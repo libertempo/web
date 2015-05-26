@@ -1,6 +1,11 @@
-Libertempo
+Libertempo Fork de php_conges
 
-----
+	Application web intéractive de gestion des congés du personnels d'un service. 
+	
+	** Libertempo se veut très paramètrable afin de fournir ou non diverses fonctionnalités aux utilisateurs. **
+	** Libertempo est multi-langues. **
+
+
 INSTALL
 Create a database for this application with a user who can access it and modify informations on it (grant access).
 

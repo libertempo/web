@@ -29,7 +29,7 @@ SOMMAIRE :
 	** Libertempo se veut très paramètrable afin de fournir ou non diverses fonctionnalités aux utilisateurs. **
 	** Libertempo est multi-langues. **
 	
-	Cette application se présente en 4 volets :
+	Cette application se présente en 5 volets :
 	
 	1 - volet utilisateur :
 	   Les utilisateurs ont accès au bilan et à l'historique de leurs congés. Ils ont également accès au calendrier

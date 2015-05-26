@@ -83,7 +83,7 @@ function header_popup($title = '' , $additional_head = '' ) {
     $type_bottom = 'popup';
 
     if (empty($title))
-        $title = 'PHP CONGES';
+        $title = 'Libertempo';
 
     include TEMPLATE_PATH . 'popup_header.php';
 }
@@ -101,7 +101,7 @@ function header_error($title = '' , $additional_head = '' ) {
     $type_bottom = 'error';
 
     if (empty($title))
-        $title = 'PHP CONGES';
+        $title = 'Libertempo';
 
     include TEMPLATE_PATH . 'error_header.php';
 }
@@ -119,7 +119,7 @@ function header_login($title = '' , $additional_head = '' ) {
     $type_bottom = 'error';
 
     if (empty($title))
-        $title = 'PHP CONGES';
+        $title = 'Libertempo';
 
     include TEMPLATE_PATH . 'login_header.php';
 }
@@ -137,7 +137,7 @@ function header_menu( $info ,$title = '' , $additional_head = '' ) {
     $type_bottom = 'menu';
 
     if (empty($title))
-        $title = 'PHP CONGES';
+        $title = 'Libertempo';
 
     include TEMPLATE_PATH . 'menu_header.php';
 }
