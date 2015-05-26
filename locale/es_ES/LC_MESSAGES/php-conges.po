@@ -1,0 +1,1437 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: php-conges\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-11-11 03:37+0100\n"
+"PO-Revision-Date: 2012-02-24 15:45+0100\n"
+"Last-Translator: Laurent <laurent.ghys@gmail.com>\n"
+"Language-Team: HoLbLiN <contact@holblin.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop\n"
+"X-Poedit-Basepath: ../../../\n"
+"X-Poedit-Language: Catalan\n"
+"X-Poedit-Country: SPAIN\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-SearchPath-0: .\n"
+
+msgid "langue"
+msgstr "Idioma"
+
+msgid "janvier"
+msgstr "Enero"
+
+msgid "fevrier"
+msgstr "Febrero"
+
+msgid "mars"
+msgstr "Marzo"
+
+msgid "avril"
+msgstr "Abril"
+
+msgid "mai"
+msgstr "Mayo"
+
+msgid "juin"
+msgstr "Junio"
+
+msgid "juillet"
+msgstr "Julio"
+
+msgid "aout"
+msgstr "Agosto"
+
+msgid "septembre"
+msgstr "Septiembre"
+
+msgid "octobre"
+msgstr "Octubre"
+
+msgid "novembre"
+msgstr "Noviembre"
+
+msgid "decembre"
+msgstr "Diciembre"
+
+msgid "lundi"
+msgstr "lunes"
+
+msgid "mardi"
+msgstr "martes"
+
+msgid "mercredi"
+msgstr "miercoles"
+
+msgid "jeudi"
+msgstr "jueves"
+
+msgid "vendredi"
+msgstr "viernes"
+
+msgid "samedi"
+msgstr "sabado"
+
+msgid "dimanche"
+msgstr "domingo"
+
+msgid "lundi_short"
+msgstr "lun"
+
+msgid "mardi_short"
+msgstr "mar"
+
+msgid "mercredi_short"
+msgstr "mie"
+
+msgid "jeudi_short"
+msgstr "jue"
+
+msgid "vendredi_short"
+msgstr "vie"
+
+msgid "samedi_short"
+msgstr "sab"
+
+msgid "dimanche_short"
+msgstr "dom"
+
+msgid "lundi_2c"
+msgstr "lu"
+
+msgid "mardi_2c"
+msgstr "ma"
+
+msgid "mercredi_2c"
+msgstr "mi"
+
+msgid "jeudi_2c"
+msgstr "ju"
+
+msgid "vendredi_2c"
+msgstr "vi"
+
+msgid "samedi_2c"
+msgstr "sa"
+
+msgid "dimanche_2c"
+msgstr "do"
+
+msgid "lundi_1c"
+msgstr "L"
+
+msgid "mardi_1c"
+msgstr "M"
+
+msgid "mercredi_1c"
+msgstr "M"
+
+msgid "jeudi_1c"
+msgstr "J"
+
+msgid "vendredi_1c"
+msgstr "V"
+
+msgid "samedi_1c"
+msgstr "S"
+
+msgid "dimanche_1c"
+msgstr "D"
+
+msgid "button_deconnect"
+msgstr "Desconexion"
+
+msgid "button_refresh"
+msgstr "Actualizar la Pagina"
+
+msgid "button_editions"
+msgstr "Edicion Papel"
+
+msgid "button_admin_mode"
+msgstr "Modo Administrador"
+
+msgid "button_calendar"
+msgstr "Mostrar el Calendario"
+
+msgid "form_ok"
+msgstr "OK"
+
+msgid "form_submit"
+msgstr "Validar"
+
+msgid "form_cancel"
+msgstr "Abandonar"
+
+msgid "form_retour"
+msgstr "Volver"
+
+msgid "form_ajout"
+msgstr "A?adir"
+
+msgid "form_supprim"
+msgstr "Suprimir"
+
+msgid "form_modif"
+msgstr "Modificar"
+
+msgid "form_annul"
+msgstr "Anular"
+
+msgid "form_redo"
+msgstr "Volver a empezar"
+
+msgid "form_am"
+msgstr "mañana"
+
+msgid "form_pm"
+msgstr "tarde"
+
+msgid "form_day"
+msgstr "jornada completa"
+
+msgid "form_close_window"
+msgstr "Cerrar esta ventana"
+
+msgid "form_save_modif"
+msgstr "Registrar las modificaciones"
+
+msgid "form_modif_ok"
+msgstr "Modificaciones registradas !"
+
+msgid "form_modif_not_ok"
+msgstr "ERROR ! Modificaciones NO registradas !"
+
+msgid "form_valid_global"
+msgstr "Validar la entrada global"
+
+msgid "form_valid_groupe"
+msgstr "Validar la entrada para el Grupo"
+
+msgid "form_password"
+msgstr "Password"
+
+msgid "form_start"
+msgstr "Comenzar"
+
+msgid "form_continuer"
+msgstr "Continuar"
+
+msgid "divers_quotite"
+msgstr "porcentaje"
+
+msgid "divers_quotite_maj_1"
+msgstr "Porcentaje"
+
+msgid "divers_annee"
+msgstr "añ"
+
+msgid "divers_annee_maj"
+msgstr "AÑO"
+
+msgid "divers_solde"
+msgstr "saldo"
+
+msgid "divers_solde_maj"
+msgstr "SALDO"
+
+msgid "divers_solde_maj_1"
+msgstr "Saldo"
+
+msgid "divers_debut_maj"
+msgstr "INICIO"
+
+msgid "divers_debut_maj_1"
+msgstr "Inicio"
+
+msgid "divers_fin_maj"
+msgstr "FIN"
+
+msgid "divers_fin_maj_1"
+msgstr "Fin"
+
+msgid "divers_type"
+msgstr "tipo"
+
+msgid "divers_type_maj_1"
+msgstr "Tipo"
+
+msgid "divers_comment_maj_1"
+msgstr "Comentario"
+
+msgid "divers_etat_maj_1"
+msgstr "Situacion"
+
+msgid "divers_nb_jours_pris_maj_1"
+msgstr "n° de dias cogidos"
+
+msgid "divers_nb_jours_maj_1"
+msgstr "n? Dias"
+
+msgid "divers_inconnu"
+msgstr "desconocido"
+
+msgid "divers_motif_refus"
+msgstr "motivo de la negativa"
+
+msgid "divers_motif_annul"
+msgstr "motivo de la anulacion"
+
+msgid "divers_refuse"
+msgstr "denegado"
+
+msgid "divers_annule"
+msgstr "anulado"
+
+msgid "divers_login"
+msgstr "login"
+
+msgid "divers_login_maj_1"
+msgstr "Login"
+
+msgid "divers_personne_maj_1"
+msgstr "Persona"
+
+msgid "divers_responsable_maj_1"
+msgstr "Responsable"
+
+msgid "divers_nom_maj"
+msgstr "APELLIDO"
+
+msgid "divers_nom_maj_1"
+msgstr "Apellido"
+
+msgid "divers_prenom_maj"
+msgstr "NOMBRE"
+
+msgid "divers_prenom_maj_1"
+msgstr "Nombre"
+
+msgid "divers_accepter_maj_1"
+msgstr "Acceptar"
+
+msgid "divers_refuser_maj_1"
+msgstr "Denegar"
+
+msgid "divers_fermer_maj_1"
+msgstr "Cerrar"
+
+msgid "divers_am_short"
+msgstr "am"
+
+msgid "divers_pm_short"
+msgstr "pm"
+
+msgid "divers_conges"
+msgstr "vacaciones"
+
+msgid "divers_conges_maj_1"
+msgstr "Vacaciones"
+
+msgid "divers_absences"
+msgstr "ausencias"
+
+msgid "divers_absences_maj_1"
+msgstr "Ausencias"
+
+msgid "divers_nouvelle_absence"
+msgstr "Nueva Ausencia"
+
+msgid "divers_mois_precedent"
+msgstr "mes precedente"
+
+msgid "divers_mois_precedent_maj_1"
+msgstr "Mois Precedente"
+
+msgid "divers_mois_suivant"
+msgstr "mois siguiente"
+
+msgid "divers_mois_suivant_maj_1"
+msgstr "Mois Siguiente"
+
+msgid "user"
+msgstr "Usuario"
+
+msgid "user_onglet_echange_abs"
+msgstr "Cambio dia ausencia"
+
+msgid "user_onglet_demandes"
+msgstr "solicitudes en curso"
+
+msgid "user_onglet_historique_conges"
+msgstr "Historico vacaciones"
+
+msgid "user_onglet_historique_abs"
+msgstr "Historico otras ausencias"
+
+msgid "user_onglet_change_passwd"
+msgstr "Cambiar el password"
+
+msgid "user_echange_rtt"
+msgstr "Cambio dia rtt,tiempo parcial / dia trabajado"
+
+msgid "user_etat_demandes"
+msgstr "Estado de las solicitudes en curso"
+
+msgid "user_historique_conges"
+msgstr "Historico vacaciones"
+
+msgid "user_historique_abs"
+msgstr "Historico de las ausencias por mision, formacion, etc ..."
+
+msgid "user_change_password"
+msgstr "Cambiar vuestro password"
+
+msgid "user_demandes_aucune_demande"
+msgstr "Ninguna solicitud en curso ..."
+
+msgid "user_conges_aucun_conges"
+msgstr "Ningunas vacaciones en la base de datos ..."
+
+msgid "user_abs_aucune_abs"
+msgstr "Ninguna ausencia en la base de datos ..."
+
+msgid "user_abs_type"
+msgstr "Ausencia"
+
+msgid "user_passwd_saisie_1"
+msgstr "1era entrada"
+
+msgid "user_passwd_saisie_2"
+msgstr "2da entrada"
+
+msgid "user_passwd_error"
+msgstr "ERROR ! las 2 entradas son diferentes o vacias !!"
+
+msgid "user_modif_demande_titre"
+msgstr "Modificacion de una solicitud/ausencia."
+
+msgid "user_suppr_demande_titre"
+msgstr "Suprimir solicitud de vacaciones ."
+
+msgid "resp_menu_titre"
+msgstr "MODO RESPONSABLE :"
+
+msgid "resp_menu_button_retour_main"
+msgstr "Retorno pagina Principal"
+
+msgid "resp_menu_button_traite_demande"
+msgstr "Tratar todas las Solicitudes"
+
+msgid "resp_menu_button_affiche_user"
+msgstr "seleccionar persona"
+
+msgid "resp_menu_button_ajout_jours"
+msgstr "A?adir Dias Vacaciones"
+
+msgid "resp_menu_button_mode_user"
+msgstr "Modo Usuario"
+
+msgid "resp_menu_button_mode_admin"
+msgstr "Mode Administrador"
+
+msgid "resp_etat_users_afficher"
+msgstr "Ver"
+
+msgid "resp_etat_users_imprim"
+msgstr "Edicion Papel"
+
+msgid "resp_traite_demandes_titre"
+msgstr "Tratamiento de solicitudes de vacaciones :"
+
+msgid "resp_traite_demandes_aucune_demande"
+msgstr "Ninguna solicitud de vacaciones en curso en la base de datos..."
+
+msgid "resp_traite_demandes_nb_jours"
+msgstr "n° Dias<br>Tomados"
+
+msgid "resp_traite_demandes_attente"
+msgstr "Espera"
+
+msgid "resp_traite_demandes_motif_refus"
+msgstr "Motivo<br>del rechazo"
+
+msgid "resp_ajout_conges_titre"
+msgstr "Añadir vacaciones :"
+
+msgid "resp_ajout_conges_nb_jours_ajout"
+msgstr "N° dias a a?adir"
+
+msgid "resp_ajout_conges_ajout_all"
+msgstr "Adicion global para Todos :"
+
+msgid "resp_ajout_conges_nb_jours_all_1"
+msgstr "Numero de dias de"
+
+msgid "resp_ajout_conges_nb_jours_all_2"
+msgstr "A añadir a todos :"
+
+msgid "resp_ajout_conges_calcul_prop"
+msgstr "Calculo proporcional al porcentaje de cada persona :"
+
+msgid "resp_ajout_conges_oui"
+msgstr "SI"
+
+msgid "resp_ajout_conges_calcul_prop_arondi"
+msgstr "el calculo proporcional es redondeado a 1/2 mas cercano"
+
+msgid "resp_ajout_conges_ajout_groupe"
+msgstr "Adicion por Grupo : (adicion a todos los miembros de un grupo)"
+
+msgid "resp_ajout_conges_choix_groupe"
+msgstr "eleccion del grupo"
+
+msgid "resp_ajout_conges_nb_jours_groupe_1"
+msgstr "Numero de dias de"
+
+msgid "resp_ajout_conges_nb_jours_groupe_2"
+msgstr "a añadir al grupo :"
+
+msgid "resp_ajout_conges_comment_periode_user"
+msgstr "añadir dia"
+
+msgid "resp_ajout_conges_comment_periode_all"
+msgstr "añadir para todas las personas"
+
+msgid "resp_ajout_conges_comment_periode_groupe"
+msgstr "añadir para el grupo"
+
+msgid "resp_traite_user_titre"
+msgstr "Tratamiento de :"
+
+msgid "resp_traite_user_new_conges"
+msgstr "Nuevas Vacaciones/Ausencias :"
+
+msgid "resp_traite_user_etat_demandes"
+msgstr "Estado de las solicitudes :"
+
+msgid "resp_traite_user_etat_conges"
+msgstr "Estado de las vacaciones :"
+
+msgid "resp_traite_user_aucune_demande"
+msgstr "Ninguna solicitud de vacaciones para esta persona en la base de datos ..."
+
+msgid "resp_traite_user_motif_refus"
+msgstr "motivo del rechazo"
+
+msgid "resp_traite_user_aucun_conges"
+msgstr "Ningunas vacaciones para esta persona en la base de datos ..."
+
+msgid "resp_traite_user_motif_possible"
+msgstr "motivo rechazo o anulacion eventual"
+
+msgid "resp_traite_user_annul"
+msgstr "Anular"
+
+msgid "resp_traite_user_motif_annul"
+msgstr "motivo anulacion"
+
+msgid "resp_traite_user_motif"
+msgstr "motivo"
+
+msgid "resp_traite_user_valeurs_not_ok"
+msgstr "ERROR ! Los valores entrados son incorrectos o faltan  !!!"
+
+msgid "admin_titre"
+msgstr "Administracion de la Base de Datos : "
+
+msgid "admin_button_close_window_1"
+msgstr "Cierre del modo Administradorr"
+
+msgid "admin_button_config_1"
+msgstr "Configuracion de php_vacaciones"
+
+msgid "admin_button_config_2"
+msgstr "Configuracion"
+
+msgid "admin_button_config_abs_1"
+msgstr "Configuracion de los tipos de ausencias gestionadas por php_vacaciones"
+
+msgid "admin_button_config_abs_2"
+msgstr "Config Ausencias"
+
+msgid "admin_button_jours_chomes_1"
+msgstr "entrada de los dias no trabajados"
+
+msgid "admin_button_jours_chomes_2"
+msgstr "entrada de los dias no trabajados"
+
+msgid "admin_button_save_db_1"
+msgstr "Copia seguridad/Restauracion Base de Datos"
+
+msgid "admin_button_save_db_2"
+msgstr "Copia seguridad/Restauracion Base de Datos"
+
+msgid "admin_onglet_gestion_user"
+msgstr "Gestion de los  Usuarios"
+
+msgid "admin_onglet_add_user"
+msgstr "Añadir un Usuario"
+
+msgid "admin_onglet_gestion_groupe"
+msgstr "Gestion de los Grupos"
+
+msgid "admin_onglet_groupe_user"
+msgstr "Gestion Grupos <-> Usuarios"
+
+msgid "admin_onglet_user_groupe"
+msgstr "Gestion Usuarios <-> Grupos"
+
+msgid "admin_onglet_groupe_resp"
+msgstr "Gestion Grupos <-> Responsables"
+
+msgid "admin_onglet_resp_groupe"
+msgstr "Gestion Responsables <-> Grupos"
+
+msgid "admin_verif_param_invalides"
+msgstr "ATENCION : algunos campos entrados no son validos ......"
+
+msgid "admin_verif_login_exist"
+msgstr "ATENCION : login ya utilizado, se ruega modificarlo ......"
+
+msgid "admin_verif_bad_mail"
+msgstr "ATENCION : direccion mail erronea ......"
+
+msgid "admin_verif_groupe_invalide"
+msgstr "ATENCION : nombre de grupo ya utilizado, se ruega modificarlo ......"
+
+msgid "admin_users_titre"
+msgstr "Estado de los Usuarios"
+
+msgid "admin_users_is_active"
+msgstr "Activo ?"
+
+msgid "admin_users_is_resp"
+msgstr "is_resp"
+
+msgid "admin_users_no_resp"
+msgstr "no_resp"
+
+msgid "admin_users_resp_login"
+msgstr "resp_login"
+
+msgid "admin_users_is_admin"
+msgstr "is_admin"
+
+msgid "admin_users_see_all"
+msgstr "see_all"
+
+msgid "admin_users_mail"
+msgstr "email"
+
+msgid "admin_users_password_1"
+msgstr "password1"
+
+msgid "admin_users_password_2"
+msgstr "password2"
+
+msgid "admin_new_users_titre"
+msgstr "Nuevo Usuario :"
+
+msgid "admin_new_users_is_resp"
+msgstr "es_responsable"
+
+msgid "admin_new_users_is_admin"
+msgstr "es_administrador"
+
+msgid "admin_new_users_see_all"
+msgstr "ver_todos"
+
+msgid "admin_new_users_password"
+msgstr "password"
+
+msgid "admin_new_users_nb_par_an"
+msgstr "n° / año"
+
+msgid "admin_groupes_groupe"
+msgstr "Grupo"
+
+msgid "admin_groupes_libelle"
+msgstr "Llamado"
+
+msgid "admin_groupes_new_groupe"
+msgstr "Nuevo Grupo :"
+
+msgid "admin_gestion_groupe_etat"
+msgstr "Estado de los Grupos"
+
+msgid "admin_aff_choix_groupe_titre"
+msgstr "Eleccion de un Grupo"
+
+msgid "admin_aff_choix_user_titre"
+msgstr "Eleccion de un Usuario"
+
+msgid "admin_aff_choix_resp_titre"
+msgstr "Eleccion de un Responsable"
+
+msgid "admin_gestion_groupe_users_membres"
+msgstr "Miembros de un Grupo"
+
+msgid "admin_gestion_groupe_users_group_of_user"
+msgstr "Grupos a los que pertenece"
+
+msgid "admin_gestion_groupe_resp_groupes"
+msgstr "Grupos del Responsable"
+
+msgid "admin_gestion_groupe_resp_responsables"
+msgstr "Responsables del Grupo"
+
+msgid "admin_chg_passwd_titre"
+msgstr "Modificacion Password usuario"
+
+msgid "admin_suppr_user_titre"
+msgstr "Supresion Usuario"
+
+msgid "admin_modif_user_titre"
+msgstr "Modificacion usuario"
+
+msgid "admin_modif_nb_jours_an"
+msgstr "n° dias / año"
+
+msgid "admin_temps_partiel_titre"
+msgstr "entrada de los dias de ausencia por ARTT o tiempo parcial"
+
+msgid "admin_temps_partiel_sem_impaires"
+msgstr "semanas Impares"
+
+msgid "admin_temps_partiel_sem_paires"
+msgstr "semanas Pares"
+
+msgid "admin_temps_partiel_am"
+msgstr "am"
+
+msgid "admin_temps_partiel_pm"
+msgstr "pm"
+
+msgid "admin_temps_partiel_date_valid"
+msgstr "Fecha de inicio de validez de este horario"
+
+msgid "admin_suppr_groupe_titre"
+msgstr "Supresion Grupo."
+
+msgid "admin_modif_groupe_titre"
+msgstr "Modificacion Grupo."
+
+msgid "admin_sauve_db_titre"
+msgstr "Copia / Restauracion de la Base de datos"
+
+msgid "admin_sauve_db_choisissez"
+msgstr "Seleccionar"
+
+msgid "admin_sauve_db_sauve"
+msgstr "Salvar"
+
+msgid "admin_sauve_db_restaure"
+msgstr "Restauracion de la base de datos"
+
+msgid "admin_sauve_db_do_sauve"
+msgstr "Iniciar la Copia"
+
+msgid "admin_sauve_db_options"
+msgstr "Opciones de la Copia"
+
+msgid "admin_sauve_db_complete"
+msgstr "Copia completa"
+
+msgid "admin_sauve_db_data_only"
+msgstr "Salvar solo los datos"
+
+msgid "admin_sauve_db_save_ok"
+msgstr "Copia efectuada"
+
+msgid "admin_sauve_db_file_to_restore"
+msgstr "Archivo a restaurar"
+
+msgid "admin_sauve_db_warning"
+msgstr "ATENCION : todos los datos de la database php_vacaciones van a ser suprimidos antes de la restauracion"
+
+msgid "admin_sauve_db_do_restaure"
+msgstr "Comenzar la Restauracion"
+
+msgid "admin_sauve_db_bad_file"
+msgstr "Archivo indicado inexistente"
+
+msgid "admin_sauve_db_restaure_ok"
+msgstr "Restauracion efectuada"
+
+msgid "admin_jours_chomes_titre"
+msgstr "Entrada de los dias no trabajados"
+
+msgid "admin_jours_chomes_annee_precedente"
+msgstr "año precedente"
+
+msgid "admin_jours_chomes_annee_suivante"
+msgstr "año siguiente"
+
+msgid "admin_jours_chomes_confirm"
+msgstr "Confirmar esta Entrada"
+
+msgid "editions_titre"
+msgstr "Ediciones Vacaciones"
+
+msgid "editions_last_edition"
+msgstr "Proxima Edicion"
+
+msgid "editions_aucun_conges"
+msgstr "Ningunas vacaciones a editar en la base de datos ..."
+
+msgid "editions_lance_edition"
+msgstr "Iniciar la edicion"
+
+msgid "editions_pdf_edition"
+msgstr "Edicion en PDF"
+
+msgid "editions_hitorique_edit"
+msgstr "Historico de ediciones"
+
+msgid "editions_aucun_hitorique"
+msgstr "Ninguna  edicion grabada para este usuario ..."
+
+msgid "editions_numero"
+msgstr "Numero"
+
+msgid "editions_date"
+msgstr "Fecha"
+
+msgid "editions_edit_again"
+msgstr "Editar de nuevo"
+
+msgid "editions_edit_again_pdf"
+msgstr "Editar de nuevo en PDF"
+
+msgid "editions_bilan_au"
+msgstr "balance a"
+
+msgid "editions_historique"
+msgstr "Historico"
+
+msgid "editions_soldes_precedents_inconnus"
+msgstr "saldo precedente desconocido"
+
+msgid "editions_solde_precedent"
+msgstr "saldo precedente"
+
+msgid "editions_nouveau_solde"
+msgstr "nuevo saldo"
+
+msgid "editions_signature_1"
+msgstr "Firma del titular"
+
+msgid "editions_signature_2"
+msgstr "Firma del responsable"
+
+msgid "editions_cachet_etab"
+msgstr "y sello del establecimiento"
+
+msgid "editions_jours_an"
+msgstr "dias / año"
+
+msgid "editions_etat_conges"
+msgstr "Edicion Estado de las vacaciones"
+
+msgid "saisie_conges_compter_jours"
+msgstr "Contar los dias"
+
+msgid "saisie_conges_nb_jours"
+msgstr "N° Dias Tomados"
+
+msgid "saisie_echange_titre_calendrier_1"
+msgstr "Dia de ausencia previsto"
+
+msgid "saisie_echange_titre_calendrier_2"
+msgstr "Dia de ausencia deseado"
+
+msgid "calendrier_titre"
+msgstr "CALENDARIO de VACACIONES"
+
+msgid "calendrier_imprimable"
+msgstr "version imprimible"
+
+msgid "calendrier_jour_precedent"
+msgstr "Dia Previo"
+
+msgid "calendrier_jour_suivant"
+msgstr "Dia Siguiente"
+
+msgid "calendrier_legende_we"
+msgstr "week-end o dia festivo"
+
+msgid "calendrier_legende_conges"
+msgstr "vacaciones tomadas o a tomar"
+
+msgid "calendrier_legende_demande"
+msgstr "vacaciones solicitadas (aun no concedidas)"
+
+msgid "calendrier_legende_part_time"
+msgstr "ausencia semanal (tiempo parcial , RTT)"
+
+msgid "calendrier_legende_abs"
+msgstr "ausencia otra (mision, formacion, enfermedad, ...)"
+
+msgid "calcul_nb_jours_nb_jours"
+msgstr "Numero de dias a tomar :"
+
+msgid "calcul_nb_jours_reportez"
+msgstr "trasladar este numero a la casilla"
+
+msgid "calcul_nb_jours_form"
+msgstr "del formulario"
+
+msgid "erreur_user"
+msgstr "Imposible de identificar el  usuario"
+
+msgid "erreur_login_password"
+msgstr "pareja login/password no valida o login ausente"
+
+msgid "erreur_session"
+msgstr "sesion invalida o expirada"
+
+msgid "mysql_srv_connect_failed"
+msgstr "Imposible de conectarse al servidor "
+
+msgid "mysql_db_connect_failed"
+msgstr "Imposible de conectarse a la base de datos"
+
+msgid "cookies_obligatoires"
+msgstr "Es necesario que vuestro navegador accepte las cookies para poder conectaros a PHP_VACACIONES."
+
+msgid "javascript_obligatoires"
+msgstr "Es aconsejado que vuestro navegador accepte el Javascript para utilizar PHP_VACACIONES."
+
+msgid "login_passwd_incorrect"
+msgstr "ERROR : Nombre de usuario y/o password incorrecto !!!"
+
+msgid "login_non_connu"
+msgstr "ERROR : Usuario no registrado para la gestion de vacaciones !!!"
+
+msgid "login_fieldset"
+msgstr "Identificacion"
+
+msgid "password"
+msgstr "Password"
+
+msgid "msie_alert"
+msgstr "Comentario : Ciertos parametros pueden no ser tomados en cuenta por Microsoft IE. Utilicen preferentemente Mozilla Firefox."
+
+msgid "verif_saisie_erreur_valeur_manque"
+msgstr "ERROR : entrada incorrecta : <b>faltan valores !!!</b>"
+
+msgid "verif_saisie_erreur_nb_jours_bad"
+msgstr "ERROR : entrada incorrecta : <b>el numero de dias es incorrecto</b>"
+
+msgid "verif_saisie_erreur_fin_avant_debut"
+msgstr "ERROR : entrada incorrecta : <b>la fecha de final es anterior a la fecha de inicio !!!</b>"
+
+msgid "verif_saisie_erreur_debut_apres_fin"
+msgstr "ERROR : entrada incorrecta : <b>la fecha de inicio es posterior a la fecha de final !!!</b>"
+
+msgid "verif_saisie_erreur_nb_bad"
+msgstr "ERROR : entrada incorrecta : <b>el numero entrado es incorrecto</b>"
+
+msgid "config_abs_titre"
+msgstr "Configuracion de los tipos de ausencia tratados por PHP_VACACIONES"
+
+msgid "config_abs_comment_conges"
+msgstr "Los tipos de ausencias listados aqui son de las diversas vacaciones, descontadas cada una en cuentas separadas."
+
+msgid "config_abs_comment_absences"
+msgstr "Los tipos de ausencias listados aqui no estan descontados (son ausencias autorizadas)."
+
+msgid "config_abs_libelle"
+msgstr "titular"
+
+msgid "config_abs_libelle_short"
+msgstr "titular corto"
+
+msgid "config_abs_add_type_abs"
+msgstr "añadir un tipo de ausencia :"
+
+msgid "config_abs_add_type_abs_comment"
+msgstr "Entrar el tipo de ausencia que Ud. quiere a?adir :"
+
+msgid "config_abs_saisie_not_ok"
+msgstr "entrada incorrecta :"
+
+msgid "config_abs_bad_caracteres"
+msgstr "los caracteres siguientes estan prohibidos:"
+
+msgid "config_abs_champs_vides"
+msgstr "los campos estan vacios !"
+
+msgid "config_abs_suppr_impossible"
+msgstr "Supresion IMPOSIBLE !"
+
+msgid "config_abs_already_used"
+msgstr "Las vacaciones/ausencias de este tipo estan en curso !"
+
+msgid "config_abs_confirm_suppr_of"
+msgstr "Por favor confirmar la supresion de"
+
+msgid "config_appli_titre_1"
+msgstr "Configuracion de la Aplicacion PHP_VACACIONES"
+
+msgid "config_appli_titre_2"
+msgstr "Configuracion de php_vacaciones"
+
+msgid "00_php_conges"
+msgstr "00 php_vacaciones"
+
+msgid "01_Serveur Web"
+msgstr "01 Servidor Web"
+
+msgid "02_PAGE D'AUTENTIFICATION"
+msgstr "02 PAGINA DE AUTENTIFICACION"
+
+msgid "03_TITRES"
+msgstr "03 TITULOS"
+
+msgid "04_Authentification"
+msgstr "04 Autentificacion"
+
+msgid "05_Utilisateur"
+msgstr "05 Usuario"
+
+msgid "06_Responsable"
+msgstr "06 Responsable"
+
+msgid "07_Administrateur"
+msgstr "07 Administrador"
+
+msgid "08_Mail"
+msgstr "08 Mail"
+
+msgid "09_jours ouvrables"
+msgstr "09 dias laborales"
+
+msgid "10_Gestion par groupes"
+msgstr "10 Gestion por grupos"
+
+msgid "11_Editions papier"
+msgstr "11 Ediciones papel"
+
+msgid "12_Fonctionnement de l'Etablissement"
+msgstr " 12 Funcionamiento del Establecimiento"
+
+msgid "13_Divers"
+msgstr "13 Varios"
+
+msgid "14_Pr?sentation"
+msgstr "14 Presentacion"
+
+msgid "15_Modules Externes"
+msgstr "15 Modulos Externos"
+
+msgid "config_comment_installed_version"
+msgstr "numero de version instalada"
+
+msgid "config_comment_lang"
+msgstr "// IDIOMA / LENGUAJE<br>//---------------------------<br>// fr = frances<br>// test = solo para los programadores de php_vacaciones (only for php_conges developpers)"
+
+msgid "config_comment_URL_ACCUEIL_CONGES"
+msgstr "// URL DE BASE DE VUESTRA INSTALACION DE PHP_VACACIONES<br>//-------------------------------------------------<br>// URL de base de php_vacaciones sobre vuestro servidor (lo que Ud devbe escribir para obtener la pagina de autentificacion.<br>// (NO termine por un / y sin el index.php al final)<br>// URL_INICIO_VACACIONES = \"http://monserveurweb.mondomaine/php_conges\""
+
+msgid "config_comment_img_login"
+msgstr "// IMAGEN DE LA PAGINA DE LOGIN<br>//---------------------------<br>// imagen que aparece en lo alto de la pagina de autentificacion de php_vacaciones"
+
+msgid "config_comment_texte_img_login"
+msgstr "// TEXTO DE LA IMAGEN<br>//-------------------<br>// texto de la imagen"
+
+msgid "config_comment_lien_img_login"
+msgstr "// ENLACE DE LA IMAGEN<br>//------------------<br>// URL donde reenvia la imagen de la pagina de login"
+
+msgid "config_comment_titre_calendrier"
+msgstr "Titulo de la pagina calendario de php_vacaciones"
+
+msgid "config_comment_titre_user_index"
+msgstr "Titulo de las paginas Usuario (sera seguido del login del usuario)"
+
+msgid "config_comment_titre_resp_index"
+msgstr "Titulo de las paginas Responsable"
+
+msgid "config_comment_titre_admin_index"
+msgstr "Titulo de las paginas Administrador"
+
+msgid "config_comment_auth"
+msgstr "// Autentificacion :<br>//---------------------<br>// si = FALSE : ninguna autentificacion al comienzo, hace falta pasar el parametro login a la llamada de php_vacaciones<br>// si = TRUE  : la pagina de autentificacion aparece a la llamada de php_vacaciones (TRUE es el valor por defecto)"
+
+msgid "config_comment_how_to_connect_user"
+msgstr "// Como verificar el login y password de los usuarios al inicio :<br>//--------------------------------------------------------------------------<br>// si a \"dbconges\" : la autentificacion de los usuarios se hace dentro la tabla usuarios de la database db_conges<br>// si a \"ldap\"     : la autentificacion de los usuarios se hace dentro de un anuario LDAP que vamos interrogar (cf config_ldap.php)<br>// si a \"CAS\"      : la autentificacion de los usuarios se hace sobre un servidor CAS que vamos interrogar (cf config_CAS.php)<br>// atencion : toda otro valor que \"dbconges\" o \"ldap\" o \"CAS\" comportara un error !!!"
+
+msgid "config_comment_export_users_from_ldap"
+msgstr "// Exportacion de los Usuarios desde LDAP :<br>//--------------------------------<br>// si = FALSE : los usuarios son creados \"a la mano\" directamente dentro php_vacaciones (FALSE es el valor por defecto)<br>// si = TRUE  : los usuarios son importados del servidor LDAP (gracias a una lista) (cf config_ldap.php)"
+
+msgid "config_comment_user_saisie_demande"
+msgstr "//  SOLICITUD DE VACACIONES<br>//---------------------------------------<br>// si FALSE : ninguna entrada de solicitud por el usuario, ninguna gestion de las solicitudes por el responsable<br>// si TRUE : entrada de solicitud por el usuario, y gestion de las solicitudes por el responsable (TRUE es el valor por defecto)"
+
+msgid "config_comment_user_affiche_calendrier"
+msgstr "//  APARICION DEL BOTON DE CALENDARIO PARA EL USUARIO<br>//--------------------------------------------------------------------------------------<br>// si FALSE : los usuarios no tienen la posibilidad de ver el calendario de las vacaciones<br>// si TRUE : los usuarios tienen la posibilidad de ver el calendario de las vacaciones (TRUE es el valor por defecto)"
+
+msgid "config_comment_user_saisie_mission"
+msgstr "//  ENTRADA DE LAS AUSENCIAS PARA MISIONES, FORMATIONES, CONGRESOS, ETC .... POR EL USUARIO<br>//--------------------------------------------------------------------------------------<br>// ( las ausencias de este tipo no quitan dias de vacaciones ! )<br>// si FALSE : ninguna entrada por el usuario de ausencias por mision, formacion, congreso, etc ....<br>// si TRUE : entrada por el usuario de las ausencias por mision, formacion, congreso, etc .... (TRUE es el valor por defecto)"
+
+msgid "config_comment_user_ch_passwd"
+msgstr "//  CAMBIAR SU PASSWORD<br>//---------------------------------------<br>// si FALSE : el usuario no puede cambiar su password<br>// si TRUE : el usuario puede cambiar su password (TRUE es el valor por defecto)"
+
+msgid "config_comment_responsable_virtuel"
+msgstr "//  RESPONSABLE GENERICO VIRTUAL O NO<br>//-------------------------------------------<br>// si FALSE : el responsable que trate las vacaciones del personal es una persona real (usuario de php_vacaciones) (FALSE es el valor por defecto)<br>// si TRUE : el responsable que trate las vacaciones del personal es un usuario generico virtual (login=conges)"
+
+msgid "config_comment_resp_affiche_calendrier"
+msgstr "//  APARICION DEL BOTON DE CALENDARIO PARA EL RESPONSABLE<br>//--------------------------------------------------------------------------------------<br>// si FALSE : los responsables no tienen la posibilidad de ver el calendario de las vacaciones<br>// si TRUE : los responsables tienen la posibilidad de ver el calendario de las vacaciones (TRUE es el valor por defecto)"
+
+msgid "config_comment_resp_saisie_mission"
+msgstr "//  ENTRADA DE LAS AUSENCIAS POR MISIONES, FORMACIONES, CONGRESOS, ETC .... POR EL RESPONSABLE<br>//---------------------------------------------------------------------------------------<br>// ( las ausencias de este tipo no quitan dias de vacaciones ! )<br>// si FALSE : ninguna entrada para el responsable de las ausencias por mision, formacion, congreso, etc ....(FALSE es el valor por defecto)<br>// si TRUE : entrada por el responsable de las ausencias por mision, formacion, congreso, etc ...."
+
+msgid "config_comment_resp_vertical_menu"
+msgstr "//  CONFIG  DEL MENU DEL RESPONSABLE<br>//---------------------------------------<br>// si TRUE : dentro la ventana responsable, el menu es vertical (a la izquierda) (TRUE es el valor por defecto)<br>// si FALSE : dentro de la ventana responsable, el menu es horizontal (en lo alto)"
+
+msgid "config_comment_admin_see_all"
+msgstr "//  CONFIG  DEL MODO ADMINISTRADOR<br>//---------------------------------------<br>// si FALSE : el administrador solo gestiona los users de los que es responsable (FALSE es el valor por defecto)<br>// si TRUE : el administrador gestiona todos los users"
+
+msgid "config_comment_admin_change_passwd"
+msgstr "//  CAMBIAR EL PASSWORD DE UN USUARIO<br>//-----------------------------------------<br>// si FALSE : el administrador no puede cambiar el password de los usuarios<br>// si TRUE : el administrador puede cambiar el password de los usuarios (TRUE es el valor por defecto)"
+
+msgid "config_comment_affiche_bouton_config_pour_admin"
+msgstr "// ACCESO A LA CONFIG DE LA APPLICACION PARA LOS ADMINISTRADORES<br>//-------------------------------------------------------<br>// si FALSE : el boton de acceso a la configuracion de php_vacaciones no aparece sobre la pagina administrador (FALSE es la valor por defecto)<br>// si TRUE : el boton de acceso a la configuracion de php_vacaciones aparece en la pagina administrador"
+
+msgid "config_comment_affiche_bouton_config_absence_pour_admin"
+msgstr "// ACCESO A LA CONFIG DE LOS TIPOS DE AUSENCIA DE LA APPLI PARA LOS ADMINS<br>//---------------------------------------------------------------------<br>// si FALSE : el boton de acceso a la configuracion de los tipos de ausencia gestionados por php_vacaciones no aparece sobre la pagina administrador (FALSE es el valor por defecto)<br>// si TRUE : el boton de acceso a la configuracion de los tipos de ausencia gestionados por php_vacaciones aparece en la pagina administrador"
+
+msgid "config_comment_mail_new_demande_alerte_resp"
+msgstr "// ENVIO DE MAIL AL RESPONSABLE PARA UNA NUEVA PETICION :<br>//----------------------------------------------------------<br>// si FALSE : el responsable no recibe el mail despues de una nueva peticion de vacaciones por un usuario (FALSE es el valor por defecto)<br>// si TRUE : el responsable recibe un mail de advertencia a cada nueva peticion de vacaciones de un usuario<br>// (ATENCION : usted puede personalizar el titulo y el texto del mail de alerta mas abajo dentro de este fichero)"
+
+msgid "config_comment_mail_valid_conges_alerte_user"
+msgstr "// ENVIO DE MAIL AL USUARIO PARA UNAS NUEVAS VACACIONES ENTRADAS O VALIDAS :<br>//----------------------------------------------------------------<br>// si FALSE : el usuario no recibe el mail cuando el responsable le acepta una nuevas vacaciones (FALSE es el valor por defecto)<br>// si TRUE : el usuario recibe un mail de advertencia a cada vez que el responsable entra una nuevas vacaciones o acepta una solicitud para el<br>// (ATENCION : usted puede personalizar el titulo y el texto del mail de alerta mas abajo dentro de este fichero)"
+
+msgid "config_comment_mail_refus_conges_alerte_user"
+msgstr "// ENVIO DE MAIL AL USUARIO POR EL RECHAZO DE UNA SOLICITUD DE VACACIONES :<br>//----------------------------------------------------------------<br>// si FALSE : el usuario no recibe el mail cuando el responsable rechaza una de sus solicitudes de vacaciones (FALSE es el valor por defecto)<br>// si TRUE : el usuario recibe un mail de advertencia cada vez que el responsable rechaza una de sus solicitudes de vacaciones <br>// (ATENCION : usted puede personalizar el titulo y el texto del mail de alerta mas abajo dentro de este fichero)"
+
+msgid "config_comment_mail_annul_conges_alerte_user"
+msgstr "// ENVIO DE MAIL AL USUARIO POR LA ANULACION POR EL RESP DE UNAS VACACIONES YA ACEPTADAS :<br>//---------------------------------------------------------------------------------<br>// si FALSE : el usuario no recibe el mail cuando el responsable le anula unas vacaciones (FALSE es el valor por defecto)<br>// si TRUE : el usuario recibe un mail de advertencia cada vez que el responsable anula unas de sus vacaciones<br>// (ATENCION : usted puede personalizar el titulo y el texto del mail de alerta mas abajo dentro de este fichero)"
+
+msgid "config_comment_serveur_smtp"
+msgstr "//  SERVIDOR SMTP A UTILIZAR<br>//---------------------------------------<br>// direccion ip  o  nombre del servidor smpt a utilizar para enviar los mails<br>// Si usted no domina el servidor SMTP o si, a la utilizacion, usted tiene un error a la connexion al servidor, deje esta variable vacia (\"\")"
+
+msgid "config_comment_where_to_find_user_email"
+msgstr "//  DONDE ENCONTRAR LAS DIRECCIONES MAILS DE LOS USUARIOS<br>//-------------------------------------------------<br>// varias posibilidades para encontrar las direcciones mails de los usuarios :<br>// si ? \"dbconges\" : el mail de los user se encuentra dentro de la tabla users de la database db_vacaciones<br>// si ? \"ldap\"     : el mail de los user se encuentra dentro de un anuario LDAP que vamos a interrogar (cf fichero config_ldap.php)<br>// ATENCION : todo otro valor que \"dbconges\" o \"ldap\" comportara une ?rreur !!!"
+
+msgid "config_comment_samedi_travail"
+msgstr "//  GESTION DE LOS SABADOS COMO TRABAJADOS O NO<br>//--------------------------------------------------------------------------------------<br>// definimos aqui si los sabados pueden ser trabajados o no.<br>// si TRUE :  el dia se considera como trabajado....<br>// si FALSE : el dia se considera como no trabajado (weeekend).... (FALSE es el valor por defecto)"
+
+msgid "config_comment_dimanche_travail"
+msgstr "//  GESTION DE LOS DOMINGOS COMO TRABAJADOS O NO<br>//--------------------------------------------------------------------------------------<br>// definimos aqui si los domingos pueden ser trabajados o no.<br>// si TRUE : el dia se considera como trabajado ....<br>// si FALSE : el dia se considera como no trabajado (weeekend).... (FALSE es el valor por defecto)"
+
+msgid "config_comment_gestion_groupes"
+msgstr "//  GESTION DE LOS GRUPOS DE USUARIOS<br>//--------------------------------------<br>// definimos aqui si queremos gestionar a los usuarios por grupos o no.<br>// si TRUE : los grupos de usuarios son gestionados dentro de la aplicacion ....<br>// si FALSE : los grupos de usuarios no son gestionados dentro de la aplicacion .... (FALSE es el valor por defecto)"
+
+msgid "config_comment_affiche_groupe_in_calendrier"
+msgstr "//  VER EL CALENDARIO : todos los usuarios o los usuarios de un grupo solamente<br>//--------------------------------------------------------------------------------------------<br>// si FALSE : todas las personas aparecen en el calendario de vacaciones (FALSE es el valor por defecto)<br>// si TRUE : solo las personas del mismo grupo que el usuario aparecen en el calendario de vacaciones"
+
+msgid "config_comment_editions_papier"
+msgstr "//  EDICION PAPEL<br>//--------------------------------------<br>// decidimos aqui si el responsable puede imprimir las vacaciones de un user.<br>// si TRUE : las impresiones son disponibles ....(TRUE es el valor por defecto)<br>// si FALSE : las impresiones no son disponibles en la aplicacion ...."
+
+msgid "config_comment_texte_haut_edition_papier"
+msgstr "//  Cabecera de las IMPRESIONES<br>//--------------------------------------<br>// definimos aqui el texto eventual que figurara en lo alto de la pagina de las impresiones de las vacaciones de un user."
+
+msgid "config_comment_texte_bas_edition_papier"
+msgstr "//  Pie de pagina de las IMPRESIONES<br>//--------------------------------------<br>// definimos aqui el texto eventual que figurara en el pie de pagina de las impresiones de las vacaciones de un user."
+
+msgid "config_comment_user_echange_rtt"
+msgstr "//  CAMBIO RTT O TIEMPO PARCIAL AUTORIZADO PARA LOS USUARIOS<br>//---------------------------------------------------------------------------------------<br>// autorizamos o no al usuario a invertir puntualmente un dia trabajado y un dia de ausencia (de rtt o tiempo parcial)<br>// si FALSE : cambio no autorizado para el usuario (FALSE es el valor por defecto)<br>// si TRUE : cambio autorizado para el usuario"
+
+msgid "config_comment_affiche_bouton_calcul_nb_jours_pris"
+msgstr "//  BOTON DE CALCULO DEL N? DE DIAS TOMADOS<br>//--------------------------------------------------------------------------------------<br>// si FALSE : no aparece el boton de calculo del n? de dias tomados cuando se efectua una nueva entrada de ausencia<br>// si TRUE : aparece el boton de calculod del n? de dias tomados cuando se efectua una nueva entrada de ausencia (TRUE es el valor por defecto)<br>// ATENCION : si es TRUE : los dias no trabajados deben ser registrados (ver el modulo de administracion)"
+
+msgid "config_comment_rempli_auto_champ_nb_jours_pris"
+msgstr "//  RELLENO AUTOMATICO DEL CAMPO EN EL MOMENTO DE LA SOLICITUD DEL CALCULO DEL N? DE DIAS TOMADOS<br>//--------------------------------------------------------------------------------------<br>// si FALSE : la solicitud al boton de calculo del n? de dias tomados no rellena automaticamente el campo del formulario (entrada a mano)<br>// si TRUE : la solicitud al boton de calculo del n? de dias tomados rellena automaticamente el campo del formulario (TRUE es el valor por defecto)"
+
+msgid "config_comment_duree_session"
+msgstr "// Duracion maxima de incatividad de una sesion antes de la expiracion (en segundos)"
+
+msgid "config_comment_stylesheet_file"
+msgstr "// HOJA DE ESTILO<br>//--------------------------<br>// nombre del fichero de la hoja de estilo a utilizar (con camino relativo desde la raiz de php_vacaciones)"
+
+msgid "config_comment_bgcolor"
+msgstr "// color de fondo de las paginas"
+
+msgid "config_comment_bgimage"
+msgstr "// imagen de fondo de las paginas (NO de / al inicio !!)"
+
+msgid "config_comment_light_grey_bgcolor"
+msgstr "// colores diversos (gris claro)"
+
+msgid "config_comment_php_conges_fpdf_include_path"
+msgstr "// CAMINO HACIA EL REPERTORIO DE fpdf<br>//-------------------------------------------------------<br>// Definimos aqui el camino para acceder al repertorio de la libreria PHP \"fpdf\".<br>// El camino debe ser relativo desde la raiz de la aplicacion php_vacaciones."
+
+msgid "config_comment_php_conges_phpmailer_include_path"
+msgstr "// CAMINO HACIA EL REPERTORIO DE phpmailer<br>//-------------------------------------------------------<br>// Definimos aqui el camino para acceder al repertorio de la libreria PHP \"phpmailer\".<br>// El camino debe ser relativo desde la raiz de la aplicacion php_vacaciones."
+
+msgid "config_comment_php_conges_cas_include_path"
+msgstr "// CAMINO HACIA EL REPERTORIO DE cas<br>//-------------------------------------------------------<br>// Definimos aqui el camino para acceder al repertorio de la libreria PHP \"CAS\".<br>// El camino debe ser relativo desde la raiz de la aplicacion php_vacaciones."
+
+msgid "config_comment_php_conges_authldap_include_path"
+msgstr "// CAMINO HACIA EL fichero authLDAP.php<br>//-------------------------------------------------------<br>// Definimos aqui el camino para acceder al repertorio de la libreria PHP \"authLDAP.php\".<br>// El camino debe ser relativo desde la raiz de la aplicacion php_vacaciones."
+
+msgid "install_le_fichier"
+msgstr "El fichero"
+
+msgid "install_bad_fichier"
+msgstr "no se encuentra dentro el repertorio raiz del nuevo php_vacaciones, o no hay los derechos en lecture suficiente"
+
+msgid "install_read_the_file"
+msgstr "dirigirse al fichero"
+
+msgid "install_reload_page"
+msgstr "despues recargar esta pagina"
+
+msgid "install_db_inaccessible"
+msgstr "la database no es accesible"
+
+msgid "install_verifiez_param_file"
+msgstr "Por favor verificar los parametros del fichero"
+
+msgid "install_verifiez_priv_mysql"
+msgstr "Aseguraros que la database, el usuario y los privilegios MySql han estado correctamente creados."
+
+msgid "install_install_phpconges"
+msgstr "Instalacion de php_vacaciones"
+
+msgid "install_index_titre"
+msgstr "Aplicacion PHP_VACACIONES"
+
+msgid "install_no_prev_version_found"
+msgstr "Ninguna version anterior no ha podido ser constatada"
+
+msgid "install_indiquez"
+msgstr "Por favor indicar si se trata"
+
+msgid "install_nouvelle_install"
+msgstr "de una Nueva Instalacion"
+
+msgid "install_mise_a_jour"
+msgstr "de una Actualizacion"
+
+msgid "install_indiquez_pre_version"
+msgstr "por favor indicar la version ya instalada"
+
+msgid "install_installed_version"
+msgstr "version ya instalada"
+
+msgid "install_configuration"
+msgstr "Configuracion"
+
+msgid "install_config_appli"
+msgstr "configurar la aplicacion"
+
+msgid "install_config_types_abs"
+msgstr "configurar los tipos de vacaciones a gestionar"
+
+msgid "install_install_titre"
+msgstr "Instalacion de la aplicacion PHP_VACACIONES"
+
+msgid "install_impossible_sur_db"
+msgstr "imposible sobre la database"
+
+msgid "install_verif_droits_mysql"
+msgstr "verificar los derechos mysql de"
+
+msgid "install_puis"
+msgstr "despues"
+
+msgid "install_ok"
+msgstr "Instalacion efectuada con exito"
+
+msgid "install_vous_pouvez_maintenant"
+msgstr "Udsted puede ahora"
+
+msgid "install_acceder_appli"
+msgstr "acceder a la aplicacion"
+
+msgid "install_version_non_choisie"
+msgstr "la version a actualizar no ha sido seleccionada"
+
+msgid "install_maj_titre_1"
+msgstr "Actualizacion"
+
+msgid "install_maj_titre_2"
+msgstr "Actualizacion de la aplicacion PHP_VACACIONES"
+
+msgid "install_maj_passer_de"
+msgstr "usted esta a punto de pasar de la version"
+
+msgid "install_maj_a_version"
+msgstr "a la version"
+
+msgid "install_maj_sauvegardez"
+msgstr "Antes de continuar, tener la precaucion de hacer una copia de seguridad de vuestra base de datos."
+
+msgid "install_etape"
+msgstr "etapa"
+
+msgid "install_inaccessible"
+msgstr "no es accesible"
+
+msgid "install_maj_conserv_config"
+msgstr "Afin de asegurar la conservacion de vuestra configuracion,"
+
+msgid "install_maj_copy_config_file"
+msgstr "por favor copiar vuestro antiguo fichero config.php dentro el nuevo repertorio"
+
+msgid "install_maj_whith_name"
+msgstr "bajo el nombre"
+
+msgid "install_maj_and"
+msgstr "y"
+
+msgid "install_maj_verif_droit_fichier"
+msgstr "verificar los derechos de lectura sobre este fichero."
+
+msgid "divers_date_traitement"
+msgstr "fecha-hora demanda/tratamiento"
+
+msgid "divers_demande"
+msgstr "demanda"
+
+msgid "divers_traitement"
+msgstr "tratamiento"
+
+msgid "divers_mois"
+msgstr "mes"
+
+msgid "phpmailer_not_valid"
+msgstr "ERROR MAIL : El fichero class.phpmailer.php no puede ser leido o no se encuentra. El mail de alerta no podra ser enviado !"
+
+msgid "fpdf_not_valid"
+msgstr "ERROR : El fichero fpdf.php no puede ser leido o no se encuentra. El documento PDF no puede ser generado !"
+
+msgid "install_remove_fichier"
+msgstr "es de aqui en adelante inutil... Por favor suprimalo !"
+
+msgid "install_config_mail"
+msgstr "configurar los mails enviados por php_conges"
+
+msgid "button_export_1"
+msgstr "Exportar ical / vcal"
+
+msgid "button_export_2"
+msgstr "Exportar los eventos al formato ical / vcal"
+
+msgid "config_comment_disable_saise_champ_nb_jours_pris"
+msgstr "//  PROHIBIDO TECLEAR EN EL CAMPO TEXTO DEL N° DE DIAS TOMADOS<br>//--------------------------------------------------------------------------------------<br>// si - FALSE : el campo texto del n° de dias tomados es activo (coger la mano posible)(FALSE es el valor por defecto)<br>// si \\ TRUE : le champ texte du nb de jours pris et inactif (saisi  la main impossible)"
+
+msgid "calcul_nb_jours_commentaire"
+msgstr "atencion: este periodo se superpone con otras vacaciones !"
+
+msgid "calcul_nb_jours_commentaire_impossible"
+msgstr "CALCULO IMPOSIBLE : este periodo se superpone con una solicitud de vacaciones en curso !"
+
+msgid "config_comment_export_ical_vcal"
+msgstr "//  EXPORTAR DESDE VACACIONES AL FORMATO ICS OU VCS<br>//----------------------------------------------------------------------<br>// si O FALSE : los usuarios no pueden exportar sus vacaciones/ausencias al formato ics o vcs.<br>// si  TRUE : los usuarios pueden exportar sus vacaciones/ausencias al formato ics ou vcs (para importar en la agenda electronica o al programa de planning). (TRUE es el valor por defecto)"
+
+msgid "export_cal_titre"
+msgstr "Exportar al formato ical / vcal"
+
+msgid "export_cal_from_date"
+msgstr "de"
+
+msgid "export_cal_to_date"
+msgstr "hasta"
+
+msgid "export_cal_saisir_debut"
+msgstr "seleccion de la fecha de inicio"
+
+msgid "export_cal_saisir_fin"
+msgstr "seleccion de la fecha de fin"
+
+msgid "export_cal_format"
+msgstr "opcion del formato"
+
+msgid "mail_new_demande_comment"
+msgstr "mensaje de alerta al responsable en caso de nueva demanda de vacaciones."
+
+msgid "mail_valid_conges_comment"
+msgstr "mensaje de alerta al usuario en caso de validation d'une demande de congs ou de saisie d'un nouveau conges par le responsable"
+
+msgid "mail_refus_conges_comment"
+msgstr "mensaje de alerta al usuario en caso de rechazo de una demanda de vacaciones por el responsable"
+
+msgid "mail_annul_conges_comment"
+msgstr "mensaje de alerta al usuario en caso de anulacion de vacaciones por el responsable"
+
+msgid "mail_prem_valid_conges_comment"
+msgstr "mensaje de alerta al usuario en caso de primera validacion de una demanda de vacaciones por el responsable (si utilizamos la doble validacion)."
+
+msgid "mail_remplace_url_accueil_comment"
+msgstr "__URL_ACCUEIL_CONGES__ sera automaticamente remplazada por un link hacia vuestra aplicacion php_conges."
+
+msgid "mail_remplace_sender_name_comment"
+msgstr "__SENDER_NAME__ sera automaticamente remplazada por le nom et prxnom de l'expediteur."
+
+msgid "mail_remplace_destination_name_comment"
+msgstr "__DESTINATION_NAME__ sera automaticamente remplazada por el apellido y el nombre del (de los) destinatario(s)."
+
+msgid "mail_remplace_retour_ligne_comment"
+msgstr "__RETOUR_LIGNE__ sera automaticamente remplazada por pase - la linea."
+
+msgid "config_mail_titre"
+msgstr "Configuracion de los mails enviados por PHP_CONGES"
+
+msgid "config_mail_alerte_config"
+msgstr "Esta pagina solo sirve si  el envio de mail por php_conges es valido (ver configuracion de la aplicaion)."
+
+msgid "config_mail_subject"
+msgstr "sujeto del mail"
+
+msgid "config_mail_body"
+msgstr "texto del mail"
+
+msgid "admin_button_config_mail_1"
+msgstr "Configuracion de los mails enviados por php_conges"
+
+msgid "admin_button_config_mail_2"
+msgstr "Config Mails"
+
+msgid "config_comment_affiche_bouton_config_mail_pour_admin"
+msgstr "// ACCESO A LA CONFIG DE LOS MAILS DE LA APPLI PARA LOS ADMINISTRADORES<br>//---------------------------------------------------------------------<br>// si  FALSE : el boton de acceso de configuracion de mails enviados por php_conges no aparece sobre la pagina administrador (FALSE es el valor por defecto)<br>// si ] TRUE : el boton de acceso a la configuracion de los mails enviados por php_vacaciones aparece sobre la pagina administrador"
+
+msgid "config_comment_mail_prem_valid_conges_alerte_user"
+msgstr "// ENVIO DE MAIL AL USUARIO Y GRAN REPONSABLE DESPUES LA PRIMERA VALIDACION DE UNA DEMANDA (caso de una doble validacion de demanda) :<br>//----------------------------------------------------------------<br>// si  FALSE : el usuario y el gran responsable no reciben el mail cuando el responsable valida una demanda (primera validacion). (FALSE es el valor por defecto)<br>// si es TRUE : el usuario y el gran responsable reciben un mail de alerta cuando el responsable valida una demanda (primera validacion).<br>"
+
+msgid "config_comment_affiche_date_traitement"
+msgstr "// PRESENTACION DE LOS DATOS Y HORA DE TRATAMIENTO EN LOS HISTORICOS DE LAS VACACIONES<br>//---------------------------------------------------------------------<br>// si  FALSE : los datos y horas de demanda de vacaciones o de validacion de demanda no seran presentados en los tableros (FALSE es el valor por defecto)<br>// si  TRUE : los datos y horas de demanda de vacaciones o de validacion de demanda seran presentados en los tableros y ditions (attention, cela augmente consid rablement la largeur de la page affiche)."
+
+msgid "config_comment_double_validation_conges"
+msgstr "//  DOBLE VALIDACION DE LAS DEMANDAS DE VACACIONES<br>//----------------------------------------------------------------------<br>// si   FALSE : la demanda de vacaciones de un usuario es aceptada o no por el responsble (une sola validacion)(FALSE es el valor por defecto).<br>// si  TRUE : la demanda de vacaciones de un usuario debe ser validada por un responsable, luego aceptada por el responsable del responsable (doble validacion).<br>ATENCION, este parametro no es valido QUE en el caso de una gestion por grupos de usuarios !)"
+
+msgid "admin_groupes_double_valid"
+msgstr "doble validacion"
+
+msgid "admin_gestion_groupe_grand_resp_responsables"
+msgstr "Grandes Responsables del Grupo"
+
+msgid "divers_grand_responsable_maj_1"
+msgstr "Gran_Responsable"
+
+msgid "resp_traite_demandes_titre_tableau_1"
+msgstr "Demandas o validar"
+
+msgid "resp_traite_demandes_titre_tableau_2"
+msgstr "Demandas en segunda validacion"
+
+msgid "resp_traite_user_etat_demandes_2_valid"
+msgstr "Estado de las demandas en segunda validacion :"
+
+msgid "resp_etat_users_titre_double_valid"
+msgstr "Usuarios con doble validacion de las demandas"
+
+msgid "resp_etat_aucun_user"
+msgstr "Ningun usuario para este responsable !!!"
+
+msgid "hr_affiche_utilisateurs_inactifs"
+msgstr "Mostrar/Ocultar los usuarios inactivos"
+
+msgid "button_imprim_calendar"
+msgstr "imprimir un calendario"
+
+msgid "imprim_calendrier_titre"
+msgstr "escoger el mes a imprimir"
+

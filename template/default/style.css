@@ -1,0 +1,69 @@
+/* Content */
+#content, #header, #bottom {
+    width: 1350px;
+    margin : auto;
+
+}
+
+
+#header{ background-image: url( ui-bg_highlight-header.png); margin-top: 15px; text-align: center;}
+#header .button_div{ float:right;margin: 5px 10px 5px 10px; padding: 6px; width:90px;}
+#header .button_div.active{ float:right; margin:5px 10px 5px 10px; padding: 4px;border:1px solid black;}
+#header .button_div span{ display: block;text-decoration: none;font: 10px verdana; margin-top: -2px;}
+#header .mode_and_user_info{ float: right; margin: 10px  50px  0px  0px; color: grey;}
+
+
+#content {
+    margin-top:10px;
+    margin-bottom:10px;
+    min-height:560px;
+}
+
+#onglet_menu { margin-bottom: 20px; padding:5px;}
+.onglet { padding: 10px 0; width: 15%;}
+
+#bottom {
+    text-align: center;
+    padding: 2px;
+}
+
+img{
+    border: 0px;
+}
+
+.tablo { text-align: center; border-spacing: 0px;}
+.tablo thead{ background-color: #CCC;}
+.tablo tbody{ background-color: #EAEAEA;}
+.tablo tbody tr:hover{ background-color: #FFC;}
+.tablo tbody .i{ background-color: #F4F4F4;}
+.tablo thead td, .tablo thead th, .tablo tbody td{ border: 1px solid gray; border-collapse: separate; border-style: inset; }
+
+.hidden{ display: none; background-color: #bbbbff; }
+
+.bilan_conges_user { width: 70%; }
+.bilan_conges_user { text-align: center; }
+.bilan_conges_user thead{ background-color: #CCC; font-weight: bold; }
+.bilan_conges_user tbody{ background-color: #EAEAEA; }
+.bilan_conges_user tbody .solde{ color: red; }
+.bilan_conges_user tbody td th{ font-weight: bold; }
+
+
+.calendrier_saisie_date_debut { width: 320px; text-align: center; }
+.calendrier_saisie_date_debut td{ border:1px solid gray; border-collapse: separate; border-style: inset; font-size: 16px; padding: 2px;}
+.calendrier_saisie_date_debut .weekend{ background-color: #BFBFBF; }
+
+#back-top { position: fixed; bottom: 2px; margin-left: -50px; display:none;}
+#back-top a { width: 30px; display: block; text-align: center; font: 11px/100% Arial, Helvetica, sans-serif; text-transform: uppercase; text-decoration: none; color: #bbb; /* transition */ -webkit-transition: 1s; -moz-transition: 1s; transition: 1s; }
+#back-top a:hover { color: #222; }
+/* arrow icon (span tag) */
+#back-top span { width: 30px; height: 30px; display: block; margin-bottom: 3px; background: #ddd url(img/up-arrow.png) no-repeat center center; /* rounded corners */ -webkit-border-radius: 7px; -moz-border-radius: 7px; border-radius: 7px; /* transition */ -webkit-transition: 1s; -moz-transition: 1s; transition: 1s; }
+#back-top a:hover span { background-color: #777; }
+
+/* **** The buttons : OK/NO order problem ****
+   Are the "Submit/Cancel Buttons left-right or right-left ?
+   You can change it in your css file
+*/
+/* OK, submit, valid ... buttons */
+// .button_type_submit { float: right }
+/* NO, cancel, return etc ... bottons */
+//.button_type_cancel { float: left }

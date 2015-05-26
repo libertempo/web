@@ -1,0 +1,70 @@
+.cet
+{
+  position: relative;
+  background: #eaeaea;
+  cursor: help;
+  display: inline-block;
+  text-decoration: none;
+  color: #222;
+  outline: none;
+}
+
+
+.cet_detail
+{
+  visibility: hidden;
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  z-index: 999;
+  width: 230px;
+  margin-left: -127px;
+  padding: 10px;
+  border: 2px solid #ccc;
+  opacity: .9;
+  border-color: #e1ca82;
+  background-color: #ffeaa6;
+  background-image: -webkit-linear-gradient(rgba(255,255,255,.5), rgba(255,255,255,0));
+  background-image: -moz-linear-gradient(rgba(255,255,255,.5), rgba(255,255,255,0));
+  background-image: -ms-linear-gradient(rgba(255,255,255,.5), rgba(255,255,255,0));
+  background-image: -o-linear-gradient(rgba(255,255,255,.5), rgba(255,255,255,0));
+  background-image: linear-gradient(rgba(255,255,255,.5), rgba(255,255,255,0));
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -moz-box-shadow: 0 1px 2px rgba(0,0,0,.4), 0 1px 0 rgba(255,255,255,.5) inset;
+  -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.4), 0 1px 0 rgba(255,255,255,.5) inset;
+  box-shadow: 0 1px 2px rgba(0,0,0,.4), 0 1px 0 rgba(255,255,255,.5) inset;
+  text-shadow: 0 1px 0 rgba(255,255,255,.4);
+}
+
+.cet:hover
+{
+  border: 0; /* IE6 fix */
+}
+
+.cet:hover span
+{
+  visibility: visible;
+}
+
+.cet span:before,
+.cet span:after
+{
+  content: "";
+  position: absolute;
+  z-index: 1000;
+  bottom: -7px;
+  left: 50%;
+  margin-left: -8px;
+  border-top: 8px solid #ffeaa6;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 0;
+}
+
+.cet span:before
+{
+  border-top-color: #e1ca82;
+  bottom: -8px;
+}
+

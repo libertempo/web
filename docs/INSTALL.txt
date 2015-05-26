@@ -1,0 +1,238 @@
+***************************************
+****         Libertempo           ****
+***************************************
+
+
+
+
+SOMMAIRE :
+----------
+-> première installation.
+-> installation avec LDAP
+-> installation avec CAS
+-> mises à jour. (passage d'une version à l'autre)
+-> configuration (config générale et types d'absences)
+-> tests.
+
+
+
+----------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------
+
+-> PREMIERE INSTALLATION : 
+---------------------------
+	1: télécharger Libertempo
+	----------------------------
+	http://Libertempo.tuxfamily.org
+
+
+	2: décompression de l'archive :
+	--------------------------------
+	décompresser l'archive .tar.gz ou .zip
+	gunzip Libertempo.version.tar.gz
+	tar xvf Libertempo.version.tar
+	ou
+	unzip Libertempo.version.zip
+
+
+	3: installation des fichiers :
+	------------------------------
+	- copier le contenu de l'archive dans l'arborescence de votre site web.
+
+
+	4: configuration de PHP :
+	-------------------------
+	- l'option "magic_quotes_gpc" doit être à "on". 
+	- l'option "track_vars" doit être à "enable". 
+	  (directive de compilation de php ou option de configuration dans php.ini)
+	  (Notez que depuis PHP 4.0.3, track_vars est toujours activée.)
+
+
+	5: preparation de la database :
+	-------------------------------- 
+	Votre administrateur MySql doit créer une database et un utilisateur qui aura les droits dessus.
+	Les droits requis sont les droits classiques sur la database + les droits de creation/mofication/suppression de tables .
+	(ces droits sont necessaire pour les procedure d'installation et de mises a jour futures)
+
+
+	6: configuration de base Libertempo :
+	--------------------------------------
+	- Saisir l'URL suivant dans votre navigateur pour obtenir le formulaire de configuration d'Libertempo : 
+	  http://monsiteweb.mondomaine.org/Libertempo/install/
+	- Saisissez les parametres de la base de données (serveur, user, password, database).
+
+	7: utilisation :
+	----------------
+	Libertempo est désormais prêt à fonctionner, il suffit de saisir dans votre navigateur l'URL :
+	http://monsiteweb.mondomaine.org/Libertempo/
+	Utilisateur par défaut = "admin" / mot de passe = "responsable"
+	Responsable virtuel = "conges" / mot de passe = "conges"
+
+	
+	Cependant, pour pouvoir utiliser votre application, il convient de :
+	- configurer les paramètres de l'application. Pour cela il faut se connecter à Libertempo en tant que responsable , passer en mode "administrateur", puis ouvrir la section "configuration".
+	- Créer un utilisateur avec les droits admin, supprimer l'utilisateur par défaut (admin) ou a changer son mot de passe !!! (Ne pas supprimer le responsable virtuel, mais changer son mot de passe !!!)
+
+	
+	8: Sécurité :
+	----------------
+	Afin d'assurer la sécurité de votre application, il est FORTEMENT recommendé de protéger
+	le répertoire "install" (par un fichier ".htaccess" par exemple (sous unix)).
+	En effet, ce répertoire contient les pages d'install et de configuration de l'appli; celles
+	ci ne doivent être accessibles qu'à certainnes personnes habilitées.
+
+
+	
+----------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------
+
+-> INSTALLATION AVEC LDAP :
+----------------------------
+	suivre les étapes de 1 à 6 de l'intallation "classique"....
+	
+	Libertempo est désormais prêt à fonctionner. Pour fonctionner avec LDAP, chaque utilisateur doit être connnu à la fois, dans LDAP et 
+	dans Libertempo.
+	Il va donc faloir soit créer à la main les utilisateurs dans Libertempo, soit extraire du LDAP les utilisateurs de Libertempo et les 
+	ajouter dans la database db_conges!
+	
+	les étapes sont les suivantes :
+
+	7: création des utilisateurs :
+	------------------------------
+	Saisir dans votre navigateur l'URL :
+	http://monsiteweb.mondomaine.org/Libertempo/
+	Utilisateur par défaut = "admin" / mot de passe = "responsable"
+	Responsable virtuel = "conges" / mot de passe = "conges"
+	
+	Se connecter avec l'utilisateur par défaut = "admin" / mot de passe = "responsable", passer en mode "administrateur", puis ouvrir la section "configuration" :
+	- Positionner l'option de configuration $config_how_to_connect_user="ldap";
+	- Positionner l'option $config_export_users_from_ldap à TRUE ou FALSE : 
+	soit importer les utilisateurs du LDAP grace à une liste déroulante... soit saisir les utilisateurs à la main...
+	Penser à supprimer l'utilisateur par défaut (admin) ou a changer son mot de passe !!!
+	(Attention: l'utilisateur "admin" se connecte toujours avec une authentification dans la database db_conges, quelque 
+	soit l'option $config_export_users_from_ldap .)
+
+	Remarque : utilisation avec Easy_php :
+	---------------------------------------------------------------------
+	sous easy_php il faut éditer le php.ini et décommenter la ligne
+        extension=php_ldap.dll
+    ... sinon pb avec l'authentification et la recup des users LDAP !
+
+
+----------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------
+
+-> INSTALLATION AVEC CAS :
+----------------------------
+	suivre les étapes de 1 à 6 de l'intallation "classique"....
+	
+	Pour fonctionner avec un serveur CAS, chaque utilisateur doit être connnu à la fois, dans CAS et dans Libertempo.
+	Il va donc falloir soit créer à la main les utilisateurs dans Libertempo, soit extraire d'un LDAP les utilisateurs d'Libertempo et les 
+	ajouter dans la database db_conges! (fréquement, CAS s'appuie sur un serveur LDAP ...)
+	 
+	les étapes sont les suivantes :
+	
+	- lors de l'étape de configuration :  Positionner l'option de configuration $config_how_to_connect_user="CAS"; !
+	- pour extraire les utilisateurs du LDAP, Positionner l'option de configuration $config_export_users_from_ldap=TRUE; !
+	  éditer le fichier "config_CAS.php" et positionner les options de configuration comme désiré.
+	- Si vous vous servez du LDAP, éditer le fichier "config_ldap.php" et positionner les options de configuration comme désiré.
+	
+	7: création des utilisateurs :
+	------------------------------
+	Saisir dans votre navigateur l'URL :
+	http://monsiteweb.mondomaine.org/Libertempo/
+	Utilisateur par défaut = "admin" / mot de passe = "responsable"
+	Responsable virtuel = "conges" / mot de passe = "conges"
+	
+	Se connecter avec l'utilisateur par défaut = "admin" / mot de passe = "responsable", passer en mode "administrateur", puis ouvrir la section "configuration" :
+	- Positionner l'option de configuration $config_how_to_connect_user="CAS";
+	- Positionner l'option de configuration $config_export_users_from_ldap=TRUE;
+	- Positionner l'option de configuration $config_export_users_from_ldap est à TRUE ou FALSE : 
+	soit importer les utilisateurs du LDAP grace à une liste déroulante... soit saisir les utilisateurs à la main...
+	Penser à supprimer l'utilisateur par défaut (admin) ou a changer son mot de passe !!!
+
+
+
+----------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------
+
+-> MISE A JOUR  (passage d'une version à l'autre) :
+----------------------------------------------------
+	Il est toujours conseillé, avant chaque mise à jour, de faire une sauvegarde de votre répertoire  
+	Libertempo, et SURTOUT de votre database !
+	
+	1: télécharger Libertempo
+	----------------------------
+	http://Libertempo.tuxfamily.org
+
+
+	2: décompression de l'archive :
+	--------------------------------
+	décompresser l'archive .tar.gz ou .zip
+	gunzip Libertempo.version.tar.gz
+	tar xvf Libertempo.version.tar
+	ou
+	unzip Libertempo.version.zip
+
+
+	3: installation des fichiers
+	-----------------------------
+	copier le contenu de l'archive dans l'arborescence de votre site web (à la place de votre ancienne version).
+
+
+	4: mise à jour de la database et configuration de Libertempo :
+	---------------------------------------------------------------
+	- Saisir l'URL suivant dans votre navigateur et lancer la mise à jour : 
+	  http://monsiteweb.mondomaine.org/Libertempo/install/
+	- La configuration de Libertempo est à vérifier après chaque mise a jour car des options de paramètrage sont ajoutées régulièrement, et, celles ci doivent
+	  être renseignées afin que l'application fonctionne correctement.
+	  (ATTENTION : dans certains cas rares, certaines variables de configuration peuvent changer de nom d'une version à l'autre. Soyez 
+	  vigilant!)
+	- ajout d'une nouvelle langue : (optionnel, le francais et l'espagnol sont livés avec Libertempo)
+		- télécharger le fichier de langue.
+		- copier ce fichier de langue dans le répertoire install/lang/ de votre application Libertempo.
+		- vérifier que votre fichier ai les bons droits en lecture.
+		- accéder à la page de configutaion d'Libertempo, sélectionner la langues choisie et valider.
+
+	
+	5: Sécurité :
+	----------------
+	Afin d'assurer la sécurité de votre application, il est FORTEMENT recommendé de protéger
+	le répertoire "install" (par un fichier ".htaccess" par exemple (sous unix)).
+	En effet, ce répertoire contient les pages d'install et de configuration de l'appli; celles
+	ci ne doivent être accessibles qu'à certainnes personnes habilitées.
+	
+	
+
+
+----------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------
+
+-> CONFIGURATION (config générale et types d'absences) : 
+---------------------------------------------------------
+	1: configuration de base Libertempo :
+	--------------------------------------
+	- Le fichier "dbconnect.php" doit contenir les paramètres relatifs à votre connexion MySQL (serveur, user, password, database).
+
+
+	2: configuration générale d'Libertempo :
+	------------------------------------------
+	- Pour obtenir le formulaire de configuration, passer en mode "administrateur", puis ouvrir la section "configuration".
+
+
+	4: configuration des mails envoyés par Libertempo :
+	------------------------------------------------------------
+	(cette étape n'est utile QUE si votre Libertempo est configuré pour envoyer des mails d'alerte (voir configuration d'Libertempo))
+	- Pour obtenir le formulaire de configuration, passer en mode "administrateur", puis ouvrir la section "configuration".
+
+----------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------
+
+-> TESTS :
+------------
+	Si vous désirez tester Libertempo avant de l'utiliser, un jeu de test (docs/jeutest.sql) est livré avec Libertempo.
+	(attention : ce jeu de test ne fonctionne évidement qu'avec une authentification dans la base db_conges (pas dans LDAP) !)
+	Il contient un jeu d'utilisateurs et de responsables déja utilisés.
+	(les mots de passe des utilisateurs sont égaux à leurs login respectifs) 
+	(les responsables dans le jeu de test sont "marie" et "paolo")
+
