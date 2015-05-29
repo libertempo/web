@@ -25,23 +25,11 @@
 
 - ajouter les reliquats dans les éditions papier
 
-- rajouter l'information " solde initial " ou "reliquat année précédente " dans la fiche d'une personne
-    (pour info et explication d'un solde supérieur au nb congés / an)
-    (pas simple car implique une notion de date de début et de fin d'"année" qui n'existe pas dans Libertempo )
-
 - calendrier sans authentification :
     supprimer les détails d'affichage (type de congés et d'abscences) 
     voir le fichier "Gestion - Calendrier sans authentification et sans détail.doc" envoyé par MaRRocK !  (ou cf mail du 16/04/2008 et 18/05/2008)
 
-- avoir, pour les "absences autres", le même mécanisme de demande utilisateur / validation par le responsable que l'on a déjà pour les "congés" !
----> ou plutot : ajouter une nouveau type de "conges" : "absences_a_valider"  : pour pouvoir avoir de absences traitées comme des conges (demande/validation)
-                          sauf qu'elles n'ont ni nb/an ni solde !!! (donc pas d'ajout, pas de modif du nb ou solde dans l'admin , etc ....)
-      + la possibilité de "désactiver" un type de conges/absence existant (qu'on ne peut pas supprimer car des periode de ce type existe )
-      --> pour ceux qui demande une validation pour les absences : pour l'existant, il suffit de désactiver une abcense, et de la recréer de type "absences_a_valider" !!!
-
 - répéter la ligne des entêtes du tableau en haut de chaque page d'une édition papier ou pdf ....
-
-- faire apparaitre les fermetures et les conges pris sur les calendriers de saisie de nouveau congés.
 
 -Ajouter dans le calendrier le nombre de jour de congés pris par mois
 
@@ -54,8 +42,6 @@
   (et surtout, il n'est pas mentionné que c'est pour une absence !! donc le resp va dans Libertempo, ne voit pas de demande et pense que c'est un bug !)
    mettre une option de config d'envoi de mail lors du dépot d'une absence (true ou false)
 
-- possibilité de gérer les nb de jours, etc .. par groupe, dans le module d'administration (peu importe que l'admin soit du groupe ou resp du groupe !)
-
 - ajouter une option de config pour n'autoriser la saisie de demandes de conges QUE dans les X mois qui suivent la date d'aujourd'hui.... ça a été mis en place pour les
   dates passées :le faire pour les dates futures ... à condition de rajouter une option de config de l'appli qui donnera la durée limite ...
 
@@ -66,9 +52,6 @@
 
 - faite un mode TEST pour l'installeur ou une page de test qui teste tout (mail, connexion db, connexion ldap, connexion cas, test pdf, etc ....) avec
  un "error_reporting(E_ALL);" pour afficher les erreurs php !
-
-- dans mode responsable : possibilité d'avoir un affichage des users groupés par groupe !
-    (meme chose dans traite_demandes_all )
 
 - dans le fonction alerte_mail de fonctions_conges.php : instancier la langue de php_mailer comme celle de
   Libertempo (pas en francais systématiquement !)
