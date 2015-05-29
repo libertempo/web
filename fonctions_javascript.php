@@ -110,18 +110,26 @@ function convert_jf($date)
 	return $date;
 }
 
-
+$tabferm = $_SESSION["tab_j_fermeture"];
 $tabjferies = $_SESSION["tab_j_feries"];
 $js_tab= "[";
-foreach($tabjferies as $key => $jf){
-  $js_tab=$js_tab.'"'.convert_jf($jf).'",';
+
+if(isset($tabjferies)) {
+	foreach($tabjferies as $key => $jf){
+		$js_tab=$js_tab.'"'.convert_jf($jf).'",';
+	}
 }
 
-
-
-$js_tab=substr($js_tab, 0, -1);
+if(isset($tabjferies)) {
+	foreach($tabferm as $key => $jf){
+		$js_tab=$js_tab.'"'.convert_jf($jf).'",';
+	}
+}
+if (strlen($js_tab) > 1)
+	$js_tab=substr($js_tab, 0, -1);
 
 print "var feries=".$js_tab."];\n";
+
 
 if (($_SESSION['config']['dimanche_travail']==FALSE)&&($_SESSION['config']['samedi_travail']==FALSE)){
 	echo "jdesac = [0,6];";
