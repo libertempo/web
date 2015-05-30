@@ -25,8 +25,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 
-
-
     //var pour resp_ajout_conges_all.php
     $ajout_conges            = getpost_variable('ajout_conges');
     $ajout_global            = getpost_variable('ajout_global');
@@ -130,11 +128,6 @@ function affichage_saisie_user_par_user($tab_type_conges, $tab_type_conges_excep
 	/* SAISIE USER PAR USER pour tous les utilisateurs du responsable */
 	
 	echo " <form action=\"$PHP_SELF?session=$session&onglet=ajout_conges\" method=\"POST\"> \n";
-	
-	// Récupération des informations
-	// Récup dans un tableau de tableau des informations de tous les users dont $_SESSION['userlogin'] est responsable
-	//$tab_all_users_du_hr=recup_infos_all_users_du_hr($_SESSION['userlogin']);
-	//$tab_all_users_du_grand_resp=recup_infos_all_users_du_grand_resp($_SESSION['userlogin']);
 	
 	if( (count($tab_all_users_du_hr)!=0) || (count($tab_all_users_du_grand_resp)!=0) )
 	{
@@ -349,12 +342,6 @@ function ajout_conges($tab_champ_saisie, $tab_commentaire_saisie, $DEBUG=FALSE)
 			/* On valide l'UPDATE dans la table ! */
 			$ReqLog1 = SQL::query($sql1) ;
 			
-/*			// Enregistrement du commentaire relatif à l'ajout de jours de congés 
-			$comment = $tab_commentaire_saisie[$user_name];
-			$sql1 = "INSERT INTO conges_historique_ajout (ha_login, ha_date, ha_abs_id, ha_nb_jours, ha_commentaire)
-					  VALUES ('$user_name', NOW(), $id_conges, $user_nb_jours_ajout_float , '$comment')";
-			$ReqLog1 = SQL::query($sql1) ;
-*/	
 			// on insert l'ajout de conges dans la table periode
 			$commentaire =  _('resp_ajout_conges_comment_periode_user') ;
 			insert_ajout_dans_periode($DEBUG, $user_name, $user_nb_jours_ajout_float, $id_conges, $commentaire);
@@ -369,9 +356,6 @@ function ajout_global($tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_ne
 {
 	$PHP_SELF=$_SERVER['PHP_SELF'];
 	$session=session_id() ;
-	
-	// $tab_new_nb_conges_all[$id_conges]= nb_jours
-	// $tab_calcul_proportionnel[$id_conges]= TRUE / FALSE
 	
 	// recup de la liste de TOUS les users dont $resp_login est responsable 
 	// (prend en compte le resp direct, les groupes, le resp virtuel, etc ...)
@@ -413,12 +397,6 @@ function ajout_global($tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_ne
 				// ajout conges
 				insert_ajout_dans_periode($DEBUG, $current_login, $nb_conges, $id_conges, $commentaire);
 				
-/*				// 3 : Enregistrement du commentaire relatif à l'ajout de jours de congés 
-				$comment = $tab_new_comment_all[$id_conges];
-				$sql_comment = "INSERT INTO conges_historique_ajout (ha_login, ha_date, ha_abs_id, ha_nb_jours, ha_commentaire)
-						  VALUES ('$current_login', NOW(), $id_conges, $nb_conges , '$comment')";
-				$ReqLog_comment = SQL::query($sql_comment) ;
-*/
 			}
 
 			if( (!isset($tab_calcul_proportionnel[$id_conges])) || ($tab_calcul_proportionnel[$id_conges]!=TRUE) )
@@ -432,13 +410,9 @@ function ajout_global($tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_ne
 
 function ajout_global_groupe($choix_groupe, $tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all, $DEBUG=FALSE)
 {
-	// $tab_new_nb_conges_all[$id_conges]= nb_jours
-	// $tab_calcul_proportionnel[$id_conges]= TRUE / FALSE
 	
 	$PHP_SELF=$_SERVER['PHP_SELF'];
 	$session=session_id() ;
-	
-
 	
 	// recup de la liste des users d'un groupe donné 
 	$list_users = get_list_users_du_groupe($choix_groupe, $DEBUG);
@@ -476,12 +450,6 @@ function ajout_global_groupe($choix_groupe, $tab_new_nb_conges_all, $tab_calcul_
 			
 				// ajout conges
 				insert_ajout_dans_periode($DEBUG, $current_login, $nb_conges, $id_conges, $commentaire);
-				
-/*				// 3 : Enregistrement du commentaire relatif à l'ajout de jours de congés 
-				$sql_comment = "INSERT INTO conges_historique_ajout (ha_login, ha_date, ha_abs_id, ha_nb_jours, ha_commentaire)
-						  VALUES ('$current_login', NOW(), $id_conges, $nb_conges , '$comment')";
-				$ReqLog_comment = SQL::query($sql_comment) ;
-*/
 			}
 
 			$group_name = get_group_name_from_id($choix_groupe, $DEBUG);
@@ -492,7 +460,6 @@ function ajout_global_groupe($choix_groupe, $tab_new_nb_conges_all, $tab_calcul_
 			log_action(0, "ajout", "groupe", $comment_log, $DEBUG);
 		}
 	}
-
 }
 
 

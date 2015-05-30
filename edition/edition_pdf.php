@@ -132,7 +132,6 @@ function edition_pdf($login, $edit_id,  $DEBUG=FALSE)
 		//header('content-Disposition: attachement; filename="downloaded.pdf"');    // pour IE
 		
 		$pdf=new PDF( 'P', 'mm', 'A4', true, "UTF-8");
-		//$pdf->Open();
 		$pdf->AddPage();
 			
 		$pdf->SetFillColor(200);

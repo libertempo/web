@@ -93,11 +93,7 @@ function envoi_date(valeur)
 
 	echo "   </td>\n";
 	echo "</tr>\n";
-	
 	echo "</table>\n";
-	
-	
-	
 	
 /*******************************************************************************/
 /**********  FONCTIONS  ********************************************************/
@@ -142,9 +138,7 @@ function affiche_calendar($year, $mois, $DEBUG=FALSE)
 	$today_timestamp =mktime (0,0,0,date("m"),date("j"),date("Y"));
 	
 	$first_jour_mois_timestamp=mktime (0,0,0,$mois,1,$year);
-//	$mois_name=date("F", $first_jour_mois_timestamp);
 	$mois_name=date_fr("F", $first_jour_mois_timestamp);
-	//$first_jour_mois_name=date("D", $first_jour_mois_timestamp);
 	$first_jour_mois_rang=date("w", $first_jour_mois_timestamp);      // jour de la semaine en chiffre (0=dim , 6=sam)
 	if($first_jour_mois_rang==0)
 		$first_jour_mois_rang=7 ;    // jour de la semaine en chiffre (1=lun , 7=dim)
@@ -163,7 +157,6 @@ function affiche_calendar($year, $mois, $DEBUG=FALSE)
 	echo "<table cellpadding=\"1\" class=\"tablo-cal\" width=\"90%\">\n";
 	/* affichage ligne des jours de la semaine*/
 	echo "<tr>\n";
-//	echo "<td bgcolor=$bgcolor class=\"cal-saisie2\"><a href=\"\" onClick=\"javascript:envoi_date('$jour-$mois_value-$year');\">$j</a></td>";
 	echo "<td class=\"calendar-header\">". _('lundi_2c') ."</td>";
 	echo "<td class=\"calendar-header\">". _('mardi_2c') ."</td>";
 	echo "<td class=\"calendar-header\">". _('mercredi_2c') ."</td>";
