@@ -422,14 +422,16 @@ function commit_update($u_login_to_update, &$tab_new_user, &$tab_new_jours_an, &
 	$tab_grille_rtt_actuelle = get_current_grille_rtt($u_login_to_update, $DEBUG);
 	$tab_new_grille_rtt=tab_grille_rtt_from_checkbox($tab_checkbox_sem_imp, $tab_checkbox_sem_p, $DEBUG);
 
-	if($tab_grille_rtt_actuelle==$tab_new_grille_rtt)
+	if($tab_grille_rtt_actuelle != $tab_new_grille_rtt)
+	{
+/*	if($tab_grille_rtt_actuelle==$tab_new_grille_rtt)
 	{
 	    // on ne touche pas à la table artt
 	}
 	else
 	{
+*/
 		$new_date_deb_grille=$tab_new_user['year']."-".$tab_new_user['mois']."-".$tab_new_user['jour'];
-		//echo "$new_date_deb_grille<br>\n" ;
 
 		/****************************/
 		/***   phase 1 :  ***/
@@ -475,7 +477,6 @@ function commit_update($u_login_to_update, &$tab_new_user, &$tab_new_jours_an, &
 		$i=0;
 		if($tab_checkbox_sem_imp!="") {
 			while (list ($key, $val) = each ($tab_checkbox_sem_imp)) {
-				//echo "$key => $val<br>\n";
 				if($i!=0)
 				{
 					$list_columns=$list_columns.", ";
@@ -488,7 +489,6 @@ function commit_update($u_login_to_update, &$tab_new_user, &$tab_new_jours_an, &
 		}
 		if($tab_checkbox_sem_p!="") {
 			while (list ($key, $val) = each ($tab_checkbox_sem_p)) {
-				//echo "$key => $val<br>\n";
 				if($i!=0)
 				{
 					$list_columns=$list_columns.", ";
@@ -637,13 +637,11 @@ function tab_grille_rtt_from_checkbox($tab_checkbox_sem_imp, $tab_checkbox_sem_p
 	// mise a jour du tab avec les valeurs des chechbox
 	if($tab_checkbox_sem_imp!="") {
 		while (list ($key, $val) = each ($tab_checkbox_sem_imp)) {
-			//echo "$key => $val<br>\n";
 			$tab_grille[$key]=$val;
 		}
 	}
 	if($tab_checkbox_sem_p!="") {
 		while (list ($key, $val) = each ($tab_checkbox_sem_p)) {
-			//echo "$key => $val<br>\n";
 			$tab_grille[$key]=$val;
 		}
 	}
