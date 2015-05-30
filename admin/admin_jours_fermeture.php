@@ -56,8 +56,6 @@ verif_droits_user($session, "is_admin", $DEBUG);
 	$year						= getpost_variable('year', 0);
 	$groupe_id					= getpost_variable('groupe_id');
 	$id_type_conges				= getpost_variable('id_type_conges');
-//	$new_date_debut				= getpost_variable('new_date_debut', date("d/m/Y")); // valeur par dédaut = aujourd'hui
-//	$new_date_fin  				= getpost_variable('new_date_fin', date("d/m/Y"));   // valeur par dédaut = aujourd'hui
 	$new_date_debut				= getpost_variable('new_date_debut'); // valeur par dédaut = aujourd'hui
 	$new_date_fin  				= getpost_variable('new_date_fin');   // valeur par dédaut = aujourd'hui
 	$fermeture_id  				= getpost_variable('fermeture_id', 0);
@@ -217,8 +215,6 @@ verif_droits_user($session, "is_admin", $DEBUG);
     }
 	elseif($choix_action=="saisie_dates")
 	{
-			//include ROOT_PATH .'fonctions_javascript_calendrier.php';
-			// affiche_javascript_et_css_des_calendriers();
 			if($groupe_id=="") // choix du groupe n'a pas été fait ($_SESSION['config']['fermeture_par_groupe']==FALSE)
 				$groupe_id=0;
 
@@ -347,102 +343,22 @@ function saisie_dates_fermeture($year, $groupe_id, $new_date_debut, $new_date_fi
 	$timestamp_date_fin = mktime(0,0,0, $tab_date_fin[1], $tab_date_fin[0], $tab_date_fin[2]) ;
 	$date_fin_yyyy_mm_dd = $tab_date_fin[2]."-".$tab_date_fin[1]."-".$tab_date_fin[0] ;
 	$timestamp_today = mktime(0,0,0, date("m"), date("d"), date("Y")) ;
-	//	$year=$tab_date_debut[2];
-
 
 	// on construit le tableau de l'année considérée
 	$tab_year=array();
 	get_tableau_jour_fermeture($year, $tab_year,  $groupe_id,  $DEBUG);
 	if( $DEBUG ) { echo "tab_year = "; print_r($tab_year); echo "<br>\n"; }
 
-	/************************************************/
-	// FORMULAIRE DE SAISIE D'UNE NOUVELLE FERMETURE  + liens de navigation d'une annee a l'autre
-	// echo "<div class=\"container\">";
-	// echo "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\"width=\"100%\">\n";
-	// echo "<tr align=\"center\">\n";
-	// // cellulle centrale : saisie d'une fermeture
-	// echo "<td width=\"450\">\n";
-	// echo "<fieldset class=\"cal_saisie\">\n";
-	// echo "<legend class=\"boxlogin\">". _('admin_jours_fermeture_new_fermeture') ."</legend>\n";
-	
-	/************************************************/
-	// FORMULAIRE
-	// echo "<form action=\"$PHP_SELF?session=$session\" method=\"POST\">\n" ;
-
-	// /************************************************/
-	// // table contenant le fieldset
-	// echo "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n";
-	// echo "<tr align=\"center\">\n";
-	// 	echo "<td>\n";
-	// 	echo "<fieldset class=\"cal_saisie\">\n";
-	// 		// tableau contenant saisie de date (avec javascript pour afficher les calendriers)
-	// 		echo "<table cellpadding=\"2\" cellspacing=\"2\" border=\"0\">\n";
-	// 		echo "<tr align=\"center\">\n";
-	// 			echo "<td>\n";
-	// 			// echo  _('divers_date_debut') ." : <input type=\"text\" name=\"new_date_debut\" class=\"calendrier DatePicker_trigger\" value=\"$new_date_debut\" />\n" ;
-	// 			// echo  _('divers_date_debut') ." : <input type=\"text\" name=\"new_date_debut\" class=\"\" value=\"$new_date_debut\" />\n" ;
-	// 			echo "<div class=\"input-append date\">" . _('divers_date_debut') . ": <input type=\"text\" name=\"new_date_debut\" value=\"$new_date_debut\"><span class=\"add-on\"><i class=\"fa fa-calendar\"></i></span></div>\n";
-	// 			echo "</td>\n";
-	// 		echo "</tr>\n";
-	// 		echo "</table>\n";
-	// 	echo "</fieldset>\n";
-	// 	echo "</td>\n";
-	// 	echo "<td>\n";
-	// 	echo "<fieldset class=\"cal_saisie\">\n";
-	// 		// tableau contenant les mois
-	// 		echo "<table cellpadding=\"2\" cellspacing=\"2\" border=\"0\">\n";
-	// 		// ligne des boutons de défilement
-	// 		echo "<tr align=\"center\">\n";
-	// 			echo "<td>\n";
-	// 			// echo  _('divers_date_fin') ." : <input type=\"text\" name=\"new date_fin\" class=\"calendrier DatePicker_trigger\" value=\"$new_date_fin\"  />\n" ;
-	// 			echo "<div class=\"input-append date\">" . _('divers_date_fin') . ": <input type=\"text\" name=\"new date_fin\" value=\"$new_date_fin\"><span class=\"add-on\"><i class=\"fa fa-calendar\"></i></span></div>\n";
-	// 			echo "</td>\n";
-	// 		echo "</tr>\n";
-	// 		echo "</table>\n";
-	// 	echo "</fieldset>\n";
-	// 	echo "</td>\n";
-	// echo "</tr>\n";
-	// echo "</table>\n";
-
-	// /************************************************/
-	// // SELECTION DU TYPE DE CONGES AUQUEL AFFECTER CETTE FERMETURE
-	// echo "<br>\n";
-	// // Affichage d'un SELECT de formulaire pour choix d'un type d'absence
-	// echo  _('admin_jours_fermeture_affect_type_conges') ;
-	// affiche_select_conges_id($DEBUG);
-
-	
-	// /************************************************/
-	// //table contenant les boutons
-	// echo "<table cellpadding=\"2\" cellspacing=\"3\" border=\"0\" >\n";
-	// echo "<tr align=\"center\">\n";
-	// echo "<td>\n";
-	// echo "<input type=\"hidden\" name=\"groupe_id\" value=\"$groupe_id\">\n";
-	// echo "<input type=\"hidden\" name=\"choix_action\" value=\"commit_new_fermeture\">\n";
-	// echo "<input type=\"submit\" value=\"". _('form_submit') ."\">  \n";
-	// // echo "<input type=\"button\" value=\"". _('form_cancel') ."\" onClick=\"javascript:window.close();\">\n";
-	// echo "</td>\n";
-	// echo "</tr>\n";
-	// echo "</table>\n";
-
-	// echo "</form>\n" ;
-	// // FIN FORMULAIRE
-	
-	// echo "</fieldset>\n";
-	// echo "</td>\n";
-	// echo "</tr>\n";
-	// echo "</table>\n";
-
 	echo "<form id=\"form-fermeture\" class=\"form-inline\" role=\"form\" action=\"$PHP_SELF?session=$session&year=$year\" method=\"POST\">\n";
   	echo "<div class=\"form-group\">\n";
-    echo "<label for=\"new_date_debut\">" . _('divers_date_debut') . "</label><input type=\"text\" class=\"form-control date\" name=\"new_date_debut\" value=\"$new_date_debut\">\n";
+	echo "<label for=\"new_date_debut\">" . _('divers_date_debut') . "</label><input type=\"text\" class=\"form-control date\" name=\"new_date_debut\" value=\"$new_date_debut\">\n";
   	echo "</div>";
   	echo "<div class=\"form-group\">\n";
   	echo "<label for=\"new date_fin\">" . _('divers_date_fin') . "</label><input type=\"text\" class=\"form-control date\" name=\"new_date_fin\" value=\"$new_date_fin\">\n";
   	echo "</div>";
   	echo "<div class=\"form-group\">\n";
-    echo "<label for=\"id_type_conges\">" . _('admin_jours_fermeture_affect_type_conges') . "</label>\n";
-    echo "<select name=\"id_type_conges\" class=\"form-control\">\n";
+	echo "<label for=\"id_type_conges\">" . _('admin_jours_fermeture_affect_type_conges') . "</label>\n";
+	echo "<select name=\"id_type_conges\" class=\"form-control\">\n";
    	echo affiche_select_conges_id($DEBUG);
    	echo "</select>\n";
    	echo "</div>\n";
@@ -661,9 +577,6 @@ function  affiche_calendrier_fermeture_mois($year, $mois, $tab_year, $DEBUG=FALS
 	echo "</table>\n";
 }
 
-
-
-
 function commit_new_fermeture($new_date_debut, $new_date_fin, $groupe_id, $id_type_conges,  $DEBUG=FALSE)
 {
 
@@ -755,7 +668,6 @@ function commit_new_fermeture($new_date_debut, $new_date_fin, $groupe_id, $id_ty
 	echo "<form action=\"$PHP_SELF?session=$session\" method=\"POST\">\n";
 	echo "<table>\n";
 	echo "<tr><td align=\"center\">\n";
-//	echo "	<input type=\"button\" value=\"". _('form_close_window') ."\" onClick=\"javascript:window.close();\">\n";
 	echo "<input type=\"submit\" value=\"". _('form_ok') ."\">\n";
 	echo "</td></tr>\n";
 	echo "</table>\n";
@@ -874,7 +786,6 @@ function commit_annul_fermeture($fermeture_id, $groupe_id,  $DEBUG=FALSE)
 	echo "<table>\n";
 	echo "<tr><td align=\"center\">\n";
 	echo "	<input type=\"submit\" value=\"". _('form_ok') ."\">\n";
-//	echo "	<input type=\"button\" value=\"". _('form_close_window') ."\" onClick=\"javascript:window.close();\">\n";
 	echo "</td></tr>\n";
 	echo "</table>\n";
 	echo "</form>\n";
@@ -912,10 +823,6 @@ function get_tableau_jour_fermeture($year, &$tab_year,  $groupe_id,  $DEBUG=FALS
 	else
 		$sql_select = $sql_select."AND  (jf_gid = $groupe_id OR jf_gid =0 ) ";
 	$res_select = SQL::query($sql_select);
-//	$res_select = SQL::query($sql_select);
-//	attention ne fonctionne pas avec requete_mysql
-//	$res_select = SQL::query($sql_select);
-
 	$num_select =$res_select->num_rows;
 
 	if($num_select!=0)
@@ -956,13 +863,13 @@ function get_tableau_periodes_fermeture(&$tab_periodes_fermeture, $groupe_id,  $
 // recup l'id de la derniere fermeture (le max)
 function get_last_fermeture_id( $DEBUG=FALSE)
 {
-   $req_1="SELECT MAX(jf_id) FROM conges_jours_fermeture ";
-   $res_1 = SQL::query($req_1);
-   $row_1 = $res_1->fetch_array();
-   if(!$row_1)
-      return 0;     // si la table est vide, on renvoit 0
-   else
-      return $row_1[0];
+	$req_1="SELECT MAX(jf_id) FROM conges_jours_fermeture ";
+	$res_1 = SQL::query($req_1);
+	$row_1 = $res_1->fetch_array();
+	if(!$row_1)
+		return 0;     // si la table est vide, on renvoit 0
+	else
+		return $row_1[0];
 
 }
 

@@ -191,17 +191,10 @@ function test_mail_direct($tab_new_values,  $session, $DEBUG=FALSE)
 	$mail->AddAddress($destination);
 	if($destination_2!="")
 		$mail->AddAddress($destination_2);
-	//$mail->AddAddress("ellen@example.com");                  // name is optional
-	//$mail->AddReplyTo("info@example.com", "Information");
 
 	$mail->WordWrap = 50;                                 // set word wrap to 50 characters
-	//$mail->AddAttachment("/var/tmp/file.tar.gz");         // add attachments
-	//$mail->AddAttachment("/tmp/image.jpg", "new.jpg");    // optional name
-	//$mail->IsHTML(true);                                  // set email format to HTML
 
 	$mail->Subject = "test phpmailer / php_conges";
-	//$mail->Body    = "This is the HTML message body <b>in bold!</b>";
-	//$mail->AltBody = "This is the body in plain text for non-HTML mail clients";
 	$mail->Body    = "This is the body in plain text for non-HTML mail clients";
 
 	// test envoie du mail
@@ -300,17 +293,11 @@ function test_mail_smtp($tab_new_values,  $session, $DEBUG=FALSE)
 	$mail->AddAddress($destination);
 	if($destination_2!="")
 		$mail->AddAddress($destination_2);
-	//$mail->AddAddress("ellen@example.com");                  // name is optional
-	//$mail->AddReplyTo("info@example.com", "Information");
 
 	$mail->WordWrap = 50;                                 // set word wrap to 50 characters
-	//$mail->AddAttachment("/var/tmp/file.tar.gz");         // add attachments
-	//$mail->AddAttachment("/tmp/image.jpg", "new.jpg");    // optional name
 	$mail->IsHTML(true);                                  // set email format to HTML
 
 	$mail->Subject = "test phpmailer pour php_conges";
-	//$mail->Body    = "This is the HTML message body <b>in bold!</b>";
-	//$mail->AltBody = "This is the body in plain text for non-HTML mail clients";
 	$mail->Body    = "This is the body in plain text for non-HTML mail clients";
 
 	// test avec hostname du serveur smtp
@@ -319,11 +306,7 @@ function test_mail_smtp($tab_new_values,  $session, $DEBUG=FALSE)
 		echo "<b>Mail Test with HostName : </b><br>\n";
 
 		$mail->IsSMTP();                                      // set mailer to use SMTP
-		//$mail->Host = "mailhub1.univ-montp2.fr;mailhub2.univ-montp2.fr";  // specify main and backup server
 		$mail->Host = $SMTP ;  // specify main and backup server
-		//$mail->SMTPAuth = true;     // turn on SMTP authentication
-		//$mail->Username = "jswan";  // SMTP username
-		//$mail->Password = "secret"; // SMTP password
 
 		if(!$mail->Send())
 		{
@@ -340,11 +323,7 @@ function test_mail_smtp($tab_new_values,  $session, $DEBUG=FALSE)
 		echo "<br><b>Mail Test with IP Address : </b><br>\n";
 
 		$mail->IsSMTP();                                      // set mailer to use SMTP
-		//$mail->Host = "mailhub1.univ-montp2.fr;mailhub2.univ-montp2.fr";  // specify main and backup server
 		$mail->Host = $SMTP_IP ;  // specify main and backup server
-		//$mail->SMTPAuth = true;     // turn on SMTP authentication
-		//$mail->Username = "jswan";  // SMTP username
-		//$mail->Password = "secret"; // SMTP password
 
 		if(!$mail->Send())
 		{

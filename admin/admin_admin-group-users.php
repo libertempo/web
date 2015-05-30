@@ -218,15 +218,6 @@ function affiche_gestion_user_groupes($choix_user, $onglet, $DEBUG=FALSE)
 	/* Affichage Groupes    */
 	/************************/
 
-/*	// Récuperation des informations :
-	$sql_u = "SELECT u_nom, u_prenom FROM conges_users WHERE u_login='$choix_user'"  ;
-	$ReqLog_u = SQL::query($sql_u);
-
-	$resultat_u = $ReqLog_u->fetch_array();
-	$sql_nom=$resultat_u["u_nom"] ;
-	$sql_prenom=$resultat_u["u_prenom"] ;
-*/
-
 	echo '<form action="'.$PHP_SELF.'?session='.$session.'&onglet='.$onglet.'" method="POST">';
 
 	affiche_tableau_affectation_user_groupes($choix_user,  $DEBUG);

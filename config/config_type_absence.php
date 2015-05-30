@@ -132,12 +132,6 @@ function affichage($tab_new_values,$session, $DEBUG=FALSE)
 			$comment= _($config_abs_comment)  ;
 
 			echo "<h2>$legend</h2>\n";
-
-			// echo "<br>\n";
-			// echo "<table>\n";
-			// echo "<tr><td>\n";
-			// echo "    <fieldset class=\"cal_saisie\">\n";
-			// echo "    <legend class=\"boxlogin\">$legend</legend>\n";
 			echo "<p>$comment</p>\n";
 
 			//requête qui récupère les informations de la table conges_type_absence
@@ -175,36 +169,23 @@ function affichage($tab_new_values,$session, $DEBUG=FALSE)
 
 				echo "    </table>\n";
 				echo "<hr/>\n";
-				// echo "</td></tr>\n";
-				// echo "</table>\n";
 			}
-
-			// echo "    </table>\n";
-			// echo "</td></tr>\n";
-			// echo "</table>\n";
 		}
 	}
 
 
 	/**************************************/
 	// saisie de nouveaux type d'absence
-	// echo "<table width=\"100%\">\n";
-	// echo "<tr><td>\n";
 	echo "<h2>" . _('config_abs_add_type_abs') . "</h2>\n";
 	echo "<p>" . _('config_abs_add_type_abs_comment') . "</p>\n";
 	echo "    <form action=\"$URL\" method=\"POST\"> \n";
-	// echo "    <fieldset class=\"cal_saisie\">\n";
-	// echo "    <legend class=\"boxlogin\">". _('config_abs_add_type_abs') ."</legend>\n";
-	// echo "    ". _('config_abs_add_type_abs_comment') ."\n";
 	echo "    <table class=\"table table-hover table-responsive table-condensed table-striped\">\n";
 	echo "    <tr>\n";
 	echo "    <th>". _('config_abs_libelle') ."</th>\n";
 	echo "    <th>". _('config_abs_libelle_short') ."</th>\n";
 	echo "    <th>". _('divers_type') ."</th>\n";
 	echo "    </tr>\n";
-
 	echo "    <tr>\n";
-
 	$new_libelle = ( isset($tab_new_values['libelle']) ? $tab_new_values['libelle'] : "" );
 	$new_short_libelle = ( isset($tab_new_values['short_libelle']) ? $tab_new_values['short_libelle'] : "" ) ;
 	$new_type = ( isset($tab_new_values['type']) ? $tab_new_values['type'] : "" ) ;
@@ -237,10 +218,6 @@ function affichage($tab_new_values,$session, $DEBUG=FALSE)
 	echo "<hr/>\n";
 	echo "<input type=\"submit\" class=\"btn btn-success\" value=\"". _('form_ajout') ."\"><br>\n";
 	echo "</form>\n";
-	// echo "</td></tr>\n";
-
-	// echo "</table>\n";
-
 }
 
 
@@ -551,11 +528,9 @@ function get_tab_from_mysql_enum_field($table, $column, $DEBUG=FALSE)
    {
       $sql_type=$row_enum['Type'];
       // exemple : enum('autre','labo','fonction','personne','web', ....
-      //echo "$sql_type<br>\n";
       $liste_enum = strstr($sql_type, '(');
       $liste_enum = substr($liste_enum, 1);    // on vire le premier caractere
       $liste_enum = substr($liste_enum, 0, strlen($liste_enum)-1);    // on vire le dernier caractere
-      //echo "$liste_enum<br>\n";
       $option = strtok($liste_enum,"','");
       while ($option)
       {

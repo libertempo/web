@@ -77,7 +77,6 @@ defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 				$tab_new_user[$login]['password1']= getpost_variable('new_password1') ;
 				$tab_new_user[$login]['password2']= getpost_variable('new_password2') ;
 			}
-//			$tab_new_user[$login]['email']= getpost_variable('new_email') ;
 			$tab_new_jours_an					= getpost_variable('tab_new_jours_an') ;
 			$tab_new_solde						= getpost_variable('tab_new_solde') ;
 			$tab_checkbox_sem_imp				= getpost_variable('tab_checkbox_sem_imp') ;
@@ -231,7 +230,7 @@ function ajout_user(&$tab_new_user, $tab_checkbox_sem_imp, $tab_checkbox_sem_p, 
 
 
 		/***********************************/
-		/* ajout du usre dans ses groupes  */
+		/* ajout du user dans ses groupes  */
 		$result4=TRUE;
 		if( ($_SESSION['config']['gestion_groupes']) && ($checkbox_user_groups!="") )
 		{
@@ -280,8 +279,6 @@ function verif_new_param(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, $D
 	// si on travaille avec la base dbconges, on teste tout, mais si on travaille avec ldap, on ne teste pas les champs qui viennent de ldap ...
 	if( (!$_SESSION['config']['export_users_from_ldap'] &&
 		(strlen($tab_new_user['nom'])==0 || strlen($tab_new_user['prenom'])==0
-//		|| strlen($tab_new_user['jours_an'])==0
-//		|| strlen($tab_new_user['solde_jours'])==0
 		|| strlen($tab_new_user['password1'])==0 || strlen($tab_new_user['password2'])==0
 		|| strcmp($tab_new_user['password1'], $tab_new_user['password2'])!=0 || strlen($tab_new_user['login'])==0
 		|| strlen($tab_new_user['quotite'])==0
@@ -289,8 +286,6 @@ function verif_new_param(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, $D
 		)
 		|| ($_SESSION['config']['export_users_from_ldap']  &&
 		(strlen($tab_new_user['login'])==0
-//		||strlen($tab_new_user['jours_an'])==0
-//		|| strlen($tab_new_user['solde_jours'])==0
 		|| strlen($tab_new_user['quotite'])==0
 		|| $tab_new_user['quotite']>100)
 		)
@@ -299,7 +294,6 @@ function verif_new_param(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, $D
 		echo "<h3><font color=\"red\"> ". _('admin_verif_param_invalides') ." </font></h3>\n"  ;
 		// affichage des param :
 		echo $tab_new_user['login']."---".$tab_new_user['nom']."---".$tab_new_user['prenom']."---".$tab_new_user['quotite']."---".$tab_new_user['is_resp']."---".$tab_new_user['resp_login']."<br>\n";
-		//echo $tab_new_user['jours_an']."---".$tab_new_user['solde_jours']."---".$tab_new_user['rtt_an']."---".$tab_new_user['solde_rtt']."<br>\n";
 		foreach($tab_new_jours_an as $id_cong => $jours_an)
 		{
 			echo $tab_new_jours_an[$id_cong]."---".$tab_new_solde[$id_cong]."<br>\n";
@@ -522,7 +516,6 @@ function affiche_formulaire_ajout_user(&$tab_new_user, &$tab_new_jours_an, &$tab
 	echo "<td>$text_is_admin</td>\n";
 	echo "<td>$text_is_hr</td>\n";
 	echo "<td>$text_see_all</td>\n";
-	//if($_SESSION['config']['where_to_find_user_email']=="dbconges")
 	if ( !$_SESSION['config']['export_users_from_ldap'] )
 		echo "<td>$text_email</td>\n";
 	if ($_SESSION['config']['how_to_connect_user'] == "dbconges")

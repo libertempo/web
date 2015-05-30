@@ -118,78 +118,7 @@ function saisie($year_calendrier_saisie, $DEBUG=FALSE)
 	if( $DEBUG ) { echo "tab_year = "; print_r($tab_year); echo "<br>\n"; }
 
 	echo '<a href="' . ROOT_PATH . "admin/admin_index.php?session=$session\" class=\"admin-back\"><i class=\"fa fa-arrow-circle-o-left\"></i>Retour mode admin</a>\n";
-
 	echo "<form action=\"$PHP_SELF?session=$session&year_calendrier_saisie=$year_calendrier_saisie\" method=\"POST\">\n" ;
-
-	// table contenant le fieldset
-	// echo "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n";
-	// echo "<tr align=\"center\">\n";
-	// 	echo "<td>\n";
-	// 	echo "<fieldset class=\"cal_saisie\">\n";
-	// 		// tableau contenant les mois
-	// 		echo "<table cellpadding=\"2\" cellspacing=\"2\" border=\"0\">\n";
-	// 		// ligne janvier / fevrier / mars / avril
-	// 		echo "<tr align=\"center\" valign=\"top\">\n";
-	// 			echo "<td>\n"; // janvier
-	// 				affiche_calendrier_saisie_jours_chomes($year_calendrier_saisie, "01", $tab_year);
-	// 			echo "</td>\n";
-	// 			echo "<td>\n"; // fevrier
-	// 				affiche_calendrier_saisie_jours_chomes($year_calendrier_saisie, "02", $tab_year);
-	// 			echo "</td>\n";
-	// 			echo "<td>\n"; // mars
-	// 				affiche_calendrier_saisie_jours_chomes($year_calendrier_saisie, "03", $tab_year);
-	// 			echo "</td>\n";
-	// 			echo "<td>\n"; // avril
-	// 				affiche_calendrier_saisie_jours_chomes($year_calendrier_saisie, "04", $tab_year);
-	// 			echo "</td>\n";
-	// 		echo "</tr>\n";
-	// 		// ligne mai / juin / juillet / aout
-	// 		echo "<tr align=\"center\" valign=\"top\">\n";
-	// 			echo "<td>\n"; // mai
-	// 				affiche_calendrier_saisie_jours_chomes($year_calendrier_saisie, "05", $tab_year);
-	// 			echo "</td>\n";
-	// 			echo "<td>\n"; // juin
-	// 				affiche_calendrier_saisie_jours_chomes($year_calendrier_saisie, "06", $tab_year);
-	// 			echo "</td>\n";
-	// 			echo "<td>\n"; // juillet
-	// 				affiche_calendrier_saisie_jours_chomes($year_calendrier_saisie, "07", $tab_year);
-	// 			echo "</td>\n";
-	// 			echo "<td>\n"; // aout
-	// 				affiche_calendrier_saisie_jours_chomes($year_calendrier_saisie, "08", $tab_year);
-	// 			echo "</td>\n";
-	// 		echo "</tr>\n";
-	// 		// ligne septembre / octobre / novembre / decembre
-	// 		echo "<tr align=\"center\" valign=\"top\">\n";
-	// 			echo "<td>\n"; // septembre
-	// 				affiche_calendrier_saisie_jours_chomes($year_calendrier_saisie, "09", $tab_year);
-	// 			echo "</td>\n";
-	// 			echo "<td>\n"; // octobre
-	// 				affiche_calendrier_saisie_jours_chomes($year_calendrier_saisie, "10", $tab_year);
-	// 			echo "</td>\n";
-	// 			echo "<td>\n"; // novembre
-	// 				affiche_calendrier_saisie_jours_chomes($year_calendrier_saisie, "11", $tab_year);
-	// 			echo "</td>\n";
-	// 			echo "<td>\n"; // décembre
-	// 				affiche_calendrier_saisie_jours_chomes($year_calendrier_saisie, "12", $tab_year);
-	// 			echo "</td>\n";
-	// 		echo "</tr>\n";
-	// 		echo "</table>\n";
-	// 	echo "</fieldset>\n";
-	// 	echo "</td>\n";
-	// echo "</tr>\n";
-	// echo "</table>\n";
-
-	// //table contenant les bountons
-	// echo "<table cellpadding=\"2\" cellspacing=\"3\" border=\"0\" >\n";
-	// echo "<tr align=\"center\">\n";
-	// echo "<td>\n";
-	// 	echo "<input type=\"hidden\" name=\"choix_action\" value=\"confirm\">\n";
-	// 	echo "<input type=\"submit\" value=\"". _('form_submit') ."\">  \n";
-	// 	echo "<input type=\"button\" value=\"". _('form_cancel') ."\" onClick=\"javascript:window.close();\">\n";
-	// echo "</td>\n";
-	// echo "</tr>\n";
-	// echo "</table>\n";
-
 	echo "<div class=\"calendar\">\n";
 	$months = array('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12');
 
@@ -201,12 +130,10 @@ function saisie($year_calendrier_saisie, $DEBUG=FALSE)
 		echo "</div>";
 	}
 	echo "</div>";
-
 	echo "<div class=\"actions\">";
 	echo "<input type=\"hidden\" name=\"choix_action\" value=\"commit\">\n";
 	echo "<input class=\"btn\" type=\"submit\" value=\"". _('form_submit') ."\">  \n";
 	echo "</div>";
-	
 	echo "</form>\n" ;
 }
 
@@ -326,15 +253,11 @@ function confirm_saisie($tab_checkbox_j_chome, $DEBUG=FALSE)
 	header_popup();	
 	
 	echo "<h1>". _('admin_jours_chomes_titre') ."</h1>\n";
-
-	//echo "tab_checkbox_j_chome : <br>\n";
-	//print_r($tab_checkbox_j_chome);
-
 	echo "<form action=\"$PHP_SELF?session=$session\" method=\"POST\">\n";
 	echo "<table>\n";
 	echo "<tr>\n";
 	echo "<td align=\"center\">\n";
-//	var_dump($tab_checkbox_j_chome);
+
 		foreach($tab_checkbox_j_chome as $key => $value)
 		{
 			$date_affiche=eng_date_to_fr($key);
@@ -362,10 +285,6 @@ function commit_saisie($tab_checkbox_j_chome,$DEBUG=FALSE)
 	$PHP_SELF=$_SERVER['PHP_SELF'];
 	$session=session_id();
 
-	// header_popup();	
-	
-	// echo "<h1>". _('admin_jours_chomes_titre') ."</h1>\n";
-
 	if( $DEBUG ) { echo "tab_checkbox_j_chome : <br>\n"; print_r($tab_checkbox_j_chome); echo "<br>\n"; }
 
 	// si l'année est déja renseignée dans la database, on efface ttes les dates de l'année
@@ -388,17 +307,6 @@ function commit_saisie($tab_checkbox_j_chome,$DEBUG=FALSE)
 	$tab_date = explode('-', $date_1);
 	$comment_log = "saisie des jours chomés pour ".$tab_date[0] ;
 	log_action(0, "", "", $comment_log, $DEBUG);
-
-	// echo "<form action=\"$PHP_SELF?session=$session\" method=\"POST\">\n";
-	// echo "<table>\n";
-	// echo "<tr><td align=\"center\">\n";
-	// echo "	<input type=\"button\" value=\"". _('form_close_window') ."\" onClick=\"javascript:window.close();\">\n";
-	// echo "</td></tr>\n";
-	// echo "</table>\n";
-	// echo "</form>\n";
-
-	// bottom();
-
 }
 
 
@@ -411,7 +319,6 @@ function insert_year($tab_checkbox_j_chome, $DEBUG=FALSE) {
 function delete_year($tab_checkbox_j_chome, $DEBUG=FALSE) {
 	$date_1=key($tab_checkbox_j_chome);
 	$year=substr($date_1, 0, 4);
-	//echo "year= $year<br>\n";
 	$sql_delete='DELETE FROM conges_jours_feries WHERE jf_date LIKE \''.SQL::quote($year).'%\' ;';
 	$result = SQL::query($sql_delete);
 
@@ -421,12 +328,8 @@ function delete_year($tab_checkbox_j_chome, $DEBUG=FALSE) {
 function verif_year_deja_saisie($tab_checkbox_j_chome, $DEBUG=FALSE) {
 	$date_1=key($tab_checkbox_j_chome);
 	$year=substr($date_1, 0, 4);
-	//echo "year= $year<br>\n";
 	$sql_select='SELECT jf_date FROM conges_jours_feries WHERE jf_date LIKE \''.SQL::quote($year).'%\' ;';
 	$relog = SQL::query($sql_select);
-//	attention ne fonctionne pas avec requete_mysql
-//	$relog = SQL::query($sql_select);
-
 	return($relog->num_rows != 0);
 }
 
@@ -437,8 +340,6 @@ function get_tableau_jour_feries($year, &$tab_year,  $DEBUG=FALSE)
 
 	$sql_select='SELECT jf_date FROM conges_jours_feries WHERE jf_date LIKE \''.SQL::quote($year).'-%\' ;';
 	$res_select = SQL::query($sql_select);
-//	attention ne fonctionne pas avec requete_mysql
-//	$res_select = SQL::query($sql_select);
 	$num_select = $res_select->num_rows;
 
 	if($num_select!=0)
@@ -475,9 +376,6 @@ function fcListJourFeries($iAnnee = 2000)
 	     $tbJourFerie["Lundi de Paques"]   = $iAnnee . date( "-m-d", easter_date($iAnnee) + 1*$iCstJour );
 	     $tbJourFerie["Jeudi de l ascenscion"] = $iAnnee . date( "-m-d", easter_date($iAnnee) + 39*$iCstJour );
 		 
-		 // devenue Journée de solidarité envers les personnes âgées
-	     // $tbJourFerie["Lundi de Pentecote"]   = $iAnnee . date( "-m-d", easter_date($iAnnee) + 50*$iCstJour );
-	
 	// Retour du tableau des jours fériés pour l'année demandée
 	return $tbJourFerie;
 }

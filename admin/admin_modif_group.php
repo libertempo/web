@@ -97,7 +97,7 @@ function modifier($group, $onglet, $DEBUG=FALSE)
 	echo "<td>$sql_groupename</td>\n";
 	echo "<td>$sql_comment</td>\n";
 	if($_SESSION['config']['double_validation_conges'])
-			echo "<td>$sql_double_valid</td>\n";
+		echo "<td>$sql_double_valid</td>\n";
 	echo "</tr>\n";
 
 	// contruction des champs de saisie

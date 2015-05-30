@@ -46,10 +46,7 @@ defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 	echo "<table class=\"table table-hover table-responsive table-condensed table-striped\" >\n";
 	echo "<thead>\n";
 	echo "<tr>\n";
-	// echo "<th>". _('divers_nom_maj_1') ."</th>\n";
-	// echo "<th>". _('divers_prenom_maj_1') ."</th>\n";
-	echo "<th>Utilisateur</th>\n";
-	// echo "<th>". _('divers_login_maj_1') ."</th>\n";
+	echo "<th>". _('user') ."</th>\n";
 	echo "<th>". _('divers_quotite_maj_1') ."</th>\n";
 	foreach($tab_type_conges as $id_type_cong => $libelle)
 	{
@@ -63,12 +60,6 @@ defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 	    echo "<th>". _('divers_solde') ." $libelle</th>\n";
 	  }
 	}
-	// echo "<th>". _('admin_users_is_resp') ."</th>\n";
-	// echo "<th>". _('admin_users_resp_login') ."</th>\n";
-	// echo "<th>". _('admin_users_is_admin') ."</th>\n";
-	// echo "<th>". _('admin_users_is_hr') ."</th>\n";
-	// echo "<th>". _('admin_users_is_active') ."</th>\n";
-	// echo "<th>". _('admin_users_see_all') ."</th>\n";
 	echo "<th></th>\n";
 	echo "<th></th>\n";
 	if($_SESSION['config']['admin_change_passwd'])

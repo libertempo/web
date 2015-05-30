@@ -163,11 +163,6 @@ function choix_sauvegarde($DEBUG=FALSE)
 	echo "	<td><input type=\"radio\" name=\"type_sauvegarde\" value=\"all\" checked></td>\n";
 	echo "	<td>". _('admin_sauve_db_complete') ."</td>\n";
 	echo "</tr>\n";
-/*	echo "<tr>\n";
-	echo "	<td><input type=\"radio\" name=\"type_sauvegarde\" value=\"structure\"></td>\n";
-	echo "	<td>Sauvegarde de la structure seule</td>\n";
-	echo "</tr>\n";
-*/
 	echo "<tr>\n";
 	echo "	<td><input type=\"radio\" name=\"type_sauvegarde\" value=\"data\"></td>\n";
 	echo "	<td>". _('admin_sauve_db_data_only') ."</td>\n";
@@ -274,15 +269,12 @@ function choix_restaure($DEBUG=FALSE)
 	header_popup();	
 	
 	echo "<h1>". _('admin_sauve_db_titre') ."</h1>\n";
-
-//	echo "<form action=\"$PHP_SELF?session=$session\" method=\"POST\">\n";
 	echo "<form enctype=\"multipart/form-data\" action=\"$PHP_SELF?session=$session\" method=\"POST\">\n";
 	echo "<table>\n";
 	echo "<tr>\n";
 	echo "<th>". _('admin_sauve_db_restaure') ."<br>". _('admin_sauve_db_file_to_restore') ." :</th>\n";
 	echo "</tr>\n";
 	echo "<tr>\n";
-//	echo "<td> <input type=\"file\" name=\"fichier_restaure\" size=\"30\"> </td>\n";
 	echo "<td align=\"center\"> <input type=\"file\" name=\"fichier_restaure\"> </td>\n";
 	echo "</tr>\n";
 	echo "<tr>\n";
@@ -351,33 +343,7 @@ function restaure($fichier_restaure_name, $fichier_restaure_tmpname, $fichier_re
 	else
 	{
 
-		//affichage du contenu :
-		//readfile($fichier_restaure_tmpname);
-
 		$result = execute_sql_file($fichier_restaure_tmpname, $DEBUG);
-/*		// on lit le fichier et on met chaque ligne dans un tableau
-		$tab_lines = file ($fichier_restaure_tmpname);
-		// puis parcourt du tableau :
-		// si la ligne n'est pas un commentaire (commence par # (après avoir enlevé les espaces de debut de chaine))
-		// on l'ajoute a la requete sql )
-		$sql2="";
-		foreach ($tab_lines as $line_num => $line)
-		{
-			$line=trim($line);
-			if(substr($line,0,1)=="#")
-			{
-				//echo "#<b>$line_num</b> $line<br>\n";
-			}
-			else
-			{
-				//echo "$line<br>\n";
-				//execution de la requete sql:
-				$sql2=$line;
-				//echo "$sql2<br>";
-				$ReqLog = SQL::query($sql2) ;
-			}
-		}
-*/
 
 		echo "<form action=\"\" method=\"POST\">\n";
 		echo "<table>\n";

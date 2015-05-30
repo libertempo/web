@@ -86,7 +86,6 @@ function modifier($u_login, $onglet, $DEBUG=FALSE)
 	echo "<tr align=\"center\">\n";
 
 	// Récupération des informations
-//	$sql1 = "SELECT u_login, u_nom, u_prenom, u_nb_jours_an, u_solde_jours, u_is_resp, u_resp_login, u_passwd FROM conges_users WHERE u_login = '$u_login' " ;
 	$sql1 = 'SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_login = \''.SQL::quote($u_login).'\'';
 	$ReqLog1 = SQL::query($sql1);
 

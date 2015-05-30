@@ -100,7 +100,6 @@ verif_droits_user($session, 'is_admin', $DEBUG);
 	$tab_type_cong=recup_tableau_types_conges( $DEBUG);
 
 	// recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
-//	if ($_SESSION['config']['gestion_conges_exceptionnels']) 
 		$tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels( $DEBUG);
 	
 	echo '<div class="'.$onglet.' main-content">';

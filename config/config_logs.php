@@ -23,25 +23,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *************************************************************************************************/
 
-// define('_PHP_CONGES', 1);
-// define('ROOT_PATH', '../');
-// include ROOT_PATH . 'define.php';
-// defined( '_PHP_CONGES' ) or die( 'Restricted access' );
-
-// $session=(isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : "") ) ;
-
-// if (file_exists(CONFIG_PATH .'config_ldap.php'))
-// 	include CONFIG_PATH .'config_ldap.php';
-	
-// include ROOT_PATH .'fonctions_conges.php' ;
-// include INCLUDE_PATH .'fonction.php';
-// if(!isset($_SESSION['config']))
-// 	$_SESSION['config']=init_config_tab();      // on initialise le tableau des variables de config
-// include INCLUDE_PATH .'session.php';
-// //include'fonctions_install.php' ;
-
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
-
 
 $DEBUG = FALSE ;
 //$DEBUG = TRUE ;
@@ -158,12 +140,10 @@ function confirmer_vider_table_logs($session, $DEBUG=FALSE)
 
 	echo "<center>\n";
 	echo "<br><h2>". _('confirm_vider_logs') ."</h2><br>\n";
-
 	echo "<form action=\"$PHP_SELF?session=$session&onglet=logs\" method=\"POST\">\n"  ;
 	echo "<input type=\"hidden\" name=\"action\" value=\"commit_suppr_logs\">\n";
 	echo "<input type=\"submit\" value=\"". _('form_delete_logs') ."\">\n";
 	echo "</form>\n" ;
-
 	echo "<form action=\"$PHP_SELF?session=$session&onglet=logs\" method=\"POST\">\n"  ;
 	echo "<input type=\"submit\" value=\"". _('form_cancel') ."\">\n";
 	echo "</form>\n" ;

@@ -41,8 +41,6 @@ include ROOT_PATH .'fonctions_conges.php' ;
 $_SESSION['config']=init_config_tab();      // on initialise le tableau des variables de config
 include INCLUDE_PATH .'session.php';
 
-//include'fonctions_install.php' ;
-	
 $PHP_SELF=$_SERVER['PHP_SELF'];
 
 $session=session_id();
@@ -51,7 +49,6 @@ $session=session_id();
 verif_droits_user($session, "is_admin");
 
 $_SESSION['from_config']=TRUE;  // initialise ce flag pour changer le bouton de retour des popup
-// propose_config();
 
 	$onglet = getpost_variable('onglet');
 	if(!$onglet)
@@ -103,43 +100,4 @@ $_SESSION['from_config']=TRUE;  // initialise ce flag pour changer le bouton de 
 		}
 		
 	echo '</div>';
-	
-
-
-// /*****************************************************************************/
-// /*   FONCTIONS   */
-
-
-// function propose_config()
-// {
-// 	$session=session_id();
-	
-// 	header_menu('CONGES : Configuration', $_SESSION['config']['titre_admin_index']);
-
-// 	// affichage du titre
-// 	echo "<center>\n";
-// 	echo "<br><H1><img src=\"". TEMPLATE_PATH . "img/tux_config_32x32.png\" width=\"32\" height=\"32\" border=\"0\" title=\"". _('install_install_phpconges') ."\" alt=\"". _('install_install_phpconges') ."\"> ". _('install_index_titre') ."</H1>\n";
-// 	echo "<br><br>\n";
-	
-// 		echo "<h2>". _('install_configuration') ." :</h2>\n";
-// 		echo "<h3>\n";
-// 		echo "<table border=\"0\">\n";
-// 		echo "<tr><td>-> <a href=\"configure.php?session=$session\">". _('install_config_appli') ."</a></td></tr>\n";
-// 		echo "<tr><td>-> <a href=\"config_type_absence.php?session=$session\">". _('install_config_types_abs') ."</a></td></tr>\n";
-// 		echo "<tr><td>-> <a href=\"config_mail.php?session=$session\">". _('install_config_mail') ."</a></td></tr>\n";
-// 		echo "<tr><td>-> <a href=\"javascript:void(0);\" onClick=\"javascript:OpenPopUp('test_mail.php?session=$session','testmail',800,350);\">". _('install_test_mail') ."</a></td></tr>\n";
-// 		echo "<tr><td>-> <a href=\"config_logs.php?session=$session\">". _('config_logs') ."</a></td></tr>\n";
-// 		echo "<tr><td>&nbsp;</td></tr>\n";
-// 		echo "<tr><td>-> <a href=\"../\">". _('install_acceder_appli') ."</a></td></tr>\n";
-// 		echo "</table>\n";
-// 		echo "</h3><br><br>\n";
-		
-
-// 		// echo '<a href="'. ROOT_PATH .'deconnexion.php?session='.$session.'" target="_top">' .
-// 		// 		'<img src="'. TEMPLATE_PATH . 'img/exit.png" width="22" height="22" border="0" title="'. _('button_deconnect') .'" alt="'. _('button_deconnect') .'">' .
-// 		// 		 _('button_deconnect') .'</a>';
-
-
-// 	bottom();
-// }
 
