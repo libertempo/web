@@ -44,7 +44,7 @@
 
 function compter_jours(radiodebut, radiofin, login_user, j_debut, j_fin)
 {
-    var login = document.forms[0].user_login.value;
+    var login = login_user.value;
     var session = document.forms[0].session.value;
 	var d_debut = j_debut.value;
 	var d_fin = j_fin.value;
@@ -62,37 +62,6 @@ function compter_jours(radiodebut, radiofin, login_user, j_debut, j_fin)
 
 }
 
-function compter_jours_old(radiodebut, radiofin, login_user, j_debut, j_fin)
-{
-    var login = document.forms[0].login_user.value;
-    var session = document.forms[0].session.value;
-
-    for (var i=0; i<radiodebut.length; i++)
-        if (radiodebut[i].checked)
-            var d_debut = radiodebut[i].value;
-
-    for (var i=0; i<radiofin.length; i++)
-        if (radiofin[i].checked)
-            var d_fin = radiofin[i].value;
-
-    for (var i=0; i<j_debut.length; i++)
-        if (j_debut[i].checked)
-            var opt_deb = j_debut[i].value;
-    // am ou pm
-
-    for (var i=0; i<j_fin.length; i++)
-        if (j_fin[i].checked)
-            var opt_fin = j_fin[i].value;
-    // am ou pm
-
-    var msg = 'de ' + d_debut + ' à ' + d_fin;
-
-    var page ='../calcul_nb_jours_pris.php?session='+session+'&date_debut='+d_debut+'&date_fin='+d_fin+'&user='+login+'&opt_debut='+opt_deb+'&opt_fin='+opt_fin;
-    //alert(msg);
-
-    window.open(page, '', 'toolbar=0,scrollbars=0,location=0,statusbar=0,menubar=0,resizable=0,width=350,height=250');
-
-}
 
 jQuery( document ).ready(function($) { 
 
