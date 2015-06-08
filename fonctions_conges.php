@@ -1040,7 +1040,7 @@ function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $m
 	}
 	else
 	{
-		if(count($mail->to)==0)
+		if(!isset($mail_dest_addr))
 		{
 			echo "<b>ERROR : No recipient address for the message!</b><br>\n";
 			echo "<b>Message was not sent </b><br>";
