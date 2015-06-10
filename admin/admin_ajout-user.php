@@ -56,8 +56,8 @@ defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 			foreach ($data as $info)
 			{
 				$tab_new_user[$login]['login']	= $login;
-				$ldap_libelle_prenom			=$_SESSION['config']['ldap_prenom'];
-				$ldap_libelle_nom				=$_SESSION['config']['ldap_nom'];
+				$ldap_libelle_prenom		=$_SESSION['config']['ldap_prenom'];
+				$ldap_libelle_nom		=$_SESSION['config']['ldap_nom'];
 				$tab_new_user[$login]['prenom']	= utf8_decode($info[$ldap_libelle_prenom][0]);
 				$tab_new_user[$login]['nom']	= utf8_decode($info[$ldap_libelle_nom][0]);
 
@@ -77,10 +77,10 @@ defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 				$tab_new_user[$login]['password1']= getpost_variable('new_password1') ;
 				$tab_new_user[$login]['password2']= getpost_variable('new_password2') ;
 			}
-			$tab_new_jours_an					= getpost_variable('tab_new_jours_an') ;
-			$tab_new_solde						= getpost_variable('tab_new_solde') ;
-			$tab_checkbox_sem_imp				= getpost_variable('tab_checkbox_sem_imp') ;
-			$tab_checkbox_sem_p					= getpost_variable('tab_checkbox_sem_p') ;
+			$tab_new_jours_an			= getpost_variable('tab_new_jours_an') ;
+			$tab_new_solde				= getpost_variable('tab_new_solde') ;
+			$tab_checkbox_sem_imp			= getpost_variable('tab_checkbox_sem_imp') ;
+			$tab_checkbox_sem_p			= getpost_variable('tab_checkbox_sem_p') ;
 			$tab_new_user[$login]['new_jour']	= getpost_variable('new_jour') ;
 			$tab_new_user[$login]['new_mois']	= getpost_variable('new_mois') ;
 			$tab_new_user[$login]['new_year']	= getpost_variable('new_year') ;
@@ -278,18 +278,16 @@ function verif_new_param(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, $D
 	// verif des parametres reçus :
 	// si on travaille avec la base dbconges, on teste tout, mais si on travaille avec ldap, on ne teste pas les champs qui viennent de ldap ...
 	if( (!$_SESSION['config']['export_users_from_ldap'] &&
-		(strlen($tab_new_user['nom'])==0 || strlen($tab_new_user['prenom'])==0
-		|| strlen($tab_new_user['password1'])==0 || strlen($tab_new_user['password2'])==0
-		|| strcmp($tab_new_user['password1'], $tab_new_user['password2'])!=0 || strlen($tab_new_user['login'])==0
-		|| strlen($tab_new_user['quotite'])==0
-		|| $tab_new_user['quotite']>100)
-		)
-		|| ($_SESSION['config']['export_users_from_ldap']  &&
-		(strlen($tab_new_user['login'])==0
-		|| strlen($tab_new_user['quotite'])==0
-		|| $tab_new_user['quotite']>100)
-		)
-		)
+		(strlen($tab_new_user['nom'])==0 
+			|| strlen($tab_new_user['prenom'])==0
+			|| strlen($tab_new_user['password1'])==0 || strlen($tab_new_user['password2'])==0
+			|| strcmp($tab_new_user['password1'], $tab_new_user['password2'])!=0 || strlen($tab_new_user['login'])==0
+			|| strlen($tab_new_user['quotite'])==0
+			|| $tab_new_user['quotite']>100)
+			|| !preg_match('/^[a-z\d_]{2,20}$/i', $tab_new_user['login'])
+			|| !preg_match('/^[a-z\d\sàáâãäåçèéêëìíîïðòóôõöùúûüýÿ-]{2,20}$/i', $tab_new_user['nom'])
+			|| !preg_match('/^[a-z\d\sàáâãäåçèéêëìíîïðòóôõöùúûüýÿ-]{2,20}$/i', $tab_new_user['prenom'])
+		) || ($_SESSION['config']['export_users_from_ldap']  && (strlen($tab_new_user['login'])==0 || strlen($tab_new_user['quotite'])==0 || $tab_new_user['quotite']>100)))
 	{
 		echo "<h3><font color=\"red\"> ". _('admin_verif_param_invalides') ." </font></h3>\n"  ;
 		// affichage des param :
@@ -323,6 +321,7 @@ function verif_new_param(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, $D
 		return 1;
 	}
 	else {
+
 		// verif si le login demandé n'existe pas déjà ....
 		$sql_verif='SELECT u_login FROM conges_users WHERE u_login=\''.SQL::quote($tab_new_user['login']).'\'';
 		$ReqLog_verif = SQL::query($sql_verif);
