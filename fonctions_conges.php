@@ -874,7 +874,7 @@ function date_fr($code, $timestmp)
 function alerte_mail($login_expediteur, $destinataire, $num_periode, $objet,  $DEBUG=FALSE)
 {
 
-	require_once( LIBRARY_PATH .'phpmailer/class.phpmailer.php' );  // ajout de la classe phpmailer
+	require_once( LIBRARY_PATH .'phpmailer/PHPMailerAutoload.php' );  // ajout de la classe phpmailer
 
 	/*********************************************/
 	// recup des infos concernant l'expéditeur ....
