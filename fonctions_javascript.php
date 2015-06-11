@@ -79,8 +79,8 @@ function convert_jf($date)
 	return $date;
 }
 
-$tabferm = $_SESSION["tab_j_fermeture"];
-$tabjferies = $_SESSION["tab_j_feries"];
+$tabferm = isset($_SESSION["tab_j_fermeture"]) ? $_SESSION["tab_j_fermeture"] : NULL;
+$tabjferies = isset($_SESSION["tab_j_feries"]) ? $_SESSION["tab_j_feries"] : NULL;
 $js_tab= "[";
 
 if(isset($tabjferies)) {
@@ -89,7 +89,7 @@ if(isset($tabjferies)) {
 	}
 }
 
-if(isset($tabjferies)) {
+if(isset($tabferm)) {
 	foreach($tabferm as $key => $jf){
 		$js_tab=$js_tab.'"'.convert_jf($jf).'",';
 	}
