@@ -45,7 +45,7 @@
 function compter_jours(radiodebut, radiofin, login_user, j_debut, j_fin)
 {
     var login = login_user.value;
-    var session = document.forms[1].session.value;
+    var session = document.forms["dem_conges"].session.value;
 	var d_debut = j_debut.value;
 	var d_fin = j_fin.value;
 	var opt_deb = radiodebut.value;

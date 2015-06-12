@@ -135,7 +135,7 @@ function saisie_nouveau_conges($user_login, $year_calendrier_saisie_debut, $mois
 	$mois_calendrier_saisie_fin_suiv=0; $year_calendrier_saisie_fin_suiv=0;
 	init_tab_jours_fermeture($user_login);
 
-	echo '<form action="'.$PHP_SELF.'?session='.$session.'&onglet='.$onglet.'" method="POST">' ;
+	echo '<form NAME="dem_conges" action="'.$PHP_SELF.'?session='.$session.'&onglet='.$onglet.'" method="POST">' ;
 	// il faut indiquer le champ de formulaire 'login_user' car il est récupéré par le javascript qui apelle le calcul automatique.
 	// echo '<input type="hidden" name="login_user" value="'.$user_login.'">';
 
@@ -418,7 +418,7 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
 	$session=session_id();
 	$new_date_fin = date('d/m/Y');
 
-	echo '<form action="'.$PHP_SELF.'?session='.$session.'&onglet='.$onglet.'" method="POST">
+	echo '<form NAME="dem_conges" action="'.$PHP_SELF.'?session='.$session.'&onglet='.$onglet.'" method="POST">
 		<div class="row">
 		<div class="col-md-6">
 		<div class="form-inline">';
