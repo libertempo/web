@@ -527,7 +527,7 @@ function  affiche_calendrier_saisie_jour_absence($user_login, $year, $mois, $DEB
 					$val_matin='';
 					$val_aprem='';
 					recup_infos_artt_du_jour($user_login, $j_timestamp, $val_matin, $val_aprem,  $DEBUG);
-					affiche_cellule_calendrier_echange_absence_saisie_semaine($val_matin, $val_aprem, $year, $mois, $i, $DEBUG);
+					affiche_cellule_calendrier_echange_absence_saisie_semaine($val_matin, $val_aprem, $year, $mois, $i+1, $DEBUG);
 				}
 				
 				if ( ($i + $start_nb_day_before ) % 7 == 6)
@@ -596,7 +596,7 @@ function  affiche_calendrier_saisie_jour_presence($user_login, $year, $mois, $DE
 					$val_matin='';
 					$val_aprem='';
 					recup_infos_artt_du_jour($user_login, $j_timestamp, $val_matin, $val_aprem,  $DEBUG);
-					affiche_cellule_calendrier_echange_presence_saisie_semaine($val_matin, $val_aprem, $year, $mois, $i, $DEBUG);
+					affiche_cellule_calendrier_echange_presence_saisie_semaine($val_matin, $val_aprem, $year, $mois, $i+1, $DEBUG);
 				}
 				
 				if ( ($i + $start_nb_day_before ) % 7 == 6)

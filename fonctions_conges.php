@@ -563,9 +563,9 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
 	if($_SESSION['config']['affiche_bouton_calcul_nb_jours_pris'])
 	{
 		echo '<input type="button" class="btn btn-success" onclick="compter_jours(new_demi_jour_deb, new_demi_jour_fin, user_login, new_debut, new_fin);return false;" value="'. _('saisie_conges_compter_jours') .'">';
-		echo '<br>';
 	}
 
+	echo '<br>';
 	echo '<input type="hidden" name="user_login" value="'.$user_login.'">';
 	echo '<input type="hidden" name="new_demande_conges" value=1>';
 	echo '<input type="hidden" name="session" value="'.$session.'">';
@@ -955,7 +955,22 @@ function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $m
 	/*********************************************/
 	// init du mail
 	$mail = new PHPMailer();
-	if( $_SESSION['config']['serveur_smtp'] == '' ) 
+	if( isset($_SESSION['config']['SMTP_server']) ) 
+	{
+		$mail->IsSMTP();
+		$mail->Host = $_SESSION['config']['SMTP_server'];
+		$mail->Port = $_SESSION['config']['SMTP_port'];
+
+		if ( isset($_SESSION['config']['SMTP_user']) )
+		{
+			$mail->SMTPAuth = true;
+			$mail->Username = $_SESSION['config']['SMTP_user'];
+			$mail->Password = $_SESSION['config']['SMTP_pwd'];
+		}
+		if ( isset($_SESSION['config']['SMTP_sec']) )
+			$mail->SMTPSecure = $_SESSION['config']['SMTP_sec'];
+	}
+	else 
 	{
 		if(file_exists('/usr/sbin/sendmail'))
 			$mail->IsSendmail();   // send message using the $Sendmail program
@@ -963,11 +978,6 @@ function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $m
 			$mail->IsQmail(); // send message using the qmail MTA
 		else
 			$mail->IsMail(); // send message using PHP mail() function
-	}
-	else 
-	{
-		$mail->IsSMTP();
-		$mail->Host = $_SESSION['config']['serveur_smtp'];
 	}
 
 	// initialisation du langage utilisé par php_mailer
@@ -2051,6 +2061,18 @@ function init_config_tab()
 			if(isset($config_CAS_host))	$tab['CAS_host']	= $config_CAS_host ;
 			if(isset($config_CAS_portNumber)) $tab['CAS_portNumber'] = $config_CAS_portNumber ;
 			if(isset($config_CAS_URI))	$tab['CAS_URI']		= $config_CAS_URI ;
+		}
+
+		/******************************************/
+		//  config_SMTP.php
+		if (file_exists(CONFIG_PATH .'config_SMTP.php')) 
+		{
+			include CONFIG_PATH .'config_SMTP.php';
+			if(isset($config_SMTP_host))	$tab['SMTP_server']	= $config_SMTP_host ;
+			if(isset($config_SMTP_port))	$tab['SMTP_port']	= $config_SMTP_port ;
+			if(isset($config_SMTP_sec))	$tab['SMTP_sec']	= $config_SMTP_sec ;
+			if(isset($config_SMTP_user))	$tab['SMTP_user']	= $config_SMTP_user ;
+			if(isset($config_SMTP_pwd))	$tab['SMTP_pwd']	= $config_SMTP_pwd ;
 		}
 
 		/******************************************/
