@@ -29,6 +29,6 @@ defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 
 $config_SMTP_host = "";		//adresse serveur smtp
 $config_SMTP_port = 25; 	//port smtp
-$config_SMTP_sec  = ""		//ssl, tls ou vide
+$config_SMTP_sec  = "";		//ssl, tls ou vide
 $config_SMTP_user = "";		//nom utilisateur (peut être vide)
 $config_SMTP_pwd = "";		//mot de passe (peut être vide)
