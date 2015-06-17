@@ -955,20 +955,26 @@ function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $m
 	/*********************************************/
 	// init du mail
 	$mail = new PHPMailer();
-	if( isset($_SESSION['config']['SMTP_server']) ) 
-	{
-		$mail->IsSMTP();
-		$mail->Host = $_SESSION['config']['SMTP_server'];
-		$mail->Port = $_SESSION['config']['SMTP_port'];
 
-		if ( isset($_SESSION['config']['SMTP_user']) )
+	if (file_exists(CONFIG_PATH .'config_SMTP.php')) 
+	{
+		include CONFIG_PATH .'config_SMTP.php';
+
+		if( isset($config_SMTP_host) ) 
 		{
-			$mail->SMTPAuth = true;
-			$mail->Username = $_SESSION['config']['SMTP_user'];
-			$mail->Password = $_SESSION['config']['SMTP_pwd'];
+			$mail->IsSMTP();
+			$mail->Host = $config_SMTP_server;
+			$mail->Port = $config_SMTP_port;
+
+			if ( isset($config_SMTP_user) )
+			{
+				$mail->SMTPAuth = true;
+				$mail->Username = $config_SMTP_user;
+				$mail->Password = $config_SMTP_pwd;
+			}
+			if ( isset($config_SMTP_sec) )
+				$mail->SMTPSecure = $config_SMTP_sec;
 		}
-		if ( isset($_SESSION['config']['SMTP_sec']) )
-			$mail->SMTPSecure = $_SESSION['config']['SMTP_sec'];
 	}
 	else 
 	{
@@ -2061,18 +2067,6 @@ function init_config_tab()
 			if(isset($config_CAS_host))	$tab['CAS_host']	= $config_CAS_host ;
 			if(isset($config_CAS_portNumber)) $tab['CAS_portNumber'] = $config_CAS_portNumber ;
 			if(isset($config_CAS_URI))	$tab['CAS_URI']		= $config_CAS_URI ;
-		}
-
-		/******************************************/
-		//  config_SMTP.php
-		if (file_exists(CONFIG_PATH .'config_SMTP.php')) 
-		{
-			include CONFIG_PATH .'config_SMTP.php';
-			if(isset($config_SMTP_host))	$tab['SMTP_server']	= $config_SMTP_host ;
-			if(isset($config_SMTP_port))	$tab['SMTP_port']	= $config_SMTP_port ;
-			if(isset($config_SMTP_sec))	$tab['SMTP_sec']	= $config_SMTP_sec ;
-			if(isset($config_SMTP_user))	$tab['SMTP_user']	= $config_SMTP_user ;
-			if(isset($config_SMTP_pwd))	$tab['SMTP_pwd']	= $config_SMTP_pwd ;
 		}
 
 		/******************************************/
