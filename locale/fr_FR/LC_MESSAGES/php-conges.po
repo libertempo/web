@@ -3,17 +3,17 @@ msgstr ""
 "Project-Id-Version: php-conges\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-11 03:37+0100\n"
-"PO-Revision-Date: 2012-02-24 15:44+0100\n"
-"Last-Translator: Laurent <laurent.ghys@gmail.com>\n"
+"PO-Revision-Date: 2015-06-18 21:56+0100\n"
+"Last-Translator: Wouldsmina <wouldsmina@gmail.com>\n"
 "Language-Team: HoLbLiN <contact@holblin.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-KeywordsList: _;gettext;gettext_noop\n"
 "X-Poedit-Basepath: ../../../\n"
-"X-Poedit-Language: French\n"
-"X-Poedit-Country: FRANCE\n"
 "X-Poedit-SourceCharset: utf-8\n"
+"Language: fr_FR\n"
+"X-Generator: Poedit 1.7.5\n"
 "X-Poedit-SearchPath-0: .\n"
 
 msgid "langue"
@@ -416,7 +416,7 @@ msgid "user_suppr_demande_titre"
 msgstr "Suppression demande de congés ."
 
 msgid "resp_menu_titre"
-msgstr "MODE RESPONSABLE :"
+msgstr "MODE RESPONSABLE"
 
 msgid "resp_menu_button_retour_main"
 msgstr "Page Principale"
@@ -446,7 +446,7 @@ msgid "resp_etat_users_imprim"
 msgstr "Édition Papier"
 
 msgid "resp_traite_demandes_titre"
-msgstr "Traitement des demandes de congés :"
+msgstr "Traitement des demandes de congés"
 
 msgid "resp_traite_demandes_aucune_demande"
 msgstr "Aucune demande de congés en cours dans la base de données ..."
@@ -467,16 +467,16 @@ msgid "resp_ajout_conges_nb_jours_ajout"
 msgstr "NB jours à ajouter"
 
 msgid "resp_ajout_conges_ajout_all"
-msgstr "Ajout global pour Tous :"
+msgstr "Ajout global pour Tous"
 
 msgid "resp_ajout_conges_nb_jours_all_1"
 msgstr "Nombre de jours de"
 
 msgid "resp_ajout_conges_nb_jours_all_2"
-msgstr "à ajouter à tous :"
+msgstr "à ajouter à tous"
 
 msgid "resp_ajout_conges_calcul_prop"
-msgstr "Calcul proportionnel à la quotité de chaque personne :"
+msgstr "Calcul proportionnel à la quotité de chaque personne"
 
 msgid "resp_ajout_conges_oui"
 msgstr "OUI"
@@ -494,7 +494,7 @@ msgid "resp_ajout_conges_nb_jours_groupe_1"
 msgstr "Nombre de jours de"
 
 msgid "resp_ajout_conges_nb_jours_groupe_2"
-msgstr "à ajouter au groupe :"
+msgstr "à ajouter au groupe"
 
 msgid "resp_ajout_conges_comment_periode_user"
 msgstr "ajout jour"
@@ -506,16 +506,16 @@ msgid "resp_ajout_conges_comment_periode_groupe"
 msgstr "ajout pour le groupe"
 
 msgid "resp_traite_user_titre"
-msgstr "Traitement de :"
+msgstr "Traitement de"
 
 msgid "resp_traite_user_new_conges"
-msgstr "Nouveau congé/Absence :"
+msgstr "Nouveau congé/Absence"
 
 msgid "resp_traite_user_etat_demandes"
-msgstr "État des demandes :"
+msgstr "État des demandes"
 
 msgid "resp_traite_user_etat_conges"
-msgstr "Historique des congés :"
+msgstr "Historique des congés"
 
 msgid "resp_traite_user_aucune_demande"
 msgstr "Aucune demande de congés pour cette personne dans la base de données ..."
@@ -581,16 +581,16 @@ msgid "admin_onglet_gestion_groupe"
 msgstr "Gestion des Groupes"
 
 msgid "admin_onglet_groupe_user"
-msgstr "Gestion Groupes <-> Utilisateurs"
+msgstr "Gestion Groupes / Utilisateurs"
 
 msgid "admin_onglet_user_groupe"
-msgstr "Gestion Utilisateurs <-> Groupes"
+msgstr "Gestion Utilisateurs / Groupes"
 
 msgid "admin_onglet_groupe_resp"
-msgstr "Gestion Groupes <-> Responsables"
+msgstr "Gestion Groupes / Responsables"
 
 msgid "admin_onglet_resp_groupe"
-msgstr "Gestion Responsables <-> Groupes"
+msgstr "Gestion Responsables / Groupes"
 
 msgid "admin_verif_param_invalides"
 msgstr "ATTENTION : certains champs saisis ne sont pas valides ......"
@@ -635,7 +635,7 @@ msgid "admin_users_password_2"
 msgstr "mot de passe 2"
 
 msgid "admin_new_users_titre"
-msgstr "Nouvel Utilisateur :"
+msgstr "Nouvel Utilisateur"
 
 msgid "admin_new_users_is_resp"
 msgstr "Droits Responsable ?"
@@ -659,7 +659,7 @@ msgid "admin_groupes_libelle"
 msgstr "libellé"
 
 msgid "admin_groupes_new_groupe"
-msgstr "Nouveau Groupe :"
+msgstr "Nouveau Groupe"
 
 msgid "admin_gestion_groupe_etat"
 msgstr "État des Groupes"
@@ -752,7 +752,7 @@ msgid "admin_sauve_db_file_to_restore"
 msgstr "Fichier à restaurer"
 
 msgid "admin_sauve_db_warning"
-msgstr "ATTENTION : toutes les données de la database php_conges vont être écrasées avant la restauration"
+msgstr "ATTENTION : toutes les données de la database Libertempo vont être écrasées avant la restauration"
 
 msgid "admin_sauve_db_do_restaure"
 msgstr "Lancer la Restauration"
@@ -842,7 +842,7 @@ msgid "saisie_conges_compter_jours"
 msgstr "Compter les jours"
 
 msgid "saisie_conges_nb_jours"
-msgstr "NB_Jours_Pris"
+msgstr "Nombre de jours "
 
 msgid "saisie_echange_titre_calendrier_1"
 msgstr "Jour d'absence ordinaire"
@@ -878,7 +878,7 @@ msgid "calendrier_legende_abs"
 msgstr "absence autre (mission, formation, maladie, ...)"
 
 msgid "calcul_nb_jours_nb_jours"
-msgstr "Nombre de jours à prendre :"
+msgstr "Nombre de jours à prendre"
 
 msgid "calcul_nb_jours_reportez"
 msgstr "reportez ce nombre dans la case"
@@ -902,10 +902,10 @@ msgid "mysql_db_connect_failed"
 msgstr "Impossible de se connecter à la base de données"
 
 msgid "cookies_obligatoires"
-msgstr "Il est nécessaire que votre navigateur accepte les <b>cookies</b> pour pouvoir vous connecter à PHP_CONGES."
+msgstr "Il est nécessaire que votre navigateur accepte les <b>cookies</b> pour pouvoir vous connecter."
 
 msgid "javascript_obligatoires"
-msgstr "Il est conseillé que votre navigateur accepte le <b>Javascript</b> pour utiliser PHP_CONGES."
+msgstr "Il est conseillé que votre navigateur accepte le <b>Javascript</b> pour utiliser Libertempo."
 
 msgid "login_passwd_incorrect"
 msgstr "ERREUR : Nom d'utilisateur et/ou mot de passe incorrect !!!"
@@ -938,7 +938,7 @@ msgid "verif_saisie_erreur_nb_bad"
 msgstr "ERREUR : mauvaise saisie : <b>le nombre saisi est invalide</b>"
 
 msgid "config_abs_titre"
-msgstr "Configuration des types d'absences gérées par PHP_CONGES"
+msgstr "Configuration des types d'absences"
 
 msgid "config_abs_comment_conges"
 msgstr "Les types d'absences listés ici sont des congés divers, décomptés chacun sur des comptes séparés."
@@ -953,10 +953,10 @@ msgid "config_abs_libelle_short"
 msgstr "libellé court"
 
 msgid "config_abs_add_type_abs"
-msgstr "ajouter un type d'absence :"
+msgstr "ajouter un type d'absence"
 
 msgid "config_abs_add_type_abs_comment"
-msgstr "Saisissez le type d'absence que vous voulez ajouter :"
+msgstr "Saisissez le type d'absence que vous voulez ajouter"
 
 msgid "config_abs_saisie_not_ok"
 msgstr "saisie incorrecte :"
@@ -977,13 +977,13 @@ msgid "config_abs_confirm_suppr_of"
 msgstr "Veuillez confirmer la suppression de"
 
 msgid "config_appli_titre_1"
-msgstr "Configuration de l'Application PHP_CONGES"
+msgstr "Configuration de l'Application"
 
 msgid "config_appli_titre_2"
-msgstr "Configuration de php_conges"
+msgstr "Configuration de Libertmpo"
 
 msgid "00_php_conges"
-msgstr "00 php_conges"
+msgstr "00 Libertempo"
 
 msgid "01_Serveur Web"
 msgstr "01 Serveur Web"
@@ -1034,13 +1034,13 @@ msgid "config_comment_installed_version"
 msgstr "numéro de version installée"
 
 msgid "config_comment_lang"
-msgstr "// LANGUE / LANGUAGE<br>//---------------------------<br>// fr = français<br>// test = seulement pour les développeurs de php_conges (only for php_conges developpers)"
+msgstr "// LANGUE / LANGUAGE<br>//---------------------------<br>// fr = français<br>// test = seulement pour les développeurs (only for developpers)"
 
 msgid "config_comment_URL_ACCUEIL_CONGES"
-msgstr "// URL DE BASE DE VOTRE INSTALLATION DE PHP_CONGES<br>//-------------------------------------------------<br>// URL de base de php_conges sur votre serveur (ce que vous devez taper pour obtenir la page d'authentification.<br>// (PAS terminé par un / et sans le index.php à la fin)<br>// URL_ACCUEIL_CONGES = \"http://monserveurweb.mondomaine/php_conges\""
+msgstr "// URL DE BASE DE VOTRE INSTALLATION<br>//-------------------------------------------------<br>// URL de base de Libertempo sur votre serveur (ce que vous devez taper pour obtenir la page d'authentification.<br>// (PAS terminé par un / et sans le index.php à la fin)<br>// URL_ACCUEIL_CONGES = \"http://monserveurweb.mondomaine/Libertempo\""
 
 msgid "config_comment_img_login"
-msgstr "// IMAGE DE LA PAGE DE CONNEXION<br>//---------------------------<br>// image qui apparaît en haut de la page d'authentification de php_conges"
+msgstr "// IMAGE DE LA PAGE DE CONNEXION<br>//---------------------------<br>// image qui apparaît en haut de la page d'authentification"
 
 msgid "config_comment_texte_img_login"
 msgstr "// TEXTE DE L'IMAGE<br>//-------------------<br>// texte de l'image"
@@ -1049,7 +1049,7 @@ msgid "config_comment_lien_img_login"
 msgstr "// LIEN DE L'IMAGE<br>//------------------<br>// URL où renvoie l'image de la page de connexion"
 
 msgid "config_comment_titre_calendrier"
-msgstr "Titre de la page calendrier de php_conges"
+msgstr "Titre de la page calendrier"
 
 msgid "config_comment_titre_user_index"
 msgstr "Titre des pages Utilisateur (sera suivi de l'identifiant de l'utilisateur)"
@@ -1061,13 +1061,13 @@ msgid "config_comment_titre_admin_index"
 msgstr "Titre des pages Administrateur"
 
 msgid "config_comment_auth"
-msgstr "// Authentification :<br>//---------------------<br>// si = FALSE : pas d'authentification au démarrage , il faut passer le paramètre login à l'appel de php_conges<br>// si = TRUE : la page d'authentification apparaît à l'appel de php_conges (TRUE est la valeur par défaut)"
+msgstr "// Authentification :<br>//---------------------<br>// si = FALSE : pas d'authentification au démarrage , il faut passer le paramètre login à l'appel de Libertempo<br>// si = TRUE : la page d'authentification apparaît à l'appel de Libertemp (TRUE est la valeur par défaut)"
 
 msgid "config_comment_how_to_connect_user"
 msgstr "// Comment vérifier l'identifiant et mot de passe des utilisateurs au démarrage :<br>//--------------------------------------------------------------------------<br>// si à \"dbconges\" : l'authentification des utilisateurs se fait dans la table users de la database db_conges<br>// si à \"ldap\"   : l'authentification des utilisateurs se fait dans un annuaire LDAP que l'on va interroger (cf config_ldap.php)<br>// si à \"CAS\"   : l'authentification des utilisateurs se fait sur un serveur CAS que l'on va interroger (cf config_CAS.php)<br>// attention : toute autre valeur que \"dbconges\" ou \"ldap\" ou \"CAS\" entraînera une erreur !!!"
 
 msgid "config_comment_export_users_from_ldap"
-msgstr "// Export des utilisateurs depuis LDAP :<br>//--------------------------------<br>// si = FALSE : les utilisateurs sont créés \"à la main\" directement dans php_conges (FALSE est la valeur par défaut)<br>// si = TRUE : les utilisateurs sont importés du serveur LDAP (grâce à une liste déroulante) (cf config_ldap.php)"
+msgstr "// Export des utilisateurs depuis LDAP :<br>//--------------------------------<br>// si = FALSE : les utilisateurs sont créés \"à la main\" directement dans Libertempo (FALSE est la valeur par défaut)<br>// si = TRUE : les utilisateurs sont importés du serveur LDAP (grâce à une liste déroulante) (cf config_ldap.php)"
 
 msgid "config_comment_user_saisie_demande"
 msgstr "// DEMANDES DE CONGÉS<br>//---------------------------------------<br>// si à FALSE : pas de saisie de demande par l'utilisateur, pas de gestion des demandes par le responsable<br>// si à TRUE : saisie de demande par l'utilisateur, et gestion des demandes par le responsable (TRUE est la valeur par défaut)"
@@ -1082,7 +1082,7 @@ msgid "config_comment_user_ch_passwd"
 msgstr "// CHANGER SON MOT DE PASSE<br>//---------------------------------------<br>// si à FALSE : l'utilisateur ne peut pas changer son mot de passe<br>// si à TRUE : l'utilisateur peut changer son mot de passe (TRUE est la valeur par défaut)"
 
 msgid "config_comment_responsable_virtuel"
-msgstr "// RESPONSABLE GÉNÉRIQUE VIRTUEL OU NON<br>//-------------------------------------------<br>// si à FALSE : le responsable qui traite les congés des personnels est une personne réelle (utilisateur de php_conges) (FALSE est la valeur par défaut)<br>// si à TRUE : le responsable qui traite les congés des personnels est un utilisateur générique virtuel (identifiant=conges)"
+msgstr "// RESPONSABLE GÉNÉRIQUE VIRTUEL OU NON<br>//-------------------------------------------<br>// si à FALSE : le responsable qui traite les congés des personnels est une personne réelle (utilisateur de Libertempo) (FALSE est la valeur par défaut)<br>// si à TRUE : le responsable qui traite les congés des personnels est un utilisateur générique virtuel (identifiant=conges)"
 
 msgid "config_comment_resp_affiche_calendrier"
 msgstr "// AFFICHAGE DU BOUTON DE CALENDRIER POUR LE RESPONSABLE<br>//--------------------------------------------------------------------------------------<br>// si à FALSE : les responsables n'ont pas la possibilité d'afficher le calendrier des congés<br>// si à TRUE : les responsables ont la possibilité d'afficher le calendrier des congés (TRUE est la valeur par défaut)"
@@ -1100,10 +1100,10 @@ msgid "config_comment_admin_change_passwd"
 msgstr "// CHANGER LE MOT DE PASSE D'UN UTILISATEUR<br>//-----------------------------------------<br>// si à FALSE : l'administrateur ne peut pas changer le mot de passe des utilisateurs<br>// si à TRUE : l'administrateur peut changer le mot de passe des utilisateurs (TRUE est la valeur par défaut)"
 
 msgid "config_comment_affiche_bouton_config_pour_admin"
-msgstr "// ACCÈS À LA CONFIG DE L'APPLI POUR LES ADMINS<br>//-------------------------------------------------------<br>// si à FALSE : le bouton d'accès à la configuration de php_conges n'apparaît pas sur la page administrateur (FALSE est la valeur par défaut)<br>// si à TRUE : le bouton d'accès à la configuration de php_conges apparaît sur la page administrateur"
+msgstr "// ACCÈS À LA CONFIG DE L'APPLI POUR LES ADMINS<br>//-------------------------------------------------------<br>// si à FALSE : le bouton d'accès à la configuration de Libertempo n'apparaît pas sur la page administrateur (FALSE est la valeur par défaut)<br>// si à TRUE : le bouton d'accès à la configuration de php_conges apparaît sur la page administrateur"
 
 msgid "config_comment_affiche_bouton_config_absence_pour_admin"
-msgstr "// ACCÈS À LA CONFIG DES TYPES D'ABSENCES DE L'APPLI POUR LES ADMINS<br>//---------------------------------------------------------------------<br>// si à FALSE : le bouton d'accès à la configuration des types d'absences gérées par php_conges n'apparaît pas sur la page administrateur (FALSE est la valeur par défaut)<br>// si à TRUE : le bouton d'accès à la configuration des types d'absences gérées par php_conges apparaît sur la page administrateur"
+msgstr "// ACCÈS À LA CONFIG DES TYPES D'ABSENCES DE L'APPLI POUR LES ADMINS<br>//---------------------------------------------------------------------<br>// si à FALSE : le bouton d'accès à la configuration des types d'absences gérées par Libertempo n'apparaît pas sur la page administrateur (FALSE est la valeur par défaut)<br>// si à TRUE : le bouton d'accès à la configuration des types d'absences gérées par Libertempo apparaît sur la page administrateur"
 
 msgid "config_comment_mail_new_demande_alerte_resp"
 msgstr "// ENVOI DE MAIL AU RESPONSABLE POUR UNE NOUVELLE DEMANDE :<br>//----------------------------------------------------------<br>// si à FALSE : le responsable ne reçoit pas de mail lors d'une nouvelle demande de congés par un utilisateur (FALSE est la valeur par défaut)<br>// si à TRUE : le responsable reçoit un mail d'avertissement à chaque nouvelle demande de congés d'un utilisateur"
@@ -1118,10 +1118,10 @@ msgid "config_comment_mail_annul_conges_alerte_user"
 msgstr "// ENVOI DE MAIL AU USER POUR L'ANNULATION PAR LE RESP D'UN CONGÉ DÉJÀ VALIDE :<br>//---------------------------------------------------------------------------------<br>// si à FALSE : l'utilisateur ne reçoit pas de mail lorsque le responsable lui annule un congé (FALSE est la valeur par défaut)<br>// si à TRUE : l'utilisateur reçoit un mail d'avertissement à chaque fois que le responsable annule un de ses congés."
 
 msgid "config_comment_serveur_smtp"
-msgstr "// SERVEUR SMTP À UTILISER<br>//---------------------------------------<br>// adresse IP ou nom du serveur SMTP à utiliser pour envoyer les mails<br>// Si vous ne maîtrisez pas le serveur SMTP ou si, à l'utilisation, vous avez une erreur de connexion au serveur, laissez cette variable vide (\"\")"
+msgstr "// SERVEUR SMTP À UTILISER<br>//---------------------------------------<br>//ne pas utiliser!!! SMTP à configurer dans le fichier cfg/config_SMTP.php, laissez cette variable vide (\"\")"
 
 msgid "config_comment_where_to_find_user_email"
-msgstr "// OU TROUVER LES ADRESSES MAIL DES UTILISATEURS<br>//-------------------------------------------------<br>// plusieurs possibilités pour retrouver les adresses mail des utilisateurs :<br>// si à \"dbconges\" : le mail des utilisateurs se trouve dans la table users de la database db_conges<br>// si à \"ldap\"   : le mail des utilisateurs se trouve dans un annuaire LDAP que l'on va interroger (cf fichier config_ldap.php)<br>// ATTENTION : toute autre valeur que \"dbconges\" ou \"ldap\" entraînera une erreur !!!"
+msgstr "// OU TROUVER LES ADRESSES MAIL DES UTILISATEURS<br>//-------------------------------------------------<br>// plusieurs possibilités pour retrouver les adresses mail des utilisateurs :<br>// si à \"dbconges\" : le mail des utilisateurs se trouve dans la table users de la database <br>// si à \"ldap\"   : le mail des utilisateurs se trouve dans un annuaire LDAP que l'on va interroger (cf fichier config_ldap.php)<br>// ATTENTION : toute autre valeur que \"dbconges\" ou \"ldap\" entraînera une erreur !!!"
 
 msgid "config_comment_samedi_travail"
 msgstr "// GESTION DES SAMEDI COMME TRAVAILLES OU NON<br>//--------------------------------------------------------------------------------------<br>// on définit ici si les samedis sont travaillés ou pas.<br>// si à TRUE : le jour considéré est travaillé ...<br>// si à FALSE : le jour considéré n'est pas travaillé (weekend)... (FALSE est la valeur par défaut)"
@@ -1148,7 +1148,7 @@ msgid "config_comment_user_echange_rtt"
 msgstr "// ÉCHANGE RTT OU TEMPS PARTIEL AUTORISÉ POUR LES UTILISATEURS<br>//---------------------------------------------------------------------------------------<br>// on autorise ou non l'utilisateur à inverser ponctuellement un jour travaillé et un jour d'absence (de RTT ou temps partiel)<br>// si à FALSE : pas d'échange autorisé pour l'utilisateur (FALSE est la valeur par défaut)<br>// si à TRUE : échange autorisé pour l'utilisateur"
 
 msgid "config_comment_affiche_bouton_calcul_nb_jours_pris"
-msgstr "// BOUTON DE CALCUL DU NB DE JOURS PRIS<br>//--------------------------------------------------------------------------------------<br>// si à FALSE : on n'affiche pas le bouton du calcul du nb de jours pris lors de la saisie d'une nouvelle absence<br>// si à TRUE : affiche le bouton du calcul du nb de jours pris lors de la saisie d'une nouvelle absence (TRUE est la valeur par défaut)<br>// ATTENTION : si à TRUE : les jours chômés doivent être saisis (voir le module d'administration)"
+msgstr "// BOUTON DE CALCUL DU NB DE JOURS PRIS<br>//--------------------------------------------------------------------------------------<br>// si à FALSE : on n'affiche pas le bouton du calcul nb de jours pris lors de la saisie d'une nouvelle absence<br>// si à TRUE : affiche le bouton du calcul du nb de jours pris lors de la saisie d'une nouvelle absence (TRUE est la valeur par défaut)<br>// ATTENTION : si à TRUE : les jours chômés doivent être saisis (voir le module d'administration)"
 
 msgid "config_comment_rempli_auto_champ_nb_jours_pris"
 msgstr "// REMPLISSAGE AUTOMATIQUE DU CHAMP LORS DE L'APPEL AU CALCUL DU NB DE JOURS PRIS<br>//--------------------------------------------------------------------------------------<br>// si à FALSE : l'appel au bouton de calcul du nb de jours pris ne remplit pas automatiquement le champ du formulaire (saisi à la main)<br>// si à TRUE : l'appel au bouton de calcul du nb de jours pris remplit automatiquement le champ du formulaire (TRUE est la valeur par défaut)"
@@ -1169,22 +1169,22 @@ msgid "config_comment_light_grey_bgcolor"
 msgstr "// couleurs diverses (gris clair)"
 
 msgid "config_comment_php_conges_fpdf_include_path"
-msgstr "// CHEMIN VERS LE RÉPERTOIRE DE fpdf<br>//-------------------------------------------------------<br>// On définit ici le chemin pour accéder au répertoire de la librairie PHP \"fpdf\".<br>// Le chemin doit être relatif depuis la racine de l'application php_conges."
+msgstr "// CHEMIN VERS LE RÉPERTOIRE DE fpdf<br>//-------------------------------------------------------<br>// On définit ici le chemin pour accéder au répertoire de la librairie PHP \"fpdf\".<br>// Le chemin doit être relatif à la racine de l'application Libertempo."
 
 msgid "config_comment_php_conges_phpmailer_include_path"
-msgstr "// CHEMIN VERS LE RÉPERTOIRE DE phpmailer<br>//-------------------------------------------------------<br>// On définit ici le chemin pour accéder au répertoire de la librairie PHP \"phpmailer\".<br>// Le chemin doit être relatif depuis la racine de l'application php_conges."
+msgstr "// CHEMIN VERS LE RÉPERTOIRE DE phpmailer<br>//-------------------------------------------------------<br>// On définit ici le chemin pour accéder au répertoire de la librairie PHP \"phpmailer\".<br>// Le chemin doit être relatif depuis la racine de l'application Libertempo."
 
 msgid "config_comment_php_conges_cas_include_path"
-msgstr "// CHEMIN VERS LE RÉPERTOIRE DE cas<br>//-------------------------------------------------------<br>// On définit ici le chemin pour accéder au répertoire de la librairie PHP \"CAS\".<br>// Le chemin doit être relatif depuis la racine de l'application php_conges."
+msgstr "// CHEMIN VERS LE RÉPERTOIRE DE cas<br>//-------------------------------------------------------<br>// On définit ici le chemin pour accéder au répertoire de la librairie PHP \"CAS\".<br>// Le chemin doit être relatif depuis la racine de l'application Libertempo."
 
 msgid "config_comment_php_conges_authldap_include_path"
-msgstr "// CHEMIN VERS LE fichier authLDAP.php<br>//-------------------------------------------------------<br>// On définit ici le chemin pour accéder au répertoire de la librairie PHP \"authLDAP.php\".<br>// Le chemin doit être relatif depuis la racine de l'application php_conges."
+msgstr "// CHEMIN VERS LE fichier authLDAP.php<br>//-------------------------------------------------------<br>// On définit ici le chemin pour accéder au répertoire de la librairie PHP \"authLDAP.php\".<br>// Le chemin doit être relatif depuis la racine de l'application Libertempo."
 
 msgid "install_le_fichier"
 msgstr "Le fichier"
 
 msgid "install_bad_fichier"
-msgstr "est introuvable dans le répertoire racine du nouveau php_conges, ou n'a pas des droits en lecture suffisants"
+msgstr "est introuvable dans le répertoire racine de Libertempo, ou n'a pas des droits en lecture suffisants"
 
 msgid "install_read_the_file"
 msgstr "reportez vous au fichier"
@@ -1202,10 +1202,10 @@ msgid "install_verifiez_priv_mysql"
 msgstr "Assurez vous que la base de données, l'utilisateur et les privilèges MySQL ont bien été créés."
 
 msgid "install_install_phpconges"
-msgstr "Installation de php_conges"
+msgstr "Installation de Libertempo"
 
 msgid "install_index_titre"
-msgstr "Application PHP_CONGES"
+msgstr "Application Libertempo"
 
 msgid "install_no_prev_version_found"
 msgstr "Aucune version antérieure n'a pu être déterminée"
@@ -1235,7 +1235,7 @@ msgid "install_config_types_abs"
 msgstr "configurer les types de congés à gérer"
 
 msgid "install_install_titre"
-msgstr "Installation de l'application PHP_CONGES"
+msgstr "Installation de l'application Libertempo"
 
 msgid "install_impossible_sur_db"
 msgstr "impossible sur la base de données"
@@ -1262,7 +1262,7 @@ msgid "install_maj_titre_1"
 msgstr "Mise à jour"
 
 msgid "install_maj_titre_2"
-msgstr "Mise à jour de l'application PHP_CONGES"
+msgstr "Mise à jour de l'application Libertempo"
 
 msgid "install_maj_passer_de"
 msgstr "vous êtes sur le point de passer de la version"
@@ -1319,7 +1319,7 @@ msgid "install_remove_fichier"
 msgstr "est désormais inutile... Veuillez le supprimer !"
 
 msgid "install_config_mail"
-msgstr "configurer les mails envoyés par php_conges"
+msgstr "configurer les mails envoyés"
 
 msgid "button_export_1"
 msgstr "Exporter ical / vcal"
@@ -1376,7 +1376,7 @@ msgid "mail_prem_valid_conges_comment"
 msgstr "message d'alerte à l'utilisateur en cas de première validation d'une demande de congés par le responsable (si on utilise la double validation)."
 
 msgid "mail_remplace_url_accueil_comment"
-msgstr "__URL_ACCUEIL_CONGES__ sera automatiquement remplacé par un lien vers votre application php_conges."
+msgstr "__URL_ACCUEIL_CONGES__ sera automatiquement remplacé par un lien vers votre application Libertempo."
 
 msgid "mail_remplace_sender_name_comment"
 msgstr "__SENDER_NAME__ sera automatiquement remplacé par le nom et prénom de l'expéditeur."
@@ -1388,10 +1388,10 @@ msgid "mail_remplace_retour_ligne_comment"
 msgstr "__RETOUR_LIGNE__ sera automatiquement remplacé par un passage à la ligne."
 
 msgid "config_mail_titre"
-msgstr "Configuration des mails envoyés par PHP_CONGES"
+msgstr "Configuration des mails envoyés"
 
 msgid "config_mail_alerte_config"
-msgstr "Cette page ne sert que si l'envoi de mail par php_conges est validé (voir configuration de l'application)."
+msgstr "Cette page ne sert que si l'envoi de mail par Libertempo est validé (voir configuration de l'application)."
 
 msgid "config_mail_subject"
 msgstr "sujet du mail"
@@ -1400,13 +1400,13 @@ msgid "config_mail_body"
 msgstr "corps du mail"
 
 msgid "admin_button_config_mail_1"
-msgstr "Configuration des mails envoyés par php_conges"
+msgstr "Configuration des mails envoyés"
 
 msgid "admin_button_config_mail_2"
 msgstr "Config Mails"
 
 msgid "config_comment_affiche_bouton_config_mail_pour_admin"
-msgstr "// ACCÈS À LA CONFIG DES MAILS DE L'APPLI POUR LES ADMINS<br>//---------------------------------------------------------------------<br>// si à FALSE : le bouton d'accès à la configuration des mails envoyés par php_conges n'apparaît pas sur la page administrateur (FALSE est la valeur par défaut)<br>// si à TRUE : le bouton d'accès à la configuration des mails envoyés par php_conges apparaît sur la page administrateur"
+msgstr "// ACCÈS À LA CONFIG DES MAILS DE L'APPLI POUR LES ADMINS<br>//---------------------------------------------------------------------<br>// si à FALSE : le bouton d'accès à la configuration des mails envoyés par Libertempo n'apparaît pas sur la page administrateur (FALSE est la valeur par défaut)<br>// si à TRUE : le bouton d'accès à la configuration des mails envoyés par Libertempo apparaît sur la page administrateur"
 
 msgid "config_comment_mail_prem_valid_conges_alerte_user"
 msgstr "// ENVOI DE MAIL À L'UTILISATEUR ET AU GRAND RESPONSABLE APRÈS LA PREMIÈRE VALIDATION D'UNE DEMANDE (cas d'une double validation de demande) :<br>//----------------------------------------------------------------<br>// si à FALSE : l'utilisateur et le grand responsable ne reçoivent pas de mail lorsque le responsable valide une demande (première validation). (FALSE est la valeur par défaut)<br>// si à TRUE : l'utilisateur et le grand responsable reçoivent un mail d'alerte lorsque le responsable valide une demande (première validation)."
@@ -1424,7 +1424,7 @@ msgid "admin_gestion_groupe_grand_resp_responsables"
 msgstr "Grands Responsables du Groupe"
 
 msgid "divers_grand_responsable_maj_1"
-msgstr "Grand_Responsable"
+msgstr "Grand Responsable"
 
 msgid "resp_traite_demandes_titre_tableau_1"
 msgstr "Demandes à valider"
@@ -1433,7 +1433,7 @@ msgid "resp_traite_demandes_titre_tableau_2"
 msgstr "Demandes en deuxième validation"
 
 msgid "resp_traite_user_etat_demandes_2_valid"
-msgstr "État des demandes en deuxième validation :"
+msgstr "État des demandes en deuxième validation"
 
 msgid "resp_etat_users_titre_double_valid"
 msgstr "Utilisateurs avec double validation des demandes"
@@ -1448,7 +1448,7 @@ msgid "imprim_calendrier_titre"
 msgstr "Choisissez le mois à imprimer"
 
 msgid "install_test_mail"
-msgstr "tester l'envoi de mails de php_conges"
+msgstr "tester l'envoi de mails de Libertempo"
 
 msgid "session_pas_session_ouverte"
 msgstr "Pas de session ouverte."
@@ -1532,7 +1532,7 @@ msgid "config_logs"
 msgstr "voir les logs"
 
 msgid "config_logs_titre_1"
-msgstr "Gestion des logs de PHP_CONGES"
+msgstr "Gestion des logs de Libertempo"
 
 msgid "config_logs_titre_2"
 msgstr "Gestion des logs"
@@ -1550,7 +1550,7 @@ msgid "form_delete_logs"
 msgstr "Vider les Logs"
 
 msgid "confirm_vider_logs"
-msgstr "Voulez-vous vraiment effacer tous les LOGS de PHP_CONGES ??"
+msgstr "Voulez-vous vraiment effacer tous les LOGS de Libertempo ??"
 
 msgid "no_logs_in_db"
 msgstr "Pas de Log dans la DataBase !"
@@ -1571,7 +1571,7 @@ msgid "config_comment_calendrier_select_all_groups"
 msgstr "// AFFICHAGE DU CALENDRIER : Sélection du groupe : choix entre tous les groupes ou non<br>//--------------------------------------------------------------------------------------------<br>// si la gestion des groupes est active, on définit ici si le choix du groupe à afficher dans le calendrier inclut tous les groupes ou pas.<br>// si à FALSE : seuls les groupes de l'utilisateur (ou dont il est responsable) apparaissent dans la sélection sur le calendrier des congés (FALSE est la valeur par défaut)<br>// si à TRUE : tous les groupes apparaissent dans la sélection sur le calendrier des congés"
 
 msgid "config_comment_consult_calendrier_sans_auth"
-msgstr "// AFFICHAGE DU CALENDRIER SANS AUTHENTIFICATION<br>//--------------------------------------------------------------------------------------------<br>// si à FALSE : Il n'est pas possible d'afficher le calendrier des congés sans être connecté à PHP_CONGES. (FALSE est la valeur par défaut)<br>// si à TRUE : Possibilité de consulter le calendrier des congés sans se connecter à PHP_CONGES (via un lien sur la page d'accueil, ou avec l'URL directe)."
+msgstr "// AFFICHAGE DU CALENDRIER SANS AUTHENTIFICATION<br>//--------------------------------------------------------------------------------------------<br>// si à FALSE : Il n'est pas possible d'afficher le calendrier des congés sans être connecté à Libertempo. (FALSE est la valeur par défaut)<br>// si à TRUE : Possibilité de consulter le calendrier des congés sans se connecter à Libertempo (via un lien sur la page d'accueil, ou avec l'URL directe)."
 
 msgid "config_comment_resp_ajoute_conges"
 msgstr "// AJOUT DE JOURS DE CONGÉS PAR LE RESPONSABLE<br>//--------------------------------------------------------------------------------------------<br>// si à FALSE : Le responsable ne peut pas ajouter (créditer) de jours de congés à ses utilisateurs.<br>// si à TRUE : Le responsable peut ajouter (créditer) des jours de congés à ses utilisateurs. (FALSE est la valeur par défaut)"
@@ -1697,7 +1697,7 @@ msgid "divers_reliquat"
 msgstr "reliquat"
 
 msgid "dont_reliquat"
-msgstr "Dont reliquat : "
+msgstr "Dont reliquat"
 
 msgid "button_cloture"
 msgstr "Changement Exercice"
@@ -1763,9 +1763,16 @@ msgid "hr_affiche_utilisateurs_inactifs"
 msgstr "Afficher/Masquer les utilisateurs inactifs"
 
 msgid "config_comment_print_disable_users"
-msgstr "// AFFICHAGE DES USER DESACTIVES : <br>//--------------------------------------------------------------------------------------------<br>// si à FALSE : pas d'affichage, dans la liste des utilisateurs, des utilisateurs qui ont été désactivés. (FALSE est la valeur par défaut)<br>// si à TRUE : affichage, dans la liste des utilisateurs, des utilisateurs qui on été désactivés."
+msgstr "// AFFICHAGE DES UTILISATEURS DESACTIVES : <br>//--------------------------------------------------------------------------------------------<br>// si à FALSE : pas d'affichage, dans la liste des utilisateurs, des utilisateurs qui ont été désactivés. (FALSE est la valeur par défaut)<br>// si à TRUE : affichage, dans la liste des utilisateurs, des utilisateurs qui on été désactivés."
 
 msgid "config_comment_affiche_jours_current_month_calendrier"
 msgstr "// AFFICHAGE DU NB DE JOURS PRIS DURANT LE MOIS AFFICHé (POUR CHAQUE TYPE D'ABSENCE) : <br>//--------------------------------------------------------------------------------------------<br>// si à FALSE : pas d'affichage, dans le calendrier, pour chaque utilisateur, pour chaque type de congé, à coté du solde, du nb de jours pris durant le mois affiché. (FALSE est la valeur par défaut)<br>// si à TRUE : affichage, dans le calendrier, pour chaque utilisateur, pour chaque type de congé, à coté du solde, du nb de jours pris durant le mois affiché."
 
+msgid "db_configuration"
+msgstr "Configuration de la base de données"
 
+msgid "db_configuration_ok"
+msgstr "génération du fichier de configuration de la base de données effectuée avec succès"
+
+msgid "tableau_recap"
+msgstr "Tableau récapitulatif"

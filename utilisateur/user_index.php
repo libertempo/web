@@ -102,7 +102,7 @@ if($_SESSION['config']['where_to_find_user_email']=="ldap"){ include CONFIG_PATH
 	/*********************************/
 
 	echo "<div class=\"wrapper\">\n";
-	echo '<h3>'._('Tableau récapitulatif ').'</h3>';
+	echo '<h3>'._('tableau_recap').'</h3>';
 	affiche_tableau_bilan_conges_user( $_SESSION['userlogin'] );
 	echo "<hr/>\n";
 	echo "</div>\n";

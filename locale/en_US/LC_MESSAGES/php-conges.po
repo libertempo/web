@@ -3,17 +3,17 @@ msgstr ""
 "Project-Id-Version: php-conges\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-11 03:37+0100\n"
-"PO-Revision-Date: 2012-02-24 15:44+0100\n"
-"Last-Translator: Laurent <laurent.ghys@gmail.com>\n"
+"PO-Revision-Date: 2015-06-19 18:53+0100\n"
+"Last-Translator: Wouldsmina <wouldsmina@gmail.com>\n"
 "Language-Team: HoLbLiN <contact@holblin.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-KeywordsList: _;gettext;gettext_noop\n"
 "X-Poedit-Basepath: ../../../\n"
-"X-Poedit-Language: English\n"
-"X-Poedit-Country: UNITED STATES\n"
 "X-Poedit-SourceCharset: utf-8\n"
+"Language: en_US\n"
+"X-Generator: Poedit 1.7.5\n"
 "X-Poedit-SearchPath-0: .\n"
 
 msgid "langue"
@@ -41,7 +41,7 @@ msgid "juillet"
 msgstr "July"
 
 msgid "aout"
-msgstr "AoÃ»t"
+msgstr "August"
 
 msgid "septembre"
 msgstr "September"
@@ -53,7 +53,7 @@ msgid "novembre"
 msgstr "November"
 
 msgid "decembre"
-msgstr "DÃ©cember"
+msgstr "December"
 
 msgid "lundi"
 msgstr "monday"
@@ -149,10 +149,10 @@ msgid "button_editions"
 msgstr "Paper Prints"
 
 msgid "button_admin_mode"
-msgstr "Administrator Mode"
+msgstr "Administrator"
 
 msgid "button_calendar"
-msgstr "Display calendar"
+msgstr "calendar"
 
 msgid "form_ok"
 msgstr "OK"
@@ -191,7 +191,7 @@ msgid "form_day"
 msgstr "full day"
 
 msgid "form_close_window"
-msgstr "Close this Window"
+msgstr "Close"
 
 msgid "form_save_modif"
 msgstr "Save modifications"
@@ -368,7 +368,7 @@ msgid "user_onglet_change_passwd"
 msgstr "Change password"
 
 msgid "user_echange_rtt"
-msgstr "Exchange the rtt day, part-time / day worked"
+msgstr "Exchange part-time / day worked"
 
 msgid "user_etat_demandes"
 msgstr "State of the current demands"
@@ -407,7 +407,7 @@ msgid "user_modif_demande_titre"
 msgstr "Modification of a demand/absence."
 
 msgid "user_suppr_demande_titre"
-msgstr "Deletion holidays demand ."
+msgstr "Deletion holidays demand."
 
 msgid "resp_menu_titre"
 msgstr "PERSON IN CHARGE MODE :"
@@ -452,7 +452,7 @@ msgid "resp_traite_demandes_motif_refus"
 msgstr "Refusal<br>motive"
 
 msgid "resp_ajout_conges_titre"
-msgstr "Holidays adding :"
+msgstr "Holidays adding"
 
 msgid "resp_ajout_conges_nb_jours_ajout"
 msgstr "NB of days to add"
@@ -539,13 +539,13 @@ msgid "admin_button_close_window_1"
 msgstr "Closing of the Administrator mode"
 
 msgid "admin_button_config_1"
-msgstr "Configuration of php_conges"
+msgstr "Configuration of Libertempo"
 
 msgid "admin_button_config_2"
 msgstr "Configuration"
 
 msgid "admin_button_config_abs_1"
-msgstr "Configuration of the absence types managed by php_conges"
+msgstr "Configuration of the absence types managed"
 
 msgid "admin_button_config_abs_2"
 msgstr "Config Absences"
@@ -743,7 +743,7 @@ msgid "admin_sauve_db_file_to_restore"
 msgstr "File to restore"
 
 msgid "admin_sauve_db_warning"
-msgstr "WARNING : all the data of the php_conges database will be overriden before the restoration"
+msgstr "WARNING : all the data of the Libertempo database will be overriden before the restoration"
 
 msgid "admin_sauve_db_do_restaure"
 msgstr "Run the Restoration"
@@ -893,10 +893,10 @@ msgid "mysql_db_connect_failed"
 msgstr "Impossible to get connected to the database"
 
 msgid "cookies_obligatoires"
-msgstr "Your navigator must accept the <b>cookies</b> to be able to connect yourself to PHP_CONGES."
+msgstr "Your navigator must accept the <b>cookies</b> to be able to connect yourself to Libertempo."
 
 msgid "javascript_obligatoires"
-msgstr "Your navigator should accept the <b>Javascript</b> to use PHP_CONGES."
+msgstr "Your navigator should accept the <b>Javascript</b> to use Libertempo."
 
 msgid "login_passwd_incorrect"
 msgstr "ERROR : User name and/or wrong password !!!"
@@ -929,7 +929,7 @@ msgid "verif_saisie_erreur_nb_bad"
 msgstr "ERROR : bad input : <b>the input number is invalid</b>"
 
 msgid "config_abs_titre"
-msgstr "Configuration of absence types managed by PHP_CONGES"
+msgstr "Configuration of absence types managed by Libertempo"
 
 msgid "config_abs_comment_conges"
 msgstr "Absence types listed here are diverse holidays, each deducted on seperate accounts."
@@ -968,13 +968,13 @@ msgid "config_abs_confirm_suppr_of"
 msgstr "Please confirm the deletion of"
 
 msgid "config_appli_titre_1"
-msgstr "Configuration of the PHP_CONGES Application"
+msgstr "Configuration of Libertempo application"
 
 msgid "config_appli_titre_2"
-msgstr "Configuration of php_conges"
+msgstr "Configuration of Libertempo"
 
 msgid "00_php_conges"
-msgstr "00 php_conges"
+msgstr "00 Libertempo"
 
 msgid "01_Serveur Web"
 msgstr "01 Web Server"
@@ -1025,13 +1025,13 @@ msgid "config_comment_installed_version"
 msgstr "release number installed"
 
 msgid "config_comment_lang"
-msgstr "// LANGUE / LANGUAGE<br>//---------------------------<br>// fr = franÃ§ais<br>// test = seulement pour les dÃ©veloppeurs de php_conges (only for php_conges developpers)"
+msgstr "// LANGUE / LANGUAGE<br>//---------------------------<br>// en = English<br>// test = only for developpers"
 
 msgid "config_comment_URL_ACCUEIL_CONGES"
-msgstr "// MAIN URL OF YOUR INSTALLATION OF PHP_CONGES<br>//-------------------------------------------------<br>// Main URL of php_conges on your server (what you must type to get to authentification page.<br>// (do NOT finish by a / and without the index.php at the end)<br>// URL_ACCUEIL_CONGES = \"http://mywebserver.mydomain/php_conges\""
+msgstr "// MAIN URL OF YOUR INSTALLATION OF Libertempo <br>//-------------------------------------------------<br>// Main URL of Libertempo on your server (what you must type to get to authentification page.<br>// (do NOT finish by a / and without the index.php at the end)<br>// URL_ACCUEIL_CONGES = \"http://mywebserver.mydomain/php_conges\""
 
 msgid "config_comment_img_login"
-msgstr "// PICTURE OF LOGIN PAGE<br>//---------------------------<br>// picture that displays on to of authentification page of php_conges"
+msgstr "// PICTURE OF LOGIN PAGE<br>//---------------------------<br>// picture that displays on to of authentification page of Libertempo"
 
 msgid "config_comment_texte_img_login"
 msgstr "// TEXTE DE L'IMAGE<br>//-------------------<br>// texte de l'image"
@@ -1040,7 +1040,7 @@ msgid "config_comment_lien_img_login"
 msgstr "// PICTURE LINK<br>//------------------<br>// URL where sends the picture of the login page"
 
 msgid "config_comment_titre_calendrier"
-msgstr "Calendar title page of php_conges"
+msgstr "Calendar title page"
 
 msgid "config_comment_titre_user_index"
 msgstr "User title pages (will be followed by the user login)"
@@ -1052,13 +1052,13 @@ msgid "config_comment_titre_admin_index"
 msgstr "Administrator title pages"
 
 msgid "config_comment_auth"
-msgstr "// Authentification :<br>//---------------------<br>// if = FALSE : no authentification at start , one must pass the login parameter during call of php_conges<br>// if = TRUE  : authentification page displays during call of php_conges (TRUE is the default value)"
+msgstr "// Authentication :<br>//---------------------<br>// if = FALSE : no authentification at start , one must pass the login parameter during call of Libertempo<br>// if = TRUE  : authentication page displays during call of Libertempo (TRUE is the default value)"
 
 msgid "config_comment_how_to_connect_user"
 msgstr "// How to verify the users login and password at start :<br>//--------------------------------------------------------------------------<br>// if at \"dbconges\" : the users authentification is done in user table of the db_conges database<br>// if at \"ldap\"     : the users authentification is done in a LDAP phone book that on will question (cf config_ldap.php)<br>// if at \"CAS\"      : the users authentification is done on a CAS server that one will question (cf config_CAS.php)<br>// warning : all other value than \"dbconges\" or \"ldap\" or \"CAS\" will lead to an error !!!"
 
 msgid "config_comment_export_users_from_ldap"
-msgstr "// Export of Users from LDAP :<br>//--------------------------------<br>// if = FALSE : the users are created \"manually\" directly in php_conges (FALSE is the default value)<br>// if = TRUE  : the users are imported from the LDAP server (with the help of a drop-down list) (cf config_ldap.php)"
+msgstr "// Export of Users from LDAP :<br>//--------------------------------<br>// if = FALSE : the users are created \"manually\" directly in Libertempo (FALSE is the default value)<br>// if = TRUE  : the users are imported from the LDAP server (with the help of a drop-down list) (cf config_ldap.php)"
 
 msgid "config_comment_user_saisie_demande"
 msgstr "//  HOLIDAYS DEMANDS<br>//---------------------------------------<br>// if at FALSE : no demand input by user, no demand management by the manager<br>// if at TRUE : demand input by user, and demand management by the manager (TRUE is the default value)"
@@ -1073,7 +1073,7 @@ msgid "config_comment_user_ch_passwd"
 msgstr "//  CHANGE YOUR PASSWORD<br>//---------------------------------------<br>// if at FALSE : the user cannot change his password<br>// if at TRUE : the user can change his password (TRUE is the default value)"
 
 msgid "config_comment_responsable_virtuel"
-msgstr "//  GENERIC VIRTUAL MANAGER OR NOT<br>//-------------------------------------------<br>// if at FALSE : the manager that handles the staff holidays is a real person (user of php_conges) (FALSE is the default value)<br>// if at TRUE : the manager that handles the staff holidays is a virtual generic user (login=conges)"
+msgstr "//  GENERIC VIRTUAL MANAGER OR NOT<br>//-------------------------------------------<br>// if at FALSE : the manager that handles the staff holidays is a real person (user of Libertempo) (FALSE is the default value)<br>// if at TRUE : the manager that handles the staff holidays is a virtual generic user (login=conges)"
 
 msgid "config_comment_resp_affiche_calendrier"
 msgstr "//  DISPLAY OF THE BUTTON OF THE CALENDAR FOR THE MANAGER<br>//--------------------------------------------------------------------------------------<br>// si Ã  FALSE : the managers cannot display the holidays calendrar<br>// if at TRUE : the managers can display the holidays calendrar(TRUE is the default value)"
@@ -1091,10 +1091,10 @@ msgid "config_comment_admin_change_passwd"
 msgstr "//  CHANGE THE PASSWORD OF A USER<br>//-----------------------------------------<br>// if at FALSE : the administrator cannot change the users password<br>// if at TRUE : the administrator can change the users password (TRUE is the default value)"
 
 msgid "config_comment_affiche_bouton_config_pour_admin"
-msgstr "// ACCESS TO THE CONFIG OF THE APPLI FOR THE ADMINS<br>//-------------------------------------------------------<br>// if at FALSE : the access button to php_conges configuration doesn't show on the administrator page (FALSE is the default value)<br>// if at TRUE : the access button to the php_conges configuration shows on the administrator page"
+msgstr "// ACCESS TO THE CONFIG OF THE APPLI FOR THE ADMINS<br>//-------------------------------------------------------<br>// if at FALSE : the access button to Libertempo configuration doesn't show on the administrator page (FALSE is the default value)<br>// if at TRUE : the access button to Libertempo configuration shows on the administrator page"
 
 msgid "config_comment_affiche_bouton_config_absence_pour_admin"
-msgstr "// ACCESS TO THE CONFIG OF THE TYPES OF ABSENCES OF THE APPLI FOR THE ADMINS<br>//---------------------------------------------------------------------<br>// if at FALSE : the access button to the configuration of the types of absences managed by php_conges doen't show on the administrator's page (FALSE is the default value)<br>// if at TRUE : the access button to the configuration of the types of absences managed by php_conges shows on the administrator's page"
+msgstr "// ACCESS TO THE CONFIG OF THE TYPES OF ABSENCES OF THE APPLI FOR THE ADMINS<br>//---------------------------------------------------------------------<br>// if at FALSE : don't show button \"configuration of the types of absences\" on the administrator's page (FALSE is the default value)<br>// if at TRUE : show button \"configuration of the types of absences\" on the administrator's page"
 
 msgid "config_comment_mail_new_demande_alerte_resp"
 msgstr "// SENDING OF MAIL TO THE MANAGER FOR A NEW DEMAND :<br>//----------------------------------------------------------<br>// if at FALSE : the manager doesn't receive a mail during a new holidays demand by a user (FALSE is the default value)<br>// if at TRUE : the manager receives a warning mail at each new holidays demand from a user"
@@ -1136,7 +1136,7 @@ msgid "config_comment_texte_bas_edition_papier"
 msgstr "//  Text at the bottom of the PAPER REPORTS<br>//--------------------------------------<br>// one defines here the eventual text that will appear at the bottom page of the paper reports of the holidays of an user."
 
 msgid "config_comment_user_echange_rtt"
-msgstr "//  EXCHANGE RTT OR PART TIME AUTHORIZED FOR THE USERS<br>//---------------------------------------------------------------------------------------<br>// one authorizes or not the user to ponctually reverse a working day and an absence day (of rtt or part time)<br>// if at FALSE : no exchange authorized for the user (FALSE is the default value)<br>// if at TRUE : exchange authorized for the user"
+msgstr "//  EXCHANGE PART TIME AUTHORIZED FOR THE USERS<br>//---------------------------------------------------------------------------------------<br>// one authorizes or not the user to ponctually reverse a working day and an absence day (of part time)<br>// if at FALSE : no exchange authorized for the user (FALSE is the default value)<br>// if at TRUE : exchange authorized for the user"
 
 msgid "config_comment_affiche_bouton_calcul_nb_jours_pris"
 msgstr "//  BUTTON OF CALCULATION OF THE NB OF DAYS TAKEN<br>//--------------------------------------------------------------------------------------<br>// if at FALSE : one doesn't display the button of calculation of the nb of days taken during input of a new abscence<br>// if at TRUE : displays the button of calculation of the nb of days taken during input of a new abscence (TRUE is the default value)<br>// WARNING : if at TRUE : the days off must be typed in (see administration module)"
@@ -1151,7 +1151,7 @@ msgid "config_comment_verif_droits"
 msgstr "// Control of the Access rights :<br>//------------------------------------<br>// set to TRUE To manage access rights to pages (is at FALSE by default)<br>/* parameter characteristic of certain install environments only !!!...... */"
 
 msgid "config_comment_stylesheet_file"
-msgstr "// STYLE SHEET<br>//--------------------------<br>// name of the style sheet file to use (with relative path from the root of php_conges)"
+msgstr "// STYLE SHEET<br>//--------------------------<br>// name of the style sheet file to use (with relative path from the root of Libertempo)"
 
 msgid "config_comment_bgcolor"
 msgstr "// background color of the pages"
@@ -1163,7 +1163,7 @@ msgid "config_comment_light_grey_bgcolor"
 msgstr "// various colors (light grey)"
 
 msgid "config_comment_php_conges_fpdf_include_path"
-msgstr "// PATH TO THE fpdf DIRECTORY<br>//-------------------------------------------------------<br>// One defines here the path to access to the PHP library directory \"fpdf\".<br>// The path must be relative from the php_conges root application."
+msgstr "// PATH TO THE fpdf DIRECTORY<br>//-------------------------------------------------------<br>// One defines here the path to access to the PHP library directory \"fpdf\".<br>// The path must be relative from Libertempo root application."
 
 msgid "config_comment_php_conges_phpmailer_include_path"
 msgstr "// PATH TO THE phpmailer DIRECTORY<br>//-------------------------------------------------------<br>// One defines here the path to access to the PHP library directory \"phpmailer\".<br>// The path must be relative from the php_conges root application."
@@ -1178,7 +1178,7 @@ msgid "install_le_fichier"
 msgstr "The file"
 
 msgid "install_bad_fichier"
-msgstr "cannot be found in the main folder of the new php_conges, or hasn't enough reading rights"
+msgstr "cannot be found in the main folder of the new Libertempo, or hasn't enough reading rights"
 
 msgid "install_read_the_file"
 msgstr "refer to the file"
@@ -1196,10 +1196,10 @@ msgid "install_verifiez_priv_mysql"
 msgstr "Make sure that the MySql database, the user and the privileges have been created."
 
 msgid "install_install_phpconges"
-msgstr "Installation of php_conges"
+msgstr "Installation of Libertempo"
 
 msgid "install_index_titre"
-msgstr "Application PHP_CONGES"
+msgstr "Application Libertempo"
 
 msgid "install_no_prev_version_found"
 msgstr "No previous release can be found"
@@ -1229,7 +1229,7 @@ msgid "install_config_types_abs"
 msgstr "configure the types of holidays to manage"
 
 msgid "install_install_titre"
-msgstr "Installation of the PHP_CONGES application"
+msgstr "Installation of Libertempo"
 
 msgid "install_impossible_sur_db"
 msgstr "impossible on the database"
@@ -1256,7 +1256,7 @@ msgid "install_maj_titre_1"
 msgstr "Update"
 
 msgid "install_maj_titre_2"
-msgstr "Update of the PHP_CONGES application"
+msgstr "Update of Libertempo"
 
 msgid "install_maj_passer_de"
 msgstr "you are about to change release from"
@@ -1313,7 +1313,7 @@ msgid "install_remove_fichier"
 msgstr "is from now on useless... Please delete it !"
 
 msgid "install_config_mail"
-msgstr "configure the mails sent by php_conges"
+msgstr "configure the mails sent by Libertempo"
 
 msgid "button_export_1"
 msgstr "Export ical / vcal"
@@ -1367,7 +1367,7 @@ msgid "mail_prem_valid_conges_comment"
 msgstr "alert message d'alerte to the user in case of first authorization by the manager of a holiday demand (if we use the double authorization)."
 
 msgid "mail_remplace_url_accueil_comment"
-msgstr "__URL_ACCUEIL_CONGES__ will automatically be replaced by a link to your php_conges application."
+msgstr "__URL_ACCUEIL_CONGES__ will automatically be replaced by a link to your Libertempo application."
 
 msgid "mail_remplace_sender_name_comment"
 msgstr "__SENDER_NAME__ will automatically be replaced by the name and first name of the sender."
@@ -1379,10 +1379,10 @@ msgid "mail_remplace_retour_ligne_comment"
 msgstr "__RETOUR_LIGNE__ will automatically be replaced by line return."
 
 msgid "config_mail_titre"
-msgstr "Configuration of the mails sent by PHP_CONGES"
+msgstr "Configuration of the mails sent by Libertempo"
 
 msgid "config_mail_alerte_config"
-msgstr "This page is only used if the mail sent by php_conges is validated (see configuration of the application)."
+msgstr "This page is only used if the mail sent by Libertempo is validated (see configuration of the application)."
 
 msgid "config_mail_subject"
 msgstr "mail subject"
@@ -1391,13 +1391,13 @@ msgid "config_mail_body"
 msgstr "mail body"
 
 msgid "admin_button_config_mail_1"
-msgstr "Configuration of the mails sent by php_conges"
+msgstr "Configuration of the mails sent by Libertempo"
 
 msgid "admin_button_config_mail_2"
 msgstr "Config Mails"
 
 msgid "config_comment_affiche_bouton_config_mail_pour_admin"
-msgstr "// ACCESS TO THE CONFIG OF MAILS OF THE APPLI FOR THE ADMINS<br>//---------------------------------------------------------------------<br>// if at FALSE : the access button to the mail configuration sent by php_conges does not show on the administrator page (FALSE is the default value)<br>// if at TRUE : the access button to the mail configuration sent by php_conges shows on the administrator page"
+msgstr "// ACCESS TO THE CONFIG OF MAILS OF THE APPLI FOR THE ADMINS<br>//---------------------------------------------------------------------<br>// if at FALSE : the access button to the mail configuration sent by Libertempo does not show on the administrator page (FALSE is the default value)<br>// if at TRUE : the access button to the mail configuration sent by php_conges shows on the administrator page"
 
 msgid "config_comment_mail_prem_valid_conges_alerte_user"
 msgstr "// SENDING OF MAIL TO THE USER AND BIG MANAGER AFTER THE FIRST VALIDATION OF A DEMAND (case of a double demand authorization) :<br>//----------------------------------------------------------------<br>// if at FALSE : the user and the big manager don't receive any mail when the manager approves a demand (first authorization). (FALSE is the default value)<br>// if at TRUE : the user and the big manager receive an alert mail when the manager approves a demand (first authorization)."
@@ -1439,7 +1439,7 @@ msgid "imprim_calendrier_titre"
 msgstr "choose the month to print"
 
 msgid "install_test_mail"
-msgstr "test the mail sendings of php_conges"
+msgstr "test the mail sendings of Libertempo"
 
 msgid "session_pas_session_ouverte"
 msgstr "No opened session."
@@ -1523,7 +1523,7 @@ msgid "config_logs"
 msgstr "see the logs"
 
 msgid "config_logs_titre_1"
-msgstr "PHP_CONGES log management"
+msgstr "Libertempo log management"
 
 msgid "config_logs_titre_2"
 msgstr "Log management"
@@ -1541,7 +1541,7 @@ msgid "form_delete_logs"
 msgstr "Empty Logs"
 
 msgid "confirm_vider_logs"
-msgstr "Do you really want to delete all LOGS of PHP_CONGES ??"
+msgstr "Do you really want to delete all LOGS of Libertempo ??"
 
 msgid "no_logs_in_db"
 msgstr "No Logs in the DataBase !"
@@ -1562,13 +1562,10 @@ msgid "config_comment_calendrier_select_all_groups"
 msgstr "//  DISPLAY OF THE CALENDAR : Group selection : choice between all groups or not<br>//--------------------------------------------------------------------------------------------<br>// if the group management is active, we define here if the choice of the group to display in the calendar includes all groups or not.<br>// if at FALSE : only the user's groups (or of which he is the manager) display in the selection on the holidays calendar (FALSE is the default value)<br>// if at TRUE : all groups display in the selection on holidays calendar"
 
 msgid "config_comment_consult_calendrier_sans_auth"
-msgstr "//  DISPLAY OF THE CALENDAR WITHOUT AUTHENTIFICATION<br>//--------------------------------------------------------------------------------------------<br>// if at FALSE : It is not possible to display the holidays calendar without being connected to PHP_CONGES. (FALSE is the default value)<br>// if at TRUE : Possibility of consulting the holidays calendar without connecting to PHP_CONGES (via a link on the home page, or with the direct URL)."
+msgstr "//  DISPLAY OF THE CALENDAR WITHOUT AUTHENTIFICATION<br>//--------------------------------------------------------------------------------------------<br>// if at FALSE : It is not possible to display the holidays calendar without being connected to Libertempo. (FALSE is the default value)<br>// if at TRUE : Possibility of consulting the holidays calendar without connecting to Libertempo (via a link on the home page, or with the direct URL)."
 
 msgid "config_comment_resp_ajoute_conges"
 msgstr "//  ADDING OF HOLIDAYS BY THE MANAGER<br>//--------------------------------------------------------------------------------------------<br>// if at FALSE : The manager cannot add holidays to his users.<br>// if at TRUE : The manager can add holidays to his users. (FALSE is the default value)"
-
-msgid "hr_affiche_utilisateurs_inactifs"
-msgstr "Display/Hide inactive users"
 
 msgid "mail_remplace_date_debut"
 msgstr "__DATE_DEBUT__ will automatically be replaced the beginning date of the concerned absence."
@@ -1576,3 +1573,152 @@ msgstr "__DATE_DEBUT__ will automatically be replaced the beginning date of the 
 msgid "mail_remplace_date_fin"
 msgstr "__DATE_FIN__   will automatically be replaced the ending date of the concerned absence."
 
+msgid "db_configuration"
+msgstr "Database settings"
+
+msgid "db_configuration_ok"
+msgstr "successfully connected to database"
+
+msgid "tableau_recap"
+msgstr "summary table"
+
+msgid "button_responsable_mode"
+msgstr "Supervisor"
+
+msgid "admin_button_jours_fermeture_1"
+msgstr "Closing days"
+
+msgid "admin_button_jours_fermeture_2"
+msgstr "Closing days"
+
+msgid "admin_jours_fermeture_titre"
+msgstr "Entering closing days"
+
+msgid "admin_jours_fermeture_fermeture_pour_tous"
+msgstr "global closure"
+
+msgid "admin_jours_fermeture_fermeture_par_groupe"
+msgstr "Service closure"
+
+msgid "admin_jours_fermeture_new_fermeture"
+msgstr "new Closing days"
+
+msgid "admin_jours_fermeture_enregistrees"
+msgstr "Registered closures"
+
+msgid "admin_jours_fermeture_dates_incompatibles"
+msgstr "Incompatible dates entered !!! please try again"
+
+msgid "admin_jours_fermeture_date_passee_error"
+msgstr "past dates impossible !!! please try again"
+
+msgid "admin_jours_fermeture_annee_non_saisie"
+msgstr "holidays of those years are not captured !!! please start over or enter the holidays for those years"
+
+msgid "admin_jours_fermeture_chevauche_periode"
+msgstr "Error: the entry closing overlaps another closure or leave taken by an affected user !!! please try again"
+
+msgid "admin_jours_fermeture_fermeture_aujourd_hui"
+msgstr "Error : seizure closure begins or ends today, which is forbidden !!! please try again"
+
+msgid "admin_jours_fermeture_affect_type_conges"
+msgstr "what type of leave affect this closure : "
+
+msgid "divers_normal_maj_1"
+msgstr "All"
+
+msgid "config_comment_texte_page_login"
+msgstr "// HOMEPAGE TEXT<br>//------------------<br>// text that will appear in the image on the login page ( can be empty)"
+
+msgid "config_comment_solde_toujours_positif"
+msgstr "// balances ALWAYS POSITIVE : <br>//--------------------------------------------------------------------------------------------<br>// if FALSE : the balance of leave can be negative . (FALSE is the default value)<br>// if TRUE : the balance of leave can not be negative ( a user can't ask a leave if his balance becomes negative)."
+
+msgid "verif_solde_erreur_part_1"
+msgstr "Please note the number of days of absence requested"
+
+msgid "verif_solde_erreur_part_2"
+msgstr "exceeds your balance ( sum of the balance"
+
+msgid "verif_solde_erreur_part_3"
+msgstr "and leave to validate )"
+
+msgid "admin_groupes_nb_users"
+msgstr "nb of members"
+
+msgid "resp_cloture_exercice_titre"
+msgstr "end / beginning of year"
+
+msgid "divers_cloturer_maj_1"
+msgstr "fence"
+
+msgid "divers_reliquat"
+msgstr "remaining"
+
+msgid "dont_reliquat"
+msgstr "whose remaining"
+
+msgid "button_cloture"
+msgstr "change Exercise"
+
+msgid "resp_cloture_exercice_all"
+msgstr "Global financial year for All"
+
+msgid "resp_cloture_exercice_groupe"
+msgstr "Global financial year by group"
+
+msgid "resp_cloture_exercice_users"
+msgstr "individual financial year"
+
+msgid "resp_cloture_exercice_for_all_text_confirmer"
+msgstr "Confirm the end of the current year and the beginning of the following year for ALL users of the application ?"
+
+msgid "resp_cloture_exercice_for_groupe_text_confirmer"
+msgstr "Confirm the end of the current year and the beginning of the following year for all users of the selected group ?"
+
+msgid "form_valid_cloture_global"
+msgstr "Validate the overall closure"
+
+msgid "form_valid_cloture_group"
+msgstr "Validate the fence to the group"
+
+msgid "resp_cloture_exercice_commentaire"
+msgstr "closing exercise"
+
+msgid "config_comment_autorise_reliquats_exercice"
+msgstr "// REMNANTS OF YEAR REPORTED: <br>//--------------------------------------------------------------------------------------------<br>// si à FALSE : le solde d'un congé ne peut pas être reporté comme reliquat sur l'exercice suivant.<br>// si à TRUE : le solde d'un congé peut être reporté comme reliquat sur l'exercice suivant.. (TRUE est la valeur par défaut)"
+
+msgid "config_comment_nb_maxi_jours_reliquats"
+msgstr "// NOMBRE MAX DE JOURS DE RELIQUATS AUTORISES D'UN EXERCICE SUR L'AUTRE : <br>//--------------------------------------------------------------------------------------------<br>// Nombre maximum de jours qui peuvent être reportés comme reliquat sur l'exercice suivant (les jours au delà du maxi sont perdus). Mettre à 0 (zéro) si pas de limite. (0 est la valeur par défaut)"
+
+msgid "config_comment_jour_mois_limite_reliquats"
+msgstr "// DATE LIMITE D'UTILISATION DES RELIQUATS : <br>//------------------<br>// (si les reliquats sont autorisés) : date maximum dans l'année pour utiliser ses reliquats de congés de l'exercice précédent (au delà, ils sont perdus) (date au format JJ-MM) (égal à 0 si pas de date limite)"
+
+msgid "config_jour_mois_limite_reliquats_modif_impossible"
+msgstr "IMPOSSIBLE de modifier la date limite des reliquats ! (format invalide !)"
+
+msgid "resp_menu_button_mode_hr"
+msgstr "HR mode"
+
+msgid "config_comment_titre_hr_index"
+msgstr "HR pages title"
+
+msgid "hr_menu_titre"
+msgstr "HR MODE:"
+
+msgid "admin_users_is_hr"
+msgstr "HR ?"
+
+msgid "admin_new_users_is_hr"
+msgstr "HR ?"
+
+msgid "hr_traite_user_etat_conges"
+msgstr "Leave status of users:"
+
+msgid "hr_affiche_utilisateurs_inactifs"
+msgstr "Show / Hide inactive users"
+
+msgid "config_comment_print_disable_users"
+msgstr "// DISPLAY DISABLED USERS : <br>//--------------------------------------------------------------------------------------------<br>// if FALSE : disabled users not displayed in the list of supervisor users. (FALSE is the default) <br> // if TRUE : display the list of enabled and disabled users."
+
+msgid "config_comment_affiche_jours_current_month_calendrier"
+msgstr "// DISPLAY NB DAYS TAKEN DURING THE MONTH ( FOR EACH TYPE OF ABSENCE ): <br>//------------------------------------------------------------<br>// if FALSE . no display, in the calendar for each user, for each type of leave , beside the balance, nb of days taken during the month displayed (FALSE is the default)<br>// if TRUE : display in the calendar for each user, for each type of leave , beside the balance, nb of days taken during the month displayed."
