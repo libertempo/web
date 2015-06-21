@@ -42,14 +42,14 @@
 
 <script language=javascript>
 
-function compter_jours(radiodebut, radiofin, login_user, j_debut, j_fin)
+function compter_jours()
 {
-    var login = login_user.value;
+    var login = document.forms["dem_conges"].user_login.value;
     var session = document.forms["dem_conges"].session.value;
-	var d_debut = j_debut.value;
-	var d_fin = j_fin.value;
-	var opt_deb = radiodebut.value;
-	var opt_fin = radiofin.value;
+	var d_debut = document.forms["dem_conges"].new_debut.value;
+	var d_fin = document.forms["dem_conges"].new_fin.value;
+	var opt_deb = document.forms["dem_conges"].new_demi_jour_deb.value;
+	var opt_fin = document.forms["dem_conges"].new_demi_jour_fin.value;
 
     var msg = 'de ' + d_debut + ' à ' + d_fin;
     if( (d_debut) && (d_fin))
@@ -119,16 +119,12 @@ if (($_SESSION['config']['dimanche_travail']==FALSE)&&($_SESSION['config']['same
 <?php
 	echo "daysOfWeekDisabled: jdesac,\n";
 ?>
-	    datesDisabled: feries
-	});        
-    
+	    datesDisabled: feries,
 
-	// $('td.cal-day').hover(function() {
-	// 	$(this).find('.cal-tooltip').toggle();
-	// });
+	}).on("change", function() {
+compter_jours();
+  });
 
-
-	
 });
 
 </script>
