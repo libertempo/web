@@ -963,7 +963,7 @@ function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $m
 		if( isset($config_SMTP_host) ) 
 		{
 			$mail->IsSMTP();
-			$mail->Host = $config_SMTP_server;
+			$mail->Host = $config_SMTP_host;
 			$mail->Port = $config_SMTP_port;
 
 			if ( isset($config_SMTP_user) )
