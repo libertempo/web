@@ -60,7 +60,7 @@ $opt_fin    = getpost_variable('opt_fin') ;
 ?>
 <script language="javascript">
 function envoi(valeur)
-{window.opener.document.forms[0].new_nb_jours.value=valeur}
+{window.opener.document.forms["dem_conges"].new_nb_jours.value=valeur}
 </Script>
 <?php
 
