@@ -52,6 +52,9 @@ verif_droits_user($session, "is_admin", $DEBUG);
 
 	if($action=="modif")
 		commit_modif($tab_new_values, $session, $DEBUG);
+        if($action=="test")
+		test_config($tab_new_values, $session, $DEBUG);
+
 
 	affichage($tab_new_values, $session, $DEBUG);
 
@@ -84,6 +87,11 @@ function affichage($tab_new_values, $session, $DEBUG=FALSE)
 	//requête qui récupère les informations de la table conges_type_absence
 	$sql1 = "SELECT * FROM conges_mail ";
 	$ReqLog1 = SQL::query($sql1);
+
+	echo "<form method=\"POST\" action=\"$URL\"> \n";
+	echo "    <input type=\"hidden\" name=\"action\" value=\"test\" /> \n";
+	echo "    <input class=\"btn btn-success\" type=\"submit\"  value=\"". _('test_mail_config') ."\"><br>\n";
+	echo "</form> \n";
 
 	echo "    <form action=\"$URL\" method=\"POST\"> \n";
 	while ($data = $ReqLog1->fetch_array())
@@ -135,6 +143,35 @@ function affichage($tab_new_values, $session, $DEBUG=FALSE)
 	echo "<hr/>\n";
 	echo "    <input class=\"btn btn-success\" type=\"submit\"  value=\"". _('form_save_modif') ."\"><br>\n";
 	echo "    </form>\n";
+
+}
+
+function test_config($tab_new_values, $session, $DEBUG=FALSE)
+{
+
+	$PHP_SELF=$_SERVER['PHP_SELF'];
+
+	if($session=="")
+		$URL = "$PHP_SELF?onglet=mail";
+	else
+		$URL = "$PHP_SELF?session=$session&onglet=mail";
+
+	// update de la table
+        $mail_array             = find_email_adress_for_user($_SESSION['userlogin'], $DEBUG);
+        $mail_sender_name       = $mail_array[0];
+        $mail_sender_addr       = $mail_array[1];
+                constuct_and_send_mail("valid_conges", "Test email", $mail_sender_addr, $mail_sender_name, $mail_sender_addr, "test", $DEBUG);
+              //  echo "<p>Mail sent</p>"; exit(0);
+
+	echo "<span class = \"messages\">". _('Mail_test_ok') ."</span><br>";
+
+	$comment_log = "test d\'envoi mail d\'alerte";
+	log_action(0, "", "", $comment_log, $DEBUG);
+
+	if( $DEBUG )
+		echo "<a href=\"$URL\" method=\"POST\">". _('form_retour') ."</a><br>\n" ;
+	else
+		echo "<META HTTP-EQUIV=REFRESH CONTENT=\"2; URL=$URL\">";
 
 }
 

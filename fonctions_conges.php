@@ -994,19 +994,33 @@ function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $m
 
 	/*********************************************/
 	// recup des infos de l'absence
-	$select_abs = 'SELECT conges_periode.p_date_deb,conges_periode.p_demi_jour_deb,conges_periode.p_date_fin,conges_periode.p_demi_jour_fin,conges_periode.p_nb_jours,conges_periode.p_commentaire,conges_type_absence.ta_libelle
-			FROM conges_periode, conges_type_absence WHERE conges_periode.p_num='.$num_periode.' AND conges_periode.p_type = conges_type_absence.ta_id;';
-	$res_abs = SQL::query($select_abs);
-	$rec_abs = $res_abs->fetch_array();
-	$tab_date_deb = explode('-', $rec_abs['p_date_deb']);
-	// affiche : "23 / 01 / 2008 (am)"
-	$sql_date_deb = $tab_date_deb[2]." / ".$tab_date_deb[1]." / ".$tab_date_deb[0]." (".$rec_abs["p_demi_jour_deb"].")" ;
-	$tab_date_fin= explode("-", $rec_abs["p_date_fin"]);
-	// affiche : "23 / 01 / 2008 (am)"
-	$sql_date_fin = $tab_date_fin[2]." / ".$tab_date_fin[1]." / ".$tab_date_fin[0]." (".$rec_abs["p_demi_jour_fin"].")" ;
-	$sql_nb_jours = $rec_abs["p_nb_jours"];
-	$sql_commentaire = $rec_abs["p_commentaire"];
-	$sql_type_absence = $rec_abs["ta_libelle"];
+	if ($num_periode == "test")
+	{
+		// affiche : "23 / 01 / 2008 (am)"
+		$sql_date_deb = "01 / 01 / 2001 (am)";
+		// affiche : "23 / 01 / 2008 (am)"
+		$sql_date_deb = "02 / 01 / 2001 (am)";
+		$sql_nb_jours = 2;
+		$sql_commentaire = "Test comment";
+		$sql_type_absence = "cp";
+		$mail->SMTPDebug = 3; // Much easier if something fails
+	}
+	else
+	{
+		$select_abs = 'SELECT conges_periode.p_date_deb,conges_periode.p_demi_jour_deb,conges_periode.p_date_fin,conges_periode.p_demi_jour_fin,conges_periode.p_nb_jours,conges_periode.p_commentaire,conges_type_absence.ta_libelle
+				FROM conges_periode, conges_type_absence WHERE conges_periode.p_num='.$num_periode.' AND conges_periode.p_type = conges_type_absence.ta_id;';
+		$res_abs = SQL::query($select_abs);
+		$rec_abs = $res_abs->fetch_array();
+		$tab_date_deb = explode('-', $rec_abs['p_date_deb']);
+		// affiche : "23 / 01 / 2008 (am)"
+		$sql_date_deb = $tab_date_deb[2]." / ".$tab_date_deb[1]." / ".$tab_date_deb[0]." (".$rec_abs["p_demi_jour_deb"].")" ;
+		$tab_date_fin= explode("-", $rec_abs["p_date_fin"]);
+		// affiche : "23 / 01 / 2008 (am)"
+		$sql_date_fin = $tab_date_fin[2]." / ".$tab_date_fin[1]." / ".$tab_date_fin[0]." (".$rec_abs["p_demi_jour_fin"].")" ;
+		$sql_nb_jours = $rec_abs["p_nb_jours"];
+		$sql_commentaire = $rec_abs["p_commentaire"];
+		$sql_type_absence = $rec_abs["ta_libelle"];
+	}
 
 	/*********************************************/
 	// construction des sujets et corps des messages
