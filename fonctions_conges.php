@@ -874,8 +874,6 @@ function date_fr($code, $timestmp)
 function alerte_mail($login_expediteur, $destinataire, $num_periode, $objet,  $DEBUG=FALSE)
 {
 
-	require_once( LIBRARY_PATH .'phpmailer/PHPMailerAutoload.php' );  // ajout de la classe phpmailer
-
 	/*********************************************/
 	// recup des infos concernant l'expéditeur ....
 	$mail_array		= find_email_adress_for_user($login_expediteur, $DEBUG);
@@ -951,6 +949,8 @@ function alerte_mail($login_expediteur, $destinataire, $num_periode, $objet,  $D
 // construit et envoie le mail
 function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $mail_dest_name, $mail_dest_addr, $num_periode,  $DEBUG=FALSE)
 {
+
+	require_once( LIBRARY_PATH .'phpmailer/PHPMailerAutoload.php' );  // ajout de la classe phpmailer
 
 	/*********************************************/
 	// init du mail
