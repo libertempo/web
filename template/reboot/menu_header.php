@@ -14,13 +14,13 @@
 	<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400,700" type="text/css" />
     
     <!-- Bootstrap -->
-    <link type="text/css" href="<?php  echo TEMPLATE_PATH;  ?>bootstrap/css/bootstrap.min.css" rel="stylesheet" rel="stylesheet" media="screen">
+    <link type="text/css" href="<?php  echo TEMPLATE_PATH;  ?>bootstrap/css/bootstrap.min.css" rel="stylesheet" rel="stylesheet" media="screen,print">
 
     <!-- Font Awesome -->
 	<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.css" rel="stylesheet">
     
 	<!-- Reboot style -->
-	<link type="text/css" href="<?php  echo TEMPLATE_PATH;  ?>css/reboot.css" rel="stylesheet" rel="stylesheet" media="screen">
+	<link type="text/css" href="<?php  echo TEMPLATE_PATH;  ?>css/reboot.css" rel="stylesheet" rel="stylesheet" media="screen,print">
     <link type="text/css" href="<?php  echo TEMPLATE_PATH;  ?>css/datepicker.css" rel="stylesheet" rel="stylesheet" media="screen">
     
     <!-- scripts -->

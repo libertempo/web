@@ -535,7 +535,7 @@ function affichage_calendrier($year, $mois, $first_jour, $timestamp_today, $prin
 				echo "<tr align=\"center\" class=\"cal-ligne-user\">\n";
 
 			if($printable==1)
-				$text_nom="<strong>$sql_nom</strong>>";
+				$text_nom="<strong>$sql_nom</strong>";
 			else
 				$text_nom="<a href=\"$PHP_SELF?session=$session&selected=$sql_login&year=$year&mois=$mois&first_jour=$first_jour&printable=$printable&select_groupe=$select_groupe\" method=\"GET\">$sql_nom $sql_prenom</a>";
 
