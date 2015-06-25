@@ -1776,3 +1776,9 @@ msgstr "génération du fichier de configuration de la base de données effectu�
 
 msgid "tableau_recap"
 msgstr "Tableau récapitulatif"
+
+msgid "test_mail_config"
+msgstr "Tester l'envoie de mail"
+
+msgid "test_mail_comment"
+msgstr "Vous permet de tester si l'émission de mail fonctionne.<br>En cas d'échec, renseigné le fichier cfg/config_SMTP.php"
