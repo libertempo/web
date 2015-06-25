@@ -89,8 +89,9 @@ function affichage($tab_new_values, $session, $DEBUG=FALSE)
 	$ReqLog1 = SQL::query($sql1);
 
 	echo "<form method=\"POST\" action=\"$URL\"> \n";
-	echo "    <input type=\"hidden\" name=\"action\" value=\"test\" /> \n";
-	echo "    <input class=\"btn btn-success\" type=\"submit\"  value=\"". _('test_mail_config') ."\"><br>\n";
+	echo "<input type=\"hidden\" name=\"action\" value=\"test\" /> \n";
+	echo "<input class=\"btn btn-success\" type=\"submit\"  value=\"". _('test_mail_config') ."\"><br>\n";
+	echo _('test_mail_comment');
 	echo "</form> \n";
 
 	echo "    <form action=\"$URL\" method=\"POST\"> \n";
