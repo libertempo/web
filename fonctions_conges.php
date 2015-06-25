@@ -960,19 +960,19 @@ function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $m
 	{
 		include CONFIG_PATH .'config_SMTP.php';
 
-		if( isset($config_SMTP_host) ) 
+		if(!empty($config_SMTP_host)) 
 		{
 			$mail->IsSMTP();
 			$mail->Host = $config_SMTP_host;
 			$mail->Port = $config_SMTP_port;
 
-			if ( isset($config_SMTP_user) )
+			if (!empty($config_SMTP_user))
 			{
 				$mail->SMTPAuth = true;
 				$mail->Username = $config_SMTP_user;
 				$mail->Password = $config_SMTP_pwd;
 			}
-			if ( isset($config_SMTP_sec) )
+			if (!empty($config_SMTP_sec))
 				$mail->SMTPSecure = $config_SMTP_sec;
 		}
 	}
