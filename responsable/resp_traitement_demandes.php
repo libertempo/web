@@ -154,7 +154,7 @@ function affiche_all_demandes_en_cours($tab_type_conges,  $DEBUG=FALSE)
 			// {
 			// 	echo "<th>". _('divers_solde_maj_1') ."<br>$libelle</th>" ;
 			// }			
-			echo "<th>Solde</th>\n" ;
+			echo "<th>". _('divers_solde') ."</th>\n" ;
 			echo "<th>". _('divers_accepter_maj_1') ."</th>\n" ;
 			echo "<th>". _('divers_refuser_maj_1') ."</th>\n" ;
 			echo "<th>". _('resp_traite_demandes_attente') ."</th>\n" ;
@@ -240,7 +240,7 @@ function affiche_all_demandes_en_cours($tab_type_conges,  $DEBUG=FALSE)
 				echo "</tr>\n" ;
 				$i = !$i;
 			} // while
-			echo "<tbody>\n" ;
+			echo "</tbody>\n" ;
 			echo "</table>\n\n" ;
 		} //if($count1!=0)
 	} //if( count($tab_all_users_du_resp)!=0 )
@@ -281,11 +281,8 @@ function affiche_all_demandes_en_cours($tab_type_conges,  $DEBUG=FALSE)
 				echo "<th>". _('divers_fin_maj_1') ."</th>\n" ;
 				echo "<th>". _('divers_comment_maj_1') ."</th>\n" ;
 				echo "<th>". _('resp_traite_demandes_nb_jours') ."</th>";
-				// foreach($tab_type_conges as $id_conges => $libelle)
-				// {
-				// 	echo "<th>". _('divers_solde_maj_1') ."<br>$libelle</th>" ;
-				// }
-				echo "<th>Solde</th>\n" ;
+				 foreach($tab_type_conges as $id_conges => $libelle)
+				 	echo "<th>". _('divers_solde_maj_1') ."<br>$libelle</th>" ;
 				echo "<th>". _('divers_type_maj_1') ."</th>\n" ;
 				echo "<th>". _('divers_accepter_maj_1') ."</th>\n" ;
 				echo "<th>". _('divers_refuser_maj_1') ."</th>\n" ;
@@ -404,7 +401,7 @@ function traite_all_demande_en_cours( $tab_bt_radio, $tab_text_refus, $DEBUG=FAL
 				// Log de l'action
 				log_action($numero_int, "valid", $user_login, "traite demande $numero ($user_login) ($user_nb_jours_pris jours) : $reponse",  $DEBUG);
 				
-				//envoi d'un mail d'alerte au user et au responsable du resp (pour double validation) (si demandé dans config de php_conges)
+				//envoi d'un mail d'alerte au user et au responsable du resp (pour double validation) (si demandé dans config de libertempo)
 				if($_SESSION['config']['mail_prem_valid_conges_alerte_user'])
 					alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "valid_conges",  $DEBUG);
 			}

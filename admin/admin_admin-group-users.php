@@ -365,7 +365,7 @@ function affiche_gestion_groupes_users($choix_group, $onglet, $DEBUG=FALSE)
 
 		echo '<tr class="'.(!($i%2)?'i':'p').'">';
 		echo "	<td>$case_a_cocher</td>\n";
-		echo "	<td class=\"$class\">$nom$prenom</td>\n";
+		echo "	<td class=\"$class\">$nom $prenom</td>\n";
 		echo "	<td class=\"$class\">$login</td>\n";
 		echo "</tr>\n";
 	}
