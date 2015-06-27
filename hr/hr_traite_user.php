@@ -142,7 +142,7 @@ function affichage($user_login,  $year_affichage, $year_calendrier_saisie_debut,
 
         echo "<H3>". _('resp_traite_user_new_conges') ."</H3>\n\n";
 
-        saisie_nouveau_conges($user_login, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet);
+        saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet);
 
         echo "<hr align=\"center\" size=\"2\" width=\"90%\"> \n";
     }
