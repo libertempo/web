@@ -56,19 +56,8 @@ $opt_debut  = getpost_variable('opt_debut') ;
 $opt_fin    = getpost_variable('opt_fin') ;
 /*************************************/
 
-// ATTENTION ne pas mettre cet appel avant les include car plantage sous windows !!!
-?>
-<script language="javascript">
-function envoi(valeur)
-{window.opener.document.forms["dem_conges"].new_nb_jours.value=valeur}
-</Script>
-<?php
-
 if( ($user!="") && ($date_debut!="") && ($date_fin!="") && ($opt_debut!="") && ($opt_fin!="") )
 	affichage($user, $date_debut, $date_fin, $opt_debut, $opt_fin, $DEBUG);
-else
-	/* APPEL D'UNE AUTRE PAGE immediat */
-	echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=user_index.php?session=$session&onglet=nouvelle_absence\">";
 
 /**********  FONCTIONS  ****************************************/
 
@@ -80,45 +69,17 @@ function affichage($user, $date_debut, $date_fin, $opt_debut, $opt_fin, $DEBUG=F
 	$session=session_id();
 	$comment="&nbsp;" ;
 
-	header_popup();
 
-	echo "<h1>$user</h1>\n";
-	echo "<form action=\"$PHP_SELF?session=$session\" method=\"POST\">\n";
-	echo "<table>\n";
-	echo "<tr>\n";
+
 	// calcul :
 	$nb_jours=compter($user, "", $date_debut, $date_fin, $opt_debut, $opt_fin, $comment, $DEBUG);
-
-	echo "<td align=\"center\"><h2>". _('calcul_nb_jours_nb_jours') ." <b>$nb_jours</b></h2></td>\n";
-	echo "</tr>\n";
-	echo "<tr>\n";
-	echo "<td align=\"center\"><i><font color=\"red\">$comment<font/></i></td>\n";
-	echo "</tr>\n";
-	echo "<tr>\n";
-	echo "<td align=\"center\"><i>". _('calcul_nb_jours_reportez') ." \"". _('saisie_conges_nb_jours') ."\" ". _('calcul_nb_jours_form') .".</i></td>\n";
-	echo "</tr>\n";
-	echo "<tr>\n";
-	echo "<td align=\"center\">&nbsp;</td>\n";
-	echo "</tr>\n";
-	echo "<tr>\n";
-	echo "<td align=\"center\">\n";
-	echo "  <input type=\"button\" value=\"". _('form_close_window') ."\" onClick=\"javascript:window.close();\">\n";
-	echo "</td>\n";
-	echo "</tr>\n";
-	echo "</table>\n";
-	echo "</form>\n";
-
-
-	if($_SESSION['config']['rempli_auto_champ_nb_jours_pris'])
+	$tab['nb'] = $nb_jours;
+	$tab['comm'] = $comment;
+	if(!$_SESSION['config']['rempli_auto_champ_nb_jours_pris'])
 	{
-		if( ($comment=="&nbsp;") && ($DEBUG==FALSE) )
-			echo "<script>envoi('$nb_jours'); window.close()</script>";
-		else
-			echo "<script>envoi('$nb_jours')</script>";
+		$tab['nb'] = "";
 	}
-
-	bottom();
-
+		echo json_encode($tab);
 }
 
 

@@ -552,7 +552,7 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
 	echo '<label>' . _('divers_comment_maj_1') . '</label><input class="form-control" type="text" name="new_comment" size="25" maxlength="30" value="">';
 
 	// zones de texte
-	echo '<label>' . _('saisie_conges_nb_jours') .'</label>';
+	echo '<label>' . _('saisie_conges_nb_jours') .'&nbsp</label>';
 	if($_SESSION['config']['disable_saise_champ_nb_jours_pris'])  // zone de texte en readonly et grisée
 		$text_nb_jours ='<input type="text" name="new_nb_jours" size="10" maxlength="30" value="" style="background-color: #D4D4D4; " readonly="readonly">' ;
 	else
@@ -564,7 +564,7 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
 	{
 		echo '<input type="button" class="btn btn-success" onclick="compter_jours();return false;" value="'. _('saisie_conges_compter_jours') .'">';
 	}
-
+	echo '<p id="comment_nbj" style="color:red">&nbsp;</p>';
 	echo '<br>';
 	echo '<input type="hidden" name="user_login" value="'.$user_login.'">';
 	echo '<input type="hidden" name="new_demande_conges" value=1>';

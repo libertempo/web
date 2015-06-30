@@ -51,17 +51,28 @@ function compter_jours()
 	var opt_deb = document.forms["dem_conges"].new_demi_jour_deb.value;
 	var opt_fin = document.forms["dem_conges"].new_demi_jour_fin.value;
 
-    var msg = 'de ' + d_debut + ' à ' + d_fin;
     if( (d_debut) && (d_fin))
     {
         var page ='../calcul_nb_jours_pris.php?session='+session+'&date_debut='+d_debut+'&date_fin='+d_fin+'&user='+login+'&opt_debut='+opt_deb+'&opt_fin='+opt_fin;
-        //alert(msg);
 
-        window.open(page, '', 'toolbar=0,scrollbars=0,location=0,statusbar=0,menubar=0,resizable=0,width=350,height=250');
+    $.ajax(
+    {
+        type : 'GET',
+        url : page,
+        dataType : 'text', // expected returned data format.
+        success : function(data)
+        {
+		var arr = new Array();
+	arr = JSON.parse(data);
+	document.forms["dem_conges"].new_nb_jours.value=arr["nb"];
+	document.getElementById('comment_nbj').innerHTML = arr["comm"];
+
+        },
+    });
+
     }
 
 }
-
 
 jQuery( document ).ready(function($) { 
 
