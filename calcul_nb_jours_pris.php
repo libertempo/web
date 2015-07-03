@@ -43,6 +43,7 @@ $session=session_id();
 $user="";
 $date_debut="";
 $date_fin="";
+$p_num="";
 
 /*************************************/
 // recup des parametres reçus :
@@ -54,14 +55,15 @@ $date_debut = getpost_variable('date_debut') ;
 $date_fin   = getpost_variable('date_fin') ;
 $opt_debut  = getpost_variable('opt_debut') ;
 $opt_fin    = getpost_variable('opt_fin') ;
+$p_num	    = getpost_variable('p_num') ;
 /*************************************/
 
 if( ($user!="") && ($date_debut!="") && ($date_fin!="") && ($opt_debut!="") && ($opt_fin!="") )
-	affichage($user, $date_debut, $date_fin, $opt_debut, $opt_fin, $DEBUG);
+	affichage($user, $date_debut, $date_fin, $opt_debut, $opt_fin, $DEBUG, $p_num);
 
 /**********  FONCTIONS  ****************************************/
 
-function affichage($user, $date_debut, $date_fin, $opt_debut, $opt_fin, $DEBUG=FALSE)
+function affichage($user, $date_debut, $date_fin, $opt_debut, $opt_fin, $DEBUG=FALSE, $p_num="")
 {
 	if( $DEBUG ) { echo "user = $user, date_debut = $date_debut, date_fin = $date_fin, opt_debut = $opt_debut, opt_fin = $opt_fin<br>\n";}
 
@@ -72,7 +74,7 @@ function affichage($user, $date_debut, $date_fin, $opt_debut, $opt_fin, $DEBUG=F
 
 
 	// calcul :
-	$nb_jours=compter($user, "", $date_debut, $date_fin, $opt_debut, $opt_fin, $comment, $DEBUG);
+	$nb_jours=compter($user, $p_num, $date_debut, $date_fin, $opt_debut, $opt_fin, $comment, $DEBUG);
 	$tab['nb'] = $nb_jours;
 	$tab['comm'] = $comment;
 	if(!$_SESSION['config']['rempli_auto_champ_nb_jours_pris'])

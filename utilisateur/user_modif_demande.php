@@ -84,7 +84,7 @@ function confirmer($p_num, $onglet, $DEBUG=FALSE)
 
 	// AFFICHAGE TABLEAU
 
-	echo "<form action=\"$PHP_SELF\" method=\"POST\">\n" ;
+	echo '<form NAME="dem_conges" action="'.$PHP_SELF.'" method="POST">' ;
 	echo "<table class=\"table table-responsive\">\n" ;
 	echo '<thead>';
 	// affichage première ligne : titres
@@ -120,27 +120,33 @@ function confirmer($p_num, $onglet, $DEBUG=FALSE)
 
 		echo "<td>$sql_date_deb _ $demi_j_deb</td><td>$sql_date_fin _ $demi_j_fin</td><td>$aff_nb_jours</td><td>$sql_commentaire</td>\n" ;
 
+		$compte ="";
+		if($_SESSION['config']['rempli_auto_champ_nb_jours_pris'])
+		{
+			$compte = 'onChange="compter_jours();return false;"';
+		}
+
 		$text_debut="<input class=\"form-control date\" type=\"text\" name=\"new_debut\" size=\"10\" maxlength=\"30\" value=\"" . revert_date($sql_date_deb) . "\">" ;
 		if($sql_demi_jour_deb=="am")
 		{
-			$radio_deb_am="<input type=\"radio\" name=\"new_demi_jour_deb\" value=\"am\" checked>&nbsp;". _('form_am') ;
-			$radio_deb_pm="<input type=\"radio\" name=\"new_demi_jour_deb\" value=\"pm\">&nbsp;". _('form_pm') ;
+			$radio_deb_am="<input type=\"radio\" $compte name=\"new_demi_jour_deb\" value=\"am\" checked>&nbsp;". _('form_am') ;
+			$radio_deb_pm="<input type=\"radio\" $compte name=\"new_demi_jour_deb\" value=\"pm\">&nbsp;". _('form_pm') ;
 		}
 		else
 		{
-			$radio_deb_am="<input type=\"radio\" name=\"new_demi_jour_deb\" value=\"am\">". _('form_am') ;
-			$radio_deb_pm="<input type=\"radio\" name=\"new_demi_jour_deb\" value=\"pm\" checked>". _('form_pm') ;
+			$radio_deb_am="<input type=\"radio\" $compte name=\"new_demi_jour_deb\" value=\"am\">". _('form_am') ;
+			$radio_deb_pm="<input type=\"radio\" $compte name=\"new_demi_jour_deb\" value=\"pm\" checked>". _('form_pm') ;
 		}
 		$text_fin="<input class=\"form-control date\" type=\"text\" name=\"new_fin\" size=\"10\" maxlength=\"30\" value=\"" . revert_date($sql_date_fin) . "\">" ;
 		if($sql_demi_jour_fin=="am")
 		{
-			$radio_fin_am="<input type=\"radio\" name=\"new_demi_jour_fin\" value=\"am\" checked>". _('form_am') ;
-			$radio_fin_pm="<input type=\"radio\" name=\"new_demi_jour_fin\" value=\"pm\">". _('form_pm') ;
+			$radio_fin_am="<input type=\"radio\" $compte name=\"new_demi_jour_fin\" value=\"am\" checked>". _('form_am') ;
+			$radio_fin_pm="<input type=\"radio\" $compte name=\"new_demi_jour_fin\" value=\"pm\">". _('form_pm') ;
 		}
 		else
 		{
-			$radio_fin_am="<input type=\"radio\" name=\"new_demi_jour_fin\" value=\"am\">". _('form_am') ;
-			$radio_fin_pm="<input type=\"radio\" name=\"new_demi_jour_fin\" value=\"pm\" checked>". _('form_pm') ;
+			$radio_fin_am="<input type=\"radio\" $compte name=\"new_demi_jour_fin\" value=\"am\">". _('form_am') ;
+			$radio_fin_pm="<input type=\"radio\" $compte name=\"new_demi_jour_fin\" value=\"pm\" checked>". _('form_pm') ;
 		}
 		if($_SESSION['config']['disable_saise_champ_nb_jours_pris'])
 			$text_nb_jours="<input class=\"form-control\" type=\"text\" name=\"new_nb_jours\" size=\"5\" maxlength=\"30\" value=\"$sql_nb_jours\" style=\"background-color: #D4D4D4; \" readonly=\"readonly\">" ;
@@ -163,7 +169,9 @@ function confirmer($p_num, $onglet, $DEBUG=FALSE)
 	echo "<input type=\"hidden\" name=\"p_num_to_update\" value=\"$p_num\">\n" ;
 	echo "<input type=\"hidden\" name=\"p_etat\" value=\"$sql_etat\">\n" ;
 	echo "<input type=\"hidden\" name=\"session\" value=\"$session\">\n" ;
+	echo '<input type="hidden" name="user_login" value="'.$_SESSION['userlogin'].'">';
 	echo "<input type=\"hidden\" name=\"onglet\" value=\"$onglet\">\n" ;
+	echo '<p id="comment_nbj" style="color:red">&nbsp;</p>';
 	echo "<input class=\"btn btn-success\" type=\"submit\" value=\"". _('form_submit') ."\">\n" ;
 	echo "<a class=\"btn\" href=\"$PHP_SELF?session=$session&onglet=demandes_en_cours\">". _('form_cancel') ."</a>\n";
 	echo "</form>\n" ;

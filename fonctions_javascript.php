@@ -50,10 +50,16 @@ function compter_jours()
 	var d_fin = document.forms["dem_conges"].new_fin.value;
 	var opt_deb = document.forms["dem_conges"].new_demi_jour_deb.value;
 	var opt_fin = document.forms["dem_conges"].new_demi_jour_fin.value;
+	var p_num = "";
+
+    if( document.forms["dem_conges"].p_num_to_update ) 
+    {
+        var p_num = document.forms["dem_conges"].p_num_to_update.value;
+    }
 
     if( (d_debut) && (d_fin))
     {
-        var page ='../calcul_nb_jours_pris.php?session='+session+'&date_debut='+d_debut+'&date_fin='+d_fin+'&user='+login+'&opt_debut='+opt_deb+'&opt_fin='+opt_fin;
+        var page ='../calcul_nb_jours_pris.php?session='+session+'&date_debut='+d_debut+'&date_fin='+d_fin+'&user='+login+'&opt_debut='+opt_deb+'&opt_fin='+opt_fin+'&p_num='+p_num;
 
     $.ajax(
     {
