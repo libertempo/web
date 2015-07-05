@@ -15,7 +15,7 @@ if (!defined( 'DEFINE_INCLUDE' )) {
 	define('INSTALL_PATH',		ROOT_PATH . 'install/');
 	define('LOCALE_PATH',		ROOT_PATH . 'locale/');
 	define('DUMP_PATH',			ROOT_PATH . 'dump/');
-	define('TEMPLATE_PATH',		ROOT_PATH . 'template/default/');
+	define('TEMPLATE_PATH',		ROOT_PATH . 'template/reboot/');
 	
 	define('PLUGINS_DIR',		ROOT_PATH . "include/plugins/");
 
