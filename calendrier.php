@@ -167,6 +167,36 @@ header_menu('admin',$_SESSION['config']['titre_admin_index'], $add_css);
 			echo "      </a>\n";
 		}
 
+	echo "      <br><br><table cellpadding=\"1\" class=\"calendar table-responsive table-bordered table-stripped\">\n" ;
+	echo "      <tr align=\"center\">\n" ;
+	echo "         <td bgcolor=\"#FFFFFF\" class=\"cal-legende\"> - </td>\n" ;
+	echo "         <td class=\"cal-legende\"> </td>\n" ;
+	echo "      </tr>\n" ;
+	echo "      <tr align=\"center\">\n" ;
+	echo "         <td bgcolor=\"#fbfbfb\" class=\"cal-legende\"> - </td>\n" ;
+	echo "         <td class=\"cal-legende\"> ". _('calendrier_legende_we') ."</td>\n" ;
+	echo "      </tr>\n" ;
+	echo "      <tr align=\"center\">\n" ;
+	echo "         <td bgcolor=\"#b8e4ef\" class=\"cal-legende\">abs</td>\n" ;
+	echo "         <td class=\"cal-legende\"> ". _('calendrier_legende_conges') ."</td>\n" ;
+	echo "      </tr>\n" ;
+	echo "      <tr align=\"center\">\n" ;
+	echo "         <td bgcolor=\"#ffe0ff\" class=\"cal-legende\">abs</td>\n" ;
+	echo "         <td class=\"cal-legende\"> ". _('calendrier_legende_demande') ."</td>\n" ;
+	echo "      </tr>\n" ;
+	echo "      <tr align=\"center\">\n" ;
+	echo "         <td bgcolor=\"#ffffd6\" class=\"cal-legende\"> - </td>\n" ;
+	echo "         <td class=\"cal-legende\"> ". _('calendrier_legende_part_time') ."</td>\n" ;
+	echo "      </tr>\n" ;
+	echo "      <tr align=\"center\">\n" ;
+	echo "         <td bgcolor=\"#f4f4f4\" class=\"cal-legende\">abs</td>\n" ;
+	echo "         <td class=\"cal-legende\"> ". _('calendrier_legende_abs') ."</td>\n" ;
+	echo "      </tr>\n" ;
+	echo "      <tr align=\"center\">\n" ;
+	echo "         <td bgcolor=\"#E6DAFF\" class=\"cal-legende\">abs</td>\n" ;
+	echo "         <td class=\"cal-legende\"> ". _('divers_fermeture') ."</td>\n" ;
+	echo "      </tr>\n" ;
+	echo "      </table>\n" ;
 	echo "</div>";
 	/********************/
 	/* bouton retour */
