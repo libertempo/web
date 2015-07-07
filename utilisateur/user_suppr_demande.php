@@ -129,7 +129,7 @@ function suppression($p_num_to_delete, $onglet, $DEBUG=FALSE)
 	$PHP_SELF=$_SERVER['PHP_SELF'];
 	$session=session_id() ;
 
-	$sql_delete = 'DELETE FROM conges_periode WHERE p_num = '.SQL::quote($p_num_to_delete).' AND p_etat=\'demande\' AND p_login=\''.SQL::quote($_SESSION['userlogin']).'\';';
+	$sql_delete = 'DELETE FROM conges_periode WHERE p_num = '.SQL::quote($p_num_to_delete).' AND p_login=\''.SQL::quote($_SESSION['userlogin']).'\';';
 
 	$result_delete = SQL::query($sql_delete);
 
