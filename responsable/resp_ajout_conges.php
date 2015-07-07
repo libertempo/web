@@ -328,7 +328,7 @@ function affichage_saisie_globale_groupe($tab_type_conges,  $DEBUG=FALSE)
 		echo "<h2>". _('resp_ajout_conges_ajout_groupe') ."</h2>\n";
 		echo "<form action=\"$PHP_SELF?session=$session&onglet=ajout_conges\" method=\"POST\"> \n";
 		echo "<div class=\"table-responsive\"><table class=\"table table-hover table-condensed table-striped\">\n";
-		echo "<tr><td align=\"center\">\n";
+		echo "<tr><td>\n";
 		echo "	<fieldset class=\"cal_saisie\">\n";
 		echo "	<table>\n";
 		echo "	<tr>\n";
@@ -358,19 +358,12 @@ function affichage_saisie_globale_groupe($tab_type_conges,  $DEBUG=FALSE)
 			echo "		<td>". _('divers_comment_maj_1') ." : <input type=\"text\" name=\"tab_new_comment_all[$id_conges]\" size=\"30\" maxlength=\"200\" value=\"\"></td>\n";
 			echo "	</tr>\n";
 		}
-		echo "	<tr>\n";
-		echo "		<td class=\"big\">&nbsp;</td>\n";
-		echo "		<td>&nbsp;</td>\n";
-		echo "		<td colspan=\"2\"> (". _('resp_ajout_conges_calcul_prop_arondi') ." !) </td>\n";
-		echo "		<td>&nbsp;</td>\n";
-		echo "	</tr>\n";
-		echo "	<tr>\n";
-		echo "		<td colspan=\"5\" align=\"center\"><input class=\"btn\" type=\"submit\" value=\"". _('form_valid_groupe') ."\"></td>\n";
-		echo "	</tr>\n";
 		echo "	</table>\n";
 		echo "	</fieldset>\n";
 		echo "</td></tr>\n";
 		echo "</table></div>\n";
+		echo "(". _('resp_ajout_conges_calcul_prop_arondi') ." !)<br><br>\n";
+		echo "<input class=\"btn\" type=\"submit\" value=\"". _('form_valid_groupe') ."\">\n";
 		echo "<input type=\"hidden\" name=\"ajout_groupe\" value=\"TRUE\">\n";
 		echo "<input type=\"hidden\" name=\"session\" value=\"$session\">\n";
 		echo "</form> \n";
@@ -389,10 +382,10 @@ function ajout_conges($tab_champ_saisie, $tab_commentaire_saisie,  $DEBUG=FALSE)
 	{
 	  foreach($tab_conges as $id_conges => $user_nb_jours_ajout)
 	  {
-	    $valid=verif_saisie_decimal($user_nb_jours_ajout, $DEBUG);   //verif la bonne saisie du nombre décimal
+		$user_nb_jours_ajout_float =(float) $user_nb_jours_ajout ;
+		$valid=verif_saisie_decimal($user_nb_jours_ajout_float, $DEBUG);   //verif la bonne saisie du nombre décimal
 	    if($valid)
 	    {
-	      $user_nb_jours_ajout_float =(float) $user_nb_jours_ajout ;
 	      if( $DEBUG ) {echo "$user_name --- $id_conges --- $user_nb_jours_ajout_float<br>\n";}
 
 	      if($user_nb_jours_ajout_float!=0)
@@ -470,25 +463,21 @@ function ajout_global($tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_ne
 					// pour arrondir au 1/2 le + proche on  fait x 2, on arrondit, puis on divise par 2 
 					$nb_conges = (ROUND(($nb_jours*($current_quotite/100))*2))/2  ;
 
-
-				// 1 : update de la table conges_solde_user
-				$req_update = "UPDATE conges_solde_user SET su_solde = su_solde+$nb_conges
-						WHERE  su_login = '$current_login' AND su_abs_id = $id_conges   ";
-				$ReqLog_update = SQL::query($req_update);
-		
-				// 2 : on insert l'ajout de conges GLOBAL (pour tous les users) dans la table periode
-				$commentaire =  _('resp_ajout_conges_comment_periode_all') ;
-				// ajout conges
-				insert_ajout_dans_periode($DEBUG, $current_login, $nb_conges, $id_conges, $commentaire);
-				
-/*				// 3 : Enregistrement du commentaire relatif à l'ajout de jours de congés 
-				$comment = $tab_new_comment_all[$id_conges];
-				$sql_comment = "INSERT INTO conges_historique_ajout (ha_login, ha_date, ha_abs_id, ha_nb_jours, ha_commentaire)
-						  VALUES ('$current_login', NOW(), $id_conges, $nb_conges , '$comment')";
-				$ReqLog_comment = SQL::query($sql_comment) ;
-*/
+				$nb_conges_ok = verif_saisie_decimal($nb_conges, $DEBUG);
+				if ($nb_conges_ok)
+				{
+					// 1 : update de la table conges_solde_user
+					$req_update = "UPDATE conges_solde_user SET su_solde = su_solde+$nb_conges
+							WHERE  su_login = '$current_login' AND su_abs_id = $id_conges   ";
+					$ReqLog_update = SQL::query($req_update);
+			
+					// 2 : on insert l'ajout de conges GLOBAL (pour tous les users) dans la table periode
+					$commentaire =  _('resp_ajout_conges_comment_periode_all') ;
+					// ajout conges
+					insert_ajout_dans_periode($DEBUG, $current_login, $nb_conges, $id_conges, $commentaire);
+				}		
 			}
-
+			// 3 : Enregistrement du commentaire relatif à l'ajout de jours de congés 
 			if( (!isset($tab_calcul_proportionnel[$id_conges])) || ($tab_calcul_proportionnel[$id_conges]!=TRUE) )
 				$comment_log = "ajout conges global ($nb_jours jour(s)) ($comment) (calcul proportionnel : No)";
 			else
@@ -542,28 +531,26 @@ function ajout_global_groupe($choix_groupe, $tab_new_nb_conges_all, $tab_calcul_
 				else
 					// pour arrondir au 1/2 le + proche on  fait x 2, on arrondit, puis on divise par 2 
 					$nb_conges = (ROUND(($nb_jours*($current_quotite/100))*2))/2  ;
+					$nb_conges_ok = verif_saisie_decimal($nb_conges, $DEBUG);
+				if($nb_conges_ok){
+					// 1 : on update conges_solde_user
+					$req_update = "UPDATE conges_solde_user SET su_solde = su_solde+$nb_conges
+							WHERE  su_login = '$current_login' AND su_abs_id = $id_conges   ";
+					$ReqLog_update = SQL::query($req_update);
 				
-				// 1 : on update conges_solde_user
-				$req_update = "UPDATE conges_solde_user SET su_solde = su_solde+$nb_conges
-						WHERE  su_login = '$current_login' AND su_abs_id = $id_conges   ";
-				$ReqLog_update = SQL::query($req_update);
+					// 2 : on insert l'ajout de conges dans la table periode
+					// recup du nom du groupe
+					$groupename= get_group_name_from_id($choix_groupe,  $DEBUG);
+					$commentaire =  _('resp_ajout_conges_comment_periode_groupe') ." $groupename";
 				
-				// 2 : on insert l'ajout de conges dans la table periode
-				// recup du nom du groupe
-				$groupename= get_group_name_from_id($choix_groupe,  $DEBUG);
-				$commentaire =  _('resp_ajout_conges_comment_periode_groupe') ." $groupename";
-			
-				// ajout conges
-				insert_ajout_dans_periode($DEBUG, $current_login, $nb_conges, $id_conges, $commentaire);
-				
-/*				// 3 : Enregistrement du commentaire relatif à l'ajout de jours de congés 
-				$sql_comment = "INSERT INTO conges_historique_ajout (ha_login, ha_date, ha_abs_id, ha_nb_jours, ha_commentaire)
-						  VALUES ('$current_login', NOW(), $id_conges, $nb_conges , '$comment')";
-				$ReqLog_comment = SQL::query($sql_comment) ;
-*/
+					// ajout conges
+					insert_ajout_dans_periode($DEBUG, $current_login, $nb_conges, $id_conges, $commentaire);
+				}
+
 			}
 
 			$group_name = get_group_name_from_id($choix_groupe,  $DEBUG);
+			// 3 : Enregistrement du commentaire relatif à l'ajout de jours de congés 
 			if( (!isset($tab_calcul_proportionnel[$id_conges])) || ($tab_calcul_proportionnel[$id_conges]!=TRUE) )
 				$comment_log = "ajout conges pour groupe $group_name ($nb_jours jour(s)) ($comment) (calcul proportionnel : No)";
 			else

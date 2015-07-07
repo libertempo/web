@@ -329,10 +329,10 @@ function ajout_conges($tab_champ_saisie, $tab_commentaire_saisie, $DEBUG=FALSE)
 	{
 	  foreach($tab_conges as $id_conges => $user_nb_jours_ajout)
 	  {
-	    $valid=verif_saisie_decimal($user_nb_jours_ajout, $DEBUG);   //verif la bonne saisie du nombre décimal
+	    $user_nb_jours_ajout_float =(float) $user_nb_jours_ajout ;
+	    $valid=verif_saisie_decimal($user_nb_jours_ajout_float, $DEBUG);   //verif la bonne saisie du nombre décimal
 	    if($valid)
 	    {
-	      $user_nb_jours_ajout_float =(float) $user_nb_jours_ajout ;
 	      if( $DEBUG ) {echo "$user_name --- $id_conges --- $user_nb_jours_ajout_float<br>\n";}
 
 	      if($user_nb_jours_ajout_float!=0)
@@ -385,18 +385,18 @@ function ajout_global($tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_ne
 				else
 					// pour arrondir au 1/2 le + proche on  fait x 2, on arrondit, puis on divise par 2 
 					$nb_conges = (ROUND(($nb_jours*($current_quotite/100))*2))/2  ;
-
-
-				// 1 : update de la table conges_solde_user
-				$req_update = 'UPDATE conges_solde_user SET su_solde = su_solde + '.floatval($nb_conges).'
-						WHERE  su_login = \''.SQL::quote($current_login).'\'  AND su_abs_id = \''.SQL::quote($id_conges).'\';';
-				$ReqLog_update = SQL::query($req_update);
-		
-				// 2 : on insert l'ajout de conges GLOBAL (pour tous les users) dans la table periode
-				$commentaire =  _('resp_ajout_conges_comment_periode_all') ;
-				// ajout conges
-				insert_ajout_dans_periode($DEBUG, $current_login, $nb_conges, $id_conges, $commentaire);
-				
+	   			$valid=verif_saisie_decimal($nb_conges, $DEBUG);
+				if($valid) {
+					// 1 : update de la table conges_solde_user
+					$req_update = 'UPDATE conges_solde_user SET su_solde = su_solde + '.floatval($nb_conges).'
+							WHERE  su_login = \''.SQL::quote($current_login).'\'  AND su_abs_id = \''.SQL::quote($id_conges).'\';';
+					$ReqLog_update = SQL::query($req_update);
+			
+					// 2 : on insert l'ajout de conges GLOBAL (pour tous les users) dans la table periode
+					$commentaire =  _('resp_ajout_conges_comment_periode_all') ;
+					// ajout conges
+					insert_ajout_dans_periode($DEBUG, $current_login, $nb_conges, $id_conges, $commentaire);
+				}
 			}
 
 			if( (!isset($tab_calcul_proportionnel[$id_conges])) || ($tab_calcul_proportionnel[$id_conges]!=TRUE) )
@@ -437,19 +437,22 @@ function ajout_global_groupe($choix_groupe, $tab_new_nb_conges_all, $tab_calcul_
 				else
 					// pour arrondir au 1/2 le + proche on  fait x 2, on arrondit, puis on divise par 2 
 					$nb_conges = (ROUND(($nb_jours*($current_quotite/100))*2))/2  ;
+
+				$valid=verif_saisie_decimal($nb_conges, $DEBUG);
+				if($valid){
+					// 1 : on update conges_solde_user
+					$req_update = 'UPDATE conges_solde_user SET su_solde = su_solde+ '.intval($nb_conges).'
+							WHERE  su_login = \''.SQL::quote($current_login).'\' AND su_abs_id = '.intval($id_conges).';';
+					$ReqLog_update = SQL::query($req_update);
+					
+					// 2 : on insert l'ajout de conges dans la table periode
+					// recup du nom du groupe
+					$groupename= get_group_name_from_id($choix_groupe, $DEBUG);
+					$commentaire =  _('resp_ajout_conges_comment_periode_groupe') ." $groupename";
 				
-				// 1 : on update conges_solde_user
-				$req_update = 'UPDATE conges_solde_user SET su_solde = su_solde+ '.intval($nb_conges).'
-						WHERE  su_login = \''.SQL::quote($current_login).'\' AND su_abs_id = '.intval($id_conges).';';
-				$ReqLog_update = SQL::query($req_update);
-				
-				// 2 : on insert l'ajout de conges dans la table periode
-				// recup du nom du groupe
-				$groupename= get_group_name_from_id($choix_groupe, $DEBUG);
-				$commentaire =  _('resp_ajout_conges_comment_periode_groupe') ." $groupename";
-			
-				// ajout conges
-				insert_ajout_dans_periode($DEBUG, $current_login, $nb_conges, $id_conges, $commentaire);
+					// ajout conges
+					insert_ajout_dans_periode($DEBUG, $current_login, $nb_conges, $id_conges, $commentaire);
+				}
 			}
 
 			$group_name = get_group_name_from_id($choix_groupe, $DEBUG);
