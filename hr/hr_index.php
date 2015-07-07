@@ -104,7 +104,7 @@ verif_droits_user($session, "is_hr", $DEBUG);
 //	if ($_SESSION['config']['gestion_conges_exceptionnels']) 
 		$tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels( $DEBUG);
 	
-	echo '<div class="'.$onglet.' wrapper">';
+	echo '<div class="'.$onglet.' main-content">';
 		include ROOT_PATH . 'hr/hr_'.$onglet.'.php';
 	echo '</div>';
 	
