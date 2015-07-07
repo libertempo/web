@@ -8,8 +8,6 @@
 
 ***************************************
 
--corriger bug affichage ajout utilisateur (après validation lorsqu'un champ n'a pas été rempli correctement)
-
 - interdire les soldes négatifs mais SEULEMENT pour certain congés (choisi dans la config des types de conges)
 
 - limiter le solde négatif autorisé (par congés)
@@ -26,8 +24,7 @@
 - ajouter les reliquats dans les éditions papier
 
 - calendrier sans authentification :
-    supprimer les détails d'affichage (type de congés et d'abscences) 
-    voir le fichier "Gestion - Calendrier sans authentification et sans détail.doc" envoyé par MaRRocK !  (ou cf mail du 16/04/2008 et 18/05/2008)
+    supprimer les détails d'affichage (type de congés et d'absences) 
 
 - répéter la ligne des entêtes du tableau en haut de chaque page d'une édition papier ou pdf ....
 
