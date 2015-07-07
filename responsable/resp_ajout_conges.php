@@ -45,7 +45,6 @@ defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 	
 	// titre
 	echo "<h1>". _('resp_ajout_conges_titre') ."</h1>\n";
-	//connexion mysql
 	
 	if($ajout_conges=="TRUE")
 	{
@@ -278,13 +277,13 @@ function affichage_saisie_globale_pour_tous($tab_type_conges,  $DEBUG=FALSE)
 		echo "	<tr>\n";
 		echo "		<td><strong>$libelle<strong></td>\n";
 		echo "		<td><input class=\"form-control\" type=\"text\" name=\"tab_new_nb_conges_all[$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\"></td>\n";
-		echo "		<td>Oui <input type=\"checkbox\" name=\"tab_calcul_proportionnel[$id_conges]\" value=\"TRUE\" checked></td>\n";
+		echo "		<td>". _('resp_ajout_conges_oui') ." <input type=\"checkbox\" name=\"tab_calcul_proportionnel[$id_conges]\" value=\"TRUE\" checked></td>\n";
 		echo "		<td><input class=\"form-control\" type=\"text\" name=\"tab_new_comment_all[$id_conges]\" size=\"30\" maxlength=\"200\" value=\"\"></td>\n";
 		echo "	</tr>\n";
 	}
 	echo "</table></div>\n";
 	// texte sur l'arrondi du calcul proportionnel
-	echo "<p>" . _('resp_ajout_conges_calcul_prop_arondi') . "!) </p>\n";
+	echo "<p>" . _('resp_ajout_conges_calcul_prop_arondi') . "!</p>\n";
 	// bouton valider
 	echo "<input class=\"btn\" type=\"submit\" value=\"". _('form_valid_global') ."\">\n";
 	echo "</fieldset>\n";
@@ -327,10 +326,8 @@ function affichage_saisie_globale_groupe($tab_type_conges,  $DEBUG=FALSE)
 	{
 		echo "<h2>". _('resp_ajout_conges_ajout_groupe') ."</h2>\n";
 		echo "<form action=\"$PHP_SELF?session=$session&onglet=ajout_conges\" method=\"POST\"> \n";
-		echo "<div class=\"table-responsive\"><table class=\"table table-hover table-condensed table-striped\">\n";
-		echo "<tr><td>\n";
 		echo "	<fieldset class=\"cal_saisie\">\n";
-		echo "	<table>\n";
+		echo "<div class=\"table-responsive\"><table class=\"table table-hover table-condensed table-striped\">\n";
 		echo "	<tr>\n";
 		echo "		<td class=\"big\">". _('resp_ajout_conges_choix_groupe') ." : </td>\n";
 			// création du select pour le choix du groupe
@@ -348,22 +345,24 @@ function affichage_saisie_globale_groupe($tab_type_conges,  $DEBUG=FALSE)
 
 		echo "		<td colspan=\"3\">$text_choix_group</td>\n";
 		echo "	</tr>\n";
+	echo "<tr>\n";
+	echo "<th colspan=\"2\">" . _('resp_ajout_conges_nb_jours_all_1') . ' ' . _('resp_ajout_conges_nb_jours_all_2') . "</th>\n";
+	echo "<th>" ._('resp_ajout_conges_calcul_prop') . "</th>\n";
+	echo "<th>" . _('divers_comment_maj_1') . "</th>\n";
+	echo "</tr>\n";
 		foreach($tab_type_conges as $id_conges => $libelle)
 		{
 			echo "	<tr>\n";
-			echo "		<td class=\"big\">". _('resp_ajout_conges_nb_jours_groupe_1') ." <strong>$libelle</strong> ". _('resp_ajout_conges_nb_jours_groupe_2') ." </td>\n";
+			echo "		<td><strong>$libelle<strong></td>\n";
 			echo "		<td><input class=\"form-control\" type=\"text\" name=\"tab_new_nb_conges_all[$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\"></td>\n";
-			echo "		<td> ( ". _('resp_ajout_conges_calcul_prop') ." </td>\n";
-			echo "		<td>". _('resp_ajout_conges_oui') ." <input type=\"checkbox\" name=\"tab_calcul_proportionnel[$id_conges]\" value=\"TRUE\" checked> )</td>\n";
-			echo "		<td>". _('divers_comment_maj_1') ." : <input type=\"text\" name=\"tab_new_comment_all[$id_conges]\" size=\"30\" maxlength=\"200\" value=\"\"></td>\n";
+			echo "		<td>". _('resp_ajout_conges_oui') ." <input type=\"checkbox\" name=\"tab_calcul_proportionnel[$id_conges]\" value=\"TRUE\" checked></td>\n";
+			echo "		<td><input class=\"form-control\" type=\"text\" name=\"tab_new_comment_all[$id_conges]\" size=\"30\" maxlength=\"200\" value=\"\"></td>\n";
 			echo "	</tr>\n";
 		}
-		echo "	</table>\n";
-		echo "	</fieldset>\n";
-		echo "</td></tr>\n";
-		echo "</table></div>\n";
-		echo "(". _('resp_ajout_conges_calcul_prop_arondi') ." !)<br><br>\n";
+		echo "	</table></div>\n";
+		echo "<p>" . _('resp_ajout_conges_calcul_prop_arondi') . "! </p>\n";
 		echo "<input class=\"btn\" type=\"submit\" value=\"". _('form_valid_groupe') ."\">\n";
+		echo "	</fieldset>\n";
 		echo "<input type=\"hidden\" name=\"ajout_groupe\" value=\"TRUE\">\n";
 		echo "<input type=\"hidden\" name=\"session\" value=\"$session\">\n";
 		echo "</form> \n";

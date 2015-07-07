@@ -32,7 +32,7 @@ defined( '_PHP_CONGES' ) or die( 'Restricted access' );
     $choix_groupe            = getpost_variable('choix_groupe');
 
 	// titre
-	echo '<h2>'. _('resp_ajout_conges_titre') ."</H2>\n\n";
+	echo '<h1>'. _('resp_ajout_conges_titre') ."</h1>\n\n";
 	
 	if( $ajout_conges == "TRUE" ) {
 	
@@ -126,15 +126,15 @@ function affichage_saisie_user_par_user($tab_type_conges, $tab_type_conges_excep
 	
 	/************************************************************/
 	/* SAISIE USER PAR USER pour tous les utilisateurs du responsable */
-	
+	echo "<h2>Ajout par utilisateur</h2>\n";
 	echo " <form action=\"$PHP_SELF?session=$session&onglet=ajout_conges\" method=\"POST\"> \n";
 	
 	if( (count($tab_all_users_du_hr)!=0) || (count($tab_all_users_du_grand_resp)!=0) )
 	{
 		// AFFICHAGE TITRES TABLEAU
-		echo "<table cellpadding=\"2\" class=\"tablo\" width=\"700\">\n";
+		echo "<div class=\"table-responsive\"><table class=\"table table-hover table-condensed table-striped\">\n";
 		echo '<thead>';
-			echo '<tr>';
+			echo '<tr align="center">';
 				echo '<th>'. _('divers_nom_maj_1') .'</th>';
 				echo '<th>'. _('divers_prenom_maj_1') .'</th>';
 				echo '<th>'. _('divers_quotite_maj_1') .'</th>';
@@ -176,7 +176,7 @@ function affichage_saisie_user_par_user($tab_type_conges, $tab_type_conges_excep
 			foreach($tab_type_conges as $id_conges => $libelle)
 			{
 				/** le champ de saisie est <input type="text" name="tab_champ_saisie[valeur de u_login][id_du_type_de_conges]" value="[valeur du nb de jours ajouté saisi]"> */
-				$champ_saisie_conges="<input type=\"text\" name=\"tab_champ_saisie[$current_login][$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\">";
+				$champ_saisie_conges="<input class=\"form-control\" type=\"text\" name=\"tab_champ_saisie[$current_login][$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\">";
 				echo '<td>'.$tab_conges[$libelle]['nb_an']." <i>(".$tab_conges[$libelle]['solde'].")</i></td>\n";
 				echo "<td align=\"center\" class=\"histo\">$champ_saisie_conges</td>\n" ;
 			}
@@ -185,12 +185,12 @@ function affichage_saisie_user_par_user($tab_type_conges, $tab_type_conges_excep
 				foreach($tab_type_conges_exceptionnels as $id_conges => $libelle)
 				{
 					/** le champ de saisie est <input type="text" name="tab_champ_saisie[valeur de u_login][id_du_type_de_conges]" value="[valeur du nb de jours ajouté saisi]"> */
-					$champ_saisie_conges="<input type=\"text\" name=\"tab_champ_saisie[$current_login][$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\">";
+					$champ_saisie_conges="<input class=\"form-control\" type=\"text\" name=\"tab_champ_saisie[$current_login][$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\">";
 					echo "<td><i>(".$tab_conges[$libelle]['solde'].")</i></td>\n";
 					echo "<td align=\"center\" class=\"histo\">$champ_saisie_conges</td>\n" ;
 				}
 			}
-			echo "<td align=\"center\" class=\"histo\"><input type=\"text\" name=\"tab_commentaire_saisie[$current_login]\" size=\"30\" maxlength=\"200\" value=\"\"></td>\n";
+			echo "<td align=\"center\" class=\"histo\"><input class=\"form-control\" type=\"text\" name=\"tab_commentaire_saisie[$current_login]\" size=\"30\" maxlength=\"200\" value=\"\"></td>\n";
 			echo '</tr>';
 			$cpt_lignes++ ;
 			$i = !$i;
@@ -201,7 +201,7 @@ function affichage_saisie_user_par_user($tab_type_conges, $tab_type_conges_excep
 	
 		echo "<input type=\"hidden\" name=\"ajout_conges\" value=\"TRUE\">\n";
 		echo "<input type=\"hidden\" name=\"session\" value=\"$session\">\n";
-		echo "<input type=\"submit\" value=\"". _('form_submit') ."\">\n";
+		echo "<input class=\"btn\" type=\"submit\" value=\"". _('form_submit') ."\">\n";
 		echo " </form> \n";
 	}
 }
@@ -214,38 +214,32 @@ function affichage_saisie_globale_pour_tous($tab_type_conges, $DEBUG=FALSE)
 	
 	/************************************************************/
 	/* SAISIE GLOBALE pour tous les utilisateurs du responsable */
-	
+	echo "<h2>". _('resp_ajout_conges_ajout_all') ."</h2>\n";
 	echo "<form action=\"$PHP_SELF?session=$session&onglet=ajout_conges\" method=\"POST\"> \n";
-	echo "<table>\n";
-	echo "<tr><td align=\"center\">\n";
 	echo "	<fieldset class=\"cal_saisie\">\n";
-	echo "	<legend class=\"boxlogin\">". _('resp_ajout_conges_ajout_all') ."</legend>\n";
-	echo "	<table>\n";
+	echo "<div class=\"table-responsive\"><table class=\"table table-hover table-condensed table-striped\">\n";
+	echo "<thead>\n";
+	echo "<tr>\n";
+	echo "<th colspan=\"2\">" . _('resp_ajout_conges_nb_jours_all_1') . ' ' . _('resp_ajout_conges_nb_jours_all_2') . "</th>\n";
+	echo "<th>" ._('resp_ajout_conges_calcul_prop') . "</th>\n";
+	echo "<th>" . _('divers_comment_maj_1') . "</th>\n";
+	echo "</tr>\n";
+	echo "</thead>\n";
 	foreach($tab_type_conges as $id_conges => $libelle)
 	{
 		echo "	<tr>\n";
-		echo "		<td class=\"big\">". _('resp_ajout_conges_nb_jours_all_1') ." <font color=\"red\" size=\"+1\">$libelle</font> ". _('resp_ajout_conges_nb_jours_all_2') ." </td>\n";
-		echo "		<td><input type=\"text\" name=\"tab_new_nb_conges_all[$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\"></td>\n";
-		echo "		<td> ( ". _('resp_ajout_conges_calcul_prop') ." </td>\n";
-		echo "		<td>". _('resp_ajout_conges_oui') ." <input type=\"checkbox\" name=\"tab_calcul_proportionnel[$id_conges]\" value=\"TRUE\" checked> )</td>\n";
-		echo "		<td>". _('divers_comment_maj_1') ." : <input type=\"text\" name=\"tab_new_comment_all[$id_conges]\" size=\"30\" maxlength=\"200\" value=\"\"></td>\n";
+		echo "		<td><strong>$libelle<strong></td>\n";
+		echo "		<td><input class=\"form-control\" type=\"text\" name=\"tab_new_nb_conges_all[$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\"></td>\n";
+		echo "		<td>". _('resp_ajout_conges_oui') ." <input type=\"checkbox\" name=\"tab_calcul_proportionnel[$id_conges]\" value=\"TRUE\" checked></td>\n";
+		echo "		<td><input class=\"form-control\" type=\"text\" name=\"tab_new_comment_all[$id_conges]\" size=\"30\" maxlength=\"200\" value=\"\"></td>\n";
 		echo "	</tr>\n";
 	}
+	echo "</table></div>\n";
 	// texte sur l'arrondi du calcul proportionnel
-	echo "	<tr>\n";
-	echo "		<td class=\"big\">&nbsp;</td>\n";
-	echo "		<td>&nbsp;</td>\n";
-	echo "		<td colspan=\"2\"> (". _('resp_ajout_conges_calcul_prop_arondi') ." !) </td>\n";
-	echo "		<td>&nbsp;</td>\n";
-	echo "	</tr>\n";
+	echo "<p>" . _('resp_ajout_conges_calcul_prop_arondi') . "!</p>\n";
 	// bouton valider
-	echo "	<tr>\n";
-	echo "		<td colspan=\"5\" align=\"center\"><input type=\"submit\" value=\"". _('form_valid_global') ."\"></td>\n";
-	echo "	</tr>\n";
-	echo "	</table>\n";
-	echo "	</fieldset>\n";
-	echo "</td></tr>\n";
-	echo "</table>\n";
+	echo "<input class=\"btn\" type=\"submit\" value=\"". _('form_valid_global') ."\">\n";
+	echo "</fieldset>\n";
 	echo "<input type=\"hidden\" name=\"ajout_global\" value=\"TRUE\">\n";
 	echo "<input type=\"hidden\" name=\"session\" value=\"$session\">\n";
 	echo "</form> \n";
@@ -265,12 +259,10 @@ function affichage_saisie_globale_groupe($tab_type_conges, $DEBUG=FALSE)
 		
 	if($list_group!="") //si la liste n'est pas vide ( serait le cas si n'est responsable d'aucun groupe)
 	{
+		echo "<h2>". _('resp_ajout_conges_ajout_groupe') ."</h2>\n";
 		echo "<form action=\"$PHP_SELF?session=$session&onglet=ajout_conges\" method=\"POST\"> \n";
-		echo "<table>\n";
-		echo "<tr><td align=\"center\">\n";
 		echo "	<fieldset class=\"cal_saisie\">\n";
-		echo "	<legend class=\"boxlogin\">". _('resp_ajout_conges_ajout_groupe') ."</legend>\n";
-		echo "	<table>\n";
+		echo "<div class=\"table-responsive\"><table class=\"table table-hover table-condensed table-striped\">\n";
 		echo "	<tr>\n";
 		echo "		<td class=\"big\">". _('resp_ajout_conges_choix_groupe') ." : </td>\n";
 			// création du select pour le choix du groupe
@@ -288,29 +280,24 @@ function affichage_saisie_globale_groupe($tab_type_conges, $DEBUG=FALSE)
 
 		echo "		<td colspan=\"3\">$text_choix_group</td>\n";
 		echo "	</tr>\n";
+	echo "<tr>\n";
+	echo "<th colspan=\"2\">" . _('resp_ajout_conges_nb_jours_all_1') . ' ' . _('resp_ajout_conges_nb_jours_all_2') . "</th>\n";
+	echo "<th>" ._('resp_ajout_conges_calcul_prop') . "</th>\n";
+	echo "<th>" . _('divers_comment_maj_1') . "</th>\n";
+	echo "</tr>\n";
 		foreach($tab_type_conges as $id_conges => $libelle)
 		{
 			echo "	<tr>\n";
-			echo "		<td class=\"big\">". _('resp_ajout_conges_nb_jours_groupe_1') ." <font color=\"red\" size=\"+1\">$libelle</font> ". _('resp_ajout_conges_nb_jours_groupe_2') ." </td>\n";
-			echo "		<td><input type=\"text\" name=\"tab_new_nb_conges_all[$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\"></td>\n";
-			echo "		<td> ( ". _('resp_ajout_conges_calcul_prop') ." </td>\n";
-			echo "		<td>". _('resp_ajout_conges_oui') ." <input type=\"checkbox\" name=\"tab_calcul_proportionnel[$id_conges]\" value=\"TRUE\" checked> )</td>\n";
-			echo "		<td>". _('divers_comment_maj_1') ." : <input type=\"text\" name=\"tab_new_comment_all[$id_conges]\" size=\"30\" maxlength=\"200\" value=\"\"></td>\n";
+			echo "		<td><strong>$libelle<strong></td>\n";
+			echo "		<td><input class=\"form-control\" type=\"text\" name=\"tab_new_nb_conges_all[$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\"></td>\n";
+			echo "		<td>". _('resp_ajout_conges_oui') ." <input type=\"checkbox\" name=\"tab_calcul_proportionnel[$id_conges]\" value=\"TRUE\" checked></td>\n";
+			echo "		<td><input class=\"form-control\" type=\"text\" name=\"tab_new_comment_all[$id_conges]\" size=\"30\" maxlength=\"200\" value=\"\"></td>\n";
 			echo "	</tr>\n";
 		}
-		echo "	<tr>\n";
-		echo "		<td class=\"big\">&nbsp;</td>\n";
-		echo "		<td>&nbsp;</td>\n";
-		echo "		<td colspan=\"2\"> (". _('resp_ajout_conges_calcul_prop_arondi') ." !) </td>\n";
-		echo "		<td>&nbsp;</td>\n";
-		echo "	</tr>\n";
-		echo "	<tr>\n";
-		echo "		<td colspan=\"5\" align=\"center\"><input type=\"submit\" value=\"". _('form_valid_groupe') ."\"></td>\n";
-		echo "	</tr>\n";
-		echo "	</table>\n";
+		echo "	</table></div>\n";
+		echo "<p>" . _('resp_ajout_conges_calcul_prop_arondi') . "! </p>\n";
+		echo "<input class=\"btn\" type=\"submit\" value=\"". _('form_valid_groupe') ."\">\n";
 		echo "	</fieldset>\n";
-		echo "</td></tr>\n";
-		echo "</table>\n";
 		echo "<input type=\"hidden\" name=\"ajout_groupe\" value=\"TRUE\">\n";
 		echo "<input type=\"hidden\" name=\"session\" value=\"$session\">\n";
 		echo "</form> \n";
