@@ -127,21 +127,19 @@ if (($_SESSION['config']['dimanche_travail']==FALSE)&&($_SESSION['config']['same
 }
 ?>
     // datepicker	            
-    $('input.date').datepicker({
-	    format: "dd/mm/yyyy",
-
-	    language: "fr",
-	    autoclose: true,
-	    todayHighlight: true,
+$('input.date').datepicker({
+	format: "dd/mm/yyyy",
+	language: "fr",
+	autoclose: true,
+	todayHighlight: true,
 <?php
-	echo "daysOfWeekDisabled: jdesac,\n";
+	echo "	daysOfWeekDisabled: jdesac,\n";
+	echo ($_SESSION['config']['interdit_saisie_periode_date_passee'])? "	startDate: 'd',\n":"";
 ?>
-	    datesDisabled: feries,
-
+	datesDisabled: feries,
 	}).on("change", function() {
-compter_jours();
-  });
-
+		compter_jours();
+	});
 });
 
 </script>
