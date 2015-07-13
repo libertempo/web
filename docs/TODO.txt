@@ -28,8 +28,6 @@
 
 - répéter la ligne des entêtes du tableau en haut de chaque page d'une édition papier ou pdf ....
 
--Ajouter dans le calendrier le nombre de jour de congés pris par mois
-
 ***************************************
 ***************************************
  en vrac :
