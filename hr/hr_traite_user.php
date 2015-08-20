@@ -748,6 +748,9 @@ function new_conges($user_login, $numero_int, $new_debut, $new_demi_jour_deb, $n
     $PHP_SELF=$_SERVER['PHP_SELF'];
     $session=session_id();
 
+	$new_debut = convert_date($new_debut);
+	$new_fin = convert_date($new_fin);   
+
     // verif validité des valeurs saisies
     $valid=verif_saisie_new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment);
 
