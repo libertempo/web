@@ -750,54 +750,55 @@ function traite_demandes($user_login, $tab_radio_traite_demande, $tab_text_refus
 
 function new_conges($user_login, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type_id,  $DEBUG=FALSE)
 {
-    $PHP_SELF=$_SERVER['PHP_SELF'];
-    $session=session_id();
+	$PHP_SELF=$_SERVER['PHP_SELF'];
+	$session=session_id();
 
-    // verif validité des valeurs saisies
-    $valid=verif_saisie_new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment);
+	//conversion des dates
+	$new_debut = convert_date($new_debut);
+	$new_fin = convert_date($new_fin);
+	
+	// verif validité des valeurs saisies
+	$valid=verif_saisie_new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment);
 	
 	if( $DEBUG ) { echo "verif_saisie_new_demande resp_traite_user : $valid<br>\n"; }
-    if($valid)
-    {
-        echo "$user_login---$new_debut _ $new_demi_jour_deb---$new_fin _ $new_demi_jour_fin---$new_nb_jours---$new_comment---$new_type_id<br>\n";
+	if($valid)
+	{
+        	echo "$user_login---$new_debut _ $new_demi_jour_deb---$new_fin _ $new_demi_jour_fin---$new_nb_jours---$new_comment---$new_type_id<br>\n";
 
-        // recup dans un tableau de tableau les infos des types de conges et absences
-        $tab_tout_type_abs = recup_tableau_tout_types_abs( $DEBUG);
+        	// recup dans un tableau de tableau les infos des types de conges et absences
+        	$tab_tout_type_abs = recup_tableau_tout_types_abs( $DEBUG);
 
-        /**********************************/
-        /* insert dans conges_periode     */
-        /**********************************/
-        $new_etat="ok";
-        $result=insert_dans_periode($user_login, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type_id, $new_etat, 0, $DEBUG);
+        	/**********************************/
+        	/* insert dans conges_periode     */
+        	/**********************************/
+        	$new_etat="ok";
+        	$result=insert_dans_periode($user_login, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type_id, $new_etat, 0, $DEBUG);
 
-        /************************************************/
-        /* UPDATE table "conges_solde_user" (jours restants) */
-        // on retranche les jours seulement pour des conges pris (pas pour les absences)
-        // donc seulement si le type de l'absence qu'on annule est un "conges"
-        if(isset($tab_tout_type_abs[$new_type_id]['type']) && $tab_tout_type_abs[$new_type_id]['type']=="conges")
-        {
-            $user_nb_jours_pris_float=(float) $new_nb_jours ;
-            soustrait_solde_et_reliquat_user($user_login, "", $user_nb_jours_pris_float, $new_type_id, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin , $DEBUG);
+        	/************************************************/
+        	/* UPDATE table "conges_solde_user" (jours restants) */
+        	// on retranche les jours seulement pour des conges pris (pas pour les absences)
+        	// donc seulement si le type de l'absence qu'on annule est un "conges"
+        	if(isset($tab_tout_type_abs[$new_type_id]['type']) && $tab_tout_type_abs[$new_type_id]['type']=="conges")
+        	{
+        		$user_nb_jours_pris_float=(float) $new_nb_jours ;
+        		soustrait_solde_et_reliquat_user($user_login, "", $user_nb_jours_pris_float, $new_type_id, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin , $DEBUG);
+	        }
+	        $comment_log = "saisie conges par le responsable pour $user_login ($new_nb_jours jour(s)) type_conges = $new_type_id ( de $new_debut $new_demi_jour_deb a $new_fin $new_demi_jour_fin) ($new_comment)";
+        	log_action(0, "", $user_login, $comment_log,  $DEBUG);
 
-        }
+        	if($result)
+        		echo  _('form_modif_ok') ."<br><br> \n";
+        	else
+        		echo  _('form_modif_not_ok') ."<br><br> \n";
+	}
+	else
+	{
+        	echo  _('resp_traite_user_valeurs_not_ok') ."<br><br> \n";
+	}
 
-        $comment_log = "saisie conges par le responsable pour $user_login ($new_nb_jours jour(s)) type_conges = $new_type_id ( de $new_debut $new_demi_jour_deb a $new_fin $new_demi_jour_fin) ($new_comment)";
-        log_action(0, "", $user_login, $comment_log,  $DEBUG);
-
-        if($result)
-            echo  _('form_modif_ok') ."<br><br> \n";
-        else
-            echo  _('form_modif_not_ok') ."<br><br> \n";
-    }
-    else
-    {
-            echo  _('resp_traite_user_valeurs_not_ok') ."<br><br> \n";
-    }
-
-    /* APPEL D'UNE AUTRE PAGE */
-    echo "<form action=\"$PHP_SELF?session=$session&onglet=traite_user&user_login=$user_login\" method=\"POST\"> \n";
-    echo "<input class=\"btn\" type=\"submit\" value=\"". _('form_retour') ."\">\n";
-    echo "</form> \n";
-
+	/* APPEL D'UNE AUTRE PAGE */
+	echo "<form action=\"$PHP_SELF?session=$session&onglet=traite_user&user_login=$user_login\" method=\"POST\"> \n";
+	echo "<input class=\"btn\" type=\"submit\" value=\"". _('form_retour') ."\">\n";
+	echo "</form> \n";
 }
 
