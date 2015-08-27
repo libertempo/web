@@ -1423,6 +1423,9 @@ msgstr "double validation"
 msgid "admin_gestion_groupe_grand_resp_responsables"
 msgstr "Grands Responsables du Groupe"
 
+msgid "ie_non_gere"
+msgstr "Internet Explorer n'est pas pris en charge par Libertempo!<br>utilisez un autre navigateur"
+
 msgid "divers_grand_responsable_maj_1"
 msgstr "Grand Responsable"
 

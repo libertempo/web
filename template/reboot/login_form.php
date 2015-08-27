@@ -25,7 +25,15 @@
 	 		<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 			<?php echo $error_message; ?>
 	 	</div>
+		<?php endif; 
+		if(preg_match('/MSIE/i',$_SERVER['HTTP_USER_AGENT'])):
+		?>
+		<div class="alert alert-danger">
+	 		<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+			<?php echo _('ie_non_gere'); ?>
+	 	</div>
 		<?php endif; ?>
+
 
 		<form method="post" action="<?php echo $PHP_SELF; ?>">
 	    	<h2 class="form-signin-heading">Connexion</h2>
