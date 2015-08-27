@@ -25,7 +25,7 @@
     
     <!-- scripts -->
     <!-- Jquery -->
-    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.10.1.min.js"></script>
     <script type="text/javascript" src="<?php echo  TEMPLATE_PATH ?>bootstrap/js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="<?php echo  TEMPLATE_PATH ?>js/bootstrap-datepicker/bootstrap-datepicker.js"></script>
     <script type="text/javascript" src="<?php echo  TEMPLATE_PATH ?>js/bootstrap-datepicker/locales/bootstrap-datepicker.fr.js"></script>
