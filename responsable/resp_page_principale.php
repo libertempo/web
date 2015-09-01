@@ -148,8 +148,8 @@ defined( '_PHP_CONGES' ) or die( 'Restricted access' );
                 //tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
                 $tab_conges_2=$tab_current_user_2['conges'];
 
-                $text_affich_user="<a class=\"action show\" href=\"resp_index.php?session=$session&onglet=traite_user&user_login=$current_login_2\">". _('resp_etat_users_afficher') ."</a>" ;
-                $text_edit_papier="<a class=\"action print\" href=\"../edition/edit_user.php?session=$session&user_login=$current_login_2\" target=\"_blank\">". _('resp_etat_users_imprim') ."</a>";
+                $text_affich_user="<a class=\"action show\" href=\"resp_index.php?session=$session&onglet=traite_user&user_login=$current_login_2\" title=\"". _('resp_etat_users_afficher') ."\"><i class=\"fa fa-eye\"></i></a>" ;
+                $text_edit_papier="<a class=\"action print\" href=\"../edition/edit_user.php?session=$session&user_login=$current_login_2\" target=\"_blank\" title=\""._('resp_etat_users_imprim')."\"><i class=\"fa fa-file-text\"></i></a>";
                 echo '<tr class="'.($i?'i':'p').'">';
                 echo "<td>".$tab_current_user_2['nom']."</td><td>".$tab_current_user_2['prenom']."</td><td>".$tab_current_user_2['quotite']."%</td>";
                 foreach($tab_type_cong as $id_conges => $libelle)
