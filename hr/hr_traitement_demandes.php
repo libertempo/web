@@ -65,42 +65,21 @@ function affiche_all_demandes_en_cours($tab_type_conges, $DEBUG=FALSE)
 	// Récupération des informations
 	/*********************************/
 
-	// Récup dans un tableau de tableau des informations de tous les users dont $_SESSION['userlogin'] est responsable sauf lui meme
-	$tab_all_users_du_resp=recup_infos_all_users_du_resp($_SESSION['userlogin'], $DEBUG);
-	if( $DEBUG ) { echo "tab_all_users_du_resp :<br>\n"; print_r($tab_all_users_du_resp); echo "<br><br>\n";}
+	// Récup dans un tableau de tableau des informations de tous les users
+	$tab_all_users=recup_infos_all_users($_SESSION['userlogin'], $DEBUG);
+	if( $DEBUG ) { echo "tab_all_users :<br>\n"; print_r($tab_all_users); echo "<br><br>\n";}
 
 	// si tableau des users du resp n'est pas vide
-	if( count($tab_all_users_du_resp)!=0 )
+	if( count($tab_all_users)!=0 )
 	{
 		// constitution de la liste (séparé par des virgules) des logins ...
-		$list_users_du_resp="";
-		foreach($tab_all_users_du_resp as $current_login => $tab_current_user)
+		$list_users="";
+		foreach($tab_all_users as $current_login => $tab_current_user)
 		{
-			if($list_users_du_resp=="")
-				$list_users_du_resp= "'$current_login'" ;
+			if($list_users=="")
+				$list_users= "'$current_login'" ;
 			else
-				$list_users_du_resp=$list_users_du_resp.", '$current_login'" ;
-		}
-	}
-
-
-	// Récup dans un tableau de tableau des informations de tous les users dont $_SESSION['userlogin'] est GRAND responsable
-	if($_SESSION['config']['double_validation_conges'])
-	{
-		$tab_all_users_du_grand_resp=recup_infos_all_users_du_grand_resp($_SESSION['userlogin'], $DEBUG);
-
-		// si tableau des users du grand resp n'est pas vide
-		if( count($tab_all_users_du_grand_resp)!=0 )
-		{
-			// constitution de la liste (séparé par des virgules) des logins ...
-			$list_users_du_grand_resp="";
-			foreach($tab_all_users_du_grand_resp as $current_login => $tab_current_user)
-			{
-				if($list_users_du_grand_resp=="")
-					$list_users_du_grand_resp= "'$current_login'" ;
-				else
-					$list_users_du_grand_resp=$list_users_du_grand_resp.", '$current_login'" ;
-			}
+				$list_users=$list_users.", '$current_login'" ;
 		}
 	}
 
@@ -112,20 +91,20 @@ function affiche_all_demandes_en_cours($tab_type_conges, $DEBUG=FALSE)
 	echo " <form action=\"$PHP_SELF?session=$session&onglet=traitement_demandes\" method=\"POST\"> \n" ;
 
 	/*********************************/
-	/* TABLEAU DES DEMANDES DES USERS DONT ON EST LE RESP */
+	/* TABLEAU DES DEMANDES DES USERS*/
 	/*********************************/
 
-	// si tableau des users du resp n'est pas vide
-	if( count($tab_all_users_du_resp)!=0 )
+	// si tableau des users n'est pas vide :)
+	if( count($tab_all_users)!=0 )
 	{
 
-		// Récup des demandes en cours pour les users dont $_SESSION['userlogin'] est responsable :
+		// Récup des demandes en cours pour les users :
 		$sql1 = "SELECT p_num, p_login, p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_nb_jours, p_commentaire, p_type, p_date_demande, p_date_traitement FROM conges_periode ";
 		$sql1=$sql1." WHERE p_etat =\"demande\" ";
 		if($_SESSION['config']['responsable_virtuel'])
 			$sql1=$sql1." AND p_login != 'conges' ";
 		else
-			$sql1=$sql1." AND p_login IN ($list_users_du_resp) ";
+			$sql1=$sql1." AND p_login IN ($list_users) ";
 		$sql1=$sql1." ORDER BY p_num";
 
 		$ReqLog1 = SQL::query($sql1) ;
@@ -146,13 +125,6 @@ function affiche_all_demandes_en_cours($tab_type_conges, $DEBUG=FALSE)
 			echo '<th>'. _('divers_fin_maj_1') .'</th>' ;
 			echo '<th>'. _('divers_comment_maj_1') .'</th>' ;
 			echo '<th>'. _('resp_traite_demandes_nb_jours') .'</th>';
-
-			// foreach($tab_type_conges as $id_conges => $libelle)
-			// 	echo '<th>'. _('divers_solde_maj_1') ."<br>$libelle</th>" ;
-
-			// if ( $_SESSION['config']['gestion_conges_exceptionnels'] )
-			// 	foreach($tab_type_conges_exceptionnels as $id_conges => $libelle)
-			// 		echo '<th>'. _('divers_solde_maj_1') ."<br>$libelle</th>" ;
 			echo "<th>". _('divers_solde') ."</th>\n" ;
 			echo '<th>'. _('divers_accepter_maj_1') .'</th>' ;
 			echo '<th>'. _('divers_refuser_maj_1') .'</th>' ;
@@ -198,28 +170,16 @@ function affiche_all_demandes_en_cours($tab_type_conges, $DEBUG=FALSE)
 
 				// on construit la chaine qui servira de valeur à passer dans les boutons-radio
 				$chaine_bouton_radio = "$sql_p_login--$sql_p_nb_jours--$sql_p_type--$sql_p_date_deb--$sql_p_demi_jour_deb--$sql_p_date_fin--$sql_p_demi_jour_fin";
-
-				// si le user fait l'objet d'une double validation on a pas le meme resultat sur le bouton !
-				if($tab_all_users_du_resp[$sql_p_login]['double_valid'] == "Y")
-				{
-					// si on est a la fois resp et grand resp
-					if( (count($tab_all_users_du_grand_resp)!=0 ) && (array_key_exists($sql_p_login, $tab_all_users_du_grand_resp)) )
-						$boutonradio1="<input type=\"radio\" name=\"tab_bt_radio[$sql_p_num]\" value=\"$chaine_bouton_radio--OK\">";
-					else  //on est QUe resp
-						$boutonradio1="<input type=\"radio\" name=\"tab_bt_radio[$sql_p_num]\" value=\"$chaine_bouton_radio--VALID\">";
-				}
-				else
-					$boutonradio1="<input type=\"radio\" name=\"tab_bt_radio[$sql_p_num]\" value=\"$chaine_bouton_radio--OK\">";
-
+				$boutonradio1="<input type=\"radio\" name=\"tab_bt_radio[$sql_p_num]\" value=\"$chaine_bouton_radio--OK\">";
 				$boutonradio2="<input type=\"radio\" name=\"tab_bt_radio[$sql_p_num]\" value=\"$chaine_bouton_radio--not_OK\">";
 				$boutonradio3="<input type=\"radio\" name=\"tab_bt_radio[$sql_p_num]\" value=\"$chaine_bouton_radio--RIEN\" checked>";
 				$text_refus="<input class=\"form-control\" type=\"text\" name=\"tab_text_refus[$sql_p_num]\" size=\"20\" max=\"100\">";
 
 				echo '<tr class="'.($i?'i':'p').'">';
-				echo "<td><b>".$tab_all_users_du_resp[$sql_p_login]['nom']."</b><br>".$tab_all_users_du_resp[$sql_p_login]['prenom']."</td><td>".$tab_all_users_du_resp[$sql_p_login]['quotite']."%</td>";
+				echo "<td><b>".$tab_all_users[$sql_p_login]['nom']."</b><br>".$tab_all_users[$sql_p_login]['prenom']."</td><td>".$tab_all_users[$sql_p_login]['quotite']."%</td>";
 				echo "<td>".$tab_type_all_abs[$sql_p_type]['libelle']."</td>\n";	
 				echo "<td>$sql_p_date_deb_fr <span class=\"demi\">$demi_j_deb</span></td><td>$sql_p_date_fin_fr <span class=\"demi\">$demi_j_fin</span></td><td>$sql_p_commentaire</td><td><b>$sql_p_nb_jours</b></td>";
-				$tab_conges=$tab_all_users_du_resp[$sql_p_login]['conges'];
+				$tab_conges=$tab_all_users[$sql_p_login]['conges'];
 				echo "<td>".$tab_conges[$tab_type_all_abs[$sql_p_type]['libelle']]['solde']."</td>";
 				// foreach($tab_type_conges as $id_conges => $libelle)
 				// {
@@ -246,121 +206,7 @@ function affiche_all_demandes_en_cours($tab_type_conges, $DEBUG=FALSE)
 			echo '</tbody>' ;
 			echo '</table>' ;
 		} //if($count1!=0)
-	} //if( count($tab_all_users_du_resp)!=0 )
-
-
-	/*********************************/
-	/* TABLEAU DES DEMANDES DES USERS DONT ON EST LE GRAND RESP */
-	/*********************************/
-
-	if( $_SESSION['config']['double_validation_conges'] )
-	{
-		// si tableau des users du grand resp n'est pas vide
-		if( count($tab_all_users_du_grand_resp)!=0 )
-		{
-
-			// Récup des demandes en cours pour les users dont $_SESSION['userlogin'] est GRAND responsable :
-			$sql2 = "SELECT p_num, p_login, p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_nb_jours, p_commentaire, p_type, p_date_demande, p_date_traitement FROM conges_periode ";
-			$sql2=$sql2." WHERE p_etat =\"valid\" ";
-			$sql2=$sql2." AND p_login IN ($list_users_du_grand_resp) ";
-			$sql2=$sql2." ORDER BY p_num";
-
-			$ReqLog2 = SQL::query($sql2) ;
-
-			$count2=$ReqLog2->num_rows;
-			if($count2!=0)
-			{
-				// AFFICHAGE TABLEAU DES DEMANDES EN COURS POUR DEUXIEME VALIDATION
-				echo "<h3>". _('resp_traite_demandes_titre_tableau_2') ."</h3>\n" ;
-				echo "<table class=\"table table-hover table-responsive table-condensed table-striped\">\n" ;
-				echo '<thead>' ;
-				echo '<tr>' ;
-				echo "<th><b>". _('divers_nom_maj_1') ."</b><br>". _('divers_prenom_maj_1') .'</th>' ;
-				echo '<th>'. _('divers_quotite_maj_1') .'</th>' ;
-				echo '<th>'. _('divers_debut_maj_1') .'</th>' ;
-				echo '<th>'. _('divers_fin_maj_1') .'</th>' ;
-				echo '<th>'. _('divers_comment_maj_1') .'</th>' ;
-				echo '<th>'. _('resp_traite_demandes_nb_jours') .'</th>';
-				 foreach($tab_type_conges as $id_conges => $libelle)
-				 	echo '<th>'. _('divers_solde_maj_1') ."<br>$libelle</th>" ;
-				echo '<th>'. _('divers_type_maj_1') .'</th>' ;
-				echo '<th>'. _('divers_accepter_maj_1') .'</th>' ;
-				echo '<th>'. _('divers_refuser_maj_1') .'</th>' ;
-				echo '<th>'. _('resp_traite_demandes_attente') .'</th>' ;
-				echo '<th>'. _('resp_traite_demandes_motif_refus') .'</th>' ;
-				if( $_SESSION['config']['affiche_date_traitement'] )
-					echo '<th>'. _('divers_date_traitement') .'</th>' ;
-				echo '</tr>';
-				echo '</thead>' ;
-				echo '<tbody>' ;
-
-				$tab_bt_radio=array();
-				$i = true;
-				while ($resultat2 = $ReqLog2->fetch_array())
-				{
-					/** sur la ligne ,   **/
-					/** le 1er bouton radio est <input type="radio" name="tab_bt_radio[valeur de p_num]" value="[valeur de p_login]--[valeur p_nb_jours]--$type--OK"> */
-					/**  et le 2ieme est <input type="radio" name="tab_bt_radio[valeur de p_num]" value="[valeur de p_login]--[valeur p_nb_jours]--$type--not_OK"> */
-					/**  et le 3ieme est <input type="radio" name="tab_bt_radio[valeur de p_num]" value="[valeur de p_login]--[valeur p_nb_jours]--$type--RIEN"> */
-
-					$sql_p_date_deb         = $resultat2["p_date_deb"];
-					$sql_p_date_fin         = $resultat2["p_date_fin"];
-					$sql_p_date_deb_fr      = eng_date_to_fr($resultat2["p_date_deb"]);
-					$sql_p_date_fin_fr      = eng_date_to_fr($resultat2["p_date_fin"]);
-					$sql_p_demi_jour_deb    = $resultat2["p_demi_jour_deb"] ;
-					$sql_p_demi_jour_fin    = $resultat2["p_demi_jour_fin"] ;
-
-					$sql_p_commentaire      = $resultat2["p_commentaire"];
-					$sql_p_num              = $resultat2["p_num"];
-					$sql_p_login            = $resultat2["p_login"];
-					$sql_p_nb_jours         = affiche_decimal($resultat2["p_nb_jours"]);
-					$sql_p_type             = $resultat2["p_type"];
-					$sql_p_date_demande     = $resultat2["p_date_demande"];
-					$sql_p_date_traitement  = $resultat2["p_date_traitement"];
-
-					if($sql_p_demi_jour_deb=="am")
-						$demi_j_deb="mat";
-					else
-						$demi_j_deb="aprm";
-
-					if($sql_p_demi_jour_fin=="am")
-						$demi_j_fin="mat";
-					else
-						$demi_j_fin="aprm";
-
-
-					// on construit la chaine qui servira de valeur à passer dans les boutons-radio
-					$chaine_bouton_radio = "$sql_p_login--$sql_p_nb_jours--$sql_p_type--$sql_p_date_deb--$sql_p_demi_jour_deb--$sql_p_date_fin--$sql_p_demi_jour_fin";
-
-					$boutonradio1="<input type=\"radio\" name=\"tab_bt_radio[$sql_p_num]\" value=\"$chaine_bouton_radio--OK\">";
-					$boutonradio2="<input type=\"radio\" name=\"tab_bt_radio[$sql_p_num]\" value=\"$chaine_bouton_radio--not_OK\">";
-					$boutonradio3="<input type=\"radio\" name=\"tab_bt_radio[$sql_p_num]\" value=\"$chaine_bouton_radio--RIEN\" checked>";
-
-					$text_refus="<input class=\"form-control\" type=\"text\" name=\"tab_text_refus[$sql_p_num]\" size=\"20\" max=\"100\">";
-
-					echo '<tr class="'.($i?'i':'p').'">' ;
-					echo "<td><strong>".$tab_all_users_du_grand_resp[$sql_p_login]['nom']."</strong><br>".$tab_all_users_du_grand_resp[$sql_p_login]['prenom']."</td><td>".$tab_all_users_du_grand_resp[$sql_p_login]['quotite']."%</td>";
-					echo "<td>$sql_p_date_deb_fr <span class=\"demi\">$demi_j_deb<span></td><td>$sql_p_date_fin_fr <span class=\"demi\">$demi_j_fin</span></td><td>$sql_p_commentaire</td><td><b>$sql_p_nb_jours</b></td>";
-					$tab_conges=$tab_all_users_du_grand_resp[$sql_p_login]['conges'];
-					foreach($tab_type_conges as $id_conges => $libelle)
-					{
-						echo '<td>'.$tab_conges[$libelle]['solde'].'</td>';
-					}
-					echo '<td>'.$tab_type_all_abs[$sql_p_type]['libelle'].'</td>';
-					echo "<td>$boutonradio1</td><td>$boutonradio2</td><td>$boutonradio3</td><td>$text_refus</td>\n";
-					if($_SESSION['config']['affiche_date_traitement'])
-					{
-						echo "<td class=\"histo-left\">". _('divers_demande') ." : $sql_p_date_demande<br>". _('divers_traitement') ." : $sql_p_date_traitement</td>\n" ;
-					}
-
-					echo '</tr>' ;
-					$i = !$i;
-				} //while
-				echo '</tbody>' ;
-				echo '</table>' ;
-			} //if($count2!=0)
-		} //if( count($tab_all_users_du_grand_resp)!=0 )
-	} //if($_SESSION['config']['double_validation_conges'])
+	} //if( count($tab_all_users)!=0 )
 
 	echo "<br>\n";
 
@@ -397,24 +243,10 @@ function traite_all_demande_en_cours($tab_bt_radio, $tab_text_refus, $DEBUG=FALS
 		echo "$numero---$user_login---$user_nb_jours_pris---$reponse<br>\n";
 
 		/* Modification de la table conges_periode */
-		if(strcmp($reponse, "VALID")==0)
-		{
-			/* UPDATE table "conges_periode" */
-			$sql1 = "UPDATE conges_periode SET p_etat=\"valid\", p_date_traitement=NOW() WHERE p_num=$numero_int" ;
-			/* On valide l'UPDATE dans la table "conges_periode" ! */
-			$ReqLog1 = SQL::query($sql1) ;
-
-			// Log de l'action
-			log_action($numero_int, "valid", $user_login, "traite demande $numero ($user_login) ($user_nb_jours_pris jours) : $reponse", $DEBUG);
-
-			//envoi d'un mail d'alerte au user et au responsable du resp (pour double validation) (si demandé dans config de libertempo)
-			if($_SESSION['config']['mail_prem_valid_conges_alerte_user'])
-				alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "valid_conges", $DEBUG);
-		}
 		if(strcmp($reponse, "OK")==0)
 		{
 			/* UPDATE table "conges_periode" */
-			$sql1 = "UPDATE conges_periode SET p_etat=\"ok\", p_date_traitement=NOW() WHERE p_num=\''.SQL::quote($numero_int).'\' AND ( p_etat=\'valid\' OR p_etat=\'demande\' );" ;
+			$sql1 = 'UPDATE conges_periode SET p_etat=\'ok\', p_date_traitement=NOW() WHERE p_num=\''.SQL::quote($numero_int).'\' AND ( p_etat=\'valid\' OR p_etat=\'demande\' );' ;
 			/* On valide l'UPDATE dans la table "conges_periode" ! */
 			$ReqLog1 = SQL::query($sql1) ;
 			if ($ReqLog1 && SQL::getVar('affected_rows') ) {
