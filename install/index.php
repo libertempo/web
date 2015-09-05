@@ -240,14 +240,10 @@ function install($lang,  $DEBUG=FALSE)
 	// affichage de la liste des versions ...
 	echo "<select name=\"version\">\n";
 	echo "<option value=\"0\">". _('install_installed_version') ."</option>\n";
-	echo "<option value=\"1.0\">v1.0.x</option>\n";
-	echo "<option value=\"0.10\">v0.10.x</option>\n";
-	echo "<option value=\"0.9\">v0.9.x</option>\n";
-	echo "<option value=\"0.8\">v0.8.x</option>\n";
-	echo "<option value=\"0.7\">v0.7.x</option>\n";
-	echo "<option value=\"0.6\">v0.6.x</option>\n";
-	echo "<option value=\"0.5\">v0.5.x</option>\n";
-	echo "<option value=\"0.4\">v0.4</option>\n";
+	echo "<option value=\"1.6.0\">v1.6.x</option>\n";
+	echo "<option value=\"1.5.1\">v1.5.x</option>\n";
+	echo "<option value=\"1.4.2\">v1.4.x</option>\n";
+	echo "<option value=\"1.4.0\">v1.4.0</option>\n";
 	echo "</select>\n";
 	echo "<br>\n";
 	echo "<input type=\"hidden\" name=\"lang\" value=\"$lang\">\n";
