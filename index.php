@@ -119,7 +119,7 @@ else
 		if (($session_username == "") || ($session_password == "")) // si login et passwd non saisis
 		{
 			//  SAISIE LOGIN / PASSWORD :
-			session_saisie_user_password("", "", ""); // appel du formulaire d'intentification (login/password)
+			session_saisie_user_password("", "", ""); // appel du formulaire d'authentification (login/password)
 			
 			exit;
 		}
