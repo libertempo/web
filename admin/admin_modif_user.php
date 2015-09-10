@@ -464,7 +464,7 @@ function commit_update($u_login_to_update, &$tab_new_user, &$tab_new_jours_an, &
 		}
 		else  // si une grille modifiée aujourd'hui : on delete cette grille
 		{
-			$sql='DELETE FROM conges_artt WHERE a_login=\''.SQL::quote($u_login_to_update).'\' AND a_date_debut_grille=\''.SQL::quote($new_date_deb_grille);
+			$sql='DELETE FROM conges_artt WHERE a_login=\''.SQL::quote($u_login_to_update).'\' AND a_date_debut_grille=\''.SQL::quote($new_date_deb_grille).'\'';
 			SQL::query($sql);
 		}
 
