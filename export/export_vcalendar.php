@@ -86,6 +86,8 @@ function form_saisie($user, $date_debut, $date_fin, $DEBUG=FALSE)
 	if($date_fin=="")
 		$date_fin=$date_today;
 
+	$huser = hash_user($user);
+
 	header_popup();
 	
 	
@@ -137,6 +139,7 @@ function form_saisie($user, $date_debut, $date_fin, $DEBUG=FALSE)
 	echo "</tr>\n";
 	echo "</table>\n";
 	echo "</form>\n";
+	echo " <a href='".ROOT_PATH."export/ics_export.php?usr=".$huser."'>Export ical<a>";
 
 	bottom();
 
