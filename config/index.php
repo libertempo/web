@@ -23,11 +23,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *************************************************************************************************/
 
-define('_PHP_CONGES', 1);
 define('ROOT_PATH', '../');
-include ROOT_PATH . 'define.php';
+require ROOT_PATH . 'define.php';
 include INCLUDE_PATH . 'fonction.php';
-defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 
 $session =(isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : session_id()) ) ;
 

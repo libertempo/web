@@ -1,7 +1,7 @@
 <?php
 
 
-defined( '_PHP_CONGES' ) or die( 'Restricted access' );
+define('_PHP_CONGES', 1);
 defined( 'ROOT_PATH' ) or die( 'ROOT_PATH not defined !' );
 
 if (!defined( 'DEFINE_INCLUDE' )) {
