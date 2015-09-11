@@ -46,6 +46,9 @@ $lang = (isset($_GET['lang']) ? $_GET['lang'] : (isset($_POST['lang']) ? $_POST[
 
 //mettre ici les modifications de la bdd
 
+//retrait de la conf SMTP
+$del_smtp_from_db="DELETE FROM `libertempo_demo`.`conges_config` WHERE `conges_config`.`conf_nom` = 'serveur_smtp'";
+$res_del_smtp_from_db=SQL::query($del_smtp_from_db);
 
     // on renvoit à la page mise_a_jour.php (là d'ou on vient)
     echo "<a href=\"mise_a_jour.php?etape=4&version=$version&lang=$lang\">upgrade_from_v1.7.0  OK</a><br>\n";
