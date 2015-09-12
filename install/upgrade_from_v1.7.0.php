@@ -49,6 +49,9 @@ $lang = (isset($_GET['lang']) ? $_GET['lang'] : (isset($_POST['lang']) ? $_POST[
 //retrait de la conf SMTP
 $del_smtp_from_db="DELETE FROM `libertempo_demo`.`conges_config` WHERE `conges_config`.`conf_nom` = 'serveur_smtp'";
 $res_del_smtp_from_db=SQL::query($del_smtp_from_db);
+//ajout du type de mail en cas d'absence non soumise à validation.
+$ajout_mail_new_absence="INSERT INTO `libertempo_demo`.`conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUES ('mail_new_absences', 'APPLI CONGES - nouvelle absence', ' __SENDER_NAME__ vous inform qu'il sera absent. Ce type de congés ne necéssite pas de validation. Vous pouvez consulter votre application Libertempo : __URL_ACCUEIL_CONGES__/ ------------------------------------------------------------------------------------------------------- Ceci est un message automatique. ');";
+$res_ajout_mail_new_absence=SQL::query($ajout_mail_new_absence);
 
     // on renvoit à la page mise_a_jour.php (là d'ou on vient)
     echo "<a href=\"mise_a_jour.php?etape=4&version=$version&lang=$lang\">upgrade_from_v1.7.0  OK</a><br>\n";
