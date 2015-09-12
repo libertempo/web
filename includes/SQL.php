@@ -1,4 +1,5 @@
 <?php
+namespace includes;
 
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 
@@ -39,7 +40,7 @@ class SQL
 		$args = func_get_args();
 		// this doesn't work ... need use ReflectionClass ... BEURK ! ReflectionClass is not documented ... unstable
 		// self::$pdo_obj = call_user_func_array('Database::__construct', $args);
-		$r = new ReflectionClass('Database');
+		$r = new \ReflectionClass('\includes\Database');
 		self::$pdo_obj = $r->newInstanceArgs($args);
 	}
 
@@ -96,7 +97,7 @@ class SQL
 }
 
 
-class Database extends mysqli
+class Database extends \mysqli
 {
 	private static $hist = array();
 	

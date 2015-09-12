@@ -192,7 +192,7 @@ function ajout_user(&$tab_new_user, $tab_checkbox_sem_imp, $tab_checkbox_sem_p, 
 		$sql1=$sql1."u_passwd='$motdepasse', ";
 		$sql1=$sql1."u_quotite=".$tab_new_user['quotite'].",";
 		$sql1=$sql1." u_email='".$tab_new_user['email']."' ";
-		$result1 = SQL::query($sql1);
+		$result1 = \includes\SQL::query($sql1);
 
 
 		/**********************************/
@@ -201,7 +201,7 @@ function ajout_user(&$tab_new_user, $tab_checkbox_sem_imp, $tab_checkbox_sem_p, 
 		{
 			$sql3 = "INSERT INTO conges_solde_user (su_login, su_abs_id, su_nb_an, su_solde, su_reliquat) ";
 			$sql3 = $sql3. "VALUES ('".$tab_new_user['login']."' , $id_cong, ".$tab_new_jours_an[$id_cong].", ".$tab_new_solde[$id_cong].", 0) " ;
-			$result3 = SQL::query($sql3);
+			$result3 = \includes\SQL::query($sql3);
 		}
 
 
@@ -226,7 +226,7 @@ function ajout_user(&$tab_new_user, $tab_checkbox_sem_imp, $tab_checkbox_sem_p, 
 		}
 
 		$sql2 = "INSERT INTO conges_artt ($list_colums_to_insert, a_date_debut_grille) VALUES ($list_values_to_insert, '$new_date_deb_grille')" ;
-		$result2 = SQL::query($sql2);
+		$result2 = \includes\SQL::query($sql2);
 
 
 		/***********************************/
@@ -323,8 +323,8 @@ function verif_new_param(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, $D
 	else {
 
 		// verif si le login demandé n'existe pas déjà ....
-		$sql_verif='SELECT u_login FROM conges_users WHERE u_login=\''.SQL::quote($tab_new_user['login']).'\'';
-		$ReqLog_verif = SQL::query($sql_verif);
+		$sql_verif='SELECT u_login FROM conges_users WHERE u_login="'.\includes\SQL::quote($tab_new_user['login']).'"';
+		$ReqLog_verif = \includes\SQL::query($sql_verif);
 
 		$num_verif = $ReqLog_verif->num_rows;
 		if ($num_verif!=0)
@@ -454,7 +454,7 @@ function affiche_formulaire_ajout_user(&$tab_new_user, &$tab_new_jours_an, &$tab
 	// PREPARATION DES OPTIONS DU SELECT du resp_login
 	$text_resp_login="<select class=\"form-control\" name=\"new_resp_login\" id=\"resp_login_id\" ><option value=\"no_resp\">". _('admin_users_no_resp') ."</option>" ;
 	$sql2 = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_is_resp = \"Y\" ORDER BY u_nom, u_prenom"  ;
-	$ReqLog2 = SQL::query($sql2);
+	$ReqLog2 = \includes\SQL::query($sql2);
 
 	while ($resultat2 = $ReqLog2->fetch_array()) {
 		$current_resp_login=$resultat2["u_login"];
@@ -625,7 +625,7 @@ function affiche_tableau_affectation_user_groupes($choix_user,  $DEBUG=FALSE)
 	//on rempli un tableau de tous les groupes avec le nom et libellé (tableau de tableau à 3 cellules)
 	$tab_groups=array();
 	$sql_g = "SELECT g_gid, g_groupename, g_comment FROM conges_groupe ORDER BY g_groupename "  ;
-	$ReqLog_g = SQL::query($sql_g);
+	$ReqLog_g = \includes\SQL::query($sql_g);
 
 	while($resultat_g=$ReqLog_g->fetch_array())
 	{
@@ -642,8 +642,8 @@ function affiche_tableau_affectation_user_groupes($choix_user,  $DEBUG=FALSE)
 	if($choix_user!="")
 	{
 		$tab_user=array();
-		$sql_gu = 'SELECT gu_gid FROM conges_groupe_users WHERE gu_login=\''.SQL::quote($choix_user).'\' ORDER BY gu_gid ';
-		$ReqLog_gu = SQL::query($sql_gu);
+		$sql_gu = 'SELECT gu_gid FROM conges_groupe_users WHERE gu_login="'.\includes\SQL::quote($choix_user).'" ORDER BY gu_gid ';
+		$ReqLog_gu = \includes\SQL::query($sql_gu);
 
 		while($resultat_gu=$ReqLog_gu->fetch_array())
 		{

@@ -75,8 +75,8 @@ function affichage($login,  $DEBUG=FALSE)
 	$session=session_id();
 
 
-	$sql1 = 'SELECT u_nom, u_prenom, u_quotite FROM conges_users where u_login = \''.SQL::quote($login).'\'';
-	$ReqLog1 = SQL::query($sql1);
+	$sql1 = 'SELECT u_nom, u_prenom, u_quotite FROM conges_users where u_login = "'. \includes\SQL::quote($login).'"';
+	$ReqLog1 = \includes\SQL::query($sql1);
 
 	while ($resultat1 = $ReqLog1->fetch_array()) {
 		$sql_nom=$resultat1["u_nom"];
@@ -119,7 +119,7 @@ function affiche_nouvelle_edition($login,  $DEBUG=FALSE)
 	$sql2=$sql2."AND (p_login = '$login') ";
 	$sql2=$sql2."AND (a.p_type=b.ta_id AND  ( (b.ta_type='conges') OR (b.ta_type='conges_exceptionnels') ) )";
 	$sql2=$sql2."ORDER BY p_date_deb ASC ";
-	$ReqLog2 = SQL::query($sql2);
+	$ReqLog2 = \includes\SQL::query($sql2);
 
 	echo "<h3>". _('editions_last_edition') ." :</h3>\n";
 

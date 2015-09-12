@@ -49,7 +49,7 @@ if($_SESSION['config']['where_to_find_user_email']=="ldap"){ include CONFIG_PATH
 	// Récupération des informations
 	$sql4 = 'SELECT p_login, p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_nb_jours, p_commentaire, p_type, p_etat, p_motif_refus, p_date_demande, p_date_traitement, p_num, ta_libelle
 			FROM conges_periode as a, conges_type_absence as b
-			WHERE a.p_login = \''.SQL::quote($_SESSION['userlogin']).'\'
+			WHERE a.p_login = "'.\includes\SQL::quote($_SESSION['userlogin']).'"
 			AND (a.p_type=b.ta_id)
 			AND (b.ta_type=\'absences\')
 			AND (p_date_deb LIKE \''.intval($year_affichage).'%\' OR p_date_fin LIKE \''.intval($year_affichage).'%\') ';
@@ -59,7 +59,7 @@ if($_SESSION['config']['where_to_find_user_email']=="ldap"){ include CONFIG_PATH
 	else
 		$sql4=$sql4." ORDER BY p_date_deb ASC ";
 
-	$ReqLog4 = SQL::query($sql4) ;
+	$ReqLog4 = \includes\SQL::query($sql4) ;
 
 	$count4=$ReqLog4->num_rows;
 	if($count4==0)

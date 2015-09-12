@@ -312,15 +312,15 @@ function commit_saisie($tab_checkbox_j_chome,$DEBUG=FALSE)
 
 function insert_year($tab_checkbox_j_chome, $DEBUG=FALSE) {
 	foreach($tab_checkbox_j_chome as $key => $value)
-		$result = SQL::query('INSERT INTO conges_jours_feries SET jf_date=\''.SQL::quote($key).'\';');
+		$result = \includes\SQL::query('INSERT INTO conges_jours_feries SET jf_date="'. \includes\SQL::quote($key).'";');
 	return true;
 }
 
 function delete_year($tab_checkbox_j_chome, $DEBUG=FALSE) {
 	$date_1=key($tab_checkbox_j_chome);
 	$year=substr($date_1, 0, 4);
-	$sql_delete='DELETE FROM conges_jours_feries WHERE jf_date LIKE \''.SQL::quote($year).'%\' ;';
-	$result = SQL::query($sql_delete);
+	$sql_delete='DELETE FROM conges_jours_feries WHERE jf_date LIKE "'. \includes\SQL::quote($year).'%" ;';
+	$result = \includes\SQL::query($sql_delete);
 
 	return true;
 }
@@ -328,8 +328,8 @@ function delete_year($tab_checkbox_j_chome, $DEBUG=FALSE) {
 function verif_year_deja_saisie($tab_checkbox_j_chome, $DEBUG=FALSE) {
 	$date_1=key($tab_checkbox_j_chome);
 	$year=substr($date_1, 0, 4);
-	$sql_select='SELECT jf_date FROM conges_jours_feries WHERE jf_date LIKE \''.SQL::quote($year).'%\' ;';
-	$relog = SQL::query($sql_select);
+	$sql_select='SELECT jf_date FROM conges_jours_feries WHERE jf_date LIKE "'. \includes\SQL::quote($year).'%" ;';
+	$relog = \includes\SQL::query($sql_select);
 	return($relog->num_rows != 0);
 }
 
@@ -338,8 +338,8 @@ function verif_year_deja_saisie($tab_checkbox_j_chome, $DEBUG=FALSE) {
 function get_tableau_jour_feries($year, &$tab_year,  $DEBUG=FALSE)
 {
 
-	$sql_select='SELECT jf_date FROM conges_jours_feries WHERE jf_date LIKE \''.SQL::quote($year).'-%\' ;';
-	$res_select = SQL::query($sql_select);
+	$sql_select='SELECT jf_date FROM conges_jours_feries WHERE jf_date LIKE "'. \includes\SQL::quote($year).'-%" ;';
+	$res_select = \includes\SQL::query($sql_select);
 	$num_select = $res_select->num_rows;
 
 	if($num_select!=0)

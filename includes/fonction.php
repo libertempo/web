@@ -26,7 +26,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 
-include INCLUDE_PATH .'sql.class.php';
 include INCLUDE_PATH .'fonction_hr.php';
 include INCLUDE_PATH .'fonction_config.php';
 include INCLUDE_PATH .'fonction_admin.php';
@@ -313,8 +312,8 @@ function autentification_passwd_conges($username,$password)
     $password_md5=md5($password);
 //  $req_conges="SELECT u_passwd   FROM conges_users   WHERE u_login='$username' AND u_passwd='$password_md5' " ;
     // on conserve le double mode d'autentificatio (nouveau cryptage (md5) ou ancien cryptage (mysql))
-    $req_conges='SELECT u_passwd   FROM conges_users   WHERE u_login=\''. SQL::quote( $username ) .'\' AND ( u_passwd=\''. md5($password) .'\' OR u_passwd=PASSWORD(\''.SQL::quote( $password ).'\') ) ' ;
-    $res_conges = SQL::query($req_conges) ;
+    $req_conges='SELECT u_passwd   FROM conges_users   WHERE u_login="'. \includes\SQL::quote( $username ) .'" AND ( u_passwd=\''. md5($password) .'\' OR u_passwd=PASSWORD("'. \includes\SQL::quote( $password ).'") ) ' ;
+    $res_conges = \includes\SQL::query($req_conges) ;
     $num_row_conges = $res_conges->num_rows;
     if ($num_row_conges !=0)
         return $username;
@@ -384,8 +383,8 @@ function authentification_passwd_conges_CAS()
     session_create($usernameCAS);
 
     //ON VERIFIE ICI QUE L'UTILISATEUR EST DEJA ENREGISTRE SOUS DBCONGES
-    $req_conges = 'SELECT u_login FROM conges_users WHERE u_login=\''.SQL::quote($usernameCAS).'\'';
-    $res_conges = SQL::query($req_conges) ;
+    $req_conges = 'SELECT u_login FROM conges_users WHERE u_login=\''. \includes\SQL::quote($usernameCAS).'\'';
+    $res_conges = \includes\SQL::query($req_conges) ;
     $num_row_conges = $res_conges->num_rows;
     if($num_row_conges !=0)
         return $usernameCAS;

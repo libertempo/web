@@ -56,7 +56,7 @@ function e1_create_table_plugins()
   `p_is_install` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Plugin is installed ?',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result_create_table_plugin = SQL::query($create_table_plugin_query);
+    $result_create_table_plugin = \includes\SQL::query($create_table_plugin_query);
     }
 
 

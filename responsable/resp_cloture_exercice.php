@@ -295,7 +295,7 @@ function affichage_cloture_globale_groupe($tab_type_conges,  $DEBUG=FALSE)
 			// création du select pour le choix du groupe
 			$text_choix_group="<select name=\"choix_groupe\" >";
 			$sql_group = "SELECT g_gid, g_groupename FROM conges_groupe WHERE g_gid IN ($list_group) ORDER BY g_groupename "  ;
-			$ReqLog_group = SQL::query($sql_group) ;
+			$ReqLog_group = \includes\SQL::query($sql_group) ;
 				
 			while ($resultat_group = $ReqLog_group->fetch_array()) 
 			{
@@ -431,7 +431,7 @@ function cloture_current_year_for_login($current_login, $tab_current_user, $tab_
 					//
 					// update D'ABORD du reliquat
 					$sql_reliquat = "UPDATE conges_solde_user SET su_reliquat = $new_reliquat WHERE su_login='$current_login' AND su_abs_id = $id_conges " ;
-					$ReqLog_reliquat = SQL::query($sql_reliquat) ;
+					$ReqLog_reliquat = \includes\SQL::query($sql_reliquat) ;
 				}
 				else
 					$new_reliquat = $user_solde_actuel ; // qui est nul ou negatif
@@ -440,8 +440,8 @@ function cloture_current_year_for_login($current_login, $tab_current_user, $tab_
 				$new_solde = $user_nb_jours_ajout_an + $new_reliquat  ;
 					
 				// update du solde
-				$sql_solde = 'UPDATE conges_solde_user SET su_solde = \''.$new_solde.'\' WHERE su_login=\''.SQL::quote($current_login).'\' AND su_abs_id =\''.SQL::quote($id_conges).'\' ';
-				$ReqLog_solde = SQL::query($sql_solde) ;
+				$sql_solde = 'UPDATE conges_solde_user SET su_solde = \''.$new_solde.'\' WHERE su_login="'. \includes\SQL::quote($current_login).'" AND su_abs_id ="'. \includes\SQL::quote($id_conges).'" ';
+				$ReqLog_solde = \includes\SQL::query($sql_solde) ;
 			}
 			else
 			{
@@ -451,15 +451,15 @@ function cloture_current_year_for_login($current_login, $tab_current_user, $tab_
 				else
 					$new_solde = $user_nb_jours_ajout_an ;
 					
-				$sql_solde = 'UPDATE conges_solde_user SET su_solde = \''.$new_solde.'\' WHERE su_login=\''.SQL::quote($current_login).'\'  AND su_abs_id = \''.SQL::quote($id_conges).'\' ';
-				$ReqLog_solde = SQL::query($sql_solde) ;
+				$sql_solde = 'UPDATE conges_solde_user SET su_solde = \''.$new_solde.'\' WHERE su_login="'. \includes\SQL::quote($current_login).'"  AND su_abs_id = "'. \includes\SQL::quote($id_conges).'" ';
+				$ReqLog_solde = \includes\SQL::query($sql_solde) ;
 			}
 
 			/* Modification de la table conges_users */
 			// ATTENTION : ne pas faire "SET u_num_exercice = u_num_exercice+1" dans la requete SQL car on incrémenterait pour chaque type d'absence !
 			$new_num_exercice=$_SESSION['config']['num_exercice'] ;
-			$sql2 = 'UPDATE conges_users SET u_num_exercice = \''.$new_num_exercice.'\' WHERE u_login=\''.SQL::quote($current_login).'\' ';
-			$ReqLog2 = SQL::query($sql2) ;
+			$sql2 = 'UPDATE conges_users SET u_num_exercice = \''.$new_num_exercice.'\' WHERE u_login="'. \includes\SQL::quote($current_login).'" ';
+			$ReqLog2 = \includes\SQL::query($sql2) ;
 			
 			// on insert l'ajout de conges dans la table periode (avec le commentaire)
 			$date_today=date("Y-m-d");
@@ -478,13 +478,13 @@ function update_appli_num_exercice( $DEBUG=FALSE)
 {
 	// verif
 	$appli_num_exercice = $_SESSION['config']['num_exercice'] ;
-	$sql_verif = 'SELECT u_login FROM conges_users WHERE u_login != \'admin\' AND u_login != \'conges\' AND u_num_exercice != '.SQL::quote($appli_num_exercice).';';
-	$ReqLog_verif = SQL::query($sql_verif);
+	$sql_verif = 'SELECT u_login FROM conges_users WHERE u_login != \'admin\' AND u_login != \'conges\' AND u_num_exercice != '. \includes\SQL::quote($appli_num_exercice).';';
+	$ReqLog_verif = \includes\SQL::query($sql_verif);
 	
 	if($ReqLog_verif->num_rows == 0) {
 		/* Modification de la table conges_appli */
 		$sql_update= 'UPDATE conges_appli SET appli_valeur = appli_valeur+1 WHERE appli_variable=\'num_exercice\' ;';
-		$ReqLog_update = SQL::query($sql_update) ;
+		$ReqLog_update = \includes\SQL::query($sql_update) ;
 		
 		// ecriture dans les logs
 		$new_appli_num_exercice = $appli_num_exercice+1 ;
@@ -599,7 +599,7 @@ function set_nouvelle_date_limite_reliquat( $DEBUG=FALSE)
 			{
 				/* Modification de la table conges_appli */
 				$sql_update= "UPDATE conges_appli SET appli_valeur = '$new_date_limite' WHERE appli_variable='date_limite_reliquats' " ;
-				$ReqLog_update = SQL::query($sql_update) ;
+				$ReqLog_update = \includes\SQL::query($sql_update) ;
 				
 			}
 		}

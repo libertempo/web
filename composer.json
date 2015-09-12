@@ -1,1 +1,19 @@
- 
+{
+    "name": "wouldsmina/Libertempo",
+    "authors": [
+        {
+            "name": "wouldsmina"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "": "."
+        }
+    },
+    "config": {
+        "vendor-dir": "vendor"
+    },
+    "require": {
+        "twig/twig": "~1.14.0"
+    }
+}

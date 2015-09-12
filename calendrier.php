@@ -997,10 +997,10 @@ function recup_tableau_periodes($mois, $first_jour, $year,  $tab_logins = false)
 	$sql	= 'SELECT  p_login, p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_type, p_etat, p_fermeture_id, p_commentaire
 				FROM conges_periode
 				WHERE ( p_etat=\'ok\' OR  p_etat=\'demande\' OR  p_etat=\'valid\') 
-					AND (p_date_fin >= \''.SQL::quote($date_deb).'\' AND p_date_deb <= \''.SQL::quote($date_fin).'\')
+					AND (p_date_fin >= "'. \includes\SQL::quote($date_deb).'" AND p_date_deb <= "'. \includes\SQL::quote($date_fin).'")
 					'.($tab_logins !== false ? 'AND p_login IN (\''.implode('\', \'', $tab_logins).'\')' : '' ).'
 				ORDER BY p_date_deb;';
-	$result = SQL::query($sql);
+	$result = \includes\SQL::query($sql);
 	while($l = $result->fetch_array()) {
 
 		// on ne stoque les "demandes" que pour le user qui consulte (il ne voit pas celles des autres !)(suivant l'option de config)
@@ -1165,7 +1165,7 @@ function recup_tableau_des_users_a_afficher($select_groupe,  $DEBUG=FALSE)
 			{
 				$sql1 = "SELECT DISTINCT u_login, u_nom, u_prenom, u_quotite FROM conges_users ";
 				$sql1 = $sql1." WHERE u_login!='conges' AND u_login!='admin' ";
-				$sql1 = $sql1.' AND ( u_login = \''.SQL::quote($_SESSION['userlogin']).'\' ';
+				$sql1 = $sql1.' AND ( u_login = "'. \includes\SQL::quote($_SESSION['userlogin']).'" ';
 
 				//recup de la liste des users des groupes dont le user est membre
 				$list_users=get_list_users_du_groupe($select_groupe,  $DEBUG);
@@ -1202,7 +1202,7 @@ function recup_tableau_des_users_a_afficher($select_groupe,  $DEBUG=FALSE)
 	
 					if($_SESSION['userlogin']!="conges")
 					{
-						$sql1 = $sql1.' AND ( u_login = \''.SQL::quote($_SESSION['userlogin']).'\' ';
+						$sql1 = $sql1.' AND ( u_login = "'. \includes\SQL::quote($_SESSION['userlogin']).'" ';
 	
 						//si affichage par groupe : on affiche les membres des groupes du user ($_SESSION['userlogin'])
 						if( ($_SESSION['config']['gestion_groupes']) && ($_SESSION['config']['affiche_groupe_in_calendrier']) )
@@ -1240,7 +1240,7 @@ function recup_tableau_des_users_a_afficher($select_groupe,  $DEBUG=FALSE)
 		}
 	}
 
-	$ReqLog = SQL::query($sql1);
+	$ReqLog = \includes\SQL::query($sql1);
 	$tab_all_users=array();
 	while ($resultat = $ReqLog->fetch_array())
 	{

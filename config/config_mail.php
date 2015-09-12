@@ -86,7 +86,7 @@ function affichage($tab_new_values, $session, $DEBUG=FALSE)
 
 	//requête qui récupère les informations de la table conges_type_absence
 	$sql1 = "SELECT * FROM conges_mail ";
-	$ReqLog1 = SQL::query($sql1);
+	$ReqLog1 = \includes\SQL::query($sql1);
 
 	echo "<form method=\"POST\" action=\"$URL\"> \n";
 	echo "<input type=\"hidden\" name=\"action\" value=\"test\" /> \n";
@@ -192,8 +192,8 @@ function commit_modif($tab_new_values, $session, $DEBUG=FALSE)
 	{
 		$subject = addslashes($tab_mail['subject']);
 		$body = addslashes($tab_mail['body']) ;
-		$req_update='UPDATE conges_mail SET mail_subject=\''.$subject.'\', mail_body=\''.$body.'\' WHERE mail_nom=\''.SQL::quote($nom_mail).'\' ';
-		$result1 = SQL::query($req_update);
+		$req_update='UPDATE conges_mail SET mail_subject=\''.$subject.'\', mail_body=\''.$body.'\' WHERE mail_nom="'. \includes\SQL::quote($nom_mail).'" ';
+		$result1 = \includes\SQL::query($req_update);
 	}
 	echo "<span class = \"messages\">". _('form_modif_ok') ."</span><br>";
 

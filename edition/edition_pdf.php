@@ -187,7 +187,7 @@ function edition_pdf($login, $edit_id,  $DEBUG=FALSE)
 			$sql2=$sql2."FROM conges_periode ";
 			$sql2=$sql2."WHERE p_edition_id = $edit_id ";
 			$sql2=$sql2."ORDER BY p_date_deb ASC ";
-			$ReqLog2 = SQL::query($sql2) ;
+			$ReqLog2 = \includes\SQL::query($sql2) ;
 	
 			$count2=$ReqLog2->num_rows;
 			if($count2==0)

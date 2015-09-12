@@ -62,8 +62,8 @@ function confirmer($group, $onglet, $DEBUG=FALSE)
 	/* Groupe en cours */
 	/*******************/
 	// Récupération des informations
-	$sql1 = 'SELECT g_groupename, g_comment, g_double_valid FROM conges_groupe WHERE g_gid = \''.SQL::quote($group).'\'';
-	$ReqLog1 = SQL::query($sql1);
+	$sql1 = 'SELECT g_groupename, g_comment, g_double_valid FROM conges_groupe WHERE g_gid = "'.\includes\SQL::quote($group).'"';
+	$ReqLog1 = \includes\SQL::query($sql1);
 
 	// AFFICHAGE TABLEAU
 
@@ -103,19 +103,19 @@ function suppression_group($group_to_delete,  $DEBUG=FALSE)
 	$PHP_SELF=$_SERVER['PHP_SELF'];
 	$session=session_id();
 
-	$sql1 = 'DELETE FROM conges_groupe WHERE g_gid = '.SQL::quote($group_to_delete);
-	$result = SQL::query($sql1);
+	$sql1 = 'DELETE FROM conges_groupe WHERE g_gid = '.\includes\SQL::quote($group_to_delete);
+	$result = \includes\SQL::query($sql1);
 
-	$sql2 = 'DELETE FROM conges_groupe_users WHERE gu_gid = '.SQL::quote($group_to_delete);
-	$result2 = SQL::query($sql2);
+	$sql2 = 'DELETE FROM conges_groupe_users WHERE gu_gid = '.\includes\SQL::quote($group_to_delete);
+	$result2 = \includes\SQL::query($sql2);
 
-	$sql3 = 'DELETE FROM conges_groupe_resp WHERE gr_gid = '.SQL::quote($group_to_delete);
-	$result3 = SQL::query($sql3);
+	$sql3 = 'DELETE FROM conges_groupe_resp WHERE gr_gid = '.\includes\SQL::quote($group_to_delete);
+	$result3 = \includes\SQL::query($sql3);
 
 	if($_SESSION['config']['double_validation_conges'])
 	{
-		$sql4 = 'DELETE FROM conges_groupe_grd_resp WHERE ggr_gid = '.SQL::quote($group_to_delete);
-        	$result4 = SQL::query($sql4);
+		$sql4 = 'DELETE FROM conges_groupe_grd_resp WHERE ggr_gid = '.\includes\SQL::quote($group_to_delete);
+        	$result4 = \includes\SQL::query($sql4);
 	}
 
 	$comment_log = "suppression_groupe ($group_to_delete)";

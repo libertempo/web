@@ -41,7 +41,7 @@ if($_SESSION['config']['where_to_find_user_email']=="ldap"){ include CONFIG_PATH
 	// on ne recup QUE les periodes de type "conges"(cf table conges_type_absence) ET QUE les demandes
 	$sql3 = 'SELECT p_login, p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_nb_jours, p_commentaire, p_type, p_etat, p_motif_refus, p_date_demande, p_date_traitement, p_num, ta_libelle
 			FROM conges_periode as a, conges_type_absence as b
-			WHERE a.p_login = \''.SQL::quote($_SESSION['userlogin']).'\'
+			WHERE a.p_login = "'. \includes\SQL::quote($_SESSION['userlogin']).'"
 			AND (a.p_type=b.ta_id)
 			AND ( (b.ta_type=\'conges\') OR (b.ta_type=\'conges_exceptionnels\') )
 			AND ((p_etat=\'demande\') OR (p_etat=\'valid\')) ';
@@ -49,7 +49,7 @@ if($_SESSION['config']['where_to_find_user_email']=="ldap"){ include CONFIG_PATH
 		$sql3=$sql3.' ORDER BY p_date_deb DESC ;';
 	else
 		$sql3=$sql3.' ORDER BY p_date_deb ASC ;';
-	$ReqLog3 = SQL::query($sql3) ;
+	$ReqLog3 = \includes\SQL::query($sql3) ;
 
 	$count3=$ReqLog3->num_rows;
 	if($count3==0) {

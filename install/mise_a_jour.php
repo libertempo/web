@@ -293,10 +293,10 @@ function lance_maj($lang, $installed_version, $config_php_conges_version, $etape
         {
             // mise à jour de la "installed_version" et de la langue dans la table conges_config
             $sql_update_version="UPDATE conges_config SET conf_valeur = '$config_php_conges_version' WHERE conf_nom='installed_version' ";
-            $result_update_version = SQL::query($sql_update_version) ;
+            $result_update_version = \includes\SQL::query($sql_update_version) ;
 
             $sql_update_lang="UPDATE conges_config SET conf_valeur = '$lang' WHERE conf_nom='lang' ";
-            $result_update_lang = SQL::query($sql_update_lang) ;
+            $result_update_lang = \includes\SQL::query($sql_update_lang) ;
 
             $comment_log = _('install_maj_titre_2')." (version $installed_version --> version $config_php_conges_version) ";
             log_action(0, "", "", $comment_log,  $DEBUG);

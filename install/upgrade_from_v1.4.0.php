@@ -87,13 +87,13 @@ function e1_insert_into_conges_config( $DEBUG=FALSE)
 {
 
 	$sql_insert_1="INSERT INTO `conges_config` VALUES ('fermeture_bgcolor', '#7B9DE6', '14_Presentation', 'hidden', 'config_comment_fermeture_bgcolor')";
-	$result_insert_1 = SQL::query($sql_insert_1)  ;
+	$result_insert_1 = \includes\SQL::query($sql_insert_1)  ;
 
 	$sql_insert_2="INSERT INTO `conges_config` VALUES ('texte_page_login', '', '02_PAGE D\'AUTENTIFICATION', 'texte', 'config_comment_texte_page_login')";
-	$result_insert_2 = SQL::query($sql_insert_2)  ;
+	$result_insert_2 = \includes\SQL::query($sql_insert_2)  ;
 
 	$sql_insert_3="INSERT INTO `conges_config` VALUES ('solde_toujours_positif', 'FALSE', '12_Fonctionnement de l\'Etablissement', 'boolean', 'config_comment_solde_toujours_positif')";
-	$result_insert_3 = SQL::query($sql_insert_3)  ;
+	$result_insert_3 = \includes\SQL::query($sql_insert_3)  ;
 
 }
 
@@ -105,7 +105,7 @@ function e2_drop_table_historique_ajout( $DEBUG=FALSE)
 		if( test_drop_table( $DEBUG))
 		{
 			$sql_drop_1="DROP TABLE `conges_historique_ajout`";
-			$result_drop_1 = SQL::query($sql_drop_1)  ;
+			$result_drop_1 = \includes\SQL::query($sql_drop_1)  ;
 		}
 	}
 }

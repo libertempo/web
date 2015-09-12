@@ -34,7 +34,6 @@ include ROOT_PATH .'fonctions_conges.php' ;
 include INCLUDE_PATH .'fonction.php';
 include INCLUDE_PATH .'session.php';
 include ROOT_PATH .'fonctions_calcul.php';
-// include  INCLUDE_PATH .'sql.class.php';
 
 //include$_SESSION['config']['lang_file'] ;
 

@@ -50,12 +50,12 @@ function test_old_config_file() {
 //renvoit TRUE si ok, et FALSE sinon
 function test_database() {
 	try {
-		SQL::singleton();
+		\includes\SQL::singleton();
 	}
 	catch (Exception $e){
 		return false;
 	}
-	return SQL::getVar('connect_errno') == 0 ;
+	return \includes\SQL::getVar('connect_errno') == 0 ;
 }
 
 
@@ -63,11 +63,11 @@ function test_database() {
 // renvoit le num de la version installée ou 0 s'il est inaccessible (non renseigné ou table non présente) 
 function get_installed_version() {
 	try {
-		$reglog = SQL::query('show tables like \'conges_config\';');
+		$reglog = \includes\SQL::query('show tables like \'conges_config\';');
 		if( $reglog->num_rows == 0)
 			return 0;
 		$sql="SELECT conf_valeur FROM conges_config WHERE conf_nom='installed_version' ";
-		if($reglog = SQL::query($sql))
+		if($reglog = \includes\SQL::query($sql))
 			if($result=$reglog->fetch_array())
 				return $result['conf_valeur'];
 	}
@@ -90,7 +90,7 @@ function test_create_table() {
 				`test2` varchar(100) BINARY NOT NULL default '',
  				 PRIMARY KEY  (`test1`)
 				) ;";
-	return SQL::query($sql_create);
+	return \includes\SQL::query($sql_create);
 }
 
 
@@ -100,7 +100,7 @@ function test_alter_table() {
 	/*********************************************/
 	// alter de la table `conges_test`
 	$sql_alter="ALTER TABLE `conges_test` CHANGE `test2` `test2` varchar(150) ;" ;
-	return SQL::query($sql_alter) ;
+	return \includes\SQL::query($sql_alter) ;
 }
 
 
@@ -110,7 +110,7 @@ function test_drop_table() {
 	/*********************************************/
 	// suppression de la table `conges_test`
 	$sql_drop="DROP TABLE `conges_test` ;" ;
-	return SQL::query($sql_drop);
+	return \includes\SQL::query($sql_drop);
 }
 
 function write_db_config($server,$user,$passwd,$db){

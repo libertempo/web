@@ -78,7 +78,7 @@ function affichage($session, $DEBUG=FALSE)
 
     //requête qui récupère les informations de config
     $sql1 = "SELECT * FROM conges_config ORDER BY conf_groupe ASC";
-    $ReqLog1 = SQL::query($sql1);
+    $ReqLog1 = \includes\SQL::query($sql1);
 
     $old_groupe="";
     while ($data =$ReqLog1->fetch_array())
@@ -197,7 +197,7 @@ function affichage($session, $DEBUG=FALSE)
             <select class=\"form-control\" name=tab_new_values[".$my_plugin."_installed]>";
 
             $sql_plug="SELECT p_is_active, p_is_install FROM conges_plugins WHERE p_name = '".$my_plugin."';";
-            $ReqLog_plug = SQL::query($sql_plug);
+            $ReqLog_plug = \includes\SQL::query($sql_plug);
             if($ReqLog_plug->num_rows !=0)
                 {
                 while($plug = $ReqLog_plug->fetch_array()){
@@ -260,7 +260,7 @@ function commit_saisie(&$tab_new_values, $session, $DEBUG=FALSE)
         if(($key=="gestion_conges_exceptionnels") && ($value=="FALSE") )
         {
             $sql_abs="SELECT ta_id, ta_libelle FROM conges_type_absence WHERE ta_type='conges_exceptionnels' ";
-            $ReqLog_abs = SQL::query($sql_abs);
+            $ReqLog_abs = \includes\SQL::query($sql_abs);
 
             if($ReqLog_abs->num_rows !=0)
             {
@@ -279,7 +279,7 @@ function commit_saisie(&$tab_new_values, $session, $DEBUG=FALSE)
             {
                 echo "<b>". _('config_jour_mois_limite_reliquats_modif_impossible') ."</b><br>\n";
                 $sql_date="SELECT conf_valeur FROM conges_config WHERE conf_nom='jour_mois_limite_reliquats' ";
-                $ReqLog_date = SQL::query($sql_date);
+                $ReqLog_date = \includes\SQL::query($sql_date);
                 $data = $ReqLog_date->fetch_row();
                 $value = $data[0] ;
                 $timeout=5 ;
@@ -312,8 +312,8 @@ function commit_saisie(&$tab_new_values, $session, $DEBUG=FALSE)
         }
 
         // Mise à jour
-        $sql2 = 'UPDATE conges_config SET conf_valeur = \''.addslashes($value).'\' WHERE conf_nom =\''.SQL::quote($key).'\' ';
-	$ReqLog2 = SQL::query($sql2);
+        $sql2 = 'UPDATE conges_config SET conf_valeur = \''.addslashes($value).'\' WHERE conf_nom ="'. \includes\SQL::quote($key).'" ';
+	$ReqLog2 = \includes\SQL::query($sql2);
     }
 
     $_SESSION['config']=init_config_tab();      // on re-initialise le tableau des variables de config

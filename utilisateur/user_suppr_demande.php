@@ -65,9 +65,9 @@ function confirmer($p_num, $onglet, $DEBUG=FALSE)
 
 
 	// Récupération des informations
-	$sql1 = 'SELECT p_login, p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_nb_jours, p_commentaire, p_type, p_num FROM conges_periode WHERE p_num = \''.SQL::quote($p_num).'\'';
+	$sql1 = 'SELECT p_login, p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_nb_jours, p_commentaire, p_type, p_num FROM conges_periode WHERE p_num = "'.\includes\SQL::quote($p_num).'"';
 	//printf("sql1 = %s<br>\n", $sql1);
-	$ReqLog1 = SQL::query($sql1) ;
+	$ReqLog1 = \includes\SQL::query($sql1) ;
 
 	// AFFICHAGE TABLEAU
 	echo "<form action=\"$PHP_SELF\" method=\"POST\">\n"  ;
@@ -129,9 +129,9 @@ function suppression($p_num_to_delete, $onglet, $DEBUG=FALSE)
 	$PHP_SELF=$_SERVER['PHP_SELF'];
 	$session=session_id() ;
 
-	$sql_delete = 'DELETE FROM conges_periode WHERE p_num = '.SQL::quote($p_num_to_delete).' AND p_login=\''.SQL::quote($_SESSION['userlogin']).'\';';
+	$sql_delete = 'DELETE FROM conges_periode WHERE p_num = '.\includes\SQL::quote($p_num_to_delete).' AND p_login="'.\includes\SQL::quote($_SESSION['userlogin']).'";';
 
-	$result_delete = SQL::query($sql_delete);
+	$result_delete = \includes\SQL::query($sql_delete);
 
 	$comment_log = "suppression de demande num $p_num_to_delete";
 	log_action($p_num_to_delete, "", $_SESSION['userlogin'], $comment_log, $DEBUG);
@@ -154,8 +154,8 @@ function suppression($p_num_to_delete, $onglet, $DEBUG=FALSE)
 function get_libelle_abs($_type_abs_id,  $DEBUG=FALSE)
 {
 
-	$sql_abs='SELECT ta_libelle FROM conges_type_absence WHERE ta_id=\''.SQL::quote($_type_abs_id).'\'';
-	$ReqLog_abs = SQL::query($sql_abs);
+	$sql_abs='SELECT ta_libelle FROM conges_type_absence WHERE ta_id="'. \includes\SQL::quote($_type_abs_id).'"';
+	$ReqLog_abs = \includes\SQL::query($sql_abs);
 	if($resultat_abs = $ReqLog_abs->fetch_array())
 		return $resultat_abs['ta_libelle'];
 	else

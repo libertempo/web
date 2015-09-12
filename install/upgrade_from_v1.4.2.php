@@ -103,7 +103,7 @@ function e1_create_table_conges_appli( $DEBUG=FALSE)
   					`appli_valeur` varchar(200) binary NOT NULL default '',
   					PRIMARY KEY  (`appli_variable`)
 					) DEFAULT CHARSET=latin1; ";
-	$result_create = SQL::query($sql_create);
+	$result_create = \includes\SQL::query($sql_create);
 
 }
 
@@ -115,31 +115,31 @@ function e2_insert_into_conges_appli( $DEBUG=FALSE)
 {
 
 	$sql_insert_1="INSERT INTO `conges_appli` VALUES ('num_exercice', '1')";
-	$result_insert_1 = SQL::query($sql_insert_1)  ;
+	$result_insert_1 = \includes\SQL::query($sql_insert_1)  ;
 
 	$sql_insert_2="INSERT INTO `conges_appli` VALUES ('date_limite_reliquats', '0')";
-	$result_insert_2 = SQL::query($sql_insert_2)  ;
+	$result_insert_2 = \includes\SQL::query($sql_insert_2)  ;
 
 	$sql_insert_3="INSERT INTO `conges_appli` VALUES ('semaine_bgcolor', '#FFFFFF')";
-	$result_insert_3 = SQL::query($sql_insert_3)  ;
+	$result_insert_3 = \includes\SQL::query($sql_insert_3)  ;
 
 	$sql_insert_4="INSERT INTO `conges_appli` VALUES ('week_end_bgcolor', '#BFBFBF')";
-	$result_insert_4 = SQL::query($sql_insert_4)  ;
+	$result_insert_4 = \includes\SQL::query($sql_insert_4)  ;
 
 	$sql_insert_5="INSERT INTO `conges_appli` VALUES ('temps_partiel_bgcolor', '#FFFFC4')";
-	$result_insert_5 = SQL::query($sql_insert_5)  ;
+	$result_insert_5 = \includes\SQL::query($sql_insert_5)  ;
 
 	$sql_insert_6="INSERT INTO `conges_appli` VALUES ('conges_bgcolor', '#DEDEDE')";
-	$result_insert_6 = SQL::query($sql_insert_6)  ;
+	$result_insert_6 = \includes\SQL::query($sql_insert_6)  ;
 
 	$sql_insert_7="INSERT INTO `conges_appli` VALUES ('demande_conges_bgcolor', '#E7C4C4')";
-	$result_insert_7 = SQL::query($sql_insert_7)  ;
+	$result_insert_7 = \includes\SQL::query($sql_insert_7)  ;
 
 	$sql_insert_8="INSERT INTO `conges_appli` VALUES ('absence_autre_bgcolor', '#D3FFB6')";
-	$result_insert_8 = SQL::query($sql_insert_8)  ;
+	$result_insert_8 = \includes\SQL::query($sql_insert_8)  ;
 
 	$sql_insert_9="INSERT INTO `conges_appli` VALUES ('fermeture_bgcolor', '#7B9DE6')";
-	$result_insert_9 = SQL::query($sql_insert_9)  ;
+	$result_insert_9 = \includes\SQL::query($sql_insert_9)  ;
 
 }
 
@@ -151,10 +151,10 @@ function e3_delete_from_table_conges_config( $DEBUG=FALSE)
 {
 
 	$sql_delete_1="DELETE FROM conges_config WHERE conf_type = 'hidden' ";
-	$result_delete_1 = SQL::query($sql_delete_1)  ;
+	$result_delete_1 = \includes\SQL::query($sql_delete_1)  ;
 
 	$sql_delete_2="DELETE FROM conges_config WHERE conf_nom = 'rtt_comme_conges' ";
-	$result_delete_2 = SQL::query($sql_delete_2)  ;
+	$result_delete_2 = \includes\SQL::query($sql_delete_2)  ;
 }
 
 
@@ -166,7 +166,7 @@ function e4_alter_table_conges_users( $DEBUG=FALSE)
 	$PHP_SELF=$_SERVER['PHP_SELF'];
 
 	$sql_alter_1=" ALTER TABLE `conges_users` ADD `u_num_exercice` INT(2) NOT NULL DEFAULT '0' ";
-	$result_alter_1 = SQL::query($sql_alter_1)  ;
+	$result_alter_1 = \includes\SQL::query($sql_alter_1)  ;
 
 }
 
@@ -177,13 +177,13 @@ function e5_insert_into_conges_config( $DEBUG=FALSE)
 {
 
 	$sql_insert_1="INSERT INTO `conges_config` VALUES ('autorise_reliquats_exercice', 'TRUE', '12_Fonctionnement de l\'Etablissement', 'boolean', 'config_comment_autorise_reliquats_exercice')";
-	$result_insert_1 = SQL::query($sql_insert_1)  ;
+	$result_insert_1 = \includes\SQL::query($sql_insert_1)  ;
 
 	$sql_insert_2="INSERT INTO `conges_config` VALUES ('nb_maxi_jours_reliquats', '0', '12_Fonctionnement de l\'Etablissement', 'texte', 'config_comment_nb_maxi_jours_reliquats')";
-	$result_insert_2 = SQL::query($sql_insert_2)  ;
+	$result_insert_2 = \includes\SQL::query($sql_insert_2)  ;
 
 	$sql_insert_3="INSERT INTO `conges_config` VALUES ('jour_mois_limite_reliquats', '0', '12_Fonctionnement de l\'Etablissement', 'texte', 'config_comment_jour_mois_limite_reliquats')";
-	$result_insert_3 = SQL::query($sql_insert_3)  ;
+	$result_insert_3 = \includes\SQL::query($sql_insert_3)  ;
 
 
 }
@@ -197,7 +197,7 @@ function e6_alter_table_conges_solde_user( $DEBUG=FALSE)
 	$PHP_SELF=$_SERVER['PHP_SELF'];
 
 	$sql_alter_1=" ALTER TABLE `conges_solde_user` ADD `su_reliquat` DECIMAL( 4, 2 ) NOT NULL DEFAULT '0' ";
-	$result_alter_1 = SQL::query($sql_alter_1)  ;
+	$result_alter_1 = \includes\SQL::query($sql_alter_1)  ;
 
 }
 
@@ -210,34 +210,34 @@ function e7_alter_tables_taille_login( $DEBUG=FALSE)
 	$PHP_SELF=$_SERVER['PHP_SELF'];
 
 	$sql_alter_1=" ALTER TABLE `conges_artt` CHANGE `a_login` `a_login` VARBINARY( 99 ) NOT NULL ";
-	$result_alter_1 = SQL::query($sql_alter_1)  ;
+	$result_alter_1 = \includes\SQL::query($sql_alter_1)  ;
 
 	$sql_alter_2=" ALTER TABLE `conges_echange_rtt` CHANGE `e_login` `e_login` VARBINARY( 99 ) NOT NULL ";
-	$result_alter_2 = SQL::query($sql_alter_2)  ; 
+	$result_alter_2 = \includes\SQL::query($sql_alter_2)  ; 
 
 	$sql_alter_3=" ALTER TABLE `conges_edition_papier` CHANGE `ep_login` `ep_login` VARBINARY( 99 ) NOT NULL ";
-	$result_alter_3 = SQL::query($sql_alter_3)  ; 
+	$result_alter_3 = \includes\SQL::query($sql_alter_3)  ; 
 
 	$sql_alter_4=" ALTER TABLE `conges_groupe_grd_resp` CHANGE `ggr_login` `ggr_login` VARBINARY( 99 ) NOT NULL ";
-	$result_alter_4 = SQL::query($sql_alter_4)  ;  
+	$result_alter_4 = \includes\SQL::query($sql_alter_4)  ;  
 
 	$sql_alter_5=" ALTER TABLE `conges_groupe_resp` CHANGE `gr_login` `gr_login` VARBINARY( 99 ) NOT NULL ";
-	$result_alter_5 = SQL::query($sql_alter_5)  ;
+	$result_alter_5 = \includes\SQL::query($sql_alter_5)  ;
 
 	$sql_alter_6=" ALTER TABLE `conges_groupe_users` CHANGE `gu_login` `gu_login` VARBINARY( 99 ) NOT NULL ";
-	$result_alter_6 = SQL::query($sql_alter_6)  ;
+	$result_alter_6 = \includes\SQL::query($sql_alter_6)  ;
 
 	$sql_alter_7=" ALTER TABLE `conges_logs` CHANGE `log_user_login_par` `log_user_login_par` VARBINARY( 99 ) NOT NULL , CHANGE `log_user_login_pour` `log_user_login_pour` VARBINARY( 99 ) NOT NULL ";
-	$result_alter_7 = SQL::query($sql_alter_7)  ; 
+	$result_alter_7 = \includes\SQL::query($sql_alter_7)  ; 
  
 	$sql_alter_8=" ALTER TABLE `conges_periode` CHANGE `p_login` `p_login` VARBINARY( 99 ) NOT NULL ";
-	$result_alter_8 = SQL::query($sql_alter_8)  ;  
+	$result_alter_8 = \includes\SQL::query($sql_alter_8)  ;  
 
 	$sql_alter_9=" ALTER TABLE `conges_solde_user` CHANGE `su_login` `su_login` VARBINARY( 99 ) NOT NULL ";
-	$result_alter_9 = SQL::query($sql_alter_9)  ;
+	$result_alter_9 = \includes\SQL::query($sql_alter_9)  ;
  
 	$sql_alter_10=" ALTER TABLE `conges_users` CHANGE `u_login` `u_login` VARBINARY( 99 ) NOT NULL , CHANGE `u_resp_login` `u_resp_login` VARBINARY( 99 ) NULL DEFAULT NULL ";
-	$result_alter_10 = SQL::query($sql_alter_10)  ;
+	$result_alter_10 = \includes\SQL::query($sql_alter_10)  ;
 	 
 }
 

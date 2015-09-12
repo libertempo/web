@@ -75,7 +75,7 @@ function affiche_gestion_groupes($new_group_name, $new_group_libelle, $onglet, $
 	echo "<tbody>\n";
 
 	$i = true;
-	$ReqLog_gr = SQL::query($sql_gr);
+	$ReqLog_gr = \includes\SQL::query($sql_gr);
 	while ($resultat_gr = $ReqLog_gr->fetch_array())
 	{
 		 $sql_gid=$resultat_gr["g_gid"] ;
@@ -158,9 +158,9 @@ function ajout_groupe($new_group_name, $new_group_libelle, $new_group_double_val
 		echo "$ngm --- $new_group_libelle<br>\n";
 
 		$sql1 = "INSERT INTO conges_groupe SET g_groupename='$new_group_name', g_comment='$new_group_libelle', g_double_valid ='$new_group_double_valid' " ;
-		$result = SQL::query($sql1);
+		$result = \includes\SQL::query($sql1);
 
-		$new_gid=SQL::getVar('insert_id');
+		$new_gid= \includes\SQL::getVar('insert_id');
 		// par défaut le responsable virtuel est resp de tous les groupes !!!
 		// $sql2 = "INSERT INTO conges_groupe_resp SET gr_gid=$new_gid, gr_login='conges' " ;
 		// $result = SQL::query($sql2);
@@ -203,8 +203,8 @@ function verif_new_param_group($new_group_name, $new_group_libelle, $DEBUG=FALSE
 	}
 	else {
 		// verif si le groupe demandé n'existe pas déjà ....
-		$sql_verif='select g_groupename from conges_groupe where g_groupename=\''.SQL::quote($new_group_name).'\' ';
-		$ReqLog_verif = SQL::query($sql_verif);
+		$sql_verif='select g_groupename from conges_groupe where g_groupename="'. \includes\SQL::quote($new_group_name).'" ';
+		$ReqLog_verif = \includes\SQL::query($sql_verif);
 		$num_verif = $ReqLog_verif->num_rows;
 		if ($num_verif!=0)
 		{
@@ -229,8 +229,8 @@ function verif_new_param_group($new_group_name, $new_group_libelle, $DEBUG=FALSE
 function get_nb_users_du_groupe($group_id,  $DEBUG=FALSE)
 {
 
-	$sql1='SELECT DISTINCT(gu_login) FROM conges_groupe_users WHERE gu_gid = '.SQL::quote($group_id).' ORDER BY gu_login ';
-	$ReqLog1 = SQL::query($sql1);
+	$sql1='SELECT DISTINCT(gu_login) FROM conges_groupe_users WHERE gu_gid = '. \includes\SQL::quote($group_id).' ORDER BY gu_login ';
+	$ReqLog1 = \includes\SQL::query($sql1);
 
 	$nb_users = $ReqLog1->num_rows;
 

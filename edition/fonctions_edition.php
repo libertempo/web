@@ -31,8 +31,8 @@ function enregistrement_edition($login,  $DEBUG=FALSE)
 	$PHP_SELF=$_SERVER['PHP_SELF'];
 
 	$tab_solde_user=array();
-	$sql1 = 'SELECT su_abs_id, su_solde FROM conges_solde_user where su_login = \''.SQL::quote($login).'\'';
-	$ReqLog1 = SQL::query($sql1);
+	$sql1 = 'SELECT su_abs_id, su_solde FROM conges_solde_user where su_login = "'. \includes\SQL::quote($login).'"';
+	$ReqLog1 = \includes\SQL::query($sql1);
 
 	while ($resultat1 = $ReqLog1->fetch_array()) 
 	{
@@ -48,7 +48,7 @@ function enregistrement_edition($login,  $DEBUG=FALSE)
 	/*************************************************/
 	$sql_insert = "INSERT INTO conges_edition_papier
 			SET ep_id=$new_edition_id, ep_login='$login', ep_date='$aujourdhui', ep_num_for_user=$num_for_user ";
-	$result_insert = SQL::query($sql_insert);
+	$result_insert = \includes\SQL::query($sql_insert);
 	
 	
 	/*************************************************/
@@ -60,7 +60,7 @@ function enregistrement_edition($login,  $DEBUG=FALSE)
 	{
 		$sql_insert_2 = "INSERT INTO conges_solde_edition
 				SET se_id_edition=$new_edition_id, se_id_absence=$id_abs, se_solde=$tab_solde_user[$id_abs] ";
-		$result_insert_2 = SQL::query($sql_insert_2);
+		$result_insert_2 = \includes\SQL::query($sql_insert_2);
 	}
 	if ($_SESSION['config']['gestion_conges_exceptionnels']) 
 	{
@@ -68,7 +68,7 @@ function enregistrement_edition($login,  $DEBUG=FALSE)
 		foreach($tab_type_conges_exceptionnels as $id_abs => $libelle)
 		{
 			$sql_insert_3 = "INSERT INTO conges_solde_edition SET se_id_edition=$new_edition_id, se_id_absence=$id_abs, se_solde=$tab_solde_user[$id_abs] ";
-			$result_insert_3 = SQL::query($sql_insert_3);
+			$result_insert_3 = \includes\SQL::query($sql_insert_3);
 		}
 	}
 	
@@ -77,7 +77,7 @@ function enregistrement_edition($login,  $DEBUG=FALSE)
 	/********************************************************************************************/
 	// recup de la liste des id des absence de type conges !
 	$sql_list="SELECT ta_id FROM conges_type_absence WHERE ta_type='conges' OR ta_type='conges_exceptionnels'";
-	$ReqLog_list = SQL::query($sql_list);
+	$ReqLog_list = \includes\SQL::query($sql_list);
 
 	$list_abs_id="";
 	while($resultat_list = $ReqLog_list->fetch_array())
@@ -93,7 +93,7 @@ function enregistrement_edition($login,  $DEBUG=FALSE)
 			AND p_edition_id IS NULL
 			AND (p_type IN (\''.$list_abs_id.'\') )
 			AND (p_etat!=\'demande\') ';
-	$ReqLog_update = SQL::query($sql_update);
+	$ReqLog_update = \includes\SQL::query($sql_update);
 	
 	return $new_edition_id;
 }
@@ -104,14 +104,14 @@ function get_last_edition_id( $DEBUG=FALSE)
 {
 	// verif si table edition pas vide
 	$sql1 = "SELECT ep_id FROM conges_edition_papier ";
-	$ReqLog1 = SQL::query($sql1);
+	$ReqLog1 = \includes\SQL::query($sql1);
 
 	if($ReqLog1->num_rows==0) 
 		return 0;    // c'est qu'il n'y a pas encore d'edition 
 	else
 	{
 		$sql2 = 'SELECT MAX(ep_id) FROM conges_edition_papier ';
-		$ReqLog2 = SQL::query($sql2);
+		$ReqLog2 = \includes\SQL::query($sql2);
 		$tmp = $ReqLog2->fetch_row();
 		return $tmp[0];
 	}	
@@ -122,15 +122,15 @@ function get_num_last_edition_user($login,  $DEBUG=FALSE)
 {
 
 	// verif si le user a une edition
-	$sql1 = 'SELECT ep_num_for_user FROM conges_edition_papier WHERE ep_login=\''.SQL::quote($login).'\'';
-	$ReqLog1 = SQL::query($sql1);
+	$sql1 = 'SELECT ep_num_for_user FROM conges_edition_papier WHERE ep_login="'. \includes\SQL::quote($login).'"';
+	$ReqLog1 = \includes\SQL::query($sql1);
 
 	if($ReqLog1->num_rows==0) 
 		return 0;    // c'est qu'il n'y a pas encore d'edition pour ce user
 	else
 	{
-		$sql2 = 'SELECT MAX(ep_num_for_user) FROM conges_edition_papier WHERE ep_login=\''.SQL::quote($login).'\'';
-		$ReqLog2 = SQL::query($sql2);
+		$sql2 = 'SELECT MAX(ep_num_for_user) FROM conges_edition_papier WHERE ep_login="'. \includes\SQL::quote($login).'"';
+		$ReqLog2 = \includes\SQL::query($sql2);
 		$tmp = $ReqLog2->fetch_row();
 		return $tmp[0];
 	}
@@ -142,16 +142,16 @@ function get_id_edition_precedente_user($login, $edition_id,  $DEBUG=FALSE)
 {
 
 	// verif si le user n'a pas une seule edition
-	$sql1 = 'SELECT * FROM conges_edition_papier WHERE ep_login=\''.SQL::quote($login).'\'';
-	$ReqLog1 = SQL::query($sql1);
+	$sql1 = 'SELECT * FROM conges_edition_papier WHERE ep_login="'.\includes\SQL::quote($login).'"';
+	$ReqLog1 = \includes\SQL::query($sql1);
 
 	$resultat1 = $ReqLog1->num_rows ;
 	if($resultat1<=1)    // une seule edition pour ce user
 		return 0;
 	else
 	{
-		$sql2 = 'SELECT MAX(ep_id) FROM conges_edition_papier WHERE ep_login=\''.SQL::quote($login).'\' AND ep_id<'.SQL::quote($edition_id);
-		$ReqLog2 = SQL::query($sql2);
+		$sql2 = 'SELECT MAX(ep_id) FROM conges_edition_papier WHERE ep_login="'. \includes\SQL::quote($login).'" AND ep_id<'.\includes\SQL::quote($edition_id);
+		$ReqLog2 = \includes\SQL::query($sql2);
 		$tmp = $ReqLog2->fetch_row();
 		return $tmp[0];
 	}
@@ -164,8 +164,8 @@ function recup_solde_conges_of_edition($edition_id,  $DEBUG=FALSE)
 {
 
 	$tab=array();
-	$sql_ed = 'SELECT se_id_absence, se_solde FROM conges_solde_edition where se_id_edition = '.SQL::quote($edition_id);
-	$ReqLog_ed = SQL::query($sql_ed);
+	$sql_ed = 'SELECT se_id_absence, se_solde FROM conges_solde_edition where se_id_edition = '.\includes\SQL::quote($edition_id);
+	$ReqLog_ed = \includes\SQL::query($sql_ed);
 
 	$tab=array();
 	while ($resultat_ed = $ReqLog_ed->fetch_array()) 
@@ -183,8 +183,8 @@ function recup_info_user_pour_edition($login,  $DEBUG=FALSE)
 {
 
 	$tab=array();
-	$sql_user = 'SELECT u_nom, u_prenom, u_quotite FROM conges_users where u_login = \''.SQL::quote($login).'\'';
-	$ReqLog_user = SQL::query($sql_user);
+	$sql_user = 'SELECT u_nom, u_prenom, u_quotite FROM conges_users where u_login = "'. \includes\SQL::quote($login).'"';
+	$ReqLog_user = \includes\SQL::query($sql_user);
 
 	while ($resultat_user = $ReqLog_user->fetch_array()) {
 		$tab['nom']=$resultat_user["u_nom"];
@@ -206,8 +206,8 @@ function recup_info_edition($edit_id,  $DEBUG=FALSE)
 
 	$tab=array();
 	
-	$sql_edition= 'SELECT ep_date, ep_num_for_user FROM conges_edition_papier where ep_id = '.SQL::quote($edit_id);
-	$ReqLog_edition = SQL::query($sql_edition);
+	$sql_edition= 'SELECT ep_date, ep_num_for_user FROM conges_edition_papier where ep_id = '.\includes\SQL::quote($edit_id);
+	$ReqLog_edition = \includes\SQL::query($sql_edition);
 
 	if($resultat_edition = $ReqLog_edition->fetch_array()) 
 	{
@@ -230,7 +230,7 @@ function recup_editions_user($login,  $DEBUG=FALSE)
 	$sql2 = "SELECT ep_id, ep_date, ep_num_for_user ";
 	$sql2=$sql2."FROM conges_edition_papier WHERE ep_login = '$login' ";
 	$sql2=$sql2."ORDER BY ep_num_for_user DESC ";
-	$ReqLog2 = SQL::query($sql2);
+	$ReqLog2 = \includes\SQL::query($sql2);
 
 	if($ReqLog2->num_rows != 0)
 	{

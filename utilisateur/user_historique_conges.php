@@ -64,7 +64,7 @@ if($_SESSION['config']['where_to_find_user_email']=="ldap"){ include CONFIG_PATH
 	else
 		$sql2=$sql2." ORDER BY p_date_deb ASC ";
 
-	$ReqLog2 = SQL::query($sql2) ;
+	$ReqLog2 = \includes\SQL::query($sql2) ;
 
 	$count2=$ReqLog2->num_rows;
 	if($count2==0)

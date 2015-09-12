@@ -22,7 +22,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *************************************************************************************************/
-
 @define('_PHP_CONGES', 1);
 @define('ROOT_PATH', '');
 include ROOT_PATH . 'define.php';
@@ -190,8 +189,8 @@ else
 
 if(isset($_SESSION['userlogin']))
 {
-	$request= "SELECT u_nom, u_passwd, u_prenom, u_is_resp FROM conges_users where u_login = '".SQL::quote($_SESSION['userlogin'])."' " ;
-	$rs = SQL::query($request );
+	$request= "SELECT u_nom, u_passwd, u_prenom, u_is_resp FROM conges_users where u_login = '". \includes\SQL::quote($_SESSION['userlogin'])."' " ;
+	$rs = \includes\SQL::query($request );
 	if($rs->num_rows != 1)
 	{
 	    redirect( ROOT_PATH .'index.php' );
