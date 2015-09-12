@@ -96,6 +96,18 @@ function export_ical($user_login, $DEBUG=FALSE)
 				$DTSTAMP=$sql_date_dem."Z";
 				$tab_date_deb=explode("-", $sql_date_debut);
 				$tab_date_fin=explode("-", $sql_date_fin);
+
+				//conversion etat demande en status
+				switch ($sql_etat) {
+					case "ok":
+						$status="CONFIRMED";
+						break;
+					case "refus":
+						$status="CANCELLED";
+						break;
+					default:
+						$status="TENTATIVE";
+					}
 				if($sql_demi_jour_deb=="am")
 					$DTSTART=$tab_date_deb[0].$tab_date_deb[1].$tab_date_deb[2]."T070000Z";   // .....
 				else
@@ -110,6 +122,7 @@ function export_ical($user_login, $DEBUG=FALSE)
 						"DTSTAMP:$DTSTAMP\r\n" .
 						"ORGANIZER:MAILTO:".$tab_infos_user['email']."\r\n" .
 						"CREATED:$DTSTART\r\n" .
+						"STATUS:$status\r\n" .
 						"UID:$user_login@Libertempo-$sql_date_dem\r\n";
 				if($sql_comment!="")
 					echo "DESCRIPTION:$sql_comment\r\n";
