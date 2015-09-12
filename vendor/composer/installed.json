@@ -1,23 +1,23 @@
 [
     {
         "name": "twig/twig",
-        "version": "v1.14.0",
-        "version_normalized": "1.14.0.0",
+        "version": "v1.14.2",
+        "version_normalized": "1.14.2.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/fabpot/Twig.git",
-            "reference": "224fc55635d544a2ec8edb3592be18db5a093f59"
+            "url": "https://github.com/twigphp/Twig.git",
+            "reference": "ca445842fcea4f844d68203ffa2d00f5e3cdea64"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/fabpot/Twig/zipball/224fc55635d544a2ec8edb3592be18db5a093f59",
-            "reference": "224fc55635d544a2ec8edb3592be18db5a093f59",
+            "url": "https://api.github.com/repos/twigphp/Twig/zipball/ca445842fcea4f844d68203ffa2d00f5e3cdea64",
+            "reference": "ca445842fcea4f844d68203ffa2d00f5e3cdea64",
             "shasum": ""
         },
         "require": {
             "php": ">=5.2.4"
         },
-        "time": "2013-10-03 06:41:20",
+        "time": "2013-10-30 08:20:53",
         "type": "library",
         "extra": {
             "branch-alias": {
