@@ -117,5 +117,3 @@ if($_SESSION['config']['where_to_find_user_email']=="ldap"){ include CONFIG_PATH
 	/*********************************/
 	
 	bottom();
-	exit;
-	
