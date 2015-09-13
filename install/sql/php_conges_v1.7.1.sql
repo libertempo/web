@@ -357,8 +357,8 @@ INSERT IGNORE INTO `conges_users` VALUES ('conges', 'conges', 'responsable-virtu
 # Contenu de la table `conges_config`
 #
 
-INSERT IGNORE INTO `conges_config` VALUES ('installed_version', '0', '00_php_conges', 'texte', 'config_comment_installed_version');
-INSERT IGNORE INTO `conges_config` VALUES ('lang', 'fr', '00_php_conges', 'enum=fr/test', 'config_comment_lang');
+INSERT IGNORE INTO `conges_config` VALUES ('installed_version', '0', '00_Libertempo', 'texte', 'config_comment_installed_version');
+INSERT IGNORE INTO `conges_config` VALUES ('lang', 'fr', '00_Libertempo', 'enum=fr/test', 'config_comment_lang');
 
 INSERT IGNORE INTO `conges_config` VALUES ('URL_ACCUEIL_CONGES', 'http://mon-serveur/mon-chemin/libertempo', '01_Serveur Web', 'texte', 'config_comment_URL_ACCUEIL_CONGES');
 
