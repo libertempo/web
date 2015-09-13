@@ -1,7 +1,7 @@
 <?php
 
 
-include ROOT_PATH . 'define.php';
+include_once ROOT_PATH . 'define.php';
 
 function find_plugins_activated(){
         $list_plugins = array();

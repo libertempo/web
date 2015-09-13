@@ -24,17 +24,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *************************************************************************************************/
 
 
-define('_PHP_CONGES', 1);
 define('ROOT_PATH', '../');
-include ROOT_PATH . 'define.php';
+require ROOT_PATH . 'define.php';
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 
 $session=(isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : session_id()) ) ;
 
-include ROOT_PATH .'fonctions_conges.php' ;
-include INCLUDE_PATH .'fonction.php';
-include INCLUDE_PATH .'session.php';
-include ROOT_PATH .'fonctions_calcul.php';
+include_once ROOT_PATH .'fonctions_conges.php' ;
+include_once INCLUDE_PATH .'fonction.php';
+include_once INCLUDE_PATH .'session.php';
+include_once ROOT_PATH .'fonctions_calcul.php';
 
 $DEBUG = FALSE ;
 //$DEBUG = TRUE ;
@@ -105,7 +104,7 @@ verif_droits_user($session, "is_hr", $DEBUG);
 		$tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels( $DEBUG);
 	
 	echo '<div class="'.$onglet.' main-content">';
-		include ROOT_PATH . 'hr/hr_'.$onglet.'.php';
+		include_once ROOT_PATH . 'hr/hr_'.$onglet.'.php';
 	echo '</div>';
 	
 	/*********************************/

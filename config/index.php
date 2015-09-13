@@ -24,8 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *************************************************************************************************/
 
 define('ROOT_PATH', '../');
-require ROOT_PATH . 'define.php';
-include INCLUDE_PATH . 'fonction.php';
+require_once ROOT_PATH . 'define.php';
+include_once INCLUDE_PATH . 'fonction.php';
 
 $session =(isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : session_id()) ) ;
 
@@ -34,10 +34,10 @@ if (empty($session)) {
 }
 
 
-include ROOT_PATH .'fonctions_conges.php' ;
+include_once ROOT_PATH .'fonctions_conges.php' ;
 
 $_SESSION['config']=init_config_tab();      // on initialise le tableau des variables de config
-include INCLUDE_PATH .'session.php';
+include_once INCLUDE_PATH .'session.php';
 
 $PHP_SELF=$_SERVER['PHP_SELF'];
 
@@ -91,10 +91,10 @@ $_SESSION['from_config']=TRUE;  // initialise ce flag pour changer le bouton de 
 		echo '<a href="' . ROOT_PATH . "admin/admin_index.php?session=$session\" class=\"admin-back\"><i class=\"fa fa-arrow-circle-o-left\"></i>Retour mode admin</a>\n";
 
 		if($onglet == 'general') {
-			include ROOT_PATH . 'config/configure.php';
+			include_once ROOT_PATH . 'config/configure.php';
 		}
 		else {
-			include ROOT_PATH . 'config/config_'.$onglet.'.php';
+			include_once ROOT_PATH . 'config/config_'.$onglet.'.php';
 		}
 		
 	echo '</div>';

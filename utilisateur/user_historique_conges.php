@@ -27,7 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 
 
-if($_SESSION['config']['where_to_find_user_email']=="ldap"){ include CONFIG_PATH .'config_ldap.php';}
+if($_SESSION['config']['where_to_find_user_email']=="ldap"){ include_once CONFIG_PATH .'config_ldap.php';}
 
 	$tri_date = getpost_variable('tri_date', "ascendant");
 	$year_affichage = getpost_variable('year_affichage' , date("Y") );

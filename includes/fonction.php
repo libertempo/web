@@ -26,12 +26,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 
-include INCLUDE_PATH .'fonction_hr.php';
-include INCLUDE_PATH .'fonction_config.php';
-include INCLUDE_PATH .'fonction_admin.php';
-include INCLUDE_PATH .'lang_profile.php';
-//better to include plugins at the end : see bottom function
-//include INCLUDE_PATH .'plugins.php';
+include_once INCLUDE_PATH .'fonction_hr.php';
+include_once INCLUDE_PATH .'fonction_config.php';
+include_once INCLUDE_PATH .'fonction_admin.php';
+include_once INCLUDE_PATH .'lang_profile.php';
+//better to include_once plugins at the end : see bottom function
+//include_once INCLUDE_PATH .'plugins.php';
 
 function schars( $htmlspec ) {
     return htmlspecialchars( $htmlspec );
@@ -84,7 +84,7 @@ function header_popup($title = '' , $additional_head = '' ) {
     if (empty($title))
         $title = 'Libertempo';
 
-    include TEMPLATE_PATH . 'popup_header.php';
+    include_once TEMPLATE_PATH . 'popup_header.php';
 }
 
 function header_error($title = '' , $additional_head = '' ) {
@@ -102,7 +102,7 @@ function header_error($title = '' , $additional_head = '' ) {
     if (empty($title))
         $title = 'Libertempo';
 
-    include TEMPLATE_PATH . 'error_header.php';
+    include_once TEMPLATE_PATH . 'error_header.php';
 }
 
 function header_login($title = '' , $additional_head = '' ) {
@@ -120,7 +120,7 @@ function header_login($title = '' , $additional_head = '' ) {
     if (empty($title))
         $title = 'Libertempo';
 
-    include TEMPLATE_PATH . 'login_header.php';
+    include_once TEMPLATE_PATH . 'login_header.php';
 }
 
 function header_menu( $info ,$title = '' , $additional_head = '' ) {
@@ -138,7 +138,7 @@ function header_menu( $info ,$title = '' , $additional_head = '' ) {
     if (empty($title))
         $title = 'Libertempo';
 
-    include TEMPLATE_PATH . 'menu_header.php';
+    include_once TEMPLATE_PATH . 'menu_header.php';
 }
 
 function bottom() {
@@ -151,23 +151,23 @@ function bottom() {
     }else
         throw new Exception('Warning : Ne peux ouvrir deux header !!!');
 
-    include INCLUDE_PATH .'plugins.php';
-    include TEMPLATE_PATH . $type_bottom .'_bottom.php';
+    include_once INCLUDE_PATH .'plugins.php';
+    include_once TEMPLATE_PATH . $type_bottom .'_bottom.php';
 }
 
 
 //manage plugins
 function install_plugin($plugin){
-    include INCLUDE_PATH . "/plugins/".$plugin."/plugin_install.php";
+    include_once INCLUDE_PATH . "/plugins/".$plugin."/plugin_install.php";
 }
 function activate_plugin($plugin){
-    include INCLUDE_PATH . "/plugins/".$plugin."/plugin_active.php";
+    include_once INCLUDE_PATH . "/plugins/".$plugin."/plugin_active.php";
 }
 function uninstall_plugin($plugin){
-    include INCLUDE_PATH . "/plugins/".$plugin."/plugin_uninstall.php";
+    include_once INCLUDE_PATH . "/plugins/".$plugin."/plugin_uninstall.php";
 }
 function disable_plugin($plugin){
-    include INCLUDE_PATH . "/plugins/".$plugin."/plugin_inactive.php";
+    include_once INCLUDE_PATH . "/plugins/".$plugin."/plugin_inactive.php";
 }
 
 
@@ -294,7 +294,7 @@ if (! navigator.cookieEnabled) {
 </noscript>';
 
     header_login('', $add);
-    include TEMPLATE_PATH . 'login_form.php';
+    include_once TEMPLATE_PATH . 'login_form.php';
 
     bottom();
     exit;

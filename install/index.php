@@ -24,15 +24,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *************************************************************************************************/
 
 define('ROOT_PATH', '../');
-require ROOT_PATH . 'define.php';
+require_once ROOT_PATH . 'define.php';
 
-//include ROOT_PATH .'fonctions_conges.php' ;
+//include_once ROOT_PATH .'fonctions_conges.php' ;
 session_start();
 $_SESSION['lang'] = 'fr_FR';
 
-include INCLUDE_PATH .'fonction.php';
+include_once INCLUDE_PATH .'fonction.php';
 
-include ROOT_PATH .'fonctions_conges.php' ;
+include_once ROOT_PATH .'fonctions_conges.php' ;
 
 $PHP_SELF=$_SERVER['PHP_SELF'];
 
@@ -116,8 +116,8 @@ $dbdb=(isset($_GET['dbdb']) ? $_GET['dbdb'] : ((isset($_POST['dbdb'])) ? $_POST[
 	}
 	else
 	{
-		include CONFIG_PATH .'dbconnect.php';
-		include ROOT_PATH .'version.php';
+		include_once CONFIG_PATH .'dbconnect.php';
+		include_once ROOT_PATH .'version.php';
 
 		if(!\install\Fonctions::test_database())
 		{
