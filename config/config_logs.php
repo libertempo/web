@@ -75,7 +75,7 @@ function affichage($login_par, $session, $DEBUG=FALSE)
 		$sql1 = $sql1." WHERE log_user_login_par = '$login_par' ";
 	$sql1 = $sql1." ORDER BY log_date";
 
-	$ReqLog1 = SQL::query($sql1);
+	$ReqLog1 = \includes\SQL::query($sql1);
 
 	if($ReqLog1->num_rows !=0)
 	{
@@ -157,7 +157,7 @@ function commit_vider_table_logs($session, $DEBUG=FALSE)
 	$PHP_SELF=$_SERVER['PHP_SELF'];
 
 	$sql_delete="TRUNCATE TABLE conges_logs ";
-	$ReqLog_delete = SQL::query($sql_delete);
+	$ReqLog_delete = \includes\SQL::query($sql_delete);
 
 	// ecriture de cette action dans les logs
 	$comment_log = "effacement des logs de php_conges ";

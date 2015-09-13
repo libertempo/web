@@ -68,7 +68,7 @@ function modifier($group, $onglet, $DEBUG=FALSE)
 	$session=session_id();
 
 	// Récupération des informations
-	$sql1 = 'SELECT g_groupename, g_comment, g_double_valid FROM conges_groupe WHERE g_gid = \''.SQL::quote($group).'\'';
+	$sql1 = 'SELECT g_groupename, g_comment, g_double_valid FROM conges_groupe WHERE g_gid = "'. \includes\SQL::quote($group).'"';
 
 	// AFFICHAGE TABLEAU
 	echo '<form action="'.$PHP_SELF.'?session='.$session.'&onglet='.$onglet.'&group_to_update='.$group.'" method="POST">';
@@ -83,7 +83,7 @@ function modifier($group, $onglet, $DEBUG=FALSE)
 	echo "</thead>\n";
 	echo "<tbody>\n";
 
-	$ReqLog1 = SQL::query($sql1);
+	$ReqLog1 = \includes\SQL::query($sql1);
 	while ($resultat1 = $ReqLog1->fetch_array())
 	{
 		$sql_groupename=$resultat1["g_groupename"];
@@ -145,8 +145,8 @@ function commit_update($group_to_update, $new_groupname, $new_comment, $new_doub
 
 
 	// UPDATE de la table conges_groupe
-	$sql1 = 'UPDATE conges_groupe  SET g_groupename=\''.$new_groupname.'\', g_comment=\''.$new_comment.'\' , g_double_valid=\''.$new_double_valid.'\' WHERE g_gid=\''.SQL::quote($group_to_update).'\''  ;
-	$result1 = SQL::query($sql1);
+	$sql1 = 'UPDATE conges_groupe  SET g_groupename=\''.$new_groupname.'\', g_comment=\''.$new_comment.'\' , g_double_valid=\''.$new_double_valid.'\' WHERE g_gid= "'. \includes\SQL::quote($group_to_update).'"'  ;
+	$result1 = \includes\SQL::query($sql1);
 	if($result1==FALSE)
 		$result==FALSE;
 

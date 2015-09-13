@@ -135,8 +135,8 @@ function affichage($tab_new_values,$session, $DEBUG=FALSE)
 			echo "<p>$comment</p>\n";
 
 			//requête qui récupère les informations de la table conges_type_absence
-			$sql1 = 'SELECT * FROM conges_type_absence WHERE ta_type = \''.SQL::quote($ta_type).'\'';
-			$ReqLog1 = SQL::query($sql1);
+			$sql1 = 'SELECT * FROM conges_type_absence WHERE ta_type = "'. \includes\SQL::quote($ta_type).'"';
+			$ReqLog1 = \includes\SQL::query($sql1);
 
 			if($ReqLog1->num_rows !=0)
 			{
@@ -237,9 +237,9 @@ function modifier(&$tab_new_values, $session, $id_to_update, $DEBUG=FALSE)
 	echo "<br>\n";
 
 	// recup des infos du type de conges / absences
-	$sql_cong='SELECT ta_type, ta_libelle, ta_short_libelle FROM conges_type_absence WHERE ta_id = '.SQL::quote($id_to_update);
+	$sql_cong='SELECT ta_type, ta_libelle, ta_short_libelle FROM conges_type_absence WHERE ta_id = '. \includes\SQL::quote($id_to_update);
 
-	$ReqLog_cong = SQL::query($sql_cong);
+	$ReqLog_cong = \includes\SQL::query($sql_cong);
 
 	if($resultat_cong = $ReqLog_cong->fetch_array())
 	{
@@ -325,8 +325,8 @@ function commit_modif(&$tab_new_values, $session, $id_to_update, $DEBUG=FALSE)
 	else
 	{
 		// update de la table
-		$req_update='UPDATE conges_type_absence SET ta_libelle=\''.$tab_new_values['libelle'].'\', ta_short_libelle=\''.$tab_new_values['short_libelle'].'\' WHERE ta_id=\''.SQL::quote($id_to_update).'\' ';
-		$result1 = SQL::query($req_update);
+		$req_update='UPDATE conges_type_absence SET ta_libelle=\''.$tab_new_values['libelle'].'\', ta_short_libelle=\''.$tab_new_values['short_libelle'].'\' WHERE ta_id="'. \includes\SQL::quote($id_to_update).'" ';
+		$result1 = \includes\SQL::query($req_update);
 
 		echo "<span class = \"messages\">". _('form_modif_ok') ."</span><br>";
 
@@ -354,8 +354,8 @@ function supprimer($session, $id_to_update, $DEBUG=FALSE)
 
 	// verif si pas de periode de ce type de conges !!!
 	//requête qui récupère les informations de la table conges_periode
-	$sql1 = 'SELECT p_num FROM conges_periode WHERE p_type=\''.SQL::quote($id_to_update).'\'';
-	$ReqLog1 = SQL::query($sql1);
+	$sql1 = 'SELECT p_num FROM conges_periode WHERE p_type="'. \includes\SQL::quote($id_to_update).'"';
+	$ReqLog1 = \includes\SQL::query($sql1);
 
 	$count= ($ReqLog1->num_rows) ;
 
@@ -410,12 +410,12 @@ function commit_suppr($session, $id_to_update, $DEBUG=FALSE)
 	if( $DEBUG ) { echo "URL = $URL<br>\n"; }
 
 	// delete dans la table conges_type_absence
-	$req_delete1='DELETE FROM conges_type_absence WHERE ta_id='.SQL::quote($id_to_update);
-	$result1 = SQL::query($req_delete1);
+	$req_delete1='DELETE FROM conges_type_absence WHERE ta_id='. \includes\SQL::quote($id_to_update);
+	$result1 = \includes\SQL::query($req_delete1);
 
 	// delete dans la table conges_solde_user
-	$req_delete2='DELETE FROM conges_solde_user WHERE su_abs_id='.SQL::quote($id_to_update);
-	$result2 = SQL::query($req_delete2);
+	$req_delete2='DELETE FROM conges_solde_user WHERE su_abs_id='.\includes\SQL::quote($id_to_update);
+	$result2 = \includes\SQL::query($req_delete2);
 
 	echo "<span class = \"messages\">". _('form_modif_ok') ."</span><br>";
 
@@ -473,7 +473,7 @@ function commit_ajout(&$tab_new_values, $session, $DEBUG=FALSE)
 		// ajout dans la table conges_type_absence
 		$req_insert1="INSERT INTO conges_type_absence (ta_libelle, ta_short_libelle, ta_type) " .
 				"VALUES ('".$tab_new_values['libelle']."', '".$tab_new_values['short_libelle']."', '".$tab_new_values['type']."') ";
-		$result1 = SQL::query($req_insert1);
+		$result1 = \includes\SQL::query($req_insert1);
 
 	    // on recup l'id de l'absence qu'on vient de créer
 	    $new_abs_id = get_last_absence_id($DEBUG);
@@ -486,7 +486,7 @@ function commit_ajout(&$tab_new_values, $session, $DEBUG=FALSE)
 				// recup de users :
 			    $sql_users="SELECT DISTINCT(u_login) FROM conges_users WHERE u_login!='conges' AND u_login!='admin' " ;
 
-				$ReqLog_users = SQL::query($sql_users);
+				$ReqLog_users = \includes\SQL::query($sql_users);
 
 				while ($resultat1 = $ReqLog_users->fetch_array())
 				{
@@ -494,7 +494,7 @@ function commit_ajout(&$tab_new_values, $session, $DEBUG=FALSE)
 
 					$req_insert2="INSERT INTO conges_solde_user (su_login, su_abs_id, su_nb_an, su_solde, su_reliquat) " .
 							"VALUES ('$current_login', $new_abs_id, 0, 0, 0) ";
-					$result2 = SQL::query($req_insert2);
+					$result2 = \includes\SQL::query($req_insert2);
 				}
 			}
 			echo "<span class = \"messages\">". _('form_modif_ok') ."</span><br>";
@@ -522,7 +522,7 @@ function get_tab_from_mysql_enum_field($table, $column, $DEBUG=FALSE)
 
    $tab=array();
    $req_enum = "DESCRIBE $table $column";
-   $res_enum = SQL::query($req_enum);
+   $res_enum = \includes\SQL::query($req_enum);
 
    while ($row_enum = $res_enum->fetch_array())
    {
@@ -546,7 +546,7 @@ function get_tab_from_mysql_enum_field($table, $column, $DEBUG=FALSE)
 function get_last_absence_id($DEBUG=FALSE)
 {
    $req_1="SELECT MAX(ta_id) FROM conges_type_absence ";
-   $res_1 = SQL::query($req_1);
+   $res_1 = \includes\SQL::query($req_1);
    $row_1 = $res_1->fetch_row();
    if(!$row_1)
       return 0;     // si la table est vide, on renvoit 0

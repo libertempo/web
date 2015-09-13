@@ -213,7 +213,7 @@ function affiche_etat_demande_user_for_resp($user_login, $tab_user, $tab_grd_res
             "FROM conges_periode " .
             "WHERE p_login = '$user_login' AND p_etat ='demande' ".
             "ORDER BY p_date_deb";
-    $ReqLog2 = SQL::query($sql2);
+    $ReqLog2 = \includes\SQL::query($sql2);
 
     $count2=$ReqLog2->num_rows;
     if($count2==0)
@@ -333,7 +333,7 @@ function affiche_etat_demande_2_valid_user_for_resp($user_login, $DEBUG=FALSE)
         $sql2 = "SELECT p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_nb_jours, p_commentaire, p_type, p_date_demande, p_date_traitement, p_num " .
                 "FROM conges_periode " .
                 "WHERE p_login = '$user_login' AND p_etat ='valid' ORDER BY p_date_deb";
-        $ReqLog2 = SQL::query($sql2);
+        $ReqLog2 = \includes\SQL::query($sql2);
 
         $count2=$ReqLog2->num_rows;
         if($count2==0)
@@ -456,7 +456,7 @@ function affiche_etat_conges_user_for_resp($user_login, $year_affichage, $tri_da
     else
         $sql3=$sql3." ORDER BY p_date_deb ASC ";
 
-    $ReqLog3 = SQL::query($sql3);
+    $ReqLog3 = \includes\SQL::query($sql3);
 
     $count3=$ReqLog3->num_rows;
     if($count3==0)
@@ -607,8 +607,8 @@ function annule_conges($user_login, $tab_checkbox_annule, $tab_text_annul, $DEBU
         if( $DEBUG ) { echo "<br><br>conges numero :$numero ---> login : $user_login --- nb de jours : $user_nb_jours_pris_float --- type : $user_type_abs_id ---> ANNULER <br>"; }
 
         /* UPDATE table "conges_periode" */
-        $sql1 = 'UPDATE conges_periode SET p_etat="annul", p_motif_refus=\''.SQL::quote($motif_annul).'\', p_date_traitement=NOW() WHERE p_num=\''.SQL::quote($numero_int).'\' ';
-        $ReqLog1 = SQL::query($sql1);
+        $sql1 = 'UPDATE conges_periode SET p_etat="annul", p_motif_refus="'.\includes\SQL::quote($motif_annul).'", p_date_traitement=NOW() WHERE p_num="'. \includes\SQL::quote($numero_int).'" ';
+        $ReqLog1 = \includes\SQL::query($sql1);
 
         // Log de l'action
         log_action($numero_int,"annul", $user_login, "annulation conges $numero ($user_login) ($user_nb_jours_pris jours)", $DEBUG);
@@ -618,8 +618,8 @@ function annule_conges($user_login, $tab_checkbox_annule, $tab_text_annul, $DEBU
         // donc seulement si le type de l'absence qu'on annule est un "conges"
         if($tab_tout_type_abs[$user_type_abs_id]['type']=="conges")
         {
-            $sql2 = 'UPDATE conges_solde_user SET su_solde = su_solde+\''.SQL::quote($user_nb_jours_pris_float).'\' WHERE su_login=\''.SQL::quote($user_login).'\' AND su_abs_id=\''.SQL::quote($user_type_abs_id).'\';';
-            $ReqLog2 = SQL::query($sql2);
+            $sql2 = 'UPDATE conges_solde_user SET su_solde = su_solde+"'. \includes\SQL::quote($user_nb_jours_pris_float).'" WHERE su_login="'. \includes\SQL::quote($user_login).'" AND su_abs_id="'. \includes\SQL::quote($user_type_abs_id).'";';
+            $ReqLog2 = \includes\\SQL::query($sql2);
         }
 
         //envoi d'un mail d'alerte au user (si demandé dans config de php_conges)
@@ -677,7 +677,7 @@ function traite_demandes($user_login, $tab_radio_traite_demande, $tab_text_refus
         {
             /* UPDATE table "conges_periode" */
             $sql1 = "UPDATE conges_periode SET p_etat=\"ok\", p_date_traitement=NOW() WHERE p_num=$numero_int" ;
-            $ReqLog1 = SQL::query($sql1);
+            $ReqLog1 = \includes\SQL::query($sql1);
 
             // Log de l'action
             log_action($numero_int,"ok", $user_login, "traite demande $numero ($user_login) ($user_nb_jours_pris jours) : $value_traite", $DEBUG);
@@ -700,7 +700,7 @@ function traite_demandes($user_login, $tab_radio_traite_demande, $tab_text_refus
         {
             /* UPDATE table "conges_periode" */
             $sql1 = "UPDATE conges_periode SET p_etat=\"valid\", p_date_traitement=NOW() WHERE p_num=$numero_int" ;
-            $ReqLog1 = SQL::query($sql1);
+            $ReqLog1 = \includes\SQL::query($sql1);
 
             // Log de l'action
             log_action($numero_int,"valid", $user_login, "traite demande $numero ($user_login) ($user_nb_jours_pris jours) : $value_traite", $DEBUG);
@@ -714,7 +714,7 @@ function traite_demandes($user_login, $tab_radio_traite_demande, $tab_text_refus
             // recup di motif de refus
             $motif_refus=addslashes($tab_text_refus[$numero_int]);
             $sql3 = "UPDATE conges_periode SET p_etat=\"refus\", p_motif_refus='$motif_refus', p_date_traitement=NOW() WHERE p_num=$numero_int" ;
-            $ReqLog3 = SQL::query($sql3);
+            $ReqLog3 = \includes\SQL::query($sql3);
 
             // Log de l'action
             log_action($numero_int,"refus", $user_login, "traite demande $numero ($user_login) ($user_nb_jours_pris jours) : $value_traite", $DEBUG);

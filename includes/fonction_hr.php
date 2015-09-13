@@ -38,7 +38,7 @@ function recup_infos_all_users_du_hr($login, $DEBUG=FALSE)
     //$sql = "SELECT u_login FROM conges_users WHERE u_login!='conges' AND u_login!='admin' ORDER BY u_login";
     $sql1 = "SELECT u_login FROM conges_users WHERE u_login!='conges' AND u_login!='admin' ORDER BY u_nom";
 
-    $ReqLog = SQL::query($sql1) ;
+    $ReqLog = \includes\SQL::query($sql1) ;
 
     while ($resultat = $ReqLog->fetch_array())
     {
@@ -61,7 +61,7 @@ function get_list_all_users_du_hr($resp_login, $DEBUG=FALSE)
 
 	$sql1="SELECT DISTINCT(u_login) FROM conges_users WHERE u_login!='conges' AND u_login!='admin'  ORDER BY u_nom  ";
 
-	$ReqLog1 = SQL::query($sql1);
+	$ReqLog1 = \includes\SQL::query($sql1);
 
 	while ($resultat1 = $ReqLog1->fetch_array())
 	{

@@ -11,7 +11,7 @@
 						<th>Query</th>
 					</tr>';
 			echo '</thead><tbody>';
-			$querys = SQL::getQuerys();
+			$querys = \includes\SQL::getQuerys();
 			$total = 0;
 			foreach($querys as $num => $v) {
 				$time = $v['t2'] - $v['t1'];

@@ -268,7 +268,7 @@ function affichage_saisie_globale_groupe($tab_type_conges, $DEBUG=FALSE)
 			// création du select pour le choix du groupe
 			$text_choix_group="<select name=\"choix_groupe\" >";
 			$sql_group = "SELECT g_gid, g_groupename FROM conges_groupe WHERE g_gid IN ($list_group) ORDER BY g_groupename "  ;
-			$ReqLog_group = SQL::query($sql_group) ;
+			$ReqLog_group = \includes\SQL::query($sql_group) ;
 				
 			while ($resultat_group = $ReqLog_group->fetch_array()) 
 			{
@@ -325,9 +325,9 @@ function ajout_conges($tab_champ_saisie, $tab_commentaire_saisie, $DEBUG=FALSE)
 	      if($user_nb_jours_ajout_float!=0)
 	      {
 			/* Modification de la table conges_users */
-			$sql1 = 'UPDATE conges_solde_user SET su_solde = su_solde+'.floatval($user_nb_jours_ajout_float).' WHERE su_login=\''.SQL::quote($user_name).'\' AND su_abs_id = \''.SQL::quote($id_conges).'\';';
+			$sql1 = 'UPDATE conges_solde_user SET su_solde = su_solde+'.floatval($user_nb_jours_ajout_float).' WHERE su_login="'. \includes\SQL::quote($user_name).'" AND su_abs_id = "'. \includes\SQL::quote($id_conges).'";';
 			/* On valide l'UPDATE dans la table ! */
-			$ReqLog1 = SQL::query($sql1) ;
+			$ReqLog1 = \includes\SQL::query($sql1) ;
 			
 			// on insert l'ajout de conges dans la table periode
 			$commentaire =  _('resp_ajout_conges_comment_periode_user') ;
@@ -360,7 +360,7 @@ function ajout_global($tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_ne
 			$comment = $tab_new_comment_all[$id_conges];
 			
 			$sql1="SELECT u_login, u_quotite FROM conges_users WHERE u_login IN ($list_users_du_resp) ORDER BY u_login ";
-			$ReqLog1 = SQL::query($sql1);
+			$ReqLog1 = \includes\SQL::query($sql1);
 				
 			while($resultat1 = $ReqLog1->fetch_array()) 
 			{
@@ -376,8 +376,8 @@ function ajout_global($tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_ne
 				if($valid) {
 					// 1 : update de la table conges_solde_user
 					$req_update = 'UPDATE conges_solde_user SET su_solde = su_solde + '.floatval($nb_conges).'
-							WHERE  su_login = \''.SQL::quote($current_login).'\'  AND su_abs_id = \''.SQL::quote($id_conges).'\';';
-					$ReqLog_update = SQL::query($req_update);
+							WHERE  su_login = "'. \includes\SQL::quote($current_login).'"  AND su_abs_id = "'. \includes\SQL::quote($id_conges).'";';
+					$ReqLog_update = \includes\SQL::query($req_update);
 			
 					// 2 : on insert l'ajout de conges GLOBAL (pour tous les users) dans la table periode
 					$commentaire =  _('resp_ajout_conges_comment_periode_all') ;
@@ -412,7 +412,7 @@ function ajout_global_groupe($choix_groupe, $tab_new_nb_conges_all, $tab_calcul_
 			$comment = $tab_new_comment_all[$id_conges];
 
 			$sql1="SELECT u_login, u_quotite FROM conges_users WHERE u_login IN ($list_users) ORDER BY u_login ";
-			$ReqLog1 = SQL::query($sql1);
+			$ReqLog1 = \includes\SQL::query($sql1);
 				
 			while ($resultat1 = $ReqLog1->fetch_array()) 
 			{
@@ -429,8 +429,8 @@ function ajout_global_groupe($choix_groupe, $tab_new_nb_conges_all, $tab_calcul_
 				if($valid){
 					// 1 : on update conges_solde_user
 					$req_update = 'UPDATE conges_solde_user SET su_solde = su_solde+ '.intval($nb_conges).'
-							WHERE  su_login = \''.SQL::quote($current_login).'\' AND su_abs_id = '.intval($id_conges).';';
-					$ReqLog_update = SQL::query($req_update);
+							WHERE  su_login = "'. \includes\SQL::quote($current_login).'" AND su_abs_id = '.intval($id_conges).';';
+					$ReqLog_update = \includes\SQL::query($req_update);
 					
 					// 2 : on insert l'ajout de conges dans la table periode
 					// recup du nom du groupe
@@ -470,7 +470,7 @@ function get_list_groupes_pour_rh($user_login, $DEBUG=FALSE)
 	$list_group="";
 
 	$sql1="SELECT g_gid FROM conges_groupe ORDER BY g_gid";
-	$ReqLog1 = SQL::query($sql1);
+	$ReqLog1 = \includes\SQL::query($sql1);
 
 	if($ReqLog1->num_rows != 0)
 	{

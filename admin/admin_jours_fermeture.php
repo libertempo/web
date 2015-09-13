@@ -309,7 +309,7 @@ function saisie_groupe_fermeture( $DEBUG=FALSE)
 
 			echo "<form action=\"$PHP_SELF?session=$session\" class=\"form-inline\" method=\"POST\">\n" ;
 				echo '<div class="form-group" style="margin-right: 10px;">';
-					$ReqLog_gr = SQL::query($sql_gr);
+					$ReqLog_gr = \includes\SQL::query($sql_gr);
 					echo "<select  class=\"form-control\" name=\"groupe_id\">";
 					while ($resultat_gr = $ReqLog_gr->fetch_array())
 					{
@@ -418,7 +418,7 @@ function get_tableau_jour_fermeture($year, &$tab_year,  $groupe_id,  $DEBUG=FALS
 		$sql_select = $sql_select."AND jf_gid = 0";
 	else
 		$sql_select = $sql_select."AND  (jf_gid = $groupe_id OR jf_gid =0 ) ";
-	$res_select = SQL::query($sql_select);
+	$res_select = \includes\SQL::query($sql_select);
 	$num_select =$res_select->num_rows;
 
 	if($num_select!=0)
@@ -461,7 +461,7 @@ function affiche_select_conges_id($DEBUG=FALSE)
 function get_tableau_periodes_fermeture(&$tab_periodes_fermeture, $DEBUG=FALSE)
 {
 	$req_1="SELECT DISTINCT conges_periode.p_date_deb, conges_periode.p_date_fin, conges_periode.p_fermeture_id, conges_jours_fermeture.jf_gid, conges_groupe.g_groupename FROM conges_periode, conges_jours_fermeture LEFT JOIN conges_groupe ON conges_jours_fermeture.jf_gid=conges_groupe.g_gid WHERE conges_periode.p_fermeture_id = conges_jours_fermeture.jf_id AND conges_periode.p_etat='ok' ORDER BY conges_periode.p_date_deb DESC  ";
-	$res_1 = SQL::query($req_1);
+	$res_1 = \includes\SQL::query($req_1);
 
 	$num_select = $res_1->num_rows;
 	if($num_select!=0)
@@ -628,8 +628,8 @@ function commit_annul_fermeture($fermeture_id, $groupe_id,  $DEBUG=FALSE)
 		$current_login = trim($current_login, "\'");
 
 		// on recupère les infos de la periode ....
-		$sql_credit='SELECT p_num, p_nb_jours, p_type FROM conges_periode WHERE p_login=\''.SQL::quote($current_login).'\' AND p_fermeture_id=\'' . SQL::quote($fermeture_id) .'\' AND p_etat=\'ok\'';
-		$result_credit = SQL::query($sql_credit);
+		$sql_credit='SELECT p_num, p_nb_jours, p_type FROM conges_periode WHERE p_login="'. \includes\SQL::quote($current_login).'" AND p_fermeture_id="' . \includes\SQL::quote($fermeture_id) .'" AND p_etat=\'ok\'';
+		$result_credit = \includes\SQL::query($sql_credit);
 		$row_credit = $result_credit->fetch_array();
 		$sql_num_periode=$row_credit['p_num'];
 		$sql_nb_jours_a_crediter=$row_credit['p_nb_jours'];
@@ -638,14 +638,14 @@ function commit_annul_fermeture($fermeture_id, $groupe_id,  $DEBUG=FALSE)
 
 		// on met à jour la table conges_periode .
 		$etat = "annul" ;
-	 	$sql1 = 'UPDATE conges_periode SET p_etat = \''.SQL::quote($etat).'\' WHERE p_num='.SQL::quote($sql_num_periode) ;
-	    $ReqLog = SQL::query($sql1);
+	 	$sql1 = 'UPDATE conges_periode SET p_etat = "'.\includes\SQL::quote($etat).'" WHERE p_num='.\includes\SQL::quote($sql_num_periode) ;
+	    $ReqLog = \includes\SQL::query($sql1);
 
 		// mise à jour du solde de jours de conges pour l'utilisateur $current_login
 		if ($sql_nb_jours_a_crediter != 0)
 		{
-		        $sql1 = 'UPDATE conges_solde_user SET su_solde = su_solde + '.SQL::quote($sql_nb_jours_a_crediter).' WHERE su_login=\''.SQL::quote($current_login).'\' AND su_abs_id = '.SQL::quote($sql_type_abs) ;
-		        $ReqLog = SQL::query($sql1);
+		        $sql1 = 'UPDATE conges_solde_user SET su_solde = su_solde + '.\includes\SQL::quote($sql_nb_jours_a_crediter).' WHERE su_login="'. \includes\SQL::quote($current_login).'" AND su_abs_id = '.\includes\SQL::quote($sql_type_abs) ;
+		        $ReqLog = \includes\SQL::query($sql1);
 		}
 	}
 
@@ -698,7 +698,7 @@ function verif_periode_chevauche_periode_groupe($date_debut, $date_fin, $num_cur
 function get_last_fermeture_id( $DEBUG=FALSE)
 {
 	$req_1="SELECT MAX(jf_id) FROM conges_jours_fermeture ";
-	$res_1 = SQL::query($req_1);
+	$res_1 = \includes\SQL::query($req_1);
 	$row_1 = $res_1->fetch_array();
 	if(!$row_1)
 		return 0;     // si la table est vide, on renvoit 0
@@ -711,7 +711,7 @@ function delete_year_fermeture($fermeture_id, $groupe_id,  $DEBUG=FALSE)
 {
 
 	$sql_delete="DELETE FROM conges_jours_fermeture WHERE jf_id = '$fermeture_id' AND jf_gid= '$groupe_id' ;";
-	$result = SQL::query($sql_delete);
+	$result = \includes\SQL::query($sql_delete);
 	return TRUE;
 }
 
@@ -722,7 +722,7 @@ function insert_year_fermeture($fermeture_id, $tab_j_ferme, $groupe_id,  $DEBUG=
 	foreach($tab_j_ferme as $jf_date )
 	{
 		$sql_insert="INSERT INTO conges_jours_fermeture (jf_id, jf_gid, jf_date) VALUES ($fermeture_id, $groupe_id, '$jf_date') ;";
-		$result_insert = SQL::query($sql_insert);
+		$result_insert = \includes\SQL::query($sql_insert);
 	}
 	return TRUE;
 }

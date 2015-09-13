@@ -404,8 +404,8 @@ function echange_absence_rtt($onglet, $new_debut_string, $new_fin_string, $new_c
 		// insert du jour d'absence ordinaire (qui n'en sera plus un ou qu'a moitie ...)
 		// e_presence = N (non) , J (jour entier) , M (matin) ou A (apres-midi)
 		// verif si le couple user/date1 existe dans conges_echange_rtt ...
-		$sql_verif_echange1='SELECT e_absence, e_presence from conges_echange_rtt WHERE e_login=\''.SQL::quote($_SESSION['userlogin']).'\' AND e_date_jour=\''.SQL::quote($new_debut).'\';';
-		$result_verif_echange1 = SQL::query($sql_verif_echange1) ;
+		$sql_verif_echange1='SELECT e_absence, e_presence from conges_echange_rtt WHERE e_login="'. \includes\SQL::quote($_SESSION['userlogin']).'" AND e_date_jour="'. \includes\SQL::quote($new_debut).'";';
+		$result_verif_echange1 = \includes\SQL::query($sql_verif_echange1) ;
 
 		$count_verif_echange1=$result_verif_echange1->num_rows;
 
@@ -417,20 +417,20 @@ function echange_absence_rtt($onglet, $new_debut_string, $new_fin_string, $new_c
 			//if($resultatverif_echange1['e_absence'] == 'N' )
 			$sql1 = 'UPDATE conges_echange_rtt
 					SET e_absence=\''.$nouvelle_absence_date_1.'\', e_presence=\''.$nouvelle_presence_date_1.'\', e_comment=\''.$new_comment.'\'
-					WHERE e_login=\''.$_SESSION['userlogin'].'\' AND e_date_jour=\''.SQL::quote($new_debut).'\'  ';
+					WHERE e_login=\''.$_SESSION['userlogin'].'\' AND e_date_jour="'. \includes\SQL::quote($new_debut).'"  ';
 		}
 		else // sinon : on insert
 		{
 			$sql1 = "INSERT into conges_echange_rtt (e_login, e_date_jour, e_absence, e_presence, e_comment)
 					VALUES ('".$_SESSION['userlogin']."','$new_debut','$nouvelle_absence_date_1', '$nouvelle_presence_date_1', '$new_comment')" ;
 		}
-		$result1 = SQL::query($sql1);
+		$result1 = \includes\SQL::query($sql1);
 
 		// insert du jour d'absence souhaité (qui en devient un)
 		// e_absence = N (non) , J (jour entier) , M (matin) ou A (apres-midi)
 		// verif si le couple user/date2 existe dans conges_echange_rtt ...
-		$sql_verif_echange2='SELECT e_absence, e_presence from conges_echange_rtt WHERE e_login=\''.SQL::quote($_SESSION['userlogin']).'\' AND e_date_jour=\''.SQL::quote($new_fin).'\';';
-		$result_verif_echange2 = SQL::query($sql_verif_echange2);
+		$sql_verif_echange2='SELECT e_absence, e_presence from conges_echange_rtt WHERE e_login="'.\includes\SQL::quote($_SESSION['userlogin']).'" AND e_date_jour="'. \includes\SQL::quote($new_fin).'";';
+		$result_verif_echange2 = \includes\SQL::query($sql_verif_echange2);
 
 		$count_verif_echange2=$result_verif_echange2->num_rows;
 
@@ -446,7 +446,7 @@ function echange_absence_rtt($onglet, $new_debut_string, $new_fin_string, $new_c
 			$sql2 = "INSERT into conges_echange_rtt (e_login, e_date_jour, e_absence, e_presence, e_comment)
 					VALUES ('".$_SESSION['userlogin']."','$new_fin','$nouvelle_absence_date_2', '$nouvelle_presence_date_2', '$new_comment')" ;
 		}
-		$result2 = SQL::query($sql2) ;
+		$result2 = \includes\SQL::query($sql2) ;
 
 		$comment_log = "echange absence - rtt  ($new_debut_string / $new_fin_string)";
 		log_action(0, "", $_SESSION['userlogin'], $comment_log,  $DEBUG);

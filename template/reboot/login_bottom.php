@@ -15,7 +15,7 @@
 				</thead>
 				<tbody>
 					<?php
-						$querys = SQL::getQuerys();
+						$querys = \includes\SQL::getQuerys();
 						$total = 0;
 						foreach($querys as $num => $v):
 					?>

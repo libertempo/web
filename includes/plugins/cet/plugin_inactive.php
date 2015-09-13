@@ -27,23 +27,21 @@ include ROOT_PATH . 'define.php';
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 
 $DEBUG=FALSE;
-$timeout=2 ; // refresh après maj.
 
 $PHP_SELF=$_SERVER['PHP_SELF'];
+$timeout=2 ; // refresh après maj.
 
 if($session=="")
     $URL = "$PHP_SELF";
 else
     $URL = "$PHP_SELF?session=$session";
-echo "<META HTTP-EQUIV=REFRESH CONTENT=\"$timeout; URL=$URL\">";
 
-$delete_table_plugin_cet_query = "DROP TABLE IF EXISTS `conges_plugin_cet`;";
+$update_plugin_table = "UPDATE conges_plugins SET p_is_active = '0'
+  WHERE p_name='".$plugin."';";
+$result_update_plugin_table = \includes\SQL::query($update_plugin_table);
 
+$update_mail_table = "DELETE FROM `conges_mail` WHERE `mail_nom`='mail_cet_demande';";
+$result_update_mail_table = \includes\SQL::query($update_mail_table);
 
-$result_delete_table_plugin = SQL::query($delete_table_plugin_cet_query);
-
-$update_plugin_table = "DELETE FROM conges_plugins WHERE p_name='".$plugin."';";
-//$update_plugin_table = "UPDATE conges_plugins SET p_is_install='0' WHERE p_name='$plugin';"
-$result_update_plugin_table = SQL::query($update_plugin_table);
 
 ?>

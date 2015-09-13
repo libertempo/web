@@ -236,7 +236,7 @@ function commit_sauvegarde($type_sauvegarde, $DEBUG=FALSE)
 
 	//recup de la liste des tables
 	$sql1="SHOW TABLES";
-	$ReqLog = SQL::query($sql1) ;
+	$ReqLog = \includes\SQL::query($sql1) ;
 	while ($resultat = $ReqLog->fetch_array())
 	{
 		$table=$resultat[0] ;
@@ -378,8 +378,8 @@ function get_table_structure($table, $DEBUG=FALSE)
 	$chaine_create = "CREATE TABLE `$table` ( ";
 
 	// description des champs :
-	$sql_champs='SHOW FIELDS FROM '.SQL::quote($table);
-	$ReqLog_champs = SQL::query($sql_champs) ;
+	$sql_champs='SHOW FIELDS FROM '. \includes\SQL::quote($table);
+	$ReqLog_champs = \includes\SQL::query($sql_champs) ;
 	$count_champs=$ReqLog_champs->num_rows;
 	$i=0;
 	while ($resultat_champs = $ReqLog_champs->fetch_array())
@@ -409,8 +409,8 @@ function get_table_structure($table, $DEBUG=FALSE)
 	}
 
 	// description des index :
-	$sql_index = 'SHOW KEYS FROM '.SQL::quote($table).'';
-	$ReqLog_index = SQL::query($sql_index) ;
+	$sql_index = 'SHOW KEYS FROM '. \includes\SQL::quote($table).'';
+	$ReqLog_index = \includes\SQL::query($sql_index) ;
 	$count_index=$ReqLog_index->num_rows;
 	$i=0;
 
@@ -475,12 +475,12 @@ function get_table_data($table,  $DEBUG=FALSE)
 	$chaine_data="";
 
 	// suppression des donnéées de la table :
-	$chaine_delete='DELETE FROM `'.SQL::quote($table).'` ;'."\n";
+	$chaine_delete='DELETE FROM `'. \includes\SQL::quote($table).'` ;'."\n";
 	$chaine_data=$chaine_data.$chaine_delete ;
 
 	// recup des donnéées de la table :
-	$sql_data='SELECT * FROM '.SQL::quote($table);
-	$ReqLog_data = SQL::query($sql_data);
+	$sql_data='SELECT * FROM '. \includes\SQL::quote($table);
+	$ReqLog_data = \includes\SQL::query($sql_data);
 
 	while ($resultat_data = $ReqLog_data->fetch_array())
 	{

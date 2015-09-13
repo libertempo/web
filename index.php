@@ -188,8 +188,8 @@ else
 
 if(isset($_SESSION['userlogin']))
 {
-	$request= "SELECT u_nom, u_passwd, u_prenom, u_is_resp FROM conges_users where u_login = '".SQL::quote($_SESSION['userlogin'])."' " ;
-	$rs = SQL::query($request );
+	$request= "SELECT u_nom, u_passwd, u_prenom, u_is_resp FROM conges_users where u_login = '". \includes\SQL::quote($_SESSION['userlogin'])."' " ;
+	$rs = \includes\SQL::query($request );
 	if($rs->num_rows != 1)
 	{
 	    redirect( ROOT_PATH .'index.php' );

@@ -100,7 +100,7 @@ function change_passwd( $new_passwd1, $new_passwd2, $DEBUG=FALSE)
 	{
 		$passwd_md5=md5($new_passwd1);
 		$sql1 = 'UPDATE conges_users SET  u_passwd=\''.$passwd_md5.'\' WHERE u_login=\''.$_SESSION['userlogin'].'\' ';
-		$result = SQL::query($sql1) ;
+		$result = \includes\SQL::query($sql1) ;
 
 		if($result)
 			echo  _('form_modif_ok') ." <br><br> \n";

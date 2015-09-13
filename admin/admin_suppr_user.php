@@ -85,8 +85,8 @@ function confirmer($u_login, $onglet, $DEBUG=FALSE)
 	echo '<tbody>';
 
 	// Récupération des informations
-	$sql1 = 'SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_login = \''.SQL::quote($u_login).'\'';
-	$ReqLog1 = SQL::query($sql1);
+	$sql1 = 'SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_login = "'. \includes\SQL::quote($u_login).'"';
+	$ReqLog1 = \includes\SQL::query($sql1);
 
 	echo "<tr>\n";
 	while ($resultat1 = $ReqLog1->fetch_array())
@@ -111,26 +111,26 @@ function suppression($u_login_to_delete, $DEBUG=FALSE)
 	$session=session_id();
 	//echo($u_login_to_delete."---".$u_login_to_delete."<br>");
 
-	$sql1 = 'DELETE FROM conges_users WHERE u_login = \''.SQL::quote($u_login_to_delete).'\'';
-	$result = SQL::query($sql1);
+	$sql1 = 'DELETE FROM conges_users WHERE u_login = "'. \includes\SQL::quote($u_login_to_delete).'"';
+	$result = \includes\SQL::query($sql1);
 
-	$sql2 = 'DELETE FROM conges_periode WHERE p_login = \''.SQL::quote($u_login_to_delete).'\'';
-	$result2 = SQL::query($sql2);
+	$sql2 = 'DELETE FROM conges_periode WHERE p_login = "'. \includes\SQL::quote($u_login_to_delete).'"';
+	$result2 = \includes\SQL::query($sql2);
 
-	$sql3 = 'DELETE FROM conges_artt WHERE a_login = \''.SQL::quote($u_login_to_delete).'\'';
-	$result3 = SQL::query($sql3);
+	$sql3 = 'DELETE FROM conges_artt WHERE a_login = "'. \includes\SQL::quote($u_login_to_delete).'"';
+	$result3 = \includes\SQL::query($sql3);
 
-	$sql4 = 'DELETE FROM conges_echange_rtt WHERE e_login = \''.SQL::quote($u_login_to_delete).'\'';
-	$result4 = SQL::query($sql4);
+	$sql4 = 'DELETE FROM conges_echange_rtt WHERE e_login = "'. \includes\SQL::quote($u_login_to_delete).'"';
+	$result4 = \includes\SQL::query($sql4);
 
-	$sql5 = 'DELETE FROM conges_groupe_resp WHERE gr_login = \''.SQL::quote($u_login_to_delete).'\'';
-	$result5 = SQL::query($sql5);
+	$sql5 = 'DELETE FROM conges_groupe_resp WHERE gr_login = "'. \includes\SQL::quote($u_login_to_delete).'"';
+	$result5 = \includes\SQL::query($sql5);
 
-	$sql6 = 'DELETE FROM conges_groupe_users WHERE gu_login = \''.SQL::quote($u_login_to_delete).'\'';
-	$result6 = SQL::query($sql6);
+	$sql6 = 'DELETE FROM conges_groupe_users WHERE gu_login = "'. \includes\SQL::quote($u_login_to_delete).'"';
+	$result6 = \includes\SQL::query($sql6);
 
-	$sql7 = 'DELETE FROM conges_solde_user WHERE su_login = \''.SQL::quote($u_login_to_delete).'\'';
-	$result7 = SQL::query($sql7);
+	$sql7 = 'DELETE FROM conges_solde_user WHERE su_login = "'.\includes\SQL::quote($u_login_to_delete).'"';
+	$result7 = \includes\SQL::query($sql7);
 
 
 	$comment_log = "suppression_user ($u_login_to_delete)";

@@ -33,7 +33,7 @@ elseif(isset($_SESSION['lang']))
 else {
     /* Retrieve lang informations from config database */
     $lang_query = "SELECT conf_valeur FROM conges_config WHERE conf_nom='lang';";
-    $ReqLang = SQL::query($lang_query);
+    $ReqLang = \includes\SQL::query($lang_query);
     $lang = $ReqLang->fetch_row();
     if ($lang != NULL)
         $lang = $lang[0];

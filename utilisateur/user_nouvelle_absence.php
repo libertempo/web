@@ -131,14 +131,14 @@ function verif_solde_user($user_login, $type_conges, $nb_jours,  $DEBUG=FALSE)
 	if (get_type_abs($type_conges,  $DEBUG)=="conges")
 	{
 		// recup du solde de conges de type $type_conges pour le user de login $user_login
-		$select_solde='SELECT su_solde FROM conges_solde_user WHERE su_login=\''.SQL::quote($user_login).'\' AND su_abs_id='.SQL::quote($type_conges);
-		$ReqLog_solde_conges = SQL::query($select_solde);
+		$select_solde='SELECT su_solde FROM conges_solde_user WHERE su_login="'. \includes\SQL::quote($user_login).'" AND su_abs_id='. \includes\SQL::quote($type_conges);
+		$ReqLog_solde_conges = \includes\SQL::query($select_solde);
 		$resultat_solde = $ReqLog_solde_conges->fetch_array();
 		$sql_solde_user = $resultat_solde["su_solde"];
 
 		// recup du nombre de jours de conges de type $type_conges pour le user de login $user_login qui sont à valider par son resp ou le grd resp
-		$select_solde_a_valider='SELECT SUM(p_nb_jours) FROM conges_periode WHERE p_login=\''.SQL::quote($user_login).'\' AND p_type='.SQL::quote($type_conges).' AND (p_etat=\'demande\' OR p_etat=\'valid\') ';
-		$ReqLog_solde_conges_a_valider = SQL::query($select_solde_a_valider);
+		$select_solde_a_valider='SELECT SUM(p_nb_jours) FROM conges_periode WHERE p_login="'. \includes\SQL::quote($user_login).'" AND p_type='. \includes\SQL::quote($type_conges).' AND (p_etat=\'demande\' OR p_etat=\'valid\') ';
+		$ReqLog_solde_conges_a_valider = \includes\SQL::query($select_solde_a_valider);
 		$resultat_solde_a_valider = $ReqLog_solde_conges_a_valider->fetch_array();
 		$sql_solde_user_a_valider = $resultat_solde_a_valider["SUM(p_nb_jours)"];
 		if ($sql_solde_user_a_valider == NULL )
@@ -159,8 +159,8 @@ function verif_solde_user($user_login, $type_conges, $nb_jours,  $DEBUG=FALSE)
 function get_type_abs($_type_abs_id,  $DEBUG=FALSE)
 {
 
-	$sql_abs='SELECT ta_type FROM conges_type_absence WHERE ta_id=\''.SQL::quote($_type_abs_id).'\'';
-	$ReqLog_abs = SQL::query($sql_abs);
+	$sql_abs='SELECT ta_type FROM conges_type_absence WHERE ta_id="'. \includes\SQL::quote($_type_abs_id).'"';
+	$ReqLog_abs = \includes\SQL::query($sql_abs);
 
 	if($resultat_abs = $ReqLog_abs->fetch_array())
 	return $resultat_abs["ta_type"];

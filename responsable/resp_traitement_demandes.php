@@ -126,7 +126,7 @@ function affiche_all_demandes_en_cours($tab_type_conges,  $DEBUG=FALSE)
 			$sql1=$sql1." AND p_login IN ($list_users_du_resp)  ";
 		$sql1=$sql1." ORDER BY p_num";
 		
-		$ReqLog1 = SQL::query($sql1) ;
+		$ReqLog1 = \includes\SQL::query($sql1) ;
 	
 		$count1=$ReqLog1->num_rows;
 		if($count1!=0)
@@ -263,7 +263,7 @@ function affiche_all_demandes_en_cours($tab_type_conges,  $DEBUG=FALSE)
 			$sql2=$sql2." AND p_login IN ($list_users_du_grand_resp) ";
 			$sql2=$sql2." ORDER BY p_num";
 			
-			$ReqLog2 = SQL::query($sql2) ;
+			$ReqLog2 = \includes\SQL::query($sql2) ;
 	
 			$count2=$ReqLog2->num_rows;
 			if($count2!=0)
@@ -393,9 +393,9 @@ function traite_all_demande_en_cours( $tab_bt_radio, $tab_text_refus, $DEBUG=FAL
 		if(strcmp($reponse, "VALID")==0)
 		{
 			/* UPDATE table "conges_periode" */
-			$sql1 = 'UPDATE conges_periode SET p_etat=\'valid\', p_date_traitement=NOW() WHERE p_num=\''.SQL::quote($numero_int).'\' AND ( p_etat=\'valid\' OR p_etat=\'demande\' );';
+			$sql1 = 'UPDATE conges_periode SET p_etat=\'valid\', p_date_traitement=NOW() WHERE p_num="'. \includes\SQL::quote($numero_int).'" AND ( p_etat=\'valid\' OR p_etat=\'demande\' );';
 			/* On valide l'UPDATE dans la table "conges_periode" ! */
-			$ReqLog1 = SQL::query($sql1) ;
+			$ReqLog1 = \includes\SQL::query($sql1) ;
 			if ($ReqLog1 && SQL::getVar('affected_rows') ) {
 
 				// Log de l'action
@@ -410,10 +410,10 @@ function traite_all_demande_en_cours( $tab_bt_radio, $tab_text_refus, $DEBUG=FAL
 		if(strcmp($reponse, "OK")==0)
 		{
 			/* UPDATE table "conges_periode" */
-			$sql1 = 'UPDATE conges_periode SET p_etat="ok", p_date_traitement=NOW() WHERE p_num=\''.SQL::quote($numero_int).'\' AND ( p_etat=\'valid\' OR p_etat=\'demande\' );';
+			$sql1 = 'UPDATE conges_periode SET p_etat="ok", p_date_traitement=NOW() WHERE p_num="'.\includes\SQL::quote($numero_int).'" AND ( p_etat=\'valid\' OR p_etat=\'demande\' );';
 			/* On valide l'UPDATE dans la table "conges_periode" ! */
-			$ReqLog1 = SQL::query($sql1) ;
-			if ($ReqLog1 && SQL::getVar('affected_rows') ) {
+			$ReqLog1 = \includes\SQL::query($sql1) ;
+			if ($ReqLog1 && \includes\SQL::getVar('affected_rows') ) {
 			
 				// Log de l'action
 				log_action($numero_int,"ok", $user_login, "traite demande $numero ($user_login) ($user_nb_jours_pris jours) : $reponse",  $DEBUG);
@@ -430,11 +430,11 @@ function traite_all_demande_en_cours( $tab_bt_radio, $tab_text_refus, $DEBUG=FAL
 		{
 			// recup du motif de refus
 			$motif_refus=addslashes($tab_text_refus[$numero_int]);
-			$sql1 = 'UPDATE conges_periode SET p_etat=\'refus\', p_motif_refus=\''.$motif_refus.'\', p_date_traitement=NOW() WHERE p_num=\''.SQL::quote($numero_int).'\' AND ( p_etat=\'valid\' OR p_etat=\'demande\' );';
+			$sql1 = 'UPDATE conges_periode SET p_etat=\'refus\', p_motif_refus=\''.$motif_refus.'\', p_date_traitement=NOW() WHERE p_num="'. \includes\SQL::quote($numero_int).'" AND ( p_etat=\'valid\' OR p_etat=\'demande\' );';
 			
 			/* On valide l'UPDATE dans la table ! */
-			$ReqLog1 = SQL::query($sql1) ;
-			if ($ReqLog1 && SQL::getVar('affected_rows')) {
+			$ReqLog1 = \includes\SQL::query($sql1) ;
+			if ($ReqLog1 && \includes\SQL::getVar('affected_rows')) {
 			
 				// Log de l'action
 				log_action($numero_int,"refus", $user_login, "traite demande $numero ($user_login) ($user_nb_jours_pris jours) : refus",  $DEBUG);

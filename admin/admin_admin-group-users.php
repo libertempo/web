@@ -101,7 +101,7 @@ function affiche_tableau_affectation_user_groupes($choix_user,  $DEBUG=FALSE)
 	//on rempli un tableau de tous les groupes avec le nom et libellé (tableau de tableau à 3 cellules)
 	$tab_groups=array();
 	$sql_g = "SELECT g_gid, g_groupename, g_comment FROM conges_groupe ORDER BY g_groupename "  ;
-	$ReqLog_g = SQL::query($sql_g);
+	$ReqLog_g = \includes\SQL::query($sql_g);
 
 	while($resultat_g=$ReqLog_g->fetch_array())
 	{
@@ -118,8 +118,8 @@ function affiche_tableau_affectation_user_groupes($choix_user,  $DEBUG=FALSE)
 	if($choix_user!="")
 	{
 		$tab_user=array();
-		$sql_gu = 'SELECT gu_gid FROM conges_groupe_users WHERE gu_login=\''.SQL::quote($choix_user).'\' ORDER BY gu_gid ';
-		$ReqLog_gu = SQL::query($sql_gu);
+		$sql_gu = 'SELECT gu_gid FROM conges_groupe_users WHERE gu_login="'. \includes\SQL::quote($choix_user).'" ORDER BY gu_gid ';
+		$ReqLog_gu = \includes\SQL::query($sql_gu);
 
 		while($resultat_gu=$ReqLog_gu->fetch_array())
 		{
@@ -184,7 +184,7 @@ function affiche_choix_user_groupes( $DEBUG=FALSE)
 	echo "<tbody>\n";
 
 	$i = true;
-	$ReqLog_user = SQL::query($sql_user);
+	$ReqLog_user = \includes\SQL::query($sql_user);
 	while ($resultat_user = $ReqLog_user->fetch_array())
 	{
 
@@ -260,7 +260,7 @@ function affiche_choix_groupes_users($DEBUG=FALSE)
 	echo "<tbody>\n";
 
 	$i = true;
-	$ReqLog_gr = SQL::query($sql_gr);
+	$ReqLog_gr = \includes\SQL::query($sql_gr);
 	while ($resultat_gr = $ReqLog_gr->fetch_array())
 	{
 
@@ -295,8 +295,8 @@ function affiche_gestion_groupes_users($choix_group, $onglet, $DEBUG=FALSE)
 	/* Affichage Groupes    */
 	/************************/
 	// Récuperation des informations :
-	$sql_gr = 'SELECT g_groupename, g_comment FROM conges_groupe WHERE g_gid='.SQL::quote($choix_group);
-	$ReqLog_gr = SQL::query($sql_gr);
+	$sql_gr = 'SELECT g_groupename, g_comment FROM conges_groupe WHERE g_gid='. \includes\SQL::quote($choix_group);
+	$ReqLog_gr = \includes\SQL::query($sql_gr);
 	$resultat_gr = $ReqLog_gr->fetch_array();
 	$sql_group=$resultat_gr["g_groupename"] ;
 	$sql_comment=$resultat_gr["g_comment"] ;
@@ -324,7 +324,7 @@ function affiche_gestion_groupes_users($choix_group, $onglet, $DEBUG=FALSE)
 	// Récuperation des utilisateurs :
 	$tab_users=array();
 	$sql_users = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_login!='conges' AND u_login!='admin' ORDER BY u_nom, u_prenom "  ;
-	$ReqLog_users = SQL::query($sql_users);
+	$ReqLog_users = \includes\SQL::query($sql_users);
 
 	while($resultat_users=$ReqLog_users->fetch_array())
 	{
@@ -336,8 +336,8 @@ function affiche_gestion_groupes_users($choix_group, $onglet, $DEBUG=FALSE)
 	}
 	// on rempli un autre tableau des users du groupe
 	$tab_group=array();
-	$sql_gu = 'SELECT gu_login FROM conges_groupe_users WHERE gu_gid=\''.SQL::quote($choix_group).'\' ORDER BY gu_login ';
-	$ReqLog_gu = SQL::query($sql_gu);
+	$sql_gu = 'SELECT gu_login FROM conges_groupe_users WHERE gu_gid="'. \includes\SQL::quote($choix_group).'" ORDER BY gu_login ';
+	$ReqLog_gu = \includes\SQL::query($sql_gu);
 
 	while($resultat_gu=$ReqLog_gu->fetch_array())
 	{
@@ -390,8 +390,8 @@ function modif_group_users($choix_group, &$checkbox_group_users,  $DEBUG=FALSE)
 	$session=session_id();
 
 	// on supprime tous les anciens users du groupe puis on ajoute tous ceux qui sont dans le tableau checkbox (si il n'est pas vide)
-	$sql_del = 'DELETE FROM conges_groupe_users WHERE gu_gid='.SQL::quote($choix_group).' ';
-	$ReqLog_del = SQL::query($sql_del);
+	$sql_del = 'DELETE FROM conges_groupe_users WHERE gu_gid='. \includes\SQL::quote($choix_group).' ';
+	$ReqLog_del = \includes\SQL::query($sql_del);
 	
 	if(is_array($checkbox_group_users) && count ($checkbox_group_users)!=0)
 	{
@@ -399,7 +399,7 @@ function modif_group_users($choix_group, &$checkbox_group_users,  $DEBUG=FALSE)
 		{
 			//$login=$checkbox_group_users[$i] ;
 			$sql_insert = "INSERT INTO conges_groupe_users SET gu_gid=$choix_group, gu_login='$login' "  ;
-			$result_insert = SQL::query($sql_insert);
+			$result_insert = \includes\SQL::query($sql_insert);
 		}
 	}
 	else

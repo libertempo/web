@@ -230,9 +230,11 @@ class Twig_Extension_Core extends Twig_Extension
             new Twig_SimpleTest('odd', null, array('node_class' => 'Twig_Node_Expression_Test_Odd')),
             new Twig_SimpleTest('defined', null, array('node_class' => 'Twig_Node_Expression_Test_Defined')),
             new Twig_SimpleTest('sameas', null, array('node_class' => 'Twig_Node_Expression_Test_Sameas')),
+            new Twig_SimpleTest('same as', null, array('node_class' => 'Twig_Node_Expression_Test_Sameas')),
             new Twig_SimpleTest('none', null, array('node_class' => 'Twig_Node_Expression_Test_Null')),
             new Twig_SimpleTest('null', null, array('node_class' => 'Twig_Node_Expression_Test_Null')),
             new Twig_SimpleTest('divisibleby', null, array('node_class' => 'Twig_Node_Expression_Test_Divisibleby')),
+            new Twig_SimpleTest('divisible by', null, array('node_class' => 'Twig_Node_Expression_Test_Divisibleby')),
             new Twig_SimpleTest('constant', null, array('node_class' => 'Twig_Node_Expression_Test_Constant')),
             new Twig_SimpleTest('empty', 'twig_test_empty'),
             new Twig_SimpleTest('iterable', 'twig_test_iterable'),
@@ -293,12 +295,11 @@ class Twig_Extension_Core extends Twig_Extension
     {
         $stream = $parser->getStream();
         $name = $stream->expect(Twig_Token::NAME_TYPE)->getValue();
+        $class = $this->getTestNodeClass($parser, $name, $node->getLine());
         $arguments = null;
         if ($stream->test(Twig_Token::PUNCTUATION_TYPE, '(')) {
             $arguments = $parser->getExpressionParser()->parseArguments(true);
         }
-
-        $class = $this->getTestNodeClass($parser, $name, $node->getLine());
 
         return new $class($node, $name, $arguments, $parser->getCurrentToken()->getLine());
     }
@@ -307,7 +308,21 @@ class Twig_Extension_Core extends Twig_Extension
     {
         $env = $parser->getEnvironment();
         $testMap = $env->getTests();
-        if (!isset($testMap[$name])) {
+        $testName = null;
+        if (isset($testMap[$name])) {
+            $testName = $name;
+        } elseif ($parser->getStream()->test(Twig_Token::NAME_TYPE)) {
+            // try 2-words tests
+            $name = $name.' '.$parser->getCurrentToken()->getValue();
+
+            if (isset($testMap[$name])) {
+                $parser->getStream()->next();
+
+                $testName = $name;
+            }
+        }
+
+        if (null === $testName) {
             $message = sprintf('The test "%s" does not exist', $name);
             if ($alternatives = $env->computeAlternatives($name, array_keys($env->getTests()))) {
                 $message = sprintf('%s. Did you mean "%s"', $message, implode('", "', $alternatives));
@@ -485,13 +500,15 @@ function twig_date_converter(Twig_Environment $env, $date = null, $timezone = nu
         $defaultTimezone = $timezone;
     }
 
-    if ($date instanceof DateTime) {
-        $date = clone $date;
+    if ($date instanceof DateTime || $date instanceof DateTimeInterface) {
+        $returningDate = new DateTime($date->format('c'));
         if (false !== $timezone) {
-            $date->setTimezone($defaultTimezone);
+            $returningDate->setTimezone($defaultTimezone);
+        } else {
+            $returningDate->setTimezone($date->getTimezone());
         }
 
-        return $date;
+        return $returningDate;
     }
 
     $asString = (string) $date;
@@ -1319,11 +1336,11 @@ function twig_test_iterable($value)
 /**
  * Renders a template.
  *
- * @param string  $template       The template to render
- * @param array   $variables      The variables to pass to the template
- * @param Boolean $with_context   Whether to pass the current context variables or not
- * @param Boolean $ignore_missing Whether to ignore missing templates or not
- * @param Boolean $sandboxed      Whether to sandbox the template or not
+ * @param string|array $template       The template to render or an array of templates to try consecutively
+ * @param array        $variables      The variables to pass to the template
+ * @param Boolean      $with_context   Whether to pass the current context variables or not
+ * @param Boolean      $ignore_missing Whether to ignore missing templates or not
+ * @param Boolean      $sandboxed      Whether to sandbox the template or not
  *
  * @return string The rendered template
  */
