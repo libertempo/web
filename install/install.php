@@ -30,8 +30,7 @@ defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 
 include ROOT_PATH .'fonctions_conges.php' ;
 include INCLUDE_PATH .'fonction.php';
-include'fonctions_install.php' ;
-	
+
 $PHP_SELF=$_SERVER['PHP_SELF'];
 
 $DEBUG=FALSE;
@@ -55,75 +54,7 @@ if( $DEBUG ) { echo "SESSION = <br>\n"; print_r($_SESSION); echo "<br><br>\n"; }
 	echo "<br><H1><img src=\"". TEMPLATE_PATH ."img/tux_config_32x32.png\" width=\"32\" height=\"32\" border=\"0\" title=\"". _('install_install_phpconges') ."\" alt=\"". _('install_install_phpconges') ."\"> ". _('install_install_titre') ."</H1>\n";
 	echo "<br><br>\n";
 		
-	lance_install($lang, $DEBUG); 
+	\install\Fonctions::lance_install($lang, $DEBUG); 
 	
 	bottom();
-
-
-/*****************************************************************************/
-/*   FONCTIONS   */
-
-// install la nouvelle version dans une database vide ... et config
-function lance_install($lang, $DEBUG=FALSE)
-{
-
-	$PHP_SELF=$_SERVER['PHP_SELF'];
-	
-	include CONFIG_PATH .'dbconnect.php' ;
-	include ROOT_PATH .'version.php' ;
-	
-	//verif si create / alter table possible !!!
-	if( !test_create_table( $DEBUG) )
-	{
-		echo "<font color=\"red\"><b>CREATE TABLE</b> ". _('install_impossible_sur_db') ." <b>$mysql_database</b> (". _('install_verif_droits_mysql') ." <b>$mysql_user</b>)...</font><br> \n";
-		echo "<br>". _('install_puis') ." ...<br>\n";
-		echo "<form action=\"$PHP_SELF\" method=\"POST\">\n";
-		echo "<input type=\"submit\" value=\"". _('form_redo') ."\">\n";
-		echo "</form>\n";
-	}
-	elseif( !test_drop_table( $DEBUG) )
-	{
-		echo "<font color=\"red\"><b>DROP TABLE</b> ". _('install_impossible_sur_db') ." <b>$mysql_database</b> (". _('install_verif_droits_mysql') ." <b>$mysql_user</b>)...</font><br> \n";
-		echo "<br>". _('install_puis') ." ...<br>\n";
-		echo "<form action=\"$PHP_SELF\" method=\"POST\">\n";
-		echo "<input type=\"submit\" value=\"". _('form_redo') ."\">\n";
-		echo "</form>\n";
-	}
-	else
-	{
-		//on execute le script [nouvelle vesion].sql qui crée et initialise les tables 
-		$file_sql="sql/php_conges_v$config_php_conges_version.sql";
-		if(file_exists($file_sql))
-			$result = execute_sql_file($file_sql,  $DEBUG);
-		
-		
-		/*************************************/
-		// FIN : mise à jour de la "installed_version" et de la langue dans la table conges_config
-		$sql_update_version="UPDATE conges_config SET conf_valeur = '$config_php_conges_version' WHERE conf_nom='installed_version' ";
-		$result_update_version = \includes\SQL::query($sql_update_version) ;
-
-		$sql_update_lang="UPDATE conges_config SET conf_valeur = '$lang' WHERE conf_nom='lang' ";
-		$result_update_lang = \includes\SQL::query($sql_update_lang) ;
-		
-		$tab_url=explode("/", $_SERVER['PHP_SELF']);
-
-		array_pop($tab_url);
-		array_pop($tab_url);
-		
-		$url_accueil= implode("/", $tab_url) ;  // on prend l'url complet sans le /install/install.php à la fin
-		
-		$sql_update_lang="UPDATE conges_config SET conf_valeur = '$url_accueil' WHERE conf_nom='URL_ACCUEIL_CONGES' ";
-		$result_update_lang = \includes\SQL::query($sql_update_lang) ;
-		
-		
-		$comment_log = "Install de php_conges (version = $config_php_conges_version) ";
-		log_action(0, "", "", $comment_log,  $DEBUG);
-
-		/*************************************/
-		// on propose la page de config ....
-		echo "<br><br><h2>". _('install_ok') ." !</h2><br>\n";
-		
-		echo "<META HTTP-EQUIV=REFRESH CONTENT=\"2; URL=../config/\">";
-	}
-}
 

@@ -33,7 +33,6 @@ defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 /*******************************************************************/
 include ROOT_PATH .'fonctions_conges.php' ;
 include INCLUDE_PATH .'fonction.php';
-include'fonctions_install.php' ;
 
 $PHP_SELF=$_SERVER['PHP_SELF'];
 
@@ -51,8 +50,8 @@ $lang = (isset($_GET['lang']) ? $_GET['lang'] : (isset($_POST['lang']) ? $_POST[
 	if( !$DEBUG )
 	{
 		// on lance les etapes (fonctions) séquentiellement
-		e1_insert_into_conges_config( $DEBUG);
-		e2_drop_table_historique_ajout( $DEBUG);
+		\install\Fonctions::e1_insert_into_conges_config( $DEBUG);
+		\install\Fonctions::e2_drop_table_historique_ajout( $DEBUG);
 
 		// on renvoit à la page mise_a_jour.php (là d'ou on vient)
 		echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=mise_a_jour.php?etape=4&version=$version&lang=$lang\">";
@@ -65,56 +64,9 @@ $lang = (isset($_GET['lang']) ? $_GET['lang'] : (isset($_POST['lang']) ? $_POST[
 		$sub_etape=( (isset($_GET['sub_etape'])) ? $_GET['sub_etape'] : ( (isset($_POST['sub_etape'])) ? $_POST['sub_etape'] : 0 ) ) ;
 
 		if($sub_etape==0) { echo "<a href=\"$PHP_SELF?sub_etape=1&version=$version&lang=$lang\">start upgrade_from_v1.3.0</a><br>\n"; }
-		if($sub_etape==1) { e1_insert_into_conges_config( $DEBUG); echo "<a href=\"$PHP_SELF?sub_etape=2&version=$version&lang=$lang\">sub_etape 1  OK</a><br>\n"; }
-		if($sub_etape==2) { e2_drop_table_historique_ajout( $DEBUG); echo "<a href=\"$PHP_SELF?sub_etape=3&version=$version&lang=$lang\">sub_etape 2  OK</a><br>\n"; }
+		if($sub_etape==1) { \install\Fonctions::e1_insert_into_conges_config( $DEBUG); echo "<a href=\"$PHP_SELF?sub_etape=2&version=$version&lang=$lang\">sub_etape 1  OK</a><br>\n"; }
+		if($sub_etape==2) { \install\Fonctions::e2_drop_table_historique_ajout( $DEBUG); echo "<a href=\"$PHP_SELF?sub_etape=3&version=$version&lang=$lang\">sub_etape 2  OK</a><br>\n"; }
 
 		// on renvoit à la page mise_a_jour.php (là d'ou on vient)
 		if($sub_etape==3) { echo "<a href=\"mise_a_jour.php?etape=4&version=$version&lang=$lang\">upgrade_from_v1.4.0  OK</a><br>\n"; }
 	}
-
-
-/********************************************************************************************************/
-/********************************************************************************************************/
-/***   FONCTIONS   ***/
-/********************************************************************************************************/
-
-
-
-/*****************************************************************/
-/***   ETAPE 1 : Ajout de paramètres dans  conges_config       ***/
-/*****************************************************************/
-function e1_insert_into_conges_config( $DEBUG=FALSE)
-{
-
-	$sql_insert_1="INSERT INTO `conges_config` VALUES ('fermeture_bgcolor', '#7B9DE6', '14_Presentation', 'hidden', 'config_comment_fermeture_bgcolor')";
-	$result_insert_1 = \includes\SQL::query($sql_insert_1)  ;
-
-	$sql_insert_2="INSERT INTO `conges_config` VALUES ('texte_page_login', '', '02_PAGE D\'AUTENTIFICATION', 'texte', 'config_comment_texte_page_login')";
-	$result_insert_2 = \includes\SQL::query($sql_insert_2)  ;
-
-	$sql_insert_3="INSERT INTO `conges_config` VALUES ('solde_toujours_positif', 'FALSE', '12_Fonctionnement de l\'Etablissement', 'boolean', 'config_comment_solde_toujours_positif')";
-	$result_insert_3 = \includes\SQL::query($sql_insert_3)  ;
-
-}
-
-function e2_drop_table_historique_ajout( $DEBUG=FALSE)
-{
-
-	if( test_create_table( $DEBUG))
-	{
-		if( test_drop_table( $DEBUG))
-		{
-			$sql_drop_1="DROP TABLE `conges_historique_ajout`";
-			$result_drop_1 = \includes\SQL::query($sql_drop_1)  ;
-		}
-	}
-}
-
-
-
-
-
-
-
-
-

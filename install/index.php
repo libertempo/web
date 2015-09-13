@@ -34,7 +34,6 @@ $_SESSION['lang'] = 'fr_FR';
 
 include INCLUDE_PATH .'fonction.php';
 
-include'fonctions_install.php' ;
 include ROOT_PATH .'fonctions_conges.php' ;
 
 $PHP_SELF=$_SERVER['PHP_SELF'];
@@ -72,7 +71,7 @@ $dbdb=(isset($_GET['dbdb']) ? $_GET['dbdb'] : ((isset($_POST['dbdb'])) ? $_POST[
 			echo "</form>\n";
 		bottom();
 	}
-	elseif(test_dbconnect_file($DEBUG)!=TRUE)
+	elseif(\install\Fonctions::test_dbconnect_file($DEBUG)!=TRUE)
 	{
 		$_SESSION['langue']=$lang;      // sert ensuite pour mettre la langue dans la table config
 //		$tab_lang_file = glob("lang/lang_".$lang.'_*.php');
@@ -102,7 +101,7 @@ $dbdb=(isset($_GET['dbdb']) ? $_GET['dbdb'] : ((isset($_POST['dbdb'])) ? $_POST[
 		}
 		else
 		{
-			$is_dbconf_ok=write_db_config($dbserver,$dbuser,$dbpasswd,$dbdb);
+			$is_dbconf_ok= \install\Fonctions::write_db_config($dbserver,$dbuser,$dbpasswd,$dbdb);
 			if($is_dbconf_ok!=true)
 			{
 				echo "le dossier ".CONFIG_PATH." n'est pas accessible en écriture";
@@ -122,7 +121,7 @@ $dbdb=(isset($_GET['dbdb']) ? $_GET['dbdb'] : ((isset($_POST['dbdb'])) ? $_POST[
 		include CONFIG_PATH .'dbconnect.php';
 		include ROOT_PATH .'version.php';
 
-		if( !test_database() )
+		if(!\install\Fonctions::test_database())
 		{
 			header_popup();
 			echo "<center>\n";
@@ -171,11 +170,11 @@ $dbdb=(isset($_GET['dbdb']) ? $_GET['dbdb'] : ((isset($_POST['dbdb'])) ? $_POST[
 		}
 		else
 		{
-			$installed_version = get_installed_version( $DEBUG);
+			$installed_version = \install\Fonctions::get_installed_version( $DEBUG);
 
 			if($installed_version==0)   // num de version inconnu
 			{
-				install($lang,  $DEBUG);
+				\install\Fonctions::install($lang,  $DEBUG);
 			}
 			else
 			{
@@ -195,65 +194,3 @@ $dbdb=(isset($_GET['dbdb']) ? $_GET['dbdb'] : ((isset($_POST['dbdb'])) ? $_POST[
 			
 		}
 	}
-
-
-
-/*****************************************************************************/
-/*   FONCTIONS   */
-
-// cette fonction verif si une version à déja été installée ou non....
-// elle lance une creation/initialisation de la base
-// ou une migration des version antérieures ....
-function install($lang,  $DEBUG=FALSE)
-{
-	// soit, c'est une install complète , soit c'est une mise à jour d'une version non déterminée
-	
-	header_popup('PHP_CONGES : Installation');
-
-	// affichage du titre
-	echo "<center>\n";
-	echo "<br><H1><img src=\"". TEMPLATE_PATH ."img/tux_config_32x32.png\" width=\"32\" height=\"32\" border=\"0\" title=\"". _('install_install_phpconges') ."\" alt=\"". _('install_install_phpconges') ."\"> ". _('install_index_titre') ."</H1>\n";
-	echo "<br><br>\n";
-
-	echo "<table border=\"0\">\n";
-	echo "<tr align=\"center\">\n";
-	echo "<td colspan=\"3\"><h2>". _('install_no_prev_version_found') .".<br>". _('install_indiquez') ." ...</h2><br><br></td>\n";
-	echo "</tr>\n";
-	echo "<tr align=\"center\">\n";
-	echo "<td valign=top>\n";
-	echo "\n";
-	echo "<h3>... ". _('install_nouvelle_install') ."</h3>\n";
-	echo "<br>\n";
-
-	// Formulaire : lance install.php
-	echo "<form action=\"install.php\" method=\"POST\">\n";
-	echo "<input type=\"hidden\" name=\"lang\" value=\"$lang\">\n";
-	echo "<input type=\"submit\" value=\"". _('form_start') ."\">\n";
-	echo "</form>\n";
-	echo "</td>\n";
-	echo "<td><img src=\"". TEMPLATE_PATH ."img/shim.gif\" width=\"100\" height=\"10\" border=\"0\" vspace=\"0\" hspace=\"0\"></td>\n";
-	echo "<td valign=top>\n";
-	echo "<h3>... ". _('install_mise_a_jour') ."</h3><b>". _('install_indiquez_pre_version') ." :</b><br><br>\n";
-
-	// Formulaire : lance mise_a_jour.php
-	echo "<form action=\"mise_a_jour.php\" method=\"POST\">\n";
-	// affichage de la liste des versions ...
-	echo "<select name=\"version\">\n";
-	echo "<option value=\"0\">". _('install_installed_version') ."</option>\n";
-	echo "<option value=\"1.6.0\">v1.6.x</option>\n";
-	echo "<option value=\"1.5.1\">v1.5.x</option>\n";
-	echo "<option value=\"1.4.2\">v1.4.x</option>\n";
-	echo "<option value=\"1.4.0\">v1.4.0</option>\n";
-	echo "</select>\n";
-	echo "<br>\n";
-	echo "<input type=\"hidden\" name=\"lang\" value=\"$lang\">\n";
-	echo "<input type=\"submit\" value=\"". _('form_start') ."\">\n";
-	echo "</form>\n";
-	echo "</td>\n";
-	echo "</tr>\n";
-	echo "</table>\n";
-	
-	bottom();
-}
-
-

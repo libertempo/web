@@ -33,7 +33,6 @@ defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 /*******************************************************************/
 include ROOT_PATH .'fonctions_conges.php' ;
 include INCLUDE_PATH .'fonction.php';
-include'fonctions_install.php' ;
 
 $PHP_SELF=$_SERVER['PHP_SELF'];
 
