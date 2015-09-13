@@ -170,6 +170,7 @@ class Fonctions {
         // affichage de la liste des versions ...
         echo "<select name=\"version\">\n";
         echo "<option value=\"0\">". _('install_installed_version') ."</option>\n";
+ +	echo "<option value=\"1.7.0\">v1.7.0</option>\n"; 
         echo "<option value=\"1.6.0\">v1.6.x</option>\n";
         echo "<option value=\"1.5.1\">v1.5.x</option>\n";
         echo "<option value=\"1.4.2\">v1.4.x</option>\n";
@@ -322,107 +323,10 @@ class Fonctions {
         //*** ETAPE 2
         elseif($etape==2)
         {
-            // si on part d'une version <= v1.0 : on travaille sinon, on passe à l'étape 3
-            if( (substr($installed_version, 0, 1)=="0") || ($installed_version=="1.0") )
-            {
-                //verif si la copie de l'ancien fichier de config est présent et lisible (install/config_old.php)
-                if( !test_old_config_file($DEBUG) )
-                {
-                    echo "<font color=\"red\">\n";
-                    echo  _('install_le_fichier') ." \"<b>install / config_old.php</b>\" ". _('install_inaccessible') ." !<br>\n";
-                    echo  _('install_maj_conserv_config') ."<br>\n";
-                    echo  _('install_maj_copy_config_file') ." \"<b>install</b>\" ". _('install_maj_whith_name') ." \"<b>config_old.php</b>\" ". _('install_maj_and') ."<br>\n";
-                    echo  _('install_maj_verif_droit_fichier') ." <br>\n";
-                    echo "</font><br> \n";
-                    echo "<br>". _('install_puis') ." ...<br>\n";
-                    echo "<form action=\"$PHP_SELF?lang=$lang\" method=\"POST\">\n";
-                    echo "<input type=\"hidden\" name=\"etape\"value=\"2\" >\n";
-                    echo "<input type=\"hidden\" name=\"version\" value=\"$installed_version\">\n";
-                    echo "<input type=\"submit\" value=\"". _('form_continuer') ."\">\n";
-                    echo "</form>\n";
-                }
-                else
-                {
-                    if( !$DEBUG )
-                        echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$PHP_SELF?etape=3&version=$installed_version&lang=$lang\">";
-                    else
-                        echo "<a href=\"$PHP_SELF?etape=3&version=$installed_version&lang=$lang\">". _('install_etape') ." 2  OK</a><br>\n";
-                }
-            }
-            else
-            {
-                if( !$DEBUG )
-                    echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$PHP_SELF?etape=3&version=$installed_version&lang=$lang\">";
-                else
-                    echo "<a href=\"$PHP_SELF?etape=3&version=$installed_version&lang=$lang\">". _('install_etape') ." 2  OK</a><br>\n";
-            }
-
-        }
-        //*** ETAPE 3
-        elseif($etape==3)
-        {
-            // ATTENTION on ne passe cette étape que si on est en version inferieure à 1.0 ! (donc en v0.xxx) (sinon on passe à l'étape 4)
-            if(substr($installed_version, 0, 1)!="0")
-            {
-                if( !$DEBUG )
-                    echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$PHP_SELF?etape=4&version=$installed_version&lang=$lang\">";
-                else
-                    echo "<a href=\"$PHP_SELF?etape=4&version=$installed_version&lang=$lang\">". _('install_etape') ." 3  OK</a><br>\n";
-            }
-            else
-            {
-                //on lance l'execution de fichier sql de migration l'un après l'autre jusqu a la version 0.10.1 ..
-                $db_version=explode(".", $installed_version);
-                $db_sub_version = (int) $db_version[1];
-
-                for($i=$db_sub_version ; $i <= 10 ; $i++)
-                {
-                    if($i==10) // si on en est à v0.10 on passe en v1.0
-                        $sql_file = "sql/upgrade_v0.10_to_v1.0.sql";
-                    else
-                    {
-                        $j=$i+1;
-                        $sql_file = "sql/upgrade_v0.".$i."_to_v0.".$j.".sql";
-                    }
-                    if( $DEBUG )
-                        echo "sql_file = $sql_file<br>\n";
-                    execute_sql_file($sql_file,  $DEBUG);
-                }
-                if( !$DEBUG )
-                    echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$PHP_SELF?etape=4&version=1.0&lang=$lang\">";
-                else
-                    echo "<a href=\"$PHP_SELF?etape=4&version=1.0&lang=$lang\">". _('install_etape') ." 3  OK</a><br>\n";
-            }
-
-        }
-        //*** ETAPE 4
-        elseif($etape==4)
-        {
-            // on est au moins à la version 1.0 ....
-            // ensuite tout se fait en php (plus de script de migration sql)
-
-            // on determine la version la + élevée entre $installed_version et 1.0  , et on part de celle là !
-            if(substr($installed_version, 0, 1)=="0")
-                $start_version="1.4.0";
-            else
                 $start_version=$installed_version ;
 
             //on lance l'execution (include) des scripts d'upgrade l'un après l'autre jusqu a la version voulue ($config_php_conges_version) ..
-            if($start_version=="1.4.0")
-            {
-                $file_upgrade='upgrade_from_v1.4.0.php';
-                $new_installed_version="1.4.1";
-                // execute le script php d'upgrade de la version1.4.0 (vers la suivante (1.4.1))
-                echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$file_upgrade?version=$new_installed_version&lang=$lang\">";
-            }
-            elseif(($start_version=="1.4.1")||($start_version=="1.4.2"))
-            {
-                $file_upgrade='upgrade_from_v1.4.2.php';
-                $new_installed_version="1.5.0";
-                // execute le script php d'upgrade de la version1.4.2 (vers la suivante (1.5.0))
-                echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$file_upgrade?version=$new_installed_version&lang=$lang\">";
-            }
-            elseif(($start_version=="1.5.0")||($start_version=="1.5.1"))
+            if(($start_version=="1.5.0")||($start_version=="1.5.1"))
             {
                 $file_upgrade='upgrade_from_v1.5.0.php';
                 $new_installed_version="1.6.0";
@@ -436,17 +340,24 @@ class Fonctions {
                 // execute le script php d'upgrade de la version1.6.0 (vers la suivante (1.7.0))
                 echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$file_upgrade?version=$new_installed_version&lang=$lang\">";
             }
+            elseif($start_version=="1.7.0") 
+	    {
+		$file_upgrade='upgrade_from_v1.7.0.php';
+		$new_installed_version="1.7.1";
+		// execute le script php d'upgrade de la version1.7.0 (vers la suivante (1.7.1))
+		echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$file_upgrade?version=$new_installed_version&lang=$lang\">";
+	    } 
             else
             {
                 if( !$DEBUG )
-                    echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$PHP_SELF?etape=5&version=1.4.1&lang=$lang\">";
+                    echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$PHP_SELF?etape=5&version=$new_installed_version&lang=$lang\">";
                 else
-                    echo "<a href=\"$PHP_SELF?etape=5&version=1.5.0&lang=$lang\">". _('install_etape') ." 4  OK</a><br>\n";
+                    echo "<a href=\"$PHP_SELF?etape=5&version=$new_installed_version&lang=$lang\">". _('install_etape') ." 2  OK</a><br>\n";
             }
 
         }
-        //*** ETAPE 5
-        elseif($etape==5)
+        //*** ETAPE 3
+        elseif($etape==3)
         {
             // FIN
             // test si fichiers config.php ou config_old.php existent encore (si oui : demande de les éffacer !
@@ -479,10 +390,6 @@ class Fonctions {
 
                 echo "<META HTTP-EQUIV=REFRESH CONTENT=\"2; URL=../config/\">";
             }
-        }
-        else
-        {
-            // rien, on ne devrait jammais arriver dans ce else !!!
         }
     }
 
