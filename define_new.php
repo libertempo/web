@@ -18,6 +18,7 @@ if (!defined( 'DEFINE_INCLUDE' )) {
 	define('TEMPLATE_PATH',		ROOT_PATH . 'template/reboot/');
 	
 	define('PLUGINS_DIR',		ROOT_PATH . "include/plugins/");
+	define('ICS_SALT',		'Jao%iT}'); //modify salt for more security with ics export
 
 	/*--- twiguification ---*/
 	require_once ROOT_PATH . 'vendor/autoload.php';

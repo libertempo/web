@@ -28,44 +28,30 @@ define('ROOT_PATH', '../');
 include ROOT_PATH . 'define.php';
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 
+/*******************************************************************/
+// SCRIPT DE MIGRATION DE LA VERSION 1.7.0 vers 1.7.1
+/*******************************************************************/
 include ROOT_PATH .'fonctions_conges.php' ;
 include INCLUDE_PATH .'fonction.php';
-include ROOT_PATH .'version.php' ;
+include 'fonctions_install.php' ;
 
 $PHP_SELF=$_SERVER['PHP_SELF'];
 
 $DEBUG=FALSE;
 //$DEBUG=TRUE;
 
-//recup de la langue
-$lang=(isset($_GET['lang']) ? $_GET['lang'] : ((isset($_POST['lang'])) ? $_POST['lang'] : "") ) ;
 
-if( $DEBUG ) { 
-	echo "SESSION = <br>\n"; print_r($_SESSION); echo "<br><br>\n"; 
-	}
+$version = (isset($_GET['version']) ? $_GET['version'] : (isset($_POST['version']) ? $_POST['version'] : "")) ;
+$lang = (isset($_GET['lang']) ? $_GET['lang'] : (isset($_POST['lang']) ? $_POST['lang'] : "")) ;
 
+//mettre ici les modifications de la bdd
 
-	// recup des parametres
-	$action = (isset($_GET['action']) ? $_GET['action'] : (isset($_POST['action']) ? $_POST['action'] : "")) ;
-	$version = (isset($_GET['version']) ? $_GET['version'] : (isset($_POST['version']) ? $_POST['version'] : "")) ;
-	$etape = (isset($_GET['etape']) ? $_GET['etape'] : (isset($_POST['etape']) ? $_POST['etape'] : 0 )) ;
+//retrait de la conf SMTP
+$del_smtp_from_db="DELETE FROM `libertempo_demo`.`conges_config` WHERE `conges_config`.`conf_nom` = 'serveur_smtp'";
+$res_del_smtp_from_db=SQL::query($del_smtp_from_db);
+//ajout du type de mail en cas d'absence non soumise à validation.
+$ajout_mail_new_absence="INSERT INTO `libertempo_demo`.`conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUES ('mail_new_absences', 'APPLI CONGES - nouvelle absence', ' __SENDER_NAME__ vous inform qu'il sera absent. Ce type de congés ne necéssite pas de validation. Vous pouvez consulter votre application Libertempo : __URL_ACCUEIL_CONGES__/ ------------------------------------------------------------------------------------------------------- Ceci est un message automatique. ');";
+$res_ajout_mail_new_absence=SQL::query($ajout_mail_new_absence);
 
-if( $DEBUG ) {
-	echo "action = $action :: version = $version :: etape = $etape<br>\n";
-	}
-
-if($version == 0) {  // la version à mettre à jour dans le formulaire de index.php n'a pas été choisie : renvoit sur le formulaire
-	redirect( ROOT_PATH . 'install/index.php?lang='.$lang);
-	}
-
-header_popup(' PHP_CONGES : '. _('install_maj_titre_1') );
-
-// affichage du titre
-echo "<center>\n";
-echo "<br><H1><img src=\"".TEMPLATE_PATH."img/tux_config_32x32.png\" width=\"32\" height=\"32\" border=\"0\" title=\"". _('install_install_phpconges') ."\" alt=\"". _('install_install_phpconges') ."\"> ". _('install_maj_titre_2') ."</H1>\n";
-echo "<br><br>\n";
-
-// $config_php_conges_version est fourni par include ROOT_PATH .'version.php' ;
-\install\Fonctions::lance_maj($lang, $version, $config_php_conges_version, $etape, $DEBUG);
-
-bottom();
+    // on renvoit à la page mise_a_jour.php (là d'ou on vient)
+    echo "<a href=\"mise_a_jour.php?etape=4&version=$version&lang=$lang\">upgrade_from_v1.7.0  OK</a><br>\n";

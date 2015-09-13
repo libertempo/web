@@ -81,15 +81,8 @@ function new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fi
 	$new_debut = convert_date($new_debut);
 	$new_fin = convert_date($new_fin);   
 
-	// print_r($new_fin);
-	//$new_nb_jours = get_nb_jour($new_debut, $new_fin, $new_demi_jour_deb, $new_demi_jour_fin);
-	
 	$PHP_SELF=$_SERVER['PHP_SELF'];
 	$session=session_id();
-
-	// echo " $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type<br><br>\n";
-
-	// exit;
 
 	// verif validité des valeurs saisies
 	$valid = verif_saisie_new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment);
@@ -114,7 +107,10 @@ function new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fi
 		echo schars( _('form_modif_ok') ).' !<br><br>'."\n";
 		//envoi d'un mail d'alerte au responsable (si demandé dans config de php_conges)
 		if($_SESSION['config']['mail_new_demande_alerte_resp'])
-			alerte_mail($_SESSION['userlogin'], ":responsable:", $periode_num, "new_demande", $DEBUG);
+			if($new_type=='absences')
+				alerte_mail($_SESSION['userlogin'], ":responsable:", $periode_num, "new_absences", $DEBUG);
+			else
+				alerte_mail($_SESSION['userlogin'], ":responsable:", $periode_num, "new_demande", $DEBUG);
 	}
 	else
 		echo schars( _('form_modif_not_ok') ).' !<br><br>'."\n";
@@ -123,11 +119,6 @@ function new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fi
 		echo schars( _('resp_traite_user_valeurs_not_ok') ).' !<br><br>'."\n";
 	}
 
-	/* RETOUR PAGE PRINCIPALE */
-	// echo '<form action="'.$PHP_SELF.'?session='.$session.'" method="POST">';
-	// echo '<input type="submit" value="'. _('form_retour') .'">';
-	// echo '</form>';
-	
 	echo "<a class=\"btn\" href=\"$PHP_SELF?session=$session\">". _('form_retour') ."</a>\n";
 
 }

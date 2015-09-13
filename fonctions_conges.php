@@ -1039,7 +1039,7 @@ function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $m
 		$key1="mail_new_demande_resp_absent_sujet" ;
 		$key2="mail_new_demande_resp_absent_contenu" ;
 	}
-	else  // $objet== "refus_conges" ou "new_demande" ou "annul_conges"
+	else  // $objet== "refus_conges" ou "new_demande" ou new_absence ou "annul_conges"
 	{
 		$key1="mail_".$objet."_sujet" ;
 		$key2="mail_".$objet."_contenu" ;
