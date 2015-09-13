@@ -61,4 +61,4 @@ function e1_create_table_plugins()
 
 
     // on renvoit à la page mise_a_jour.php (là d'ou on vient)
-    echo "<a href=\"mise_a_jour.php?etape=4&version=$version&lang=$lang\">upgrade_from_v1.6.0  OK</a><br>\n";
+    echo "<a href=\"mise_a_jour.php?etape=2&version=$version&lang=$lang\">upgrade_from_v1.6.0  OK</a><br>\n";

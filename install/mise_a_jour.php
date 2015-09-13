@@ -131,20 +131,10 @@ function lance_maj($lang, $installed_version, $config_php_conges_version, $etape
 			else
 				echo "<a href=\"$PHP_SELF?etape=2&version=$installed_version&lang=$lang\">". _('install_etape') ." 1  OK</a><br>\n";
 		}
-	} elseif($etape==2) {   //*** ETAPE 4
+	} elseif($etape==2) {   //*** ETAPE 2
 		$start_version=$installed_version ;
 		//on lance l'execution (include) des scripts d'upgrade l'un après l'autre jusqu a la version voulue ($config_php_conges_version) ..
-		if($start_version=="1.4.0") {
-			$file_upgrade='upgrade_from_v1.4.0.php';
-			$new_installed_version="1.4.1";
-			// execute le script php d'upgrade de la version1.4.0 (vers la suivante (1.4.1))
-			echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$file_upgrade?version=$new_installed_version&lang=$lang\">";
-		} elseif(($start_version=="1.4.1")||($start_version=="1.4.2")) {
-			$file_upgrade='upgrade_from_v1.4.2.php';
-			$new_installed_version="1.5.0";
-			// execute le script php d'upgrade de la version1.4.2 (vers la suivante (1.5.0))
-			echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$file_upgrade?version=$new_installed_version&lang=$lang\">";
-		} elseif(($start_version=="1.5.0")||($start_version=="1.5.1")) {
+		if(($start_version=="1.5.0")||($start_version=="1.5.1")) {
 			$file_upgrade='upgrade_from_v1.5.0.php';
 			$new_installed_version="1.6.0";
 			// execute le script php d'upgrade de la version1.5.0 (vers la suivante (1.6.0))
@@ -159,12 +149,13 @@ function lance_maj($lang, $installed_version, $config_php_conges_version, $etape
 			$new_installed_version="1.7.1";
 			// execute le script php d'upgrade de la version1.7.0 (vers la suivante (1.7.1))
 			echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$file_upgrade?version=$new_installed_version&lang=$lang\">";
-		}
+		} else { 
 	            if( !$DEBUG )
 	                echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$PHP_SELF?etape=3&version=$new_installed_version&lang=$lang\">";
 	            else
-			echo "<a href=\"$PHP_SELF?etape=3&version=$new_installed_version&lang=$lang\">". _('install_etape') ." 4  OK</a><br>\n";
-	} elseif($etape==3) {     //*** ETAPE 5 FIN.
+			echo "<a href=\"$PHP_SELF?etape=3&version=$new_installed_version&lang=$lang\">". _('install_etape') ." 2  OK</a><br>\n";
+		}
+	} elseif($etape==3) {     //*** ETAPE 3 FIN.
 		// test si fichiers config.php ou config_old.php existent encore (si oui : demande de les éffacer !
 		if( (test_config_file($DEBUG)) || (test_old_config_file($DEBUG)) ) {
 			if(test_config_file($DEBUG)) {
