@@ -973,8 +973,8 @@ msgstr "Configuracion de la Aplicacion PHP_VACACIONES"
 msgid "config_appli_titre_2"
 msgstr "Configuracion de php_vacaciones"
 
-msgid "00_php_conges"
-msgstr "00 php_vacaciones"
+msgid "00_libertempo"
+msgstr "00 Libertempo"
 
 msgid "01_Serveur Web"
 msgstr "01 Servidor Web"

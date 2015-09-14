@@ -982,7 +982,7 @@ msgstr "Configuration de l'Application"
 msgid "config_appli_titre_2"
 msgstr "Configuration de Libertmpo"
 
-msgid "00_php_conges"
+msgid "00_libertempo"
 msgstr "00 Libertempo"
 
 msgid "01_Serveur Web"
