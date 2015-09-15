@@ -478,13 +478,14 @@ function  affiche_calendrier_saisie_jour_absence($user_login, $year, $mois, $DEB
 	$jour_today_name			= date('D');
 
 	$first_jour_mois_timestamp	= mktime(0,0,0,$mois,1,$year);
-	$last_jour_mois_timestamp	= mktime(0,0,0,$mois +1 , 1 ,$year);
+	$last_jour_mois_timestamp	= mktime(0,0,0,$mois + 1, 0 ,$year);
 	
 	$mois_name					= date_fr('F', $first_jour_mois_timestamp);
 	
 	$first_jour_mois_rang		= date('w', $first_jour_mois_timestamp);      // jour de la semaine en chiffre (0=dim , 6=sam)
 	$last_jour_mois_rang		= date('w', $last_jour_mois_timestamp);      // jour de la semaine en chiffre (0=dim , 6=sam)
 	$nb_jours_mois				= ( $last_jour_mois_timestamp - $first_jour_mois_timestamp  + 60*60 *12 ) / (24 * 60 * 60);// + 60*60 *12 for fucking DST
+
 	
 	if( $first_jour_mois_rang == 0 )
 		$first_jour_mois_rang=7 ;    // jour de la semaine en chiffre (1=lun , 7=dim)
@@ -520,7 +521,7 @@ function  affiche_calendrier_saisie_jour_absence($user_login, $year, $mois, $DEB
 				$j_timestamp=mktime (0,0,0,$mois, $i +1 ,$year);
 				$td_second_class = get_td_class_of_the_day_in_the_week($j_timestamp);
 				
-				if ($i <= 0 || $i > $nb_jours_mois || $td_second_class == 'weekend') {
+				if ($i < 0 || $i > $nb_jours_mois || $td_second_class == 'weekend') {
 					echo '<td class="'.$td_second_class.'">-</td>';
 				}
 				else {	
@@ -589,7 +590,7 @@ function  affiche_calendrier_saisie_jour_presence($user_login, $year, $mois, $DE
 				$j_timestamp=mktime (0,0,0,$mois, $i +1 ,$year);
 				$td_second_class = get_td_class_of_the_day_in_the_week($j_timestamp);
 				
-				if ($i <= 0 || $i > $nb_jours_mois || $td_second_class == 'weekend') {
+				if ($i < 0 || $i > $nb_jours_mois || $td_second_class == 'weekend') {
 					echo '<td class="'.$td_second_class.'">-</td>';
 				}
 				else {	
