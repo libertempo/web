@@ -86,8 +86,8 @@ function modifier($u_login, $onglet, $DEBUG=FALSE)
 	echo "<tr align=\"center\">\n";
 
 	// Récupération des informations
-	$sql1 = 'SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_login = \''.SQL::quote($u_login).'\'';
-	$ReqLog1 = SQL::query($sql1);
+	$sql1 = 'SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_login = "'. \includes\SQL::quote($u_login).'"';
+	$ReqLog1 = \includes\SQL::query($sql1);
 
 	while ($resultat1 = $ReqLog1->fetch_array()) {
 			$text_pwd1="<input type=\"password\" name=\"new_pwd1\" size=\"10\" maxlength=\"30\" value=\"\">" ;
@@ -116,8 +116,8 @@ function commit_update($u_login_to_update, $new_pwd1, $new_pwd2, $DEBUG=FALSE)
 	{
 
 		$passwd_md5=md5($new_pwd1);
-		$sql1 = 'UPDATE conges_users  SET u_passwd=\''.$passwd_md5.'\' WHERE u_login=\''.SQL::quote($u_login_to_update).'\'' ;
-		$result = SQL::query($sql1);
+		$sql1 = 'UPDATE conges_users  SET u_passwd=\''.$passwd_md5.'\' WHERE u_login="'. \includes\SQL::quote($u_login_to_update).'"' ;
+		$result = \includes\SQL::query($sql1);
 
 		if($result)
 			echo  _('form_modif_ok') ." !<br><br> \n";

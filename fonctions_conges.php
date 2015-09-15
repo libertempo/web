@@ -958,7 +958,7 @@ function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $m
 
 	if (file_exists(CONFIG_PATH .'config_SMTP.php')) 
 	{
-		include CONFIG_PATH .'config_SMTP.php';
+		include_once CONFIG_PATH .'config_SMTP.php';
 
 		if(!empty($config_SMTP_host)) 
 		{
@@ -1987,8 +1987,8 @@ function init_config_tab()
 	if ($result === null || $userlogin != $_SESSION['userlogin']) 
 	{
 
-		include ROOT_PATH .'version.php';
-		include CONFIG_PATH .'dbconnect.php';
+		include_once ROOT_PATH .'version.php';
+		include_once CONFIG_PATH .'dbconnect.php';
 		$tab = array();
 
 		/******************************************/
@@ -2051,7 +2051,7 @@ function init_config_tab()
 		//  config_ldap.php
 		if (file_exists(CONFIG_PATH .'config_ldap.php')) 
 		{
-			include CONFIG_PATH .'config_ldap.php';
+			include_once CONFIG_PATH .'config_ldap.php';
 			if(isset($config_ldap_protocol_version))
 				$tab['ldap_protocol_version'] = $config_ldap_protocol_version ;
 			else
@@ -2077,7 +2077,7 @@ function init_config_tab()
 		//  config_CAS.php
 		if (file_exists(CONFIG_PATH .'config_CAS.php')) 
 		{
-			include CONFIG_PATH .'config_CAS.php';
+			include_once CONFIG_PATH .'config_CAS.php';
 			if(isset($config_CAS_host))	$tab['CAS_host']	= $config_CAS_host ;
 			if(isset($config_CAS_portNumber)) $tab['CAS_portNumber'] = $config_CAS_portNumber ;
 			if(isset($config_CAS_URI))	$tab['CAS_URI']		= $config_CAS_URI ;
@@ -2612,7 +2612,7 @@ $user_nb_jours_pris = number_format($user_nb_jours_pris, 1, '.', '');
 			//d'apres la data limite et ne pas le décompter des reliquats !!!
 			else
 			{
-				include 'fonctions_calcul.php' ;
+				include_once 'fonctions_calcul.php' ;
 				$nb_reliquats_a_deduire = compter($user_login, $num_current_periode, $date_deb, $_SESSION['config']['date_limite_reliquats'], $demi_jour_deb, "pm", null ,  $DEBUG);
 
 				if($reliquat > $nb_reliquats_a_deduire)

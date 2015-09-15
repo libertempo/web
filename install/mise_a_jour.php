@@ -24,11 +24,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *************************************************************************************************/
 
 define('ROOT_PATH', '../');
-require ROOT_PATH . 'define.php';
+require_once ROOT_PATH . 'define.php';
 
-include ROOT_PATH .'fonctions_conges.php' ;
-include INCLUDE_PATH .'fonction.php';
-include ROOT_PATH .'version.php' ;
+include_once ROOT_PATH .'fonctions_conges.php' ;
+include_once INCLUDE_PATH .'fonction.php';
+include_once ROOT_PATH .'version.php' ;
 
 $PHP_SELF=$_SERVER['PHP_SELF'];
 
@@ -63,7 +63,7 @@ echo "<center>\n";
 echo "<br><H1><img src=\"".TEMPLATE_PATH."img/tux_config_32x32.png\" width=\"32\" height=\"32\" border=\"0\" title=\"". _('install_install_phpconges') ."\" alt=\"". _('install_install_phpconges') ."\"> ". _('install_maj_titre_2') ."</H1>\n";
 echo "<br><br>\n";
 
-// $config_php_conges_version est fourni par include ROOT_PATH .'version.php' ;
+// $config_php_conges_version est fourni par include_once ROOT_PATH .'version.php' ;
 \install\Fonctions::lance_maj($lang, $version, $config_php_conges_version, $etape, $DEBUG);
 
 bottom();

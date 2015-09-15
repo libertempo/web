@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *************************************************************************************************/
 
 define('ROOT_PATH', '');
-require 'define.php';
+require_once 'define.php';
 
 // test si dbconnect.php est présent !
 if (!is_readable( CONFIG_PATH .'dbconnect.php'))
@@ -33,8 +33,8 @@ if (!is_readable( CONFIG_PATH .'dbconnect.php'))
 	exit;
 }
 
-include INCLUDE_PATH .'fonction.php';
-include ROOT_PATH .'fonctions_conges.php'; // for init_config_tab()
+include_once INCLUDE_PATH .'fonction.php';
+include_once ROOT_PATH .'fonctions_conges.php'; // for init_config_tab()
 $_SESSION['config']=init_config_tab();      // on initialise le tableau des variables de config
 
 

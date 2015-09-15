@@ -619,7 +619,7 @@ function annule_conges($user_login, $tab_checkbox_annule, $tab_text_annul, $DEBU
         if($tab_tout_type_abs[$user_type_abs_id]['type']=="conges")
         {
             $sql2 = 'UPDATE conges_solde_user SET su_solde = su_solde+"'. \includes\SQL::quote($user_nb_jours_pris_float).'" WHERE su_login="'. \includes\SQL::quote($user_login).'" AND su_abs_id="'. \includes\SQL::quote($user_type_abs_id).'";';
-            $ReqLog2 = \includes\\SQL::query($sql2);
+            $ReqLog2 = \includes\SQL::query($sql2);
         }
 
         //envoi d'un mail d'alerte au user (si demandé dans config de php_conges)

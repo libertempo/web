@@ -24,16 +24,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *************************************************************************************************/
 
 define('ROOT_PATH', '../');
-require ROOT_PATH . 'define.php';
+require_once ROOT_PATH . 'define.php';
 
 $session=(isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : session_id()) ) ;
 
 if (file_exists(CONFIG_PATH .'config_ldap.php'))
-	include CONFIG_PATH .'config_ldap.php';
+	include_once CONFIG_PATH .'config_ldap.php';
 
-include ROOT_PATH .'fonctions_conges.php' ;
-include INCLUDE_PATH .'fonction.php';
-include INCLUDE_PATH .'session.php';
+include_once ROOT_PATH .'fonctions_conges.php' ;
+include_once INCLUDE_PATH .'fonction.php';
+include_once INCLUDE_PATH .'session.php';
 
 $DEBUG=FALSE;
 //$DEBUG=TRUE ;
