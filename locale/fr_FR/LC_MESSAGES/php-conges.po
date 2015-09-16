@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: php-conges\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-11 03:37+0100\n"
-"PO-Revision-Date: 2015-06-26 22:53+0100\n"
+"PO-Revision-Date: 2015-09-16 18:53+0100\n"
 "Last-Translator: Wouldsmina <wouldsmina@gmail.com>\n"
 "Language-Team: HoLbLiN <contact@holblin.com>\n"
 "MIME-Version: 1.0\n"
@@ -153,6 +153,9 @@ msgstr "Responsable"
 
 msgid "button_admin_mode"
 msgstr "Administrateur"
+
+msgid "button_hr_mode"
+msgstr "RH"
 
 msgid "button_calendar"
 msgstr "Calendrier"
