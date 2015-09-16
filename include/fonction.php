@@ -420,7 +420,7 @@ function deconnexion_CAS($url="")
 function hash_user($user)
 {
 
-	$ics_salt = $_SESSION['config']['admin_see_all'];
+	$ics_salt = $_SESSION['config']['export_ical_salt'];
 	$huser = hash('sha256', $user . $ics_salt);
 	return $huser;
 }
@@ -428,7 +428,7 @@ function hash_user($user)
 function unhash_user($huser_test)
 {
 	$user = "";
-	$ics_salt = $_SESSION['config']['admin_see_all'];
+	$ics_salt = $_SESSION['config']['export_ical_salt'];
 	$req_user = 'SELECT u_login FROM conges_users';
 	$res_user = SQL::query($req_user) ;
 
