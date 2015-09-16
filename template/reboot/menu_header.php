@@ -59,25 +59,23 @@
 					$tmp = dirname($_SERVER['PHP_SELF']);
 					$tmp = explode('/',$tmp);
 					$tmp = array_pop($tmp);
-					if (in_array($tmp, array('utilisateur','admin','config', 'responsable','hr'))){
-						switch ($tmp) {
-							case "utilisateur":
-								$user_mode = _('user');
-								break;
-							case "admin":
-							case "config":
-								$user_mode = _('button_admin_mode');
-								break;
-							case "responsable":
-								$user_mode = _('button_responsable_mode');
-								break;
-							case "hr":
-								$user_mode = _('button_hr_mode');
-								break;
-						}
+					switch ($tmp) {
+						case "utilisateur":
+							$user_mode = _('user');
+							break;
+						case "admin":
+						case "config":
+							$user_mode = _('button_admin_mode');
+							break;
+						case "responsable":
+							$user_mode = _('button_responsable_mode');
+							break;
+						case "hr":
+							$user_mode = _('button_hr_mode');
+							break;
+						default :
+							$user_mode = _('button_calendar');
 					}
-					else
-						$user_mode = _('button_calendar');
 				?>
 		   		<div class="profil-info">
 		   			<i class="fa fa-smile-o"></i>
