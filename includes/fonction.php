@@ -416,23 +416,24 @@ function deconnexion_CAS($url="")
     phpCAS::logoutWithUrl($url);
 }
 
+
 function hash_user($user)
 {
-
-	$huser = hash('sha256', $user . ICS_SALT);
+	$ics_salt = $_SESSION['config']['export_ical_salt'];
+	$huser = hash('sha256', $user . $ics_salt);
 	return $huser;
 }
 
 function unhash_user($huser_test)
 {
 	$user = "";
+	$ics_salt = $_SESSION['config']['export_ical_salt'];
 	$req_user = 'SELECT u_login FROM conges_users';
 	$res_user = SQL::query($req_user) ;
-
 	while ($resultat = $res_user->fetch_assoc())
 	{
 		$clear_user = $resultat['u_login'];
-		$huser = hash('sha256', $clear_user . ICS_SALT);
+		$huser = hash('sha256', $clear_user . $ics_salt);
 		if( $huser_test == $huser )
 			$user = $clear_user;
 	}

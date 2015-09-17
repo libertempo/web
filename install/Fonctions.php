@@ -170,11 +170,9 @@ class Fonctions {
         // affichage de la liste des versions ...
         echo "<select name=\"version\">\n";
         echo "<option value=\"0\">". _('install_installed_version') ."</option>\n";
- +	echo "<option value=\"1.7.0\">v1.7.0</option>\n"; 
+        echo "<option value=\"1.7.0\">v1.7.0</option>\n"; 
         echo "<option value=\"1.6.0\">v1.6.x</option>\n";
         echo "<option value=\"1.5.1\">v1.5.x</option>\n";
-        echo "<option value=\"1.4.2\">v1.4.x</option>\n";
-        echo "<option value=\"1.4.0\">v1.4.0</option>\n";
         echo "</select>\n";
         echo "<br>\n";
         echo "<input type=\"hidden\" name=\"lang\" value=\"$lang\">\n";
