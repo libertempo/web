@@ -973,7 +973,7 @@ msgstr "Configuration of Libertempo application"
 msgid "config_appli_titre_2"
 msgstr "Configuration of Libertempo"
 
-msgid "00_php_conges"
+msgid "00_libertempo"
 msgstr "00 Libertempo"
 
 msgid "01_Serveur Web"
@@ -1722,3 +1722,4 @@ msgstr "// DISPLAY DISABLED USERS : <br>//--------------------------------------
 
 msgid "config_comment_affiche_jours_current_month_calendrier"
 msgstr "// DISPLAY NB DAYS TAKEN DURING THE MONTH ( FOR EACH TYPE OF ABSENCE ): <br>//------------------------------------------------------------<br>// if FALSE . no display, in the calendar for each user, for each type of leave , beside the balance, nb of days taken during the month displayed (FALSE is the default)<br>// if TRUE : display in the calendar for each user, for each type of leave , beside the balance, nb of days taken during the month displayed."
+
