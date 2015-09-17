@@ -47,12 +47,20 @@ $lang = (isset($_GET['lang']) ? $_GET['lang'] : (isset($_POST['lang']) ? $_POST[
 //retrait de la conf SMTP
 $del_smtp_from_db="DELETE FROM conges_config WHERE conf_nom = 'serveur_smtp';";
 $res_del_smtp_from_db=SQL::query($del_smtp_from_db);
+
 //retrait de la conf couleur 
 $del_color_from_db="DELETE FROM conges_config WHERE conf_nom = 'light_grey_bgcolor';";
 $res_del_color_from_db=SQL::query($del_color_from_db);
+
 //ajout du type de mail en cas d'absence non soumise à validation.
 $ajout_mail_new_absence="INSERT IGNORE INTO `conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUES ('mail_prem_valid_conges', 'APPLI CONGES - Nouvelle absence', ' __SENDER_NAME__ vous informe qu\'il sera absent. Ce type de congés ne necéssite pas de validation. Vous pouvez consulter votre application Libertempo : __URL_ACCUEIL_CONGES__/\r\n\r\n-------------------------------------------------------------------------------------------------------\r\nCeci est un message automatique. ');";
 $res_ajout_mail_new_absence=SQL::query($ajout_mail_new_absence);
 
+$ajout_export_ical="INSERT INTO conges_config (`conf_nom`, `conf_valeur`, `conf_groupe`, `conf_type`, `conf_commentaire`) VALUES ('export_ical', 'true', '15_ical', 'boolean', 'config_comment__export_ical');";
+$res_ajout_export_ical=SQL::query($ajout_export_ical);
+
+$ajout_export_ical_salt="INSERT INTO conges_config (`conf_nom`, `conf_valeur`, `conf_groupe`, `conf_type`, `conf_commentaire`) VALUES ('export_ical_salt', 'Jao%iT}', '15_ical', 'texte', 'config_comment_export_ical_salt');";
+$res_ajout_export_ical_salt=SQL::query($ajout_export_ical_salt);
+
 // on renvoit à la page mise_a_jour.php (là d'ou on vient)
-echo "<a href=\"mise_a_jour.php?etape=4&version=$version&lang=$lang\">upgrade_from_v1.7.0  OK</a><br>\n";
+echo "<a href=\"mise_a_jour.php?etape=3&version=$version&lang=$lang\">upgrade_from_v1.7.0  OK</a><br>\n";

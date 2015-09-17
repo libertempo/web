@@ -357,8 +357,8 @@ INSERT IGNORE INTO `conges_users` VALUES ('conges', 'conges', 'responsable-virtu
 # Contenu de la table `conges_config`
 #
 
-INSERT IGNORE INTO `conges_config` VALUES ('installed_version', '0', '00_Libertempo', 'texte', 'config_comment_installed_version');
-INSERT IGNORE INTO `conges_config` VALUES ('lang', 'fr', '00_Libertempo', 'enum=fr/test', 'config_comment_lang');
+INSERT IGNORE INTO `conges_config` VALUES ('installed_version', '0', '00_libertempo', 'texte', 'config_comment_installed_version');
+INSERT IGNORE INTO `conges_config` VALUES ('lang', 'fr', '00_libertempo', 'enum=fr/test', 'config_comment_lang');
 
 INSERT IGNORE INTO `conges_config` VALUES ('URL_ACCUEIL_CONGES', 'http://mon-serveur/mon-chemin/libertempo', '01_Serveur Web', 'texte', 'config_comment_URL_ACCUEIL_CONGES');
 
@@ -432,7 +432,8 @@ INSERT IGNORE INTO `conges_config` VALUES ('affiche_jours_current_month_calendri
 INSERT IGNORE INTO `conges_config` VALUES ('calcul_auto_jours_feries_france', 'FALSE', '13_Divers', 'boolean', 'config_comment_calcul_auto_jours_feries_france');
 
 INSERT IGNORE INTO `conges_config` VALUES ('stylesheet_file', 'style.css', '14_Presentation', 'texte', 'config_comment_stylesheet_file');
-
+INSERT IGNORE INTO `conges_config` (`conf_nom`, `conf_valeur`, `conf_groupe`, `conf_type`, `conf_commentaire`) VALUES ('export_ical', 'true', '15_ical', 'boolean', 'config_comment__export_ical'),
+('export_ical_salt', 'Jao%iT}', '15_ical', 'texte', 'config_comment_export_ical_salt');
 
 #
 # Contenu de la table `conges_type_absence`
