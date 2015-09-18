@@ -146,7 +146,7 @@ msgid "button_refresh"
 msgstr "Refresh Page"
 
 msgid "button_editions"
-msgstr "Paper Prints"
+msgstr "Reports"
 
 msgid "button_admin_mode"
 msgstr "Administrator"
@@ -161,7 +161,7 @@ msgid "form_submit"
 msgstr "Validate"
 
 msgid "form_cancel"
-msgstr "Abandon"
+msgstr "Cancel"
 
 msgid "form_retour"
 msgstr "Return"
@@ -329,13 +329,13 @@ msgid "divers_conges_maj_1"
 msgstr "Holidays"
 
 msgid "divers_absences"
-msgstr "absences"
+msgstr "leave"
 
 msgid "divers_absences_maj_1"
-msgstr "Absences"
+msgstr "Leave"
 
 msgid "divers_nouvelle_absence"
-msgstr "New Absence"
+msgstr "New leave"
 
 msgid "divers_mois_precedent"
 msgstr "previous month"
@@ -353,46 +353,46 @@ msgid "user"
 msgstr "User"
 
 msgid "user_onglet_echange_abs"
-msgstr "Exchange the absence day"
+msgstr "Move the leave day"
 
 msgid "user_onglet_demandes"
-msgstr "Current demands"
+msgstr "Current requests"
 
 msgid "user_onglet_historique_conges"
-msgstr "Holidays historic"
+msgstr "Holidays history"
 
 msgid "user_onglet_historique_abs"
-msgstr "Other absences historic"
+msgstr "Other leaves history"
 
 msgid "user_onglet_change_passwd"
 msgstr "Change password"
 
 msgid "user_echange_rtt"
-msgstr "Exchange part-time / day worked"
+msgstr "Change part-time / day worked"
 
 msgid "user_etat_demandes"
-msgstr "State of the current demands"
+msgstr "State of the current requests"
 
 msgid "user_historique_conges"
-msgstr "Holidays historic"
+msgstr "Holidays history"
 
 msgid "user_historique_abs"
-msgstr "Historic of the absences for mission, training, etc...."
+msgstr "History of the absences for mission, training, etc...."
 
 msgid "user_change_password"
 msgstr "Change your password"
 
 msgid "user_demandes_aucune_demande"
-msgstr "No current demand ..."
+msgstr "No current request ..."
 
 msgid "user_conges_aucun_conges"
 msgstr "No holidays in the database ..."
 
 msgid "user_abs_aucune_abs"
-msgstr "No  absences in the database ..."
+msgstr "No leave in the database ..."
 
 msgid "user_abs_type"
-msgstr "Absence"
+msgstr "Leave"
 
 msgid "user_passwd_saisie_1"
 msgstr "1st input"
@@ -404,10 +404,10 @@ msgid "user_passwd_error"
 msgstr "ERROR ! both inputs are different or empty !!"
 
 msgid "user_modif_demande_titre"
-msgstr "Modification of a demand/absence."
+msgstr "Modification of a request/leave."
 
 msgid "user_suppr_demande_titre"
-msgstr "Deletion holidays demand."
+msgstr "Deletion holidays request."
 
 msgid "resp_menu_titre"
 msgstr "PERSON IN CHARGE MODE :"
@@ -416,7 +416,7 @@ msgid "resp_menu_button_retour_main"
 msgstr "Return to Main page"
 
 msgid "resp_menu_button_traite_demande"
-msgstr "Handle all Demands"
+msgstr "Handle all requests"
 
 msgid "resp_menu_button_affiche_user"
 msgstr "display person"
@@ -434,13 +434,13 @@ msgid "resp_etat_users_afficher"
 msgstr "Display"
 
 msgid "resp_etat_users_imprim"
-msgstr "Paper Edition"
+msgstr "Print out"
 
 msgid "resp_traite_demandes_titre"
-msgstr "Holidays demands processing :"
+msgstr "Holidays requests processing :"
 
 msgid "resp_traite_demandes_aucune_demande"
-msgstr "No current holidays demand in the database ..."
+msgstr "No current holidays request in the database ..."
 
 msgid "resp_traite_demandes_nb_jours"
 msgstr "nb Days<br>Taken"
@@ -500,22 +500,22 @@ msgid "resp_traite_user_titre"
 msgstr "Processing of :"
 
 msgid "resp_traite_user_new_conges"
-msgstr "New Holidays/Absence :"
+msgstr "New Holidays/leave :"
 
 msgid "resp_traite_user_etat_demandes"
-msgstr "State of the demands :"
+msgstr "State of the requests :"
 
 msgid "resp_traite_user_etat_conges"
 msgstr "State of the holidays :"
 
 msgid "resp_traite_user_aucune_demande"
-msgstr "No holidays demand for that person in the database ..."
+msgstr "No holidays request for that person in the database ..."
 
 msgid "resp_traite_user_motif_refus"
 msgstr "Refusal motive"
 
 msgid "resp_traite_user_aucun_conges"
-msgstr "No holidays demand for that person in the database ..."
+msgstr "No holidays request for that person in the database ..."
 
 msgid "resp_traite_user_motif_possible"
 msgstr "refusal motive or possible cancellation"
@@ -545,10 +545,10 @@ msgid "admin_button_config_2"
 msgstr "Configuration"
 
 msgid "admin_button_config_abs_1"
-msgstr "Configuration of the absence types managed"
+msgstr "Configuration of the leave types managed"
 
 msgid "admin_button_config_abs_2"
-msgstr "Config Absences"
+msgstr "Config leaves"
 
 msgid "admin_button_jours_chomes_1"
 msgstr "input of days off"
@@ -689,7 +689,7 @@ msgid "admin_modif_nb_jours_an"
 msgstr "nb days / year"
 
 msgid "admin_temps_partiel_titre"
-msgstr "input of absence days for ARTT or part time"
+msgstr "input of leaves days for part time"
 
 msgid "admin_temps_partiel_sem_impaires"
 msgstr "Odd weeks"
@@ -782,7 +782,7 @@ msgid "editions_pdf_edition"
 msgstr "Print in PDF"
 
 msgid "editions_hitorique_edit"
-msgstr "Prints Historic"
+msgstr "Prints History"
 
 msgid "editions_aucun_hitorique"
 msgstr "No print recorded for that user ..."
@@ -803,7 +803,7 @@ msgid "editions_bilan_au"
 msgstr "statement at"
 
 msgid "editions_historique"
-msgstr "Historic"
+msgstr "History"
 
 msgid "editions_soldes_precedents_inconnus"
 msgstr "previous balances unknown"
@@ -836,10 +836,10 @@ msgid "saisie_conges_nb_jours"
 msgstr "NB_Days_Taken"
 
 msgid "saisie_echange_titre_calendrier_1"
-msgstr "Ordinary absence day"
+msgstr "Ordinary leave day"
 
 msgid "saisie_echange_titre_calendrier_2"
-msgstr "Wished absence day"
+msgstr "Wished leave day"
 
 msgid "calendrier_titre"
 msgstr "HOLIDAYS CALENDAR"
@@ -863,10 +863,10 @@ msgid "calendrier_legende_demande"
 msgstr "holidays asked (not yet granted)"
 
 msgid "calendrier_legende_part_time"
-msgstr "daily absence (part time , RTT)"
+msgstr "daily leave (part time , RTT)"
 
 msgid "calendrier_legende_abs"
-msgstr "absence other (mission, training, illness, ...)"
+msgstr "other leaves (mission, training, illness, ...)"
 
 msgid "calcul_nb_jours_nb_jours"
 msgstr "Number of days to take :"
@@ -929,13 +929,13 @@ msgid "verif_saisie_erreur_nb_bad"
 msgstr "ERROR : bad input : <b>the input number is invalid</b>"
 
 msgid "config_abs_titre"
-msgstr "Configuration of absence types managed by Libertempo"
+msgstr "Configuration of leave types managed by Libertempo"
 
 msgid "config_abs_comment_conges"
-msgstr "Absence types listed here are diverse holidays, each deducted on seperate accounts."
+msgstr "Leave types listed here are diverse holidays, each deducted on seperate accounts."
 
 msgid "config_abs_comment_absences"
-msgstr "Absence types listed here are not deducted (they are authorized holidays)."
+msgstr "Leave types listed here are not deducted (they are authorized holidays)."
 
 msgid "config_abs_libelle"
 msgstr "description"
@@ -944,10 +944,10 @@ msgid "config_abs_libelle_short"
 msgstr "short description"
 
 msgid "config_abs_add_type_abs"
-msgstr "add an absence type :"
+msgstr "add an leave type :"
 
 msgid "config_abs_add_type_abs_comment"
-msgstr "Type in the absence type you want to add :"
+msgstr "Type in the leave type you want to add :"
 
 msgid "config_abs_saisie_not_ok"
 msgstr "invalid input :"
@@ -962,7 +962,7 @@ msgid "config_abs_suppr_impossible"
 msgstr "Deletion IMPOSSIBLE !"
 
 msgid "config_abs_already_used"
-msgstr "Holidays/absences of this type are being processed !"
+msgstr "Holidays/leaves of this type are being processed !"
 
 msgid "config_abs_confirm_suppr_of"
 msgstr "Please confirm the deletion of"
@@ -1007,7 +1007,7 @@ msgid "10_Gestion par groupes"
 msgstr "10 Management by groups"
 
 msgid "11_Editions papier"
-msgstr "11 Paper editions"
+msgstr "11 Reports"
 
 msgid "12_Fonctionnement de l'Etablissement"
 msgstr " 12 Functioning of the Establishment"
@@ -1015,7 +1015,7 @@ msgstr " 12 Functioning of the Establishment"
 msgid "13_Divers"
 msgstr "13 Diverse"
 
-msgid "14_PrÃ©sentation"
+msgid "14_Presentation"
 msgstr "14 Presentation"
 
 msgid "15_Modules Externes"
@@ -1061,13 +1061,13 @@ msgid "config_comment_export_users_from_ldap"
 msgstr "// Export of Users from LDAP :<br>//--------------------------------<br>// if = FALSE : the users are created \"manually\" directly in Libertempo (FALSE is the default value)<br>// if = TRUE  : the users are imported from the LDAP server (with the help of a drop-down list) (cf config_ldap.php)"
 
 msgid "config_comment_user_saisie_demande"
-msgstr "//  HOLIDAYS DEMANDS<br>//---------------------------------------<br>// if at FALSE : no demand input by user, no demand management by the manager<br>// if at TRUE : demand input by user, and demand management by the manager (TRUE is the default value)"
+msgstr "//  HOLIDAYS REQUESTS<br>//---------------------------------------<br>// if at FALSE : no request input by user, no request management by the manager<br>// if at TRUE : request input by user, and request management by the manager (TRUE is the default value)"
 
 msgid "config_comment_user_affiche_calendrier"
 msgstr "//  DISPLAY OF THE BUTTON OF THE CALENDAR FOR THE USER<br>//--------------------------------------------------------------------------------------<br>// if at FALSE : the users cannot display the holidays calendrar<br>// if at TRUE : the users can display the holidays calendrar(TRUE is the default value)"
 
 msgid "config_comment_user_saisie_mission"
-msgstr "//  INPUT BY THE USER OF ABSENCES FOR MISSIONS, TRAININGS, CONGRESSES, ETC ....<br>//--------------------------------------------------------------------------------------<br>// ( absences of this type do not take off holidays days ! )<br>// if at FALSE : no input by the user of absences for mission, training, congress, etc ....<br>// if at TRUE : input by user of absences for mission, training, congress, etc .... (TRUE is default value)"
+msgstr "//  INPUT BY THE USER OF LEAVES FOR MISSIONS, TRAININGS, CONGRESSES, ETC ....<br>//--------------------------------------------------------------------------------------<br>// ( absences of this type do not take off holidays days ! )<br>// if at FALSE : no input by the user of leave for mission, training, congress, etc ....<br>// if at TRUE : input by user of leaves for mission, training, congress, etc .... (TRUE is default value)"
 
 msgid "config_comment_user_ch_passwd"
 msgstr "//  CHANGE YOUR PASSWORD<br>//---------------------------------------<br>// if at FALSE : the user cannot change his password<br>// if at TRUE : the user can change his password (TRUE is the default value)"
@@ -1079,7 +1079,7 @@ msgid "config_comment_resp_affiche_calendrier"
 msgstr "//  DISPLAY OF THE BUTTON OF THE CALENDAR FOR THE MANAGER<br>//--------------------------------------------------------------------------------------<br>// si Ã  FALSE : the managers cannot display the holidays calendrar<br>// if at TRUE : the managers can display the holidays calendrar(TRUE is the default value)"
 
 msgid "config_comment_resp_saisie_mission"
-msgstr "//  INPUT BY THE MANAGER OF ABSENCES FOR MISSIONS, TRAININGS, CONGRESSES, ETC ....<br>//---------------------------------------------------------------------------------------<br>// ( absences of this type do not take off holidays days ! )<br>// if at FALSE : no input by the manager of absences for mission, training, congress, etc ....(FALSE is the default value)<br>// if at TRUE : input by manager of absences for mission, training, congress, etc ...."
+msgstr "//  INPUT BY THE MANAGER OF LEAVES FOR MISSIONS, TRAININGS, CONGRESSES, ETC ....<br>//---------------------------------------------------------------------------------------<br>// ( leaves of this type do not take off holidays days ! )<br>// if at FALSE : no input by the manager of leaves for mission, training, congress, etc ....(FALSE is the default value)<br>// if at TRUE : input by manager of leaves for mission, training, congress, etc ...."
 
 msgid "config_comment_resp_vertical_menu"
 msgstr "//  CONFIG  OF THE MENU OF THE MANAGER<br>//---------------------------------------<br>// if at TRUE : in the manager window, the menu is vertical (on the left) (TRUE is the default value)<br>// if at FALSE : in the manager window, the menu is horizontal (on top)"
@@ -1094,16 +1094,16 @@ msgid "config_comment_affiche_bouton_config_pour_admin"
 msgstr "// ACCESS TO THE CONFIG OF THE APPLI FOR THE ADMINS<br>//-------------------------------------------------------<br>// if at FALSE : the access button to Libertempo configuration doesn't show on the administrator page (FALSE is the default value)<br>// if at TRUE : the access button to Libertempo configuration shows on the administrator page"
 
 msgid "config_comment_affiche_bouton_config_absence_pour_admin"
-msgstr "// ACCESS TO THE CONFIG OF THE TYPES OF ABSENCES OF THE APPLI FOR THE ADMINS<br>//---------------------------------------------------------------------<br>// if at FALSE : don't show button \"configuration of the types of absences\" on the administrator's page (FALSE is the default value)<br>// if at TRUE : show button \"configuration of the types of absences\" on the administrator's page"
+msgstr "// ACCESS TO THE CONFIG OF THE TYPES OF LEAVES OF THE APPLI FOR THE ADMINS<br>//---------------------------------------------------------------------<br>// if at FALSE : don't show button \"configuration of the types of leaves\" on the administrator's page (FALSE is the default value)<br>// if at TRUE : show button \"configuration of the types of leaves\" on the administrator's page"
 
 msgid "config_comment_mail_new_demande_alerte_resp"
-msgstr "// SENDING OF MAIL TO THE MANAGER FOR A NEW DEMAND :<br>//----------------------------------------------------------<br>// if at FALSE : the manager doesn't receive a mail during a new holidays demand by a user (FALSE is the default value)<br>// if at TRUE : the manager receives a warning mail at each new holidays demand from a user"
+msgstr "// SENDING OF MAIL TO THE MANAGER FOR A NEW REQUEST :<br>//----------------------------------------------------------<br>// if at FALSE : the manager doesn't receive a mail during a new holidays request by a user (FALSE is the default value)<br>// if at TRUE : the manager receives a warning mail at each new holidays request from a user"
 
 msgid "config_comment_mail_valid_conges_alerte_user"
-msgstr "// SENDING OF MAIL TO THE USER FOR A NEW HOLIDAYS TYPED IN OR VALID :<br>//----------------------------------------------------------------<br>// if at FALSE : the user doesn't receive a mail when the manager types in or accepts a new holiday for him (FALSE is the default value)<br>// if at TRUE : the user receives a warning mail eachtime the managers types in a new holiday or accepts a demand for him"
+msgstr "// SENDING OF MAIL TO THE USER FOR A NEW HOLIDAYS TYPED IN OR VALID :<br>//----------------------------------------------------------------<br>// if at FALSE : the user doesn't receive a mail when the manager types in or accepts a new holiday for him (FALSE is the default value)<br>// if at TRUE : the user receives a warning mail eachtime the managers types in a new holiday or accepts a request for him"
 
 msgid "config_comment_mail_refus_conges_alerte_user"
-msgstr "// SENDING OF MAIL TO THE USER FOR THE REFUSAL OF A HOLIDAYS DEMAND :<br>//----------------------------------------------------------------<br>// if at FALSE : the user doesn't receive a mail when the manager refuses one of his holidays demands (FALSE is the default value)<br>// if at TRUE : the user receives a warning mail eachtime the manager refuses one of his holidays demands."
+msgstr "// SENDING OF MAIL TO THE USER FOR THE REFUSAL OF A HOLIDAYS REQUEST :<br>//----------------------------------------------------------------<br>// if at FALSE : the user doesn't receive a mail when the manager refuses one of his holidays requests (FALSE is the default value)<br>// if at TRUE : the user receives a warning mail eachtime the manager refuses one of his holidays requests."
 
 msgid "config_comment_mail_annul_conges_alerte_user"
 msgstr "// SENDING OF MAIL TO THE USER FOR THE CANCELLATION BY THE MANAG FOR A HOLIDAYS ALREADY VALIDATED :<br>//---------------------------------------------------------------------------------<br>// if at FALSE : the user doesn't receive a mail when the manager cancels his holidays (FALSE is the default value)<br>// if at TRUE : the user receives a warning mail eachtime the manager cancels one of his holidays."
@@ -1136,7 +1136,7 @@ msgid "config_comment_texte_bas_edition_papier"
 msgstr "//  Text at the bottom of the PAPER REPORTS<br>//--------------------------------------<br>// one defines here the eventual text that will appear at the bottom page of the paper reports of the holidays of an user."
 
 msgid "config_comment_user_echange_rtt"
-msgstr "//  EXCHANGE PART TIME AUTHORIZED FOR THE USERS<br>//---------------------------------------------------------------------------------------<br>// one authorizes or not the user to ponctually reverse a working day and an absence day (of part time)<br>// if at FALSE : no exchange authorized for the user (FALSE is the default value)<br>// if at TRUE : exchange authorized for the user"
+msgstr "//  CHANGE PART TIME AUTHORIZED FOR THE USERS<br>//---------------------------------------------------------------------------------------<br>// one authorizes or not the user to ponctually reverse a working day and an leave day (of part time)<br>// if at FALSE : no change authorized for the user (FALSE is the default value)<br>// if at TRUE : change authorized for the user"
 
 msgid "config_comment_affiche_bouton_calcul_nb_jours_pris"
 msgstr "//  BUTTON OF CALCULATION OF THE NB OF DAYS TAKEN<br>//--------------------------------------------------------------------------------------<br>// if at FALSE : one doesn't display the button of calculation of the nb of days taken during input of a new abscence<br>// if at TRUE : displays the button of calculation of the nb of days taken during input of a new abscence (TRUE is the default value)<br>// WARNING : if at TRUE : the days off must be typed in (see administration module)"
@@ -1328,10 +1328,10 @@ msgid "calcul_nb_jours_commentaire"
 msgstr "warning: this period overlaps other holidays !"
 
 msgid "calcul_nb_jours_commentaire_impossible"
-msgstr "CALCULATION IMPOSSIBLE : this period overlaps a current holidays demand pending !"
+msgstr "CALCULATION IMPOSSIBLE : this period overlaps a current holidays request pending !"
 
 msgid "config_comment_export_ical_vcal"
-msgstr "//  EXPORT HOLIDAYS IN ICS OU VCS FORMAT<br>//----------------------------------------------------------------------<br>// if at FALSE : the users cannot export their holidays/absences in the ics or vcs formats.<br>// if at TRUE : the users can export their holidays/absences in the ics or vcs formats (to import in electronic agendas or in planning softwares). (TRUE is the default value)"
+msgstr "//  EXPORT HOLIDAYS IN ICS OU VCS FORMAT<br>//----------------------------------------------------------------------<br>// if at FALSE : the users cannot export their holidays/leaves in the ics or vcs formats.<br>// if at TRUE : the users can export their holidays/leaves in the ics or vcs formats (to import in electronic agendas or in planning softwares). (TRUE is the default value)"
 
 msgid "export_cal_titre"
 msgstr "Export in ical / vcal format"
@@ -1352,19 +1352,19 @@ msgid "export_cal_format"
 msgstr "choice of the format"
 
 msgid "mail_new_demande_comment"
-msgstr "alert message to the manager in case of new demand of holidays."
+msgstr "alert message to the manager in case of new holidays request."
 
 msgid "mail_valid_conges_comment"
-msgstr "alert message d'alerte to the user in case of validation of a holiday demand or of input of a new holiday by the manager"
+msgstr "alert message d'alerte to the user in case of validation of a holiday request or of input of a new holiday by the manager"
 
 msgid "mail_refus_conges_comment"
-msgstr "alert message d'alerte to the user in case of refusal by the manager of a holiday demand"
+msgstr "alert message d'alerte to the user in case of refusal by the manager of a holiday request"
 
 msgid "mail_annul_conges_comment"
 msgstr "alert message d'alerte to the user in case of cancellation by the manager of holidays"
 
 msgid "mail_prem_valid_conges_comment"
-msgstr "alert message d'alerte to the user in case of first authorization by the manager of a holiday demand (if we use the double authorization)."
+msgstr "alert message d'alerte to the user in case of first authorization by the manager of a holiday request (if we use the double authorization)."
 
 msgid "mail_remplace_url_accueil_comment"
 msgstr "__URL_ACCUEIL_CONGES__ will automatically be replaced by a link to your Libertempo application."
@@ -1400,13 +1400,13 @@ msgid "config_comment_affiche_bouton_config_mail_pour_admin"
 msgstr "// ACCESS TO THE CONFIG OF MAILS OF THE APPLI FOR THE ADMINS<br>//---------------------------------------------------------------------<br>// if at FALSE : the access button to the mail configuration sent by Libertempo does not show on the administrator page (FALSE is the default value)<br>// if at TRUE : the access button to the mail configuration sent by php_conges shows on the administrator page"
 
 msgid "config_comment_mail_prem_valid_conges_alerte_user"
-msgstr "// SENDING OF MAIL TO THE USER AND BIG MANAGER AFTER THE FIRST VALIDATION OF A DEMAND (case of a double demand authorization) :<br>//----------------------------------------------------------------<br>// if at FALSE : the user and the big manager don't receive any mail when the manager approves a demand (first authorization). (FALSE is the default value)<br>// if at TRUE : the user and the big manager receive an alert mail when the manager approves a demand (first authorization)."
+msgstr "// SENDING OF MAIL TO THE USER AND BIG MANAGER AFTER THE FIRST VALIDATION OF A REQUEST (case of a double authorization) :<br>//----------------------------------------------------------------<br>// if at FALSE : the user and the big manager don't receive any mail when the manager approves a request (first authorization). (FALSE is the default value)<br>// if at TRUE : the user and the big manager receive an alert mail when the manager approves a request (first authorization)."
 
 msgid "config_comment_affiche_date_traitement"
-msgstr "// DISPLAY OF PROCESSING DATES AND HOURS IN THE HOLIDAYS HISTORICS<br>//---------------------------------------------------------------------<br>// if at FALSE : the dates and hours of holidays demands or de demands approvals are not displayed in the tables (FALSE is the default value)<br>// if at TRUE : dates and hour of holidays demands or of approval demands are displayed in the tables and reports (warning, this increases considerably the width of the displayed page)."
+msgstr "// DISPLAY OF PROCESSING DATES AND HOURS IN THE HOLIDAYS HISTORY<br>//---------------------------------------------------------------------<br>// if at FALSE : the dates and hours of holidays requests or approvals requests are not displayed in the tables (FALSE is the default value)<br>// if at TRUE : dates and hour of holidays requests or of approval requests are displayed in the tables and reports (warning, this increases considerably the width of the displayed page)."
 
 msgid "config_comment_double_validation_conges"
-msgstr "//  DOUBLE APPROVAL OF THE HOLIDAYS DEMANDS<br>//----------------------------------------------------------------------<br>// if at FALSE : the holidays demand of a user is accepted or not by the manager (only one approval)(FALSE is the default value).<br>// if at TRUE : the holidays demand of an user must be approved by the manager, then accepted by the manager of the manager (double approval).<br>\\WARNING, this parameter is valid ONLY if in the case of a management by group of the users !)"
+msgstr "//  DOUBLE APPROVAL OF THE HOLIDAYS DEMANDS<br>//----------------------------------------------------------------------<br>// if at FALSE : the holidays request of a user is accepted or not by the manager (only one approval)(FALSE is the default value).<br>// if at TRUE : the holidays request of a user must be approved by the manager, then accepted by the manager of the manager (double approval).<br>\\WARNING, this parameter is valid ONLY if in the case of a management by group of the users !)"
 
 msgid "admin_groupes_double_valid"
 msgstr "double approval"
@@ -1418,16 +1418,16 @@ msgid "divers_grand_responsable_maj_1"
 msgstr "Big_Manager"
 
 msgid "resp_traite_demandes_titre_tableau_1"
-msgstr "Demands to be approved"
+msgstr "requests to be approved"
 
 msgid "resp_traite_demandes_titre_tableau_2"
-msgstr "Demands in second approval"
+msgstr "requests in second approval"
 
 msgid "resp_traite_user_etat_demandes_2_valid"
-msgstr "State of demands in second approval :"
+msgstr "State of requests in second approval :"
 
 msgid "resp_etat_users_titre_double_valid"
-msgstr "Users with double demand approvals"
+msgstr "Users with double approvals request"
 
 msgid "resp_etat_aucun_user"
 msgstr "No user for this manager !!!"
@@ -1463,7 +1463,7 @@ msgid "config_comment_affiche_soldes_calendrier"
 msgstr "//  DISPLAY OF THE USERS BALANCES IN THE CALENDAR : <br>//--------------------------------------------------------------------------------------------<br>// if at FALSE : the users holidays balance don't appear on the calendar holidays<br>// if at TRUE : the users holidays balance appear on the calendar holidays (TRUE is the default value)"
 
 msgid "mail_remplace_nb_jours"
-msgstr "__NB__JOURS__ will automatically be replaced by the number of days of the concerned absence."
+msgstr "__NB__JOURS__ will automatically be replaced by the number of days of the concerned leave."
 
 msgid "divers_traitement_ok"
 msgstr "accepted"
@@ -1496,7 +1496,7 @@ msgid "config_comment_grand_resp_ajout_conges"
 msgstr "//  ADDING OF HOLIDAYS BY THE BIG MANAGER<br>//----------------------------------------------------------------------<br>// ONLY works if the double approval is activated !<br>// if at FALSE : a manager can only add holidays to his direct users (of which he is 'manager').(FALSE is default value)<br>// if at TRUE : a manager can add holidays to users of which he is 'manager' AND 'big manager' !"
 
 msgid "config_comment_interdit_saisie_periode_date_passee"
-msgstr "//  FORBID HOLIDAYS INPUT FOR PAST DATES<br>//----------------------------------------------------------------------<br>//if at FALSE : it is possible to input a holiday demand for a past date.(FALSE is the default value)<br>// if at TRUE : it is forbidden (and impossible) to input a holiday demand at a past date. "
+msgstr "//  FORBID HOLIDAYS INPUT FOR PAST DATES<br>//----------------------------------------------------------------------<br>//if at FALSE : it is possible to input a holiday request for a past date.(FALSE is the default value)<br>// if at TRUE : it is forbidden (and impossible) to input a holiday request at a past date. "
 
 msgid "calcul_nb_jours_commentaire_bad_date"
 msgstr "warning: ending date de fin smaller than beginning date !"
@@ -1511,7 +1511,7 @@ msgid "contacter_admin"
 msgstr "Contact your administrator."
 
 msgid "config_comment_interdit_modif_demande"
-msgstr "//  FORBID THE HOLIDAY DEMAND MODIFICATION BY A USER<br>//----------------------------------------------------------------------<br>//if at FALSE : the user can modify an existing holiday demand.(FALSE is the default value)<br>// if at TRUE : it is forbidden (and impossible) for the user to modify an existing holiday demand. "
+msgstr "//  FORBID THE HOLIDAY REQUEST MODIFICATION BY A USER<br>//----------------------------------------------------------------------<br>//if at FALSE : the user can modify an existing holiday request.(FALSE is the default value)<br>// if at TRUE : it is forbidden (and impossible) for the user to modify an existing holiday request. "
 
 msgid "calendrier_afficher_groupe"
 msgstr "group to display"
@@ -1568,10 +1568,10 @@ msgid "config_comment_resp_ajoute_conges"
 msgstr "//  ADDING OF HOLIDAYS BY THE MANAGER<br>//--------------------------------------------------------------------------------------------<br>// if at FALSE : The manager cannot add holidays to his users.<br>// if at TRUE : The manager can add holidays to his users. (FALSE is the default value)"
 
 msgid "mail_remplace_date_debut"
-msgstr "__DATE_DEBUT__ will automatically be replaced the beginning date of the concerned absence."
+msgstr "__DATE_DEBUT__ will automatically be replaced the beginning date of the concerned leave."
 
 msgid "mail_remplace_date_fin"
-msgstr "__DATE_FIN__   will automatically be replaced the ending date of the concerned absence."
+msgstr "__DATE_FIN__   will automatically be replaced the ending date of the concerned leave."
 
 msgid "db_configuration"
 msgstr "Database settings"
@@ -1634,7 +1634,7 @@ msgid "config_comment_solde_toujours_positif"
 msgstr "// balances ALWAYS POSITIVE : <br>//--------------------------------------------------------------------------------------------<br>// if FALSE : the balance of leave can be negative . (FALSE is the default value)<br>// if TRUE : the balance of leave can not be negative ( a user can't ask a leave if his balance becomes negative)."
 
 msgid "verif_solde_erreur_part_1"
-msgstr "Please note the number of days of absence requested"
+msgstr "Please note the number of days of leave requested"
 
 msgid "verif_solde_erreur_part_2"
 msgstr "exceeds your balance ( sum of the balance"
@@ -1721,4 +1721,4 @@ msgid "config_comment_print_disable_users"
 msgstr "// DISPLAY DISABLED USERS : <br>//--------------------------------------------------------------------------------------------<br>// if FALSE : disabled users not displayed in the list of supervisor users. (FALSE is the default) <br> // if TRUE : display the list of enabled and disabled users."
 
 msgid "config_comment_affiche_jours_current_month_calendrier"
-msgstr "// DISPLAY NB DAYS TAKEN DURING THE MONTH ( FOR EACH TYPE OF ABSENCE ): <br>//------------------------------------------------------------<br>// if FALSE . no display, in the calendar for each user, for each type of leave , beside the balance, nb of days taken during the month displayed (FALSE is the default)<br>// if TRUE : display in the calendar for each user, for each type of leave , beside the balance, nb of days taken during the month displayed."
+msgstr "// DISPLAY NB DAYS TAKEN DURING THE MONTH ( FOR EACH TYPE OF LEAVE ): <br>//------------------------------------------------------------<br>// if FALSE . no display, in the calendar for each user, for each type of leave , beside the balance, nb of days taken during the month displayed (FALSE is the default)<br>// if TRUE : display in the calendar for each user, for each type of leave , beside the balance, nb of days taken during the month displayed."
