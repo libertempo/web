@@ -94,10 +94,17 @@ function new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fi
 
 	if( $valid ) {
 
-	if( in_array(get_type_abs($new_type, $DEBUG) , array('conges','conges_exceptionnels') ) )
-		$new_etat = 'demande' ;
-	else
-		$new_etat = 'ok' ;
+	if( in_array(get_type_abs($new_type, $DEBUG) , array('conges','conges_exceptionnels') ) ) {
+			$resp_du_user = get_tab_resp_du_user($_SESSION['userlogin']);
+			if (array_key_exists('conges', $resp_du_user)) {
+				$new_etat = 'ok' ;
+				soustrait_solde_et_reliquat_user($_SESSION['userlogin'], "", $new_nb_jours, $new_type, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $DEBUG);
+			} else {
+				$new_etat = 'demande' ;
+			}
+		} else {
+			$new_etat = 'ok' ;
+		}
 
 	$new_comment = addslashes($new_comment);
 
