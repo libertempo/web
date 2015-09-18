@@ -128,15 +128,17 @@ class authLDAP
 
 
           $info = ldap_get_entries($ds,$sr);
+          if( isset($info['count']) && $info['count']>0)
+            $dn=$info[0]["dn"];
+          else 
+            $dn=false;
 
-          $dn=$info[0]["dn"];
 
           if ($this->DEBUG) print "<p>".$this->user_login." = $dn</p>";
 
 
           if ( $dn && !empty($this->user_password))
           {
-           // if (@ldap_bind($ds,$dn,utf8_decode($this->user_password)))
             if (@ldap_bind($ds,$dn,$this->user_password))
 	    {
 
