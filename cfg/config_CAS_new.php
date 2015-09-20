@@ -32,4 +32,4 @@ defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 $config_CAS_host = "localhost";		//adresse http
 $config_CAS_portNumber = 443; 	//entier
 $config_CAS_URI = "";		//chemin relatif (peut être vide)
-
+$config_CAS_CACERT = ""; //indispensable en production

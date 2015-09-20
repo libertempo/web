@@ -356,6 +356,7 @@ function authentification_passwd_conges_CAS()
     $config_CAS_host       =$_SESSION['config']['CAS_host'];
     $config_CAS_portNumber =$_SESSION['config']['CAS_portNumber'];
     $config_CAS_URI        =$_SESSION['config']['CAS_URI'];
+    $config_CAS_CACERT     =$_SESSION['config']['CAS_CACERT'];
 
     global $connexionCAS;
     global $logoutCas;
@@ -375,9 +376,14 @@ function authentification_passwd_conges_CAS()
         phpCAS::logout();
     }
 
+
+    // Vérification SSL
+    if(isset($config_CAS_CACERT))
+        phpCAS::setCasServerCACert ($config_CAS_CACERT);
+    else
+        phpCAS::setNoCasServerValidation();
+
     // authentificationCAS (redirection vers la page d'authentification de CAS)
-    // setCasServerCACert a besoin du certificat au format pem. Il faut ajouter l'option d'import du certificat dans les préférences... En attendant setNoCasServer...
-    phpCAS::setNoCasServerValidation();
     phpCAS::forceAuthentication();
 
     $usernameCAS = phpCAS::getUser();
