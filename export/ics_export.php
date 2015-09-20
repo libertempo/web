@@ -1,7 +1,7 @@
 <?php
 /*************************************************************************************************
 Libertempo : Gestion Interactive des Congés
-Copyright (C) 2005 (wouldsmina)
+Copyright (C) 2015 (wouldsmina)
 
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
 termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
@@ -31,6 +31,12 @@ defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 include INCLUDE_PATH .'fonction.php';
 include ROOT_PATH .'fonctions_conges.php'; // for init_config_tab()
 $_SESSION['config']=init_config_tab();      // on initialise le tableau des variables de config
+
+if($_SESSION['config']['export_ical']==FALSE)
+	{
+		header('HTTP/1.0 403 Forbidden');
+		exit('403 Forbidden');
+	}
 
 //on récupère le hash du user
 $usrh = $_GET['usr'];

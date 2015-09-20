@@ -130,7 +130,7 @@
 							<ul class="dropdown-menu dropdown-select" role="menu" aria-labelledby="dropdown-mode">
 					        	<?php if (is_admin($_SESSION['userlogin'])): ?>
 					        		<li>
-					        			<a href="<?php echo ROOT_PATH . 'admin/admin_index.php?session=' . $session; ?>" <?php print ($user_mode == 'admin' || $user_mode == 'config') ? 'active' : '' ;?>>Administration</a>
+					        			<a href="<?php echo ROOT_PATH . 'admin/admin_index.php?session=' . $session; ?>" <?php print ($tmp == 'admin' || $tmp == 'config') ? 'active' : '' ;?>>Administration</a>
 					        		</li>
 					      		<?php endif; ?>
 					      		<?php if (is_hr($_SESSION['userlogin'])): ?>

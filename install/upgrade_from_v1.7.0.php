@@ -37,9 +37,7 @@ include 'fonctions_install.php' ;
 
 $PHP_SELF=$_SERVER['PHP_SELF'];
 
-$DEBUG=FALSE;
 //$DEBUG=TRUE;
-
 
 $version = (isset($_GET['version']) ? $_GET['version'] : (isset($_POST['version']) ? $_POST['version'] : "")) ;
 $lang = (isset($_GET['lang']) ? $_GET['lang'] : (isset($_POST['lang']) ? $_POST['lang'] : "")) ;
