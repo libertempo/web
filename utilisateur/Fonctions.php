@@ -91,8 +91,6 @@ class Fonctions
 
         if( $valid ) {
 
-
-
 	if( in_array(\utilisateur\Fonctions::get_type_abs($new_type, $DEBUG) , array('conges','conges_exceptionnels') ) ) {
 			$resp_du_user = get_tab_resp_du_user($_SESSION['userlogin']);
 			if (array_key_exists('conges', $resp_du_user)) {
@@ -104,15 +102,6 @@ class Fonctions
 		} else {
 			$new_etat = 'ok' ;
 		}
-
-
-
-
-
-            if( in_array(\utilisateur\Fonctions::get_type_abs($new_type, $DEBUG) , array('conges','conges_exceptionnels') ) )
-                $new_etat = 'demande' ;
-            else
-                $new_etat = 'ok' ;
 
             $new_comment = addslashes($new_comment);
 
