@@ -793,7 +793,7 @@ class Fonctions
         $jour_today_name			= date('D');
 
         $first_jour_mois_timestamp	= mktime(0,0,0,$mois,1,$year);
-        $last_jour_mois_timestamp	= mktime(0,0,0,$mois +1 , 1 ,$year);
+        $last_jour_mois_timestamp	= mktime(0,0,0,$mois + 1, 0 ,$year);
 
         $mois_name					= date_fr('F', $first_jour_mois_timestamp);
 
