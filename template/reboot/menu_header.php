@@ -130,21 +130,21 @@
 							<ul class="dropdown-menu dropdown-select" role="menu" aria-labelledby="dropdown-mode">
 					        	<?php if (is_admin($_SESSION['userlogin'])): ?>
 					        		<li>
-					        			<a href="<?php echo ROOT_PATH . 'admin/admin_index.php?session=' . $session; ?>" <?php print ($user_mode == 'admin' || $user_mode == 'config') ? 'active' : '' ;?>>Administration</a>
+					        			<a href="<?php echo ROOT_PATH . 'admin/admin_index.php?session=' . $session; ?>" <?php print ($tmp == 'admin' || $tmp == 'config') ? 'active' : '' ;?>>Administration</a>
 					        		</li>
 					      		<?php endif; ?>
 					      		<?php if (is_hr($_SESSION['userlogin'])): ?>
 					        		<li>
-					        			<a href="<?php echo ROOT_PATH . 'hr/hr_index.php?session=' . $session; ?>" <?php print ($user_mode == 'hr') ? 'active' : '' ;?>>RH</a>
+					        			<a href="<?php echo ROOT_PATH . 'hr/hr_index.php?session=' . $session; ?>" <?php print ($tmp == 'hr') ? 'active' : '' ;?>>RH</a>
 					        		</li>
 					      		<?php endif; ?>
 					      		<?php if (is_resp($_SESSION['userlogin'])): ?>
 					        		<li>
-					        			<a href="<?php echo ROOT_PATH  . 'responsable/resp_index.php?session=' . $session; ?>" <?php print ($user_mode == 'utilisateur') ? 'active' : '' ;?>><?php echo _('button_responsable_mode');?></a>
+					        			<a href="<?php echo ROOT_PATH  . 'responsable/resp_index.php?session=' . $session; ?>" <?php print ($tmp == 'utilisateur') ? 'active' : '' ;?>><?php echo _('button_responsable_mode');?></a>
 					        		</li>
 					      		<?php endif; ?>
 								<li>
-									<a href="<?php echo ROOT_PATH . 'utilisateur/user_index.php?session=' . $session; ?>" <?php print ($user_mode == 'utilisateur') ? 'active' : '' ;?>><?php echo _('user');?></a>
+									<a href="<?php echo ROOT_PATH . 'utilisateur/user_index.php?session=' . $session; ?>" <?php print ($tmp == 'utilisateur') ? 'active' : '' ;?>><?php echo _('user');?></a>
 								</li>
 					        </ul>
 				        </li>
@@ -154,7 +154,7 @@
 				// toolbar contextuelle au mode
 				$mod_toolbar = NULL;
 				
-				switch($user_mode) {
+				switch($tmp) {
 					case 'admin':
 						$mod_toolbar[] = "<a href=\"javascript:void(0);\" onClick=\"javascript:OpenPopUp('". ROOT_PATH ."/admin/admin_db_sauve.php?session=$session','400,300');\"><i class=\"fa fa-save\"></i><span>" . _('admin_button_save_db_2') . "</span></a>";
 						// $mod_toolbar[] = "<a href=\"javascript:void(0);\" onClick=\"javascript:OpenPopUp('". ROOT_PATH ."/admin/admin_jours_fermeture.php?session=$session','1080,690');\"><i class=\"fa fa-calendar\"></i><span>" . _('admin_button_jours_fermeture_2') . "</span></a>";
