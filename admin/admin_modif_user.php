@@ -352,7 +352,7 @@ function commit_update($u_login_to_update, &$tab_new_user, &$tab_new_jours_an, &
 	}
 
 
-	echo "$u_login_to_update---".$tab_new_user['nom']."---".$tab_new_user['prenom']."---".$tab_new_user['quotite']."---".$tab_new_user['is_resp']."---".$tab_new_user['resp_login']."---".$tab_new_user['is_admin']."---".$tab_new_user['is_hr']."---".$tab_new_user['is_active']."---".$tab_new_user['see_all']."---".$tab_new_user['email']."---".$tab_new_user['login']."<br>\n";
+	echo htmlentities($u_login_to_update)."---".htmlentities($tab_new_user['nom'])."---".htmlentities($tab_new_user['prenom'])."---".htmlentities($tab_new_user['quotite'])."---".htmlentities($tab_new_user['is_resp'])."---".htmlentities($tab_new_user['resp_login'])."---".htmlentities($tab_new_user['is_admin'])."---".htmlentities($tab_new_user['is_hr'])."---".htmlentities($tab_new_user['is_active'])."---".htmlentities($tab_new_user['see_all'])."---".htmlentities($tab_new_user['email'])."---".htmlentities($tab_new_user['login'])."<br>\n";
 
 
 	$valid_1=TRUE;

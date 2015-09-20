@@ -2081,6 +2081,7 @@ function init_config_tab()
 			if(isset($config_CAS_host))	$tab['CAS_host']	= $config_CAS_host ;
 			if(isset($config_CAS_portNumber)) $tab['CAS_portNumber'] = $config_CAS_portNumber ;
 			if(isset($config_CAS_URI))	$tab['CAS_URI']		= $config_CAS_URI ;
+			if(isset($config_CAS_CACERT))	$tab['CAS_CACERT']		= $config_CAS_CACERT ;
 		}
 
 		/******************************************/

@@ -91,10 +91,17 @@ class Fonctions
 
         if( $valid ) {
 
-            if( in_array(\utilisateur\Fonctions::get_type_abs($new_type, $DEBUG) , array('conges','conges_exceptionnels') ) )
-                $new_etat = 'demande' ;
-            else
-                $new_etat = 'ok' ;
+	if( in_array(\utilisateur\Fonctions::get_type_abs($new_type, $DEBUG) , array('conges','conges_exceptionnels') ) ) {
+			$resp_du_user = get_tab_resp_du_user($_SESSION['userlogin']);
+			if (array_key_exists('conges', $resp_du_user)) {
+				$new_etat = 'ok' ;
+				soustrait_solde_et_reliquat_user($_SESSION['userlogin'], "", $new_nb_jours, $new_type, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $DEBUG);
+			} else {
+				$new_etat = 'demande' ;
+			}
+		} else {
+			$new_etat = 'ok' ;
+		}
 
             $new_comment = addslashes($new_comment);
 
@@ -768,7 +775,7 @@ class Fonctions
             $j_timestamp=mktime (0,0,0,$mois, $i +1 ,$year);
             $td_second_class = get_td_class_of_the_day_in_the_week($j_timestamp);
 
-            if ($i <= 0 || $i > $nb_jours_mois || $td_second_class == 'weekend') {
+            if ($i < 0 || $i > $nb_jours_mois || $td_second_class == 'weekend') {
                 echo '<td class="'.$td_second_class.'">-</td>';
             }
             else {	
@@ -793,7 +800,7 @@ class Fonctions
         $jour_today_name			= date('D');
 
         $first_jour_mois_timestamp	= mktime(0,0,0,$mois,1,$year);
-        $last_jour_mois_timestamp	= mktime(0,0,0,$mois +1 , 1 ,$year);
+        $last_jour_mois_timestamp	= mktime(0,0,0,$mois + 1, 0 ,$year);
 
         $mois_name					= date_fr('F', $first_jour_mois_timestamp);
 
@@ -835,7 +842,7 @@ class Fonctions
             $j_timestamp=mktime (0,0,0,$mois, $i +1 ,$year);
             $td_second_class = get_td_class_of_the_day_in_the_week($j_timestamp);
 
-            if ($i <= 0 || $i > $nb_jours_mois || $td_second_class == 'weekend') {
+            if ($i < 0 || $i > $nb_jours_mois || $td_second_class == 'weekend') {
                 echo '<td class="'.$td_second_class.'">-</td>';
             }
             else {	

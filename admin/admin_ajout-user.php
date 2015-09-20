@@ -284,14 +284,14 @@ function verif_new_param(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, $D
 			|| strcmp($tab_new_user['password1'], $tab_new_user['password2'])!=0 || strlen($tab_new_user['login'])==0
 			|| strlen($tab_new_user['quotite'])==0
 			|| $tab_new_user['quotite']>100)
-			|| !preg_match('/^[a-z.\d_-]{2,20}$/i', $tab_new_user['login'])
+			|| !preg_match('/^[a-z.\d_-]{2,30}$/i', $tab_new_user['login'])
 			|| !preg_match('/^[a-z\d\sàáâãäåçèéêëìíîïðòóôõöùúûüýÿ-]{2,20}$/i', $tab_new_user['nom'])
 			|| !preg_match('/^[a-z\d\sàáâãäåçèéêëìíîïðòóôõöùúûüýÿ-]{2,20}$/i', $tab_new_user['prenom'])
 		) || ($_SESSION['config']['export_users_from_ldap']  && (strlen($tab_new_user['login'])==0 || strlen($tab_new_user['quotite'])==0 || $tab_new_user['quotite']>100)))
 	{
 		echo "<h3><font color=\"red\"> ". _('admin_verif_param_invalides') ." </font></h3>\n"  ;
 		// affichage des param :
-		echo $tab_new_user['login']."---".$tab_new_user['nom']."---".$tab_new_user['prenom']."---".$tab_new_user['quotite']."---".$tab_new_user['is_resp']."---".$tab_new_user['resp_login']."<br>\n";
+		echo htmlentities($tab_new_user['login'])."---".htmlentities($tab_new_user['nom'])."---".htmlentities($tab_new_user['prenom'])."---".htmlentities($tab_new_user['quotite'])."---".htmlentities($tab_new_user['is_resp'])."---".htmlentities($tab_new_user['resp_login'])."<br>\n";
 		foreach($tab_new_jours_an as $id_cong => $jours_an)
 		{
 			echo $tab_new_jours_an[$id_cong]."---".$tab_new_solde[$id_cong]."<br>\n";

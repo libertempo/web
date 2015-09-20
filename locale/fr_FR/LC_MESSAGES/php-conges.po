@@ -1027,7 +1027,7 @@ msgstr " 12 Fonctionnement de l'Établissement  "
 msgid "13_Divers"
 msgstr "13 Divers"
 
-msgid "14_Présentation"
+msgid "14_Presentation"
 msgstr "14 Présentation"
 
 msgid "15_Modules Externes"
