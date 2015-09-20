@@ -32,6 +32,12 @@ include INCLUDE_PATH .'fonction.php';
 include ROOT_PATH .'fonctions_conges.php'; // for init_config_tab()
 $_SESSION['config']=init_config_tab();      // on initialise le tableau des variables de config
 
+if($_SESSION['config']['export_ical']==FALSE)
+	{
+		header('HTTP/1.0 403 Forbidden');
+		exit('403 Forbidden');
+	}
+
 //on récupère le hash du user
 $usrh = $_GET['usr'];
 
