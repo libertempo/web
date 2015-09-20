@@ -170,27 +170,27 @@ header_menu('admin',$_SESSION['config']['titre_admin_index'], $add_css);
 	echo "         <td class=\"cal-legende\"> </td>\n" ;
 	echo "      </tr>\n" ;
 	echo "      <tr align=\"center\">\n" ;
-	echo "         <td bgcolor=\"#fbfbfb\" class=\"cal-legende\"> - </td>\n" ;
+	echo "         <td bgcolor=\"#DCDCDC\" class=\"cal-legende\"> - </td>\n" ;
 	echo "         <td class=\"cal-legende\"> ". _('calendrier_legende_we') ."</td>\n" ;
 	echo "      </tr>\n" ;
 	echo "      <tr align=\"center\">\n" ;
-	echo "         <td bgcolor=\"#b8e4ef\" class=\"cal-legende\">abs</td>\n" ;
+	echo "         <td bgcolor=\"#8addf2\" class=\"cal-legende\">abs</td>\n" ;
 	echo "         <td class=\"cal-legende\"> ". _('calendrier_legende_conges') ."</td>\n" ;
 	echo "      </tr>\n" ;
 	echo "      <tr align=\"center\">\n" ;
-	echo "         <td bgcolor=\"#ffe0ff\" class=\"cal-legende\">abs</td>\n" ;
+	echo "         <td bgcolor=\"#ffc1ff\" class=\"cal-legende\">abs</td>\n" ;
 	echo "         <td class=\"cal-legende\"> ". _('calendrier_legende_demande') ."</td>\n" ;
 	echo "      </tr>\n" ;
 	echo "      <tr align=\"center\">\n" ;
-	echo "         <td bgcolor=\"#ffffd6\" class=\"cal-legende\"> - </td>\n" ;
+	echo "         <td bgcolor=\"#ffffad\" class=\"cal-legende\"> - </td>\n" ;
 	echo "         <td class=\"cal-legende\"> ". _('calendrier_legende_part_time') ."</td>\n" ;
 	echo "      </tr>\n" ;
 	echo "      <tr align=\"center\">\n" ;
-	echo "         <td bgcolor=\"#f4f4f4\" class=\"cal-legende\">abs</td>\n" ;
+	echo "         <td bgcolor=\"#C3C3C3\" class=\"cal-legende\">abs</td>\n" ;
 	echo "         <td class=\"cal-legende\"> ". _('calendrier_legende_abs') ."</td>\n" ;
 	echo "      </tr>\n" ;
 	echo "      <tr align=\"center\">\n" ;
-	echo "         <td bgcolor=\"#E6DAFF\" class=\"cal-legende\">abs</td>\n" ;
+	echo "         <td bgcolor=\"#CEB6FF\" class=\"cal-legende\">abs</td>\n" ;
 	echo "         <td class=\"cal-legende\"> ". _('divers_fermeture') ."</td>\n" ;
 	echo "      </tr>\n" ;
 	echo "      </table>\n" ;
@@ -323,7 +323,6 @@ function affichage_calendrier($year, $mois, $first_jour, $timestamp_today, $prin
 		// affichage nom prenom quotité
 		$nb_colonnes=3;
 		echo "	<th rowspan=\"2\">Utilisateur</th>\n\n";
-		// echo "	<td class=\"cal-user\" rowspan=\"2\">". _('divers_prenom_maj') ."</td>\n\n";
 		echo "	<th rowspan=\"2\">Quotité</th>";
 
 		// affichage des semaines
@@ -872,7 +871,6 @@ function affiche_cellule_jour_user($sql_login, $j_timestamp, $year_select, $mois
 			}
 			else
 			{
-				//echo "<td class=\"$class\"  onmousedown=\"javascript:afficher('$sql_login-$j_timestamp');\" onmouseup=\"javascript:cacher('$sql_login-$j_timestamp');\">";
 				echo "<td class=\"$class\">";
 				echo "	$text_am $text_pm ";
 
