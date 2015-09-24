@@ -66,7 +66,7 @@ function affiche_all_demandes_en_cours($tab_type_conges, $DEBUG=FALSE)
 	/*********************************/
 
 	// Récup dans un tableau de tableau des informations de tous les users
-	$tab_all_users=recup_infos_all_users($_SESSION['userlogin'], $DEBUG);
+	$tab_all_users=recup_infos_all_users($DEBUG);
 	if( $DEBUG ) { echo "tab_all_users :<br>\n"; print_r($tab_all_users); echo "<br><br>\n";}
 
 	// si tableau des users du resp n'est pas vide

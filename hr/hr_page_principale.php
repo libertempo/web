@@ -83,8 +83,8 @@ defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 		{
 			//tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
 			$tab_conges=$tab_current_user['conges'];
-			$text_affich_user="<a href=\"hr_index.php?session=$session&onglet=traite_user&user_login=$current_login\">". _('resp_etat_users_afficher') ."</a>" ;
-			$text_edit_papier="<a href=\"../edition/edit_user.php?session=$session&user_login=$current_login\" target=\"_blank\">". _('resp_etat_users_imprim') ."</a>";
+			$text_affich_user="<a href=\"hr_index.php?session=$session&onglet=traite_user&user_login=$current_login\" title=\""._('resp_etat_users_afficher')."\"><i class=\"fa fa-eye\"></i></a>" ;
+			$text_edit_papier="<a href=\"../edition/edit_user.php?session=$session&user_login=$current_login\" target=\"_blank\" title=\""._('resp_etat_users_imprim')."\"><i class=\"fa fa-file-text\"></i></a>";
 			if($tab_current_user['is_active'] == "Y" || $_SESSION['config']['print_disable_users'] == 'TRUE')
 				{ echo '<tr>'; }
 			else
