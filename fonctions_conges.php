@@ -1352,20 +1352,15 @@ function get_list_all_users_du_resp($resp_login,  $DEBUG=FALSE)
 
 	$list_users="";
 	$sql1="SELECT DISTINCT(u_login) FROM conges_users WHERE u_login!='conges' AND u_login!='admin' AND u_login!='$resp_login'";
-
-	// si resp virtuel, on renvoie tout le monde, sinon, seulement ceux dont on est responsable
-	if($_SESSION['config']['responsable_virtuel']==FALSE)
+	$sql1 = $sql1." AND  ( u_resp_login='$resp_login' " ;
+	if($_SESSION['config']['gestion_groupes'] )
 	{
-		$sql1 = $sql1." AND  ( u_resp_login='$resp_login' " ;
-		if($_SESSION['config']['gestion_groupes'] )
-		{
-			$list_users_group=get_list_users_des_groupes_du_resp_sauf_resp($resp_login, $DEBUG);
-			if($list_users_group!="")
-				$sql1=$sql1." OR u_login IN ($list_users_group) ";
-		}
-
-		$sql1=$sql1." ) " ;
+		$list_users_group=get_list_users_des_groupes_du_resp_sauf_resp($resp_login, $DEBUG);
+		if($list_users_group!="")
+			$sql1=$sql1." OR u_login IN ($list_users_group) ";
 	}
+
+	$sql1=$sql1." ) " ;
 	$sql1 = $sql1." ORDER BY u_nom " ;
 	$ReqLog1 = SQL::query($sql1);
 
@@ -1385,20 +1380,17 @@ function get_list_all_users_du_resp($resp_login,  $DEBUG=FALSE)
 	{
 		// recup liste des resp absents, dont $resp_login est responsable
 		$sql_2='SELECT DISTINCT(u_login) FROM conges_users WHERE u_is_resp=\'Y\' AND u_login!=\''.SQL::quote($resp_login).'\' AND u_login!=\'conges\' AND u_login!=\'admin\'';
-		// si resp virtuel, on renvoie tout le monde, sinon, seulement ceux dont on est responsable
-		if($_SESSION['config']['responsable_virtuel']==FALSE)
-		{
-			$sql_2 = $sql_2." AND  ( u_resp_login='$resp_login' " ;
-			if($_SESSION['config']['gestion_groupes'] )
-			{
-				$list_users_group=get_list_users_des_groupes_du_resp_sauf_resp($resp_login, $DEBUG);
-				if($list_users_group!="")
-					$sql_2=$sql_2." OR u_login IN ($list_users_group) ";
-			}
-			$sql_2=$sql_2." ) " ;
-		}
-		$sql_2 = $sql_2." ORDER BY u_nom " ;
+		$sql_2 = $sql_2." AND  ( u_resp_login='$resp_login' " ;
 
+		if($_SESSION['config']['gestion_groupes'] )
+		{
+			$list_users_group=get_list_users_des_groupes_du_resp_sauf_resp($resp_login, $DEBUG);
+			if($list_users_group!="")
+				$sql_2=$sql_2." OR u_login IN ($list_users_group) ";
+		}
+		
+		$sql_2=$sql_2." ) " ;
+		$sql_2 = $sql_2." ORDER BY u_nom " ;
 		$ReqLog_2 = SQL::query($sql_2);
 
 		// on va verifier si les resp récupérés sont absents (si oui, c'est $resp_login qui traite leurs users
@@ -1657,88 +1649,81 @@ function get_list_all_groupes($DEBUG=FALSE)
 function get_tab_resp_du_user($user_login,  $DEBUG=FALSE)
 {
 	$tab_resp=array();
-	if($_SESSION['config']['responsable_virtuel'])
-	{
-		$tab_resp["conges"]="present";
-	}
-	else
-	{
-		if( $DEBUG ) {echo ">> RECHERCHE des RESPONSABLES de : $user_login<br>\n";}
-		// recup du resp indiqué dans la table users (sauf s'il est resp de lui meme)
-		$req = 'SELECT u_resp_login FROM conges_users WHERE u_login=\''.SQL::quote($user_login).'\';';
-		$res = SQL::query($req);
-		$rec = $res->fetch_array();
-		if ($rec['u_resp_login'] !== NULL)
-			$tab_resp[$rec['u_resp_login']]="present";
+	if( $DEBUG ) {echo ">> RECHERCHE des RESPONSABLES de : $user_login<br>\n";}
+	// recup du resp indiqué dans la table users (sauf s'il est resp de lui meme)
+	$req = 'SELECT u_resp_login FROM conges_users WHERE u_login=\''.SQL::quote($user_login).'\';';
+	$res = SQL::query($req);
+	$rec = $res->fetch_array();
+	if ($rec['u_resp_login'] !== NULL)
+		$tab_resp[$rec['u_resp_login']]="present";
 
-		// recup des resp des groupes du user
-		if($_SESSION['config']['gestion_groupes'])
+	// recup des resp des groupes du user
+	if($_SESSION['config']['gestion_groupes'])
+	{
+		$list_groups=get_list_groupes_du_user($user_login,  $DEBUG);
+		if($list_groups!="")
 		{
-			$list_groups=get_list_groupes_du_user($user_login,  $DEBUG);
-			if($list_groups!="")
+			$tab_gid=explode(",", $list_groups);
+			foreach($tab_gid as $gid)
 			{
-				$tab_gid=explode(",", $list_groups);
-				foreach($tab_gid as $gid)
-				{
-					$gid=trim($gid);
-					$sql2='SELECT gr_login FROM conges_groupe_resp WHERE gr_gid='.SQL::quote($gid).' AND gr_login!=\''.SQL::quote($user_login).'\'';
-					$ReqLog1 = SQL::query($sql2);
+				$gid=trim($gid);
+				$sql2='SELECT gr_login FROM conges_groupe_resp WHERE gr_gid='.SQL::quote($gid).' AND gr_login!=\''.SQL::quote($user_login).'\'';
+				$ReqLog1 = SQL::query($sql2);
 
-					while ($resultat1 = $ReqLog1->fetch_array())
-					{
-						//attention à ne pas mettre 2 fois le meme resp dans le tableau
-						if (in_array($resultat1["gr_login"], $tab_resp)==FALSE)
-							$tab_resp[$resultat1["gr_login"]]="present";
-					}
+				while ($resultat1 = $ReqLog1->fetch_array())
+				{
+					//attention à ne pas mettre 2 fois le meme resp dans le tableau
+					if (in_array($resultat1["gr_login"], $tab_resp)==FALSE)
+						$tab_resp[$resultat1["gr_login"]]="present";
 				}
 			}
 		}
-		if( $DEBUG ) {echo "tab_resp intermediaire =\n"; print_r($tab_resp); echo "<br>\n";}
-
-		/************************************/
-		// gestion des absence des responsables :
-		// on verifie que les resp sont présents, si tous absent, on cherhe les resp des resp, et ainsi de suite ....
-		if($_SESSION['config']['gestion_cas_absence_responsable'])
-		{
-			if( $DEBUG ) {echo "gestion des absence des responsables<br>\n"; }
-
-			// on va verifier si les resp récupérés sont absents
-			$nb_present=count($tab_resp);
-			foreach ($tab_resp as $current_resp => $presence )
-			{
-				// verif dans la base si le current_resp est absent :
-				$req = 'SELECT p_num
-										 FROM conges_periode
-										 WHERE p_login =\''.SQL::quote($current_resp).'\'
-										 AND p_etat = \'ok\'
-										 AND TO_DAYS(conges_periode.p_date_deb) <= TO_DAYS(NOW())
-										 AND TO_DAYS(conges_periode.p_date_fin) >= TO_DAYS(NOW())';
-				$ReqLog_3 = SQL::query($req);
-				if($ReqLog_3->num_rows!=0)
-				{
-					$nb_present=$nb_present-1;
-					$tab_resp[$current_resp]="absent";
-				}
-			}
-
-			//si aucun resp present on recupere les resp du resp
-			if($nb_present==0)
-			{
-				$new_tab_resp=array();
-				if( $DEBUG ) { echo "zero resp présent<br>\n"; }
-				foreach ($tab_resp as $current_resp => $presence)
-				{
-					// attention ,on evite le cas ou le user est son propre resp (sinon on boucle infiniment)
-					if($current_resp != $user_login)
-						$new_tab_resp = array_merge  ( $new_tab_resp , get_tab_resp_du_user($current_resp,  $DEBUG));
-				}
-				$tab_resp = array_merge  ( $tab_resp, $new_tab_resp);
-			}
-
-		}
-		// FIN gestion des absence des responsables :
-		/************************************/
 	}
+
+	if( $DEBUG ) {echo "tab_resp intermediaire =\n"; print_r($tab_resp); echo "<br>\n";}
+
+	/************************************/
+	// gestion des absence des responsables :
+	// on verifie que les resp sont présents, si tous absent, on cherhe les resp des resp, et ainsi de suite ....
+	if($_SESSION['config']['gestion_cas_absence_responsable'])
+	{
+		if( $DEBUG ) {echo "gestion des absence des responsables<br>\n"; }
+
+		// on va verifier si les resp récupérés sont absents
+		$nb_present=count($tab_resp);
+		foreach ($tab_resp as $current_resp => $presence )
+		{
+			// verif dans la base si le current_resp est absent :
+			$req = 'SELECT p_num
+					 FROM conges_periode
+					 WHERE p_login =\''.SQL::quote($current_resp).'\'
+					 AND p_etat = \'ok\'
+					 AND TO_DAYS(conges_periode.p_date_deb) <= TO_DAYS(NOW())
+					 AND TO_DAYS(conges_periode.p_date_fin) >= TO_DAYS(NOW())';
+			$ReqLog_3 = SQL::query($req);
+			if($ReqLog_3->num_rows!=0)
+			{
+				$nb_present=$nb_present-1;
+				$tab_resp[$current_resp]="absent";
+			}
+		}
+
+		//si aucun resp present on recupere les resp du resp
+		if($nb_present==0)
+		{
+			$new_tab_resp=array();
+			if( $DEBUG ) { echo "zero resp présent<br>\n"; }
+			foreach ($tab_resp as $current_resp => $presence)
+			{
+				// attention ,on evite le cas ou le user est son propre resp (sinon on boucle infiniment)
+				if($current_resp != $user_login)
+					$new_tab_resp = array_merge  ( $new_tab_resp , get_tab_resp_du_user($current_resp,  $DEBUG));
+			}
+			$tab_resp = array_merge  ( $tab_resp, $new_tab_resp);
+		}
+	}
+	// FIN gestion des absence des responsables :
+	/************************************/
 
 	if( $DEBUG ) {echo "return tab_resp =\n"; print_r($tab_resp); echo "<br>\n";}
 	return $tab_resp;

@@ -63,8 +63,7 @@ verif_droits_user($session, 'is_admin', $DEBUG);
 	if( $_SESSION['config']['gestion_groupes'] ) {
 		$onglets['admin-group'] = _('admin_onglet_gestion_groupe');
 		$onglets['admin-group-users'] = _('admin_onglet_groupe_user');
-		if( !$_SESSION['config']['responsable_virtuel'] )
-			$onglets['admin-group-responsables'] = _('admin_onglet_groupe_resp');
+		$onglets['admin-group-responsables'] = _('admin_onglet_groupe_resp');
 	}
 	
 	if ( !isset($onglets[ $onglet ]) && !in_array($onglet, array('chg_pwd_user', 'modif_group', 'modif_user', 'suppr_group','suppr_user')))

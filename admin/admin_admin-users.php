@@ -70,8 +70,8 @@ defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 
 	// Récuperation des informations des users:
 	$tab_info_users=array();
-	// si l'admin peut voir tous les users  OU si on est en mode "responsble virtuel" OU si l'admin n'est pas responsable
-	if( $_SESSION['config']['admin_see_all'] || $_SESSION['config']['responsable_virtuel'] || !is_resp($_SESSION['userlogin']) )
+	// si l'admin peut voir tous les users  OU si l'admin n'est pas responsable
+	if( $_SESSION['config']['admin_see_all'] || !is_resp($_SESSION['userlogin']) )
 		$tab_info_users = recup_infos_all_users($DEBUG);
 	else
 		$tab_info_users = recup_infos_all_users_du_resp($_SESSION['userlogin'], $DEBUG);

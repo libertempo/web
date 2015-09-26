@@ -63,6 +63,9 @@ $res_del_conf_from_db=SQL::query($del_conf_from_db);
 $del_conf_from_db="DELETE FROM conges_config WHERE conf_nom = 'titre_admin_index';";
 $res_del_conf_from_db=SQL::query($del_conf_from_db);
 
+$del_conf_from_db="DELETE FROM conges_config WHERE conf_nom = 'responsable_virtuel';";
+$res_del_conf_from_db=SQL::query($del_conf_from_db);
+
 //ajout du type de mail en cas d'absence non soumise à validation.
 $ajout_mail_new_absence="INSERT IGNORE INTO `conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUES ('mail_prem_valid_conges', 'APPLI CONGES - Nouvelle absence', ' __SENDER_NAME__ vous informe qu\'il sera absent. Ce type de congés ne necéssite pas de validation. Vous pouvez consulter votre application Libertempo : __URL_ACCUEIL_CONGES__/\r\n\r\n-------------------------------------------------------------------------------------------------------\r\nCeci est un message automatique. ');";
 $res_ajout_mail_new_absence=SQL::query($ajout_mail_new_absence);
