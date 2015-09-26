@@ -75,7 +75,7 @@ verif_droits_user($session, "is_resp", $DEBUG);
     /*********************************/
 
     $add_css = '<style>#onglet_menu .onglet{ width: '. (str_replace(',', '.', 100 / count($onglets) )).'% ;}</style>';
-    header_menu('responsable',$_SESSION['config']['titre_resp_index'],$add_css);
+    header_menu('', 'Libertempo : '._('divers_responsable_maj_1'),$add_css);
 
     /*********************************/
     /*   AFFICHAGE DES ONGLETS...  */

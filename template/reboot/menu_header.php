@@ -157,10 +157,10 @@
 				switch($tmp) {
 					case 'admin':
 						$mod_toolbar[] = "<a href=\"javascript:void(0);\" onClick=\"javascript:OpenPopUp('". ROOT_PATH ."/admin/admin_db_sauve.php?session=$session','400,300');\"><i class=\"fa fa-save\"></i><span>" . _('admin_button_save_db_2') . "</span></a>";
-						// $mod_toolbar[] = "<a href=\"javascript:void(0);\" onClick=\"javascript:OpenPopUp('". ROOT_PATH ."/admin/admin_jours_fermeture.php?session=$session','1080,690');\"><i class=\"fa fa-calendar\"></i><span>" . _('admin_button_jours_fermeture_2') . "</span></a>";
-						$mod_toolbar[] = "<a href=\"" . ROOT_PATH . "admin/admin_jours_fermeture.php?session=$session\"><i class=\"fa fa-calendar\"></i><span>" . _('admin_button_jours_fermeture_2') . "</span></a>";
-						$mod_toolbar[] = "<a href=\"" . ROOT_PATH . "admin/admin_jours_chomes.php?session=$session\"><i class=\"fa fa-calendar-o\"></i><span>" . _('admin_button_jours_chomes_2') . "</span></a>";
 						$mod_toolbar[] = "<a href=\"" . ROOT_PATH . "config/index.php?session=$session\"" . ($tmp == 'config' ? 'class="active"' : '') . "><i class=\"fa fa-th-list\"></i><span>Configuration</span></a>";
+					break;
+					case 'hr':
+						$mod_toolbar[] = "<a href=\"" . ROOT_PATH . "hr/hr_jours_fermeture.php?session=$session\"><i class=\"fa fa-calendar\"></i><span>" . _('admin_button_jours_fermeture_2') . "</span></a>";
 					break;
 					case 'utilisateur':
 						$mod_toolbar[] = "<a href=\"javascript:void(0);\" onClick=\"javascript:OpenPopUp('". ROOT_PATH . "export/export_vcalendar.php?session=$session&user_login=" . $_SESSION['userlogin'] . "','457,280');\"><i class=\"fa fa-download\"></i><span>" . _('Exporter cal') . "</span></a>";

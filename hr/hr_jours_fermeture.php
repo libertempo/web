@@ -45,7 +45,7 @@ $DEBUG=FALSE;
 // $DEBUG=TRUE ;
 
 // verif des droits du user à afficher la page
-verif_droits_user($session, "is_admin", $DEBUG);
+verif_droits_user($session, "is_hr", $DEBUG);
 
 /*** initialisation des variables ***/
 /*************************************/
@@ -138,7 +138,7 @@ $add_css = '<style>#onglet_menu .onglet{ width: '. (str_replace(',', '.', 100 / 
 	
 /***********************************/
 // AFFICHAGE DE LA PAGE
-header_menu('admin', NULL, $add_css);
+header_menu('', 'Libertempo : '._('divers_fermeture'), $add_css);
 
 
 /*********************************/
@@ -245,14 +245,14 @@ elseif($choix_action=="saisie_dates")
 		echo "<div class=\"alert alert-danger\">" . _('admin_jours_fermeture_chevauche_periode') . "</div>\n";
 
 	echo "<div class=\"wrapper\">";
-	echo '<a href="' . ROOT_PATH . "admin/admin_index.php?session=$session\" class=\"admin-back\"><i class=\"fa fa-arrow-circle-o-left\"></i>Retour mode admin</a>\n";
+	echo '<a href="' . ROOT_PATH . "hr/hr_index.php?session=$session\" class=\"admin-back\"><i class=\"fa fa-arrow-circle-o-left\"></i>Retour mode rh</a>\n";
 	if($onglet == 'saisie') 
         	saisie_dates_fermeture($year, $groupe_id, $new_date_debut, $new_date_fin, $code_erreur, $DEBUG);
 }
 elseif($choix_action=="saisie_groupe") 
 {
 	echo '<div class="wrapper">';
-	echo '<a href="' . ROOT_PATH . "admin/admin_index.php?session=$session\" class=\"admin-back\"><i class=\"fa fa-arrow-circle-o-left\"></i>Retour mode admin</a>\n";
+	echo '<a href="' . ROOT_PATH . "hr/hr_index.php?session=$session\" class=\"admin-back\"><i class=\"fa fa-arrow-circle-o-left\"></i>Retour mode rh</a>\n";
        	saisie_groupe_fermeture($DEBUG);
         echo '</div>';
 }

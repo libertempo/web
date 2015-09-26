@@ -65,11 +65,9 @@ function cacher(id)
 }
 </script>';
 
-// $css = '<link href="'. TEMPLATE_PATH .'style_calendar_edition.css" rel="stylesheet" media="screen, print" type="text/css"><style type="text/css" media="print">@media print{@page {size: landscape}}</style>';
 
-// header_popup($_SESSION['config']['titre_calendrier'] , $script . $css);
 $add_css = NULL;
-header_menu('admin',$_SESSION['config']['titre_admin_index'], $add_css);
+header_menu('', 'Libertempo : '._('calendrier_titre'), $add_css);
 
 
 	/*************************************/

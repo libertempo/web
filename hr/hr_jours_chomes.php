@@ -23,9 +23,6 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *************************************************************************************************/
 
-define('_PHP_CONGES', 1);
-define('ROOT_PATH', '../');
-include ROOT_PATH . 'define.php';
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 
 $session=(isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : session_id()) ) ;
@@ -33,15 +30,11 @@ $session=(isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session']
 if (file_exists(CONFIG_PATH .'config_ldap.php'))
 	include CONFIG_PATH .'config_ldap.php';
 
-include ROOT_PATH .'fonctions_conges.php' ;
-include INCLUDE_PATH .'fonction.php';
-include INCLUDE_PATH .'session.php';
-
 $DEBUG=FALSE;
 //$DEBUG=TRUE ;
 
 // verif des droits du user à afficher la page
-verif_droits_user($session, "is_admin", $DEBUG);
+verif_droits_user($session, "is_hr", $DEBUG);
 
 
 	/*** initialisation des variables ***/
@@ -63,14 +56,14 @@ verif_droits_user($session, "is_admin", $DEBUG);
 
 	$add_css = '<style>#onglet_menu .onglet{ width: 50% ;}</style>';
 	
-	header_menu('admin', NULL, $add_css);
+//	header_menu('hr', NULL, $add_css);
 
-	echo "<div id=\"onglet_menu\">\n";
-		echo "<div class=\"onglet active\">" . _('admin_jours_chomes_titre') . " <span class=\"current-year\">$year_calendrier_saisie</span></div>";
+	echo "<div class=\"pager\">\n";
+//		echo "<div class=\"onglet active\">" . _('admin_jours_chomes_titre') . " <span class=\"current-year\">$year_calendrier_saisie</span></div>";
 		echo "<div class=\"onglet calendar-nav\">\n";
 			// navigation 
-			$prev_link = "$PHP_SELF?session=$session&year_calendrier_saisie=". ($year_calendrier_saisie - 1);
-			$next_link = "$PHP_SELF?session=$session&year_calendrier_saisie=". ($year_calendrier_saisie + 1);
+			$prev_link = "$PHP_SELF?session=$session&onglet=jours_chomes&year_calendrier_saisie=". ($year_calendrier_saisie - 1);
+			$next_link = "$PHP_SELF?session=$session&onglet=jours_chomes&year_calendrier_saisie=". ($year_calendrier_saisie + 1);
 			echo "<ul>\n";
 			echo "<li><a href=\"$prev_link\" class=\"calendar-prev\"><i class=\"fa fa-chevron-left\"></i><span>année précédente</span></a></li>\n";
 			echo "<li class=\"current-year\">$year_calendrier_saisie</li>\n";
@@ -117,8 +110,8 @@ function saisie($year_calendrier_saisie, $DEBUG=FALSE)
 	}
 	if( $DEBUG ) { echo "tab_year = "; print_r($tab_year); echo "<br>\n"; }
 
-	echo '<a href="' . ROOT_PATH . "admin/admin_index.php?session=$session\" class=\"admin-back\"><i class=\"fa fa-arrow-circle-o-left\"></i>Retour mode admin</a>\n";
-	echo "<form action=\"$PHP_SELF?session=$session&year_calendrier_saisie=$year_calendrier_saisie\" method=\"POST\">\n" ;
+//	echo '<a href="' . ROOT_PATH . "hr/hr_index.php?session=$session\" class=\"admin-back\"><i class=\"fa fa-arrow-circle-o-left\"></i>Retour mode RH</a>\n";
+	echo "<form action=\"$PHP_SELF?session=$session&onglet=jours_chomes&year_calendrier_saisie=$year_calendrier_saisie\" method=\"POST\">\n" ;
 	echo "<div class=\"calendar\">\n";
 	$months = array('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12');
 
@@ -253,7 +246,7 @@ function confirm_saisie($tab_checkbox_j_chome, $DEBUG=FALSE)
 	header_popup();	
 	
 	echo "<h1>". _('admin_jours_chomes_titre') ."</h1>\n";
-	echo "<form action=\"$PHP_SELF?session=$session\" method=\"POST\">\n";
+	echo "<form action=\"$PHP_SELF?session=$session&onglet=jours_chomes\" method=\"POST\">\n";
 	echo "<table>\n";
 	echo "<tr>\n";
 	echo "<td align=\"center\">\n";

@@ -75,7 +75,7 @@ verif_droits_user($session, 'is_admin', $DEBUG);
 	/*********************************/
 	
    	$add_css = '<style>#onglet_menu .onglet{ width: '. (str_replace(',', '.', 100 / count($onglets) )).'% ;}</style>';
-	header_menu('admin',$_SESSION['config']['titre_admin_index'],$add_css);
+	header_menu('', 'Libertempo : '._('button_admin_mode'),$add_css);
 		
 	/*********************************/
 	/*   AFFICHAGE DES ONGLETS...  */

@@ -551,7 +551,7 @@ msgid "admin_button_close_window_1"
 msgstr "Fermeture du mode Administrateur"
 
 msgid "admin_button_config_1"
-msgstr "Configuration de php_conges"
+msgstr "Configuration de Libertempo"
 
 msgid "admin_button_config_2"
 msgstr "Configuration"
