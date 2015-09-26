@@ -362,11 +362,6 @@ INSERT IGNORE INTO `conges_config` VALUES ('lang', 'fr', '00_libertempo', 'enum=
 
 INSERT IGNORE INTO `conges_config` VALUES ('URL_ACCUEIL_CONGES', 'http://mon-serveur/mon-chemin/libertempo', '01_Serveur Web', 'texte', 'config_comment_URL_ACCUEIL_CONGES');
 
-INSERT IGNORE INTO `conges_config` VALUES ('titre_calendrier', 'CONGES : Calendrier', '03_TITRES', 'texte', 'config_comment_titre_calendrier');
-INSERT IGNORE INTO `conges_config` VALUES ('titre_user_index', 'CONGES : Utilisateur', '03_TITRES', 'texte', 'config_comment_titre_user_index');
-INSERT IGNORE INTO `conges_config` VALUES ('titre_resp_index', 'CONGES : Page Responsable', '03_TITRES', 'texte', 'config_comment_titre_resp_index');
-INSERT IGNORE INTO `conges_config` VALUES ('titre_admin_index', 'CONGES : Administrateur', '03_TITRES', 'texte', 'config_comment_titre_admin_index');
-
 INSERT IGNORE INTO `conges_config` VALUES ('auth', 'TRUE', '04_Authentification', 'boolean', 'config_comment_auth');
 INSERT IGNORE INTO `conges_config` VALUES ('how_to_connect_user', 'dbconges', '04_Authentification', 'enum=dbconges/ldap/CAS', 'config_comment_how_to_connect_user');
 INSERT IGNORE INTO `conges_config` VALUES ('export_users_from_ldap', 'FALSE', '04_Authentification', 'boolean', 'config_comment_export_users_from_ldap');
