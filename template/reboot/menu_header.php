@@ -92,7 +92,7 @@
 			   			</div>
 		   			</div>
 				</div>
-	        	<?php if($_SESSION['config']['user_affiche_calendrier']): ?>
+	        	<?php if( ($_SESSION['config']['user_affiche_calendrier'] && $tmp=='utilisateur') || ($_SESSION['config']['resp_affiche_calendrier'] && $tmp=='responsable') || $tmp=='hr' ): ?>
 	        	<div class="calendar-link">
 	        		<a title="<?php echo _('button_calendar'); ?>" href="<?php echo ROOT_PATH  . "calendrier.php?session=$session";?>">
 	        			<i class="fa fa-calendar"></i>
