@@ -68,8 +68,6 @@ verif_droits_user($session, "is_admin", $DEBUG);
 	}
 
 
-	// header_menu('CONGES : Configuration', $_SESSION['config']['titre_admin_index']);
-
 	/*********************************/
 	/*********************************/
 
