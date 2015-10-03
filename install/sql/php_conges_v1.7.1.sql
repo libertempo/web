@@ -412,20 +412,18 @@ INSERT IGNORE INTO `conges_config` VALUES ('autorise_reliquats_exercice', 'TRUE'
 INSERT IGNORE INTO `conges_config` VALUES ('nb_maxi_jours_reliquats', '0', '12_Fonctionnement de l\'Etablissement', 'texte', 'config_comment_nb_maxi_jours_reliquats');
 INSERT IGNORE INTO `conges_config` VALUES ('jour_mois_limite_reliquats', '0', '12_Fonctionnement de l\'Etablissement', 'texte', 'config_comment_jour_mois_limite_reliquats');
 
-INSERT IGNORE INTO `conges_config` VALUES ('affiche_bouton_calcul_nb_jours_pris', 'TRUE', '13_Divers', 'boolean', 'config_comment_affiche_bouton_calcul_nb_jours_pris');
-INSERT IGNORE INTO `conges_config` VALUES ('rempli_auto_champ_nb_jours_pris', 'TRUE', '13_Divers', 'boolean', 'config_comment_rempli_auto_champ_nb_jours_pris');
-INSERT IGNORE INTO `conges_config` VALUES ('disable_saise_champ_nb_jours_pris', 'FALSE', '13_Divers', 'boolean', 'config_comment_disable_saise_champ_nb_jours_pris');
-INSERT IGNORE INTO `conges_config` VALUES ('interdit_saisie_periode_date_passee', 'FALSE', '13_Divers', 'boolean', 'config_comment_interdit_saisie_periode_date_passee');
-INSERT IGNORE INTO `conges_config` VALUES ('interdit_modif_demande', 'FALSE', '13_Divers', 'boolean', 'config_comment_interdit_modif_demande');
+INSERT IGNORE INTO `conges_config` VALUES ('affiche_bouton_calcul_nb_jours_pris', 'TRUE', '05_utilisateur', 'boolean', 'config_comment_affiche_bouton_calcul_nb_jours_pris');
+INSERT IGNORE INTO `conges_config` VALUES ('rempli_auto_champ_nb_jours_pris', 'TRUE', '05_utilisateur', 'boolean', 'config_comment_rempli_auto_champ_nb_jours_pris');
+INSERT IGNORE INTO `conges_config` VALUES ('disable_saise_champ_nb_jours_pris', 'FALSE', '05_utilisateur', 'boolean', 'config_comment_disable_saise_champ_nb_jours_pris');
+INSERT IGNORE INTO `conges_config` VALUES ('interdit_saisie_periode_date_passee', 'FALSE', '05_utilisateur', 'boolean', 'config_comment_interdit_saisie_periode_date_passee');
+INSERT IGNORE INTO `conges_config` VALUES ('interdit_modif_demande', 'FALSE', '05_utilisateur', 'boolean', 'config_comment_interdit_modif_demande');
 INSERT IGNORE INTO `conges_config` VALUES ('duree_session', '1800', '13_Divers', 'texte', 'config_comment_duree_session');
-INSERT IGNORE INTO `conges_config` VALUES ('export_ical_vcal', 'TRUE', '13_Divers', 'boolean', 'config_comment_export_ical_vcal');
 INSERT IGNORE INTO `conges_config` VALUES ('affiche_date_traitement', 'FALSE', '13_Divers', 'boolean', 'config_comment_affiche_date_traitement');
 INSERT IGNORE INTO `conges_config` VALUES ('affiche_soldes_calendrier', 'TRUE', '13_Divers', 'boolean', 'config_comment_affiche_soldes_calendrier');
 INSERT IGNORE INTO `conges_config` VALUES ('affiche_demandes_dans_calendrier', 'FALSE', '13_Divers', 'boolean', 'config_comment_affiche_demandes_dans_calendrier');
 INSERT IGNORE INTO `conges_config` VALUES ('affiche_jours_current_month_calendrier',  'FALSE',  '13_Divers',  'boolean',  'config_comment_affiche_jours_current_month_calendrier');
 INSERT IGNORE INTO `conges_config` VALUES ('calcul_auto_jours_feries_france', 'FALSE', '13_Divers', 'boolean', 'config_comment_calcul_auto_jours_feries_france');
 
-INSERT IGNORE INTO `conges_config` VALUES ('stylesheet_file', 'style.css', '14_Presentation', 'texte', 'config_comment_stylesheet_file');
 INSERT IGNORE INTO `conges_config` (`conf_nom`, `conf_valeur`, `conf_groupe`, `conf_type`, `conf_commentaire`) VALUES ('export_ical', 'true', '15_ical', 'boolean', 'config_comment__export_ical'),
 ('export_ical_salt', 'Jao%iT}', '15_ical', 'texte', 'config_comment_export_ical_salt');
 
