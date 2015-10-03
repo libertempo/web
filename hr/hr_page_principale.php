@@ -78,7 +78,6 @@ defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 	else
 	{
 		//$i = true;
-		echo "<a id='display_hidden'><u>". _('hr_affiche_utilisateurs_inactifs') ."</u></a>";
 		foreach($tab_all_users as $current_login => $tab_current_user)
 		{
 			//tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)

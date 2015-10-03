@@ -553,29 +553,31 @@ function commit_new_fermeture($new_date_debut, $new_date_fin, $groupe_id, $id_ty
 	/** insersion des jours de fermetures pour chaque user  **/
 	foreach($tab_users as $current_login)
 	{
-	    $current_login = trim($current_login);
-		// on enleve les quotes qui ont été ajoutées lors de la creation de la liste
-		$current_login = trim($current_login, "\'");
+		if (is_active($login,  $DEBUG))
+		{
+			$current_login = trim($current_login);
+			// on enleve les quotes qui ont été ajoutées lors de la creation de la liste
+			$current_login = trim($current_login, "\'");
 
-		// on compte le nb de jour à enlever au user (par periode et au total)
-		// on ne met à jour la table conges_periode
-		$nb_jours = 0;
-		$comment="" ;
+			// on compte le nb de jour à enlever au user (par periode et au total)
+			// on ne met à jour la table conges_periode
+			$nb_jours = 0;
+			$comment="" ;
 
-		// $nb_jours = compter($current_login, $date_debut, $date_fin, $opt_debut, $opt_fin, $comment,  $DEBUG);
-		$nb_jours = compter($current_login, "", $date_debut, $date_fin, $opt_debut, $opt_fin, $comment, $DEBUG);
+			// $nb_jours = compter($current_login, $date_debut, $date_fin, $opt_debut, $opt_fin, $comment,  $DEBUG);
+			$nb_jours = compter($current_login, "", $date_debut, $date_fin, $opt_debut, $opt_fin, $comment, $DEBUG);
 
-		if ($DEBUG) echo "<br>user_login : " . $current_login . " nbjours : " . $nb_jours . "<br>\n";
+			if ($DEBUG) echo "<br>user_login : " . $current_login . " nbjours : " . $nb_jours . "<br>\n";
 
-		// on ne met à jour la table conges_periode .
-		$commentaire =  _('divers_fermeture') ;
-		$etat = "ok" ;
-		$num_periode = insert_dans_periode($current_login, $date_debut, $opt_debut, $date_fin, $opt_fin, $nb_jours, $commentaire, $id_type_conges, $etat, $new_fermeture_id, $DEBUG) ;
+			// on ne met à jour la table conges_periode .
+			$commentaire =  _('divers_fermeture') ;
+			$etat = "ok" ;
+			$num_periode = insert_dans_periode($current_login, $date_debut, $opt_debut, $date_fin, $opt_fin, $nb_jours, $commentaire, $id_type_conges, $etat, $new_fermeture_id, $DEBUG) ;
 
-		// mise à jour du solde de jours de conges pour l'utilisateur $current_login
-		if ($nb_jours != 0) {
-			soustrait_solde_et_reliquat_user($current_login, "", $nb_jours, $id_type_conges, $date_debut, $opt_debut, $date_fin, $opt_fin, $DEBUG);
-
+			// mise à jour du solde de jours de conges pour l'utilisateur $current_login
+			if ($nb_jours != 0) {
+				soustrait_solde_et_reliquat_user($current_login, "", $nb_jours, $id_type_conges, $date_debut, $opt_debut, $date_fin, $opt_fin, $DEBUG);
+			}
 		}
 	}
 
