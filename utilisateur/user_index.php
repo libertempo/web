@@ -33,15 +33,12 @@ include_once INCLUDE_PATH .'fonction.php';
 include_once INCLUDE_PATH .'session.php';
 include_once ROOT_PATH .'fonctions_calcul.php';
 
-//include$_SESSION['config']['lang_file'] ;
 
 $DEBUG=FALSE;
 //$DEBUG=TRUE;
 
 
 if($_SESSION['config']['where_to_find_user_email']=="ldap"){ include CONFIG_PATH .'config_ldap.php';}
-
-
 
 	// SERVER
 	$PHP_SELF=$_SERVER['PHP_SELF'];
@@ -78,7 +75,7 @@ if($_SESSION['config']['where_to_find_user_email']=="ldap"){ include CONFIG_PATH
 	/*********************************/
 	
 	$add_css = '<style>#onglet_menu .onglet{ width: '. (str_replace(',', '.', 100 / count($onglets) )).'% ;}</style>';
-	header_menu('user','',$add_css);
+	header_menu('','Libertempo : '._('user'),$add_css);
 	
 	
 	/*********************************/

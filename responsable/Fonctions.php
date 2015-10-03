@@ -2253,10 +2253,7 @@ class Fonctions
             // Récup des demandes en cours pour les users dont $_SESSION['userlogin'] est responsable :
             $sql1 = "SELECT p_num, p_login, p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_nb_jours, p_commentaire, p_type, p_date_demande, p_date_traitement FROM conges_periode ";
             $sql1=$sql1." WHERE p_etat =\"demande\" ";
-            if($_SESSION['config']['responsable_virtuel'])
-                $sql1=$sql1." AND p_login != 'conges' ";
-            else
-                $sql1=$sql1." AND p_login IN ($list_users_du_resp)  ";
+            $sql1=$sql1." AND p_login IN ($list_users_du_resp)  ";
             $sql1=$sql1." ORDER BY p_num";
 
             $ReqLog1 = \includes\SQL::query($sql1) ;

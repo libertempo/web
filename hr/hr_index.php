@@ -64,6 +64,7 @@ verif_droits_user($session, "is_hr", $DEBUG);
 		
 	// if( $_SESSION['config']['resp_ajoute_conges'] )
 		$onglets['ajout_conges'] = _('resp_ajout_conges_titre');
+		$onglets['jours_chomes'] = _('admin_button_jours_chomes_1');
 		
 	$onglets['cloture_year'] = _('resp_cloture_exercice_titre');
 	
@@ -75,7 +76,7 @@ verif_droits_user($session, "is_hr", $DEBUG);
 	/*********************************/
 	
 	$add_css = '<style>#onglet_menu .onglet{ width: '. (str_replace(',', '.', 100 / count($onglets) )).'% ;}</style>';
-   	header_menu('responsable',$_SESSION['config']['titre_resp_index'],$add_css);
+   	header_menu('', 'Libertempo : '._('resp_menu_button_mode_hr'),$add_css);
 		
 	/*********************************/
 	/*   AFFICHAGE DES ONGLETS...  */

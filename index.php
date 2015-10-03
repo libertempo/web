@@ -91,7 +91,7 @@ else
 		session_destroy();
 					
 	// Si CAS alors on utilise le login CAS pour la session
-	if ( $_SESSION['config']['how_to_connect_user'] == "cas" && $session_username != "admin" && ( $session_username != "conges" || !$_SESSION['config']['responsable_virtuel'] ) )
+	if ( $_SESSION['config']['how_to_connect_user'] == "cas" && $session_username != "admin" )
 	{
 		//redirection vers l'url d'authentification CAS
 		$usernameCAS = authentification_passwd_conges_CAS();
@@ -127,7 +127,7 @@ else
 			// le user doit etre authentifié dans la table conges (login + passwd) ou dans le ldap.
 			// si on a trouve personne qui correspond au couple user/password
 
-			if ( $_SESSION['config']['how_to_connect_user'] == "ldap" && $session_username != "admin" && ( $session_username != "conges" || !$_SESSION['config']['responsable_virtuel'] ) )
+			if ( $_SESSION['config']['how_to_connect_user'] == "ldap" && $session_username != "admin" )
 			{	
 				$username_ldap = authentification_ldap_conges($session_username,$session_password);
 				if ( $username_ldap != $session_username)
@@ -160,7 +160,7 @@ else
 					}
 				}
 			} // fin du if test avec ldap
-			elseif ( $_SESSION['config']['how_to_connect_user'] == "dbconges" || $session_username == "admin" || ( $session_username != "conges" && !$_SESSION['config']['responsable_virtuel'] ))
+			elseif ( $_SESSION['config']['how_to_connect_user'] == "dbconges" || $session_username == "admin" )
 			{				
 				$username_conges = autentification_passwd_conges($session_username,$session_password);
 				if ( $username_conges != $session_username)
@@ -212,7 +212,7 @@ if(isset($_SESSION['userlogin']))
 			else
 				redirect( ROOT_PATH .$return_url . '?session=' . $session );
 		}
-		elseif ( (($is_resp=="Y")&&($_SESSION['config']['responsable_virtuel']==FALSE)) || (($_SESSION['config']['responsable_virtuel'])&&($session_username=="conges")) )
+		elseif ( $is_resp=="Y" )
 		{
 			// redirection vers responsable/resp_index.php
 			redirect( ROOT_PATH .'responsable/resp_index.php?session=' . $session );
