@@ -553,12 +553,12 @@ function commit_new_fermeture($new_date_debut, $new_date_fin, $groupe_id, $id_ty
 	/** insersion des jours de fermetures pour chaque user  **/
 	foreach($tab_users as $current_login)
 	{
-		if (is_active($login,  $DEBUG))
-		{
-			$current_login = trim($current_login);
-			// on enleve les quotes qui ont été ajoutées lors de la creation de la liste
-			$current_login = trim($current_login, "\'");
+		$current_login = trim($current_login);
+		// on enleve les quotes qui ont été ajoutées lors de la creation de la liste
+		$current_login = trim($current_login, "\'");
 
+		if (is_active($current_login,  $DEBUG))
+		{
 			// on compte le nb de jour à enlever au user (par periode et au total)
 			// on ne met à jour la table conges_periode
 			$nb_jours = 0;
