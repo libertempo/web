@@ -7,7 +7,6 @@ defined( 'ROOT_PATH' ) or die( 'ROOT_PATH not defined !' );
 if (!defined( 'DEFINE_INCLUDE' )) {
 	define('DEFINE_INCLUDE',	true);
 	define('SHOW_SQL',			false);
-	define('ERROR_MAIL_REPORT',	'your@mail.adress');// remove this if you don't want receive mails when a SQL error is found.
 	
 	define('LIBRARY_PATH',		ROOT_PATH . 'library/');
 	define('INCLUDE_PATH',		ROOT_PATH . 'includes/');
@@ -18,7 +17,6 @@ if (!defined( 'DEFINE_INCLUDE' )) {
 	define('TEMPLATE_PATH',		ROOT_PATH . 'template/reboot/');
 	
 	define('PLUGINS_DIR',		INCLUDE_PATH . "plugins/");
-	define('ICS_SALT',		'Jao%iT}'); //modify salt for more security with ics export
 
 	/*--- twiguification ---*/
 	require_once ROOT_PATH . 'vendor/autoload.php';

@@ -69,20 +69,23 @@ $res_del_conf_from_db=SQL::query($del_conf_from_db);
 $del_conf_from_db="DELETE FROM conges_config WHERE conf_nom = 'export_ical_vcal';";
 $res_del_conf_from_db=SQL::query($del_conf_from_db);
 
+$del_conf_from_db="DELETE FROM conges_config WHERE conf_nom = 'stylesheet_file';";
+$res_del_conf_from_db=SQL::query($del_conf_from_db);
+
 
 // modification des sections
 
-$mod_section="UPDATE conges_config SET conf_groupe = '05_utilisateur' WHERE conf_nom in ('disable_saise_champ_nb_jours_pris','affiche_bouton_calcul_nb_jours_pris','rempli_auto_champ_nb_jours_pris','interdit_saisie_periode_date_passee','interdit_modif_demande');";
+$mod_section="UPDATE conges_config SET conf_groupe = '05_Utilisateur' WHERE conf_nom in ('disable_saise_champ_nb_jours_pris','affiche_bouton_calcul_nb_jours_pris','rempli_auto_champ_nb_jours_pris','interdit_saisie_periode_date_passee','interdit_modif_demande');";
 $res_mod_section=SQL::query($mod_section);
 
 //ajout du type de mail en cas d'absence non soumise à validation.
 $ajout_mail_new_absence="INSERT IGNORE INTO `conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUES ('mail_prem_valid_conges', 'APPLI CONGES - Nouvelle absence', ' __SENDER_NAME__ vous informe qu\'il sera absent. Ce type de congés ne necéssite pas de validation. Vous pouvez consulter votre application Libertempo : __URL_ACCUEIL_CONGES__/\r\n\r\n-------------------------------------------------------------------------------------------------------\r\nCeci est un message automatique. ');";
 $res_ajout_mail_new_absence=SQL::query($ajout_mail_new_absence);
 
-$ajout_export_ical="INSERT INTO conges_config (`conf_nom`, `conf_valeur`, `conf_groupe`, `conf_type`, `conf_commentaire`) VALUES ('export_ical', 'true', '15_ical', 'boolean', 'config_comment_export_ical_vcal');";
+$ajout_export_ical="INSERT IGNORE INTO conges_config (`conf_nom`, `conf_valeur`, `conf_groupe`, `conf_type`, `conf_commentaire`) VALUES ('export_ical', 'true', '15_ical', 'boolean', 'config_comment_export_ical_vcal');";
 $res_ajout_export_ical=SQL::query($ajout_export_ical);
 
-$ajout_export_ical_salt="INSERT INTO conges_config (`conf_nom`, `conf_valeur`, `conf_groupe`, `conf_type`, `conf_commentaire`) VALUES ('export_ical_salt', 'Jao%iT}', '15_ical', 'texte', 'config_comment_export_ical_salt');";
+$ajout_export_ical_salt="INSERT IGNORE INTO conges_config (`conf_nom`, `conf_valeur`, `conf_groupe`, `conf_type`, `conf_commentaire`) VALUES ('export_ical_salt', 'Jao%iT}', '15_ical', 'texte', 'config_comment_export_ical_salt');";
 $res_ajout_export_ical_salt=SQL::query($ajout_export_ical_salt);
 
 // on renvoit à la page mise_a_jour.php (là d'ou on vient)
