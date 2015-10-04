@@ -5,8 +5,6 @@ include ROOT_PATH . 'define.php';
 
 function find_plugins_activated(){
         $list_plugins = array();
-        if($_SESSION['config']['php_conges_version'] == "1.7.0")
-            {
             $plugins_inst_activ_query = "SELECT p_name FROM conges_plugins WHERE p_is_active = 1 AND p_is_install = 1;";
             $ReqLog_list_plugins = SQL::query($plugins_inst_activ_query);
             if($ReqLog_list_plugins->num_rows !=0){
@@ -16,7 +14,6 @@ function find_plugins_activated(){
                 }
             }
         return $list_plugins;
-        }
 }
 
 function include_plugins($plugins_activated){
