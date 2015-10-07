@@ -2612,6 +2612,7 @@ $user_nb_jours_pris = number_format($user_nb_jours_pris, 1, '.', '');
 			//d'apres la data limite et ne pas le décompter des reliquats !!!
 			else
 			{
+				include_once 'fonctions_calcul.php' ;
 				$comment="calcul reliquat -> date limite" ;
 				$nb_reliquats_a_deduire = compter($user_login, $num_current_periode, $date_deb, $_SESSION['config']['date_limite_reliquats'], $demi_jour_deb, "pm", $comment ,  $DEBUG);
 
