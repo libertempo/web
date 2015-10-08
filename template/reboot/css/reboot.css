@@ -21,6 +21,11 @@ td.cal-day_semaine_travail_am_autre_pm{
 background-image: -webkit-gradient(linear,left bottom,right top,color-stop(0.5, #F4F4F4),color-stop(0, #FFF));
 background-image: -moz-linear-gradient(right top,#F4F4F4 50%,#FFF 0%);}
 
+/* style pour les cellules du calendriers (jour de semaine congés matin seulement) */
+td.cal-day_semaine_travail_am_conges_pm{
+background-image: -webkit-gradient(linear,left bottom,right top,color-stop(0.5, #B8E4EF),color-stop(0, #FFF));
+background-image: -moz-linear-gradient(right top,#B8E4EF 50%,#FFF 0%);}
+
 /* style pour les cellules du calendriers (jour de semaine congés) */
 td.cal-day_semaine_conges_am_rtt_pm{
 background-image: -webkit-gradient(linear,left bottom,right top,color-stop(0.5, #FFFFD6),color-stop(0, #B8E4EF));
