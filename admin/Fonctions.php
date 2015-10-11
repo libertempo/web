@@ -1481,13 +1481,14 @@ class Fonctions
      * Encapsule le comportement du module de gestion des groupes et des responsables
      *
      * @param string $onglet Nom de l'onglet à afficher
+     * @param string $session
      * @param bool   $DEBUG  Mode debug ?
      *
      * @return void
      * @access public
      * @static
      */
-    public static function changeMotDePasseUserModule($session, $DEBUG = false)
+    public static function changeMotDePasseUserModule($onglet, $session, $DEBUG = false)
     {
         /*************************************/
         // recup des parametres reçus :
