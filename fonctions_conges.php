@@ -2617,11 +2617,13 @@ $user_nb_jours_pris = number_format($user_nb_jours_pris, 1, '.', '');
 				$new_reliquat = 0;
 		}
 		$user_nb_jours_pris = str_replace(',', '.', $user_nb_jours_pris);
+		$new_reliquat = str_replace(',', '.', $new_reliquat);
 		$sql2 = 'UPDATE conges_solde_user SET su_solde=su_solde-'.\includes\SQL::quote($user_nb_jours_pris).', su_reliquat='.\includes\SQL::quote($new_reliquat).' WHERE su_login="'.\includes\SQL::quote($user_login).'"  AND su_abs_id='.\includes\SQL::quote($type_abs).' ';
 	}
 	else
 	{
 		$user_nb_jours_pris = str_replace(',', '.', $user_nb_jours_pris);
+		$new_reliquat = str_replace(',', '.', $new_reliquat);
 		$sql2 = 'UPDATE conges_solde_user SET su_solde=su_solde-'.\includes\SQL::quote($user_nb_jours_pris).' WHERE su_login=\''.\includes\SQL::quote($user_login).'\'  AND su_abs_id=\''.$type_abs.'\' ';
 	}
 	$ReqLog2 = \includes\SQL::query($sql2) ;

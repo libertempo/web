@@ -1323,10 +1323,10 @@ msgid "install_config_mail"
 msgstr "configurer les mails envoyés"
 
 msgid "button_export_1"
-msgstr "Exporter ical / vcal"
+msgstr "Exporter ical"
 
 msgid "button_export_2"
-msgstr "Exporter les évènements au format ical / vcal"
+msgstr "Pour consulter vos congés sur un agenda, copiez ce lien :"
 
 msgid "config_comment_disable_saise_champ_nb_jours_pris"
 msgstr "// SAISIE INTERDITE DANS LE CHAMP TEXTE DU NB DE JOURS PRIS<br>//--------------------------------------------------------------------------------------<br>// si à FALSE : le champ texte du nb de jours pris est actif (saisie à la main possible)(FALSE est la valeur par défaut)<br>// si à TRUE : le champ texte du nb de jours pris et inactif (saisie à la main impossible)"
@@ -1338,10 +1338,10 @@ msgid "calcul_nb_jours_commentaire_impossible"
 msgstr "CALCUL IMPOSSIBLE : cette période chevauche une demande de congés en cours !"
 
 msgid "config_comment_export_ical_vcal"
-msgstr "// EXPORTER DES CONGES AU FORMAT ICS OU VCS<br>//----------------------------------------------------------------------<br>// si à FALSE : les utilisateurs ne peuvent pas exporter leurs congés/absences au format ICS ou VCS.<br>// si à TRUE : les utilisateurs peuvent exporter leurs congés/absences au format ICS ou VCS (pour importer dans les agendas électroniques ou les logiciels de planning). (TRUE est la valeur par défaut)"
+msgstr "// EXPORTER LES CONGES AU FORMAT ICS<br>//----------------------------------------------------------------------<br>// si à FALSE : les utilisateurs ne peuvent pas exporter leurs congés/absences au format ICS.<br>// si à TRUE : les utilisateurs peuvent exporter leurs congés/absences au format ICS (pour importer dans les agendas électroniques ou les logiciels de planning). (TRUE est la valeur par défaut)"
 
 msgid "export_cal_titre"
-msgstr "Exporter au format ical / vcal"
+msgstr "Exporter au format ical"
 
 msgid "export_cal_from_date"
 msgstr "du"
