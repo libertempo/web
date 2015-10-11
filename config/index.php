@@ -62,9 +62,11 @@ $_SESSION['from_config']=TRUE;  // initialise ce flag pour changer le bouton de 
 	
 	$onglets['general'] = _('install_config_appli');
 
-	$onglets['type_absence'] = _('install_config_types_abs');
-		
-	$onglets['mail'] = _('install_config_mail');
+	if($_SESSION['config']['affiche_bouton_config_absence_pour_admin'])
+		$onglets['type_absence'] = _('install_config_types_abs');
+
+	if($_SESSION['config']['affiche_bouton_config_mail_pour_admin'])
+		$onglets['mail'] = _('install_config_mail');
 	
 	$onglets['logs'] = _('config_logs');
 	
@@ -90,7 +92,7 @@ $_SESSION['from_config']=TRUE;  // initialise ce flag pour changer le bouton de 
 
 	echo '<div class="'.$onglet.' wrapper">';
 
-		echo '<a href="' . ROOT_PATH . "admin/admin_index.php?session=$session\" class=\"admin-back\"><i class=\"fa fa-arrow-circle-o-left\"></i>Retour mode admin</a>\n";
+		echo '<a href="' . ROOT_PATH . "admin/admin_index.php?session=$session\" class=\"admin-back\"><i class=\"fa fa-arrow-circle-o-left\"></i>". _('form_retour')."</a>\n";
 
 		if($onglet == 'general') {
 			include ROOT_PATH . 'config/configure.php';
