@@ -261,7 +261,7 @@ function commit_modif_user_groups($choix_user, &$checkbox_user_groups,  $DEBUG=F
 
 	$result_insert=FALSE;
 	// on supprime tous les anciens groupes du user, puis on ajoute tous ceux qui sont dans la tableau checkbox (si il n'est pas vide)
-	$sql_del = 'DELETE FROM conges_groupe_users WHERE gu_login=\''.SQL::quote($choix_user).'\'';
+	$sql_del = 'DELETE FROM conges_groupe_users WHERE gu_login=\''. \includes\SQL::quote($choix_user).'\'';
 	$ReqLog_del = \includes\SQL::query($sql_del);
 
 	if( ($checkbox_user_groups!="") && (count ($checkbox_user_groups)!=0) )
