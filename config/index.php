@@ -62,10 +62,10 @@ $_SESSION['from_config']=TRUE;  // initialise ce flag pour changer le bouton de 
 	
 	$onglets['general'] = _('install_config_appli');
 
-	if($_SESSION['config']['affiche_bouton_config_absence_pour_admin'])
+	if($_SESSION['config']['affiche_bouton_config_absence_pour_admin'] || $_SESSION['userlogin']=="admin")
 		$onglets['type_absence'] = _('install_config_types_abs');
 
-	if($_SESSION['config']['affiche_bouton_config_mail_pour_admin'])
+	if($_SESSION['config']['affiche_bouton_config_mail_pour_admin'] || $_SESSION['userlogin']=="admin")
 		$onglets['mail'] = _('install_config_mail');
 	
 	$onglets['logs'] = _('config_logs');
