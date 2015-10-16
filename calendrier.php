@@ -157,12 +157,21 @@ header_menu('', 'Libertempo : '._('calendrier_titre'), $add_css);
 	echo "</tr>\n";
 	echo "</table>\n";
 
+
 	if($printable!=1) // si version ecran :
 		{
 			echo "      <br/><a href=\"$PHP_SELF?session=$session&printable=1&year=$year&mois=$mois&first_jour=$first_jour&select_groupe=$select_groupe\" target=\"_blank\" method=\"post\">\n";
 			echo "<i class=\"fa fa-print\"></i>\n";
 			echo "      ". _('calendrier_imprimable') ."\n";
 			echo "      </a>\n";
+						/*******************************************************/
+						/*modif pour implementer l'impression pdf*/
+						/*******************************************************/
+			echo "      <br><a href=\"calendrier-pdf.php?session=$session&printable=1&year=$year&mois=$mois&first_jour=$first_jour&select_groupe=$select_groupe\" target=\"_blank\" method=\"post\">\n";
+			echo "		<img src=\"". TEMPLATE_PATH . "img/pdf_22x22_2.png\" width=\"22\" height=\"22\" border=\"0\" title=\"Version PDF\">\n";
+			echo "      Version PDF\n";
+			echo "      </a>\n";
+                                               /******************* FIN **********************/
 		}
 
 	echo "      <br><br><table cellpadding=\"1\" class=\"calendar table-responsive table-bordered table-stripped\">\n" ;
