@@ -29,9 +29,6 @@ include ROOT_PATH . 'define.php';
 include INCLUDE_PATH . 'fonction.php';
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 
-require_once ROOT_PATH . 'define.php';
-include_once INCLUDE_PATH . 'fonction.php';
-
 $session =(isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : session_id()) ) ;
 
 if (empty($session)) {
