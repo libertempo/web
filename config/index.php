@@ -49,12 +49,20 @@ verif_droits_user($session, "is_admin");
 $_SESSION['from_config']=TRUE;  // initialise ce flag pour changer le bouton de retour des popup
 
 	$onglet = getpost_variable('onglet');
-	if(!$onglet && $_SESSION['config']['affiche_bouton_config_pour_admin'] || $_SESSION['userlogin']=="admin")
+	
+	if(!$onglet && $_SESSION['userlogin']=="admin")
+	{
 		$onglet = 'general';
-	elseif(!$onglet && $_SESSION['config']['affiche_bouton_config_absence_pour_admin'])
-		$onglet = 'type_absence';
-	elseif(!$onglet && $_SESSION['config']['affiche_bouton_config_mail_pour_admin'])
-		$onglet = 'config_mail';
+	} elseif (!$onglet && $_SESSION['userlogin']!="admin") {
+
+		if($_SESSION['config']['affiche_bouton_config_pour_admin'])
+			$onglet = 'general';
+		elseif($_SESSION['config']['affiche_bouton_config_absence_pour_admin'])
+			$onglet = 'type_absence';
+		elseif($_SESSION['config']['affiche_bouton_config_mail_pour_admin'])
+			$onglet = 'config_mail';
+		
+	} 
 	
 	/*********************************/
 	/*   COMPOSITION DES ONGLETS...  */
