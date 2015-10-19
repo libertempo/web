@@ -1,0 +1,248 @@
+// variables
+@firm-color : #00AAD4;
+@firm-border : #0098bd;
+@text-color: #717171;
+@border-color: #e0e4e8;
+@brand-color: #009ec5;
+@red: #FB6B5B;
+@green: #92CF5C;
+
+body{
+  background: @firm-color;
+}
+
+html, body, #content{
+  height: 100%;
+}
+
+body.connected{
+  background-color: #F3F5F9;
+}
+
+body, h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+/*--- login ---*/
+.login-heading{
+  /*font-weight: bold;*/
+  color: #FFF;
+  border-bottom: solid 1px @firm-border;
+  padding: 20px; 
+  margin: 0;
+  background: #009ec5;
+}
+.form-signin {
+  width:300px;
+  height:200px;
+  position:absolute;
+  left:50%;
+  top:50%;
+  margin:-100px 0 0 -150px;
+}
+.form-signin .form-signin-heading,
+.form-signin .checkbox {
+  margin-bottom: 10px;
+}
+.form-signin .form-signin-heading{
+  color: #FFF;
+  text-transform: uppercase;
+  font-size: 17px;
+}
+.form-signin .checkbox {
+  font-weight: normal;
+}
+.form-signin select{
+  margin-bottom: 10px;
+}
+.form-signin .form-control {
+  position: relative;
+  font-size: 16px;
+  height: auto;
+  padding: 10px;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+.form-signin .form-control:focus {
+  z-index: 2;
+}
+.form-signin input[type="text"] {
+  margin-bottom: -1px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-color: transparent;
+}
+.form-signin input[type="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-color: transparent;
+}
+/*--- vbox --*/
+#toolbar{
+
+}
+#toolbar .brand {
+  font-size: 17px;
+  margin: 0;
+}
+#toolbar .brand a {
+  color: #edfbff;
+  display: block;
+  line-height: 60px;
+  padding: 0 20px;
+  text-align: center;
+  background: @brand-color;
+  border-bottom: solid 1px @firm-border;
+}
+#toolbar .brand a:hover {
+  color: #FFF;
+  text-decoration: none;
+  background: #00AAD4;
+}
+
+.bg-white {
+  background-color: #fff;
+  color: @text-color;
+}
+
+.header{
+  min-height: 61px;
+  line-height: 61px;
+  border-bottom: #e0e4e8 solid 1px;
+}
+
+#scrollable .wrapper{
+  margin: 20px;
+}
+
+/*--- profil info ---*/
+.profil-info{
+  padding: 20px;
+  background: #92CF5C;
+  color: #FFF;
+}
+
+.profil-info .user-login{
+  text-transform: uppercase;
+}
+
+.profil-info .user-info .name{
+  font-weight: bold;
+}
+
+// .profil-info .wrapper:before{
+//   font-family: FontAwesome;
+//   content: "\f118";
+//   float: left;
+// }
+.profil-info .icon-smile{
+  float: left;
+  font-size: 24px;
+}
+.profil-info .wrapper{
+  margin-left: 40px;
+}
+
+.profil-info .user-info {
+}
+
+/*--- calendar link ---*/
+.calendar-link a{
+  border-top: solid 1px @firm-border;
+  display: block;
+  text-align: center;
+  padding: 20px 0;
+  background: @brand-color;
+  color: #FFF;
+}
+
+.calendar-link a:hover{
+  text-decoration: none;
+  background-color: @firm-color;
+}
+
+.calendar-link i{
+  margin-right: 5px;
+}
+
+/*--- bottom-links ---*/
+.nav>li.bottom-links {
+  overflow: hidden;
+  border-top: solid 1px @firm-border;
+  border-bottom: solid 1px @firm-border;
+}
+
+.bottom-links a{
+  float: left;
+  display: block;
+  text-align: center;
+  width: 50%;
+  background-color: @brand-color;
+  color: #FFF;
+  border-left: solid 1px @firm-border;
+}
+
+.bottom-links a:first-child{
+  border: none;
+}
+
+.bottom-links a.refresh-link:hover{
+  background-color: @firm-color;
+}
+
+.bottom-links a.disconnect-link:hover{
+  background-color: @red;
+}
+
+/*--- mod-info ---*/
+.mod-info .nav>li>a {
+  padding: 0 20px;
+  color: @text-color;
+  text-transform: uppercase;
+}
+
+.mod-info .nav .caret{
+  border-top-color: @text-color;
+  border-bottom-color: @text-color;
+}
+
+.mod-info .nav a:hover .caret{
+  border-top-color: #FFF;
+  border-bottom-color: #FFF;
+}
+
+.mod-info .nav>li>a:hover {
+  color: #FFF;
+  background-color: @firm-color;
+}
+/*--- mod-toolbar ---*/
+#mod-toolbar li {
+  float: left;
+  list-style-type: none;
+}
+#mod-toolbar li a {
+  display: block;
+  line-height: 60px;
+  padding: 0 20px;
+  font-weight: bold;
+  color: @text-color;
+}
+
+#mod-toolbar li a:hover {
+  color: #FFF;
+  background-color: @firm-color;
+  text-decoration: none;
+}
+
+#mod-toolbar i{
+  margin-right: 10px;
+}
+
+/*--- footer ---*/
+footer{
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+}

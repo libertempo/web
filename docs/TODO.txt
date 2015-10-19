@@ -1,0 +1,85 @@
+***************************************
+****         Libertempo           ****
+***************************************
+
+
+  TODO :
+****************
+
+***************************************
+
+- interdire les soldes négatifs mais SEULEMENT pour certain congés (choisi dans la config des types de conges)
+
+- limiter le solde négatif autorisé (par congés)
+
+- petit bug :
+    lors de la saisie d'un nouveau user, si un champs est éroné (ex: le mail est vide) , un clic sur recommencer renvoit 
+    à la page de saisie du user avec les champs préremplis SAUF le tableau des rtt !!! 
+    il faut récupérer aussi le tableau des rtt.
+
+- possibilité d'afficher le solde réel au jour d'aujourd'hui, et le solde "projeté" des conges. (celui calculé et inscrit dans la base (qui tient compte des congés futurs)).
+
+- possibilité d'indiquer dans le mail de validation de congés le nombre de CP et RTT restant à l'utilisateur...
+
+- ajouter les reliquats dans les éditions papier
+
+- calendrier sans authentification :
+    supprimer les détails d'affichage (type de congés et d'absences) 
+
+- répéter la ligne des entêtes du tableau en haut de chaque page d'une édition papier ou pdf ....
+
+***************************************
+***************************************
+ en vrac :
+---------------------
+
+- le logiciel envoie un mail au responsable lorsqu'on pose une "absence" .. alors qu'il n'y a pas de validation à faire !
+  (et surtout, il n'est pas mentionné que c'est pour une absence !! donc le resp va dans Libertempo, ne voit pas de demande et pense que c'est un bug !)
+   mettre une option de config d'envoi de mail lors du dépot d'une absence (true ou false)
+
+- ajouter une option de config pour n'autoriser la saisie de demandes de conges QUE dans les X mois qui suivent la date d'aujourd'hui.... ça a été mis en place pour les
+  dates passées :le faire pour les dates futures ... à condition de rajouter une option de config de l'appli qui donnera la durée limite ...
+
+-  crée un module pour exporter sous forme de tableau excel (fichier CSV) les congés validés pour un période donnée.
+(génération d'un fichier CVS avec le nom et prénom, la date de début, la date de fin et le nombre de jour pris)
+
+- edition du calendrier en pdf ...
+
+- faite un mode TEST pour l'installeur ou une page de test qui teste tout (mail, connexion db, connexion ldap, connexion cas, test pdf, etc ....) avec
+ un "error_reporting(E_ALL);" pour afficher les erreurs php !
+
+- dans le fonction alerte_mail de fonctions_conges.php : instancier la langue de php_mailer comme celle de
+  Libertempo (pas en francais systématiquement !)
+
+- faire une page d'aide pour le module d'admin !!!
+
+- vérif si le navigateur accepte le javascript et les cookies DANS LE CAS d'une config sans authentification ....
+
+- fonctionnement des sessions sans cookies (si non acceptés par le navigateur) !
+
+Mails :  ajouter dans la conf une adresse mail pour envoyer les mails en cc (ceux utilisateurs ou ceux responsable)
+    et dans la table groupe pour pouvoir faire un cc différent pour chaque groupe
+
+- possibilité de choisir entre PHPMailer et WAMailer si déja utilisé sur le serveur (--> réécrire la fonction de mail en testant quelle
+    librairie est utilisée (verif dans le fichier de conf ou verif de l'existantce d'un fichier))
+
+- modif d'une demande : pouvoir passer une demande de conges en demande de rtt (ou inverse)(si rtt comme conges)
+
+- mettre un bouton qui affiche la date courante pour que on puisse y revenir par un clic lorsqu'on
+  navigue dans le calendrier (genre de l'année 2008 un clic affiche le mois en cours).
+
+- prévoir une édition papier pour les absences autres que les conges/RTT
+
+- Rajouter dans la base de données un champs 'niveau hiérarchique' pour chaque user, et faire en sorte que les affichages
+  des listes et calendriers se fassent dans l'ordre hiérarchique puis alphabétique. Ajouter un paramètre pour laisser le choix
+  d'utiliser ou pas cette option.
+
+- Echanges jours rtt :
+   - faire apparaitre les 1/2 journées d'absence et de présence sur le calendrier de saisie.
+   - gérer les echanges par demi journées, pas par date (pour les échanges de 2 demi jour le même jour)
+
+- balises "pragma nocache" et "expire" dans entetes des pages
+
+- gestion temps partagé d'un user à plusieurs responsables ...
+
+- possibilité de décompte des conges en heure....
