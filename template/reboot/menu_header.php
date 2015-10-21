@@ -157,7 +157,8 @@
 				switch($tmp) {
 					case 'admin':
 						$mod_toolbar[] = "<a href=\"javascript:void(0);\" onClick=\"javascript:OpenPopUp('". ROOT_PATH ."/admin/admin_db_sauve.php?session=$session','400,300');\"><i class=\"fa fa-save\"></i><span>" . _('admin_button_save_db_2') . "</span></a>";
-						$mod_toolbar[] = "<a href=\"" . ROOT_PATH . "config/index.php?session=$session\"" . ($tmp == 'config' ? 'class="active"' : '') . "><i class=\"fa fa-th-list\"></i><span>Configuration</span></a>";
+						if($_SESSION['config']['affiche_bouton_config_pour_admin'] || $_SESSION['config']['affiche_bouton_config_absence_pour_admin'] || $_SESSION['config']['affiche_bouton_config_mail_pour_admin'] || $_SESSION['userlogin']=="admin" )
+							$mod_toolbar[] = "<a href=\"" . ROOT_PATH . "config/index.php?session=$session\"" . ($tmp == 'config' ? 'class="active"' : '') . "><i class=\"fa fa-th-list\"></i><span>" . _('admin_button_config_2') . "</span></a>";
 					break;
 					case 'hr':
 						$mod_toolbar[] = "<a href=\"" . ROOT_PATH . "hr/hr_jours_fermeture.php?session=$session\"><i class=\"fa fa-calendar\"></i><span>" . _('admin_button_jours_fermeture_2') . "</span></a>";

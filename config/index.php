@@ -49,20 +49,35 @@ verif_droits_user($session, "is_admin");
 $_SESSION['from_config']=TRUE;  // initialise ce flag pour changer le bouton de retour des popup
 
 	$onglet = getpost_variable('onglet');
-	if(!$onglet)
+	
+	if(!$onglet && $_SESSION['userlogin']=="admin")
+	{
 		$onglet = 'general';
+	} elseif (!$onglet && $_SESSION['userlogin']!="admin") {
+
+		if($_SESSION['config']['affiche_bouton_config_pour_admin'])
+			$onglet = 'general';
+		elseif($_SESSION['config']['affiche_bouton_config_absence_pour_admin'])
+			$onglet = 'type_absence';
+		elseif($_SESSION['config']['affiche_bouton_config_mail_pour_admin'])
+			$onglet = 'config_mail';
+		
+	} 
 	
 	/*********************************/
 	/*   COMPOSITION DES ONGLETS...  */
 	/*********************************/
 
 	$onglets = array();
-	
-	$onglets['general'] = _('install_config_appli');
 
-	$onglets['type_absence'] = _('install_config_types_abs');
-		
-	$onglets['mail'] = _('install_config_mail');
+	if($_SESSION['config']['affiche_bouton_config_pour_admin'] || $_SESSION['userlogin']=="admin")
+		$onglets['general'] = _('install_config_appli');
+
+	if($_SESSION['config']['affiche_bouton_config_absence_pour_admin'] || $_SESSION['userlogin']=="admin")
+		$onglets['type_absence'] = _('install_config_types_abs');
+
+	if($_SESSION['config']['affiche_bouton_config_mail_pour_admin'] || $_SESSION['userlogin']=="admin")
+		$onglets['mail'] = _('install_config_mail');
 	
 	$onglets['logs'] = _('config_logs');
 	
@@ -88,7 +103,7 @@ $_SESSION['from_config']=TRUE;  // initialise ce flag pour changer le bouton de 
 
 	echo '<div class="'.$onglet.' wrapper">';
 
-		echo '<a href="' . ROOT_PATH . "admin/admin_index.php?session=$session\" class=\"admin-back\"><i class=\"fa fa-arrow-circle-o-left\"></i>Retour mode admin</a>\n";
+		echo '<a href="' . ROOT_PATH . "admin/admin_index.php?session=$session\" class=\"admin-back\"><i class=\"fa fa-arrow-circle-o-left\"></i>". _('form_retour')."</a>\n";
 
 		if($onglet == 'general') {
 			include_once ROOT_PATH . 'config/configure.php';
