@@ -1668,7 +1668,7 @@ function get_tab_resp_du_user($user_login,  $DEBUG=FALSE)
 			foreach($tab_gid as $gid)
 			{
 				$gid=trim($gid);
-				$sql2='SELECT gr_login FROM conges_groupe_resp WHERE gr_gid='.SQL::quote($gid).' AND gr_login!=\''.SQL::quote($user_login).'\'';
+				$sql2='SELECT gr_login FROM conges_groupe_resp WHERE gr_gid='. \includes\SQL::quote($gid).' AND gr_login!=\''. \includes\SQL::quote($user_login).'\'';
 				$ReqLog1 = \includes\SQL::query($sql2);
 
 				while ($resultat1 = $ReqLog1->fetch_array())
