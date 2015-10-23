@@ -1,6 +1,6 @@
 <?php
 /*************************************************************************************************
-Libertempo : Gestion Interactive des Congés
+PHP_CONGES : Gestion Interactive des Congés
 Copyright (C) 2005 (cedric chauvineau)
 
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
@@ -40,7 +40,7 @@ if(substr($session, 0, 9)!="phpconges")
 	$_SESSION['config']=init_config_tab();      // on initialise le tableau des variables de config
 	if($_SESSION['config']['consult_calendrier_sans_auth']==FALSE)
 	{
-		redirect( ROOT_PATH . 'index.php' );
+		redirect( ROOT_PATH );
 	}
 }
 else
@@ -49,7 +49,7 @@ else
 $DEBUG=FALSE;
 //$DEBUG=TRUE ;
 
-if( $DEBUG ) { echo "lang_file=".$_SESSION['config']['lang_file']."<br/>\n";  echo "_SESSION =<br/>\n"; print_r($_SESSION); echo "<br/><br/>\n"; }
+if( $DEBUG ) { $content .= "lang_file=".$_SESSION['config']['lang_file']."<br>\n";  $content .= "_SESSION =<br>\n"; print_r($_SESSION); $content .= "<br><br>\n"; }
 
 $script = '<script language=javascript>
 function afficher(id)
@@ -65,10 +65,20 @@ function cacher(id)
 }
 </script>';
 
+$css = '<link href="'. TEMPLATE_PATH .'style_calendar_edition.css" rel="stylesheet" media="screen, print" type="text/css"><style type="text/css" media="print">@media print{@page {size: landscape}}</style>';
 
-$add_css = NULL;
-header_menu('', 'Libertempo : '._('calendrier_titre'), $add_css);
-
+//header_popup($_SESSION['config']['titre_calendrier'] , $script . $css);
+$content = "";
+$content .= "<page>\n";
+//$content .= "<html>\n";
+$content .= "<head>\n";
+$content .= "<title> CONGES : Calendrier </TITLE>\n";
+$content .= "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n";
+//$content .= "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\" />\n";
+$content .= '<link href="'. TEMPLATE_PATH .'style_calendar_edition.css" rel="stylesheet" media="screen, print" type="text/css"><style type="text/css" media="print">@media print{@page {size: landscape}}</style>\n';
+$content .= "</head>\n";
+$content .= "<body>\n";
+//<center>';
 
 	/*************************************/
 	// recup des parametres reçus :
@@ -97,7 +107,7 @@ header_menu('', 'Libertempo : '._('calendrier_titre'), $add_css);
 	$tab_type_absence=recup_tableau_tout_types_abs($DEBUG);
 
 
-//	echo "<hr align=\"center\" size=\"2\" width=\"90%\"> \n";
+//	$content .= "<hr align=\"center\" size=\"2\" width=\"90%\"> \n";
 
 	$jour_today=date("j");
 	$mois_today=date("m");
@@ -110,101 +120,108 @@ header_menu('', 'Libertempo : '._('calendrier_titre'), $add_css);
 	$group_names =get_groups_name();
 	
 	// AFFICHAGE PAGE
-	echo "<div id=\"main-calendar\" class=\"main-content\">\n";
-	if( ($_SESSION['config']['gestion_groupes']) && ($printable!=1) )  // si gestion des groupes active et pas version imprimable
-	{
-	// affiche le select des groupes du user OU les groupes du resp (si user est resp) OU tous les groupes (si option de config ok)
-		echo "<div class=\"pull-right\">\n";
-		affiche_select_groupe($select_groupe, $selected, $printable, $year, $mois, $first_jour, $group_names) ;
-		echo "</div>\n";
-	}
+		$content .= '<div style="width: 2540px; text-align: right;"></div>';
+	$content .= "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\">\n";
+	$content .= "<tr>\n";
+	$content .= "   <td align=\"center\">\n";
+		$content .= "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\">\n";
+		$content .= "<tr>\n";
+		$content .= "   <td align=\"center\"><img src=\"". TEMPLATE_PATH . "img/shim.gif\" width=\"200\" height=\"10\" border=\"0\" vspace=\"0\" hspace=\"0\"></td>\n";
+		$content .= "   <td align=\"center\">\n";
+	//	$content .= "   <H2>". _('calendrier_titre') ."</H2>\n";
+		$content .= "   <H3>". _('calendrier_titre') ;
+//		if( ($_SESSION['config']['gestion_groupes']) && ($select_groupe!="") )
+		if( ($_SESSION['config']['gestion_groupes']) && ($select_groupe!=0) )
+			$content .= "   (". _('divers_groupe') ." : ".$group_names[ $select_groupe ].")\n";
+		$content .= "   </H3>\n";
+		$content .= "   </td>\n";
+		// AFFICHAGE DE LA SELECTION D'UN GROUPE A AFFICHER
+		$content .= "   <td align=\"right\">\n";
+			if( ($_SESSION['config']['gestion_groupes']) && ($printable!=1) )  // si gestion des groupes active et pas version imprimable
+			{
+				// affiche le select des groupes du user OU les groupes du resp (si user est resp) OU tous les groupes (si option de config ok)
+				affiche_select_groupe($select_groupe, $selected, $printable, $year, $mois, $first_jour, $group_names) ;
+			}
+			else
+				$content .= "   <img src=\"". TEMPLATE_PATH . "img/shim.gif\" width=\"200\" height=\"10\" border=\"0\" vspace=\"0\" hspace=\"0\">\n";
+		$content .= "   </td>\n";
+		$content .= "</tr>\n";
+		$content .= "</table>\n";
+	$content .= "   </td>\n";
+	$content .= "</tr>\n";
 
-	echo "   <h1>". _('calendrier_titre') . "</h1>\n";
-	if( ($_SESSION['config']['gestion_groupes']) && ($select_groupe!=0) ) {
-		echo "<h2>". _('divers_groupe') ." : <strong>".$group_names[ $select_groupe ]."</strong></h2>\n";
-
-	}
 	
-	echo "<hr/>\n";
-	echo "<h3 class=\"current-month\">$nom_mois $year</h3>\n";
-	echo "<hr/>\n";
-
+	$content .= "<tr>\n";
+	$content .= "   <td align=\"center\">\n";
+//	$content .= "   <h3>$nom_mois  $year</h3>\n";
+	$content .= "   <b>$nom_mois  $year</b><br><br>\n";
+	$content .= "   </td>\n";
+	$content .= "</tr>\n";
 	/**********************/
 	/* Boutons de defilement */
-	if($printable!=1)   // si version ecran :
-	{
-		affichage_boutons_defilement($first_jour, $mois, $year, $select_groupe, $DEBUG) ;
-	}
 
 
 	/***********************************/
 	/* AFFICHAGE  TABLEAU (CALENDRIER) */
+	$content .= "<tr>\n";
+	$content .= "   <td align=\"center\">\n";
 	affichage_calendrier($year, $mois, $first_jour, $timestamp_today, $printable, $selected, $tab_type_absence, $select_groupe, $DEBUG);
+	$content .= "   </td>\n";
+	$content .= "</tr>\n";
 
 
 	/**********************/
 	/* Boutons de defilement */
+
+	$content .= "<tr>\n";
+	$content .= "   <td><img src=\"". TEMPLATE_PATH . "img/shim.gif\" width=\"200\" height=\"10\" border=\"0\" vspace=\"0\" hspace=\"0\"></td>\n";
+	$content .= "</tr>\n";
+	$content .= "<tr>\n";
+	$content .= "   <td align=\"center\">\n";
+
+		/**********************/
+		/* SOUS LE CALENDRIER */
+		/**********************/
+		$content .= "<table cellpadding=\"0\" cellspacing=\"5\" border=\"0\" width=\"90%\">\n";
+		$content .= "<tr>\n";
+		$content .= "   <td width=\"25%\" valign=\"top\" align=\"left\">\n";
+		if($printable!=1) // si version ecran :
+		{
+			$content .= "      <br><a href=\"$PHP_SELF?session=$session&printable=1&year=$year&mois=$mois&first_jour=$first_jour&select_groupe=$select_groupe\" target=\"_blank\" method=\"post\">\n";
+			$content .= "		<img src=\"". TEMPLATE_PATH . "img/fileprint_4_22x22.png\" width=\"22\" height=\"22\" border=\"0\" title=\"". _('calendrier_imprimable') ."\" alt=\"". _('calendrier_imprimable') ."\">\n";
+			$content .= "      ". _('calendrier_imprimable') ."\n";
+			$content .= "      </a>\n";
+			/*modif pour implementer l'impression pdf*/
+			$content .= "      <br><a href=\"calendrier-pdf.php?session=$session&printable=1&year=$year&mois=$mois&first_jour=$first_jour&select_groupe=$select_groupe\" target=\"_blank\" method=\"post\">\n";
+			$content .= "		<img src=\"". TEMPLATE_PATH . "img/pdf_22x22_2.png\" width=\"22\" height=\"22\" border=\"0\" title=\"Version PDF\">\n";
+			$content .= "      Version PDF\n";
+			$content .= "      </a>\n";
+		}
+		else  // si version imprimable
+			$content .= "      <img src=\"". TEMPLATE_PATH . "img/shim.gif\" width=\"25\" height=\"25\" border=\"0\" vspace=\"0\" hspace=\"0\">\n";
+		$content .= "   </td>\n";
+		$content .= "   <td valign=\"top\" align=\"right\">\n";
+		$content .= "      <h4>légende :</h4>\n";
+		$content .= "   </td>\n";
+		$content .= "   <td width=\"150\" valign=\"top\" align=\"left\">\n";
+				affiche_legende_type_absence($tab_type_absence, $DEBUG);
+		$content .= "   </td>\n";
+		$content .= "   <td width=\"30%\" valign=\"top\" align=\"left\">\n";
+				affiche_legende();
+		$content .= "   </td>\n";
+		$content .= "</tr>\n";
+		$content .= "</table>\n";
+
+	$content .= "   </td>\n";
+	$content .= "</tr>\n";
+	$content .= "</table>\n";
+
+
 	if($printable!=1)   // si version ecran :
 	{
-		echo "<tr>\n";
-		echo "   <td align=\"center\">\n";
-		affichage_boutons_defilement($first_jour, $mois, $year, $select_groupe, $DEBUG) ;
-		echo "   </td>\n";
-		echo "</tr>\n";
+		$content .= "<center><hr align=\"center\" size=\"2\" width=\"90%\"></center> \n" ;
 	}
 
-	echo "<tr>\n";
-	echo "</tr>\n";
-	echo "</table>\n";
-
-
-	if($printable!=1) // si version ecran :
-		{
-			echo "      <br/><a href=\"$PHP_SELF?session=$session&printable=1&year=$year&mois=$mois&first_jour=$first_jour&select_groupe=$select_groupe\" target=\"_blank\" method=\"post\">\n";
-			echo "<i class=\"fa fa-print\"></i>\n";
-			echo "      ". _('calendrier_imprimable') ."\n";
-			echo "      </a>\n";
-						/*******************************************************/
-						/*modif pour implementer l'impression pdf*/
-						/*******************************************************/
-			echo "      <br><a href=\"calendrier-pdf.php?session=$session&printable=1&year=$year&mois=$mois&first_jour=$first_jour&select_groupe=$select_groupe\" target=\"_blank\" method=\"post\">\n";
-			echo "		<img src=\"". TEMPLATE_PATH . "img/pdf_22x22_2.png\" width=\"22\" height=\"22\" border=\"0\" title=\"Version PDF\">\n";
-			echo "      Version PDF\n";
-			echo "      </a>\n";
-                                               /******************* FIN **********************/
-		}
-
-	echo "      <br><br><table cellpadding=\"1\" class=\"calendar table-responsive table-bordered table-stripped\">\n" ;
-	echo "      <tr align=\"center\">\n" ;
-	echo "         <td bgcolor=\"#FFFFFF\" class=\"cal-legende\"> - </td>\n" ;
-	echo "         <td class=\"cal-legende\"> </td>\n" ;
-	echo "      </tr>\n" ;
-	echo "      <tr align=\"center\">\n" ;
-	echo "         <td bgcolor=\"#DCDCDC\" class=\"cal-legende\"> - </td>\n" ;
-	echo "         <td class=\"cal-legende\"> ". _('calendrier_legende_we') ."</td>\n" ;
-	echo "      </tr>\n" ;
-	echo "      <tr align=\"center\">\n" ;
-	echo "         <td bgcolor=\"#8addf2\" class=\"cal-legende\">abs</td>\n" ;
-	echo "         <td class=\"cal-legende\"> ". _('calendrier_legende_conges') ."</td>\n" ;
-	echo "      </tr>\n" ;
-	echo "      <tr align=\"center\">\n" ;
-	echo "         <td bgcolor=\"#ffc1ff\" class=\"cal-legende\">abs</td>\n" ;
-	echo "         <td class=\"cal-legende\"> ". _('calendrier_legende_demande') ."</td>\n" ;
-	echo "      </tr>\n" ;
-	echo "      <tr align=\"center\">\n" ;
-	echo "         <td bgcolor=\"#ffffad\" class=\"cal-legende\"> - </td>\n" ;
-	echo "         <td class=\"cal-legende\"> ". _('calendrier_legende_part_time') ."</td>\n" ;
-	echo "      </tr>\n" ;
-	echo "      <tr align=\"center\">\n" ;
-	echo "         <td bgcolor=\"#C3C3C3\" class=\"cal-legende\">abs</td>\n" ;
-	echo "         <td class=\"cal-legende\"> ". _('calendrier_legende_abs') ."</td>\n" ;
-	echo "      </tr>\n" ;
-	echo "      <tr align=\"center\">\n" ;
-	echo "         <td bgcolor=\"#CEB6FF\" class=\"cal-legende\">abs</td>\n" ;
-	echo "         <td class=\"cal-legende\"> ". _('divers_fermeture') ."</td>\n" ;
-	echo "      </tr>\n" ;
-	echo "      </table>\n" ;
-	echo "</div>";
 	/********************/
 	/* bouton retour */
 	/********************/
@@ -212,35 +229,46 @@ header_menu('', 'Libertempo : '._('calendrier_titre'), $add_css);
 	{
 	// appel de la fenetre d'impression directe
 ?>
-<script type="text/javascript" language="javascript1.2">
-<!--
+<!--<script type="text/javascript" language="javascript1.2">
+
 // Do print the page
 if (typeof(window.print) != 'undefined') {
     window.print();
 }
-//-->
-</script>
+//
+</script>-->
 <?php
 	}
 	// si on est dans un acces sans authentification
-//	elseif(($_SESSION['config']['consult_calendrier_sans_auth']) && (!isset($_SESSION['userlogin'])) )
-//	{
-//	}
-//	else // sinon (version ecran et session authentifiée
-//	{
-		// echo "<form action=\"\" method=\"POST\">\n";
-		// echo "<center><input type=\"button\" value=\"". _('form_close_window') ."\" onClick=\"javascript:window.close();\"></center>\n";
-		// echo "</form>\n";
+	elseif(($_SESSION['config']['consult_calendrier_sans_auth']) && (!isset($_SESSION['userlogin'])) )
+	{
+	}
+	else // sinon (version ecran et session authentifiée
+	{
+		$content .= "<form action=\"\" method=\"POST\">\n";
+		$content .= "<center><input type=\"button\" value=\"". _('form_close_window') ."\" onClick=\"javascript:window.close();\"></center>\n";
+		$content .= "</form>\n";
 //		//tentative de reload de la page pour eviter le bug d'affichage de firefox avec les div en positions relatives ....
 //		if($first_load=="Y")
 //		{
 //			/* APPEL D'UNE AUTRE PAGE au bout d'une tempo de 2secondes */
-//			echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$PHP_SELF?session=$session&year=$year&mois=$mois&first_jour=$first_jour&first_load=N\">";
+//			$content .= "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$PHP_SELF?session=$session&year=$year&mois=$mois&first_jour=$first_jour&first_load=N\">";
 //		}
-//	}
+	}
 
-	bottom();
+//	bottom();
 
+//	$content .= "</center>\n";
+	$content .= "</body>\n";
+	//$content .= "</html>\n";
+	$content .= "</page>\n";
+//	echo $content;
+	$content=htmlspecialchars_decode(htmlentities($content, ENT_NOQUOTES, "UTF-8"));
+	require_once('INCLUDE.EXTERNAL/html2pdf/html2pdf.class.php');
+    $html2pdf = new HTML2PDF('L','A3','fr', false, 'ISO-8859-15');
+    $html2pdf->WriteHTML($content);
+	ob_clean();
+    $html2pdf->Output('exemple.pdf');
 
 /*******************************************************************************/
 /**********  FONCTIONS  ********************************************************/
@@ -279,10 +307,22 @@ function affichage_boutons_defilement($first_jour, $mois, $year, $select_groupe,
 			$next_first_jour_mois=date("n", jour_suivant($first_jour, $mois, $year)) ;
 			$next_first_jour_year=date("Y", jour_suivant($first_jour, $mois, $year)) ;
 
-		echo "<ul class=\"pager\">\n";
-		echo "<li><a href=\"$PHP_SELF?session=$session&first_jour=1&mois=$prev_mois&year=$prev_year&select_groupe=$select_groupe\" method=\"POST\"><i class=\"fa fa-angle-double-left\"></i>&nbsp;". _('divers_mois_precedent_maj_1') ." </a></li>\n";
-		echo "<li><a href=\"$PHP_SELF?session=$session&first_jour=1&mois=$next_mois&year=$next_year&select_groupe=$select_groupe\" method=\"POST\">". _('divers_mois_suivant_maj_1') ."&nbsp;<i class=\"fa fa-angle-double-right\"></i></a></li>\n";
-		echo "</ul>\n";
+		$content .= "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"90%\" >\n";
+		$content .= "<tr>\n";
+		$content .= "<td align=\"left\">
+				<a href=\"$PHP_SELF?session=$session&first_jour=1&mois=$prev_mois&year=$prev_year&select_groupe=$select_groupe\" method=\"POST\"> << ". _('divers_mois_precedent_maj_1') ." </a>
+			</td>\n";
+		$content .= "<td align=\"left\">
+				<a href=\"$PHP_SELF?session=$session&first_jour=$prev_first_jour&mois=$prev_first_jour_mois&year=$prev_first_jour_year&select_groupe=$select_groupe\" method=\"POST\"> << ". _('calendrier_jour_precedent') ." </a>
+			</td>\n";
+		$content .= "<td align=\"right\">
+				<a href=\"$PHP_SELF?session=$session&first_jour=$next_first_jour&mois=$next_first_jour_mois&year=$next_first_jour_year&select_groupe=$select_groupe\" method=\"POST\"> ". _('calendrier_jour_suivant') ." >> </a>
+			</td>\n";
+		$content .= "<td align=\"right\">
+				<a href=\"$PHP_SELF?session=$session&first_jour=1&mois=$next_mois&year=$next_year&select_groupe=$select_groupe\" method=\"POST\"> ". _('divers_mois_suivant_maj_1') ." >> </a>
+			</td>\n";
+		$content .= "</tr></table>\n";
+		$content .= "<br>\n";
 
 }
 
@@ -293,7 +333,7 @@ function affichage_calendrier($year, $mois, $first_jour, $timestamp_today, $prin
 {
 	$PHP_SELF=$_SERVER['PHP_SELF'];
 	$session=session_id();
-		$nb_day = date('t', mktime(1,1,1,$mois,1,$year));
+    global $content;
 
 		// recup du tableau des types de conges (seulement les conges)
 		$tab_type_cong=recup_tableau_types_conges($DEBUG);
@@ -320,20 +360,19 @@ function affichage_calendrier($year, $mois, $first_jour, $timestamp_today, $prin
 		/**  AFFICHAGE TABLEAU  **/
 
 		if($printable!=1)  // si version ecran :
-			echo "<table class=\"calendar table table-responsive table-bordered table-stripped\">\n";
+			$content .= "<table cellpadding=\"1\" class=\"tablo-cal\" width=\"80%\">\n";
 		else               // si version imprimable :
-			echo "<table>\n";
-
-		echo "<tr><th colspan=\"2\"></th><th colspan=\"$nb_day\">". _('divers_semaine') ."</th><th colspan=\"8\">Solde</th></tr>\n";
+			$content .= "<table cellpadding=\"1\" cellspacing=\"0\" border=\"1\" width=\"80%\">\n";
 
 		/*************************************/
 		// affichage premiere ligne (semaines)
-		echo "<tr align=\"center\">\n";
+		$content .= "<tr align=\"center\">\n";
 
 		// affichage nom prenom quotité
 		$nb_colonnes=3;
-		echo "	<th rowspan=\"2\">Utilisateur</th>\n\n";
-		echo "	<th rowspan=\"2\">Quotité</th>";
+		$content .= "	<td class=\"cal-user\" rowspan=\"2\">". _('divers_nom_maj') ."</td>\n\n";
+		$content .= "	<td class=\"cal-user\" rowspan=\"2\">". _('divers_prenom_maj') ."</td>\n\n";
+		$content .= "	<td class=\"cal-user\" rowspan=\"2\">%</td>";
 
 		// affichage des semaines
 		// ... du premier jour voulu à la fin du mois
@@ -347,24 +386,17 @@ function affichage_calendrier($year, $mois, $first_jour, $timestamp_today, $prin
 			else
 				$j_num_jour_semaine=date_fr("w", $j_timestamp);
 
-			//DEBUG : echo "<td class=\"cal-day\" >$j_num_jour_semaine / $j_num_semaine</td>";
+			//DEBUG : $content .= "<td class=\"cal-day\" >$j_num_jour_semaine / $j_num_semaine</td>";
 			if($j==$first_jour)
 			{
-					$colspan = 8 - $j_num_jour_semaine;
-				
-				echo "<th class=\"cal-day-first\" colspan=\"$colspan\" >$j_num_semaine</th>\n";
+				$colspan=8-$j_num_jour_semaine;
+				$content .= "<td class=\"cal-day-first\" colspan=\"$colspan\" >". _('divers_semaine') ." $j_num_semaine</td>\n";
 			}
 			else
 			{
-				$month_rest = $nb_day - $j;
-				$colspan = 7;
-				if($month_rest < 6)
-					$colspan = $month_rest + 1;
 				// on affiche que les lundi
-				if($j_num_jour_semaine==1) {
-					echo "<th class=\"cal-day\" colspan=\"$colspan\" >$j_num_semaine</th>\n";
-				}
-					
+				if($j_num_jour_semaine==1)
+					$content .= "<td class=\"cal-day\" colspan=\"7\" >". _('divers_semaine') ." $j_num_semaine</td>\n";
 			}
 
 		}
@@ -395,57 +427,54 @@ function affichage_calendrier($year, $mois, $first_jour, $timestamp_today, $prin
 				else
 					$j_num_jour_semaine=date_fr("w", $j_timestamp);
 
-				//DEBUG : echo "<td class=\"cal-day\" >$j_num_jour_semaine / $j_num_semaine</td>";
+				//DEBUG : $content .= "<td class=\"cal-day\" >$j_num_jour_semaine / $j_num_semaine</td>";
 				if($j==$first_jour)
 				{
 					$colspan=8-$j_num_jour_semaine;
-					echo "<td class=\"cal-day-first\" colspan=\"$colspan\" >$j_num_semaine</td>\n";
+					$content .= "<td class=\"cal-day-first\" colspan=\"$colspan\" >". _('divers_semaine') ." $j_num_semaine</td>\n";
 				}
 				else
 				{
 					// on affiche que les lundi
-					if($j_num_jour_semaine==1) {
-						echo "<td class=\"cal-day\" colspan=\"7\" >$j_num_semaine</td>\n";
-					}
+					if($j_num_jour_semaine==1)
+						$content .= "<td class=\"cal-day\" colspan=\"7\" >". _('divers_semaine') ." $j_num_semaine</td>\n";
 				}
 			}
 		}
 
 		
 
-		if( $_SESSION['config']['affiche_soldes_calendrier'] || is_resp($_SESSION['userlogin']) || is_hr($_SESSION['userlogin']) || is_admin($_SESSION['userlogin']) )
-		{
-			// affichage des libellé des conges
-			$abs_libelle = recup_tableau_tout_types_abs();
-
-			foreach($tab_type_cong as $id => $libelle)
-			{
-					echo "<th rowspan=\"2\">" . $abs_libelle[$id]['short_libelle'] . "</th>\n";
-					$nb_colonnes=$nb_colonnes+1;
-			}
-			
-			
-			if ($_SESSION['config']['gestion_conges_exceptionnels'])
-			{
-				foreach($tab_type_cong_excep as $id => $libelle)
-				{
-					echo "<th rowspan=\"2\">" . $abs_libelle[$id]['short_libelle'] . "</th>\n";
-					$nb_colonnes=$nb_colonnes+1;
-				}
-			}
-		}
+//		if( $_SESSION['config']['affiche_soldes_calendrier'] || is_resp($_SESSION['userlogin']) || is_hr($_SESSION['userlogin']) || is_admin($_SESSION['userlogin']) )
+//		{
+//			// affichage des libellé des conges
+//			foreach($tab_type_cong as $id => $libelle)
+//			{
+//					$content .= "<td class=\"cal-user\" rowspan=\"2\">". _('divers_solde') ." $libelle</td>\n";
+//					$nb_colonnes=$nb_colonnes+1;
+//			}
+//			
+//			
+//			if ($_SESSION['config']['gestion_conges_exceptionnels'])
+//			{
+//				foreach($tab_type_cong_excep as $id => $libelle)
+//				{
+//					$content .= "<td class=\"cal-user\" rowspan=\"2\">". _('divers_solde') ." $libelle</td>\n";
+//					$nb_colonnes=$nb_colonnes+1;
+//				}
+//			}
+//		}
 
 		
-		echo "</tr>\n\n";
+		$content .= "</tr>\n\n";
 
 
 		/*************************************/
 		// affichage 2ieme ligne (dates)
-		echo "<tr>\n";
+		$content .= "<tr align=\"center\">\n";
 
 		// on affiche pas car on a fait de "rowspan" à la ligne supérieure
 		// affichage d'une cellule vide sous les titres
-		//echo "	<td class=\"cal-user\" colspan=\"$nb_colonnes\">&nbsp;</td>\n";
+		//$content .= "	<td class=\"cal-user\" colspan=\"$nb_colonnes\">&nbsp;</td>\n";
 		//dernier jour = dimanche ?
 		$last = 7;
 				
@@ -455,8 +484,7 @@ function affichage_calendrier($year, $mois, $first_jour, $timestamp_today, $prin
 		for($j=$first_jour; checkdate($mois, $j, $year); $j++)
 		{
 			$j_timestamp=mktime (0,0,0,$mois, $j, $year);
-			// $j_name=date_fr("D", $j_timestamp);
-			$j_name = substr(date_fr("D", $j_timestamp), 0, 1);
+			$j_name=date_fr("D", $j_timestamp);
 			$last =date("N", $j_timestamp);
 			$j_date_fr=date_fr("d-m-Y", $j_timestamp);
 			$j_num_semaine=date_fr("W", $j_timestamp);
@@ -464,9 +492,9 @@ function affichage_calendrier($year, $mois, $first_jour, $timestamp_today, $prin
 
 			// on affiche en gras le jour d'aujourd'hui
 			if($j_timestamp==$timestamp_today)
-				$text_titre_date="<b>$j_name <br/>$j</b>";
+				$text_titre_date="<b>$j_name <br>$j</b>";
 			else
-				$text_titre_date="$j_name <br/>$j";
+				$text_titre_date="$j_name <br>$j";
 
 			// on regarde si c'est la premiere cellule ou non
 			if($j==$first_jour)
@@ -475,7 +503,7 @@ function affichage_calendrier($year, $mois, $first_jour, $timestamp_today, $prin
 				$cal_day="cal-day";
 
 			// on affiche le titre -date (la date du jour)
-			echo "<td class=\"$cal_day $td_second_class\" title=\"$j_date_fr / ". _('divers_semaine') ." $j_num_semaine\">$text_titre_date</td>";
+			$content .= "<td class=\"$cal_day $td_second_class\" title=\"$j_date_fr / ". _('divers_semaine') ." $j_num_semaine\">$text_titre_date</td>";
 		}
 
 		// ... si le premier jour voulu n'etait pas le premier du mois, on va jusqu'à la meme date du mois suivant.
@@ -496,26 +524,23 @@ function affichage_calendrier($year, $mois, $first_jour, $timestamp_today, $prin
 
 				$j_timestamp=mktime (0,0,0,$mois_select, $j, $year_select);
 				$last =date("N", $j_timestamp);
-				// $j_name=date_fr("D", $j_timestamp);
-				$j_name = substr(date_fr("D", $j_timestamp), 0, 1);
+				$j_name=date_fr("D", $j_timestamp);
 				$j_date_fr=date_fr("d-m-Y", $j_timestamp);
 				$j_num_semaine=date_fr("W", $j_timestamp);
 				$td_second_class=get_td_class_of_the_day_in_the_week($j_timestamp);
 
 				// on affiche en gras le jour d'aujourd'hui
 				if($j_timestamp==$timestamp_today)
-					echo "<td class=\"cal-day $td_second_class\" title=\"$j_date_fr / ". _('divers_semaine') ." $j_num_semaine\"><strong>$j_name $j</strong></td>";
-					// echo "<td class=\"cal-day $td_second_class\" title=\"$j_date_fr / ". _('divers_semaine') ." $j_num_semaine\"><b>$j_name $j/$mois_select</b></td>";
+					$content .= "<td class=\"cal-day $td_second_class\" title=\"$j_date_fr / ". _('divers_semaine') ." $j_num_semaine\"><b>$j_name $j/$mois_select</b></td>";
 				else
-					echo "<td class=\"cal-day $td_second_class\" title=\"$j_date_fr / ". _('divers_semaine') ." $j_num_semaine\">$j_name $j</td>";
-					// echo "<td class=\"cal-day $td_second_class\" title=\"$j_date_fr / ". _('divers_semaine') ." $j_num_semaine\">$j_name $j/$mois_select</td>";
+					$content .= "<td class=\"cal-day $td_second_class\" title=\"$j_date_fr / ". _('divers_semaine') ." $j_num_semaine\">$j_name $j/$mois_select</td>";
 			}
 		}
 		
-		// if ($last < 7)
-		// for ($i = $last; $i <7; $i ++)
-		// 	echo '<td></td>';
-		// echo "</tr>\n";
+		if ($last < 7)
+		for ($i = $last; $i <7; $i ++)
+			$content .= '<td></td>';
+		$content .= "</tr>\n";
 
 
 		/**************************************************/
@@ -564,19 +589,19 @@ function affichage_calendrier($year, $mois, $first_jour, $timestamp_today, $prin
 			$tab_cong_user = $tab_cong_users[ $sql_login ];
 
 			if($printable==1)
-				echo "<tr align=\"center\" class=\"cal-ligne-user-edit\">\n";
+				$content .= "<tr align=\"center\" class=\"cal-ligne-user-edit\">\n";
 			elseif($selected==$sql_login)
-				echo "<tr align=\"center\" class=\"cal-ligne-user-selected\">\n";
+				$content .= "<tr align=\"center\" class=\"cal-ligne-user-selected\">\n";
 			else
-				echo "<tr align=\"center\" class=\"cal-ligne-user\">\n";
+				$content .= "<tr align=\"center\" class=\"cal-ligne-user\">\n";
 
 			if($printable==1)
-				$text_nom="<strong>$sql_nom</strong>";
+				$text_nom="<b>$sql_nom</b>";
 			else
-				$text_nom="<a href=\"$PHP_SELF?session=$session&selected=$sql_login&year=$year&mois=$mois&first_jour=$first_jour&printable=$printable&select_groupe=$select_groupe\" method=\"GET\">$sql_nom $sql_prenom</a>";
+				$text_nom="<a href=\"$PHP_SELF?session=$session&selected=$sql_login&year=$year&mois=$mois&first_jour=$first_jour&printable=$printable&select_groupe=$select_groupe\" method=\"GET\">$sql_nom</a>";
 
 			// affichage nom prenom quotité
-			echo "<td class=\"cal-user\">$text_nom</td><td class=\"cal-percent\">$sql_quotite %</td>";
+			$content .= "<td class=\"cal-user\">$text_nom</td><td class=\"cal-user\">$sql_prenom</td><td class=\"cal-user\">$sql_quotite%</td>";
 			
 
 			// pour chaque jour : (du premier jour demandé à la fin du mois ...)
@@ -631,28 +656,28 @@ function affichage_calendrier($year, $mois, $first_jour, $timestamp_today, $prin
 			}
 			
 			
-			//if ($last < 7)
-			//for ($i = $last; $i <7; $i ++)
-			//	echo '<td></td>';
+			if ($last < 7)
+			for ($i = $last; $i <7; $i ++)
+				$content .= '<td></td>';
 			
-			if( $_SESSION['config']['affiche_soldes_calendrier'] || is_resp($_SESSION['userlogin']) || is_hr($_SESSION['userlogin']) || is_admin($_SESSION['userlogin']) )
-			{
-				// affichage des divers soldes
-				foreach($tab_cong_user as $id => $tab_conges)
-				{
-					// si des jours ont été pris durant le mois affiché, on indique combien :
-					if((isset($nb_jours_current_month[$id])) && ($_SESSION['config']['affiche_jours_current_month_calendrier']) )
-						echo "<td class=\"cal-user\">".$tab_conges['solde']."&nbsp;(".$nb_jours_current_month[$id].")</td>";
-					else
-						echo "<td class=\"cal-user\">".$tab_conges['solde']."</td>";
-				}
-			}
+//			if( $_SESSION['config']['affiche_soldes_calendrier'] || is_resp($_SESSION['userlogin']) || is_hr($_SESSION['userlogin']) || is_admin($_SESSION['userlogin']) )
+//			{
+//				// affichage des divers soldes
+//				foreach($tab_cong_user as $id => $tab_conges)
+//				{
+//					// si des jours ont été pris durant le mois affiché, on indique combien :
+//					if((isset($nb_jours_current_month[$id])) && ($_SESSION['config']['affiche_jours_current_month_calendrier']) )
+//						//$content .= "<td class=\"cal-user\">"./*$tab_conges['solde'].*/"&nbsp;("./*$nb_jours_current_month[$id].*/")</td>";
+//					else
+//						//$content .= "<td class=\"cal-user\">"./*$tab_conges['solde'].*/"</td>";
+//				}
+//			}
 			
 			
-			echo "\n</tr>\n";
+			$content .= "\n</tr>\n";
 		}
 
-		echo "</table>\n\n";
+		$content .= "</table>\n\n";
 		
 }
 
@@ -663,7 +688,7 @@ function affiche_cellule_jour_user($sql_login, $j_timestamp, $year_select, $mois
 {
 
 	$session=session_id();
-
+    global $content;
 	$return = array();						
 	
 	// info bulle
@@ -676,9 +701,9 @@ function affiche_cellule_jour_user($sql_login, $j_timestamp, $year_select, $mois
 	{
 		$class="cal-day_".$second_class ;
 		if($printable!=1)  // si version écran :
-			echo "<td class=\"$class\" $info_bulle>-</td>";
+			$content .= "<td class=\"$class\" $info_bulle>-</td>";
 		else
-			echo "<td class=\"$class\">-</td>";
+			$content .= "<td class=\"$class\">-</td>";
 	}
 	else
 	{
@@ -728,7 +753,7 @@ function affiche_cellule_jour_user($sql_login, $j_timestamp, $year_select, $mois
 						$tab_per=$tab_day[$i];  // on recup le tableau de la periode
 						if(in_array($sql_login, $tab_per))   // si la periode correspond au user que l'on est en train de traiter
 						{
-							//echo "tab_per =<br/>\n"; print_r($tab_per); echo "<br/>\n";
+							//$content .= "tab_per =<br>\n"; print_r($tab_per); $content .= "<br>\n";
 
 							$sql_p_type=$tab_per["p_type"];
 							$sql_p_etat=$tab_per["p_etat"];
@@ -749,9 +774,9 @@ function affiche_cellule_jour_user($sql_login, $j_timestamp, $year_select, $mois
 									$class_am=get_class_titre($sql_p_type, $tab_type_absence, $sql_p_etat, $sql_p_fermeture_id)."_am";
 									$text_am=$tab_type_absence[$sql_p_type]['short_libelle'];
 									if ($tab_per['p_commentaire'] == "")   // *** si le commentaire est renseigné on l'affiche dans l'infobulle, sinon on affiche le type d'absence ***
-									        $text_bulle_type_abs='<div class="type-abscence">' . $tab_type_absence[$sql_p_type]['libelle'] ."</div>$sql_p_date_deb_fr <i class=\"fa fa-long-arrow-right\"></i> $sql_p_date_fin_fr";
+									        $text_bulle_type_abs=$tab_type_absence[$sql_p_type]['libelle']."<br>$sql_p_date_deb_fr - $sql_p_date_fin_fr";
 									else
-									        $text_bulle_type_abs=$tab_per['p_commentaire']."<br/>$sql_p_date_deb_fr <i class=\"fa fa-long-arrow-right\"></i> $sql_p_date_fin_fr";
+									        $text_bulle_type_abs=$tab_per['p_commentaire']."<br>$sql_p_date_deb_fr - $sql_p_date_fin_fr";
 									
 									if (isset($return[ $tab_type_absence[$sql_p_type]['libelle'] ]))
 										$return[ $tab_type_absence[$sql_p_type]['libelle'] ] += 0.5;
@@ -763,9 +788,9 @@ function affiche_cellule_jour_user($sql_login, $j_timestamp, $year_select, $mois
 									$class_pm=get_class_titre($sql_p_type, $tab_type_absence, $sql_p_etat, $sql_p_fermeture_id)."_pm";
 									$text_pm=$tab_type_absence[$sql_p_type]['short_libelle'];
 									if ($tab_per['p_commentaire'] == "")   // *** si le commentaire est renseigné on l'affiche dans l'infobulle, sinon on affiche le type d'absence ***
-									        $text_bulle_type_abs='<div class="type-abscence">' . $tab_type_absence[$sql_p_type]['libelle'] ."</div>$sql_p_date_deb_fr <i class=\"fa fa-long-arrow-right\"></i> $sql_p_date_fin_fr";
+									        $text_bulle_type_abs=$tab_type_absence[$sql_p_type]['libelle']."<br>$sql_p_date_deb_fr - $sql_p_date_fin_fr";
 									else
-									        $text_bulle_type_abs=$tab_per['p_commentaire']."<br/>$sql_p_date_deb_fr <i class=\"fa fa-long-arrow-right\"></i> $sql_p_date_fin_fr";
+									        $text_bulle_type_abs=$tab_per['p_commentaire']."<br>$sql_p_date_deb_fr - $sql_p_date_fin_fr";
 									
 									if (isset($return[ $tab_type_absence[$sql_p_type]['libelle'] ]))
 										$return[ $tab_type_absence[$sql_p_type]['libelle'] ] += 0.5;
@@ -782,9 +807,9 @@ function affiche_cellule_jour_user($sql_login, $j_timestamp, $year_select, $mois
 									$class_pm=get_class_titre($sql_p_type, $tab_type_absence, $sql_p_etat, $sql_p_fermeture_id)."_pm";
 									$text_pm=$tab_type_absence[$sql_p_type]['short_libelle'];
 									if ($tab_per['p_commentaire'] == "")   // *** si le commentaire est renseigné on l'affiche dans l'infobulle, sinon on affiche le type d'absence ***
-									        $text_bulle_type_abs='<div class="type-abscence">' . $tab_type_absence[$sql_p_type]['libelle'] ."</div>$sql_p_date_deb_fr <i class=\"fa fa-long-arrow-right\"></i> $sql_p_date_fin_fr";
+									        $text_bulle_type_abs=$tab_type_absence[$sql_p_type]['libelle']."<br>$sql_p_date_deb_fr - $sql_p_date_fin_fr";
 									else
-									        $text_bulle_type_abs=$tab_per['p_commentaire']."<br/>$sql_p_date_deb_fr <i class=\"fa fa-long-arrow-right\"></i> $sql_p_date_fin_fr";
+									        $text_bulle_type_abs=$tab_per['p_commentaire']."<br>$sql_p_date_deb_fr - $sql_p_date_fin_fr";
 									
 									$return[ $tab_type_absence[$sql_p_type]['libelle'] ] = 1;
 								}
@@ -793,9 +818,9 @@ function affiche_cellule_jour_user($sql_login, $j_timestamp, $year_select, $mois
 									$class_pm=get_class_titre($sql_p_type, $tab_type_absence, $sql_p_etat, $sql_p_fermeture_id)."_pm";
 									$text_pm=$tab_type_absence[$sql_p_type]['short_libelle'];
 									if ($tab_per['p_commentaire'] == "")   // *** si le commentaire est renseigné on l'affiche dans l'infobulle, sinon on affiche le type d'absence ***
-									        $text_bulle_type_abs='<div class="type-abscence">' . $tab_type_absence[$sql_p_type]['libelle'] ."</div>$sql_p_date_deb_fr <i class=\"fa fa-long-arrow-right\"></i> $sql_p_date_fin_fr";
+									        $text_bulle_type_abs=$tab_type_absence[$sql_p_type]['libelle']."<br>$sql_p_date_deb_fr - $sql_p_date_fin_fr";
 									else
-									        $text_bulle_type_abs=$tab_per['p_commentaire']."<br/>$sql_p_date_deb_fr <i class=\"fa fa-long-arrow-right\"></i> $sql_p_date_fin_fr";
+									        $text_bulle_type_abs=$tab_per['p_commentaire']."<br>$sql_p_date_deb_fr - $sql_p_date_fin_fr";
 											
 									
 									if (isset($return[ $tab_type_absence[$sql_p_type]['libelle'] ]))
@@ -812,10 +837,10 @@ function affiche_cellule_jour_user($sql_login, $j_timestamp, $year_select, $mois
 									$text_am=$tab_type_absence[$sql_p_type]['short_libelle'];
 									$class_pm=get_class_titre($sql_p_type, $tab_type_absence, $sql_p_etat, $sql_p_fermeture_id)."_pm";
 									if ($tab_per['p_commentaire'] == "")   // *** si le commentaire est renseigné on l'affiche dans l'infobulle, sinon on affiche le type d'absence ***
-									        $text_bulle_type_abs='<div class="type-abscence">' . $tab_type_absence[$sql_p_type]['libelle'] ."</div>$sql_p_date_deb_fr <i class=\"fa fa-long-arrow-right\"></i> $sql_p_date_fin_fr";
+									        $text_bulle_type_abs=$tab_type_absence[$sql_p_type]['libelle']."<br>$sql_p_date_deb_fr - $sql_p_date_fin_fr";
 									else
-									        $text_bulle_type_abs=$tab_per['p_commentaire']."<br/>$sql_p_date_deb_fr <i class=\"fa fa-long-arrow-right\"></i> $sql_p_date_fin_fr";
-									$text_bulle_type_abs='<div class="type-abscence">' . $tab_type_absence[$sql_p_type]['libelle'] ."</div>$sql_p_date_deb_fr <i class=\"fa fa-long-arrow-right\"></i> $sql_p_date_fin_fr";
+									        $text_bulle_type_abs=$tab_per['p_commentaire']."<br>$sql_p_date_deb_fr - $sql_p_date_fin_fr";
+									$text_bulle_type_abs=$tab_type_absence[$sql_p_type]['libelle']."<br>$sql_p_date_deb_fr - $sql_p_date_fin_fr";
 									
 									$return[ $tab_type_absence[$sql_p_type]['libelle'] ] = 1;
 								}
@@ -824,9 +849,9 @@ function affiche_cellule_jour_user($sql_login, $j_timestamp, $year_select, $mois
 									$class_am=get_class_titre($sql_p_type, $tab_type_absence, $sql_p_etat, $sql_p_fermeture_id)."_am";
 									$text_am=$tab_type_absence[$sql_p_type]['short_libelle'];
 									if ($tab_per['p_commentaire'] == "")   // *** si le commentaire est renseigné on l'affiche dans l'infobulle, sinon on affiche le type d'absence ***
-									        $text_bulle_type_abs='<div class="type-abscence">' . $tab_type_absence[$sql_p_type]['libelle'] ."</div>$sql_p_date_deb_fr <i class=\"fa fa-long-arrow-right\"></i> $sql_p_date_fin_fr";
+									        $text_bulle_type_abs=$tab_type_absence[$sql_p_type]['libelle']."<br>$sql_p_date_deb_fr - $sql_p_date_fin_fr";
 									else
-									        $text_bulle_type_abs=$tab_per['p_commentaire']."<br/>$sql_p_date_deb_fr <i class=\"fa fa-long-arrow-right\"></i> $sql_p_date_fin_fr";
+									        $text_bulle_type_abs=$tab_per['p_commentaire']."<br>$sql_p_date_deb_fr - $sql_p_date_fin_fr";
 									
 									if (isset($return[ $tab_type_absence[$sql_p_type]['libelle'] ]))
 										$return[ $tab_type_absence[$sql_p_type]['libelle'] ] += 0.5;
@@ -841,9 +866,9 @@ function affiche_cellule_jour_user($sql_login, $j_timestamp, $year_select, $mois
 								$class_pm=get_class_titre($sql_p_type, $tab_type_absence, $sql_p_etat, $sql_p_fermeture_id)."_pm";
 								$text_pm=$tab_type_absence[$sql_p_type]['short_libelle'];
 									if ($tab_per['p_commentaire'] == "")   // *** si le commentaire est renseigné on l'affiche dans l'infobulle, sinon on affiche le type d'absence ***
-									        $text_bulle_type_abs='<div class="type-abscence">' . $tab_type_absence[$sql_p_type]['libelle'] ."</div>$sql_p_date_deb_fr <i class=\"fa fa-long-arrow-right\"></i> $sql_p_date_fin_fr";
+									        $text_bulle_type_abs=$tab_type_absence[$sql_p_type]['libelle']."<br>$sql_p_date_deb_fr - $sql_p_date_fin_fr";
 									else
-									        $text_bulle_type_abs=$tab_per['p_commentaire']."<br/>$sql_p_date_deb_fr <i class=\"fa fa-long-arrow-right\"></i> $sql_p_date_fin_fr";
+									        $text_bulle_type_abs=$tab_per['p_commentaire']."<br>$sql_p_date_deb_fr - $sql_p_date_fin_fr";
 											
 								
 								$return[ $tab_type_absence[$sql_p_type]['libelle'] ] = 1;
@@ -869,38 +894,39 @@ function affiche_cellule_jour_user($sql_login, $j_timestamp, $year_select, $mois
 			$text_pm="";
 
 
-		$class="cal-day cal-day_".$second_class."_".$class_am."_".$class_pm ;
+		$class="cal-day_".$second_class."_".$class_am."_".$class_pm ;
 
 		
 		if($printable!=1)  // si version écran :
 		{
 			if( ($text_am=="-") && ($text_pm=="") )
 			{
-				echo "<td class=\"$class\"  $info_bulle>";
-				echo "	$text_am $text_pm ";
+				$content .= "<td class=\"$class\"  $info_bulle>";
+				$content .= "	$text_am $text_pm ";
 			}
 			else
 			{
-				echo "<td class=\"$class\">";
-				echo "	$text_am $text_pm ";
+				//$content .= "<td class=\"$class\"  onmousedown=\"javascript:afficher('$sql_login-$j_timestamp');\" onmouseup=\"javascript:cacher('$sql_login-$j_timestamp');\">";
+				$content .= "<td class=\"$class\"  onmouseover=\"javascript:afficher('$sql_login-$j_timestamp');\" onmouseout=\"javascript:cacher('$sql_login-$j_timestamp');\">";
+				$content .= "	$text_am $text_pm ";
 
 				// affiche l'info-bulle (affichée grace au javascript)
-				//$texte_info_bulle=" $j_date_fr / ". _('divers_semaine') ." $j_num_semaine <br/>$text_bulle_type_abs<br/>periode";
-				// $texte_info_bulle=" $j_date_fr <br/>$text_bulle_type_abs";
-				echo "	<div class=\"cal-tooltip\" id='$sql_login-$j_timestamp' name='$sql_login-$j_timestamp' >
-							<div class=\"pull-right current-date\">$j_date_fr</div>
-							<strong>$sql_login</strong>
-							<hr/>
-							<div>$text_bulle_type_abs</div>
+				//$texte_info_bulle=" $j_date_fr / ". _('divers_semaine') ." $j_num_semaine <br>$text_bulle_type_abs<br>periode";
+				$texte_info_bulle=" $j_date_fr <br>$text_bulle_type_abs";
+				$content .= "	<div class=\"cal-bulles\" align=\"center\" id='$sql_login-$j_timestamp' name='$sql_login-$j_timestamp' >
+						$sql_login<br>
+						<hr align=\"center\" size=\"1\" width=\"100\" color=\"#6699CC\" />
+						$texte_info_bulle
+						<hr align=\"center\" size=\"1\" width=\"100\" color=\"#6699CC\" />
 						</div> ";
 			}
 		}
 		else
 		{
-			echo "<td class=\"$class\" >";
-			echo "	$text_am $text_pm ";
+			$content .= "<td class=\"$class\" >";
+			$content .= "	$text_am $text_pm ";
 		}
-		echo "</td>";
+		$content .= "</td>";
 	}
 	return $return;
 }
@@ -911,56 +937,56 @@ function affiche_cellule_jour_user($sql_login, $j_timestamp, $year_select, $mois
 function affiche_legende($DEBUG=FALSE)
 {
 	$session=session_id();
-
-//	echo "      <table cellpadding=\"1\" cellspacing=\"1\" border=\"1\">\n" ;
-	echo "      <table cellpadding=\"1\" class=\"tablo-cal\">\n" ;
-	echo "      <tr align=\"center\">\n" ;
-	echo "         <td bgcolor=\"".$_SESSION['config']['semaine_bgcolor']."\" class=\"cal-legende\"> - </td>\n" ;
-	echo "         <td class=\"cal-legende\"> </td>\n" ;
-	echo "      </tr>\n" ;
-	echo "      <tr align=\"center\">\n" ;
-	echo "         <td bgcolor=\"".$_SESSION['config']['week_end_bgcolor']."\" class=\"cal-legende\"> - </td>\n" ;
-	echo "         <td class=\"cal-legende\"> ". _('calendrier_legende_we') ."</td>\n" ;
-	echo "      </tr>\n" ;
-	echo "      <tr align=\"center\">\n" ;
-	echo "         <td bgcolor=\"".$_SESSION['config']['conges_bgcolor']."\" class=\"cal-legende\">abs</td>\n" ;
-	echo "         <td class=\"cal-legende\"> ". _('calendrier_legende_conges') ."</td>\n" ;
-	echo "      </tr>\n" ;
-	echo "      <tr align=\"center\">\n" ;
-	echo "         <td bgcolor=\"".$_SESSION['config']['demande_conges_bgcolor']."\" class=\"cal-legende\">abs</td>\n" ;
-	echo "         <td class=\"cal-legende\"> ". _('calendrier_legende_demande') ."</td>\n" ;
-	echo "      </tr>\n" ;
-	echo "      <tr align=\"center\">\n" ;
-//	echo "         <td bgcolor=\"".$_SESSION['config']['temps_partiel_bgcolor']."\" class=\"cal-legende\">abs</td>\n" ;
-	echo "         <td bgcolor=\"".$_SESSION['config']['temps_partiel_bgcolor']."\" class=\"cal-legende\"> - </td>\n" ;
-	echo "         <td class=\"cal-legende\"> ". _('calendrier_legende_part_time') ."</td>\n" ;
-	echo "      </tr>\n" ;
-	echo "      <tr align=\"center\">\n" ;
-	echo "         <td bgcolor=\"".$_SESSION['config']['absence_autre_bgcolor']."\" class=\"cal-legende\">abs</td>\n" ;
-	echo "         <td class=\"cal-legende\"> ". _('calendrier_legende_abs') ."</td>\n" ;
-	echo "      </tr>\n" ;
-	echo "      <tr align=\"center\">\n" ;
-	echo "         <td bgcolor=\"".$_SESSION['config']['fermeture_bgcolor']."\" class=\"cal-legende\">abs</td>\n" ;
-	echo "         <td class=\"cal-legende\"> ". _('divers_fermeture') ."</td>\n" ;
-	echo "      </tr>\n" ;
-	echo "      </table>\n" ;
+    global $content;
+	$content .= "      <table cellpadding=\"1\" cellspacing=\"1\" border=\"1\">\n" ;
+//	$content .= "      <table cellpadding=\"1\" class=\"tablo-cal\">\n" ;
+	$content .= "      <tr align=\"center\">\n" ;
+	$content .= "         <td bgcolor=\"".$_SESSION['config']['semaine_bgcolor']."\" class=\"cal-legende\"> - </td>\n" ;
+	$content .= "         <td class=\"cal-legende\"> </td>\n" ;
+	$content .= "      </tr>\n" ;
+	$content .= "      <tr align=\"center\">\n" ;
+	$content .= "         <td bgcolor=\"".$_SESSION['config']['week_end_bgcolor']."\" class=\"cal-legende\"> - </td>\n" ;
+	$content .= "         <td class=\"cal-legende\"> ". _('calendrier_legende_we') ."</td>\n" ;
+	$content .= "      </tr>\n" ;
+	$content .= "      <tr align=\"center\">\n" ;
+	$content .= "         <td bgcolor=\"".$_SESSION['config']['conges_bgcolor']."\" class=\"cal-legende\">abs</td>\n" ;
+	$content .= "         <td class=\"cal-legende\"> ". _('calendrier_legende_conges') ."</td>\n" ;
+	$content .= "      </tr>\n" ;
+	$content .= "      <tr align=\"center\">\n" ;
+	$content .= "         <td bgcolor=\"".$_SESSION['config']['demande_conges_bgcolor']."\" class=\"cal-legende\">abs</td>\n" ;
+	$content .= "         <td class=\"cal-legende\"> ". _('calendrier_legende_demande') ."</td>\n" ;
+	$content .= "      </tr>\n" ;
+	$content .= "      <tr align=\"center\">\n" ;
+//	$content .= "         <td bgcolor=\"".$_SESSION['config']['temps_partiel_bgcolor']."\" class=\"cal-legende\">abs</td>\n" ;
+	$content .= "         <td bgcolor=\"".$_SESSION['config']['temps_partiel_bgcolor']."\" class=\"cal-legende\"> - </td>\n" ;
+	$content .= "         <td class=\"cal-legende\"> ". _('calendrier_legende_part_time') ."</td>\n" ;
+	$content .= "      </tr>\n" ;
+	$content .= "      <tr align=\"center\">\n" ;
+	$content .= "         <td bgcolor=\"".$_SESSION['config']['absence_autre_bgcolor']."\" class=\"cal-legende\">abs</td>\n" ;
+	$content .= "         <td class=\"cal-legende\"> ". _('calendrier_legende_abs') ."</td>\n" ;
+	$content .= "      </tr>\n" ;
+	$content .= "      <tr align=\"center\">\n" ;
+	$content .= "         <td bgcolor=\"".$_SESSION['config']['fermeture_bgcolor']."\" class=\"cal-legende\">abs</td>\n" ;
+	$content .= "         <td class=\"cal-legende\"> ". _('divers_fermeture') ."</td>\n" ;
+	$content .= "      </tr>\n" ;
+	$content .= "      </table>\n" ;
 }
 
 // affichage de la légende explicative des abréviations
 function affiche_legende_type_absence($tab_type_absence, $DEBUG=FALSE)
 {
 	$session=session_id();
-
-//	echo "      <table cellpadding=\"1\" cellspacing=\"1\" border=\"1\">\n" ;
-	echo "      <table cellpadding=\"1\" class=\"tablo-cal\">\n" ;
+    global $content;
+	$content .= "      <table cellpadding=\"1\" cellspacing=\"1\" border=\"1\">\n" ;
+//	$content .= "      <table cellpadding=\"1\" class=\"tablo-cal\">\n" ;
 	foreach($tab_type_absence as $id_abs => $tab)
 	{
-		echo "      <tr align=\"center\">\n" ;
-		echo "         <td class=\"cal-legende\"> ".$tab['short_libelle']." : </td>\n" ;
-		echo "         <td class=\"cal-legende\"> ".$tab['libelle']." </td>\n" ;
-		echo "      </tr>\n" ;
+		$content .= "      <tr align=\"center\">\n" ;
+		$content .= "         <td class=\"cal-legende\"> ".$tab['short_libelle']." : </td>\n" ;
+		$content .= "         <td class=\"cal-legende\"> ".$tab['libelle']." </td>\n" ;
+		$content .= "      </tr>\n" ;
 	}
-	echo "      </table>\n" ;
+	$content .= "      </table>\n" ;
 }
 
 
@@ -1070,15 +1096,14 @@ function affiche_select_groupe($select_groupe, $selected, $printable, $year, $mo
 	else
 		$list_groupes=get_list_groupes_du_user($_SESSION['userlogin'] );
 
-	echo "<form id=\"group-select-form\" class=\"form-inline\" action=\"$PHP_SELF?session=$session&printable=$printable&selected=$selected&year=$year&mois=$mois&first_jour=$first_jour\" method=\"POST\">\n";
+	$content .= "<form action=\"$PHP_SELF?session=$session&printable=$printable&selected=$selected&year=$year&mois=$mois&first_jour=$first_jour\" method=\"POST\">\n";
 	if (trim($list_groupes) == '')
 		$tab_groupes=array();
 	else
 		$tab_groupes=array_unique(explode(",", $list_groupes));
 
-	echo "<div class=\"form-group\">\n";
-	echo "<label for=\"select_groupe\">" . _('calendrier_afficher_groupe') ."</label>\n";
-	echo "<select class=\"form-control\" name=\"select_groupe\">\n";
+	$content .=  _('calendrier_afficher_groupe') ." : ";
+	$content .= "<select name=select_groupe>\n";
 
 	$tmp = false;
 	foreach($tab_groupes as $grp)
@@ -1086,22 +1111,21 @@ function affiche_select_groupe($select_groupe, $selected, $printable, $year, $mo
 		$grp=trim($grp);
 		if($grp == $select_groupe)
 		{
-			echo "<option value=\"$grp\" selected=\"selected\">".$group_names[$grp]."</option>\n";
+			$content .= "<option value=\"$grp\" selected=\"selected\">".$group_names[$grp]."</option>\n";
 			$tmp = true;
 		}
 		else
-			echo "<option value=\"$grp\">".$group_names[$grp]."</option>\n";
+			$content .= "<option value=\"$grp\">".$group_names[$grp]."</option>\n";
 	}
 	//option pour retour a l'affichage normal ...
 	if ($tmp)
-		echo "<option value=\"0\">". _('divers_normal_maj_1') ."</option>\n";
+		$content .= "<option value=\"0\">". _('divers_normal_maj_1') ."</option>\n";
 	else
-		echo "<option value=\"0\" selected=\"selected\">". _('divers_normal_maj_1') ."</option>\n";
+		$content .= "<option value=\"0\" selected=\"selected\">". _('divers_normal_maj_1') ."</option>\n";
 
-	echo "</select>\n";
-	echo "</div>\n";
-	echo "<input class=\"btn btn-default\" type=\"submit\" value=\"ok\">\n";
-	echo "</form>\n";
+	$content .= "</select>\n";
+	$content .= "<input type=\"submit\" value=\"ok\">\n";
+	$content .= "</form>\n";
 }
 
 
@@ -1259,3 +1283,6 @@ function recup_tableau_des_users_a_afficher($select_groupe,  $DEBUG=FALSE)
 
 	return($tab_all_users);
 }
+
+
+
