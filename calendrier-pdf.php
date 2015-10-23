@@ -75,7 +75,7 @@ $content .= "<head>\n";
 $content .= "<title> CONGES : Calendrier </TITLE>\n";
 $content .= "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n";
 //$content .= "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\" />\n";
-$content .= '<link href="'. TEMPLATE_PATH .'style_calendar_edition.css" rel="stylesheet" media="screen, print" type="text/css"><style type="text/css" media="print">@media print{@page {size: landscape}}</style>\n';
+$content .= '<link href="'. TEMPLATE_PATH .'css/reboot.css" rel="stylesheet" media="screen, print" type="text/css"><style type="text/css" media="print">@media print{@page {size: landscape}}</style>\n';
 $content .= "</head>\n";
 $content .= "<body>\n";
 //<center>';
@@ -126,11 +126,8 @@ $content .= "<body>\n";
 	$content .= "   <td align=\"center\">\n";
 		$content .= "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\">\n";
 		$content .= "<tr>\n";
-		$content .= "   <td align=\"center\"><img src=\"". TEMPLATE_PATH . "img/shim.gif\" width=\"200\" height=\"10\" border=\"0\" vspace=\"0\" hspace=\"0\"></td>\n";
 		$content .= "   <td align=\"center\">\n";
-	//	$content .= "   <H2>". _('calendrier_titre') ."</H2>\n";
 		$content .= "   <H3>". _('calendrier_titre') ;
-//		if( ($_SESSION['config']['gestion_groupes']) && ($select_groupe!="") )
 		if( ($_SESSION['config']['gestion_groupes']) && ($select_groupe!=0) )
 			$content .= "   (". _('divers_groupe') ." : ".$group_names[ $select_groupe ].")\n";
 		$content .= "   </H3>\n";
@@ -142,8 +139,6 @@ $content .= "<body>\n";
 				// affiche le select des groupes du user OU les groupes du resp (si user est resp) OU tous les groupes (si option de config ok)
 				affiche_select_groupe($select_groupe, $selected, $printable, $year, $mois, $first_jour, $group_names) ;
 			}
-			else
-				$content .= "   <img src=\"". TEMPLATE_PATH . "img/shim.gif\" width=\"200\" height=\"10\" border=\"0\" vspace=\"0\" hspace=\"0\">\n";
 		$content .= "   </td>\n";
 		$content .= "</tr>\n";
 		$content .= "</table>\n";
@@ -174,9 +169,6 @@ $content .= "<body>\n";
 	/* Boutons de defilement */
 
 	$content .= "<tr>\n";
-	$content .= "   <td><img src=\"". TEMPLATE_PATH . "img/shim.gif\" width=\"200\" height=\"10\" border=\"0\" vspace=\"0\" hspace=\"0\"></td>\n";
-	$content .= "</tr>\n";
-	$content .= "<tr>\n";
 	$content .= "   <td align=\"center\">\n";
 
 		/**********************/
@@ -184,22 +176,6 @@ $content .= "<body>\n";
 		/**********************/
 		$content .= "<table cellpadding=\"0\" cellspacing=\"5\" border=\"0\" width=\"90%\">\n";
 		$content .= "<tr>\n";
-		$content .= "   <td width=\"25%\" valign=\"top\" align=\"left\">\n";
-		if($printable!=1) // si version ecran :
-		{
-			$content .= "      <br><a href=\"$PHP_SELF?session=$session&printable=1&year=$year&mois=$mois&first_jour=$first_jour&select_groupe=$select_groupe\" target=\"_blank\" method=\"post\">\n";
-			$content .= "		<img src=\"". TEMPLATE_PATH . "img/fileprint_4_22x22.png\" width=\"22\" height=\"22\" border=\"0\" title=\"". _('calendrier_imprimable') ."\" alt=\"". _('calendrier_imprimable') ."\">\n";
-			$content .= "      ". _('calendrier_imprimable') ."\n";
-			$content .= "      </a>\n";
-			/*modif pour implementer l'impression pdf*/
-			$content .= "      <br><a href=\"calendrier-pdf.php?session=$session&printable=1&year=$year&mois=$mois&first_jour=$first_jour&select_groupe=$select_groupe\" target=\"_blank\" method=\"post\">\n";
-			$content .= "		<img src=\"". TEMPLATE_PATH . "img/pdf_22x22_2.png\" width=\"22\" height=\"22\" border=\"0\" title=\"Version PDF\">\n";
-			$content .= "      Version PDF\n";
-			$content .= "      </a>\n";
-		}
-		else  // si version imprimable
-			$content .= "      <img src=\"". TEMPLATE_PATH . "img/shim.gif\" width=\"25\" height=\"25\" border=\"0\" vspace=\"0\" hspace=\"0\">\n";
-		$content .= "   </td>\n";
 		$content .= "   <td valign=\"top\" align=\"right\">\n";
 		$content .= "      <h4>légende :</h4>\n";
 		$content .= "   </td>\n";
@@ -215,56 +191,11 @@ $content .= "<body>\n";
 	$content .= "   </td>\n";
 	$content .= "</tr>\n";
 	$content .= "</table>\n";
-
-
-	if($printable!=1)   // si version ecran :
-	{
-		$content .= "<center><hr align=\"center\" size=\"2\" width=\"90%\"></center> \n" ;
-	}
-
-	/********************/
-	/* bouton retour */
-	/********************/
-	if($printable==1)   // si version imprimable :
-	{
-	// appel de la fenetre d'impression directe
-?>
-<!--<script type="text/javascript" language="javascript1.2">
-
-// Do print the page
-if (typeof(window.print) != 'undefined') {
-    window.print();
-}
-//
-</script>-->
-<?php
-	}
-	// si on est dans un acces sans authentification
-	elseif(($_SESSION['config']['consult_calendrier_sans_auth']) && (!isset($_SESSION['userlogin'])) )
-	{
-	}
-	else // sinon (version ecran et session authentifiée
-	{
-		$content .= "<form action=\"\" method=\"POST\">\n";
-		$content .= "<center><input type=\"button\" value=\"". _('form_close_window') ."\" onClick=\"javascript:window.close();\"></center>\n";
-		$content .= "</form>\n";
-//		//tentative de reload de la page pour eviter le bug d'affichage de firefox avec les div en positions relatives ....
-//		if($first_load=="Y")
-//		{
-//			/* APPEL D'UNE AUTRE PAGE au bout d'une tempo de 2secondes */
-//			$content .= "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$PHP_SELF?session=$session&year=$year&mois=$mois&first_jour=$first_jour&first_load=N\">";
-//		}
-	}
-
-//	bottom();
-
-//	$content .= "</center>\n";
 	$content .= "</body>\n";
-	//$content .= "</html>\n";
 	$content .= "</page>\n";
 //	echo $content;
 	$content=htmlspecialchars_decode(htmlentities($content, ENT_NOQUOTES, "UTF-8"));
-	require_once('INCLUDE.EXTERNAL/html2pdf/html2pdf.class.php');
+	require_once(LIBRARY_PATH.'/html2pdf/html2pdf.class.php');
     $html2pdf = new HTML2PDF('L','A3','fr', false, 'ISO-8859-15');
     $html2pdf->WriteHTML($content);
 	ob_clean();
