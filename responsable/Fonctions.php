@@ -1496,7 +1496,7 @@ class Fonctions
             // donc seulement si le type de l'absence qu'on annule est un "conges"
             if($tab_tout_type_abs[$user_type_abs_id]['type']=="conges")
             {
-                $sql2 = 'UPDATE conges_solde_user SET su_solde = su_solde+"'. \includes\SQL::quote($user_nb_jours_pris_float).'" WHERE su_login="'. \includes\SQL::quote($user_login).'" AND su_abs_idi="'. \includes\SQL::quote($user_type_abs_id).'";';
+                $sql2 = 'UPDATE conges_solde_user SET su_solde = su_solde+"'. \includes\SQL::quote($user_nb_jours_pris_float).'" WHERE su_login="'. \includes\SQL::quote($user_login).'" AND su_abs_id="'. \includes\SQL::quote($user_type_abs_id).'";';
                 //echo($sql2."<br>");
                 $ReqLog2 = \includes\SQL::query($sql2);
             }
