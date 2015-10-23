@@ -277,17 +277,7 @@ function verif_new_param(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, $D
 
 	// verif des parametres reçus :
 	// si on travaille avec la base dbconges, on teste tout, mais si on travaille avec ldap, on ne teste pas les champs qui viennent de ldap ...
-	if( (!$_SESSION['config']['export_users_from_ldap'] &&
-		(strlen($tab_new_user['nom'])==0 
-			|| strlen($tab_new_user['prenom'])==0
-			|| strlen($tab_new_user['password1'])==0 || strlen($tab_new_user['password2'])==0
-			|| strcmp($tab_new_user['password1'], $tab_new_user['password2'])!=0 || strlen($tab_new_user['login'])==0
-			|| strlen($tab_new_user['quotite'])==0
-			|| $tab_new_user['quotite']>100)
-			|| !preg_match('/^[a-z.\d_-]{2,30}$/i', $tab_new_user['login'])
-			|| !preg_match('/^[a-z\d\sàáâãäåçèéêëìíîïðòóôõöùúûüýÿ-]{2,20}$/i', $tab_new_user['nom'])
-			|| !preg_match('/^[a-z\d\sàáâãäåçèéêëìíîïðòóôõöùúûüýÿ-]{2,20}$/i', $tab_new_user['prenom'])
-		) || ($_SESSION['config']['export_users_from_ldap']  && (strlen($tab_new_user['login'])==0 || strlen($tab_new_user['quotite'])==0 || $tab_new_user['quotite']>100)))
+	if(!test_form_add_user($tab_new_user, $DEBUG=FALSE))
 	{
 		echo "<h3><font color=\"red\"> ". _('admin_verif_param_invalides') ." </font></h3>\n"  ;
 		// affichage des param :
@@ -384,7 +374,34 @@ function verif_new_param(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, $D
 	}
 }
 
+function test_form_add_user($tab_new_user, $DEBUG=FALSE) {
+	if($_SESSION['config']['export_users_from_ldap']) {
+		return LoginOk($tab_new_user['login']) && QuotiteOk($tab_new_user['quotite']);
+	} else {
+		return LoginOk($tab_new_user['login']) && QuotiteOk($tab_new_user['quotite']) && NameOk($tab_new_user['nom']) && NameOk($tab_new_user['prenom']) && passwdOk($tab_new_user['password1'],$tab_new_user['password2']);
+	}
+}
 
+function LoginOk($login) {
+	return preg_match('/^[a-z.\d_-]{2,30}$/i', $login);
+}
+
+function QuotiteOk($quot) {
+	return !(strlen($quot)==0 || $quot>100);
+}
+
+function NameOk($name) {
+		return preg_match('/^[a-z\d\sàáâãäåçèéêëìíîïðòóôõöùúûüýÿ-]{2,20}$/i', $name);
+}
+
+function passwdOk($password1,$password2) {
+	if($_SESSION['config']['how_to_connect_user']=='dbconges') 
+	{
+		return !(strlen($password1)==0 || strlen($password2)==0 || strcmp($password1, $password2)!=0);
+	} else {
+		return (strlen($password1)==0 && strlen($password2)==0);
+	}
+}
 
 
 // affaichage du formulaire de saisie d'un nouveau user
