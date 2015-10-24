@@ -32,8 +32,6 @@ include_once ROOT_PATH .'fonctions_conges.php' ;
 include_once INCLUDE_PATH .'fonction.php';
 include_once INCLUDE_PATH .'session.php';
 
-include_once 'fonctions_edition.php' ;
-
 //$DEBUG = TRUE ;
 $DEBUG = FALSE ;
 \edition\Fonctions::editUserModule($session, $DEBUG);

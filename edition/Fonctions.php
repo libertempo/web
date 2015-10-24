@@ -42,7 +42,7 @@ class Fonctions
     	/* Historique des éditions           */
     	/*************************************/
     	// Récupération des informations des editions du user
-    	$tab_editions_user = recup_editions_user($login,  $DEBUG);
+    	$tab_editions_user = \edition\Fonctions::recup_editions_user($login,  $DEBUG);
     	if( $DEBUG ) {echo "tab_editions_user<br>\n"; print_r($tab_editions_user); echo "<br>\n"; }
 
     	echo "<h3>". _('editions_hitorique_edit') ." :</h3>\n";
@@ -319,10 +319,10 @@ class Fonctions
     	$session=session_id();
 
     	// recup infos du user
-    	$tab_info_user=recup_info_user_pour_edition($login,  $DEBUG);
+    	$tab_info_user = \edition\Fonctions::recup_info_user_pour_edition($login,  $DEBUG);
 
     	// recup infos de l'édition
-    	$tab_info_edition=recup_info_edition($edit_id,  $DEBUG);
+    	$tab_info_edition = \edition\Fonctions::recup_info_edition($edit_id,  $DEBUG);
 
     	// recup du tableau des types de conges exceptionnels (seulement les conge sexceptionnels )
     	$tab_type_cong=recup_tableau_types_conges( $DEBUG);
@@ -417,12 +417,12 @@ class Fonctions
     			echo "\n<!-- affichage anciens soldes -->\n";
     			echo "<tr>\n";
     			echo "<td colspan=\"5\">\n";
-    			$edition_precedente_id=get_id_edition_precedente_user($login, $edit_id,  $DEBUG);
+    			$edition_precedente_id = \edition\Fonctions::get_id_edition_precedente_user($login, $edit_id,  $DEBUG);
     			if($edition_precedente_id==0)
     				echo "<b>". _('editions_soldes_precedents_inconnus') ." !... ";
     			else
     			{
-    				$tab_edition_precedente=recup_info_edition($edition_precedente_id,  $DEBUG);
+    				$tab_edition_precedente = \edition\Fonctions::recup_info_edition($edition_precedente_id,  $DEBUG);
     				foreach($tab_type_cong as $id_abs => $libelle)
     				{
     					echo  _('editions_solde_precedent') ." <b>$libelle : ".$tab_edition_precedente['conges'][$id_abs]."</b><br>\n";
@@ -591,7 +591,7 @@ class Fonctions
 
 
         if($edit_id==0)   // si c'est une nouvelle édition, on insert dans la base avant d'éditer et on renvoit l'id de l'édition
-            $edit_id=enregistrement_edition($user_login,  $DEBUG);
+            $edit_id = \edition\Fonctions::enregistrement_edition($user_login,  $DEBUG);
 
         \edition\Fonctions::edition_papier($user_login, $edit_id,  $DEBUG);
 
@@ -822,7 +822,7 @@ class Fonctions
     {
     //	$pdf->SetFont('Times', 'B', 10);
 
-    	$edition_precedente_id=get_id_edition_precedente_user($login, $edit_id,  $DEBUG);
+    	$edition_precedente_id = \edition\Fonctions::get_id_edition_precedente_user($login, $edit_id,  $DEBUG);
     	if($edition_precedente_id==0)
     	{
     		$pdf->Cell($decalage);
@@ -831,7 +831,7 @@ class Fonctions
     	}
     	else
     	{
-    		$tab_edition_precedente=recup_info_edition($edition_precedente_id,  $DEBUG);
+    		$tab_edition_precedente = \edition\Fonctions::recup_info_edition($edition_precedente_id,  $DEBUG);
 
     		foreach($tab_type_cong as $id_abs => $libelle)
     		{
@@ -906,10 +906,10 @@ class Fonctions
     		$tab_type_all_cong=recup_tableau_tout_types_abs( $DEBUG);
 
     		// recup infos du user
-    		$tab_info_user=recup_info_user_pour_edition($login);
+    		$tab_info_user = \edition\Fonctions::recup_info_user_pour_edition($login);
 
     		// recup infos de l'édition
-    		$tab_info_edition=recup_info_edition($edit_id);
+    		$tab_info_edition = \edition\Fonctions::recup_info_edition($edit_id);
 
 
     		/**************************************/
@@ -1075,11 +1075,226 @@ class Fonctions
 
     	/************************************/
     	if($edit_id==0)   // si c'est une nouvelle édition, on insert dans la base avant d'éditer et on renvoit l'id de l'édition
-    		$edit_id=enregistrement_edition($user_login, $DEBUG);
+    		$edit_id = \edition\Fonctions::enregistrement_edition($user_login, $DEBUG);
 
     	\edition\Fonctions::edition_pdf($user_login, $edit_id, $DEBUG);
 
     	$comment_log = "edition PDF (num_edition = $edit_id) ($user_login) ";
     	log_action(0, "", $user_login, $comment_log,  $DEBUG);
+    }
+
+    // Récupération des informations des editions du user
+    // renvoit un tableau vide si pas de'edition pour le user
+    public static function recup_editions_user($login,  $DEBUG=FALSE)
+    {
+    	$tab_ed=array();
+
+    	$sql2 = "SELECT ep_id, ep_date, ep_num_for_user ";
+    	$sql2=$sql2."FROM conges_edition_papier WHERE ep_login = '$login' ";
+    	$sql2=$sql2."ORDER BY ep_num_for_user DESC ";
+    	$ReqLog2 = \includes\SQL::query($sql2);
+
+    	if($ReqLog2->num_rows != 0)
+    	{
+    		while ($resultat2 = $ReqLog2->fetch_array())
+    		{
+    			$tab=array();
+    			$sql_id = $resultat2["ep_id"];
+    			$tab['date'] = eng_date_to_fr($resultat2["ep_date"]);
+    			$tab['num_for_user'] = $resultat2["ep_num_for_user"];
+    			// recup du tab des soldes des conges pour cette edition
+    			$tab['conges'] = \edition\Fonctions::recup_solde_conges_of_edition($sql_id,  $DEBUG);
+
+    			$tab_ed[$sql_id]=$tab;
+    		}
+    	}
+    	return $tab_ed ;
+    }
+
+    // recup infos de l'édition
+    // renvoit un tableau vide si pas de'edition pour le user
+    public static function recup_info_edition($edit_id,  $DEBUG=FALSE)
+    {
+
+    	$tab=array();
+
+    	$sql_edition= 'SELECT ep_date, ep_num_for_user FROM conges_edition_papier where ep_id = '.\includes\SQL::quote($edit_id);
+    	$ReqLog_edition = \includes\SQL::query($sql_edition);
+
+    	if($resultat_edition = $ReqLog_edition->fetch_array())
+    	{
+    		$tab['date']=$resultat_edition["ep_date"];
+    		$tab['num_for_user'] = $resultat_edition["ep_num_for_user"];
+    		// recup du tab des soldes des conges pour cette edition
+    		$tab['conges'] = \edition\Fonctions::recup_solde_conges_of_edition($edit_id,  $DEBUG);
+    	}
+    	return $tab ;
+    }
+
+    // recup infos du user
+    public static function recup_info_user_pour_edition($login,  $DEBUG=FALSE)
+    {
+
+    	$tab=array();
+    	$sql_user = 'SELECT u_nom, u_prenom, u_quotite FROM conges_users where u_login = "'. \includes\SQL::quote($login).'"';
+    	$ReqLog_user = \includes\SQL::query($sql_user);
+
+    	while ($resultat_user = $ReqLog_user->fetch_array()) {
+    		$tab['nom']=$resultat_user["u_nom"];
+    		$tab['prenom']=$resultat_user["u_prenom"];
+    		$tab['quotite']=$sql_quotite=$resultat_user["u_quotite"];
+    	}
+
+    	// recup dans un tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
+    	$tab['conges']=recup_tableau_conges_for_user($login, false, $DEBUG) ;
+
+    	return $tab;
+    }
+
+    // recup du tab des soldes des conges pour cette edition
+    public static function recup_solde_conges_of_edition($edition_id,  $DEBUG=FALSE)
+    {
+
+    	$tab=array();
+    	$sql_ed = 'SELECT se_id_absence, se_solde FROM conges_solde_edition where se_id_edition = '.\includes\SQL::quote($edition_id);
+    	$ReqLog_ed = \includes\SQL::query($sql_ed);
+
+    	$tab=array();
+    	while ($resultat_ed = $ReqLog_ed->fetch_array())
+    	{
+    		$id_absence=$resultat_ed["se_id_absence"];
+    		$tab[$id_absence]=$resultat_ed["se_solde"];
+    	}
+    	return $tab;
+    }
+
+    // renvoi le id de la table edition_papier de l'edition précédente pour un user donné et un edition_id donnée.
+    public static function get_id_edition_precedente_user($login, $edition_id,  $DEBUG=FALSE)
+    {
+
+    	// verif si le user n'a pas une seule edition
+    	$sql1 = 'SELECT * FROM conges_edition_papier WHERE ep_login="'.\includes\SQL::quote($login).'"';
+    	$ReqLog1 = \includes\SQL::query($sql1);
+
+    	$resultat1 = $ReqLog1->num_rows ;
+    	if($resultat1<=1)    // une seule edition pour ce user
+    		return 0;
+    	else
+    	{
+    		$sql2 = 'SELECT MAX(ep_id) FROM conges_edition_papier WHERE ep_login="'. \includes\SQL::quote($login).'" AND ep_id<'.\includes\SQL::quote($edition_id);
+    		$ReqLog2 = \includes\SQL::query($sql2);
+    		$tmp = $ReqLog2->fetch_row();
+    		return $tmp[0];
+    	}
+    }
+
+    // renvoi le + grand num_par_user de la table edition_papier pour un user donné (le num de la derniere edition du user)
+    public static function get_num_last_edition_user($login,  $DEBUG=FALSE)
+    {
+
+    	// verif si le user a une edition
+    	$sql1 = 'SELECT ep_num_for_user FROM conges_edition_papier WHERE ep_login="'. \includes\SQL::quote($login).'"';
+    	$ReqLog1 = \includes\SQL::query($sql1);
+
+    	if($ReqLog1->num_rows==0)
+    		return 0;    // c'est qu'il n'y a pas encore d'edition pour ce user
+    	else
+    	{
+    		$sql2 = 'SELECT MAX(ep_num_for_user) FROM conges_edition_papier WHERE ep_login="'. \includes\SQL::quote($login).'"';
+    		$ReqLog2 = \includes\SQL::query($sql2);
+    		$tmp = $ReqLog2->fetch_row();
+    		return $tmp[0];
+    	}
+    }
+
+    // renvoi le + grand id de la table edition_papier (l'id de la derniere edition)
+    public static function get_last_edition_id( $DEBUG=FALSE)
+    {
+    	// verif si table edition pas vide
+    	$sql1 = "SELECT ep_id FROM conges_edition_papier ";
+    	$ReqLog1 = \includes\SQL::query($sql1);
+
+    	if($ReqLog1->num_rows==0)
+    		return 0;    // c'est qu'il n'y a pas encore d'edition
+    	else
+    	{
+    		$sql2 = 'SELECT MAX(ep_id) FROM conges_edition_papier ';
+    		$ReqLog2 = \includes\SQL::query($sql2);
+    		$tmp = $ReqLog2->fetch_row();
+    		return $tmp[0];
+    	}
+    }
+
+    public static function enregistrement_edition($login,  $DEBUG=FALSE)
+    {
+
+    	$PHP_SELF=$_SERVER['PHP_SELF'];
+
+    	$tab_solde_user=array();
+    	$sql1 = 'SELECT su_abs_id, su_solde FROM conges_solde_user where su_login = "'. \includes\SQL::quote($login).'"';
+    	$ReqLog1 = \includes\SQL::query($sql1);
+
+    	while ($resultat1 = $ReqLog1->fetch_array())
+    	{
+    		$sql_id=$resultat1["su_abs_id"];
+    		$tab_solde_user[$sql_id]=$resultat1["su_solde"];
+    	}
+    	$new_edition_id = \edition\Fonctions::get_last_edition_id()+1;
+    	$aujourdhui = date("Y-m-d");
+    	$num_for_user = \edition\Fonctions::get_num_last_edition_user($login)+1;
+
+    	/*************************************************/
+    	/* Insertion dans le table conges_edition_papier */
+    	/*************************************************/
+    	$sql_insert = "INSERT INTO conges_edition_papier
+    			SET ep_id=$new_edition_id, ep_login='$login', ep_date='$aujourdhui', ep_num_for_user=$num_for_user ";
+    	$result_insert = \includes\SQL::query($sql_insert);
+
+
+    	/*************************************************/
+    	/* Insertion dans le table conges_solde_edition  */
+    	/*************************************************/
+    	// recup du tableau des types de conges (seulement les conges)
+    	$tab_type_cong=recup_tableau_types_conges( $DEBUG);
+    	foreach($tab_type_cong as $id_abs => $libelle)
+    	{
+    		$sql_insert_2 = "INSERT INTO conges_solde_edition
+    				SET se_id_edition=$new_edition_id, se_id_absence=$id_abs, se_solde=$tab_solde_user[$id_abs] ";
+    		$result_insert_2 = \includes\SQL::query($sql_insert_2);
+    	}
+    	if ($_SESSION['config']['gestion_conges_exceptionnels'])
+    	{
+    		$tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels( $DEBUG);
+    		foreach($tab_type_conges_exceptionnels as $id_abs => $libelle)
+    		{
+    			$sql_insert_3 = "INSERT INTO conges_solde_edition SET se_id_edition=$new_edition_id, se_id_absence=$id_abs, se_solde=$tab_solde_user[$id_abs] ";
+    			$result_insert_3 = \includes\SQL::query($sql_insert_3);
+    		}
+    	}
+
+    	/********************************************************************************************/
+    	/* Update du num edition dans la table periode pour les Conges et demandes de cette edition */
+    	/********************************************************************************************/
+    	// recup de la liste des id des absence de type conges !
+    	$sql_list="SELECT ta_id FROM conges_type_absence WHERE ta_type='conges' OR ta_type='conges_exceptionnels'";
+    	$ReqLog_list = \includes\SQL::query($sql_list);
+
+    	$list_abs_id="";
+    	while($resultat_list = $ReqLog_list->fetch_array())
+    	{
+    		if($list_abs_id=="")
+    			$list_abs_id=$resultat_list['ta_id'] ;
+    		else
+    			$list_abs_id=$list_abs_id.", ".$resultat_list['ta_id'] ;
+    	}
+
+    	$sql_update = 'UPDATE conges_periode SET p_edition_id=\''.$new_edition_id.'\'
+    			WHERE p_login = \''.$login.'\'
+    			AND p_edition_id IS NULL
+    			AND (p_type IN (\''.$list_abs_id.'\') )
+    			AND (p_etat!=\'demande\') ';
+    	$ReqLog_update = \includes\SQL::query($sql_update);
+
+    	return $new_edition_id;
     }
 }
