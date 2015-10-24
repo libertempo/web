@@ -90,7 +90,7 @@ $ajout_export_ical_salt="INSERT IGNORE INTO conges_config (`conf_nom`, `conf_val
 $res_ajout_export_ical_salt=SQL::query($ajout_export_ical_salt);
 
 //solde conges supérieur à 100
-$alter_solde="ALTER TABLE conges_solde_user MODIFY `su_reliquat` DECIMAL(4,2) NOT NULL DEFAULT '0.00', MODIFY `su_solde` DECIMAL(4,2) NOT NULL DEFAULT '0.00', MODIFY `su_nb_an` DECIMAL(4,2) NOT NULL DEFAULT '0.00';";
+$alter_solde="ALTER TABLE conges_solde_user MODIFY `su_reliquat` DECIMAL(5,2) NOT NULL DEFAULT '0.00', MODIFY `su_solde` DECIMAL(5,2) NOT NULL DEFAULT '0.00', MODIFY `su_nb_an` DECIMAL(5,2) NOT NULL DEFAULT '0.00';";
 $res_alter_solde=SQL::query($alter_solde);
 
 // on renvoit à la page mise_a_jour.php (là d'ou on vient)
