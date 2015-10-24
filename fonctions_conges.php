@@ -102,7 +102,7 @@ function affiche_cellule_calendrier_echange_presence_saisie_semaine($val_matin, 
 		echo '<td bgcolor='.$bgcolor.' class="cal-day_semaine_rtt_am_travail_pm_w35">'.$j.'<input type="radio" name="new_fin" value="'.$year.'-'.$mois.'-'.$j.'-p"></td>';
 	elseif( $val_matin == 'N' && $val_aprem == 'Y' )
 		echo '<td bgcolor='.$bgcolor.' class="cal-day_semaine_travail_am_rtt_pm_w35">'.$j.'<input type="radio" name="new_fin" value="'.$year.'-'.$mois.'-'.$j.'-a"></td>';
-	else 
+	else
 	{
 		$bgcolor = $_SESSION['config']['semaine_bgcolor'];
 		echo '<td bgcolor='.$bgcolor.' class="cal-saisie">'.$j.'<input type="radio" name="new_fin" value="'.$year.'-'.$mois.'-'.$j.'-j"></td>';
@@ -359,7 +359,7 @@ function saisie_nouveau_conges($user_login, $year_calendrier_saisie_debut, $mois
 		echo '<b><i><u>'. _('divers_conges') .' :</u></i></b><br>';
 		foreach($tab_type_conges as $id => $libelle)
 		{
-			if($id==1) 
+			if($id==1)
 			{
 				echo '<input type="radio" name="new_type" value="'.$id.'" checked> '.$libelle.'<br>';
 				$already_checked = true;
@@ -376,7 +376,7 @@ function saisie_nouveau_conges($user_login, $year_calendrier_saisie_debut, $mois
 		echo '<br>';
 		// absences
 		echo '<b><i><u>'. _('divers_absences') .' :</u></i></b><br>';
-		foreach($tab_type_absence as $id => $libelle) 
+		foreach($tab_type_absence as $id => $libelle)
 		{
 			if (!$already_checked)
 			{
@@ -396,7 +396,7 @@ function saisie_nouveau_conges($user_login, $year_calendrier_saisie_debut, $mois
 		echo '<b><i><u>'. _('divers_conges_exceptionnels') .' :</u></i></b><br>';
 		foreach($tab_type_conges_exceptionnels as $id => $libelle)
 		{
-			if($id==1) 
+			if($id==1)
 				echo '<input type="radio" name="new_type" value="'.$id.'" checked> '.$libelle.'<br>';
 			 else
 				echo '<input type="radio" name="new_type" value="'.$id.'"> '.$libelle.'<br>';
@@ -412,7 +412,7 @@ function saisie_nouveau_conges($user_login, $year_calendrier_saisie_debut, $mois
 	echo '</form>' ;
 }
 
-function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet,  $DEBUG=FALSE) 
+function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet,  $DEBUG=FALSE)
 {
 	$PHP_SELF=$_SERVER['PHP_SELF'];
 	$session=session_id();
@@ -446,7 +446,7 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
 			echo 'onChange="compter_jours();return false;"' ;
 	}
 	echo 'value="pm">&nbsp;'. _('form_pm');
-	echo '</div>';				   
+	echo '</div>';
 	echo '</div>';
 	echo '<div class="col-md-6">';
 	echo '<div class="form-inline">';
@@ -501,7 +501,7 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
 			echo '<label>'. _('divers_conges') .'</label>';
 			foreach($tab_type_conges as $id => $libelle)
 			{
-				if($id==1) 
+				if($id==1)
 				{
 					echo '<input type="radio" name="new_type" value="'.$id.'" checked> '.$libelle.'<br>';
 					$already_checked = true;
@@ -579,43 +579,43 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
 // certains arguments sont passés par référence (avec &) car on change leur valeur
 function init_var_navigation_mois_year( $mois_calendrier_saisie_debut, $year_calendrier_saisie_debut, &$mois_calendrier_saisie_debut_prec, &$year_calendrier_saisie_debut_prec,	&$mois_calendrier_saisie_debut_suiv, &$year_calendrier_saisie_debut_suiv, $mois_calendrier_saisie_fin, $year_calendrier_saisie_fin, &$mois_calendrier_saisie_fin_prec, &$year_calendrier_saisie_fin_prec, &$mois_calendrier_saisie_fin_suiv, &$year_calendrier_saisie_fin_suiv )
 {
-	if($mois_calendrier_saisie_debut==1) 
+	if($mois_calendrier_saisie_debut==1)
 	{
 		$mois_calendrier_saisie_debut_prec=12;
 		$year_calendrier_saisie_debut_prec=$year_calendrier_saisie_debut-1 ;
 	}
-	else 
+	else
 	{
 		$mois_calendrier_saisie_debut_prec=$mois_calendrier_saisie_debut-1 ;
 		$year_calendrier_saisie_debut_prec=$year_calendrier_saisie_debut ;
 	}
-	if($mois_calendrier_saisie_debut==12) 
+	if($mois_calendrier_saisie_debut==12)
 	{
 		$mois_calendrier_saisie_debut_suiv=1;
 		$year_calendrier_saisie_debut_suiv=$year_calendrier_saisie_debut+1 ;
 	}
-	else 
+	else
 	{
 		$mois_calendrier_saisie_debut_suiv=$mois_calendrier_saisie_debut+1 ;
 		$year_calendrier_saisie_debut_suiv=$year_calendrier_saisie_debut ;
 	}
 
-	if($mois_calendrier_saisie_fin==1) 
+	if($mois_calendrier_saisie_fin==1)
 	{
 		$mois_calendrier_saisie_fin_prec=12;
 		$year_calendrier_saisie_fin_prec=$year_calendrier_saisie_fin-1 ;
 	}
-	else 
+	else
 	{
 		$mois_calendrier_saisie_fin_prec=$mois_calendrier_saisie_fin-1 ;
 		$year_calendrier_saisie_fin_prec=$year_calendrier_saisie_fin ;
 	}
-	if($mois_calendrier_saisie_fin==12) 
+	if($mois_calendrier_saisie_fin==12)
 	{
 		$mois_calendrier_saisie_fin_suiv=1;
 		$year_calendrier_saisie_fin_suiv=$year_calendrier_saisie_fin+1 ;
 	}
-	else 
+	else
 	{
 		$mois_calendrier_saisie_fin_suiv=$mois_calendrier_saisie_fin+1 ;
 		$year_calendrier_saisie_fin_suiv=$year_calendrier_saisie_fin ;
@@ -652,13 +652,13 @@ function verif_saisie_new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new
 	$verif = true;
 
 	// leur champs doivent etre renseignés dans le formulaire
-	if( $new_debut == '' || $new_fin == '' || $new_nb_jours == '' ) 
+	if( $new_debut == '' || $new_fin == '' || $new_nb_jours == '' )
 	{
 		echo '<br>'. _('verif_saisie_erreur_valeur_manque') .'<br>';
 		$verif = false;
 	}
 
-	if ( !preg_match('/([0-9]+)([\.\,]*[0-9]{1,2})*$/', $new_nb_jours) ) 
+	if ( !preg_match('/([0-9]+)([\.\,]*[0-9]{1,2})*$/', $new_nb_jours) )
 	{
 		echo '<br>'. _('verif_saisie_erreur_nb_jours_bad') .'<br>';
 		$verif = false;
@@ -667,14 +667,14 @@ function verif_saisie_new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new
 		$new_nb_jours=$reg[1].'.'.$reg[2]; // on remplace la virgule par un point pour les décimaux
 
 	// si la date de fin est antéreieure à la date debut
-	if(strnatcmp($new_debut, $new_fin)>0) 
+	if(strnatcmp($new_debut, $new_fin)>0)
 	{
 		echo '<br>'. _('verif_saisie_erreur_fin_avant_debut') .'<br>';
 		$verif = false;
 	}
 
 	// si la date debut et fin = même jour mais début=après midi et fin=matin !!
-	if( $new_debut == $new_fin && $new_demi_jour_deb=='pm' && $new_demi_jour_fin == 'am' ) 
+	if( $new_debut == $new_fin && $new_demi_jour_deb=='pm' && $new_demi_jour_fin == 'am' )
 	{
 		echo '<br>'. _('verif_saisie_erreur_debut_apres_fin') .'<br>';
 		$verif = false;
@@ -799,9 +799,9 @@ function recup_infos_artt_du_jour_from_tab($sql_login, $j_timestamp, &$val_matin
 			if(array_key_exists($sql_login, $tab_rtt_planifiees))
 				$tab_grille_user = $tab_rtt_planifiees[$sql_login];
 			// parcours du tableau des grille pour trouver la key qui correspond à la bonne période
-			if(count($tab_grille_user)) 
+			if(count($tab_grille_user))
 			{
-				foreach ($tab_grille_user as $key => $value) 
+				foreach ($tab_grille_user as $key => $value)
 				{
 					if( $date_j >= $value['date_debut_grille'] && $date_j <= $value['date_fin_grille'] ) // date_jour comprise entre date_deb_grille et date_fin grille
 					{
@@ -821,7 +821,7 @@ function recup_infos_artt_du_jour_from_tab($sql_login, $j_timestamp, &$val_matin
 //  (attention : le $nombre est passé par référence car on le modifie si besoin)
 function verif_saisie_decimal(&$nombre, $DEBUG=FALSE)
 {
-	if ( !preg_match('/^-?([0-9]+)([\.\,]?[0-9]?[0-9]?)$/', $nombre) ) 
+	if ( !preg_match('/^-?([0-9]+)([\.\,]?[0-9]?[0-9]?)$/', $nombre) )
 	{
 		echo "<br>". _('verif_saisie_erreur_nb_bad') ." ($nombre)<br>\n";
 		return false;
@@ -844,7 +844,7 @@ function date_fr($code, $timestmp)
 	$les_jours_longs  = array( _('dimanche') ,  _('lundi') ,  _('mardi') ,  _('mercredi') , _('jeudi') ,  _('vendredi') ,  _('samedi') );
 	$les_jours_courts = array( _('dimanche_short') ,  _('lundi_short') ,  _('mardi_short') , _('mercredi_short') ,  _('jeudi_short') ,  _('vendredi_short') ,  _('samedi_short') );
 
-	switch ($code) 
+	switch ($code)
 	{
 		case 'F':
 			return $les_mois_longs[ date('n', $timestmp) ];
@@ -956,11 +956,11 @@ function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $m
 	// init du mail
 	$mail = new PHPMailer();
 
-	if (file_exists(CONFIG_PATH .'config_SMTP.php')) 
+	if (file_exists(CONFIG_PATH .'config_SMTP.php'))
 	{
 		include_once CONFIG_PATH .'config_SMTP.php';
 
-		if(!empty($config_SMTP_host)) 
+		if(!empty($config_SMTP_host))
 		{
 			$mail->IsSMTP();
 			$mail->Host = $config_SMTP_host;
@@ -976,7 +976,7 @@ function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $m
 				$mail->SMTPSecure = $config_SMTP_sec;
 		}
 	}
-	else 
+	else
 	{
 		if(file_exists('/usr/sbin/sendmail'))
 			$mail->IsSendmail();   // send message using the $Sendmail program
@@ -1155,7 +1155,7 @@ function find_email_adress_for_user($login, $DEBUG=FALSE)
 /**************************************************/
 function recup_tableau_rtt_echange($mois, $first_jour, $year,  $tab_logins = false)
 {
-	$tab_rtt_echange=array();  
+	$tab_rtt_echange=array();
 	//tableau indexé dont la clé est la date sous forme yyyy-mm-dd
 	//il contient pour chaque clé (chaque jour): un tableau indéxé ($tab_jour_rtt_echange) (clé= login)
 	// qui contient lui même un tableau ($tab_echange) contenant les infos des echanges de rtt pour ce
@@ -1185,7 +1185,7 @@ function recup_tableau_rtt_echange($mois, $first_jour, $year,  $tab_logins = fal
 /**************************************************/
 function recup_tableau_rtt_planifiees($mois, $first_jour, $year , $tab_logins = false ) {
 
-	$tab_rtt_planifiees=array();  
+	$tab_rtt_planifiees=array();
 	//tableau indexé dont la clé est le login_user
 	// il contient pour chaque clé login : un tableau ($tab_user_grille) indexé dont la
 	// clé est la date_fin_grille.
@@ -1290,11 +1290,11 @@ function affiche_cellule_jour_cal_saisie($login, $j_timestamp, $td_second_class,
 	recup_infos_artt_du_jour($login, $j_timestamp, $val_matin, $val_aprem,  $DEBUG);
 
 	//## AFICHAGE ##
-	if($val_matin=='Y') 
+	if($val_matin=='Y')
 	{
 		$class_am='rtt_am';
 	}
-	if($val_aprem=='Y') 
+	if($val_aprem=='Y')
 	{
 		$class_pm = 'rtt_pm';
 	}
@@ -1337,7 +1337,7 @@ function get_groups_name()
 	$sql	= 'SELECT g_gid, g_groupename FROM conges_groupe;';
 	$requete	= \includes\SQL::query($sql);
 	$tab = array();
-	while( $l = $requete->fetch_array() ) 
+	while( $l = $requete->fetch_array() )
 	{
 		$tab[ $l['g_gid'] ] = $l['g_groupename'];
 	}
@@ -1388,7 +1388,7 @@ function get_list_all_users_du_resp($resp_login,  $DEBUG=FALSE)
 			if($list_users_group!="")
 				$sql_2=$sql_2." OR u_login IN ($list_users_group) ";
 		}
-		
+
 		$sql_2=$sql_2." ) " ;
 		$sql_2 = $sql_2." ORDER BY u_nom " ;
 
@@ -1668,7 +1668,7 @@ function get_tab_resp_du_user($user_login,  $DEBUG=FALSE)
 			foreach($tab_gid as $gid)
 			{
 				$gid=trim($gid);
-				$sql2='SELECT gr_login FROM conges_groupe_resp WHERE gr_gid='.\includes\SQL::quote($gid).' AND gr_login!=\''.\includes\SQL::quote($user_login).'\'';
+				$sql2='SELECT gr_login FROM conges_groupe_resp WHERE gr_gid=' . \includes\SQL::quote($gid) . ' AND gr_login!=\'' . \includes\SQL::quote($user_login) . '\'';
 				$ReqLog1 = \includes\SQL::query($sql2);
 
 				while ($resultat1 = $ReqLog1->fetch_array())
@@ -1790,7 +1790,7 @@ connecter alors qu'il n'a pas de compte dans
 function is_resp($login)
 {
 	static $sql_is_resp = array();
-	if (!isset($sql_is_resp[$login])) 
+	if (!isset($sql_is_resp[$login]))
 	{
 		// recup de qq infos sur le user
 		$select_info='SELECT u_is_resp FROM conges_users WHERE u_login="'.\includes\SQL::quote($login).'"';
@@ -1807,7 +1807,7 @@ function is_resp($login)
 function is_hr($login,  $DEBUG=FALSE)
 {
 	static $sql_is_hr = array();
-	if (!isset($sql_is_hr[$login])) 
+	if (!isset($sql_is_hr[$login]))
 	{
 		// recup de qq infos sur le user
 		$select_info='SELECT u_is_hr FROM conges_users WHERE u_login="'. \includes\SQL::quote($login).'";';
@@ -1823,7 +1823,7 @@ function is_hr($login,  $DEBUG=FALSE)
 function is_active($login,  $DEBUG=FALSE)
 {
 	static $sql_is_active = array();
-	if (!isset($sql_is_active[$login])) 
+	if (!isset($sql_is_active[$login]))
 	{
 		// recup de qq infos sur le user
 		$select_info='SELECT u_is_active FROM conges_users WHERE u_login="'.\includes\SQL::quote($login).'";';
@@ -1850,7 +1850,7 @@ function is_resp_of_user($resp_login, $user_login,  $DEBUG=FALSE)
 
 		return ($resp_login==$sql_resp_login);
 	}
-	else 
+	else
 	{
 
 //		if ( $_SESSION['config']['double_validation_conges'] ){
@@ -1940,14 +1940,14 @@ function insert_dans_periode($login, $date_deb, $demi_jour_deb, $date_fin, $demi
 // remplit le tableau global des jours feries a partir de la database
 function init_tab_jours_feries()
 {
-	if (empty($_SESSION['tab_j_feries'])) 
+	if (empty($_SESSION['tab_j_feries']))
 	{
 		$_SESSION['tab_j_feries']=array();
 
 		$sql_select='SELECT jf_date FROM conges_jours_feries;';
 		$res_select = \includes\SQL::query($sql_select);
 
-		while( $row = $res_select->fetch_array()) 
+		while( $row = $res_select->fetch_array())
 		{
 			$_SESSION['tab_j_feries'][]=$row['jf_date'];
 		}
@@ -1970,7 +1970,7 @@ function init_config_tab()
 {
 	static $userlogin = null;
 	static $result = null;
-	if ($result === null || $userlogin != $_SESSION['userlogin']) 
+	if ($result === null || $userlogin != $_SESSION['userlogin'])
 	{
 
 		include_once ROOT_PATH .'version.php';
@@ -1987,7 +1987,7 @@ function init_config_tab()
 		$sql_appli = "SELECT appli_variable, appli_valeur FROM conges_appli;";
 		$req_appli = \includes\SQL::query($sql_appli) ;
 
-		while ($data_appli = $req_appli->fetch_array()) 
+		while ($data_appli = $req_appli->fetch_array())
 		{
 			$key	= $data_appli[0];
 			$value	= $data_appli[1];
@@ -2000,7 +2000,7 @@ function init_config_tab()
 		$sql_config = "SELECT conf_nom, conf_valeur, conf_type FROM conges_config;";
 		$req_config = \includes\SQL::query($sql_config) ;
 
-		while ($data = $req_config->fetch_array()) 
+		while ($data = $req_config->fetch_array())
 		{
 			$key	= $data[0];
 			$value	= $data[1];
@@ -2022,7 +2022,7 @@ function init_config_tab()
 		$sql_mail = "SELECT mail_nom, mail_subject, mail_body FROM conges_mail;";
 		$req_mail = \includes\SQL::query($sql_mail) ;
 
-		while ($data_mail = $req_mail->fetch_array()) 
+		while ($data_mail = $req_mail->fetch_array())
 		{
 			$mail_nom	= $data_mail[0];
 			$key1	= $mail_nom."_sujet";
@@ -2035,7 +2035,7 @@ function init_config_tab()
 
 		/******************************************/
 		//  config_ldap.php
-		if (file_exists(CONFIG_PATH .'config_ldap.php')) 
+		if (file_exists(CONFIG_PATH .'config_ldap.php'))
 		{
 			include_once CONFIG_PATH .'config_ldap.php';
 			if(isset($config_ldap_protocol_version))
@@ -2061,7 +2061,7 @@ function init_config_tab()
 
 		/******************************************/
 		//  config_CAS.php
-		if (file_exists(CONFIG_PATH .'config_CAS.php')) 
+		if (file_exists(CONFIG_PATH .'config_CAS.php'))
 		{
 			include_once CONFIG_PATH .'config_CAS.php';
 			if(isset($config_CAS_host))	$tab['CAS_host']	= $config_CAS_host ;
@@ -2072,12 +2072,12 @@ function init_config_tab()
 
 		/******************************************/
 		//  recup de qq infos sur le user
-		if(isset($_SESSION['userlogin'])) 
+		if(isset($_SESSION['userlogin']))
 		{
 			$sql_user = "SELECT u_nom, u_prenom, u_is_resp, u_is_admin, u_is_hr, u_is_active FROM conges_users WHERE u_login='".$_SESSION['userlogin']."' ";
 			$req_user = \includes\SQL::query($sql_user) ;
 
-			if($data_user = $req_user->fetch_array()) 
+			if($data_user = $req_user->fetch_array())
 			{
 				$_SESSION['u_nom']	= $data_user[0] ;
 				$_SESSION['u_prenom']	= $data_user[1] ;
@@ -2115,7 +2115,7 @@ function get_user_see_all($login)
 	$request = 'SELECT u_see_all FROM conges_users WHERE u_login="'.\includes\SQL::quote($login).'";';
 	$data = \includes\SQL::query($request);
 
-	if($l = $data->fetch_array()) 
+	if($l = $data->fetch_array())
 	{
 		$see_all = $l['u_see_all'];
 		return ($see_all == 'Y');
@@ -2132,7 +2132,7 @@ function recup_tableau_types_conges()
 	$request = 'SELECT ta_id, ta_libelle FROM conges_type_absence WHERE ta_type=\'conges\';';
 	$data   = \includes\SQL::query($request);
 
-	while ($l = $data->fetch_array()) 
+	while ($l = $data->fetch_array())
 	{
 		$id = $l['ta_id'];
 		$result[$id] = $l['ta_libelle'];
@@ -2147,7 +2147,7 @@ function recup_tableau_types_absence()
 	$request = 'SELECT ta_id, ta_libelle FROM conges_type_absence WHERE ta_type=\'absences\';';
 	$data   = \includes\SQL::query($request);
 
-	while ($l = $data->fetch_array()) 
+	while ($l = $data->fetch_array())
 	{
 		$id = $l['ta_id'];
 		$result[$id] = $l['ta_libelle'];
@@ -2162,7 +2162,7 @@ function recup_tableau_types_conges_exceptionnels()
 	$request = 'SELECT ta_id, ta_libelle FROM conges_type_absence WHERE ta_type=\'conges_exceptionnels\';';
 	$data   = \includes\SQL::query($request);
 
-	while ($l = $data->fetch_array()) 
+	while ($l = $data->fetch_array())
 	{
 		$id = $l['ta_id'];
 		$result[$id] = $l['ta_libelle'];
@@ -2181,7 +2181,7 @@ function recup_tableau_tout_types_abs( )
 
 	$data = \includes\SQL::query($request);
 
-	while ($resultat_cong = $data->fetch_array()) 
+	while ($resultat_cong = $data->fetch_array())
 	{
 		$id = $resultat_cong['ta_id'];
 		$result[$id] = array('type' =>  $resultat_cong['ta_type'],'libelle' => $resultat_cong['ta_libelle'],'short_libelle' =>  $resultat_cong['ta_short_libelle'],);
@@ -2203,7 +2203,7 @@ function recup_tableau_conges_for_user($login, $hide_conges_exceptionnels)
 
 	$result = array();
 
-	while ($l = $data->fetch_array()) 
+	while ($l = $data->fetch_array())
 	{
 		$sql_id = $l['ta_libelle'];
 		$result[$sql_id] = array('nb_an' => affiche_decimal($l['su_nb_an']),'solde' => affiche_decimal($l['su_solde']),'reliquat' => affiche_decimal($l['su_reliquat']),);
@@ -2230,7 +2230,7 @@ function recup_tableau_conges_for_users( $hide_conges_exceptionnels, $logins = f
 	$data = \includes\SQL::query($request);
 
 	$result=array();
-	while ($l = $data->fetch_array()) 
+	while ($l = $data->fetch_array())
 	{
 		$tab=array();
 		$tab['nb_an'] = affiche_decimal($l['su_nb_an']);
@@ -2242,7 +2242,7 @@ function recup_tableau_conges_for_users( $hide_conges_exceptionnels, $logins = f
 }
 
 // affichage du tableau récapitulatif des solde de congés d'un user
-function affiche_tableau_bilan_conges_user($login, $DEBUG=FALSE) 
+function affiche_tableau_bilan_conges_user($login, $DEBUG=FALSE)
 {
 	$request = 'SELECT u_quotite FROM conges_users where u_login = "'. \includes\SQL::quote($login).'";';
 	$ReqLog = \includes\SQL::query($request) ;
@@ -2262,7 +2262,7 @@ function affiche_tableau_bilan_conges_user($login, $DEBUG=FALSE)
 	echo '<tr>';
 	echo '<th class="titre">'. _('divers_quotite') .'</th>';
 
-	foreach($tab_cong_user as $id => $val) 
+	foreach($tab_cong_user as $id => $val)
 	{
 		if ($_SESSION['config']['gestion_conges_exceptionnels'] && in_array($id,$tab_type_conges_exceptionnels))
 			echo '<th class="solde">'.$id.'</th>';
@@ -2435,8 +2435,8 @@ function recup_infos_all_users_du_grand_resp($login, $DEBUG=FALSE)
 				$current_login = trim($current_login, "\'");  // on enleve les qote qui on été ajouté lors de la creation de la liste
 				$tab[$current_login] = recup_infos_du_user($current_login, $list_groups_double_valid, $DEBUG);
 			}
-		} 
-	} 
+		}
+	}
 	return $tab ;
 }
 
@@ -2671,7 +2671,7 @@ function revert_date($date){
 	return implode('/', $date_component);
 }
 
-//date au format d/m/Y 
+//date au format d/m/Y
 function get_nb_jour($date_deb, $date_fin, $demi_jour_deb, $demi_jour_fin){
 	$date_deb = new DateTime($date_deb); //inclusive
 	$date_fin = new DateTime($date_fin); //exclusive
@@ -2688,4 +2688,3 @@ function get_nb_jour($date_deb, $date_fin, $demi_jour_deb, $demi_jour_fin){
 
 	return $diff;
 }
-

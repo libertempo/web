@@ -22,7 +22,30 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *************************************************************************************************/
+namespace edition;
 
+include_once LIBRARY_PATH .'tcpdf/tcpdf.php';
 
-defined( '_PHP_CONGES' ) or die( 'Restricted access' );
-\admin\Fonctions::changeMotDePasseUserModule($onglet, $session, $DEBUG);
+class PDF extends \TCPDF
+{
+    function Header()
+    {
+        /**************************************/
+        /* affichage du texte en haut de page */
+        /**************************************/
+        $this->SetFont('Times','',10);
+        $this->Cell(0,3, $_SESSION['config']['texte_haut_edition_papier'],0,1,'C');
+        $this->Ln(10);
+    }
+
+    function Footer()
+    {
+        /**************************************/
+        /* affichage du texte de bas de page */
+        /**************************************/
+        $this->SetFont('Times','',10);
+        //$pdf->Cell(0,6, 'texte_haut_edition_papier',0,1,'C');
+        $this->Cell(0,3, $_SESSION['config']['texte_bas_edition_papier'],0,1,'C');
+        $this->Ln(10);
+    }
+}
