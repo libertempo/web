@@ -3333,17 +3333,7 @@ class Fonctions
 
         // verif des parametres reçus :
         // si on travaille avec la base dbconges, on teste tout, mais si on travaille avec ldap, on ne teste pas les champs qui viennent de ldap ...
-        if( (!$_SESSION['config']['export_users_from_ldap'] &&
-                    (strlen($tab_new_user['nom'])==0 
-                     || strlen($tab_new_user['prenom'])==0
-                     || strlen($tab_new_user['password1'])==0 || strlen($tab_new_user['password2'])==0
-                     || strcmp($tab_new_user['password1'], $tab_new_user['password2'])!=0 || strlen($tab_new_user['login'])==0
-                     || strlen($tab_new_user['quotite'])==0
-                     || $tab_new_user['quotite']>100)
-                    || !preg_match('/^[a-z.\d_-]{2,30}$/i', $tab_new_user['login'])
-                    || !preg_match('/^[a-z\d\sàáâãäåçèéêëìíîïðòóôõöùúûüýÿ-]{2,20}$/i', $tab_new_user['nom'])
-                    || !preg_match('/^[a-z\d\sàáâãäåçèéêëìíîïðòóôõöùúûüýÿ-]{2,20}$/i', $tab_new_user['prenom'])
-            ) || ($_SESSION['config']['export_users_from_ldap']  && (strlen($tab_new_user['login'])==0 || strlen($tab_new_user['quotite'])==0 || $tab_new_user['quotite']>100)))
+        if(!\admin\Fonctions::test_form_add_user($tab_new_user, $DEBUG=FALSE))
         {
             echo "<h3><font color=\"red\"> ". _('admin_verif_param_invalides') ." </font></h3>\n"  ;
             // affichage des param :
@@ -3437,6 +3427,35 @@ class Fonctions
             }
             else
                 return 0;
+        }
+    }
+
+    public static function test_form_add_user($tab_new_user, $DEBUG=FALSE) {
+        if($_SESSION['config']['export_users_from_ldap']) {
+            return \admin\Fonctions::FormAddUserLoginOk($tab_new_user['login']) && \admin\Fonctions::FormAddUserQuotiteOk($tab_new_user['quotite']);
+        } else {
+            return \admin\Fonctions::FormAddUserLoginOk($tab_new_user['login']) && \admin\Fonctions::FormAddUserQuotiteOk($tab_new_user['quotite']) && \admin\Fonctions::FormAddUserNameOk($tab_new_user['nom']) && \admin\Fonctions::FormAddUserNameOk($tab_new_user['prenom']) && \admin\Fonctions::FormAddUserpasswdOk($tab_new_user['password1'],$tab_new_user['password2']);
+        }
+    }
+
+    public static function FormAddUserLoginOk($login) {
+        return preg_match('/^[a-z.\d_-]{2,30}$/i', $login);
+    }
+
+    public static function FormAddUserQuotiteOk($quot) {
+        return !(strlen($quot)==0 || $quot>100);
+    }
+
+    public static function FormAddUserNameOk($name) {
+        return preg_match('/^[a-z\d\sàáâãäåçèéêëìíîïðòóôõöùúûüýÿ-]{2,20}$/i', $name);
+    }
+
+    public static function FormAddUserpasswdOk($password1,$password2) {
+        if($_SESSION['config']['how_to_connect_user']=='dbconges') 
+        {
+            return !(strlen($password1)==0 || strlen($password2)==0 || strcmp($password1, $password2)!=0);
+        } else {
+            return (strlen($password1)==0 && strlen($password2)==0);
         }
     }
 
