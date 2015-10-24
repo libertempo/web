@@ -437,7 +437,7 @@ function unhash_user($huser_test)
 	$user = "";
 	$ics_salt = $_SESSION['config']['export_ical_salt'];
 	$req_user = 'SELECT u_login FROM conges_users';
-	$res_user = SQL::query($req_user) ;
+	$res_user = \includes\SQL::query($req_user) ;
 
 	while ($resultat = $res_user->fetch_assoc())
 	{
