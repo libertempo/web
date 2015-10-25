@@ -80,7 +80,6 @@ header_menu('', 'Libertempo : '._('calendrier_titre'), $add_css);
 	$year          = getpost_variable('year', date("Y")) ;
 	$mois          = getpost_variable('mois', date("n")) ;
 	$first_jour    = getpost_variable('first_jour', 1) ;
-//	$first_load    = getpost_variable('first_load', "Y") ;
 	$select_groupe = getpost_variable('select_groupe', 0) ;
 
 
@@ -97,7 +96,6 @@ header_menu('', 'Libertempo : '._('calendrier_titre'), $add_css);
 	$tab_type_absence=recup_tableau_tout_types_abs($DEBUG);
 
 
-//	echo "<hr align=\"center\" size=\"2\" width=\"90%\"> \n";
 
 	$jour_today=date("j");
 	$mois_today=date("m");
@@ -455,7 +453,6 @@ function affichage_calendrier($year, $mois, $first_jour, $timestamp_today, $prin
 		for($j=$first_jour; checkdate($mois, $j, $year); $j++)
 		{
 			$j_timestamp=mktime (0,0,0,$mois, $j, $year);
-			// $j_name=date_fr("D", $j_timestamp);
 			$j_name = substr(date_fr("D", $j_timestamp), 0, 1);
 			$last =date("N", $j_timestamp);
 			$j_date_fr=date_fr("d-m-Y", $j_timestamp);
@@ -496,7 +493,6 @@ function affichage_calendrier($year, $mois, $first_jour, $timestamp_today, $prin
 
 				$j_timestamp=mktime (0,0,0,$mois_select, $j, $year_select);
 				$last =date("N", $j_timestamp);
-				// $j_name=date_fr("D", $j_timestamp);
 				$j_name = substr(date_fr("D", $j_timestamp), 0, 1);
 				$j_date_fr=date_fr("d-m-Y", $j_timestamp);
 				$j_num_semaine=date_fr("W", $j_timestamp);
@@ -508,16 +504,9 @@ function affichage_calendrier($year, $mois, $first_jour, $timestamp_today, $prin
 					// echo "<td class=\"cal-day $td_second_class\" title=\"$j_date_fr / ". _('divers_semaine') ." $j_num_semaine\"><b>$j_name $j/$mois_select</b></td>";
 				else
 					echo "<td class=\"cal-day $td_second_class\" title=\"$j_date_fr / ". _('divers_semaine') ." $j_num_semaine\">$j_name $j</td>";
-					// echo "<td class=\"cal-day $td_second_class\" title=\"$j_date_fr / ". _('divers_semaine') ." $j_num_semaine\">$j_name $j/$mois_select</td>";
 			}
 		}
 		
-		// if ($last < 7)
-		// for ($i = $last; $i <7; $i ++)
-		// 	echo '<td></td>';
-		// echo "</tr>\n";
-
-
 		/**************************************************/
 		/**************************************************/
 		/* recup des info de chaque jour pour tous les users et stockage dans 1 tableau de tableaux */
@@ -630,11 +619,6 @@ function affichage_calendrier($year, $mois, $first_jour, $timestamp_today, $prin
 				}
 			}
 			
-			
-			//if ($last < 7)
-			//for ($i = $last; $i <7; $i ++)
-			//	echo '<td></td>';
-			
 			if( $_SESSION['config']['affiche_soldes_calendrier'] || is_resp($_SESSION['userlogin']) || is_hr($_SESSION['userlogin']) || is_admin($_SESSION['userlogin']) )
 			{
 				// affichage des divers soldes
@@ -728,7 +712,6 @@ function affiche_cellule_jour_user($sql_login, $j_timestamp, $year_select, $mois
 						$tab_per=$tab_day[$i];  // on recup le tableau de la periode
 						if(in_array($sql_login, $tab_per))   // si la periode correspond au user que l'on est en train de traiter
 						{
-							//echo "tab_per =<br/>\n"; print_r($tab_per); echo "<br/>\n";
 
 							$sql_p_type=$tab_per["p_type"];
 							$sql_p_etat=$tab_per["p_etat"];
@@ -885,8 +868,6 @@ function affiche_cellule_jour_user($sql_login, $j_timestamp, $year_select, $mois
 				echo "	$text_am $text_pm ";
 
 				// affiche l'info-bulle (affichée grace au javascript)
-				//$texte_info_bulle=" $j_date_fr / ". _('divers_semaine') ." $j_num_semaine <br/>$text_bulle_type_abs<br/>periode";
-				// $texte_info_bulle=" $j_date_fr <br/>$text_bulle_type_abs";
 				echo "	<div class=\"cal-tooltip\" id='$sql_login-$j_timestamp' name='$sql_login-$j_timestamp' >
 							<div class=\"pull-right current-date\">$j_date_fr</div>
 							<strong>$sql_login</strong>
@@ -912,7 +893,6 @@ function affiche_legende($DEBUG=FALSE)
 {
 	$session=session_id();
 
-//	echo "      <table cellpadding=\"1\" cellspacing=\"1\" border=\"1\">\n" ;
 	echo "      <table cellpadding=\"1\" class=\"tablo-cal\">\n" ;
 	echo "      <tr align=\"center\">\n" ;
 	echo "         <td bgcolor=\"".$_SESSION['config']['semaine_bgcolor']."\" class=\"cal-legende\"> - </td>\n" ;
@@ -951,7 +931,6 @@ function affiche_legende_type_absence($tab_type_absence, $DEBUG=FALSE)
 {
 	$session=session_id();
 
-//	echo "      <table cellpadding=\"1\" cellspacing=\"1\" border=\"1\">\n" ;
 	echo "      <table cellpadding=\"1\" class=\"tablo-cal\">\n" ;
 	foreach($tab_type_absence as $id_abs => $tab)
 	{
