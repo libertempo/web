@@ -62,7 +62,7 @@ else
 	/**************************/
 	/* Nouvelle Demande */
 	/**************************/
-
+	include ROOT_PATH .'fonctions_javascript.php' ;
 	echo '<h1>'. _('divers_nouvelle_absence') .'</h1>';
 
 	 //affiche le formulaire de saisie d'une nouvelle demande de conges

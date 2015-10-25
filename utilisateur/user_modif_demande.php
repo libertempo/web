@@ -83,7 +83,7 @@ function confirmer($p_num, $onglet, $DEBUG=FALSE)
 	$ReqLog1 = SQL::query($sql1) ;
 
 	// AFFICHAGE TABLEAU
-
+	include ROOT_PATH .'fonctions_javascript.php' ;
 	echo '<form NAME="dem_conges" action="'.$PHP_SELF.'" method="POST">' ;
 	echo "<table class=\"table table-responsive\">\n" ;
 	echo '<thead>';

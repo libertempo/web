@@ -32,7 +32,6 @@
 	<script type="text/javascript" src="<?php echo  TEMPLATE_PATH ?>js/reboot.js"></script>
 
 	<?php
-		include ROOT_PATH .'fonctions_javascript.php' ;
 		echo $additional_head;
 	?>
   </head>
