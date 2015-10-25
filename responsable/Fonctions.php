@@ -1160,7 +1160,7 @@ class Fonctions
      * @access public
      * @static
      */
-    public static function pagePrincipaleModule($tab_type_cong, $session, $DEBUG = false)
+    public static function pagePrincipaleModule($tab_type_cong, $tab_type_conges_exceptionnels, $session, $DEBUG = false)
     {
         /***********************************/
         // AFFICHAGE ETAT CONGES TOUS USERS
