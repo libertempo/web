@@ -212,6 +212,11 @@ if(isset($_SESSION['userlogin']))
 			else
 				redirect( ROOT_PATH .$return_url . '?session=' . $session );
 		}
+		elseif ($_SESSION['userlogin']=="admin")
+		{
+			// redirection vers responsable/resp_index.php
+			redirect( ROOT_PATH .'admin/admin_index.php?session=' . $session );
+		}
 		elseif ( $is_resp=="Y" )
 		{
 			// redirection vers responsable/resp_index.php
