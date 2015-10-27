@@ -174,7 +174,7 @@ class Fonctions
             /**************************/
             /* Nouvelle Demande */
             /**************************/
-
+            include ROOT_PATH .'fonctions_javascript.php' ;
             echo '<h1>'. _('divers_nouvelle_absence') .'</h1>';
 
             //affiche le formulaire de saisie d'une nouvelle demande de conges
@@ -220,7 +220,7 @@ class Fonctions
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id();
-
+	include ROOT_PATH .'fonctions_javascript.php' ;
 
         // Récupération des informations
         $sql1 = 'SELECT p_login, p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_nb_jours, p_commentaire, p_etat, p_num FROM conges_periode where p_num = "'. \includes\SQL::quote($p_num).'"';

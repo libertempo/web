@@ -1930,6 +1930,7 @@ class Fonctions
             if( $DEBUG ) { echo"tab_grd_resp =<br>\n"; print_r($tab_grd_resp); echo "<br>\n"; }
         }
 
+	include ROOT_PATH .'fonctions_javascript.php' ;
         /********************/
         /* Titre */
         /********************/

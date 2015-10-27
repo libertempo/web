@@ -73,6 +73,7 @@ verif_droits_user($session, 'is_admin', $DEBUG);
 	
    	$add_css = '<style>#onglet_menu .onglet{ width: '. (str_replace(',', '.', 100 / count($onglets) )).'% ;}</style>';
 	header_menu('', 'Libertempo : '._('button_admin_mode'),$add_css);
+	include ROOT_PATH .'fonctions_javascript.php' ;
 		
 	/*********************************/
 	/*   AFFICHAGE DES ONGLETS...  */
