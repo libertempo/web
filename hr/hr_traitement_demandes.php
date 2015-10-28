@@ -1,7 +1,7 @@
 <?php
 /*************************************************************************************************
 Libertempo : Gestion Interactive des Congés
-Copyright (C) 2005 (cedric chauvineau)
+Copyright (C) 2015 (Wouldsmina)Copyright (C) 2015 (Prytoegrian)Copyright (C) 2005 (cedric chauvineau)
 
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
 termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
@@ -187,17 +187,6 @@ function affiche_all_demandes_en_cours($tab_type_conges, $DEBUG=FALSE)
 				echo "<td>$sql_p_date_deb_fr <span class=\"demi\">$demi_j_deb</span></td><td>$sql_p_date_fin_fr <span class=\"demi\">$demi_j_fin</span></td><td>$sql_p_commentaire</td><td><b>$sql_p_nb_jours</b></td>";
 				$tab_conges=$tab_all_users[$sql_p_login]['conges'];
 				echo "<td>".$tab_conges[$tab_type_all_abs[$sql_p_type]['libelle']]['solde']."</td>";
-				// foreach($tab_type_conges as $id_conges => $libelle)
-				// {
-				// 	echo '<td>'.$tab_conges[$libelle]['solde'].'</td>';
-				// }
-
-				// if ($_SESSION['config']['gestion_conges_exceptionnels'])
-				// 	foreach($tab_type_conges_exceptionnels as $id_conges => $libelle)
-				// 	{
-				// 		echo '<td>'.$tab_conges[$libelle]['solde'].'</td>';
-				// 	}
-				// echo '<td>'.$tab_type_all_abs[$sql_p_type]['libelle'].'</td>';
 				echo "<td>$boutonradio1</td><td>$boutonradio2</td><td>$boutonradio3</td><td>$text_refus</td>\n";
 				if($_SESSION['config']['affiche_date_traitement'])
 				{

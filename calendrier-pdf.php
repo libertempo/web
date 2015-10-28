@@ -1,6 +1,8 @@
 <?php
 /*************************************************************************************************
 Libertempo : Gestion Interactive des Congés
+Copyright (C) 2015 (Wouldsmina)
+Copyright (C) 2015 (Prytoegrian)
 Copyright (C) 2005 (cedric chauvineau)
 
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
@@ -569,12 +571,10 @@ function affiche_cellule_jour_user($sql_login, $j_timestamp, $year_select, $mois
 		if($val_matin=="Y")
 		{
 			$class_am="rtt_am";
-	//		$text_am="a";
 		}
 		if($val_aprem=="Y")
 		{
 			$class_pm = "rtt_pm";
-	//		$text_pm="a";
 		}
 
 		
@@ -587,9 +587,7 @@ function affiche_cellule_jour_user($sql_login, $j_timestamp, $year_select, $mois
 			if (array_key_exists($date_j, $tab_calendrier))   //verif la clé du jour exite dans $tab_calendrier
 			{
 				$tab_day=$tab_calendrier["$date_j"];  // on recup le tableau ($tab_jour) de la date que l'on affiche
-				//print_r($tab_day);
-
-				$nb_resultat_periode = count($tab_day);  //
+				$nb_resultat_periode = count($tab_day); 
 				if($nb_resultat_periode>0)      // si on est dans une periode de conges
 				{
 					for ($i = 0; $i < $nb_resultat_periode; $i++)
@@ -882,7 +880,6 @@ function affiche_select_groupe($select_groupe, $selected, $printable, $year, $mo
 	$session=session_id();
 
 	// quelle liste de groupes recuperer ?
-	//if( ($_SESSION['config']['consult_calendrier_sans_auth']) && (!isset($_SESSION['userlogin'])) )
 	if( is_hr($_SESSION['userlogin']) )
 		$list_groupes=get_list_all_groupes( );
 	elseif($_SESSION['config']['calendrier_select_all_groups'])
@@ -966,7 +963,6 @@ function recup_tableau_des_users_a_afficher($select_groupe,  $DEBUG=FALSE)
 		else // affiche tous les users
 		{
 			$sql1 = "SELECT DISTINCT u_login, u_nom, u_prenom, u_quotite FROM conges_users ";
-			//$sql1 = $sql1." WHERE u_login!='conges' AND u_resp_login = 'conges' ORDER BY u_nom, u_prenom";
 			$sql1 = $sql1." WHERE u_login!='conges'  AND u_login!='admin' ORDER BY u_nom, u_prenom";
 		}
 	}
@@ -995,7 +991,6 @@ function recup_tableau_des_users_a_afficher($select_groupe,  $DEBUG=FALSE)
 			else
 			{
 				$sql1 = "SELECT DISTINCT u_login, u_nom, u_prenom, u_quotite FROM conges_users ";
-				//$sql1 = $sql1." WHERE u_login!='conges' AND u_resp_login = 'conges' ORDER BY u_nom, u_prenom";
 				$sql1 = $sql1." WHERE u_login!='conges'  AND u_login!='admin' ORDER BY u_nom, u_prenom";
 			}
 		}

@@ -1,7 +1,7 @@
 <?php
 /*************************************************************************************************
 Libertempo : Gestion Interactive des Congés
-Copyright (C) 2005 (cedric chauvineau)
+Copyright (C) 2015 (Wouldsmina)Copyright (C) 2015 (Prytoegrian)Copyright (C) 2005 (cedric chauvineau)
 
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
 termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
@@ -77,7 +77,6 @@ defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 		echo "<tr><td class=\"histo\" colspan=\"".$nb_colonnes."\">". _('resp_etat_aucun_user') ."</td></tr>\n" ;
 	else
 	{
-		//$i = true;
 		foreach($tab_all_users as $current_login => $tab_current_user)
 		{
 			//tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
@@ -105,7 +104,6 @@ defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 			if($_SESSION['config']['editions_papier'])
 			echo "<td>$text_edit_papier</td>";
 			echo '</tr>';
-			//$i = !$i;
 		}
 	}
 

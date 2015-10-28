@@ -1,7 +1,7 @@
 <?php
 /*************************************************************************************************
 Libertempo : Gestion Interactive des Congés
-Copyright (C) 2005 (cedric chauvineau)
+Copyright (C) 2015 (Wouldsmina)Copyright (C) 2015 (Prytoegrian)Copyright (C) 2005 (cedric chauvineau)
 
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
 termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
@@ -59,7 +59,6 @@ verif_droits_user($session, "is_hr", $DEBUG);
 //	header_menu('hr', NULL, $add_css);
 
 	echo "<div class=\"pager\">\n";
-//		echo "<div class=\"onglet active\">" . _('admin_jours_chomes_titre') . " <span class=\"current-year\">$year_calendrier_saisie</span></div>";
 		echo "<div class=\"onglet calendar-nav\">\n";
 			// navigation 
 			$prev_link = "$PHP_SELF?session=$session&onglet=jours_chomes&year_calendrier_saisie=". ($year_calendrier_saisie - 1);
@@ -110,7 +109,6 @@ function saisie($year_calendrier_saisie, $DEBUG=FALSE)
 	}
 	if( $DEBUG ) { echo "tab_year = "; print_r($tab_year); echo "<br>\n"; }
 
-//	echo '<a href="' . ROOT_PATH . "hr/hr_index.php?session=$session\" class=\"admin-back\"><i class=\"fa fa-arrow-circle-o-left\"></i>Retour mode RH</a>\n";
 	echo "<form action=\"$PHP_SELF?session=$session&onglet=jours_chomes&year_calendrier_saisie=$year_calendrier_saisie\" method=\"POST\">\n" ;
 	echo "<div class=\"calendar\">\n";
 	$months = array('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12');
