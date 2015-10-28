@@ -271,7 +271,7 @@ function session_saisie_user_password($erreur, $session_username, $session_passw
 
     $config_php_conges_version      = $_SESSION['config']['php_conges_version'];
     $config_url_site_web_php_conges = $_SESSION['config']['url_site_web_php_conges'];
-    $config_stylesheet_file         = $_SESSION['config']['stylesheet_file'];
+//    $config_stylesheet_file         = $_SESSION['config']['stylesheet_file'];
 
     $return_url                     = getpost_variable('return_url', false);
 
