@@ -45,13 +45,9 @@ if(substr($session, 0, 9)!="phpconges")
 	}
 }
 else
-	include INCLUDE_PATH .'session.php';
+	include_once INCLUDE_PATH .'session.php';
 
-$DEBUG=FALSE;
-//$DEBUG=TRUE ;
-
-
-if( $DEBUG ) { $content .= "lang_file=".$_SESSION['config']['lang_file']."<br>\n";  $content .= "_SESSION =<br>\n"; print_r($_SESSION); $content .= "<br><br>\n"; }
+        if( $DEBUG ) { echo "lang_file=".$_SESSION['config']['lang_file']."<br/>\n";  echo "_SESSION =<br/>\n"; print_r($_SESSION); echo "<br/><br/>\n"; }
 
 $script = '<script language=javascript>
 function afficher(id)
@@ -69,10 +65,9 @@ function cacher(id)
 
 
 $content = "";
-//$content .= "<page>\n";
 $content .= '   <page backtop="7mm" backbottom="7mm" backleft="10mm" backright="10mm"> '."\n";
 $content .= "<head>\n";
-$content .= "<title> CONGES : Calendrier </TITLE>\n";
+$content .= "<title> Libertempo : "._('calendrier_titre')." </TITLE>\n";
 $content .= "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n";
 $content .= '<link href="'. TEMPLATE_PATH .'css/reboot.css" rel="stylesheet" media="screen, print" type="text/css"><style type="text/css" media="print">@media print{@page {size: landscape}}</style>';
 $content .= "\n</head>\n";
@@ -118,22 +113,12 @@ $content .= "<body id=\"top\" class=\"hbox connected\">\n";
 	// AFFICHAGE PAGE
 	$content .= "<div class='wrapper bg-white'>\n";
 	$content .= "<div id=\"main-calendar\" class=\"main-content\">\n";
-	if( ($_SESSION['config']['gestion_groupes']) && ($printable!=1) )  // si gestion des groupes active et pas version imprimable
-	{
-	// affiche le select des groupes du user OU les groupes du resp (si user est resp) OU tous les groupes (si option de config ok)
-		$content .= "<div class=\"pull-right\">\n";
-		affiche_select_groupe($select_groupe, $selected, $printable, $year, $mois, $first_jour, $group_names) ;
-		$content .= "</div>\n";
-	}
 
 		$content .= "   <h1>". _('calendrier_titre') . "</h1>\n";
 		if( ($_SESSION['config']['gestion_groupes']) && ($select_groupe!=0) )
 			$content .="<h2>". _('divers_groupe') ." : <strong>".$group_names[ $select_groupe ]."</strong></h2>\n";
 	
 	$content .= "<h3 class=\"current-month\">$nom_mois $year</h3>\n";
-
-
-
 	/***********************************/
 	/* AFFICHAGE  TABLEAU (CALENDRIER) */
 	affichage_calendrier($year, $mois, $first_jour, $timestamp_today, $printable, $selected, $tab_type_absence, $select_groupe, $DEBUG);
@@ -160,10 +145,10 @@ $content .= "<body id=\"top\" class=\"hbox connected\">\n";
 	$content .= "</div>\n";
 	$content .= "</body>\n";
 	$content .= '   </page> ';
-//	echo $content;
+	if( $DEBUG ) {echo $content;};
 	$content=htmlspecialchars_decode(htmlentities($content, ENT_NOQUOTES, "UTF-8"));
 	require_once(LIBRARY_PATH.'/html2pdf/html2pdf.class.php');
-    $html2pdf = new HTML2PDF('L','A3','fr', false, 'ISO-8859-15');
+    $html2pdf = new HTML2PDF('L','A4','fr', false, 'ISO-8859-15');
     $html2pdf->WriteHTML($content);
 	ob_clean();
     $html2pdf->Output('exemple.pdf');
@@ -838,10 +823,10 @@ function recup_tableau_periodes($mois, $first_jour, $year,  $tab_logins = false)
 	$sql	= 'SELECT  p_login, p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_type, p_etat, p_fermeture_id, p_commentaire
 				FROM conges_periode
 				WHERE ( p_etat=\'ok\' OR  p_etat=\'demande\' OR  p_etat=\'valid\') 
-					AND (p_date_fin >= \''.SQL::quote($date_deb).'\' AND p_date_deb <= \''.SQL::quote($date_fin).'\')
+					AND (p_date_fin >= \''.\includes\SQL::quote($date_deb).'\' AND p_date_deb <= \''.\includes\SQL::quote($date_fin).'\')
 					'.($tab_logins !== false ? 'AND p_login IN (\''.implode('\', \'', $tab_logins).'\')' : '' ).'
 				ORDER BY p_date_deb;';
-	$result = SQL::query($sql);
+	$result = \includes\SQL::query($sql);
 	while($l = $result->fetch_array()) {
 
 		// on ne stoque les "demandes" que pour le user qui consulte (il ne voit pas celles des autres !)(suivant l'option de config)
@@ -1002,7 +987,7 @@ function recup_tableau_des_users_a_afficher($select_groupe,  $DEBUG=FALSE)
 			{
 				$sql1 = "SELECT DISTINCT u_login, u_nom, u_prenom, u_quotite FROM conges_users ";
 				$sql1 = $sql1." WHERE u_login!='conges' AND u_login!='admin' ";
-				$sql1 = $sql1.' AND ( u_login = \''.SQL::quote($_SESSION['userlogin']).'\' ';
+				$sql1 = $sql1.' AND ( u_login = \''.\includes\SQL::quote($_SESSION['userlogin']).'\' ';
 
 				//recup de la liste des users des groupes dont le user est membre
 				$list_users=get_list_users_du_groupe($select_groupe,  $DEBUG);
@@ -1039,7 +1024,7 @@ function recup_tableau_des_users_a_afficher($select_groupe,  $DEBUG=FALSE)
 	
 					if($_SESSION['userlogin']!="conges")
 					{
-						$sql1 = $sql1.' AND ( u_login = \''.SQL::quote($_SESSION['userlogin']).'\' ';
+						$sql1 = $sql1.' AND ( u_login = \''.\includes\SQL::quote($_SESSION['userlogin']).'\' ';
 	
 						//si affichage par groupe : on affiche les membres des groupes du user ($_SESSION['userlogin'])
 						if( ($_SESSION['config']['gestion_groupes']) && ($_SESSION['config']['affiche_groupe_in_calendrier']) )
@@ -1077,7 +1062,7 @@ function recup_tableau_des_users_a_afficher($select_groupe,  $DEBUG=FALSE)
 		}
 	}
 
-	$ReqLog = SQL::query($sql1);
+	$ReqLog = \includes\SQL::query($sql1);
 	$tab_all_users=array();
 	while ($resultat = $ReqLog->fetch_array())
 	{
