@@ -5,7 +5,7 @@ include_once ROOT_PATH . 'define.php';
 
 function find_plugins_activated(){
         $list_plugins = array();
-    if($_SESSION['config']['php_conges_version'] != "")
+    if($_SESSION['config']['installed_version'] != "")
     {
 
             $plugins_inst_activ_query = "SELECT p_name FROM conges_plugins WHERE p_is_active = 1 AND p_is_install = 1;";
