@@ -100,7 +100,7 @@ function affiche_all_demandes_en_cours($tab_type_conges, $DEBUG=FALSE)
 
 		// Récup des demandes en cours pour les users :
 		$sql1 = "SELECT p_num, p_login, p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_nb_jours, p_commentaire, p_type, p_date_demande, p_date_traitement FROM conges_periode ";
-		$sql1=$sql1." WHERE p_etat =\"demande\" ";
+		$sql1=$sql1." WHERE p_etat IN (\"valid\",\"demande\") ";
 		$sql1=$sql1." AND p_login IN ($list_users) ";
 		$sql1=$sql1." ORDER BY p_num";
 
@@ -116,6 +116,10 @@ function affiche_all_demandes_en_cours($tab_type_conges, $DEBUG=FALSE)
 			echo '<thead>' ;
 			echo '<tr>' ;
 			echo '<th>'. _('divers_nom_maj_1') ."<br>". _('divers_prenom_maj_1') .'</th>' ;
+
+			if($_SESSION['config']['double_validation_conges'])
+				echo '<th>'. _('admin_groupes_double_valid') .'</th>' ;
+
 			echo '<th>'. _('divers_quotite_maj_1') .'</th>' ;
 			echo "<th>". _('divers_type_maj_1') ."</th>\n" ;
 			echo '<th>'. _('divers_debut_maj_1') .'</th>' ;
@@ -173,7 +177,12 @@ function affiche_all_demandes_en_cours($tab_type_conges, $DEBUG=FALSE)
 				$text_refus="<input class=\"form-control\" type=\"text\" name=\"tab_text_refus[$sql_p_num]\" size=\"20\" max=\"100\">";
 
 				echo '<tr class="'.($i?'i':'p').'">';
-				echo "<td><b>".$tab_all_users[$sql_p_login]['nom']."</b><br>".$tab_all_users[$sql_p_login]['prenom']."</td><td>".$tab_all_users[$sql_p_login]['quotite']."%</td>";
+				echo "<td><b>".$tab_all_users[$sql_p_login]['nom']."</b><br>".$tab_all_users[$sql_p_login]['prenom']."</td>";
+
+				if($_SESSION['config']['double_validation_conges'])
+					echo "<td>".$tab_all_users[$sql_p_login]['double_valid']."</td>";
+
+				echo "<td>".$tab_all_users[$sql_p_login]['quotite']."%</td>";
 				echo "<td>".$tab_type_all_abs[$sql_p_type]['libelle']."</td>\n";	
 				echo "<td>$sql_p_date_deb_fr <span class=\"demi\">$demi_j_deb</span></td><td>$sql_p_date_fin_fr <span class=\"demi\">$demi_j_fin</span></td><td>$sql_p_commentaire</td><td><b>$sql_p_nb_jours</b></td>";
 				$tab_conges=$tab_all_users[$sql_p_login]['conges'];
