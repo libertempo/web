@@ -2,7 +2,7 @@
 ****         Libertempo           ****
 ***************************************
 
-
+RETROUVEZ LA DOCUMENTATION À JOUR SUR http://libertempo.tuxfamily.org
 
 
 SOMMAIRE :
