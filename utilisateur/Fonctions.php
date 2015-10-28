@@ -93,7 +93,7 @@ class Fonctions
 
 	if( in_array(\utilisateur\Fonctions::get_type_abs($new_type, $DEBUG) , array('conges','conges_exceptionnels') ) ) {
 			$resp_du_user = get_tab_resp_du_user($_SESSION['userlogin']);
-			if (array_key_exists('conges', $resp_du_user)) {
+			if (array_key_exists('conges', $resp_du_user)||empty($resp_du_user)) {
 				$new_etat = 'ok' ;
 				soustrait_solde_et_reliquat_user($_SESSION['userlogin'], "", $new_nb_jours, $new_type, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $DEBUG);
 			} else {
