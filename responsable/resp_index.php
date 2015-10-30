@@ -1,7 +1,9 @@
 <?php
 /*************************************************************************************************
 Libertempo : Gestion Interactive des Congés
-Copyright (C) 2015 (Wouldsmina)Copyright (C) 2015 (Prytoegrian)Copyright (C) 2005 (cedric chauvineau)
+Copyright (C) 2015 (Wouldsmina)
+Copyright (C) 2015 (Prytoegrian)
+Copyright (C) 2005 (cedric chauvineau)
 
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
 termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
@@ -100,7 +102,8 @@ verif_droits_user($session, "is_resp", $DEBUG);
     $tab_type_cong=recup_tableau_types_conges($DEBUG);
 
     // recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
-//  if ($_SESSION['config']['gestion_conges_exceptionnels'])
+    $tab_type_conges_exceptionnels=array();
+  if ($_SESSION['config']['gestion_conges_exceptionnels'])
         $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels( $DEBUG);
 
     echo '<div class="'.$onglet.' main-content">';

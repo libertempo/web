@@ -1,7 +1,9 @@
 <?php
 /*************************************************************************************************
 Libertempo : Gestion Interactive des Congés
-Copyright (C) 2015 (Wouldsmina)Copyright (C) 2015 (Prytoegrian)Copyright (C) 2005 (cedric chauvineau)
+Copyright (C) 2015 (Wouldsmina)
+Copyright (C) 2015 (Prytoegrian)
+Copyright (C) 2005 (cedric chauvineau)
 
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les 
 termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
@@ -1160,7 +1162,7 @@ class Fonctions
      * @access public
      * @static
      */
-    public static function pagePrincipaleModule($tab_type_cong, $session, $DEBUG = false)
+    public static function pagePrincipaleModule($tab_type_cong, $tab_type_conges_exceptionnels, $session, $DEBUG = false)
     {
         /***********************************/
         // AFFICHAGE ETAT CONGES TOUS USERS
