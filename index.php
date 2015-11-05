@@ -1,7 +1,9 @@
 <?php
 /*************************************************************************************************
 Libertempo : Gestion Interactive des Congés
-Copyright (C) 2015 (Wouldsmina)Copyright (C) 2015 (Prytoegrian)Copyright (C) 2005 (cedric chauvineau)
+Copyright (C) 2015 (Wouldsmina)
+Copyright (C) 2015 (Prytoegrian)
+Copyright (C) 2005 (cedric chauvineau)
 
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
 termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
@@ -90,7 +92,7 @@ else
 		session_destroy();
 					
 	// Si CAS alors on utilise le login CAS pour la session
-	if ( $_SESSION['config']['how_to_connect_user'] == "cas" && $session_username != "admin" )
+	if ( $_SESSION['config']['how_to_connect_user'] == "cas" && $_GET['cas'] != "no" )
 	{
 		//redirection vers l'url d'authentification CAS
 		$usernameCAS = authentification_passwd_conges_CAS();
