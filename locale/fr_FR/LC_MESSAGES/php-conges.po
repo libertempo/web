@@ -1014,7 +1014,7 @@ msgid "config_comment_resp_affiche_calendrier"
 msgstr "// AFFICHAGE DU BOUTON DE CALENDRIER POUR LE RESPONSABLE<br>//--------------------------------------------------------------------------------------<br>// si à FALSE : les responsables n'ont pas la possibilité d'afficher le calendrier des congés<br>// si à TRUE : les responsables ont la possibilité d'afficher le calendrier des congés (TRUE est la valeur par défaut)"
 
 msgid "config_comment_resp_saisie_mission"
-msgstr "// SAISIE DES ABSENCES POUR MISSIONS, FORMATIONS, CONGRES, ETC. PAR LE RESPONSABLE<br>//---------------------------------------------------------------------------------------<br>// ( les absences de ce type n'enlèvent pas de jours de congés ! )<br>// si à FALSE : pas de saisie par le responsable des absences pour mission, formation, congrès, etc.(FALSE est la valeur par défaut)<br>// si à TRUE : saisie par le responsable des absences pour mission, formation, congrès, etc."
+msgstr "// SAISIE DES CONGES ET ABSENCES POUR MISSIONS, FORMATIONS, CONGRES, ETC. PAR LE RESPONSABLE<br>//---------------------------------------------------------------------------------------<br>// <br>// si à FALSE : pas de saisie par le responsable des congés et absences (FALSE est la valeur par défaut)<br>// si à TRUE : saisie par le responsable des congés et absences"
 
 msgid "config_comment_resp_vertical_menu"
 msgstr "// CONFIG DU MENU DU RESPONSABLE<br>//---------------------------------------<br>// si à TRUE : dans la fenêtre responsable, le menu est vertical (à gauche) (TRUE est la valeur par défaut)<br>// si à FALSE : dans la fenêtre responsable, le menu est horizontal (en haut)"
