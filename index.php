@@ -1,6 +1,8 @@
 <?php
 /*************************************************************************************************
 Libertempo : Gestion Interactive des Congés
+Copyright (C) 2015 (Wouldsmina)
+Copyright (C) 2015 (Prytoegrian)
 Copyright (C) 2005 (cedric chauvineau)
 
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
@@ -29,8 +31,7 @@ require_once 'define.php';
 // test si dbconnect.php est présent !
 if (!is_readable( CONFIG_PATH .'dbconnect.php'))
 {
-	echo "connexion a la database impossible, consultez le fichier INSTALL.txt !<br>\n";
-	exit;
+	redirect( ROOT_PATH .'install/');
 }
 
 include_once INCLUDE_PATH .'fonction.php';
@@ -91,7 +92,7 @@ else
 		session_destroy();
 					
 	// Si CAS alors on utilise le login CAS pour la session
-	if ( $_SESSION['config']['how_to_connect_user'] == "cas" && $session_username != "admin" )
+	if ( $_SESSION['config']['how_to_connect_user'] == "cas" && $_GET['cas'] != "no" )
 	{
 		//redirection vers l'url d'authentification CAS
 		$usernameCAS = authentification_passwd_conges_CAS();
@@ -211,6 +212,11 @@ if(isset($_SESSION['userlogin']))
 				redirect( ROOT_PATH . $return_url .'&session=' . $session );
 			else
 				redirect( ROOT_PATH .$return_url . '?session=' . $session );
+		}
+		elseif ($_SESSION['userlogin']=="admin")
+		{
+			// redirection vers responsable/resp_index.php
+			redirect( ROOT_PATH .'admin/admin_index.php?session=' . $session );
 		}
 		elseif ( $is_resp=="Y" )
 		{

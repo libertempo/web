@@ -1,7 +1,7 @@
 <?php
 /*************************************************************************************************
 Libertempo : Gestion Interactive des Congés
-Copyright (C) 2005 (cedric chauvineau)
+Copyright (C) 2015 (Wouldsmina)Copyright (C) 2015 (Prytoegrian)Copyright (C) 2005 (cedric chauvineau)
 
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
 termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
@@ -110,7 +110,7 @@ class Fonctions
     		// affichage dans un fichier non html !
 
     		header("content-type: application/ics");
-    		header("Content-disposition: filename=php_conges.ics");
+    		header("Content-disposition: filename=libertempo.ics");
 
 
     		echo "BEGIN:VCALENDAR\r\n" .
@@ -119,8 +119,8 @@ class Fonctions
 
     		// SELECT des periodes à exporter .....
     		// on prend toutes les periodes de conges qui chevauchent la periode donnée par les dates demandées
-    		$sql_periodes="SELECT p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_commentaire, p_type, p_date_demande  " .
-    				'FROM conges_periode WHERE p_login=\''. \includes\SQL::quote($user_login).'\' AND p_etat=\'ok\' AND ((p_date_deb>=\''. \includes\SQL::quote($good_date_debut).'\' AND  p_date_deb<=\''.\includes\SQL::quote($good_date_fin).'\') OR (p_date_fin>=\''. \includes\SQL::quote($good_date_debut).'\' AND p_date_fin<=\''. \includes\SQL::quote($good_date_fin).'\'))';
+    		$sql_periodes="SELECT p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_commentaire, p_type, p_etat, p_date_demande  " .
+    				'FROM conges_periode WHERE p_login=\''. \includes\SQL::quote($user_login).'\' AND ((p_date_deb>=\''. \includes\SQL::quote($good_date_debut).'\' AND  p_date_deb<=\''.\includes\SQL::quote($good_date_fin).'\') OR (p_date_fin>=\''. \includes\SQL::quote($good_date_debut).'\' AND p_date_fin<=\''. \includes\SQL::quote($good_date_fin).'\'))';
     		$res_periodes = \includes\SQL::query($sql_periodes);
 
     		if($num_periodes=$res_periodes->num_rows!=0)

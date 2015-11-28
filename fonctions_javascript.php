@@ -122,7 +122,7 @@ if (($_SESSION['config']['dimanche_travail']==FALSE)&&($_SESSION['config']['same
 } else {
 	if ($_SESSION['config']['dimanche_travail']==FALSE)
 		echo "jdesac = [0];";
-	if ($_SESSION['config']['dimanche_travail']==FALSE)
+	if ($_SESSION['config']['samedi_travail']==FALSE)
 		echo "jdesac = [6];";
 }
 ?>

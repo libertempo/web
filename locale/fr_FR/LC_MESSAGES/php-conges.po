@@ -140,9 +140,6 @@ msgstr "D"
 msgid "button_deconnect"
 msgstr "Déconnexion"
 
-msgid "button_refresh"
-msgstr "Actualiser"
-
 msgid "button_editions"
 msgstr "Éditions Papier"
 
@@ -266,9 +263,6 @@ msgstr "Commentaire"
 msgid "divers_etat_maj_1"
 msgstr "État"
 
-msgid "divers_comment_refus_maj_1"
-msgstr "État"
-
 msgid "divers_nb_jours_pris_maj_1"
 msgstr "nb Jours Pris"
 
@@ -320,9 +314,6 @@ msgstr "Accepter"
 msgid "divers_refuser_maj_1"
 msgstr "Refuser"
 
-msgid "divers_fermer_maj_1"
-msgstr "Fermer"
-
 msgid "divers_am_short"
 msgstr "am"
 
@@ -332,14 +323,8 @@ msgstr "pm"
 msgid "divers_conges"
 msgstr "congés"
 
-msgid "divers_conges_maj_1"
-msgstr "Congés"
-
 msgid "divers_absences"
 msgstr "absences"
-
-msgid "divers_absences_maj_1"
-msgstr "Absences"
 
 msgid "divers_nouvelle_absence"
 msgstr "Nouvelle Absence"
@@ -408,37 +393,19 @@ msgid "user_passwd_saisie_2"
 msgstr "2ème saisie"
 
 msgid "user_passwd_error"
-msgstr "ERREUR ! les 2 saisies sont différentes ou vides !!"
+msgstr "ERREUR! les 2 saisies sont différentes ou vides!!"
 
 msgid "user_modif_demande_titre"
 msgstr "Modification d'une demande/absence."
 
 msgid "user_suppr_demande_titre"
-msgstr "Suppression demande de congés ."
-
-msgid "resp_menu_titre"
-msgstr "MODE RESPONSABLE"
+msgstr "Suppression demande de congés."
 
 msgid "resp_menu_button_retour_main"
 msgstr "Page Principale"
 
 msgid "resp_menu_button_traite_demande"
 msgstr "Traiter toutes les Demandes"
-
-msgid "resp_menu_button_affiche_user"
-msgstr "Afficher personne"
-
-msgid "resp_menu_button_ajout_jours"
-msgstr "Ajout Jours Congés"
-
-msgid "resp_menu_button_mode_user"
-msgstr "Utilisateur"
-
-msgid "resp_menu_button_mode_responsable"
-msgstr "Responsable"
-
-msgid "resp_menu_button_mode_admin"
-msgstr "Administrateur"
 
 msgid "resp_etat_users_afficher"
 msgstr "Afficher"
@@ -491,12 +458,6 @@ msgstr "Ajout par Groupe : (ajout à tous les membres d'un groupe)"
 msgid "resp_ajout_conges_choix_groupe"
 msgstr "choix du groupe"
 
-msgid "resp_ajout_conges_nb_jours_groupe_1"
-msgstr "Nombre de jours de"
-
-msgid "resp_ajout_conges_nb_jours_groupe_2"
-msgstr "à ajouter au groupe"
-
 msgid "resp_ajout_conges_comment_periode_user"
 msgstr "ajout jour"
 
@@ -541,12 +502,6 @@ msgstr "motif"
 
 msgid "resp_traite_user_valeurs_not_ok"
 msgstr "ERREUR ! Les valeurs saisies sont invalides ou manquantes !!!"
-
-msgid "admin_titre"
-msgstr "Administration des utilisateurs"
-
-msgid "admin_button_close_window_1"
-msgstr "Fermeture du mode Administrateur"
 
 msgid "admin_button_config_1"
 msgstr "Configuration de Libertempo"
@@ -680,9 +635,6 @@ msgstr "Membres du Groupe"
 msgid "admin_gestion_groupe_users_group_of_user"
 msgstr "Groupes auxquels appartient"
 
-msgid "admin_gestion_groupe_resp_groupes"
-msgstr "Groupes du Responsable"
-
 msgid "admin_gestion_groupe_resp_responsables"
 msgstr "Responsables du Groupe"
 
@@ -766,12 +718,6 @@ msgstr "Restauration effectuée avec succès"
 
 msgid "admin_jours_chomes_titre"
 msgstr "Jours chômés"
-
-msgid "admin_jours_chomes_annee_precedente"
-msgstr "année précédente"
-
-msgid "admin_jours_chomes_annee_suivante"
-msgstr "année suivante"
 
 msgid "admin_jours_chomes_confirm"
 msgstr "Confirmer cette Saisie"
@@ -878,29 +824,11 @@ msgstr "absence hebdomadaire (temps partiel , RTT)"
 msgid "calendrier_legende_abs"
 msgstr "absence autre (mission, formation, maladie, ...)"
 
-msgid "calcul_nb_jours_nb_jours"
-msgstr "Nombre de jours à prendre"
-
-msgid "calcul_nb_jours_reportez"
-msgstr "reportez ce nombre dans la case"
-
-msgid "calcul_nb_jours_form"
-msgstr "du formulaire"
-
 msgid "erreur_user"
 msgstr "Impossible d'identifier l'utilisateur"
 
 msgid "erreur_login_password"
 msgstr "couple identifiant/mot de passe non valide ou identifiant absent"
-
-msgid "erreur_session"
-msgstr "session invalide ou expirée"
-
-msgid "mysql_srv_connect_failed"
-msgstr "Impossible de se connecter au serveur "
-
-msgid "mysql_db_connect_failed"
-msgstr "Impossible de se connecter à la base de données"
 
 msgid "cookies_obligatoires"
 msgstr "Il est nécessaire que votre navigateur accepte les <b>cookies</b> pour pouvoir vous connecter."
@@ -919,9 +847,6 @@ msgstr "Authentification"
 
 msgid "password"
 msgstr "Mot de Passe"
-
-msgid "msie_alert"
-msgstr "Remarque : Certains affichages peuvent ne pas être pris en charge par Microsoft IE. Utilisez plutôt Mozilla Firefox."
 
 msgid "verif_saisie_erreur_valeur_manque"
 msgstr "ERREUR : mauvaise saisie : valeurs <b>manquantes !!!</b>"
@@ -1089,7 +1014,7 @@ msgid "config_comment_resp_affiche_calendrier"
 msgstr "// AFFICHAGE DU BOUTON DE CALENDRIER POUR LE RESPONSABLE<br>//--------------------------------------------------------------------------------------<br>// si à FALSE : les responsables n'ont pas la possibilité d'afficher le calendrier des congés<br>// si à TRUE : les responsables ont la possibilité d'afficher le calendrier des congés (TRUE est la valeur par défaut)"
 
 msgid "config_comment_resp_saisie_mission"
-msgstr "// SAISIE DES ABSENCES POUR MISSIONS, FORMATIONS, CONGRES, ETC. PAR LE RESPONSABLE<br>//---------------------------------------------------------------------------------------<br>// ( les absences de ce type n'enlèvent pas de jours de congés ! )<br>// si à FALSE : pas de saisie par le responsable des absences pour mission, formation, congrès, etc.(FALSE est la valeur par défaut)<br>// si à TRUE : saisie par le responsable des absences pour mission, formation, congrès, etc."
+msgstr "// SAISIE DES CONGES ET ABSENCES POUR MISSIONS, FORMATIONS, CONGRES, ETC. PAR LE RESPONSABLE<br>//---------------------------------------------------------------------------------------<br>// <br>// si à FALSE : pas de saisie par le responsable des congés et absences (FALSE est la valeur par défaut)<br>// si à TRUE : saisie par le responsable des congés et absences"
 
 msgid "config_comment_resp_vertical_menu"
 msgstr "// CONFIG DU MENU DU RESPONSABLE<br>//---------------------------------------<br>// si à TRUE : dans la fenêtre responsable, le menu est vertical (à gauche) (TRUE est la valeur par défaut)<br>// si à FALSE : dans la fenêtre responsable, le menu est horizontal (en haut)"
@@ -1184,12 +1109,6 @@ msgstr "// CHEMIN VERS LE fichier authLDAP.php<br>//----------------------------
 msgid "install_le_fichier"
 msgstr "Le fichier"
 
-msgid "install_bad_fichier"
-msgstr "est introuvable dans le répertoire racine de Libertempo, ou n'a pas des droits en lecture suffisants"
-
-msgid "install_read_the_file"
-msgstr "reportez vous au fichier"
-
 msgid "install_reload_page"
 msgstr "puis rechargez cette page"
 
@@ -1226,9 +1145,6 @@ msgstr "veuillez indiquer la version déjà installée"
 msgid "install_installed_version"
 msgstr "version déjà installée"
 
-msgid "install_configuration"
-msgstr "Configuration"
-
 msgid "install_config_appli"
 msgstr "configurer l'application"
 
@@ -1250,15 +1166,6 @@ msgstr "puis"
 msgid "install_ok"
 msgstr "Installation effectuée avec succès"
 
-msgid "install_vous_pouvez_maintenant"
-msgstr "Vous pouvez maintenant"
-
-msgid "install_acceder_appli"
-msgstr "accéder à l'application"
-
-msgid "install_version_non_choisie"
-msgstr "la version à mettre à jour n'a pas été choisie"
-
 msgid "install_maj_titre_1"
 msgstr "Mise à jour"
 
@@ -1277,24 +1184,6 @@ msgstr "Avant de continuer, prenez soin de faire une sauvegarde de votre base de
 msgid "install_etape"
 msgstr "étape"
 
-msgid "install_inaccessible"
-msgstr "n'est pas accessible"
-
-msgid "install_maj_conserv_config"
-msgstr "Afin d'assurer la conservation de votre configuration,"
-
-msgid "install_maj_copy_config_file"
-msgstr "veuillez copier votre ancien fichier config.php dans le nouveau répertoire"
-
-msgid "install_maj_whith_name"
-msgstr "sous le nom"
-
-msgid "install_maj_and"
-msgstr "et"
-
-msgid "install_maj_verif_droit_fichier"
-msgstr "vérifier les droits de lecture sur ce fichier."
-
 msgid "divers_date_traitement"
 msgstr "date-heure demande/traitement"
 
@@ -1309,9 +1198,6 @@ msgstr "mois"
 
 msgid "divers_annee"
 msgstr "année"
-
-msgid "phpmailer_not_valid"
-msgstr "ERREUR MAIL : Le fichier class.phpmailer.php ne peut pas être lu ou est introuvable. Le mail d'alerte ne pourra pas être envoyé !"
 
 msgid "fpdf_not_valid"
 msgstr "ERREUR : Le fichier fpdf.php ne peut pas être lu ou est introuvable. Le document PDF ne peut être généré !"
@@ -1342,21 +1228,6 @@ msgstr "// EXPORTER LES CONGES AU FORMAT ICS<br>//------------------------------
 
 msgid "export_cal_titre"
 msgstr "Exporter au format ical"
-
-msgid "export_cal_from_date"
-msgstr "du"
-
-msgid "export_cal_to_date"
-msgstr "au"
-
-msgid "export_cal_saisir_debut"
-msgstr "sélection de la date de début"
-
-msgid "export_cal_saisir_fin"
-msgstr "sélection de la date de fin"
-
-msgid "export_cal_format"
-msgstr "choix du format"
 
 msgid "mail_new_demande_comment"
 msgstr "message d'alerte au responsable en cas de nouvelle demande de congés."
@@ -1427,9 +1298,6 @@ msgstr "Grands Responsables du Groupe"
 msgid "ie_non_gere"
 msgstr "Internet Explorer n'est pas pris en charge par Libertempo!<br>utilisez un autre navigateur"
 
-msgid "divers_grand_responsable_maj_1"
-msgstr "Grand Responsable"
-
 msgid "resp_traite_demandes_titre_tableau_1"
 msgstr "Demandes à valider"
 
@@ -1450,9 +1318,6 @@ msgstr "Imprimer un calendrier"
 
 msgid "imprim_calendrier_titre"
 msgstr "Choisissez le mois à imprimer"
-
-msgid "install_test_mail"
-msgstr "tester l'envoi de mails de Libertempo"
 
 msgid "session_pas_session_ouverte"
 msgstr "Pas de session ouverte."
@@ -1475,15 +1340,6 @@ msgstr "// AFFICHAGE DES SOLDES UTILISATEURS DANS LE CALENDRIER : <br>//--------
 msgid "mail_remplace_nb_jours"
 msgstr "__NB_OF_DAY__ sera automatiquement remplacé par le nombre de jours de l'absence concernés."
 
-msgid "divers_traitement_ok"
-msgstr "accepté"
-
-msgid "divers_traitement_refus"
-msgstr "refusé"
-
-msgid "divers_traitement_annul"
-msgstr "annulé"
-
 msgid "config_comment_gestion_conges_exceptionnels"
 msgstr "// CONGES EXCEPTIONNELS<br>//----------------------------------------------------------------------<br>// congés avec un nombre de jours annuel toujours à 0<br>// si à FALSE : les congés de type 'congés exceptionnels' ne sont pas gérés.(FALSE est la valeur par défaut)<br>// si à TRUE : il est possible de définir des congés de type 'congés exceptionnels' pour les utilisateurs (congés sans solde)."
 
@@ -1495,9 +1351,6 @@ msgstr "IMPOSSIBLE de désactiver les congés exceptionnels! (aucun congé excep
 
 msgid "divers_conges_exceptionnels"
 msgstr "congés exceptionnels"
-
-msgid "divers_conges_exceptionnels_maj_1"
-msgstr "Congés Exceptionnels"
 
 msgid "divers_semaine"
 msgstr "semaine"
@@ -1543,9 +1396,6 @@ msgstr "pour voir les actions d'un seul utilisateur : cliquez sur son identifian
 
 msgid "voir_tous_les_logs"
 msgstr "Pour voir tous les logs"
-
-msgid "divers_cliquez_ici"
-msgstr "cliquez ici"
 
 msgid "form_delete_logs"
 msgstr "Vider les Logs"
@@ -1604,12 +1454,6 @@ msgstr "Fermeture pour tous"
 msgid "admin_jours_fermeture_fermeture_par_groupe"
 msgstr "Fermeture par groupe"
 
-msgid "admin_jours_fermeture_new_fermeture"
-msgstr "Nouvelle Fermeture"
-
-msgid "admin_jours_fermeture_enregistrees"
-msgstr "Fermetures Enregistrées"
-
 msgid "admin_jours_fermeture_dates_incompatibles"
 msgstr "dates saisies incompatibles !!! veuillez recommencer"
 
@@ -1654,9 +1498,6 @@ msgstr "date de début"
 
 msgid "divers_date_fin"
 msgstr "date de fin"
-
-msgid "divers_confirmer_maj_1"
-msgstr "Confirmer"
 
 msgid "config_comment_affiche_demandes_dans_calendrier"
 msgstr "// AFFICHAGE DES DEMANDES DE CONGÉS DES UTILISATEURS DANS LE CALENDRIER : <br>//--------------------------------------------------------------------------------------------<br>// si à FALSE : les demandes de congés de tous les utilisateurs n'apparaissent pas sur le calendrier des congés. (seules les demandes de l'utilisateur connecté apparaissent) (FALSE est la valeur par défaut)<br>// si à TRUE : les demandes de congés de tous les utilisateurs apparaissent sur le calendrier des congés."
@@ -1748,9 +1589,6 @@ msgstr "Mode RH"
 msgid "config_comment_titre_hr_index"
 msgstr "Titre des pages RH"
 
-msgid "hr_menu_titre"
-msgstr "MODE RH:"
-
 msgid "admin_users_is_hr"
 msgstr "Droits RH ?"
 
@@ -1759,9 +1597,6 @@ msgstr "Droits RH ?"
 
 msgid "hr_traite_user_etat_conges"
 msgstr "État des congés des Utilisateurs :"
-
-msgid "hr_affiche_utilisateurs_inactifs"
-msgstr "Afficher/Masquer les utilisateurs inactifs"
 
 msgid "config_comment_print_disable_users"
 msgstr "// AFFICHAGE DES UTILISATEURS DESACTIVES : <br>//--------------------------------------------------------------------------------------------<br>// si à FALSE : pas d'affichage, dans la liste des utilisateurs, des utilisateurs qui ont été désactivés. (FALSE est la valeur par défaut)<br>// si à TRUE : affichage, dans la liste des utilisateurs, des utilisateurs qui on été désactivés."

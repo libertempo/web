@@ -1,6 +1,8 @@
 <?php
 /*************************************************************************************************
 Libertempo : Gestion Interactive des Congés
+Copyright (C) 2015 (Wouldsmina)
+Copyright (C) 2015 (Prytoegrian)
 Copyright (C) 2005 (cedric chauvineau)
 
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les

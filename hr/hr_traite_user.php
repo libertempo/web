@@ -1,7 +1,7 @@
 <?php
 /*************************************************************************************************
 Libertempo : Gestion Interactive des Congés
-Copyright (C) 2005 (cedric chauvineau)
+Copyright (C) 2015 (Wouldsmina)Copyright (C) 2015 (Prytoegrian)Copyright (C) 2005 (cedric chauvineau)
 
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
 termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
@@ -108,6 +108,7 @@ function affichage($user_login,  $year_affichage, $year_calendrier_saisie_debut,
         if( $DEBUG ) { echo"tab_grd_resp =<br>\n"; print_r($tab_grd_resp); echo "<br>\n"; }
     }
 
+	include ROOT_PATH .'fonctions_javascript.php' ;
     /********************/
     /* Titre */
     /********************/
@@ -688,7 +689,6 @@ function traite_demandes($user_login, $tab_radio_traite_demande, $tab_text_refus
             if( $DEBUG ) { echo "type_abs = ".$tab_tout_type_abs[$value_type_abs_id]['type']."<br>\n" ; }
             if(($tab_tout_type_abs[$value_type_abs_id]['type']=="conges")||($tab_tout_type_abs[$value_type_abs_id]['type']=="conges_exceptionnels"))
             {
-//              soustrait_solde_user($user_login, $user_nb_jours_pris_float, $value_type_abs_id, $DEBUG);
                 soustrait_solde_et_reliquat_user($user_login, $numero_int, $user_nb_jours_pris_float, $value_type_abs_id, $date_deb, $demi_jour_deb, $date_fin, $demi_jour_fin, $DEBUG);
             }
 

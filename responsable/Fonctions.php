@@ -1,6 +1,8 @@
 <?php
 /*************************************************************************************************
 Libertempo : Gestion Interactive des Congés
+Copyright (C) 2015 (Wouldsmina)
+Copyright (C) 2015 (Prytoegrian)
 Copyright (C) 2005 (cedric chauvineau)
 
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les 
@@ -1930,6 +1932,7 @@ class Fonctions
             if( $DEBUG ) { echo"tab_grd_resp =<br>\n"; print_r($tab_grd_resp); echo "<br>\n"; }
         }
 
+	include ROOT_PATH .'fonctions_javascript.php' ;
         /********************/
         /* Titre */
         /********************/

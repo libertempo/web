@@ -1,7 +1,7 @@
 <?php
 /*************************************************************************************************
 Libertempo : Gestion Interactive des Congés
-Copyright (C) 2005 (cedric chauvineau)
+Copyright (C) 2015 (Wouldsmina)Copyright (C) 2015 (Prytoegrian)Copyright (C) 2005 (cedric chauvineau)
 
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
 termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
@@ -73,6 +73,7 @@ verif_droits_user($session, 'is_admin', $DEBUG);
 	
    	$add_css = '<style>#onglet_menu .onglet{ width: '. (str_replace(',', '.', 100 / count($onglets) )).'% ;}</style>';
 	header_menu('', 'Libertempo : '._('button_admin_mode'),$add_css);
+	include ROOT_PATH .'fonctions_javascript.php' ;
 		
 	/*********************************/
 	/*   AFFICHAGE DES ONGLETS...  */

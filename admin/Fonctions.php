@@ -1,7 +1,7 @@
 <?php
 /*************************************************************************************************
 Libertempo : Gestion Interactive des Congés
-Copyright (C) 2005 (cedric chauvineau)
+Copyright (C) 2015 (Wouldsmina)Copyright (C) 2015 (Prytoegrian)Copyright (C) 2005 (cedric chauvineau)
 
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les 
 termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
@@ -90,7 +90,6 @@ class Fonctions
 
         echo "<h1>". _('admin_onglet_resp_groupe') ."</h1>\n";
 
-        //echo "resp = $choix_resp<br>\n";
         /****************************/
         /* Affichage Responsable    */
         /****************************/
@@ -1108,9 +1107,6 @@ class Fonctions
             $result = \includes\SQL::query($sql1);
 
             $new_gid= \includes\SQL::getVar('insert_id');
-            // par défaut le responsable virtuel est resp de tous les groupes !!!
-            // $sql2 = "INSERT INTO conges_groupe_resp SET gr_gid=$new_gid, gr_login='conges' " ;
-            // $result = SQL::query($sql2);
 
             if($result)
                 echo  _('form_modif_ok') ."<br><br> \n";
@@ -1220,7 +1216,6 @@ class Fonctions
         echo "<hr>\n";
         echo "<input type=\"hidden\" name=\"saisie_group\" value=\"ok\">\n";
         echo "<input class=\"btn btn-success\" type=\"submit\" value=\"". _('form_submit') ."\">\n";
-        // echo "<a class=\"btn\" href=\"$PHP_SELF?session=$session&onglet=admin-group\">". _('form_cancel') ."</a>\n";
         echo "</form>\n" ;
     }
     
@@ -1277,7 +1272,6 @@ class Fonctions
             $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels($DEBUG);
 
         // AFFICHAGE TABLEAU
-        // echo "<h3><font color=\"red\">". _('admin_users_titre') ." :</font></h3>\n";
 
         echo "<table class=\"table table-hover table-responsive table-condensed table-striped\" >\n";
         echo "<thead>\n";
@@ -2301,13 +2295,6 @@ class Fonctions
 
             if($tab_grille_rtt_actuelle != $tab_new_grille_rtt)
             {
-                /*	if($tab_grille_rtt_actuelle==$tab_new_grille_rtt)
-                    {
-                // on ne touche pas à la table artt
-                }
-                else
-                {
-                 */
                 $new_date_deb_grille=$tab_new_user['year']."-".$tab_new_user['mois']."-".$tab_new_user['jour'];
 
                 /****************************/
@@ -2869,7 +2856,6 @@ class Fonctions
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id();
-        //echo($u_login_to_delete."---".$u_login_to_delete."<br>");
 
         $sql1 = 'DELETE FROM conges_users WHERE u_login = "'. \includes\SQL::quote($u_login_to_delete).'"';
         $result = \includes\SQL::query($sql1);
@@ -3530,14 +3516,12 @@ class Fonctions
             // on parcours le tableau des jours d'absence semaine impaire
             if($tab_checkbox_sem_imp!="") {
                 while (list ($key, $val) = each ($tab_checkbox_sem_imp)) {
-                    //echo "$key => $val<br>\n";
                     $list_colums_to_insert="$list_colums_to_insert, $key";
                     $list_values_to_insert="$list_values_to_insert, '$val'";
                 }
             }
             if($tab_checkbox_sem_p!="") {
                 while (list ($key, $val) = each ($tab_checkbox_sem_p)) {
-                    //echo "$key => $val<br>\n";
                     $list_colums_to_insert="$list_colums_to_insert, $key";
                     $list_values_to_insert="$list_values_to_insert, '$val'";
                 }
