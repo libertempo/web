@@ -1,7 +1,9 @@
 <?php
 /*************************************************************************************************
 Libertempo : Gestion Interactive des Congés
-Copyright (C) 2015 (Wouldsmina)Copyright (C) 2015 (Prytoegrian)Copyright (C) 2005 (cedric chauvineau)
+Copyright (C) 2015 (Wouldsmina)
+Copyright (C) 2015 (Prytoegrian)
+Copyright (C) 2005 (cedric chauvineau)
 
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les 
 termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
@@ -3016,11 +3018,7 @@ class Fonctions
         // affichage TITRE
         echo "<thead>\n";
         echo "<tr>\n";
-        if($choix_user=="")
-            echo "	<th colspan=3><h3>". _('admin_gestion_groupe_users_group_of_new_user') ." :</h3></th>\n";
-        else
-            echo "	<th colspan=3><h3>". _('admin_gestion_groupe_users_group_of_user') ." <b> $choix_user </b> :</h3></th>\n";
-
+        echo "	<th colspan=3><h3>". _('admin_gestion_groupe_users_group_of_new_user') ." :</h3></th>\n";
         echo "</tr>\n";
 
         echo "<tr>\n";
@@ -3158,7 +3156,11 @@ class Fonctions
 
         // PREPARATION DES OPTIONS DU SELECT du resp_login
         $text_resp_login="<select class=\"form-control\" name=\"new_resp_login\" id=\"resp_login_id\" ><option value=\"no_resp\">". _('admin_users_no_resp') ."</option>" ;
-        $sql2 = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_is_resp = \"Y\" ORDER BY u_nom, u_prenom"  ;
+	if( $_SESSION['config']['admin_see_all'] || !is_resp($_SESSION['userlogin']) )
+        	$sql2 = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_is_resp = \"Y\" ORDER BY u_nom, u_prenom"  ;
+	else
+		$sql2 = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_is_resp = \"Y\" AND u_login=\"".$_SESSION['userlogin']."\" ORDER BY u_nom, u_prenom" ;
+
         $ReqLog2 = \includes\SQL::query($sql2);
 
         while ($resultat2 = $ReqLog2->fetch_array()) {
@@ -3290,7 +3292,10 @@ class Fonctions
         if($_SESSION['config']['gestion_groupes'])
         {
             echo "<br>\n";
+	if( $_SESSION['config']['admin_see_all'] || !is_resp($_SESSION['userlogin']) )
             \admin\Fonctions::affiche_tableau_affectation_user_groupes2("",  $DEBUG);
+	else
+            \admin\Fonctions::affiche_tableau_affectation_user_groupes2($_SESSION['userlogin'],  $DEBUG);
         }
 
         echo "<hr>\n";
