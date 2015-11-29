@@ -5,7 +5,6 @@ define('_PHP_CONGES', 1);
 defined( 'ROOT_PATH' ) or die( 'ROOT_PATH not defined !' );
 
 if (!defined( 'DEFINE_INCLUDE' )) {
-    define('DEBUG_MODE',        true);
 	define('DEFINE_INCLUDE',	true);
 	define('SHOW_SQL',			false);
 
@@ -22,10 +21,6 @@ if (!defined( 'DEFINE_INCLUDE' )) {
 
 	/*--- twiguification ---*/
 	require_once ROOT_PATH . 'vendor/autoload.php';
-    if (DEBUG_MODE) {
-        error_reporting(-1);
-        ini_set("display_errors", 1);
-    }
 
 	$loader = new \Twig_Loader_Filesystem(ROOT_PATH . 'template/twig');
 	// global $twig;
