@@ -17,15 +17,6 @@ if (!defined( 'DEFINE_INCLUDE' )) {
 	define('TEMPLATE_PATH',		ROOT_PATH . 'template/reboot/');
 
 	define('PLUGINS_DIR',		INCLUDE_PATH . "plugins/");
-	define('ICS_SALT',		'Jao%iT}'); //modify salt for more security with ics export
 
-	/*--- twiguification ---*/
 	require_once ROOT_PATH . 'vendor/autoload.php';
-
-	$loader = new \Twig_Loader_Filesystem(ROOT_PATH . 'template/twig');
-	// global $twig;
-
-	$twig = new \Twig_Environment($loader, array(
-	    'cache' => ROOT_PATH . 'template/twig/cache',
-	));
 }
