@@ -1,6 +1,6 @@
 <?php
-	defined( '_PHP_CONGES' ) or die( 'Restricted access' );
-	include TEMPLATE_PATH . 'template_define.php';
+    defined( '_PHP_CONGES' ) or die( 'Restricted access' );
+    include TEMPLATE_PATH . 'template_define.php';
     $printable = getpost_variable('printable');
     if (is_resp($_SESSION['userlogin'])) {
         $home = 'responsable/resp_index.php?session='.$session;

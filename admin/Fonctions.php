@@ -5,20 +5,20 @@ Copyright (C) 2015 (Wouldsmina)
 Copyright (C) 2015 (Prytoegrian)
 Copyright (C) 2005 (cedric chauvineau)
 
-Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les 
+Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
 termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
-Ce programme est distribué car potentiellement utile, mais SANS AUCUNE GARANTIE, 
-ni explicite ni implicite, y compris les garanties de commercialisation ou d'adaptation 
+Ce programme est distribué car potentiellement utile, mais SANS AUCUNE GARANTIE,
+ni explicite ni implicite, y compris les garanties de commercialisation ou d'adaptation
 dans un but spécifique. Reportez-vous à la Licence Publique Générale GNU pour plus de détails.
-Vous devez avoir reçu une copie de la Licence Publique Générale GNU en même temps 
-que ce programme ; si ce n'est pas le cas, écrivez à la Free Software Foundation, 
+Vous devez avoir reçu une copie de la Licence Publique Générale GNU en même temps
+que ce programme ; si ce n'est pas le cas, écrivez à la Free Software Foundation,
 Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, États-Unis.
 *************************************************************************************************
 This program is free software; you can redistribute it and/or modify it under the terms
-of the GNU General Public License as published by the Free Software Foundation; either 
+of the GNU General Public License as published by the Free Software Foundation; either
 version 2 of the License, or any later version.
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
-without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
@@ -147,9 +147,9 @@ class Fonctions
         echo "<thead>\n";
         // affichage TITRE
         echo "<tr>\n";
-        echo "	<th>&nbsp;</th>\n";
-        echo "	<th>". _('admin_groupes_groupe') ."</th>\n";
-        echo "	<th>". _('admin_groupes_libelle') ."</th>\n";
+        echo "    <th>&nbsp;</th>\n";
+        echo "    <th>". _('admin_groupes_groupe') ."</th>\n";
+        echo "    <th>". _('admin_groupes_libelle') ."</th>\n";
         echo "</tr>\n";
         echo "</thead>\n";
         echo "<tbody>\n";
@@ -184,9 +184,9 @@ class Fonctions
             }
 
             echo '<tr class="'.(!($i%2)?'i':'p').'">';
-            echo "	<td>$case_a_cocher</td>\n";
-            echo "	<td class=\"$class\"> $group </td>\n";
-            echo "	<td class=\"$class\"> $comment </td>\n";
+            echo "    <td>$case_a_cocher</td>\n";
+            echo "    <td class=\"$class\"> $group </td>\n";
+            echo "    <td class=\"$class\"> $comment </td>\n";
             echo "</tr>\n";
         }
 
@@ -203,9 +203,9 @@ class Fonctions
             //AFFICHAGE DU TABLEAU DES GROUPES DONT RESP EST GRAND RESPONSABLE
             echo "<table class=\"table table-hover table-responsive table-condensed table-striped\" >\n";
             echo "<thead>\n";
-            echo "	<th>&nbsp;</th>\n";
-            echo "	<th>". _('admin_groupes_groupe') ."</th>\n";
-            echo "	<th>". _('admin_groupes_libelle') ."</th>\n";
+            echo "    <th>&nbsp;</th>\n";
+            echo "    <th>". _('admin_groupes_groupe') ."</th>\n";
+            echo "    <th>". _('admin_groupes_libelle') ."</th>\n";
             echo "</tr>\n";
             echo "</thead>\n";
             echo "<tbody>\n";
@@ -240,9 +240,9 @@ class Fonctions
                 }
 
                 echo '<tr class="'.(!($i%2)?'i':'p').'">';
-                echo "	<td>$case_a_cocher</td>\n";
-                echo "	<td class=\"$class\"> $group </td>\n";
-                echo "	<td class=\"$class\"> $comment </td>\n";
+                echo "    <td>$case_a_cocher</td>\n";
+                echo "    <td class=\"$class\"> $group </td>\n";
+                echo "    <td class=\"$class\"> $comment </td>\n";
                 echo "</tr>\n";
             }
 
@@ -284,8 +284,8 @@ class Fonctions
         echo "<table class=\"table table-hover table-responsive table-condensed table-striped\" >\n";
         echo "<thead>\n";
         echo "<tr>\n";
-        echo "	<th>". _('divers_responsable_maj_1') ."</th>\n";
-        echo "	<th>". _('divers_login') ."</th>\n";
+        echo "    <th>". _('divers_responsable_maj_1') ."</th>\n";
+        echo "    <th>". _('divers_login') ."</th>\n";
         echo "</tr>\n";
         echo "</thead>\n";
         echo "<tbody>\n";
@@ -414,9 +414,9 @@ class Fonctions
 
         // affichage TITRE
         echo "<tr>\n";
-        echo "	<th>&nbsp;</th>\n";
-        echo "	<th>". _('divers_personne_maj_1') ."</th>\n";
-        echo "	<th>". _('divers_login') ."</th>\n";
+        echo "    <th>&nbsp;</th>\n";
+        echo "    <th>". _('divers_personne_maj_1') ."</th>\n";
+        echo "    <th>". _('divers_login') ."</th>\n";
         echo "</tr>\n";
         echo "</thead>\n";
         echo "<tbody>\n";
@@ -451,9 +451,9 @@ class Fonctions
             }
 
             echo '<tr class="'.(!($i%2)?'i':'p').'">';
-            echo "	<td>$case_a_cocher</td>\n";
-            echo "	<td class=\"$class\">$nom&nbsp;$prenom</td>\n";
-            echo "	<td class=\"$class\">$login</td>\n";
+            echo "    <td>$case_a_cocher</td>\n";
+            echo "    <td class=\"$class\">$nom&nbsp;$prenom</td>\n";
+            echo "    <td class=\"$class\">$login</td>\n";
             echo "</tr>\n";
         }
         echo "</tbody>\n\n";
@@ -472,9 +472,9 @@ class Fonctions
 
             // affichage TITRE
             echo "<tr>\n";
-            echo "	<th>&nbsp;</th>\n";
-            echo "	<th>". _('divers_personne_maj_1') ."&nbsp;:</th>\n";
-            echo "	<th>". _('divers_login') ."&nbsp;:</th>\n";
+            echo "    <th>&nbsp;</th>\n";
+            echo "    <th>". _('divers_personne_maj_1') ."&nbsp;:</th>\n";
+            echo "    <th>". _('divers_login') ."&nbsp;:</th>\n";
             echo "</tr>\n";
             echo "</thead>\n";
             echo "<tbody>\n";
@@ -509,9 +509,9 @@ class Fonctions
                 }
 
                 echo '<tr class="'.(!($i%2)?'i':'p').'">';
-                echo "	<td>$case_a_cocher</td>\n";
-                echo "	<td class=\"$class\">$nom&nbsp;$prenom</td>\n";
-                echo "	<td class=\"$class\">$login</td>\n";
+                echo "    <td>$case_a_cocher</td>\n";
+                echo "    <td class=\"$class\">$nom&nbsp;$prenom</td>\n";
+                echo "    <td class=\"$class\">$login</td>\n";
                 echo "</tr>\n";
             }
             echo "</tbody>\n\n";
@@ -547,8 +547,8 @@ class Fonctions
         echo "<table class=\"table table-hover table-responsive table-condensed table-striped\">\n";
         echo "<thead>\n";
         echo "<tr>\n";
-        echo "	<th>" . _('admin_groupes_groupe') . "</th>\n";
-        echo "	<th>" . _('admin_groupes_libelle') . "</th>\n";
+        echo "    <th>" . _('admin_groupes_groupe') . "</th>\n";
+        echo "    <th>" . _('admin_groupes_libelle') . "</th>\n";
         echo "</tr>\n";
         echo "</thead>\n";
         echo "<tbody>\n";
@@ -614,19 +614,19 @@ class Fonctions
         $choix_group    = getpost_variable('choix_group') ;
         $choix_resp     = getpost_variable('choix_resp') ;
 
-        $change_group_responsables	= getpost_variable('change_group_responsables') ;
-        $change_responsable_group	= getpost_variable('change_responsable_group') ;
+        $change_group_responsables    = getpost_variable('change_group_responsables') ;
+        $change_responsable_group    = getpost_variable('change_responsable_group') ;
 
         if($change_group_responsables=="ok")
         {
-            $checkbox_group_resp		= getpost_variable('checkbox_group_resp') ;
-            $checkbox_group_grd_resp	= getpost_variable('checkbox_group_grd_resp') ;
+            $checkbox_group_resp        = getpost_variable('checkbox_group_resp') ;
+            $checkbox_group_grd_resp    = getpost_variable('checkbox_group_grd_resp') ;
             \admin\Fonctions::modif_group_responsables($choix_group, $checkbox_group_resp, $checkbox_group_grd_resp, $DEBUG);
         }
         elseif($change_responsable_group=="ok")
         {
-            $checkbox_resp_group		= getpost_variable('checkbox_resp_group') ;
-            $checkbox_grd_resp_group	= getpost_variable('checkbox_grd_resp_group') ;
+            $checkbox_resp_group        = getpost_variable('checkbox_resp_group') ;
+            $checkbox_grd_resp_group    = getpost_variable('checkbox_grd_resp_group') ;
 
             \admin\Fonctions::modif_resp_groupes($choix_resp, $checkbox_resp_group, $checkbox_grd_resp_group, $DEBUG);
         }
@@ -719,9 +719,9 @@ class Fonctions
         // affichage TITRE
         echo "<thead>\n";
         echo "<tr>\n";
-        echo "	<th></th>\n";
-        echo "	<th>". _('divers_personne_maj_1') ."</th>\n";
-        echo "	<th>". _('divers_login') . "</th>\n";
+        echo "    <th></th>\n";
+        echo "    <th>". _('divers_personne_maj_1') ."</th>\n";
+        echo "    <th>". _('divers_login') . "</th>\n";
         echo "</tr>\n";
         echo "</thead>\n";
         echo "<tbody>\n";
@@ -772,9 +772,9 @@ class Fonctions
             }
 
             echo '<tr class="'.(!($i%2)?'i':'p').'">';
-            echo "	<td>$case_a_cocher</td>\n";
-            echo "	<td class=\"$class\">$nom $prenom</td>\n";
-            echo "	<td class=\"$class\">$login</td>\n";
+            echo "    <td>$case_a_cocher</td>\n";
+            echo "    <td class=\"$class\">$nom $prenom</td>\n";
+            echo "    <td class=\"$class\">$login</td>\n";
             echo "</tr>\n";
         }
 
@@ -807,8 +807,8 @@ class Fonctions
         echo "<table class=\"table table-hover table-responsive table-condensed table-striped\" >\n";
         echo "<thead>\n";
         echo "<tr>\n";
-        echo "	<th>". _('admin_groupes_groupe') ."</th>\n";
-        echo "	<th>". _('admin_groupes_libelle') ."</th>\n";
+        echo "    <th>". _('admin_groupes_groupe') ."</th>\n";
+        echo "    <th>". _('admin_groupes_libelle') ."</th>\n";
         echo "</tr>\n";
         echo "</thead>\n";
         echo "<tbody>\n";
@@ -913,9 +913,9 @@ class Fonctions
         echo "<table class=\"table table-hover table-responsive table-condensed table-striped\" >\n";
         echo "<thead>\n";
         echo "<tr>\n";
-        echo "	<th></th>\n";
-        echo "	<th>" . _('admin_groupes_groupe') . "</th>\n";
-        echo "	<th>" . _('admin_groupes_libelle') . "</th>\n";
+        echo "    <th></th>\n";
+        echo "    <th>" . _('admin_groupes_groupe') . "</th>\n";
+        echo "    <th>" . _('admin_groupes_libelle') . "</th>\n";
         echo "</tr>\n";
         echo "</thead>\n";
         echo "<tbody>\n";
@@ -971,9 +971,9 @@ class Fonctions
             }
 
             echo '<tr class="'.(!($i%2)?'i':'p').'">';
-            echo "	<td>$case_a_cocher</td>\n";
-            echo "	<td class=\"$class\">$group&nbsp</td>\n";
-            echo "	<td class=\"$class\">$libelle</td>\n";
+            echo "    <td>$case_a_cocher</td>\n";
+            echo "    <td class=\"$class\">$group&nbsp</td>\n";
+            echo "    <td class=\"$class\">$libelle</td>\n";
             echo "</tr>\n";
         }
 
@@ -1019,19 +1019,19 @@ class Fonctions
      */
     public static function groupUserModule($onglet, $DEBUG = false)
     {
-        $change_group_users	= getpost_variable('change_group_users') ;
-        $change_user_groups	= getpost_variable('change_user_groups') ;
-        $choix_group		= getpost_variable('choix_group') ;
-        $choix_user			= getpost_variable('choix_user') ;
+        $change_group_users    = getpost_variable('change_group_users') ;
+        $change_user_groups    = getpost_variable('change_user_groups') ;
+        $choix_group        = getpost_variable('choix_group') ;
+        $choix_user            = getpost_variable('choix_user') ;
 
         if($change_group_users=="ok")
         {
-            $checkbox_group_users	= getpost_variable('checkbox_group_users');
+            $checkbox_group_users    = getpost_variable('checkbox_group_users');
             \admin\Fonctions::modif_group_users($choix_group, $checkbox_group_users, $DEBUG);
         }
         elseif($change_user_groups=="ok")
         {
-            $checkbox_user_groups	= getpost_variable('checkbox_user_groups');
+            $checkbox_user_groups    = getpost_variable('checkbox_user_groups');
             \admin\Fonctions::modif_user_groups($choix_user, $checkbox_user_groups,  $DEBUG);
         }
         else
@@ -1097,61 +1097,63 @@ class Fonctions
 
     public static function ajout_groupe($new_group_name, $new_group_libelle, $new_group_double_valid,  $DEBUG=FALSE)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
-        $session=session_id();
+        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $session  = session_id();
+        $return   = '';
 
-        if(\admin\Fonctions::verif_new_param_group($new_group_name, $new_group_libelle,  $DEBUG)==0)  // verif si les nouvelles valeurs sont coohérentes et n'existe pas déjà
+        if(\admin\Fonctions::verif_new_param_group($new_group_name, $new_group_libelle,  $DEBUG)==0)  // verif si les nouvelles valeurs sont coohérentes et n'existent pas déjà
         {
             $ngm=stripslashes($new_group_name);
-            echo "$ngm --- $new_group_libelle<br>\n";
+            $return .= $ngm . '---' . $new_group_libelle . '<br>';
 
             $sql1 = "INSERT INTO conges_groupe SET g_groupename='$new_group_name', g_comment='$new_group_libelle', g_double_valid ='$new_group_double_valid' " ;
             $result = \includes\SQL::query($sql1);
 
             $new_gid= \includes\SQL::getVar('insert_id');
 
-            if($result)
-                echo  _('form_modif_ok') ."<br><br> \n";
-            else
-                echo  _('form_modif_not_ok') ."<br><br> \n";
+            if($result) {
+                $return .= _('form_modif_ok') . '<br><br>';
+            } else {
+                $return .= _('form_modif_not_ok') . '<br><br>';
+            }
 
             $comment_log = "ajout_groupe : $new_gid / $new_group_name / $new_group_libelle (double_validation : $new_group_double_valid)" ;
             log_action(0, "", "", $comment_log, $DEBUG);
 
             /* APPEL D'UNE AUTRE PAGE */
-            echo " <form action=\"$PHP_SELF?session=$session&onglet=admin-group\" method=\"POST\"> \n";
-            echo "<input type=\"submit\" value=\"". _('form_retour') ."\">\n";
-            echo " </form> \n";
+            $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=admin-group" method="POST">';
+            $return .= '<input type="submit" value="' . _('form_retour') . '">';
+            $return .= '</form>';
         }
+        return $return;
     }
 
     public static function affiche_gestion_groupes($new_group_name, $new_group_libelle, $onglet, $DEBUG=FALSE)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
-        $session=session_id();
+        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $session  = session_id();
+        $return   = '';
 
-        echo "<h1>". _('admin_onglet_gestion_groupe') ."</h1>\n\n";
+        $return .= '<h1>' . _('admin_onglet_gestion_groupe') . '</h1>';
 
         /*********************/
-        /* Etat Groupes	   */
+        /* Etat Groupes       */
         /*********************/
         // Récuperation des informations :
         $sql_gr = "SELECT g_gid, g_groupename, g_comment, g_double_valid FROM conges_groupe ORDER BY g_groupename"  ;
 
         // AFFICHAGE TABLEAU
-        echo "<h2>". _('admin_gestion_groupe_etat') ."</h2>\n";
-        echo "<table class=\"table table-hover table-responsive table-condensed table-striped\">\n";
-        echo "<thead>\n";
-        echo "<tr>\n";
-        echo "    <th>". _('admin_groupes_groupe') ."</th>\n";
-        echo "    <th>". _('admin_groupes_libelle') ."</th>\n";
-        echo "    <th>". _('admin_groupes_nb_users') ."</th>\n";
-        if($_SESSION['config']['double_validation_conges'])
-            echo "    <th>". _('admin_groupes_double_valid') ."</th>\n";
-        echo "    <th></th>\n";
-        echo "</tr>\n";
-        echo "</thead>\n";
-        echo "<tbody>\n";
+        $return .= '<h2>' . _('admin_gestion_groupe_etat') . '</h2>';
+        $return .= '<table class="table table-hover table-responsive table-condensed table-striped">';
+        $return .= '<thead>';
+        $return .= '<tr>';
+        $return .= '<th>' . _('admin_groupes_groupe') . '</th>';
+        $return .= '<th>' . _('admin_groupes_libelle') . '</th>';
+        $return .= '<th>' . _('admin_groupes_nb_users') . '</th>';
+        if($_SESSION['config']['double_validation_conges']) {
+            $return .= '<th>' . _('admin_groupes_double_valid') . '</th>';
+        }
+        $return .= '<th></th></tr></thead><tbody>';
 
         $i = true;
         $ReqLog_gr = \includes\SQL::query($sql_gr);
@@ -1163,23 +1165,21 @@ class Fonctions
             $sql_double_valid=$resultat_gr["g_double_valid"] ;
             $nb_users_groupe = \admin\Fonctions::get_nb_users_du_groupe($sql_gid, $DEBUG);
 
-            $admin_modif_group="<a href=\"admin_index.php?onglet=modif_group&session=$session&group=$sql_gid\" title=\"". _('form_modif') ."\"><i class=\"fa fa-pencil\"></i></a>" ;
-            $admin_suppr_group="<a href=\"admin_index.php?onglet=suppr_group&session=$session&group=$sql_gid\" title=\"". _('form_supprim') ."\"><i class=\"fa fa-times-circle\"></i></a>" ;
+            $admin_modif_group = '<a href="admin_index.php?onglet=modif_group&session=$session&group=$sql_gid" title="' . _('form_modif') . '"><i class="fa fa-pencil"></i></a>';
+            $admin_suppr_group = '<a href="admin_index.php?onglet=suppr_group&session=$session&group=$sql_gid" title="' . _('form_supprim') . '"><i class="fa fa-times-circle"></i></a>';
 
-            echo '<tr class="'.($i?'i':'p').'">';
-            echo "<td><b>$sql_group</b></td>\n";
-            echo "<td>$sql_comment</td>\n";
-            echo "<td>$nb_users_groupe</td>\n";
-            if($_SESSION['config']['double_validation_conges'])
-                echo "<td>$sql_double_valid</td>\n";
-            echo "<td class=\"action\">$admin_modif_group $admin_suppr_group</td>\n";
-            echo "</tr>\n";
+            $return .= '<tr class="' . ($i ? 'i' : 'p') . '">';
+            $return .= '<td><b>' . $sql_group .'</b></td>';
+            $return .= '<td>' . $sql_comment . '</td>';
+            $return .= '<td>' . $nb_users_groupe . '</td>';
+            if($_SESSION['config']['double_validation_conges']) {
+                $return .= '<td>' . $sql_double_valid . '</td>';
+            }
+            $return .= '<td class="action">' . $admin_modif_group . ' ' . $admin_suppr_group . '</td>';
+            $return .= '</tr>';
             $i = !$i;
         }
-        echo "</tbody>\n\n";
-        echo "</table>\n\n";
-
-        echo "<hr/>\n";
+        $return .= '</tbody></table><hr/>';
 
         /*********************/
         /* Ajout Groupe      */
@@ -1187,65 +1187,57 @@ class Fonctions
 
         // TITRE
 
-        echo "<h2>". _('admin_groupes_new_groupe') ."</h2>\n";
-        echo '<form action="'.$PHP_SELF.'?session='.$session.'&onglet='.$onglet.'" method="POST">';
-        echo "<table class=\"tablo\">\n";
-        echo "<thead>\n";
-        echo "<tr>\n";
-        echo "<th><b>". _('admin_groupes_groupe') ."</b></th>\n";
-        echo "<th>". _('admin_groupes_libelle') ." / ". _('divers_comment_maj_1') ."</th>\n";
-        if($_SESSION['config']['double_validation_conges'])
-            echo "    <th>". _('admin_groupes_double_valid') ."</th>\n";
-        echo "</tr>\n";
-        echo "</thead>\n";
-        echo "<tbody>\n";
-
-        $text_groupname="<input class=\"form-control\" type=\"text\" name=\"new_group_name\" size=\"30\" maxlength=\"50\" value=\"".$new_group_name."\">" ;
-        $text_libelle="<input class=\"form-control\" type=\"text\" name=\"new_group_libelle\" size=\"50\" maxlength=\"250\" value=\"".$new_group_libelle."\">" ;
-
-        echo "<tr>\n";
-        echo "<td>$text_groupname</td>\n";
-        echo "<td>$text_libelle</td>\n";
-        if($_SESSION['config']['double_validation_conges'])
-        {
-            $text_double_valid="<select class=\"form-control\" name=\"new_group_double_valid\" ><option value=\"N\">N</option><option value=\"Y\">Y</option></select>" ;
-            echo "<td>$text_double_valid</td>\n";
+        $return .= '<h2>' . _('admin_groupes_new_groupe') . '</h2>';
+        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '" method="POST">';
+        $return .= '<table class="tablo"><thead><tr>';
+        $return .= '<th><b>' . _('admin_groupes_groupe') . '</b></th>';
+        $return .= '<th>' . _('admin_groupes_libelle') . ' / ' . _('divers_comment_maj_1') . '</th>';
+        if($_SESSION['config']['double_validation_conges']) {
+            $return .= '<th>' . _('admin_groupes_double_valid') . '</th>';
         }
-        echo "</tr>\n";
-        echo "</tbody>\n";
-        echo "</table>";
+        $return .= '</tr></thead><tbody>';
 
-        echo "<hr>\n";
-        echo "<input type=\"hidden\" name=\"saisie_group\" value=\"ok\">\n";
-        echo "<input class=\"btn btn-success\" type=\"submit\" value=\"". _('form_submit') ."\">\n";
-        echo "</form>\n" ;
+        $text_groupname = '<input class="form-control" type="text" name="new_group_name" size="30" maxlength="50" value="' . $new_group_name . '">';
+        $text_libelle = '<input class="form-control" type="text" name="new_group_libelle" size="50" maxlength="250" value="' . $new_group_libelle . '">';
+
+        $return .= '<tr>';
+        $return .= '<td>' . $text_groupname . '</td>';
+        $return .= '<td>' . $text_libelle . '</td>';
+        if($_SESSION['config']['double_validation_conges']) {
+            $text_double_valid = '<select class="form-control" name="new_group_double_valid"><option value="N">N</option><option value="Y">Y</option></select>';
+            $return .= '<td>' . $text_double_valid . '</td>';
+        }
+        $return .= '</tr></tbody></table><hr>';
+        $return .= '<input type="hidden" name="saisie_group" value="ok">';
+        $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
+        $return .= '</form>';
+        return $return;
     }
-    
+
     /**
      * Encapsule le comportement du module de gestion des groupes
      *
      * @param string $onglet Nom de l'onglet à afficher
      * @param bool   $DEBUG  Mode debug ?
      *
-     * @return void
+     * @return string
      * @access public
      * @static
      */
     public static function groupeModule($onglet, $DEBUG = false)
     {
-        $saisie_group   		= getpost_variable('saisie_group') ;
-        $new_group_name			= addslashes( getpost_variable('new_group_name')) ;
-        $new_group_libelle		= addslashes( getpost_variable('new_group_libelle')) ;
-        $new_group_double_valid	= getpost_variable('new_group_double_valid') ;
+        $saisie_group           = getpost_variable('saisie_group') ;
+        $new_group_name         = addslashes( getpost_variable('new_group_name')) ;
+        $new_group_libelle      = addslashes( getpost_variable('new_group_libelle')) ;
+        $new_group_double_valid = getpost_variable('new_group_double_valid');
+        $return = '';
 
-        if($saisie_group=="ok")
-        {
-            \admin\Fonctions::ajout_groupe($new_group_name, $new_group_libelle, $new_group_double_valid,  $DEBUG);
+        if($saisie_group=="ok") {
+            $return .= \admin\Fonctions::ajout_groupe($new_group_name, $new_group_libelle, $new_group_double_valid,  $DEBUG);
+        } else {
+            $return .= \admin\Fonctions::affiche_gestion_groupes($new_group_name, $new_group_libelle, $onglet, $DEBUG);
         }
-        else
-        {
-            \admin\Fonctions::affiche_gestion_groupes($new_group_name, $new_group_libelle, $onglet, $DEBUG);
-        }
+        return $return;
     }
 
     /**
@@ -1254,13 +1246,13 @@ class Fonctions
      * @param string $session
      * @param bool   $DEBUG   Mode debug ?
      *
-     * @return void
+     * @return string
      * @access public
      * @static
      */
     public static function userModule($session, $DEBUG = false)
     {
-        echo "<h1> ". _('admin_onglet_gestion_user') ."</h1>\n";
+        $return = '<h1>' . _('admin_onglet_gestion_user') . '</h1>';
 
         /*********************/
         /* Etat Utilisateurs */
@@ -1268,190 +1260,182 @@ class Fonctions
 
         // recup du tableau des types de conges (seulement les conges)
         $tab_type_conges=recup_tableau_types_conges($DEBUG);
+        $tab_type_conges_exceptionnels = [];
 
         // recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
-        if ( $_SESSION['config']['gestion_conges_exceptionnels'] )
+        if ($_SESSION['config']['gestion_conges_exceptionnels']) {
             $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels($DEBUG);
+        }
+
 
         // AFFICHAGE TABLEAU
 
-        echo "<table class=\"table table-hover table-responsive table-condensed table-striped\" >\n";
-        echo "<thead>\n";
-        echo "<tr>\n";
-        echo "<th>". _('user') ."</th>\n";
-        echo "<th>". _('divers_quotite_maj_1') ."</th>\n";
-        foreach($tab_type_conges as $id_type_cong => $libelle)
-        {
-            echo "<th>$libelle / ". _('divers_an') ."</th>\n";
-            echo "<th>". _('divers_solde') ." $libelle</th>\n";
+        $return .= '<table class="table table-hover table-responsive table-condensed table-striped" >';
+        $return .= '<thead>';
+        $return .= '<tr>';
+        $return .= '<th>' .  _('user') . '</th>';
+        $return .= '<th>' . _('divers_quotite_maj_1') . '</th>';
+        foreach($tab_type_conges as $id_type_cong => $libelle) {
+            $return .= '<th>' . $libelle . ' / ' . _('divers_an') . '</th>';
+            $return .= '<th>' . _('divers_solde') . ' ' . $libelle . '</th>';
         }
 
-        if ($_SESSION['config']['gestion_conges_exceptionnels']) {
-            foreach($tab_type_conges_exceptionnels as $id_type_cong => $libelle)
-            {
-                echo "<th>". _('divers_solde') ." $libelle</th>\n";
-            }
+        foreach($tab_type_conges_exceptionnels as $id_type_cong => $libelle) {
+            $return .= '<th>' . _('divers_solde') . ' ' . $libelle . '</th>';
         }
-        echo "<th></th>\n";
-        echo "<th></th>\n";
-        if($_SESSION['config']['admin_change_passwd'])
-            echo "<th></th>\n";
-        echo "</tr>\n";
-        echo "</thead>\n";
-        echo "<tbody>\n";
+        $return .= '<th></th>';
+        $return .= '<th></th>';
+        if($_SESSION['config']['admin_change_passwd']) {
+            $return .= '<th></th>';
+        }
+        $return .= '</tr>';
+        $return .= '</thead>';
+        $return .= '<tbody>';
 
         // Récuperation des informations des users:
         $tab_info_users=array();
         // si l'admin peut voir tous les users  OU si l'admin n'est pas responsable
-        if( $_SESSION['config']['admin_see_all'] || !is_resp($_SESSION['userlogin']) )
+        if($_SESSION['config']['admin_see_all'] || !is_resp($_SESSION['userlogin'])) {
             $tab_info_users = recup_infos_all_users($DEBUG);
-        else
+        } else {
             $tab_info_users = recup_infos_all_users_du_resp($_SESSION['userlogin'], $DEBUG);
-
+        }
 
         $i = true;
-        foreach($tab_info_users as $current_login => $tab_current_infos)
-        {
+        foreach($tab_info_users as $current_login => $tab_current_infos) {
+            $admin_modif_user= '<a href="admin_index.php?onglet=modif_user&session=' . $session . '&u_login=' . $current_login . '" title="' . _('form_modif') . '"><i class="fa fa-pencil"></i></a>';
+            $admin_suppr_user = '<a href="admin_index.php?onglet=suppr_user&session=' . $session . '&u_login=' . $current_login . '" title="' . _('form_supprim') . '"><i class="fa fa-times-circle"></i></a>';
+            $admin_chg_pwd_user = '<a href="admin_index.php?onglet=chg_pwd_user&session=' . $session . '&u_login=' . $current_login . '" title="' . _('form_password') . '"><i class="fa fa-key"></i></a>';
 
 
-            $admin_modif_user="<a href=\"admin_index.php?onglet=modif_user&session=$session&u_login=$current_login\" title=\"". _('form_modif') ."\"><i class=\"fa fa-pencil\"></i></a>" ;
-            $admin_suppr_user="<a href=\"admin_index.php?onglet=suppr_user&session=$session&u_login=$current_login\" title=\"". _('form_supprim') ."\"><i class=\"fa fa-times-circle\"></i></a>" ;
-            $admin_chg_pwd_user="<a href=\"admin_index.php?onglet=chg_pwd_user&session=$session&u_login=$current_login\" title=\"". _('form_password') ."\"><i class=\"fa fa-key\"></i></a>" ;
-
-
-            echo '<tr class="' . (($tab_current_infos['is_active']=='Y') ? 'actif' : 'inactif') . '">';
-            echo "<td class=\"utilisateur\"><strong>" . $tab_current_infos['nom'] . " " . $tab_current_infos['prenom'] ."</strong>";
-            echo '<span class="login">' . $current_login . "</span>";
-            if($_SESSION['config']['where_to_find_user_email']=="dbconges")
-                echo "<span class=\"mail\">".$tab_current_infos['email']."</span>\n";
+            $return .= '<tr class="' . (($tab_current_infos['is_active']=='Y') ? 'actif' : 'inactif') . '">';
+            $return .= '<td class="utilisateur"><strong>' . $tab_current_infos['nom'] . ' ' . $tab_current_infos['prenom'] . '</strong>';
+            $return .= '<span class="login">' . $current_login . '</span>';
+            if($_SESSION['config']['where_to_find_user_email']=="dbconges") {
+                $return .= '<span class="mail">' . $tab_current_infos['email'] . '</span>';
+            }
             // droit utilisateur
             $rights = array();
-            if($tab_current_infos['is_admin'] == 'Y')
+            if($tab_current_infos['is_admin'] == 'Y') {
                 $rights[] = 'administrateur';
-            if($tab_current_infos['is_resp'] == 'Y')
+            }
+            if($tab_current_infos['is_resp'] == 'Y') {
                 $rights[] = 'responsable';
-            if($tab_current_infos['is_hr'] == 'Y')
+            }
+            if($tab_current_infos['is_hr'] == 'Y') {
                 $rights[] = 'RH';
-            if($tab_current_infos['see_all'] == 'Y')
+            }
+            if($tab_current_infos['see_all'] == 'Y') {
                 $rights[] = 'voit tout';
+            }
 
-            if(count($rights) > 0) 
-                echo "<span class=\"rights\"> " . implode(', ', $rights) . "</span>";
+            if(count($rights) > 0) {
+                $return .= '<span class="rights">' . implode(', ', $rights) . '</span>';
+            }
 
-            echo "<span class=\"responsable\"> responsable : <strong>" . $tab_current_infos['resp_login'] . "</strong></span>";
+            $return .= '<span class="responsable"> responsable : <strong>' . $tab_current_infos['resp_login'] . '</strong></span>';
 
-            echo "</td>\n";
-            echo "<td>".$tab_current_infos['quotite']."%</td>\n";
+            $return .= '</td><td>' . $tab_current_infos['quotite'] . ' %</td>';
 
             //tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
             $tab_conges=$tab_current_infos['conges'];
 
-            foreach($tab_type_conges as $id_conges => $libelle)
-            {
-                if (isset($tab_conges[$libelle]))
-                {
-                    echo "<td>".$tab_conges[$libelle]['nb_an']."</td>\n";
-                    echo "<td>".$tab_conges[$libelle]['solde']."</td>\n";
-                }
-                else
-                {
-                    echo "<td>0</td>\n";
-                    echo "<td>0</td>\n";
+            foreach($tab_type_conges as $id_conges => $libelle) {
+                if (isset($tab_conges[$libelle])) {
+                    $return .= '<td>' . $tab_conges[$libelle]['nb_an'] . '</td>';
+                    $return .= '<td>' . $tab_conges[$libelle]['solde'] . '</td>';
+                } else {
+                    $return .= '<td>0</td>';
+                    $return .= '<td>0</td>';
                 }
             }
 
-            if ($_SESSION['config']['gestion_conges_exceptionnels'])
-            {
-                foreach($tab_type_conges_exceptionnels as $id_conges => $libelle)
-                {
-                    if (isset($tab_conges[$libelle]))
-                        echo "<td>".$tab_conges[$libelle]['solde']."</td>\n";
-                    else
-                        echo "<td>0</td>\n";
+            foreach($tab_type_conges_exceptionnels as $id_conges => $libelle) {
+                if (isset($tab_conges[$libelle])) {
+                    $return .= '<td>' . $tab_conges[$libelle]['solde'] . '</td>';
+                } else {
+                    $return .= '<td>0</td>';
                 }
             }
 
-            echo "<td>$admin_modif_user</td>\n";
-            echo "<td>$admin_suppr_user</td>\n";
-            if(($_SESSION['config']['admin_change_passwd']) && ($_SESSION['config']['how_to_connect_user'] == "dbconges"))
-                echo "<td>$admin_chg_pwd_user</td>\n";
-            echo "</tr>\n";
+            $return .= '<td>' . $admin_modif_user . '</td>';
+            $return .= '<td>' . $admin_suppr_user . '</td>';
+            if(($_SESSION['config']['admin_change_passwd']) && ($_SESSION['config']['how_to_connect_user'] == "dbconges")) {
+                $return .= '<td>' . $admin_chg_pwd_user . '</td>';
+            }
+            $return .= '</tr>';
             $i = !$i;
         }
 
-        echo "</tbody>\n";
-        echo"</table>\n\n";
-        echo "<br>\n";
+        $return .= '</tbody></table><br>';
+        return $return;
     }
 
     public static function commit_update($u_login_to_update, $new_pwd1, $new_pwd2, $DEBUG=FALSE)
     {
 
-        $PHP_SELF=$_SERVER['PHP_SELF'];
-        $session=session_id();
+        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $session  = session_id();
+        $return   = '';
 
-        if( (strlen($new_pwd1)!=0) && (strlen($new_pwd2)!=0) && (strcmp($new_pwd1, $new_pwd2)==0) )
-        {
+        if( (strlen($new_pwd1)!=0) && (strlen($new_pwd2)!=0) && (strcmp($new_pwd1, $new_pwd2)==0) ) {
 
             $passwd_md5=md5($new_pwd1);
             $sql1 = 'UPDATE conges_users  SET u_passwd=\''.$passwd_md5.'\' WHERE u_login="'. \includes\SQL::quote($u_login_to_update).'"' ;
             $result = \includes\SQL::query($sql1);
 
-            if($result)
-                echo  _('form_modif_ok') ." !<br><br> \n";
-            else
-                echo  _('form_modif_not_ok') ." !<br><br> \n";
+            if($result) {
+                $return .= _('form_modif_ok') . ' !<br><br>';
+            } else {
+                $return .= _('form_modif_not_ok') . ' !<br><br>';
+            }
 
             $comment_log = "admin_change_password_user : pour $u_login_to_update" ;
             log_action(0, "", $u_login_to_update, $comment_log, $DEBUG);
 
-            if( $DEBUG )
-            {
-                echo "<form action=\"admin_index.php?session=$session&onglet=admin-users\" method=\"POST\">\n" ;
-                echo "<input type=\"submit\" value=\"". _('form_ok') ."\">\n";
-                echo "</form>\n" ;
-            }
-            else
-            {
+            if( $DEBUG ) {
+                $return .= '<form action="admin_index.php?session=' . $session . '&onglet=admin-users" method="POST">';
+                $return .= '<input type="submit" value="' . _('form_ok') . '">';
+                $return .= '</form>';
+            } else {
                 /* APPEL D'UNE AUTRE PAGE au bout d'une tempo de 2secondes */
-                echo "<META HTTP-EQUIV=REFRESH CONTENT=\"2; URL=admin_index.php?session=$session&onglet=admin-users\">";
+                $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=admin_index.php?session=' . $session . '&onglet=admin-users">';
             }
+        } else {
+            $return .= '<H3>' . _('admin_verif_param_invalides') . '</H3>';
+            $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=chg_pwd_user" method="POST">';
+            $return .= '<input type="hidden" name="u_login" value="' . $u_login_to_update . '">';
 
+            $return .= '<input type="submit" value="' . _('form_redo') . '">';
+            $return .= '</form>';
         }
-        else
-        {
-            echo "<H3> ". _('admin_verif_param_invalides') ." </H3>\n" ;
-            echo "<form action=\"$PHP_SELF?session=$session&onglet=chg_pwd_user\" method=\"POST\">\n" ;
-            echo "<input type=\"hidden\" name=\"u_login\" value=\"$u_login_to_update\">\n";
-
-            echo "<input type=\"submit\" value=\"". _('form_redo') ."\">\n";
-            echo "</form>\n" ;
-        }
+        return $return;
     }
 
     public static function modifier($u_login, $onglet, $DEBUG=FALSE)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id();
+        $return = '';
 
         /********************/
         /* Etat utilisateur */
         /********************/
         // AFFICHAGE TABLEAU
-        echo '<form action="'.$PHP_SELF.'?session='.$session.'&onglet='.$onglet.'&u_login_to_update='.$u_login.'" method="POST">';
-        echo "<table cellpadding=\"2\" class=\"tablo\" width=\"80%\">\n";
-        echo '<thead>';
-        echo '<tr>';
-        echo "<th>". _('divers_login_maj_1') ."</th>\n";
-        echo "<th>". _('divers_nom_maj_1') ."</th>\n";
-        echo "<th>". _('divers_prenom_maj_1') ."</th>\n";
-        echo "<th>". _('admin_users_password_1') ."</th>\n";
-        echo "<th>". _('admin_users_password_2') ."</th>\n";
-        echo "</tr>\n";
-        echo '</thead>';
-        echo '<tbody>';
+        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '&u_login_to_update=' . $u_login . '" method="POST">';
+        $return .= '<table cellpadding="2" class="tablo" width="80%">';
+        $return .= '<thead>';
+        $return .= '<tr>';
+        $return .= '<th>' . _('divers_login_maj_1') . '</th>';
+        $return .= '<th>' . _('divers_nom_maj_1') . '</th>';
+        $return .= '<th>' . _('divers_prenom_maj_1') . '</th>';
+        $return .= '<th>' . _('admin_users_password_1') . '</th>';
+        $return .= '<th>' . _('admin_users_password_2') . '</th>';
+        $return .= '</tr>';
+        $return .= '</thead>';
+        $return .= '<tbody>';
 
-        echo "<tr align=\"center\">\n";
+        $return .= '<tr align="center">';
 
         // Récupération des informations
         $sql1 = 'SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_login = "'. \includes\SQL::quote($u_login).'"';
@@ -1460,17 +1444,18 @@ class Fonctions
         while ($resultat1 = $ReqLog1->fetch_array()) {
             $text_pwd1="<input type=\"password\" name=\"new_pwd1\" size=\"10\" maxlength=\"30\" value=\"\">" ;
             $text_pwd2="<input type=\"password\" name=\"new_pwd2\" size=\"10\" maxlength=\"30\" value=\"\">" ;
-            echo  "<td>".$resultat1["u_login"]."</td><td>".$resultat1["u_nom"]."</td><td>".$resultat1["u_prenom"]."</td><td>$text_pwd1</td><td>$text_pwd2</td>\n";
+            $return .= '<td>' . $resultat1["u_login"] . '</td><td>' . $resultat1["u_nom"] . '</td><td>' . $resultat1["u_prenom"] . '</td><td>' . $text_pwd1 . '</td><td>' . $text_pwd2 . '</td>';
         }
-        echo "<tr>\n";
-        echo '<tbody>';
-        echo "</table>\n\n";
-        echo "<input type=\"submit\" value=\"". _('form_submit') ."\">\n";
-        echo "</form>\n" ;
+        $return .= '<tr>';
+        $return .= '<tbody>';
+        $return .= '</table>';
+        $return .= '<input type="submit" value="' . _('form_submit') . '">';
+        $return .= '</form>';
 
-        echo "<form action=\"admin_index.php?session=$session&onglet=admin-users\" method=\"POST\">\n" ;
-        echo "<input type=\"submit\" value=\"". _('form_cancel') ."\">\n";
-        echo "</form>\n"  ;
+        $return .= '<form action="admin_index.php?session=' . $session . '&onglet=admin-users" method="POST">';
+        $return .= '<input type="submit" value="' . _('form_cancel') . '">';
+        $return .= '</form>';
+        return $return;
     }
 
     /**
@@ -1480,12 +1465,13 @@ class Fonctions
      * @param string $session
      * @param bool   $DEBUG  Mode debug ?
      *
-     * @return void
+     * @return string
      * @access public
      * @static
      */
     public static function changeMotDePasseUserModule($onglet, $session, $DEBUG = false)
     {
+        $return = '';
         /*************************************/
         // recup des parametres reçus :
         // SERVER
@@ -1494,25 +1480,20 @@ class Fonctions
         $u_login_to_update  = getpost_variable('u_login_to_update') ;
         $new_pwd1           = getpost_variable('new_pwd1') ;
         $new_pwd2           = getpost_variable('new_pwd2') ;
-        /*************************************/
 
-
-        if($u_login!="")
-        {
-            echo "<H1>". _('admin_chg_passwd_titre') ." : $u_login .</H1>\n\n";
-            \admin\Fonctions::modifier($u_login, $onglet, $DEBUG);
-        }
-        else
-        {
+        if($u_login!="") {
+            $return = '<H1>' . _('admin_chg_passwd_titre') . ' : ' . $u_login . '</H1>';
+            $return .= \admin\Fonctions::modifier($u_login, $onglet, $DEBUG);
+        } else {
             if($u_login_to_update!="") {
-                echo "<H1>". _('admin_chg_passwd_titre') ." : $u_login_to_update .</H1>\n\n";
-                \admin\Fonctions::commit_update($u_login_to_update, $new_pwd1, $new_pwd2, $DEBUG);
-            }
-            else {
+                $return .= '<H1>' . _('admin_chg_passwd_titre') . ' : ' . $u_login_to_update . '</H1>';
+                $return .= \admin\Fonctions::commit_update($u_login_to_update, $new_pwd1, $new_pwd2, $DEBUG);
+            } else {
                 // renvoit sur la page principale .
                 redirect( ROOT_PATH .'admin/admin_index.php?session='.$session.'&onglet=admin-users', false);
             }
         }
+        return $return;
     }
 
 // recup des data d'une table sous forme de INSERT ...
@@ -1577,7 +1558,7 @@ class Fonctions
             if(!empty($sql_default))
             {
                 if($sql_default=="CURRENT_TIMESTAMP")
-                    $chaine_create=$chaine_create." default $sql_default ";		// pas de quotes !
+                    $chaine_create=$chaine_create." default $sql_default ";        // pas de quotes !
                 else
                     $chaine_create=$chaine_create." default '$sql_default' ";
             }
@@ -1652,7 +1633,7 @@ class Fonctions
         $session=session_id();
 
 
-        header_popup();	
+        header_popup();
 
         echo "<h1>". _('admin_sauve_db_titre') ."</h1>\n";
 
@@ -1668,13 +1649,13 @@ class Fonctions
             echo "</tr>\n";
             echo "<tr>\n";
             echo "<td align=\"center\">\n";
-            echo "	<input type=\"hidden\" name=\"choix_action\" value=\"restaure\">\n";
-            echo "	<input type=\"submit\" value=\"". _('form_redo') ."\">\n";
+            echo "    <input type=\"hidden\" name=\"choix_action\" value=\"restaure\">\n";
+            echo "    <input type=\"submit\" value=\"". _('form_redo') ."\">\n";
             echo "</td>\n";
             echo "</tr>\n";
             echo "<tr>\n";
             echo "<td align=\"center\">\n";
-            echo "	<input type=\"button\" value=\"". _('form_cancel') ."\" onClick=\"javascript:window.close();\">\n";
+            echo "    <input type=\"button\" value=\"". _('form_cancel') ."\" onClick=\"javascript:window.close();\">\n";
             echo "</td>\n";
             echo "</tr>\n";
             echo "</table>\n";
@@ -1695,7 +1676,7 @@ class Fonctions
             echo "</tr>\n";
             echo "<tr>\n";
             echo "<td align=\"center\">\n";
-            echo "	<input type=\"button\" value=\"". _('form_close_window') ."\" onClick=\"javascript:window.close();\">\n";
+            echo "    <input type=\"button\" value=\"". _('form_close_window') ."\" onClick=\"javascript:window.close();\">\n";
             echo "</td>\n";
             echo "</tr>\n";
             echo "</table>\n";
@@ -1711,7 +1692,7 @@ class Fonctions
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id();
 
-        header_popup();	
+        header_popup();
 
         echo "<h1>". _('admin_sauve_db_titre') ."</h1>\n";
         echo "<form enctype=\"multipart/form-data\" action=\"$PHP_SELF?session=$session\" method=\"POST\">\n";
@@ -1732,14 +1713,14 @@ class Fonctions
         echo "<td align=\"center\">&nbsp;</td>\n";
         echo "</tr>\n";
         echo "<tr>\n";
-        echo "	<td align=\"center\">\n";
-        echo "		<input type=\"hidden\" name=\"choix_action\" value=\"restaure\">\n";
-        echo "		<input type=\"submit\" value=\"". _('admin_sauve_db_do_restaure') ."\">\n";
-        echo "	</td>\n";
+        echo "    <td align=\"center\">\n";
+        echo "        <input type=\"hidden\" name=\"choix_action\" value=\"restaure\">\n";
+        echo "        <input type=\"submit\" value=\"". _('admin_sauve_db_do_restaure') ."\">\n";
+        echo "    </td>\n";
         echo "</tr>\n";
         echo "<tr>\n";
         echo "<td align=\"center\">\n";
-        echo "	<input type=\"button\" value=\"". _('form_cancel') ."\" onClick=\"javascript:window.close();\">\n";
+        echo "    <input type=\"button\" value=\"". _('form_cancel') ."\" onClick=\"javascript:window.close();\">\n";
         echo "</td>\n";
         echo "</tr>\n";
         echo "</table>\n";
@@ -1795,7 +1776,7 @@ class Fonctions
 
         redirect(ROOT_PATH .'admin/admin_db_sauve.php?session='.$session.'&choix_action=sauvegarde&type_sauvegarde='.$type_sauvegarde.'&commit=ok', false);
 
-        header_popup();	
+        header_popup();
 
         echo "<h1>". _('admin_sauve_db_titre') ."</h1>\n";
 
@@ -1806,7 +1787,7 @@ class Fonctions
         echo "</tr>\n";
         echo "<tr>\n";
         echo "<td colspan=\"2\" align=\"center\">\n";
-        echo "	<input type=\"button\" value=\"". _('form_close_window') ."\" onClick=\"javascript:window.close();\">\n";
+        echo "    <input type=\"button\" value=\"". _('form_close_window') ."\" onClick=\"javascript:window.close();\">\n";
         echo "</td>\n";
         echo "</tr>\n";
         echo "</table>\n";
@@ -1822,7 +1803,7 @@ class Fonctions
         $session=session_id();
 
 
-        header_popup();	
+        header_popup();
 
         echo "<h1>". _('admin_sauve_db_titre') ."</h1>\n";
 
@@ -1832,27 +1813,27 @@ class Fonctions
         echo "<th colspan=\"2\">". _('admin_sauve_db_options') ."</th>\n";
         echo "</tr>\n";
         echo "<tr>\n";
-        echo "	<td><input type=\"radio\" name=\"type_sauvegarde\" value=\"all\" checked></td>\n";
-        echo "	<td>". _('admin_sauve_db_complete') ."</td>\n";
+        echo "    <td><input type=\"radio\" name=\"type_sauvegarde\" value=\"all\" checked></td>\n";
+        echo "    <td>". _('admin_sauve_db_complete') ."</td>\n";
         echo "</tr>\n";
         echo "<tr>\n";
-        echo "	<td><input type=\"radio\" name=\"type_sauvegarde\" value=\"data\"></td>\n";
-        echo "	<td>". _('admin_sauve_db_data_only') ."</td>\n";
+        echo "    <td><input type=\"radio\" name=\"type_sauvegarde\" value=\"data\"></td>\n";
+        echo "    <td>". _('admin_sauve_db_data_only') ."</td>\n";
         echo "</tr>\n";
         echo "<tr>\n";
         echo "<td colspan=\"2\" align=\"center\">\n";
-        echo "	&nbsp;\n";
+        echo "    &nbsp;\n";
         echo "</td>\n";
         echo "</tr>\n";
         echo "<tr>\n";
-        echo "	<td colspan=\"2\" align=\"center\">\n";
-        echo "		<input type=\"hidden\" name=\"choix_action\" value=\"sauvegarde\">\n";
-        echo "		<input type=\"submit\" value=\"". _('admin_sauve_db_do_sauve') ."\">\n";
-        echo "	</td>\n";
+        echo "    <td colspan=\"2\" align=\"center\">\n";
+        echo "        <input type=\"hidden\" name=\"choix_action\" value=\"sauvegarde\">\n";
+        echo "        <input type=\"submit\" value=\"". _('admin_sauve_db_do_sauve') ."\">\n";
+        echo "    </td>\n";
         echo "</tr>\n";
         echo "<tr>\n";
         echo "<td colspan=\"2\" align=\"center\">\n";
-        echo "	<input type=\"button\" value=\"". _('form_cancel') ."\" onClick=\"javascript:window.close();\">\n";
+        echo "    <input type=\"button\" value=\"". _('form_cancel') ."\" onClick=\"javascript:window.close();\">\n";
         echo "</td>\n";
         echo "</tr>\n";
         echo "</table>\n";
@@ -1867,7 +1848,7 @@ class Fonctions
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id();
 
-        header_popup();	
+        header_popup();
 
         echo "<h1>". _('admin_sauve_db_titre') ."</h1>\n";
 
@@ -1886,17 +1867,17 @@ class Fonctions
         echo "</tr>\n";
         echo "<tr>\n";
         echo "<td colspan=\"2\" align=\"center\">\n";
-        echo "	&nbsp;\n";
+        echo "    &nbsp;\n";
         echo "</td>\n";
         echo "</tr>\n";
         echo "<tr>\n";
         echo "<td colspan=\"2\" align=\"center\">\n";
-        echo "	<input type=\"submit\" value=\"". _('form_submit') ."\">\n";
+        echo "    <input type=\"submit\" value=\"". _('form_submit') ."\">\n";
         echo "</td>\n";
         echo "</tr>\n";
         echo "<tr>\n";
         echo "<td colspan=\"2\" align=\"center\">\n";
-        echo "	<input type=\"button\" value=\"". _('form_cancel') ."\" onClick=\"javascript:window.close();\">\n";
+        echo "    <input type=\"button\" value=\"". _('form_cancel') ."\" onClick=\"javascript:window.close();\">\n";
         echo "</td>\n";
         echo "</tr>\n";
         echo "</table>\n";
@@ -1943,7 +1924,7 @@ class Fonctions
             $fichier_restaure_error=$_FILES['fichier_restaure']['error'];
         }
         /*************************************/
-        if( $DEBUG ) {	echo "_FILES = <br>\n"; print_r($_FILES); echo "<br>\n"; }
+        if( $DEBUG ) {    echo "_FILES = <br>\n"; print_r($_FILES); echo "<br>\n"; }
 
 
         if($choix_action=="")
@@ -2019,14 +2000,13 @@ class Fonctions
         echo "<th>". _('admin_groupes_groupe') ."</th>\n";
         echo "<th>". _('admin_groupes_libelle') ." / ". _('divers_comment_maj_1') ."</th>\n";
         if($_SESSION['config']['double_validation_conges'])
-            echo "	<th>". _('admin_groupes_double_valid') ."</th>\n";
+            echo "    <th>". _('admin_groupes_double_valid') ."</th>\n";
         echo "</tr>\n";
         echo "</thead>\n";
         echo "<tbody>\n";
 
         $ReqLog1 = \includes\SQL::query($sql1);
-        while ($resultat1 = $ReqLog1->fetch_array())
-        {
+        while ($resultat1 = $ReqLog1->fetch_array()) {
             $sql_groupename=$resultat1["g_groupename"];
             $sql_comment=$resultat1["g_comment"];
             $sql_double_valid=$resultat1["g_double_valid"] ;
@@ -2049,8 +2029,7 @@ class Fonctions
         echo "<tr>\n";
         echo "<td>$text_group</td>\n";
         echo "<td>$text_comment</td>\n";
-        if($_SESSION['config']['double_validation_conges'])
-        {
+        if($_SESSION['config']['double_validation_conges']) {
             $text_double_valid="<select class=\"form-control\" name=\"new_double_valid\" ><option value=\"N\" ";
             if($sql_double_valid=="N")
                 $text_double_valid=$text_double_valid."SELECTED";
@@ -2089,27 +2068,22 @@ class Fonctions
         /*************************************/
         // recup des parametres reçus :
 
-        $group 				= getpost_variable('group');
-        $group_to_update 	= getpost_variable('group_to_update');
-        $new_groupname 		= getpost_variable('new_groupname');
-        $new_comment 		= getpost_variable('new_comment');
-        $new_double_valid	= getpost_variable('new_double_valid');
+        $group                 = getpost_variable('group');
+        $group_to_update     = getpost_variable('group_to_update');
+        $new_groupname         = getpost_variable('new_groupname');
+        $new_comment         = getpost_variable('new_comment');
+        $new_double_valid    = getpost_variable('new_double_valid');
         /*************************************/
 
         // TITRE
         echo "<h1>". _('admin_modif_groupe_titre') ."</h1>\n";
 
 
-        if($group!="" )
-        {
+        if($group!="" ) {
             \admin\Fonctions::modifier_groupe($group, $onglet, $DEBUG);
-        }
-        elseif($group_to_update!="")
-        {
+        } elseif($group_to_update!="") {
             \admin\Fonctions::commit_update_groupe($group_to_update, $new_groupname, $new_comment, $new_double_valid,  $DEBUG);
-        }
-        else
-        {
+        } else {
             // renvoit sur la page principale .
             redirect( ROOT_PATH .'admin/admin_index.php?session='.$session.'&onglet=admin-group', false);
         }
@@ -2121,7 +2095,7 @@ class Fonctions
         $semaine=array("lu", "ma", "me", "je", "ve", "sa", "di");
 
         // initialiastaion du tableau
-        foreach($semaine as $day){
+        foreach($semaine as $day) {
             $key1="sem_imp_".$day."_am";
             $key2="sem_imp_".$day."_pm";
             $tab_grille[$key1] = "";
@@ -2144,8 +2118,7 @@ class Fonctions
             }
         }
 
-        if( $DEBUG )
-        {
+        if( $DEBUG ) {
             echo "tab_grille_rtt_from_checkbox :<br>\n";
             print_r($tab_grille);
             echo "<br>\n";
@@ -2191,8 +2164,7 @@ class Fonctions
             $tab_grille['sem_p_di_pm'] = $resultat1['sem_p_di_pm'] ;
         }
 
-        if( $DEBUG )
-        {
+        if( $DEBUG ) {
             echo "get_current_grille_rtt :<br>\n";
             print_r($tab_grille);
             echo "<br>\n";
@@ -2212,11 +2184,11 @@ class Fonctions
         // recup du tableau des types de conges (seulement les conges)
         $tab_type_conges = recup_tableau_types_conges($DEBUG);
         $tab_type_conges_excep=array();
-        if ($_SESSION['config']['gestion_conges_exceptionnels'])
+        if ($_SESSION['config']['gestion_conges_exceptionnels']) {
             $tab_type_conges_excep=recup_tableau_types_conges_exceptionnels($DEBUG);
+        }
 
-        if( $DEBUG )
-        {
+        if( $DEBUG ) {
             echo "tab_new_jours_an = <br>\n"; print_r($tab_new_jours_an); echo "<br>\n";
             echo "tab_new_solde = <br>\n"; print_r($tab_new_solde); echo "<br>\n";
             echo "tab_new_reliquat = <br>\n"; print_r($tab_new_reliquat); echo "<br>\n";
@@ -2234,36 +2206,30 @@ class Fonctions
         $valid_reliquat=TRUE;
 
         // verification de la validite de la saisie du nombre de jours annuels et du solde pour chaque type de conges
-        foreach($tab_type_conges as $id_conges => $libelle)
-        {
+        foreach($tab_type_conges as $id_conges => $libelle) {
             $valid_1=$valid_1 && verif_saisie_decimal($tab_new_jours_an[$id_conges], $DEBUG);  //verif la bonne saisie du nombre d?cimal
             $valid_2=$valid_2 && verif_saisie_decimal($tab_new_solde[$id_conges], $DEBUG);  //verif la bonne saisie du nombre d?cimal
             $valid_reliquat=$valid_reliquat && verif_saisie_decimal($tab_new_reliquat[$id_conges], $DEBUG);  //verif la bonne saisie du nombre d?cimal
         }
 
         // si l'application gere les conges exceptionnels ET si des types de conges exceptionnels ont été définis
-        if (($_SESSION['config']['gestion_conges_exceptionnels'])&&(count($tab_type_conges_excep) > 0))
-        {
+        if (($_SESSION['config']['gestion_conges_exceptionnels'])&&(count($tab_type_conges_excep) > 0)) {
             $valid_3=TRUE;
             // vérification de la validité de la saisie du nombre de jours annuels et du solde pour chaque type de conges exceptionnels
-            foreach($tab_type_conges_excep as $id_conges => $libelle)
-            {
+            foreach($tab_type_conges_excep as $id_conges => $libelle) {
                 $valid_3 = $valid_3 && verif_saisie_decimal($tab_new_solde[$id_conges], $DEBUG);  //verif la bonne saisie du nombre décimal
             }
-        }
-        // sinon on considère $valid_3 comme vrai
-        else
+        } else { // sinon on considère $valid_3 comme vrai
             $valid_3=TRUE;
+        }
 
-        if( $DEBUG )
-        {
+        if( $DEBUG ) {
             echo "valid_1 = $valid_1  //  valid_2 = $valid_2  //  valid_3 = $valid_3  //  valid_reliquat = $valid_reliquat <br>\n";
         }
 
 
         // si aucune erreur de saisie n'a ete commise
-        if(($valid_1) && ($valid_2) && ($valid_3) && ($valid_reliquat) && $tab_new_user['login']!="")
-        {
+        if(($valid_1) && ($valid_2) && ($valid_3) && ($valid_reliquat) && $tab_new_user['login']!="") {
             // UPDATE de la table conges_users
             $sql = 'UPDATE conges_users SET u_nom="'. \includes\SQL::quote($tab_new_user['nom']).'", u_prenom="'.\includes\SQL::quote($tab_new_user['prenom']).'", u_is_resp="'. \includes\SQL::quote($tab_new_user['is_resp']).'", u_resp_login="'.\includes\SQL::quote($tab_new_user['resp_login']).'",u_is_admin="'. \includes\SQL::quote($tab_new_user['is_admin']).'",u_is_hr="'.\includes\SQL::quote($tab_new_user['is_hr']).'",u_is_active="'.\includes\SQL::quote($tab_new_user['is_active']).'",u_see_all="'.\includes\SQL::quote($tab_new_user['see_all']).'",u_login="'.\includes\SQL::quote($tab_new_user['login']).'",u_quotite="'.\includes\SQL::quote($tab_new_user['quotite']).'",u_email="'. \includes\SQL::quote($tab_new_user['email']).'" WHERE u_login="'.\includes\SQL::quote($u_login_to_update).'"' ;
 
@@ -2272,18 +2238,15 @@ class Fonctions
 
             /*************************************/
             /* Mise a jour de la table conges_solde_user   */
-            foreach($tab_type_conges as $id_conges => $libelle)
-            {
+            foreach($tab_type_conges as $id_conges => $libelle) {
                 $sql = 'REPLACE INTO conges_solde_user SET su_nb_an=\''.strtr(round_to_half($tab_new_jours_an[$id_conges]),",",".").'\',su_solde=\''.strtr(round_to_half($tab_new_solde[$id_conges]),",",".").'\',su_reliquat=\''.strtr(round_to_half($tab_new_reliquat[$id_conges]),",",".").'\',su_login="'.\includes\SQL::quote($u_login_to_update).'",su_abs_id='.intval($id_conges).';';
                 echo $sql;
                 \includes\SQL::query($sql);
 
             }
 
-            if ($_SESSION['config']['gestion_conges_exceptionnels'])
-            {
-                foreach($tab_type_conges_excep as $id_conges => $libelle)
-                {
+            if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+                foreach($tab_type_conges_excep as $id_conges => $libelle) {
                     $sql = 'REPLACE INTO conges_solde_user SET su_nb_an=0, su_solde=\''.strtr(round_to_half($tab_new_solde[$id_conges]),",",".").'\', su_reliquat=\''.strtr(round_to_half($tab_new_reliquat[$id_conges]),",",".").'\', su_login="'.\includes\SQL::quote($u_login_to_update).'", su_abs_id='.intval($id_conges).';';
                     echo $sql;
                     \includes\SQL::query($sql);
@@ -2295,8 +2258,7 @@ class Fonctions
             $tab_grille_rtt_actuelle = \admin\Fonctions::get_current_grille_rtt($u_login_to_update, $DEBUG);
             $tab_new_grille_rtt= \admin\Fonctions::tab_grille_rtt_from_checkbox($tab_checkbox_sem_imp, $tab_checkbox_sem_p, $DEBUG);
 
-            if($tab_grille_rtt_actuelle != $tab_new_grille_rtt)
-            {
+            if($tab_grille_rtt_actuelle != $tab_new_grille_rtt) {
                 $new_date_deb_grille=$tab_new_user['year']."-".$tab_new_user['mois']."-".$tab_new_user['jour'];
 
                 /****************************/
@@ -2311,8 +2273,8 @@ class Fonctions
 
                 $count_grille=$result_grille->num_rows;
 
-                if($count_grille==0) // si pas de grille modifiée aujourd'hui : on update la date de fin de la derniere grille
-                {
+                if($count_grille==0) {  // si pas de grille modifiée aujourd'hui : on update la date de fin de la derniere grille
+
                     // date de fin de la grille précedent :
                     // $new_date_fin_grille = $new_date_deb_grille -1 jour !
                     $new_jour_num= (integer) $tab_new_user['jour'];
@@ -2327,9 +2289,7 @@ class Fonctions
                     // on update la dernière grille (on update la date de fin de grille)
                     $sql = 'UPDATE conges_artt SET a_date_fin_grille="'. \includes\SQL::quote($new_date_fin_grille).'" WHERE a_login="'. \includes\SQL::quote($u_login_to_update).'"  AND a_date_fin_grille=\'9999-12-31\' ';
                     \includes\SQL::query($sql);
-                }
-                else  // si une grille modifiée aujourd'hui : on delete cette grille
-                {
+                } else {// si une grille modifiée aujourd'hui : on delete cette grille
                     $sql='DELETE FROM conges_artt WHERE a_login="'. \includes\SQL::quote($u_login_to_update).'" AND a_date_debut_grille="'. \includes\SQL::quote($new_date_deb_grille).'"';
                     \includes\SQL::query($sql);
                 }
@@ -2343,8 +2303,7 @@ class Fonctions
                 $i=0;
                 if($tab_checkbox_sem_imp!="") {
                     while (list ($key, $val) = each ($tab_checkbox_sem_imp)) {
-                        if($i!=0)
-                        {
+                        if($i!=0) {
                             $list_columns=$list_columns.", ";
                             $list_valeurs=$list_valeurs.", ";
                         }
@@ -2355,8 +2314,7 @@ class Fonctions
                 }
                 if($tab_checkbox_sem_p!="") {
                     while (list ($key, $val) = each ($tab_checkbox_sem_p)) {
-                        if($i!=0)
-                        {
+                        if($i!=0) {
                             $list_columns=$list_columns.", ";
                             $list_valeurs=$list_valeurs.", ";
                         }
@@ -2365,8 +2323,7 @@ class Fonctions
                         $i=$i+1;
                     }
                 }
-                if( ($list_columns!="") && ($list_valeurs!="") )
-                {
+                if( ($list_columns!="") && ($list_valeurs!="") ) {
                     $sql = "INSERT INTO conges_artt (a_login, $list_columns, a_date_debut_grille ) VALUES ('$u_login_to_update', $list_valeurs, '$new_date_deb_grille') " ;
                     \includes\SQL::query($sql);
                 }
@@ -2374,8 +2331,7 @@ class Fonctions
 
             // Si changement du login, (on a dèja updaté la table users (mais pas les responsables !!!)) on update toutes les autres tables
             // (les grilles artt, les periodes de conges et les échanges de rtt, etc ....) avec le nouveau login
-            if($tab_new_user['login'] != $u_login_to_update)
-            {
+            if($tab_new_user['login'] != $u_login_to_update) {
                 // update table artt
                 $sql = 'UPDATE conges_artt SET a_login="'. \includes\SQL::quote($tab_new_user['login']).'" WHERE a_login="'. \includes\SQL::quote($u_login_to_update).'" ';
                 \includes\SQL::query($sql);
@@ -2408,42 +2364,40 @@ class Fonctions
                 $sql = 'UPDATE conges_solde_user SET su_login="'. \includes\SQL::quote($tab_new_user['login']).'" WHERE su_login="'. \includes\SQL::quote($u_login_to_update).'" ' ;
                 \includes\SQL::query($sql);
 
-
                 // update table conges_users
                 $sql = 'UPDATE conges_users SET u_resp_login="'. \includes\SQL::quote($tab_new_user['login']).'" WHERE u_resp_login="'. \includes\SQL::quote($u_login_to_update).'" ' ;
                 \includes\SQL::query($sql);
 
             }
 
-            if($tab_new_user['login'] != $u_login_to_update)
+            if($tab_new_user['login'] != $u_login_to_update) {
                 $comment_log = "modif_user (old_login = $u_login_to_update)  new_login = ".$tab_new_user['login'];
-            else
+            } else {
                 $comment_log = "modif_user login = $u_login_to_update";
+            }
 
             log_action(0, "", $u_login_to_update, $comment_log,  $DEBUG);
 
             echo  _('form_modif_ok') ." !<br><br> \n";
 
-            }
-            // en cas d'erreur de saisie
-            else
-            {
-                echo  _('form_modif_not_ok') ." !<br><br> \n";
-            }
-
+        } else { // en cas d'erreur de saisie
+            echo  _('form_modif_not_ok') ." !<br><br> \n";
+        }
     }
 
     public static function modifier_user($u_login, $tab_checkbox_sem_imp, $tab_checkbox_sem_p, $onglet, $DEBUG=FALSE)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
-        $session=session_id();
+        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $session  = session_id();
+        $return   = '';
 
         // recup du tableau des types de conges (seulement les conges)
         $tab_type_conges=recup_tableau_types_conges($DEBUG);
 
         // recup du tableau des types de conges (seulement les conges)
-        if ( $_SESSION['config']['gestion_conges_exceptionnels'] )
+        if ( $_SESSION['config']['gestion_conges_exceptionnels'] ) {
             $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels($DEBUG);
+        }
 
         // Récupération des informations
         $tab_user = recup_infos_du_user($u_login, "", $DEBUG);
@@ -2451,81 +2405,90 @@ class Fonctions
         /********************/
         /* Etat utilisateur */
         /********************/
-        echo '<form action="'.$PHP_SELF.'?session='.$session.'&onglet='.$onglet.'&u_login_to_update='.$u_login.'" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '&u_login_to_update=' . $u_login . '" method="POST">';
         // AFFICHAGE TABLEAU DES INFOS
-        echo "<table class=\"table table-hover table-responsive table-condensed table-striped\">\n";
-        echo "<thead>\n";
-        echo "<tr>\n";
-        echo "<th>". _('divers_nom_maj_1') ."</th>\n";
-        echo "<th>". _('divers_prenom_maj_1') ."</th>\n";
-        echo "<th>". _('divers_login_maj_1') ."</th>\n";
-        echo "<th>". _('divers_quotite_maj_1') ."</th>\n";
-        echo "<th>". _('admin_users_is_resp') ."</th>\n";
-        echo "<th>". _('admin_users_resp_login') ."</th>\n";
-        echo "<th>". _('admin_users_is_admin') ."</th>\n";
-        echo "<th>". _('admin_users_is_hr') ."</th>\n";
-        echo "<th>". _('admin_users_is_active') ."</th>\n";
-        echo "<th>". _('admin_users_see_all') ."</th>\n";
+        $return .= '<table class="table table-hover table-responsive table-condensed table-striped">';
+        $return .= '<thead>';
+        $return .= '<tr>';
+        $return .= '<th>' . _('divers_nom_maj_1') . '</th>';
+        $return .= '<th>' . _('divers_prenom_maj_1') . '</th>';
+        $return .= '<th>' . _('divers_login_maj_1') . '</th>';
+        $return .= '<th>' . _('divers_quotite_maj_1') . '</th>';
+        $return .= '<th>' . _('admin_users_is_resp') . '</th>';
+        $return .= '<th>' . _('admin_users_resp_login') . '</th>';
+        $return .= '<th>' . _('admin_users_is_admin') . '</th>';
+        $return .= '<th>' . _('admin_users_is_hr') . '</th>';
+        $return .= '<th>' . _('admin_users_is_active') . '</th>';
+        $return .= '<th>' . _('admin_users_see_all') . '</th>';
 
-        if($_SESSION['config']['where_to_find_user_email']=="dbconges")
-            echo "<th>". _('admin_users_mail') ."</th>\n";
-        echo "</tr>\n";
-        echo "</thead>\n";
-        echo "<tbody>\n";
+        if($_SESSION['config']['where_to_find_user_email']=="dbconges") {
+            $return .= '<th>' . _('admin_users_mail') . '</th>';
+        }
+        $return .= '</tr>';
+        $return .= '</thead>';
+        $return .= '<tbody>';
 
         // AFICHAGE DE LA LIGNE DES VALEURS ACTUELLES A MOFIDIER
-        echo "<tr>\n";
-        echo "<td>".$tab_user['nom']."</td>\n";
-        echo "<td>".$tab_user['prenom']."</td>\n";
-        echo "<td>".$tab_user['login']."</td>\n";
-        echo "<td>".$tab_user['quotite']."</td>\n";
-        echo "<td>".$tab_user['is_resp']."</td>\n";
-        echo "<td>".$tab_user['resp_login']."</td>\n";
-        echo "<td>".$tab_user['is_admin']."</td>\n";
-        echo "<td>".$tab_user['is_hr']."</td>\n";
-        echo "<td>".$tab_user['is_active']."</td>\n";
-        echo "<td>".$tab_user['see_all']."</td>\n";
+        $return .= '<tr>';
+        $return .= '<td>' . $tab_user['nom']. '</td>';
+        $return .= '<td>' . $tab_user['prenom'] . '</td>';
+        $return .= '<td>' . $tab_user['login'] . '</td>';
+        $return .= '<td>' . $tab_user['quotite'] . '</td>';
+        $return .= '<td>' . $tab_user['is_resp'] . '</td>';
+        $return .= '<td>' . $tab_user['resp_login'] . '</td>';
+        $return .= '<td>' . $tab_user['is_admin'] . '</td>';
+        $return .= '<td>' . $tab_user['is_hr'] . '</td>';
+        $return .= '<td>' . $tab_user['is_active'] . '</td>';
+        $return .= '<td>' . $tab_user['see_all'] . '</td>';
 
-        if($_SESSION['config']['where_to_find_user_email']=="dbconges")
-            echo "<td>".$tab_user['email']."</td>\n";
-        echo "</tr>\n";
+        if($_SESSION['config']['where_to_find_user_email']=="dbconges") {
+            $return .= '<td>' . $tab_user['email'] . '</td>';
+        }
+        $return .= '</tr>';
 
         // contruction des champs de saisie
-	if($_SESSION['config']['export_users_from_ldap'])
-		$text_login="<input class=\"form-control\" type=\"text\" name=\"new_login\" size=\"10\" maxlength=\"98\" value=\"".$tab_user['login']."\" disabled>" ;
-	else
-		$text_login="<input class=\"form-control\" type=\"text\" name=\"new_login\" size=\"10\" maxlength=\"98\" value=\"".$tab_user['login']."\">" ;
+        if($_SESSION['config']['export_users_from_ldap']) {
+            $text_login="<input class=\"form-control\" type=\"text\" name=\"new_login\" size=\"10\" maxlength=\"98\" value=\"".$tab_user['login']."\" disabled>" ;
+        } else {
+            $text_login="<input class=\"form-control\" type=\"text\" name=\"new_login\" size=\"10\" maxlength=\"98\" value=\"".$tab_user['login']."\">" ;
+        }
 
         $text_nom="<input class=\"form-control\" type=\"text\" name=\"new_nom\" size=\"10\" maxlength=\"30\" value=\"".$tab_user['nom']."\">" ;
         $text_prenom="<input class=\"form-control\" type=\"text\" name=\"new_prenom\" size=\"10\" maxlength=\"30\" value=\"".$tab_user['prenom']."\">" ;
         $text_quotite="<input class=\"form-control\" type=\"text\" name=\"new_quotite\" size=\"3\" maxlength=\"3\" value=\"".$tab_user['quotite']."\">" ;
-        if($tab_user['is_resp']=="Y")
+        if($tab_user['is_resp']=="Y") {
             $text_is_resp="<select class=\"form-control\" name=\"new_is_resp\" id=\"is_resp_id\" ><option value=\"Y\">Y</option><option value=\"N\">N</option></select>" ;
-        else
+        } else {
             $text_is_resp="<select class=\"form-control\" name=\"new_is_resp\" id=\"is_resp_id\" ><option value=\"N\">N</option><option value=\"Y\">Y</option></select>" ;
+        }
 
-        if($tab_user['is_admin']=="Y")
+        if($tab_user['is_admin']=="Y") {
             $text_is_admin="<select class=\"form-control\" name=\"new_is_admin\" ><option value=\"Y\">Y</option><option value=\"N\">N</option></select>" ;
-        else
+        } else {
             $text_is_admin="<select class=\"form-control\" name=\"new_is_admin\" ><option value=\"N\">N</option><option value=\"Y\">Y</option></select>" ;
+        }
 
-        if($tab_user['is_hr']=="Y")
+        if($tab_user['is_hr']=="Y") {
             $text_is_hr="<select class=\"form-control\" name=\"new_is_hr\" ><option value=\"Y\">Y</option><option value=\"N\">N</option></select>" ;
-        else
+        } else {
             $text_is_hr="<select class=\"form-control\" name=\"new_is_hr\" ><option value=\"N\">N</option><option value=\"Y\">Y</option></select>" ;
+        }
 
-        if($tab_user['is_active']=="Y")
+        if($tab_user['is_active']=="Y") {
             $text_is_active="<select class=\"form-control\" name=\"new_is_active\" ><option value=\"Y\">Y</option><option value=\"N\">N</option></select>" ;
-        else
+        } else {
             $text_is_active="<select class=\"form-control\" name=\"new_is_active\" ><option value=\"N\">N</option><option value=\"Y\">Y</option></select>" ;
+        }
 
-        if($tab_user['see_all']=="Y")
+        if($tab_user['see_all']=="Y") {
             $text_see_all="<select class=\"form-control\" name=\"new_see_all\" ><option value=\"Y\">Y</option><option value=\"N\">N</option></select>" ;
-        else
+        } else {
             $text_see_all="<select class=\"form-control\" name=\"new_see_all\" ><option value=\"N\">N</option><option value=\"Y\">Y</option></select>" ;
+        }
 
-        if($_SESSION['config']['where_to_find_user_email']=="dbconges")
+        if($_SESSION['config']['where_to_find_user_email']=="dbconges") {
             $text_email="<input class=\"form-control\" type=\"text\" name=\"new_email\" size=\"10\" maxlength=\"99\" value=\"".$tab_user['email']."\">" ;
+        }
 
 
         $text_resp_login="<select class=\"form-control\" name=\"new_resp_login\" id=\"resp_login_id\" >" ;
@@ -2533,150 +2496,129 @@ class Fonctions
         $sql2 = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_is_resp = \"Y\" ORDER BY u_nom,u_prenom"  ;
         $ReqLog2 = \includes\SQL::query($sql2);
 
-        while ($resultat2 = $ReqLog2->fetch_array())
-        {
-            if($resultat2["u_login"]==$tab_user['resp_login'] )
+        while ($resultat2 = $ReqLog2->fetch_array()){
+            if($resultat2["u_login"]==$tab_user['resp_login'] ) {
                 $text_resp_login=$text_resp_login."<option value=\"".$resultat2["u_login"]."\" selected>".$resultat2["u_nom"]." ".$resultat2["u_prenom"]."</option>";
-            else
+            } else {
                 $text_resp_login=$text_resp_login."<option value=\"".$resultat2["u_login"]."\">".$resultat2["u_nom"]." ".$resultat2["u_prenom"]."</option>";
+            }
         }
 
         $text_resp_login=$text_resp_login."</select>" ;
 
         // AFFICHAGE ligne de saisie
-        echo "<tr class=\"update-line\">\n";
-        echo "<td>$text_nom</td>\n";
-        echo "<td>$text_prenom</td>\n";
-        echo "<td>$text_login</td>\n";
-        echo "<td>$text_quotite</td>\n";
-        echo "<td>$text_is_resp</td>\n";
-        echo "<td>$text_resp_login</td>\n";
-        echo "<td>$text_is_admin</td>\n";
-        echo "<td>$text_is_hr</td>\n";
-        echo "<td>$text_is_active</td>\n";
-        echo "<td>$text_see_all</td>\n";
-        if($_SESSION['config']['where_to_find_user_email']=="dbconges")
-            echo "<td>$text_email</td>\n";
-        echo "</tr>\n";
-        echo "</tbody>\n";
-        echo "</table><br>\n\n";
-        echo "<hr/>\n";
+        $return .= '<tr class="update-line">';
+        $return .= '<td>' . $text_nom . '</td>';
+        $return .= '<td>' . $text_prenom . '</td>';
+        $return .= '<td>' . $text_login . '</td>';
+        $return .= '<td>' . $text_quotite . '</td>';
+        $return .= '<td>' . $text_is_resp . '</td>';
+        $return .= '<td>' . $text_resp_login . '</td>';
+        $return .= '<td>' . $text_is_admin . '</td>';
+        $return .= '<td>' . $text_is_hr . '</td>';
+        $return .= '<td>' . $text_is_active . '</td>';
+        $return .= '<td>' . $text_see_all . '</td>';
+        if($_SESSION['config']['where_to_find_user_email']=="dbconges") {
+            $return .= '<td>' . $text_email . '</td>';
+        }
+        $return .= '</tr></tbody></table><br><hr/>';
 
         // AFFICHAGE TABLEAU DES conges annuels et soldes
-        echo "<table class=\"table table-hover table-responsive table-condensed table-striped\" >\n";
-        echo "<thead>\n";
-        echo "<tr>\n";
-        echo "<th></th>\n";
-        echo "<th colspan=\"2\">". _('admin_modif_nb_jours_an') ." </th>\n";
-        echo "<th colspan=\"2\">". _('divers_solde') ."</th>\n";
-        if( $_SESSION['config']['autorise_reliquats_exercice'] )
-        {
-            echo "<th colspan=\"2\">". _('divers_reliquat') ."</th>\n";
+        $return .= '<table class="table table-hover table-responsive table-condensed table-striped">';
+        $return .= '<thead>';
+        $return .= '<tr>';
+        $return .= '<th></th>';
+        $return .= '<th colspan="2">' . _('admin_modif_nb_jours_an') . ' </th>';
+        $return .= '<th colspan="2">' . _('divers_solde') . '</th>';
+        if( $_SESSION['config']['autorise_reliquats_exercice'] ) {
+            $return .= '<th colspan="2">' . _('divers_reliquat') . '</th>';
         }
-        echo "</tr>\n";
-        echo "</thead>\n";
-        echo "<tbody>\n";
+        $return .= '</tr></thead><tbody>';
 
         $i = true;
-        foreach($tab_type_conges as $id_type_cong => $libelle)
-        {
-            echo '<tr class="'.($i?'i':'p').'">';
-            echo "<td>$libelle</td>\n";
+        foreach($tab_type_conges as $id_type_cong => $libelle) {
+            $return .= '<tr class="' . ($i? 'i' : 'p') . '">';
+            $return .= '<td>' . $libelle . '</td>';
             // jours / an
 
-            if (isset($tab_user['conges'][$libelle]))
-            {
-                echo "<td>".$tab_user['conges'][$libelle]['nb_an']."</td>\n";
+            if (isset($tab_user['conges'][$libelle])) {
+                $return .= '<td>' . $tab_user['conges'][$libelle]['nb_an'] . '</td>';
                 $text_jours_an="<input class=\"form-control\" type=\"text\" name=\"tab_new_jours_an[$id_type_cong]\" size=\"5\" maxlength=\"5\" value=\"".$tab_user['conges'][$libelle]['nb_an']."\">" ;
-            }
-            else
-            {
-                echo "<td>0</td>\n";
+            } else {
+                $return .= '<td>0</td>';
                 $text_jours_an='<input class=\"form-control\" type="text" name="tab_new_jours_an['.$id_type_cong.']" size="5" maxlength="5" value="0">' ;
             }
 
-            echo "<td>$text_jours_an</td>\n";
+            $return .= '<td>' . $text_jours_an . '</td>';
 
             // solde
-            if (isset($tab_user['conges'][$libelle]))
-            {
-                echo "<td>".$tab_user['conges'][$libelle]['solde']."</td>\n";
+            if (isset($tab_user['conges'][$libelle])) {
+                $return .= '<td>' . $tab_user['conges'][$libelle]['solde'] . '</td>';
                 $text_solde_jours="<input class=\"form-control\" type=\"text\" name=\"tab_new_solde[$id_type_cong]\" size=\"5\" maxlength=\"5\" value=\"".$tab_user['conges'][$libelle]['solde']."\">" ;
-            }
-            else
-            {
-                echo "<td>0</td>\n";
+            } else {
+                $return .= '<td>0</td>';
                 $text_solde_jours='<input class=\"form-control\" type="text" name="tab_new_solde['.$id_type_cong.']" size="5" maxlength="5" value="0">' ;
             }
 
-            echo "<td>$text_solde_jours</td>\n";
+            $return .= '<td>' . $text_solde_jours . '</td>';
 
             // reliquat
             // si on ne les utilise pas, on initialise qd meme le tableau (<input type=\"hidden\") ...
-            if($_SESSION['config']['autorise_reliquats_exercice'])
-            {
-                if (isset($tab_user['conges'][$libelle]))
-                {
-                    echo "<td>".$tab_user['conges'][$libelle]['reliquat']."</td>\n";
+            if($_SESSION['config']['autorise_reliquats_exercice']) {
+                if (isset($tab_user['conges'][$libelle])) {
+                    $return .= '<td>' . $tab_user['conges'][$libelle]['reliquat'] . '</td>';
                     $text_reliquats_jours="<input class=\"form-control\" type=\"text\" name=\"tab_new_reliquat[$id_type_cong]\" size=\"5\" maxlength=\"5\" value=\"".$tab_user['conges'][$libelle]['reliquat']."\">" ;
 
-                }
-                else
-                {
-                    echo "<td>0</td>\n";
+                } else {
+                    $return .= '<td>0</td>';
                     $text_reliquats_jours='<input class=\"form-control\" type="text" name="tab_new_reliquat['.$id_type_cong.']" size="5" maxlength="5" value="0">' ;
                 }
-                echo "<td>$text_reliquats_jours</td>\n";
+                $return .= '<td>' . $text_reliquats_jours . '</td>';
+            } else {
+                $return .= '<input type="hidden" name="tab_new_reliquat[$id_type_cong]" value="0">';
             }
-            else
-                echo "<input type=\"hidden\" name=\"tab_new_reliquat[$id_type_cong]\" value=\"0\">" ;
-            echo "</tr>\n";
+            $return .= '</tr>';
             $i = !$i;
         }
 
         // recup du tableau des types de conges (seulement les conges)
-        if ($_SESSION['config']['gestion_conges_exceptionnels'])
-        {
-            foreach($tab_type_conges_exceptionnels as $id_type_cong_exp => $libelle)
-            {
-                echo '<tr class="'.($i?'i':'p').'">';
-                echo "<td>$libelle</td>\n";
+        if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+            foreach($tab_type_conges_exceptionnels as $id_type_cong_exp => $libelle) {
+                $return .= '<tr class="' . ($i ? 'i' : 'p') . '">';
+                $return .= '<td>' . $libelle . '</td>';
                 // jours / an
-                echo "<td>0</td>\n";
-                echo "<td>0</td>\n";
+                $return .= '<td>0</td>';
+                $return .= '<td>0</td>';
                 // solde
-                echo "<td>".$tab_user['conges'][$libelle]['solde']."</td>\n";
+                $return .= '<td>' . $tab_user['conges'][$libelle]['solde'] . '</td>';
                 $text_solde_jours="<input class=\"form-control\" type=\"text\" name=\"tab_new_solde[$id_type_cong_exp]\" size=\"5\" maxlength=\"5\" value=\"".$tab_user['conges'][$libelle]['solde']."\">" ;
-                echo "<td>$text_solde_jours</td>\n";
+                $return .= '<td>' . $text_solde_jours . '</td>';
                 // reliquat
                 // si on ne les utilise pas, on initialise qd meme le tableau (<input type=\"hidden\") ...
-                if($_SESSION['config']['autorise_reliquats_exercice'])
-                {
-                    echo "<td>".$tab_user['conges'][$libelle]['reliquat']."</td>\n";
+                if($_SESSION['config']['autorise_reliquats_exercice']) {
+                    $return .= '<td>' . $tab_user['conges'][$libelle]['reliquat'] . '</td>';
                     $text_reliquats_jours="<input class=\"form-control\" type=\"text\" name=\"tab_new_reliquat[$id_type_cong_exp]\" size=\"5\" maxlength=\"5\" value=\"".$tab_user['conges'][$libelle]['reliquat']."\">" ;
-                    echo "<td>$text_reliquats_jours</td>\n";
+                    $return .= '<td>' . $text_reliquats_jours . '</td>';
+                } else {
+                    $return .= '<input type="hidden" name="tab_new_reliquat[' . $id_type_cong_exp . ']" value="0">';
                 }
-                else
-                    echo "<input type=\"hidden\" name=\"tab_new_reliquat[$id_type_cong_exp]\" value=\"0\">" ;
-                echo "</tr>\n";
+                $return .= '</tr>';
                 $i = !$i;
             }
         }
 
-        echo "</tbody>\n";
-        echo "</table><br>\n\n";
-
-        echo "<hr/>\n";
+        $return .= '</tbody></table><br><hr/>';
 
         /*********************************************************/
         // saisie des jours d'abscence RTT ou temps partiel:
-        saisie_jours_absence_temps_partiel($u_login,$DEBUG);
-        echo "<hr/>\n";
-        echo "<input class=\"btn btn-success\" type=\"submit\" value=\"". _('form_submit') ."\">\n";
-        echo "<a class=\"btn\" href=\"admin_index.php?session=$session&onglet=admin-users\">". _('form_cancel') ."</a>\n";
-        echo "</form>\n" ;
+        $return .= saisie_jours_absence_temps_partiel($u_login,$DEBUG);
+        $return .= '<hr/>';
+        $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
+        $return .= '<a class="btn" href="admin_index.php?session=' . $session . '&onglet=admin-users">' . _('form_cancel') . '</a>';
+        $return .= '</form>';
+        return $return;
     }
-    
+
     /**
      * Encapsule le comportement du module de modification d'utilisateurs
      *
@@ -2684,38 +2626,37 @@ class Fonctions
      * @param string $onglet Nom de l'onglet à afficher
      * @param bool   $DEBUG  Mode debug ?
      *
-     * @return void
+     * @return string
      * @access public
      * @static
      */
     public static function modifUserModule($session, $onglet, $DEBUG = false)
     {
-        $u_login		= getpost_variable('u_login') ;
-        $u_login_to_update      = getpost_variable('u_login_to_update') ;
-        $tab_checkbox_sem_imp   = getpost_variable('tab_checkbox_sem_imp') ;
-        $tab_checkbox_sem_p     = getpost_variable('tab_checkbox_sem_p') ;
+        $u_login              = getpost_variable('u_login') ;
+        $u_login_to_update    = getpost_variable('u_login_to_update') ;
+        $tab_checkbox_sem_imp = getpost_variable('tab_checkbox_sem_imp') ;
+        $tab_checkbox_sem_p   = getpost_variable('tab_checkbox_sem_p') ;
+        $return = '';
 
         // TITRE
-        if($u_login!="")
+        if($u_login!="") {
             $login_titre = $u_login;
-        elseif($u_login_to_update!="")
+        } elseif($u_login_to_update!="") {
             $login_titre = $u_login_to_update;
-
-        echo "<h1>". _('admin_modif_user_titre') ." : <strong>$login_titre</strong></h1>\n\n";
-
-
-        if($u_login!="")
-        {
-            \admin\Fonctions::modifier_user($u_login, $tab_checkbox_sem_imp, $tab_checkbox_sem_p, $onglet, $DEBUG);
         }
-        elseif($u_login_to_update!="")
-        {
+
+        $return .= '<h1>' . _('admin_modif_user_titre') . ' : <strong>' . $login_titre . '</strong></h1>';
+
+
+        if($u_login!="") {
+            $return .= \admin\Fonctions::modifier_user($u_login, $tab_checkbox_sem_imp, $tab_checkbox_sem_p, $onglet, $DEBUG);
+        } elseif($u_login_to_update!="") {
             $tab_new_jours_an   = getpost_variable('tab_new_jours_an') ;
             $tab_new_solde      = getpost_variable('tab_new_solde') ;
             $tab_new_reliquat   = getpost_variable('tab_new_reliquat') ;
 
             $tab_new_user['login']      = getpost_variable('new_login') ;
-            $tab_new_user['nom']	= getpost_variable('new_nom') ;
+            $tab_new_user['nom']    = getpost_variable('new_nom') ;
             $tab_new_user['prenom']     = getpost_variable('new_prenom') ;
             $tab_new_user['quotite']    = getpost_variable('new_quotite') ;
             $tab_new_user['is_resp']    = getpost_variable('new_is_resp') ;
@@ -2729,17 +2670,16 @@ class Fonctions
             $tab_new_user['mois']       = getpost_variable('new_mois') ;
             $tab_new_user['year']       = getpost_variable('new_year') ;
 
-            \admin\Fonctions::commit_update_user($u_login_to_update, $tab_new_user, $tab_new_jours_an, $tab_new_solde, $tab_new_reliquat, $tab_checkbox_sem_imp, $tab_checkbox_sem_p, $DEBUG);
+            echo \admin\Fonctions::commit_update_user($u_login_to_update, $tab_new_user, $tab_new_jours_an, $tab_new_solde, $tab_new_reliquat, $tab_checkbox_sem_imp, $tab_checkbox_sem_p, $DEBUG);
             redirect( ROOT_PATH .'admin/admin_index.php?session='.$session.'&onglet=admin-users', false);
             exit;
 
-        }
-        else
-        {
+        } else {
             // renvoit sur la page principale .
             redirect( ROOT_PATH .'admin/admin_index.php?session='.$session.'&onglet=admin-users', false);
             exit;
         }
+        return $return;
     }
 
     public static function suppression_group($group_to_delete,  $DEBUG=FALSE)
@@ -2756,8 +2696,7 @@ class Fonctions
         $sql3 = 'DELETE FROM conges_groupe_resp WHERE gr_gid = '.\includes\SQL::quote($group_to_delete);
         $result3 = \includes\SQL::query($sql3);
 
-        if($_SESSION['config']['double_validation_conges'])
-        {
+        if($_SESSION['config']['double_validation_conges']) {
             $sql4 = 'DELETE FROM conges_groupe_grd_resp WHERE ggr_gid = '.\includes\SQL::quote($group_to_delete);
             $result4 = \includes\SQL::query($sql4);
         }
@@ -2765,10 +2704,11 @@ class Fonctions
         $comment_log = "suppression_groupe ($group_to_delete)";
         log_action(0, "", "", $comment_log,  $DEBUG);
 
-        if($result)
+        if($result) {
             echo  _('form_modif_ok') ." !<br><br> \n";
-        else
+        } else {
             echo  _('form_modif_not_ok') ." !<br><br> \n";
+        }
 
         /* APPEL D'UNE AUTRE PAGE au bout d'une tempo de 2secondes */
         echo "<META HTTP-EQUIV=REFRESH CONTENT=\"2; URL=admin_index.php?session=$session&onglet=admin-group\">";
@@ -2794,8 +2734,9 @@ class Fonctions
         echo "<tr>\n";
         echo "<th><b>". _('admin_groupes_groupe') ."</b></th>\n";
         echo "<th><b>". _('admin_groupes_libelle') ." / ". _('divers_comment_maj_1') ."</b></th>\n";
-        if($_SESSION['config']['double_validation_conges'])
-            echo "	<th><b>". _('admin_groupes_double_valid') ."</b></th>\n";
+        if($_SESSION['config']['double_validation_conges']) {
+            echo "    <th><b>". _('admin_groupes_double_valid') ."</b></th>\n";
+        }
         echo "</tr>\n";
         echo "</thead>\n";
         echo "<tbody>\n";
@@ -2806,8 +2747,9 @@ class Fonctions
             $sql_double_valid=$resultat1["g_double_valid"] ;
             echo "<td>&nbsp;$sql_groupname&nbsp;</td>\n"  ;
             echo "<td>&nbsp;$sql_comment&nbsp;</td>\n" ;
-            if($_SESSION['config']['double_validation_conges'])
+            if($_SESSION['config']['double_validation_conges']) {
                 echo "<td>$sql_double_valid</td>\n";
+            }
         }
         echo "</tr>\n";
         echo "</tbody>\n";
@@ -2839,16 +2781,11 @@ class Fonctions
         echo "<h1>". _('admin_suppr_groupe_titre') ."</h1>\n";
 
 
-        if($group!="")
-        {
+        if($group!="") {
             \admin\Fonctions::confirmer($group, $onglet, $DEBUG);
-        }
-        elseif($group_to_delete!="")
-        {
+        } elseif($group_to_delete!="") {
             \admin\Fonctions::suppression_group($group_to_delete,  $DEBUG);
-        }
-        else
-        {
+        } else {
             // renvoit sur la page principale .
             redirect( ROOT_PATH .'admin/admin_index.php?session='.$session.'&onglet=admin-group', false);
         }
@@ -2856,8 +2793,9 @@ class Fonctions
 
     public static function suppression($u_login_to_delete, $DEBUG=FALSE)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
-        $session=session_id();
+        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $session  = session_id();
+        $return   = '';
 
         $sql1 = 'DELETE FROM conges_users WHERE u_login = "'. \includes\SQL::quote($u_login_to_delete).'"';
         $result = \includes\SQL::query($sql1);
@@ -2884,49 +2822,52 @@ class Fonctions
         $comment_log = "suppression_user ($u_login_to_delete)";
         log_action(0, "", $u_login_to_delete, $comment_log, $DEBUG);
 
-        if($result)
-            echo  _('form_modif_ok') ." !<br><br> \n" ;
-        else
-            echo  _('form_modif_not_ok') ." !<br><br> \n";
+        if($result) {
+            $return .= _('form_modif_ok') . ' !<br><br>';
+        } else {
+            $return .= _('form_modif_not_ok') . ' !<br><br>';
+        }
+        return $return;
     }
 
     public static function confirmer_suppression($u_login, $onglet, $DEBUG=FALSE)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
-        $session=session_id();
+        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $session  = session_id();
+        $return   = '';
 
-        /****************************/
+        /*****************************/
         /* Etat Utilisateur en cours */
         /*****************************/
         // AFFICHAGE TABLEAU
-        echo '<form action="'.$PHP_SELF.'?session='.$session.'&onglet='.$onglet.'&u_login_to_delete='.$u_login.'" method="POST">';
-        echo "<table class=\"table table-hover table-responsive table-condensed table-striped\">\n";
-        echo '<thead>';
-        echo '<tr>';
-        echo "<th>". _('divers_login_maj_1') ."</th>\n";
-        echo "<th>". _('divers_nom_maj_1') ."</th>\n";
-        echo "<th>". _('divers_prenom_maj_1') ."</th>\n";
-        echo "</tr>\n";
-        echo '</thead>';
-        echo '<tbody>';
+        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '&u_login_to_delete=' . $u_login . '" method="POST">';
+        $return .= '<table class="table table-hover table-responsive table-condensed table-striped">';
+        $return .= '<thead>';
+        $return .= '<tr>';
+        $return .= '<th>' . _('divers_login_maj_1') . '</th>';
+        $return .= '<th>'. _('divers_nom_maj_1') . '</th>';
+        $return .= '<th>' . _('divers_prenom_maj_1') . '</th>';
+        $return .= '</tr>';
+        $return .= '</thead>';
+        $return .= '<tbody>';
 
         // Récupération des informations
         $sql1 = 'SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_login = "'. \includes\SQL::quote($u_login).'"';
         $ReqLog1 = \includes\SQL::query($sql1);
 
-        echo "<tr>\n";
-        while ($resultat1 = $ReqLog1->fetch_array())
-        {
-            echo "<td>".$resultat1["u_login"]."</td>\n";
-            echo "<td>".$resultat1["u_nom"]."</td>\n";
-            echo "<td>".$resultat1["u_prenom"]."</td>\n";
+        $return .= '<tr>';
+        while ($resultat1 = $ReqLog1->fetch_array()) {
+            $return .= '<td>' . $resultat1["u_login"] . '</td>';
+            $return .= '<td>' . $resultat1["u_nom"] . '</td>';
+            $return .= '<td>' . $resultat1["u_prenom"] . '</td>';
         }
-        echo "</tr>\n";
-        echo '</tbody>';
-        echo "</table><br>\n\n";
-        echo "<input class=\"btn btn-danger\" type=\"submit\" value=\"". _('form_supprim') ."\">\n";
-        echo "<a class=\"btn\" href=\"admin_index.php?session=$session&onglet=admin-users\">". _('form_cancel') ."</a>\n";
-        echo "</form>\n" ;
+        $return .= '</tr>';
+        $return .= '</tbody>';
+        $return .= '</table><br>';
+        $return .= '<input class="btn btn-danger" type="submit" value="' . _('form_supprim') . '">';
+        $return .= '<a class="btn" href="admin_index.php?session=' . $session . '&onglet=admin-users">' . _('form_cancel') . '</a>';
+        $return .= '</form>';
+        return $return;
     }
 
     /**
@@ -2936,12 +2877,13 @@ class Fonctions
      * @param string $onglet
      * @param bool   $DEBUG   Mode debug ?
      *
-     * @return void
+     * @return string
      * @access public
      * @static
      */
     public static function supprimerUtilisateurModule($session, $onglet, $DEBUG = false)
     {
+        $return = '';
         /*************************************/
         // recup des parametres reçus :
 
@@ -2950,54 +2892,53 @@ class Fonctions
         /*************************************/
 
         // TITRE
-        if($u_login!="")
+        if($u_login!="") {
             $login_titre = $u_login;
-        elseif($u_login_to_delete!="")
+        } elseif($u_login_to_delete!="") {
             $login_titre = $u_login_to_delete;
-
-        echo "<h1>". _('admin_suppr_user_titre') ." : <strong>$login_titre</strong></h1>\n";
-
-
-        if($u_login!="")
-        {
-            \admin\Fonctions::confirmer_suppression($u_login, $onglet, $DEBUG);
         }
-        elseif($u_login_to_delete!="")
-        {
-            \admin\Fonctions::suppression($u_login_to_delete, $DEBUG);
+
+        $return .= '<h1>' . _('admin_suppr_user_titre') . ' : <strong>' . $login_titre . '</strong></h1>';
+
+
+        if($u_login!="") {
+            $return .= \admin\Fonctions::confirmer_suppression($u_login, $onglet, $DEBUG);
+        } elseif($u_login_to_delete!="") {
+            echo \admin\Fonctions::suppression($u_login_to_delete, $DEBUG);
             redirect( ROOT_PATH .'admin/admin_index.php?session='.$session.'&onglet=admin-users', false);
             exit;
-        }
-        else
-        {
+        } else {
             // renvoit sur la page principale .
             redirect( ROOT_PATH .'admin/admin_index.php?session='.$session.'&onglet=admin-users', false);
             exit;
         }
+        return $return;
     }
 
     public static function recup_users_from_ldap(&$tab_ldap, &$tab_login, $DEBUG=FALSE)
     {
         // cnx à l'annuaire ldap :
         $ds = \ldap_connect($_SESSION['config']['ldap_server']);
-        if($_SESSION['config']['ldap_protocol_version'] != 0)
+        if($_SESSION['config']['ldap_protocol_version'] != 0) {
             ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, $_SESSION['config']['ldap_protocol_version']) ;
-        if ($_SESSION['config']['ldap_user'] == "")
+        }
+        if ($_SESSION['config']['ldap_user'] == "") {
             $bound = ldap_bind($ds);  // connexion anonyme au serveur
-        else
+        } else {
             $bound = ldap_bind($ds, $_SESSION['config']['ldap_user'], $_SESSION['config']['ldap_pass']);
+        }
 
         // recherche des entrées :
-        if ($_SESSION['config']['ldap_filtre_complet'] != "")
+        if ($_SESSION['config']['ldap_filtre_complet'] != "") {
             $filter = $_SESSION['config']['ldap_filtre_complet'];
-        else
+        } else {
             $filter = "(&(".$_SESSION['config']['ldap_nomaff']."=*)(".$_SESSION['config']['ldap_filtre']."=".$_SESSION['config']['ldap_filrech']."))";
+        }
 
         $sr   = ldap_search($ds, $_SESSION['config']['searchdn'], $filter);
         $data = ldap_get_entries($ds,$sr);
 
-        foreach ($data as $info)
-        {
+        foreach ($data as $info) {
             $ldap_libelle_login=$_SESSION['config']['ldap_login'];
             $ldap_libelle_nom=$_SESSION['config']['ldap_nom'];
             $ldap_libelle_prenom=$_SESSION['config']['ldap_prenom'];
@@ -3018,13 +2959,13 @@ class Fonctions
         // affichage TITRE
         echo "<thead>\n";
         echo "<tr>\n";
-        echo "	<th colspan=3><h3>". _('admin_gestion_groupe_users_group_of_new_user') ." :</h3></th>\n";
+        echo "    <th colspan=3><h3>". _('admin_gestion_groupe_users_group_of_new_user') ." :</h3></th>\n";
         echo "</tr>\n";
 
         echo "<tr>\n";
-        echo "	<th>&nbsp;</th>\n";
-        echo "	<th>&nbsp;". _('admin_groupes_groupe') ."&nbsp;:</th>\n";
-        echo "	<th>&nbsp;". _('admin_groupes_libelle') ."&nbsp;:</th>\n";
+        echo "    <th>&nbsp;</th>\n";
+        echo "    <th>&nbsp;". _('admin_groupes_groupe') ."&nbsp;:</th>\n";
+        echo "    <th>&nbsp;". _('admin_groupes_libelle') ."&nbsp;:</th>\n";
         echo "</tr>\n";
         echo "</thead>\n";
         echo "<tbody>\n";
@@ -3036,8 +2977,7 @@ class Fonctions
         $sql_g = "SELECT g_gid, g_groupename, g_comment FROM conges_groupe ORDER BY g_groupename "  ;
         $ReqLog_g = \includes\SQL::query($sql_g);
 
-        while($resultat_g=$ReqLog_g->fetch_array())
-        {
+        while($resultat_g=$ReqLog_g->fetch_array()) {
             $tab_gg=array();
             $tab_gg["gid"]=$resultat_g["g_gid"];
             $tab_gg["groupename"]=$resultat_g["g_groupename"];
@@ -3048,41 +2988,35 @@ class Fonctions
         $tab_user="";
         // si le user est connu
         // on rempli un autre tableau des groupes du user
-        if($choix_user!="")
-        {
+        if($choix_user!="") {
             $tab_user=array();
             $sql_gu = 'SELECT gu_gid FROM conges_groupe_users WHERE gu_login="'.\includes\SQL::quote($choix_user).'" ORDER BY gu_gid ';
             $ReqLog_gu = \includes\SQL::query($sql_gu);
 
-            while($resultat_gu=$ReqLog_gu->fetch_array())
-            {
+            while($resultat_gu=$ReqLog_gu->fetch_array()) {
                 $tab_user[]=$resultat_gu["gu_gid"];
             }
         }
 
         // ensuite on affiche tous les groupes avec une case cochée si existe le gid dans le 2ieme tableau
         $count = count($tab_groups);
-        for ($i = 0; $i < $count; $i++)
-        {
+        for ($i = 0; $i < $count; $i++) {
             $gid=$tab_groups[$i]["gid"] ;
             $group=$tab_groups[$i]["groupename"] ;
             $libelle=$tab_groups[$i]["comment"] ;
 
-            if ( ($tab_user!="") && (in_array ($gid, $tab_user)) )
-            {
+            if ( ($tab_user!="") && (in_array ($gid, $tab_user)) ){
                 $case_a_cocher="<input type=\"checkbox\" name=\"checkbox_user_groups[$gid]\" value=\"$gid\" checked>";
                 $class="histo-big";
-            }
-            else
-            {
+            } else {
                 $case_a_cocher="<input type=\"checkbox\" name=\"checkbox_user_groups[$gid]\" value=\"$gid\">";
                 $class="histo";
             }
 
             echo '<tr class="'.(!($i%2)?'i':'p').'">';
-            echo "	<td>$case_a_cocher</td>\n";
-            echo "	<td class=\"$class\">&nbsp;$group&nbsp</td>\n";
-            echo "	<td class=\"$class\">&nbsp;$libelle&nbsp;</td>\n";
+            echo "    <td>$case_a_cocher</td>\n";
+            echo "    <td class=\"$class\">&nbsp;$group&nbsp</td>\n";
+            echo "    <td class=\"$class\">&nbsp;$libelle&nbsp;</td>\n";
             echo "</tr>\n";
         }
 
@@ -3100,12 +3034,13 @@ class Fonctions
         $tab_type_conges=recup_tableau_types_conges($DEBUG);
 
         // recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
-        if ($_SESSION['config']['gestion_conges_exceptionnels'])
-        {
+        if ($_SESSION['config']['gestion_conges_exceptionnels']){
             $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels($DEBUG);
         }
 
-        if( $DEBUG ) { echo "tab_type_conges = <br>\n"; print_r($tab_type_conges); echo "<br>\n"; }
+        if( $DEBUG ) {
+            echo "tab_type_conges = <br>\n"; print_r($tab_type_conges); echo "<br>\n";
+        }
 
         /*********************/
         /* Ajout Utilisateur */
@@ -3122,10 +3057,9 @@ class Fonctions
         echo "<table class=\"table table-hover table-responsive table-condensed table-striped\" >\n";
         echo "<thead>\n";
         echo "<tr>\n";
-        if ($_SESSION['config']['export_users_from_ldap'] )
+        if ($_SESSION['config']['export_users_from_ldap'] ) {
             echo "<th>". _('divers_nom_maj_1') ." ". _('divers_prenom_maj_1') ."</th>\n";
-        else
-        {
+        } else {
             echo "<th>". _('divers_login_maj_1') ."</th>\n";
             echo "<th>". _('divers_nom_maj_1') ."</th>\n";
             echo "<th>". _('divers_prenom_maj_1') ."</th>\n";
@@ -3136,10 +3070,10 @@ class Fonctions
         echo "<th>". _('admin_new_users_is_admin') ."</th>\n";
         echo "<th>". _('admin_new_users_is_hr') ."</th>\n";
         echo "<th>". _('admin_new_users_see_all') ."</th>\n";
-        if ( !$_SESSION['config']['export_users_from_ldap'] )
+        if ( !$_SESSION['config']['export_users_from_ldap'] ) {
             echo "<th>". _('admin_users_mail') ."</th>\n";
-        if ($_SESSION['config']['how_to_connect_user'] == "dbconges")
-        {
+        }
+        if ($_SESSION['config']['how_to_connect_user'] == "dbconges") {
             echo "<th>". _('admin_new_users_password') ."</th>\n";
             echo "<th>". _('admin_new_users_password') ."</th>\n";
         }
@@ -3149,26 +3083,29 @@ class Fonctions
 
         $text_nom="<input class=\"form-control\" type=\"text\" name=\"new_nom\" size=\"10\" maxlength=\"30\" value=\"".$tab_new_user['nom']."\">" ;
         $text_prenom="<input class=\"form-control\" type=\"text\" name=\"new_prenom\" size=\"10\" maxlength=\"30\" value=\"".$tab_new_user['prenom']."\">" ;
-        if( (!isset($tab_new_user['quotite'])) || ($tab_new_user['quotite']=="") )
+        if( (!isset($tab_new_user['quotite'])) || ($tab_new_user['quotite']=="") ) {
             $tab_new_user['quotite']=100;
+        }
         $text_quotite="<input class=\"form-control\" type=\"text\" name=\"new_quotite\" size=\"3\" maxlength=\"3\" value=\"".$tab_new_user['quotite']."\">" ;
         $text_is_resp="<select class=\"form-control\" name=\"new_is_resp\" ><option value=\"N\">N</option><option value=\"Y\">Y</option></select>" ;
 
         // PREPARATION DES OPTIONS DU SELECT du resp_login
         $text_resp_login="<select class=\"form-control\" name=\"new_resp_login\" id=\"resp_login_id\" ><option value=\"no_resp\">". _('admin_users_no_resp') ."</option>" ;
-	if( $_SESSION['config']['admin_see_all'] || !is_resp($_SESSION['userlogin']) )
-        	$sql2 = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_is_resp = \"Y\" ORDER BY u_nom, u_prenom"  ;
-	else
-		$sql2 = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_is_resp = \"Y\" AND u_login=\"".$_SESSION['userlogin']."\" ORDER BY u_nom, u_prenom" ;
+        if( $_SESSION['config']['admin_see_all'] || !is_resp($_SESSION['userlogin']) ) {
+            $sql2 = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_is_resp = \"Y\" ORDER BY u_nom, u_prenom"  ;
+        } else {
+            $sql2 = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_is_resp = \"Y\" AND u_login=\"".$_SESSION['userlogin']."\" ORDER BY u_nom, u_prenom" ;
+        }
 
         $ReqLog2 = \includes\SQL::query($sql2);
 
         while ($resultat2 = $ReqLog2->fetch_array()) {
             $current_resp_login=$resultat2["u_login"];
-            if($tab_new_user['resp_login']==$current_resp_login)
+            if($tab_new_user['resp_login']==$current_resp_login) {
                 $text_resp_login=$text_resp_login."<option value=\"$current_resp_login\" selected>".$resultat2["u_nom"]." ".$resultat2["u_prenom"]."</option>";
-            else
+            } else {
                 $text_resp_login=$text_resp_login."<option value=\"$current_resp_login\">".$resultat2["u_nom"]." ".$resultat2["u_prenom"]."</option>";
+            }
         }
         $text_resp_login=$text_resp_login."</select>" ;
 
@@ -3185,8 +3122,7 @@ class Fonctions
 
         echo "<tr class=\"update-line\">\n";
         // Aj. D.Chabaud - Université d'Auvergne - Sept. 2005
-        if ($_SESSION['config']['export_users_from_ldap'] )
-        {
+        if ($_SESSION['config']['export_users_from_ldap'] ) {
             // Récupération de la liste des utilisateurs via un ldap :
 
             // on crée 2 tableaux (1 avec les noms + prénoms, 1 avec les login)
@@ -3201,16 +3137,13 @@ class Fonctions
             $lst_users = "<select multiple size=9 name=new_ldap_user[]><option>------------------</option>\n";
             $i = 0;
 
-            foreach ($tab_login as $login)
-            {
+            foreach ($tab_login as $login) {
                 $lst_users .= "<option value=$tab_login[$i]>$tab_ldap[$i]</option>\n";
                 $i++;
             }
             $lst_users .= "</select>\n";
             echo "<td>$lst_users</td>\n";
-        }
-        else
-        {
+        } else {
             echo "<td>$text_login</td>\n";
             echo "<td>$text_nom</td>\n";
             echo "<td>$text_prenom</td>\n";
@@ -3222,10 +3155,10 @@ class Fonctions
         echo "<td>$text_is_admin</td>\n";
         echo "<td>$text_is_hr</td>\n";
         echo "<td>$text_see_all</td>\n";
-        if ( !$_SESSION['config']['export_users_from_ldap'] )
+        if ( !$_SESSION['config']['export_users_from_ldap'] ) {
             echo "<td>$text_email</td>\n";
-        if ($_SESSION['config']['how_to_connect_user'] == "dbconges")
-        {
+        }
+        if ($_SESSION['config']['how_to_connect_user'] == "dbconges") {
             echo "<td>$text_password1</td>\n";
             echo "<td>$text_password2</td>\n";
         }
@@ -3252,8 +3185,7 @@ class Fonctions
 
         $i = true;
         // ligne de saisie des valeurs
-        foreach($tab_type_conges as $id_type_cong => $libelle)
-        {
+        foreach($tab_type_conges as $id_type_cong => $libelle) {
             echo '<tr class="'.($i?'i':'p').'">';
             $value_jours_an = ( isset($tab_new_jours_an[$id_type_cong]) ? $tab_new_jours_an[$id_type_cong] : 0 );
             $value_solde_jours = ( isset($tab_new_solde[$id_type_cong]) ? $tab_new_solde[$id_type_cong] : 0 );
@@ -3266,8 +3198,7 @@ class Fonctions
             $i = !$i;
         }
         if ($_SESSION['config']['gestion_conges_exceptionnels']) {
-            foreach($tab_type_conges_exceptionnels as $id_type_cong => $libelle)
-            {
+            foreach($tab_type_conges_exceptionnels as $id_type_cong => $libelle) {
                 echo '<tr class="'.($i?'i':'p').'">';
                 $value_solde_jours = ( isset($tab_new_solde[$id_type_cong]) ? $tab_new_solde[$id_type_cong] : 0 );
                 $text_jours_an="<input type=\"hidden\" name=\"tab_new_jours_an[$id_type_cong]\" size=\"5\" maxlength=\"5\" value=\"0\"> &nbsp; " ;
@@ -3285,17 +3216,17 @@ class Fonctions
         echo "<br>\n\n";
 
         // saisie de la grille des jours d'abscence ARTT ou temps partiel:
-        saisie_jours_absence_temps_partiel($tab_new_user['login'],  $DEBUG);
+        $return .= saisie_jours_absence_temps_partiel($tab_new_user['login'],  $DEBUG);
 
 
         // si gestion des groupes :  affichage des groupe pour y affecter le user
-        if($_SESSION['config']['gestion_groupes'])
-        {
+        if($_SESSION['config']['gestion_groupes']) {
             echo "<br>\n";
-	if( $_SESSION['config']['admin_see_all'] || !is_resp($_SESSION['userlogin']) )
-            \admin\Fonctions::affiche_tableau_affectation_user_groupes2("",  $DEBUG);
-	else
-            \admin\Fonctions::affiche_tableau_affectation_user_groupes2($_SESSION['userlogin'],  $DEBUG);
+            if( $_SESSION['config']['admin_see_all'] || !is_resp($_SESSION['userlogin']) ) {
+                \admin\Fonctions::affiche_tableau_affectation_user_groupes2("",  $DEBUG);
+            } else {
+                \admin\Fonctions::affiche_tableau_affectation_user_groupes2($_SESSION['userlogin'],  $DEBUG);
+            }
         }
 
         echo "<hr>\n";
@@ -3310,13 +3241,11 @@ class Fonctions
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id();
 
-        foreach($tab_new_jours_an as $id_cong => $jours_an)
-        {
+        foreach($tab_new_jours_an as $id_cong => $jours_an) {
             $valid=verif_saisie_decimal($tab_new_jours_an[$id_cong], $DEBUG);    //verif la bonne saisie du nombre décimal
             $valid=verif_saisie_decimal($tab_new_solde[$id_cong], $DEBUG);    //verif la bonne saisie du nombre décimal
         }
-        if( $DEBUG )
-        {
+        if( $DEBUG ) {
             echo "tab_new_jours_an = "; print_r($tab_new_jours_an) ; echo "<br>\n";
             echo "tab_new_solde = "; print_r($tab_new_solde) ; echo "<br>\n";
         }
@@ -3324,13 +3253,11 @@ class Fonctions
 
         // verif des parametres reçus :
         // si on travaille avec la base dbconges, on teste tout, mais si on travaille avec ldap, on ne teste pas les champs qui viennent de ldap ...
-        if(!\admin\Fonctions::test_form_add_user($tab_new_user, $DEBUG=FALSE))
-        {
+        if(!\admin\Fonctions::test_form_add_user($tab_new_user, $DEBUG=FALSE)) {
             echo "<h3><font color=\"red\"> ". _('admin_verif_param_invalides') ." </font></h3>\n"  ;
             // affichage des param :
             echo htmlentities($tab_new_user['login'])."---".htmlentities($tab_new_user['nom'])."---".htmlentities($tab_new_user['prenom'])."---".htmlentities($tab_new_user['quotite'])."---".htmlentities($tab_new_user['is_resp'])."---".htmlentities($tab_new_user['resp_login'])."<br>\n";
-            foreach($tab_new_jours_an as $id_cong => $jours_an)
-            {
+            foreach($tab_new_jours_an as $id_cong => $jours_an) {
                 echo $tab_new_jours_an[$id_cong]."---".$tab_new_solde[$id_cong]."<br>\n";
             }
 
@@ -3345,8 +3272,7 @@ class Fonctions
             echo "<input type=\"hidden\" name=\"new_see_all\" value=\"".$tab_new_user['see_all']."\">\n";
             echo "<input type=\"hidden\" name=\"new_quotite\" value=\"".$tab_new_user['quotite']."\">\n";
             echo "<input type=\"hidden\" name=\"new_email\" value=\"".$tab_new_user['email']."\">\n";
-            foreach($tab_new_jours_an as $id_cong => $jours_an)
-            {
+            foreach($tab_new_jours_an as $id_cong => $jours_an) {
                 echo "<input type=\"hidden\" name=\"tab_new_jours_an[$id_cong]\" value=\"".$tab_new_jours_an[$id_cong]."\">\n";
                 echo "<input type=\"hidden\" name=\"tab_new_solde[$id_cong]\" value=\"".$tab_new_solde[$id_cong]."\">\n";
             }
@@ -3356,9 +3282,7 @@ class Fonctions
             echo"</form>\n" ;
 
             return 1;
-        }
-        else {
-
+        } else {
             // verif si le login demandé n'existe pas déjà ....
             $sql_verif='SELECT u_login FROM conges_users WHERE u_login="'.\includes\SQL::quote($tab_new_user['login']).'"';
             $ReqLog_verif = \includes\SQL::query($sql_verif);
@@ -3378,8 +3302,7 @@ class Fonctions
                 echo "<input type=\"hidden\" name=\"new_quotite\" value=\"".$tab_new_user['quotite']."\">\n";
                 echo "<input type=\"hidden\" name=\"new_email\" value=\"".$tab_new_user['email']."\">\n";
 
-                foreach($tab_new_jours_an as $id_cong => $jours_an)
-                {
+                foreach($tab_new_jours_an as $id_cong => $jours_an) {
                     echo "<input type=\"hidden\" name=\"tab_new_jours_an[$id_cong]\" value=\"".$tab_new_jours_an[$id_cong]."\">\n";
                     echo "<input type=\"hidden\" name=\"tab_new_solde[$id_cong]\" value=\"".$tab_new_solde[$id_cong]."\">\n";
                 }
@@ -3389,8 +3312,7 @@ class Fonctions
                 echo "</form>\n" ;
 
                 return 1;
-            }
-            elseif($_SESSION['config']['where_to_find_user_email'] == "dbconges" && strrchr($tab_new_user['email'], "@")==FALSE)
+            } elseif($_SESSION['config']['where_to_find_user_email'] == "dbconges" && strrchr($tab_new_user['email'], "@")==FALSE)
             {
                 echo "<h3> ". _('admin_verif_bad_mail') ." </h3>\n" ;
                 echo "<form action=\"$PHP_SELF?session=$session&onglet=ajout-user\" method=\"POST\">\n" ;
@@ -3404,8 +3326,7 @@ class Fonctions
                 echo "<input type=\"hidden\" name=\"new_quotite\" value=\"".$tab_new_user['quotite']."\">\n";
                 echo "<input type=\"hidden\" name=\"new_email\" value=\"".$tab_new_user['email']."\">\n";
 
-                foreach($tab_new_jours_an as $id_cong => $jours_an)
-                {
+                foreach($tab_new_jours_an as $id_cong => $jours_an) {
                     echo "<input type=\"hidden\" name=\"tab_new_jours_an[$id_cong]\" value=\"".$tab_new_jours_an[$id_cong]."\">\n";
                     echo "<input type=\"hidden\" name=\"tab_new_solde[$id_cong]\" value=\"".$tab_new_solde[$id_cong]."\">\n";
                 }
@@ -3416,8 +3337,9 @@ class Fonctions
 
                 return 1;
             }
-            else
+            else {
                 return 0;
+            }
         }
     }
 
@@ -3442,7 +3364,7 @@ class Fonctions
     }
 
     public static function FormAddUserpasswdOk($password1,$password2) {
-        if($_SESSION['config']['how_to_connect_user']=='dbconges') 
+        if($_SESSION['config']['how_to_connect_user']=='dbconges')
         {
             return !(strlen($password1)==0 || strlen($password2)==0 || strcmp($password1, $password2)!=0);
         } else {
@@ -3452,36 +3374,38 @@ class Fonctions
 
     public static function ajout_user(&$tab_new_user, $tab_checkbox_sem_imp, $tab_checkbox_sem_p, &$tab_new_jours_an, &$tab_new_solde, $checkbox_user_groups, $DEBUG=FALSE)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
-        $session=session_id();
+        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $session  = session_id();
+        $return   = '';
 
-        if( $DEBUG )
+        if( true ) // TODO
         {
-            echo "tab_new_jours_an = "; print_r($tab_new_jours_an) ; echo "<br>\n";
-            echo "tab_new_solde = "; print_r($tab_new_solde) ; echo "<br>\n";
+            $return .= 'tab_new_jours_an = ';
+            $return .= var_export($tab_new_jours_an, true);
+            $return .= '<br>tab_new_solde = ';
+            $return .= var_export($tab_new_solde, true) . '<br>';
         }
 
         // si pas d'erreur de saisie :
-        if( \admin\Fonctions::verif_new_param($tab_new_user, $tab_new_jours_an, $tab_new_solde, $DEBUG)==0)
+        if(\admin\Fonctions::verif_new_param($tab_new_user, $tab_new_jours_an, $tab_new_solde, $DEBUG)==0)
         {
-            echo $tab_new_user['login']."---".$tab_new_user['nom']."---".$tab_new_user['prenom']."---".$tab_new_user['quotite']."\n";
-            echo "---".$tab_new_user['is_resp']."---".$tab_new_user['resp_login']."---".$tab_new_user['is_admin']."---".$tab_new_user['is_hr']."---".$tab_new_user['see_all']."---".$tab_new_user['email']."<br>\n";
+            $return .= $tab_new_user['login'] . ' --- ' . $tab_new_user['nom'] .  ' --- ' . $tab_new_user['prenom'] . ' --- ' . $tab_new_user['quotite'];
+            $return .= ' --- ' . $tab_new_user['is_resp'] . ' --- ' . $tab_new_user['resp_login'] . ' --- ' . $tab_new_user['is_admin'] . ' --- ' . $tab_new_user['is_hr'] . ' --- ' . $tab_new_user['see_all'] . ' --- ' . $tab_new_user['email'] . '<br>';
 
             foreach($tab_new_jours_an as $id_cong => $jours_an)
             {
-                echo $tab_new_jours_an[$id_cong]."---".$tab_new_solde[$id_cong]."<br>\n";
+                $return .= $tab_new_jours_an[$id_cong] . ' --- ' . $tab_new_solde[$id_cong] . '<br>';
             }
             $new_date_deb_grille=$tab_new_user['new_year']."-".$tab_new_user['new_mois']."-".$tab_new_user['new_jour'];
-            echo "$new_date_deb_grille<br>\n" ;
+            $return .= $new_date_deb_grille . '<br>';
 
             /*****************************/
             /* INSERT dans conges_users  */
-            if ($_SESSION['config']['how_to_connect_user'] == "dbconges")
+            if ($_SESSION['config']['how_to_connect_user'] == "dbconges") {
                 $motdepasse = md5($tab_new_user['password1']);
-            else
+            } else {
                 $motdepasse = "none";
-
-
+            }
 
             $sql1 = "INSERT INTO conges_users SET ";
             $sql1=$sql1."u_login='".$tab_new_user['login']."', ";
@@ -3489,11 +3413,11 @@ class Fonctions
             $sql1=$sql1."u_prenom='".addslashes($tab_new_user['prenom'])."', ";
             $sql1=$sql1."u_is_resp='".$tab_new_user['is_resp']."', ";
 
-            if($tab_new_user['resp_login'] == 'no_resp')
+            if($tab_new_user['resp_login'] == 'no_resp') {
                 $sql1=$sql1."u_resp_login= NULL , ";
-            else
+            } else {
                 $sql1=$sql1."u_resp_login='". $tab_new_user['resp_login']."', ";
-
+            }
 
             $sql1=$sql1."u_is_admin='".$tab_new_user['is_admin']."', ";
             $sql1=$sql1."u_is_hr='".$tab_new_user['is_hr']."', ";
@@ -3539,28 +3463,27 @@ class Fonctions
             /***********************************/
             /* ajout du user dans ses groupes  */
             $result4=TRUE;
-            if( ($_SESSION['config']['gestion_groupes']) && ($checkbox_user_groups!="") )
-            {
+            if( ($_SESSION['config']['gestion_groupes']) && ($checkbox_user_groups!="") ) {
                 $result4=commit_modif_user_groups($tab_new_user['login'], $checkbox_user_groups, $DEBUG);
             }
 
-
-
             /*****************************/
 
-            if($result1 && $result2 && $result3 && $result4)
-                echo  _('form_modif_ok') ."<br><br> \n";
-            else
-                echo  _('form_modif_not_ok') ."<br><br> \n";
+            if($result1 && $result2 && $result3 && $result4) {
+                $return .= _('form_modif_ok') . '<br><br>';
+            } else {
+                $return .= _('form_modif_not_ok') . '<br><br>';
+            }
 
             $comment_log = "ajout_user : ".$tab_new_user['login']." / ".addslashes($tab_new_user['nom'])." ".addslashes($tab_new_user['prenom'])." (".$tab_new_user['quotite']." %)" ;
             log_action(0, "", $tab_new_user['login'], $comment_log, $DEBUG);
 
             /* APPEL D'UNE AUTRE PAGE */
-            echo " <form action=\"$PHP_SELF?session=$session&onglet=admin-users\" method=\"POST\"> \n";
-            echo "<input type=\"submit\" value=\"". _('form_retour') ."\">\n";
-            echo " </form> \n";
+            $return .= '<form action="$PHP_SELF?session=$session&onglet=admin-users" method="POST">';
+            $return .= '<input type="submit" value="' . _('form_retour') .'">';
+            $return .= '</form>';
         }
+        return $return;
     }
 
     /**
@@ -3575,25 +3498,25 @@ class Fonctions
      */
     public static function ajoutUtilisateurModule($onglet, $DEBUG = false)
     {
-        $saisie_user     = getpost_variable('saisie_user') ;
+        $saisie_user = getpost_variable('saisie_user');
+        $return      = '';
 
         // si on recupere les users dans ldap et qu'on vient d'en créer un depuis la liste déroulante
-        if ($_SESSION['config']['export_users_from_ldap']  && isset($_POST['new_ldap_user']))
-        {
+        if ($_SESSION['config']['export_users_from_ldap'] && isset($_POST['new_ldap_user'])) {
             $index = 0;
             // On lance une boucle pour selectionner tous les items
             // traitements : $login contient les valeurs successives
-            foreach($_POST['new_ldap_user'] as $login)
-            {
-                $tab_login[$index]=$login;
+            foreach($_POST['new_ldap_user'] as $login) {
+                $tab_login[$index] = $login;
                 $index++;
                 // cnx à l'annuaire ldap :
                 $ds = ldap_connect($_SESSION['config']['ldap_server']);
-                ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3) ;
-                if ($_SESSION['config']['ldap_user'] == "")
+                ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
+                if ($_SESSION['config']['ldap_user'] == "") {
                     $bound = ldap_bind($ds);
-                else
+                } else {
                     $bound = ldap_bind($ds, $_SESSION['config']['ldap_user'], $_SESSION['config']['ldap_pass']);
+                }
 
                 // recherche des entrées :
                 $filter = "(".$_SESSION['config']['ldap_login']."=".$login.")";
@@ -3601,86 +3524,76 @@ class Fonctions
                 $sr   = ldap_search($ds, $_SESSION['config']['searchdn'], $filter);
                 $data = ldap_get_entries($ds,$sr);
 
-                foreach ($data as $info)
-                {
-                    $tab_new_user[$login]['login']	= $login;
-                    $ldap_libelle_prenom		=$_SESSION['config']['ldap_prenom'];
-                    $ldap_libelle_nom		=$_SESSION['config']['ldap_nom'];
-                    $tab_new_user[$login]['prenom']	= utf8_decode($info[$ldap_libelle_prenom][0]);
-                    $tab_new_user[$login]['nom']	= utf8_decode($info[$ldap_libelle_nom][0]);
+                foreach ($data as $info) {
+                    $tab_new_user[$login]['login']  = $login;
+                    $ldap_libelle_prenom        =$_SESSION['config']['ldap_prenom'];
+                    $ldap_libelle_nom               = $_SESSION['config']['ldap_nom'];
+                    $tab_new_user[$login]['prenom'] = utf8_decode($info[$ldap_libelle_prenom][0]);
+                    $tab_new_user[$login]['nom']    = utf8_decode($info[$ldap_libelle_nom][0]);
 
-                    $ldap_libelle_mail				=$_SESSION['config']['ldap_mail'];
-                    $tab_new_user[$login]['email']	= $info[$ldap_libelle_mail][0] ;
+                    $ldap_libelle_mail              = $_SESSION['config']['ldap_mail'];
+                    $tab_new_user[$login]['email']  = $info[$ldap_libelle_mail][0] ;
                 }
 
-                $tab_new_user[$login]['quotite']	= getpost_variable('new_quotite') ;
-                $tab_new_user[$login]['is_resp']	= getpost_variable('new_is_resp') ;
-                $tab_new_user[$login]['resp_login']	= getpost_variable('new_resp_login') ;
-                $tab_new_user[$login]['is_admin']	= getpost_variable('new_is_admin') ;
-                $tab_new_user[$login]['is_hr']		= getpost_variable('new_is_hr') ;
-                $tab_new_user[$login]['see_all']	= getpost_variable('new_see_all') ;
+                $tab_new_user[$login]['quotite']    = getpost_variable('new_quotite');
+                $tab_new_user[$login]['is_resp']    = getpost_variable('new_is_resp');
+                $tab_new_user[$login]['resp_login'] = getpost_variable('new_resp_login');
+                $tab_new_user[$login]['is_admin']   = getpost_variable('new_is_admin');
+                $tab_new_user[$login]['is_hr']      = getpost_variable('new_is_hr');
+                $tab_new_user[$login]['see_all']    = getpost_variable('new_see_all');
 
-                if ($_SESSION['config']['how_to_connect_user'] == "dbconges")
-                {
-                    $tab_new_user[$login]['password1']= getpost_variable('new_password1') ;
-                    $tab_new_user[$login]['password2']= getpost_variable('new_password2') ;
+                if ($_SESSION['config']['how_to_connect_user'] == "dbconges") {
+                    $tab_new_user[$login]['password1'] = getpost_variable('new_password1');
+                    $tab_new_user[$login]['password2'] = getpost_variable('new_password2');
                 }
-                $tab_new_jours_an			= getpost_variable('tab_new_jours_an') ;
-                $tab_new_solde				= getpost_variable('tab_new_solde') ;
-                $tab_checkbox_sem_imp			= getpost_variable('tab_checkbox_sem_imp') ;
-                $tab_checkbox_sem_p			= getpost_variable('tab_checkbox_sem_p') ;
-                $tab_new_user[$login]['new_jour']	= getpost_variable('new_jour') ;
-                $tab_new_user[$login]['new_mois']	= getpost_variable('new_mois') ;
-                $tab_new_user[$login]['new_year']	= getpost_variable('new_year') ;
+                $tab_new_jours_an                 = getpost_variable('tab_new_jours_an');
+                $tab_new_solde                    = getpost_variable('tab_new_solde') ;
+                $tab_checkbox_sem_imp             = getpost_variable('tab_checkbox_sem_imp');
+                $tab_checkbox_sem_p               = getpost_variable('tab_checkbox_sem_p');
+                $tab_new_user[$login]['new_jour'] = getpost_variable('new_jour');
+                $tab_new_user[$login]['new_mois'] = getpost_variable('new_mois');
+                $tab_new_user[$login]['new_year'] = getpost_variable('new_year');
             }
-        }
-        else
-        {
-            $tab_new_user[0]['login']		= getpost_variable('new_login') ;
-            $tab_new_user[0]['nom']			= getpost_variable('new_nom') ;
-            $tab_new_user[0]['prenom']		= getpost_variable('new_prenom') ;
+        } else {
+            $tab_new_user[0]['login']      = getpost_variable('new_login');
+            $tab_new_user[0]['nom']        = getpost_variable('new_nom');
+            $tab_new_user[0]['prenom']     = getpost_variable('new_prenom');
+            $tab_new_user[0]['quotite']    = getpost_variable('new_quotite');
+            $tab_new_user[0]['is_resp']    = getpost_variable('new_is_resp');
+            $tab_new_user[0]['resp_login'] = getpost_variable('new_resp_login');
+            $tab_new_user[0]['is_admin']   = getpost_variable('new_is_admin');
+            $tab_new_user[0]['is_hr']      = getpost_variable('new_is_hr');
+            $tab_new_user[0]['see_all']    = getpost_variable('new_see_all');
 
-
-            $tab_new_user[0]['quotite']		= getpost_variable('new_quotite') ;
-            $tab_new_user[0]['is_resp']		= getpost_variable('new_is_resp') ;
-            $tab_new_user[0]['resp_login']	= getpost_variable('new_resp_login') ;
-            $tab_new_user[0]['is_admin']	= getpost_variable('new_is_admin') ;
-            $tab_new_user[0]['is_hr']		= getpost_variable('new_is_hr') ;
-            $tab_new_user[0]['see_all']		= getpost_variable('new_see_all') ;
-
-            if ($_SESSION['config']['how_to_connect_user'] == "dbconges")
-            {
-                $tab_new_user[0]['password1']	= getpost_variable('new_password1') ;
-                $tab_new_user[0]['password2']	= getpost_variable('new_password2') ;
+            if ($_SESSION['config']['how_to_connect_user'] == "dbconges") {
+                $tab_new_user[0]['password1']    = getpost_variable('new_password1');
+                $tab_new_user[0]['password2']    = getpost_variable('new_password2');
             }
-            $tab_new_user[0]['email']	= getpost_variable('new_email') ;
-            $tab_new_jours_an			= getpost_variable('tab_new_jours_an') ;
-            $tab_new_solde				= getpost_variable('tab_new_solde') ;
-            $tab_checkbox_sem_imp		= getpost_variable('tab_checkbox_sem_imp') ;
-            $tab_checkbox_sem_p			= getpost_variable('tab_checkbox_sem_p') ;
-            $tab_new_user[0]['new_jour']= getpost_variable('new_jour') ;
-            $tab_new_user[0]['new_mois']= getpost_variable('new_mois') ;
-            $tab_new_user[0]['new_year']= getpost_variable('new_year') ;
+            $tab_new_user[0]['email']    = getpost_variable('new_email');
+            $tab_new_jours_an            = getpost_variable('tab_new_jours_an');
+            $tab_new_solde               = getpost_variable('tab_new_solde');
+            $tab_checkbox_sem_imp        = getpost_variable('tab_checkbox_sem_imp');
+            $tab_checkbox_sem_p          = getpost_variable('tab_checkbox_sem_p');
+            $tab_new_user[0]['new_jour'] = getpost_variable('new_jour');
+            $tab_new_user[0]['new_mois'] = getpost_variable('new_mois');
+            $tab_new_user[0]['new_year'] = getpost_variable('new_year');
         }
 
-
-        $checkbox_user_groups= getpost_variable('checkbox_user_groups') ;
+        $checkbox_user_groups = getpost_variable('checkbox_user_groups') ;
         /* FIN de la recup des parametres    */
         /*************************************/
 
-
-
         if($saisie_user=="ok") {
-            if($_SESSION['config']['export_users_from_ldap'] ) {
+            if($_SESSION['config']['export_users_from_ldap']) {
                 foreach($tab_login as $login) {
-                    \admin\Fonctions::ajout_user($tab_new_user[$login], $tab_checkbox_sem_imp, $tab_checkbox_sem_p, $tab_new_jours_an, $tab_new_solde, $checkbox_user_groups, $DEBUG);
+                    $return .= \admin\Fonctions::ajout_user($tab_new_user[$login], $tab_checkbox_sem_imp, $tab_checkbox_sem_p, $tab_new_jours_an, $tab_new_solde, $checkbox_user_groups, $DEBUG);
                 }
+            } else {
+                $return .= \admin\Fonctions::ajout_user($tab_new_user[0], $tab_checkbox_sem_imp, $tab_checkbox_sem_p, $tab_new_jours_an, $tab_new_solde, $checkbox_user_groups, $DEBUG);
             }
-            else
-                \admin\Fonctions::ajout_user($tab_new_user[0], $tab_checkbox_sem_imp, $tab_checkbox_sem_p, $tab_new_jours_an, $tab_new_solde, $checkbox_user_groups, $DEBUG);
+        } else {
+            $return .= \admin\Fonctions::affiche_formulaire_ajout_user($tab_new_user[0], $tab_new_jours_an, $tab_new_solde, $onglet, $DEBUG);
         }
-        else {
-            \admin\Fonctions::affiche_formulaire_ajout_user($tab_new_user[0], $tab_new_jours_an, $tab_new_solde, $onglet, $DEBUG);
-        }
+        return $return;
     }
 }
