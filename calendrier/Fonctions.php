@@ -1,7 +1,9 @@
 <?php
 /*************************************************************************************************
 Libertempo : Gestion Interactive des Congés
-Copyright (C) 2015 (Wouldsmina)Copyright (C) 2015 (Prytoegrian)Copyright (C) 2005 (cedric chauvineau)
+Copyright (C) 2015 (Wouldsmina)
+Copyright (C) 2015 (Prytoegrian)
+Copyright (C) 2005 (cedric chauvineau)
 
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
 termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
@@ -1014,20 +1016,22 @@ class Fonctions
 
     		echo "<ul class=\"pager\">\n";
     		echo "<li><a href=\"$PHP_SELF?session=$session&first_jour=1&mois=$prev_mois&year=$prev_year&select_groupe=$select_groupe\" method=\"POST\"><i class=\"fa fa-angle-double-left\"></i>&nbsp;". _('divers_mois_precedent_maj_1') ." </a></li>\n";
-    		echo "<li><a href=\"$PHP_SELF?session=$session&first_jour=1&mois=$next_mois&year=$next_year&select_groupe=$select_groupe\" method=\"POST\">". _('divers_mois_suivant_maj_1') ."&nbsp;<i class=\"fa fa-angle-double-right\"></i></a></li>\n";
+ 		echo "<li><a href=\"$PHP_SELF?session=$session&first_jour=$prev_first_jour&mois=$prev_first_jour_mois&year=$prev_first_jour_year&select_groupe=$select_groupe\" method=\"POST\"><i class=\"fa fa-angle-double-left\"></i>&nbsp;". _('calendrier_jour_precedent') ." </a></li>\n";
+    		echo "<li><a href=\"$PHP_SELF?session=$session&first_jour=$next_first_jour&mois=$next_first_jour_mois&year=$next_first_jour_year&select_groupe=$select_groupe\" method=\"POST\"> ". _('calendrier_jour_suivant') ."&nbsp;<i class=\"fa fa-angle-double-right\"></i></a></li>\n";
+   		echo "<li><a href=\"$PHP_SELF?session=$session&first_jour=1&mois=$next_mois&year=$next_year&select_groupe=$select_groupe\" method=\"POST\">". _('divers_mois_suivant_maj_1') ."&nbsp;<i class=\"fa fa-angle-double-right\"></i></a></li>\n";
     		echo "</ul>\n";
     }
 
     // retourne le timestamp calculé du jour suivant
     public static function jour_suivant($jour, $mois, $year)
     {
-    	return mktime (0,0,0,$mois,$jour +1,$year);
+    	return mktime (0,0,0,$mois,$jour +7,$year);
     }
 
     // retourne le timestamp calculé du jour precedent
     public static function jour_precedent($jour, $mois, $year)
     {
-    	return mktime (0,0,0,$mois,$jour -1,$year);
+    	return mktime (0,0,0,$mois,$jour -7,$year);
     }
 
     /**
