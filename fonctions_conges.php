@@ -2647,7 +2647,7 @@ function get_list_users_des_groupes_du_resp_sauf_resp($resp_login, $DEBUG=FALSE)
 	$list_groups=get_list_groupes_du_resp($resp_login, $DEBUG);
 	if($list_groups!="") // si $resp_login est responsable d'au moins un groupe
 	{
-		$sql1="SELECT DISTINCT(gu_login) FROM conges_groupe_users WHERE gu_gid IN ($list_groups) AND gu_login NOT IN (SELECT gr_login FROM conges_groupe_resp WHERE gr_gid IN ($list_groups)) ORDER BY gu_login ";
+		$sql1="SELECT DISTINCT(gu_login) FROM conges_groupe_users WHERE gu_gid IN ($list_groups) AND gu_login NOT IN (SELECT gr_login FROM conges_groupe_resp WHERE gr_gid = gu_gid) ORDER BY gu_login ";
 		$ReqLog1 = SQL::query($sql1);
 
 		while ($resultat1 = $ReqLog1->fetch_array())
