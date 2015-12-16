@@ -1372,6 +1372,15 @@ function get_list_all_users_du_resp($resp_login,  $DEBUG=FALSE)
 		else
 			$list_users=$list_users.", '$current_login'";
 	}
+	
+	// si le responsable n'a pas de responsable, ou est responsable de lui-même, on l'ajout à la liste
+	$list_resps=get_list_responsables($resp_login, $DEBUG);
+	if ($list_resps == "") {
+		if($list_users=="")
+			$list_users="'$resp_login'";
+		else
+			$list_users=$list_users.", '$resp_login'";
+	}
 
 	/************************************/
 	// gestion des absence des responsables :
@@ -2647,7 +2656,7 @@ function get_list_users_des_groupes_du_resp_sauf_resp($resp_login, $DEBUG=FALSE)
 	$list_groups=get_list_groupes_du_resp($resp_login, $DEBUG);
 	if($list_groups!="") // si $resp_login est responsable d'au moins un groupe
 	{
-		$sql1="SELECT DISTINCT(gu_login) FROM conges_groupe_users WHERE gu_gid IN ($list_groups) AND gu_login NOT IN (SELECT gr_login FROM conges_groupe_resp WHERE gr_gid IN ($list_groups)) ORDER BY gu_login ";
+		$sql1="SELECT DISTINCT(gu_login) FROM conges_groupe_users WHERE gu_gid IN ($list_groups) AND gu_login NOT IN (SELECT gr_login FROM conges_groupe_resp WHERE gr_gid = gu_gid) ORDER BY gu_login ";
 		$ReqLog1 = SQL::query($sql1);
 
 		while ($resultat1 = $ReqLog1->fetch_array())
@@ -2662,6 +2671,25 @@ function get_list_users_des_groupes_du_resp_sauf_resp($resp_login, $DEBUG=FALSE)
 	if( $DEBUG ) { echo "list_users_des_groupes_du_resp_sauf_resp= $list_users_des_groupes_du_resp_sauf_resp<br>\n" ;}
 
 	return $list_users_des_groupes_du_resp_sauf_resp;
+}
+
+// recup de la liste des responsables de $login, ne prend pas en compte si $login est responsable de lui-même ou si un autre responsable a les mêmes droits
+// renvoit une liste de login entre quotes et séparés par des virgules
+function get_list_responsables($login, $DEBUG=FALSE)	
+{
+	$list_resps="";
+	$sql1="SELECT gr_login FROM conges_groupe_resp WHERE gr_gid IN (SELECT gu_gid FROM conges_groupe_users WHERE gu_login = '$login') AND NOT gr_gid IN (SELECT gu_gid FROM conges_groupe_users, conges_groupe_resp WHERE gu_gid = gr_gid AND gu_login = gr_login AND gu_login = '$login') ORDER BY gr_login ";
+	$ReqLog1 = SQL::query($sql1);
+	while ($resultat1 = $ReqLog1->fetch_array())
+	{
+		$current_login=$resultat1["gr_login"];
+		if($list_resps=="")
+			$list_resps="'$current_login'";
+		else
+			$list_resps=$list_resps.", '$current_login'";
+	}
+	if( $DEBUG ) { echo "list_resps= $list_resps<br>\n" ;}
+	return $list_resps;
 }
 
 /*--------- ajout fonction probesys -------------------*/
