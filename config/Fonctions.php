@@ -187,40 +187,45 @@ class Fonctions
     public static function commit_modif($tab_new_values, $session, $DEBUG=FALSE)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
+        $return = '';
 
-        if($session=="")
+        if($session=="") {
             $URL = "$PHP_SELF?onglet=mail";
-        else
+        } else {
             $URL = "$PHP_SELF?session=$session&onglet=mail";
+        }
 
 
         // update de la table
-        foreach($tab_new_values as $nom_mail => $tab_mail)
-        {
+        foreach($tab_new_values as $nom_mail => $tab_mail) {
             $subject = addslashes($tab_mail['subject']);
             $body = addslashes($tab_mail['body']) ;
             $req_update='UPDATE conges_mail SET mail_subject=\''.$subject.'\', mail_body=\''.$body.'\' WHERE mail_nom="'. \includes\SQL::quote($nom_mail).'" ';
             $result1 = \includes\SQL::query($req_update);
         }
-        echo "<span class = \"messages\">". _('form_modif_ok') ."</span><br>";
+        $return .= '<span class="messages">' . _('form_modif_ok') . '</span><br>';
 
         $comment_log = "configuration des mails d\'alerte";
         log_action(0, "", "", $comment_log, $DEBUG);
 
-        if( $DEBUG )
-            echo "<a href=\"$URL\" method=\"POST\">". _('form_retour') ."</a><br>\n" ;
-        else
-            echo "<META HTTP-EQUIV=REFRESH CONTENT=\"2; URL=$URL\">";
+        if( $DEBUG ) {
+            $return .= '<a href="' . $URL . '" method="POST">' . _('form_retour') . '</a><br>';
+        } else {
+            $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $URL . '">';
+        }
+        return $return;
     }
 
     public static function test_config($tab_new_values, $session, $DEBUG=FALSE)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
+        $return = '';
 
-        if($session=="")
+        if($session=="") {
             $URL = "$PHP_SELF?onglet=mail";
-        else
+        } else {
             $URL = "$PHP_SELF?session=$session&onglet=mail";
+        }
 
         // update de la table
         $mail_array             = find_email_adress_for_user($_SESSION['userlogin'], $DEBUG);
@@ -229,29 +234,34 @@ class Fonctions
         constuct_and_send_mail("valid_conges", "Test email", $mail_sender_addr, $mail_sender_name, $mail_sender_addr, "test", $DEBUG);
         //  echo "<p>Mail sent</p>"; exit(0);
 
-        echo "<span class = \"messages\">". _('Mail_test_ok') ."</span><br>";
+        $return .= '<span class="messages">' . _('Mail_test_ok') . '</span><br>';
 
         $comment_log = "test d\'envoi mail d\'alerte";
         log_action(0, "", "", $comment_log, $DEBUG);
 
-        if( $DEBUG )
-            echo "<a href=\"$URL\" method=\"POST\">". _('form_retour') ."</a><br>\n" ;
-        else
-            echo "<META HTTP-EQUIV=REFRESH CONTENT=\"2; URL=$URL\">";
+        if( $DEBUG ) {
+            $return .= '<a href="' . $URL . '" method="POST">' . _('form_retour') . '</a><br>';
+        } else {
+            $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $URL . '">';
+        }
+
+        return $return;
     }
 
     public static function affichage_config_mail($tab_new_values, $session, $DEBUG=FALSE)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
+        $return = '';
 
-        if($session=="")
+        if($session=="") {
             $URL = "$PHP_SELF?onglet=mail";
-        else
+        } else {
             $URL = "$PHP_SELF?session=$session&onglet=mail";
+        }
 
         /**************************************/
         // affichage du titre
-        echo "<div class=\"alert alert-info\"> ". _('config_mail_alerte_config') ."</div>\n";
+        $return .= '<div class="alert alert-info">' . _('config_mail_alerte_config') . '</div>';
         /**************************************/
 
         // affichage de la liste des type d'absence existants
@@ -260,15 +270,14 @@ class Fonctions
         $sql1 = "SELECT * FROM conges_mail ";
         $ReqLog1 = \includes\SQL::query($sql1);
 
-        echo "<form method=\"POST\" action=\"$URL\"> \n";
-        echo "<input type=\"hidden\" name=\"action\" value=\"test\" /> \n";
-        echo "<input class=\"btn btn-success\" type=\"submit\"  value=\"". _('test_mail_config') ."\"><br>\n";
-        echo _('test_mail_comment');
-        echo "</form> \n";
+        $return .= '<form method="POST" action="' . $URL . '">';
+        $return .= '<input type="hidden" name="action" value="test" />';
+        $return .= '<input class="btn btn-success" type="submit"  value="' . _('test_mail_config') . '"><br>';
+        $return .= _('test_mail_comment');
+        $return .= '</form>';
 
-        echo "    <form action=\"$URL\" method=\"POST\"> \n";
-        while ($data = $ReqLog1->fetch_array())
-        {
+        $return .= '<form action="' . $URL . '" method="POST">';
+        while ($data = $ReqLog1->fetch_array()) {
             $mail_nom = stripslashes($data['mail_nom']);
             $mail_subject = stripslashes($data['mail_subject']);
             $mail_body = stripslashes($data['mail_body']);
@@ -277,45 +286,43 @@ class Fonctions
             $key = $mail_nom."_comment";
             $comment =  _($key)  ;
 
-            echo "<br>\n";
-            echo "<table>\n";
-            echo "<tr><td>\n";
-            echo "    <fieldset class=\"cal_saisie\">\n";
-            echo "    <legend class=\"boxlogin\">$legend</legend>\n";
-            echo "    <i>$comment</i><br><br>\n";
-            echo "    <table>\n";
-            echo "    <tr>\n";
-            echo "    	<td class=\"config\" valign=\"top\"><b>". _('config_mail_subject') ."</b></td>\n";
-            echo "    	<td class=\"config\"><input class=\"form-control\" type=\"text\" size=\"80\" name=\"tab_new_values[$mail_nom][subject]\" value=\"$mail_subject\"></td>\n";
-            echo "    </tr>\n";
-            echo "    <tr>\n";
-            echo "    	<td class=\"config\" valign=\"top\"><b>". _('config_mail_body') ."</b></td>\n";
-            echo "    	<td class=\"config\"><textarea class=\"form-control\" rows=\"6\" cols=\"80\" name=\"tab_new_values[$mail_nom][body]\" value=\"$mail_body\">$mail_body</textarea></td>\n";
-            echo "    </tr>\n";
-            echo "    <tr>\n";
-            echo "    	<td class=\"config\">&nbsp;</td>\n";
-            echo "    	<td class=\"config\">\n";
-            echo "    		<i>". _('mail_remplace_url_accueil_comment') ."<br>\n";
-            echo "    		". _('mail_remplace_sender_name_comment') ."<br>\n";
-            echo "    		". _('mail_remplace_destination_name_comment') ."<br>\n";
-            echo "    		". _('mail_remplace_nb_jours') ."<br>\n";
-            echo "    		". _('mail_remplace_date_debut') ."<br>\n";
-            echo "    		". _('mail_remplace_date_fin') ."<br>\n";
-            echo "    		". _('mail_remplace_commentaire') ."<br>\n";
-            echo "    		". _('mail_remplace_type_absence') ."<br>\n";
-            echo "    		". _('mail_remplace_retour_ligne_comment') ."</i>\n";
-            echo "    	</td>\n";
-            echo "    </tr>\n";
-
-            echo "    </table>\n";
-            echo "</td></tr>\n";
-            echo "</table>\n";
+            $return .= '<br>';
+            $return .= '<table>';
+            $return .= '<tr><td>';
+            $return .= '<fieldset class="cal_saisie">';
+            $return .= '<legend class="boxlogin">' . $legend . '</legend>';
+            $return .= '<i>' . $comment . '</i><br><br>';
+            $return .= '<table>';
+            $return .= '<tr>';
+            $return .= '<td class="config" valign="top"><b>' .  _('config_mail_subject') . '</b></td>';
+            $return .= '<td class="config"><input class="form-control" type="text" size="80" name="tab_new_values[' . $mail_nom . '][subject]" value="' . $mail_subject . '"></td>';
+            $return .= '</tr>';
+            $return .= '<tr>';
+            $return .= '<td class="config" valign="top"><b>' . _('config_mail_body') . '</b></td>';
+            $return .= '<td class="config"><textarea class="form-control" rows="6" cols="80" name="tab_new_values[' . $mail_nom . '][body]" value="' . $mail_body . '">' . $mail_body . '</textarea></td>';
+            $return .= '</tr><tr>';
+            $return .= '<td class="config">&nbsp;</td>';
+            $return .= '<td class="config">';
+            $return .= '<i>' . _('mail_remplace_url_accueil_comment') . '<br>';
+            $return .= _('mail_remplace_sender_name_comment') . '<br>';
+            $return .= _('mail_remplace_destination_name_comment') . '<br>';
+            $return .= _('mail_remplace_nb_jours') . '<br>';
+            $return .= _('mail_remplace_date_debut') . '<br>';
+            $return .= _('mail_remplace_date_fin') . '<br>';
+            $return .= _('mail_remplace_commentaire') . '<br>';
+            $return .= _('mail_remplace_type_absence') . '<br>';
+            $return .= _('mail_remplace_retour_ligne_comment') . '</i>';
+            $return .= '</td></tr>';
+            $return .= '</table>';
+            $return .= '</td></tr>';
+            $return .= '</table>';
         }
 
-        echo "    <input type=\"hidden\" name=\"action\" value=\"modif\">\n";
-        echo "<hr/>\n";
-        echo "    <input class=\"btn btn-success\" type=\"submit\"  value=\"". _('form_save_modif') ."\"><br>\n";
-        echo "    </form>\n";
+        $return .= '<input type="hidden" name="action" value="modif">';
+        $return .= '<hr/>';
+        $return .= '<input class="btn btn-success" type="submit"  value="' . _('form_save_modif') . '"><br>';
+        $return .= '</form>';
+        return $return;
     }
 
     /**
@@ -332,6 +339,7 @@ class Fonctions
     {
         // verif des droits du user à afficher la page
         verif_droits_user($session, "is_admin", $DEBUG);
+        $return = '';
 
 
         /*** initialisation des variables ***/
@@ -345,27 +353,24 @@ class Fonctions
 
         /*************************************/
 
-        if($DEBUG)
-        {
-            print_r($tab_new_values); echo "<br>\n";
-            echo "$action<br>\n";
+        if($DEBUG) {
+            $return .= var_export($tab_new_values, true) . '<br>';
+            $return .= $action . '<br>';
         }
 
         /*********************************/
         /*********************************/
 
-        if($action=="modif")
-            \config\Fonctions::commit_modif($tab_new_values, $session, $DEBUG);
-        if($action=="test")
-            \config\Fonctions::test_config($tab_new_values, $session, $DEBUG);
+        if($action=="modif") {
+            $return .= \config\Fonctions::commit_modif($tab_new_values, $session, $DEBUG);
+        }
+        if($action=="test") {
+            $return .= \config\Fonctions::test_config($tab_new_values, $session, $DEBUG);
+        }
 
+        $return .= \config\Fonctions::affichage_config_mail($tab_new_values, $session, $DEBUG);
 
-        \config\Fonctions::affichage_config_mail($tab_new_values, $session, $DEBUG);
-
-        /*********************************/
-        /*********************************/
-
-        // bottom();
+        return $return;
     }
 
     // recup l'id de la derniere absence (le max puisque c'est un auto incrément)
@@ -575,44 +580,41 @@ class Fonctions
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
 
-        if($session=="")
+        if($session=="") {
             $URL = "$PHP_SELF";
-        else
+        } else {
             $URL = "$PHP_SELF?session=$session";
+        }
 
 
         // verif de la saisie
         $erreur=FALSE ;
         // verif si pas de " ' , . ; % ?
-        if( (preg_match('/.*[?%;.,"\'].*$/', $tab_new_values['libelle'])) || (preg_match('/.*[?%;.,"\'].*$/', $tab_new_values['short_libelle'])) )
-        {
-            echo "<br> ". _('config_abs_saisie_not_ok') ." : ". _('config_abs_bad_caracteres') ."  \" \' , . ; % ? <br>\n";
+        if( (preg_match('/.*[?%;.,"\'].*$/', $tab_new_values['libelle'])) || (preg_match('/.*[?%;.,"\'].*$/', $tab_new_values['short_libelle'])) ) {
+            $return .= '<br>' . _('config_abs_saisie_not_ok') . ' : ' . _('config_abs_bad_caracteres') . ' " \' , . ; % ? <br>';
             $erreur=TRUE;
         }
         // verif si les champs sont vides
-        if( (strlen($tab_new_values['libelle'])==0) || (strlen($tab_new_values['short_libelle'])==0) )
-        {
-            echo "<br> ". _('config_abs_saisie_not_ok') ." : ". _('config_abs_champs_vides') ." <br>\n";
+        if( (strlen($tab_new_values['libelle'])==0) || (strlen($tab_new_values['short_libelle'])==0) ) {
+            $return .= '<br>' . _('config_abs_saisie_not_ok') . ' : ' . _('config_abs_champs_vides') . '<br>';
             $erreur=TRUE;
         }
 
-        if($erreur)
-        {
-            echo "<br>\n";
-            if($session=="")
-                echo "<form action=\"$PHP_SELF?onglet=type_absence\" method=\"POST\"> \n";
-            else
-                echo "<form action=\"$PHP_SELF?session=$session&onglet=type_absence\" method=\"POST\"> \n";
-            echo "<input type=\"hidden\" name=\"action\" value=\"modif\">\n";
-            echo "<input type=\"hidden\" name=\"id_to_update\" value=\"$id_to_update\">\n";
-            echo "<input type=\"hidden\" name=\"tab_new_values[libelle]\" value=\"".$tab_new_values['libelle']."\">\n";
-            echo "<input type=\"hidden\" name=\"tab_new_values[short_libelle]\" value=\"".$tab_new_values['short_libelle']."\">\n";
-            echo "<input type=\"submit\" value=\"". _('form_redo') ."\" >\n";
-            echo "</form>\n";
-            echo "<br><br>\n";
-        }
-        else
-        {
+        if($erreur) {
+            $return .= '<br>';
+            if($session=="") {
+                $return .= '<form action="' . $PHP_SELF . '?onglet=type_absence" method="POST">';
+            } else {
+                $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=type_absence" method="POST">';
+            }
+            $return .= '<input type="hidden" name="action" value="modif">';
+            $return .= '<input type="hidden" name="id_to_update" value="' . $id_to_update .'">';
+            $return .= '<input type="hidden" name="tab_new_values[libelle]" value="' . $tab_new_values['libelle'] . '">';
+            $return .= '<input type="hidden" name="tab_new_values[short_libelle]" value="' . $tab_new_values['short_libelle'] . '">';
+            $return .= '<input type="submit" value="' . _('form_redo') . '" >';
+            $return .= '</form>';
+            $return .= '<br><br>';
+        } else {
             // update de la table
             $req_update='UPDATE conges_type_absence SET ta_libelle=\''.$tab_new_values['libelle'].'\', ta_short_libelle=\''.$tab_new_values['short_libelle'].'\' WHERE ta_id="'. \includes\SQL::quote($id_to_update).'" ';
             $result1 = \includes\SQL::query($req_update);
