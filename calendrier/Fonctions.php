@@ -153,7 +153,7 @@ class Fonctions
     						if ($_SESSION['config']['double_validation_conges']) {
     							$list_groupes_3 = get_list_login_du_grand_resp($_SESSION['userlogin'] );
     							if (count($list_groupes_3) > 0) {
-    								$list_groupes_3 = array_map("SQL::quote", $list_groupes_3);
+    								$list_groupes_3 = array_map("\includes\SQL::quote", $list_groupes_3);
     								$list_groupes_3 = '\'' . implode('\', \'', $list_groupes_3).'\'';
 
     								$sql1 = $sql1." OR u_login IN ( $list_groupes_3 ) ";
@@ -646,7 +646,7 @@ class Fonctions
 
     		if( ($_SESSION['config']['gestion_groupes']) && ($select_groupe!=0) ) {
     			$tab_logins = array_keys( $tab_all_users );
-    			$tab_logins = array_map("SQL::quote", $tab_logins);
+    			$tab_logins = array_map("\includes\SQL::quote", $tab_logins);
     		}
     		else
     			$tab_logins = false;
