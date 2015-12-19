@@ -29,4 +29,5 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 include_once ROOT_PATH . 'define.php';
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 $DEBUG = false;
-\config\Fonctions::typeAbsenceModule($DEBUG);
+echo \config\Fonctions::typeAbsenceModule($DEBUG);
+bottom();
