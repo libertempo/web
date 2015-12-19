@@ -2515,19 +2515,26 @@ function verif_droits_user($session, $niveau_droits, $DEBUG=FALSE)
 // on lit le contenu du répertoire lang et on parse les nom de ficher (ex lang_fr_francais.php)
 function affiche_select_from_lang_directory( $select_name, $default )
 {
-	if(empty($select_name)){$select_name = 'lang';}
-	if(empty($default)){$default = 'fr_FR';}
-	echo '<select id="'.$select_name.'" name="'.$select_name.'" class="form-control">';
+    $return = '';
+	if(empty($select_name)){
+        $select_name = 'lang';
+    }
+	if(empty($default)){
+        $default = 'fr_FR';
+    }
+	$return .= '<select id="' . $select_name . '" name="' . $select_name . '" class="form-control">';
 	$langs = glob( LOCALE_PATH .'*' );
-	var_dump( $langs );
+	$return .= 'langs = ' . var_export( $langs, true );
 	foreach($langs as $lang ) {
 		$lang = basename($lang);
-		if( $lang == $default )
-			echo '<option value="'.$lang.'" selected >'.$lang.'</option>';
-		else
-			echo '<option value="'.$lang.'">'.$lang.'</option>';
+		if( $lang == $default ) {
+			$return .= '<option value="' . $lang . '" selected >' . $lang . '</option>';
+        } else {
+			$return .= '<option value="' . $lang . '">' . $lang . '</option>';
+        }
 	}
-	echo "</select>\n";
+	$return .= '</select>';
+    return $return;
 }
 
 // on insert les logs des periodes de conges

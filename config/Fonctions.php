@@ -379,10 +379,11 @@ class Fonctions
         $req_1="SELECT MAX(ta_id) FROM conges_type_absence ";
         $res_1 = \includes\SQL::query($req_1);
         $row_1 = $res_1->fetch_row();
-        if(!$row_1)
+        if(!$row_1) {
             return 0;     // si la table est vide, on renvoit 0
-        else
+        } else {
             return $row_1[0];
+        }
     }
 
     //
@@ -396,16 +397,14 @@ class Fonctions
         $req_enum = "DESCRIBE $table $column";
         $res_enum = \includes\SQL::query($req_enum);
 
-        while ($row_enum = $res_enum->fetch_array())
-        {
+        while ($row_enum = $res_enum->fetch_array()) {
             $sql_type=$row_enum['Type'];
             // exemple : enum('autre','labo','fonction','personne','web', ....
             $liste_enum = strstr($sql_type, '(');
             $liste_enum = substr($liste_enum, 1);    // on vire le premier caractere
             $liste_enum = substr($liste_enum, 0, strlen($liste_enum)-1);    // on vire le dernier caractere
             $option = strtok($liste_enum,"','");
-            while ($option)
-            {
+            while ($option) {
                 $tab[]=$option;
                 $option = strtok("','");
             }
@@ -882,28 +881,29 @@ class Fonctions
     {
         //$DEBUG=TRUE;
         $PHP_SELF=$_SERVER['PHP_SELF'];
+        $return = '';
 
-        if($session=="")
+        if($session=="") {
             $URL = "$PHP_SELF";
-        else
+        } else {
             $URL = "$PHP_SELF?session=$session";
+        }
 
         $timeout=2 ;  // temps d'attente pour rafraichir l'écran après l'update !
 
-        if( $DEBUG ) { echo "SESSION = "; print_r($_SESSION); echo "<br>\n"; }
+        if( $DEBUG ) {
+            $return .= 'SESSION = ' . var_export($_SESSION, true) . '<br>';
+        }
 
-        foreach($tab_new_values as $key => $value )
-        {
+        foreach($tab_new_values as $key => $value ) {
             // CONTROLE gestion_conges_exceptionnels
             // si désactivation les conges exceptionnels, on verif s'il y a des conges exceptionnels enregistres ! si oui : changement impossible !
-            if(($key=="gestion_conges_exceptionnels") && ($value=="FALSE") )
-            {
+            if(($key=="gestion_conges_exceptionnels") && ($value=="FALSE") ) {
                 $sql_abs="SELECT ta_id, ta_libelle FROM conges_type_absence WHERE ta_type='conges_exceptionnels' ";
                 $ReqLog_abs = \includes\SQL::query($sql_abs);
 
-                if($ReqLog_abs->num_rows !=0)
-                {
-                    echo "<b>". _('config_abs_desactive_cong_excep_impossible') ."</b><br>\n";
+                if($ReqLog_abs->num_rows !=0) {
+                    $return .= '<b>' . _('config_abs_desactive_cong_excep_impossible') . '</b><br>';
                     $value = "TRUE" ;
                     $timeout=5 ;
                 }
@@ -911,12 +911,10 @@ class Fonctions
 
             // CONTROLE jour_mois_limite_reliquats
             // si modif de jour_mois_limite_reliquats, on verifie le format ( 0 ou jj-mm) , sinon : changement impossible !
-            if( ($key=="jour_mois_limite_reliquats") && ($value!= "0") )
-            {
+            if( ($key=="jour_mois_limite_reliquats") && ($value!= "0") ) {
                 $t=explode("-", $value);
-                if(checkdate($t[1], $t[0], date("Y"))==FALSE)
-                {
-                    echo "<b>". _('config_jour_mois_limite_reliquats_modif_impossible') ."</b><br>\n";
+                if(checkdate($t[1], $t[0], date("Y"))==FALSE) {
+                    $return .= '<b>' . _('config_jour_mois_limite_reliquats_modif_impossible') . '</b><br>';
                     $sql_date="SELECT conf_valeur FROM conges_config WHERE conf_nom='jour_mois_limite_reliquats' ";
                     $ReqLog_date = \includes\SQL::query($sql_date);
                     $data = $ReqLog_date->fetch_row();
@@ -925,26 +923,20 @@ class Fonctions
                 }
             }
 
-            if(preg_match("/_installed$/",$key) && ($value=="1"))
-            {
+            if(preg_match("/_installed$/",$key) && ($value=="1")) {
                 $plugin = explode("_",$key);
                 $plugin = $plugin[0];
                 install_plugin($plugin);
-            }
-            elseif(preg_match("/_installed$/",$key) && ($value=="0"))
-            {
+            } elseif(preg_match("/_installed$/",$key) && ($value=="0")) {
                 $plugin = explode("_",$key);
                 $plugin = $plugin[0];
                 uninstall_plugin($plugin);
             }
-            if(preg_match("/_activated$/",$key) && ($value=="1"))
-            {
+            if(preg_match("/_activated$/",$key) && ($value=="1")) {
                 $plugin = explode("_",$key);
                 $plugin = $plugin[0];
                 activate_plugin($plugin);
-            }
-            elseif(preg_match("/_activated$/",$key) && ($value=="0"))
-            {
+            } elseif(preg_match("/_activated$/",$key) && ($value=="0")) {
                 $plugin = explode("_",$key);
                 $plugin = $plugin[0];
                 disable_plugin($plugin);
@@ -961,33 +953,35 @@ class Fonctions
         $comment_log = "nouvelle configuration de php_conges ";
         log_action(0, "", "", $comment_log, $DEBUG);
 
-        echo "<span class = \"messages\">". _('form_modif_ok') ."</span><br>";
+        $return .= '<span class="messages">' . _('form_modif_ok') . '</span><br>';
+        $return .= '<META HTTP-EQUIV=REFRESH CONTENT="' . $timeout . '; URL=' . $URL . '">';
 
-        echo "<META HTTP-EQUIV=REFRESH CONTENT=\"$timeout; URL=$URL\">";
+        return $return;
     }
 
     public static function affichage_configuration($session, $DEBUG=FALSE)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
+        $return = '';
 
         // affiche_bouton_retour($session);
 
 
         // affichage de la liste des variables
 
-        if($session=="")
-            echo "<form action=\"$PHP_SELF\" method=\"POST\"> \n";
-        else
-            echo "<form action=\"$PHP_SELF?session=$session\" method=\"POST\"> \n";
-        echo "<input type=\"hidden\" name=\"action\" value=\"commit\">\n";
+        if($session=="") {
+            $return .= '<form action="' . $PHP_SELF . '" method="POST">';
+        } else {
+            $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '" method="POST">';
+        }
+        $return .= '<input type="hidden" name="action" value="commit">';
 
         //requête qui récupère les informations de config
         $sql1 = "SELECT * FROM conges_config ORDER BY conf_groupe ASC";
         $ReqLog1 = \includes\SQL::query($sql1);
 
         $old_groupe="";
-        while ($data =$ReqLog1->fetch_array())
-        {
+        while ($data =$ReqLog1->fetch_array()) {
             $conf_nom = $data['conf_nom'];
             $conf_valeur = $data['conf_valeur'];
             $conf_groupe = $data['conf_groupe'];
@@ -995,80 +989,72 @@ class Fonctions
             $conf_commentaire = strtolower($data['conf_commentaire']);
 
             // changement de groupe de variables
-            if($old_groupe != $conf_groupe)
-            {
-                if($old_groupe!="")
-                {
-                    echo "</td></tr>\n";
-                    echo "<tr><td align=\"right\">\n";
-                    echo "<input type=\"submit\" class=\"btn\"  value=\"". _('form_save_modif') ."\"><br>";
-                    echo "</td></tr>\n";
-                    echo "</table>\n";
+            if($old_groupe != $conf_groupe) {
+                if($old_groupe!="") {
+                    $return .= '</td></tr>';
+                    $return .= '<tr><td align="right">';
+                    $return .= '<input type="submit" class="btn"  value="' . _('form_save_modif') . '"><br>';
+                    $return .= '</td></tr>';
+                    $return .= '</table>';
                 }
-                echo "<br>\n";
-                echo "<table width=\"100%\">\n";
-                echo "<tr><td>\n";
-                echo "    <fieldset class=\"cal_saisie $conf_nom\">\n";
-                echo "    <legend class=\"boxlogin\">". _($conf_groupe) ."</legend>\n";
-                $old_groupe = $conf_groupe ;
+                $return .= '<br>';
+                $return .= '<table width="100%">';
+                $return .= '<tr><td>';
+                $return .= '<fieldset class="cal_saisie '. $conf_nom . '">';
+                $return .= '<legend class="boxlogin">' . _($conf_groupe) . '</legend>';
+                $old_groupe = $conf_groupe;
             }
 
             // si on est sur le parametre "lang" on liste les fichiers de langue du répertoire install/lang
-            if($conf_nom=="lang")
-            {
-                echo "Choisissez votre langue :<br> \n";
-                echo "Choose your language :<br>\n";
+            if($conf_nom=="lang") {
+                $return .= 'Choisissez votre langue :<br>';
+                $return .= 'Choose your language :<br>';
                 // affichage de la liste des langues supportées ...
                 // on lit le contenu du répertoire lang et on parse les nom de ficher (ex lang_fr_francais.php)
                 //affiche_select_from_lang_directory("tab_new_values[$conf_nom]");
-                affiche_select_from_lang_directory('lang', $conf_valeur);
-            }
-            else
-            {
+                $return .= affiche_select_from_lang_directory('lang', $conf_valeur);
+            } else {
                 // affichage commentaire
-                echo "<br><i>". _($conf_commentaire) ."</i><br>\n";
+                $return .= '<br><i>' . _($conf_commentaire) . '</i><br>';
 
                 // affichage saisie variable
-                if($conf_nom=="installed_version")
-                {
-                    echo "<b>$conf_nom&nbsp;&nbsp;=&nbsp;&nbsp;$conf_valeur</b><br>";
-                }
-                elseif( ($conf_type=="texte") || ($conf_type=="path") )
-                {
-                    echo "<b>$conf_nom</b>&nbsp;=&nbsp;<input type=\"text\" class=\"form-control\" size=\"50\" maxlength=\"200\" name=\"tab_new_values[$conf_nom]\" value=\"$conf_valeur\"><br>";
-                }
-                elseif($conf_type=="boolean")
-                {
-                    echo "<b>$conf_nom</b>&nbsp;=&nbsp;<select class=\"form-control\" name=\"tab_new_values[$conf_nom]\">";
-                    echo "<option value=\"TRUE\"";
-                    if($conf_valeur=="TRUE") echo "selected";
-                    echo ">TRUE</option>";
-                    echo "<option value=\"FALSE\"";
-                    if($conf_valeur=="FALSE") echo "selected";
-                    echo ">FALSE</option>";
-                    echo "</select><br>";
-                }
-                elseif(substr($conf_type,0,4)=="enum")
-                {
-                    echo "<b>$conf_nom</b>&nbsp;=&nbsp;<select class=\"form-control\" name=\"tab_new_values[$conf_nom]\">";
-                    $options=explode("/", substr(strstr($conf_type, '='),1));
-                    for($i=0; $i<count($options); $i++)
-                    {
-                        echo "<option value=\"".$options[$i]."\"";
-                        if($conf_valeur==$options[$i]) echo "selected";
-                        echo ">".$options[$i]."</option>";
+                if($conf_nom=="installed_version") {
+                    $return .= '<b>' . $conf_nom . '&nbsp;&nbsp;=&nbsp;&nbsp;' . $conf_valeur . '</b><br>';
+                } elseif( ($conf_type=="texte") || ($conf_type=="path") ) {
+                    $return .= '<b>' . $conf_nom . '</b>&nbsp;=&nbsp;<input type="text" class="form-control" size="50" maxlength="200" name="tab_new_values[' . $conf_nom . ']" value="' . $conf_valeur . '"><br>';
+                } elseif($conf_type=="boolean") {
+                    $return .= '<b>' . $conf_nom . '</b>&nbsp;=&nbsp;<select class="form-control" name="tab_new_values[' . $conf_nom . ']">';
+                    $return .= '<option value="TRUE"';
+                    if($conf_valeur=="TRUE") {
+                        $return .= ' selected';
                     }
-                    echo "</select><br>";
+                    $return .= '>TRUE</option>';
+                    $return .= '<option value="FALSE"';
+                    if($conf_valeur=="FALSE") {
+                        $return .= ' selected';
+                    }
+                    $return .= '>FALSE</option>';
+                    $return .= '</select><br>';
+                } elseif(substr($conf_type,0,4)=="enum") {
+                    $return .= '<b>' . $conf_nom . '</b>&nbsp;=&nbsp;<select class="form-control" name="tab_new_values[' . $conf_nom . ']">';
+                    $options=explode("/", substr(strstr($conf_type, '='),1));
+                    for($i=0; $i<count($options); $i++) {
+                        $return .= '<option value="' . $options[$i] . '"';
+                        if($conf_valeur==$options[$i]) {
+                            $return .= ' selected';
+                        }
+                        $return .= '>' . $options[$i] . '</option>';
+                    }
+                    $return .= '</select><br>';
                 }
-                echo "<br>";
+                $return .= '<br>';
             }
-
         }
 
-        echo "</td></tr>\n";
-        echo "<tr><td align=\"right\">\n";
-        echo "<input type=\"submit\" class=\"btn\"  value=\"". _('form_save_modif') ."\"><br>";
-        echo "</td></tr>\n";
+        $return .= '</td></tr>';
+        $return .= '<tr><td align="right">';
+        $return .= '<input type="submit" class="btn"  value="' . _('form_save_modif') . '"><br>';
+        $return .= '</td></tr>';
 
 
         /******************* GESTION DES PLUGINS V1.7 *************************/
@@ -1090,57 +1076,58 @@ class Fonctions
 
         $my_plugins = scandir(PLUGINS_DIR);
         $plug_count = 0;
-        echo "<table width=\"100%\">\n";
-        echo "<tr><td>\n";
-        echo "    <fieldset class=\"cal_saisie plugins\">\n";
-        echo "    <legend class=\"boxlogin\">Plugins</legend>\n";
-        foreach($my_plugins as $my_plugin){
-            if(is_dir(PLUGINS_DIR."/$my_plugin") && !preg_match("/^\./",$my_plugin))
-            {
-                echo "Plugin détecté : ";
-                echo "<b> $my_plugin </b>. This plugin is installed ? :
-                    <select class=\"form-control\" name=tab_new_values[".$my_plugin."_installed]>";
+        $return .= '<table width="100%">';
+        $return .= '<tr><td>';
+        $return .= '<fieldset class="cal_saisie plugins">';
+        $return .= '<legend class="boxlogin">Plugins</legend>';
+        foreach($my_plugins as $my_plugin) {
+            if(is_dir(PLUGINS_DIR."/$my_plugin") && !preg_match("/^\./",$my_plugin)) {
+                $return .= 'Plugin détecté : ';
+                $return .= '<b>' . $my_plugin . '</b> This plugin is installed ? :
+                    <select class="form-control" name=tab_new_values[' . $my_plugin . '_installed]>';
 
                 $sql_plug="SELECT p_is_active, p_is_install FROM conges_plugins WHERE p_name = '".$my_plugin."';";
                 $ReqLog_plug = \includes\SQL::query($sql_plug);
-                if($ReqLog_plug->num_rows !=0)
-                {
+                if($ReqLog_plug->num_rows !=0) {
                     while($plug = $ReqLog_plug->fetch_array()){
                         $p_install = $plug["p_is_install"];
-                        if ($p_install == '1')
-                        { echo "<option selected='selected' value='1'>Y</option><option value='0'>N</option>"; }
-                        else
-                        { echo "<option value='1'>Y</option><option selected='selected' value='0'>N</option>"; }
-                        echo "</select>";
-                        echo " ... Is activated ? : <select class=\"form-control\" name=tab_new_values[".$my_plugin."_activated]>";
+                        if ($p_install == '1') {
+                            $return .= '<option selected="selected" value="1">Y</option><option value="0">N</option>';
+                        } else {
+                            $return .= '<option value="1">Y</option><option selected="selected" value="0">N</option>';
+                        }
+                        $return .= '</select>';
+                        $return .= ' ... Is activated ? : <select class="form-control" name=tab_new_values[' . $my_plugin . '_activated]>';
                         $p_active = $plug["p_is_active"];
-                        if ($p_active == '1')
-                        { echo "<option selected='selected' value='1'>Y</option><option value='0'>N</option>"; }
-                        else
-                        { echo "<option value='1'>Y</option><option selected='selected' value='0'>N</option>"; }
+                        if ($p_active == '1') {
+                            $return .= '<option selected="selected" value="1">Y</option><option value="0">N</option>';
+                        } else {
+                            $return .= '<option value="1">Y</option><option selected="selected" value="0">N</option>';
+                        }
                     }
+                } else {
+                    $return .= '<option value="1">Y</option><option selected="selected" value="0">N</option>';
+                    $return .= '</select>';
+                    $return .= ' ... Is activated ? : <select class="form-control" name=tab_new_values[' . $my_plugin . '_activated]>';
+                    $return .= '<option value="1">Y</option><option selected="selected" value="0">N</option>';
                 }
-                else
-                {
-                    echo "<option value='1'>Y</option><option selected='selected' value='0'>N</option>";
-                    echo "</select>";
-                    echo " ... Is activated ? : <select class=\"form-control\" name=tab_new_values[".$my_plugin."_activated]>";
-                    echo "<option value='1'>Y</option><option selected='selected' value='0'>N</option>";
-                }
-                echo "</select>";
-                echo "<br />";
+                $return .= '</select>';
+                $return .= '<br />';
                 $plug_count++;
             }
         }
-        if($plug_count == 0){ echo "No plugin detected."; }
-        echo "</td></tr>\n";
-        echo "<tr><td align=\"right\">\n";
-        echo "<input type=\"submit\" class=\"btn\"  value=\"". _('form_save_modif') ."\"><br>";
-        echo "</td></tr>\n";
+        if($plug_count == 0){
+            $return .= 'No plugin detected.';
+        }
+        $return .= '</td></tr>';
+        $return .= '<tr><td align="right">';
+        $return .= '<input type="submit" class="btn"  value="' . _('form_save_modif') . '"><br>';
+        $return .= '</td></tr>';
         /**********************************************************************/
 
-        echo "</table>\n";
-        echo "</form>\n";
+        $return .= '</table>';
+        $return .= '</form>';
+        return $return;
     }
 
     /**
@@ -1157,8 +1144,11 @@ class Fonctions
     {
         // verif des droits du user à afficher la page
         verif_droits_user($session, "is_admin", $DEBUG);
+        $return = '';
 
-        if( $DEBUG ) { echo "SESSION = "; print_r($_SESSION); echo "<br>\n";}
+        if( $DEBUG ) {
+            $return .= 'SESSION = ' . var_export($_SESSION, true) . '<br>';
+        }
 
 
         /*** initialisation des variables ***/
@@ -1176,14 +1166,17 @@ class Fonctions
 
         /*************************************/
 
-        if( $DEBUG ) { echo "tab_new_values = "; print_r($tab_new_values); echo "<br>\n"; }
-
-        if($action=="commit")
-            \config\Fonctions::commit_saisie($tab_new_values, $session, $DEBUG);
-        else {
-            echo "<div class=\"wrapper configure\">\n";
-            \config\Fonctions::affichage_configuration($session, $DEBUG);
-            echo "<div>\n";
+        if( $DEBUG ) {
+            $return .= 'tab_new_values = ' . var_export($tab_new_values, true) . '<br>';
         }
+
+        if($action=="commit") {
+            $return .= \config\Fonctions::commit_saisie($tab_new_values, $session, $DEBUG);
+        } else {
+            $return .= '<div class="wrapper configure">';
+            $return .= \config\Fonctions::affichage_configuration($session, $DEBUG);
+            $return .= '<div>';
+        }
+        return $return;
     }
 }
