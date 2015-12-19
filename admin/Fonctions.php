@@ -1224,7 +1224,6 @@ class Fonctions
 
 
         // AFFICHAGE TABLEAU
-
         $return .= '<table class="table table-hover table-responsive table-condensed table-striped" >';
         $return .= '<thead>';
         $return .= '<tr>';
@@ -3163,7 +3162,7 @@ class Fonctions
         return $return;
     }
 
-    public static function verif_new_param(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, $DEBUG=FALSE)
+    public static function verif_new_param(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, &$return = null, $DEBUG=FALSE)
     {
         $PHP_SELF = $_SERVER['PHP_SELF'];
         $session  = session_id();
@@ -3302,6 +3301,7 @@ class Fonctions
         $PHP_SELF = $_SERVER['PHP_SELF'];
         $session  = session_id();
         $return   = '';
+        $verifFalse = '';
 
         if( $DEBUG ) {
             $return .= 'tab_new_jours_an = ';
@@ -3311,7 +3311,7 @@ class Fonctions
         }
 
         // si pas d'erreur de saisie :
-        if(\admin\Fonctions::verif_new_param($tab_new_user, $tab_new_jours_an, $tab_new_solde, $DEBUG)==0) {
+        if(\admin\Fonctions::verif_new_param($tab_new_user, $tab_new_jours_an, $tab_new_solde, $verifFalse, $DEBUG)==0) {
             $return .= $tab_new_user['login'] . ' --- ' . $tab_new_user['nom'] .  ' --- ' . $tab_new_user['prenom'] . ' --- ' . $tab_new_user['quotite'];
             $return .= ' --- ' . $tab_new_user['is_resp'] . ' --- ' . $tab_new_user['resp_login'] . ' --- ' . $tab_new_user['is_admin'] . ' --- ' . $tab_new_user['is_hr'] . ' --- ' . $tab_new_user['see_all'] . ' --- ' . $tab_new_user['email'] . '<br>';
 
@@ -3403,6 +3403,8 @@ class Fonctions
             $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=admin-users" method="POST">';
             $return .= '<input type="submit" value="' . _('form_retour') .'">';
             $return .= '</form>';
+        } else {
+            $return .= $verifFalse;
         }
         return $return;
     }
