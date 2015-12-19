@@ -61,10 +61,10 @@ verif_droits_user($session, 'is_admin', $DEBUG);
 	$onglets['ajout-user']	= _('admin_onglet_add_user');
 
 	if( $_SESSION['config']['gestion_groupes'] ) {
-		if( $_SESSION['config']['admin_see_all'] || !is_resp($_SESSION['userlogin']) )
+		if( $_SESSION['config']['admin_see_all'] || $_SESSION['userlogin']=="admin" || is_hr($_SESSION['userlogin']) )
 			$onglets['admin-group'] = _('admin_onglet_gestion_groupe');
 		$onglets['admin-group-users'] = _('admin_onglet_groupe_user');
-		if( $_SESSION['config']['admin_see_all'] || !is_resp($_SESSION['userlogin']) )
+		if( $_SESSION['config']['admin_see_all'] || $_SESSION['userlogin']=="admin" || is_hr($_SESSION['userlogin']) )
 			$onglets['admin-group-responsables'] = _('admin_onglet_groupe_resp');
 	}
 	

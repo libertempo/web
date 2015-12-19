@@ -1303,7 +1303,7 @@ class Fonctions
         // Récuperation des informations des users:
         $tab_info_users=array();
         // si l'admin peut voir tous les users  OU si l'admin n'est pas responsable
-        if( $_SESSION['config']['admin_see_all'] || !is_resp($_SESSION['userlogin']) )
+        if( $_SESSION['config']['admin_see_all'] || $_SESSION['userlogin']=="admin" || is_hr($_SESSION['userlogin']) )
             $tab_info_users = recup_infos_all_users($DEBUG);
         else
             $tab_info_users = recup_infos_all_users_du_resp($_SESSION['userlogin'], $DEBUG);
@@ -3156,7 +3156,7 @@ class Fonctions
 
         // PREPARATION DES OPTIONS DU SELECT du resp_login
         $text_resp_login="<select class=\"form-control\" name=\"new_resp_login\" id=\"resp_login_id\" ><option value=\"no_resp\">". _('admin_users_no_resp') ."</option>" ;
-	if( $_SESSION['config']['admin_see_all'] || !is_resp($_SESSION['userlogin']) )
+	if( $_SESSION['config']['admin_see_all'] || $_SESSION['userlogin']=="admin" || is_hr($_SESSION['userlogin'],  $DEBUG=FALSE))
         	$sql2 = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_is_resp = \"Y\" ORDER BY u_nom, u_prenom"  ;
 	else
 		$sql2 = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_is_resp = \"Y\" AND u_login=\"".$_SESSION['userlogin']."\" ORDER BY u_nom, u_prenom" ;
@@ -3292,7 +3292,7 @@ class Fonctions
         if($_SESSION['config']['gestion_groupes'])
         {
             echo "<br>\n";
-	if( $_SESSION['config']['admin_see_all'] || !is_resp($_SESSION['userlogin']) )
+	if( $_SESSION['config']['admin_see_all'] || $_SESSION['userlogin']=="admin" ||  is_hr($_SESSION['userlogin']) )
             \admin\Fonctions::affiche_tableau_affectation_user_groupes2("",  $DEBUG);
 	else
             \admin\Fonctions::affiche_tableau_affectation_user_groupes2($_SESSION['userlogin'],  $DEBUG);
