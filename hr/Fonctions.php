@@ -3210,6 +3210,7 @@ class Fonctions
         /***********************************/
         // AFFICHAGE DE LA PAGE
         header_menu('', 'Libertempo : '._('divers_fermeture'), $add_css);
+        include ROOT_PATH .'fonctions_javascript.php' ;
 
         /*********************************/
         /*   AFFICHAGE DES ONGLETS...  */
