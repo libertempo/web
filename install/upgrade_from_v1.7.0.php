@@ -79,7 +79,7 @@ $mod_section="UPDATE conges_config SET conf_groupe = '05_Utilisateur' WHERE conf
 $res_mod_section=SQL::query($mod_section);
 
 //ajout du type de mail en cas d'absence non soumise à validation.
-$ajout_mail_new_absence="INSERT IGNORE INTO `conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUES ('mail_new_absences_conges', 'APPLI CONGES - Nouvelle absence', ' __SENDER_NAME__ vous informe qu\'il sera absent. Ce type de congés ne necéssite pas de validation. Vous pouvez consulter votre application Libertempo : __URL_ACCUEIL_CONGES__/\r\n\r\n-------------------------------------------------------------------------------------------------------\r\nCeci est un message automatique. ');";
+$ajout_mail_new_absence="INSERT IGNORE INTO `conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUES ('mail_new_absence_conges', 'APPLI CONGES - Nouvelle absence', ' __SENDER_NAME__ vous informe qu\'il sera absent. Ce type de congés ne necéssite pas de validation. Vous pouvez consulter votre application Libertempo : __URL_ACCUEIL_CONGES__/\r\n\r\n-------------------------------------------------------------------------------------------------------\r\nCeci est un message automatique. ');";
 $res_ajout_mail_new_absence=SQL::query($ajout_mail_new_absence);
 
 //ical
