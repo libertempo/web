@@ -1,7 +1,9 @@
 <?php
 /*************************************************************************************************
 Libertempo : Gestion Interactive des Congés
-Copyright (C) 2015 (Wouldsmina)Copyright (C) 2015 (Prytoegrian)Copyright (C) 2005 (cedric chauvineau)
+Copyright (C) 2015 (Wouldsmina)
+Copyright (C) 2015 (Prytoegrian)
+Copyright (C) 2005 (cedric chauvineau)
 
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
 termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
@@ -1034,12 +1036,7 @@ function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $m
 		$key1="mail_valid_conges_sujet" ;
 		$key2="mail_valid_conges_contenu" ;
 	}
-	elseif($objet=="new_demande_resp_absent")
-	{
-		$key1="mail_new_demande_resp_absent_sujet" ;
-		$key2="mail_new_demande_resp_absent_contenu" ;
-	}
-	else  // $objet== "refus_conges" ou "new_demande" ou new_absence ou "annul_conges"
+	else
 	{
 		$key1="mail_".$objet."_sujet" ;
 		$key2="mail_".$objet."_contenu" ;
