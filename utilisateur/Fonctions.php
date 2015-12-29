@@ -207,9 +207,9 @@ class Fonctions
 
         $result = \includes\SQL::query($sql1) ;
 
-        if($_SESSION['config']['mail_modif_demande_alerte_resp'])
-        alerte_mail($_SESSION['userlogin'], ":responsable:", $p_num_to_update, "modif_demande", $DEBUG);
-
+        if($_SESSION['config']['mail_modif_demande_alerte_resp']) {
+            alerte_mail($_SESSION['userlogin'], ":responsable:", $p_num_to_update, "modif_demande", $DEBUG);
+        }
         $comment_log = "modification de demande num $p_num_to_update ($new_nb_jours jour(s)) ( de $new_debut $new_demi_jour_deb a $new_fin $new_demi_jour_fin) ($new_comment)";
         log_action($p_num_to_update, "$p_etat", $_SESSION['userlogin'], $comment_log, $DEBUG);
 
@@ -403,9 +403,9 @@ class Fonctions
 
         $result_delete = \includes\SQL::query($sql_delete);
 
-    if($_SESSION['config']['mail_supp_demande_alerte_resp'])
-        alerte_mail($_SESSION['userlogin'], ":responsable:", $p_num, "supp_demande", $DEBUG);
-
+        if($_SESSION['config']['mail_supp_demande_alerte_resp']) {
+            alerte_mail($_SESSION['userlogin'], ":responsable:", $p_num, "supp_demande", $DEBUG);
+        }
         $comment_log = "suppression de demande num $p_num_to_delete";
         log_action($p_num_to_delete, "", $_SESSION['userlogin'], $comment_log, $DEBUG);
 
