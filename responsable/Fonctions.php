@@ -1478,6 +1478,7 @@ class Fonctions
             $user_login=$champs[0];
             $user_nb_jours_pris=$champs[1];
             $user_nb_jours_pris_float=(float) $user_nb_jours_pris ;
+            $user_nb_jours_pris_format=number_format($user_nb_jours_pris_float, 1, '.', '');
             $numero=$elem_tableau['key'];
             $numero_int=(int) $numero;
             $user_type_abs_id=$champs[2];
