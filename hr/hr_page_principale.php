@@ -25,4 +25,4 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 $DEBUG = false;
-\hr\Fonctions::pagePrincipaleModule($tab_type_cong, $tab_type_conges_exceptionnels, $session, $DEBUG);
+echo \hr\Fonctions::pagePrincipaleModule($tab_type_cong, $tab_type_conges_exceptionnels, $session, $DEBUG);

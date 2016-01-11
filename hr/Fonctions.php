@@ -47,36 +47,37 @@ class Fonctions
         // AFFICHAGE ETAT CONGES TOUS USERS
         /***********************************/
         // AFFICHAGE TABLEAU (premiere ligne)
-        echo '<h2>'. _('hr_traite_user_etat_conges') ."</H2>\n\n";
-        echo "<table cellpadding=\"2\" class=\"tablo\" width=\"80%\">\n";
-        echo '<thead>';
-        echo '<tr>';
-        echo '<th>'. _('divers_nom_maj') .'</th>';
-        echo '<th>'. _('divers_prenom_maj') .'</th>';
-        echo '<th>'. _('divers_quotite_maj_1') .'</th>' ;
+        $return = '';
+        $return .= '<h2>'. _('hr_traite_user_etat_conges') . '</H2>';
+        $return .= '<table cellpadding="2" class="tablo" width="80%">';
+        $return .= '<thead>';
+        $return .= '<tr>';
+        $return .= '<th>' . _('divers_nom_maj') . '</th>';
+        $return .= '<th>' . _('divers_prenom_maj') . '</th>';
+        $return .= '<th>' . _('divers_quotite_maj_1') . '</th>';
         $nb_colonnes = 3;
         foreach($tab_type_cong as $id_conges => $libelle) {
             // cas d'une absence ou d'un congé
-            echo "<th> $libelle"." / ". _('divers_an_maj') .'</th>';
-            echo '<th>'. _('divers_solde_maj') ." ".$libelle .'</th>';
+            $return .= '<th>' . $libelle . ' / ' . _('divers_an_maj') . '</th>';
+            $return .= '<th>'. _('divers_solde_maj') . ' ' . $libelle . '</th>';
             $nb_colonnes += 2;
         }
         // conges exceptionnels
         if ($_SESSION['config']['gestion_conges_exceptionnels']) {
             foreach($tab_type_conges_exceptionnels as $id_type_cong => $libelle) {
-                echo '<th>'. _('divers_solde_maj') ." $libelle</th>\n";
+                $return .= '<th>'. _('divers_solde_maj') . ' ' . $libelle . '</th>';
                 $nb_colonnes += 1;
             }
         }
-        echo '<th></th>';
+        $return .= '<th></th>';
         $nb_colonnes += 1;
         if($_SESSION['config']['editions_papier']) {
-            echo '<th></th>';
+            $return .= '<th></th>';
             $nb_colonnes += 1;
         }
-        echo '</tr>';
-        echo '</thead>';
-        echo '<tbody>';
+        $return .= '</tr>';
+        $return .= '</thead>';
+        $return .= '<tbody>';
 
         /***********************************/
         // AFFICHAGE USERS
@@ -85,22 +86,26 @@ class Fonctions
 
         // Récup dans un tableau de tableau des informations de tous les users dont $_SESSION['userlogin'] est responsable
         $tab_all_users=recup_infos_all_users_du_hr($_SESSION['userlogin'], $DEBUG);
-        if( $DEBUG ) {echo "tab_all_users :<br>\n";  print_r($tab_all_users); echo "<br>\n"; }
+        if( $DEBUG ) {
+            $return .= 'tab_all_users :<br>' . var_export($tab_all_users, true) . '<br>';
+        }
 
-        if(count($tab_all_users)==0) // si le tableau est vide (resp sans user !!) on affiche une alerte !
-            echo "<tr><td class=\"histo\" colspan=\"".$nb_colonnes."\">". _('resp_etat_aucun_user') ."</td></tr>\n" ;
-        else {
+        if(count($tab_all_users)==0) {
+            // si le tableau est vide (resp sans user !!) on affiche une alerte !
+            $return .= '<tr><td class="histo" colspan="' . $nb_colonnes . '">' .  _('resp_etat_aucun_user') . '</td></tr>';
+        } else {
             //$i = true;
             foreach($tab_all_users as $current_login => $tab_current_user) {
                 //tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
                 $tab_conges=$tab_current_user['conges'];
                 $text_affich_user="<a href=\"hr_index.php?session=$session&onglet=traite_user&user_login=$current_login\" title=\""._('resp_etat_users_afficher')."\"><i class=\"fa fa-eye\"></i></a>" ;
                 $text_edit_papier="<a href=\"../edition/edit_user.php?session=$session&user_login=$current_login\" target=\"_blank\" title=\""._('resp_etat_users_imprim')."\"><i class=\"fa fa-file-text\"></i></a>";
-                if($tab_current_user['is_active'] == "Y" || $_SESSION['config']['print_disable_users'] == 'TRUE')
-                    { echo '<tr>'; }
-                else
-                    { echo '<tr class="hidden">'; }
-                echo '<td>'.$tab_current_user['nom']."</td><td>".$tab_current_user['prenom']."</td><td>".$tab_current_user['quotite']."%</td>";
+                if($tab_current_user['is_active'] == "Y" || $_SESSION['config']['print_disable_users'] == 'TRUE') {
+                    $return .= '<tr>';
+                } else {
+                    $return .= '<tr class="hidden">';
+                }
+                $return .= '<td>' . $tab_current_user['nom'] . '</td><td>' . $tab_current_user['prenom'] . '</td><td>' . $tab_current_user['quotite'] . '%</td>';
                 foreach($tab_type_cong as $id_conges => $libelle) {
                     $nbAn = isset($tab_conges[$libelle]['nb_an'])
                         ? $tab_conges[$libelle]['nb_an']
@@ -108,8 +113,8 @@ class Fonctions
                     $solde = isset($tab_conges[$libelle]['solde'])
                         ? $tab_conges[$libelle]['solde']
                         : 0;
-                    echo '<td>'.$nbAn.'</td>';
-                    echo '<td>'. $solde .'</td>';
+                    $return .= '<td>'.$nbAn.'</td>';
+                    $return .= '<td>'. $solde .'</td>';
                 }
                 if ($_SESSION['config']['gestion_conges_exceptionnels']) {
                     foreach($tab_type_conges_exceptionnels as $id_type_cong => $libelle)
@@ -117,20 +122,22 @@ class Fonctions
                         $solde = isset($tab_conges[$libelle]['solde'])
                             ? $tab_conges[$libelle]['solde']
                             : 0;
-                        echo '<td>' . $solde .'</td>';
+                        $return .= '<td>' . $solde .'</td>';
                     }
                 }
-                echo "<td>$text_affich_user</td>\n";
-                if($_SESSION['config']['editions_papier'])
-                echo "<td>$text_edit_papier</td>";
-                echo '</tr>';
+                $return .= '<td>' . $text_affich_user . '</td>';
+                if($_SESSION['config']['editions_papier']) {
+                    $return .= '<td>' . $text_edit_papier . '</td>';
+                }
+
+                $return .= '</tr>';
                 //$i = !$i;
             }
         }
 
-        echo '</tbody>';
-        echo '</table>';
-        echo '<script>
+        $return .= '</tbody>';
+        $return .= '</table>';
+        $return .= '<script>
         $(document).ready(function()
             {
             $("tr:not(.hidden):odd").css("background-color", "#F4F4F4");
@@ -139,6 +146,7 @@ class Fonctions
                 });
             });
         </script>';
+        return $return;
     }
 
     public static function traite_all_demande_en_cours($tab_bt_radio, $tab_text_refus, $DEBUG=FALSE)
