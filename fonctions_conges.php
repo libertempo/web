@@ -1210,58 +1210,64 @@ function recup_tableau_rtt_planifiees($mois, $first_jour, $year , $tab_logins = 
 // affiche une liste déroulante des jours du mois : la variable est $new_jour
 function affiche_selection_new_jour($default)
 {
-	echo "<select class=\"form-control\" name=\"new_jour\" >\n";
-	for($i=1; $i<10; $i++)
-	{
-		if($default=="0$i")
-			echo "<option value=\"0$i\" selected >0$i</option>\n";
-		else
-			echo "<option value=\"0$i\">0$i</option>\n";
+    $return = '';
+	$return .= '<select class="form-control" name="new_jour">';
+	for($i=1; $i<10; $i++) {
+		if($default=="0$i") {
+			$return .= '<option value="0' . $i . '" selected >0' . $i . '</option>';
+        } else {
+			$return .= '<option value="0' . $i . '">0' . $i . '</option>';
+        }
 	}
-	for($i=10; $i<32; $i++)
-	{
-		if($default=="$i")
-			echo "<option value=\"$i\" selected >$i</option>\n";
-		else
-			echo "<option value=\"$i\">$i</option>\n";
+	for($i=10; $i<32; $i++) {
+		if($default=="$i") {
+            $return .= '<option value="' . $i . '" selected >' . $i . '</option>';
+        } else {
+			$return .= '<option value="' . $i . '">' . $i . '</option>';
+        }
 	}
-	echo "</select>\n";
+	$return .= '</select>';
+    return $return;
 }
 
 // affiche une liste déroulante des mois de l'année : la variable est $new_mois
 function affiche_selection_new_mois($default)
 {
-	echo "<select class=\"form-control\" name=\"new_mois\" >\n";
-	for($i=1; $i<10; $i++)
-	{
-		echo "$default : $i<br>\n";
-		if($default=="0$i")
-			echo "<option value=\"0$i\" selected >0$i</option>\n";
-		else
-			echo "<option value=\"0$i\">0$i</option>\n";
+    $return = '';
+	$return .= '<select class="form-control" name="new_mois" >';
+	for($i=1; $i<10; $i++) {
+		$return .= $default . ' : ' . $i . '<br>';
+		if($default=="0$i") {
+			$return .= '<option value="0' . $i . '" selected >0' . $i . '</option>';
+        } else {
+			$return .= '<option value="0' . $i . '">0' . $i . '</option>';
+        }
 	}
-	for($i=10; $i<13; $i++)
-	{
-		if($default=="$i")
-			echo "<option value=\"$i\" selected >$i</option>\n";
-		else
-			echo "<option value=\"$i\">$i</option>\n";
+	for($i=10; $i<13; $i++) {
+		if($default=="$i") {
+			$return .= '<option value="' . $i . '" selected >' . $i . '</option>';
+        } else {
+			$return .= '<option value="' . $i . '">' . $i . '</option>';
+        }
 	}
-	echo "</select>\n";
+	$return .= '</select>';
+    return $return;
 }
 
 // affiche une liste déroulante d'année : la variable est $new_year
 function affiche_selection_new_year($an_debut, $an_fin, $default)
 {
-	echo "<select class=\"form-control\" name=\"new_year\" >\n";
-	for($i=$an_debut; $i<$an_fin+1; $i++)
-	{
-		if($default=="$i")
-			echo "<option value=\"$i\" selected >$i</option>\n";
-		else
-			echo "<option value=\"$i\">$i</option>\n";
+    $return = '';
+	$return .= '<select class="form-control" name="new_year">';
+	for($i=$an_debut; $i<$an_fin+1; $i++) {
+		if($default=="$i") {
+			$return .= '<option value="' . $i . '" selected >' . $i . '</option>';
+        } else {
+			$return .= '<option value="' . $i . '">' . $i . '</option>';
+        }
 	}
-	echo "</select>\n";
+	$return .= '</select>';
+    return $return;
 }
 
 // met la date aaaa-mm-jj dans le format jj-mm-aaaa
@@ -2506,19 +2512,26 @@ function verif_droits_user($session, $niveau_droits, $DEBUG=FALSE)
 // on lit le contenu du répertoire lang et on parse les nom de ficher (ex lang_fr_francais.php)
 function affiche_select_from_lang_directory( $select_name, $default )
 {
-	if(empty($select_name)){$select_name = 'lang';}
-	if(empty($default)){$default = 'fr_FR';}
-	echo '<select id="'.$select_name.'" name="'.$select_name.'" class="form-control">';
+    $return = '';
+	if(empty($select_name)){
+        $select_name = 'lang';
+    }
+	if(empty($default)){
+        $default = 'fr_FR';
+    }
+	$return .= '<select id="' . $select_name . '" name="' . $select_name . '" class="form-control">';
 	$langs = glob( LOCALE_PATH .'*' );
-	var_dump( $langs );
+	$return .= 'langs = ' . var_export( $langs, true );
 	foreach($langs as $lang ) {
 		$lang = basename($lang);
-		if( $lang == $default )
-			echo '<option value="'.$lang.'" selected >'.$lang.'</option>';
-		else
-			echo '<option value="'.$lang.'">'.$lang.'</option>';
+		if( $lang == $default ) {
+			$return .= '<option value="' . $lang . '" selected >' . $lang . '</option>';
+        } else {
+			$return .= '<option value="' . $lang . '">' . $lang . '</option>';
+        }
 	}
-	echo "</select>\n";
+	$return .= '</select>';
+    return $return;
 }
 
 // on insert les logs des periodes de conges
