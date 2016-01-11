@@ -1,7 +1,9 @@
 <?php
 /*************************************************************************************************
 Libertempo : Gestion Interactive des Congés
-Copyright (C) 2015 (Wouldsmina)Copyright (C) 2015 (Prytoegrian)Copyright (C) 2005 (cedric chauvineau)
+Copyright (C) 2015 (Wouldsmina)
+Copyright (C) 2015 (Prytoegrian)
+Copyright (C) 2005 (cedric chauvineau)
 
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
 termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
@@ -152,6 +154,7 @@ function compter($user, $num_current_periode, $date_debut, $date_fin, $opt_debut
 			$current_day=jour_suivant($current_day);
 		}
 		 $nb_jours = $nb_jours * 0.5;
+		 $nb_jours = number_format($nb_jours, 1, '.', '');
 		return $nb_jours;
 	}
 	else

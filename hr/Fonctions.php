@@ -563,6 +563,7 @@ class Fonctions
             $user_login=$champs[0];
             $user_nb_jours_pris=$champs[1];
             $user_nb_jours_pris_float=(float) $user_nb_jours_pris ;
+            $user_nb_jours_pris_float=number_format($user_nb_jours_pris_float, 1, '.', '');
             $numero=$elem_tableau['key'];
             $numero_int=(int) $numero;
             $user_type_abs_id=$champs[2];
@@ -3053,6 +3054,7 @@ class Fonctions
         /***********************************/
         // AFFICHAGE DE LA PAGE
         header_menu('', 'Libertempo : '._('divers_fermeture'), $add_css);
+        include ROOT_PATH .'fonctions_javascript.php' ;
 
         /*********************************/
         /*   AFFICHAGE DES ONGLETS...  */

@@ -804,10 +804,10 @@ msgid "calendrier_imprimable"
 msgstr "version imprimable"
 
 msgid "calendrier_jour_precedent"
-msgstr "Jour Précédent"
+msgstr "Semaine Précédente"
 
 msgid "calendrier_jour_suivant"
-msgstr "Jour Suivant"
+msgstr "Semaine Suivante"
 
 msgid "calendrier_legende_we"
 msgstr "week-end ou jour férié"

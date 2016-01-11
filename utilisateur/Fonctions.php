@@ -1,7 +1,9 @@
 <?php
 /*************************************************************************************************
 Libertempo : Gestion Interactive des Congés
-Copyright (C) 2015 (Wouldsmina)Copyright (C) 2015 (Prytoegrian)Copyright (C) 2005 (cedric chauvineau)
+Copyright (C) 2015 (Wouldsmina)
+Copyright (C) 2015 (Prytoegrian)
+Copyright (C) 2005 (cedric chauvineau)
 
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les 
 termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
@@ -110,11 +112,12 @@ class Fonctions
             if ( $periode_num != 0 ) {
                 echo schars( _('form_modif_ok') ).' !<br><br>'."\n";
                 //envoi d'un mail d'alerte au responsable (si demandé dans config de php_conges)
-                if($_SESSION['config']['mail_new_demande_alerte_resp'])
+                if($_SESSION['config']['mail_new_demande_alerte_resp']){
 		    if( in_array(get_type_abs($new_type, $DEBUG) , array('absences') ) )
-                        alerte_mail($_SESSION['userlogin'], ":responsable:", $periode_num, "new_absences", $DEBUG);
+                        alerte_mail($_SESSION['userlogin'], ":responsable:", $periode_num, "new_absence", $DEBUG);
                     else
                         alerte_mail($_SESSION['userlogin'], ":responsable:", $periode_num, "new_demande", $DEBUG);
+                    }
             }
             else
                 echo schars( _('form_modif_not_ok') ).' !<br><br>'."\n";
@@ -204,6 +207,9 @@ class Fonctions
 
         $result = \includes\SQL::query($sql1) ;
 
+        if($_SESSION['config']['mail_modif_demande_alerte_resp']) {
+            alerte_mail($_SESSION['userlogin'], ":responsable:", $p_num_to_update, "modif_demande", $DEBUG);
+        }
         $comment_log = "modification de demande num $p_num_to_update ($new_nb_jours jour(s)) ( de $new_debut $new_demi_jour_deb a $new_fin $new_demi_jour_fin) ($new_comment)";
         log_action($p_num_to_update, "$p_etat", $_SESSION['userlogin'], $comment_log, $DEBUG);
 
@@ -397,6 +403,9 @@ class Fonctions
 
         $result_delete = \includes\SQL::query($sql_delete);
 
+        if($_SESSION['config']['mail_supp_demande_alerte_resp']) {
+            alerte_mail($_SESSION['userlogin'], ":responsable:", $p_num, "supp_demande", $DEBUG);
+        }
         $comment_log = "suppression de demande num $p_num_to_delete";
         log_action($p_num_to_delete, "", $_SESSION['userlogin'], $comment_log, $DEBUG);
 
