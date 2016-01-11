@@ -1249,7 +1249,7 @@ class Fonctions
         // Récuperation des informations des users:
         $tab_info_users=array();
         // si l'admin peut voir tous les users  OU si l'admin n'est pas responsable
-        if( $_SESSION['config']['admin_see_all'] || $_SESSION['userlogin']=="admin" || is_hr($_SESSION['userlogin']) )
+        if( $_SESSION['config']['admin_see_all'] || $_SESSION['userlogin']=="admin" || is_hr($_SESSION['userlogin']) ) {
             $tab_info_users = recup_infos_all_users($DEBUG);
         } else {
             $tab_info_users = recup_infos_all_users_du_resp($_SESSION['userlogin'], $DEBUG);
