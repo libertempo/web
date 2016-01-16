@@ -18,13 +18,5 @@ if (!defined( 'DEFINE_INCLUDE' )) {
 
 	define('PLUGINS_DIR',		INCLUDE_PATH . "plugins/");
 
-	/*--- twiguification ---*/
 	require_once ROOT_PATH . 'vendor/autoload.php';
-
-	$loader = new \Twig_Loader_Filesystem(ROOT_PATH . 'template/twig');
-	// global $twig;
-
-	$twig = new \Twig_Environment($loader, array(
-	    'cache' => ROOT_PATH . 'template/twig/cache',
-	));
 }
