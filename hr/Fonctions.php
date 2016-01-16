@@ -1986,20 +1986,26 @@ class Fonctions
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id();
+        $return = '';
 
         // recup de la liste de TOUS les users du groupe
         $tab_all_users_du_groupe=recup_infos_all_users_du_groupe($group_id, $DEBUG);
-        if( $DEBUG ) { echo "tab_all_users_du_groupe =<br>\n"; print_r($tab_all_users_du_groupe); echo "<br>\n"; }
-        if( $DEBUG ) { echo "tab_type_conges =<br>\n"; print_r($tab_type_conges); echo "<br>\n"; }
+        if( $DEBUG ) {
+            $return .= 'tab_all_users_du_groupe =<br>' . var_export($tab_all_users_du_groupe, true) . '<br>';
+        }
+        if( $DEBUG ) {
+            $return .= 'tab_type_conges =<br>' . var_export($tab_type_conges, true) . '<br>';
+        }
 
         $comment_cloture =  _('resp_cloture_exercice_commentaire') ." ".date("m/Y");
 
         if(count($tab_all_users_du_groupe)!=0) {
             // traitement des users dont on est responsable :
             foreach($tab_all_users_du_groupe as $current_login => $tab_current_user) {
-                \hr\Fonctions::cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $comment_cloture, $DEBUG);
+                $return .= \hr\Fonctions::cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $comment_cloture, $DEBUG);
             }
         }
+        return $return;
     }
 
     // cloture / debut d'exercice pour TOUS les users du resp (ou grand resp)
@@ -2007,24 +2013,32 @@ class Fonctions
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id();
+        $return = '';
 
         // recup de la liste de TOUS les users dont $resp_login est responsable
         // (prend en compte le resp direct, les groupes, le resp virtuel, etc ...)
         // renvoit une liste de login entre quotes et séparés par des virgules
         $tab_all_users_du_hr=recup_infos_all_users_du_hr($_SESSION['userlogin']);
         $tab_all_users_du_grand_resp=recup_infos_all_users_du_grand_resp($_SESSION['userlogin']);
-        if( $DEBUG ) { echo "tab_all_users_du_hr =<br>\n"; print_r($tab_all_users_du_hr); echo "<br>\n"; }
-        if( $DEBUG ) { echo "tab_all_users_du_grand_resp =<br>\n"; print_r($tab_all_users_du_grand_resp); echo "<br>\n"; }
-        if( $DEBUG ) { echo "tab_type_conges =<br>\n"; print_r($tab_type_conges); echo "<br>\n"; }
+        if( $DEBUG ) {
+            $return .= 'tab_all_users_du_hr =<br>' . var_export($tab_all_users_du_hr, true) . '<br>';
+        }
+        if( $DEBUG ) {
+            $return .= 'tab_all_users_du_grand_resp =<br>' . var_export($tab_all_users_du_grand_resp, true) . '<br>';
+        }
+        if( $DEBUG ) {
+            $return .= 'tab_type_conges =<br>' . var_export($tab_type_conges, true) . '<br>';
+        }
 
         $comment_cloture =  _('resp_cloture_exercice_commentaire') ." ".date("m/Y");
 
         if( (count($tab_all_users_du_hr)!=0) || (count($tab_all_users_du_grand_resp)!=0) ) {
             // traitement des users dont on est responsable :
             foreach($tab_all_users_du_hr as $current_login => $tab_current_user) {
-                \hr\Fonctions::cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $comment_cloture, $DEBUG);
+                $return .= \hr\Fonctions::cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $comment_cloture, $DEBUG);
             }
         }
+        return $return;
     }
 
     // verifie si tous les users on été basculés de l'exercice précédent vers le suivant.
@@ -2049,6 +2063,7 @@ class Fonctions
 
     public static function cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $commentaire, $DEBUG=FALSE)
     {
+        $return = '';
         // si le num d'exercice du user est < à celui de l'appli (il n'a pas encore été basculé): on le bascule d'exercice
         if($tab_current_user['num_exercice'] < $_SESSION['config']['num_exercice']) {
             // calcule de la date limite d'utilisation des reliquats (si on utilise une date limite et qu'elle n'est pas encore calculée)
@@ -2061,7 +2076,9 @@ class Fonctions
                 $user_solde_actuel= $tab_conges_current_user[$libelle]['solde'];
                 $user_reliquat_actuel= $tab_conges_current_user[$libelle]['reliquat'];
 
-                if( $DEBUG ) {echo "$current_login --- $id_conges --- $user_nb_jours_ajout_an<br>\n";}
+                if( $DEBUG ) {
+                    $return .= $current_login . '---' . $id_conges . '---' . $user_nb_jours_ajout_an . '<br>';
+                }
 
                 /**********************************************/
                 /* Modification de la table conges_solde_user */
@@ -2071,22 +2088,23 @@ class Fonctions
                     if($user_solde_actuel>0) {
                         //calcul du reliquat pour l'exercice suivant
                         if($_SESSION['config']['nb_maxi_jours_reliquats']!=0) {
-                            if($user_solde_actuel <= $_SESSION['config']['nb_maxi_jours_reliquats'])
+                            if($user_solde_actuel <= $_SESSION['config']['nb_maxi_jours_reliquats']) {
                                 $new_reliquat = $user_solde_actuel ;
-                            else
+                            } else {
                                 $new_reliquat = $_SESSION['config']['nb_maxi_jours_reliquats'] ;
-                        }
-                        else
+                            }
+                        } else {
                             $new_reliquat = $user_reliquat_actuel + $user_solde_actuel ;
+                        }
 
                         $new_reliquat = str_replace(',', '.', $new_reliquat);
                         //
                         // update D'ABORD du reliquat
                         $sql_reliquat = 'UPDATE conges_solde_user SET su_reliquat = '.$new_reliquat.' WHERE su_login="'. \includes\SQL::quote($current_login).'"  AND su_abs_id = '.$id_conges;
                         $ReqLog_reliquat = \includes\SQL::query($sql_reliquat) ;
-                    }
-                    else
+                    } else {
                         $new_reliquat = $user_solde_actuel ; // qui est nul ou negatif
+                    }
 
                     $new_solde = $user_nb_jours_ajout_an + $new_reliquat  ;
                     $new_solde = str_replace(',', '.', $new_solde);
@@ -2096,10 +2114,11 @@ class Fonctions
                     $ReqLog_solde = \includes\SQL::query($sql_solde) ;
                 } else {
                     // ATTENTION : meme si on accepte pas les reliquats, si le solde du user est négatif, il faut le reporter: le nouveau solde est nb_jours_an + le solde actuel (qui est négatif)
-                    if($user_solde_actuel < 0)
+                    if($user_solde_actuel < 0) {
                         $new_solde = $user_nb_jours_ajout_an + $user_solde_actuel ; // qui est nul ou negatif
-                    else
+                    } else {
                         $new_solde = $user_nb_jours_ajout_an ;
+                    }
 
                     $new_solde = str_replace(',', '.', $new_solde);
                     $sql_solde = 'UPDATE conges_solde_user SET su_solde = '.$new_solde.' WHERE su_login="'. \includes\SQL::quote($current_login).'" AND su_abs_id = '.intval($id_conges).';';
@@ -2117,9 +2136,10 @@ class Fonctions
                 insert_dans_periode($current_login, $date_today, "am", $date_today, "am", $user_nb_jours_ajout_an, $commentaire, $id_conges, "ajout", 0, $DEBUG);
             }
 
-            // on incrémente le num_exercice de l'application si tous les users on été basculés.
+            // on incrémente le num_exercice de l'application si tous les users ont été basculés.
             \hr\Fonctions::update_appli_num_exercice($DEBUG);
         }
+        return $return;
     }
 
     // cloture / debut d'exercice user par user pour les users du resp (ou grand resp)
@@ -2155,6 +2175,7 @@ class Fonctions
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id() ;
+        $return = '';
 
         /***********************************************************************/
         /* SAISIE GROUPE pour tous les utilisateurs d'un groupe du responsable */
@@ -2164,210 +2185,222 @@ class Fonctions
 
         if($list_group!="") //si la liste n'est pas vide ( serait le cas si n'est responsable d'aucun groupe)
         {
-            echo "<form action=\"$PHP_SELF\" method=\"POST\"> \n";
-            echo "<table>\n";
-            echo "<tr><td align=\"center\">\n";
-            echo "    <fieldset class=\"cal_saisie\">\n";
-            echo "    <legend class=\"boxlogin\">". _('resp_cloture_exercice_groupe') ."</legend>\n";
+            $return .= '<form action="' . $PHP_SELF . '" method="POST">';
+            $return .= '<table>';
+            $return .= '<tr><td align="center">';
+            $return .= '<fieldset class="cal_saisie">';
+            $return .= '<legend class="boxlogin">' . _('resp_cloture_exercice_groupe') . '</legend>';
 
-            echo "    <table>\n";
-            echo "    <tr>\n";
+            $return .= '<table>';
+            $return .= '<tr>';
 
-                // création du select pour le choix du groupe
-                $text_choix_group="<select name=\"choix_groupe\" >";
-                $sql_group = "SELECT g_gid, g_groupename FROM conges_groupe WHERE g_gid IN ($list_group) ORDER BY g_groupename "  ;
-                $ReqLog_group = \includes\SQL::query($sql_group) ;
+            // création du select pour le choix du groupe
+            $text_choix_group="<select name=\"choix_groupe\" >";
+            $sql_group = "SELECT g_gid, g_groupename FROM conges_groupe WHERE g_gid IN ($list_group) ORDER BY g_groupename "  ;
+            $ReqLog_group = \includes\SQL::query($sql_group) ;
 
-                while ($resultat_group = $ReqLog_group->fetch_array())
-                {
-                    $current_group_id=$resultat_group["g_gid"];
-                    $current_group_name=$resultat_group["g_groupename"];
-                    $text_choix_group=$text_choix_group."<option value=\"$current_group_id\" >$current_group_name</option>";
-                }
-                $text_choix_group=$text_choix_group."</select>" ;
+            while ($resultat_group = $ReqLog_group->fetch_array()) {
+                $current_group_id=$resultat_group["g_gid"];
+                $current_group_name=$resultat_group["g_groupename"];
+                $text_choix_group=$text_choix_group."<option value=\"$current_group_id\" >$current_group_name</option>";
+            }
+            $text_choix_group=$text_choix_group."</select>" ;
 
-            echo "        <td class=\"big\">". _('resp_ajout_conges_choix_groupe') ." : $text_choix_group</td>\n";
+            $return .= '<td class="big">' . _('resp_ajout_conges_choix_groupe') . ' : ' . $text_choix_group . '</td>';
+            $return .= '</tr>';
+            $return .= '<tr>';
+            $return .= '<td class="big">' . _('resp_cloture_exercice_for_groupe_text_confirmer') . '</td>';
+            $return .= '</tr>';
+            $return .= '<tr>';
+            $return .= '<td align="center"><input type="submit" value="' . _('form_valid_cloture_group') . '"></td>';
+            $return .= '</tr>';
+            $return .= '</table>';
 
-            echo "    </tr>\n";
-            echo "    <tr>\n";
-            echo "        <td class=\"big\">". _('resp_cloture_exercice_for_groupe_text_confirmer') ." </td>\n";
-            echo "    </tr>\n";
-            echo "    <tr>\n";
-            echo "        <td align=\"center\"><input type=\"submit\" value=\"". _('form_valid_cloture_group') ."\"></td>\n";
-            echo "    </tr>\n";
-            echo "    </table>\n";
+            $return .= '</fieldset>';
+            $return .= '</td></tr>';
+            $return .= '</table>';
 
-            echo "    </fieldset>\n";
-            echo "</td></tr>\n";
-            echo "</table>\n";
-
-            echo "<input type=\"hidden\" name=\"onglet\" value=\"cloture_exercice\">\n";
-            echo "<input type=\"hidden\" name=\"cloture_groupe\" value=\"TRUE\">\n";
-            echo "<input type=\"hidden\" name=\"session\" value=\"$session\">\n";
-            echo "</form> \n";
+            $return .= '<input type="hidden" name="onglet" value="cloture_exercice">';
+            $return .= '<input type="hidden" name="cloture_groupe" value="TRUE">';
+            $return .= '<input type="hidden" name="session" value="' . $session . '">';
+            $return .= '</form>';
         }
+
+        return $return;
     }
 
     public static function affichage_cloture_globale_pour_tous($tab_type_conges, $DEBUG=FALSE)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id() ;
+        $return = '';
 
         /************************************************************/
         /* CLOTURE EXERCICE GLOBALE pour tous les utilisateurs du responsable */
 
-        echo "<form action=\"$PHP_SELF?session=$session&onglet=cloture_year\" method=\"POST\"> \n";
-        echo "<table>\n";
-        echo "<tr><td align=\"center\">\n";
-        echo "    <fieldset class=\"cal_saisie\">\n";
-        echo "    <legend class=\"boxlogin\">". _('resp_cloture_exercice_all') ."</legend>\n";
-        echo "    <table>\n";
-        echo "    <tr>\n";
-        echo "        <td class=\"big\">&nbsp;&nbsp;&nbsp;". _('resp_cloture_exercice_for_all_text_confirmer') ." &nbsp;&nbsp;&nbsp;</td>\n";
-        echo "    </tr>\n";
+        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=cloture_year" method="POST">';
+        $return .= '<table>';
+        $return .= '<tr><td align="center">';
+        $return .= '<fieldset class="cal_saisie">';
+        $return .= '<legend class="boxlogin">' . _('resp_cloture_exercice_all') . '</legend>';
+        $return .= '<table>';
+        $return .= '<tr>';
+        $return .= '<td class="big">&nbsp;&nbsp;&nbsp;' . _('resp_cloture_exercice_for_all_text_confirmer') . '&nbsp;&nbsp;&nbsp;</td>';
+        $return .= '</tr>';
         // bouton valider
-        echo "    <tr>\n";
-        echo "        <td colspan=\"5\" align=\"center\"><input type=\"submit\" value=\"". _('form_valid_cloture_global') ."\"></td>\n";
-        echo "    </tr>\n";
-        echo "    </table>\n";
-        echo "    </fieldset>\n";
-        echo "</td></tr>\n";
-        echo "</table>\n";
-        echo "<input type=\"hidden\" name=\"cloture_globale\" value=\"TRUE\">\n";
-        echo "<input type=\"hidden\" name=\"session\" value=\"$session\">\n";
-        echo "</form> \n";
+        $return .= '<tr>';
+        $return .= '<td colspan="5" align="center"><input type="submit" value="' . _('form_valid_cloture_global') . '"></td>';
+        $return .= '</tr>';
+        $return .= '</table>';
+        $return .= '</fieldset>';
+        $return .= '</td></tr>';
+        $return .= '</table>';
+        $return .= '<input type="hidden" name="cloture_globale" value="TRUE">';
+        $return .= '<input type="hidden" name="session" value="' . $session . '">';
+        $return .= '</form>';
+        return $return;
     }
 
     public static function affiche_ligne_du_user($current_login, $tab_type_conges, $tab_current_user, $i = true)
     {
-        echo '<tr class="'.($i?'i':'p').'">';
+        $return = '';
+        $return .= '<tr class="' . ($i ? 'i' : 'p') . '">';
         //tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
         $tab_conges=$tab_current_user['conges'];
 
         /** sur la ligne ,   **/
-        echo " <td>".$tab_current_user['nom'].'</td>';
-        echo " <td>".$tab_current_user['prenom'].'</td>';
-        echo " <td>".$tab_current_user['quotite']."%</td>\n";
+        $return .= '<td>' . $tab_current_user['nom'] . '</td>';
+        $return .= '<td>' . $tab_current_user['prenom'] . '</td>';
+        $return .= '<td>' . $tab_current_user['quotite'] . '%</td>';
 
         foreach($tab_type_conges as $id_conges => $libelle) {
             if (isset($tab_conges[$libelle])) {
-                echo " <td>".$tab_conges[$libelle]['nb_an']." <i>(".$tab_conges[$libelle]['solde'].")</i></td>\n";
+                $return .= '<td>' . $tab_conges[$libelle]['nb_an'] . ' <i>(' . $tab_conges[$libelle]['solde'] . ')</i></td>';
             } else {
-                echo "<td></td>";
+                $return .= '<td></td>';
             }
         }
 
         // si le num d'exercice du user est < à celui de l'appli (il n'a pas encore été basculé): on peut le cocher
-        if($tab_current_user['num_exercice'] < $_SESSION['config']['num_exercice'])
-            echo "    <td align=\"center\" class=\"histo\"><input type=\"checkbox\" name=\"tab_cloture_users[$current_login]\" value=\"TRUE\" checked></td>\n";
-        else
-            echo "    <td align=\"center\" class=\"histo\"><img src=\"". TEMPLATE_PATH ."img/stop.png\" width=\"16\" height=\"16\" border=\"0\" ></td>\n";
+        if($tab_current_user['num_exercice'] < $_SESSION['config']['num_exercice']) {
+            $return .= '<td align="center" class="histo"><input type="checkbox" name="tab_cloture_users[' . $current_login . ']" value="TRUE" checked></td>';
+        } else {
+            $return .= '<td align="center" class="histo"><img src="' . TEMPLATE_PATH . 'img/stop.png" width="16" height="16" border="0" ></td>';
+        }
 
         $comment_cloture =  _('resp_cloture_exercice_commentaire') ." ".date("m/Y");
-        echo "    <td align=\"center\" class=\"histo\"><input type=\"text\" name=\"tab_commentaire_saisie[$current_login]\" size=\"20\" maxlength=\"200\" value=\"$comment_cloture\"></td>\n";
-        echo "     </tr>\n";
+        $return .= '<td align="center" class="histo"><input type="text" name="tab_commentaire_saisie[' . $current_login . ']" size="20" maxlength="200" value="' . $comment_cloture . '"></td>';
+        $return .= '</tr>';
+
+        return $return;
     }
 
     public static function affichage_cloture_user_par_user($tab_type_conges, $tab_all_users_du_hr, $tab_all_users_du_grand_resp, $DEBUG=FALSE)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id() ;
+        $return = '';
 
         /************************************************************/
         /* CLOTURE EXERCICE USER PAR USER pour tous les utilisateurs du responsable */
 
         if( (count($tab_all_users_du_hr)!=0) || (count($tab_all_users_du_grand_resp)!=0) ) {
-            echo "<form action=\"$PHP_SELF?session=$session&onglet=cloture_year\" method=\"POST\"> \n";
-            echo "<table>\n";
-            echo '<tr>';
-            echo "<td align=\"center\">\n";
-            echo "<fieldset class=\"cal_saisie\">\n";
-            echo "<legend class=\"boxlogin\">". _('resp_cloture_exercice_users') ."</legend>\n";
-            echo "    <table>\n";
-            echo "    <tr>\n";
-            echo "    <td align=\"center\">\n";
+            $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=cloture_year" method="POST">';
+            $return .= '<table>';
+            $return .= '<tr>';
+            $return .= '<td align="center">';
+            $return .= '<fieldset class="cal_saisie">';
+            $return .= '<legend class="boxlogin">' . _('resp_cloture_exercice_users') . '</legend>';
+            $return .= '<table>';
+            $return .= '<tr>';
+            $return .= '<td align="center">';
 
             // AFFICHAGE TITRES TABLEAU
-            echo "    <table cellpadding=\"2\" class=\"tablo\">\n";
-            echo "  <thead>\n";
-            echo "    <tr>\n";
-            echo "    <th>". _('divers_nom_maj_1') .'</th>';
-            echo "    <th>". _('divers_prenom_maj_1') .'</th>';
-            echo "    <th>". _('divers_quotite_maj_1') .'</th>';
+            $return .= '<table cellpadding="2" class="tablo">';
+            $return .= '<thead>';
+            $return .= '<tr>';
+            $return .= '<th>' . _('divers_nom_maj_1') . '</th>';
+            $return .= '<th>' . _('divers_prenom_maj_1') . '</th>';
+            $return .= '<th>' . _('divers_quotite_maj_1') . '</th>';
             foreach($tab_type_conges as $id_conges => $libelle) {
-                echo "    <th>$libelle<br><i>(". _('divers_solde') .")</i></th>\n";
+                $return .= '<th>' . $libelle . '<br><i>(' . _('divers_solde') . ')</i></th>';
             }
-            echo "    <th>". _('divers_cloturer_maj_1') ."<br></th>\n" ;
-            echo "    <th>". _('divers_comment_maj_1') ."<br></th>\n" ;
-            echo "    </tr>\n";
-            echo "  </thead>\n";
-            echo "  <tbody>\n";
+            $return .= '<th>' . _('divers_cloturer_maj_1') . '<br></th>';
+            $return .= '<th>' . _('divers_comment_maj_1') . '<br></th>';
+            $return .= '</tr>';
+            $return .= '</thead>';
+            $return .= '<tbody>';
 
             // AFFICHAGE LIGNES TABLEAU
 
             // affichage des users dont on est responsable :
             $i = true;
             foreach($tab_all_users_du_hr as $current_login => $tab_current_user) {
-                \hr\Fonctions::affiche_ligne_du_user($current_login, $tab_type_conges, $tab_current_user, $i);
+                $return .= \hr\Fonctions::affiche_ligne_du_user($current_login, $tab_type_conges, $tab_current_user, $i);
                 $i = !$i;
             }
 
-            echo "    </tbody>\n\n";
-            echo "    </table>\n\n";
-
-            echo "    </td>\n";
-            echo "    </tr>\n";
-            echo "    <tr>\n";
-            echo "    <td align=\"center\">\n";
-            echo "    <input type=\"submit\" value=\"". _('form_submit') ."\">\n";
-            echo "    </td>\n";
-            echo "    </tr>\n";
-            echo "    </table>\n";
-
-            echo "</fieldset>\n";
-            echo "</td></tr>\n";
-            echo "</table>\n";
-            echo "<input type=\"hidden\" name=\"cloture_users\" value=\"TRUE\">\n";
-            echo "<input type=\"hidden\" name=\"session\" value=\"$session\">\n";
-            echo "</form> \n";
+            $return .= '</tbody>';
+            $return .= '</table>';
+            $return .= '</td>';
+            $return .= '</tr>';
+            $return .= '<tr>';
+            $return .= '<td align="center">';
+            $return .= '<input type="submit" value="' . _('form_submit') . '">';
+            $return .= '</td>';
+            $return .= '</tr>';
+            $return .= '</table>';
+            $return .= '</fieldset>';
+            $return .= '</td></tr>';
+            $return .= '</table>';
+            $return .= '<input type="hidden" name="cloture_users" value="TRUE">';
+            $return .= '<input type="hidden" name="session" value="' . $session . '">';
+            $return .= '</form>';
         }
+
+        return $return;
     }
 
     public static function saisie_cloture( $tab_type_conges, $DEBUG)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id() ;
+        $return = '';
 
         // recup de la liste de TOUS les users dont $resp_login est responsable
         // (prend en compte le resp direct, les groupes, le resp virtuel, etc ...)
         // renvoit une liste de login entre quotes et séparés par des virgules
         $tab_all_users_du_hr=recup_infos_all_users_du_hr($_SESSION['userlogin']);
         $tab_all_users_du_grand_resp=recup_infos_all_users_du_grand_resp($_SESSION['userlogin']);
-        if( $DEBUG ) { echo "tab_all_users_du_hr =<br>\n"; print_r($tab_all_users_du_hr); echo "<br>\n"; }
-        if( $DEBUG ) { echo "tab_all_users_du_grand_resp =<br>\n"; print_r($tab_all_users_du_grand_resp); echo "<br>\n"; }
+        if( $DEBUG ) {
+            $return .= 'tab_all_users_du_hr = <br>' . var_export($tab_all_users_du_hr, true) . '<br>';
+        }
+        if( $DEBUG ) {
+            $return .= 'tab_all_users_du_grand_resp =<br>' . var_export($tab_all_users_du_grand_resp, true) . '<br>';
+        }
 
         if( (count($tab_all_users_du_hr)!=0) || (count($tab_all_users_du_grand_resp)!=0) ) {
             /************************************************************/
             /* SAISIE GLOBALE pour tous les utilisateurs du responsable */
-            \hr\Fonctions::affichage_cloture_globale_pour_tous($tab_type_conges, $DEBUG);
-            echo "<br>\n";
+            $return .= \hr\Fonctions::affichage_cloture_globale_pour_tous($tab_type_conges, $DEBUG);
+            $return .= '<br>';
 
             /***********************************************************************/
             /* SAISIE GROUPE pour tous les utilisateurs d'un groupe du responsable */
-            if( $_SESSION['config']['gestion_groupes'] )
-            {
-                \hr\Fonctions::affichage_cloture_globale_groupe($tab_type_conges, $DEBUG);
+            if( $_SESSION['config']['gestion_groupes']) {
+                $return .= \hr\Fonctions::affichage_cloture_globale_groupe($tab_type_conges, $DEBUG);
             }
-            echo "<br>\n";
+            $return .= '<br>';
 
             /************************************************************/
             /* SAISIE USER PAR USER pour tous les utilisateurs du responsable */
-            \hr\Fonctions::affichage_cloture_user_par_user($tab_type_conges, $tab_all_users_du_hr, $tab_all_users_du_grand_resp, $DEBUG);
-            echo "<br>\n";
+            $return .= \hr\Fonctions::affichage_cloture_user_par_user($tab_type_conges, $tab_all_users_du_hr, $tab_all_users_du_grand_resp, $DEBUG);
+            $return .= '<br>';
 
+        } else {
+            $return .= _('resp_etat_aucun_user') . '<br>';
         }
-        else
-         echo  _('resp_etat_aucun_user') ."<br>\n";
+        return $return;
     }
 
     /**
@@ -2385,11 +2418,11 @@ class Fonctions
         /*************************************/
         // recup des parametres reçus :
 
-        $cloture_users           = getpost_variable('cloture_users');
-        $cloture_globale         = getpost_variable('cloture_globale');
-        $cloture_groupe          = getpost_variable('cloture_groupe');
+        $cloture_users   = getpost_variable('cloture_users');
+        $cloture_globale = getpost_variable('cloture_globale');
+        $cloture_groupe  = getpost_variable('cloture_groupe');
+        $return = '';
         /*************************************/
-
 
         /** initialisation des tableaux des types de conges/absences  **/
         // recup du tableau des types de conges (conges et congesexceptionnels)
@@ -2397,7 +2430,7 @@ class Fonctions
         $tab_type_cong = ( recup_tableau_types_conges($DEBUG) + recup_tableau_types_conges_exceptionnels($DEBUG)  );
 
         // titre
-        echo '<h2>'. _('resp_cloture_exercice_titre') ."</H2>\n\n";
+        $return .= '<h2>'. _('resp_cloture_exercice_titre') . '</H2>';
 
         if($cloture_users=="TRUE") {
             $tab_cloture_users       = getpost_variable('tab_cloture_users');
@@ -2412,13 +2445,14 @@ class Fonctions
             exit;
         } elseif($cloture_groupe=="TRUE") {
             $choix_groupe            = getpost_variable('choix_groupe');
-            \hr\Fonctions::cloture_globale_groupe($choix_groupe, $tab_type_cong, $DEBUG);
+            $return .= \hr\Fonctions::cloture_globale_groupe($choix_groupe, $tab_type_cong, $DEBUG);
 
             redirect( ROOT_PATH .'hr/hr_index.php?session='.$session, false);
             exit;
         } else {
-            \hr\Fonctions::saisie_cloture($tab_type_cong,$DEBUG);
+            $return .= \hr\Fonctions::saisie_cloture($tab_type_cong,$DEBUG);
         }
+        return $return;
     }
 
     public static function affiche_calendrier_fermeture_mois($year, $mois, $tab_year, $DEBUG=FALSE)
