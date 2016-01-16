@@ -1676,12 +1676,16 @@ class Fonctions
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id();
+        $return = '';
 
-        if( $DEBUG ) { echo "tab_checkbox_j_chome : <br>\n"; print_r($tab_checkbox_j_chome); echo "<br>\n"; }
+        if( $DEBUG ) {
+            $return .= 'tab_checkbox_j_chome : <br>' . var_export($tab_checkbox_j_chome, true) . '<br>';
+        }
 
         // si l'année est déja renseignée dans la database, on efface ttes les dates de l'année
-        if(\hr\Fonctions::verif_year_deja_saisie($tab_checkbox_j_chome, $DEBUG))
+        if(\hr\Fonctions::verif_year_deja_saisie($tab_checkbox_j_chome, $DEBUG)) {
             $result = \hr\Fonctions::delete_year($tab_checkbox_j_chome, $DEBUG);
+        }
 
 
         // on insert les nouvelles dates saisies
@@ -1690,15 +1694,17 @@ class Fonctions
         // on recharge les jours feries dans les variables de session
         init_tab_jours_feries($DEBUG);
 
-        if($result)
-            echo "<div class=\"alert alert-success\">" . _('form_modif_ok') . "</div>\n";
-        else
-            echo "<div class=\"alert alert-danger\">". _('form_modif_not_ok') . "</div>\n";
+        if($result) {
+            $return .= '<div class="alert alert-success">' . _('form_modif_ok') . '</div>';
+        } else {
+            $return .= '<div class="alert alert-danger">' . _('form_modif_not_ok') . '</div>';
+        }
 
         $date_1=key($tab_checkbox_j_chome);
         $tab_date = explode('-', $date_1);
         $comment_log = "saisie des jours chomés pour ".$tab_date[0] ;
         log_action(0, "", "", $comment_log, $DEBUG);
+        return $return;
     }
 
     public static function confirm_saisie($tab_checkbox_j_chome, $DEBUG=FALSE)
@@ -1756,131 +1762,141 @@ class Fonctions
     {
         $jour_today=date("j");
         $jour_today_name=date("D");
+        $return = '';
 
         $first_jour_mois_timestamp=mktime (0,0,0,$mois,1,$year);
         $mois_name=date_fr("F", $first_jour_mois_timestamp);
         $first_jour_mois_rang=date("w", $first_jour_mois_timestamp);      // jour de la semaine en chiffre (0=dim , 6=sam)
-        if($first_jour_mois_rang==0)
+        if($first_jour_mois_rang==0) {
             $first_jour_mois_rang=7 ;    // jour de la semaine en chiffre (1=lun , 7=dim)
+        }
 
-
-        echo "<table>\n";
+        $return .= '<table>';
         /* affichage  2 premieres lignes */
-        echo "<thead>\n";
-        echo "    <tr align=\"center\" bgcolor=\"".$_SESSION['config']['light_grey_bgcolor']."\"><th colspan=7 class=\"titre\"> $mois_name $year </th></tr>\n" ;
-        echo "    <tr>\n";
-        echo "        <th class=\"cal-saisie2\">". _('lundi_1c') ."</th>\n";
-        echo "        <th class=\"cal-saisie2\">". _('mardi_1c') ."</th>\n";
-        echo "        <th class=\"cal-saisie2\">". _('mercredi_1c') ."</th>\n";
-        echo "        <th class=\"cal-saisie2\">". _('jeudi_1c') ."</th>\n";
-        echo "        <th class=\"cal-saisie2\">". _('vendredi_1c') ."</th>\n";
-        echo "        <th class=\"cal-saisie2 weekend\">". _('samedi_1c') ."</th>\n";
-        echo "        <th class=\"cal-saisie2 weekend\">". _('dimanche_1c') ."</th>\n";
-        echo "    </tr>\n" ;
-        echo "</thead>\n";
+        $return .= '<thead>';
+        $return .= '<tr align="center" bgcolor="' .  $_SESSION['config']['light_grey_bgcolor'] . '"><th colspan=7 class="titre">' . $mois_name . ' ' . $year . '</th></tr>';
+        $return .= '<tr>';
+        $return .= '<th class="cal-saisie2">' . _('lundi_1c') . '</th>';
+        $return .= '<th class="cal-saisie2">' . _('mardi_1c') . '</th>';
+        $return .= '<th class="cal-saisie2">' . _('mercredi_1c') . '</th>';
+        $return .= '<th class="cal-saisie2">' . _('jeudi_1c') . '</th>';
+        $return .= '<th class="cal-saisie2">' . _('vendredi_1c') . '</th>';
+        $return .= '<th class="cal-saisie2 weekend">' . _('samedi_1c') . '</th>';
+        $return .= '<th class="cal-saisie2 weekend">' . _('dimanche_1c') . '</th>';
+        $return .= '</tr>';
+        $return .= '</thead>';
 
         /* affichage ligne 1 du mois*/
-        echo "<tr>\n";
+        $return .= '<tr>';
         // affichage des cellules vides jusqu'au 1 du mois ...
         for($i=1; $i<$first_jour_mois_rang; $i++) {
-            echo \hr\Fonctions::affiche_jour_hors_mois($mois,$i,$year,$tab_year);
+            $return .= \hr\Fonctions::affiche_jour_hors_mois($mois,$i,$year,$tab_year);
         }
         // affichage des cellules cochables du 1 du mois à la fin de la ligne ...
         for($i=$first_jour_mois_rang; $i<8; $i++) {
             $j=$i-$first_jour_mois_rang+1;
-            echo \hr\Fonctions::affiche_jour_checkbox($mois,$j,$year,$tab_year);
+            $return .= \hr\Fonctions::affiche_jour_checkbox($mois,$j,$year,$tab_year);
         }
-        echo "</tr>\n";
+        $return .= '</tr>';
 
         /* affichage ligne 2 du mois*/
-        echo "<tr>\n";
+        $return .= '<tr>';
         for($i=8-$first_jour_mois_rang+1; $i<15-$first_jour_mois_rang+1; $i++) {
-            echo \hr\Fonctions::affiche_jour_checkbox($mois,$i,$year,$tab_year);
+            $return .= \hr\Fonctions::affiche_jour_checkbox($mois,$i,$year,$tab_year);
         }
-        echo "</tr>\n";
+        $return .= '</tr>';
 
         /* affichage ligne 3 du mois*/
-        echo "<tr>\n";
-        for($i=15-$first_jour_mois_rang+1; $i<22-$first_jour_mois_rang+1; $i++){
-            echo \hr\Fonctions::affiche_jour_checkbox($mois,$i,$year,$tab_year);
+        $return .= '<tr>';
+        for($i=15-$first_jour_mois_rang+1; $i<22-$first_jour_mois_rang+1; $i++) {
+            $return .= \hr\Fonctions::affiche_jour_checkbox($mois,$i,$year,$tab_year);
         }
-        echo "</tr>\n";
+        $return .= '</tr>';
 
         /* affichage ligne 4 du mois*/
-        echo "<tr>\n";
+        $return .= '<tr>';
         for($i=22-$first_jour_mois_rang+1; $i<29-$first_jour_mois_rang+1; $i++) {
-            echo \hr\Fonctions::affiche_jour_checkbox($mois,$i,$year,$tab_year);
+            $return .= \hr\Fonctions::affiche_jour_checkbox($mois,$i,$year,$tab_year);
         }
-        echo "</tr>\n";
+        $return .= '</tr>';
 
         /* affichage ligne 5 du mois (peut etre la derniere ligne) */
-        echo "<tr>\n";
+        $return .= '<tr>';
         for($i=29-$first_jour_mois_rang+1; $i<36-$first_jour_mois_rang+1 && checkdate($mois, $i, $year); $i++) {
-            echo \hr\Fonctions::affiche_jour_checkbox($mois,$i,$year,$tab_year);
+            $return .= \hr\Fonctions::affiche_jour_checkbox($mois,$i,$year,$tab_year);
         }
 
         for($i; $i<36-$first_jour_mois_rang+1; $i++) {
-            echo \hr\Fonctions::affiche_jour_hors_mois($mois,$i,$year,$tab_year);
+            $return .= \hr\Fonctions::affiche_jour_hors_mois($mois,$i,$year,$tab_year);
         }
-        echo "</tr>\n";
+        $return .= '</tr>';
 
         /* affichage ligne 6 du mois (derniere ligne)*/
-        echo "<tr>\n";
+        $return .= '<tr>';
         for($i=36-$first_jour_mois_rang+1; checkdate($mois, $i, $year); $i++) {
-            echo \hr\Fonctions::affiche_jour_checkbox($mois,$i,$year,$tab_year);
+            $return .= \hr\Fonctions::affiche_jour_checkbox($mois,$i,$year,$tab_year);
         }
 
         for($i; $i<43-$first_jour_mois_rang+1; $i++) {
-            echo \hr\Fonctions::affiche_jour_hors_mois($mois,$i,$year,$tab_year);
+            $return .= \hr\Fonctions::affiche_jour_hors_mois($mois,$i,$year,$tab_year);
         }
-        echo "</tr>\n";
+        $return .= '</tr></table>';
 
-        echo "</table>\n";
+        return $return;
     }
 
     public static function saisie($year_calendrier_saisie, $DEBUG=FALSE)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id();
+        $return = '';
 
         // si l'année n'est pas renseignée, on prend celle du jour
-        if($year_calendrier_saisie==0)
+        if($year_calendrier_saisie==0) {
             $year_calendrier_saisie = date("Y");
+        }
 
         // on construit le tableau des jours feries de l'année considérée
         $tab_year=array();
         \hr\Fonctions::get_tableau_jour_feries($year_calendrier_saisie, $tab_year,$DEBUG);
-        if( $DEBUG ) { echo "tab_year = "; print_r($tab_year); echo "<br>\n"; }
+        if( $DEBUG ) {
+            $return .= 'tab_year = ' . var_export($tab_year, true) . '<br>';
+        }
 
         //calcul automatique des jours feries
         if($_SESSION['config']['calcul_auto_jours_feries_france']) {
             $tableau_jour_feries = \hr\Fonctions::fcListJourFeries($year_calendrier_saisie) ;
-            if( $DEBUG ) { echo "tableau_jour_feries = "; print_r($tableau_jour_feries); echo "<br>\n"; }
-            foreach ($tableau_jour_feries as $i => $value)
-            {
+            if( $DEBUG ) {
+                $return .= 'tableau_jour_feries = ' . var_export($tableau_jour_feries, true) . '<br>';
+            }
+            foreach ($tableau_jour_feries as $i => $value) {
                 if(!in_array ("$value", $tab_year))
-                    $tab_year[]=$value;
+                    $tab_year[] = $value;
             }
         }
-        if( $DEBUG ) { echo "tab_year = "; print_r($tab_year); echo "<br>\n"; }
+        if( $DEBUG ) {
+            $return .= 'tab_year = ' . var_export($tab_year, true) . '<br>';
+        }
 
-        echo "<form action=\"$PHP_SELF?session=$session&onglet=jours_chomes&year_calendrier_saisie=$year_calendrier_saisie\" method=\"POST\">\n" ;
-        echo "<div class=\"calendar\">\n";
+        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=jours_chomes&year_calendrier_saisie=' . $year_calendrier_saisie . '" method="POST">';
+        $return .= '<div class="calendar">';
         $months = array('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12');
 
         foreach ($months as $month) {
-            echo "<div class=\"month\">\n";
-            echo "<div class=\"wrapper\">\n";
-            echo \hr\Fonctions::affiche_calendrier_saisie_jours_chomes($year_calendrier_saisie, $month, $tab_year);
-            echo "</div>\n";
-            echo "</div>";
+            $return .= '<div class="month">';
+            $return .= '<div class="wrapper">';
+            $return .= \hr\Fonctions::affiche_calendrier_saisie_jours_chomes($year_calendrier_saisie, $month, $tab_year);
+            $return .= '</div>';
+            $return .= '</div>';
         }
-        echo "</div>";
-        echo "<div class=\"actions\">";
-        echo "<input type=\"hidden\" name=\"choix_action\" value=\"commit\">\n";
-        echo "<input class=\"btn\" type=\"submit\" value=\"". _('form_submit') ."\">  \n";
-        echo "</div>";
-        echo "</form>\n" ;
+        $return .= '</div>';
+        $return .= '<div class="actions">';
+        $return .= '<input type="hidden" name="choix_action" value="commit">';
+        $return .= '<input class="btn" type="submit" value="' . _('form_submit') . '">';
+        $return .= '</div>';
+        $return .= '</form>';
+
+        return $return;
     }
 
     /**
@@ -1897,6 +1913,7 @@ class Fonctions
     {
         // verif des droits du user à afficher la page
         verif_droits_user($session, "is_hr", $DEBUG);
+        $return = '';
         /*** initialisation des variables ***/
         /*************************************/
         // recup des parametres reçus :
@@ -1908,33 +1925,38 @@ class Fonctions
         $tab_checkbox_j_chome        = getpost_variable('tab_checkbox_j_chome');
         /*************************************/
 
-        if( $DEBUG ) { echo "choix_action = $choix_action # year_calendrier_saisie = $year_calendrier_saisie<br>\n"; print_r($year_calendrier_saisie) ; echo "<br>\n"; }
+        if( $DEBUG ) {
+            $return .= 'choix_action = ' . $choix_action . ' # year_calendrier_saisie = ' . $year_calendrier_saisie . '<br>' . var_export($year_calendrier_saisie, true) . '<br>';
+        }
 
         // si l'année n'est pas renseignée, on prend celle du jour
-        if($year_calendrier_saisie==0)
+        if($year_calendrier_saisie==0) {
             $year_calendrier_saisie = date("Y");
+        }
 
         $add_css = '<style>#onglet_menu .onglet{ width: 50% ;}</style>';
 
         //    header_menu('hr', NULL, $add_css);
 
-        echo "<div class=\"pager\">\n";
-        echo "<div class=\"onglet calendar-nav\">\n";
+        $return .= '<div class="pager">';
+        $return .= '<div class="onglet calendar-nav">';
         // navigation
         $prev_link = "$PHP_SELF?session=$session&onglet=jours_chomes&year_calendrier_saisie=". ($year_calendrier_saisie - 1);
         $next_link = "$PHP_SELF?session=$session&onglet=jours_chomes&year_calendrier_saisie=". ($year_calendrier_saisie + 1);
-        echo "<ul>\n";
-        echo "<li><a href=\"$prev_link\" class=\"calendar-prev\"><i class=\"fa fa-chevron-left\"></i><span>année précédente</span></a></li>\n";
-        echo "<li class=\"current-year\">$year_calendrier_saisie</li>\n";
-        echo "<li><a href=\"$next_link\" class=\"calendar-next\"><i class=\"fa fa-chevron-right\"></i><span>année suivante</span></a></li>\n";
-        echo "</ul>\n";
-        echo "</div>\n";
-        echo "</div>\n";
-        if($choix_action=="commit")
-            \hr\Fonctions::commit_saisie($tab_checkbox_j_chome, $DEBUG);
-        echo "<div class=\"wrapper\">\n";
-        \hr\Fonctions::saisie($year_calendrier_saisie, $DEBUG);
-        echo "</div>\n";
+        $return .= '<ul>';
+        $return .= '<li><a href="' . $prev_link . '" class="calendar-prev"><i class="fa fa-chevron-left"></i><span>année précédente</span></a></li>';
+        $return .= '&nbsp;<li class="current-year">' . $year_calendrier_saisie . '</li>';
+        $return .= '&nbsp;<li><a href="' . $next_link . '" class="calendar-next"><i class="fa fa-chevron-right"></i><span>année suivante</span></a></li>';
+        $return .= '</ul>';
+        $return .= '</div>';
+        $return .= '</div>';
+        if($choix_action=="commit") {
+            $return .= \hr\Fonctions::commit_saisie($tab_checkbox_j_chome, $DEBUG);
+        }
+        $return .= '<div class="wrapper">';
+        $return .= \hr\Fonctions::saisie($year_calendrier_saisie, $DEBUG);
+        $return .= '</div>';
+        return $return;
     }
 
     // calcule de la date limite d'utilisation des reliquats (si on utilise une date limite et qu'elle n'est pas encore calculée) et stockage dans la table
