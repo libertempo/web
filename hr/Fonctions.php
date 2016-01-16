@@ -1187,7 +1187,6 @@ class Fonctions
         // recup de la liste des users d'un groupe donné
         $list_users = get_list_users_du_groupe($choix_groupe, $DEBUG);
 
-
         foreach($tab_new_nb_conges_all as $id_conges => $nb_jours) {
             if($nb_jours!=0) {
                 $comment = $tab_new_comment_all[$id_conges];
@@ -1199,14 +1198,15 @@ class Fonctions
                     $current_login  =$resultat1["u_login"];
                     $current_quotite=$resultat1["u_quotite"];
 
-                    if( (!isset($tab_calcul_proportionnel[$id_conges])) || ($tab_calcul_proportionnel[$id_conges]!=TRUE) )
+                    if( (!isset($tab_calcul_proportionnel[$id_conges])) || ($tab_calcul_proportionnel[$id_conges]!=TRUE) ) {
                         $nb_conges=$nb_jours;
-                    else
+                    } else {
                         // pour arrondir au 1/2 le + proche on  fait x 2, on arrondit, puis on divise par 2
                         $nb_conges = (ROUND(($nb_jours*($current_quotite/100))*2))/2  ;
+                    }
 
                     $valid=verif_saisie_decimal($nb_conges, $DEBUG);
-                    if($valid){
+                    if($valid) {
                         // 1 : on update conges_solde_user
                         $req_update = 'UPDATE conges_solde_user SET su_solde = su_solde+ '.intval($nb_conges).'
                                 WHERE  su_login = "'. \includes\SQL::quote($current_login).'" AND su_abs_id = '.intval($id_conges).';';
@@ -1223,10 +1223,11 @@ class Fonctions
                 }
 
                 $group_name = get_group_name_from_id($choix_groupe, $DEBUG);
-                if( (!isset($tab_calcul_proportionnel[$id_conges])) || ($tab_calcul_proportionnel[$id_conges]!=TRUE) )
+                if( (!isset($tab_calcul_proportionnel[$id_conges])) || ($tab_calcul_proportionnel[$id_conges]!=TRUE) ) {
                     $comment_log = "ajout conges pour groupe $group_name ($nb_jours jour(s)) ($comment) (calcul proportionnel : No)";
-                else
+                } else {
                     $comment_log = "ajout conges pour groupe $group_name ($nb_jours jour(s)) ($comment) (calcul proportionnel : Yes)";
+                }
                 log_action(0, "ajout", "groupe", $comment_log, $DEBUG);
             }
         }
@@ -1236,15 +1237,17 @@ class Fonctions
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id() ;
+        $return = '';
 
         // recup de la liste de TOUS les users dont $resp_login est responsable
         // (prend en compte le resp direct, les groupes, le resp virtuel, etc ...)
         // renvoit une liste de login entre quotes et séparés par des virgules
         $list_users_du_resp = get_list_all_users_du_hr($_SESSION['userlogin'], $DEBUG);
-        if( $DEBUG ) { echo "list_all_users_du_hr = $list_users_du_resp<br>\n";}
-
-        if( $DEBUG ) { echo "tab_new_nb_conges_all = <br>"; print_r($tab_new_nb_conges_all); echo "<br>\n" ;}
-        if( $DEBUG ) { echo "tab_calcul_proportionnel = <br>"; print_r($tab_calcul_proportionnel); echo "<br>\n" ;}
+        if( $DEBUG ) {
+            $return .= 'list_all_users_du_hr = ' . $list_users_du_resp . '<br>';
+            $return .= 'tab_new_nb_conges_all = <br>' . var_export($tab_new_nb_conges_all, true) . '<br>';
+            $return .= 'tab_calcul_proportionnel = <br>' . var_export($tab_calcul_proportionnel, true) . '<br>';
+        }
 
         foreach($tab_new_nb_conges_all as $id_conges => $nb_jours) {
             if($nb_jours!=0) {
@@ -1257,12 +1260,13 @@ class Fonctions
                     $current_login  =$resultat1["u_login"];
                     $current_quotite=$resultat1["u_quotite"];
 
-                    if( (!isset($tab_calcul_proportionnel[$id_conges])) || ($tab_calcul_proportionnel[$id_conges]!=TRUE) )
+                    if( (!isset($tab_calcul_proportionnel[$id_conges])) || ($tab_calcul_proportionnel[$id_conges]!=TRUE) ) {
                         $nb_conges=$nb_jours;
-                    else
+                    } else {
                         // pour arrondir au 1/2 le + proche on  fait x 2, on arrondit, puis on divise par 2
                         $nb_conges = (ROUND(($nb_jours*($current_quotite/100))*2))/2  ;
-                       $valid=verif_saisie_decimal($nb_conges, $DEBUG);
+                    }
+                    $valid=verif_saisie_decimal($nb_conges, $DEBUG);
                     if($valid) {
                         // 1 : update de la table conges_solde_user
                         $req_update = 'UPDATE conges_solde_user SET su_solde = su_solde + '.floatval($nb_conges).'
@@ -1276,13 +1280,15 @@ class Fonctions
                     }
                 }
 
-                if( (!isset($tab_calcul_proportionnel[$id_conges])) || ($tab_calcul_proportionnel[$id_conges]!=TRUE) )
+                if( (!isset($tab_calcul_proportionnel[$id_conges])) || ($tab_calcul_proportionnel[$id_conges]!=TRUE) ) {
                     $comment_log = "ajout conges global ($nb_jours jour(s)) ($comment) (calcul proportionnel : No)";
-                else
+                } else {
                     $comment_log = "ajout conges global ($nb_jours jour(s)) ($comment) (calcul proportionnel : Yes)";
+                }
                 log_action(0, "ajout", "tous", $comment_log, $DEBUG);
             }
         }
+        return $return;
     }
 
 
@@ -1318,6 +1324,7 @@ class Fonctions
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id() ;
+        $return = '';
 
         /***********************************************************************/
         /* SAISIE GROUPE pour tous les utilisateurs */
@@ -1327,118 +1334,122 @@ class Fonctions
 
         if($list_group!="") //si la liste n'est pas vide ( serait le cas si n'est responsable d'aucun groupe)
         {
-            echo "<h2>". _('resp_ajout_conges_ajout_groupe') ."</h2>\n";
-            echo "<form action=\"$PHP_SELF?session=$session&onglet=ajout_conges\" method=\"POST\"> \n";
-            echo "    <fieldset class=\"cal_saisie\">\n";
-            echo "<div class=\"table-responsive\"><table class=\"table table-hover table-condensed table-striped\">\n";
-            echo "    <tr>\n";
-            echo "        <td class=\"big\">". _('resp_ajout_conges_choix_groupe') ." : </td>\n";
-                // création du select pour le choix du groupe
-                $text_choix_group="<select name=\"choix_groupe\" >";
-                $sql_group = "SELECT g_gid, g_groupename FROM conges_groupe WHERE g_gid IN ($list_group) ORDER BY g_groupename "  ;
-                $ReqLog_group = \includes\SQL::query($sql_group) ;
+            $return .= '<h2>' . _('resp_ajout_conges_ajout_groupe') . '</h2>';
+            $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=ajout_conges" method="POST">';
+            $return .= '<fieldset class="cal_saisie">';
+            $return .= '<div class="table-responsive"><table class="table table-hover table-condensed table-striped">';
+            $return .= '<tr>';
+            $return .= '<td class="big">' . _('resp_ajout_conges_choix_groupe') . ' : </td>';
+            // création du select pour le choix du groupe
+            $text_choix_group="<select name=\"choix_groupe\" >";
+            $sql_group = "SELECT g_gid, g_groupename FROM conges_groupe WHERE g_gid IN ($list_group) ORDER BY g_groupename "  ;
+            $ReqLog_group = \includes\SQL::query($sql_group) ;
 
-                while ($resultat_group = $ReqLog_group->fetch_array()) {
-                    $current_group_id=$resultat_group["g_gid"];
-                    $current_group_name=$resultat_group["g_groupename"];
-                    $text_choix_group=$text_choix_group."<option value=\"$current_group_id\" >$current_group_name</option>";
-                }
-                $text_choix_group=$text_choix_group."</select>" ;
-
-            echo "        <td colspan=\"3\">$text_choix_group</td>\n";
-            echo "    </tr>\n";
-        echo "<tr>\n";
-        echo "<th colspan=\"2\">" . _('resp_ajout_conges_nb_jours_all_1') . ' ' . _('resp_ajout_conges_nb_jours_all_2') . "</th>\n";
-        echo "<th>" ._('resp_ajout_conges_calcul_prop') . "</th>\n";
-        echo "<th>" . _('divers_comment_maj_1') . "</th>\n";
-        echo "</tr>\n";
-            foreach($tab_type_conges as $id_conges => $libelle) {
-                echo "    <tr>\n";
-                echo "        <td><strong>$libelle<strong></td>\n";
-                echo "        <td><input class=\"form-control\" type=\"text\" name=\"tab_new_nb_conges_all[$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\"></td>\n";
-                echo "        <td>". _('resp_ajout_conges_oui') ." <input type=\"checkbox\" name=\"tab_calcul_proportionnel[$id_conges]\" value=\"TRUE\" checked></td>\n";
-                echo "        <td><input class=\"form-control\" type=\"text\" name=\"tab_new_comment_all[$id_conges]\" size=\"30\" maxlength=\"200\" value=\"\"></td>\n";
-                echo "    </tr>\n";
+            while ($resultat_group = $ReqLog_group->fetch_array()) {
+                $current_group_id=$resultat_group["g_gid"];
+                $current_group_name=$resultat_group["g_groupename"];
+                $text_choix_group=$text_choix_group."<option value=\"$current_group_id\" >$current_group_name</option>";
             }
-            echo "    </table></div>\n";
-            echo "<p>" . _('resp_ajout_conges_calcul_prop_arondi') . "! </p>\n";
-            echo "<input class=\"btn\" type=\"submit\" value=\"". _('form_valid_groupe') ."\">\n";
-            echo "    </fieldset>\n";
-            echo "<input type=\"hidden\" name=\"ajout_groupe\" value=\"TRUE\">\n";
-            echo "<input type=\"hidden\" name=\"session\" value=\"$session\">\n";
-            echo "</form> \n";
+            $text_choix_group=$text_choix_group."</select>" ;
+
+            $return .= '<td colspan="3">' . $text_choix_group . '</td>';
+            $return .= '</tr>';
+            $return .= '<tr>';
+            $return .= '<th colspan="2">' . _('resp_ajout_conges_nb_jours_all_1') . ' ' . _('resp_ajout_conges_nb_jours_all_2') . '</th>';
+            $return .= '<th>' ._('resp_ajout_conges_calcul_prop') . '</th>';
+            $return .= '<th>' . _('divers_comment_maj_1') . '</th>';
+            $return .= '</tr>';
+            foreach($tab_type_conges as $id_conges => $libelle) {
+                $return .= '<tr>';
+                $return .= '<td><strong>' . $libelle . '<strong></td>';
+                $return .= '<td><input class="form-control" type="text" name="tab_new_nb_conges_all[' . $id_conges . ']" size="6" maxlength="6" value="0"></td>';
+                $return .= '<td>' . _('resp_ajout_conges_oui') . '<input type="checkbox" name="tab_calcul_proportionnel[' . $id_conges . ']" value="TRUE" checked></td>';
+                $return .= '<td><input class="form-control" type="text" name="tab_new_comment_all[' . $id_conges . ']" size="30" maxlength="200" value=""></td>';
+                $return .= '</tr>';
+            }
+            $return .= '</table></div>';
+            $return .= '<p>' . _('resp_ajout_conges_calcul_prop_arondi') . '! </p>';
+            $return .= '<input class="btn" type="submit" value="' . _('form_valid_groupe') . '">';
+            $return .= '</fieldset>';
+            $return .= '<input type="hidden" name="ajout_groupe" value="TRUE">';
+            $return .= '<input type="hidden" name="session" value="' . $session . '">';
+            $return .= '</form>';
         }
+        return $return;
     }
 
     public static function affichage_saisie_globale_pour_tous($tab_type_conges, $DEBUG=FALSE)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id() ;
+        $return = '';
 
         /************************************************************/
         /* SAISIE GLOBALE pour tous les utilisateurs du responsable */
-        echo "<h2>". _('resp_ajout_conges_ajout_all') ."</h2>\n";
-        echo "<form action=\"$PHP_SELF?session=$session&onglet=ajout_conges\" method=\"POST\"> \n";
-        echo "    <fieldset class=\"cal_saisie\">\n";
-        echo "<div class=\"table-responsive\"><table class=\"table table-hover table-condensed table-striped\">\n";
-        echo "<thead>\n";
-        echo "<tr>\n";
-        echo "<th colspan=\"2\">" . _('resp_ajout_conges_nb_jours_all_1') . ' ' . _('resp_ajout_conges_nb_jours_all_2') . "</th>\n";
-        echo "<th>" ._('resp_ajout_conges_calcul_prop') . "</th>\n";
-        echo "<th>" . _('divers_comment_maj_1') . "</th>\n";
-        echo "</tr>\n";
-        echo "</thead>\n";
+        $return .= '<h2>' . _('resp_ajout_conges_ajout_all') . '</h2>';
+        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=ajout_conges" method="POST">';
+        $return .= '<fieldset class="cal_saisie">';
+        $return .= '<div class="table-responsive"><table class="table table-hover table-condensed table-striped">';
+        $return .= '<thead>';
+        $return .= '<tr>';
+        $return .= '<th colspan="2">' . _('resp_ajout_conges_nb_jours_all_1') . ' ' . _('resp_ajout_conges_nb_jours_all_2') . '</th>';
+        $return .= '<th>' . _('resp_ajout_conges_calcul_prop') . '</th>';
+        $return .= '<th>' . _('divers_comment_maj_1') . '</th>';
+        $return .= '</tr>';
+        $return .= '</thead>';
         foreach($tab_type_conges as $id_conges => $libelle) {
-            echo "    <tr>\n";
-            echo "        <td><strong>$libelle<strong></td>\n";
-            echo "        <td><input class=\"form-control\" type=\"text\" name=\"tab_new_nb_conges_all[$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\"></td>\n";
-            echo "        <td>". _('resp_ajout_conges_oui') ." <input type=\"checkbox\" name=\"tab_calcul_proportionnel[$id_conges]\" value=\"TRUE\" checked></td>\n";
-            echo "        <td><input class=\"form-control\" type=\"text\" name=\"tab_new_comment_all[$id_conges]\" size=\"30\" maxlength=\"200\" value=\"\"></td>\n";
-            echo "    </tr>\n";
+            $return .= '<tr>';
+            $return .= '<td><strong>' . $libelle . '<strong></td>';
+            $return .= '<td><input class="form-control" type="text" name="tab_new_nb_conges_all[' . $id_conges . ']" size="6" maxlength="6" value="0"></td>';
+            $return .= '<td>' . _('resp_ajout_conges_oui') . '<input type="checkbox" name="tab_calcul_proportionnel[' . $id_conges . ']" value="TRUE" checked></td>';
+            $return .= '<td><input class="form-control" type="text" name="tab_new_comment_all[' . $id_conges . ']" size="30" maxlength="200" value=""></td>';
+            $return .= '</tr>';
         }
-        echo "</table></div>\n";
+        $return .= '</table></div>';
         // texte sur l'arrondi du calcul proportionnel
-        echo "<p>" . _('resp_ajout_conges_calcul_prop_arondi') . "!</p>\n";
+        $return .= '<p>' . _('resp_ajout_conges_calcul_prop_arondi') . '!</p>';
         // bouton valider
-        echo "<input class=\"btn\" type=\"submit\" value=\"". _('form_valid_global') ."\">\n";
-        echo "</fieldset>\n";
-        echo "<input type=\"hidden\" name=\"ajout_global\" value=\"TRUE\">\n";
-        echo "<input type=\"hidden\" name=\"session\" value=\"$session\">\n";
-        echo "</form> \n";
+        $return .= '<input class="btn" type="submit" value="' . _('form_valid_global') . '">';
+        $return .= '</fieldset>';
+        $return .= '<input type="hidden" name="ajout_global" value="TRUE">';
+        $return .= '<input type="hidden" name="session" value="' . $session . '">';
+        $return .= '</form>';
+        return $return;
     }
 
     public static function affichage_saisie_user_par_user($tab_type_conges, $tab_type_conges_exceptionnels, $tab_all_users_du_hr, $tab_all_users_du_grand_resp, $DEBUG=FALSE)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id() ;
+        $return = '';
 
         /************************************************************/
         /* SAISIE USER PAR USER pour tous les utilisateurs du responsable */
-        echo "<h2>Ajout par utilisateur</h2>\n";
-        echo " <form action=\"$PHP_SELF?session=$session&onglet=ajout_conges\" method=\"POST\"> \n";
+        $return .= '<h2>Ajout par utilisateur</h2>';
+        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=ajout_conges" method="POST">';
 
         if( (count($tab_all_users_du_hr)!=0) || (count($tab_all_users_du_grand_resp)!=0) ) {
             // AFFICHAGE TITRES TABLEAU
-            echo "<div class=\"table-responsive\"><table class=\"table table-hover table-condensed table-striped\">\n";
-            echo '<thead>';
-                echo '<tr align="center">';
-                    echo '<th>'. _('divers_nom_maj_1') .'</th>';
-                    echo '<th>'. _('divers_prenom_maj_1') .'</th>';
-                    echo '<th>'. _('divers_quotite_maj_1') .'</th>';
-                    foreach($tab_type_conges as $id_conges => $libelle) {
-                        echo "<th>$libelle<br><i>(". _('divers_solde') .")</i></th>\n";
-                        echo "<th>$libelle<br>". _('resp_ajout_conges_nb_jours_ajout') .'</th>' ;
-                    }
-                    if ($_SESSION['config']['gestion_conges_exceptionnels']) {
-                        foreach($tab_type_conges_exceptionnels as $id_conges => $libelle) {
-                            echo "<th>$libelle<br><i>(". _('divers_solde') .")</i></th>\n";
-                            echo "<th>$libelle<br>". _('resp_ajout_conges_nb_jours_ajout') .'</th>' ;
-                        }
-                    }
-                    echo '<th>'. _('divers_comment_maj_1') ."<br></th>\n" ;
-                echo"</tr>\n";
-            echo '</thead>';
-            echo '<tbody>';
+            $return .= '<div class="table-responsive"><table class="table table-hover table-condensed table-striped">';
+            $return .= '<thead>';
+            $return .= '<tr align="center">';
+            $return .= '<th>' . _('divers_nom_maj_1') . '</th>';
+            $return .= '<th>' . _('divers_prenom_maj_1') . '</th>';
+            $return .= '<th>' . _('divers_quotite_maj_1') . '</th>';
+            foreach($tab_type_conges as $id_conges => $libelle) {
+                $return .= '<th>' . $libelle . '<br><i>(' . _('divers_solde') . ')</i></th>';
+                $return .= '<th>' . $libelle . '<br>' . _('resp_ajout_conges_nb_jours_ajout') . '</th>';
+            }
+            if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+                foreach($tab_type_conges_exceptionnels as $id_conges => $libelle) {
+                    $return .= '<th>' . $libelle . '<br><i>(' . _('divers_solde') . ')</i></th>';
+                    $return .= '<th>' . $libelle . '<br>' . _('resp_ajout_conges_nb_jours_ajout') . '</th>';
+                }
+            }
+            $return .= '<th>'. _('divers_comment_maj_1') . '<br></th>';
+            $return .= '</tr>';
+            $return .= '</thead>';
+            $return .= '<tbody>';
 
             // AFFICHAGE LIGNES TABLEAU
             $cpt_lignes=0 ;
@@ -1447,87 +1458,97 @@ class Fonctions
             $i = true;
             // affichage des users dont on est responsable :
             foreach($tab_all_users_du_hr as $current_login => $tab_current_user) {
-                echo '<tr class="'.($i?'i':'p').'">';
+                $return .= '<tr class="' . ($i ? 'i' : 'p') . '">';
                 //tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
                 $tab_conges=$tab_current_user['conges'];
 
                 /** sur la ligne ,   **/
-                echo '<td>'.$tab_current_user['nom'].'</td>';
-                echo '<td>'.$tab_current_user['prenom'].'</td>';
-                echo '<td>'.$tab_current_user['quotite']."%</td>\n";
+                $return .= '<td>' . $tab_current_user['nom'] . '</td>';
+                $return .= '<td>' . $tab_current_user['prenom'] . '</td>';
+                $return .= '<td>' . $tab_current_user['quotite'] . '%</td>';
 
                 foreach($tab_type_conges as $id_conges => $libelle) {
                     /** le champ de saisie est <input type="text" name="tab_champ_saisie[valeur de u_login][id_du_type_de_conges]" value="[valeur du nb de jours ajouté saisi]"> */
                     $champ_saisie_conges="<input class=\"form-control\" type=\"text\" name=\"tab_champ_saisie[$current_login][$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\">";
-                    echo '<td>'.$tab_conges[$libelle]['nb_an']." <i>(".$tab_conges[$libelle]['solde'].")</i></td>\n";
-                    echo "<td align=\"center\" class=\"histo\">$champ_saisie_conges</td>\n" ;
+                    $return .= '<td>' . $tab_conges[$libelle]['nb_an'] . ' <i>(' . $tab_conges[$libelle]['solde'] . ')</i></td>';
+                    $return .= '<td align="center" class="histo">' . $champ_saisie_conges . '</td>';
                 }
                 if ($_SESSION['config']['gestion_conges_exceptionnels']) {
                     foreach($tab_type_conges_exceptionnels as $id_conges => $libelle) {
                         /** le champ de saisie est <input type="text" name="tab_champ_saisie[valeur de u_login][id_du_type_de_conges]" value="[valeur du nb de jours ajouté saisi]"> */
                         $champ_saisie_conges="<input class=\"form-control\" type=\"text\" name=\"tab_champ_saisie[$current_login][$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\">";
-                        echo "<td><i>(".$tab_conges[$libelle]['solde'].")</i></td>\n";
-                        echo "<td align=\"center\" class=\"histo\">$champ_saisie_conges</td>\n" ;
+                        $return .= '<td><i>(' . $tab_conges[$libelle]['solde'] . ')</i></td>';
+                        $return .= '<td align="center" class="histo">' . $champ_saisie_conges . '</td>';
                     }
                 }
-                echo "<td align=\"center\" class=\"histo\"><input class=\"form-control\" type=\"text\" name=\"tab_commentaire_saisie[$current_login]\" size=\"30\" maxlength=\"200\" value=\"\"></td>\n";
-                echo '</tr>';
+                $return .= '<td align="center" class="histo"><input class="form-control" type="text" name="tab_commentaire_saisie[' . $current_login . ']" size="30" maxlength="200" value=""></td>';
+                $return .= '</tr>';
                 $cpt_lignes++ ;
                 $i = !$i;
             }
 
-            echo '</tbody>';
-            echo '</table>';
+            $return .= '</tbody>';
+            $return .= '</table>';
 
-            echo "<input type=\"hidden\" name=\"ajout_conges\" value=\"TRUE\">\n";
-            echo "<input type=\"hidden\" name=\"session\" value=\"$session\">\n";
-            echo "<input class=\"btn\" type=\"submit\" value=\"". _('form_submit') ."\">\n";
-            echo " </form> \n";
+            $return .= '<input type="hidden" name="ajout_conges" value="TRUE">';
+            $return .= '<input type="hidden" name="session" value="' . $session . '">';
+            $return .= '<input class="btn" type="submit" value="' . _('form_submit') . '">';
+            $return .= ' </form>';
         }
+
+        return $return;
     }
 
     public static function saisie_ajout( $tab_type_conges, $DEBUG)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id() ;
+        $return = '';
 
         // recup du tableau des types de conges (seulement les congesexceptionnels )
         if ($_SESSION['config']['gestion_conges_exceptionnels']) {
-          $tab_type_conges_exceptionnels = recup_tableau_types_conges_exceptionnels();
-          if( $DEBUG ) { echo "tab_type_conges_exceptionnels = "; print_r($tab_type_conges_exceptionnels); echo "<br><br>\n";}
+            $tab_type_conges_exceptionnels = recup_tableau_types_conges_exceptionnels();
+            if( $DEBUG ) {
+                $return .= 'tab_type_conges_exceptionnels = ' . var_export($tab_type_conges_exceptionnels, true) . '<br><br>';
+            }
+        } else {
+            $tab_type_conges_exceptionnels = array();
         }
-        else
-          $tab_type_conges_exceptionnels = array();
 
         // recup de la liste de TOUS les users pour le RH
         // (prend en compte le resp direct, les groupes, le resp virtuel, etc ...)
         // renvoit une liste de login entre quotes et séparés par des virgules
         $tab_all_users_du_hr=recup_infos_all_users_du_hr($_SESSION['userlogin']);
         $tab_all_users_du_grand_resp=recup_infos_all_users_du_grand_resp($_SESSION['userlogin']);
-        if( $DEBUG ) { echo "tab_all_users_du_hr =<br>\n"; print_r($tab_all_users_du_hr); echo "<br>\n"; }
-        if( $DEBUG ) { echo "tab_all_users_du_grand_resp =<br>\n"; print_r($tab_all_users_du_grand_resp); echo "<br>\n"; }
+        if( $DEBUG ) {
+            $return .= 'tab_all_users_du_hr =<br>' . var_export($tab_all_users_du_hr, true) . '<br>';
+        }
+        if( $DEBUG ) {
+            $return .= 'tab_all_users_du_grand_resp =<br>' . var_export($tab_all_users_du_grand_resp, true) . '<br>';
+        }
 
         if( (count($tab_all_users_du_hr)!=0) || (count($tab_all_users_du_grand_resp)!=0) ) {
             /************************************************************/
             /* SAISIE GLOBALE pour tous les utilisateurs du responsable */
-            \hr\Fonctions::affichage_saisie_globale_pour_tous($tab_type_conges, $DEBUG);
-            echo "<br>\n";
+            $return .= \hr\Fonctions::affichage_saisie_globale_pour_tous($tab_type_conges, $DEBUG);
+            $return .= '<br>';
 
             /***********************************************************************/
             /* SAISIE GROUPE pour tous les utilisateurs d'un groupe du responsable */
-            if( $_SESSION['config']['gestion_groupes'] )
-                \hr\Fonctions::affichage_saisie_globale_groupe($tab_type_conges, $DEBUG);
-            echo "<br>\n";
+            if( $_SESSION['config']['gestion_groupes'] ) {
+                $return .= \hr\Fonctions::affichage_saisie_globale_groupe($tab_type_conges, $DEBUG);
+            }
+            $return .= '<br>';
 
             /************************************************************/
             /* SAISIE USER PAR USER pour tous les utilisateurs du responsable */
-            \hr\Fonctions::affichage_saisie_user_par_user($tab_type_conges, $tab_type_conges_exceptionnels, $tab_all_users_du_hr, $tab_all_users_du_grand_resp, $DEBUG);
-            echo "<br>\n";
+            $return .= \hr\Fonctions::affichage_saisie_user_par_user($tab_type_conges, $tab_type_conges_exceptionnels, $tab_all_users_du_hr, $tab_all_users_du_grand_resp, $DEBUG);
+            $return .= '<br>';
 
+        } else {
+            $return .= _('resp_etat_aucun_user') . '<br>';
         }
-        else
-            echo  _('resp_etat_aucun_user') ."<br>\n";
-
+        return $return;
     }
 
     /**
@@ -1544,13 +1565,14 @@ class Fonctions
     public static function pageAjoutCongesModule($tab_type_cong, $session, $DEBUG = false)
     {
         //var pour resp_ajout_conges_all.php
-        $ajout_conges            = getpost_variable('ajout_conges');
-        $ajout_global            = getpost_variable('ajout_global');
-        $ajout_groupe            = getpost_variable('ajout_groupe');
-        $choix_groupe            = getpost_variable('choix_groupe');
+        $ajout_conges = getpost_variable('ajout_conges');
+        $ajout_global = getpost_variable('ajout_global');
+        $ajout_groupe = getpost_variable('ajout_groupe');
+        $choix_groupe = getpost_variable('choix_groupe');
+        $return = '';
 
         // titre
-        echo '<h1>'. _('resp_ajout_conges_titre') ."</h1>\n\n";
+        $return .= '<h1>'. _('resp_ajout_conges_titre') . '</h1>';
 
         if( $ajout_conges == "TRUE" ) {
             $tab_champ_saisie            = getpost_variable('tab_champ_saisie');
@@ -1565,7 +1587,7 @@ class Fonctions
             $tab_calcul_proportionnel    = getpost_variable('tab_calcul_proportionnel');
             $tab_new_comment_all         = getpost_variable('tab_new_comment_all');
 
-            \hr\Fonctions::ajout_global($tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all, $DEBUG);
+            $return .= \hr\Fonctions::ajout_global($tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all, $DEBUG);
             redirect( ROOT_PATH .'hr/hr_index.php?session='.$session, false);
             exit;
         } elseif( $ajout_groupe == "TRUE" ) {
@@ -1579,8 +1601,10 @@ class Fonctions
             redirect( ROOT_PATH .'hr/hr_index.php?session='.$session, false);
             exit;
         } else {
-            \hr\Fonctions::saisie_ajout($tab_type_cong,$DEBUG);
+            $return .= \hr\Fonctions::saisie_ajout($tab_type_cong,$DEBUG);
         }
+
+        return $return;
     }
 
     //fonction de recherche des jours fériés de l'année demandée
