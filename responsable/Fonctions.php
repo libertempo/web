@@ -1782,7 +1782,8 @@ class Fonctions
             echo "</table>\n\n";
 
             echo "<input type=\"hidden\" name=\"user_login\" value=\"$user_login\">\n";
-            echo "<input class=\"btn\" type=\"submit\" value=\"". _('form_submit') ."\">  &nbsp;&nbsp;&nbsp;&nbsp;  <input type=\"reset\" value=\"". _('form_cancel') ."\">\n";
+            echo "<input class=\"btn btn-success\" type=\"submit\" value=\"". _('form_submit') ."\">";
+            echo "<a class=\"btn\" href=\"$PHP_SELF?session=$session\">". _('form_cancel') ."</a>\n";
             echo " </form> \n";
         }
     }
@@ -1897,7 +1898,8 @@ class Fonctions
             echo "</table>\n\n";
 
             echo "<input type=\"hidden\" name=\"user_login\" value=\"$user_login\">\n";
-            echo "<input class=\"btn\" type=\"submit\" value=\"". _('form_submit') ."\">  &nbsp;&nbsp;&nbsp;&nbsp;  <input type=\"reset\" value=\"". _('form_cancel') ."\">\n";
+            echo "<input class=\"btn btn-success\" type=\"submit\" value=\"". _('form_submit') ."\">";
+            echo "<a class=\"btn\" href=\"$PHP_SELF?session=$session\">". _('form_cancel') ."</a>\n";
             echo " </form> \n";
         }
     }
