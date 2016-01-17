@@ -2459,37 +2459,40 @@ class Fonctions
     {
         $jour_today=date("j");
         $jour_today_name=date("D");
+        $return = '';
 
         $first_jour_mois_timestamp=mktime (0,0,0,$mois,1,$year);
         $mois_name=date_fr("F", $first_jour_mois_timestamp);
         $first_jour_mois_rang=date("w", $first_jour_mois_timestamp);      // jour de la semaine en chiffre (0=dim , 6=sam)
-        if($first_jour_mois_rang==0)
+        if($first_jour_mois_rang==0) {
             $first_jour_mois_rang=7 ;    // jour de la semaine en chiffre (1=lun , 7=dim)
+        }
 
-        echo "<table>\n";
+        $return .= '<table>';
         /* affichage  2 premieres lignes */
-        echo "    <thead>\n";
-        echo "    <tr><th colspan=7 class=\"titre\"> $mois_name $year </th></tr>\n" ;
-        echo "    <tr>\n";
-        echo "        <th class=\"cal-saisie2\">". _('lundi_1c') ."</th>\n";
-        echo "        <th class=\"cal-saisie2\">". _('mardi_1c') ."</th>\n";
-        echo "        <th class=\"cal-saisie2\">". _('mercredi_1c') ."</th>\n";
-        echo "        <th class=\"cal-saisie2\">". _('jeudi_1c') ."</th>\n";
-        echo "        <th class=\"cal-saisie2\">". _('vendredi_1c') ."</th>\n";
-        echo "        <th class=\"cal-saisie2\">". _('samedi_1c') ."</th>\n";
-        echo "        <th class=\"cal-saisie2\">". _('dimanche_1c') ."</th>\n";
-        echo "    </tr>\n" ;
-        echo "    </thead>\n" ;
+        $return .= '<thead>';
+        $return .= '<tr><th colspan=7 class="titre">' . $mois_name . ' ' . $year . '</th></tr>';
+        $return .= '<tr>';
+        $return .= '<th class="cal-saisie2">' . _('lundi_1c') . '</th>';
+        $return .= '<th class="cal-saisie2">' . _('mardi_1c') . '</th>';
+        $return .= '<th class="cal-saisie2">' . _('mercredi_1c') . '</th>';
+        $return .= '<th class="cal-saisie2">' . _('jeudi_1c') . '</th>';
+        $return .= '<th class="cal-saisie2">' . _('vendredi_1c') . '</th>';
+        $return .= '<th class="cal-saisie2">' . _('samedi_1c') . '</th>';
+        $return .= '<th class="cal-saisie2">' . _('dimanche_1c') . '</th>';
+        $return .= '</tr>' ;
+        $return .= '</thead>';
 
         /* affichage ligne 1 du mois*/
-        echo "<tr>\n";
+        $return .= '<tr>';
         // affichage des cellules vides jusqu'au 1 du mois ...
         for($i=1; $i<$first_jour_mois_rang; $i++) {
-            if( (($i==6)&&($_SESSION['config']['samedi_travail']==FALSE)) || (($i==7)&&($_SESSION['config']['dimanche_travail']==FALSE)) )
+            if( (($i==6)&&($_SESSION['config']['samedi_travail']==FALSE)) || (($i==7)&&($_SESSION['config']['dimanche_travail']==FALSE)) ) {
                 $bgcolor=$_SESSION['config']['week_end_bgcolor'];
-            else
+            } else {
                 $bgcolor=$_SESSION['config']['semaine_bgcolor'];
-            echo "<td class=\"month-out cal-saisie2\">&nbsp;</td>";
+            }
+            $return .= '<td class="month-out cal-saisie2">&nbsp;</td>';
         }
         // affichage des cellules du 1 du mois à la fin de la ligne ...
         for($i=$first_jour_mois_rang; $i<8; $i++) {
@@ -2499,103 +2502,110 @@ class Fonctions
             $j_day=date("d", $j_timestamp);
             $td_second_class=get_td_class_of_the_day_in_the_week($j_timestamp);
 
-            if(in_array ("$j_date", $tab_year))
+            if(in_array ("$j_date", $tab_year)) {
                 $td_second_class="fermeture";
+            }
 
-            echo "<td  class=\"cal-saisie $td_second_class\">$j_day</td>";
+            $return .= '<td  class="cal-saisie ' . $td_second_class . '">' . $j_day . '</td>';
         }
-        echo "</tr>\n";
+        $return .= '</tr>';
 
         /* affichage ligne 2 du mois*/
-        echo "<tr>\n";
+        $return .= '<tr>';
         for($i=8-$first_jour_mois_rang+1; $i<15-$first_jour_mois_rang+1; $i++) {
             $j_timestamp=mktime (0,0,0,$mois,$i,$year);
             $td_second_class=get_td_class_of_the_day_in_the_week($j_timestamp);
             $j_date=date("Y-m-d", $j_timestamp);
             $j_day=date("d", $j_timestamp);
 
-            if(in_array ("$j_date", $tab_year))
+            if(in_array ("$j_date", $tab_year)) {
                 $td_second_class="fermeture";
+            }
 
-            echo "<td  class=\"cal-saisie $td_second_class\">$j_day</td>";
+            $return .= '<td class="cal-saisie ' . $td_second_class . '">' . $j_day . '</td>';
         }
-        echo "</tr>\n";
+        $return .= '</tr>';
 
         /* affichage ligne 3 du mois*/
-        echo "<tr>\n";
+        $return .= '<tr>';
         for($i=15-$first_jour_mois_rang+1; $i<22-$first_jour_mois_rang+1; $i++) {
             $j_timestamp=mktime (0,0,0,$mois,$i,$year);
             $j_date=date("Y-m-d", $j_timestamp);
             $j_day=date("d", $j_timestamp);
             $td_second_class=get_td_class_of_the_day_in_the_week($j_timestamp);
 
-            if(in_array ("$j_date", $tab_year))
+            if(in_array ("$j_date", $tab_year)) {
                 $td_second_class="fermeture";
+            }
 
-            echo "<td  class=\"cal-saisie $td_second_class\">$j_day</td>";
+            $return .= '<td class="cal-saisie ' . $td_second_class . '">' . $j_day .  '</td>';
         }
-        echo "</tr>\n";
+        $return .= '</tr>';
 
         /* affichage ligne 4 du mois*/
-        echo "<tr>\n";
+        $return .= '<tr>';
         for($i=22-$first_jour_mois_rang+1; $i<29-$first_jour_mois_rang+1; $i++) {
             $j_timestamp=mktime (0,0,0,$mois,$i,$year);
             $j_date=date("Y-m-d", $j_timestamp);
             $j_day=date("d", $j_timestamp);
             $td_second_class=get_td_class_of_the_day_in_the_week($j_timestamp);
 
-            if(in_array ("$j_date", $tab_year))
+            if(in_array ("$j_date", $tab_year)) {
                 $td_second_class="fermeture";
+            }
 
-            echo "<td  class=\"cal-saisie $td_second_class\">$j_day</td>";
+            $return .= '<td class="cal-saisie ' . $td_second_class . '">' . $j_day . '</td>';
         }
-        echo "</tr>\n";
+        $return .= '</tr>';
 
         /* affichage ligne 5 du mois (peut etre la derniere ligne) */
-        echo "<tr>\n";
+        $return .= '<tr>';
         for($i=29-$first_jour_mois_rang+1; $i<36-$first_jour_mois_rang+1 && checkdate($mois, $i, $year); $i++) {
             $j_timestamp=mktime (0,0,0,$mois,$i,$year);
             $j_date=date("Y-m-d", $j_timestamp);
             $j_day=date("d", $j_timestamp);
             $td_second_class=get_td_class_of_the_day_in_the_week($j_timestamp);
 
-            if(in_array ("$j_date", $tab_year))
+            if(in_array ("$j_date", $tab_year)) {
                 $td_second_class="fermeture";
+            }
 
-            echo "<td  class=\"cal-saisie $td_second_class\">$j_day</td>";
+            $return .= '<td  class="cal-saisie ' . $td_second_class . '">' . $j_day . '</td>';
         }
         for($i; $i<36-$first_jour_mois_rang+1; $i++) {
-            if( (($i==35-$first_jour_mois_rang)&&($_SESSION['config']['samedi_travail']==FALSE)) || (($i==36-$first_jour_mois_rang)&&($_SESSION['config']['dimanche_travail']==FALSE)) )
+            if( (($i==35-$first_jour_mois_rang)&&($_SESSION['config']['samedi_travail']==FALSE)) || (($i==36-$first_jour_mois_rang)&&($_SESSION['config']['dimanche_travail']==FALSE)) ) {
                 $bgcolor=$_SESSION['config']['week_end_bgcolor'];
-            else
+            } else {
                 $bgcolor=$_SESSION['config']['semaine_bgcolor'];
-            echo "<td class=\"cal-saisie2 month-out\">&nbsp;</td>";
+            }
+            $return .= '<td class="cal-saisie2 month-out">&nbsp;</td>';
         }
-        echo "</tr>\n";
+        $return .= '</tr>';
 
         /* affichage ligne 6 du mois (derniere ligne)*/
-        echo "<tr>\n";
+        $return .= '<tr>';
         for($i=36-$first_jour_mois_rang+1; checkdate($mois, $i, $year); $i++) {
             $j_timestamp=mktime (0,0,0,$mois,$i,$year);
             $j_date=date("Y-m-d", $j_timestamp);
             $j_day=date("d", $j_timestamp);
             $td_second_class=get_td_class_of_the_day_in_the_week($j_timestamp);
 
-            if(in_array ("$j_date", $tab_year))
+            if(in_array ("$j_date", $tab_year)) {
                 $td_second_class="fermeture";
+            }
 
-            echo "<td  class=\"cal-saisie $td_second_class\">$j_day</td>";
+            $return .= '<td  class="cal-saisie ' . $td_second_class . '">' . $j_day . '</td>';
         }
         for($i; $i<43-$first_jour_mois_rang+1; $i++) {
-            if( (($i==42-$first_jour_mois_rang)&&($_SESSION['config']['samedi_travail']==FALSE)) || (($i==43-$first_jour_mois_rang)&&($_SESSION['config']['dimanche_travail']==FALSE)))
+            if( (($i==42-$first_jour_mois_rang)&&($_SESSION['config']['samedi_travail']==FALSE)) || (($i==43-$first_jour_mois_rang)&&($_SESSION['config']['dimanche_travail']==FALSE))) {
                 $bgcolor=$_SESSION['config']['week_end_bgcolor'];
-            else
+            } else {
                 $bgcolor=$_SESSION['config']['semaine_bgcolor'];
-            echo "<td class=\"month-out cal-saisie2\">&nbsp;</td>";
+            }
+            $return .= '<td class="month-out cal-saisie2">&nbsp;</td>';
         }
-        echo "</tr>\n";
-
-        echo "</table>\n";
+        $return .= '</tr></table>';
+        return $return;
     }
 
     //calendrier des fermeture
@@ -2604,18 +2614,20 @@ class Fonctions
         // on construit le tableau de l'année considérée
         $tab_year=array();
         \hr\Fonctions::get_tableau_jour_fermeture($year, $tab_year,  $groupe_id,  $DEBUG);
+        $return = '';
 
-        echo "<div class=\"calendar calendar-year\">\n";
+        $return .= '<div class="calendar calendar-year">';
         $months = array('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12');
 
         foreach ($months as $month) {
-            echo "<div class=\"month\">\n";
-            echo "<div class=\"wrapper\">\n";
-            echo \hr\Fonctions::affiche_calendrier_fermeture_mois($year, $month, $tab_year);
-            echo "</div>\n";
-            echo "</div>";
+            $return .= '<div class="month">';
+            $return .= '<div class="wrapper">';
+            $return .= \hr\Fonctions::affiche_calendrier_fermeture_mois($year, $month, $tab_year);
+            $return .= '</div>';
+            $return .= '</div>';
         }
-        echo "</div>";
+        $return .= '</div>';
+        return $return;
     }
 
     //insertion des nouvelles dates de fermeture
@@ -2676,22 +2688,27 @@ class Fonctions
 
     public static function commit_annul_fermeture($fermeture_id, $groupe_id,  $DEBUG=FALSE)
     {
-
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id();
+        $return = '';
 
-        if( $DEBUG ) { echo "fermeture_id = $fermeture_id <br>\n"; }
+        if( $DEBUG ) {
+            $return .= 'fermeture_id = ' . $fermeture_id . '<br>';
+        }
 
 
         /*****************************/
         // on construit le tableau des users affectés par les fermetures saisies :
-        if($groupe_id==0)  // fermeture pour tous !
+        if($groupe_id==0) { // fermeture pour tous !
             $list_users = get_list_all_users( $DEBUG);
-        else
+        } else {
             $list_users = get_list_users_du_groupe($groupe_id,  $DEBUG);
+        }
 
         $tab_users = explode(",", $list_users);
-        if( $DEBUG ) { echo "tab_users =<br>\n"; print_r($tab_users) ; echo "<br>\n"; }
+        if( $DEBUG ) {
+            $return .= 'tab_users =<br>' . var_export($tab_users, true) . '<br>';
+        }
 
         /***********************************************/
         /** suppression des jours de fermetures   **/
@@ -2721,54 +2738,61 @@ class Fonctions
 
             // mise à jour du solde de jours de conges pour l'utilisateur $current_login
             if ($sql_nb_jours_a_crediter != 0) {
-                    $sql1 = 'UPDATE conges_solde_user SET su_solde = su_solde + '.\includes\SQL::quote($sql_nb_jours_a_crediter).' WHERE su_login="'. \includes\SQL::quote($current_login).'" AND su_abs_id = '.\includes\SQL::quote($sql_type_abs) ;
-                    $ReqLog = \includes\SQL::query($sql1);
+                $sql1 = 'UPDATE conges_solde_user SET su_solde = su_solde + '.\includes\SQL::quote($sql_nb_jours_a_crediter).' WHERE su_login="'. \includes\SQL::quote($current_login).'" AND su_abs_id = '.\includes\SQL::quote($sql_type_abs) ;
+                $ReqLog = \includes\SQL::query($sql1);
             }
         }
 
-        echo '<div class="wrapper">';
-        if($result)
-            echo "<br>". _('form_modif_ok') ."<br><br>\n";
-        else
-            echo "<br>". _('form_modif_not_ok') ." !<br><br>\n";
+        $return .= '<div class="wrapper">';
+        if($result) {
+            $return .= '<br>' . _('form_modif_ok') . '<br><br>';
+        } else {
+            $return .= '<br>' . _('form_modif_not_ok') . ' !<br><br>';
+        }
 
         // on enregistre cette action dan les logs
-        if($groupe_id==0)  // fermeture pour tous !
+        if($groupe_id==0) { // fermeture pour tous !
             $comment_log = "annulation fermeture $fermeture_id (pour tous) " ;
-        else
+        } else {
             $comment_log = "annulation fermeture $fermeture_id (pour le groupe $groupe_id)" ;
+        }
         log_action(0, "", "", $comment_log,  $DEBUG);
 
-        echo "<form action=\"$PHP_SELF?session=$session\" method=\"POST\">\n";
-        echo "<input class=\"btn btn-success\" type=\"submit\" value=\"". _('form_ok') ."\">\n";
-        echo "</form>\n";
-        echo '</div>';
+        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '" method="POST">';
+        $return .= '<input class="btn btn-success" type="submit" value="' . _('form_ok') . '">';
+        $return .= '</form>';
+        $return .= '</div>';
+        return $return;
     }
 
     public static function commit_new_fermeture($new_date_debut, $new_date_fin, $groupe_id, $id_type_conges, $DEBUG=FALSE)
     {
-
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id();
-
+        $return = '';
 
         // on transforme les formats des dates
         $tab_date_debut=explode("/",$new_date_debut);   // date au format d/m/Y
         $date_debut=$tab_date_debut[2]."-".$tab_date_debut[1]."-".$tab_date_debut[0];
         $tab_date_fin=explode("/",$new_date_fin);   // date au format d/m/Y
         $date_fin=$tab_date_fin[2]."-".$tab_date_fin[1]."-".$tab_date_fin[0];
-        if( $DEBUG ) { echo "date_debut = $date_debut  // date_fin = $date_fin<br>\n"; }
+        if( $DEBUG ) {
+            $return .= 'date_debut = ' . $date_debut . '// date_fin = ' . $date_fin . '<br>';
+        }
 
 
         /*****************************/
         // on construit le tableau des users affectés par les fermetures saisies :
-        if($groupe_id==0)  // fermeture pour tous !
+        if($groupe_id==0) { // fermeture pour tous !
             $list_users = get_list_all_users( $DEBUG);
-        else
+        } else {
             $list_users = get_list_users_du_groupe($groupe_id,  $DEBUG);
+        }
 
         $tab_users = explode(",", $list_users);
-        if( $DEBUG ) { echo "tab_users =<br>\n"; print_r($tab_users) ; echo "<br>\n"; }
+        if( $DEBUG ) {
+            $return .= 'tab_users =<br>' . var_export($tab_users, true) . '<br>';
+        }
 
         //******************************
         // !!!!
@@ -2784,7 +2808,9 @@ class Fonctions
         for($current_date=$date_debut; $current_date <= $date_fin; $current_date=jour_suivant($current_date)) {
             $tab_fermeture[] = $current_date;
         }
-        if( $DEBUG ) { echo "tab_fermeture =<br>\n"; print_r($tab_fermeture) ; echo "<br>\n"; }
+        if( $DEBUG ) {
+            echo "tab_fermeture =<br>\n"; print_r($tab_fermeture) ; echo "<br>\n";
+        }
         // on insere les nouvelles dates saisies dans conges_jours_fermeture
         $result = \hr\Fonctions::insert_year_fermeture($new_fermeture_id, $tab_fermeture, $groupe_id,  $DEBUG);
 
@@ -2807,7 +2833,9 @@ class Fonctions
                 // $nb_jours = compter($current_login, $date_debut, $date_fin, $opt_debut, $opt_fin, $comment,  $DEBUG);
                 $nb_jours = compter($current_login, "", $date_debut, $date_fin, $opt_debut, $opt_fin, $comment, $DEBUG);
 
-                if ($DEBUG) echo "<br>user_login : " . $current_login . " nbjours : " . $nb_jours . "<br>\n";
+                if ($DEBUG) {
+                    $return .= '<br>user_login : ' . $current_login . ' nbjours : ' . $nb_jours . '<br>';
+                }
 
                 // on ne met à jour la table conges_periode .
                 $commentaire =  _('divers_fermeture') ;
@@ -2824,19 +2852,21 @@ class Fonctions
         // on recharge les jours fermés dans les variables de session
         init_tab_jours_fermeture($_SESSION['userlogin'],  $DEBUG);
 
-        echo '<div class="wrapper">';
+        $return .= '<div class="wrapper">';
 
-        if($result)
-            echo "<br>". _('form_modif_ok') ."<br><br>\n";
-        else
-            echo "<br>". _('form_modif_not_ok') ." !<br><br>\n";
+        if($result) {
+            $return .= '<br>' . _('form_modif_ok') . '<br><br>';
+        } else {
+            $return .= '<br>' . _('form_modif_not_ok') . ' !<br><br>';
+        }
 
         $comment_log = "saisie des jours de fermeture de $date_debut a $date_fin" ;
         log_action(0, "", "", $comment_log,  $DEBUG);
-        echo "<form action=\"$PHP_SELF?session=$session\" method=\"POST\">\n";
-        echo "<input class=\"btn btn-success\" type=\"submit\" value=\"". _('form_ok') ."\">\n";
-        echo "</form>\n";
-        echo '</div>';
+        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '" method="POST">';
+        $return .= '<input class="btn btn-success" type="submit" value="' . _('form_ok') . '">';
+        $return .= '</form>';
+        $return .= '</div>';
+        return $return;
     }
 
     //function confirm_saisie_fermeture($tab_checkbox_j_ferme, $year_calendrier_saisie, $groupe_id, $DEBUG=FALSE)
@@ -2844,20 +2874,22 @@ class Fonctions
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id();
+        $return = '';
 
-        echo '<div class="wrapper">';
-        echo "<form action=\"$PHP_SELF?session=$session\" method=\"POST\">\n";
-        echo  _('divers_fermeture_du') ."  <b>$fermeture_date_debut</b> ". _('divers_au') ." <b>$fermeture_date_fin</b>. \n";
-        echo "<b>". _('admin_annul_fermeture_confirm') .".</b><br>\n";
-        echo "<input type=\"hidden\" name=\"fermeture_id\" value=\"$fermeture_id\">\n";
-        echo "<input type=\"hidden\" name=\"fermeture_date_debut\" value=\"$fermeture_date_debut\">\n";
-        echo "<input type=\"hidden\" name=\"fermeture_date_fin\" value=\"$fermeture_date_fin\">\n";
-        echo "<input type=\"hidden\" name=\"groupe_id\" value=\"$groupe_id\">\n";
-        echo "<input type=\"hidden\" name=\"choix_action\" value=\"commit_annul_fermeture\">\n";
-        echo "<input class=\"btn btn-success\" type=\"submit\" value=\"". _('form_continuer') ."\">\n";
-        echo "<a class=\"btn\" href=\"$PHP_SELF?session=$session\">". _('form_cancel') ."</a>";
-        echo "</form>\n";
-        echo "</div>\n";
+        $return .= '<div class="wrapper">';
+        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '" method="POST">';
+        $return .= _('divers_fermeture_du') . '<b>' . $fermeture_date_debut . '</b>' . _('divers_au') . '<b>' . $fermeture_date_fin . '</b>.';
+        $return .= '<b>' . _('admin_annul_fermeture_confirm') . '</b>.<br>';
+        $return .= '<input type="hidden" name="fermeture_id" value="' . $fermeture_id . '">';
+        $return .= '<input type="hidden" name="fermeture_date_debut" value="' . $fermeture_date_debut . '">';
+        $return .= '<input type="hidden" name="fermeture_date_fin" value="' . $fermeture_date_fin . '">';
+        $return .= '<input type="hidden" name="groupe_id" value="' . $groupe_id . '">';
+        $return .= '<input type="hidden" name="choix_action" value="commit_annul_fermeture">';
+        $return .= '<input class="btn btn-success" type="submit" value="' . _('form_continuer') . '">';
+        $return .= '<a class="btn" href="' . $PHP_SELF . '?session=' . $session . '">' . _('form_cancel') . '</a>';
+        $return .= '</form>';
+        $return .= '</div>';
+        return $return;
     }
 
     // retourne un tableau des periodes de fermeture (pour un groupe donné (gid=0 pour tout le monde))
@@ -2885,21 +2917,25 @@ class Fonctions
     {
         $tab_conges=recup_tableau_types_conges( $DEBUG);
         $tab_conges_except=recup_tableau_types_conges_exceptionnels( $DEBUG);
+        $return = '';
 
         foreach($tab_conges as $id => $libelle) {
-            if($libelle == 1)
-                echo "<option value=\"$id\" selected>$libelle</option>\n";
-            else
-                echo "<option value=\"$id\">$libelle</option>\n";
+            if($libelle == 1) {
+                $return .= '<option value="' . $id . '" selected>' . $libelle . '</option>';
+            } else {
+                $return .= '<option value="' . $id  . '">' . $libelle . '</option>';
+            }
         }
         if(count($tab_conges_except)!=0) {
             foreach($tab_conges_except as $id => $libelle) {
-                if($libelle == 1)
-                    echo "<option value=\"$id\" selected>$libelle</option>\n";
-                else
-                    echo "<option value=\"$id\">$libelle</option>\n";
+                if($libelle == 1) {
+                    $return .= '<option value="' . $id . '" selected>' . $libelle . '</option>';
+                } else {
+                    $return .= '<option value="' . $id . '">' . $libelle . '</option>';
+                }
             }
         }
+        return $return;
     }
 
     //renvoi un tableau des jours de fermeture
@@ -2925,6 +2961,7 @@ class Fonctions
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id();
+        $return = '';
 
         $tab_date_debut=explode("/",$new_date_debut);   // date au format d/m/Y
         $timestamp_date_debut = mktime(0,0,0, $tab_date_debut[1], $tab_date_debut[0], $tab_date_debut[2]) ;
@@ -2937,74 +2974,76 @@ class Fonctions
         // on construit le tableau de l'année considérée
         $tab_year=array();
         \hr\Fonctions::get_tableau_jour_fermeture($year, $tab_year,  $groupe_id,  $DEBUG);
-        if( $DEBUG ) { echo "tab_year = "; print_r($tab_year); echo "<br>\n"; }
+        if( $DEBUG ) {
+            $return .= 'tab_year = ' . var_export($tab_year, true) . '<br>';
+        }
 
-        echo "<form id=\"form-fermeture\" class=\"form-inline\" role=\"form\" action=\"$PHP_SELF?session=$session&year=$year\" method=\"POST\">\n";
-          echo "<div class=\"form-group\">\n";
-        echo "<label for=\"new_date_debut\">" . _('divers_date_debut') . "</label><input type=\"text\" class=\"form-control date\" name=\"new_date_debut\" value=\"$new_date_debut\">\n";
-          echo "</div>";
-          echo "<div class=\"form-group\">\n";
-          echo "<label for=\"new date_fin\">" . _('divers_date_fin') . "</label><input type=\"text\" class=\"form-control date\" name=\"new_date_fin\" value=\"$new_date_fin\">\n";
-          echo "</div>";
-          echo "<div class=\"form-group\">\n";
-        echo "<label for=\"id_type_conges\">" . _('admin_jours_fermeture_affect_type_conges') . "</label>\n";
-        echo "<select name=\"id_type_conges\" class=\"form-control\">\n";
-           echo \hr\Fonctions::affiche_select_conges_id($DEBUG);
-           echo "</select>\n";
-           echo "</div>\n";
-           echo "<hr/>\n";
-         echo "<input type=\"hidden\" name=\"groupe_id\" value=\"$groupe_id\">\n";
-        echo "<input type=\"hidden\" name=\"choix_action\" value=\"commit_new_fermeture\">\n";
-        echo "<input class=\"btn btn-success\" type=\"submit\" value=\"". _('form_submit') ."\">\n";
-        echo "</form>\n";
+        $return .= '<form id="form-fermeture" class="form-inline" role="form" action="' . $PHP_SELF . '?session=' . $session . '&year=' . $year . '" method="POST">';
+        $return .= '<div class="form-group">';
+        $return .= '<label for="new_date_debut">' . _('divers_date_debut') . '</label><input type="text" class="form-control date" name="new_date_debut" value="' . $new_date_debut . '">';
+        $return .= '</div>';
+        $return .= '<div class="form-group">';
+        $return .= '<label for="new date_fin">' . _('divers_date_fin') . '</label><input type="text" class="form-control date" name="new_date_fin" value="' . $new_date_fin . '">';
+        $return .= '</div>';
+        $return .= '<div class="form-group">';
+        $return .= '<label for="id_type_conges">' . _('admin_jours_fermeture_affect_type_conges') . '</label>';
+        $return .= '<select name="id_type_conges" class="form-control">';
+        $return .= \hr\Fonctions::affiche_select_conges_id($DEBUG);
+        $return .= '</select>';
+        $return .= '</div>';
+        $return .= '<hr/>';
+        $return .= '<input type="hidden" name="groupe_id" value="' . $groupe_id . '">';
+        $return .= '<input type="hidden" name="choix_action" value="commit_new_fermeture">';
+        $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
+        $return .= '</form>';
+        return $return;
     }
 
     public static function saisie_groupe_fermeture( $DEBUG=FALSE)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id();
+        $return = '';
 
+        $return .= '<h3>fermeture pour tous ou pour un groupe ?</h3>';
+        $return .= '<div class="row">';
+        $return .= '<div class="col-md-6">';
+        /********************/
+        /* Choix Tous       */
+        /********************/
 
-        echo "<h3>fermeture pour tous ou pour un groupe ?</h3>\n";
-        echo '<div class="row">';
-            echo '<div class="col-md-6">';
-                /********************/
-                /* Choix Tous       */
-                /********************/
+        // AFFICHAGE TABLEAU
+        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '" method="POST">';
+        $return .= '<input type="hidden" name="groupe_id" value="0">';
+        $return .= '<input type="hidden" name="choix_action" value="saisie_dates">';
+        $return .= '<input class="btn btn-success" type="submit" value="' . _('admin_jours_fermeture_fermeture_pour_tous') . ' !">';
+        $return .= '</form>';
+        $return .= '</div>';
+        $return .= '<div class="col-md-6">';
+        /********************/
+        /* Choix Groupe     */
+        /********************/
+        // Récuperation des informations :
+        $sql_gr = "SELECT g_gid, g_groupename, g_comment FROM conges_groupe ORDER BY g_groupename"  ;
 
-                // AFFICHAGE TABLEAU
-                echo "<form action=\"$PHP_SELF?session=$session\" method=\"POST\">\n" ;
-                    echo "<input type=\"hidden\" name=\"groupe_id\" value=\"0\">\n";
-                    echo "<input type=\"hidden\" name=\"choix_action\" value=\"saisie_dates\">\n";
-                    echo "<input class=\"btn btn-success\" type=\"submit\" value=\"". _('admin_jours_fermeture_fermeture_pour_tous') ." !\">  \n";
-                echo "</form>\n" ;
-            echo '</div>';
-            echo '<div class="col-md-6">';
-                /********************/
-                /* Choix Groupe     */
-                /********************/
-                // Récuperation des informations :
-                $sql_gr = "SELECT g_gid, g_groupename, g_comment FROM conges_groupe ORDER BY g_groupename"  ;
+        // AFFICHAGE TABLEAU
+        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '" class="form-inline" method="POST">';
+        $return .= '<div class="form-group" style="margin-right: 10px;">';
+        $ReqLog_gr = \includes\SQL::query($sql_gr);
+        $return .= '<select class="form-control" name="groupe_id">';
+        while ($resultat_gr = $ReqLog_gr->fetch_array()) {
+            $sql_gid=$resultat_gr["g_gid"] ;
+            $sql_group=$resultat_gr["g_groupename"] ;
+            $sql_comment=$resultat_gr["g_comment"] ;
 
-                // AFFICHAGE TABLEAU
-
-                echo "<form action=\"$PHP_SELF?session=$session\" class=\"form-inline\" method=\"POST\">\n" ;
-                    echo '<div class="form-group" style="margin-right: 10px;">';
-                        $ReqLog_gr = \includes\SQL::query($sql_gr);
-                        echo "<select  class=\"form-control\" name=\"groupe_id\">";
-                        while ($resultat_gr = $ReqLog_gr->fetch_array()) {
-                            $sql_gid=$resultat_gr["g_gid"] ;
-                            $sql_group=$resultat_gr["g_groupename"] ;
-                            $sql_comment=$resultat_gr["g_comment"] ;
-
-                            echo "<option value=\"$sql_gid\">$sql_group";
-                        }
-                        echo "</select>";
-                        echo "<input type=\"hidden\" name=\"choix_action\" value=\"saisie_dates\">\n";
-                    echo '</div>';
-                    echo "<input class=\"btn btn-success\" type=\"submit\" value=\"". _('admin_jours_fermeture_fermeture_par_groupe') ."\">  \n";
-                echo "</form>\n" ;
-            echo '</div>';
+            $return .= '<option value="' . $sql_gid . '">' . $sql_group;
+        }
+        $return .= '</select>';
+        $return .= '<input type="hidden" name="choix_action" value="saisie_dates">';
+        $return .= '</div>';
+        $return .= '<input class="btn btn-success" type="submit" value="' . _('admin_jours_fermeture_fermeture_par_groupe') . '">';
+        $return .= '</form>';
+        $return .= '</div>';
 
         /************************************************/
         // HISTORIQUE DES FERMETURES
@@ -3012,12 +3051,12 @@ class Fonctions
         $tab_periodes_fermeture = array();
         \hr\Fonctions::get_tableau_periodes_fermeture($tab_periodes_fermeture, $DEBUG);
         if(count($tab_periodes_fermeture)!=0) {
-            echo "<table class=\"table\">\n";
-            echo "<thead>\n";
-            echo "<tr>\n";
-            echo "<th colspan=\"2\">Fermetures</th>\n";
-            echo "</tr>\n";
-            echo "</thead>\n";
+            $return .= '<table class="table">';
+            $return .= '<thead>';
+            $return .= '<tr>';
+            $return .= '<th colspan="2">Fermetures</th>';
+            $return .= '</tr>';
+            $return .= '</thead>';
             foreach($tab_periodes_fermeture as $tab_periode) {
                 $date_affiche_1=eng_date_to_fr($tab_periode['date_deb']);
                 $date_affiche_2=eng_date_to_fr($tab_periode['date_fin']);
@@ -3025,27 +3064,27 @@ class Fonctions
                 $groupe_id =($tab_periode['groupe_id']);
                 $groupe_name =($tab_periode['groupe_name']);
 
-                if($groupe_id==0)
+                if($groupe_id==0) {
                     $groupe_name = 'Tous';
-                else
+                } else {
                     $groupe_name = $groupe_name;
+                }
 
-                echo "<tr>\n";
-                echo "<td>\n";
-                echo  _('divers_du') ." <b>$date_affiche_1</b> ". _('divers_au') ." <b>$date_affiche_2</b>  (id $fermeture_id)</b>  ".$groupe_name."\n";
-                echo "</td>\n";
-                echo "<td>\n";
-                echo "<a href=\"$PHP_SELF?session=$session&choix_action=annul_fermeture&fermeture_id=$fermeture_id&groupe_id=$groupe_id&fermeture_date_debut=$date_affiche_1&fermeture_date_fin=$date_affiche_2\">". _('admin_annuler_fermeture') ."</a>\n";
-                echo "</td>\n";
-                echo "</tr>\n";
+                $return .= '<tr>';
+                $return .= '<td>';
+                $return .= _('divers_du') . ' <b>'. $date_affiche_1 . '</b> ' . _('divers_au') . ' <b>' . $date_affiche_2 . '</b>  (id ' . $fermeture_id . ')</b> ' . $groupe_name;
+                $return .= '</td>';
+                $return .= '<td>';
+                $return .= '<a href="' . $PHP_SELF . '?session=' . $session . '&choix_action=annul_fermeture&fermeture_id=' . $fermeture_id . '&groupe_id=' . $groupe_id . '&fermeture_date_debut=' . $date_affiche_1 . '&fermeture_date_fin=' . $date_affiche_2 . '">' . _('admin_annuler_fermeture') . '</a>';
+                $return .= '</td>';
+                $return .= '</tr>';
             }
-            echo "</table>\n";
+            $return .= '</table>';
         }
-
-
-        echo '</div>';
-        echo "<hr>\n" ;
-        echo "<a class=\"btn\" href=\"/admin/admin_index.php?session=$session\">". _('form_cancel') ."</a>\n";
+        $return .= '</div>';
+        $return .= '<hr>';
+        $return .= '<a class="btn" href="/admin/admin_index.php?session=' . $session . '">' . _('form_cancel') . '</a>';
+        return $return;
     }
 
     /**
@@ -3062,6 +3101,7 @@ class Fonctions
     {
         // verif des droits du user à afficher la page
         verif_droits_user($session, "is_hr", $DEBUG);
+        $return = '';
 
         /*** initialisation des variables ***/
         /*************************************/
@@ -3069,40 +3109,49 @@ class Fonctions
         // SERVER
         $PHP_SELF=$_SERVER['PHP_SELF'];
         // GET / POST
-        $choix_action                 = getpost_variable('choix_action');
-        $year                        = getpost_variable('year', 0);
-        $groupe_id                    = getpost_variable('groupe_id');
-        $id_type_conges                = getpost_variable('id_type_conges');
-        $new_date_debut                = getpost_variable('new_date_debut'); // valeur par dédaut = aujourd'hui
-        $new_date_fin                  = getpost_variable('new_date_fin');   // valeur par dédaut = aujourd'hui
-        $fermeture_id                  = getpost_variable('fermeture_id', 0);
-        $fermeture_date_debut        = getpost_variable('fermeture_date_debut');
-        $fermeture_date_fin            = getpost_variable('fermeture_date_fin');
-        $code_erreur                = getpost_variable('code_erreur', 0);
+        $choix_action         = getpost_variable('choix_action');
+        $year                 = getpost_variable('year', 0);
+        $groupe_id            = getpost_variable('groupe_id');
+        $id_type_conges       = getpost_variable('id_type_conges');
+        $new_date_debut       = getpost_variable('new_date_debut'); // valeur par dédaut = aujourd'hui
+        $new_date_fin         = getpost_variable('new_date_fin');   // valeur par dédaut = aujourd'hui
+        $fermeture_id         = getpost_variable('fermeture_id', 0);
+        $fermeture_date_debut = getpost_variable('fermeture_date_debut');
+        $fermeture_date_fin   = getpost_variable('fermeture_date_fin');
+        $code_erreur          = getpost_variable('code_erreur', 0);
 
-        // si les dates de début ou de fin ne sont pas passé par get/post alors date du jours.
+        // si les dates de début ou de fin ne sont pas passé par get/post alors date du jour.
         if($new_date_debut=="") {
-            if($year==0)
+            if($year==0) {
                 $new_date_debut=date("d/m/Y") ;
-            else
+            } else {
                 $new_date_debut=date("d/m/Y", mktime(0,0,0, date("m"), date("d"), $year) ) ;
+            }
         }
         if($new_date_fin=="") {
-            if($year==0)
+            if($year==0) {
                 $new_date_fin=date("d/m/Y") ;
-            else
+            } else {
                 $new_date_fin=date("d/m/Y", mktime(0,0,0, date("m"), date("d"), $year) ) ;
+            }
         }
 
-        if($year ==0)
+        if($year ==0) {
             $year= date("Y");
+        }
 
         /*************************************/
 
         //debugage
-        if( $DEBUG ) { echo "choix_action = $choix_action // year = $year // groupe_id = $groupe_id<br>\n"; }
-        if( $DEBUG ) { echo "new_date_debut = $new_date_debut // new_date_fin = $new_date_fin<br>\n"; }
-        if( $DEBUG ) { echo "fermeture_id = $fermeture_id // fermeture_date_debut = $fermeture_date_debut // fermeture_date_fin = $fermeture_date_fin<br>\n"; }
+        if( $DEBUG ) {
+            $return .= 'choix_action = ' . $choix_action . '// year = ' . $year . ' // groupe_id = ' . $groupe_id . '<br>';
+        }
+        if( $DEBUG ) {
+            $return .= 'new_date_debut = ' . $new_date_debut . '// new_date_fin = ' . $new_date_fin . '<br>';
+        }
+        if( $DEBUG ) {
+            $return .= 'fermeture_id = ' . $fermeture_id . '// fermeture_date_debut = ' . $fermeture_date_debut . '// fermeture_date_fin = ' . $fermeture_date_fin . '<br>';
+        }
 
         /***********************************/
         /*  VERIF DES DATES RECUES   */
@@ -3114,7 +3163,9 @@ class Fonctions
         $date_fin_yyyy_mm_dd = $tab_date_fin[2]."-".$tab_date_fin[1]."-".$tab_date_fin[0] ;
         $timestamp_today = mktime(0,0,0, date("m"), date("d"), date("Y")) ;
 
-        if( $DEBUG ) { echo "timestamp_date_debut = $timestamp_date_debut // timestamp_date_fin = $timestamp_date_fin // timestamp_today = $timestamp_today<br>\n"; }
+        if( $DEBUG ) {
+            $return .= 'timestamp_date_debut = ' . $timestamp_date_debut . ' // timestamp_date_fin = ' . $timestamp_date_fin . '// timestamp_today = ' . $timestamp_today . '<br>';
+        }
 
         /*********************************/
         /*   COMPOSITION DES ONGLETS...  */
@@ -3122,24 +3173,27 @@ class Fonctions
 
         $onglet = getpost_variable('onglet');
 
-        if(!$onglet)
+        if(!$onglet) {
             $onglet = 'saisie';
+        }
 
         $onglets = array();
-        $onglets['saisie'] = _('admin_jours_fermeture_titre') . " " . "<span class=\"current-year\">$year</span>";
+        $onglets['saisie']   = _('admin_jours_fermeture_titre') . " " . "<span class=\"current-year\">$year</span>";
         $onglets['calendar'] = 'Calendrier des fermetures' . " " . "<span class=\"current-year\">$year</span>";
         $onglets['year_nav'] = NULL;
 
         //initialisation de l'action par défaut : saisie_dates pour tous, saisie_groupe en cas de gestion et fermeture par groupe autorisée
         if($choix_action=="") {
             // si pas de gestion par groupe
-            if($_SESSION['config']['gestion_groupes']==FALSE)
-                 $choix_action="saisie_dates";
+            if($_SESSION['config']['gestion_groupes'] == FALSE) {
+                $choix_action="saisie_dates";
+            }
             // si gestion par groupe et fermeture_par_groupe
-            elseif(($_SESSION['config']['fermeture_par_groupe']) && ($groupe_id=="") )
-                 $choix_action="saisie_groupe";
-            else
-                 $choix_action="saisie_dates";
+            elseif(($_SESSION['config']['fermeture_par_groupe']) && ($groupe_id=="") ) {
+                $choix_action="saisie_groupe";
+            } else {
+                $choix_action="saisie_dates";
+            }
         }
 
         /*********************************/
@@ -3156,25 +3210,24 @@ class Fonctions
         /*********************************/
         /*   AFFICHAGE DES ONGLETS...  */
         /*********************************/
-        echo '<div id="onglet_menu">';
+        $return .= '<div id="onglet_menu">';
         foreach($onglets as $key => $title) {
-            if($key == 'year_nav')
-            {
+            if($key == 'year_nav') {
                 // navigation
                 $prev_link = "$PHP_SELF?session=$session&onglet=$onglet&year=". ($year - 1) . "&groupe_id=$groupe_id";
                 $next_link = "$PHP_SELF?session=$session&onglet=$onglet&year=". ($year + 1) . "&groupe_id=$groupe_id";
-                echo "<div class=\"onglet calendar-nav\">\n";
-                echo "<ul>\n";
-                echo "<li><a href=\"$prev_link\" class=\"calendar-prev\"><i class=\"fa fa-chevron-left\"></i><span>année précédente</span></a></li>\n";
-                echo "<li class=\"current-year\">$year</li>\n";
-                echo "<li><a href=\"$next_link\" class=\"calendar-next\"><i class=\"fa fa-chevron-right\"></i><span>année suivante</span></a></li>\n";
-                echo "</ul>\n";
-                echo "</div>\n";
+                $return .= '<div class="onglet calendar-nav">';
+                $return .= '<ul>';
+                $return .= '<li><a href="' . $prev_link . '" class="calendar-prev"><i class="fa fa-chevron-left"></i><span>année précédente</span></a></li>';
+                $return .= '<li class="current-year">' . $year . '</li>';
+                $return .= '<li><a href="' . $next_link . '" class="calendar-next"><i class="fa fa-chevron-right"></i><span>année suivante</span></a></li>';
+                $return .= '</ul>';
+                $return .= '</div>';
             } else {
-                echo '<div class="onglet '.($onglet == $key ? ' active': '').'" ><a href="' . $PHP_SELF . '?session=' . $session . "&year=$year&onglet=" . $key . '">' . $title . '</a></div>';
+                $return .= '<div class="onglet ' . ($onglet == $key ? ' active' : '') . '" ><a href="' . $PHP_SELF . '?session=' . $session . '&year=' . $year . '&onglet=' . $key . '">' . $title . '</a></div>';
             }
         }
-        echo '</div>';
+        $return .= '</div>';
 
         // vérifie si les jours fériés sont saisie pour l'année en cours
         if( (verif_jours_feries_saisis($date_debut_yyyy_mm_dd, $DEBUG)==FALSE) && (verif_jours_feries_saisis($date_fin_yyyy_mm_dd, $DEBUG)==FALSE) ) {
@@ -3187,8 +3240,7 @@ class Fonctions
         //en cas de confirmation d'une fermeture :
         if($choix_action == "commit_new_fermeture") {
             // on verifie que $new_date_debut est anterieure a $new_date_fin
-            if($timestamp_date_debut > $timestamp_date_fin)
-            {
+            if($timestamp_date_debut > $timestamp_date_fin) {
                 $code_erreur=2 ;  // code erreur : $new_date_debut est posterieure a $new_date_fin
                 $choix_action="saisie_dates";
             }
@@ -3206,8 +3258,7 @@ class Fonctions
                 // fabrication et initialisation du tableau des demi-jours de la date_debut à la date_fin
                 $tab_periode_calcul = make_tab_demi_jours_periode($date_debut_yyyy_mm_dd, $date_fin_yyyy_mm_dd, "am", "pm", $DEBUG);
                 // on verifie si la periode saisie ne chevauche pas une periode existante
-                if(\hr\Fonctions::verif_periode_chevauche_periode_groupe($date_debut_yyyy_mm_dd, $date_fin_yyyy_mm_dd, '', $tab_periode_calcul, $groupe_id, $DEBUG) )
-                {
+                if(\hr\Fonctions::verif_periode_chevauche_periode_groupe($date_debut_yyyy_mm_dd, $date_fin_yyyy_mm_dd, '', $tab_periode_calcul, $groupe_id, $DEBUG) ) {
                     $code_erreur=5 ;  // code erreur : fermeture chevauche une periode deja saisie
                     $choix_action="saisie_dates";
                 }
@@ -3215,54 +3266,59 @@ class Fonctions
         }
 
         if($onglet == 'calendar') {
-
             // les jours fériés de l'annee de la periode saisie ne sont pas enregistrés
-            if($code_erreur==1)
-                echo "<div class=\"alert alert-danger\">" . _('admin_jours_fermeture_annee_non_saisie') . "</div>\n";
+            if($code_erreur==1) {
+                $return .= '<div class="alert alert-danger">' . _('admin_jours_fermeture_annee_non_saisie') . '</div>';
+            }
 
                    /************************************************/
             // CALENDRIER DES FERMETURES
-            \hr\Fonctions::affiche_calendrier_fermeture($year, $DEBUG);
+            $return .= \hr\Fonctions::affiche_calendrier_fermeture($year, $DEBUG);
         } elseif($choix_action=="saisie_dates") {
-            if($groupe_id=="") // choix du groupe n'a pas été fait ($_SESSION['config']['fermeture_par_groupe']==FALSE)
+            if($groupe_id=="") { // choix du groupe n'a pas été fait ($_SESSION['config']['fermeture_par_groupe']==FALSE)
                 $groupe_id=0;
+            }
 
             // $new_date_debut est anterieure a $new_date_fin
-            if($code_erreur==2)
-                echo "<div class=\"alert alert-danger\">" . _('admin_jours_fermeture_dates_incompatibles') . "</div>\n";
+            if($code_erreur==2) {
+                $return .= '<div class="alert alert-danger">' . _('admin_jours_fermeture_dates_incompatibles') . '</div>';
+            }
 
             // ce ne sont des dates passées
-            if($code_erreur==3)
-                echo "<div class=\"alert alert-danger\">" . _('admin_jours_fermeture_date_passee_error') . "</div>\n";
+            if($code_erreur==3) {
+                $return .= '<div class="alert alert-danger">' . _('admin_jours_fermeture_date_passee_error') . '</div>';
+            }
 
             // fermeture le jour même impossible
-            if($code_erreur==4)
-                echo "<div class=\"alert alert-danger\">" . _('admin_jours_fermeture_fermeture_aujourd_hui') . "</div>\n";
+            if($code_erreur==4) {
+                $return .= '<div class="alert alert-danger">' . _('admin_jours_fermeture_fermeture_aujourd_hui') . '</div>';
+            }
 
             // la periode saisie chevauche une periode existante
-            if($code_erreur==5)
-                echo "<div class=\"alert alert-danger\">" . _('admin_jours_fermeture_chevauche_periode') . "</div>\n";
+            if($code_erreur==5) {
+                $return .= '<div class="alert alert-danger">' . _('admin_jours_fermeture_chevauche_periode') . '</div>';
+            }
 
-            echo "<div class=\"wrapper\">";
-            echo '<a href="' . ROOT_PATH . "hr/hr_index.php?session=$session\" class=\"admin-back\"><i class=\"fa fa-arrow-circle-o-left\"></i>Retour mode rh</a>\n";
-            if($onglet == 'saisie')
-                    \hr\Fonctions::saisie_dates_fermeture($year, $groupe_id, $new_date_debut, $new_date_fin, $code_erreur, $DEBUG);
+            $return .= '<div class="wrapper">';
+            $return .= '<a href="' . ROOT_PATH . 'hr/hr_index.php?session=' . $session . '" class="admin-back"><i class="fa fa-arrow-circle-o-left"></i>Retour mode rh</a>';
+            if($onglet == 'saisie') {
+                $return .= \hr\Fonctions::saisie_dates_fermeture($year, $groupe_id, $new_date_debut, $new_date_fin, $code_erreur, $DEBUG);
+            }
         } elseif($choix_action=="saisie_groupe") {
-            echo '<div class="wrapper">';
-            echo '<a href="' . ROOT_PATH . "hr/hr_index.php?session=$session\" class=\"admin-back\"><i class=\"fa fa-arrow-circle-o-left\"></i>Retour mode rh</a>\n";
-                   \hr\Fonctions::saisie_groupe_fermeture($DEBUG);
-                echo '</div>';
+            $return .= '<div class="wrapper">';
+            $return .= '<a href="' . ROOT_PATH . 'hr/hr_index.php?session=' . $session . '" class="admin-back"><i class="fa fa-arrow-circle-o-left"></i>Retour mode rh</a>';
+            $return .= \hr\Fonctions::saisie_groupe_fermeture($DEBUG);
+            $return .= '</div>';
         } elseif($choix_action=="commit_new_fermeture") {
-            echo $title;
-            \hr\Fonctions::commit_new_fermeture($new_date_debut, $new_date_fin, $groupe_id, $id_type_conges, $DEBUG);
+            $return .= $title;
+            $return .= \hr\Fonctions::commit_new_fermeture($new_date_debut, $new_date_fin, $groupe_id, $id_type_conges, $DEBUG);
         } elseif($choix_action=="annul_fermeture") {
-            echo $title;
-            \hr\Fonctions::confirm_annul_fermeture($fermeture_id, $groupe_id, $fermeture_date_debut, $fermeture_date_fin, $DEBUG);
+            $return .= $title;
+            $return .= \hr\Fonctions::confirm_annul_fermeture($fermeture_id, $groupe_id, $fermeture_date_debut, $fermeture_date_fin, $DEBUG);
         } elseif($choix_action=="commit_annul_fermeture") {
-            echo $title;
-            \hr\Fonctions::commit_annul_fermeture($fermeture_id, $groupe_id, $DEBUG);
+            $return .= $title;
+            $return .= \hr\Fonctions::commit_annul_fermeture($fermeture_id, $groupe_id, $DEBUG);
         }
-
-        bottom();
+        return $return;
     }
 }
