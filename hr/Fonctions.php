@@ -877,7 +877,8 @@ class Fonctions
             $return .= '</table>';
 
             $return .= '<input type="hidden" name="user_login" value="' . $user_login . '">';
-            $return .= '<br><input type="submit" value="' . _('form_submit') . '">  &nbsp;&nbsp;&nbsp;&nbsp; <input type="reset" value="' . _('form_cancel') . '">';
+            $return .= '<br><input class="btn btn-success" type="submit" value="' . _('form_submit') . '">  &nbsp;&nbsp;&nbsp;&nbsp; <input type="reset" value="' . _('form_cancel') . '">';
+            $return .= '<a class="btn" href="' . $PHP_SELF . '?session=' . $session . '">' . _('form_cancel') . '</a>';
             $return .= '</form>';
         }
         return $return;
@@ -997,7 +998,8 @@ class Fonctions
             $return .= '</table>';
 
             $return .= '<input type="hidden" name="user_login" value="' . $user_login . '">';
-            $return .= '<br><input type="submit" value="' . _('form_submit') . '">  &nbsp;&nbsp;&nbsp;&nbsp;  <input type="reset" value="' . _('form_cancel') . '">';
+            $return .= '<br><input class="btn btn-success" type="submit" value="' . _('form_submit') . '">  &nbsp;&nbsp;&nbsp;&nbsp;  <input type="reset" value="' . _('form_cancel') . '">';
+            $return .= '<a class="btn" href="' . $PHP_SELF . '?session=' . $session . '">' . _('form_cancel') . '</a>';
             $return .= '</form>';
         }
         return $return;

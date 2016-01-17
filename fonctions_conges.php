@@ -1169,8 +1169,8 @@ function recup_tableau_rtt_echange($mois, $first_jour, $year,  $tab_logins = fal
     $result = \includes\SQL::query($sql);
     while($l = $result->fetch_array()) {
         $tab_echange = array();
-        $tab_echange["val_matin"] = ($l["e_absence"]=='J' || $l["e_absence"]='M' ? 'Y' : 'N');
-        $tab_echange["val_aprem"] = ($l["e_absence"]=='J' || $l["e_absence"]='A' ? 'Y' : 'N');
+        $tab_echange["val_matin"] = ($l["e_absence"]=='J' || $l["e_absence"]=='M' ? 'Y' : 'N');
+        $tab_echange["val_aprem"] = ($l["e_absence"]=='J' || $l["e_absence"]=='A' ? 'Y' : 'N');
         $tab_rtt_echange[ $l['e_date_jour'] ][ $l["e_login"] ] = $tab_echange;
     }
 
