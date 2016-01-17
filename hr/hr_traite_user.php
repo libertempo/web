@@ -25,4 +25,5 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 $DEBUG = false;
-\hr\Fonctions::pageTraiteUserModule($onglet, $DEBUG);
+include_once ROOT_PATH .'fonctions_javascript.php' ;
+echo \hr\Fonctions::pageTraiteUserModule($onglet, $DEBUG);

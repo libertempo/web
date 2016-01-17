@@ -241,7 +241,7 @@ class Fonctions
     	/* Bilan des Conges */
     	/********************/
     	// affichage du tableau récapitulatif des solde de congés d'un user
-    	affiche_tableau_bilan_conges_user($login,  $DEBUG);
+    	echo affiche_tableau_bilan_conges_user($login,  $DEBUG);
     	echo "<br><br><br>\n";
 
     	\edition\Fonctions::affiche_nouvelle_edition($login,  $DEBUG);
