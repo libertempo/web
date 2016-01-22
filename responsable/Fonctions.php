@@ -1946,7 +1946,7 @@ class Fonctions
         /********************/
         // AFFICHAGE TABLEAU
         // affichage du tableau récapitulatif des solde de congés d'un user
-        affiche_tableau_bilan_conges_user($user_login);
+        echo affiche_tableau_bilan_conges_user($user_login);
         echo "<hr/>\n";
 
         /*************************/
@@ -1971,7 +1971,7 @@ class Fonctions
 
             //affiche le formulaire de saisie d'une nouvelle demande de conges ou d'un  nouveau conges
             $onglet = "traite_user";
-            saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet);
+            echo saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet);
 
             echo "<hr/>\n";
         }

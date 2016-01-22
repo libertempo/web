@@ -5,20 +5,20 @@ Copyright (C) 2015 (Wouldsmina)
 Copyright (C) 2015 (Prytoegrian)
 Copyright (C) 2005 (cedric chauvineau)
 
-Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les 
+Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
 termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
-Ce programme est distribué car potentiellement utile, mais SANS AUCUNE GARANTIE, 
-ni explicite ni implicite, y compris les garanties de commercialisation ou d'adaptation 
+Ce programme est distribué car potentiellement utile, mais SANS AUCUNE GARANTIE,
+ni explicite ni implicite, y compris les garanties de commercialisation ou d'adaptation
 dans un but spécifique. Reportez-vous à la Licence Publique Générale GNU pour plus de détails.
-Vous devez avoir reçu une copie de la Licence Publique Générale GNU en même temps 
-que ce programme ; si ce n'est pas le cas, écrivez à la Free Software Foundation, 
+Vous devez avoir reçu une copie de la Licence Publique Générale GNU en même temps
+que ce programme ; si ce n'est pas le cas, écrivez à la Free Software Foundation,
 Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, États-Unis.
 *************************************************************************************************
 This program is free software; you can redistribute it and/or modify it under the terms
-of the GNU General Public License as published by the Free Software Foundation; either 
+of the GNU General Public License as published by the Free Software Foundation; either
 version 2 of the License, or any later version.
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
-without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
@@ -78,7 +78,7 @@ class Fonctions
     {
         //conversion des dates
         $new_debut = convert_date($new_debut);
-        $new_fin = convert_date($new_fin);   
+        $new_fin = convert_date($new_fin);
 
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id();
@@ -149,7 +149,7 @@ class Fonctions
 
         $new_demande_conges = getpost_variable('new_demande_conges', 0);
 
-        if( $new_demande_conges == 1 && $_SESSION['config']['user_saisie_demande'] ) 
+        if( $new_demande_conges == 1 && $_SESSION['config']['user_saisie_demande'] )
         {
             $new_debut	    = getpost_variable('new_debut');
             $new_demi_jour_deb  = getpost_variable('new_demi_jour_deb');
@@ -160,7 +160,7 @@ class Fonctions
 
             $user_login	    = $_SESSION['userlogin'];
 
-            if( $_SESSION['config']['disable_saise_champ_nb_jours_pris'] ) 
+            if( $_SESSION['config']['disable_saise_champ_nb_jours_pris'] )
                 $new_nb_jours = compter($user_login, '', $new_debut,  $new_fin, $new_demi_jour_deb, $new_demi_jour_fin, $new_comment,  $DEBUG);
             else
                 $new_nb_jours = getpost_variable('new_nb_jours') ;
@@ -184,7 +184,7 @@ class Fonctions
             // saisie_nouveau_conges($_SESSION['userlogin'], $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet, $DEBUG);
 
             //affiche le formulaire de saisie d'une nouvelle demande de conges
-            saisie_nouveau_conges2($_SESSION['userlogin'], $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet, $DEBUG);
+            echo saisie_nouveau_conges2($_SESSION['userlogin'], $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet, $DEBUG);
         }
     }
 
@@ -352,7 +352,7 @@ class Fonctions
 
         //conversion des dates
         $new_debut = convert_date($new_debut);
-        $new_fin = convert_date($new_fin); 
+        $new_fin = convert_date($new_fin);
 
         if ($_SESSION['config']['disable_saise_champ_nb_jours_pris'])
             $new_nb_jours = compter($user_login, $p_num_to_update, $new_debut,  $new_fin, $new_demi_jour_deb, $new_demi_jour_fin, $new_comment,  $DEBUG);
@@ -548,7 +548,7 @@ class Fonctions
         log_action(0, '', $_SESSION['userlogin'], $comment_log,  $DEBUG);
 
     }
-    
+
     /**
      * Encapsule le comportement du module de modification de mot de passe
      *
@@ -612,7 +612,7 @@ class Fonctions
             echo '</form>';
         }
     }
-    
+
     /**
      * Encapsule le comportement du module de demande en cours
      *
@@ -682,9 +682,9 @@ class Fonctions
                 $sql_p_demi_jour_deb		= $resultat3["p_demi_jour_deb"];
                 $sql_p_demi_jour_fin		= $resultat3["p_demi_jour_fin"];
 
-                if($sql_p_demi_jour_deb=="am") 
-                    $demi_j_deb="mat";  
-                else 
+                if($sql_p_demi_jour_deb=="am")
+                    $demi_j_deb="mat";
+                else
                     $demi_j_deb="aprm";
 
                 if($sql_p_demi_jour_fin=="am")
@@ -787,7 +787,7 @@ class Fonctions
             if ($i < 0 || $i > $nb_jours_mois || $td_second_class == 'weekend') {
                 echo '<td class="'.$td_second_class.'">-</td>';
             }
-            else {	
+            else {
                 $val_matin='';
                 $val_aprem='';
                 recup_infos_artt_du_jour($user_login, $j_timestamp, $val_matin, $val_aprem,  $DEBUG);
@@ -854,7 +854,7 @@ class Fonctions
             if ($i < 0 || $i > $nb_jours_mois || $td_second_class == 'weekend') {
                 echo '<td class="'.$td_second_class.'">-</td>';
             }
-            else {	
+            else {
                 $val_matin='';
                 $val_aprem='';
                 recup_infos_artt_du_jour($user_login, $j_timestamp, $val_matin, $val_aprem,  $DEBUG);
@@ -1273,7 +1273,7 @@ class Fonctions
 
         echo '</form>' ;
     }
-    
+
     /**
      * Encapsule le comportement du module d'échange d'absence
      *

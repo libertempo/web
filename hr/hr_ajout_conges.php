@@ -25,4 +25,4 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 $DEBUG = false;
-\hr\Fonctions::pageAjoutCongesModule($tab_type_cong, $session, $DEBUG);
+echo \hr\Fonctions::pageAjoutCongesModule($tab_type_cong, $session, $DEBUG);

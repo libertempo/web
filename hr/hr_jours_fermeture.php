@@ -29,8 +29,9 @@ require_once ROOT_PATH . 'define.php';
 
 $session=(isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : session_id()) ) ;
 
-if (file_exists(CONFIG_PATH .'config_ldap.php'))
-	include_once CONFIG_PATH .'config_ldap.php';
+if (file_exists(CONFIG_PATH .'config_ldap.php')) {
+    include_once CONFIG_PATH .'config_ldap.php';
+}
 
 
 include_once ROOT_PATH .'fonctions_conges.php' ;
@@ -40,4 +41,5 @@ include_once ROOT_PATH .'fonctions_calcul.php';
 
 
 $DEBUG=FALSE;
-\hr\Fonctions::pageJoursFermetureModule($session, $DEBUG);
+echo \hr\Fonctions::pageJoursFermetureModule($session, $DEBUG);
+bottom();
