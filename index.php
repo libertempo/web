@@ -31,7 +31,7 @@ require_once 'define.php';
 // test si dbconnect.php est présent !
 if (!is_readable( CONFIG_PATH .'dbconnect.php'))
 {
-	redirect( ROOT_PATH .'install/');
+	header("Location:". ROOT_PATH .'install/');
 }
 
 include_once INCLUDE_PATH .'fonction.php';
