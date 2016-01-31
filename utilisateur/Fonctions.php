@@ -195,6 +195,7 @@ class Fonctions
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id() ;
+        $return = '';
 
         // echo($new_debut." / ".$new_demi_jour_deb."---".$new_fin." / ".$new_demi_jour_fin."---".$new_nb_jours."---".$new_comment."<br>");
         // echo (string) $new_nb_jours;
@@ -217,11 +218,13 @@ class Fonctions
         log_action($p_num_to_update, "$p_etat", $_SESSION['userlogin'], $comment_log, $DEBUG);
 
 
-        echo  _('form_modif_ok') ."<br><br> \n" ;
+        $return .= _('form_modif_ok') . '<br><br>';
         /* APPEL D'UNE AUTRE PAGE */
-        echo '<form action="'.ROOT_PATH .'utilisateur/user_index.php?session='.$session.'&onglet=demandes_en_cours" method="POST">';
-        echo '<input class="btn" type="submit" value="'. _('form_submit') .'">';
-        echo '</form>';
+        $return .= '<form action="'.ROOT_PATH .'utilisateur/user_index.php?session='.$session.'&onglet=demandes_en_cours" method="POST">';
+        $return .= '<input class="btn" type="submit" value="'. _('form_submit') .'">';
+        $return .= '</form>';
+
+        return $return;
 
     }
 
@@ -229,6 +232,7 @@ class Fonctions
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id();
+        $return = '';
         include ROOT_PATH .'fonctions_javascript.php' ;
 
         // Récupération des informations
@@ -237,22 +241,21 @@ class Fonctions
 
         // AFFICHAGE TABLEAU
 
-        echo '<form NAME="dem_conges" action="'.$PHP_SELF.'" method="POST">' ;
-        echo "<table class=\"table table-responsive\">\n" ;
-        echo '<thead>';
+        $return .= '<form NAME="dem_conges" action="' . $PHP_SELF . '" method="POST">' ;
+        $return .= '<table class="table table-responsive">';
+        $return .= '<thead>';
         // affichage première ligne : titres
-        echo "<tr>\n";
-        echo "<td>". _('divers_debut_maj_1') ."</td>\n";
-        echo "<td>". _('divers_fin_maj_1') ."</td>\n";
-        echo "<td>". _('divers_nb_jours_maj_1') ."</td>\n";
-        echo "<td>". _('divers_comment_maj_1') ."</td>\n";
-        echo "</tr>\n" ;
-        echo '</thead>';
-        echo '<tbody>';
+        $return .= '<tr>';
+        $return .= '<td>' . _('divers_debut_maj_1') . '</td>';
+        $return .= '<td>' . _('divers_fin_maj_1') . '</td>';
+        $return .= '<td>' . _('divers_nb_jours_maj_1') . '</td>';
+        $return .= '<td>' . _('divers_comment_maj_1') . '</td>';
+        $return .= '</tr>';
+        $return .= '</thead>';
+        $return .= '<tbody>';
         // affichage 2ieme ligne : valeurs actuelles
-        echo "<tr>\n" ;
-        while ($resultat1 = $ReqLog1->fetch_array())
-        {
+        $return .= '<tr>';
+        while ($resultat1 = $ReqLog1->fetch_array()) {
             $sql_date_deb=eng_date_to_fr($resultat1["p_date_deb"]);
 
             $sql_demi_jour_deb = $resultat1["p_demi_jour_deb"];
@@ -271,33 +274,26 @@ class Fonctions
             $sql_commentaire=$resultat1["p_commentaire"];
             $sql_etat=$resultat1["p_etat"];
 
-            echo "<td>$sql_date_deb _ $demi_j_deb</td><td>$sql_date_fin _ $demi_j_fin</td><td>$aff_nb_jours</td><td>$sql_commentaire</td>\n" ;
+            $return .= '<td>' . $sql_date_deb . '_' . $demi_j_deb . '</td><td>' . $sql_date_fin  . '_' . $demi_j_fin . '</td><td>' . $aff_nb_jours . '</td><td>' . $sql_commentaire . '</td>';
 
             $compte ="";
-            if($_SESSION['config']['rempli_auto_champ_nb_jours_pris'])
-            {
+            if($_SESSION['config']['rempli_auto_champ_nb_jours_pris']) {
                 $compte = 'onChange="compter_jours();return false;"';
             }
 
             $text_debut="<input class=\"form-control date\" type=\"text\" name=\"new_debut\" size=\"10\" maxlength=\"30\" value=\"" . revert_date($sql_date_deb) . "\">" ;
-            if($sql_demi_jour_deb=="am")
-            {
+            if($sql_demi_jour_deb=="am") {
                 $radio_deb_am="<input type=\"radio\" $compte name=\"new_demi_jour_deb\" value=\"am\" checked>&nbsp;". _('form_am') ;
                 $radio_deb_pm="<input type=\"radio\" $compte name=\"new_demi_jour_deb\" value=\"pm\">&nbsp;". _('form_pm') ;
-            }
-            else
-            {
+            } else {
                 $radio_deb_am="<input type=\"radio\" $compte name=\"new_demi_jour_deb\" value=\"am\">". _('form_am') ;
                 $radio_deb_pm="<input type=\"radio\" $compte name=\"new_demi_jour_deb\" value=\"pm\" checked>". _('form_pm') ;
             }
             $text_fin="<input class=\"form-control date\" type=\"text\" name=\"new_fin\" size=\"10\" maxlength=\"30\" value=\"" . revert_date($sql_date_fin) . "\">" ;
-            if($sql_demi_jour_fin=="am")
-            {
+            if($sql_demi_jour_fin=="am") {
                 $radio_fin_am="<input type=\"radio\" $compte name=\"new_demi_jour_fin\" value=\"am\" checked>". _('form_am') ;
                 $radio_fin_pm="<input type=\"radio\" $compte name=\"new_demi_jour_fin\" value=\"pm\">". _('form_pm') ;
-            }
-            else
-            {
+            } else {
                 $radio_fin_am="<input type=\"radio\" $compte name=\"new_demi_jour_fin\" value=\"am\">". _('form_am') ;
                 $radio_fin_pm="<input type=\"radio\" $compte name=\"new_demi_jour_fin\" value=\"pm\" checked>". _('form_pm') ;
             }
@@ -309,26 +305,27 @@ class Fonctions
 
             $text_commentaire="<input class=\"form-control\" type=\"text\" name=\"new_comment\" size=\"15\" maxlength=\"30\" value=\"$sql_commentaire\">" ;
         }
-        echo "</tr>\n";
+        $return .= '</tr>';
 
         // affichage 3ieme ligne : saisie des nouvelles valeurs
-        echo "<tr>\n" ;
-        echo "<td>$text_debut<br>$radio_deb_am / $radio_deb_pm</td><td>$text_fin<br>$radio_fin_am / $radio_fin_pm</td><td>$text_nb_jours</td><td>$text_commentaire</td>\n" ;
-        echo "</tr>\n" ;
+        $return .= '<tr>';
+        $return .= '<td>' . $text_debut . '<br>' . $radio_deb_am . '/' . $radio_deb_pm . '</td><td>' . $text_fin . '<br>' . $radio_fin_am . '/' .  $radio_fin_pm . '</td><td>' . $text_nb_jours . '</td><td>' . $text_commentaire . '</td>';
+        $return .= '</tr>';
 
-        echo '</tbody>';
-        echo "</table>\n" ;
-        echo '<hr/>';
-        echo "<input type=\"hidden\" name=\"p_num_to_update\" value=\"$p_num\">\n" ;
-        echo "<input type=\"hidden\" name=\"p_etat\" value=\"$sql_etat\">\n" ;
-        echo "<input type=\"hidden\" name=\"session\" value=\"$session\">\n" ;
-        echo '<input type="hidden" name="user_login" value="'.$_SESSION['userlogin'].'">';
-        echo "<input type=\"hidden\" name=\"onglet\" value=\"$onglet\">\n" ;
-        echo '<p id="comment_nbj" style="color:red">&nbsp;</p>';
-        echo "<input class=\"btn btn-success\" type=\"submit\" value=\"". _('form_submit') ."\">\n" ;
-        echo "<a class=\"btn\" href=\"$PHP_SELF?session=$session&onglet=demandes_en_cours\">". _('form_cancel') ."</a>\n";
-        echo "</form>\n" ;
+        $return .= '</tbody>';
+        $return .= '</table>';
+        $return .= '<hr/>';
+        $return .= '<input type="hidden" name="p_num_to_update" value="' . $p_num . '">';
+        $return .= '<input type="hidden" name="p_etat" value="' . $sql_etat . '">';
+        $return .= '<input type="hidden" name="session" value="' . $session . '">';
+        $return .= '<input type="hidden" name="user_login" value="'.$_SESSION['userlogin'].'">';
+        $return .= '<input type="hidden" name="onglet" value="' . $onglet . '">';
+        $return .= '<p id="comment_nbj" style="color:red">&nbsp;</p>';
+        $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
+        $return .= '<a class="btn" href="' . $PHP_SELF . '?session=' . $session . '&onglet=demandes_en_cours">' . _('form_cancel') . '</a>';
+        $return .= '</form>';
 
+        return $return;
     }
 
     /**
@@ -352,6 +349,7 @@ class Fonctions
         $new_fin           = getpost_variable('new_fin');
         $new_demi_jour_fin = getpost_variable('new_demi_jour_fin');
         $new_comment       = getpost_variable('new_comment');
+        $return            = '';
 
         //conversion des dates
         $new_debut = convert_date($new_debut);
@@ -365,24 +363,20 @@ class Fonctions
         /*************************************/
 
         // TITRE
-        echo '<h1>'. _('user_modif_demande_titre') .'</h1>';
+        $return .= '<h1>'. _('user_modif_demande_titre') .'</h1>';
 
-        if($p_num!="")
-        {
-            \utilisateur\Fonctions::confirmer($p_num, $onglet, $DEBUG);
-        }
-        else
-        {
-            if($p_num_to_update != "")
-            {
-                \utilisateur\Fonctions::modifier($p_num_to_update, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $p_etat, $onglet, $DEBUG);
-            }
-            else
-            {
+        if($p_num!="") {
+            $return .= \utilisateur\Fonctions::confirmer($p_num, $onglet, $DEBUG);
+        } else {
+            if($p_num_to_update != "") {
+                $return .= \utilisateur\Fonctions::modifier($p_num_to_update, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $p_etat, $onglet, $DEBUG);
+            } else {
                 // renvoit sur la page principale .
                 redirect( ROOT_PATH .'utilisateur/user_index.php', false );
             }
         }
+
+        return $return;
     }
 
     // renvoit le libelle d une absence (conges ou absence) d une absence
@@ -628,13 +622,16 @@ class Fonctions
      */
     public static function demandeEnCoursModule($session, $DEBUG = false)
     {
-        if($_SESSION['config']['where_to_find_user_email']=="ldap"){ include_once CONFIG_PATH .'config_ldap.php';}
+        $return = '';
+        if($_SESSION['config']['where_to_find_user_email']=="ldap"){
+            include_once CONFIG_PATH .'config_ldap.php';
+        }
 
 
         // on initialise le tableau global des jours fériés s'il ne l'est pas déjà :
         init_tab_jours_feries($DEBUG);
 
-        echo '<h1>'. _('user_etat_demandes') .'</h1>';
+        $return .= '<h1>' . _('user_etat_demandes') . '</h1>';
 
         $tri_date = getpost_variable('tri_date', "ascendant");
 
@@ -655,31 +652,29 @@ class Fonctions
 
         $count3=$ReqLog3->num_rows;
         if($count3==0) {
-            echo '<b>'. _('user_demandes_aucune_demande') .'</b>';
-        }
-        else {
+            $return .= '<b>'. _('user_demandes_aucune_demande') .'</b>';
+        } else {
             // AFFICHAGE TABLEAU
-            echo '<table class="table table-responsive table-condensed table-stripped table-hover">';
-            echo '<thead>';
-            echo '<tr>';
-            echo '<th>';
-            echo  _('divers_debut_maj_1')  ;
-            echo '</th>';
-            echo '<th>'. _('divers_fin_maj_1') .'</th>';
-            echo '<th>'. _('divers_type_maj_1') .'</th>';
-            echo '<th>'. _('divers_nb_jours_pris_maj_1') .'</th>';
-            echo '<th>'. _('divers_comment_maj_1') .'</th>';
-            echo '<th></th><th></th>' ;
+            $return .= '<table class="table table-responsive table-condensed table-stripped table-hover">';
+            $return .= '<thead>';
+            $return .= '<tr>';
+            $return .= '<th>';
+            $return .= _('divers_debut_maj_1')  ;
+            $return .= '</th>';
+            $return .= '<th>'. _('divers_fin_maj_1') .'</th>';
+            $return .= '<th>'. _('divers_type_maj_1') .'</th>';
+            $return .= '<th>'. _('divers_nb_jours_pris_maj_1') .'</th>';
+            $return .= '<th>'. _('divers_comment_maj_1') .'</th>';
+            $return .= '<th></th><th></th>' ;
             if( $_SESSION['config']['affiche_date_traitement'] ) {
                 echo '<th >'. _('divers_date_traitement') .'</th>';
             }
-            echo '</tr>';
-            echo '</thead>';
-            echo '<tbody>';
+            $return .= '</tr>';
+            $return .= '</thead>';
+            $return .= '<tbody>';
 
             $i = true;
             while ($resultat3 = $ReqLog3->fetch_array()) {
-
                 $sql_p_date_deb                = eng_date_to_fr($resultat3["p_date_deb"], $DEBUG);
                 $sql_p_date_fin                = eng_date_to_fr($resultat3["p_date_fin"], $DEBUG);
                 $sql_p_demi_jour_deb        = $resultat3["p_demi_jour_deb"];
@@ -712,29 +707,31 @@ class Fonctions
                         $user_modif_demande="<a href=\"user_index.php?session=$session&p_num=$sql_p_num&onglet=modif_demande\">". _('form_modif') ."</a>" ;
                 }
                 $user_suppr_demande="<a href=\"user_index.php?session=$session&p_num=$sql_p_num&onglet=suppr_demande\">". _('form_supprim') ."</a>" ;
-                echo '<tr class="'.($i?'i':'p').'">';
-                echo '<td class="histo">'.schars($sql_p_date_deb).' _ '.schars($demi_j_deb).'</td>';
-                echo '<td class="histo">'.schars($sql_p_date_fin).' _ '.schars($demi_j_fin).'</td>' ;
-                echo '<td class="histo">'.schars($sql_p_type).'</td>' ;
-                echo '<td class="histo">'.affiche_decimal($sql_p_nb_jours).'</td>' ;
-                echo '<td class="histo">'.schars($sql_p_commentaire).'</td>' ;
+                $return .= '<tr class="'.($i?'i':'p').'">';
+                $return .= '<td class="histo">'.schars($sql_p_date_deb).' _ '.schars($demi_j_deb).'</td>';
+                $return .= '<td class="histo">'.schars($sql_p_date_fin).' _ '.schars($demi_j_fin).'</td>' ;
+                $return .= '<td class="histo">'.schars($sql_p_type).'</td>' ;
+                $return .= '<td class="histo">'.affiche_decimal($sql_p_nb_jours).'</td>' ;
+                $return .= '<td class="histo">'.schars($sql_p_commentaire).'</td>' ;
                 if( !$_SESSION['config']['interdit_modif_demande'] ) {
-                    echo '<td class="histo">'.($user_modif_demande).'</td>' ;
+                    $return .= '<td class="histo">'.($user_modif_demande).'</td>' ;
                 }
-                echo '<td class="histo">'.($user_suppr_demande).'</td>'."\n" ;
+                $return .= '<td class="histo">'.($user_suppr_demande).'</td>'."\n" ;
 
                 if( $_SESSION['config']['affiche_date_traitement'] ) {
                     if($sql_p_date_demande == NULL)
-                        echo '<td class="histo-left">'. _('divers_demande') .' : '.$sql_p_date_demande.'<br>'. _('divers_traitement') .' : '.$sql_p_date_traitement.'</td>';
+                        $return .= '<td class="histo-left">'. _('divers_demande') .' : '.$sql_p_date_demande.'<br>'. _('divers_traitement') .' : '.$sql_p_date_traitement.'</td>';
                     else
-                        echo '<td class="histo-left">'. _('divers_demande') .' : '.$sql_p_date_demande.'<br>'. _('divers_traitement') .' : pas traité</td>';
+                        $return .= '<td class="histo-left">'. _('divers_demande') .' : '.$sql_p_date_demande.'<br>'. _('divers_traitement') .' : pas traité</td>';
                 }
-                echo '</tr>';
+                $return .= '</tr>';
                 $i = !$i;
             }
-            echo '</tbody>';
-            echo '</table>' ;
+            $return .= '</tbody>';
+            $return .= '</table>' ;
         }
+
+        return $return;
     }
 
     // affichage du calendrier du mois avec les case à cocher sur les jour de présence
