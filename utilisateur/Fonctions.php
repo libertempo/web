@@ -79,6 +79,7 @@ class Fonctions
         //conversion des dates
         $new_debut = convert_date($new_debut);
         $new_fin = convert_date($new_fin);
+        $return = '';
 
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id();
@@ -92,41 +93,44 @@ class Fonctions
         }
 
         if( $valid ) {
-
-	if( in_array(\utilisateur\Fonctions::get_type_abs($new_type, $DEBUG) , array('conges','conges_exceptionnels') ) ) {
-			$resp_du_user = get_tab_resp_du_user($_SESSION['userlogin']);
-			if (array_key_exists('conges', $resp_du_user)||empty($resp_du_user)) {
-				$new_etat = 'ok' ;
-				soustrait_solde_et_reliquat_user($_SESSION['userlogin'], "", $new_nb_jours, $new_type, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $DEBUG);
-			} else {
-				$new_etat = 'demande' ;
-			}
-		} else {
-			$new_etat = 'ok' ;
-		}
+            if( in_array(\utilisateur\Fonctions::get_type_abs($new_type, $DEBUG) , array('conges','conges_exceptionnels') ) ) {
+                $resp_du_user = get_tab_resp_du_user($_SESSION['userlogin']);
+                if (array_key_exists('conges', $resp_du_user)||empty($resp_du_user)) {
+                    $new_etat = 'ok' ;
+                    soustrait_solde_et_reliquat_user($_SESSION['userlogin'], "", $new_nb_jours, $new_type, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $DEBUG);
+                } else {
+                    $new_etat = 'demande' ;
+                }
+            } else {
+                $new_etat = 'ok' ;
+            }
 
             $new_comment = addslashes($new_comment);
 
             $periode_num = insert_dans_periode($_SESSION['userlogin'], $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type, $new_etat, 0, $DEBUG);
 
             if ( $periode_num != 0 ) {
-                echo schars( _('form_modif_ok') ).' !<br><br>'."\n";
+                $return .= schars( _('form_modif_ok') ) . ' !<br><br>.';
                 //envoi d'un mail d'alerte au responsable (si demandé dans config de php_conges)
                 if($_SESSION['config']['mail_new_demande_alerte_resp']){
-		    if( in_array(get_type_abs($new_type, $DEBUG) , array('absences') ) )
+                    if(in_array(get_type_abs($new_type, $DEBUG), array('absences'))) {
                         alerte_mail($_SESSION['userlogin'], ":responsable:", $periode_num, "new_absence", $DEBUG);
-                    else
+                    } else {
                         alerte_mail($_SESSION['userlogin'], ":responsable:", $periode_num, "new_demande", $DEBUG);
                     }
+                }
             }
-            else
-                echo schars( _('form_modif_not_ok') ).' !<br><br>'."\n";
+            else {
+                $return .= schars( _('form_modif_not_ok') ) . ' !<br><br>.';
+            }
         }
         else {
-            echo schars( _('resp_traite_user_valeurs_not_ok') ).' !<br><br>'."\n";
+            $return .= schars( _('resp_traite_user_valeurs_not_ok') ) . ' !<br><br>.';
         }
 
-        echo "<a class=\"btn\" href=\"$PHP_SELF?session=$session\">". _('form_retour') ."</a>\n";
+        $return .= '<a class="btn" href="' . $PHP_SELF . '?session=' . $session . '">' . _('form_retour') . '</a>';
+
+        return $return;
     }
 
     /**
@@ -143,32 +147,30 @@ class Fonctions
     {
         // on initialise le tableau global des jours fériés s'il ne l'est pas déjà :
         init_tab_jours_feries();
+        $return = '';
 
         // si le user peut saisir ses demandes et qu'il vient d'en saisir une ...
 
-
         $new_demande_conges = getpost_variable('new_demande_conges', 0);
 
-        if( $new_demande_conges == 1 && $_SESSION['config']['user_saisie_demande'] )
-        {
-            $new_debut	    = getpost_variable('new_debut');
+        if( $new_demande_conges == 1 && $_SESSION['config']['user_saisie_demande'] ) {
+            $new_debut        = getpost_variable('new_debut');
             $new_demi_jour_deb  = getpost_variable('new_demi_jour_deb');
-            $new_fin	    = getpost_variable('new_fin');
+            $new_fin        = getpost_variable('new_fin');
             $new_demi_jour_fin  = getpost_variable('new_demi_jour_fin');
-            $new_comment	    = getpost_variable('new_comment');
-            $new_type	    = getpost_variable('new_type');
+            $new_comment        = getpost_variable('new_comment');
+            $new_type        = getpost_variable('new_type');
 
-            $user_login	    = $_SESSION['userlogin'];
+            $user_login        = $_SESSION['userlogin'];
 
-            if( $_SESSION['config']['disable_saise_champ_nb_jours_pris'] )
+            if( $_SESSION['config']['disable_saise_champ_nb_jours_pris'] ) {
                 $new_nb_jours = compter($user_login, '', $new_debut,  $new_fin, $new_demi_jour_deb, $new_demi_jour_fin, $new_comment,  $DEBUG);
-            else
+            } else {
                 $new_nb_jours = getpost_variable('new_nb_jours') ;
+            }
 
-            \utilisateur\Fonctions::new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type, $DEBUG);
-        }
-        else
-        {
+            $return .= \utilisateur\Fonctions::new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type, $DEBUG);
+        } else {
             $year_calendrier_saisie_debut   = getpost_variable('year_calendrier_saisie_debut'   , date('Y'));
             $mois_calendrier_saisie_debut   = getpost_variable('mois_calendrier_saisie_debut'   , date('m'));
             $year_calendrier_saisie_fin     = getpost_variable('year_calendrier_saisie_fin'     , date('Y'));
@@ -178,14 +180,15 @@ class Fonctions
             /* Nouvelle Demande */
             /**************************/
             include ROOT_PATH .'fonctions_javascript.php' ;
-            echo '<h1>'. _('divers_nouvelle_absence') .'</h1>';
+            $return .= '<h1>' . _('divers_nouvelle_absence') . '</h1>';
 
             //affiche le formulaire de saisie d'une nouvelle demande de conges
             // saisie_nouveau_conges($_SESSION['userlogin'], $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet, $DEBUG);
 
             //affiche le formulaire de saisie d'une nouvelle demande de conges
-            echo saisie_nouveau_conges2($_SESSION['userlogin'], $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet, $DEBUG);
+            $return .= saisie_nouveau_conges2($_SESSION['userlogin'], $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet, $DEBUG);
         }
+        return $return;
     }
 
     public static function modifier($p_num_to_update, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $p_etat, $onglet, $DEBUG=FALSE)
@@ -203,7 +206,7 @@ class Fonctions
             $sql1 = $sql1." p_date_demande=NOW() ";
         else
             $sql1 = $sql1." p_date_traitement=NOW() ";
-        $sql1 = $sql1."	WHERE p_num='$p_num_to_update' AND p_login='".$_SESSION['userlogin']."' ;" ;
+        $sql1 = $sql1."    WHERE p_num='$p_num_to_update' AND p_login='".$_SESSION['userlogin']."' ;" ;
 
         $result = \includes\SQL::query($sql1) ;
 
@@ -226,7 +229,7 @@ class Fonctions
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id();
-	include ROOT_PATH .'fonctions_javascript.php' ;
+        include ROOT_PATH .'fonctions_javascript.php' ;
 
         // Récupération des informations
         $sql1 = 'SELECT p_login, p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_nb_jours, p_commentaire, p_etat, p_num FROM conges_periode where p_num = "'. \includes\SQL::quote($p_num).'"';
@@ -339,11 +342,11 @@ class Fonctions
      */
     public static function modificationAbsenceModule($DEBUG = false)
     {
-        $user_login		= $_SESSION['userlogin'];
+        $user_login        = $_SESSION['userlogin'];
         $p_num             = getpost_variable('p_num');
         $onglet            = getpost_variable('onglet');
         $p_num_to_update   = getpost_variable('p_num_to_update');
-        $p_etat			   = getpost_variable('p_etat');
+        $p_etat               = getpost_variable('p_etat');
         $new_debut         = getpost_variable('new_debut');
         $new_demi_jour_deb = getpost_variable('new_demi_jour_deb');
         $new_fin           = getpost_variable('new_fin');
@@ -597,8 +600,8 @@ class Fonctions
             echo '</thead>';
             echo '<tbody>';
 
-            $text_passwd1	= '<input class="form-control" type="password" name="new_passwd1" size="10" maxlength="20" value="">';
-            $text_passwd2	= '<input class="form-control" type="password" name="new_passwd2" size="10" maxlength="20" value="">';
+            $text_passwd1    = '<input class="form-control" type="password" name="new_passwd1" size="10" maxlength="20" value="">';
+            $text_passwd2    = '<input class="form-control" type="password" name="new_passwd2" size="10" maxlength="20" value="">';
             echo '<tr>';
             echo '<td>'.($text_passwd1).'</td><td>'.($text_passwd2).'</td>'."\n";
             echo '</tr>';
@@ -677,10 +680,10 @@ class Fonctions
             $i = true;
             while ($resultat3 = $ReqLog3->fetch_array()) {
 
-                $sql_p_date_deb				= eng_date_to_fr($resultat3["p_date_deb"], $DEBUG);
-                $sql_p_date_fin				= eng_date_to_fr($resultat3["p_date_fin"], $DEBUG);
-                $sql_p_demi_jour_deb		= $resultat3["p_demi_jour_deb"];
-                $sql_p_demi_jour_fin		= $resultat3["p_demi_jour_fin"];
+                $sql_p_date_deb                = eng_date_to_fr($resultat3["p_date_deb"], $DEBUG);
+                $sql_p_date_fin                = eng_date_to_fr($resultat3["p_date_fin"], $DEBUG);
+                $sql_p_demi_jour_deb        = $resultat3["p_demi_jour_deb"];
+                $sql_p_demi_jour_fin        = $resultat3["p_demi_jour_fin"];
 
                 if($sql_p_demi_jour_deb=="am")
                     $demi_j_deb="mat";
@@ -692,13 +695,13 @@ class Fonctions
                 else
                     $demi_j_fin="aprm";
 
-                $sql_p_nb_jours			= $resultat3["p_nb_jours"];
-                $sql_p_commentaire		= $resultat3["p_commentaire"];
-                $sql_p_type				= $resultat3["ta_libelle"];
-                $sql_p_etat				= $resultat3["p_etat"];
-                $sql_p_date_demande		= $resultat3["p_date_demande"];
-                $sql_p_date_traitement	= $resultat3["p_date_traitement"];
-                $sql_p_num				= $resultat3["p_num"];
+                $sql_p_nb_jours            = $resultat3["p_nb_jours"];
+                $sql_p_commentaire        = $resultat3["p_commentaire"];
+                $sql_p_type                = $resultat3["ta_libelle"];
+                $sql_p_etat                = $resultat3["p_etat"];
+                $sql_p_date_demande        = $resultat3["p_date_demande"];
+                $sql_p_date_traitement    = $resultat3["p_date_traitement"];
+                $sql_p_num                = $resultat3["p_num"];
 
                 // si on peut modifier une demande :on defini le lien à afficher
                 if( !$_SESSION['config']['interdit_modif_demande'] ) {
@@ -737,17 +740,17 @@ class Fonctions
     // affichage du calendrier du mois avec les case à cocher sur les jour de présence
     public static function  affiche_calendrier_saisie_jour_presence($user_login, $year, $mois, $DEBUG=FALSE)
     {
-        $jour_today					= date('j');
-        $jour_today_name			= date('D');
+        $jour_today                    = date('j');
+        $jour_today_name            = date('D');
 
-        $first_jour_mois_timestamp	= mktime(0,0,0,$mois,1,$year);
-        $last_jour_mois_timestamp	= mktime(0,0,0,$mois +1 , 0,$year);
+        $first_jour_mois_timestamp    = mktime(0,0,0,$mois,1,$year);
+        $last_jour_mois_timestamp    = mktime(0,0,0,$mois +1 , 0,$year);
 
-        $mois_name					= date_fr('F', $first_jour_mois_timestamp);
+        $mois_name                    = date_fr('F', $first_jour_mois_timestamp);
 
-        $first_jour_mois_rang		= date('w', $first_jour_mois_timestamp);      // jour de la semaine en chiffre (0=dim , 6=sam)
-        $last_jour_mois_rang		= date('w', $last_jour_mois_timestamp);      // jour de la semaine en chiffre (0=dim , 6=sam)
-        $nb_jours_mois				= ( $last_jour_mois_timestamp - $first_jour_mois_timestamp  + 60*60 *12 ) / (24 * 60 * 60);// + 60*60 *12 for fucking DST
+        $first_jour_mois_rang        = date('w', $first_jour_mois_timestamp);      // jour de la semaine en chiffre (0=dim , 6=sam)
+        $last_jour_mois_rang        = date('w', $last_jour_mois_timestamp);      // jour de la semaine en chiffre (0=dim , 6=sam)
+        $nb_jours_mois                = ( $last_jour_mois_timestamp - $first_jour_mois_timestamp  + 60*60 *12 ) / (24 * 60 * 60);// + 60*60 *12 for fucking DST
 
         if( $first_jour_mois_rang == 0 )
             $first_jour_mois_rang=7 ;    // jour de la semaine en chiffre (1=lun , 7=dim)
@@ -805,17 +808,17 @@ class Fonctions
     //affichage du calendrier du mois avec les case à cocher sur les jour d'absence
     public static function  affiche_calendrier_saisie_jour_absence($user_login, $year, $mois, $DEBUG=FALSE)
     {
-        $jour_today					= date('j');
-        $jour_today_name			= date('D');
+        $jour_today                    = date('j');
+        $jour_today_name            = date('D');
 
-        $first_jour_mois_timestamp	= mktime(0,0,0,$mois,1,$year);
-        $last_jour_mois_timestamp	= mktime(0,0,0,$mois + 1, 0 ,$year);
+        $first_jour_mois_timestamp    = mktime(0,0,0,$mois,1,$year);
+        $last_jour_mois_timestamp    = mktime(0,0,0,$mois + 1, 0 ,$year);
 
-        $mois_name					= date_fr('F', $first_jour_mois_timestamp);
+        $mois_name                    = date_fr('F', $first_jour_mois_timestamp);
 
-        $first_jour_mois_rang		= date('w', $first_jour_mois_timestamp);      // jour de la semaine en chiffre (0=dim , 6=sam)
-        $last_jour_mois_rang		= date('w', $last_jour_mois_timestamp);      // jour de la semaine en chiffre (0=dim , 6=sam)
-        $nb_jours_mois				= ( $last_jour_mois_timestamp - $first_jour_mois_timestamp  + 60*60 *12 ) / (24 * 60 * 60);// + 60*60 *12 for fucking DST
+        $first_jour_mois_rang        = date('w', $first_jour_mois_timestamp);      // jour de la semaine en chiffre (0=dim , 6=sam)
+        $last_jour_mois_rang        = date('w', $last_jour_mois_timestamp);      // jour de la semaine en chiffre (0=dim , 6=sam)
+        $nb_jours_mois                = ( $last_jour_mois_timestamp - $first_jour_mois_timestamp  + 60*60 *12 ) / (24 * 60 * 60);// + 60*60 *12 for fucking DST
 
         if( $first_jour_mois_rang == 0 )
             $first_jour_mois_rang=7 ;    // jour de la semaine en chiffre (1=lun , 7=dim)
@@ -1293,20 +1296,20 @@ class Fonctions
 
         if( $new_echange_rtt == 1 && $_SESSION['config']['user_echange_rtt'] ) {
 
-            $new_debut					= getpost_variable('new_debut');
-            $new_fin					= getpost_variable('new_fin');
-            $new_comment				= getpost_variable('new_comment');
-            $moment_absence_ordinaire	= getpost_variable('moment_absence_ordinaire');
-            $moment_absence_souhaitee	= getpost_variable('moment_absence_souhaitee');
+            $new_debut                    = getpost_variable('new_debut');
+            $new_fin                    = getpost_variable('new_fin');
+            $new_comment                = getpost_variable('new_comment');
+            $moment_absence_ordinaire    = getpost_variable('moment_absence_ordinaire');
+            $moment_absence_souhaitee    = getpost_variable('moment_absence_souhaitee');
 
             \utilisateur\Fonctions::echange_absence_rtt($onglet, $new_debut, $new_fin, $new_comment, $moment_absence_ordinaire, $moment_absence_souhaitee, $DEBUG);
         }
         else {
 
-            $year_calendrier_saisie_debut	= getpost_variable('year_calendrier_saisie_debut'	, date('Y'));
-            $mois_calendrier_saisie_debut	= getpost_variable('mois_calendrier_saisie_debut'	, date('m'));
-            $year_calendrier_saisie_fin		= getpost_variable('year_calendrier_saisie_fin'		, date('Y'));
-            $mois_calendrier_saisie_fin		= getpost_variable('mois_calendrier_saisie_fin'		, date('m'));
+            $year_calendrier_saisie_debut    = getpost_variable('year_calendrier_saisie_debut'    , date('Y'));
+            $mois_calendrier_saisie_debut    = getpost_variable('mois_calendrier_saisie_debut'    , date('m'));
+            $year_calendrier_saisie_fin        = getpost_variable('year_calendrier_saisie_fin'        , date('Y'));
+            $mois_calendrier_saisie_fin        = getpost_variable('mois_calendrier_saisie_fin'        , date('m'));
 
             echo '<h1>'. _('user_echange_rtt') .'</h1>';
 
