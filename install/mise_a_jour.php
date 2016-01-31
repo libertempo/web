@@ -38,23 +38,22 @@ $DEBUG=FALSE;
 //recup de la langue
 $lang=(isset($_GET['lang']) ? $_GET['lang'] : ((isset($_POST['lang'])) ? $_POST['lang'] : "") ) ;
 
-if( $DEBUG ) { 
-	echo "SESSION = <br>\n"; print_r($_SESSION); echo "<br><br>\n"; 
-	}
+if( $DEBUG ) {
+    echo "SESSION = <br>\n"; print_r($_SESSION); echo "<br><br>\n";
+}
 
-
-	// recup des parametres
-	$action = (isset($_GET['action']) ? $_GET['action'] : (isset($_POST['action']) ? $_POST['action'] : "")) ;
-	$version = (isset($_GET['version']) ? $_GET['version'] : (isset($_POST['version']) ? $_POST['version'] : "")) ;
-	$etape = (isset($_GET['etape']) ? $_GET['etape'] : (isset($_POST['etape']) ? $_POST['etape'] : 0 )) ;
+// recup des parametres
+$action = (isset($_GET['action']) ? $_GET['action'] : (isset($_POST['action']) ? $_POST['action'] : "")) ;
+$version = (isset($_GET['version']) ? $_GET['version'] : (isset($_POST['version']) ? $_POST['version'] : "")) ;
+$etape = (isset($_GET['etape']) ? $_GET['etape'] : (isset($_POST['etape']) ? $_POST['etape'] : 0 )) ;
 
 if( $DEBUG ) {
-	echo "action = $action :: version = $version :: etape = $etape<br>\n";
-	}
+    echo "action = $action :: version = $version :: etape = $etape<br>\n";
+}
 
 if($version == 0) {  // la version à mettre à jour dans le formulaire de index.php n'a pas été choisie : renvoit sur le formulaire
-	redirect( ROOT_PATH . 'install/index.php?lang='.$lang);
-	}
+    redirect( ROOT_PATH . 'install/index.php?lang='.$lang);
+}
 
 header_popup(' PHP_CONGES : '. _('install_maj_titre_1') );
 
