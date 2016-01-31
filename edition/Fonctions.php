@@ -266,6 +266,8 @@ class Fonctions
         // GET / POST
         $user_login = getpost_variable('user_login', $_SESSION['userlogin']) ;
         $return = '';
+        header_popup( _('editions_titre') .' : '.$user_login);
+
 
         /*************************************/
 
@@ -282,36 +284,33 @@ class Fonctions
     // affichage du tableau récapitulatif des solde de congés d'un user d'une edition donnée !
     public static function affiche_tableau_bilan_conges_user_edition($tab_info_user, $tab_info_edition, $tab_type_cong, $tab_type_conges_exceptionnels,  $DEBUG=FALSE)
     {
+        $return = '';
 
-        echo "<table cellpadding=\"2\" width=\"250\" class=\"tablo\">\n";
-    //    echo "<tr align=\"center\"><td class=\"titre\" colspan=\"3\"> quotité &nbsp; : &nbsp; $quotite % </td></tr>\n" ;
-        echo "<thead><tr>\n";
-        echo "    <th></th>\n";
-        echo "    <th> ". _('editions_jours_an') ." </th>\n";
-        echo "    <th> ". _('divers_solde_maj') ."</th>\n";
-        echo "    </tr></thead><tbody>\n" ;
+        $return .= '<table cellpadding="2" width="250" class="tablo">';
+        //    echo "<tr align=\"center\"><td class=\"titre\" colspan=\"3\"> quotité &nbsp; : &nbsp; $quotite % </td></tr>\n" ;
+        $return .= '<thead><tr>';
+        $return .= '<th></th>';
+        $return .= '<th>' . _('editions_jours_an') . '</th>';
+        $return .= '<th>' . _('divers_solde_maj') . '</th>';
+        $return .= '</tr></thead><tbody>';
 
-        foreach($tab_type_cong as $id_abs => $libelle)
-        {
-            echo "<tr><td> $libelle </td>
-                    <td>".$tab_info_user['conges'][$libelle]['nb_an']."</td>
-                    <td align=\"center\" bgcolor=\"#FF9191\"><b>".$tab_info_edition['conges'][$id_abs]."</b></td>";
+        foreach($tab_type_cong as $id_abs => $libelle) {
+            $return .= '<tr><td>' . $libelle . '</td><td>' . $tab_info_user['conges'][$libelle]['nb_an']. '</td><td align="center" bgcolor="#FF9191"><b>' . $tab_info_edition['conges'][$id_abs] . '</b></td>';
         }
-        foreach($tab_type_conges_exceptionnels as $id_abs => $libelle)
-        {
-            echo "<tr><td> $libelle </td>
-                    <td>".$tab_info_user['conges'][$libelle]['nb_an']."</td>
-                    <td align=\"center\" bgcolor=\"#FF9191\"><b>".$tab_info_edition['conges'][$id_abs]."</b></td>";
+        foreach($tab_type_conges_exceptionnels as $id_abs => $libelle) {
+            $return .= '<tr><td>' . $libelle . '</td><td>' . $tab_info_user['conges'][$libelle]['nb_an'] . '</td><td align="center" bgcolor="#FF9191"><b>'. $tab_info_edition['conges'][$id_abs] . '</b></td>';
         }
-        echo "</tr>\n";
+        $return .= '</tr>';
+        $return .= '</tbody></table>';
 
-        echo "</tbody></table>\n";
+        return $return;
     }
 
     public static function edition_papier($login, $edit_id,  $DEBUG=FALSE)
     {
-    //$DEBUG = TRUE ;
+        //$DEBUG = TRUE ;
         $session=session_id();
+        $return = '';
 
         // recup infos du user
         $tab_info_user = \edition\Fonctions::recup_info_user_pour_edition($login,  $DEBUG);
@@ -322,235 +321,229 @@ class Fonctions
         // recup du tableau des types de conges exceptionnels (seulement les conge sexceptionnels )
         $tab_type_cong=recup_tableau_types_conges( $DEBUG);
         // recup du tableau des types de conges (seulement les conges)
-        if ($_SESSION['config']['gestion_conges_exceptionnels'])
+        if ($_SESSION['config']['gestion_conges_exceptionnels']) {
             $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels( $DEBUG);
-        else
+        } else {
             $tab_type_conges_exceptionnels=array();
+        }
         // recup du tableau de tous les types de conges
         $tab_type_all_cong=recup_tableau_tout_types_abs( $DEBUG);
 
-        if( $DEBUG )
-        {
-            echo "tab_info_user :<br>\n" ; print_r($tab_info_user) ; echo "<br><br>\n" ;
-            echo "tab_info_edition :<br>\n" ; print_r($tab_info_edition) ; echo "<br><br>\n" ;
-            echo "tab_type_cong :<br>\n" ; print_r($tab_type_cong) ; echo "<br><br>\n" ;
-            echo "tab_type_conges_exceptionnels :<br>\n" ; print_r($tab_type_conges_exceptionnels) ; echo "<br><br>\n" ;
-            echo "tab_type_all_cong :<br>\n" ; print_r($tab_type_all_cong) ; echo "<br><br>\n" ;
-            echo "numero edition = $edit_id<br>\n" ;
+        if( $DEBUG ) {
+            $return .= 'tab_info_user :<br>' . var_export($tab_info_user, true) . '<br><br>';
+            $return .= 'tab_info_edition :<br>' . var_export($tab_info_edition, true) . '<br><br>';
+            $return .= 'tab_type_cong :<br>' . var_export($tab_type_cong, true) . '<br><br>';
+            $return .= 'tab_type_conges_exceptionnels :<br>' . var_export($tab_type_conges_exceptionnels, true) . '<br><br>';
+            $return .= 'tab_type_all_cong :<br>' . var_export($tab_type_all_cong, true) . '<br><br>';
+            $return .= 'numero edition = ' . $edit_id . '<br>';
         }
 
 
         /**************************************/
         /* affichage du texte en haut de page */
         /**************************************/
-        echo "\n<!-- affichage du texte en haut de page -->\n";
-        echo "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"770\">\n" ;
-        echo "<tr align=\"center\">\n";
-        echo "<td>".$_SESSION['config']['texte_haut_edition_papier']."<br><br></td>\n";
-        echo "</tr>\n";
-        echo "</table>\n";
+        $return .= '<table cellpadding="0" cellspacing="0" border="0" width="770">';
+        $return .= '<tr align="center">';
+        $return .= '<td>' . $_SESSION['config']['texte_haut_edition_papier'] . '<br><br></td>';
+        $return .= '</tr>';
+        $return .= '</table>';
 
         /**************************************/
         /* affichage du TITRE                 */
         /**************************************/
-        echo "\n<!-- affichage du TITRE -->\n";
-        echo "<H1>".$tab_info_user['nom']."  ".$tab_info_user['prenom']."</H1>\n\n";
+        $return .= '<H1>' . $tab_info_user['nom'] . ' ' . $tab_info_user['prenom'] . '</H1>';
         $tab_date=explode("-", $tab_info_edition['date']);
-        echo "<H2>". _('editions_bilan_au') ." $tab_date[2] / $tab_date[1] / $tab_date[0]</H2>\n\n";
+        $return .= '<H2>' . _('editions_bilan_au') . ' ' . $tab_date[2] . '/' . $tab_date[1] . '/' . $tab_date[0] . '</H2>';
 
 
         /****************************/
         /* tableau Bilan des Conges */
         /****************************/
         // affichage du tableau récapitulatif des solde de congés d'un user DE cette edition !
-        \edition\Fonctions::affiche_tableau_bilan_conges_user_edition($tab_info_user, $tab_info_edition, $tab_type_cong, $tab_type_conges_exceptionnels,  $DEBUG);
+        $return .= \edition\Fonctions::affiche_tableau_bilan_conges_user_edition($tab_info_user, $tab_info_edition, $tab_type_cong, $tab_type_conges_exceptionnels,  $DEBUG);
 
         $quotite=$tab_info_user['quotite'];
-        echo "<h3> ". _('divers_quotite') ."&nbsp; : &nbsp;$quotite % </h3>\n" ;
-        echo "<br><br><br>\n";
+        $return .= '<h3>' . _('divers_quotite') . '&nbsp; : &nbsp;' . $quotite . ' %</h3>';
+        $return .= '<br><br><br>';
 
 
-        if($_SESSION['config']['affiche_date_traitement'])
-            echo "<table cellpadding=\"0\" cellspacing=\"0\" border=\"1\" width=\"870\">\n" ;
-        else
-            echo "<table cellpadding=\"0\" cellspacing=\"0\" border=\"1\" width=\"770\">\n" ;
-        echo "<tr align=\"center\">\n";
-        echo "<td><h3>". _('editions_historique') ." :</h3></td>\n";
-        echo "</tr>\n";
+        if($_SESSION['config']['affiche_date_traitement']) {
+            $return .= '<table cellpadding="0" cellspacing="0" border="1" width="870">';
+        } else {
+            $return .= '<table cellpadding="0" cellspacing="0" border="1" width="770">';
+        }
+        $return .= '<tr align="center">';
+        $return .= '<td><h3>' . _('editions_historique') . ' :</h3></td>';
+        $return .= '</tr>';
 
         /*********************************************/
         /* Tableau Historique des Conges et demandes */
         /*********************************************/
-        echo "\n<!-- Tableau Historique des Conges et demandes -->\n";
-        echo "<tr align=\"center\">\n";
-        echo "<td>\n";
+        $return .= '<!-- Tableau Historique des Conges et demandes -->';
+        $return .= '<tr align="center">';
+        $return .= '<td>';
 
-            // Récupération des informations
-            // on ne recup QUE les periodes de l'edition choisie
-            $sql2 = "SELECT p_login, p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_nb_jours, p_commentaire, p_type, p_etat, p_date_demande, p_date_traitement ";
-            $sql2=$sql2."FROM conges_periode ";
-            $sql2=$sql2."WHERE p_edition_id = $edit_id ";
-            $sql2=$sql2."ORDER BY p_date_deb ASC ";
-            $ReqLog2 = \includes\SQL::query($sql2);
+        // Récupération des informations
+        // on ne recup QUE les periodes de l'edition choisie
+        $sql2 = "SELECT p_login, p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_nb_jours, p_commentaire, p_type, p_etat, p_date_demande, p_date_traitement ";
+        $sql2=$sql2."FROM conges_periode ";
+        $sql2=$sql2."WHERE p_edition_id = $edit_id ";
+        $sql2=$sql2."ORDER BY p_date_deb ASC ";
+        $ReqLog2 = \includes\SQL::query($sql2);
 
-            $count2=$ReqLog2->num_rows;
-            if($count2==0)
-            {
-                echo "<b>". _('editions_aucun_conges') ."</b><br>\n";
+        $count2=$ReqLog2->num_rows;
+        if($count2==0) {
+            $return .= '<b>' . _('editions_aucun_conges') . '</b><br>';
+        } else {
+            // AFFICHAGE TABLEAU
+            if($_SESSION['config']['affiche_date_traitement']) {
+                $return .= '<table cellpadding="2" class="tablo-edit" width="850">';
+            } else {
+                $return .= '<table cellpadding="2" class="tablo-edit" width="750">';
             }
-            else
-            {
-                // AFFICHAGE TABLEAU
-                if($_SESSION['config']['affiche_date_traitement'])
-                    echo "<table cellpadding=\"2\" class=\"tablo-edit\" width=\"850\">\n";
-                else
-                    echo "<table cellpadding=\"2\" class=\"tablo-edit\" width=\"750\">\n";
 
-                /*************************************/
-                /* affichage anciens soldes          */
-                /*************************************/
-                echo "\n<!-- affichage anciens soldes -->\n";
-                echo "<tr>\n";
-                echo "<td colspan=\"5\">\n";
-                $edition_precedente_id = \edition\Fonctions::get_id_edition_precedente_user($login, $edit_id,  $DEBUG);
-                if($edition_precedente_id==0)
-                    echo "<b>". _('editions_soldes_precedents_inconnus') ." !... ";
-                else
-                {
-                    $tab_edition_precedente = \edition\Fonctions::recup_info_edition($edition_precedente_id,  $DEBUG);
-                    foreach($tab_type_cong as $id_abs => $libelle)
-                    {
-                        echo  _('editions_solde_precedent') ." <b>$libelle : ".$tab_edition_precedente['conges'][$id_abs]."</b><br>\n";
-                    }
-                    foreach($tab_type_conges_exceptionnels as $id_abs => $libelle)
-                    {
-                        echo  _('editions_solde_precedent') ." <b>$libelle : ".$tab_edition_precedente['conges'][$id_abs]."</b><br>\n";
-                    }
+            /*************************************/
+            /* affichage anciens soldes          */
+            /*************************************/
+            $return .= '<!-- affichage anciens soldes -->';
+            $return .= '<tr>';
+            $return .= '<td colspan="5">';
+            $edition_precedente_id = \edition\Fonctions::get_id_edition_precedente_user($login, $edit_id,  $DEBUG);
+            if($edition_precedente_id==0) {
+                $return .= '<b>' . _('editions_soldes_precedents_inconnus') . '!... ';
+            } else {
+                $tab_edition_precedente = \edition\Fonctions::recup_info_edition($edition_precedente_id,  $DEBUG);
+                foreach($tab_type_cong as $id_abs => $libelle) {
+                    $return .= _('editions_solde_precedent') . ' <b>' . $libelle . ' : ' . $tab_edition_precedente['conges'][$id_abs] . '</b><br>';
                 }
-
-                echo "<td>\n";
-                echo "</tr>\n";
-
-
-                /*************************************/
-                /* affichage lignes de l'edition     */
-                /*************************************/
-                echo "\n<!-- affichage lignes de l'edition -->\n";
-                echo "<tr>\n";
-                echo " <td class=\"titre-edit\">". _('divers_type_maj_1') ."</td>\n";
-                echo " <td class=\"titre-edit\">". _('divers_etat_maj_1') ."</td>\n";
-                echo " <td class=\"titre-edit\">". _('divers_nb_jours_maj_1') ."</td>\n";
-                echo " <td class=\"titre-edit\">". _('divers_debut_maj_1') ."</td>\n";
-                echo " <td class=\"titre-edit\">". _('divers_fin_maj_1') ."</td>\n";
-                echo " <td class=\"titre-edit\">". _('divers_comment_maj_1') ."</td>\n";
-                if($_SESSION['config']['affiche_date_traitement'])
-                {
-                    echo "<td class=\"titre-edit\">". _('divers_date_traitement') ."</td>\n" ;
+                foreach($tab_type_conges_exceptionnels as $id_abs => $libelle) {
+                    $return .= _('editions_solde_precedent') . ' <b>' . $libelle . ' : ' . $tab_edition_precedente['conges'][$id_abs] . '</b><br>';
                 }
-                echo "</tr>\n";
-
-                while ($resultat2 = $ReqLog2->fetch_array()) {
-                        $sql_p_date_deb = eng_date_to_fr($resultat2["p_date_deb"]);
-                        $sql_p_demi_jour_deb = $resultat2["p_demi_jour_deb"];
-                        if($sql_p_demi_jour_deb=="am")
-                            $demi_j_deb =  _('divers_am_short') ;
-                        else
-                            $demi_j_deb =  _('divers_pm_short') ;
-                        $sql_p_date_fin = eng_date_to_fr($resultat2["p_date_fin"]);
-                        $sql_p_demi_jour_fin = $resultat2["p_demi_jour_fin"];
-                        if($sql_p_demi_jour_fin=="am")
-                            $demi_j_fin =  _('divers_am_short') ;
-                        else
-                            $demi_j_fin =  _('divers_pm_short') ;
-                        $sql_p_nb_jours = $resultat2["p_nb_jours"];
-                        $sql_p_commentaire = $resultat2["p_commentaire"];
-                        $sql_p_type = $resultat2["p_type"];
-                        $sql_p_etat = $resultat2["p_etat"];
-                        $sql_p_date_demande = $resultat2["p_date_demande"];
-                        $sql_p_date_traitement = $resultat2["p_date_traitement"];
-
-                        echo "<tr>\n";
-                        echo "<td class=\"histo-edit\">".$tab_type_all_cong[$sql_p_type]['libelle']."</td>\n" ;
-                        echo "<td class=\"histo-edit\">";
-                        if($sql_p_etat=="refus")
-                            echo  _('divers_refuse') ;
-                        elseif($sql_p_etat=="annul")
-                            echo  _('divers_annule') ;
-                        else
-                            echo "$sql_p_etat";
-                        echo "</td>\n" ;
-                        if($sql_p_etat=="ok")
-                            echo "<td class=\"histo-big\"> -$sql_p_nb_jours</td>";
-                        elseif($sql_p_etat=="ajout")
-                            echo "<td class=\"histo-big\"> +$sql_p_nb_jours</td>";
-                        else
-                            echo "<td> $sql_p_nb_jours</td>";
-                        echo "<td class=\"histo-edit\">$sql_p_date_deb _ $demi_j_deb</td>";
-                        echo "<td class=\"histo-edit\">$sql_p_date_fin _ $demi_j_fin</td>";
-                        echo "<td class=\"histo-edit\">$sql_p_commentaire</td>";
-
-                    if($_SESSION['config']['affiche_date_traitement'])
-                    {
-                        if($sql_p_date_demande == NULL)
-                            echo "<td class=\"histo-left\">". _('divers_demande') ." : $sql_p_date_demande<br>". _('divers_traitement') ." : $sql_p_date_traitement</td>\n" ;
-                        else
-                            echo "<td class=\"histo-left\">". _('divers_demande') ." : $sql_p_date_demande<br>". _('divers_traitement') ." : pas traité</td>\n" ;
-                    }
-                        echo "</tr>\n";
-                }
-
-                /*************************************/
-                /* affichage nouveaux soldes         */
-                /*************************************/
-                echo "\n<!-- affichage nouveaux soldes -->\n";
-                echo "<tr>\n";
-                echo "<td colspan=\"5\">\n";
-                    foreach($tab_type_cong as $id_abs => $libelle)
-                    {
-                        echo  _('editions_nouveau_solde') ." <b>$libelle : ".$tab_info_edition['conges'][$id_abs]."</b><br>\n";
-                    }
-                echo "<td>\n";
-                echo "</tr>\n";
-
-                echo "</table>\n\n";
             }
-        echo "<br><br>\n";
-        echo "</td>\n";
 
-        echo "</tr>\n";
+            $return .= '<td>';
+            $return .= '</tr>';
 
-        echo "</table>\n";
 
+            /*************************************/
+            /* affichage lignes de l'edition     */
+            /*************************************/
+            $return .= '<!-- affichage lignes de l\'edition -->';
+            $return .= '<tr>';
+            $return .= '<td class="titre-edit">' . _('divers_type_maj_1') . '</td>';
+            $return .= '<td class="titre-edit">' . _('divers_etat_maj_1') . '</td>';
+            $return .= '<td class="titre-edit">' . _('divers_nb_jours_maj_1') . '</td>';
+            $return .= '<td class="titre-edit">' . _('divers_debut_maj_1') . '</td>';
+            $return .= '<td class="titre-edit">' . _('divers_fin_maj_1') . '</td>';
+            $return .= '<td class="titre-edit">' . _('divers_comment_maj_1') . '</td>';
+            if($_SESSION['config']['affiche_date_traitement']) {
+                $return .= '<td class="titre-edit">' . _('divers_date_traitement') . '</td>';
+            }
+            $return .= '</tr>';
+
+            while ($resultat2 = $ReqLog2->fetch_array()) {
+                $sql_p_date_deb = eng_date_to_fr($resultat2["p_date_deb"]);
+                $sql_p_demi_jour_deb = $resultat2["p_demi_jour_deb"];
+                if($sql_p_demi_jour_deb=="am") {
+                    $demi_j_deb =  _('divers_am_short') ;
+                } else {
+                    $demi_j_deb =  _('divers_pm_short') ;
+                }
+                $sql_p_date_fin = eng_date_to_fr($resultat2["p_date_fin"]);
+                $sql_p_demi_jour_fin = $resultat2["p_demi_jour_fin"];
+                if($sql_p_demi_jour_fin=="am") {
+                    $demi_j_fin =  _('divers_am_short') ;
+                } else {
+                    $demi_j_fin =  _('divers_pm_short') ;
+                }
+                $sql_p_nb_jours = $resultat2["p_nb_jours"];
+                $sql_p_commentaire = $resultat2["p_commentaire"];
+                $sql_p_type = $resultat2["p_type"];
+                $sql_p_etat = $resultat2["p_etat"];
+                $sql_p_date_demande = $resultat2["p_date_demande"];
+                $sql_p_date_traitement = $resultat2["p_date_traitement"];
+
+                $return .= '<tr>';
+                $return .= '<td class="histo-edit">' . $tab_type_all_cong[$sql_p_type]['libelle'] . '</td>';
+                $return .= '<td class="histo-edit">';
+                if($sql_p_etat=="refus") {
+                    $return .= _('divers_refuse') ;
+                } elseif($sql_p_etat=="annul") {
+                    $return .= _('divers_annule') ;
+                } else {
+                    $return .= '"' . $sql_p_etat . '"';
+                }
+                $return .= '</td>';
+                if($sql_p_etat=="ok") {
+                    $return .= '<td class="histo-big"> -' . $sql_p_nb_jours . '</td>';
+                } elseif($sql_p_etat=="ajout") {
+                    $return .= '<td class="histo-big"> +' . $sql_p_nb_jours . '</td>';
+                } else {
+                    $return .= '<td> ' . $sql_p_nb_jours . '</td>';
+                }
+                $return .= '<td class="histo-edit">' . $sql_p_date_deb . '_' .  $demi_j_deb . '</td>';
+                $return .= '<td class="histo-edit">' . $sql_p_date_fin . '_' .  $demi_j_fin . '</td>';
+                $return .= '<td class="histo-edit">' . $sql_p_commentaire . '</td>';
+
+                if($_SESSION['config']['affiche_date_traitement']) {
+                    if($sql_p_date_demande == NULL) {
+                        $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : ' . $sql_p_date_traitement . '</td>';
+                    } else {
+                        $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : pas traité</td>';
+                    }
+                }
+                $return .= '</tr>';
+            }
+
+            /*************************************/
+            /* affichage nouveaux soldes         */
+            /*************************************/
+            $return .= '<!-- affichage nouveaux soldes -->';
+            $return .= '<tr>';
+            $return .= '<td colspan="5">';
+            foreach($tab_type_cong as $id_abs => $libelle) {
+                $return .= _('editions_nouveau_solde') . ' <b>' . $libelle . ': ' . $tab_info_edition['conges'][$id_abs] . '</b><br>';
+            }
+            $return .= '<td>';
+            $return .= '</tr>';
+            $return .= '</table>';
+        }
+        $return .= '<br><br>';
+        $return .= '</td>';
+        $return .= '</tr>';
+        $return .= '</table>';
 
         /*************************************/
         /* affichage des zones de signature  */
         /*************************************/
-        echo "\n<!-- affichage des zones de signature -->\n";
-        echo "<br>\n" ;
-        echo "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"770\">\n" ;
-        echo "<tr align=\"center\">\n";
-        echo "<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>\n";
-        echo "<td align=\"left\">\n" ;
-            echo "<b>". _('editions_date') ." : <br>". _('editions_signature_1') ." :</b><br><br><br><br><br><br><br><br><br><br>\n" ;
-        echo "</td>\n";
-        echo "<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>\n";
-        echo "<td align=\"left\">\n" ;
-            echo "<b>". _('editions_date') ." : <br>". _('editions_signature_2') ." :</b><br><i>(". _('editions_cachet_etab') .")</i><br><br><br><br><br><br><br><br><br>\n" ;
-        echo "</td>\n";
-        echo "<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>\n";
-        echo "</tr>\n";
-        echo "</table>\n";
+        $return .= '<!-- affichage des zones de signature -->';
+        $return .= '<br>';
+        $return .= '<table cellpadding="0" cellspacing="0" border="0" width="770">';
+        $return .= '<tr align="center">';
+        $return .= '<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
+        $return .= '<td align="left">';
+        $return .= '<b>' . _('editions_date') . ' : <br>' . _('editions_signature_1') . ' :</b><br><br><br><br><br><br><br><br><br><br>';
+        $return .= '</td>';
+        $return .= '<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
+        $return .= '<td align="left">';
+        $return .= '<b>' . _('editions_date') . ' : <br>' . _('editions_signature_2') . ' :</b><br><i>(' . _('editions_cachet_etab') . ')</i><br><br><br><br><br><br><br><br><br>';
+        $return .= '</td>';
+        $return .= '<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
+        $return .= '</tr>';
+        $return .= '</table>';
 
 
         /*************************************/
         /* affichage du texte en bas de page */
         /*************************************/
-        echo "\n<!-- affichage du texte en bas de page -->\n";
-        echo "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"770\">\n" ;
-        echo "<tr align=\"center\">\n";
-        echo "<td><br>".$_SESSION['config']['texte_bas_edition_papier']."</td>\n";
-        echo "</tr>\n";
-        echo "</table>\n";
+        $return .= '<!-- affichage du texte en bas de page -->';
+        $return .= '<table cellpadding="0" cellspacing="0" border="0" width="770">';
+        $return .= '<tr align="center">';
+        $return .= '<td><br>' . $_SESSION['config']['texte_bas_edition_papier'] . '</td>';
+        $return .= '</tr>';
+        $return .= '</table>';
+
+        return $return;
     }
 
     /**
@@ -570,6 +563,7 @@ class Fonctions
         // GET / POST
         $user_login = getpost_variable('user_login') ;
         $edit_id = getpost_variable('edit_id', 0) ;
+        $return = '';
         /*************************************/
 
         if ($user_login != $_SESSION['userlogin'] && !is_hr($_SESSION['userlogin']) && !is_resp_of_user($_SESSION['userlogin'] , $user_login)) {
@@ -583,29 +577,21 @@ class Fonctions
 
         header_popup(_('editions_etat_conges').' : '.$user_login , $css);
 
-
-
-        if($edit_id==0)   // si c'est une nouvelle édition, on insert dans la base avant d'éditer et on renvoit l'id de l'édition
+        if($edit_id==0) {  // si c'est une nouvelle édition, on insert dans la base avant d'éditer et on renvoit l'id de l'édition
             $edit_id = \edition\Fonctions::enregistrement_edition($user_login,  $DEBUG);
+        }
 
-        \edition\Fonctions::edition_papier($user_login, $edit_id,  $DEBUG);
+        $return .= \edition\Fonctions::edition_papier($user_login, $edit_id,  $DEBUG);
 
         $comment_log = "edition papier (num_edition = $edit_id) ($user_login) ";
         log_action(0, "", $user_login, $comment_log,  $DEBUG);
 
-    ?>
-    <br>
-    <script type="text/javascript" language="javascript1.2">
-    <!--
-    // Do print the page
-    if (typeof(window.print) != 'undefined') {
-        window.print();
-    }
-    //-->
-    </script>
-    <?php
-
-    bottom();
+        $return .= '<br><script type="text/javascript" language="javascript1.2">
+        if (typeof(window.print) != \'undefined\') {
+            window.print();
+        }
+        </script>';
+        return $return;
     }
 
     public static function affiche_tableau_conges_normal(&$pdf, $ReqLog2, $decalage, $tab_type_all_cong, $DEBUG=FALSE)
@@ -636,20 +622,21 @@ class Fonctions
         $pdf->Cell($size_cell_fin, 5,  _('divers_fin_maj_1') , 1, 0, 'C', 1);
         $pdf->Cell($size_cell_comment, 5,  _('divers_comment_maj_1') , 1, 1, 'C', 1);
 
-        while ($resultat2 = $ReqLog2->fetch_array())
-        {
+        while ($resultat2 = $ReqLog2->fetch_array()) {
             $sql_p_date_deb = eng_date_to_fr($resultat2["p_date_deb"]);
             $sql_p_demi_jour_deb = $resultat2["p_demi_jour_deb"];
-            if($sql_p_demi_jour_deb=="am")
-                    $demi_j_deb =  _('divers_am_short') ;
-            else
-                    $demi_j_deb =  _('divers_pm_short') ;
+            if($sql_p_demi_jour_deb=="am") {
+                $demi_j_deb =  _('divers_am_short') ;
+            } else {
+                $demi_j_deb =  _('divers_pm_short') ;
+            }
             $sql_p_date_fin = eng_date_to_fr($resultat2["p_date_fin"]);
             $sql_p_demi_jour_fin = $resultat2["p_demi_jour_fin"];
-            if($sql_p_demi_jour_fin=="am")
+            if($sql_p_demi_jour_fin=="am") {
                 $demi_j_fin =  _('divers_am_short') ;
-            else
+            } else {
                 $demi_j_fin =  _('divers_pm_short') ;
+            }
             $sql_p_nb_jours = $resultat2["p_nb_jours"];
             $sql_p_commentaire = $resultat2["p_commentaire"];
             $sql_p_type = $resultat2["p_type"];
@@ -667,40 +654,43 @@ class Fonctions
 
             $pdf->Cell($size_cell_type, $hauteur_cellule, $tab_type_all_cong[$sql_p_type]['libelle'], 1, 0, 'C');
 
-            if($sql_p_etat=="refus")
+            if($sql_p_etat=="refus") {
                 $text_etat =  _('divers_refuse') ;
-            elseif($sql_p_etat=="annul")
+            } elseif($sql_p_etat=="annul") {
                 $text_etat =  _('divers_annule') ;
-            else
+            } else {
                 $text_etat=$sql_p_etat;
+            }
             $pdf->Cell($size_cell_etat, $hauteur_cellule, $text_etat, 1, 0, 'C');
 
-            if( ($sql_p_etat=="refus") || ($sql_p_etat=="annul") )
+            if( ($sql_p_etat=="refus") || ($sql_p_etat=="annul") ) {
                 $pdf->SetFont('Times', '', $taille_font);
-            else
+            } else {
                 $pdf->SetFont('Times', 'B', $taille_font);
+            }
 
-            if($sql_p_etat=="ok")
+            if($sql_p_etat=="ok") {
                 $text_nb_jours="-".$sql_p_nb_jours;
-            elseif($sql_p_etat=="ajout")
+            } elseif($sql_p_etat=="ajout") {
                 $text_nb_jours="+".$sql_p_nb_jours;
-            else
+            } else {
                 $text_nb_jours=$sql_p_nb_jours;
+            }
             $pdf->Cell($size_cell_nb_jours, $hauteur_cellule, $text_nb_jours, 1, 0, 'C');
 
             $pdf->SetFont('Times', '', $taille_font);
             $pdf->Cell($size_cell_debut, $hauteur_cellule, $sql_p_date_deb." _ ".$demi_j_deb, 1, 0, 'C');
             $pdf->Cell($size_cell_fin, $hauteur_cellule, $sql_p_date_fin." _ ".$demi_j_fin, 1, 0, 'C');
             // reduction de la taille du commentaire pour rentrer dans la cellule
-            if(strlen($sql_p_commentaire)>39)
-            $sql_p_commentaire = substr($sql_p_commentaire, 0, 35)." ..." ;
+            if(strlen($sql_p_commentaire)>39) {
+                $sql_p_commentaire = substr($sql_p_commentaire, 0, 35)." ..." ;
+            }
             $pdf->Cell($size_cell_comment, $hauteur_cellule, $sql_p_commentaire, 1, 1, 'C');
         }
     }
 
     public static function affiche_tableau_conges_avec_date_traitement(&$pdf, $ReqLog2, $decalage, $tab_type_all_cong, $DEBUG=FALSE)
     {
-
         // (largeur totale page = 210 ( - 2x10 de marge))
         // tailles des cellules du tableau
         $size_cell_type = 25;
@@ -726,20 +716,21 @@ class Fonctions
         $pdf->Cell($size_cell_fin, 5,  _('divers_fin_maj_1') , 1, 0, 'C', 1);
         $pdf->Cell($size_cell_comment, 5,  _('divers_comment_maj_1') , 1, 1, 'C', 1);
 
-        while ($resultat2 = $ReqLog2->fetch_array())
-        {
+        while ($resultat2 = $ReqLog2->fetch_array()) {
             $sql_p_date_deb = eng_date_to_fr($resultat2["p_date_deb"]);
             $sql_p_demi_jour_deb = $resultat2["p_demi_jour_deb"];
-            if($sql_p_demi_jour_deb=="am")
+            if($sql_p_demi_jour_deb=="am") {
                 $demi_j_deb =  _('divers_am_short') ;
-            else
+            } else {
                 $demi_j_deb =  _('divers_pm_short') ;
+            }
             $sql_p_date_fin = eng_date_to_fr($resultat2["p_date_fin"]);
             $sql_p_demi_jour_fin = $resultat2["p_demi_jour_fin"];
-            if($sql_p_demi_jour_fin=="am")
+            if($sql_p_demi_jour_fin=="am") {
                 $demi_j_fin =  _('divers_am_short') ;
-            else
+            } else {
                 $demi_j_fin =  _('divers_pm_short') ;
+            }
             $sql_p_nb_jours = $resultat2["p_nb_jours"];
             $sql_p_commentaire = $resultat2["p_commentaire"];
             $sql_p_type = $resultat2["p_type"];
@@ -815,7 +806,7 @@ class Fonctions
     // affichage en pdf des anciens soldes de congés d'un user
     public static function affiche_pdf_ancien_solde(&$pdf, $login, $edit_id, $tab_type_cong, $tab_type_conges_exceptionnels, $decalage,  $DEBUG=FALSE)
     {
-    //    $pdf->SetFont('Times', 'B', 10);
+        //    $pdf->SetFont('Times', 'B', 10);
 
         $edition_precedente_id = \edition\Fonctions::get_id_edition_precedente_user($login, $edit_id,  $DEBUG);
         if($edition_precedente_id==0)
@@ -1129,7 +1120,6 @@ class Fonctions
     // recup infos du user
     public static function recup_info_user_pour_edition($login,  $DEBUG=FALSE)
     {
-
         $tab=array();
         $sql_user = 'SELECT u_nom, u_prenom, u_quotite FROM conges_users where u_login = "'. \includes\SQL::quote($login).'"';
         $ReqLog_user = \includes\SQL::query($sql_user);

@@ -34,4 +34,5 @@ include_once INCLUDE_PATH .'session.php';
 
 //$DEBUG = TRUE ;
 $DEBUG = FALSE ;
-\edition\Fonctions::editPapierModule($session, $DEBUG);
+echo \edition\Fonctions::editPapierModule($session, $DEBUG);
+bottom();
