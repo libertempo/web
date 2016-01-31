@@ -852,15 +852,13 @@ class Fonctions
         $pdf->Cell(20, 5, " ". _('editions_jours_an') , 1, 0, 'C');
         $pdf->Cell(20, 5,  _('divers_solde_maj_1') ." ", 1, 1, 'C');
 
-        foreach($tab_type_cong as $id_abs => $libelle)
-        {
+        foreach($tab_type_cong as $id_abs => $libelle) {
             $pdf->Cell($decalage);
             $pdf->Cell(40, 5, " $libelle ", 1, 0, 'C');
             $pdf->Cell(20, 5, $tab_info_user['conges'][$libelle]['nb_an'], 1, 0, 'C');
             $pdf->Cell(20, 5, $tab_info_edition['conges'][$id_abs], 1, 1, 'C', 1);
         }
-        foreach($tab_type_conges_exceptionnels as $id_abs => $libelle)
-        {
+        foreach($tab_type_conges_exceptionnels as $id_abs => $libelle) {
             $pdf->Cell($decalage);
             $pdf->Cell(40, 5, " $libelle ", 1, 0, 'C');
             $pdf->Cell(20, 5, $tab_info_user['conges'][$libelle]['nb_an'], 1, 0, 'C');
@@ -875,19 +873,17 @@ class Fonctions
     {
         $fpdf_filename = LIBRARY_PATH .'tcpdf/tcpdf.php';
         // verif si la librairie fpdf est présente
-        if (!is_readable($fpdf_filename))
-        {
+        if (!is_readable($fpdf_filename)) {
             echo  _('fpdf_not_valid') ."<br> !";
-        }
-        else
-        {
+        } else {
             // recup du tableau des types de conges (seulement les conges)
             $tab_type_cong=recup_tableau_types_conges();
             // recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
-            if ($_SESSION['config']['gestion_conges_exceptionnels'])
-                 $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels( $DEBUG);
-            else
+            if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+                $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels( $DEBUG);
+            } else {
                 $tab_type_conges_exceptionnels=array();
+            }
             // recup du tableau de tous les types de conges
             $tab_type_all_cong=recup_tableau_tout_types_abs( $DEBUG);
 
@@ -906,7 +902,6 @@ class Fonctions
 
             $pdf=new \edition\PDF( 'P', 'mm', 'A4', true, "UTF-8");
             $pdf->AddPage();
-
             $pdf->SetFillColor(200);
 
             /**************************************/
@@ -945,65 +940,55 @@ class Fonctions
             /*********************************************/
             /* Tableau Historique des Conges et demandes */
             /*********************************************/
+            $pdf->SetFont('Times', 'B', 10);
 
-                $pdf->SetFont('Times', 'B', 10);
+            //test d'une ligne à 120 caractères
+            //$ligne120="123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
+            //$pdf->Cell(0, 5, $ligne120 ,0,1,'C');
 
-                //test d'une ligne à 120 caractères
-                //$ligne120="123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
-                //$pdf->Cell(0, 5, $ligne120 ,0,1,'C');
+            // Récupération des informations
+            // on ne recup QUE les periodes de l'edition choisie
+            $sql2 = "SELECT p_login, p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_nb_jours, p_commentaire, p_type, p_etat, p_date_demande, p_date_traitement ";
+            $sql2=$sql2."FROM conges_periode ";
+            $sql2=$sql2."WHERE p_edition_id = $edit_id ";
+            $sql2=$sql2."ORDER BY p_date_deb ASC ";
+            $ReqLog2 = \includes\SQL::query($sql2) ;
 
+            $count2=$ReqLog2->num_rows;
+            if($count2==0) {
+                $pdf->Cell(0, 5,  _('editions_aucun_conges') ." ...",0,1,'C');
+                $pdf->Ln(5);
+            } else {
+                // AFFICHAGE TABLEAU
+                // decalage pour centrer
+                $decalage = 5;
 
+                /*************************************/
+                /* affichage anciens soldes          */
+                /*************************************/
+                // affichage en pdf des anciens soldes de congés d'un user
+                \edition\Fonctions::affiche_pdf_ancien_solde($pdf, $login, $edit_id, $tab_type_cong, $tab_type_conges_exceptionnels, $decalage,  $DEBUG) ;
 
-                // Récupération des informations
-                // on ne recup QUE les periodes de l'edition choisie
-                $sql2 = "SELECT p_login, p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_nb_jours, p_commentaire, p_type, p_etat, p_date_demande, p_date_traitement ";
-                $sql2=$sql2."FROM conges_periode ";
-                $sql2=$sql2."WHERE p_edition_id = $edit_id ";
-                $sql2=$sql2."ORDER BY p_date_deb ASC ";
-                $ReqLog2 = \includes\SQL::query($sql2) ;
+                $pdf->Ln(2);
 
-                $count2=$ReqLog2->num_rows;
-                if($count2==0)
-                {
-                    $pdf->Cell(0, 5,  _('editions_aucun_conges') ." ...",0,1,'C');
-                    $pdf->Ln(5);
-                }
-                else
-                {
-                    // AFFICHAGE TABLEAU
-                    // decalage pour centrer
-                    $decalage = 5;
-
-                    /*************************************/
-                    /* affichage anciens soldes          */
-                    /*************************************/
-                    // affichage en pdf des anciens soldes de congés d'un user
-                    \edition\Fonctions::affiche_pdf_ancien_solde($pdf, $login, $edit_id, $tab_type_cong, $tab_type_conges_exceptionnels, $decalage,  $DEBUG) ;
-
-                    $pdf->Ln(2);
-
-                    // (largeur totale page = 210 ( - 2x10 de marge))
-                    // tailles des cellules du tableau
-                    if($_SESSION['config']['affiche_date_traitement'])
-                    {
-                        \edition\Fonctions::affiche_tableau_conges_avec_date_traitement($pdf, $ReqLog2, $decalage, $tab_type_all_cong, $DEBUG);
-                    }
-                    else
-                    {
-                        \edition\Fonctions::affiche_tableau_conges_normal($pdf, $ReqLog2, $decalage, $tab_type_all_cong, $DEBUG);
-                    }
-
-                    $pdf->Ln(2);
-
-                    /*************************************/
-                    /* affichage nouveaux soldes         */
-                    /*************************************/
-                    // affichage en pdf des nouveaux soldes de congés d'un user
-                    \edition\Fonctions::affiche_pdf_nouveau_solde($pdf, $login, $tab_info_edition, $tab_type_cong, $tab_type_conges_exceptionnels, $decalage,  $DEBUG) ;
-
+                // (largeur totale page = 210 ( - 2x10 de marge))
+                // tailles des cellules du tableau
+                if($_SESSION['config']['affiche_date_traitement']) {
+                    \edition\Fonctions::affiche_tableau_conges_avec_date_traitement($pdf, $ReqLog2, $decalage, $tab_type_all_cong, $DEBUG);
+                } else {
+                    \edition\Fonctions::affiche_tableau_conges_normal($pdf, $ReqLog2, $decalage, $tab_type_all_cong, $DEBUG);
                 }
 
-                $pdf->Ln(8);
+                $pdf->Ln(2);
+
+                /*************************************/
+                /* affichage nouveaux soldes         */
+                /*************************************/
+                // affichage en pdf des nouveaux soldes de congés d'un user
+                \edition\Fonctions::affiche_pdf_nouveau_solde($pdf, $login, $tab_info_edition, $tab_type_cong, $tab_type_conges_exceptionnels, $decalage,  $DEBUG) ;
+            }
+
+            $pdf->Ln(8);
 
             /*************************************/
             /* affichage des zones de signature  */
@@ -1060,8 +1045,9 @@ class Fonctions
         }
 
         /************************************/
-        if($edit_id==0)   // si c'est une nouvelle édition, on insert dans la base avant d'éditer et on renvoit l'id de l'édition
+        if($edit_id==0) {  // si c'est une nouvelle édition, on insert dans la base avant d'éditer et on renvoit l'id de l'édition
             $edit_id = \edition\Fonctions::enregistrement_edition($user_login, $DEBUG);
+        }
 
         \edition\Fonctions::edition_pdf($user_login, $edit_id, $DEBUG);
 
