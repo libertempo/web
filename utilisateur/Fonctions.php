@@ -395,6 +395,7 @@ class Fonctions
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id() ;
+        $return = '';
 
         $sql_delete = 'DELETE FROM conges_periode WHERE p_num = '.\includes\SQL::quote($p_num_to_delete).' AND p_login="'.\includes\SQL::quote($_SESSION['userlogin']).'";';
 
@@ -407,22 +408,24 @@ class Fonctions
         log_action($p_num_to_delete, "", $_SESSION['userlogin'], $comment_log, $DEBUG);
 
         if($result_delete)
-            echo  _('form_modif_ok') ."<br><br> \n";
+            $return .= _('form_modif_ok') ."<br><br> \n";
         else
-            echo  _('form_modif_not_ok') ."<br><br> \n";
+            $return .= _('form_modif_not_ok') ."<br><br> \n";
 
         /* APPEL D'UNE AUTRE PAGE */
-        echo '<form action="'.ROOT_PATH .'utilisateur/user_index.php?session='.$session.'&onglet=demandes_en_cours" method="POST">';
-        echo '<input class="btn" type="submit" value="'. _('form_submit') .'">';
-        echo '</form>';
-        echo '<a href="">';
+        $return .= '<form action="'.ROOT_PATH .'utilisateur/user_index.php?session='.$session.'&onglet=demandes_en_cours" method="POST">';
+        $return .= '<input class="btn" type="submit" value="'. _('form_submit') .'">';
+        $return .= '</form>';
+        $return .= '<a href="">';
+
+        return $return;
     }
 
     public static function confirmerSuppression($p_num, $onglet, $DEBUG=FALSE)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id() ;
-
+        $return = '';
 
         // Récupération des informations
         $sql1 = 'SELECT p_login, p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_nb_jours, p_commentaire, p_type, p_num FROM conges_periode WHERE p_num = "'.\includes\SQL::quote($p_num).'"';
@@ -430,21 +433,20 @@ class Fonctions
         $ReqLog1 = \includes\SQL::query($sql1) ;
 
         // AFFICHAGE TABLEAU
-        echo "<form action=\"$PHP_SELF\" method=\"POST\">\n"  ;
-        echo "<table class=\"table table-responsive table-condensed\">\n";
-        echo "<thead>\n";
-        echo "<tr>\n";
-        echo "<th>". _('divers_debut_maj_1') ."</th>\n";
-        echo "<th>". _('divers_fin_maj_1') ."</th>\n";
-        echo "<th>". _('divers_nb_jours_maj_1') ."</th>\n";
-        echo "<th>". _('divers_comment_maj_1') ."</th>\n";
-        echo "<th>". _('divers_type_maj_1') ."</th>\n";
-        echo "</tr>\n";
-        echo "</thead>\n";
-        echo "<tbody>\n";
-        echo "<tr>\n";
-        while ($resultat1 = $ReqLog1->fetch_array())
-        {
+        $return .= '<form action="' . $PHP_SELF . '" method="POST">';
+        $return .= '<table class="table table-responsive table-condensed">';
+        $return .= '<thead>';
+        $return .= '<tr>';
+        $return .= '<th>' . _('divers_debut_maj_1') . '</th>';
+        $return .= '<th>' . _('divers_fin_maj_1') . '</th>';
+        $return .= '<th>' . _('divers_nb_jours_maj_1') . '</th>';
+        $return .= '<th>' . _('divers_comment_maj_1') . '</th>';
+        $return .= '<th>' . _('divers_type_maj_1') . '</th>';
+        $return .= '</tr>';
+        $return .= '</thead>';
+        $return .= '<tbody>';
+        $return .= '<tr>';
+        while ($resultat1 = $ReqLog1->fetch_array()) {
             $sql_date_deb=eng_date_to_fr($resultat1["p_date_deb"]);
             $sql_demi_jour_deb = $resultat1["p_demi_jour_deb"];
             if($sql_demi_jour_deb=="am")
@@ -464,22 +466,24 @@ class Fonctions
 
             if( $DEBUG ) { echo "$sql_date_deb _ $demi_j_deb : $sql_date_fin _ $demi_j_fin : $sql_nb_jours : $sql_comment : $sql_type<br>\n"; }
 
-            echo "<td>$sql_date_deb _ $demi_j_deb</td>\n";
-            echo "<td>$sql_date_fin _ $demi_j_fin</td>\n";
-            echo "<td>$sql_nb_jours</td>\n";
-            echo "<td>$sql_comment</td>\n";
-            echo "<td>$sql_type</td>\n";
+            $return .= '<td>' . $sql_date_deb . '_' . $demi_j_deb . '</td>';
+            $return .= '<td>' . $sql_date_fin . '_' . $demi_j_fin . '</td>';
+            $return .= '<td>' . $sql_nb_jours . '</td>';
+            $return .= '<td>' . $sql_comment . '</td>';
+            $return .= '<td>' . $sql_type . '</td>';
         }
-        echo "</tr>\n";
-        echo "</tbody>\n";
-        echo "</table>\n";
-        echo "<hr/>\n";
-        echo "<input type=\"hidden\" name=\"p_num_to_delete\" value=\"$p_num\">\n";
-        echo "<input type=\"hidden\" name=\"session\" value=\"$session\">\n";
-        echo "<input type=\"hidden\" name=\"onglet\" value=\"$onglet\">\n";
-        echo "<input class=\"btn btn-danger\" type=\"submit\" value=\"". _('form_supprim') ."\">\n";
-        echo "<a class=\"btn\" href=\"$PHP_SELF?session=$session&onglet=demandes_en_cours\">". _('form_cancel') ."</a>\n";
-        echo "</form>\n" ;
+        $return .= '</tr>';
+        $return .= '</tbody>';
+        $return .= '</table>';
+        $return .= '<hr/>';
+        $return .= '<input type="hidden" name="p_num_to_delete" value="' . $p_num . '">';
+        $return .= '<input type="hidden" name="session" value="' . $session . '">';
+        $return .= '<input type="hidden" name="onglet" value="' . $onglet . '">';
+        $return .= '<input class="btn btn-danger" type="submit" value="' . _('form_supprim') . '">';
+        $return .= '<a class="btn" href="' . $PHP_SELF . '?session=' . $session . '&onglet=demandes_en_cours">' . _('form_cancel') . '</a>';
+        $return .= '</form>';
+
+        return $return;
     }
 
     /**
@@ -496,28 +500,25 @@ class Fonctions
         $p_num           = getpost_variable('p_num');
         $onglet          = getpost_variable('onglet');
         $p_num_to_delete = getpost_variable('p_num_to_delete');
+        $return          = '';
         /*************************************/
 
         // TITRE
-        echo '<h1>'. _('user_suppr_demande_titre') .'</h1>';
-        echo "<br> \n";
+        $return .= '<h1>'. _('user_suppr_demande_titre') .'</h1>';
+        $return .= '<br>';
 
-        if($p_num!="")
-        {
-            \utilisateur\Fonctions::confirmerSuppression($p_num, $onglet, $DEBUG);
-        }
-        else
-        {
-            if($p_num_to_delete!="")
-            {
-                \utilisateur\Fonctions::suppression($p_num_to_delete, $onglet, $DEBUG);
-            }
-            else
-            {
+        if($p_num!="") {
+            $return .= \utilisateur\Fonctions::confirmerSuppression($p_num, $onglet, $DEBUG);
+        } else {
+            if($p_num_to_delete!="") {
+                $return .= \utilisateur\Fonctions::suppression($p_num_to_delete, $onglet, $DEBUG);
+            } else {
                 // renvoit sur la page principale .
                 redirect( ROOT_PATH .'utilisateur/user_index.php', false );
             }
         }
+
+        return $return;
     }
 
     public static function change_passwd( $new_passwd1, $new_passwd2, $DEBUG=FALSE)
@@ -1329,13 +1330,15 @@ class Fonctions
      */
     public static function historiqueCongesModule($session, $PHP_SELF, $DEBUG = false)
     {
-        if($_SESSION['config']['where_to_find_user_email']=="ldap"){ include_once CONFIG_PATH .'config_ldap.php';}
+        $return = '';
+        if($_SESSION['config']['where_to_find_user_email']=="ldap"){
+            include_once CONFIG_PATH .'config_ldap.php';
+        }
 
         $tri_date = getpost_variable('tri_date', "ascendant");
         $year_affichage = getpost_variable('year_affichage' , date("Y") );
 
-
-        echo '<h1>'. _('user_historique_conges') .'</h1>';
+        $return .= '<h1>' . _('user_historique_conges') . '</h1>';
 
         //affiche le tableau de l'hitorique des conges
 
@@ -1344,11 +1347,11 @@ class Fonctions
         $year_affichage_prec = $year_affichage-1 ;
         $year_affichage_suiv = $year_affichage+1 ;
 
-        echo "<b>";
-        echo "<a href=\"$PHP_SELF?session=$session&onglet=historique_conges&year_affichage=$year_affichage_prec\"><<</a>";
-        echo '&nbsp&nbsp&nbsp  '.schars($year_affichage).' &nbsp&nbsp&nbsp';
-        echo '<a href="'.schars($PHP_SELF).'?session='.schars($session).'&onglet=historique_conges&year_affichage='.schars($year_affichage_suiv).'">>></a>';
-        echo "</b><br><br>\n";
+        $return .= '<b>';
+        $return .= '<a href="' . $PHP_SELF . '?session=' . $session . '&onglet=historique_conges&year_affichage=' . $year_affichage_prec . '"><<</a>';
+        $return .= '&nbsp&nbsp&nbsp  ' . schars($year_affichage) . ' &nbsp&nbsp&nbsp';
+        $return .= '<a href="' . schars($PHP_SELF) . '?session=' . schars($session) . '&onglet=historique_conges&year_affichage=' . schars($year_affichage_suiv) . '">>></a>';
+        $return .= '</b><br><br>';
 
 
         // Récupération des informations
@@ -1369,37 +1372,32 @@ class Fonctions
         $ReqLog2 = \includes\SQL::query($sql2) ;
 
         $count2=$ReqLog2->num_rows;
-        if($count2==0)
-        {
-            echo "<b>". _('user_conges_aucun_conges') ."</b><br>\n";
-        }
-        else
-        {
+        if($count2==0) {
+            $return .= '<b>' . _('user_conges_aucun_conges') . '</b><br>';
+        } else {
             // AFFICHAGE TABLEAU
-            echo "<table class=\"table table-responsive table-condensed table-stripped table-hover\">\n";
-            echo "<thead>\n";
-            echo "<tr>\n";
-            echo " <th>\n";
-            echo  _('divers_debut_maj_1')  ;
-            echo " </th>\n";
-            echo " <th>". _('divers_fin_maj_1') ."</th>\n";
-            echo " <th>". _('divers_type_maj_1') ."</th>\n";
-            echo " <th>". _('divers_nb_jours_maj_1') ."</th>\n";
-            echo " <th>". _('divers_comment_maj_1') ."</th>\n";
-            echo " <th>". _('divers_etat_maj_1') ."</th>\n";
-            echo " <th>". _('divers_motif_refus') ."</th>\n";
-            if($_SESSION['config']['affiche_date_traitement'])
-            {
-                echo "<td>". _('divers_date_traitement') ."</td>\n" ;
+            $return .= '<table class="table table-responsive table-condensed table-stripped table-hover">';
+            $return .= '<thead>';
+            $return .= '<tr>';
+            $return .= '<th>';
+            $return .= _('divers_debut_maj_1');
+            $return .= '</th>';
+            $return .= '<th>' . _('divers_fin_maj_1') . '</th>';
+            $return .= '<th>' . _('divers_type_maj_1') . '</th>';
+            $return .= '<th>' . _('divers_nb_jours_maj_1') . '</th>';
+            $return .= '<th>' . _('divers_comment_maj_1') . '</th>';
+            $return .= '<th>' . _('divers_etat_maj_1') . '</th>';
+            $return .= '<th>' . _('divers_motif_refus') . '</th>';
+            if($_SESSION['config']['affiche_date_traitement']) {
+                $return .= '<td>' . _('divers_date_traitement') . '</td>';
             }
 
-            echo "</tr>\n";
-            echo "</thead>\n";
-            echo "<tbody>\n";
+            $return .= '</tr>';
+            $return .= '</thead>';
+            $return .= '<tbody>';
 
             $i = true;
-            while ($resultat2 = $ReqLog2->fetch_array())
-            {
+            while ($resultat2 = $ReqLog2->fetch_array()) {
                 $sql_p_date_deb = eng_date_to_fr($resultat2["p_date_deb"], $DEBUG);
                 $sql_p_demi_jour_deb = $resultat2["p_demi_jour_deb"];
                 if($sql_p_demi_jour_deb=="am") $demi_j_deb="mat";  else $demi_j_deb="aprm";
@@ -1415,57 +1413,54 @@ class Fonctions
                 $sql_p_date_demande = $resultat2["p_date_demande"];
                 $sql_p_date_traitement = $resultat2["p_date_traitement"];
 
-                echo '<tr class="'.($i?'i':'p').'">';
-                echo '<td class="histo">'.schars($sql_p_date_deb).' _ '.schars($demi_j_deb).'</td>';
-                echo '<td class="histo">'.schars($sql_p_date_fin).' _ '.schars($demi_j_fin).'</td>' ;
-                echo '<td class="histo">'.schars($sql_p_type).'</td>' ;
-                echo '<td class="histo">'.affiche_decimal($sql_p_nb_jours).'</td>' ;
-                echo '<td class="histo">'.schars($sql_p_commentaire).'</td>' ;
+                $return .= '<tr class="' . ($i ? 'i' : 'p') . '">';
+                $return .= '<td class="histo">' . schars($sql_p_date_deb) . ' _ ' . schars($demi_j_deb) . '</td>';
+                $return .= '<td class="histo">' . schars($sql_p_date_fin) . ' _ ' . schars($demi_j_fin) . '</td>' ;
+                $return .= '<td class="histo">' . schars($sql_p_type) . '</td>';
+                $return .= '<td class="histo">' . affiche_decimal($sql_p_nb_jours) . '</td>';
+                $return .= '<td class="histo">' . schars($sql_p_commentaire) . '</td>';
 
 
-                echo "<td>";
+                $return .= '<td>';
                 if($sql_p_etat=="refus")
-                    echo  _('divers_refuse') ;
+                    $return .= _('divers_refuse') ;
                 elseif($sql_p_etat=="annul")
-                    echo  _('divers_annule') ;
+                    $return .= _('divers_annule') ;
                 else
-                    echo schars($sql_p_etat);
-                echo "</td>\n" ;
+                    $return .= schars($sql_p_etat);
+                $return .= '</td>';
 
 
                 if($sql_p_etat=="refus") {
                     if($sql_p_motif_refus=="")
                         $sql_p_motif_refus= _('divers_inconnu') ;
-                    echo '<td class="histo">'.schars($sql_p_motif_refus).'</td>'."\n";
-                }
-                elseif($sql_p_etat=="annul")
-                {
+                    $return .= '<td class="histo">' . schars($sql_p_motif_refus) . '</td>';
+                } elseif($sql_p_etat=="annul") {
                     if($sql_p_motif_refus=="")
                         $sql_p_motif_refus= _('divers_inconnu') ;
-                    echo'<td class="histo">'.schars($sql_p_motif_refus).'</td>'."\n";
-                }
-                elseif($sql_p_etat=="ok")
-                {
+                    $return .= '<td class="histo">' . schars($sql_p_motif_refus) . '</td>';
+                } elseif($sql_p_etat=="ok") {
                     if($sql_p_motif_refus=="")
                         $sql_p_motif_refus=" ";
-                    echo'<td class="histo">'.schars($sql_p_motif_refus).'</td>'."\n";
+                    $return .= '<td class="histo">' . schars($sql_p_motif_refus) . '</td>';
                 }
-                echo "</td>\n";
+                $return .= '</td>';
 
-                if($_SESSION['config']['affiche_date_traitement'])
-                {
-                    echo '<td class="histo-left">'.schars( _('divers_demande') ).' : '.schars($sql_p_date_demande).'<br>'."\n";
+                if($_SESSION['config']['affiche_date_traitement']) {
+                    $return .= '<td class="histo-left">' . schars( _('divers_demande')) . ' : ' . schars($sql_p_date_demande) . '<br>';
                     $text_lang_a_afficher="divers_traitement_$sql_p_etat" ; // p_etat='ok' OR  p_etat='refus' OR  p_etat='annul' .....
-                    echo schars( _($text_lang_a_afficher) ).' : '.schars($sql_p_date_traitement).'</td>'."\n" ;
+                    $return .= schars( _($text_lang_a_afficher) ) . ' : ' . schars($sql_p_date_traitement).'</td>';
                 }
 
-                echo '</tr>';
+                $return .= '</tr>';
                 $i = !$i;
             }
-            echo "</tbody>\n\n";
-            echo "</table>\n\n";
+            $return .= '</tbody>';
+            $return .= '</table>';
         }
-        echo "<br><br>\n" ;
+        $return .= '<br><br>';
+
+        return $return;
     }
 
     /**
