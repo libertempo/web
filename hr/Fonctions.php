@@ -216,10 +216,6 @@ class Fonctions
             /* APPEL D'UNE AUTRE PAGE au bout d'une tempo de 2secondes */
             $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $PHP_SELF . '?session=' . $session . '&onglet=traitement_demandes">';
         }
-        //envoi d'un mail d'alerte au user (si demandé dans config de php_conges)
-        if($_SESSION['config']['mail_refus_conges_alerte_user']) {
-            alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "refus_conges", $DEBUG);
-        }
         return $return;
     }
 
