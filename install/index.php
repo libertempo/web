@@ -117,7 +117,7 @@ $dbdb=(isset($_GET['dbdb']) ? $_GET['dbdb'] : ((isset($_POST['dbdb'])) ? $_POST[
 	else
 	{
 		include_once CONFIG_PATH .'dbconnect.php';
-		include_once ROOT_PATH .'version.php';
+		include ROOT_PATH .'version.php';
 
 		if(!\install\Fonctions::test_database())
 		{

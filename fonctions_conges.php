@@ -1987,9 +1987,10 @@ function init_config_tab()
     if ($result === null || $userlogin != $_SESSION['userlogin'])
     {
 
-        include_once ROOT_PATH .'version.php';
+        include ROOT_PATH .'version.php';
         include_once CONFIG_PATH .'dbconnect.php';
         $tab = array();
+
 
         /******************************************/
         //  recup des variables de version.php
@@ -2051,7 +2052,7 @@ function init_config_tab()
         //  config_ldap.php
         if (file_exists(CONFIG_PATH .'config_ldap.php'))
         {
-            include_once CONFIG_PATH .'config_ldap.php';
+            include CONFIG_PATH .'config_ldap.php';
             if(isset($config_ldap_protocol_version))
                 $tab['ldap_protocol_version'] = $config_ldap_protocol_version ;
             else
