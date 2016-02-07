@@ -228,7 +228,7 @@ function session_create($username)
 {
     if ($username != "")
     {
-	if(isset($_SESSION)) session_destroy();
+	if(isset($_SESSION)) unset($_SESSION);
         $session = "phpconges".md5(uniqid(rand()));
         session_name($session);
         session_id($session);
