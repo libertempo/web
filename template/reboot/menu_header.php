@@ -56,21 +56,19 @@
         <meta charset="utf-8">
         <title><?= $title; ?></title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <?php /* FONTS */?>
-        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400,700" type="text/css" />
         <?php /* BOOTSTRAP */?>
         <link type="text/css" href="<?= TEMPLATE_PATH ?>bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen,print">
         <?php /* FONT AWESOME */ ?>
-        <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.css" rel="stylesheet">
+        <link href="<?= TEMPLATE_PATH ?>/font-awesome/css/font-awesome.css" rel="stylesheet">
         <?php /* REBOOT STYLE */ ?>
         <link type="text/css" href="<?= TEMPLATE_PATH ?>css/reboot.css" rel="stylesheet" media="screen,print">
         <link type="text/css" href="<?= TEMPLATE_PATH ?>css/datepicker.css" rel="stylesheet" media="screen">
         <?php /* JQUERY */ ?>
-        <script src="//code.jquery.com/jquery-1.10.1.min.js"></script>
+        <script type="text/javascript" src="<?= TEMPLATE_PATH ?>jquery/js/jquery-1.7.1.min.js"></script>
         <script type="text/javascript" src="<?= TEMPLATE_PATH  ?>bootstrap/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="<?= TEMPLATE_PATH ?>js/bootstrap-datepicker/bootstrap-datepicker.js"></script>
         <script type="text/javascript" src="<?= TEMPLATE_PATH ?>js/bootstrap-datepicker/locales/bootstrap-datepicker.fr.js"></script>
-       <script type="text/javascript" src="<?= TEMPLATE_PATH ?>js/reboot.js"></script>
+        <script type="text/javascript" src="<?= TEMPLATE_PATH ?>js/reboot.js"></script>
        <?= $additional_head ?>
     </head>
     <body id="top" class="hbox connected <?= ($printable) ? 'printable' : '' ?>">

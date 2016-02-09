@@ -216,10 +216,6 @@ class Fonctions
             /* APPEL D'UNE AUTRE PAGE au bout d'une tempo de 2secondes */
             $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $PHP_SELF . '?session=' . $session . '&onglet=traitement_demandes">';
         }
-        //envoi d'un mail d'alerte au user (si demandé dans config de php_conges)
-        if($_SESSION['config']['mail_refus_conges_alerte_user']) {
-            alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "refus_conges", $DEBUG);
-        }
         return $return;
     }
 
@@ -499,12 +495,11 @@ class Fonctions
             $date_fin=$champs[5];
             $demi_jour_fin=$champs[6];
             $reponse=$champs[7];
-            $value_traite=$champs[3];
 
             $numero=$elem_tableau['key'];
             $numero_int=(int) $numero;
             if( $DEBUG ) {
-                $return .= '<br><br>conges numero : ' . $numero . '--- User_login : ' . $user_login . '--- nb de jours : ' . $user_nb_jours_pris . '--->' . $value_traite . '<br>';
+                $return .= '<br><br>conges numero : ' . $numero . '--- User_login : ' . $user_login . '--- nb de jours : ' . $user_nb_jours_pris . '--->' . $date_deb . '<br>';
             }
 
             if($reponse == "ACCEPTE") { // acceptation definitive d'un conges
@@ -513,7 +508,7 @@ class Fonctions
                 $ReqLog1 = \includes\SQL::query($sql1);
 
                 // Log de l'action
-                log_action($numero_int,"ok", $user_login, "traite demande $numero ($user_login) ($user_nb_jours_pris jours) : $value_traite", $DEBUG);
+                log_action($numero_int,"ok", $user_login, "traite demande $numero ($user_login) ($user_nb_jours_pris jours) : $date_deb", $DEBUG);
 
                 /* UPDATE table "conges_solde_user" (jours restants) */
                 // on retranche les jours seulement pour des conges pris (pas pour les absences)
@@ -536,7 +531,7 @@ class Fonctions
                 $ReqLog1 = \includes\SQL::query($sql1);
 
                 // Log de l'action
-                log_action($numero_int,"valid", $user_login, "traite demande $numero ($user_login) ($user_nb_jours_pris jours) : $value_traite", $DEBUG);
+                log_action($numero_int,"valid", $user_login, "traite demande $numero ($user_login) ($user_nb_jours_pris jours) : $date_deb", $DEBUG);
 
                 //envoi d'un mail d'alerte au user (si demandé dans config de php_conges)
                 if($_SESSION['config']['mail_valid_conges_alerte_user']) {
@@ -550,7 +545,7 @@ class Fonctions
                 $ReqLog3 = \includes\SQL::query($sql3);
 
                 // Log de l'action
-                log_action($numero_int,"refus", $user_login, "traite demande $numero ($user_login) ($user_nb_jours_pris jours) : $value_traite", $DEBUG);
+                log_action($numero_int,"refus", $user_login, "traite demande $numero ($user_login) ($user_nb_jours_pris jours) : $date_deb", $DEBUG);
 
                 //envoi d'un mail d'alerte au user (si demandé dans config de php_conges)
                 if($_SESSION['config']['mail_refus_conges_alerte_user']) {

@@ -116,3 +116,17 @@ background-image: -moz-linear-gradient(right top,#ffc1ff 50%,#F4F4F4 0%);}
 td.cal-day_semaine_autre_am_rtt_pm{
 background-image: -webkit-gradient(linear,left bottom,right top,color-stop(0.5, #ffffad),color-stop(0, #F4F4F4));
 background-image: -moz-linear-gradient(right top,#ffffad 50%,#F4F4F4 0%);}
+
+/*fonts*/
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Open Sans'), local('OpenSans'), url(../fonts/OpenSans/open-sans.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Open Sans Bold'), local('OpenSans-Bold'), url(../fonts/OpenSans/open-sans-ext.woff2) format('woff2');
+}
