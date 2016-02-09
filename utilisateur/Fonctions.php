@@ -795,7 +795,7 @@ class Fonctions
                 $val_matin='';
                 $val_aprem='';
                 recup_infos_artt_du_jour($user_login, $j_timestamp, $val_matin, $val_aprem,  $DEBUG);
-                $return .= affiche_cellule_calendrier_echange_presence_saisie_semaine($val_matin, $val_aprem, $year, $mois, $i+1, $DEBUG);
+                $return .= \utilisateur\Fonctions::affiche_cellule_calendrier_echange_presence_saisie_semaine($val_matin, $val_aprem, $year, $mois, $i+1, $DEBUG);
             }
 
             if ( ($i + $start_nb_day_before ) % 7 == 6)
@@ -852,7 +852,7 @@ class Fonctions
                 $val_matin='';
                 $val_aprem='';
                 recup_infos_artt_du_jour($user_login, $j_timestamp, $val_matin, $val_aprem,  $DEBUG);
-                $return .= affiche_cellule_calendrier_echange_absence_saisie_semaine($val_matin, $val_aprem, $year, $mois, $i+1, $DEBUG);
+                $return .= \utilisateur\Fonctions::affiche_cellule_calendrier_echange_absence_saisie_semaine($val_matin, $val_aprem, $year, $mois, $i+1, $DEBUG);
             }
 
             if ( ($i + $start_nb_day_before ) % 7 == 6)
@@ -861,6 +861,42 @@ class Fonctions
 
         $return .= '</tbody>';
         $return .= '</table>';
+
+        return $return;
+    }
+
+    public static function affiche_cellule_calendrier_echange_absence_saisie_semaine($val_matin, $val_aprem, $year, $mois, $j, $DEBUG=FALSE)
+    {
+        $return = '';
+        $bgcolor=$_SESSION['config']['temps_partiel_bgcolor'];
+        if( $val_matin == 'Y' && $val_aprem == 'Y')
+            $return .= '<td bgcolor='.$bgcolor.' class="cal-saisie">'.$j.'<input type="radio" name="new_debut" value="'.$year.'-'.$mois.'-'.$j.'-j"></td>';
+        elseif( $val_matin == 'Y' && $val_aprem == 'N' )
+            $return .= '<td bgcolor='.$bgcolor.' class="cal-day_semaine_rtt_am_travail_pm_w35">'.$j.'<input type="radio" name="new_debut" value="'.$year.'-'.$mois.'-'.$j.'-a"></td>';
+        elseif( $val_matin == 'N' && $val_aprem == 'Y' )
+            $return .= '<td bgcolor='.$bgcolor.' class="cal-day_semaine_travail_am_rtt_pm_w35">'.$j.'<input type="radio" name="new_debut" value="'.$year.'-'.$mois.'-'.$j.'-p"></td>';
+        else {
+            $bgcolor=$_SESSION['config']['semaine_bgcolor'];
+            $return .= '<td bgcolor='.$bgcolor.' class="cal-saisie">'.$j.'</td>';
+        }
+        return $return;
+    }
+
+    public static function affiche_cellule_calendrier_echange_presence_saisie_semaine($val_matin, $val_aprem, $year, $mois, $j, $DEBUG=FALSE)
+    {
+        $return = '';
+        $bgcolor = $_SESSION['config']['temps_partiel_bgcolor'];
+        if( $val_matin == 'Y' && $val_aprem == 'Y' )  // rtt le matin et l'apres midi !
+            $return .= '<td bgcolor='.$bgcolor.' class="cal-saisie">'.$j.'</td>';
+        elseif( $val_matin == 'Y' && $val_aprem == 'N' )
+            $return .= '<td bgcolor='.$bgcolor.' class="cal-day_semaine_rtt_am_travail_pm_w35">'.$j.'<input type="radio" name="new_fin" value="'.$year.'-'.$mois.'-'.$j.'-p"></td>';
+        elseif( $val_matin == 'N' && $val_aprem == 'Y' )
+            $return .= '<td bgcolor='.$bgcolor.' class="cal-day_semaine_travail_am_rtt_pm_w35">'.$j.'<input type="radio" name="new_fin" value="'.$year.'-'.$mois.'-'.$j.'-a"></td>';
+        else
+        {
+            $bgcolor = $_SESSION['config']['semaine_bgcolor'];
+            $return .= '<td bgcolor='.$bgcolor.' class="cal-saisie">'.$j.'<input type="radio" name="new_fin" value="'.$year.'-'.$mois.'-'.$j.'-j"></td>';
+        }
 
         return $return;
     }
