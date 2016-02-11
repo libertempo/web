@@ -14,5 +14,6 @@
         "vendor-dir": "vendor"
     },
     "require": {
+        "raveren/kint": "^1.0"
     }
 }
