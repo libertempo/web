@@ -2854,6 +2854,8 @@ class Fonctions
         $ds = \ldap_connect($_SESSION['config']['ldap_server']);
         if($_SESSION['config']['ldap_protocol_version'] != 0) {
             ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, $_SESSION['config']['ldap_protocol_version']) ;
+			// Support Active Directory
+			ldap_set_option($ds, LDAP_OPT_REFERRALS, 0);
         }
         if ($_SESSION['config']['ldap_user'] == "") {
             $bound = ldap_bind($ds);  // connexion anonyme au serveur
@@ -3437,6 +3439,8 @@ class Fonctions
                 // cnx à l'annuaire ldap :
                 $ds = ldap_connect($_SESSION['config']['ldap_server']);
                 ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
+			    // Support Active Directory
+			    ldap_set_option($ds, LDAP_OPT_REFERRALS, 0);
                 if ($_SESSION['config']['ldap_user'] == "") {
                     $bound = ldap_bind($ds);
                 } else {
