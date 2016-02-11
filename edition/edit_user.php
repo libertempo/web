@@ -34,4 +34,5 @@ include_once INCLUDE_PATH .'session.php';
 
 //$DEBUG = TRUE ;
 $DEBUG = FALSE ;
-\edition\Fonctions::editUserModule($session, $DEBUG);
+echo \edition\Fonctions::editUserModule($session, $DEBUG);
+bottom();

@@ -80,36 +80,6 @@ function  affiche_calendrier_saisie_date($user_login, $year, $mois, $type_debut_
     echo '</tbody></table>';
 }
 
-function affiche_cellule_calendrier_echange_absence_saisie_semaine($val_matin, $val_aprem, $year, $mois, $j, $DEBUG=FALSE)
-{
-    $bgcolor=$_SESSION['config']['temps_partiel_bgcolor'];
-    if( $val_matin == 'Y' && $val_aprem == 'Y')
-        echo '<td bgcolor='.$bgcolor.' class="cal-saisie">'.$j.'<input type="radio" name="new_debut" value="'.$year.'-'.$mois.'-'.$j.'-j"></td>';
-    elseif( $val_matin == 'Y' && $val_aprem == 'N' )
-        echo '<td bgcolor='.$bgcolor.' class="cal-day_semaine_rtt_am_travail_pm_w35">'.$j.'<input type="radio" name="new_debut" value="'.$year.'-'.$mois.'-'.$j.'-a"></td>';
-    elseif( $val_matin == 'N' && $val_aprem == 'Y' )
-        echo '<td bgcolor='.$bgcolor.' class="cal-day_semaine_travail_am_rtt_pm_w35">'.$j.'<input type="radio" name="new_debut" value="'.$year.'-'.$mois.'-'.$j.'-p"></td>';
-    else {
-        $bgcolor=$_SESSION['config']['semaine_bgcolor'];
-        echo '<td bgcolor='.$bgcolor.' class="cal-saisie">'.$j.'</td>';
-    }
-}
-
-function affiche_cellule_calendrier_echange_presence_saisie_semaine($val_matin, $val_aprem, $year, $mois, $j, $DEBUG=FALSE)
-{
-    $bgcolor = $_SESSION['config']['temps_partiel_bgcolor'];
-    if( $val_matin == 'Y' && $val_aprem == 'Y' )  // rtt le matin et l'apres midi !
-        echo '<td bgcolor='.$bgcolor.' class="cal-saisie">'.$j.'</td>';
-    elseif( $val_matin == 'Y' && $val_aprem == 'N' )
-        echo '<td bgcolor='.$bgcolor.' class="cal-day_semaine_rtt_am_travail_pm_w35">'.$j.'<input type="radio" name="new_fin" value="'.$year.'-'.$mois.'-'.$j.'-p"></td>';
-    elseif( $val_matin == 'N' && $val_aprem == 'Y' )
-        echo '<td bgcolor='.$bgcolor.' class="cal-day_semaine_travail_am_rtt_pm_w35">'.$j.'<input type="radio" name="new_fin" value="'.$year.'-'.$mois.'-'.$j.'-a"></td>';
-    else
-    {
-        $bgcolor = $_SESSION['config']['semaine_bgcolor'];
-        echo '<td bgcolor='.$bgcolor.' class="cal-saisie">'.$j.'<input type="radio" name="new_fin" value="'.$year.'-'.$mois.'-'.$j.'-j"></td>';
-    }
-}
 
 // retourne le nom du jour de la semaine en francais sur 2 caracteres
 function get_j_name_fr_2c($timestamp)
