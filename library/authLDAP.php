@@ -18,9 +18,9 @@ class authLDAP
   var $user_password = "";
   var $user_auth  = 0;
 
-  // liste des groupes autorisés
+  // liste des groupes autorisÃ©s
   var $auth_dn_groups;
-  // liste des persones autorisées
+  // liste des persones autorisÃ©es
   var $auth_users;
 
   var $DEBUG = 0;
@@ -58,9 +58,9 @@ class authLDAP
       $this->ldap_group         = $ldap_group;
       $this->ldap_login	        = $ldap_login;
 
-      if ($this->DEBUG) print "Auth personnalisée ";
+      if ($this->DEBUG) print "Auth personnalisÃ©e ";
     }
-    else //serveurs par défaut
+    else //serveurs par dÃ©faut
     {
       $this->servers();
     }
@@ -101,6 +101,8 @@ class authLDAP
       {
 		if($this->ldap_protocol_version[$i] != 0)
         	ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, $this->ldap_protocol_version[$i]) ;
+		// Support Active Directory
+		ldap_set_option($ds, LDAP_OPT_REFERRALS, 0);
         //$bound = @ldap_bind($ds, $this->ldap_user[$i], $this->ldap_pass[$i]);
   	 if ($this->ldap_user[$i] == "")
   	 	$bound = @ldap_bind($ds);
