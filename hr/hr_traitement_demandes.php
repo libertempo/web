@@ -296,10 +296,6 @@ function traite_all_demande_en_cours($tab_bt_radio, $tab_text_refus, $DEBUG=FALS
 		/* APPEL D'UNE AUTRE PAGE au bout d'une tempo de 2secondes */
 		echo "<META HTTP-EQUIV=REFRESH CONTENT=\"2; URL=$PHP_SELF?session=$session&onglet=traitement_demandes\">";
 	}
-			//envoi d'un mail d'alerte au user (si demandé dans config de php_conges)
-			if($_SESSION['config']['mail_refus_conges_alerte_user'])
-				alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "refus_conges", $DEBUG);
-
 }
 
 
