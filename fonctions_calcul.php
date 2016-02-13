@@ -149,7 +149,7 @@ function compter($user, $num_current_periode, $date_debut, $date_fin, $opt_debut
 			$current_day=jour_suivant($current_day);
 		}
 		 $nb_jours = $nb_jours * 0.5;
-		 $nb_jours = number_format($nb_jours, 1, '.', '');
+		 $VerifDec = verif_saisie_decimal($nb_jours);
 		return $nb_jours;
 	}
 	else

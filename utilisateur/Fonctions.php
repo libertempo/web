@@ -192,11 +192,7 @@ class Fonctions
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id() ;
         $return = '';
-
-        // echo($new_debut." / ".$new_demi_jour_deb."---".$new_fin." / ".$new_demi_jour_fin."---".$new_nb_jours."---".$new_comment."<br>");
-        // echo (string) $new_nb_jours;
-        // exit;
-
+        $VerifNb = verif_saisie_decimal($new_nb_jours);
         $sql1 = "UPDATE conges_periode
             SET p_date_deb='$new_debut', p_demi_jour_deb='$new_demi_jour_deb', p_date_fin='$new_fin', p_demi_jour_fin='$new_demi_jour_fin', p_nb_jours='$new_nb_jours', p_commentaire='$new_comment', ";
         if($p_etat=="demande")

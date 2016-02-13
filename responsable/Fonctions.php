@@ -649,6 +649,7 @@ class Fonctions
 
                         //
                         // update D'ABORD du reliquat
+                        $VerifDec=verif_saisie_decimal($new_reliquat);
                         $sql_reliquat = "UPDATE conges_solde_user SET su_reliquat = $new_reliquat WHERE su_login='$current_login' AND su_abs_id = $id_conges " ;
                         $ReqLog_reliquat = \includes\SQL::query($sql_reliquat) ;
                     } else {
@@ -657,7 +658,7 @@ class Fonctions
 
 
                     $new_solde = $user_nb_jours_ajout_an + $new_reliquat  ;
-
+                    $VerifDec=verif_saisie_decimal($new_solde);
                     // update du solde
                     $sql_solde = 'UPDATE conges_solde_user SET su_solde = \''.$new_solde.'\' WHERE su_login="'. \includes\SQL::quote($current_login).'" AND su_abs_id ="'. \includes\SQL::quote($id_conges).'" ';
                     $ReqLog_solde = \includes\SQL::query($sql_solde) ;
@@ -668,7 +669,7 @@ class Fonctions
                     } else {
                         $new_solde = $user_nb_jours_ajout_an ;
                     }
-
+                    $VerifDec=verif_saisie_decimal($new_solde);
                     $sql_solde = 'UPDATE conges_solde_user SET su_solde = \''.$new_solde.'\' WHERE su_login="'. \includes\SQL::quote($current_login).'"  AND su_abs_id = "'. \includes\SQL::quote($id_conges).'" ';
                     $ReqLog_solde = \includes\SQL::query($sql_solde) ;
                 }
@@ -1309,9 +1310,8 @@ class Fonctions
         while($elem_tableau = each($tab_checkbox_annule)) {
             $champs = explode("--", $elem_tableau['value']);
             $user_login=$champs[0];
-            $user_nb_jours_pris=$champs[1];
-            $user_nb_jours_pris_float=(float) $user_nb_jours_pris ;
-            $user_nb_jours_pris_float=number_format($user_nb_jours_pris_float, 1, '.', '');
+            $user_nb_jours_pris_float=$champs[1];
+            $VerifDec=verif_saisie_decimal($$user_nb_jours_pris_float);
             $numero=$elem_tableau['key'];
             $numero_int=(int) $numero;
             $user_type_abs_id=$champs[2];

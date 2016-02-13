@@ -503,17 +503,7 @@ function recup_infos_artt_du_jour_from_tab($sql_login, $j_timestamp, &$val_matin
 //  (attention : le $nombre est passé par référence car on le modifie si besoin)
 function verif_saisie_decimal(&$nombre)
 {
-    if ( !preg_match('/^-?([0-9]+)([\.\,]?[0-9]?[0-9]?)$/', $nombre) )
-    {
-        echo "<br>". _('verif_saisie_erreur_nb_bad') ." ($nombre)<br>\n";
-        return false;
-    }
-
-    if( preg_match('/^([0-9]+)\,([0-9]{1,2})$/', $nombre, $reg) )
-        $nombre=$reg[1].".".$reg[2]; // on remplace la virgule par un point pour les décimaux
-    elseif( preg_match('/^-([0-9]+)\,([0-9]{1,2})$/', $nombre, $reg) )
-        $nombre="-".$reg[1].".".$reg[2]; // on remplace la virgule par un point pour les décimaux
-
+    $nombre = number_format(floatval($nombre), 1, '.', '' );  
     return true;
 }
 
@@ -2231,7 +2221,7 @@ function get_reliquat_user_conges($login, $type_abs)
 function soustrait_solde_et_reliquat_user($user_login, $num_current_periode, $user_nb_jours_pris, $type_abs, $date_deb, $demi_jour_deb, $date_fin, $demi_jour_fin)
 {
 
-    $user_nb_jours_pris = number_format($user_nb_jours_pris, 1, '.', '');
+    $VerifDec = verif_saisie_decimal($user_nb_jours_pris);
 
     //si on autorise les reliquats
     if($_SESSION['config']['autorise_reliquats_exercice'])
@@ -2278,14 +2268,14 @@ function soustrait_solde_et_reliquat_user($user_login, $num_current_periode, $us
             else
                 $new_reliquat = 0;
         }
-        $user_nb_jours_pris = str_replace(',', '.', $user_nb_jours_pris);
-        $new_reliquat = str_replace(',', '.', $new_reliquat);
+        $VerifDec = verif_saisie_decimal($user_nb_jours_pris);
+        $VerifDec = verif_saisie_decimal($new_reliquat);
         $sql2 = 'UPDATE conges_solde_user SET su_solde=su_solde-'.\includes\SQL::quote($user_nb_jours_pris).', su_reliquat='.\includes\SQL::quote($new_reliquat).' WHERE su_login="'.\includes\SQL::quote($user_login).'"  AND su_abs_id='.\includes\SQL::quote($type_abs).' ';
     }
     else
     {
-        $user_nb_jours_pris = str_replace(',', '.', $user_nb_jours_pris);
-        $new_reliquat = str_replace(',', '.', $new_reliquat);
+        $VerifDec = verif_saisie_decimal($user_nb_jours_pris);
+        $VerifDec = verif_saisie_decimal($new_reliquat);
         $sql2 = 'UPDATE conges_solde_user SET su_solde=su_solde-'.\includes\SQL::quote($user_nb_jours_pris).' WHERE su_login=\''.\includes\SQL::quote($user_login).'\'  AND su_abs_id=\''.$type_abs.'\' ';
     }
     $ReqLog2 = \includes\SQL::query($sql2) ;
