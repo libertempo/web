@@ -84,7 +84,7 @@ class Fonctions
         // AFFICHAGE DE USERS DIRECTS DU RESP
 
         // Récup dans un tableau de tableau des informations de tous les users dont $_SESSION['userlogin'] est responsable
-        $tab_all_users=recup_infos_all_users_du_hr($_SESSION['userlogin']);
+        $tab_all_users=\hr\Fonctions::recup_infos_all_users_du_hr($_SESSION['userlogin']);
 
         if(count($tab_all_users)==0) {
             // si le tableau est vide (resp sans user !!) on affiche une alerte !
@@ -972,7 +972,7 @@ class Fonctions
         $list_group_dbl_valid_du_resp = get_list_groupes_double_valid_du_resp($_SESSION['userlogin']);
         $tab_user=array();
         $tab_user = recup_infos_du_user($user_login, $list_group_dbl_valid_du_resp);
-        $list_all_users_du_hr=get_list_all_users_du_hr($_SESSION['userlogin']);
+        $list_all_users_du_hr=\hr\Fonctions::get_list_all_users_du_hr($_SESSION['userlogin']);
         // recup des grd resp du user
         $tab_grd_resp=array();
         if($_SESSION['config']['double_validation_conges']) {
@@ -1220,7 +1220,7 @@ class Fonctions
         // recup de la liste de TOUS les users dont $resp_login est responsable
         // (prend en compte le resp direct, les groupes, le resp virtuel, etc ...)
         // renvoit une liste de login entre quotes et séparés par des virgules
-        $list_users_du_resp = get_list_all_users_du_hr($_SESSION['userlogin']);
+        $list_users_du_resp = \hr\Fonctions::get_list_all_users_du_hr($_SESSION['userlogin']);
 
         foreach($tab_new_nb_conges_all as $id_conges => $nb_jours) {
             if($nb_jours!=0) {
@@ -1471,6 +1471,45 @@ class Fonctions
         return $return;
     }
 
+    // renvoit un tableau de tableau contenant les informations de tous les users dont $login est HR responsable
+    public static function recup_infos_all_users_du_hr($login)
+    {
+        $tab=array();
+        $list_groupes_double_validation=get_list_groupes_double_valid();
+
+        $sql1 = "SELECT u_login FROM conges_users WHERE u_login!='conges' AND u_login!='admin' ORDER BY u_nom";
+        $ReqLog = \includes\SQL::query($sql1) ;
+
+        while ($resultat = $ReqLog->fetch_array())
+        {
+            $tab_user=array();
+            $sql_login=$resultat["u_login"];
+            $tab[$sql_login] = recup_infos_du_user($sql_login, $list_groupes_double_validation);
+        }
+        return $tab ;
+    }
+
+    // recup de la liste de TOUS les users pour le responsable RH
+    // renvoit une liste de login entre quotes et séparés par des virgules
+    public static function get_list_all_users_du_hr($resp_login)
+    {
+        $list_users="";
+
+        $sql1="SELECT DISTINCT(u_login) FROM conges_users WHERE u_login!='conges' AND u_login!='admin'  ORDER BY u_nom  ";
+        $ReqLog1 = \includes\SQL::query($sql1);
+
+        while ($resultat1 = $ReqLog1->fetch_array())
+        {
+            $current_login=$resultat1["u_login"];
+                if($list_users=="") {
+                    $list_users="'$current_login'";
+                } else {
+                    $list_users=$list_users.", '$current_login'";
+                }
+        }
+        return $list_users;
+    }
+
     public static function saisie_ajout( $tab_type_conges)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
@@ -1487,7 +1526,7 @@ class Fonctions
         // recup de la liste de TOUS les users pour le RH
         // (prend en compte le resp direct, les groupes, le resp virtuel, etc ...)
         // renvoit une liste de login entre quotes et séparés par des virgules
-        $tab_all_users_du_hr=recup_infos_all_users_du_hr($_SESSION['userlogin']);
+        $tab_all_users_du_hr=\hr\Fonctions::recup_infos_all_users_du_hr($_SESSION['userlogin']);
         $tab_all_users_du_grand_resp=recup_infos_all_users_du_grand_resp($_SESSION['userlogin']);
 
         if( (count($tab_all_users_du_hr)!=0) || (count($tab_all_users_du_grand_resp)!=0) ) {
@@ -1955,7 +1994,7 @@ class Fonctions
         // recup de la liste de TOUS les users dont $resp_login est responsable
         // (prend en compte le resp direct, les groupes, le resp virtuel, etc ...)
         // renvoit une liste de login entre quotes et séparés par des virgules
-        $tab_all_users_du_hr=recup_infos_all_users_du_hr($_SESSION['userlogin']);
+        $tab_all_users_du_hr=\hr\Fonctions::recup_infos_all_users_du_hr($_SESSION['userlogin']);
         $tab_all_users_du_grand_resp=recup_infos_all_users_du_grand_resp($_SESSION['userlogin']);
 
         $comment_cloture =  _('resp_cloture_exercice_commentaire') ." ".date("m/Y");
@@ -2076,7 +2115,7 @@ class Fonctions
         // recup de la liste de TOUS les users dont $resp_login est responsable
         // (prend en compte le resp direct, les groupes, le resp virtuel, etc ...)
         // renvoit une liste de login entre quotes et séparés par des virgules
-        $tab_all_users_du_hr=recup_infos_all_users_du_hr($_SESSION['userlogin']);
+        $tab_all_users_du_hr=\hr\Fonctions::recup_infos_all_users_du_hr($_SESSION['userlogin']);
         $tab_all_users_du_grand_resp=recup_infos_all_users_du_grand_resp($_SESSION['userlogin']);
         if( (count($tab_all_users_du_hr)!=0) || (count($tab_all_users_du_grand_resp)!=0) ) {
             // traitement des users dont on est responsable :
@@ -2290,7 +2329,7 @@ class Fonctions
         // recup de la liste de TOUS les users dont $resp_login est responsable
         // (prend en compte le resp direct, les groupes, le resp virtuel, etc ...)
         // renvoit une liste de login entre quotes et séparés par des virgules
-        $tab_all_users_du_hr=recup_infos_all_users_du_hr($_SESSION['userlogin']);
+        $tab_all_users_du_hr=\hr\Fonctions::recup_infos_all_users_du_hr($_SESSION['userlogin']);
         $tab_all_users_du_grand_resp=recup_infos_all_users_du_grand_resp($_SESSION['userlogin']);
         if( (count($tab_all_users_du_hr)!=0) || (count($tab_all_users_du_grand_resp)!=0) ) {
             /************************************************************/
