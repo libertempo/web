@@ -339,8 +339,8 @@ class Fonctions {
             elseif($start_version=="1.7.0") 
 	    {
 		$file_upgrade='upgrade_from_v1.7.0.php';
-		$new_installed_version="1.7.1";
-		// execute le script php d'upgrade de la version1.7.0 (vers la suivante (1.7.1))
+		$new_installed_version="1.8";
+		// execute le script php d'upgrade de la version1.7.0 (vers la suivante (1.8))
 		echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$file_upgrade?version=$new_installed_version&lang=$lang\">";
 	    } 
             else
