@@ -29,7 +29,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 
 include_once INCLUDE_PATH .'fonction_config.php';
-include_once INCLUDE_PATH .'fonction_admin.php';
 include_once INCLUDE_PATH .'lang_profile.php';
 //better to include_once plugins at the end : see bottom function
 //include_once INCLUDE_PATH .'plugins.php';
