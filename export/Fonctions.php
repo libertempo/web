@@ -1,7 +1,9 @@
 <?php
 /*************************************************************************************************
 Libertempo : Gestion Interactive des Congés
-Copyright (C) 2015 (Wouldsmina)Copyright (C) 2015 (Prytoegrian)Copyright (C) 2005 (cedric chauvineau)
+Copyright (C) 2015 (Wouldsmina)
+Copyright (C) 2015 (Prytoegrian)
+Copyright (C) 2005 (cedric chauvineau)
 
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
 termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
@@ -29,7 +31,7 @@ namespace export;
 */
 class Fonctions
 {
-    public static function form_saisie($user, $date_debut, $date_fin, $DEBUG=FALSE)
+    public static function form_saisie($user, $date_debut, $date_fin)
     {
     	$PHP_SELF=$_SERVER['PHP_SELF'];
     	$session=session_id();
@@ -58,13 +60,12 @@ class Fonctions
      * Encapsule le comportement du module de l'export VCALENDAR
      *
      * @param string $session
-     * @param bool   $DEBUG   Mode debug ?
      *
      * @return void
      * @access public
      * @static
      */
-    public static function exportVCalendarModule($session, $DEBUG = false)
+    public static function exportVCalendarModule($session)
     {
     	/*** initialisation des variables ***/
     	$session=session_id();
@@ -83,7 +84,7 @@ class Fonctions
     	/*************************************/
 
 
-    	\export\Fonctions::form_saisie($user_login, $date_debut, $date_fin, $DEBUG);
+    	\export\Fonctions::form_saisie($user_login, $date_debut, $date_fin);
     }
 
     public static function remplace_accents($str)
@@ -94,7 +95,7 @@ class Fonctions
     }
 
     // export des périodes des conges et d'absences comprise entre les 2 dates , dans un fichier texte au format ICAL
-    public static function export_ical($user_login, $DEBUG=FALSE)
+    public static function export_ical($user_login)
     {
     	$good_date_debut = date("Y-m-d", strtotime("-1 year"));
     	$good_date_fin = date("Y-m-d", strtotime('+1 year'));
@@ -102,9 +103,9 @@ class Fonctions
     		// initialisation de variables communes a ttes les periodes
 
     		// recup des infos du user
-    		$tab_infos_user=recup_infos_du_user($user_login, "",  $DEBUG);
+    		$tab_infos_user=recup_infos_du_user($user_login, "");
 
-    		$tab_types_abs=recup_tableau_tout_types_abs($DEBUG) ;
+    		$tab_types_abs=recup_tableau_tout_types_abs() ;
 
     		/********************************/
     		// affichage dans un fichier non html !

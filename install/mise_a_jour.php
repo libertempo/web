@@ -1,7 +1,9 @@
 <?php
 /*************************************************************************************************
 Libertempo : Gestion Interactive des Congés
-Copyright (C) 2015 (Wouldsmina)Copyright (C) 2015 (Prytoegrian)Copyright (C) 2005 (cedric chauvineau)
+Copyright (C) 2015 (Wouldsmina)
+Copyright (C) 2015 (Prytoegrian)
+Copyright (C) 2005 (cedric chauvineau)
 
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
 termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
@@ -32,24 +34,13 @@ include ROOT_PATH .'version.php' ;
 
 $PHP_SELF=$_SERVER['PHP_SELF'];
 
-$DEBUG=FALSE;
-//$DEBUG=TRUE;
-
 //recup de la langue
 $lang=(isset($_GET['lang']) ? $_GET['lang'] : ((isset($_POST['lang'])) ? $_POST['lang'] : "") ) ;
-
-if( $DEBUG ) {
-    echo "SESSION = <br>\n"; print_r($_SESSION); echo "<br><br>\n";
-}
 
 // recup des parametres
 $action = (isset($_GET['action']) ? $_GET['action'] : (isset($_POST['action']) ? $_POST['action'] : "")) ;
 $version = (isset($_GET['version']) ? $_GET['version'] : (isset($_POST['version']) ? $_POST['version'] : "")) ;
 $etape = (isset($_GET['etape']) ? $_GET['etape'] : (isset($_POST['etape']) ? $_POST['etape'] : 0 )) ;
-
-if( $DEBUG ) {
-    echo "action = $action :: version = $version :: etape = $etape<br>\n";
-}
 
 if($version == 0) {  // la version à mettre à jour dans le formulaire de index.php n'a pas été choisie : renvoit sur le formulaire
     redirect( ROOT_PATH . 'install/index.php?lang='.$lang);
@@ -63,6 +54,6 @@ echo "<br><H1><img src=\"".TEMPLATE_PATH."img/tux_config_32x32.png\" width=\"32\
 echo "<br><br>\n";
 
 // $config_php_conges_version est fourni par include_once ROOT_PATH .'version.php' ;
-\install\Fonctions::lance_maj($lang, $version, $config_php_conges_version, $etape, $DEBUG);
+\install\Fonctions::lance_maj($lang, $version, $config_php_conges_version, $etape);
 
 bottom();

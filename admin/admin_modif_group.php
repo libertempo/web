@@ -1,7 +1,9 @@
 <?php
 /*************************************************************************************************
 Libertempo : Gestion Interactive des Congés
-Copyright (C) 2015 (Wouldsmina)Copyright (C) 2015 (Prytoegrian)Copyright (C) 2005 (cedric chauvineau)
+Copyright (C) 2015 (Wouldsmina)
+Copyright (C) 2015 (Prytoegrian)
+Copyright (C) 2005 (cedric chauvineau)
 
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
 termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
@@ -25,4 +27,4 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
-echo \admin\Fonctions::modifGroupeModule($session, $onglet, $DEBUG);
+echo \admin\Fonctions::modifGroupeModule($session, $onglet);

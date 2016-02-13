@@ -1,7 +1,9 @@
 <?php
 /*************************************************************************************************
 Libertempo : Gestion Interactive des Congés
-Copyright (C) 2015 (Wouldsmina)Copyright (C) 2015 (Prytoegrian)Copyright (C) 2005 (cedric chauvineau)
+Copyright (C) 2015 (Wouldsmina)
+Copyright (C) 2015 (Prytoegrian)
+Copyright (C) 2005 (cedric chauvineau)
 
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
 termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
@@ -36,13 +38,7 @@ include_once ROOT_PATH .'fonctions_conges.php' ;
 
 $PHP_SELF=$_SERVER['PHP_SELF'];
 
-$DEBUG=FALSE;
-//$DEBUG=TRUE;
-
 $session=session_id();
-
-// verif des droits du user à afficher la page
-//verif_droits_user($session, "is_admin", $DEBUG);
 
 //recup de la langue
 $lang=(isset($_GET['lang']) ? $_GET['lang'] : ((isset($_POST['lang'])) ? $_POST['lang'] : "") ) ;
@@ -67,7 +63,7 @@ $dbdb=(isset($_GET['dbdb']) ? $_GET['dbdb'] : ((isset($_POST['dbdb'])) ? $_POST[
         echo "<input type=\"submit\" value=\"OK\">\n";
         echo "</form>\n";
         bottom();
-    } elseif(\install\Fonctions::test_dbconnect_file($DEBUG)!=TRUE) {
+    } elseif(\install\Fonctions::test_dbconnect_file()!=TRUE) {
         $_SESSION['langue']=$lang;      // sert ensuite pour mettre la langue dans la table config
 //        $tab_lang_file = glob("lang/lang_".$lang.'_*.php');
 //        include$tab_lang_file[0] ;
@@ -143,12 +139,12 @@ $dbdb=(isset($_GET['dbdb']) ? $_GET['dbdb'] : ((isset($_POST['dbdb'])) ? $_POST[
 
             bottom();
         } else {
-            $installed_version = \install\Fonctions::get_installed_version( $DEBUG);
+            $installed_version = \install\Fonctions::get_installed_version();
             $installed_version = 0;
 
             if($installed_version==0)   // num de version inconnu
             {
-                \install\Fonctions::install($lang,  $DEBUG);
+                \install\Fonctions::install($lang);
             } else {
                 // on compare la version déclarée dans la database avec la version déclarée dans le fichier de config
                 if($installed_version != $config_php_conges_version) {

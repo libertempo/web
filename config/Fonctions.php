@@ -1,7 +1,9 @@
 <?php
 /*************************************************************************************************
 Libertempo : Gestion Interactive des Congés
-Copyright (C) 2015 (Wouldsmina)Copyright (C) 2015 (Prytoegrian)Copyright (C) 2005 (cedric chauvineau)
+Copyright (C) 2015 (Wouldsmina)
+Copyright (C) 2015 (Prytoegrian)
+Copyright (C) 2005 (cedric chauvineau)
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
 termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
 Ce programme est distribué car potentiellement utile, mais SANS AUCUNE GARANTIE,
@@ -29,9 +31,8 @@ namespace config;
  */
 class Fonctions
 {
-    public static function commit_vider_table_logs($session, $DEBUG=FALSE)
+    public static function commit_vider_table_logs($session)
     {
-        //$DEBUG=TRUE;
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $return = '';
 
@@ -40,7 +41,7 @@ class Fonctions
 
         // ecriture de cette action dans les logs
         $comment_log = "effacement des logs de php_conges ";
-        log_action(0, "", "", $comment_log, $DEBUG);
+        log_action(0, "", "", $comment_log);
 
         $return .= '<span class="messages">' . _('form_modif_ok') . '</span><br>';
         if($session=="") {
@@ -51,9 +52,8 @@ class Fonctions
         }
     }
 
-    public static function confirmer_vider_table_logs($session, $DEBUG=FALSE)
+    public static function confirmer_vider_table_logs($session)
     {
-        //$DEBUG=TRUE;
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $return = '';
 
@@ -69,7 +69,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affichage($login_par, $session, $DEBUG=FALSE)
+    public static function affichage($login_par, $session)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $return = '';
@@ -140,22 +140,16 @@ class Fonctions
      * Encapsule le comportement du module d'affichage des logs
      *
      * @param string $session
-     * @param bool   $DEBUG  Mode debug ?
      *
      * @return void
      * @access public
      * @static
      */
-    public static function logModule($session, $DEBUG = false)
+    public static function logModule($session)
     {
         // verif des droits du user à afficher la page
-        verif_droits_user($session, "is_admin", $DEBUG);
+        verif_droits_user($session, "is_admin");
         $return = '';
-
-        if( $DEBUG ) {
-            $return .= 'SESSION = ' . var_export($_SESSION, true) . '<br>';
-        }
-
 
         /*** initialisation des variables ***/
         /************************************/
@@ -174,17 +168,17 @@ class Fonctions
 
 
         if($action=="suppr_logs") {
-            $return .= \config\Fonctions::confirmer_vider_table_logs($session, $DEBUG);
+            $return .= \config\Fonctions::confirmer_vider_table_logs($session);
         } elseif($action=="commit_suppr_logs") {
-            \config\Fonctions::commit_vider_table_logs($session, $DEBUG);
+            \config\Fonctions::commit_vider_table_logs($session);
         } else {
-            $return .= \config\Fonctions::affichage($login_par, $session, $DEBUG);
+            $return .= \config\Fonctions::affichage($login_par, $session);
         }
         // bottom();
         return $return;
     }
 
-    public static function commit_modif($tab_new_values, $session, $DEBUG=FALSE)
+    public static function commit_modif($tab_new_values, $session)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $return = '';
@@ -206,17 +200,13 @@ class Fonctions
         $return .= '<span class="messages">' . _('form_modif_ok') . '</span><br>';
 
         $comment_log = "configuration des mails d\'alerte";
-        log_action(0, "", "", $comment_log, $DEBUG);
+        log_action(0, "", "", $comment_log);
+        $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $URL . '">';
 
-        if( $DEBUG ) {
-            $return .= '<a href="' . $URL . '" method="POST">' . _('form_retour') . '</a><br>';
-        } else {
-            $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $URL . '">';
-        }
         return $return;
     }
 
-    public static function test_config($tab_new_values, $session, $DEBUG=FALSE)
+    public static function test_config($tab_new_values, $session)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $return = '';
@@ -228,27 +218,22 @@ class Fonctions
         }
 
         // update de la table
-        $mail_array             = find_email_adress_for_user($_SESSION['userlogin'], $DEBUG);
+        $mail_array             = find_email_adress_for_user($_SESSION['userlogin']);
         $mail_sender_name       = $mail_array[0];
         $mail_sender_addr       = $mail_array[1];
-        constuct_and_send_mail("valid_conges", "Test email", $mail_sender_addr, $mail_sender_name, $mail_sender_addr, "test", $DEBUG);
+        constuct_and_send_mail("valid_conges", "Test email", $mail_sender_addr, $mail_sender_name, $mail_sender_addr, "test");
         //  echo "<p>Mail sent</p>"; exit(0);
 
         $return .= '<span class="messages">' . _('Mail_test_ok') . '</span><br>';
 
         $comment_log = "test d\'envoi mail d\'alerte";
-        log_action(0, "", "", $comment_log, $DEBUG);
-
-        if( $DEBUG ) {
-            $return .= '<a href="' . $URL . '" method="POST">' . _('form_retour') . '</a><br>';
-        } else {
-            $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $URL . '">';
-        }
+        log_action(0, "", "", $comment_log);
+        $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $URL . '">';
 
         return $return;
     }
 
-    public static function affichage_config_mail($tab_new_values, $session, $DEBUG=FALSE)
+    public static function affichage_config_mail($tab_new_values, $session)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $return = '';
@@ -329,16 +314,15 @@ class Fonctions
      * Encapsule le comportement du module d'affichage des logs
      *
      * @param string $session
-     * @param bool   $DEBUG  Mode debug ?
      *
      * @return void
      * @access public
      * @static
      */
-    public static function mailModule($session, $DEBUG = false)
+    public static function mailModule($session)
     {
         // verif des droits du user à afficher la page
-        verif_droits_user($session, "is_admin", $DEBUG);
+        verif_droits_user($session, "is_admin");
         $return = '';
 
 
@@ -350,31 +334,22 @@ class Fonctions
         // GET / POST
         $action = getpost_variable('action') ;
         $tab_new_values = getpost_variable('tab_new_values');
-
-        /*************************************/
-
-        if($DEBUG) {
-            $return .= var_export($tab_new_values, true) . '<br>';
-            $return .= $action . '<br>';
-        }
-
-        /*********************************/
         /*********************************/
 
         if($action=="modif") {
-            $return .= \config\Fonctions::commit_modif($tab_new_values, $session, $DEBUG);
+            $return .= \config\Fonctions::commit_modif($tab_new_values, $session);
         }
         if($action=="test") {
-            $return .= \config\Fonctions::test_config($tab_new_values, $session, $DEBUG);
+            $return .= \config\Fonctions::test_config($tab_new_values, $session);
         }
 
-        $return .= \config\Fonctions::affichage_config_mail($tab_new_values, $session, $DEBUG);
+        $return .= \config\Fonctions::affichage_config_mail($tab_new_values, $session);
 
         return $return;
     }
 
     // recup l'id de la derniere absence (le max puisque c'est un auto incrément)
-    public static function get_last_absence_id($DEBUG=FALSE)
+    public static function get_last_absence_id()
     {
         $req_1="SELECT MAX(ta_id) FROM conges_type_absence ";
         $res_1 = \includes\SQL::query($req_1);
@@ -390,7 +365,7 @@ class Fonctions
     // cree un tableau à partir des valeurs du enum(...) d'un champ mysql (cf structure des tables)
     //    $table         = nom de la table sql
     //    $column        = nom du champ sql
-    public static function get_tab_from_mysql_enum_field($table, $column, $DEBUG=FALSE)
+    public static function get_tab_from_mysql_enum_field($table, $column)
     {
 
         $tab=array();
@@ -413,7 +388,7 @@ class Fonctions
         return $tab;
     }
 
-    public static function commit_ajout(&$tab_new_values, $session, $DEBUG=FALSE)
+    public static function commit_ajout(&$tab_new_values, $session)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $return = '';
@@ -422,9 +397,6 @@ class Fonctions
             $URL = "$PHP_SELF?onglet=type_absence";
         } else {
             $URL = "$PHP_SELF?session=$session&onglet=type_absence";
-        }
-        if( $DEBUG ) {
-            $return .= 'URL = ' . $URL . '<br>';
         }
 
         // verif de la saisie
@@ -458,7 +430,7 @@ class Fonctions
             $result1 = \includes\SQL::query($req_insert1);
 
             // on recup l'id de l'absence qu'on vient de créer
-            $new_abs_id = \config\Fonctions::get_last_absence_id($DEBUG);
+            $new_abs_id = \config\Fonctions::get_last_absence_id();
 
             if($new_abs_id!=0) {
                 // ajout dans la table conges_solde_user (pour chaque user !!)(si c'est un conges, pas si c'est une absence)
@@ -480,18 +452,13 @@ class Fonctions
             }
 
             $comment_log = "config : ajout_type_absence : ".$tab_new_values['libelle']."  (".$tab_new_values['short_libelle'].") (type : ".$tab_new_values['type'].") ";
-            log_action(0, "", "", $comment_log, $DEBUG);
-
-            if( $DEBUG ) {
-                $return .= '<a href="' . $URL . '" method="POST">' . _('form_retour') . '</a><br>';
-            } else {
-                $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $URL . '">';
-            }
+            log_action(0, "", "", $comment_log);
+            $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $URL . '">';
         }
         return $return;
     }
 
-    public static function commit_suppr($session, $id_to_update, $DEBUG=FALSE)
+    public static function commit_suppr($session, $id_to_update)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $return = '';
@@ -500,9 +467,6 @@ class Fonctions
             $URL = "$PHP_SELF?onglet=type_absence";
         } else {
             $URL = "$PHP_SELF?session=$session&onglet=type_absence";
-        }
-        if( $DEBUG ) {
-            $return .= 'URL = ' . $URL . '<br>';
         }
 
         // delete dans la table conges_type_absence
@@ -516,17 +480,13 @@ class Fonctions
         $return .= '<span class="messages">' . _('form_modif_ok') . '</span><br>';
 
         $comment_log = "config : supprime_type_absence ($id_to_update) ";
-        log_action(0, "", "", $comment_log,$DEBUG);
+        log_action(0, "", "", $comment_log);
+        $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $URL . '">';
 
-        if( $DEBUG ) {
-            $return .= '<a href="' . $URL . '" method="POST">' . _('form_retour') . '</a><br>';
-        } else {
-            $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $URL . '">';
-        }
         return $return;
     }
 
-    public static function supprimer($session, $id_to_update, $DEBUG=FALSE)
+    public static function supprimer($session, $id_to_update)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $return = '';
@@ -557,7 +517,7 @@ class Fonctions
             $return .= '</center>';
         } else {
             // recup dans un tableau de tableau les infos des types de conges et absences
-            $tab_type_abs = recup_tableau_tout_types_abs($DEBUG);
+            $tab_type_abs = recup_tableau_tout_types_abs();
 
             $return .= '<center>';
             $return .= '<br>';
@@ -579,7 +539,7 @@ class Fonctions
         return $return;
     }
 
-    public static function commit_modif_absence(&$tab_new_values, $session, $id_to_update, $DEBUG=FALSE)
+    public static function commit_modif_absence(&$tab_new_values, $session, $id_to_update)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $return = '';
@@ -626,18 +586,13 @@ class Fonctions
             $return .= '<span class="messages">' . _('form_modif_ok') . '</span><br>';
 
             $comment_log = "config : modif_type_absence ($id_to_update): ".$tab_new_values['libelle']."  (".$tab_new_values['short_libelle'].") ";
-            log_action(0, "", "", $comment_log, $DEBUG);
-
-            if( $DEBUG ) {
-                $return .= '<a href="' . $URL . '" method="POST">' . _('form_retour') . '</a><br>';
-            } else {
-                $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $URL . '">';
-            }
+            log_action(0, "", "", $comment_log);
+            $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $URL . '">';
         }
         return $return;
     }
 
-    public static function modifier(&$tab_new_values, $session, $id_to_update, $DEBUG=FALSE)
+    public static function modifier(&$tab_new_values, $session, $id_to_update)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $return = '';
@@ -695,7 +650,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affichage_absence($tab_new_values,$session, $DEBUG=FALSE)
+    public static function affichage_absence($tab_new_values,$session)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $return = '';
@@ -716,7 +671,7 @@ class Fonctions
 
         // affichage de la liste des type d'absence existants
 
-        $tab_enum = \config\Fonctions::get_tab_from_mysql_enum_field("conges_type_absence", "ta_type", $DEBUG);
+        $tab_enum = \config\Fonctions::get_tab_from_mysql_enum_field("conges_type_absence", "ta_type");
 
         foreach($tab_enum as $ta_type) {
             if( ($ta_type=="conges_exceptionnels") &&  ($_SESSION['config']['gestion_conges_exceptionnels']==FALSE)) {
@@ -808,13 +763,12 @@ class Fonctions
     /**
      * Encapsule le comportement du module de configuration des types de congés
      *
-     * @param bool   $DEBUG  Mode debug ?
      *
      * @return void
      * @access public
      * @static
      */
-    public static function typeAbsenceModule($DEBUG = false)
+    public static function typeAbsenceModule()
     {
         $session=(isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : "") ) ;
         $return = '';
@@ -830,11 +784,8 @@ class Fonctions
         }
         include_once INCLUDE_PATH .'session.php';
 
-        //$DEBUG = TRUE ;
-        $DEBUG = FALSE ;
-
         // verif des droits du user à afficher la page
-        verif_droits_user($session, "is_admin", $DEBUG);
+        verif_droits_user($session, "is_admin");
 
 
 
@@ -848,38 +799,27 @@ class Fonctions
         $tab_new_values = getpost_variable('tab_new_values');
         $id_to_update   = getpost_variable('id_to_update');
 
-        /*************************************/
-
-        if($DEBUG) {
-            $return .= var_export($tab_new_values, true) . '<br>';
-            $return .= $action . '<br>';
-            $return .= $id_to_update . '<br>';
-        }
-
-
-        /*********************************/
         /*********************************/
 
         if($action=="new") {
-            $return .= \config\Fonctions::commit_ajout($tab_new_values,$session, $DEBUG);
+            $return .= \config\Fonctions::commit_ajout($tab_new_values,$session);
         } elseif($action=="modif") {
-            $return .= \config\Fonctions::modifier($tab_new_values, $session, $id_to_update, $DEBUG);
+            $return .= \config\Fonctions::modifier($tab_new_values, $session, $id_to_update);
         } elseif($action=="commit_modif") {
-            $return .= \config\Fonctions::commit_modif_absence($tab_new_values, $session, $id_to_update, $DEBUG);
+            $return .= \config\Fonctions::commit_modif_absence($tab_new_values, $session, $id_to_update);
         } elseif($action=="suppr") {
-            $return .= \config\Fonctions::supprimer($session, $id_to_update, $DEBUG);
+            $return .= \config\Fonctions::supprimer($session, $id_to_update);
         } elseif($action=="commit_suppr") {
-            $return .= \config\Fonctions::commit_suppr($session, $id_to_update, $DEBUG);
+            $return .= \config\Fonctions::commit_suppr($session, $id_to_update);
         } else {
-            $return .= \config\Fonctions::affichage_absence($tab_new_values, $session, $DEBUG);
+            $return .= \config\Fonctions::affichage_absence($tab_new_values, $session);
         }
 
         return $return;
     }
 
-    public static function commit_saisie(&$tab_new_values, $session, $DEBUG=FALSE)
+    public static function commit_saisie(&$tab_new_values, $session)
     {
-        //$DEBUG=TRUE;
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $return = '';
 
@@ -890,10 +830,6 @@ class Fonctions
         }
 
         $timeout=2 ;  // temps d'attente pour rafraichir l'écran après l'update !
-
-        if( $DEBUG ) {
-            $return .= 'SESSION = ' . var_export($_SESSION, true) . '<br>';
-        }
 
         foreach($tab_new_values as $key => $value ) {
             // CONTROLE gestion_conges_exceptionnels
@@ -951,7 +887,7 @@ class Fonctions
 
         // enregistrement dans les logs
         $comment_log = "nouvelle configuration de php_conges ";
-        log_action(0, "", "", $comment_log, $DEBUG);
+        log_action(0, "", "", $comment_log);
 
         $return .= '<span class="messages">' . _('form_modif_ok') . '</span><br>';
         $return .= '<META HTTP-EQUIV=REFRESH CONTENT="' . $timeout . '; URL=' . $URL . '">';
@@ -959,7 +895,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affichage_configuration($session, $DEBUG=FALSE)
+    public static function affichage_configuration($session)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $return = '';
@@ -1134,22 +1070,16 @@ class Fonctions
      * Encapsule le comportement du module d'affichage des logs
      *
      * @param string $session
-     * @param bool   $DEBUG  Mode debug ?
      *
      * @return void
      * @access public
      * @static
      */
-    public static function configurationModule($session, $DEBUG = false)
+    public static function configurationModule($session)
     {
         // verif des droits du user à afficher la page
-        verif_droits_user($session, "is_admin", $DEBUG);
+        verif_droits_user($session, "is_admin");
         $return = '';
-
-        if( $DEBUG ) {
-            $return .= 'SESSION = ' . var_export($_SESSION, true) . '<br>';
-        }
-
 
         /*** initialisation des variables ***/
         $action="";
@@ -1166,15 +1096,11 @@ class Fonctions
 
         /*************************************/
 
-        if( $DEBUG ) {
-            $return .= 'tab_new_values = ' . var_export($tab_new_values, true) . '<br>';
-        }
-
         if($action=="commit") {
-            $return .= \config\Fonctions::commit_saisie($tab_new_values, $session, $DEBUG);
+            $return .= \config\Fonctions::commit_saisie($tab_new_values, $session);
         } else {
             $return .= '<div class="wrapper configure">';
-            $return .= \config\Fonctions::affichage_configuration($session, $DEBUG);
+            $return .= \config\Fonctions::affichage_configuration($session);
             $return .= '<div>';
         }
         return $return;

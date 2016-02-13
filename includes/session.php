@@ -1,7 +1,9 @@
 <?php
 /*************************************************************************************************
 Libertempo : Gestion Interactive des Congés
-Copyright (C) 2015 (Wouldsmina)Copyright (C) 2015 (Prytoegrian)Copyright (C) 2005 (cedric chauvineau)
+Copyright (C) 2015 (Wouldsmina)
+Copyright (C) 2015 (Prytoegrian)
+Copyright (C) 2005 (cedric chauvineau)
 
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les 
 termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
@@ -38,10 +40,6 @@ $session_password="";
 //
 // recup du num  de session (mais on ne sais pas s'il est passé en GET ou POST
 $session=(isset($_REQUEST['session']) ? $_REQUEST['session'] : '' );
-
-$DEBUG=FALSE;
-//$DEBUG=TRUE;
-
 
 if ($session != "") //  UNE SESSION EXISTE
 {

@@ -35,11 +35,8 @@ include_once INCLUDE_PATH .'fonction.php';
 include_once INCLUDE_PATH .'session.php';
 include_once ROOT_PATH .'fonctions_calcul.php';
 
-$DEBUG = FALSE ;
-//$DEBUG = TRUE ;
-
 // verif des droits du user à afficher la page
-verif_droits_user($session, 'is_admin', $DEBUG);
+verif_droits_user($session, 'is_admin');
 
 
 
@@ -100,10 +97,10 @@ echo '</div>';
 
 /** initialisation des tableaux des types de conges/absences  **/
 // recup du tableau des types de conges (seulement les conges)
-$tab_type_cong=recup_tableau_types_conges( $DEBUG);
+$tab_type_cong=recup_tableau_types_conges();
 
 // recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
-$tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels( $DEBUG);
+$tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
 
 echo '<div class="'.$onglet.' main-content">';
     include_once ROOT_PATH . 'admin/admin_'.$onglet.'.php';

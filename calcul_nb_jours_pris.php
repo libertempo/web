@@ -1,7 +1,9 @@
 <?php
 /*************************************************************************************************
 Libertempo : Gestion Interactive des Congés
-Copyright (C) 2015 (Wouldsmina)Copyright (C) 2015 (Prytoegrian)Copyright (C) 2005 (cedric chauvineau)
+Copyright (C) 2015 (Wouldsmina)
+Copyright (C) 2015 (Prytoegrian)
+Copyright (C) 2005 (cedric chauvineau)
 
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
 termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
@@ -33,9 +35,6 @@ include_once INCLUDE_PATH . 'fonction.php';
 include_once INCLUDE_PATH . 'session.php';
 include_once ROOT_PATH . 'fonctions_calcul.php';
 
-$DEBUG=FALSE;
-//$DEBUG=TRUE;
-
 /*** initialisation des variables ***/
 $session=session_id();
 $user="";
@@ -57,14 +56,12 @@ $p_num	    = getpost_variable('p_num') ;
 /*************************************/
 
 if( ($user!="") && ($date_debut!="") && ($date_fin!="") && ($opt_debut!="") && ($opt_fin!="") )
-	affichage($user, $date_debut, $date_fin, $opt_debut, $opt_fin, $DEBUG, $p_num);
+	affichage($user, $date_debut, $date_fin, $opt_debut, $opt_fin, $p_num);
 
 /**********  FONCTIONS  ****************************************/
 
-function affichage($user, $date_debut, $date_fin, $opt_debut, $opt_fin, $DEBUG=FALSE, $p_num="")
+function affichage($user, $date_debut, $date_fin, $opt_debut, $opt_fin, $p_num="")
 {
-	if( $DEBUG ) { echo "user = $user, date_debut = $date_debut, date_fin = $date_fin, opt_debut = $opt_debut, opt_fin = $opt_fin<br>\n";}
-
 	$PHP_SELF=$_SERVER['PHP_SELF'];
 	$session=session_id();
 	$comment="&nbsp;" ;
@@ -72,7 +69,7 @@ function affichage($user, $date_debut, $date_fin, $opt_debut, $opt_fin, $DEBUG=F
 
 
 	// calcul :
-	$nb_jours=compter($user, $p_num, $date_debut, $date_fin, $opt_debut, $opt_fin, $comment, $DEBUG);
+	$nb_jours=compter($user, $p_num, $date_debut, $date_fin, $opt_debut, $opt_fin, $comment);
 	$tab['nb'] = $nb_jours;
 	$tab['comm'] = $comment;
 	if(!$_SESSION['config']['rempli_auto_champ_nb_jours_pris'])

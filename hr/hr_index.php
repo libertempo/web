@@ -1,7 +1,9 @@
 <?php
 /*************************************************************************************************
 Libertempo : Gestion Interactive des Congés
-Copyright (C) 2015 (Wouldsmina)Copyright (C) 2015 (Prytoegrian)Copyright (C) 2005 (cedric chauvineau)
+Copyright (C) 2015 (Wouldsmina)
+Copyright (C) 2015 (Prytoegrian)
+Copyright (C) 2005 (cedric chauvineau)
 
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
 termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
@@ -35,11 +37,8 @@ include_once INCLUDE_PATH .'fonction.php';
 include_once INCLUDE_PATH .'session.php';
 include_once ROOT_PATH .'fonctions_calcul.php';
 
-$DEBUG = FALSE ;
-//$DEBUG = TRUE ;
-
 // verif des droits du user à afficher la page
-verif_droits_user($session, "is_hr", $DEBUG);
+verif_droits_user($session, "is_hr");
 
 
 /*************************************/
@@ -98,11 +97,11 @@ echo '</div>';
 
 /** initialisation des tableaux des types de conges/absences  **/
 // recup du tableau des types de conges (seulement les conges)
-$tab_type_cong=recup_tableau_types_conges( $DEBUG);
+$tab_type_cong=recup_tableau_types_conges();
 
 // recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
 //    if ($_SESSION['config']['gestion_conges_exceptionnels'])
-$tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels( $DEBUG);
+$tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
 
 echo '<div class="'.$onglet.' main-content">';
     include_once ROOT_PATH . 'hr/hr_'.$onglet.'.php';

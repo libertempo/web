@@ -1,7 +1,9 @@
 <?php
 /*************************************************************************************************
 Libertempo : Gestion Interactive des Congés
-Copyright (C) 2015 (Wouldsmina)Copyright (C) 2015 (Prytoegrian)Copyright (C) 2005 (cedric chauvineau)
+Copyright (C) 2015 (Wouldsmina)
+Copyright (C) 2015 (Prytoegrian)
+Copyright (C) 2005 (cedric chauvineau)
 
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
 termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
@@ -28,7 +30,7 @@ defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 
 
 // saisie de la grille des jours d'absence ARTT ou temps partiel:
-function saisie_jours_absence_temps_partiel($login,  $DEBUG=FALSE)
+function saisie_jours_absence_temps_partiel($login)
 {
     $return = '';
 
@@ -247,7 +249,7 @@ function saisie_jours_absence_temps_partiel($login,  $DEBUG=FALSE)
 }
 
 
-function commit_modif_user_groups($choix_user, &$checkbox_user_groups,  $DEBUG=FALSE)
+function commit_modif_user_groups($choix_user, &$checkbox_user_groups)
 {
 
 

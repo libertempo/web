@@ -1,7 +1,9 @@
 <?php
 /*************************************************************************************************
 Libertempo : Gestion Interactive des Congés
-Copyright (C) 2015 (Wouldsmina)Copyright (C) 2015 (Prytoegrian)Copyright (C) 2005 (cedric chauvineau)
+Copyright (C) 2015 (Wouldsmina)
+Copyright (C) 2015 (Prytoegrian)
+Copyright (C) 2005 (cedric chauvineau)
 
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
 termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
@@ -33,6 +35,4 @@ include_once ROOT_PATH .'fonctions_conges.php' ;
 include_once INCLUDE_PATH .'fonction.php';
 include_once INCLUDE_PATH .'session.php';
 
-$DEBUG=FALSE ;
-//$DEBUG=TRUE ;
-\admin\Fonctions::saveRestoreModule($session, $DEBUG);
+\admin\Fonctions::saveRestoreModule($session);

@@ -1,7 +1,9 @@
 <?php
 /*************************************************************************************************
 Libertempo : Gestion Interactive des Congés
-Copyright (C) 2015 (Wouldsmina)Copyright (C) 2015 (Prytoegrian)Copyright (C) 2005 (cedric chauvineau)
+Copyright (C) 2015 (Wouldsmina)
+Copyright (C) 2015 (Prytoegrian)
+Copyright (C) 2005 (cedric chauvineau)
 
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les 
 termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
@@ -31,13 +33,8 @@ include_once INCLUDE_PATH .'fonction.php';
 
 $PHP_SELF=$_SERVER['PHP_SELF'];
 
-$DEBUG=FALSE;
-//$DEBUG=TRUE;
-
 //recup de la langue
 $lang=(isset($_GET['lang']) ? $_GET['lang'] : ((isset($_POST['lang'])) ? $_POST['lang'] : "") ) ;
-
-if( $DEBUG ) { echo "SESSION = <br>\n"; print_r($_SESSION); echo "<br><br>\n"; }
 
 	
 	header_popup('PHP_CONGES : Installation');
@@ -47,7 +44,7 @@ if( $DEBUG ) { echo "SESSION = <br>\n"; print_r($_SESSION); echo "<br><br>\n"; }
 	echo "<br><H1><img src=\"". TEMPLATE_PATH ."img/tux_config_32x32.png\" width=\"32\" height=\"32\" border=\"0\" title=\"". _('install_install_phpconges') ."\" alt=\"". _('install_install_phpconges') ."\"> ". _('install_install_titre') ."</H1>\n";
 	echo "<br><br>\n";
 		
-	\install\Fonctions::lance_install($lang, $DEBUG); 
+	\install\Fonctions::lance_install($lang); 
 	
 	bottom();
 

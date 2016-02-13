@@ -1,7 +1,9 @@
 <?php
 /*************************************************************************************************
 Libertempo : Gestion Interactive des Congés
-Copyright (C) 2015 (Wouldsmina)Copyright (C) 2015 (Prytoegrian)Copyright (C) 2005 (cedric chauvineau)
+Copyright (C) 2015 (Wouldsmina)
+Copyright (C) 2015 (Prytoegrian)
+Copyright (C) 2005 (cedric chauvineau)
 
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les 
 termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
@@ -28,12 +30,11 @@ defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 
 
 // renvoit un tableau de tableau contenant les informations de tous les users dont $login est HR responsable
-function recup_infos_all_users_du_hr($login, $DEBUG=FALSE)
+function recup_infos_all_users_du_hr($login)
 {
     $tab=array();
 
-    $list_groupes_double_validation=get_list_groupes_double_valid($DEBUG);
-    if( $DEBUG ) { echo "list_groupes_double_validation :<br>\n"; print_r($list_groupes_double_validation); echo "<br><br>\n";}
+    $list_groupes_double_validation=get_list_groupes_double_valid();
 
     //$sql = "SELECT u_login FROM conges_users WHERE u_login!='conges' AND u_login!='admin' ORDER BY u_login";
     $sql1 = "SELECT u_login FROM conges_users WHERE u_login!='conges' AND u_login!='admin' ORDER BY u_nom";
@@ -45,7 +46,7 @@ function recup_infos_all_users_du_hr($login, $DEBUG=FALSE)
         $tab_user=array();
         $sql_login=$resultat["u_login"];
 
-        $tab[$sql_login] = recup_infos_du_user($sql_login, $list_groupes_double_validation, $DEBUG);
+        $tab[$sql_login] = recup_infos_du_user($sql_login, $list_groupes_double_validation);
     }
 
     return $tab ;
@@ -54,7 +55,7 @@ function recup_infos_all_users_du_hr($login, $DEBUG=FALSE)
 
 // recup de la liste de TOUS les users pour le responsable RH
 // renvoit une liste de login entre quotes et séparés par des virgules
-function get_list_all_users_du_hr($resp_login, $DEBUG=FALSE)
+function get_list_all_users_du_hr($resp_login)
 {
 
 	$list_users="";
@@ -71,9 +72,5 @@ function get_list_all_users_du_hr($resp_login, $DEBUG=FALSE)
 		else
 			$list_users=$list_users.", '$current_login'";
 	}
-	
-
-	if( $DEBUG ) { echo "list_users = $list_users<br>\n" ;}
-
 	return $list_users;
 }

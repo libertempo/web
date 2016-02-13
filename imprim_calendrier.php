@@ -1,7 +1,9 @@
 <?php
 /*************************************************************************************************
 Libertempo : Gestion Interactive des Congés
-Copyright (C) 2015 (Wouldsmina)Copyright (C) 2015 (Prytoegrian)Copyright (C) 2005 (cedric chauvineau)
+Copyright (C) 2015 (Wouldsmina)
+Copyright (C) 2015 (Prytoegrian)
+Copyright (C) 2005 (cedric chauvineau)
 
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
 termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
@@ -32,10 +34,6 @@ include_once ROOT_PATH .'fonctions_conges.php';
 include_once INCLUDE_PATH .'fonction.php';
 include_once INCLUDE_PATH .'session.php';
 
-$DEBUG=FALSE;
-//$DEBUG=TRUE
-
-
 	/*** initialisation des variables ***/
 	$session=session_id();
 	/************************************/
@@ -51,13 +49,13 @@ $DEBUG=FALSE;
 	/*************************************/
 
 
-	form_saisie($action, $new_mois, $new_year, $DEBUG);
+	form_saisie($action, $new_mois, $new_year);
 
 
 /*******************************************************************************/
 /**********  FONCTIONS  ********************************************************/
 
-function form_saisie($action, $new_mois, $new_year, $DEBUG=FALSE)
+function form_saisie($action, $new_mois, $new_year)
 {
 	$PHP_SELF=$_SERVER['PHP_SELF'];
 	$session=session_id();
@@ -65,7 +63,7 @@ function form_saisie($action, $new_mois, $new_year, $DEBUG=FALSE)
 	header_popup();
 
 	if($action=="imprim")
-		ouvre_calendrier($new_mois, $new_year, $DEBUG);
+		ouvre_calendrier($new_mois, $new_year);
 
 	
 	echo "<center>\n";
@@ -109,7 +107,7 @@ function form_saisie($action, $new_mois, $new_year, $DEBUG=FALSE)
 
 }
 
-function ouvre_calendrier($mois, $year, $DEBUG=FALSE)
+function ouvre_calendrier($mois, $year)
 {
 	$session=session_id();
 

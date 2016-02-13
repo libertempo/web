@@ -32,7 +32,7 @@ namespace utilisateur;
 class Fonctions
 {
     // renvoit le type d'absence (conges ou absence) d'une absence
-    public static function get_type_abs($_type_abs_id,  $DEBUG=FALSE)
+    public static function get_type_abs($_type_abs_id)
     {
         $sql_abs='SELECT ta_type FROM conges_type_absence WHERE ta_id="'. \includes\SQL::quote($_type_abs_id).'"';
         $ReqLog_abs = \includes\SQL::query($sql_abs);
@@ -43,11 +43,11 @@ class Fonctions
             return "" ;
     }
 
-    public static function verif_solde_user($user_login, $type_conges, $nb_jours,  $DEBUG=FALSE)
+    public static function verif_solde_user($user_login, $type_conges, $nb_jours)
     {
         $verif = TRUE;
         // on ne tient compte du solde que pour les absences de type conges (conges avec solde annuel)
-        if (\utilisateur\Fonctions::get_type_abs($type_conges,  $DEBUG)=="conges")
+        if (\utilisateur\Fonctions::get_type_abs($type_conges)=="conges")
         {
             // recup du solde de conges de type $type_conges pour le user de login $user_login
             $select_solde='SELECT su_solde FROM conges_solde_user WHERE su_login="'. \includes\SQL::quote($user_login).'" AND su_abs_id='. \includes\SQL::quote($type_conges);
@@ -74,7 +74,7 @@ class Fonctions
     }
 
     // verifie les parametre de la nouvelle demande :si ok : enregistre la demande dans table conges_periode
-    public static function new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type, $DEBUG=FALSE)
+    public static function new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type)
     {
         //conversion des dates
         $new_debut = convert_date($new_debut);
@@ -89,15 +89,15 @@ class Fonctions
 
         // verifie que le solde de conges sera encore positif après validation
         if( $_SESSION['config']['solde_toujours_positif'] ) {
-            $valid = $valid && verif_solde_user($_SESSION['userlogin'], $new_type, $new_nb_jours, $DEBUG);
+            $valid = $valid && verif_solde_user($_SESSION['userlogin'], $new_type, $new_nb_jours);
         }
 
         if( $valid ) {
-            if( in_array(\utilisateur\Fonctions::get_type_abs($new_type, $DEBUG) , array('conges','conges_exceptionnels') ) ) {
+            if( in_array(\utilisateur\Fonctions::get_type_abs($new_type) , array('conges','conges_exceptionnels') ) ) {
                 $resp_du_user = get_tab_resp_du_user($_SESSION['userlogin']);
                 if (array_key_exists('conges', $resp_du_user)||empty($resp_du_user)) {
                     $new_etat = 'ok' ;
-                    soustrait_solde_et_reliquat_user($_SESSION['userlogin'], "", $new_nb_jours, $new_type, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $DEBUG);
+                    soustrait_solde_et_reliquat_user($_SESSION['userlogin'], "", $new_nb_jours, $new_type, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin);
                 } else {
                     $new_etat = 'demande' ;
                 }
@@ -107,16 +107,16 @@ class Fonctions
 
             $new_comment = addslashes($new_comment);
 
-            $periode_num = insert_dans_periode($_SESSION['userlogin'], $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type, $new_etat, 0, $DEBUG);
+            $periode_num = insert_dans_periode($_SESSION['userlogin'], $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type, $new_etat, 0);
 
             if ( $periode_num != 0 ) {
                 $return .= schars( _('form_modif_ok') ) . ' !<br><br>.';
                 //envoi d'un mail d'alerte au responsable (si demandé dans config de php_conges)
                 if($_SESSION['config']['mail_new_demande_alerte_resp']){
-                    if(in_array(\utilisateur\Fonctions::get_type_abs($new_type, $DEBUG), array('absences'))) {
-                        alerte_mail($_SESSION['userlogin'], ":responsable:", $periode_num, "new_absence", $DEBUG);
+                    if(in_array(\utilisateur\Fonctions::get_type_abs($new_type), array('absences'))) {
+                        alerte_mail($_SESSION['userlogin'], ":responsable:", $periode_num, "new_absence");
                     } else {
-                        alerte_mail($_SESSION['userlogin'], ":responsable:", $periode_num, "new_demande", $DEBUG);
+                        alerte_mail($_SESSION['userlogin'], ":responsable:", $periode_num, "new_demande");
                     }
                 }
             }
@@ -137,13 +137,12 @@ class Fonctions
      * Encapsule le comportement du module de nouvelle absence
      *
      * @param string $onglet Nom de l'onglet à afficher
-     * @param bool   $DEBUG  Mode debug ?
      *
      * @return void
      * @access public
      * @static
      */
-    public static function nouvelleAbsenceModule($onglet, $DEBUG = false)
+    public static function nouvelleAbsenceModule($onglet)
     {
         // on initialise le tableau global des jours fériés s'il ne l'est pas déjà :
         init_tab_jours_feries();
@@ -164,12 +163,12 @@ class Fonctions
             $user_login        = $_SESSION['userlogin'];
 
             if( $_SESSION['config']['disable_saise_champ_nb_jours_pris'] ) {
-                $new_nb_jours = compter($user_login, '', $new_debut,  $new_fin, $new_demi_jour_deb, $new_demi_jour_fin, $new_comment,  $DEBUG);
+                $new_nb_jours = compter($user_login, '', $new_debut,  $new_fin, $new_demi_jour_deb, $new_demi_jour_fin, $new_comment);
             } else {
                 $new_nb_jours = getpost_variable('new_nb_jours') ;
             }
 
-            $return .= \utilisateur\Fonctions::new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type, $DEBUG);
+            $return .= \utilisateur\Fonctions::new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type);
         } else {
             $year_calendrier_saisie_debut   = getpost_variable('year_calendrier_saisie_debut'   , date('Y'));
             $mois_calendrier_saisie_debut   = getpost_variable('mois_calendrier_saisie_debut'   , date('m'));
@@ -183,15 +182,12 @@ class Fonctions
             $return .= '<h1>' . _('divers_nouvelle_absence') . '</h1>';
 
             //affiche le formulaire de saisie d'une nouvelle demande de conges
-            // saisie_nouveau_conges($_SESSION['userlogin'], $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet, $DEBUG);
-
-            //affiche le formulaire de saisie d'une nouvelle demande de conges
-            $return .= saisie_nouveau_conges2($_SESSION['userlogin'], $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet, $DEBUG);
+            $return .= saisie_nouveau_conges2($_SESSION['userlogin'], $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet);
         }
         return $return;
     }
 
-    public static function modifier($p_num_to_update, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $p_etat, $onglet, $DEBUG=FALSE)
+    public static function modifier($p_num_to_update, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $p_etat, $onglet)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id() ;
@@ -212,10 +208,10 @@ class Fonctions
         $result = \includes\SQL::query($sql1) ;
 
         if($_SESSION['config']['mail_modif_demande_alerte_resp']) {
-            alerte_mail($_SESSION['userlogin'], ":responsable:", $p_num_to_update, "modif_demande", $DEBUG);
+            alerte_mail($_SESSION['userlogin'], ":responsable:", $p_num_to_update, "modif_demande");
         }
         $comment_log = "modification de demande num $p_num_to_update ($new_nb_jours jour(s)) ( de $new_debut $new_demi_jour_deb a $new_fin $new_demi_jour_fin) ($new_comment)";
-        log_action($p_num_to_update, "$p_etat", $_SESSION['userlogin'], $comment_log, $DEBUG);
+        log_action($p_num_to_update, "$p_etat", $_SESSION['userlogin'], $comment_log);
 
 
         $return .= _('form_modif_ok') . '<br><br>';
@@ -228,7 +224,7 @@ class Fonctions
 
     }
 
-    public static function confirmer($p_num, $onglet, $DEBUG=FALSE)
+    public static function confirmer($p_num, $onglet)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id();
@@ -331,13 +327,12 @@ class Fonctions
     /**
      * Encapsule le comportement du module de modification d'absence
      *
-     * @param bool $DEBUG Mode debug ?
      *
      * @return void
      * @access public
      * @static
      */
-    public static function modificationAbsenceModule($DEBUG = false)
+    public static function modificationAbsenceModule()
     {
         $user_login        = $_SESSION['userlogin'];
         $p_num             = getpost_variable('p_num');
@@ -356,7 +351,7 @@ class Fonctions
         $new_fin = convert_date($new_fin);
 
         if ($_SESSION['config']['disable_saise_champ_nb_jours_pris'])
-            $new_nb_jours = compter($user_login, $p_num_to_update, $new_debut,  $new_fin, $new_demi_jour_deb, $new_demi_jour_fin, $new_comment,  $DEBUG);
+            $new_nb_jours = compter($user_login, $p_num_to_update, $new_debut,  $new_fin, $new_demi_jour_deb, $new_demi_jour_fin, $new_comment);
         else
             $new_nb_jours = getpost_variable('new_nb_jours');
 
@@ -366,10 +361,10 @@ class Fonctions
         $return .= '<h1>'. _('user_modif_demande_titre') .'</h1>';
 
         if($p_num!="") {
-            $return .= \utilisateur\Fonctions::confirmer($p_num, $onglet, $DEBUG);
+            $return .= \utilisateur\Fonctions::confirmer($p_num, $onglet);
         } else {
             if($p_num_to_update != "") {
-                $return .= \utilisateur\Fonctions::modifier($p_num_to_update, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $p_etat, $onglet, $DEBUG);
+                $return .= \utilisateur\Fonctions::modifier($p_num_to_update, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $p_etat, $onglet);
             } else {
                 // renvoit sur la page principale .
                 redirect( ROOT_PATH .'utilisateur/user_index.php', false );
@@ -380,7 +375,7 @@ class Fonctions
     }
 
     // renvoit le libelle d une absence (conges ou absence) d une absence
-    public static function get_libelle_abs($_type_abs_id,  $DEBUG=FALSE)
+    public static function get_libelle_abs($_type_abs_id)
     {
 
         $sql_abs='SELECT ta_libelle FROM conges_type_absence WHERE ta_id="'. \includes\SQL::quote($_type_abs_id).'"';
@@ -391,7 +386,7 @@ class Fonctions
             return "" ;
     }
 
-    public static function suppression($p_num_to_delete, $onglet, $DEBUG=FALSE)
+    public static function suppression($p_num_to_delete, $onglet)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id() ;
@@ -402,10 +397,10 @@ class Fonctions
         $result_delete = \includes\SQL::query($sql_delete);
 
         if($_SESSION['config']['mail_supp_demande_alerte_resp']) {
-            alerte_mail($_SESSION['userlogin'], ":responsable:", $p_num, "supp_demande", $DEBUG);
+            alerte_mail($_SESSION['userlogin'], ":responsable:", $p_num, "supp_demande");
         }
         $comment_log = "suppression de demande num $p_num_to_delete";
-        log_action($p_num_to_delete, "", $_SESSION['userlogin'], $comment_log, $DEBUG);
+        log_action($p_num_to_delete, "", $_SESSION['userlogin'], $comment_log);
 
         if($result_delete)
             $return .= _('form_modif_ok') ."<br><br> \n";
@@ -421,7 +416,7 @@ class Fonctions
         return $return;
     }
 
-    public static function confirmerSuppression($p_num, $onglet, $DEBUG=FALSE)
+    public static function confirmerSuppression($p_num, $onglet)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id() ;
@@ -461,12 +456,8 @@ class Fonctions
                 $demi_j_fin= _('divers_pm_short') ;
             $sql_nb_jours=affiche_decimal($resultat1["p_nb_jours"]);
             //$sql_type=$resultat1["p_type"];
-            $sql_type= \utilisateur\Fonctions::get_libelle_abs($resultat1["p_type"], $DEBUG);
+            $sql_type= \utilisateur\Fonctions::get_libelle_abs($resultat1["p_type"]);
             $sql_comment=$resultat1["p_commentaire"];
-
-            if( $DEBUG ) {
-                $return .= "$sql_date_deb _ $demi_j_deb : $sql_date_fin _ $demi_j_fin : $sql_nb_jours : $sql_comment : $sql_type<br>\n";
-            }
 
             $return .= '<td>' . $sql_date_deb . '_' . $demi_j_deb . '</td>';
             $return .= '<td>' . $sql_date_fin . '_' . $demi_j_fin . '</td>';
@@ -491,13 +482,12 @@ class Fonctions
     /**
      * Encapsule le comportement du module de suppression d'absence
      *
-     * @param bool $DEBUG Mode debug ?
      *
      * @return void
      * @access public
      * @static
      */
-    public static function suppressionAbsenceModule($DEBUG = false)
+    public static function suppressionAbsenceModule()
     {
         $p_num           = getpost_variable('p_num');
         $onglet          = getpost_variable('onglet');
@@ -510,10 +500,10 @@ class Fonctions
         $return .= '<br>';
 
         if($p_num!="") {
-            $return .= \utilisateur\Fonctions::confirmerSuppression($p_num, $onglet, $DEBUG);
+            $return .= \utilisateur\Fonctions::confirmerSuppression($p_num, $onglet);
         } else {
             if($p_num_to_delete!="") {
-                $return .= \utilisateur\Fonctions::suppression($p_num_to_delete, $onglet, $DEBUG);
+                $return .= \utilisateur\Fonctions::suppression($p_num_to_delete, $onglet);
             } else {
                 // renvoit sur la page principale .
                 redirect( ROOT_PATH .'utilisateur/user_index.php', false );
@@ -523,7 +513,7 @@ class Fonctions
         return $return;
     }
 
-    public static function change_passwd( $new_passwd1, $new_passwd2, $DEBUG=FALSE)
+    public static function change_passwd( $new_passwd1, $new_passwd2)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id();
@@ -546,7 +536,7 @@ class Fonctions
         }
 
         $comment_log = 'changement Password';
-        log_action(0, '', $_SESSION['userlogin'], $comment_log,  $DEBUG);
+        log_action(0, '', $_SESSION['userlogin'], $comment_log);
 
         return $return;
     }
@@ -555,13 +545,12 @@ class Fonctions
      * Encapsule le comportement du module de modification de mot de passe
      *
      * @param string $onglet Nom de l'onglet à afficher
-     * @param bool $DEBUG Mode debug ?
      *
      * @return void
      * @access public
      * @static
      */
-    public static function modificationMotDePasseModule($onglet, $DEBUG = false)
+    public static function modificationMotDePasseModule($onglet)
     {
         $return = '';
         if($_SESSION['config']['where_to_find_user_email']=="ldap"){
@@ -573,7 +562,7 @@ class Fonctions
         $new_passwd2 = getpost_variable('new_passwd2');
 
         if($change_passwd==1) {
-            $return .= \utilisateur\Fonctions::change_passwd($new_passwd1, $new_passwd2, $DEBUG);
+            $return .= \utilisateur\Fonctions::change_passwd($new_passwd1, $new_passwd2);
         } else {
             $PHP_SELF=$_SERVER['PHP_SELF'];
             $session=session_id();
@@ -617,13 +606,13 @@ class Fonctions
      * Encapsule le comportement du module de demande en cours
      *
      * @param string $session Clé de session
-     * @param bool   $DEBUG   Mode debug ?
+
      *
      * @return void
      * @access public
      * @static
      */
-    public static function demandeEnCoursModule($session, $DEBUG = false)
+    public static function demandeEnCoursModule($session)
     {
         $return = '';
         if($_SESSION['config']['where_to_find_user_email']=="ldap"){
@@ -632,7 +621,7 @@ class Fonctions
 
 
         // on initialise le tableau global des jours fériés s'il ne l'est pas déjà :
-        init_tab_jours_feries($DEBUG);
+        init_tab_jours_feries();
 
         $return .= '<h1>' . _('user_etat_demandes') . '</h1>';
 
@@ -678,8 +667,8 @@ class Fonctions
 
             $i = true;
             while ($resultat3 = $ReqLog3->fetch_array()) {
-                $sql_p_date_deb                = eng_date_to_fr($resultat3["p_date_deb"], $DEBUG);
-                $sql_p_date_fin                = eng_date_to_fr($resultat3["p_date_fin"], $DEBUG);
+                $sql_p_date_deb                = eng_date_to_fr($resultat3["p_date_deb"]);
+                $sql_p_date_fin                = eng_date_to_fr($resultat3["p_date_fin"]);
                 $sql_p_demi_jour_deb        = $resultat3["p_demi_jour_deb"];
                 $sql_p_demi_jour_fin        = $resultat3["p_demi_jour_fin"];
 
@@ -738,7 +727,7 @@ class Fonctions
     }
 
     // affichage du calendrier du mois avec les case à cocher sur les jour de présence
-    public static function  affiche_calendrier_saisie_jour_presence($user_login, $year, $mois, $DEBUG=FALSE)
+    public static function  affiche_calendrier_saisie_jour_presence($user_login, $year, $mois)
     {
         $return = '';
         $jour_today                    = date('j');
@@ -794,8 +783,8 @@ class Fonctions
             else {
                 $val_matin='';
                 $val_aprem='';
-                recup_infos_artt_du_jour($user_login, $j_timestamp, $val_matin, $val_aprem,  $DEBUG);
-                $return .= \utilisateur\Fonctions::affiche_cellule_calendrier_echange_presence_saisie_semaine($val_matin, $val_aprem, $year, $mois, $i+1, $DEBUG);
+                recup_infos_artt_du_jour($user_login, $j_timestamp, $val_matin, $val_aprem);
+                $return .= \utilisateur\Fonctions::affiche_cellule_calendrier_echange_presence_saisie_semaine($val_matin, $val_aprem, $year, $mois, $i+1);
             }
 
             if ( ($i + $start_nb_day_before ) % 7 == 6)
@@ -809,7 +798,7 @@ class Fonctions
     }
 
     //affichage du calendrier du mois avec les case à cocher sur les jour d'absence
-    public static function  affiche_calendrier_saisie_jour_absence($user_login, $year, $mois, $DEBUG=FALSE)
+    public static function  affiche_calendrier_saisie_jour_absence($user_login, $year, $mois)
     {
         $return = '';
         $jour_today                    = date('j');
@@ -851,8 +840,8 @@ class Fonctions
             else {
                 $val_matin='';
                 $val_aprem='';
-                recup_infos_artt_du_jour($user_login, $j_timestamp, $val_matin, $val_aprem,  $DEBUG);
-                $return .= \utilisateur\Fonctions::affiche_cellule_calendrier_echange_absence_saisie_semaine($val_matin, $val_aprem, $year, $mois, $i+1, $DEBUG);
+                recup_infos_artt_du_jour($user_login, $j_timestamp, $val_matin, $val_aprem);
+                $return .= \utilisateur\Fonctions::affiche_cellule_calendrier_echange_absence_saisie_semaine($val_matin, $val_aprem, $year, $mois, $i+1);
             }
 
             if ( ($i + $start_nb_day_before ) % 7 == 6)
@@ -865,7 +854,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affiche_cellule_calendrier_echange_absence_saisie_semaine($val_matin, $val_aprem, $year, $mois, $j, $DEBUG=FALSE)
+    public static function affiche_cellule_calendrier_echange_absence_saisie_semaine($val_matin, $val_aprem, $year, $mois, $j)
     {
         $return = '';
         $bgcolor=$_SESSION['config']['temps_partiel_bgcolor'];
@@ -882,7 +871,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affiche_cellule_calendrier_echange_presence_saisie_semaine($val_matin, $val_aprem, $year, $mois, $j, $DEBUG=FALSE)
+    public static function affiche_cellule_calendrier_echange_presence_saisie_semaine($val_matin, $val_aprem, $year, $mois, $j)
     {
         $return = '';
         $bgcolor = $_SESSION['config']['temps_partiel_bgcolor'];
@@ -901,10 +890,9 @@ class Fonctions
         return $return;
     }
 
-    public static function echange_absence_rtt($onglet, $new_debut_string, $new_fin_string, $new_comment, $moment_absence_ordinaire, $moment_absence_souhaitee, $DEBUG=FALSE)
+    public static function echange_absence_rtt($onglet, $new_debut_string, $new_fin_string, $new_comment, $moment_absence_ordinaire, $moment_absence_souhaitee)
     {
         $return = '';
-        //$DEBUG=TRUE;
 
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id();
@@ -985,9 +973,6 @@ class Fonctions
                 }
                 elseif($moment_absence_ordinaire=="p") // on demande à etre present l'aprem
                 {
-                    if( $DEBUG ) {
-                        $return .= 'false_1';
-                    }
                     $valid=FALSE;
                 }
             }
@@ -1001,9 +986,6 @@ class Fonctions
                 }
                 elseif($moment_absence_ordinaire=="a") // on demande à etre present le matin
                 {
-                    if( $DEBUG ) {
-                        $return .= 'false_2';
-                    }
                     $valid=FALSE;
                 }
                 elseif($moment_absence_ordinaire=="p") // on demande à etre present l'aprem
@@ -1074,9 +1056,6 @@ class Fonctions
                 }
                 elseif($moment_absence_souhaitee=="p") // on demande à etre absent l'aprem
                 {
-                    if( $DEBUG ) {
-                        $return .= 'false_3';
-                    }
                     $valid=FALSE;
                 }
             }
@@ -1090,9 +1069,6 @@ class Fonctions
                 }
                 elseif($moment_absence_souhaitee=="a") // on demande à etre absent le matin
                 {
-                    if( $DEBUG ) {
-                        $return .= 'false_4';
-                    }
                     $valid=FALSE;
                 }
                 elseif($moment_absence_souhaitee=="p") // on demande à etre absent l'aprem
@@ -1112,17 +1088,10 @@ class Fonctions
             }
             else
             {
-                if( $DEBUG ) {
-                    $return .= 'false_5';
-                }
                 $valid=FALSE;
             }
 
 
-            if( $DEBUG ) {
-                $return .= schars($new_debut) . ' - ' . schars($demi_jour_debut) . ' :: ' . schars($new_fin) . ' - ' . schars($demi_jour_fin) .'<br>';
-                $return .= schars($duree_demande_1) . ' :: ' . schars($duree_demande_2) . '<br>';
-            }
             // verif de la concordance des durée (journée avec journée ou 1/2 journée avec1/2 journée)
             if( ($duree_demande_1=="") || ($duree_demande_2=="") || ($duree_demande_1!=$duree_demande_2) )
                 $valid=FALSE;
@@ -1179,7 +1148,7 @@ class Fonctions
             $result2 = \includes\SQL::query($sql2) ;
 
             $comment_log = "echange absence - rtt  ($new_debut_string / $new_fin_string)";
-            log_action(0, "", $_SESSION['userlogin'], $comment_log,  $DEBUG);
+            log_action(0, "", $_SESSION['userlogin'], $comment_log);
 
 
             if(($result1)&&($result2))
@@ -1200,7 +1169,7 @@ class Fonctions
     }
 
     //affiche le formulaire d'échange d'un jour de rtt-temps partiel / jour travaillé
-    public static function saisie_echange_rtt($user_login, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet,  $DEBUG=FALSE)
+    public static function saisie_echange_rtt($user_login, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet)
     {
         $return = '';
         $PHP_SELF=$_SERVER['PHP_SELF'];
@@ -1209,10 +1178,6 @@ class Fonctions
         $mois_calendrier_saisie_debut_suiv=0; $year_calendrier_saisie_debut_suiv=0;
         $mois_calendrier_saisie_fin_prec=0; $year_calendrier_saisie_fin_prec=0;
         $mois_calendrier_saisie_fin_suiv=0; $year_calendrier_saisie_fin_suiv=0;
-
-        if( $DEBUG ) {
-            $return .= 'param = '.$user_login.', '.$year_calendrier_saisie_debut.', '.$mois_calendrier_saisie_debut.', '.$year_calendrier_saisie_fin.', '.$mois_calendrier_saisie_fin.' <br>' ;
-        }
 
         $return .= '<form action="'.$PHP_SELF.'?session='.$session.'&&onglet='.$onglet.'" method="POST">' ;
 
@@ -1318,16 +1283,15 @@ class Fonctions
      * Encapsule le comportement du module d'échange d'absence
      *
      * @param string $onglet Nom de l'onglet à afficher
-     * @param bool   $DEBUG  Mode debug ?
      *
      * @return void
      * @access public
      * @static
      */
-    public static function echangeJourAbsenceModule($onglet, $DEBUG = false)
+    public static function echangeJourAbsenceModule($onglet)
     {
         $return = '';
-        init_tab_jours_feries($DEBUG);
+        init_tab_jours_feries();
 
         $new_echange_rtt    = getpost_variable('new_echange_rtt', 0);
 
@@ -1339,7 +1303,7 @@ class Fonctions
             $moment_absence_ordinaire = getpost_variable('moment_absence_ordinaire');
             $moment_absence_souhaitee = getpost_variable('moment_absence_souhaitee');
 
-            $return .= \utilisateur\Fonctions::echange_absence_rtt($onglet, $new_debut, $new_fin, $new_comment, $moment_absence_ordinaire, $moment_absence_souhaitee, $DEBUG);
+            $return .= \utilisateur\Fonctions::echange_absence_rtt($onglet, $new_debut, $new_fin, $new_comment, $moment_absence_ordinaire, $moment_absence_souhaitee);
         } else {
 
             $year_calendrier_saisie_debut = getpost_variable('year_calendrier_saisie_debut', date('Y'));
@@ -1350,7 +1314,7 @@ class Fonctions
             $return .= '<h1>'. _('user_echange_rtt') .'</h1>';
 
             //affiche le formulaire de saisie d'une nouvelle demande de conges
-            $return .= \utilisateur\Fonctions::saisie_echange_rtt($_SESSION['userlogin'], $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet,  $DEBUG);
+            $return .= \utilisateur\Fonctions::saisie_echange_rtt($_SESSION['userlogin'], $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet);
         }
 
         return $return;
@@ -1361,13 +1325,12 @@ class Fonctions
      *
      * @param string $session  Clé de session
      * @param string $PHP_SELF
-     * @param bool   $DEBUG    Mode debug ?
      *
      * @return void
      * @access public
      * @static
      */
-    public static function historiqueCongesModule($session, $PHP_SELF, $DEBUG = false)
+    public static function historiqueCongesModule($session, $PHP_SELF)
     {
         $return = '';
         if($_SESSION['config']['where_to_find_user_email']=="ldap"){
@@ -1437,10 +1400,10 @@ class Fonctions
 
             $i = true;
             while ($resultat2 = $ReqLog2->fetch_array()) {
-                $sql_p_date_deb = eng_date_to_fr($resultat2["p_date_deb"], $DEBUG);
+                $sql_p_date_deb = eng_date_to_fr($resultat2["p_date_deb"]);
                 $sql_p_demi_jour_deb = $resultat2["p_demi_jour_deb"];
                 if($sql_p_demi_jour_deb=="am") $demi_j_deb="mat";  else $demi_j_deb="aprm";
-                $sql_p_date_fin = eng_date_to_fr($resultat2["p_date_fin"], $DEBUG);
+                $sql_p_date_fin = eng_date_to_fr($resultat2["p_date_fin"]);
                 $sql_p_demi_jour_fin = $resultat2["p_demi_jour_fin"];
                 if($sql_p_demi_jour_fin=="am") $demi_j_fin="mat";  else $demi_j_fin="aprm";
                 $sql_p_nb_jours = $resultat2["p_nb_jours"];
@@ -1508,13 +1471,12 @@ class Fonctions
      * @param string $onglet Nom de l'onglet à afficher
      * @param string $session  Clé de session
      * @param string $PHP_SELF
-     * @param bool   $DEBUG    Mode debug ?
      *
      * @return void
      * @access public
      * @static
      */
-    public static function historiqueAutresAbsencesModule($onglet, $session, $PHP_SELF, $DEBUG = false)
+    public static function historiqueAutresAbsencesModule($onglet, $session, $PHP_SELF)
     {
         $return = '';
         if($_SESSION['config']['where_to_find_user_email']=="ldap"){
@@ -1581,13 +1543,13 @@ class Fonctions
             $i = true;
             while ($resultat4 = $ReqLog4->fetch_array()) {
                 $sql_login= $resultat4["p_login"];
-                $sql_date_deb= eng_date_to_fr($resultat4["p_date_deb"], $DEBUG);
+                $sql_date_deb= eng_date_to_fr($resultat4["p_date_deb"]);
                 $sql_p_demi_jour_deb = $resultat4["p_demi_jour_deb"];
                 if($sql_p_demi_jour_deb=="am") $demi_j_deb="mat";  else $demi_j_deb="aprm";
-                $sql_date_fin= eng_date_to_fr($resultat4["p_date_fin"], $DEBUG);
+                $sql_date_fin= eng_date_to_fr($resultat4["p_date_fin"]);
                 $sql_p_demi_jour_fin = $resultat4["p_demi_jour_fin"];
                 if($sql_p_demi_jour_fin=="am") $demi_j_fin="mat";  else $demi_j_fin="aprm";
-                $sql_nb_jours= affiche_decimal($resultat4["p_nb_jours"], $DEBUG);
+                $sql_nb_jours= affiche_decimal($resultat4["p_nb_jours"]);
                 $sql_commentaire= $resultat4["p_commentaire"];
                 //$sql_type=$resultat4["p_type"];
                 $sql_type=$resultat4["ta_libelle"];

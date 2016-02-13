@@ -47,8 +47,6 @@ if(substr($session, 0, 9)!="phpconges")
 else
 	include_once INCLUDE_PATH .'session.php';
 
-        if( $DEBUG ) { echo "lang_file=".$_SESSION['config']['lang_file']."<br/>\n";  echo "_SESSION =<br/>\n"; print_r($_SESSION); echo "<br/><br/>\n"; }
-
 $script = '<script language=javascript>
 function afficher(id)
 {
@@ -92,11 +90,10 @@ $content .= "<body id=\"top\" class=\"hbox connected\">\n";
 	if(!isset($_SESSION["tab_j_feries"]))
 	{
 		init_tab_jours_feries();
-		//print_r($_SESSION["tab_j_feries"]);   // verif DEBUG
 	}
 
 	// renvoit un tableau de tableau contenant les infos des types de conges et absences
-	$tab_type_absence=recup_tableau_tout_types_abs($DEBUG);
+	$tab_type_absence=recup_tableau_tout_types_abs();
 
 
 
@@ -121,7 +118,7 @@ $content .= "<body id=\"top\" class=\"hbox connected\">\n";
 	$content .= "<h3 class=\"current-month\">$nom_mois $year</h3>\n";
 	/***********************************/
 	/* AFFICHAGE  TABLEAU (CALENDRIER) */
-	affichage_calendrier($year, $mois, $first_jour, $timestamp_today, $printable, $selected, $tab_type_absence, $select_groupe, $DEBUG);
+	affichage_calendrier($year, $mois, $first_jour, $timestamp_today, $printable, $selected, $tab_type_absence, $select_groupe);
 
 
 		/**********************/
@@ -133,7 +130,7 @@ $content .= "<body id=\"top\" class=\"hbox connected\">\n";
 		$content .= "      <h4>légende :</h4>\n";
 		$content .= "   </td>\n";
 		$content .= "   <td width=\"150\" valign=\"top\" align=\"left\">\n";
-				   affiche_legende_type_absence($tab_type_absence, $DEBUG);
+				   affiche_legende_type_absence($tab_type_absence);
 		$content .= "   </td>\n";
 		$content .= "   <td width=\"30%\" valign=\"top\" align=\"left\">\n";
 				   affiche_legende();
@@ -145,7 +142,6 @@ $content .= "<body id=\"top\" class=\"hbox connected\">\n";
 	$content .= "</div>\n";
 	$content .= "</body>\n";
 	$content .= '   </page> ';
-	if( $DEBUG ) {echo $content;};
 	$content=htmlspecialchars_decode(htmlentities($content, ENT_NOQUOTES, "UTF-8"));
 	require_once(LIBRARY_PATH.'/html2pdf/html2pdf.class.php');
     $html2pdf = new HTML2PDF('L','A4','fr', false, 'ISO-8859-15');
@@ -171,7 +167,7 @@ function jour_suivant($jour, $mois, $year)
 
 
 // AFFICHAGE  TABLEAU (CALENDRIER)
-function affichage_calendrier($year, $mois, $first_jour, $timestamp_today, $printable, $selected, $tab_type_absence, $select_groupe, $DEBUG=FALSE)
+function affichage_calendrier($year, $mois, $first_jour, $timestamp_today, $printable, $selected, $tab_type_absence, $select_groupe)
 {
 	$PHP_SELF=$_SERVER['PHP_SELF'];
 	$session=session_id();
@@ -179,14 +175,14 @@ function affichage_calendrier($year, $mois, $first_jour, $timestamp_today, $prin
     global $content;
 
 		// recup du tableau des types de conges (seulement les conges)
-		$tab_type_cong=recup_tableau_types_conges($DEBUG);
+		$tab_type_cong=recup_tableau_types_conges();
 		if ($_SESSION['config']['gestion_conges_exceptionnels'])
-			$tab_type_cong_excep=recup_tableau_types_conges_exceptionnels($DEBUG);
+			$tab_type_cong_excep=recup_tableau_types_conges_exceptionnels();
 
 		/*****************************************/
 		/** Récupération des users à afficher:  **/
 		
-		$tab_all_users	= recup_tableau_des_users_a_afficher($select_groupe,$DEBUG);
+		$tab_all_users	= recup_tableau_des_users_a_afficher($select_groupe);
 
 		
 		if( ($_SESSION['config']['gestion_groupes']) && ($select_groupe!=0) ) {
@@ -226,7 +222,6 @@ function affichage_calendrier($year, $mois, $first_jour, $timestamp_today, $prin
 			else
 				$j_num_jour_semaine=date_fr("w", $j_timestamp);
 
-			//DEBUG : $content .= "<td class=\"cal-day\" >$j_num_jour_semaine / $j_num_semaine</td>";
 			if($j==$first_jour)
 			{
 				$colspan=8-$j_num_jour_semaine;
@@ -271,7 +266,6 @@ function affichage_calendrier($year, $mois, $first_jour, $timestamp_today, $prin
 				else
 					$j_num_jour_semaine=date_fr("w", $j_timestamp);
 
-				//DEBUG : $content .= "<td class=\"cal-day\" >$j_num_jour_semaine / $j_num_semaine</td>";
 				if($j==$first_jour)
 				{
 					$colspan=8-$j_num_jour_semaine;
@@ -516,7 +510,7 @@ function affichage_calendrier($year, $mois, $first_jour, $timestamp_today, $prin
 
 // affichage de la cellule correspondant au jour et au user considéré
 // et renvoit un tableau avec une key / une valeur : key = id type absence / valeur = nb jours pris le jour J
-function affiche_cellule_jour_user($sql_login, $j_timestamp, $year_select, $mois_select, $j, $second_class, $printable, $tab_calendrier, $tab_rtt_echange, $tab_rtt_planifiees, $tab_type_absence,  $DEBUG=FALSE)
+function affiche_cellule_jour_user($sql_login, $j_timestamp, $year_select, $mois_select, $j, $second_class, $printable, $tab_calendrier, $tab_rtt_echange, $tab_rtt_planifiees, $tab_type_absence)
 {
 
 	$session=session_id();
@@ -550,7 +544,7 @@ function affiche_cellule_jour_user($sql_login, $j_timestamp, $year_select, $mois
 		$val_aprem="";
 		// recup des infos ARTT ou Temps Partiel :
 		// la fonction suivante change les valeurs de $val_matin $val_aprem ....
-		recup_infos_artt_du_jour_from_tab($sql_login, $j_timestamp, $val_matin, $val_aprem, $tab_rtt_echange, $tab_rtt_planifiees,  $DEBUG=FALSE);
+		recup_infos_artt_du_jour_from_tab($sql_login, $j_timestamp, $val_matin, $val_aprem, $tab_rtt_echange, $tab_rtt_planifiees);
 		
 		//## AFICHAGE ##
 		if($val_matin=="Y")
@@ -731,7 +725,7 @@ function affiche_cellule_jour_user($sql_login, $j_timestamp, $year_select, $mois
 }
 
 // affichage de la légende des couleurs
-function affiche_legende($DEBUG=FALSE)
+function affiche_legende()
 {
 	$session=session_id();
     global $content;
@@ -769,7 +763,7 @@ function affiche_legende($DEBUG=FALSE)
 }
 
 // affichage de la légende explicative des abréviations
-function affiche_legende_type_absence($tab_type_absence, $DEBUG=FALSE)
+function affiche_legende_type_absence($tab_type_absence)
 {
 	$session=session_id();
     global $content;
@@ -786,7 +780,7 @@ function affiche_legende_type_absence($tab_type_absence, $DEBUG=FALSE)
 
 
 // renvoit conges , demande ou autre ....
-function get_class_titre($sql_p_type, $tab_type_absence, $sql_p_etat, $sql_p_fermeture_id, $DEBUG=FALSE)
+function get_class_titre($sql_p_type, $tab_type_absence, $sql_p_etat, $sql_p_fermeture_id)
 {
 	if($sql_p_fermeture_id!="")
 		return "fermeture";
@@ -927,7 +921,7 @@ function affiche_select_groupe($select_groupe, $selected, $printable, $year, $mo
 
 // Récupération des users à afficher: 
 // renvoit un tableau de tableau
-function recup_tableau_des_users_a_afficher($select_groupe,  $DEBUG=FALSE)
+function recup_tableau_des_users_a_afficher($select_groupe)
 {
 
 	// si acces sans authentification est permis : alors droit de voir tout le monde
@@ -941,7 +935,7 @@ function recup_tableau_des_users_a_afficher($select_groupe,  $DEBUG=FALSE)
 			$sql1 = $sql1." WHERE u_login!='conges' AND u_login!='admin' ";
 
 			//recup de la liste des users des groupes dont le user est membre
-			$list_users=get_list_users_du_groupe($select_groupe,  $DEBUG);
+			$list_users=get_list_users_du_groupe($select_groupe);
 			if($list_users!="")  //si la liste n'est pas vide ( serait le cas si groupe vide)
 				$sql1 = $sql1." AND u_login IN ($list_users) ORDER BY u_nom, u_prenom ";
 		}
@@ -967,7 +961,7 @@ function recup_tableau_des_users_a_afficher($select_groupe,  $DEBUG=FALSE)
 				$sql1 = $sql1." WHERE u_login!='conges' AND u_login!='admin' ";
 
 				//recup de la liste des users des groupes dont le user est membre
-				$list_users=get_list_users_du_groupe($select_groupe,  $DEBUG);
+				$list_users=get_list_users_du_groupe($select_groupe);
 				if($list_users!="")  //si la liste n'est pas vide ( serait le cas si groupe vide)
 				$sql1 = $sql1." AND u_login IN ($list_users) ";
 					
@@ -990,7 +984,7 @@ function recup_tableau_des_users_a_afficher($select_groupe,  $DEBUG=FALSE)
 				$sql1 = $sql1.' AND ( u_login = \''.\includes\SQL::quote($_SESSION['userlogin']).'\' ';
 
 				//recup de la liste des users des groupes dont le user est membre
-				$list_users=get_list_users_du_groupe($select_groupe,  $DEBUG);
+				$list_users=get_list_users_du_groupe($select_groupe);
 				if($list_users!="")  //si la liste n'est pas vide ( serait le cas si groupe vide)
 					$sql1 = $sql1." OR u_login IN ($list_users) ";
 					$sql1 = $sql1." ) ";
@@ -1037,7 +1031,7 @@ function recup_tableau_des_users_a_afficher($select_groupe,  $DEBUG=FALSE)
 						}
 						
 						//recup de la liste des users dont le user est responsable
-						$list_users_2=get_list_all_users_du_resp($_SESSION['userlogin'],  $DEBUG);
+						$list_users_2=get_list_all_users_du_resp($_SESSION['userlogin']);
 						if($list_users_2!="")  //si la liste n'est pas vide ( serait le cas si n'est responsable d'aucun groupe)
 							$sql1 = $sql1." OR u_login IN ($list_users_2) ";
 

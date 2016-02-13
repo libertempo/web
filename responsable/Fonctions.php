@@ -32,14 +32,14 @@ namespace responsable;
 class Fonctions
 {
     // on insert l'ajout de conges dans la table periode
-    public static function insert_ajout_dans_periode($DEBUG, $login, $nb_jours, $id_type_abs, $commentaire)
+    public static function insert_ajout_dans_periode($login, $nb_jours, $id_type_abs, $commentaire)
     {
         $date_today=date("Y-m-d");
 
-        $result=insert_dans_periode($login, $date_today, "am", $date_today, "am", $nb_jours, $commentaire, $id_type_abs, "ajout", 0,  $DEBUG);
+        $result=insert_dans_periode($login, $date_today, "am", $date_today, "am", $nb_jours, $commentaire, $id_type_abs, "ajout", 0);
     }
 
-    public static function ajout_global_groupe($choix_groupe, $tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all,  $DEBUG=FALSE)
+    public static function ajout_global_groupe($choix_groupe, $tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all)
     {
         // $tab_new_nb_conges_all[$id_conges]= nb_jours
         // $tab_calcul_proportionnel[$id_conges]= TRUE / FALSE
@@ -49,7 +49,7 @@ class Fonctions
         $return = '';
 
         // recup de la liste des users d'un groupe donné
-        $list_users = get_list_users_du_groupe($choix_groupe,  $DEBUG);
+        $list_users = get_list_users_du_groupe($choix_groupe);
 
         foreach($tab_new_nb_conges_all as $id_conges => $nb_jours) {
             if($nb_jours!=0) {
@@ -68,7 +68,7 @@ class Fonctions
                         // pour arrondir au 1/2 le + proche on  fait x 2, on arrondit, puis on divise par 2
                         $nb_conges = (ROUND(($nb_jours*($current_quotite/100))*2))/2  ;
                     }
-                    $nb_conges_ok = verif_saisie_decimal($nb_conges, $DEBUG);
+                    $nb_conges_ok = verif_saisie_decimal($nb_conges);
                     if($nb_conges_ok){
                         // 1 : on update conges_solde_user
                         $req_update = "UPDATE conges_solde_user SET su_solde = su_solde+$nb_conges
@@ -77,39 +77,31 @@ class Fonctions
 
                         // 2 : on insert l'ajout de conges dans la table periode
                         // recup du nom du groupe
-                        $groupename= get_group_name_from_id($choix_groupe,  $DEBUG);
+                        $groupename= get_group_name_from_id($choix_groupe);
                         $commentaire =  _('resp_ajout_conges_comment_periode_groupe') ." $groupename";
 
                         // ajout conges
-                        \responsable\Fonctions::insert_ajout_dans_periode($DEBUG, $current_login, $nb_conges, $id_conges, $commentaire);
+                        \responsable\Fonctions::insert_ajout_dans_periode($current_login, $nb_conges, $id_conges, $commentaire);
                     }
 
                 }
 
-                $group_name = get_group_name_from_id($choix_groupe,  $DEBUG);
+                $group_name = get_group_name_from_id($choix_groupe);
                 // 3 : Enregistrement du commentaire relatif à l'ajout de jours de congés
                 if( (!isset($tab_calcul_proportionnel[$id_conges])) || ($tab_calcul_proportionnel[$id_conges]!=TRUE) ) {
                     $comment_log = "ajout conges pour groupe $group_name ($nb_jours jour(s)) ($comment) (calcul proportionnel : No)";
                 } else {
                     $comment_log = "ajout conges pour groupe $group_name ($nb_jours jour(s)) ($comment) (calcul proportionnel : Yes)";
                 }
-                log_action(0, "ajout", "groupe", $comment_log,  $DEBUG);
+                log_action(0, "ajout", "groupe", $comment_log);
             }
         }
-
-        if( $DEBUG ) {
-            $return .= '<form action="' . $PHP_SELF . '" method="POST">';
-            $return .= '<input type="hidden" name="session" value="' . $session . '">';
-            $return .= '<input class="btn" type="submit" value="' . _('form_ok') . '">';
-            $return .= '</form>';
-        } else {
-            $return .= ' ' . _('form_modif_ok') . '<br><br>';
-            redirect( ROOT_PATH .'responsable/resp_index.php?session=' . $session );
-        }
+        $return .= ' ' . _('form_modif_ok') . '<br><br>';
+        redirect( ROOT_PATH .'responsable/resp_index.php?session=' . $session );
         return $return;
     }
 
-    public static function ajout_global($tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all,  $DEBUG=FALSE)
+    public static function ajout_global($tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id() ;
@@ -121,17 +113,7 @@ class Fonctions
         // recup de la liste de TOUS les users dont $resp_login est responsable
         // (prend en compte le resp direct, les groupes, le resp virtuel, etc ...)
         // renvoit une liste de login entre quotes et séparés par des virgules
-        $list_users_du_resp = get_list_all_users_du_resp($_SESSION['userlogin'],  $DEBUG);
-        if( $DEBUG ) {
-            $return .= 'list_all_users_du_resp = ' . $list_users_du_resp . '<br>';
-        }
-
-        if( $DEBUG ) {
-            $return .= 'tab_new_nb_conges_all = <br>' . var_export($tab_new_nb_conges_all, true) . '<br>';
-        }
-        if( $DEBUG ) {
-            $return .= 'tab_calcul_proportionnel = <br>' . var_export($tab_calcul_proportionnel, true) . '<br>';
-        }
+        $list_users_du_resp = get_list_all_users_du_resp($_SESSION['userlogin']);
 
         foreach($tab_new_nb_conges_all as $id_conges => $nb_jours) {
             if($nb_jours!=0) {
@@ -151,7 +133,7 @@ class Fonctions
                         $nb_conges = (ROUND(($nb_jours*($current_quotite/100))*2))/2  ;
                     }
 
-                    $nb_conges_ok = verif_saisie_decimal($nb_conges, $DEBUG);
+                    $nb_conges_ok = verif_saisie_decimal($nb_conges);
                     if ($nb_conges_ok) {
                         // 1 : update de la table conges_solde_user
                         $req_update = "UPDATE conges_solde_user SET su_solde = su_solde+$nb_conges
@@ -161,7 +143,7 @@ class Fonctions
                         // 2 : on insert l'ajout de conges GLOBAL (pour tous les users) dans la table periode
                         $commentaire =  _('resp_ajout_conges_comment_periode_all') ;
                         // ajout conges
-                        \responsable\Fonctions::insert_ajout_dans_periode($DEBUG, $current_login, $nb_conges, $id_conges, $commentaire);
+                        \responsable\Fonctions::insert_ajout_dans_periode($current_login, $nb_conges, $id_conges, $commentaire);
                     }
                 }
                 // 3 : Enregistrement du commentaire relatif à l'ajout de jours de congés
@@ -170,24 +152,17 @@ class Fonctions
                 } else {
                     $comment_log = "ajout conges global ($nb_jours jour(s)) ($comment) (calcul proportionnel : Yes)";
                 }
-                log_action(0, "ajout", "tous", $comment_log,  $DEBUG);
+                log_action(0, "ajout", "tous", $comment_log);
             }
         }
 
-        if( $DEBUG ) {
-            $return .= '<form action="' . $PHP_SELF . '" method="POST">';
-            $return .= '<input type="hidden" name="session" value="' . $session . '">';
-            $return .= '<input class="btn" type="submit" value="' . _('form_ok') . '">';
-            $return .= '</form>';
-        } else {
-            $return .= ' ' . _('form_modif_ok') . '<br><br>';
-            /* APPEL D'UNE AUTRE PAGE au bout d'une tempo de 2secondes */
-            redirect( ROOT_PATH .'responsable/resp_index.php?session=' . $session );
-        }
+        $return .= ' ' . _('form_modif_ok') . '<br><br>';
+        /* APPEL D'UNE AUTRE PAGE au bout d'une tempo de 2secondes */
+        redirect( ROOT_PATH .'responsable/resp_index.php?session=' . $session );
         return $return;
     }
 
-    public static function ajout_conges($tab_champ_saisie, $tab_commentaire_saisie,  $DEBUG=FALSE)
+    public static function ajout_conges($tab_champ_saisie, $tab_commentaire_saisie)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id();
@@ -197,12 +172,8 @@ class Fonctions
         {
             foreach($tab_conges as $id_conges => $user_nb_jours_ajout) {
                 $user_nb_jours_ajout_float =(float) $user_nb_jours_ajout ;
-                $valid=verif_saisie_decimal($user_nb_jours_ajout_float, $DEBUG);   //verif la bonne saisie du nombre décimal
+                $valid=verif_saisie_decimal($user_nb_jours_ajout_float);   //verif la bonne saisie du nombre décimal
                 if($valid) {
-                    if( $DEBUG ) {
-                        $return .= $user_name . '---' . $id_conges . '---' . $user_nb_jours_ajout_float . '<br>';
-                    }
-
                     if($user_nb_jours_ajout_float!=0) {
                         /* Modification de la table conges_users */
                         $sql1 = "UPDATE conges_solde_user SET su_solde = su_solde+$user_nb_jours_ajout_float WHERE su_login='$user_name' AND su_abs_id = $id_conges " ;
@@ -217,26 +188,18 @@ class Fonctions
                          */
                         // on insert l'ajout de conges dans la table periode
                         $commentaire =  _('resp_ajout_conges_comment_periode_user') ;
-                        \responsable\Fonctions::insert_ajout_dans_periode($DEBUG, $user_name, $user_nb_jours_ajout_float, $id_conges, $commentaire);
+                        \responsable\Fonctions::insert_ajout_dans_periode($user_name, $user_nb_jours_ajout_float, $id_conges, $commentaire);
                     }
                 }
             }
         }
-
-        if( $DEBUG ) {
-            $return .= '<form action="' . $PHP_SELF . '" method="POST">';
-            $return .= '<input type="hidden" name="session" value="' . $session . '">';
-            $return .= '<input class="btn" type="submit" value="' . _('form_ok') . '">';
-            $return .= '</form>';
-        } else {
-            $return .= ' '. _('form_modif_ok') . '<br><br>';
-            /* APPEL D'UNE AUTRE PAGE au bout d'une tempo de 2secondes */
-            $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $PHP_SELF . '?session=' . $session . '">';
-        }
+        $return .= ' '. _('form_modif_ok') . '<br><br>';
+        /* APPEL D'UNE AUTRE PAGE au bout d'une tempo de 2secondes */
+        $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $PHP_SELF . '?session=' . $session . '">';
         return $return;
     }
 
-    public static function affichage_saisie_globale_groupe($tab_type_conges,  $DEBUG=FALSE)
+    public static function affichage_saisie_globale_groupe($tab_type_conges)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id() ;
@@ -248,7 +211,7 @@ class Fonctions
         // on établi la liste complète des groupes dont on est le resp (ou le grd resp)
         $list_group_resp=get_list_groupes_du_resp($_SESSION['userlogin']);
         if( ($_SESSION['config']['double_validation_conges']) && ($_SESSION['config']['grand_resp_ajout_conges']) ) {
-            $list_group_grd_resp=get_list_groupes_du_grand_resp($_SESSION['userlogin'],  $DEBUG);
+            $list_group_grd_resp=get_list_groupes_du_grand_resp($_SESSION['userlogin']);
         } else {
             $list_group_grd_resp="";
         }
@@ -312,7 +275,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affichage_saisie_globale_pour_tous($tab_type_conges,  $DEBUG=FALSE)
+    public static function affichage_saisie_globale_pour_tous($tab_type_conges)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id() ;
@@ -351,7 +314,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affichage_saisie_user_par_user($tab_type_conges, $tab_type_conges_exceptionnels, $tab_all_users_du_resp, $tab_all_users_du_grand_resp,  $DEBUG=FALSE)
+    public static function affichage_saisie_user_par_user($tab_type_conges, $tab_type_conges_exceptionnels, $tab_all_users_du_resp, $tab_all_users_du_grand_resp)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id() ;
@@ -474,7 +437,7 @@ class Fonctions
         return $return;
     }
 
-    public static function saisie_ajout( $tab_type_conges,  $DEBUG)
+    public static function saisie_ajout( $tab_type_conges)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id() ;
@@ -483,9 +446,6 @@ class Fonctions
         // recup du tableau des types de conges (seulement les congesexceptionnels )
         if ($_SESSION['config']['gestion_conges_exceptionnels']) {
             $tab_type_conges_exceptionnels = recup_tableau_types_conges_exceptionnels();
-            if( $DEBUG ) {
-                $return .= 'tab_type_conges_exceptionnels = ' . var_export($tab_type_conges_exceptionnels, true) . '<br><br>';
-            }
         } else {
             $tab_type_conges_exceptionnels = array();
         }
@@ -495,30 +455,23 @@ class Fonctions
         // renvoit une liste de login entre quotes et séparés par des virgules
         $tab_all_users_du_resp=recup_infos_all_users_du_resp($_SESSION['userlogin']);
         $tab_all_users_du_grand_resp=recup_infos_all_users_du_grand_resp($_SESSION['userlogin']);
-        if( $DEBUG ) {
-            $return .= 'tab_all_users_du_resp =<br>' . var_export($tab_all_users_du_resp, true) . '<br>';
-        }
-        if( $DEBUG ) {
-            $return .= 'tab_all_users_du_grand_resp =<br>' . var_export($tab_all_users_du_grand_resp, true) . '<br>';
-        }
-
         if( (count($tab_all_users_du_resp)!=0) || (count($tab_all_users_du_grand_resp)!=0) ) {
             /************************************************************/
             /* SAISIE GLOBALE pour tous les utilisateurs du responsable */
-            $return .= \responsable\Fonctions::affichage_saisie_globale_pour_tous($tab_type_conges,  $DEBUG);
+            $return .= \responsable\Fonctions::affichage_saisie_globale_pour_tous($tab_type_conges);
             $return .= '<br>';
 
             /***********************************************************************/
             /* SAISIE GROUPE pour tous les utilisateurs d'un groupe du responsable */
             if( $_SESSION['config']['gestion_groupes'] ) {
-                $return .= \responsable\Fonctions::affichage_saisie_globale_groupe($tab_type_conges,  $DEBUG);
+                $return .= \responsable\Fonctions::affichage_saisie_globale_groupe($tab_type_conges);
             }
 
             $return .= '<hr/>';
 
             /************************************************************/
             /* SAISIE USER PAR USER pour tous les utilisateurs du responsable */
-            $return .= \responsable\Fonctions::affichage_saisie_user_par_user($tab_type_conges, $tab_type_conges_exceptionnels, $tab_all_users_du_resp, $tab_all_users_du_grand_resp,  $DEBUG);
+            $return .= \responsable\Fonctions::affichage_saisie_user_par_user($tab_type_conges, $tab_type_conges_exceptionnels, $tab_all_users_du_resp, $tab_all_users_du_grand_resp);
             $return .= '<br>';
         } else {
             $return .= _('resp_etat_aucun_user') . '<br>';
@@ -533,7 +486,7 @@ class Fonctions
      * @access public
      * @static
      */
-    public static function ajoutCongesModule($tab_type_cong, $DEBUG = false)
+    public static function ajoutCongesModule($tab_type_cong)
     {
         //var pour resp_ajout_conges_all.php
         $ajout_conges            = getpost_variable('ajout_conges');
@@ -548,32 +501,23 @@ class Fonctions
         $tab_new_comment_all     = getpost_variable('tab_new_comment_all');
         $return = '';
 
-
-        if( $DEBUG ) {
-            $return .= 'tab_new_nb_conges_all = <br>' . var_export($tab_new_nb_conges_all, true) . '<br>';
-        }
-        if( $DEBUG ) {
-            $return .= 'tab_calcul_proportionnel = <br>' . var_export($tab_calcul_proportionnel, true) . '<br>';
-        }
-
-
         // titre
         $return .= '<h1>' . _('resp_ajout_conges_titre') . '</h1>';
 
         if($ajout_conges=="TRUE") {
-            $return .= \responsable\Fonctions::ajout_conges($tab_champ_saisie, $tab_commentaire_saisie, $DEBUG);
+            $return .= \responsable\Fonctions::ajout_conges($tab_champ_saisie, $tab_commentaire_saisie);
         } elseif($ajout_global=="TRUE") {
-            $return .= \responsable\Fonctions::ajout_global($tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all,  $DEBUG);
+            $return .= \responsable\Fonctions::ajout_global($tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all);
         } elseif($ajout_groupe=="TRUE") {
-            $return .= \responsable\Fonctions::ajout_global_groupe($choix_groupe, $tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all,  $DEBUG);
+            $return .= \responsable\Fonctions::ajout_global_groupe($choix_groupe, $tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all);
         } else {
-            $return .= \responsable\Fonctions::saisie_ajout($tab_type_cong, $DEBUG);
+            $return .= \responsable\Fonctions::saisie_ajout($tab_type_cong);
         }
         return $return;
     }
 
     // calcule de la date limite d'utilisation des reliquats (si on utilise une date limite et qu'elle n'est pas encore calculée) et stockage dans la table
-    public static function set_nouvelle_date_limite_reliquat( $DEBUG=FALSE)
+    public static function set_nouvelle_date_limite_reliquat()
     {
         //si on autorise les reliquats
         if($_SESSION['config']['autorise_reliquats_exercice']) {
@@ -595,45 +539,31 @@ class Fonctions
     }
 
     // cloture / debut d'exercice pour TOUS les users d'un groupe'
-    public static function cloture_globale_groupe($group_id, $tab_type_conges,  $DEBUG=FALSE)
+    public static function cloture_globale_groupe($group_id, $tab_type_conges)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id();
         $return = '';
 
         // recup de la liste de TOUS les users du groupe
-        $tab_all_users_du_groupe=recup_infos_all_users_du_groupe($group_id,  $DEBUG);
-        if( $DEBUG ) {
-            $return .= 'tab_all_users_du_groupe =<br>' . var_export($tab_all_users_du_groupe, true) . '<br>';
-        }
-        if( $DEBUG ) {
-            $return .= 'tab_type_conges =<br>' . var_export($tab_type_conges, true) . '<br>';
-        }
+        $tab_all_users_du_groupe=recup_infos_all_users_du_groupe($group_id);
 
         $comment_cloture =  _('resp_cloture_exercice_commentaire') ." ".date("m/Y");
 
         if(count($tab_all_users_du_groupe)!=0) {
             // traitement des users dont on est responsable :
             foreach($tab_all_users_du_groupe as $current_login => $tab_current_user) {
-                $return .= cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $comment_cloture,  $DEBUG);
+                $return .= cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $comment_cloture);
             }
         }
-
-        if( $DEBUG ) {
-            $return .= '<form action="' . $PHP_SELF . '" method="POST">';
-            $return .= '<input type="hidden" name="session" value="' . $session . '">';
-            $return .= '<input class="btn" type="submit" value="' . _('form_ok') . '">';
-            $return .= '</form>';
-        } else {
-            $return .= ' ' . _('form_modif_ok') . '<br><br>';
-            /* APPEL D'UNE AUTRE PAGE au bout d'une tempo de 2secondes */
-            $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $PHP_SELF . '?session=' . $session . '">';
-        }
+        $return .= ' ' . _('form_modif_ok') . '<br><br>';
+        /* APPEL D'UNE AUTRE PAGE au bout d'une tempo de 2secondes */
+        $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $PHP_SELF . '?session=' . $session . '">';
         return $return;
     }
 
     // cloture / debut d'exercice pour TOUS les users du resp (ou grand resp)
-    public static function cloture_globale($tab_type_conges,  $DEBUG=FALSE)
+    public static function cloture_globale($tab_type_conges)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id();
@@ -644,47 +574,30 @@ class Fonctions
         // renvoit une liste de login entre quotes et séparés par des virgules
         $tab_all_users_du_resp=recup_infos_all_users_du_resp($_SESSION['userlogin']);
         $tab_all_users_du_grand_resp=recup_infos_all_users_du_grand_resp($_SESSION['userlogin']);
-        if( $DEBUG ) {
-            $return .= 'tab_all_users_du_resp =<br>' . var_export($tab_all_users_du_resp, true) . '<br>';
-        }
-        if( $DEBUG ) {
-            $return .= 'tab_all_users_du_grand_resp =<br>' . var_export($tab_all_users_du_grand_resp, true) . '<br>';
-        }
-        if( $DEBUG ) {
-            $return .= 'tab_type_conges =<br>' . var_export($tab_type_conges, true) . '<br>';
-        }
 
         $comment_cloture =  _('resp_cloture_exercice_commentaire') ." ".date("m/Y");
 
         if( (count($tab_all_users_du_resp)!=0) || (count($tab_all_users_du_grand_resp)!=0) ) {
             // traitement des users dont on est responsable :
             foreach($tab_all_users_du_resp as $current_login => $tab_current_user) {
-                $return .= cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $comment_cloture,  $DEBUG);
+                $return .= cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $comment_cloture);
             }
             // traitement des users dont on est grand responsable :
             if( ($_SESSION['config']['double_validation_conges']) && ($_SESSION['config']['grand_resp_ajout_conges']) ) {
                 foreach($tab_all_users_du_grand_resp as $current_login => $tab_current_user) {
-                    $return .= cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $comment_cloture,  $DEBUG);
+                    $return .= cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $comment_cloture);
                 }
             }
         }
-
-        if( $DEBUG ) {
-            $return .= '<form action="' . $PHP_SELF . '" method="POST">';
-            $return .= '<input type="hidden" name="session" value="' . $session . '">';
-            $return .= '<input class="btn" type="submit" value="' . _('form_ok') . '">';
-            $return .= '</form>';
-        } else {
-            $return .= ' ' . _('form_modif_ok') . '<br><br>';
-            /* APPEL D'UNE AUTRE PAGE au bout d'une tempo de 2secondes */
-            $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $PHP_SELF . '?session=' . $session . '">';
-        }
+        $return .= ' ' . _('form_modif_ok') . '<br><br>';
+        /* APPEL D'UNE AUTRE PAGE au bout d'une tempo de 2secondes */
+        $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $PHP_SELF . '?session=' . $session . '">';
         return $return;
     }
 
     // verifie si tous les users on été basculés de l'exerccice précédent vers le suivant.
     // si oui : on incrémente le num_exercice de l'application
-    public static function update_appli_num_exercice( $DEBUG=FALSE)
+    public static function update_appli_num_exercice()
     {
         // verif
         $appli_num_exercice = $_SESSION['config']['num_exercice'] ;
@@ -698,17 +611,17 @@ class Fonctions
 
             // ecriture dans les logs
             $new_appli_num_exercice = $appli_num_exercice+1 ;
-            log_action(0, '', '', 'fin/debut exercice (appli_num_exercice : '.$appli_num_exercice.' -> '.$new_appli_num_exercice.')',  $DEBUG);
+            log_action(0, '', '', 'fin/debut exercice (appli_num_exercice : '.$appli_num_exercice.' -> '.$new_appli_num_exercice.')');
         }
     }
 
-    public static function cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $commentaire,  $DEBUG=FALSE)
+    public static function cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $commentaire)
     {
         $return = '';
         // si le num d'exercice du user est < à celui de l'appli (il n'a pas encore été basculé): on le bascule d'exercice
         if($tab_current_user['num_exercice'] < $_SESSION['config']['num_exercice']) {
             // calcule de la date limite d'utilisation des reliquats (si on utilise une date limite et qu'elle n'est pas encore calculée)
-            \responsable\Fonctions::set_nouvelle_date_limite_reliquat( $DEBUG);
+            \responsable\Fonctions::set_nouvelle_date_limite_reliquat();
 
             //tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
             $tab_conges_current_user=$tab_current_user['conges'];
@@ -716,10 +629,6 @@ class Fonctions
                 $user_nb_jours_ajout_an = $tab_conges_current_user[$libelle]['nb_an'];
                 $user_solde_actuel=$tab_conges_current_user[$libelle]['solde'];
                 $user_reliquat_actuel=$tab_conges_current_user[$libelle]['reliquat'];
-
-                if( $DEBUG ) {
-                    $return .= $current_login . '---' . $id_conges . '---' . $user_nb_jours_ajout_an . '<br>';
-                }
 
                 /**********************************************/
                 /* Modification de la table conges_solde_user */
@@ -772,19 +681,18 @@ class Fonctions
 
                 // on insert l'ajout de conges dans la table periode (avec le commentaire)
                 $date_today=date("Y-m-d");
-                insert_dans_periode($current_login, $date_today, "am", $date_today, "am", $user_nb_jours_ajout_an, $commentaire, $id_conges, "ajout", 0,  $DEBUG);
+                insert_dans_periode($current_login, $date_today, "am", $date_today, "am", $user_nb_jours_ajout_an, $commentaire, $id_conges, "ajout", 0);
             }
 
             // on incrémente le num_exercice de l'application si tous les users on été basculés.
-            \responsable\Fonctions::update_appli_num_exercice( $DEBUG);
+            \responsable\Fonctions::update_appli_num_exercice();
         }
         return $return;
     }
 
     // cloture / debut d'exercice user par user pour les users du resp (ou grand resp)
-    public static function cloture_users($tab_type_conges, $tab_cloture_users, $tab_commentaire_saisie,  $DEBUG=FALSE)
+    public static function cloture_users($tab_type_conges, $tab_cloture_users, $tab_commentaire_saisie)
     {
-        //$DEBUG=TRUE;
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id();
         $return = '';
@@ -794,21 +702,6 @@ class Fonctions
         // renvoit une liste de login entre quotes et séparés par des virgules
         $tab_all_users_du_resp=recup_infos_all_users_du_resp($_SESSION['userlogin']);
         $tab_all_users_du_grand_resp=recup_infos_all_users_du_grand_resp($_SESSION['userlogin']);
-        if( $DEBUG ) {
-            $return .= 'tab_all_users_du_resp =<br>' . var_export($tab_all_users_du_resp, true) . '<br>';
-        }
-        if( $DEBUG ) {
-            $return .= 'tab_all_users_du_grand_resp =<br>' . var_export($tab_all_users_du_grand_resp, true) . '<br>';
-        }
-        if( $DEBUG ) {
-            $return .= 'tab_type_conges =<br>' . var_export($tab_type_conges, true) . '<br>';
-        }
-        if( $DEBUG ) {
-            $return .= 'tab_cloture_users =<br>' . var_export($tab_cloture_users) . '<br>';
-        }
-        if( $DEBUG ) {
-            $return .= 'tab_commentaire_saisie =<br>' . var_export($tab_commentaire_saisie, true) . '<br>';
-        }
 
         if( (count($tab_all_users_du_resp)!=0) || (count($tab_all_users_du_grand_resp)!=0) ) {
             // traitement des users dont on est responsable :
@@ -816,7 +709,7 @@ class Fonctions
                 // tab_cloture_users[$current_login]=TRUE si checkbox "cloturer" est cochée
                 if( (isset($tab_cloture_users[$current_login])) && ($tab_cloture_users[$current_login]=TRUE) ) {
                     $commentaire = $tab_commentaire_saisie[$current_login];
-                    $return .= \responsable\Fonctions::cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $commentaire,  $DEBUG);
+                    $return .= \responsable\Fonctions::cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $commentaire);
                 }
             }
             // traitement des users dont on est grand responsable :
@@ -825,26 +718,18 @@ class Fonctions
                     // tab_cloture_users[$current_login]=TRUE si checkbox "cloturer" est cochée
                     if( (isset($tab_cloture_users[$current_login])) && ($tab_cloture_users[$current_login]=TRUE) ) {
                         $commentaire = $tab_commentaire_saisie[$current_login];
-                        $return .= \responsable\Fonctions::cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $commentaire,  $DEBUG);
+                        $return .= \responsable\Fonctions::cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $commentaire);
                     }
                 }
             }
         }
-
-        if( $DEBUG ) {
-            $return .= '<form action="' . $PHP_SELF . '" method="POST">';
-            $return .= '<input type="hidden" name="session" value="' . $session . '">';
-            $return .= '<input class="btn" type="submit" value="' . _('form_ok') . '">';
-            $return .= '</form>';
-        } else {
-            $return .= ' ' . _('form_modif_ok') . '<br><br>';
-            /* APPEL D'UNE AUTRE PAGE au bout d'une tempo de 2secondes */
-            $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $PHP_SELF . '?session=' . $session . '">';
-        }
+        $return .= ' ' . _('form_modif_ok') . '<br><br>';
+        /* APPEL D'UNE AUTRE PAGE au bout d'une tempo de 2secondes */
+        $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $PHP_SELF . '?session=' . $session . '">';
         return $return;
     }
 
-    public static function affichage_cloture_globale_groupe($tab_type_conges,  $DEBUG=FALSE)
+    public static function affichage_cloture_globale_groupe($tab_type_conges)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id() ;
@@ -856,7 +741,7 @@ class Fonctions
         // on établi la liste complète des groupes dont on est le resp (ou le grd resp)
         $list_group_resp=get_list_groupes_du_resp($_SESSION['userlogin']);
         if( ($_SESSION['config']['double_validation_conges']) && ($_SESSION['config']['grand_resp_ajout_conges']) ) {
-            $list_group_grd_resp=get_list_groupes_du_grand_resp($_SESSION['userlogin'],  $DEBUG);
+            $list_group_grd_resp=get_list_groupes_du_grand_resp($_SESSION['userlogin']);
         } else {
             $list_group_grd_resp="";
         }
@@ -920,7 +805,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affichage_cloture_globale_pour_tous($tab_type_conges,  $DEBUG=FALSE)
+    public static function affichage_cloture_globale_pour_tous($tab_type_conges)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id() ;
@@ -980,7 +865,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affichage_cloture_user_par_user($tab_type_conges, $tab_all_users_du_resp, $tab_all_users_du_grand_resp,  $DEBUG=FALSE)
+    public static function affichage_cloture_user_par_user($tab_type_conges, $tab_all_users_du_resp, $tab_all_users_du_grand_resp)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id() ;
@@ -1054,7 +939,7 @@ class Fonctions
         return $return;
     }
 
-    public static function saisie_cloture( $tab_type_conges,  $DEBUG)
+    public static function saisie_cloture( $tab_type_conges)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id() ;
@@ -1065,29 +950,23 @@ class Fonctions
         // renvoit une liste de login entre quotes et séparés par des virgules
         $tab_all_users_du_resp=recup_infos_all_users_du_resp($_SESSION['userlogin']);
         $tab_all_users_du_grand_resp=recup_infos_all_users_du_grand_resp($_SESSION['userlogin']);
-        if( $DEBUG ) {
-            $return .= 'tab_all_users_du_resp =<br>' . var_export($tab_all_users_du_resp, true) . '<br>';
-        }
-        if( $DEBUG ) {
-            $return .= 'tab_all_users_du_grand_resp =<br>' . var_export($tab_all_users_du_grand_resp, true) . '<br>';
-        }
 
         if( (count($tab_all_users_du_resp)!=0) || (count($tab_all_users_du_grand_resp)!=0) ) {
             /************************************************************/
             /* SAISIE GLOBALE pour tous les utilisateurs du responsable */
-            $return .= affichage_cloture_globale_pour_tous($tab_type_conges,  $DEBUG);
+            $return .= affichage_cloture_globale_pour_tous($tab_type_conges);
             $return .= '<br>';
 
             /***********************************************************************/
             /* SAISIE GROUPE pour tous les utilisateurs d'un groupe du responsable */
             if( $_SESSION['config']['gestion_groupes'] ) {
-                $return .= \responsable\Fonctions::affichage_cloture_globale_groupe($tab_type_conges,  $DEBUG);
+                $return .= \responsable\Fonctions::affichage_cloture_globale_groupe($tab_type_conges);
             }
             $return .= '<br>';
 
             /************************************************************/
             /* SAISIE USER PAR USER pour tous les utilisateurs du responsable */
-            $return .= \responsable\Fonctions::affichage_cloture_user_par_user($tab_type_conges, $tab_all_users_du_resp, $tab_all_users_du_grand_resp,  $DEBUG);
+            $return .= \responsable\Fonctions::affichage_cloture_user_par_user($tab_type_conges, $tab_all_users_du_resp, $tab_all_users_du_grand_resp);
             $return .= '<br>';
 
         } else {
@@ -1103,7 +982,7 @@ class Fonctions
      * @access public
      * @static
      */
-    public static function clotureExerciceModule($DEBUG = false)
+    public static function clotureExerciceModule()
     {
         $choix_groupe            = getpost_variable('choix_groupe');
         $cloture_users           = getpost_variable('cloture_users');
@@ -1124,19 +1003,19 @@ class Fonctions
         /** initialisation des tableaux des types de conges/absences  **/
         // recup du tableau des types de conges (conges et congesexceptionnels)
         // on concatene les 2 tableaux
-        $tab_type_cong = ( recup_tableau_types_conges( $DEBUG) + recup_tableau_types_conges_exceptionnels( $DEBUG)  );
+        $tab_type_cong = ( recup_tableau_types_conges() + recup_tableau_types_conges_exceptionnels()  );
 
         // titre
         $return .= '<H2>' . _('resp_cloture_exercice_titre') . '</H2>';
 
         if($cloture_users=="TRUE") {
-            $return .= \responsable\Fonctions::cloture_users($tab_type_cong, $tab_cloture_users, $tab_commentaire_saisie,  $DEBUG);
+            $return .= \responsable\Fonctions::cloture_users($tab_type_cong, $tab_cloture_users, $tab_commentaire_saisie);
         } elseif($cloture_globale=="TRUE") {
-            $return .= \responsable\Fonctions::cloture_globale($tab_type_cong,  $DEBUG);
+            $return .= \responsable\Fonctions::cloture_globale($tab_type_cong);
         } elseif($cloture_groupe=="TRUE") {
-            $return .= \responsable\Fonctions::cloture_globale_groupe($choix_groupe, $tab_type_cong,  $DEBUG);
+            $return .= \responsable\Fonctions::cloture_globale_groupe($choix_groupe, $tab_type_cong);
         } else {
-            $return .= \responsable\Fonctions::saisie_cloture($tab_type_cong, $DEBUG);
+            $return .= \responsable\Fonctions::saisie_cloture($tab_type_cong);
         }
         return $return;
     }
@@ -1148,7 +1027,7 @@ class Fonctions
      * @access public
      * @static
      */
-    public static function pagePrincipaleModule($tab_type_cong, $tab_type_conges_exceptionnels, $session, $DEBUG = false)
+    public static function pagePrincipaleModule($tab_type_cong, $tab_type_conges_exceptionnels, $session)
     {
         $return = '';
         /***********************************/
@@ -1198,11 +1077,7 @@ class Fonctions
         // AFFICHAGE DE USERS DIRECTS DU RESP
 
         // Récup dans un tableau de tableau des informations de tous les users dont $_SESSION['userlogin'] est responsable
-        $tab_all_users=recup_infos_all_users_du_resp($_SESSION['userlogin'],  $DEBUG);
-        if( $DEBUG ) {
-            $return .= 'tab_all_users :<br>' . var_export($tab_all_users) . '<br>';
-        }
-
+        $tab_all_users=recup_infos_all_users_du_resp($_SESSION['userlogin']);
         if(count($tab_all_users)==0) {// si le tableau est vide (resp sans user !!) on affiche une alerte !
             $return .= '<tr align="center"><td class="histo" colspan="' .  $nb_colonnes . '">' . _('resp_etat_aucun_user') . '</td></tr>';
         } else {
@@ -1240,11 +1115,7 @@ class Fonctions
 
         if($_SESSION['config']['double_validation_conges']) {
             // Récup dans un tableau de tableau des informations de tous les users dont $_SESSION['userlogin'] est GRAND responsable
-            $tab_all_users_2=recup_infos_all_users_du_grand_resp($_SESSION['userlogin'],  $DEBUG);
-
-            if( $DEBUG ) {
-                $return .= 'tab_all_users_2 :<br>' . var_export($tab_all_users_2, true) . '<br>';
-            }
+            $tab_all_users_2=recup_infos_all_users_du_grand_resp($_SESSION['userlogin']);
 
             $compteur=0;  // compteur de ligne a afficher en dessous (dés que passe à 1 : on affiche une ligne de titre)
 
@@ -1293,7 +1164,7 @@ class Fonctions
         return $return;
     }
 
-    public static function new_conges($user_login, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type_id,  $DEBUG=FALSE)
+    public static function new_conges($user_login, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type_id)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id();
@@ -1306,20 +1177,17 @@ class Fonctions
         // verif validité des valeurs saisies
         $valid=verif_saisie_new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment);
 
-        if( $DEBUG ) {
-            $return .= 'verif_saisie_new_demande resp_traite_user : ' . $valid . '<br>';
-        }
         if ($valid) {
             $return .= $user_login . '---' . $new_debut . '_' . $new_demi_jour_deb . '---' . $new_fin . '_' .  $new_demi_jour_fin . '---' . $new_nb_jours . '---' . $new_comment . '---' . $new_type_id . '<br>';
 
             // recup dans un tableau de tableau les infos des types de conges et absences
-            $tab_tout_type_abs = recup_tableau_tout_types_abs( $DEBUG);
+            $tab_tout_type_abs = recup_tableau_tout_types_abs();
 
             /**********************************/
             /* insert dans conges_periode     */
             /**********************************/
             $new_etat="ok";
-            $result=insert_dans_periode($user_login, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type_id, $new_etat, 0, $DEBUG);
+            $result=insert_dans_periode($user_login, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type_id, $new_etat, 0);
 
             /************************************************/
             /* UPDATE table "conges_solde_user" (jours restants) */
@@ -1327,10 +1195,10 @@ class Fonctions
             // donc seulement si le type de l'absence qu'on annule est un "conges"
             if(isset($tab_tout_type_abs[$new_type_id]['type']) && $tab_tout_type_abs[$new_type_id]['type']=="conges") {
                 $user_nb_jours_pris_float=(float) $new_nb_jours ;
-                soustrait_solde_et_reliquat_user($user_login, "", $user_nb_jours_pris_float, $new_type_id, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin , $DEBUG);
+                soustrait_solde_et_reliquat_user($user_login, "", $user_nb_jours_pris_float, $new_type_id, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin);
             }
             $comment_log = "saisie conges par le responsable pour $user_login ($new_nb_jours jour(s)) type_conges = $new_type_id ( de $new_debut $new_demi_jour_deb a $new_fin $new_demi_jour_fin) ($new_comment)";
-            log_action(0, "", $user_login, $comment_log,  $DEBUG);
+            log_action(0, "", $user_login, $comment_log);
 
             if($result) {
                 $return .= _('form_modif_ok') . '<br><br>';
@@ -1348,14 +1216,14 @@ class Fonctions
         return $return;
     }
 
-    public static function traite_demandes($user_login, $tab_radio_traite_demande, $tab_text_refus,  $DEBUG=FALSE)
+    public static function traite_demandes($user_login, $tab_radio_traite_demande, $tab_text_refus)
     {
         $PHP_SELF=$_SERVER['PHP_SELF']; ;
         $session=session_id();
         $return = '';
 
         // recup dans un tableau de tableau les infos des types de conges et absences
-        $tab_tout_type_abs = recup_tableau_tout_types_abs( $DEBUG);
+        $tab_tout_type_abs = recup_tableau_tout_types_abs();
 
         while($elem_tableau = each($tab_radio_traite_demande)) {
             $champs = explode("--", $elem_tableau['value']);
@@ -1370,9 +1238,6 @@ class Fonctions
             $reponse=$champs[7];
             $numero=$elem_tableau['key'];
             $numero_int=(int) $numero;
-            if( $DEBUG ) {
-                $return .= '<br><br>conges numero :' . $numero . '--- User_login : ' . $user_login .  '--- nb de jours : ' . $user_nb_jours_pris . '---> ' .$date_deb . '<br>';
-            }
 
             if($reponse == "ACCEPTE") // acceptation definitive d'un conges
             {
@@ -1381,21 +1246,18 @@ class Fonctions
                 $ReqLog1 = \includes\SQL::query($sql1);
 
                 // Log de l'action
-                log_action($numero_int,"ok", $user_login, "traite demande $numero ($user_login) ($user_nb_jours_pris jours) : $date_deb",  $DEBUG);
+                log_action($numero_int,"ok", $user_login, "traite demande $numero ($user_login) ($user_nb_jours_pris jours) : $date_deb");
 
                 /* UPDATE table "conges_solde_user" (jours restants) */
                 // on retranche les jours seulement pour des conges pris (pas pour les absences)
                 // donc seulement si le type de l'absence qu'on accepte est un "conges"
-                if( $DEBUG ) {
-                    $return .= 'type_abs = ' . $tab_tout_type_abs[$value_type_abs_id]['type'] . '<br>';
-                }
                 if(($tab_tout_type_abs[$value_type_abs_id]['type']=="conges")||($tab_tout_type_abs[$value_type_abs_id]['type']=="conges_exceptionnels")) {
-                    soustrait_solde_et_reliquat_user($user_login, $numero_int, $user_nb_jours_pris_float, $value_type_abs_id, $date_deb, $demi_jour_deb, $date_fin, $demi_jour_fin, $DEBUG);
+                    soustrait_solde_et_reliquat_user($user_login, $numero_int, $user_nb_jours_pris_float, $value_type_abs_id, $date_deb, $demi_jour_deb, $date_fin, $demi_jour_fin);
                 }
 
                 //envoi d'un mail d'alerte au user (si demandé dans config de php_conges)
                 if($_SESSION['config']['mail_valid_conges_alerte_user']) {
-                    alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "accept_conges",  $DEBUG);
+                    alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "accept_conges");
                 }
             }
             elseif($reponse == "VALID") // première validation dans le cas d'une double validation
@@ -1405,11 +1267,11 @@ class Fonctions
                 $ReqLog1 = \inclusionSQL::query($sql1);
 
                 // Log de l'action
-                log_action($numero_int,"valid", $user_login, "traite demande $numero ($user_login) ($user_nb_jours_pris jours) : $date_deb",  $DEBUG);
+                log_action($numero_int,"valid", $user_login, "traite demande $numero ($user_login) ($user_nb_jours_pris jours) : $date_deb");
 
                 //envoi d'un mail d'alerte au user (si demandé dans config de php_conges)
                 if($_SESSION['config']['mail_valid_conges_alerte_user']) {
-                    alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "valid_conges",  $DEBUG);
+                    alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "valid_conges");
                 }
             }
             elseif($reponse == "REFUSE") // refus d'un conges
@@ -1421,38 +1283,28 @@ class Fonctions
                 $ReqLog3 = \includes\SQL::query($sql3);
 
                 // Log de l'action
-                log_action($numero_int,"refus", $user_login, "traite demande $numero ($user_login) ($user_nb_jours_pris jours) : $date_deb",  $DEBUG);
+                log_action($numero_int,"refus", $user_login, "traite demande $numero ($user_login) ($user_nb_jours_pris jours) : $date_deb");
 
                 //envoi d'un mail d'alerte au user (si demandé dans config de php_conges)
                 if($_SESSION['config']['mail_refus_conges_alerte_user']) {
-                    alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "refus_conges",  $DEBUG);
+                    alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "refus_conges");
                 }
             }
         }
-
-        if($DEBUG) {
-            $return .= '<form action="' . $PHP_SELF . '" method="POST">';
-            $return .= '<input type="hidden" name="session" value="' . $session . '">';
-            $return .= '<input type="hidden" name="onglet" value="traite_user">';
-            $return .= '<input type="hidden" name="user_login" value="' . $user_login . '">';
-            $return .= '<input class="btn" type="submit" value="' . _('form_ok') . '">';
-            $return .= '</form>';
-        } else {
-            $return .= _('form_modif_ok') . '<br><br>';
-            /* APPEL D'UNE AUTRE PAGE au bout d'une tempo de 2secondes */
-            $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $PHP_SELF . '?session=' . $session . '&user_login=' . $user_login . '">';
-        }
+        $return .= _('form_modif_ok') . '<br><br>';
+        /* APPEL D'UNE AUTRE PAGE au bout d'une tempo de 2secondes */
+        $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $PHP_SELF . '?session=' . $session . '&user_login=' . $user_login . '">';
         return $return;
     }
 
-    public static function annule_conges($user_login, $tab_checkbox_annule, $tab_text_annul,  $DEBUG=FALSE)
+    public static function annule_conges($user_login, $tab_checkbox_annule, $tab_text_annul)
     {
         $PHP_SELF=$_SERVER['PHP_SELF']; ;
         $session=session_id() ;
         $return = '';
 
         // recup dans un tableau de tableau les infos des types de conges et absences
-        $tab_tout_type_abs = recup_tableau_tout_types_abs( $DEBUG);
+        $tab_tout_type_abs = recup_tableau_tout_types_abs();
 
         while($elem_tableau = each($tab_checkbox_annule)) {
             $champs = explode("--", $elem_tableau['value']);
@@ -1466,16 +1318,12 @@ class Fonctions
 
             $motif_annul=addslashes($tab_text_annul[$numero_int]);
 
-            if( $DEBUG ) {
-                $return .= '<br><br>conges numero :' . $numero . '---> login : ' . $user_login . '---  nb de jours :  ' . $user_nb_jours_pris_float . '--- type : ' . $user_type_abs_id . '---> ANNULER <br>';
-            }
-
             /* UPDATE table "conges_periode" */
             $sql1 = 'UPDATE conges_periode SET p_etat="annul", p_motif_refus="'. \includes\SQL::quote($motif_annul).'", p_date_traitement=NOW() WHERE p_num="'. \includes\SQL::quote($numero_int).'" ';
             $ReqLog1 = \includes\SQL::query($sql1);
 
             // Log de l'action
-            log_action($numero_int,"annul", $user_login, "annulation conges $numero ($user_login) ($user_nb_jours_pris jours)",  $DEBUG);
+            log_action($numero_int,"annul", $user_login, "annulation conges $numero ($user_login) ($user_nb_jours_pris jours)");
 
             /* UPDATE table "conges_solde_user" (jours restants) */
             // on re-crédite les jours seulement pour des conges pris (pas pour les absences)
@@ -1488,27 +1336,17 @@ class Fonctions
 
             //envoi d'un mail d'alerte au user (si demandé dans config de php_conges)
             if($_SESSION['config']['mail_annul_conges_alerte_user']) {
-                alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "annul_conges",  $DEBUG);
+                alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "annul_conges");
             }
         }
-
-        if( $DEBUG ) {
-            $return .= '<form action="' . $PHP_SELF . '" method="POST">';
-            $return .= '<input type="hidden" name="session" value="' . $session . '">';
-            $return .= '<input type="hidden" name="onglet" value="traite_user">';
-            $return .= '<input type="hidden" name="user_login" value="' . $user_login . '">';
-            $return .= '<input class="btn" type="submit" value="' . _('form_ok') . '">';
-            $return .= '</form>';
-        } else {
-            $return .= _('form_modif_ok') . '<br><br>';
-            /* APPEL D'UNE AUTRE PAGE au bout d'une tempo de 2secondes */
-            $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $PHP_SELF . '?session=' . $session . '&user_login=' . $user_login . '">';
-        }
+        $return .= _('form_modif_ok') . '<br><br>';
+        /* APPEL D'UNE AUTRE PAGE au bout d'une tempo de 2secondes */
+        $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $PHP_SELF . '?session=' . $session . '&user_login=' . $user_login . '">';
         return $return;
     }
 
     //affiche l'état des conges du user (avec le formulaire pour le responsable)
-    public static function affiche_etat_conges_user_for_resp($user_login, $year_affichage, $tri_date, $onglet ,$DEBUG=FALSE)
+    public static function affiche_etat_conges_user_for_resp($user_login, $year_affichage, $tri_date, $onglet)
     {
         $PHP_SELF=$_SERVER['PHP_SELF']; ;
         $session=session_id() ;
@@ -1546,7 +1384,7 @@ class Fonctions
             $return .= '<b>' . _('resp_traite_user_aucun_conges') . '</b><br><br>';
         } else {
             // recup dans un tableau de tableau les infos des types de conges et absences
-            $tab_types_abs = recup_tableau_tout_types_abs( $DEBUG) ;
+            $tab_types_abs = recup_tableau_tout_types_abs() ;
 
             // AFFICHAGE TABLEAU
             $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=traite_user" method="POST">';
@@ -1658,7 +1496,7 @@ class Fonctions
     }
 
     //affiche l'état des demande en attente de 2ieme validation du user (avec le formulaire pour le responsable)
-    public static function affiche_etat_demande_2_valid_user_for_resp($user_login,  $DEBUG=FALSE)
+    public static function affiche_etat_demande_2_valid_user_for_resp($user_login)
     {
         $PHP_SELF=$_SERVER['PHP_SELF']; ;
         $session=session_id() ;
@@ -1762,7 +1600,7 @@ class Fonctions
     }
 
     //affiche l'état des demandes du user (avec le formulaire pour le responsable)
-    public static function affiche_etat_demande_user_for_resp($user_login, $tab_user, $tab_grd_resp,  $DEBUG=FALSE)
+    public static function affiche_etat_demande_user_for_resp($user_login, $tab_user, $tab_grd_resp)
     {
         $PHP_SELF=$_SERVER['PHP_SELF']; ;
         $session=session_id();
@@ -1876,7 +1714,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affichage($user_login,  $year_affichage, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $tri_date,  $DEBUG)
+    public static function affichage($user_login,  $year_affichage, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $tri_date)
     {
         $PHP_SELF=$_SERVER['PHP_SELF']; ;
         $session=session_id();
@@ -1885,31 +1723,21 @@ class Fonctions
         // on initialise le tableau global des jours fériés s'il ne l'est pas déjà :
         if(!isset($_SESSION["tab_j_feries"])) {
             init_tab_jours_feries();
-            //print_r($GLOBALS["tab_j_feries"]);   // verif DEBUG
         }
 
         /********************/
         /* Récupération des informations sur le user : */
         /********************/
-        $list_group_dbl_valid_du_resp = get_list_groupes_double_valid_du_resp($_SESSION['userlogin'],  $DEBUG);
+        $list_group_dbl_valid_du_resp = get_list_groupes_double_valid_du_resp($_SESSION['userlogin']);
         $tab_user=array();
-        $tab_user = recup_infos_du_user($user_login, $list_group_dbl_valid_du_resp,  $DEBUG);
-        if( $DEBUG ) {
-            $return .= 'tab_user =<br>' . var_export($tab_user) . '<br>';
-        }
+        $tab_user = recup_infos_du_user($user_login, $list_group_dbl_valid_du_resp);
 
-        $list_all_users_du_resp=get_list_all_users_du_resp($_SESSION['userlogin'],  $DEBUG);
-        if( $DEBUG ) {
-            $return .= 'list_all_users_du_resp = ' . $list_all_users_du_resp . '<br>';
-        }
+        $list_all_users_du_resp=get_list_all_users_du_resp($_SESSION['userlogin']);
 
         // recup des grd resp du user
         $tab_grd_resp=array();
         if($_SESSION['config']['double_validation_conges']) {
-            get_tab_grd_resp_du_user($user_login, $tab_grd_resp,  $DEBUG);
-            if( $DEBUG ) {
-                $return .= 'tab_grd_resp =<br>' . var_export($tab_grd_resp) . '<br>';
-            }
+            get_tab_grd_resp_du_user($user_login, $tab_grd_resp);
         }
 
         include_once ROOT_PATH . 'fonctions_javascript.php' ;
@@ -1945,9 +1773,6 @@ class Fonctions
             if($mois_calendrier_saisie_fin==0) {
                 $mois_calendrier_saisie_fin=date("m");
             }
-            if( $DEBUG ) {
-                $return .= $mois_calendrier_saisie_debut .  $year_calendrier_saisie_debut . ' - ' . $mois_calendrier_saisie_fin . $year_calendrier_saisie_fin . '<br>';
-            }
 
             $return .= '<h2>' . _('resp_traite_user_new_conges') . '</h2>';
 
@@ -1967,7 +1792,7 @@ class Fonctions
                 $return .= '<h2>' . _('resp_traite_user_etat_demandes') . '</h2>';
 
                 //affiche l'état des demandes du user (avec le formulaire pour le responsable)
-                $return .= \responsable\Fonctions::affiche_etat_demande_user_for_resp($user_login, $tab_user, $tab_grd_resp,  $DEBUG);
+                $return .= \responsable\Fonctions::affiche_etat_demande_user_for_resp($user_login, $tab_user, $tab_grd_resp);
 
                 $return .= '<hr/>';
             }
@@ -1985,7 +1810,7 @@ class Fonctions
                 $return .= '<h2>' . _('resp_traite_user_etat_demandes_2_valid') . '</h2>';
 
                 //affiche l'état des demande en attente de 2ieme valid du user (avec le formulaire pour le responsable)
-                $return .= \responsable\Fonctions::affiche_etat_demande_2_valid_user_for_resp($user_login,  $DEBUG);
+                $return .= \responsable\Fonctions::affiche_etat_demande_2_valid_user_for_resp($user_login);
 
                 $return .= '<hr/>';
             }
@@ -1996,7 +1821,7 @@ class Fonctions
         /*******************/
         //affiche l'état des conges du user (avec le formulaire pour le responsable)
         $onglet = "traite_user";
-        $return .= \responsable\Fonctions::affiche_etat_conges_user_for_resp($user_login,  $year_affichage, $tri_date, $onglet, $DEBUG);
+        $return .= \responsable\Fonctions::affiche_etat_conges_user_for_resp($user_login,  $year_affichage, $tri_date, $onglet);
         return $return;
     }
 
@@ -2007,7 +1832,7 @@ class Fonctions
      * @access public
      * @static
      */
-    public static function traiteUserModule($DEBUG = false)
+    public static function traiteUserModule()
     {
         //var pour resp_traite_user.php
         $user_login   = getpost_variable('user_login') ;
@@ -2028,7 +1853,7 @@ class Fonctions
         $return = '';
 
         if($_SESSION['config']['disable_saise_champ_nb_jours_pris']) { // zone de texte en readonly et grisée
-            $new_nb_jours = compter($user_login, '', $new_debut,  $new_fin, $new_demi_jour_deb, $new_demi_jour_fin, $comment,  $DEBUG);
+            $new_nb_jours = compter($user_login, '', $new_debut,  $new_fin, $new_demi_jour_deb, $new_demi_jour_fin, $comment);
         } else {
             $new_nb_jours = getpost_variable('new_nb_jours') ;
         }
@@ -2049,22 +1874,22 @@ class Fonctions
 
         // si une annulation de conges a été selectionée :
         if($tab_checkbox_annule!="") {
-            $return .= \responsable\Fonctions::annule_conges($user_login, $tab_checkbox_annule, $tab_text_annul,  $DEBUG);
+            $return .= \responsable\Fonctions::annule_conges($user_login, $tab_checkbox_annule, $tab_text_annul);
         }
         // si le traitement des demandes a été selectionée :
         elseif($tab_radio_traite_demande!="") {
-            $return .= \responsable\Fonctions::traite_demandes($user_login, $tab_radio_traite_demande, $tab_text_refus,  $DEBUG);
+            $return .= \responsable\Fonctions::traite_demandes($user_login, $tab_radio_traite_demande, $tab_text_refus);
         }
         // si un nouveau conges ou absence a été saisi pour un user :
         elseif($new_demande_conges==1) {
-            $return .= \responsable\Fonctions::new_conges($user_login, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type,  $DEBUG);
+            $return .= \responsable\Fonctions::new_conges($user_login, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type);
         } else {
-            $return .= \responsable\Fonctions::affichage($user_login,  $year_affichage, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $tri_date,  $DEBUG);
+            $return .= \responsable\Fonctions::affichage($user_login,  $year_affichage, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $tri_date);
         }
         return $return;
     }
 
-    public static function traite_all_demande_en_cours( $tab_bt_radio, $tab_text_refus, $DEBUG=FALSE)
+    public static function traite_all_demande_en_cours( $tab_bt_radio, $tab_text_refus)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id();
@@ -2094,11 +1919,11 @@ class Fonctions
                 if ($ReqLog1 && SQL::getVar('affected_rows') ) {
 
                     // Log de l'action
-                    log_action($numero_int, "valid", $user_login, "traite demande $numero ($user_login) ($user_nb_jours_pris jours) : $reponse",  $DEBUG);
+                    log_action($numero_int, "valid", $user_login, "traite demande $numero ($user_login) ($user_nb_jours_pris jours) : $reponse");
 
                     //envoi d'un mail d'alerte au user et au responsable du resp (pour double validation) (si demandé dans config de libertempo)
                     if($_SESSION['config']['mail_prem_valid_conges_alerte_user']) {
-                        alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "valid_conges",  $DEBUG);
+                        alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "valid_conges");
                     }
                 }
             }
@@ -2111,14 +1936,14 @@ class Fonctions
                 if ($ReqLog1 && \includes\SQL::getVar('affected_rows') ) {
 
                     // Log de l'action
-                    log_action($numero_int,"ok", $user_login, "traite demande $numero ($user_login) ($user_nb_jours_pris jours) : $reponse",  $DEBUG);
+                    log_action($numero_int,"ok", $user_login, "traite demande $numero ($user_login) ($user_nb_jours_pris jours) : $reponse");
 
                     /* UPDATE table "conges_solde_user" (jours restants) */
-                    soustrait_solde_et_reliquat_user($user_login, $numero_int, $user_nb_jours_pris, $type_abs, $date_deb, $demi_jour_deb, $date_fin, $demi_jour_fin, $DEBUG);
+                    soustrait_solde_et_reliquat_user($user_login, $numero_int, $user_nb_jours_pris, $type_abs, $date_deb, $demi_jour_deb, $date_fin, $demi_jour_fin);
 
                     //envoi d'un mail d'alerte au user (si demandé dans config de php_conges)
                     if($_SESSION['config']['mail_valid_conges_alerte_user']) {
-                        alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "accept_conges",  $DEBUG);
+                        alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "accept_conges");
                     }
                 }
             } elseif(strcmp($reponse, "not_OK")==0) {
@@ -2131,33 +1956,24 @@ class Fonctions
                 if ($ReqLog1 && \includes\SQL::getVar('affected_rows')) {
 
                     // Log de l'action
-                    log_action($numero_int,"refus", $user_login, "traite demande $numero ($user_login) ($user_nb_jours_pris jours) : refus",  $DEBUG);
+                    log_action($numero_int,"refus", $user_login, "traite demande $numero ($user_login) ($user_nb_jours_pris jours) : refus");
 
 
                     //envoi d'un mail d'alerte au user (si demandé dans config de php_conges)
                     if($_SESSION['config']['mail_refus_conges_alerte_user']) {
-                        alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "refus_conges",  $DEBUG);
+                        alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "refus_conges");
                     }
                 }
             }
         }
-
-        if( $DEBUG ) {
-            $return .= '<form action="' . $PHP_SELF . '?sesssion=' . $session . '&onglet=traitement_demande" method="POST">';
-            $return .= '<input type="hidden" name="session" value="' . $session . '">';
-            $return .= '<input class="btn" type="submit" value="' . _('form_ok') . '">';
-            $return .= '</form>';
-        } else {
-            $return .= _('form_modif_ok') . '<br><br>';
-            /* APPEL D'UNE AUTRE PAGE au bout d'une tempo de 2secondes */
-            $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $PHP_SELF  . '?session=' . $session . '&onglet=traitement_demandes">';
-        }
+        $return .= _('form_modif_ok') . '<br><br>';
+        /* APPEL D'UNE AUTRE PAGE au bout d'une tempo de 2secondes */
+        $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $PHP_SELF  . '?session=' . $session . '&onglet=traitement_demandes">';
         return $return;
     }
 
-    public static function affiche_all_demandes_en_cours($tab_type_conges,  $DEBUG=FALSE)
+    public static function affiche_all_demandes_en_cours($tab_type_conges)
     {
-        //$DEBUG=TRUE ;
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id() ;
         $count1=0;
@@ -2169,7 +1985,7 @@ class Fonctions
         // recup du tableau des types de conges (seulement les conges exceptionnels)
         $tab_type_conges_exceptionnels=array();
         if ($_SESSION['config']['gestion_conges_exceptionnels']) {
-            $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels( $DEBUG);
+            $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
         }
 
         /*********************************/
@@ -2177,10 +1993,7 @@ class Fonctions
         /*********************************/
 
         // Récup dans un tableau de tableau des informations de tous les users dont $_SESSION['userlogin'] est responsable
-        $tab_all_users_du_resp=recup_infos_all_users_du_resp($_SESSION['userlogin'],  $DEBUG);
-        if( $DEBUG ) {
-            $return .= 'tab_all_users_du_resp :<br>' . var_export($tab_all_users_du_resp, true) . '<br><br>';
-        }
+        $tab_all_users_du_resp=recup_infos_all_users_du_resp($_SESSION['userlogin']);
 
         // si tableau des users du resp n'est pas vide
         if( count($tab_all_users_du_resp) !=0 ) {
@@ -2198,7 +2011,7 @@ class Fonctions
 
         // Récup dans un tableau de tableau des informations de tous les users dont $_SESSION['userlogin'] est GRAND responsable
         if( $_SESSION['config']['double_validation_conges'] ) {
-            $tab_all_users_du_grand_resp=recup_infos_all_users_du_grand_resp($_SESSION['userlogin'],  $DEBUG);
+            $tab_all_users_du_grand_resp=recup_infos_all_users_du_grand_resp($_SESSION['userlogin']);
 
             // si tableau des users du grand resp n'est pas vide
             if( count($tab_all_users_du_grand_resp)!=0 ) {
@@ -2469,7 +2282,7 @@ class Fonctions
      * @access public
      * @static
      */
-    public static function traitementDemandesModule($tab_type_cong, $DEBUG = false)
+    public static function traitementDemandesModule($tab_type_cong)
     {
         //var pour resp_traite_demande_all.php
         $tab_bt_radio   = getpost_variable('tab_bt_radio');
@@ -2482,9 +2295,9 @@ class Fonctions
 
         // si le tableau des bouton radio des demandes est vide , on affiche les demandes en cours
         if($tab_bt_radio=="") {
-            $return .= \responsable\Fonctions::affiche_all_demandes_en_cours($tab_type_cong,  $DEBUG);
+            $return .= \responsable\Fonctions::affiche_all_demandes_en_cours($tab_type_cong);
         } else {
-            $return .= \responsable\Fonctions::traite_all_demande_en_cours( $tab_bt_radio, $tab_text_refus, $DEBUG);
+            $return .= \responsable\Fonctions::traite_all_demande_en_cours( $tab_bt_radio, $tab_text_refus);
         }
         return $return;
     }

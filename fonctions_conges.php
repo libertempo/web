@@ -30,7 +30,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 
 // affichage du calendrier avec les case à cocher, du mois du début du congés
-function  affiche_calendrier_saisie_date($user_login, $year, $mois, $type_debut_fin , $DEBUG=FALSE) {
+function  affiche_calendrier_saisie_date($user_login, $year, $mois, $type_debut_fin) {
     $jour_today            = date('j');
     $jour_today_name        = date('D');
     $first_jour_mois_timestamp    = mktime(0,0,0,$mois,1,$year);
@@ -73,7 +73,7 @@ function  affiche_calendrier_saisie_date($user_login, $year, $mois, $type_debut_
                 if ($i < 0 || $i > $nb_jours_mois )
                     echo '<td class="'.$td_second_class.'">-</td>';
                 else
-                    affiche_cellule_jour_cal_saisie($user_login, $j_timestamp, $td_second_class, $type_debut_fin , $DEBUG);
+                    affiche_cellule_jour_cal_saisie($user_login, $j_timestamp, $td_second_class, $type_debut_fin);
                 if ( ($i + $start_nb_day_before ) % 7 == 6)
                     echo '<tr>';
     }
@@ -94,10 +94,8 @@ function get_j_name_fr_2c($timestamp)
 
 
 //affiche le formulaire de saisie d'une nouvelle demande de conges
-function saisie_nouveau_conges($user_login, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet,  $DEBUG=FALSE)
+function saisie_nouveau_conges($user_login, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet)
 {
-    //$DEBUG=TRUE;
-    if( $DEBUG ) { echo 'user_login = '.$user_login.', year_calendrier_saisie_debut = '.$year_calendrier_saisie_debut.', mois_calendrier_saisie_debut = '.$mois_calendrier_saisie_debut.',year_calendrier_saisie_fin = '.$year_calendrier_saisie_fin.', mois_calendrier_saisie_fin = '.$mois_calendrier_saisie_fin.', onglet = '.$onglet.'<br>';}
 
     $PHP_SELF=$_SERVER['PHP_SELF'];
     $session=session_id();
@@ -158,7 +156,7 @@ function saisie_nouveau_conges($user_login, $year_calendrier_saisie_debut, $mois
     echo '</tr>';
     echo '</table>';
     /*** calendrier saisie date debut ***/
-    affiche_calendrier_saisie_date($user_login, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, 'new_debut', $DEBUG);
+    affiche_calendrier_saisie_date($user_login, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, 'new_debut');
     echo '</td>';
     /**************************************************/
     /* cellule 2 : boutons radio matin ou après midi */
@@ -233,7 +231,7 @@ function saisie_nouveau_conges($user_login, $year_calendrier_saisie_debut, $mois
     echo '</tr>';
     echo '</table>';
     /*** calendrier saisie date fin ***/
-    affiche_calendrier_saisie_date($user_login, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, 'new_fin',  $DEBUG);
+    affiche_calendrier_saisie_date($user_login, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, 'new_fin');
     echo '</td>';
     /**************************************************/
     /* cellule 2 : boutons radio matin ou après midi */
@@ -314,11 +312,11 @@ function saisie_nouveau_conges($user_login, $year_calendrier_saisie_debut, $mois
     /* boutons radio */
     /*****************/
     // recup d tableau des types de conges
-    $tab_type_conges=recup_tableau_types_conges( $DEBUG);
+    $tab_type_conges=recup_tableau_types_conges();
     // recup du tableau des types d'absence
-    $tab_type_absence=recup_tableau_types_absence( $DEBUG);
+    $tab_type_absence=recup_tableau_types_absence();
     // recup d tableau des types de conges exceptionnels
-    $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels( $DEBUG);
+    $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
     $already_checked = false;
 
     echo '<td align="left" valign="top">';
@@ -343,7 +341,7 @@ function saisie_nouveau_conges($user_login, $year_calendrier_saisie_debut, $mois
     // si le user a droit de saisir une mission ET si on est PAS dans une fenetre de responsable
     // OU si le resp a droit de saisir une mission ET si on est PAS dans une fenetre dd'utilisateur
     // OU si le resp a droit de saisir une mission ET si le resp est resp de lui meme
-    if( (($_SESSION['config']['user_saisie_mission'])&&($user_login==$_SESSION['userlogin'])) || (($_SESSION['config']['resp_saisie_mission'])&&($user_login!=$_SESSION['userlogin'])) || (($_SESSION['config']['resp_saisie_mission'])&&(is_resp_of_user($_SESSION['userlogin'], $user_login,  $DEBUG))) )
+    if( (($_SESSION['config']['user_saisie_mission'])&&($user_login==$_SESSION['userlogin'])) || (($_SESSION['config']['resp_saisie_mission'])&&($user_login!=$_SESSION['userlogin'])) || (($_SESSION['config']['resp_saisie_mission'])&&(is_resp_of_user($_SESSION['userlogin'], $user_login))) )
     {
         echo '<br>';
         // absences
@@ -384,7 +382,7 @@ function saisie_nouveau_conges($user_login, $year_calendrier_saisie_debut, $mois
     echo '</form>' ;
 }
 
-function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet,  $DEBUG=FALSE)
+function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet)
 {
     $PHP_SELF=$_SERVER['PHP_SELF'];
     $session=session_id();
@@ -457,11 +455,11 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
         /* boutons radio */
         /*****************/
         // recup du tableau des types de conges
-        $tab_type_conges=recup_tableau_types_conges( $DEBUG);
+        $tab_type_conges=recup_tableau_types_conges();
         // recup du tableau des types d'absence
-        $tab_type_absence=recup_tableau_types_absence( $DEBUG);
+        $tab_type_absence=recup_tableau_types_absence();
         // recup d tableau des types de conges exceptionnels
-        $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels( $DEBUG);
+        $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
         $already_checked = false;
 
         $return .= '<div class="row type-conges">';
@@ -487,7 +485,7 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
         // si le user a droit de saisir une mission ET si on est PAS dans une fenetre de responsable
         // OU si le resp a droit de saisir une mission ET si on est PAS dans une fenetre dd'utilisateur
         // OU si le resp a droit de saisir une mission ET si le resp est resp de lui meme
-        if( (($_SESSION['config']['user_saisie_mission'])&&($user_login==$_SESSION['userlogin'])) || (($_SESSION['config']['resp_saisie_mission'])&&($user_login!=$_SESSION['userlogin'])) || (($_SESSION['config']['resp_saisie_mission'])&&(is_resp_of_user($_SESSION['userlogin'], $user_login,  $DEBUG))) )
+        if( (($_SESSION['config']['user_saisie_mission'])&&($user_login==$_SESSION['userlogin'])) || (($_SESSION['config']['resp_saisie_mission'])&&($user_login!=$_SESSION['userlogin'])) || (($_SESSION['config']['resp_saisie_mission'])&&(is_resp_of_user($_SESSION['userlogin'], $user_login))) )
         {
             // absences
             $return .= '<div class="col-md-4">';
@@ -600,7 +598,7 @@ function init_var_navigation_mois_year( $mois_calendrier_saisie_debut, $year_cal
 // affiche une chaine représentant un decimal sans 0 à la fin ...
 // (un point separe les unités et les decimales et on ne considere que 2 decimales !!!)
 // ex : 10.00 devient 10  , 5.50 devient 5.5  , et 3.05 reste 3.05
-function affiche_decimal($str, $DEBUG=FALSE)
+function affiche_decimal($str)
 {
     $champs=explode('.', $str);
     $int=$champs[0];
@@ -673,7 +671,7 @@ function get_td_class_of_the_day_in_the_week($timestamp_du_jour)
 
 // recup des infos ARTT ou Temps Partiel :
 // attention : les param $val_matin et $val_aprem sont passées par référence (avec &) car on change leur valeur
-function recup_infos_artt_du_jour($sql_login, $j_timestamp, &$val_matin, &$val_aprem,  $DEBUG=FALSE)
+function recup_infos_artt_du_jour($sql_login, $j_timestamp, &$val_matin, &$val_aprem)
 {
     $num_semaine = date('W', $j_timestamp);
     $jour_name_fr_2c = get_j_name_fr_2c($j_timestamp); // nom du jour de la semaine en francais sur 2 caracteres
@@ -729,7 +727,7 @@ function recup_infos_artt_du_jour($sql_login, $j_timestamp, &$val_matin, &$val_a
 
 // recup des infos ARTT ou Temps Partiel :
 // attention : les param $val_matin et $val_aprem sont passées par référence (avec &) car on change leur valeur
-function recup_infos_artt_du_jour_from_tab($sql_login, $j_timestamp, &$val_matin, &$val_aprem, $tab_rtt_echange, $tab_rtt_planifiees, $DEBUG=FALSE)
+function recup_infos_artt_du_jour_from_tab($sql_login, $j_timestamp, &$val_matin, &$val_aprem, $tab_rtt_echange, $tab_rtt_planifiees)
 {
 
     //$tab_rtt_echange  //tableau indexé dont la clé est la date sous forme yyyy-mm-dd
@@ -793,7 +791,7 @@ function recup_infos_artt_du_jour_from_tab($sql_login, $j_timestamp, &$val_matin
 
 // verif validité d'un nombre saisi (decimal ou non)
 //  (attention : le $nombre est passé par référence car on le modifie si besoin)
-function verif_saisie_decimal(&$nombre, $DEBUG=FALSE)
+function verif_saisie_decimal(&$nombre)
 {
     if ( !preg_match('/^-?([0-9]+)([\.\,]?[0-9]?[0-9]?)$/', $nombre) )
     {
@@ -845,12 +843,12 @@ function date_fr($code, $timestmp)
 // parametre 2=login du destinataire (ou ":responsable:" si envoi au(x) responsable(s))
 // parametre 3= numero de l'absence concernée
 // parametre 4=objet du message (cf table conges_mail pour les diff valeurs possibles)
-function alerte_mail($login_expediteur, $destinataire, $num_periode, $objet,  $DEBUG=FALSE)
+function alerte_mail($login_expediteur, $destinataire, $num_periode, $objet)
 {
 
     /*********************************************/
     // recup des infos concernant l'expéditeur ....
-    $mail_array        = find_email_adress_for_user($login_expediteur, $DEBUG);
+    $mail_array        = find_email_adress_for_user($login_expediteur);
     $mail_sender_name    = $mail_array[0];
     $mail_sender_addr    = $mail_array[1];
 
@@ -860,11 +858,11 @@ function alerte_mail($login_expediteur, $destinataire, $num_periode, $objet,  $D
     $dest_mail  = '';
     if( $destinataire == ':responsable:' )  // c'est un message au responsable
     {
-        $tab_resp   = get_tab_resp_du_user($login_expediteur,  $DEBUG);
+        $tab_resp   = get_tab_resp_du_user($login_expediteur);
         foreach($tab_resp as $item_login => $item_presence)
         {
             // recherche de l'adresse mail du (des) responsable(s) :
-            $mail_array_dest = find_email_adress_for_user($item_login, $DEBUG);
+            $mail_array_dest = find_email_adress_for_user($item_login);
             $mail_dest_name = $mail_array_dest[0];
             $mail_dest_addr = $mail_array_dest[1];
 
@@ -878,7 +876,7 @@ function alerte_mail($login_expediteur, $destinataire, $num_periode, $objet,  $D
                 else
                     $new_objet  = $objet;
 
-                constuct_and_send_mail($new_objet, $mail_sender_name, $mail_sender_addr, $mail_dest_name, $mail_dest_addr, $num_periode,  $DEBUG);
+                constuct_and_send_mail($new_objet, $mail_sender_name, $mail_sender_addr, $mail_dest_name, $mail_dest_addr, $num_periode);
             }
         }
 
@@ -886,33 +884,33 @@ function alerte_mail($login_expediteur, $destinataire, $num_periode, $objet,  $D
     else   // c'est un message du responsale à un user
     {
         $dest_login        = $destinataire ;
-        $mail_array_dest    = find_email_adress_for_user($dest_login, $DEBUG);
+        $mail_array_dest    = find_email_adress_for_user($dest_login);
         $mail_dest_name     = $mail_array_dest[0];
         $mail_dest_addr     = $mail_array_dest[1];
 
         if( $mail_dest_addr == '' )
             echo "<b>ERROR : $mail_dest_name : no mail address !</b><br>\n";
         else
-            constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $mail_dest_name, $mail_dest_addr, $num_periode,  $DEBUG);
+            constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $mail_dest_name, $mail_dest_addr, $num_periode);
 
         /****************************/
         if( $objet == 'valid_conges' )  // c'est un mail de première validation de demande : il faut faire une copie au(x) grand(s) responsable(s)
         {
             // on recup la liste des grands resp du user
             $tab_grd_resp   = array();
-            get_tab_grd_resp_du_user($dest_login, $tab_grd_resp,  $DEBUG);
+            get_tab_grd_resp_du_user($dest_login, $tab_grd_resp);
 
             if( count($tab_grd_resp) != 0 ) {
                 foreach($tab_grd_resp as $item_login) {
                     // recherche de l'adresse mail du (des) responsable(s) :
-                    $mail_array_dest = find_email_adress_for_user($item_login, $DEBUG);
+                    $mail_array_dest = find_email_adress_for_user($item_login);
                     $mail_dest_name = $mail_array_dest[0];
                     $mail_dest_addr = $mail_array_dest[1];
 
                     if( $mail_dest_addr == '' )
                         echo "<b>ERROR : $mail_dest_name : no mail address !</b><br>\n";
                     else
-                        constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $mail_dest_name, $mail_dest_addr, $num_periode,  $DEBUG);
+                        constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $mail_dest_name, $mail_dest_addr, $num_periode);
                 }
             }
         }
@@ -921,7 +919,7 @@ function alerte_mail($login_expediteur, $destinataire, $num_periode, $objet,  $D
 
 
 // construit et envoie le mail
-function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $mail_dest_name, $mail_dest_addr, $num_periode,  $DEBUG=FALSE)
+function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $mail_dest_name, $mail_dest_addr, $num_periode)
 {
 
     require_once( LIBRARY_PATH .'phpmailer/PHPMailerAutoload.php' );  // ajout de la classe phpmailer
@@ -1032,25 +1030,17 @@ function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $m
 
     /*********************************************/
     // ENVOI du mail
-    if( $DEBUG )
+    if(!isset($mail_dest_addr))
     {
-        echo "SUBJECT = ".$sujet."<br>\n";
-        echo "CONTENU = ".$mail->FromName." ".$contenu."<br>\n";
+        echo "<b>ERROR : No recipient address for the message!</b><br>\n";
+        echo "<b>Message was not sent </b><br>";
     }
     else
     {
-        if(!isset($mail_dest_addr))
+        if(!$mail->Send())
         {
-            echo "<b>ERROR : No recipient address for the message!</b><br>\n";
             echo "<b>Message was not sent </b><br>";
-        }
-        else
-        {
-            if(!$mail->Send())
-            {
-                echo "<b>Message was not sent </b><br>";
-                echo "<b>Mailer Error: " . $mail->ErrorInfo."</b><br>";
-            }
+            echo "<b>Mailer Error: " . $mail->ErrorInfo."</b><br>";
         }
     }
 }
@@ -1059,7 +1049,7 @@ function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $m
 
 // recuperation du mail d'un user
 // renvoit un tableau a 2 valeurs : prenom+nom et email
-function find_email_adress_for_user($login, $DEBUG=FALSE)
+function find_email_adress_for_user($login)
 {
 
     $found_mail=array();
@@ -1247,7 +1237,7 @@ function affiche_selection_new_year($an_debut, $an_fin, $default)
 }
 
 // met la date aaaa-mm-jj dans le format jj-mm-aaaa
-function eng_date_to_fr($une_date, $DEBUG=FALSE)
+function eng_date_to_fr($une_date)
 {
  return substr($une_date, 8)."-".substr($une_date, 5, 2)."-".substr($une_date, 0, 4);
 
@@ -1255,7 +1245,7 @@ function eng_date_to_fr($une_date, $DEBUG=FALSE)
 
 
 // affichage de la cellule correspondant au jour dans les calendrier de saisie (demande de conges, etc ...)
-function affiche_cellule_jour_cal_saisie($login, $j_timestamp, $td_second_class, $result,  $DEBUG=FALSE)
+function affiche_cellule_jour_cal_saisie($login, $j_timestamp, $td_second_class, $result)
 {
     $date_j=date('Y-m-d', $j_timestamp);
     $j=date('d', $j_timestamp);
@@ -1266,7 +1256,7 @@ function affiche_cellule_jour_cal_saisie($login, $j_timestamp, $td_second_class,
 
     // recup des infos ARTT ou Temps Partiel :
     // la fonction suivante change les valeurs de $val_matin $val_aprem ....
-    recup_infos_artt_du_jour($login, $j_timestamp, $val_matin, $val_aprem,  $DEBUG);
+    recup_infos_artt_du_jour($login, $j_timestamp, $val_matin, $val_aprem);
 
     //## AFICHAGE ##
     if($val_matin=='Y')
@@ -1326,7 +1316,7 @@ function get_groups_name()
 // recup de la liste de TOUS les users dont $resp_login est responsable
 // (prend en compte le resp direct, les groupes, le resp virtuel, etc ...)
 // renvoie une liste de login entre quotes et séparés par des virgules
-function get_list_all_users_du_resp($resp_login,  $DEBUG=FALSE)
+function get_list_all_users_du_resp($resp_login)
 {
 
     $list_users="";
@@ -1334,7 +1324,7 @@ function get_list_all_users_du_resp($resp_login,  $DEBUG=FALSE)
     $sql1 = $sql1." AND  ( u_resp_login='$resp_login' " ;
     if($_SESSION['config']['gestion_groupes'] )
     {
-        $list_users_group=get_list_users_des_groupes_du_resp_sauf_resp($resp_login, $DEBUG);
+        $list_users_group=get_list_users_des_groupes_du_resp_sauf_resp($resp_login);
         if($list_users_group!="")
             $sql1=$sql1." OR u_login IN ($list_users_group) ";
     }
@@ -1363,7 +1353,7 @@ function get_list_all_users_du_resp($resp_login,  $DEBUG=FALSE)
 
         if($_SESSION['config']['gestion_groupes'] )
         {
-            $list_users_group=get_list_users_des_groupes_du_resp_sauf_resp($resp_login, $DEBUG);
+            $list_users_group=get_list_users_des_groupes_du_resp_sauf_resp($resp_login);
             if($list_users_group!="")
                 $sql_2=$sql_2." OR u_login IN ($list_users_group) ";
         }
@@ -1385,24 +1375,21 @@ function get_list_all_users_du_resp($resp_login,  $DEBUG=FALSE)
             if ($ReqLog_3->num_rows!=0)
             {
                 if($list_users=="")
-                    $list_users=get_list_all_users_du_resp($current_resp,  $DEBUG);
+                    $list_users=get_list_all_users_du_resp($current_resp);
                 else
-                    $list_users=$list_users.", ".get_list_all_users_du_resp($current_resp,  $DEBUG);
+                    $list_users=$list_users.", ".get_list_all_users_du_resp($current_resp);
             }
         }
 
     }
     // FIN gestion des absence des responsables :
     /************************************/
-
-    if( $DEBUG ) { echo "list_users = $list_users<br>\n" ;}
-
     return $list_users;
 }
 
 // recup de la liste des users d'un groupe donné
 // renvoit une liste de login entre quotes et séparés par des virgules
-function get_list_users_du_groupe($group_id,  $DEBUG=FALSE)
+function get_list_users_du_groupe($group_id)
 {
     $list_users=array();
     $sql1='SELECT DISTINCT(gu_login) FROM conges_groupe_users WHERE gu_gid = '.intval($group_id).' ORDER BY gu_login ';
@@ -1411,15 +1398,12 @@ function get_list_users_du_groupe($group_id,  $DEBUG=FALSE)
         $list_users[] = '"'.\includes\SQL::quote($resultat1["gu_login"]).'"';
 
     $list_users = implode(' , ', $list_users);
-
-    if( $DEBUG ) { echo "list_users = $list_users<br>\n" ;}
-
     return $list_users;
 }
 
 // recup de la liste des groupes dont $resp_login est responsable
 // renvoit une liste de group_id séparés par des virgules
-function get_list_groupes_du_resp($resp_login,  $DEBUG=FALSE)
+function get_list_groupes_du_resp($resp_login)
 {
     $list_group="";
     $sql1='SELECT gr_gid FROM conges_groupe_resp WHERE gr_login="'.\includes\SQL::quote($resp_login).'" ORDER BY gr_gid';
@@ -1436,8 +1420,6 @@ function get_list_groupes_du_resp($resp_login,  $DEBUG=FALSE)
                 $list_group=$list_group.", $current_group";
         }
     }
-    if( $DEBUG ) { echo "list_group = $list_group<br>\n" ;}
-
     return $list_group;
 }
 
@@ -1480,7 +1462,7 @@ function get_list_login_du_grand_resp($resp_login)
 
 // recup de la liste des groupes à double validation
 // renvoit une liste de gid séparés par des virgules
-function get_list_groupes_double_valid( $DEBUG=FALSE)
+function get_list_groupes_double_valid()
 {
     $list_groupes_double_valid="";
     $sql1="SELECT g_gid FROM conges_groupe WHERE g_double_valid='Y' ORDER BY g_gid ";
@@ -1494,19 +1476,16 @@ function get_list_groupes_double_valid( $DEBUG=FALSE)
         else
             $list_groupes_double_valid=$list_groupes_double_valid.", $current_gid";
     }
-
-    if( $DEBUG ) { echo "list_groupes_double_valid = $list_groupes_double_valid<br>\n" ;}
-
     return $list_groupes_double_valid;
 
 }
 
 // recup de la liste des groupes à double validation, dont $resp_login est responsable
 // renvoit une liste de gid séparés par des virgules
-function get_list_groupes_double_valid_du_resp($resp_login,  $DEBUG=FALSE)
+function get_list_groupes_double_valid_du_resp($resp_login)
 {
     $list_groupes_double_valid_du_resp="";
-    $list_groups=get_list_groupes_du_resp($resp_login,  $DEBUG);
+    $list_groups=get_list_groupes_du_resp($resp_login);
 
     if($list_groups!="") // si $resp_login est responsable d'au moins un groupe
     {
@@ -1522,15 +1501,13 @@ function get_list_groupes_double_valid_du_resp($resp_login,  $DEBUG=FALSE)
                 $list_groupes_double_valid_du_resp=$list_groupes_double_valid_du_resp.", $current_gid";
         }
     }
-    if( $DEBUG ) { echo "list_groupes_double_valid_du_resp = $list_groupes_double_valid_du_resp<br>\n" ;}
-
     return $list_groupes_double_valid_du_resp;
 
 }
 
 // recup de la liste des groupes à double validation, dont $resp_login est GRAND responsable
 // renvoit une liste de gid séparés par des virgules
-function get_list_groupes_double_valid_du_grand_resp($resp_login,  $DEBUG=FALSE)
+function get_list_groupes_double_valid_du_grand_resp($resp_login)
 {
 
     $list_groupes_double_valid_du_grand_resp="";
@@ -1546,17 +1523,15 @@ function get_list_groupes_double_valid_du_grand_resp($resp_login,  $DEBUG=FALSE)
         else
             $list_groupes_double_valid_du_grand_resp=$list_groupes_double_valid_du_grand_resp.", $current_gid";
     }
-    if( $DEBUG ) { echo "list_groupes_double_valid_du_grand_resp = $list_groupes_double_valid_du_grand_resp<br>\n" ;}
-
     return $list_groupes_double_valid_du_grand_resp;
 }
 
 // recup de la liste des users des groupes dont $user_login est membre
 // renvoit une liste de login entre quotes et séparés par des virgules
-function get_list_users_des_groupes_du_user($user_login,  $DEBUG=FALSE)
+function get_list_users_des_groupes_du_user($user_login)
 {
     $list_users=array();
-    $list_groups=get_list_groupes_du_user($user_login,  $DEBUG);
+    $list_groups=get_list_groupes_du_user($user_login);
     if($list_groups!="") // si $user_login est membre d'au moins un groupe
     {
         $sql1='SELECT DISTINCT(gu_login) FROM conges_groupe_users WHERE gu_gid IN ('.$list_groups.') ORDER BY gu_login ';
@@ -1571,7 +1546,7 @@ function get_list_users_des_groupes_du_user($user_login,  $DEBUG=FALSE)
 
 // recup de la liste des groupes dont $resp_login est membre
 // renvoit une liste de group_id séparés par des virgules
-function get_list_groupes_du_user($user_login,  $DEBUG=FALSE)
+function get_list_groupes_du_user($user_login)
 {
     $list_group=array();
     $sql1='SELECT gu_gid FROM conges_groupe_users WHERE gu_login="'.\includes\SQL::quote($user_login).'" ORDER BY gu_gid';
@@ -1585,7 +1560,7 @@ function get_list_groupes_du_user($user_login,  $DEBUG=FALSE)
 
 // recup de la liste de TOUS les users (sauf "conges" et "admin"
 // renvoit une liste de login entre quotes et séparés par des virgules
-function get_list_all_users($DEBUG=FALSE)
+function get_list_all_users()
 {
     $list_users="";
     $sql1="SELECT DISTINCT(u_login) FROM conges_users WHERE u_login!='conges' AND u_login!='admin' ORDER BY u_login " ;
@@ -1599,16 +1574,13 @@ function get_list_all_users($DEBUG=FALSE)
         else
             $list_users=$list_users.", '$current_login'";
     }
-
-    if( $DEBUG ) { echo "list_users = $list_users<br>\n" ;}
-
     return $list_users;
 }
 
 
 // recup de la liste des groupes (tous)
 // renvoit une liste de group_id séparés par des virgules
-function get_list_all_groupes($DEBUG=FALSE)
+function get_list_all_groupes()
 {
     $list_group = array();
 
@@ -1626,10 +1598,9 @@ function get_list_all_groupes($DEBUG=FALSE)
 // construit le tableau des responsables d'un user
 // le login du user est passé en paramêtre ainsi que le tableau (vide) des resp
 //renvoit un tableau indexé de resp_login => "absent" ou "present"
-function get_tab_resp_du_user($user_login,  $DEBUG=FALSE)
+function get_tab_resp_du_user($user_login)
 {
     $tab_resp=array();
-    if( $DEBUG ) {echo ">> RECHERCHE des RESPONSABLES de : $user_login<br>\n";}
     // recup du resp indiqué dans la table users (sauf s'il est resp de lui meme)
     $req = 'SELECT u_resp_login FROM conges_users WHERE u_login=\''.\includes\SQL::quote($user_login).'\';';
     $res = \includes\SQL::query($req);
@@ -1640,7 +1611,7 @@ function get_tab_resp_du_user($user_login,  $DEBUG=FALSE)
     // recup des resp des groupes du user
     if($_SESSION['config']['gestion_groupes'])
     {
-        $list_groups=get_list_groupes_du_user($user_login,  $DEBUG);
+        $list_groups=get_list_groupes_du_user($user_login);
         if($list_groups!="")
         {
             $tab_gid=explode(",", $list_groups);
@@ -1660,15 +1631,11 @@ function get_tab_resp_du_user($user_login,  $DEBUG=FALSE)
         }
     }
 
-    if( $DEBUG ) {echo "tab_resp intermediaire =\n"; print_r($tab_resp); echo "<br>\n";}
-
     /************************************/
     // gestion des absence des responsables :
     // on verifie que les resp sont présents, si tous absent, on cherhe les resp des resp, et ainsi de suite ....
     if($_SESSION['config']['gestion_cas_absence_responsable'])
     {
-        if( $DEBUG ) {echo "gestion des absence des responsables<br>\n"; }
-
         // on va verifier si les resp récupérés sont absents
         $nb_present=count($tab_resp);
         foreach ($tab_resp as $current_resp => $presence )
@@ -1692,12 +1659,11 @@ function get_tab_resp_du_user($user_login,  $DEBUG=FALSE)
         if($nb_present==0)
         {
             $new_tab_resp=array();
-            if( $DEBUG ) { echo "zero resp présent<br>\n"; }
             foreach ($tab_resp as $current_resp => $presence)
             {
                 // attention ,on evite le cas ou le user est son propre resp (sinon on boucle infiniment)
                 if($current_resp != $user_login)
-                    $new_tab_resp = array_merge  ( $new_tab_resp , get_tab_resp_du_user($current_resp,  $DEBUG));
+                    $new_tab_resp = array_merge  ( $new_tab_resp , get_tab_resp_du_user($current_resp));
             }
             $tab_resp = array_merge  ( $tab_resp, $new_tab_resp);
         }
@@ -1705,7 +1671,6 @@ function get_tab_resp_du_user($user_login,  $DEBUG=FALSE)
     // FIN gestion des absence des responsables :
     /************************************/
 
-    if( $DEBUG ) {echo "return tab_resp =\n"; print_r($tab_resp); echo "<br>\n";}
     return $tab_resp;
 }
 
@@ -1713,14 +1678,12 @@ function get_tab_resp_du_user($user_login,  $DEBUG=FALSE)
 // construit le tableau des grands responsables d'un user
 // (tab des grd resp des groupes à double_valid dont le user fait partie
 // le login du user est passé en paramêtre ainsi que le tableau (vide) des resp
-function get_tab_grd_resp_du_user($user_login, &$tab_grd_resp,  $DEBUG=FALSE)
+function get_tab_grd_resp_du_user($user_login, &$tab_grd_resp)
 {
     // recup des resp des groupes du user
     if($_SESSION['config']['gestion_groupes'])
     {
-        $list_groups=get_list_groupes_du_user($user_login,  $DEBUG);
-        if( $DEBUG ) { echo "list_groups : <br>$list_groups<br>\n"; }
-
+        $list_groups=get_list_groupes_du_user($user_login);
         if($list_groups!="")
         {
             $tab_gid=explode(",", $list_groups);
@@ -1742,7 +1705,7 @@ function get_tab_grd_resp_du_user($user_login, &$tab_grd_resp,  $DEBUG=FALSE)
 }
 
 
-function valid_ldap_user($username, $DEBUG=FALSE)
+function valid_ldap_user($username)
 {
 /* fonction utilisée avec le mode d'authentification ldap.
    En effet, si un utilisateur (enregistré dans le ldap) tente de se
@@ -1783,7 +1746,7 @@ function is_resp($login)
 
 // verifie si un user est HR ou pas
 // renvoit TRUE si le login est HR dans la table conges_users, FALSE sinon.
-function is_hr($login,  $DEBUG=FALSE)
+function is_hr($login)
 {
     static $sql_is_hr = array();
     if (!isset($sql_is_hr[$login]))
@@ -1799,7 +1762,7 @@ function is_hr($login,  $DEBUG=FALSE)
 }
 // verifie si un user est valide ou pas
 // renvoit TRUE si le login est enable dans la table conges_users, FALSE sinon.
-function is_active($login,  $DEBUG=FALSE)
+function is_active($login)
 {
     static $sql_is_active = array();
     if (!isset($sql_is_active[$login]))
@@ -1816,13 +1779,13 @@ function is_active($login,  $DEBUG=FALSE)
 
 // verifie si un user est responsable d'un second user
 // renvoit TRUE si le $resp_login est responsable du $user_login, FALSE sinon.
-function is_resp_of_user($resp_login, $user_login,  $DEBUG=FALSE)
+function is_resp_of_user($resp_login, $user_login)
 {
-    return is_resp_direct_of_user($resp_login, $user_login,  $DEBUG=FALSE) || is_resp_group_of_user($resp_login, $user_login,  $DEBUG=FALSE) || is_gr_group_of_user($resp_login, $user_login,  $DEBUG=FALSE);
+    return is_resp_direct_of_user($resp_login, $user_login) || is_resp_group_of_user($resp_login, $user_login) || is_gr_group_of_user($resp_login, $user_login);
 }
 
 
-function is_resp_direct_of_user($resp_login, $user_login,  $DEBUG=FALSE)
+function is_resp_direct_of_user($resp_login, $user_login)
 {
 
     $select_info='SELECT u_resp_login FROM conges_users WHERE u_login=\''.\includes\SQL::quote($user_login).'\';';
@@ -1833,7 +1796,7 @@ function is_resp_direct_of_user($resp_login, $user_login,  $DEBUG=FALSE)
 }
 
 
-function is_resp_group_of_user($resp_login, $user_login,  $DEBUG=FALSE)
+function is_resp_group_of_user($resp_login, $user_login)
 {
     if ( $_SESSION['config']['gestion_groupes'] )
     {
@@ -1848,7 +1811,7 @@ function is_resp_group_of_user($resp_login, $user_login,  $DEBUG=FALSE)
     return false;
 }
 
-function is_gr_group_of_user($resp_login, $user_login,  $DEBUG=FALSE)
+function is_gr_group_of_user($resp_login, $user_login)
 {
     if ( $_SESSION['config']['gestion_groupes'] && $_SESSION['config']['double_validation_conges'])
     {
@@ -1868,7 +1831,7 @@ function is_gr_group_of_user($resp_login, $user_login,  $DEBUG=FALSE)
 
 // verifie si un user est administrateur ou pas
 // renvoit TRUE si le login est administrateur dans la table conges_users, FALSE sinon.
-function is_admin($login, $DEBUG=FALSE)
+function is_admin($login)
 {
     static $sql_is_admin = array();
     if (!isset($sql_is_admin[$login])) {
@@ -1888,7 +1851,7 @@ function is_admin($login, $DEBUG=FALSE)
 
 // on insert une nouvelle periode dans la table periode
 // retourne le num d'auto_incremente (p_num) ou 0 en cas l'erreur
-function insert_dans_periode($login, $date_deb, $demi_jour_deb, $date_fin, $demi_jour_fin, $nb_jours, $commentaire, $id_type_abs, $etat, $id_fermeture, $DEBUG=FALSE)
+function insert_dans_periode($login, $date_deb, $demi_jour_deb, $date_fin, $demi_jour_fin, $nb_jours, $commentaire, $id_type_abs, $etat, $id_fermeture)
 {
     // Récupération du + grand p_num (+ grand numero identifiant de conges)
     $sql1 = "SELECT max(p_num) FROM conges_periode" ;
@@ -1917,7 +1880,7 @@ function insert_dans_periode($login, $date_deb, $demi_jour_deb, $date_fin, $demi
     else
         $comment_log = "saisie de conges num $num_new_demande (type $id_type_abs) pour $login ($nb_jours jours) (de $date_deb $demi_jour_deb à $date_fin $demi_jour_fin)";
 
-    log_action($num_new_demande, $etat, $login, $comment_log, $DEBUG);
+    log_action($num_new_demande, $etat, $login, $comment_log);
 
     if($result)
         return $num_new_demande;
@@ -2231,7 +2194,7 @@ function recup_tableau_conges_for_users( $hide_conges_exceptionnels, $logins = f
 }
 
 // affichage du tableau récapitulatif des solde de congés d'un user
-function affiche_tableau_bilan_conges_user($login, $DEBUG=FALSE)
+function affiche_tableau_bilan_conges_user($login)
 {
     $request = 'SELECT u_quotite FROM conges_users where u_login = "'. \includes\SQL::quote($login).'";';
     $ReqLog = \includes\SQL::query($request) ;
@@ -2240,11 +2203,11 @@ function affiche_tableau_bilan_conges_user($login, $DEBUG=FALSE)
     $return = '';
 
     // recup dans un tableau de tableaux les nb et soldes de conges d'un user
-    $tab_cong_user = recup_tableau_conges_for_user($login, true ,$DEBUG);
+    $tab_cong_user = recup_tableau_conges_for_user($login, true);
 
     // recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
     if ($_SESSION['config']['gestion_conges_exceptionnels']) {
-        $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels($DEBUG);
+        $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
     }
 
     $return .= '<table class="table table-hover table-responsive table-condensed table-bordered">';
@@ -2280,7 +2243,7 @@ function affiche_tableau_bilan_conges_user($login, $DEBUG=FALSE)
 
 // renvoit un tableau de tableau contenant les informations du user
 // renvoit FALSE si erreur
-function recup_infos_du_user($login, $list_groups_double_valid, $DEBUG=FALSE)
+function recup_infos_du_user($login, $list_groups_double_valid)
 {
     $tab=array();
     $sql1 = 'SELECT u_login, u_nom, u_prenom, u_is_resp, u_resp_login, u_is_admin, u_is_hr, u_is_active, u_see_all, u_passwd, u_quotite, u_email, u_num_exercice FROM conges_users ' .
@@ -2303,7 +2266,7 @@ function recup_infos_du_user($login, $list_groups_double_valid, $DEBUG=FALSE)
         $tab_user['quotite']    = $resultat['u_quotite'];
         $tab_user['email']    = $resultat['u_email'];
         $tab_user['num_exercice'] = $resultat['u_num_exercice'];
-        $tab_user['conges']    = recup_tableau_conges_for_user($login, false, $DEBUG);
+        $tab_user['conges']    = recup_tableau_conges_for_user($login, false);
 
         $tab_user['double_valid'] = "N";
 
@@ -2326,10 +2289,10 @@ function recup_infos_du_user($login, $list_groups_double_valid, $DEBUG=FALSE)
 }
 
 // renvoit un tableau de tableau contenant les informations de tous les users
-function recup_infos_all_users($DEBUG=FALSE)
+function recup_infos_all_users()
 {
     $tab=array();
-    $list_groupes_double_validation=get_list_groupes_double_valid($DEBUG);
+    $list_groupes_double_validation=get_list_groupes_double_valid();
     $sql1 = "SELECT u_login FROM conges_users WHERE u_login!='conges' AND u_login!='admin' ORDER BY u_nom";
     $ReqLog = \includes\SQL::query($sql1);
 
@@ -2338,22 +2301,18 @@ function recup_infos_all_users($DEBUG=FALSE)
         $tab_user=array();
         $sql_login=$resultat["u_login"];
 
-        $tab[$sql_login] = recup_infos_du_user($sql_login, $list_groupes_double_validation, $DEBUG);
+        $tab[$sql_login] = recup_infos_du_user($sql_login, $list_groupes_double_validation);
     }
     return $tab ;
 }
 
 // renvoit un tableau de tableau contenant les informations de tous les users d'un groupe donné
-function recup_infos_all_users_du_groupe($group_id, $DEBUG=FALSE)
+function recup_infos_all_users_du_groupe($group_id)
 {
     $tab=array();
     // recup de la liste de tous les users du groupe ...
-    $list_all_users_du_groupe = get_list_users_du_groupe($group_id, $DEBUG);
-    if( $DEBUG ) { echo "list_all_users_du_groupe :<br>\n"; print_r($list_all_users_du_groupe); echo "<br><br>\n";}
-
-    $list_groupes_double_validation=get_list_groupes_double_valid($DEBUG);
-    if( $DEBUG ) { echo "list_groupes_double_validation :<br>\n"; print_r($list_groupes_double_validation); echo "<br><br>\n";}
-
+    $list_all_users_du_groupe = get_list_users_du_groupe($group_id);
+    $list_groupes_double_validation=get_list_groupes_double_valid();
     if(strlen($list_all_users_du_groupe)!=0)
     {
         $tab_users_du_groupe=explode(",", $list_all_users_du_groupe);
@@ -2361,25 +2320,23 @@ function recup_infos_all_users_du_groupe($group_id, $DEBUG=FALSE)
         {
             $current_login = trim($current_login);
             $current_login = trim($current_login, "\'");  // on enleve les quotes qui ont été ajouté lors de la creation de la liste
-            $tab[$current_login] = recup_infos_du_user($current_login, $list_groupes_double_validation, $DEBUG);
+            $tab[$current_login] = recup_infos_du_user($current_login, $list_groupes_double_validation);
         }
     }
     return $tab ;
 }
 
 // renvoit un tableau de tableau contenant les informations de tous les users dont $login est responsable
-function recup_infos_all_users_du_resp($login, $DEBUG=FALSE)
+function recup_infos_all_users_du_resp($login)
 {
     $tab=array();
 
     // recup de la liste de tous les users du resp ...
-    $list_all_users_du_resp = get_list_all_users_du_resp($login, $DEBUG);
-    if( $DEBUG ) { echo "list_all_users_du_resp :<br>\n"; print_r($list_all_users_du_resp); echo "<br><br>\n";}
+    $list_all_users_du_resp = get_list_all_users_du_resp($login);
 
     // recup de la liste des groupes à double validation, dont $login est responsable
     // (servira à dire pour chaque user s'il est dans un de ces groupe ou non , donc s'il fait l'objet d'une double valid ou non )
-    $list_groups_double_valid_du_resp=get_list_groupes_double_valid_du_resp($login, $DEBUG);
-    if( $DEBUG ) { echo "list_groups_double_valid :<br>\n"; print_r($list_groups_double_valid_du_resp); echo "<br><br>\n";}
+    $list_groups_double_valid_du_resp=get_list_groupes_double_valid_du_resp($login);
 
     if(strlen($list_all_users_du_resp)!=0)
     {
@@ -2389,7 +2346,7 @@ function recup_infos_all_users_du_resp($login, $DEBUG=FALSE)
             $current_login = trim($current_login);
             $current_login = trim($current_login, "\'");  // on enleve les quotes qui ont été ajouté lors de la creation de la liste
 
-            $tab[$current_login] = recup_infos_du_user($current_login, $list_groups_double_valid_du_resp, $DEBUG);
+            $tab[$current_login] = recup_infos_du_user($current_login, $list_groups_double_valid_du_resp);
         }
     }
 
@@ -2397,11 +2354,10 @@ function recup_infos_all_users_du_resp($login, $DEBUG=FALSE)
 }
 
 // renvoit un tableau de tableau contenant les informations de tous les users dont $login est GRAND responsable
-function recup_infos_all_users_du_grand_resp($login, $DEBUG=FALSE)
+function recup_infos_all_users_du_grand_resp($login)
 {
     $tab=array();
-    $list_groups_double_valid=get_list_groupes_double_valid_du_grand_resp($login, $DEBUG);
-    if( $DEBUG ) { echo "list_groups_double_valid :<br>\n"; print_r($list_groups_double_valid); echo "<br><br>\n";}
+    $list_groups_double_valid=get_list_groupes_double_valid_du_grand_resp($login);
 
     if($list_groups_double_valid!="")
     {
@@ -2425,7 +2381,7 @@ function recup_infos_all_users_du_grand_resp($login, $DEBUG=FALSE)
             {
                 $current_login = trim($current_login);
                 $current_login = trim($current_login, "\'");  // on enleve les qote qui on été ajouté lors de la creation de la liste
-                $tab[$current_login] = recup_infos_du_user($current_login, $list_groups_double_valid, $DEBUG);
+                $tab[$current_login] = recup_infos_du_user($current_login, $list_groups_double_valid);
             }
         }
     }
@@ -2433,7 +2389,7 @@ function recup_infos_all_users_du_grand_resp($login, $DEBUG=FALSE)
 }
 
 // execute sequentiellement les requètes d'un fichier .sql
-function execute_sql_file($file, $DEBUG=FALSE)
+function execute_sql_file($file)
 {
     // lecture du fichier SQL
     // et execution de chaque ligne ....
@@ -2447,8 +2403,6 @@ function execute_sql_file($file, $DEBUG=FALSE)
             $sql_requete = $sql_requete.$line ;
             if(substr($sql_requete, -1, 1)==";") // alors la requete est finie !
             {
-                if( $DEBUG )
-                    echo "$sql_requete<br>\n";
                 $result = \includes\SQL::query($sql_requete);
                 $sql_requete="";
             }
@@ -2458,11 +2412,9 @@ function execute_sql_file($file, $DEBUG=FALSE)
 }
 
 // verif des droits du user à afficher la page qu'il demande (pour éviter les hacks par bricolage d'URL)
-// verif_droits_user($session, "is_admin", $DEBUG);
-function verif_droits_user($session, $niveau_droits, $DEBUG=FALSE)
-{
-    if( $DEBUG ) { print_r($_SESSION); echo "<br><br>\n"; }
 
+function verif_droits_user($session, $niveau_droits)
+{
     $niveau_droits = strtolower($niveau_droits);
 
     // verif si $_SESSION['is_admin'] ou $_SESSION['is_resp'] ou $_SESSION['is_hr'] =="N" ou $_SESSION['is_active'] =="N"
@@ -2515,7 +2467,7 @@ function affiche_select_from_lang_directory( $select_name, $default )
 
 // on insert les logs des periodes de conges
 // retourne TRUE ou FALSE
-function log_action($num_periode, $etat_periode, $login_pour, $comment, $DEBUG=FALSE)
+function log_action($num_periode, $etat_periode, $login_pour, $comment)
 {
     if(isset($_SESSION['userlogin']))
         $user = $_SESSION['userlogin'] ;
@@ -2529,7 +2481,7 @@ function log_action($num_periode, $etat_periode, $login_pour, $comment, $DEBUG=F
 }
 
 // remplit le tableau global des jours feries a partir de la database
-function init_tab_jours_fermeture($user,  $DEBUG=FALSE)
+function init_tab_jours_fermeture($user)
 {
     $_SESSION["tab_j_fermeture"]=array();
     $sql_select='SELECT DISTINCT jf_date FROM conges_jours_fermeture, conges_groupe_users WHERE gu_login="'.\includes\SQL::quote($user).'" AND gu_gid=jf_gid';
@@ -2550,7 +2502,7 @@ function est_ferme($timestamp)
 }
 
 // renvoit le "su_reliquat" pour un user et un type de conges donné
-function get_reliquat_user_conges($login, $type_abs,  $DEBUG=FALSE)
+function get_reliquat_user_conges($login, $type_abs)
 {
     $select_info='SELECT su_reliquat FROM conges_solde_user WHERE su_login="'.\includes\SQL::quote($login).'" AND su_abs_id="'.\includes\SQL::quote($type_abs).'"';
     $ReqLog_info = \includes\SQL::query($select_info);
@@ -2566,7 +2518,7 @@ function get_reliquat_user_conges($login, $type_abs,  $DEBUG=FALSE)
     calculer le nb_jours_avant pris avant la date limite, et on le decompte des reliquats, et calculer le nb_jours_apres
     d'apres la date limite et ne pas le décompter des reliquats !!!
 */
-function soustrait_solde_et_reliquat_user($user_login, $num_current_periode, $user_nb_jours_pris, $type_abs, $date_deb, $demi_jour_deb, $date_fin, $demi_jour_fin,  $DEBUG=FALSE)
+function soustrait_solde_et_reliquat_user($user_login, $num_current_periode, $user_nb_jours_pris, $type_abs, $date_deb, $demi_jour_deb, $date_fin, $demi_jour_fin)
 {
 
     $user_nb_jours_pris = number_format($user_nb_jours_pris, 1, '.', '');
@@ -2575,7 +2527,7 @@ function soustrait_solde_et_reliquat_user($user_login, $num_current_periode, $us
     if($_SESSION['config']['autorise_reliquats_exercice'])
     {
         //recup du reliquat du user pour ce type d'absence
-        $reliquat=get_reliquat_user_conges($user_login, $type_abs,  $DEBUG);
+        $reliquat=get_reliquat_user_conges($user_login, $type_abs);
         //echo "reliquat = $reliquat<br>\n";
         // s'il y a une date limite d'utilisationdes reliquats (au format jj-mm)
         if($_SESSION['config']['jour_mois_limite_reliquats']!=0)
@@ -2600,7 +2552,7 @@ function soustrait_solde_et_reliquat_user($user_login, $num_current_periode, $us
             {
                 include_once 'fonctions_calcul.php' ;
                 $comment="calcul reliquat -> date limite" ;
-                $nb_reliquats_a_deduire = compter($user_login, $num_current_periode, $date_deb, $_SESSION['config']['date_limite_reliquats'], $demi_jour_deb, "pm", $comment ,  $DEBUG);
+                $nb_reliquats_a_deduire = compter($user_login, $num_current_periode, $date_deb, $_SESSION['config']['date_limite_reliquats'], $demi_jour_deb, "pm", $comment );
 
                 if($reliquat > $nb_reliquats_a_deduire)
                     $new_reliquat = $reliquat - $nb_reliquats_a_deduire;
@@ -2631,10 +2583,10 @@ function soustrait_solde_et_reliquat_user($user_login, $num_current_periode, $us
 
 // recup de la liste des users des groupes dont $resp_login est responsable mais ne remonte pas les autres responsables
 // renvoit une liste de login entre quotes et séparés par des virgules
-function get_list_users_des_groupes_du_resp_sauf_resp($resp_login, $DEBUG=FALSE)
+function get_list_users_des_groupes_du_resp_sauf_resp($resp_login)
 {
     $list_users_des_groupes_du_resp_sauf_resp="";
-    $list_groups=get_list_groupes_du_resp($resp_login, $DEBUG);
+    $list_groups=get_list_groupes_du_resp($resp_login);
     if($list_groups!="") // si $resp_login est responsable d'au moins un groupe
     {
         $sql1="SELECT DISTINCT(gu_login) FROM conges_groupe_users WHERE gu_gid IN ($list_groups) AND gu_login NOT IN (SELECT gr_login FROM conges_groupe_resp WHERE gr_gid IN ($list_groups)) ORDER BY gu_login ";
@@ -2649,8 +2601,6 @@ function get_list_users_des_groupes_du_resp_sauf_resp($resp_login, $DEBUG=FALSE)
                 $list_users_des_groupes_du_resp_sauf_resp=$list_users_des_groupes_du_resp_sauf_resp.", '$current_login'";
         }
     }
-    if( $DEBUG ) { echo "list_users_des_groupes_du_resp_sauf_resp= $list_users_des_groupes_du_resp_sauf_resp<br>\n" ;}
-
     return $list_users_des_groupes_du_resp_sauf_resp;
 }
 

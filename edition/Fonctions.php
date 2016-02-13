@@ -1,7 +1,9 @@
 <?php
 /*************************************************************************************************
 Libertempo : Gestion Interactive des Congés
-Copyright (C) 2015 (Wouldsmina)Copyright (C) 2015 (Prytoegrian)Copyright (C) 2005 (cedric chauvineau)
+Copyright (C) 2015 (Wouldsmina)
+Copyright (C) 2015 (Prytoegrian)
+Copyright (C) 2005 (cedric chauvineau)
 
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
 termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
@@ -29,7 +31,7 @@ namespace edition;
 */
 class Fonctions
 {
-    public static function affiche_anciennes_editions($login, $DEBUG=FALSE)
+    public static function affiche_anciennes_editions($login)
     {
         $session=session_id();
         $return = '';
@@ -43,10 +45,7 @@ class Fonctions
         /* Historique des éditions           */
         /*************************************/
         // Récupération des informations des editions du user
-        $tab_editions_user = \edition\Fonctions::recup_editions_user($login,  $DEBUG);
-        if( $DEBUG ) {
-            $return .= 'tab_editions_user<br>' . var_export($tab_editions_user, true) . '<br>';
-        }
+        $tab_editions_user = \edition\Fonctions::recup_editions_user($login);
 
         $return .= '<h3>' . _('editions_hitorique_edit') . ' :</h3>';
 
@@ -97,7 +96,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affiche_nouvelle_edition($login,  $DEBUG=FALSE)
+    public static function affiche_nouvelle_edition($login)
     {
         $session=session_id();
         $return = '';
@@ -216,7 +215,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affichage($login,  $DEBUG=FALSE)
+    public static function affichage($login)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id();
@@ -238,12 +237,12 @@ class Fonctions
         /* Bilan des Conges */
         /********************/
         // affichage du tableau récapitulatif des solde de congés d'un user
-        $return .= affiche_tableau_bilan_conges_user($login,  $DEBUG);
+        $return .= affiche_tableau_bilan_conges_user($login);
         $return .= '<br><br><br>';
 
-        $return .= \edition\Fonctions::affiche_nouvelle_edition($login,  $DEBUG);
+        $return .= \edition\Fonctions::affiche_nouvelle_edition($login);
 
-        $return .= \edition\Fonctions::affiche_anciennes_editions($login,  $DEBUG);
+        $return .= \edition\Fonctions::affiche_anciennes_editions($login);
         return $return;
     }
 
@@ -251,13 +250,12 @@ class Fonctions
      * Encapsule le comportement du module d'édition des utilisateurs
      *
      * @param string $session
-     * @param bool   $DEBUG  Mode debug ?
      *
      * @return void
      * @access public
      * @static
      */
-    public static function editUserModule($session, $DEBUG = false)
+    public static function editUserModule($session)
     {
         /*************************************/
         // recup des parametres reçus :
@@ -277,12 +275,12 @@ class Fonctions
         }
 
         /************************************/
-        $return .= \edition\Fonctions::affichage($user_login, $DEBUG);
+        $return .= \edition\Fonctions::affichage($user_login);
         return $return;
     }
 
     // affichage du tableau récapitulatif des solde de congés d'un user d'une edition donnée !
-    public static function affiche_tableau_bilan_conges_user_edition($tab_info_user, $tab_info_edition, $tab_type_cong, $tab_type_conges_exceptionnels,  $DEBUG=FALSE)
+    public static function affiche_tableau_bilan_conges_user_edition($tab_info_user, $tab_info_edition, $tab_type_cong, $tab_type_conges_exceptionnels)
     {
         $return = '';
 
@@ -306,38 +304,27 @@ class Fonctions
         return $return;
     }
 
-    public static function edition_papier($login, $edit_id,  $DEBUG=FALSE)
+    public static function edition_papier($login, $edit_id)
     {
-        //$DEBUG = TRUE ;
         $session=session_id();
         $return = '';
 
         // recup infos du user
-        $tab_info_user = \edition\Fonctions::recup_info_user_pour_edition($login,  $DEBUG);
+        $tab_info_user = \edition\Fonctions::recup_info_user_pour_edition($login);
 
         // recup infos de l'édition
-        $tab_info_edition = \edition\Fonctions::recup_info_edition($edit_id,  $DEBUG);
+        $tab_info_edition = \edition\Fonctions::recup_info_edition($edit_id);
 
         // recup du tableau des types de conges exceptionnels (seulement les conge sexceptionnels )
-        $tab_type_cong=recup_tableau_types_conges( $DEBUG);
+        $tab_type_cong=recup_tableau_types_conges();
         // recup du tableau des types de conges (seulement les conges)
         if ($_SESSION['config']['gestion_conges_exceptionnels']) {
-            $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels( $DEBUG);
+            $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
         } else {
             $tab_type_conges_exceptionnels=array();
         }
         // recup du tableau de tous les types de conges
-        $tab_type_all_cong=recup_tableau_tout_types_abs( $DEBUG);
-
-        if( $DEBUG ) {
-            $return .= 'tab_info_user :<br>' . var_export($tab_info_user, true) . '<br><br>';
-            $return .= 'tab_info_edition :<br>' . var_export($tab_info_edition, true) . '<br><br>';
-            $return .= 'tab_type_cong :<br>' . var_export($tab_type_cong, true) . '<br><br>';
-            $return .= 'tab_type_conges_exceptionnels :<br>' . var_export($tab_type_conges_exceptionnels, true) . '<br><br>';
-            $return .= 'tab_type_all_cong :<br>' . var_export($tab_type_all_cong, true) . '<br><br>';
-            $return .= 'numero edition = ' . $edit_id . '<br>';
-        }
-
+        $tab_type_all_cong=recup_tableau_tout_types_abs();
 
         /**************************************/
         /* affichage du texte en haut de page */
@@ -360,7 +347,7 @@ class Fonctions
         /* tableau Bilan des Conges */
         /****************************/
         // affichage du tableau récapitulatif des solde de congés d'un user DE cette edition !
-        $return .= \edition\Fonctions::affiche_tableau_bilan_conges_user_edition($tab_info_user, $tab_info_edition, $tab_type_cong, $tab_type_conges_exceptionnels,  $DEBUG);
+        $return .= \edition\Fonctions::affiche_tableau_bilan_conges_user_edition($tab_info_user, $tab_info_edition, $tab_type_cong, $tab_type_conges_exceptionnels);
 
         $quotite=$tab_info_user['quotite'];
         $return .= '<h3>' . _('divers_quotite') . '&nbsp; : &nbsp;' . $quotite . ' %</h3>';
@@ -408,11 +395,11 @@ class Fonctions
             $return .= '<!-- affichage anciens soldes -->';
             $return .= '<tr>';
             $return .= '<td colspan="5">';
-            $edition_precedente_id = \edition\Fonctions::get_id_edition_precedente_user($login, $edit_id,  $DEBUG);
+            $edition_precedente_id = \edition\Fonctions::get_id_edition_precedente_user($login, $edit_id);
             if($edition_precedente_id==0) {
                 $return .= '<b>' . _('editions_soldes_precedents_inconnus') . '!... ';
             } else {
-                $tab_edition_precedente = \edition\Fonctions::recup_info_edition($edition_precedente_id,  $DEBUG);
+                $tab_edition_precedente = \edition\Fonctions::recup_info_edition($edition_precedente_id);
                 foreach($tab_type_cong as $id_abs => $libelle) {
                     $return .= _('editions_solde_precedent') . ' <b>' . $libelle . ' : ' . $tab_edition_precedente['conges'][$id_abs] . '</b><br>';
                 }
@@ -550,13 +537,12 @@ class Fonctions
      * Encapsule le comportement du module de l'édition papier
      *
      * @param string $session
-     * @param bool   $DEBUG  Mode debug ?
      *
      * @return void
      * @access public
      * @static
      */
-    public static function editPapierModule($session, $DEBUG = false)
+    public static function editPapierModule($session)
     {
         /*************************************/
         // recup des parametres reçus :
@@ -578,13 +564,13 @@ class Fonctions
         header_popup(_('editions_etat_conges').' : '.$user_login , $css);
 
         if($edit_id==0) {  // si c'est une nouvelle édition, on insert dans la base avant d'éditer et on renvoit l'id de l'édition
-            $edit_id = \edition\Fonctions::enregistrement_edition($user_login,  $DEBUG);
+            $edit_id = \edition\Fonctions::enregistrement_edition($user_login);
         }
 
-        $return .= \edition\Fonctions::edition_papier($user_login, $edit_id,  $DEBUG);
+        $return .= \edition\Fonctions::edition_papier($user_login, $edit_id);
 
         $comment_log = "edition papier (num_edition = $edit_id) ($user_login) ";
-        log_action(0, "", $user_login, $comment_log,  $DEBUG);
+        log_action(0, "", $user_login, $comment_log);
 
         $return .= '<br><script type="text/javascript" language="javascript1.2">
         if (typeof(window.print) != \'undefined\') {
@@ -594,7 +580,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affiche_tableau_conges_normal(&$pdf, $ReqLog2, $decalage, $tab_type_all_cong, $DEBUG=FALSE)
+    public static function affiche_tableau_conges_normal(&$pdf, $ReqLog2, $decalage, $tab_type_all_cong)
     {
 
         // (largeur totale page = 210 ( - 2x10 de marge))
@@ -689,7 +675,7 @@ class Fonctions
         }
     }
 
-    public static function affiche_tableau_conges_avec_date_traitement(&$pdf, $ReqLog2, $decalage, $tab_type_all_cong, $DEBUG=FALSE)
+    public static function affiche_tableau_conges_avec_date_traitement(&$pdf, $ReqLog2, $decalage, $tab_type_all_cong)
     {
         // (largeur totale page = 210 ( - 2x10 de marge))
         // tailles des cellules du tableau
@@ -782,7 +768,7 @@ class Fonctions
     }
 
     // affichage en pdf des nouveaux soldes de congés d'un user
-    public static function affiche_pdf_nouveau_solde(&$pdf, $login, $tab_info_edition, $tab_type_cong, $tab_type_conges_exceptionnels, $decalage,  $DEBUG=FALSE)
+    public static function affiche_pdf_nouveau_solde(&$pdf, $login, $tab_info_edition, $tab_type_cong, $tab_type_conges_exceptionnels, $decalage)
     {
 
         foreach($tab_type_cong as $id_abs => $libelle)
@@ -804,11 +790,11 @@ class Fonctions
     }
 
     // affichage en pdf des anciens soldes de congés d'un user
-    public static function affiche_pdf_ancien_solde(&$pdf, $login, $edit_id, $tab_type_cong, $tab_type_conges_exceptionnels, $decalage,  $DEBUG=FALSE)
+    public static function affiche_pdf_ancien_solde(&$pdf, $login, $edit_id, $tab_type_cong, $tab_type_conges_exceptionnels, $decalage)
     {
         //    $pdf->SetFont('Times', 'B', 10);
 
-        $edition_precedente_id = \edition\Fonctions::get_id_edition_precedente_user($login, $edit_id,  $DEBUG);
+        $edition_precedente_id = \edition\Fonctions::get_id_edition_precedente_user($login, $edit_id);
         if($edition_precedente_id==0)
         {
             $pdf->Cell($decalage);
@@ -817,7 +803,7 @@ class Fonctions
         }
         else
         {
-            $tab_edition_precedente = \edition\Fonctions::recup_info_edition($edition_precedente_id,  $DEBUG);
+            $tab_edition_precedente = \edition\Fonctions::recup_info_edition($edition_precedente_id);
 
             foreach($tab_type_cong as $id_abs => $libelle)
             {
@@ -839,7 +825,7 @@ class Fonctions
     }
 
     // affichage en pdf du tableau récapitulatif des solde de congés d'un user
-    public static function affiche_pdf_tableau_bilan_conges_user_edtion(&$pdf, $tab_info_user, $tab_info_edition, $tab_type_cong, $tab_type_conges_exceptionnels,  $DEBUG=FALSE)
+    public static function affiche_pdf_tableau_bilan_conges_user_edtion(&$pdf, $tab_info_user, $tab_info_edition, $tab_type_cong, $tab_type_conges_exceptionnels)
     {
         // calcul du décalage pour centrer ( = (21cm - (marges x 2) - (sommes des cell définies en dessous) )/2  ) (marges=10mm)
         $decalage = 55 ;
@@ -869,7 +855,7 @@ class Fonctions
 
     }
 
-    public static function edition_pdf($login, $edit_id,  $DEBUG=FALSE)
+    public static function edition_pdf($login, $edit_id)
     {
         $fpdf_filename = LIBRARY_PATH .'tcpdf/tcpdf.php';
         // verif si la librairie fpdf est présente
@@ -880,12 +866,12 @@ class Fonctions
             $tab_type_cong=recup_tableau_types_conges();
             // recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
             if ($_SESSION['config']['gestion_conges_exceptionnels']) {
-                $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels( $DEBUG);
+                $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
             } else {
                 $tab_type_conges_exceptionnels=array();
             }
             // recup du tableau de tous les types de conges
-            $tab_type_all_cong=recup_tableau_tout_types_abs( $DEBUG);
+            $tab_type_all_cong=recup_tableau_tout_types_abs();
 
             // recup infos du user
             $tab_info_user = \edition\Fonctions::recup_info_user_pour_edition($login);
@@ -924,7 +910,7 @@ class Fonctions
             /* tableau Bilan des Conges */
             /****************************/
             // affichage en pdf du tableau récapitulatif des solde de congés d'un user
-            \edition\Fonctions::affiche_pdf_tableau_bilan_conges_user_edtion($pdf, $tab_info_user, $tab_info_edition, $tab_type_cong, $tab_type_conges_exceptionnels,  $DEBUG) ;
+            \edition\Fonctions::affiche_pdf_tableau_bilan_conges_user_edtion($pdf, $tab_info_user, $tab_info_edition, $tab_type_cong, $tab_type_conges_exceptionnels) ;
 
             // affichage de la quotité
             $pdf->SetFont('Times', 'B', 13);
@@ -967,16 +953,16 @@ class Fonctions
                 /* affichage anciens soldes          */
                 /*************************************/
                 // affichage en pdf des anciens soldes de congés d'un user
-                \edition\Fonctions::affiche_pdf_ancien_solde($pdf, $login, $edit_id, $tab_type_cong, $tab_type_conges_exceptionnels, $decalage,  $DEBUG) ;
+                \edition\Fonctions::affiche_pdf_ancien_solde($pdf, $login, $edit_id, $tab_type_cong, $tab_type_conges_exceptionnels, $decalage) ;
 
                 $pdf->Ln(2);
 
                 // (largeur totale page = 210 ( - 2x10 de marge))
                 // tailles des cellules du tableau
                 if($_SESSION['config']['affiche_date_traitement']) {
-                    \edition\Fonctions::affiche_tableau_conges_avec_date_traitement($pdf, $ReqLog2, $decalage, $tab_type_all_cong, $DEBUG);
+                    \edition\Fonctions::affiche_tableau_conges_avec_date_traitement($pdf, $ReqLog2, $decalage, $tab_type_all_cong);
                 } else {
-                    \edition\Fonctions::affiche_tableau_conges_normal($pdf, $ReqLog2, $decalage, $tab_type_all_cong, $DEBUG);
+                    \edition\Fonctions::affiche_tableau_conges_normal($pdf, $ReqLog2, $decalage, $tab_type_all_cong);
                 }
 
                 $pdf->Ln(2);
@@ -985,7 +971,7 @@ class Fonctions
                 /* affichage nouveaux soldes         */
                 /*************************************/
                 // affichage en pdf des nouveaux soldes de congés d'un user
-                \edition\Fonctions::affiche_pdf_nouveau_solde($pdf, $login, $tab_info_edition, $tab_type_cong, $tab_type_conges_exceptionnels, $decalage,  $DEBUG) ;
+                \edition\Fonctions::affiche_pdf_nouveau_solde($pdf, $login, $tab_info_edition, $tab_type_cong, $tab_type_conges_exceptionnels, $decalage) ;
             }
 
             $pdf->Ln(8);
@@ -1024,13 +1010,12 @@ class Fonctions
      * Encapsule le comportement du module d'édition PDF
      *
      * @param string $session
-     * @param bool   $DEBUG  Mode debug ?
      *
      * @return void
      * @access public
      * @static
      */
-    public static function editPDFModule($session, $DEBUG = false)
+    public static function editPDFModule($session)
     {
         /*************************************/
         // recup des parametres reçus :
@@ -1046,18 +1031,18 @@ class Fonctions
 
         /************************************/
         if($edit_id==0) {  // si c'est une nouvelle édition, on insert dans la base avant d'éditer et on renvoit l'id de l'édition
-            $edit_id = \edition\Fonctions::enregistrement_edition($user_login, $DEBUG);
+            $edit_id = \edition\Fonctions::enregistrement_edition($user_login);
         }
 
-        \edition\Fonctions::edition_pdf($user_login, $edit_id, $DEBUG);
+        \edition\Fonctions::edition_pdf($user_login, $edit_id);
 
         $comment_log = "edition PDF (num_edition = $edit_id) ($user_login) ";
-        log_action(0, "", $user_login, $comment_log,  $DEBUG);
+        log_action(0, "", $user_login, $comment_log);
     }
 
     // Récupération des informations des editions du user
     // renvoit un tableau vide si pas de'edition pour le user
-    public static function recup_editions_user($login,  $DEBUG=FALSE)
+    public static function recup_editions_user($login)
     {
         $tab_ed=array();
 
@@ -1075,7 +1060,7 @@ class Fonctions
                 $tab['date'] = eng_date_to_fr($resultat2["ep_date"]);
                 $tab['num_for_user'] = $resultat2["ep_num_for_user"];
                 // recup du tab des soldes des conges pour cette edition
-                $tab['conges'] = \edition\Fonctions::recup_solde_conges_of_edition($sql_id,  $DEBUG);
+                $tab['conges'] = \edition\Fonctions::recup_solde_conges_of_edition($sql_id);
 
                 $tab_ed[$sql_id]=$tab;
             }
@@ -1085,7 +1070,7 @@ class Fonctions
 
     // recup infos de l'édition
     // renvoit un tableau vide si pas de'edition pour le user
-    public static function recup_info_edition($edit_id,  $DEBUG=FALSE)
+    public static function recup_info_edition($edit_id)
     {
 
         $tab=array();
@@ -1098,13 +1083,13 @@ class Fonctions
             $tab['date']=$resultat_edition["ep_date"];
             $tab['num_for_user'] = $resultat_edition["ep_num_for_user"];
             // recup du tab des soldes des conges pour cette edition
-            $tab['conges'] = \edition\Fonctions::recup_solde_conges_of_edition($edit_id,  $DEBUG);
+            $tab['conges'] = \edition\Fonctions::recup_solde_conges_of_edition($edit_id);
         }
         return $tab ;
     }
 
     // recup infos du user
-    public static function recup_info_user_pour_edition($login,  $DEBUG=FALSE)
+    public static function recup_info_user_pour_edition($login)
     {
         $tab=array();
         $sql_user = 'SELECT u_nom, u_prenom, u_quotite FROM conges_users where u_login = "'. \includes\SQL::quote($login).'"';
@@ -1117,13 +1102,13 @@ class Fonctions
         }
 
         // recup dans un tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
-        $tab['conges']=recup_tableau_conges_for_user($login, false, $DEBUG) ;
+        $tab['conges']=recup_tableau_conges_for_user($login, false) ;
 
         return $tab;
     }
 
     // recup du tab des soldes des conges pour cette edition
-    public static function recup_solde_conges_of_edition($edition_id,  $DEBUG=FALSE)
+    public static function recup_solde_conges_of_edition($edition_id)
     {
 
         $tab=array();
@@ -1140,7 +1125,7 @@ class Fonctions
     }
 
     // renvoi le id de la table edition_papier de l'edition précédente pour un user donné et un edition_id donnée.
-    public static function get_id_edition_precedente_user($login, $edition_id,  $DEBUG=FALSE)
+    public static function get_id_edition_precedente_user($login, $edition_id)
     {
 
         // verif si le user n'a pas une seule edition
@@ -1160,7 +1145,7 @@ class Fonctions
     }
 
     // renvoi le + grand num_par_user de la table edition_papier pour un user donné (le num de la derniere edition du user)
-    public static function get_num_last_edition_user($login,  $DEBUG=FALSE)
+    public static function get_num_last_edition_user($login)
     {
 
         // verif si le user a une edition
@@ -1179,7 +1164,7 @@ class Fonctions
     }
 
     // renvoi le + grand id de la table edition_papier (l'id de la derniere edition)
-    public static function get_last_edition_id( $DEBUG=FALSE)
+    public static function get_last_edition_id()
     {
         // verif si table edition pas vide
         $sql1 = "SELECT ep_id FROM conges_edition_papier ";
@@ -1196,7 +1181,7 @@ class Fonctions
         }
     }
 
-    public static function enregistrement_edition($login,  $DEBUG=FALSE)
+    public static function enregistrement_edition($login)
     {
 
         $PHP_SELF=$_SERVER['PHP_SELF'];
@@ -1226,7 +1211,7 @@ class Fonctions
         /* Insertion dans le table conges_solde_edition  */
         /*************************************************/
         // recup du tableau des types de conges (seulement les conges)
-        $tab_type_cong=recup_tableau_types_conges( $DEBUG);
+        $tab_type_cong=recup_tableau_types_conges();
         foreach($tab_type_cong as $id_abs => $libelle)
         {
             $sql_insert_2 = "INSERT INTO conges_solde_edition
@@ -1235,7 +1220,7 @@ class Fonctions
         }
         if ($_SESSION['config']['gestion_conges_exceptionnels'])
         {
-            $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels( $DEBUG);
+            $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
             foreach($tab_type_conges_exceptionnels as $id_abs => $libelle)
             {
                 $sql_insert_3 = "INSERT INTO conges_solde_edition SET se_id_edition=$new_edition_id, se_id_absence=$id_abs, se_solde=$tab_solde_user[$id_abs] ";

@@ -1,7 +1,9 @@
 <?php
 /*************************************************************************************************
 Libertempo : Gestion Interactive des Congés
-Copyright (C) 2015 (Wouldsmina)Copyright (C) 2015 (Prytoegrian)Copyright (C) 2005 (cedric chauvineau)
+Copyright (C) 2015 (Wouldsmina)
+Copyright (C) 2015 (Prytoegrian)
+Copyright (C) 2005 (cedric chauvineau)
 
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les 
 termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
@@ -134,7 +136,7 @@ class Fonctions {
     // cette fonction verif si une version à déja été installée ou non....
     // elle lance une creation/initialisation de la base
     // ou une migration des version antérieures ....
-    public static function install($lang,  $DEBUG=FALSE)
+    public static function install($lang)
     {
         // soit, c'est une install complète , soit c'est une mise à jour d'une version non déterminée
 
@@ -186,7 +188,7 @@ class Fonctions {
     }
 
     // install la nouvelle version dans une database vide ... et config
-    public static function lance_install($lang, $DEBUG=FALSE)
+    public static function lance_install($lang)
     {
 
         $PHP_SELF=$_SERVER['PHP_SELF'];
@@ -195,7 +197,7 @@ class Fonctions {
         include ROOT_PATH .'version.php' ;
 
         //verif si create / alter table possible !!!
-        if(!\install\Fonctions::test_create_table($DEBUG))
+        if(!\install\Fonctions::test_create_table())
         {
             echo "<font color=\"red\"><b>CREATE TABLE</b> ". _('install_impossible_sur_db') ." <b>$mysql_database</b> (". _('install_verif_droits_mysql') ." <b>$mysql_user</b>)...</font><br> \n";
             echo "<br>". _('install_puis') ." ...<br>\n";
@@ -203,7 +205,7 @@ class Fonctions {
             echo "<input type=\"submit\" value=\"". _('form_redo') ."\">\n";
             echo "</form>\n";
         }
-        elseif(!\install\Fonctions::test_drop_table($DEBUG))
+        elseif(!\install\Fonctions::test_drop_table())
         {
             echo "<font color=\"red\"><b>DROP TABLE</b> ". _('install_impossible_sur_db') ." <b>$mysql_database</b> (". _('install_verif_droits_mysql') ." <b>$mysql_user</b>)...</font><br> \n";
             echo "<br>". _('install_puis') ." ...<br>\n";
@@ -216,7 +218,7 @@ class Fonctions {
             //on execute le script [nouvelle vesion].sql qui crée et initialise les tables 
             $file_sql="sql/php_conges_v$config_php_conges_version.sql";
             if(file_exists($file_sql))
-                $result = execute_sql_file($file_sql,  $DEBUG);
+                $result = execute_sql_file($file_sql);
 
 
             /*************************************/
@@ -239,7 +241,7 @@ class Fonctions {
 
 
             $comment_log = "Install de php_conges (version = $config_php_conges_version) ";
-            log_action(0, "", "", $comment_log,  $DEBUG);
+            log_action(0, "", "", $comment_log);
 
             /*************************************/
             // on propose la page de config ....
@@ -252,9 +254,8 @@ class Fonctions {
 
     // lance les differente maj depuis la $installed_version jusqu'à la version actuelle
     // la $installed_version est préalablement déterminée par get_installed_version() ou renseignée par l'utilisateur
-    public static function lance_maj($lang, $installed_version, $config_php_conges_version, $etape, $DEBUG=FALSE)
+    public static function lance_maj($lang, $installed_version, $config_php_conges_version, $etape)
     {
-        if( $DEBUG ) { echo " lang = $lang  ##  etape = $etape ## version = $installed_version<br>\n";}
 
         $PHP_SELF=$_SERVER['PHP_SELF'];
         include CONFIG_PATH .'dbconnect.php' ;
@@ -280,7 +281,7 @@ class Fonctions {
         elseif($etape==1)
         {
             //verif si create / alter table possible !!!
-            if(!\install\Fonctions::test_create_table($DEBUG))
+            if(!\install\Fonctions::test_create_table())
             {
                 echo "<font color=\"red\"><b>CREATE TABLE</b> ". _('install_impossible_sur_db') ." <b>$mysql_database</b> (". _('install_verif_droits_mysql') ." <b>$mysql_user</b>)...</font><br> \n";
                 echo "<br>puis ...<br>\n";
@@ -290,7 +291,7 @@ class Fonctions {
                 echo "<input type=\"submit\" value=\"". _('form_redo') ."\">\n";
                 echo "</form>\n";
             }
-            elseif(!\install\Fonctions::test_alter_table($DEBUG))
+            elseif(!\install\Fonctions::test_alter_table())
             {
                 echo "<font color=\"red\"><b>ALTER TABLE</b> ". _('install_impossible_sur_db') ." <b>$mysql_database</b> (". _('install_verif_droits_mysql') ." <b>$mysql_user</b>)...</font><br> \n";
                 echo "<br>puis ...<br>\n";
@@ -300,7 +301,7 @@ class Fonctions {
                 echo "<input type=\"submit\" value=\"". _('form_redo') ."\">\n";
                 echo "</form>\n";
             }
-            elseif(!\install\Fonctions::test_drop_table($DEBUG))
+            elseif(!\install\Fonctions::test_drop_table())
             {
                 echo "<font color=\"red\"><b>DROP TABLE</b> ". _('install_impossible_sur_db') ." <b>$mysql_database</b> (". _('install_verif_droits_mysql') ." <b>$mysql_user</b>)...</font><br> \n";
                 echo "<br>puis ...<br>\n";
@@ -312,10 +313,7 @@ class Fonctions {
             }
             else
             {
-                if( !$DEBUG )
                     echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$PHP_SELF?etape=2&version=$installed_version&lang=$lang\">";
-                else
-                    echo "<a href=\"$PHP_SELF?etape=2&version=$installed_version&lang=$lang\">". _('install_etape') ." 1  OK</a><br>\n";
             }
         }
         //*** ETAPE 2
@@ -347,10 +345,7 @@ class Fonctions {
 	    } 
             else
             {
-                if( !$DEBUG )
                     echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$PHP_SELF?etape=5&version=$new_installed_version&lang=$lang\">";
-                else
-                    echo "<a href=\"$PHP_SELF?etape=5&version=$new_installed_version&lang=$lang\">". _('install_etape') ." 2  OK</a><br>\n";
             }
 
         }
@@ -359,13 +354,13 @@ class Fonctions {
         {
             // FIN
             // test si fichiers config.php ou config_old.php existent encore (si oui : demande de les éffacer !
-            if( (\install\Fonctions::test_config_file($DEBUG)) || (\install\Fonctions::test_old_config_file($DEBUG)) )
+            if( (\install\Fonctions::test_config_file()) || (\install\Fonctions::test_old_config_file()) )
             {
-                if(test_config_file($DEBUG))
+                if(test_config_file())
                 {
                     echo  _('install_le_fichier') ." <b>\"config.php\"</b> ". _('install_remove_fichier') .".<br> \n";
                 }
-                if(test_old_config_file($DEBUG))
+                if(test_old_config_file())
                 {
                     echo  _('install_le_fichier') ." <b>\"install/config_old.php\"</b> ". _('install_remove_fichier') .".<br> \n";
                 }
@@ -381,7 +376,7 @@ class Fonctions {
                 $result_update_lang = \includes\SQL::query($sql_update_lang) ;
 
                 $comment_log = _('install_maj_titre_2')." (version $installed_version --> version $config_php_conges_version) ";
-                log_action(0, "", "", $comment_log,  $DEBUG);
+                log_action(0, "", "", $comment_log);
 
                 // on propose la page de config ....
                 echo "<br><br><h2>". _('install_ok') ." !</h2><br>\n";

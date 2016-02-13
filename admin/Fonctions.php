@@ -32,7 +32,7 @@ namespace admin;
 class Fonctions
 {
     // modifie, pour un resp donné,  les groupes dont il est resp et grands_resp
-    public static function modif_resp_groupes($choix_resp, &$checkbox_resp_group, &$checkbox_grd_resp_group,  $DEBUG=FALSE)
+    public static function modif_resp_groupes($choix_resp, &$checkbox_resp_group, &$checkbox_grd_resp_group)
     {
         $PHP_SELF = $_SERVER['PHP_SELF'];
         $session  = session_id();
@@ -75,7 +75,7 @@ class Fonctions
         }
 
         $comment_log = "mofification groupes dont $choix_resp est responsable ou grand responsable" ;
-        log_action(0, "", $choix_resp, $comment_log,  $DEBUG);
+        log_action(0, "", $choix_resp, $comment_log);
 
         /* APPEL D'UNE AUTRE PAGE */
         $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=admin-group-responsables&choix_gestion_groupes_responsables=resp-group" method="POST">';
@@ -85,7 +85,7 @@ class Fonctions
     }
 
     // affiche pour un resp des cases à cocher devant les groupes possibles pour les selectionner.
-    public static function affiche_gestion_responsable_groupes($choix_resp, $onglet, $DEBUG=FALSE)
+    public static function affiche_gestion_responsable_groupes($choix_resp, $onglet)
     {
         $PHP_SELF = $_SERVER['PHP_SELF'];
         $session  = session_id();
@@ -248,7 +248,7 @@ class Fonctions
     }
 
     // affiche le tableau des responsables pour choisir sur lequel on va gerer les groupes dont il est resp
-    public static function affiche_choix_responsable_groupes( $DEBUG=FALSE)
+    public static function affiche_choix_responsable_groupes()
     {
         $PHP_SELF = $_SERVER['PHP_SELF'];
         $session  = session_id();
@@ -295,7 +295,7 @@ class Fonctions
     }
 
     // modifie, pour un groupe donné,  ses resp et grands_resp
-    public static function modif_group_responsables($choix_group, &$checkbox_group_resp, &$checkbox_group_grd_resp,  $DEBUG=FALSE)
+    public static function modif_group_responsables($choix_group, &$checkbox_group_resp, &$checkbox_group_grd_resp)
     {
         $PHP_SELF = $_SERVER['PHP_SELF'];
         $session  = session_id();
@@ -339,7 +339,7 @@ class Fonctions
         }
 
         $comment_log = "mofification_responsables_du_groupe : $choix_group" ;
-        log_action(0, "", "", $comment_log,  $DEBUG);
+        log_action(0, "", "", $comment_log);
 
         /* APPEL D'UNE AUTRE PAGE */
         $return .= '<form action="' . $PHP_SELF . '?session=' .  $session . ' &onglet=admin-group-responsables&choix_gestion_groupes_responsables=group-resp" method="POST">';
@@ -349,7 +349,7 @@ class Fonctions
     }
 
     // affiche pour un groupe des cases à cocher devant les resp et grand_resp possibles pour les selectionner.
-    public static function affiche_gestion_groupes_responsables($choix_group, $onglet, $DEBUG=FALSE)
+    public static function affiche_gestion_groupes_responsables($choix_group, $onglet)
     {
         $PHP_SELF = $_SERVER['PHP_SELF'];
         $session  = session_id();
@@ -498,7 +498,7 @@ class Fonctions
     }
 
     // affiche le tableau des groupes pour choisir sur quel groupe on va gerer les responsables
-    public static function affiche_choix_groupes_responsables( $DEBUG=FALSE)
+    public static function affiche_choix_groupes_responsables()
     {
         $PHP_SELF = $_SERVER['PHP_SELF'];
         $session  = session_id();
@@ -540,7 +540,7 @@ class Fonctions
     }
 
     // affichage des pages de gestion des responsables des groupes
-    public static function affiche_choix_gestion_groupes_responsables($choix_group, $choix_resp, $onglet, $DEBUG=FALSE)
+    public static function affiche_choix_gestion_groupes_responsables($choix_group, $choix_resp, $onglet)
     {
         $PHP_SELF = $_SERVER['PHP_SELF'];
         $session  = session_id();
@@ -548,20 +548,20 @@ class Fonctions
 
         if( $choix_group!="" )    // si un groupe choisi : on affiche la gestion par groupe
         {
-            $return .= \admin\Fonctions::affiche_gestion_groupes_responsables($choix_group, $onglet, $DEBUG);
+            $return .= \admin\Fonctions::affiche_gestion_groupes_responsables($choix_group, $onglet);
         }
         elseif( $choix_resp!="" )     // si un resp choisi : on affiche la gestion par resp
         {
-            $return .= \admin\Fonctions::affiche_gestion_responsable_groupes($choix_resp, $onglet, $DEBUG);
+            $return .= \admin\Fonctions::affiche_gestion_responsable_groupes($choix_resp, $onglet);
         }
         else    // si pas de groupe ou de resp choisi : on affiche les choix
         {
             $return .= '<div class="row">';
             $return .= '<div class="col-md-6">';
-            $return .= \admin\Fonctions::affiche_choix_groupes_responsables($DEBUG);
+            $return .= \admin\Fonctions::affiche_choix_groupes_responsables();
             $return .= '</div>';
             $return .= '<div class="col-md-6">';
-            $return .= \admin\Fonctions::affiche_choix_responsable_groupes($DEBUG);
+            $return .= \admin\Fonctions::affiche_choix_responsable_groupes();
             $return .= '</div>';
             $return .= '</div>';
         }
@@ -572,13 +572,12 @@ class Fonctions
      * Encapsule le comportement du module de gestion des groupes et des responsables
      *
      * @param string $onglet Nom de l'onglet à afficher
-     * @param bool   $DEBUG  Mode debug ?
      *
      * @return void
      * @access public
      * @static
      */
-    public static function groupeResponsableModule($onglet, $DEBUG = false)
+    public static function groupeResponsableModule($onglet)
     {
         $choix_group    = getpost_variable('choix_group') ;
         $choix_resp     = getpost_variable('choix_resp') ;
@@ -590,25 +589,25 @@ class Fonctions
         if($change_group_responsables=="ok") {
             $checkbox_group_resp        = getpost_variable('checkbox_group_resp') ;
             $checkbox_group_grd_resp    = getpost_variable('checkbox_group_grd_resp') ;
-            $return .= \admin\Fonctions::modif_group_responsables($choix_group, $checkbox_group_resp, $checkbox_group_grd_resp, $DEBUG);
+            $return .= \admin\Fonctions::modif_group_responsables($choix_group, $checkbox_group_resp, $checkbox_group_grd_resp);
         } elseif($change_responsable_group=="ok") {
             $checkbox_resp_group        = getpost_variable('checkbox_resp_group') ;
             $checkbox_grd_resp_group    = getpost_variable('checkbox_grd_resp_group') ;
 
-            $return .= \admin\Fonctions::modif_resp_groupes($choix_resp, $checkbox_resp_group, $checkbox_grd_resp_group, $DEBUG);
+            $return .= \admin\Fonctions::modif_resp_groupes($choix_resp, $checkbox_resp_group, $checkbox_grd_resp_group);
         } else {
             $return .= \admin\Fonctions::affiche_choix_gestion_groupes_responsables($choix_group, $choix_resp, $onglet);
         }
         return $return;
     }
 
-    public static function modif_user_groups($choix_user, &$checkbox_user_groups,  $DEBUG=FALSE)
+    public static function modif_user_groups($choix_user, &$checkbox_user_groups)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id();
         $return = '';
 
-        $result_insert=commit_modif_user_groups($choix_user, $checkbox_user_groups,  $DEBUG);
+        $result_insert=commit_modif_user_groups($choix_user, $checkbox_user_groups);
 
         if($result_insert) {
             $return .= _('form_modif_ok') . ' !<br><br>';
@@ -617,7 +616,7 @@ class Fonctions
         }
 
         $comment_log = "mofification_des groupes auxquels $choix_user appartient" ;
-        log_action(0, "", $choix_user, $comment_log,  $DEBUG);
+        log_action(0, "", $choix_user, $comment_log);
 
         /* APPEL D'UNE AUTRE PAGE */
         $return .= '<form action="' . $PHP_SELF . '?session=' . $session. ' &onglet=admin-group-users" method="POST">';
@@ -626,7 +625,7 @@ class Fonctions
         return $return;
     }
 
-    public static function modif_group_users($choix_group, &$checkbox_group_users,  $DEBUG=FALSE)
+    public static function modif_group_users($choix_group, &$checkbox_group_users)
     {
         $PHP_SELF = $_SERVER['PHP_SELF'];
         $session  = session_id();
@@ -653,7 +652,7 @@ class Fonctions
         }
 
         $comment_log = "mofification_users_du_groupe : $choix_group" ;
-        log_action(0, "", "", $comment_log,  $DEBUG);
+        log_action(0, "", "", $comment_log);
 
         /* APPEL D'UNE AUTRE PAGE */
         $return .= '<form action="' . $PHP_SELF. '?session=' . $session . '&onglet=admin-group-users" method="POST">';
@@ -662,7 +661,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affiche_gestion_groupes_users($choix_group, $onglet, $DEBUG=FALSE) {
+    public static function affiche_gestion_groupes_users($choix_group, $onglet) {
         $PHP_SELF = $_SERVER['PHP_SELF'];
         $session  = session_id();
         $return   = '';
@@ -753,7 +752,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affiche_choix_groupes_users($DEBUG=FALSE)
+    public static function affiche_choix_groupes_users()
     {
         $PHP_SELF = $_SERVER['PHP_SELF'];
         $session  = session_id();
@@ -798,7 +797,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affiche_gestion_user_groupes($choix_user, $onglet, $DEBUG=FALSE)
+    public static function affiche_gestion_user_groupes($choix_user, $onglet)
     {
         $PHP_SELF = $_SERVER['PHP_SELF'];
         $session  = session_id();
@@ -812,7 +811,7 @@ class Fonctions
 
         $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '" method="POST">';
 
-        $return .= \admin\Fonctions::affiche_tableau_affectation_user_groupes($choix_user,  $DEBUG);
+        $return .= \admin\Fonctions::affiche_tableau_affectation_user_groupes($choix_user);
 
         $return .= '<hr/>';
         $return .= '<input type="hidden" name="change_user_groups" value="ok">';
@@ -823,7 +822,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affiche_choix_user_groupes( $DEBUG=FALSE)
+    public static function affiche_choix_user_groupes()
     {
         $PHP_SELF = $_SERVER['PHP_SELF'];
         $session  = session_id();
@@ -869,7 +868,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affiche_tableau_affectation_user_groupes($choix_user,  $DEBUG=FALSE)
+    public static function affiche_tableau_affectation_user_groupes($choix_user)
     {
         $return = '';
         $return .= '<h2>' . _('admin_gestion_groupe_users_group_of_user') . (($choix_user!='') ? ' <strong>' . $choix_user . '</strong>' : '') . '</h2>';
@@ -940,26 +939,26 @@ class Fonctions
         return $return;
     }
 
-    public static function affiche_choix_gestion_groupes_users($choix_group, $choix_user, $onglet,$DEBUG=FALSE)
+    public static function affiche_choix_gestion_groupes_users($choix_group, $choix_user, $onglet)
     {
         $PHP_SELF = $_SERVER['PHP_SELF'];
         $return   = '';
 
         if( $choix_group!="" )     // si un groupe choisi : on affiche la gestion par groupe
         {
-            $return .= \admin\Fonctions::affiche_gestion_groupes_users($choix_group, $onglet, $DEBUG);
+            $return .= \admin\Fonctions::affiche_gestion_groupes_users($choix_group, $onglet);
         } elseif( $choix_user!="" )     // si un user choisi : on affiche la gestion par user
         {
-            $return .= \admin\Fonctions::affiche_gestion_user_groupes($choix_user, $onglet, $DEBUG);
+            $return .= \admin\Fonctions::affiche_gestion_user_groupes($choix_user, $onglet);
         }
         else    // si pas de groupe ou de user choisi : on affiche les choix
         {
             $return .= '<div class="row">';
             $return .= '<div class="col-md-6">';
-            $return .= \admin\Fonctions::affiche_choix_groupes_users($DEBUG);
+            $return .= \admin\Fonctions::affiche_choix_groupes_users();
             $return .= '</div>';
             $return .= '<div class="col-md-6">';
-            $return .= \admin\Fonctions::affiche_choix_user_groupes($DEBUG);
+            $return .= \admin\Fonctions::affiche_choix_user_groupes();
             $return .= '</div>';
             $return .= '</div>';
         }
@@ -970,13 +969,12 @@ class Fonctions
      * Encapsule le comportement du module de la gestion de groupes et d'utilisateurs
      *
      * @param string $onglet Nom de l'onglet à afficher
-     * @param bool   $DEBUG  Mode debug ?
      *
      * @return void
      * @access public
      * @static
      */
-    public static function groupUserModule($onglet, $DEBUG = false)
+    public static function groupUserModule($onglet)
     {
         $change_group_users    = getpost_variable('change_group_users') ;
         $change_user_groups    = getpost_variable('change_user_groups') ;
@@ -986,18 +984,18 @@ class Fonctions
 
         if($change_group_users=="ok") {
             $checkbox_group_users    = getpost_variable('checkbox_group_users');
-            $return .= \admin\Fonctions::modif_group_users($choix_group, $checkbox_group_users, $DEBUG);
+            $return .= \admin\Fonctions::modif_group_users($choix_group, $checkbox_group_users);
         } elseif($change_user_groups=="ok") {
             $checkbox_user_groups    = getpost_variable('checkbox_user_groups');
-            $return .= \admin\Fonctions::modif_user_groups($choix_user, $checkbox_user_groups,  $DEBUG);
+            $return .= \admin\Fonctions::modif_user_groups($choix_user, $checkbox_user_groups);
         } else {
-            $return .= \admin\Fonctions::affiche_choix_gestion_groupes_users($choix_group, $choix_user, $onglet, $DEBUG);
+            $return .= \admin\Fonctions::affiche_choix_gestion_groupes_users($choix_group, $choix_user, $onglet);
         }
         return $return;
     }
 
     // recup le nombre de users d'un groupe donné
-    public static function get_nb_users_du_groupe($group_id,  $DEBUG=FALSE)
+    public static function get_nb_users_du_groupe($group_id)
     {
 
         $sql1='SELECT DISTINCT(gu_login) FROM conges_groupe_users WHERE gu_gid = '. \includes\SQL::quote($group_id).' ORDER BY gu_login ';
@@ -1009,7 +1007,7 @@ class Fonctions
 
     }
 
-    public static function verif_new_param_group($new_group_name, $new_group_libelle, $DEBUG=FALSE)
+    public static function verif_new_param_group($new_group_name, $new_group_libelle)
     {
         $PHP_SELF = $_SERVER['PHP_SELF'];
         $session  = session_id();
@@ -1050,13 +1048,13 @@ class Fonctions
         }
     }
 
-    public static function ajout_groupe($new_group_name, $new_group_libelle, $new_group_double_valid,  $DEBUG=FALSE)
+    public static function ajout_groupe($new_group_name, $new_group_libelle, $new_group_double_valid)
     {
         $PHP_SELF = $_SERVER['PHP_SELF'];
         $session  = session_id();
         $return   = '';
 
-        if(\admin\Fonctions::verif_new_param_group($new_group_name, $new_group_libelle,  $DEBUG)==0)  // verif si les nouvelles valeurs sont coohérentes et n'existent pas déjà
+        if(\admin\Fonctions::verif_new_param_group($new_group_name, $new_group_libelle)==0)  // verif si les nouvelles valeurs sont coohérentes et n'existent pas déjà
         {
             $ngm=stripslashes($new_group_name);
             $return .= $ngm . '---' . $new_group_libelle . '<br>';
@@ -1073,7 +1071,7 @@ class Fonctions
             }
 
             $comment_log = "ajout_groupe : $new_gid / $new_group_name / $new_group_libelle (double_validation : $new_group_double_valid)" ;
-            log_action(0, "", "", $comment_log, $DEBUG);
+            log_action(0, "", "", $comment_log);
 
             /* APPEL D'UNE AUTRE PAGE */
             $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=admin-group" method="POST">';
@@ -1083,7 +1081,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affiche_gestion_groupes($new_group_name, $new_group_libelle, $onglet, $DEBUG=FALSE)
+    public static function affiche_gestion_groupes($new_group_name, $new_group_libelle, $onglet)
     {
         $PHP_SELF = $_SERVER['PHP_SELF'];
         $session  = session_id();
@@ -1118,7 +1116,7 @@ class Fonctions
             $sql_group=$resultat_gr["g_groupename"] ;
             $sql_comment=$resultat_gr["g_comment"] ;
             $sql_double_valid=$resultat_gr["g_double_valid"] ;
-            $nb_users_groupe = \admin\Fonctions::get_nb_users_du_groupe($sql_gid, $DEBUG);
+            $nb_users_groupe = \admin\Fonctions::get_nb_users_du_groupe($sql_gid);
 
             $admin_modif_group = '<a href="admin_index.php?onglet=modif_group&session=' . $session . '&group=' . $sql_gid . '" title="' . _('form_modif') . '"><i class="fa fa-pencil"></i></a>';
             $admin_suppr_group = '<a href="admin_index.php?onglet=suppr_group&session=' . $session . '&group=' . $sql_gid . '" title="' . _('form_supprim') . '"><i class="fa fa-times-circle"></i></a>';
@@ -1173,13 +1171,12 @@ class Fonctions
      * Encapsule le comportement du module de gestion des groupes
      *
      * @param string $onglet Nom de l'onglet à afficher
-     * @param bool   $DEBUG  Mode debug ?
      *
      * @return string
      * @access public
      * @static
      */
-    public static function groupeModule($onglet, $DEBUG = false)
+    public static function groupeModule($onglet)
     {
         $saisie_group           = getpost_variable('saisie_group') ;
         $new_group_name         = addslashes( getpost_variable('new_group_name')) ;
@@ -1188,9 +1185,9 @@ class Fonctions
         $return = '';
 
         if($saisie_group=="ok") {
-            $return .= \admin\Fonctions::ajout_groupe($new_group_name, $new_group_libelle, $new_group_double_valid,  $DEBUG);
+            $return .= \admin\Fonctions::ajout_groupe($new_group_name, $new_group_libelle, $new_group_double_valid);
         } else {
-            $return .= \admin\Fonctions::affiche_gestion_groupes($new_group_name, $new_group_libelle, $onglet, $DEBUG);
+            $return .= \admin\Fonctions::affiche_gestion_groupes($new_group_name, $new_group_libelle, $onglet);
         }
         return $return;
     }
@@ -1199,13 +1196,12 @@ class Fonctions
      * Encapsule le comportement du module de gestion des utilisateurs
      *
      * @param string $session
-     * @param bool   $DEBUG   Mode debug ?
      *
      * @return string
      * @access public
      * @static
      */
-    public static function userModule($session, $DEBUG = false)
+    public static function userModule($session)
     {
         $return = '<h1>' . _('admin_onglet_gestion_user') . '</h1>';
 
@@ -1214,12 +1210,12 @@ class Fonctions
         /*********************/
 
         // recup du tableau des types de conges (seulement les conges)
-        $tab_type_conges=recup_tableau_types_conges($DEBUG);
+        $tab_type_conges=recup_tableau_types_conges();
         $tab_type_conges_exceptionnels = [];
 
         // recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
         if ($_SESSION['config']['gestion_conges_exceptionnels']) {
-            $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels($DEBUG);
+            $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
         }
 
 
@@ -1250,9 +1246,9 @@ class Fonctions
         $tab_info_users=array();
         // si l'admin peut voir tous les users  OU si l'admin n'est pas responsable
         if( $_SESSION['config']['admin_see_all'] || $_SESSION['userlogin']=="admin" || is_hr($_SESSION['userlogin']) ) {
-            $tab_info_users = recup_infos_all_users($DEBUG);
+            $tab_info_users = recup_infos_all_users();
         } else {
-            $tab_info_users = recup_infos_all_users_du_resp($_SESSION['userlogin'], $DEBUG);
+            $tab_info_users = recup_infos_all_users_du_resp($_SESSION['userlogin']);
         }
 
         $i = true;
@@ -1325,7 +1321,7 @@ class Fonctions
         return $return;
     }
 
-    public static function commit_update($u_login_to_update, $new_pwd1, $new_pwd2, $DEBUG=FALSE)
+    public static function commit_update($u_login_to_update, $new_pwd1, $new_pwd2)
     {
 
         $PHP_SELF = $_SERVER['PHP_SELF'];
@@ -1345,16 +1341,10 @@ class Fonctions
             }
 
             $comment_log = "admin_change_password_user : pour $u_login_to_update" ;
-            log_action(0, "", $u_login_to_update, $comment_log, $DEBUG);
+            log_action(0, "", $u_login_to_update, $comment_log);
 
-            if( $DEBUG ) {
-                $return .= '<form action="admin_index.php?session=' . $session . '&onglet=admin-users" method="POST">';
-                $return .= '<input type="submit" value="' . _('form_ok') . '">';
-                $return .= '</form>';
-            } else {
-                /* APPEL D'UNE AUTRE PAGE au bout d'une tempo de 2secondes */
-                $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=admin_index.php?session=' . $session . '&onglet=admin-users">';
-            }
+            /* APPEL D'UNE AUTRE PAGE au bout d'une tempo de 2secondes */
+            $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=admin_index.php?session=' . $session . '&onglet=admin-users">';
         } else {
             $return .= '<H3>' . _('admin_verif_param_invalides') . '</H3>';
             $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=chg_pwd_user" method="POST">';
@@ -1366,7 +1356,7 @@ class Fonctions
         return $return;
     }
 
-    public static function modifier($u_login, $onglet, $DEBUG=FALSE)
+    public static function modifier($u_login, $onglet)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id();
@@ -1417,13 +1407,12 @@ class Fonctions
      *
      * @param string $onglet Nom de l'onglet à afficher
      * @param string $session
-     * @param bool   $DEBUG  Mode debug ?
      *
      * @return string
      * @access public
      * @static
      */
-    public static function changeMotDePasseUserModule($onglet, $session, $DEBUG = false)
+    public static function changeMotDePasseUserModule($onglet, $session)
     {
         $return = '';
         /*************************************/
@@ -1437,11 +1426,11 @@ class Fonctions
 
         if($u_login!="") {
             $return = '<H1>' . _('admin_chg_passwd_titre') . ' : ' . $u_login . '</H1>';
-            $return .= \admin\Fonctions::modifier($u_login, $onglet, $DEBUG);
+            $return .= \admin\Fonctions::modifier($u_login, $onglet);
         } else {
             if($u_login_to_update!="") {
                 $return .= '<H1>' . _('admin_chg_passwd_titre') . ' : ' . $u_login_to_update . '</H1>';
-                $return .= \admin\Fonctions::commit_update($u_login_to_update, $new_pwd1, $new_pwd2, $DEBUG);
+                $return .= \admin\Fonctions::commit_update($u_login_to_update, $new_pwd1, $new_pwd2);
             } else {
                 // renvoit sur la page principale .
                 redirect( ROOT_PATH .'admin/admin_index.php?session='.$session.'&onglet=admin-users', false);
@@ -1451,7 +1440,7 @@ class Fonctions
     }
 
 // recup des data d'une table sous forme de INSERT ...
-    public static function get_table_data($table,  $DEBUG=FALSE)
+    public static function get_table_data($table)
     {
 
         $chaine_data="";
@@ -1487,7 +1476,7 @@ class Fonctions
     }
 
     // recup de la structure d'une table sous forme de CREATE ...
-    public static function get_table_structure($table, $DEBUG=FALSE)
+    public static function get_table_structure($table)
     {
         $chaine_drop="DROP TABLE IF EXISTS  `$table` ;\n";
         $chaine_create = "CREATE TABLE `$table` ( ";
@@ -1581,7 +1570,7 @@ class Fonctions
         return($chaine_drop.$chaine_create);
     }
 
-    public static function restaure($fichier_restaure_name, $fichier_restaure_tmpname, $fichier_restaure_size, $fichier_restaure_error, $DEBUG=FALSE)
+    public static function restaure($fichier_restaure_name, $fichier_restaure_tmpname, $fichier_restaure_size, $fichier_restaure_error)
     {
         $PHP_SELF = $_SERVER['PHP_SELF'];
         $session  = session_id();
@@ -1610,7 +1599,7 @@ class Fonctions
             $return.= '</td>';
             $return.= '</tr></table></form>';
         } else {
-            $result = execute_sql_file($fichier_restaure_tmpname, $DEBUG);
+            $result = execute_sql_file($fichier_restaure_tmpname);
 
             $return .= '<form action="" method="POST">';
             $return .= '<table>';
@@ -1631,7 +1620,7 @@ class Fonctions
     }
 
     // RESTAURATION
-    public static function choix_restaure($DEBUG=FALSE)
+    public static function choix_restaure()
     {
         $PHP_SELF = $_SERVER['PHP_SELF'];
         $session  = session_id();
@@ -1673,7 +1662,7 @@ class Fonctions
         bottom();
     }
 
-    public static function commit_sauvegarde($type_sauvegarde, $DEBUG=FALSE)
+    public static function commit_sauvegarde($type_sauvegarde)
     {
         $PHP_SELF = $_SERVER['PHP_SELF'];
         $session  = session_id();
@@ -1711,7 +1700,7 @@ class Fonctions
         echo $return;
     }
 
-    public static function sauve($type_sauvegarde, $DEBUG=FALSE)
+    public static function sauve($type_sauvegarde)
     {
         $PHP_SELF = $_SERVER['PHP_SELF'];
         $session  = session_id();
@@ -1738,7 +1727,7 @@ class Fonctions
     }
 
     // SAUVEGARDE
-    public static function choix_sauvegarde($DEBUG=FALSE)
+    public static function choix_sauvegarde()
     {
         $PHP_SELF = $_SERVER['PHP_SELF'];
         $session  = session_id();
@@ -1780,7 +1769,7 @@ class Fonctions
     }
 
     // CHOIX
-    public static function choix_save_restore($DEBUG=FALSE)
+    public static function choix_save_restore()
     {
         $PHP_SELF = $_SERVER['PHP_SELF'];
         $session  = session_id();
@@ -1825,16 +1814,15 @@ class Fonctions
      * Encapsule le comportement du module de sauvegarde / restauration de bdd
      *
      * @param string $session
-     * @param bool   $DEBUG   Mode debug ?
      *
      * @return void
      * @access public
      * @static
      */
-    public static function saveRestoreModule($session, $DEBUG = false)
+    public static function saveRestoreModule($session)
     {
         // verif des droits du user à afficher la page
-        verif_droits_user($session, "is_admin", $DEBUG);
+        verif_droits_user($session, "is_admin");
 
 
         /*** initialisation des variables ***/
@@ -1858,34 +1846,30 @@ class Fonctions
             $fichier_restaure_error=$_FILES['fichier_restaure']['error'];
         }
         /*************************************/
-        if( $DEBUG ) {
-            $return .= '_FILES = <br>' . var_export($_FILES, true) . '<br>';
-        }
-
         if($choix_action=="") {
-            \admin\Fonctions::choix_save_restore($DEBUG);
+            \admin\Fonctions::choix_save_restore();
         } elseif($choix_action=="sauvegarde") {
             if( (!isset($type_sauvegarde)) || ($type_sauvegarde=="") ) {
-                \admin\Fonctions::choix_sauvegarde($DEBUG);
+                \admin\Fonctions::choix_sauvegarde();
             } else {
                 if( (!isset($commit)) || ($commit=="") ) {
                     \admin\Fonctions::sauve($type_sauvegarde);
                 } else {
-                    \admin\Fonctions::commit_sauvegarde($type_sauvegarde, $DEBUG);
+                    \admin\Fonctions::commit_sauvegarde($type_sauvegarde);
                 }
             }
         } elseif($choix_action=="restaure") {
             if( (!isset($fichier_restaure_name)) || ($fichier_restaure_name=="")||(!isset($fichier_restaure_tmpname)) || ($fichier_restaure_tmpname=="") )
-                \admin\Fonctions::choix_restaure($DEBUG);
+                \admin\Fonctions::choix_restaure();
             else
-                \admin\Fonctions::restaure($fichier_restaure_name, $fichier_restaure_tmpname, $fichier_restaure_size, $fichier_restaure_error, $DEBUG);
+                \admin\Fonctions::restaure($fichier_restaure_name, $fichier_restaure_tmpname, $fichier_restaure_size, $fichier_restaure_error);
         } else {
             /* APPEL D'UNE AUTRE PAGE immediat */
             echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=admin_index.php?session=$session&onglet=admin-users\">";
         }
     }
 
-    public static function commit_update_groupe($group_to_update, $new_groupname, $new_comment, $new_double_valid,  $DEBUG=FALSE)
+    public static function commit_update_groupe($group_to_update, $new_groupname, $new_comment, $new_double_valid)
     {
         $PHP_SELF = $_SERVER['PHP_SELF'];
         $session  = session_id();
@@ -1903,7 +1887,7 @@ class Fonctions
 
 
         $comment_log = "modif_groupe ($group_to_update) : $new_groupname , $new_comment (double_valid = $new_double_valid)";
-        log_action(0, "", "", $comment_log,  $DEBUG);
+        log_action(0, "", "", $comment_log);
 
         if($result) {
             $return .= _('form_modif_ok') . ' !<br><br>';
@@ -1916,7 +1900,7 @@ class Fonctions
         return $return;
     }
 
-    public static function modifier_groupe($group, $onglet, $DEBUG=FALSE)
+    public static function modifier_groupe($group, $onglet)
     {
         $PHP_SELF = $_SERVER['PHP_SELF'];
         $session  = session_id();
@@ -1986,13 +1970,12 @@ class Fonctions
      *
      * @param string $session
      * @param mixed  $onglet
-     * @param bool   $DEBUG  Mode debug ?
      *
      * @return void
      * @access public
      * @static
      */
-    public static function modifGroupeModule($session, $onglet, $DEBUG = false)
+    public static function modifGroupeModule($session, $onglet)
     {
         /*************************************/
         // recup des parametres reçus :
@@ -2009,9 +1992,9 @@ class Fonctions
         $return .= '<h1>' . _('admin_modif_groupe_titre') . '</h1>';
 
         if($group!="" ) {
-            $return .= \admin\Fonctions::modifier_groupe($group, $onglet, $DEBUG);
+            $return .= \admin\Fonctions::modifier_groupe($group, $onglet);
         } elseif($group_to_update!="") {
-            $return .= \admin\Fonctions::commit_update_groupe($group_to_update, $new_groupname, $new_comment, $new_double_valid,  $DEBUG);
+            $return .= \admin\Fonctions::commit_update_groupe($group_to_update, $new_groupname, $new_comment, $new_double_valid);
         } else {
             // renvoit sur la page principale .
             redirect( ROOT_PATH .'admin/admin_index.php?session='.$session.'&onglet=admin-group', false);
@@ -2019,7 +2002,7 @@ class Fonctions
         return $return;
     }
 
-    public static function tab_grille_rtt_from_checkbox($tab_checkbox_sem_imp, $tab_checkbox_sem_p, $DEBUG=FALSE)
+    public static function tab_grille_rtt_from_checkbox($tab_checkbox_sem_imp, $tab_checkbox_sem_p)
     {
         $tab_grille=array();
         $semaine=array("lu", "ma", "me", "je", "ve", "sa", "di");
@@ -2047,16 +2030,10 @@ class Fonctions
                 $tab_grille[$key]=$val;
             }
         }
-
-        if( $DEBUG ) {
-            echo "tab_grille_rtt_from_checkbox :<br>\n";
-            print_r($tab_grille);
-            echo "<br>\n";
-        }
         return $tab_grille;
     }
 
-    public static function get_current_grille_rtt($u_login_to_update, $DEBUG=FALSE)
+    public static function get_current_grille_rtt($u_login_to_update)
     {
         $tab_grille=array();
 
@@ -2093,19 +2070,11 @@ class Fonctions
             $tab_grille['sem_p_di_am'] = $resultat1['sem_p_di_am'] ;
             $tab_grille['sem_p_di_pm'] = $resultat1['sem_p_di_pm'] ;
         }
-
-        if( $DEBUG ) {
-            echo "get_current_grille_rtt :<br>\n";
-            print_r($tab_grille);
-            echo "<br>\n";
-        }
         return $tab_grille;
     }
 
-    public static function commit_update_user($u_login_to_update, &$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, &$tab_new_reliquat, $tab_checkbox_sem_imp, $tab_checkbox_sem_p, $DEBUG=FALSE)
+    public static function commit_update_user($u_login_to_update, &$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, &$tab_new_reliquat, $tab_checkbox_sem_imp, $tab_checkbox_sem_p)
     {
-        //$DEBUG=TRUE;
-
         $PHP_SELF = $_SERVER['PHP_SELF'];
         $session  = session_id();
         $return   = '';
@@ -2113,21 +2082,11 @@ class Fonctions
         $result=TRUE;
 
         // recup du tableau des types de conges (seulement les conges)
-        $tab_type_conges = recup_tableau_types_conges($DEBUG);
+        $tab_type_conges = recup_tableau_types_conges();
         $tab_type_conges_excep=array();
         if ($_SESSION['config']['gestion_conges_exceptionnels']) {
-            $tab_type_conges_excep=recup_tableau_types_conges_exceptionnels($DEBUG);
+            $tab_type_conges_excep=recup_tableau_types_conges_exceptionnels();
         }
-
-        if( $DEBUG ) {
-            $return .= 'tab_new_jours_an = <br>' . var_export($tab_new_jours_an, true) . '<br>';
-            $return .= 'tab_new_solde = <br>' . var_export($tab_new_solde, true) . '<br>';
-            $return .= 'tab_new_reliquat = <br>' . var_export($tab_new_reliquat, true) . '<br>';
-            $return .= 'tab_type_conges = <br>' . var_export($tab_type_conges, true) . '<br>';
-            $return .= 'tab_type_conges_excep = <br>' . var_export($tab_type_conges_excep, true) . '<br>';
-        }
-
-
         $return .= htmlentities($u_login_to_update) . '---' . htmlentities($tab_new_user['nom']) . '---' . htmlentities($tab_new_user['prenom']) . '---' . htmlentities($tab_new_user['quotite']) . '---' . htmlentities($tab_new_user['is_resp']) . '---' . htmlentities($tab_new_user['resp_login']) . '---';
         $return .= htmlentities($tab_new_user['is_admin']) . '---' . htmlentities($tab_new_user['is_hr']) . '---' . htmlentities($tab_new_user['is_active']) . '---' . htmlentities($tab_new_user['see_all']) . '---' . htmlentities($tab_new_user['email']) . '---' . htmlentities($tab_new_user['login']) . '<br>';
 
@@ -2139,9 +2098,9 @@ class Fonctions
 
         // verification de la validite de la saisie du nombre de jours annuels et du solde pour chaque type de conges
         foreach($tab_type_conges as $id_conges => $libelle) {
-            $valid_1=$valid_1 && verif_saisie_decimal($tab_new_jours_an[$id_conges], $DEBUG);  //verif la bonne saisie du nombre d?cimal
-            $valid_2=$valid_2 && verif_saisie_decimal($tab_new_solde[$id_conges], $DEBUG);  //verif la bonne saisie du nombre d?cimal
-            $valid_reliquat=$valid_reliquat && verif_saisie_decimal($tab_new_reliquat[$id_conges], $DEBUG);  //verif la bonne saisie du nombre d?cimal
+            $valid_1=$valid_1 && verif_saisie_decimal($tab_new_jours_an[$id_conges]);  //verif la bonne saisie du nombre d?cimal
+            $valid_2=$valid_2 && verif_saisie_decimal($tab_new_solde[$id_conges]);  //verif la bonne saisie du nombre d?cimal
+            $valid_reliquat=$valid_reliquat && verif_saisie_decimal($tab_new_reliquat[$id_conges]);  //verif la bonne saisie du nombre d?cimal
         }
 
         // si l'application gere les conges exceptionnels ET si des types de conges exceptionnels ont été définis
@@ -2149,16 +2108,11 @@ class Fonctions
             $valid_3=TRUE;
             // vérification de la validité de la saisie du nombre de jours annuels et du solde pour chaque type de conges exceptionnels
             foreach($tab_type_conges_excep as $id_conges => $libelle) {
-                $valid_3 = $valid_3 && verif_saisie_decimal($tab_new_solde[$id_conges], $DEBUG);  //verif la bonne saisie du nombre décimal
+                $valid_3 = $valid_3 && verif_saisie_decimal($tab_new_solde[$id_conges]);  //verif la bonne saisie du nombre décimal
             }
         } else { // sinon on considère $valid_3 comme vrai
             $valid_3=TRUE;
         }
-
-        if( $DEBUG ) {
-            $return .= 'valid_1 = ' . $valid_1 . ' // valid_2 = ' . $valid_2 . '  // valid_3 = ' . $valid_3 . ' // valid_reliquat = ' . $valid_reliquat . '<br>';
-        }
-
 
         // si aucune erreur de saisie n'a ete commise
         if(($valid_1) && ($valid_2) && ($valid_3) && ($valid_reliquat) && $tab_new_user['login']!="") {
@@ -2187,8 +2141,8 @@ class Fonctions
 
             /*************************************/
             /* Mise a jour de la table artt si besoin :   */
-            $tab_grille_rtt_actuelle = \admin\Fonctions::get_current_grille_rtt($u_login_to_update, $DEBUG);
-            $tab_new_grille_rtt= \admin\Fonctions::tab_grille_rtt_from_checkbox($tab_checkbox_sem_imp, $tab_checkbox_sem_p, $DEBUG);
+            $tab_grille_rtt_actuelle = \admin\Fonctions::get_current_grille_rtt($u_login_to_update);
+            $tab_new_grille_rtt= \admin\Fonctions::tab_grille_rtt_from_checkbox($tab_checkbox_sem_imp, $tab_checkbox_sem_p);
 
             if($tab_grille_rtt_actuelle != $tab_new_grille_rtt) {
                 $new_date_deb_grille=$tab_new_user['year']."-".$tab_new_user['mois']."-".$tab_new_user['jour'];
@@ -2308,7 +2262,7 @@ class Fonctions
                 $comment_log = "modif_user login = $u_login_to_update";
             }
 
-            log_action(0, "", $u_login_to_update, $comment_log,  $DEBUG);
+            log_action(0, "", $u_login_to_update, $comment_log);
 
             $return .= _('form_modif_ok') . ' !<br><br>';
 
@@ -2318,22 +2272,22 @@ class Fonctions
         return $return;
     }
 
-    public static function modifier_user($u_login, $tab_checkbox_sem_imp, $tab_checkbox_sem_p, $onglet, $DEBUG=FALSE)
+    public static function modifier_user($u_login, $tab_checkbox_sem_imp, $tab_checkbox_sem_p, $onglet)
     {
         $PHP_SELF = $_SERVER['PHP_SELF'];
         $session  = session_id();
         $return   = '';
 
         // recup du tableau des types de conges (seulement les conges)
-        $tab_type_conges=recup_tableau_types_conges($DEBUG);
+        $tab_type_conges=recup_tableau_types_conges();
 
         // recup du tableau des types de conges (seulement les conges)
         if ( $_SESSION['config']['gestion_conges_exceptionnels'] ) {
-            $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels($DEBUG);
+            $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
         }
 
         // Récupération des informations
-        $tab_user = recup_infos_du_user($u_login, "", $DEBUG);
+        $tab_user = recup_infos_du_user($u_login, "");
 
         /********************/
         /* Etat utilisateur */
@@ -2544,7 +2498,7 @@ class Fonctions
 
         /*********************************************************/
         // saisie des jours d'abscence RTT ou temps partiel:
-        $return .= saisie_jours_absence_temps_partiel($u_login,$DEBUG);
+        $return .= saisie_jours_absence_temps_partiel($u_login);
         $return .= '<hr/>';
         $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
         $return .= '<a class="btn" href="admin_index.php?session=' . $session . '&onglet=admin-users">' . _('form_cancel') . '</a>';
@@ -2557,13 +2511,12 @@ class Fonctions
      *
      * @param string $session
      * @param string $onglet Nom de l'onglet à afficher
-     * @param bool   $DEBUG  Mode debug ?
      *
      * @return string
      * @access public
      * @static
      */
-    public static function modifUserModule($session, $onglet, $DEBUG = false)
+    public static function modifUserModule($session, $onglet)
     {
         $u_login              = getpost_variable('u_login') ;
         $u_login_to_update    = getpost_variable('u_login_to_update') ;
@@ -2582,7 +2535,7 @@ class Fonctions
 
 
         if($u_login!="") {
-            $return .= \admin\Fonctions::modifier_user($u_login, $tab_checkbox_sem_imp, $tab_checkbox_sem_p, $onglet, $DEBUG);
+            $return .= \admin\Fonctions::modifier_user($u_login, $tab_checkbox_sem_imp, $tab_checkbox_sem_p, $onglet);
         } elseif($u_login_to_update!="") {
             $tab_new_jours_an   = getpost_variable('tab_new_jours_an') ;
             $tab_new_solde      = getpost_variable('tab_new_solde') ;
@@ -2603,7 +2556,7 @@ class Fonctions
             $tab_new_user['mois']       = getpost_variable('new_mois') ;
             $tab_new_user['year']       = getpost_variable('new_year') ;
 
-            echo \admin\Fonctions::commit_update_user($u_login_to_update, $tab_new_user, $tab_new_jours_an, $tab_new_solde, $tab_new_reliquat, $tab_checkbox_sem_imp, $tab_checkbox_sem_p, $DEBUG);
+            echo \admin\Fonctions::commit_update_user($u_login_to_update, $tab_new_user, $tab_new_jours_an, $tab_new_solde, $tab_new_reliquat, $tab_checkbox_sem_imp, $tab_checkbox_sem_p);
             redirect( ROOT_PATH .'admin/admin_index.php?session='.$session.'&onglet=admin-users', false);
             exit;
 
@@ -2615,7 +2568,7 @@ class Fonctions
         return $return;
     }
 
-    public static function suppression_group($group_to_delete,  $DEBUG=FALSE)
+    public static function suppression_group($group_to_delete)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id();
@@ -2636,7 +2589,7 @@ class Fonctions
         }
 
         $comment_log = "suppression_groupe ($group_to_delete)";
-        log_action(0, "", "", $comment_log,  $DEBUG);
+        log_action(0, "", "", $comment_log);
 
         if($result) {
             $return .= _('form_modif_ok') . ' !<br><br>';
@@ -2649,7 +2602,7 @@ class Fonctions
         return $return;
     }
 
-    public static function confirmer($group, $onglet, $DEBUG=FALSE)
+    public static function confirmer($group, $onglet)
     {
         $PHP_SELF = $_SERVER['PHP_SELF'];
         $session  = session_id();
@@ -2697,13 +2650,12 @@ class Fonctions
      *
      * @param string $session
      * @param string $onglet Nom de l'onglet à afficher
-     * @param bool   $DEBUG  Mode debug ?
      *
      * @return void
      * @access public
      * @static
      */
-    public static function supprimerGroupeModule($session, $onglet, $DEBUG = false)
+    public static function supprimerGroupeModule($session, $onglet)
     {
         $group = getpost_variable('group');
         $group_to_delete = getpost_variable('group_to_delete');
@@ -2714,9 +2666,9 @@ class Fonctions
         $return .= '<h1>' . _('admin_suppr_groupe_titre') . '</h1>';
 
         if($group!="") {
-            $return .= \admin\Fonctions::confirmer($group, $onglet, $DEBUG);
+            $return .= \admin\Fonctions::confirmer($group, $onglet);
         } elseif($group_to_delete!="") {
-            $return .= \admin\Fonctions::suppression_group($group_to_delete,  $DEBUG);
+            $return .= \admin\Fonctions::suppression_group($group_to_delete);
         } else {
             // renvoit sur la page principale .
             redirect( ROOT_PATH .'admin/admin_index.php?session='.$session.'&onglet=admin-group', false);
@@ -2724,7 +2676,7 @@ class Fonctions
         return $return;
     }
 
-    public static function suppression($u_login_to_delete, $DEBUG=FALSE)
+    public static function suppression($u_login_to_delete)
     {
         $PHP_SELF = $_SERVER['PHP_SELF'];
         $session  = session_id();
@@ -2753,7 +2705,7 @@ class Fonctions
 
 
         $comment_log = "suppression_user ($u_login_to_delete)";
-        log_action(0, "", $u_login_to_delete, $comment_log, $DEBUG);
+        log_action(0, "", $u_login_to_delete, $comment_log);
 
         if($result) {
             $return .= _('form_modif_ok') . ' !<br><br>';
@@ -2763,7 +2715,7 @@ class Fonctions
         return $return;
     }
 
-    public static function confirmer_suppression($u_login, $onglet, $DEBUG=FALSE)
+    public static function confirmer_suppression($u_login, $onglet)
     {
         $PHP_SELF = $_SERVER['PHP_SELF'];
         $session  = session_id();
@@ -2808,13 +2760,12 @@ class Fonctions
      *
      * @param string $session
      * @param string $onglet
-     * @param bool   $DEBUG   Mode debug ?
      *
      * @return string
      * @access public
      * @static
      */
-    public static function supprimerUtilisateurModule($session, $onglet, $DEBUG = false)
+    public static function supprimerUtilisateurModule($session, $onglet)
     {
         $return = '';
         /*************************************/
@@ -2835,9 +2786,9 @@ class Fonctions
 
 
         if($u_login!="") {
-            $return .= \admin\Fonctions::confirmer_suppression($u_login, $onglet, $DEBUG);
+            $return .= \admin\Fonctions::confirmer_suppression($u_login, $onglet);
         } elseif($u_login_to_delete!="") {
-            echo \admin\Fonctions::suppression($u_login_to_delete, $DEBUG);
+            echo \admin\Fonctions::suppression($u_login_to_delete);
             redirect( ROOT_PATH .'admin/admin_index.php?session='.$session.'&onglet=admin-users', false);
             exit;
         } else {
@@ -2848,7 +2799,7 @@ class Fonctions
         return $return;
     }
 
-    public static function recup_users_from_ldap(&$tab_ldap, &$tab_login, $DEBUG=FALSE)
+    public static function recup_users_from_ldap(&$tab_ldap, &$tab_login)
     {
         // cnx à l'annuaire ldap :
         $ds = \ldap_connect($_SESSION['config']['ldap_server']);
@@ -2886,7 +2837,7 @@ class Fonctions
         }
     }
 
-    public static function affiche_tableau_affectation_user_groupes2($choix_user,  $DEBUG=FALSE)
+    public static function affiche_tableau_affectation_user_groupes2($choix_user)
     {
         $return = '';
         //AFFICHAGE DU TABLEAU DES GROUPES DU USER
@@ -2960,22 +2911,18 @@ class Fonctions
     }
 
     // affichage du formulaire de saisie d'un nouveau user
-    public static function affiche_formulaire_ajout_user(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, $onglet,  $DEBUG=FALSE)
+    public static function affiche_formulaire_ajout_user(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, $onglet)
     {
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id();
         $return = '';
 
         // recup du tableau des types de conges (seulement les conges)
-        $tab_type_conges=recup_tableau_types_conges($DEBUG);
+        $tab_type_conges=recup_tableau_types_conges();
 
         // recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
         if ($_SESSION['config']['gestion_conges_exceptionnels']){
-            $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels($DEBUG);
-        }
-
-        if( $DEBUG ) {
-            $return .= 'tab_type_conges = <br>' . var_export($tab_type_conges, true) . '<br>';
+            $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
         }
 
         /*********************/
@@ -3026,7 +2973,7 @@ class Fonctions
         // PREPARATION DES OPTIONS DU SELECT du resp_login
         $text_resp_login="<select class=\"form-control\" name=\"new_resp_login\" id=\"resp_login_id\" ><option value=\"no_resp\">". _('admin_users_no_resp') ."</option>" ;
 
-        if( $_SESSION['config']['admin_see_all'] || $_SESSION['userlogin']=="admin" || is_hr($_SESSION['userlogin'],  $DEBUG=FALSE)) {
+        if( $_SESSION['config']['admin_see_all'] || $_SESSION['userlogin']=="admin" || is_hr($_SESSION['userlogin'])) {
             $sql2 = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_is_resp = \"Y\" ORDER BY u_nom, u_prenom"  ;
         } else {
             $sql2 = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_is_resp = \"Y\" AND u_login=\"".$_SESSION['userlogin']."\" ORDER BY u_nom, u_prenom" ;
@@ -3064,7 +3011,7 @@ class Fonctions
             // afin de pouvoir construire une liste déroulante dans le formulaire qui suit...
             $tab_ldap  = array();
             $tab_login = array();
-            \admin\Fonctions::recup_users_from_ldap($tab_ldap, $tab_login, $DEBUG);
+            \admin\Fonctions::recup_users_from_ldap($tab_ldap, $tab_login);
 
             // construction de la liste des users récupérés du ldap ...
             array_multisort($tab_ldap, $tab_login); // on trie les utilisateurs par le nom
@@ -3144,7 +3091,7 @@ class Fonctions
         $return .= '</tbody></table><br>';
 
         // saisie de la grille des jours d'absence ARTT ou temps partiel:
-        $return .= saisie_jours_absence_temps_partiel($tab_new_user['login'],  $DEBUG);
+        $return .= saisie_jours_absence_temps_partiel($tab_new_user['login']);
 
 
         // si gestion des groupes :  affichage des groupe pour y affecter le user
@@ -3152,9 +3099,9 @@ class Fonctions
         {
             $return .= '<br>';
             if( $_SESSION['config']['admin_see_all'] || $_SESSION['userlogin']=="admin" ||  is_hr($_SESSION['userlogin']) ) {
-                $return .= \admin\Fonctions::affiche_tableau_affectation_user_groupes2("",  $DEBUG);
+                $return .= \admin\Fonctions::affiche_tableau_affectation_user_groupes2("");
             } else {
-                $return .= \admin\Fonctions::affiche_tableau_affectation_user_groupes2($_SESSION['userlogin'],  $DEBUG);
+                $return .= \admin\Fonctions::affiche_tableau_affectation_user_groupes2($_SESSION['userlogin']);
             }
         }
 
@@ -3166,25 +3113,20 @@ class Fonctions
         return $return;
     }
 
-    public static function verif_new_param(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, &$return = null, $DEBUG=FALSE)
+    public static function verif_new_param(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, &$return = null)
     {
         $PHP_SELF = $_SERVER['PHP_SELF'];
         $session  = session_id();
         $return   = '';
 
         foreach($tab_new_jours_an as $id_cong => $jours_an) {
-            $valid=verif_saisie_decimal($tab_new_jours_an[$id_cong], $DEBUG);    //verif la bonne saisie du nombre décimal
-            $valid=verif_saisie_decimal($tab_new_solde[$id_cong], $DEBUG);    //verif la bonne saisie du nombre décimal
+            $valid=verif_saisie_decimal($tab_new_jours_an[$id_cong]);    //verif la bonne saisie du nombre décimal
+            $valid=verif_saisie_decimal($tab_new_solde[$id_cong]);    //verif la bonne saisie du nombre décimal
         }
-        if( $DEBUG ) {
-            $return .= 'tab_new_jours_an = ' . var_export($tab_new_jours_an, true) . '<br>';
-            $return .= 'tab_new_solde = ' . var_export($tab_new_solde, true) . '<br>';
-        }
-
-
+ 
         // verif des parametres reçus :
         // si on travaille avec la base dbconges, on teste tout, mais si on travaille avec ldap, on ne teste pas les champs qui viennent de ldap ...
-        if(!\admin\Fonctions::test_form_add_user($tab_new_user, $DEBUG=FALSE)) {
+        if(!\admin\Fonctions::test_form_add_user($tab_new_user)) {
             $return .= '<h3><font color="red">' . _('admin_verif_param_invalides') . '</font></h3>';
             // affichage des param :
             $return .= htmlentities($tab_new_user['login']) . '---' . htmlentities($tab_new_user['nom']) . '---' . htmlentities($tab_new_user['prenom']) . '---' . htmlentities($tab_new_user['quotite']) . '---' . htmlentities($tab_new_user['is_resp']) . '---' . htmlentities($tab_new_user['resp_login']) . '<br>';
@@ -3271,7 +3213,7 @@ class Fonctions
         }
     }
 
-    public static function test_form_add_user($tab_new_user, $DEBUG=FALSE) {
+    public static function test_form_add_user($tab_new_user) {
         if($_SESSION['config']['export_users_from_ldap']) {
             return \admin\Fonctions::FormAddUserLoginOk($tab_new_user['login']) && \admin\Fonctions::FormAddUserQuotiteOk($tab_new_user['quotite']);
         } else {
@@ -3300,22 +3242,15 @@ class Fonctions
         }
     }
 
-    public static function ajout_user(&$tab_new_user, $tab_checkbox_sem_imp, $tab_checkbox_sem_p, &$tab_new_jours_an, &$tab_new_solde, $checkbox_user_groups, $DEBUG=FALSE)
+    public static function ajout_user(&$tab_new_user, $tab_checkbox_sem_imp, $tab_checkbox_sem_p, &$tab_new_jours_an, &$tab_new_solde, $checkbox_user_groups)
     {
         $PHP_SELF = $_SERVER['PHP_SELF'];
         $session  = session_id();
         $return   = '';
         $verifFalse = '';
 
-        if( $DEBUG ) {
-            $return .= 'tab_new_jours_an = ';
-            $return .= var_export($tab_new_jours_an, true);
-            $return .= '<br>tab_new_solde = ';
-            $return .= var_export($tab_new_solde, true) . '<br>';
-        }
-
         // si pas d'erreur de saisie :
-        if(\admin\Fonctions::verif_new_param($tab_new_user, $tab_new_jours_an, $tab_new_solde, $verifFalse, $DEBUG)==0) {
+        if(\admin\Fonctions::verif_new_param($tab_new_user, $tab_new_jours_an, $tab_new_solde, $verifFalse)==0) {
             $return .= $tab_new_user['login'] . ' --- ' . $tab_new_user['nom'] .  ' --- ' . $tab_new_user['prenom'] . ' --- ' . $tab_new_user['quotite'];
             $return .= ' --- ' . $tab_new_user['is_resp'] . ' --- ' . $tab_new_user['resp_login'] . ' --- ' . $tab_new_user['is_admin'] . ' --- ' . $tab_new_user['is_hr'] . ' --- ' . $tab_new_user['see_all'] . ' --- ' . $tab_new_user['email'] . '<br>';
 
@@ -3389,7 +3324,7 @@ class Fonctions
             /* ajout du user dans ses groupes  */
             $result4=TRUE;
             if( ($_SESSION['config']['gestion_groupes']) && ($checkbox_user_groups!="") ) {
-                $result4=commit_modif_user_groups($tab_new_user['login'], $checkbox_user_groups, $DEBUG);
+                $result4=commit_modif_user_groups($tab_new_user['login'], $checkbox_user_groups);
             }
 
             /*****************************/
@@ -3401,7 +3336,7 @@ class Fonctions
             }
 
             $comment_log = "ajout_user : ".$tab_new_user['login']." / ".addslashes($tab_new_user['nom'])." ".addslashes($tab_new_user['prenom'])." (".$tab_new_user['quotite']." %)" ;
-            log_action(0, "", $tab_new_user['login'], $comment_log, $DEBUG);
+            log_action(0, "", $tab_new_user['login'], $comment_log);
 
             /* APPEL D'UNE AUTRE PAGE */
             $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=admin-users" method="POST">';
@@ -3417,13 +3352,12 @@ class Fonctions
      * Encapsule le comportement du module d'ajout d'utilisateurs
      *
      * @param string $onglet
-     * @param bool   $DEBUG   Mode debug ?
      *
      * @return void
      * @access public
      * @static
      */
-    public static function ajoutUtilisateurModule($onglet, $DEBUG = false)
+    public static function ajoutUtilisateurModule($onglet)
     {
         $saisie_user = getpost_variable('saisie_user');
         $return      = '';
@@ -3515,13 +3449,13 @@ class Fonctions
         if($saisie_user=="ok") {
             if($_SESSION['config']['export_users_from_ldap']) {
                 foreach($tab_login as $login) {
-                    $return .= \admin\Fonctions::ajout_user($tab_new_user[$login], $tab_checkbox_sem_imp, $tab_checkbox_sem_p, $tab_new_jours_an, $tab_new_solde, $checkbox_user_groups, $DEBUG);
+                    $return .= \admin\Fonctions::ajout_user($tab_new_user[$login], $tab_checkbox_sem_imp, $tab_checkbox_sem_p, $tab_new_jours_an, $tab_new_solde, $checkbox_user_groups);
                 }
             } else {
-                $return .= \admin\Fonctions::ajout_user($tab_new_user[0], $tab_checkbox_sem_imp, $tab_checkbox_sem_p, $tab_new_jours_an, $tab_new_solde, $checkbox_user_groups, $DEBUG);
+                $return .= \admin\Fonctions::ajout_user($tab_new_user[0], $tab_checkbox_sem_imp, $tab_checkbox_sem_p, $tab_new_jours_an, $tab_new_solde, $checkbox_user_groups);
             }
         } else {
-            $return .= \admin\Fonctions::affiche_formulaire_ajout_user($tab_new_user[0], $tab_new_jours_an, $tab_new_solde, $onglet, $DEBUG);
+            $return .= \admin\Fonctions::affiche_formulaire_ajout_user($tab_new_user[0], $tab_new_jours_an, $tab_new_solde, $onglet);
         }
         return $return;
     }
