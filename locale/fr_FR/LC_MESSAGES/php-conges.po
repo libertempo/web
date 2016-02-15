@@ -1605,10 +1605,22 @@ msgid "config_comment_affiche_jours_current_month_calendrier"
 msgstr "// AFFICHAGE DU NB DE JOURS PRIS DURANT LE MOIS AFFICHé (POUR CHAQUE TYPE D'ABSENCE) : <br>//--------------------------------------------------------------------------------------------<br>// si à FALSE : pas d'affichage, dans le calendrier, pour chaque utilisateur, pour chaque type de congé, à coté du solde, du nb de jours pris durant le mois affiché. (FALSE est la valeur par défaut)<br>// si à TRUE : affichage, dans le calendrier, pour chaque utilisateur, pour chaque type de congé, à coté du solde, du nb de jours pris durant le mois affiché."
 
 msgid "db_configuration"
-msgstr "Configuration de la base de données"
+msgstr "Configuration de la base de données MySQL"
 
 msgid "db_configuration_ok"
-msgstr "génération du fichier de configuration de la base de données effectuée avec succès"
+msgstr "Génération du fichier de configuration de la base de données effectuée avec succès"
+
+msgid "db_configuration_server"
+msgstr "Hôte :"
+
+msgid "db_configuration_name"
+msgstr "Nom :"
+
+msgid "db_configuration_user"
+msgstr "Identifiant :"
+
+msgid "db_configuration_password"
+msgstr "Mot de passe :"
 
 msgid "tableau_recap"
 msgstr "Tableau récapitulatif"

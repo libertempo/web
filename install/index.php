@@ -75,13 +75,13 @@ $dbdb=(isset($_GET['dbdb']) ? $_GET['dbdb'] : ((isset($_POST['dbdb'])) ? $_POST[
         if($dbserver=="" || $dbuser=="" || $dbpasswd=="") {
             echo  _('db_configuration');
             echo "<form action=\"$PHP_SELF?session=$session\" method=\"POST\">\n";
-            echo "Server :";
+            echo  _('db_configuration_server');
             echo '<INPUT type="text" value="localhost" name="dbserver"><br>';
-            echo "Database name :";
+            echo  _('db_configuration_name');
             echo '<INPUT type="text" value="db_conges" name="dbdb"><br>';
-            echo "\n User : ";
+            echo  _('db_configuration_user');
             echo '<INPUT type="text" value="conges" name="dbuser"><br>';
-            echo "\n Password : ";
+            echo  _('db_configuration_password');
             echo '<INPUT type="password" name="dbpasswd"><br>';
             echo "<INPUT type=\"hidden\" value=\"".$lang."\" name=\"lang\"><br>";
             echo "<br>\n";
@@ -115,13 +115,13 @@ $dbdb=(isset($_GET['dbdb']) ? $_GET['dbdb'] : ((isset($_POST['dbdb'])) ? $_POST[
             if($dbserver=="" || $dbuser=="" || $dbpasswd=="") {
                 echo  _('db_configuration');
                 echo "<form action=\"$PHP_SELF?session=$session\" method=\"POST\">\n";
-                echo "Server :";
+                echo  _('db_configuration_server');
                 echo '<INPUT type="text" value="localhost" name="dbserver"><br>';
-                echo "Database name :";
+                echo  _('db_configuration_name');
                 echo '<INPUT type="text" value="db_conges" name="dbdb"><br>';
-                echo "\n User : ";
+                echo  _('db_configuration_user');
                 echo '<INPUT type="text" value="conges" name="dbuser"><br>';
-                echo "\n Password : ";
+                echo  _('db_configuration_password');
                 echo '<INPUT type="password" name="dbpasswd"><br>';
                 echo "<INPUT type=\"hidden\" value=\"".$lang."\" name=\"lang\"><br>";
                 echo "<br>\n";
