@@ -481,11 +481,11 @@ function authentification_AD_SSO()
 	$cred = explode("\",$_SERVER["REMOTE_USER"]);
 	if(count($cred)==1)
 	{
-		$userAD = $cred[0];
+		$userAD = $cred[1];
 	}
 	else
 	{
-		$userAD = $cred[1];
+		$userAD = $cred[0];
 	}
 
 	session_create($userAD);
