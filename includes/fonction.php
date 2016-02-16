@@ -473,3 +473,29 @@ function unhash_user($huser_test)
 	}
 	return $user;
 }
+
+function authentification_AD_SSO()
+{
+	$cred = explode("\",$_SERVER["REMOTE_USER"]);
+	if(count($cred)==1)
+	{
+		$userAD = $cred[1];
+	}
+	else
+	{
+		$userAD = $cred[0];
+	}
+
+	session_create($userAD);
+
+	// ON VERIFIE ICI QUE L'UTILISATEUR EST DEJA ENREGISTRE SOUS DBCONGES
+	$req_conges = 'SELECT u_login FROM conges_users WHERE u_login=\''. SQL::quote($userAD).'\'';
+	$res_conges = SQL::query($req_conges) ;
+	$num_row_conges = $res_conges->num_rows;
+	if($num_row_conges !=0)
+	{
+		return $userAD;
+	}
+
+	return '';
+}

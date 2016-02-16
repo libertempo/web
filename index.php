@@ -95,7 +95,16 @@ else
 	if ( $_SESSION['config']['how_to_connect_user'] == "cas" && $_GET['cas'] != "no" )
 	{
 		//redirection vers l'url d'authentification CAS
-		$usernameCAS = authentification_passwd_conges_CAS();
+		$usernameCAS = '';
+		if( $_SESSION['config']['CAS_Windows'] )
+		{
+			$usernameCAS = authentification_AD_SSO();
+		}
+		else
+		{
+			$usernameCAS = authentification_passwd_conges_CAS();
+		}
+		
 		if($usernameCAS != "")
 		{
 			session_create($usernameCAS);
