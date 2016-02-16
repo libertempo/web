@@ -33,3 +33,4 @@ $config_CAS_host = "localhost";		//adresse http
 $config_CAS_portNumber = 443; 	//entier
 $config_CAS_URI = "";		//chemin relatif (peut être vide)
 $config_CAS_CACERT = ""; //indispensable en production
+$config_CAS_Windows = false; // mettre à true pour utiliser l'identifiant et le mot de passe de session Windows en SSO
