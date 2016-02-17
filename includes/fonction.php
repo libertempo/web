@@ -408,8 +408,6 @@ function authentification_passwd_conges_CAS()
         phpCAS::setNoCasServerValidation();
 
     // authentificationCAS (redirection vers la page d'authentification de CAS)
-    // setCasServerCACert a besoin du certificat au format pem. Il faut ajouter l'option d'import du certificat dans les préférences... En attendant setNoCasServer...
-    phpCAS::setNoCasServerValidation();
     phpCAS::forceAuthentication();
 
     $usernameCAS = phpCAS::getUser();
