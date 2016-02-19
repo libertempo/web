@@ -64,7 +64,7 @@
         <link type="text/css" href="<?= TEMPLATE_PATH ?>css/reboot.css" rel="stylesheet" media="screen,print">
         <link type="text/css" href="<?= TEMPLATE_PATH ?>css/datepicker.css" rel="stylesheet" media="screen">
         <?php /* JQUERY */ ?>
-        <script type="text/javascript" src="<?= TEMPLATE_PATH ?>jquery/js/jquery-1.7.1.min.js"></script>
+        <script type="text/javascript" src="<?= ASSETS_PATH ?>jquery/js/jquery-1.7.1.min.js"></script>
         <script type="text/javascript" src="<?= ASSETS_PATH  ?>bootstrap/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="<?= ASSETS_PATH ?>bootstrap-datepicker/bootstrap-datepicker.js"></script>
         <script type="text/javascript" src="<?= ASSETS_PATH ?>bootstrap-datepicker/locales/bootstrap-datepicker.fr.js"></script>

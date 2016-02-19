@@ -9,7 +9,7 @@ include TEMPLATE_PATH . 'template_define.php';
         <title><?= $title ?></title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <?php /* JQUERY */ ?>
-        <link type="text/css" href="<?= TEMPLATE_PATH ?>jquery/css/custom-theme/jquery-ui-1.8.17.custom.css" rel="stylesheet" />
+        <link type="text/css" href="<?= ASSETS_PATH ?>jquery/css/custom-theme/jquery-ui-1.8.17.custom.css" rel="stylesheet" />
         <?php /* BOOTSTRAP */?>
         <link type="text/css" href="<?= ASSETS_PATH ?>bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
         <?php /* FONT AWESOME */ ?>
@@ -17,9 +17,9 @@ include TEMPLATE_PATH . 'template_define.php';
         <?php /* REBOOT STYLE */ ?>
         <link type="text/css" href="<?= TEMPLATE_PATH ?>/css/reboot.css" rel="stylesheet" rel="stylesheet" media="screen">
         <?php /* SCRIPTS */ ?>
-        <script type="text/javascript" src="<?= TEMPLATE_PATH ?>jquery/js/jquery-1.7.1.min.js"></script>
-        <script type="text/javascript" src="<?= TEMPLATE_PATH ?>jquery/js/jquery-ui-1.8.17.custom.min.js"></script>
-        <script type="text/javascript" src="<?= TEMPLATE_PATH ?>jquery/js/jquery.tablesorter.min.js"></script>
+        <script type="text/javascript" src="<?= ASSETS_PATH ?>jquery/js/jquery-1.7.1.min.js"></script>
+        <script type="text/javascript" src="<?= ASSETS_PATH ?>jquery/js/jquery-ui-1.8.17.custom.min.js"></script>
+        <script type="text/javascript" src="<?= ASSETS_PATH ?>jquery/js/jquery.tablesorter.min.js"></script>
         <?= $additional_head ?>
     </head>
     <body class="login">
