@@ -12,6 +12,9 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     define('DEFINE_INCLUDE',   true);
     define('SHOW_SQL',         false);
     define('ABSOLUTE_SYSPATH', dirname(__FILE__) . '/');
+    define('PUBLIC_PATH',      ROOT_PATH . 'Public/');
+    define('ASSETS_PATH',      PUBLIC_PATH . 'Assets/');
+    define('JS_PATH',          ASSETS_PATH . 'Js/');
     define('DEBUG_SYSPATH',    ABSOLUTE_SYSPATH . 'debug/');
     define('LIBRARY_PATH',     ROOT_PATH . 'library/');
     define('INCLUDE_PATH',     ROOT_PATH . 'includes/');
