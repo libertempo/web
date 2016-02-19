@@ -59,7 +59,7 @@
         <?php /* BOOTSTRAP */?>
         <link type="text/css" href="<?= ASSETS_PATH ?>bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen,print">
         <?php /* FONT AWESOME */ ?>
-        <link href="<?= TEMPLATE_PATH ?>/font-awesome/css/font-awesome.css" rel="stylesheet">
+        <link href="<?= ASSETS_PATH ?>font-awesome/css/font-awesome.css" rel="stylesheet">
         <?php /* REBOOT STYLE */ ?>
         <link type="text/css" href="<?= TEMPLATE_PATH ?>css/reboot.css" rel="stylesheet" media="screen,print">
         <link type="text/css" href="<?= TEMPLATE_PATH ?>css/datepicker.css" rel="stylesheet" media="screen">
