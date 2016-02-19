@@ -16,7 +16,7 @@ include TEMPLATE_PATH . 'template_define.php';
         <?php /* FONT AWESOME */ ?>
         <link href="<?= ASSETS_PATH ?>font-awesome/css/font-awesome.css" rel="stylesheet">
         <?php /* REBOOT STYLE */ ?>
-        <link type="text/css" href="<?= TEMPLATE_PATH ?>/css/reboot.css" rel="stylesheet" media="screen">
+        <link type="text/css" href="<?= CSS_PATH ?>reboot.css" rel="stylesheet" media="screen">
         <?php /* SCRIPTS */ ?>
         <script type="text/javascript" src="<?= ASSETS_PATH ?>jquery/js/jquery-1.7.1.min.js"></script>
         <script type="text/javascript" src="<?= ASSETS_PATH; ?>jquery/js/jquery-ui-1.8.17.custom.min.js"></script>

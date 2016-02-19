@@ -12,10 +12,13 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     define('DEFINE_INCLUDE',   true);
     define('SHOW_SQL',         false);
     define('ABSOLUTE_SYSPATH', dirname(__FILE__) . '/');
+    define('DEBUG_SYSPATH',    ABSOLUTE_SYSPATH . 'debug/');
     define('PUBLIC_PATH',      ROOT_PATH . 'Public/');
     define('ASSETS_PATH',      PUBLIC_PATH . 'Assets/');
     define('JS_PATH',          ASSETS_PATH . 'Js/');
-    define('DEBUG_SYSPATH',    ABSOLUTE_SYSPATH . 'debug/');
+    define('IMG_PATH',         ASSETS_PATH . 'Img/');
+    define('FONT_PATH',        ASSETS_PATH . 'Font/');
+    define('CSS_PATH',         ASSETS_PATH . 'Css/');
     define('LIBRARY_PATH',     ROOT_PATH . 'library/');
     define('INCLUDE_PATH',     ROOT_PATH . 'includes/');
     define('CONFIG_PATH',      ROOT_PATH . 'cfg/');
