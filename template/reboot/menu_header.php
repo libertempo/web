@@ -68,7 +68,7 @@
         <script type="text/javascript" src="<?= ASSETS_PATH  ?>bootstrap/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="<?= ASSETS_PATH ?>bootstrap-datepicker/bootstrap-datepicker.js"></script>
         <script type="text/javascript" src="<?= ASSETS_PATH ?>bootstrap-datepicker/locales/bootstrap-datepicker.fr.js"></script>
-        <script type="text/javascript" src="<?= TEMPLATE_PATH ?>js/reboot.js"></script>
+        <script type="text/javascript" src="<?= JS_PATH ?>reboot.js"></script>
        <?= $additional_head ?>
     </head>
     <body id="top" class="hbox connected <?= ($printable) ? 'printable' : '' ?>">

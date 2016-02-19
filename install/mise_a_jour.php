@@ -50,7 +50,7 @@ header_popup(' PHP_CONGES : '. _('install_maj_titre_1') );
 
 // affichage du titre
 echo "<center>\n";
-echo "<br><H1><img src=\"".TEMPLATE_PATH."img/tux_config_32x32.png\" width=\"32\" height=\"32\" border=\"0\" title=\"". _('install_install_phpconges') ."\" alt=\"". _('install_install_phpconges') ."\"> ". _('install_maj_titre_2') ."</H1>\n";
+echo "<br><H1><img src=\"".IMG_PATH."tux_config_32x32.png\" width=\"32\" height=\"32\" border=\"0\" title=\"". _('install_install_phpconges') ."\" alt=\"". _('install_install_phpconges') ."\"> ". _('install_maj_titre_2') ."</H1>\n";
 echo "<br><br>\n";
 
 // $config_php_conges_version est fourni par include_once ROOT_PATH .'version.php' ;

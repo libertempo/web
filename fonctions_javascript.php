@@ -52,7 +52,7 @@ function compter_jours()
 	var opt_fin = document.forms["dem_conges"].new_demi_jour_fin.value;
 	var p_num = "";
 
-    if( document.forms["dem_conges"].p_num_to_update ) 
+    if( document.forms["dem_conges"].p_num_to_update )
     {
         var p_num = document.forms["dem_conges"].p_num_to_update.value;
     }
@@ -77,10 +77,9 @@ function compter_jours()
     });
 
     }
-
 }
 
-jQuery( document ).ready(function($) { 
+jQuery( document ).ready(function($) {
 
 var jdesac = [];
 <?php
@@ -126,7 +125,7 @@ if (($_SESSION['config']['dimanche_travail']==FALSE)&&($_SESSION['config']['same
 		echo "jdesac = [6];";
 }
 ?>
-    // datepicker	            
+    // datepicker
 $('input.date').datepicker({
 	format: "dd/mm/yyyy",
 	language: "fr",

@@ -12,30 +12,30 @@ class SQL
 {
 	// singleton
 	private static $instance;
-	
+
 	// warper obj
 	private static $pdo_obj;
 
 	//=====================
 	// singleton
 	//=====================
-	
+
 	// singleton pattern, code from php.net
 	// fucking parameters ... I don't find a way to use $args and call construtor with it ...
 	public static function singleton() {
 		if (!isset(self::$instance)) {
             $className = __CLASS__;
 			include CONFIG_PATH .'dbconnect.php';
-			
+
             self::$instance = new $className( $mysql_serveur , $mysql_user, $mysql_pass, $mysql_database);
 		}
 		return self::$instance;
 	}
-	
+
 	public function initialized() {
 		return isset( self::$instance );
 	}
-	
+
 	private function __construct() {
 		$args = func_get_args();
 		// this doesn't work ... need use ReflectionClass ... BEURK ! ReflectionClass is not documented ... unstable
@@ -46,7 +46,7 @@ class SQL
 
 	// singleton pattern, code from php.net
 	public function __clone() { error_handler('Clone is not allowed.', E_USER_ERROR); }
-	
+
 	// singleton pattern, code from php.net
 	public function __wakeup() { error_handler('Unserializing is not allowed.', E_USER_ERROR); }
 
@@ -58,38 +58,38 @@ class SQL
 		elseif (method_exists(self::$pdo_obj, $name))
 			return call_user_func_array(array(self::$pdo_obj, $name), $args);
 		else
-			throw new Exception(sprintf('The required method "%s" does not exist for %s', $name, get_class(self::$instance))); 
-    }	
-	
+			throw new Exception(sprintf('The required method "%s" does not exist for %s', $name, get_class(self::$instance)));
+    }
+
 	//=====================
 	// warper
 	//=====================
-	
+
 	// isset on the warped obj
     public function __isset($name) {
 		return isset(self::$pdo_obj->$name);
     }
-	
+
 	// get on the warped obj
     public function __get($name) {
 		return self::$pdo_obj->$name;
     }
-	
+
 	// isset on the warped obj
     public function __set($name, $value) {
 		self::$pdo_obj->$name = $value;
     }
-	
+
 	// unset on the warped obj
 	public function __unset($name) {
 		unset(self::$pdo_obj->$name);
 	}
-	   
+
 	// call on the warped obj
 	public function __call($name, $args) {
 		return call_user_func_array(array(self::$pdo_obj, $name), $args);
 	}
-	
+
 	// call on the warped obj
 	public static function getVar($name) {
 		return self::$pdo_obj->$name;
@@ -100,7 +100,7 @@ class SQL
 class Database extends \mysqli
 {
 	private static $hist = array();
-	
+
     public function __construct ( $host='localhost', $username='root', $passwd ='',$dbname = 'db_conges')
     {
 		parent::__construct (  $host , $username , $passwd , $dbname );
@@ -110,19 +110,19 @@ class Database extends \mysqli
 	public function multi_query($query) {
 		throw new Exception('Function disabled !' );
 	}
-	
+
 	public function real_query($query) {
 		throw new Exception('Function disabled !' );
 	}
-	
+
 	public function getQuerys() {
 		return self::$hist;
 	}
-	
+
     public function query( $query , $resultmode = MYSQLI_STORE_RESULT )
     {
 		$nb = count(self::$hist);
-		
+
 		$backtraces = debug_backtrace();
 		$f = false;
 		foreach ( $backtraces as $k => $b ) {
@@ -171,17 +171,17 @@ class Database extends \mysqli
 					fclose ($fh);
 				}
 			}
-			
+
 			if (defined('ERROR_MAIL_REPORT'))
 				@mail(ERROR_MAIL_REPORT,'Errors php-conges',file_get_contents($dump_name));
-			
+
 			@ob_clean();
 			// DONT USE GETTEXT ... KEEP THIS CODE WITHOUT REF ... THIS NEED TO BE A SAFE CODE !!!!
 			echo '<div style="margin: auto; width: 80%;">
 					<h1>Une erreur est survenue ...</h1>
 					<p>Pour aider la résolution de ce problème, veuillez fournir les informations suivantes :</p>
 					<div>
-						<div style="float:left;width: 230px;"><img src="'. TEMPLATE_PATH .'img/oops.png" style="width: 98%" /></div>
+						<div style="float:left;width: 230px;"><img src="'. IMG_PATH .'oops.png" style="width: 98%" /></div>
 						<textarea style="width: 70%" rows="14">'.
 						'login : '.@$_SESSION['userlogin']."\n".
 						'uri   : '.preg_replace('/session=phpconges[a-z0-9]{32}&?/','',@$_SERVER['REQUEST_URI'])."\n".
@@ -198,7 +198,7 @@ class Database extends \mysqli
 		}
 		return $result;
     }
-	
+
 	public function quote( $escapestr )
 	{
 		return $this->escape_string( $escapestr );

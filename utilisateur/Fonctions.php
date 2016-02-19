@@ -1519,9 +1519,9 @@ class Fonctions
             $return .= '<thead>';
             $return .= '<tr>';
             $return .= '<td>';
-            $return .= '<a href="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '&tri_date=descendant"><img src="' . TEMPLATE_PATH . 'img/1downarrow-16x16.png" width="16" height="16" border="0" title="trier"></a>';
+            $return .= '<a href="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '&tri_date=descendant"><img src="' . IMG_PATH . '1downarrow-16x16.png" width="16" height="16" border="0" title="trier"></a>';
             $return .= _('divers_debut_maj_1');
-            $return .= '<a href="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '&tri_date=ascendant"><img src="' . TEMPLATE_PATH . 'img/1uparrow-16x16.png" width="16" height="16" border="0" title="trier"></a>';
+            $return .= '<a href="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '&tri_date=ascendant"><img src="' . IMG_PATH . '1uparrow-16x16.png" width="16" height="16" border="0" title="trier"></a>';
             $return .= '</td>';
             $return .= '<td>' . _('divers_fin_maj_1') . '</td>';
             $return .= '<td>' . _('user_abs_type') . '</td>';

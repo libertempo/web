@@ -628,9 +628,9 @@ class Fonctions
             $return .= '<thead>';
             $return .= '<tr>';
             $return .= '<th>';
-            $return .= '<a href="' . $PHP_SELF . '?session=' . $session . '&onglet=traite_user&user_login=' . $user_login . '&tri_date=descendant"><img src="' . TEMPLATE_PATH . 'img/1downarrow-16x16.png" width="16" height="16" border="0" title="trier"></a>';
+            $return .= '<a href="' . $PHP_SELF . '?session=' . $session . '&onglet=traite_user&user_login=' . $user_login . '&tri_date=descendant"><img src="' . IMG_PATH . '1downarrow-16x16.png" width="16" height="16" border="0" title="trier"></a>';
             $return .= _('divers_debut_maj_1');
-            $return .= '<a href="' . $PHP_SELF . '?session=' . $session . '&onglet=traite_user&user_login=' . $user_login . '&tri_date=ascendant"><img src="' . TEMPLATE_PATH . 'img/1uparrow-16x16.png" width="16" height="16" border="0" title="trier"></a>';
+            $return .= '<a href="' . $PHP_SELF . '?session=' . $session . '&onglet=traite_user&user_login=' . $user_login . '&tri_date=ascendant"><img src="' . IMG_PATH . '1uparrow-16x16.png" width="16" height="16" border="0" title="trier"></a>';
             $return .= '</th>';
             $return .= '<th>' . _('divers_fin_maj_1') . '</th>';
             $return .= '<th>' . _('divers_nb_jours_pris_maj_1') . '</th>';
@@ -2242,7 +2242,7 @@ class Fonctions
         if($tab_current_user['num_exercice'] < $_SESSION['config']['num_exercice']) {
             $return .= '<td align="center" class="histo"><input type="checkbox" name="tab_cloture_users[' . $current_login . ']" value="TRUE" checked></td>';
         } else {
-            $return .= '<td align="center" class="histo"><img src="' . TEMPLATE_PATH . 'img/stop.png" width="16" height="16" border="0" ></td>';
+            $return .= '<td align="center" class="histo"><img src="' . IMG_PATH . 'stop.png" width="16" height="16" border="0" ></td>';
         }
 
         $comment_cloture =  _('resp_cloture_exercice_commentaire') ." ".date("m/Y");
