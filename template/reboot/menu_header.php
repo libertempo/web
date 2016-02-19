@@ -57,7 +57,7 @@
         <title><?= $title; ?></title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <?php /* BOOTSTRAP */?>
-        <link type="text/css" href="<?= TEMPLATE_PATH ?>bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen,print">
+        <link type="text/css" href="<?= ASSETS_PATH ?>bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen,print">
         <?php /* FONT AWESOME */ ?>
         <link href="<?= TEMPLATE_PATH ?>/font-awesome/css/font-awesome.css" rel="stylesheet">
         <?php /* REBOOT STYLE */ ?>
@@ -65,9 +65,9 @@
         <link type="text/css" href="<?= TEMPLATE_PATH ?>css/datepicker.css" rel="stylesheet" media="screen">
         <?php /* JQUERY */ ?>
         <script type="text/javascript" src="<?= TEMPLATE_PATH ?>jquery/js/jquery-1.7.1.min.js"></script>
-        <script type="text/javascript" src="<?= TEMPLATE_PATH  ?>bootstrap/js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="<?= TEMPLATE_PATH ?>js/bootstrap-datepicker/bootstrap-datepicker.js"></script>
-        <script type="text/javascript" src="<?= TEMPLATE_PATH ?>js/bootstrap-datepicker/locales/bootstrap-datepicker.fr.js"></script>
+        <script type="text/javascript" src="<?= ASSETS_PATH  ?>bootstrap/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="<?= ASSETS_PATH ?>bootstrap-datepicker/bootstrap-datepicker.js"></script>
+        <script type="text/javascript" src="<?= ASSETS_PATH ?>bootstrap-datepicker/locales/bootstrap-datepicker.fr.js"></script>
         <script type="text/javascript" src="<?= TEMPLATE_PATH ?>js/reboot.js"></script>
        <?= $additional_head ?>
     </head>

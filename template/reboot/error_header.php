@@ -11,7 +11,7 @@ include TEMPLATE_PATH . 'template_define.php';
         <?php /* JQUERY */ ?>
         <link type="text/css" href="<?= TEMPLATE_PATH ?>jquery/css/custom-theme/jquery-ui-1.8.17.custom.css" rel="stylesheet" />
         <?php /* BOOTSTRAP */?>
-        <link type="text/css" href="<?= TEMPLATE_PATH ?>bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+        <link type="text/css" href="<?= ASSETS_PATH ?>bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
         <?php /* FONT AWESOME */ ?>
         <link href="<?= TEMPLATE_PATH ?>/font-awesome/css/font-awesome.css" rel="stylesheet">
         <?php /* REBOOT STYLE */ ?>
