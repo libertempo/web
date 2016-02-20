@@ -1740,7 +1740,6 @@ class Fonctions
             get_tab_grd_resp_du_user($user_login, $tab_grd_resp);
         }
 
-        include_once ROOT_PATH . 'fonctions_javascript.php' ;
         /********************/
         /* Titre */
         /********************/

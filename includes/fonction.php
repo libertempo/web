@@ -159,7 +159,7 @@ function bouton_popup($name, $icon ,$link, $popup_name, $size_x, $size_y, $activ
     $name = str_replace('"','\\"',$name);
 
     echo '<div class="button_div'.($active?' active':'').'">
-            <a href="javascript:void(0);" onClick="javascript:OpenPopUp(\''. $link .'\',\''.$popup_name.'\','.$size_x.','.$size_y.');">
+            <a href="#" onClick="OpenPopUp(\''. $link .'\',\''.$popup_name.'\','.$size_x.','.$size_y.');">
                 <img src="'. IMG_PATH . $icon.'" title="'.$name.'" alt="'.$name.'">
                 <span>'.$name.'</span>
             </a>

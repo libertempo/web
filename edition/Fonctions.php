@@ -559,7 +559,7 @@ class Fonctions
 
         /************************************/
 
-        $css = '<link href="'. TEMPLATE_PATH .'style_calendar_edition.css" rel="stylesheet" type="text/css">';
+        $css = '<link href="'. CSS_PATH .'style_calendar_edition.css" rel="stylesheet" type="text/css">';
 
         header_popup(_('editions_etat_conges').' : '.$user_login , $css);
 
