@@ -47,7 +47,7 @@ if(substr($session, 0, 9)!="phpconges")
 else
 	include_once INCLUDE_PATH .'session.php';
 
-$script = '<script language=javascript>
+$script = '<script type="text/javascript">
 function afficher(id)
 {
 	el = document.getElementById(id);

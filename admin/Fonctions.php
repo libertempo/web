@@ -1595,7 +1595,7 @@ class Fonctions
             $return.= '</td>';
             $return.= '</tr><tr>';
             $return.= '<td align="center">';
-            $return.= '<input type="button" value="' . _('form_cancel') . '" onClick="javascript:window.close();">';
+            $return.= '<input type="button" value="' . _('form_cancel') . '" onClick="window.close();">';
             $return.= '</td>';
             $return.= '</tr></table></form>';
         } else {
@@ -1611,7 +1611,7 @@ class Fonctions
             $return .= '</tr>';
             $return .= '<tr>';
             $return .= '<td align="center">';
-            $return .= '<input type="button" value="' . _('form_close_window') . '" onClick="javascript:window.close();">';
+            $return .= '<input type="button" value="' . _('form_close_window') . '" onClick="window.close();">';
             $return .= '</td>';
             $return .= '</tr></table></form>';
         }
@@ -1654,7 +1654,7 @@ class Fonctions
         $return .= '</tr>';
         $return .= '<tr>';
         $return .= '<td align="center">';
-        $return .= '<input type="button" value="' . _('form_cancel') . '" onClick="javascript:window.close();">';
+        $return .= '<input type="button" value="' . _('form_cancel') . '" onClick="window.close();">';
         $return .= '</td>';
         $return .= '</tr></table></form>';
 
@@ -1718,7 +1718,7 @@ class Fonctions
         $return .= '<th colspan="2">' . _('admin_sauve_db_save_ok') . ' ...</th>';
         $return .= '</tr><tr>';
         $return .= '<td colspan="2" align="center">';
-        $return .= '<input type="button" value="' . _('form_close_window') . '" onClick="javascript:window.close();">';
+        $return .= '<input type="button" value="' . _('form_close_window') . '" onClick="window.close();">';
         $return .= '</td>';
         $return .= '</tr></table></form>';
 
@@ -1759,7 +1759,7 @@ class Fonctions
         $return .= '</td>';
         $return .= '</tr><tr>';
         $return .= '<td colspan="2" align="center">';
-        $return .= '<input type="button" value="' . _('form_cancel') . '" onClick="javascript:window.close();">';
+        $return .= '<input type="button" value="' . _('form_cancel') . '" onClick="window.close();">';
         $return .= '</td>';
         $return .= '</tr></table></form>';
 
@@ -1804,7 +1804,7 @@ class Fonctions
         $return .= '</tr>';
         $return .= '<tr>';
         $return .= '<td colspan="2" align="center">';
-        $return .= '<input type="button" value="' . _('form_cancel') . '" onClick="javascript:window.close();">';
+        $return .= '<input type="button" value="' . _('form_cancel') . '" onClick="window.close();">';
         $return .= '</td></tr></table></form>';
         echo $return;
         bottom();

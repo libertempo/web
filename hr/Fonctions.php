@@ -1727,7 +1727,7 @@ class Fonctions
         $return .= '</tr>';
         $return .= '<tr>';
         $return .= '<td align="center">';
-        $return .= '<input type="button" value="' . _('form_cancel') . '" onClick="javascript:window.close();">';
+        $return .= '<input type="button" value="' . _('form_cancel') . '" onClick="window.close();">';
         $return .= '</td>';
         $return .= '</tr>';
         $return .= '</table>';

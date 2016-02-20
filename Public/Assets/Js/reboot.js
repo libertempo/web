@@ -74,10 +74,9 @@ function compter_jours()
 /**
  * Génère le datepicker sur un champ, paramétré par des options précises
  *
- * @param HTMLInputElement field
- * @param object           opts
+ * @param object opts
  */
-function generateDatePicker(field, opts)
+function generateDatePicker(opts)
 {
     var defaultOpts = {
         format             : 'dd/mm/yyyy',

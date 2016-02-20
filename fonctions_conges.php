@@ -104,6 +104,7 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
         <div class="col-md-6">
         <div class="form-inline">';
     $return .= '<div class="form-group"><label for="new_deb">' . _('divers_date_debut') . '</label><input type="text" class="form-control date" name="new_debut" value="' . $new_date_fin . '"></div>';
+    
     $return .= '<input type="radio" name="new_demi_jour_deb" ';
 
     if($_SESSION['config']['rempli_auto_champ_nb_jours_pris'])
@@ -503,7 +504,7 @@ function recup_infos_artt_du_jour_from_tab($sql_login, $j_timestamp, &$val_matin
 //  (attention : le $nombre est passé par référence car on le modifie si besoin)
 function verif_saisie_decimal(&$nombre)
 {
-    $nombre = number_format(floatval($nombre), 1, '.', '' );  
+    $nombre = number_format(floatval($nombre), 1, '.', '' );
     return true;
 }
 
