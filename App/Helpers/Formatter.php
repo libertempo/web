@@ -1,10 +1,12 @@
 <?php
-namespace App\Libraries\Static;
+namespace App\Helpers;
 
 /**
- * Classe de formatage de petits éléments de l'application
+ * Classe de formatage de petits utilitaires de l'application
  *
- * @since 1.9
+ * @since  1.9
+ * @author Prytoegrian <prytoegrian@protonmail.com>
+ * @see    \Tests\Units\App\Helpers\Formatter
  */
 class Formatter
 {
@@ -17,10 +19,15 @@ class Formatter
      * @static
      * @return string
      * @throws \Exception Si le paramètre d'entrée n'est pas bien formé
+     * @TODO   \Exception out of bounds ?
+     * @since  1.9
      */
-    public static function dateFr2Iso()
+    public static function dateFr2Iso($date)
     {
-
+        if (!preg_match('#^(\d{2})/(\d{2})/(\d{4})$#', $date, $matches)) {
+            throw new \Exception('Date mal formée');
+        }
+        return $matches[3] . '-' . $matches[2] . '-' . $matches[1];
     }
 
     /**
@@ -32,11 +39,14 @@ class Formatter
      * @static
      * @return string
      * @throws \Exception Si le paramètre d'entrée n'est pas bien formé
+     * @TODO   \Exception out of bounds ?
+     * @since  1.9
      */
     public static function dateIso2Fr($date)
     {
-        if (!preg_match('#^\(d+)/$#', $date, $matches)) {
+        if (!preg_match('#^(\d{4})-(\d{2})-(\d{2})$#', $date, $matches)) {
             throw new \Exception('Date mal formée');
         }
+        return $matches[3] . '/' . $matches[2] . '/' . $matches[1];
     }
 }
