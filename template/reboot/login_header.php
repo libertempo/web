@@ -21,8 +21,7 @@ include TEMPLATE_PATH . 'template_define.php';
         <script type="text/javascript" src="<?= ASSETS_PATH ?>jquery/js/jquery-ui-1.8.17.custom.min.js"></script>
         <script type="text/javascript" src="<?= ASSETS_PATH ?>jquery/js/jquery.tablesorter.min.js"></script>
         <script type="text/javascript" src="<?= JS_PATH ?>reboot.js"></script>
-        <?php include ROOT_PATH . 'fonctions_javascript.php';
-        echo $additional_head ?>
+        <?= $additional_head ?>
     </head>
     <body class="login">
         <header>

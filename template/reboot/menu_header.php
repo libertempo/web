@@ -73,8 +73,7 @@
         <script type="text/javascript" src="<?= ASSETS_PATH ?>bootstrap-datepicker/bootstrap-datepicker.js"></script>
         <script type="text/javascript" src="<?= ASSETS_PATH ?>bootstrap-datepicker/locales/bootstrap-datepicker.fr.js"></script>
         <script type="text/javascript" src="<?= JS_PATH ?>reboot.js"></script>
-        <?php include ROOT_PATH . 'fonctions_javascript.php';
-        echo $additional_head ?>
+        <?= $additional_head ?>
     </head>
     <body id="top" class="hbox connected <?= ($printable) ? 'printable' : '' ?>">
         <aside id="toolbar">
