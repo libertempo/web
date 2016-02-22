@@ -29,6 +29,7 @@ abstract class HtmlElement implements \App\Libraries\Interfaces\IHtmlElement
 
     /**
      * @inheritdoc
+     * @see Interfaces\IHtmlElement
      */
     public function addClass($class)
     {
@@ -39,6 +40,7 @@ abstract class HtmlElement implements \App\Libraries\Interfaces\IHtmlElement
 
     /**
      * @inheritdoc
+     * @see Interfaces\IHtmlElement
      */
     public function addClasses(array $classes)
     {
@@ -49,6 +51,7 @@ abstract class HtmlElement implements \App\Libraries\Interfaces\IHtmlElement
 
     /**
      * @inheritdoc
+     * @see Interfaces\IHtmlElement
      */
     public function getId()
     {
@@ -60,6 +63,7 @@ abstract class HtmlElement implements \App\Libraries\Interfaces\IHtmlElement
 
     /**
      * @inheritdoc
+     * @see Interfaces\IHtmlElement
      */
     public function setId($id)
     {
