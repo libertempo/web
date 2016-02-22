@@ -1,4 +1,5 @@
 <?php
+namespace App\Libraries\Interfaces;
 
 /**
  * Décrit le contrat d'un élément renderable

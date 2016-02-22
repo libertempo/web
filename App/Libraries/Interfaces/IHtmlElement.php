@@ -1,4 +1,5 @@
 <?php
+namespace App\Libraries\Interfaces;
 
 /**
  * Décrit le contrat d'un élément Html
@@ -38,7 +39,7 @@ interface IHtmlElement
      * @return void
      * @since 1.9
      */
-    public function addAttribute($name, $value);
+    //public function addAttribute($name, $value);
 
     /**
      * Ajoute une liste d'attributs quelconques à l'élément
@@ -49,7 +50,7 @@ interface IHtmlElement
      * @return void
      * @since 1.9
      */
-    public function addAttributes(array $list);
+    //public function addAttributes(array $list);
 
     /**
      * Renvoie l'id unique de l'élément
@@ -58,4 +59,12 @@ interface IHtmlElement
      * @since 1.9
      */
     public function getId();
+
+    /**
+     * Force l'id unique de l'élément
+     *
+     * @return void
+     * @since 1.9
+     */
+    public function setId($id);
 }
