@@ -1,13 +1,15 @@
 <?php
 namespace App\Libraries\Structure;
 
+use \App\Libraries\Interfaces;
+
 /**
  * Élément html
  *
  * @since  1.9
  * @author Prytoegrian <prytoegrian@protonmail.com>
  */
-abstract class HtmlElement implements \App\Libraries\Interfaces\IHtmlElement
+abstract class HtmlElement implements Interfaces\IHtmlElement
 {
     /**
      * Classes applicables sur l'élément
@@ -17,6 +19,15 @@ abstract class HtmlElement implements \App\Libraries\Interfaces\IHtmlElement
      * @access protected
      */
     protected $classes = [];
+
+    /**
+     * Attributs divers de l'élément
+     *
+     * @var array
+     *
+     * @access protected
+     */
+    protected $attributes = [];
 
     /**
      * Id unique de l'élément html
@@ -53,6 +64,24 @@ abstract class HtmlElement implements \App\Libraries\Interfaces\IHtmlElement
      * @inheritdoc
      * @see Interfaces\IHtmlElement
      */
+    public function addAttribute($name, $value)
+    {
+        if (!isset($this->attributes[$name])) {
+            $this->attributes[$name] = $value;
+        }
+    }
+
+    public function addAttributes(array $list)
+    {
+        foreach ($list as $name => $value) {
+            $this->addAttribute($name, $value);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     * @see Interfaces\IHtmlElement
+     */
     public function getId()
     {
         if ('' === $this->id) {
@@ -68,5 +97,42 @@ abstract class HtmlElement implements \App\Libraries\Interfaces\IHtmlElement
     public function setId($id)
     {
         $this->id = $id;
+    }
+
+    /**
+     * @inheritdoc
+     * @see Interfaces\IRenderable
+     */
+    public abstract function render();
+
+    /**
+     * Render les classes de l'élément
+     *
+     * @access protected
+     * @since  1.9
+     * @return void
+     */
+    protected function renderClasses()
+    {
+        if (!empty($this->classes)) {
+            echo ' class="' . implode(' ', $this->classes) . '"';
+        }
+    }
+
+    /**
+     * Render les attributs quelconques de l'élément
+     *
+     * @access protected
+     * @since  1.9
+     * @return void
+     * @deprecated Ne devrait pas être utilisé dans les nouveaux codes
+     */
+    protected function renderAttributes()
+    {
+        if (!empty($this->attributes)) {
+            foreach ($this->attributes as $name => $value) {
+                echo ' ' . $name . '="' . $value . '"';
+            }
+        }
     }
 }

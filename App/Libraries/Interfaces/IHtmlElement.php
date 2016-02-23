@@ -7,7 +7,7 @@ namespace App\Libraries\Interfaces;
  * @since  1.9
  * @author Prytoegrian <prytoegrian@protonmail.com>
  */
-interface IHtmlElement
+interface IHtmlElement extends IRenderable
 {
     /**
      * Ajoute une classe à l'élément
@@ -38,8 +38,9 @@ interface IHtmlElement
      *
      * @return void
      * @since 1.9
+     * @deprecated Ne devrait pas être utilisé dans les nouveaux codes
      */
-    //public function addAttribute($name, $value);
+    public function addAttribute($name, $value);
 
     /**
      * Ajoute une liste d'attributs quelconques à l'élément
@@ -49,8 +50,9 @@ interface IHtmlElement
      *
      * @return void
      * @since 1.9
+     * @deprecated Ne devrait pas être utilisé dans les nouveaux codes
      */
-    //public function addAttributes(array $list);
+    public function addAttributes(array $list);
 
     /**
      * Renvoie l'id unique de l'élément

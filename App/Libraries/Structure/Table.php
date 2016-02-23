@@ -10,7 +10,7 @@ use \App\Libraries\Interfaces;
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @see    \Tests\Units\App\Libraries\Structure\Table
  */
-class Table extends HtmlElement implements Interfaces\IRenderable, Interfaces\IHeritable
+class Table extends HtmlElement implements Interfaces\IHeritable
 {
     /**
      * Liste d'enfants de la table
@@ -27,7 +27,10 @@ class Table extends HtmlElement implements Interfaces\IRenderable, Interfaces\IH
      */
     public function render()
     {
-        echo '<table id="' .  $this->getId() . '" class="' . implode(' ', $this->classes) . '">';
+        echo '<table id="' .  $this->getId() . '"';
+        $this->renderClasses();
+        $this->renderAttributes();
+        echo '>';
         foreach ($this->children as $child) {
             if ($child instanceOf Interfaces\IRenderable) {
                 $child->render();
