@@ -84,28 +84,29 @@ class Fonctions
         $ReqLog1 = \includes\SQL::query($sql1);
 
         if($ReqLog1->num_rows !=0) {
-            if($session=="") {
-                $return .= '<form action="' . $PHP_SELF . '?onglet=logs" method="POST">';
-            } else {
-                $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=logs" method="POST">';
-            }
+            $return .= '<br>';
+            $table = new \App\Libraries\Structure\Table();
+            $table->addClasses([
+                'table',
+                'table-hover',
+                'table-stripped',
+                'table-condensed'
+            ]);
 
-            $return .= '<br><table class="table table-hover table-stripped table-condensed">';
-
-            $return .= '<tr><td class="histo" colspan="5">' . _('voir_les_logs_par') . '</td>';
+            $childTable = '<tr><td class="histo" colspan="5">' . _('voir_les_logs_par') . '</td>';
             if($login_par!="") {
-                $return .= '<tr><td class="histo" colspan="5">' . _('voir_tous_les_logs') . '<a href="' . $PHP_SELF . '?session=' . $session . '&onglet=logs">' . _('voir_tous_les_logs') . '</a></td>';
+                $childTable .= '<tr><td class="histo" colspan="5">' . _('voir_tous_les_logs') . '<a href="' . $PHP_SELF . '?session=' . $session . '&onglet=logs">' . _('voir_tous_les_logs') . '</a></td>';
             }
-            $return .= '<tr><td class="histo" colspan="5">&nbsp;</td>';
+            $childTable .= '<tr><td class="histo" colspan="5">&nbsp;</td>';
 
             // titres
-            $return .= '<tr>';
-            $return .= '<td>' . _('divers_date_maj_1') . '</td>';
-            $return .= '<td>' . _('divers_fait_par_maj_1') . '</td>';
-            $return .= '<td>' . _('divers_pour_maj_1') . '</td>';
-            $return .= '<td>' . _('divers_comment_maj_1') . '</td>';
-            $return .= '<td>' . _('divers_etat_maj_1') . '</td>';
-            $return .= '</tr>';
+            $childTable .= '<tr>';
+            $childTable .= '<td>' . _('divers_date_maj_1') . '</td>';
+            $childTable .= '<td>' . _('divers_fait_par_maj_1') . '</td>';
+            $childTable .= '<td>' . _('divers_pour_maj_1') . '</td>';
+            $childTable .= '<td>' . _('divers_comment_maj_1') . '</td>';
+            $childTable .= '<td>' . _('divers_etat_maj_1') . '</td>';
+            $childTable .= '</tr>';
 
             // affichage des logs
             while ($data = $ReqLog1->fetch_array()) {
@@ -115,16 +116,24 @@ class Fonctions
                 $log_log_comment = $data['log_comment'];
                 $log_log_date = $data['log_date'];
 
-                $return .= '<tr>';
-                $return .= '<td>' . $log_log_date . '</td>';
-                $return .= '<td><a href="' . $PHP_SELF . '?session=' . $session . '&onglet=logs&login_par=' . $log_login_par . '"><b>' . $log_login_par . '</b></a></td>';
-                $return .= '<td>' . $log_login_pour . '</td>';
-                $return .= '<td>' . $log_log_comment . '</td>';
-                $return .= '<td>' . $log_log_etat . '</td>';
-                $return .= '</tr>';
+                $childTable .= '<tr>';
+                $childTable .= '<td>' . $log_log_date . '</td>';
+                $childTable .= '<td><a href="' . $PHP_SELF . '?session=' . $session . '&onglet=logs&login_par=' . $log_login_par . '"><b>' . $log_login_par . '</b></a></td>';
+                $childTable .= '<td>' . $log_login_pour . '</td>';
+                $childTable .= '<td>' . $log_log_comment . '</td>';
+                $childTable .= '<td>' . $log_log_etat . '</td>';
+                $childTable .= '</tr>';
             }
 
-            $return .= '</table>';
+            $table->addChild($childTable);
+            ob_start();
+            $table->render();
+            $return .= ob_get_clean();
+            if($session=="") {
+                $return .= '<form action="' . $PHP_SELF . '?onglet=logs" method="POST">';
+            } else {
+                $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=logs" method="POST">';
+            }
 
             // affichage du bouton pour vider les logs
             $return .= '<input type="hidden" name="action" value="suppr_logs">';
