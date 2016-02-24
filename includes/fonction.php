@@ -148,7 +148,7 @@ function bouton($name, $icon ,$link, $active = false)
     $link = str_replace('"','\\"',$link);
     echo '<div class="button_div'.($active?' active':'').'">
             <a href="'. $link .'">
-                <img src="'. TEMPLATE_PATH .'img/'.$icon.'" title="'.$name.'" alt="'.$name.'">
+                <img src="'. IMG_PATH . $icon.'" title="'.$name.'" alt="'.$name.'">
                 <span>'.$name.'</span>
             </a>
         </div>';
@@ -159,8 +159,8 @@ function bouton_popup($name, $icon ,$link, $popup_name, $size_x, $size_y, $activ
     $name = str_replace('"','\\"',$name);
 
     echo '<div class="button_div'.($active?' active':'').'">
-            <a href="javascript:void(0);" onClick="javascript:OpenPopUp(\''. $link .'\',\''.$popup_name.'\','.$size_x.','.$size_y.');">
-                <img src="'. TEMPLATE_PATH .'img/'.$icon.'" title="'.$name.'" alt="'.$name.'">
+            <a href="#" onClick="OpenPopUp(\''. $link .'\',\''.$popup_name.'\','.$size_x.','.$size_y.');">
+                <img src="'. IMG_PATH . $icon.'" title="'.$name.'" alt="'.$name.'">
                 <span>'.$name.'</span>
             </a>
         </div>';

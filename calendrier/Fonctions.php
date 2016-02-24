@@ -1103,7 +1103,7 @@ class Fonctions
             $return .= _('calendrier_imprimable');
             $return .= '</a>';
             $return .= '<br><a href="calendrier-pdf.php?session=' . $session . '&printable=1&year=' . $year . '&mois=' . $mois . '&first_jour=' . $first_jour . '&select_groupe=' . $select_groupe . '" target="_blank" method="post">';
-            $return .= '<img src="' . TEMPLATE_PATH . 'img/pdf_22x22_2.png" width="22" height="22" border="0" title="Version PDF">';
+            $return .= '<img src="' . IMG_PATH . 'pdf_22x22_2.png" width="22" height="22" border="0" title="Version PDF">';
             $return .= 'PDF';
             $return .= '</a>';
         }

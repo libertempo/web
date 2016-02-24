@@ -47,7 +47,7 @@ if(substr($session, 0, 9)!="phpconges")
 else
 	include_once INCLUDE_PATH .'session.php';
 
-$script = '<script language=javascript>
+$script = '<script type="text/javascript">
 function afficher(id)
 {
 	el = document.getElementById(id);
@@ -67,7 +67,7 @@ $content .= '   <page backtop="7mm" backbottom="7mm" backleft="10mm" backright="
 $content .= "<head>\n";
 $content .= "<title> Libertempo : "._('calendrier_titre')." </TITLE>\n";
 $content .= "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n";
-$content .= '<link href="'. TEMPLATE_PATH .'css/reboot.css" rel="stylesheet" media="screen, print" type="text/css"><style type="text/css" media="print">@media print{@page {size: landscape}}</style>';
+$content .= '<link href="'. CSS_PATH .'reboot.css" rel="stylesheet" media="screen, print" type="text/css"><style type="text/css" media="print">@media print{@page {size: landscape}}</style>';
 $content .= "\n</head>\n";
 $content .= "<body id=\"top\" class=\"hbox connected\">\n";
 
@@ -106,7 +106,7 @@ $content .= "<body id=\"top\" class=\"hbox connected\">\n";
 	$nom_mois=date_fr("F", $mois_timestamp);
 
 	$group_names =get_groups_name();
-	
+
 	// AFFICHAGE PAGE
 	$content .= "<div class='wrapper bg-white'>\n";
 	$content .= "<div id=\"main-calendar\" class=\"main-content\">\n";
@@ -114,7 +114,7 @@ $content .= "<body id=\"top\" class=\"hbox connected\">\n";
 		$content .= "   <h1>". _('calendrier_titre') . "</h1>\n";
 		if( ($_SESSION['config']['gestion_groupes']) && ($select_groupe!=0) )
 			$content .="<h2>". _('divers_groupe') ." : <strong>".$group_names[ $select_groupe ]."</strong></h2>\n";
-	
+
 	$content .= "<h3 class=\"current-month\">$nom_mois $year</h3>\n";
 	/***********************************/
 	/* AFFICHAGE  TABLEAU (CALENDRIER) */
@@ -181,10 +181,10 @@ function affichage_calendrier($year, $mois, $first_jour, $timestamp_today, $prin
 
 		/*****************************************/
 		/** Récupération des users à afficher:  **/
-		
+
 		$tab_all_users	= recup_tableau_des_users_a_afficher($select_groupe);
 
-		
+
 		if( ($_SESSION['config']['gestion_groupes']) && ($select_groupe!=0) ) {
 			$tab_logins = array_keys( $tab_all_users );
 			$tab_logins = array_map("SQL::quote", $tab_logins);
@@ -280,7 +280,7 @@ function affichage_calendrier($year, $mois, $first_jour, $timestamp_today, $prin
 			}
 		}
 
-		
+
 
 		if( $_SESSION['config']['affiche_soldes_calendrier'] || is_resp($_SESSION['userlogin']) || is_hr($_SESSION['userlogin']) || is_admin($_SESSION['userlogin']) )
 		{
@@ -292,8 +292,8 @@ function affichage_calendrier($year, $mois, $first_jour, $timestamp_today, $prin
 					$content .= "<th rowspan=\"2\">" . $abs_libelle[$id]['short_libelle'] . "</th>\n";
 					$nb_colonnes=$nb_colonnes+1;
 			}
-			
-			
+
+
 			if ($_SESSION['config']['gestion_conges_exceptionnels'])
 			{
 				foreach($tab_type_cong_excep as $id => $libelle)
@@ -304,7 +304,7 @@ function affichage_calendrier($year, $mois, $first_jour, $timestamp_today, $prin
 			}
 		}
 
-		
+
 		$content .= "</tr>\n\n";
 
 
@@ -317,8 +317,8 @@ function affichage_calendrier($year, $mois, $first_jour, $timestamp_today, $prin
 		//$content .= "	<td class=\"cal-user\" colspan=\"$nb_colonnes\">&nbsp;</td>\n";
 		//dernier jour = dimanche ?
 		$last = 7;
-				
-				
+
+
 		// affichage des dates
 		// ... du premier jour voulu à la fin du mois
 		for($j=$first_jour; checkdate($mois, $j, $year); $j++)
@@ -398,13 +398,13 @@ function affichage_calendrier($year, $mois, $first_jour, $timestamp_today, $prin
 					// qui contient lui meme pour chaque clé : un tableau ($tab_user_rtt) qui contient enfin
 					// les infos pour le matin et l'après midi ('Y' si rtt, 'N' sinon) sur 2 semaines
 					// ( du sem_imp_lu_am au sem_p_ve_pm ) + la date de début et de fin de la grille
-		
+
 
 		$tab_rtt_echange= recup_tableau_rtt_echange($mois, $first_jour, $year  , $tab_logins );
 		$tab_rtt_planifiees= recup_tableau_rtt_planifiees($mois, $first_jour, $year , $tab_logins);
-		
+
 		$tab_cong_users = recup_tableau_conges_for_users(false, $tab_logins);
-		
+
 		/**************************************************/
 		/**************************************************/
 		// affichage lignes suivantes (users)
@@ -415,7 +415,7 @@ function affichage_calendrier($year, $mois, $first_jour, $timestamp_today, $prin
 			$sql_nom=$tab_current_user["nom"];
 			$sql_prenom=$tab_current_user["prenom"];
 			$sql_quotite=$tab_current_user["quotite"];
-			
+
 			// nb de jour pris dans le mois en cours (pour un type d'absence donné)
 			$nb_jours_current_month = array();
 
@@ -433,7 +433,7 @@ function affichage_calendrier($year, $mois, $first_jour, $timestamp_today, $prin
 
 			// affichage nom prenom quotité
 			$content .= "<td class=\"cal-user\">$text_nom</td><td class=\"cal-percent\">$sql_quotite %</td>";
-			
+
 
 			// pour chaque jour : (du premier jour demandé à la fin du mois ...)
 			for($j=$first_jour; checkdate($mois, $j, $year); $j++)
@@ -485,7 +485,7 @@ function affichage_calendrier($year, $mois, $first_jour, $timestamp_today, $prin
 					}
 				}
 			}
-			
+
 			if( $_SESSION['config']['affiche_soldes_calendrier'] || is_resp($_SESSION['userlogin']) || is_hr($_SESSION['userlogin']) || is_admin($_SESSION['userlogin']) )
 			{
 				// affichage des divers soldes
@@ -498,13 +498,13 @@ function affichage_calendrier($year, $mois, $first_jour, $timestamp_today, $prin
 						$content .= "<td class=\"cal-user\">".$tab_conges['solde']."</td>";
 				}
 			}
-			
-			
+
+
 			$content .= "\n</tr>\n";
 		}
 
 		$content .= "</table>\n\n";
-		
+
 }
 
 
@@ -515,8 +515,8 @@ function affiche_cellule_jour_user($sql_login, $j_timestamp, $year_select, $mois
 
 	$session=session_id();
     global $content;
-	$return = array();						
-	
+	$return = array();
+
 	// info bulle
 	$j_date_fr=date_fr("d/m/Y", $j_timestamp);
 	$j_num_semaine=date_fr("W", $j_timestamp);
@@ -545,7 +545,7 @@ function affiche_cellule_jour_user($sql_login, $j_timestamp, $year_select, $mois
 		// recup des infos ARTT ou Temps Partiel :
 		// la fonction suivante change les valeurs de $val_matin $val_aprem ....
 		recup_infos_artt_du_jour_from_tab($sql_login, $j_timestamp, $val_matin, $val_aprem, $tab_rtt_echange, $tab_rtt_planifiees);
-		
+
 		//## AFICHAGE ##
 		if($val_matin=="Y")
 		{
@@ -556,8 +556,8 @@ function affiche_cellule_jour_user($sql_login, $j_timestamp, $year_select, $mois
 			$class_pm = "rtt_pm";
 		}
 
-		
-		
+
+
 		$text_bulle_type_abs="";
 
 		if( !(($val_matin=="Y")&&($val_aprem=="Y")) ) //si pas journée complète temps-partiel ou rtt, on regarde les conges)
@@ -566,7 +566,7 @@ function affiche_cellule_jour_user($sql_login, $j_timestamp, $year_select, $mois
 			if (array_key_exists($date_j, $tab_calendrier))   //verif la clé du jour exite dans $tab_calendrier
 			{
 				$tab_day=$tab_calendrier["$date_j"];  // on recup le tableau ($tab_jour) de la date que l'on affiche
-				$nb_resultat_periode = count($tab_day); 
+				$nb_resultat_periode = count($tab_day);
 				if($nb_resultat_periode>0)      // si on est dans une periode de conges
 				{
 					for ($i = 0; $i < $nb_resultat_periode; $i++)
@@ -598,7 +598,7 @@ function affiche_cellule_jour_user($sql_login, $j_timestamp, $year_select, $mois
 									        $text_bulle_type_abs='<div class="type-abscence">' . $tab_type_absence[$sql_p_type]['libelle'] ."</div>$sql_p_date_deb_fr <i class=\"fa fa-long-arrow-right\"></i> $sql_p_date_fin_fr";
 									else
 									        $text_bulle_type_abs=$tab_per['p_commentaire']."<br/>$sql_p_date_deb_fr <i class=\"fa fa-long-arrow-right\"></i> $sql_p_date_fin_fr";
-									
+
 									if (isset($return[ $tab_type_absence[$sql_p_type]['libelle'] ]))
 										$return[ $tab_type_absence[$sql_p_type]['libelle'] ] += 0.5;
 									else
@@ -612,7 +612,7 @@ function affiche_cellule_jour_user($sql_login, $j_timestamp, $year_select, $mois
 									        $text_bulle_type_abs='<div class="type-abscence">' . $tab_type_absence[$sql_p_type]['libelle'] ."</div>$sql_p_date_deb_fr <i class=\"fa fa-long-arrow-right\"></i> $sql_p_date_fin_fr";
 									else
 									        $text_bulle_type_abs=$tab_per['p_commentaire']."<br/>$sql_p_date_deb_fr <i class=\"fa fa-long-arrow-right\"></i> $sql_p_date_fin_fr";
-									
+
 									if (isset($return[ $tab_type_absence[$sql_p_type]['libelle'] ]))
 										$return[ $tab_type_absence[$sql_p_type]['libelle'] ] += 0.5;
 									else
@@ -631,7 +631,7 @@ function affiche_cellule_jour_user($sql_login, $j_timestamp, $year_select, $mois
 									        $text_bulle_type_abs='<div class="type-abscence">' . $tab_type_absence[$sql_p_type]['libelle'] ."</div>$sql_p_date_deb_fr <i class=\"fa fa-long-arrow-right\"></i> $sql_p_date_fin_fr";
 									else
 									        $text_bulle_type_abs=$tab_per['p_commentaire']."<br/>$sql_p_date_deb_fr <i class=\"fa fa-long-arrow-right\"></i> $sql_p_date_fin_fr";
-									
+
 									$return[ $tab_type_absence[$sql_p_type]['libelle'] ] = 1;
 								}
 								else
@@ -642,8 +642,8 @@ function affiche_cellule_jour_user($sql_login, $j_timestamp, $year_select, $mois
 									        $text_bulle_type_abs='<div class="type-abscence">' . $tab_type_absence[$sql_p_type]['libelle'] ."</div>$sql_p_date_deb_fr <i class=\"fa fa-long-arrow-right\"></i> $sql_p_date_fin_fr";
 									else
 									        $text_bulle_type_abs=$tab_per['p_commentaire']."<br/>$sql_p_date_deb_fr <i class=\"fa fa-long-arrow-right\"></i> $sql_p_date_fin_fr";
-											
-									
+
+
 									if (isset($return[ $tab_type_absence[$sql_p_type]['libelle'] ]))
 										$return[ $tab_type_absence[$sql_p_type]['libelle'] ] += 0.5;
 									else
@@ -662,7 +662,7 @@ function affiche_cellule_jour_user($sql_login, $j_timestamp, $year_select, $mois
 									else
 									        $text_bulle_type_abs=$tab_per['p_commentaire']."<br/>$sql_p_date_deb_fr <i class=\"fa fa-long-arrow-right\"></i> $sql_p_date_fin_fr";
 									$text_bulle_type_abs='<div class="type-abscence">' . $tab_type_absence[$sql_p_type]['libelle'] ."</div>$sql_p_date_deb_fr <i class=\"fa fa-long-arrow-right\"></i> $sql_p_date_fin_fr";
-									
+
 									$return[ $tab_type_absence[$sql_p_type]['libelle'] ] = 1;
 								}
 								else
@@ -673,7 +673,7 @@ function affiche_cellule_jour_user($sql_login, $j_timestamp, $year_select, $mois
 									        $text_bulle_type_abs='<div class="type-abscence">' . $tab_type_absence[$sql_p_type]['libelle'] ."</div>$sql_p_date_deb_fr <i class=\"fa fa-long-arrow-right\"></i> $sql_p_date_fin_fr";
 									else
 									        $text_bulle_type_abs=$tab_per['p_commentaire']."<br/>$sql_p_date_deb_fr <i class=\"fa fa-long-arrow-right\"></i> $sql_p_date_fin_fr";
-									
+
 									if (isset($return[ $tab_type_absence[$sql_p_type]['libelle'] ]))
 										$return[ $tab_type_absence[$sql_p_type]['libelle'] ] += 0.5;
 									else
@@ -690,8 +690,8 @@ function affiche_cellule_jour_user($sql_login, $j_timestamp, $year_select, $mois
 									        $text_bulle_type_abs='<div class="type-abscence">' . $tab_type_absence[$sql_p_type]['libelle'] ."</div>$sql_p_date_deb_fr <i class=\"fa fa-long-arrow-right\"></i> $sql_p_date_fin_fr";
 									else
 									        $text_bulle_type_abs=$tab_per['p_commentaire']."<br/>$sql_p_date_deb_fr <i class=\"fa fa-long-arrow-right\"></i> $sql_p_date_fin_fr";
-											
-								
+
+
 								$return[ $tab_type_absence[$sql_p_type]['libelle'] ] = 1;
 							}
 						}
@@ -807,16 +807,16 @@ function recup_tableau_periodes($mois, $first_jour, $year,  $tab_logins = false)
 						// tableaux indexés contenant les infos des periode de conges dont ce jour fait partie
 						// ($tab_periode)
 
-	
+
 	$timestamp_deb	= mktime (0,0,0,$mois, $first_jour, $year);
 	$timestamp_fin	= mktime (0,0,0,$mois +1 , $first_jour, $year);
-						
+
 	$date_deb	= date("Y-m-d", $timestamp_deb );
 	$date_fin	= date("Y-m-d", $timestamp_fin );
-	
+
 	$sql	= 'SELECT  p_login, p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_type, p_etat, p_fermeture_id, p_commentaire
 				FROM conges_periode
-				WHERE ( p_etat=\'ok\' OR  p_etat=\'demande\' OR  p_etat=\'valid\') 
+				WHERE ( p_etat=\'ok\' OR  p_etat=\'demande\' OR  p_etat=\'valid\')
 					AND (p_date_fin >= \''.\includes\SQL::quote($date_deb).'\' AND p_date_deb <= \''.\includes\SQL::quote($date_fin).'\')
 					'.($tab_logins !== false ? 'AND p_login IN (\''.implode('\', \'', $tab_logins).'\')' : '' ).'
 				ORDER BY p_date_deb;';
@@ -830,14 +830,14 @@ function recup_tableau_periodes($mois, $first_jour, $year,  $tab_logins = false)
 			$tab_jour	= $l;
 		else
 			continue;
-			
+
 		$p_timestamp_deb = DateTime::createFromFormat('Y-m-d', $l['p_date_deb']);
 		$p_timestamp_fin = DateTime::createFromFormat('Y-m-d', $l['p_date_fin']);
-		
-		
+
+
 		$deb	= ( $timestamp_deb < $p_timestamp_deb->getTimestamp() ? $p_timestamp_deb : new DateTime( '@'.$timestamp_deb) );
 		$fin	= ( $timestamp_fin > $p_timestamp_fin->getTimestamp() ? $p_timestamp_fin : new DateTime( '@'.$timestamp_fin) );
-		
+
 		$tmp	= $deb;
 		while ( $tmp <= $fin ){
 			$date_j = date('Y-m-d',$tmp->getTimestamp() );
@@ -872,9 +872,9 @@ function affiche_select_groupe($select_groupe, $selected, $printable, $year, $mo
 			$list_groupes = $list_groupes_1.$list_groupes_2 ;
 		else
 			$list_groupes = $list_groupes_1.",".$list_groupes_2 ;
-			
+
 		if ($_SESSION['config']['double_validation_conges']) {
-			$list_groupes_3 = get_list_groupes_du_grand_resp($_SESSION['userlogin'] );			
+			$list_groupes_3 = get_list_groupes_du_grand_resp($_SESSION['userlogin'] );
 			if ($list_groupes == '' || $list_groupes_3 == '')
 				$list_groupes = $list_groupes.$list_groupes_3 ;
 			else
@@ -919,7 +919,7 @@ function affiche_select_groupe($select_groupe, $selected, $printable, $year, $mo
 
 
 
-// Récupération des users à afficher: 
+// Récupération des users à afficher:
 // renvoit un tableau de tableau
 function recup_tableau_des_users_a_afficher($select_groupe)
 {
@@ -964,7 +964,7 @@ function recup_tableau_des_users_a_afficher($select_groupe)
 				$list_users=get_list_users_du_groupe($select_groupe);
 				if($list_users!="")  //si la liste n'est pas vide ( serait le cas si groupe vide)
 				$sql1 = $sql1." AND u_login IN ($list_users) ";
-					
+
 				$sql1 = $sql1." ORDER BY u_nom, u_prenom";
 			}
 			else
@@ -988,7 +988,7 @@ function recup_tableau_des_users_a_afficher($select_groupe)
 				if($list_users!="")  //si la liste n'est pas vide ( serait le cas si groupe vide)
 					$sql1 = $sql1." OR u_login IN ($list_users) ";
 					$sql1 = $sql1." ) ";
-					
+
 				$sql1 = $sql1." ORDER BY u_nom, u_prenom";
 			}
 			// si user n'est pas un responsable
@@ -998,7 +998,7 @@ function recup_tableau_des_users_a_afficher($select_groupe)
 				{
 					$sql1 = "SELECT DISTINCT u_login, u_nom, u_prenom, u_quotite FROM conges_users ";
 					$sql1 = $sql1." WHERE u_login!='conges' AND u_login!='admin' ";
-					
+
 					//si affichage par groupe : on affiche les membres des groupes du user ($_SESSION['userlogin'])
 					if( ($_SESSION['config']['gestion_groupes']) && ($_SESSION['config']['affiche_groupe_in_calendrier']) )
 					{
@@ -1007,7 +1007,7 @@ function recup_tableau_des_users_a_afficher($select_groupe)
 						if($list_users!="")  //si la liste n'est pas vide ( serait le cas si n'est membre d'aucun groupe)
 						$sql1 = $sql1." AND u_login IN ($list_users) ";
 					}
-					
+
 					$sql1 = $sql1." ORDER BY u_nom, u_prenom";
 				}
 				// si user est un responsable
@@ -1015,11 +1015,11 @@ function recup_tableau_des_users_a_afficher($select_groupe)
 				{
 					$sql1 = "SELECT DISTINCT u_login, u_nom, u_prenom, u_quotite FROM conges_users ";
 					$sql1 = $sql1." WHERE u_login!='conges' AND u_login!='admin' ";
-	
+
 					if($_SESSION['userlogin']!="conges")
 					{
 						$sql1 = $sql1.' AND ( u_login = \''.\includes\SQL::quote($_SESSION['userlogin']).'\' ';
-	
+
 						//si affichage par groupe : on affiche les membres des groupes du user ($_SESSION['userlogin'])
 						if( ($_SESSION['config']['gestion_groupes']) && ($_SESSION['config']['affiche_groupe_in_calendrier']) )
 						{
@@ -1027,9 +1027,9 @@ function recup_tableau_des_users_a_afficher($select_groupe)
 							$list_users=get_list_users_des_groupes_du_user($_SESSION['userlogin']);
 							if($list_users!="")  //si la liste n'est pas vide ( serait le cas si n'est membre d'aucun groupe)
 								$sql1 = $sql1." OR u_login IN ($list_users) ";
-		
+
 						}
-						
+
 						//recup de la liste des users dont le user est responsable
 						$list_users_2=get_list_all_users_du_resp($_SESSION['userlogin']);
 						if($list_users_2!="")  //si la liste n'est pas vide ( serait le cas si n'est responsable d'aucun groupe)
@@ -1040,15 +1040,15 @@ function recup_tableau_des_users_a_afficher($select_groupe)
 							if (count($list_groupes_3) > 0) {
 								$list_groupes_3 = array_map("SQL::quote", $list_groupes_3);
 								$list_groupes_3 = '\'' . implode('\', \'', $list_groupes_3).'\'';
-								
+
 								$sql1 = $sql1." OR u_login IN ( $list_groupes_3 ) ";
 							}
 						}
-							
-							
+
+
 						$sql1 = $sql1." ) ";
 					}
-					
+
 					$sql1 = $sql1." ORDER BY u_nom, u_prenom";
 
 				}

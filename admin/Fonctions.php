@@ -1595,7 +1595,7 @@ class Fonctions
             $return.= '</td>';
             $return.= '</tr><tr>';
             $return.= '<td align="center">';
-            $return.= '<input type="button" value="' . _('form_cancel') . '" onClick="javascript:window.close();">';
+            $return.= '<input type="button" value="' . _('form_cancel') . '" onClick="window.close();">';
             $return.= '</td>';
             $return.= '</tr></table></form>';
         } else {
@@ -1611,7 +1611,7 @@ class Fonctions
             $return .= '</tr>';
             $return .= '<tr>';
             $return .= '<td align="center">';
-            $return .= '<input type="button" value="' . _('form_close_window') . '" onClick="javascript:window.close();">';
+            $return .= '<input type="button" value="' . _('form_close_window') . '" onClick="window.close();">';
             $return .= '</td>';
             $return .= '</tr></table></form>';
         }
@@ -1654,7 +1654,7 @@ class Fonctions
         $return .= '</tr>';
         $return .= '<tr>';
         $return .= '<td align="center">';
-        $return .= '<input type="button" value="' . _('form_cancel') . '" onClick="javascript:window.close();">';
+        $return .= '<input type="button" value="' . _('form_cancel') . '" onClick="window.close();">';
         $return .= '</td>';
         $return .= '</tr></table></form>';
 
@@ -1718,7 +1718,7 @@ class Fonctions
         $return .= '<th colspan="2">' . _('admin_sauve_db_save_ok') . ' ...</th>';
         $return .= '</tr><tr>';
         $return .= '<td colspan="2" align="center">';
-        $return .= '<input type="button" value="' . _('form_close_window') . '" onClick="javascript:window.close();">';
+        $return .= '<input type="button" value="' . _('form_close_window') . '" onClick="window.close();">';
         $return .= '</td>';
         $return .= '</tr></table></form>';
 
@@ -1759,7 +1759,7 @@ class Fonctions
         $return .= '</td>';
         $return .= '</tr><tr>';
         $return .= '<td colspan="2" align="center">';
-        $return .= '<input type="button" value="' . _('form_cancel') . '" onClick="javascript:window.close();">';
+        $return .= '<input type="button" value="' . _('form_cancel') . '" onClick="window.close();">';
         $return .= '</td>';
         $return .= '</tr></table></form>';
 
@@ -1804,7 +1804,7 @@ class Fonctions
         $return .= '</tr>';
         $return .= '<tr>';
         $return .= '<td colspan="2" align="center">';
-        $return .= '<input type="button" value="' . _('form_cancel') . '" onClick="javascript:window.close();">';
+        $return .= '<input type="button" value="' . _('form_cancel') . '" onClick="window.close();">';
         $return .= '</td></tr></table></form>';
         echo $return;
         bottom();
@@ -3123,7 +3123,7 @@ class Fonctions
             $valid=verif_saisie_decimal($tab_new_jours_an[$id_cong]);    //verif la bonne saisie du nombre décimal
             $valid=verif_saisie_decimal($tab_new_solde[$id_cong]);    //verif la bonne saisie du nombre décimal
         }
- 
+
         // verif des parametres reçus :
         // si on travaille avec la base dbconges, on teste tout, mais si on travaille avec ldap, on ne teste pas les champs qui viennent de ldap ...
         if(!\admin\Fonctions::test_form_add_user($tab_new_user)) {
@@ -3488,7 +3488,7 @@ class Fonctions
             $return .= '<td class="histo">' . $imp_di_pm . '</td>';
         }
         $return .= '</tr></tbody></table>';
-        $return .= '</td><td><img src="'. TEMPLATE_PATH . 'img/shim.gif" width="15" height="2" border="0" vspace="0" hspace="0"></td><td>';
+        $return .= '</td><td><img src="'. IMG_PATH . 'shim.gif" width="15" height="2" border="0" vspace="0" hspace="0"></td><td>';
 
         //tableau semaines paires
         $return .= '<b><u>'. _('admin_temps_partiel_sem_paires') .':</u></b><br>';

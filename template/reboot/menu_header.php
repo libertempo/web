@@ -36,7 +36,7 @@
 
     switch($tmp) {
         case 'admin':
-            $mod_toolbar[] = "<a href=\"javascript:void(0);\" onClick=\"javascript:OpenPopUp('". ROOT_PATH ."/admin/admin_db_sauve.php?session=$session','400,300');\"><i class=\"fa fa-save\"></i><span>" . _('admin_button_save_db_2') . "</span></a>";
+            $mod_toolbar[] = '<a href="#" onClick="OpenPopUp(\''. ROOT_PATH .'admin/admin_db_sauve.php?session=' . $session . '\', \'\', 800, 600); return false;"><i class="fa fa-save"></i><span>' . _('admin_button_save_db_2') . '</span></a>';
             if($_SESSION['config']['affiche_bouton_config_pour_admin'] || $_SESSION['config']['affiche_bouton_config_absence_pour_admin'] || $_SESSION['config']['affiche_bouton_config_mail_pour_admin'] || $_SESSION['userlogin']=="admin" )
                 $mod_toolbar[] = "<a href=\"" . ROOT_PATH . "config/index.php?session=$session\"" . ($tmp == 'config' ? 'class="active"' : '') . "><i class=\"fa fa-th-list\"></i><span>" . _('admin_button_config_2') . "</span></a>";
         break;
@@ -44,7 +44,11 @@
             $mod_toolbar[] = "<a href=\"" . ROOT_PATH . "hr/hr_jours_fermeture.php?session=$session\"><i class=\"fa fa-calendar\"></i><span>" . _('admin_button_jours_fermeture_2') . "</span></a>";
         break;
         case 'utilisateur':
-            $mod_toolbar[] = "<a href=\"javascript:void(0);\" onClick=\"javascript:OpenPopUp('". ROOT_PATH . "export/export_vcalendar.php?session=$session&user_login=" . $_SESSION['userlogin'] . "','457,280');\"><i class=\"fa fa-download\"></i><span>" . _('Exporter cal') . "</span></a>";
+            $mod_toolbar[] = '<a href="#"
+            onClick="OpenPopUp(\'' . ROOT_PATH . 'export/export_vcalendar.php?session=' . $session .
+            '&user_login=' . $_SESSION['userlogin'] .
+            '\', \'\', 600, 400);return false;">
+            <i class="fa fa-download"></i><span>' . _('Exporter cal') . '</span></a>';
             if($_SESSION['config']['editions_papier'])
                 $mod_toolbar[] = "<a href=\"" . ROOT_PATH . "edition/edit_user.php?session=$session\"><i class=\"fa fa-file-text\"></i><span>"._('button_editions')."</span></a>";
         break;
@@ -57,19 +61,19 @@
         <title><?= $title; ?></title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <?php /* BOOTSTRAP */?>
-        <link type="text/css" href="<?= TEMPLATE_PATH ?>bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen,print">
+        <link type="text/css" href="<?= ASSETS_PATH ?>bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen,print">
         <?php /* FONT AWESOME */ ?>
-        <link href="<?= TEMPLATE_PATH ?>/font-awesome/css/font-awesome.css" rel="stylesheet">
+        <link href="<?= ASSETS_PATH ?>font-awesome/css/font-awesome.css" rel="stylesheet">
         <?php /* REBOOT STYLE */ ?>
-        <link type="text/css" href="<?= TEMPLATE_PATH ?>css/reboot.css" rel="stylesheet" media="screen,print">
-        <link type="text/css" href="<?= TEMPLATE_PATH ?>css/datepicker.css" rel="stylesheet" media="screen">
+        <link type="text/css" href="<?= CSS_PATH ?>reboot.css" rel="stylesheet" media="screen,print">
+        <link type="text/css" href="<?= CSS_PATH ?>datepicker.css" rel="stylesheet" media="screen">
         <?php /* JQUERY */ ?>
-        <script type="text/javascript" src="<?= TEMPLATE_PATH ?>jquery/js/jquery-1.7.1.min.js"></script>
-        <script type="text/javascript" src="<?= TEMPLATE_PATH  ?>bootstrap/js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="<?= TEMPLATE_PATH ?>js/bootstrap-datepicker/bootstrap-datepicker.js"></script>
-        <script type="text/javascript" src="<?= TEMPLATE_PATH ?>js/bootstrap-datepicker/locales/bootstrap-datepicker.fr.js"></script>
-        <script type="text/javascript" src="<?= TEMPLATE_PATH ?>js/reboot.js"></script>
-       <?= $additional_head ?>
+        <script type="text/javascript" src="<?= ASSETS_PATH ?>jquery/js/jquery-1.7.1.min.js"></script>
+        <script type="text/javascript" src="<?= ASSETS_PATH  ?>bootstrap/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="<?= ASSETS_PATH ?>bootstrap-datepicker/bootstrap-datepicker.js"></script>
+        <script type="text/javascript" src="<?= ASSETS_PATH ?>bootstrap-datepicker/locales/bootstrap-datepicker.fr.js"></script>
+        <script type="text/javascript" src="<?= JS_PATH ?>reboot.js"></script>
+        <?= $additional_head ?>
     </head>
     <body id="top" class="hbox connected <?= ($printable) ? 'printable' : '' ?>">
         <aside id="toolbar">

@@ -62,10 +62,11 @@ function form_saisie($action, $new_mois, $new_year)
 
 	header_popup();
 
-	if($action=="imprim")
-		ouvre_calendrier($new_mois, $new_year);
+    if($action=="imprim") {
+        echo '<script type="text/javascript">OpenPopUp(\'calendrier.php?session=' . $session . '&printable=1&mois=' . $mois . '&year=' . $year . '\'',\'calendrier\',1000,600);</script>';
+    }
 
-	
+
 	echo "<center>\n";
 	echo "<h3>". _('imprim_calendrier_titre') ."</h3>\n";
 
@@ -97,7 +98,7 @@ function form_saisie($action, $new_mois, $new_year)
 	echo "</tr>\n";
 	echo "<tr>\n";
 	echo "<td colspan=\"2\" align=\"center\">\n";
-	echo "	<input type=\"button\" value=\"". _('form_close_window') ."\" onClick=\"javascript:window.close();\">\n";
+	echo "	<input type=\"button\" value=\"". _('form_close_window') ."\" onClick=\"window.close();\">\n";
 	echo "</td>\n";
 	echo "</tr>\n";
 	echo "</table>\n";
@@ -106,13 +107,3 @@ function form_saisie($action, $new_mois, $new_year)
 	bottom();
 
 }
-
-function ouvre_calendrier($mois, $year)
-{
-	$session=session_id();
-
-	echo "<script language=\"javascript\">\n";
-	echo "OpenPopUp('calendrier.php?session=$session&printable=1&mois=$mois&year=$year','calendrier',1000,600);\n";
-	echo "</script>\n";
-}
-

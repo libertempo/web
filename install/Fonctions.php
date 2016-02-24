@@ -5,20 +5,20 @@ Copyright (C) 2015 (Wouldsmina)
 Copyright (C) 2015 (Prytoegrian)
 Copyright (C) 2005 (cedric chauvineau)
 
-Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les 
+Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
 termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
-Ce programme est distribué car potentiellement utile, mais SANS AUCUNE GARANTIE, 
-ni explicite ni implicite, y compris les garanties de commercialisation ou d'adaptation 
+Ce programme est distribué car potentiellement utile, mais SANS AUCUNE GARANTIE,
+ni explicite ni implicite, y compris les garanties de commercialisation ou d'adaptation
 dans un but spécifique. Reportez-vous à la Licence Publique Générale GNU pour plus de détails.
-Vous devez avoir reçu une copie de la Licence Publique Générale GNU en même temps 
-que ce programme ; si ce n'est pas le cas, écrivez à la Free Software Foundation, 
+Vous devez avoir reçu une copie de la Licence Publique Générale GNU en même temps
+que ce programme ; si ce n'est pas le cas, écrivez à la Free Software Foundation,
 Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, États-Unis.
 *************************************************************************************************
 This program is free software; you can redistribute it and/or modify it under the terms
-of the GNU General Public License as published by the Free Software Foundation; either 
+of the GNU General Public License as published by the Free Software Foundation; either
 version 2 of the License, or any later version.
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
-without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
@@ -32,14 +32,14 @@ defined( '_PHP_CONGES' ) or die( 'Restricted access' );
  * Regroupement de fonctions d'installation
  */
 class Fonctions {
-    // teste le fichier config.php 
+    // teste le fichier config.php
     //renvoit TRUE si ok, et FALSE sinon
     public static function test_config_file() {
         return is_readable( CONFIG_PATH .'config.php' );
     }
 
 
-    // teste le fichier dbconnect.php 
+    // teste le fichier dbconnect.php
     //renvoit TRUE si ok, et FALSE sinon
     public static function test_dbconnect_file() {
         return is_readable( CONFIG_PATH .'dbconnect.php' ) ;
@@ -67,7 +67,7 @@ class Fonctions {
 
 
 
-    // renvoit le num de la version installée ou 0 s'il est inaccessible (non renseigné ou table non présente) 
+    // renvoit le num de la version installée ou 0 s'il est inaccessible (non renseigné ou table non présente)
     public static function get_installed_version() {
         try {
             $reglog = \includes\SQL::query('show tables like \'conges_config\';');
@@ -144,7 +144,7 @@ class Fonctions {
 
         // affichage du titre
         echo "<center>\n";
-        echo "<br><H1><img src=\"". TEMPLATE_PATH ."img/tux_config_32x32.png\" width=\"32\" height=\"32\" border=\"0\" title=\"". _('install_install_phpconges') ."\" alt=\"". _('install_install_phpconges') ."\"> ". _('install_index_titre') ."</H1>\n";
+        echo "<br><H1><img src=\"". IMG_PATH ."tux_config_32x32.png\" width=\"32\" height=\"32\" border=\"0\" title=\"". _('install_install_phpconges') ."\" alt=\"". _('install_install_phpconges') ."\"> ". _('install_index_titre') ."</H1>\n";
         echo "<br><br>\n";
 
         echo "<table border=\"0\">\n";
@@ -163,7 +163,7 @@ class Fonctions {
         echo "<input type=\"submit\" value=\"". _('form_start') ."\">\n";
         echo "</form>\n";
         echo "</td>\n";
-        echo "<td><img src=\"". TEMPLATE_PATH ."img/shim.gif\" width=\"100\" height=\"10\" border=\"0\" vspace=\"0\" hspace=\"0\"></td>\n";
+        echo "<td><img src=\"". IMG_PATH ."shim.gif\" width=\"100\" height=\"10\" border=\"0\" vspace=\"0\" hspace=\"0\"></td>\n";
         echo "<td valign=top>\n";
         echo "<h3>... ". _('install_mise_a_jour') ."</h3><b>". _('install_indiquez_pre_version') ." :</b><br><br>\n";
 
@@ -172,9 +172,8 @@ class Fonctions {
         // affichage de la liste des versions ...
         echo "<select name=\"version\">\n";
         echo "<option value=\"0\">". _('install_installed_version') ."</option>\n";
-        echo "<option value=\"1.7.0\">v1.8</option>\n";
+        echo "<option value=\"1.8\">v1.8</option>\n";
         echo "<option value=\"1.7.0\">v1.7.0</option>\n";
-        echo "<option value=\"1.6.0\">v1.6.x</option>\n";
         echo "<option value=\"1.5.1\">v1.5.x</option>\n";
         echo "</select>\n";
         echo "<br>\n";
@@ -216,7 +215,7 @@ class Fonctions {
         }
         else
         {
-            //on execute le script [nouvelle vesion].sql qui crée et initialise les tables 
+            //on execute le script [nouvelle vesion].sql qui crée et initialise les tables
             $file_sql="sql/php_conges_v$config_php_conges_version.sql";
             if(file_exists($file_sql))
                 $result = execute_sql_file($file_sql);
@@ -329,25 +328,28 @@ class Fonctions {
                 // execute le script php d'upgrade de la version1.5.0 (vers la suivante (1.6.0))
                 echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$file_upgrade?version=$new_installed_version&lang=$lang\">";
             }
-            elseif($start_version=="1.6.0") {
+            elseif($start_version=="1.6.0")
+            {
                 $file_upgrade='upgrade_from_v1.6.0.php';
                 $new_installed_version="1.7.0";
                 // execute le script php d'upgrade de la version1.6.0 (vers la suivante (1.7.0))
                 echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$file_upgrade?version=$new_installed_version&lang=$lang\">";
             }
-            elseif($start_version=="1.7.0") {
+            elseif($start_version=="1.7.0")
+	    {
 		$file_upgrade='upgrade_from_v1.7.0.php';
 		$new_installed_version="1.8";
 		// execute le script php d'upgrade de la version1.7.0 (vers la suivante (1.8))
 		echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$file_upgrade?version=$new_installed_version&lang=$lang\">";
 	    }
-            elseif($start_version=="1.8") {
+            elseif($start_version=="1.8")
+	    {
 		$file_upgrade='upgrade_from_v1.8.php';
 		$new_installed_version="1.9";
 		// execute le script php d'upgrade de la version1.8 (vers la suivante (1.9))
 		echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$file_upgrade?version=$new_installed_version&lang=$lang\">";
 	    } else {
-                    echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$PHP_SELF?etape=5&version=$new_installed_version&lang=$lang\">";
+                echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$PHP_SELF?etape=5&version=$new_installed_version&lang=$lang\">";
             }
 
         }
@@ -400,3 +402,4 @@ class Fonctions {
         $result_create_table_plugin = \includes\SQL::query($create_table_plugin_query);
     }
 }
+

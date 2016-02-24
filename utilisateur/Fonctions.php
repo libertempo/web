@@ -178,7 +178,41 @@ class Fonctions
             /**************************/
             /* Nouvelle Demande */
             /**************************/
-            include ROOT_PATH .'fonctions_javascript.php' ;
+            /* Génération du datePicker et de ses options */
+            $daysOfWeekDisabled = [];
+            $datesDisabled      = [];
+            if ((false == $_SESSION['config']['dimanche_travail'])
+                && (false == $_SESSION['config']['samedi_travail'])
+            ) {
+                $daysOfWeekDisabled = [0,6];
+            } else {
+                if (false == $_SESSION['config']['dimanche_travail']) {
+                    $daysOfWeekDisabled = [0];
+                }
+                if (false == $_SESSION['config']['samedi_travail']) {
+                    $daysOfWeekDisabled = [6];
+                }
+            }
+
+            if (is_array($_SESSION["tab_j_feries"])) {
+                foreach ($_SESSION["tab_j_feries"] as $date) {
+                    $datesDisabled[] = \App\Helpers\Formatter::dateIso2Fr($date);
+                }
+            }
+
+            if (is_array($_SESSION["tab_j_fermeture"])) {
+                foreach ($_SESSION["tab_j_fermeture"] as $date) {
+                    $datesDisabled[] = \App\Helpers\Formatter::dateIso2Fr($date);
+                }
+            }
+            $startDate = ($_SESSION['config']['interdit_saisie_periode_date_passee']) ? 'd' : '';
+
+            $datePickerOpts = [
+                'daysOfWeekDisabled' => $daysOfWeekDisabled,
+                'datesDisabled'      => $datesDisabled,
+                'startDate'          => $startDate,
+            ];
+            $return .= '<script>generateDatePicker(' . json_encode($datePickerOpts) . ');</script>';
             $return .= '<h1>' . _('divers_nouvelle_absence') . '</h1>';
 
             //affiche le formulaire de saisie d'une nouvelle demande de conges
@@ -225,7 +259,6 @@ class Fonctions
         $PHP_SELF=$_SERVER['PHP_SELF'];
         $session=session_id();
         $return = '';
-        include ROOT_PATH .'fonctions_javascript.php' ;
 
         // Récupération des informations
         $sql1 = 'SELECT p_login, p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_nb_jours, p_commentaire, p_etat, p_num FROM conges_periode where p_num = "'. \includes\SQL::quote($p_num).'"';
@@ -1519,9 +1552,9 @@ class Fonctions
             $return .= '<thead>';
             $return .= '<tr>';
             $return .= '<td>';
-            $return .= '<a href="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '&tri_date=descendant"><img src="' . TEMPLATE_PATH . 'img/1downarrow-16x16.png" width="16" height="16" border="0" title="trier"></a>';
+            $return .= '<a href="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '&tri_date=descendant"><img src="' . IMG_PATH . '1downarrow-16x16.png" width="16" height="16" border="0" title="trier"></a>';
             $return .= _('divers_debut_maj_1');
-            $return .= '<a href="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '&tri_date=ascendant"><img src="' . TEMPLATE_PATH . 'img/1uparrow-16x16.png" width="16" height="16" border="0" title="trier"></a>';
+            $return .= '<a href="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '&tri_date=ascendant"><img src="' . IMG_PATH . '1uparrow-16x16.png" width="16" height="16" border="0" title="trier"></a>';
             $return .= '</td>';
             $return .= '<td>' . _('divers_fin_maj_1') . '</td>';
             $return .= '<td>' . _('user_abs_type') . '</td>';

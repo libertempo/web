@@ -857,7 +857,7 @@ class Fonctions
         if($tab_current_user['num_exercice'] < $_SESSION['config']['num_exercice']) {
             $return .= '<td align="center" class="histo"><input type="checkbox" name="tab_cloture_users[' . $current_login . ']" value="TRUE" checked></td>';
         } else {
-            $return .= '<td align="center" class="histo"><img src="' . TEMPLATE_PATH . 'img/stop.png" width="16" height="16" border="0" ></td>';
+            $return .= '<td align="center" class="histo"><img src="' . IMG_PATH . 'stop.png" width="16" height="16" border="0" ></td>';
         }
 
         $comment_cloture =  _('resp_cloture_exercice_commentaire') ." ".date("m/Y");
@@ -1393,9 +1393,9 @@ class Fonctions
             $return .= '<thead>';
             $return .= '<tr align="center">';
             $return .= '<th>';
-            // echo " <a href=\"$PHP_SELF?session=$session&user_login=$user_login&onglet=$onglet&tri_date=descendant\"><img src=\"". TEMPLATE_PATH ."img/1downarrow-16x16.png\" width=\"16\" height=\"16\" border=\"0\" title=\"trier\"></a>\n";
+            // echo " <a href=\"$PHP_SELF?session=$session&user_login=$user_login&onglet=$onglet&tri_date=descendant\"><img src=\"". IMG_PATH ."1downarrow-16x16.png\" width=\"16\" height=\"16\" border=\"0\" title=\"trier\"></a>\n";
             $return .= _('divers_debut_maj_1');
-            // echo " <a href=\"$PHP_SELF?session=$session&user_login=$user_login&onglet=$onglet&tri_date=ascendant\"><img src=\"". TEMPLATE_PATH ."img/1uparrow-16x16.png\" width=\"16\" height=\"16\" border=\"0\" title=\"trier\"></a>\n";
+            // echo " <a href=\"$PHP_SELF?session=$session&user_login=$user_login&onglet=$onglet&tri_date=ascendant\"><img src=\"". IMG_PATH ."1uparrow-16x16.png\" width=\"16\" height=\"16\" border=\"0\" title=\"trier\"></a>\n";
             $return .= '</th>';
             $return .= '<th>' . _('divers_fin_maj_1') . '</th>';
             $return .= '<th>' . _('divers_nb_jours_pris_maj_1') . '</th>';
@@ -1740,7 +1740,6 @@ class Fonctions
             get_tab_grd_resp_du_user($user_login, $tab_grd_resp);
         }
 
-        include_once ROOT_PATH . 'fonctions_javascript.php' ;
         /********************/
         /* Titre */
         /********************/
