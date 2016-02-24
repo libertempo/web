@@ -113,6 +113,25 @@ else
 			exit;
 		}
 	}
+	// Si SSO, on utilise les identifiants de session pour se connecter
+	else if ( $_SESSION['config']['how_to_connect_user'] == "SSO" )
+	{
+		$usernameSSO = authentification_AD_SSO();
+		if($usernameSSO != "")
+		{
+			session_create( $usernameSSO );
+		}
+		else//dans ce cas l'utilisateur n'a pas encore été enregistré dans la base de données db_conges
+		{
+			header_error();
+
+			echo  _('session_pas_de_compte_dans_dbconges') ."<br>\n";
+			echo  _('session_contactez_admin') ."\n";
+			
+			bottom();
+			exit;
+		}
+	}
 	else 
 	{
 		if (($session_username == "") || ($session_password == "")) // si login et passwd non saisis
