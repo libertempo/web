@@ -402,4 +402,3 @@ class Fonctions {
         $result_create_table_plugin = \includes\SQL::query($create_table_plugin_query);
     }
 }
-
