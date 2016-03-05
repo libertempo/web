@@ -172,8 +172,8 @@ class Fonctions {
         // affichage de la liste des versions ...
         echo "<select name=\"version\">\n";
         echo "<option value=\"0\">". _('install_installed_version') ."</option>\n";
+        echo "<option value=\"1.8\">v1.8</option>\n";
         echo "<option value=\"1.7.0\">v1.7.0</option>\n";
-        echo "<option value=\"1.6.0\">v1.6.x</option>\n";
         echo "<option value=\"1.5.1\">v1.5.x</option>\n";
         echo "</select>\n";
         echo "<br>\n";
@@ -322,8 +322,7 @@ class Fonctions {
                 $start_version=$installed_version ;
 
             //on lance l'execution (include) des scripts d'upgrade l'un après l'autre jusqu a la version voulue ($config_php_conges_version) ..
-            if(($start_version=="1.5.0")||($start_version=="1.5.1"))
-            {
+            if(($start_version=="1.5.0")||($start_version=="1.5.1")) {
                 $file_upgrade='upgrade_from_v1.5.0.php';
                 $new_installed_version="1.6.0";
                 // execute le script php d'upgrade de la version1.5.0 (vers la suivante (1.6.0))
@@ -336,18 +335,20 @@ class Fonctions {
                 // execute le script php d'upgrade de la version1.6.0 (vers la suivante (1.7.0))
                 echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$file_upgrade?version=$new_installed_version&lang=$lang\">";
             }
-            elseif($start_version=="1.7.0")
-	    {
-		$file_upgrade='upgrade_from_v1.7.0.php';
-		$new_installed_version="1.8";
-		// execute le script php d'upgrade de la version1.7.0 (vers la suivante (1.8))
-		echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$file_upgrade?version=$new_installed_version&lang=$lang\">";
-	    }
-            else
-            {
-                    echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$PHP_SELF?etape=5&version=$new_installed_version&lang=$lang\">";
+            elseif($start_version=="1.7.0") {
+                $file_upgrade='upgrade_from_v1.7.0.php';
+                $new_installed_version="1.8";
+                // execute le script php d'upgrade de la version1.7.0 (vers la suivante (1.8))
+                echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$file_upgrade?version=$new_installed_version&lang=$lang\">";
             }
-
+            elseif($start_version=="1.8") {
+                $file_upgrade='upgrade_from_v1.8.php';
+                $new_installed_version="1.9";
+                // execute le script php d'upgrade de la version1.8 (vers la suivante (1.9))
+                echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$file_upgrade?version=$new_installed_version&lang=$lang\">";
+            } else {
+                echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$PHP_SELF?etape=5&version=$new_installed_version&lang=$lang\">";
+            }
         }
         //*** ETAPE 3
         elseif($etape==3)
