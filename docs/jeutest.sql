@@ -148,16 +148,10 @@ INSERT INTO `conges_solde_user` VALUES('bernard', 12, 0.00, 0.00, 0.00);
 INSERT INTO `conges_solde_user` VALUES('marie', 11, 0.00, 0.00, 0.00);
 INSERT INTO `conges_solde_user` VALUES('marie', 12, 0.00, 0.00, 0.00);
 
---
--- Contenu de la table `conges_type_absence`
---
+---
+--- Contenu de la table `conges_type_absence`
+---
 
-INSERT INTO `conges_type_absence` VALUES(1, 'conges', 'congés payés', 'cp');
-INSERT INTO `conges_type_absence` VALUES(2, 'conges', 'rtt', 'rtt');
-INSERT INTO `conges_type_absence` VALUES(3, 'absences', 'formation', 'fo');
-INSERT INTO `conges_type_absence` VALUES(4, 'absences', 'misson', 'mi');
-INSERT INTO `conges_type_absence` VALUES(5, 'absences', 'autre', 'ab');
-INSERT INTO `conges_type_absence` VALUES(6, 'absences', 'malade', 'mal');
 INSERT INTO `conges_type_absence` VALUES(11, 'conges_exceptionnels', 'enfant malade', 'enf');
 INSERT INTO `conges_type_absence` VALUES(12, 'conges_exceptionnels', 'maladie', 'mal');
 
