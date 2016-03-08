@@ -1715,7 +1715,7 @@ function init_config_tab()
         //  config_CAS.php
         if (file_exists(CONFIG_PATH .'config_CAS.php'))
         {
-            include_once CONFIG_PATH .'config_CAS.php';
+            include CONFIG_PATH .'config_CAS.php';
             if(isset($config_CAS_host))    $tab['CAS_host']    = $config_CAS_host ;
             if(isset($config_CAS_portNumber)) $tab['CAS_portNumber'] = $config_CAS_portNumber ;
             if(isset($config_CAS_URI))    $tab['CAS_URI']        = $config_CAS_URI ;
