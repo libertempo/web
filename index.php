@@ -98,6 +98,7 @@ else
 		$usernameCAS = authentification_passwd_conges_CAS();
 		if($usernameCAS != "")
 		{
+			session_destroy();
 			session_create($usernameCAS);
 		}
 		else //dans ce cas l'utilisateur n'a pas encore été enregistré dans la base de données db_conges
