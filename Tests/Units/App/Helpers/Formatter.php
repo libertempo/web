@@ -2,7 +2,6 @@
 namespace Tests\Units\App\Helpers;
 
 use \App\Helpers\Formatter as _Formatter;
-use \atoum;
 
 /**
  * Classe de test des formatages
@@ -11,7 +10,7 @@ use \atoum;
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @see    \App\Helpers\Formatter
  */
-class Formatter extends atoum
+class Formatter extends \Tests\Units\TestUnit
 {
     /**
      * Test de la transformation d'une date Fr -> ISO avec une date mal formée
