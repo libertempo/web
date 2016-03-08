@@ -1070,7 +1070,7 @@ class Fonctions
                             $childTableAddon .= '<option value="1">Y</option><option selected="selected" value="0">N</option>';
                         }
                         $childTableAddon .= '</select>';
-                        $return .= ' ... Is activated ? : <select class="form-control" name=tab_new_values[' . $my_plugin . '_activated]>';
+                        $childTableAddon .= ' ... Is activated ? : <select class="form-control" name=tab_new_values[' . $my_plugin . '_activated]>';
                         $p_active = $plug["p_is_active"];
                         if ($p_active == '1') {
                             $childTableAddon .= '<option selected="selected" value="1">Y</option><option value="0">N</option>';
@@ -1098,7 +1098,7 @@ class Fonctions
         $childTableAddon .= '</td></tr>';
         /**********************************************************************/
 
-        $return .= '</table>';
+        $childTableAddon .= '</table>';
         $tableAddon->addChild($childTableAddon);
         ob_start();
         $tableAddon->render();
