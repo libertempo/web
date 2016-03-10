@@ -974,8 +974,7 @@ class Fonctions
                 $conf_commentaire = strtolower($data['conf_commentaire']);
 
                 if($conf_nom=="lang") {
-                    $childTable .= 'Choisissez votre langue :<br>';
-                    $childTable .= 'Choose your language :<br>';
+                    $childTable .= _('choisir_langue').'<br>';
                     // affichage de la liste des langues supportées ...
                     // on lit le contenu du répertoire lang et on parse les nom de ficher (ex lang_fr_francais.php)
                     //affiche_select_from_lang_directory("tab_new_values[$conf_nom]");
@@ -1055,8 +1054,8 @@ class Fonctions
         $childTableAddon .= '<legend class="boxlogin">Plugins</legend>';
         foreach($my_plugins as $my_plugin) {
             if(is_dir(PLUGINS_DIR."/$my_plugin") && !preg_match("/^\./",$my_plugin)) {
-                $childTableAddon .= 'Plugin détecté : ';
-                $childTableAddon .= '<b>' . $my_plugin . '</b> This plugin is installed ? :
+                $childTableAddon .= _('plugin_detect').'<br>';
+                $childTableAddon .= '<b>' . $my_plugin . ' : </b>'._('plugin_install').'
                     <select class="form-control" name=tab_new_values[' . $my_plugin . '_installed]>';
 
                 $sql_plug="SELECT p_is_active, p_is_install FROM conges_plugins WHERE p_name = '".$my_plugin."';";
@@ -1070,7 +1069,7 @@ class Fonctions
                             $childTableAddon .= '<option value="1">Y</option><option selected="selected" value="0">N</option>';
                         }
                         $childTableAddon .= '</select>';
-                        $return .= ' ... Is activated ? : <select class="form-control" name=tab_new_values[' . $my_plugin . '_activated]>';
+                        $childTableAddon .= _('plugin_active').' <select class="form-control" name=tab_new_values[' . $my_plugin . '_activated]>';
                         $p_active = $plug["p_is_active"];
                         if ($p_active == '1') {
                             $childTableAddon .= '<option selected="selected" value="1">Y</option><option value="0">N</option>';
@@ -1081,7 +1080,7 @@ class Fonctions
                 } else {
                     $childTableAddon .= '<option value="1">Y</option><option selected="selected" value="0">N</option>';
                     $childTableAddon .= '</select>';
-                    $childTableAddon .= ' ... Is activated ? : <select class="form-control" name=tab_new_values[' . $my_plugin . '_activated]>';
+                    $childTableAddon .= _('plugin_active').' <select class="form-control" name=tab_new_values[' . $my_plugin . '_activated]>';
                     $childTableAddon .= '<option value="1">Y</option><option selected="selected" value="0">N</option>';
                 }
                 $childTableAddon .= '</select>';
@@ -1090,7 +1089,7 @@ class Fonctions
             }
         }
         if($plug_count == 0){
-            $childTableAddon .= 'No plugin detected.';
+            $childTableAddon .= _('no_plugin');
         }
         $childTableAddon .= '</td></tr>';
         $childTableAddon .= '<tr><td align="right">';
@@ -1098,7 +1097,6 @@ class Fonctions
         $childTableAddon .= '</td></tr>';
         /**********************************************************************/
 
-        $return .= '</table>';
         $tableAddon->addChild($childTableAddon);
         ob_start();
         $tableAddon->render();

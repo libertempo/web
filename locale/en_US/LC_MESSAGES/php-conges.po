@@ -1722,3 +1722,30 @@ msgstr "// DISPLAY DISABLED USERS : <br>//--------------------------------------
 
 msgid "config_comment_affiche_jours_current_month_calendrier"
 msgstr "// DISPLAY NB DAYS TAKEN DURING THE MONTH ( FOR EACH TYPE OF LEAVE ): <br>//------------------------------------------------------------<br>// if FALSE . no display, in the calendar for each user, for each type of leave , beside the balance, nb of days taken during the month displayed (FALSE is the default)<br>// if TRUE : display in the calendar for each user, for each type of leave , beside the balance, nb of days taken during the month displayed."
+
+msgid "db_configuration"
+msgstr "Configuration of MySQL"
+
+msgid "db_configuration_ok"
+msgstr "Database configuration file generated successfully"
+
+msgid "db_configuration_server"
+msgstr "Host :"
+
+msgid "db_configuration_name"
+msgstr "Database name :"
+
+msgid "db_configuration_user"
+msgstr "Login :"
+
+msgid "db_configuration_password"
+msgstr "Password :"
+
+msgid "test_mail_config"
+msgstr "Test email sending"
+
+msgid "test_mail_comment"
+msgstr "Test email sending.<br>if not successfully, edit cfg/config_SMTP.php file"
+
+msgid "choisir_langue"
+msgstr "Choose your language :"

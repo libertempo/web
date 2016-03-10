@@ -683,7 +683,7 @@ class Fonctions
         log_action(0, "", $choix_user, $comment_log);
 
         /* APPEL D'UNE AUTRE PAGE */
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session. ' &onglet=admin-group-users" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '?session=' . $session. '&onglet=admin-group-users" method="POST">';
         $return .= '<input type="submit" value="' . _('form_retour') . '">';
         $return .= '</form>';
         return $return;
