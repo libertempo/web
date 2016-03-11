@@ -96,12 +96,7 @@ else
 	{
 		//redirection vers l'url d'authentification CAS
 		$usernameCAS = authentification_passwd_conges_CAS();
-		if($usernameCAS != "")
-		{
-			session_create($usernameCAS);
-		}
-		else //dans ce cas l'utilisateur n'a pas encore été enregistré dans la base de données db_conges
-		{
+		if($usernameCAS == "") {
 			header_error();
 
 			echo  _('session_pas_de_compte_dans_dbconges') ."<br>\n";

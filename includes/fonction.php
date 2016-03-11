@@ -411,16 +411,21 @@ function authentification_passwd_conges_CAS()
     phpCAS::forceAuthentication();
 
     $usernameCAS = phpCAS::getUser();
+
+    //On nettoie la session créée par phpCAS
+    session_destroy();
+    // On créé la session gérée par Libertempo
     session_create($usernameCAS);
 
     //ON VERIFIE ICI QUE L'UTILISATEUR EST DEJA ENREGISTRE SOUS DBCONGES
     $req_conges = 'SELECT u_login FROM conges_users WHERE u_login=\''. \includes\SQL::quote($usernameCAS).'\'';
     $res_conges = \includes\SQL::query($req_conges) ;
     $num_row_conges = $res_conges->num_rows;
-    if($num_row_conges !=0)
+    if($num_row_conges !=0) {
         return $usernameCAS;
-
-    return '';
+    } else {
+        return '';
+    }
 }
 
 

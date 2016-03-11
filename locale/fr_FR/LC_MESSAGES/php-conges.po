@@ -323,7 +323,13 @@ msgstr "pm"
 msgid "divers_conges"
 msgstr "congés"
 
+msgid "divers_conges_maj_1"
+msgstr "congés"
+
 msgid "divers_absences"
+msgstr "absences"
+
+msgid "divers_absences_maj_1"
 msgstr "absences"
 
 msgid "divers_nouvelle_absence"
@@ -510,7 +516,7 @@ msgid "admin_button_config_2"
 msgstr "Configuration"
 
 msgid "admin_button_config_abs_1"
-msgstr "Configuration des types d'absence gérées par php_conges"
+msgstr "Configuration des types d'absence gérées par Libertempo"
 
 msgid "admin_button_config_abs_2"
 msgstr "Config Absences"
@@ -1026,7 +1032,7 @@ msgid "config_comment_admin_change_passwd"
 msgstr "// CHANGER LE MOT DE PASSE D'UN UTILISATEUR<br>//-----------------------------------------<br>// si à FALSE : l'administrateur ne peut pas changer le mot de passe des utilisateurs<br>// si à TRUE : l'administrateur peut changer le mot de passe des utilisateurs (TRUE est la valeur par défaut)"
 
 msgid "config_comment_affiche_bouton_config_pour_admin"
-msgstr "// ACCÈS À LA CONFIG DE L'APPLI POUR LES ADMINS<br>//-------------------------------------------------------<br>// si à FALSE : le bouton d'accès à la configuration de Libertempo n'apparaît pas sur la page administrateur (FALSE est la valeur par défaut)<br>// si à TRUE : le bouton d'accès à la configuration de php_conges apparaît sur la page administrateur"
+msgstr "// ACCÈS À LA CONFIG DE L'APPLI POUR LES ADMINS<br>//-------------------------------------------------------<br>// si à FALSE : le bouton d'accès à la configuration de Libertempo n'apparaît pas sur la page administrateur (FALSE est la valeur par défaut)<br>// si à TRUE : le bouton d'accès à la configuration de Libertempo apparaît sur la page administrateur"
 
 msgid "config_comment_affiche_bouton_config_absence_pour_admin"
 msgstr "// ACCÈS À LA CONFIG DES TYPES D'ABSENCES DE L'APPLI POUR LES ADMINS<br>//---------------------------------------------------------------------<br>// si à FALSE : le bouton d'accès à la configuration des types d'absences gérées par Libertempo n'apparaît pas sur la page administrateur (FALSE est la valeur par défaut)<br>// si à TRUE : le bouton d'accès à la configuration des types d'absences gérées par Libertempo apparaît sur la page administrateur"
@@ -1083,7 +1089,7 @@ msgid "config_comment_duree_session"
 msgstr "// Durée max d'inactivité d'une session avant expiration (en secondes)"
 
 msgid "config_comment_stylesheet_file"
-msgstr "// FEUILLE DE STYLE<br>//--------------------------<br>// nom du fichier de la feuille de style à utiliser (avec chemin relatif depuis la racine de php_conges)"
+msgstr "// FEUILLE DE STYLE<br>//--------------------------<br>// nom du fichier de la feuille de style à utiliser (avec chemin relatif depuis la racine de Libertempo)"
 
 msgid "config_comment_bgcolor"
 msgstr "// couleur de fond des pages"
@@ -1247,6 +1253,15 @@ msgstr "message d'alerte à l'utilisateur en cas d'annulation de congés par le 
 msgid "mail_prem_valid_conges_comment"
 msgstr "message d'alerte à l'utilisateur en cas de première validation d'une demande de congés par le responsable (si on utilise la double validation)."
 
+msgid "mail_new_absence_conges_comment"
+msgstr "message d'alerte au responsable en cas de dépot d'une absence."
+
+msgid "mail_modif_demande_conges_comment"
+msgstr "message d'alerte au responsable en cas de modification d'une demande de congés."
+
+msgid "mail_supp_demande_conges_comment"
+msgstr "message d'alerte au responsable en cas de suppression d'une demande de congés."
+
 msgid "mail_remplace_url_accueil_comment"
 msgstr "__URL_ACCUEIL_CONGES__ sera automatiquement remplacé par un lien vers votre application Libertempo."
 
@@ -1279,6 +1294,15 @@ msgstr "Config Mails"
 
 msgid "config_comment_affiche_bouton_config_mail_pour_admin"
 msgstr "// ACCÈS À LA CONFIG DES MAILS DE L'APPLI POUR LES ADMINS<br>//---------------------------------------------------------------------<br>// si à FALSE : le bouton d'accès à la configuration des mails envoyés par Libertempo n'apparaît pas sur la page administrateur (FALSE est la valeur par défaut)<br>// si à TRUE : le bouton d'accès à la configuration des mails envoyés par Libertempo apparaît sur la page administrateur"
+
+msgid "config_comment_mail_modif_demande_alerte_resp"
+msgstr "// ENVOI DE MAIL AU RESPONSABLE SUITE À LA MODIFICATION D'UNE DEMANDE :<br>//----------------------------------------------------------------<br>// si à FALSE : le responsable ne reçoie pas de mail lorsque l'utilisateur modifie une demande. (FALSE est la valeur par défaut)<br>// si à TRUE : le responsable reçoie un mail d'alerte lorsque l'utilisateur modifie une demande."
+
+msgid "config_comment_mail_supp_demande_alerte_resp"
+msgstr "// ENVOI DE MAIL AU RESPONSABLE SUITE À LA SUPPRESSION D'UNE DEMANDE :<br>//----------------------------------------------------------------<br>// si à FALSE : le responsable ne reçoie pas de mail lorsque l'utilisateur supprime une demande. (FALSE est la valeur par défaut)<br>// si à TRUE : le responsable reçoie un mail d'alerte lorsque l'utilisateur supprime une demande."
+
+msgid "config_comment__export_ical"
+msgstr "// AUTORISE L'EXPORT DU CALENDRIER VERS UN AGENDA (format ics) :<br>//----------------------------------------------------------------<br>// si à FALSE : l'utilisateur ne peut accéder au calendrier depuis un agenda.<br>// si à TRUE : l'utilisateur peut exporter le calendrier vers un agenda à l'aide d'une url. Cette url permet d'obtenir un calendrier constamment à jour. (TRUE est la valeur par défaut)"
 
 msgid "config_comment_mail_prem_valid_conges_alerte_user"
 msgstr "// ENVOI DE MAIL À L'UTILISATEUR ET AU GRAND RESPONSABLE APRÈS LA PREMIÈRE VALIDATION D'UNE DEMANDE (cas d'une double validation de demande) :<br>//----------------------------------------------------------------<br>// si à FALSE : l'utilisateur et le grand responsable ne reçoivent pas de mail lorsque le responsable valide une demande (première validation). (FALSE est la valeur par défaut)<br>// si à TRUE : l'utilisateur et le grand responsable reçoivent un mail d'alerte lorsque le responsable valide une demande (première validation)."
