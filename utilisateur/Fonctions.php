@@ -388,13 +388,13 @@ class Fonctions
         $session=session_id() ;
         $return = '';
 
-        $sql_delete = 'DELETE FROM conges_periode WHERE p_num = '.\includes\SQL::quote($p_num_to_delete).' AND p_login="'.\includes\SQL::quote($_SESSION['userlogin']).'";';
+        if($_SESSION['config']['mail_supp_demande_alerte_resp']) {
+            alerte_mail($_SESSION['userlogin'], ":responsable:", $p_num_to_delete, "supp_demande_conges");
+        }
 
+        $sql_delete = 'DELETE FROM conges_periode WHERE p_num = '.\includes\SQL::quote($p_num_to_delete).' AND p_login="'.\includes\SQL::quote($_SESSION['userlogin']).'";';
         $result_delete = \includes\SQL::query($sql_delete);
 
-        if($_SESSION['config']['mail_supp_demande_alerte_resp']) {
-            alerte_mail($_SESSION['userlogin'], ":responsable:", $p_num, "supp_demande_conges");
-        }
         $comment_log = "suppression de demande num $p_num_to_delete";
         log_action($p_num_to_delete, "", $_SESSION['userlogin'], $comment_log);
 

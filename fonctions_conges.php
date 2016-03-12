@@ -630,7 +630,7 @@ function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $m
 
     if (file_exists(CONFIG_PATH .'config_SMTP.php'))
     {
-        include_once CONFIG_PATH .'config_SMTP.php';
+        include CONFIG_PATH .'config_SMTP.php';
 
         if(!empty($config_SMTP_host))
         {

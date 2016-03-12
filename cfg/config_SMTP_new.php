@@ -1,7 +1,9 @@
 <?php
 /*************************************************************************************************
 Libertempo : Gestion Interactive des Congés
-Copyright (C) 2015 (Wouldsmina)Copyright (C) 2015 (Prytoegrian)Copyright (C) 2005 (cedric chauvineau)
+Copyright (C) 2015 (Wouldsmina)
+Copyright (C) 2015 (Prytoegrian)
+Copyright (C) 2005 (cedric chauvineau)
 
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les 
 termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
@@ -34,5 +36,6 @@ $config_SMTP_user = "";		//nom utilisateur (peut être vide)
 $config_SMTP_pwd = "";		//mot de passe (peut être vide)
 
 // uncomment this if you want receive mails when a SQL error is found.
+//if (!defined( 'ERROR_MAIL_REPORT' ))
 // define('ERROR_MAIL_REPORT',	'your@mail.adress');
 
