@@ -2300,4 +2300,59 @@ class Fonctions
         }
         return $return;
     }
+
+    /**
+     * Encapsule le comportement du module de liste des plannings
+     *
+     * @return string
+     */
+    public static function listePlanningModule()
+    {
+        if ('Y' !== $_SESSION['is_resp']) {
+            return 'Une erreur est apparue';
+
+        }
+        $return = '';
+        $return .= '<h1>' . _('resp_affichage_liste_planning_titre') . '</h1>';
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-hover',
+            'table-responsive',
+            'table-condensed',
+            'table-striped',
+        ]);
+        $childTable = '<thead><tr><th>Nom</th><th style="width:10%"></th></tr></thead><tbody>';
+        $sql   = 'SELECT * FROM conges_planning ORDER BY planning_id DESC';
+        $query = \includes\SQL::query($sql);
+        if (0 === $query->num_rows) {
+            $childTable .= '<tr><td colspan="2">Aucun résultat</td></tr>';
+        } else {
+            while ($data = $query->fetch_array()) {
+                $childTable .= '<tr><td>' . $data['planning_name'] . '</td><td><a href="resp_index?onglet=modif_planning&id=' . $data['planning_id'] . '"><i class="fa fa-eye"></i></a></td></tr>';
+            }
+        }
+        $childTable .= '</tbody>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
+        return $return;
+    }
+
+    /**
+     * Encapsule le comportement du module d'ajout / modification de planning
+     *
+     * @return string
+     */
+    public static function editPlanningModule($id = -1)
+    {
+        $return = '';
+        echo 'nil';
+        if (-1 !== $id) {
+            // c'est que c'est une modif, alors on cherche à afficher le rappel des info existantes
+        }
+
+        return $return;
+    }
 }
