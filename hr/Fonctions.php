@@ -1770,7 +1770,7 @@ class Fonctions
         $return .= '<table>';
         /* affichage  2 premieres lignes */
         $return .= '<thead>';
-        $return .= '<tr align="center" bgcolor="' .  $_SESSION['config']['light_grey_bgcolor'] . '"><th colspan=7 class="titre">' . $mois_name . ' ' . $year . '</th></tr>';
+        $return .= '<tr align="center"><th colspan=7 class="titre">' . $mois_name . ' ' . $year . '</th></tr>';
         $return .= '<tr>';
         $return .= '<th class="cal-saisie2">' . _('lundi_1c') . '</th>';
         $return .= '<th class="cal-saisie2">' . _('mardi_1c') . '</th>';
