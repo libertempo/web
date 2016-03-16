@@ -89,7 +89,7 @@ class Fonctions
 
         // verifie que le solde de conges sera encore positif après validation
         if( $_SESSION['config']['solde_toujours_positif'] ) {
-            $valid = $valid && verif_solde_user($_SESSION['userlogin'], $new_type, $new_nb_jours);
+            $valid = $valid && \utilisateur\Fonctions::verif_solde_user($_SESSION['userlogin'], $new_type, $new_nb_jours);
         }
 
         if( $valid ) {
