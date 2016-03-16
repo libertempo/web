@@ -89,7 +89,7 @@ class Fonctions
 
         // verifie que le solde de conges sera encore positif après validation
         if( $_SESSION['config']['solde_toujours_positif'] ) {
-            $valid = $valid && verif_solde_user($_SESSION['userlogin'], $new_type, $new_nb_jours);
+            $valid = $valid && \utilisateur\Fonctions::verif_solde_user($_SESSION['userlogin'], $new_type, $new_nb_jours);
         }
 
         if( $valid ) {
@@ -238,7 +238,7 @@ class Fonctions
         $result = \includes\SQL::query($sql1) ;
 
         if($_SESSION['config']['mail_modif_demande_alerte_resp']) {
-            alerte_mail($_SESSION['userlogin'], ":responsable:", $p_num_to_update, "modif_demande");
+            alerte_mail($_SESSION['userlogin'], ":responsable:", $p_num_to_update, "modif_demande_conges");
         }
         $comment_log = "modification de demande num $p_num_to_update ($new_nb_jours jour(s)) ( de $new_debut $new_demi_jour_deb a $new_fin $new_demi_jour_fin) ($new_comment)";
         log_action($p_num_to_update, "$p_etat", $_SESSION['userlogin'], $comment_log);
@@ -421,13 +421,13 @@ class Fonctions
         $session=session_id() ;
         $return = '';
 
-        $sql_delete = 'DELETE FROM conges_periode WHERE p_num = '.\includes\SQL::quote($p_num_to_delete).' AND p_login="'.\includes\SQL::quote($_SESSION['userlogin']).'";';
+        if($_SESSION['config']['mail_supp_demande_alerte_resp']) {
+            alerte_mail($_SESSION['userlogin'], ":responsable:", $p_num_to_delete, "supp_demande_conges");
+        }
 
+        $sql_delete = 'DELETE FROM conges_periode WHERE p_num = '.\includes\SQL::quote($p_num_to_delete).' AND p_login="'.\includes\SQL::quote($_SESSION['userlogin']).'";';
         $result_delete = \includes\SQL::query($sql_delete);
 
-        if($_SESSION['config']['mail_supp_demande_alerte_resp']) {
-            alerte_mail($_SESSION['userlogin'], ":responsable:", $p_num, "supp_demande");
-        }
         $comment_log = "suppression de demande num $p_num_to_delete";
         log_action($p_num_to_delete, "", $_SESSION['userlogin'], $comment_log);
 

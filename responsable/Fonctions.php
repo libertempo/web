@@ -1915,7 +1915,7 @@ class Fonctions
                 $sql1 = 'UPDATE conges_periode SET p_etat=\'valid\', p_date_traitement=NOW() WHERE p_num="'. \includes\SQL::quote($numero_int).'" AND ( p_etat=\'valid\' OR p_etat=\'demande\' );';
                 /* On valide l'UPDATE dans la table "conges_periode" ! */
                 $ReqLog1 = \includes\SQL::query($sql1) ;
-                if ($ReqLog1 && SQL::getVar('affected_rows') ) {
+                if ($ReqLog1 && \includes\SQL::getVar('affected_rows') ) {
 
                     // Log de l'action
                     log_action($numero_int, "valid", $user_login, "traite demande $numero ($user_login) ($user_nb_jours_pris jours) : $reponse");
@@ -2256,7 +2256,7 @@ class Fonctions
                         $i = !$i;
                     } //while
                     $return .= '</tbody>';
-                    $retur .= '</table>';
+                    $return .= '</table>';
                 } //if($count2!=0)
             } //if( count($tab_all_users_du_grand_resp)!=0 )
         } //if($_SESSION['config']['double_validation_conges'])

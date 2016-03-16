@@ -264,7 +264,7 @@ class Fonctions
         $return .= '<input type="hidden" name="change_responsable_group" value="ok">';
         $return .= '<input type="hidden" name="choix_resp" value="' .  $choix_resp . '">';
         $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
-        $return .= '<a class="btn" href="' . $PHP_SELF . ' ?session=' . $session . '&onglet=admin-group-responsables&choix_gestion_groupes_responsables=resp-group">' . _('form_annul') . '</a>';
+        $return .= '<a class="btn" href="' . $PHP_SELF . '?session=' . $session . '&onglet=admin-group-responsables&choix_gestion_groupes_responsables=resp-group">' . _('form_annul') . '</a>';
         $return .= '</form>';
         return $return;
     }
@@ -374,7 +374,7 @@ class Fonctions
         log_action(0, "", "", $comment_log);
 
         /* APPEL D'UNE AUTRE PAGE */
-        $return .= '<form action="' . $PHP_SELF . '?session=' .  $session . ' &onglet=admin-group-responsables&choix_gestion_groupes_responsables=group-resp" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '?session=' .  $session . '&onglet=admin-group-responsables&choix_gestion_groupes_responsables=group-resp" method="POST">';
         $return .= '<input type="submit" value="' . _('form_retour') . '">';
         $return .= '</form>';
         return $return;

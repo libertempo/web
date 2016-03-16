@@ -1770,7 +1770,7 @@ class Fonctions
         $return .= '<table>';
         /* affichage  2 premieres lignes */
         $return .= '<thead>';
-        $return .= '<tr align="center" bgcolor="' .  $_SESSION['config']['light_grey_bgcolor'] . '"><th colspan=7 class="titre">' . $mois_name . ' ' . $year . '</th></tr>';
+        $return .= '<tr align="center"><th colspan=7 class="titre">' . $mois_name . ' ' . $year . '</th></tr>';
         $return .= '<tr>';
         $return .= '<th class="cal-saisie2">' . _('lundi_1c') . '</th>';
         $return .= '<th class="cal-saisie2">' . _('mardi_1c') . '</th>';
@@ -2926,7 +2926,6 @@ class Fonctions
         $session=session_id();
         $return = '';
 
-        $return .= '<h3>fermeture pour tous ou pour un groupe ?</h3>';
         $return .= '<div class="row">';
         $return .= '<div class="col-md-6">';
         /********************/
@@ -2940,31 +2939,34 @@ class Fonctions
         $return .= '<input class="btn btn-success" type="submit" value="' . _('admin_jours_fermeture_fermeture_pour_tous') . ' !">';
         $return .= '</form>';
         $return .= '</div>';
-        $return .= '<div class="col-md-6">';
-        /********************/
-        /* Choix Groupe     */
-        /********************/
-        // Récuperation des informations :
-        $sql_gr = "SELECT g_gid, g_groupename, g_comment FROM conges_groupe ORDER BY g_groupename"  ;
 
-        // AFFICHAGE TABLEAU
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '" class="form-inline" method="POST">';
-        $return .= '<div class="form-group" style="margin-right: 10px;">';
-        $ReqLog_gr = \includes\SQL::query($sql_gr);
-        $return .= '<select class="form-control" name="groupe_id">';
-        while ($resultat_gr = $ReqLog_gr->fetch_array()) {
-            $sql_gid=$resultat_gr["g_gid"] ;
-            $sql_group=$resultat_gr["g_groupename"] ;
-            $sql_comment=$resultat_gr["g_comment"] ;
+        if($_SESSION['config']['gestion_groupes'] && $_SESSION['config']['fermeture_par_groupe']) {
+            /********************/
+            /* Choix Groupe     */
+            /********************/
+            // Récuperation des informations :
+            $sql_gr = "SELECT g_gid, g_groupename, g_comment FROM conges_groupe ORDER BY g_groupename"  ;
 
-            $return .= '<option value="' . $sql_gid . '">' . $sql_group;
+            // AFFICHAGE TABLEAU
+            $return .= '<div class="col-md-6">';
+            $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '" class="form-inline" method="POST">';
+            $return .= '<div class="form-group" style="margin-right: 10px;">';
+            $ReqLog_gr = \includes\SQL::query($sql_gr);
+            $return .= '<select class="form-control" name="groupe_id">';
+            while ($resultat_gr = $ReqLog_gr->fetch_array()) {
+                $sql_gid=$resultat_gr["g_gid"] ;
+                $sql_group=$resultat_gr["g_groupename"] ;
+                $sql_comment=$resultat_gr["g_comment"] ;
+
+                $return .= '<option value="' . $sql_gid . '">' . $sql_group;
+            }
+            $return .= '</select>';
+            $return .= '<input type="hidden" name="choix_action" value="saisie_dates">';
+            $return .= '</div>';
+            $return .= '<input class="btn btn-success" type="submit" value="' . _('admin_jours_fermeture_fermeture_par_groupe') . '">';
+            $return .= '</form>';
+            $return .= '</div>';
         }
-        $return .= '</select>';
-        $return .= '<input type="hidden" name="choix_action" value="saisie_dates">';
-        $return .= '</div>';
-        $return .= '<input class="btn btn-success" type="submit" value="' . _('admin_jours_fermeture_fermeture_par_groupe') . '">';
-        $return .= '</form>';
-        $return .= '</div>';
 
         /************************************************/
         // HISTORIQUE DES FERMETURES
@@ -3087,18 +3089,9 @@ class Fonctions
         $onglets['calendar'] = 'Calendrier des fermetures' . " " . "<span class=\"current-year\">$year</span>";
         $onglets['year_nav'] = NULL;
 
-        //initialisation de l'action par défaut : saisie_dates pour tous, saisie_groupe en cas de gestion et fermeture par groupe autorisée
+        //initialisation de l'action par défaut
         if($choix_action=="") {
-            // si pas de gestion par groupe
-            if($_SESSION['config']['gestion_groupes'] == FALSE) {
-                $choix_action="saisie_dates";
-            }
-            // si gestion par groupe et fermeture_par_groupe
-            elseif(($_SESSION['config']['fermeture_par_groupe']) && ($groupe_id=="") ) {
-                $choix_action="saisie_groupe";
-            } else {
-                $choix_action="saisie_dates";
-            }
+            $choix_action="saisie_groupe";
         }
 
         /*********************************/
