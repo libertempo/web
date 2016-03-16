@@ -2257,7 +2257,7 @@ class Fonctions
                         $i = !$i;
                     } //while
                     $return .= '</tbody>';
-                    $retur .= '</table>';
+                    $return .= '</table>';
                 } //if($count2!=0)
             } //if( count($tab_all_users_du_grand_resp)!=0 )
         } //if($_SESSION['config']['double_validation_conges'])
