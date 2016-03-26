@@ -630,24 +630,24 @@ function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $m
     // init du mail
     $mail = new PHPMailer();
 
-    if (file_exists(CONFIG_PATH .'config_SMTP.php'))
-    {
+    if (file_exists(CONFIG_PATH .'config_SMTP.php')) {
         include CONFIG_PATH .'config_SMTP.php';
 
-        if(!empty($config_SMTP_host))
-        {
+        if(!empty($config_SMTP_host)) {
             $mail->IsSMTP();
             $mail->Host = $config_SMTP_host;
             $mail->Port = $config_SMTP_port;
 
-            if (!empty($config_SMTP_user))
-            {
+            if (!empty($config_SMTP_user)) {
                 $mail->SMTPAuth = true;
                 $mail->Username = $config_SMTP_user;
                 $mail->Password = $config_SMTP_pwd;
             }
-            if (!empty($config_SMTP_sec))
+            if (!empty($config_SMTP_sec)) {
                 $mail->SMTPSecure = $config_SMTP_sec;
+            } else {
+            	 $mail->SMTPAutoTLS = false;
+            }
         }
     }
     else
