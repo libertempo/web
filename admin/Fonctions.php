@@ -2529,7 +2529,7 @@ class Fonctions
 
         // contruction des champs de saisie
         if($_SESSION['config']['export_users_from_ldap']) {
-            $text_login="<input class=\"form-control\" type=\"text\" name=\"new_login\" size=\"10\" maxlength=\"98\" value=\"".$tab_user['login']."\" disabled>" ;
+            $text_login="<input class=\"form-control\" type=\"text\" name=\"new_login\" size=\"10\" maxlength=\"98\" value=\"".$tab_user['login']."\" readonly>" ;
         } else {
             $text_login="<input class=\"form-control\" type=\"text\" name=\"new_login\" size=\"10\" maxlength=\"98\" value=\"".$tab_user['login']."\">" ;
         }
