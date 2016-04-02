@@ -145,90 +145,91 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
         } else {
             $return .= 'onChange="compter_jours();return false;"' ;
         }
-        $return .= 'value="am">&nbsp;'. _('form_am');
-        $return .= '<input class="form-controm" type="radio" name="new_demi_jour_fin" ';
+    }
+    $return .= 'value="am">&nbsp;'. _('form_am');
+    $return .= '<input class="form-controm" type="radio" name="new_demi_jour_fin" ';
 
-        if($_SESSION['config']['rempli_auto_champ_nb_jours_pris'])
-        {
-            if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) ) {
-                $return .= 'onClick="compter_jours();return true;"' ;
-            } else {
-                $return .= 'onChange="compter_jours();return false;"' ;
-            }
-        }
-        $return .= 'value="pm" checked>&nbsp;' . _('form_pm');
-        $return .= '</div>';
-        $return .= '</div>';
-        $return .= '</div>';
-        $return .= '<hr/>';
-
-        /*****************/
-        /* boutons radio */
-        /*****************/
-        // recup du tableau des types de conges
-        $tab_type_conges=recup_tableau_types_conges();
-        // recup du tableau des types d'absence
-        $tab_type_absence=recup_tableau_types_absence();
-        // recup d tableau des types de conges exceptionnels
-        $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
-        $already_checked = false;
-
-        $return .= '<div class="row type-conges">';
-        // si le user a droit de saisir une demande de conges ET si on est PAS dans une fenetre de responsable
-        // OU si le user n'a pas droit de saisir une demande de conges ET si on est dans une fenetre de responsable
-        // OU si le user est un RH ou un admin
-        if( ( $_SESSION['config']['user_saisie_demande'] && $user_login==$_SESSION['userlogin'] ) || ( $_SESSION['config']['user_saisie_demande']==FALSE && $user_login!=$_SESSION['userlogin'] ) || is_hr($_SESSION['userlogin']) || is_admin($_SESSION['userlogin']) )
-        {
-            // congés
-            $return .= '<div class="col-md-4">';
-            $return .= '<label>' . _('divers_conges') . '</label>';
-            foreach($tab_type_conges as $id => $libelle) {
-                if($id==1) {
-                    $return .= '<input type="radio" name="new_type" value="' . $id . '" checked>'. $libelle . '<br>';
-                    $already_checked = true;
-                } else {
-                    $return .= '<input type="radio" name="new_type" value="' . $id . '">' . $libelle . '<br>';
-                }
-            }
-            $return .= '</div>';
-        }
-
-        // si le user a droit de saisir une mission ET si on est PAS dans une fenetre de responsable
-        // OU si le resp a droit de saisir une mission ET si on est PAS dans une fenetre dd'utilisateur
-        // OU si le resp a droit de saisir une mission ET si le resp est resp de lui meme
-        if( (($_SESSION['config']['user_saisie_mission'])&&($user_login==$_SESSION['userlogin'])) || (($_SESSION['config']['resp_saisie_mission'])&&($user_login!=$_SESSION['userlogin'])) || (($_SESSION['config']['resp_saisie_mission'])&&(is_resp_of_user($_SESSION['userlogin'], $user_login))) )
-        {
-            // absences
-            $return .= '<div class="col-md-4">';
-            $return .= '<label>' . _('divers_absences') . '</label>';
-            foreach($tab_type_absence as $id => $libelle) {
-                if (!$already_checked) {
-                    $return .= '<input type="radio" name="new_type" value="' . $id . '" checked>' . $libelle . '<br>';
-                    $already_checked = true;
-                } else {
-                    $return .= '<input type="radio" name="new_type" value="' . $id . '">' . $libelle . '<br>';
-                }
-            }
-            $return .= '</div>';
-        }
-
-        // si le user a droit de saisir une demande de conges ET si on est PAS dans une fenetre de responsable
-        // OU si le user n'a pas droit de saisir une demande de conges ET si on est dans une fenetre de responsable
-        if( ($_SESSION['config']['gestion_conges_exceptionnels']) && ((($_SESSION['config']['user_saisie_demande'])&&($user_login==$_SESSION['userlogin'])) || (($_SESSION['config']['user_saisie_demande']==FALSE)&&($user_login!=$_SESSION['userlogin'])) ) )
-        {
-            // congés exceptionnels
-            $return .= '<div class="col-md-4">';
-            $return .= '<label>' . _('divers_conges_exceptionnels') . '</label>';
-            foreach($tab_type_conges_exceptionnels as $id => $libelle) {
-                if($id==1) {
-                    $return .= '<input type="radio" name="new_type" value="' . $id . '" checked> ' . $libelle . '<br>';
-                } else {
-                    $return .= '<input type="radio" name="new_type" value="' . $id . '">' . $libelle . '<br>';
-                }
-            }
-            $return .= '</div>';
+    if($_SESSION['config']['rempli_auto_champ_nb_jours_pris'])
+    {
+        if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) ) {
+            $return .= 'onClick="compter_jours();return true;"' ;
+        } else {
+            $return .= 'onChange="compter_jours();return false;"' ;
         }
     }
+    $return .= 'value="pm" checked>&nbsp;' . _('form_pm');
+    $return .= '</div>';
+    $return .= '</div>';
+    $return .= '</div>';
+    $return .= '<hr/>';
+
+    /*****************/
+    /* boutons radio */
+    /*****************/
+    // recup du tableau des types de conges
+    $tab_type_conges=recup_tableau_types_conges();
+    // recup du tableau des types d'absence
+    $tab_type_absence=recup_tableau_types_absence();
+    // recup d tableau des types de conges exceptionnels
+    $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
+    $already_checked = false;
+
+    $return .= '<div class="row type-conges">';
+    // si le user a droit de saisir une demande de conges ET si on est PAS dans une fenetre de responsable
+    // OU si le user n'a pas droit de saisir une demande de conges ET si on est dans une fenetre de responsable
+    // OU si le user est un RH ou un admin
+    if( ( $_SESSION['config']['user_saisie_demande'] && $user_login==$_SESSION['userlogin'] ) || ( $_SESSION['config']['user_saisie_demande']==FALSE && $user_login!=$_SESSION['userlogin'] ) || is_hr($_SESSION['userlogin']) || is_admin($_SESSION['userlogin']) )
+    {
+        // congés
+        $return .= '<div class="col-md-4">';
+        $return .= '<label>' . _('divers_conges') . '</label>';
+        foreach($tab_type_conges as $id => $libelle) {
+            if($id==1) {
+                $return .= '<input type="radio" name="new_type" value="' . $id . '" checked>'. $libelle . '<br>';
+                $already_checked = true;
+            } else {
+                $return .= '<input type="radio" name="new_type" value="' . $id . '">' . $libelle . '<br>';
+            }
+        }
+        $return .= '</div>';
+    }
+
+    // si le user a droit de saisir une mission ET si on est PAS dans une fenetre de responsable
+    // OU si le resp a droit de saisir une mission ET si on est PAS dans une fenetre dd'utilisateur
+    // OU si le resp a droit de saisir une mission ET si le resp est resp de lui meme
+    if( (($_SESSION['config']['user_saisie_mission'])&&($user_login==$_SESSION['userlogin'])) || (($_SESSION['config']['resp_saisie_mission'])&&($user_login!=$_SESSION['userlogin'])) || (($_SESSION['config']['resp_saisie_mission'])&&(is_resp_of_user($_SESSION['userlogin'], $user_login))) )
+        {
+        // absences
+        $return .= '<div class="col-md-4">';
+        $return .= '<label>' . _('divers_absences') . '</label>';
+        foreach($tab_type_absence as $id => $libelle) {
+            if (!$already_checked) {
+                $return .= '<input type="radio" name="new_type" value="' . $id . '" checked>' . $libelle . '<br>';
+                $already_checked = true;
+            } else {
+                $return .= '<input type="radio" name="new_type" value="' . $id . '">' . $libelle . '<br>';
+            }
+        }
+        $return .= '</div>';
+    }
+
+    // si le user a droit de saisir une demande de conges ET si on est PAS dans une fenetre de responsable
+    // OU si le user n'a pas droit de saisir une demande de conges ET si on est dans une fenetre de responsable
+    if( ($_SESSION['config']['gestion_conges_exceptionnels']) && ((($_SESSION['config']['user_saisie_demande'])&&($user_login==$_SESSION['userlogin'])) || (($_SESSION['config']['user_saisie_demande']==FALSE)&&($user_login!=$_SESSION['userlogin'])) ) )
+    {
+        // congés exceptionnels
+        $return .= '<div class="col-md-4">';
+        $return .= '<label>' . _('divers_conges_exceptionnels') . '</label>';
+        foreach($tab_type_conges_exceptionnels as $id => $libelle) {
+            if($id==1) {
+                $return .= '<input type="radio" name="new_type" value="' . $id . '" checked> ' . $libelle . '<br>';
+            } else {
+                $return .= '<input type="radio" name="new_type" value="' . $id . '">' . $libelle . '<br>';
+            }
+        }
+        $return .= '</div>';
+    }
+
     $return .= '</div>';
     $return .= '<hr/>';
     $return .= '<label>' . _('divers_comment_maj_1') . '</label><input class="form-control" type="text" name="new_comment" size="25" maxlength="30" value="">';
@@ -629,24 +630,24 @@ function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $m
     // init du mail
     $mail = new PHPMailer();
 
-    if (file_exists(CONFIG_PATH .'config_SMTP.php'))
-    {
-        include_once CONFIG_PATH .'config_SMTP.php';
+    if (file_exists(CONFIG_PATH .'config_SMTP.php')) {
+        include CONFIG_PATH .'config_SMTP.php';
 
-        if(!empty($config_SMTP_host))
-        {
+        if(!empty($config_SMTP_host)) {
             $mail->IsSMTP();
             $mail->Host = $config_SMTP_host;
             $mail->Port = $config_SMTP_port;
 
-            if (!empty($config_SMTP_user))
-            {
+            if (!empty($config_SMTP_user)) {
                 $mail->SMTPAuth = true;
                 $mail->Username = $config_SMTP_user;
                 $mail->Password = $config_SMTP_pwd;
             }
-            if (!empty($config_SMTP_sec))
+            if (!empty($config_SMTP_sec)) {
                 $mail->SMTPSecure = $config_SMTP_sec;
+            } else {
+            	 $mail->SMTPAutoTLS = false;
+            }
         }
     }
     else
@@ -1716,7 +1717,7 @@ function init_config_tab()
         //  config_CAS.php
         if (file_exists(CONFIG_PATH .'config_CAS.php'))
         {
-            include_once CONFIG_PATH .'config_CAS.php';
+            include CONFIG_PATH .'config_CAS.php';
             if(isset($config_CAS_host))    $tab['CAS_host']    = $config_CAS_host ;
             if(isset($config_CAS_portNumber)) $tab['CAS_portNumber'] = $config_CAS_portNumber ;
             if(isset($config_CAS_URI))    $tab['CAS_URI']        = $config_CAS_URI ;

@@ -486,49 +486,55 @@ class Fonctions
 
             if($reponse == "ACCEPTE") { // acceptation definitive d'un conges
                 /* UPDATE table "conges_periode" */
-                $sql1 = "UPDATE conges_periode SET p_etat=\"ok\", p_date_traitement=NOW() WHERE p_num=$numero_int" ;
+                $sql1 = 'UPDATE conges_periode SET p_etat=\'ok\', p_date_traitement=NOW() WHERE p_num='.\includes\SQL::quote($numero_int).' AND ( p_etat=\'valid\' OR p_etat=\'demande\' );';
                 $ReqLog1 = \includes\SQL::query($sql1);
 
-                // Log de l'action
-                log_action($numero_int,"ok", $user_login, "traite demande $numero ($user_login) ($user_nb_jours_pris jours) : $date_deb");
+                if ($ReqLog1 && \includes\SQL::getVar('affected_rows')) {
+                    // Log de l'action
+                    log_action($numero_int,"ok", $user_login, "traite demande $numero ($user_login) ($user_nb_jours_pris jours) : $date_deb");
 
-                /* UPDATE table "conges_solde_user" (jours restants) */
-                // on retranche les jours seulement pour des conges pris (pas pour les absences)
-                // donc seulement si le type de l'absence qu'on annule est un "conges"
-                if(($tab_tout_type_abs[$value_type_abs_id]['type']=="conges")||($tab_tout_type_abs[$value_type_abs_id]['type']=="conges_exceptionnels")) {
-                    soustrait_solde_et_reliquat_user($user_login, $numero_int, $user_nb_jours_pris_float, $value_type_abs_id, $date_deb, $demi_jour_deb, $date_fin, $demi_jour_fin);
-                }
+                    /* UPDATE table "conges_solde_user" (jours restants) */
+                    // on retranche les jours seulement pour des conges pris (pas pour les absences)
+                    // donc seulement si le type de l'absence qu'on annule est un "conges"
+                    if(($tab_tout_type_abs[$value_type_abs_id]['type']=="conges")||($tab_tout_type_abs[$value_type_abs_id]['type']=="conges_exceptionnels")) {
+                        soustrait_solde_et_reliquat_user($user_login, $numero_int, $user_nb_jours_pris_float, $value_type_abs_id, $date_deb, $demi_jour_deb, $date_fin, $demi_jour_fin);
+                    }
 
-                //envoi d'un mail d'alerte au user (si demandé dans config de php_conges)
-                if($_SESSION['config']['mail_valid_conges_alerte_user']) {
-                    alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "accept_conges");
+                    //envoi d'un mail d'alerte au user (si demandé dans config de php_conges)
+                    if($_SESSION['config']['mail_valid_conges_alerte_user']) {
+                        alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "accept_conges");
+                    }
                 }
             } elseif($reponse == "VALID") // première validation dans le cas d'une double validation
             {
                 /* UPDATE table "conges_periode" */
-                $sql1 = "UPDATE conges_periode SET p_etat=\"valid\", p_date_traitement=NOW() WHERE p_num=$numero_int" ;
+                $sql1 = 'UPDATE conges_periode SET p_etat=\'valid\', p_date_traitement=NOW() WHERE p_num='.\includes\SQL::quote($numero_int).' AND p_etat=\'demande\';' ;
                 $ReqLog1 = \includes\SQL::query($sql1);
 
-                // Log de l'action
-                log_action($numero_int,"valid", $user_login, "traite demande $numero ($user_login) ($user_nb_jours_pris jours) : $date_deb");
+                if ($ReqLog1 && \includes\SQL::getVar('affected_rows')) {
+                    // Log de l'action
+                    log_action($numero_int,"valid", $user_login, "traite demande $numero ($user_login) ($user_nb_jours_pris jours) : $date_deb");
 
-                //envoi d'un mail d'alerte au user (si demandé dans config de php_conges)
-                if($_SESSION['config']['mail_valid_conges_alerte_user']) {
-                    alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "valid_conges");
+                    //envoi d'un mail d'alerte au user (si demandé dans config de php_conges)
+                    if($_SESSION['config']['mail_valid_conges_alerte_user']) {
+                        alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "valid_conges");
+                    }
                 }
             } elseif($reponse == "REFUSE") // refus d'un conges
             {
                 // recup di motif de refus
                 $motif_refus=addslashes($tab_text_refus[$numero_int]);
-                $sql3 = "UPDATE conges_periode SET p_etat=\"refus\", p_motif_refus='$motif_refus', p_date_traitement=NOW() WHERE p_num=$numero_int" ;
+                $sql3 = 'UPDATE conges_periode SET p_etat=\'refus\', p_motif_refus='.\includes\SQL::quote($motif_annul).', p_date_traitement=NOW() WHERE p_num="'.\includes\SQL::quote($numero_int).'" AND ( p_etat=\'valid\' OR p_etat=\'demande\' );';
                 $ReqLog3 = \includes\SQL::query($sql3);
 
-                // Log de l'action
-                log_action($numero_int,"refus", $user_login, "traite demande $numero ($user_login) ($user_nb_jours_pris jours) : $date_deb");
+                if ($ReqLog3 && \includes\SQL::getVar('affected_rows')) {
+                    // Log de l'action
+                    log_action($numero_int,"refus", $user_login, "traite demande $numero ($user_login) ($user_nb_jours_pris jours) : $date_deb");
 
-                //envoi d'un mail d'alerte au user (si demandé dans config de php_conges)
-                if($_SESSION['config']['mail_refus_conges_alerte_user']) {
-                    alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "refus_conges");
+                    //envoi d'un mail d'alerte au user (si demandé dans config de php_conges)
+                    if($_SESSION['config']['mail_refus_conges_alerte_user']) {
+                        alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "refus_conges");
+                    }
                 }
             }
         }
@@ -559,23 +565,26 @@ class Fonctions
             $motif_annul=addslashes($tab_text_annul[$numero_int]);
 
             /* UPDATE table "conges_periode" */
-            $sql1 = 'UPDATE conges_periode SET p_etat="annul", p_motif_refus="'.\includes\SQL::quote($motif_annul).'", p_date_traitement=NOW() WHERE p_num="'. \includes\SQL::quote($numero_int).'" ';
+            $sql1 = 'UPDATE conges_periode SET p_etat="annul", p_motif_refus="'.\includes\SQL::quote($motif_annul).'", p_date_traitement=NOW() WHERE p_num="'. \includes\SQL::quote($numero_int).'" AND p_etat="ok";';
             $ReqLog1 = \includes\SQL::query($sql1);
 
-            // Log de l'action
-            log_action($numero_int,"annul", $user_login, "annulation conges $numero ($user_login) ($user_nb_jours_pris jours)");
+            if ($ReqLog1 && \includes\SQL::getVar('affected_rows')) {
+                // Log de l'action
+                log_action($numero_int,"annul", $user_login, "annulation conges $numero ($user_login) ($user_nb_jours_pris jours)");
 
-            /* UPDATE table "conges_solde_user" (jours restants) */
-            // on re-crédite les jours seulement pour des conges pris (pas pour les absences)
-            // donc seulement si le type de l'absence qu'on annule est un "conges"
-            if($tab_tout_type_abs[$user_type_abs_id]['type']=="conges") {
-                $sql2 = 'UPDATE conges_solde_user SET su_solde = su_solde+"'. \includes\SQL::quote($user_nb_jours_pris).'" WHERE su_login="'. \includes\SQL::quote($user_login).'" AND su_abs_id="'. \includes\SQL::quote($user_type_abs_id).'";';
-                $ReqLog2 = \includes\SQL::query($sql2);
+                /* UPDATE table "conges_solde_user" (jours restants) */
+                // on re-crédite les jours seulement pour des conges pris (pas pour les absences)
+                // donc seulement si le type de l'absence qu'on annule est un "conges"
+                if($tab_tout_type_abs[$user_type_abs_id]['type']=="conges") {
+                    $sql2 = 'UPDATE conges_solde_user SET su_solde = su_solde+"'. \includes\SQL::quote($user_nb_jours_pris).'" WHERE su_login="'. \includes\SQL::quote($user_login).'" AND su_abs_id="'. \includes\SQL::quote($user_type_abs_id).'";';
+                    $ReqLog2 = \includes\SQL::query($sql2);
+                }
+
+                //envoi d'un mail d'alerte au user (si demandé dans config de php_conges)
+                if($_SESSION['config']['mail_annul_conges_alerte_user']) {
+                    alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "annul_conges");
+                }
             }
-
-            //envoi d'un mail d'alerte au user (si demandé dans config de php_conges)
-            if($_SESSION['config']['mail_annul_conges_alerte_user'])
-                alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "annul_conges");
         }
 
         $return .= _('form_modif_ok') . '<br><br>';
@@ -1770,7 +1779,7 @@ class Fonctions
         $return .= '<table>';
         /* affichage  2 premieres lignes */
         $return .= '<thead>';
-        $return .= '<tr align="center" bgcolor="' .  $_SESSION['config']['light_grey_bgcolor'] . '"><th colspan=7 class="titre">' . $mois_name . ' ' . $year . '</th></tr>';
+        $return .= '<tr align="center"><th colspan=7 class="titre">' . $mois_name . ' ' . $year . '</th></tr>';
         $return .= '<tr>';
         $return .= '<th class="cal-saisie2">' . _('lundi_1c') . '</th>';
         $return .= '<th class="cal-saisie2">' . _('mardi_1c') . '</th>';
@@ -2673,13 +2682,15 @@ class Fonctions
 
             // on met à jour la table conges_periode .
             $etat = "annul" ;
-             $sql1 = 'UPDATE conges_periode SET p_etat = "'.\includes\SQL::quote($etat).'" WHERE p_num='.\includes\SQL::quote($sql_num_periode) ;
+            $sql1 = 'UPDATE conges_periode SET p_etat = "'.\includes\SQL::quote($etat).'" WHERE p_num='.\includes\SQL::quote($sql_num_periode).'" AND p_etat=\'ok\';';
             $ReqLog = \includes\SQL::query($sql1);
 
-            // mise à jour du solde de jours de conges pour l'utilisateur $current_login
-            if ($sql_nb_jours_a_crediter != 0) {
-                $sql1 = 'UPDATE conges_solde_user SET su_solde = su_solde + '.\includes\SQL::quote($sql_nb_jours_a_crediter).' WHERE su_login="'. \includes\SQL::quote($current_login).'" AND su_abs_id = '.\includes\SQL::quote($sql_type_abs) ;
-                $ReqLog = \includes\SQL::query($sql1);
+            if ($ReqLog && \includes\SQL::getVar('affected_rows')) {
+                // mise à jour du solde de jours de conges pour l'utilisateur $current_login
+                if ($sql_nb_jours_a_crediter != 0) {
+                    $sql1 = 'UPDATE conges_solde_user SET su_solde = su_solde + '.\includes\SQL::quote($sql_nb_jours_a_crediter).' WHERE su_login="'. \includes\SQL::quote($current_login).'" AND su_abs_id = '.\includes\SQL::quote($sql_type_abs) ;
+                    $ReqLog = \includes\SQL::query($sql1);
+                }
             }
         }
 
@@ -2926,7 +2937,6 @@ class Fonctions
         $session=session_id();
         $return = '';
 
-        $return .= '<h3>fermeture pour tous ou pour un groupe ?</h3>';
         $return .= '<div class="row">';
         $return .= '<div class="col-md-6">';
         /********************/
@@ -2940,31 +2950,34 @@ class Fonctions
         $return .= '<input class="btn btn-success" type="submit" value="' . _('admin_jours_fermeture_fermeture_pour_tous') . ' !">';
         $return .= '</form>';
         $return .= '</div>';
-        $return .= '<div class="col-md-6">';
-        /********************/
-        /* Choix Groupe     */
-        /********************/
-        // Récuperation des informations :
-        $sql_gr = "SELECT g_gid, g_groupename, g_comment FROM conges_groupe ORDER BY g_groupename"  ;
 
-        // AFFICHAGE TABLEAU
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '" class="form-inline" method="POST">';
-        $return .= '<div class="form-group" style="margin-right: 10px;">';
-        $ReqLog_gr = \includes\SQL::query($sql_gr);
-        $return .= '<select class="form-control" name="groupe_id">';
-        while ($resultat_gr = $ReqLog_gr->fetch_array()) {
-            $sql_gid=$resultat_gr["g_gid"] ;
-            $sql_group=$resultat_gr["g_groupename"] ;
-            $sql_comment=$resultat_gr["g_comment"] ;
+        if($_SESSION['config']['gestion_groupes'] && $_SESSION['config']['fermeture_par_groupe']) {
+            /********************/
+            /* Choix Groupe     */
+            /********************/
+            // Récuperation des informations :
+            $sql_gr = "SELECT g_gid, g_groupename, g_comment FROM conges_groupe ORDER BY g_groupename"  ;
 
-            $return .= '<option value="' . $sql_gid . '">' . $sql_group;
+            // AFFICHAGE TABLEAU
+            $return .= '<div class="col-md-6">';
+            $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '" class="form-inline" method="POST">';
+            $return .= '<div class="form-group" style="margin-right: 10px;">';
+            $ReqLog_gr = \includes\SQL::query($sql_gr);
+            $return .= '<select class="form-control" name="groupe_id">';
+            while ($resultat_gr = $ReqLog_gr->fetch_array()) {
+                $sql_gid=$resultat_gr["g_gid"] ;
+                $sql_group=$resultat_gr["g_groupename"] ;
+                $sql_comment=$resultat_gr["g_comment"] ;
+
+                $return .= '<option value="' . $sql_gid . '">' . $sql_group;
+            }
+            $return .= '</select>';
+            $return .= '<input type="hidden" name="choix_action" value="saisie_dates">';
+            $return .= '</div>';
+            $return .= '<input class="btn btn-success" type="submit" value="' . _('admin_jours_fermeture_fermeture_par_groupe') . '">';
+            $return .= '</form>';
+            $return .= '</div>';
         }
-        $return .= '</select>';
-        $return .= '<input type="hidden" name="choix_action" value="saisie_dates">';
-        $return .= '</div>';
-        $return .= '<input class="btn btn-success" type="submit" value="' . _('admin_jours_fermeture_fermeture_par_groupe') . '">';
-        $return .= '</form>';
-        $return .= '</div>';
 
         /************************************************/
         // HISTORIQUE DES FERMETURES
@@ -3087,18 +3100,9 @@ class Fonctions
         $onglets['calendar'] = 'Calendrier des fermetures' . " " . "<span class=\"current-year\">$year</span>";
         $onglets['year_nav'] = NULL;
 
-        //initialisation de l'action par défaut : saisie_dates pour tous, saisie_groupe en cas de gestion et fermeture par groupe autorisée
+        //initialisation de l'action par défaut
         if($choix_action=="") {
-            // si pas de gestion par groupe
-            if($_SESSION['config']['gestion_groupes'] == FALSE) {
-                $choix_action="saisie_dates";
-            }
-            // si gestion par groupe et fermeture_par_groupe
-            elseif(($_SESSION['config']['fermeture_par_groupe']) && ($groupe_id=="") ) {
-                $choix_action="saisie_groupe";
-            } else {
-                $choix_action="saisie_dates";
-            }
+            $choix_action="saisie_groupe";
         }
 
         /*********************************/

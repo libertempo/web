@@ -32,7 +32,7 @@ $timeout=2 ; // refresh après maj.
 
 $PHP_SELF=$_SERVER['PHP_SELF'];
 
-if($session=="")
+if(!isset($session) || $session == "")
     $URL = "$PHP_SELF";
 else
     $URL = "$PHP_SELF?session=$session";
