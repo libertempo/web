@@ -58,7 +58,7 @@ class SQL
 		elseif (method_exists(self::$pdo_obj, $name))
 			return call_user_func_array(array(self::$pdo_obj, $name), $args);
 		else
-			throw new Exception(sprintf('The required method "%s" does not exist for %s', $name, get_class(self::$instance)));
+			throw new \Exception(sprintf('The required method "%s" does not exist for %s', $name, get_class(self::$instance)));
     }
 
 	//=====================
@@ -94,6 +94,16 @@ class SQL
 	public static function getVar($name) {
 		return self::$pdo_obj->$name;
 	}
+
+    /**
+     * Retourne l'objet DB
+     *
+     * @return \incudes\Database
+     */
+    public function getPdoObj()
+    {
+        return self::$pdo_obj;
+    }
 }
 
 

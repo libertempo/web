@@ -99,3 +99,125 @@ function generateDatePicker(opts)
         });
     });
 }
+
+/**
+ * Objet de manipulation du planning
+ */
+var planningController = function (idElement, options)
+{
+    this.element = document.getElementById(idElement);
+    this.options = options;
+    this.typeSemaine = this.options['typeSemaine'];
+    this.debut = this.options['typeHeureDebut'];
+    this.fin   = this.options['typeHeureFin'];
+    this.incrementMatin = 0;
+    this.incrementApresMidi = 0;
+    this.init = function ()
+    {
+        this.element.addEventListener('click', function () {
+            var select = document.getElementById(this.options['selectJourId']);
+            var jourSelectionne = select.options[select.selectedIndex].value;
+            var radios = document.body.querySelectorAll('input[type="radio"]');
+            var typePeriodeSelected = 0;
+            for (var i = 0; i < radios.length; ++i) {
+                if (radios[i].checked) {
+                    typePeriodeSelected = radios[i].value;
+                }
+            }
+            var debutVal = document.getElementById(this.options['debutId']).value;
+            var finVal = document.getElementById(this.options['finId']).value;
+            if (-1 != jourSelectionne && 0 != typePeriodeSelected && '' != debutVal && '' != finVal) {
+                if (this._checkTimeValue(debutVal) || this._checkTimeValue(finVal)) {
+                    this._addPeriod(jourSelectionne, typePeriodeSelected, debutVal, finVal);
+                    // TODO: reorganisation dynamique de l'ordre
+                }
+            }
+        }.bind(this));
+    }
+
+    /**
+     * Vérifie que l'heure respecte bien un format donné
+     *
+     * @param string timeValue
+     *
+     * @return bool
+     */
+    this._checkTimeValue = function (timeValue)
+    {
+        timeValue   = timeValue.trim();
+        var pattern = new RegExp("^(([0-1][0-9])|(2[0-3])):[0-5]|0-9]");
+
+        return pattern.test(timeValue);
+        console.log(timeValue, a);
+        return a;
+    }
+
+    /**
+     *
+     */
+    this._addPeriod = function (jourSelectionne, typePeriodeSelected, debutVal, finVal)
+    {
+        var tableImpaire = document.getElementById(this.options['tableId']);
+        var ligneCible = tableImpaire.querySelector('tr[data-id-jour="' +  jourSelectionne + '"]');
+        var cellCible = ligneCible.getElementsByClassName('creneaux')[0];
+
+        cellCible.appendChild(this._getVisiblePeriod(jourSelectionne, typePeriodeSelected, debutVal, finVal));
+    }
+
+    /**
+     *
+     */
+    this._getVisiblePeriod = function (jourSelectionne, typePeriodeSelected, debutVal, finVal) {
+        var span = document.createElement('span');
+        var iBaseTag = document.createElement('i');
+        var iTo = iBaseTag.cloneNode(false);
+        var buttonTag = document.createElement('button');
+        buttonTag.className = 'btn btn-default btn-xs';
+        iTo.className = 'fa fa-caret-right';
+        var debut = document.createTextNode(' ' + debutVal + ' ');
+        var labelTypePeriode = (this.options['typePeriodeMatin'] == typePeriodeSelected ) ? 'am' : 'pm';
+        var fin   = document.createTextNode(' ' + finVal + ' (' + labelTypePeriode + ') ');
+        var iMinus = iBaseTag.cloneNode(false);
+        iMinus.className = 'fa fa-minus';
+        span.appendChild(debut);
+        span.appendChild(iTo);
+        span.appendChild(fin);
+        buttonTag.appendChild(iMinus);
+        span.appendChild(buttonTag);
+        span.appendChild(this._getHiddenFieldPeriod(jourSelectionne, typePeriodeSelected, debutVal, finVal));
+        return span;
+    }
+
+    /**
+     *
+     */
+    this._getHiddenFieldPeriod = function (jourSelectionne, typePeriodeSelected, debutVal, finVal) {
+        var span = document.createElement('span');
+        var input = document.createElement('input');
+        var typeSemaine = this.typeSemaine;
+        var debut = input.cloneNode(false);
+        var prefixName = 'creneaux[' + typeSemaine + '][' + jourSelectionne + '][' + typePeriodeSelected + ']';
+        if (this.options['typePeriodeMatin'] == typePeriodeSelected) {
+            var prefixName = prefixName + '[' + (++this.incrementMatin) + ']';
+        } else {
+            var prefixName = prefixName + '[' + (++this.incrementMatin) + ']';
+        }
+        debut.type  = 'hidden';
+        debut.name  = prefixName + '[' + this.debut + ']';
+        debut.value = debutVal;
+        var fin     = input.cloneNode(false);
+        fin.type    = 'hidden';
+        fin.name    = prefixName + '[' + this.fin + ']';
+        fin.value   = finVal;
+        span.appendChild(debut);
+        span.appendChild(fin);
+        return span;
+    }
+
+    /**
+     *
+     */
+    this._removePeriod = function ()
+    {
+    }
+}

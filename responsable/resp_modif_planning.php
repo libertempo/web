@@ -26,4 +26,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *************************************************************************************************/
 
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
-echo \responsable\Fonctions::getListePlanningModule();
+$id = (int) getpost_variable('id');
+if (0 === $id) {
+    redirect(ROOT_PATH . 'deconnexion.php');
+}
+echo \responsable\Fonctions::getFormPlanningModule($id);

@@ -2306,14 +2306,10 @@ class Fonctions
      *
      * @return string
      */
-    public static function listePlanningModule()
+    public static function getListePlanningModule()
     {
-        if ('Y' !== $_SESSION['is_resp']) {
-            return 'Une erreur est apparue';
-
-        }
-        $return = '';
-        $return .= '<h1>' . _('resp_affichage_liste_planning_titre') . '</h1>';
+        $return = '<h1>' . _('resp_affichage_liste_planning_titre') . '</h1>';
+        $session = session_id();
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses([
             'table',
@@ -2329,7 +2325,9 @@ class Fonctions
             $childTable .= '<tr><td colspan="2">Aucun résultat</td></tr>';
         } else {
             while ($data = $query->fetch_array()) {
-                $childTable .= '<tr><td>' . $data['planning_name'] . '</td><td><a href="resp_index?onglet=modif_planning&id=' . $data['planning_id'] . '"><i class="fa fa-eye"></i></a></td></tr>';
+                $childTable .= '<tr><td>' . $data['planning_name'] . '</td>';
+                $childTable .= '<td><a href="resp_index.php?onglet=modif_planning&id=' . $data['planning_id'] .
+                '&session=' . $session . '"><i class="fa fa-eye"></i></a></td></tr>';
             }
         }
         $childTable .= '</tbody>';
@@ -2341,18 +2339,344 @@ class Fonctions
     }
 
     /**
+     * Poste un nouveau planning
+     *
+     * @param array $post
+     * @param array &$errors
+     *
+     * @return int
+     */
+    private static function postPlanning(array $post, array &$errors = [])
+    {
+        if (empty($post['planning_name'])) {
+            $errors['Nom'] = 'Le champ ne doit pas être vide';
+        }
+
+        /* On fait la distinction entre les verbes post / put (début REST) */
+        if (!empty($post['planning_id'])) {
+            return \responsable\Fonctions::putPlanning($post['planning_id'], $post, $errors);
+        }
+
+        if (!empty($post['creneaux'])) {
+            $sql   = \includes\SQL::singleton();
+            $sql->getPdoObj()->begin_transaction();
+            $idPlanning = \responsable\Fonctions::insertPlanning($post);
+            $idLastCreneau = \responsable\Fonctions::postCreneauxList($post['creneaux'], $errors, $idPlanning);
+            if (0 < $idPlanning && 0 < $idLastCreneau) {
+                $sql->getPdoObj()->commit();
+            } else {
+                $sql->getPdoObj()->rollback();
+                return -1;
+            }
+        } else {
+            $idPlanning = \responsable\Fonctions::insertPlanning($post);
+        }
+
+        return $idPlanning;
+    }
+
+    /**
+     * Insère un planning en base
+     *
+     * @param array $planning
+     *
+     * @return int
+     */
+    private static function insertPlanning(array $planning)
+    {
+        $sql   = \includes\SQL::singleton();
+        $req   = 'INSERT INTO conges_planning (planning_id, planning_name)
+                  VALUES ("", "' . $sql->quote($planning['planning_name']) . '")';
+        $query = $sql->query($req);
+        return $sql->insert_id;
+    }
+
+    /**
+     * Met à jour un planning
+     *
+     * @param int   $id
+     * @param array $put
+     * @param array &$errors
+     *
+     * @return int
+     */
+    private static function putPlanning($id, array $put, array &$errors = [])
+    {
+        if (!empty($put['creneaux'])) {
+            $sql   = \includes\SQL::singleton();
+            $sql->getPdoObj()->begin_transaction();
+            $idPlanning = \responsable\Fonctions::updatePlanning($id, $put);
+            $idLastCreneau = \responsable\Fonctions::postCreneauxList($put['creneaux'], $errors, $idPlanning, true);
+            if (0 < $idPlanning && 0 < $idLastCreneau) {
+                $sql->getPdoObj()->commit();
+            } else {
+                $sql->getPdoObj()->rollback();
+                return -1;
+            }
+        } else {
+            $idPlanning = \responsable\Fonctions::updatePlanning($id, $put);
+        }
+
+        return $idPlanning;
+    }
+
+    /**
+     * Met à jour un planning en base
+     *
+     * @param int   $id
+     * @param array $put
+     *
+     * @return int
+     */
+    private static function updatePlanning($id, array $put)
+    {
+        $sql = \includes\SQL::singleton();
+        $req = 'UPDATE conges_planning
+                SET planning_name = "' . $sql->quote($put['planning_name']) . '"
+                WHERE planning_id = ' . $id;
+        $query = $sql->query($req);
+
+        return $id;
+        // return id si tout s'est bien passé (sens de « tout s'est bien passé » ?)
+    }
+
+    /**
+     * Poste une liste de créneaux de planning
+     *
+     * @param array $post
+     * @param array &$errors
+     * @param int   $idPlanning
+     * @param bool  $withDelete S'il est nécessaire de vider la table des créneaux avant
+     *
+     * @return int
+     */
+    private static function postCreneauxList(array $post, array &$errors = [], $idPlanning, $withDelete = false)
+    {
+        foreach ($post as $typeSemaine => $jours) {
+            foreach ($jours as $jourId => $periodes) {
+                if (!\responsable\Fonctions::verifieCoherenceCreneaux($periodes, $errors)) {
+                    return -1;
+                }
+            }
+        }
+
+        if ($withDelete && !\responsable\Fonctions::deleteCreneauList($idPlanning)) {
+            return -1;
+        } else {
+            return \responsable\Fonctions::insertCreneauList($post, $idPlanning);
+        }
+    }
+
+    /**
+     * S'assure que les données passées aient un sens
+     *
+     * @param array $periodes
+     * @param array &$errors
+     *
+     * @return bool
+     */
+    private static function verifieCoherenceCreneaux(array $periodes, array &$errors = [])
+    {
+        $localError = [];
+        $precedentsCreneauxJours = [];
+        $pattern = '/^(([0-1])?[0-9])|(2[0-3]):[0-5][0-9]#/';
+        foreach ($periodes as $typeCreneau => $creneaux) {
+            foreach ($creneaux as $creneauxJour) {
+                $debut = $creneauxJour[\App\Models\Planning\Creneau::TYPE_HEURE_DEBUT];
+                $fin   = $creneauxJour[\App\Models\Planning\Creneau::TYPE_HEURE_FIN];
+                if (-1 !== strnatcmp($debut, $fin)) {
+                    $localError[] = 'Date de début supérieure à date de fin';
+                }
+                if (!preg_match($pattern, $debut) || !preg_match($pattern, $fin))  {
+                    $localError[] = 'Heure non reconnue';
+                }
+                if (!empty($precedentsCreneauxJours) && -1 !== strnatcmp($fin, $precedentsCreneauxJours[\App\Models\Planning\Creneau::TYPE_HEURE_DEBUT])) {
+                    $localError[] = 'Créneaux consécutifs';
+                }
+                $precedentsCreneauxJours = $creneauxJour;
+            }
+        }
+        $errors['Créneaux de travail'] = $localError;
+
+        return empty($localError);
+    }
+
+    /**
+     * Supprime tous les créneaux d'un planning donné
+     *
+     * @param int $idPlanning
+     *
+     * @return bool
+     */
+    private static function deleteCreneauList($idPlanning)
+    {
+        $sql = \includes\SQL::singleton();
+        $req = 'DELETE FROM conges_planning_creneau WHERE planning_id = ' . (int) $idPlanning;
+        $sql->query($req);
+
+        return (bool) $sql->affected_rows;
+    }
+
+    /**
+     * Insère une liste de créneaux de travail en base de donnée
+     *
+     * @param array $list
+     * @param int   $idPlanning
+     *
+     * @return int
+     */
+    private static function insertCreneauList(array $list, $idPlanning)
+    {
+        $sql = \includes\SQL::singleton();
+        $toInsert = [];
+        foreach ($list as $typeSemaine => $jours) {
+            foreach ($jours as $jourId => $periodes) {
+                foreach ($periodes as $typeCreneau => $creneaux) {
+                    foreach ($creneaux as $creneauxJour) {
+                        $debut = explode(':', $creneauxJour[\App\Models\Planning\Creneau::TYPE_HEURE_DEBUT]);
+                        $timeDebut = mktime($debut[0], $debut[1], 0, 1, 1, 70);
+                        $fin = explode(':', $creneauxJour[\App\Models\Planning\Creneau::TYPE_HEURE_FIN]);
+                        $timeFin = mktime($fin[0], $fin[1], 0, 1, 1, 70);
+                        $toInsert[] = '("", ' . $idPlanning . ', ' . $jourId . ', ' . $typeSemaine . ', ' . $typeCreneau . ', "' . $timeDebut . '", "' . $timeFin . '")';
+                    }
+                }
+            }
+        }
+        // insertion multiple en fonction de la liste
+        $req = 'INSERT INTO conges_planning_creneau (creneau_id, planning_id, jour_id, type_semaine, type_periode, debut, fin) VALUES ' . implode(', ', $toInsert);
+        $query = $sql->query($req);
+
+        return $sql->insert_id;
+    }
+
+    /**
      * Encapsule le comportement du module d'ajout / modification de planning
      *
      * @return string
      */
-    public static function editPlanningModule($id = -1)
+    public static function getFormPlanningModule($id = -1)
     {
-        $return = '';
-        echo 'nil';
-        if (-1 !== $id) {
-            // c'est que c'est une modif, alors on cherche à afficher le rappel des info existantes
+        $return    = '';
+        $message   = '';
+        $errorsLst = [];
+        $valueName = '';
+        if (!empty($_POST)) {
+            if (0 < (int) \responsable\Fonctions::postPlanning($_POST, $errorsLst)) {
+                redirect(ROOT_PATH . 'responsable/resp_index.php?session='. session_id() . '&onglet=liste_planning', false);
+            } else {
+                $errors = '';
+                if (!empty($errorsLst)) {
+                    foreach ($errorsLst as $key => $value) {
+                        if (is_array($value)) {
+                            $value = implode(' / ', $value);
+                        }
+                        $errors .= '<li>' . $key . ' : ' . $value . '</li>';
+                    }
+                    $message = '<div>Des erreurs sont apparues, veuillez recommencer</div><ul>' . $errors . '</ul>';
+                }
+                $valueName = $_POST['planning_name'];
+            }
         }
 
+        if (-1 !== $id) {
+            $return .= '<h1>' . _('resp_modif_planning_titre') . '</h1>';
+        } else {
+            $return .= '<h1>' . _('resp_ajout_planning_titre') . '</h1>';
+        }
+        $return .= $message;
+
+        $return .= '<form action="" method="post" class="form-group">';
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-hover',
+            'table-responsive',
+            'table-striped',
+            'table-condensed'
+        ]);
+        $childTable = '<thead><tr><th class="col-md-4">Nom</th><th></th></tr></thead><tbody>';
+        if (-1 !== $id) {
+            $sql   = 'SELECT * FROM conges_planning WHERE planning_id = ' . $id;
+            $query = \includes\SQL::query($sql);
+            $data = $query->fetch_array();
+            $valueName = $data['planning_name'];
+            $childTable .= '<tr><td>' . $data['planning_name'] . '<input type="hidden" name="planning_id" value="' . $id . '" /></td></tr>';
+        }
+        $childTable .= '<tr><td><input type="text" name="planning_name" value="' . $valueName . '" class="form-control" required /></td><td></td></tr></tbody>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
+        $return .= '<h3>Créneaux</h3>';
+        $return .= '<h4>Semaine impaire</h4>';
+        $return .= \responsable\Fonctions::getFormPlanningTable(\App\Models\Planning\Creneau::TYPE_SEMAINE_IMPAIRE);
+        $return .= '<h4>Semaine paire</h4>';
+        $return .= \responsable\Fonctions::getFormPlanningTable(\App\Models\Planning\Creneau::TYPE_SEMAINE_PAIRE);
+        $return .= '<hr><input type="submit" class="btn btn-success" value="' . _('form_submit') . '" />';
+        $return .='</form>';
+
         return $return;
+    }
+
+    /**
+     *
+     */
+    protected static function getFormPlanningTable($typeSemaine)
+    {
+        $jours = [
+            // ISO-8601
+            1 => 'Lundi',
+            2 => 'Mardi',
+            3 => 'Mercredi',
+            4 => 'Jeudi',
+            5 => 'Vendredi',
+            6 => 'Samedi',
+            7 => 'Dimanche',
+        ];
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-hover',
+            'table-responsive',
+            'table-striped',
+            'table-condensed'
+        ]);
+        $linkId       = uniqid();
+        $selectJourId = uniqid();
+        $debutId      = uniqid();
+        $finId        = uniqid();
+        $childTable = '<thead><tr><th width="20%">Jour</th><th>Créneaux de travail</th><tr></thead><tbody>';
+        $childTable .= '<tr><td><select class="form-control" id="' . $selectJourId . '"><option value="-1"></option>';
+
+        foreach ($jours as $id => $jour) {
+            $childTable .= '<option value="' . $id . '">' . $jour . '</option>';
+        }
+
+        $childTable .= '</select></td><td><div class="form-inline col-xs-2"><input type="text" id="' . $debutId . '" class="form-control" style="width:45%" />&nbsp;<i class="fa fa-caret-right"></i>&nbsp;<input type="text" id="' . $finId . '" class="form-control" style="width:45%" size="8" /></div>&nbsp;&nbsp;<label class="radio-inline"><input type="radio" name="periode" value="' . \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN . '">Matin</label><label class="radio-inline"><input type="radio" name="periode" value="' . \App\Models\Planning\Creneau::TYPE_PERIODE_APRES_MIDI . '">Après-midi</label>';
+        $options = [
+            'selectJourId'       => $selectJourId,
+            'tableId'            => $table->getId(),
+            'debutId'            => $debutId,
+            'finId'              => $finId,
+            'typeSemaine'        => $typeSemaine,
+            'typePeriodeMatin'   => \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN,
+            'typeHeureDebut'     => \App\Models\Planning\Creneau::TYPE_HEURE_DEBUT,
+            'typeHeureFin'       => \App\Models\Planning\Creneau::TYPE_HEURE_FIN,
+
+            'messageErreur'      => _('veuillez saisir une période bien formatée'),
+        ];
+
+        $childTable .= '&nbsp;&nbsp; <button type="button" class="btn btn-default btn-sm" id="' .  $linkId . '"><i class="fa fa-plus link" ></i></button></td></tr>';
+        foreach ($jours as $id => $jour) {
+            $childTable .= '<tr data-id-jour=' . $id . '><td name="nom">' . $jour . '</td><td class="creneaux"></td></tr>';
+        }
+        $childTable .= '</tbody>';
+        $childTable .= '<script type="text/javascript">
+        new planningController("' . $linkId . '", ' . json_encode($options) . ').init();
+        </script>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        return ob_get_clean();
     }
 }

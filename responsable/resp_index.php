@@ -69,7 +69,7 @@ verif_droits_user($session, "is_resp");
     if (false)
         $onglets['cloture_exercice'] = _('button_cloture');
 
-    if ( !isset($onglets[ $onglet ]) && !in_array($onglet, array('traite_user')))
+    if ( !isset($onglets[ $onglet ]) && !in_array($onglet, array('traite_user', 'modif_planning')))
         $onglet = 'page_principale';
 
     /*********************************/

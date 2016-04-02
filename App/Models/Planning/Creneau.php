@@ -24,6 +24,18 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *************************************************************************************************/
+namespace App\Models\Planning;
 
-defined( '_PHP_CONGES' ) or die( 'Restricted access' );
-echo \responsable\Fonctions::getListePlanningModule();
+/**
+ * Modèle de créneau de planning
+ */
+class Creneau
+{
+    const TYPE_SEMAINE_COMMUNE = 0;
+    const TYPE_SEMAINE_IMPAIRE = 1;
+    const TYPE_SEMAINE_PAIRE   = 2;
+    const TYPE_HEURE_DEBUT     = 1;
+    const TYPE_HEURE_FIN       = 2;
+    const TYPE_PERIODE_MATIN   = 1;
+    const TYPE_PERIODE_APRES_MIDI = 2;
+}
