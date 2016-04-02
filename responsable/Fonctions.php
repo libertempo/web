@@ -2361,7 +2361,8 @@ class Fonctions
             $sql   = \includes\SQL::singleton();
             $sql->getPdoObj()->begin_transaction();
             $idPlanning = \responsable\Fonctions::insertPlanning($post);
-            $idLastCreneau = \responsable\Fonctions::postCreneauxList($post['creneaux'], $errors, $idPlanning);
+            \responsable\Fonctions::deleteCreneauList($idPlanning);
+            $idLastCreneau = \responsable\Fonctions::postCreneauxList($post['creneaux'], $idPlanning, $errors);
             if (0 < $idPlanning && 0 < $idLastCreneau) {
                 $sql->getPdoObj()->commit();
             } else {
@@ -2370,6 +2371,7 @@ class Fonctions
             }
         } else {
             $idPlanning = \responsable\Fonctions::insertPlanning($post);
+            \responsable\Fonctions::deleteCreneauList($idPlanning);
         }
 
         return $idPlanning;
@@ -2406,7 +2408,8 @@ class Fonctions
             $sql   = \includes\SQL::singleton();
             $sql->getPdoObj()->begin_transaction();
             $idPlanning = \responsable\Fonctions::updatePlanning($id, $put);
-            $idLastCreneau = \responsable\Fonctions::postCreneauxList($put['creneaux'], $errors, $idPlanning, true);
+            \responsable\Fonctions::deleteCreneauList($idPlanning);
+            $idLastCreneau = \responsable\Fonctions::postCreneauxList($put['creneaux'], $idPlanning, $errors);
             if (0 < $idPlanning && 0 < $idLastCreneau) {
                 $sql->getPdoObj()->commit();
             } else {
@@ -2444,13 +2447,12 @@ class Fonctions
      * Poste une liste de créneaux de planning
      *
      * @param array $post
-     * @param array &$errors
      * @param int   $idPlanning
-     * @param bool  $withDelete S'il est nécessaire de vider la table des créneaux avant
+     * @param array &$errors
      *
      * @return int
      */
-    private static function postCreneauxList(array $post, array &$errors = [], $idPlanning, $withDelete = false)
+    private static function postCreneauxList(array $post, $idPlanning, array &$errors = [])
     {
         foreach ($post as $typeSemaine => $jours) {
             foreach ($jours as $jourId => $periodes) {
@@ -2460,11 +2462,7 @@ class Fonctions
             }
         }
 
-        if ($withDelete && !\responsable\Fonctions::deleteCreneauList($idPlanning)) {
-            return -1;
-        } else {
-            return \responsable\Fonctions::insertCreneauList($post, $idPlanning);
-        }
+        return \responsable\Fonctions::insertCreneauList($post, $idPlanning);
     }
 
     /**
@@ -2600,7 +2598,7 @@ class Fonctions
             $query = \includes\SQL::query($sql);
             $data = $query->fetch_array();
             $valueName = $data['planning_name'];
-            $childTable .= '<tr><td>' . $data['planning_name'] . '<input type="hidden" name="planning_id" value="' . $id . '" /></td></tr>';
+            $childTable .= '<tr><td>' . $valueName . '<input type="hidden" name="planning_id" value="' . $id . '" /></td></tr>';
         }
         $childTable .= '<tr><td><input type="text" name="planning_name" value="' . $valueName . '" class="form-control" required /></td><td></td></tr></tbody>';
         $table->addChild($childTable);
@@ -2619,7 +2617,11 @@ class Fonctions
     }
 
     /**
+     * Retourne la structure d'une table de créneaux de planning
      *
+     * @param int $typeSemaine
+     *
+     * @return string
      */
     protected static function getFormPlanningTable($typeSemaine)
     {
@@ -2652,7 +2654,15 @@ class Fonctions
             $childTable .= '<option value="' . $id . '">' . $jour . '</option>';
         }
 
-        $childTable .= '</select></td><td><div class="form-inline col-xs-2"><input type="text" id="' . $debutId . '" class="form-control" style="width:45%" />&nbsp;<i class="fa fa-caret-right"></i>&nbsp;<input type="text" id="' . $finId . '" class="form-control" style="width:45%" size="8" /></div>&nbsp;&nbsp;<label class="radio-inline"><input type="radio" name="periode" value="' . \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN . '">Matin</label><label class="radio-inline"><input type="radio" name="periode" value="' . \App\Models\Planning\Creneau::TYPE_PERIODE_APRES_MIDI . '">Après-midi</label>';
+        $childTable .= '</select></td>';
+        $childTable .= '<td><div class="form-inline col-xs-3"><input type="text" id="' . $debutId . '" class="form-control" style="width:45%" />&nbsp;<i class="fa fa-caret-right"></i>&nbsp;<input type="text" id="' . $finId . '" class="form-control" style="width:45%" size="8" /></div>';
+        $childTable .= '&nbsp;&nbsp;<div class="form-inline col-xs-3"><label class="radio-inline"><input type="radio" name="periode" value="' . \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN . '">Matin</label>';
+        $childTable .= '<label class="radio-inline"><input type="radio" name="periode" value="' . \App\Models\Planning\Creneau::TYPE_PERIODE_APRES_MIDI . '">Après-midi</label>';
+        $childTable .= '&nbsp;&nbsp; <button type="button" class="btn btn-default btn-sm" id="' .  $linkId . '"><i class="fa fa-plus link" ></i></button></div></td></tr>';
+        foreach ($jours as $id => $jour) {
+            $childTable .= '<tr data-id-jour=' . $id . '><td name="nom">' . $jour . '</td><td class="creneaux"></td></tr>';
+        }
+        $childTable .= '</tbody>';
         $options = [
             'selectJourId'       => $selectJourId,
             'tableId'            => $table->getId(),
@@ -2662,15 +2672,7 @@ class Fonctions
             'typePeriodeMatin'   => \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN,
             'typeHeureDebut'     => \App\Models\Planning\Creneau::TYPE_HEURE_DEBUT,
             'typeHeureFin'       => \App\Models\Planning\Creneau::TYPE_HEURE_FIN,
-
-            'messageErreur'      => _('veuillez saisir une période bien formatée'),
         ];
-
-        $childTable .= '&nbsp;&nbsp; <button type="button" class="btn btn-default btn-sm" id="' .  $linkId . '"><i class="fa fa-plus link" ></i></button></td></tr>';
-        foreach ($jours as $id => $jour) {
-            $childTable .= '<tr data-id-jour=' . $id . '><td name="nom">' . $jour . '</td><td class="creneaux"></td></tr>';
-        }
-        $childTable .= '</tbody>';
         $childTable .= '<script type="text/javascript">
         new planningController("' . $linkId . '", ' . json_encode($options) . ').init();
         </script>';

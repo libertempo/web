@@ -148,24 +148,36 @@ var planningController = function (idElement, options)
         var pattern = new RegExp("^(([0-1][0-9])|(2[0-3])):[0-5]|0-9]");
 
         return pattern.test(timeValue);
-        console.log(timeValue, a);
-        return a;
     }
 
     /**
+     * Ajoute une nouvelle période au planning
      *
+     * @param int    jourSelectionne
+     * @param int    typePeriodeSelected
+     * @param string debutVal
+     * @param string finVal
+     *
+     * @return void
      */
     this._addPeriod = function (jourSelectionne, typePeriodeSelected, debutVal, finVal)
     {
-        var tableImpaire = document.getElementById(this.options['tableId']);
-        var ligneCible = tableImpaire.querySelector('tr[data-id-jour="' +  jourSelectionne + '"]');
+        var table = document.getElementById(this.options['tableId']);
+        var ligneCible = table.querySelector('tr[data-id-jour="' +  jourSelectionne + '"]');
         var cellCible = ligneCible.getElementsByClassName('creneaux')[0];
 
         cellCible.appendChild(this._getVisiblePeriod(jourSelectionne, typePeriodeSelected, debutVal, finVal));
     }
 
     /**
+     * Retourne la structure DOM d'une période à afficher
      *
+     * @param int    jourSelectionne
+     * @param int    typePeriodeSelected
+     * @param string debutVal
+     * @param string finVal
+     *
+     * @return HTMLSpanElement
      */
     this._getVisiblePeriod = function (jourSelectionne, typePeriodeSelected, debutVal, finVal) {
         var span = document.createElement('span');
@@ -173,6 +185,10 @@ var planningController = function (idElement, options)
         var iTo = iBaseTag.cloneNode(false);
         var buttonTag = document.createElement('button');
         buttonTag.className = 'btn btn-default btn-xs';
+        buttonTag.type = 'button';
+        buttonTag.addEventListener('click', function (e) {
+            this._removePeriod(e.target.parentNode);
+        }.bind(this));
         iTo.className = 'fa fa-caret-right';
         var debut = document.createTextNode(' ' + debutVal + ' ');
         var labelTypePeriode = (this.options['typePeriodeMatin'] == typePeriodeSelected ) ? 'am' : 'pm';
@@ -185,11 +201,19 @@ var planningController = function (idElement, options)
         buttonTag.appendChild(iMinus);
         span.appendChild(buttonTag);
         span.appendChild(this._getHiddenFieldPeriod(jourSelectionne, typePeriodeSelected, debutVal, finVal));
+
         return span;
     }
 
     /**
+     * Retourne la structure DOM des champs cachés d'une période à afficher
      *
+     * @param int    jourSelectionne
+     * @param int    typePeriodeSelected
+     * @param string debutVal
+     * @param string finVal
+     *
+     * @return HTMLSpanElement
      */
     this._getHiddenFieldPeriod = function (jourSelectionne, typePeriodeSelected, debutVal, finVal) {
         var span = document.createElement('span');
@@ -211,13 +235,17 @@ var planningController = function (idElement, options)
         fin.value   = finVal;
         span.appendChild(debut);
         span.appendChild(fin);
+
         return span;
     }
 
     /**
+     * Supprime une période au planning
      *
+     * @return void
      */
-    this._removePeriod = function ()
+    this._removePeriod = function (period)
     {
+        period.parentNode.removeChild(period);
     }
 }
