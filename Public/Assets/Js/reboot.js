@@ -103,7 +103,7 @@ function generateDatePicker(opts)
 /**
  * Objet de manipulation du planning
  */
-var planningController = function (idElement, options)
+var planningController = function (idElement, options, creneaux)
 {
     this.element = document.getElementById(idElement);
     this.options = options;
@@ -129,10 +129,15 @@ var planningController = function (idElement, options)
             if (-1 != jourSelectionne && 0 != typePeriodeSelected && '' != debutVal && '' != finVal) {
                 if (this._checkTimeValue(debutVal) || this._checkTimeValue(finVal)) {
                     this._addPeriod(jourSelectionne, typePeriodeSelected, debutVal, finVal);
+                    // else heure inconnue
                     // TODO: reorganisation dynamique de l'ordre
                 }
             }
+            // Else option manquante
         }.bind(this));
+
+        /* Remplissage des valeurs prééxistantes */
+        this._addPeriods(creneaux);
     }
 
     /**
@@ -148,6 +153,27 @@ var planningController = function (idElement, options)
         var pattern = new RegExp("^(([0-1][0-9])|(2[0-3])):[0-5]|0-9]");
 
         return pattern.test(timeValue);
+    }
+
+    /**
+     * Ajoute une liste de périodes au planning
+     *
+     * @param Object creneaux
+     *
+     * @return void
+     */
+    this._addPeriods = function (creneaux)
+    {
+        for (var jour in creneaux) {
+            var dataJour = creneaux[jour];
+            for (var periode in dataJour) {
+                var dataPeriode = dataJour[periode];
+                if (!dataPeriode.hasOwnProperty(this.debut) || !dataPeriode.hasOwnProperty(this.fin)) {
+                    return;
+                }
+                this._addPeriod(jour, periode, dataPeriode[this.debut], dataPeriode[this.fin]);
+            }
+        }
     }
 
     /**
@@ -240,7 +266,7 @@ var planningController = function (idElement, options)
     }
 
     /**
-     * Supprime une période au planning
+     * Supprime une période du planning
      *
      * @return void
      */

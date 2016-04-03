@@ -2373,7 +2373,7 @@ class Fonctions
                 $sql->getPdoObj()->commit();
             } else {
                 $sql->getPdoObj()->rollback();
-                return -1;
+                return NIL_INT;
             }
         } else {
             $idPlanning = \responsable\Fonctions::insertPlanning($post);
@@ -2394,7 +2394,7 @@ class Fonctions
     {
         $sql   = \includes\SQL::singleton();
         $req   = 'INSERT INTO conges_planning (planning_id, planning_name)
-                  VALUES ("", "' . $sql->quote($planning['planning_name']) . '")';
+                  VALUES ("", "' . htmlspecialchars($sql->quote($planning['planning_name'])) . '")';
         $query = $sql->query($req);
         return $sql->insert_id;
     }
@@ -2420,7 +2420,7 @@ class Fonctions
                 $sql->getPdoObj()->commit();
             } else {
                 $sql->getPdoObj()->rollback();
-                return -1;
+                return NIL_INT;
             }
         } else {
             $idPlanning = \responsable\Fonctions::updatePlanning($id, $put);
@@ -2441,12 +2441,11 @@ class Fonctions
     {
         $sql = \includes\SQL::singleton();
         $req = 'UPDATE conges_planning
-                SET planning_name = "' . $sql->quote($put['planning_name']) . '"
+                SET planning_name = "' . htmlspecialchars($sql->quote($put['planning_name'])) . '"
                 WHERE planning_id = ' . $id;
         $query = $sql->query($req);
 
-        return $id;
-        // return id si tout s'est bien passé (sens de « tout s'est bien passé » ?)
+        return (bool) $sql->affected_rows ? $id : NIL_INT;
     }
 
     /**
@@ -2463,7 +2462,7 @@ class Fonctions
         foreach ($post as $typeSemaine => $jours) {
             foreach ($jours as $jourId => $periodes) {
                 if (!\responsable\Fonctions::verifieCoherenceCreneaux($periodes, $errors)) {
-                    return -1;
+                    return NIL_INT;
                 }
             }
         }
@@ -2483,7 +2482,7 @@ class Fonctions
     {
         $localError = [];
         $precedentsCreneauxJours = [];
-        $pattern = '/^(([0-1])?[0-9])|(2[0-3]):[0-5][0-9]#/';
+        $pattern = '/^(((0?|1)[0-9])|(2[0-3])):[0-5][0-9]$/';
         foreach ($periodes as $typeCreneau => $creneaux) {
             foreach ($creneaux as $creneauxJour) {
                 $debut = $creneauxJour[\App\Models\Planning\Creneau::TYPE_HEURE_DEBUT];
@@ -2537,11 +2536,9 @@ class Fonctions
             foreach ($jours as $jourId => $periodes) {
                 foreach ($periodes as $typeCreneau => $creneaux) {
                     foreach ($creneaux as $creneauxJour) {
-                        $debut = explode(':', $creneauxJour[\App\Models\Planning\Creneau::TYPE_HEURE_DEBUT]);
-                        $timeDebut = mktime($debut[0], $debut[1], 0, 1, 1, 70);
-                        $fin = explode(':', $creneauxJour[\App\Models\Planning\Creneau::TYPE_HEURE_FIN]);
-                        $timeFin = mktime($fin[0], $fin[1], 0, 1, 1, 70);
-                        $toInsert[] = '("", ' . $idPlanning . ', ' . $jourId . ', ' . $typeSemaine . ', ' . $typeCreneau . ', "' . $timeDebut . '", "' . $timeFin . '")';
+                        $timeDebut = \App\Helpers\Formatter::hour2Time($creneauxJour[\App\Models\Planning\Creneau::TYPE_HEURE_DEBUT]);
+                        $timeFin   = \App\Helpers\Formatter::hour2Time($creneauxJour[\App\Models\Planning\Creneau::TYPE_HEURE_FIN]);
+                        $toInsert[] = '("", ' . (int) $idPlanning . ', ' . (int) $jourId . ', ' . (int) $typeSemaine . ', ' . (int) $typeCreneau . ', "' . (int) $timeDebut . '", "' . (int) $timeFin . '")';
                     }
                 }
             }
@@ -2558,7 +2555,7 @@ class Fonctions
      *
      * @return string
      */
-    public static function getFormPlanningModule($id = -1)
+    public static function getFormPlanningModule($id = NIL_INT)
     {
         $return    = '';
         $message   = '';
@@ -2582,7 +2579,7 @@ class Fonctions
             }
         }
 
-        if (-1 !== $id) {
+        if (NIL_INT !== $id) {
             $return .= '<h1>' . _('resp_modif_planning_titre') . '</h1>';
         } else {
             $return .= '<h1>' . _('resp_ajout_planning_titre') . '</h1>';
@@ -2599,10 +2596,10 @@ class Fonctions
             'table-condensed'
         ]);
         $childTable = '<thead><tr><th class="col-md-4">Nom</th><th></th></tr></thead><tbody>';
-        if (-1 !== $id) {
+        if (NIL_INT !== $id) {
             $sql   = 'SELECT * FROM conges_planning WHERE planning_id = ' . $id;
             $query = \includes\SQL::query($sql);
-            $data = $query->fetch_array();
+            $data = $query->fetch_assoc();
             $valueName = $data['planning_name'];
             $childTable .= '<tr><td>' . $valueName . '<input type="hidden" name="planning_id" value="' . $id . '" /></td></tr>';
         }
@@ -2613,9 +2610,9 @@ class Fonctions
         $return .= ob_get_clean();
         $return .= '<h3>Créneaux</h3>';
         $return .= '<h4>Semaine impaire</h4>';
-        $return .= \responsable\Fonctions::getFormPlanningTable(\App\Models\Planning\Creneau::TYPE_SEMAINE_IMPAIRE);
+        $return .= \responsable\Fonctions::getFormPlanningTable(\App\Models\Planning\Creneau::TYPE_SEMAINE_IMPAIRE, $id, $_POST);
         $return .= '<h4>Semaine paire</h4>';
-        $return .= \responsable\Fonctions::getFormPlanningTable(\App\Models\Planning\Creneau::TYPE_SEMAINE_PAIRE);
+        $return .= \responsable\Fonctions::getFormPlanningTable(\App\Models\Planning\Creneau::TYPE_SEMAINE_PAIRE, $id, $_POST);
         $return .= '<hr><input type="submit" class="btn btn-success" value="' . _('form_submit') . '" />';
         $return .='</form>';
 
@@ -2626,11 +2623,16 @@ class Fonctions
      * Retourne la structure d'une table de créneaux de planning
      *
      * @param int $typeSemaine
+     * @param int $idPlanning
+     * @param array $postPlanning
      *
      * @return string
      */
-    protected static function getFormPlanningTable($typeSemaine)
+    private static function getFormPlanningTable($typeSemaine, $idPlanning = NIL_INT, array $postPlanning)
     {
+        /* Recupération des creneaux (postés ou existants) pour le JS */
+        $creneauxGroupes = \responsable\Fonctions::getCreneauxGroupes($postPlanning, $idPlanning, $typeSemaine);
+
         $jours = [
             // ISO-8601
             1 => 'Lundi',
@@ -2654,7 +2656,7 @@ class Fonctions
         $debutId      = uniqid();
         $finId        = uniqid();
         $childTable = '<thead><tr><th width="20%">Jour</th><th>Créneaux de travail</th><tr></thead><tbody>';
-        $childTable .= '<tr><td><select class="form-control" id="' . $selectJourId . '"><option value="-1"></option>';
+        $childTable .= '<tr><td><select class="form-control" id="' . $selectJourId . '"><option value="' . NIL_INT . '"></option>';
 
         foreach ($jours as $id => $jour) {
             $childTable .= '<option value="' . $id . '">' . $jour . '</option>';
@@ -2680,11 +2682,88 @@ class Fonctions
             'typeHeureFin'       => \App\Models\Planning\Creneau::TYPE_HEURE_FIN,
         ];
         $childTable .= '<script type="text/javascript">
-        new planningController("' . $linkId . '", ' . json_encode($options) . ').init();
+        new planningController("' . $linkId . '", ' . json_encode($options) . ', ' . json_encode($creneauxGroupes) . ').init();
         </script>';
         $table->addChild($childTable);
         ob_start();
         $table->render();
+
         return ob_get_clean();
+    }
+
+    /**
+     * Retourne les créneaux de travail groupés
+     *
+     * @param array $post        Totalité des données postées par l'utilisateur
+     * @param int   $idPlanning
+     * @param int   $typeSemaine
+     *
+     * @return array
+     */
+    private static function getCreneauxGroupes(array $post, $idPlanning, $typeSemaine)
+    {
+        if (!empty($post['creneaux'][$typeSemaine])) {
+            return \responsable\Fonctions::groupCreneauxFromUser($post['creneaux'][$typeSemaine]);
+        }
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT *
+                FROM conges_planning_creneau
+                WHERE planning_id = ' . (int) $idPlanning . '
+                  AND type_semaine = ' . (int) $typeSemaine;
+        $res = $sql->query($req);
+        if (!$res->num_rows) {
+            return [];
+        }
+
+        return \responsable\Fonctions::groupCreneauxFromDb($res->fetch_all(\MYSQLI_ASSOC));
+    }
+
+    /**
+     * Organise les Creneaux selon leurs critères de groupement à partir des infos de l'utilisateur
+     *
+     * @param array $list
+     *
+     * @return array
+     */
+    private static function groupCreneauxFromUser(array $list)
+    {
+        $grouped = [];
+        foreach ($list as $jourId => $periodes) {
+            foreach ($periodes as $typeCreneau => $creneaux) {
+                foreach ($creneaux as $creneauxJour) {
+                    $grouped[$jourId][$typeCreneau] = [
+                        \App\Models\Planning\Creneau::TYPE_HEURE_DEBUT => $creneauxJour[\App\Models\Planning\Creneau::TYPE_HEURE_DEBUT],
+                        \App\Models\Planning\Creneau::TYPE_HEURE_FIN => $creneauxJour[\App\Models\Planning\Creneau::TYPE_HEURE_FIN]
+                    ];
+                }
+            }
+        }
+
+        return $grouped;
+    }
+
+    /**
+     * Organise les Creneaux selon leurs critères de groupement à partir des infos de la BDD
+     *
+     * @param array $creneaux
+     *
+     * @return array
+     */
+    private static function groupCreneauxFromDb(array $creneaux)
+    {
+        $grouped = [];
+        foreach ($creneaux as $creneau) {
+            $jourId      = $creneau['jour_id'];
+            $typePeriode = $creneau['type_periode'];
+            $debut       = date('H\:i', $creneau['debut']);
+            $fin         = date('H\:i', $creneau['fin']);
+
+            $grouped[$jourId][$typePeriode] = [
+                \App\Models\Planning\Creneau::TYPE_HEURE_DEBUT => $debut,
+                \App\Models\Planning\Creneau::TYPE_HEURE_FIN   => $fin,
+            ];
+        }
+
+        return $grouped;
     }
 }
