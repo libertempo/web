@@ -168,10 +168,13 @@ var planningController = function (idElement, options, creneaux)
             var dataJour = creneaux[jour];
             for (var periode in dataJour) {
                 var dataPeriode = dataJour[periode];
-                if (!dataPeriode.hasOwnProperty(this.debut) || !dataPeriode.hasOwnProperty(this.fin)) {
-                    return;
+                for (var creneau in dataPeriode) {
+                    var dataCreneau = dataPeriode[creneau];
+                    if (!dataCreneau.hasOwnProperty(this.debut) || !dataCreneau.hasOwnProperty(this.fin)) {
+                        return;
+                    }
+                    this._addPeriod(jour, periode, dataCreneau[this.debut], dataCreneau[this.fin]);
                 }
-                this._addPeriod(jour, periode, dataPeriode[this.debut], dataPeriode[this.fin]);
             }
         }
     }
@@ -192,7 +195,14 @@ var planningController = function (idElement, options, creneaux)
         var ligneCible = table.querySelector('tr[data-id-jour="' +  jourSelectionne + '"]');
         var cellCible = ligneCible.getElementsByClassName('creneaux')[0];
 
-        cellCible.appendChild(this._getVisiblePeriod(jourSelectionne, typePeriodeSelected, debutVal, finVal));
+        var periode = this._getVisiblePeriod(jourSelectionne, typePeriodeSelected, debutVal, finVal);
+
+        var allPeriods = ligneCible.querySelectorAll('span[data-heures]');
+        if (0 < allPeriods.length) {
+            cellCible.insertBefore(periode, this._findSuccPeriod(periode, allPeriods));
+        } else {
+            cellCible.appendChild(periode);
+        }
     }
 
     /**
@@ -207,6 +217,9 @@ var planningController = function (idElement, options, creneaux)
      */
     this._getVisiblePeriod = function (jourSelectionne, typePeriodeSelected, debutVal, finVal) {
         var span = document.createElement('span');
+        /* Positionnement des datasets pour la réorganisation dynamique */
+        span.dataset.heures = debutVal + '-' + finVal;
+
         var iBaseTag = document.createElement('i');
         var iTo = iBaseTag.cloneNode(false);
         var buttonTag = document.createElement('button');
@@ -273,5 +286,25 @@ var planningController = function (idElement, options, creneaux)
     this._removePeriod = function (period)
     {
         period.parentNode.removeChild(period);
+    }
+
+    /**
+     * Retourne la période suivante à period dans l'ordre lexicographique parmi allPeriods
+     *
+     * @param HTMLSpanElement period
+     * @param NodeListe       allPeriods
+     *
+     * @return HTMLSpanElement | null
+     */
+    this._findSuccPeriod = function (period, allPeriods)
+    {
+        for (var i = 0; i < allPeriods.length; ++i) {
+            var brother = allPeriods[i];
+            var heurePeriode = period.dataset.heures;
+            var heureBrother = brother.dataset.heures;
+            if (0 > heurePeriode.localeCompare(heureBrother)) {
+                return brother;
+            }
+        }
     }
 }
