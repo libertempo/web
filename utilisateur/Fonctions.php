@@ -1637,4 +1637,128 @@ class Fonctions
 
         return $return;
     }
+
+    public static function getDemandeCongesHeure($id = NIL_INT)
+    {
+        $return    = '';
+            $return .= '<script>generateDatePicker();</script>'; 
+        $message   = '';
+        $errorsLst = [];
+        $valueName = '';
+        if (!empty($_POST)) {
+            if (0 < (int) \utilisateur\Fonctions::postDemandeCongesHeure($_POST, $id, $errorsLst)) {
+              //  redirect(ROOT_PATH . 'utilisateur/user_index.php?session='. session_id() . '&onglet=demande_heures', false);
+            } else {
+                $errors = '';
+                if (!empty($errorsLst)) {
+                    foreach ($errorsLst as $key => $value) {
+                        if (is_array($value)) {
+                            $value = implode(' / ', $value);
+                        }
+                        $errors .= '<li>' . $key . ' : ' . $value . '</li>';
+                    }
+                    $message = '<div class="alert alert-danger">Des erreurs sont apparues, veuillez recommencer<ul>' . $errors . '</ul></div>';
+                }
+            }
+        }
+
+
+
+        if ($id != NIL_INT) {
+            $return .= '<h1>' . _('user_modif_heure_titre') . '</h1>';
+        } else {
+            $return .= '<h1>' . _('user_demande_heure_titre') . '</h1>';
+        }
+        $return .= $message;
+
+        $return .= '<form action="" method="post" class="form-group">';
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-hover',
+            'table-responsive',
+            'table-striped',
+            'table-condensed'
+        ]);
+
+        $childTable="";
+
+        if ($id != NIL_INT) {
+            $sql   = 'SELECT * FROM heure_recup WHERE planning_id = ' . $id;
+            $query = \includes\SQL::query($sql);
+            $data = $query->fetch_assoc();
+            $valueDeb = $data['debut'];
+            $valueFin = $data['fin'];
+            $childTable .= '<thead><tr><th class="col-md-4">Modification de la demande du </th><th></th></tr></thead>';
+            $childTable .= '<div class="form-group"><label for="new_deb">' . _('divers_date_debut') . '</label><input type="text" class="form-control date" name="new_debut" value="' . $_POST["debut"] . '"></div>';
+        }
+
+        $childTable .= '<div class="form-inline"><div class="form-group"><label for="new_dem_jour">Jour de l\'absence ponctuelle </label><input class="form-control date" type="text" value="'.date("d/m/y").'" name="new_jour"></div>';
+        $childTable .= '<div class="form-group"><label for="new_heure_deb">Heure de début </label><input class="form-control time" type="text" value="" name="new_deb_heure"></div>';
+        $childTable .= '<div class="form-group"><label for="new_heure_fin">Heure de fin </label><input class="form-control time" type="text" value="" name="new_fin_heure"></div>';
+        $childTable .= '</div>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
+        $return .= '<hr><input type="submit" class="btn btn-success" value="' . _('form_submit') . '" />';
+        $return .='</form>';
+
+        return $return;
+    }
+
+
+    private static function postDemandeCongesHeure(array $post, $idDemande, &$errorsLst)
+    {
+        if (!\utilisateur\Fonctions::VerifNewDemandeHeures($post['new_jour'], $post['new_deb_heure'], $post['new_deb_heure'], $errorsLst)) {
+            return NIL_INT;
+        }
+
+        return \utilisateur\Fonctions::insertDemandeCongesHeure($post, $idDemande);
+    }
+
+
+    public static function VerifNewDemandeHeures($jour, $heuredeb, $heurefin, array &$Error = [])
+    {
+        $verif = true;
+        $Error = [];
+        $pattern = '/^(((0?|1)[0-9])|(2[0-3])):[0-5][0-9]$/'; 
+
+        // leur champs doivent etre renseignés dans le formulaire
+        if( $jour == '' || $heuredeb == '' || $heurefin == '' ) {
+            $Error[] = _('verif_saisie_erreur_valeur_manque'); 
+            $verif = false;
+        }
+
+        // si la date de fin est antérieur à la date debut
+        if(0 != strnatcmp($heuredeb, $heurefin)) {
+            $Error[] = _('verif_saisie_erreur_heure_fin_avant_debut') ;
+            $verif = false;
+        }
+
+        if (!preg_match($pattern, $heuredeb) || !preg_match($pattern, $heurefin))  {
+            $Error[] = 'Heure non reconnue';
+        }
+
+        return empty($Error);
+    }
+
+    private static function insertDemandeCongesHeure(array $info, $idDemande)
+    {
+
+        $date = str_replace('/', '-', $info['new_jour']);
+        $deb = $date." ".$info['new_deb_heure'];
+        $fin = $date." ".$info['new_fin_heure'];
+        $timedeb = strtotime($deb);
+        $timefin = strtotime($fin);
+        $user = $_SESSION['userlogin'];
+        $sql = \includes\SQL::singleton();
+        $toInsert = [];
+        $toInsert[] = '("", ' . $user . ', ' . (int) $timedeb . ', ' . (int) $timefin .', 0, "demande", "debit")';
+        $req = 'INSERT INTO conges_heure_periode (id_heure, login, debut, fin, time, status, type) VALUES ' . implode(', ', $toInsert);
+        $query = $sql->query($req);
+
+        return $sql->insert_id;
+    }
+
 }
