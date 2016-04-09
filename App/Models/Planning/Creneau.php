@@ -28,6 +28,9 @@ namespace App\Models\Planning;
 
 /**
  * Modèle de créneau de planning
+ *
+ * @since  1.9
+ * @author Prytoegrian <prytoegrian@protonmail.com>
  */
 class Creneau
 {
