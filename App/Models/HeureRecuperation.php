@@ -4,7 +4,6 @@ Libertempo : Gestion Interactive des Congés
 Copyright (C) 2015 (Wouldsmina)
 Copyright (C) 2015 (Prytoegrian)
 Copyright (C) 2005 (cedric chauvineau)
-
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
 termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
 Ce programme est distribué car potentiellement utile, mais SANS AUCUNE GARANTIE,
@@ -24,13 +23,17 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *************************************************************************************************/
-
-defined( '_PHP_CONGES' ) or die( 'Restricted access' );
-
-$id = (int) getpost_variable('id');
-
-if (0 === $id) {
-    echo \utilisateur\Fonctions::getDemandeCongesHeure();
-} else {
-    echo \utilisateur\Fonctions::getDemandeCongesHeure($id);
+namespace App\Models;
+/**
+ * Modèle de type et de status d'une période
+ */
+class HeureRecuperation
+{
+    const STATUS_DEMANDE = 0;
+    const STATUS_VALIDE  = 1;
+    const STATUS_OK      = 2;
+    const STATUS_REFUS   = 3;
+    const STATUS_ANNUL   = 4;
+    const TYPE_CREDIT    = 0;
+    const TYPE_DEBIT     = 1;
 }

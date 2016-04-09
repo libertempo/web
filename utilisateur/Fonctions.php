@@ -1638,10 +1638,53 @@ class Fonctions
         return $return;
     }
 
+     /**
+     * Module de gestion des demandes de debit d'heure
+     *
+     * @param int $id en cas de modification
+     *
+     * @return void
+     */
     public static function getDemandeCongesHeure($id = NIL_INT)
     {
         $return    = '';
-            $return .= '<script>generateDatePicker();</script>'; 
+
+        /* Génération du datePicker et de ses options */
+        $daysOfWeekDisabled = [];
+            $datesDisabled      = [];
+            if ((false == $_SESSION['config']['dimanche_travail'])
+                && (false == $_SESSION['config']['samedi_travail'])
+            ) {
+                $daysOfWeekDisabled = [0,6];
+            } else {
+                if (false == $_SESSION['config']['dimanche_travail']) {
+                    $daysOfWeekDisabled = [0];
+                }
+                if (false == $_SESSION['config']['samedi_travail']) {
+                    $daysOfWeekDisabled = [6];
+                }
+            }
+
+            if (is_array($_SESSION["tab_j_feries"])) {
+                foreach ($_SESSION["tab_j_feries"] as $date) {
+                    $datesDisabled[] = \App\Helpers\Formatter::dateIso2Fr($date);
+                }
+            }
+
+            if (is_array($_SESSION["tab_j_fermeture"])) {
+                foreach ($_SESSION["tab_j_fermeture"] as $date) {
+                    $datesDisabled[] = \App\Helpers\Formatter::dateIso2Fr($date);
+                }
+            }
+            $startDate = ($_SESSION['config']['interdit_saisie_periode_date_passee']) ? 'd' : '';
+
+            $datePickerOpts = [
+                'daysOfWeekDisabled' => $daysOfWeekDisabled,
+                'datesDisabled'      => $datesDisabled,
+                'startDate'          => $startDate,
+        ];
+        $return .= '<script>generateDatePicker('.$datePickerOpts.');</script>'; 
+d($datePickerOpts);
         $message   = '';
         $errorsLst = [];
         $valueName = '';
@@ -1662,9 +1705,7 @@ class Fonctions
             }
         }
 
-
-
-        if ($id != NIL_INT) {
+        if ($id !== NIL_INT) {
             $return .= '<h1>' . _('user_modif_heure_titre') . '</h1>';
         } else {
             $return .= '<h1>' . _('user_demande_heure_titre') . '</h1>';
@@ -1683,26 +1724,32 @@ class Fonctions
 
         $childTable="";
 
-        if ($id != NIL_INT) {
-            $sql   = 'SELECT * FROM heure_recup WHERE planning_id = ' . $id;
+        if ($id !== NIL_INT) {
+            $sql   = 'SELECT * FROM conges_heure_periode WHERE id_heure = ' . $id;
             $query = \includes\SQL::query($sql);
             $data = $query->fetch_assoc();
-            $valueDeb = $data['debut'];
-            $valueFin = $data['fin'];
-            $childTable .= '<thead><tr><th class="col-md-4">Modification de la demande du </th><th></th></tr></thead>';
-            $childTable .= '<div class="form-group"><label for="new_deb">' . _('divers_date_debut') . '</label><input type="text" class="form-control date" name="new_debut" value="' . $_POST["debut"] . '"></div>';
-        }
+            $heureDeb = gmdate("H:i", $data['debut']);
+            $jour = gmdate("d/m/Y", $data['debut']);
+            $heureFin = gmdate("H:i", $data['fin']);
+            $childTable .= '<div class="form-inline"><div class="form-group"><label for="new_dem_jour">' . _('divers_date_debut') . '</label><input class="form-control date" type="text" value="'.$jour.'" name="new_jour"></div>';
+            $childTable .= '<div class="form-group"><label for="new_heure_deb">Heure de début </label><input class="form-control time" type="text" value="'.$heureDeb.'" name="new_deb_heure"></div>';
+            $childTable .= '<div class="form-group"><label for="new_heure_fin">Heure de fin </label><input class="form-control time" type="text" value="'.$heureFin.'" name="new_fin_heure"></div>';
+            $childTable .= '<input hidden type="text" value="true" name="modif"></div>';
+            $childTable .= '<div class="form-group"><input type="submit" class="btn btn-success" value="' . _('form_modif') . '" /></div>';
+        } else {
 
-        $childTable .= '<div class="form-inline"><div class="form-group"><label for="new_dem_jour">Jour de l\'absence ponctuelle </label><input class="form-control date" type="text" value="'.date("d/m/y").'" name="new_jour"></div>';
-        $childTable .= '<div class="form-group"><label for="new_heure_deb">Heure de début </label><input class="form-control time" type="text" value="" name="new_deb_heure"></div>';
-        $childTable .= '<div class="form-group"><label for="new_heure_fin">Heure de fin </label><input class="form-control time" type="text" value="" name="new_fin_heure"></div>';
-        $childTable .= '</div>';
+            $childTable .= '<div class="form-inline"><div class="form-group"><label for="new_dem_jour">' . _('divers_date_debut') . '</label><input class="form-control date" type="text" value="'.date("d/m/Y").'" name="new_jour"></div>';
+            $childTable .= '<div class="form-group"><label for="new_heure_deb">Heure de début </label><input class="form-control time" type="text" value="" name="new_deb_heure"></div>';
+            $childTable .= '<div class="form-group"><label for="new_heure_fin">Heure de fin </label><input class="form-control time" type="text" value="" name="new_fin_heure"></div>';
+            $childTable .= '</div>';
+            $childTable .= '<div class="form-group"><input type="submit" class="btn btn-success" value="' . _('form_submit') . '" /></div>';
+        }
         $table->addChild($childTable);
         ob_start();
         $table->render();
         $return .= ob_get_clean();
-        $return .= '<hr><input type="submit" class="btn btn-success" value="' . _('form_submit') . '" />';
         $return .='</form>';
+        $return .= \utilisateur\Fonctions::getListPeriodeHeure();
 
         return $return;
     }
@@ -1743,7 +1790,8 @@ class Fonctions
         return empty($Error);
     }
 
-    private static function insertDemandeCongesHeure(array $info, $idDemande)
+
+    private static function insertDemandeCongesHeure(array $info, $idDemande = NIL_INT)
     {
 
         $date = str_replace('/', '-', $info['new_jour']);
@@ -1754,11 +1802,58 @@ class Fonctions
         $user = $_SESSION['userlogin'];
         $sql = \includes\SQL::singleton();
         $toInsert = [];
-        $toInsert[] = '("", ' . $user . ', ' . (int) $timedeb . ', ' . (int) $timefin .', 0, "demande", "debit")';
+        $toInsert[] = '("", "' . $user . '", ' . (int) $timedeb . ', ' . (int) $timefin .', 0, '.\App\Models\HeureRecuperation::STATUS_DEMANDE.', "debit")';
         $req = 'INSERT INTO conges_heure_periode (id_heure, login, debut, fin, time, status, type) VALUES ' . implode(', ', $toInsert);
         $query = $sql->query($req);
 
         return $sql->insert_id;
     }
 
+    private static function getListPeriodeHeure()
+    {
+
+        $return = '<hr><h1>' . _('utilisateur_demande_heure_recuperation') . '</h1>';
+        $session = session_id();
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-hover',
+            'table-responsive',
+            'table-condensed',
+            'table-striped',
+        ]);
+        $childTable = '<thead><tr><th>Jour </th><th style="width:15%"></th>';
+        $childTable .= '<th>Heure de debut</th><th style="width:15%"></th>';
+        $childTable .= '<th>Heure de fin</th><th style="width:15%"></th>';
+        $childTable .= '<th>modifier</th><th style="width:15%"></th>';
+        $childTable .= '<th>annuler</th></tr>';
+        $childTable .= '</thead><tbody>';
+
+        $sql = \includes\SQL::singleton();
+        // a faire : filtrer pour n'avoir que les demandes
+        $req = 'SELECT *
+                FROM conges_heure_periode
+                WHERE login = "' . $_SESSION['userlogin'].'"
+                ORDER by debut DESC';
+        $res = $sql->query($req);
+        if (!$res->num_rows) {
+            $childTable .= '<tr><td colspan="2">'. _('aucun_demande_heure_recuperation') .'</td></tr>';
+        } else {
+            while ($data = $res->fetch_array()) {
+                $childTable .= '<tr><td>' . gmdate("d/m/Y", $data['debut']) . '</td><td style="width:15%"></td>';
+                $childTable .= '<td>' . gmdate("H:i", $data['debut']) . '</td><td style="width:15%"></td>';
+                $childTable .= '<td>' . gmdate("H:i", $data['fin']) . '</td><td style="width:15%"></td>';
+                $childTable .= '<td><a href="user_index.php?onglet=demande_heures&id=' . $data['id_heure'] .
+                '&session=' . $session . '"><i class="fa fa-file-text"></i></a></td><td style="width:15%"></td>';
+                $childTable .= '<td><a href="user_index.php?onglet=demande_heures&id=' . $data['id_heure'] .
+                '&session=' . $session . '"><i class="fa fa-trash"></i></a></td></tr>';
+            }
+        }
+        $childTable .= '</tbody>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
+        return $return;
+    }
 }
