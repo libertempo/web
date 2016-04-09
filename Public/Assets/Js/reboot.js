@@ -126,11 +126,10 @@ var planningController = function (idElement, options, creneaux)
             }
             var debutVal = document.getElementById(this.options['debutId']).value;
             var finVal = document.getElementById(this.options['finId']).value;
-            if (-1 != jourSelectionne && 0 != typePeriodeSelected && '' != debutVal && '' != finVal) {
+            if (this.options['nilInt'] != jourSelectionne && 0 != typePeriodeSelected && '' != debutVal && '' != finVal) {
                 if (this._checkTimeValue(debutVal) || this._checkTimeValue(finVal)) {
                     this._addPeriod(jourSelectionne, typePeriodeSelected, debutVal, finVal);
                     // else heure inconnue
-                    // TODO: reorganisation dynamique de l'ordre
                 }
             }
             // Else option manquante

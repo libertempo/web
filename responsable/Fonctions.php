@@ -2311,9 +2311,15 @@ class Fonctions
      * Encapsule le comportement du module de liste des plannings
      *
      * @return string
+     * @TODO trouver dans quelle condition un planning ne pourrait pas être modifié
      */
     public static function getListePlanningModule()
     {
+        /* Préparation et requêtage */
+        $listPlanningId = \responsable\Fonctions::getListPlanningId();
+        $listIdUsed     = \responsable\Fonctions::getListPlanningUsed($listPlanningId);
+        $listPlanning   = \responsable\Fonctions::getListPlanning($listPlanningId);
+
         $return = '<h1>' . _('resp_affichage_liste_planning_titre') . '</h1>';
         $session = session_id();
         $table = new \App\Libraries\Structure\Table();
@@ -2325,15 +2331,19 @@ class Fonctions
             'table-striped',
         ]);
         $childTable = '<thead><tr><th>Nom</th><th style="width:10%"></th></tr></thead><tbody>';
-        $sql   = 'SELECT * FROM conges_planning ORDER BY planning_id DESC';
-        $query = \includes\SQL::query($sql);
-        if (0 === $query->num_rows) {
+        if (empty($listPlanning)) {
             $childTable .= '<tr><td colspan="2">Aucun résultat</td></tr>';
         } else {
-            while ($data = $query->fetch_array()) {
-                $childTable .= '<tr><td>' . $data['planning_name'] . '</td>';
-                $childTable .= '<td><a href="resp_index.php?onglet=modif_planning&id=' . $data['planning_id'] .
-                '&session=' . $session . '"><i class="fa fa-eye"></i></a></td></tr>';
+            foreach ($listPlanning as $planning) {
+                $childTable .= '<tr><td>' . $planning['planning_name'] . '</td>';
+                $childTable .= '<td><a  title="' . _('form_modif') . '" href="resp_index.php?onglet=modif_planning&id=' . $planning['planning_id'] .
+                '&session=' . $session . '"><i class="fa fa-pencil"></i></a>&nbsp;&nbsp;';
+                if (in_array($planning['planning_id'], $listIdUsed)) {
+                    $childTable .= '<span title="' . _('planning_used') . '"><i class="fa fa-times-circle"></i></span>';
+                } else {
+                    $childTable .= '<a href="" title="' . _('form_supprim') . '"><i class="fa fa-times-circle"></i></a>';
+                }
+                $childTable .= '</td></tr>';
             }
         }
         $childTable .= '</tbody>';
@@ -2343,6 +2353,70 @@ class Fonctions
         $return .= ob_get_clean();
         return $return;
     }
+
+    /**
+     * Retourne la liste des id de planning
+     *
+     * @return array
+     */
+    private static function getListPlanningId()
+    {
+        $ids = [];
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT planning_id AS id
+                FROM conges_planning';
+        $res = $sql->query($req);
+        while ($data = $res->fetch_array()) {
+            $ids[] = (int) $data['id'];
+        }
+
+        return $ids;
+    }
+
+    /**
+     * Retourne la liste des id de planning utilisés
+     *
+     * @param array $listId
+     *
+     * @return array
+     */
+    private static function getListPlanningUsed(array $listId)
+    {
+        $ids = [];
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT planning_id AS id
+                FROM conges_users
+                WHERE planning_id IN (' . implode(',', $listId) . ')';
+        $res = $sql->query($req);
+        while ($data = $res->fetch_array()) {
+            $ids[] = (int) $data['id'];
+        }
+
+        return $ids;
+    }
+
+    /**
+     * Retourne la liste des plannings
+     *
+     * @param array $listId
+     *
+     * @return array
+     */
+    private static function getListPlanning(array $listId)
+    {
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT *
+                FROM conges_planning
+                WHERE planning_id IN (' . implode(',', $listId) . ')
+                ORDER BY planning_id DESC';
+
+        return $sql->query($req)->fetch_all(MYSQLI_ASSOC);
+    }
+
+    // TODO timepicker
+    // TODO toggle semaine commune / impaire-paire
+    // TODO mise en trad
+    // TODO erreur à la soumission des créneaux
 
     /**
      * Poste un nouveau planning
@@ -2359,7 +2433,7 @@ class Fonctions
         }
 
         /* On fait la distinction entre les verbes post / put (début REST) */
-        if (!empty($post['planning_id'])) {
+        if (!empty($post['planning_id']) && 0 < (int) $post['planning_id']) {
             return \responsable\Fonctions::putPlanning($post['planning_id'], $post, $errors);
         }
 
@@ -2396,6 +2470,7 @@ class Fonctions
         $req   = 'INSERT INTO conges_planning (planning_id, planning_name)
                   VALUES ("", "' . htmlspecialchars($sql->quote($planning['planning_name'])) . '")';
         $query = $sql->query($req);
+
         return $sql->insert_id;
     }
 
@@ -2445,7 +2520,7 @@ class Fonctions
                 WHERE planning_id = ' . $id;
         $query = $sql->query($req);
 
-        return (bool) $sql->affected_rows ? $id : NIL_INT;
+        return $id;
     }
 
     /**
@@ -2488,18 +2563,18 @@ class Fonctions
                 $debut = $creneauxJour[\App\Models\Planning\Creneau::TYPE_HEURE_DEBUT];
                 $fin   = $creneauxJour[\App\Models\Planning\Creneau::TYPE_HEURE_FIN];
                 if (-1 !== strnatcmp($debut, $fin)) {
-                    $localError[] = 'Date de début supérieure à date de fin';
+                    $localError['Créneaux de travail'][] = 'Date de début supérieure à date de fin';
                 }
                 if (!preg_match($pattern, $debut) || !preg_match($pattern, $fin))  {
-                    $localError[] = 'Heure non reconnue';
+                    $localError['Créneaux de travail'][] = 'Heure non reconnue';
                 }
-                if (!empty($precedentsCreneauxJours) && -1 !== strnatcmp($fin, $precedentsCreneauxJours[\App\Models\Planning\Creneau::TYPE_HEURE_DEBUT])) {
-                    $localError[] = 'Créneaux consécutifs';
+                if (!empty($precedentsCreneauxJours) && 1 !== strnatcmp($debut, $precedentsCreneauxJours[\App\Models\Planning\Creneau::TYPE_HEURE_FIN])) {
+                    $localError['Créneaux de travail'][] = 'Créneaux consécutifs';
                 }
                 $precedentsCreneauxJours = $creneauxJour;
             }
         }
-        $errors['Créneaux de travail'] = $localError;
+        $errors = array_merge($errors, $localError);
 
         return empty($localError);
     }
@@ -2567,13 +2642,14 @@ class Fonctions
             } else {
                 $errors = '';
                 if (!empty($errorsLst)) {
+                    d($errorsLst);
                     foreach ($errorsLst as $key => $value) {
                         if (is_array($value)) {
                             $value = implode(' / ', $value);
                         }
                         $errors .= '<li>' . $key . ' : ' . $value . '</li>';
                     }
-                    $message = '<div>Des erreurs sont apparues, veuillez recommencer</div><ul>' . $errors . '</ul>';
+                    $message = '<div>Des erreurs sont apparues, veuillez recommencer :</div><ul>' . $errors . '</ul>';
                 }
                 $valueName = $_POST['planning_name'];
             }
@@ -2680,6 +2756,7 @@ class Fonctions
             'typePeriodeMatin'   => \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN,
             'typeHeureDebut'     => \App\Models\Planning\Creneau::TYPE_HEURE_DEBUT,
             'typeHeureFin'       => \App\Models\Planning\Creneau::TYPE_HEURE_FIN,
+            'nilInt'             => NIL_INT
         ];
         $childTable .= '<script type="text/javascript">
         new planningController("' . $linkId . '", ' . json_encode($options) . ', ' . json_encode($creneauxGroupes) . ').init();
@@ -2731,7 +2808,7 @@ class Fonctions
         foreach ($list as $jourId => $periodes) {
             foreach ($periodes as $typeCreneau => $creneaux) {
                 foreach ($creneaux as $creneauxJour) {
-                    $grouped[$jourId][$typeCreneau] = [
+                    $grouped[$jourId][$typeCreneau][] = [
                         \App\Models\Planning\Creneau::TYPE_HEURE_DEBUT => $creneauxJour[\App\Models\Planning\Creneau::TYPE_HEURE_DEBUT],
                         \App\Models\Planning\Creneau::TYPE_HEURE_FIN => $creneauxJour[\App\Models\Planning\Creneau::TYPE_HEURE_FIN]
                     ];
@@ -2758,7 +2835,7 @@ class Fonctions
             $debut       = date('H\:i', $creneau['debut']);
             $fin         = date('H\:i', $creneau['fin']);
 
-            $grouped[$jourId][$typePeriode] = [
+            $grouped[$jourId][$typePeriode][] = [
                 \App\Models\Planning\Creneau::TYPE_HEURE_DEBUT => $debut,
                 \App\Models\Planning\Creneau::TYPE_HEURE_FIN   => $fin,
             ];
