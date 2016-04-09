@@ -101,6 +101,32 @@ function generateDatePicker(opts)
 }
 
 /**
+ * Génère le timePicker sur un champ, paramétré par des options précises
+ *
+ * @param string elementId L'id unique du champ sur lequel on applique le timePicker
+ * @param object opts
+ */
+function generateTimePicker(elementId, opts)
+{
+    var defaultOpts = {
+        minuteStep             : 15,
+        showInputs             : false,
+        showMeridian           : false,
+        showWidgetOnAddonClick : false,
+    };
+    var toApply = defaultOpts;
+
+    if (undefined !== opts) {
+        /* On ne peut pas écraser une option qui n'existe en défaut */
+        for (var i in defaultOpts) {
+            toApply[i] = (undefined !== opts[i]) ? opts[i] : defaultOpts[i];
+        }
+    }
+
+    $('#' + elementId).timepicker(toApply);
+}
+
+/**
  * Objet de manipulation du planning
  */
 var planningController = function (idElement, options, creneaux)

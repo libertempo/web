@@ -2373,7 +2373,6 @@ enctype="application/x-www-form-urlencoded"><a  title="' . _('form_modif') . '" 
     }
 
     // TODO association à un utilisateur
-    // TODO timepicker
     // TODO toggle semaine commune / impaire-paire
     // TODO mise en trad
     // TODO erreur à la soumission des créneaux dans le js
@@ -2498,6 +2497,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $childTable .= '&nbsp;&nbsp;<div class="form-inline col-xs-3"><label class="radio-inline"><input type="radio" name="periode" value="' . \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN . '">Matin</label>';
         $childTable .= '<label class="radio-inline"><input type="radio" name="periode" value="' . \App\Models\Planning\Creneau::TYPE_PERIODE_APRES_MIDI . '">Après-midi</label>';
         $childTable .= '&nbsp;&nbsp; <button type="button" class="btn btn-default btn-sm" id="' .  $linkId . '"><i class="fa fa-plus link" ></i></button></div></td></tr>';
+        $childTable .= '<script>generateTimePicker("' . $debutId . '");generateTimePicker("' . $finId . '");</script>';
         foreach ($jours as $id => $jour) {
             $childTable .= '<tr data-id-jour=' . $id . '><td name="nom">' . $jour . '</td><td class="creneaux"></td></tr>';
         }
