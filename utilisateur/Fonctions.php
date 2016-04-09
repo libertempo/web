@@ -1651,37 +1651,37 @@ class Fonctions
 
         /* Génération du datePicker et de ses options */
         $daysOfWeekDisabled = [];
-            $datesDisabled      = [];
-            if ((false == $_SESSION['config']['dimanche_travail'])
-                && (false == $_SESSION['config']['samedi_travail'])
-            ) {
-                $daysOfWeekDisabled = [0,6];
-            } else {
-                if (false == $_SESSION['config']['dimanche_travail']) {
-                    $daysOfWeekDisabled = [0];
-                }
-                if (false == $_SESSION['config']['samedi_travail']) {
-                    $daysOfWeekDisabled = [6];
-                }
+        $datesDisabled      = [];
+        if ((false == $_SESSION['config']['dimanche_travail'])
+            && (false == $_SESSION['config']['samedi_travail'])
+        ) {
+            $daysOfWeekDisabled = [0,6];
+        } else {
+            if (false == $_SESSION['config']['dimanche_travail']) {
+                $daysOfWeekDisabled = [0];
             }
-
-            if (is_array($_SESSION["tab_j_feries"])) {
-                foreach ($_SESSION["tab_j_feries"] as $date) {
-                    $datesDisabled[] = \App\Helpers\Formatter::dateIso2Fr($date);
-                }
+            if (false == $_SESSION['config']['samedi_travail']) {
+                $daysOfWeekDisabled = [6];
             }
+        }
 
-            if (is_array($_SESSION["tab_j_fermeture"])) {
-                foreach ($_SESSION["tab_j_fermeture"] as $date) {
-                    $datesDisabled[] = \App\Helpers\Formatter::dateIso2Fr($date);
-                }
+        if (is_array($_SESSION["tab_j_feries"])) {
+            foreach ($_SESSION["tab_j_feries"] as $date) {
+                $datesDisabled[] = \App\Helpers\Formatter::dateIso2Fr($date);
             }
-            $startDate = ($_SESSION['config']['interdit_saisie_periode_date_passee']) ? 'd' : '';
+        }
 
-            $datePickerOpts = [
-                'daysOfWeekDisabled' => $daysOfWeekDisabled,
-                'datesDisabled'      => $datesDisabled,
-                'startDate'          => $startDate,
+        if (is_array($_SESSION["tab_j_fermeture"])) {
+            foreach ($_SESSION["tab_j_fermeture"] as $date) {
+                $datesDisabled[] = \App\Helpers\Formatter::dateIso2Fr($date);
+            }
+        }
+        $startDate = ($_SESSION['config']['interdit_saisie_periode_date_passee']) ? 'd' : '';
+
+        $datePickerOpts = [
+            'daysOfWeekDisabled' => $daysOfWeekDisabled,
+            'datesDisabled'      => $datesDisabled,
+            'startDate'          => $startDate,
         ];
         $return .= '<script>generateDatePicker('.$datePickerOpts.');</script>'; 
 d($datePickerOpts);
@@ -1728,9 +1728,9 @@ d($datePickerOpts);
             $sql   = 'SELECT * FROM conges_heure_periode WHERE id_heure = ' . $id;
             $query = \includes\SQL::query($sql);
             $data = $query->fetch_assoc();
-            $heureDeb = gmdate("H:i", $data['debut']);
-            $jour = gmdate("d/m/Y", $data['debut']);
-            $heureFin = gmdate("H:i", $data['fin']);
+            $heureDeb = date("H:i", $data['debut']);
+            $jour = date("d/m/Y", $data['debut']);
+            $heureFin = date("H:i", $data['fin']);
             $childTable .= '<div class="form-inline"><div class="form-group"><label for="new_dem_jour">' . _('divers_date_debut') . '</label><input class="form-control date" type="text" value="'.$jour.'" name="new_jour"></div>';
             $childTable .= '<div class="form-group"><label for="new_heure_deb">Heure de début </label><input class="form-control time" type="text" value="'.$heureDeb.'" name="new_deb_heure"></div>';
             $childTable .= '<div class="form-group"><label for="new_heure_fin">Heure de fin </label><input class="form-control time" type="text" value="'.$heureFin.'" name="new_fin_heure"></div>';
@@ -1759,9 +1759,11 @@ d($datePickerOpts);
     {
         if (!\utilisateur\Fonctions::VerifNewDemandeHeures($post['new_jour'], $post['new_deb_heure'], $post['new_deb_heure'], $errorsLst)) {
             return NIL_INT;
+        } elseif (NIL_INT !== $idDemande) {
+            return \utilisateur\Fonctions::updateDemandeCongesHeure($post, $idDemande);
         }
 
-        return \utilisateur\Fonctions::insertDemandeCongesHeure($post, $idDemande);
+        return \utilisateur\Fonctions::insertDemandeCongesHeure($post);
     }
 
 
@@ -1791,10 +1793,10 @@ d($datePickerOpts);
     }
 
 
-    private static function insertDemandeCongesHeure(array $info, $idDemande = NIL_INT)
+    private static function insertDemandeCongesHeure(array $info)
     {
 
-        $date = str_replace('/', '-', $info['new_jour']);
+        $date = \App\Helpers\Formatter::dateFr2Iso($info['new_jour']);
         $deb = $date." ".$info['new_deb_heure'];
         $fin = $date." ".$info['new_fin_heure'];
         $timedeb = strtotime($deb);
@@ -1804,6 +1806,28 @@ d($datePickerOpts);
         $toInsert = [];
         $toInsert[] = '("", "' . $user . '", ' . (int) $timedeb . ', ' . (int) $timefin .', 0, '.\App\Models\HeureRecuperation::STATUS_DEMANDE.', "debit")';
         $req = 'INSERT INTO conges_heure_periode (id_heure, login, debut, fin, time, status, type) VALUES ' . implode(', ', $toInsert);
+        $query = $sql->query($req);
+
+        return $sql->insert_id;
+    }
+
+    private static function updateDemandeCongesHeure(array $info, $id)
+    {
+
+        $date = \App\Helpers\Formatter::dateFr2Iso($info['new_jour']);
+        $deb = $date." ".$info['new_deb_heure'];
+        $fin = $date." ".$info['new_fin_heure'];
+        $timedeb = strtotime($deb);
+        $timefin = strtotime($fin);
+        $user = $_SESSION['userlogin'];
+        $sql = \includes\SQL::singleton();
+        $toInsert = [];
+        $req = 'UPDATE conges_heure_periode 
+                SET debut = '.$timedeb.', 
+                    fin = '.$timefin.', 
+                    time = 0
+                WHERE id_heure = '.$id.' 
+                AND login = "'.$_SESSION['userlogin'].'"';
         $query = $sql->query($req);
 
         return $sql->insert_id;
@@ -1840,9 +1864,9 @@ d($datePickerOpts);
             $childTable .= '<tr><td colspan="2">'. _('aucun_demande_heure_recuperation') .'</td></tr>';
         } else {
             while ($data = $res->fetch_array()) {
-                $childTable .= '<tr><td>' . gmdate("d/m/Y", $data['debut']) . '</td><td style="width:15%"></td>';
-                $childTable .= '<td>' . gmdate("H:i", $data['debut']) . '</td><td style="width:15%"></td>';
-                $childTable .= '<td>' . gmdate("H:i", $data['fin']) . '</td><td style="width:15%"></td>';
+                $childTable .= '<tr><td>' . date("d/m/Y", $data['debut']) . '</td><td style="width:15%"></td>';
+                $childTable .= '<td>' . date("H:i", $data['debut']) . '</td><td style="width:15%"></td>';
+                $childTable .= '<td>' . date("H:i", $data['fin']) . '</td><td style="width:15%"></td>';
                 $childTable .= '<td><a href="user_index.php?onglet=demande_heures&id=' . $data['id_heure'] .
                 '&session=' . $session . '"><i class="fa fa-file-text"></i></a></td><td style="width:15%"></td>';
                 $childTable .= '<td><a href="user_index.php?onglet=demande_heures&id=' . $data['id_heure'] .
