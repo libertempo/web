@@ -2306,4 +2306,218 @@ class Fonctions
         }
         return $return;
     }
+
+    /**
+     * Encapsule le comportement du module de liste des plannings
+     *
+     * @return string
+     * @TODO trouver dans quelle condition un planning ne pourrait pas être modifié
+     */
+    public static function getListePlanningModule()
+    {
+        $message   = '';
+        $errorsLst = [];
+        if (!empty($_POST)) {
+            if (0 >= (int) \App\ProtoControllers\Planning::postPlanning($_POST, $errorsLst)) {
+                $errors = '';
+                if (!empty($errorsLst)) {
+                    foreach ($errorsLst as $value) {
+                        $errors .= '<li>' . $value . '</li>';
+                    }
+                    $message = '<div class="alert alert-danger">' . _('erreur_recommencer') . ' :<ul>' . $errors . '</ul></div>';
+                }
+            } else {
+                redirect(ROOT_PATH . 'responsable/resp_index.php?session='. session_id() . '&onglet=liste_planning', false);
+            }
+        }
+
+        /* Préparation et requêtage */
+        $listPlanningId = \App\ProtoControllers\Planning::getListPlanningId();
+        $listIdUsed     = \App\ProtoControllers\Planning::getListPlanningUsed($listPlanningId);
+        $listPlanning   = \App\ProtoControllers\Planning::getListPlanning($listPlanningId);
+
+        $return = '<h1>' . _('resp_affichage_liste_planning_titre') . '</h1>';
+        $return .= $message;
+        $session = session_id();
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-hover',
+            'table-responsive',
+            'table-condensed',
+            'table-striped',
+        ]);
+        $childTable = '<thead><tr><th>Nom</th><th style="width:10%"></th></tr></thead><tbody>';
+        if (empty($listPlanning)) {
+            $childTable .= '<tr><td colspan="2">' . _('aucun_resultat') . '</td></tr>';
+        } else {
+            foreach ($listPlanning as $planning) {
+                $childTable .= '<tr><td>' . $planning['planning_name'] . '</td>';
+                $childTable .= '<td><form action="" method="post" accept-charset="UTF-8"
+enctype="application/x-www-form-urlencoded"><a  title="' . _('form_modif') . '" href="resp_index.php?onglet=modif_planning&id=' . $planning['planning_id'] .
+                '&session=' . $session . '"><i class="fa fa-pencil"></i></a>&nbsp;&nbsp;';
+                if (in_array($planning['planning_id'], $listIdUsed)) {
+                    $childTable .= '<button title="' . _('planning_used') . '" type="button" class="btn btn-link disabled"><i class="fa fa-times-circle"></i></button>';
+                } else {
+                    $childTable .= '<input type="hidden" name="planning_id" value="' . $planning['planning_id'] . '" /><input type="hidden" name="_METHOD" value="DELETE" /><button type="submit" class="btn btn-link" title="' . _('form_supprim') . '"><i class="fa fa-times-circle"></i></button>';
+                }
+                $childTable .= '</form></td></tr>';
+            }
+        }
+        $childTable .= '</tbody>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
+        return $return;
+    }
+
+    /**
+     * Encapsule le comportement du module d'ajout / modification de planning
+     *
+     * @return string
+     */
+    public static function getFormPlanningModule($id = NIL_INT)
+    {
+        $return    = '';
+        $message   = '';
+        $errorsLst = [];
+        $valueName = '';
+        if (!empty($_POST)) {
+            if (0 < (int) \App\ProtoControllers\Planning::postPlanning($_POST, $errorsLst)) {
+                redirect(ROOT_PATH . 'responsable/resp_index.php?session='. session_id() . '&onglet=liste_planning', false);
+            } else {
+                $errors = '';
+                if (!empty($errorsLst)) {
+                    foreach ($errorsLst as $key => $value) {
+                        if (is_array($value)) {
+                            $value = implode(' / ', $value);
+                        }
+                        $errors .= '<li>' . $key . ' : ' . $value . '</li>';
+                    }
+                    $message = '<div class="alert alert-danger">' . _('erreur_recommencer') . ' :<ul>' . $errors . '</ul></div>';
+                }
+                $valueName = $_POST['planning_name'];
+            }
+        }
+
+        if (NIL_INT !== $id) {
+            $return .= '<h1>' . _('resp_modif_planning_titre') . '</h1>';
+        } else {
+            $return .= '<h1>' . _('resp_ajout_planning_titre') . '</h1>';
+        }
+        $return .= $message;
+
+        $return .= '<form action="" method="post" accept-charset="UTF-8"
+enctype="application/x-www-form-urlencoded" class="form-group">';
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-hover',
+            'table-responsive',
+            'table-striped',
+            'table-condensed'
+        ]);
+        $childTable = '<thead><tr><th class="col-md-4">Nom</th><th></th></tr></thead><tbody>';
+        if (NIL_INT !== $id) {
+            $sql   = 'SELECT * FROM conges_planning WHERE planning_id = ' . $id;
+            $query = \includes\SQL::query($sql);
+            $data = $query->fetch_assoc();
+            $valueName = $data['planning_name'];
+            $childTable .= '<tr><td>' . $valueName . '<input type="hidden" name="planning_id" value="' . $id . '" /><input type="hidden" name="_METHOD" value="PUT" /></td></tr>';
+        }
+        $childTable .= '<tr><td><input type="text" name="planning_name" value="' . $valueName . '" class="form-control" required /></td><td></td></tr></tbody>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
+        $return .= '<h3>Créneaux</h3>';
+        $return .= '<h4>Semaine impaire</h4>';
+        $return .= \responsable\Fonctions::getFormPlanningTable(\App\Models\Planning\Creneau::TYPE_SEMAINE_IMPAIRE, $id, $_POST);
+        $return .= '<h4>Semaine paire</h4>';
+        $return .= \responsable\Fonctions::getFormPlanningTable(\App\Models\Planning\Creneau::TYPE_SEMAINE_PAIRE, $id, $_POST);
+        $return .= '<hr><input type="submit" class="btn btn-success" value="' . _('form_submit') . '" />';
+        $return .='</form>';
+
+        return $return;
+    }
+
+    /**
+     * Retourne la structure d'une table de créneaux de planning
+     *
+     * @param int $typeSemaine
+     * @param int $idPlanning
+     * @param array $postPlanning
+     *
+     * @return string
+     */
+    private static function getFormPlanningTable($typeSemaine, $idPlanning = NIL_INT, array $postPlanning)
+    {
+        /* Recupération des creneaux (postés ou existants) pour le JS */
+        $creneauxGroupes = \App\ProtoControllers\Creneau::getCreneauxGroupes($postPlanning, $idPlanning, $typeSemaine);
+
+        $jours = [
+            // ISO-8601
+            1 => 'Lundi',
+            2 => 'Mardi',
+            3 => 'Mercredi',
+            4 => 'Jeudi',
+            5 => 'Vendredi',
+            6 => 'Samedi',
+            7 => 'Dimanche',
+        ];
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-hover',
+            'table-responsive',
+            'table-striped',
+            'table-condensed'
+        ]);
+        $linkId       = uniqid();
+        $selectJourId = uniqid();
+        $debutId      = uniqid();
+        $finId        = uniqid();
+        $helperId     = uniqid();
+        $childTable = '<thead><tr><th width="20%">Jour</th><th>' . _('creneaux_travail') . '</th><tr></thead><tbody>';
+        $childTable .= '<tr><td><select class="form-control" id="' . $selectJourId . '"><option value="' . NIL_INT . '"></option>';
+
+        foreach ($jours as $id => $jour) {
+            $childTable .= '<option value="' . $id . '">' . $jour . '</option>';
+        }
+
+        $childTable .= '</select></td>';
+        $childTable .= '<td><div class="form-inline col-xs-3"><input type="text" id="' . $debutId . '" class="form-control" style="width:45%" />&nbsp;<i class="fa fa-caret-right"></i>&nbsp;<input type="text" id="' . $finId . '" class="form-control" style="width:45%" size="8" /></div>';
+        $childTable .= '&nbsp;&nbsp;<div class="form-inline col-xs-3"><label class="radio-inline"><input type="radio" name="periode" value="' . \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN . '">Matin</label>';
+        $childTable .= '<label class="radio-inline"><input type="radio" name="periode" value="' . \App\Models\Planning\Creneau::TYPE_PERIODE_APRES_MIDI . '">Après-midi</label>';
+        $childTable .= '&nbsp;&nbsp; <button type="button" class="btn btn-default btn-sm" id="' .  $linkId . '"><i class="fa fa-plus link" ></i></button></div>';
+        $childTable .= '<span class="text-danger" id="' . $helperId . '"></span></td></tr>';
+        $childTable .= '<script>generateTimePicker("' . $debutId . '");generateTimePicker("' . $finId . '");</script>';
+        foreach ($jours as $id => $jour) {
+            $childTable .= '<tr data-id-jour=' . $id . '><td name="nom">' . $jour . '</td><td class="creneaux"></td></tr>';
+        }
+        $childTable .= '</tbody>';
+        $options = [
+            'selectJourId'          => $selectJourId,
+            'tableId'               => $table->getId(),
+            'debutId'               => $debutId,
+            'finId'                 => $finId,
+            'typeSemaine'           => $typeSemaine,
+            'typePeriodeMatin'      => \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN,
+            'typeHeureDebut'        => \App\Models\Planning\Creneau::TYPE_HEURE_DEBUT,
+            'typeHeureFin'          => \App\Models\Planning\Creneau::TYPE_HEURE_FIN,
+            'helperId'              => $helperId,
+            'nilInt'                => NIL_INT,
+            'erreurFormatHeure'     => _('format_heure_incorrect'),
+            'erreurOptionManquante' => _('option_manquante'),
+        ];
+        $childTable .= '<script type="text/javascript">
+        new planningController("' . $linkId . '", ' . json_encode($options) . ', ' . json_encode($creneauxGroupes) . ').init();
+        </script>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+
+        return ob_get_clean();
+    }
 }

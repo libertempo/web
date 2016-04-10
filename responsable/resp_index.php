@@ -63,10 +63,13 @@ verif_droits_user($session, "is_resp");
     if( $_SESSION['config']['resp_ajoute_conges'] )
         $onglets['ajout_conges'] = _('resp_ajout_conges_titre');
 
+    $onglets['liste_planning'] = _('resp_liste_planning');
+    $onglets['ajout_planning'] = _('resp_ajout_planning');
+
     if (false)
         $onglets['cloture_exercice'] = _('button_cloture');
 
-    if ( !isset($onglets[ $onglet ]) && !in_array($onglet, array('traite_user')))
+    if ( !isset($onglets[ $onglet ]) && !in_array($onglet, array('traite_user', 'modif_planning')))
         $onglet = 'page_principale';
 
     /*********************************/
@@ -113,4 +116,3 @@ verif_droits_user($session, "is_resp");
 
     bottom();
     exit;
-

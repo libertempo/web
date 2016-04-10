@@ -16,7 +16,6 @@ class Formatter extends \Tests\Units\TestUnit
      * Test de la transformation d'une date Fr -> ISO avec une date mal formée
      *
      * @return void
-     * @access public
      * @since 1.9
      */
     public function testDateFr2IsoBadFormat()
@@ -32,7 +31,6 @@ class Formatter extends \Tests\Units\TestUnit
      * Test de la transformation d'une date Fr -> ISO avec une date bien formée
      *
      * @return void
-     * @access public
      * @since 21.9
      */
     public function testDateFr2IsoWithoutError()
@@ -47,7 +45,6 @@ class Formatter extends \Tests\Units\TestUnit
     /**
      * Test de la transformation d'une date ISO -> Fr avec une date mal formée
      *
-     * @access public
      * @return void
      * @since 1.9
      */
@@ -74,5 +71,57 @@ class Formatter extends \Tests\Units\TestUnit
         $return = _Formatter::dateIso2Fr($date);
 
         $this->string($return)->isIdenticalTo('22/33/5555');
+    }
+
+    /**
+     * Test de la transformation d'une heure en un timestamp avec du texte
+     *
+     * @return void
+     * @since 1.9
+     */
+    public function testHour2TimeWithString()
+    {
+        $this->hour2TimeBadFormat('test');
+    }
+
+    /**
+     * Test de la transformation d'une heure en un timestamp avec une heure aberrante
+     *
+     * @return void
+     * @since 1.9
+     */
+    public function testHour2TimeOutOfBounds()
+    {
+        $this->hour2TimeBadFormat('88:88');
+    }
+
+    /**
+     * Test de la transformation d'une heure en un timestamp avec une heure mal formée
+     *
+     * @param string $string
+     *
+     * @return void
+     * @since 1.9
+     */
+    private function hour2TimeBadFormat($string)
+    {
+        $this->exception(function () use ($string) {
+            _Formatter::hour2Time($string);
+        })->isInstanceOf('\Exception');
+    }
+
+    /**
+     * Test de la transformation d'une heure bien formée en un timestamp
+     *
+     * @return void
+     * @since 1.9
+     */
+    public function testHour2TimeWithoutError()
+    {
+        $string = '12:59';
+
+        $time = _Formatter::hour2Time($string);
+
+        $this->string(date('d-m-Y H\:i', $time))->isIdenticalTo('01-01-1970 12:59');
     }
 }
