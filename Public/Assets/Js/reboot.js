@@ -113,6 +113,7 @@ function generateTimePicker(elementId, opts)
         showInputs             : false,
         showMeridian           : false,
         showWidgetOnAddonClick : false,
+        defaultTime            : false,
     };
     var toApply = defaultOpts;
 
@@ -263,9 +264,6 @@ var planningController = function (idElement, options, creneaux)
      */
     this._getVisiblePeriod = function (jourSelectionne, typePeriodeSelected, debutVal, finVal) {
         var span = document.createElement('span');
-        /* Positionnement des datasets pour la réorganisation dynamique */
-        span.dataset.heures = debutVal + '-' + finVal;
-
         var iBaseTag = document.createElement('i');
         var iTo = iBaseTag.cloneNode(false);
         var buttonTag = document.createElement('button');
@@ -286,6 +284,15 @@ var planningController = function (idElement, options, creneaux)
         buttonTag.appendChild(iMinus);
         span.appendChild(buttonTag);
         span.appendChild(this._getHiddenFieldPeriod(jourSelectionne, typePeriodeSelected, debutVal, finVal));
+        /* Positionnement des datasets pour la réorganisation dynamique */
+        var patternHour = new RegExp('^[0-9]:[0-5][0-9]$');
+        if (patternHour.test(debutVal)) {
+            debutVal = '0' + debutVal;
+        }
+        if (patternHour.test(finVal)) {
+            finVal = '0' + finVal;
+        }
+        span.dataset.heures = debutVal + '-' + finVal;
 
         return span;
     }

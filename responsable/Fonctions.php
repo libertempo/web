@@ -2372,13 +2372,6 @@ enctype="application/x-www-form-urlencoded"><a  title="' . _('form_modif') . '" 
         return $return;
     }
 
-    // TODO association à un utilisateur
-    // TODO toggle semaine commune / impaire-paire
-    // TODO mise en trad
-    // TODO requetes create table et ajout user dans install et upgrade from
-    // TODO vérif si la session a bien le droit de faire ce qu'elle cherche à faire
-    // TODO format trad pour les jour et matin / après midi ?
-
     /**
      * Encapsule le comportement du module d'ajout / modification de planning
      *
