@@ -154,15 +154,36 @@ var planningController = function (idElement, options, creneaux)
             var finVal = document.getElementById(this.options['finId']).value;
             if (this.options['nilInt'] != jourSelectionne && 0 != typePeriodeSelected && '' != debutVal && '' != finVal) {
                 if (this._checkTimeValue(debutVal) || this._checkTimeValue(finVal)) {
+                    this._emptyHelper();
                     this._addPeriod(jourSelectionne, typePeriodeSelected, debutVal, finVal);
-                    // else heure inconnue
+                } else {
+                    this._fillHelper(this.options['erreurFormatHeure']);
                 }
+            } else {
+                this._fillHelper(this.options['erreurOptionManquante']);
             }
-            // Else option manquante
         }.bind(this));
 
-        /* Remplissage des valeurs prééxistantes */
+        /* Remplissage des valeurs préexistantes */
         this._addPeriods(creneaux);
+    }
+
+    /**
+     * Vide le helper
+     */
+    this._emptyHelper = function ()
+    {
+        document.getElementById(this.options['helperId']).innerHTML = '';
+    }
+
+    /**
+     * Remplis le helper avec le text fourni
+     *
+     * @param string text
+     */
+    this._fillHelper = function (text)
+    {
+        document.getElementById(this.options['helperId']).innerHTML = text;
     }
 
     /**
@@ -175,7 +196,7 @@ var planningController = function (idElement, options, creneaux)
     this._checkTimeValue = function (timeValue)
     {
         timeValue   = timeValue.trim();
-        var pattern = new RegExp("^(([0-1][0-9])|(2[0-3])):[0-5]|0-9]");
+        var pattern = new RegExp("^(([01]?[0-9])|(2[0-3])):[0-5][0-9]$");
 
         return pattern.test(timeValue);
     }

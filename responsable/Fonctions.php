@@ -2324,7 +2324,7 @@ class Fonctions
                     foreach ($errorsLst as $value) {
                         $errors .= '<li>' . $value . '</li>';
                     }
-                    $message = '<div>Des erreurs sont apparues, veuillez recommencer :</div><ul>' . $errors . '</ul>';
+                    $message = '<div class="alert alert-danger">' . _('erreur_recommencer') . ' :<ul>' . $errors . '</ul></div>';
                 }
             } else {
                 redirect(ROOT_PATH . 'responsable/resp_index.php?session='. session_id() . '&onglet=liste_planning', false);
@@ -2349,7 +2349,7 @@ class Fonctions
         ]);
         $childTable = '<thead><tr><th>Nom</th><th style="width:10%"></th></tr></thead><tbody>';
         if (empty($listPlanning)) {
-            $childTable .= '<tr><td colspan="2">Aucun résultat</td></tr>';
+            $childTable .= '<tr><td colspan="2">' . _('aucun_resultat') . '</td></tr>';
         } else {
             foreach ($listPlanning as $planning) {
                 $childTable .= '<tr><td>' . $planning['planning_name'] . '</td>';
@@ -2375,9 +2375,9 @@ enctype="application/x-www-form-urlencoded"><a  title="' . _('form_modif') . '" 
     // TODO association à un utilisateur
     // TODO toggle semaine commune / impaire-paire
     // TODO mise en trad
-    // TODO erreur à la soumission des créneaux dans le js
     // TODO requetes create table et ajout user dans install et upgrade from
     // TODO vérif si la session a bien le droit de faire ce qu'elle cherche à faire
+    // TODO format trad pour les jour et matin / après midi ?
 
     /**
      * Encapsule le comportement du module d'ajout / modification de planning
@@ -2402,7 +2402,7 @@ enctype="application/x-www-form-urlencoded"><a  title="' . _('form_modif') . '" 
                         }
                         $errors .= '<li>' . $key . ' : ' . $value . '</li>';
                     }
-                    $message = '<div>Des erreurs sont apparues, veuillez recommencer :</div><ul>' . $errors . '</ul>';
+                    $message = '<div class="alert alert-danger">' . _('erreur_recommencer') . ' :<ul>' . $errors . '</ul></div>';
                 }
                 $valueName = $_POST['planning_name'];
             }
@@ -2485,7 +2485,8 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $selectJourId = uniqid();
         $debutId      = uniqid();
         $finId        = uniqid();
-        $childTable = '<thead><tr><th width="20%">Jour</th><th>Créneaux de travail</th><tr></thead><tbody>';
+        $helperId     = uniqid();
+        $childTable = '<thead><tr><th width="20%">Jour</th><th>' . _('creneaux_travail') . '</th><tr></thead><tbody>';
         $childTable .= '<tr><td><select class="form-control" id="' . $selectJourId . '"><option value="' . NIL_INT . '"></option>';
 
         foreach ($jours as $id => $jour) {
@@ -2496,22 +2497,26 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $childTable .= '<td><div class="form-inline col-xs-3"><input type="text" id="' . $debutId . '" class="form-control" style="width:45%" />&nbsp;<i class="fa fa-caret-right"></i>&nbsp;<input type="text" id="' . $finId . '" class="form-control" style="width:45%" size="8" /></div>';
         $childTable .= '&nbsp;&nbsp;<div class="form-inline col-xs-3"><label class="radio-inline"><input type="radio" name="periode" value="' . \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN . '">Matin</label>';
         $childTable .= '<label class="radio-inline"><input type="radio" name="periode" value="' . \App\Models\Planning\Creneau::TYPE_PERIODE_APRES_MIDI . '">Après-midi</label>';
-        $childTable .= '&nbsp;&nbsp; <button type="button" class="btn btn-default btn-sm" id="' .  $linkId . '"><i class="fa fa-plus link" ></i></button></div></td></tr>';
+        $childTable .= '&nbsp;&nbsp; <button type="button" class="btn btn-default btn-sm" id="' .  $linkId . '"><i class="fa fa-plus link" ></i></button></div>';
+        $childTable .= '<span class="text-danger" id="' . $helperId . '"></span></td></tr>';
         $childTable .= '<script>generateTimePicker("' . $debutId . '");generateTimePicker("' . $finId . '");</script>';
         foreach ($jours as $id => $jour) {
             $childTable .= '<tr data-id-jour=' . $id . '><td name="nom">' . $jour . '</td><td class="creneaux"></td></tr>';
         }
         $childTable .= '</tbody>';
         $options = [
-            'selectJourId'       => $selectJourId,
-            'tableId'            => $table->getId(),
-            'debutId'            => $debutId,
-            'finId'              => $finId,
-            'typeSemaine'        => $typeSemaine,
-            'typePeriodeMatin'   => \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN,
-            'typeHeureDebut'     => \App\Models\Planning\Creneau::TYPE_HEURE_DEBUT,
-            'typeHeureFin'       => \App\Models\Planning\Creneau::TYPE_HEURE_FIN,
-            'nilInt'             => NIL_INT
+            'selectJourId'          => $selectJourId,
+            'tableId'               => $table->getId(),
+            'debutId'               => $debutId,
+            'finId'                 => $finId,
+            'typeSemaine'           => $typeSemaine,
+            'typePeriodeMatin'      => \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN,
+            'typeHeureDebut'        => \App\Models\Planning\Creneau::TYPE_HEURE_DEBUT,
+            'typeHeureFin'          => \App\Models\Planning\Creneau::TYPE_HEURE_FIN,
+            'helperId'              => $helperId,
+            'nilInt'                => NIL_INT,
+            'erreurFormatHeure'     => _('format_heure_incorrect'),
+            'erreurOptionManquante' => _('option_manquante'),
         ];
         $childTable .= '<script type="text/javascript">
         new planningController("' . $linkId . '", ' . json_encode($options) . ', ' . json_encode($creneauxGroupes) . ').init();

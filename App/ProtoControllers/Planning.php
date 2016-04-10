@@ -54,7 +54,7 @@ class Planning
             }
         } else {
             if (empty($post['planning_name'])) {
-                $errors['Nom'] = 'Le champ ne doit pas être vide';
+                $errors['Nom'] = _('champ doit etre rempli');
             }
 
             if (!empty($post['creneaux'])) {
@@ -90,7 +90,7 @@ class Planning
     private static function putPlanning($id, array $put, array &$errors)
     {
         if (empty($post['planning_name'])) {
-            $errors['Nom'] = 'Le champ ne doit pas être vide';
+            $errors['Nom'] = _('champ doit etre rempli');
         }
         if (!empty($put['creneaux'])) {
             $sql = \includes\SQL::singleton();
@@ -127,7 +127,7 @@ class Planning
     {
         // si planning inexistant ou faisant partie des non supprimable
         if (!\App\ProtoControllers\Planning::isDeletable($id)) {
-            $errors[] = 'Non supprimable';
+            $errors[] = _('planning_non_supprimable');
             return NIL_INT;
         }
 

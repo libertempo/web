@@ -68,19 +68,19 @@ class Creneau
     {
         $localError = [];
         $precedentsCreneauxJours = [];
-        $pattern = '/^(((0?|1)[0-9])|(2[0-3])):[0-5][0-9]$/';
+        $pattern = '/^(([01]?[0-9])|(2[0-3])):[0-5][0-9]$/';
         foreach ($periodes as $typeCreneau => $creneaux) {
             foreach ($creneaux as $creneauxJour) {
                 $debut = $creneauxJour[\App\Models\Planning\Creneau::TYPE_HEURE_DEBUT];
                 $fin   = $creneauxJour[\App\Models\Planning\Creneau::TYPE_HEURE_FIN];
                 if (-1 !== strnatcmp($debut, $fin)) {
-                    $localError['Créneaux de travail'][] = 'Date de début supérieure à date de fin';
+                    $localError['Créneaux de travail'][] = _('date_fin_superieure_date_debut');
                 }
                 if (!preg_match($pattern, $debut) || !preg_match($pattern, $fin))  {
-                    $localError['Créneaux de travail'][] = 'Heure non reconnue';
+                    $localError['Créneaux de travail'][] = _('format_heure_incorrect');
                 }
                 if (!empty($precedentsCreneauxJours) && 1 !== strnatcmp($debut, $precedentsCreneauxJours[\App\Models\Planning\Creneau::TYPE_HEURE_FIN])) {
-                    $localError['Créneaux de travail'][] = 'Créneaux consécutifs';
+                    $localError['Créneaux de travail'][] = _('creneaux_consecutifs');
                 }
                 $precedentsCreneauxJours = $creneauxJour;
             }
