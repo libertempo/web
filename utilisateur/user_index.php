@@ -53,7 +53,8 @@ $onglets = array();
 
 if( $_SESSION['config']['user_saisie_demande'] || $_SESSION['config']['user_saisie_mission'] ) {
     $onglets['nouvelle_absence'] = _('divers_nouvelle_absence');
-    $onglets['demande_heures'] = _('divers_demande_heures');
+    $onglets['demande_debit_heures'] = _('divers_demande_debit_heures');
+    $onglets['demande_credit_heures'] = _('divers_demande_credit_heures');
 }
 
 if( $_SESSION['config']['user_echange_rtt'] ) {
