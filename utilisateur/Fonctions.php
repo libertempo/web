@@ -751,7 +751,6 @@ class Fonctions
             $return .= '</tbody>';
             $return .= '</table>' ;
         }
-
         return $return;
     }
 
@@ -1908,8 +1907,12 @@ class Fonctions
 
     private static function getListPeriodeHeure($type=\App\Models\HeureRecuperation::TYPE_DEBIT)
     {
-
-        $return = '<hr><h1>' . _('utilisateur_demande_debit_heure_recuperation') . '</h1>';
+        if ($type===\App\Models\HeureRecuperation::TYPE_DEBIT) {
+            $titre = _('utilisateur_demande_debit_heure_recuperation');
+        } else {
+            $titre = _('utilisateur_demande_credit_heure_recuperation');
+        }
+        $return = '<hr><h1>' . $titre . '</h1>';
         $session = session_id();
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses([
@@ -1919,12 +1922,6 @@ class Fonctions
             'table-condensed',
             'table-striped',
         ]);
-        $childTable = '<thead><tr><th>Jour </th><th style="width:15%"></th>';
-        $childTable .= '<th>Heure de debut</th><th style="width:15%"></th>';
-        $childTable .= '<th>Heure de fin</th><th style="width:15%"></th>';
-        $childTable .= '<th>modifier</th><th style="width:15%"></th>';
-        $childTable .= '<th>annuler</th></tr>';
-        $childTable .= '</thead><tbody>';
 
         $sql = \includes\SQL::singleton();
         // a faire : filtrer pour n'avoir que les demandes
@@ -1937,17 +1934,23 @@ class Fonctions
         if (!$res->num_rows) {
             $childTable .= '<tr><td colspan="2">'. _('aucune_demande') .'</td></tr>';
         } else {
+            $childTable = '<thead><tr><th>Jour </th><th style="width:15%"></th>';
+            $childTable .= '<th>Heure de debut</th><th style="width:15%"></th>';
+            $childTable .= '<th>Heure de fin</th><th style="width:15%"></th>';
+            $childTable .= '<th>modifier</th><th style="width:15%"></th>';
+            $childTable .= '<th>annuler</th></tr>';
+            $childTable .= '</thead><tbody>';
             while ($data = $res->fetch_array()) {
                 $childTable .= '<tr><td>' . date("d/m/Y", $data['debut']) . '</td><td style="width:15%"></td>';
                 $childTable .= '<td>' . date("H:i", $data['debut']) . '</td><td style="width:15%"></td>';
                 $childTable .= '<td>' . date("H:i", $data['fin']) . '</td><td style="width:15%"></td>';
                 $childTable .= '<form id="mod'.$data['id_heure'].'" action="" method="post" class="form-group">';
                 $childTable .= '<input hidden type="text" name="idmod" value="'.$data['id_heure'].'">';
-                $childTable .= '<td><a href="javascript:{}" onclick="document.getElementById(\'mod'.$data['id_heure'].'\').submit(); return false;"><i class="fa fa-pencil"></i></a></td><td style="width:15%"></td></form>';
+                $childTable .= '<td><button type="submit" class="btn btn-link" title="' . _('form_modif') . '"><i class="fa fa-pencil"></i></a></td><td style="width:15%"></button></td></form>';
                 $childTable .= '<form id="del'.$data['id_heure'].'" action="" method="post" class="form-group">';
                 $childTable .= '<input hidden type="text" name="_METHOD" value="DELETE">';
                 $childTable .= '<input hidden type="text" name="id_heure" value="'.$data['id_heure'].'">';
-                $childTable .= '<td><a href="javascript:{}" onclick="document.getElementById(\'del'.$data['id_heure'].'\').submit(); return false;"><i class="fa fa-times-circle"></i></a></td></tr></form>';
+                $childTable .= '<td><button type="submit" class="btn btn-link" title="' . _('form_supprim') . '"><i class="fa fa-times-circle"></i></button></td></tr></form>';
             }
         }
         $childTable .= '</tbody>';
