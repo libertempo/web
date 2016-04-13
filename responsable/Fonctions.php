@@ -2347,7 +2347,7 @@ class Fonctions
             'table-condensed',
             'table-striped',
         ]);
-        $childTable = '<thead><tr><th>Nom</th><th style="width:10%"></th></tr></thead><tbody>';
+        $childTable = '<thead><tr><th>' . _('Nom') . '</th><th style="width:10%"></th></tr></thead><tbody>';
         if (empty($listPlanning)) {
             $childTable .= '<tr><td colspan="2">' . _('aucun_resultat') . '</td></tr>';
         } else {
@@ -2418,7 +2418,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             'table-striped',
             'table-condensed'
         ]);
-        $childTable = '<thead><tr><th class="col-md-4">Nom</th><th></th></tr></thead><tbody>';
+        $childTable = '<thead><tr><th class="col-md-4">' . _('Nom') .'</th><th></th></tr></thead><tbody>';
         if (NIL_INT !== $id) {
             $sql   = 'SELECT * FROM conges_planning WHERE planning_id = ' . $id;
             $query = \includes\SQL::query($sql);
@@ -2431,10 +2431,10 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         ob_start();
         $table->render();
         $return .= ob_get_clean();
-        $return .= '<h3>Créneaux</h3>';
-        $return .= '<h4>Semaine impaire</h4>';
+        $return .= '<h3>' . _('Créneaux') . '</h3>';
+        $return .= '<h4>' . _('Semaine impaire') . '</h4>';
         $return .= \responsable\Fonctions::getFormPlanningTable(\App\Models\Planning\Creneau::TYPE_SEMAINE_IMPAIRE, $id, $_POST);
-        $return .= '<h4>Semaine paire</h4>';
+        $return .= '<h4>' .  _('Semaine paire') . '</h4>';
         $return .= \responsable\Fonctions::getFormPlanningTable(\App\Models\Planning\Creneau::TYPE_SEMAINE_PAIRE, $id, $_POST);
         $return .= '<hr><input type="submit" class="btn btn-success" value="' . _('form_submit') . '" />';
         $return .='</form>';
@@ -2458,13 +2458,13 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
 
         $jours = [
             // ISO-8601
-            1 => 'Lundi',
-            2 => 'Mardi',
-            3 => 'Mercredi',
-            4 => 'Jeudi',
-            5 => 'Vendredi',
-            6 => 'Samedi',
-            7 => 'Dimanche',
+            1 => _('lundi'),
+            2 => _('mardi'),
+            3 => _('mercredi'),
+            4 => _('jeudi'),
+            5 => _('vendredi'),
+            6 => _('samedi'),
+            7 => _('dimanche'),
         ];
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses([
@@ -2488,8 +2488,8 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
 
         $childTable .= '</select></td>';
         $childTable .= '<td><div class="form-inline col-xs-3"><input type="text" id="' . $debutId . '" class="form-control" style="width:45%" />&nbsp;<i class="fa fa-caret-right"></i>&nbsp;<input type="text" id="' . $finId . '" class="form-control" style="width:45%" size="8" /></div>';
-        $childTable .= '&nbsp;&nbsp;<div class="form-inline col-xs-3"><label class="radio-inline"><input type="radio" name="periode" value="' . \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN . '">Matin</label>';
-        $childTable .= '<label class="radio-inline"><input type="radio" name="periode" value="' . \App\Models\Planning\Creneau::TYPE_PERIODE_APRES_MIDI . '">Après-midi</label>';
+        $childTable .= '&nbsp;&nbsp;<div class="form-inline col-xs-3"><label class="radio-inline"><input type="radio" name="periode" value="' . \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN . '">' . _('form_am') . '</label>';
+        $childTable .= '<label class="radio-inline"><input type="radio" name="periode" value="' . \App\Models\Planning\Creneau::TYPE_PERIODE_APRES_MIDI . '">' . _('form_pm') . '</label>';
         $childTable .= '&nbsp;&nbsp; <button type="button" class="btn btn-default btn-sm" id="' .  $linkId . '"><i class="fa fa-plus link" ></i></button></div>';
         $childTable .= '<span class="text-danger" id="' . $helperId . '"></span></td></tr>';
         $childTable .= '<script>generateTimePicker("' . $debutId . '");generateTimePicker("' . $finId . '");</script>';
