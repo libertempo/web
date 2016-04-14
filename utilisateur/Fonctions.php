@@ -644,11 +644,16 @@ class Fonctions
     public static function demandeEnCoursModule($session)
     {
         $return = '';
+        $errorsLst=[];
         if($_SESSION['config']['where_to_find_user_email']=="ldap"){
             include_once CONFIG_PATH .'config_ldap.php';
         }
 
-
+        if(!empty($_POST)) {
+            if (0 < (int) \utilisateur\Fonctions::postDemandeCongesHeure($_POST, $errorsLst)) {
+                $return .= '<div class="alert alert-danger">suppression effectuée avec succès</div>';
+            }
+        }
         // on initialise le tableau global des jours fériés s'il ne l'est pas déjà :
         init_tab_jours_feries();
 
@@ -751,6 +756,9 @@ class Fonctions
             $return .= '</tbody>';
             $return .= '</table>' ;
         }
+        $return .= \utilisateur\Fonctions::getListPeriodeHeure(\App\Models\HeureRecuperation::TYPE_DEBIT);
+        $return .= \utilisateur\Fonctions::getListPeriodeHeure(\App\Models\HeureRecuperation::TYPE_CREDIT);
+
         return $return;
     }
 
@@ -1637,6 +1645,13 @@ class Fonctions
         return $return;
     }
 
+    /**
+     * Retourne les jours de la semaine à désactiver dans datepicker
+     *
+     * @return array
+     * @access public
+     * @static
+     */
     public static function setDatePickerDaysOfWeekDisabled()
     {
         $daysOfWeekDisabled = [];
@@ -1655,6 +1670,13 @@ class Fonctions
     return $daysOfWeekDisabled;
     }
 
+    /**
+     * Retourne les jours fériés à désactiver dans datepicker
+     *
+     * @return array
+     * @access public
+     * @static
+     */
     public static function setDatePickerJoursFeries()
     {
         $Jferies      = [];
@@ -1668,6 +1690,13 @@ class Fonctions
     return $Jferies;
     }
 
+    /**
+     * Retourne les jours de fermeture à désactiver dans datepicker
+     *
+     * @return array
+     * @access public
+     * @static
+     */
     public static function setDatePickerFermeture()
     {
         $Fermeture      = [];
@@ -1681,19 +1710,26 @@ class Fonctions
     return $Fermeture;
     }
 
+    /**
+     * Retourne le jour de début du calendrier dans datepicker
+     *
+     * @return string
+     * @access public
+     * @static
+     */
     public static function setDatePickerStartDate()
     {
     return ($_SESSION['config']['interdit_saisie_periode_date_passee']) ? 'd' : '';
     }
 
-     /**
-     * Module de gestion des demandes de debit d'heure
+    /**
+     * Encapsule le comportement du module des demandes de debit d'heures
      *
-     * @param int $id en cas de modification
-     *
-     * @return void
+     * @return string
+     * @access public
+     * @static
      */
-    public static function getDemandeCongesHeure($id = NIL_INT, $type = \App\Models\HeureRecuperation::TYPE_DEBIT)
+    public static function getDemandeCongesHeure($type = \App\Models\HeureRecuperation::TYPE_DEBIT)
     {
         $return    = '';
 
@@ -1708,13 +1744,99 @@ class Fonctions
             'datesDisabled'      => $datesDisabled,
             'startDate'          => $startDate,
         ];
-        $return .= '<script>generateDatePicker('.json_encode($datePickerOpts).', false);</script>'; 
+        $return .= '<script>generateDatePicker('.json_encode($datePickerOpts).', false);</script>';
+
         $message   = '';
         $errorsLst = [];
         $valueName = '';
-        if (!empty($_POST['new_deb_heure']) || !empty($_POST['id_heure'])) {
-            if (0 < (int) \utilisateur\Fonctions::postDemandeCongesHeure($_POST, $errorsLst, $type)) {
-                redirect(ROOT_PATH . 'utilisateur/user_index.php?session='. session_id() . '&onglet=demande_debit_heures', false);
+
+        if (!empty($_POST)) {
+            if (0 >= (int) \utilisateur\Fonctions::postDemandeCongesHeure($_POST, $errorsLst)) {
+                $errors = '';
+                if (!empty($errorsLst)) {
+                    foreach ($errorsLst as $key => $value) {
+                        if (is_array($value)) {
+                            $value = implode(' / ', $value);
+                        }
+                        $errors .= '<li>' . $key . ' : ' . $value . '</li>';
+                    }
+                    $message = '<div class="alert alert-danger">Des erreurs sont apparues, veuillez recommencer<ul>' . $errors . '</ul></div>';
+                }
+            }
+        }
+
+        if ($type === \App\Models\HeureRecuperation::TYPE_DEBIT) {
+            $return .= '<h1>' . _('user_demande_debit_heure_titre') . '</h1>';
+        } else {
+            $return .= '<h1>' . _('user_demande_credit_heure_titre') . '</h1>';
+        }
+
+        $return .= $message;
+
+        $return .= '<form action="" method="post" class="form-group">';
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-hover',
+            'table-responsive',
+            'table-striped',
+            'table-condensed'
+        ]);
+
+        $childTable="";
+        $childTable .= '<div class="form-inline"><div class="form-group"><label for="new_dem_jour">' . _('divers_date_debut') . '</label><input class="form-control date" type="text" value="'.date("d/m/Y").'" name="new_jour"></div>';
+        $childTable .= '<div class="form-group"><label for="new_heure_deb">Heure de début </label><input class="form-control time" type="text" value="" name="new_deb_heure"></div>';
+        $childTable .= '<div class="form-group"><label for="new_heure_fin">Heure de fin </label><input class="form-control time" type="text" value="" name="new_fin_heure"></div>';
+        $childTable .= '<input hidden type="text" name="type" value="'.$type.'"></div>';
+        $childTable .= '</div>';
+        $childTable .= '<div class="form-group"><input type="submit" class="btn btn-success" value="' . _('form_submit') . '" /></div>';
+
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
+        $return .='</form>';
+        $return .= \utilisateur\Fonctions::getListPeriodeHeure($type);
+
+        return $return;
+    }
+
+
+    /**
+     * Encapsule le comportement du module de modification d'une demande
+     * de débit ou de crédit d'heure
+     *
+     * @param int $id 
+     * @param int $type
+     *
+     * @return string
+     * @access public
+     * @static
+     */
+    public static function getModificationHeures($id,$type)
+    {
+
+        $return            = '';
+        $errorsLst = [];
+
+        /* Génération du datePicker et de ses options */
+        $daysOfWeekDisabled = \utilisateur\Fonctions::setDatePickerDaysOfWeekDisabled();
+        $datesDisabled      = \utilisateur\Fonctions::setDatePickerJoursFeries();
+        $datesDisabled      = \utilisateur\Fonctions::setDatePickerFermeture();
+        $startDate = \utilisateur\Fonctions::setDatePickerStartDate();
+
+        $datePickerOpts = [
+            'daysOfWeekDisabled' => $daysOfWeekDisabled,
+            'datesDisabled'      => $datesDisabled,
+            'startDate'          => $startDate,
+        ];
+        $return .= '<script>generateDatePicker('.json_encode($datePickerOpts).', false);</script>'; 
+
+        $message   = '';
+
+        if (!empty($_POST)) {
+            if (0 < (int) \utilisateur\Fonctions::postDemandeCongesHeure($_POST, $errorsLst)) {
+                redirect(ROOT_PATH . 'utilisateur/user_index.php?session='. session_id() . '&onglet=demandes_en_cours', false);
             } else {
                 $errors = '';
                 if (!empty($errorsLst)) {
@@ -1729,11 +1851,12 @@ class Fonctions
             }
         }
 
-        if (isset($_POST["idmod"])) {
+        if ($type === \App\Models\HeureRecuperation::TYPE_DEBIT) {
             $return .= '<h1>' . _('user_modif_debit_heure_titre') . '</h1>';
         } else {
-            $return .= '<h1>' . _('user_demande_debit_heure_titre') . '</h1>';
+            $return .= '<h1>' . _('user_modif_credit_heure_titre') . '</h1>';
         }
+
         $return .= $message;
 
         $return .= '<form action="" method="post" class="form-group">';
@@ -1748,7 +1871,7 @@ class Fonctions
 
         $childTable="";
 
-        if (isset($_POST["idmod"])) {
+        //conversion des dates
             $sql   = 'SELECT * FROM conges_heure_periode WHERE id_heure = ' . $id;
             $query = \includes\SQL::query($sql);
             $data = $query->fetch_assoc();
@@ -1762,39 +1885,45 @@ class Fonctions
             $childTable .= '<input hidden type="text" name="type" value="'.$type.'"></div>';
             $childTable .= '<input hidden type="text" name="_METHOD" value="PUT"></div>';
             $childTable .= '<div class="form-group"><input type="submit" class="btn btn-success" value="' . _('form_modif') . '" /></div>';
-        } else {
 
-            $childTable .= '<div class="form-inline"><div class="form-group"><label for="new_dem_jour">' . _('divers_date_debut') . '</label><input class="form-control date" type="text" value="'.date("d/m/Y").'" name="new_jour"></div>';
-            $childTable .= '<div class="form-group"><label for="new_heure_deb">Heure de début </label><input class="form-control time" type="text" value="" name="new_deb_heure"></div>';
-            $childTable .= '<div class="form-group"><label for="new_heure_fin">Heure de fin </label><input class="form-control time" type="text" value="" name="new_fin_heure"></div>';
-            $childTable .= '<input hidden type="text" name="type" value="'.$type.'"></div>';
-            $childTable .= '</div>';
-            $childTable .= '<div class="form-group"><input type="submit" class="btn btn-success" value="' . _('form_submit') . '" /></div>';
-        }
         $table->addChild($childTable);
         ob_start();
         $table->render();
         $return .= ob_get_clean();
         $return .='</form>';
-        $return .= \utilisateur\Fonctions::getListPeriodeHeure($type);
-
         return $return;
     }
 
-
+    /**
+     * Traite la demande/modification/suppression d'heures
+     *
+     * @param array $post
+     * @param array &$errorsLst
+     *
+     * @return int
+     */
     private static function postDemandeCongesHeure(array $post, &$errorsLst)
     {
         if (!empty($post['_METHOD'])) {
             if ('DELETE' === $post['_METHOD']) {
-                \utilisateur\Fonctions::deleteDemandeDebitCongesHeure($post['id_heure']);
+                return \utilisateur\Fonctions::deleteDemandeDebitCongesHeure($post['id_heure']);
             } elseif ('PUT' === $post['_METHOD']) {
-                \utilisateur\Fonctions::putDemandeDebitCongesHeure($post, $errorsLst);
+               return \utilisateur\Fonctions::putDemandeDebitCongesHeure($post, $errorsLst);
             }
         } else {
-            \utilisateur\Fonctions::insertDemandeDebitCongesHeure($post, $errorsLst);
+           return \utilisateur\Fonctions::insertDemandeDebitCongesHeure($post, $errorsLst);
         }
+        return NIL_INT;
     }
 
+    /**
+     * Met à jour une demande d'heures
+     *
+     * @param array $post
+     * @param array &$errors
+     *
+     * @return int
+     */
     private static function putDemandeDebitCongesHeure(array $post, array &$errors)
     {
 
@@ -1802,32 +1931,45 @@ class Fonctions
             return \utilisateur\Fonctions::updateDemandeDebitCongesHeure($post, $post['id_heure']);
         }
 
-        return empty($errors);
+        return NIL_INT;
     }
 
+    /**
+     * Ajoute une demande d'heures
+     *
+     * @param array $post
+     * @param array &$errors
+     *
+     * @return int
+     */
     private static function insertDemandeDebitCongesHeure(array $post, array &$errors)
     {
         if (\utilisateur\Fonctions::VerifNewDemandeHeures($post['new_jour'], $post['new_deb_heure'], $post['new_fin_heure'], $errors)) {
             return \utilisateur\Fonctions::insertSQLDemandeDebitCongesHeure($post);
         }
 
-        return empty($errors);
+        return NIL_INT;
     }
 
+    /**
+     * Supprime une demande d'heures
+     *
+     * @param int $id
+     *
+     * @return int
+     */
     private static function deleteDemandeDebitCongesHeure($id)
     {
-        $sql = \includes\SQL::singleton();
-        $sql->getPdoObj()->begin_transaction();
-        $res = \utilisateur\Fonctions::deleteSQLDemandeDebitCongesHeure($id);
-        if (0 < $res) {
-            $sql->getPdoObj()->commit();
-            return $res;
-        } else {
-            $sql->getPdoObj()->rollback();
-            return NIL_INT;
-        }
+        return \utilisateur\Fonctions::deleteSQLDemandeDebitCongesHeure($id);
     }
 
+    /**
+     * Supprime une demande d'heures de la BDD
+     *
+     * @param int $id
+     *
+     * @return int
+     */
     private static function deleteSQLDemandeDebitCongesHeure($id)
     {
         $sql = \includes\SQL::singleton();
@@ -1839,7 +1981,16 @@ class Fonctions
         return 0 < $sql->affected_rows ? $id : NIL_INT;
     }
 
-
+    /**
+     * controle l'égibilité d'une demande d'heures
+     *
+     * @param string $jour
+     * @param string $heuredeb
+     * @param string $heurefin
+     * @param array $Error
+     *
+     * @return boolean
+     */
     public static function VerifNewDemandeHeures($jour, $heuredeb, $heurefin, array &$Error)
     {
         $verif = true;
@@ -1865,7 +2016,13 @@ class Fonctions
         return empty($localError);
     }
 
-
+    /**
+     * Ajoute une demande d'heures dans la BDD
+     *
+     * @param array $info
+     *
+     * @return int
+     */
     private static function insertSQLDemandeDebitCongesHeure(array $info)
     {
         $date = \App\Helpers\Formatter::dateFr2Iso($info['new_jour']);
@@ -1883,6 +2040,13 @@ class Fonctions
         return $sql->insert_id;
     }
 
+    /**
+     * Met à jour une demande d'heures dans la BDD
+     *
+     * @param array $info
+     *
+     * @return int
+     */
     private static function updateDemandeDebitCongesHeure(array $info, $id)
     {
 
@@ -1901,10 +2065,16 @@ class Fonctions
                 WHERE id_heure = '. (int) $id.' 
                 AND login = "'.$_SESSION['userlogin'].'"';
         $query = $sql->query($req);
-        redirect(ROOT_PATH . 'utilisateur/user_index.php?session='. session_id() . '&onglet='.$_GET["onglet"].'', false); 
         return 0 < $sql->affected_rows ? $id : NIL_INT;
     }
 
+    /**
+     * Affiche la liste des demandes d'heures non validées
+     *
+     * @param int $type
+     *
+     * @return string
+     */
     private static function getListPeriodeHeure($type=\App\Models\HeureRecuperation::TYPE_DEBIT)
     {
         if ($type===\App\Models\HeureRecuperation::TYPE_DEBIT) {
@@ -1932,7 +2102,7 @@ class Fonctions
                 ORDER by debut DESC';
         $res = $sql->query($req);
         if (!$res->num_rows) {
-            $childTable .= '<tr><td colspan="2">'. _('aucune_demande') .'</td></tr>';
+            $childTable = '<tr><td colspan="2">'. _('aucune_demande') .'</td></tr>';
         } else {
             $childTable = '<thead><tr><th>Jour </th><th style="width:15%"></th>';
             $childTable .= '<th>Heure de debut</th><th style="width:15%"></th>';
@@ -1944,13 +2114,11 @@ class Fonctions
                 $childTable .= '<tr><td>' . date("d/m/Y", $data['debut']) . '</td><td style="width:15%"></td>';
                 $childTable .= '<td>' . date("H:i", $data['debut']) . '</td><td style="width:15%"></td>';
                 $childTable .= '<td>' . date("H:i", $data['fin']) . '</td><td style="width:15%"></td>';
-                $childTable .= '<form id="mod'.$data['id_heure'].'" action="" method="post" class="form-group">';
-                $childTable .= '<input hidden type="text" name="idmod" value="'.$data['id_heure'].'">';
-                $childTable .= '<td><button type="submit" class="btn btn-link" title="' . _('form_modif') . '"><i class="fa fa-pencil"></i></a></td><td style="width:15%"></button></td></form>';
-                $childTable .= '<form id="del'.$data['id_heure'].'" action="" method="post" class="form-group">';
+                $childTable .= '<td><a href="user_index.php?session='.$session.'&onglet=modif_demande_heures&id='.$data['id_heure'].'&type='.$type.'" title="' . _('form_modif') . '"><i class="fa fa-times-circle"></i></a></td><td style="width:15%"></td>';
+                $childTable .= '<td><form id="del'.$data['id_heure'].'" action="" method="post" class="form-group">';
                 $childTable .= '<input hidden type="text" name="_METHOD" value="DELETE">';
                 $childTable .= '<input hidden type="text" name="id_heure" value="'.$data['id_heure'].'">';
-                $childTable .= '<td><button type="submit" class="btn btn-link" title="' . _('form_supprim') . '"><i class="fa fa-times-circle"></i></button></td></tr></form>';
+                $childTable .= '<button type="submit" class="btn btn-link" title="' . _('form_supprim') . '"><i class="fa fa-times-circle"></i></button></form></td></tr>';
             }
         }
         $childTable .= '</tbody>';
