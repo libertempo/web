@@ -2030,10 +2030,11 @@ class Fonctions
         $fin = $date." ".$info['new_fin_heure'];
         $timedeb = strtotime($deb);
         $timefin = strtotime($fin);
+        $duree = \utilisateur\Fonctions::compter_heures($timedeb,$timefin);
         $user = $_SESSION['userlogin'];
         $sql = \includes\SQL::singleton();
         $toInsert = [];
-        $toInsert[] = '("", "' . $user . '", ' . (int) $timedeb . ', ' . (int) $timefin .', 0, '.\App\Models\HeureRecuperation::STATUS_DEMANDE.', '.$info['type'].')';
+        $toInsert[] = '("", "' . $user . '", ' . (int) $timedeb . ', '. (int) $timefin .', '. (int) $duree .', '.\App\Models\HeureRecuperation::STATUS_DEMANDE.', '.$info['type'].')';
         $req = 'INSERT INTO conges_heure_periode (id_heure, login, debut, fin, time, status, type) VALUES ' . implode(', ', $toInsert);
         $query = $sql->query($req);
 
@@ -2055,13 +2056,14 @@ class Fonctions
         $fin = $date." ".$info['new_fin_heure'];
         $timedeb = strtotime($deb);
         $timefin = strtotime($fin);
+        $duree = \utilisateur\Fonctions::compter_heures($timedeb,$timefin);
         $user = $_SESSION['userlogin'];
         $sql = \includes\SQL::singleton();
         $toInsert = [];
         $req = 'UPDATE conges_heure_periode 
                 SET debut = '.$timedeb.', 
                     fin = '.$timefin.', 
-                    time = 0
+                    time = '.$duree.'
                 WHERE id_heure = '. (int) $id.' 
                 AND login = "'.$_SESSION['userlogin'].'"';
         $query = $sql->query($req);
@@ -2107,6 +2109,7 @@ class Fonctions
             $childTable = '<thead><tr><th>Jour </th><th style="width:15%"></th>';
             $childTable .= '<th>Heure de debut</th><th style="width:15%"></th>';
             $childTable .= '<th>Heure de fin</th><th style="width:15%"></th>';
+            $childTable .= '<th>durée</th><th style="width:15%"></th>';
             $childTable .= '<th>modifier</th><th style="width:15%"></th>';
             $childTable .= '<th>annuler</th></tr>';
             $childTable .= '</thead><tbody>';
@@ -2114,6 +2117,7 @@ class Fonctions
                 $childTable .= '<tr><td>' . date("d/m/Y", $data['debut']) . '</td><td style="width:15%"></td>';
                 $childTable .= '<td>' . date("H:i", $data['debut']) . '</td><td style="width:15%"></td>';
                 $childTable .= '<td>' . date("H:i", $data['fin']) . '</td><td style="width:15%"></td>';
+                $childTable .= '<td>' . \utilisateur\Fonctions::Timestamp2Time($data['time']) . '</td><td style="width:15%"></td>';
                 $childTable .= '<td><a href="user_index.php?session='.$session.'&onglet=modif_demande_heures&id='.$data['id_heure'].'&type='.$type.'" title="' . _('form_modif') . '"><i class="fa fa-times-circle"></i></a></td><td style="width:15%"></td>';
                 $childTable .= '<td><form id="del'.$data['id_heure'].'" action="" method="post" class="form-group">';
                 $childTable .= '<input hidden type="text" name="_METHOD" value="DELETE">';
@@ -2128,4 +2132,15 @@ class Fonctions
         $return .= ob_get_clean();
         return $return;
     }
+
+    public static function Timestamp2Time($secondes) {
+        $t = round($secondes);
+        return sprintf('%02d:%02d:%02d', ($t/3600),($t/60%60), $t%60);
+    }
+
+    public static function compter_heures($debut,$fin) {
+        return $fin - $debut;
+    }
+
+
 }
