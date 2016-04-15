@@ -2426,16 +2426,36 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             $valueName = $data['planning_name'];
             $childTable .= '<tr><td>' . $valueName . '<input type="hidden" name="planning_id" value="' . $id . '" /><input type="hidden" name="_METHOD" value="PUT" /></td></tr>';
         }
-        $childTable .= '<tr><td><input type="text" name="planning_name" value="' . $valueName . '" class="form-control" required /></td><td></td></tr></tbody>';
+        $idSemaine = uniqid();
+        $textCommon = _('Semaines communes');
+        $childTable .= '<tr><td><input type="text" name="planning_name" value="' . $valueName . '" class="form-control" required /></td>';
+        $childTable .= '<td><input type="button" id="' . $idSemaine . '" class="btn btn-default " value="' . $textCommon . '" /></td></tr></tbody>';
         $table->addChild($childTable);
         ob_start();
         $table->render();
         $return .= ob_get_clean();
         $return .= '<h3>' . _('Créneaux') . '</h3>';
-        $return .= '<h4>' . _('Semaine impaire') . '</h4>';
+        $idCommune = uniqid();
+        $return .= '<div id="' . $idCommune . '"><h4>' . _('Semaine') . '</h4>';
+
+        $return .= \responsable\Fonctions::getFormPlanningTable(\App\Models\Planning\Creneau::TYPE_SEMAINE_COMMUNE, $id, $_POST);
+        $idImpaire = uniqid();
+        $return .= '</div><div id="' . $idImpaire . '"><h4>' . _('Semaine impaire') . '</h4>';
+        $idPaire = uniqid();
         $return .= \responsable\Fonctions::getFormPlanningTable(\App\Models\Planning\Creneau::TYPE_SEMAINE_IMPAIRE, $id, $_POST);
-        $return .= '<h4>' .  _('Semaine paire') . '</h4>';
+        $return .= '</div><div id="' . $idPaire . '"><h4>' .  _('Semaine paire') . '</h4>';
+
         $return .= \responsable\Fonctions::getFormPlanningTable(\App\Models\Planning\Creneau::TYPE_SEMAINE_PAIRE, $id, $_POST);
+        $typeSemaine = [
+            \App\Models\Planning\Creneau::TYPE_SEMAINE_COMMUNE => $idCommune,
+            \App\Models\Planning\Creneau::TYPE_SEMAINE_IMPAIRE => $idImpaire,
+            \App\Models\Planning\Creneau::TYPE_SEMAINE_PAIRE   => $idPaire,
+        ];
+        $text = [
+            'common'    => $textCommon,
+            'notCommon' => _('Semaines différenciées')
+        ];
+        $return .= '</div><script>new semaineDisplayer("' . $idSemaine . '", "' . \App\Models\Planning\Creneau::TYPE_SEMAINE_COMMUNE . '", ' . json_encode($typeSemaine) . ', ' . json_encode($text) . ').init()</script>';
         $return .= '<hr><input type="submit" class="btn btn-success" value="' . _('form_submit') . '" />';
         $return .='</form>';
 
@@ -2451,20 +2471,21 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
      *
      * @return string
      */
-    private static function getFormPlanningTable($typeSemaine, $idPlanning = NIL_INT, array $postPlanning)
+    private static function getFormPlanningTable($typeSemaine, $idPlanning, array $postPlanning)
     {
-        /* Recupération des creneaux (postés ou existants) pour le JS */
+        /* Recupération des créneaux (postés ou existants) pour le JS */
         $creneauxGroupes = \App\ProtoControllers\Creneau::getCreneauxGroupes($postPlanning, $idPlanning, $typeSemaine);
 
         $jours = [
             // ISO-8601
-            1 => _('lundi'),
-            2 => _('mardi'),
-            3 => _('mercredi'),
-            4 => _('jeudi'),
-            5 => _('vendredi'),
-            6 => _('samedi'),
-            7 => _('dimanche'),
+            1 => _('Lundi'),
+            2 => _('Mardi'),
+            3 => _('Mercredi'),
+            4 => _('Jeudi'),
+            5 => _('Vendredi'),
+            6 => _('Samedi'),
+            7 => _('Dimanche'),
+            // ne pas afficher samedi ou dimanche s'il ne sont pas travaillés
         ];
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses([
@@ -2479,7 +2500,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $debutId      = uniqid();
         $finId        = uniqid();
         $helperId     = uniqid();
-        $childTable = '<thead><tr><th width="20%">Jour</th><th>' . _('creneaux_travail') . '</th><tr></thead><tbody>';
+        $childTable = '<thead style="width:100%"><tr><th width="20%">' . _('Jour') . '</th><th>' . _('Creneaux_travail') . '</th><tr></thead><tbody>';
         $childTable .= '<tr><td><select class="form-control" id="' . $selectJourId . '"><option value="' . NIL_INT . '"></option>';
 
         foreach ($jours as $id => $jour) {
@@ -2492,7 +2513,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $childTable .= '<label class="radio-inline"><input type="radio" name="periode" value="' . \App\Models\Planning\Creneau::TYPE_PERIODE_APRES_MIDI . '">' . _('form_pm') . '</label>';
         $childTable .= '&nbsp;&nbsp; <button type="button" class="btn btn-default btn-sm" id="' .  $linkId . '"><i class="fa fa-plus link" ></i></button></div>';
         $childTable .= '<span class="text-danger" id="' . $helperId . '"></span></td></tr>';
-        $childTable .= '<script>generateTimePicker("' . $debutId . '");generateTimePicker("' . $finId . '");</script>';
+        $childTable .= '<script type="text/javascript">generateTimePicker("' . $debutId . '");generateTimePicker("' . $finId . '");</script>';
         foreach ($jours as $id => $jour) {
             $childTable .= '<tr data-id-jour=' . $id . '><td name="nom">' . $jour . '</td><td class="creneaux"></td></tr>';
         }
@@ -2508,8 +2529,8 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             'typeHeureFin'          => \App\Models\Planning\Creneau::TYPE_HEURE_FIN,
             'helperId'              => $helperId,
             'nilInt'                => NIL_INT,
-            'erreurFormatHeure'     => _('format_heure_incorrect'),
-            'erreurOptionManquante' => _('option_manquante'),
+            'erreurFormatHeure'     => _('Format_heure_incorrect'),
+            'erreurOptionManquante' => _('Option_manquante'),
         ];
         $childTable .= '<script type="text/javascript">
         new planningController("' . $linkId . '", ' . json_encode($options) . ', ' . json_encode($creneauxGroupes) . ').init();

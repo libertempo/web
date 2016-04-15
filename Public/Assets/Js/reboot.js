@@ -128,6 +128,153 @@ function generateTimePicker(elementId, opts)
 }
 
 /**
+ * Objet de présentation de l'affichage des semaines
+ */
+var semaineDisplayer = function (idElement, idCommon, typeSemaines, texts)
+{
+    this.element      = document.getElementById(idElement);
+    this.idCommon     = idCommon;
+    this.typeSemaines = typeSemaines;
+    this.texts        = texts;
+    this.init = function ()
+    {
+        var displayedNot = false;
+
+        for (var idType in this.typeSemaines) {
+            if (this.typeSemaines.hasOwnProperty(idType)) {
+                if (idType !== this.idCommon) {
+                    if (this._hasWeekInputs(this.typeSemaines[idType])) {
+                        this._clickedElement(this.element);
+                        this._displayNotCommon();
+                        displayedNot = true;
+                        break;
+                    }
+                }
+            }
+        }
+        if (!displayedNot) {
+            this._unclickedElement(this.element);
+        }
+
+        /* Événementiel */
+        this.element.addEventListener('click', function (e) {
+            var element = e.target;
+            if (element.classList.contains('active')) {
+                this._unclickedElement(element);
+            } else {
+                this._clickedElement(element);
+            }
+
+        }.bind(this));
+    }
+
+    /**
+     * Présente l'élément comme cliqué en affichant les semaines correspondantes
+     */
+    this._clickedElement = function (element)
+    {
+        element.classList.add('active');
+        element.value = this.texts['notCommon'];
+        this._displayNotCommon();
+    }
+
+    /**
+     * Présente l'élément comme non cliqué en affichant les semaines correspondantes
+     */
+    this._unclickedElement = function (element)
+    {
+        element.classList.remove('active');
+        element.value = this.texts['common'];
+        this._displayCommon();
+    }
+
+    /**
+     * Vérifie que la semaine a des inputs décisifs en son sein
+     *
+     * @return bool
+     */
+    this._hasWeekInputs = function (typeSemaine)
+    {
+        return 0 < this._getWeekInputs(typeSemaine).length;
+    }
+
+    /**
+     * Affiche les semaines non communes
+     */
+    this._displayNotCommon = function ()
+    {
+        /* Show not common */
+        for (var idType in this.typeSemaines) {
+            if (this.typeSemaines.hasOwnProperty(idType)) {
+                if (idType !== this.idCommon) {
+                    var typeSemaine = this.typeSemaines[idType];
+                    this._showBlock(typeSemaine);
+                }
+            }
+        }
+
+        /* Hide common */
+        this._hideBlock(this.typeSemaines[this.idCommon]);
+    }
+
+    /**
+     * Affiche les semaines communes
+     */
+    this._displayCommon = function ()
+    {
+        /* Show common */
+        this._showBlock(this.typeSemaines[this.idCommon]);
+
+        /* Hide not common */
+        for (var idType in this.typeSemaines) {
+            if (this.typeSemaines.hasOwnProperty(idType)) {
+                if (idType !== this.idCommon) {
+                    var typeSemaine = this.typeSemaines[idType];
+                    this._hideBlock(typeSemaine);
+                }
+            }
+        }
+    }
+
+    /**
+     * Affiche un bloc et active tous les champs décisifs en son sein
+     */
+    this._showBlock = function (typeSemaine)
+    {
+        var inputs = this._getWeekInputs(typeSemaine);
+        for (var i = 0; i < inputs.length; ++i) {
+            inputs[i].disabled = '';
+        }
+
+        document.getElementById(typeSemaine).style.display = 'block';
+    }
+
+    /**
+     * Cache un bloc et désactive tous les champs décisifs en son sein
+     */
+    this._hideBlock = function (typeSemaine)
+    {
+        var inputs = this._getWeekInputs(typeSemaine);
+        for (var i = 0; i < inputs.length; ++i) {
+            inputs[i].disabled = 'disabled';
+        }
+
+        document.getElementById(typeSemaine).style.display = 'none';
+    }
+
+    /**
+     * Retourne tous les inputs décisifs de la semaine
+     *
+     * @return Object
+     */
+    this._getWeekInputs = function (typeSemaine)
+    {
+        // TODO : not with reference sur un autre form ?
+        return document.getElementById(typeSemaine).querySelectorAll('input[type=hidden]');
+    }
+}
+
+/**
  * Objet de manipulation du planning
  */
 var planningController = function (idElement, options, creneaux)
@@ -308,11 +455,10 @@ var planningController = function (idElement, options, creneaux)
      * @return HTMLSpanElement
      */
     this._getHiddenFieldPeriod = function (jourSelectionne, typePeriodeSelected, debutVal, finVal) {
-        var span = document.createElement('span');
+        var span  = document.createElement('span');
         var input = document.createElement('input');
-        var typeSemaine = this.typeSemaine;
         var debut = input.cloneNode(false);
-        var prefixName = 'creneaux[' + typeSemaine + '][' + jourSelectionne + '][' + typePeriodeSelected + ']';
+        var prefixName = 'creneaux[' + this.typeSemaine + '][' + jourSelectionne + '][' + typePeriodeSelected + ']';
         if (this.options['typePeriodeMatin'] == typePeriodeSelected) {
             var prefixName = prefixName + '[' + (++this.incrementMatin) + ']';
         } else {
