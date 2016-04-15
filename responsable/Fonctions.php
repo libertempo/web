@@ -2484,7 +2484,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             4 => _('Jeudi'),
             5 => _('Vendredi'),
         ];
-        if (false !== $_SESSION['config']['dimanche_travail']) {
+        if (false !== $_SESSION['config']['samedi_travail']) {
             $jours[6] = _('Samedi');
         }
         if (false !== $_SESSION['config']['dimanche_travail']) {
