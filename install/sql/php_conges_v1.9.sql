@@ -316,10 +316,34 @@ CREATE TABLE IF NOT EXISTS `conges_users` (
   `u_quotite` int(3) DEFAULT '100',
   `u_email` varchar(100) DEFAULT NULL,
   `u_num_exercice` int(2) NOT NULL DEFAULT '0',
+  `planning_id` int(11) unsigned NOT NULL,
   PRIMARY KEY (`u_login`),
-  KEY `u_login` (`u_login`)
+  KEY `planning_id` (`planning_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+#
+# Structure de la table `conges_planning`
+#
+
+CREATE TABLE IF NOT EXISTS `conges_planning` (
+  `planning_id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `planning_name` VARCHAR(50) NOT NULL DEFAULT "" UNIQUE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+#
+# Structure de la table `conges_planning_creneau`
+#
+
+CREATE TABLE IF NOT EXISTS `conges_planning_creneau` (
+  `creneau_id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `planning_id` INT(11) UNSIGNED NOT NULL,
+  `jour_id` TINYINT(3) UNSIGNED NOT NULL,
+  `type_semaine` TINYINT(3) UNSIGNED NOT NULL,
+  `type_periode` TINYINT(3) UNSIGNED NOT NULL,
+  `debut` INT(11) UNSIGNED NOT NULL,
+  `fin` INT(11) UNSIGNED NOT NULL,
+  KEY `planning_id` (`planning_id`,`type_semaine`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 #
 # Contenu de la table `conges_appli`
@@ -350,8 +374,8 @@ INSERT IGNORE INTO `conges_artt` VALUES ('conges', NULL, NULL, NULL, NULL, NULL,
 # Contenu de la table `conges_users`
 #
 
-INSERT IGNORE INTO `conges_users` VALUES ('admin', 'Libertempo', 'admin', 'N', 'admin', 'Y', 'N','Y','N', '636d61cf9094a62a81836f3737d9c0da', 100, NULL, 0);
-INSERT IGNORE INTO `conges_users` VALUES ('conges', 'conges', 'responsable-virtuel', 'Y', NULL, 'Y', 'Y','Y','N', '3cdb69ff35635d9a3f6eccb6a5e269e6', 100, NULL, 0);
+INSERT IGNORE INTO `conges_users` VALUES ('admin', 'Libertempo', 'admin', 'N', 'admin', 'Y', 'N','Y','N', '636d61cf9094a62a81836f3737d9c0da', 100, NULL, 0, 0);
+INSERT IGNORE INTO `conges_users` VALUES ('conges', 'conges', 'responsable-virtuel', 'Y', NULL, 'Y', 'Y','Y','N', '3cdb69ff35635d9a3f6eccb6a5e269e6', 100, NULL, 0, 0);
 
 #
 # Contenu de la table `conges_config`
@@ -455,4 +479,3 @@ INSERT IGNORE INTO `conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUE
 INSERT IGNORE INTO `conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUES ('mail_new_absence_conges', 'APPLI CONGES - Nouvelle absence', ' __SENDER_NAME__ vous informe qu\'il sera absent. Ce type de congés ne necéssite pas de validation. Vous pouvez consulter votre application Libertempo : __URL_ACCUEIL_CONGES__/\r\n\r\n-------------------------------------------------------------------------------------------------------\r\nCeci est un message automatique. ');
 INSERT IGNORE INTO `conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUES ('mail_modif_demande_conges', 'APPLI CONGES - Modification demande', ' __SENDER_NAME__ à modifié une demande non traité. Vous pouvez consulter votre application Libertempo : __URL_ACCUEIL_CONGES__/\r\n\r\n-------------------------------------------------------------------------------------------------------\r\nCeci est un message automatique.');
 INSERT IGNORE INTO `conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUES ('mail_supp_demande_conges', 'APPLI CONGES - Suppression demande', ' __SENDER_NAME__ à supprimé une demande non traité. Vous pouvez consulter votre application Libertempo : __URL_ACCUEIL_CONGES__/\r\n\r\n-------------------------------------------------------------------------------------------------------\r\nCeci est un message automatique.');
-

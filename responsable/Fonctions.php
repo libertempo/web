@@ -2333,8 +2333,6 @@ class Fonctions
 
         /* Préparation et requêtage */
         $listPlanningId = \App\ProtoControllers\Planning::getListPlanningId();
-        $listIdUsed     = \App\ProtoControllers\Planning::getListPlanningUsed($listPlanningId);
-        $listPlanning   = \App\ProtoControllers\Planning::getListPlanning($listPlanningId);
 
         $return = '<h1>' . _('resp_affichage_liste_planning_titre') . '</h1>';
         $return .= $message;
@@ -2348,9 +2346,11 @@ class Fonctions
             'table-striped',
         ]);
         $childTable = '<thead><tr><th>' . _('Nom') . '</th><th style="width:10%"></th></tr></thead><tbody>';
-        if (empty($listPlanning)) {
-            $childTable .= '<tr><td colspan="2">' . _('aucun_resultat') . '</td></tr>';
+        if (empty($listPlanningId)) {
+            $childTable .= '<tr><td colspan="2"><center>' . _('aucun_resultat') . '</center></td></tr>';
         } else {
+            $listIdUsed   = \App\ProtoControllers\Planning::getListPlanningUsed($listPlanningId);
+            $listPlanning = \App\ProtoControllers\Planning::getListPlanning($listPlanningId);
             foreach ($listPlanning as $planning) {
                 $childTable .= '<tr><td>' . $planning['planning_name'] . '</td>';
                 $childTable .= '<td><form action="" method="post" accept-charset="UTF-8"
@@ -2488,7 +2488,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
 
         $childTable .= '</select></td>';
         $childTable .= '<td><div class="form-inline col-xs-3"><input type="text" id="' . $debutId . '" class="form-control" style="width:45%" />&nbsp;<i class="fa fa-caret-right"></i>&nbsp;<input type="text" id="' . $finId . '" class="form-control" style="width:45%" size="8" /></div>';
-        $childTable .= '&nbsp;&nbsp;<div class="form-inline col-xs-3"><label class="radio-inline"><input type="radio" name="periode" value="' . \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN . '">' . _('form_am') . '</label>';
+        $childTable .= '&nbsp;&nbsp;<div class="form-inline col-xs-4"><label class="radio-inline"><input type="radio" name="periode" value="' . \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN . '">' . _('form_am') . '</label>';
         $childTable .= '<label class="radio-inline"><input type="radio" name="periode" value="' . \App\Models\Planning\Creneau::TYPE_PERIODE_APRES_MIDI . '">' . _('form_pm') . '</label>';
         $childTable .= '&nbsp;&nbsp; <button type="button" class="btn btn-default btn-sm" id="' .  $linkId . '"><i class="fa fa-plus link" ></i></button></div>';
         $childTable .= '<span class="text-danger" id="' . $helperId . '"></span></td></tr>';
