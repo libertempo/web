@@ -2134,7 +2134,7 @@ class Fonctions
     }
 
     public static function Timestamp2Time($secondes) {
-        $t = round($secondes);
+        $t = (int) $secondes;
         return sprintf('%02d:%02d:%02d', ($t/3600),($t/60%60), $t%60);
     }
 
