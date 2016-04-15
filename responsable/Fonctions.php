@@ -2483,10 +2483,13 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             3 => _('Mercredi'),
             4 => _('Jeudi'),
             5 => _('Vendredi'),
-            6 => _('Samedi'),
-            7 => _('Dimanche'),
-            // ne pas afficher samedi ou dimanche s'il ne sont pas travaillés
         ];
+        if (false !== $_SESSION['config']['dimanche_travail']) {
+            $jours[6] = _('Samedi');
+        }
+        if (false !== $_SESSION['config']['dimanche_travail']) {
+            $jours[7] = _('Dimanche');
+        }
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses([
             'table',
