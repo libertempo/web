@@ -174,7 +174,7 @@ var semaineDisplayer = function (idElement, idCommon, typeSemaines, texts)
     this._clickedElement = function (element)
     {
         element.classList.add('active');
-        element.value = this.texts['notCommon'];
+        element.value = this.texts['common'];
         this._displayNotCommon();
     }
 
@@ -184,7 +184,7 @@ var semaineDisplayer = function (idElement, idCommon, typeSemaines, texts)
     this._unclickedElement = function (element)
     {
         element.classList.remove('active');
-        element.value = this.texts['common'];
+        element.value = this.texts['notCommon'];
         this._displayCommon();
     }
 

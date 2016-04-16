@@ -24,10 +24,21 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *************************************************************************************************/
+namespace App\Models;
 
-defined( '_PHP_CONGES' ) or die( 'Restricted access' );
-$id = (int) getpost_variable('id');
-if (0 >= $id || !\App\ProtoControllers\Planning::isVisible($id)) {
-    redirect(ROOT_PATH . 'deconnexion.php');
+/**
+ * Modèle planning
+ *
+ * @since  1.9
+ * @author Prytoegrian <prytoegrian@protonmail.com>
+ */
+class Planning
+{
+    /**
+     * Statut
+     *
+     * @var int
+     */
+    const STATUS_ACTIVE = STATUS_ACTIVE;
+    const STATUS_DELETED = STATUS_DELETED;
 }
-echo \responsable\Fonctions::getFormPlanningModule($id);

@@ -39,21 +39,31 @@ class Planning
      *
      * @param array $post
      * @param array &$errors
+     * @param string $notice
      *
      * @return int
      */
-    public static function postPlanning(array $post, array &$errors)
+    public static function postPlanning(array $post, array &$errors, &$notice)
     {
         /* On fait la distinction entre les verbes post / put (début REST) */
         if (!empty($post['_METHOD'])) {
-            if ('DELETE' === $post['_METHOD']) {
-                return \App\ProtoControllers\Planning::deletePlanning($post['planning_id'], $errors);
-
-            } elseif ('PUT' === $post['_METHOD'] && !empty($post['planning_id']) && 0 < (int) $post['planning_id']) {
-                return \App\ProtoControllers\Planning::putPlanning($post['planning_id'], $post, $errors);
+            switch ($post['_METHOD']) {
+                case 'DELETE':
+                    return \App\ProtoControllers\Planning::deletePlanning($post['planning_id'], $errors, $notice);
+                    break;
+                case 'PUT':
+                    if (!empty($post['planning_id']) && 0 < (int) $post['planning_id']) {
+                        return \App\ProtoControllers\Planning::putPlanning($post['planning_id'], $post, $errors);
+                    }
+                    break;
+                case 'PATCH':
+                    if (!empty($post['planning_id']) && 0 < (int) $post['planning_id']) {
+                        return \App\ProtoControllers\Planning::patchPlanning($post['planning_id'], $post);
+                    }
+                    break;
             }
         } else {
-            if (empty($post['planning_name'])) {
+            if (empty($post['name'])) {
                 $errors['Nom'] = _('champ doit etre rempli');
             }
 
@@ -89,7 +99,7 @@ class Planning
      */
     private static function putPlanning($id, array $put, array &$errors)
     {
-        if (empty($post['planning_name'])) {
+        if (empty($post['name'])) {
             $errors['Nom'] = _('champ doit etre rempli');
         }
         if (!empty($put['creneaux'])) {
@@ -120,10 +130,11 @@ class Planning
      *
      * @param int   $id
      * @param array &$errors
+     * @param string $notice
      *
      * @return int
      */
-    private static function deletePlanning($id, array &$errors)
+    private static function deletePlanning($id, array &$errors, &$notice)
     {
         // si planning inexistant ou faisant partie des non supprimable
         if (!\App\ProtoControllers\Planning::isDeletable($id)) {
@@ -136,12 +147,26 @@ class Planning
         $res = \App\ProtoControllers\Planning::deleteSql($id);
         \App\ProtoControllers\Creneau::deleteCreneauList($id);
         if (0 < $res) {
+            $notice = _('planning_supprime');
             $sql->getPdoObj()->commit();
             return $res;
         } else {
             $sql->getPdoObj()->rollback();
             return NIL_INT;
         }
+    }
+
+    /**
+     * Patche un planning
+     *
+     * @param int   $id
+     * @param array $put
+     *
+     * @return int
+     */
+    private static function patchPlanning($id, array $patch)
+    {
+        return \App\ProtoControllers\Planning::patchSql($id, $patch);
     }
 
     /*
@@ -170,6 +195,27 @@ class Planning
     }
 
     /**
+     * Vérifie qu'un planning est visible dans l'application
+     *
+     * @param int $id
+     *
+     * @return bool
+     */
+    public static function isVisible($id)
+    {
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT EXISTS (
+                    SELECT planning_id
+                    FROM conges_planning
+                    WHERE planning_id = ' . (int) $id . '
+                      AND status = ' . \App\Models\Planning::STATUS_ACTIVE . '
+                )';
+        $query = $sql->query($req);
+
+        return 0 < (int) $query->fetch_array()[0];
+    }
+
+    /**
      * Insère un planning en base
      *
      * @param array $planning
@@ -179,8 +225,8 @@ class Planning
     private static function insertPlanning(array $planning)
     {
         $sql   = \includes\SQL::singleton();
-        $req   = 'INSERT INTO conges_planning (planning_id, planning_name)
-                  VALUES ("", "' . htmlspecialchars($sql->quote($planning['planning_name'])) . '")';
+        $req   = 'INSERT INTO conges_planning (planning_id, name, status)
+                  VALUES ("", "' . htmlspecialchars($sql->quote($planning['name'])) . '", ' . \App\Models\Planning::STATUS_ACTIVE . ')';
         $query = $sql->query($req);
 
         return $sql->insert_id;
@@ -198,7 +244,28 @@ class Planning
     {
         $sql = \includes\SQL::singleton();
         $req = 'UPDATE conges_planning
-                SET planning_name = "' . htmlspecialchars($sql->quote($put['planning_name'])) . '"
+                SET name = "' . htmlspecialchars($sql->quote($put['name'])) . '"
+                WHERE planning_id = ' . $id;
+        $sql->query($req);
+
+        return 0 < $sql->affected_rows ? $id : NIL_INT;
+    }
+
+    /**
+     * Met à jour le statut d'un planning en base
+     *
+     * @param int $id
+     * @param array $patch
+     *
+     * @return int
+     * @TODO : j'aime pas cette méthode, à supprimer dès que possible
+     * @since 1.9
+     */
+    private static function patchSql($id, array $patch)
+    {
+        $sql = \includes\SQL::singleton();
+        $req = 'UPDATE conges_planning
+                SET status = ' . (int) $patch['status'] . '
                 WHERE planning_id = ' . $id;
         $sql->query($req);
 
@@ -208,14 +275,15 @@ class Planning
     /**
      * Supprime un planning de la base
      *
-     * @param int   $id
+     * @param int $id
      *
      * @return int
      */
     private static function deleteSql($id)
     {
         $sql = \includes\SQL::singleton();
-        $req = 'DELETE FROM conges_planning
+        $req = 'UPDATE conges_planning
+                SET status = ' . \App\Models\Planning::STATUS_DELETED . '
                 WHERE planning_id = ' . $id . '
                 LIMIT 1';
         $sql->query($req);
@@ -273,7 +341,8 @@ class Planning
         $ids = [];
         $sql = \includes\SQL::singleton();
         $req = 'SELECT planning_id AS id
-                FROM conges_planning';
+                FROM conges_planning
+                WHERE status = ' . \App\Models\Planning::STATUS_ACTIVE;
         $res = $sql->query($req);
         while ($data = $res->fetch_array()) {
             $ids[] = (int) $data['id'];

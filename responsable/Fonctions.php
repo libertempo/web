@@ -2317,8 +2317,9 @@ class Fonctions
     {
         $message   = '';
         $errorsLst = [];
+        $notice    = '';
         if (!empty($_POST)) {
-            if (0 >= (int) \App\ProtoControllers\Planning::postPlanning($_POST, $errorsLst)) {
+            if (0 >= (int) \App\ProtoControllers\Planning::postPlanning($_POST, $errorsLst, $notice)) {
                 $errors = '';
                 if (!empty($errorsLst)) {
                     foreach ($errorsLst as $value) {
@@ -2326,7 +2327,11 @@ class Fonctions
                     }
                     $message = '<div class="alert alert-danger">' . _('erreur_recommencer') . ' :<ul>' . $errors . '</ul></div>';
                 }
+            } elseif ('DELETE' === $_POST['_METHOD'] && !empty($notice)) {
+                $message = '<form action="" method="post" accept-charset="UTF-8"
+enctype="application/x-www-form-urlencoded"><input type="hidden" name="planning_id" value="' . $_POST['planning_id'] . '" /><input type="hidden" name="status" value="' . \App\Models\Planning::STATUS_ACTIVE . '" /><input type="hidden" name="_METHOD" value="PATCH" /><div class="alert alert-info">' .  $notice . '. <button type="submit" class="btn btn-link alert-link">' . _('Annuler') . '</button></div></form>';
             } else {
+                //ddd('a');
                 redirect(ROOT_PATH . 'responsable/resp_index.php?session='. session_id() . '&onglet=liste_planning', false);
             }
         }
@@ -2352,7 +2357,7 @@ class Fonctions
             $listIdUsed   = \App\ProtoControllers\Planning::getListPlanningUsed($listPlanningId);
             $listPlanning = \App\ProtoControllers\Planning::getListPlanning($listPlanningId);
             foreach ($listPlanning as $planning) {
-                $childTable .= '<tr><td>' . $planning['planning_name'] . '</td>';
+                $childTable .= '<tr><td>' . $planning['name'] . '</td>';
                 $childTable .= '<td><form action="" method="post" accept-charset="UTF-8"
 enctype="application/x-www-form-urlencoded"><a  title="' . _('form_modif') . '" href="resp_index.php?onglet=modif_planning&id=' . $planning['planning_id'] .
                 '&session=' . $session . '"><i class="fa fa-pencil"></i></a>&nbsp;&nbsp;';
@@ -2382,9 +2387,10 @@ enctype="application/x-www-form-urlencoded"><a  title="' . _('form_modif') . '" 
         $return    = '';
         $message   = '';
         $errorsLst = [];
+        $notice    = '';
         $valueName = '';
         if (!empty($_POST)) {
-            if (0 < (int) \App\ProtoControllers\Planning::postPlanning($_POST, $errorsLst)) {
+            if (0 < (int) \App\ProtoControllers\Planning::postPlanning($_POST, $errorsLst, $notice)) {
                 redirect(ROOT_PATH . 'responsable/resp_index.php?session='. session_id() . '&onglet=liste_planning', false);
             } else {
                 $errors = '';
@@ -2397,7 +2403,7 @@ enctype="application/x-www-form-urlencoded"><a  title="' . _('form_modif') . '" 
                     }
                     $message = '<div class="alert alert-danger">' . _('erreur_recommencer') . ' :<ul>' . $errors . '</ul></div>';
                 }
-                $valueName = $_POST['planning_name'];
+                $valueName = $_POST['name'];
             }
         }
 
@@ -2423,13 +2429,12 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             $sql   = 'SELECT * FROM conges_planning WHERE planning_id = ' . $id;
             $query = \includes\SQL::query($sql);
             $data = $query->fetch_assoc();
-            $valueName = $data['planning_name'];
-            $childTable .= '<tr><td>' . $valueName . '<input type="hidden" name="planning_id" value="' . $id . '" /><input type="hidden" name="_METHOD" value="PUT" /></td></tr>';
+            $valueName = $data['name'];
+            $childTable .= '<tr><td>' . $valueName . '<input type="hidden" name="planning_id" value="' . $id . '" /><input type="hidden" name="_METHOD" value="PUT" /></td><td></td></tr>';
         }
         $idSemaine = uniqid();
-        $textCommon = _('Semaines communes');
-        $childTable .= '<tr><td><input type="text" name="planning_name" value="' . $valueName . '" class="form-control" required /></td>';
-        $childTable .= '<td><input type="button" id="' . $idSemaine . '" class="btn btn-default " value="' . $textCommon . '" /></td></tr></tbody>';
+        $childTable .= '<tr><td><input type="text" name="name" value="' . $valueName . '" class="form-control" required /></td>';
+        $childTable .= '<td><input type="button" id="' . $idSemaine . '" class="btn btn-default " /></td></tr></tbody>';
         $table->addChild($childTable);
         ob_start();
         $table->render();
@@ -2452,8 +2457,8 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             \App\Models\Planning\Creneau::TYPE_SEMAINE_PAIRE   => $idPaire,
         ];
         $text = [
-            'common'    => $textCommon,
-            'notCommon' => _('Semaines différenciées')
+            'common'    => _('Semaines identiques'),
+            'notCommon' => _('Semaines différenciées'),
         ];
         $return .= '</div><script>new semaineDisplayer("' . $idSemaine . '", "' . \App\Models\Planning\Creneau::TYPE_SEMAINE_COMMUNE . '", ' . json_encode($typeSemaine) . ', ' . json_encode($text) . ').init()</script>';
         $return .= '<hr><input type="submit" class="btn btn-success" value="' . _('form_submit') . '" />';
