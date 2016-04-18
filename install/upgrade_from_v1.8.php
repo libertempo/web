@@ -44,7 +44,7 @@ $lang = (isset($_GET['lang']) ? $_GET['lang'] : (isset($_POST['lang']) ? $_POST[
 $ssoad="UPDATE conges_config SET conf_type = 'enum=dbconges/ldap/CAS/SSO' WHERE conf_nom = 'how_to_connect_user';";
 $res_ssoad=\includes\SQL::query($ssoad);
 
-$periode_heure= "CREATE TABLE conges_heure_periode ( id_heure INT(10) UNSIGNED NOT NULL AUTO_INCREMENT , login VARBINARY(99) NOT NULL , debut INT(11) NOT NULL DEFAULT CURRENT_TIMESTAMP , fin INT(11) NOT NULL DEFAULT CURRENT_TIMESTAMP , time INT NOT NULL DEFAULT '0', status INT NOT NULL DEFAULT '0', type INT NOT NULL DEFAULT '0' , PRIMARY KEY (`id_heure`));";
+$periode_heure= "CREATE TABLE conges_heure_periode ( id_heure INT(10) UNSIGNED NOT NULL AUTO_INCREMENT , login VARBINARY(99) NOT NULL , debut INT(11) NOT NULL DEFAULT CURRENT_TIMESTAMP , fin INT(11) NOT NULL DEFAULT CURRENT_TIMESTAMP , time INT NOT NULL DEFAULT '0', statut INT NOT NULL DEFAULT '0', type INT NOT NULL DEFAULT '0' , PRIMARY KEY (`id_heure`));";
 $res_periode_heure=\includes\SQL::query($periode_heure);
 
 // on renvoit à la page mise_a_jour.php (là d'ou on vient)

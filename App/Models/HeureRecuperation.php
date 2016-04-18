@@ -29,11 +29,11 @@ namespace App\Models;
  */
 class HeureRecuperation
 {
-    const STATUS_DEMANDE = 0;
-    const STATUS_VALIDE  = 1;
-    const STATUS_OK      = 2;
-    const STATUS_REFUS   = 3;
-    const STATUS_ANNUL   = 4;
+    const STATUT_DEMANDE = 0;
+    const STATUT_VALIDE  = 1;
+    const STATUT_OK      = 2;
+    const STATUT_REFUS   = 3;
+    const STATUT_ANNUL   = 4;
     const TYPE_CREDIT    = 0;
     const TYPE_DEBIT     = 1;
 }

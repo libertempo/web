@@ -1760,7 +1760,7 @@ class Fonctions
                         }
                         $errors .= '<li>' . $key . ' : ' . $value . '</li>';
                     }
-                    $message = '<div class="alert alert-danger">Des erreurs sont apparues, veuillez recommencer<ul>' . $errors . '</ul></div>';
+                    $message = '<div class="alert alert-danger">' . _('erreur_recommencer') . '<ul>' . $errors . '</ul></div>';
                 }
             }
         }
@@ -1784,9 +1784,9 @@ class Fonctions
         ]);
 
         $childTable="";
-        $childTable .= '<div class="form-inline"><div class="form-group"><label for="new_dem_jour">' . _('divers_date_debut') . '</label><input class="form-control date" type="text" value="'.date("d/m/Y").'" name="new_jour"></div>';
-        $childTable .= '<div class="form-group"><label for="new_heure_deb">Heure de début </label><input class="form-control time" type="text" value="" name="new_deb_heure"></div>';
-        $childTable .= '<div class="form-group"><label for="new_heure_fin">Heure de fin </label><input class="form-control time" type="text" value="" name="new_fin_heure"></div>';
+        $childTable .= '<div class="form-inline"><div class="form-group"><label for="new_dem_jour">' . _('saisie_echange_titre_calendrier_2') . '</label><input class="form-control date" type="text" value="'.date("d/m/Y").'" name="new_jour"></div>';
+        $childTable .= '<div class="form-group"><label for="new_heure_deb">'._('divers_debut_maj_1').'</label><input class="form-control time" type="text" value="" name="new_deb_heure"></div>';
+        $childTable .= '<div class="form-group"><label for="new_heure_fin">'._('divers_fin_maj_1').'</label><input class="form-control time" type="text" value="" name="new_fin_heure"></div>';
         $childTable .= '<input hidden type="text" name="type" value="'.$type.'"></div>';
         $childTable .= '</div>';
         $childTable .= '<div class="form-group"><input type="submit" class="btn btn-success" value="' . _('form_submit') . '" /></div>';
@@ -1846,7 +1846,7 @@ class Fonctions
                         }
                         $errors .= '<li>' . $key . ' : ' . $value . '</li>';
                     }
-                    $message = '<div class="alert alert-danger">Des erreurs sont apparues, veuillez recommencer<ul>' . $errors . '</ul></div>';
+                    $message = '<div class="alert alert-danger">' . _('erreur_recommencer') . '<ul>' . $errors . '</ul></div>';
                 }
             }
         }
@@ -1878,9 +1878,9 @@ class Fonctions
             $heureDeb = date("H:i", $data['debut']);
             $jour = date("d/m/Y", $data['debut']);
             $heureFin = date("H:i", $data['fin']);
-            $childTable .= '<div class="form-inline"><div class="form-group"><label for="new_dem_jour">' . _('divers_date_debut') . '</label><input class="form-control date" type="text" value="'.$jour.'" name="new_jour"></div>';
-            $childTable .= '<div class="form-group"><label for="new_heure_deb">Heure de début </label><input class="form-control time" type="text" value="'.$heureDeb.'" name="new_deb_heure"></div>';
-            $childTable .= '<div class="form-group"><label for="new_heure_fin">Heure de fin </label><input class="form-control time" type="text" value="'.$heureFin.'" name="new_fin_heure"></div>';
+            $childTable .= '<div class="form-inline"><div class="form-group"><label for="new_dem_jour">' . _('saisie_echange_titre_calendrier_2') . '</label><input class="form-control date" type="text" value="'.$jour.'" name="new_jour"></div>';
+            $childTable .= '<div class="form-group"><label for="new_heure_deb">'._('divers_debut_maj_1').'</label><input class="form-control time" type="text" value="'.$heureDeb.'" name="new_deb_heure"></div>';
+            $childTable .= '<div class="form-group"><label for="new_heure_fin">'._('divers_fin_maj_1').'</label><input class="form-control time" type="text" value="'.$heureFin.'" name="new_fin_heure"></div>';
             $childTable .= '<input hidden type="text" name="id_heure" value="'.$id.'"></div>';
             $childTable .= '<input hidden type="text" name="type" value="'.$type.'"></div>';
             $childTable .= '<input hidden type="text" name="_METHOD" value="PUT"></div>';
@@ -1998,19 +1998,21 @@ class Fonctions
         $pattern = '/^(((0?|1)[0-9])|(2[0-3])):[0-5][0-9]$/'; 
 
         // leur champs doivent etre renseignés dans le formulaire
-        if( $jour == '' || $heuredeb == '' || $heurefin == '' ) {
+        if ( $jour == '' || $heuredeb == '' || $heurefin == '' ) {
             $localError[] = _('verif_saisie_erreur_valeur_manque'); 
         }
 
         // si la date de fin est antérieur à la date debut
-        if(NIL_INT !== strnatcmp($heuredeb, $heurefin)) {
+        if (NIL_INT !== strnatcmp($heuredeb, $heurefin)) {
             $localError[] = _('verif_saisie_erreur_heure_fin_avant_debut') ;
         }
 
-        if (!preg_match($pattern, $heuredeb) || !preg_match($pattern, $heurefin))  {
-            $localError[] = 'Heure non reconnue';
+        if (!preg_match($pattern, $heuredeb) || !preg_match($pattern, $heurefin)) {
+            $localError[] = _('Heure_non_reconnue');
         }
 
+        $chevauch = \utilisateur\Fonctions::VerifChevauchHeures($jour, $heuredeb, $heurefin, $localError);
+            
         $Error = array_merge($Error, $localError);
 
         return empty($localError);
@@ -2034,8 +2036,8 @@ class Fonctions
         $user = $_SESSION['userlogin'];
         $sql = \includes\SQL::singleton();
         $toInsert = [];
-        $toInsert[] = '("", "' . $user . '", ' . (int) $timedeb . ', '. (int) $timefin .', '. (int) $duree .', '.\App\Models\HeureRecuperation::STATUS_DEMANDE.', '.$info['type'].')';
-        $req = 'INSERT INTO conges_heure_periode (id_heure, login, debut, fin, time, status, type) VALUES ' . implode(', ', $toInsert);
+        $toInsert[] = '("", "' . $user . '", ' . (int) $timedeb . ', '. (int) $timefin .', '. (int) $duree .', '.\App\Models\HeureRecuperation::STATUT_DEMANDE.', '.$info['type'].')';
+        $req = 'INSERT INTO conges_heure_periode (id_heure, login, debut, fin, time, statut, type) VALUES ' . implode(', ', $toInsert);
         $query = $sql->query($req);
 
         return $sql->insert_id;
@@ -2096,29 +2098,29 @@ class Fonctions
         ]);
 
         $sql = \includes\SQL::singleton();
-        // a faire : filtrer pour n'avoir que les demandes
         $req = 'SELECT *
                 FROM conges_heure_periode
                 WHERE login = "' . $_SESSION['userlogin'].'"
                 AND type = '.$type.'
+                AND statut ='.\App\Models\HeureRecuperation::STATUT_DEMANDE.'
                 ORDER by debut DESC';
         $res = $sql->query($req);
         if (!$res->num_rows) {
             $childTable = '<tr><td colspan="2">'. _('aucune_demande') .'</td></tr>';
         } else {
-            $childTable = '<thead><tr><th>Jour </th><th style="width:15%"></th>';
-            $childTable .= '<th>Heure de debut</th><th style="width:15%"></th>';
-            $childTable .= '<th>Heure de fin</th><th style="width:15%"></th>';
-            $childTable .= '<th>durée</th><th style="width:15%"></th>';
-            $childTable .= '<th>modifier</th><th style="width:15%"></th>';
-            $childTable .= '<th>annuler</th></tr>';
+            $childTable = '<thead><tr><th>'._('saisie_echange_titre_calendrier_2').'</th><th style="width:15%"></th>';
+            $childTable .= '<th>'._('divers_debut_maj_1').'</th><th style="width:15%"></th>';
+            $childTable .= '<th>'._('divers_fin_maj_1').'</th><th style="width:15%"></th>';
+            $childTable .= '<th>'._('nb_heures').'</th><th style="width:15%"></th>';
+            $childTable .= '<th>'._('form_modif').'</th><th style="width:15%"></th>';
+            $childTable .= '<th>'._('form_modif').'</th></tr>';
             $childTable .= '</thead><tbody>';
             while ($data = $res->fetch_array()) {
                 $childTable .= '<tr><td>' . date("d/m/Y", $data['debut']) . '</td><td style="width:15%"></td>';
                 $childTable .= '<td>' . date("H:i", $data['debut']) . '</td><td style="width:15%"></td>';
                 $childTable .= '<td>' . date("H:i", $data['fin']) . '</td><td style="width:15%"></td>';
                 $childTable .= '<td>' . \utilisateur\Fonctions::Timestamp2Time($data['time']) . '</td><td style="width:15%"></td>';
-                $childTable .= '<td><a href="user_index.php?session='.$session.'&onglet=modif_demande_heures&id='.$data['id_heure'].'&type='.$type.'" title="' . _('form_modif') . '"><i class="fa fa-times-circle"></i></a></td><td style="width:15%"></td>';
+                $childTable .= '<td><a href="user_index.php?session='.$session.'&onglet=modif_demande_heures&id='.$data['id_heure'].'&type='.$type.'" title="' . _('form_modif') . '"><i class="fa fa-pencil"></i></a></td><td style="width:15%"></td>';
                 $childTable .= '<td><form id="del'.$data['id_heure'].'" action="" method="post" class="form-group">';
                 $childTable .= '<input hidden type="text" name="_METHOD" value="DELETE">';
                 $childTable .= '<input hidden type="text" name="id_heure" value="'.$data['id_heure'].'">';
@@ -2133,14 +2135,53 @@ class Fonctions
         return $return;
     }
 
-    public static function Timestamp2Time($secondes) {
+    public static function Timestamp2Time($secondes) 
+    {
         $t = (int) $secondes;
         return sprintf('%02d:%02d:%02d', ($t/3600),($t/60%60), $t%60);
     }
 
-    public static function compter_heures($debut,$fin) {
+    public static function compter_heures($debut,$fin) 
+    {
         return $fin - $debut;
     }
 
+    public static function VerifSQLChevauchHeures($jour, $heuredeb, $heurefin)
+    {
+        $date = \App\Helpers\Formatter::dateFr2Iso($jour);
+        $deb = $date." ".$heuredeb;
+        $fin = $date." ".$heurefin;
+        $timedeb = strtotime($deb);
+        $timefin = strtotime($fin);
 
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT statut
+                FROM conges_heure_periode
+                WHERE login = "'. $_SESSION['userlogin'].'"
+                AND (statut != '.\App\Models\HeureRecuperation::STATUT_REFUS.'
+                OR statut != '.\App\Models\HeureRecuperation::STATUT_ANNUL.')
+                AND (debut <= '.$timefin.' and fin >= '.$timedeb.')';
+        $res = $sql->query($req);
+        $val = $res->fetch_assoc();
+
+    return is_null($val['statut']) ? NIL_INT : (int)$val['statut'];
+    }
+
+    public static function VerifChevauchHeures($jour, $heuredeb, $heurefin, array &$Errors)
+    {
+        $statut = \utilisateur\Fonctions::VerifSQLChevauchHeures($jour, $heuredeb, $heurefin);
+        $Error = '';
+
+        if (NIL_INT !== $statut) {
+            if (\App\Models\HeureRecuperation::STATUT_DEMANDE === $statut) {
+                $Error = _('calcul_nb_jours_commentaire_impossible');
+            } else {
+                $Error = _('calcul_nb_jours_commentaire');
+            }
+d($statut);            
+            $Errors[] = $Error;
+        }
+
+        return empty($Error);
+    }
 }
