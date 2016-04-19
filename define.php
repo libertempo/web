@@ -1,6 +1,4 @@
 <?php
-
-
 define('_PHP_CONGES', 1);
 defined( 'ROOT_PATH' ) or die( 'ROOT_PATH not defined !' );
 

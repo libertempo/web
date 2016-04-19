@@ -24,8 +24,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *************************************************************************************************/
-
-define('_PHP_CONGES', 1);
 define('ROOT_PATH', '../');
 require_once ROOT_PATH . 'define.php';
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
@@ -113,4 +111,3 @@ verif_droits_user($session, "is_resp");
 
     bottom();
     exit;
-
