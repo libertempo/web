@@ -87,6 +87,12 @@ class Fonctions
         // verif validité des valeurs saisies
         $valid = verif_saisie_new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment);
 
+        // si il s'agit de conges payés ou rtt, on impose un délai de 48h entre la demande et le début des congés
+        if( $new_type < 3 )
+        {
+            $valid = \utilisateur\Fonctions::verifieDelaiDemande($new_debut);
+        }
+
         // verifie que le solde de conges sera encore positif après validation
         if( $_SESSION['config']['solde_toujours_positif'] ) {
             $valid = $valid && \utilisateur\Fonctions::verif_solde_user($_SESSION['userlogin'], $new_type, $new_nb_jours);
@@ -131,6 +137,30 @@ class Fonctions
         $return .= '<a class="btn" href="' . $PHP_SELF . '?session=' . $session . '">' . _('form_retour') . '</a>';
 
         return $return;
+    }
+
+    /**
+     * Vérifie que le délai entre la demande et le début d'un congé payé ou rtt est d'au moins 48h
+     *
+     * @param string $new_debut Date de début du congé
+     *
+     * @return bool
+     * @access public
+     * @static
+     */
+    public static function verifieDelaiDemande($new_debut)
+    {
+        $dStart         = new DateTime( date( 'Y-m-d' ) );
+        $dEnd           = new DateTime( $new_debut );
+        $dDiff          = $dStart->diff( $dEnd );
+        $daysDiff       = (int)$dDiff->format("%r%a");
+        if( $daysDiff < 2 )
+        {
+                echo '<br>Les demandes de cong&eacute;s doivent &ecirc;tre effectu&eacute;es au minimum 48h &agrave; l\'avance !<br>';
+                return false;
+        }
+
+        return true;
     }
 
     /**
