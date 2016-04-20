@@ -127,6 +127,12 @@ function compter($user, $num_current_periode, $date_debut, $date_fin, $opt_debut
 				// verif des rtt ou temp partiel (dans la table rtt)
 				$val_matin="N";
 				$val_aprem="N";
+                /*
+                 * Get data sur période entre dateDebut et dateFin (en fonction de 1/ ce qu'il y a en base 2 / du typeSemaine)
+                 *
+                 * for each : check is !(demi-journée travaillée) : 0
+                 *
+                 */
 				recup_infos_artt_du_jour($user, $timestamp_du_jour, $val_matin, $val_aprem);
 
 				if($val_matin=="Y")  // rtt le matin
@@ -186,7 +192,7 @@ function verif_jours_feries_saisis($date)
 		$tab_date=explode("/", $date); // date est de la forme dd/mm/YYYY
 		$an=$tab_date[2];
 	}
-	if(substr_count($date,'-')) 
+	if(substr_count($date,'-'))
 	{
 		$tab_date=explode("-", $date); // date est de la forme yyyy-mm-dd
 		$an=$tab_date[0];
@@ -362,5 +368,3 @@ function round_to_half($num)
 	else if($num < $half - 0.25) return floor($num);
 	else return $half;
 }
-
-
