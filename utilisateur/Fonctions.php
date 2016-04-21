@@ -1927,7 +1927,7 @@ class Fonctions
     private static function putDemandeDebitCongesHeure(array $post, array &$errors)
     {
 
-        if (\utilisateur\Fonctions::VerifNewDemandeHeures($post['new_jour'], $post['new_deb_heure'], $post['new_fin_heure'], $errors)) {
+        if (\utilisateur\Fonctions::VerifNewDemandeHeures($post['new_jour'], $post['new_deb_heure'], $post['new_fin_heure'], $errors, $post['id_heure'])) {
             return \utilisateur\Fonctions::updateDemandeDebitCongesHeure($post, $post['id_heure']);
         }
 
@@ -1991,7 +1991,7 @@ class Fonctions
      *
      * @return boolean
      */
-    public static function VerifNewDemandeHeures($jour, $heuredeb, $heurefin, array &$Error)
+    public static function VerifNewDemandeHeures($jour, $heuredeb, $heurefin, array &$Error, $id = NIL_INT)
     {
         $verif = true;
         $localError = [];
@@ -2011,7 +2011,7 @@ class Fonctions
             $localError[] = _('Heure_non_reconnue');
         }
 
-        $chevauch = \utilisateur\Fonctions::VerifChevauchHeures($jour, $heuredeb, $heurefin, $localError);
+        $chevauch = \utilisateur\Fonctions::VerifChevauchHeures($jour, $heuredeb, $heurefin, $localError, $id);
             
         $Error = array_merge($Error, $localError);
 
@@ -2146,7 +2146,7 @@ class Fonctions
         return $fin - $debut;
     }
 
-    public static function VerifSQLChevauchHeures($jour, $heuredeb, $heurefin)
+    public static function VerifSQLChevauchHeures($jour, $heuredeb, $heurefin, $id)
     {
         $date = \App\Helpers\Formatter::dateFr2Iso($jour);
         $deb = $date." ".$heuredeb;
@@ -2160,16 +2160,19 @@ class Fonctions
                 WHERE login = "'. $_SESSION['userlogin'].'"
                 AND (statut != '.\App\Models\HeureRecuperation::STATUT_REFUS.'
                 OR statut != '.\App\Models\HeureRecuperation::STATUT_ANNUL.')
-                AND (debut <= '.$timefin.' and fin >= '.$timedeb.')';
+                AND (debut <= '.$timefin.' and fin >= '.$timedeb.') ';
+        if(NIL_INT !== $id) {
+            $req .=' AND id_heure !='.$id;
+        }
         $res = $sql->query($req);
         $val = $res->fetch_assoc();
 
     return is_null($val['statut']) ? NIL_INT : (int)$val['statut'];
     }
 
-    public static function VerifChevauchHeures($jour, $heuredeb, $heurefin, array &$Errors)
+    public static function VerifChevauchHeures($jour, $heuredeb, $heurefin, array &$Errors, $id)
     {
-        $statut = \utilisateur\Fonctions::VerifSQLChevauchHeures($jour, $heuredeb, $heurefin);
+        $statut = \utilisateur\Fonctions::VerifSQLChevauchHeures($jour, $heuredeb, $heurefin, $id);
         $Error = '';
 
         if (NIL_INT !== $statut) {
