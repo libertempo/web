@@ -45,7 +45,7 @@ $lang = (isset($_GET['lang']) ? $_GET['lang'] : (isset($_POST['lang']) ? $_POST[
 $del_conges_acl = "DELETE FROM conges_groupe_resp WHERE gr_login = 'conges';";
 $res_del_conges_acl = \includes\SQL::query($del_conges_acl);
 
-$del_conges_acl = "DELETE FROM conges_groupe_grd_resp WHERE gr_login = 'conges';";
+$del_conges_acl = "DELETE FROM conges_groupe_grd_resp WHERE ggr_login = 'conges';";
 $res_del_conges_acl=\includes\SQL::query($del_conges_acl);
 
 //modifications des users ayant comme responsable conges
