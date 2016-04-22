@@ -54,11 +54,11 @@ $res_upd_user_resp=\includes\SQL::query($upd_user_resp);
 
 //suppression des artt de conges
 $del_conges_artt = "DELETE FROM conges_artt WHERE gr_login = 'conges';";
-$res_del_conges_acl = \includes\SQL::query($del_conges_acl);
+$res_del_conges_artt = \includes\SQL::query($del_conges_artt);
 
 //suppression du user conges
 $del_conges_usr="DELETE FROM conges_users WHERE u_login = 'conges';";
-$res_del_conges_acl=\includes\SQL::query($del_conges_acl);
+$res_del_conges_usr=\includes\SQL::query($del_conges_usr);
 
 
 // on renvoit à la page mise_a_jour.php (là d'ou on vient)
