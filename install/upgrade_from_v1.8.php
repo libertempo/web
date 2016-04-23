@@ -53,13 +53,13 @@ $upd_user_resp = "UPDATE conges_users SET u_resp_login = NULL WHERE u_login = 'c
 $res_upd_user_resp=\includes\SQL::query($upd_user_resp);
 
 //suppression des artt de conges
-$del_conges_artt = "DELETE FROM conges_artt WHERE gr_login = 'conges';";
+$del_conges_artt = "DELETE FROM conges_artt WHERE a_login = 'conges';";
 $res_del_conges_artt = \includes\SQL::query($del_conges_artt);
 
 //suppression du user conges
 $del_conges_usr="DELETE FROM conges_users WHERE u_login = 'conges';";
 $res_del_conges_usr=\includes\SQL::query($del_conges_usr);
 
-
 // on renvoit à la page mise_a_jour.php (là d'ou on vient)
-echo "<a href=\"mise_a_jour.php?etape=3&version=$version&lang=$lang\">upgrade_from_v1.8  OK</a><br>\n";
+echo "<a href=\"mise_a_jour.php?etape=2&version=$version&lang=$lang\">upgrade_from_v1.8  OK</a><br>\n";
+
