@@ -1031,7 +1031,7 @@ function get_list_all_users_du_resp($resp_login)
     }
 
     $sql1=$sql1." ) " ;
-    $sql1 = $sql1." ORDER BY u_nom " ;
+    $sql1 = $sql1." ORDER BY u_login " ;
     $ReqLog1 = \includes\SQL::query($sql1);
 
     while ($resultat1 = $ReqLog1->fetch_array())
@@ -1060,7 +1060,7 @@ function get_list_all_users_du_resp($resp_login)
         }
 
         $sql_2=$sql_2." ) " ;
-        $sql_2 = $sql_2." ORDER BY u_nom " ;
+        $sql_2 = $sql_2." ORDER BY u_login " ;
 
         $ReqLog_2 = \includes\SQL::query($sql_2);
 
