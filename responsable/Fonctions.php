@@ -2328,9 +2328,11 @@ class Fonctions
                     $message = '<div class="alert alert-danger">' . _('erreur_recommencer') . ' :<ul>' . $errors . '</ul></div>';
                 }
             } elseif ('DELETE' === $_POST['_METHOD'] && !empty($notice)) {
+                log_action(0, '', '', 'Suppression du planning ' . $_POST['planning_id']);
                 $message = '<form action="" method="post" accept-charset="UTF-8"
 enctype="application/x-www-form-urlencoded"><input type="hidden" name="planning_id" value="' . $_POST['planning_id'] . '" /><input type="hidden" name="status" value="' . \App\Models\Planning::STATUS_ACTIVE . '" /><input type="hidden" name="_METHOD" value="PATCH" /><div class="alert alert-info">' .  $notice . '. <button type="submit" class="btn btn-link alert-link">' . _('Annuler') . '</button></div></form>';
             } else {
+                log_action(0, '', '', 'Récupération du planning ' . $_POST['planning_id']);
                 redirect(ROOT_PATH . 'responsable/resp_index.php?session='. session_id() . '&onglet=liste_planning', false);
             }
         }
@@ -2390,6 +2392,7 @@ enctype="application/x-www-form-urlencoded"><a  title="' . _('form_modif') . '" 
         $valueName = '';
         if (!empty($_POST)) {
             if (0 < (int) \App\ProtoControllers\Planning::postPlanning($_POST, $errorsLst, $notice)) {
+                log_action(0, '', '', 'Édition du planning ' . $_POST['name']);
                 redirect(ROOT_PATH . 'responsable/resp_index.php?session='. session_id() . '&onglet=liste_planning', false);
             } else {
                 $errors = '';
