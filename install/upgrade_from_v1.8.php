@@ -58,7 +58,7 @@ $sql->query($addIndexPlanningUser);
 /* Création du planning et des créneaux */
 $addPlanning = 'CREATE TABLE `conges_planning` (
   `planning_id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `name` VARCHAR(50) NOT NULL DEFAULT "" UNIQUE,
+  `name` VARCHAR(50) NOT NULL DEFAULT "",
   `status` TINYINT(3) UNSIGNED NOT NULL DEFAULT 0,
   KEY `status` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;';

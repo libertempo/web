@@ -64,7 +64,12 @@ class Planning
             }
         } else {
             if (empty($post['name'])) {
-                $errors['Nom'] = _('champ doit etre rempli');
+                $errors['Nom'] = _('champ_necessaire');
+                return NIL_INT;
+            }
+            if (\App\ProtoControllers\Planning::existPlanningName($post['name'])) {
+                $errors['Nom'] = _('nom_existe_deja');
+                return NIL_INT;
             }
 
             if (!empty($post['creneaux'])) {
@@ -99,9 +104,15 @@ class Planning
      */
     private static function putPlanning($id, array $put, array &$errors)
     {
-        if (empty($post['name'])) {
-            $errors['Nom'] = _('champ doit etre rempli');
+        if (empty($put['name'])) {
+            $errors['Nom'] = _('champ_necessaire');
+            return NIL_INT;
         }
+        if (\App\ProtoControllers\Planning::existPlanningName($put['name'], $id)) {
+            $errors['Nom'] = _('nom_existe_deja');
+            return NIL_INT;
+        }
+
         if (!empty($put['creneaux'])) {
             $sql = \includes\SQL::singleton();
             $sql->getPdoObj()->begin_transaction();
@@ -248,7 +259,7 @@ class Planning
                 WHERE planning_id = ' . $id;
         $sql->query($req);
 
-        return 0 < $sql->affected_rows ? $id : NIL_INT;
+        return $id;
     }
 
     /**
@@ -349,5 +360,28 @@ class Planning
         }
 
         return $ids;
+    }
+
+    /**
+     * Vérifie l'existence d'un planning par son nom
+     *
+     * @param string $name
+     * @param int    $idAuthorized Id autorisé à outrepasser la vérification
+     *
+     * @return bool
+     */
+    private static function existPlanningName($name, $idAuthorized = NIL_INT)
+    {
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT EXISTS (
+                    SELECT planning_id
+                    FROM conges_planning
+                    WHERE name = "' . htmlspecialchars($sql->quote($name)) . '"
+                      AND status = ' . \App\Models\Planning::STATUS_ACTIVE . '
+                      AND planning_id != ' . (int) $idAuthorized . '
+                )';
+        $query = $sql->query($req);
+
+        return 0 < (int) $query->fetch_array()[0];
     }
 }
