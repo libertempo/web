@@ -1096,7 +1096,7 @@ function get_list_users_du_groupe($group_id)
     $sql1='SELECT DISTINCT(gu_login) FROM conges_groupe_users WHERE gu_gid = '.intval($group_id).' ORDER BY gu_login ';
     $ReqLog1 = \includes\SQL::query($sql1);
     while ($resultat1 = $ReqLog1->fetch_array())
-        $list_users[] = '"'.\includes\SQL::quote($resultat1["gu_login"]).'"';
+        $list_users[] = "'".\includes\SQL::quote($resultat1["gu_login"])."'";
 
     $list_users = implode(' , ', $list_users);
     return $list_users;
