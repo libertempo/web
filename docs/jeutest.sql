@@ -3,29 +3,13 @@
 -- http://www.phpmyadmin.net
 --
 -- Client :  sql
--- Généré le :  Mar 26 Mai 2015 à 17:53
+-- Gï¿½nï¿½rï¿½ le :  Mar 26 Mai 2015 ï¿½ 17:53
 -- Version du serveur :  5.5.43-0+deb7u1
 -- Version de PHP :  5.4.39-0+deb7u2
 
 --
--- Base de données :  `libertempo`
+-- Base de donnï¿½es :  `libertempo`
 --
-
---
--- Contenu de la table `conges_artt`
---
-
-INSERT INTO `conges_artt` VALUES('marie', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0000-00-00', '9999-12-31');
-INSERT INTO `conges_artt` VALUES('pierre', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0000-00-00', '9999-12-31');
-INSERT INTO `conges_artt` VALUES('georges', 'Y', 'Y', 'Y', 'Y', 'Y', NULL, NULL, NULL, NULL, NULL, 'Y', 'Y', 'Y', 'Y', 'Y', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0000-00-00', '2015-05-24');
-INSERT INTO `conges_artt` VALUES('bernard', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0000-00-00', '9999-12-31');
-INSERT INTO `conges_artt` VALUES('cecile', NULL, NULL, NULL, NULL, 'Y', 'Y', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Y', 'Y', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0000-00-00', '9999-12-31');
-INSERT INTO `conges_artt` VALUES('albert', 'Y', 'Y', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Y', 'Y', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0000-00-00', '2015-05-24');
-INSERT INTO `conges_artt` VALUES('kevin', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0000-00-00', '9999-12-31');
-INSERT INTO `conges_artt` VALUES('paolo', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0000-00-00', '9999-12-31');
-INSERT INTO `conges_artt` VALUES('jean', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0000-00-00', '9999-12-31');
-INSERT INTO `conges_artt` VALUES('albert', 'Y', 'Y', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2015-05-25', '9999-12-31');
-INSERT INTO `conges_artt` VALUES('georges', 'Y', 'Y', 'Y', 'Y', 'Y', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Y', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2015-05-25', '9999-12-31');
 
 --
 -- Contenu de la table `conges_echange_rtt`
@@ -159,13 +143,24 @@ INSERT INTO `conges_type_absence` VALUES(12, 'conges_exceptionnels', 'maladie', 
 -- Contenu de la table `conges_users`
 --
 
-INSERT INTO `conges_users` VALUES('albert', 'dupont', 'albert', 'N', 'marie', 'N', 'N', 'N', 'Y', '6c5bc43b443975b806740d8e41146479', 80, '', 0);
-INSERT INTO `conges_users` VALUES('bernard', 'simon', 'bernard', 'N', 'marie', 'N', 'N', 'N', 'Y', '78d6810e1299959f3a8db157045aa926', 100, '', 0);
-INSERT INTO `conges_users` VALUES('cecile', 'fabre', 'cecile', 'N', 'marie', 'N', 'N', 'N', 'Y', '0231a1bba275eac1ebb37acb638175e1', 80, '', 0);
-INSERT INTO `conges_users` VALUES('georges', 'simeon', 'georges', 'N', 'paolo', 'N', 'N', 'N', 'Y', 'c5c6c8e77d4534ba39f5afec86a3a23a', 50, '', 0);
-INSERT INTO `conges_users` VALUES('jean', 'gauthier', 'jean', 'N', 'marie', 'N', 'N', 'N', 'Y', 'b71985397688d6f1820685dde534981b', 100, '', 0);
-INSERT INTO `conges_users` VALUES('kevin', 'legrand', 'kevin', 'N', 'paolo', 'N', 'N', 'N', 'Y', '9d5e3ecdeb4cdb7acfd63075ae046672', 100, '', 0);
-INSERT INTO `conges_users` VALUES('marie', 'trinte', 'marie', 'Y', 'marie', 'Y', 'N', 'N', 'Y', 'b3725122c9d3bfef5664619e08e31877', 100, '', 0);
-INSERT INTO `conges_users` VALUES('paolo', 'durand', 'paolo', 'Y', 'pierre', 'Y', 'N', 'Y', 'Y', '969044ea4df948fb0392308cfff9cdce', 100, '', 0);
-INSERT INTO `conges_users` VALUES('pierre', 'point', 'pierre', 'Y', 'conges', 'N', 'Y', 'Y', 'Y', '84675f2baf7140037b8f5afe54eef841', 100, '', 0);
+INSERT INTO `conges_users` VALUES('albert', 'dupont', 'albert', 'N', 'marie', 'N', 'N', 'N', 'Y', '6c5bc43b443975b806740d8e41146479', 80, '', 0, 7);
+INSERT INTO `conges_users` VALUES('bernard', 'simon', 'bernard', 'N', 'marie', 'N', 'N', 'N', 'Y', '78d6810e1299959f3a8db157045aa926', 100, '', 0, 8);
+INSERT INTO `conges_users` VALUES('cecile', 'fabre', 'cecile', 'N', 'marie', 'N', 'N', 'N', 'Y', '0231a1bba275eac1ebb37acb638175e1', 80, '', 0, 7);
+INSERT INTO `conges_users` VALUES('georges', 'simeon', 'georges', 'N', 'paolo', 'N', 'N', 'N', 'Y', 'c5c6c8e77d4534ba39f5afec86a3a23a', 50, '', 0, 7);
+INSERT INTO `conges_users` VALUES('jean', 'gauthier', 'jean', 'N', 'marie', 'N', 'N', 'N', 'Y', 'b71985397688d6f1820685dde534981b', 100, '', 0, 7);
+INSERT INTO `conges_users` VALUES('kevin', 'legrand', 'kevin', 'N', 'paolo', 'N', 'N', 'N', 'Y', '9d5e3ecdeb4cdb7acfd63075ae046672', 100, '', 0, 7);
+INSERT INTO `conges_users` VALUES('marie', 'trinte', 'marie', 'Y', 'marie', 'Y', 'N', 'N', 'Y', 'b3725122c9d3bfef5664619e08e31877', 100, '', 0, 8);
+INSERT INTO `conges_users` VALUES('paolo', 'durand', 'paolo', 'Y', 'pierre', 'Y', 'N', 'Y', 'Y', '969044ea4df948fb0392308cfff9cdce', 100, '', 0, 7);
+INSERT INTO `conges_users` VALUES('pierre', 'point', 'pierre', 'Y', 'conges', 'N', 'Y', 'Y', 'Y', '84675f2baf7140037b8f5afe54eef841', 100, '', 0, 7);
 
+--
+-- Contenu de la table `conges_planning`
+--
+INSERT INTO conges_planning (planning_id, name, status)
+  VALUES (7, "planning_type", 1), (8, "planning_sans_creneau", 1);
+
+--
+-- Contenu de la table `conges_planning_creneau`
+--
+
+INSERT INTO conges_planning_creneau (creneau_id, planning_id, jour_id, type_semaine, type_periode, debut, fin) VALUES ("", 7, 1, 1, 1, "28800", "45000"), ("", 7, 1, 1, 2, "50400", "59400"), ("", 7, 1, 1, 2, "64800", "72000"), ("", 7, 2, 1, 1, "28800", "45000"), ("", 7, 2, 1, 2, "50400", "59400"), ("", 7, 2, 1, 2, "64800", "72000"), ("", 7, 3, 1, 1, "28800", "45000"), ("", 7, 3, 1, 2, "50400", "59400"), ("", 7, 3, 1, 2, "64800", "72000"), ("", 7, 4, 1, 1, "28800", "45000"), ("", 7, 4, 1, 2, "50400", "59400"), ("", 7, 4, 1, 2, "64800", "72000"), ("", 7, 5, 1, 1, "28800", "45000"), ("", 7, 5, 1, 2, "50400", "59400"), ("", 7, 5, 1, 2, "64800", "72000");

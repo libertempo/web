@@ -2257,10 +2257,6 @@ class Fonctions
             // Si changement du login, (on a dèja updaté la table users (mais pas les responsables !!!)) on update toutes les autres tables
             // (les grilles artt, les periodes de conges et les échanges de rtt, etc ....) avec le nouveau login
             if($tab_new_user['login'] != $u_login_to_update) {
-                // update table artt
-                $sql = 'UPDATE conges_artt SET a_login="'. \includes\SQL::quote($tab_new_user['login']).'" WHERE a_login="'. \includes\SQL::quote($u_login_to_update).'" ';
-                \includes\SQL::query($sql);
-
                 // update table echange_rtt
                 $sql = 'UPDATE conges_echange_rtt SET e_login="'. \includes\SQL::quote($tab_new_user['login']).'" WHERE e_login="'. \includes\SQL::quote($u_login_to_update).'" ';
                 \includes\SQL::query($sql);
@@ -2766,9 +2762,6 @@ class Fonctions
 
         $sql2 = 'DELETE FROM conges_periode WHERE p_login = "'. \includes\SQL::quote($u_login_to_delete).'"';
         $result2 = \includes\SQL::query($sql2);
-
-        $sql3 = 'DELETE FROM conges_artt WHERE a_login = "'. \includes\SQL::quote($u_login_to_delete).'"';
-        $result3 = \includes\SQL::query($sql3);
 
         $sql4 = 'DELETE FROM conges_echange_rtt WHERE e_login = "'. \includes\SQL::quote($u_login_to_delete).'"';
         $result4 = \includes\SQL::query($sql4);

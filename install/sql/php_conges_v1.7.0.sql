@@ -17,47 +17,6 @@ CREATE TABLE IF NOT EXISTS `conges_appli` (
 # --------------------------------------------------------
 
 #
-# Structure de la table `conges_artt`
-#
-
-CREATE TABLE IF NOT EXISTS `conges_artt` (
-  `a_login` varbinary(99) NOT NULL DEFAULT '',
-  `sem_imp_lu_am` varchar(10) DEFAULT NULL,
-  `sem_imp_lu_pm` varchar(10) DEFAULT NULL,
-  `sem_imp_ma_am` varchar(10) DEFAULT NULL,
-  `sem_imp_ma_pm` varchar(10) DEFAULT NULL,
-  `sem_imp_me_am` varchar(10) DEFAULT NULL,
-  `sem_imp_me_pm` varchar(10) DEFAULT NULL,
-  `sem_imp_je_am` varchar(10) DEFAULT NULL,
-  `sem_imp_je_pm` varchar(10) DEFAULT NULL,
-  `sem_imp_ve_am` varchar(10) DEFAULT NULL,
-  `sem_imp_ve_pm` varchar(10) DEFAULT NULL,
-  `sem_imp_sa_am` varchar(10) DEFAULT NULL,
-  `sem_imp_sa_pm` varchar(10) DEFAULT NULL,
-  `sem_imp_di_am` varchar(10) DEFAULT NULL,
-  `sem_imp_di_pm` varchar(10) DEFAULT NULL,
-  `sem_p_lu_am` varchar(10) DEFAULT NULL,
-  `sem_p_lu_pm` varchar(10) DEFAULT NULL,
-  `sem_p_ma_am` varchar(10) DEFAULT NULL,
-  `sem_p_ma_pm` varchar(10) DEFAULT NULL,
-  `sem_p_me_am` varchar(10) DEFAULT NULL,
-  `sem_p_me_pm` varchar(10) DEFAULT NULL,
-  `sem_p_je_am` varchar(10) DEFAULT NULL,
-  `sem_p_je_pm` varchar(10) DEFAULT NULL,
-  `sem_p_ve_am` varchar(10) DEFAULT NULL,
-  `sem_p_ve_pm` varchar(10) DEFAULT NULL,
-  `sem_p_sa_am` varchar(10) DEFAULT NULL,
-  `sem_p_sa_pm` varchar(10) DEFAULT NULL,
-  `sem_p_di_am` varchar(10) DEFAULT NULL,
-  `sem_p_di_pm` varchar(10) DEFAULT NULL,
-  `a_date_debut_grille` date NOT NULL DEFAULT '0000-00-00',
-  `a_date_fin_grille` date NOT NULL DEFAULT '9999-12-31',
-  PRIMARY KEY (`a_login`,`a_date_fin_grille`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
-# --------------------------------------------------------
-
-#
 # Structure de la table `conges_config`
 #
 
@@ -338,15 +297,6 @@ INSERT IGNORE INTO `conges_appli` VALUES ('fermeture_bgcolor', '#7B9DE6');
 # --------------------------------------------------------
 
 #
-# Contenu de la table `conges_artt`
-#
-
-INSERT IGNORE INTO `conges_artt` VALUES ('admin', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0000-00-00', '9999-12-31');
-INSERT IGNORE INTO `conges_artt` VALUES ('conges', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0000-00-00', '9999-12-31');
-
-# --------------------------------------------------------
-
-#
 # Contenu de la table `conges_users`
 #
 
@@ -459,6 +409,3 @@ INSERT IGNORE INTO `conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUE
 INSERT IGNORE INTO `conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUES ('mail_refus_conges', 'APPLI CONGES - Congés refusé', ' __SENDER_NAME__ a refusé une demande de congés pour vous dans l''application de gestion des congés.\r\n\r\nMerci de consulter votre application Libertempo : __URL_ACCUEIL_CONGES__/\r\n\r\n-------------------------------------------------------------------------------------------------------\r\nCeci est un message automatique.');
 INSERT IGNORE INTO `conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUES ('mail_annul_conges', 'APPLI CONGES - Congés annulé', ' __SENDER_NAME__ a annulé un de vos congés dans l''application de gestion des congés.\r\n\r\nMerci de consulter votre application Libertempo : __URL_ACCUEIL_CONGES__/\r\n\r\n-------------------------------------------------------------------------------------------------------\r\nCeci est un message automatique.');
 INSERT IGNORE INTO `conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUES ('mail_prem_valid_conges', 'APPLI CONGES - Congés validé', ' __SENDER_NAME__ a validé (première validation) un congés pour vous dans l''application de gestion des congés.\r\n\Il doit maintenant être accepté en deuxième validation.\r\n\r\nMerci de consulter votre application Libertempo : __URL_ACCUEIL_CONGES__/\r\n\r\n-------------------------------------------------------------------------------------------------------\r\nCeci est un message automatique.');
-
-
-

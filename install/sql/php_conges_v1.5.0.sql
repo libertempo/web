@@ -1,56 +1,10 @@
 #
-# Base de données: `db_conges`
+# Base de donnï¿½es: `db_conges`
 #
 
 # --------------------------------------------------------
 #
 # ATTENTION :  toutes les requetes doivent se terminer par un point virgule ";"
-
-#
-# Structure de la table `conges_artt`
-#
-
-CREATE TABLE `conges_artt` (
-  `a_login` varbinary(99) NOT NULL default '',
-  `sem_imp_lu_am` varchar(10) default NULL,
-  `sem_imp_lu_pm` varchar(10) default NULL,
-  `sem_imp_ma_am` varchar(10) default NULL,
-  `sem_imp_ma_pm` varchar(10) default NULL,
-  `sem_imp_me_am` varchar(10) default NULL,
-  `sem_imp_me_pm` varchar(10) default NULL,
-  `sem_imp_je_am` varchar(10) default NULL,
-  `sem_imp_je_pm` varchar(10) default NULL,
-  `sem_imp_ve_am` varchar(10) default NULL,
-  `sem_imp_ve_pm` varchar(10) default NULL,
-  `sem_imp_sa_am` varchar(10) default NULL,
-  `sem_imp_sa_pm` varchar(10) default NULL,
-  `sem_imp_di_am` varchar(10) default NULL,
-  `sem_imp_di_pm` varchar(10) default NULL,
-  `sem_p_lu_am` varchar(10) default NULL,
-  `sem_p_lu_pm` varchar(10) default NULL,
-  `sem_p_ma_am` varchar(10) default NULL,
-  `sem_p_ma_pm` varchar(10) default NULL,
-  `sem_p_me_am` varchar(10) default NULL,
-  `sem_p_me_pm` varchar(10) default NULL,
-  `sem_p_je_am` varchar(10) default NULL,
-  `sem_p_je_pm` varchar(10) default NULL,
-  `sem_p_ve_am` varchar(10) default NULL,
-  `sem_p_ve_pm` varchar(10) default NULL,
-  `sem_p_sa_am` varchar(10) default NULL,
-  `sem_p_sa_pm` varchar(10) default NULL,
-  `sem_p_di_am` varchar(10) default NULL,
-  `sem_p_di_pm` varchar(10) default NULL,
-  `a_date_debut_grille` date NOT NULL default '0000-00-00',
-  `a_date_fin_grille` date NOT NULL default '9999-12-31',
-  PRIMARY KEY  (`a_login`,`a_date_fin_grille`)
-) DEFAULT CHARSET=latin1;
-
-#
-# Contenu de la table `conges_artt`
-#
-
-INSERT INTO `conges_artt` VALUES ('admin', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0000-00-00', '9999-12-31');
-INSERT INTO `conges_artt` VALUES ('conges', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0000-00-00', '9999-12-31');
 
 # --------------------------------------------------------
 
@@ -252,7 +206,7 @@ INSERT INTO `conges_config` VALUES ('lang', 'fr', '00_php_conges', 'enum=fr/test
 INSERT INTO `conges_config` VALUES ('URL_ACCUEIL_CONGES', 'http://mon-serveur/mon-chemin/php_conges', '01_Serveur Web', 'texte', 'config_comment_URL_ACCUEIL_CONGES');
 
 INSERT INTO `conges_config` VALUES ('img_login', 'img/logo_um2_v.gif', '02_PAGE D\'AUTENTIFICATION', 'texte', 'config_comment_img_login');
-INSERT INTO `conges_config` VALUES ('texte_img_login', 'Cliquez ici pour retourner à ...', '02_PAGE D\'AUTENTIFICATION', 'texte', 'config_comment_texte_img_login');
+INSERT INTO `conges_config` VALUES ('texte_img_login', 'Cliquez ici pour retourner ï¿½ ...', '02_PAGE D\'AUTENTIFICATION', 'texte', 'config_comment_texte_img_login');
 INSERT INTO `conges_config` VALUES ('lien_img_login', 'http://mon-serveur/mon-site/', '02_PAGE D\'AUTENTIFICATION', 'texte', 'config_comment_lien_img_login');
 INSERT INTO `conges_config` VALUES ('texte_page_login', '', '02_PAGE D\'AUTENTIFICATION', 'texte', 'config_comment_texte_page_login');
 
@@ -300,8 +254,8 @@ INSERT INTO `conges_config` VALUES ('calendrier_select_all_groups', 'FALSE', '10
 INSERT INTO `conges_config` VALUES ('fermeture_par_groupe', 'FALSE', '10_Gestion par groupes', 'boolean', 'config_comment_fermeture_par_groupe');
 
 INSERT INTO `conges_config` VALUES ('editions_papier', 'TRUE', '11_Editions papier', 'boolean', 'config_comment_editions_papier');
-INSERT INTO `conges_config` VALUES ('texte_haut_edition_papier', '- Adex_conges : édition des congés -', '11_Editions papier', 'texte', 'config_comment_texte_haut_edition_papier');
-INSERT INTO `conges_config` VALUES ('texte_bas_edition_papier', '- édité par php_conges -', '11_Editions papier', 'texte', 'config_comment_texte_bas_edition_papier');
+INSERT INTO `conges_config` VALUES ('texte_haut_edition_papier', '- Adex_conges : ï¿½dition des congï¿½s -', '11_Editions papier', 'texte', 'config_comment_texte_haut_edition_papier');
+INSERT INTO `conges_config` VALUES ('texte_bas_edition_papier', '- ï¿½ditï¿½ par php_conges -', '11_Editions papier', 'texte', 'config_comment_texte_bas_edition_papier');
 
 INSERT INTO `conges_config` VALUES ('user_echange_rtt', 'FALSE', '12_Fonctionnement de l\'Etablissement', 'boolean', 'config_comment_user_echange_rtt');
 INSERT INTO `conges_config` VALUES ('double_validation_conges', 'FALSE', '12_Fonctionnement de l\'Etablissement', 'boolean', 'config_comment_double_validation_conges');
@@ -354,7 +308,7 @@ CREATE TABLE `conges_type_absence` (
 # Contenu de la table `conges_type_absence`
 ###############################################
 
-INSERT INTO `conges_type_absence` VALUES (1, 'conges', 'congés payés', 'cp');
+INSERT INTO `conges_type_absence` VALUES (1, 'conges', 'congï¿½s payï¿½s', 'cp');
 INSERT INTO `conges_type_absence` VALUES (2, 'conges', 'rtt', 'rtt');
 INSERT INTO `conges_type_absence` VALUES (3, 'absences', 'formation', 'fo');
 INSERT INTO `conges_type_absence` VALUES (4, 'absences', 'misson', 'mi');
@@ -409,12 +363,12 @@ UNIQUE KEY `mail_nom` (`mail_nom`)
 # Contenu de la table `conges_mail`
 #
 
-INSERT INTO `conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUES ('mail_new_demande', 'APPLI CONGES - Demande de congés', ' __SENDER_NAME__ a solicité une demande de congés dans l''application de gestion des congés.\r\n\r\nMerci de consulter votre application php_conges : __URL_ACCUEIL_CONGES__/\r\n\r\n-------------------------------------------------------------------------------------------------------\r\nCeci est un message automatique.');
-INSERT INTO `conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUES ('mail_new_demande_resp_absent', 'APPLI CONGES - Demande de congés', ' __SENDER_NAME__ a solicité une demande de congés dans l''application de gestion des congés.\r\n\r\nEn votre absence, cette demande a été transférée à votre (vos) propre(s) responsable(s)./\r\n\r\n-------------------------------------------------------------------------------------------------------\r\nCeci est un message automatique.');
-INSERT INTO `conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUES ('mail_valid_conges', 'APPLI CONGES - Congés accepté', ' __SENDER_NAME__ a enregistré/acceptéé un congés pour vous dans l''application de gestion des congés.\r\n\r\nMerci de consulter votre application php_conges : __URL_ACCUEIL_CONGES__/\r\n\r\n-------------------------------------------------------------------------------------------------------\r\nCeci est un message automatique.');
-INSERT INTO `conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUES ('mail_refus_conges', 'APPLI CONGES - Congés refusé', ' __SENDER_NAME__ a refusé une demande de congés pour vous dans l''application de gestion des congés.\r\n\r\nMerci de consulter votre application php_conges : __URL_ACCUEIL_CONGES__/\r\n\r\n-------------------------------------------------------------------------------------------------------\r\nCeci est un message automatique.');
-INSERT INTO `conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUES ('mail_annul_conges', 'APPLI CONGES - Congés annulé', ' __SENDER_NAME__ a annulé un de vos congés dans l''application de gestion des congés.\r\n\r\nMerci de consulter votre application php_conges : __URL_ACCUEIL_CONGES__/\r\n\r\n-------------------------------------------------------------------------------------------------------\r\nCeci est un message automatique.');
-INSERT INTO `conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUES ('mail_prem_valid_conges', 'APPLI CONGES - Congés validé', ' __SENDER_NAME__ a validé (première validation) un congés pour vous dans l''application de gestion des congés.\r\n\Il doit maintenant être accepté en deuxième validation.\r\n\r\nMerci de consulter votre application php_conges : __URL_ACCUEIL_CONGES__/\r\n\r\n-------------------------------------------------------------------------------------------------------\r\nCeci est un message automatique.');
+INSERT INTO `conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUES ('mail_new_demande', 'APPLI CONGES - Demande de congï¿½s', ' __SENDER_NAME__ a solicitï¿½ une demande de congï¿½s dans l''application de gestion des congï¿½s.\r\n\r\nMerci de consulter votre application php_conges : __URL_ACCUEIL_CONGES__/\r\n\r\n-------------------------------------------------------------------------------------------------------\r\nCeci est un message automatique.');
+INSERT INTO `conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUES ('mail_new_demande_resp_absent', 'APPLI CONGES - Demande de congï¿½s', ' __SENDER_NAME__ a solicitï¿½ une demande de congï¿½s dans l''application de gestion des congï¿½s.\r\n\r\nEn votre absence, cette demande a ï¿½tï¿½ transfï¿½rï¿½e ï¿½ votre (vos) propre(s) responsable(s)./\r\n\r\n-------------------------------------------------------------------------------------------------------\r\nCeci est un message automatique.');
+INSERT INTO `conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUES ('mail_valid_conges', 'APPLI CONGES - Congï¿½s acceptï¿½', ' __SENDER_NAME__ a enregistrï¿½/acceptï¿½ï¿½ un congï¿½s pour vous dans l''application de gestion des congï¿½s.\r\n\r\nMerci de consulter votre application php_conges : __URL_ACCUEIL_CONGES__/\r\n\r\n-------------------------------------------------------------------------------------------------------\r\nCeci est un message automatique.');
+INSERT INTO `conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUES ('mail_refus_conges', 'APPLI CONGES - Congï¿½s refusï¿½', ' __SENDER_NAME__ a refusï¿½ une demande de congï¿½s pour vous dans l''application de gestion des congï¿½s.\r\n\r\nMerci de consulter votre application php_conges : __URL_ACCUEIL_CONGES__/\r\n\r\n-------------------------------------------------------------------------------------------------------\r\nCeci est un message automatique.');
+INSERT INTO `conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUES ('mail_annul_conges', 'APPLI CONGES - Congï¿½s annulï¿½', ' __SENDER_NAME__ a annulï¿½ un de vos congï¿½s dans l''application de gestion des congï¿½s.\r\n\r\nMerci de consulter votre application php_conges : __URL_ACCUEIL_CONGES__/\r\n\r\n-------------------------------------------------------------------------------------------------------\r\nCeci est un message automatique.');
+INSERT INTO `conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUES ('mail_prem_valid_conges', 'APPLI CONGES - Congï¿½s validï¿½', ' __SENDER_NAME__ a validï¿½ (premiï¿½re validation) un congï¿½s pour vous dans l''application de gestion des congï¿½s.\r\n\Il doit maintenant ï¿½tre acceptï¿½ en deuxiï¿½me validation.\r\n\r\nMerci de consulter votre application php_conges : __URL_ACCUEIL_CONGES__/\r\n\r\n-------------------------------------------------------------------------------------------------------\r\nCeci est un message automatique.');
 # --------------------------------------------------------
 
 #
@@ -472,4 +426,3 @@ INSERT INTO `conges_appli` VALUES ('absence_autre_bgcolor', '#D3FFB6');
 INSERT INTO `conges_appli` VALUES ('fermeture_bgcolor', '#7B9DE6');
 
 # --------------------------------------------------------
-

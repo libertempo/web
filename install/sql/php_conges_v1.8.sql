@@ -17,47 +17,6 @@ CREATE TABLE IF NOT EXISTS `conges_appli` (
 # --------------------------------------------------------
 
 #
-# Structure de la table `conges_artt`
-#
-
-CREATE TABLE IF NOT EXISTS `conges_artt` (
-  `a_login` varbinary(99) NOT NULL DEFAULT '',
-  `sem_imp_lu_am` varchar(10) DEFAULT NULL,
-  `sem_imp_lu_pm` varchar(10) DEFAULT NULL,
-  `sem_imp_ma_am` varchar(10) DEFAULT NULL,
-  `sem_imp_ma_pm` varchar(10) DEFAULT NULL,
-  `sem_imp_me_am` varchar(10) DEFAULT NULL,
-  `sem_imp_me_pm` varchar(10) DEFAULT NULL,
-  `sem_imp_je_am` varchar(10) DEFAULT NULL,
-  `sem_imp_je_pm` varchar(10) DEFAULT NULL,
-  `sem_imp_ve_am` varchar(10) DEFAULT NULL,
-  `sem_imp_ve_pm` varchar(10) DEFAULT NULL,
-  `sem_imp_sa_am` varchar(10) DEFAULT NULL,
-  `sem_imp_sa_pm` varchar(10) DEFAULT NULL,
-  `sem_imp_di_am` varchar(10) DEFAULT NULL,
-  `sem_imp_di_pm` varchar(10) DEFAULT NULL,
-  `sem_p_lu_am` varchar(10) DEFAULT NULL,
-  `sem_p_lu_pm` varchar(10) DEFAULT NULL,
-  `sem_p_ma_am` varchar(10) DEFAULT NULL,
-  `sem_p_ma_pm` varchar(10) DEFAULT NULL,
-  `sem_p_me_am` varchar(10) DEFAULT NULL,
-  `sem_p_me_pm` varchar(10) DEFAULT NULL,
-  `sem_p_je_am` varchar(10) DEFAULT NULL,
-  `sem_p_je_pm` varchar(10) DEFAULT NULL,
-  `sem_p_ve_am` varchar(10) DEFAULT NULL,
-  `sem_p_ve_pm` varchar(10) DEFAULT NULL,
-  `sem_p_sa_am` varchar(10) DEFAULT NULL,
-  `sem_p_sa_pm` varchar(10) DEFAULT NULL,
-  `sem_p_di_am` varchar(10) DEFAULT NULL,
-  `sem_p_di_pm` varchar(10) DEFAULT NULL,
-  `a_date_debut_grille` date NOT NULL DEFAULT '0000-00-00',
-  `a_date_fin_grille` date NOT NULL DEFAULT '9999-12-31',
-  PRIMARY KEY (`a_login`,`a_date_fin_grille`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
-# --------------------------------------------------------
-
-#
 # Structure de la table `conges_config`
 #
 
@@ -338,15 +297,6 @@ INSERT IGNORE INTO `conges_appli` VALUES ('fermeture_bgcolor', '#7B9DE6');
 # --------------------------------------------------------
 
 #
-# Contenu de la table `conges_artt`
-#
-
-INSERT IGNORE INTO `conges_artt` VALUES ('admin', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0000-00-00', '9999-12-31');
-INSERT IGNORE INTO `conges_artt` VALUES ('conges', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0000-00-00', '9999-12-31');
-
-# --------------------------------------------------------
-
-#
 # Contenu de la table `conges_users`
 #
 
@@ -453,4 +403,3 @@ INSERT IGNORE INTO `conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUE
 INSERT IGNORE INTO `conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUES ('mail_new_absence_conges', 'APPLI CONGES - Nouvelle absence', ' __SENDER_NAME__ vous informe qu\'il sera absent. Ce type de congés ne necéssite pas de validation. Vous pouvez consulter votre application Libertempo : __URL_ACCUEIL_CONGES__/\r\n\r\n-------------------------------------------------------------------------------------------------------\r\nCeci est un message automatique. ');
 INSERT IGNORE INTO `conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUES ('mail_modif_demande_conges', 'APPLI CONGES - Modification demande', ' __SENDER_NAME__ à modifié une demande non traité. Vous pouvez consulter votre application Libertempo : __URL_ACCUEIL_CONGES__/\r\n\r\n-------------------------------------------------------------------------------------------------------\r\nCeci est un message automatique.');
 INSERT IGNORE INTO `conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUES ('mail_supp_demande_conges', 'APPLI CONGES - Suppression demande', ' __SENDER_NAME__ à supprimé une demande non traité. Vous pouvez consulter votre application Libertempo : __URL_ACCUEIL_CONGES__/\r\n\r\n-------------------------------------------------------------------------------------------------------\r\nCeci est un message automatique.');
-
