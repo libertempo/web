@@ -114,7 +114,7 @@ class Fonctions
                 //envoi d'un mail d'alerte au responsable (si demandé dans config de php_conges)
                 if($_SESSION['config']['mail_new_demande_alerte_resp']){
                     if(in_array(\utilisateur\Fonctions::get_type_abs($new_type), array('absences'))) {
-                        alerte_mail($_SESSION['userlogin'], ":responsable:", $periode_num, "new_absence");
+                        alerte_mail($_SESSION['userlogin'], ":responsable:", $periode_num, "new_absence_conges");
                     } else {
                         alerte_mail($_SESSION['userlogin'], ":responsable:", $periode_num, "new_demande");
                     }
