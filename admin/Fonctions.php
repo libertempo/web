@@ -2260,7 +2260,7 @@ class Fonctions
         return $tab_grille;
     }
 
-    public static function commit_update_user($u_login_to_update, &$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, &$tab_new_reliquat, $tab_checkbox_sem_imp, $tab_checkbox_sem_p)
+    public static function commit_update_user($u_login_to_update, &$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, &$tab_new_reliquat)
     {
         $PHP_SELF = $_SERVER['PHP_SELF'];
         $session  = session_id();
@@ -2274,9 +2274,6 @@ class Fonctions
         if ($_SESSION['config']['gestion_conges_exceptionnels']) {
             $tab_type_conges_excep=recup_tableau_types_conges_exceptionnels();
         }
-        $return .= htmlentities($u_login_to_update) . '---' . htmlentities($tab_new_user['nom']) . '---' . htmlentities($tab_new_user['prenom']) . '---' . htmlentities($tab_new_user['quotite']) . '---' . htmlentities($tab_new_user['is_resp']) . '---' . htmlentities($tab_new_user['resp_login']) . '---';
-        $return .= htmlentities($tab_new_user['is_admin']) . '---' . htmlentities($tab_new_user['is_hr']) . '---' . htmlentities($tab_new_user['is_active']) . '---' . htmlentities($tab_new_user['see_all']) . '---' . htmlentities($tab_new_user['email']) . '---' . htmlentities($tab_new_user['login']) . '<br>';
-
 
         $valid_1=TRUE;
         $valid_2=TRUE;
@@ -2304,7 +2301,7 @@ class Fonctions
         // si aucune erreur de saisie n'a ete commise
         if(($valid_1) && ($valid_2) && ($valid_3) && ($valid_reliquat) && $tab_new_user['login']!="") {
             // UPDATE de la table conges_users
-            $sql = 'UPDATE conges_users SET u_nom="'. \includes\SQL::quote($tab_new_user['nom']).'", u_prenom="'.\includes\SQL::quote($tab_new_user['prenom']).'", u_is_resp="'. \includes\SQL::quote($tab_new_user['is_resp']).'", u_resp_login="'.\includes\SQL::quote($tab_new_user['resp_login']).'",u_is_admin="'. \includes\SQL::quote($tab_new_user['is_admin']).'",u_is_hr="'.\includes\SQL::quote($tab_new_user['is_hr']).'",u_is_active="'.\includes\SQL::quote($tab_new_user['is_active']).'",u_see_all="'.\includes\SQL::quote($tab_new_user['see_all']).'",u_login="'.\includes\SQL::quote($tab_new_user['login']).'",u_quotite="'.\includes\SQL::quote($tab_new_user['quotite']).'",u_email="'. \includes\SQL::quote($tab_new_user['email']).'" WHERE u_login="'.\includes\SQL::quote($u_login_to_update).'"' ;
+            $sql = 'UPDATE conges_users SET u_nom="'. \includes\SQL::quote($tab_new_user['nom']).'", u_prenom="'.\includes\SQL::quote($tab_new_user['prenom']).'", u_is_resp="'. \includes\SQL::quote($tab_new_user['is_resp']).'", u_resp_login="'.\includes\SQL::quote($tab_new_user['resp_login']).'",u_is_admin="'. \includes\SQL::quote($tab_new_user['is_admin']).'",u_is_hr="'.\includes\SQL::quote($tab_new_user['is_hr']).'",u_is_active="'.\includes\SQL::quote($tab_new_user['is_active']).'",u_see_all="'.\includes\SQL::quote($tab_new_user['see_all']).'",u_login="'.\includes\SQL::quote($tab_new_user['login']).'",u_quotite="'.\includes\SQL::quote($tab_new_user['quotite']).'",u_email="'. \includes\SQL::quote($tab_new_user['email']).'", planning_id = ' . (int) $tab_new_user['planning_utilisateur'] . ' WHERE u_login="'.\includes\SQL::quote($u_login_to_update).'"' ;
 
             \includes\SQL::query($sql);
 
@@ -2327,80 +2324,6 @@ class Fonctions
             }
 
             /*************************************/
-            /* Mise a jour de la table artt si besoin :   */
-            $tab_grille_rtt_actuelle = \admin\Fonctions::get_current_grille_rtt($u_login_to_update);
-            $tab_new_grille_rtt= \admin\Fonctions::tab_grille_rtt_from_checkbox($tab_checkbox_sem_imp, $tab_checkbox_sem_p);
-
-            if($tab_grille_rtt_actuelle != $tab_new_grille_rtt) {
-                $new_date_deb_grille=$tab_new_user['year']."-".$tab_new_user['mois']."-".$tab_new_user['jour'];
-
-                /****************************/
-                /***   phase 1 :  ***/
-                // si la derniere grille est ancienne, on l'update (on update la date de fin de grille)
-                // sinon, si la derniere grille date d'aujourd'hui, on la supprime
-
-                // on regarde si la grille artt a deja été modifiée aujourd'hui :
-                $sql='SELECT a_date_fin_grille FROM conges_artt
-                    WHERE a_login="'.\includes\SQL::quote($u_login_to_update).'" AND a_date_debut_grille="'. \includes\SQL::quote($new_date_deb_grille).'";';
-                $result_grille = \includes\SQL::query($sql);
-
-                $count_grille=$result_grille->num_rows;
-
-                if($count_grille==0) {  // si pas de grille modifiée aujourd'hui : on update la date de fin de la derniere grille
-
-                    // date de fin de la grille précedent :
-                    // $new_date_fin_grille = $new_date_deb_grille -1 jour !
-                    $new_jour_num= (integer) $tab_new_user['jour'];
-                    $new_mois_num= (integer) $tab_new_user['mois'];
-                    $new_year_num= (integer) $tab_new_user['year'];
-                    $new_date_fin_grille=date("Y-m-d", mktime(0, 0, 0, $new_mois_num, $new_jour_num-1, $new_year_num)); // int mktime(int hour, int minute, int second, int month, int day, int year )
-
-                    // UPDATE de la table conges_artt
-                    // en fait, on update la dernière grille (on update la date de fin de grille), et on ajoute une nouvelle
-                    // grille (avec sa date de début de grille)
-
-                    // on update la dernière grille (on update la date de fin de grille)
-                    $sql = 'UPDATE conges_artt SET a_date_fin_grille="'. \includes\SQL::quote($new_date_fin_grille).'" WHERE a_login="'. \includes\SQL::quote($u_login_to_update).'"  AND a_date_fin_grille=\'9999-12-31\' ';
-                    \includes\SQL::query($sql);
-                } else {// si une grille modifiée aujourd'hui : on delete cette grille
-                    $sql='DELETE FROM conges_artt WHERE a_login="'. \includes\SQL::quote($u_login_to_update).'" AND a_date_debut_grille="'. \includes\SQL::quote($new_date_deb_grille).'"';
-                    \includes\SQL::query($sql);
-                }
-
-                /****************************/
-                /***   phase 2 :  ***/
-                // on Insert la nouvelle grille (celle qui commence aujourd'hui)
-                //  on met à 'Y' les demi-journées de rtt (et seulement celles là)
-                $list_columns="";
-                $list_valeurs="";
-                $i=0;
-                if($tab_checkbox_sem_imp!="") {
-                    while (list ($key, $val) = each ($tab_checkbox_sem_imp)) {
-                        if($i!=0) {
-                            $list_columns=$list_columns.", ";
-                            $list_valeurs=$list_valeurs.", ";
-                        }
-                        $list_columns=$list_columns." $key ";
-                        $list_valeurs=$list_valeurs." '$val' ";
-                        $i=$i+1;
-                    }
-                }
-                if($tab_checkbox_sem_p!="") {
-                    while (list ($key, $val) = each ($tab_checkbox_sem_p)) {
-                        if($i!=0) {
-                            $list_columns=$list_columns.", ";
-                            $list_valeurs=$list_valeurs.", ";
-                        }
-                        $list_columns=$list_columns." $key ";
-                        $list_valeurs=$list_valeurs." '$val' ";
-                        $i=$i+1;
-                    }
-                }
-                if( ($list_columns!="") && ($list_valeurs!="") ) {
-                    $sql = "INSERT INTO conges_artt (a_login, $list_columns, a_date_debut_grille ) VALUES ('$u_login_to_update', $list_valeurs, '$new_date_deb_grille') " ;
-                    \includes\SQL::query($sql);
-                }
-            }
 
             // Si changement du login, (on a dèja updaté la table users (mais pas les responsables !!!)) on update toutes les autres tables
             // (les grilles artt, les periodes de conges et les échanges de rtt, etc ....) avec le nouveau login
@@ -2459,7 +2382,7 @@ class Fonctions
         return $return;
     }
 
-    public static function modifier_user($u_login, $tab_checkbox_sem_imp, $tab_checkbox_sem_p, $onglet)
+    public static function modifier_user($u_login, $onglet)
     {
         $PHP_SELF = $_SERVER['PHP_SELF'];
         $session  = session_id();
@@ -2705,14 +2628,17 @@ class Fonctions
         ob_start();
         $table->render();
         $return .= ob_get_clean();
+        $listPlanning = \App\ProtoControllers\Planning::getListPlanning(\App\ProtoControllers\Planning::getListPlanningId());
         $return .= '<br><hr/>';
+        $return .= '<h4>' . _('planning_utilisateur') . '</h4>';
+        $return .= '<select name="planning_utilisateur" class="form-control">';
+        $return .= '<option value="0"></option>';
+        foreach ($listPlanning as $planning) {
+            $return .= '<option value="' . $planning['planning_id'] . '">' . $planning['name'] . '</option>';
+        }
 
-        /*********************************************************/
-        // saisie des jours d'abscence RTT ou temps partiel:
-        $return .= \admin\Fonctions::saisie_jours_absence_temps_partiel($u_login);
-        $return .= '<hr/>';
-        $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
-        $return .= '<a class="btn" href="admin_index.php?session=' . $session . '&onglet=admin-users">' . _('form_cancel') . '</a>';
+        $return .= '</select><hr /><input class="btn btn-success" type="submit" value="' . _('form_submit') . '"> ';
+        $return .= '<a class="btn btn-default" href="admin_index.php?session=' . $session . '&onglet=admin-users">' . _('form_cancel') . '</a>';
         $return .= '</form>';
         return $return;
     }
@@ -2731,8 +2657,7 @@ class Fonctions
     {
         $u_login              = getpost_variable('u_login') ;
         $u_login_to_update    = getpost_variable('u_login_to_update') ;
-        $tab_checkbox_sem_imp = getpost_variable('tab_checkbox_sem_imp') ;
-        $tab_checkbox_sem_p   = getpost_variable('tab_checkbox_sem_p') ;
+        $planningUtilisateur  = getpost_variable('planning_utilisateur');
         $return = '';
 
         // TITRE
@@ -2746,7 +2671,7 @@ class Fonctions
 
 
         if($u_login!="") {
-            $return .= \admin\Fonctions::modifier_user($u_login, $tab_checkbox_sem_imp, $tab_checkbox_sem_p, $onglet);
+            $return .= \admin\Fonctions::modifier_user($u_login, $onglet);
         } elseif($u_login_to_update!="") {
             $tab_new_jours_an   = getpost_variable('tab_new_jours_an') ;
             $tab_new_solde      = getpost_variable('tab_new_solde') ;
@@ -2766,8 +2691,9 @@ class Fonctions
             $tab_new_user['jour']       = getpost_variable('new_jour') ;
             $tab_new_user['mois']       = getpost_variable('new_mois') ;
             $tab_new_user['year']       = getpost_variable('new_year') ;
+            $tab_new_user['planning_utilisateur'] = getpost_variable('planning_utilisateur');
 
-            echo \admin\Fonctions::commit_update_user($u_login_to_update, $tab_new_user, $tab_new_jours_an, $tab_new_solde, $tab_new_reliquat, $tab_checkbox_sem_imp, $tab_checkbox_sem_p);
+            echo \admin\Fonctions::commit_update_user($u_login_to_update, $tab_new_user, $tab_new_jours_an, $tab_new_solde, $tab_new_reliquat);
             redirect( ROOT_PATH .'admin/admin_index.php?session='.$session.'&onglet=admin-users', false);
             exit;
 
@@ -3357,10 +3283,6 @@ class Fonctions
         $return .= ob_get_clean();
         $return .= '<br>';
 
-        // saisie de la grille des jours d'absence ARTT ou temps partiel:
-        $return .= \admin\Fonctions::saisie_jours_absence_temps_partiel($tab_new_user['login']);
-
-
         // si gestion des groupes :  affichage des groupe pour y affecter le user
         if($_SESSION['config']['gestion_groupes'])
         {
@@ -3614,250 +3536,6 @@ class Fonctions
         }
         return $return;
     }
-
-    // saisie de la grille des jours d'absence ARTT ou temps partiel:
-    public static function saisie_jours_absence_temps_partiel($login)
-    {
-        $return = '';
-
-        /* initialisation des variables **************/
-        $checked_option_sem_imp_lu_am='';
-        $checked_option_sem_imp_lu_pm='';
-        $checked_option_sem_imp_ma_am='';
-        $checked_option_sem_imp_ma_pm='';
-        $checked_option_sem_imp_me_am='';
-        $checked_option_sem_imp_me_pm='';
-        $checked_option_sem_imp_je_am='';
-        $checked_option_sem_imp_je_pm='';
-        $checked_option_sem_imp_ve_am='';
-        $checked_option_sem_imp_ve_pm='';
-        $checked_option_sem_imp_sa_am='';
-        $checked_option_sem_imp_sa_pm='';
-        $checked_option_sem_imp_di_am='';
-        $checked_option_sem_imp_di_pm='';
-        $checked_option_sem_p_lu_am='';
-        $checked_option_sem_p_lu_pm='';
-        $checked_option_sem_p_ma_am='';
-        $checked_option_sem_p_ma_pm='';
-        $checked_option_sem_p_me_am='';
-        $checked_option_sem_p_me_pm='';
-        $checked_option_sem_p_je_am='';
-        $checked_option_sem_p_je_pm='';
-        $checked_option_sem_p_ve_am='';
-        $checked_option_sem_p_ve_pm='';
-        $checked_option_sem_p_sa_am='';
-        $checked_option_sem_p_sa_pm='';
-        $checked_option_sem_p_di_am='';
-        $checked_option_sem_p_di_pm='';
-        /*********************************************/
-
-        // recup des données de la dernière table artt du user :
-        $sql1 = 'SELECT * FROM conges_artt WHERE a_login="'. \includes\SQL::quote($login).'" AND a_date_fin_grille=\'9999-12-31\' '  ;
-        $ReqLog1 = \includes\SQL::query($sql1);
-
-        while ($resultat1 = $ReqLog1->fetch_array()) {
-            if($resultat1['sem_imp_lu_am']=='Y') $checked_option_sem_imp_lu_am=' checked';
-            if($resultat1['sem_imp_lu_pm']=='Y') $checked_option_sem_imp_lu_pm=' checked';
-            if($resultat1['sem_imp_ma_am']=='Y') $checked_option_sem_imp_ma_am=' checked';
-            if($resultat1['sem_imp_ma_pm']=='Y') $checked_option_sem_imp_ma_pm=' checked';
-            if($resultat1['sem_imp_me_am']=='Y') $checked_option_sem_imp_me_am=' checked';
-            if($resultat1['sem_imp_me_pm']=='Y') $checked_option_sem_imp_me_pm=' checked';
-            if($resultat1['sem_imp_je_am']=='Y') $checked_option_sem_imp_je_am=' checked';
-            if($resultat1['sem_imp_je_pm']=='Y') $checked_option_sem_imp_je_pm=' checked';
-            if($resultat1['sem_imp_ve_am']=='Y') $checked_option_sem_imp_ve_am=' checked';
-            if($resultat1['sem_imp_ve_pm']=='Y') $checked_option_sem_imp_ve_pm=' checked';
-            if($resultat1['sem_imp_sa_am']=='Y') $checked_option_sem_imp_sa_am=' checked';
-            if($resultat1['sem_imp_sa_pm']=='Y') $checked_option_sem_imp_sa_pm=' checked';
-            if($resultat1['sem_imp_di_am']=='Y') $checked_option_sem_imp_di_am=' checked';
-            if($resultat1['sem_imp_di_pm']=='Y') $checked_option_sem_imp_di_pm=' checked';
-            if($resultat1['sem_p_lu_am']=='Y') $checked_option_sem_p_lu_am=' checked';
-            if($resultat1['sem_p_lu_pm']=='Y') $checked_option_sem_p_lu_pm=' checked';
-            if($resultat1['sem_p_ma_am']=='Y') $checked_option_sem_p_ma_am=' checked';
-            if($resultat1['sem_p_ma_pm']=='Y') $checked_option_sem_p_ma_pm=' checked';
-            if($resultat1['sem_p_me_am']=='Y') $checked_option_sem_p_me_am=' checked';
-            if($resultat1['sem_p_me_pm']=='Y') $checked_option_sem_p_me_pm=' checked';
-            if($resultat1['sem_p_je_am']=='Y') $checked_option_sem_p_je_am=' checked';
-            if($resultat1['sem_p_je_pm']=='Y') $checked_option_sem_p_je_pm=' checked';
-            if($resultat1['sem_p_ve_am']=='Y') $checked_option_sem_p_ve_am=' checked';
-            if($resultat1['sem_p_ve_pm']=='Y') $checked_option_sem_p_ve_pm=' checked';
-            if($resultat1['sem_p_sa_am']=='Y') $checked_option_sem_p_sa_am=' checked';
-            if($resultat1['sem_p_sa_pm']=='Y') $checked_option_sem_p_sa_pm=' checked';
-            if($resultat1['sem_p_di_am']=='Y') $checked_option_sem_p_di_am=' checked';
-            if($resultat1['sem_p_di_pm']=='Y') $checked_option_sem_p_di_pm=' checked';
-            $date_deb_grille=$resultat1['a_date_debut_grille'];
-            $date_fin_grille=$resultat1['a_date_fin_grille'];
-        }
-
-        $return .= '<h4>'. _('admin_temps_partiel_titre') .' :</h4>';
-        $table = new \App\Libraries\Structure\Table();
-        $table->addClasses([
-            'table',
-            'table-hover',
-            'table-responsive',
-            'table-striped',
-            'table-condensed'
-        ]);
-        $childTable = '<tr>';
-        $childTable .= '<td>';
-        //tableau semaines impaires
-        $childTable .= '<b><u>'. _('admin_temps_partiel_sem_impaires') .' :</u></b><br>';
-        $tab_checkbox_sem_imp=array();
-        $imp_lu_am='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_lu_am]" value="Y" '.$checked_option_sem_imp_lu_am.'>';
-        $imp_lu_pm='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_lu_pm]" value="Y" '.$checked_option_sem_imp_lu_pm.'>';
-        $imp_ma_am='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_ma_am]" value="Y" '.$checked_option_sem_imp_ma_am.'>';
-        $imp_ma_pm='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_ma_pm]" value="Y" '.$checked_option_sem_imp_ma_pm.'>';
-        $imp_me_am='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_me_am]" value="Y" '.$checked_option_sem_imp_me_am.'>';
-        $imp_me_pm='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_me_pm]" value="Y" '.$checked_option_sem_imp_me_pm.'>';
-        $imp_je_am='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_je_am]" value="Y" '.$checked_option_sem_imp_je_am.'>';
-        $imp_je_pm='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_je_pm]" value="Y" '.$checked_option_sem_imp_je_pm.'>';
-        $imp_ve_am='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_ve_am]" value="Y" '.$checked_option_sem_imp_ve_am.'>';
-        $imp_ve_pm='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_ve_pm]" value="Y" '.$checked_option_sem_imp_ve_pm.'>';
-        if($_SESSION['config']['samedi_travail']) {
-            $imp_sa_am='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_sa_am]" value="Y" '.$checked_option_sem_imp_sa_am.'>';
-            $imp_sa_pm='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_sa_pm]" value="Y" '.$checked_option_sem_imp_sa_pm.'>';
-        }
-        if($_SESSION['config']['dimanche_travail']) {
-            $imp_di_am='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_di_am]" value="Y" '.$checked_option_sem_imp_di_am.'>';
-            $imp_di_pm='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_di_pm]" value="Y" '.$checked_option_sem_imp_di_pm.'>';
-        }
-
-        $tableImpaire = new \App\Libraries\Structure\Table();
-        $tableImpaire->addClasses([
-            'tablo',
-        ]);
-        $childImpaireTable = '<thead><tr><td></td>';
-        $childImpaireTable .= '<td class="histo">'. _('lundi') .'</td>';
-        $childImpaireTable .= '<td class="histo">'. _('mardi') .'</td>';
-        $childImpaireTable .= '<td class="histo">'. _('mercredi') .'</td>';
-        $childImpaireTable .= '<td class="histo">'. _('jeudi') .'</td>';
-        $childImpaireTable .= '<td class="histo">'. _('vendredi') .'</td>';
-        if($_SESSION['config']['samedi_travail']) {
-            $childImpaireTable .= '<td class="histo">'. _('samedi') .'</td>';
-        }
-        if($_SESSION['config']['dimanche_travail']) {
-            $childImpaireTable .= '<td class="histo">'. _('dimanche') .'</td>';
-        }
-        $childImpaireTable .= '</tr></thead><tbody>';
-        $childImpaireTable .= '<tr align="center">';
-        $childImpaireTable .= '<td class="histo">'. _('admin_temps_partiel_am') .'</td>';
-        $childImpaireTable .= '<td class="histo">' . $imp_lu_am . '</td>';
-        $childImpaireTable .= '<td class="histo">' . $imp_ma_am . '</td>';
-        $childImpaireTable .= '<td class="histo">' . $imp_me_am . '</td>';
-        $childImpaireTable .= '<td class="histo">' . $imp_je_am . '</td>';
-        $childImpaireTable .= '<td class="histo">' . $imp_ve_am . '</td>';
-        if($_SESSION['config']['samedi_travail']) {
-            $childImpaireTable .= '<td class="histo">' . $imp_sa_am . '</td>';
-        }
-        if($_SESSION['config']['dimanche_travail']) {
-            $childImpaireTable .= '<td class="histo">' . $imp_di_am . '</td>';
-        }
-        $childImpaireTable .= '</tr>';
-        $childImpaireTable .= '<tr align="center">';
-        $childImpaireTable .= '<td class="histo">'. _('admin_temps_partiel_pm') .'</td>';
-        $childImpaireTable .= '<td class="histo">' . $imp_lu_pm . '</td>';
-        $childImpaireTable .= '<td class="histo">' . $imp_ma_pm . '</td>';
-        $childImpaireTable .= '<td class="histo">' . $imp_me_pm . '</td>';
-        $childImpaireTable .= '<td class="histo">' . $imp_je_pm . '</td>';
-        $childImpaireTable .= '<td class="histo">' . $imp_ve_pm . '</td>';
-        if($_SESSION['config']['samedi_travail']) {
-            $childImpaireTable .= '<td class="histo">' . $imp_sa_pm . '</td>';
-        }
-        if($_SESSION['config']['dimanche_travail']) {
-            $childImpaireTable .= '<td class="histo">' . $imp_di_pm . '</td>';
-        }
-        $childImpaireTable .= '</tr></tbody>';
-        $tableImpaire->addChild($childImpaireTable);
-        ob_start();
-        $tableImpaire->render();
-        $childTable .= ob_get_clean();
-
-        $childTable .= '</td><td><img src="'. IMG_PATH . 'shim.gif" width="15" height="2" border="0" vspace="0" hspace="0"></td><td>';
-
-        //tableau semaines paires
-        $childTable .= '<b><u>'. _('admin_temps_partiel_sem_paires') .':</u></b><br>';
-        $tab_checkbox_sem_p=array();
-        $p_lu_am='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_lu_am]" value="Y" '.$checked_option_sem_p_lu_am.'>';
-        $p_lu_pm='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_lu_pm]" value="Y" '.$checked_option_sem_p_lu_pm.'>';
-        $p_ma_am='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_ma_am]" value="Y" '.$checked_option_sem_p_ma_am.'>';
-        $p_ma_pm='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_ma_pm]" value="Y" '.$checked_option_sem_p_ma_pm.'>';
-        $p_me_am='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_me_am]" value="Y" '.$checked_option_sem_p_me_am.'>';
-        $p_me_pm='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_me_pm]" value="Y" '.$checked_option_sem_p_me_pm.'>';
-        $p_je_am='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_je_am]" value="Y" '.$checked_option_sem_p_je_am.'>';
-        $p_je_pm='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_je_pm]" value="Y" '.$checked_option_sem_p_je_pm.'>';
-        $p_ve_am='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_ve_am]" value="Y" '.$checked_option_sem_p_ve_am.'>';
-        $p_ve_pm='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_ve_pm]" value="Y" '.$checked_option_sem_p_ve_pm.'>';
-        $p_sa_am='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_sa_am]" value="Y" '.$checked_option_sem_p_sa_am.'>';
-        $p_sa_pm='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_sa_pm]" value="Y" '.$checked_option_sem_p_sa_pm.'>';
-        $p_di_am='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_di_am]" value="Y" '.$checked_option_sem_p_di_am.'>';
-        $p_di_pm='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_di_pm]" value="Y" '.$checked_option_sem_p_di_pm.'>';
-
-        $tablePaire = new \App\Libraries\Structure\Table();
-        $tablePaire->addClasses([
-            'tablo',
-        ]);
-        $childPaireTable = '<thead><tr><td></td>';
-        $childPaireTable .= '<td class="histo">'. _('lundi') .'</td>';
-        $childPaireTable .= '<td class="histo">'. _('mardi') .'</td>';
-        $childPaireTable .= '<td class="histo">'. _('mercredi') .'</td>';
-        $childPaireTable .= '<td class="histo">'. _('jeudi') .'</td>';
-        $childPaireTable .= '<td class="histo">'. _('vendredi') .'</td>';
-        if($_SESSION['config']['samedi_travail']) {
-            $childPaireTable .= '<td class="histo">'. _('samedi') .'</td>';
-        }
-        if($_SESSION['config']['dimanche_travail']) {
-            $childPaireTable .= '<td class="histo">'. _('dimanche') .'</td>';
-        }
-        $childPaireTable .= '</tr></thead><tbody>';
-        $childPaireTable .= '<tr align="center">';
-        $childPaireTable .= '<td class="histo">'. _('admin_temps_partiel_am') .'</td>';
-        $childPaireTable .= '<td class="histo">' . $p_lu_am . '</td>';
-        $childPaireTable .= '<td class="histo">' . $p_ma_am . '</td>';
-        $childPaireTable .= '<td class="histo">' . $p_me_am . '</td>';
-        $childPaireTable .= '<td class="histo">' . $p_je_am . '</td>';
-        $childPaireTable .= '<td class="histo">' . $p_ve_am . '</td>';
-        if($_SESSION['config']['samedi_travail']) {
-            $childPaireTable .= '<td class="histo">' . $p_sa_am . '</td>';
-        }
-        if($_SESSION['config']['dimanche_travail']) {
-            $childPaireTable .= '<td class="histo">' . $p_di_am . '</td>';
-        }
-        $childPaireTable .= '</tr>';
-        $childPaireTable .= '<tr align="center">';
-        $childPaireTable .= '<td class="histo">'. _('admin_temps_partiel_pm') .'</td>';
-        $childPaireTable .= '<td class="histo">'.$p_lu_pm.'</td>';
-        $childPaireTable .= '<td class="histo">'.$p_ma_pm.'</td>';
-        $childPaireTable .= '<td class="histo">'.$p_me_pm.'</td>';
-        $childPaireTable .= '<td class="histo">'.$p_je_pm.'</td>';
-        $childPaireTable .= '<td class="histo">'.$p_ve_pm.'</td>';
-        if($_SESSION['config']['samedi_travail']) {
-            $childPaireTable .= '<td class="histo">' . $p_sa_pm . '</td>';
-        }
-        if($_SESSION['config']['dimanche_travail']) {
-            $childPaireTable .= '<td class="histo">' . $p_di_pm . '</td>';
-        }
-        $childPaireTable .= '</tr></tbody>';
-        $tablePaire->addChild($childPaireTable);
-        ob_start();
-        $tablePaire->render();
-        $childTable .= ob_get_clean();
-        $childTable .= '</td></tr>';
-        $childTable .= '<tr>';
-        $childTable .= '<td colspan="3" class="inline-date">';
-        $jour_default=date('d');
-        $mois_default=date('m');
-        $year_default=date('Y');
-        $childTable .= '<strong>' . _('admin_temps_partiel_date_valid') . "</strong> ";
-        $childTable .= affiche_selection_new_jour($jour_default);  // la variable est $new_jour
-        $childTable .= affiche_selection_new_mois($mois_default);  // la variable est $new_mois
-        $childTable .= affiche_selection_new_year($year_default-2, $year_default+10, $year_default );  // la variable est $new_year
-        $childTable .= '</td></tr>';
-        $table->addChild($childTable);
-        ob_start();
-        $table->render();
-        $return .= ob_get_clean();
-        return $return;
-    }
-
 
     public static function commit_modif_user_groups($choix_user, &$checkbox_user_groups)
     {
