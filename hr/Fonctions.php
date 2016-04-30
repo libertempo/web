@@ -1282,17 +1282,17 @@ class Fonctions
         foreach($tab_champ_saisie as $user_name => $tab_conges)   // tab_champ_saisie[$current_login][$id_conges]=valeur du nb de jours ajouté saisi
         {
           foreach($tab_conges as $id_conges => $user_nb_jours_ajout) {
-            $valid=verif_saisie_decimal($user_nb_jours_ajout_float);   //verif la bonne saisie du nombre décimal
+            $valid=verif_saisie_decimal($user_nb_jours_ajout);   //verif la bonne saisie du nombre décimal
             if($valid) {
-              if($user_nb_jours_ajout_float!=0) {
+              if($user_nb_jours_ajout!=0) {
                 /* Modification de la table conges_users */
-                $sql1 = 'UPDATE conges_solde_user SET su_solde = su_solde+'.$user_nb_jours_ajout_float.' WHERE su_login="'. \includes\SQL::quote($user_name).'" AND su_abs_id = "'. \includes\SQL::quote($id_conges).'";';
+                $sql1 = 'UPDATE conges_solde_user SET su_solde = su_solde+'.$user_nb_jours_ajout.' WHERE su_login="'. \includes\SQL::quote($user_name).'" AND su_abs_id = "'. \includes\SQL::quote($id_conges).'";';
                 /* On valide l'UPDATE dans la table ! */
                 $ReqLog1 = \includes\SQL::query($sql1) ;
 
                 // on insert l'ajout de conges dans la table periode
                 $commentaire =  _('resp_ajout_conges_comment_periode_user') ;
-                \hr\Fonctions::insert_ajout_dans_periode($user_name, $user_nb_jours_ajout_float, $id_conges, $commentaire);
+                \hr\Fonctions::insert_ajout_dans_periode($user_name, $user_nb_jours_ajout, $id_conges, $commentaire);
               }
             }
           }
