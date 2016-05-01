@@ -25,7 +25,7 @@ class Formatter
     public static function dateFr2Iso($date)
     {
         if (!preg_match('#^(\d{2})/(\d{2})/(\d{4})$#', $date, $matches)) {
-            throw new \Exception('Date mal formée');
+            throw new \Exception(_('Date_mal_formee'));
         }
 
         return $matches[3] . '-' . $matches[2] . '-' . $matches[1];
@@ -46,7 +46,7 @@ class Formatter
     public static function dateIso2Fr($date)
     {
         if (!preg_match('#^(\d{4})-(\d{2})-(\d{2})$#', $date, $matches)) {
-            throw new \Exception('Date mal formée');
+            throw new \Exception(_('Date_mal_formee'));
         }
 
         return $matches[3] . '/' . $matches[2] . '/' . $matches[1];
@@ -65,7 +65,7 @@ class Formatter
     {
         $pattern = '/^(((0?|1)[0-9])|(2[0-3])):([0-5][0-9])$/';
         if (!preg_match($pattern, $hour, $matches)) {
-            throw new \Exception('Heure mal formée');
+            throw new \Exception(_('Heure_mal_formee'));
         }
 
         return mktime($matches[1], $matches[5], 0, 1, 1, 70);

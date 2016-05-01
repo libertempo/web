@@ -113,7 +113,7 @@ function generateTimePicker(elementId, opts)
         showInputs             : false,
         showMeridian           : false,
         showWidgetOnAddonClick : false,
-        defaultTime            : false,
+        defaultTime            : '12:00',
     };
     var toApply = defaultOpts;
 
@@ -145,7 +145,6 @@ var semaineDisplayer = function (idElement, idCommon, typeSemaines, texts)
                 if (idType !== this.idCommon) {
                     if (this._hasWeekInputs(this.typeSemaines[idType])) {
                         this._clickedElement(this.element);
-                        this._displayNotCommon();
                         displayedNot = true;
                         break;
                     }
@@ -301,7 +300,7 @@ var planningController = function (idElement, options, creneaux)
             var debutVal = document.getElementById(this.options['debutId']).value;
             var finVal = document.getElementById(this.options['finId']).value;
             if (this.options['nilInt'] != jourSelectionne && 0 != typePeriodeSelected && '' != debutVal && '' != finVal) {
-                if (this._checkTimeValue(debutVal) || this._checkTimeValue(finVal)) {
+                if (this._checkTimeValue(debutVal) && this._checkTimeValue(finVal)) {
                     this._emptyHelper();
                     this._addPeriod(jourSelectionne, typePeriodeSelected, debutVal, finVal);
                 } else {

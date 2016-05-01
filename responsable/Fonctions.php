@@ -2328,10 +2328,11 @@ class Fonctions
                     $message = '<div class="alert alert-danger">' . _('erreur_recommencer') . ' :<ul>' . $errors . '</ul></div>';
                 }
             } elseif ('DELETE' === $_POST['_METHOD'] && !empty($notice)) {
+                log_action(0, '', '', 'Suppression du planning ' . $_POST['planning_id']);
                 $message = '<form action="" method="post" accept-charset="UTF-8"
 enctype="application/x-www-form-urlencoded"><input type="hidden" name="planning_id" value="' . $_POST['planning_id'] . '" /><input type="hidden" name="status" value="' . \App\Models\Planning::STATUS_ACTIVE . '" /><input type="hidden" name="_METHOD" value="PATCH" /><div class="alert alert-info">' .  $notice . '. <button type="submit" class="btn btn-link alert-link">' . _('Annuler') . '</button></div></form>';
             } else {
-                //ddd('a');
+                log_action(0, '', '', 'Récupération du planning ' . $_POST['planning_id']);
                 redirect(ROOT_PATH . 'responsable/resp_index.php?session='. session_id() . '&onglet=liste_planning', false);
             }
         }
@@ -2350,7 +2351,7 @@ enctype="application/x-www-form-urlencoded"><input type="hidden" name="planning_
             'table-condensed',
             'table-striped',
         ]);
-        $childTable = '<thead><tr><th>' . _('Nom') . '</th><th style="width:10%"></th></tr></thead><tbody>';
+        $childTable = '<thead><tr><th>' . _('divers_nom_maj_1') . '</th><th style="width:10%"></th></tr></thead><tbody>';
         if (empty($listPlanningId)) {
             $childTable .= '<tr><td colspan="2"><center>' . _('aucun_resultat') . '</center></td></tr>';
         } else {
@@ -2391,6 +2392,7 @@ enctype="application/x-www-form-urlencoded"><a  title="' . _('form_modif') . '" 
         $valueName = '';
         if (!empty($_POST)) {
             if (0 < (int) \App\ProtoControllers\Planning::postPlanning($_POST, $errorsLst, $notice)) {
+                log_action(0, '', '', 'Édition du planning ' . $_POST['name']);
                 redirect(ROOT_PATH . 'responsable/resp_index.php?session='. session_id() . '&onglet=liste_planning', false);
             } else {
                 $errors = '';
@@ -2439,16 +2441,16 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         ob_start();
         $table->render();
         $return .= ob_get_clean();
-        $return .= '<h3>' . _('Créneaux') . '</h3>';
+        $return .= '<h3>' . _('Creneaux') . '</h3>';
         $idCommune = uniqid();
-        $return .= '<div id="' . $idCommune . '"><h4>' . _('Semaine') . '</h4>';
+        $return .= '<div id="' . $idCommune . '"><h4>' . _('admin_temps_partiel_sem') . '</h4>';
 
         $return .= \responsable\Fonctions::getFormPlanningTable(\App\Models\Planning\Creneau::TYPE_SEMAINE_COMMUNE, $id, $_POST);
         $idImpaire = uniqid();
-        $return .= '</div><div id="' . $idImpaire . '"><h4>' . _('Semaine impaire') . '</h4>';
+        $return .= '</div><div id="' . $idImpaire . '"><h4>' . _('admin_temps_partiel_sem_impaires') . '</h4>';
         $idPaire = uniqid();
         $return .= \responsable\Fonctions::getFormPlanningTable(\App\Models\Planning\Creneau::TYPE_SEMAINE_IMPAIRE, $id, $_POST);
-        $return .= '</div><div id="' . $idPaire . '"><h4>' .  _('Semaine paire') . '</h4>';
+        $return .= '</div><div id="' . $idPaire . '"><h4>' .  _('admin_temps_partiel_sem_paires') . '</h4>';
 
         $return .= \responsable\Fonctions::getFormPlanningTable(\App\Models\Planning\Creneau::TYPE_SEMAINE_PAIRE, $id, $_POST);
         $typeSemaine = [
@@ -2457,8 +2459,8 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             \App\Models\Planning\Creneau::TYPE_SEMAINE_PAIRE   => $idPaire,
         ];
         $text = [
-            'common'    => _('Semaines identiques'),
-            'notCommon' => _('Semaines différenciées'),
+            'common'    => _('Semaines_identiques'),
+            'notCommon' => _('Semaines_differenciees'),
         ];
         $return .= '</div><script>new semaineDisplayer("' . $idSemaine . '", "' . \App\Models\Planning\Creneau::TYPE_SEMAINE_COMMUNE . '", ' . json_encode($typeSemaine) . ', ' . json_encode($text) . ').init()</script>';
         $return .= '<hr><input type="submit" class="btn btn-success" value="' . _('form_submit') . '" />';
@@ -2508,7 +2510,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $debutId      = uniqid();
         $finId        = uniqid();
         $helperId     = uniqid();
-        $childTable = '<thead style="width:100%"><tr><th width="20%">' . _('Jour') . '</th><th>' . _('Creneaux_travail') . '</th><tr></thead><tbody>';
+        $childTable = '<thead><tr><th width="20%">' . _('Jour') . '</th><th>' . _('Creneaux_travail') . '</th><tr></thead><tbody>';
         $childTable .= '<tr><td><select class="form-control" id="' . $selectJourId . '"><option value="' . NIL_INT . '"></option>';
 
         foreach ($jours as $id => $jour) {
