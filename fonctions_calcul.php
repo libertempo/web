@@ -35,7 +35,7 @@ function compter($user, $num_current_periode, $date_debut, $date_fin, $opt_debut
 	$date_fin = convert_date($date_fin);
 
     $planningUser = \utilisateur\Fonctions::getUserPlanning($user);
-    if (empty($planningUser)) {
+    if (is_null($planningUser)) {
         $comment = _('aucun_planning_associe_utilisateur');
         return 0;
     }

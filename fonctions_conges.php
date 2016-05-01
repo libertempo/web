@@ -410,43 +410,22 @@ function recup_infos_artt_du_jour($sql_login, $j_timestamp, &$val_matin, &$val_a
                 $val_aprem = 'N';
         } else {
             /* Sinon, on s'appuie sur le planning normalement */
-            $realWeekType = \utilisateur\Fonctions::getRealWeekType($planningUser[0], $num_semaine);
+            $realWeekType = \utilisateur\Fonctions::getRealWeekType($planningUser, $num_semaine);
             if (NIL_INT === $realWeekType) {
                 $val_matin = 'Y';
                 $val_aprem = 'Y';
             } else {
-                $planningWeek = $planningUser[0][$realWeekType];
+                $planningWeek = $planningUser[$realWeekType];
                 $jourId = date('N', $j_timestamp);
                 if (!\utilisateur\Fonctions::isWorkingDay($planningWeek, $jourId)) {
                     $val_matin = 'Y';
                     $val_aprem = 'Y';
                 } else {
                     $planningDay = $planningWeek[$jourId];
-                    $val_matin = (\utilisateur\Fonctions::isWorkingMorning($planningDay)) ? 'N': 'Y';
-                    $val_aprem = (\utilisateur\Fonctions::isWorkingAfternoon($planningDay)) ? 'N': 'Y';
+                    $val_matin = (\utilisateur\Fonctions::isWorkingMorning($planningDay)) ? 'N' : 'Y';
+                    $val_aprem = (\utilisateur\Fonctions::isWorkingAfternoon($planningDay)) ? 'N' : 'Y';
                 }
             }
-
-            $par_sem = $num_semaine % 2 == 0 ? 'p' : 'imp';
-
-            //on calcule la key du tableau $result_artt qui correspond au jour j que l'on est en train d'afficher
-            $key_artt_matin = 'sem_'.$par_sem.'_'.$jour_name_fr_2c.'_am' ;
-            $key_artt_aprem = 'sem_'.$par_sem.'_'.$jour_name_fr_2c.'_pm' ;
-
-            // recup des ARTT et temps-partiels du user
-            $sql_artt='SELECT '.\includes\SQL::quote($key_artt_matin).', '.\includes\SQL::quote($key_artt_aprem).' FROM conges_artt WHERE a_login = "'.\includes\SQL::quote($sql_login).'" AND a_date_debut_grille <=  "'.\includes\SQL::quote($date_j).'" AND a_date_fin_grille >= "'.\includes\SQL::quote($date_j).'";';
-            $res_artt = \includes\SQL::query($sql_artt);
-            $result_artt = $res_artt->fetch_array();
-
-            if($result_artt[$key_artt_matin] == 'Y')
-                $val_matin='Y';
-            else
-                $val_matin='N';
-
-            if($result_artt[$key_artt_aprem] == 'Y')
-                $val_aprem='Y';
-            else
-                $val_aprem='N';
         }
     }
 }

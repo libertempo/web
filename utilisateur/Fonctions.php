@@ -1647,10 +1647,11 @@ class Fonctions
      * @param string $user
      *
      * @return array
+     * @TODO je n'aime pas l'idée que la méthode doive retourner null si pas d'association. Changer ça dès que possible
      */
     public static function getUserPlanning($user)
     {
-        $dataPlanning = [];
+        $dataPlanning = null;
         $sql = \includes\SQL::singleton();
         $reqUser = 'SELECT conges_planning.*
             FROM conges_users
@@ -1660,15 +1661,14 @@ class Fonctions
         $queryUser = $sql->query($reqUser);
         $planning = $queryUser->fetch_array();
         if (!empty($planning)) {
-            $dataPlanning[$planning['planning_id']] = [];
+            $dataPlanning = [];
             $reqCreneau = 'SELECT *
                 FROM conges_planning_creneau
                 WHERE planning_id = ' . $planning['planning_id'];
             $queryCreneau = $sql->query($reqCreneau);
-            $all = $queryCreneau->fetch_all();
 
-            foreach ($all as $data) {
-                $dataPlanning[$planning['planning_id']][$data['type_semaine']][$data['jour_id']][$data['type_periode']] = [
+            while ($data = $queryCreneau->fetch_array()) {
+                $dataPlanning[$data['type_semaine']][$data['jour_id']][$data['type_periode']] = [
                     \App\Models\Planning\Creneau::TYPE_HEURE_DEBUT => $data['debut'],
                     \App\Models\Planning\Creneau::TYPE_HEURE_FIN   => $data['fin'],
                 ];
@@ -1679,7 +1679,12 @@ class Fonctions
     }
 
     /**
+     * Retourne le type de semaine applicable pour un planning et un numéro de semaine données
      *
+     * @param array $planningUser
+     * @param int   $weekOfDay
+     *
+     * @return int
      */
     public static function getRealWeekType(array $planningUser, $weekOfDay)
     {
@@ -1704,7 +1709,11 @@ class Fonctions
     }
 
     /**
+    * Vérifie qu'une matinée est travaillée pour un jour de planning donné
      *
+     * @param array $planningDay
+     *
+     * @return bool
      */
     public static function isWorkingMorning(array $planningDay)
     {
@@ -1712,18 +1721,27 @@ class Fonctions
     }
 
     /**
+     * Vérifie qu'une après midi est travaillée pour un jour de planning donné
      *
+     * @param array $planningDay
+     *
+     * @return bool
      */
-    public static function isWorkinAfternon(array $planningDay)
+    public static function isWorkingAfternoon(array $planningDay)
     {
         return \utilisateur\Fonctions::isWorkingPeriodType($planningDay, \App\Models\Planning\Creneau::TYPE_PERIODE_APRES_MIDI);
     }
 
     /**
+     * Vérifie qu'un type de période est travaillé pour un jour de planning donné
      *
+     * @param array $planningDay
+     * @param int   $periodType
+     *
+     * @return bool
      */
     private static function isWorkingPeriodType(array $planningDay, $periodType)
     {
-        return isset($planningday[$periodType]);
+        return isset($planningDay[$periodType]);
     }
 }
