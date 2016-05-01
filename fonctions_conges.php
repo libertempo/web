@@ -104,7 +104,7 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
         <div class="col-md-6">
         <div class="form-inline">';
     $return .= '<div class="form-group"><label for="new_deb">' . _('divers_date_debut') . '</label><input type="text" class="form-control date" name="new_debut" value="' . $new_date_fin . '"></div>';
-    
+
     $return .= '<input type="radio" name="new_demi_jour_deb" ';
 
     if($_SESSION['config']['rempli_auto_champ_nb_jours_pris'])
@@ -383,7 +383,7 @@ function get_td_class_of_the_day_in_the_week($timestamp_du_jour)
 
 // recup des infos ARTT ou Temps Partiel :
 // attention : les param $val_matin et $val_aprem sont passées par référence (avec &) car on change leur valeur
-function recup_infos_artt_du_jour($sql_login, $j_timestamp, &$val_matin, &$val_aprem)
+function recup_infos_artt_du_jour($sql_login, $j_timestamp, &$val_matin, &$val_aprem, array $planningUser)
 {
     $num_semaine = date('W', $j_timestamp);
     $jour_name_fr_2c = get_j_name_fr_2c($j_timestamp); // nom du jour de la semaine en francais sur 2 caracteres
@@ -408,10 +408,25 @@ function recup_infos_artt_du_jour($sql_login, $j_timestamp, &$val_matin, &$val_a
                 $val_aprem = 'Y';
             else
                 $val_aprem = 'N';
-        }
-        // sinon, on lit la table conges_artt normalement
-        else
-        {
+        } else {
+            /* Sinon, on s'appuie sur le planning normalement */
+            $realWeekType = \utilisateur\Fonctions::getRealWeekType($planningUser[0], $num_semaine);
+            if (NIL_INT === $realWeekType) {
+                $val_matin = 'Y';
+                $val_aprem = 'Y';
+            } else {
+                $planningWeek = $planningUser[0][$realWeekType];
+                $jourId = date('N', $j_timestamp);
+                if (!\utilisateur\Fonctions::isWorkingDay($planningWeek, $jourId)) {
+                    $val_matin = 'Y';
+                    $val_aprem = 'Y';
+                } else {
+                    $planningDay = $planningWeek[$jourId];
+                    $val_matin = (\utilisateur\Fonctions::isWorkingMorning($planningDay)) ? 'N': 'Y';
+                    $val_aprem = (\utilisateur\Fonctions::isWorkingAfternoon($planningDay)) ? 'N': 'Y';
+                }
+            }
+
             $par_sem = $num_semaine % 2 == 0 ? 'p' : 'imp';
 
             //on calcule la key du tableau $result_artt qui correspond au jour j que l'on est en train d'afficher
@@ -955,10 +970,11 @@ function affiche_cellule_jour_cal_saisie($login, $j_timestamp, $td_second_class,
     $class_pm='travail_pm';
     $val_matin='';
     $val_aprem='';
+    $planningUser = \utilisateur\Fonctions::getUserPlanning($login);
 
     // recup des infos ARTT ou Temps Partiel :
     // la fonction suivante change les valeurs de $val_matin $val_aprem ....
-    recup_infos_artt_du_jour($login, $j_timestamp, $val_matin, $val_aprem);
+    recup_infos_artt_du_jour($login, $j_timestamp, $val_matin, $val_aprem, $planningUser);
 
     //## AFICHAGE ##
     if($val_matin=='Y')
@@ -1948,7 +1964,7 @@ function affiche_tableau_bilan_conges_user($login)
 function recup_infos_du_user($login, $list_groups_double_valid)
 {
     $tab=array();
-    $sql1 = 'SELECT u_login, u_nom, u_prenom, u_is_resp, u_resp_login, u_is_admin, u_is_hr, u_is_active, u_see_all, u_passwd, u_quotite, u_email, u_num_exercice FROM conges_users ' .
+    $sql1 = 'SELECT u_login, u_nom, u_prenom, u_is_resp, u_resp_login, u_is_admin, u_is_hr, u_is_active, u_see_all, u_passwd, u_quotite, u_email, u_num_exercice, planning_id FROM conges_users ' .
             'WHERE u_login="'.\includes\SQL::quote($login).'";';
     $ReqLog = \includes\SQL::query($sql1) ;
 
@@ -1968,6 +1984,7 @@ function recup_infos_du_user($login, $list_groups_double_valid)
         $tab_user['quotite']    = $resultat['u_quotite'];
         $tab_user['email']    = $resultat['u_email'];
         $tab_user['num_exercice'] = $resultat['u_num_exercice'];
+        $tab_user['planningId']   = $resultat['planning_id'];
         $tab_user['conges']    = recup_tableau_conges_for_user($login, false);
 
         $tab_user['double_valid'] = "N";

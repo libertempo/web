@@ -56,6 +56,6 @@ class Creneau
      *
      * @var int
      */
-    const TYPE_PERIODE_MATIN   = 1;
+    const TYPE_PERIODE_MATIN      = 1;
     const TYPE_PERIODE_APRES_MIDI = 2;
 }
