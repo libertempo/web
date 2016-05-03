@@ -1247,7 +1247,7 @@ class Fonctions
         $sql_update = 'UPDATE conges_periode SET p_edition_id=\''.$new_edition_id.'\'
                 WHERE p_login = \''.$login.'\'
                 AND p_edition_id IS NULL
-                AND (p_type IN (\''.$list_abs_id.'\') )
+                AND (p_type IN ('.$list_abs_id.') )
                 AND (p_etat!=\'demande\') ';
         $ReqLog_update = \includes\SQL::query($sql_update);
 
