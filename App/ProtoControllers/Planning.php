@@ -171,7 +171,7 @@ class Planning
      * Patche un planning
      *
      * @param int   $id
-     * @param array $put
+     * @param array $patch
      *
      * @return int
      */
@@ -311,6 +311,9 @@ class Planning
      */
     public static function getListPlanning(array $listId)
     {
+        if (empty($listId)) {
+            return [];
+        }
         $sql = \includes\SQL::singleton();
         $req = 'SELECT *
                 FROM conges_planning
