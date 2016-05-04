@@ -24,38 +24,21 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *************************************************************************************************/
-namespace App\Models\Planning;
+namespace App\Models;
 
 /**
- * Modèle de créneau de planning
+ * Modèle planning
  *
  * @since  1.9
  * @author Prytoegrian <prytoegrian@protonmail.com>
  */
-class Creneau
+class Planning
 {
     /**
-     * Type de semaine
+     * Statut
      *
      * @var int
      */
-    const TYPE_SEMAINE_COMMUNE = 1;
-    const TYPE_SEMAINE_IMPAIRE = 2;
-    const TYPE_SEMAINE_PAIRE   = 3;
-
-    /**
-     * Type d'heures
-     *
-     * @var int
-     */
-    const TYPE_HEURE_DEBUT     = 1;
-    const TYPE_HEURE_FIN       = 2;
-
-    /**
-     * Type de période
-     *
-     * @var int
-     */
-    const TYPE_PERIODE_MATIN   = 1;
-    const TYPE_PERIODE_APRES_MIDI = 2;
+    const STATUS_ACTIVE = STATUS_ACTIVE;
+    const STATUS_DELETED = STATUS_DELETED;
 }

@@ -41,9 +41,43 @@ $PHP_SELF=$_SERVER['PHP_SELF'];
 $version = (isset($_GET['version']) ? $_GET['version'] : (isset($_POST['version']) ? $_POST['version'] : "")) ;
 $lang = (isset($_GET['lang']) ? $_GET['lang'] : (isset($_POST['lang']) ? $_POST['lang'] : "")) ;
 
-$ssoad="UPDATE conges_config SET conf_type = 'enum=dbconges/ldap/CAS/SSO' WHERE conf_nom = 'how_to_connect_user';";
-$res_ssoad=\includes\SQL::query($ssoad);
+$sql = \includes\SQL::singleton();
+$sql->getPdoObj()->begin_transaction();
 
+$ssoad="UPDATE conges_config SET conf_type = 'enum=dbconges/ldap/CAS/SSO' WHERE conf_nom = 'how_to_connect_user';";
+$res_ssoad = $sql->query($ssoad);
+
+/* Modification sur conges_users */
+$dropIndexUser = 'ALTER TABLE conges_users DROP INDEX u_login;';
+$sql->query($dropIndexUser);
+$addPlanningUser = 'ALTER TABLE conges_users ADD planning_id INT(11) UNSIGNED NOT NULL';
+$sql->query($addPlanningUser);
+$addIndexPlanningUser = 'ALTER TABLE conges_users ADD INDEX planning_id (planning_id);';
+$sql->query($addIndexPlanningUser);
+
+/* Création du planning et des créneaux */
+$addPlanning = 'CREATE TABLE `conges_planning` (
+  `planning_id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `name` VARCHAR(50) NOT NULL DEFAULT "",
+  `status` TINYINT(3) UNSIGNED NOT NULL DEFAULT 0,
+  KEY `status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;';
+$sql->query($addPlanning);
+
+$addPlanningCreneau = 'CREATE TABLE `conges_planning_creneau` (
+  `creneau_id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `planning_id` INT(11) UNSIGNED NOT NULL,
+  `jour_id` TINYINT(3) UNSIGNED NOT NULL,
+  `type_semaine` TINYINT(3) UNSIGNED NOT NULL,
+  `type_periode` TINYINT(3) UNSIGNED NOT NULL,
+  `debut` INT(11) UNSIGNED NOT NULL,
+  `fin` INT(11) UNSIGNED NOT NULL,
+  KEY `planning_id` (`planning_id`,`type_semaine`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8';
+$sql->query($addPlanningCreneau);
+
+
+$sql->getPdoObj()->commit();
 
 // on renvoit à la page mise_a_jour.php (là d'ou on vient)
 echo "<a href=\"mise_a_jour.php?etape=3&version=$version&lang=$lang\">upgrade_from_v1.8  OK</a><br>\n";
