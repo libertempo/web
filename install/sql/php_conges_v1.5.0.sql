@@ -6,6 +6,52 @@
 #
 # ATTENTION :  toutes les requetes doivent se terminer par un point virgule ";"
 
+#
+# Structure de la table `conges_artt`
+#
+
+CREATE TABLE `conges_artt` (
+  `a_login` varbinary(99) NOT NULL default '',
+  `sem_imp_lu_am` varchar(10) default NULL,
+  `sem_imp_lu_pm` varchar(10) default NULL,
+  `sem_imp_ma_am` varchar(10) default NULL,
+  `sem_imp_ma_pm` varchar(10) default NULL,
+  `sem_imp_me_am` varchar(10) default NULL,
+  `sem_imp_me_pm` varchar(10) default NULL,
+  `sem_imp_je_am` varchar(10) default NULL,
+  `sem_imp_je_pm` varchar(10) default NULL,
+  `sem_imp_ve_am` varchar(10) default NULL,
+  `sem_imp_ve_pm` varchar(10) default NULL,
+  `sem_imp_sa_am` varchar(10) default NULL,
+  `sem_imp_sa_pm` varchar(10) default NULL,
+  `sem_imp_di_am` varchar(10) default NULL,
+  `sem_imp_di_pm` varchar(10) default NULL,
+  `sem_p_lu_am` varchar(10) default NULL,
+  `sem_p_lu_pm` varchar(10) default NULL,
+  `sem_p_ma_am` varchar(10) default NULL,
+  `sem_p_ma_pm` varchar(10) default NULL,
+  `sem_p_me_am` varchar(10) default NULL,
+  `sem_p_me_pm` varchar(10) default NULL,
+  `sem_p_je_am` varchar(10) default NULL,
+  `sem_p_je_pm` varchar(10) default NULL,
+  `sem_p_ve_am` varchar(10) default NULL,
+  `sem_p_ve_pm` varchar(10) default NULL,
+  `sem_p_sa_am` varchar(10) default NULL,
+  `sem_p_sa_pm` varchar(10) default NULL,
+  `sem_p_di_am` varchar(10) default NULL,
+  `sem_p_di_pm` varchar(10) default NULL,
+  `a_date_debut_grille` date NOT NULL default '0000-00-00',
+  `a_date_fin_grille` date NOT NULL default '9999-12-31',
+  PRIMARY KEY  (`a_login`,`a_date_fin_grille`)
+) DEFAULT CHARSET=latin1;
+
+#
+# Contenu de la table `conges_artt`
+#
+
+INSERT INTO `conges_artt` VALUES ('admin', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0000-00-00', '9999-12-31');
+INSERT INTO `conges_artt` VALUES ('conges', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0000-00-00', '9999-12-31');
+
 # --------------------------------------------------------
 
 #

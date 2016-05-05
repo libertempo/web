@@ -17,6 +17,47 @@ CREATE TABLE IF NOT EXISTS `conges_appli` (
 # --------------------------------------------------------
 
 #
+# Structure de la table `conges_artt`
+#
+
+CREATE TABLE IF NOT EXISTS `conges_artt` (
+  `a_login` varbinary(99) NOT NULL DEFAULT '',
+  `sem_imp_lu_am` varchar(10) DEFAULT NULL,
+  `sem_imp_lu_pm` varchar(10) DEFAULT NULL,
+  `sem_imp_ma_am` varchar(10) DEFAULT NULL,
+  `sem_imp_ma_pm` varchar(10) DEFAULT NULL,
+  `sem_imp_me_am` varchar(10) DEFAULT NULL,
+  `sem_imp_me_pm` varchar(10) DEFAULT NULL,
+  `sem_imp_je_am` varchar(10) DEFAULT NULL,
+  `sem_imp_je_pm` varchar(10) DEFAULT NULL,
+  `sem_imp_ve_am` varchar(10) DEFAULT NULL,
+  `sem_imp_ve_pm` varchar(10) DEFAULT NULL,
+  `sem_imp_sa_am` varchar(10) DEFAULT NULL,
+  `sem_imp_sa_pm` varchar(10) DEFAULT NULL,
+  `sem_imp_di_am` varchar(10) DEFAULT NULL,
+  `sem_imp_di_pm` varchar(10) DEFAULT NULL,
+  `sem_p_lu_am` varchar(10) DEFAULT NULL,
+  `sem_p_lu_pm` varchar(10) DEFAULT NULL,
+  `sem_p_ma_am` varchar(10) DEFAULT NULL,
+  `sem_p_ma_pm` varchar(10) DEFAULT NULL,
+  `sem_p_me_am` varchar(10) DEFAULT NULL,
+  `sem_p_me_pm` varchar(10) DEFAULT NULL,
+  `sem_p_je_am` varchar(10) DEFAULT NULL,
+  `sem_p_je_pm` varchar(10) DEFAULT NULL,
+  `sem_p_ve_am` varchar(10) DEFAULT NULL,
+  `sem_p_ve_pm` varchar(10) DEFAULT NULL,
+  `sem_p_sa_am` varchar(10) DEFAULT NULL,
+  `sem_p_sa_pm` varchar(10) DEFAULT NULL,
+  `sem_p_di_am` varchar(10) DEFAULT NULL,
+  `sem_p_di_pm` varchar(10) DEFAULT NULL,
+  `a_date_debut_grille` date NOT NULL DEFAULT '0000-00-00',
+  `a_date_fin_grille` date NOT NULL DEFAULT '9999-12-31',
+  PRIMARY KEY (`a_login`,`a_date_fin_grille`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+# --------------------------------------------------------
+
+#
 # Structure de la table `conges_config`
 #
 
@@ -293,6 +334,15 @@ INSERT IGNORE INTO `conges_appli` VALUES ('conges_bgcolor', '#DEDEDE');
 INSERT IGNORE INTO `conges_appli` VALUES ('demande_conges_bgcolor', '#E7C4C4');
 INSERT IGNORE INTO `conges_appli` VALUES ('absence_autre_bgcolor', '#D3FFB6');
 INSERT IGNORE INTO `conges_appli` VALUES ('fermeture_bgcolor', '#7B9DE6');
+
+# --------------------------------------------------------
+
+#
+# Contenu de la table `conges_artt`
+#
+
+INSERT IGNORE INTO `conges_artt` VALUES ('admin', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0000-00-00', '9999-12-31');
+INSERT IGNORE INTO `conges_artt` VALUES ('conges', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0000-00-00', '9999-12-31');
 
 # --------------------------------------------------------
 
