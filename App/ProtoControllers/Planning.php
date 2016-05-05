@@ -295,7 +295,7 @@ class Planning
         $sql = \includes\SQL::singleton();
         $req = 'UPDATE conges_planning
                 SET status = ' . \App\Models\Planning::STATUS_DELETED . '
-                WHERE planning_id = ' . $id . '
+                WHERE planning_id = ' . (int) $id . '
                 LIMIT 1';
         $sql->query($req);
 
@@ -332,6 +332,9 @@ class Planning
      */
     public static function getListPlanningUsed(array $listId)
     {
+        if (empty($listId)) {
+            return [];
+        }
         $ids = [];
         $sql = \includes\SQL::singleton();
         $req = 'SELECT planning_id AS id
