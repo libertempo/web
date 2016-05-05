@@ -651,7 +651,7 @@ class Fonctions
 
         if(!empty($_POST)) {
             if (0 < (int) \utilisateur\Fonctions::postDemandeCongesHeure($_POST, $errorsLst)) {
-                $return .= '<div class="alert alert-danger">suppression effectuée avec succès</div>';
+                $return .= '<div class="alert alert-info">.'_('suppr_succes')'.</div>';
             }
         }
         // on initialise le tableau global des jours fériés s'il ne l'est pas déjà :
@@ -1652,19 +1652,15 @@ class Fonctions
      * @access public
      * @static
      */
-    public static function setDatePickerDaysOfWeekDisabled()
+    public static function getDatePickerDaysOfWeekDisabled()
     {
         $daysOfWeekDisabled = [];
-        if ((false == $_SESSION['config']['dimanche_travail'])
-            && (false == $_SESSION['config']['samedi_travail'])
-        ) {
-            $daysOfWeekDisabled = [0,6];
-        } else {
+
             if (false == $_SESSION['config']['dimanche_travail']) {
-                $daysOfWeekDisabled = [0];
+                $daysOfWeekDisabled[] = 0;
             }
             if (false == $_SESSION['config']['samedi_travail']) {
-                $daysOfWeekDisabled = [6];
+                $daysOfWeekDisabled[] = 6;
             }
         }
     return $daysOfWeekDisabled;
@@ -1677,7 +1673,7 @@ class Fonctions
      * @access public
      * @static
      */
-    public static function setDatePickerJoursFeries()
+    public static function getDatePickerJoursFeries()
     {
         $Jferies      = [];
 
@@ -1697,7 +1693,7 @@ class Fonctions
      * @access public
      * @static
      */
-    public static function setDatePickerFermeture()
+    public static function getDatePickerFermeture()
     {
         $Fermeture      = [];
 
@@ -1717,7 +1713,7 @@ class Fonctions
      * @access public
      * @static
      */
-    public static function setDatePickerStartDate()
+    public static function getDatePickerStartDate()
     {
     return ($_SESSION['config']['interdit_saisie_periode_date_passee']) ? 'd' : '';
     }
@@ -1729,15 +1725,16 @@ class Fonctions
      * @access public
      * @static
      */
-    public static function getDemandeCongesHeure($type = \App\Models\HeureRecuperation::TYPE_DEBIT)
+    public static function getDemandeCongesHeure($type)
     {
         $return    = '';
 
         /* Génération du datePicker et de ses options */
-        $daysOfWeekDisabled = \utilisateur\Fonctions::setDatePickerDaysOfWeekDisabled();
-        $datesDisabled      = \utilisateur\Fonctions::setDatePickerJoursFeries();
-        $datesDisabled      = \utilisateur\Fonctions::setDatePickerFermeture();
-        $startDate = \utilisateur\Fonctions::setDatePickerStartDate();
+        $daysOfWeekDisabled = \utilisateur\Fonctions::getDatePickerDaysOfWeekDisabled();
+        $datesFeries        = \utilisateur\Fonctions::getDatePickerJoursFeries();
+        $datesFerme         = \utilisateur\Fonctions::getDatePickerFermeture();
+        $datesDisabled      = array_merge($datesFeries,$datesFerme);
+        $startDate = \utilisateur\Fonctions::getDatePickerStartDate();
 
         $datePickerOpts = [
             'daysOfWeekDisabled' => $daysOfWeekDisabled,
@@ -1748,7 +1745,6 @@ class Fonctions
 
         $message   = '';
         $errorsLst = [];
-        $valueName = '';
 
         if (!empty($_POST)) {
             if (0 >= (int) \utilisateur\Fonctions::postDemandeCongesHeure($_POST, $errorsLst)) {
@@ -1787,7 +1783,7 @@ class Fonctions
         $childTable .= '<div class="form-inline"><div class="form-group"><label for="new_dem_jour">' . _('saisie_echange_titre_calendrier_2') . '</label><input class="form-control date" type="text" value="'.date("d/m/Y").'" name="new_jour"></div>';
         $childTable .= '<div class="form-group"><label for="new_heure_deb">'._('divers_debut_maj_1').'</label><input class="form-control time" type="text" value="" name="new_deb_heure"></div>';
         $childTable .= '<div class="form-group"><label for="new_heure_fin">'._('divers_fin_maj_1').'</label><input class="form-control time" type="text" value="" name="new_fin_heure"></div>';
-        $childTable .= '<input hidden type="text" name="type" value="'.$type.'"></div>';
+        $childTable .= '<input type="hidden" name="type" value="'.$type.'"></div>';
         $childTable .= '</div>';
         $childTable .= '<div class="form-group"><input type="submit" class="btn btn-success" value="' . _('form_submit') . '" /></div>';
 
@@ -1820,10 +1816,11 @@ class Fonctions
         $errorsLst = [];
 
         /* Génération du datePicker et de ses options */
-        $daysOfWeekDisabled = \utilisateur\Fonctions::setDatePickerDaysOfWeekDisabled();
-        $datesDisabled      = \utilisateur\Fonctions::setDatePickerJoursFeries();
-        $datesDisabled      = \utilisateur\Fonctions::setDatePickerFermeture();
-        $startDate = \utilisateur\Fonctions::setDatePickerStartDate();
+        $daysOfWeekDisabled = \utilisateur\Fonctions::getDatePickerDaysOfWeekDisabled();
+        $datesFeries        = \utilisateur\Fonctions::getDatePickerJoursFeries();
+        $datesFerme         = \utilisateur\Fonctions::getDatePickerFermeture();
+        $datesDisabled      = array_merge($datesFeries,$datesFerme);
+        $startDate = \utilisateur\Fonctions::getDatePickerStartDate();
 
         $datePickerOpts = [
             'daysOfWeekDisabled' => $daysOfWeekDisabled,
@@ -1881,9 +1878,9 @@ class Fonctions
             $childTable .= '<div class="form-inline"><div class="form-group"><label for="new_dem_jour">' . _('saisie_echange_titre_calendrier_2') . '</label><input class="form-control date" type="text" value="'.$jour.'" name="new_jour"></div>';
             $childTable .= '<div class="form-group"><label for="new_heure_deb">'._('divers_debut_maj_1').'</label><input class="form-control time" type="text" value="'.$heureDeb.'" name="new_deb_heure"></div>';
             $childTable .= '<div class="form-group"><label for="new_heure_fin">'._('divers_fin_maj_1').'</label><input class="form-control time" type="text" value="'.$heureFin.'" name="new_fin_heure"></div>';
-            $childTable .= '<input hidden type="text" name="id_heure" value="'.$id.'"></div>';
-            $childTable .= '<input hidden type="text" name="type" value="'.$type.'"></div>';
-            $childTable .= '<input hidden type="text" name="_METHOD" value="PUT"></div>';
+            $childTable .= '<input type="hidden" name="id_heure" value="'.$id.'"></div>';
+            $childTable .= '<input type="hidden" name="type" value="'.$type.'"></div>';
+            $childTable .= '<input type="hidden" name="_METHOD" value="PUT"></div>';
             $childTable .= '<div class="form-group"><input type="submit" class="btn btn-success" value="' . _('form_modif') . '" /></div>';
 
         $table->addChild($childTable);
@@ -2122,8 +2119,8 @@ class Fonctions
                 $childTable .= '<td>' . \utilisateur\Fonctions::Timestamp2Time($data['time']) . '</td><td style="width:15%"></td>';
                 $childTable .= '<td><a href="user_index.php?session='.$session.'&onglet=modif_demande_heures&id='.$data['id_heure'].'&type='.$type.'" title="' . _('form_modif') . '"><i class="fa fa-pencil"></i></a></td><td style="width:15%"></td>';
                 $childTable .= '<td><form id="del'.$data['id_heure'].'" action="" method="post" class="form-group">';
-                $childTable .= '<input hidden type="text" name="_METHOD" value="DELETE">';
-                $childTable .= '<input hidden type="text" name="id_heure" value="'.$data['id_heure'].'">';
+                $childTable .= '<input type="hidden" name="_METHOD" value="DELETE">';
+                $childTable .= '<input type="hidden" name="id_heure" value="'.$data['id_heure'].'">';
                 $childTable .= '<button type="submit" class="btn btn-link" title="' . _('form_supprim') . '"><i class="fa fa-times-circle"></i></button></form></td></tr>';
             }
         }

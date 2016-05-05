@@ -1678,3 +1678,6 @@ msgstr "durée"
 
 msgid "erreur_recommencer"
 msgstr "Des erreurs sont apparues, veuillez recommencer"
+
+msgid "suppr_succes"
+msgstr "suppression effectuée avec succès"

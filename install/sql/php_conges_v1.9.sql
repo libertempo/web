@@ -320,6 +320,20 @@ CREATE TABLE IF NOT EXISTS `conges_users` (
   KEY `u_login` (`u_login`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+#
+# Structure de la table `conges_heure_periode`
+#
+
+CREATE TABLE IF NOT EXISTS `conges_heure_periode` (
+  `id_heure` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `login` VARBINARY(99) NOT NULL ,
+  `debut` INT(11) NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+  `fin` INT(11) NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+  `time` INT NOT NULL DEFAULT '0',
+  `statut` INT NOT NULL DEFAULT '0',
+  `type` INT NOT NULL DEFAULT '0' ,
+  PRIMARY KEY (`id_heure`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 #
 # Contenu de la table `conges_appli`
