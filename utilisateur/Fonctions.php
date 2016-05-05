@@ -1701,7 +1701,10 @@ class Fonctions
     }
 
     /**
+     * Vérifie que le jour est travaillé selon le planning
      *
+     * @param array $planningWeek
+     * @param int   $jourId
      */
     public static function isWorkingDay(array $planningWeek, $jourId)
     {
