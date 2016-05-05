@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Client :  sql
--- Généré le :  Mar 26 Mai 2015 � 17:53
+-- Généré le :  Mar 26 Mai 2015 à 17:53
 -- Version du serveur :  5.5.43-0+deb7u1
 -- Version de PHP :  5.4.39-0+deb7u2
 
