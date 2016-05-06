@@ -1931,6 +1931,7 @@ class Fonctions
     {
 
         if (\utilisateur\Fonctions::VerifNewDemandeHeures($post['new_jour'], $post['new_deb_heure'], $post['new_fin_heure'], $errors, $post['id_heure'])) {
+            log_action($post['id_heure'], 'demande', '', 'Modification demande d\'heure ' . $post['id_heure']);
             return \utilisateur\Fonctions::updateDemandeDebitCongesHeure($post, $post['id_heure']);
         }
 
@@ -1948,6 +1949,7 @@ class Fonctions
     private static function insertDemandeDebitCongesHeure(array $post, array &$errors)
     {
         if (\utilisateur\Fonctions::VerifNewDemandeHeures($post['new_jour'], $post['new_deb_heure'], $post['new_fin_heure'], $errors)) {
+            log_action("", 'demande', '', 'Nouvelle demande d\'heure ');
             return \utilisateur\Fonctions::insertSQLDemandeDebitCongesHeure($post);
         }
 
@@ -1963,6 +1965,7 @@ class Fonctions
      */
     private static function deleteDemandeDebitCongesHeure($id, &$errorsLst)
     {
+        log_action($id, 'supprimé', '', 'Annulation de la demande d\'heure ' . $id);
         return \utilisateur\Fonctions::deleteSQLDemandeDebitCongesHeure($id, $errorsLst);
     }
 
