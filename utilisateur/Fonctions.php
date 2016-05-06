@@ -1757,6 +1757,8 @@ class Fonctions
                     }
                     $message = '<div class="alert alert-danger">' . _('erreur_recommencer') . '<ul>' . $errors . '</ul></div>';
                 }
+            } else {
+                $message = '<div class="alert alert-info">' . _('demande_transmise') . '</div>';
             }
         }
 

@@ -1681,3 +1681,6 @@ msgstr "Des erreurs sont apparues, veuillez recommencer"
 
 msgid "suppr_succes"
 msgstr "suppression effectuée avec succès"
+
+msgid "demande_transmise"
+msgstr "Demande transmise à votre responsable"
