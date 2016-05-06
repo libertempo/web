@@ -49,4 +49,20 @@ class Formatter
         }
         return $matches[3] . '/' . $matches[2] . '/' . $matches[1];
     }
+
+    /**
+     * Verifie le format d'une heure (hh:mm)
+     *
+     * @param string $heure
+     *
+     * @access public
+     * @static
+     * @return int
+     * @since  1.9
+     */
+    public static function isHourFormat($heure)
+    {
+        $pattern = '/^(((0?|1)[0-9])|(2[0-3])):[0-5][0-9]$/';
+        return preg_match($pattern, $heure);
+    }
 }

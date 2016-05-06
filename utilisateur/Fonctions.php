@@ -651,7 +651,7 @@ class Fonctions
 
         if(!empty($_POST)) {
             if (0 < (int) \utilisateur\Fonctions::postDemandeCongesHeure($_POST, $errorsLst)) {
-                $return .= '<div class="alert alert-info">.'_('suppr_succes')'.</div>';
+                $return .= '<div class="alert alert-info">'._('suppr_succes').'</div>';
             }
         }
         // on initialise le tableau global des jours fériés s'il ne l'est pas déjà :
@@ -1662,7 +1662,6 @@ class Fonctions
             if (false == $_SESSION['config']['samedi_travail']) {
                 $daysOfWeekDisabled[] = 6;
             }
-        }
     return $daysOfWeekDisabled;
     }
 
@@ -1869,25 +1868,30 @@ class Fonctions
         $childTable="";
 
         //conversion des dates
-            $sql   = 'SELECT * FROM conges_heure_periode WHERE id_heure = ' . $id;
+            $sql   = 'SELECT * FROM conges_heure_periode WHERE id_heure = ' . \includes\SQL::quote($id) . ' AND statut=' . \App\Models\HeureRecuperation::STATUT_DEMANDE ;
             $query = \includes\SQL::query($sql);
-            $data = $query->fetch_assoc();
-            $heureDeb = date("H:i", $data['debut']);
-            $jour = date("d/m/Y", $data['debut']);
-            $heureFin = date("H:i", $data['fin']);
-            $childTable .= '<div class="form-inline"><div class="form-group"><label for="new_dem_jour">' . _('saisie_echange_titre_calendrier_2') . '</label><input class="form-control date" type="text" value="'.$jour.'" name="new_jour"></div>';
-            $childTable .= '<div class="form-group"><label for="new_heure_deb">'._('divers_debut_maj_1').'</label><input class="form-control time" type="text" value="'.$heureDeb.'" name="new_deb_heure"></div>';
-            $childTable .= '<div class="form-group"><label for="new_heure_fin">'._('divers_fin_maj_1').'</label><input class="form-control time" type="text" value="'.$heureFin.'" name="new_fin_heure"></div>';
-            $childTable .= '<input type="hidden" name="id_heure" value="'.$id.'"></div>';
-            $childTable .= '<input type="hidden" name="type" value="'.$type.'"></div>';
-            $childTable .= '<input type="hidden" name="_METHOD" value="PUT"></div>';
-            $childTable .= '<div class="form-group"><input type="submit" class="btn btn-success" value="' . _('form_modif') . '" /></div>';
+            if (!$query->num_rows) {
+                $return .= _('form_modif_not_ok');
+                $return .= '<a class="btn" href="' . $PHP_SELF . '?session=' . $session . '&onglet=demandes_en_cours">' . _('form_cancel') . '</a>';
+            } else {
+                $data = $query->fetch_assoc();
+                $heureDeb = date("H:i", $data['debut']);
+                $jour = date("d/m/Y", $data['debut']);
+                $heureFin = date("H:i", $data['fin']);
+                $childTable .= '<div class="form-inline"><div class="form-group"><label for="new_dem_jour">' . _('saisie_echange_titre_calendrier_2') . '</label><input class="form-control date" type="text" value="'.$jour.'" name="new_jour"></div>';
+                $childTable .= '<div class="form-group"><label for="new_heure_deb">'._('divers_debut_maj_1').'</label><input class="form-control time" type="text" value="'.$heureDeb.'" name="new_deb_heure"></div>';
+                $childTable .= '<div class="form-group"><label for="new_heure_fin">'._('divers_fin_maj_1').'</label><input class="form-control time" type="text" value="'.$heureFin.'" name="new_fin_heure"></div>';
+                $childTable .= '<input type="hidden" name="id_heure" value="'.$id.'"></div>';
+                $childTable .= '<input type="hidden" name="type" value="'.$type.'"></div>';
+                $childTable .= '<input type="hidden" name="_METHOD" value="PUT"></div>';
+                $childTable .= '<div class="form-group"><input type="submit" class="btn btn-success" value="' . _('form_modif') . '" /></div>';
 
-        $table->addChild($childTable);
-        ob_start();
-        $table->render();
-        $return .= ob_get_clean();
-        $return .='</form>';
+                $table->addChild($childTable);
+                ob_start();
+                $table->render();
+                $return .= ob_get_clean();
+            }
+            $return .='</form>';
         return $return;
     }
 
@@ -1903,7 +1907,7 @@ class Fonctions
     {
         if (!empty($post['_METHOD'])) {
             if ('DELETE' === $post['_METHOD']) {
-                return \utilisateur\Fonctions::deleteDemandeDebitCongesHeure($post['id_heure']);
+                return \utilisateur\Fonctions::deleteDemandeDebitCongesHeure($post['id_heure'], $errorsLst);
             } elseif ('PUT' === $post['_METHOD']) {
                return \utilisateur\Fonctions::putDemandeDebitCongesHeure($post, $errorsLst);
             }
@@ -1955,9 +1959,9 @@ class Fonctions
      *
      * @return int
      */
-    private static function deleteDemandeDebitCongesHeure($id)
+    private static function deleteDemandeDebitCongesHeure($id, &$errorsLst)
     {
-        return \utilisateur\Fonctions::deleteSQLDemandeDebitCongesHeure($id);
+        return \utilisateur\Fonctions::deleteSQLDemandeDebitCongesHeure($id, $errorsLst);
     }
 
     /**
@@ -1967,7 +1971,7 @@ class Fonctions
      *
      * @return int
      */
-    private static function deleteSQLDemandeDebitCongesHeure($id)
+    private static function deleteSQLDemandeDebitCongesHeure($id, &$errorsLst)
     {
         $sql = \includes\SQL::singleton();
         $req = 'DELETE FROM conges_heure_periode
@@ -1975,7 +1979,12 @@ class Fonctions
                 AND login = "'.$_SESSION['userlogin'].'"';
         $sql->query($req);
 
-        return 0 < $sql->affected_rows ? $id : NIL_INT;
+        if (0 < $sql->affected_rows) {
+            return $id;
+        } else {
+            $errorLst[] = _('config_abs_suppr_impossible');
+        }
+        return NIL_INT;
     }
 
     /**
@@ -1990,25 +1999,23 @@ class Fonctions
      */
     public static function VerifNewDemandeHeures($jour, $heuredeb, $heurefin, array &$Error, $id = NIL_INT)
     {
-        $verif = true;
         $localError = [];
-        $pattern = '/^(((0?|1)[0-9])|(2[0-3])):[0-5][0-9]$/'; 
 
         // leur champs doivent etre renseignés dans le formulaire
         if ( $jour == '' || $heuredeb == '' || $heurefin == '' ) {
             $localError[] = _('verif_saisie_erreur_valeur_manque'); 
         }
 
-        // si la date de fin est antérieur à la date debut
-        if (NIL_INT !== strnatcmp($heuredeb, $heurefin)) {
-            $localError[] = _('verif_saisie_erreur_heure_fin_avant_debut') ;
-        }
-
-        if (!preg_match($pattern, $heuredeb) || !preg_match($pattern, $heurefin)) {
+        if ( !(\App\Helpers\Formatter::isHourFormat($heuredeb) && \App\Helpers\Formatter::isHourFormat($heurefin))) {
             $localError[] = _('Heure_non_reconnue');
-        }
+        } else {
+            // si la date de fin est antérieur à la date debut
+            if (NIL_INT !== strnatcmp($heuredeb, $heurefin)) {
+                $localError[] = _('verif_saisie_erreur_heure_fin_avant_debut') ;
+            }
 
-        $chevauch = \utilisateur\Fonctions::VerifChevauchHeures($jour, $heuredeb, $heurefin, $localError, $id);
+            $chevauch = \utilisateur\Fonctions::VerifChevauchHeures($jour, $heuredeb, $heurefin, $localError, $id);
+        }
             
         $Error = array_merge($Error, $localError);
 
@@ -2033,7 +2040,7 @@ class Fonctions
         $user = $_SESSION['userlogin'];
         $sql = \includes\SQL::singleton();
         $toInsert = [];
-        $toInsert[] = '("", "' . $user . '", ' . (int) $timedeb . ', '. (int) $timefin .', '. (int) $duree .', '.\App\Models\HeureRecuperation::STATUT_DEMANDE.', '.$info['type'].')';
+        $toInsert[] = '(NULL, "' . $user . '", ' . (int) $timedeb . ', '. (int) $timefin .', '. (int) $duree .', '.\App\Models\HeureRecuperation::STATUT_DEMANDE.', '.$info['type'].')';
         $req = 'INSERT INTO conges_heure_periode (id_heure, login, debut, fin, time, statut, type) VALUES ' . implode(', ', $toInsert);
         $query = $sql->query($req);
 
@@ -2110,7 +2117,7 @@ class Fonctions
             $childTable .= '<th>'._('divers_fin_maj_1').'</th><th style="width:15%"></th>';
             $childTable .= '<th>'._('nb_heures').'</th><th style="width:15%"></th>';
             $childTable .= '<th>'._('form_modif').'</th><th style="width:15%"></th>';
-            $childTable .= '<th>'._('form_modif').'</th></tr>';
+            $childTable .= '<th>'._('form_supprim').'</th></tr>';
             $childTable .= '</thead><tbody>';
             while ($data = $res->fetch_array()) {
                 $childTable .= '<tr><td>' . date("d/m/Y", $data['debut']) . '</td><td style="width:15%"></td>';
