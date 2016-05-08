@@ -1366,7 +1366,7 @@ function get_list_all_users_du_resp($resp_login,  $DEBUG=FALSE)
 
 		$sql1=$sql1." ) " ;
 	}
-	$sql1 = $sql1." ORDER BY u_nom " ;
+	$sql1 = $sql1." ORDER BY u_login " ;
 	$ReqLog1 = SQL::query($sql1);
 
 	while ($resultat1 = $ReqLog1->fetch_array())
@@ -1397,7 +1397,7 @@ function get_list_all_users_du_resp($resp_login,  $DEBUG=FALSE)
 			}
 			$sql_2=$sql_2." ) " ;
 		}
-		$sql_2 = $sql_2." ORDER BY u_nom " ;
+		$sql_2 = $sql_2." ORDER BY u_login " ;
 
 		$ReqLog_2 = SQL::query($sql_2);
 
