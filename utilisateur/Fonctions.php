@@ -1688,9 +1688,9 @@ class Fonctions
      */
     public static function getRealWeekType(array $planningUser, $weekOfDay)
     {
-        $typeSemaineDuJour = (0 === $weekOfDay % 2)
-            ? \App\Models\Planning\Creneau::TYPE_SEMAINE_PAIRE
-            : \App\Models\Planning\Creneau::TYPE_SEMAINE_IMPAIRE;
+        $typeSemaineDuJour = ($weekOfDay & 1)
+            ? \App\Models\Planning\Creneau::TYPE_SEMAINE_IMPAIRE
+            : \App\Models\Planning\Creneau::TYPE_SEMAINE_PAIRE;
         if (isset($planningUser[$typeSemaineDuJour])) {
             return $typeSemaineDuJour;
         } elseif (isset($planningUser[\App\Models\Planning\Creneau::TYPE_SEMAINE_COMMUNE])) {
