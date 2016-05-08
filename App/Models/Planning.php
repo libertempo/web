@@ -1,5 +1,5 @@
 <?php
-/************************************************************************************************
+/*************************************************************************************************
 Libertempo : Gestion Interactive des Congés
 Copyright (C) 2015 (Wouldsmina)
 Copyright (C) 2015 (Prytoegrian)
@@ -24,11 +24,21 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *************************************************************************************************/
+namespace App\Models;
 
-defined( '_PHP_CONGES' ) or die( 'Restricted access' );
-
-// site et numero de version de PHP_CONGES
-// ne pas toucher ces variables SVP ;-)
-$config_php_conges_version="1.9";
-$config_url_site_web_php_conges="http://Libertempo.tuxfamily.org";
-// ne pas toucher ces variables SVP ;-)
+/**
+ * Modèle planning
+ *
+ * @since  1.9
+ * @author Prytoegrian <prytoegrian@protonmail.com>
+ */
+class Planning
+{
+    /**
+     * Statut
+     *
+     * @var int
+     */
+    const STATUS_ACTIVE = STATUS_ACTIVE;
+    const STATUS_DELETED = STATUS_DELETED;
+}

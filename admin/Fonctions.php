@@ -1263,7 +1263,7 @@ class Fonctions
         $table->addClasses([
             'table',
         ]);
-        $childTable = '<head><tr>';
+        $childTable = '<thead><tr>';
         $childTable .= '<th><b>' . _('admin_groupes_groupe') . '</b></th>';
         $childTable .= '<th>' . _('admin_groupes_libelle') . ' / ' . _('divers_comment_maj_1') . '</th>';
         if($_SESSION['config']['double_validation_conges']) {
@@ -2533,7 +2533,7 @@ class Fonctions
 
         // contruction des champs de saisie
         if($_SESSION['config']['export_users_from_ldap']) {
-            $text_login="<input class=\"form-control\" type=\"text\" name=\"new_login\" size=\"10\" maxlength=\"98\" value=\"".$tab_user['login']."\" disabled>" ;
+            $text_login="<input class=\"form-control\" type=\"text\" name=\"new_login\" size=\"10\" maxlength=\"98\" value=\"".$tab_user['login']."\" readonly>" ;
         } else {
             $text_login="<input class=\"form-control\" type=\"text\" name=\"new_login\" size=\"10\" maxlength=\"98\" value=\"".$tab_user['login']."\">" ;
         }

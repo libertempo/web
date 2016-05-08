@@ -1,5 +1,5 @@
 <?php
-/************************************************************************************************
+/*************************************************************************************************
 Libertempo : Gestion Interactive des Congés
 Copyright (C) 2015 (Wouldsmina)
 Copyright (C) 2015 (Prytoegrian)
@@ -26,9 +26,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *************************************************************************************************/
 
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
-
-// site et numero de version de PHP_CONGES
-// ne pas toucher ces variables SVP ;-)
-$config_php_conges_version="1.9";
-$config_url_site_web_php_conges="http://Libertempo.tuxfamily.org";
-// ne pas toucher ces variables SVP ;-)
+$id = (int) getpost_variable('id');
+if (0 >= $id || !\App\ProtoControllers\Planning::isVisible($id)) {
+    redirect(ROOT_PATH . 'deconnexion.php');
+}
+echo \responsable\Fonctions::getFormPlanningModule($id);
