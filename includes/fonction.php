@@ -402,7 +402,7 @@ function authentification_passwd_conges_CAS()
 
 
     // Vérification SSL
-    if(isset($config_CAS_CACERT))
+    if(!empty($config_CAS_CACERT))
         phpCAS::setCasServerCACert ($config_CAS_CACERT);
     else
         phpCAS::setNoCasServerValidation();
