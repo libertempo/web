@@ -37,7 +37,9 @@ if (!defined( 'DEFINE_INCLUDE' )) {
             // no break;
         case ENV_TEST:
             \Kint::enabled(true);
-            error_reporting(E_ALL & ~E_NOTICE);
+            if (ENV === ENV_TEST) {
+                error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
+            }
             ini_set("display_errors", 1);
 
             /**
