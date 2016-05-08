@@ -1830,12 +1830,8 @@ class Fonctions
         ];
         $return .= '<script>generateDatePicker('.json_encode($datePickerOpts).', false);</script>'; 
 
-        $message   = '';
-
         if (!empty($_POST)) {
-            if (0 < (int) \utilisateur\Fonctions::postDemandeCongesHeure($_POST, $errorsLst)) {
-                redirect(ROOT_PATH . 'utilisateur/user_index.php?session='. session_id() . '&onglet=demandes_en_cours', false);
-            } else {
+            if (0 >= (int) \utilisateur\Fonctions::postDemandeCongesHeure($_POST, $errorsLst)) {
                 $errors = '';
                 if (!empty($errorsLst)) {
                     foreach ($errorsLst as $key => $value) {
@@ -1844,56 +1840,59 @@ class Fonctions
                         }
                         $errors .= '<li>' . $key . ' : ' . $value . '</li>';
                     }
-                    $message = '<div class="alert alert-danger">' . _('erreur_recommencer') . '<ul>' . $errors . '</ul></div>';
+                    $return .= '<div class="alert alert-danger">' . _('erreur_recommencer') . '<ul>' . $errors . '</ul></div>';
                 }
-            }
-        }
-
-        if ($type === \App\Models\HeureRecuperation::TYPE_DEBIT) {
-            $return .= '<h1>' . _('user_modif_debit_heure_titre') . '</h1>';
-        } else {
-            $return .= '<h1>' . _('user_modif_credit_heure_titre') . '</h1>';
-        }
-
-        $return .= $message;
-
-        $return .= '<form action="" method="post" class="form-group">';
-        $table = new \App\Libraries\Structure\Table();
-        $table->addClasses([
-            'table',
-            'table-hover',
-            'table-responsive',
-            'table-striped',
-            'table-condensed'
-        ]);
-
-        $childTable="";
-
-        //conversion des dates
-            $sql   = 'SELECT * FROM conges_heure_periode WHERE id_heure = ' . \includes\SQL::quote($id) . ' AND statut=' . \App\Models\HeureRecuperation::STATUT_DEMANDE ;
-            $query = \includes\SQL::query($sql);
-            if (!$query->num_rows) {
-                $return .= _('form_modif_not_ok');
-                $return .= '<a class="btn" href="' . $PHP_SELF . '?session=' . $session . '&onglet=demandes_en_cours">' . _('form_cancel') . '</a>';
             } else {
-                $data = $query->fetch_assoc();
-                $heureDeb = date("H:i", $data['debut']);
-                $jour = date("d/m/Y", $data['debut']);
-                $heureFin = date("H:i", $data['fin']);
-                $childTable .= '<div class="form-inline"><div class="form-group"><label for="new_dem_jour">' . _('saisie_echange_titre_calendrier_2') . '</label><input class="form-control date" type="text" value="'.$jour.'" name="new_jour"></div>';
-                $childTable .= '<div class="form-group"><label for="new_heure_deb">'._('divers_debut_maj_1').'</label><input class="form-control time" type="text" value="'.$heureDeb.'" name="new_deb_heure"></div>';
-                $childTable .= '<div class="form-group"><label for="new_heure_fin">'._('divers_fin_maj_1').'</label><input class="form-control time" type="text" value="'.$heureFin.'" name="new_fin_heure"></div>';
-                $childTable .= '<input type="hidden" name="id_heure" value="'.$id.'"></div>';
-                $childTable .= '<input type="hidden" name="type" value="'.$type.'"></div>';
-                $childTable .= '<input type="hidden" name="_METHOD" value="PUT"></div>';
-                $childTable .= '<div class="form-group"><input type="submit" class="btn btn-success" value="' . _('form_modif') . '" /></div>';
-
-                $table->addChild($childTable);
-                ob_start();
-                $table->render();
-                $return .= ob_get_clean();
+                $return .= '<div class="alert alert-info">' . _('demande_modifie') . '</div>';
+                $return .= \utilisateur\Fonctions::getListPeriodeHeure($type);
+                $return .= '<a class="btn" href="user_index.php?session='. session_id() . '&onglet=demandes_en_cours">' . _('user_onglet_demandes') . '</a>';
             }
-            $return .='</form>';
+        } else {
+
+            if ($type === \App\Models\HeureRecuperation::TYPE_DEBIT) {
+                $return .= '<h1>' . _('user_modif_debit_heure_titre') . '</h1>';
+            } else {
+                $return .= '<h1>' . _('user_modif_credit_heure_titre') . '</h1>';
+            }
+
+            $return .= '<form action="" method="post" class="form-group">';
+            $table = new \App\Libraries\Structure\Table();
+            $table->addClasses([
+                'table',
+                'table-hover',
+                'table-responsive',
+                'table-striped',
+                'table-condensed'
+            ]);
+
+            $childTable="";
+
+            //conversion des dates
+                $sql   = 'SELECT * FROM conges_heure_periode WHERE id_heure = ' . \includes\SQL::quote($id) . ' AND statut=' . \App\Models\HeureRecuperation::STATUT_DEMANDE ;
+                $query = \includes\SQL::query($sql);
+                if (!$query->num_rows) {
+                    $return .= _('form_modif_not_ok');
+                    $return .= '<a class="btn" href="' . $PHP_SELF . '?session=' . $session . '&onglet=demandes_en_cours">' . _('form_cancel') . '</a>';
+                } else {
+                    $data = $query->fetch_assoc();
+                    $heureDeb = date("H:i", $data['debut']);
+                    $jour = date("d/m/Y", $data['debut']);
+                    $heureFin = date("H:i", $data['fin']);
+                    $childTable .= '<div class="form-inline"><div class="form-group"><label for="new_dem_jour">' . _('saisie_echange_titre_calendrier_2') . '</label><input class="form-control date" type="text" value="'.$jour.'" name="new_jour"></div>';
+                    $childTable .= '<div class="form-group"><label for="new_heure_deb">'._('divers_debut_maj_1').'</label><input class="form-control time" type="text" value="'.$heureDeb.'" name="new_deb_heure"></div>';
+                    $childTable .= '<div class="form-group"><label for="new_heure_fin">'._('divers_fin_maj_1').'</label><input class="form-control time" type="text" value="'.$heureFin.'" name="new_fin_heure"></div>';
+                    $childTable .= '<input type="hidden" name="id_heure" value="'.$id.'"></div>';
+                    $childTable .= '<input type="hidden" name="type" value="'.$type.'"></div>';
+                    $childTable .= '<input type="hidden" name="_METHOD" value="PUT"></div>';
+                    $childTable .= '<div class="form-group"><input type="submit" class="btn btn-success" value="' . _('form_modif') . '" /></div>';
+
+                    $table->addChild($childTable);
+                    ob_start();
+                    $table->render();
+                    $return .= ob_get_clean();
+                }
+                $return .='</form>';
+            }
         return $return;
     }
 
@@ -1909,12 +1908,12 @@ class Fonctions
     {
         if (!empty($post['_METHOD'])) {
             if ('DELETE' === $post['_METHOD']) {
-                return \utilisateur\Fonctions::deleteDemandeDebitCongesHeure($post['id_heure'], $errorsLst);
+                return \utilisateur\Fonctions::deleteDemandeDebitCongesHeure($post['id_heure'], $_SESSION['userlogin'], $errorsLst);
             } elseif ('PUT' === $post['_METHOD']) {
-               return \utilisateur\Fonctions::putDemandeDebitCongesHeure($post, $errorsLst);
+               return \utilisateur\Fonctions::putDemandeDebitCongesHeure($post, $errorsLst, $_SESSION['userlogin']);
             }
         } else {
-           return \utilisateur\Fonctions::insertDemandeDebitCongesHeure($post, $errorsLst);
+           return \utilisateur\Fonctions::insertDemandeDebitCongesHeure($post, $errorsLst, $_SESSION['userlogin']);
         }
         return NIL_INT;
     }
@@ -1927,12 +1926,14 @@ class Fonctions
      *
      * @return int
      */
-    private static function putDemandeDebitCongesHeure(array $post, array &$errors)
+    private static function putDemandeDebitCongesHeure(array $post, array &$errors, $user)
     {
 
-        if (\utilisateur\Fonctions::VerifNewDemandeHeures($post['new_jour'], $post['new_deb_heure'], $post['new_fin_heure'], $errors, $post['id_heure'])) {
-            log_action($post['id_heure'], 'demande', '', 'Modification demande d\'heure ' . $post['id_heure']);
-            return \utilisateur\Fonctions::updateDemandeDebitCongesHeure($post, $post['id_heure']);
+        if (\utilisateur\Fonctions::VerifNewDemandeHeures($post['new_jour'], $post['new_deb_heure'], $post['new_fin_heure'], $user, $errors, $post['id_heure'])) {
+            if (NIL_INT !== \utilisateur\Fonctions::updateDemandeDebitCongesHeure($post, $post['id_heure'], $user)) {
+                log_action($post['id_heure'], 'modif', '', 'Modification demande d\'heure ' . $post['id_heure']);
+                return $post['id_heure'];
+            }
         }
 
         return NIL_INT;
@@ -1946,11 +1947,14 @@ class Fonctions
      *
      * @return int
      */
-    private static function insertDemandeDebitCongesHeure(array $post, array &$errors)
+    private static function insertDemandeDebitCongesHeure(array $post, array &$errors, $user)
     {
-        if (\utilisateur\Fonctions::VerifNewDemandeHeures($post['new_jour'], $post['new_deb_heure'], $post['new_fin_heure'], $errors)) {
-            log_action("", 'demande', '', 'Nouvelle demande d\'heure ');
-            return \utilisateur\Fonctions::insertSQLDemandeDebitCongesHeure($post);
+        if (\utilisateur\Fonctions::VerifNewDemandeHeures($post['new_jour'], $post['new_deb_heure'], $post['new_fin_heure'], $user, $errors)) {
+            $id = \utilisateur\Fonctions::insertSQLDemandeDebitCongesHeure($post, $user);
+            if(0 < $id ) {
+                log_action($id, 'demande', '', 'Nouvelle demande d\'heure enregistrée : '. $id);
+                return $id;
+            }
         }
 
         return NIL_INT;
@@ -1963,10 +1967,13 @@ class Fonctions
      *
      * @return int
      */
-    private static function deleteDemandeDebitCongesHeure($id, &$errorsLst)
+    private static function deleteDemandeDebitCongesHeure($id, $user, &$errorsLst)
     {
-        log_action($id, 'supprimé', '', 'Annulation de la demande d\'heure ' . $id);
-        return \utilisateur\Fonctions::deleteSQLDemandeDebitCongesHeure($id, $errorsLst);
+        if (NIL_INT !== \utilisateur\Fonctions::deleteSQLDemandeDebitCongesHeure($id, $user, $errorsLst)) {
+            log_action($id, 'annul', '', 'Annulation de la demande d\'heure ' . $id);
+            return $id;
+        }
+        return NIL_INT;
     }
 
     /**
@@ -1976,12 +1983,12 @@ class Fonctions
      *
      * @return int
      */
-    private static function deleteSQLDemandeDebitCongesHeure($id, &$errorsLst)
+    private static function deleteSQLDemandeDebitCongesHeure($id, $user, &$errorsLst)
     {
         $sql = \includes\SQL::singleton();
         $req = 'DELETE FROM conges_heure_periode
                 WHERE id_heure = ' . (int) $id . '
-                AND login = "'.$_SESSION['userlogin'].'"';
+                AND login = "'.$user.'"';
         $sql->query($req);
 
         if (0 < $sql->affected_rows) {
@@ -2002,7 +2009,7 @@ class Fonctions
      *
      * @return boolean
      */
-    public static function VerifNewDemandeHeures($jour, $heuredeb, $heurefin, array &$Error, $id = NIL_INT)
+    public static function VerifNewDemandeHeures($jour, $heuredeb, $heurefin, $user, array &$Error, $id = NIL_INT)
     {
         $localError = [];
 
@@ -2019,7 +2026,7 @@ class Fonctions
                 $localError[] = _('verif_saisie_erreur_heure_fin_avant_debut') ;
             }
 
-            $chevauch = \utilisateur\Fonctions::VerifChevauchHeures($jour, $heuredeb, $heurefin, $localError, $id);
+            $chevauch = \utilisateur\Fonctions::VerifChevauchHeures($jour, $heuredeb, $heurefin, $localError, $id, $user);
         }
             
         $Error = array_merge($Error, $localError);
@@ -2034,7 +2041,7 @@ class Fonctions
      *
      * @return int
      */
-    private static function insertSQLDemandeDebitCongesHeure(array $info)
+    private static function insertSQLDemandeDebitCongesHeure(array $info, $user)
     {
         $date = \App\Helpers\Formatter::dateFr2Iso($info['new_jour']);
         $deb = $date." ".$info['new_deb_heure'];
@@ -2042,7 +2049,6 @@ class Fonctions
         $timedeb = strtotime($deb);
         $timefin = strtotime($fin);
         $duree = \utilisateur\Fonctions::compter_heures($timedeb,$timefin);
-        $user = $_SESSION['userlogin'];
         $sql = \includes\SQL::singleton();
         $toInsert = [];
         $toInsert[] = '(NULL, "' . $user . '", ' . (int) $timedeb . ', '. (int) $timefin .', '. (int) $duree .', '.\App\Models\HeureRecuperation::STATUT_DEMANDE.', '.$info['type'].')';
@@ -2059,7 +2065,7 @@ class Fonctions
      *
      * @return int
      */
-    private static function updateDemandeDebitCongesHeure(array $info, $id)
+    private static function updateDemandeDebitCongesHeure(array $info, $id, $user)
     {
 
         $date = \App\Helpers\Formatter::dateFr2Iso($info['new_jour']);
@@ -2068,7 +2074,6 @@ class Fonctions
         $timedeb = strtotime($deb);
         $timefin = strtotime($fin);
         $duree = \utilisateur\Fonctions::compter_heures($timedeb,$timefin);
-        $user = $_SESSION['userlogin'];
         $sql = \includes\SQL::singleton();
         $toInsert = [];
         $req = 'UPDATE conges_heure_periode 
@@ -2155,7 +2160,7 @@ class Fonctions
         return $fin - $debut;
     }
 
-    public static function VerifSQLChevauchHeures($jour, $heuredeb, $heurefin, $id)
+    public static function VerifSQLChevauchHeures($jour, $heuredeb, $heurefin, $id, $user)
     {
         $date = \App\Helpers\Formatter::dateFr2Iso($jour);
         $deb = $date." ".$heuredeb;
@@ -2166,7 +2171,7 @@ class Fonctions
         $sql = \includes\SQL::singleton();
         $req = 'SELECT statut
                 FROM conges_heure_periode
-                WHERE login = "'. $_SESSION['userlogin'].'"
+                WHERE login = "'. $user.'"
                 AND (statut != '.\App\Models\HeureRecuperation::STATUT_REFUS.'
                 OR statut != '.\App\Models\HeureRecuperation::STATUT_ANNUL.')
                 AND (debut <= '.$timefin.' and fin >= '.$timedeb.') ';
@@ -2179,9 +2184,9 @@ class Fonctions
     return is_null($val['statut']) ? NIL_INT : (int)$val['statut'];
     }
 
-    public static function VerifChevauchHeures($jour, $heuredeb, $heurefin, array &$Errors, $id)
+    public static function VerifChevauchHeures($jour, $heuredeb, $heurefin, array &$Errors, $id, $user)
     {
-        $statut = \utilisateur\Fonctions::VerifSQLChevauchHeures($jour, $heuredeb, $heurefin, $id);
+        $statut = \utilisateur\Fonctions::VerifSQLChevauchHeures($jour, $heuredeb, $heurefin, $id, $user);
         $Error = '';
 
         if (NIL_INT !== $statut) {
