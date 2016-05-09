@@ -1784,13 +1784,13 @@ class Fonctions
         $finId        = uniqid();
 
         $childTable="";
-        $childTable .= '<script type="text/javascript">generateTimePicker("' . $debutId . '");generateTimePicker("' . $finId . '");</script>';
         $childTable .= '<div class="form-inline"><div class="form-group"><label for="new_dem_jour">' . _('saisie_echange_titre_calendrier_2') . '</label><input class="form-control date" type="text" value="'.date("d/m/Y").'" name="new_jour"></div>';
         $childTable .= '<div class="form-group"><label for="new_heure_deb">'._('divers_debut_maj_1').'</label><input class="form-control" type="text" id="' . $debutId . '"  value="" name="new_deb_heure"></div>';
         $childTable .= '<div class="form-group"><label for="new_heure_fin">'._('divers_fin_maj_1').'</label><input class="form-control" type="text" id="' . $finId . '"  value="" name="new_fin_heure"></div>';
         $childTable .= '<input type="hidden" name="type" value="'.$type.'"></div>';
         $childTable .= '</div>';
         $childTable .= '<div class="form-group"><input type="submit" class="btn btn-success" value="' . _('form_submit') . '" /></div>';
+        $childTable .= '<script type="text/javascript">generateTimePicker("' . $debutId . '");generateTimePicker("' . $finId . '");</script>';
 
         $table->addChild($childTable);
         ob_start();
@@ -1880,7 +1880,6 @@ class Fonctions
                 } else {
                     $debutId      = uniqid();
                     $finId        = uniqid();
-                    $childTable .= '<script type="text/javascript">generateTimePicker("' . $debutId . '");generateTimePicker("' . $finId . '");</script>';
                     $data = $query->fetch_assoc();
                     $heureDeb = date("H:i", $data['debut']);
                     $jour = date("d/m/Y", $data['debut']);
@@ -1892,6 +1891,7 @@ class Fonctions
                     $childTable .= '<input type="hidden" name="type" value="'.$type.'"></div>';
                     $childTable .= '<input type="hidden" name="_METHOD" value="PUT"></div>';
                     $childTable .= '<div class="form-group"><input type="submit" class="btn btn-success" value="' . _('form_modif') . '" /></div>';
+                    $childTable .= '<script type="text/javascript">generateTimePicker("' . $debutId . '");generateTimePicker("' . $finId . '");</script>';
 
                     $table->addChild($childTable);
                     ob_start();
