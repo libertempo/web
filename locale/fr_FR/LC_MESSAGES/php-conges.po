@@ -1684,3 +1684,6 @@ msgstr "suppression effectuée avec succès"
 
 msgid "demande_transmise"
 msgstr "Demande transmise à votre responsable"
+
+msgid "demande_non_modif"
+msgstr "demande non modifié"

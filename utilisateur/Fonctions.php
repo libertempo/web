@@ -1783,21 +1783,19 @@ class Fonctions
         $debutId      = uniqid();
         $finId        = uniqid();
 
-        $childTable="";
-        $childTable .= '<div class="form-inline"><div class="form-group"><label for="new_dem_jour">' . _('saisie_echange_titre_calendrier_2') . '</label><input class="form-control date" type="text" value="'.date("d/m/Y").'" name="new_jour"></div>';
-        $childTable .= '<div class="form-group"><label for="new_heure_deb">'._('divers_debut_maj_1').'</label><input class="form-control" type="text" id="' . $debutId . '"  value="" name="new_deb_heure"></div>';
-        $childTable .= '<div class="form-group"><label for="new_heure_fin">'._('divers_fin_maj_1').'</label><input class="form-control" type="text" id="' . $finId . '"  value="" name="new_fin_heure"></div>';
-        $childTable .= '<input type="hidden" name="type" value="'.$type.'"></div>';
-        $childTable .= '</div>';
-        $childTable .= '<div class="form-group"><input type="submit" class="btn btn-success" value="' . _('form_submit') . '" /></div>';
+        $childTable = '<thead><tr><th width="20%">' . _('Jour') . '</th><th>' . _('creneau') . '</th></tr></thead><tbody>';
+        $childTable .= '<tr><td><input class="form-control date" type="text" value="'.date("d/m/Y").'" name="new_jour"></td>';
+        $childTable .= '<td><div class="form-inline col-xs-3"><input class="form-control" style="width:45%" type="text" id="' . $debutId . '"  value="" name="new_deb_heure">&nbsp;<i class="fa fa-caret-right"></i>&nbsp;<input class="form-control" style="width:45%" type="text" id="' . $finId . '"  value="" name="new_fin_heure"></div></td></tr>';
+        $childTable .= '</tbody>';
         $childTable .= '<script type="text/javascript">generateTimePicker("' . $debutId . '");generateTimePicker("' . $finId . '");</script>';
 
         $table->addChild($childTable);
         ob_start();
         $table->render();
         $return .= ob_get_clean();
+        $return .= '<input type="hidden" name="type" value="'.$type.'">';
+        $return .= '<div class="form-group"><input type="submit" class="btn btn-success" value="' . _('form_submit') . '" /></div>';
         $return .='</form>';
-        $return .= \utilisateur\Fonctions::getListPeriodeHeure($type);
 
         return $return;
     }
@@ -1845,13 +1843,31 @@ class Fonctions
                         $errors .= '<li>' . $key . ' : ' . $value . '</li>';
                     }
                     $return .= '<div class="alert alert-danger">' . _('erreur_recommencer') . '<ul>' . $errors . '</ul></div>';
+                    $return .= \utilisateur\Fonctions::getformModifHeures($id,$type);
                 }
             } else {
                 $return .= '<div class="alert alert-info">' . _('demande_modifie') . '</div>';
                 $return .= \utilisateur\Fonctions::getListPeriodeHeure($type);
-                $return .= '<a class="btn" href="user_index.php?session='. session_id() . '&onglet=demandes_en_cours">' . _('user_onglet_demandes') . '</a>';
             }
         } else {
+            $return .= \utilisateur\Fonctions::getformModifHeures($id,$type);
+        }
+        return $return;
+    }
+
+   /**
+     * formulaire de modification d'une demande de débit ou de crédit d'heure
+     *
+     * @param int $id 
+     * @param int $type
+     *
+     * @return string
+     * @access public
+     * @static
+     */
+    public static function getformModifHeures($id,$type)
+    {
+        $return="";
 
             if ($type === \App\Models\HeureRecuperation::TYPE_DEBIT) {
                 $return .= '<h1>' . _('user_modif_debit_heure_titre') . '</h1>';
@@ -1869,9 +1885,6 @@ class Fonctions
                 'table-condensed'
             ]);
 
-            $childTable="";
-
-            //conversion des dates
                 $sql   = 'SELECT * FROM conges_heure_periode WHERE id_heure = ' . \includes\SQL::quote($id) . ' AND statut=' . \App\Models\HeureRecuperation::STATUT_DEMANDE ;
                 $query = \includes\SQL::query($sql);
                 if (!$query->num_rows) {
@@ -1881,25 +1894,27 @@ class Fonctions
                     $debutId      = uniqid();
                     $finId        = uniqid();
                     $data = $query->fetch_assoc();
+                    //conversion des dates
                     $heureDeb = date("H:i", $data['debut']);
                     $jour = date("d/m/Y", $data['debut']);
                     $heureFin = date("H:i", $data['fin']);
-                    $childTable .= '<div class="form-inline"><div class="form-group"><label for="new_dem_jour">' . _('saisie_echange_titre_calendrier_2') . '</label><input class="form-control date" type="text" value="'.$jour.'" name="new_jour"></div>';
-                    $childTable .= '<div class="form-group"><label for="new_heure_deb">'._('divers_debut_maj_1').'</label><input class="form-control" type="text" id="' . $debutId . '" value="'.$heureDeb.'" name="new_deb_heure"></div>';
-                    $childTable .= '<div class="form-group"><label for="new_heure_fin">'._('divers_fin_maj_1').'</label><input class="form-control" type="text" id="' . $finId . '" value="'.$heureFin.'" name="new_fin_heure"></div>';
-                    $childTable .= '<input type="hidden" name="id_heure" value="'.$id.'"></div>';
-                    $childTable .= '<input type="hidden" name="type" value="'.$type.'"></div>';
-                    $childTable .= '<input type="hidden" name="_METHOD" value="PUT"></div>';
-                    $childTable .= '<div class="form-group"><input type="submit" class="btn btn-success" value="' . _('form_modif') . '" /></div>';
+
+                    $childTable = '<thead><tr><th width="20%">' . _('Jour') . '</th><th>' . _('creneau') . '</th></tr></thead><tbody>';
+                    $childTable .= '<tr><td><input class="form-control date" type="text" value="'.date("d/m/Y").'" name="new_jour"></td>';
+                    $childTable .= '<td><div class="form-inline col-xs-3"><input class="form-control" style="width:45%" type="text" id="' . $debutId . '"  value="'.$heureDeb.'" name="new_deb_heure">&nbsp;<i class="fa fa-caret-right"></i>&nbsp;<input class="form-control" style="width:45%" type="text" id="' . $finId . '"  value="'.$heureFin.'" name="new_fin_heure"></div></td></tr>';
+                    $childTable .= '</tbody>';
                     $childTable .= '<script type="text/javascript">generateTimePicker("' . $debutId . '");generateTimePicker("' . $finId . '");</script>';
 
                     $table->addChild($childTable);
                     ob_start();
                     $table->render();
                     $return .= ob_get_clean();
+                    $return .= '<input type="hidden" name="id_heure" value="'.$id.'">';
+                    $return .= '<input type="hidden" name="type" value="'.$type.'">';
+                    $return .= '<input type="hidden" name="_METHOD" value="PUT">';
+                    $return .= '<div class="form-group"><input type="submit" class="btn btn-success" value="' . _('form_modif') . '" /></div>';
                 }
                 $return .='</form>';
-            }
         return $return;
     }
 
@@ -1940,6 +1955,9 @@ class Fonctions
             if (NIL_INT !== \utilisateur\Fonctions::updateDemandeDebitCongesHeure($post, $post['id_heure'], $user)) {
                 log_action($post['id_heure'], 'modif', '', 'Modification demande d\'heure ' . $post['id_heure']);
                 return $post['id_heure'];
+            } else {
+                $errors[] = _('demande_non_modif');
+                return NIL_INT;
             }
         }
 
@@ -2159,7 +2177,7 @@ class Fonctions
     public static function Timestamp2Time($secondes) 
     {
         $t = (int) $secondes;
-        return sprintf('%02d:%02d:%02d', ($t/3600),($t/60%60), $t%60);
+        return sprintf('%02d:%02d', ($t/3600),($t/60%60));
     }
 
     public static function compter_heures($debut,$fin) 
@@ -2202,7 +2220,6 @@ class Fonctions
             } else {
                 $Error = _('calcul_nb_jours_commentaire');
             }
-d($statut);            
             $Errors[] = $Error;
         }
 
