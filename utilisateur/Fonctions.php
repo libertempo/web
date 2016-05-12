@@ -2048,7 +2048,7 @@ class Fonctions
         } else {
             // si la date de fin est antérieur à la date debut
             if (NIL_INT !== strnatcmp($heuredeb, $heurefin)) {
-                $localError[] = _('verif_saisie_erreur_heure_fin_avant_debut') ;
+                $localError[] = _('date_fin_superieure_date_debut') ;
             }
 
             $chevauch = \utilisateur\Fonctions::VerifChevauchHeures($jour, $heuredeb, $heurefin, $localError, $id, $user);

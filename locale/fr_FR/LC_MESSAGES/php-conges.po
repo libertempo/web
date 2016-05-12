@@ -1687,3 +1687,6 @@ msgstr "Demande transmise à votre responsable"
 
 msgid "demande_non_modif"
 msgstr "demande non modifié"
+
+msgid "date_fin_superieure_date_debut"
+msgstr "l'heure de fin est antérieur à l'heure de début"
