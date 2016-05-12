@@ -234,9 +234,16 @@ class Fonctions
             $return .= '<h2>' . _('resp_ajout_conges_ajout_groupe') . '</h2>';
             $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=ajout_conges" method="POST">';
             $return .= '<fieldset class="cal_saisie">';
-            $return .= '<div class="table-responsive"><table class="table table-hover table-condensed table-striped">';
-            $return .= '<tr>';
-            $return .= '<td class="big">' . _('resp_ajout_conges_choix_groupe') . ' : </td>';
+            $table = new \App\Libraries\Structure\Table();
+            $table->addClasses([
+                'table',
+                'table-hover',
+                'table-responsive',
+                'table-condensed',
+                'table-striped'
+            ]);
+            $childTable = '<tr>';
+            $childTable .= '<td class="big">' . _('resp_ajout_conges_choix_groupe') . ' : </td>';
             // création du select pour le choix du groupe
             $text_choix_group="<select name=\"choix_groupe\" >";
             $sql_group = "SELECT g_gid, g_groupename FROM conges_groupe WHERE g_gid IN ($list_group) ORDER BY g_groupename "  ;
@@ -249,22 +256,25 @@ class Fonctions
             }
             $text_choix_group=$text_choix_group."</select>" ;
 
-            $return .= '<td colspan="3">' . $text_choix_group . '</td>';
-            $return .= '</tr>';
-            $return .= '<tr>';
-            $return .= '<th colspan="2">' . _('resp_ajout_conges_nb_jours_all_1') . ' ' . _('resp_ajout_conges_nb_jours_all_2') . '</th>';
-            $return .= '<th>' ._('resp_ajout_conges_calcul_prop') . '</th>';
-            $return .= '<th>' . _('divers_comment_maj_1') . '</th>';
-            $return .= '</tr>';
+            $childTable .= '<td colspan="3">' . $text_choix_group . '</td>';
+            $childTable .= '</tr>';
+            $childTable .= '<tr>';
+            $childTable .= '<th colspan="2">' . _('resp_ajout_conges_nb_jours_all_1') . ' ' . _('resp_ajout_conges_nb_jours_all_2') . '</th>';
+            $childTable .= '<th>' ._('resp_ajout_conges_calcul_prop') . '</th>';
+            $childTable .= '<th>' . _('divers_comment_maj_1') . '</th>';
+            $childTable .= '</tr>';
             foreach($tab_type_conges as $id_conges => $libelle) {
-                $return .= '<tr>';
-                $return .= '<td><strong>' . $libelle . '<strong></td>';
-                $return .= '<td><input class="form-control" type="text" name="tab_new_nb_conges_all[' . $id_conges . ']" size="6" maxlength="6" value="0"></td>';
-                $return .= '<td>' . _('resp_ajout_conges_oui') . '<input type="checkbox" name="tab_calcul_proportionnel[' . $id_conges . ']" value="TRUE" checked></td>';
-                $return .= '<td><input class="form-control" type="text" name="tab_new_comment_all[' . $id_conges . ']" size="30" maxlength="200" value=""></td>';
-                $return .= '</tr>';
+                $childTable .= '<tr>';
+                $childTable .= '<td><strong>' . $libelle . '<strong></td>';
+                $childTable .= '<td><input class="form-control" type="text" name="tab_new_nb_conges_all[' . $id_conges . ']" size="6" maxlength="6" value="0"></td>';
+                $childTable .= '<td>' . _('resp_ajout_conges_oui') . '<input type="checkbox" name="tab_calcul_proportionnel[' . $id_conges . ']" value="TRUE" checked></td>';
+                $childTable .= '<td><input class="form-control" type="text" name="tab_new_comment_all[' . $id_conges . ']" size="30" maxlength="200" value=""></td>';
+                $childTable .= '</tr>';
             }
-            $return .= '</table></div>';
+            $table->addChild($childTable);
+            ob_start();
+            $table->render();
+            $return .= ob_get_clean();
             $return .= '<p>' . _('resp_ajout_conges_calcul_prop_arondi') . '! </p>';
             $return .= '<input class="btn" type="submit" value="' . _('form_valid_groupe') . '">';
             $return .= '</fieldset>';
@@ -286,23 +296,33 @@ class Fonctions
         $return .= '<h2>' . _('resp_ajout_conges_ajout_all') . '</h2>';
         $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=ajout_conges" method="POST">';
         $return .= '<fieldset class="cal_saisie">';
-        $return .= '<div class="table-responsive"><table class="table table-hover table-condensed table-striped">';
-        $return .= '<thead>';
-        $return .= '<tr>';
-        $return .= '<th colspan="2">' . _('resp_ajout_conges_nb_jours_all_1') . ' ' . _('resp_ajout_conges_nb_jours_all_2') . '</th>';
-        $return .= '<th>' ._('resp_ajout_conges_calcul_prop') . '</th>';
-        $return .= '<th>' . _('divers_comment_maj_1') . '</th>';
-        $return .= '</tr>';
-        $return .= '</thead>';
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-hover',
+            'table-responsive',
+            'table-condensed',
+            'table-striped'
+        ]);
+        $childTable = '<thead>';
+        $childTable .= '<tr>';
+        $childTable .= '<th colspan="2">' . _('resp_ajout_conges_nb_jours_all_1') . ' ' . _('resp_ajout_conges_nb_jours_all_2') . '</th>';
+        $childTable .= '<th>' ._('resp_ajout_conges_calcul_prop') . '</th>';
+        $childTable .= '<th>' . _('divers_comment_maj_1') . '</th>';
+        $childTable .= '</tr>';
+        $childTable .= '</thead>';
         foreach($tab_type_conges as $id_conges => $libelle) {
-            $return .= '<tr>';
-            $return .= '<td><strong>' . $libelle . '<strong></td>';
-            $return .= '<td><input class="form-control" type="text" name="tab_new_nb_conges_all[' . $id_conges . ']" size="6" maxlength="6" value="0"></td>';
-            $return .= '<td>' . _('resp_ajout_conges_oui') . '<input type="checkbox" name="tab_calcul_proportionnel[' . $id_conges . ']" value="TRUE" checked></td>';
-            $return .= '<td><input class="form-control" type="text" name="tab_new_comment_all[' . $id_conges . ']" size="30" maxlength="200" value=""></td>';
-            $return .= '</tr>';
+            $childTable .= '<tr>';
+            $childTable .= '<td><strong>' . $libelle . '<strong></td>';
+            $childTable .= '<td><input class="form-control" type="text" name="tab_new_nb_conges_all[' . $id_conges . ']" size="6" maxlength="6" value="0"></td>';
+            $childTable .= '<td>' . _('resp_ajout_conges_oui') . '<input type="checkbox" name="tab_calcul_proportionnel[' . $id_conges . ']" value="TRUE" checked></td>';
+            $childTable .= '<td><input class="form-control" type="text" name="tab_new_comment_all[' . $id_conges . ']" size="30" maxlength="200" value=""></td>';
+            $childTable .= '</tr>';
         }
-        $return .= '</table></div>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
         // texte sur l'arrondi du calcul proportionnel
         $return .= '<p>' . _('resp_ajout_conges_calcul_prop_arondi') . '!</p>';
         // bouton valider
@@ -332,26 +352,33 @@ class Fonctions
 
         if( (count($tab_all_users_du_resp)!=0) || (count($tab_all_users_du_grand_resp)!=0) ) {
             // AFFICHAGE TITRES TABLEAU
-            $return .= '<div class="table-responsive"><table class="table table-hover table-condensed table-striped">';
-            $return .= '<thead>';
-            $return .= '<tr align="center">';
-            $return .= '<th>' . _('divers_nom_maj_1') . '</th>';
-            $return .= '<th>' . _('divers_prenom_maj_1') . '</th>';
-            $return .= '<th>' . _('divers_quotite_maj_1') . '</td>';
+            $table = new \App\Libraries\Structure\Table();
+            $table->addClasses([
+                'table',
+                'table-hover',
+                'table-responsive',
+                'table-condensed',
+                'table-striped'
+            ]);
+            $childTable = '<thead>';
+            $childTable .= '<tr align="center">';
+            $childTable .= '<th>' . _('divers_nom_maj_1') . '</th>';
+            $childTable .= '<th>' . _('divers_prenom_maj_1') . '</th>';
+            $childTable .= '<th>' . _('divers_quotite_maj_1') . '</td>';
             foreach($tab_type_conges as $id_conges => $libelle) {
-                $return .= '<th>' . $libelle . '<br><i>(' . _('divers_solde') . ')</i></th>';
-                $return .= '<th>' . $libelle . '<br>' . _('resp_ajout_conges_nb_jours_ajout') . '</th>';
+                $childTable .= '<th>' . $libelle . '<br><i>(' . _('divers_solde') . ')</i></th>';
+                $childTable .= '<th>' . $libelle . '<br>' . _('resp_ajout_conges_nb_jours_ajout') . '</th>';
             }
             if ($_SESSION['config']['gestion_conges_exceptionnels']) {
                 foreach($tab_type_conges_exceptionnels as $id_conges => $libelle) {
-                    $return .= '<th>' . $libelle . '<br><i>(' . _('divers_solde') . ')</i></th>';
-                    $return .= '<th>' . $libelle . '<br>' . _('resp_ajout_conges_nb_jours_ajout') . '</th>';
+                    $childTable .= '<th>' . $libelle . '<br><i>(' . _('divers_solde') . ')</i></th>';
+                    $childTable .= '<th>' . $libelle . '<br>' . _('resp_ajout_conges_nb_jours_ajout') . '</th>';
                 }
             }
-            $return .= '<th>' . _('divers_comment_maj_1') . '<br></th>';
-            $return .= '</tr>';
-            $return .= '</thead>';
-            $return .= '<tbody>';
+            $childTable .= '<th>' . _('divers_comment_maj_1') . '<br></th>';
+            $childTable .= '</tr>';
+            $childTable .= '</thead>';
+            $childTable .= '<tbody>';
 
             // AFFICHAGE LIGNES TABLEAU
             $cpt_lignes=0 ;
@@ -360,31 +387,31 @@ class Fonctions
             $i = true;
             // affichage des users dont on est responsable :
             foreach($tab_all_users_du_resp as $current_login => $tab_current_user) {
-                $return .= '<tr class="'.($i?'i':'p').'">';
+                $childTable .= '<tr class="'.($i?'i':'p').'">';
                 //tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
                 $tab_conges=$tab_current_user['conges'];
 
                 /** sur la ligne ,   **/
-                $return .= '<td>' . $tab_current_user['nom'] . '</td>';
-                $return .= '<td>' . $tab_current_user['prenom'] . '</td>';
-                $return .= '<td>' . $tab_current_user['quotite'] . '%</td>';
+                $childTable .= '<td>' . $tab_current_user['nom'] . '</td>';
+                $childTable .= '<td>' . $tab_current_user['prenom'] . '</td>';
+                $childTable .= '<td>' . $tab_current_user['quotite'] . '%</td>';
 
                 foreach($tab_type_conges as $id_conges => $libelle) {
                     /** le champ de saisie est <input type="text" name="tab_champ_saisie[valeur de u_login][id_du_type_de_conges]" value="[valeur du nb de jours ajouté saisi]"> */
                     $champ_saisie_conges="<input class=\"form-control\" type=\"text\" name=\"tab_champ_saisie[$current_login][$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\">";
-                    $return .= '<td>' . $tab_conges[$libelle]['nb_an'] . ' <i>(' . $tab_conges[$libelle]['solde'] . ')</i></td>';
-                    $return .= '<td align="center" class="histo">' . $champ_saisie_conges . '</td>';
+                    $childTable .= '<td>' . $tab_conges[$libelle]['nb_an'] . ' <i>(' . $tab_conges[$libelle]['solde'] . ')</i></td>';
+                    $childTable .= '<td align="center" class="histo">' . $champ_saisie_conges . '</td>';
                 }
                 if ($_SESSION['config']['gestion_conges_exceptionnels']) {
                     foreach($tab_type_conges_exceptionnels as $id_conges => $libelle) {
                         /** le champ de saisie est <input type="text" name="tab_champ_saisie[valeur de u_login][id_du_type_de_conges]" value="[valeur du nb de jours ajouté saisi]"> */
                         $champ_saisie_conges="<input class=\"form-control\" type=\"text\" name=\"tab_champ_saisie[$current_login][$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\">";
-                        $return .= '<td><i>(' . $tab_conges[$libelle]['solde'] . ')</i></td>';
-                        $return .= '<td align="center" class="histo">' . $champ_saisie_conges . '</td>';
+                        $childTable .= '<td><i>(' . $tab_conges[$libelle]['solde'] . ')</i></td>';
+                        $childTable .= '<td align="center" class="histo">' . $champ_saisie_conges . '</td>';
                     }
                 }
-                $return .= '<td align="center" class="histo"><input class="form-control" type="text" name="tab_commentaire_saisie[' . $current_login . ']" size="30" maxlength="200" value=""></td>';
-                $return .= '</tr>';
+                $childTable .= '<td align="center" class="histo"><input class="form-control" type="text" name="tab_commentaire_saisie[' . $current_login . ']" size="30" maxlength="200" value=""></td>';
+                $childTable .= '</tr>';
                 $cpt_lignes++ ;
                 $i = !$i;
             }
@@ -392,42 +419,45 @@ class Fonctions
             // affichage des users dont on est grand responsable :
             if( ($_SESSION['config']['double_validation_conges']) && ($_SESSION['config']['grand_resp_ajout_conges']) ) {
                 $nb_colspan=50;
-                $return .= '<tr align="center"><td class="histo" style="background-color: #CCC;" colspan="' . $nb_colspan . '"><i>' . _('resp_etat_users_titre_double_valid') . '</i></td></tr>';
+                $childTable .= '<tr align="center"><td class="histo" style="background-color: #CCC;" colspan="' . $nb_colspan . '"><i>' . _('resp_etat_users_titre_double_valid') . '</i></td></tr>';
 
                 $i = true;
                 foreach($tab_all_users_du_grand_resp as $current_login => $tab_current_user) {
-                    $return .= '<tr class="'.($i?'i':'p').'">';
+                    $childTable .= '<tr class="'.($i?'i':'p').'">';
                     //tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
                     $tab_conges=$tab_current_user['conges'];
 
                     /** sur la ligne ,   **/
-                    $return .= '<td>' . $tab_current_user['nom'] . '</td>';
-                    $return .= '<td>' . $tab_current_user['prenom'] . '</td>';
-                    $return .= '<td>' . $tab_current_user['quotite'] . '%</td>';
+                    $childTable .= '<td>' . $tab_current_user['nom'] . '</td>';
+                    $childTable .= '<td>' . $tab_current_user['prenom'] . '</td>';
+                    $childTable .= '<td>' . $tab_current_user['quotite'] . '%</td>';
 
                     foreach($tab_type_conges as $id_conges => $libelle) {
                         /** le champ de saisie est <input type="text" name="tab_champ_saisie[valeur de u_login][id_du_type_de_conges]" value="[valeur du nb de jours ajouté saisi]"> */
                         $champ_saisie_conges="<input type=\"text\" name=\"tab_champ_saisie[$current_login][$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\">";
-                        $return .= '<td>' . $tab_conges[$libelle]['nb_an'] . ' <i>(' . $tab_conges[$libelle]['solde'] . ')</i></td>';
-                        $return .= '<td align="center" class="histo">' . $champ_saisie_conges . '</td>';
+                        $childTable .= '<td>' . $tab_conges[$libelle]['nb_an'] . ' <i>(' . $tab_conges[$libelle]['solde'] . ')</i></td>';
+                        $childTable .= '<td align="center" class="histo">' . $champ_saisie_conges . '</td>';
                     }
                     if ($_SESSION['config']['gestion_conges_exceptionnels']) {
                         foreach($tab_type_conges_exceptionnels as $id_conges => $libelle) {
                             /** le champ de saisie est <input type="text" name="tab_champ_saisie[valeur de u_login][id_du_type_de_conges]" value="[valeur du nb de jours ajouté saisi]"> */
                             $champ_saisie_conges="<input type=\"text\" name=\"tab_champ_saisie[$current_login][$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\">";
-                            $return .= '<td><i>(' . $tab_conges[$libelle]['solde'] . ')</i></td>';
-                            $return .= '<td align="center" class="histo">' . $champ_saisie_conges . '</td>';
+                            $childTable .= '<td><i>(' . $tab_conges[$libelle]['solde'] . ')</i></td>';
+                            $childTable .= '<td align="center" class="histo">' . $champ_saisie_conges . '</td>';
                         }
                     }
-                    $return .= '<td align="center" class="histo"><input type="text" name="tab_commentaire_saisie[' . $current_login . ']" size="30" maxlength="200" value=""></td>';
-                    $return .= '</tr>';
+                    $childTable .= '<td align="center" class="histo"><input type="text" name="tab_commentaire_saisie[' . $current_login . ']" size="30" maxlength="200" value=""></td>';
+                    $childTable .= '</tr>';
                     $cpt_lignes++ ;
                     $i = !$i;
                 }
             }
 
-            $return .= '</tbody>';
-            $return .= '</table></div>';
+            $childTable .= '</tbody>';
+            $table->addChild($childTable);
+            ob_start();
+            $table->render();
+            $return .= ob_get_clean();
 
             $return .= '<input type="hidden" name="ajout_conges" value="TRUE">';
             $return .= '<input type="hidden" name="session" value="' . $session . '">';
@@ -977,51 +1007,6 @@ class Fonctions
     }
 
     /**
-     * Encapsule le comportement du module de cloture d'exercice
-     *
-     * @return void
-     * @access public
-     * @static
-     */
-    public static function clotureExerciceModule()
-    {
-        $choix_groupe            = getpost_variable('choix_groupe');
-        $cloture_users           = getpost_variable('cloture_users');
-        $cloture_globale         = getpost_variable('cloture_globale');
-        $cloture_groupe          = getpost_variable('cloture_groupe');
-        $tab_cloture_users       = getpost_variable('tab_cloture_users');
-        $tab_commentaire_saisie       = getpost_variable('tab_commentaire_saisie');
-        $return = '';
-        /*************************************/
-
-        header_popup( $_SESSION['config']['titre_resp_index'] );
-
-
-        /*************************************/
-        /***  suite de la page             ***/
-        /*************************************/
-
-        /** initialisation des tableaux des types de conges/absences  **/
-        // recup du tableau des types de conges (conges et congesexceptionnels)
-        // on concatene les 2 tableaux
-        $tab_type_cong = ( recup_tableau_types_conges() + recup_tableau_types_conges_exceptionnels()  );
-
-        // titre
-        $return .= '<H2>' . _('resp_cloture_exercice_titre') . '</H2>';
-
-        if($cloture_users=="TRUE") {
-            $return .= \responsable\Fonctions::cloture_users($tab_type_cong, $tab_cloture_users, $tab_commentaire_saisie);
-        } elseif($cloture_globale=="TRUE") {
-            $return .= \responsable\Fonctions::cloture_globale($tab_type_cong);
-        } elseif($cloture_groupe=="TRUE") {
-            $return .= \responsable\Fonctions::cloture_globale_groupe($choix_groupe, $tab_type_cong);
-        } else {
-            $return .= \responsable\Fonctions::saisie_cloture($tab_type_cong);
-        }
-        return $return;
-    }
-
-    /**
      * Encapsule le comportement du module de page principale
      *
      * @return void
@@ -1038,38 +1023,45 @@ class Fonctions
         // AFFICHAGE TABLEAU (premiere ligne)
         $return .= '<h1>' . _('resp_traite_user_etat_conges') . '</h1>';
 
-        $return .= '<table class="table table-hover table-responsive table-condensed table-striped">';
-        $return .= '<thead>';
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-hover',
+            'table-responsive',
+            'table-condensed',
+            'table-striped'
+        ]);
+        $childTable = '<thead>';
 
         $nb_colonnes = 0;
 
-        $return .= '<tr>';
-        $return .= '<th>' . _('divers_nom_maj') .'</th>';
-        $return .= '<th>'. _('divers_prenom_maj') .'</th>';
-        $return .= '<th>'. _('divers_quotite_maj_1') .'</th>' ;
+        $childTable .= '<tr>';
+        $childTable .= '<th>' . _('divers_nom_maj') .'</th>';
+        $childTable .= '<th>'. _('divers_prenom_maj') .'</th>';
+        $childTable .= '<th>'. _('divers_quotite_maj_1') .'</th>' ;
         $nb_colonnes = 3;
         foreach($tab_type_cong as $id_conges => $libelle) {
             // cas d'une absence ou d'un congé
-            $return .= '<th>' . $libelle . ' / ' . _('divers_an_maj') . '</th>';
-            $return .= '<th>'. _('divers_solde_maj') . ' ' . $libelle . '</th>';
+            $childTable .= '<th>' . $libelle . ' / ' . _('divers_an_maj') . '</th>';
+            $childTable .= '<th>'. _('divers_solde_maj') . ' ' . $libelle . '</th>';
             $nb_colonnes += 2;
         }
         // conges exceptionnels
         if ($_SESSION['config']['gestion_conges_exceptionnels']) {
             foreach($tab_type_conges_exceptionnels as $id_type_cong => $libelle) {
-                $return .= '<th>'. _('divers_solde_maj') . ' ' . $libelle . '</th>';
+                $childTable .= '<th>'. _('divers_solde_maj') . ' ' . $libelle . '</th>';
                 $nb_colonnes += 1;
             }
         }
-        $return .= '<th></th>';
+        $childTable .= '<th></th>';
         $nb_colonnes += 1;
         if($_SESSION['config']['editions_papier']) {
-            $return .= '<th></th>';
+            $childTable .= '<th></th>';
             $nb_colonnes += 1;
         }
-        $return .= '</tr>';
-        $return .= '</thead>';
-        $return .= '<tbody>';
+        $childTable .= '</tr>';
+        $childTable .= '</thead>';
+        $childTable .= '<tbody>';
 
         /***********************************/
         // AFFICHAGE USERS
@@ -1080,7 +1072,7 @@ class Fonctions
         // Récup dans un tableau de tableau des informations de tous les users dont $_SESSION['userlogin'] est responsable
         $tab_all_users=recup_infos_all_users_du_resp($_SESSION['userlogin']);
         if(count($tab_all_users)==0) {// si le tableau est vide (resp sans user !!) on affiche une alerte !
-            $return .= '<tr align="center"><td class="histo" colspan="' .  $nb_colonnes . '">' . _('resp_etat_aucun_user') . '</td></tr>';
+            $childTable .= '<tr align="center"><td class="histo" colspan="' .  $nb_colonnes . '">' . _('resp_etat_aucun_user') . '</td></tr>';
         } else {
             $i = true;
             foreach($tab_all_users as $current_login => $tab_current_user) {
@@ -1090,22 +1082,23 @@ class Fonctions
                     $text_affich_user="<a class=\"action show\" href=\"resp_index.php?session=$session&onglet=traite_user&user_login=$current_login\" title=\""._('resp_etat_users_afficher')."\"><i class=\"fa fa-eye\"></i></a>" ;
                     $text_edit_papier="<a class=\"action edit\" href=\"../edition/edit_user.php?session=$session&user_login=$current_login\" target=\"_blank\" title=\""._('resp_etat_users_imprim')."\"><i class=\"fa fa-file-text\"></i></a>";
 
-                    $return .= '<tr class="' . ($i ? 'i' : 'p') . '">';
-                    $return .= '<td>' . $tab_current_user['nom'] . '</td><td>' . $tab_current_user['prenom'] . '</td><td>' . $tab_current_user['quotite'] . '%</td>';
+                    $childTable .= '<tr class="' . ($i ? 'i' : 'p') . '">';
+                    $childTable .= '<td>' . $tab_current_user['nom'] . '</td><td>' . $tab_current_user['prenom'] . '</td><td>' . $tab_current_user['quotite'] . '%</td>';
                     foreach($tab_type_cong as $id_conges => $libelle) {
-                        $return .= '<td>' . $tab_conges[$libelle]['nb_an'] . '</td>';
-                        $return .= '<td>' . $tab_conges[$libelle]['solde'] . '</td>';
+                        $childTable .= '<td>' . $tab_conges[$libelle]['nb_an'] . '</td>';
+                        $childTable .= '<td>' . $tab_conges[$libelle]['solde'] . '</td>';
                     }
                     if ($_SESSION['config']['gestion_conges_exceptionnels']) {
                         foreach($tab_type_conges_exceptionnels as $id_type_cong => $libelle) {
-                            $return .= '<td>' . $tab_conges[$libelle]['solde'] . '</td>';
+                            $nbSolde = (isset($tab_conges[$libelle])) ? $tab_conges[$libelle]['solde'] : 0;
+                            $childTable .= '<td>' . $nbSolde . '</td>';
                         }
                     }
-                    $return .= '<td>' . $text_affich_user . '</td>';
+                    $childTable .= '<td>' . $text_affich_user . '</td>';
                     if($_SESSION['config']['editions_papier']) {
-                        $return .= '<td>' . $text_edit_papier . '</td>';
+                        $childTable .= '<td>' . $text_edit_papier . '</td>';
                     }
-                    $return .= '</tr>';
+                    $childTable .= '</tr>';
                     $i = !$i;
                 }
             }
@@ -1132,7 +1125,7 @@ class Fonctions
                             $nb_colspan=10;
                         }
 
-                        $return .= '<tr align="center"><td class="histo" style="background-color: #CCC;" colspan="' . $nb_colonnes . '"><i>' . _('resp_etat_users_titre_double_valid') . '</i></td></tr>';
+                        $childTable .= '<tr align="center"><td class="histo" style="background-color: #CCC;" colspan="' . $nb_colonnes . '"><i>' . _('resp_etat_users_titre_double_valid') . '</i></td></tr>';
                     }
 
                     //tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
@@ -1140,28 +1133,31 @@ class Fonctions
 
                     $text_affich_user="<a class=\"action show\" href=\"resp_index.php?session=$session&onglet=traite_user&user_login=$current_login_2\" title=\"". _('resp_etat_users_afficher') ."\"><i class=\"fa fa-eye\"></i></a>" ;
                     $text_edit_papier="<a class=\"action print\" href=\"../edition/edit_user.php?session=$session&user_login=$current_login_2\" target=\"_blank\" title=\""._('resp_etat_users_imprim')."\"><i class=\"fa fa-file-text\"></i></a>";
-                    $return .= '<tr class="'.($i?'i':'p').'">';
-                    $return .= '<td>' . $tab_current_user_2['nom'] . '</td><td>' . $tab_current_user_2['prenom'] . '</td><td>' . $tab_current_user_2['quotite'] . '%</td>';
+                    $childTable .= '<tr class="'.($i?'i':'p').'">';
+                    $childTable .= '<td>' . $tab_current_user_2['nom'] . '</td><td>' . $tab_current_user_2['prenom'] . '</td><td>' . $tab_current_user_2['quotite'] . '%</td>';
                     foreach($tab_type_cong as $id_conges => $libelle) {
-                        $return .= '<td>' . $tab_conges_2[$libelle]['nb_an'] . '</td><td>' . $tab_conges_2[$libelle]['solde'] . '</td>';
+                        $childTable .= '<td>' . $tab_conges_2[$libelle]['nb_an'] . '</td><td>' . $tab_conges_2[$libelle]['solde'] . '</td>';
                     }
                     if ($_SESSION['config']['gestion_conges_exceptionnels']) {
                         foreach($tab_type_conges_exceptionnels as $id_type_cong => $libelle) {
-                            $return .= '<td>' . $tab_conges_2[$libelle]['solde'] . '</td>';
+                            $childTable .= '<td>' . $tab_conges_2[$libelle]['solde'] . '</td>';
                         }
                     }
-                    $return .= '<td>' . $text_affich_user . '</td>';
+                    $childTable .= '<td>' . $text_affich_user . '</td>';
                     if($_SESSION['config']['editions_papier']) {
-                        $return .= '<td>' . $text_edit_papier . '</td>';
+                        $childTable .= '<td>' . $text_edit_papier . '</td>';
                     }
-                    $return .= '</tr>';
+                    $childTable .= '</tr>';
                     $i = !$i;
                 }
             }
         }
 
-        $return .= '</tbody>';
-        $return .= '</table>';
+        $childTable .= '</tbody>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
         return $return;
     }
 
@@ -1394,28 +1390,32 @@ class Fonctions
 
             // AFFICHAGE TABLEAU
             $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=traite_user" method="POST">';
-            //echo "<table cellpadding=\"2\" class=\"table table-hover table-responsive table-condensed table-striped\" width=\"80%\">\n";
-            $return .= '<table class="table table-hover table-responsive table-condensed table-striped">';
-            $return .= '<thead>';
-            $return .= '<tr align="center">';
-            $return .= '<th>';
-            // echo " <a href=\"$PHP_SELF?session=$session&user_login=$user_login&onglet=$onglet&tri_date=descendant\"><img src=\"". IMG_PATH ."1downarrow-16x16.png\" width=\"16\" height=\"16\" border=\"0\" title=\"trier\"></a>\n";
-            $return .= _('divers_debut_maj_1');
-            // echo " <a href=\"$PHP_SELF?session=$session&user_login=$user_login&onglet=$onglet&tri_date=ascendant\"><img src=\"". IMG_PATH ."1uparrow-16x16.png\" width=\"16\" height=\"16\" border=\"0\" title=\"trier\"></a>\n";
-            $return .= '</th>';
-            $return .= '<th>' . _('divers_fin_maj_1') . '</th>';
-            $return .= '<th>' . _('divers_nb_jours_pris_maj_1') . '</th>';
-            $return .= '<th>' . _('divers_comment_maj_1') . '</th>';
-            $return .= '<th>' . _('divers_type_maj_1') . '</th>';
-            $return .= '<th>' . _('divers_etat_maj_1') . '</th>';
-            $return .= '<th>' . _('resp_traite_user_annul') . '</th>';
-            $return .= '<th>' . _('resp_traite_user_motif_annul') . '</th>';
+            $table = new \App\Libraries\Structure\Table();
+            $table->addClasses([
+                'table',
+                'table-hover',
+                'table-responsive',
+                'table-condensed',
+                'table-striped'
+            ]);
+            $childTable = '<thead>';
+            $childTable .= '<tr align="center">';
+            $childTable .= '<th>';
+            $childTable .= _('divers_debut_maj_1');
+            $childTable .= '</th>';
+            $childTable .= '<th>' . _('divers_fin_maj_1') . '</th>';
+            $childTable .= '<th>' . _('divers_nb_jours_pris_maj_1') . '</th>';
+            $childTable .= '<th>' . _('divers_comment_maj_1') . '</th>';
+            $childTable .= '<th>' . _('divers_type_maj_1') . '</th>';
+            $childTable .= '<th>' . _('divers_etat_maj_1') . '</th>';
+            $childTable .= '<th>' . _('resp_traite_user_annul') . '</th>';
+            $childTable .= '<th>' . _('resp_traite_user_motif_annul') . '</th>';
             if($_SESSION['config']['affiche_date_traitement']) {
-                $return .= '<th>' . _('divers_date_traitement') . '</th>';
+                $childTable .= '<th>' . _('divers_date_traitement') . '</th>';
             }
-            $return .= '</tr>';
-            $return .= '</thead>';
-            $return .= '<tbody>';
+            $childTable .= '</tr>';
+            $childTable .= '</thead>';
+            $childTable .= '<tbody>';
             $tab_checkbox=array();
             $i = true;
             while ($resultat3 = $ReqLog3->fetch_array()) {
@@ -1464,35 +1464,38 @@ class Fonctions
                     $text_annul="<input type=\"text\" name=\"tab_text_annul[$sql_num]\" size=\"20\" max=\"100\">";
                 }
 
-                $return .= '<tr class="' . ($i ? 'i' : 'p') . '">';
-                $return .= '<td>' . $sql_date_deb . '_' . $demi_j_deb . '</td>';
-                $return .= '<td>' . $sql_date_fin . '_' . $demi_j_fin . '</td>';
-                $return .= '<td>' . $sql_nb_jours . '</td>';
-                $return .= '<td>' . $sql_commentaire . '</td>';
-                $return .= '<td>' . $tab_types_abs[$sql_type]['libelle'] . '</td>';
-                $return .= '<td>';
+                $childTable .= '<tr class="' . ($i ? 'i' : 'p') . '">';
+                $childTable .= '<td>' . $sql_date_deb . '_' . $demi_j_deb . '</td>';
+                $childTable .= '<td>' . $sql_date_fin . '_' . $demi_j_fin . '</td>';
+                $childTable .= '<td>' . $sql_nb_jours . '</td>';
+                $childTable .= '<td>' . $sql_commentaire . '</td>';
+                $childTable .= '<td>' . $tab_types_abs[$sql_type]['libelle'] . '</td>';
+                $childTable .= '<td>';
                 if($sql_etat=="refus") {
-                    $return .= _('divers_refuse') ;
+                    $childTable .= _('divers_refuse') ;
                 } elseif($sql_etat=="annul") {
-                    $return .= _('divers_annule') ;
+                    $childTable .= _('divers_annule') ;
                 } else {
-                    $return .= $sql_etat;
+                    $childTable .= $sql_etat;
                 }
-                $return .= '</td>';
-                $return .= '<td>' . $casecocher1 . '</td>';
-                $return .= '<td>' . $text_annul . '</td>';
+                $childTable .= '</td>';
+                $childTable .= '<td>' . $casecocher1 . '</td>';
+                $childTable .= '<td>' . $text_annul . '</td>';
                 if($_SESSION['config']['affiche_date_traitement']) {
                     if(empty($sql_p_date_traitement)) {
-                        $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : pas traité</td>';
+                        $childTable .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : pas traité</td>';
                     } else {
-                        $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : ' . $sql_p_date_traitement . '</td>';
+                        $childTable .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : ' . $sql_p_date_traitement . '</td>';
                     }
                 }
-                $return .= '</tr>';
+                $childTable .= '</tr>';
                 $i = !$i;
             }
-            $return .= '</tbody>';
-            $return .= '</table>';
+            $childTable .= '</tbody>';
+            $table->addChild($childTable);
+            ob_start();
+            $table->render();
+            $return .= ob_get_clean();
 
             $return .= '<input type="hidden" name="user_login" value="' . $user_login . '">';
             $return .= '<input class="btn" type="submit" value="' . _('form_submit') . '">';
@@ -1628,21 +1631,27 @@ class Fonctions
 
             // AFFICHAGE TABLEAU
             $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=traite_user" method="POST">';
-            //echo "<table cellpadding=\"2\" class=\"table table-hover table-responsive table-condensed table-striped\" width=\"80%\">\n";
-            $return .= '<table cellpadding="2" class="table table-hover table-responsive table-condensed table-striped">';
-            $return .= '<tr align="center">';
-            $return .= '<td>' . _('divers_debut_maj_1') . '</td>';
-            $return .= '<td>' . _('divers_fin_maj_1') . '</td>';
-            $return .= '<td>' . _('divers_nb_jours_pris_maj_1') . '</td>';
-            $return .= '<td>' . _('divers_comment_maj_1') . '</td>';
-            $return .= '<td>' . _('divers_type_maj_1') . '</td>';
-            $return .= '<td>' . _('divers_accepter_maj_1') . '</td>';
-            $return .= '<td>' . _('divers_refuser_maj_1') . '</td>';
-            $return .= '<td>' . _('resp_traite_user_motif_refus') . '</td>';
+            $table = new \App\Libraries\Structure\Table();
+            $table->addClasses([
+                'table',
+                'table-hover',
+                'table-responsive',
+                'table-condensed',
+                'table-striped'
+            ]);
+            $childTable = '<tr align="center">';
+            $childTable .= '<td>' . _('divers_debut_maj_1') . '</td>';
+            $childTable .= '<td>' . _('divers_fin_maj_1') . '</td>';
+            $childTable .= '<td>' . _('divers_nb_jours_pris_maj_1') . '</td>';
+            $childTable .= '<td>' . _('divers_comment_maj_1') . '</td>';
+            $childTable .= '<td>' . _('divers_type_maj_1') . '</td>';
+            $childTable .= '<td>' . _('divers_accepter_maj_1') . '</td>';
+            $childTable .= '<td>' . _('divers_refuser_maj_1') . '</td>';
+            $childTable .= '<td>' . _('resp_traite_user_motif_refus') . '</td>';
             if($_SESSION['config']['affiche_date_traitement']) {
-                $return .= '<td>' . _('divers_date_traitement') . '</td>';
+                $childTable .= '<td>' . _('divers_date_traitement') . '</td>';
             }
-            $return .= '</tr>';
+            $childTable .= '</tr>';
 
             $tab_checkbox=array();
             while ($resultat2 = $ReqLog2->fetch_array()) {
@@ -1689,28 +1698,31 @@ class Fonctions
 
                 $text_refus  = "<input type=\"text\" name=\"tab_text_refus[$sql_num]\" size=\"20\" max=\"100\">";
 
-                $return .= '<tr align="center">';
-                $return .= '<td>' . $sql_date_deb_fr . '_' . $demi_j_deb . '</td>';
-                $return .= '<td>' . $sql_date_fin_fr . '_' . $demi_j_fin . '</td>';
-                $return .= '<td>' . $sql_nb_jours . '</td>';
-                $return .= '<td>' . $sql_commentaire . '</td>';
-                $return .= '<td>' . $tab_type_all_abs[$sql_type]['libelle'] . '</td>';
-                $return .= '<td>' . $boutonradio1 . '</td>';
-                $return .= '<td>' . $boutonradio2 . '</td>';
-                $return .= '<td>' . $text_refus . '</td>';
-                $return .= '<td>' . $sql_date_demande . '</td>';
+                $childTable .= '<tr align="center">';
+                $childTable .= '<td>' . $sql_date_deb_fr . '_' . $demi_j_deb . '</td>';
+                $childTable .= '<td>' . $sql_date_fin_fr . '_' . $demi_j_fin . '</td>';
+                $childTable .= '<td>' . $sql_nb_jours . '</td>';
+                $childTable .= '<td>' . $sql_commentaire . '</td>';
+                $childTable .= '<td>' . $tab_type_all_abs[$sql_type]['libelle'] . '</td>';
+                $childTable .= '<td>' . $boutonradio1 . '</td>';
+                $childTable .= '<td>' . $boutonradio2 . '</td>';
+                $childTable .= '<td>' . $text_refus . '</td>';
+                $childTable .= '<td>' . $sql_date_demande . '</td>';
 
                 if($_SESSION['config']['affiche_date_traitement']) {
                     if(empty($sql_date_traitement)) {
-                        $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_date_demande . '<br>' . _('divers_traitement') . ' : pas traité</td>';
+                        $childTable .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_date_demande . '<br>' . _('divers_traitement') . ' : pas traité</td>';
                     } else {
-                        $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_date_demande . '<br>' . _('divers_traitement') . ' : ' . $sql_date_traitement . '</td>';
+                        $childTable .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_date_demande . '<br>' . _('divers_traitement') . ' : ' . $sql_date_traitement . '</td>';
                     }
                 }
 
-                $return .= '</tr>';
+                $childTable .= '</tr>';
             }
-            $return .= '</table>';
+            $table->addChild($childTable);
+            ob_start();
+            $table->render();
+            $return .= ob_get_clean();
 
             $return .= '<input type="hidden" name="user_login" value="' . $user_login . '">';
             $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
@@ -2056,16 +2068,23 @@ class Fonctions
                 // AFFICHAGE TABLEAU DES DEMANDES EN COURS
 
                 $return .= '<h3>' . _('resp_traite_demandes_titre_tableau_1') . '</h3>';
-                $return .= '<table cellpadding="2" class="table table-hover table-responsive table-condensed table-striped">';
-                $return .= '<thead>';
-                $return .= '<tr>';
-                $return .= '<th>' . _('divers_nom_maj_1') . '<br>' . _('divers_prenom_maj_1') . '</th>';
-                $return .= '<th>' . _('divers_quotite_maj_1') . '</th>';
-                $return .= '<th>' . _('divers_type_maj_1') . '</th>';
-                $return .= '<th>' . _('divers_debut_maj_1') . '</th>';
-                $return .= '<th>' . _('divers_fin_maj_1') . '</th>' ;
-                $return .= '<th>' . _('divers_comment_maj_1') . '</th>';
-                $return .= '<th>' . _('resp_traite_demandes_nb_jours') . '</th>';
+                $table = new \App\Libraries\Structure\Table();
+                $table->addClasses([
+                    'table',
+                    'table-hover',
+                    'table-responsive',
+                    'table-condensed',
+                    'table-striped'
+                ]);
+                $childTable = '<thead>';
+                $childTable .= '<tr>';
+                $childTable .= '<th>' . _('divers_nom_maj_1') . '<br>' . _('divers_prenom_maj_1') . '</th>';
+                $childTable .= '<th>' . _('divers_quotite_maj_1') . '</th>';
+                $childTable .= '<th>' . _('divers_type_maj_1') . '</th>';
+                $childTable .= '<th>' . _('divers_debut_maj_1') . '</th>';
+                $childTable .= '<th>' . _('divers_fin_maj_1') . '</th>' ;
+                $childTable .= '<th>' . _('divers_comment_maj_1') . '</th>';
+                $childTable .= '<th>' . _('resp_traite_demandes_nb_jours') . '</th>';
                 // foreach($tab_type_conges as $id_conges => $libelle)
                 // {
                 // 	echo "<th>". _('divers_solde_maj_1') ."<br>$libelle</th>" ;
@@ -2075,17 +2094,17 @@ class Fonctions
                 // {
                 // 	echo "<th>". _('divers_solde_maj_1') ."<br>$libelle</th>" ;
                 // }
-                $return .= '<th>' . _('divers_solde') . '</th>';
-                $return .= '<th>' . _('divers_accepter_maj_1') . '</th>';
-                $return .= '<th>' . _('divers_refuser_maj_1') . '</th>';
-                $return .= '<th>' . _('resp_traite_demandes_attente') . '</th>' ;
-                $return .= '<th>' . _('resp_traite_demandes_motif_refus') . '</th>';
+                $childTable .= '<th>' . _('divers_solde') . '</th>';
+                $childTable .= '<th>' . _('divers_accepter_maj_1') . '</th>';
+                $childTable .= '<th>' . _('divers_refuser_maj_1') . '</th>';
+                $childTable .= '<th>' . _('resp_traite_demandes_attente') . '</th>' ;
+                $childTable .= '<th>' . _('resp_traite_demandes_motif_refus') . '</th>';
                 if($_SESSION['config']['affiche_date_traitement']) {
-                    $return .= '<th>' . _('divers_date_traitement') . '</th>';
+                    $childTable .= '<th>' . _('divers_date_traitement') . '</th>';
                 }
-                $return .= '</tr>';
-                $return .= '</thead>';
-                $return .= '<tbody>';
+                $childTable .= '</tr>';
+                $childTable .= '</thead>';
+                $childTable .= '<tbody>';
 
                 $i = true;
                 $tab_bt_radio=array();
@@ -2131,12 +2150,12 @@ class Fonctions
 
                     $text_refus="<input class=\"form-control\" type=\"text\" name=\"tab_text_refus[$sql_p_num]\" size=\"20\" max=\"100\">";
 
-                    $return .= '<tr class="'.($i?'i':'p').'">';
-                    $return .= '<td><b>' . $tab_all_users_du_resp[$sql_p_login]['nom'] . '</b><br>' . $tab_all_users_du_resp[$sql_p_login]['prenom'] . '</td><td>' . $tab_all_users_du_resp[$sql_p_login]['quotite'] . '%</td>';
-                    $return .= '<td>' . $tab_type_all_abs[$sql_p_type]['libelle'] . '</td>';
-                    $return .= '<td>' . $sql_p_date_deb_fr . '<span class="demi">' . $demi_j_deb . '</span></td><td>' . $sql_p_date_fin_fr . '<span class="demi">' . $demi_j_fin . '</span></td><td>' . $sql_p_commentaire . '</td><td><b>' . $sql_p_nb_jours . '</b></td>';
+                    $childTable .= '<tr class="'.($i?'i':'p').'">';
+                    $childTable .= '<td><b>' . $tab_all_users_du_resp[$sql_p_login]['nom'] . '</b><br>' . $tab_all_users_du_resp[$sql_p_login]['prenom'] . '</td><td>' . $tab_all_users_du_resp[$sql_p_login]['quotite'] . '%</td>';
+                    $childTable .= '<td>' . $tab_type_all_abs[$sql_p_type]['libelle'] . '</td>';
+                    $childTable .= '<td>' . $sql_p_date_deb_fr . '<span class="demi">' . $demi_j_deb . '</span></td><td>' . $sql_p_date_fin_fr . '<span class="demi">' . $demi_j_fin . '</span></td><td>' . $sql_p_commentaire . '</td><td><b>' . $sql_p_nb_jours . '</b></td>';
                     $tab_conges=$tab_all_users_du_resp[$sql_p_login]['conges'];
-                    $return .= '<td>' . $tab_conges[$tab_type_all_abs[$sql_p_type]['libelle']]['solde'] . '</td>';
+                    $childTable .= '<td>' . $tab_conges[$tab_type_all_abs[$sql_p_type]['libelle']]['solde'] . '</td>';
                     // foreach($tab_type_conges as $id_conges => $libelle)
                     // {
                     // 	echo "<td>".$tab_conges[$libelle]['solde']."</td>";
@@ -2147,20 +2166,23 @@ class Fonctions
                     // 	echo "<td>".$tab_conges[$libelle]['solde']."</td>";
                     // }
                     // echo "<td>".$tab_type_all_abs[$sql_p_type]['libelle']."</td>\n";
-                    $return .= '<td>' . $boutonradio1 . '</td><td>' . $boutonradio2 . '</td><td>' . $boutonradio3 . '</td><td>' . $text_refus . '</td>';
+                    $childTable .= '<td>' . $boutonradio1 . '</td><td>' . $boutonradio2 . '</td><td>' . $boutonradio3 . '</td><td>' . $text_refus . '</td>';
                     if($_SESSION['config']['affiche_date_traitement']) {
                         if($sql_p_date_demande == NULL) {
-                            $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : ' . $sql_p_date_traitement . '</td>';
+                            $childTable .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : ' . $sql_p_date_traitement . '</td>';
                         } else {
-                            $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : pas traité</td>';
+                            $childTable .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : pas traité</td>';
                         }
                     }
 
-                    $return .= '</tr>';
+                    $childTable .= '</tr>';
                     $i = !$i;
                 } // while
-                $return .= '</tbody>';
-                $return .= '</table>';
+                $childTable .= '</tbody>';
+                $table->addChild($childTable);
+                ob_start();
+                $table->render();
+                $return .= ob_get_clean();
             } //if($count1!=0)
         } //if( count($tab_all_users_du_resp)!=0 )
 
@@ -2188,29 +2210,36 @@ class Fonctions
 
                     $return .= '<h3>' . _('resp_traite_demandes_titre_tableau_2') . '</h3>';
 
-                    $return .= '<table class="table table-hover table-responsive table-condensed table-striped">';
-                    $return .= '<thead>';
-                    $return .= '<tr>';
-                    $return .= '<th><b>' . _('divers_nom_maj_1') . '</b><br>' . _('divers_prenom_maj_1') . '</th>';
-                    $return .= '<th>' . _('divers_quotite_maj_1') . '</th>';
-                    $return .= '<th>' . _('divers_debut_maj_1') . '</th>';
-                    $return .= '<th>' . _('divers_fin_maj_1') . '</th>';
-                    $return .= '<th>' . _('divers_comment_maj_1') . '</th>';
-                    $return .= '<th>' . _('resp_traite_demandes_nb_jours') . '</th>';
+                    $table = new \App\Libraries\Structure\Table();
+                    $table->addClasses([
+                        'table',
+                        'table-hover',
+                        'table-responsive',
+                        'table-condensed',
+                        'table-striped'
+                    ]);
+                    $childTable = '<thead>';
+                    $childTable .= '<tr>';
+                    $childTable .= '<th><b>' . _('divers_nom_maj_1') . '</b><br>' . _('divers_prenom_maj_1') . '</th>';
+                    $childTable .= '<th>' . _('divers_quotite_maj_1') . '</th>';
+                    $childTable .= '<th>' . _('divers_debut_maj_1') . '</th>';
+                    $childTable .= '<th>' . _('divers_fin_maj_1') . '</th>';
+                    $childTable .= '<th>' . _('divers_comment_maj_1') . '</th>';
+                    $childTable .= '<th>' . _('resp_traite_demandes_nb_jours') . '</th>';
                     foreach($tab_type_conges as $id_conges => $libelle) {
-                        $return .= '<th>' . _('divers_solde_maj_1') . '<br>' . $libelle . '</th>';
+                        $childTable .= '<th>' . _('divers_solde_maj_1') . '<br>' . $libelle . '</th>';
                     }
-                    $return .= '<th>' . _('divers_type_maj_1') . '</th>';
-                    $return .= '<th>' . _('divers_accepter_maj_1') . '</th>';
-                    $return .= '<th>' . _('divers_refuser_maj_1') . '</th>';
-                    $return .= '<th>' . _('resp_traite_demandes_attente') . '</th>';
-                    $return .= '<th>' . _('resp_traite_demandes_motif_refus') . '</th>';
+                    $childTable .= '<th>' . _('divers_type_maj_1') . '</th>';
+                    $childTable .= '<th>' . _('divers_accepter_maj_1') . '</th>';
+                    $childTable .= '<th>' . _('divers_refuser_maj_1') . '</th>';
+                    $childTable .= '<th>' . _('resp_traite_demandes_attente') . '</th>';
+                    $childTable .= '<th>' . _('resp_traite_demandes_motif_refus') . '</th>';
                     if($_SESSION['config']['affiche_date_traitement']) {
-                        $return .= '<th>' . _('divers_date_traitement') . '</th>';
+                        $childTable .= '<th>' . _('divers_date_traitement') . '</th>';
                     }
-                    $return .= '</tr>';
-                    $return .= '</thead>';
-                    $return .= '<tbody>';
+                    $childTable .= '</tr>';
+                    $childTable .= '</thead>';
+                    $childTable .= '<tbody>';
 
                     $i = true;
                     $tab_bt_radio=array();
@@ -2245,24 +2274,27 @@ class Fonctions
 
                         $text_refus="<input class=\"form-control\" type=\"text\" name=\"tab_text_refus[$sql_p_num]\" size=\"20\" max=\"100\">";
 
-                        $return .= '<tr class="'.($i?'i':'p').'">';
-                        $return .= '<td><strong>' . $tab_all_users_du_grand_resp[$sql_p_login]['nom'] . '</strong><br>' . $tab_all_users_du_grand_resp[$sql_p_login]['prenom'] . '</td><td>' . $tab_all_users_du_grand_resp[$sql_p_login]['quotite'] . '%</td>';
-                        $return .= '<td>' . $sql_p_date_deb_fr . '<span class="demi">' . $demi_j_deb . '<span></td><td>' . $sql_p_date_fin_fr . '<span class="demi">' . $demi_j_fin . '</span></td><td>' . $sql_p_commentaire . '</td><td><b>' . $sql_p_nb_jours . '</b></td>';
+                        $childTable .= '<tr class="'.($i?'i':'p').'">';
+                        $childTable .= '<td><strong>' . $tab_all_users_du_grand_resp[$sql_p_login]['nom'] . '</strong><br>' . $tab_all_users_du_grand_resp[$sql_p_login]['prenom'] . '</td><td>' . $tab_all_users_du_grand_resp[$sql_p_login]['quotite'] . '%</td>';
+                        $childTable .= '<td>' . $sql_p_date_deb_fr . '<span class="demi">' . $demi_j_deb . '<span></td><td>' . $sql_p_date_fin_fr . '<span class="demi">' . $demi_j_fin . '</span></td><td>' . $sql_p_commentaire . '</td><td><b>' . $sql_p_nb_jours . '</b></td>';
                         $tab_conges=$tab_all_users_du_grand_resp[$sql_p_login]['conges'];
                         foreach($tab_type_conges as $id_conges => $libelle) {
-                            $return .= '<td>' . $tab_conges[$libelle]['solde'] . '</td>';
+                            $childTable .= '<td>' . $tab_conges[$libelle]['solde'] . '</td>';
                         }
-                        $return .= '<td>' . $tab_type_all_abs[$sql_p_type]['libelle'] . '</td>';
-                        $return .= '<td>' . $boutonradio1 . '</td><td>' . $boutonradio2 . '</td><td>' . $boutonradio3 . '</td><td>' . $text_refus . '</td>';
+                        $childTable .= '<td>' . $tab_type_all_abs[$sql_p_type]['libelle'] . '</td>';
+                        $childTable .= '<td>' . $boutonradio1 . '</td><td>' . $boutonradio2 . '</td><td>' . $boutonradio3 . '</td><td>' . $text_refus . '</td>';
                         if($_SESSION['config']['affiche_date_traitement']) {
-                            $return .= '<td class="histo-left">' . _('divers_demande') . ' : '. $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : ' . $sql_p_date_traitement . '</td>';
+                            $childTable .= '<td class="histo-left">' . _('divers_demande') . ' : '. $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : ' . $sql_p_date_traitement . '</td>';
                         }
 
-                        $return .= '</tr>';
+                        $childTable .= '</tr>';
                         $i = !$i;
                     } //while
-                    $return .= '</tbody>';
-                    $return .= '</table>';
+                    $childTable .= '</tbody>';
+                    $table->addChild($childTable);
+                    ob_start();
+                    $table->render();
+                    $return .= ob_get_clean();
                 } //if($count2!=0)
             } //if( count($tab_all_users_du_grand_resp)!=0 )
         } //if($_SESSION['config']['double_validation_conges'])
