@@ -1,19 +1,19 @@
 Libertempo Fork de php_conges
 
-	Application web intéractive de gestion des congés du personnels d'un service. 
-	
+	Application web interactive de gestion des congés du personnel d'un service.
+
 	** Libertempo se veut très paramètrable afin de fournir ou non diverses fonctionnalités aux utilisateurs. **
 	** Libertempo est multi-langues. **
 
 
-INSTALL
+# INSTALL
 
 Create a database for this application with a user who can access it and modify informations on it (grant access).
 
 Copy and edits proprely this files :
-	cfg/dconfig_CAS_new.php	to 	cfg/config_CAS.php
-	cfg/config_ldap_new.php	to 	cfg/config_ldap.php
-	define_new.php		to 	define.php
+	cfg/dconfig_CAS_new.php to cfg/config_CAS.php
+	cfg/config_ldap_new.php to cfg/config_ldap.php
+	cfg/env_new.php         to cfg/env.php
 
 
 Then copy your Libertempo directory to your Apache DocumentRoot
@@ -23,14 +23,18 @@ Default user : "admin" / password : "responsable"
 Default manager : "conges" / password : "conges"
 
 ----
-UPGRADE FROM v1.5
+# UPGRADE TO 1.9
+Simply copy `cfg/env_new.php` to `cfg/env.php`
+
+----
+# UPGRADE FROM v1.5
 
 Copy (and edit):
 	dbconnect.php 		to 	cfg/dbconnect.php
 	define_new.php		to	define.php
 
 
-Go to your [Libertempo] URL, in /install subdirectory to migrate your application.
+Go to your [Libertempo] URL, in /install subdirectory to upgrade your application.
 
 ---
 # After installation

@@ -6,7 +6,6 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     define('ENV_DEV', 1);
     define('ENV_TEST', 2);
     define('ENV_PROD', 3);
-    define('ENV', ENV_PROD);
     define('DEFINE_INCLUDE',   true);
     define('SHOW_SQL',         false);
     define('ABSOLUTE_SYSPATH', dirname(__FILE__) . '/');
@@ -28,6 +27,7 @@ if (!defined( 'DEFINE_INCLUDE' )) {
 
     require_once ROOT_PATH . 'vendor/autoload.php';
     require_once ROOT_PATH . 'vendor/raveren/kint/Kint.class.php';
+    require_once CONFIG_PATH . 'env.php';
     \Kint::enabled(false);
     \Kint::$theme = 'solarized-dark';
     switch (ENV) {
