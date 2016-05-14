@@ -53,17 +53,24 @@ class Fonctions
             $return .= '<b>' . _('editions_aucun_hitorique') . '</b><br>';
         } else {
             // AFFICHAGE TABLEAU
-            $return .= '<table cellpadding="2" class="tablo" width="750">';
-            $return .= '<thead><tr align="center">';
-            $return .= '<th>' . _('editions_numero') . '</th>';
-            $return .= '<th>' . _('editions_date') . '</th>';
+            $table = new \App\Libraries\Structure\Table();
+            $table->addClasses([
+                'table',
+                'table-hover',
+                'table-responsive',
+                'table-condensed',
+                'table-striped',
+            ]);
+            $childTable = '<thead><tr align="center">';
+            $childTable .= '<th>' . _('editions_numero') . '</th>';
+            $childTable .= '<th>' . _('editions_date') . '</th>';
             foreach($tab_type_cong as $id_abs => $libelle) {
-                $return .= '<th>' . _('divers_solde_maj_1') . ' ' . $libelle . '</th>';
+                $childTable .= '<th>' . _('divers_solde_maj_1') . ' ' . $libelle . '</th>';
             }
 
-            $return .= '<th></th>';
-            $return .= '<th></th>';
-            $return .= '</tr></thead><tbody>';
+            $childTable .= '<th></th>';
+            $childTable .= '<th></th>';
+            $childTable .= '</tr></thead><tbody>';
 
             foreach($tab_editions_user as $id_edition => $tab_ed) {
                 //$text_edit_a_nouveau="<a href=\"edition_papier.php?session=$session&user_login=$login&edit_id=$sql_id\">Editer à nouveau</a>" ;
@@ -76,18 +83,22 @@ class Fonctions
                         " ". _('editions_edit_again_pdf')  .
                         "</a>\n";
 
-                $return .= '<tr align="center">';
-                $return .= '<td>' . $tab_ed['num_for_user'] . '</td>';
-                $return .= '<td class="histo-big">' . $tab_ed['date'] . '</td>';
+                $childTable .= '<tr align="center">';
+                $childTable .= '<td>' . $tab_ed['num_for_user'] . '</td>';
+                $childTable .= '<td class="histo-big">' . $tab_ed['date'] . '</td>';
                 foreach($tab_type_cong as $id_abs => $libelle) {
-                    $return .= '<td>' . $tab_ed['conges'][$id_abs] . '</td>';
+                    $childTable .= '<td>' . $tab_ed['conges'][$id_abs] . '</td>';
                 }
 
-                $return .= '<td>' . $text_edit_a_nouveau . '</td>';
-                $return .= '<td>' . $text_edit_pdf_a_nouveau . '</td>';
-                $return .= '</tr>';
+                $childTable .= '<td>' . $text_edit_a_nouveau . '</td>';
+                $childTable .= '<td>' . $text_edit_pdf_a_nouveau . '</td>';
+                $childTable .= '</tr>';
             }
-            $return .= '</tbody></table>';
+            $childTable .= '</tbody>';
+            $table->addChild($childTable);
+            ob_start();
+            $table->render();
+            $return .= ob_get_clean();
         }
         $return .= '<br>';
 
@@ -123,22 +134,25 @@ class Fonctions
             $return .= '<b>' . _('editions_aucun_conges') . '</b><br>';
         } else {
             // AFFICHAGE TABLEAU
+            $table = new \App\Libraries\Structure\Table();
+            $table->addClasses([
+                'table',
+                'table-hover',
+                'table-responsive',
+                'table-condensed',
+                'table-striped',
+            ]);
+            $childTable = '<thead><tr align="center">';
+            $childTable .= '<th>' . _('divers_type_maj_1') . '</th>';
+            $childTable .= '<th>' . _('divers_etat_maj_1') . '</th>';
+            $childTable .= '<th>' . _('divers_nb_jours_maj_1') . '</th>';
+            $childTable .= '<th>' . _('divers_debut_maj_1') . '</th>';
+            $childTable .= '<th>' . _('divers_fin_maj_1') . '</th>';
+            $childTable .= '<th>' . _('divers_comment_maj_1') . '</th>';
             if($_SESSION['config']['affiche_date_traitement']) {
-                $return .= '<table cellpadding="2" class="tablo" width="850">';
-            } else {
-                $return .= '<table cellpadding="2" class="tablo" width="750">';
+                $childTable .= '<th>' . _('divers_date_traitement') . '</td>';
             }
-            $return .= '<thead><tr align="center">';
-            $return .= '<th>' . _('divers_type_maj_1') . '</th>';
-            $return .= '<th>' . _('divers_etat_maj_1') . '</th>';
-            $return .= '<th>' . _('divers_nb_jours_maj_1') . '</th>';
-            $return .= '<th>' . _('divers_debut_maj_1') . '</th>';
-            $return .= '<th>' . _('divers_fin_maj_1') . '</th>';
-            $return .= '<th>' . _('divers_comment_maj_1') . '</th>';
-            if($_SESSION['config']['affiche_date_traitement']) {
-                $return .= '<th>' . _('divers_date_traitement') . '</td>';
-            }
-            $return .= '</tr></thead></tbody>';
+            $childTable .= '</tr></thead></tbody>';
 
             while ($resultat2 = $ReqLog2->fetch_array()) {
                 $sql_p_date_deb = eng_date_to_fr($resultat2["p_date_deb"]);
@@ -154,60 +168,67 @@ class Fonctions
                 $sql_p_date_demande = $resultat2["p_date_demande"];
                 $sql_p_date_traitement = $resultat2["p_date_traitement"];
 
-                $return .= '<tr align="center">';
-                $return .= '<td>' . $sql_p_type . '</td>';
-                $return .= '<td>';
+                $childTable .= '<tr align="center">';
+                $childTable .= '<td>' . $sql_p_type . '</td>';
+                $childTable .= '<td>';
                 if($sql_p_etat=="refus") {
-                    $return .= _('divers_refuse');
+                    $childTable .= _('divers_refuse');
                 } elseif($sql_p_etat=="annul") {
-                    $return .= _('divers_annule');
+                    $childTable .= _('divers_annule');
                 } else {
-                    $return .= $sql_p_etat;
+                    $childTable .= $sql_p_etat;
                 }
-                $return .= '</td>';
+                $childTable .= '</td>';
                 if($sql_p_etat=="ok") {
-                    $return .= '<td class="histo-big"> -' . $sql_p_nb_jours . '</td>';
+                    $childTable .= '<td class="histo-big"> -' . $sql_p_nb_jours . '</td>';
                 } elseif($sql_p_etat=="ajout") {
-                    $return .= '<td class="histo-big"> +' . $sql_p_nb_jours . '</td>';
+                    $childTable .= '<td class="histo-big"> +' . $sql_p_nb_jours . '</td>';
                 } else {
-                    $return .= '<td>' . $sql_p_nb_jours . '</td>';
+                    $childTable .= '<td>' . $sql_p_nb_jours . '</td>';
                 }
-                $return .= '<td>' . $sql_p_date_deb . '_' . $demi_j_deb . '</td>';
-                $return .= '<td>' . $sql_p_date_fin . '_' . $demi_j_fin . '</td>';
-                $return .= '<td>' . $sql_p_commentaire . '</td>';
+                $childTable .= '<td>' . $sql_p_date_deb . '_' . $demi_j_deb . '</td>';
+                $childTable .= '<td>' . $sql_p_date_fin . '_' . $demi_j_fin . '</td>';
+                $childTable .= '<td>' . $sql_p_commentaire . '</td>';
                 if($_SESSION['config']['affiche_date_traitement']) {
                     if($sql_p_date_demande == NULL) {
-                        $return .= '<td class="histo-left">' . _('divers_traitement') . ' : ' . $sql_p_date_traitement . '</td>';
+                        $childTable .= '<td class="histo-left">' . _('divers_traitement') . ' : ' . $sql_p_date_traitement . '</td>';
                     }
                     else {
-                        $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : ' . $sql_p_date_traitement . '</td>';
+                        $childTable .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : ' . $sql_p_date_traitement . '</td>';
                     }
                 }
-                $return .= '</tr>';
+                $childTable .= '</tr>';
             }
-            $return .= '</tbody></table>';
+            $childTable .= '</tbody>';
+            $table->addChild($childTable);
+            ob_start();
+            $table->render();
+            $return .= ob_get_clean();
             $return .= '<br>';
 
             /******************/
             /* bouton editer  */
             /******************/
-            $return .= '<table cellpadding="2" width="400">';
-            $return .= '<tr align="center">';
-            $return .= '<td width="200">';
-            $return .= '<a href="edition_papier.php?session=' . $session . '&user_login=' . $login . '&edit_id=0">';
-            $return .= '<img src="' . IMG_PATH . 'fileprint_2.png" width="22" height="22" border="0" title="' . _('editions_lance_edition') . '" alt="' . _('editions_lance_edition') . '">';
-            $return .= '<b>' . _('editions_lance_edition') . '</b>';
-            $return .= '</a>';
-            $return .= '</td>';
-            $return .= '<td width="200">';
-            $return .= '<a href="edition_pdf.php?session=' . $session . '&user_login=' . $login . '&edit_id=0">';
-            $return .= '<img src="' . IMG_PATH . 'pdf_22x22_2.png" width="22" height="22" border="0" title="' . _('editions_pdf_edition') . '" alt="' . _('editions_pdf_edition') . '">';
-            $return .= '<b>' . _('editions_pdf_edition') . '</b>';
-            $return .= '</a>';
-            $return .= '</td>';
-            $return .= '</tr>';
-            $return .= '</table>';
-
+            $table = new \App\Libraries\Structure\Table();
+            $table->addAttribute('width', 400);
+            $childTable = '<tr align="center">';
+            $childTable .= '<td width="200">';
+            $childTable .= '<a href="edition_papier.php?session=' . $session . '&user_login=' . $login . '&edit_id=0">';
+            $childTable .= '<img src="' . IMG_PATH . 'fileprint_2.png" width="22" height="22" border="0" title="' . _('editions_lance_edition') . '" alt="' . _('editions_lance_edition') . '">';
+            $childTable .= '<b>' . _('editions_lance_edition') . '</b>';
+            $childTable .= '</a>';
+            $childTable .= '</td>';
+            $childTable .= '<td width="200">';
+            $childTable .= '<a href="edition_pdf.php?session=' . $session . '&user_login=' . $login . '&edit_id=0">';
+            $childTable .= '<img src="' . IMG_PATH . 'pdf_22x22_2.png" width="22" height="22" border="0" title="' . _('editions_pdf_edition') . '" alt="' . _('editions_pdf_edition') . '">';
+            $childTable .= '<b>' . _('editions_pdf_edition') . '</b>';
+            $childTable .= '</a>';
+            $childTable .= '</td>';
+            $childTable .= '</tr>';
+            $table->addChild($childTable);
+            ob_start();
+            $table->render();
+            $return .= ob_get_clean();
         }
         $return .= '<br>';
         $return .= '</CENTER>';
@@ -283,23 +304,26 @@ class Fonctions
     public static function affiche_tableau_bilan_conges_user_edition($tab_info_user, $tab_info_edition, $tab_type_cong, $tab_type_conges_exceptionnels)
     {
         $return = '';
-
-        $return .= '<table cellpadding="2" width="250" class="tablo">';
-        //    echo "<tr align=\"center\"><td class=\"titre\" colspan=\"3\"> quotité &nbsp; : &nbsp; $quotite % </td></tr>\n" ;
-        $return .= '<thead><tr>';
-        $return .= '<th></th>';
-        $return .= '<th>' . _('editions_jours_an') . '</th>';
-        $return .= '<th>' . _('divers_solde_maj') . '</th>';
-        $return .= '</tr></thead><tbody>';
+        $table = new \App\Libraries\Structure\Table();
+        $table->addAttribute('width', 250);
+        $childTable = '<thead><tr>';
+        $childTable .= '<th></th>';
+        $childTable .= '<th>' . _('editions_jours_an') . '</th>';
+        $childTable .= '<th>' . _('divers_solde_maj') . '</th>';
+        $childTable .= '</tr></thead><tbody>';
 
         foreach($tab_type_cong as $id_abs => $libelle) {
-            $return .= '<tr><td>' . $libelle . '</td><td>' . $tab_info_user['conges'][$libelle]['nb_an']. '</td><td align="center" bgcolor="#FF9191"><b>' . $tab_info_edition['conges'][$id_abs] . '</b></td>';
+            $childTable .= '<tr><td>' . $libelle . '</td><td>' . $tab_info_user['conges'][$libelle]['nb_an']. '</td><td align="center" bgcolor="#FF9191"><b>' . $tab_info_edition['conges'][$id_abs] . '</b></td>';
         }
         foreach($tab_type_conges_exceptionnels as $id_abs => $libelle) {
-            $return .= '<tr><td>' . $libelle . '</td><td>' . $tab_info_user['conges'][$libelle]['nb_an'] . '</td><td align="center" bgcolor="#FF9191"><b>'. $tab_info_edition['conges'][$id_abs] . '</b></td>';
+            $childTable .= '<tr><td>' . $libelle . '</td><td>' . $tab_info_user['conges'][$libelle]['nb_an'] . '</td><td align="center" bgcolor="#FF9191"><b>'. $tab_info_edition['conges'][$id_abs] . '</b></td>';
         }
-        $return .= '</tr>';
-        $return .= '</tbody></table>';
+        $childTable .= '</tr>';
+        $childTable .= '</tbody>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
 
         return $return;
     }
@@ -329,11 +353,14 @@ class Fonctions
         /**************************************/
         /* affichage du texte en haut de page */
         /**************************************/
-        $return .= '<table cellpadding="0" cellspacing="0" border="0" width="770">';
-        $return .= '<tr align="center">';
-        $return .= '<td>' . $_SESSION['config']['texte_haut_edition_papier'] . '<br><br></td>';
-        $return .= '</tr>';
-        $return .= '</table>';
+        $table = new \App\Libraries\Structure\Table();
+        $childTable = '<tr align="center">';
+        $childTable .= '<td>' . $_SESSION['config']['texte_haut_edition_papier'] . '<br><br></td>';
+        $childTable .= '</tr>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
 
         /**************************************/
         /* affichage du TITRE                 */
@@ -353,22 +380,17 @@ class Fonctions
         $return .= '<h3>' . _('divers_quotite') . '&nbsp; : &nbsp;' . $quotite . ' %</h3>';
         $return .= '<br><br><br>';
 
-
-        if($_SESSION['config']['affiche_date_traitement']) {
-            $return .= '<table cellpadding="0" cellspacing="0" border="1" width="870">';
-        } else {
-            $return .= '<table cellpadding="0" cellspacing="0" border="1" width="770">';
-        }
-        $return .= '<tr align="center">';
-        $return .= '<td><h3>' . _('editions_historique') . ' :</h3></td>';
-        $return .= '</tr>';
+        $table = new \App\Libraries\Structure\Table();
+        $childTable = '<tr align="center">';
+        $childTable .= '<td><h3>' . _('editions_historique') . ' :</h3></td>';
+        $childTable .= '</tr>';
 
         /*********************************************/
         /* Tableau Historique des Conges et demandes */
         /*********************************************/
-        $return .= '<!-- Tableau Historique des Conges et demandes -->';
-        $return .= '<tr align="center">';
-        $return .= '<td>';
+        $childTable .= '<!-- Tableau Historique des Conges et demandes -->';
+        $childTable .= '<tr align="center">';
+        $childTable .= '<td>';
 
         // Récupération des informations
         // on ne recup QUE les periodes de l'edition choisie
@@ -380,53 +402,52 @@ class Fonctions
 
         $count2=$ReqLog2->num_rows;
         if($count2==0) {
-            $return .= '<b>' . _('editions_aucun_conges') . '</b><br>';
+            $childTable .= '<b>' . _('editions_aucun_conges') . '</b><br>';
         } else {
             // AFFICHAGE TABLEAU
-            if($_SESSION['config']['affiche_date_traitement']) {
-                $return .= '<table cellpadding="2" class="tablo-edit" width="850">';
-            } else {
-                $return .= '<table cellpadding="2" class="tablo-edit" width="750">';
-            }
+            $innerTable = new \App\Libraries\Structure\Table();
+            $innerTable->addClasses([
+                'tablo-edit',
+            ]);
 
             /*************************************/
             /* affichage anciens soldes          */
             /*************************************/
-            $return .= '<!-- affichage anciens soldes -->';
-            $return .= '<tr>';
-            $return .= '<td colspan="5">';
+            $innerChildTable = '<!-- affichage anciens soldes -->';
+            $innerChildTable .= '<tr>';
+            $innerChildTable .= '<td colspan="5">';
             $edition_precedente_id = \edition\Fonctions::get_id_edition_precedente_user($login, $edit_id);
             if($edition_precedente_id==0) {
-                $return .= '<b>' . _('editions_soldes_precedents_inconnus') . '!... ';
+                $innerChildTable .= '<b>' . _('editions_soldes_precedents_inconnus') . '!... ';
             } else {
                 $tab_edition_precedente = \edition\Fonctions::recup_info_edition($edition_precedente_id);
                 foreach($tab_type_cong as $id_abs => $libelle) {
-                    $return .= _('editions_solde_precedent') . ' <b>' . $libelle . ' : ' . $tab_edition_precedente['conges'][$id_abs] . '</b><br>';
+                    $innerChildTable .= _('editions_solde_precedent') . ' <b>' . $libelle . ' : ' . $tab_edition_precedente['conges'][$id_abs] . '</b><br>';
                 }
                 foreach($tab_type_conges_exceptionnels as $id_abs => $libelle) {
-                    $return .= _('editions_solde_precedent') . ' <b>' . $libelle . ' : ' . $tab_edition_precedente['conges'][$id_abs] . '</b><br>';
+                    $innerChildTable .= _('editions_solde_precedent') . ' <b>' . $libelle . ' : ' . $tab_edition_precedente['conges'][$id_abs] . '</b><br>';
                 }
             }
 
-            $return .= '<td>';
-            $return .= '</tr>';
+            $innerChildTable .= '<td>';
+            $innerChildTable .= '</tr>';
 
 
             /*************************************/
             /* affichage lignes de l'edition     */
             /*************************************/
-            $return .= '<!-- affichage lignes de l\'edition -->';
-            $return .= '<tr>';
-            $return .= '<td class="titre-edit">' . _('divers_type_maj_1') . '</td>';
-            $return .= '<td class="titre-edit">' . _('divers_etat_maj_1') . '</td>';
-            $return .= '<td class="titre-edit">' . _('divers_nb_jours_maj_1') . '</td>';
-            $return .= '<td class="titre-edit">' . _('divers_debut_maj_1') . '</td>';
-            $return .= '<td class="titre-edit">' . _('divers_fin_maj_1') . '</td>';
-            $return .= '<td class="titre-edit">' . _('divers_comment_maj_1') . '</td>';
+            $innerChildTable .= '<!-- affichage lignes de l\'edition -->';
+            $innerChildTable .= '<tr>';
+            $innerChildTable .= '<td class="titre-edit">' . _('divers_type_maj_1') . '</td>';
+            $innerChildTable .= '<td class="titre-edit">' . _('divers_etat_maj_1') . '</td>';
+            $innerChildTable .= '<td class="titre-edit">' . _('divers_nb_jours_maj_1') . '</td>';
+            $innerChildTable .= '<td class="titre-edit">' . _('divers_debut_maj_1') . '</td>';
+            $innerChildTable .= '<td class="titre-edit">' . _('divers_fin_maj_1') . '</td>';
+            $innerChildTable .= '<td class="titre-edit">' . _('divers_comment_maj_1') . '</td>';
             if($_SESSION['config']['affiche_date_traitement']) {
-                $return .= '<td class="titre-edit">' . _('divers_date_traitement') . '</td>';
+                $innerChildTable .= '<td class="titre-edit">' . _('divers_date_traitement') . '</td>';
             }
-            $return .= '</tr>';
+            $innerChildTable .= '</tr>';
 
             while ($resultat2 = $ReqLog2->fetch_array()) {
                 $sql_p_date_deb = eng_date_to_fr($resultat2["p_date_deb"]);
@@ -450,85 +471,97 @@ class Fonctions
                 $sql_p_date_demande = $resultat2["p_date_demande"];
                 $sql_p_date_traitement = $resultat2["p_date_traitement"];
 
-                $return .= '<tr>';
-                $return .= '<td class="histo-edit">' . $tab_type_all_cong[$sql_p_type]['libelle'] . '</td>';
-                $return .= '<td class="histo-edit">';
+                $innerChildTable .= '<tr>';
+                $innerChildTable .= '<td class="histo-edit">' . $tab_type_all_cong[$sql_p_type]['libelle'] . '</td>';
+                $innerChildTable .= '<td class="histo-edit">';
                 if($sql_p_etat=="refus") {
-                    $return .= _('divers_refuse') ;
+                    $innerChildTable .= _('divers_refuse') ;
                 } elseif($sql_p_etat=="annul") {
-                    $return .= _('divers_annule') ;
+                    $innerChildTable .= _('divers_annule') ;
                 } else {
-                    $return .= '"' . $sql_p_etat . '"';
+                    $innerChildTable .= '"' . $sql_p_etat . '"';
                 }
-                $return .= '</td>';
+                $innerChildTable .= '</td>';
                 if($sql_p_etat=="ok") {
-                    $return .= '<td class="histo-big"> -' . $sql_p_nb_jours . '</td>';
+                    $innerChildTable .= '<td class="histo-big"> -' . $sql_p_nb_jours . '</td>';
                 } elseif($sql_p_etat=="ajout") {
-                    $return .= '<td class="histo-big"> +' . $sql_p_nb_jours . '</td>';
+                    $innerChildTable .= '<td class="histo-big"> +' . $sql_p_nb_jours . '</td>';
                 } else {
-                    $return .= '<td> ' . $sql_p_nb_jours . '</td>';
+                    $innerChildTable .= '<td> ' . $sql_p_nb_jours . '</td>';
                 }
-                $return .= '<td class="histo-edit">' . $sql_p_date_deb . '_' .  $demi_j_deb . '</td>';
-                $return .= '<td class="histo-edit">' . $sql_p_date_fin . '_' .  $demi_j_fin . '</td>';
-                $return .= '<td class="histo-edit">' . $sql_p_commentaire . '</td>';
+                $innerChildTable .= '<td class="histo-edit">' . $sql_p_date_deb . '_' .  $demi_j_deb . '</td>';
+                $innerChildTable .= '<td class="histo-edit">' . $sql_p_date_fin . '_' .  $demi_j_fin . '</td>';
+                $innerChildTable .= '<td class="histo-edit">' . $sql_p_commentaire . '</td>';
 
                 if($_SESSION['config']['affiche_date_traitement']) {
                     if($sql_p_date_demande == NULL) {
-                        $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : ' . $sql_p_date_traitement . '</td>';
+                        $innerChildTable .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : ' . $sql_p_date_traitement . '</td>';
                     } else {
-                        $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : pas traité</td>';
+                        $innerChildTable .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : pas traité</td>';
                     }
                 }
-                $return .= '</tr>';
+                $innerChildTable .= '</tr>';
             }
 
             /*************************************/
             /* affichage nouveaux soldes         */
             /*************************************/
-            $return .= '<!-- affichage nouveaux soldes -->';
-            $return .= '<tr>';
-            $return .= '<td colspan="5">';
+            $innerChildTable .= '<!-- affichage nouveaux soldes -->';
+            $innerChildTable .= '<tr>';
+            $innerChildTable .= '<td colspan="5">';
             foreach($tab_type_cong as $id_abs => $libelle) {
-                $return .= _('editions_nouveau_solde') . ' <b>' . $libelle . ': ' . $tab_info_edition['conges'][$id_abs] . '</b><br>';
+                $innerChildTable .= _('editions_nouveau_solde') . ' <b>' . $libelle . ': ' . $tab_info_edition['conges'][$id_abs] . '</b><br>';
             }
-            $return .= '<td>';
-            $return .= '</tr>';
-            $return .= '</table>';
+            $innerChildTable .= '<td>';
+            $innerChildTable .= '</tr>';
+            $innerTable->addChild($innerChildTable);
+            ob_start();
+            $innerTable->render();
+            $childTable .= ob_get_clean();
         }
-        $return .= '<br><br>';
-        $return .= '</td>';
-        $return .= '</tr>';
-        $return .= '</table>';
+        $childTable .= '<br><br>';
+        $childTable .= '</td>';
+        $childTable .= '</tr>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
 
         /*************************************/
         /* affichage des zones de signature  */
         /*************************************/
         $return .= '<!-- affichage des zones de signature -->';
         $return .= '<br>';
-        $return .= '<table cellpadding="0" cellspacing="0" border="0" width="770">';
-        $return .= '<tr align="center">';
-        $return .= '<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
-        $return .= '<td align="left">';
-        $return .= '<b>' . _('editions_date') . ' : <br>' . _('editions_signature_1') . ' :</b><br><br><br><br><br><br><br><br><br><br>';
-        $return .= '</td>';
-        $return .= '<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
-        $return .= '<td align="left">';
-        $return .= '<b>' . _('editions_date') . ' : <br>' . _('editions_signature_2') . ' :</b><br><i>(' . _('editions_cachet_etab') . ')</i><br><br><br><br><br><br><br><br><br>';
-        $return .= '</td>';
-        $return .= '<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
-        $return .= '</tr>';
-        $return .= '</table>';
+        $table = new \App\Libraries\Structure\Table();
+        $childTable = '<tr align="center">';
+        $childTable .= '<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
+        $childTable .= '<td align="left">';
+        $childTable .= '<b>' . _('editions_date') . ' : <br>' . _('editions_signature_1') . ' :</b><br><br><br><br><br><br><br><br><br><br>';
+        $childTable .= '</td>';
+        $childTable .= '<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
+        $childTable .= '<td align="left">';
+        $childTable .= '<b>' . _('editions_date') . ' : <br>' . _('editions_signature_2') . ' :</b><br><i>(' . _('editions_cachet_etab') . ')</i><br><br><br><br><br><br><br><br><br>';
+        $childTable .= '</td>';
+        $childTable .= '<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
+        $childTable .= '</tr>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
 
 
         /*************************************/
         /* affichage du texte en bas de page */
         /*************************************/
         $return .= '<!-- affichage du texte en bas de page -->';
-        $return .= '<table cellpadding="0" cellspacing="0" border="0" width="770">';
-        $return .= '<tr align="center">';
-        $return .= '<td><br>' . $_SESSION['config']['texte_bas_edition_papier'] . '</td>';
-        $return .= '</tr>';
-        $return .= '</table>';
+        $table = new \App\Libraries\Structure\Table();
+        $childTable = '<tr align="center">';
+        $childTable .= '<td><br>' . $_SESSION['config']['texte_bas_edition_papier'] . '</td>';
+        $childTable .= '</tr>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
 
         return $return;
     }
