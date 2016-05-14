@@ -1742,7 +1742,6 @@ class Fonctions
         ];
         $return .= '<script>generateDatePicker('.json_encode($datePickerOpts).', false);</script>';
 
-        $message   = '';
         $errorsLst = [];
 
         if (!empty($_POST)) {
@@ -1755,21 +1754,28 @@ class Fonctions
                         }
                         $errors .= '<li>' . $key . ' : ' . $value . '</li>';
                     }
-                    $message = '<div class="alert alert-danger">' . _('erreur_recommencer') . '<ul>' . $errors . '</ul></div>';
+                    $return .= '<div class="alert alert-danger">' . _('erreur_recommencer') . '<ul>' . $errors . '</ul></div>';
+                    $return .= \utilisateur\Fonctions::getFormDemandeHeure($type);
                 }
             } else {
-                $message = '<div class="alert alert-info">' . _('demande_transmise') . '</div>';
+                $return .= '<div class="alert alert-info">' . _('demande_transmise') . '</div>';
+                $return .= \utilisateur\Fonctions::getListPeriodeHeure($type);
             }
+        } else {
+            $return .= \utilisateur\Fonctions::getFormDemandeHeure($type);
         }
+        return $return;
+    }
+
+    public static function getFormDemandeHeure($type)
+    {
+        $return ='';
 
         if ($type === \App\Models\HeureRecuperation::TYPE_DEBIT) {
             $return .= '<h1>' . _('user_demande_debit_heure_titre') . '</h1>';
         } else {
             $return .= '<h1>' . _('user_demande_credit_heure_titre') . '</h1>';
         }
-
-        $return .= $message;
-
         $return .= '<form action="" method="post" class="form-group">';
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses([
@@ -1799,7 +1805,6 @@ class Fonctions
 
         return $return;
     }
-
 
     /**
      * Encapsule le comportement du module de modification d'une demande
@@ -1885,11 +1890,11 @@ class Fonctions
                 'table-condensed'
             ]);
 
-                $sql   = 'SELECT * FROM conges_heure_periode WHERE id_heure = ' . \includes\SQL::quote($id) . ' AND statut=' . \App\Models\HeureRecuperation::STATUT_DEMANDE ;
+                $sql = 'SELECT * FROM conges_heure_periode WHERE id_heure = ' . \includes\SQL::quote($id);
                 $query = \includes\SQL::query($sql);
                 if (!$query->num_rows) {
                     $return .= _('form_modif_not_ok');
-                    $return .= '<a class="btn" href="' . $PHP_SELF . '?session=' . $session . '&onglet=demandes_en_cours">' . _('form_cancel') . '</a>';
+                    $return .= '<a class="btn" href="user_index.php?session=' . session_id() . '&onglet=demandes_en_cours">' . _('form_cancel') . '</a>';
                 } else {
                     $debutId      = uniqid();
                     $finId        = uniqid();
@@ -1900,7 +1905,7 @@ class Fonctions
                     $heureFin = date("H:i", $data['fin']);
 
                     $childTable = '<thead><tr><th width="20%">' . _('Jour') . '</th><th>' . _('creneau') . '</th></tr></thead><tbody>';
-                    $childTable .= '<tr><td><input class="form-control date" type="text" value="'.date("d/m/Y").'" name="new_jour"></td>';
+                    $childTable .= '<tr><td><input class="form-control date" type="text" value="'.$jour.'" name="new_jour"></td>';
                     $childTable .= '<td><div class="form-inline col-xs-3"><input class="form-control" style="width:45%" type="text" id="' . $debutId . '"  value="'.$heureDeb.'" name="new_deb_heure">&nbsp;<i class="fa fa-caret-right"></i>&nbsp;<input class="form-control" style="width:45%" type="text" id="' . $finId . '"  value="'.$heureFin.'" name="new_fin_heure"></div></td></tr>';
                     $childTable .= '</tbody>';
                     $childTable .= '<script type="text/javascript">generateTimePicker("' . $debutId . '");generateTimePicker("' . $finId . '");</script>';
@@ -2048,7 +2053,7 @@ class Fonctions
         } else {
             // si la date de fin est antérieur à la date debut
             if (NIL_INT !== strnatcmp($heuredeb, $heurefin)) {
-                $localError[] = _('date_fin_superieure_date_debut') ;
+                $localError[] = _('verif_saisie_erreur_heure_fin_avant_debut') ;
             }
 
             $chevauch = \utilisateur\Fonctions::VerifChevauchHeures($jour, $heuredeb, $heurefin, $localError, $id, $user);

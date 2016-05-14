@@ -1690,3 +1690,12 @@ msgstr "demande non modifié"
 
 msgid "date_fin_superieure_date_debut"
 msgstr "l'heure de fin est antérieur à l'heure de début"
+
+msgid "demande_heure_chevauche_demande"
+msgstr "Cette demande chevauche une autre demande en cours"
+
+msgid "demande_heure_chevauche_autre"
+msgstr "Cette demande chevauche une autre demande déjà validée"
+
+msgid "demande_heure_non_editable"
+msgstr "Cette demande n'est plus accessible"
