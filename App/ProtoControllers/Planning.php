@@ -237,7 +237,7 @@ class Planning
     {
         $sql   = \includes\SQL::singleton();
         $req   = 'INSERT INTO conges_planning (planning_id, name, status)
-                  VALUES ("", "' . htmlspecialchars($sql->quote($planning['name'])) . '", ' . \App\Models\Planning::STATUS_ACTIVE . ')';
+                  VALUES (null, "' . htmlspecialchars($sql->quote($planning['name'])) . '", ' . \App\Models\Planning::STATUS_ACTIVE . ')';
         $query = $sql->query($req);
 
         return $sql->insert_id;
