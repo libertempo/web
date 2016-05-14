@@ -33,11 +33,18 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     switch (ENV) {
         case ENV_DEV:
             error_reporting(-1);
-            ini_set("display_errors", 1);
             \Kint::enabled(true);
             // no break;
         case ENV_TEST:
             \Kint::enabled(true);
+            if (ENV === ENV_TEST) {
+                error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
+            }
+            ini_set("display_errors", 1);
+
+            /**
+             * Logue les variables à déboguer
+             */
             function debug()
             {
                 global $debug;
@@ -51,6 +58,9 @@ if (!defined( 'DEFINE_INCLUDE' )) {
                 global $debug;
                 if (empty($debug)) {
                     return;
+                }
+                if (!is_dir(DEBUG_SYSPATH)) {
+                    mkdir(DEBUG_SYSPATH);
                 }
                 $file = fopen(DEBUG_SYSPATH . 'dbg-' . date('Y-m-d') . '.html', 'wb');
                 if (!is_resource($file)) {
