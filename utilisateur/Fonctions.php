@@ -267,19 +267,26 @@ class Fonctions
         // AFFICHAGE TABLEAU
 
         $return .= '<form NAME="dem_conges" action="' . $PHP_SELF . '" method="POST">' ;
-        $return .= '<table class="table table-responsive">';
-        $return .= '<thead>';
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-hover',
+            'table-responsive',
+            'table-condensed',
+            'table-striped',
+        ]);
+        $childTable = '<thead>';
         // affichage première ligne : titres
-        $return .= '<tr>';
-        $return .= '<td>' . _('divers_debut_maj_1') . '</td>';
-        $return .= '<td>' . _('divers_fin_maj_1') . '</td>';
-        $return .= '<td>' . _('divers_nb_jours_maj_1') . '</td>';
-        $return .= '<td>' . _('divers_comment_maj_1') . '</td>';
-        $return .= '</tr>';
-        $return .= '</thead>';
-        $return .= '<tbody>';
+        $childTable .= '<tr>';
+        $childTable .= '<td>' . _('divers_debut_maj_1') . '</td>';
+        $childTable .= '<td>' . _('divers_fin_maj_1') . '</td>';
+        $childTable .= '<td>' . _('divers_nb_jours_maj_1') . '</td>';
+        $childTable .= '<td>' . _('divers_comment_maj_1') . '</td>';
+        $childTable .= '</tr>';
+        $childTable .= '</thead>';
+        $childTable .= '<tbody>';
         // affichage 2ieme ligne : valeurs actuelles
-        $return .= '<tr>';
+        $childTable .= '<tr>';
         while ($resultat1 = $ReqLog1->fetch_array()) {
             $sql_date_deb=eng_date_to_fr($resultat1["p_date_deb"]);
 
@@ -299,7 +306,7 @@ class Fonctions
             $sql_commentaire=$resultat1["p_commentaire"];
             $sql_etat=$resultat1["p_etat"];
 
-            $return .= '<td>' . $sql_date_deb . '_' . $demi_j_deb . '</td><td>' . $sql_date_fin  . '_' . $demi_j_fin . '</td><td>' . $aff_nb_jours . '</td><td>' . $sql_commentaire . '</td>';
+            $childTable .= '<td>' . $sql_date_deb . '_' . $demi_j_deb . '</td><td>' . $sql_date_fin  . '_' . $demi_j_fin . '</td><td>' . $aff_nb_jours . '</td><td>' . $sql_commentaire . '</td>';
 
             $compte ="";
             if($_SESSION['config']['rempli_auto_champ_nb_jours_pris']) {
@@ -330,15 +337,18 @@ class Fonctions
 
             $text_commentaire="<input class=\"form-control\" type=\"text\" name=\"new_comment\" size=\"15\" maxlength=\"30\" value=\"$sql_commentaire\">" ;
         }
-        $return .= '</tr>';
+        $childTable .= '</tr>';
 
         // affichage 3ieme ligne : saisie des nouvelles valeurs
-        $return .= '<tr>';
-        $return .= '<td>' . $text_debut . '<br>' . $radio_deb_am . '/' . $radio_deb_pm . '</td><td>' . $text_fin . '<br>' . $radio_fin_am . '/' .  $radio_fin_pm . '</td><td>' . $text_nb_jours . '</td><td>' . $text_commentaire . '</td>';
-        $return .= '</tr>';
+        $childTable .= '<tr>';
+        $childTable .= '<td>' . $text_debut . '<br>' . $radio_deb_am . '/' . $radio_deb_pm . '</td><td>' . $text_fin . '<br>' . $radio_fin_am . '/' .  $radio_fin_pm . '</td><td>' . $text_nb_jours . '</td><td>' . $text_commentaire . '</td>';
+        $childTable .= '</tr>';
 
-        $return .= '</tbody>';
-        $return .= '</table>';
+        $childTable .= '</tbody>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
         $return .= '<hr/>';
         $return .= '<input type="hidden" name="p_num_to_update" value="' . $p_num . '">';
         $return .= '<input type="hidden" name="p_etat" value="' . $sql_etat . '">';
@@ -458,18 +468,25 @@ class Fonctions
 
         // AFFICHAGE TABLEAU
         $return .= '<form action="' . $PHP_SELF . '" method="POST">';
-        $return .= '<table class="table table-responsive table-condensed">';
-        $return .= '<thead>';
-        $return .= '<tr>';
-        $return .= '<th>' . _('divers_debut_maj_1') . '</th>';
-        $return .= '<th>' . _('divers_fin_maj_1') . '</th>';
-        $return .= '<th>' . _('divers_nb_jours_maj_1') . '</th>';
-        $return .= '<th>' . _('divers_comment_maj_1') . '</th>';
-        $return .= '<th>' . _('divers_type_maj_1') . '</th>';
-        $return .= '</tr>';
-        $return .= '</thead>';
-        $return .= '<tbody>';
-        $return .= '<tr>';
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-hover',
+            'table-responsive',
+            'table-condensed',
+            'table-striped',
+        ]);
+        $childTable = '<thead>';
+        $childTable .= '<tr>';
+        $childTable .= '<th>' . _('divers_debut_maj_1') . '</th>';
+        $childTable .= '<th>' . _('divers_fin_maj_1') . '</th>';
+        $childTable .= '<th>' . _('divers_nb_jours_maj_1') . '</th>';
+        $childTable .= '<th>' . _('divers_comment_maj_1') . '</th>';
+        $childTable .= '<th>' . _('divers_type_maj_1') . '</th>';
+        $childTable .= '</tr>';
+        $childTable .= '</thead>';
+        $childTable .= '<tbody>';
+        $childTable .= '<tr>';
         while ($resultat1 = $ReqLog1->fetch_array()) {
             $sql_date_deb=eng_date_to_fr($resultat1["p_date_deb"]);
             $sql_demi_jour_deb = $resultat1["p_demi_jour_deb"];
@@ -488,15 +505,18 @@ class Fonctions
             $sql_type= \utilisateur\Fonctions::get_libelle_abs($resultat1["p_type"]);
             $sql_comment=$resultat1["p_commentaire"];
 
-            $return .= '<td>' . $sql_date_deb . '_' . $demi_j_deb . '</td>';
-            $return .= '<td>' . $sql_date_fin . '_' . $demi_j_fin . '</td>';
-            $return .= '<td>' . $sql_nb_jours . '</td>';
-            $return .= '<td>' . $sql_comment . '</td>';
-            $return .= '<td>' . $sql_type . '</td>';
+            $childTable .= '<td>' . $sql_date_deb . '_' . $demi_j_deb . '</td>';
+            $childTable .= '<td>' . $sql_date_fin . '_' . $demi_j_fin . '</td>';
+            $childTable .= '<td>' . $sql_nb_jours . '</td>';
+            $childTable .= '<td>' . $sql_comment . '</td>';
+            $childTable .= '<td>' . $sql_type . '</td>';
         }
-        $return .= '</tr>';
-        $return .= '</tbody>';
-        $return .= '</table>';
+        $childTable .= '</tr>';
+        $childTable .= '</tbody>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
         $return .= '<hr/>';
         $return .= '<input type="hidden" name="p_num_to_delete" value="' . $p_num . '">';
         $return .= '<input type="hidden" name="session" value="' . $session . '">';
@@ -598,29 +618,26 @@ class Fonctions
 
             $return .= '<h1>' . _('user_change_password') . '</h1>';
             $return .= '<form action="'.$PHP_SELF.'?session='.$session.'&onglet='.$onglet.'" method="POST">';
-            $return .= '<table cellpadding="2" class="tablo" width="500">';
-            $return .= '<thead>';
-            /*
-               echo '<tr>
-               <td class="titre">'. _('user_passwd_saisie_1') .'</td>
-               <td class="titre">'. _('user_passwd_saisie_2') .'</td>
-               </tr>';
-             */
-            $return .= '<tr>
+            $table = new \App\Libraries\Structure\Table();
+            $childTable = '<thead>';
+            $childTable .= '<tr>
                 <th class="titre">'. _('user_passwd_saisie_1') .'</th>
                 <th class="titre">'. _('user_passwd_saisie_2') .'</th>
                 </tr>';
-            $return .= '</thead>';
-            $return .= '<tbody>';
+            $childTable .= '</thead>';
+            $childTable .= '<tbody>';
 
             $text_passwd1    = '<input class="form-control" type="password" name="new_passwd1" size="10" maxlength="20" value="">';
             $text_passwd2    = '<input class="form-control" type="password" name="new_passwd2" size="10" maxlength="20" value="">';
-            $return .= '<tr>';
-            $return .= '<td>'.($text_passwd1).'</td><td>'.($text_passwd2).'</td>'."\n";
-            $return .= '</tr>';
+            $childTable .= '<tr>';
+            $childTable .= '<td>'.($text_passwd1).'</td><td>'.($text_passwd2).'</td>'."\n";
+            $childTable .= '</tr>';
 
-            $return .= '</tbody>';
-            $return .= '</table>';
+            $childTable .= '</tbody>';
+            $table->addChild($childTable);
+            ob_start();
+            $table->render();
+            $return .= ob_get_clean();
 
             $return .= '<hr/>';
             $return .= '<input type="hidden" name="change_passwd" value=1>';
@@ -676,23 +693,30 @@ class Fonctions
             $return .= '<b>'. _('user_demandes_aucune_demande') .'</b>';
         } else {
             // AFFICHAGE TABLEAU
-            $return .= '<table class="table table-responsive table-condensed table-stripped table-hover">';
-            $return .= '<thead>';
-            $return .= '<tr>';
-            $return .= '<th>';
-            $return .= _('divers_debut_maj_1')  ;
-            $return .= '</th>';
-            $return .= '<th>'. _('divers_fin_maj_1') .'</th>';
-            $return .= '<th>'. _('divers_type_maj_1') .'</th>';
-            $return .= '<th>'. _('divers_nb_jours_pris_maj_1') .'</th>';
-            $return .= '<th>'. _('divers_comment_maj_1') .'</th>';
-            $return .= '<th></th><th></th>' ;
+            $table = new \App\Libraries\Structure\Table();
+            $table->addClasses([
+                'table',
+                'table-hover',
+                'table-responsive',
+                'table-condensed',
+                'table-striped',
+            ]);
+            $childTable = '<thead>';
+            $childTable .= '<tr>';
+            $childTable .= '<th>';
+            $childTable .= _('divers_debut_maj_1')  ;
+            $childTable .= '</th>';
+            $childTable .= '<th>'. _('divers_fin_maj_1') .'</th>';
+            $childTable .= '<th>'. _('divers_type_maj_1') .'</th>';
+            $childTable .= '<th>'. _('divers_nb_jours_pris_maj_1') .'</th>';
+            $childTable .= '<th>'. _('divers_comment_maj_1') .'</th>';
+            $childTable .= '<th></th><th></th>' ;
             if( $_SESSION['config']['affiche_date_traitement'] ) {
-                $return .= '<th >'. _('divers_date_traitement') .'</th>';
+                $childTable .= '<th >'. _('divers_date_traitement') .'</th>';
             }
-            $return .= '</tr>';
-            $return .= '</thead>';
-            $return .= '<tbody>';
+            $childTable .= '</tr>';
+            $childTable .= '</thead>';
+            $childTable .= '<tbody>';
 
             $i = true;
             while ($resultat3 = $ReqLog3->fetch_array()) {
@@ -728,28 +752,31 @@ class Fonctions
                         $user_modif_demande="<a href=\"user_index.php?session=$session&p_num=$sql_p_num&onglet=modif_demande\">". _('form_modif') ."</a>" ;
                 }
                 $user_suppr_demande="<a href=\"user_index.php?session=$session&p_num=$sql_p_num&onglet=suppr_demande\">". _('form_supprim') ."</a>" ;
-                $return .= '<tr class="'.($i?'i':'p').'">';
-                $return .= '<td class="histo">'.schars($sql_p_date_deb).' _ '.schars($demi_j_deb).'</td>';
-                $return .= '<td class="histo">'.schars($sql_p_date_fin).' _ '.schars($demi_j_fin).'</td>' ;
-                $return .= '<td class="histo">'.schars($sql_p_type).'</td>' ;
-                $return .= '<td class="histo">'.affiche_decimal($sql_p_nb_jours).'</td>' ;
-                $return .= '<td class="histo">'.schars($sql_p_commentaire).'</td>' ;
+                $childTable .= '<tr class="'.($i?'i':'p').'">';
+                $childTable .= '<td class="histo">'.schars($sql_p_date_deb).' _ '.schars($demi_j_deb).'</td>';
+                $childTable .= '<td class="histo">'.schars($sql_p_date_fin).' _ '.schars($demi_j_fin).'</td>' ;
+                $childTable .= '<td class="histo">'.schars($sql_p_type).'</td>' ;
+                $childTable .= '<td class="histo">'.affiche_decimal($sql_p_nb_jours).'</td>' ;
+                $childTable .= '<td class="histo">'.schars($sql_p_commentaire).'</td>' ;
                 if( !$_SESSION['config']['interdit_modif_demande'] ) {
-                    $return .= '<td class="histo">'.($user_modif_demande).'</td>' ;
+                    $childTable .= '<td class="histo">'.($user_modif_demande).'</td>' ;
                 }
-                $return .= '<td class="histo">'.($user_suppr_demande).'</td>'."\n" ;
+                $childTable .= '<td class="histo">'.($user_suppr_demande).'</td>'."\n" ;
 
                 if( $_SESSION['config']['affiche_date_traitement'] ) {
                     if($sql_p_date_demande == NULL)
-                        $return .= '<td class="histo-left">'. _('divers_demande') .' : '.$sql_p_date_demande.'<br>'. _('divers_traitement') .' : '.$sql_p_date_traitement.'</td>';
+                        $childTable .= '<td class="histo-left">'. _('divers_demande') .' : '.$sql_p_date_demande.'<br>'. _('divers_traitement') .' : '.$sql_p_date_traitement.'</td>';
                     else
-                        $return .= '<td class="histo-left">'. _('divers_demande') .' : '.$sql_p_date_demande.'<br>'. _('divers_traitement') .' : pas traité</td>';
+                        $childTable .= '<td class="histo-left">'. _('divers_demande') .' : '.$sql_p_date_demande.'<br>'. _('divers_traitement') .' : pas traité</td>';
                 }
-                $return .= '</tr>';
+                $childTable .= '</tr>';
                 $i = !$i;
             }
-            $return .= '</tbody>';
-            $return .= '</table>' ;
+            $childTable .= '</tbody>';
+            $table->addChild($childTable);
+            ob_start();
+            $table->render();
+            $return .= ob_get_clean();
         }
 
         return $return;
@@ -777,8 +804,12 @@ class Fonctions
         if( $last_jour_mois_rang == 0 )
             $last_jour_mois_rang=7 ;    // jour de la semaine en chiffre (1=lun , 7=dim)
 
-        $return .= '<table class="table calendrier_saisie_date">';
-        $return .= '<thead>
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'calendrier_saisie_date',
+        ]);
+        $childTable = '<thead>
             <tr>
             <th colspan="7" class="titre"> '.$mois_name.' '.$year.' </th>
             </tr>
@@ -792,7 +823,7 @@ class Fonctions
             <th class="cal-saisie2">'. _('dimanche_1c') .'</th>
             </tr>
             </thead>';
-        $return .= '<tbody>';
+        $childTable .= '<tbody>';
 
         $start_nb_day_before = $first_jour_mois_rang -1;
         $stop_nb_day_before = 7 - $last_jour_mois_rang ;
@@ -800,28 +831,31 @@ class Fonctions
 
         for ( $i = - $start_nb_day_before; $i <= $nb_jours_mois + $stop_nb_day_before; $i ++) {
             if ( ($i + $start_nb_day_before ) % 7 == 0)
-                $return .= '<tr>';
+                $childTable .= '<tr>';
 
 
             $j_timestamp=mktime (0,0,0,$mois, $i +1 ,$year);
             $td_second_class = get_td_class_of_the_day_in_the_week($j_timestamp);
 
             if ($i < 0 || $i > $nb_jours_mois || $td_second_class == 'weekend') {
-                $return .= '<td class="'.$td_second_class.'">-</td>';
+                $childTable .= '<td class="'.$td_second_class.'">-</td>';
             }
             else {
                 $val_matin='';
                 $val_aprem='';
                 recup_infos_artt_du_jour($user_login, $j_timestamp, $val_matin, $val_aprem);
-                $return .= \utilisateur\Fonctions::affiche_cellule_calendrier_echange_presence_saisie_semaine($val_matin, $val_aprem, $year, $mois, $i+1);
+                $childTable .= \utilisateur\Fonctions::affiche_cellule_calendrier_echange_presence_saisie_semaine($val_matin, $val_aprem, $year, $mois, $i+1);
             }
 
             if ( ($i + $start_nb_day_before ) % 7 == 6)
-                $return .= '<tr>';
+                $childTable .= '<tr>';
         }
 
-        $return .= '</tbody>';
-        $return .= '</table>';
+        $childTable .= '</tbody>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
 
         return $return;
     }
@@ -848,9 +882,13 @@ class Fonctions
         if( $last_jour_mois_rang == 0 )
             $last_jour_mois_rang=7 ;    // jour de la semaine en chiffre (1=lun , 7=dim)
 
-        $return .= '<table class="table calendrier_saisie_date">';
-        $return .= '<thead><tr><th colspan="7" class="titre"> '.$mois_name.' '.$year.' </th></tr><tr><th class="cal-saisie2">'. _('lundi_1c') .'</th><th class="cal-saisie2">'. _('mardi_1c') .'</th><th class="cal-saisie2">'. _('mercredi_1c') .'</th><th class="cal-saisie2">'. _('jeudi_1c') .'</th><th class="cal-saisie2">'. _('vendredi_1c') .'</th><th class="cal-saisie2">'. _('samedi_1c') .'</th><th class="cal-saisie2">'. _('dimanche_1c') .'</th></tr></thead>';
-        $return .= '<tbody>';
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'calendrier_saisie_date',
+        ]);
+        $childTable = '<thead><tr><th colspan="7" class="titre"> '.$mois_name.' '.$year.' </th></tr><tr><th class="cal-saisie2">'. _('lundi_1c') .'</th><th class="cal-saisie2">'. _('mardi_1c') .'</th><th class="cal-saisie2">'. _('mercredi_1c') .'</th><th class="cal-saisie2">'. _('jeudi_1c') .'</th><th class="cal-saisie2">'. _('vendredi_1c') .'</th><th class="cal-saisie2">'. _('samedi_1c') .'</th><th class="cal-saisie2">'. _('dimanche_1c') .'</th></tr></thead>';
+        $childTable .= '<tbody>';
 
         $start_nb_day_before = $first_jour_mois_rang -1;
         $stop_nb_day_before = 7 - $last_jour_mois_rang ;
@@ -858,27 +896,30 @@ class Fonctions
 
         for ( $i = - $start_nb_day_before; $i <= $nb_jours_mois + $stop_nb_day_before; $i ++) {
             if ( ($i + $start_nb_day_before ) % 7 == 0)
-                $return .= '<tr>';
+                $childTable .= '<tr>';
 
             $j_timestamp=mktime (0,0,0,$mois, $i +1 ,$year);
             $td_second_class = get_td_class_of_the_day_in_the_week($j_timestamp);
 
             if ($i < 0 || $i > $nb_jours_mois || $td_second_class == 'weekend') {
-                $return .= '<td class="'.$td_second_class.'">-</td>';
+                $childTable .= '<td class="'.$td_second_class.'">-</td>';
             }
             else {
                 $val_matin='';
                 $val_aprem='';
                 recup_infos_artt_du_jour($user_login, $j_timestamp, $val_matin, $val_aprem);
-                $return .= \utilisateur\Fonctions::affiche_cellule_calendrier_echange_absence_saisie_semaine($val_matin, $val_aprem, $year, $mois, $i+1);
+                $childTable .= \utilisateur\Fonctions::affiche_cellule_calendrier_echange_absence_saisie_semaine($val_matin, $val_aprem, $year, $mois, $i+1);
             }
 
             if ( ($i + $start_nb_day_before ) % 7 == 6)
-                $return .= '<tr>';
+                $childTable .= '<tr>';
         }
 
-        $return .= '</tbody>';
-        $return .= '</table>';
+        $childTable .= '</tbody>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
 
         return $return;
     }
@@ -1210,13 +1251,24 @@ class Fonctions
 
         $return .= '<form action="'.$PHP_SELF.'?session='.$session.'&&onglet='.$onglet.'" method="POST">' ;
 
-        $return .= '<table class="table table condensed">';
-        $return .= '<tr align="center">';
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-responsive',
+            'table-condensed',
+        ]);
+        $childTable = '<tr align="center">';
 
         // cellule 1 : calendrier de saisie du jour d'absence
-        $return .= '<td class="cell-top">';
-        $return .= '<table class="table table-bordered table-calendar">';
-        $return .= '<tr>';
+        $childTable .= '<td class="cell-top">';
+        $innerTableCell1 = new \App\Libraries\Structure\Table();
+        $innerTableCell1->addClasses([
+            'table',
+            'table-responsive',
+            'table-bordered',
+            'table-calendar',
+        ]);
+        $childTableCell1 = '<tr>';
         init_var_navigation_mois_year($mois_calendrier_saisie_debut, $year_calendrier_saisie_debut,
                 $mois_calendrier_saisie_debut_prec, $year_calendrier_saisie_debut_prec,
                 $mois_calendrier_saisie_debut_suiv, $year_calendrier_saisie_debut_suiv,
@@ -1226,75 +1278,90 @@ class Fonctions
 
         // affichage des boutons de défilement
         // recul du mois saisie debut
-        $return .= '<td align="center">';
-        $return .= '<a href="' . $PHP_SELF . '?session=' . $session . '&year_calendrier_saisie_debut=' . $year_calendrier_saisie_debut_prec . '&mois_calendrier_saisie_debut=' . $mois_calendrier_saisie_debut_prec . '&year_calendrier_saisie_fin=' . $year_calendrier_saisie_fin . '&mois_calendrier_saisie_fin=' . $mois_calendrier_saisie_fin . '&user_login=' . $user_login . '&onglet=' .$onglet . '">';
-        $return .= '<i class="fa fa-chevron-circle-left"></i>';
-        $return .= '</a>';
-        $return .= '</td>';
+        $childTableCell1 .= '<td align="center">';
+        $childTableCell1 .= '<a href="' . $PHP_SELF . '?session=' . $session . '&year_calendrier_saisie_debut=' . $year_calendrier_saisie_debut_prec . '&mois_calendrier_saisie_debut=' . $mois_calendrier_saisie_debut_prec . '&year_calendrier_saisie_fin=' . $year_calendrier_saisie_fin . '&mois_calendrier_saisie_fin=' . $mois_calendrier_saisie_fin . '&user_login=' . $user_login . '&onglet=' .$onglet . '">';
+        $childTableCell1 .= '<i class="fa fa-chevron-circle-left"></i>';
+        $childTableCell1 .= '</a>';
+        $childTableCell1 .= '</td>';
 
         // titre du calendrier de saisie du jour d'absence
-        $return .= '<td align="center">'. _('saisie_echange_titre_calendrier_1') . '</td>';
+        $childTableCell1 .= '<td align="center">'. _('saisie_echange_titre_calendrier_1') . '</td>';
 
         // affichage des boutons de défilement
         // avance du mois saisie debut
-        $return .= '<td align="center">';
-        $return .= '<a href="' . $PHP_SELF . '?session=' . $session . '&year_calendrier_saisie_debut=' . $year_calendrier_saisie_debut_suiv . '&mois_calendrier_saisie_debut=' . $mois_calendrier_saisie_debut_suiv . '&year_calendrier_saisie_fin=' . $year_calendrier_saisie_fin . '&mois_calendrier_saisie_fin=' . $mois_calendrier_saisie_fin . '&user_login=' . $user_login . '&onglet=' . $onglet . '">';
-        $return .= '<i class="fa fa-chevron-circle-right"></i>';
-        $return .= '</a>';
-        $return .= '</td>';
-        $return .= '</tr>';
-        $return .= '<tr>';
-        $return .= '<td colspan="3">';
+        $childTableCell1 .= '<td align="center">';
+        $childTableCell1 .= '<a href="' . $PHP_SELF . '?session=' . $session . '&year_calendrier_saisie_debut=' . $year_calendrier_saisie_debut_suiv . '&mois_calendrier_saisie_debut=' . $mois_calendrier_saisie_debut_suiv . '&year_calendrier_saisie_fin=' . $year_calendrier_saisie_fin . '&mois_calendrier_saisie_fin=' . $mois_calendrier_saisie_fin . '&user_login=' . $user_login . '&onglet=' . $onglet . '">';
+        $childTableCell1 .= '<i class="fa fa-chevron-circle-right"></i>';
+        $childTableCell1 .= '</a>';
+        $childTableCell1 .= '</td>';
+        $childTableCell1 .= '</tr>';
+        $childTableCell1 .= '<tr>';
+        $childTableCell1 .= '<td colspan="3">';
         //*** calendrier saisie date debut ***/
-        $return .= \utilisateur\Fonctions::affiche_calendrier_saisie_jour_absence($user_login, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut);
-        $return .= '</td>';
-        $return .= '</tr>';
-        $return .= '</table>';
-        $return .= '</td>';
+        $childTableCell1 .= \utilisateur\Fonctions::affiche_calendrier_saisie_jour_absence($user_login, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut);
+        $childTableCell1 .= '</td>';
+        $childTableCell1 .= '</tr>';
+        $innerTableCell1->addChild($childTableCell1);
+        ob_start();
+        $innerTableCell1->render();
+        $childTable .= ob_get_clean();
+        $childTable .= '</td>';
 
         // cellule 2 : boutons radio 1/2 journée ou jour complet
-        $return .= '<td class="day-period">';
-        $return .= '<div><input type="radio" name="moment_absence_ordinaire" value="a"><label>'. _('form_am') .'</label><input type="radio" name="moment_absence_souhaitee" value="a"></div>';
-        $return .= '<input type="radio" name="moment_absence_ordinaire" value="p"><label>'. _('form_pm') .'</label><input type="radio" name="moment_absence_souhaitee" value="p"></div>';
-        $return .= '<div><input type="radio" name="moment_absence_ordinaire" value="j" checked><label>'. _('form_day') .'</label><input type="radio" name="moment_absence_souhaitee" value="j" checked></div>';
-        $return .= '</td>';
+        $childTable .= '<td class="day-period">';
+        $childTable .= '<div><input type="radio" name="moment_absence_ordinaire" value="a"><label>'. _('form_am') .'</label><input type="radio" name="moment_absence_souhaitee" value="a"></div>';
+        $childTable .= '<input type="radio" name="moment_absence_ordinaire" value="p"><label>'. _('form_pm') .'</label><input type="radio" name="moment_absence_souhaitee" value="p"></div>';
+        $childTable .= '<div><input type="radio" name="moment_absence_ordinaire" value="j" checked><label>'. _('form_day') .'</label><input type="radio" name="moment_absence_souhaitee" value="j" checked></div>';
+        $childTable .= '</td>';
 
         // cellule 3 : calendrier de saisie du jour d'absence
-        $return .= '<td class="cell-top">';
-        $return .= '<table class="table table-bordered table-calendar">';
-        $return .= '<tr>';
+        $childTable .= '<td class="cell-top">';
+        $innerTableCell3 = new \App\Libraries\Structure\Table();
+        $innerTableCell3->addClasses([
+            'table',
+            'table-responsive',
+            'table-bordered',
+            'table-calendar',
+        ]);
+        $childTableCell3 = '<tr>';
         $mois_calendrier_saisie_fin_prec = $mois_calendrier_saisie_fin==1 ? 12 : $mois_calendrier_saisie_fin-1 ;
         $mois_calendrier_saisie_fin_suiv = $mois_calendrier_saisie_fin==12 ? 1 : $mois_calendrier_saisie_fin+1 ;
 
         // affichage des boutons de défilement
         // recul du mois saisie fin
-        $return .= '<td align="center">';
-        $return .= '<a href="'.$PHP_SELF.'?session='.$session.'&year_calendrier_saisie_debut='.$year_calendrier_saisie_debut.'&mois_calendrier_saisie_debut='.$mois_calendrier_saisie_debut.'&year_calendrier_saisie_fin='.$year_calendrier_saisie_fin_prec.'&mois_calendrier_saisie_fin='.$mois_calendrier_saisie_fin_prec.'&user_login='.$user_login.'&onglet='.$onglet.'">';
-        $return .= '<i class="fa fa-chevron-circle-left"></i>';
-        $return .= '</a>';
-        $return .= '</td>';
+        $childTableCell3 .= '<td align="center">';
+        $childTableCell3 .= '<a href="'.$PHP_SELF.'?session='.$session.'&year_calendrier_saisie_debut='.$year_calendrier_saisie_debut.'&mois_calendrier_saisie_debut='.$mois_calendrier_saisie_debut.'&year_calendrier_saisie_fin='.$year_calendrier_saisie_fin_prec.'&mois_calendrier_saisie_fin='.$mois_calendrier_saisie_fin_prec.'&user_login='.$user_login.'&onglet='.$onglet.'">';
+        $childTableCell3 .= '<i class="fa fa-chevron-circle-left"></i>';
+        $childTableCell3 .= '</a>';
+        $childTableCell3 .= '</td>';
 
         // titre du ecalendrier de saisie du jour d'absence
-        $return .= '<td align="center">' . _('saisie_echange_titre_calendrier_2') . '</td>';
+        $childTableCell3 .= '<td align="center">' . _('saisie_echange_titre_calendrier_2') . '</td>';
 
         // affichage des boutons de défilement
         // avance du mois saisie fin
-        $return .= '<td align="center">';
-        $return .= '<a href="'.$PHP_SELF.'?session='.$session.'&year_calendrier_saisie_debut='.$year_calendrier_saisie_debut.'&mois_calendrier_saisie_debut='.$mois_calendrier_saisie_debut.'&year_calendrier_saisie_fin='.$year_calendrier_saisie_fin_suiv.'&mois_calendrier_saisie_fin='.$mois_calendrier_saisie_fin_suiv.'&user_login='.$user_login.'&onglet='.$onglet.'">';
-        $return .= '<i class="fa fa-chevron-circle-right"></i>';
-        $return .= '</a>';
-        $return .= '</td>';
-        $return .= '</tr>';
-        $return .= '<tr>';
-        $return .= '<td colspan="3">';
+        $childTableCell3 .= '<td align="center">';
+        $childTableCell3 .= '<a href="'.$PHP_SELF.'?session='.$session.'&year_calendrier_saisie_debut='.$year_calendrier_saisie_debut.'&mois_calendrier_saisie_debut='.$mois_calendrier_saisie_debut.'&year_calendrier_saisie_fin='.$year_calendrier_saisie_fin_suiv.'&mois_calendrier_saisie_fin='.$mois_calendrier_saisie_fin_suiv.'&user_login='.$user_login.'&onglet='.$onglet.'">';
+        $childTableCell3 .= '<i class="fa fa-chevron-circle-right"></i>';
+        $childTableCell3 .= '</a>';
+        $childTableCell3 .= '</td>';
+        $childTableCell3 .= '</tr>';
+        $childTableCell3 .= '<tr>';
+        $childTableCell3 .= '<td colspan="3">';
         //*** calendrier saisie date fin ***/
-        $return .= \utilisateur\Fonctions::affiche_calendrier_saisie_jour_presence($user_login, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin);
-        $return .= '</td>';
-        $return .= '</tr>';
-        $return .= '</table>';
-        $return .= '</td>';
-        $return .= '</tr>';
-        $return .= '</table>';
+        $childTableCell3 .= \utilisateur\Fonctions::affiche_calendrier_saisie_jour_presence($user_login, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin);
+        $childTableCell3 .= '</td>';
+        $childTableCell3 .= '</tr>';
+        $innerTableCell3->addChild($childTableCell3);
+        ob_start();
+        $innerTableCell3->render();
+        $childTable .= ob_get_clean();
+        $childTable .= '</td>';
+        $childTable .= '</tr>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
         $return .= "<hr/>\n";
         // cellule 1 : champs texte et boutons (valider/cancel)
         $return .= '<label>'. _('divers_comment_maj_1') .'</label><input class="form-control" type="text" name="new_comment" size="25" maxlength="30" value="">';
@@ -1407,25 +1474,32 @@ class Fonctions
             $return .= '<b>' . _('user_conges_aucun_conges') . '</b><br>';
         } else {
             // AFFICHAGE TABLEAU
-            $return .= '<table class="table table-responsive table-condensed table-stripped table-hover">';
-            $return .= '<thead>';
-            $return .= '<tr>';
-            $return .= '<th>';
-            $return .= _('divers_debut_maj_1');
-            $return .= '</th>';
-            $return .= '<th>' . _('divers_fin_maj_1') . '</th>';
-            $return .= '<th>' . _('divers_type_maj_1') . '</th>';
-            $return .= '<th>' . _('divers_nb_jours_maj_1') . '</th>';
-            $return .= '<th>' . _('divers_comment_maj_1') . '</th>';
-            $return .= '<th>' . _('divers_etat_maj_1') . '</th>';
-            $return .= '<th>' . _('divers_motif_refus') . '</th>';
+            $table = new \App\Libraries\Structure\Table();
+            $table->addClasses([
+                'table',
+                'table-hover',
+                'table-responsive',
+                'table-condensed',
+                'table-striped',
+            ]);
+            $childTable = '<thead>';
+            $childTable .= '<tr>';
+            $childTable .= '<th>';
+            $childTable .= _('divers_debut_maj_1');
+            $childTable .= '</th>';
+            $childTable .= '<th>' . _('divers_fin_maj_1') . '</th>';
+            $childTable .= '<th>' . _('divers_type_maj_1') . '</th>';
+            $childTable .= '<th>' . _('divers_nb_jours_maj_1') . '</th>';
+            $childTable .= '<th>' . _('divers_comment_maj_1') . '</th>';
+            $childTable .= '<th>' . _('divers_etat_maj_1') . '</th>';
+            $childTable .= '<th>' . _('divers_motif_refus') . '</th>';
             if($_SESSION['config']['affiche_date_traitement']) {
-                $return .= '<td>' . _('divers_date_traitement') . '</td>';
+                $childTable .= '<td>' . _('divers_date_traitement') . '</td>';
             }
 
-            $return .= '</tr>';
-            $return .= '</thead>';
-            $return .= '<tbody>';
+            $childTable .= '</tr>';
+            $childTable .= '</thead>';
+            $childTable .= '<tbody>';
 
             $i = true;
             while ($resultat2 = $ReqLog2->fetch_array()) {
@@ -1444,50 +1518,53 @@ class Fonctions
                 $sql_p_date_demande = $resultat2["p_date_demande"];
                 $sql_p_date_traitement = $resultat2["p_date_traitement"];
 
-                $return .= '<tr class="' . ($i ? 'i' : 'p') . '">';
-                $return .= '<td class="histo">' . schars($sql_p_date_deb) . ' _ ' . schars($demi_j_deb) . '</td>';
-                $return .= '<td class="histo">' . schars($sql_p_date_fin) . ' _ ' . schars($demi_j_fin) . '</td>' ;
-                $return .= '<td class="histo">' . schars($sql_p_type) . '</td>';
-                $return .= '<td class="histo">' . affiche_decimal($sql_p_nb_jours) . '</td>';
-                $return .= '<td class="histo">' . schars($sql_p_commentaire) . '</td>';
+                $childTable .= '<tr class="' . ($i ? 'i' : 'p') . '">';
+                $childTable .= '<td class="histo">' . schars($sql_p_date_deb) . ' _ ' . schars($demi_j_deb) . '</td>';
+                $childTable .= '<td class="histo">' . schars($sql_p_date_fin) . ' _ ' . schars($demi_j_fin) . '</td>' ;
+                $childTable .= '<td class="histo">' . schars($sql_p_type) . '</td>';
+                $childTable .= '<td class="histo">' . affiche_decimal($sql_p_nb_jours) . '</td>';
+                $childTable .= '<td class="histo">' . schars($sql_p_commentaire) . '</td>';
 
 
-                $return .= '<td>';
+                $childTable .= '<td>';
                 if($sql_p_etat=="refus")
-                    $return .= _('divers_refuse') ;
+                    $childTable .= _('divers_refuse') ;
                 elseif($sql_p_etat=="annul")
-                    $return .= _('divers_annule') ;
+                    $childTable .= _('divers_annule') ;
                 else
-                    $return .= schars($sql_p_etat);
-                $return .= '</td>';
+                    $childTable .= schars($sql_p_etat);
+                $childTable .= '</td>';
 
 
                 if($sql_p_etat=="refus") {
                     if($sql_p_motif_refus=="")
                         $sql_p_motif_refus= _('divers_inconnu') ;
-                    $return .= '<td class="histo">' . schars($sql_p_motif_refus) . '</td>';
+                    $childTable .= '<td class="histo">' . schars($sql_p_motif_refus) . '</td>';
                 } elseif($sql_p_etat=="annul") {
                     if($sql_p_motif_refus=="")
                         $sql_p_motif_refus= _('divers_inconnu') ;
-                    $return .= '<td class="histo">' . schars($sql_p_motif_refus) . '</td>';
+                    $childTable .= '<td class="histo">' . schars($sql_p_motif_refus) . '</td>';
                 } elseif($sql_p_etat=="ok") {
                     if($sql_p_motif_refus=="")
                         $sql_p_motif_refus=" ";
-                    $return .= '<td class="histo">' . schars($sql_p_motif_refus) . '</td>';
+                    $childTable .= '<td class="histo">' . schars($sql_p_motif_refus) . '</td>';
                 }
-                $return .= '</td>';
+                $childTable .= '</td>';
 
                 if($_SESSION['config']['affiche_date_traitement']) {
-                    $return .= '<td class="histo-left">' . schars( _('divers_demande')) . ' : ' . schars($sql_p_date_demande) . '<br>';
+                    $childTable .= '<td class="histo-left">' . schars( _('divers_demande')) . ' : ' . schars($sql_p_date_demande) . '<br>';
                     $text_lang_a_afficher="divers_traitement_$sql_p_etat" ; // p_etat='ok' OR  p_etat='refus' OR  p_etat='annul' .....
-                    $return .= schars( _($text_lang_a_afficher) ) . ' : ' . schars($sql_p_date_traitement).'</td>';
+                    $childTable .= schars( _($text_lang_a_afficher) ) . ' : ' . schars($sql_p_date_traitement).'</td>';
                 }
 
-                $return .= '</tr>';
+                $childTable .= '</tr>';
                 $i = !$i;
             }
-            $return .= '</tbody>';
-            $return .= '</table>';
+            $childTable .= '</tbody>';
+            $table->addChild($childTable);
+            ob_start();
+            $table->render();
+            $return .= ob_get_clean();
         }
         $return .= '<br><br>';
 
@@ -1548,26 +1625,33 @@ class Fonctions
             $return .= '<b>' . _('user_abs_aucune_abs') . '</b><br>';
         } else {
             // AFFICHAGE TABLEAU
-            $return .= '<table cellpadding="2"  class="tablo" width="80%">';
-            $return .= '<thead>';
-            $return .= '<tr>';
-            $return .= '<td>';
-            $return .= '<a href="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '&tri_date=descendant"><img src="' . IMG_PATH . '1downarrow-16x16.png" width="16" height="16" border="0" title="trier"></a>';
-            $return .= _('divers_debut_maj_1');
-            $return .= '<a href="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '&tri_date=ascendant"><img src="' . IMG_PATH . '1uparrow-16x16.png" width="16" height="16" border="0" title="trier"></a>';
-            $return .= '</td>';
-            $return .= '<td>' . _('divers_fin_maj_1') . '</td>';
-            $return .= '<td>' . _('user_abs_type') . '</td>';
-            $return .= '<td>' . _('divers_nb_jours_maj_1') . '</td>';
-            $return .= '<td>' . _('divers_comment_maj_1') . '</td>';
-            $return .= '<td>' . _('divers_etat_maj_1') . '</td>';
-            $return .= '<td></td><td></td>';
+            $table = new \App\Libraries\Structure\Table();
+            $table->addClasses([
+                'table',
+                'table-hover',
+                'table-responsive',
+                'table-condensed',
+                'table-striped',
+            ]);
+            $childTable = '<thead>';
+            $childTable .= '<tr>';
+            $childTable .= '<td>';
+            $childTable .= '<a href="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '&tri_date=descendant"><img src="' . IMG_PATH . '1downarrow-16x16.png" width="16" height="16" border="0" title="trier"></a>';
+            $childTable .= _('divers_debut_maj_1');
+            $childTable .= '<a href="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '&tri_date=ascendant"><img src="' . IMG_PATH . '1uparrow-16x16.png" width="16" height="16" border="0" title="trier"></a>';
+            $childTable .= '</td>';
+            $childTable .= '<td>' . _('divers_fin_maj_1') . '</td>';
+            $childTable .= '<td>' . _('user_abs_type') . '</td>';
+            $childTable .= '<td>' . _('divers_nb_jours_maj_1') . '</td>';
+            $childTable .= '<td>' . _('divers_comment_maj_1') . '</td>';
+            $childTable .= '<td>' . _('divers_etat_maj_1') . '</td>';
+            $childTable .= '<td></td><td></td>';
             if($_SESSION['config']['affiche_date_traitement']) {
-                $return .= '<td>' . _('divers_date_traitement') . '</td>';
+                $childTable .= '<td>' . _('divers_date_traitement') . '</td>';
             }
-            $return .= '</tr>';
-            $return .= '</thead>';
-            $return .= '<tbody>';
+            $childTable .= '</tr>';
+            $childTable .= '</thead>';
+            $childTable .= '<tbody>';
 
             $i = true;
             while ($resultat4 = $ReqLog4->fetch_array()) {
@@ -1597,41 +1681,44 @@ class Fonctions
                     $user_suppr_mission=" - " ;
                 }
 
-                $return .= '<tr class="'.($i ? 'i' : 'p') . '">';
-                $return .= '<td class="histo">' . schars($sql_date_deb) . ' _ ' . schars($demi_j_deb) . '</td>';
-                $return .= '<td class="histo">' . schars($sql_date_fin) . ' _ ' . schars($demi_j_fin) . '</td>' ;
-                $return .= '<td class="histo">' . schars($sql_type) . '</td>';
-                $return .= '<td class="histo">' . affiche_decimal($sql_nb_jours) . '</td>' ;
-                $return .= '<td class="histo">' . schars($sql_commentaire) . '</td>';
+                $childTable .= '<tr class="'.($i ? 'i' : 'p') . '">';
+                $childTable .= '<td class="histo">' . schars($sql_date_deb) . ' _ ' . schars($demi_j_deb) . '</td>';
+                $childTable .= '<td class="histo">' . schars($sql_date_fin) . ' _ ' . schars($demi_j_fin) . '</td>' ;
+                $childTable .= '<td class="histo">' . schars($sql_type) . '</td>';
+                $childTable .= '<td class="histo">' . affiche_decimal($sql_nb_jours) . '</td>' ;
+                $childTable .= '<td class="histo">' . schars($sql_commentaire) . '</td>';
 
                 if($sql_etat=="refus") {
                     if($sql_motif_refus=="")
                         $sql_motif_refus= _('divers_inconnu') ;
-                    $return .= '<br><i>".'.schars( _('divers_motif_refus') ).'." : '.schars($sql_motif_refus).'</i>';
+                    $childTable .= '<br><i>".'.schars( _('divers_motif_refus') ).'." : '.schars($sql_motif_refus).'</i>';
                 } elseif($sql_etat=="annul") {
                     if($sql_motif_refus=="")
                         $sql_motif_refus= _('divers_inconnu') ;
-                    $return .= '<br><i>".'.schars( _('divers_motif_annul') ).'." : '.schars($sql_motif_refus).'</i>';
+                    $childTable .= '<br><i>".'.schars( _('divers_motif_annul') ).'." : '.schars($sql_motif_refus).'</i>';
                 }
-                $return .= '</td>';
-                $return .= '<td>';
+                $childTable .= '</td>';
+                $childTable .= '<td>';
                 if($sql_etat=="refus")
-                    $return .= _('divers_refuse') ;
+                    $childTable .= _('divers_refuse') ;
                 elseif($sql_etat=="annul")
-                    $return .= _('divers_annule') ;
+                    $childTable .= _('divers_annule') ;
                 else
-                    $return .= schars($sql_etat);
-                $return .= '</td>';
-                $return .= '<td class="histo">' . ($user_modif_mission) . '</td>';
-                $return .= '<td class="histo">'.($user_suppr_mission).'</td>'."\n";
+                    $childTable .= schars($sql_etat);
+                $childTable .= '</td>';
+                $childTable .= '<td class="histo">' . ($user_modif_mission) . '</td>';
+                $childTable .= '<td class="histo">'.($user_suppr_mission).'</td>'."\n";
                 if($_SESSION['config']['affiche_date_traitement']) {
-                    $return .= '<td class="histo-left">' . schars(_('divers_demande') ) . ' : ' . schars($sql_date_demande) . '<br>' . schars(_('divers_traitement') ) . ' : ' . schars($sql_date_traitement) . '</td>';
+                    $childTable .= '<td class="histo-left">' . schars(_('divers_demande') ) . ' : ' . schars($sql_date_demande) . '<br>' . schars(_('divers_traitement') ) . ' : ' . schars($sql_date_traitement) . '</td>';
                 }
-                $return .= '</tr>';
+                $childTable .= '</tr>';
                 $i = !$i;
             }
-            $return .= '</tbody>';
-            $return .= '</table>';
+            $childTable .= '</tbody>';
+            $table->addChild($childTable);
+            ob_start();
+            $table->render();
+            $return .= ob_get_clean();
         }
         $return .= '<br><br>';
 
