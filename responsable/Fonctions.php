@@ -760,114 +760,6 @@ class Fonctions
         return $return;
     }
 
-    public static function affichage_cloture_globale_groupe($tab_type_conges)
-    {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
-        $session=session_id() ;
-        $return = '';
-
-        /***********************************************************************/
-        /* SAISIE GROUPE pour tous les utilisateurs d'un groupe du responsable */
-
-        // on établi la liste complète des groupes dont on est le resp (ou le grd resp)
-        $list_group_resp=get_list_groupes_du_resp($_SESSION['userlogin']);
-        if( ($_SESSION['config']['double_validation_conges']) && ($_SESSION['config']['grand_resp_ajout_conges']) ) {
-            $list_group_grd_resp=get_list_groupes_du_grand_resp($_SESSION['userlogin']);
-        } else {
-            $list_group_grd_resp="";
-        }
-
-        $list_group="";
-        if($list_group_resp!="") {
-            $list_group = $list_group_resp;
-            if($list_group_grd_resp!="") {
-                $list_group = $list_group.",".$list_group_grd_resp;
-            }
-        } else {
-            if($list_group_grd_resp!="") {
-                $list_group = $list_group_grd_resp;
-            }
-        }
-
-
-        if($list_group!="") //si la liste n'est pas vide ( serait le cas si n'est responsable d'aucun groupe)
-        {
-            $return .= '<form action="' . $PHP_SELF . '" method="POST">';
-            $return .= '<table>';
-            $return .= '<tr><td align="center">';
-            $return .= '<fieldset class="cal_saisie">';
-            $return .= '<legend class="boxlogin">' . _('resp_cloture_exercice_groupe') . '</legend>';
-
-            $return .= '<table>';
-            $return .= '<tr>';
-
-            // création du select pour le choix du groupe
-            $text_choix_group="<select name=\"choix_groupe\" >";
-            $sql_group = "SELECT g_gid, g_groupename FROM conges_groupe WHERE g_gid IN ($list_group) ORDER BY g_groupename "  ;
-            $ReqLog_group = \includes\SQL::query($sql_group) ;
-
-            while ($resultat_group = $ReqLog_group->fetch_array()) {
-                $current_group_id=$resultat_group["g_gid"];
-                $current_group_name=$resultat_group["g_groupename"];
-                $text_choix_group=$text_choix_group."<option value=\"$current_group_id\" >$current_group_name</option>";
-            }
-            $text_choix_group=$text_choix_group."</select>" ;
-
-            $return .= '<td class="big">' . _('resp_ajout_conges_choix_groupe') .' : ' . $text_choix_group . '</td>';
-
-            $return .= '</tr>';
-            $return .= '<tr>';
-            $return .= '<td class="big">' . _('resp_cloture_exercice_for_groupe_text_confirmer') . '</td>';
-            $return .= '</tr>';
-            $return .= '<tr>';
-            $return .= '<td align="center"><input class="btn" type="submit" value="' . _('form_valid_cloture_group') . '"></td>';
-            $return .= '</tr>';
-            $return .= '</table>';
-
-            $return .= '</fieldset>';
-            $return .= '/td></tr>';
-            $return .= '/table>';
-
-            $return .= '<input type="hidden" name="onglet" value="cloture_exercice">';
-            $return .= '<input type="hidden" name="cloture_groupe" value="TRUE">';
-            $return .= '<input type="hidden" name="session" value="' . $session . '">';
-            $return .= '</form>';
-        }
-        return $return;
-    }
-
-    public static function affichage_cloture_globale_pour_tous($tab_type_conges)
-    {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
-        $session=session_id() ;
-        $return = '';
-
-        /************************************************************/
-        /* CLOTURE EXERCICE GLOBALE pour tous les utilisateurs du responsable */
-
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=cloture_exercice" method="POST">';
-        $return .= '<table>';
-        $return .= '<tr><td align="center">';
-        $return .= '<fieldset class="cal_saisie">';
-        $return .= '<legend class="boxlogin">' . _('resp_cloture_exercice_all') . '</legend>';
-        $return .= '<table>';
-        $return .= '<tr>';
-        $return .= '<td class="big">&nbsp;&nbsp;&nbsp;' . _('resp_cloture_exercice_for_all_text_confirmer') . ' &nbsp;&nbsp;&nbsp;</td>';
-        $return .= '</tr>';
-        // bouton valider
-        $return .= '<tr>';
-        $return .= '<td colspan="5" align="center"><input class="btn" type="submit" value="' . _('form_valid_cloture_global') . '"></td>';
-        $return .= '</tr>';
-        $return .= '</table>';
-        $return .= '</fieldset>';
-        $return .= '</td></tr>';
-        $return .= '</table>';
-        $return .= '<input type="hidden" name="cloture_globale" value="TRUE">';
-        $return .= '<input type="hidden" name="session" value="' . $session . '">';
-        $return .= '</form>';
-        return $return;
-    }
-
     public static function affiche_ligne_du_user($current_login, $tab_type_conges, $tab_current_user)
     {
         $return .= '<tr align="center">';
@@ -893,116 +785,6 @@ class Fonctions
         $comment_cloture =  _('resp_cloture_exercice_commentaire') ." ".date("m/Y");
         $return .= '<td align="center" class="histo"><input type="text" name="tab_commentaire_saisie[' . $current_login . ']" size="20" maxlength="200" value="' . $comment_cloture . '"></td>';
         $return .= '</tr>';
-        return $return;
-    }
-
-    public static function affichage_cloture_user_par_user($tab_type_conges, $tab_all_users_du_resp, $tab_all_users_du_grand_resp)
-    {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
-        $session=session_id() ;
-        $return = '';
-
-        /************************************************************/
-        /* CLOTURE EXERCICE USER PAR USER pour tous les utilisateurs du responsable */
-
-        if( (count($tab_all_users_du_resp)!=0) || (count($tab_all_users_du_grand_resp)!=0) ) {
-            $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=cloture_exercice" method="POST">';
-            $return .= '<table>';
-            $return .= '<tr>';
-            $return .= '<td align="center">';
-            $return .= '<fieldset class="cal_saisie">';
-            $return .= '<legend class="boxlogin">' . _('resp_cloture_exercice_users') . '</legend>';
-            $return .= '<table>';
-            $return .= '<tr>';
-            $return .= '<td align="center">';
-
-            // AFFICHAGE TITRES TABLEAU
-            $return .= '<table cellpadding="2" class="table table-hover table-responsive table-condensed table-striped" width="700">';
-            $return .= '<thead>';
-            $return .= '<tr align="center">';
-            $return .= '<th>' . _('divers_nom_maj_1') . '</th>';
-            $return .= '<th>' . _('divers_prenom_maj_1') . '</th>';
-            $return .= '<th>' . _('divers_quotite_maj_1') . '</th>';
-            foreach($tab_type_conges as $id_conges => $libelle) {
-                $return .= '<th>' . $libelle . '<br><i>(' . _('divers_solde') . ')</i></th>';
-            }
-            $return .= '<th>' . _('divers_cloturer_maj_1') . '<br></th>';
-            $return .= '<th>' . _('divers_comment_maj_1') . '<br></th>';
-            $return .= '</tr>';
-            $return .= '</thead>';
-            $return .= '<tbody>';
-
-            // AFFICHAGE LIGNES TABLEAU
-
-            // affichage des users dont on est responsable :
-            foreach($tab_all_users_du_resp as $current_login => $tab_current_user) {
-                $return .= \responsable\Fonctions::affiche_ligne_du_user($current_login, $tab_type_conges, $tab_current_user);
-            }
-
-            // affichage des users dont on est grand responsable :
-            if( ($_SESSION['config']['double_validation_conges']) && ($_SESSION['config']['grand_resp_ajout_conges']) ) {
-                $nb_colspan=50;
-                $return .= '<tr align="center"><td class="histo" style="background-color: #CCC;" colspan="' . $nb_colspan . '"><i>' . _('resp_etat_users_titre_double_valid') . '</i></td></tr>';
-
-                foreach($tab_all_users_du_grand_resp as $current_login => $tab_current_user) {
-                    $return .= \responsable\Fonctions::affiche_ligne_du_user($current_login, $tab_type_conges, $tab_current_user);
-                }
-            }
-            $return .= '</tbody>';
-            $return .= '</table>';
-
-            $return .= '</td>';
-            $return .= '</tr>';
-            $return .= '<tr>';
-            $return .= '<td align="center">';
-            $return .= '<input class="btn" type="submit" value="' . _('form_submit') . '">';
-            $return .= '</td>';
-            $return .= '</tr>';
-            $return .= '</table>';
-
-            $return .= '</fieldset>';
-            $return .= '</td></tr>';
-            $return .= '</table>';
-            $return .= '<input type="hidden" name="cloture_users" value="TRUE">';
-            $return .= '<input type="hidden" name="session" value="' . $session  . '">';
-            $return .= '</form>';
-        }
-        return $return;
-    }
-
-    public static function saisie_cloture( $tab_type_conges)
-    {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
-        $session=session_id() ;
-        $return = '';
-
-        // recup de la liste de TOUS les users dont $resp_login est responsable
-        // (prend en compte le resp direct, les groupes, le resp virtuel, etc ...)
-        // renvoit une liste de login entre quotes et séparés par des virgules
-        $tab_all_users_du_resp=recup_infos_all_users_du_resp($_SESSION['userlogin']);
-        $tab_all_users_du_grand_resp=recup_infos_all_users_du_grand_resp($_SESSION['userlogin']);
-
-        if( (count($tab_all_users_du_resp)!=0) || (count($tab_all_users_du_grand_resp)!=0) ) {
-            /************************************************************/
-            /* SAISIE GLOBALE pour tous les utilisateurs du responsable */
-            $return .= affichage_cloture_globale_pour_tous($tab_type_conges);
-            $return .= '<br>';
-
-            /***********************************************************************/
-            /* SAISIE GROUPE pour tous les utilisateurs d'un groupe du responsable */
-            if( $_SESSION['config']['gestion_groupes'] ) {
-                $return .= \responsable\Fonctions::affichage_cloture_globale_groupe($tab_type_conges);
-            }
-            $return .= '<br>';
-
-            /************************************************************/
-            /* SAISIE USER PAR USER pour tous les utilisateurs du responsable */
-            $return .= \responsable\Fonctions::affichage_cloture_user_par_user($tab_type_conges, $tab_all_users_du_resp, $tab_all_users_du_grand_resp);
-            $return .= '<br>';
-
-        } else {
-            $return .= _('resp_etat_aucun_user') . '<br>';
-        }
         return $return;
     }
 
@@ -1526,24 +1308,30 @@ class Fonctions
 
             // AFFICHAGE TABLEAU
             $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=traite_user" method="POST">';
-            //echo "<table cellpadding=\"2\" class=\"table table-hover table-responsive table-condensed table-striped\" width=\"80%\">\n";
-            $return .= '<table cellpadding="2" class="table table-hover table-responsive table-condensed table-striped">';
-            $return .= '<thead>';
-            $return .= '<tr align="center">';
-            $return .= '<th>' . _('divers_debut_maj_1') . '</th>';
-            $return .= '<th>' . _('divers_fin_maj_1') . '</th>';
-            $return .= '<th>' . _('divers_nb_jours_pris_maj_1') . '</th>';
-            $return .= '<th>' . _('divers_comment_maj_1') . '</th>';
-            $return .= '<th>' . _('divers_type_maj_1') . '</th>';
-            $return .= '<th>' . _('divers_accepter_maj_1') . '</th>';
-            $return .= '<th>' . _('divers_refuser_maj_1') . '</th>';
-            $return .= '<th>' . _('resp_traite_user_motif_refus') . '</th>';
+            $table = new \App\Libraries\Structure\Table();
+            $table->addClasses([
+                'table',
+                'table-hover',
+                'table-responsive',
+                'table-condensed',
+                'table-striped',
+            ]);
+            $childTable .= '<thead>';
+            $childTable .= '<tr align="center">';
+            $childTable .= '<th>' . _('divers_debut_maj_1') . '</th>';
+            $childTable .= '<th>' . _('divers_fin_maj_1') . '</th>';
+            $childTable .= '<th>' . _('divers_nb_jours_pris_maj_1') . '</th>';
+            $childTable .= '<th>' . _('divers_comment_maj_1') . '</th>';
+            $childTable .= '<th>' . _('divers_type_maj_1') . '</th>';
+            $childTable .= '<th>' . _('divers_accepter_maj_1') . '</th>';
+            $childTable .= '<th>' . _('divers_refuser_maj_1') . '</th>';
+            $childTable .= '<th>' . _('resp_traite_user_motif_refus') . '</th>';
             if($_SESSION['config']['affiche_date_traitement']) {
-                $return .= '<th>' . _('divers_date_traitement') . '</th>';
+                $childTable .= '<th>' . _('divers_date_traitement') . '</th>';
             }
-            $return .= '</tr>';
-            $return .= '</thead>';
-            $return .= '<tbody>';
+            $childTable .= '</tr>';
+            $childTable .= '</thead>';
+            $childTable .= '<tbody>';
 
             $i = true;
             $tab_checkbox=array();
@@ -1579,26 +1367,30 @@ class Fonctions
                 $casecocher2 = "<input type=\"radio\" name=\"tab_radio_traite_demande[$sql_num]\" value=\"$chaine_bouton_radio--REFUSE\">";
                 $text_refus  = "<input type=\"text\" name=\"tab_text_refus[$sql_num]\" size=\"20\" max=\"100\">";
 
-                $return .= '<tr class="' . ($i ? 'i' : 'p') . '">';
-                $return .= '<td>' . $sql_date_deb_fr . '_' . $demi_j_deb . '</td>';
-                $return .= '<td>' . $sql_date_fin_fr . '_' . $demi_j_fin . '</td>';
-                $return .= '<td>' . $sql_nb_jours . '</td>';
-                $return .= '<td>' . $sql_commentaire . '</td>';
-                $return .= '<td>' . $tab_type_all_abs[$sql_type]['libelle'] . '</td>';
-                $return .= '<td>' . $casecocher1 . '</td>';
-                $return .= '<td>' . $casecocher2 . '</td>';
-                $return .= '<td>' . $text_refus . '</td>';
+                $childTable .= '<tr class="' . ($i ? 'i' : 'p') . '">';
+                $childTable .= '<td>' . $sql_date_deb_fr . '_' . $demi_j_deb . '</td>';
+                $childTable .= '<td>' . $sql_date_fin_fr . '_' . $demi_j_fin . '</td>';
+                $childTable .= '<td>' . $sql_nb_jours . '</td>';
+                $childTable .= '<td>' . $sql_commentaire . '</td>';
+                $childTable .= '<td>' . $tab_type_all_abs[$sql_type]['libelle'] . '</td>';
+                $childTable .= '<td>' . $casecocher1 . '</td>';
+                $childTable .= '<td>' . $casecocher2 . '</td>';
+                $childTable .= '<td>' . $text_refus . '</td>';
                 if($_SESSION['config']['affiche_date_traitement']) {
                     if(empty($sql_date_traitement)) {
-                        $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_date_demande . '<br>' . _('divers_traitement') . ' : pas traité</td>';
+                        $childTable .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_date_demande . '<br>' . _('divers_traitement') . ' : pas traité</td>';
                     } else {
-                        $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_date_demande . '<br>' . _('divers_traitement') . ' : ' . $sql_date_traitement . '</td>';
+                        $childTable .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_date_demande . '<br>' . _('divers_traitement') . ' : ' . $sql_date_traitement . '</td>';
                     }
                 }
-                $return .= '</tr>';
+                $childTable .= '</tr>';
                 $i = !$i;
             }
-            $return .= '</tbody></table>';
+            $childTable .= '</tbody>';
+            $table->addChild($childTable);
+            ob_start();
+            $table->render();
+            $return .= ob_get_clean();
 
             $return .= '<input type="hidden" name="user_login" value="' . $user_login . '">';
             $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';

@@ -1263,7 +1263,7 @@ class Fonctions
         $table->addClasses([
             'table',
         ]);
-        $childTable = '<head><tr>';
+        $childTable = '<thead><tr>';
         $childTable .= '<th><b>' . _('admin_groupes_groupe') . '</b></th>';
         $childTable .= '<th>' . _('admin_groupes_libelle') . ' / ' . _('divers_comment_maj_1') . '</th>';
         if($_SESSION['config']['double_validation_conges']) {
