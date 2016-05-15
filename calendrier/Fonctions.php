@@ -310,61 +310,6 @@ class Fonctions
         }
     }
 
-    // affichage de la légende explicative des abréviations
-    public static function affiche_legende_type_absence($tab_type_absence)
-    {
-        $session=session_id();
-
-        //    echo "      <table cellpadding=\"1\" cellspacing=\"1\" border=\"1\">\n" ;
-        echo "      <table cellpadding=\"1\" class=\"tablo-cal\">\n" ;
-        foreach($tab_type_absence as $id_abs => $tab) {
-            echo "      <tr align=\"center\">\n" ;
-            echo "         <td class=\"cal-legende\"> ".$tab['short_libelle']." : </td>\n" ;
-            echo "         <td class=\"cal-legende\"> ".$tab['libelle']." </td>\n" ;
-            echo "      </tr>\n" ;
-        }
-        echo "      </table>\n" ;
-    }
-
-    // affichage de la légende des couleurs
-    public static function affiche_legende()
-    {
-        $session=session_id();
-
-        //    echo "      <table cellpadding=\"1\" cellspacing=\"1\" border=\"1\">\n" ;
-        echo "      <table cellpadding=\"1\" class=\"tablo-cal\">\n" ;
-        echo "      <tr align=\"center\">\n" ;
-        echo "         <td bgcolor=\"".$_SESSION['config']['semaine_bgcolor']."\" class=\"cal-legende\"> - </td>\n" ;
-        echo "         <td class=\"cal-legende\"> </td>\n" ;
-        echo "      </tr>\n" ;
-        echo "      <tr align=\"center\">\n" ;
-        echo "         <td bgcolor=\"".$_SESSION['config']['week_end_bgcolor']."\" class=\"cal-legende\"> - </td>\n" ;
-        echo "         <td class=\"cal-legende\"> ". _('calendrier_legende_we') ."</td>\n" ;
-        echo "      </tr>\n" ;
-        echo "      <tr align=\"center\">\n" ;
-        echo "         <td bgcolor=\"".$_SESSION['config']['conges_bgcolor']."\" class=\"cal-legende\">abs</td>\n" ;
-        echo "         <td class=\"cal-legende\"> ". _('calendrier_legende_conges') ."</td>\n" ;
-        echo "      </tr>\n" ;
-        echo "      <tr align=\"center\">\n" ;
-        echo "         <td bgcolor=\"".$_SESSION['config']['demande_conges_bgcolor']."\" class=\"cal-legende\">abs</td>\n" ;
-        echo "         <td class=\"cal-legende\"> ". _('calendrier_legende_demande') ."</td>\n" ;
-        echo "      </tr>\n" ;
-        echo "      <tr align=\"center\">\n" ;
-        //    echo "         <td bgcolor=\"".$_SESSION['config']['temps_partiel_bgcolor']."\" class=\"cal-legende\">abs</td>\n" ;
-        echo "         <td bgcolor=\"".$_SESSION['config']['temps_partiel_bgcolor']."\" class=\"cal-legende\"> - </td>\n" ;
-        echo "         <td class=\"cal-legende\"> ". _('calendrier_legende_part_time') ."</td>\n" ;
-        echo "      </tr>\n" ;
-        echo "      <tr align=\"center\">\n" ;
-        echo "         <td bgcolor=\"".$_SESSION['config']['absence_autre_bgcolor']."\" class=\"cal-legende\">abs</td>\n" ;
-        echo "         <td class=\"cal-legende\"> ". _('calendrier_legende_abs') ."</td>\n" ;
-        echo "      </tr>\n" ;
-        echo "      <tr align=\"center\">\n" ;
-        echo "         <td bgcolor=\"".$_SESSION['config']['fermeture_bgcolor']."\" class=\"cal-legende\">abs</td>\n" ;
-        echo "         <td class=\"cal-legende\"> ". _('divers_fermeture') ."</td>\n" ;
-        echo "      </tr>\n" ;
-        echo "      </table>\n" ;
-    }
-
     // affichage de la cellule correspondant au jour et au user considéré
     // et renvoit un tableau avec une key / une valeur : key = id type absence / valeur = nb jours pris le jour J
     public static function affiche_cellule_jour_user($sql_login, $j_timestamp, $year_select, $mois_select, $j, $second_class, $printable, $tab_calendrier, $tab_rtt_echange, $tab_rtt_planifiees, $tab_type_absence, &$returnString)
@@ -625,23 +570,26 @@ class Fonctions
 
         /*************************/
         /**  AFFICHAGE TABLEAU  **/
-
+        $table = new \App\Libraries\Structure\Table();
         if($printable!=1) { // si version ecran :
-            $return .= '<table class="calendar table table-responsive table-bordered table-stripped">';
-        } else {               // si version imprimable :
-            $return .= '<table>';
+            $table->addClasses([
+                'table',
+                'calendar',
+                'table-responsive',
+                'table-bordered',
+            ]);
         }
 
-        $return .= '<tr><th colspan="2"></th><th colspan="' . $nb_day . '">' . _('divers_semaine') . '</th><th colspan="8">Solde</th></tr>';
+        $childTable = '<tr><th colspan="2"></th><th colspan="' . $nb_day . '">' . _('divers_semaine') . '</th><th colspan="8">Solde</th></tr>';
 
         /*************************************/
         // affichage premiere ligne (semaines)
-        $return .= '<tr align="center">';
+        $childTable .= '<tr align="center">';
 
         // affichage nom prenom quotité
         $nb_colonnes=3;
-        $return .= '<th rowspan="2">Utilisateur</th>';
-        $return .= '<th rowspan="2">Quotité</th>';
+        $childTable .= '<th rowspan="2">Utilisateur</th>';
+        $childTable .= '<th rowspan="2">Quotité</th>';
 
         // affichage des semaines
         // ... du premier jour voulu à la fin du mois
@@ -657,7 +605,7 @@ class Fonctions
 
             if($j==$first_jour) {
                 $colspan = 8 - $j_num_jour_semaine;
-                $return .= '<th class="cal-day-first" colspan="' . $colspan . '" >' . $j_num_semaine . '</th>';
+                $childTable .= '<th class="cal-day-first" colspan="' . $colspan . '" >' . $j_num_semaine . '</th>';
             } else {
                 $month_rest = $nb_day - $j;
                 $colspan = 7;
@@ -666,7 +614,7 @@ class Fonctions
                 }
                 // on affiche que les lundi
                 if($j_num_jour_semaine==1) {
-                    $return .= '<th class="cal-day" colspan="' . $colspan . '" >' . $j_num_semaine . '</th>';
+                    $childTable .= '<th class="cal-day" colspan="' . $colspan . '" >' . $j_num_semaine . '</th>';
                 }
 
             }
@@ -697,11 +645,11 @@ class Fonctions
 
                 if($j==$first_jour) {
                     $colspan=8-$j_num_jour_semaine;
-                    $return .= '<td class="cal-day-first" colspan="' . $colspan . '">' . $j_num_semaine . '</td>';
+                    $childTable .= '<td class="cal-day-first" colspan="' . $colspan . '">' . $j_num_semaine . '</td>';
                 } else {
                     // on affiche que les lundi
                     if($j_num_jour_semaine==1) {
-                        $return .= '<td class="cal-day" colspan="7" >' . $j_num_semaine . '</td>';
+                        $childTable .= '<td class="cal-day" colspan="7" >' . $j_num_semaine . '</td>';
                     }
                 }
             }
@@ -712,24 +660,24 @@ class Fonctions
             $abs_libelle = recup_tableau_tout_types_abs();
 
             foreach($tab_type_cong as $id => $libelle) {
-                $return .= '<th rowspan="2">' . $abs_libelle[$id]['short_libelle'] . '</th>';
+                $childTable .= '<th rowspan="2">' . $abs_libelle[$id]['short_libelle'] . '</th>';
                 $nb_colonnes=$nb_colonnes+1;
             }
 
 
             if ($_SESSION['config']['gestion_conges_exceptionnels']) {
                 foreach($tab_type_cong_excep as $id => $libelle) {
-                    $return .= '<th rowspan="2">' . $abs_libelle[$id]['short_libelle'] . '</th>';
+                    $childTable .= '<th rowspan="2">' . $abs_libelle[$id]['short_libelle'] . '</th>';
                     $nb_colonnes=$nb_colonnes+1;
                 }
             }
         }
 
-        $return .= '</tr>';
+        $childTable .= '</tr>';
 
         /*************************************/
         // affichage 2ieme ligne (dates)
-        $return .= '<tr>';
+        $childTable .= '<tr>';
 
         // on affiche pas car on a fait de "rowspan" à la ligne supérieure
         // affichage d'une cellule vide sous les titres
@@ -764,7 +712,7 @@ class Fonctions
             }
 
             // on affiche le titre -date (la date du jour)
-            $return .= '<td class="' . $cal_day . ' ' . $td_second_class . '" title="' . $j_date_fr . ' / ' . _('divers_semaine') . ' ' .  $j_num_semaine . '">' . $text_titre_date . '</td>';
+            $childTable .= '<td class="' . $cal_day . ' ' . $td_second_class . '" title="' . $j_date_fr . ' / ' . _('divers_semaine') . ' ' .  $j_num_semaine . '">' . $text_titre_date . '</td>';
         }
 
         // ... si le premier jour voulu n'etait pas le premier du mois, on va jusqu'à la meme date du mois suivant.
@@ -788,10 +736,10 @@ class Fonctions
 
                 // on affiche en gras le jour d'aujourd'hui
                 if($j_timestamp==$timestamp_today) {
-                    $return .= '<td class="cal-day ' . $td_second_class . '" title="' . $j_date_fr . ' / ' . _('divers_semaine') . ' ' . $j_num_semaine . '"><strong>' . $j_name . ' ' . $j . '</strong></td>';
+                    $childTable .= '<td class="cal-day ' . $td_second_class . '" title="' . $j_date_fr . ' / ' . _('divers_semaine') . ' ' . $j_num_semaine . '"><strong>' . $j_name . ' ' . $j . '</strong></td>';
                     // echo "<td class=\"cal-day $td_second_class\" title=\"$j_date_fr / ". _('divers_semaine') ." $j_num_semaine\"><b>$j_name $j/$mois_select</b></td>";
                 } else {
-                    $return .= '<td class="cal-day ' . $td_second_class . '" title="' . $j_date_fr . ' / ' . _('divers_semaine') . ' ' . $j_num_semaine . '">' . $j_name . ' ' . $j . '</td>';
+                    $childTable .= '<td class="cal-day ' . $td_second_class . '" title="' . $j_date_fr . ' / ' . _('divers_semaine') . ' ' . $j_num_semaine . '">' . $j_name . ' ' . $j . '</td>';
                     // echo "<td class=\"cal-day $td_second_class\" title=\"$j_date_fr / ". _('divers_semaine') ." $j_num_semaine\">$j_name $j/$mois_select</td>";
                 }
             }
@@ -846,11 +794,11 @@ class Fonctions
             $tab_cong_user = isset($tab_cong_users[$sql_login]) ? $tab_cong_users[$sql_login] : [];
 
             if($printable==1) {
-                $return .= '<tr align="center" class="cal-ligne-user-edit">';
+                $childTable .= '<tr align="center" class="cal-ligne-user-edit">';
             } elseif($selected==$sql_login) {
-                $return .= '<tr align="center" class="cal-ligne-user-selected">';
+                $childTable .= '<tr align="center" class="cal-ligne-user-selected">';
             } else {
-                $return .= '<tr align="center" class="cal-ligne-user">';
+                $childTable .= '<tr align="center" class="cal-ligne-user">';
             }
 
             if($printable==1) {
@@ -860,7 +808,7 @@ class Fonctions
             }
 
             // affichage nom prenom quotité
-            $return .= '<td class="cal-user">' . $text_nom . '</td><td class="cal-percent">' . $sql_quotite . '%</td>';
+            $childTable .= '<td class="cal-user">' . $text_nom . '</td><td class="cal-percent">' . $sql_quotite . '%</td>';
 
 
             // pour chaque jour : (du premier jour demandé à la fin du mois ...)
@@ -872,7 +820,7 @@ class Fonctions
                 $year_select=$year ;
 
                 // affichage de la cellule correspondant au jour et au user considéré
-                $t_nb_j_type_abs = \calendrier\Fonctions::affiche_cellule_jour_user($sql_login, $j_timestamp, $year, $mois_select, $j , $td_second_class, $printable, $tab_calendrier, $tab_rtt_echange, $tab_rtt_planifiees, $tab_type_absence, $return);
+                $t_nb_j_type_abs = \calendrier\Fonctions::affiche_cellule_jour_user($sql_login, $j_timestamp, $year, $mois_select, $j , $td_second_class, $printable, $tab_calendrier, $tab_rtt_echange, $tab_rtt_planifiees, $tab_type_absence, $childTable);
                 foreach($t_nb_j_type_abs as $id_type_abs => $nb_j_pris) {
                     if (isset($nb_jours_current_month[ $id_type_abs ])) {
                         $nb_jours_current_month[ $id_type_abs ] +=$nb_j_pris;
@@ -897,7 +845,7 @@ class Fonctions
                     }
 
                     // affichage de la cellule correspondant au jour et au user considéré
-                    $t_nb_j_type_abs = \calendrier\Fonctions::affiche_cellule_jour_user($sql_login, $j_timestamp, $year, $mois_select, $j, $td_second_class, $printable, $tab_calendrier, $tab_rtt_echange, $tab_rtt_planifiees, $tab_type_absence, $return);
+                    $t_nb_j_type_abs = \calendrier\Fonctions::affiche_cellule_jour_user($sql_login, $j_timestamp, $year, $mois_select, $j, $td_second_class, $printable, $tab_calendrier, $tab_rtt_echange, $tab_rtt_planifiees, $tab_type_absence, $childTable);
                     foreach($t_nb_j_type_abs as $id_type_abs => $nb_j_pris) {
                         if (isset($nb_jours_current_month[ $id_type_abs ])) {
                             $nb_jours_current_month[ $id_type_abs ] +=$nb_j_pris;
@@ -918,15 +866,18 @@ class Fonctions
                 foreach($tab_cong_user as $id => $tab_conges) {
                     // si des jours ont été pris durant le mois affiché, on indique combien :
                     if((isset($nb_jours_current_month[$id])) && ($_SESSION['config']['affiche_jours_current_month_calendrier']) ) {
-                        $return .= '<td class="cal-user">' . $tab_conges['solde'] . '&nbsp;(' . $nb_jours_current_month[$id] . ')</td>';
+                        $childTable .= '<td class="cal-user">' . $tab_conges['solde'] . '&nbsp;(' . $nb_jours_current_month[$id] . ')</td>';
                     } else {
-                        $return .= '<td class="cal-user">' . $tab_conges['solde'] . '</td>';
+                        $childTable .= '<td class="cal-user">' . $tab_conges['solde'] . '</td>';
                     }
                 }
             }
-            $return .= '</tr>';
+            $childTable .= '</tr>';
         }
-        $return .= '</table>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
         return $return;
     }
 
@@ -1085,19 +1036,7 @@ class Fonctions
         /* Boutons de defilement */
         if($printable!=1)   // si version ecran :
         {
-            $return .= '<tr>';
-            $return .= '<td align="center">';
             $return .= \calendrier\Fonctions::affichage_boutons_defilement($first_jour, $mois, $year, $select_groupe) ;
-            $return .= '</td>';
-            $return .= '</tr>';
-        }
-
-        $return .= '<tr>';
-        $return .= '</tr>';
-        $return .= '</table>';
-
-        if($printable!=1) // si version ecran :
-        {
             $return .= '<br/><a href="' . $PHP_SELF . '?session=' . $session . '&printable=1&year=' . $year . '&mois=' . $mois . '&first_jour=' . $first_jour . '&select_groupe=' . $select_groupe . '" target="_blank" method="post">';
             $return .= '<i class="fa fa-print"></i>';
             $return .= _('calendrier_imprimable');
@@ -1108,36 +1047,45 @@ class Fonctions
             $return .= '</a>';
         }
 
-        $return .= '<br><br><table cellpadding="1" class="calendar table-responsive table-bordered table-stripped">';
-        $return .= '<tr align="center">';
-        $return .= '<td bgcolor="#FFFFFF" class="cal-legende"> - </td>';
-        $return .= '<td class="cal-legende"> </td>';
-        $return .= '</tr>';
-        $return .= '<tr align="center">';
-        $return .= '<td bgcolor="#DCDCDC" class="cal-legende"> - </td>';
-        $return .= '<td class="cal-legende">' . _('calendrier_legende_we') . '</td>' ;
-        $return .= '</tr>' ;
-        $return .= '<tr align="center">';
-        $return .= '<td bgcolor="#8addf2" class="cal-legende">abs</td>';
-        $return .= '<td class="cal-legende">' . _('calendrier_legende_conges') . '</td>';
-        $return .= '</tr>' ;
-        $return .= '<tr align="center">' ;
-        $return .= '<td bgcolor="#ffc1ff" class="cal-legende">abs</td>';
-        $return .= '<td class="cal-legende">' . _('calendrier_legende_demande') . '</td>';
-        $return .= '</tr>';
-        $return .= '<tr align="center">';
-        $return .= '<td bgcolor="#ffffad" class="cal-legende"> - </td>';
-        $return .= '<td class="cal-legende">' . _('calendrier_legende_part_time') . '</td>';
-        $return .= '</tr>';
-        $return .= '<tr align="center">';
-        $return .= '<td bgcolor="#C3C3C3" class="cal-legende">abs</td>';
-        $return .= '<td class="cal-legende">' . _('calendrier_legende_abs') . '</td>';
-        $return .= '</tr>';
-        $return .= '<tr align="center">';
-        $return .= '<td bgcolor="#CEB6FF" class="cal-legende">abs</td>';
-        $return .= '<td class="cal-legende">' . _('divers_fermeture') . '</td>' ;
-        $return .= '</tr>';
-        $return .= '</table>';
+        $return .= '<br><br>';
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'calendar',
+            'table-responsive',
+            'table-condensed',
+        ]);
+        $childTable = '<tr align="center">';
+        $childTable .= '<td bgcolor="#FFFFFF" class="cal-legende">adzef - </td>';
+        $childTable .= '<td class="cal-legende"> </td>';
+        $childTable .= '</tr>';
+        $childTable .= '<tr align="center">';
+        $childTable .= '<td bgcolor="#DCDCDC" class="cal-legende"> - </td>';
+        $childTable .= '<td class="cal-legende">' . _('calendrier_legende_we') . '</td>' ;
+        $childTable .= '</tr>' ;
+        $childTable .= '<tr align="center">';
+        $childTable .= '<td bgcolor="#8addf2" class="cal-legende">abs</td>';
+        $childTable .= '<td class="cal-legende">' . _('calendrier_legende_conges') . '</td>';
+        $childTable .= '</tr>' ;
+        $childTable .= '<tr align="center">' ;
+        $childTable .= '<td bgcolor="#ffc1ff" class="cal-legende">abs</td>';
+        $childTable .= '<td class="cal-legende">' . _('calendrier_legende_demande') . '</td>';
+        $childTable .= '</tr>';
+        $childTable .= '<tr align="center">';
+        $childTable .= '<td bgcolor="#ffffad" class="cal-legende"> - </td>';
+        $childTable .= '<td class="cal-legende">' . _('calendrier_legende_part_time') . '</td>';
+        $childTable .= '</tr>';
+        $childTable .= '<tr align="center">';
+        $childTable .= '<td bgcolor="#C3C3C3" class="cal-legende">abs</td>';
+        $childTable .= '<td class="cal-legende">' . _('calendrier_legende_abs') . '</td>';
+        $childTable .= '</tr>';
+        $childTable .= '<tr align="center">';
+        $childTable .= '<td bgcolor="#CEB6FF" class="cal-legende">abs</td>';
+        $childTable .= '<td class="cal-legende">' . _('divers_fermeture') . '</td>' ;
+        $childTable .= '</tr>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
         $return .= '</div>';
         /********************/
         /* bouton retour */
