@@ -10,10 +10,13 @@ Libertempo Fork de php_conges
 
 Create a database for this application with a user who can access it and modify informations on it (grant access).
 
-Copy and edits proprely this files :
-	cfg/dconfig_CAS_new.php to cfg/config_CAS.php
-	cfg/config_ldap_new.php to cfg/config_ldap.php
-	cfg/env_new.php         to cfg/env.php
+Copy and edit proprely these files :
+* `cfg/env_new.php`       to `cfg/env.php`
+* `cfg/dbconnect_new.php` to `cfg/dbconnect.php`
+
+If you also need LDAP and CAS, copy and edit :
+* `cfg/dconfig_CAS_new.php` to `cfg/config_CAS.php`
+* `cfg/config_ldap_new.php` to `cfg/config_ldap.php`
 
 
 Then copy your Libertempo directory to your Apache DocumentRoot
@@ -30,8 +33,8 @@ Simply copy `cfg/env_new.php` to `cfg/env.php`
 # UPGRADE FROM v1.5
 
 Copy (and edit):
-	dbconnect.php 		to 	cfg/dbconnect.php
-	define_new.php		to	define.php
+* `dbconnect.php`  to `cfg/dbconnect.php`
+* `define_new.php` to	`define.php`
 
 
 Go to your [Libertempo] URL, in /install subdirectory to upgrade your application.
