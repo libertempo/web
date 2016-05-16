@@ -1306,9 +1306,6 @@ msgstr "year"
 msgid "phpmailer_not_valid"
 msgstr "MAIL ERROR : The file class.phpmailer.php cannot be read or cannot be found. The alert mail will not be sent !"
 
-msgid "fpdf_not_valid"
-msgstr "ERROR : The file fpdf.php cannot be read or cannot be found. The PDF document cannot be generated !"
-
 msgid "install_remove_fichier"
 msgstr "is from now on useless... Please delete it !"
 
