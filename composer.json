@@ -14,6 +14,7 @@
         "vendor-dir": "vendor"
     },
     "require": {
-        "raveren/kint": "^1.0"
+        "raveren/kint": "^1.0",
+        "spipu/html2pdf": "v4.4.0"
     }
 }

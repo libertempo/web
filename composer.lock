@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "c8e0014161a9f7aef672a29496f6634b",
-    "content-hash": "52424ada9f2ea1f615354d56b83b9914",
+    "hash": "659309f437f708c1d022aeb5d24cc27c",
+    "content-hash": "5e84426667646904ffadcf027a6d4d14",
     "packages": [
         {
             "name": "raveren/kint",
@@ -57,6 +57,49 @@
                 "php"
             ],
             "time": "2015-09-16 14:09:00"
+        },
+        {
+            "name": "spipu/html2pdf",
+            "version": "v4.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spipu/html2pdf.git",
+                "reference": "2b86b570dd9058c1fc2383503d8b8628a977292d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spipu/html2pdf/zipball/2b86b570dd9058c1fc2383503d8b8628a977292d",
+                "reference": "2b86b570dd9058c1fc2383503d8b8628a977292d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "html2pdf.class.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL"
+            ],
+            "authors": [
+                {
+                    "name": "Spipu",
+                    "homepage": "https://github.com/spipu",
+                    "role": "Developer"
+                }
+            ],
+            "description": "PHP library to convert Html into Pdf",
+            "homepage": "http://html2pdf.fr/",
+            "keywords": [
+                "html",
+                "html2pdf",
+                "pdf"
+            ],
+            "time": "2015-12-11 10:13:58"
         }
     ],
     "packages-dev": [],
