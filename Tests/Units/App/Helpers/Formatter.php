@@ -124,4 +124,52 @@ class Formatter extends \Tests\Units\TestUnit
 
         $this->string(date('d-m-Y H\:i', $time))->isIdenticalTo('01-01-1970 12:59');
     }
+
+    /**
+     * Test une heure mal formée
+     *
+     * @return void
+     * @since 1.9
+     */
+    public function testisHourFormatBad()
+    {
+        $return = _Formatter::isHourFormat('12:');
+        $this->integer($return)->isEqualTo(0);
+
+        $return = _Formatter::isHourFormat('a12:25');
+        $this->integer($return)->isEqualTo(0);
+
+        $return = _Formatter::isHourFormat('12h00');
+        $this->integer($return)->isEqualTo(0);
+    }
+
+    /**
+     * Test des heures aberrantes
+     *
+     * @return void
+     * @since 1.9
+     */
+    public function testisHourFormatOutOfBound()
+    {
+        $return = _Formatter::isHourFormat('20:70');
+        $this->integer($return)->isEqualTo(0);
+
+        $return = _Formatter::isHourFormat('25:00');
+        $this->integer($return)->isEqualTo(0);
+    }
+
+    /**
+     * Test une heure bien formée
+     *
+     * @return void
+     * @since 1.9
+     */
+    public function testisHourFormatGood()
+    {
+        $string = '12:00';
+
+        $return = _Formatter::isHourFormat($string);
+
+        $this->integer($return)->isEqualTo(1);
+    }
 }
