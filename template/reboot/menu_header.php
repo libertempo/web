@@ -115,8 +115,38 @@
                             </div>
                         </div>
                     </div>
+					<?php if (is_admin($_SESSION['userlogin'])): ?>
+                    <div class="menu-link">
+                        <a title="Administration" href="<?= ROOT_PATH ?>admin/admin_index.php?session=<?= $session ?>" <?php print ($tmp == 'admin' || $tmp == 'config') ? 'active' : '' ;?>>
+                            <i class="fa fa-bolt"></i>
+							Administration
+						</a>
+                    </div>
+					<?php endif; ?>
+					<?php if (is_hr($_SESSION['userlogin'])): ?>
+                    <div class="menu-link">
+                        <a title="RH" href="<?= ROOT_PATH ?>hr/hr_index.php?session=<?= $session ?>" <?php print ($tmp == 'hr') ? 'active' : '' ;?>>
+                            <i class="fa fa-sitemap"></i>
+							RH
+						</a>
+                    </div>
+					<?php endif; ?>
+					<?php if (is_resp($_SESSION['userlogin'])): ?>
+                    <div class="menu-link">
+                        <a title="<?= _('button_responsable_mode');?>" href="<?= ROOT_PATH ?>responsable/resp_index.php?session=<?= $session ?>" <?php print ($tmp == 'utilisateur') ? 'active' : '' ;?>>
+                            <i class="fa fa-users"></i>
+							<?= _('button_responsable_mode');?>
+						</a>
+                    </div>
+					<?php endif; ?>
+                    <div class="menu-link">
+                        <a title="<?= _('user') ?>" href="<?= ROOT_PATH ?>utilisateur/user_index.php?session=<?= $session ?>" <?php print ($tmp == 'utilisateur') ? 'active' : '' ;?>>
+                            <i class="fa fa-user"></i>
+							<?= _('user') ?>
+                        </a>
+                    </div>
                     <?php if( ($_SESSION['config']['user_affiche_calendrier'] && $tmp=='utilisateur') || ($_SESSION['config']['resp_affiche_calendrier'] && $tmp=='responsable') || $tmp=='hr' ): ?>
-                    <div class="calendar-link">
+                    <div class="menu-link">
                         <a title="<?= _('button_calendar') ?>" href="<?= ROOT_PATH ?>calendrier.php?session=<?= $session ?>">
                             <i class="fa fa-calendar"></i>
                             <?= _('button_calendar') ?>
@@ -124,11 +154,6 @@
                     </div>
                     <?php endif; ?>
                     <ul class="nav">
-                        <li class="bottom-links">
-                            <a class="refresh-link" href="<?= $_SERVER['PHP_SELF'] ?>?session=<?= $session ?>&amp;onglet=<?= $onglet ?>" title="Actualiser">
-                                <i class="fa fa-refresh"></i>
-                            </a>
-                        </li>
                         <?php if($_SESSION['config']['auth']): ?>
                             <li class="bottom-links">
                                 <a class="disconnect-link" href="<?= ROOT_PATH ?>deconnexion.php?session=<?= $session ?>" title="Se déconnecter">
@@ -143,33 +168,6 @@
         <section id="content">
             <section class="vbox">
                 <header class="header bg-white">
-                    <div class="mod-info">
-                        <ul class="nav pull-left">
-                            <li class="dropdown">
-                                <a id="dropdown-mode" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">Mode <strong><?= $user_mode ?></strong>&nbsp;<b class="caret"></b></a>
-                                <ul class="dropdown-menu dropdown-select" role="menu" aria-labelledby="dropdown-mode">
-                                <?php if (is_admin($_SESSION['userlogin'])): ?>
-                                    <li>
-                                        <a href="<?= ROOT_PATH ?>admin/admin_index.php?session=<?= $session ?>" <?php print ($tmp == 'admin' || $tmp == 'config') ? 'active' : '' ;?>>Administration</a>
-                                    </li>
-                                <?php endif; ?>
-                                <?php if (is_hr($_SESSION['userlogin'])): ?>
-                                    <li>
-                                        <a href="<?= ROOT_PATH ?>hr/hr_index.php?session=<?= $session ?>" <?php print ($tmp == 'hr') ? 'active' : '' ;?>>RH</a>
-                                    </li>
-                                <?php endif; ?>
-                                <?php if (is_resp($_SESSION['userlogin'])): ?>
-                                    <li>
-                                        <a href="<?= ROOT_PATH ?>responsable/resp_index.php?session=<?= $session ?>" <?php print ($tmp == 'utilisateur') ? 'active' : '' ;?>><?= _('button_responsable_mode');?></a>
-                                    </li>
-                                <?php endif; ?>
-                                    <li>
-                                        <a href="<?= ROOT_PATH ?>utilisateur/user_index.php?session=<?= $session ?>" <?php print ($tmp == 'utilisateur') ? 'active' : '' ;?>><?= _('user') ?></a>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </div>
                 <?php if($mod_toolbar) : ?>
                     <ul id="mod-toolbar" class="pull-right">
                     <?php foreach ($mod_toolbar as $key => $link) : ?>

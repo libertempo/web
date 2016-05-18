@@ -273,22 +273,22 @@ a{
   }
 }
 
-/*--- calendar link ---*/
-.calendar-link a{
+/*--- menu link ---*/
+.menu-link a{
   border-top: solid 1px $firm-border;
   display: block;
-  text-align: center;
+  text-align: left;
   padding: 20px 0;
   background: $brand-color;
   color: #FFF;
 }
 
-.calendar-link a:hover{
+.menu-link a:hover{
   text-decoration: none;
   background-color: $firm-color;
 }
 
-.calendar-link i{
+.menu-link i{
   margin-right: 5px;
 }
 
