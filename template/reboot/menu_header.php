@@ -115,28 +115,6 @@
                             </div>
                         </div>
                     </div>
-                    <?php if( ($_SESSION['config']['user_affiche_calendrier'] && $tmp=='utilisateur') || ($_SESSION['config']['resp_affiche_calendrier'] && $tmp=='responsable') || $tmp=='hr' ): ?>
-                    <div class="calendar-link">
-                        <a title="<?= _('button_calendar') ?>" href="<?= ROOT_PATH ?>calendrier.php?session=<?= $session ?>">
-                            <i class="fa fa-calendar"></i>
-                            <?= _('button_calendar') ?>
-                        </a>
-                    </div>
-                    <?php endif; ?>
-                    <ul class="nav">
-                        <li class="bottom-links">
-                            <a class="refresh-link" href="<?= $_SERVER['PHP_SELF'] ?>?session=<?= $session ?>&amp;onglet=<?= $onglet ?>" title="Actualiser">
-                                <i class="fa fa-refresh"></i>
-                            </a>
-                        </li>
-                        <?php if($_SESSION['config']['auth']): ?>
-                            <li class="bottom-links">
-                                <a class="disconnect-link" href="<?= ROOT_PATH ?>deconnexion.php?session=<?= $session ?>" title="Se déconnecter">
-                                    <i class="fa fa-power-off"></i>
-                                </a>
-                            </li>
-                        <?php endif; ?>
-                    </ul>
                 </div>
             </section>
         </aside>
@@ -166,6 +144,16 @@
                                     <li>
                                         <a href="<?= ROOT_PATH ?>utilisateur/user_index.php?session=<?= $session ?>" <?php print ($tmp == 'utilisateur') ? 'active' : '' ;?>><?= _('user') ?></a>
                                     </li>
+                                <?php if( ($_SESSION['config']['user_affiche_calendrier'] && $tmp=='utilisateur') || ($_SESSION['config']['resp_affiche_calendrier'] && $tmp=='responsable') || $tmp=='hr' ): ?>
+                                    <li>
+                                        <a href="<?= ROOT_PATH ?>calendrier.php?session=<?= $session ?>"><?= _('button_calendar') ?></a>
+                                    </li>
+                                <?php endif; ?>
+                                <?php if($_SESSION['config']['auth']): ?>
+                                    <li>
+                                        <a href="<?= ROOT_PATH ?>deconnexion.php?session=<?= $session ?>">Déconnexion</a>
+                                    </li>
+                                <?php endif; ?>
                                 </ul>
                             </li>
                         </ul>
