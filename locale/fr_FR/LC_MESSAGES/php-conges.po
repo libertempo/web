@@ -1227,7 +1227,7 @@ msgid "calcul_nb_jours_commentaire"
 msgstr "attention: cette période chevauche d'autres congés !"
 
 msgid "calcul_nb_jours_commentaire_impossible"
-msgstr "CALCUL IMPOSSIBLE : cette période chevauche une demande de congés en cours !"
+msgstr "attention: cette période chevauche une demande de congés en cours !"
 
 msgid "config_comment_export_ical_vcal"
 msgstr "// EXPORTER LES CONGES AU FORMAT ICS<br>//----------------------------------------------------------------------<br>// si à FALSE : les utilisateurs ne peuvent pas exporter leurs congés/absences au format ICS.<br>// si à TRUE : les utilisateurs peuvent exporter leurs congés/absences au format ICS (pour importer dans les agendas électroniques ou les logiciels de planning). (TRUE est la valeur par défaut)"
@@ -1669,3 +1669,33 @@ msgstr "Plugin détecté :"
 
 msgid "no_plugin"
 msgstr "Aucun plugin"
+
+msgid "Heure_non_reconnue"
+msgstr "Heure non reconnue"
+
+msgid "nb_heures"
+msgstr "durée"
+
+msgid "erreur_recommencer"
+msgstr "Des erreurs sont apparues, veuillez recommencer"
+
+msgid "suppr_succes"
+msgstr "suppression effectuée avec succès"
+
+msgid "demande_transmise"
+msgstr "Demande transmise à votre responsable"
+
+msgid "demande_non_modif"
+msgstr "demande non modifié"
+
+msgid "date_fin_superieure_date_debut"
+msgstr "l'heure de fin est antérieur à l'heure de début"
+
+msgid "demande_heure_chevauche_demande"
+msgstr "Cette demande chevauche une autre demande en cours"
+
+msgid "demande_heure_chevauche_autre"
+msgstr "Cette demande chevauche une autre demande déjà validée"
+
+msgid "demande_heure_non_editable"
+msgstr "Cette demande n'est plus accessible"
