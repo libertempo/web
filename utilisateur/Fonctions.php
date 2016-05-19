@@ -1758,7 +1758,11 @@ class Fonctions
                     $return .= \utilisateur\Fonctions::getFormDemandeHeure($type);
                 }
             } else {
-                $return .= '<div class="alert alert-info">' . _('demande_transmise') . '</div>';
+                if('DELETE'==$_POST['_METHOD']) {
+                    $return .= '<div class="alert alert-info">' . _('suppr_succes') . '</div>';
+                } else {
+                    $return .= '<div class="alert alert-info">' . _('demande_transmise') . '</div>';
+                }
                 $return .= \utilisateur\Fonctions::getListPeriodeHeure($type);
             }
         } else {
@@ -1917,7 +1921,8 @@ class Fonctions
                     $return .= '<input type="hidden" name="id_heure" value="'.$id.'">';
                     $return .= '<input type="hidden" name="type" value="'.$type.'">';
                     $return .= '<input type="hidden" name="_METHOD" value="PUT">';
-                    $return .= '<div class="form-group"><input type="submit" class="btn btn-success" value="' . _('form_modif') . '" /></div>';
+                    $return .= '<div class="form-group"><input type="submit" class="btn btn-success" value="' . _('form_modif') . '" />';
+                    $return .= '<a class="btn" href="user_index.php?session=' . session_id() . '&onglet=demandes_en_cours">' . _('form_cancel') . '</a></div>';
                 }
                 $return .='</form>';
         return $return;
