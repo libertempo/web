@@ -1887,7 +1887,7 @@ class Fonctions
         $return .= '</div>';
         $return .= '<div class="actions">';
         $return .= '<input type="hidden" name="choix_action" value="commit">';
-        $return .= '<input class="btn" type="submit" value="' . _('form_submit') . '">';
+        $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
         $return .= '</div>';
         $return .= '</form>';
 

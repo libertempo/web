@@ -53,6 +53,8 @@ $onglets = array();
 
 if( $_SESSION['config']['user_saisie_demande'] || $_SESSION['config']['user_saisie_mission'] ) {
     $onglets['nouvelle_absence'] = _('divers_nouvelle_absence');
+    $onglets['demande_debit_heures'] = _('divers_demande_debit_heures');
+    $onglets['demande_credit_heures'] = _('divers_demande_credit_heures');
 }
 
 if( $_SESSION['config']['user_echange_rtt'] ) {
@@ -70,7 +72,7 @@ if( $_SESSION['config']['auth'] && $_SESSION['config']['user_ch_passwd'] ) {
     $onglets['changer_mot_de_passe'] = _('user_onglet_change_passwd');
 }
 
-if ( !isset($onglets[ $onglet ]) && !in_array($onglet, array('modif_demande','suppr_demande'))) {
+if ( !isset($onglets[ $onglet ]) && !in_array($onglet, array('modif_demande','suppr_demande','modif_demande_heures'))) {
     $onglet = 'nouvelle_absence';
 }
 
