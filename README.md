@@ -33,7 +33,7 @@ Simply copy `cfg/env_new.php` to `cfg/env.php`
 # UPGRADE FROM v1.5
 
 Copy (and edit):
-* `dbconnect.php`  to `cfg/dbconnect.php`
+* `cfg/dbconnect_new.php`  to `cfg/dbconnect.php`
 * `define_new.php` to	`define.php`
 
 
