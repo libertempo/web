@@ -986,7 +986,7 @@ function get_list_all_users_du_resp($resp_login)
     }
 
     $sql1=$sql1." ) " ;
-    $sql1 = $sql1." ORDER BY u_nom " ;
+    $sql1 = $sql1." ORDER BY u_login " ;
     $ReqLog1 = \includes\SQL::query($sql1);
 
     while ($resultat1 = $ReqLog1->fetch_array())
@@ -1015,7 +1015,7 @@ function get_list_all_users_du_resp($resp_login)
         }
 
         $sql_2=$sql_2." ) " ;
-        $sql_2 = $sql_2." ORDER BY u_nom " ;
+        $sql_2 = $sql_2." ORDER BY u_login " ;
 
         $ReqLog_2 = \includes\SQL::query($sql_2);
 
@@ -1051,7 +1051,7 @@ function get_list_users_du_groupe($group_id)
     $sql1='SELECT DISTINCT(gu_login) FROM conges_groupe_users WHERE gu_gid = '.intval($group_id).' ORDER BY gu_login ';
     $ReqLog1 = \includes\SQL::query($sql1);
     while ($resultat1 = $ReqLog1->fetch_array())
-        $list_users[] = '"'.\includes\SQL::quote($resultat1["gu_login"]).'"';
+        $list_users[] = "'".\includes\SQL::quote($resultat1["gu_login"])."'";
 
     $list_users = implode(' , ', $list_users);
     return $list_users;

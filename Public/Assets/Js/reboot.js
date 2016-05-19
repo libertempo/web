@@ -76,7 +76,7 @@ function compter_jours()
  *
  * @param object opts
  */
-function generateDatePicker(opts)
+function generateDatePicker(opts, compter = true)
 {
     var defaultOpts = {
         format             : 'dd/mm/yyyy',
@@ -95,7 +95,9 @@ function generateDatePicker(opts)
     }
     $(document).ready(function () {
         $('input.date').datepicker(toApply).on("change", function() {
-            compter_jours();
+            if( compter == true) {
+                compter_jours();
+            }
         });
     });
 }
