@@ -95,7 +95,7 @@ class Fonctions
         if( $valid ) {
             if( in_array(\utilisateur\Fonctions::get_type_abs($new_type) , array('conges','conges_exceptionnels') ) ) {
                 $resp_du_user = get_tab_resp_du_user($_SESSION['userlogin']);
-                if (array_key_exists('conges', $resp_du_user)||empty($resp_du_user)) {
+                if ((1 === count($resp_du_user) && isset($resp_du_user['conges']))||empty($resp_du_user)) {
                     $new_etat = 'ok' ;
                     soustrait_solde_et_reliquat_user($_SESSION['userlogin'], "", $new_nb_jours, $new_type, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin);
                 } else {
@@ -114,7 +114,7 @@ class Fonctions
                 //envoi d'un mail d'alerte au responsable (si demandé dans config de php_conges)
                 if($_SESSION['config']['mail_new_demande_alerte_resp']){
                     if(in_array(\utilisateur\Fonctions::get_type_abs($new_type), array('absences'))) {
-                        alerte_mail($_SESSION['userlogin'], ":responsable:", $periode_num, "new_absence");
+                        alerte_mail($_SESSION['userlogin'], ":responsable:", $periode_num, "new_absence_conges");
                     } else {
                         alerte_mail($_SESSION['userlogin'], ":responsable:", $periode_num, "new_demande");
                     }

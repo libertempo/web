@@ -25,7 +25,7 @@ class SQL
 	public static function singleton() {
 		if (!isset(self::$instance)) {
             $className = __CLASS__;
-			include CONFIG_PATH .'dbconnect.php';
+			require CONFIG_PATH .'dbconnect.php';
 
             self::$instance = new $className( $mysql_serveur , $mysql_user, $mysql_pass, $mysql_database);
 		}

@@ -24,8 +24,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *************************************************************************************************/
-
-define('_PHP_CONGES', 1);
 define('ROOT_PATH', '../');
 include ROOT_PATH . 'define.php';
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
@@ -76,8 +74,26 @@ $addPlanningCreneau = 'CREATE TABLE `conges_planning_creneau` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8';
 $sql->query($addPlanningCreneau);
 
-
 $sql->getPdoObj()->commit();
 
+//suppression des droits de conges
+$del_conges_acl = "DELETE FROM conges_groupe_resp WHERE gr_login = 'conges';";
+$res_del_conges_acl = \includes\SQL::query($del_conges_acl);
+
+$del_conges_acl = "DELETE FROM conges_groupe_grd_resp WHERE ggr_login = 'conges';";
+$res_del_conges_acl=\includes\SQL::query($del_conges_acl);
+
+//modifications des users ayant comme responsable conges
+$upd_user_resp = "UPDATE conges_users SET u_resp_login = NULL WHERE u_login = 'conges';";
+$res_upd_user_resp=\includes\SQL::query($upd_user_resp);
+
+//suppression des artt de conges
+$del_conges_artt = "DELETE FROM conges_artt WHERE a_login = 'conges';";
+$res_del_conges_artt = \includes\SQL::query($del_conges_artt);
+
+//suppression du user conges
+$del_conges_usr="DELETE FROM conges_users WHERE u_login = 'conges';";
+$res_del_conges_usr=\includes\SQL::query($del_conges_usr);
+
 // on renvoit à la page mise_a_jour.php (là d'ou on vient)
-echo "<a href=\"mise_a_jour.php?etape=3&version=$version&lang=$lang\">upgrade_from_v1.8  OK</a><br>\n";
+echo "<a href=\"mise_a_jour.php?etape=2&version=$version&lang=$lang\">upgrade_from_v1.8  OK</a><br>\n";
