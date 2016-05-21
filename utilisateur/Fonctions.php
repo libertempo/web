@@ -681,7 +681,7 @@ class Fonctions
             $return .= '<b>'. _('user_demandes_aucune_demande') .'</b>';
         } else {
             // AFFICHAGE TABLEAU
-            $return .= '<table class="table table-responsive table-condensed table-stripped table-hover">';
+            $return .= '<table class="table table-responsive table-condensed table-striped table-hover">';
             $return .= '<thead>';
             $return .= '<tr>';
             $return .= '<th>';
@@ -1416,7 +1416,7 @@ class Fonctions
             $return .= '<b>' . _('user_conges_aucun_conges') . '</b><br>';
         } else {
             // AFFICHAGE TABLEAU
-            $return .= '<table class="table table-responsive table-condensed table-stripped table-hover">';
+            $return .= '<table class="table table-responsive table-condensed table-striped table-hover">';
             $return .= '<thead>';
             $return .= '<tr>';
             $return .= '<th>';
@@ -1653,7 +1653,7 @@ class Fonctions
      *
      * @param string $user
      *
-     * @return array
+     * @return ?array
      * @TODO $dataPlanning peut être nullable (php7.1)
      */
     public static function getUserPlanning($user)
@@ -1686,7 +1686,7 @@ class Fonctions
     }
 
     /**
-     * Retourne le type de semaine applicable pour un planning et un numéro de semaine données
+     * Retourne le type de semaine applicable pour un planning et un numéro de semaine donnés
      *
      * @param array $planningUser
      * @param int   $weekOfDay
@@ -1868,7 +1868,7 @@ class Fonctions
                     $return .= \utilisateur\Fonctions::getFormDemandeHeure($type);
                 }
             } else {
-                if('DELETE'==$_POST['_METHOD']) {
+                if(isset($_POST['_METHOD']) && 'DELETE' == $_POST['_METHOD']) {
                     $return .= '<div class="alert alert-info">' . _('suppr_succes') . '</div>';
                 } else {
                     $return .= '<div class="alert alert-info">' . _('demande_transmise') . '</div>';
@@ -2182,18 +2182,28 @@ class Fonctions
     /**
      * Ajoute une demande d'heures dans la BDD
      *
-     * @param array $info
+     * @param array  $info
+     * @param string $user
      *
      * @return int
      */
     private static function insertSQLDemandeDebitCongesHeure(array $info, $user)
     {
+        /*
+         * Il faut vraiment découper les heures additionnelles / de repos en deux choses différentes.
+         * En effet, au niveau du comptage des vraies heures de différences (fin - début), ils ne vont pas se baser sur la même chose :
+         * - les heures additionnelles vont s'appuyer sur les périodes non travaillées
+         * - les heures de repos vont s'appuyer sur les périodes travaillées
+         *
+         * ==> ce sont bien deux modèles différents, et doivent être considérés comme tels (ils ne se ressemblent que par accident)
+         */
         $date = \App\Helpers\Formatter::dateFr2Iso($info['new_jour']);
         $deb = $date." ".$info['new_deb_heure'];
         $fin = $date." ".$info['new_fin_heure'];
         $timedeb = strtotime($deb);
         $timefin = strtotime($fin);
-        $duree = \utilisateur\Fonctions::compter_heures($timedeb,$timefin);
+        $planning = \utilisateur\Fonctions::getUserPlanning($user);
+        $duree = \utilisateur\Fonctions::getDureeViaPlanning($timedeb, $timefin, $planning);
         $sql = \includes\SQL::singleton();
         $toInsert = [];
         $toInsert[] = '(NULL, "' . $user . '", ' . (int) $timedeb . ', '. (int) $timefin .', '. (int) $duree .', '.\App\Models\HeureRecuperation::STATUT_DEMANDE.', '.$info['type'].')';
@@ -2218,7 +2228,8 @@ class Fonctions
         $fin = $date." ".$info['new_fin_heure'];
         $timedeb = strtotime($deb);
         $timefin = strtotime($fin);
-        $duree = \utilisateur\Fonctions::compter_heures($timedeb,$timefin);
+        $planning = \utilisateur\Fonctions::getUserPlanning($user);
+        $duree = \utilisateur\Fonctions::getDureeViaPlanning($timedeb, $timefin, $planning);
         $sql = \includes\SQL::singleton();
         $toInsert = [];
         $req = 'UPDATE conges_heure_periode
@@ -2300,8 +2311,40 @@ class Fonctions
         return sprintf('%02d:%02d', ($t/3600),($t/60%60));
     }
 
-    public static function compter_heures($debut,$fin)
+    /**
+     * Retourne la vraie durée entre deux timestamp en fonction du planning de l'utilisateur
+     *
+     * @param int   $debut
+     * @param int   $fin
+     * @param array $planningUser
+     *
+     * @return int
+     */
+    public static function getDureeViaPlanning($debut, $fin, array $planningUser)
     {
+        /*
+         * Comme pour le moment on ne peut prendre une heure additionnelle / de repos que sur un jour,
+         * on prend arbitrairement le début...
+        */
+        $numeroSemaine = date('W', $debut);
+
+        $realWeekType = \utilisateur\Fonctions::getRealWeekType($planningUser, $numeroSemaine);
+        /* Si la semaine n'est pas travaillée */
+        if (NIL_INT === $realWeekType) {
+            return 0;
+        } else {
+            /*
+             * ... Pareil pour le jour
+             */
+            $planningWeek = $planningUser[$realWeekType];
+            $jourId = date('N', $debut);
+            /* Si le jour n'est pas travaillé */
+            if (!\utilisateur\Fonctions::isWorkingDay($planningWeek, $jourId)) {
+                return 0;
+            } else {
+            }
+        }
+
         return $fin - $debut;
     }
 

@@ -182,7 +182,6 @@ class Planning
 
     /*
      * SQL
-     *
      */
 
     /**

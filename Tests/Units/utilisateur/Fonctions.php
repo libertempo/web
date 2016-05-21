@@ -157,4 +157,18 @@ class Fonctions extends \Tests\Units\TestUnit
     {
         $this->boolean(_Fonctions::isWorkingAfternoon($planningDay))->isIdenticalTo($expected);
     }
+
+    /**
+     * Test de la récupération de la durée à soustraire
+     */
+    public function testGetDureeViaPlanningWithWeekNotWorked()
+    {
+        $planning = [Creneau::TYPE_SEMAINE_PAIRE => []];
+        $week     = date('W', strtotime('2016-01-15'));
+        $debut    = 0;
+        $fin      = 0;
+        $res = _Fonctions::getDureeViaPlanning($debut, $fin, $planning);
+
+        $this->integer($res)->isIdenticalTo(0);
+    }
 }
