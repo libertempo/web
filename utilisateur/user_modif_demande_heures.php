@@ -28,7 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 $id = (int) getpost_variable('id');
 $type = (int) getpost_variable('type');
-if (0 >= $id || !App\ProtoControllers\DemandeHeure::isEditable($id) || !App\ProtoControllers\DemandeHeure::isUserOwner($id,$_SESSION['userlogin'])) {
+if (0 >= $id || !\App\ProtoControllers\DemandeHeure::isEditable($id) || !\App\ProtoControllers\DemandeHeure::isUserOwner($id,$_SESSION['userlogin'])) {
     redirect(ROOT_PATH . 'deconnexion.php');
 }
 echo \utilisateur\Fonctions::getModificationHeures($id,$type);
