@@ -155,9 +155,9 @@
                     <?php endif; ?>
                    <?php if($_SESSION['config']['auth']): ?>
                     <div class="menu-link">
-                        <a title="Quitter" href="<?= ROOT_PATH ?>deconnexion.php?session=<?= $session ?>">
+                        <a title="<?= _('button_deconnect') ?>" href="<?= ROOT_PATH ?>deconnexion.php?session=<?= $session ?>">
                             <i class="fa fa-power-off"></i>
-                            Quitter
+                            <?= _('button_deconnect') ?>
                         </a>
                     </div>
                     <?php endif; ?>
