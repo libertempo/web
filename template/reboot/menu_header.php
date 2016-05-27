@@ -153,15 +153,14 @@
                         </a>
                     </div>
                     <?php endif; ?>
-                    <ul class="nav">
-                        <?php if($_SESSION['config']['auth']): ?>
-                            <li class="bottom-links">
-                                <a class="disconnect-link" href="<?= ROOT_PATH ?>deconnexion.php?session=<?= $session ?>" title="Se déconnecter">
-                                    <i class="fa fa-power-off"></i>
-                                </a>
-                            </li>
-                        <?php endif; ?>
-                    </ul>
+                   <?php if($_SESSION['config']['auth']): ?>
+                    <div class="menu-link">
+                        <a title="Quitter" href="<?= ROOT_PATH ?>deconnexion.php?session=<?= $session ?>">
+                            <i class="fa fa-power-off"></i>
+                            Quitter
+                        </a>
+                    </div>
+                    <?php endif; ?>
                 </div>
             </section>
         </aside>
