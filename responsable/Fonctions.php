@@ -2381,6 +2381,8 @@ enctype="application/x-www-form-urlencoded"><a  title="' . _('form_modif') . '" 
     /**
      * Encapsule le comportement du module d'ajout / modification de planning
      *
+     * @param int $id
+     *
      * @return string
      */
     public static function getFormPlanningModule($id = NIL_INT)
@@ -2395,8 +2397,8 @@ enctype="application/x-www-form-urlencoded"><a  title="' . _('form_modif') . '" 
                 log_action(0, '', '', 'Édition du planning ' . $_POST['name']);
                 redirect(ROOT_PATH . 'responsable/resp_index.php?session='. session_id() . '&onglet=liste_planning', false);
             } else {
-                $errors = '';
                 if (!empty($errorsLst)) {
+                    $errors = '';
                     foreach ($errorsLst as $key => $value) {
                         if (is_array($value)) {
                             $value = implode(' / ', $value);

@@ -360,7 +360,7 @@ CREATE TABLE IF NOT EXISTS `conges_heure_periode` (
   `statut` INT NOT NULL DEFAULT '0' ,
   `type` INT NOT NULL DEFAULT '0' ,
   PRIMARY KEY (`id_heure`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 #
 # Contenu de la table `conges_appli`

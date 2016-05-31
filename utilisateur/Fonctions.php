@@ -1776,9 +1776,9 @@ class Fonctions
         $return ='';
 
         if ($type === \App\Models\HeureRecuperation::TYPE_DEBIT) {
-            $return .= '<h1>' . _('user_demande_debit_heure_titre') . '</h1>';
+            $return .= '<h1>' . _('user_demande_heure_repos_titre') . '</h1>';
         } else {
-            $return .= '<h1>' . _('user_demande_credit_heure_titre') . '</h1>';
+            $return .= '<h1>' . _('user_demande_heure_additionnelle_titre') . '</h1>';
         }
         $return .= '<form action="" method="post" class="form-group">';
         $table = new \App\Libraries\Structure\Table();
@@ -1814,7 +1814,7 @@ class Fonctions
      * Encapsule le comportement du module de modification d'une demande
      * de débit ou de crédit d'heure
      *
-     * @param int $id 
+     * @param int $id
      * @param int $type
      *
      * @return string
@@ -1839,7 +1839,7 @@ class Fonctions
             'datesDisabled'      => $datesDisabled,
             'startDate'          => $startDate,
         ];
-        $return .= '<script>generateDatePicker('.json_encode($datePickerOpts).', false);</script>'; 
+        $return .= '<script>generateDatePicker('.json_encode($datePickerOpts).', false);</script>';
 
         if (!empty($_POST)) {
             if (0 >= (int) \utilisateur\Fonctions::postDemandeCongesHeure($_POST, $errorsLst)) {
@@ -1864,10 +1864,92 @@ class Fonctions
         return $return;
     }
 
+    // --------------------------------------
+
+    /*
+    * TODO: Où sont passées les heures validées (!= en cours donc) ?
+    */
+
+    /**
+     * Encapsule le comportemen du module d'ajout / modification d'heure additionnnelles
+     *
+     * @param int $id
+     *
+     * @return string
+     */
+    public static function getFormHeureAdditionnelle($id = NIL_INT)
+    {
+        $errorsLst = [];
+        $return = '<h1>' . _('user_demande_heure_additionnelle_titre') . '</h1>';
+        if (!empty($_POST)) {
+            if (0 >= (int) \utilisateur\Fonctions::postDemandeCongesHeure($_POST, $errorsLst)) {
+                if (!empty($errorsLst)) {
+                    $errors = '';
+                    foreach ($errorsLst as $key => $value) {
+                        if (is_array($value)) {
+                            $value = implode(' / ', $value);
+                        }
+                        $errors .= '<li>' . $key . ' : ' . $value . '</li>';
+                    }
+                    $return .= '<div class="alert alert-danger">' . _('erreur_recommencer') . '<ul>' . $errors . '</ul></div>';
+                }
+            } else {
+                //log_action(0, '', '', 'Édition du planning ' . $_POST['name']);
+                // TODO log approprié
+                redirect(ROOT_PATH . 'responsable/resp_index.php?session='. session_id() . '&onglet=liste_planning', false);
+            }
+        }
+
+        $return .= '<form action="" method="post" accept-charset="UTF-8"
+enctype="application/x-www-form-urlencoded" class="form-group">';
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-hover',
+            'table-responsive',
+            'table-striped',
+            'table-condensed'
+        ]);
+
+        $debutId      = uniqid();
+        $finId        = uniqid();
+
+        $childTable = '<thead><tr><th width="20%">' . _('Jour') . '</th><th>' . _('creneau') . '</th></tr></thead><tbody>';
+        $childTable .= '<tr><td><input class="form-control date" type="text" value="'.date("d/m/Y").'" name="new_jour"></td>';
+        $childTable .= '<td><div class="form-inline col-xs-3"><input class="form-control" style="width:45%" type="text" id="' . $debutId . '"  value="" name="new_deb_heure">&nbsp;<i class="fa fa-caret-right"></i>&nbsp;<input class="form-control" style="width:45%" type="text" id="' . $finId . '"  value="" name="new_fin_heure"></div></td></tr>';
+        $childTable .= '</tbody>';
+        $childTable .= '<script type="text/javascript">generateTimePicker("' . $debutId . '");generateTimePicker("' . $finId . '");</script>';
+
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
+        $return .= '<input type="hidden" name="type" value="' . \App\Models\HeureRecuperation::TYPE_ADDITIONNELLE . '">';
+        $return .= '<div class="form-group"><input type="submit" class="btn btn-success" value="' . _('form_submit') . '" /></div>';
+        $return .='</form>';
+        /* Génération du datePicker et de ses options */
+        $daysOfWeekDisabled = \utilisateur\Fonctions::getDatePickerDaysOfWeekDisabled();
+        $datesFeries        = \utilisateur\Fonctions::getDatePickerJoursFeries();
+        $datesFerme         = \utilisateur\Fonctions::getDatePickerFermeture();
+        $datesDisabled      = array_merge($datesFeries,$datesFerme);
+        $startDate = \utilisateur\Fonctions::getDatePickerStartDate();
+
+        $datePickerOpts = [
+            'daysOfWeekDisabled' => $daysOfWeekDisabled,
+            'datesDisabled'      => $datesDisabled,
+            'startDate'          => $startDate,
+        ];
+        $return .= '<script>generateDatePicker('.json_encode($datePickerOpts).', false);</script>';
+
+        return $return;
+    }
+
+    // ---------------------------------
+
    /**
      * formulaire de modification d'une demande de débit ou de crédit d'heure
      *
-     * @param int $id 
+     * @param int $id
      * @param int $type
      *
      * @return string
@@ -1879,9 +1961,9 @@ class Fonctions
         $return="";
 
             if ($type === \App\Models\HeureRecuperation::TYPE_DEBIT) {
-                $return .= '<h1>' . _('user_modif_debit_heure_titre') . '</h1>';
+                $return .= '<h1>' . _('user_heure_repos_titre') . '</h1>';
             } else {
-                $return .= '<h1>' . _('user_modif_credit_heure_titre') . '</h1>';
+                $return .= '<h1>' . _('user_modif_heure_additionnelle_titre') . '</h1>';
             }
 
             $return .= '<form action="" method="post" class="form-group">';
@@ -2050,7 +2132,7 @@ class Fonctions
 
         // leur champs doivent etre renseignés dans le formulaire
         if ( $jour == '' || $heuredeb == '' || $heurefin == '' ) {
-            $localError[] = _('verif_saisie_erreur_valeur_manque'); 
+            $localError[] = _('verif_saisie_erreur_valeur_manque');
         }
 
         if ( !(\App\Helpers\Formatter::isHourFormat($heuredeb) && \App\Helpers\Formatter::isHourFormat($heurefin))) {
@@ -2063,7 +2145,7 @@ class Fonctions
 
             $chevauch = \utilisateur\Fonctions::VerifChevauchHeures($jour, $heuredeb, $heurefin, $localError, $id, $user);
         }
-            
+
         $Error = array_merge($Error, $localError);
 
         return empty($localError);
@@ -2111,11 +2193,11 @@ class Fonctions
         $duree = \utilisateur\Fonctions::compter_heures($timedeb,$timefin);
         $sql = \includes\SQL::singleton();
         $toInsert = [];
-        $req = 'UPDATE conges_heure_periode 
-                SET debut = '.$timedeb.', 
-                    fin = '.$timefin.', 
+        $req = 'UPDATE conges_heure_periode
+                SET debut = '.$timedeb.',
+                    fin = '.$timefin.',
                     time = '.$duree.'
-                WHERE id_heure = '. (int) $id.' 
+                WHERE id_heure = '. (int) $id.'
                 AND login = "'.$_SESSION['userlogin'].'"';
         $query = $sql->query($req);
         return 0 < $sql->affected_rows ? $id : NIL_INT;
@@ -2131,9 +2213,9 @@ class Fonctions
     private static function getListPeriodeHeure($type=\App\Models\HeureRecuperation::TYPE_DEBIT)
     {
         if ($type===\App\Models\HeureRecuperation::TYPE_DEBIT) {
-            $titre = _('utilisateur_demande_debit_heure_recuperation');
+            $titre = _('utilisateur_demande_eure_repos');
         } else {
-            $titre = _('utilisateur_demande_credit_heure_recuperation');
+            $titre = _('utilisateur_demande_heure_additionnelle');
         }
         $return = '<hr><h1>' . $titre . '</h1>';
         $session = session_id();
@@ -2184,13 +2266,13 @@ class Fonctions
         return $return;
     }
 
-    public static function Timestamp2Time($secondes) 
+    public static function Timestamp2Time($secondes)
     {
         $t = (int) $secondes;
         return sprintf('%02d:%02d', ($t/3600),($t/60%60));
     }
 
-    public static function compter_heures($debut,$fin) 
+    public static function compter_heures($debut,$fin)
     {
         return $fin - $debut;
     }
