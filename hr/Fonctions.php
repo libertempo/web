@@ -1482,7 +1482,7 @@ class Fonctions
                 'table-condensed',
                 'table-responsive',
             ]);
-            $childTable .= '<thead>';
+            $childTable = '<thead>';
             $childTable .= '<tr align="center">';
             $childTable .= '<th>' . _('divers_nom_maj_1') . '</th>';
             $childTable .= '<th>' . _('divers_prenom_maj_1') . '</th>';
