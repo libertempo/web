@@ -121,6 +121,13 @@ abstract class Heure
         return empty($localErrors);
     }
 
+    /**
+     * Liste des heures
+     *
+     * @return string
+     */
+    abstract public function getListe();
+
     /*
      * SQL
      */

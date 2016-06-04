@@ -72,6 +72,18 @@ class Formatter
     }
 
     /**
+     * Transforme un timestamp en une date
+     *
+     * @param int $timestamp
+     *
+     * @return string
+     */
+    public static function timestamp2DateTime($timestamp)
+    {
+        return date('d/m/Y H\:i', $timestamp);
+    }
+
+    /**
      * Verifie le format d'une heure (hh:mm)
      *
      * @param string $heure

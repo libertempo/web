@@ -58,8 +58,8 @@ class Repos extends \App\ProtoControllers\Heure
                     $return .= '<div class="alert alert-danger">' . _('erreur_recommencer') . '<ul>' . $errors . '</ul></div>';
                 }
             } else {
-                // TODO: log et redirect
-                // ex : log_action($id, 'demande', '', 'Nouvelle demande d\'heure enregistrée : '. $id);
+                log_action(0, 'demande', '', 'Nouvelle demande d\'heure de repos enregistrée');
+                redirect(ROOT_PATH . 'utilisateur/user_index.php?session='. session_id() . '&onglet=liste_heure_repos', false);
             }
         }
 
@@ -126,24 +126,83 @@ class Repos extends \App\ProtoControllers\Heure
     }
 
     /**
-     * Liste des heures
-     *
-     * @return string
+     * {@inheritDoc}
      */
     public function getListe()
     {
-        return '<h1>hello world</h1>';
+        $return = '<h1>' . _('user_liste_heure_repos') . '</h1>';
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-hover',
+            'table-responsive',
+            'table-condensed',
+            'table-striped',
+        ]);
+        $childTable = '<thead><tr><th style="width:25%">debut</th><th style="width:25%">fin</th><th style="width:25%">durée</th><th style="width:25%">statut</th></tr></thead><tbody>';
+        $listId = $this->getListeId();
+        if (empty($listId)) {
+            $childTable .= '<tr><td colspan=4><center>' . _('aucun_resultat') . '</center></td></tr>';
+        } else {
+            $listeRepos = $this->getListeSQL($listId);
+            foreach ($listeRepos as $repos) {
+                $debut  = \App\Helpers\Formatter::timestamp2DateTime($repos['debut']);
+                $fin    = \App\Helpers\Formatter::timestamp2DateTime($repos['fin']);
+                $duree  = date('H\:i', $repos['duree']);
+                $statut = Heure::statusText($repos['statut']);
+                $childTable .= '<tr><td>' . $debut . '</td><td>' . $fin . '</td><td>' . $duree . '</td><td>' . $statut . '</td></tr>';
+            }
+        }
+        $childTable .= '</tbody>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
 
-        // order by debut DESC AND statut ASC
+        return $return;
+    }
+
+    /**
+     * @return array
+     */
+    private function getListeId()
+    {
+        $ids = [];
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT id_heure AS id
+                FROM conges_heure_repos';
+        $res = $sql->query($req);
+        while ($data = $res->fetch_array()) {
+            $ids[] = (int) $data['id'];
+        }
+
+        return $ids;
+    }
+
+    /**
+     * @return array
+     */
+    private function getListeSQL(array $listId)
+    {
+        if (empty($listId)) {
+            return [];
+        }
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT *
+                FROM conges_heure_repos
+                WHERE id_heure IN (' . implode(',', $listId) . ')
+                ORDER BY debut DESC, statut ASC';
+
+        return $sql->query($req)->fetch_all(MYSQLI_ASSOC);
     }
 
     /*
      * SQL
      */
 
-     /**
-      * {@inheritDoc}
-      */
+    /**
+     * {@inheritDoc}
+     */
     protected function isChevauchement($jour, $heureDebut, $heureFin, $id, $user)
     {
         $jour = \App\Helpers\Formatter::dateFr2Iso($jour);

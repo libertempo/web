@@ -31,11 +31,49 @@ namespace App\Models;
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina
  */
-class Heure
+abstract class Heure
 {
+    /**
+     * Constantes de statut
+     * @var int
+     */
     const STATUT_DEMANDE = 1;
     const STATUT_VALIDE  = 2;
     const STATUT_OK      = 3;
     const STATUT_REFUS   = 4;
     const STATUT_ANNUL   = 5;
+
+    /**
+     * Affiche le statut en format texte
+     *
+     * @param int $status
+     *
+     * @return string
+     */
+    public static function statusText($status)
+    {
+        switch ($status) {
+            case static::STATUT_DEMANDE:
+                $text = 'statut_demande';
+                break;
+            case static::STATUT_VALIDE:
+                $text = 'statut_valide';
+                break;
+            case static::STATUT_OK:
+                $text = 'statut_ok';
+                break;
+            case static::STATUT_REFUS:
+                $text = 'statut_refus';
+                break;
+            case static::STATUT_ANNUL:
+                $text = 'statut_annul';
+                break;
+
+            default:
+                $text = 'statut_inconnu';
+                break;
+        }
+
+        return _($text);
+    }
 }
