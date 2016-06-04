@@ -35,22 +35,18 @@ use \App\Models\Heure;
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina
  */
-class Repos
+class Repos extends \App\ProtoControllers\Heure
 {
     /**
-     * Encapsule le comportement du formulaire d'édition d'heures de repos
-     *
-     * @return string
-     * @access public
-     * @static
+     * {@inheritDoc}
      */
-    public static function getForm()
+    public function getForm()
     {
         $return    = '';
         $errorsLst = [];
 
         if (!empty($_POST)) {
-            if (0 >= (int) static::post($_POST, $errorsLst)) {
+            if (0 >= (int) $this->post($_POST, $errorsLst)) {
                 $errors = '';
                 if (!empty($errorsLst)) {
                     foreach ($errorsLst as $key => $value) {
@@ -114,45 +110,13 @@ class Repos
     }
 
     /**
-     * Traite la demande/modification/suppression
-     *
-     * @param array $post
-     * @param array &$errorsLst
-     *
-     * @return int
-     */
-    private static function post(array $post, array &$errorsLst)
-    {
-        if (!empty($post['_METHOD'])) {
-            switch ($post['_METHOD']) {
-                case 'DELETE':
-                    return static::delete($post['id_heure'], $_SESSION['userlogin'], $errorsLst);
-                    break;
-                case 'PUT':
-                    return \utilisateur\Fonctions::putDemandeDebitCongesHeure($post, $errorsLst, $_SESSION['userlogin']);
-                    break;
-            }
-        } else {
-            if (static::hasErreurs($post, $errorsLst)) {
-                $id = static::insert($post, $_SESSION['userlogin']);
-                if (0 < $id) {
-
-                    return $id;
-                }
-            }
-
-            return NIL_INT;
-        }
-    }
-
-    /**
      * Supprime une demande d'heures
      *
      * @param int $id
      *
      * @return int
      */
-    private static function delete($id, $user, array &$errorsLst)
+    private function delete($id, $user, array &$errorsLst)
     {
         if (NIL_INT !== \utilisateur\Fonctions::deleteSQLDemandeDebitCongesHeure($id, $user, $errorsLst)) {
             log_action($id, 'annul', '', 'Annulation de la demande d\'heure ' . $id);
@@ -162,57 +126,11 @@ class Repos
     }
 
     /**
-     * Contrôle l'éligibilité d'une demande d'heures
-     *
-     * @param array  $post
-     * @param array  &$errorsLst
-     * @param int    $id
-     *
-     * @return bool
-     */
-    private static function hasErreurs(array $post, array &$errorsLst, $id = NIL_INT)
-    {
-        $localErrors = [];
-
-        /* Syntaxique : champs requis et format */
-        if (empty($post['new_jour'])) {
-            $localErrors['Jour'] = _('champ_necessaire');
-        }
-        if (empty($post['new_deb_heure'])) {
-            $localErrors['Heure de début'] = _('champ_necessaire');
-        } elseif (!\App\Helpers\Formatter::isHourFormat($post['new_deb_heure'])) {
-            $localErrors['Heure de début'] = _('Format_heure_incorrect');
-        }
-        if (empty($post['new_fin_heure'])) {
-            $localErrors['Heure de fin'] = _('champ_necessaire');
-        } elseif (!\App\Helpers\Formatter::isHourFormat($post['new_fin_heure'])) {
-            $localErrors['Heure de fin'] = _('Format_heure_incorrect');
-        }
-        if (!empty($localErrors)) {
-            $errorsLst = array_merge($errorsLst, $localErrors);
-
-            return empty($localErrors);
-        }
-
-        /* Sémantique : sens de prise d'heure */
-        if (NIL_INT !== strnatcmp($post['new_deb_heure'], $post['new_fin_heure'])) {
-            $localErrors['Heure de début / Heure de fin'] = _('verif_saisie_erreur_heure_fin_avant_debut');
-        }
-        if (static::isChevauchement($post['new_jour'], $post['new_deb_heure'], $post['new_fin_heure'], $id, $_SESSION['userlogin'])) {
-            $localErrors['Cohérence'] = _('Chevauchement_heure_avec_existant');
-        }
-
-        $errorsLst = array_merge($errorsLst, $localErrors);
-
-        return empty($localErrors);
-    }
-
-    /**
      * Liste des heures
      *
      * @return string
      */
-    public static function getListe()
+    public function getListe()
     {
         return '<h1>hello world</h1>';
 
@@ -223,18 +141,10 @@ class Repos
      * SQL
      */
 
-    /**
-     * Vérifie le chevauchement entre les heures demandées et l'existant
-     *
-     * @param string $jour
-     * @param string $heureDebut
-     * @param string $heureFin
-     * @param int    $id
-     * @param string $user
-     *
-     * @return bool
-     */
-    private static function isChevauchement($jour, $heureDebut, $heureFin, $id, $user)
+     /**
+      * {@inheritDoc}
+      */
+    protected function isChevauchement($jour, $heureDebut, $heureFin, $id, $user)
     {
         $jour = \App\Helpers\Formatter::dateFr2Iso($jour);
         $timestampDebut = strtotime($jour . ' ' . $heureDebut);
@@ -258,14 +168,9 @@ class Repos
     }
 
     /**
-     * Ajoute une demande d'heures dans la BDD
-     *
-     * @param array  $post
-     * @param string $user
-     *
-     * @return int
+     * {@inheritDoc}
      */
-    private static function insert(array $post, $user)
+    protected function insert(array $post, $user)
     {
         $jour = \App\Helpers\Formatter::dateFr2Iso($post['new_jour']);
         $timestampDebut = strtotime($jour . ' ' . $post['new_deb_heure']);
@@ -273,7 +178,7 @@ class Repos
         /* TODO: Toute la partie du check d'erreur et du comptage réel des heures devrait être dans le modèle.
         C'est lui qui devrait remplir le DAO à partir de ses attributs pour l'insertion
         */
-        $duree = static::compterHeures($timestampDebut, $timestampFin);
+        $duree = $this->countDuree($timestampDebut, $timestampFin);
         $sql = \includes\SQL::singleton();
         $req = 'INSERT INTO conges_heure_repos (id_heure, login, debut, fin, duree, statut) VALUES
         (NULL, "' . $user . '", ' . (int) $timestampDebut . ', '. (int) $timestampFin .', '. (int) $duree . ', ' . Heure::STATUT_DEMANDE . ')';
@@ -282,7 +187,10 @@ class Repos
         return $sql->insert_id;
     }
 
-    private static function compterHeures($debut, $fin)
+    /**
+     * {@inheritDoc}
+     */
+    protected function countDuree($debut, $fin)
     {
         return $fin - $debut;
     }

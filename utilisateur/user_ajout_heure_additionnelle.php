@@ -27,4 +27,5 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 defined('_PHP_CONGES') or die('Restricted access');
 
-echo \App\ProtoControllers\Heure\Additionnelle::getForm();
+$additionnelle = new \App\ProtoControllers\Heure\Additionnelle();
+echo $additionnelle->getForm();
