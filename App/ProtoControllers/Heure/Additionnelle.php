@@ -31,6 +31,7 @@ namespace App\ProtoControllers\Heure;
  *
  * @since  1.9
  * @author Prytoegrian <prytoegrian@protonmail.com>
+ * @author Wouldsmina
  */
 class Additionnelle
 {

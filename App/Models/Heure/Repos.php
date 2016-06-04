@@ -23,17 +23,15 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *************************************************************************************************/
-namespace App\Models;
+namespace App\Models\Heure;
+
 /**
- * Modèle de type et de status d'une période
+ * Modèle d'une heure de repos
+ *
+ * @since  1.9
+ * @author Prytoegrian <prytoegrian@protonmail.com>
+ * @author Wouldsmina
  */
-class HeureRecuperation
+class Repos extends \App\Models\Heure
 {
-    const STATUT_DEMANDE     = 1;
-    const STATUT_VALIDE      = 2;
-    const STATUT_OK          = 3;
-    const STATUT_REFUS       = 4;
-    const STATUT_ANNUL       = 5;
-    const TYPE_ADDITIONNELLE = 1;
-    const TYPE_REPOS         = 2;
 }

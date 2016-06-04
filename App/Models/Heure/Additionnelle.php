@@ -4,7 +4,6 @@ Libertempo : Gestion Interactive des Congés
 Copyright (C) 2015 (Wouldsmina)
 Copyright (C) 2015 (Prytoegrian)
 Copyright (C) 2005 (cedric chauvineau)
-
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
 termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
 Ce programme est distribué car potentiellement utile, mais SANS AUCUNE GARANTIE,
@@ -24,15 +23,15 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *************************************************************************************************/
-namespace App\ProtoControllers\Heure;
+namespace App\Models\Heure;
 
 /**
- * ProtoContrôleur d'heures de repos, en attendant la migration vers le MVC REST
+ * Modèle d'une heure additionnelle
  *
  * @since  1.9
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina
  */
-class Repos
+class Additionnelle extends \App\Models\Heure
 {
 }
