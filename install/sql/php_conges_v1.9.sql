@@ -367,7 +367,7 @@ CREATE TABLE IF NOT EXISTS `conges_heure_additionnelle` (
   `login` varbinary(99) NOT NULL,
   `debut` int(11) NOT NULL,
   `fin` int(11) NOT NULL,
-  `time` int(11) NOT NULL,
+  `duree` int(11) NOT NULL,
   `statut` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id_heure`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -377,7 +377,7 @@ CREATE TABLE IF NOT EXISTS `conges_heure_repos` (
   `login` varbinary(99) NOT NULL,
   `debut` int(11) NOT NULL,
   `fin` int(11) NOT NULL,
-  `time` int(11) NOT NULL,
+  `duree` int(11) NOT NULL,
   `statut` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id_heure`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

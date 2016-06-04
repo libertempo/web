@@ -111,7 +111,7 @@ $periodeAdditionnelle = "CREATE TABLE conges_heure_additionnelle (
     login VARBINARY(99) NOT NULL,
     debut INT(11) NOT NULL,
     fin INT(11) NOT NULL,
-    time INT NOT NULL,
+    duree INT NOT NULL,
     statut INT NOT NULL DEFAULT 0,
     PRIMARY KEY (`id_heure`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
@@ -122,7 +122,7 @@ $periodeRepos = "CREATE TABLE conges_heure_repos (
     login VARBINARY(99) NOT NULL,
     debut INT(11) NOT NULL,
     fin INT(11) NOT NULL,
-    time INT NOT NULL,
+    duree INT NOT NULL,
     statut INT NOT NULL DEFAULT 0,
     PRIMARY KEY (`id_heure`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8";

@@ -1717,45 +1717,6 @@ class Fonctions
     return ($_SESSION['config']['interdit_saisie_periode_date_passee']) ? 'd' : '';
     }
 
-    public static function getFormDemandeHeure($type)
-    {
-        $return ='';
-
-        if ($type === \App\Models\HeureRecuperation::TYPE_DEBIT) {
-            $return .= '<h1>' . _('user_demande_heure_repos_titre') . '</h1>';
-        } else {
-            $return .= '<h1>' . _('user_demande_heure_additionnelle_titre') . '</h1>';
-        }
-        $return .= '<form action="" method="post" class="form-group">';
-        $table = new \App\Libraries\Structure\Table();
-        $table->addClasses([
-            'table',
-            'table-hover',
-            'table-responsive',
-            'table-striped',
-            'table-condensed'
-        ]);
-
-        $debutId      = uniqid();
-        $finId        = uniqid();
-
-        $childTable = '<thead><tr><th width="20%">' . _('Jour') . '</th><th>' . _('creneau') . '</th></tr></thead><tbody>';
-        $childTable .= '<tr><td><input class="form-control date" type="text" value="'.date("d/m/Y").'" name="new_jour"></td>';
-        $childTable .= '<td><div class="form-inline col-xs-3"><input class="form-control" style="width:45%" type="text" id="' . $debutId . '"  value="" name="new_deb_heure">&nbsp;<i class="fa fa-caret-right"></i>&nbsp;<input class="form-control" style="width:45%" type="text" id="' . $finId . '"  value="" name="new_fin_heure"></div></td></tr>';
-        $childTable .= '</tbody>';
-        $childTable .= '<script type="text/javascript">generateTimePicker("' . $debutId . '");generateTimePicker("' . $finId . '");</script>';
-
-        $table->addChild($childTable);
-        ob_start();
-        $table->render();
-        $return .= ob_get_clean();
-        $return .= '<input type="hidden" name="type" value="'.$type.'">';
-        $return .= '<div class="form-group"><input type="submit" class="btn btn-success" value="' . _('form_submit') . '" /></div>';
-        $return .='</form>';
-
-        return $return;
-    }
-
     /**
      * Encapsule le comportement du module de modification d'une demande
      * de débit ou de crédit d'heure

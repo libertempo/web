@@ -60,7 +60,6 @@ class Repos
                         $errors .= '<li>' . $key . ' : ' . $value . '</li>';
                     }
                     $return .= '<div class="alert alert-danger">' . _('erreur_recommencer') . '<ul>' . $errors . '</ul></div>';
-                    //$return .= \utilisateur\Fonctions::getFormDemandeHeure($type);
                 }
             } else {
                 // TODO: log et redirect
@@ -134,7 +133,7 @@ class Repos
                     break;
             }
         } else {
-            if (static::hasErreurs($post, $_SESSION['userlogin'], $errorsLst)) {
+            if (static::hasErreurs($post, $errorsLst)) {
                 $id = static::insert($post, $_SESSION['userlogin']);
                 if (0 < $id) {
 
@@ -166,13 +165,12 @@ class Repos
      * Contrôle l'éligibilité d'une demande d'heures
      *
      * @param array  $post
-     * @param string $user
      * @param array  &$errorsLst
      * @param int    $id
      *
      * @return bool
      */
-    private static function hasErreurs(array $post, $user, array &$errorsLst, $id = NIL_INT)
+    private static function hasErreurs(array $post, array &$errorsLst, $id = NIL_INT)
     {
         $localErrors = [];
 
@@ -200,13 +198,25 @@ class Repos
         if (NIL_INT !== strnatcmp($post['new_deb_heure'], $post['new_fin_heure'])) {
             $localErrors['Heure de début / Heure de fin'] = _('verif_saisie_erreur_heure_fin_avant_debut');
         }
-        if (static::isChevauchement($post['new_jour'], $post['new_deb_heure'], $post['new_fin_heure'], $id, $user)) {
+        if (static::isChevauchement($post['new_jour'], $post['new_deb_heure'], $post['new_fin_heure'], $id, $_SESSION['userlogin'])) {
             $localErrors['Cohérence'] = _('Chevauchement_heure_avec_existant');
         }
 
         $errorsLst = array_merge($errorsLst, $localErrors);
 
         return empty($localErrors);
+    }
+
+    /**
+     * Liste des heures
+     *
+     * @return string
+     */
+    public static function getListe()
+    {
+        return '<h1>hello world</h1>';
+
+        // order by debut DESC AND statut ASC
     }
 
     /*
