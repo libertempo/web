@@ -1696,7 +1696,7 @@ class Fonctions
     {
         $Fermeture      = [];
 
-        if (is_array($_SESSION["tab_j_fermeture"])) {
+        if (isset($_SESSION["tab_j_fermeture"]) && is_array($_SESSION["tab_j_fermeture"])) {
             foreach ($_SESSION["tab_j_fermeture"] as $date) {
                 $Fermeture[] = \App\Helpers\Formatter::dateIso2Fr($date);
             }
@@ -1715,60 +1715,6 @@ class Fonctions
     public static function getDatePickerStartDate()
     {
     return ($_SESSION['config']['interdit_saisie_periode_date_passee']) ? 'd' : '';
-    }
-
-    /**
-     * Encapsule le comportement du module des demandes de debit d'heures
-     *
-     * @return string
-     * @access public
-     * @static
-     */
-    public static function getDemandeCongesHeure($type)
-    {
-        $return    = '';
-
-        /* Génération du datePicker et de ses options */
-        $daysOfWeekDisabled = \utilisateur\Fonctions::getDatePickerDaysOfWeekDisabled();
-        $datesFeries        = \utilisateur\Fonctions::getDatePickerJoursFeries();
-        $datesFerme         = \utilisateur\Fonctions::getDatePickerFermeture();
-        $datesDisabled      = array_merge($datesFeries,$datesFerme);
-        $startDate = \utilisateur\Fonctions::getDatePickerStartDate();
-
-        $datePickerOpts = [
-            'daysOfWeekDisabled' => $daysOfWeekDisabled,
-            'datesDisabled'      => $datesDisabled,
-            'startDate'          => $startDate,
-        ];
-        $return .= '<script>generateDatePicker('.json_encode($datePickerOpts).', false);</script>';
-
-        $errorsLst = [];
-
-        if (!empty($_POST)) {
-            if (0 >= (int) \utilisateur\Fonctions::postDemandeCongesHeure($_POST, $errorsLst)) {
-                $errors = '';
-                if (!empty($errorsLst)) {
-                    foreach ($errorsLst as $key => $value) {
-                        if (is_array($value)) {
-                            $value = implode(' / ', $value);
-                        }
-                        $errors .= '<li>' . $key . ' : ' . $value . '</li>';
-                    }
-                    $return .= '<div class="alert alert-danger">' . _('erreur_recommencer') . '<ul>' . $errors . '</ul></div>';
-                    $return .= \utilisateur\Fonctions::getFormDemandeHeure($type);
-                }
-            } else {
-                if('DELETE'==$_POST['_METHOD']) {
-                    $return .= '<div class="alert alert-info">' . _('suppr_succes') . '</div>';
-                } else {
-                    $return .= '<div class="alert alert-info">' . _('demande_transmise') . '</div>';
-                }
-                $return .= \utilisateur\Fonctions::getListPeriodeHeure($type);
-            }
-        } else {
-            $return .= \utilisateur\Fonctions::getFormDemandeHeure($type);
-        }
-        return $return;
     }
 
     public static function getFormDemandeHeure($type)
@@ -2298,7 +2244,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $res = $sql->query($req);
         $val = $res->fetch_assoc();
 
-    return is_null($val['statut']) ? NIL_INT : (int)$val['statut'];
+        return is_null($val['statut']) ? NIL_INT : (int)$val['statut'];
     }
 
     public static function VerifChevauchHeures($jour, $heuredeb, $heurefin, array &$Errors, $id, $user)

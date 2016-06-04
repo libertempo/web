@@ -33,14 +33,9 @@ namespace App\Models;
  */
 class Heure
 {
-    const STATUT_DEMANDE     = 1;
-    const STATUT_VALIDE      = 2;
-    const STATUT_OK          = 3;
-    const STATUT_REFUS       = 4;
-    const STATUT_ANNUL       = 5;
-
-
-
-    const TYPE_ADDITIONNELLE = 1;
-    const TYPE_REPOS         = 2;
+    const STATUT_DEMANDE = 1;
+    const STATUT_VALIDE  = 2;
+    const STATUT_OK      = 3;
+    const STATUT_REFUS   = 4;
+    const STATUT_ANNUL   = 5;
 }
