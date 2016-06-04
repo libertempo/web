@@ -38,10 +38,12 @@ abstract class Heure
     /**
      * Encapsule le comportement du formulaire d'édition d'heures
      *
+     * @param int $id
+     *
      * @return string
      * @access public
      */
-    abstract public function getForm();
+    abstract public function getForm($id = NIL_INT);
 
     /**
      * Traite la demande/modification/suppression
@@ -59,11 +61,11 @@ abstract class Heure
                     return $this->delete($post['id_heure'], $_SESSION['userlogin'], $errorsLst);
                     break;
                 case 'PUT':
-                    return \utilisateur\Fonctions::putDemandeDebitCongesHeure($post, $errorsLst, $_SESSION['userlogin']);
+                    return $this->put($post, $errorsLst, $_SESSION['userlogin']);
                     break;
             }
         } else {
-            if ($this->hasErreurs($post, $errorsLst)) {
+            if (!$this->hasErreurs($post, $errorsLst)) {
                 $id = $this->insert($post, $_SESSION['userlogin']);
                 if (0 < $id) {
 
@@ -76,30 +78,41 @@ abstract class Heure
     }
 
     /**
+     * Met à jour une demande d'heures
+     *
+     * @param array  $put
+     * @param array  &$errorsLst
+     * @param string $user
+     *
+     * @return int
+     */
+    abstract protected function put(array $put, array &$errorsLst, $user);
+
+    /**
      * Contrôle l'éligibilité d'une demande d'heures
      *
      * @param array  $post
      * @param array  &$errorsLst
      * @param int    $id
      *
-     * @return bool
+     * @return bool True s'il y a des erreurs
      */
-    private function hasErreurs(array $post, array &$errorsLst, $id = NIL_INT)
+    protected function hasErreurs(array $post, array &$errorsLst, $id = NIL_INT)
     {
         $localErrors = [];
 
         /* Syntaxique : champs requis et format */
-        if (empty($post['new_jour'])) {
+        if (empty($post['jour'])) {
             $localErrors['Jour'] = _('champ_necessaire');
         }
-        if (empty($post['new_deb_heure'])) {
+        if (empty($post['debut_heure'])) {
             $localErrors['Heure de début'] = _('champ_necessaire');
-        } elseif (!\App\Helpers\Formatter::isHourFormat($post['new_deb_heure'])) {
+        } elseif (!\App\Helpers\Formatter::isHourFormat($post['debut_heure'])) {
             $localErrors['Heure de début'] = _('Format_heure_incorrect');
         }
-        if (empty($post['new_fin_heure'])) {
+        if (empty($post['fin_heure'])) {
             $localErrors['Heure de fin'] = _('champ_necessaire');
-        } elseif (!\App\Helpers\Formatter::isHourFormat($post['new_fin_heure'])) {
+        } elseif (!\App\Helpers\Formatter::isHourFormat($post['fin_heure'])) {
             $localErrors['Heure de fin'] = _('Format_heure_incorrect');
         }
         if (!empty($localErrors)) {
@@ -109,16 +122,16 @@ abstract class Heure
         }
 
         /* Sémantique : sens de prise d'heure */
-        if (NIL_INT !== strnatcmp($post['new_deb_heure'], $post['new_fin_heure'])) {
+        if (NIL_INT !== strnatcmp($post['debut_heure'], $post['fin_heure'])) {
             $localErrors['Heure de début / Heure de fin'] = _('verif_saisie_erreur_heure_fin_avant_debut');
         }
-        if ($this->isChevauchement($post['new_jour'], $post['new_deb_heure'], $post['new_fin_heure'], $id, $_SESSION['userlogin'])) {
+        if ($this->isChevauchement($post['jour'], $post['debut_heure'], $post['fin_heure'], $id, $_SESSION['userlogin'])) {
             $localErrors['Cohérence'] = _('Chevauchement_heure_avec_existant');
         }
 
         $errorsLst = array_merge($errorsLst, $localErrors);
 
-        return empty($localErrors);
+        return !empty($localErrors);
     }
 
     /**
@@ -154,6 +167,17 @@ abstract class Heure
      * @return int
      */
     abstract protected function insert(array $post, $user);
+
+    /**
+     * Met à jour une demande d'heures dans la BDD
+     *
+     * @param array  $put
+     * @param string $user
+     * @param int    $id
+     *
+     * @return int
+     */
+    abstract protected function update(array $put, $user, $id);
 
     /**
      * Compte la vraie durée entre le début et la fin

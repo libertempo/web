@@ -40,10 +40,13 @@ class Repos extends \App\ProtoControllers\Heure
     /**
      * {@inheritDoc}
      */
-    public function getForm()
+    public function getForm($id = NIL_INT)
     {
-        $return    = '';
-        $errorsLst = [];
+        $return     = '';
+        $errorsLst  = [];
+        $valueJour  = date('d/m/Y');
+        $valueDebut = '';
+        $valueFin   = '';
 
         if (!empty($_POST)) {
             if (0 >= (int) $this->post($_POST, $errorsLst)) {
@@ -57,15 +60,20 @@ class Repos extends \App\ProtoControllers\Heure
                     }
                     $return .= '<div class="alert alert-danger">' . _('erreur_recommencer') . '<ul>' . $errors . '</ul></div>';
                 }
+                $valueJour  = $_POST['jour'];
+                $valueDebut = $_POST['debut_heure'];
+                $valueFin   = $_POST['fin_heure'];
             } else {
                 log_action(0, 'demande', '', 'Nouvelle demande d\'heure de repos enregistrée');
                 redirect(ROOT_PATH . 'utilisateur/user_index.php?session='. session_id() . '&onglet=liste_heure_repos', false);
             }
         }
 
-        $return .= '<h1>' . _('user_ajout_heure_repos_titre') . '</h1>';
-        // TODO: with modif
-
+        if (NIL_INT !== $id) {
+            $return .= '<h1>' . _('user_modif_heure_repos_titre') . '</h1>';
+        } else {
+            $return .= '<h1>' . _('user_ajout_heure_repos_titre') . '</h1>';
+        }
 
         /* Génération du datePicker et de ses options */
         $daysOfWeekDisabled = \utilisateur\Fonctions::getDatePickerDaysOfWeekDisabled();
@@ -90,12 +98,25 @@ class Repos extends \App\ProtoControllers\Heure
             'table-condensed'
         ]);
 
+        $childTable = '';
+
+        if (NIL_INT !== $id) {
+            $sql   = 'SELECT * FROM conges_heure_repos WHERE id_heure = ' . $id;
+            $query = \includes\SQL::query($sql);
+            $data = $query->fetch_array();
+            $valueJour  = date('d/m/Y', $data['debut']);
+            $valueDebut = date('H\:i', $data['debut']);
+            $valueFin   = date('H\:i', $data['fin']);
+
+            $childTable .= '<input type="hidden" name="id_heure" value="' . $id . '" /><input type="hidden" name="_METHOD" value="PUT" />';
+        }
+
         $debutId = uniqid();
         $finId   = uniqid();
 
-        $childTable = '<thead><tr><th width="20%">' . _('Jour') . '</th><th>' . _('creneau') . '</th></tr></thead><tbody>';
-        $childTable .= '<tr><td><input class="form-control date" type="text" value="'.date("d/m/Y").'" name="new_jour"></td>';
-        $childTable .= '<td><div class="form-inline col-xs-3"><input class="form-control" style="width:45%" type="text" id="' . $debutId . '"  value="" name="new_deb_heure">&nbsp;<i class="fa fa-caret-right"></i>&nbsp;<input class="form-control" style="width:45%" type="text" id="' . $finId . '"  value="" name="new_fin_heure"></div></td></tr>';
+        $childTable .= '<thead><tr><th width="20%">' . _('Jour') . '</th><th>' . _('creneau') . '</th></tr></thead><tbody>';
+        $childTable .= '<tr><td><input class="form-control date" type="text" value="' . $valueJour . '" name="jour"></td>';
+        $childTable .= '<td><div class="form-inline col-xs-3"><input class="form-control" style="width:45%" type="text" id="' . $debutId . '"  value="' . $valueDebut . '" name="debut_heure">&nbsp;<i class="fa fa-caret-right"></i>&nbsp;<input class="form-control" style="width:45%" type="text" id="' . $finId . '"  value="' . $valueFin . '" name="fin_heure"></div></td></tr>';
         $childTable .= '</tbody>';
         $childTable .= '<script type="text/javascript">generateTimePicker("' . $debutId . '");generateTimePicker("' . $finId . '");</script>';
 
@@ -107,6 +128,21 @@ class Repos extends \App\ProtoControllers\Heure
         $return .='</form>';
 
         return $return;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function put(array $put, array &$errorsLst, $user)
+    {
+        if (!$this->hasErreurs($put, $errorsLst, $put['id_heure'])) {
+            $id = $this->update($put, $user, $put['id_heure']);
+            log_action($put['id_heure'], 'modif', '', 'Modification demande d\'heure de repos ' . $put['id_heure']);
+
+            return $id;
+        }
+
+        return NIL_INT;
     }
 
     /**
@@ -139,18 +175,21 @@ class Repos extends \App\ProtoControllers\Heure
             'table-condensed',
             'table-striped',
         ]);
-        $childTable = '<thead><tr><th style="width:25%">debut</th><th style="width:25%">fin</th><th style="width:25%">durée</th><th style="width:25%">statut</th></tr></thead><tbody>';
+        $childTable = '<thead><tr><th>jour</th><th>debut</th><th>fin</th><th>durée</th><th>statut</th><th></th></tr></thead><tbody>';
+        $session = session_id();
         $listId = $this->getListeId();
         if (empty($listId)) {
-            $childTable .= '<tr><td colspan=4><center>' . _('aucun_resultat') . '</center></td></tr>';
+            $childTable .= '<tr><td colspan=6><center>' . _('aucun_resultat') . '</center></td></tr>';
         } else {
             $listeRepos = $this->getListeSQL($listId);
             foreach ($listeRepos as $repos) {
-                $debut  = \App\Helpers\Formatter::timestamp2DateTime($repos['debut']);
-                $fin    = \App\Helpers\Formatter::timestamp2DateTime($repos['fin']);
+                $jour   = date('d/m/Y', $repos['debut']);
+                $debut  = date('H\:i', $repos['debut']);
+                $fin    = date('H\:i', $repos['fin']);
                 $duree  = date('H\:i', $repos['duree']);
                 $statut = Heure::statusText($repos['statut']);
-                $childTable .= '<tr><td>' . $debut . '</td><td>' . $fin . '</td><td>' . $duree . '</td><td>' . $statut . '</td></tr>';
+                $childTable .= '<tr><td>' . $jour . '</td><td>' . $debut . '</td><td>' . $fin . '</td><td>' . $duree . '</td><td>' . $statut . '</td><td><a  title="' . _('form_modif') . '" href="user_index.php?onglet=modif_heure_repos&id=' . $repos['id_heure'] .
+                                '&session=' . $session . '"><i class="fa fa-pencil"></i></a></td></tr>';
             }
         }
         $childTable .= '</tbody>';
@@ -231,9 +270,9 @@ class Repos extends \App\ProtoControllers\Heure
      */
     protected function insert(array $post, $user)
     {
-        $jour = \App\Helpers\Formatter::dateFr2Iso($post['new_jour']);
-        $timestampDebut = strtotime($jour . ' ' . $post['new_deb_heure']);
-        $timestampFin   = strtotime($jour . ' ' . $post['new_fin_heure']);
+        $jour = \App\Helpers\Formatter::dateFr2Iso($post['jour']);
+        $timestampDebut = strtotime($jour . ' ' . $post['debut_heure']);
+        $timestampFin   = strtotime($jour . ' ' . $post['fin_heure']);
         /* TODO: Toute la partie du check d'erreur et du comptage réel des heures devrait être dans le modèle.
         C'est lui qui devrait remplir le DAO à partir de ses attributs pour l'insertion
         */
@@ -244,6 +283,28 @@ class Repos extends \App\ProtoControllers\Heure
         $query = $sql->query($req);
 
         return $sql->insert_id;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function update(array $put, $user, $id)
+    {
+        $jour = \App\Helpers\Formatter::dateFr2Iso($put['jour']);
+        $timestampDebut = strtotime($jour . ' ' . $put['debut_heure']);
+        $timestampFin   = strtotime($jour . ' ' . $put['fin_heure']);
+        $duree = \utilisateur\Fonctions::compter_heures($timestampDebut, $timestampFin);
+        $sql   = \includes\SQL::singleton();
+        $toInsert = [];
+        $req   = 'UPDATE conges_heure_repos
+                SET debut = ' . $timestampDebut . ',
+                    fin = ' . $timestampFin . ',
+                    duree = ' . $duree . '
+                WHERE id_heure = '. (int) $id . '
+                AND login = "' . $user . '"';
+        $query = $sql->query($req);
+
+        return $id;
     }
 
     /**

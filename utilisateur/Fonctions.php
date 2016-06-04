@@ -756,8 +756,8 @@ class Fonctions
             $return .= '</tbody>';
             $return .= '</table>' ;
         }
-        $return .= \utilisateur\Fonctions::getListPeriodeHeure(\App\Models\HeureRecuperation::TYPE_DEBIT);
-        $return .= \utilisateur\Fonctions::getListPeriodeHeure(\App\Models\HeureRecuperation::TYPE_CREDIT);
+        //$return .= \utilisateur\Fonctions::getListPeriodeHeure(\App\Models\HeureRecuperation::TYPE_DEBIT);
+        //$return .= \utilisateur\Fonctions::getListPeriodeHeure(\App\Models\HeureRecuperation::TYPE_CREDIT);
 
         return $return;
     }

@@ -126,20 +126,6 @@ class Formatter extends \Tests\Units\TestUnit
     }
 
     /**
-     * Test de la transformation d'un timestamp en une date
-     *
-     * @since 1.9
-     */
-    public function testTimestamp2DateTime()
-    {
-        $time = '02322201192';
-
-        $dateTime = _Formatter::timestamp2DateTime($time);
-
-        $this->string('03/08/2043 07:53')->isIdenticalTo($dateTime);
-    }
-
-    /**
      * Test une heure mal formée
      *
      * @return void
