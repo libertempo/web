@@ -1102,7 +1102,7 @@ class Fonctions
         // si le traitement des demandes a été selectionée :
         elseif( $tab_radio_traite_demande != '' ) {
             $tab_text_refus         = getpost_variable('tab_text_refus') ;
-            $returnn .= \hr\Fonctions::traite_demandes($user_login, $tab_radio_traite_demande, $tab_text_refus);
+            $return .= \hr\Fonctions::traite_demandes($user_login, $tab_radio_traite_demande, $tab_text_refus);
         }
         // si un nouveau conges ou absence a été saisi pour un user :
         elseif( $new_demande_conges == 1 ) {
