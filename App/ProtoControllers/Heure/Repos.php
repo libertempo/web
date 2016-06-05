@@ -152,7 +152,7 @@ class Repos extends \App\ProtoControllers\Heure
     protected function delete($id, $user, array &$errorsLst, &$notice)
     {
         if (NIL_INT !== $this->deleteSQL($id, $user, $errorsLst)) {
-            log_action($id, 'annul', '', 'Annulation de la demande d\'heure ' . $id);
+            log_action($id, 'annul', '', 'Annulation de la demande d\'heure de repos ' . $id);
             $notice = _('heure_repos_annulee');
             return $id;
         }
@@ -185,7 +185,7 @@ class Repos extends \App\ProtoControllers\Heure
             }
         }
 
-        $return = '<h1>' . _('user_liste_heure_repos') . '</h1>';
+        $return = '<h1>' . _('user_liste_heure_repos_titre') . '</h1>';
         $return .= $message;
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses([
@@ -228,44 +228,44 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
         return $return;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function getListeId($user)
-    {
-        $ids = [];
-        $sql = \includes\SQL::singleton();
-        $req = 'SELECT id_heure AS id
-                FROM conges_heure_repos
-                WHERE login = "' . $user . '"';
-        $res = $sql->query($req);
-        while ($data = $res->fetch_array()) {
-            $ids[] = (int) $data['id'];
-        }
-
-        return $ids;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getListeSQL(array $listId)
-    {
-        if (empty($listId)) {
-            return [];
-        }
-        $sql = \includes\SQL::singleton();
-        $req = 'SELECT *
-                FROM conges_heure_repos
-                WHERE id_heure IN (' . implode(',', $listId) . ')
-                ORDER BY debut DESC, statut ASC';
-
-        return $sql->query($req)->fetch_all(MYSQLI_ASSOC);
-    }
-
     /*
      * SQL
      */
+
+     /**
+      * {@inheritDoc}
+      */
+     protected function getListeId($user)
+     {
+         $ids = [];
+         $sql = \includes\SQL::singleton();
+         $req = 'SELECT id_heure AS id
+                 FROM conges_heure_repos
+                 WHERE login = "' . $user . '"';
+         $res = $sql->query($req);
+         while ($data = $res->fetch_array()) {
+             $ids[] = (int) $data['id'];
+         }
+
+         return $ids;
+     }
+
+     /**
+      * {@inheritDoc}
+      */
+     protected function getListeSQL(array $listId)
+     {
+         if (empty($listId)) {
+             return [];
+         }
+         $sql = \includes\SQL::singleton();
+         $req = 'SELECT *
+                 FROM conges_heure_repos
+                 WHERE id_heure IN (' . implode(',', $listId) . ')
+                 ORDER BY debut DESC, statut ASC';
+
+         return $sql->query($req)->fetch_all(MYSQLI_ASSOC);
+     }
 
     /**
      * {@inheritDoc}
@@ -359,5 +359,23 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
     protected function countDuree($debut, $fin)
     {
         return $fin - $debut;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function canUserEdit($id, $user)
+    {
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT EXISTS (
+                    SELECT id_heure
+                    FROM conges_heure_repos
+                    WHERE id_heure = ' . (int) $id . '
+                        AND statut = ' . Heure::STATUT_DEMANDE . '
+                        AND login = "' . $user . '"
+                )';
+        $query = $sql->query($req);
+
+        return 0 < (int) $query->fetch_array()[0];
     }
 }

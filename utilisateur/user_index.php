@@ -68,6 +68,7 @@ if( $_SESSION['config']['user_saisie_demande'] ) {
 $onglets['historique_conges'] = _('user_onglet_historique_conges');
 $onglets['historique_autres_absences'] = _('user_onglet_historique_abs');
 $onglets['liste_heure_repos'] = _('user_liste_heure_repos');
+$onglets['liste_heure_additionnelle'] = _('user_liste_heure_additionnelle');
 
 if( $_SESSION['config']['auth'] && $_SESSION['config']['user_ch_passwd'] ) {
     $onglets['changer_mot_de_passe'] = _('user_onglet_change_passwd');

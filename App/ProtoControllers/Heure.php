@@ -29,6 +29,8 @@ namespace App\ProtoControllers;
 /**
  * ProtoContrôleur abstrait d'heures, en attendant la migration vers le MVC REST
  *
+ * TODO: On pourrait davantage faire de chose dans la classe abstraite, mais on est empêché par les log. Ça devrait être un sujet d'étude pour l'avenir
+ *
  * @since  1.9
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina
@@ -229,4 +231,14 @@ abstract class Heure
      * @return int
      */
     abstract protected function countDuree($debut, $fin);
+
+    /**
+     * Vérifie que l'utilisateur a bien le droit d'éditer la ressource
+     *
+     * @param int    $id
+     * @param string $user
+     *
+     * @return bool
+     */
+    abstract public function canUserEdit($id, $user);
 }
