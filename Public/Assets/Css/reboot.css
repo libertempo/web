@@ -192,21 +192,20 @@ a {
 .profil-info .wrapper {
     margin-left: 40px
 }
-.calendar-link a {
-    border-top: solid 1px #0098bd;
-    display: block;
-    text-align: center;
-    padding: 20px 0;
-    background: #009ec5;
-    color: #FFF
+
+.menu-link a{
+    border-top:solid 1px #0098bd;display:block;text-align:left;padding:20px;background:#009ec5;color:#FFF
 }
-.calendar-link a:hover {
-    text-decoration: none;
-    background-color: #00aad4
+
+.menu-link a:hover{
+    text-decoration:none;background-color:#00aad4
 }
-.calendar-link i {
-    margin-right: 5px
-}
+
+.menu-link i{
+        margin-right:5px
+    }
+
+
 .mod-info .nav>li>a {
     padding: 0 20px;
     color: #717171;
@@ -670,106 +669,234 @@ h3.current-month {
 }
 /* style pour les cellules du calendriers */
 
-td.cal-day_weekend {
-    background-color: #DCDCDC;
+td.cal-day_weekend{background-color: #DCDCDC;}
+td.cal-day_fermeture{background-color: #CEB6FF;}
+
+td.cal-day_semaine_travail_am_conges_pm{
+    background: -webkit-linear-gradient(45deg,#FFFFFF 50%,#8addf2 0%);
+    background: -o-linear-gradient(45deg,#FFFFFF 50%,#8addf2 0%);
+    background: -moz-linear-gradient(45deg,#FFFFFF 50%,#8addf2 0%);
+    background: linear-gradient(45deg,#FFFFFF 50%,#8addf2 0%);
 }
-td.cal-day_fermeture {
-    background-color: #CEB6FF;
+
+td.cal-day_semaine_travail_am_rtt_pm{
+    background: -webkit-linear-gradient(45deg,#FFFFFF 50%,#ffffad 0%);
+    background: -o-linear-gradient(45deg,#FFFFFF 50%,#ffffad 0%);
+    background: -moz-linear-gradient(45deg,#FFFFFF 50%,#ffffad 0%);
+    background: linear-gradient(45deg,#FFFFFF 50%,#ffffad 0%);
 }
-td.cal-day_semaine_travail_am_rtt_pm {
-    background-image: -webkit-gradient(linear, left bottom, right top, color-stop(0.5, #ffffad), color-stop(0, #FFF));
-    background-image: -moz-linear-gradient(right top, #ffffad 50%, #FFF 0%);
+
+td.cal-day_semaine_travail_am_demande_pm{
+    background: -webkit-linear-gradient(45deg,#FFFFFF 50%,#ffc1ff 0%);
+    background: -o-linear-gradient(45deg,#FFFFFF 50%,#ffc1ff 0%);
+    background: -moz-linear-gradient(45deg,#FFFFFF 50%,#ffc1ff 0%);
+    background: linear-gradient(45deg,#FFFFFF 50%,#ffc1ff 0%);
 }
-td.cal-day_semaine_travail_am_demande_pm {
-    background-image: -webkit-gradient(linear, left bottom, right top, color-stop(0.5, #ffc1ff), color-stop(0, #FFF));
-    background-image: -moz-linear-gradient(right top, #ffc1ff 50%, #FFF 0%);
+
+td.cal-day_semaine_travail_am_autre_pm{
+    background: -webkit-linear-gradient(45deg,#FFFFFF 50%,#F4F4F4 0%);
+    background: -o-linear-gradient(45deg,#FFFFFF 50%,#F4F4F4 0%);
+    background: -moz-linear-gradient(45deg,#FFFFFF 50%,#F4F4F4 0%);
+    background: linear-gradient(45deg,#FFFFFF 50%,#F4F4F4 0%);
 }
-td.cal-day_semaine_travail_am_autre_pm {
-    background-image: -webkit-gradient(linear, left bottom, right top, color-stop(0.5, #C3C3C3), color-stop(0, #FFF));
-    background-image: -moz-linear-gradient(right top, #C3C3C3 50%, #FFF 0%);
+
+td.cal-day_semaine_travail_am_fermeture_pm{
+    background: -webkit-linear-gradient(45deg,#FFFFFF 50%,#CEB6FF 0%);
+    background: -o-linear-gradient(45deg,#FFFFFF 50%,#CEB6FF 0%);
+    background: -moz-linear-gradient(45deg,#FFFFFF 50%,#CEB6FF 0%);
+    background: linear-gradient(45deg,#FFFFFF 50%,#CEB6FF 0%);
 }
-td.cal-day_semaine_travail_am_conges_pm {
-    background-image: -webkit-gradient(linear, left bottom, right top, color-stop(0.5, #B8E4EF), color-stop(0, #FFF));
-    background-image: -moz-linear-gradient(right top, #B8E4EF 50%, #FFF 0%);
+
+td.cal-day_semaine_conges_am_conges_pm{background-color: #8addf2;}
+
+td.cal-day_semaine_conges_am_travail_pm{
+    background: -webkit-linear-gradient(45deg,#8addf2 50%,#FFFFFF 0%);
+    background: -o-linear-gradient(45deg,#8addf2 50%,#FFFFFF 0%);
+    background: -moz-linear-gradient(45deg,#8addf2 50%,#FFFFFF 0%);
+    background: linear-gradient(45deg,#8addf2 50%,#FFFFFF 0%);
 }
-td.cal-day_semaine_conges_am_rtt_pm {
-    background-image: -webkit-gradient(linear, left bottom, right top, color-stop(0.5, #ffffad), color-stop(0, #8addf2));
-    background-image: -moz-linear-gradient(right top, #ffffad 50%, #8addf2 0%);
+
+td.cal-day_semaine_conges_am_demande_pm{
+    background: -webkit-linear-gradient(45deg,#8addf2 50%,#ffc1ff 0%);
+    background: -o-linear-gradient(45deg,#8addf2 50%,#ffc1ff 0%);
+    background: -moz-linear-gradient(45deg,#8addf2 50%,#ffc1ff 0%);
+    background: linear-gradient(45deg,#8addf2 50%,#ffc1ff 0%);
 }
-td.cal-day_semaine_conges_am_conges_pm {
-    background-color: #8addf2;
+
+td.cal-day_semaine_conges_am_rtt_pm{
+    background: -webkit-linear-gradient(45deg,#8addf2 50%,#ffffad 0%);
+    background: -o-linear-gradient(45deg,#8addf2 50%,#ffffad 0%);
+    background: -moz-linear-gradient(45deg,#8addf2 50%,#ffffad 0%);
+    background: linear-gradient(45deg,#8addf2 50%,#ffffad 0%);
 }
-td.cal-day_semaine_conges_am_travail_pm {
-    background-image: -webkit-gradient(linear, left bottom, right top, color-stop(0.5, #FFFFFF), color-stop(0, #8addf2));
-    background-image: -moz-linear-gradient(right top, #FFFFFF 50%, #8addf2 0%);
+
+td.cal-day_semaine_conges_am_autre_pm{
+    background: -webkit-linear-gradient(45deg,#8addf2 50%,#F4F4F4 0%);
+    background: -o-linear-gradient(45deg,#8addf2 50%,#F4F4F4 0%);
+    background: -moz-linear-gradient(45deg,#8addf2 50%,#F4F4F4 0%);
+    background: linear-gradient(45deg,#8addf2 50%,#F4F4F4 0%);
 }
-td.cal-day_semaine_conges_am_demande_pm {
-    background-image: -webkit-gradient(linear, left bottom, right top, color-stop(0.5, #ffc1ff), color-stop(0, #8addf2));
-    background-image: -moz-linear-gradient(right top, #ffc1ff 50%, #8addf2 0%);
+
+td.cal-day_semaine_conges_am_fermeture_pm{
+    background: -webkit-linear-gradient(45deg,#8addf2 50%,#CEB6FF 0%);
+    background: -o-linear-gradient(45deg,#8addf2 50%,#CEB6FF 0%);
+    background: -moz-linear-gradient(45deg,#8addf2 50%,#CEB6FF 0%);
+    background: linear-gradient(45deg,#8addf2 50%,#CEB6FF 0%);
 }
-td.cal-day_semaine_conges_am_autre_pm {
-    background-image: -webkit-gradient(linear, left bottom, right top, color-stop(0.5, #C3C3C3), color-stop(0, #8addf2));
-    background-image: -moz-linear-gradient(right top, #C3C3C3 50%, #8addf2 0%);
+
+td.cal-day_semaine_rtt_am_rtt_pm{background-color: #ffffad;}
+
+td.cal-day_semaine_rtt_am_conges_pm{
+    background: -webkit-linear-gradient(45deg,#ffffad 50%,#8addf2 0%);
+    background: -o-linear-gradient(45deg,#ffffad 50%,#8addf2 0%);
+    background: -moz-linear-gradient(45deg,#ffffad 50%,#8addf2 0%);
+    background: linear-gradient(45deg,#ffffad 50%,#8addf2 0%);
 }
-td.cal-day_semaine_rtt_am_rtt_pm {
-    background-color: #ffffad;
+
+td.cal-day_semaine_rtt_am_travail_pm{
+    background: -webkit-linear-gradient(45deg,#ffffad 50%,#FFFFFF 0%);
+    background: -o-linear-gradient(45deg,#ffffad 50%,#FFFFFF 0%);
+    background: -moz-linear-gradient(45deg,#ffffad 50%,#FFFFFF 0%);
+    background: linear-gradient(45deg,#ffffad 50%,#FFFFFF 0%);
 }
-td.cal-day_semaine_rtt_am_conges_pm {
-    background-image: -webkit-gradient(linear, left bottom, right top, color-stop(0.5, #8addf2), color-stop(0, #ffffad));
-    background-image: -moz-linear-gradient(right top, #8addf2 50%, #ffffad 0%);
+
+td.cal-day_semaine_rtt_am_demande_pm{
+    background: -webkit-linear-gradient(45deg,#ffffad 50%,#ffc1ff 0%);
+    background: -o-linear-gradient(45deg,#ffffad 50%,#ffc1ff 0%);
+    background: -moz-linear-gradient(45deg,#ffffad 50%,#ffc1ff 0%);
+    background: linear-gradient(45deg,#ffffad 50%,#ffc1ff 0%);
 }
-td.cal-day_semaine_rtt_am_travail_pm {
-    background-image: -webkit-gradient(linear, left bottom, right top, color-stop(0.5, #FFFFFF), color-stop(0, #ffffad));
-    background-image: -moz-linear-gradient(right top, #FFFFFF 50%, #ffffad 0%);
+
+td.cal-day_semaine_rtt_am_autre_pm{
+    background: -webkit-linear-gradient(45deg,#ffffad 50%,#F4F4F4 0%);
+    background: -o-linear-gradient(45deg,#ffffad 50%,#F4F4F4 0%);
+    background: -moz-linear-gradient(45deg,#ffffad 50%,#F4F4F4 0%);
+    background: linear-gradient(45deg,#ffffad 50%,#F4F4F4 0%);
 }
-td.cal-day_semaine_rtt_am_demande_pm {
-    background-image: -webkit-gradient(linear, left bottom, right top, color-stop(0.5, #ffc1ff), color-stop(0, #ffffad));
-    background-image: -moz-linear-gradient(right top, #ffc1ff 50%, #ffffad 0%);
+
+td.cal-day_semaine_rtt_am_fermeture_pm{
+    background: -webkit-linear-gradient(45deg,#ffffad 50%,#CEB6FF 0%);
+    background: -o-linear-gradient(45deg,#ffffad 50%,#CEB6FF 0%);
+    background: -moz-linear-gradient(45deg,#ffffad 50%,#CEB6FF 0%);
+    background: linear-gradient(45deg,#ffffad 50%,#CEB6FF 0%);
 }
-td.cal-day_semaine_rtt_am_autre_pm {
-    background-image: -webkit-gradient(linear, left bottom, right top, color-stop(0.5, #C3C3C3), color-stop(0, #ffffad));
-    background-image: -moz-linear-gradient(right top, #C3C3C3 50%, #ffffad 0%);
+
+td.cal-day_semaine_demande_am_demande_pm{background-color: #ffc1ff;}
+
+td.cal-day_semaine_demande_am_travail_pm{
+    background: -webkit-linear-gradient(45deg,#ffc1ff 50%,#FFFFFF 0%);
+    background: -o-linear-gradient(45deg,#ffc1ff 50%,#FFFFFF 0%);
+    background: -moz-linear-gradient(45deg,#ffc1ff 50%,#FFFFFF 0%);
+    background: linear-gradient(45deg,#ffc1ff 50%,#FFFFFF 0%);
 }
-td.cal-day_semaine_demande_am_demande_pm {
-    background-color: #ffc1ff;
+
+td.cal-day_semaine_demande_am_conges_pm{
+    background: -webkit-linear-gradient(45deg,#ffc1ff 50%,#8addf2 0%);
+    background: -o-linear-gradient(45deg,#ffc1ff 50%,#8addf2 0%);
+    background: -moz-linear-gradient(45deg,#ffc1ff 50%,#8addf2 0%);
+    background: linear-gradient(45deg,#ffc1ff 50%,#8addf2 0%);
 }
-td.cal-day_semaine_demande_am_travail_pm {
-    background-image: -webkit-gradient(linear, left bottom, right top, color-stop(0.5, #FFFFFF), color-stop(0, #ffc1ff));
-    background-image: -moz-linear-gradient(right top, #FFFFFF 50%, #ffc1ff 0%);
+
+td.cal-day_semaine_demande_am_rtt_pm{
+    background: -webkit-linear-gradient(45deg,#ffc1ff 50%,#ffffad 0%);
+    background: -o-linear-gradient(45deg,#ffc1ff 50%,#ffffad 0%);
+    background: -moz-linear-gradient(45deg,#ffc1ff 50%,#ffffad 0%);
+    background: linear-gradient(45deg,#ffc1ff 50%,#ffffad 0%);
 }
-td.cal-day_semaine_demande_am_conges_pm {
-    background-image: -webkit-gradient(linear, left bottom, right top, color-stop(0.5, #8addf2), color-stop(0, #ffc1ff));
-    background-image: -moz-linear-gradient(right top, #8addf2 50%, #ffc1ff 0%);
+
+td.cal-day_semaine_demande_am_autre_pm{
+    background: -webkit-linear-gradient(45deg,#ffc1ff 50%,#F4F4F4 0%);
+    background: -o-linear-gradient(45deg,#ffc1ff 50%,#F4F4F4 0%);
+    background: -moz-linear-gradient(45deg,#ffc1ff 50%,#F4F4F4 0%);
+    background: linear-gradient(45deg,#ffc1ff 50%,#F4F4F4 0%);
 }
-td.cal-day_semaine_demande_am_rtt_pm {
-    background-image: -webkit-gradient(linear, left bottom, right top, color-stop(0.5, #ffffad), color-stop(0, #ffc1ff));
-    background-image: -moz-linear-gradient(right top, #ffffad 50%, #ffc1ff 0%);
+
+td.cal-day_semaine_demande_am_fermeture_pm{
+    background: -webkit-linear-gradient(45deg,#ffc1ff 50%,#CEB6FF 0%);
+    background: -o-linear-gradient(45deg,#ffc1ff 50%,#CEB6FF 0%);
+    background: -moz-linear-gradient(45deg,#ffc1ff 50%,#CEB6FF 0%);
+    background: linear-gradient(45deg,#ffc1ff 50%,#CEB6FF 0%);
 }
-td.cal-day_semaine_demande_am_autre_pm {
-    background-image: -webkit-gradient(linear, left bottom, right top, color-stop(0.5, #F4F4F4), color-stop(0, #ffc1ff));
-    background-image: -moz-linear-gradient(right top, #F4F4F4 50%, #ffc1ff 0%);
+
+td.cal-day_semaine_autre_am_autre_pm{background-color: #F4F4F4;}
+
+td.cal-day_semaine_autre_am_conges_pm{
+    background: -webkit-linear-gradient(45deg,#F4F4F4 50%,#8addf2 0%);
+    background: -o-linear-gradient(45deg,#F4F4F4 50%,#8addf2 0%);
+    background: -moz-linear-gradient(45deg,#F4F4F4 50%,#8addf2 0%);
+    background: linear-gradient(45deg,#F4F4F4 50%,#8addf2 0%);
 }
-td.cal-day_semaine_autre_am_autre_pm {
-    background-color: #F4F4F4;
+
+td.cal-day_semaine_autre_am_travail_pm{
+    background: -webkit-linear-gradient(45deg,#F4F4F4 50%,#FFFFFF 0%);
+    background: -o-linear-gradient(45deg,#F4F4F4 50%,#FFFFFF 0%);
+    background: -moz-linear-gradient(45deg,#F4F4F4 50%,#FFFFFF 0%);
+    background: linear-gradient(45deg,#F4F4F4 50%,#FFFFFF 0%);
 }
-td.cal-day_semaine_autre_am_conges_pm {
-    background-image: -webkit-gradient(linear, left bottom, right top, color-stop(0.5, #8addf2), color-stop(0, #F4F4F4));
-    background-image: -moz-linear-gradient(right top, #8addf2 50%, #F4F4F4 0%);
+
+td.cal-day_semaine_autre_am_demande_pm{
+    background: -webkit-linear-gradient(45deg,#F4F4F4 50%,#ffc1ff 0%);
+    background: -o-linear-gradient(45deg,#F4F4F4 50%,#ffc1ff 0%);
+    background: -moz-linear-gradient(45deg,#F4F4F4 50%,#ffc1ff 0%);
+    background: linear-gradient(45deg,#F4F4F4 50%,#ffc1ff 0%);
 }
-td.cal-day_semaine_autre_am_travail_pm {
-    background-image: -webkit-gradient(linear, left bottom, right top, color-stop(0.5, #FFFFFF), color-stop(0, #F4F4F4));
-    background-image: -moz-linear-gradient(right top, #FFFFFF 50%, #F4F4F4 0%);
+
+td.cal-day_semaine_autre_am_rtt_pm{
+    background: -webkit-linear-gradient(45deg,#F4F4F4 50%,#ffffad 0%);
+    background: -o-linear-gradient(45deg,#F4F4F4 50%,#ffffad 0%);
+    background: -moz-linear-gradient(45deg,#F4F4F4 50%,#ffffad 0%);
+    background: linear-gradient(45deg,#F4F4F4 50%,#ffffad 0%);
 }
-td.cal-day_semaine_autre_am_demande_pm {
-    background-image: -webkit-gradient(linear, left bottom, right top, color-stop(0.5, #ffc1ff), color-stop(0, #F4F4F4));
-    background-image: -moz-linear-gradient(right top, #ffc1ff 50%, #F4F4F4 0%);
+
+td.cal-day_semaine_autre_am_rtt_pm{
+    background: -webkit-linear-gradient(45deg,#F4F4F4 50%,#ffffad 0%);
+    background: -o-linear-gradient(45deg,#F4F4F4 50%,#ffffad 0%);
+    background: -moz-linear-gradient(45deg,#F4F4F4 50%,#ffffad 0%);
+    background: linear-gradient(45deg,#F4F4F4 50%,#ffffad 0%);
 }
-td.cal-day_semaine_autre_am_rtt_pm {
-    background-image: -webkit-gradient(linear, left bottom, right top, color-stop(0.5, #ffffad), color-stop(0, #F4F4F4));
-    background-image: -moz-linear-gradient(right top, #ffffad 50%, #F4F4F4 0%);
+
+td.cal-day_semaine_autre_am_fermeture_pm{
+    background: -webkit-linear-gradient(45deg,#F4F4F4 50%,#CEB6FF 0%);
+    background: -o-linear-gradient(45deg,#F4F4F4 50%,#CEB6FF 0%);
+    background: -moz-linear-gradient(45deg,#F4F4F4 50%,#CEB6FF 0%);
+    background: linear-gradient(45deg,#F4F4F4 50%,#CEB6FF 0%);
 }
-td.cal-day_semaine_fermeture_am_fermeture_pm {
-    background-color: #CEB6FF;
+
+td.cal-day_semaine_fermeture_am_fermeture_pm{background-color: #CEB6FF;}
+
+td.cal-day_semaine_fermeture_am_travail_pm{
+    background: -webkit-linear-gradient(45deg,#CEB6FF 50%,#FFFFFF 0%);
+    background: -o-linear-gradient(45deg,#CEB6FF 50%,#FFFFFF 0%);
+    background: -moz-linear-gradient(45deg,#CEB6FF 50%,#FFFFFF 0%);
+    background: linear-gradient(45deg,#CEB6FF 50%,#FFFFFF 0%);
+}
+
+td.cal-day_semaine_fermeture_am_conges_pm{
+    background: -webkit-linear-gradient(45deg,#CEB6FF 50%,#8addf2 0%);
+    background: -o-linear-gradient(45deg,#CEB6FF 50%,#8addf2 0%);
+    background: -moz-linear-gradient(45deg,#CEB6FF 50%,#8addf2 0%);
+    background: linear-gradient(45deg,#CEB6FF 50%,#8addf2 0%);
+}
+
+td.cal-day_semaine_fermeture_am_rtt_pm{
+    background: -webkit-linear-gradient(45deg,#CEB6FF 50%,#ffffad 0%);
+    background: -o-linear-gradient(45deg,#CEB6FF 50%,#ffffad 0%);
+    background: -moz-linear-gradient(45deg,#CEB6FF 50%,#ffffad 0%);
+    background: linear-gradient(45deg,#CEB6FF 50%,#ffffad 0%);
+}
+
+td.cal-day_semaine_fermeture_am_demande_pm{
+    background: -webkit-linear-gradient(45deg,#CEB6FF 50%,#ffc1ff 0%);
+    background: -o-linear-gradient(45deg,#CEB6FF 50%,#ffc1ff 0%);
+    background: -moz-linear-gradient(45deg,#CEB6FF 50%,#ffc1ff 0%);
+    background: linear-gradient(45deg,#CEB6FF 50%,#ffc1ff 0%);
+}
+
+td.cal-day_semaine_fermeture_am_autre_pm{
+    background: -webkit-linear-gradient(45deg,#CEB6FF 50%,#CEB6FF 0%);
+    background: -o-linear-gradient(45deg,#CEB6FF 50%,#CEB6FF 0%);
+    background: -moz-linear-gradient(45deg,#CEB6FF 50%,#CEB6FF 0%);
+    background: linear-gradient(45deg,#CEB6FF 50%,#CEB6FF 0%);
 }
 /*fonts*/
 
