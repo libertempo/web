@@ -44,9 +44,10 @@ class Additionnelle extends \App\ProtoControllers\Heure
     {
         $return    = '';
         $errorsLst = [];
+        $notice
 
         if (!empty($_POST)) {
-            if (0 >= (int) $this->post($_POST, $errorsLst)) {
+            if (0 >= (int) $this->post($_POST, $errorsLst, $notice)) {
                 $errors = '';
                 if (!empty($errorsLst)) {
                     foreach ($errorsLst as $key => $value) {

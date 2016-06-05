@@ -38,6 +38,11 @@ abstract class Heure
      * @var int
      */
     const STATUT_DEMANDE = 1;
+
+    /**
+     * Le valide est pour la première validation, le « ok » pour la seconde
+     * @var int
+     */
     const STATUT_VALIDE  = 2;
     const STATUT_OK      = 3;
     const STATUT_REFUS   = 4;

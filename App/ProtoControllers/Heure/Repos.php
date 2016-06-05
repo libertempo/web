@@ -47,9 +47,10 @@ class Repos extends \App\ProtoControllers\Heure
         $valueJour  = date('d/m/Y');
         $valueDebut = '';
         $valueFin   = '';
+        $notice = '';
 
         if (!empty($_POST)) {
-            if (0 >= (int) $this->post($_POST, $errorsLst)) {
+            if (0 >= (int) $this->post($_POST, $errorsLst, $notice)) {
                 $errors = '';
                 if (!empty($errorsLst)) {
                     foreach ($errorsLst as $key => $value) {
@@ -146,16 +147,13 @@ class Repos extends \App\ProtoControllers\Heure
     }
 
     /**
-     * Supprime une demande d'heures
-     *
-     * @param int $id
-     *
-     * @return int
+     * {@inheritDoc}
      */
-    private function delete($id, $user, array &$errorsLst)
+    protected function delete($id, $user, array &$errorsLst, &$notice)
     {
-        if (NIL_INT !== \utilisateur\Fonctions::deleteSQLDemandeDebitCongesHeure($id, $user, $errorsLst)) {
+        if (NIL_INT !== $this->deleteSQL($id, $user, $errorsLst)) {
             log_action($id, 'annul', '', 'Annulation de la demande d\'heure ' . $id);
+            $notice = _('heure_repos_annulee');
             return $id;
         }
         return NIL_INT;
@@ -166,7 +164,29 @@ class Repos extends \App\ProtoControllers\Heure
      */
     public function getListe()
     {
+        $message   = '';
+        $errorsLst = [];
+        $notice    = '';
+        if (!empty($_POST)) {
+            if (0 >= (int) $this->post($_POST, $errorsLst, $notice)) {
+                $errors = '';
+                if (!empty($errorsLst)) {
+                    foreach ($errorsLst as $value) {
+                        $errors .= '<li>' . $value . '</li>';
+                    }
+                    $message = '<div class="alert alert-danger">' . _('erreur_recommencer') . ' :<ul>' . $errors . '</ul></div>';
+                }
+            } elseif ('DELETE' === $_POST['_METHOD'] && !empty($notice)) {
+                log_action(0, '', '', 'Annulation de l\'heure de repos ' . $_POST['id_heure']);
+                $message = '<div class="alert alert-info">' .  $notice . '.</div>';
+            } else {
+                log_action(0, '', '', 'Récupération de l\'heure de repos ' . $_POST['id_heure']);
+                redirect(ROOT_PATH . 'utilisateur/user_index.php?session='. session_id() . '&onglet=liste_heure_repos', false);
+            }
+        }
+
         $return = '<h1>' . _('user_liste_heure_repos') . '</h1>';
+        $return .= $message;
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses([
             'table',
@@ -177,9 +197,9 @@ class Repos extends \App\ProtoControllers\Heure
         ]);
         $childTable = '<thead><tr><th>jour</th><th>debut</th><th>fin</th><th>durée</th><th>statut</th><th></th></tr></thead><tbody>';
         $session = session_id();
-        $listId = $this->getListeId();
+        $listId = $this->getListeId($_SESSION['userlogin']);
         if (empty($listId)) {
-            $childTable .= '<tr><td colspan=6><center>' . _('aucun_resultat') . '</center></td></tr>';
+            $childTable .= '<tr><td colspan="6"><center>' . _('aucun_resultat') . '</center></td></tr>';
         } else {
             $listeRepos = $this->getListeSQL($listId);
             foreach ($listeRepos as $repos) {
@@ -188,8 +208,15 @@ class Repos extends \App\ProtoControllers\Heure
                 $fin    = date('H\:i', $repos['fin']);
                 $duree  = date('H\:i', $repos['duree']);
                 $statut = Heure::statusText($repos['statut']);
-                $childTable .= '<tr><td>' . $jour . '</td><td>' . $debut . '</td><td>' . $fin . '</td><td>' . $duree . '</td><td>' . $statut . '</td><td><a  title="' . _('form_modif') . '" href="user_index.php?onglet=modif_heure_repos&id=' . $repos['id_heure'] .
-                                '&session=' . $session . '"><i class="fa fa-pencil"></i></a></td></tr>';
+                if (Heure::STATUT_DEMANDE == $repos['statut']) {
+                    $modification = '<a title="' . _('form_modif') . '" href="user_index.php?onglet=modif_heure_repos&id=' . $repos['id_heure'] . '&session=' . $session . '"><i class="fa fa-pencil"></i></a>';
+                    $annulation   = '<input type="hidden" name="id_heure" value="' . $repos['id_heure'] . '" /><input type="hidden" name="_METHOD" value="DELETE" /><button type="submit" class="btn btn-link" title="' . _('Annuler') . '"><i class="fa fa-times-circle"></i></button>';
+                } else {
+                    $modification = '<i class="fa fa-pencil disabled" title="'  . _('heure_non_modifiable') . '"></i>';
+                    $annulation   = '<button title="' . _('heure_non_supprimable') . '" type="button" class="btn btn-link disabled"><i class="fa fa-times-circle"></i></button>';
+                }
+                $childTable .= '<tr><td>' . $jour . '</td><td>' . $debut . '</td><td>' . $fin . '</td><td>' . $duree . '</td><td>' . $statut . '</td><td><form action="" method="post" accept-charset="UTF-8"
+enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' . $annulation . '</form></td></tr>';
             }
         }
         $childTable .= '</tbody>';
@@ -202,14 +229,15 @@ class Repos extends \App\ProtoControllers\Heure
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    private function getListeId()
+    protected function getListeId($user)
     {
         $ids = [];
         $sql = \includes\SQL::singleton();
         $req = 'SELECT id_heure AS id
-                FROM conges_heure_repos';
+                FROM conges_heure_repos
+                WHERE login = "' . $user . '"';
         $res = $sql->query($req);
         while ($data = $res->fetch_array()) {
             $ids[] = (int) $data['id'];
@@ -219,9 +247,9 @@ class Repos extends \App\ProtoControllers\Heure
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    private function getListeSQL(array $listId)
+    protected function getListeSQL(array $listId)
     {
         if (empty($listId)) {
             return [];
@@ -247,14 +275,17 @@ class Repos extends \App\ProtoControllers\Heure
         $jour = \App\Helpers\Formatter::dateFr2Iso($jour);
         $timestampDebut = strtotime($jour . ' ' . $heureDebut);
         $timestampFin   = strtotime($jour . ' ' . $heureFin);
+        $statuts = [
+            Heure::STATUT_DEMANDE,
+            Heure::STATUT_VALIDE,
+            Heure::STATUT_OK,
+        ];
 
         $sql = \includes\SQL::singleton();
         $req = 'SELECT EXISTS (SELECT statut
                 FROM conges_heure_repos
                 WHERE login = "' . $user . '"
-                    AND (statut != ' . Heure::STATUT_REFUS . '
-                        OR statut != ' . Heure::STATUT_ANNUL . '
-                    )
+                    AND statut IN (' . implode(',', $statuts) . ')
                     AND (debut <= ' . $timestampFin . ' AND fin >= ' . $timestampDebut . ')';
         if (NIL_INT !== $id) {
             $req .= ' AND id_heure !=' . $id;
@@ -293,7 +324,7 @@ class Repos extends \App\ProtoControllers\Heure
         $jour = \App\Helpers\Formatter::dateFr2Iso($put['jour']);
         $timestampDebut = strtotime($jour . ' ' . $put['debut_heure']);
         $timestampFin   = strtotime($jour . ' ' . $put['fin_heure']);
-        $duree = \utilisateur\Fonctions::compter_heures($timestampDebut, $timestampFin);
+        $duree = $this->countDuree($timestampDebut, $timestampFin);
         $sql   = \includes\SQL::singleton();
         $toInsert = [];
         $req   = 'UPDATE conges_heure_repos
@@ -305,6 +336,21 @@ class Repos extends \App\ProtoControllers\Heure
         $query = $sql->query($req);
 
         return $id;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function deleteSQL($id, $user)
+    {
+        $sql = \includes\SQL::singleton();
+        $req = 'UPDATE conges_heure_repos
+                SET statut = ' . Heure::STATUT_ANNUL . '
+                WHERE id_heure = ' . (int) $id . '
+                AND login = "' . $user . '"';
+        $sql->query($req);
+
+        return 0 < $sql->affected_rows ? $id : NIL_INT;
     }
 
     /**

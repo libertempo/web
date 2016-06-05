@@ -48,17 +48,18 @@ abstract class Heure
     /**
      * Traite la demande/modification/suppression
      *
-     * @param array $post
-     * @param array &$errorsLst
+     * @param array  $post
+     * @param array  &$errorsLst
+     * @param string $notice
      *
      * @return int
      */
-    protected function post(array $post, array &$errorsLst)
+    protected function post(array $post, array &$errorsLst, &$notice)
     {
         if (!empty($post['_METHOD'])) {
             switch ($post['_METHOD']) {
                 case 'DELETE':
-                    return $this->delete($post['id_heure'], $_SESSION['userlogin'], $errorsLst);
+                    return $this->delete($post['id_heure'], $_SESSION['userlogin'], $errorsLst, $notice);
                     break;
                 case 'PUT':
                     return $this->put($post, $errorsLst, $_SESSION['userlogin']);
@@ -76,6 +77,18 @@ abstract class Heure
             return NIL_INT;
         }
     }
+
+    /**
+     * Supprime une demande d'heures
+     *
+     * @param int    $id
+     * @param string $user
+     * @param array  &$errorsLst
+     * @param string &$notice
+     *
+     * @return int
+     */
+    abstract protected function delete($id, $user, array &$errorsLst, &$notice);
 
     /**
      * Met à jour une demande d'heures
@@ -178,6 +191,34 @@ abstract class Heure
      * @return int
      */
     abstract protected function update(array $put, $user, $id);
+
+    /**
+     * Supprime une demande d'heures dans la BDD
+     *
+     * @param int $id
+     * @param string $user
+     *
+     * @return int
+     */
+    abstract protected function deleteSQL($id, $user);
+
+    /**
+     * Retourne une liste d'id d'heures
+     *
+     * @param string $user
+     *
+     * @return array
+     */
+    abstract protected function getListeId($user);
+
+    /**
+     * Retourne une liste d'heures
+     *
+     * @param array $listId
+     *
+     * @return array
+     */
+    abstract protected function getListeSQL(array $listId);
 
     /**
      * Compte la vraie durée entre le début et la fin
