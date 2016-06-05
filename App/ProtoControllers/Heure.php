@@ -61,10 +61,19 @@ abstract class Heure
         if (!empty($post['_METHOD'])) {
             switch ($post['_METHOD']) {
                 case 'DELETE':
-                    return $this->delete($post['id_heure'], $_SESSION['userlogin'], $errorsLst, $notice);
+                    if (!$this->canUserDelete($post['id_heure'], $_SESSION['userlogin'])) {
+                        return NIl_INT;
+                    } else {
+                        return $this->delete($post['id_heure'], $_SESSION['userlogin'], $errorsLst, $notice);
+                    }
+
                     break;
                 case 'PUT':
-                    return $this->put($post, $errorsLst, $_SESSION['userlogin']);
+                    if (!$this->canUserEdit($post['id_heure'], $_SESSION['userlogin'])) {
+                        return NIl_INT;
+                    } else {
+                        return $this->put($post, $errorsLst, $_SESSION['userlogin']);
+                    }
                     break;
             }
         } else {
@@ -241,4 +250,14 @@ abstract class Heure
      * @return bool
      */
     abstract public function canUserEdit($id, $user);
+
+    /**
+     * Vérifie que l'utilisateur a bien le droit de supprimer la ressource
+     *
+     * @param int    $id
+     * @param string $user
+     *
+     * @return bool
+     */
+    abstract public function canUserDelete($id, $user);
 }

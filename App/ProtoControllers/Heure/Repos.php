@@ -378,4 +378,22 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
 
         return 0 < (int) $query->fetch_array()[0];
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function canUserDelete($id, $user)
+    {
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT EXISTS (
+                    SELECT id_heure
+                    FROM conges_heure_repos
+                    WHERE id_heure = ' . (int) $id . '
+                        AND statut = ' . Heure::STATUT_DEMANDE . '
+                        AND login = "' . $user . '"
+                )';
+        $query = $sql->query($req);
+
+        return 0 < (int) $query->fetch_array()[0];
+    }
 }
