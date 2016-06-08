@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS `conges_artt` (
   `sem_p_sa_pm` varchar(10) DEFAULT NULL,
   `sem_p_di_am` varchar(10) DEFAULT NULL,
   `sem_p_di_pm` varchar(10) DEFAULT NULL,
-  `a_date_debut_grille` date NOT NULL DEFAULT '0000-00-00',
+  `a_date_debut_grille` date NOT NULL DEFAULT '1000-01-01',
   `a_date_fin_grille` date NOT NULL DEFAULT '9999-12-31',
   PRIMARY KEY (`a_login`,`a_date_fin_grille`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
@@ -78,7 +78,7 @@ CREATE TABLE IF NOT EXISTS `conges_config` (
 
 CREATE TABLE IF NOT EXISTS `conges_echange_rtt` (
   `e_login` varbinary(99) NOT NULL DEFAULT '',
-  `e_date_jour` date NOT NULL DEFAULT '0000-00-00',
+  `e_date_jour` date NOT NULL DEFAULT '1000-01-01',
   `e_absence` enum('N','J','M','A') NOT NULL DEFAULT 'N',
   `e_presence` enum('N','J','M','A') NOT NULL DEFAULT 'N',
   `e_comment` varchar(255) DEFAULT NULL,
@@ -94,7 +94,7 @@ CREATE TABLE IF NOT EXISTS `conges_echange_rtt` (
 CREATE TABLE IF NOT EXISTS `conges_edition_papier` (
   `ep_id` int(11) NOT NULL AUTO_INCREMENT,
   `ep_login` varbinary(99) NOT NULL DEFAULT '',
-  `ep_date` date NOT NULL DEFAULT '0000-00-00',
+  `ep_date` date NOT NULL DEFAULT '1000-01-01',
   `ep_num_for_user` int(5) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`ep_id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=143 ;
@@ -154,7 +154,7 @@ CREATE TABLE IF NOT EXISTS `conges_groupe_users` (
 #
 
 CREATE TABLE IF NOT EXISTS `conges_jours_feries` (
-  `jf_date` date NOT NULL DEFAULT '0000-00-00',
+  `jf_date` date NOT NULL DEFAULT '1000-01-01',
   PRIMARY KEY (`jf_date`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
@@ -208,9 +208,9 @@ CREATE TABLE IF NOT EXISTS `conges_mail` (
 
 CREATE TABLE IF NOT EXISTS `conges_periode` (
   `p_login` varbinary(99) NOT NULL DEFAULT '',
-  `p_date_deb` date NOT NULL DEFAULT '0000-00-00',
+  `p_date_deb` date NOT NULL DEFAULT '1000-01-01',
   `p_demi_jour_deb` enum('am','pm') NOT NULL DEFAULT 'am',
-  `p_date_fin` date NOT NULL DEFAULT '0000-00-00',
+  `p_date_fin` date NOT NULL DEFAULT '1000-01-01',
   `p_demi_jour_fin` enum('am','pm') NOT NULL DEFAULT 'pm',
   `p_nb_jours` decimal(5,2) NOT NULL DEFAULT '0.00',
   `p_commentaire` varchar(50) DEFAULT NULL,
@@ -341,8 +341,8 @@ INSERT IGNORE INTO `conges_appli` VALUES ('fermeture_bgcolor', '#7B9DE6');
 # Contenu de la table `conges_artt`
 #
 
-INSERT IGNORE INTO `conges_artt` VALUES ('admin', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0000-00-00', '9999-12-31');
-INSERT IGNORE INTO `conges_artt` VALUES ('conges', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0000-00-00', '9999-12-31');
+INSERT IGNORE INTO `conges_artt` VALUES ('admin', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1000-01-01', '9999-12-31');
+INSERT IGNORE INTO `conges_artt` VALUES ('conges', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1000-01-01', '9999-12-31');
 
 # --------------------------------------------------------
 
