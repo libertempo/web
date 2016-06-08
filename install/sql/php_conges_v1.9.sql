@@ -342,7 +342,6 @@ INSERT IGNORE INTO `conges_appli` VALUES ('fermeture_bgcolor', '#7B9DE6');
 #
 
 INSERT IGNORE INTO `conges_artt` VALUES ('admin', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0000-00-00', '9999-12-31');
-INSERT IGNORE INTO `conges_artt` VALUES ('conges', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0000-00-00', '9999-12-31');
 
 # --------------------------------------------------------
 
@@ -351,7 +350,6 @@ INSERT IGNORE INTO `conges_artt` VALUES ('conges', NULL, NULL, NULL, NULL, NULL,
 #
 
 INSERT IGNORE INTO `conges_users` VALUES ('admin', 'Libertempo', 'admin', 'N', 'admin', 'Y', 'N','Y','N', '636d61cf9094a62a81836f3737d9c0da', 100, NULL, 0);
-INSERT IGNORE INTO `conges_users` VALUES ('conges', 'conges', 'responsable-virtuel', 'Y', NULL, 'Y', 'Y','Y','N', '3cdb69ff35635d9a3f6eccb6a5e269e6', 100, NULL, 0);
 
 #
 # Contenu de la table `conges_config`
