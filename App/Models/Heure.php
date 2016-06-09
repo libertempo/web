@@ -48,6 +48,24 @@ abstract class Heure
     const STATUT_REFUS   = 4;
     const STATUT_ANNUL   = 5;
 
+    public static function getOptionsStatuts()
+    {
+        $options = [];
+        $key = [
+            static::STATUT_DEMANDE,
+            static::STATUT_VALIDE,
+            static::STATUT_OK,
+            static::STATUT_REFUS,
+            static::STATUT_ANNUL,
+        ];
+
+        foreach ($key as $k) {
+            $options[$k] = static::statusText($k);
+        }
+
+        return $options;
+    }
+
     /**
      * Affiche le statut en format texte
      *

@@ -133,6 +133,17 @@ class Fonctions
         return $return;
     }
 
+    public static function getOptionsAnnees()
+    {
+        $current = date('Y');
+
+        return [
+            $current => $current,
+            $current - 1 => $current - 1,
+            $current - 2 => $current - 2,
+        ];
+    }
+
     /**
      * Encapsule le comportement du module de nouvelle absence
      *
@@ -677,6 +688,46 @@ class Fonctions
         $ReqLog3 = \includes\SQL::query($sql3) ;
 
         $count3=$ReqLog3->num_rows;
+        $return .= '
+        <form method="post" action="" class="form-inline search" role="form">
+    <div class="form-group">
+      <label class="control-label col-md-3" for="statut">Statut&nbsp;:</label>
+      <div class="col-md-8">
+        <select class="form-control" name="search[statut]" id="statut">';
+        foreach (\App\Models\Heure::getOptionsStatuts() as $key => $value) {
+            $return .= '<option value="' . $key . '">' . $value . '</option>';
+        }
+        $return .= '</select>
+      </div>
+    </div>
+    <div class="form-group ">
+      <label class="control-label col-md-3" for="type">Type&nbsp;:</label>
+      <div class="col-md-8">
+        <select class="form-control" name="search[type]" id="sel1">
+            <option>looong text</option>
+            <option>très long text</option>
+            <option>là aussi</option>
+            <option>pas un peu là mais pas trop</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-md-3" for="annee">Année&nbsp;:</label>
+      <div class="col-md-8">
+        <select class="form-control" name="search[annee]" id="sel1">';
+        foreach (\utilisateur\Fonctions::getOptionsAnnees() as $key => $value) {
+            $return .= '<option value="' . $key . '">' . $value . '</option>';
+        }
+        $return .= '</select>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="input-group">
+        <button type="submit" class="btn btn-default">Filtrer</button>&nbsp;
+        <a href="' . ROOT_PATH . 'utilisateur/user_index.php?session='. session_id() . '&onglet=liste_heure_repos" type="reset" class="btn btn-default">Reset</a>
+      </div>
+    </div>
+  </form>';
         if($count3==0) {
             $return .= '<b>'. _('user_demandes_aucune_demande') .'</b>';
         } else {

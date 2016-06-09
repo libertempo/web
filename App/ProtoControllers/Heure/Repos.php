@@ -167,7 +167,7 @@ class Repos extends \App\ProtoControllers\Heure
         $message   = '';
         $errorsLst = [];
         $notice    = '';
-        if (!empty($_POST)) {
+        if (!empty($_POST) && !$this->isSearch($_POST)) {
             if (0 >= (int) $this->post($_POST, $errorsLst, $notice)) {
                 $errors = '';
                 if (!empty($errorsLst)) {
@@ -184,8 +184,49 @@ class Repos extends \App\ProtoControllers\Heure
                 redirect(ROOT_PATH . 'utilisateur/user_index.php?session='. session_id() . '&onglet=liste_heure_repos', false);
             }
         }
+        $champsRecherche = (!empty($_POST) && $this->isSearch($_POST))
+            ? $this->sanitizeChampsRecherche($_POST)
+            : ['statut' => Heure::STATUT_DEMANDE, 'annee' => (int) date('Y')];
+        $params = $champsRecherche + [
+            'login' => $_SESSION['userlogin'],
+        ];
 
         $return = '<h1>' . _('user_liste_heure_repos_titre') . '</h1>';
+        $return .= '
+        <form method="post" action="" class="form-inline search" role="form">
+    <div class="form-group">
+      <label class="control-label col-md-4" for="statut">Statut&nbsp;:</label>
+      <div class="col-md-8">
+        <select class="form-control" name="search[statut]" id="statut">';
+        foreach (Heure::getOptionsStatuts() as $key => $value) {
+            $selected = (isset($champsRecherche['statut']) && $key === $champsRecherche['statut'])
+                ? 'selected="selected"'
+                : '';
+            $return .= '<option value="' . $key . '" ' . $selected . '>' . $value . '</option>';
+        }
+        $return .= '</select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-md-4" for="annee">Année&nbsp;:</label>
+      <div class="col-md-8">
+        <select class="form-control" name="search[annee]" id="sel1">';
+        foreach (\utilisateur\Fonctions::getOptionsAnnees() as $key => $value) {
+            $selected = (isset($champsRecherche['annee']) && $key === $champsRecherche['annee'])
+                ? 'selected="selected"'
+                : '';
+            $return .= '<option value="' . $key . '" ' . $selected . '>' . $value . '</option>';
+        }
+        $return .= '</select>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="input-group">
+        <button type="submit" class="btn btn-default">Filtrer</button>&nbsp;
+        <a href="' . ROOT_PATH . 'utilisateur/user_index.php?session='. session_id() . '&onglet=liste_heure_repos" type="reset" class="btn btn-default">Reset</a>
+      </div>
+    </div>
+  </form>';
         $return .= $message;
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses([
@@ -197,7 +238,7 @@ class Repos extends \App\ProtoControllers\Heure
         ]);
         $childTable = '<thead><tr><th>jour</th><th>debut</th><th>fin</th><th>durée</th><th>statut</th><th></th></tr></thead><tbody>';
         $session = session_id();
-        $listId = $this->getListeId($_SESSION['userlogin']);
+        $listId = $this->getListeId($params);
         if (empty($listId)) {
             $childTable .= '<tr><td colspan="6"><center>' . _('aucun_resultat') . '</center></td></tr>';
         } else {
@@ -228,44 +269,70 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
         return $return;
     }
 
+    protected function isSearch(array $post)
+    {
+        return !empty($post['search']);
+    }
+
+    protected function sanitizeChampsRecherche(array $post)
+    {
+        $champs = [];
+        $search = $post['search'];
+        foreach ($search as $key => $value) {
+            $champs[$key] = (int) $value;
+        }
+
+        return $champs;
+    }
+
     /*
      * SQL
      */
 
-     /**
-      * {@inheritDoc}
-      */
-     protected function getListeId($user)
-     {
-         $ids = [];
-         $sql = \includes\SQL::singleton();
-         $req = 'SELECT id_heure AS id
-                 FROM conges_heure_repos
-                 WHERE login = "' . $user . '"';
-         $res = $sql->query($req);
-         while ($data = $res->fetch_array()) {
-             $ids[] = (int) $data['id'];
-         }
+    /**
+     * {@inheritDoc}
+     */
+    protected function getListeId(array $params)
+    {
+        if (!empty($params)) {
+            $where = [];
+            foreach ($params as $key => $value) {
+                if ('annee' === $key) {
+                    $where[] = ' debut >= ' . '"' . mktime(0, 0, 0, 1, 1, $value) . '"';
+                } else {
+                    $where[] = $key . ' = "' . $value . '"';
+                }
+            }
+        }
+        $ids = [];
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT id_heure AS id
+                FROM conges_heure_repos '
+                . ((!empty($where)) ? ' WHERE ' . implode(' AND ', $where) : '');
+        $res = $sql->query($req);
+        while ($data = $res->fetch_array()) {
+            $ids[] = (int) $data['id'];
+        }
 
-         return $ids;
-     }
+        return $ids;
+    }
 
-     /**
-      * {@inheritDoc}
-      */
-     protected function getListeSQL(array $listId)
-     {
-         if (empty($listId)) {
-             return [];
-         }
-         $sql = \includes\SQL::singleton();
-         $req = 'SELECT *
-                 FROM conges_heure_repos
-                 WHERE id_heure IN (' . implode(',', $listId) . ')
-                 ORDER BY debut DESC, statut ASC';
+    /**
+     * {@inheritDoc}
+     */
+    protected function getListeSQL(array $listId)
+    {
+        if (empty($listId)) {
+            return [];
+        }
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT *
+                FROM conges_heure_repos
+                WHERE id_heure IN (' . implode(',', $listId) . ')
+                ORDER BY debut DESC, statut ASC';
 
-         return $sql->query($req)->fetch_all(MYSQLI_ASSOC);
-     }
+        return $sql->query($req)->fetch_all(MYSQLI_ASSOC);
+    }
 
     /**
      * {@inheritDoc}

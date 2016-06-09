@@ -216,11 +216,11 @@ abstract class Heure
     /**
      * Retourne une liste d'id d'heures
      *
-     * @param string $user
+     * @param array $params Paramètres de recherche
      *
      * @return array
      */
-    abstract protected function getListeId($user);
+    abstract protected function getListeId(array $params);
 
     /**
      * Retourne une liste d'heures

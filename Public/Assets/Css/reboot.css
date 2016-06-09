@@ -912,3 +912,11 @@ td.cal-day_semaine_fermeture_am_autre_pm{
     font-weight: 700;
     src: local('Open Sans Bold'), local('OpenSans-Bold'), url(../Font/OpenSans/open-sans-ext.woff2) format('woff2');
 }
+
+form.search {
+    padding : 10px;
+    margin: 30px auto;
+    line-height : 30px;
+    background : #F4F4F4;
+    border-radius : 3px;
+}
