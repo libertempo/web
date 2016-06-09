@@ -1,55 +1,67 @@
 [
     {
-        "name": "raveren/kint",
-        "version": "1.0.10",
-        "version_normalized": "1.0.10.0",
+        "name": "tecnickcom/tcpdf",
+        "version": "6.2.6",
+        "version_normalized": "6.2.6.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/raveren/kint.git",
-            "reference": "c8423b9928bd35bf6ad14c688ab9c6d17d97d0eb"
+            "url": "https://github.com/tecnickcom/TCPDF.git",
+            "reference": "a2e8f5b505a7a14a4ed960313c4baf699fd1f4bb"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/raveren/kint/zipball/c8423b9928bd35bf6ad14c688ab9c6d17d97d0eb",
-            "reference": "c8423b9928bd35bf6ad14c688ab9c6d17d97d0eb",
+            "url": "https://api.github.com/repos/tecnickcom/TCPDF/zipball/a2e8f5b505a7a14a4ed960313c4baf699fd1f4bb",
+            "reference": "a2e8f5b505a7a14a4ed960313c4baf699fd1f4bb",
             "shasum": ""
         },
         "require": {
-            "php": ">=5.1.0"
+            "php": ">=5.3.0"
         },
-        "time": "2015-09-16 14:09:00",
+        "time": "2015-01-28 18:51:40",
         "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.0.x-dev"
-            }
-        },
         "installation-source": "dist",
         "autoload": {
-            "files": [
-                "Kint.class.php"
+            "classmap": [
+                "fonts",
+                "config",
+                "include",
+                "tcpdf.php",
+                "tcpdf_parser.php",
+                "tcpdf_import.php",
+                "tcpdf_barcodes_1d.php",
+                "tcpdf_barcodes_2d.php",
+                "include/tcpdf_colors.php",
+                "include/tcpdf_filters.php",
+                "include/tcpdf_font_data.php",
+                "include/tcpdf_fonts.php",
+                "include/tcpdf_images.php",
+                "include/tcpdf_static.php",
+                "include/barcodes/datamatrix.php",
+                "include/barcodes/pdf417.php",
+                "include/barcodes/qrcode.php"
             ]
         },
         "notification-url": "https://packagist.org/downloads/",
         "license": [
-            "MIT"
+            "LGPLv3"
         ],
         "authors": [
             {
-                "name": "Rokas Šleinius",
-                "homepage": "https://github.com/raveren"
-            },
-            {
-                "name": "Contributors",
-                "homepage": "https://github.com/raveren/kint/contributors"
+                "name": "Nicola Asuni",
+                "email": "info@tecnick.com",
+                "homepage": "http://nicolaasuni.tecnick.com"
             }
         ],
-        "description": "Kint - debugging helper for PHP developers",
-        "homepage": "https://github.com/raveren/kint",
+        "description": "TCPDF is a PHP class for generating PDF documents and barcodes.",
+        "homepage": "http://www.tcpdf.org/",
         "keywords": [
-            "debug",
-            "kint",
-            "php"
+            "PDFD32000-2008",
+            "TCPDF",
+            "barcodes",
+            "datamatrix",
+            "pdf",
+            "pdf417",
+            "qrcode"
         ]
     },
     {
@@ -105,6 +117,59 @@
         "keywords": [
             "cas",
             "jasig"
+        ]
+    },
+    {
+        "name": "raveren/kint",
+        "version": "1.0.10",
+        "version_normalized": "1.0.10.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/raveren/kint.git",
+            "reference": "c8423b9928bd35bf6ad14c688ab9c6d17d97d0eb"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/raveren/kint/zipball/c8423b9928bd35bf6ad14c688ab9c6d17d97d0eb",
+            "reference": "c8423b9928bd35bf6ad14c688ab9c6d17d97d0eb",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.1.0"
+        },
+        "time": "2015-09-16 14:09:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "files": [
+                "Kint.class.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Rokas Šleinius",
+                "homepage": "https://github.com/raveren"
+            },
+            {
+                "name": "Contributors",
+                "homepage": "https://github.com/raveren/kint/contributors"
+            }
+        ],
+        "description": "Kint - debugging helper for PHP developers",
+        "homepage": "https://github.com/raveren/kint",
+        "keywords": [
+            "debug",
+            "kint",
+            "php"
         ]
     }
 ]

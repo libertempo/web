@@ -1300,9 +1300,6 @@ msgstr "mes"
 msgid "phpmailer_not_valid"
 msgstr "ERROR MAIL : El fichero class.phpmailer.php no puede ser leido o no se encuentra. El mail de alerta no podra ser enviado !"
 
-msgid "fpdf_not_valid"
-msgstr "ERROR : El fichero fpdf.php no puede ser leido o no se encuentra. El documento PDF no puede ser generado !"
-
 msgid "install_remove_fichier"
 msgstr "es de aqui en adelante inutil... Por favor suprimalo !"
 
@@ -1434,4 +1431,3 @@ msgstr "imprimir un calendario"
 
 msgid "imprim_calendrier_titre"
 msgstr "escoger el mes a imprimir"
-
