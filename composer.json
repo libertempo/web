@@ -14,6 +14,7 @@
         "vendor-dir": "vendor"
     },
     "require": {
-        "raveren/kint": "^1.0"
+        "raveren/kint": "^1.0",
+        "jasig/phpcas": "1.3.3"
     }
 }

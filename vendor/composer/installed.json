@@ -51,5 +51,60 @@
             "kint",
             "php"
         ]
+    },
+    {
+        "name": "jasig/phpcas",
+        "version": "1.3.3",
+        "version_normalized": "1.3.3.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/Jasig/phpCAS.git",
+            "reference": "b6f5d484735d3b0e80b068a87bd1eabac04b2cbe"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/Jasig/phpCAS/zipball/b6f5d484735d3b0e80b068a87bd1eabac04b2cbe",
+            "reference": "b6f5d484735d3b0e80b068a87bd1eabac04b2cbe",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.0.0"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "~3.7.10"
+        },
+        "time": "2014-07-24 20:29:29",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.3.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "classmap": [
+                "source/"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "Apache-2.0"
+        ],
+        "authors": [
+            {
+                "name": "Joachim Fritschi",
+                "homepage": "https://wiki.jasig.org/display/~fritschi"
+            },
+            {
+                "name": "Adam Franco",
+                "homepage": "https://wiki.jasig.org/display/~adamfranco"
+            }
+        ],
+        "description": "Provides a simple API for authenticating users against a CAS server",
+        "homepage": "https://wiki.jasig.org/display/CASC/phpCAS",
+        "keywords": [
+            "cas",
+            "jasig"
+        ]
     }
 ]
