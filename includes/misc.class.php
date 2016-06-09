@@ -8,7 +8,7 @@ class HTTPLocale
   var $language;
   var $country;
 
-  function HTTPLocale()
+  function __construct()
   {
     $data = array_map("trim", explode(",", $_SERVER["HTTP_ACCEPT_LANGUAGE"]));
     $data = array_map("trim", explode(";", $data[0]));
