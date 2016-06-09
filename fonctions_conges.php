@@ -673,7 +673,7 @@ function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $m
         // affiche : "23 / 01 / 2008 (am)"
         $sql_date_deb = "01 / 01 / 2001 (am)";
         // affiche : "23 / 01 / 2008 (am)"
-        $sql_date_deb = "02 / 01 / 2001 (am)";
+        $sql_date_fin = "02 / 01 / 2001 (am)";
         $sql_nb_jours = 2;
         $sql_commentaire = "Test comment";
         $sql_type_absence = "cp";
