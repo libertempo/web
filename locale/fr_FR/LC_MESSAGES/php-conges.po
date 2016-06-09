@@ -1205,9 +1205,6 @@ msgstr "mois"
 msgid "divers_annee"
 msgstr "année"
 
-msgid "fpdf_not_valid"
-msgstr "ERREUR : Le fichier fpdf.php ne peut pas être lu ou est introuvable. Le document PDF ne peut être généré !"
-
 msgid "install_remove_fichier"
 msgstr "est désormais inutile... Veuillez le supprimer !"
 
