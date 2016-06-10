@@ -1049,10 +1049,6 @@ class Fonctions
         $return .= '<th style="border-right: 2px solid #e6e6e6;">'. _('divers_quotite_maj_1') .'</th>' ;
         $nb_colonnes = 3;
         foreach($tab_type_cong as $id_conges => $libelle) {
-            // cas d'une absence ou d'un congé
-            /*
-            $return .= '<th>' . $libelle . ' / ' . _('divers_an_maj') . '</th>';
-            $return .= '<th>'. _('divers_solde_maj') . ' ' . $libelle . '</th>';*/
             $return .= '<th colspan="2" style="text-align: center; border-right: 2px solid #e6e6e6;">'.$libelle.'</th>';
             $nb_colonnes += 2;
             $tmp ++;
