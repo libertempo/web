@@ -31,7 +31,7 @@ namespace App\Models;
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina
  */
-abstract class Heure
+abstract class AHeure
 {
     /**
      * Constantes de statut

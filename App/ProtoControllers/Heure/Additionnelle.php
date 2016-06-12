@@ -35,7 +35,7 @@ use \App\Models\Heure;
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina
  */
-class Additionnelle extends \App\ProtoControllers\Heure
+class Additionnelle extends \App\ProtoControllers\AHeure
 {
     /**
      * {@inheritDoc}

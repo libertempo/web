@@ -35,7 +35,7 @@ namespace App\ProtoControllers;
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina
  */
-abstract class Heure
+abstract class AHeure
 {
     /**
      * Encapsule le comportement du formulaire d'édition d'heures
