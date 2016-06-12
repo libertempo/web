@@ -95,17 +95,6 @@ $res_del_conges_artt = \includes\SQL::query($del_conges_artt);
 $del_conges_usr="DELETE FROM conges_users WHERE u_login = 'conges';";
 $res_del_conges_usr=\includes\SQL::query($del_conges_usr);
 
-$periode_heure = "CREATE TABLE conges_heure_periode (
-    id_heure INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-    login VARBINARY(99) NOT NULL,
-    debut INT(11) NOT NULL,
-    fin INT(11) NOT NULL,
-    time INT NOT NULL,
-    statut INT NOT NULL DEFAULT 0,
-    PRIMARY KEY (`id_heure`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8";
-$res_periode_heure = $sql->query($periode_heure);
-
 $periodeAdditionnelle = "CREATE TABLE conges_heure_additionnelle (
     id_heure INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
     login VARBINARY(99) NOT NULL,
