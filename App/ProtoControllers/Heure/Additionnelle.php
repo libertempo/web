@@ -298,9 +298,9 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
      */
     protected function insert(array $post, $user)
     {
-        $jour = \App\Helpers\Formatter::dateFr2Iso($post['new_jour']);
-        $timestampDebut = strtotime($jour . ' ' . $post['new_deb_heure']);
-        $timestampFin   = strtotime($jour . ' ' . $post['new_fin_heure']);
+        $jour = \App\Helpers\Formatter::dateFr2Iso($post['jour']);
+        $timestampDebut = strtotime($jour . ' ' . $post['debut_heure']);
+        $timestampFin   = strtotime($jour . ' ' . $post['fin_heure']);
         /* TODO: Toute la partie du check d'erreur et du comptage réel des heures devrait être dans le modèle.
         C'est lui qui devrait remplir le DAO à partir de ses attributs pour l'insertion
         */
