@@ -193,18 +193,6 @@ a {
     margin-left: 40px
 }
 
-.menu-link a{
-    border-top:solid 1px #0098bd;display:block;text-align:left;padding:20px;background:#009ec5;color:#FFF
-}
-
-.menu-link a:hover{
-    text-decoration:none;background-color:#00aad4
-}
-
-.menu-link i{
-        margin-right:5px
-    }
-
 
 .mod-info .nav>li>a {
     padding: 0 20px;
@@ -662,15 +650,33 @@ h3.current-month {
     position: relative;
     top: 4px
 }
+.menu-link a {
+    border-top:solid 1px #0098bd;
+    display:block;
+    text-align:left;
+    padding:20px;
+    background:#009ec5;
+    color:#FFF
+}
+.menu-link a:hover {
+    text-decoration:none;
+    background-color:#00aad4
+}
+.menu-link i{
+    margin-right:5px
+}
 
 #main-calendar table td {
     border: 1px solid #000;
     min-width: 2em;
 }
 /* style pour les cellules du calendriers */
-
-td.cal-day_weekend{background-color: #DCDCDC;}
-td.cal-day_fermeture{background-color: #CEB6FF;}
+td.cal-day_weekend {
+    background-color: #DCDCDC;
+}
+td.cal-day_fermeture {
+    background-color: #CEB6FF;
+}
 
 td.cal-day_semaine_travail_am_conges_pm{
     background: -webkit-linear-gradient(45deg,#FFFFFF 50%,#8addf2 0%);
@@ -848,13 +854,6 @@ td.cal-day_semaine_autre_am_rtt_pm{
     background: linear-gradient(45deg,#F4F4F4 50%,#ffffad 0%);
 }
 
-td.cal-day_semaine_autre_am_rtt_pm{
-    background: -webkit-linear-gradient(45deg,#F4F4F4 50%,#ffffad 0%);
-    background: -o-linear-gradient(45deg,#F4F4F4 50%,#ffffad 0%);
-    background: -moz-linear-gradient(45deg,#F4F4F4 50%,#ffffad 0%);
-    background: linear-gradient(45deg,#F4F4F4 50%,#ffffad 0%);
-}
-
 td.cal-day_semaine_autre_am_fermeture_pm{
     background: -webkit-linear-gradient(45deg,#F4F4F4 50%,#CEB6FF 0%);
     background: -o-linear-gradient(45deg,#F4F4F4 50%,#CEB6FF 0%);
@@ -898,6 +897,7 @@ td.cal-day_semaine_fermeture_am_autre_pm{
     background: -moz-linear-gradient(45deg,#CEB6FF 50%,#CEB6FF 0%);
     background: linear-gradient(45deg,#CEB6FF 50%,#CEB6FF 0%);
 }
+
 /*fonts*/
 
 @font-face {

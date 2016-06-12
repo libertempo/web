@@ -25,7 +25,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *************************************************************************************************/
 
-defined( '_PHP_CONGES' ) or die( 'Restricted access' );
+defined('_PHP_CONGES') or die('Restricted access');
 
-echo \utilisateur\Fonctions::getDemandeCongesHeure(\App\Models\HeureRecuperation::TYPE_DEBIT);
-
+$repos = new \App\ProtoControllers\Heure\Repos();
+echo $repos->getForm();

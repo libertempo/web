@@ -24,49 +24,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *************************************************************************************************/
-namespace App\ProtoControllers;
 
-class DemandeHeure
-{
+defined('_PHP_CONGES') or die('Restricted access');
 
-
-    /**
-     * Vérifie qu'une demande est éditable
-     *
-     * @param int $id
-     *
-     * @return bool
-     */
-    public static function isEditable($id)
-    {
-        $sql = \includes\SQL::singleton();
-        $req = 'SELECT EXISTS (
-                    SELECT id_heure
-                    FROM conges_heure_periode
-                    WHERE id_heure = ' . (int) $id . '
-                    AND statut = ' . \App\Models\HeureRecuperation::STATUT_DEMANDE . '
-                )';
-        $query = $sql->query($req);
-
-        return 0 < (int) $query->fetch_array()[0];
-    }
-
-    /**
-     * Vérifie que l'utilisateur peut accéder à une demande
-     *
-     * @param int $id
-     * @param string $user
-     *
-     * @return bool
-     */
-    public static function isUserOwner($id,$user)
-    {
-        $sql = \includes\SQL::singleton();
-        $req = 'SELECT login
-                FROM conges_heure_periode
-                WHERE id_heure = ' . (int) $id;
-        $query = $sql->query($req);
-        $login = $query->fetch_assoc();
-        return $user === $login['login'];
-    }
-}
+$additionnelle = new \App\ProtoControllers\Heure\Additionnelle();
+echo $additionnelle->getForm();
