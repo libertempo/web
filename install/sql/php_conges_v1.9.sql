@@ -347,7 +347,7 @@ CREATE TABLE IF NOT EXISTS `conges_planning_creneau` (
   KEY `planning_id` (`planning_id`,`type_semaine`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `conges_heure_additionnelle` (
+CREATE TABLE IF NOT EXISTS `heure_additionnelle` (
   `id_heure` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `login` varbinary(99) NOT NULL,
   `debut` int(11) NOT NULL,
@@ -357,7 +357,7 @@ CREATE TABLE IF NOT EXISTS `conges_heure_additionnelle` (
   PRIMARY KEY (`id_heure`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `conges_heure_repos` (
+CREATE TABLE IF NOT EXISTS `heure_repos` (
   `id_heure` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `login` varbinary(99) NOT NULL,
   `debut` int(11) NOT NULL,

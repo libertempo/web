@@ -102,7 +102,7 @@ class Repos extends \App\ProtoControllers\Heure
         $childTable = '';
 
         if (NIL_INT !== $id) {
-            $sql   = 'SELECT * FROM conges_heure_repos WHERE id_heure = ' . $id;
+            $sql   = 'SELECT * FROM heure_repos WHERE id_heure = ' . $id;
             $query = \includes\SQL::query($sql);
             $data = $query->fetch_array();
             $valueJour  = date('d/m/Y', $data['debut']);
@@ -240,7 +240,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
          $ids = [];
          $sql = \includes\SQL::singleton();
          $req = 'SELECT id_heure AS id
-                 FROM conges_heure_repos
+                 FROM heure_repos
                  WHERE login = "' . $user . '"';
          $res = $sql->query($req);
          while ($data = $res->fetch_array()) {
@@ -260,7 +260,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
          }
          $sql = \includes\SQL::singleton();
          $req = 'SELECT *
-                 FROM conges_heure_repos
+                 FROM heure_repos
                  WHERE id_heure IN (' . implode(',', $listId) . ')
                  ORDER BY debut DESC, statut ASC';
 
@@ -283,7 +283,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
 
         $sql = \includes\SQL::singleton();
         $req = 'SELECT EXISTS (SELECT statut
-                FROM conges_heure_repos
+                FROM heure_repos
                 WHERE login = "' . $user . '"
                     AND statut IN (' . implode(',', $statuts) . ')
                     AND (debut <= ' . $timestampFin . ' AND fin >= ' . $timestampDebut . ')';
@@ -309,7 +309,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
         */
         $duree = $this->countDuree($timestampDebut, $timestampFin);
         $sql = \includes\SQL::singleton();
-        $req = 'INSERT INTO conges_heure_repos (id_heure, login, debut, fin, duree, statut) VALUES
+        $req = 'INSERT INTO heure_repos (id_heure, login, debut, fin, duree, statut) VALUES
         (NULL, "' . $user . '", ' . (int) $timestampDebut . ', '. (int) $timestampFin .', '. (int) $duree . ', ' . Heure::STATUT_DEMANDE . ')';
         $query = $sql->query($req);
 
@@ -327,7 +327,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
         $duree = $this->countDuree($timestampDebut, $timestampFin);
         $sql   = \includes\SQL::singleton();
         $toInsert = [];
-        $req   = 'UPDATE conges_heure_repos
+        $req   = 'UPDATE heure_repos
                 SET debut = ' . $timestampDebut . ',
                     fin = ' . $timestampFin . ',
                     duree = ' . $duree . '
@@ -344,7 +344,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
     protected function deleteSQL($id, $user)
     {
         $sql = \includes\SQL::singleton();
-        $req = 'UPDATE conges_heure_repos
+        $req = 'UPDATE heure_repos
                 SET statut = ' . Heure::STATUT_ANNUL . '
                 WHERE id_heure = ' . (int) $id . '
                 AND login = "' . $user . '"';
@@ -369,7 +369,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
         $sql = \includes\SQL::singleton();
         $req = 'SELECT EXISTS (
                     SELECT id_heure
-                    FROM conges_heure_repos
+                    FROM heure_repos
                     WHERE id_heure = ' . (int) $id . '
                         AND statut = ' . Heure::STATUT_DEMANDE . '
                         AND login = "' . $user . '"
@@ -387,7 +387,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
         $sql = \includes\SQL::singleton();
         $req = 'SELECT EXISTS (
                     SELECT id_heure
-                    FROM conges_heure_repos
+                    FROM heure_repos
                     WHERE id_heure = ' . (int) $id . '
                         AND statut = ' . Heure::STATUT_DEMANDE . '
                         AND login = "' . $user . '"
