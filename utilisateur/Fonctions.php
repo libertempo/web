@@ -134,7 +134,31 @@ class Fonctions
     }
 
     /**
-     * Retourne les options 
+     * Retourne les options de select des statuts
+     *
+     * @return array
+     */
+    public static function getOptionsStatuts()
+    {
+        $statuts = [
+            \App\Models\AHeure::STATUT_DEMANDE,
+            \App\Models\AHeure::STATUT_VALIDE,
+            \App\Models\AHeure::STATUT_OK,
+            \App\Models\AHeure::STATUT_REFUS,
+            \App\Models\AHeure::STATUT_ANNUL
+        ];
+        $options = [];
+        foreach ($statuts as $value) {
+            $options[$value] = \App\Models\AHeure::statusText($value);
+        }
+
+        return $options;
+    }
+
+    /**
+     * Retourne les options de select des années
+     *
+     * @return array
      */
     public static function getOptionsAnnees()
     {

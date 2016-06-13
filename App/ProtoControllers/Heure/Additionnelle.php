@@ -26,7 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *************************************************************************************************/
 namespace App\ProtoControllers\Heure;
 
-use \App\Models\Heure;
+use \App\Models\AHeure;
 
 /**
  * ProtoContrôleur d'heures additionnelles, en attendant la migration vers le MVC REST
@@ -167,7 +167,7 @@ class Additionnelle extends \App\ProtoControllers\AHeure
         $message   = '';
         $errorsLst = [];
         $notice    = '';
-        if (!empty($_POST)) {
+        if (!empty($_POST) && !$this->isSearch($_POST)) {
             if (0 >= (int) $this->post($_POST, $errorsLst, $notice)) {
                 $errors = '';
                 if (!empty($errorsLst)) {
@@ -184,8 +184,15 @@ class Additionnelle extends \App\ProtoControllers\AHeure
                 redirect(ROOT_PATH . 'utilisateur/user_index.php?session='. session_id() . '&onglet=liste_heure_additionnelle', false);
             }
         }
+        $champsRecherche = (!empty($_POST) && $this->isSearch($_POST))
+            ? $this->transformChampsRecherche($_POST)
+            : ['statut' => AHeure::STATUT_DEMANDE];
+        $params = $champsRecherche + [
+            'login' => $_SESSION['userlogin'],
+        ];
 
         $return = '<h1>' . _('user_liste_heure_additionnelle_titre') . '</h1>';
+        $return .= $this->getFormulaireRecherche($champsRecherche);
         $return .= $message;
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses([
@@ -197,7 +204,7 @@ class Additionnelle extends \App\ProtoControllers\AHeure
         ]);
         $childTable = '<thead><tr><th>jour</th><th>debut</th><th>fin</th><th>durée</th><th>statut</th><th></th></tr></thead><tbody>';
         $session = session_id();
-        $listId = $this->getListeId($_SESSION['userlogin']);
+        $listId = $this->getListeId($params);
         if (empty($listId)) {
             $childTable .= '<tr><td colspan="6"><center>' . _('aucun_resultat') . '</center></td></tr>';
         } else {
@@ -207,8 +214,8 @@ class Additionnelle extends \App\ProtoControllers\AHeure
                 $debut  = date('H\:i', $additionnelle['debut']);
                 $fin    = date('H\:i', $additionnelle['fin']);
                 $duree  = date('H\:i', $additionnelle['duree']);
-                $statut = Heure::statusText($additionnelle['statut']);
-                if (Heure::STATUT_DEMANDE == $additionnelle['statut']) {
+                $statut = AHeure::statusText($additionnelle['statut']);
+                if (AHeure::STATUT_DEMANDE == $additionnelle['statut']) {
                     $modification = '<a title="' . _('form_modif') . '" href="user_index.php?onglet=modif_heure_additionnelle&id=' . $additionnelle['id_heure'] . '&session=' . $session . '"><i class="fa fa-pencil"></i></a>';
                     $annulation   = '<input type="hidden" name="id_heure" value="' . $additionnelle['id_heure'] . '" /><input type="hidden" name="_METHOD" value="DELETE" /><button type="submit" class="btn btn-link" title="' . _('Annuler') . '"><i class="fa fa-times-circle"></i></button>';
                 } else {
@@ -228,27 +235,67 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
         return $return;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    protected function getFormulaireRecherche(array $champs)
+    {
+        $form = '<form method="post" action="" class="form-inline search" role="form"><div class="form-group"><label class="control-label col-md-4" for="statut">Statut&nbsp;:</label><div class="col-md-8"><select class="form-control" name="search[statut]" id="statut">';
+        foreach (\utilisateur\Fonctions::getOptionsStatuts() as $key => $value) {
+            $selected = (isset($champs['statut']) && $key === $champs['statut'])
+                ? 'selected="selected"'
+                : '';
+            $form .= '<option value="' . $key . '" ' . $selected . '>' . $value . '</option>';
+        }
+        $form .= '</select></div></div><div class="form-group"><label class="control-label col-md-4" for="annee">Année&nbsp;:</label><div class="col-md-8"><select class="form-control" name="search[annee]" id="sel1">';
+        foreach (\utilisateur\Fonctions::getOptionsAnnees() as $key => $value) {
+            $selected = (isset($champs['annee']) && $key === $champs['annee'])
+                ? 'selected="selected"'
+                : '';
+            $form .= '<option value="' . $key . '" ' . $selected . '>' . $value . '</option>';
+        }
+        $form .= '</select></div></div><div class="form-group"><div class="input-group"><button type="submit" class="btn btn-default">Filtrer</button>&nbsp;<a href="' . ROOT_PATH . 'utilisateur/user_index.php?session='. session_id() . '&onglet=liste_heure_repos" type="reset" class="btn btn-default">Reset</a></div></div></form>';
+
+        return $form;
+    }
+
     /*
      * SQL
      */
 
-     /**
-      * {@inheritDoc}
-      */
-     protected function getListeId($user)
-     {
-         $ids = [];
-         $sql = \includes\SQL::singleton();
-         $req = 'SELECT id_heure AS id
-                 FROM heure_additionnelle
-                 WHERE login = "' . $user . '"';
-         $res = $sql->query($req);
-         while ($data = $res->fetch_array()) {
-             $ids[] = (int) $data['id'];
-         }
+    /**
+     * {@inheritDoc}
+     */
+    protected function getListeId(array $params)
+    {
+        if (!empty($params)) {
+            $where = [];
+            foreach ($params as $key => $value) {
+                switch ($key) {
+                    case 'timestampDebut':
+                        $where[] = 'debut >= ' . $value;
+                        break;
+                    case 'timestampFin':
+                        $where[] = 'debut <= ' . $value;
+                        break;
+                    default:
+                        $where[] = $key . ' = "' . $value . '"';
+                        break;
+                }
+            }
+        }
+        $ids = [];
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT id_heure AS id
+                FROM heure_additionnelle '
+                . ((!empty($where)) ? ' WHERE ' . implode(' AND ', $where) : '');
+        $res = $sql->query($req);
+        while ($data = $res->fetch_array()) {
+            $ids[] = (int) $data['id'];
+        }
 
-         return $ids;
-     }
+        return $ids;
+    }
 
      /**
       * {@inheritDoc}
@@ -280,8 +327,8 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
         $req = 'SELECT EXISTS (SELECT statut
                 FROM heure_additionnelle
                 WHERE login = "' . $user . '"
-                    AND (statut != ' . Heure::STATUT_REFUS . '
-                        OR statut != ' . Heure::STATUT_ANNUL . '
+                    AND (statut != ' . AHeure::STATUT_REFUS . '
+                        OR statut != ' . AHeure::STATUT_ANNUL . '
                     )
                     AND (debut <= ' . $timestampFin . ' AND fin >= ' . $timestampDebut . ')';
         if (NIL_INT !== $id) {
@@ -307,7 +354,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
         $duree = $this->countDuree($timestampDebut, $timestampFin);
         $sql = \includes\SQL::singleton();
         $req = 'INSERT INTO heure_additionnelle (id_heure, login, debut, fin, duree, statut) VALUES
-        (NULL, "' . $user . '", ' . (int) $timestampDebut . ', '. (int) $timestampFin .', '. (int) $duree . ', ' . Heure::STATUT_DEMANDE . ')';
+        (NULL, "' . $user . '", ' . (int) $timestampDebut . ', '. (int) $timestampFin .', '. (int) $duree . ', ' . AHeure::STATUT_DEMANDE . ')';
         $query = $sql->query($req);
 
         return $sql->insert_id;
@@ -342,7 +389,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
     {
         $sql = \includes\SQL::singleton();
         $req = 'UPDATE heure_additionnelle
-                SET statut = ' . Heure::STATUT_ANNUL . '
+                SET statut = ' . AHeure::STATUT_ANNUL . '
                 WHERE id_heure = ' . (int) $id . '
                 AND login = "' . $user . '"';
         $sql->query($req);
@@ -368,7 +415,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
                     SELECT id_heure
                     FROM heure_additionnelle
                     WHERE id_heure = ' . (int) $id . '
-                        AND statut = ' . Heure::STATUT_DEMANDE . '
+                        AND statut = ' . AHeure::STATUT_DEMANDE . '
                         AND login = "' . $user . '"
                 )';
         $query = $sql->query($req);
@@ -386,7 +433,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
                     SELECT id_heure
                     FROM heure_repos
                     WHERE id_heure = ' . (int) $id . '
-                        AND statut = ' . Heure::STATUT_DEMANDE . '
+                        AND statut = ' . AHeure::STATUT_DEMANDE . '
                         AND login = "' . $user . '"
                 )';
         $query = $sql->query($req);

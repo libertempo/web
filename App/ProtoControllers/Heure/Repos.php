@@ -26,7 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *************************************************************************************************/
 namespace App\ProtoControllers\Heure;
 
-use \App\Models\Heure;
+use \App\Models\AHeure;
 
 /**
  * ProtoContrôleur d'heures de repos, en attendant la migration vers le MVC REST
@@ -186,47 +186,13 @@ class Repos extends \App\ProtoControllers\AHeure
         }
         $champsRecherche = (!empty($_POST) && $this->isSearch($_POST))
             ? $this->transformChampsRecherche($_POST)
-            : ['statut' => Heure::STATUT_DEMANDE];
+            : ['statut' => AHeure::STATUT_DEMANDE];
         $params = $champsRecherche + [
             'login' => $_SESSION['userlogin'],
         ];
 
         $return = '<h1>' . _('user_liste_heure_repos_titre') . '</h1>';
-        $return .= '
-        <form method="post" action="" class="form-inline search" role="form">
-    <div class="form-group">
-      <label class="control-label col-md-4" for="statut">Statut&nbsp;:</label>
-      <div class="col-md-8">
-        <select class="form-control" name="search[statut]" id="statut">';
-        foreach (Heure::getOptionsStatuts() as $key => $value) {
-            $selected = (isset($champsRecherche['statut']) && $key === $champsRecherche['statut'])
-                ? 'selected="selected"'
-                : '';
-            $return .= '<option value="' . $key . '" ' . $selected . '>' . $value . '</option>';
-        }
-        $return .= '</select>
-      </div>
-    </div>
-    <div class="form-group">
-      <label class="control-label col-md-4" for="annee">Année&nbsp;:</label>
-      <div class="col-md-8">
-        <select class="form-control" name="search[annee]" id="sel1">';
-        foreach (\utilisateur\Fonctions::getOptionsAnnees() as $key => $value) {
-            $selected = (isset($champsRecherche['annee']) && $key === $champsRecherche['annee'])
-                ? 'selected="selected"'
-                : '';
-            $return .= '<option value="' . $key . '" ' . $selected . '>' . $value . '</option>';
-        }
-        $return .= '</select>
-      </div>
-    </div>
-    <div class="form-group">
-      <div class="input-group">
-        <button type="submit" class="btn btn-default">Filtrer</button>&nbsp;
-        <a href="' . ROOT_PATH . 'utilisateur/user_index.php?session='. session_id() . '&onglet=liste_heure_repos" type="reset" class="btn btn-default">Reset</a>
-      </div>
-    </div>
-  </form>';
+        $return .= $this->getFormulaireRecherche($champsRecherche);
         $return .= $message;
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses([
@@ -248,8 +214,8 @@ class Repos extends \App\ProtoControllers\AHeure
                 $debut  = date('H\:i', $repos['debut']);
                 $fin    = date('H\:i', $repos['fin']);
                 $duree  = date('H\:i', $repos['duree']);
-                $statut = Heure::statusText($repos['statut']);
-                if (Heure::STATUT_DEMANDE == $repos['statut']) {
+                $statut = AHeure::statusText($repos['statut']);
+                if (AHeure::STATUT_DEMANDE == $repos['statut']) {
                     $modification = '<a title="' . _('form_modif') . '" href="user_index.php?onglet=modif_heure_repos&id=' . $repos['id_heure'] . '&session=' . $session . '"><i class="fa fa-pencil"></i></a>';
                     $annulation   = '<input type="hidden" name="id_heure" value="' . $repos['id_heure'] . '" /><input type="hidden" name="_METHOD" value="DELETE" /><button type="submit" class="btn btn-link" title="' . _('Annuler') . '"><i class="fa fa-times-circle"></i></button>';
                 } else {
@@ -270,38 +236,27 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
     }
 
     /**
-     * Y-a-t-il une recherche dans l'avion ?
-     *
-     * @param array $post
-     *
-     * @return bool
+     * {@inheritDoc}
      */
-    protected function isSearch(array $post)
+    protected function getFormulaireRecherche(array $champs)
     {
-        return !empty($post['search']);
-    }
-
-    /**
-     * Transforme les champs de recherche afin d'être compris par la bdd
-     *
-     * @param array $post
-     *
-     * @return array
-     */
-    protected function transformChampsRecherche(array $post)
-    {
-        $champs = [];
-        $search = $post['search'];
-        foreach ($search as $key => $value) {
-            if ('annee' === $key) {
-                $champs['timestampDebut'] = \utilisateur\Fonctions::getTimestampPremierJourAnnee($value);
-                $champs['timestampFin'] = \utilisateur\Fonctions::getTimestampDernierJourAnnee($value);
-            } else {
-                $champs[$key] = (int) $value;
-            }
+        $form = '<form method="post" action="" class="form-inline search" role="form"><div class="form-group"><label class="control-label col-md-4" for="statut">Statut&nbsp;:</label><div class="col-md-8"><select class="form-control" name="search[statut]" id="statut">';
+        foreach (\utilisateur\Fonctions::getOptionsStatuts() as $key => $value) {
+            $selected = (isset($champs['statut']) && $key === $champs['statut'])
+                ? 'selected="selected"'
+                : '';
+            $form .= '<option value="' . $key . '" ' . $selected . '>' . $value . '</option>';
         }
+        $form .= '</select></div></div><div class="form-group"><label class="control-label col-md-4" for="annee">Année&nbsp;:</label><div class="col-md-8"><select class="form-control" name="search[annee]" id="sel1">';
+        foreach (\utilisateur\Fonctions::getOptionsAnnees() as $key => $value) {
+            $selected = (isset($champs['annee']) && $key === $champs['annee'])
+                ? 'selected="selected"'
+                : '';
+            $form .= '<option value="' . $key . '" ' . $selected . '>' . $value . '</option>';
+        }
+        $form .= '</select></div></div><div class="form-group"><div class="input-group"><button type="submit" class="btn btn-default">Filtrer</button>&nbsp;<a href="' . ROOT_PATH . 'utilisateur/user_index.php?session='. session_id() . '&onglet=liste_heure_repos" type="reset" class="btn btn-default">Reset</a></div></div></form>';
 
-        return $champs;
+        return $form;
     }
 
     /*
@@ -368,9 +323,9 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
         $timestampDebut = strtotime($jour . ' ' . $heureDebut);
         $timestampFin   = strtotime($jour . ' ' . $heureFin);
         $statuts = [
-            Heure::STATUT_DEMANDE,
-            Heure::STATUT_VALIDE,
-            Heure::STATUT_OK,
+            AHeure::STATUT_DEMANDE,
+            AHeure::STATUT_VALIDE,
+            AHeure::STATUT_OK,
         ];
 
         $sql = \includes\SQL::singleton();
@@ -402,7 +357,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
         $duree = $this->countDuree($timestampDebut, $timestampFin);
         $sql = \includes\SQL::singleton();
         $req = 'INSERT INTO heure_repos (id_heure, login, debut, fin, duree, statut) VALUES
-        (NULL, "' . $user . '", ' . (int) $timestampDebut . ', '. (int) $timestampFin .', '. (int) $duree . ', ' . Heure::STATUT_DEMANDE . ')';
+        (NULL, "' . $user . '", ' . (int) $timestampDebut . ', '. (int) $timestampFin .', '. (int) $duree . ', ' . AHeure::STATUT_DEMANDE . ')';
         $query = $sql->query($req);
 
         return $sql->insert_id;
@@ -437,7 +392,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
     {
         $sql = \includes\SQL::singleton();
         $req = 'UPDATE heure_repos
-                SET statut = ' . Heure::STATUT_ANNUL . '
+                SET statut = ' . AHeure::STATUT_ANNUL . '
                 WHERE id_heure = ' . (int) $id . '
                 AND login = "' . $user . '"';
         $sql->query($req);
@@ -463,7 +418,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
                     SELECT id_heure
                     FROM heure_repos
                     WHERE id_heure = ' . (int) $id . '
-                        AND statut = ' . Heure::STATUT_DEMANDE . '
+                        AND statut = ' . AHeure::STATUT_DEMANDE . '
                         AND login = "' . $user . '"
                 )';
         $query = $sql->query($req);
@@ -481,7 +436,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
                     SELECT id_heure
                     FROM heure_repos
                     WHERE id_heure = ' . (int) $id . '
-                        AND statut = ' . Heure::STATUT_DEMANDE . '
+                        AND statut = ' . AHeure::STATUT_DEMANDE . '
                         AND login = "' . $user . '"
                 )';
         $query = $sql->query($req);

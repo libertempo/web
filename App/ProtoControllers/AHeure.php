@@ -165,6 +165,50 @@ abstract class AHeure
      */
     abstract public function getListe();
 
+    /**
+     * Y-a-t-il une recherche dans l'avion ?
+     *
+     * @param array $post
+     *
+     * @return bool
+     */
+    protected function isSearch(array $post)
+    {
+        return !empty($post['search']);
+    }
+
+    /**
+     * Retourne le formulaire de recherche de la liste
+     *
+     * @param array $champs Champs de recherche (postés ou défaut)
+     *
+     * @return string
+     */
+    abstract protected function getFormulaireRecherche(array $champs);
+
+    /**
+     * Transforme les champs de recherche afin d'être compris par la bdd
+     *
+     * @param array $post
+     *
+     * @return array
+     */
+    protected function transformChampsRecherche(array $post)
+    {
+        $champs = [];
+        $search = $post['search'];
+        foreach ($search as $key => $value) {
+            if ('annee' === $key) {
+                $champs['timestampDebut'] = \utilisateur\Fonctions::getTimestampPremierJourAnnee($value);
+                $champs['timestampFin'] = \utilisateur\Fonctions::getTimestampDernierJourAnnee($value);
+            } else {
+                $champs[$key] = (int) $value;
+            }
+        }
+
+        return $champs;
+    }
+
     /*
      * SQL
      */
@@ -216,11 +260,11 @@ abstract class AHeure
     /**
      * Retourne une liste d'id d'heures
      *
-     * @param string $user
+     * @param array $params Paramètres de recherche
      *
      * @return array
      */
-    abstract protected function getListeId($user);
+    abstract protected function getListeId(array $params);
 
     /**
      * Retourne une liste d'heures
