@@ -133,6 +133,9 @@ class Fonctions
         return $return;
     }
 
+    /**
+     *
+     */
     public static function getOptionsAnnees()
     {
         $current = date('Y');
@@ -142,6 +145,22 @@ class Fonctions
             $current - 1 => $current - 1,
             $current - 2 => $current - 2,
         ];
+    }
+
+    /**
+     *
+     */
+    public static function getTimestampDernierJourAnnee($annee)
+    {
+        return mktime(23, 59, 59, 12, 31, $annee);
+    }
+
+    /**
+     *
+     */
+    public static function getTimestampPremierJourAnnee($annee)
+    {
+        return mktime(0, 0, 0, 1, 1, $annee);
     }
 
     /**

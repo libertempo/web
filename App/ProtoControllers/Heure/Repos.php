@@ -185,8 +185,8 @@ class Repos extends \App\ProtoControllers\Heure
             }
         }
         $champsRecherche = (!empty($_POST) && $this->isSearch($_POST))
-            ? $this->sanitizeChampsRecherche($_POST)
-            : ['statut' => Heure::STATUT_DEMANDE, 'annee' => (int) date('Y')];
+            ? $this->transformChampsRecherche($_POST)
+            : ['statut' => Heure::STATUT_DEMANDE];
         $params = $champsRecherche + [
             'login' => $_SESSION['userlogin'],
         ];
@@ -269,17 +269,28 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
         return $return;
     }
 
+    /**
+     * 
+     */
     protected function isSearch(array $post)
     {
         return !empty($post['search']);
     }
 
-    protected function sanitizeChampsRecherche(array $post)
+    /**
+     *
+     */
+    protected function transformChampsRecherche(array $post)
     {
         $champs = [];
         $search = $post['search'];
         foreach ($search as $key => $value) {
-            $champs[$key] = (int) $value;
+            if ('annee' === $key) {
+                $champs['timestampDebut'] = \utilisateur\Fonctions::getTimestampPremierJourAnnee($value);
+                $champs['timestampFin'] = \utilisateur\Fonctions::getTimestampDernierJourAnnee($value);
+            } else {
+                $champs[$key] = (int) $value;
+            }
         }
 
         return $champs;
@@ -297,10 +308,16 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
         if (!empty($params)) {
             $where = [];
             foreach ($params as $key => $value) {
-                if ('annee' === $key) {
-                    $where[] = ' debut >= ' . '"' . mktime(0, 0, 0, 1, 1, $value) . '"';
-                } else {
-                    $where[] = $key . ' = "' . $value . '"';
+                switch ($key) {
+                    case 'timestampDebut':
+                        $where[] = 'debut >= ' . $value;
+                        break;
+                    case 'timestampFin':
+                        $where[] = 'debut <= ' . $value;
+                        break;
+                    default:
+                        $where[] = $key . ' = "' . $value . '"';
+                        break;
                 }
             }
         }
