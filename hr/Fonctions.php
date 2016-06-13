@@ -524,7 +524,7 @@ class Fonctions
             {
                 // recup di motif de refus
                 $motif_refus=addslashes($tab_text_refus[$numero_int]);
-                $sql3 = 'UPDATE conges_periode SET p_etat=\'refus\', p_motif_refus='.\includes\SQL::quote($motif_annul).', p_date_traitement=NOW() WHERE p_num="'.\includes\SQL::quote($numero_int).'" AND ( p_etat=\'valid\' OR p_etat=\'demande\' );';
+                $sql3 = 'UPDATE conges_periode SET p_etat=\'refus\', p_motif_refus='.\includes\SQL::quote($motif_refus).', p_date_traitement=NOW() WHERE p_num="'.\includes\SQL::quote($numero_int).'" AND ( p_etat=\'valid\' OR p_etat=\'demande\' );';
                 $ReqLog3 = \includes\SQL::query($sql3);
 
                 if ($ReqLog3 && \includes\SQL::getVar('affected_rows')) {
@@ -1122,7 +1122,7 @@ class Fonctions
                 $new_nb_jours   = getpost_variable('new_nb_jours') ;
             }
 
-            $return .= \hr\Fonctions::new_conges($user_login, $numero_int, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type);
+            $return .= \hr\Fonctions::new_conges($user_login, $numero_int, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type); /**$numero_int n'est pas défini, problème ?**/
         } else {
             $year_calendrier_saisie_debut   = getpost_variable('year_calendrier_saisie_debut', 0) ;
             $mois_calendrier_saisie_debut   = getpost_variable('mois_calendrier_saisie_debut', 0) ;
@@ -2392,6 +2392,7 @@ class Fonctions
 
         if($cloture_users=="TRUE") {
             $tab_cloture_users       = getpost_variable('tab_cloture_users');
+            $tab_commentaire_saisie  = getpost_variable('tab_commentaire_saisie'); /*en attente de vérification*/
             $return .= \hr\Fonctions::cloture_users($tab_type_cong, $tab_cloture_users, $tab_commentaire_saisie);
 
             redirect( ROOT_PATH .'hr/hr_index.php?session='.$session, false);
@@ -2682,7 +2683,7 @@ class Fonctions
 
             // on met à jour la table conges_periode .
             $etat = "annul" ;
-            $sql1 = 'UPDATE conges_periode SET p_etat = "'.\includes\SQL::quote($etat).'" WHERE p_num='.\includes\SQL::quote($sql_num_periode).'" AND p_etat=\'ok\';';
+            $sql1 = 'UPDATE conges_periode SET p_etat = "'.\includes\SQL::quote($etat).'" WHERE p_num='.\includes\SQL::quote($sql_num_periode).' AND p_etat=\'ok\';';
             $ReqLog = \includes\SQL::query($sql1);
 
             if ($ReqLog && \includes\SQL::getVar('affected_rows')) {
