@@ -115,7 +115,7 @@ function header_login($title = '' , $additional_head = '' ) {
     }else
         throw new Exception('Warning : Ne peux ouvrir deux header !!! previous = '.$last_use['file']);
 
-    $type_bottom = 'error';
+    $type_bottom = 'login';
 
     if (empty($title))
         $title = 'Libertempo';
