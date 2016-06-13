@@ -270,7 +270,11 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
     }
 
     /**
-     * 
+     * Y-a-t-il une recherche dans l'avion ?
+     *
+     * @param array $post
+     *
+     * @return bool
      */
     protected function isSearch(array $post)
     {
@@ -278,7 +282,11 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
     }
 
     /**
+     * Transforme les champs de recherche afin d'être compris par la bdd
      *
+     * @param array $post
+     *
+     * @return array
      */
     protected function transformChampsRecherche(array $post)
     {

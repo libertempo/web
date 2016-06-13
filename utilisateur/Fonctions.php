@@ -134,7 +134,7 @@ class Fonctions
     }
 
     /**
-     *
+     * Retourne les options 
      */
     public static function getOptionsAnnees()
     {
@@ -148,7 +148,11 @@ class Fonctions
     }
 
     /**
+     * Retourne le timestamp du dernier jour de l'année
      *
+     * @param string $annee
+     *
+     * @return string
      */
     public static function getTimestampDernierJourAnnee($annee)
     {
@@ -156,7 +160,11 @@ class Fonctions
     }
 
     /**
+     * Retourne le timestamp du premier jour de l'année
      *
+     * @param string $annee
+     *
+     * @return string
      */
     public static function getTimestampPremierJourAnnee($annee)
     {
