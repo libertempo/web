@@ -35,7 +35,7 @@ use \App\Models\Heure;
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina
  */
-class Additionnelle extends \App\ProtoControllers\Heure
+class Additionnelle extends \App\ProtoControllers\AHeure
 {
     /**
      * {@inheritDoc}
@@ -102,7 +102,7 @@ class Additionnelle extends \App\ProtoControllers\Heure
         $childTable = '';
 
         if (NIL_INT !== $id) {
-            $sql   = 'SELECT * FROM conges_heure_additionnelle WHERE id_heure = ' . $id;
+            $sql   = 'SELECT * FROM heure_additionnelle WHERE id_heure = ' . $id;
             $query = \includes\SQL::query($sql);
             $data = $query->fetch_array();
             $valueJour  = date('d/m/Y', $data['debut']);
@@ -240,7 +240,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
          $ids = [];
          $sql = \includes\SQL::singleton();
          $req = 'SELECT id_heure AS id
-                 FROM conges_heure_additionnelle
+                 FROM heure_additionnelle
                  WHERE login = "' . $user . '"';
          $res = $sql->query($req);
          while ($data = $res->fetch_array()) {
@@ -260,7 +260,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
          }
          $sql = \includes\SQL::singleton();
          $req = 'SELECT *
-                 FROM conges_heure_additionnelle
+                 FROM heure_additionnelle
                  WHERE id_heure IN (' . implode(',', $listId) . ')
                  ORDER BY debut DESC, statut ASC';
 
@@ -278,7 +278,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
 
         $sql = \includes\SQL::singleton();
         $req = 'SELECT EXISTS (SELECT statut
-                FROM conges_heure_additionnelle
+                FROM heure_additionnelle
                 WHERE login = "' . $user . '"
                     AND (statut != ' . Heure::STATUT_REFUS . '
                         OR statut != ' . Heure::STATUT_ANNUL . '
@@ -298,15 +298,15 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
      */
     protected function insert(array $post, $user)
     {
-        $jour = \App\Helpers\Formatter::dateFr2Iso($post['new_jour']);
-        $timestampDebut = strtotime($jour . ' ' . $post['new_deb_heure']);
-        $timestampFin   = strtotime($jour . ' ' . $post['new_fin_heure']);
+        $jour = \App\Helpers\Formatter::dateFr2Iso($post['jour']);
+        $timestampDebut = strtotime($jour . ' ' . $post['debut_heure']);
+        $timestampFin   = strtotime($jour . ' ' . $post['fin_heure']);
         /* TODO: Toute la partie du check d'erreur et du comptage réel des heures devrait être dans le modèle.
         C'est lui qui devrait remplir le DAO à partir de ses attributs pour l'insertion
         */
         $duree = $this->countDuree($timestampDebut, $timestampFin);
         $sql = \includes\SQL::singleton();
-        $req = 'INSERT INTO conges_heure_additionnelle (id_heure, login, debut, fin, duree, statut) VALUES
+        $req = 'INSERT INTO heure_additionnelle (id_heure, login, debut, fin, duree, statut) VALUES
         (NULL, "' . $user . '", ' . (int) $timestampDebut . ', '. (int) $timestampFin .', '. (int) $duree . ', ' . Heure::STATUT_DEMANDE . ')';
         $query = $sql->query($req);
 
@@ -324,7 +324,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
         $duree = $this->countDuree($timestampDebut, $timestampFin);
         $sql   = \includes\SQL::singleton();
         $toInsert = [];
-        $req   = 'UPDATE conges_heure_additionnelle
+        $req   = 'UPDATE heure_additionnelle
                 SET debut = ' . $timestampDebut . ',
                     fin = ' . $timestampFin . ',
                     duree = ' . $duree . '
@@ -341,7 +341,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
     protected function deleteSQL($id, $user)
     {
         $sql = \includes\SQL::singleton();
-        $req = 'UPDATE conges_heure_additionnelle
+        $req = 'UPDATE heure_additionnelle
                 SET statut = ' . Heure::STATUT_ANNUL . '
                 WHERE id_heure = ' . (int) $id . '
                 AND login = "' . $user . '"';
@@ -366,7 +366,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
         $sql = \includes\SQL::singleton();
         $req = 'SELECT EXISTS (
                     SELECT id_heure
-                    FROM conges_heure_additionnelle
+                    FROM heure_additionnelle
                     WHERE id_heure = ' . (int) $id . '
                         AND statut = ' . Heure::STATUT_DEMANDE . '
                         AND login = "' . $user . '"
@@ -384,7 +384,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
         $sql = \includes\SQL::singleton();
         $req = 'SELECT EXISTS (
                     SELECT id_heure
-                    FROM conges_heure_repos
+                    FROM heure_repos
                     WHERE id_heure = ' . (int) $id . '
                         AND statut = ' . Heure::STATUT_DEMANDE . '
                         AND login = "' . $user . '"

@@ -2440,11 +2440,6 @@ class Fonctions
                 // update table conges_users
                 $sql = 'UPDATE conges_users SET u_resp_login="'. \includes\SQL::quote($tab_new_user['login']).'" WHERE u_resp_login="'. \includes\SQL::quote($u_login_to_update).'" ' ;
                 \includes\SQL::query($sql);
-
-                // update table heure periode
-                $sql = 'UPDATE conges_heure_periode SET login="'. \includes\SQL::quote($tab_new_user['login']).'" WHERE login="'. \includes\SQL::quote($u_login_to_update).'" ';
-                \includes\SQL::query($sql);
-
             }
 
             if($tab_new_user['login'] != $u_login_to_update) {

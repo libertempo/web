@@ -32,6 +32,6 @@ namespace App\Models\Heure;
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina
  */
-class Additionnelle extends \App\Models\Heure
+class Additionnelle extends \App\Models\AHeure
 {
 }

@@ -32,6 +32,6 @@ namespace App\Models\Heure;
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina
  */
-class Repos extends \App\Models\Heure
+class Repos extends \App\Models\AHeure
 {
 }
