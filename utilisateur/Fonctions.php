@@ -745,7 +745,7 @@ class Fonctions
       <label class="control-label col-md-3" for="statut">Statut&nbsp;:</label>
       <div class="col-md-8">
         <select class="form-control" name="search[statut]" id="statut">';
-        foreach (\App\Models\Heure::getOptionsStatuts() as $key => $value) {
+        foreach (\utilisateur\Fonctions::getOptionsStatuts() as $key => $value) {
             $return .= '<option value="' . $key . '">' . $value . '</option>';
         }
         $return .= '</select>
