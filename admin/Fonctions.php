@@ -2572,7 +2572,7 @@ class Fonctions
         }
 
 
-        $text_resp_login="<select class=\"form-control\" name=\"new_resp_login\" id=\"resp_login_id\" >" ;
+        $text_resp_login="<select class=\"form-control\" name=\"new_resp_login\" id=\"resp_login_id\" ><option value=\"no_resp\">". _('admin_users_no_resp') ."</option>" ;
         // construction des options du SELECT pour new_resp_login
         $sql2 = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_is_resp = \"Y\" ORDER BY u_nom,u_prenom"  ;
         $ReqLog2 = \includes\SQL::query($sql2);
