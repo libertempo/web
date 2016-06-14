@@ -2304,7 +2304,13 @@ class Fonctions
         // si aucune erreur de saisie n'a ete commise
         if(($valid_1) && ($valid_2) && ($valid_3) && ($valid_reliquat) && $tab_new_user['login']!="") {
             // UPDATE de la table conges_users
-            $sql = 'UPDATE conges_users SET u_nom="'. \includes\SQL::quote($tab_new_user['nom']).'", u_prenom="'.\includes\SQL::quote($tab_new_user['prenom']).'", u_is_resp="'. \includes\SQL::quote($tab_new_user['is_resp']).'", u_resp_login="'.\includes\SQL::quote($tab_new_user['resp_login']).'",u_is_admin="'. \includes\SQL::quote($tab_new_user['is_admin']).'",u_is_hr="'.\includes\SQL::quote($tab_new_user['is_hr']).'",u_is_active="'.\includes\SQL::quote($tab_new_user['is_active']).'",u_see_all="'.\includes\SQL::quote($tab_new_user['see_all']).'",u_login="'.\includes\SQL::quote($tab_new_user['login']).'",u_quotite="'.\includes\SQL::quote($tab_new_user['quotite']).'",u_email="'. \includes\SQL::quote($tab_new_user['email']).'" WHERE u_login="'.\includes\SQL::quote($u_login_to_update).'"' ;
+            $sql = 'UPDATE conges_users SET u_nom="'. \includes\SQL::quote($tab_new_user['nom']).'", u_prenom="'.\includes\SQL::quote($tab_new_user['prenom']).'", u_is_resp="'. \includes\SQL::quote($tab_new_user['is_resp']).'", u_resp_login=';
+            if($tab_new_user['resp_login'] == 'no_resp') {
+                $sql .='NULL , ';
+            } else {
+                $sql .='"'.\includes\SQL::quote($tab_new_user['resp_login']).'",';
+            }
+            $sql .= 'u_is_admin="'. \includes\SQL::quote($tab_new_user['is_admin']).'",u_is_hr="'.\includes\SQL::quote($tab_new_user['is_hr']).'",u_is_active="'.\includes\SQL::quote($tab_new_user['is_active']).'",u_see_all="'.\includes\SQL::quote($tab_new_user['see_all']).'",u_login="'.\includes\SQL::quote($tab_new_user['login']).'",u_quotite="'.\includes\SQL::quote($tab_new_user['quotite']).'",u_email="'. \includes\SQL::quote($tab_new_user['email']).'" WHERE u_login="'.\includes\SQL::quote($u_login_to_update).'"' ;
 
             \includes\SQL::query($sql);
 
