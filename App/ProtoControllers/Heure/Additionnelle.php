@@ -241,7 +241,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
     protected function getFormulaireRecherche(array $champs)
     {
         $form = '<form method="post" action="" class="form-inline search" role="form"><div class="form-group"><label class="control-label col-md-4" for="statut">Statut&nbsp;:</label><div class="col-md-8"><select class="form-control" name="search[statut]" id="statut">';
-        foreach (\utilisateur\Fonctions::getOptionsStatuts() as $key => $value) {
+        foreach (\App\Models\AHeure::getOptionsStatuts() as $key => $value) {
             $selected = (isset($champs['statut']) && $key === $champs['statut'])
                 ? 'selected="selected"'
                 : '';

@@ -134,28 +134,6 @@ class Fonctions
     }
 
     /**
-     * Retourne les options de select des statuts
-     *
-     * @return array
-     */
-    public static function getOptionsStatuts()
-    {
-        $statuts = [
-            \App\Models\AHeure::STATUT_DEMANDE,
-            \App\Models\AHeure::STATUT_VALIDE,
-            \App\Models\AHeure::STATUT_OK,
-            \App\Models\AHeure::STATUT_REFUS,
-            \App\Models\AHeure::STATUT_ANNUL
-        ];
-        $options = [];
-        foreach ($statuts as $value) {
-            $options[$value] = \App\Models\AHeure::statusText($value);
-        }
-
-        return $options;
-    }
-
-    /**
      * Retourne les options de select des années
      *
      * @return array
@@ -745,7 +723,7 @@ class Fonctions
       <label class="control-label col-md-3" for="statut">Statut&nbsp;:</label>
       <div class="col-md-8">
         <select class="form-control" name="search[statut]" id="statut">';
-        foreach (\utilisateur\Fonctions::getOptionsStatuts() as $key => $value) {
+        foreach (\App\Models\Conge::getOptionsStatuts() as $key => $value) {
             $return .= '<option value="' . $key . '">' . $value . '</option>';
         }
         $return .= '</select>
@@ -783,7 +761,7 @@ class Fonctions
             $return .= '<b>'. _('user_demandes_aucune_demande') .'</b>';
         } else {
             // AFFICHAGE TABLEAU
-            $return .= '<table class="table table-responsive table-condensed table-stripped table-hover">';
+            $return .= '<table class="table table-responsive table-condensed table-striped table-hover">';
             $return .= '<thead>';
             $return .= '<tr>';
             $return .= '<th>';
@@ -1824,4 +1802,18 @@ class Fonctions
     /*
     * TODO: Où sont passées les heures validées (!= en cours donc) ?
     */
+
+    public static function getOptionsTypeConges()
+    {
+        $options = [];
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT ta_libelle, ta_short_libelle
+                FROM conges_type_absence';
+        $res = $sql->query($req);
+        while ($data = $res->fetch_array()) {
+            $options[$data['ta_short_libelle']] = $data['ta_libelle'];
+        }
+
+        return $options;
+    }
 }

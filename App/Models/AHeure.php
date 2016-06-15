@@ -48,6 +48,29 @@ abstract class AHeure
     const STATUT_REFUS   = 4;
     const STATUT_ANNUL   = 5;
 
+
+    /**
+     * Retourne les options de select des statuts
+     *
+     * @return array
+     */
+    public static function getOptionsStatuts()
+    {
+        $statuts = [
+            static::STATUT_DEMANDE,
+            static::STATUT_VALIDE,
+            static::STATUT_OK,
+            static::STATUT_REFUS,
+            static::STATUT_ANNUL
+        ];
+        $options = [];
+        foreach ($statuts as $value) {
+            $options[$value] = static::statusText($value);
+        }
+
+        return $options;
+    }
+
     /**
      * Affiche le statut en format texte
      *

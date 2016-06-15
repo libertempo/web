@@ -184,10 +184,14 @@ class Repos extends \App\ProtoControllers\AHeure
                 redirect(ROOT_PATH . 'utilisateur/user_index.php?session='. session_id() . '&onglet=liste_heure_repos', false);
             }
         }
-        $champsRecherche = (!empty($_POST) && $this->isSearch($_POST))
-            ? $this->transformChampsRecherche($_POST)
-            : ['statut' => AHeure::STATUT_DEMANDE];
-        $params = $champsRecherche + [
+        if (!empty($_POST) && $this->isSearch($_POST)) {
+            $champsRecherche = $_POST['search'];
+            $champsSql       = $this->transformChampsRecherche($_POST);
+        } else {
+            $champsRecherche = [];
+            $champsSql       = [];
+        }
+        $params = $champsSql + [
             'login' => $_SESSION['userlogin'],
         ];
 
@@ -241,15 +245,15 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
     protected function getFormulaireRecherche(array $champs)
     {
         $form = '<form method="post" action="" class="form-inline search" role="form"><div class="form-group"><label class="control-label col-md-4" for="statut">Statut&nbsp;:</label><div class="col-md-8"><select class="form-control" name="search[statut]" id="statut">';
-        foreach (\utilisateur\Fonctions::getOptionsStatuts() as $key => $value) {
-            $selected = (isset($champs['statut']) && $key === $champs['statut'])
+        foreach (\App\Models\AHeure::getOptionsStatuts() as $key => $value) {
+            $selected = (isset($champs['statut']) && $key == $champs['statut'])
                 ? 'selected="selected"'
                 : '';
             $form .= '<option value="' . $key . '" ' . $selected . '>' . $value . '</option>';
         }
         $form .= '</select></div></div><div class="form-group"><label class="control-label col-md-4" for="annee">Année&nbsp;:</label><div class="col-md-8"><select class="form-control" name="search[annee]" id="sel1">';
         foreach (\utilisateur\Fonctions::getOptionsAnnees() as $key => $value) {
-            $selected = (isset($champs['annee']) && $key === $champs['annee'])
+            $selected = (isset($champs['annee']) && $key == $champs['annee'])
                 ? 'selected="selected"'
                 : '';
             $form .= '<option value="' . $key . '" ' . $selected . '>' . $value . '</option>';
