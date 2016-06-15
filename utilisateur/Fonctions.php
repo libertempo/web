@@ -286,7 +286,7 @@ class Fonctions
 
         $return .= _('form_modif_ok') . '<br><br>';
         /* APPEL D'UNE AUTRE PAGE */
-        $return .= '<form action="'.ROOT_PATH .'utilisateur/user_index.php?session='.$session.'&onglet=demandes_en_cours" method="POST">';
+        $return .= '<form action="'.ROOT_PATH .'utilisateur/user_index.php?session='.$session.'&onglet=liste_conge" method="POST">';
         $return .= '<input class="btn" type="submit" value="'. _('form_submit') .'">';
         $return .= '</form>';
 
@@ -387,7 +387,7 @@ class Fonctions
         $return .= '<input type="hidden" name="onglet" value="' . $onglet . '">';
         $return .= '<p id="comment_nbj" style="color:red">&nbsp;</p>';
         $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
-        $return .= '<a class="btn" href="' . $PHP_SELF . '?session=' . $session . '&onglet=demandes_en_cours">' . _('form_cancel') . '</a>';
+        $return .= '<a class="btn" href="' . $PHP_SELF . '?session=' . $session . '&onglet=liste_conge">' . _('form_cancel') . '</a>';
         $return .= '</form>';
 
         return $return;
@@ -477,7 +477,7 @@ class Fonctions
             $return .= _('form_modif_not_ok') ."<br><br> \n";
 
         /* APPEL D'UNE AUTRE PAGE */
-        $return .= '<form action="'.ROOT_PATH .'utilisateur/user_index.php?session='.$session.'&onglet=demandes_en_cours" method="POST">';
+        $return .= '<form action="'.ROOT_PATH .'utilisateur/user_index.php?session='.$session.'&onglet=liste_conge" method="POST">';
         $return .= '<input class="btn" type="submit" value="'. _('form_submit') .'">';
         $return .= '</form>';
         $return .= '<a href="">';
@@ -542,7 +542,7 @@ class Fonctions
         $return .= '<input type="hidden" name="session" value="' . $session . '">';
         $return .= '<input type="hidden" name="onglet" value="' . $onglet . '">';
         $return .= '<input class="btn btn-danger" type="submit" value="' . _('form_supprim') . '">';
-        $return .= '<a class="btn" href="' . $PHP_SELF . '?session=' . $session . '&onglet=demandes_en_cours">' . _('form_cancel') . '</a>';
+        $return .= '<a class="btn" href="' . $PHP_SELF . '?session=' . $session . '&onglet=liste_conge">' . _('form_cancel') . '</a>';
         $return .= '</form>';
 
         return $return;
@@ -667,177 +667,6 @@ class Fonctions
             $return .= '<input class="btn btn-success" type="submit" value="'. _('form_submit') .'">';
             $return .= '</form>';
         }
-
-        return $return;
-    }
-
-    /**
-     * Encapsule le comportement du module de demande en cours
-     *
-     * @param string $session Clé de session
-
-     *
-     * @return void
-     * @access public
-     * @static
-     */
-    public static function demandeEnCoursModule($session)
-    {
-        $return = '';
-        $errorsLst=[];
-        if($_SESSION['config']['where_to_find_user_email']=="ldap"){
-            include_once CONFIG_PATH .'config_ldap.php';
-        }
-
-        if(!empty($_POST)) {
-            if (0 < (int) \utilisateur\Fonctions::postDemandeCongesHeure($_POST, $errorsLst)) {
-                $return .= '<div class="alert alert-info">'._('suppr_succes').'</div>';
-            }
-        }
-        // on initialise le tableau global des jours fériés s'il ne l'est pas déjà :
-        init_tab_jours_feries();
-
-        $return .= '<h1>' . _('user_etat_demandes') . '</h1>';
-
-        $tri_date = getpost_variable('tri_date', "ascendant");
-
-
-        // Récupération des informations
-        // on ne recup QUE les periodes de type "conges"(cf table conges_type_absence) ET QUE les demandes
-        $sql3 = 'SELECT p_login, p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_nb_jours, p_commentaire, p_type, p_etat, p_motif_refus, p_date_demande, p_date_traitement, p_num, ta_libelle
-            FROM conges_periode as a, conges_type_absence as b
-            WHERE a.p_login = "'. \includes\SQL::quote($_SESSION['userlogin']).'"
-            AND (a.p_type=b.ta_id)
-            AND ( (b.ta_type=\'conges\') OR (b.ta_type=\'conges_exceptionnels\') )
-            AND ((p_etat=\'demande\') OR (p_etat=\'valid\')) ';
-        if($tri_date=='descendant')
-            $sql3=$sql3.' ORDER BY p_date_deb DESC ;';
-        else
-            $sql3=$sql3.' ORDER BY p_date_deb ASC ;';
-        $ReqLog3 = \includes\SQL::query($sql3) ;
-
-        $count3=$ReqLog3->num_rows;
-        $return .= '
-        <form method="post" action="" class="form-inline search" role="form">
-    <div class="form-group">
-      <label class="control-label col-md-3" for="statut">Statut&nbsp;:</label>
-      <div class="col-md-8">
-        <select class="form-control" name="search[statut]" id="statut">';
-        foreach (\App\Models\Conge::getOptionsStatuts() as $key => $value) {
-            $return .= '<option value="' . $key . '">' . $value . '</option>';
-        }
-        $return .= '</select>
-      </div>
-    </div>
-    <div class="form-group ">
-      <label class="control-label col-md-3" for="type">Type&nbsp;:</label>
-      <div class="col-md-8">
-        <select class="form-control" name="search[type]" id="sel1">
-            <option>looong text</option>
-            <option>très long text</option>
-            <option>là aussi</option>
-            <option>pas un peu là mais pas trop</option>
-        </select>
-      </div>
-    </div>
-    <div class="form-group">
-      <label class="control-label col-md-3" for="annee">Année&nbsp;:</label>
-      <div class="col-md-8">
-        <select class="form-control" name="search[annee]" id="sel1">';
-        foreach (\utilisateur\Fonctions::getOptionsAnnees() as $key => $value) {
-            $return .= '<option value="' . $key . '">' . $value . '</option>';
-        }
-        $return .= '</select>
-      </div>
-    </div>
-    <div class="form-group">
-      <div class="input-group">
-        <button type="submit" class="btn btn-default">Filtrer</button>&nbsp;
-        <a href="' . ROOT_PATH . 'utilisateur/user_index.php?session='. session_id() . '&onglet=liste_heure_repos" type="reset" class="btn btn-default">Reset</a>
-      </div>
-    </div>
-  </form>';
-        if($count3==0) {
-            $return .= '<b>'. _('user_demandes_aucune_demande') .'</b>';
-        } else {
-            // AFFICHAGE TABLEAU
-            $return .= '<table class="table table-responsive table-condensed table-striped table-hover">';
-            $return .= '<thead>';
-            $return .= '<tr>';
-            $return .= '<th>';
-            $return .= _('divers_debut_maj_1')  ;
-            $return .= '</th>';
-            $return .= '<th>'. _('divers_fin_maj_1') .'</th>';
-            $return .= '<th>'. _('divers_type_maj_1') .'</th>';
-            $return .= '<th>'. _('divers_nb_jours_pris_maj_1') .'</th>';
-            $return .= '<th>'. _('divers_comment_maj_1') .'</th>';
-            $return .= '<th></th><th></th>' ;
-            if( $_SESSION['config']['affiche_date_traitement'] ) {
-                $return .= '<th >'. _('divers_date_traitement') .'</th>';
-            }
-            $return .= '</tr>';
-            $return .= '</thead>';
-            $return .= '<tbody>';
-
-            $i = true;
-            while ($resultat3 = $ReqLog3->fetch_array()) {
-                $sql_p_date_deb                = eng_date_to_fr($resultat3["p_date_deb"]);
-                $sql_p_date_fin                = eng_date_to_fr($resultat3["p_date_fin"]);
-                $sql_p_demi_jour_deb        = $resultat3["p_demi_jour_deb"];
-                $sql_p_demi_jour_fin        = $resultat3["p_demi_jour_fin"];
-
-                if($sql_p_demi_jour_deb=="am")
-                    $demi_j_deb="mat";
-                else
-                    $demi_j_deb="aprm";
-
-                if($sql_p_demi_jour_fin=="am")
-                    $demi_j_fin="mat";
-                else
-                    $demi_j_fin="aprm";
-
-                $sql_p_nb_jours            = $resultat3["p_nb_jours"];
-                $sql_p_commentaire        = $resultat3["p_commentaire"];
-                $sql_p_type                = $resultat3["ta_libelle"];
-                $sql_p_etat                = $resultat3["p_etat"];
-                $sql_p_date_demande        = $resultat3["p_date_demande"];
-                $sql_p_date_traitement    = $resultat3["p_date_traitement"];
-                $sql_p_num                = $resultat3["p_num"];
-
-                // si on peut modifier une demande :on defini le lien à afficher
-                if( !$_SESSION['config']['interdit_modif_demande'] ) {
-                    //on ne peut pas modifier une demande qui a déja été validé une fois (si on utilise la double validation)
-                    if($sql_p_etat=="valid")
-                        $user_modif_demande="&nbsp;";
-                    else
-                        $user_modif_demande="<a href=\"user_index.php?session=$session&p_num=$sql_p_num&onglet=modif_demande\">". _('form_modif') ."</a>" ;
-                }
-                $user_suppr_demande="<a href=\"user_index.php?session=$session&p_num=$sql_p_num&onglet=suppr_demande\">". _('form_supprim') ."</a>" ;
-                $return .= '<tr class="'.($i?'i':'p').'">';
-                $return .= '<td class="histo">'.schars($sql_p_date_deb).' _ '.schars($demi_j_deb).'</td>';
-                $return .= '<td class="histo">'.schars($sql_p_date_fin).' _ '.schars($demi_j_fin).'</td>' ;
-                $return .= '<td class="histo">'.schars($sql_p_type).'</td>' ;
-                $return .= '<td class="histo">'.affiche_decimal($sql_p_nb_jours).'</td>' ;
-                $return .= '<td class="histo">'.schars($sql_p_commentaire).'</td>' ;
-                if( !$_SESSION['config']['interdit_modif_demande'] ) {
-                    $return .= '<td class="histo">'.($user_modif_demande).'</td>' ;
-                }
-                $return .= '<td class="histo">'.($user_suppr_demande).'</td>'."\n" ;
-
-                if( $_SESSION['config']['affiche_date_traitement'] ) {
-                    if($sql_p_date_demande == NULL)
-                        $return .= '<td class="histo-left">'. _('divers_demande') .' : '.$sql_p_date_demande.'<br>'. _('divers_traitement') .' : '.$sql_p_date_traitement.'</td>';
-                    else
-                        $return .= '<td class="histo-left">'. _('divers_demande') .' : '.$sql_p_date_demande.'<br>'. _('divers_traitement') .' : pas traité</td>';
-                }
-                $return .= '</tr>';
-                $i = !$i;
-            }
-            $return .= '</tbody>';
-            $return .= '</table>' ;
-        }
-        //$return .= \utilisateur\Fonctions::getListPeriodeHeure(\App\Models\HeureRecuperation::TYPE_DEBIT);
-        //$return .= \utilisateur\Fonctions::getListPeriodeHeure(\App\Models\HeureRecuperation::TYPE_CREDIT);
 
         return $return;
     }
