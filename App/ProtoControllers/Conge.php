@@ -80,7 +80,7 @@ class Conge
             'table-condensed',
             'table-striped',
         ]);
-        $childTable = '<thead><tr><th>' . _('divers_debut_maj_1') . '</th><th>'. _('divers_fin_maj_1') .'</th><th>'. _('divers_type_maj_1') .'</th><th>'. _('divers_nb_jours_pris_maj_1') .'</th><th>'. _('divers_comment_maj_1') .'</th><th></th><th></th>';
+        $childTable = '<thead><tr><th>' . _('divers_debut_maj_1') . '</th><th>'. _('divers_fin_maj_1') .'</th><th>'. _('divers_type_maj_1') .'</th><th>'. _('divers_nb_jours_pris_maj_1') .'</th><th>Statut</th><th>'. _('divers_comment_maj_1') .'</th><th></th><th></th>';
         if( $_SESSION['config']['affiche_date_traitement'] ) {
             $childTable .= '<th >'. _('divers_date_traitement') .'</th>';
         }
@@ -89,7 +89,7 @@ class Conge
         $listId = $this->getListeId($params);
         $session = session_id();
         if (empty($listId)) {
-            $colonnes = ($_SESSION['config']['affiche_date_traitement']) ? 8 : 7;
+            $colonnes = ($_SESSION['config']['affiche_date_traitement']) ? 9 : 8;
             $childTable .= '<tr><td colspan="' . $colonnes . '"><center>' . _('aucun_resultat') .'</center></td></tr>';
         } else {
             $i = true;
@@ -127,6 +127,7 @@ class Conge
                 $childTable .= '<td class="histo">'.schars($sql_p_date_fin).' _ '.schars($demi_j_fin).'</td>' ;
                 $childTable .= '<td class="histo">'.schars($sql_p_type).'</td>' ;
                 $childTable .= '<td class="histo">'.affiche_decimal($sql_p_nb_jours).'</td>' ;
+                $childTable .= '<td>' . \App\Models\Conge::statusText($sql_p_etat) . '</td>';
                 $childTable .= '<td class="histo">'.schars($sql_p_commentaire).'</td>' ;
                 if( !$_SESSION['config']['interdit_modif_demande'] ) {
                     $childTable .= '<td class="histo">'.($user_modif_demande).'</td>' ;
