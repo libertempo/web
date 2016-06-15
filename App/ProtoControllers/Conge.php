@@ -104,41 +104,33 @@ class Conge
 
                 $demi_j_fin = ($sql_p_demi_jour_fin=="am") ? 'mat' : 'aprm';
 
-                $sql_p_nb_jours        = $conges["p_nb_jours"];
-                $sql_p_commentaire     = $conges["p_commentaire"];
-                $sql_p_type            = $conges["ta_libelle"];
-                $sql_p_etat            = $conges["p_etat"];
-                $sql_p_date_demande    = $conges["p_date_demande"];
-                $sql_p_date_traitement = $conges["p_date_traitement"];
-                $sql_p_num             = $conges["p_num"];
-
                 // si on peut modifier une demande :on defini le lien à afficher
                 if( !$_SESSION['config']['interdit_modif_demande'] ) {
                     //on ne peut pas modifier une demande qui a déja été validé une fois (si on utilise la double validation)
-                    if($sql_p_etat=="valid") {
+                    if($conges["p_etat"] == "valid") {
                         $user_modif_demande="&nbsp;";
                     } else {
-                        $user_modif_demande="<a href=\"user_index.php?session=$session&p_num=$sql_p_num&onglet=modif_demande\">". _('form_modif') ."</a>" ;
+                        $user_modif_demande = '<a href="user_index.php?session=' . $session . '&p_num=' . $conges['p_num'] . '&onglet=modif_demande">' . _('form_modif') . '</a>' ;
                     }
                 }
-                $user_suppr_demande="<a href=\"user_index.php?session=$session&p_num=$sql_p_num&onglet=suppr_demande\">". _('form_supprim') ."</a>" ;
+                $user_suppr_demande = '<a href="user_index.php?session=' . $session . '&p_num=' . $conges['p_num'] . '&onglet=suppr_demande">' . _('form_supprim') . '</a>';
                 $childTable .= '<tr class="'.($i?'i':'p').'">';
                 $childTable .= '<td class="histo">'.schars($sql_p_date_deb).' _ '.schars($demi_j_deb).'</td>';
                 $childTable .= '<td class="histo">'.schars($sql_p_date_fin).' _ '.schars($demi_j_fin).'</td>' ;
-                $childTable .= '<td class="histo">'.schars($sql_p_type).'</td>' ;
-                $childTable .= '<td class="histo">'.affiche_decimal($sql_p_nb_jours).'</td>' ;
-                $childTable .= '<td>' . \App\Models\Conge::statusText($sql_p_etat) . '</td>';
-                $childTable .= '<td class="histo">'.schars($sql_p_commentaire).'</td>' ;
+                $childTable .= '<td class="histo">'.schars($conges["ta_libelle"]).'</td>' ;
+                $childTable .= '<td class="histo">'.affiche_decimal($conges["p_nb_jours"]).'</td>' ;
+                $childTable .= '<td>' . \App\Models\Conge::statusText($conges["p_etat"]) . '</td>';
+                $childTable .= '<td class="histo">'.schars($conges["p_commentaire"]).'</td>' ;
                 if( !$_SESSION['config']['interdit_modif_demande'] ) {
                     $childTable .= '<td class="histo">'.($user_modif_demande).'</td>' ;
                 }
                 $childTable .= '<td class="histo">'.($user_suppr_demande).'</td>'."\n" ;
 
                 if( $_SESSION['config']['affiche_date_traitement'] ) {
-                    if($sql_p_date_demande == NULL) {
-                        $childTable .= '<td class="histo-left">'. _('divers_demande') .' : '.$sql_p_date_demande.'<br>'. _('divers_traitement') .' : '.$sql_p_date_traitement.'</td>';
+                    if($conges["p_date_demande"] == NULL) {
+                        $childTable .= '<td class="histo-left">'. _('divers_demande') .' : '.$conges["p_date_demande"].'<br>'. _('divers_traitement') .' : '.$conges["p_date_traitement"].'</td>';
                     } else {
-                        $childTable .= '<td class="histo-left">'. _('divers_demande') .' : '.$sql_p_date_demande.'<br>'. _('divers_traitement') .' : pas traité</td>';
+                        $childTable .= '<td class="histo-left">'. _('divers_demande') .' : '.$conges["p_date_demande"].'<br>'. _('divers_traitement') .' : pas traité</td>';
                     }
                 }
                 $childTable .= '</tr>';
