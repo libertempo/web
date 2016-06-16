@@ -69,7 +69,6 @@ class Conge
         }
         $params = $champsSql + [
             'p_login' => $_SESSION['userlogin'],
-            'gtype'   => ['conges', 'conges_exceptionnels'],
             'type'    => 'cp',
             'p_etat'  => 'demande',
         ]; // champs par défaut écrasés par postés
@@ -100,8 +99,10 @@ class Conge
                 $dateDemande = '';
                 $dateReponse = '';
                 if( $_SESSION['config']['affiche_date_traitement'] ) {
-                    list($date, $heure) = explode(' ', $conges["p_date_demande"]);
-                    $dateDemande = '(' . \App\Helpers\Formatter::dateIso2Fr($date) . ' ' . $heure . ') ';
+                    if (!empty($conges["p_date_demande"])) {
+                        list($date, $heure) = explode(' ', $conges["p_date_demande"]);
+                        $dateDemande = '(' . \App\Helpers\Formatter::dateIso2Fr($date) . ' ' . $heure . ') ';
+                    }
                     if(null != $conges["p_date_traitement"]) {
                         list($date, $heure) = explode(' ', $conges["p_date_traitement"]);
                         $dateReponse = '(' . \App\Helpers\Formatter::dateIso2Fr($date) . ' ' . $heure . ') ';
@@ -120,8 +121,6 @@ class Conge
                     $messageReponse = '';
                 }
 
-                $sql_p_date_deb       = eng_date_to_fr($conges["p_date_deb"]);
-                $sql_p_date_fin       = eng_date_to_fr($conges["p_date_fin"]);
                 $demi_j_deb = ($conges["p_demi_jour_deb"]=="am") ? 'mat' : 'aprm';
 
                 $demi_j_fin = ($conges["p_demi_jour_fin"] =="am") ? 'mat' : 'aprm';
@@ -134,8 +133,8 @@ class Conge
                 }
                 $user_suppr_demande = '<a href="user_index.php?session=' . $session . '&p_num=' . $conges['p_num'] . '&onglet=suppr_demande">' . _('form_supprim') . '</a>';
                 $childTable .= '<tr class="'.($i?'i':'p').'">';
-                $childTable .= '<td class="histo">'.schars($sql_p_date_deb).' _ '.schars($demi_j_deb).'</td>';
-                $childTable .= '<td class="histo">'.schars($sql_p_date_fin).' _ '.schars($demi_j_fin).'</td>' ;
+                $childTable .= '<td class="histo">' . \App\Helpers\Formatter::dateIso2Fr($conges["p_date_deb"]) . ' (' . schars($demi_j_deb) . ')</td>';
+                $childTable .= '<td class="histo">' . \App\Helpers\Formatter::dateIso2Fr($conges["p_date_fin"]) . ' (' . schars($demi_j_fin) . ')</td>' ;
                 $childTable .= '<td class="histo">'.schars($conges["ta_libelle"]).'</td>' ;
                 $childTable .= '<td class="histo">'.affiche_decimal($conges["p_nb_jours"]).'</td>' ;
                 $childTable .= '<td>' . \App\Models\Conge::statusText($conges["p_etat"]) . '</td>';
@@ -259,9 +258,6 @@ class Conge
                         break;
                     case 'dateFin':
                         $where[] = 'p_date_deb <= "' . $value . '"';
-                        break;
-                    case 'gtype':
-                        $where[] = 'CTA.ta_type IN ("' . implode('","', $value) . '")';
                         break;
                     case 'type':
                         $where[] = 'CTA.ta_short_libelle = "' . $value . '"';
