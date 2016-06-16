@@ -60,7 +60,6 @@ if( $_SESSION['config']['user_echange_rtt'] ) {
 }
 
 $onglets['liste_conge'] = _('user_liste_conge');
-$onglets['historique_conges'] = _('user_onglet_historique_conges');
 $onglets['historique_autres_absences'] = _('user_onglet_historique_abs');
 if( $_SESSION['config']['user_saisie_demande'] || $_SESSION['config']['user_saisie_mission'] ) {
     $onglets['ajout_heure_repos'] = _('divers_ajout_heure_repos');

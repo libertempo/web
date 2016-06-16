@@ -62,13 +62,17 @@ class Conge
             $champsRecherche = $_POST['search'];
             $champsSql       = $this->transformChampsRecherche($_POST);
         } else {
-            $champsRecherche = [];
+            $champsRecherche = [
+                'type' => 'cp',
+            ];
             $champsSql       = [];
         }
         $params = $champsSql + [
             'p_login' => $_SESSION['userlogin'],
             'gtype'   => ['conges', 'conges_exceptionnels'],
-        ];
+            'type'    => 'cp',
+            'p_etat'  => 'demande',
+        ]; // champs par défaut écrasés par postés
 
         $return.= $this->getFormulaireRecherche($champsRecherche);
 
@@ -80,38 +84,53 @@ class Conge
             'table-condensed',
             'table-striped',
         ]);
-        $childTable = '<thead><tr><th>' . _('divers_debut_maj_1') . '</th><th>'. _('divers_fin_maj_1') .'</th><th>'. _('divers_type_maj_1') .'</th><th>'. _('divers_nb_jours_pris_maj_1') .'</th><th>Statut</th><th>'. _('divers_comment_maj_1') .'</th><th></th><th></th>';
-        if( $_SESSION['config']['affiche_date_traitement'] ) {
-            $childTable .= '<th >'. _('divers_date_traitement') .'</th>';
-        }
+        $childTable = '<thead><tr><th>' . _('divers_debut_maj_1') . '</th><th>'. _('divers_fin_maj_1') .'</th><th>'. _('divers_type_maj_1') .'</th><th>'. _('divers_nb_jours_pris_maj_1') .'</th><th>Statut</th><th></th><th></th>';
         $childTable .= '</tr>';
         $childTable .= '</thead><tbody>';
         $listId = $this->getListeId($params);
         $session = session_id();
         if (empty($listId)) {
-            $colonnes = ($_SESSION['config']['affiche_date_traitement']) ? 9 : 8;
+            $colonnes = 8;
             $childTable .= '<tr><td colspan="' . $colonnes . '"><center>' . _('aucun_resultat') .'</center></td></tr>';
         } else {
             $i = true;
             $listeConges = $this->getListeSQL($listId);
             foreach ($listeConges as $conges) {
+                /** Dates demande / traitement */
+                $dateDemande = '';
+                $dateReponse = '';
+                if( $_SESSION['config']['affiche_date_traitement'] ) {
+                    list($date, $heure) = explode(' ', $conges["p_date_demande"]);
+                    $dateDemande = '(' . \App\Helpers\Formatter::dateIso2Fr($date) . ' ' . $heure . ') ';
+                    if(null != $conges["p_date_traitement"]) {
+                        list($date, $heure) = explode(' ', $conges["p_date_traitement"]);
+                        $dateReponse = '(' . \App\Helpers\Formatter::dateIso2Fr($date) . ' ' . $heure . ') ';
+                    }
+                }
+
+                /** Messages complémentaires */
+                if (!empty($conges["p_commentaire"])) {
+                    $messageDemande = '> Demande ' . $dateDemande . ":\n" . schars($conges["p_commentaire"]);
+                } else {
+                    $messageDemande = '';
+                }
+                if (!empty($conges["p_motif_refus"])) {
+                    $messageReponse = '> Réponse ' . $dateReponse . ":\n" . schars($conges["p_motif_refus"]);
+                } else {
+                    $messageReponse = '';
+                }
+
                 $sql_p_date_deb       = eng_date_to_fr($conges["p_date_deb"]);
                 $sql_p_date_fin       = eng_date_to_fr($conges["p_date_fin"]);
-                $sql_p_demi_jour_deb  = $conges["p_demi_jour_deb"];
-                $sql_p_demi_jour_fin  = $conges["p_demi_jour_fin"];
+                $demi_j_deb = ($conges["p_demi_jour_deb"]=="am") ? 'mat' : 'aprm';
 
-                $demi_j_deb = ($sql_p_demi_jour_deb=="am") ? 'mat' : 'aprm';
-
-                $demi_j_fin = ($sql_p_demi_jour_fin=="am") ? 'mat' : 'aprm';
+                $demi_j_fin = ($conges["p_demi_jour_fin"] =="am") ? 'mat' : 'aprm';
+                $user_modif_demande="&nbsp;";
 
                 // si on peut modifier une demande :on defini le lien à afficher
-                if( !$_SESSION['config']['interdit_modif_demande'] ) {
+                if( !$_SESSION['config']['interdit_modif_demande'] && $conges["p_etat"] != "valid") {
                     //on ne peut pas modifier une demande qui a déja été validé une fois (si on utilise la double validation)
-                    if($conges["p_etat"] == "valid") {
-                        $user_modif_demande="&nbsp;";
-                    } else {
-                        $user_modif_demande = '<a href="user_index.php?session=' . $session . '&p_num=' . $conges['p_num'] . '&onglet=modif_demande">' . _('form_modif') . '</a>' ;
-                    }
+                    $user_modif_demande = '<a href="user_index.php?session=' . $session . '&p_num=' . $conges['p_num'] . '&onglet=modif_demande">' . _('form_modif') . '</a>' ;
                 }
                 $user_suppr_demande = '<a href="user_index.php?session=' . $session . '&p_num=' . $conges['p_num'] . '&onglet=suppr_demande">' . _('form_supprim') . '</a>';
                 $childTable .= '<tr class="'.($i?'i':'p').'">';
@@ -120,19 +139,16 @@ class Conge
                 $childTable .= '<td class="histo">'.schars($conges["ta_libelle"]).'</td>' ;
                 $childTable .= '<td class="histo">'.affiche_decimal($conges["p_nb_jours"]).'</td>' ;
                 $childTable .= '<td>' . \App\Models\Conge::statusText($conges["p_etat"]) . '</td>';
-                $childTable .= '<td class="histo">'.schars($conges["p_commentaire"]).'</td>' ;
+                $childTable .= '<td class="histo">';
+                if (!empty($messageDemande) || !empty($messageReponse)) {
+                    $childTable .= '<i class="fa fa-comments" aria-hidden="true" title="' . $messageDemande . "\n\n" . $messageReponse . '"></i>';
+                }
+                $childTable .= '</td>' ;
+                $childTable .= '<td class="histo">';
                 if( !$_SESSION['config']['interdit_modif_demande'] ) {
-                    $childTable .= '<td class="histo">'.($user_modif_demande).'</td>' ;
+                    $childTable .= $user_modif_demande . '&nbsp;&nbsp;';
                 }
-                $childTable .= '<td class="histo">'.($user_suppr_demande).'</td>'."\n" ;
-
-                if( $_SESSION['config']['affiche_date_traitement'] ) {
-                    if($conges["p_date_demande"] == NULL) {
-                        $childTable .= '<td class="histo-left">'. _('divers_demande') .' : '.$conges["p_date_demande"].'<br>'. _('divers_traitement') .' : '.$conges["p_date_traitement"].'</td>';
-                    } else {
-                        $childTable .= '<td class="histo-left">'. _('divers_demande') .' : '.$conges["p_date_demande"].'<br>'. _('divers_traitement') .' : pas traité</td>';
-                    }
-                }
+                $childTable .= ($user_suppr_demande) . '</td>'."\n" ;
                 $childTable .= '</tr>';
                 $i = !$i;
             }
@@ -193,7 +209,7 @@ class Conge
                 : '';
             $form .= '<option value="' . $key . '" ' . $selected . '>' . $value . '</option>';
         }
-        $form .= '</select></div></div><div class="form-group"><div class="input-group"><button type="submit" class="btn btn-default">Filtrer</button>&nbsp;<a href="' . ROOT_PATH . 'utilisateur/user_index.php?session='. $session . '&onglet=liste_conge" type="reset" class="btn btn-default">Reset</a></div></div></form>';
+        $form .= '</select></div></div><div class="form-group"><div class="input-group"><button type="submit" class="btn btn-default"><i class="fa fa-search" aria-hidden="true"></i></button>&nbsp;<a href="' . ROOT_PATH . 'utilisateur/user_index.php?session='. $session . '&onglet=liste_conge" type="reset" class="btn btn-default">Reset</a></div></div></form>';
 
         return $form;
     }
