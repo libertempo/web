@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "5055d019cbe46b2d2a6a5eef65aa1b5d",
-    "content-hash": "08ca4dd9f08312bb12c174bf7e5bbb4f",
+    "hash": "55c9762e8a0f61798d222e3d9adfc4b5",
+    "content-hash": "e9c210835f3036c52d8b86200ab53d6d",
     "packages": [
         {
             "name": "jasig/phpcas",
@@ -165,6 +165,49 @@
                 "php"
             ],
             "time": "2015-09-16 14:09:00"
+        },
+        {
+            "name": "spipu/html2pdf",
+            "version": "v4.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spipu/html2pdf.git",
+                "reference": "2b86b570dd9058c1fc2383503d8b8628a977292d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spipu/html2pdf/zipball/2b86b570dd9058c1fc2383503d8b8628a977292d",
+                "reference": "2b86b570dd9058c1fc2383503d8b8628a977292d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "html2pdf.class.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL"
+            ],
+            "authors": [
+                {
+                    "name": "Spipu",
+                    "homepage": "https://github.com/spipu",
+                    "role": "Developer"
+                }
+            ],
+            "description": "PHP library to convert Html into Pdf",
+            "homepage": "http://html2pdf.fr/",
+            "keywords": [
+                "html",
+                "html2pdf",
+                "pdf"
+            ],
+            "time": "2015-12-11 10:13:58"
         },
         {
             "name": "tecnickcom/tcpdf",
