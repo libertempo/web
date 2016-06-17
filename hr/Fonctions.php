@@ -3017,7 +3017,7 @@ class Fonctions
         }
         $return .= '</div>';
         $return .= '<hr>';
-        $return .= '<a class="btn" href="/admin/admin_index.php?session=' . $session . '">' . _('form_cancel') . '</a>';
+        $return .= '<a class="btn" href="'.ROOT_PATH.'/hr/hr_index.php?session=' . $session . '">' . _('form_cancel') . '</a>';
         return $return;
     }
 
