@@ -121,9 +121,9 @@ class Conge
                     $messageReponse = '';
                 }
 
-                $demi_j_deb = ($conges["p_demi_jour_deb"]=="am") ? 'mat' : 'aprm';
+                $demi_j_deb = ($conges["p_demi_jour_deb"]=="am") ? 'matin' : 'après-midi';
 
-                $demi_j_fin = ($conges["p_demi_jour_fin"] =="am") ? 'mat' : 'aprm';
+                $demi_j_fin = ($conges["p_demi_jour_fin"] =="am") ? 'matin' : 'après-midi';
                 $user_modif_demande="&nbsp;";
 
                 // si on peut modifier une demande :on defini le lien à afficher
@@ -133,8 +133,8 @@ class Conge
                 }
                 $user_suppr_demande = '<a href="user_index.php?session=' . $session . '&p_num=' . $conges['p_num'] . '&onglet=suppr_demande">' . _('form_supprim') . '</a>';
                 $childTable .= '<tr class="'.($i?'i':'p').'">';
-                $childTable .= '<td class="histo">' . \App\Helpers\Formatter::dateIso2Fr($conges["p_date_deb"]) . ' (' . schars($demi_j_deb) . ')</td>';
-                $childTable .= '<td class="histo">' . \App\Helpers\Formatter::dateIso2Fr($conges["p_date_fin"]) . ' (' . schars($demi_j_fin) . ')</td>' ;
+                $childTable .= '<td class="histo">' . \App\Helpers\Formatter::dateIso2Fr($conges["p_date_deb"]) . ' <span class="demi">' . schars($demi_j_deb) . '</span></td>';
+                $childTable .= '<td class="histo">' . \App\Helpers\Formatter::dateIso2Fr($conges["p_date_fin"]) . ' <span class="demi">' . schars($demi_j_fin) . '</span></td>' ;
                 $childTable .= '<td class="histo">'.schars($conges["ta_libelle"]).'</td>' ;
                 $childTable .= '<td class="histo">'.affiche_decimal($conges["p_nb_jours"]).'</td>' ;
                 $childTable .= '<td>' . \App\Models\Conge::statusText($conges["p_etat"]) . '</td>';
