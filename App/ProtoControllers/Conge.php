@@ -94,11 +94,13 @@ class Conge
         } else {
             $i = true;
             $listeConges = $this->getListeSQL($listId);
+            $interdictionModification = $_SESSION['config']['interdit_modif_demande'];
+            $affichageDateTraitement = $_SESSION['config']['affiche_date_traitement'];
             foreach ($listeConges as $conges) {
                 /** Dates demande / traitement */
                 $dateDemande = '';
                 $dateReponse = '';
-                if( $_SESSION['config']['affiche_date_traitement'] ) {
+                if ($affichageDateTraitement) {
                     if (!empty($conges["p_date_demande"])) {
                         list($date, $heure) = explode(' ', $conges["p_date_demande"]);
                         $dateDemande = '(' . \App\Helpers\Formatter::dateIso2Fr($date) . ' ' . $heure . ') ';
@@ -127,7 +129,7 @@ class Conge
                 $user_modif_demande="&nbsp;";
 
                 // si on peut modifier une demande :on defini le lien à afficher
-                if( !$_SESSION['config']['interdit_modif_demande'] && $conges["p_etat"] != "valid") {
+                if( !$interdictionModification && $conges["p_etat"] != "valid") {
                     //on ne peut pas modifier une demande qui a déja été validé une fois (si on utilise la double validation)
                     $user_modif_demande = '<a href="user_index.php?session=' . $session . '&p_num=' . $conges['p_num'] . '&onglet=modif_demande">' . _('form_modif') . '</a>' ;
                 }
@@ -144,7 +146,7 @@ class Conge
                 }
                 $childTable .= '</td>' ;
                 $childTable .= '<td class="histo">';
-                if( !$_SESSION['config']['interdit_modif_demande'] ) {
+                if(!$interdictionModification) {
                     $childTable .= $user_modif_demande . '&nbsp;&nbsp;';
                 }
                 $childTable .= ($user_suppr_demande) . '</td>'."\n" ;
