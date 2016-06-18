@@ -134,6 +134,46 @@ class Fonctions
     }
 
     /**
+     * Retourne les options de select des années
+     *
+     * @return array
+     */
+    public static function getOptionsAnnees()
+    {
+        $current = date('Y');
+
+        return [
+            $current => $current,
+            $current - 1 => $current - 1,
+            $current - 2 => $current - 2,
+        ];
+    }
+
+    /**
+     * Retourne le timestamp du dernier jour de l'année
+     *
+     * @param string $annee
+     *
+     * @return string
+     */
+    public static function getTimestampDernierJourAnnee($annee)
+    {
+        return mktime(23, 59, 59, 12, 31, $annee);
+    }
+
+    /**
+     * Retourne le timestamp du premier jour de l'année
+     *
+     * @param string $annee
+     *
+     * @return string
+     */
+    public static function getTimestampPremierJourAnnee($annee)
+    {
+        return mktime(0, 0, 0, 1, 1, $annee);
+    }
+
+    /**
      * Encapsule le comportement du module de nouvelle absence
      *
      * @param string $onglet Nom de l'onglet à afficher
@@ -246,7 +286,7 @@ class Fonctions
 
         $return .= _('form_modif_ok') . '<br><br>';
         /* APPEL D'UNE AUTRE PAGE */
-        $return .= '<form action="'.ROOT_PATH .'utilisateur/user_index.php?session='.$session.'&onglet=demandes_en_cours" method="POST">';
+        $return .= '<form action="'.ROOT_PATH .'utilisateur/user_index.php?session='.$session.'&onglet=liste_conge" method="POST">';
         $return .= '<input class="btn" type="submit" value="'. _('form_submit') .'">';
         $return .= '</form>';
 
@@ -347,7 +387,7 @@ class Fonctions
         $return .= '<input type="hidden" name="onglet" value="' . $onglet . '">';
         $return .= '<p id="comment_nbj" style="color:red">&nbsp;</p>';
         $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
-        $return .= '<a class="btn" href="' . $PHP_SELF . '?session=' . $session . '&onglet=demandes_en_cours">' . _('form_cancel') . '</a>';
+        $return .= '<a class="btn" href="' . $PHP_SELF . '?session=' . $session . '&onglet=liste_conge">' . _('form_cancel') . '</a>';
         $return .= '</form>';
 
         return $return;
@@ -437,7 +477,7 @@ class Fonctions
             $return .= _('form_modif_not_ok') ."<br><br> \n";
 
         /* APPEL D'UNE AUTRE PAGE */
-        $return .= '<form action="'.ROOT_PATH .'utilisateur/user_index.php?session='.$session.'&onglet=demandes_en_cours" method="POST">';
+        $return .= '<form action="'.ROOT_PATH .'utilisateur/user_index.php?session='.$session.'&onglet=liste_conge" method="POST">';
         $return .= '<input class="btn" type="submit" value="'. _('form_submit') .'">';
         $return .= '</form>';
         $return .= '<a href="">';
@@ -502,7 +542,7 @@ class Fonctions
         $return .= '<input type="hidden" name="session" value="' . $session . '">';
         $return .= '<input type="hidden" name="onglet" value="' . $onglet . '">';
         $return .= '<input class="btn btn-danger" type="submit" value="' . _('form_supprim') . '">';
-        $return .= '<a class="btn" href="' . $PHP_SELF . '?session=' . $session . '&onglet=demandes_en_cours">' . _('form_cancel') . '</a>';
+        $return .= '<a class="btn" href="' . $PHP_SELF . '?session=' . $session . '&onglet=liste_conge">' . _('form_cancel') . '</a>';
         $return .= '</form>';
 
         return $return;
@@ -627,137 +667,6 @@ class Fonctions
             $return .= '<input class="btn btn-success" type="submit" value="'. _('form_submit') .'">';
             $return .= '</form>';
         }
-
-        return $return;
-    }
-
-    /**
-     * Encapsule le comportement du module de demande en cours
-     *
-     * @param string $session Clé de session
-
-     *
-     * @return void
-     * @access public
-     * @static
-     */
-    public static function demandeEnCoursModule($session)
-    {
-        $return = '';
-        $errorsLst=[];
-        if($_SESSION['config']['where_to_find_user_email']=="ldap"){
-            include_once CONFIG_PATH .'config_ldap.php';
-        }
-
-        if(!empty($_POST)) {
-            if (0 < (int) \utilisateur\Fonctions::postDemandeCongesHeure($_POST, $errorsLst)) {
-                $return .= '<div class="alert alert-info">'._('suppr_succes').'</div>';
-            }
-        }
-        // on initialise le tableau global des jours fériés s'il ne l'est pas déjà :
-        init_tab_jours_feries();
-
-        $return .= '<h1>' . _('user_etat_demandes') . '</h1>';
-
-        $tri_date = getpost_variable('tri_date', "ascendant");
-
-
-        // Récupération des informations
-        // on ne recup QUE les periodes de type "conges"(cf table conges_type_absence) ET QUE les demandes
-        $sql3 = 'SELECT p_login, p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_nb_jours, p_commentaire, p_type, p_etat, p_motif_refus, p_date_demande, p_date_traitement, p_num, ta_libelle
-            FROM conges_periode as a, conges_type_absence as b
-            WHERE a.p_login = "'. \includes\SQL::quote($_SESSION['userlogin']).'"
-            AND (a.p_type=b.ta_id)
-            AND ( (b.ta_type=\'conges\') OR (b.ta_type=\'conges_exceptionnels\') )
-            AND ((p_etat=\'demande\') OR (p_etat=\'valid\')) ';
-        if($tri_date=='descendant')
-            $sql3=$sql3.' ORDER BY p_date_deb DESC ;';
-        else
-            $sql3=$sql3.' ORDER BY p_date_deb ASC ;';
-        $ReqLog3 = \includes\SQL::query($sql3) ;
-
-        $count3=$ReqLog3->num_rows;
-        if($count3==0) {
-            $return .= '<b>'. _('user_demandes_aucune_demande') .'</b>';
-        } else {
-            // AFFICHAGE TABLEAU
-            $return .= '<table class="table table-responsive table-condensed table-striped table-hover">';
-            $return .= '<thead>';
-            $return .= '<tr>';
-            $return .= '<th>';
-            $return .= _('divers_debut_maj_1')  ;
-            $return .= '</th>';
-            $return .= '<th>'. _('divers_fin_maj_1') .'</th>';
-            $return .= '<th>'. _('divers_type_maj_1') .'</th>';
-            $return .= '<th>'. _('divers_nb_jours_pris_maj_1') .'</th>';
-            $return .= '<th>'. _('divers_comment_maj_1') .'</th>';
-            $return .= '<th></th><th></th>' ;
-            if( $_SESSION['config']['affiche_date_traitement'] ) {
-                $return .= '<th >'. _('divers_date_traitement') .'</th>';
-            }
-            $return .= '</tr>';
-            $return .= '</thead>';
-            $return .= '<tbody>';
-
-            $i = true;
-            while ($resultat3 = $ReqLog3->fetch_array()) {
-                $sql_p_date_deb                = eng_date_to_fr($resultat3["p_date_deb"]);
-                $sql_p_date_fin                = eng_date_to_fr($resultat3["p_date_fin"]);
-                $sql_p_demi_jour_deb        = $resultat3["p_demi_jour_deb"];
-                $sql_p_demi_jour_fin        = $resultat3["p_demi_jour_fin"];
-
-                if($sql_p_demi_jour_deb=="am")
-                    $demi_j_deb="mat";
-                else
-                    $demi_j_deb="aprm";
-
-                if($sql_p_demi_jour_fin=="am")
-                    $demi_j_fin="mat";
-                else
-                    $demi_j_fin="aprm";
-
-                $sql_p_nb_jours            = $resultat3["p_nb_jours"];
-                $sql_p_commentaire        = $resultat3["p_commentaire"];
-                $sql_p_type                = $resultat3["ta_libelle"];
-                $sql_p_etat                = $resultat3["p_etat"];
-                $sql_p_date_demande        = $resultat3["p_date_demande"];
-                $sql_p_date_traitement    = $resultat3["p_date_traitement"];
-                $sql_p_num                = $resultat3["p_num"];
-
-                // si on peut modifier une demande :on defini le lien à afficher
-                if( !$_SESSION['config']['interdit_modif_demande'] ) {
-                    //on ne peut pas modifier une demande qui a déja été validé une fois (si on utilise la double validation)
-                    if($sql_p_etat=="valid")
-                        $user_modif_demande="&nbsp;";
-                    else
-                        $user_modif_demande="<a href=\"user_index.php?session=$session&p_num=$sql_p_num&onglet=modif_demande\">". _('form_modif') ."</a>" ;
-                }
-                $user_suppr_demande="<a href=\"user_index.php?session=$session&p_num=$sql_p_num&onglet=suppr_demande\">". _('form_supprim') ."</a>" ;
-                $return .= '<tr class="'.($i?'i':'p').'">';
-                $return .= '<td class="histo">'.schars($sql_p_date_deb).' _ '.schars($demi_j_deb).'</td>';
-                $return .= '<td class="histo">'.schars($sql_p_date_fin).' _ '.schars($demi_j_fin).'</td>' ;
-                $return .= '<td class="histo">'.schars($sql_p_type).'</td>' ;
-                $return .= '<td class="histo">'.affiche_decimal($sql_p_nb_jours).'</td>' ;
-                $return .= '<td class="histo">'.schars($sql_p_commentaire).'</td>' ;
-                if( !$_SESSION['config']['interdit_modif_demande'] ) {
-                    $return .= '<td class="histo">'.($user_modif_demande).'</td>' ;
-                }
-                $return .= '<td class="histo">'.($user_suppr_demande).'</td>'."\n" ;
-
-                if( $_SESSION['config']['affiche_date_traitement'] ) {
-                    if($sql_p_date_demande == NULL)
-                        $return .= '<td class="histo-left">'. _('divers_demande') .' : '.$sql_p_date_demande.'<br>'. _('divers_traitement') .' : '.$sql_p_date_traitement.'</td>';
-                    else
-                        $return .= '<td class="histo-left">'. _('divers_demande') .' : '.$sql_p_date_demande.'<br>'. _('divers_traitement') .' : pas traité</td>';
-                }
-                $return .= '</tr>';
-                $i = !$i;
-            }
-            $return .= '</tbody>';
-            $return .= '</table>' ;
-        }
-        $return .= \utilisateur\Fonctions::getListPeriodeHeure(\App\Models\HeureRecuperation::TYPE_DEBIT);
-        $return .= \utilisateur\Fonctions::getListPeriodeHeure(\App\Models\HeureRecuperation::TYPE_CREDIT);
 
         return $return;
     }
@@ -1359,295 +1268,6 @@ class Fonctions
     }
 
     /**
-     * Encapsule le comportement du module de l'historique des congés
-     *
-     * @param string $session  Clé de session
-     * @param string $PHP_SELF
-     *
-     * @return void
-     * @access public
-     * @static
-     */
-    public static function historiqueCongesModule($session, $PHP_SELF)
-    {
-        $return = '';
-        if($_SESSION['config']['where_to_find_user_email']=="ldap"){
-            include_once CONFIG_PATH .'config_ldap.php';
-        }
-
-        $tri_date = getpost_variable('tri_date', "ascendant");
-        $year_affichage = getpost_variable('year_affichage' , date("Y") );
-
-        $return .= '<h1>' . _('user_historique_conges') . '</h1>';
-
-        //affiche le tableau de l'hitorique des conges
-
-
-        // affichage de l'année et des boutons de défilement
-        $year_affichage_prec = $year_affichage-1 ;
-        $year_affichage_suiv = $year_affichage+1 ;
-
-        $return .= '<b>';
-        $return .= '<a href="' . $PHP_SELF . '?session=' . $session . '&onglet=historique_conges&year_affichage=' . $year_affichage_prec . '"><<</a>';
-        $return .= '&nbsp&nbsp&nbsp  ' . schars($year_affichage) . ' &nbsp&nbsp&nbsp';
-        $return .= '<a href="' . schars($PHP_SELF) . '?session=' . schars($session) . '&onglet=historique_conges&year_affichage=' . schars($year_affichage_suiv) . '">>></a>';
-        $return .= '</b><br><br>';
-
-
-        // Récupération des informations
-        // on ne recup QUE les periodes de type "conges"(cf table conges_type_absence) ET pas les demandes
-        $sql2 = "SELECT p_login, p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_nb_jours, p_commentaire, p_type, p_etat, p_motif_refus, p_date_demande, p_date_traitement, ta_libelle
-            FROM conges_periode as a, conges_type_absence as b
-            WHERE a.p_login = '".$_SESSION['userlogin']."'
-            AND (a.p_type=b.ta_id)
-            AND ( (b.ta_type='conges') OR (b.ta_type='conges_exceptionnels') )
-            AND (p_etat='ok' OR  p_etat='refus' OR  p_etat='annul')
-            AND (p_date_deb LIKE '$year_affichage%' OR p_date_fin LIKE '$year_affichage%') ";
-
-        if($tri_date=="descendant")
-            $sql2=$sql2." ORDER BY p_date_deb DESC ";
-        else
-            $sql2=$sql2." ORDER BY p_date_deb ASC ";
-
-        $ReqLog2 = \includes\SQL::query($sql2) ;
-
-        $count2=$ReqLog2->num_rows;
-        if($count2==0) {
-            $return .= '<b>' . _('user_conges_aucun_conges') . '</b><br>';
-        } else {
-            // AFFICHAGE TABLEAU
-            $return .= '<table class="table table-responsive table-condensed table-striped table-hover">';
-            $return .= '<thead>';
-            $return .= '<tr>';
-            $return .= '<th>';
-            $return .= _('divers_debut_maj_1');
-            $return .= '</th>';
-            $return .= '<th>' . _('divers_fin_maj_1') . '</th>';
-            $return .= '<th>' . _('divers_type_maj_1') . '</th>';
-            $return .= '<th>' . _('divers_nb_jours_maj_1') . '</th>';
-            $return .= '<th>' . _('divers_comment_maj_1') . '</th>';
-            $return .= '<th>' . _('divers_etat_maj_1') . '</th>';
-            $return .= '<th>' . _('divers_motif_refus') . '</th>';
-            if($_SESSION['config']['affiche_date_traitement']) {
-                $return .= '<td>' . _('divers_date_traitement') . '</td>';
-            }
-
-            $return .= '</tr>';
-            $return .= '</thead>';
-            $return .= '<tbody>';
-
-            $i = true;
-            while ($resultat2 = $ReqLog2->fetch_array()) {
-                $sql_p_date_deb = eng_date_to_fr($resultat2["p_date_deb"]);
-                $sql_p_demi_jour_deb = $resultat2["p_demi_jour_deb"];
-                if($sql_p_demi_jour_deb=="am") $demi_j_deb="mat";  else $demi_j_deb="aprm";
-                $sql_p_date_fin = eng_date_to_fr($resultat2["p_date_fin"]);
-                $sql_p_demi_jour_fin = $resultat2["p_demi_jour_fin"];
-                if($sql_p_demi_jour_fin=="am") $demi_j_fin="mat";  else $demi_j_fin="aprm";
-                $sql_p_nb_jours = $resultat2["p_nb_jours"];
-                $sql_p_commentaire = $resultat2["p_commentaire"];
-                //$sql_p_type = $resultat2["p_type"];
-                $sql_p_type = $resultat2["ta_libelle"];
-                $sql_p_etat = $resultat2["p_etat"];
-                $sql_p_motif_refus=$resultat2["p_motif_refus"] ;
-                $sql_p_date_demande = $resultat2["p_date_demande"];
-                $sql_p_date_traitement = $resultat2["p_date_traitement"];
-
-                $return .= '<tr class="' . ($i ? 'i' : 'p') . '">';
-                $return .= '<td class="histo">' . schars($sql_p_date_deb) . ' _ ' . schars($demi_j_deb) . '</td>';
-                $return .= '<td class="histo">' . schars($sql_p_date_fin) . ' _ ' . schars($demi_j_fin) . '</td>' ;
-                $return .= '<td class="histo">' . schars($sql_p_type) . '</td>';
-                $return .= '<td class="histo">' . affiche_decimal($sql_p_nb_jours) . '</td>';
-                $return .= '<td class="histo">' . schars($sql_p_commentaire) . '</td>';
-
-
-                $return .= '<td>';
-                if($sql_p_etat=="refus")
-                    $return .= _('divers_refuse') ;
-                elseif($sql_p_etat=="annul")
-                    $return .= _('divers_annule') ;
-                else
-                    $return .= schars($sql_p_etat);
-                $return .= '</td>';
-
-
-                if($sql_p_etat=="refus") {
-                    if($sql_p_motif_refus=="")
-                        $sql_p_motif_refus= _('divers_inconnu') ;
-                    $return .= '<td class="histo">' . schars($sql_p_motif_refus) . '</td>';
-                } elseif($sql_p_etat=="annul") {
-                    if($sql_p_motif_refus=="")
-                        $sql_p_motif_refus= _('divers_inconnu') ;
-                    $return .= '<td class="histo">' . schars($sql_p_motif_refus) . '</td>';
-                } elseif($sql_p_etat=="ok") {
-                    if($sql_p_motif_refus=="")
-                        $sql_p_motif_refus=" ";
-                    $return .= '<td class="histo">' . schars($sql_p_motif_refus) . '</td>';
-                }
-                $return .= '</td>';
-
-                if($_SESSION['config']['affiche_date_traitement']) {
-                    $return .= '<td class="histo-left">' . schars( _('divers_demande')) . ' : ' . schars($sql_p_date_demande) . '<br>';
-                    $text_lang_a_afficher="divers_traitement_$sql_p_etat" ; // p_etat='ok' OR  p_etat='refus' OR  p_etat='annul' .....
-                    $return .= schars( _($text_lang_a_afficher) ) . ' : ' . schars($sql_p_date_traitement).'</td>';
-                }
-
-                $return .= '</tr>';
-                $i = !$i;
-            }
-            $return .= '</tbody>';
-            $return .= '</table>';
-        }
-        $return .= '<br><br>';
-
-        return $return;
-    }
-
-    /**
-     * Encapsule le comportement du module de l'historique des autres absences
-     *
-     * @param string $onglet Nom de l'onglet à afficher
-     * @param string $session  Clé de session
-     * @param string $PHP_SELF
-     *
-     * @return void
-     * @access public
-     * @static
-     */
-    public static function historiqueAutresAbsencesModule($onglet, $session, $PHP_SELF)
-    {
-        $return = '';
-        if($_SESSION['config']['where_to_find_user_email']=="ldap"){
-            include_once CONFIG_PATH .'config_ldap.php';
-        }
-
-        $tri_date = getpost_variable('tri_date', "ascendant");
-        $year_affichage = getpost_variable('year_affichage' , date("Y") );
-
-        $return = '<h1>'. _('user_historique_abs') .' :</h1>';
-
-        // affichage de l'année et des boutons de défilement
-        $year_affichage_prec = $year_affichage-1 ;
-        $year_affichage_suiv = $year_affichage+1 ;
-
-        $return .= '<b>';
-        $return .= '<a href="' . $PHP_SELF . '?session=' . $session . '&onglet=historique_autres_absences&year_affichage=' . $year_affichage_prec . '"><<</a>';
-        $return .= '&nbsp&nbsp&nbsp ' . $year_affichage . '&nbsp&nbsp&nbsp';
-        $return .= '<a href="' . $PHP_SELF . '?session=' . $session . '&onglet=historique_autres_absences&year_affichage=' . $year_affichage_suiv . '">>></a>';
-        $return .= '</b><br><br>';
-
-
-        // Récupération des informations
-        $sql4 = 'SELECT p_login, p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_nb_jours, p_commentaire, p_type, p_etat, p_motif_refus, p_date_demande, p_date_traitement, p_num, ta_libelle
-            FROM conges_periode as a, conges_type_absence as b
-            WHERE a.p_login = "'.\includes\SQL::quote($_SESSION['userlogin']).'"
-            AND (a.p_type=b.ta_id)
-            AND (b.ta_type=\'absences\')
-            AND (p_date_deb LIKE \''.intval($year_affichage).'%\' OR p_date_fin LIKE \''.intval($year_affichage).'%\') ';
-
-        if($tri_date=="descendant")
-            $sql4=$sql4." ORDER BY p_date_deb DESC ";
-        else
-            $sql4=$sql4." ORDER BY p_date_deb ASC ";
-
-        $ReqLog4 = \includes\SQL::query($sql4) ;
-
-        $count4=$ReqLog4->num_rows;
-        if($count4==0) {
-            $return .= '<b>' . _('user_abs_aucune_abs') . '</b><br>';
-        } else {
-            // AFFICHAGE TABLEAU
-            $return .= '<table cellpadding="2"  class="tablo" width="80%">';
-            $return .= '<thead>';
-            $return .= '<tr>';
-            $return .= '<td>';
-            $return .= '<a href="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '&tri_date=descendant"><img src="' . IMG_PATH . '1downarrow-16x16.png" width="16" height="16" border="0" title="trier"></a>';
-            $return .= _('divers_debut_maj_1');
-            $return .= '<a href="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '&tri_date=ascendant"><img src="' . IMG_PATH . '1uparrow-16x16.png" width="16" height="16" border="0" title="trier"></a>';
-            $return .= '</td>';
-            $return .= '<td>' . _('divers_fin_maj_1') . '</td>';
-            $return .= '<td>' . _('user_abs_type') . '</td>';
-            $return .= '<td>' . _('divers_nb_jours_maj_1') . '</td>';
-            $return .= '<td>' . _('divers_comment_maj_1') . '</td>';
-            $return .= '<td>' . _('divers_etat_maj_1') . '</td>';
-            $return .= '<td></td><td></td>';
-            if($_SESSION['config']['affiche_date_traitement']) {
-                $return .= '<td>' . _('divers_date_traitement') . '</td>';
-            }
-            $return .= '</tr>';
-            $return .= '</thead>';
-            $return .= '<tbody>';
-
-            $i = true;
-            while ($resultat4 = $ReqLog4->fetch_array()) {
-                $sql_login= $resultat4["p_login"];
-                $sql_date_deb= eng_date_to_fr($resultat4["p_date_deb"]);
-                $sql_p_demi_jour_deb = $resultat4["p_demi_jour_deb"];
-                if($sql_p_demi_jour_deb=="am") $demi_j_deb="mat";  else $demi_j_deb="aprm";
-                $sql_date_fin= eng_date_to_fr($resultat4["p_date_fin"]);
-                $sql_p_demi_jour_fin = $resultat4["p_demi_jour_fin"];
-                if($sql_p_demi_jour_fin=="am") $demi_j_fin="mat";  else $demi_j_fin="aprm";
-                $sql_nb_jours= affiche_decimal($resultat4["p_nb_jours"]);
-                $sql_commentaire= $resultat4["p_commentaire"];
-                //$sql_type=$resultat4["p_type"];
-                $sql_type=$resultat4["ta_libelle"];
-                $sql_etat=$resultat4["p_etat"];
-                $sql_motif_refus=$resultat4["p_motif_refus"] ;
-                $sql_date_demande = $resultat4["p_date_demande"];
-                $sql_date_traitement = $resultat4["p_date_traitement"];
-                $sql_num= $resultat4["p_num"];
-
-                // si le user a le droit de saisir lui meme ses absences et qu'elle n'est pas deja annulee, on propose de modifier ou de supprimer
-                if(($sql_etat != "annul")&&($_SESSION['config']['user_saisie_mission'])) {
-                    $user_modif_mission="<a href=\"user_index.php?session=$session&p_num=$sql_num&onglet=modif_demande\">". _('form_modif') ."</a>" ;
-                    $user_suppr_mission="<a href=\"user_index.php?session=$session&p_num=$sql_num&onglet=suppr_demande\">". _('form_supprim') ."</a>" ;
-                } else {
-                    $user_modif_mission=" - " ;
-                    $user_suppr_mission=" - " ;
-                }
-
-                $return .= '<tr class="'.($i ? 'i' : 'p') . '">';
-                $return .= '<td class="histo">' . schars($sql_date_deb) . ' _ ' . schars($demi_j_deb) . '</td>';
-                $return .= '<td class="histo">' . schars($sql_date_fin) . ' _ ' . schars($demi_j_fin) . '</td>' ;
-                $return .= '<td class="histo">' . schars($sql_type) . '</td>';
-                $return .= '<td class="histo">' . affiche_decimal($sql_nb_jours) . '</td>' ;
-                $return .= '<td class="histo">' . schars($sql_commentaire) . '</td>';
-
-                if($sql_etat=="refus") {
-                    if($sql_motif_refus=="")
-                        $sql_motif_refus= _('divers_inconnu') ;
-                    $return .= '<br><i>".'.schars( _('divers_motif_refus') ).'." : '.schars($sql_motif_refus).'</i>';
-                } elseif($sql_etat=="annul") {
-                    if($sql_motif_refus=="")
-                        $sql_motif_refus= _('divers_inconnu') ;
-                    $return .= '<br><i>".'.schars( _('divers_motif_annul') ).'." : '.schars($sql_motif_refus).'</i>';
-                }
-                $return .= '</td>';
-                $return .= '<td>';
-                if($sql_etat=="refus")
-                    $return .= _('divers_refuse') ;
-                elseif($sql_etat=="annul")
-                    $return .= _('divers_annule') ;
-                else
-                    $return .= schars($sql_etat);
-                $return .= '</td>';
-                $return .= '<td class="histo">' . ($user_modif_mission) . '</td>';
-                $return .= '<td class="histo">'.($user_suppr_mission).'</td>'."\n";
-                if($_SESSION['config']['affiche_date_traitement']) {
-                    $return .= '<td class="histo-left">' . schars(_('divers_demande') ) . ' : ' . schars($sql_date_demande) . '<br>' . schars(_('divers_traitement') ) . ' : ' . schars($sql_date_traitement) . '</td>';
-                }
-                $return .= '</tr>';
-                $i = !$i;
-            }
-            $return .= '</tbody>';
-            $return .= '</table>';
-        }
-        $return .= '<br><br>';
-
-        return $return;
-    }
-
-    /**
      * Retourne le planning de l'utilisateur organisé selon la hiérarchie habituelle
      * @example planningId[typeSemaine][jourId][typePeriode][creneaux]
      *
@@ -1806,7 +1426,7 @@ class Fonctions
     {
         $Fermeture      = [];
 
-        if (is_array($_SESSION["tab_j_fermeture"])) {
+        if (isset($_SESSION["tab_j_fermeture"]) && is_array($_SESSION["tab_j_fermeture"])) {
             foreach ($_SESSION["tab_j_fermeture"] as $date) {
                 $Fermeture[] = \App\Helpers\Formatter::dateIso2Fr($date);
             }
@@ -1824,491 +1444,7 @@ class Fonctions
      */
     public static function getDatePickerStartDate()
     {
-    return ($_SESSION['config']['interdit_saisie_periode_date_passee']) ? 'd' : '';
-    }
-
-    /**
-     * Encapsule le comportement du module des demandes de debit d'heures
-     *
-     * @return string
-     * @access public
-     * @static
-     */
-    public static function getDemandeCongesHeure($type)
-    {
-        $return    = '';
-
-        /* Génération du datePicker et de ses options */
-        $daysOfWeekDisabled = \utilisateur\Fonctions::getDatePickerDaysOfWeekDisabled();
-        $datesFeries        = \utilisateur\Fonctions::getDatePickerJoursFeries();
-        $datesFerme         = \utilisateur\Fonctions::getDatePickerFermeture();
-        $datesDisabled      = array_merge($datesFeries,$datesFerme);
-        $startDate = \utilisateur\Fonctions::getDatePickerStartDate();
-
-        $datePickerOpts = [
-            'daysOfWeekDisabled' => $daysOfWeekDisabled,
-            'datesDisabled'      => $datesDisabled,
-            'startDate'          => $startDate,
-        ];
-        $return .= '<script>generateDatePicker('.json_encode($datePickerOpts).', false);</script>';
-
-        $errorsLst = [];
-
-        if (!empty($_POST)) {
-            if (0 >= (int) \utilisateur\Fonctions::postDemandeCongesHeure($_POST, $errorsLst)) {
-                $errors = '';
-                if (!empty($errorsLst)) {
-                    foreach ($errorsLst as $key => $value) {
-                        if (is_array($value)) {
-                            $value = implode(' / ', $value);
-                        }
-                        $errors .= '<li>' . $key . ' : ' . $value . '</li>';
-                    }
-                    $return .= '<div class="alert alert-danger">' . _('erreur_recommencer') . '<ul>' . $errors . '</ul></div>';
-                    $return .= \utilisateur\Fonctions::getFormDemandeHeure($type);
-                }
-            } else {
-                if(isset($_POST['_METHOD']) && 'DELETE' == $_POST['_METHOD']) {
-                    $return .= '<div class="alert alert-info">' . _('suppr_succes') . '</div>';
-                } else {
-                    $return .= '<div class="alert alert-info">' . _('demande_transmise') . '</div>';
-                }
-                $return .= \utilisateur\Fonctions::getListPeriodeHeure($type);
-            }
-        } else {
-            $return .= \utilisateur\Fonctions::getFormDemandeHeure($type);
-        }
-        return $return;
-    }
-
-    public static function getFormDemandeHeure($type)
-    {
-        $return ='';
-
-        if ($type === \App\Models\HeureRecuperation::TYPE_DEBIT) {
-            $return .= '<h1>' . _('user_demande_debit_heure_titre') . '</h1>';
-        } else {
-            $return .= '<h1>' . _('user_demande_credit_heure_titre') . '</h1>';
-        }
-        $return .= '<form action="" method="post" class="form-group">';
-        $table = new \App\Libraries\Structure\Table();
-        $table->addClasses([
-            'table',
-            'table-hover',
-            'table-responsive',
-            'table-striped',
-            'table-condensed'
-        ]);
-
-        $debutId      = uniqid();
-        $finId        = uniqid();
-
-        $childTable = '<thead><tr><th width="20%">' . _('Jour') . '</th><th>' . _('creneau') . '</th></tr></thead><tbody>';
-        $childTable .= '<tr><td><input class="form-control date" type="text" value="'.date("d/m/Y").'" name="new_jour"></td>';
-        $childTable .= '<td><div class="form-inline col-xs-3"><input class="form-control" style="width:45%" type="text" id="' . $debutId . '"  value="" name="new_deb_heure">&nbsp;<i class="fa fa-caret-right"></i>&nbsp;<input class="form-control" style="width:45%" type="text" id="' . $finId . '"  value="" name="new_fin_heure"></div></td></tr>';
-        $childTable .= '</tbody>';
-        $childTable .= '<script type="text/javascript">generateTimePicker("' . $debutId . '");generateTimePicker("' . $finId . '");</script>';
-
-        $table->addChild($childTable);
-        ob_start();
-        $table->render();
-        $return .= ob_get_clean();
-        $return .= '<input type="hidden" name="type" value="'.$type.'">';
-        $return .= '<div class="form-group"><input type="submit" class="btn btn-success" value="' . _('form_submit') . '" /></div>';
-        $return .='</form>';
-
-        return $return;
-    }
-
-    /**
-     * Encapsule le comportement du module de modification d'une demande
-     * de débit ou de crédit d'heure
-     *
-     * @param int $id
-     * @param int $type
-     *
-     * @return string
-     * @access public
-     * @static
-     */
-    public static function getModificationHeures($id,$type)
-    {
-
-        $return            = '';
-        $errorsLst = [];
-
-        /* Génération du datePicker et de ses options */
-        $daysOfWeekDisabled = \utilisateur\Fonctions::getDatePickerDaysOfWeekDisabled();
-        $datesFeries        = \utilisateur\Fonctions::getDatePickerJoursFeries();
-        $datesFerme         = \utilisateur\Fonctions::getDatePickerFermeture();
-        $datesDisabled      = array_merge($datesFeries,$datesFerme);
-        $startDate = \utilisateur\Fonctions::getDatePickerStartDate();
-
-        $datePickerOpts = [
-            'daysOfWeekDisabled' => $daysOfWeekDisabled,
-            'datesDisabled'      => $datesDisabled,
-            'startDate'          => $startDate,
-        ];
-        $return .= '<script>generateDatePicker('.json_encode($datePickerOpts).', false);</script>';
-
-        if (!empty($_POST)) {
-            if (0 >= (int) \utilisateur\Fonctions::postDemandeCongesHeure($_POST, $errorsLst)) {
-                $errors = '';
-                if (!empty($errorsLst)) {
-                    foreach ($errorsLst as $key => $value) {
-                        if (is_array($value)) {
-                            $value = implode(' / ', $value);
-                        }
-                        $errors .= '<li>' . $key . ' : ' . $value . '</li>';
-                    }
-                    $return .= '<div class="alert alert-danger">' . _('erreur_recommencer') . '<ul>' . $errors . '</ul></div>';
-                    $return .= \utilisateur\Fonctions::getformModifHeures($id,$type);
-                }
-            } else {
-                $return .= '<div class="alert alert-info">' . _('demande_modifie') . '</div>';
-                $return .= \utilisateur\Fonctions::getListPeriodeHeure($type);
-            }
-        } else {
-            $return .= \utilisateur\Fonctions::getformModifHeures($id,$type);
-        }
-        return $return;
-    }
-
-   /**
-     * formulaire de modification d'une demande de débit ou de crédit d'heure
-     *
-     * @param int $id
-     * @param int $type
-     *
-     * @return string
-     * @access public
-     * @static
-     */
-    public static function getformModifHeures($id,$type)
-    {
-        $return="";
-
-            if ($type === \App\Models\HeureRecuperation::TYPE_DEBIT) {
-                $return .= '<h1>' . _('user_modif_debit_heure_titre') . '</h1>';
-            } else {
-                $return .= '<h1>' . _('user_modif_credit_heure_titre') . '</h1>';
-            }
-
-            $return .= '<form action="" method="post" class="form-group">';
-            $table = new \App\Libraries\Structure\Table();
-            $table->addClasses([
-                'table',
-                'table-hover',
-                'table-responsive',
-                'table-striped',
-                'table-condensed'
-            ]);
-
-                $sql = 'SELECT * FROM conges_heure_periode WHERE id_heure = ' . \includes\SQL::quote($id);
-                $query = \includes\SQL::query($sql);
-                if (!$query->num_rows) {
-                    $return .= _('form_modif_not_ok');
-                    $return .= '<a class="btn" href="user_index.php?session=' . session_id() . '&onglet=demandes_en_cours">' . _('form_cancel') . '</a>';
-                } else {
-                    $debutId      = uniqid();
-                    $finId        = uniqid();
-                    $data = $query->fetch_assoc();
-                    //conversion des dates
-                    $heureDeb = date("H:i", $data['debut']);
-                    $jour = date("d/m/Y", $data['debut']);
-                    $heureFin = date("H:i", $data['fin']);
-
-                    $childTable = '<thead><tr><th width="20%">' . _('Jour') . '</th><th>' . _('creneau') . '</th></tr></thead><tbody>';
-                    $childTable .= '<tr><td><input class="form-control date" type="text" value="'.$jour.'" name="new_jour"></td>';
-                    $childTable .= '<td><div class="form-inline col-xs-3"><input class="form-control" style="width:45%" type="text" id="' . $debutId . '"  value="'.$heureDeb.'" name="new_deb_heure">&nbsp;<i class="fa fa-caret-right"></i>&nbsp;<input class="form-control" style="width:45%" type="text" id="' . $finId . '"  value="'.$heureFin.'" name="new_fin_heure"></div></td></tr>';
-                    $childTable .= '</tbody>';
-                    $childTable .= '<script type="text/javascript">generateTimePicker("' . $debutId . '");generateTimePicker("' . $finId . '");</script>';
-
-                    $table->addChild($childTable);
-                    ob_start();
-                    $table->render();
-                    $return .= ob_get_clean();
-                    $return .= '<input type="hidden" name="id_heure" value="'.$id.'">';
-                    $return .= '<input type="hidden" name="type" value="'.$type.'">';
-                    $return .= '<input type="hidden" name="_METHOD" value="PUT">';
-                    $return .= '<div class="form-group"><input type="submit" class="btn btn-success" value="' . _('form_modif') . '" />';
-                    $return .= '<a class="btn" href="user_index.php?session=' . session_id() . '&onglet=demandes_en_cours">' . _('form_cancel') . '</a></div>';
-                }
-                $return .='</form>';
-        return $return;
-    }
-
-    /**
-     * Traite la demande/modification/suppression d'heures
-     *
-     * @param array $post
-     * @param array &$errorsLst
-     *
-     * @return int
-     */
-    private static function postDemandeCongesHeure(array $post, &$errorsLst)
-    {
-        if (!empty($post['_METHOD'])) {
-            if ('DELETE' === $post['_METHOD']) {
-                return \utilisateur\Fonctions::deleteDemandeDebitCongesHeure($post['id_heure'], $_SESSION['userlogin'], $errorsLst);
-            } elseif ('PUT' === $post['_METHOD']) {
-               return \utilisateur\Fonctions::putDemandeDebitCongesHeure($post, $errorsLst, $_SESSION['userlogin']);
-            }
-        } else {
-           return \utilisateur\Fonctions::insertDemandeDebitCongesHeure($post, $errorsLst, $_SESSION['userlogin']);
-        }
-        return NIL_INT;
-    }
-
-    /**
-     * Met à jour une demande d'heures
-     *
-     * @param array $post
-     * @param array &$errors
-     *
-     * @return int
-     */
-    private static function putDemandeDebitCongesHeure(array $post, array &$errors, $user)
-    {
-
-        if (\utilisateur\Fonctions::VerifNewDemandeHeures($post['new_jour'], $post['new_deb_heure'], $post['new_fin_heure'], $user, $errors, $post['id_heure'])) {
-            if (NIL_INT !== \utilisateur\Fonctions::updateDemandeDebitCongesHeure($post, $post['id_heure'], $user)) {
-                log_action($post['id_heure'], 'modif', '', 'Modification demande d\'heure ' . $post['id_heure']);
-                return $post['id_heure'];
-            } else {
-                $errors[] = _('demande_non_modif');
-                return NIL_INT;
-            }
-        }
-
-        return NIL_INT;
-    }
-
-    /**
-     * Ajoute une demande d'heures
-     *
-     * @param array $post
-     * @param array &$errors
-     *
-     * @return int
-     */
-    private static function insertDemandeDebitCongesHeure(array $post, array &$errors, $user)
-    {
-        if (\utilisateur\Fonctions::VerifNewDemandeHeures($post['new_jour'], $post['new_deb_heure'], $post['new_fin_heure'], $user, $errors)) {
-            $id = \utilisateur\Fonctions::insertSQLDemandeDebitCongesHeure($post, $user);
-            if(0 < $id ) {
-                log_action($id, 'demande', '', 'Nouvelle demande d\'heure enregistrée : '. $id);
-                return $id;
-            }
-        }
-
-        return NIL_INT;
-    }
-
-    /**
-     * Supprime une demande d'heures
-     *
-     * @param int $id
-     *
-     * @return int
-     */
-    private static function deleteDemandeDebitCongesHeure($id, $user, &$errorsLst)
-    {
-        if (NIL_INT !== \utilisateur\Fonctions::deleteSQLDemandeDebitCongesHeure($id, $user, $errorsLst)) {
-            log_action($id, 'annul', '', 'Annulation de la demande d\'heure ' . $id);
-            return $id;
-        }
-        return NIL_INT;
-    }
-
-    /**
-     * Supprime une demande d'heures de la BDD
-     *
-     * @param int $id
-     *
-     * @return int
-     */
-    private static function deleteSQLDemandeDebitCongesHeure($id, $user, &$errorsLst)
-    {
-        $sql = \includes\SQL::singleton();
-        $req = 'DELETE FROM conges_heure_periode
-                WHERE id_heure = ' . (int) $id . '
-                AND login = "'.$user.'"';
-        $sql->query($req);
-
-        if (0 < $sql->affected_rows) {
-            return $id;
-        } else {
-            $errorLst[] = _('config_abs_suppr_impossible');
-        }
-        return NIL_INT;
-    }
-
-    /**
-     * controle l'égibilité d'une demande d'heures
-     *
-     * @param string $jour
-     * @param string $heuredeb
-     * @param string $heurefin
-     * @param array $Error
-     *
-     * @return boolean
-     */
-    public static function VerifNewDemandeHeures($jour, $heuredeb, $heurefin, $user, array &$Error, $id = NIL_INT)
-    {
-        $localError = [];
-
-        // leur champs doivent etre renseignés dans le formulaire
-        if ( $jour == '' || $heuredeb == '' || $heurefin == '' ) {
-            $localError[] = _('verif_saisie_erreur_valeur_manque');
-        }
-
-        if ( !(\App\Helpers\Formatter::isHourFormat($heuredeb) && \App\Helpers\Formatter::isHourFormat($heurefin))) {
-            $localError[] = _('Heure_non_reconnue');
-        } else {
-            // si la date de fin est antérieur à la date debut
-            if (NIL_INT !== strnatcmp($heuredeb, $heurefin)) {
-                $localError[] = _('verif_saisie_erreur_heure_fin_avant_debut') ;
-            }
-
-            $chevauch = \utilisateur\Fonctions::VerifChevauchHeures($jour, $heuredeb, $heurefin, $localError, $id, $user);
-        }
-
-        $Error = array_merge($Error, $localError);
-
-        return empty($localError);
-    }
-
-    /**
-     * Ajoute une demande d'heures dans la BDD
-     *
-     * @param array  $info
-     * @param string $user
-     *
-     * @return int
-     */
-    private static function insertSQLDemandeDebitCongesHeure(array $info, $user)
-    {
-        /*
-         * Il faut vraiment découper les heures additionnelles / de repos en deux choses différentes.
-         * En effet, au niveau du comptage des vraies heures de différences (fin - début), ils ne vont pas se baser sur la même chose :
-         * - les heures additionnelles vont s'appuyer sur les périodes non travaillées
-         * - les heures de repos vont s'appuyer sur les périodes travaillées
-         *
-         * ==> ce sont bien deux modèles différents, et doivent être considérés comme tels (ils ne se ressemblent que par accident)
-         */
-        $date = \App\Helpers\Formatter::dateFr2Iso($info['new_jour']);
-        $deb = $date." ".$info['new_deb_heure'];
-        $fin = $date." ".$info['new_fin_heure'];
-        $timedeb = strtotime($deb);
-        $timefin = strtotime($fin);
-        $planning = \utilisateur\Fonctions::getUserPlanning($user);
-        $duree = \utilisateur\Fonctions::getDureeViaPlanning($timedeb, $timefin, $planning);
-        $sql = \includes\SQL::singleton();
-        $toInsert = [];
-        $toInsert[] = '(NULL, "' . $user . '", ' . (int) $timedeb . ', '. (int) $timefin .', '. (int) $duree .', '.\App\Models\HeureRecuperation::STATUT_DEMANDE.', '.$info['type'].')';
-        $req = 'INSERT INTO conges_heure_periode (id_heure, login, debut, fin, time, statut, type) VALUES ' . implode(', ', $toInsert);
-        $query = $sql->query($req);
-
-        return $sql->insert_id;
-    }
-
-    /**
-     * Met à jour une demande d'heures dans la BDD
-     *
-     * @param array $info
-     *
-     * @return int
-     */
-    private static function updateDemandeDebitCongesHeure(array $info, $id, $user)
-    {
-
-        $date = \App\Helpers\Formatter::dateFr2Iso($info['new_jour']);
-        $deb = $date." ".$info['new_deb_heure'];
-        $fin = $date." ".$info['new_fin_heure'];
-        $timedeb = strtotime($deb);
-        $timefin = strtotime($fin);
-        $planning = \utilisateur\Fonctions::getUserPlanning($user);
-        $duree = \utilisateur\Fonctions::getDureeViaPlanning($timedeb, $timefin, $planning);
-        $sql = \includes\SQL::singleton();
-        $toInsert = [];
-        $req = 'UPDATE conges_heure_periode
-                SET debut = '.$timedeb.',
-                    fin = '.$timefin.',
-                    time = '.$duree.'
-                WHERE id_heure = '. (int) $id.'
-                AND login = "'.$_SESSION['userlogin'].'"';
-        $query = $sql->query($req);
-        return 0 < $sql->affected_rows ? $id : NIL_INT;
-    }
-
-    /**
-     * Affiche la liste des demandes d'heures non validées
-     *
-     * @param int $type
-     *
-     * @return string
-     */
-    private static function getListPeriodeHeure($type=\App\Models\HeureRecuperation::TYPE_DEBIT)
-    {
-        if ($type===\App\Models\HeureRecuperation::TYPE_DEBIT) {
-            $titre = _('utilisateur_demande_debit_heure_recuperation');
-        } else {
-            $titre = _('utilisateur_demande_credit_heure_recuperation');
-        }
-        $return = '<hr><h1>' . $titre . '</h1>';
-        $session = session_id();
-        $table = new \App\Libraries\Structure\Table();
-        $table->addClasses([
-            'table',
-            'table-hover',
-            'table-responsive',
-            'table-condensed',
-            'table-striped',
-        ]);
-
-        $sql = \includes\SQL::singleton();
-        $req = 'SELECT *
-                FROM conges_heure_periode
-                WHERE login = "' . $_SESSION['userlogin'].'"
-                AND type = '.$type.'
-                AND statut ='.\App\Models\HeureRecuperation::STATUT_DEMANDE.'
-                ORDER by debut DESC';
-        $res = $sql->query($req);
-        if (!$res->num_rows) {
-            $childTable = '<tr><td colspan="2">'. _('aucune_demande') .'</td></tr>';
-        } else {
-            $childTable = '<thead><tr><th>'._('saisie_echange_titre_calendrier_2').'</th><th style="width:15%"></th>';
-            $childTable .= '<th>'._('divers_debut_maj_1').'</th><th style="width:15%"></th>';
-            $childTable .= '<th>'._('divers_fin_maj_1').'</th><th style="width:15%"></th>';
-            $childTable .= '<th>'._('nb_heures').'</th><th style="width:15%"></th>';
-            $childTable .= '<th>'._('form_modif').'</th><th style="width:15%"></th>';
-            $childTable .= '<th>'._('form_supprim').'</th></tr>';
-            $childTable .= '</thead><tbody>';
-            while ($data = $res->fetch_array()) {
-                $childTable .= '<tr><td>' . date("d/m/Y", $data['debut']) . '</td><td style="width:15%"></td>';
-                $childTable .= '<td>' . date("H:i", $data['debut']) . '</td><td style="width:15%"></td>';
-                $childTable .= '<td>' . date("H:i", $data['fin']) . '</td><td style="width:15%"></td>';
-                $childTable .= '<td>' . \utilisateur\Fonctions::Timestamp2Time($data['time']) . '</td><td style="width:15%"></td>';
-                $childTable .= '<td><a href="user_index.php?session='.$session.'&onglet=modif_demande_heures&id='.$data['id_heure'].'&type='.$type.'" title="' . _('form_modif') . '"><i class="fa fa-pencil"></i></a></td><td style="width:15%"></td>';
-                $childTable .= '<td><form id="del'.$data['id_heure'].'" action="" method="post" class="form-group">';
-                $childTable .= '<input type="hidden" name="_METHOD" value="DELETE">';
-                $childTable .= '<input type="hidden" name="id_heure" value="'.$data['id_heure'].'">';
-                $childTable .= '<button type="submit" class="btn btn-link" title="' . _('form_supprim') . '"><i class="fa fa-times-circle"></i></button></form></td></tr>';
-            }
-        }
-        $childTable .= '</tbody>';
-        $table->addChild($childTable);
-        ob_start();
-        $table->render();
-        $return .= ob_get_clean();
-        return $return;
-    }
-
-    public static function Timestamp2Time($secondes)
-    {
-        $t = (int) $secondes;
-        return sprintf('%02d:%02d', ($t/3600),($t/60%60));
+        return ($_SESSION['config']['interdit_saisie_periode_date_passee']) ? 'd' : '';
     }
 
     /**
@@ -2348,44 +1484,25 @@ class Fonctions
         return $fin - $debut;
     }
 
-    public static function VerifSQLChevauchHeures($jour, $heuredeb, $heurefin, $id, $user)
-    {
-        $date = \App\Helpers\Formatter::dateFr2Iso($jour);
-        $deb = $date." ".$heuredeb;
-        $fin = $date." ".$heurefin;
-        $timedeb = strtotime($deb);
-        $timefin = strtotime($fin);
 
+    // --------------------------------------
+
+    /*
+    * TODO: Où sont passées les heures validées (!= en cours donc) ?
+    */
+
+    public static function getOptionsTypeConges()
+    {
+        $options = [];
         $sql = \includes\SQL::singleton();
-        $req = 'SELECT statut
-                FROM conges_heure_periode
-                WHERE login = "'. $user.'"
-                AND (statut != '.\App\Models\HeureRecuperation::STATUT_REFUS.'
-                OR statut != '.\App\Models\HeureRecuperation::STATUT_ANNUL.')
-                AND (debut <= '.$timefin.' and fin >= '.$timedeb.') ';
-        if(NIL_INT !== $id) {
-            $req .=' AND id_heure !='.$id;
-        }
+        $req = 'SELECT ta_libelle, ta_short_libelle
+                FROM conges_type_absence';
         $res = $sql->query($req);
-        $val = $res->fetch_assoc();
 
-        return is_null($val['statut']) ? NIL_INT : (int)$val['statut'];
-    }
-
-    public static function VerifChevauchHeures($jour, $heuredeb, $heurefin, array &$Errors, $id, $user)
-    {
-        $statut = \utilisateur\Fonctions::VerifSQLChevauchHeures($jour, $heuredeb, $heurefin, $id, $user);
-        $Error = '';
-
-        if (NIL_INT !== $statut) {
-            if (\App\Models\HeureRecuperation::STATUT_DEMANDE === $statut) {
-                $Error = _('calcul_nb_jours_commentaire_impossible');
-            } else {
-                $Error = _('calcul_nb_jours_commentaire');
-            }
-            $Errors[] = $Error;
+        while ($data = $res->fetch_array()) {
+            $options[$data['ta_short_libelle']] = $data['ta_libelle'];
         }
 
-        return empty($Error);
+        return $options;
     }
 }

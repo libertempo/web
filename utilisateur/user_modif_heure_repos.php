@@ -25,6 +25,10 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *************************************************************************************************/
 
-
-defined( '_PHP_CONGES' ) or die( 'Restricted access' );
-echo \utilisateur\Fonctions::historiqueCongesModule($session, $PHP_SELF);
+defined('_PHP_CONGES') or die('Restricted access');
+$id    = (int) getpost_variable('id');
+$repos = new \App\ProtoControllers\Heure\Repos();
+if (0 >= $id || !$repos->canUserEdit($id, $_SESSION['userlogin'])) {
+    redirect(ROOT_PATH . 'deconnexion.php');
+}
+echo $repos->getForm($id);

@@ -25,6 +25,10 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *************************************************************************************************/
 
-
-defined( '_PHP_CONGES' ) or die( 'Restricted access' );
-echo \utilisateur\Fonctions::demandeEnCoursModule($session);
+defined('_PHP_CONGES') or die('Restricted access');
+$id = (int) getpost_variable('id');
+if (0 >= $id) {
+    redirect(ROOT_PATH . 'deconnexion.php');
+}
+$additionnelle = new \App\ProtoControllers\Heure\Additionnelle();
+echo $additionnelle->getForm($id);
