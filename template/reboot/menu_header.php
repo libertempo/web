@@ -126,7 +126,7 @@
                     </div>
 					<?php if (is_admin($_SESSION['userlogin'])): ?>
                     <div class="menu-link <?= $adminActive ?>">
-                        <a title="Administration" href="<?= ROOT_PATH ?>admin/admin_index.php?session=<?= $session ?>" <?php print ($tmp == 'admin' || $tmp == 'config') ? 'active' : '' ;?>>
+                        <a title="<?= _('button_admin_mode');?>" href="<?= ROOT_PATH ?>admin/admin_index.php?session=<?= $session ?>" <?php print ($tmp == 'admin' || $tmp == 'config') ? 'active' : '' ;?>>
                             <i class="fa fa-bolt fa-2x maxi"></i>
                             <i class="fa fa-bolt mini"></i>
 						</a>
@@ -134,7 +134,7 @@
 					<?php endif; ?>
 					<?php if (is_hr($_SESSION['userlogin'])): ?>
                     <div class="menu-link <?= $hrActive ?>">
-                        <a title="RH" href="<?= ROOT_PATH ?>hr/hr_index.php?session=<?= $session ?>" <?php print ($tmp == 'hr') ? 'active' : '' ;?>>
+                        <a title="<?= _('button_hr_mode');?>" href="<?= ROOT_PATH ?>hr/hr_index.php?session=<?= $session ?>" <?php print ($tmp == 'hr') ? 'active' : '' ;?>>
                             <i class="fa fa-sitemap fa-2x maxi"></i>
                             <i class="fa fa-sitemap mini"></i>
 						</a>
