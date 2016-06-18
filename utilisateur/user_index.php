@@ -59,12 +59,7 @@ if( $_SESSION['config']['user_echange_rtt'] ) {
     $onglets['echange_jour_absence'] = _('user_onglet_echange_abs');
 }
 
-if( $_SESSION['config']['user_saisie_demande'] ) {
-    $onglets['demandes_en_cours'] = _('user_onglet_demandes');
-}
-
-$onglets['historique_conges'] = _('user_onglet_historique_conges');
-$onglets['historique_autres_absences'] = _('user_onglet_historique_abs');
+$onglets['liste_conge'] = _('user_liste_conge');
 if( $_SESSION['config']['user_saisie_demande'] || $_SESSION['config']['user_saisie_mission'] ) {
     $onglets['ajout_heure_repos'] = _('divers_ajout_heure_repos');
 }
