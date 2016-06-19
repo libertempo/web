@@ -126,24 +126,6 @@ class Repos extends \App\ProtoControllers\AHeure
     /**
      * {@inheritDoc}
      */
-    protected function dataModel2Db(array $post, $user)
-    {
-        $jour  = \App\Helpers\Formatter::dateFr2Iso($post['jour']);
-        $debut = strtotime($jour . ' ' . $post['debut_heure']);
-        $fin   = strtotime($jour . ' ' . $post['fin_heure']);
-        $planningUser = \utilisateur\Fonctions::getUserPlanning($user);
-        $duree = (is_null($planningUser)) ? 0 : $this->countDuree($debut, $fin, $planningUser);
-
-        return [
-            'debut' => (int) $debut,
-            'fin'   => (int) $fin,
-            'duree' => (int) $duree,
-        ];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     protected function countDuree($debut, $fin, array $planning)
     {
         /*
@@ -432,18 +414,13 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
     /**
      * {@inheritDoc}
      */
-    protected function update(array $put, $user, $id)
+    protected function update(array $data, $user, $id)
     {
-        $jour = \App\Helpers\Formatter::dateFr2Iso($put['jour']);
-        $timestampDebut = strtotime($jour . ' ' . $put['debut_heure']);
-        $timestampFin   = strtotime($jour . ' ' . $put['fin_heure']);
-        $duree = $this->countDuree($timestampDebut, $timestampFin);
-        $sql   = \includes\SQL::singleton();
-        $toInsert = [];
-        $req   = 'UPDATE heure_repos
-                SET debut = ' . $timestampDebut . ',
-                    fin = ' . $timestampFin . ',
-                    duree = ' . $duree . '
+        $sql = \includes\SQL::singleton();
+        $req = 'UPDATE heure_repos
+                SET debut = ' . $data['debut']  . ',
+                    fin = ' . $data['fin'] . ',
+                    duree = ' . $data['duree'] . '
                 WHERE id_heure = '. (int) $id . '
                 AND login = "' . $user . '"';
         $query = $sql->query($req);

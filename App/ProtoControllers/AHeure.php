@@ -147,7 +147,20 @@ abstract class AHeure
      *
      * @return array
      */
-    abstract protected function dataModel2Db(array $post, $user);
+    protected function dataModel2Db(array $post, $user)
+    {
+        $jour  = \App\Helpers\Formatter::dateFr2Iso($post['jour']);
+        $debut = strtotime($jour . ' ' . $post['debut_heure']);
+        $fin   = strtotime($jour . ' ' . $post['fin_heure']);
+        $planningUser = \utilisateur\Fonctions::getUserPlanning($user);
+        $duree = (is_null($planningUser)) ? 0 : $this->countDuree($debut,   $fin, $planningUser);
+
+        return [
+            'debut' => (int) $debut,
+            'fin'   => (int) $fin,
+            'duree' => (int) $duree,
+        ];
+    }
 
     /**
      * Compte la vraie durée entre le début et la fin
@@ -261,13 +274,13 @@ abstract class AHeure
     /**
      * Met à jour une demande d'heures dans la BDD
      *
-     * @param array  $put
+     * @param array  $data
      * @param string $user
      * @param int    $id
      *
      * @return int
      */
-    abstract protected function update(array $put, $user, $id);
+    abstract protected function update(array $data, $user, $id);
 
     /**
      * Supprime une demande d'heures dans la BDD
