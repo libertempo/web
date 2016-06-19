@@ -1295,7 +1295,7 @@ class Fonctions
             $queryCreneau = $sql->query($reqCreneau);
 
             while ($data = $queryCreneau->fetch_array()) {
-                $dataPlanning[$data['type_semaine']][$data['jour_id']][$data['type_periode']] = [
+                $dataPlanning[$data['type_semaine']][$data['jour_id']][$data['type_periode']][] = [
                     \App\Models\Planning\Creneau::TYPE_HEURE_DEBUT => $data['debut'],
                     \App\Models\Planning\Creneau::TYPE_HEURE_FIN   => $data['fin'],
                 ];

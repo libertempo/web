@@ -149,7 +149,7 @@ class Additionnelle extends \App\ProtoControllers\AHeure
      */
     protected function put(array $put, array &$errorsLst, $user)
     {
-        if (!$this->hasErreurs($put, $errorsLst, $put['id_heure'])) {
+        if (!$this->hasErreurs($put, $user, $errorsLst, $put['id_heure'])) {
             $id = $this->update($put, $user, $put['id_heure']);
             log_action($put['id_heure'], 'modif', '', 'Modification demande d\'heure additionnelle ' . $put['id_heure']);
 

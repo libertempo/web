@@ -1,29 +1,4 @@
 <?php
-/*************************************************************************************************
-Libertempo : Gestion Interactive des Congés
-Copyright (C) 2015 (Wouldsmina)
-Copyright (C) 2015 (Prytoegrian)
-Copyright (C) 2005 (cedric chauvineau)
-
-Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
-termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
-Ce programme est distribué car potentiellement utile, mais SANS AUCUNE GARANTIE,
-ni explicite ni implicite, y compris les garanties de commercialisation ou d'adaptation
-dans un but spécifique. Reportez-vous à la Licence Publique Générale GNU pour plus de détails.
-Vous devez avoir reçu une copie de la Licence Publique Générale GNU en même temps
-que ce programme ; si ce n'est pas le cas, écrivez à la Free Software Foundation,
-Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, États-Unis.
-*************************************************************************************************
-This program is free software; you can redistribute it and/or modify it under the terms
-of the GNU General Public License as published by the Free Software Foundation; either
-version 2 of the License, or any later version.
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the GNU General Public License for more details.
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*************************************************************************************************/
 namespace App\ProtoControllers\Heure;
 
 use \App\Models\AHeure;
@@ -136,14 +111,108 @@ class Repos extends \App\ProtoControllers\AHeure
      */
     protected function put(array $put, array &$errorsLst, $user)
     {
-        if (!$this->hasErreurs($put, $errorsLst, $put['id_heure'])) {
-            $id = $this->update($put, $user, $put['id_heure']);
-            log_action($put['id_heure'], 'modif', '', 'Modification demande d\'heure de repos ' . $put['id_heure']);
+        $idHeure = $put['id_heure'];
+        if (!$this->hasErreurs($put, $user, $errorsLst, $idHeure)) {
+            $data = $this->dataModel2Db($put, $user);
+            $id   = $this->update($data, $user, $idHeure);
+            log_action($idHeure, 'modif', '', 'Modification demande d\'heure de repos ' . $idHeure);
 
             return $id;
         }
 
         return NIL_INT;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function dataModel2Db(array $post, $user)
+    {
+        $jour  = \App\Helpers\Formatter::dateFr2Iso($post['jour']);
+        $debut = strtotime($jour . ' ' . $post['debut_heure']);
+        $fin   = strtotime($jour . ' ' . $post['fin_heure']);
+        $planningUser = \utilisateur\Fonctions::getUserPlanning($user);
+        $duree = (is_null($planningUser)) ? 0 : $this->countDuree($debut, $fin, $planningUser);
+
+        return [
+            'debut' => (int) $debut,
+            'fin'   => (int) $fin,
+            'duree' => (int) $duree,
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function countDuree($debut, $fin, array $planning)
+    {
+        /*
+         * Comme pour le moment on ne peut prendre une heure de repos que sur un jour,
+         * on prend arbitrairement le début...
+         */
+        $numeroSemaine = date('W', $debut);
+        $realWeekType  = \utilisateur\Fonctions::getRealWeekType($planning, $numeroSemaine);
+        /* Si la semaine n'est pas travaillée */
+        if (NIL_INT === $realWeekType) {
+            return 0;
+        } else {
+            /*
+             * ... Pareil pour le jour
+             */
+            $planningWeek = $planning[$realWeekType];
+            $jourId = date('N', $debut);
+            /* Si le jour n'est pas travaillé */
+            if (!\utilisateur\Fonctions::isWorkingDay($planningWeek, $jourId)) {
+                return 0;
+            } else {
+                return $this->countDureeJour($planningWeek[$jourId], $debut, $fin);
+            }
+        }
+    }
+
+    /**
+     * Compte la durée réelle de travail à décompter en fonction du planning
+     *
+     * @param array $planningJour Planning de la journée
+     * @param int $debut          Timestamp du début de la demande
+     * @param int $fin            Timestamp de la fin de la demande
+     *
+     * @return int
+     */
+    private function countDureeJour(array $planningJour, $debut, $fin)
+    {
+        $horodateDebut = \App\Helpers\Formatter::hour2Time(date('H\:i', $debut));
+        $horodateFin   = \App\Helpers\Formatter::hour2Time(date('H\:i', $fin));
+        $reelleDuree   = 0;
+        /* Double foreach pour lisser les créneaux matin / après midi sur le même plan */
+        foreach ($planningJour as $creneaux) {
+            foreach ($creneaux as $creneau) {
+                $creneauDebut = (int) $creneau[\App\Models\Planning\Creneau::TYPE_HEURE_DEBUT];
+                $creneauFin   = (int) $creneau[\App\Models\Planning\Creneau::TYPE_HEURE_FIN];
+
+                if ($horodateDebut <= $creneauDebut) {
+                    if ($horodateFin <= $creneauDebut) {
+                        // On ne cumule rien
+                        break;
+                    } elseif ($horodateFin > $creneauDebut && $horodateFin <= $creneauFin) {
+                        $reelleDuree += $fin - $creneauDebut;
+                    } else {
+                        /* $horodateFin > $creneauFin */
+                        $reelleDuree += $creneauFin - $creneauDebut;
+                    }
+                } elseif ($horodateDebut > $creneauDebut && $horodateDebut < $creneauFin) {
+                    /* $horodateDebut > $creneauDebut */
+                    if ($horodateFin > $creneauDebut && $horodateFin <= $creneauFin) {
+                        $reelleDuree += $creneauFin - $horodateDebut;
+                    } else {
+                        /* $horodateFin > $creneauFin */
+                        $reelleDuree += $creneauFin - $horodateDebut;
+                    }
+                }
+            }
+        }
+
+        return $reelleDuree;
     }
 
     /**
@@ -350,18 +419,11 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
     /**
      * {@inheritDoc}
      */
-    protected function insert(array $post, $user)
+    protected function insert(array $data, $user)
     {
-        $jour = \App\Helpers\Formatter::dateFr2Iso($post['jour']);
-        $timestampDebut = strtotime($jour . ' ' . $post['debut_heure']);
-        $timestampFin   = strtotime($jour . ' ' . $post['fin_heure']);
-        /* TODO: Toute la partie du check d'erreur et du comptage réel des heures devrait être dans le modèle.
-        C'est lui qui devrait remplir le DAO à partir de ses attributs pour l'insertion
-        */
-        $duree = $this->countDuree($timestampDebut, $timestampFin);
         $sql = \includes\SQL::singleton();
         $req = 'INSERT INTO heure_repos (id_heure, login, debut, fin, duree, statut) VALUES
-        (NULL, "' . $user . '", ' . (int) $timestampDebut . ', '. (int) $timestampFin .', '. (int) $duree . ', ' . AHeure::STATUT_DEMANDE . ')';
+        (NULL, "' . $user . '", ' . (int) $data['debut'] . ', '. (int) $data['fin'] .', '. (int) $data['duree'] . ', ' . AHeure::STATUT_DEMANDE . ')';
         $query = $sql->query($req);
 
         return $sql->insert_id;
@@ -402,14 +464,6 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
         $sql->query($req);
 
         return 0 < $sql->affected_rows ? $id : NIL_INT;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function countDuree($debut, $fin)
-    {
-        return $fin - $debut;
     }
 
     /**
