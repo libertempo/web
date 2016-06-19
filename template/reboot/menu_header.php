@@ -154,7 +154,7 @@
                             <i class="fa fa-user mini"></i>
                         </a>
                     </div>
-                    <?php if('libertempo' === $tmp || ( ($_SESSION['config']['user_affiche_calendrier'] && $tmp=='utilisateur') || ($_SESSION['config']['resp_affiche_calendrier'] && $tmp=='responsable') || in_array($tmp, ['hr', 'admin']))): ?>
+                    <?php if('libertempo' === $tmp || ( ($_SESSION['config']['user_affiche_calendrier'] && $tmp=='utilisateur') || ($_SESSION['config']['resp_affiche_calendrier'] && $tmp=='responsable') || in_array($tmp, ['hr', 'admin', 'config']))): ?>
                     <div class="separator"></div>
                     <div class="menu-link <?= $calendarActive ?>">
                         <a title="<?= _('button_calendar') ?>" href="<?= ROOT_PATH ?>calendrier.php?session=<?= $session ?>">
