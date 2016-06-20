@@ -607,12 +607,9 @@ function alerte_mail($login_expediteur, $destinataire, $num_periode, $objet)
 // construit et envoie le mail
 function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $mail_dest_name, $mail_dest_addr, $num_periode)
 {
-
-    require_once( LIBRARY_PATH .'phpmailer/PHPMailerAutoload.php' );  // ajout de la classe phpmailer
-
     /*********************************************/
     // init du mail
-    $mail = new PHPMailer();
+    $mail = new \PHPMailer();
 
     if (file_exists(CONFIG_PATH .'config_SMTP.php')) {
         include CONFIG_PATH .'config_SMTP.php';
@@ -645,7 +642,7 @@ function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $m
     }
 
     // initialisation du langage utilisé par php_mailer
-    $mail->SetLanguage( 'fr', LIBRARY_PATH .'phpmailer/language/');
+    $mail->SetLanguage( 'fr', ROOT_PATH . 'vendor/phpmailer/phpmailer/language/');
     $mail->FromName    = $mail_sender_name;
     $mail->From        = $mail_sender_addr;
     $mail->AddAddress($mail_dest_addr);
@@ -657,7 +654,7 @@ function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $m
         // affiche : "23 / 01 / 2008 (am)"
         $sql_date_deb = "01 / 01 / 2001 (am)";
         // affiche : "23 / 01 / 2008 (am)"
-        $sql_date_deb = "02 / 01 / 2001 (am)";
+        $sql_date_fin = "02 / 01 / 2001 (am)";
         $sql_nb_jours = 2;
         $sql_commentaire = "Test comment";
         $sql_type_absence = "cp";

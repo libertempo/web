@@ -142,11 +142,10 @@ $content .= "<body id=\"top\" class=\"hbox connected\">\n";
 	$content .= "</body>\n";
 	$content .= '   </page> ';
 	$content=htmlspecialchars_decode(htmlentities($content, ENT_NOQUOTES, "UTF-8"));
-	require_once(LIBRARY_PATH.'/html2pdf/html2pdf.class.php');
-    $html2pdf = new HTML2PDF('L','A4','fr', false, 'ISO-8859-15');
+    $html2pdf = new \HTML2PDF('L','A4','fr', false, 'ISO-8859-15');
     $html2pdf->WriteHTML($content);
 	ob_clean();
-    $html2pdf->Output('exemple.pdf');
+    $html2pdf->Output('calendrier.pdf');
 
 /*******************************************************************************/
 /**********  FONCTIONS  ********************************************************/

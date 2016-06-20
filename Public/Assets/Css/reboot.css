@@ -83,30 +83,17 @@ a {
 #toolbar .toolbar-toggle {
     display: none
 }
-@media screen and (min-width: 768px) {
+@media screen {
     #toolbar {
-        min-width: 200px;
+        position: relative;
+        width: 100px;
         min-height: 100%;
         display: table-cell;
         vertical-align: top
     }
 }
 @media screen and (max-width: 767px) {
-    #toolbar .toolbar-toggle {
-        display: block;
-        position: absolute;
-        font-size: 24px;
-        color: #FFF;
-        right: 20px;
-        top: 20px;
-        opacity: 0.8
-    }
-    #toolbar .toolbar-toggle:hover {
-        opacity: 1
-    }
-    #toolbar .tools {
-        display: none
-    }
+    #toolbar .toolbar-toggle {}#toolbar .toolbar-toggle:hover {}#toolbar .tools {}
 }
 #toolbar .brand {
     font-size: 17px;
@@ -157,10 +144,10 @@ a {
 }
 @media screen and (min-width: 768px) {
     #content {
-        margin-right: 200px;
-        width: 100%;
-        height: 100%;
-        display: table-cell
+        margin-right:200px;
+        width:100%;
+        height:100%;
+        display:table-cell
     }
 }
 #scrollable .wrapper {
@@ -193,6 +180,12 @@ a {
     margin-left: 40px
 }
 
+.menu-link a {
+    display: block;
+    text-align: center;
+    padding: 17px;
+    color: #FFF
+}
 
 .mod-info .nav>li>a {
     padding: 0 20px;
@@ -227,11 +220,10 @@ a {
     color: #717171
 }
 @media screen and (max-width: 767px) {
-    #mod-toolbar li a {
-        padding: 0 13px
-    }
+    #mod-toolbar li a {}
 }
-#mod-toolbar li a:hover, #mod-toolbar li a.active {
+#mod-toolbar li a:hover,
+#mod-toolbar li a.active {
     color: #FFF;
     background-color: #00aad4;
     text-decoration: none
@@ -376,10 +368,13 @@ a {
     color: #00aad4;
     font-weight: bold
 }
-form .table tbody>tr>td, form .table-condensed tbody>tr>td {
+
+form .table tbody>tr>td,
+form .table-condensed tbody>tr>td {
     vertical-align: middle
 }
-form .table tbody>tr.update-line td, form .table-condensed tbody>tr.update-line td {
+form .table tbody>tr.update-line td,
+form .table-condensed tbody>tr.update-line td {
     min-width: 70px
 }
 form .inline-date {
@@ -590,6 +585,14 @@ h3.current-month {
     font-size: 24px;
     font-size: 2.4rem
 }
+
+.alert {
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    -ms-border-radius: 0;
+    -o-border-radius: 0;
+    border-radius: 0
+}
 .configure select, .configure .form-control {
     display: inline-block;
     width: 50%;
@@ -650,6 +653,7 @@ h3.current-month {
     position: relative;
     top: 4px
 }
+
 .menu-link a {
     border-top:solid 1px #0098bd;
     display:block;
@@ -666,10 +670,15 @@ h3.current-month {
     margin-right:5px
 }
 
+.alert-info {
+    background-color: #f6f8fb;
+    border-color: #eceff6
+}
 #main-calendar table td {
     border: 1px solid #000;
     min-width: 2em;
 }
+
 /* style pour les cellules du calendriers */
 td.cal-day_weekend {
     background-color: #DCDCDC;
@@ -896,6 +905,42 @@ td.cal-day_semaine_fermeture_am_autre_pm{
     background: -o-linear-gradient(45deg,#CEB6FF 50%,#CEB6FF 0%);
     background: -moz-linear-gradient(45deg,#CEB6FF 50%,#CEB6FF 0%);
     background: linear-gradient(45deg,#CEB6FF 50%,#CEB6FF 0%);
+}
+
+.separator {
+    height : 20px;
+}
+
+.menu-link:hover i {
+    color: #076791;
+}
+
+.menu-link.active i {
+    color: #05415C;
+}
+
+@media screen and (min-width: 768px){
+    .menu-link i.mini {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .menu-link i.maxi {
+        display: none;
+    }
+    .menu-link a {
+        padding: 10px 0;
+    }
+    #toolbar {
+        width: 50px;
+    }
+    #toolbar .brand a {
+        padding: 0 10px;
+    }
+    .profil-info {
+        padding : 5px;
+    }
 }
 
 /*fonts*/
