@@ -2,10 +2,13 @@
     defined( '_PHP_CONGES' ) or die( 'Restricted access' );
     include TEMPLATE_PATH . 'template_define.php';
     $printable = getpost_variable('printable');
-    if (is_resp($_SESSION['userlogin'])) {
+    if (is_admin($_SESSION['userlogin'])) {
+        $home = 'admin/admin_index.php?session='.$session;
+    } elseif (is_hr($_SESSION['userlogin'])) {
+        $home = 'hr/hr_index.php?session='.$session;
+    } elseif (is_resp($_SESSION['userlogin'])) {
         $home = 'responsable/resp_index.php?session='.$session;
-    }
-    else {
+    } else {
         $home = 'utilisateur/user_index.php?session='.$session;
     }
     //user mode
@@ -13,22 +16,28 @@
     $tmp = dirname($_SERVER['PHP_SELF']);
     $tmp = explode('/',$tmp);
     $tmp = array_pop($tmp);
+    $adminActive = $userActive = $respActive = $hrActive = $calendarActive = '';
     switch ($tmp) {
         case "utilisateur":
             $user_mode = _('user');
+            $userActive = 'active';
             break;
         case "admin":
         case "config":
             $user_mode = _('button_admin_mode');
+            $adminActive = 'active';
             break;
         case "responsable":
             $user_mode = _('button_responsable_mode');
+            $respActive = 'active';
             break;
         case "hr":
-            $user_mode = _('button_hr_mode');
+            $hrActive = _('button_hr_mode');
+            $hrActive = 'active';
             break;
         default :
-            $user_mode = _('button_calendar');
+            $calendarActive = _('button_calendar');
+            $calendarActive = 'active';
     }
     $onglet = getpost_variable('onglet');
     // toolbar contextuelle au mode
@@ -64,7 +73,7 @@
         <link rel="apple-touch-icon" href="<?= IMG_PATH ?>Favicons/apple-touch-icon.png">
         <link rel="apple-touch-icon" sizes="57x57" href="<?= IMG_PATH ?>Favicons/apple-touch-icon-57x57.png">
         <link rel="apple-touch-icon" sizes="60x60" href="<?= IMG_PATH ?>Favicons/apple-touch-icon-60x60.png">
-        <link rel="apple-touch-icon" sizes="72x72" href="<?= IMG_PATH ?>Favicons/apple-touch-icon-72x72.png">    
+        <link rel="apple-touch-icon" sizes="72x72" href="<?= IMG_PATH ?>Favicons/apple-touch-icon-72x72.png">
         <link rel="apple-touch-icon" sizes="76x76" href="<?= IMG_PATH ?>Favicons/apple-touch-icon-76x76.png">
         <link rel="apple-touch-icon" sizes="114x114" href="<?= IMG_PATH ?>Favicons/apple-touch-icon-114x114.png">
         <link rel="apple-touch-icon" sizes="120x120" href="<?= IMG_PATH ?>Favicons/apple-touch-icon-120x120.png">
@@ -118,48 +127,50 @@
                         </div>
                     </div>
 					<?php if (is_admin($_SESSION['userlogin'])): ?>
-                    <div class="menu-link">
-                        <a title="Administration" href="<?= ROOT_PATH ?>admin/admin_index.php?session=<?= $session ?>" <?php print ($tmp == 'admin' || $tmp == 'config') ? 'active' : '' ;?>>
-                            <i class="fa fa-bolt"></i>
-							Administration
+                    <div class="menu-link <?= $adminActive ?>">
+                        <a title="<?= _('button_admin_mode');?>" href="<?= ROOT_PATH ?>admin/admin_index.php?session=<?= $session ?>" <?php print ($tmp == 'admin' || $tmp == 'config') ? 'active' : '' ;?>>
+                            <i class="fa fa-bolt fa-2x maxi"></i>
+                            <i class="fa fa-bolt mini"></i>
 						</a>
                     </div>
 					<?php endif; ?>
 					<?php if (is_hr($_SESSION['userlogin'])): ?>
-                    <div class="menu-link">
-                        <a title="RH" href="<?= ROOT_PATH ?>hr/hr_index.php?session=<?= $session ?>" <?php print ($tmp == 'hr') ? 'active' : '' ;?>>
-                            <i class="fa fa-sitemap"></i>
-							RH
+                    <div class="menu-link <?= $hrActive ?>">
+                        <a title="<?= _('button_hr_mode');?>" href="<?= ROOT_PATH ?>hr/hr_index.php?session=<?= $session ?>" <?php print ($tmp == 'hr') ? 'active' : '' ;?>>
+                            <i class="fa fa-sitemap fa-2x maxi"></i>
+                            <i class="fa fa-sitemap mini"></i>
 						</a>
                     </div>
 					<?php endif; ?>
 					<?php if (is_resp($_SESSION['userlogin'])): ?>
-                    <div class="menu-link">
+                    <div class="menu-link <?= $respActive ?>">
                         <a title="<?= _('button_responsable_mode');?>" href="<?= ROOT_PATH ?>responsable/resp_index.php?session=<?= $session ?>" <?php print ($tmp == 'utilisateur') ? 'active' : '' ;?>>
-                            <i class="fa fa-users"></i>
-							<?= _('button_responsable_mode');?>
+                            <i class="fa fa-users fa-2x maxi"></i>
+                            <i class="fa fa-users mini"></i>
 						</a>
                     </div>
 					<?php endif; ?>
-                    <div class="menu-link">
+                    <div class="menu-link <?= $userActive ?>">
                         <a title="<?= _('user') ?>" href="<?= ROOT_PATH ?>utilisateur/user_index.php?session=<?= $session ?>" <?php print ($tmp == 'utilisateur') ? 'active' : '' ;?>>
-                            <i class="fa fa-user"></i>
-							<?= _('user') ?>
+                            <i class="fa fa-user fa-2x maxi"></i>
+                            <i class="fa fa-user mini"></i>
                         </a>
                     </div>
-                    <?php if( ($_SESSION['config']['user_affiche_calendrier'] && $tmp=='utilisateur') || ($_SESSION['config']['resp_affiche_calendrier'] && $tmp=='responsable') || $tmp=='hr' ): ?>
-                    <div class="menu-link">
+                    <?php if('active' === $calendarActive || ( ($_SESSION['config']['user_affiche_calendrier'] && $tmp=='utilisateur') || ($_SESSION['config']['resp_affiche_calendrier'] && $tmp=='responsable') || in_array($tmp, ['hr', 'admin', 'config']))): ?>
+                    <div class="separator"></div>
+                    <div class="menu-link <?= $calendarActive ?>">
                         <a title="<?= _('button_calendar') ?>" href="<?= ROOT_PATH ?>calendrier.php?session=<?= $session ?>">
-                            <i class="fa fa-calendar"></i>
-                            <?= _('button_calendar') ?>
-                        </a>
+                            <i class="fa fa-calendar fa-2x maxi"></i>
+                            <i class="fa fa-calendar mini"></i>
+                            </a>
                     </div>
                     <?php endif; ?>
                    <?php if($_SESSION['config']['auth']): ?>
+                    <div class="separator"></div>
                     <div class="menu-link">
                         <a title="<?= _('button_deconnect') ?>" href="<?= ROOT_PATH ?>deconnexion.php?session=<?= $session ?>">
-                            <i class="fa fa-power-off"></i>
-                            <?= _('button_deconnect') ?>
+                            <i class="fa fa-power-off fa-2x maxi"></i>
+                            <i class="fa fa-power-off mini"></i>
                         </a>
                     </div>
                     <?php endif; ?>

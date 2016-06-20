@@ -115,7 +115,7 @@ function header_login($title = '' , $additional_head = '' ) {
     }else
         throw new Exception('Warning : Ne peux ouvrir deux header !!! previous = '.$last_use['file']);
 
-    $type_bottom = 'error';
+    $type_bottom = 'login';
 
     if (empty($title))
         $title = 'Libertempo';
@@ -373,10 +373,6 @@ function authentification_ldap_conges($username,$password)
 // - renvoie ""        si authentification FAIL
 function authentification_passwd_conges_CAS()
 {
-    // import de la librairie CAS
-    include( LIBRARY_PATH .'CAS/CAS.php');
-    // import des paramètres du serveur CAS
-
     $config_CAS_host       =$_SESSION['config']['CAS_host'];
     $config_CAS_portNumber =$_SESSION['config']['CAS_portNumber'];
     $config_CAS_URI        =$_SESSION['config']['CAS_URI'];
@@ -385,32 +381,33 @@ function authentification_passwd_conges_CAS()
     global $connexionCAS;
     global $logoutCas;
 
-    phpCAS::setDebug();
+
+    \phpCAS::setDebug();
 
     // initialisation phpCAS
     if($connexionCAS!="active")
     {
-        $CASCnx = phpCAS::client(CAS_VERSION_2_0,$config_CAS_host,$config_CAS_portNumber,$config_CAS_URI);
+        $CASCnx = \phpCAS::client(CAS_VERSION_2_0,$config_CAS_host,$config_CAS_portNumber,$config_CAS_URI);
         $connexionCAS = "active";
 
     }
 
     if($logoutCas==1)
     {
-        phpCAS::logout();
+        \phpCAS::logout();
     }
 
 
     // Vérification SSL
     if(!empty($config_CAS_CACERT))
-        phpCAS::setCasServerCACert ($config_CAS_CACERT);
+        \phpCAS::setCasServerCACert ($config_CAS_CACERT);
     else
-        phpCAS::setNoCasServerValidation();
+        \phpCAS::setNoCasServerValidation();
 
     // authentificationCAS (redirection vers la page d'authentification de CAS)
-    phpCAS::forceAuthentication();
+    \phpCAS::forceAuthentication();
 
-    $usernameCAS = phpCAS::getUser();
+    $usernameCAS = \phpCAS::getUser();
 
     //On nettoie la session créée par phpCAS
     session_destroy();
@@ -431,8 +428,6 @@ function authentification_passwd_conges_CAS()
 
 function deconnexion_CAS($url="")
 {
-    // import de la librairie CAS
-    include( LIBRARY_PATH .'CAS/CAS.php');
     // import des parametres du serveur CAS
 
     $config_CAS_host       =$_SESSION['config']['CAS_host'];
@@ -444,12 +439,12 @@ function deconnexion_CAS($url="")
     // initialisation phpCAS
     if($connexionCAS!="active")
     {
-        $CASCnx = phpCAS::client(CAS_VERSION_2_0,$config_CAS_host,$config_CAS_portNumber,$config_CAS_URI);
+        $CASCnx = \phpCAS::client(CAS_VERSION_2_0,$config_CAS_host,$config_CAS_portNumber,$config_CAS_URI);
         $connexionCAS = "active";
 
     }
 
-    phpCAS::logoutWithUrl($url);
+    \phpCAS::logoutWithUrl($url);
 }
 
 
