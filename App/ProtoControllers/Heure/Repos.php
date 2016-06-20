@@ -154,6 +154,8 @@ class Repos extends \App\ProtoControllers\AHeure
 
     /**
      * Compte la durée réelle de travail à décompter en fonction du planning
+     * (Prenez un papier et un crayon pour review / tester ça...)
+     *
      *
      * @param array $planningJour Planning de la journée
      * @param int $debut          Timestamp du début de la demande
