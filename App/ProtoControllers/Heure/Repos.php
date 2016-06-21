@@ -156,7 +156,6 @@ class Repos extends \App\ProtoControllers\AHeure
      * Compte la durée réelle de travail à décompter en fonction du planning
      * (Prenez un papier et un crayon pour review / tester ça...)
      *
-     *
      * @param array $planningJour Planning de la journée
      * @param int $debut          Timestamp du début de la demande
      * @param int $fin            Timestamp de la fin de la demande
@@ -168,6 +167,7 @@ class Repos extends \App\ProtoControllers\AHeure
         $horodateDebut = \App\Helpers\Formatter::hour2Time(date('H\:i', $debut));
         $horodateFin   = \App\Helpers\Formatter::hour2Time(date('H\:i', $fin));
         $reelleDuree   = 0;
+
         /* Double foreach pour lisser les créneaux matin / après midi sur le même plan */
         foreach ($planningJour as $creneaux) {
             foreach ($creneaux as $creneau) {

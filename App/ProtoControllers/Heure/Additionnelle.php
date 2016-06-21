@@ -193,6 +193,7 @@ class Additionnelle extends \App\ProtoControllers\AHeure
 
     /**
      * Compte la durée réelle de travail à ajouter en fonction du planning
+     * (Prenez un papier et un crayon pour review / tester ça...)
      *
      * @param array $planningJour Planning de la journée
      * @param int   $debut        Timestamp du début de la demande
@@ -204,80 +205,40 @@ class Additionnelle extends \App\ProtoControllers\AHeure
     {
         $horodateDebut = \App\Helpers\Formatter::hour2Time(date('H\:i', $debut));
         $horodateFin   = \App\Helpers\Formatter::hour2Time(date('H\:i', $fin));
-        $reelleDuree   = 0;
-        ddd($horodateDebut, $horodateFin);
+        $reelleDuree   = $horodateFin - $horodateDebut;
+        $aSoustraire   = 0;
 
-        return $fin - $debut;
         /* Double foreach pour lisser les créneaux matin / après midi sur le même plan */
         foreach ($planningJour as $creneaux) {
             foreach ($creneaux as $creneau) {
                 $creneauDebut = (int) $creneau[\App\Models\Planning\Creneau::TYPE_HEURE_DEBUT];
                 $creneauFin   = (int) $creneau[\App\Models\Planning\Creneau::TYPE_HEURE_FIN];
 
-                /* /!\ il faut empêcher de sommer les différences sur les creneaux vu qu'on prend tout autour
-                *
-                *
-                */
-
                 if ($horodateDebut < $creneauDebut) {
-                    # code...
-                    if (condition) {
-                        # code...
-                    } elseif (condition) {
-                        # code...
-                    } elseif (condition) {
-                        # code...
+                    if ($horodateFin < $creneauDebut) {
+                        // Rien à soustraire
+                        break 2;
+                    } elseif ($horodateFin >= $creneauDebut && $horodateFin <= $creneauFin) {
+                        $aSoustraire += $horodateFin - $creneauDebut;
+                    } else {
+                        /* $horodateFin > $creneauFin */
+                        $aSoustraire += $creneauFin - $creneauDebut;
                     }
                 } elseif ($horodateDebut >= $creneauDebut && $horodateDebut < $creneauFin) {
-                    if (condition) {
-                        # code...
-                    } elseif (condition) {
-                        # code...
+                    if ($horodateFin >= $creneauDebut && $horodateFin <= $creneauFin) {
+                        return 0;
+                    } else {
+                        /* $horodateFin > $creneauFin */
+                        $aSoustraire += $creneauFin - $horodateDebut;
                     }
-                    # code...
                 } else {
                     /* $horodateDebut >= $creneauFin */
-                    return $horodateFin - $horodateDebut;
+                    // Rien à soustraire
                 }
-                /*
-                * $horodateDebut < $creneauDebut :
-                *   $horodateFin < $creneauDebut : $horodateFin - $horodateDebut
-                *   $horodateFin >= $creneauDebut && $horodateFin <= $creneauFin : $creneauDebut - $horodateDebut
-                *   $horodateFin > $creneauFin : ($creneauDebut - $horodateDebut) + ($horodateFin - $creneauFin)
-                * $horodateDebut >= $creneauDebut && $horodateDebut < $creneauFin:
-                *   $horodateFin >= $creneauDebut && $horodateFin <= $creneauFin : 0
-                *   $horodateFin > $creneauFin : $horodateFin - $creneauFin
-                * $horodateDebut >= $creneauFin : $horodateFin - $horodateDebut
-                *
-                *
-                *
-                */
-
-                /*
-                if ($horodateDebut <= $creneauDebut) {
-                    if ($horodateFin <= $creneauDebut) {
-                        // On ne cumule rien
-                        break;
-                    } elseif ($horodateFin > $creneauDebut && $horodateFin <= $creneauFin) {
-                        $reelleDuree += $fin - $creneauDebut;
-                    } else {
-                        /* $horodateFin > $creneauFin *
-                        $reelleDuree += $creneauFin - $creneauDebut;
-                    }
-                } elseif ($horodateDebut > $creneauDebut && $horodateDebut < $creneauFin) {
-                    /* $horodateDebut > $creneauDebut *
-                    if ($horodateFin > $creneauDebut && $horodateFin <= $creneauFin) {
-                        $reelleDuree += $creneauFin - $horodateDebut;
-                    } else {
-                        /* $horodateFin > $creneauFin *
-                        $reelleDuree += $creneauFin - $horodateDebut;
-                    }
-                }
-                */
             }
         }
 
-        return $reelleDuree;
+        return $reelleDuree - $aSoustraire;
     }
 
     /**
