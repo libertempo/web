@@ -2236,7 +2236,7 @@ class Fonctions
             } else {
                 $sql .='"'.\includes\SQL::quote($tab_new_user['resp_login']).'",';
             }
-            $sql .= 'u_is_admin="'. \includes\SQL::quote($tab_new_user['is_admin']).'",u_is_hr="'.\includes\SQL::quote($tab_new_user['is_hr']).'",u_is_active="'.\includes\SQL::quote($tab_new_user['is_active']).'",u_see_all="'.\includes\SQL::quote($tab_new_user['see_all']).'",u_login="'.\includes\SQL::quote($tab_new_user['login']).'",u_quotite="'.\includes\SQL::quote($tab_new_user['quotite']).'",u_email="'. \includes\SQL::quote($tab_new_user['email']).'" WHERE u_login="'.\includes\SQL::quote($u_login_to_update).'"' ;
+            $sql .= 'u_is_admin="'. \includes\SQL::quote($tab_new_user['is_admin']).'",u_is_hr="'.\includes\SQL::quote($tab_new_user['is_hr']).'",u_is_active="'.\includes\SQL::quote($tab_new_user['is_active']).'",u_see_all="'.\includes\SQL::quote($tab_new_user['see_all']).'",u_login="'.\includes\SQL::quote($tab_new_user['login']).'",u_quotite="'.\includes\SQL::quote($tab_new_user['quotite']).'",u_email="'. \includes\SQL::quote($tab_new_user['email']).'", planning_id = ' . (int) $tab_new_user['planning_utilisateur'] . ' WHERE u_login="'.\includes\SQL::quote($u_login_to_update).'"' ;
 
             \includes\SQL::query($sql);
 
@@ -2309,7 +2309,7 @@ class Fonctions
         } else { // en cas d'erreur de saisie
             $return .= _('form_modif_not_ok') . ' !<br><br>';
         }
-        return $return;
+            return $return;
     }
 
     public static function modifier_user($u_login, $onglet)

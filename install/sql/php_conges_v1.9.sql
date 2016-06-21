@@ -275,7 +275,7 @@ CREATE TABLE IF NOT EXISTS `conges_users` (
   `u_quotite` int(3) DEFAULT '100',
   `u_email` varchar(100) DEFAULT NULL,
   `u_num_exercice` int(2) NOT NULL DEFAULT '0',
-  `planning_id` int(11) unsigned NOT NULL,
+  `planning_id` int(11) UNSIGNED NOT NULL,
   PRIMARY KEY (`u_login`),
   KEY `planning_id` (`planning_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -347,7 +347,7 @@ INSERT IGNORE INTO `conges_appli` VALUES ('fermeture_bgcolor', '#7B9DE6');
 # Contenu de la table `conges_users`
 #
 
-INSERT IGNORE INTO `conges_users` VALUES ('admin', 'Libertempo', 'admin', 'N', 'admin', 'Y', 'N','Y','N', '636d61cf9094a62a81836f3737d9c0da', 100, NULL, 0);
+INSERT IGNORE INTO `conges_users` VALUES ('admin', 'Libertempo', 'admin', 'N', 'admin', 'Y', 'N','Y','N', '636d61cf9094a62a81836f3737d9c0da', 100, NULL, 0, 0);
 
 #
 # Contenu de la table `conges_config`
