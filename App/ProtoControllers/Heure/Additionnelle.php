@@ -336,7 +336,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
                 : '';
             $form .= '<option value="' . $key . '" ' . $selected . '>' . $value . '</option>';
         }
-        $form .= '</select></div></div><div class="form-group"><div class="input-group"><button type="submit" class="btn btn-default">Filtrer</button>&nbsp;<a href="' . ROOT_PATH . 'utilisateur/user_index.php?session='. session_id() . '&onglet=liste_heure_repos" type="reset" class="btn btn-default">Reset</a></div></div></form>';
+        $form .= '</select></div></div><div class="form-group"><div class="input-group"><button type="submit" class="btn btn-default"><i class="fa fa-search" aria-hidden="true"></i></button>&nbsp;<a href="' . ROOT_PATH . 'utilisateur/user_index.php?session='. session_id() . '&onglet=liste_heure_repos" type="reset" class="btn btn-default">Reset</a></div></div></form>';
 
         return $form;
     }
