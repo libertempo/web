@@ -154,13 +154,13 @@ INSERT INTO `conges_users` VALUES('paolo', 'durand', 'paolo', 'Y', 'pierre', 'Y'
 INSERT INTO `conges_users` VALUES('pierre', 'point', 'pierre', 'Y', 'conges', 'N', 'Y', 'Y', 'Y', '84675f2baf7140037b8f5afe54eef841', 100, '', 0, 7);
 
 --
--- Contenu de la table `conges_planning`
+-- Contenu de la table `planning`
 --
-INSERT INTO conges_planning (planning_id, name, status)
+INSERT INTO planning (planning_id, name, status)
   VALUES (7, "planning_type", 1), (8, "planning_sans_creneau", 1);
 
 --
--- Contenu de la table `conges_planning_creneau`
+-- Contenu de la table `planning_creneau`
 --
 
-INSERT INTO conges_planning_creneau (creneau_id, planning_id, jour_id, type_semaine, type_periode, debut, fin) VALUES ("", 7, 1, 1, 1, "28800", "45000"), ("", 7, 1, 1, 2, "50400", "59400"), ("", 7, 1, 1, 2, "64800", "72000"), ("", 7, 2, 1, 1, "28800", "45000"), ("", 7, 2, 1, 2, "50400", "59400"), ("", 7, 2, 1, 2, "64800", "72000"), ("", 7, 3, 1, 1, "28800", "45000"), ("", 7, 3, 1, 2, "50400", "59400"), ("", 7, 3, 1, 2, "64800", "72000"), ("", 7, 4, 1, 1, "28800", "45000"), ("", 7, 4, 1, 2, "50400", "59400"), ("", 7, 4, 1, 2, "64800", "72000"), ("", 7, 5, 1, 1, "28800", "45000"), ("", 7, 5, 1, 2, "50400", "59400"), ("", 7, 5, 1, 2, "64800", "72000");
+INSERT INTO planning_creneau (creneau_id, planning_id, jour_id, type_semaine, type_periode, debut, fin) VALUES ("", 7, 1, 1, 1, "28800", "45000"), ("", 7, 1, 1, 2, "50400", "59400"), ("", 7, 1, 1, 2, "64800", "72000"), ("", 7, 2, 1, 1, "28800", "45000"), ("", 7, 2, 1, 2, "50400", "59400"), ("", 7, 2, 1, 2, "64800", "72000"), ("", 7, 3, 1, 1, "28800", "45000"), ("", 7, 3, 1, 2, "50400", "59400"), ("", 7, 3, 1, 2, "64800", "72000"), ("", 7, 4, 1, 1, "28800", "45000"), ("", 7, 4, 1, 2, "50400", "59400"), ("", 7, 4, 1, 2, "64800", "72000"), ("", 7, 5, 1, 1, "28800", "45000"), ("", 7, 5, 1, 2, "50400", "59400"), ("", 7, 5, 1, 2, "64800", "72000");

@@ -156,7 +156,7 @@ class Creneau
     public static function deleteCreneauList($idPlanning)
     {
         $sql = \includes\SQL::singleton();
-        $req = 'DELETE FROM conges_planning_creneau WHERE planning_id = ' . (int) $idPlanning;
+        $req = 'DELETE FROM planning_creneau WHERE planning_id = ' . (int) $idPlanning;
         $sql->query($req);
 
         return (bool) $sql->affected_rows;
@@ -186,7 +186,7 @@ class Creneau
             }
         }
         // insertion multiple en fonction de la liste
-        $req = 'INSERT INTO conges_planning_creneau (creneau_id, planning_id, jour_id, type_semaine, type_periode, debut, fin) VALUES ' . implode(', ', $toInsert);
+        $req = 'INSERT INTO planning_creneau (creneau_id, planning_id, jour_id, type_semaine, type_periode, debut, fin) VALUES ' . implode(', ', $toInsert);
         $query = $sql->query($req);
 
         return $sql->insert_id;
@@ -208,7 +208,7 @@ class Creneau
         }
         $sql = \includes\SQL::singleton();
         $req = 'SELECT *
-                FROM conges_planning_creneau
+                FROM planning_creneau
                 WHERE planning_id = ' . (int) $idPlanning . '
                   AND type_semaine = ' . (int) $typeSemaine;
         $res = $sql->query($req);

@@ -281,10 +281,10 @@ CREATE TABLE IF NOT EXISTS `conges_users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 #
-# Structure de la table `conges_planning`
+# Structure de la table `planning`
 #
 
-CREATE TABLE IF NOT EXISTS `conges_planning` (
+CREATE TABLE IF NOT EXISTS `planning` (
   `planning_id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `name` VARCHAR(50) NOT NULL DEFAULT "",
   `status` TINYINT(3) UNSIGNED NOT NULL DEFAULT 0,
@@ -292,10 +292,10 @@ CREATE TABLE IF NOT EXISTS `conges_planning` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 #
-# Structure de la table `conges_planning_creneau`
+# Structure de la table `planning_creneau`
 #
 
-CREATE TABLE IF NOT EXISTS `conges_planning_creneau` (
+CREATE TABLE IF NOT EXISTS `planning_creneau` (
   `creneau_id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `planning_id` INT(11) UNSIGNED NOT NULL,
   `jour_id` TINYINT(3) UNSIGNED NOT NULL,

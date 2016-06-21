@@ -2430,7 +2430,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         ]);
         $childTable = '<thead><tr><th class="col-md-4">' . _('Nom') .'</th><th></th></tr></thead><tbody>';
         if (NIL_INT !== $id) {
-            $sql   = 'SELECT * FROM conges_planning WHERE planning_id = ' . $id;
+            $sql   = 'SELECT * FROM planning WHERE planning_id = ' . $id;
             $query = \includes\SQL::query($sql);
             $data = $query->fetch_assoc();
             $valueName = $data['name'];

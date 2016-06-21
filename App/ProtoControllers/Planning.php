@@ -216,7 +216,7 @@ class Planning
         $sql = \includes\SQL::singleton();
         $req = 'SELECT EXISTS (
                     SELECT planning_id
-                    FROM conges_planning
+                    FROM planning
                     WHERE planning_id = ' . (int) $id . '
                       AND status = ' . \App\Models\Planning::STATUS_ACTIVE . '
                 )';
@@ -235,7 +235,7 @@ class Planning
     private static function insertPlanning(array $planning)
     {
         $sql   = \includes\SQL::singleton();
-        $req   = 'INSERT INTO conges_planning (planning_id, name, status)
+        $req   = 'INSERT INTO planning (planning_id, name, status)
                   VALUES (null, "' . htmlspecialchars($sql->quote($planning['name'])) . '", ' . \App\Models\Planning::STATUS_ACTIVE . ')';
         $query = $sql->query($req);
 
@@ -253,7 +253,7 @@ class Planning
     private static function updatePlanning($id, array $put)
     {
         $sql = \includes\SQL::singleton();
-        $req = 'UPDATE conges_planning
+        $req = 'UPDATE planning
                 SET name = "' . htmlspecialchars($sql->quote($put['name'])) . '"
                 WHERE planning_id = ' . $id;
         $sql->query($req);
@@ -274,7 +274,7 @@ class Planning
     private static function patchSql($id, array $patch)
     {
         $sql = \includes\SQL::singleton();
-        $req = 'UPDATE conges_planning
+        $req = 'UPDATE planning
                 SET status = ' . (int) $patch['status'] . '
                 WHERE planning_id = ' . $id;
         $sql->query($req);
@@ -292,7 +292,7 @@ class Planning
     private static function deleteSql($id)
     {
         $sql = \includes\SQL::singleton();
-        $req = 'UPDATE conges_planning
+        $req = 'UPDATE planning
                 SET status = ' . \App\Models\Planning::STATUS_DELETED . '
                 WHERE planning_id = ' . (int) $id . '
                 LIMIT 1';
@@ -315,7 +315,7 @@ class Planning
         }
         $sql = \includes\SQL::singleton();
         $req = 'SELECT *
-                FROM conges_planning
+                FROM planning
                 WHERE planning_id IN (' . implode(',', $listId) . ')
                 ORDER BY planning_id DESC';
 
@@ -357,7 +357,7 @@ class Planning
         $ids = [];
         $sql = \includes\SQL::singleton();
         $req = 'SELECT planning_id AS id
-                FROM conges_planning
+                FROM planning
                 WHERE status = ' . \App\Models\Planning::STATUS_ACTIVE;
         $res = $sql->query($req);
         while ($data = $res->fetch_array()) {
@@ -380,7 +380,7 @@ class Planning
         $sql = \includes\SQL::singleton();
         $req = 'SELECT EXISTS (
                     SELECT planning_id
-                    FROM conges_planning
+                    FROM planning
                     WHERE name = "' . htmlspecialchars($sql->quote($name)) . '"
                       AND status = ' . \App\Models\Planning::STATUS_ACTIVE . '
                       AND planning_id != ' . (int) $idAuthorized . '

@@ -1280,17 +1280,17 @@ class Fonctions
     {
         $dataPlanning = null;
         $sql = \includes\SQL::singleton();
-        $reqUser = 'SELECT conges_planning.*
+        $reqUser = 'SELECT planning.*
             FROM conges_users
-                INNER JOIN conges_planning USING (planning_id)
+                INNER JOIN planning USING (planning_id)
             WHERE u_login = "' . $sql->quote($user) . '"
-                AND conges_planning.status = ' . \App\Models\Planning::STATUS_ACTIVE;
+                AND planning.status = ' . \App\Models\Planning::STATUS_ACTIVE;
         $queryUser = $sql->query($reqUser);
         $planning = $queryUser->fetch_array();
         if (!empty($planning)) {
             $dataPlanning = [];
             $reqCreneau = 'SELECT *
-                FROM conges_planning_creneau
+                FROM planning_creneau
                 WHERE planning_id = ' . $planning['planning_id'];
             $queryCreneau = $sql->query($reqCreneau);
 
