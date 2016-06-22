@@ -88,7 +88,7 @@ $upd_user_resp = "UPDATE conges_users SET u_resp_login = NULL WHERE u_login = 'c
 $res_upd_user_resp=\includes\SQL::query($upd_user_resp);
 
 //suppression des artt de conges
-$del_conges_artt = "DELETE FROM conges_artt WHERE a_login = 'conges';";
+$del_conges_artt = "DROP TABLE conges_artt";
 $res_del_conges_artt = \includes\SQL::query($del_conges_artt);
 
 //suppression du user conges
