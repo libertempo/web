@@ -938,11 +938,11 @@ td.cal-day_semaine_fermeture_am_autre_pm{
   font-family: 'Open Sans';
   font-style: normal;
   font-weight: 400;
-  src: local('Open Sans'), local('OpenSans'), url(../fonts/OpenSans/open-sans.woff2) format('woff2');
+  src: local('Open Sans'), local('OpenSans'), url(../Font/OpenSans/open-sans.woff2) format('woff2');
 }
 @font-face {
   font-family: 'Open Sans';
   font-style: normal;
   font-weight: 700;
-  src: local('Open Sans Bold'), local('OpenSans-Bold'), url(../fonts/OpenSans/open-sans-ext.woff2) format('woff2');
+  src: local('Open Sans Bold'), local('OpenSans-Bold'), url(../Font/OpenSans/open-sans-ext.woff2) format('woff2');
 }
