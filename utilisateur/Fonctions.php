@@ -1259,12 +1259,38 @@ class Fonctions
             $mois_calendrier_saisie_fin   = getpost_variable('mois_calendrier_saisie_fin', date('m'));
 
             $return .= '<h1>'. _('user_echange_rtt') .'</h1>';
+            if (!\utilisateur\Fonctions::hasUserPlanning($_SESSION['userlogin'])) {
+                $return .= '<div class="alert alert-danger">' . _('aucun_planning_associe_utilisateur') . '</div>';
 
-            //affiche le formulaire de saisie d'une nouvelle demande de conges
-            $return .= \utilisateur\Fonctions::saisie_echange_rtt($_SESSION['userlogin'], $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet);
+            } else {
+                //affiche le formulaire de saisie d'une nouvelle demande de conges
+                $return .= \utilisateur\Fonctions::saisie_echange_rtt($_SESSION['userlogin'], $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet);
+            }
         }
 
         return $return;
+    }
+
+    /**
+     * Retourne vrai si l'utilisateur a un planning associé
+     *
+     * @param string $user
+     *
+     * @return bool
+     */
+    public static function hasUserPlanning($user)
+    {
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT EXISTS (
+            SELECT planning_id
+            FROM conges_users
+                INNER JOIN planning USING (planning_id)
+            WHERE u_login ="' . $sql->quote($user) . '"
+            AND planning.status = ' . \App\Models\Planning::STATUS_ACTIVE . '
+        )';
+        $query = $sql->query($req);
+
+        return 0 < (int) $query->fetch_array()[0];
     }
 
     /**
@@ -1445,43 +1471,6 @@ class Fonctions
     public static function getDatePickerStartDate()
     {
         return ($_SESSION['config']['interdit_saisie_periode_date_passee']) ? 'd' : '';
-    }
-
-    /**
-     * Retourne la vraie durée entre deux timestamp en fonction du planning de l'utilisateur
-     *
-     * @param int   $debut
-     * @param int   $fin
-     * @param array $planningUser
-     *
-     * @return int
-     */
-    public static function getDureeViaPlanning($debut, $fin, array $planningUser)
-    {
-        /*
-         * Comme pour le moment on ne peut prendre une heure additionnelle / de repos que sur un jour,
-         * on prend arbitrairement le début...
-        */
-        $numeroSemaine = date('W', $debut);
-
-        $realWeekType = \utilisateur\Fonctions::getRealWeekType($planningUser, $numeroSemaine);
-        /* Si la semaine n'est pas travaillée */
-        if (NIL_INT === $realWeekType) {
-            return 0;
-        } else {
-            /*
-             * ... Pareil pour le jour
-             */
-            $planningWeek = $planningUser[$realWeekType];
-            $jourId = date('N', $debut);
-            /* Si le jour n'est pas travaillé */
-            if (!\utilisateur\Fonctions::isWorkingDay($planningWeek, $jourId)) {
-                return 0;
-            } else {
-            }
-        }
-
-        return $fin - $debut;
     }
 
 
