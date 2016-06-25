@@ -2189,11 +2189,12 @@ class Fonctions
         return $return;
     }
 
-    public static function commit_update_user($u_login_to_update, &$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, &$tab_new_reliquat)
+    public static function commit_update_user($u_login_to_update, &$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, &$tab_new_reliquat, &$return)
     {
+        $dataUser = \App\ProtoControllers\Utilisateur::getDataByLogin($u_login_to_update);
         $PHP_SELF = $_SERVER['PHP_SELF'];
         $session  = session_id();
-        $return   = '';
+        $erreurs = [];
 
         $result=TRUE;
 
@@ -2208,12 +2209,22 @@ class Fonctions
         $valid_2=TRUE;
         $valid_3=TRUE;
         $valid_reliquat=TRUE;
+        $valid_4 = true;
 
         // verification de la validite de la saisie du nombre de jours annuels et du solde pour chaque type de conges
         foreach($tab_type_conges as $id_conges => $libelle) {
             $valid_1=$valid_1 && verif_saisie_decimal($tab_new_jours_an[$id_conges]);  //verif la bonne saisie du nombre d?cimal
             $valid_2=$valid_2 && verif_saisie_decimal($tab_new_solde[$id_conges]);  //verif la bonne saisie du nombre d?cimal
             $valid_reliquat=$valid_reliquat && verif_saisie_decimal($tab_new_reliquat[$id_conges]);  //verif la bonne saisie du nombre d?cimal
+        }
+        if (false === $valid_1) {
+            $erreurs['Nombre jour annuel'] = _('nombre_incorrect');
+        }
+        if (false === $valid_2) {
+            $erreurs['Solde congés'] = _('nombre_incorrect');
+        }
+        if (false === $valid_reliquat) {
+            $erreurs['Nombre reliquat'] = _('nombre_incorrect');
         }
 
         // si l'application gere les conges exceptionnels ET si des types de conges exceptionnels ont été définis
@@ -2227,8 +2238,20 @@ class Fonctions
             $valid_3=TRUE;
         }
 
+        if (false === $valid_3) {
+            $erreurs['Solde congés exceptionnels'] = _('nombre_incorrect');
+        }
+
+        /* Si l'on change le planning de l'utilisateur sans le pouvoir */
+        if ($dataUser['planning_id'] != $tab_new_user['planning_utilisateur']) {
+            if (\App\ProtoControllers\Utilisateur::hasCongesEnCours($u_login_to_update)) {
+                $erreurs['Planning'] = _('planning_en_cours_utilisation');
+                $valid_4 = false;
+            }
+        }
+
         // si aucune erreur de saisie n'a ete commise
-        if(($valid_1) && ($valid_2) && ($valid_3) && ($valid_reliquat) && $tab_new_user['login']!="") {
+        if(($valid_1) && ($valid_2) && ($valid_3) && ($valid_reliquat) && $valid_4 && $tab_new_user['login']!="") {
             // UPDATE de la table conges_users
             $sql = 'UPDATE conges_users SET u_nom="'. \includes\SQL::quote($tab_new_user['nom']).'", u_prenom="'.\includes\SQL::quote($tab_new_user['prenom']).'", u_is_resp="'. \includes\SQL::quote($tab_new_user['is_resp']).'", u_resp_login=';
             if($tab_new_user['resp_login'] == 'no_resp') {
@@ -2245,7 +2268,6 @@ class Fonctions
             /* Mise a jour de la table conges_solde_user   */
             foreach($tab_type_conges as $id_conges => $libelle) {
                 $sql = 'REPLACE INTO conges_solde_user SET su_nb_an=\''.strtr(round_to_half($tab_new_jours_an[$id_conges]),",",".").'\',su_solde=\''.strtr(round_to_half($tab_new_solde[$id_conges]),",",".").'\',su_reliquat=\''.strtr(round_to_half($tab_new_reliquat[$id_conges]),",",".").'\',su_login="'.\includes\SQL::quote($u_login_to_update).'",su_abs_id='.intval($id_conges).';';
-                $return .= $sql;
                 \includes\SQL::query($sql);
 
             }
@@ -2253,7 +2275,6 @@ class Fonctions
             if ($_SESSION['config']['gestion_conges_exceptionnels']) {
                 foreach($tab_type_conges_excep as $id_conges => $libelle) {
                     $sql = 'REPLACE INTO conges_solde_user SET su_nb_an=0, su_solde=\''.strtr(round_to_half($tab_new_solde[$id_conges]),",",".").'\', su_reliquat=\''.strtr(round_to_half($tab_new_reliquat[$id_conges]),",",".").'\', su_login="'.\includes\SQL::quote($u_login_to_update).'", su_abs_id='.intval($id_conges).';';
-                    $return .= $sql;
                     \includes\SQL::query($sql);
                 }
             }
@@ -2306,10 +2327,20 @@ class Fonctions
 
             $return .= _('form_modif_ok') . ' !<br><br>';
 
+            return true;
+
         } else { // en cas d'erreur de saisie
-            $return .= _('form_modif_not_ok') . ' !<br><br>';
+            // composition des erreurs
+            $errors = '';
+            if (!empty($erreurs)) {
+                foreach ($erreurs as $erreur) {
+                    $errors .= '<li>' . $erreur . '</li>';
+                }
+            }
+            $return .= '<div class="alert alert-danger">' . _('erreur_recommencer') . ' :<ul>' . $errors . '</ul><br /><a href="admin_index.php?onglet=modif_user&session=' . $session . '&u_login=' . $u_login_to_update . '">' . _('form_retour') . '</a></div>';
+
+            return false;
         }
-            return $return;
     }
 
     public static function modifier_user($u_login, $onglet)
@@ -2623,11 +2654,17 @@ class Fonctions
             $tab_new_user['mois']       = getpost_variable('new_mois') ;
             $tab_new_user['year']       = getpost_variable('new_year') ;
             $tab_new_user['planning_utilisateur'] = getpost_variable('planning_utilisateur');
+            $echo  = '';
 
-            echo \admin\Fonctions::commit_update_user($u_login_to_update, $tab_new_user, $tab_new_jours_an, $tab_new_solde, $tab_new_reliquat);
-            redirect( ROOT_PATH .'admin/admin_index.php?session='.$session.'&onglet=admin-users', false);
-            exit;
-
+            $ok = \admin\Fonctions::commit_update_user($u_login_to_update, $tab_new_user, $tab_new_jours_an, $tab_new_solde, $tab_new_reliquat, $echo);
+            ddd($ok, $echo);
+            if ($ok) {
+                redirect( ROOT_PATH .'admin/admin_index.php?session='.$session.'&onglet=admin-users', false);
+                exit;
+            } else {
+                echo $echo;
+                // display retour erreur avec possibilité de recommencer
+            }
         } else {
             // renvoit sur la page principale .
             redirect( ROOT_PATH .'admin/admin_index.php?session='.$session.'&onglet=admin-users', false);

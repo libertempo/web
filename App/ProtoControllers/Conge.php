@@ -305,4 +305,35 @@ class Conge
 
         return $sql->query($req)->fetch_all(MYSQLI_ASSOC);
     }
+
+    /**
+     * Vérifie l'existence de congé basée sur les critères fournis
+     *
+     * @param array $params
+     *
+     * @return bool
+     * @TODO: à terme, à baser sur le find()
+     */
+    public function exists(array $params)
+    {
+        $sql = \includes\SQL::singleton();
+
+        $where = [];
+        foreach ($params as $key => $value) {
+            if (is_array($value)) {
+                $where[] = $key . ' IN (' . implode(',', array_map(function ($element) use ($sql) {
+                    return '"' . $sql->quote($element) . '"';
+                }, $value)) . ')';
+            } else {
+                $where[] = $key . ' = "' . $sql->quote($value) . '"';
+            }
+        }
+        $req = 'SELECT EXISTS (
+                    SELECT *
+                    FROM conges_periode
+                    WHERE ' . implode(' AND ', $where) . '
+        )';
+
+        return 0 < (int) $sql->query($req)->fetch_array()[0];
+    }
 }

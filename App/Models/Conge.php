@@ -12,18 +12,39 @@ class Conge
 {
     /**
      * Constantes de statut
-     * @var int
+     * @var string
      */
     const STATUT_DEMANDE = 'demande';
 
     /**
-     * Le valide est pour la première validation, le « ok » pour la seconde
-     * @var int
+     * Constante de statut de première validation
+     * @var string
      */
     const STATUT_VALIDE  = 'valid';
+
+    /**
+     * Constante de statut de seconde validation
+     * @var string
+     */
     const STATUT_OK      = 'ok';
+
+    /**
+     * Constante de refus par l'un des validateurs
+     * @var string
+     */
     const STATUT_REFUS   = 'refus';
+
+    /**
+     * Constante d'annulation par l'employé
+     * @var string
+     */
     const STATUT_ANNUL   = 'annul';
+
+    /**
+     * À quoi sert cette constante ?
+     * @var string
+     */
+    const STATUT_AJOUT   = 'ajout';
 
     /**
      * Retourne les options de select des statuts
