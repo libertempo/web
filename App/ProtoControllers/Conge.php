@@ -312,7 +312,7 @@ class Conge
      * @param array $params
      *
      * @return bool
-     * @TODO: à terme, à baser sur le find()
+     * @TODO: à terme, à baser sur le getList()
      */
     public function exists(array $params)
     {
@@ -320,13 +320,7 @@ class Conge
 
         $where = [];
         foreach ($params as $key => $value) {
-            if (is_array($value)) {
-                $where[] = $key . ' IN (' . implode(',', array_map(function ($element) use ($sql) {
-                    return '"' . $sql->quote($element) . '"';
-                }, $value)) . ')';
-            } else {
-                $where[] = $key . ' = "' . $sql->quote($value) . '"';
-            }
+            $where[] = $key . ' = "' . $sql->quote($value) . '"';
         }
         $req = 'SELECT EXISTS (
                     SELECT *

@@ -11,7 +11,7 @@ namespace App\Models;
 class Conge
 {
     /**
-     * Constantes de statut
+     * Constantes de statut de demande
      * @var string
      */
     const STATUT_DEMANDE = 'demande';
@@ -20,31 +20,31 @@ class Conge
      * Constante de statut de première validation
      * @var string
      */
-    const STATUT_VALIDE  = 'valid';
+    const STATUT_VALIDE = 'valid';
 
     /**
      * Constante de statut de seconde validation
      * @var string
      */
-    const STATUT_OK      = 'ok';
+    const STATUT_OK = 'ok';
 
     /**
      * Constante de refus par l'un des validateurs
      * @var string
      */
-    const STATUT_REFUS   = 'refus';
+    const STATUT_REFUS = 'refus';
 
     /**
      * Constante d'annulation par l'employé
      * @var string
      */
-    const STATUT_ANNUL   = 'annul';
+    const STATUT_ANNUL = 'annul';
 
     /**
-     * À quoi sert cette constante ?
+     * Constante de congé ajouté par un responsable
      * @var string
      */
-    const STATUT_AJOUT   = 'ajout';
+    const STATUT_AJOUT = 'ajout';
 
     /**
      * Retourne les options de select des statuts

@@ -34,18 +34,33 @@ namespace App\Models;
 abstract class AHeure
 {
     /**
-     * Constantes de statut
-     * @var int
+     * Constantes de statut de demande
+     * @var string
      */
     const STATUT_DEMANDE = 1;
 
     /**
-     * Le valide est pour la première validation, le « ok » pour la seconde
-     * @var int
+     * Constante de statut de première validation
+     * @var string
      */
     const STATUT_VALIDE  = 2;
+
+    /**
+     * Constante de statut de seconde validation
+     * @var string
+     */
     const STATUT_OK      = 3;
+
+    /**
+     * Constante de refus par l'un des validateurs
+     * @var string
+     */
     const STATUT_REFUS   = 4;
+
+    /**
+     * Constante d'annulation par l'employé
+     * @var string
+     */
     const STATUT_ANNUL   = 5;
 
 

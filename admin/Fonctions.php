@@ -2244,8 +2244,11 @@ class Fonctions
 
         /* Si l'on change le planning de l'utilisateur sans le pouvoir */
         if ($dataUser['planning_id'] != $tab_new_user['planning_utilisateur']) {
-            if (\App\ProtoControllers\Utilisateur::hasCongesEnCours($u_login_to_update)) {
-                $erreurs['Planning'] = _('planning_en_cours_utilisation');
+            if (\App\ProtoControllers\Utilisateur::hasCongesEnCours($u_login_to_update)
+                || \App\ProtoControllers\Utilisateur::hasHeureReposEnCours($u_login_to_update)
+                || \App\ProtoControllers\Utilisateur::hasHeureAdditionnelleEnCours($u_login_to_update)
+            ) {
+                $erreurs['Planning'] = _('demande_en_cours_sur_planning');
                 $valid_4 = false;
             }
         }
@@ -2657,13 +2660,11 @@ class Fonctions
             $echo  = '';
 
             $ok = \admin\Fonctions::commit_update_user($u_login_to_update, $tab_new_user, $tab_new_jours_an, $tab_new_solde, $tab_new_reliquat, $echo);
-            ddd($ok, $echo);
             if ($ok) {
                 redirect( ROOT_PATH .'admin/admin_index.php?session='.$session.'&onglet=admin-users', false);
                 exit;
             } else {
-                echo $echo;
-                // display retour erreur avec possibilité de recommencer
+                $return .= $echo;
             }
         } else {
             // renvoit sur la page principale .

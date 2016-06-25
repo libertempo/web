@@ -480,4 +480,29 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
 
         return 0 < (int) $query->fetch_array()[0];
     }
+
+    /**
+     * Vérifie l'existence de congé basée sur les critères fournis
+     *
+     * @param array $params
+     *
+     * @return bool
+     * @TODO: à terme, à baser sur le getList()
+     */
+    public function exists(array $params)
+    {
+        $sql = \includes\SQL::singleton();
+
+        $where = [];
+        foreach ($params as $key => $value) {
+            $where[] = $key . ' = "' . $sql->quote($value) . '"';
+        }
+        $req = 'SELECT EXISTS (
+                    SELECT *
+                    FROM heure_repos
+                    WHERE ' . implode(' AND ', $where) . '
+        )';
+
+        return 0 < (int) $sql->query($req)->fetch_array()[0];
+    }
 }

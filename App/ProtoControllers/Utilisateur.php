@@ -39,9 +39,39 @@ class Utilisateur
      */
     public static function hasCongesEnCours($login)
     {
-        $params = ['p_login' => $login, 'p_etat' => [\App\Models\Conge::STATUT_DEMANDE]];
+        $params = ['p_login' => $login, 'p_etat' => \App\Models\Conge::STATUT_DEMANDE];
         $conge = new \App\ProtoControllers\Conge();
 
         return $conge->exists($params);
+    }
+
+    /**
+     * Vérifie si l'utilisateur a des heures de repos en cours
+     *
+     * @param string $login
+     *
+     * @return bool
+     */
+    public static function hasHeureReposEnCours($login)
+    {
+        $params = ['login' => $login, 'statut' => \App\Models\Heure\Repos::STATUT_DEMANDE];
+        $repos = new \App\ProtoControllers\Heure\Repos();
+
+        return $repos->exists($params);
+    }
+
+    /**
+     * Vérifie si l'utilisateur a des heures additionnelles en cours
+     *
+     * @param string $login
+     *
+     * @return bool
+     */
+    public static function hasHeureAdditionnelleEnCours($login)
+    {
+        $params = ['login' => $login, 'statut' => \App\Models\Heure\Additionnelle::STATUT_DEMANDE];
+        $additionnelle = new \App\ProtoControllers\Heure\Additionnelle();
+
+        return $additionnelle->exists($params);
     }
 }
