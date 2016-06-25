@@ -104,6 +104,10 @@ class Planning
      */
     private static function putPlanning($id, array $put, array &$errors)
     {
+        if (in_array($id, \App\ProtoControllers\Planning::getListPlanningUsed(\App\ProtoControllers\Planning::getListPlanningId()))) {
+            $errors['Planning'] = _('planning_utilise');
+            return NIL_INT;
+        }
         if (empty($put['name'])) {
             $errors['Nom'] = _('champ_necessaire');
             return NIL_INT;
