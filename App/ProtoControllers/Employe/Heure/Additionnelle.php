@@ -33,7 +33,7 @@ use \App\Models\AHeure;
  *
  * @since  1.9
  * @author Prytoegrian <prytoegrian@protonmail.com>
- * @author Wouldsmina
+ * @author Wouldsmina <wouldsmina@tuxfamily.org>
  */
 class Additionnelle extends \App\ProtoControllers\Employe\AHeure
 {

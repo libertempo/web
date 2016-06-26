@@ -24,11 +24,17 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *************************************************************************************************/
+namespace App\ProtoControllers\Traitement;
 
-defined( '_PHP_CONGES' ) or die( 'Restricted access' );
-echo \responsable\Fonctions::traitementDemandesModule($tab_type_cong);
+use \App\Models\Traitement;
 
-
-$additionnelle = new \App\ProtoControllers\Traitement\Additionnelle();
-echo $additionnelle->getForm();
-
+/**
+ * ProtoContrôleur de validation d'heures additionnelles
+ *
+ * @since  1.9
+ * @author Prytoegrian <prytoegrian@protonmail.com>
+ * @author Wouldsmina <wouldsmina@tuxfamily.org>
+ */
+class TraitementAdditionnelle extends \App\ProtoControllers\ATraitement
+{
+}
