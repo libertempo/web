@@ -29,6 +29,6 @@ defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 echo \responsable\Fonctions::traitementDemandesModule($tab_type_cong);
 
 
-$additionnelle = new \App\ProtoControllers\Traitement\Additionnelle();
+$additionnelle = new \App\ProtoControllers\Responsable\Traitement\Additionnelle();
 echo $additionnelle->getForm();
 

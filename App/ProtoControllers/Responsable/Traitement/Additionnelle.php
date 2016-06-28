@@ -24,7 +24,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *************************************************************************************************/
-namespace App\ProtoControllers\Traitement;
+namespace App\ProtoControllers\Responsable\Traitement;
 
 use \App\Models\AHeure;
 
@@ -35,7 +35,7 @@ use \App\Models\AHeure;
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina <wouldsmina@tuxfamily.org>
  */
-class Additionnelle extends \App\ProtoControllers\ATraitement
+class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
 {
 
     /**
@@ -44,12 +44,16 @@ class Additionnelle extends \App\ProtoControllers\ATraitement
     protected function put(array $put, $resp, &$notice)
     {
         foreach ($put['demande'] as $id_heure => $statut){
-            //vérifier ici isRespdeUser()
-            // ajouter methode mise à jour solde si statut==statut_ok
-            // faire un log selon $statut
-            $id = $this->update($id_heure, $statut);
+            $infoDemande = $this->getListeSQL(explode(" ", $id_heure));
+            if( $this->isRespDeUser($resp, $infoDemande[0]['login'])){
+                // ajouter methode mise à jour solde si statut==statut_ok
+                // faire un log selon $statut
+                $id = $this->update($id_heure, $statut);
+            } else {
+                $errorLst[] = _('traitement_user_non_autorise').': $infoDemande[0][login]';
+            }
         }
-            $notice = _('traitement_ok');
+            $notice = _('traitement_termine');
             return $id;
     }
 
@@ -117,7 +121,7 @@ class Additionnelle extends \App\ProtoControllers\ATraitement
                 $childTable .= '<input type="hidden" name="_METHOD" value="PUT" />';
                 $childTable .= '<td><input type="radio" name="demande['.$id.']" value="STATUT_OK"></td>';
                 $childTable .= '<td><input type="radio" name="demande['.$id.']" value="STATUT_REFUS"></td>';
-                $childTable .= '<td><input type="radio" name="demande['.$id.']" value="NULL"></td></tr>';
+                $childTable .= '<td><input type="radio" name="demande['.$id.']" value="NULL" checked></td></tr>';
                 $i = !$i;
             }
         }
@@ -214,7 +218,7 @@ class Additionnelle extends \App\ProtoControllers\ATraitement
     public function isRespGroupe($resp, $groupesId)
     {
         $sql = \includes\SQL::singleton();
-        $req = 'SELECT EXIST (
+        $req = 'SELECT EXISTS (
                     SELECT gr_gid
                     FROM conges_groupe_resp
                     WHERE gr_gid IN (\'' . implode(',', $groupesId) . '\')
@@ -231,7 +235,7 @@ class Additionnelle extends \App\ProtoControllers\ATraitement
     public function isGrandRespGroupe($gResp, $groupesId)
     {
         $sql = \includes\SQL::singleton();
-        $req = 'SELECT EXIST (
+        $req = 'SELECT EXISTS (
                     SELECT ggr_gid
                     FROM conges_groupe_grd_resp
                     WHERE ggr_gid IN (\'' . implode(',', $groupesId) . '\')
@@ -248,7 +252,7 @@ class Additionnelle extends \App\ProtoControllers\ATraitement
     public function isRespDirect($resp, $user)
     {
         $sql = \includes\SQL::singleton();
-        $req = 'SELECT EXIST (
+        $req = 'SELECT EXISTS (
                     SELECT u_resp_login 
                     FROM conges_users 
                     WHERE u_login ="'.\includes\SQL::quote($user).'"
