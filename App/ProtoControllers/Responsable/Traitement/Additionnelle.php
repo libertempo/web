@@ -41,7 +41,7 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
     /**
      * {@inheritDoc}
      */
-    protected function put(array $put, $resp, &$notice)
+    protected function put(array $put, $resp, &$notice, array &$errorLst)
     {
         foreach ($put['demande'] as $id_heure => $statut){
             $infoDemande = $this->getListeSQL(explode(" ", $id_heure));
@@ -73,10 +73,13 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
     public function getForm()
     {
         $return     = '';
+        $notice = '';
+        $errorsLst  = [];
+
         $i = true;
 
         if (!empty($_POST)) {
-            if (0 >= (int) $this->post($_POST, $notice)) {
+            if (0 >= (int) $this->post($_POST, $notice, $errorsLst)) {
                 $errors = '';
                 if (!empty($errorsLst)) {
                     foreach ($errorsLst as $key => $value) {
@@ -112,12 +115,13 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
                 $jour   = date('d/m/Y', $demande['debut']);
                 $debut  = date('H\:i', $demande['debut']);
                 $fin    = date('H\:i', $demande['fin']);
-                $duree  = date('H\:i', $demande['duree']);
+                $duree  = $this->Timestamp2Time($demande['duree']);
                 $id = $demande['id_heure'];
                 $nom = $this->getNom($demande['login']);
                 $prenom = $this->getPrenom($demande['login']);
+                $solde = $this->Timestamp2Time($this->getSoldeHeure($demande['login']));
                 $childTable .= '<tr class="'.($i?'i':'p').'">';
-                $childTable .= '<td><b>'.$nom.'</b><br>'.$prenom.'</td><td>0</td><td>'.$jour.'</td><td>'.$debut.'</td><td>'.$fin.'</td><td>'.$duree.'</td>';
+                $childTable .= '<td><b>'.$nom.'</b><br>'.$prenom.'</td><td>'.$solde.'</td><td>'.$jour.'</td><td>'.$debut.'</td><td>'.$fin.'</td><td>'.$duree.'</td>';
                 $childTable .= '<input type="hidden" name="_METHOD" value="PUT" />';
                 $childTable .= '<td><input type="radio" name="demande['.$id.']" value="STATUT_OK"></td>';
                 $childTable .= '<td><input type="radio" name="demande['.$id.']" value="STATUT_REFUS"></td>';
@@ -151,7 +155,7 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
 
         return $demandes;
     }
-
+    
      /**
       * {@inheritDoc}
       */

@@ -54,7 +54,7 @@ abstract class ATraitement
      *
      * @return int
      */
-    abstract protected function put(array $put, $resp, &$notice);
+    abstract protected function put(array $put, $resp, &$notice, array &$errorLst);
 
     /**
      * Liste des demandes
@@ -91,11 +91,11 @@ abstract class ATraitement
      *
      * @return int
      */
-    protected function post(array $post, &$notice)
+    protected function post(array $post, &$notice, array &$errorLst)
     {
         if (!empty($post['_METHOD']) && $post['_METHOD'] == "PUT") {
             $demandeTraitable = array_intersect($post['demande'], $this->getDemandesRespId($_SESSION['userlogin']));
-            return $this->put($post, $_SESSION['userlogin'], $notice);
+            return $this->put($post, $_SESSION['userlogin'], $notice, $errorLst);
         } else {
             return NIL_INT;
         }
@@ -133,6 +133,23 @@ abstract class ATraitement
         $nom = $query->fetch_array()[0];
 
         return $nom;
+    }
+    
+    /**
+     * Retourne le solde d'heure d'un utilisateur
+     *
+     * @param string $login
+     *
+     * @return int
+     */
+    public function getSoldeHeure($login)
+    {
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT u_heure_solde FROM conges_users WHERE u_login = \''.$login.'\'';
+        $query = $sql->query($req);
+        $solde = $query->fetch_array()[0];
+
+        return $solde;
     }
 
     /**
@@ -196,6 +213,11 @@ abstract class ATraitement
 
          return $users;
     }
+    
+        public function Timestamp2Time($secondes) 
+    {
+        $t = (int) $secondes;
+        return sprintf('%02d:%02d', ($t/3600),($t/60%60));
+    }
 
 }
-
