@@ -58,11 +58,11 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
                 }
                 // ajouter methode mise à jour solde si statut==statut_ok
             } else {
-                $errorLst[] = _('traitement_user_non_autorise').': $infoDemande[0][login]';
+                $errorLst[] = _('traitement_user_non_autorise').': '.$infoDemande[0]['login'];
             }
         }
-            $notice = _('traitement_termine');
-            return $id;
+        $notice = _('traitement_effectue');
+        return $id;
     }
 
     /**
@@ -70,13 +70,11 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
      */
     protected function update($demande, $statut)
     {
-        d($demande,$statut);
+        $sql = \includes\SQL::singleton();
+
         $req   = 'UPDATE heure_additionnelle
-                SET debut = ' . $timestampDebut . ',
-                    fin = ' . $timestampFin . ',
-                    duree = ' . $duree . '
-                WHERE id_heure = '. (int) $id . '
-                AND login = "' . $user . '"';
+                SET statut = ' . $statut . '
+                WHERE id_heure = '. (int) $demande;
         $query = $sql->query($req);
 
         return NIL_INT;
@@ -104,6 +102,9 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
                         $errors .= '<li>' . $key . ' : ' . $value . '</li>';
                     }
                     $return .= '<div class="alert alert-danger">' . _('erreur_recommencer') . '<ul>' . $errors . '</ul></div>';
+                } elseif(!empty($notice)) {
+                    $return .= '<div class="alert alert-info">' .  $notice . '.</div>';
+
                 }
             } else {
                 redirect(ROOT_PATH . 'responsable/resp_index.php?session='. session_id() . '&onglet=traitement_demandes', false);
@@ -322,11 +323,17 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
      */
     protected function isDoubleValGroupe($user)
     {
-        $groupes[];
+        $groupes = [];
         $groupes = $this->getGroupesId($user);
         $sql = \includes\SQL::singleton();
-        $req = '';
+        $req = 'SELECT EXISTS (
+                    SELECT g_double_valid
+                    FROM conges_groupe
+                    WHERE g_gid ='. $groupes[0] . '
+                    AND g_double_valid = "Y"
+                )';
+        $query = $sql->query($req);
 
-        return $sql->query($req)->fetch_all(MYSQLI_ASSOC);
+        return 0 < (int) $query->fetch_array()[0];
     }
 }
