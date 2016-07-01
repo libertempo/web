@@ -86,4 +86,19 @@ class Formatter
         $pattern = '/^(((0?|1)[0-9])|(2[0-3])):[0-5][0-9]$/';
         return preg_match($pattern, $heure);
     }
-}
+
+    /**
+     * convertit un timestamp en une durée
+     *
+     * @param string $secondes
+     *
+     * @access public
+     * @static
+     * @return string
+     * @since  1.9
+     */
+    public static function Timestamp2Duree($secondes) 
+    {
+        $t = (int) $secondes;
+        return sprintf('%02d:%02d', ($t/3600),($t/60%60));
+    }

@@ -213,11 +213,4 @@ abstract class ATraitement
 
          return $users;
     }
-    
-        public function Timestamp2Time($secondes) 
-    {
-        $t = (int) $secondes;
-        return sprintf('%02d:%02d', ($t/3600),($t/60%60));
-    }
-
 }

@@ -45,10 +45,18 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
     {
         foreach ($put['demande'] as $id_heure => $statut){
             $infoDemande = $this->getListeSQL(explode(" ", $id_heure));
-            if( $this->isRespDeUser($resp, $infoDemande[0]['login'])){
+            if( $this->isRespDeUser($resp, $infoDemande[0]['login']) && !$this->isDoubleValGroupe($infoDemande[0]['login'])){
+                    switch ($statut) {
+                    case 'STATUT_OK':
+                        $id = $this->update($id_heure, \App\Models\AHeure::STATUT_OK);
+                        log_action(0, '', '', 'Validation de la demande d\'heure additionnelle ' . $id_heure . 'de ' . $infoDemande[0]['login']);
+                        break;
+                    case 'STATUT_REFUS':
+                        $id = $this->update($id_heure, \App\Models\AHeure::STATUT_REFUS);
+                        log_action(0, '', '', 'Refus de la demande d\'heure additionnelle ' . $id_heure . 'de ' . $infoDemande[0]['login']);
+                        break;
+                }
                 // ajouter methode mise à jour solde si statut==statut_ok
-                // faire un log selon $statut
-                $id = $this->update($id_heure, $statut);
             } else {
                 $errorLst[] = _('traitement_user_non_autorise').': $infoDemande[0][login]';
             }
@@ -63,6 +71,13 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
     protected function update($demande, $statut)
     {
         d($demande,$statut);
+        $req   = 'UPDATE heure_additionnelle
+                SET debut = ' . $timestampDebut . ',
+                    fin = ' . $timestampFin . ',
+                    duree = ' . $duree . '
+                WHERE id_heure = '. (int) $id . '
+                AND login = "' . $user . '"';
+        $query = $sql->query($req);
 
         return NIL_INT;
     }
@@ -115,11 +130,11 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
                 $jour   = date('d/m/Y', $demande['debut']);
                 $debut  = date('H\:i', $demande['debut']);
                 $fin    = date('H\:i', $demande['fin']);
-                $duree  = $this->Timestamp2Time($demande['duree']);
+                $duree  = \App\Helpers\Formatter::Timestamp2Duree($demande['duree']);
                 $id = $demande['id_heure'];
                 $nom = $this->getNom($demande['login']);
                 $prenom = $this->getPrenom($demande['login']);
-                $solde = $this->Timestamp2Time($this->getSoldeHeure($demande['login']));
+                $solde = \App\Helpers\Formatter::Timestamp2Duree($this->getSoldeHeure($demande['login']));
                 $childTable .= '<tr class="'.($i?'i':'p').'">';
                 $childTable .= '<td><b>'.$nom.'</b><br>'.$prenom.'</td><td>'.$solde.'</td><td>'.$jour.'</td><td>'.$debut.'</td><td>'.$fin.'</td><td>'.$duree.'</td>';
                 $childTable .= '<input type="hidden" name="_METHOD" value="PUT" />';
@@ -297,6 +312,20 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
                 FROM heure_additionnelle
                 WHERE id_heure IN (' . implode(',', $listId) . ')
                 ORDER BY debut DESC, statut ASC';
+
+        return $sql->query($req)->fetch_all(MYSQLI_ASSOC);
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function isDoubleValGroupe($user)
+    {
+        $groupes[];
+        $groupes = $this->getGroupesId($user);
+        $sql = \includes\SQL::singleton();
+        $req = '';
 
         return $sql->query($req)->fetch_all(MYSQLI_ASSOC);
     }
