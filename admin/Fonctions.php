@@ -2396,7 +2396,7 @@ class Fonctions
         $childTable .= '</thead>';
         $childTable .= '<tbody>';
 
-        // AFICHAGE DE LA LIGNE DES VALEURS ACTUELLES A MOFIDIER
+        // AFFICHAGE DE LA LIGNE DES VALEURS ACTUELLES A MODIFIER
         $childTable .= '<tr>';
         $childTable .= '<td>' . $tab_user['nom']. '</td>';
         $childTable .= '<td>' . $tab_user['prenom'] . '</td>';

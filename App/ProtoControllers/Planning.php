@@ -112,7 +112,7 @@ class Planning
                 || \App\ProtoControllers\Utilisateur::hasHeureReposEnCours($login)
                 || \App\ProtoControllers\Utilisateur::hasHeureAdditionnelleEnCours($login)
             ) {
-                $errors['Planning'] = _('planning_utilise');
+                $errors['Planning'] = _('demande_en_cours_sur_planning');
                 return NIL_INT;
             }
         }
