@@ -251,9 +251,11 @@ class Conge
       */
     protected function getListeId(array $params)
     {
+        $sql = \includes\SQL::singleton();
         if (!empty($params)) {
             $where = [];
             foreach ($params as $key => $value) {
+                $value = $sql->quote($value);
                 switch ($key) {
                     case 'dateDebut':
                         $where[] = 'p_date_deb >= "' . $value . '"';
@@ -271,7 +273,6 @@ class Conge
             }
         }
         $ids = [];
-        $sql = \includes\SQL::singleton();
         $req = 'SELECT p_num AS id
                 FROM conges_periode CP
                     INNER JOIN conges_type_absence CTA ON (CP.p_type = CTA.ta_id) '

@@ -13,6 +13,24 @@ class Utilisateur
      * SQL
      */
 
+     /**
+      * Retourne la liste des utilisateurs associés à un planning
+      *
+      * @param int $planningId
+      *
+      * @return array
+      */
+    public static function getListByPlanning($planningId)
+    {
+        $planningId = (int) $planningId;
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT *
+                FROM conges_users
+                WHERE planning_id = ' . $planningId;
+
+        return $sql->query($req)->fetch_all(MYSQLI_ASSOC);
+    }
+
     /**
      * Récupère la totalité des données d'un utilisateur
      *
