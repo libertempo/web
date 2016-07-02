@@ -50,7 +50,6 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
                 log_action(0, '', '', 'Refus de la demande d\'heure additionnelle ' . $id_heure . ' de ' . $infoDemande[0]['login']);
             } elseif( (($this->isRespDeUser($resp, $infoDemande[0]['login']) && !$this->isDoubleValGroupe($infoDemande[0]['login'])) || ($this->isGrandRespDeUser($resp, $this->getGroupesId($infoDemande[0]['login'])) && $this->isDoubleValGroupe($infoDemande[0]['login']))) && $statut == 'STATUT_OK' ) {
                     $id = $this->update($id_heure, \App\Models\AHeure::STATUT_OK);
-                    d($statut);
                     log_action(0, '', '', 'Validation de la demande d\'heure additionnelle ' . $id_heure . ' de ' . $infoDemande[0]['login']);
             } elseif($this->isRespDeUser($resp, $infoDemande[0]['login']) && $this->isDoubleValGroupe($infoDemande[0]['login']) && $statut == 'STATUT_OK' ) {
                     $id = $this->update($id_heure, \App\Models\AHeure::STATUT_VALIDE);
@@ -104,7 +103,6 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
 
                 }
             } else {
-                            d($notice);
 
                 //redirect(ROOT_PATH . 'responsable/resp_index.php?session='. session_id() . '&onglet=traitement_demandes', false);
             }
@@ -123,9 +121,7 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
         $childTable = '<thead><tr><th width="20%">' . _('nom') . '</th><th>' . _('solde') . '</th><th>' . _('jour') . '</th><th>' . _('debut') . '</th><th>' . _('fin') . '</th><th>' . _('duree') . '</th><th>' . _('accept') . '</th><th>' . _('refus') . '</th><th>' . _('attente') . '</th></tr></thead><tbody>';
 
         $demandesResp = $this->getDemandesResp($_SESSION['userlogin']);
-        d($demandesResp);
         $demandesGrandResp = $this->getDemandesGrandResp($_SESSION['userlogin']);
-        d($demandesGrandResp);
         if (empty($demandesResp) && empty($demandesGrandResp) ) {
             $childTable .= '<tr><td colspan="6"><center>' . _('aucun_resultat') . '</center></td></tr>';
         } else {
