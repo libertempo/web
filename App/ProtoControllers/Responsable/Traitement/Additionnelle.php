@@ -45,24 +45,22 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
     {
         foreach ($put['demande'] as $id_heure => $statut){
             $infoDemande = $this->getListeSQL(explode(" ", $id_heure));
-            if( $this->isRespDeUser($resp, $infoDemande[0]['login']) && !$this->isDoubleValGroupe($infoDemande[0]['login'])){
-                    switch ($statut) {
-                    case 'STATUT_OK':
-                        $id = $this->update($id_heure, \App\Models\AHeure::STATUT_OK);
-                        log_action(0, '', '', 'Validation de la demande d\'heure additionnelle ' . $id_heure . 'de ' . $infoDemande[0]['login']);
-                        break;
-                    case 'STATUT_REFUS':
-                        $id = $this->update($id_heure, \App\Models\AHeure::STATUT_REFUS);
-                        log_action(0, '', '', 'Refus de la demande d\'heure additionnelle ' . $id_heure . 'de ' . $infoDemande[0]['login']);
-                        break;
-                }
-                // ajouter methode mise à jour solde si statut==statut_ok
-            } else {
+            if( ($this->isRespDeUser($resp, $infoDemande[0]['login']) || $this->isGrandRespDeUser($resp, $infoDemande[0]['login'])) && $statut == 'STATUT_REFUS') {
+                $id = $this->update($id_heure, \App\Models\AHeure::STATUT_REFUS);
+                log_action(0, '', '', 'Refus de la demande d\'heure additionnelle ' . $id_heure . ' de ' . $infoDemande[0]['login']);
+            } elseif( (($this->isRespDeUser($resp, $infoDemande[0]['login']) && !$this->isDoubleValGroupe($infoDemande[0]['login'])) || ($this->isGrandRespDeUser($resp, $infoDemande[0]['login']) && $this->isDoubleValGroupe($infoDemande[0]['login']))) && $statut == 'STATUT_OK' ) {
+                    $id = $this->update($id_heure, \App\Models\AHeure::STATUT_OK);
+                    d($statut);
+                    log_action(0, '', '', 'Validation de la demande d\'heure additionnelle ' . $id_heure . ' de ' . $infoDemande[0]['login']);
+            } elseif($this->isRespDeUser($resp, $infoDemande[0]['login']) && $this->isDoubleValGroupe($infoDemande[0]['login']) && $statut == 'STATUT_OK' ) {
+                    $id = $this->update($id_heure, \App\Models\AHeure::STATUT_VALIDE);
+                    log_action(0, '', '', 'Demande d\'heure additionnelle ' . $id_heure . ' de ' . $infoDemande[0]['login'] . ' transmise au grand responsable');
+            } elseif($statut != "NULL") {
                 $errorLst[] = _('traitement_user_non_autorise').': '.$infoDemande[0]['login'];
             }
         }
         $notice = _('traitement_effectue');
-        return $id;
+        return NIL_INT;
     }
 
     /**
@@ -88,7 +86,6 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
         $return     = '';
         $notice = '';
         $errorsLst  = [];
-
         $i = true;
 
         if (!empty($_POST)) {
@@ -107,7 +104,9 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
 
                 }
             } else {
-                redirect(ROOT_PATH . 'responsable/resp_index.php?session='. session_id() . '&onglet=traitement_demandes', false);
+                            d($notice);
+
+                //redirect(ROOT_PATH . 'responsable/resp_index.php?session='. session_id() . '&onglet=traitement_demandes', false);
             }
         }
 
