@@ -2064,7 +2064,7 @@ function recup_infos_all_users_du_grand_resp($login)
     if($list_groups_double_valid!="")
     {
         // recup de la liste des users des groupes de la liste $list_groups_double_valid
-        $sql_users = 'SELECT DISTINCT(gu_login) FROM conges_groupe_users, conges_users WHERE gu_gid IN ('.\includes\SQL::quote($list_groups_double_valid).') AND gu_login=u_login ORDER BY u_nom;';
+        $sql_users = 'SELECT DISTINCT(gu_login) FROM conges_groupe_users, conges_users WHERE gu_gid IN ('.\includes\SQL::quote($list_groups_double_valid).') AND gu_login=u_login ORDER BY gu_login;';
         $ReqLog_users = \includes\SQL::query($sql_users) ;
         $list_all_users_dbl_valid="";
         while ($resultat_users =$ReqLog_users->fetch_array())
