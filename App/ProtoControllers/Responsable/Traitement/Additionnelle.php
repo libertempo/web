@@ -45,10 +45,10 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
     {
         foreach ($put['demande'] as $id_heure => $statut){
             $infoDemande = $this->getListeSQL(explode(" ", $id_heure));
-            if( ($this->isRespDeUser($resp, $infoDemande[0]['login']) || $this->isGrandRespDeUser($resp, $infoDemande[0]['login'])) && $statut == 'STATUT_REFUS') {
+            if( ($this->isRespDeUser($resp, $infoDemande[0]['login']) || $this->isGrandRespDeUser($resp, $this->getGroupesId($infoDemande[0]['login']))) && $statut == 'STATUT_REFUS') {
                 $id = $this->update($id_heure, \App\Models\AHeure::STATUT_REFUS);
                 log_action(0, '', '', 'Refus de la demande d\'heure additionnelle ' . $id_heure . ' de ' . $infoDemande[0]['login']);
-            } elseif( (($this->isRespDeUser($resp, $infoDemande[0]['login']) && !$this->isDoubleValGroupe($infoDemande[0]['login'])) || ($this->isGrandRespDeUser($resp, $infoDemande[0]['login']) && $this->isDoubleValGroupe($infoDemande[0]['login']))) && $statut == 'STATUT_OK' ) {
+            } elseif( (($this->isRespDeUser($resp, $infoDemande[0]['login']) && !$this->isDoubleValGroupe($infoDemande[0]['login'])) || ($this->isGrandRespDeUser($resp, $this->getGroupesId($infoDemande[0]['login'])) && $this->isDoubleValGroupe($infoDemande[0]['login']))) && $statut == 'STATUT_OK' ) {
                     $id = $this->update($id_heure, \App\Models\AHeure::STATUT_OK);
                     d($statut);
                     log_action(0, '', '', 'Validation de la demande d\'heure additionnelle ' . $id_heure . ' de ' . $infoDemande[0]['login']);
@@ -122,26 +122,19 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
         ]);
         $childTable = '<thead><tr><th width="20%">' . _('nom') . '</th><th>' . _('solde') . '</th><th>' . _('jour') . '</th><th>' . _('debut') . '</th><th>' . _('fin') . '</th><th>' . _('duree') . '</th><th>' . _('accept') . '</th><th>' . _('refus') . '</th><th>' . _('attente') . '</th></tr></thead><tbody>';
 
-        $demandes = $this->getDemandes($_SESSION['userlogin']);
-        if (empty($demandes)) {
+        $demandesResp = $this->getDemandesResp($_SESSION['userlogin']);
+        d($demandesResp);
+        $demandesGrandResp = $this->getDemandesGrandResp($_SESSION['userlogin']);
+        d($demandesGrandResp);
+        if (empty($demandesResp) && empty($demandesGrandResp) ) {
             $childTable .= '<tr><td colspan="6"><center>' . _('aucun_resultat') . '</center></td></tr>';
         } else {
-            foreach ( $demandes as $demande ) {
-                $jour   = date('d/m/Y', $demande['debut']);
-                $debut  = date('H\:i', $demande['debut']);
-                $fin    = date('H\:i', $demande['fin']);
-                $duree  = \App\Helpers\Formatter::Timestamp2Duree($demande['duree']);
-                $id = $demande['id_heure'];
-                $nom = $this->getNom($demande['login']);
-                $prenom = $this->getPrenom($demande['login']);
-                $solde = \App\Helpers\Formatter::Timestamp2Duree($this->getSoldeHeure($demande['login']));
-                $childTable .= '<tr class="'.($i?'i':'p').'">';
-                $childTable .= '<td><b>'.$nom.'</b><br>'.$prenom.'</td><td>'.$solde.'</td><td>'.$jour.'</td><td>'.$debut.'</td><td>'.$fin.'</td><td>'.$duree.'</td>';
-                $childTable .= '<input type="hidden" name="_METHOD" value="PUT" />';
-                $childTable .= '<td><input type="radio" name="demande['.$id.']" value="STATUT_OK"></td>';
-                $childTable .= '<td><input type="radio" name="demande['.$id.']" value="STATUT_REFUS"></td>';
-                $childTable .= '<td><input type="radio" name="demande['.$id.']" value="NULL" checked></td></tr>';
-                $i = !$i;
+            if(!empty($demandesResp)) {
+                $childTable .= $this->getDemandesTab($demandesResp);
+            }
+            if (!empty($demandesGrandResp)) {
+                $childTable .= $this->getDemandesTab($demandesGrandResp);
+
             }
         }
 
@@ -157,12 +150,52 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
         return $return;
     }
     
+    protected function getDemandesTab(array $demandes)
+    {
+        $i=true;
+        $Table='';
+        
+        foreach ( $demandes as $demande ) {
+            $jour   = date('d/m/Y', $demande['debut']);
+            $debut  = date('H\:i', $demande['debut']);
+            $fin    = date('H\:i', $demande['fin']);
+            $duree  = \App\Helpers\Formatter::Timestamp2Duree($demande['duree']);
+            $id = $demande['id_heure'];
+            $nom = $this->getNom($demande['login']);
+            $prenom = $this->getPrenom($demande['login']);
+            $solde = \App\Helpers\Formatter::Timestamp2Duree($this->getSoldeHeure($demande['login']));
+            $Table .= '<tr class="'.($i?'i':'p').'">';
+            $Table .= '<td><b>'.$nom.'</b><br>'.$prenom.'</td><td>'.$solde.'</td><td>'.$jour.'</td><td>'.$debut.'</td><td>'.$fin.'</td><td>'.$duree.'</td>';
+            $Table .= '<input type="hidden" name="_METHOD" value="PUT" />';
+            $Table .= '<td><input type="radio" name="demande['.$id.']" value="STATUT_OK"></td>';
+            $Table .= '<td><input type="radio" name="demande['.$id.']" value="STATUT_REFUS"></td>';
+            $Table .= '<td><input type="radio" name="demande['.$id.']" value="NULL" checked></td></tr>';
+            $i = !$i;
+            }
+            
+        return $Table;
+    }
+    
     /**
      * {@inheritDoc}
      */
-    public function getDemandes($resp)
+    public function getDemandesResp($resp)
     {
         $demandesId = $this->getDemandesRespId($resp);
+        if (empty($demandesId)) {
+            return [];
+        }
+        $demandes = $this->getListeSQL($demandesId);
+
+        return $demandes;
+    }
+    
+        /**
+     * {@inheritDoc}
+     */
+    public function getDemandesGrandResp($resp)
+    {
+        $demandesId = $this->getDemandesGrandRespId($resp);
         if (empty($demandesId)) {
             return [];
         }
@@ -207,8 +240,15 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
     protected function getDemandesGrandRespId($gResp)
     {
         $groupId = $this->getGroupeGrandRespId($gResp);
+        if (empty($groupId)) {
+            return [];
+        }
+        
         $usersResp = $this->getUsersGroupe($groupId);
-
+        if (empty($usersResp)) {
+            return [];
+        }
+        
         $ids = [];
         $sql = \includes\SQL::singleton();
         $req = 'SELECT id_heure AS id
@@ -228,13 +268,29 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
      * {@inheritDoc}
      */
     public function isRespDeUser($resp, $user) {
-        return $this->isRespDirect($resp, $user) || $this->isRespGroupe($resp, $user->getGroupesId());
+        return $this->isRespDirect($resp, $user) || $this->isRespGroupe($resp, $this->getGroupesId($user));
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public function isGrandRespDeUser($resp, array $groupesId) {
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT EXISTS (
+                    SELECT ggr_gid
+                    FROM conges_groupe_grd_resp
+                    WHERE ggr_gid IN (\'' . implode(',', $groupesId) . '\')
+                        AND ggr_login = "'.\includes\SQL::quote($resp).'"
+                )';
+        $query = $sql->query($req);
+
+        return 0 < (int) $query->fetch_array()[0];
     }
 
     /**
      * {@inheritDoc}
      */
-    public function isRespGroupe($resp, $groupesId)
+    public function isRespGroupe($resp, array $groupesId)
     {
         $sql = \includes\SQL::singleton();
         $req = 'SELECT EXISTS (

@@ -57,11 +57,18 @@ abstract class ATraitement
     abstract protected function put(array $put, $resp, &$notice, array &$errorLst);
 
     /**
-     * Liste des demandes
+     * Liste des demandes du responsable
      *
      * @return string
      */
-    abstract public function getDemandes($resp);
+    abstract public function getDemandesResp($resp);
+    
+        /**
+     * Liste des demandes du grand responsable
+     *
+     * @return string
+     */
+    abstract public function getDemandesGrandResp($resp);
 
     /**
      * Retourne une liste d'id des demandes pour le responsable
@@ -71,6 +78,16 @@ abstract class ATraitement
      * @return array
      */
     abstract protected function getDemandesRespId($resp);
+    
+        /**
+     * Retourne le code html des demandes d'heures
+     *
+     * @param array $demandes
+     *
+     * @return string
+     */
+    abstract protected function getDemandesTab(array $demandes);
+
 
     /**
      * Retourne une liste d'heures
@@ -183,8 +200,9 @@ abstract class ATraitement
      */
     public function getGroupeGrandRespId($gresp)
     {
+        $ids=[];
          $sql = \includes\SQL::singleton();
-         $req = 'SELECT ggr_gid AS id FROM `conges_groupe_grd_resp` WHERE gr_login =\''.$gresp.'\'';
+         $req = 'SELECT ggr_gid AS id FROM `conges_groupe_grd_resp` WHERE ggr_login =\''.$gresp.'\'';
          $res = $sql->query($req);
 
          while ($data = $res->fetch_array()) {
