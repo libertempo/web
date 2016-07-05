@@ -50,7 +50,7 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
                     $id = $this->updateStatut($id_heure, \App\Models\AHeure::STATUT_REFUS);
                     log_action(0, '', '', 'Refus de la demande d\'heure additionnelle ' . $id_heure . ' de ' . $infoDemande[0]['login']);
                 } elseif( (($this->isRespDeUser($resp, $infoDemande[0]['login']) && !$this->isDoubleValGroupe($infoDemande[0]['login'])) || ($this->isGrandRespDeUser($resp, $this->getGroupesId($infoDemande[0]['login'])) && $this->isDoubleValGroupe($infoDemande[0]['login']))) && $statut == 'STATUT_OK' ) {
-                        $id = $this->updateStatut($id_heure, \App\Models\AHeure::STATUT_OK);
+                        $id = $this->demandeOk($id_heure, \App\Models\AHeure::STATUT_OK);
                         log_action(0, '', '', 'Validation de la demande d\'heure additionnelle ' . $id_heure . ' de ' . $infoDemande[0]['login']);
                 } elseif($this->isRespDeUser($resp, $infoDemande[0]['login']) && $this->isDoubleValGroupe($infoDemande[0]['login']) && $statut == 'STATUT_OK' ) {
                         $id = $this->updateStatut($id_heure, \App\Models\AHeure::STATUT_VALIDE);
