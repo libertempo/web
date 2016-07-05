@@ -99,6 +99,9 @@ class Formatter
      */
     public static function Timestamp2Duree($secondes) 
     {
+        if (!is_int($secondes) || 0 > $secondes) {
+            throw new \Exception(_('TimeStamp_mal_formee'));
+        }
         $t = (int) $secondes;
         return sprintf('%02d:%02d', ($t/3600),($t/60%60));
     }
