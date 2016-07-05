@@ -45,17 +45,21 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
     {
         foreach ($put['demande'] as $id_heure => $statut){
             $infoDemande = $this->getListeSQL(explode(" ", $id_heure));
-            if( ($this->isRespDeUser($resp, $infoDemande[0]['login']) || $this->isGrandRespDeUser($resp, $this->getGroupesId($infoDemande[0]['login']))) && $statut == 'STATUT_REFUS') {
-                $id = $this->update($id_heure, \App\Models\AHeure::STATUT_REFUS);
-                log_action(0, '', '', 'Refus de la demande d\'heure additionnelle ' . $id_heure . ' de ' . $infoDemande[0]['login']);
-            } elseif( (($this->isRespDeUser($resp, $infoDemande[0]['login']) && !$this->isDoubleValGroupe($infoDemande[0]['login'])) || ($this->isGrandRespDeUser($resp, $this->getGroupesId($infoDemande[0]['login'])) && $this->isDoubleValGroupe($infoDemande[0]['login']))) && $statut == 'STATUT_OK' ) {
-                    $id = $this->update($id_heure, \App\Models\AHeure::STATUT_OK);
-                    log_action(0, '', '', 'Validation de la demande d\'heure additionnelle ' . $id_heure . ' de ' . $infoDemande[0]['login']);
-            } elseif($this->isRespDeUser($resp, $infoDemande[0]['login']) && $this->isDoubleValGroupe($infoDemande[0]['login']) && $statut == 'STATUT_OK' ) {
-                    $id = $this->update($id_heure, \App\Models\AHeure::STATUT_VALIDE);
-                    log_action(0, '', '', 'Demande d\'heure additionnelle ' . $id_heure . ' de ' . $infoDemande[0]['login'] . ' transmise au grand responsable');
-            } elseif($statut != "NULL") {
-                $errorLst[] = _('traitement_user_non_autorise').': '.$infoDemande[0]['login'];
+            if($this->isDemandeTraitable($infoDemande[0]['statut'], $statut)) {
+                if( ($this->isRespDeUser($resp, $infoDemande[0]['login']) || $this->isGrandRespDeUser($resp, $this->getGroupesId($infoDemande[0]['login']))) && $statut == 'STATUT_REFUS') {
+                    $id = $this->updateStatut($id_heure, \App\Models\AHeure::STATUT_REFUS);
+                    log_action(0, '', '', 'Refus de la demande d\'heure additionnelle ' . $id_heure . ' de ' . $infoDemande[0]['login']);
+                } elseif( (($this->isRespDeUser($resp, $infoDemande[0]['login']) && !$this->isDoubleValGroupe($infoDemande[0]['login'])) || ($this->isGrandRespDeUser($resp, $this->getGroupesId($infoDemande[0]['login'])) && $this->isDoubleValGroupe($infoDemande[0]['login']))) && $statut == 'STATUT_OK' ) {
+                        $id = $this->updateStatut($id_heure, \App\Models\AHeure::STATUT_OK);
+                        log_action(0, '', '', 'Validation de la demande d\'heure additionnelle ' . $id_heure . ' de ' . $infoDemande[0]['login']);
+                } elseif($this->isRespDeUser($resp, $infoDemande[0]['login']) && $this->isDoubleValGroupe($infoDemande[0]['login']) && $statut == 'STATUT_OK' ) {
+                        $id = $this->updateStatut($id_heure, \App\Models\AHeure::STATUT_VALIDE);
+                        log_action(0, '', '', 'Demande d\'heure additionnelle ' . $id_heure . ' de ' . $infoDemande[0]['login'] . ' transmise au grand responsable');
+                } elseif($statut != "NULL") {
+                    $errorLst[] = _('traitement_non_autorise').': '.$infoDemande[0]['login'];
+                }
+            } else {
+                $errorLst[] = _('demande_deja_traite');
             }
         }
         $notice = _('traitement_effectue');
@@ -65,7 +69,7 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
     /**
      * {@inheritDoc}
      */
-    protected function update($demande, $statut)
+    protected function updateStatut($demande, $statut)
     {
         $sql = \includes\SQL::singleton();
 
@@ -74,7 +78,42 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
                 WHERE id_heure = '. (int) $demande;
         $query = $sql->query($req);
 
-        return NIL_INT;
+        return $demande;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    protected function demandeOk($demande, $statut)
+    {
+        $sql = \includes\SQL::singleton();
+        $sql->getPdoObj()->begin_transaction();
+        
+        $idSolde = $this->updateSolde($demande);
+        $idStatut = $this->updateStatut($demande, $statut);
+        if (0 < $idSolde && 0 < $idStatut) {
+            $sql->getPdoObj()->commit();
+        } else {
+            $sql->getPdoObj()->rollback();
+            return NIL_INT;
+        }
+        return $demande;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function updateSolde($demande)
+    {
+        $user = $this->getListeSQL(explode(" ",$demande));
+        $sql = \includes\SQL::singleton();
+
+        $req   = 'UPDATE conges_users
+                SET heure_solde = heure_solde+' .$user[0]['duree'] . '
+                WHERE u_login = '. $user[0]['login'];
+        $query = $sql->query($req);
+
+        return $demande;
     }
 
     /**
@@ -298,6 +337,14 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
         $query = $sql->query($req);
 
         return 0 < (int) $query->fetch_array()[0];
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public function isDemandeTraitable($statutDb, $statut)
+    {
+        return $statutDb != $statut;
     }
 
     /**
