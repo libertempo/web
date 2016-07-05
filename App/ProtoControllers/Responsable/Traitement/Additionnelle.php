@@ -109,8 +109,8 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
         $sql = \includes\SQL::singleton();
 
         $req   = 'UPDATE conges_users
-                SET heure_solde = heure_solde+' .$user[0]['duree'] . '
-                WHERE u_login = '. $user[0]['login'];
+                SET u_heure_solde = u_heure_solde+' .$user[0]['duree'] . '
+                WHERE u_login = \''. $user[0]['login'] .'\'';
         $query = $sql->query($req);
 
         return $demande;

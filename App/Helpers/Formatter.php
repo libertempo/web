@@ -99,7 +99,7 @@ class Formatter
      */
     public static function Timestamp2Duree($secondes) 
     {
-        if (!is_int($secondes) || 0 > $secondes) {
+        if (!is_numeric($secondes) || 0 > $secondes) {
             throw new \Exception(_('TimeStamp_mal_formee'));
         }
         $t = (int) $secondes;
