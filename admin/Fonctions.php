@@ -1428,15 +1428,15 @@ class Fonctions
 
             $childTable .= '<span class="responsable"> responsable : <strong>' . $tab_current_infos['resp_login'] . '</strong></span>';
 
-            $childTable .= '</td><td>' . $tab_current_infos['quotite'] . ' %</td>';
+            $childTable .= '</td><td style="text-align: center; border-right: 2px solid #e6e6e6;">' . $tab_current_infos['quotite'] . ' %</td>';
 
             //tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
             $tab_conges=$tab_current_infos['conges'];
 
             foreach($tab_type_conges as $id_conges => $libelle) {
                 if (isset($tab_conges[$libelle])) {
-                    $childTable .= '<td>' . $tab_conges[$libelle]['nb_an'] . '</td>';
-                    $childTable .= '<td>' . $tab_conges[$libelle]['solde'] . '</td>';
+                    $childTable .= '<td style="text-align: center; border-right: 2px solid #e6e6e6;">' . $tab_conges[$libelle]['nb_an'] . '</td>';
+                    $childTable .= '<td style="text-align: center; border-right: 2px solid #e6e6e6;">' . $tab_conges[$libelle]['solde'] . '</td>';
                 } else {
                     $childTable .= '<td>0</td>';
                     $childTable .= '<td>0</td>';
