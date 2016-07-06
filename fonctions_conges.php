@@ -1916,22 +1916,25 @@ function affiche_tableau_bilan_conges_user($login)
     $return .= '<th class="titre">'. _('divers_quotite') .'</th>';
 
     foreach($tab_cong_user as $id => $val) {
-        if ($_SESSION['config']['gestion_conges_exceptionnels'] && in_array($id,$tab_type_conges_exceptionnels)) {
-            $return .= '<th class="solde">' . $id . '</th>';
-        } else {
-            $return .= '<th class="annuel">' . $id . ' / ' . _('divers_an_maj') . '</th><th class="solde">' . $id . '</th>';
-        }
+        $return .= '<th colspan="2" style="text-align: center; border-right: 2px solid #e6e6e6;">' . $id . '</th>';
+        $tmp ++;
     }
     $return .= '</tr>';
     $return .= '</thead>';
+    $return .= '<thead><tr><th style="text-align: center; border-right: 2px solid #e6e6e6;"></th>';
+    for($i=0;$i<$tmp;$i++) {
+        $return .= '<th style="text-align: center; border-right: 2px solid #e6e6e6;">/' . _('divers_an_maj') .
+            '</th><th style="text-align: center; border-right: 2px solid #e6e6e6;">' . _('divers_solde_maj') . '</th>';
+    }
+    $return .= '</tr></thead>';
     $return .= '<tbody>';
     $return .= '<tr>';
-    $return .= '<td class="quotite">' . $sql_quotite . '%</td>';
+    $return .= '<td class="quotite" style="text-align: center; border-right: 2px solid #e6e6e6;">' . $sql_quotite . '%</td>';
     foreach($tab_cong_user as $id => $val) {
         if ($_SESSION['config']['gestion_conges_exceptionnels']  && in_array($id,$tab_type_conges_exceptionnels)) {
-            $return .= '<td class="solde">' . $val['solde'] . ($val['reliquat'] > 0 ? ' (' . _('dont_reliquat') . ' ' . $val['reliquat'] . ')' : '') . '</td>';
+            $return .= '<td class="solde" style="text-align: center; border-right: 2px solid #e6e6e6;">' . $val['solde'] . ($val['reliquat'] > 0 ? ' (' . _('dont_reliquat') . ' ' . $val['reliquat'] . ')' : '') . '</td>';
         } else {
-            $return .= '<td class="annuel">' . $val['nb_an'] . '</td><td class="solde">' . $val['solde'] . ($val['reliquat'] > 0 ? ' (' . _('dont_reliquat') . ' ' . $val['reliquat'] . ')' : '') . '</td>';
+            $return .= '<td class="annuel" style="text-align: center; border-right: 2px solid #e6e6e6;">' . $val['nb_an'] . '</td><td class="solde">' . $val['solde'] . ($val['reliquat'] > 0 ? ' (' . _('dont_reliquat') . ' ' . $val['reliquat'] . ')' : '') . '</td>';
         }
     }
     $return .= '</tr>';
