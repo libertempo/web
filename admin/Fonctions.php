@@ -1357,14 +1357,18 @@ class Fonctions
         $childTable = '<thead>';
         $childTable .= '<tr>';
         $childTable .= '<th>' .  _('user') . '</th>';
-        $childTable .= '<th>' . _('divers_quotite_maj_1') . '</th>';
+        $childTable .= '<th style="border-right: 2px solid #e6e6e6;">' . _('divers_quotite_maj_1') . '</th>';
+        
+        $tmp = 0;
+        
         foreach ($tab_type_conges as $id_type_cong => $libelle) {
-            $childTable .= '<th>' . $libelle . ' / ' . _('divers_an') . '</th>';
-            $childTable .= '<th>' . _('divers_solde') . ' ' . $libelle . '</th>';
+            $childTable .= '<th colspan="2" style="text-align: center; border-right: 2px solid #e6e6e6;">'.$libelle.'</th>';
+            $tmp ++;
         }
 
         foreach ($tab_type_conges_exceptionnels as $id_type_cong => $libelle) {
-            $childTable .= '<th>' . _('divers_solde') . ' ' . $libelle . '</th>';
+            $childTable .= '<th style="border-right: 2px solid #e6e6e6;">' . _('divers_solde') . ' ' . $libelle . '</th>';
+            $tmp ++;
         }
         $childTable .= '<th></th>';
         $childTable .= '<th></th>';
@@ -1373,6 +1377,12 @@ class Fonctions
         }
         $childTable .= '</tr>';
         $childTable .= '</thead>';
+        $childTable .= '<thead><tr><th></th><th style="text-align: center; border-right: 2px solid #e6e6e6;"></th>';
+        for($i=0;$i<$tmp;$i++) {
+            $childTable .= '<th style="text-align: center; border-right: 1px solid #e6e6e6;">/' . _('divers_an_maj') .'</th>'
+            $childTable .= '<th style="text-align: center; border-right: 2px solid #e6e6e6;">' . _('divers_solde_maj') . '</th>';
+        }
+        $childTable .= '</tr></thead>'
         $childTable .= '<tbody>';
 
         // Récuperation des informations des users:
