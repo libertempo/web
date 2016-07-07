@@ -37,7 +37,6 @@ use \App\Models\AHeure;
  */
 class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
 {
-
     /**
      * {@inheritDoc}
      */
@@ -67,7 +66,12 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
     }
 
     /**
-     * {@inheritDoc}
+     * Mise a jour du statut de la demande d'heure
+     * 
+     * @param int $demande
+     * @param int $statut
+     * 
+     * @return int $id 
      */
     protected function updateStatut($demande, $statut)
     {
@@ -80,28 +84,13 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
 
         return $demande;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    protected function demandeOk($demande, $statut)
-    {
-        $sql = \includes\SQL::singleton();
-        $sql->getPdoObj()->begin_transaction();
-        
-        $idSolde = $this->updateSolde($demande);
-        $idStatut = $this->updateStatut($demande, $statut);
-        if (0 < $idSolde && 0 < $idStatut) {
-            $sql->getPdoObj()->commit();
-        } else {
-            $sql->getPdoObj()->rollback();
-            return NIL_INT;
-        }
-        return $demande;
-    }
 
     /**
-     * {@inheritDoc}
+     * Mise a jour du solde du demandeur
+     * 
+     * @param int $demande
+     * 
+     * @return int $demande
      */
     protected function updateSolde($demande)
     {
@@ -184,61 +173,8 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
 
         return $return;
     }
-    
-    protected function getDemandesTab(array $demandes)
-    {
-        $i=true;
-        $Table='';
-        
-        foreach ( $demandes as $demande ) {
-            $jour   = date('d/m/Y', $demande['debut']);
-            $debut  = date('H\:i', $demande['debut']);
-            $fin    = date('H\:i', $demande['fin']);
-            $duree  = \App\Helpers\Formatter::Timestamp2Duree($demande['duree']);
-            $id = $demande['id_heure'];
-            $nom = $this->getNom($demande['login']);
-            $prenom = $this->getPrenom($demande['login']);
-            $solde = \App\Helpers\Formatter::Timestamp2Duree($this->getSoldeHeure($demande['login']));
-            $Table .= '<tr class="'.($i?'i':'p').'">';
-            $Table .= '<td><b>'.$nom.'</b><br>'.$prenom.'</td><td>'.$solde.'</td><td>'.$jour.'</td><td>'.$debut.'</td><td>'.$fin.'</td><td>'.$duree.'</td>';
-            $Table .= '<input type="hidden" name="_METHOD" value="PUT" />';
-            $Table .= '<td><input type="radio" name="demande['.$id.']" value="STATUT_OK"></td>';
-            $Table .= '<td><input type="radio" name="demande['.$id.']" value="STATUT_REFUS"></td>';
-            $Table .= '<td><input type="radio" name="demande['.$id.']" value="NULL" checked></td></tr>';
-            $i = !$i;
-            }
-            
-        return $Table;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public function getDemandesResp($resp)
-    {
-        $demandesId = $this->getDemandesRespId($resp);
-        if (empty($demandesId)) {
-            return [];
-        }
-        $demandes = $this->getListeSQL($demandesId);
 
-        return $demandes;
-    }
-    
-        /**
-     * {@inheritDoc}
-     */
-    public function getDemandesGrandResp($resp)
-    {
-        $demandesId = $this->getDemandesGrandRespId($resp);
-        if (empty($demandesId)) {
-            return [];
-        }
-        $demandes = $this->getListeSQL($demandesId);
 
-        return $demandes;
-    }
-    
      /**
       * {@inheritDoc}
       */
@@ -294,107 +230,6 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
         while ($data = $res->fetch_array()) {
             $ids[] = (int) $data['id'];
         }
-
-
-        return $ids;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function isRespDeUser($resp, $user) {
-        return $this->isRespDirect($resp, $user) || $this->isRespGroupe($resp, $this->getGroupesId($user));
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public function isGrandRespDeUser($resp, array $groupesId) {
-        $sql = \includes\SQL::singleton();
-        $req = 'SELECT EXISTS (
-                    SELECT ggr_gid
-                    FROM conges_groupe_grd_resp
-                    WHERE ggr_gid IN (\'' . implode(',', $groupesId) . '\')
-                        AND ggr_login = "'.\includes\SQL::quote($resp).'"
-                )';
-        $query = $sql->query($req);
-
-        return 0 < (int) $query->fetch_array()[0];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function isRespGroupe($resp, array $groupesId)
-    {
-        $sql = \includes\SQL::singleton();
-        $req = 'SELECT EXISTS (
-                    SELECT gr_gid
-                    FROM conges_groupe_resp
-                    WHERE gr_gid IN (\'' . implode(',', $groupesId) . '\')
-                        AND gr_login = "'.\includes\SQL::quote($resp).'"
-                )';
-        $query = $sql->query($req);
-
-        return 0 < (int) $query->fetch_array()[0];
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public function isDemandeTraitable($statutDb, $statut)
-    {
-        return $statutDb != $statut;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function isGrandRespGroupe($gResp, $groupesId)
-    {
-        $sql = \includes\SQL::singleton();
-        $req = 'SELECT EXISTS (
-                    SELECT ggr_gid
-                    FROM conges_groupe_grd_resp
-                    WHERE ggr_gid IN (\'' . implode(',', $groupesId) . '\')
-                        AND ggr_login = "'.\includes\SQL::quote($gResp).'"
-                )';
-        $query = $sql->query($req);
-
-        return 0 < (int) $query->fetch_array()[0];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function isRespDirect($resp, $user)
-    {
-        $sql = \includes\SQL::singleton();
-        $req = 'SELECT EXISTS (
-                    SELECT u_resp_login 
-                    FROM conges_users 
-                    WHERE u_login ="'.\includes\SQL::quote($user).'"
-                        AND u_resp_login ="'.\includes\SQL::quote($resp).'"
-           )';
-    $query = $sql->query($req);
-
-    return 0 < (int) $query->fetch_array()[0];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getGroupesId($user)
-    {
-        $sql = \includes\SQL::singleton();
-        $req = 'SELECT gu_gid AS id
-                    FROM conges_groupe_users 
-                    WHERE gu_login ="'.\includes\SQL::quote($user).'"';
-        $res = $sql->query($req);
-        while ($data = $res->fetch_array()) {
-            $ids[] = (int) $data['id'];
-        }
-
         return $ids;
     }
 
@@ -413,25 +248,5 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
                 ORDER BY debut DESC, statut ASC';
 
         return $sql->query($req)->fetch_all(MYSQLI_ASSOC);
-    }
-
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function isDoubleValGroupe($user)
-    {
-        $groupes = [];
-        $groupes = $this->getGroupesId($user);
-        $sql = \includes\SQL::singleton();
-        $req = 'SELECT EXISTS (
-                    SELECT g_double_valid
-                    FROM conges_groupe
-                    WHERE g_gid ='. $groupes[0] . '
-                    AND g_double_valid = "Y"
-                )';
-        $query = $sql->query($req);
-
-        return 0 < (int) $query->fetch_array()[0];
     }
 }
