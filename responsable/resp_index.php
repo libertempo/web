@@ -54,9 +54,24 @@ verif_droits_user($session, "is_resp");
 
 
     $onglets['page_principale'] = _('resp_menu_button_retour_main');
-
+    $DemandesAdd = new \App\ProtoControllers\Responsable\Traitement\Additionnelle;
+    $DemandesRep = new \App\ProtoControllers\Responsable\Traitement\Repos;
     if( $_SESSION['config']['user_saisie_demande'] )
-        $onglets['traitement_demandes'] = _('resp_menu_button_traite_demande');
+        $onglets['traitement_demandes'] = _('resp_menu_button_traite_demande') ;
+    
+    $nbbadgeDem='';
+    if ( 0 < $DemandesAdd->getNbDemande($_SESSION['userlogin']))
+    {
+        $nbbadgeDem = ' <span class="badge">'.$DemandesAdd->getNbDemande($_SESSION['userlogin']).'</span>';
+    }
+    $onglets['traitement_heures_additionnelles'] = _('resp_menu_button_traite_additionnelle').$nbbadgeDem;
+    
+    $nbbadgeRep='';
+    if ( 0 < $DemandesRep->getNbDemande($_SESSION['userlogin']))
+    {
+        $nbbadgeRep = ' <span class="badge">'.$DemandesRep->getNbDemande($_SESSION['userlogin']).'</span>';
+    }
+    $onglets['traitement_heures_repos'] = _('resp_menu_button_traite_repos').$nbbadgeRep;
 
     if( $_SESSION['config']['resp_ajoute_conges'] )
         $onglets['ajout_conges'] = _('resp_ajout_conges_titre');
