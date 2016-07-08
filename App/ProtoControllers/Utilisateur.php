@@ -58,7 +58,7 @@ class Utilisateur
     public static function hasCongesEnCours($login)
     {
         $params = ['p_login' => $login, 'p_etat' => \App\Models\Conge::STATUT_DEMANDE];
-        $conge = new \App\ProtoControllers\Conge();
+        $conge = new \App\ProtoControllers\Employe\Conge();
 
         return $conge->exists($params);
     }
@@ -73,7 +73,7 @@ class Utilisateur
     public static function hasHeureReposEnCours($login)
     {
         $params = ['login' => $login, 'statut' => \App\Models\Heure\Repos::STATUT_DEMANDE];
-        $repos = new \App\ProtoControllers\Heure\Repos();
+        $repos = new \App\ProtoControllers\Employe\Heure\Repos();
 
         return $repos->exists($params);
     }
@@ -88,7 +88,7 @@ class Utilisateur
     public static function hasHeureAdditionnelleEnCours($login)
     {
         $params = ['login' => $login, 'statut' => \App\Models\Heure\Additionnelle::STATUT_DEMANDE];
-        $additionnelle = new \App\ProtoControllers\Heure\Additionnelle();
+        $additionnelle = new \App\ProtoControllers\Employe\Heure\Additionnelle();
 
         return $additionnelle->exists($params);
     }

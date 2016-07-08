@@ -1,5 +1,5 @@
 <?php
-namespace App\ProtoControllers;
+namespace App\ProtoControllers\Employe;
 
 /**
  * ProtoContrôleur abstrait d'heures, en attendant la migration vers le MVC REST

@@ -2592,7 +2592,7 @@ class Fonctions
         ob_start();
         $table->render();
         $return .= ob_get_clean();
-        $listPlanning = \App\ProtoControllers\Planning::getListPlanning(\App\ProtoControllers\Planning::getListPlanningId());
+        $listPlanning = \App\ProtoControllers\Responsable\Planning::getListPlanning(\App\ProtoControllers\Responsable\Planning::getListPlanningId());
         $return .= '<br><hr/>';
         $return .= '<h4>' . _('planning_utilisateur') . '</h4>';
         $return .= '<select name="planning_utilisateur" class="form-control">';
@@ -3247,7 +3247,7 @@ class Fonctions
         ob_start();
         $table->render();
         $return .= ob_get_clean();
-        $listPlanning = \App\ProtoControllers\Planning::getListPlanning(\App\ProtoControllers\Planning::getListPlanningId());
+        $listPlanning = \App\ProtoControllers\Responsable\Planning::getListPlanning(\App\ProtoControllers\Responsable\Planning::getListPlanningId());
         $return .= '<br><hr/>';
         $return .= '<h4>' . _('planning_utilisateur') . '</h4>';
         $return .= '<select name="planning_utilisateur" class="form-control">';

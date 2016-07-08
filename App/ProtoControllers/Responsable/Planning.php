@@ -24,7 +24,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *************************************************************************************************/
-namespace App\ProtoControllers;
+namespace App\ProtoControllers\Responsable;
 
 /**
  * ProtoContrôleur de planning, en attendant la migration vers le MVC REST
@@ -49,16 +49,16 @@ class Planning
         if (!empty($post['_METHOD'])) {
             switch ($post['_METHOD']) {
                 case 'DELETE':
-                    return \App\ProtoControllers\Planning::deletePlanning($post['planning_id'], $errors, $notice);
+                    return \App\ProtoControllers\Responsable\Planning::deletePlanning($post['planning_id'], $errors, $notice);
                     break;
                 case 'PUT':
                     if (!empty($post['planning_id']) && 0 < (int) $post['planning_id']) {
-                        return \App\ProtoControllers\Planning::putPlanning($post['planning_id'], $post, $errors);
+                        return \App\ProtoControllers\Responsable\Planning::putPlanning($post['planning_id'], $post, $errors);
                     }
                     break;
                 case 'PATCH':
                     if (!empty($post['planning_id']) && 0 < (int) $post['planning_id']) {
-                        return \App\ProtoControllers\Planning::patchPlanning($post['planning_id'], $post);
+                        return \App\ProtoControllers\Responsable\Planning::patchPlanning($post['planning_id'], $post);
                     }
                     break;
             }
@@ -67,7 +67,7 @@ class Planning
                 $errors['Nom'] = _('champ_necessaire');
                 return NIL_INT;
             }
-            if (\App\ProtoControllers\Planning::existPlanningName($post['name'])) {
+            if (\App\ProtoControllers\Responsable\Planning::existPlanningName($post['name'])) {
                 $errors['Nom'] = _('nom_existe_deja');
                 return NIL_INT;
             }
@@ -75,9 +75,9 @@ class Planning
             if (!empty($post['creneaux'])) {
                 $sql = \includes\SQL::singleton();
                 $sql->getPdoObj()->begin_transaction();
-                $idPlanning = \App\ProtoControllers\Planning::insertPlanning($post);
-                \App\ProtoControllers\Creneau::deleteCreneauList($idPlanning);
-                $idLastCreneau = \App\ProtoControllers\Creneau::postCreneauxList($post['creneaux'], $idPlanning, $errors);
+                $idPlanning = \App\ProtoControllers\Responsable\Planning::insertPlanning($post);
+                \App\ProtoControllers\Responsable\Creneau::deleteCreneauList($idPlanning);
+                $idLastCreneau = \App\ProtoControllers\Responsable\Creneau::postCreneauxList($post['creneaux'], $idPlanning, $errors);
                 if (0 < $idPlanning && 0 < $idLastCreneau) {
                     $sql->getPdoObj()->commit();
                 } else {
@@ -85,8 +85,8 @@ class Planning
                     return NIL_INT;
                 }
             } else {
-                $idPlanning = \App\ProtoControllers\Planning::insertPlanning($post);
-                \App\ProtoControllers\Creneau::deleteCreneauList($idPlanning);
+                $idPlanning = \App\ProtoControllers\Responsable\Planning::insertPlanning($post);
+                \App\ProtoControllers\Responsable\Creneau::deleteCreneauList($idPlanning);
             }
 
             return $idPlanning;
@@ -120,7 +120,7 @@ class Planning
             $errors['Nom'] = _('champ_necessaire');
             return NIL_INT;
         }
-        if (\App\ProtoControllers\Planning::existPlanningName($put['name'], $id)) {
+        if (\App\ProtoControllers\Responsable\Planning::existPlanningName($put['name'], $id)) {
             $errors['Nom'] = _('nom_existe_deja');
             return NIL_INT;
         }
@@ -128,10 +128,10 @@ class Planning
         if (!empty($put['creneaux'])) {
             $sql = \includes\SQL::singleton();
             $sql->getPdoObj()->begin_transaction();
-            $idPlanning = \App\ProtoControllers\Planning::updatePlanning($id, $put);
-            \App\ProtoControllers\Creneau::deleteCreneauList($idPlanning);
+            $idPlanning = \App\ProtoControllers\Responsable\Planning::updatePlanning($id, $put);
+            \App\ProtoControllers\Responsable\Creneau::deleteCreneauList($idPlanning);
             if (0 < $idPlanning) {
-                $idLastCreneau = \App\ProtoControllers\Creneau::postCreneauxList($put['creneaux'], $idPlanning, $errors);
+                $idLastCreneau = \App\ProtoControllers\Responsable\Creneau::postCreneauxList($put['creneaux'], $idPlanning, $errors);
                 if (0 < $idLastCreneau) {
                     $sql->getPdoObj()->commit();
                 } else {
@@ -142,7 +142,7 @@ class Planning
                 $sql->getPdoObj()->rollback();
             }
         } else {
-            $idPlanning = \App\ProtoControllers\Planning::updatePlanning($id, $put);
+            $idPlanning = \App\ProtoControllers\Responsable\Planning::updatePlanning($id, $put);
         }
 
         return $idPlanning;
@@ -160,15 +160,15 @@ class Planning
     private static function deletePlanning($id, array &$errors, &$notice)
     {
         // si planning inexistant ou faisant partie des non supprimable
-        if (!\App\ProtoControllers\Planning::isDeletable($id)) {
+        if (!\App\ProtoControllers\Responsable\Planning::isDeletable($id)) {
             $errors[] = _('planning_non_supprimable');
             return NIL_INT;
         }
 
         $sql = \includes\SQL::singleton();
         $sql->getPdoObj()->begin_transaction();
-        $res = \App\ProtoControllers\Planning::deleteSql($id);
-        \App\ProtoControllers\Creneau::deleteCreneauList($id);
+        $res = \App\ProtoControllers\Responsable\Planning::deleteSql($id);
+        \App\ProtoControllers\Responsable\Creneau::deleteCreneauList($id);
         if (0 < $res) {
             $notice = _('planning_supprime');
             $sql->getPdoObj()->commit();
@@ -189,7 +189,7 @@ class Planning
      */
     private static function patchPlanning($id, array $patch)
     {
-        return \App\ProtoControllers\Planning::patchSql($id, $patch);
+        return \App\ProtoControllers\Responsable\Planning::patchSql($id, $patch);
     }
 
     /*

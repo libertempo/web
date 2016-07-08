@@ -1,5 +1,5 @@
 <?php
-namespace App\ProtoControllers\Heure;
+namespace App\ProtoControllers\Employe\Heure;
 
 use \App\Models\AHeure;
 
@@ -10,7 +10,7 @@ use \App\Models\AHeure;
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina
  */
-class Repos extends \App\ProtoControllers\AHeure
+class Repos extends \App\ProtoControllers\Employe\AHeure
 {
     /**
      * {@inheritDoc}
