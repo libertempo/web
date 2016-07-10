@@ -28,3 +28,5 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 echo \responsable\Fonctions::traitementDemandesModule($tab_type_cong);
 
+$conges = new \App\ProtoControllers\Responsable\Traitement\conge();
+echo $conges->getForm();

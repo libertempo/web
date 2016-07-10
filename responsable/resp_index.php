@@ -56,8 +56,16 @@ verif_droits_user($session, "is_resp");
     $onglets['page_principale'] = _('resp_menu_button_retour_main');
     $DemandesAdd = new \App\ProtoControllers\Responsable\Traitement\Additionnelle;
     $DemandesRep = new \App\ProtoControllers\Responsable\Traitement\Repos;
-    if( $_SESSION['config']['user_saisie_demande'] )
-        $onglets['traitement_demandes'] = _('resp_menu_button_traite_demande') ;
+    //$DemandesConges = new \App\ProtoControllers\Responsable\Traitement\Conge;
+    
+    if( $_SESSION['config']['user_saisie_demande'] ) {
+
+        $nbbadgeConges='';
+        //if ( 0 < $DemandesConges->getNbDemande($_SESSION['userlogin'])) {
+        //    $nbbadgeConges = ' <span class="badge">'.$DemandesConges->getNbDemande($_SESSION['userlogin']).'</span>';
+        //}
+        $onglets['traitement_demandes'] = _('resp_menu_button_traite_demande').$nbbadgeConges ;
+    }
     
     $nbbadgeDem='';
     if ( 0 < $DemandesAdd->getNbDemande($_SESSION['userlogin']))
