@@ -102,8 +102,8 @@ $periodeAdditionnelle = "CREATE TABLE heure_additionnelle (
     fin INT(11) NOT NULL,
     duree INT NOT NULL,
     statut INT NOT NULL DEFAULT 0,
-    comment VARCHAR(50) NOT NULL DEFAULT ''
-    comment_refus VARCHAR(50) NOT NULL DEFAULT ''
+    comment VARCHAR(50) NOT NULL DEFAULT '',
+    comment_refus VARCHAR(50) NOT NULL DEFAULT '',
     PRIMARY KEY (`id_heure`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
 $resPeriodeAdditionnelle = $sql->query($periodeAdditionnelle);
@@ -115,8 +115,8 @@ $periodeRepos = "CREATE TABLE heure_repos (
     fin INT(11) NOT NULL,
     duree INT NOT NULL,
     statut INT NOT NULL DEFAULT 0,
-    comment VARCHAR(50) NOT NULL DEFAULT ''
-    comment_refus VARCHAR(50) NOT NULL DEFAULT ''
+    comment VARCHAR(50) NOT NULL DEFAULT '',
+    comment_refus VARCHAR(50) NOT NULL DEFAULT '',
     PRIMARY KEY (`id_heure`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
 $resPeriodeRepos = $sql->query($periodeRepos);

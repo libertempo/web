@@ -313,6 +313,8 @@ CREATE TABLE IF NOT EXISTS `heure_additionnelle` (
   `fin` int(11) NOT NULL,
   `duree` int(11) NOT NULL,
   `statut` int(11) NOT NULL DEFAULT 0,
+  `comment` VARCHAR(50) NOT NULL DEFAULT '',
+  `comment_refus` VARCHAR(50) NOT NULL DEFAULT '',
   PRIMARY KEY (`id_heure`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -323,6 +325,8 @@ CREATE TABLE IF NOT EXISTS `heure_repos` (
   `fin` int(11) NOT NULL,
   `duree` int(11) NOT NULL,
   `statut` int(11) NOT NULL DEFAULT 0,
+  `comment` VARCHAR(50) NOT NULL DEFAULT '',
+  `comment_refus` VARCHAR(50) NOT NULL DEFAULT '',
   PRIMARY KEY (`id_heure`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
