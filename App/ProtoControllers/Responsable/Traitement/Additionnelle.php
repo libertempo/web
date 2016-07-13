@@ -21,13 +21,13 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
             $infoDemande = $this->getListeSQL(explode(" ", $id_heure));
             if($this->isDemandeTraitable($infoDemande[0]['statut'], $statut)) {
                 if( ($this->isRespDeUser($resp, $infoDemande[0]['login']) || $this->isGrandRespDeUser($resp, $this->getGroupesId($infoDemande[0]['login']))) && $statut == 'STATUT_REFUS') {
-                    $id = $this->updateStatut($id_heure, \App\Models\AHeure::STATUT_REFUS);
+                    $id = $this->updateStatutRefus($id_heure, $put['comment_refus'][$id_heure]);
                     log_action(0, '', '', 'Refus de la demande d\'heure additionnelle ' . $id_heure . ' de ' . $infoDemande[0]['login']);
                 } elseif( (($this->isRespDeUser($resp, $infoDemande[0]['login']) && !$this->isDoubleValGroupe($infoDemande[0]['login'])) || ($this->isGrandRespDeUser($resp, $this->getGroupesId($infoDemande[0]['login'])) && $this->isDoubleValGroupe($infoDemande[0]['login']))) && $statut == 'STATUT_OK' ) {
-                        $id = $this->demandeOk($id_heure, \App\Models\AHeure::STATUT_OK);
+                        $id = $this->demandeOk($id_heure);
                         log_action(0, '', '', 'Validation de la demande d\'heure additionnelle ' . $id_heure . ' de ' . $infoDemande[0]['login']);
                 } elseif($this->isRespDeUser($resp, $infoDemande[0]['login']) && $this->isDoubleValGroupe($infoDemande[0]['login']) && $statut == 'STATUT_OK' ) {
-                        $id = $this->updateStatut($id_heure, \App\Models\AHeure::STATUT_VALIDE);
+                        $id = $this->updateStatutValide($id_heure);
                         log_action(0, '', '', 'Demande d\'heure additionnelle ' . $id_heure . ' de ' . $infoDemande[0]['login'] . ' transmise au grand responsable');
                 } elseif($statut != "NULL") {
                     $errorLst[] = _('traitement_non_autorise').': '.$infoDemande[0]['login'];
@@ -48,12 +48,54 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
      * 
      * @return int $id 
      */
-    protected function updateStatut($demande, $statut)
+    protected function updateStatutOk($demande)
     {
         $sql = \includes\SQL::singleton();
 
         $req   = 'UPDATE heure_additionnelle
-                SET statut = ' . $statut . '
+                SET statut = ' . \App\Models\AHeure::STATUT_OK . '
+                WHERE id_heure = '. (int) $demande;
+        $query = $sql->query($req);
+
+        return $demande;
+    }
+    
+    
+    /**
+     * Refus de la demande d'heure
+     * 
+     * @param int $demande
+     * @param int $comm
+     * 
+     * @return int $id 
+     */
+    protected function updateStatutRefus($demande, $comm)
+    {
+        $sql = \includes\SQL::singleton();
+
+        $req   = 'UPDATE heure_additionnelle
+                SET statut = ' . \App\Models\AHeure::STATUT_REFUS . ',
+                    comment_refus = \''.$comm.'\'
+                WHERE id_heure = '. (int) $demande;
+        $query = $sql->query($req);
+
+        return $demande;
+    }
+    
+    /**
+     * Première validation de la demande d'heure
+     * 
+     * @param int $demande
+     * @param int $comm
+     * 
+     * @return int $id 
+     */
+    protected function updateStatutValide($demande)
+    {
+        $sql = \includes\SQL::singleton();
+
+        $req   = 'UPDATE heure_additionnelle
+                SET statut = ' . \App\Models\AHeure::STATUT_VALIDE . '
                 WHERE id_heure = '. (int) $demande;
         $query = $sql->query($req);
 
@@ -71,7 +113,6 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
     {
         $user = $this->getListeSQL(explode(" ",$demande));
         $sql = \includes\SQL::singleton();
-
         $req   = 'UPDATE conges_users
                 SET u_heure_solde = u_heure_solde+' .$user[0]['duree'] . '
                 WHERE u_login = \''. $user[0]['login'] .'\'';
@@ -118,7 +159,16 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
             'table-striped',
             'table-condensed'
         ]);
-        $childTable = '<thead><tr><th width="20%">' . _('nom') . '</th><th>' . _('solde') . '</th><th>' . _('jour') . '</th><th>' . _('debut') . '</th><th>' . _('fin') . '</th><th>' . _('duree') . '</th><th>' . _('accept') . '</th><th>' . _('refus') . '</th><th>' . _('attente') . '</th></tr></thead><tbody>';
+        $childTable = '<thead><tr><th>' . _('divers_nom_maj_1') . '<br>' . _('divers_prenom_maj_1') . '</th>';
+        $childTable .= '<th>' . _('jour') . '</th>';
+        $childTable .= '<th>' . _('divers_debut_maj_1') . '</th>';
+        $childTable .= '<th>' . _('divers_fin_maj_1') . '</th>';
+        $childTable .= '<th>' . _('duree') . '</th>';
+        $childTable .= '<th>' . _('divers_solde') . '</th>';
+        $childTable .= '<th>' . _('divers_comment_maj_1') . '</th>';
+        $childTable .= '<th>' . _('divers_accepter_maj_1') . '</th><th>' . _('divers_refuser_maj_1') . '</th><th>' . _('resp_traite_demandes_attente') . '</th>';
+        $childTable .= '<th>' . _('resp_traite_demandes_motif_refus') . '</th>';
+        $childTable .= '</tr></thead><tbody>';
 
         $demandesResp = $this->getDemandesResp($_SESSION['userlogin']);
         $demandesGrandResp = $this->getDemandesGrandResp($_SESSION['userlogin']);

@@ -186,13 +186,13 @@ abstract class ATraitement
     /**
      * Traitement
      */
-    protected function demandeOk($demande, $statut)
+    protected function demandeOk($demande)
     {
         $sql = \includes\SQL::singleton();
         $sql->getPdoObj()->begin_transaction();
         
         $idSolde = $this->updateSolde($demande);
-        $idStatut = $this->updateStatut($demande, $statut);
+        $idStatut = $this->updateStatutOk($demande);
         if (0 < $idSolde && 0 < $idStatut) {
             $sql->getPdoObj()->commit();
         } else {
@@ -231,11 +231,14 @@ abstract class ATraitement
             $prenom = $this->getPrenom($demande['login']);
             $solde = \App\Helpers\Formatter::Timestamp2Duree($this->getSoldeHeure($demande['login']));
             $Table .= '<tr class="'.($i?'i':'p').'">';
-            $Table .= '<td><b>'.$nom.'</b><br>'.$prenom.'</td><td>'.$solde.'</td><td>'.$jour.'</td><td>'.$debut.'</td><td>'.$fin.'</td><td>'.$duree.'</td>';
+            $Table .= '<td><b>'.$nom.'</b><br>'.$prenom.'</td><td>'.$jour.'</td><td>'.$debut.'</td><td>'.$fin.'</td><td>'.$duree.'</td><td>'.$solde.'</td>';
             $Table .= '<input type="hidden" name="_METHOD" value="PUT" />';
+            $Table .= '<td>' . $demande['comment'] . '</td>';
             $Table .= '<td><input type="radio" name="demande['.$id.']" value="STATUT_OK"></td>';
             $Table .= '<td><input type="radio" name="demande['.$id.']" value="STATUT_REFUS"></td>';
-            $Table .= '<td><input type="radio" name="demande['.$id.']" value="NULL" checked></td></tr>';
+            $Table .= '<td><input type="radio" name="demande['.$id.']" value="NULL" checked></td>';
+            $Table .= '<td><input class="form-control" type="text" name="comment_refus['.$id.']" size="20" max="100"></td></tr>';
+
             $i = !$i;
             }
             
