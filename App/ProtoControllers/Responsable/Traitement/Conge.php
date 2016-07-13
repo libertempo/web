@@ -137,17 +137,17 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
             if($this->isDemandeTraitable($infoDemande[0]['p_etat'], $statut)) {
                 if( ($this->isRespDeUser($resp, $infoDemande[0]['p_login']) || $this->isGrandRespDeUser($resp, $this->getGroupesId($infoDemande[0]['p_login']))) && $statut == 'STATUT_REFUS') {
                     $id = $this->updateStatutRefus($id_conge, $put['comment_refus'][$id_conge]);
-                    log_action($id,"refus", $infoDemande[0]['p_login'], 'traitement demande ' . $id . ' (' . $infoDemande[0]['p_login'] . ') (' . $infoDemande[0]['p_nb_jours'] . ' jours) : refus');
+                    log_action($infoDemande[0]['p_num'],"refus", $infoDemande[0]['p_login'], 'traitement demande ' . $id . ' (' . $infoDemande[0]['p_login'] . ') (' . $infoDemande[0]['p_nb_jours'] . ' jours) : refus');
                 } elseif( (($this->isRespDeUser($resp, $infoDemande[0]['p_login']) && !$this->isDoubleValGroupe($infoDemande[0]['p_login'])) || ($this->isGrandRespDeUser($resp, $this->getGroupesId($infoDemande[0]['p_login'])) && $this->isDoubleValGroupe($infoDemande[0]['p_login']))) && $statut == 'STATUT_OK' ) {
                     if($this->isReliquatAutorise() && $this->isReliquatUtilisable($infoDemande[0]['p_date_fin']) && 0 < $this->getReliquatconge($infoDemande[0]['p_login'], $infoDemande[0]['p_type'])) {
                         $id = $this->gestionSoldeReliquat($infoDemande[0]);
                     } else {
                         $id = $this->updateSoldeUser($infoDemande[0]['p_login'], $infoDemande[0]['p_nb_jours'], $infoDemande[0]['p_type']);
                         $this->updateStatutOk($infoDemande[0]['p_num']);                    }
-                    log_action($id,"ok", $infoDemande[0]['p_login'], 'traitement demande ' . $id . ' (' . $infoDemande[0]['p_login'] . ') (' . $infoDemande[0]['p_nb_jours'] . ' jours) : OK');
+                    log_action($infoDemande[0]['p_num'],"ok", $infoDemande[0]['p_login'], 'traitement demande ' . $id . ' (' . $infoDemande[0]['p_login'] . ') (' . $infoDemande[0]['p_nb_jours'] . ' jours) : OK');
                 } elseif($this->isRespDeUser($resp, $infoDemande[0]['p_login']) && $this->isDoubleValGroupe($infoDemande[0]['p_login']) && $statut == 'STATUT_OK' ) {
                         $id = $this->updateStatutValide($id_conge);
-                        log_action($id, 'valid', $infoDemande[0]['p_login'], 'traitement dmande conges ' . $id . ' de ' . $infoDemande[0]['login'] . ' première validation');
+                        log_action($infoDemande[0]['p_num'], 'valid', $infoDemande[0]['p_login'], 'traitement dmande conges ' . $id . ' de ' . $infoDemande[0]['login'] . ' première validation');
                 } elseif($statut != "NULL") {
                     $errorLst[] = _('traitement_non_autorise').': '.$infoDemande[0]['login'];
                 }
@@ -164,7 +164,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
     {
         $SoldeReliquat = $this->getReliquatconge($demande['p_login'], $demande['p_type']);
         
-        if($SoldeReliquat>$demande['p_nb_jours']) {
+        if($SoldeReliquat>=$demande['p_nb_jours']) {
             $sql = \includes\SQL::singleton();
             $sql->getPdoObj()->begin_transaction();
             $idReliquat = $this->updateReliquatUser($demande['p_login'], $demande['p_nb_jours'], $demande['p_type']);
@@ -182,14 +182,14 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
             $sql->getPdoObj()->begin_transaction();
             $idReliquat = $this->updateReliquatUser($demande['p_login'], $SoldeReliquat, $demande['p_type']);
             $idSolde = $this->updateSoldeUser($demande['p_login'], $ResteSolde, $demande['p_type']);
-            $idStatut = $this->updateStatusOk($demande['p_num']);
+            $idStatut = $this->updateStatutOk($demande['p_num']);
             if (0 < $idReliquat && 0 < $idStatut && 0 < $idSolde) {
                 $sql->getPdoObj()->commit();
             } else {
                 $sql->getPdoObj()->rollback();
                 return NIL_INT;
             }
-            return $id;
+            return 1;
         }
     }
     /**
@@ -264,7 +264,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         $sql = \includes\SQL::singleton();
 
         $req   = 'UPDATE conges_solde_user
-                SET su_solde = su_solde-' .$duree . '
+                SET su_solde = su_solde-' .number_format($duree,2) . '
                 WHERE su_login = \''. $user .'\'
                 AND su_abs_id = '. (int) $typeId;
         $query = $sql->query($req);
@@ -284,12 +284,12 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         $sql = \includes\SQL::singleton();
 
         $req   = 'UPDATE conges_solde_user
-                SET su_reliquat = su_reliquat-' .$duree . '
+                SET su_reliquat = su_reliquat-' .number_format($duree,2) . '
                 WHERE su_login = \''. $user .'\'
                 AND su_abs_id = '. (int) $typeId;
         $query = $sql->query($req);
 
-        return $demande;
+        return 1;
     }
 
      /**
@@ -425,7 +425,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
      * verifie si la date limite d'usage des reliquats n'est pas dépassée
      *
      * @param int $findemande date de fin de la demande
-     * @return int
+     * @return boolean
      */
     public function isReliquatUtilisable($findemande)
     {
@@ -436,7 +436,9 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         $query = $sql->query($req);
         
         $dlimite = $query->fetch_array()[0];
-        // d'abord vérifier si il n'y a pas de date!
+        if ($dlimite == 0) {
+            return true;
+        }
         return $findemande < $dlimite;
     }
     
