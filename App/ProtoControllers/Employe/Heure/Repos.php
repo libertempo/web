@@ -23,6 +23,7 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
         $valueDebut = '';
         $valueFin   = '';
         $notice = '';
+        $comment    = '';
 
         if (!empty($_POST)) {
             if (0 >= (int) $this->post($_POST, $errorsLst, $notice)) {
@@ -83,6 +84,7 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
             $valueJour  = date('d/m/Y', $data['debut']);
             $valueDebut = date('H\:i', $data['debut']);
             $valueFin   = date('H\:i', $data['fin']);
+            $comment    = $data['comment'];
 
             $childTable .= '<input type="hidden" name="id_heure" value="' . $id . '" /><input type="hidden" name="_METHOD" value="PUT" />';
         }
@@ -90,9 +92,14 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
         $debutId = uniqid();
         $finId   = uniqid();
 
-        $childTable .= '<thead><tr><th width="20%">' . _('Jour') . '</th><th>' . _('creneau') . '</th></tr></thead><tbody>';
-        $childTable .= '<tr><td><div class="form-inline col-xs-12 col-sm-10 col-lg-8"><input class="form-control date" type="text" value="' . $valueJour . '" name="jour"></div></td>';
-        $childTable .= '<td><div class="form-inline col-xs-10 col-sm-6 col-lg-4"><input class="form-control" style="width:45%" type="text" id="' . $debutId . '"  value="' . $valueDebut . '" name="debut_heure">&nbsp;<i class="fa fa-caret-right"></i>&nbsp;<input class="form-control" style="width:45%" type="text" id="' . $finId . '"  value="' . $valueFin . '" name="fin_heure"></div></td></tr>';
+        $childTable .= '<thead><tr><th width="20%">' . _('Jour') . '</th>
+        <th>' . _('creneau') . '</th><th>' . _('divers_comment_maj_1') . '</th></tr></thead><tbody>';
+        $childTable .= '<tr><td><div class="form-inline col-xs-12 col-sm-10 col-lg-8">
+        <input class="form-control date" type="text" value="' . $valueJour . '" name="jour"></div></td>';
+        $childTable .= '<td><div class="form-inline col-xs-10 col-sm-6 col-lg-4">
+        <input class="form-control" style="width:45%" type="text" id="' . $debutId . '"  value="' . $valueDebut . '" name="debut_heure">
+        &nbsp;<i class="fa fa-caret-right"></i>&nbsp;
+        <input class="form-control" style="width:45%" type="text" id="' . $finId . '"  value="' . $valueFin . '" name="fin_heure"></div></td><td><input class="form-control" type="text" name="comment" value="'.$comment.'" size="20" max="100"></td></tr>';
         $childTable .= '</tbody>';
         $childTable .= '<script type="text/javascript">generateTimePicker("' . $debutId . '");generateTimePicker("' . $finId . '");</script>';
 
@@ -259,7 +266,7 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
             'table-condensed',
             'table-striped',
         ]);
-        $childTable = '<thead><tr><th>jour</th><th>debut</th><th>fin</th><th>durée</th><th>statut</th><th></th></tr></thead><tbody>';
+        $childTable = '<thead><tr><th>' . _('jour') . '</th><th>' . _('divers_debut_maj_1') . '</th><th>fin</th><th>' . _('duree') . '</th><th>' . _('statut') . '</th><th>' . _('commentaire') . '</th><th></th></tr></thead><tbody>';
         $session = session_id();
         $listId = $this->getListeId($params);
         if (empty($listId)) {
@@ -279,7 +286,7 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
                     $modification = '<i class="fa fa-pencil disabled" title="'  . _('heure_non_modifiable') . '"></i>';
                     $annulation   = '<button title="' . _('heure_non_supprimable') . '" type="button" class="btn btn-link disabled"><i class="fa fa-times-circle"></i></button>';
                 }
-                $childTable .= '<tr><td>' . $jour . '</td><td>' . $debut . '</td><td>' . $fin . '</td><td>' . $duree . '</td><td>' . $statut . '</td><td><form action="" method="post" accept-charset="UTF-8"
+                $childTable .= '<tr><td>' . $jour . '</td><td>' . $debut . '</td><td>' . $fin . '</td><td>' . $duree . '</td><td>' . $statut . '</td><td>' . $repos['comment'] . '</td><td><form action="" method="post" accept-charset="UTF-8"
 enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' . $annulation . '</form></td></tr>';
             }
         }
@@ -406,8 +413,8 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
     protected function insert(array $data, $user)
     {
         $sql = \includes\SQL::singleton();
-        $req = 'INSERT INTO heure_repos (id_heure, login, debut, fin, duree, statut) VALUES
-        (NULL, "' . $user . '", ' . (int) $data['debut'] . ', '. (int) $data['fin'] .', '. (int) $data['duree'] . ', ' . AHeure::STATUT_DEMANDE . ')';
+        $req = 'INSERT INTO heure_repos (id_heure, login, debut, fin, duree, statut, comment) VALUES
+        (NULL, "' . $user . '", ' . (int) $data['debut'] . ', '. (int) $data['fin'] .', '. (int) $data['duree'] . ', ' . AHeure::STATUT_DEMANDE . ', "' . $post['comment'] . '")';
         $query = $sql->query($req);
 
         return $sql->insert_id;
@@ -418,11 +425,17 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
      */
     protected function update(array $data, $user, $id)
     {
-        $sql = \includes\SQL::singleton();
-        $req = 'UPDATE heure_repos
-                SET debut = ' . $data['debut']  . ',
-                    fin = ' . $data['fin'] . ',
-                    duree = ' . $data['duree'] . '
+        $jour = \App\Helpers\Formatter::dateFr2Iso($put['jour']);
+        $timestampDebut = strtotime($jour . ' ' . $put['debut_heure']);
+        $timestampFin   = strtotime($jour . ' ' . $put['fin_heure']);
+        $duree = $this->countDuree($timestampDebut, $timestampFin);
+        $sql   = \includes\SQL::singleton();
+        $toInsert = [];
+        $req   = 'UPDATE heure_repos
+                SET debut = ' . $timestampDebut . ',
+                    fin = ' . $timestampFin . ',
+                    duree = ' . $duree . ',
+                    comment = \''.$put['comment'].'\'
                 WHERE id_heure = '. (int) $id . '
                 AND login = "' . $user . '"';
         $query = $sql->query($req);
