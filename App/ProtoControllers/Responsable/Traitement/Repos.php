@@ -17,27 +17,30 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
      */
     protected function put(array $put, $resp, &$notice, array &$errorLst)
     {
+        $return ='1';
+        $infoDemande = $this->getListeSQL(array_keys($put['demande']));
+
         foreach ($put['demande'] as $id_heure => $statut){
-            $infoDemande = $this->getListeSQL(explode(" ", $id_heure));
-            if($this->isDemandeTraitable($infoDemande[0]['statut'], $statut)) {
-                if( ($this->isRespDeUser($resp, $infoDemande[0]['login']) || $this->isGrandRespDeUser($resp, $this->getGroupesId($infoDemande[0]['login']))) && $statut == 'STATUT_REFUS') {
+            if($this->isDemandeTraitable($infoDemande[$id_heure]['statut'], $statut)) {
+                if( ($this->isRespDeUser($resp, $infoDemande[$id_heure]['login']) || $this->isGrandRespDeUser($resp, $this->getGroupesId($infoDemande[$id_heure]['login']))) && $statut == 'STATUT_REFUS') {
                     $id = $this->updateStatutRefus($id_heure, $put['comment_refus'][$id_heure]);
-                    log_action(0, '', '', 'Refus de la demande d\'heure de repos ' . $id_heure . ' de ' . $infoDemande[0]['login']);
-                } elseif( (($this->isRespDeUser($resp, $infoDemande[0]['login']) && !$this->isDoubleValGroupe($infoDemande[0]['login'])) || ($this->isGrandRespDeUser($resp, $this->getGroupesId($infoDemande[0]['login'])) && $this->isDoubleValGroupe($infoDemande[0]['login']))) && $statut == 'STATUT_OK' ) {
+                    log_action(0, '', '', 'Refus de la demande d\'heure de repos ' . $id_heure . ' de ' . $infoDemande[$id_heure]['login']);
+                } elseif( (($this->isRespDeUser($resp, $infoDemande[$id_heure]['login']) && !$this->isDoubleValGroupe($infoDemande[$id_heure]['login'])) || ($this->isGrandRespDeUser($resp, $this->getGroupesId($infoDemande[$id_heure]['login'])) && $this->isDoubleValGroupe($infoDemande[$id_heure]['login']))) && $statut == 'STATUT_OK' ) {
                         $id = $this->demandeOk($id_heure);
-                        log_action(0, '', '', 'Validation de la demande d\'heure de repos ' . $id_heure . ' de ' . $infoDemande[0]['login']);
-                } elseif($this->isRespDeUser($resp, $infoDemande[0]['login']) && $this->isDoubleValGroupe($infoDemande[0]['login']) && $statut == 'STATUT_OK' ) {
+                        log_action(0, '', '', 'Validation de la demande d\'heure de repos ' . $id_heure . ' de ' . $infoDemande[$id_heure]['login']);
+                } elseif($this->isRespDeUser($resp, $infoDemande[$id_heure]['login']) && $this->isDoubleValGroupe($infoDemande[$id_heure]['login']) && $statut == 'STATUT_OK' ) {
                         $id = $this->updateStatutValide($id_heure);
-                        log_action(0, '', '', 'Demande d\'heure de repos ' . $id_heure . ' de ' . $infoDemande[0]['login'] . ' transmise au grand responsable');
+                        log_action(0, '', '', 'Demande d\'heure de repos ' . $id_heure . ' de ' . $infoDemande[$id_heure]['login'] . ' transmise au grand responsable');
                 } elseif($statut != "NULL") {
-                    $errorLst[] = _('traitement_non_autorise').': '.$infoDemande[0]['login'];
+                    $errorLst[] = _('traitement_non_autorise').': '.$infoDemande[$id_heure]['login'];
                 }
             } else {
                 $errorLst[] = _('demande_deja_traite');
+                $return = NIL_INT;
             }
         }
         $notice = _('traitement_effectue');
-        return NIL_INT;
+        return $return;
     }
 
     /**
@@ -57,7 +60,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
                 WHERE id_heure = '. (int) $demande;
         $query = $sql->query($req);
 
-        return $demande;
+        return $sql->affected_rows;
     }
     
     /**
@@ -78,7 +81,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
                 WHERE id_heure = '. (int) $demande;
         $query = $sql->query($req);
 
-        return $demande;
+        return $sql->affected_rows;
     }
     
     /**
@@ -98,7 +101,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
                 WHERE id_heure = '. (int) $demande;
         $query = $sql->query($req);
 
-        return $demande;
+        return $sql->affected_rows;
     }
 
     /**
@@ -118,7 +121,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
                 WHERE u_login = \''. $user[0]['login'] .'\'';
         $query = $sql->query($req);
 
-        return $demande;
+        return $sql->affected_rows;
     }
 
     /**
@@ -173,7 +176,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
         $demandesResp = $this->getDemandesResp($_SESSION['userlogin']);
         $demandesGrandResp = $this->getDemandesGrandResp($_SESSION['userlogin']);
         if (empty($demandesResp) && empty($demandesGrandResp) ) {
-            $childTable .= '<tr><td colspan="6"><center>' . _('aucun_resultat') . '</center></td></tr>';
+            $childTable .= '<tr><td colspan="11"><center>' . _('aucun_resultat') . '</center></td></tr>';
         } else {
             if(!empty($demandesResp)) {
                 $childTable .= $this->getDemandesTab($demandesResp);
@@ -199,9 +202,8 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
      /**
       * {@inheritDoc}
       */
-    protected function getDemandesRespId($resp)
+    protected function getIdDemandesResponsable($resp)
     {
-        $groupId = []; 
         $groupId = $this->getGroupeRespId($resp);
         if (empty($groupId)) {
             return [];
@@ -229,7 +231,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
      /**
       * {@inheritDoc}
       */
-    protected function getDemandesGrandRespId($gResp)
+    protected function getIdDemandesGrandResponsable($gResp)
     {
         $groupId = $this->getGroupeGrandRespId($gResp);
         if (empty($groupId)) {
@@ -268,6 +270,12 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
                 WHERE id_heure IN (' . implode(',', $listId) . ')
                 ORDER BY debut DESC, statut ASC';
 
-        return $sql->query($req)->fetch_all(MYSQLI_ASSOC);
+        $ListeDemande = $sql->query($req)->fetch_all(MYSQLI_ASSOC);
+        
+        foreach ($ListeDemande as $demande){
+            $infoDemande[$demande['p_num']] = $demande;
+        }
+
+        return $infoDemande;
     }
 }

@@ -38,7 +38,7 @@ abstract class ATraitement
      *
      * @return array
      */
-    abstract protected function getDemandesRespId($resp);
+    abstract protected function getIdDemandesResponsable($resp);
 
     /**
      * Retourne une liste d'heures
@@ -47,7 +47,6 @@ abstract class ATraitement
      *
      * @return array
      * 
-     * utiliser celui dans Heure/Additionnelle?
      */
     abstract protected function getListeSQL(array $listId);
 
@@ -62,7 +61,7 @@ abstract class ATraitement
     protected function post(array $post, &$notice, array &$errorLst)
     {
         if (!empty($post['_METHOD']) && $post['_METHOD'] == "PUT") {
-            $demandeTraitable = array_intersect($post['demande'], $this->getDemandesRespId($_SESSION['userlogin']));
+            $demandeTraitable = array_intersect($post['demande'], $this->getIdDemandesResponsable($_SESSION['userlogin']));
             return $this->put($post, $_SESSION['userlogin'], $notice, $errorLst);
         } else {
             return NIL_INT;
@@ -73,15 +72,15 @@ abstract class ATraitement
      * Retourne le nom d'un utilisateur
      *
      * @param string $login
-     *
+     * 
      * @return string
      */
     public function getNom($login)
     {
         $sql = \includes\SQL::singleton();
-        $req = 'SELECT u_nom FROM conges_users WHERE u_login = \''.$login.'\'';
+        $req = 'SELECT u_nom FROM conges_users WHERE u_login = \''.  \includes\SQL::quote($login).'\'';
         $query = $sql->query($req);
-        $nom = $query->fetch_array()[0];
+        $nom = $query->fetch_array()['u_nom'];
 
         return $nom;
     }
@@ -90,7 +89,7 @@ abstract class ATraitement
      * Retourne le prenom d'un utilisateur
      *
      * @param string $login
-     *
+     * 
      * @return string
      */
     public function getPrenom($login)
@@ -107,7 +106,7 @@ abstract class ATraitement
      * Retourne le solde d'heure d'un utilisateur
      *
      * @param string $login
-     *
+     * 
      * @return int
      */
     public function getSoldeHeure($login)
@@ -124,7 +123,7 @@ abstract class ATraitement
      * Retourne l'id des groupes d'un responsable donné
      *
      * @param string $resp
-     *
+     * 
      * @return array
      */
     public function getGroupeRespId($resp)
@@ -146,7 +145,7 @@ abstract class ATraitement
      * Retourne l'id des groupes d'un grand responsable donné
      *
      * @param string $gresp
-     *
+     * 
      * @return array
      */
     public function getGroupeGrandRespId($gresp)
@@ -167,7 +166,7 @@ abstract class ATraitement
      * Retourne le login des membres d'un ou plusieurs groupes
      *
      * @param array $groupes
-     *
+     * 
      * @return array
      */
     public function getUsersGroupe(array $groupes)
@@ -184,15 +183,19 @@ abstract class ATraitement
     }
         
     /**
-     * Traitement
+     * Traitement d'une validation avec modification du solde
+     * 
+     * @param int $demande
+     * 
+     * @return int
      */
     protected function demandeOk($demande)
     {
         $sql = \includes\SQL::singleton();
         $sql->getPdoObj()->begin_transaction();
         
-        $idSolde = $this->updateSolde($demande);
-        $idStatut = $this->updateStatutOk($demande);
+        $updateSolde = $this->updateSolde($demande);
+        $updateStatut = $this->updateStatutOk($demande);
         if (0 < $idSolde && 0 < $idStatut) {
             $sql->getPdoObj()->commit();
         } else {
@@ -203,11 +206,15 @@ abstract class ATraitement
     }
     
     /**
-     * {@inheritDoc}
+     * Retourne les demandes en cours d'un responsable
+     * 
+     * @param $resp login du responsable
+     * 
+     * @return array $demandes
      */
     public function getDemandesResp($resp)
     {
-        $demandesId = $this->getDemandesRespId($resp);
+        $demandesId = $this->getIdDemandesResponsable($resp);
         if (empty($demandesId)) {
             return [];
         }
@@ -216,13 +223,20 @@ abstract class ATraitement
         return $demandes;
     }
     
+    /**
+     * Retourne un tableau html des demandes a traiter
+     * 
+     * @param array $demandes
+     * 
+     * @return string
+     */
     protected function getDemandesTab(array $demandes)
     {
         $i=true;
         $Table='';
         
         foreach ( $demandes as $demande ) {
-            $jour   = date('d/m/Y', $demande['debut']);
+           $jour   = date('d/m/Y', $demande['debut']);
             $debut  = date('H\:i', $demande['debut']);
             $fin    = date('H\:i', $demande['fin']);
             $duree  = \App\Helpers\Formatter::Timestamp2Duree($demande['duree']);
@@ -246,11 +260,15 @@ abstract class ATraitement
     }
 
     /**
-     * {@inheritDoc}
+     * Retourne le détail des demandes a traiter en tant que grand responsable
+     * 
+     * @param string $resp
+     * 
+     * @return array
      */
     public function getDemandesGrandResp($resp)
     {
-        $demandesId = $this->getDemandesGrandRespId($resp);
+        $demandesId = $this->getIdDemandesGrandResponsable($resp);
         if (empty($demandesId)) {
             return [];
         }
@@ -260,14 +278,24 @@ abstract class ATraitement
     }
 
     /**
-     * {@inheritDoc}
+     * Vérifie si un utilisateur est bien le responsable d'un employé
+     * 
+     * @param string $resp
+     * @param string $user
+     * 
+     * @return bool
      */
     public function isRespDeUser($resp, $user) {
         return $this->isRespDirect($resp, $user) || $this->isRespGroupe($resp, $this->getGroupesId($user));
     }
     
     /**
-     * {@inheritDoc}
+     * Vérifie si un utilisateur est bien le grand responsable d'un employé
+     * 
+     * @param type $resp
+     * @param array $groupesId
+     * 
+     * @return type
      */
     public function isGrandRespDeUser($resp, array $groupesId) {
         $sql = \includes\SQL::singleton();
@@ -283,7 +311,12 @@ abstract class ATraitement
     }
 
     /**
-     * {@inheritDoc}
+     * Verifie si un utilisateur est responsable d'une liste de groupe
+     * 
+     * @param string $resp
+     * @param array $groupesId
+     * 
+     * @return bool
      */
     public function isRespGroupe($resp, array $groupesId)
     {
@@ -300,7 +333,12 @@ abstract class ATraitement
     }
     
     /**
-     * {@inheritDoc}
+     * Verifie si la demande n'a pas déja été traité
+     * 
+     * @param string $statutDb
+     * @param string $statut
+     * 
+     * @return type
      */
     public function isDemandeTraitable($statutDb, $statut)
     {
@@ -308,7 +346,12 @@ abstract class ATraitement
     }
 
     /**
-     * {@inheritDoc}
+     * Verifie si un utilisateur est grand responsable d'une liste de groupe
+     *
+     * @param string $gResp
+     * @param type $groupesId
+     * 
+     * @return type
      */
     public function isGrandRespGroupe($gResp, $groupesId)
     {
@@ -325,7 +368,12 @@ abstract class ATraitement
     }
 
     /**
-     * {@inheritDoc}
+     *  Verifie si un utilisateur est responsable d'une autre
+     * 
+     * @param type $resp
+     * @param type $user
+     * 
+     * @return type
      */
     public function isRespDirect($resp, $user)
     {
@@ -342,7 +390,11 @@ abstract class ATraitement
     }
 
     /**
-     * {@inheritDoc}
+     * retourne les identifiants de groupe auquel un utilisateur appartient
+     * 
+     * @param string $user
+     * 
+     * @return array $ids
      */
     public function getGroupesId($user)
     {
@@ -359,7 +411,11 @@ abstract class ATraitement
     }
 
     /**
-     * {@inheritDoc}
+     * Vérifie si le groupe d'un est en double validation
+     * 
+     * @param string $user
+     * 
+     * @return bool
      */
     protected function isDoubleValGroupe($user)
     {
@@ -378,16 +434,16 @@ abstract class ATraitement
     }
     
     /**
-     * Retourne le nombre de demande d'heure
+     * Retourne le nombre de demande en cours d'un responsable
      * 
      * @param $resp
      * 
      * @return int
      */
-    public function getNbDemande($resp)
+    public function getNbDemandesATraiter($resp)
     {
-        $demandesResp= $this->getDemandesRespId($resp);
-        $demandesGResp=  $this->getDemandesGrandRespId($resp);
+        $demandesResp= $this->getIdDemandesResponsable($resp);
+        $demandesGResp=  $this->getIdDemandesGrandResponsable($resp);
         
         return count($demandesResp) + count($demandesGResp);
     }

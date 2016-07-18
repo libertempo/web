@@ -62,7 +62,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         $demandesResp = $this->getDemandesResp($_SESSION['userlogin']);
         $demandesGrandResp = $this->getDemandesGrandResp($_SESSION['userlogin']);
         if (empty($demandesResp) && empty($demandesGrandResp) ) {
-            $childTable .= '<tr><td colspan="6"><center>' . _('resp_traite_demandes_aucune_demande') . '</center></td></tr>';
+            $childTable .= '<tr><td colspan="11"><center>' . _('resp_traite_demandes_aucune_demande') . '</center></td></tr>';
         } else {
             if(!empty($demandesResp)) {
                 $childTable .= $this->getDemandesTab($demandesResp);
@@ -132,31 +132,35 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
      */
     protected function put(array $put, $resp, &$notice, array &$errorLst)
     {
+        $return = '1';
+        $infoDemande = $this->getListeSQL(array_keys($put['demande']));
+
         foreach ($put['demande'] as $id_conge => $statut){
-            $infoDemande = $this->getListeSQL(explode(" ", $id_conge));
-            if($this->isDemandeTraitable($infoDemande[0]['p_etat'], $statut)) {
-                if( ($this->isRespDeUser($resp, $infoDemande[0]['p_login']) || $this->isGrandRespDeUser($resp, $this->getGroupesId($infoDemande[0]['p_login']))) && $statut == 'STATUT_REFUS') {
+            if($this->isDemandeTraitable($infoDemande[$id_conge]['p_etat'], $statut)) {
+                if( ($this->isRespDeUser($resp, $infoDemande[$id_conge]['p_login']) || $this->isGrandRespDeUser($resp, $this->getGroupesId($infoDemande[$id_conge]['p_login']))) && $statut == 'STATUT_REFUS') {
                     $id = $this->updateStatutRefus($id_conge, $put['comment_refus'][$id_conge]);
-                    log_action($infoDemande[0]['p_num'],"refus", $infoDemande[0]['p_login'], 'traitement demande ' . $id . ' (' . $infoDemande[0]['p_login'] . ') (' . $infoDemande[0]['p_nb_jours'] . ' jours) : refus');
-                } elseif( (($this->isRespDeUser($resp, $infoDemande[0]['p_login']) && !$this->isDoubleValGroupe($infoDemande[0]['p_login'])) || ($this->isGrandRespDeUser($resp, $this->getGroupesId($infoDemande[0]['p_login'])) && $this->isDoubleValGroupe($infoDemande[0]['p_login']))) && $statut == 'STATUT_OK' ) {
-                    if($this->isReliquatAutorise() && $this->isReliquatUtilisable($infoDemande[0]['p_date_fin']) && 0 < $this->getReliquatconge($infoDemande[0]['p_login'], $infoDemande[0]['p_type'])) {
-                        $id = $this->gestionSoldeReliquat($infoDemande[0]);
+                    log_action($infoDemande[$id_conge]['p_num'],"refus", $infoDemande[$id_conge]['p_login'], 'traitement demande ' . $id . ' (' . $infoDemande[$id_conge]['p_login'] . ') (' . $infoDemande[$id_conge]['p_nb_jours'] . ' jours) : refus');
+                } elseif( (($this->isRespDeUser($resp, $infoDemande[$id_conge]['p_login']) && !$this->isDoubleValGroupe($infoDemande[$id_conge]['p_login'])) || ($this->isGrandRespDeUser($resp, $this->getGroupesId($infoDemande[$id_conge]['p_login'])) && $this->isDoubleValGroupe($infoDemande[$id_conge]['p_login']))) && $statut == 'STATUT_OK' ) {
+                    if($this->isReliquatAutorise() && $this->isReliquatUtilisable($infoDemande[$id_conge]['p_date_fin']) && 0 < $this->getReliquatconge($infoDemande[$id_conge]['p_login'], $infoDemande[$id_conge]['p_type'])) {
+                        $id = $this->gestionSoldeReliquat($infoDemande[$id_conge]);
+                        log_action($infoDemande[$id_conge]['p_num'],"ok", $infoDemande[$id_conge]['p_login'], 'traitement demande ' . $id . ' (' . $infoDemande[$id_conge]['p_login'] . ') (' . $infoDemande[$id_conge]['p_nb_jours'] . ' jours) : OK');
                     } else {
-                        $id = $this->updateSoldeUser($infoDemande[0]['p_login'], $infoDemande[0]['p_nb_jours'], $infoDemande[0]['p_type']);
-                        $this->updateStatutOk($infoDemande[0]['p_num']);                    }
-                    log_action($infoDemande[0]['p_num'],"ok", $infoDemande[0]['p_login'], 'traitement demande ' . $id . ' (' . $infoDemande[0]['p_login'] . ') (' . $infoDemande[0]['p_nb_jours'] . ' jours) : OK');
-                } elseif($this->isRespDeUser($resp, $infoDemande[0]['p_login']) && $this->isDoubleValGroupe($infoDemande[0]['p_login']) && $statut == 'STATUT_OK' ) {
-                        $id = $this->updateStatutValide($id_conge);
-                        log_action($infoDemande[0]['p_num'], 'valid', $infoDemande[0]['p_login'], 'traitement dmande conges ' . $id . ' de ' . $infoDemande[0]['login'] . ' première validation');
+                        $id = $this->updateSoldeUser($infoDemande[$id_conge]['p_login'], $infoDemande[$id_conge]['p_nb_jours'], $infoDemande[$id_conge]['p_type']);
+                        $this->updateStatutOk($infoDemande[$id_conge]['p_num']);                    }
+                        log_action($infoDemande[$id_conge]['p_num'],"ok", $infoDemande[$id_conge]['p_login'], 'traitement demande ' . $id . ' (' . $infoDemande[$id_conge]['p_login'] . ') (' . $infoDemande[$id_conge]['p_nb_jours'] . ' jours) : OK');
+                } elseif($this->isRespDeUser($resp, $infoDemande[$id_conge]['p_login']) && $this->isDoubleValGroupe($infoDemande[$id_conge]['p_login']) && $statut == 'STATUT_OK' ) {
+                    $id = $this->updateStatutValide($id_conge);
+                    log_action($infoDemande[$id_conge]['p_num'], 'valid', $infoDemande[$id_conge]['p_login'], 'traitement dmande conges ' . $id . ' de ' . $infoDemande[$id_conge]['login'] . ' première validation');
                 } elseif($statut != "NULL") {
-                    $errorLst[] = _('traitement_non_autorise').': '.$infoDemande[0]['login'];
+                    $errorLst[] = _('traitement_non_autorise').': '.$infoDemande[$id_conge]['login'];
                 }
             } else {
                 $errorLst[] = _('demande_deja_traite');
+                $return = NIL_INT;
             }
         }
         $notice = _('traitement_effectue');
-        return NIL_INT;
+        return $return;
     }
 
     
@@ -209,7 +213,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
                 WHERE p_num = '. (int) $demande;
         $query = $sql->query($req);
 
-        return $demande;
+        return $sql->affected_rows;
     }
     
     /**
@@ -230,7 +234,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
                 WHERE p_num = '. (int) $demande;
         $query = $sql->query($req);
 
-        return $demande;
+        return $sql->affected_rows;
     }
     
     /**
@@ -249,7 +253,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
                 WHERE p_num = '. (int) $demande;
         $query = $sql->query($req);
 
-        return $demande;
+        return $sql->affected_rows;
     }
     
     /**
@@ -269,7 +273,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
                 AND su_abs_id = '. (int) $typeId;
         $query = $sql->query($req);
 
-        return 1;
+        return $sql->affected_rows;
     }
     
     /**
@@ -289,15 +293,14 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
                 AND su_abs_id = '. (int) $typeId;
         $query = $sql->query($req);
 
-        return 1;
+        return $sql->affected_rows;
     }
 
      /**
       * {@inheritDoc}
       */
-    protected function getDemandesRespId($resp)
-    {
-        $groupId = []; 
+    protected function getIdDemandesResponsable($resp)
+    { 
         $groupId = $this->getGroupeRespId($resp);
         if (empty($groupId)) {
             return [];
@@ -325,7 +328,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
      /**
       * {@inheritDoc}
       */
-    protected function getDemandesGrandRespId($gResp)
+    protected function getIdDemandesGrandResponsable($gResp)
     {
         $groupId = $this->getGroupeGrandRespId($gResp);
         if (empty($groupId)) {
@@ -363,8 +366,14 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
                 FROM conges_periode
                 WHERE p_num IN (' . implode(',', $listId) . ')
                 ORDER BY p_date_deb DESC, p_etat ASC';
+        
+        $ListeDemande = $sql->query($req)->fetch_all(MYSQLI_ASSOC);
+        
+        foreach ($ListeDemande as $demande){
+            $infoDemande[$demande['p_num']] = $demande;
+        }
 
-        return $sql->query($req)->fetch_all(MYSQLI_ASSOC);
+        return $infoDemande;
     }
     
     /**
