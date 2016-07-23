@@ -1153,4 +1153,52 @@ class Fonctions
         }
         return $return;
     }
+
+    /**
+     * Encapsule le comportement du module calendrier
+     *
+     * @param string $session
+     *
+     * @return string
+     * @access public
+     * @static
+     */
+    public static function calendrierModuleNew($session)
+    {
+        $return = '';
+
+        if(substr($session, 0, 9)!="phpconges") {
+            session_start();
+            // on initialise le tableau des variables de config
+            $_SESSION['config']=init_config_tab();
+            if($_SESSION['config']['consult_calendrier_sans_auth']==FALSE) {
+                redirect( ROOT_PATH . 'index.php' );
+            }
+        } else {
+            include_once INCLUDE_PATH . 'session.php';
+        }
+        $return .= '<h1>' . _('calendrier_titre') . '</h1>';
+
+        $return .= '<div id="script-warning" style="display: none;
+		background: #eee;
+		border-bottom: 1px solid #ddd;
+		padding: 0 10px;
+		line-height: 40px;
+		text-align: center;
+		font-weight: bold;
+		font-size: 12px;
+		color: red;">
+            <code>php/get-events.php</code> must be running.
+        </div>
+        <div id="loading" style="display: none;
+		position: absolute;
+		top: 10px;
+		right: 10px">loading...</div>
+        <div id="calendar"></div>';
+        $return .= '<script type="text/javascript">
+        new calendrierControleur();
+        </script>';
+
+        return $return;
+    }
 }

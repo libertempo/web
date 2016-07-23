@@ -508,3 +508,35 @@ var planningController = function (idElement, options, creneaux)
         }
     }
 }
+
+/**
+ * Objet de manipulation du calendrier
+ */
+var calendrierControleur = function ()
+{
+    $(document).ready(function() {
+        $('#calendar').fullCalendar({
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'month,agendaWeek,agendaDay'
+            },
+            lang: 'fr',
+            defaultDate: '2016-06-12',
+            editable: false,
+            eventLimit: true, // allow "more" link when too many events
+            events: {
+                // on recharge la page en php si on doit changer / poser un groupe en particulier. Ce faisant, on pose un groupe dans l'url :
+                // url: 'php/get-events.php?groupe=X'
+                url: 'php/get-events.php',
+                error: function() {
+                    $('#script-warning').show();
+                }
+            },
+            loading: function(bool) {
+                $('#loading').toggle(bool);
+            }
+        });
+
+    });
+}
