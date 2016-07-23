@@ -63,6 +63,12 @@ abstract class AHeure
      */
     const STATUT_ANNUL   = 5;
 
+    /**
+     * Constantes du formulaire de traitement des demandes
+     * à terme, vu que c'est une logique métier qui dépend de plusieurs modèles, à mettre dans un service ou une spécification
+     */
+    const ACCEPTE       = '1';
+    const REFUSE        = '2';
 
     /**
      * Retourne les options de select des statuts

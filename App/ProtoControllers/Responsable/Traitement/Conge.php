@@ -17,7 +17,6 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         $return     = '';
         $notice = '';
         $errorsLst  = [];
-        $i = true;
 
         if (!empty($_POST)) {
             if (0 >= (int) $this->post($_POST, $notice, $errorsLst)) {
@@ -59,17 +58,17 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         $childTable .= '<th>' . _('resp_traite_demandes_motif_refus') . '</th>';
         $childTable .= '</tr></thead><tbody>';
 
-        $demandesResp = $this->getDemandesResp($_SESSION['userlogin']);
-        $demandesGrandResp = $this->getDemandesGrandResp($_SESSION['userlogin']);
+        $demandesResp = $this->getDemandesResponsable($_SESSION['userlogin']);
+        $demandesGrandResp = $this->getDemandesGrandResponsable($_SESSION['userlogin']);
         if (empty($demandesResp) && empty($demandesGrandResp) ) {
             $childTable .= '<tr><td colspan="11"><center>' . _('resp_traite_demandes_aucune_demande') . '</center></td></tr>';
         } else {
             if(!empty($demandesResp)) {
-                $childTable .= $this->getDemandesTab($demandesResp);
+                $childTable .= $this->getFormDemandes($demandesResp);
             }
             if (!empty($demandesGrandResp)) {
                 $childTable .='<tr align="center"><td class="histo" style="background-color: #CCC;" colspan="11"><i>'._('resp_etat_users_titre_double_valid').'</i></td></tr>';
-                $childTable .= $this->getDemandesTab($demandesGrandResp);
+                $childTable .= $this->getFormDemandes($demandesGrandResp);
 
             }
         }
@@ -86,15 +85,14 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         return $return;
     }
     
-    protected function getDemandesTab(array $demandes)
+    protected function getFormDemandes(array $demandes)
     {
         $i=true;
         $Table='';
         
         foreach ( $demandes as $demande ) {
             $id = $demande['p_num'];
-            $nom = $this->getNom($demande['p_login']);
-            $prenom = $this->getPrenom($demande['p_login']);
+            $infoUtilisateur = $this->getDonneesUtilisateur($demande['p_login']);
             $solde = $this->getSoldeconge($demande['p_login'],$demande['p_type']);
             $type = $this->getTypeLabel($demande['p_type']);
             $debut = \App\Helpers\Formatter::dateIso2Fr($demande['p_date_deb']);
@@ -112,13 +110,13 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
             }
             
             $Table .= '<tr class="'.($i?'i':'p').'">';
-            $Table .= '<td><b>'.$nom.'</b><br>'.$prenom.'</td>';
+            $Table .= '<td><b>'.$infoUtilisateur['u_nom'].'</b><br>'.$infoUtilisateur['u_prenom'].'</td>';
             $Table .= '<td>'.$debut.'<span class="demi">' . $demideb . '</span></td><td>'.$fin.'<span class="demi">' . $demifin . '</span></td>';
             $Table .= '<td>'.$type.'</td><td><b>'.floatval($demande['p_nb_jours']).'</b></td><td>'.floatval($solde).'</td>';
             $Table .= '<td>'.$demande['p_commentaire'].'</td>';
             $Table .= '<input type="hidden" name="_METHOD" value="PUT" />';
-            $Table .= '<td><input type="radio" name="demande['.$id.']" value="STATUT_OK"></td>';
-            $Table .= '<td><input type="radio" name="demande['.$id.']" value="STATUT_REFUS"></td>';
+            $Table .= '<td><input type="radio" name="demande['.$id.']" value="1"></td>';
+            $Table .= '<td><input type="radio" name="demande['.$id.']" value="2"></td>';
             $Table .= '<td><input type="radio" name="demande['.$id.']" value="NULL" checked></td>';
             $Table .= '<td><input class="form-control" type="text" name="comment_refus['.$id.']" size="20" max="100"></td></tr>';
             $i = !$i;
@@ -130,25 +128,25 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
     /**
      * {@inheritDoc}
      */
-    protected function put(array $put, $resp, &$notice, array &$errorLst)
+    protected function oput(array $put, $resp, &$notice, array &$errorLst)
     {
         $return = '1';
         $infoDemande = $this->getListeSQL(array_keys($put['demande']));
 
         foreach ($put['demande'] as $id_conge => $statut){
             if($this->isDemandeTraitable($infoDemande[$id_conge]['p_etat'], $statut)) {
-                if( ($this->isRespDeUser($resp, $infoDemande[$id_conge]['p_login']) || $this->isGrandRespDeUser($resp, $this->getGroupesId($infoDemande[$id_conge]['p_login']))) && $statut == 'STATUT_REFUS') {
+                if( ($this->isRespDeUtilisateur($resp, $infoDemande[$id_conge]['p_login']) || $this->isGrandRespDeUtilisateur($resp, $this->getGroupesId($infoDemande[$id_conge]['p_login']))) && $statut == 'STATUT_REFUS') {
                     $id = $this->updateStatutRefus($id_conge, $put['comment_refus'][$id_conge]);
                     log_action($infoDemande[$id_conge]['p_num'],"refus", $infoDemande[$id_conge]['p_login'], 'traitement demande ' . $id . ' (' . $infoDemande[$id_conge]['p_login'] . ') (' . $infoDemande[$id_conge]['p_nb_jours'] . ' jours) : refus');
-                } elseif( (($this->isRespDeUser($resp, $infoDemande[$id_conge]['p_login']) && !$this->isDoubleValGroupe($infoDemande[$id_conge]['p_login'])) || ($this->isGrandRespDeUser($resp, $this->getGroupesId($infoDemande[$id_conge]['p_login'])) && $this->isDoubleValGroupe($infoDemande[$id_conge]['p_login']))) && $statut == 'STATUT_OK' ) {
+                } elseif( (($this->isRespDeUtilisateur($resp, $infoDemande[$id_conge]['p_login']) && !$this->isDoubleValGroupe($infoDemande[$id_conge]['p_login'])) || ($this->isGrandRespDeUtilisateur($resp, $this->getGroupesId($infoDemande[$id_conge]['p_login'])) && $this->isDoubleValGroupe($infoDemande[$id_conge]['p_login']))) && $statut == 'STATUT_OK' ) {
                     if($this->isReliquatAutorise() && $this->isReliquatUtilisable($infoDemande[$id_conge]['p_date_fin']) && 0 < $this->getReliquatconge($infoDemande[$id_conge]['p_login'], $infoDemande[$id_conge]['p_type'])) {
-                        $id = $this->gestionSoldeReliquat($infoDemande[$id_conge]);
+                        $id = $this->putSoldeReliquat($infoDemande[$id_conge]);
                         log_action($infoDemande[$id_conge]['p_num'],"ok", $infoDemande[$id_conge]['p_login'], 'traitement demande ' . $id . ' (' . $infoDemande[$id_conge]['p_login'] . ') (' . $infoDemande[$id_conge]['p_nb_jours'] . ' jours) : OK');
                     } else {
                         $id = $this->updateSoldeUser($infoDemande[$id_conge]['p_login'], $infoDemande[$id_conge]['p_nb_jours'], $infoDemande[$id_conge]['p_type']);
                         $this->updateStatutOk($infoDemande[$id_conge]['p_num']);                    }
                         log_action($infoDemande[$id_conge]['p_num'],"ok", $infoDemande[$id_conge]['p_login'], 'traitement demande ' . $id . ' (' . $infoDemande[$id_conge]['p_login'] . ') (' . $infoDemande[$id_conge]['p_nb_jours'] . ' jours) : OK');
-                } elseif($this->isRespDeUser($resp, $infoDemande[$id_conge]['p_login']) && $this->isDoubleValGroupe($infoDemande[$id_conge]['p_login']) && $statut == 'STATUT_OK' ) {
+                } elseif($this->isRespDeUtilisateur($resp, $infoDemande[$id_conge]['p_login']) && $this->isDoubleValGroupe($infoDemande[$id_conge]['p_login']) && $statut == 'STATUT_OK' ) {
                     $id = $this->updateStatutValide($id_conge);
                     log_action($infoDemande[$id_conge]['p_num'], 'valid', $infoDemande[$id_conge]['p_login'], 'traitement dmande conges ' . $id . ' de ' . $infoDemande[$id_conge]['login'] . ' première validation');
                 } elseif($statut != "NULL") {
@@ -162,106 +160,203 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         $notice = _('traitement_effectue');
         return $return;
     }
-
     
-    protected function gestionSoldeReliquat($demande) 
+    /**
+     * Traite les demandes
+     *
+     * @param array  $put
+     * @param string $resp
+     * @param string $notice
+     * @param array $errorLst
+     *
+     * @return int
+     */
+    public function put(array $put, $resp, &$notice, array &$errorLst)
     {
-        $SoldeReliquat = $this->getReliquatconge($demande['p_login'], $demande['p_type']);
-        
-        if($SoldeReliquat>=$demande['p_nb_jours']) {
-            $sql = \includes\SQL::singleton();
-            $sql->getPdoObj()->begin_transaction();
-            $idReliquat = $this->updateReliquatUser($demande['p_login'], $demande['p_nb_jours'], $demande['p_type']);
-            $idStatut = $this->updateStatutOk($demande['p_num']);
-            if (0 < $idReliquat && 0 < $idStatut) {
-                $sql->getPdoObj()->commit();
+        $return = '1';
+        $infoDemandes = $this->getListeSQL(array_keys($put['demande']));
+
+        foreach ($put['demande'] as $id_conge => $statut) {
+            if ($this->isRespDeUtilisateur($resp, $infoDemandes[$id_conge]['p_login'])) {
+                $return = $this->putResponsable($infoDemandes[$id_conge], $statut, $put, $errorLst);
+            } elseif ($this->isGrandRespDeUtilisateur($resp, $this->getGroupesId($infoDemandes[$id_conge]['p_login']))) {
+                $return = $this->putGrandResponsable($infoDemandes[$id_conge], $statut, $put, $errorLst);
             } else {
-                $sql->getPdoObj()->rollback();
-                return NIL_INT;
+                $errorLst[] = _('erreur_pas_responsable_de') . ' ' . $infoDemandes['id_conge']['p_login'];
+                $return = NIL_INT;
             }
-            return $demande['p_num'];
+        }
+        $notice = _('traitement_effectue');
+        return $return;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    protected function putResponsable(array $infoDemande, $statut, array $put, array &$errorLst)
+    {
+        $return = NIL_INT;
+        $id_conge = $infoDemande['p_num'];
+        if ($this->isDemandeTraitable($infoDemande['p_etat'])) { // demande est traitable
+            if (\App\Models\Conge::REFUSE === $statut) {
+                $return = $this->updateStatutRefus($id_conge, $put['comment_refus'][$id_conge]);
+                log_action($infoDemande['p_num'], 'refus', '', $infoDemande['p_login'], 'traitement demande ' . $id_conge . ' (' . $infoDemande['p_login'] . ') (' . $infoDemande['p_nb_jours'] . ' jours) : refus');
+            } elseif (\App\Models\Conge::ACCEPTE === $statut) {
+                if ($this->isDoubleValGroupe($infoDemande['p_login'])) {
+                    $return = $this->updateStatutValide($id_conge);
+                    log_action($infoDemande['p_num'], 'valid', $infoDemande['p_login'], 'traitement demande conges ' . $id_conge . ' de ' . $infoDemande['p_login'] . ' première validation');
+                } else {
+                    $return = $this->putValidationFinale($id_conge);
+                    log_action($infoDemande['p_num'], 'ok', $infoDemande['p_login'], 'traitement demande ' . $id_conge . ' (' . $infoDemande['p_login'] . ') (' . $infoDemande['p_nb_jours'] . ' jours) : OK');
+                }
+            }
         } else {
-            $ResteSolde = $demande['p_nb_jours'] - $SoldeReliquat;
-            $sql = \includes\SQL::singleton();
-            $sql->getPdoObj()->begin_transaction();
-            $idReliquat = $this->updateReliquatUser($demande['p_login'], $SoldeReliquat, $demande['p_type']);
-            $idSolde = $this->updateSoldeUser($demande['p_login'], $ResteSolde, $demande['p_type']);
-            $idStatut = $this->updateStatutOk($demande['p_num']);
-            if (0 < $idReliquat && 0 < $idStatut && 0 < $idSolde) {
-                $sql->getPdoObj()->commit();
-            } else {
-                $sql->getPdoObj()->rollback();
-                return NIL_INT;
+            $errorLst[] = _('demande_deja_traite') . ': ' . $infoDemande['p_login'];
+            $return = NIL_INT;
+        }
+        return $return;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function putGrandResponsable(array $infoDemande, $statut, array $put, array &$errorLst)
+    {
+        $return = NIL_INT;
+        $id_conge = $infoDemande['p_num'];
+        if ($this->isDemandeTraitable($infoDemande['p_etat'])) { // demande est traitable
+            if (\App\Models\Conge::REFUSE === $statut) {
+                $return = $this->updateStatutRefus($id_conge, $put['comment_refus'][$id_conge]);
+                log_action($infoDemande['p_num'], 'refus', '', $infoDemande['p_login'], 'traitement demande ' . $id_conge . ' (' . $infoDemande['p_login'] . ') (' . $infoDemande['p_nb_jours'] . ' jours) : refus');
+            } elseif (\App\Models\Conge::ACCEPTE === $statut) {
+                if ($this->isDoubleValGroupe($infoDemande['p_login'])) {
+                    $return = $this->putValidationFinale($id_conge);
+                    log_action($infoDemande['p_num'], 'ok', $infoDemande['p_login'], 'traitement demande ' . $id_conge . ' (' . $infoDemande['p_login'] . ') (' . $infoDemande['p_nb_jours'] . ' jours) : OK');
+                } else {
+                $errorLst[] = _('traitement_non_autorise') . ': ' . $infoDemande['p_login'];
+                $return = NIL_INT;
+                }
             }
-            return 1;
+        } else {
+            $errorLst[] = _('demande_deja_traite') . ': ' . $infoDemande['p_login'];
+            $return = NIL_INT;
+        }
+        return $return;
+    }
+
+    /**
+     * Validation finale avec prise en compte des reliquats
+     * 
+     * @param type $demandeId
+     * @return int
+     */
+    protected function putValidationFinale($demandeId) 
+    {
+        $demande = $this->getListeSQL(explode(" ", $demandeId))[$demandeId];
+        if($this->isReliquatAutorise() && $this->isReliquatUtilisable($demande['p_date_fin']) && 0 < $this->getReliquatconge($demande['p_login'], $demande['p_type'])) {
+            $SoldeReliquat = $this->getReliquatconge($demande['p_login'], $demande['p_type']);
+        
+            if($SoldeReliquat>=$demande['p_nb_jours']) {
+                $sql = \includes\SQL::singleton();
+                $sql->getPdoObj()->begin_transaction();
+                $updateReliquat = $this->updateReliquatUser($demande['p_login'], $demande['p_nb_jours'], $demande['p_type']);
+                $updateStatut = $this->updateStatutOk($demande['p_num']);
+                if (0 < $updateReliquat && 0 < $updateStatut) {
+                    $sql->getPdoObj()->commit();
+                } else {
+                    $sql->getPdoObj()->rollback();
+                    return NIL_INT;
+                }
+                return $demande['p_num'];
+            } else {
+                $ResteSolde = $demande['p_nb_jours'] - $SoldeReliquat;
+                $sql = \includes\SQL::singleton();
+                $sql->getPdoObj()->begin_transaction();
+                $updateReliquat = $this->updateReliquatUser($demande['p_login'], $SoldeReliquat, $demande['p_type']);
+                $updateSolde = $this->updateSoldeUser($demande['p_login'], $ResteSolde, $demande['p_type']);
+                $updateStatut = $this->updateStatutOk($demande['p_num']);
+                if (0 < $updateReliquat && 0 < $updateStatut && 0 < $updateSolde) {
+                    $sql->getPdoObj()->commit();
+                } else {
+                    $sql->getPdoObj()->rollback();
+                    return NIL_INT;
+                }
+                return 1;
+            }
+        } else {
+            $id = $this->updateSoldeUser($demande['p_login'], $demande['p_nb_jours'], $demande['p_type']);
+            $this->updateStatutOk($demande['p_num']);
+            log_action($demande['p_num'],"ok", $demande['p_login'], 'traitement demande ' . $demande['p_num'] . ' (' . $demande['p_login'] . ') (' . $demande['p_nb_jours'] . ' jours) : OK');
         }
     }
+    
     /**
-     * Première validation de la demande
+     * Première validation de la demande de congé
      * 
-     * @param int $demande
-     * @param int $statut
+     * @param int $demandeId
      * 
-     * @return int $id 
+     * @return int
      */
-    protected function updateStatutValide($demande)
+    protected function updateStatutValide($demandeId)
     {
         $sql = \includes\SQL::singleton();
 
         $req   = 'UPDATE conges_periode
                 SET p_etat = \'' . \App\Models\Conge::STATUT_VALIDE . '\'
-                WHERE p_num = '. (int) $demande;
+                WHERE p_num = '. (int) $demandeId;
         $query = $sql->query($req);
 
         return $sql->affected_rows;
     }
     
     /**
-     * Refus de la demande
+     * Refus de la demande de congé
      * 
-     * @param int $demande
+     * @param int $demandeId
      * @param int $comm
      * 
      * @return int $id 
      */
-    protected function updateStatutRefus($demande, $comm)
+    protected function updateStatutRefus($demandeId, $comm)
     {
         $sql = \includes\SQL::singleton();
 
         $req   = 'UPDATE conges_periode
                 SET p_etat = \'' . \App\Models\Conge::STATUT_REFUS . '\',
                     p_motif_refus = \'' . \includes\SQL::quote($comm) .'\'
-                WHERE p_num = '. (int) $demande;
+                WHERE p_num = '. (int) $demandeId;
         $query = $sql->query($req);
 
         return $sql->affected_rows;
     }
     
     /**
-     * Validation finale de la demande
+     * Validation finale de la demande de conges
      * 
-     * @param int $demande
+     * @param int $demandeId
      * 
      * @return int $id 
      */
-    protected function updateStatutOk($demande)
+    protected function updateStatutOk($demandeId)
     {
         $sql = \includes\SQL::singleton();
 
         $req   = 'UPDATE conges_periode
                 SET p_etat = \'' . \App\Models\Conge::STATUT_OK . '\'
-                WHERE p_num = '. (int) $demande;
+                WHERE p_num = '. (int) $demandeId;
         $query = $sql->query($req);
 
         return $sql->affected_rows;
     }
     
     /**
-     * Mise a jour du solde du demandeur
+     * Mise a jour du solde (selon le type de congés) du demandeur
      * 
-     * @param int $demande
+     * @param string $user
+     * @param int $duree
+     * @param int $typeId
      * 
-     * @return int $demande
+     * @return int
      */
     protected function updateSoldeUser($user,$duree,$typeId)
     {
@@ -277,11 +372,13 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
     }
     
     /**
-     * Mise a jour du reliquat du demandeur
+     * Mise a jour du reliquat (selon le type de congés) du demandeur
      * 
-     * @param int $demande
+     * @param string $user
+     * @param int $duree
+     * @param int $typeId
      * 
-     * @return int $demande
+     * @return int
      */
     protected function updateReliquatUser($user,$duree,$typeId)
     {
@@ -301,7 +398,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
       */
     protected function getIdDemandesResponsable($resp)
     { 
-        $groupId = $this->getGroupeRespId($resp);
+        $groupId = $this->getIdGroupeResp($resp);
         if (empty($groupId)) {
             return [];
         }
@@ -330,7 +427,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
       */
     protected function getIdDemandesGrandResponsable($gResp)
     {
-        $groupId = $this->getGroupeGrandRespId($gResp);
+        $groupId = $this->getIdGroupeGrandResponsable($gResp);
         if (empty($groupId)) {
             return [];
         }
@@ -358,6 +455,8 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
      */
     protected function getListeSQL(array $listId)
     {
+        $infoDemande =[];
+        
         if (empty($listId)) {
             return [];
         }
@@ -377,12 +476,12 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
     }
     
     /**
-     * Retourne le solde de conges d'un utilisateur
+     * Retourne le solde de conges (selon le type) d'un utilisateur
      *
      * @param string $login
      * @param int $typeId 
      *
-     * @return int
+     * @return int $solde
      */
     public function getSoldeconge($login, $typeId)
     {
@@ -396,12 +495,12 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
     }
     
     /**
-     * Retourne le reliquat de conges d'un utilisateur
+     * Retourne le reliquat de conges (selon le type) d'un utilisateur
      *
      * @param string $login
      * @param int $typeId 
      *
-     * @return int
+     * @return int $rel
      */
     public function getReliquatconge($login, $typeId)
     {
@@ -417,7 +516,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
     /**
      * verifie que les reliquats sont autorisées
      *
-     * @return boolean
+     * @return bool
      */
     public function isReliquatAutorise()
     {
@@ -434,7 +533,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
      * verifie si la date limite d'usage des reliquats n'est pas dépassée
      *
      * @param int $findemande date de fin de la demande
-     * @return boolean
+     * @return bool
      */
     public function isReliquatUtilisable($findemande)
     {

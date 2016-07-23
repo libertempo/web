@@ -47,6 +47,13 @@ class Conge
     const STATUT_AJOUT = 'ajout';
 
     /**
+     * Constantes du formulaire de traitement des demandes
+     * à terme, vu que c'est une logique métier qui dépend de plusieurs modèles, à mettre dans un service ou une spécification
+     */
+    const ACCEPTE       = '1';
+    const REFUSE        = '2';
+
+    /**
      * Retourne les options de select des statuts
      *
      * @return array

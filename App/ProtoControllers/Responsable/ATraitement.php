@@ -22,46 +22,69 @@ abstract class ATraitement
     abstract public function getForm();
 
     /**
-     * Traite les demandes d'heures
+     * Traite les demandes
      *
      * @param array  $put
-     * @param string $user
+     * @param string $resp
+     * @param string $notice
+     * @param array $errorLst
      *
      * @return int
      */
-    abstract protected function put(array $put, $resp, &$notice, array &$errorLst);
+    abstract public function put(array $put, $resp, &$notice, array &$errorLst);
+
+
+    /**
+     * 
+     * @param array $infoDemande
+     * @param type $statut
+     * @param array $put
+     * 
+     * @return int
+     */
+    abstract protected function putResponsable(array $infoDemande, $statut, array $put, array &$errorLst);
+
+    /**
+     * 
+     * @param array $infoDemande
+     * @param type $statut
+     * @param array $put
+     * 
+     * @return int
+     */
+    abstract protected function putGrandResponsable(array $infoDemande, $statut, array $put, array &$errorLst);
 
     /**
      * Retourne une liste d'id des demandes pour le responsable
      *
      * @param array $resp
      *
-     * @return array
+     * @return array $ids
      */
     abstract protected function getIdDemandesResponsable($resp);
 
     /**
-     * Retourne une liste d'heures
+     * Retourne la liste détaillée des demandes
      *
      * @param array $listId
      *
-     * @return array
+     * @return array $infoDemande
      * 
      */
     abstract protected function getListeSQL(array $listId);
 
     /**
-     * Traite la demande/modification/suppression
+     * Traite les demandes
      *
      * @param array  $post
      * @param string $notice
+     * @param string $errorLst 
      *
      * @return int
      */
     protected function post(array $post, &$notice, array &$errorLst)
     {
         if (!empty($post['_METHOD']) && $post['_METHOD'] == "PUT") {
-            $demandeTraitable = array_intersect($post['demande'], $this->getIdDemandesResponsable($_SESSION['userlogin']));
             return $this->put($post, $_SESSION['userlogin'], $notice, $errorLst);
         } else {
             return NIL_INT;
@@ -69,64 +92,30 @@ abstract class ATraitement
     }
 
     /**
-     * Retourne le nom d'un utilisateur
+     * Retourne les informations d'un utilisateur
      *
      * @param string $login
      * 
-     * @return string
+     * @return string $donnees
      */
-    public function getNom($login)
+    public function getDonneesUtilisateur($login)
     {
         $sql = \includes\SQL::singleton();
-        $req = 'SELECT u_nom FROM conges_users WHERE u_login = \''.  \includes\SQL::quote($login).'\'';
+        $req = 'SELECT * FROM conges_users WHERE u_login = \''.  \includes\SQL::quote($login).'\'';
         $query = $sql->query($req);
-        $nom = $query->fetch_array()['u_nom'];
+        $donnees = $query->fetch_array();
 
-        return $nom;
+        return $donnees;
     }
 
     /**
-     * Retourne le prenom d'un utilisateur
-     *
-     * @param string $login
-     * 
-     * @return string
-     */
-    public function getPrenom($login)
-    {
-        $sql = \includes\SQL::singleton();
-        $req = 'SELECT u_prenom FROM conges_users WHERE u_login = \''.$login.'\'';
-        $query = $sql->query($req);
-        $nom = $query->fetch_array()[0];
-
-        return $nom;
-    }
-    
-    /**
-     * Retourne le solde d'heure d'un utilisateur
-     *
-     * @param string $login
-     * 
-     * @return int
-     */
-    public function getSoldeHeure($login)
-    {
-        $sql = \includes\SQL::singleton();
-        $req = 'SELECT u_heure_solde FROM conges_users WHERE u_login = \''.$login.'\'';
-        $query = $sql->query($req);
-        $solde = $query->fetch_array()[0];
-
-        return $solde;
-    }
-
-    /**
-     * Retourne l'id des groupes d'un responsable donné
+     * Retourne l'id des groupes d'un responsable
      *
      * @param string $resp
      * 
-     * @return array
+     * @return array $ids
      */
-    public function getGroupeRespId($resp)
+    public function getIdGroupeResp($resp)
     {
         $ids = [];
 
@@ -142,13 +131,13 @@ abstract class ATraitement
     }
 
     /**
-     * Retourne l'id des groupes d'un grand responsable donné
+     * Retourne l'id des groupes d'un grand responsable
      *
      * @param string $gresp
      * 
-     * @return array
+     * @return array $ids
      */
-    public function getGroupeGrandRespId($gresp)
+    public function getIdGroupeGrandResponsable($gresp)
     {
         $ids=[];
          $sql = \includes\SQL::singleton();
@@ -163,16 +152,16 @@ abstract class ATraitement
     }
 
     /**
-     * Retourne le login des membres d'un ou plusieurs groupes
+     * Retourne le login des membres d'une liste de groupes
      *
-     * @param array $groupes
+     * @param array $groupesId
      * 
-     * @return array
+     * @return array $users
      */
-    public function getUsersGroupe(array $groupes)
+    public function getUsersGroupe(array $groupesId)
     {
          $sql = \includes\SQL::singleton();
-         $req = 'SELECT gu_login FROM `conges_groupe_users` WHERE gu_gid IN (' . implode(',', $groupes) . ')';
+         $req = 'SELECT gu_login FROM `conges_groupe_users` WHERE gu_gid IN (' . implode(',', $groupesId) . ')';
          $res = $sql->query($req);
 
          while ($data = $res->fetch_array()) {
@@ -185,34 +174,34 @@ abstract class ATraitement
     /**
      * Traitement d'une validation avec modification du solde
      * 
-     * @param int $demande
+     * @param int $demandeId
      * 
      * @return int
      */
-    protected function demandeOk($demande)
+    protected function putValidationFinale($demandeId)
     {
         $sql = \includes\SQL::singleton();
         $sql->getPdoObj()->begin_transaction();
         
-        $updateSolde = $this->updateSolde($demande);
-        $updateStatut = $this->updateStatutOk($demande);
-        if (0 < $idSolde && 0 < $idStatut) {
+        $updateSolde = $this->updateSolde($demandeId);
+        $updateStatut = $this->updateStatutOk($demandeId);
+        if (0 < $updateSolde && 0 < $updateStatut) {
             $sql->getPdoObj()->commit();
         } else {
             $sql->getPdoObj()->rollback();
             return NIL_INT;
         }
-        return $demande;
+        return $demandeId;
     }
     
     /**
      * Retourne les demandes en cours d'un responsable
      * 
-     * @param $resp login du responsable
+     * @param string $resp login du responsable
      * 
      * @return array $demandes
      */
-    public function getDemandesResp($resp)
+    public function getDemandesResponsable($resp)
     {
         $demandesId = $this->getIdDemandesResponsable($resp);
         if (empty($demandesId)) {
@@ -224,13 +213,13 @@ abstract class ATraitement
     }
     
     /**
-     * Retourne un tableau html des demandes a traiter
+     * Retourne un tableau html des demandes à traiter
      * 
      * @param array $demandes
      * 
      * @return string
      */
-    protected function getDemandesTab(array $demandes)
+    protected function getFormDemandes(array $demandes)
     {
         $i=true;
         $Table='';
@@ -241,15 +230,14 @@ abstract class ATraitement
             $fin    = date('H\:i', $demande['fin']);
             $duree  = \App\Helpers\Formatter::Timestamp2Duree($demande['duree']);
             $id = $demande['id_heure'];
-            $nom = $this->getNom($demande['login']);
-            $prenom = $this->getPrenom($demande['login']);
-            $solde = \App\Helpers\Formatter::Timestamp2Duree($this->getSoldeHeure($demande['login']));
+            $infoUtilisateur = $this->getDonneesUtilisateur($demande['login']);
+            $solde = \App\Helpers\Formatter::Timestamp2Duree($infoUtilisateur['u_heure_solde']);
             $Table .= '<tr class="'.($i?'i':'p').'">';
-            $Table .= '<td><b>'.$nom.'</b><br>'.$prenom.'</td><td>'.$jour.'</td><td>'.$debut.'</td><td>'.$fin.'</td><td>'.$duree.'</td><td>'.$solde.'</td>';
+            $Table .= '<td><b>'.$infoUtilisateur['u_nom'].'</b><br>'.$infoUtilisateur['u_prenom'].'</td><td>'.$jour.'</td><td>'.$debut.'</td><td>'.$fin.'</td><td>'.$duree.'</td><td>'.$solde.'</td>';
             $Table .= '<input type="hidden" name="_METHOD" value="PUT" />';
             $Table .= '<td>' . $demande['comment'] . '</td>';
-            $Table .= '<td><input type="radio" name="demande['.$id.']" value="STATUT_OK"></td>';
-            $Table .= '<td><input type="radio" name="demande['.$id.']" value="STATUT_REFUS"></td>';
+            $Table .= '<td><input type="radio" name="demande['.$id.']" value="1"></td>';
+            $Table .= '<td><input type="radio" name="demande['.$id.']" value="2"></td>';
             $Table .= '<td><input type="radio" name="demande['.$id.']" value="NULL" checked></td>';
             $Table .= '<td><input class="form-control" type="text" name="comment_refus['.$id.']" size="20" max="100"></td></tr>';
 
@@ -260,13 +248,13 @@ abstract class ATraitement
     }
 
     /**
-     * Retourne le détail des demandes a traiter en tant que grand responsable
+     * Retourne le détail des demandes à traiter en tant que grand responsable
      * 
      * @param string $resp
      * 
-     * @return array
+     * @return array $demandes
      */
-    public function getDemandesGrandResp($resp)
+    public function getDemandesGrandResponsable($resp)
     {
         $demandesId = $this->getIdDemandesGrandResponsable($resp);
         if (empty($demandesId)) {
@@ -285,19 +273,19 @@ abstract class ATraitement
      * 
      * @return bool
      */
-    public function isRespDeUser($resp, $user) {
+    public function isRespDeUtilisateur($resp, $user) {
         return $this->isRespDirect($resp, $user) || $this->isRespGroupe($resp, $this->getGroupesId($user));
     }
     
     /**
      * Vérifie si un utilisateur est bien le grand responsable d'un employé
      * 
-     * @param type $resp
+     * @param string $resp
      * @param array $groupesId
      * 
-     * @return type
+     * @return bool
      */
-    public function isGrandRespDeUser($resp, array $groupesId) {
+    public function isGrandRespDeUtilisateur($resp, array $groupesId) {
         $sql = \includes\SQL::singleton();
         $req = 'SELECT EXISTS (
                     SELECT ggr_gid
@@ -338,20 +326,20 @@ abstract class ATraitement
      * @param string $statutDb
      * @param string $statut
      * 
-     * @return type
+     * @return bool
      */
-    public function isDemandeTraitable($statutDb, $statut)
+    public function isDemandeTraitable($statut)
     {
-        return $statutDb != $statut;
+        return ($statut != \App\Models\AHeure::STATUT_ANNUL || $statut != \App\Models\AHeure::STATUT_OK || $statut != \App\Models\AHeure::STATUT_REFUS);
     }
 
     /**
      * Verifie si un utilisateur est grand responsable d'une liste de groupe
      *
      * @param string $gResp
-     * @param type $groupesId
+     * @param int $groupesId
      * 
-     * @return type
+     * @return bool
      */
     public function isGrandRespGroupe($gResp, $groupesId)
     {
@@ -368,12 +356,12 @@ abstract class ATraitement
     }
 
     /**
-     *  Verifie si un utilisateur est responsable d'une autre
+     *  Verifie si un utilisateur est responsable d'un employé
      * 
-     * @param type $resp
-     * @param type $user
+     * @param string $resp
+     * @param string $user
      * 
-     * @return type
+     * @return bool
      */
     public function isRespDirect($resp, $user)
     {
@@ -411,7 +399,7 @@ abstract class ATraitement
     }
 
     /**
-     * Vérifie si le groupe d'un est en double validation
+     * Vérifie si le groupe d'un employé est en double validation
      * 
      * @param string $user
      * 

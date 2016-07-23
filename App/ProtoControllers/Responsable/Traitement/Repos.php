@@ -13,107 +13,160 @@ use App\Models\AHeure;
 class Repos extends \App\ProtoControllers\Responsable\ATraitement
 {
     /**
-     * {@inheritDoc}
+     * Traite les demandes
+     *
+     * @param array  $put
+     * @param string $resp
+     * @param string $notice
+     * @param array $errorLst
+     *
+     * @return int
      */
-    protected function put(array $put, $resp, &$notice, array &$errorLst)
+    public function put(array $put, $resp, &$notice, array &$errorLst)
     {
-        $return ='1';
-        $infoDemande = $this->getListeSQL(array_keys($put['demande']));
+        $return = '1';
+        $infoDemandes = $this->getListeSQL(array_keys($put['demande']));
 
-        foreach ($put['demande'] as $id_heure => $statut){
-            if($this->isDemandeTraitable($infoDemande[$id_heure]['statut'], $statut)) {
-                if( ($this->isRespDeUser($resp, $infoDemande[$id_heure]['login']) || $this->isGrandRespDeUser($resp, $this->getGroupesId($infoDemande[$id_heure]['login']))) && $statut == 'STATUT_REFUS') {
-                    $id = $this->updateStatutRefus($id_heure, $put['comment_refus'][$id_heure]);
-                    log_action(0, '', '', 'Refus de la demande d\'heure de repos ' . $id_heure . ' de ' . $infoDemande[$id_heure]['login']);
-                } elseif( (($this->isRespDeUser($resp, $infoDemande[$id_heure]['login']) && !$this->isDoubleValGroupe($infoDemande[$id_heure]['login'])) || ($this->isGrandRespDeUser($resp, $this->getGroupesId($infoDemande[$id_heure]['login'])) && $this->isDoubleValGroupe($infoDemande[$id_heure]['login']))) && $statut == 'STATUT_OK' ) {
-                        $id = $this->demandeOk($id_heure);
-                        log_action(0, '', '', 'Validation de la demande d\'heure de repos ' . $id_heure . ' de ' . $infoDemande[$id_heure]['login']);
-                } elseif($this->isRespDeUser($resp, $infoDemande[$id_heure]['login']) && $this->isDoubleValGroupe($infoDemande[$id_heure]['login']) && $statut == 'STATUT_OK' ) {
-                        $id = $this->updateStatutValide($id_heure);
-                        log_action(0, '', '', 'Demande d\'heure de repos ' . $id_heure . ' de ' . $infoDemande[$id_heure]['login'] . ' transmise au grand responsable');
-                } elseif($statut != "NULL") {
-                    $errorLst[] = _('traitement_non_autorise').': '.$infoDemande[$id_heure]['login'];
-                }
+        foreach ($put['demande'] as $id_heure => $statut) {
+            if ($this->isRespDeUtilisateur($resp, $infoDemandes[$id_heure]['login'])) {
+                $return = $this->putResponsable($infoDemandes[$id_heure], $statut, $put, $errorLst);
+            } elseif ($this->isGrandRespDeUtilisateur($resp, $this->getGroupesId($infoDemandes[$id_heure]['login']))) {
+                $return = $this->putGrandResponsable($infoDemandes[$id_heure], $statut, $put, $errorLst);
             } else {
-                $errorLst[] = _('demande_deja_traite');
+                $errorLst[] = _('erreur_pas_responsable_de') . ' ' . $infoDemandes['id_heure']['login'];
                 $return = NIL_INT;
             }
         }
         $notice = _('traitement_effectue');
         return $return;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    protected function putResponsable(array $infoDemande, $statut, array $put, array &$errors)
+    {
+        $localError = [];
+        $return = NIL_INT;
+        $id_heure = $infoDemande['id_heure'];
+        if ($this->isDemandeTraitable($infoDemande['statut'])) { // demande est traitable
+            if (\App\Models\AHeure::REFUSE === $statut) {
+                $return = $this->updateStatutRefus($id_heure, $put['comment_refus'][$id_heure]);
+                    log_action(0, '', '', 'Refus de la demande d\'heure de repos ' . $id_heure . ' de ' . $infoDemande['login']);
+            } elseif (\App\Models\AHeure::ACCEPTE === $statut) {
+                if ($this->isDoubleValGroupe($infoDemande['login'])) {
+                    $return = $this->updateStatutValide($id_heure);
+                    log_action(0, '', '', 'Demande d\'heure de repos ' . $id_heure . ' de ' . $infoDemande['login'] . ' transmise au grand responsable');
+                } else {
+                    $return = $this->putValidationFinale($id_heure);
+                    log_action(0, '', '', 'Validation de la demande d\'heure de repos ' . $id_heure . ' de ' . $infoDemande['login']);
+                }
+            }
+        } else {
+            $localError[] = _('demande_deja_traite') . ': ' . $infoDemande['login'];
+            $return = NIL_INT;
+        }
+        $errors = array_merge($errors, $localError);
+        return $return;
+    }
 
     /**
-     * Mise a jour du statut de la demande d'heure
-     * 
-     * @param int $demande
-     * @param int $statut
-     * 
-     * @return int $id 
+     * {@inheritDoc}
      */
-    protected function updateStatutOk($demande)
+    protected function putGrandResponsable(array $infoDemande, $statut, array $put, array &$errors)
+    {
+        $localError = [];
+        $return = NIL_INT;
+        $id_heure = $infoDemande['id_heure'];
+        if ($this->isDemandeTraitable($infoDemande['statut'])) { // demande est traitable
+            if (\App\Models\Conge::REFUSE === $statut) {
+                $return = $this->updateStatutRefus($id_heure, $put['comment_refus'][$id_heure]);
+                log_action(0, '', '', 'Refus de la demande d\'heure de repos ' . $id_heure . ' de ' . $infoDemande['login']);
+            } elseif (\App\Models\Conge::ACCEPTE === $statut) {
+                if ($this->isDoubleValGroupe($infoDemande['login'])) {
+                    $return = $this->putValidationFinale($id_heure);
+                    log_action(0, '', '', 'Validation de la demande d\'heure de repos ' . $id_heure . ' de ' . $infoDemande['login']);
+                } else {
+                $localError[] = _('traitement_non_autorise') . ': ' . $infoDemande['login'];
+                }
+            }
+        } else {
+            $localError[] = _('demande_deja_traite') . ': ' . $infoDemande['login'];
+            $return = NIL_INT;
+        }
+        $errors = array_merge($errors, $localError);
+        return $return;
+    }
+
+    /**
+     * Mise a jour du statut de la demande d'heure de repos
+     * 
+     * @param int $demandeId
+     * 
+     * @return int 
+     */
+    protected function updateStatutOk($demandeId)
     {
         $sql = \includes\SQL::singleton();
 
         $req   = 'UPDATE heure_repos
                 SET statut = ' . \App\Models\AHeure::STATUT_OK . '
-                WHERE id_heure = '. (int) $demande;
+                WHERE id_heure = '. (int) $demandeId;
         $query = $sql->query($req);
 
         return $sql->affected_rows;
     }
     
     /**
-     * Refus de la demande d'heure
+     * Refus de la demande d'heure de repos
      * 
-     * @param int $demande
+     * @param int $demandeId
      * @param int $comm
      * 
-     * @return int $id 
+     * @return int
      */
-    protected function updateStatutRefus($demande, $comm)
+    protected function updateStatutRefus($demandeId, $comment)
     {
         $sql = \includes\SQL::singleton();
 
         $req   = 'UPDATE heure_repos
                 SET statut = ' . \App\Models\AHeure::STATUT_REFUS . ',
-                    comment_refus = \'' . \includes\SQL::quote($comm) . '\'
-                WHERE id_heure = '. (int) $demande;
+                    comment_refus = \'' . \includes\SQL::quote($comment) . '\'
+                WHERE id_heure = '. (int) $demandeId;
         $query = $sql->query($req);
 
         return $sql->affected_rows;
     }
     
     /**
-     * Première validation de la demande d'heure
+     * Première validation de la demande d'heure de repos
      * 
-     * @param int $demande
-     * @param int $comm
+     * @param int $demandeId
      * 
-     * @return int $id 
+     * @return int 
      */
-    protected function updateStatutValide($demande)
+    protected function updateStatutValide($demandeId)
     {
         $sql = \includes\SQL::singleton();
 
         $req   = 'UPDATE heure_repos
                 SET statut = ' . \App\Models\AHeure::STATUT_VALIDE . '
-                WHERE id_heure = '. (int) $demande;
+                WHERE id_heure = '. (int) $demandeId;
         $query = $sql->query($req);
 
         return $sql->affected_rows;
     }
 
     /**
-     * Mise a jour du solde du demandeur
+     * Soustraction de la demande de repos au solde du demandeur
      * 
-     * @param int $demande
+     * @param int $demandeId
      * 
-     * @return int $demande
+     * @return int
      */
-    protected function updateSolde($demande)
+    protected function updateSolde($demandeId)
     {
-        $user = $this->getListeSQL(explode(" ",$demande));
+        $user = $this->getListeSQL(explode(" ",$demandeId));
         $sql = \includes\SQL::singleton();
 
         $req   = 'UPDATE conges_users
@@ -173,16 +226,16 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
         $childTable .= '<th>' . _('resp_traite_demandes_motif_refus') . '</th>';
         $childTable .= '</tr></thead><tbody>';
         
-        $demandesResp = $this->getDemandesResp($_SESSION['userlogin']);
-        $demandesGrandResp = $this->getDemandesGrandResp($_SESSION['userlogin']);
+        $demandesResp = $this->getDemandesResponsable($_SESSION['userlogin']);
+        $demandesGrandResp = $this->getDemandesGrandResponsable($_SESSION['userlogin']);
         if (empty($demandesResp) && empty($demandesGrandResp) ) {
             $childTable .= '<tr><td colspan="11"><center>' . _('aucun_resultat') . '</center></td></tr>';
         } else {
             if(!empty($demandesResp)) {
-                $childTable .= $this->getDemandesTab($demandesResp);
+                $childTable .= $this->getFormDemandes($demandesResp);
             }
             if (!empty($demandesGrandResp)) {
-                $childTable .= $this->getDemandesTab($demandesGrandResp);
+                $childTable .= $this->getFormDemandes($demandesGrandResp);
 
             }
         }
@@ -204,7 +257,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
       */
     protected function getIdDemandesResponsable($resp)
     {
-        $groupId = $this->getGroupeRespId($resp);
+        $groupId = $this->getIdGroupeResp($resp);
         if (empty($groupId)) {
             return [];
         }
@@ -233,7 +286,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
       */
     protected function getIdDemandesGrandResponsable($gResp)
     {
-        $groupId = $this->getGroupeGrandRespId($gResp);
+        $groupId = $this->getIdGroupeGrandResponsable($gResp);
         if (empty($groupId)) {
             return [];
         }
@@ -261,6 +314,8 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
      */
     protected function getListeSQL(array $listId)
     {
+        $infoDemande =[];
+        
         if (empty($listId)) {
             return [];
         }
