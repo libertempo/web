@@ -514,6 +514,19 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
     }
     
     /**
+     * Verifie si la demande n'a pas déja été traité
+     * 
+     * @param string $statutDb
+     * @param string $statut
+     * 
+     * @return bool
+     */
+    public function isDemandeTraitable($statut)
+    {
+        return ($statut != \App\Models\conge::STATUT_ANNUL || $statut != \App\Models\Conge::STATUT_OK || $statut != \App\Models\Conge::STATUT_REFUS);
+    }
+    
+    /**
      * verifie que les reliquats sont autorisées
      *
      * @return bool
