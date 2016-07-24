@@ -528,7 +528,7 @@ var calendrierControleur = function ()
             events: {
                 // on recharge la page en php si on doit changer / poser un groupe en particulier. Ce faisant, on pose un groupe dans l'url :
                 // url: 'php/get-events.php?groupe=X'
-                url: 'php/get-events.php',
+                url: 'calendrier/wrapper_getEvenement.php',
                 error: function() {
                     $('#script-warning').show();
                 }
