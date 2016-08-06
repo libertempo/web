@@ -12,7 +12,6 @@ namespace App\ProtoControllers\Responsable;
  */
 abstract class ATraitement
 {
-
     /**
      * Encapsule le comportement du formulaire de traitement des demandes d'heures
      *
@@ -27,32 +26,36 @@ abstract class ATraitement
      * @param array  $put
      * @param string $resp
      * @param string $notice
-     * @param array $errorLst
+     * @param array $errors
      *
      * @return int
      */
-    abstract public function put(array $put, $resp, &$notice, array &$errorLst);
+    abstract public function put(array $put, $resp, &$notice, array &$errors);
 
 
     /**
+     * Vérifie et traite une demande en tant que responsable
      * 
      * @param array $infoDemande
-     * @param type $statut
+     * @param int $statut
      * @param array $put
+     * @param array $errors
      * 
      * @return int
      */
-    abstract protected function putResponsable(array $infoDemande, $statut, array $put, array &$errorLst);
+    abstract protected function putResponsable(array $infoDemande, $statut, array $put, array &$errors);
 
     /**
+     * Vérifie et traite une demande en tant que grand responsable
      * 
      * @param array $infoDemande
-     * @param type $statut
+     * @param int $statut
      * @param array $put
+     * @param array $errors
      * 
      * @return int
      */
-    abstract protected function putGrandResponsable(array $infoDemande, $statut, array $put, array &$errorLst);
+    abstract protected function putGrandResponsable(array $infoDemande, $statut, array $put, array &$errors);
 
     /**
      * Retourne une liste d'id des demandes pour le responsable
@@ -71,14 +74,14 @@ abstract class ATraitement
      * @return array $infoDemande
      * 
      */
-    abstract protected function getListeSQL(array $listId);
+    abstract protected function getInfoDemandes(array $listId);
 
     /**
      * Traite les demandes
      *
      * @param array  $post
      * @param string $notice
-     * @param string $errorLst 
+     * @param array $errorLst 
      *
      * @return int
      */
@@ -98,10 +101,12 @@ abstract class ATraitement
      * 
      * @return string $donnees
      */
-    public function getDonneesUtilisateur($login)
+    public static function getDonneesUtilisateur($login)
     {
         $sql = \includes\SQL::singleton();
-        $req = 'SELECT * FROM conges_users WHERE u_login = \''.  \includes\SQL::quote($login).'\'';
+        $req = 'SELECT *
+                FROM conges_users 
+                WHERE u_login = \''.  \includes\SQL::quote($login).'\'';
         $query = $sql->query($req);
         $donnees = $query->fetch_array();
 
@@ -184,14 +189,14 @@ abstract class ATraitement
         $sql->getPdoObj()->begin_transaction();
         
         $updateSolde = $this->updateSolde($demandeId);
-        $updateStatut = $this->updateStatutOk($demandeId);
+        $updateStatut = $this->updateStatutValidationFinale($demandeId);
         if (0 < $updateSolde && 0 < $updateStatut) {
             $sql->getPdoObj()->commit();
         } else {
             $sql->getPdoObj()->rollback();
             return NIL_INT;
         }
-        return $demandeId;
+        return $sql->affected_rows;
     }
     
     /**
@@ -207,7 +212,7 @@ abstract class ATraitement
         if (empty($demandesId)) {
             return [];
         }
-        $demandes = $this->getListeSQL($demandesId);
+        $demandes = $this->getInfoDemandes($demandesId);
 
         return $demandes;
     }
@@ -260,7 +265,7 @@ abstract class ATraitement
         if (empty($demandesId)) {
             return [];
         }
-        $demandes = $this->getListeSQL($demandesId);
+        $demandes = $this->getInfoDemandes($demandesId);
 
         return $demandes;
     }

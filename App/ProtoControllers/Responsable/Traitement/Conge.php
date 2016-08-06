@@ -137,7 +137,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
     public function put(array $put, $resp, &$notice, array &$errorLst)
     {
         $return = '1';
-        $infoDemandes = $this->getListeSQL(array_keys($put['demande']));
+        $infoDemandes = $this->getInfoDemandes(array_keys($put['demande']));
 
         foreach ($put['demande'] as $id_conge => $statut) {
             if ($this->isRespDeUtilisateur($resp, $infoDemandes[$id_conge]['p_login'])) {
@@ -215,7 +215,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
      */
     protected function putValidationFinale($demandeId) 
     {
-        $demande = $this->getListeSQL(explode(" ", $demandeId))[$demandeId];
+        $demande = $this->getInfoDemandes(explode(" ", $demandeId))[$demandeId];
         if($this->isOptionReliquatActive() && $this->isReliquatUtilisable($demande['p_date_fin']) && 0 < $this->getReliquatconge($demande['p_login'], $demande['p_type'])) {
             $SoldeReliquat = $this->getReliquatconge($demande['p_login'], $demande['p_type']);
         
@@ -416,7 +416,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
     /**
      * {@inheritDoc}
      */
-    protected function getListeSQL(array $listId)
+    protected function getInfoDemandes(array $listId)
     {
         $infoDemande =[];
         
@@ -545,4 +545,3 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         return $tLabel;
     }
 }
-

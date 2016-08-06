@@ -25,7 +25,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
     public function put(array $put, $resp, &$notice, array &$errorLst)
     {
         $return = '1';
-        $infoDemandes = $this->getListeSQL(array_keys($put['demande']));
+        $infoDemandes = $this->getInfoDemandes(array_keys($put['demande']));
 
         foreach ($put['demande'] as $id_heure => $statut) {
             if ($this->isRespDeUtilisateur($resp, $infoDemandes[$id_heure]['login'])) {
@@ -55,7 +55,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
                     log_action(0, '', '', 'Refus de la demande d\'heure de repos ' . $id_heure . ' de ' . $infoDemande['login']);
             } elseif (\App\Models\AHeure::ACCEPTE === $statut) {
                 if ($this->isDoubleValGroupe($infoDemande['login'])) {
-                    $return = $this->updateStatutValide($id_heure);
+                    $return = $this->updateStatutPremiereValidation($id_heure);
                     log_action(0, '', '', 'Demande d\'heure de repos ' . $id_heure . ' de ' . $infoDemande['login'] . ' transmise au grand responsable');
                 } else {
                     $return = $this->putValidationFinale($id_heure);
@@ -79,10 +79,10 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
         $return = NIL_INT;
         $id_heure = $infoDemande['id_heure'];
         if ($this->isDemandeTraitable($infoDemande['statut'])) { // demande est traitable
-            if (\App\Models\Conge::REFUSE === $statut) {
+            if (\App\Models\AHeure::REFUSE === $statut) {
                 $return = $this->updateStatutRefus($id_heure, $put['comment_refus'][$id_heure]);
                 log_action(0, '', '', 'Refus de la demande d\'heure de repos ' . $id_heure . ' de ' . $infoDemande['login']);
-            } elseif (\App\Models\Conge::ACCEPTE === $statut) {
+            } elseif (\App\Models\AHeure::ACCEPTE === $statut) {
                 if ($this->isDoubleValGroupe($infoDemande['login'])) {
                     $return = $this->putValidationFinale($id_heure);
                     log_action(0, '', '', 'Validation de la demande d\'heure de repos ' . $id_heure . ' de ' . $infoDemande['login']);
@@ -105,7 +105,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
      * 
      * @return int 
      */
-    protected function updateStatutOk($demandeId)
+    protected function updateStatutValidationFinale($demandeId)
     {
         $sql = \includes\SQL::singleton();
 
@@ -145,7 +145,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
      * 
      * @return int 
      */
-    protected function updateStatutValide($demandeId)
+    protected function updateStatutPremiereValidation($demandeId)
     {
         $sql = \includes\SQL::singleton();
 
@@ -166,7 +166,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
      */
     protected function updateSolde($demandeId)
     {
-        $user = $this->getListeSQL(explode(" ",$demandeId));
+        $user = $this->getInfoDemandes(explode(" ",$demandeId));
         $sql = \includes\SQL::singleton();
 
         $req   = 'UPDATE conges_users
@@ -312,7 +312,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
     /**
      * {@inheritDoc}
      */
-    protected function getListeSQL(array $listId)
+    protected function getInfoDemandes(array $listId)
     {
         $infoDemande =[];
         
