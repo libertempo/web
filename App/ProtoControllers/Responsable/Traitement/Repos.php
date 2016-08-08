@@ -50,10 +50,10 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
         $return = NIL_INT;
         $id_heure = $infoDemande['id_heure'];
         if ($this->isDemandeTraitable($infoDemande['statut'])) { // demande est traitable
-            if (\App\Models\AHeure::REFUSE === $statut) {
+            if (AHeure::REFUSE === $statut) {
                 $return = $this->updateStatutRefus($id_heure, $put['comment_refus'][$id_heure]);
                     log_action(0, '', '', 'Refus de la demande d\'heure de repos ' . $id_heure . ' de ' . $infoDemande['login']);
-            } elseif (\App\Models\AHeure::ACCEPTE === $statut) {
+            } elseif (AHeure::ACCEPTE === $statut) {
                 if ($this->isDoubleValGroupe($infoDemande['login'])) {
                     $return = $this->updateStatutPremiereValidation($id_heure);
                     log_action(0, '', '', 'Demande d\'heure de repos ' . $id_heure . ' de ' . $infoDemande['login'] . ' transmise au grand responsable');
@@ -79,10 +79,10 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
         $return = NIL_INT;
         $id_heure = $infoDemande['id_heure'];
         if ($this->isDemandeTraitable($infoDemande['statut'])) { // demande est traitable
-            if (\App\Models\AHeure::REFUSE === $statut) {
+            if (AHeure::REFUSE === $statut) {
                 $return = $this->updateStatutRefus($id_heure, $put['comment_refus'][$id_heure]);
                 log_action(0, '', '', 'Refus de la demande d\'heure de repos ' . $id_heure . ' de ' . $infoDemande['login']);
-            } elseif (\App\Models\AHeure::ACCEPTE === $statut) {
+            } elseif (AHeure::ACCEPTE === $statut) {
                 if ($this->isDoubleValGroupe($infoDemande['login'])) {
                     $return = $this->putValidationFinale($id_heure);
                     log_action(0, '', '', 'Validation de la demande d\'heure de repos ' . $id_heure . ' de ' . $infoDemande['login']);
@@ -110,7 +110,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
         $sql = \includes\SQL::singleton();
 
         $req   = 'UPDATE heure_repos
-                SET statut = ' . \App\Models\AHeure::STATUT_OK . '
+                SET statut = ' . AHeure::STATUT_OK . '
                 WHERE id_heure = '. (int) $demandeId;
         $query = $sql->query($req);
 
@@ -130,7 +130,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
         $sql = \includes\SQL::singleton();
 
         $req   = 'UPDATE heure_repos
-                SET statut = ' . \App\Models\AHeure::STATUT_REFUS . ',
+                SET statut = ' . AHeure::STATUT_REFUS . ',
                     comment_refus = \'' . \includes\SQL::quote($comment) . '\'
                 WHERE id_heure = '. (int) $demandeId;
         $query = $sql->query($req);
@@ -150,7 +150,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
         $sql = \includes\SQL::singleton();
 
         $req   = 'UPDATE heure_repos
-                SET statut = ' . \App\Models\AHeure::STATUT_VALIDE . '
+                SET statut = ' . AHeure::STATUT_VALIDE . '
                 WHERE id_heure = '. (int) $demandeId;
         $query = $sql->query($req);
 

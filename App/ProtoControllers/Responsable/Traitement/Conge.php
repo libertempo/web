@@ -1,8 +1,6 @@
 <?php
 namespace App\ProtoControllers\Responsable\Traitement;
 
-use \App\Models\Conge;
-
 /**
  * ProtoContrôleur de validation des conges
  *
