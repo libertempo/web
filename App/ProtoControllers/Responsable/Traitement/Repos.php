@@ -28,9 +28,9 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
         $infoDemandes = $this->getInfoDemandes(array_keys($put['demande']));
 
         foreach ($put['demande'] as $id_heure => $statut) {
-            if ($this->isRespDeUtilisateur($resp, $infoDemandes[$id_heure]['login'])) {
+            if (\App\ProtoControllers\responsable::isRespDeUtilisateur($resp, $infoDemandes[$id_heure]['login'])) {
                 $return = $this->putResponsable($infoDemandes[$id_heure], $statut, $put, $errorLst);
-            } elseif ($this->isGrandRespDeUtilisateur($resp, $this->getGroupesId($infoDemandes[$id_heure]['login']))) {
+            } elseif (\App\ProtoControllers\responsable::isGrandRespDeUtilisateur($resp, \App\ProtoControllers\Utilisateur::getGroupesId($infoDemandes[$id_heure]['login']))) {
                 $return = $this->putGrandResponsable($infoDemandes[$id_heure], $statut, $put, $errorLst);
             } else {
                 $errorLst[] = _('erreur_pas_responsable_de') . ' ' . $infoDemandes['id_heure']['login'];
@@ -54,7 +54,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
                 $return = $this->updateStatutRefus($id_heure, $put['comment_refus'][$id_heure]);
                     log_action(0, '', '', 'Refus de la demande d\'heure de repos ' . $id_heure . ' de ' . $infoDemande['login']);
             } elseif (AHeure::ACCEPTE === $statut) {
-                if ($this->isDoubleValGroupe($infoDemande['login'])) {
+                if (\App\ProtoControllers\responsable::isDoubleValGroupe($infoDemande['login'])) {
                     $return = $this->updateStatutPremiereValidation($id_heure);
                     log_action(0, '', '', 'Demande d\'heure de repos ' . $id_heure . ' de ' . $infoDemande['login'] . ' transmise au grand responsable');
                 } else {
@@ -83,7 +83,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
                 $return = $this->updateStatutRefus($id_heure, $put['comment_refus'][$id_heure]);
                 log_action(0, '', '', 'Refus de la demande d\'heure de repos ' . $id_heure . ' de ' . $infoDemande['login']);
             } elseif (AHeure::ACCEPTE === $statut) {
-                if ($this->isDoubleValGroupe($infoDemande['login'])) {
+                if (\App\ProtoControllers\responsable::isDoubleValGroupe($infoDemande['login'])) {
                     $return = $this->putValidationFinale($id_heure);
                     log_action(0, '', '', 'Validation de la demande d\'heure de repos ' . $id_heure . ' de ' . $infoDemande['login']);
                 } else {
@@ -257,13 +257,13 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
       */
     protected function getIdDemandesResponsable($resp)
     {
-        $groupId = $this->getIdGroupeResp($resp);
+        $groupId = \App\ProtoControllers\responsable::getIdGroupeResp($resp);
         if (empty($groupId)) {
             return [];
         }
 
         $usersResp = [];
-        $usersResp = $this->getUsersGroupe($groupId);
+        $usersResp = \App\ProtoControllers\responsable::getUsersGroupe($groupId);
         if (empty($usersResp)) {
             return [];
         }
@@ -286,12 +286,12 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
       */
     protected function getIdDemandesGrandResponsable($gResp)
     {
-        $groupId = $this->getIdGroupeGrandResponsable($gResp);
+        $groupId = \App\ProtoControllers\responsable::getIdGroupeGrandResponsable($gResp);
         if (empty($groupId)) {
             return [];
         }
         
-        $usersResp = $this->getUsersGroupe($groupId);
+        $usersResp = \App\ProtoControllers\responsable::getUsersGroupe($groupId);
         if (empty($usersResp)) {
             return [];
         }

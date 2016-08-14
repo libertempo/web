@@ -96,8 +96,8 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         
         foreach ( $demandes as $demande ) {
             $id = $demande['p_num'];
-            $infoUtilisateur = $this->getDonneesUtilisateur($demande['p_login']);
-            $solde = $this->getSoldeconge($demande['p_login'],$demande['p_type']);
+            $infoUtilisateur = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($demande['p_login']);
+            $solde = \App\ProtoControllers\Utilisateur::getSoldeconge($demande['p_login'],$demande['p_type']);
             $type = $this->getTypeLabel($demande['p_type']);
             $debut = \App\Helpers\Formatter::dateIso2Fr($demande['p_date_deb']);
             $fin = \App\Helpers\Formatter::dateIso2Fr($demande['p_date_fin']);
@@ -138,9 +138,9 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         $infoDemandes = $this->getInfoDemandes(array_keys($put['demande']));
 
         foreach ($put['demande'] as $id_conge => $statut) {
-            if ($this->isRespDeUtilisateur($resp, $infoDemandes[$id_conge]['p_login'])) {
+            if (\App\ProtoControllers\responsable::isRespDeUtilisateur($resp, $infoDemandes[$id_conge]['p_login'])) {
                 $return = $this->putResponsable($infoDemandes[$id_conge], $statut, $put, $errorLst);
-            } elseif ($this->isGrandRespDeUtilisateur($resp, $this->getGroupesId($infoDemandes[$id_conge]['p_login']))) {
+            } elseif (\App\ProtoControllers\responsable::isGrandRespDeUtilisateur($resp, \App\ProtoControllers\Utilisateur::getGroupesId($infoDemandes[$id_conge]['p_login']))) {
                 $return = $this->putGrandResponsable($infoDemandes[$id_conge], $statut, $put, $errorLst);
             } else {
                 $errorLst[] = _('erreur_pas_responsable_de') . ' ' . $infoDemandes['id_conge']['p_login'];
@@ -163,7 +163,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
                 $return = $this->updateStatutRefus($id_conge, $put['comment_refus'][$id_conge]);
                 log_action($infoDemande['p_num'], 'refus', '', $infoDemande['p_login'], 'traitement demande ' . $id_conge . ' (' . $infoDemande['p_login'] . ') (' . $infoDemande['p_nb_jours'] . ' jours) : refus');
             } elseif (\App\Models\Conge::ACCEPTE === $statut) {
-                if ($this->isDoubleValGroupe($infoDemande['p_login'])) {
+                if (\App\ProtoControllers\responsable::isDoubleValGroupe($infoDemande['p_login'])) {
                     $return = $this->updateStatutPremiereValidation($id_conge);
                     log_action($infoDemande['p_num'], 'valid', $infoDemande['p_login'], 'traitement demande conges ' . $id_conge . ' de ' . $infoDemande['p_login'] . ' première validation');
                 } else {
@@ -190,7 +190,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
                 $return = $this->updateStatutRefus($id_conge, $put['comment_refus'][$id_conge]);
                 log_action($infoDemande['p_num'], 'refus', '', $infoDemande['p_login'], 'traitement demande ' . $id_conge . ' (' . $infoDemande['p_login'] . ') (' . $infoDemande['p_nb_jours'] . ' jours) : refus');
             } elseif (\App\Models\Conge::ACCEPTE === $statut) {
-                if ($this->isDoubleValGroupe($infoDemande['p_login'])) {
+                if (\App\ProtoControllers\responsable::isDoubleValGroupe($infoDemande['p_login'])) {
                     $return = $this->putValidationFinale($id_conge);
                     log_action($infoDemande['p_num'], 'ok', $infoDemande['p_login'], 'traitement demande ' . $id_conge . ' (' . $infoDemande['p_login'] . ') (' . $infoDemande['p_nb_jours'] . ' jours) : OK');
                 } else {
@@ -359,13 +359,13 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
       */
     protected function getIdDemandesResponsable($resp)
     { 
-        $groupId = $this->getIdGroupeResp($resp);
+        $groupId = \App\ProtoControllers\responsable::getIdGroupeResp($resp);
         if (empty($groupId)) {
             return [];
         }
 
         $usersResp = [];
-        $usersResp = $this->getUsersGroupe($groupId);
+        $usersResp = \App\ProtoControllers\responsable::getUsersGroupe($groupId);
         if (empty($usersResp)) {
             return [];
         }
@@ -388,12 +388,12 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
       */
     protected function getIdDemandesGrandResponsable($gResp)
     {
-        $groupId = $this->getIdGroupeGrandResponsable($gResp);
+        $groupId = \App\ProtoControllers\responsable::getIdGroupeGrandResponsable($gResp);
         if (empty($groupId)) {
             return [];
         }
         
-        $usersResp = $this->getUsersGroupe($groupId);
+        $usersResp = \App\ProtoControllers\responsable::getUsersGroupe($groupId);
         if (empty($usersResp)) {
             return [];
         }
@@ -435,26 +435,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
         return $infoDemande;
     }
-    
-    /**
-     * Retourne le solde de conges (selon le type) d'un utilisateur
-     *
-     * @param string $login
-     * @param int $typeId 
-     *
-     * @return int $solde
-     */
-    public function getSoldeconge($login, $typeId)
-    {
-        $sql = \includes\SQL::singleton();
-        $req = 'SELECT su_solde FROM conges_solde_user WHERE su_login = \''.$login.'\'
-                AND su_abs_id ='. (int) $typeId;
-        $query = $sql->query($req);
-        $solde = $query->fetch_array()[0];
 
-        return $solde;
-    }
-    
     /**
      * Retourne le reliquat de conges (selon le type) d'un utilisateur
      *
