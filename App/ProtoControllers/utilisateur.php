@@ -7,7 +7,7 @@ namespace App\ProtoControllers;
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina <wouldsmina@tuxfamily.org>
  */
-class Utilisateur
+class utilisateur
 {
     /**
      * Retourne les informations d'un utilisateur

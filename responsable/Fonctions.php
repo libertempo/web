@@ -1046,7 +1046,7 @@ class Fonctions
         $return .= '<tr>';
         $return .= '<th>' . _('divers_nom_maj') .'</th>';
         $return .= '<th>'. _('divers_prenom_maj') .'</th>';
-        $return .= '<th>'. _('divers_quotite_maj_1') .'</th>' ;
+        $return .= '<th>'. _('divers_quotite_maj_1') .'</th>';
         $nb_colonnes = 3;
         foreach($tab_type_cong as $id_conges => $libelle) {
             // cas d'une absence ou d'un congé
@@ -1061,6 +1061,7 @@ class Fonctions
                 $nb_colonnes += 1;
             }
         }
+        $return .= '<th>'. _('solde_heure') .'</th>' ;
         $return .= '<th></th>';
         $nb_colonnes += 1;
         if($_SESSION['config']['editions_papier']) {
@@ -1101,6 +1102,8 @@ class Fonctions
                             $return .= '<td>' . $tab_conges[$libelle]['solde'] . '</td>';
                         }
                     }
+                    $soldeHeure = \App\ProtoControllers\utilisateur::getDonneesUtilisateur($current_login)['u_heure_solde'];
+                    $return .= '<td>' . \App\Helpers\Formatter::Timestamp2Duree($soldeHeure) . '</td>';
                     $return .= '<td>' . $text_affich_user . '</td>';
                     if($_SESSION['config']['editions_papier']) {
                         $return .= '<td>' . $text_edit_papier . '</td>';
