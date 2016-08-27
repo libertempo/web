@@ -24,7 +24,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *************************************************************************************************/
-namespace App\ProtoControllers;
+namespace App\ProtoControllers\Responsable;
 
 /**
  * ProtoContrôleur de planning, en attendant la migration vers le MVC REST
@@ -49,16 +49,16 @@ class Planning
         if (!empty($post['_METHOD'])) {
             switch ($post['_METHOD']) {
                 case 'DELETE':
-                    return \App\ProtoControllers\Planning::deletePlanning($post['planning_id'], $errors, $notice);
+                    return \App\ProtoControllers\Responsable\Planning::deletePlanning($post['planning_id'], $errors, $notice);
                     break;
                 case 'PUT':
                     if (!empty($post['planning_id']) && 0 < (int) $post['planning_id']) {
-                        return \App\ProtoControllers\Planning::putPlanning($post['planning_id'], $post, $errors);
+                        return \App\ProtoControllers\Responsable\Planning::putPlanning($post['planning_id'], $post, $errors);
                     }
                     break;
                 case 'PATCH':
                     if (!empty($post['planning_id']) && 0 < (int) $post['planning_id']) {
-                        return \App\ProtoControllers\Planning::patchPlanning($post['planning_id'], $post);
+                        return \App\ProtoControllers\Responsable\Planning::patchPlanning($post['planning_id'], $post);
                     }
                     break;
             }
@@ -67,7 +67,7 @@ class Planning
                 $errors['Nom'] = _('champ_necessaire');
                 return NIL_INT;
             }
-            if (\App\ProtoControllers\Planning::existPlanningName($post['name'])) {
+            if (\App\ProtoControllers\Responsable\Planning::existPlanningName($post['name'])) {
                 $errors['Nom'] = _('nom_existe_deja');
                 return NIL_INT;
             }
@@ -75,9 +75,9 @@ class Planning
             if (!empty($post['creneaux'])) {
                 $sql = \includes\SQL::singleton();
                 $sql->getPdoObj()->begin_transaction();
-                $idPlanning = \App\ProtoControllers\Planning::insertPlanning($post);
-                \App\ProtoControllers\Creneau::deleteCreneauList($idPlanning);
-                $idLastCreneau = \App\ProtoControllers\Creneau::postCreneauxList($post['creneaux'], $idPlanning, $errors);
+                $idPlanning = \App\ProtoControllers\Responsable\Planning::insertPlanning($post);
+                \App\ProtoControllers\Responsable\Creneau::deleteCreneauList($idPlanning);
+                $idLastCreneau = \App\ProtoControllers\Responsable\Creneau::postCreneauxList($post['creneaux'], $idPlanning, $errors);
                 if (0 < $idPlanning && 0 < $idLastCreneau) {
                     $sql->getPdoObj()->commit();
                 } else {
@@ -85,8 +85,8 @@ class Planning
                     return NIL_INT;
                 }
             } else {
-                $idPlanning = \App\ProtoControllers\Planning::insertPlanning($post);
-                \App\ProtoControllers\Creneau::deleteCreneauList($idPlanning);
+                $idPlanning = \App\ProtoControllers\Responsable\Planning::insertPlanning($post);
+                \App\ProtoControllers\Responsable\Creneau::deleteCreneauList($idPlanning);
             }
 
             return $idPlanning;
@@ -104,11 +104,23 @@ class Planning
      */
     private static function putPlanning($id, array $put, array &$errors)
     {
+        $utilisateurs = \App\ProtoControllers\Utilisateur::getListByPlanning($id);
+        /* TODO: Peut mieux faire */
+        foreach ($utilisateurs as $utilisateur) {
+            $login = $utilisateur['u_login'];
+            if (\App\ProtoControllers\Utilisateur::hasCongesEnCours($login)
+                || \App\ProtoControllers\Utilisateur::hasHeureReposEnCours($login)
+                || \App\ProtoControllers\Utilisateur::hasHeureAdditionnelleEnCours($login)
+            ) {
+                $errors['Planning'] = _('demande_en_cours_sur_planning');
+                return NIL_INT;
+            }
+        }
         if (empty($put['name'])) {
             $errors['Nom'] = _('champ_necessaire');
             return NIL_INT;
         }
-        if (\App\ProtoControllers\Planning::existPlanningName($put['name'], $id)) {
+        if (\App\ProtoControllers\Responsable\Planning::existPlanningName($put['name'], $id)) {
             $errors['Nom'] = _('nom_existe_deja');
             return NIL_INT;
         }
@@ -116,10 +128,10 @@ class Planning
         if (!empty($put['creneaux'])) {
             $sql = \includes\SQL::singleton();
             $sql->getPdoObj()->begin_transaction();
-            $idPlanning = \App\ProtoControllers\Planning::updatePlanning($id, $put);
-            \App\ProtoControllers\Creneau::deleteCreneauList($idPlanning);
+            $idPlanning = \App\ProtoControllers\Responsable\Planning::updatePlanning($id, $put);
+            \App\ProtoControllers\Responsable\Creneau::deleteCreneauList($idPlanning);
             if (0 < $idPlanning) {
-                $idLastCreneau = \App\ProtoControllers\Creneau::postCreneauxList($put['creneaux'], $idPlanning, $errors);
+                $idLastCreneau = \App\ProtoControllers\Responsable\Creneau::postCreneauxList($put['creneaux'], $idPlanning, $errors);
                 if (0 < $idLastCreneau) {
                     $sql->getPdoObj()->commit();
                 } else {
@@ -130,7 +142,7 @@ class Planning
                 $sql->getPdoObj()->rollback();
             }
         } else {
-            $idPlanning = \App\ProtoControllers\Planning::updatePlanning($id, $put);
+            $idPlanning = \App\ProtoControllers\Responsable\Planning::updatePlanning($id, $put);
         }
 
         return $idPlanning;
@@ -148,15 +160,15 @@ class Planning
     private static function deletePlanning($id, array &$errors, &$notice)
     {
         // si planning inexistant ou faisant partie des non supprimable
-        if (!\App\ProtoControllers\Planning::isDeletable($id)) {
+        if (!\App\ProtoControllers\Responsable\Planning::isDeletable($id)) {
             $errors[] = _('planning_non_supprimable');
             return NIL_INT;
         }
 
         $sql = \includes\SQL::singleton();
         $sql->getPdoObj()->begin_transaction();
-        $res = \App\ProtoControllers\Planning::deleteSql($id);
-        \App\ProtoControllers\Creneau::deleteCreneauList($id);
+        $res = \App\ProtoControllers\Responsable\Planning::deleteSql($id);
+        \App\ProtoControllers\Responsable\Creneau::deleteCreneauList($id);
         if (0 < $res) {
             $notice = _('planning_supprime');
             $sql->getPdoObj()->commit();
@@ -171,18 +183,17 @@ class Planning
      * Patche un planning
      *
      * @param int   $id
-     * @param array $put
+     * @param array $patch
      *
      * @return int
      */
     private static function patchPlanning($id, array $patch)
     {
-        return \App\ProtoControllers\Planning::patchSql($id, $patch);
+        return \App\ProtoControllers\Responsable\Planning::patchSql($id, $patch);
     }
 
     /*
      * SQL
-     *
      */
 
     /**
@@ -217,7 +228,7 @@ class Planning
         $sql = \includes\SQL::singleton();
         $req = 'SELECT EXISTS (
                     SELECT planning_id
-                    FROM conges_planning
+                    FROM planning
                     WHERE planning_id = ' . (int) $id . '
                       AND status = ' . \App\Models\Planning::STATUS_ACTIVE . '
                 )';
@@ -236,7 +247,7 @@ class Planning
     private static function insertPlanning(array $planning)
     {
         $sql   = \includes\SQL::singleton();
-        $req   = 'INSERT INTO conges_planning (planning_id, name, status)
+        $req   = 'INSERT INTO planning (planning_id, name, status)
                   VALUES (null, "' . htmlspecialchars($sql->quote($planning['name'])) . '", ' . \App\Models\Planning::STATUS_ACTIVE . ')';
         $query = $sql->query($req);
 
@@ -254,7 +265,7 @@ class Planning
     private static function updatePlanning($id, array $put)
     {
         $sql = \includes\SQL::singleton();
-        $req = 'UPDATE conges_planning
+        $req = 'UPDATE planning
                 SET name = "' . htmlspecialchars($sql->quote($put['name'])) . '"
                 WHERE planning_id = ' . $id;
         $sql->query($req);
@@ -275,7 +286,7 @@ class Planning
     private static function patchSql($id, array $patch)
     {
         $sql = \includes\SQL::singleton();
-        $req = 'UPDATE conges_planning
+        $req = 'UPDATE planning
                 SET status = ' . (int) $patch['status'] . '
                 WHERE planning_id = ' . $id;
         $sql->query($req);
@@ -293,9 +304,9 @@ class Planning
     private static function deleteSql($id)
     {
         $sql = \includes\SQL::singleton();
-        $req = 'UPDATE conges_planning
+        $req = 'UPDATE planning
                 SET status = ' . \App\Models\Planning::STATUS_DELETED . '
-                WHERE planning_id = ' . $id . '
+                WHERE planning_id = ' . (int) $id . '
                 LIMIT 1';
         $sql->query($req);
 
@@ -311,9 +322,12 @@ class Planning
      */
     public static function getListPlanning(array $listId)
     {
+        if (empty($listId)) {
+            return [];
+        }
         $sql = \includes\SQL::singleton();
         $req = 'SELECT *
-                FROM conges_planning
+                FROM planning
                 WHERE planning_id IN (' . implode(',', $listId) . ')
                 ORDER BY planning_id DESC';
 
@@ -329,6 +343,9 @@ class Planning
      */
     public static function getListPlanningUsed(array $listId)
     {
+        if (empty($listId)) {
+            return [];
+        }
         $ids = [];
         $sql = \includes\SQL::singleton();
         $req = 'SELECT planning_id AS id
@@ -352,7 +369,7 @@ class Planning
         $ids = [];
         $sql = \includes\SQL::singleton();
         $req = 'SELECT planning_id AS id
-                FROM conges_planning
+                FROM planning
                 WHERE status = ' . \App\Models\Planning::STATUS_ACTIVE;
         $res = $sql->query($req);
         while ($data = $res->fetch_array()) {
@@ -375,7 +392,7 @@ class Planning
         $sql = \includes\SQL::singleton();
         $req = 'SELECT EXISTS (
                     SELECT planning_id
-                    FROM conges_planning
+                    FROM planning
                     WHERE name = "' . htmlspecialchars($sql->quote($name)) . '"
                       AND status = ' . \App\Models\Planning::STATUS_ACTIVE . '
                       AND planning_id != ' . (int) $idAuthorized . '

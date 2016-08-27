@@ -54,7 +54,7 @@ if (!defined( 'DEFINE_INCLUDE' )) {
                 $debug[] = [
                     'Kint' => @d(func_get_args()),
                     'Backtrace' => '<pre>' . print_r(debug_backtrace(), true) . '</pre>',
-                    'LastError' => error_get_last(),
+                    'LastError' => '<pre>' . print_r(error_get_last(), true)  .'</pre>',
                 ];
             }
             register_shutdown_function(function () {

@@ -383,7 +383,7 @@ function get_td_class_of_the_day_in_the_week($timestamp_du_jour)
 
 // recup des infos ARTT ou Temps Partiel :
 // attention : les param $val_matin et $val_aprem sont passées par référence (avec &) car on change leur valeur
-function recup_infos_artt_du_jour($sql_login, $j_timestamp, &$val_matin, &$val_aprem)
+function recup_infos_artt_du_jour($sql_login, $j_timestamp, &$val_matin, &$val_aprem, array $planningUser)
 {
     $num_semaine = date('W', $j_timestamp);
     $jour_name_fr_2c = get_j_name_fr_2c($j_timestamp); // nom du jour de la semaine en francais sur 2 caracteres
@@ -408,30 +408,27 @@ function recup_infos_artt_du_jour($sql_login, $j_timestamp, &$val_matin, &$val_a
                 $val_aprem = 'Y';
             else
                 $val_aprem = 'N';
-        }
-        // sinon, on lit la table conges_artt normalement
-        else
-        {
-            $par_sem = $num_semaine % 2 == 0 ? 'p' : 'imp';
-
-            //on calcule la key du tableau $result_artt qui correspond au jour j que l'on est en train d'afficher
-            $key_artt_matin = 'sem_'.$par_sem.'_'.$jour_name_fr_2c.'_am' ;
-            $key_artt_aprem = 'sem_'.$par_sem.'_'.$jour_name_fr_2c.'_pm' ;
-
-            // recup des ARTT et temps-partiels du user
-            $sql_artt='SELECT '.\includes\SQL::quote($key_artt_matin).', '.\includes\SQL::quote($key_artt_aprem).' FROM conges_artt WHERE a_login = "'.\includes\SQL::quote($sql_login).'" AND a_date_debut_grille <=  "'.\includes\SQL::quote($date_j).'" AND a_date_fin_grille >= "'.\includes\SQL::quote($date_j).'";';
-            $res_artt = \includes\SQL::query($sql_artt);
-            $result_artt = $res_artt->fetch_array();
-
-            if($result_artt[$key_artt_matin] == 'Y')
-                $val_matin='Y';
-            else
-                $val_matin='N';
-
-            if($result_artt[$key_artt_aprem] == 'Y')
-                $val_aprem='Y';
-            else
-                $val_aprem='N';
+        } else {
+            /* Sinon, on s'appuie sur le planning normalement */
+            $realWeekType = \utilisateur\Fonctions::getRealWeekType($planningUser, $num_semaine);
+            if (NIL_INT === $realWeekType) {
+                /* Si la semaine n'est pas travaillée */
+                $val_matin = 'Y';
+                $val_aprem = 'Y';
+            } else {
+                $planningWeek = $planningUser[$realWeekType];
+                $jourId = date('N', $j_timestamp);
+                if (!\utilisateur\Fonctions::isWorkingDay($planningWeek, $jourId)) {
+                    /* Si le jour n'est pas travaillé */
+                    $val_matin = 'Y';
+                    $val_aprem = 'Y';
+                } else {
+                    /* Vérification si le créneau est travaillé */
+                    $planningDay = $planningWeek[$jourId];
+                    $val_matin = (\utilisateur\Fonctions::isWorkingMorning($planningDay)) ? 'N' : 'Y';
+                    $val_aprem = (\utilisateur\Fonctions::isWorkingAfternoon($planningDay)) ? 'N' : 'Y';
+                }
+            }
         }
     }
 }
@@ -439,19 +436,13 @@ function recup_infos_artt_du_jour($sql_login, $j_timestamp, &$val_matin, &$val_a
 
 // recup des infos ARTT ou Temps Partiel :
 // attention : les param $val_matin et $val_aprem sont passées par référence (avec &) car on change leur valeur
-function recup_infos_artt_du_jour_from_tab($sql_login, $j_timestamp, &$val_matin, &$val_aprem, $tab_rtt_echange, $tab_rtt_planifiees)
+function recup_infos_artt_du_jour_from_tab($sql_login, $j_timestamp, &$val_matin, &$val_aprem, $tab_rtt_echange, array $planningUser)
 {
 
     //$tab_rtt_echange  //tableau indexé dont la clé est la date sous forme yyyy-mm-dd
     //il contient pour chaque clé (chaque jour): un tableau indéxé ($tab_jour_rtt_echange) (clé= login)
     // qui contient lui même un tableau ($tab_echange) contenant les infos des echanges de rtt pour ce
     // jour et ce login (valeur du matin + valeur de l'apres midi ('Y' si rtt, 'N' sinon) )
-    //$tab_rtt_planifiees  //tableau indexé dont la clé est le login_user
-    // il contient pour chaque clé login : un tableau ($tab_user_grille) indexé dont la
-    // clé est la date_fin_grille.
-    // qui contient lui meme pour chaque clé : un tableau ($tab_user_rtt) qui contient enfin
-    // les infos pour le matin et l'après midi ('Y' si rtt, 'N' sinon) sur 2 semaines
-    // ( du sem_imp_lu_am au sem_p_ve_pm ) + la date de début et de fin de la grille
 
     $num_semaine = date('W', $j_timestamp);
     $jour_name_fr_2c = get_j_name_fr_2c($j_timestamp); // nom du jour de la semaine en francais sur 2 caracteres
@@ -468,38 +459,31 @@ function recup_infos_artt_du_jour_from_tab($sql_login, $j_timestamp, &$val_matin
             $val_matin = $tab_day[$sql_login]["val_matin"];
             $val_aprem = $tab_day[$sql_login]["val_aprem"];
         }
-        // sinon, on lit la table conges_artt normalement
         else
         {
-            $par_sem = $num_semaine % 2 == 0 ? 'p' : 'imp';
-
-            //on calcule la key du tableau $result_artt qui correspond au jour j que l'on est en train d'afficher
-            $key_artt_matin = 'sem_'.$par_sem.'_'.$jour_name_fr_2c.'_am' ;
-            $key_artt_aprem = 'sem_'.$par_sem.'_'.$jour_name_fr_2c.'_pm' ;
-
-            // recup des ARTT et temps-partiels du user :
-            // recup des grille du user
-            $tab_grille_user = array();
-            if(array_key_exists($sql_login, $tab_rtt_planifiees))
-                $tab_grille_user = $tab_rtt_planifiees[$sql_login];
-            // parcours du tableau des grille pour trouver la key qui correspond à la bonne période
-            if(count($tab_grille_user))
-            {
-                foreach ($tab_grille_user as $key => $value)
-                {
-                    if( $date_j >= $value['date_debut_grille'] && $date_j <= $value['date_fin_grille'] ) // date_jour comprise entre date_deb_grille et date_fin grille
-                    {
-                        $val_matin  = $value[$key_artt_matin];
-                        $val_aprem  = $value[$key_artt_aprem];
-                    }
+            /* Sinon, on s'appuie sur le planning normalement */
+            $realWeekType = \utilisateur\Fonctions::getRealWeekType($planningUser, $num_semaine);
+            if (NIL_INT === $realWeekType) {
+                /* Si la semaine n'est pas travaillée */
+                $val_matin = 'Y';
+                $val_aprem = 'Y';
+            } else {
+                $planningWeek = $planningUser[$realWeekType];
+                $jourId = date('N', $j_timestamp);
+                if (!\utilisateur\Fonctions::isWorkingDay($planningWeek, $jourId)) {
+                    /* Si le jour n'est pas travaillé */
+                    $val_matin = 'Y';
+                    $val_aprem = 'Y';
+                } else {
+                    /* Vérification si le créneau est travaillé */
+                    $planningDay = $planningWeek[$jourId];
+                    $val_matin = (\utilisateur\Fonctions::isWorkingMorning($planningDay)) ? 'N' : 'Y';
+                    $val_aprem = (\utilisateur\Fonctions::isWorkingAfternoon($planningDay)) ? 'N' : 'Y';
                 }
             }
         }
     }
 }
-
-
-
 
 // verif validité d'un nombre saisi (decimal ou non)
 //  (attention : le $nombre est passé par référence car on le modifie si besoin)
@@ -841,37 +825,6 @@ function recup_tableau_rtt_echange($mois, $first_jour, $year,  $tab_logins = fal
 }
 
 
-
-/**************************************************/
-/* recup dans un tableau des rtt planifiées  pour tous les users */
-/**************************************************/
-function recup_tableau_rtt_planifiees($mois, $first_jour, $year , $tab_logins = false ) {
-
-    $tab_rtt_planifiees=array();
-    //tableau indexé dont la clé est le login_user
-    // il contient pour chaque clé login : un tableau ($tab_user_grille) indexé dont la
-    // clé est la date_fin_grille.
-    // qui contient lui meme pour chaque clé : un tableau ($tab_user_rtt) qui contient enfin
-    // les infos pour le matin et l'après midi ('Y' si rtt, 'N' sinon) sur 2 semaines
-    // ( du sem_imp_lu_am au sem_p_ve_pm ) + la date de début et de fin de la grille
-
-    // construction du tableau $tab_rtt_planifie:
-    $sql    = 'SELECT a_login AS login, a_date_debut_grille AS date_debut_grille, a_date_fin_grille AS date_fin_grille,
-            sem_imp_lu_am, sem_imp_lu_pm, sem_imp_ma_am, sem_imp_ma_pm, sem_imp_me_am, sem_imp_me_pm,
-            sem_imp_je_am, sem_imp_je_pm, sem_imp_ve_am, sem_imp_ve_pm, sem_imp_sa_am, sem_imp_sa_pm,
-            sem_imp_di_am, sem_imp_di_pm, sem_p_lu_am, sem_p_lu_pm, sem_p_ma_am, sem_p_ma_pm,
-            sem_p_me_am, sem_p_me_pm, sem_p_je_am, sem_p_je_pm, sem_p_ve_am, sem_p_ve_pm,
-            sem_p_sa_am, sem_p_sa_pm, sem_p_di_am, sem_p_di_pm
-            FROM conges_artt'.($tab_logins === false ?'': ' WHERE a_login IN ( \''.implode('\', \'', $tab_logins ).'\')').';';
-    $result = \includes\SQL::query($sql);
-
-    while($l = $result->fetch_array()) // pour chaque lignes
-        $tab_rtt_planifiees[ $l['login'] ][ $l['date_fin_grille'] ] = $l;
-
-    return $tab_rtt_planifiees;
-}
-
-
 // affiche une liste déroulante des jours du mois : la variable est $new_jour
 function affiche_selection_new_jour($default)
 {
@@ -952,10 +905,11 @@ function affiche_cellule_jour_cal_saisie($login, $j_timestamp, $td_second_class,
     $class_pm='travail_pm';
     $val_matin='';
     $val_aprem='';
+    $planningUser = \utilisateur\Fonctions::getUserPlanning($login);
 
     // recup des infos ARTT ou Temps Partiel :
     // la fonction suivante change les valeurs de $val_matin $val_aprem ....
-    recup_infos_artt_du_jour($login, $j_timestamp, $val_matin, $val_aprem);
+    recup_infos_artt_du_jour($login, $j_timestamp, $val_matin, $val_aprem, $planningUser);
 
     //## AFICHAGE ##
     if($val_matin=='Y')
@@ -1945,7 +1899,7 @@ function affiche_tableau_bilan_conges_user($login)
 function recup_infos_du_user($login, $list_groups_double_valid)
 {
     $tab=array();
-    $sql1 = 'SELECT u_login, u_nom, u_prenom, u_is_resp, u_resp_login, u_is_admin, u_is_hr, u_is_active, u_see_all, u_passwd, u_quotite, u_email, u_num_exercice FROM conges_users ' .
+    $sql1 = 'SELECT u_login, u_nom, u_prenom, u_is_resp, u_resp_login, u_is_admin, u_is_hr, u_is_active, u_see_all, u_passwd, u_quotite, u_email, u_num_exercice, planning_id FROM conges_users ' .
             'WHERE u_login="'.\includes\SQL::quote($login).'";';
     $ReqLog = \includes\SQL::query($sql1) ;
 
@@ -1965,6 +1919,7 @@ function recup_infos_du_user($login, $list_groups_double_valid)
         $tab_user['quotite']    = $resultat['u_quotite'];
         $tab_user['email']    = $resultat['u_email'];
         $tab_user['num_exercice'] = $resultat['u_num_exercice'];
+        $tab_user['planningId']   = $resultat['planning_id'];
         $tab_user['conges']    = recup_tableau_conges_for_user($login, false);
 
         $tab_user['double_valid'] = "N";

@@ -2319,7 +2319,7 @@ class Fonctions
         $errorsLst = [];
         $notice    = '';
         if (!empty($_POST)) {
-            if (0 >= (int) \App\ProtoControllers\Planning::postPlanning($_POST, $errorsLst, $notice)) {
+            if (0 >= (int) \App\ProtoControllers\Responsable\Planning::postPlanning($_POST, $errorsLst, $notice)) {
                 $errors = '';
                 if (!empty($errorsLst)) {
                     foreach ($errorsLst as $value) {
@@ -2338,7 +2338,7 @@ enctype="application/x-www-form-urlencoded"><input type="hidden" name="planning_
         }
 
         /* Préparation et requêtage */
-        $listPlanningId = \App\ProtoControllers\Planning::getListPlanningId();
+        $listPlanningId = \App\ProtoControllers\Responsable\Planning::getListPlanningId();
 
         $return = '<h1>' . _('resp_affichage_liste_planning_titre') . '</h1>';
         $return .= $message;
@@ -2355,8 +2355,8 @@ enctype="application/x-www-form-urlencoded"><input type="hidden" name="planning_
         if (empty($listPlanningId)) {
             $childTable .= '<tr><td colspan="2"><center>' . _('aucun_resultat') . '</center></td></tr>';
         } else {
-            $listIdUsed   = \App\ProtoControllers\Planning::getListPlanningUsed($listPlanningId);
-            $listPlanning = \App\ProtoControllers\Planning::getListPlanning($listPlanningId);
+            $listIdUsed   = \App\ProtoControllers\Responsable\Planning::getListPlanningUsed($listPlanningId);
+            $listPlanning = \App\ProtoControllers\Responsable\Planning::getListPlanning($listPlanningId);
             foreach ($listPlanning as $planning) {
                 $childTable .= '<tr><td>' . $planning['name'] . '</td>';
                 $childTable .= '<td><form action="" method="post" accept-charset="UTF-8"
@@ -2393,7 +2393,7 @@ enctype="application/x-www-form-urlencoded"><a  title="' . _('form_modif') . '" 
         $notice    = '';
         $valueName = '';
         if (!empty($_POST)) {
-            if (0 < (int) \App\ProtoControllers\Planning::postPlanning($_POST, $errorsLst, $notice)) {
+            if (0 < (int) \App\ProtoControllers\Responsable\Planning::postPlanning($_POST, $errorsLst, $notice)) {
                 log_action(0, '', '', 'Édition du planning ' . $_POST['name']);
                 redirect(ROOT_PATH . 'responsable/resp_index.php?session='. session_id() . '&onglet=liste_planning', false);
             } else {
@@ -2430,7 +2430,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         ]);
         $childTable = '<thead><tr><th class="col-md-4">' . _('Nom') .'</th><th></th></tr></thead><tbody>';
         if (NIL_INT !== $id) {
-            $sql   = 'SELECT * FROM conges_planning WHERE planning_id = ' . $id;
+            $sql   = 'SELECT * FROM planning WHERE planning_id = ' . $id;
             $query = \includes\SQL::query($sql);
             $data = $query->fetch_assoc();
             $valueName = $data['name'];
@@ -2483,7 +2483,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
     private static function getFormPlanningTable($typeSemaine, $idPlanning, array $postPlanning)
     {
         /* Recupération des créneaux (postés ou existants) pour le JS */
-        $creneauxGroupes = \App\ProtoControllers\Creneau::getCreneauxGroupes($postPlanning, $idPlanning, $typeSemaine);
+        $creneauxGroupes = \App\ProtoControllers\Responsable\Creneau::getCreneauxGroupes($postPlanning, $idPlanning, $typeSemaine);
 
         $jours = [
             // ISO-8601

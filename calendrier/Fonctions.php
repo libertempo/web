@@ -367,7 +367,7 @@ class Fonctions
 
     // affichage de la cellule correspondant au jour et au user considéré
     // et renvoit un tableau avec une key / une valeur : key = id type absence / valeur = nb jours pris le jour J
-    public static function affiche_cellule_jour_user($sql_login, $j_timestamp, $year_select, $mois_select, $j, $second_class, $printable, $tab_calendrier, $tab_rtt_echange, $tab_rtt_planifiees, $tab_type_absence, &$returnString)
+    public static function affiche_cellule_jour_user($sql_login, $j_timestamp, $year_select, $mois_select, $j, $second_class, $printable, $tab_calendrier, $tab_rtt_echange, $tab_type_absence, &$returnString)
     {
         $session=session_id();
         $return = array();
@@ -397,7 +397,10 @@ class Fonctions
             $val_aprem="";
             // recup des infos ARTT ou Temps Partiel :
             // la fonction suivante change les valeurs de $val_matin $val_aprem ....
-            recup_infos_artt_du_jour_from_tab($sql_login, $j_timestamp, $val_matin, $val_aprem, $tab_rtt_echange, $tab_rtt_planifiees);
+            $planningUser = \utilisateur\Fonctions::getUserPlanning($sql_login);
+            if (!is_null($planningUser)) {
+                recup_infos_artt_du_jour_from_tab($sql_login, $j_timestamp, $val_matin, $val_aprem, $tab_rtt_echange, $planningUser);
+            }
 
             //## AFICHAGE ##
             if($val_matin=="Y") {
@@ -816,17 +819,9 @@ class Fonctions
         //il contient pour chaque clé (chaque jour): un tableau indéxé ($tab_jour_rtt_echange) (clé= login)
         // qui contient lui même un tableau ($tab_echange) contenant les infos des echanges de rtt pour ce
         // jour et ce login (valeur du matin + valeur de l'apres midi ('Y' si rtt, 'N' sinon) )
-        //$tab_rtt_planifiees=array();  //tableau indexé dont la clé est le login_user
-        // il contient pour chaque clé login : un tableau ($tab_user_grille) indexé dont la
-        // clé est la date_fin_grille.
-        // qui contient lui meme pour chaque clé : un tableau ($tab_user_rtt) qui contient enfin
-        // les infos pour le matin et l'après midi ('Y' si rtt, 'N' sinon) sur 2 semaines
-        // ( du sem_imp_lu_am au sem_p_ve_pm ) + la date de début et de fin de la grille
 
 
         $tab_rtt_echange= recup_tableau_rtt_echange($mois, $first_jour, $year  , $tab_logins );
-        $tab_rtt_planifiees= recup_tableau_rtt_planifiees($mois, $first_jour, $year , $tab_logins);
-
         $tab_cong_users = recup_tableau_conges_for_users(false, $tab_logins);
 
         /**************************************************/
@@ -872,7 +867,7 @@ class Fonctions
                 $year_select=$year ;
 
                 // affichage de la cellule correspondant au jour et au user considéré
-                $t_nb_j_type_abs = \calendrier\Fonctions::affiche_cellule_jour_user($sql_login, $j_timestamp, $year, $mois_select, $j , $td_second_class, $printable, $tab_calendrier, $tab_rtt_echange, $tab_rtt_planifiees, $tab_type_absence, $return);
+                $t_nb_j_type_abs = \calendrier\Fonctions::affiche_cellule_jour_user($sql_login, $j_timestamp, $year, $mois_select, $j , $td_second_class, $printable, $tab_calendrier, $tab_rtt_echange, $tab_type_absence, $return);
                 foreach($t_nb_j_type_abs as $id_type_abs => $nb_j_pris) {
                     if (isset($nb_jours_current_month[ $id_type_abs ])) {
                         $nb_jours_current_month[ $id_type_abs ] +=$nb_j_pris;
@@ -897,7 +892,7 @@ class Fonctions
                     }
 
                     // affichage de la cellule correspondant au jour et au user considéré
-                    $t_nb_j_type_abs = \calendrier\Fonctions::affiche_cellule_jour_user($sql_login, $j_timestamp, $year, $mois_select, $j, $td_second_class, $printable, $tab_calendrier, $tab_rtt_echange, $tab_rtt_planifiees, $tab_type_absence, $return);
+                    $t_nb_j_type_abs = \calendrier\Fonctions::affiche_cellule_jour_user($sql_login, $j_timestamp, $year, $mois_select, $j, $td_second_class, $printable, $tab_calendrier, $tab_rtt_echange, $tab_type_absence, $return);
                     foreach($t_nb_j_type_abs as $id_type_abs => $nb_j_pris) {
                         if (isset($nb_jours_current_month[ $id_type_abs ])) {
                             $nb_jours_current_month[ $id_type_abs ] +=$nb_j_pris;

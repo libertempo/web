@@ -24,7 +24,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *************************************************************************************************/
-namespace App\ProtoControllers;
+namespace App\ProtoControllers\Responsable;
 
 /**
  * ProtoContrôleur de créneau, en attendant la migration vers le MVC REST
@@ -47,13 +47,13 @@ class Creneau
     {
         foreach ($post as $typeSemaine => $jours) {
             foreach ($jours as $jourId => $periodes) {
-                if (!\App\ProtoControllers\Creneau::verifieCoherenceCreneaux($periodes, $errors)) {
+                if (!\App\ProtoControllers\Responsable\Creneau::verifieCoherenceCreneaux($periodes, $errors)) {
                     return NIL_INT;
                 }
             }
         }
 
-        return \App\ProtoControllers\Creneau::insertCreneauList($post, $idPlanning);
+        return \App\ProtoControllers\Responsable\Creneau::insertCreneauList($post, $idPlanning);
     }
 
     /**
@@ -156,7 +156,7 @@ class Creneau
     public static function deleteCreneauList($idPlanning)
     {
         $sql = \includes\SQL::singleton();
-        $req = 'DELETE FROM conges_planning_creneau WHERE planning_id = ' . (int) $idPlanning;
+        $req = 'DELETE FROM planning_creneau WHERE planning_id = ' . (int) $idPlanning;
         $sql->query($req);
 
         return (bool) $sql->affected_rows;
@@ -186,7 +186,7 @@ class Creneau
             }
         }
         // insertion multiple en fonction de la liste
-        $req = 'INSERT INTO conges_planning_creneau (creneau_id, planning_id, jour_id, type_semaine, type_periode, debut, fin) VALUES ' . implode(', ', $toInsert);
+        $req = 'INSERT INTO planning_creneau (creneau_id, planning_id, jour_id, type_semaine, type_periode, debut, fin) VALUES ' . implode(', ', $toInsert);
         $query = $sql->query($req);
 
         return $sql->insert_id;
@@ -204,11 +204,11 @@ class Creneau
     public static function getCreneauxGroupes(array $post, $idPlanning, $typeSemaine)
     {
         if (!empty($post['creneaux'][$typeSemaine])) {
-            return \App\ProtoControllers\Creneau::groupCreneauxFromUser($post['creneaux'][$typeSemaine]);
+            return \App\ProtoControllers\Responsable\Creneau::groupCreneauxFromUser($post['creneaux'][$typeSemaine]);
         }
         $sql = \includes\SQL::singleton();
         $req = 'SELECT *
-                FROM conges_planning_creneau
+                FROM planning_creneau
                 WHERE planning_id = ' . (int) $idPlanning . '
                   AND type_semaine = ' . (int) $typeSemaine;
         $res = $sql->query($req);
@@ -216,6 +216,6 @@ class Creneau
             return [];
         }
 
-        return \App\ProtoControllers\Creneau::groupCreneauxFromDb($res->fetch_all(\MYSQLI_ASSOC));
+        return \App\ProtoControllers\Responsable\Creneau::groupCreneauxFromDb($res->fetch_all(\MYSQLI_ASSOC));
     }
 }

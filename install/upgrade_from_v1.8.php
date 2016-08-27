@@ -54,7 +54,7 @@ $addIndexPlanningUser = 'ALTER TABLE conges_users ADD INDEX planning_id (plannin
 $sql->query($addIndexPlanningUser);
 
 /* Création du planning et des créneaux */
-$addPlanning = 'CREATE TABLE `conges_planning` (
+$addPlanning = 'CREATE TABLE `planning` (
   `planning_id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `name` VARCHAR(50) NOT NULL DEFAULT "",
   `status` TINYINT(3) UNSIGNED NOT NULL DEFAULT 0,
@@ -62,7 +62,7 @@ $addPlanning = 'CREATE TABLE `conges_planning` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;';
 $sql->query($addPlanning);
 
-$addPlanningCreneau = 'CREATE TABLE `conges_planning_creneau` (
+$addPlanningCreneau = 'CREATE TABLE `planning_creneau` (
   `creneau_id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `planning_id` INT(11) UNSIGNED NOT NULL,
   `jour_id` TINYINT(3) UNSIGNED NOT NULL,
@@ -88,7 +88,7 @@ $upd_user_resp = "UPDATE conges_users SET u_resp_login = NULL WHERE u_login = 'c
 $res_upd_user_resp=\includes\SQL::query($upd_user_resp);
 
 //suppression des artt de conges
-$del_conges_artt = "DELETE FROM conges_artt WHERE a_login = 'conges';";
+$del_conges_artt = "DROP TABLE conges_artt";
 $res_del_conges_artt = \includes\SQL::query($del_conges_artt);
 
 //suppression du user conges

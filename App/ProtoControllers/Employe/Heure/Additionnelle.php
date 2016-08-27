@@ -24,7 +24,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *************************************************************************************************/
-namespace App\ProtoControllers\Heure;
+namespace App\ProtoControllers\Employe\Heure;
 
 use \App\Models\AHeure;
 
@@ -35,7 +35,7 @@ use \App\Models\AHeure;
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina
  */
-class Additionnelle extends \App\ProtoControllers\AHeure
+class Additionnelle extends \App\ProtoControllers\Employe\AHeure
 {
     /**
      * {@inheritDoc}
@@ -116,8 +116,8 @@ class Additionnelle extends \App\ProtoControllers\AHeure
         $finId   = uniqid();
 
         $childTable .= '<thead><tr><th width="20%">' . _('Jour') . '</th><th>' . _('creneau') . '</th></tr></thead><tbody>';
-        $childTable .= '<tr><td><input class="form-control date" type="text" value="' . $valueJour . '" name="jour"></td>';
-        $childTable .= '<td><div class="form-inline col-xs-3"><input class="form-control" style="width:45%" type="text" id="' . $debutId . '"  value="' . $valueDebut . '" name="debut_heure">&nbsp;<i class="fa fa-caret-right"></i>&nbsp;<input class="form-control" style="width:45%" type="text" id="' . $finId . '"  value="' . $valueFin . '" name="fin_heure"></div></td></tr>';
+        $childTable .= '<tr><td><div class="form-inline col-xs-12 col-sm-10 col-lg-8"><input class="form-control date" type="text" value="' . $valueJour . '" name="jour"></div></td>';
+        $childTable .= '<td><div class="form-inline col-xs-10 col-sm-6 col-lg-4"><input class="form-control" style="width:45%" type="text" id="' . $debutId . '"  value="' . $valueDebut . '" name="debut_heure">&nbsp;<i class="fa fa-caret-right"></i>&nbsp;<input class="form-control" style="width:45%" type="text" id="' . $finId . '"  value="' . $valueFin . '" name="fin_heure"></div></td></tr>';
         $childTable .= '</tbody>';
         $childTable .= '<script type="text/javascript">generateTimePicker("' . $debutId . '");generateTimePicker("' . $finId . '");</script>';
 
@@ -149,14 +149,96 @@ class Additionnelle extends \App\ProtoControllers\AHeure
      */
     protected function put(array $put, array &$errorsLst, $user)
     {
-        if (!$this->hasErreurs($put, $errorsLst, $put['id_heure'])) {
-            $id = $this->update($put, $user, $put['id_heure']);
-            log_action($put['id_heure'], 'modif', '', 'Modification demande d\'heure additionnelle ' . $put['id_heure']);
+        $idHeure = $put['id_heure'];
+        if (!$this->hasErreurs($put, $user, $errorsLst, $idHeure)) {
+            $data = $this->dataModel2Db($put, $user);
+            $id   = $this->update($data, $user, $idHeure);
+            log_action($idHeure, 'modif', '', 'Modification demande d\'heure additionnelle ' . $idHeure);
 
             return $id;
         }
 
         return NIL_INT;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function countDuree($debut, $fin, array $planning)
+    {
+        /*
+         * Comme pour le moment on ne peut prendre une heure de repos que sur un jour,
+         * on prend arbitrairement le début...
+         */
+        $numeroSemaine = date('W', $debut);
+        $dureeTotale   = $fin - $debut;
+        $typeSemaineReel  = \utilisateur\Fonctions::getRealWeekType($planning, $numeroSemaine);
+        /* Si la semaine n'est pas travaillée */
+        if (NIL_INT === $typeSemaineReel) {
+            return $dureeTotale;
+        } else {
+            /*
+             * ... Pareil pour le jour
+             */
+            $planningSemaine = $planning[$typeSemaineReel];
+            $jourId = date('N', $debut);
+            /* Si le jour n'est pas travaillé */
+            if (!\utilisateur\Fonctions::isWorkingDay($planningSemaine, $jourId)) {
+                return $dureeTotale;
+            } else {
+                return $this->countDureeJour($planningSemaine[$jourId], $debut, $fin);
+            }
+        }
+    }
+
+    /**
+     * Compte la durée réelle de travail à ajouter en fonction du planning
+     * (Prenez un papier et un crayon pour review / tester ça...)
+     *
+     * @param array $planningJour Planning de la journée
+     * @param int   $debut        Timestamp du début de la demande
+     * @param int   $fin          Timestamp de la fin de la demande
+     *
+     * @return int
+     */
+    private function countDureeJour(array $planningJour, $debut, $fin)
+    {
+        $horodateDebut = \App\Helpers\Formatter::hour2Time(date('H\:i', $debut));
+        $horodateFin   = \App\Helpers\Formatter::hour2Time(date('H\:i', $fin));
+        $reelleDuree   = $horodateFin - $horodateDebut;
+        $aSoustraire   = 0;
+
+        /* Double foreach pour lisser les créneaux matin / après midi sur le même plan */
+        foreach ($planningJour as $creneaux) {
+            foreach ($creneaux as $creneau) {
+                $creneauDebut = (int) $creneau[\App\Models\Planning\Creneau::TYPE_HEURE_DEBUT];
+                $creneauFin   = (int) $creneau[\App\Models\Planning\Creneau::TYPE_HEURE_FIN];
+
+                if ($horodateDebut < $creneauDebut) {
+                    if ($horodateFin < $creneauDebut) {
+                        // Rien à soustraire
+                        break 2;
+                    } elseif ($horodateFin >= $creneauDebut && $horodateFin <= $creneauFin) {
+                        $aSoustraire += $horodateFin - $creneauDebut;
+                    } else {
+                        /* $horodateFin > $creneauFin */
+                        $aSoustraire += $creneauFin - $creneauDebut;
+                    }
+                } elseif ($horodateDebut >= $creneauDebut && $horodateDebut < $creneauFin) {
+                    if ($horodateFin >= $creneauDebut && $horodateFin <= $creneauFin) {
+                        return 0;
+                    } else {
+                        /* $horodateFin > $creneauFin */
+                        $aSoustraire += $creneauFin - $horodateDebut;
+                    }
+                } else {
+                    /* $horodateDebut >= $creneauFin */
+                    // Rien à soustraire
+                }
+            }
+        }
+
+        return $reelleDuree - $aSoustraire;
     }
 
     /**
@@ -254,7 +336,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
                 : '';
             $form .= '<option value="' . $key . '" ' . $selected . '>' . $value . '</option>';
         }
-        $form .= '</select></div></div><div class="form-group"><div class="input-group"><button type="submit" class="btn btn-default">Filtrer</button>&nbsp;<a href="' . ROOT_PATH . 'utilisateur/user_index.php?session='. session_id() . '&onglet=liste_heure_repos" type="reset" class="btn btn-default">Reset</a></div></div></form>';
+        $form .= '</select></div></div><div class="form-group"><div class="input-group"><button type="submit" class="btn btn-default"><i class="fa fa-search" aria-hidden="true"></i></button>&nbsp;<a href="' . ROOT_PATH . 'utilisateur/user_index.php?session='. session_id() . '&onglet=liste_heure_repos" type="reset" class="btn btn-default">Reset</a></div></div></form>';
 
         return $form;
     }
@@ -322,14 +404,17 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
         $jour = \App\Helpers\Formatter::dateFr2Iso($jour);
         $timestampDebut = strtotime($jour . ' ' . $heureDebut);
         $timestampFin   = strtotime($jour . ' ' . $heureFin);
+        $statuts = [
+            AHeure::STATUT_DEMANDE,
+            AHeure::STATUT_VALIDE,
+            AHeure::STATUT_OK,
+        ];
 
         $sql = \includes\SQL::singleton();
         $req = 'SELECT EXISTS (SELECT statut
                 FROM heure_additionnelle
                 WHERE login = "' . $user . '"
-                    AND (statut != ' . AHeure::STATUT_REFUS . '
-                        OR statut != ' . AHeure::STATUT_ANNUL . '
-                    )
+                    AND statut IN (' . implode(',', $statuts) . ')
                     AND (debut <= ' . $timestampFin . ' AND fin >= ' . $timestampDebut . ')';
         if (NIL_INT !== $id) {
             $req .= ' AND id_heure !=' . $id;
@@ -343,18 +428,11 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
     /**
      * {@inheritDoc}
      */
-    protected function insert(array $post, $user)
+    protected function insert(array $data, $user)
     {
-        $jour = \App\Helpers\Formatter::dateFr2Iso($post['jour']);
-        $timestampDebut = strtotime($jour . ' ' . $post['debut_heure']);
-        $timestampFin   = strtotime($jour . ' ' . $post['fin_heure']);
-        /* TODO: Toute la partie du check d'erreur et du comptage réel des heures devrait être dans le modèle.
-        C'est lui qui devrait remplir le DAO à partir de ses attributs pour l'insertion
-        */
-        $duree = $this->countDuree($timestampDebut, $timestampFin);
         $sql = \includes\SQL::singleton();
         $req = 'INSERT INTO heure_additionnelle (id_heure, login, debut, fin, duree, statut) VALUES
-        (NULL, "' . $user . '", ' . (int) $timestampDebut . ', '. (int) $timestampFin .', '. (int) $duree . ', ' . AHeure::STATUT_DEMANDE . ')';
+        (NULL, "' . $user . '", ' . (int) $data['debut'] . ', '. (int) $data['fin'] .', '. (int) $data['duree'] . ', ' . AHeure::STATUT_DEMANDE . ')';
         $query = $sql->query($req);
 
         return $sql->insert_id;
@@ -363,18 +441,13 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
     /**
      * {@inheritDoc}
      */
-    protected function update(array $put, $user, $id)
+    protected function update(array $data, $user, $id)
     {
-        $jour = \App\Helpers\Formatter::dateFr2Iso($put['jour']);
-        $timestampDebut = strtotime($jour . ' ' . $put['debut_heure']);
-        $timestampFin   = strtotime($jour . ' ' . $put['fin_heure']);
-        $duree = $this->countDuree($timestampDebut, $timestampFin);
-        $sql   = \includes\SQL::singleton();
-        $toInsert = [];
-        $req   = 'UPDATE heure_additionnelle
-                SET debut = ' . $timestampDebut . ',
-                    fin = ' . $timestampFin . ',
-                    duree = ' . $duree . '
+        $sql = \includes\SQL::singleton();
+        $req = 'UPDATE heure_additionnelle
+                SET debut = ' . $data['debut'] . ',
+                    fin = ' . $data['fin'] . ',
+                    duree = ' . $data['duree'] . '
                 WHERE id_heure = '. (int) $id . '
                 AND login = "' . $user . '"';
         $query = $sql->query($req);
@@ -395,14 +468,6 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
         $sql->query($req);
 
         return 0 < $sql->affected_rows ? $id : NIL_INT;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function countDuree($debut, $fin)
-    {
-        return $fin - $debut;
     }
 
     /**
@@ -431,7 +496,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
         $sql = \includes\SQL::singleton();
         $req = 'SELECT EXISTS (
                     SELECT id_heure
-                    FROM heure_repos
+                    FROM heure_additionnelle
                     WHERE id_heure = ' . (int) $id . '
                         AND statut = ' . AHeure::STATUT_DEMANDE . '
                         AND login = "' . $user . '"
@@ -440,4 +505,30 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
 
         return 0 < (int) $query->fetch_array()[0];
     }
+
+
+        /**
+         * Vérifie l'existence de congé basée sur les critères fournis
+         *
+         * @param array $params
+         *
+         * @return bool
+         * @TODO: à terme, à baser sur le getList()
+         */
+        public function exists(array $params)
+        {
+            $sql = \includes\SQL::singleton();
+
+            $where = [];
+            foreach ($params as $key => $value) {
+                $where[] = $key . ' = "' . $sql->quote($value) . '"';
+            }
+            $req = 'SELECT EXISTS (
+                        SELECT *
+                        FROM heure_additionnelle
+                        WHERE ' . implode(' AND ', $where) . '
+            )';
+
+            return 0 < (int) $sql->query($req)->fetch_array()[0];
+        }
 }

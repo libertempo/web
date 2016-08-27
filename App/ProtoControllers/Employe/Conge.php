@@ -24,7 +24,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *************************************************************************************************/
-namespace App\ProtoControllers;
+namespace App\ProtoControllers\Employe;
 
 /**
  * ProtoContrôleur d'un congé, en attendant la migration vers le MVC REST
@@ -251,9 +251,11 @@ class Conge
       */
     protected function getListeId(array $params)
     {
+        $sql = \includes\SQL::singleton();
         if (!empty($params)) {
             $where = [];
             foreach ($params as $key => $value) {
+                $value = $sql->quote($value);
                 switch ($key) {
                     case 'dateDebut':
                         $where[] = 'p_date_deb >= "' . $value . '"';
@@ -271,7 +273,6 @@ class Conge
             }
         }
         $ids = [];
-        $sql = \includes\SQL::singleton();
         $req = 'SELECT p_num AS id
                 FROM conges_periode CP
                     INNER JOIN conges_type_absence CTA ON (CP.p_type = CTA.ta_id) '
@@ -304,5 +305,30 @@ class Conge
                 ORDER BY p_date_deb DESC';
 
         return $sql->query($req)->fetch_all(MYSQLI_ASSOC);
+    }
+
+    /**
+     * Vérifie l'existence de congé basée sur les critères fournis
+     *
+     * @param array $params
+     *
+     * @return bool
+     * @TODO: à terme, à baser sur le getList()
+     */
+    public function exists(array $params)
+    {
+        $sql = \includes\SQL::singleton();
+
+        $where = [];
+        foreach ($params as $key => $value) {
+            $where[] = $key . ' = "' . $sql->quote($value) . '"';
+        }
+        $req = 'SELECT EXISTS (
+                    SELECT *
+                    FROM conges_periode
+                    WHERE ' . implode(' AND ', $where) . '
+        )';
+
+        return 0 < (int) $sql->query($req)->fetch_array()[0];
     }
 }

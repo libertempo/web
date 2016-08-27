@@ -180,13 +180,6 @@ a {
     margin-left: 40px
 }
 
-.menu-link a {
-    display: block;
-    text-align: center;
-    padding: 17px;
-    color: #FFF
-}
-
 .mod-info .nav>li>a {
     padding: 0 20px;
     color: #717171;
@@ -655,17 +648,12 @@ h3.current-month {
 }
 
 .menu-link a {
-    border-top:solid 1px #0098bd;
-    display:block;
-    text-align:left;
-    padding:20px;
-    background:#009ec5;
-    color:#FFF
+    display: block;
+    text-align: center;
+    padding: 17px;
+    color: #FFF
 }
-.menu-link a:hover {
-    text-decoration:none;
-    background-color:#00aad4
-}
+
 .menu-link i{
     margin-right:5px
 }

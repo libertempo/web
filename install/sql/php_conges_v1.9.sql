@@ -17,47 +17,6 @@ CREATE TABLE IF NOT EXISTS `conges_appli` (
 # --------------------------------------------------------
 
 #
-# Structure de la table `conges_artt`
-#
-
-CREATE TABLE IF NOT EXISTS `conges_artt` (
-  `a_login` varbinary(99) NOT NULL DEFAULT '',
-  `sem_imp_lu_am` varchar(10) DEFAULT NULL,
-  `sem_imp_lu_pm` varchar(10) DEFAULT NULL,
-  `sem_imp_ma_am` varchar(10) DEFAULT NULL,
-  `sem_imp_ma_pm` varchar(10) DEFAULT NULL,
-  `sem_imp_me_am` varchar(10) DEFAULT NULL,
-  `sem_imp_me_pm` varchar(10) DEFAULT NULL,
-  `sem_imp_je_am` varchar(10) DEFAULT NULL,
-  `sem_imp_je_pm` varchar(10) DEFAULT NULL,
-  `sem_imp_ve_am` varchar(10) DEFAULT NULL,
-  `sem_imp_ve_pm` varchar(10) DEFAULT NULL,
-  `sem_imp_sa_am` varchar(10) DEFAULT NULL,
-  `sem_imp_sa_pm` varchar(10) DEFAULT NULL,
-  `sem_imp_di_am` varchar(10) DEFAULT NULL,
-  `sem_imp_di_pm` varchar(10) DEFAULT NULL,
-  `sem_p_lu_am` varchar(10) DEFAULT NULL,
-  `sem_p_lu_pm` varchar(10) DEFAULT NULL,
-  `sem_p_ma_am` varchar(10) DEFAULT NULL,
-  `sem_p_ma_pm` varchar(10) DEFAULT NULL,
-  `sem_p_me_am` varchar(10) DEFAULT NULL,
-  `sem_p_me_pm` varchar(10) DEFAULT NULL,
-  `sem_p_je_am` varchar(10) DEFAULT NULL,
-  `sem_p_je_pm` varchar(10) DEFAULT NULL,
-  `sem_p_ve_am` varchar(10) DEFAULT NULL,
-  `sem_p_ve_pm` varchar(10) DEFAULT NULL,
-  `sem_p_sa_am` varchar(10) DEFAULT NULL,
-  `sem_p_sa_pm` varchar(10) DEFAULT NULL,
-  `sem_p_di_am` varchar(10) DEFAULT NULL,
-  `sem_p_di_pm` varchar(10) DEFAULT NULL,
-  `a_date_debut_grille` date NOT NULL DEFAULT '0000-00-00',
-  `a_date_fin_grille` date NOT NULL DEFAULT '9999-12-31',
-  PRIMARY KEY (`a_login`,`a_date_fin_grille`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
-# --------------------------------------------------------
-
-#
 # Structure de la table `conges_config`
 #
 
@@ -316,16 +275,16 @@ CREATE TABLE IF NOT EXISTS `conges_users` (
   `u_quotite` int(3) DEFAULT '100',
   `u_email` varchar(100) DEFAULT NULL,
   `u_num_exercice` int(2) NOT NULL DEFAULT '0',
-  `planning_id` int(11) unsigned NOT NULL,
+  `planning_id` int(11) UNSIGNED NOT NULL,
   PRIMARY KEY (`u_login`),
   KEY `planning_id` (`planning_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 #
-# Structure de la table `conges_planning`
+# Structure de la table `planning`
 #
 
-CREATE TABLE IF NOT EXISTS `conges_planning` (
+CREATE TABLE IF NOT EXISTS `planning` (
   `planning_id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `name` VARCHAR(50) NOT NULL DEFAULT "",
   `status` TINYINT(3) UNSIGNED NOT NULL DEFAULT 0,
@@ -333,10 +292,10 @@ CREATE TABLE IF NOT EXISTS `conges_planning` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 #
-# Structure de la table `conges_planning_creneau`
+# Structure de la table `planning_creneau`
 #
 
-CREATE TABLE IF NOT EXISTS `conges_planning_creneau` (
+CREATE TABLE IF NOT EXISTS `planning_creneau` (
   `creneau_id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `planning_id` INT(11) UNSIGNED NOT NULL,
   `jour_id` TINYINT(3) UNSIGNED NOT NULL,
@@ -381,13 +340,6 @@ INSERT IGNORE INTO `conges_appli` VALUES ('demande_conges_bgcolor', '#E7C4C4');
 INSERT IGNORE INTO `conges_appli` VALUES ('absence_autre_bgcolor', '#D3FFB6');
 INSERT IGNORE INTO `conges_appli` VALUES ('fermeture_bgcolor', '#7B9DE6');
 
-# --------------------------------------------------------
-
-#
-# Contenu de la table `conges_artt`
-#
-
-INSERT IGNORE INTO `conges_artt` VALUES ('admin', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0000-00-00', '9999-12-31');
 
 # --------------------------------------------------------
 

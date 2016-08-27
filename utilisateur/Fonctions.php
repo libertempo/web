@@ -712,6 +712,7 @@ class Fonctions
 
         $start_nb_day_before = $first_jour_mois_rang -1;
         $stop_nb_day_before = 7 - $last_jour_mois_rang ;
+        $planningUser = \utilisateur\Fonctions::getUserPlanning($user_login);
 
 
         for ( $i = - $start_nb_day_before; $i <= $nb_jours_mois + $stop_nb_day_before; $i ++) {
@@ -728,7 +729,7 @@ class Fonctions
             else {
                 $val_matin='';
                 $val_aprem='';
-                recup_infos_artt_du_jour($user_login, $j_timestamp, $val_matin, $val_aprem);
+                recup_infos_artt_du_jour($user_login, $j_timestamp, $val_matin, $val_aprem, $planningUser);
                 $return .= \utilisateur\Fonctions::affiche_cellule_calendrier_echange_presence_saisie_semaine($val_matin, $val_aprem, $year, $mois, $i+1);
             }
 
@@ -770,6 +771,7 @@ class Fonctions
 
         $start_nb_day_before = $first_jour_mois_rang -1;
         $stop_nb_day_before = 7 - $last_jour_mois_rang ;
+        $planningUser = \utilisateur\Fonctions::getUserPlanning($user_login);
 
 
         for ( $i = - $start_nb_day_before; $i <= $nb_jours_mois + $stop_nb_day_before; $i ++) {
@@ -785,7 +787,7 @@ class Fonctions
             else {
                 $val_matin='';
                 $val_aprem='';
-                recup_infos_artt_du_jour($user_login, $j_timestamp, $val_matin, $val_aprem);
+                recup_infos_artt_du_jour($user_login, $j_timestamp, $val_matin, $val_aprem, $planningUser);
                 $return .= \utilisateur\Fonctions::affiche_cellule_calendrier_echange_absence_saisie_semaine($val_matin, $val_aprem, $year, $mois, $i+1);
             }
 
@@ -1257,12 +1259,146 @@ class Fonctions
             $mois_calendrier_saisie_fin   = getpost_variable('mois_calendrier_saisie_fin', date('m'));
 
             $return .= '<h1>'. _('user_echange_rtt') .'</h1>';
+            if (!\utilisateur\Fonctions::hasUserPlanning($_SESSION['userlogin'])) {
+                $return .= '<div class="alert alert-danger">' . _('aucun_planning_associe_utilisateur') . '</div>';
 
-            //affiche le formulaire de saisie d'une nouvelle demande de conges
-            $return .= \utilisateur\Fonctions::saisie_echange_rtt($_SESSION['userlogin'], $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet);
+            } else {
+                //affiche le formulaire de saisie d'une nouvelle demande de conges
+                $return .= \utilisateur\Fonctions::saisie_echange_rtt($_SESSION['userlogin'], $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet);
+            }
         }
 
         return $return;
+    }
+
+    /**
+     * Retourne vrai si l'utilisateur a un planning associé
+     *
+     * @param string $user
+     *
+     * @return bool
+     */
+    public static function hasUserPlanning($user)
+    {
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT EXISTS (
+            SELECT planning_id
+            FROM conges_users
+                INNER JOIN planning USING (planning_id)
+            WHERE u_login ="' . $sql->quote($user) . '"
+            AND planning.status = ' . \App\Models\Planning::STATUS_ACTIVE . '
+        )';
+        $query = $sql->query($req);
+
+        return 0 < (int) $query->fetch_array()[0];
+    }
+
+    /**
+     * Retourne le planning de l'utilisateur organisé selon la hiérarchie habituelle
+     * @example planningId[typeSemaine][jourId][typePeriode][creneaux]
+     *
+     * @param string $user
+     *
+     * @return ?array
+     * @TODO $dataPlanning peut être nullable (php7.1)
+     */
+    public static function getUserPlanning($user)
+    {
+        $dataPlanning = null;
+        $sql = \includes\SQL::singleton();
+        $reqUser = 'SELECT planning.*
+            FROM conges_users
+                INNER JOIN planning USING (planning_id)
+            WHERE u_login = "' . $sql->quote($user) . '"
+                AND planning.status = ' . \App\Models\Planning::STATUS_ACTIVE;
+        $queryUser = $sql->query($reqUser);
+        $planning = $queryUser->fetch_array();
+        if (!empty($planning)) {
+            $dataPlanning = [];
+            $reqCreneau = 'SELECT *
+                FROM planning_creneau
+                WHERE planning_id = ' . $planning['planning_id'];
+            $queryCreneau = $sql->query($reqCreneau);
+
+            while ($data = $queryCreneau->fetch_array()) {
+                $dataPlanning[$data['type_semaine']][$data['jour_id']][$data['type_periode']][] = [
+                    \App\Models\Planning\Creneau::TYPE_HEURE_DEBUT => $data['debut'],
+                    \App\Models\Planning\Creneau::TYPE_HEURE_FIN   => $data['fin'],
+                ];
+            }
+        }
+
+        return $dataPlanning;
+    }
+
+    /**
+     * Retourne le type de semaine applicable pour un planning et un numéro de semaine donnés
+     *
+     * @param array $planningUser
+     * @param int   $weekOfDay
+     *
+     * @return int
+     */
+    public static function getRealWeekType(array $planningUser, $weekOfDay)
+    {
+        $typeSemaineDuJour = ($weekOfDay & 1)
+            ? \App\Models\Planning\Creneau::TYPE_SEMAINE_IMPAIRE
+            : \App\Models\Planning\Creneau::TYPE_SEMAINE_PAIRE;
+        if (isset($planningUser[$typeSemaineDuJour])) {
+            return $typeSemaineDuJour;
+        } elseif (isset($planningUser[\App\Models\Planning\Creneau::TYPE_SEMAINE_COMMUNE])) {
+            return \App\Models\Planning\Creneau::TYPE_SEMAINE_COMMUNE;
+        } else {
+            return NIL_INT;
+        }
+    }
+
+    /**
+     * Vérifie que le jour est travaillé selon le planning
+     *
+     * @param array $planningWeek
+     * @param int   $jourId
+     */
+    public static function isWorkingDay(array $planningWeek, $jourId)
+    {
+        return isset($planningWeek[$jourId]);
+    }
+
+    /**
+    * Vérifie qu'une matinée est travaillée pour un jour de planning donné
+     *
+     * @param array $planningDay
+     *
+     * @return bool
+     */
+    public static function isWorkingMorning(array $planningDay)
+    {
+        return \utilisateur\Fonctions::isWorkingPeriodType($planningDay, \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN);
+    }
+
+    /**
+     * Vérifie qu'une après midi est travaillée pour un jour de planning donné
+     *
+     * @param array $planningDay
+     *
+     * @return bool
+     */
+    public static function isWorkingAfternoon(array $planningDay)
+    {
+        return \utilisateur\Fonctions::isWorkingPeriodType($planningDay, \App\Models\Planning\Creneau::TYPE_PERIODE_APRES_MIDI);
+    }
+
+    /**
+     * Vérifie qu'un type de période est travaillé pour un jour de planning donné
+     *
+     * @param array $planningDay
+     * @param int   $periodType
+     *
+     * @return bool
+     */
+    private static function isWorkingPeriodType(array $planningDay, $periodType)
+    {
+        return isset($planningDay[$periodType]);
     }
 
     /**
@@ -1276,13 +1412,13 @@ class Fonctions
     {
         $daysOfWeekDisabled = [];
 
-            if (false == $_SESSION['config']['dimanche_travail']) {
-                $daysOfWeekDisabled[] = 0;
-            }
-            if (false == $_SESSION['config']['samedi_travail']) {
-                $daysOfWeekDisabled[] = 6;
-            }
-    return $daysOfWeekDisabled;
+        if (false == $_SESSION['config']['dimanche_travail']) {
+            $daysOfWeekDisabled[] = 0;
+        }
+        if (false == $_SESSION['config']['samedi_travail']) {
+            $daysOfWeekDisabled[] = 6;
+        }
+        return $daysOfWeekDisabled;
     }
 
     /**
@@ -1302,7 +1438,7 @@ class Fonctions
             }
         }
 
-    return $Jferies;
+        return $Jferies;
     }
 
     /**
@@ -1322,7 +1458,7 @@ class Fonctions
             }
         }
 
-    return $Fermeture;
+        return $Fermeture;
     }
 
     /**
@@ -1334,8 +1470,9 @@ class Fonctions
      */
     public static function getDatePickerStartDate()
     {
-    return ($_SESSION['config']['interdit_saisie_periode_date_passee']) ? 'd' : '';
+        return ($_SESSION['config']['interdit_saisie_periode_date_passee']) ? 'd' : '';
     }
+
 
     // --------------------------------------
 
@@ -1350,6 +1487,7 @@ class Fonctions
         $req = 'SELECT ta_libelle, ta_short_libelle
                 FROM conges_type_absence';
         $res = $sql->query($req);
+
         while ($data = $res->fetch_array()) {
             $options[$data['ta_short_libelle']] = $data['ta_libelle'];
         }

@@ -30,5 +30,5 @@ $id = (int) getpost_variable('id');
 if (0 >= $id) {
     redirect(ROOT_PATH . 'deconnexion.php');
 }
-$additionnelle = new \App\ProtoControllers\Heure\Additionnelle();
+$additionnelle = new \App\ProtoControllers\Employe\Heure\Additionnelle();
 echo $additionnelle->getForm($id);
