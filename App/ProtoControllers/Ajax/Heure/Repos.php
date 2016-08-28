@@ -23,7 +23,7 @@ class Repos
                 'start' => date('c', $heureRepos['debut']),
                 'end' => date('c', $heureRepos['fin']),
                 'className' => 'heureRepos',
-                'title' => $heureRepos['login'] . ' pour le moment',
+                'title' => '« ' . $heureRepos['login'] . ' » - Repos',
             ];
         }
 

@@ -33,7 +33,7 @@ class WeekEnd
             $weekEnd[] = [
                 'start' => $jour,
                 'className' => 'week-end',
-                'title' => 'WeekEnd',
+                'title' => 'Week-End',
             ];
         }
 

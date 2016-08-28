@@ -23,21 +23,20 @@ class Evenement
             }
         }
         header('Content-type: application/json');
-        // repos en attente
         $repos = new \App\ProtoControllers\Ajax\Heure\Repos();
         $lstRepos = $repos->getListe($parametresRecherche);
         $feries = new \App\ProtoControllers\Ajax\Employe\Ferie();
         $lstFeries = $feries->getListe($parametresRecherche);
         $weekEnd = new \App\ProtoControllers\Ajax\Employe\WeekEnd();
         $lstWeekEnd = $weekEnd->getListe($parametresRecherche);
-        $evenements = array_merge($lstRepos, $lstFeries, $lstWeekEnd);
+        $fermeture = new \App\ProtoControllers\Ajax\Fermeture();
+        $lstFermeture = $fermeture->getListe($parametresRecherche);
+        $evenements = array_merge($lstRepos, $lstFeries, $lstWeekEnd, $lstFermeture);
 
         //ddd($evenements);
 
-        // week end
-        // fermeture
         // congés acceptés (rtt compris)
-        // heure repos
+        // heure additionnelles
         // congés en cours de validation
         // absences
 
