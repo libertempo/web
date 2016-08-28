@@ -28,7 +28,11 @@ class Evenement
         $lstRepos = $repos->getListe($parametresRecherche);
         $feries = new \App\ProtoControllers\Ajax\Employe\Ferie();
         $lstFeries = $feries->getListe($parametresRecherche);
-        $evenements = array_merge($lstRepos, $lstFeries);
+        $weekEnd = new \App\ProtoControllers\Ajax\Employe\WeekEnd();
+        $lstWeekEnd = $weekEnd->getListe($parametresRecherche);
+        $evenements = array_merge($lstRepos, $lstFeries, $lstWeekEnd);
+
+        //ddd($evenements);
 
         // week end
         // fermeture
