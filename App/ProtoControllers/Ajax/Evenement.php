@@ -31,7 +31,15 @@ class Evenement
         $lstWeekEnd = $weekEnd->getListe($parametresRecherche);
         $fermeture = new \App\ProtoControllers\Ajax\Fermeture();
         $lstFermeture = $fermeture->getListe($parametresRecherche);
-        $evenements = array_merge($lstRepos, $lstFeries, $lstWeekEnd, $lstFermeture);
+        $additionnelle = new \App\ProtoControllers\Ajax\Heure\Additionnelle();
+        $lstAdditionnelle = $additionnelle->getListe($parametresRecherche);
+        $evenements = array_merge(
+            $lstRepos,
+            $lstFeries,
+            $lstWeekEnd,
+            $lstFermeture,
+            $lstAdditionnelle
+        );
 
         //ddd($evenements);
 

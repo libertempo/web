@@ -522,7 +522,6 @@ var calendrierControleur = function ()
                 right: 'month,agendaWeek,agendaDay'
             },
             lang: 'fr',
-            defaultDate: '2016-06-12',
             editable: false,
             eventLimit: true, // allow "more" link when too many events
             events: {

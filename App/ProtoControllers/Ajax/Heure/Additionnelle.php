@@ -2,16 +2,20 @@
 namespace App\ProtoControllers\Ajax\Heure;
 
 /**
- * ProtoContrôleur ajax d'heure de repos, en attendant la migration vers le MVC REST
+ * ProtoContrôleur ajax d'heure additionnelles, en attendant la migration vers le MVC REST
  *
  * @since  1.9
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina
  */
-class Repos
+class Additionnelle
 {
     /**
+     * Retourne la liste des heures additionnelles satisfaisant aux critères fournis
      *
+     * @param array $parametresRecherche Critères de filtres
+     *
+     * @return array utilisables par le calendrier
      */
     public function getListe(array $parametresRecherche)
     {
@@ -22,8 +26,8 @@ class Repos
             $repos[] = [
                 'start' => date('c', $heureRepos['debut']),
                 'end' => date('c', $heureRepos['fin']),
-                'className' => 'heureRepos',
-                'title' => '« ' . $heureRepos['login'] . ' » - Repos',
+                'className' => 'heureAdditionnelle',
+                'title' => '« ' . $heureRepos['login'] . ' » - Additionnelle',
             ];
         }
 
@@ -49,11 +53,12 @@ class Repos
                 }
             }
         }
+        /* TODO voir si c'est vraiment utile, si on est capable de l'empêcher en amont */
         $where[] = 'duree > 0';
         $ids = [];
         $sql = \includes\SQL::singleton();
         $req = 'SELECT id_heure AS id
-                FROM heure_repos '
+                FROM heure_additionnelle '
                 . ((!empty($where)) ? ' WHERE ' . implode(' AND ', $where) : '');
         $res = $sql->query($req);
         while ($data = $res->fetch_array()) {
@@ -73,7 +78,7 @@ class Repos
         }
         $sql = \includes\SQL::singleton();
         $req = 'SELECT *
-                FROM heure_repos
+                FROM heure_additionnelle
                 WHERE id_heure IN (' . implode(',', $listeId) . ')
                 ORDER BY debut DESC, statut ASC';
 

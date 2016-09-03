@@ -24,6 +24,13 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *************************************************************************************************/
+$session=(isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : session_id()) ) ;
+
+header('Location:calendrier_new.php?session=' . $session);
+exit();
+/*
+ TODEL
+ */
 
 define('ROOT_PATH', '');
 require_once ROOT_PATH . 'define.php';
