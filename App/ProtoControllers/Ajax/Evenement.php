@@ -19,26 +19,30 @@ class Evenement
         $rechercheAuthorise = ['start', 'end'];
         foreach ($_GET as $get => $valeur) {
             if (in_array($get, $rechercheAuthorise)) {
+                // protéger les valeurs passées
                 $parametresRecherche[$get] = $valeur;
             }
         }
         header('Content-type: application/json');
         $repos = new \App\ProtoControllers\Ajax\Employe\Heure\Repos();
         $lstRepos = $repos->getListe($parametresRecherche);
-        $feries = new \App\ProtoControllers\Ajax\Ferie();
-        $lstFeries = $feries->getListe($parametresRecherche);
+        $ferie = new \App\ProtoControllers\Ajax\Ferie();
+        $lstFeries = $ferie->getListe($parametresRecherche);
         $weekEnd = new \App\ProtoControllers\Ajax\WeekEnd();
         $lstWeekEnd = $weekEnd->getListe($parametresRecherche);
         $fermeture = new \App\ProtoControllers\Ajax\Fermeture();
-        $lstFermeture = $fermeture->getListe($parametresRecherche);
+        $lstFermetures = $fermeture->getListe($parametresRecherche);
         $additionnelle = new \App\ProtoControllers\Ajax\Employe\Heure\Additionnelle();
-        $lstAdditionnelle = $additionnelle->getListe($parametresRecherche);
+        $lstAdditionnelles = $additionnelle->getListe($parametresRecherche);
+        $conge = new \App\ProtoControllers\Ajax\Employe\Conge();
+        $lstConges = $conge->getListe($parametresRecherche);
         $evenements = array_merge(
             $lstRepos,
             $lstFeries,
             $lstWeekEnd,
-            $lstFermeture,
-            $lstAdditionnelle
+            $lstFermetures,
+            $lstAdditionnelles,
+            $lstConges
         );
 
         //ddd($evenements);

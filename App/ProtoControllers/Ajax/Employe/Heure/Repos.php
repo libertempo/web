@@ -18,7 +18,7 @@ class Repos
         $repos = [];
         $liste = $this->getListeSQL($this->getListeId($parametresRecherche));
 
-        foreach ($liste as $id => $heureRepos) {
+        foreach ($liste as $heureRepos) {
             $repos[] = [
                 'start' => date('c', $heureRepos['debut']),
                 'end' => date('c', $heureRepos['fin']),

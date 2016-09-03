@@ -19,19 +19,19 @@ class Additionnelle
      */
     public function getListe(array $parametresRecherche)
     {
-        $repos = [];
+        $additionnelle = [];
         $liste = $this->getListeSQL($this->getListeId($parametresRecherche));
 
-        foreach ($liste as $id => $heureRepos) {
-            $repos[] = [
-                'start' => date('c', $heureRepos['debut']),
-                'end' => date('c', $heureRepos['fin']),
+        foreach ($liste as $heureAdditionnelle) {
+            $additionnelle[] = [
+                'start' => date('c', $heureAdditionnelle['debut']),
+                'end' => date('c', $heureAdditionnelle['fin']),
                 'className' => 'heureAdditionnelle',
-                'title' => '« ' . $heureRepos['login'] . ' » - Additionnelle',
+                'title' => '« ' . $heureAdditionnelle['login'] . ' » - Additionnelle',
             ];
         }
 
-        return $repos;
+        return $additionnelle;
     }
 
     /*
