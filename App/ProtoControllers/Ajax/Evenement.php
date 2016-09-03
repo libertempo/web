@@ -23,15 +23,15 @@ class Evenement
             }
         }
         header('Content-type: application/json');
-        $repos = new \App\ProtoControllers\Ajax\Heure\Repos();
+        $repos = new \App\ProtoControllers\Ajax\Employe\Heure\Repos();
         $lstRepos = $repos->getListe($parametresRecherche);
-        $feries = new \App\ProtoControllers\Ajax\Employe\Ferie();
+        $feries = new \App\ProtoControllers\Ajax\Ferie();
         $lstFeries = $feries->getListe($parametresRecherche);
-        $weekEnd = new \App\ProtoControllers\Ajax\Employe\WeekEnd();
+        $weekEnd = new \App\ProtoControllers\Ajax\WeekEnd();
         $lstWeekEnd = $weekEnd->getListe($parametresRecherche);
         $fermeture = new \App\ProtoControllers\Ajax\Fermeture();
         $lstFermeture = $fermeture->getListe($parametresRecherche);
-        $additionnelle = new \App\ProtoControllers\Ajax\Heure\Additionnelle();
+        $additionnelle = new \App\ProtoControllers\Ajax\Employe\Heure\Additionnelle();
         $lstAdditionnelle = $additionnelle->getListe($parametresRecherche);
         $evenements = array_merge(
             $lstRepos,
@@ -44,7 +44,6 @@ class Evenement
         //ddd($evenements);
 
         // congés acceptés (rtt compris)
-        // heure additionnelles
         // congés en cours de validation
         // absences
 

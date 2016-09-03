@@ -1,5 +1,5 @@
 <?php
-namespace App\ProtoControllers\Ajax\Heure;
+namespace App\ProtoControllers\Ajax\Employe\Heure;
 
 /**
  * ProtoContrôleur ajax d'heure de repos, en attendant la migration vers le MVC REST

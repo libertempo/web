@@ -1,5 +1,5 @@
 <?php
-namespace App\ProtoControllers\Ajax\Employe;
+namespace App\ProtoControllers\Ajax;
 
 /**
  * ProtoContrôleur ajax des jours de congés, en attendant la migration vers le MVC REST
