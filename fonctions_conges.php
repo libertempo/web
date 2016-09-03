@@ -1899,7 +1899,7 @@ function affiche_tableau_bilan_conges_user($login)
 function recup_infos_du_user($login, $list_groups_double_valid)
 {
     $tab=array();
-    $sql1 = 'SELECT u_login, u_nom, u_prenom, u_is_resp, u_resp_login, u_is_admin, u_is_hr, u_is_active, u_see_all, u_passwd, u_quotite, u_email, u_num_exercice, planning_id FROM conges_users ' .
+    $sql1 = 'SELECT * FROM conges_users ' .
             'WHERE u_login="'.\includes\SQL::quote($login).'";';
     $ReqLog = \includes\SQL::query($sql1) ;
 
@@ -1917,6 +1917,7 @@ function recup_infos_du_user($login, $list_groups_double_valid)
         $tab_user['see_all']    = $resultat['u_see_all'];
         $tab_user['passwd']    = $resultat['u_passwd'];
         $tab_user['quotite']    = $resultat['u_quotite'];
+        $tab_user['solde_heure']    = $resultat['u_heure_solde'];
         $tab_user['email']    = $resultat['u_email'];
         $tab_user['num_exercice'] = $resultat['u_num_exercice'];
         $tab_user['planningId']   = $resultat['planning_id'];

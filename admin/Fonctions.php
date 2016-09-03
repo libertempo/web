@@ -2210,6 +2210,7 @@ class Fonctions
         $valid_3=TRUE;
         $valid_reliquat=TRUE;
         $valid_4 = true;
+        $valid_5 = true;
 
         // verification de la validite de la saisie du nombre de jours annuels et du solde pour chaque type de conges
         foreach($tab_type_conges as $id_conges => $libelle) {
@@ -2242,6 +2243,14 @@ class Fonctions
             $erreurs['Solde congés exceptionnels'] = _('nombre_incorrect');
         }
 
+        if(!\admin\Fonctions::FormAddUserSoldeHeureOk($tab_new_user['solde_heure'])
+            || !\admin\Fonctions::FormAddUserQuotiteOk($tab_new_user['quotite'])
+            || !\admin\Fonctions::FormAddUserNameOk($tab_new_user['nom'])
+            || !\admin\Fonctions::FormAddUserNameOk($tab_new_user['prenom']))
+        {
+            $valid_4=FALSE;
+        }
+
         /* Si l'on change le planning de l'utilisateur sans le pouvoir */
         if ($dataUser['planning_id'] != $tab_new_user['planning_utilisateur']) {
             if (\App\ProtoControllers\Utilisateur::hasCongesEnCours($u_login_to_update)
@@ -2249,12 +2258,12 @@ class Fonctions
                 || \App\ProtoControllers\Utilisateur::hasHeureAdditionnelleEnCours($u_login_to_update)
             ) {
                 $erreurs['Planning'] = _('demande_en_cours_sur_planning');
-                $valid_4 = false;
+                $valid_5 = false;
             }
         }
 
         // si aucune erreur de saisie n'a ete commise
-        if(($valid_1) && ($valid_2) && ($valid_3) && ($valid_reliquat) && $valid_4 && $tab_new_user['login']!="") {
+        if(($valid_1) && ($valid_2) && ($valid_3) && ($valid_4) && ($valid_5) && ($valid_reliquat) && $tab_new_user['login']!="") {
             // UPDATE de la table conges_users
             $sql = 'UPDATE conges_users SET u_nom="'. \includes\SQL::quote($tab_new_user['nom']).'", u_prenom="'.\includes\SQL::quote($tab_new_user['prenom']).'", u_is_resp="'. \includes\SQL::quote($tab_new_user['is_resp']).'", u_resp_login=';
             if($tab_new_user['resp_login'] == 'no_resp') {
@@ -2262,7 +2271,7 @@ class Fonctions
             } else {
                 $sql .='"'.\includes\SQL::quote($tab_new_user['resp_login']).'",';
             }
-            $sql .= 'u_is_admin="'. \includes\SQL::quote($tab_new_user['is_admin']).'",u_is_hr="'.\includes\SQL::quote($tab_new_user['is_hr']).'",u_is_active="'.\includes\SQL::quote($tab_new_user['is_active']).'",u_see_all="'.\includes\SQL::quote($tab_new_user['see_all']).'",u_login="'.\includes\SQL::quote($tab_new_user['login']).'",u_quotite="'.\includes\SQL::quote($tab_new_user['quotite']).'",u_email="'. \includes\SQL::quote($tab_new_user['email']).'", planning_id = ' . (int) $tab_new_user['planning_utilisateur'] . ' WHERE u_login="'.\includes\SQL::quote($u_login_to_update).'"' ;
+            $sql .= 'u_heure_solde='. \App\Helpers\Formatter::hour2Time($tab_new_user['solde_heure']).',u_is_admin="'. \includes\SQL::quote($tab_new_user['is_admin']).'",u_is_hr="'.\includes\SQL::quote($tab_new_user['is_hr']).'",u_is_active="'.\includes\SQL::quote($tab_new_user['is_active']).'",u_see_all="'.\includes\SQL::quote($tab_new_user['see_all']).'",u_login="'.\includes\SQL::quote($tab_new_user['login']).'",u_quotite="'.\includes\SQL::quote($tab_new_user['quotite']).'",u_email="'. \includes\SQL::quote($tab_new_user['email']).'", planning_id = ' . (int) $tab_new_user['planning_utilisateur'] . ' WHERE u_login="'.\includes\SQL::quote($u_login_to_update).'"' ;
 
             \includes\SQL::query($sql);
 
@@ -2382,6 +2391,7 @@ class Fonctions
         $childTable .= '<th>' . _('divers_prenom_maj_1') . '</th>';
         $childTable .= '<th>' . _('divers_login_maj_1') . '</th>';
         $childTable .= '<th>' . _('divers_quotite_maj_1') . '</th>';
+        $childTable .= '<th>' . _('solde_heure') . '</th>';
         $childTable .= '<th>' . _('admin_users_is_resp') . '</th>';
         $childTable .= '<th>' . _('admin_users_resp_login') . '</th>';
         $childTable .= '<th>' . _('admin_users_is_admin') . '</th>';
@@ -2402,6 +2412,7 @@ class Fonctions
         $childTable .= '<td>' . $tab_user['prenom'] . '</td>';
         $childTable .= '<td>' . $tab_user['login'] . '</td>';
         $childTable .= '<td>' . $tab_user['quotite'] . '</td>';
+        $childTable .= '<td>' . \App\Helpers\Formatter::Timestamp2Duree($tab_user['solde_heure']) . '</td>';
         $childTable .= '<td>' . $tab_user['is_resp'] . '</td>';
         $childTable .= '<td>' . $tab_user['resp_login'] . '</td>';
         $childTable .= '<td>' . $tab_user['is_admin'] . '</td>';
@@ -2424,6 +2435,7 @@ class Fonctions
         $text_nom="<input class=\"form-control\" type=\"text\" name=\"new_nom\" size=\"10\" maxlength=\"30\" value=\"".$tab_user['nom']."\">" ;
         $text_prenom="<input class=\"form-control\" type=\"text\" name=\"new_prenom\" size=\"10\" maxlength=\"30\" value=\"".$tab_user['prenom']."\">" ;
         $text_quotite="<input class=\"form-control\" type=\"text\" name=\"new_quotite\" size=\"3\" maxlength=\"3\" value=\"".$tab_user['quotite']."\">" ;
+        $text_solde_heure="<input class=\"form-control\" type=\"text\" name=\"new_solde_heure\" size=\"6\" maxlength=\"6\" value=\"".  \App\Helpers\Formatter::Timestamp2Duree($tab_user['solde_heure'])."\">" ;
         if($tab_user['is_resp']=="Y") {
             $text_is_resp="<select class=\"form-control\" name=\"new_is_resp\" id=\"is_resp_id\" ><option value=\"Y\">Y</option><option value=\"N\">N</option></select>" ;
         } else {
@@ -2480,6 +2492,7 @@ class Fonctions
         $childTable .= '<td>' . $text_prenom . '</td>';
         $childTable .= '<td>' . $text_login . '</td>';
         $childTable .= '<td>' . $text_quotite . '</td>';
+        $childTable .= '<td>' . $text_solde_heure . '</td>';
         $childTable .= '<td>' . $text_is_resp . '</td>';
         $childTable .= '<td>' . $text_resp_login . '</td>';
         $childTable .= '<td>' . $text_is_admin . '</td>';
@@ -2646,6 +2659,7 @@ class Fonctions
             $tab_new_user['nom']    = getpost_variable('new_nom') ;
             $tab_new_user['prenom']     = getpost_variable('new_prenom') ;
             $tab_new_user['quotite']    = getpost_variable('new_quotite') ;
+            $tab_new_user['solde_heure']    = getpost_variable('new_solde_heure') ;
             $tab_new_user['is_resp']    = getpost_variable('new_is_resp') ;
             $tab_new_user['resp_login'] = getpost_variable('new_resp_login') ;
             $tab_new_user['is_admin']   = getpost_variable('new_is_admin') ;
@@ -3091,6 +3105,7 @@ class Fonctions
             $childTable .= '<th>' . _('divers_prenom_maj_1') . '</th>';
         }
         $childTable .= '<th>' . _('divers_quotite_maj_1') . '</th>';
+        $childTable .= '<th>' . _('solde_heure') . '</th>';
         $childTable .= '<th>' . _('admin_new_users_is_resp') . '</th>';
         $childTable .= '<th>' . _('divers_responsable_maj_1') . '</th>';
         $childTable .= '<th>' . _('admin_new_users_is_admin') . '</th>';
@@ -3111,6 +3126,7 @@ class Fonctions
             $tab_new_user['quotite']=100;
         }
         $text_quotite="<input class=\"form-control\" type=\"text\" name=\"new_quotite\" size=\"3\" maxlength=\"3\" value=\"".$tab_new_user['quotite']."\">" ;
+        $text_solde_heure="<input class=\"form-control\" type=\"text\" name=\"new_solde_heure\" size=\"6\" maxlength=\"6\" value=\"".$tab_new_user['solde_heure']."\">" ;
         $text_is_resp="<select class=\"form-control\" name=\"new_is_resp\" ><option value=\"N\">N</option><option value=\"Y\">Y</option></select>" ;
 
         // PREPARATION DES OPTIONS DU SELECT du resp_login
@@ -3175,6 +3191,7 @@ class Fonctions
         }
 
         $childTable .= '<td>' . $text_quotite . '</td>';
+        $childTable .= '<td>' . $text_solde_heure . '</td>';
         $childTable .= '<td>' . $text_is_resp . '</td>';
         $childTable .= '<td>' . $text_resp_login . '</td>';
         $childTable .= '<td>' . $text_is_admin . '</td>';
@@ -3307,6 +3324,7 @@ class Fonctions
             $return .= '<input type="hidden" name="new_is_hr" value="' . $tab_new_user['is_hr'] . '">';
             $return .= '<input type="hidden" name="new_see_all" value="' . $tab_new_user['see_all'] . '">';
             $return .= '<input type="hidden" name="new_quotite" value="' . $tab_new_user['quotite'] . '">';
+            $return .= '<input type="hidden" name="new_heure_solde" value="' . $tab_new_user['solde_heure'] . '">';
             $return .= '<input type="hidden" name="new_email" value="' . $tab_new_user['email'] . '">';
             foreach($tab_new_jours_an as $id_cong => $jours_an) {
                 $return .= '<input type="hidden" name="tab_new_jours_an[$id_cong]" value="' . $tab_new_jours_an[$id_cong] . '">';
@@ -3335,6 +3353,7 @@ class Fonctions
                 $return .= '<input type="hidden" name="new_is_admin" value="' . $tab_new_user['is_admin'] . '">';
                 $return .= '<input type="hidden" name="new_is_hr" value="' . $tab_new_user['is_hr'] . '">';
                 $return .= '<input type="hidden" name="new_quotite" value="' . $tab_new_user['quotite'] . '">';
+                $return .= '<input type="hidden" name="new_heure_solde" value="' . $tab_new_user['solde_heure'] . '">';
                 $return .= '<input type="hidden" name="new_email" value="' . $tab_new_user['email'] . '">';
 
                 foreach($tab_new_jours_an as $id_cong => $jours_an) {
@@ -3358,6 +3377,7 @@ class Fonctions
                 $return .= '<input type="hidden" name="new_is_admin" value="' . $tab_new_user['is_admin'] . '">';
                 $return .= '<input type="hidden" name="new_is_hr" value="' . $tab_new_user['is_hr'] . '">';
                 $return .= '<input type="hidden" name="new_quotite" value="' . $tab_new_user['quotite'] . '">';
+                $return .= '<input type="hidden" name="new_heure_solde" value="' . $tab_new_user['solde_heure'] . '">';
                 $return .= '<input type="hidden" name="new_email" value="' . $tab_new_user['email'] . '">';
 
                 foreach($tab_new_jours_an as $id_cong => $jours_an) {
@@ -3378,10 +3398,17 @@ class Fonctions
 
     public static function test_form_add_user($tab_new_user) {
         if($_SESSION['config']['export_users_from_ldap']) {
-            return \admin\Fonctions::FormAddUserLoginOk($tab_new_user['login']) && \admin\Fonctions::FormAddUserQuotiteOk($tab_new_user['quotite']);
+            return \admin\Fonctions::FormAddUserLoginOk($tab_new_user['login']) && \admin\Fonctions::FormAddUserQuotiteOk($tab_new_user['quotite']) && \admin\Fonctions::FormAddUserSoldeHeureOk($tab_new_user['solde_heure']);
         } else {
-            return \admin\Fonctions::FormAddUserLoginOk($tab_new_user['login']) && \admin\Fonctions::FormAddUserQuotiteOk($tab_new_user['quotite']) && \admin\Fonctions::FormAddUserNameOk($tab_new_user['nom']) && \admin\Fonctions::FormAddUserNameOk($tab_new_user['prenom']) && \admin\Fonctions::FormAddUserpasswdOk($tab_new_user['password1'],$tab_new_user['password2']);
+            return \admin\Fonctions::FormAddUserLoginOk($tab_new_user['login']) && \admin\Fonctions::FormAddUserQuotiteOk($tab_new_user['quotite'])  && \admin\Fonctions::FormAddUserSoldeHeureOk($tab_new_user['solde_heure']) && \admin\Fonctions::FormAddUserNameOk($tab_new_user['nom']) && \admin\Fonctions::FormAddUserNameOk($tab_new_user['prenom']) && \admin\Fonctions::FormAddUserpasswdOk($tab_new_user['password1'],$tab_new_user['password2']);
         }
+    }
+
+    public static function FormAddUserSoldeHeureOk($solde_heure){
+        if (empty($solde_heure)) {
+            return false;
+        }
+        return \App\Helpers\Formatter::isHourFormat($solde_heure);
     }
 
     public static function FormAddUserLoginOk($login) {
@@ -3448,6 +3475,7 @@ class Fonctions
             $sql1=$sql1."u_see_all='".$tab_new_user['see_all']."', ";
             $sql1=$sql1."u_passwd='$motdepasse', ";
             $sql1=$sql1."u_quotite=".$tab_new_user['quotite'].",";
+            $sql1=$sql1."u_heure_solde=".  \App\Helpers\Formatter::hour2Time($tab_new_user['solde_heure']).",";
             $sql1=$sql1." u_email='".$tab_new_user['email']."' ";
             $sql1 .= ', planning_id = ' . (int) $tab_new_user['planningId'];
             $result1 = \includes\SQL::query($sql1);
@@ -3560,6 +3588,7 @@ class Fonctions
                 }
 
                 $tab_new_user[$login]['quotite']    = getpost_variable('new_quotite');
+                $tab_new_user[$login]['solde_heure']= getpost_variable('new_solde_heure');
                 $tab_new_user[$login]['is_resp']    = getpost_variable('new_is_resp');
                 $tab_new_user[$login]['resp_login'] = getpost_variable('new_resp_login');
                 $tab_new_user[$login]['is_admin']   = getpost_variable('new_is_admin');
@@ -3582,6 +3611,7 @@ class Fonctions
             $tab_new_user[0]['nom']        = getpost_variable('new_nom');
             $tab_new_user[0]['prenom']     = getpost_variable('new_prenom');
             $tab_new_user[0]['quotite']    = getpost_variable('new_quotite');
+            $tab_new_user[0]['solde_heure']= getpost_variable('new_solde_heure');
             $tab_new_user[0]['is_resp']    = getpost_variable('new_is_resp');
             $tab_new_user[0]['resp_login'] = getpost_variable('new_resp_login');
             $tab_new_user[0]['is_admin']   = getpost_variable('new_is_admin');

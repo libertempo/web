@@ -68,7 +68,7 @@ class Formatter
             throw new \Exception(_('Heure_mal_formee'));
         }
 
-        return mktime($matches[1], $matches[5], 0, 1, 1, 70);
+        return ($matches[1]*3600+$matches[5]*60);
     }
 
     /**
