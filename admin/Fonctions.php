@@ -2360,6 +2360,8 @@ class Fonctions
         $PHP_SELF = $_SERVER['PHP_SELF'];
         $session  = session_id();
         $return   = '';
+        $soldeHeureId = uniqid();
+
 
         // recup du tableau des types de conges (seulement les conges)
         $tab_type_conges=recup_tableau_types_conges();
@@ -2435,7 +2437,7 @@ class Fonctions
         $text_nom="<input class=\"form-control\" type=\"text\" name=\"new_nom\" size=\"10\" maxlength=\"30\" value=\"".$tab_user['nom']."\">" ;
         $text_prenom="<input class=\"form-control\" type=\"text\" name=\"new_prenom\" size=\"10\" maxlength=\"30\" value=\"".$tab_user['prenom']."\">" ;
         $text_quotite="<input class=\"form-control\" type=\"text\" name=\"new_quotite\" size=\"3\" maxlength=\"3\" value=\"".$tab_user['quotite']."\">" ;
-        $text_solde_heure="<input class=\"form-control\" type=\"text\" name=\"new_solde_heure\" size=\"6\" maxlength=\"6\" value=\"".  \App\Helpers\Formatter::Timestamp2Duree($tab_user['solde_heure'])."\">" ;
+        $text_solde_heure="<input class=\"form-control\" type=\"text\" name=\"new_solde_heure\" id=\"" . $soldeHeureId . "\"  size=\"6\" maxlength=\"6\" value=\"".  \App\Helpers\Formatter::Timestamp2Duree($tab_user['solde_heure'])."\">" ;
         if($tab_user['is_resp']=="Y") {
             $text_is_resp="<select class=\"form-control\" name=\"new_is_resp\" id=\"is_resp_id\" ><option value=\"Y\">Y</option><option value=\"N\">N</option></select>" ;
         } else {
@@ -2503,6 +2505,8 @@ class Fonctions
             $childTable .= '<td>' . $text_email . '</td>';
         }
         $childTable .= '</tr></tbody>';
+        $childTable .= '<script type="text/javascript">generateTimePicker("' . $soldeHeureId . '");</script>';
+
         $table->addChild($childTable);
         ob_start();
         $table->render();
@@ -2601,6 +2605,8 @@ class Fonctions
         }
 
         $childTable .= '</tbody>';
+        $childTable .= '<script type="text/javascript">generateTimePicker("' . $soldeHeureId . '");</script>';
+
         $table->addChild($childTable);
         ob_start();
         $table->render();
@@ -3119,6 +3125,8 @@ class Fonctions
             $childTable .= '<th>' . _('admin_new_users_password') . '</th>';
         }
         $childTable .= '</tr></thead><tbody>';
+        $soldeHeureId = uniqid();
+
 
         $text_nom="<input class=\"form-control\" type=\"text\" name=\"new_nom\" size=\"10\" maxlength=\"30\" value=\"".$tab_new_user['nom']."\">" ;
         $text_prenom="<input class=\"form-control\" type=\"text\" name=\"new_prenom\" size=\"10\" maxlength=\"30\" value=\"".$tab_new_user['prenom']."\">" ;
@@ -3126,7 +3134,7 @@ class Fonctions
             $tab_new_user['quotite']=100;
         }
         $text_quotite="<input class=\"form-control\" type=\"text\" name=\"new_quotite\" size=\"3\" maxlength=\"3\" value=\"".$tab_new_user['quotite']."\">" ;
-        $text_solde_heure="<input class=\"form-control\" type=\"text\" name=\"new_solde_heure\" size=\"6\" maxlength=\"6\" value=\"".$tab_new_user['solde_heure']."\">" ;
+        $text_solde_heure="<input class=\"form-control\" type=\"text\" name=\"new_solde_heure\" id=\"" . $soldeHeureId . "\" size=\"6\" maxlength=\"6\" value=\"".$tab_new_user['solde_heure']."\">" ;
         $text_is_resp="<select class=\"form-control\" name=\"new_is_resp\" ><option value=\"N\">N</option><option value=\"Y\">Y</option></select>" ;
 
         // PREPARATION DES OPTIONS DU SELECT du resp_login
@@ -3205,6 +3213,7 @@ class Fonctions
             $childTable .= '<td>' . $text_password2 . '</td>';
         }
         $childTable .= '</tr></tbody>';
+        $childTable .= '<script type="text/javascript">generateTimePicker("' . $soldeHeureId . '");</script>';
         $table->addChild($childTable);
         ob_start();
         $table->render();
