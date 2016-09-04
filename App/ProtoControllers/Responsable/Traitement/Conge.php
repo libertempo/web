@@ -96,8 +96,8 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         
         foreach ( $demandes as $demande ) {
             $id = $demande['p_num'];
-            $infoUtilisateur = \App\ProtoControllers\utilisateur::getDonneesUtilisateur($demande['p_login']);
-            $solde = \App\ProtoControllers\utilisateur::getSoldeconge($demande['p_login'],$demande['p_type']);
+            $infoUtilisateur = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($demande['p_login']);
+            $solde = \App\ProtoControllers\Utilisateur::getSoldeconge($demande['p_login'],$demande['p_type']);
             $type = $this->getTypeLabel($demande['p_type']);
             $debut = \App\Helpers\Formatter::dateIso2Fr($demande['p_date_deb']);
             $fin = \App\Helpers\Formatter::dateIso2Fr($demande['p_date_fin']);
@@ -122,7 +122,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
             $Table .= '<td><input type="radio" name="demande['.$id.']" value="1"></td>';
             $Table .= '<td><input type="radio" name="demande['.$id.']" value="2"></td>';
             $Table .= '<td><input type="radio" name="demande['.$id.']" value="NULL" checked></td>';
-            $Table .= '<td><input class="form-control" type="text" name="comment_refus['.$id.']" size="20" max="100"></td></tr>';
+            $Table .= '<td><input class="form-control" type="text" name="comment_refus['.$id.']" size="20" maxlength="100"></td></tr>';
             $i = !$i;
             }
             
@@ -140,7 +140,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         foreach ($put['demande'] as $id_conge => $statut) {
             if (\App\ProtoControllers\responsable::isRespDeUtilisateur($resp, $infoDemandes[$id_conge]['p_login'])) {
                 $return = $this->putResponsable($infoDemandes[$id_conge], $statut, $put, $errorLst);
-            } elseif (\App\ProtoControllers\responsable::isGrandRespDeUtilisateur($resp, \App\ProtoControllers\utilisateur::getGroupesId($infoDemandes[$id_conge]['p_login']))) {
+            } elseif (\App\ProtoControllers\responsable::isGrandRespDeUtilisateur($resp, \App\ProtoControllers\Utilisateur::getGroupesId($infoDemandes[$id_conge]['p_login']))) {
                 $return = $this->putGrandResponsable($infoDemandes[$id_conge], $statut, $put, $errorLst);
             } else {
                 $errorLst[] = _('erreur_pas_responsable_de') . ' ' . $infoDemandes['id_conge']['p_login'];
@@ -214,8 +214,9 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
     protected function putValidationFinale($demandeId) 
     {
         $demande = $this->getInfoDemandes(explode(" ", $demandeId))[$demandeId];
-        if($this->isOptionReliquatActive() && $this->isReliquatUtilisable($demande['p_date_fin']) && 0 < $this->getReliquatconge($demande['p_login'], $demande['p_type'])) {
-            $SoldeReliquat = $this->getReliquatconge($demande['p_login'], $demande['p_type']);
+        $SoldeReliquat = $this->getReliquatconge($demande['p_login'], $demande['p_type']);
+
+        if($this->isOptionReliquatActive() && $this->isReliquatUtilisable($demande['p_date_fin']) && 0 < $SoldeReliquat) {
         
             if($SoldeReliquat>=$demande['p_nb_jours']) {
                 $sql = \includes\SQL::singleton();

@@ -153,7 +153,7 @@ abstract class ATraitement
             $fin    = date('H\:i', $demande['fin']);
             $duree  = \App\Helpers\Formatter::Timestamp2Duree($demande['duree']);
             $id = $demande['id_heure'];
-            $infoUtilisateur = \App\ProtoControllers\utilisateur::getDonneesUtilisateur($demande['login']);
+            $infoUtilisateur = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($demande['login']);
             $solde = \App\Helpers\Formatter::Timestamp2Duree($infoUtilisateur['u_heure_solde']);
             $Table .= '<tr class="'.($i?'i':'p').'">';
             $Table .= '<td><b>'.$infoUtilisateur['u_nom'].'</b><br>'.$infoUtilisateur['u_prenom'].'</td><td>'.$jour.'</td><td>'.$debut.'</td><td>'.$fin.'</td><td>'.$duree.'</td><td>'.$solde.'</td>';
@@ -162,7 +162,7 @@ abstract class ATraitement
             $Table .= '<td><input type="radio" name="demande['.$id.']" value="1"></td>';
             $Table .= '<td><input type="radio" name="demande['.$id.']" value="2"></td>';
             $Table .= '<td><input type="radio" name="demande['.$id.']" value="NULL" checked></td>';
-            $Table .= '<td><input class="form-control" type="text" name="comment_refus['.$id.']" size="20" max="100"></td></tr>';
+            $Table .= '<td><input class="form-control" type="text" name="comment_refus['.$id.']" size="20" maxlength="100"></td></tr>';
 
             $i = !$i;
             }

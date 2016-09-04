@@ -167,7 +167,7 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
      */
     protected function updateSolde($demandeId)
     {
-        $user = $this->getInfoDemandes(explode(" ",$demandeId));
+        $user = $this->getInfoDemandes([$demandeId]);
         $sql = \includes\SQL::singleton();
         $req   = 'UPDATE conges_users
                 SET u_heure_solde = u_heure_solde+' .$user[$demandeId]['duree'] . '

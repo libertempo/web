@@ -160,7 +160,7 @@ class responsable
     public static function isDoubleValGroupe($user)
     {
         $groupes = [];
-        $groupes = \App\ProtoControllers\utilisateur::getGroupesId($user);
+        $groupes = \App\ProtoControllers\Utilisateur::getGroupesId($user);
         $sql = \includes\SQL::singleton();
         $req = 'SELECT EXISTS (
                     SELECT g_double_valid

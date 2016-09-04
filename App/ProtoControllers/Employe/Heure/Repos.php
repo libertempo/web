@@ -100,7 +100,7 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
         $childTable .= '<td><div class="form-inline col-xs-10 col-sm-6 col-lg-4">
         <input class="form-control" style="width:45%" type="text" id="' . $debutId . '"  value="' . $valueDebut . '" name="debut_heure">
         &nbsp;<i class="fa fa-caret-right"></i>&nbsp;
-        <input class="form-control" style="width:45%" type="text" id="' . $finId . '"  value="' . $valueFin . '" name="fin_heure"></div></td><td><input class="form-control" type="text" name="comment" value="'.$comment.'" size="20" max="100"></td></tr>';
+        <input class="form-control" style="width:45%" type="text" id="' . $finId . '"  value="' . $valueFin . '" name="fin_heure"></div></td><td><input class="form-control" type="text" name="comment" value="'.$comment.'" size="20" maxlength="100"></td></tr>';
         $childTable .= '</tbody>';
         $childTable .= '<script type="text/javascript">generateTimePicker("' . $debutId . '");generateTimePicker("' . $finId . '");</script>';
 

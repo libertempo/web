@@ -120,7 +120,7 @@ class Additionnelle extends \App\ProtoControllers\Employe\AHeure
 
         $childTable .= '<thead><tr><th width="20%">' . _('Jour') . '</th><th>' . _('creneau') . '</th><th>' . _('divers_comment_maj_1') . '</th></tr></thead><tbody>';
         $childTable .= '<tr><td><div class="form-inline col-xs-12 col-sm-10 col-lg-8"><input class="form-control date" type="text" value="' . $valueJour . '" name="jour"></div></td>';
-        $childTable .= '<td><div class="form-inline col-xs-10 col-sm-6 col-lg-4"><input class="form-control" style="width:45%" type="text" id="' . $debutId . '"  value="' . $valueDebut . '" name="debut_heure">&nbsp;<i class="fa fa-caret-right"></i>&nbsp;<input class="form-control" style="width:45%" type="text" id="' . $finId . '"  value="' . $valueFin . '" name="fin_heure"></div></td><td><input class="form-control" type="text" name="comment" value="'.$comment.'" size="20" max="100"></td></tr>';
+        $childTable .= '<td><div class="form-inline col-xs-10 col-sm-6 col-lg-4"><input class="form-control" style="width:45%" type="text" id="' . $debutId . '"  value="' . $valueDebut . '" name="debut_heure">&nbsp;<i class="fa fa-caret-right"></i>&nbsp;<input class="form-control" style="width:45%" type="text" id="' . $finId . '"  value="' . $valueFin . '" name="fin_heure"></div></td><td><input class="form-control" type="text" name="comment" value="'.$comment.'" size="20" maxlength="100"></td></tr>';
         $childTable .= '</tbody>';
         $childTable .= '<script type="text/javascript">generateTimePicker("' . $debutId . '");generateTimePicker("' . $finId . '");</script>';
 
