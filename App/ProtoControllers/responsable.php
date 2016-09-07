@@ -62,6 +62,12 @@ class responsable
      */
     public static function getUsersGroupe(array $groupesId)
     {
+        if (empty($groupesId)) {
+            return [];
+        }
+        
+        $users = [];
+        
          $sql = \includes\SQL::singleton();
          $req = 'SELECT gu_login FROM `conges_groupe_users` WHERE gu_gid IN (' . implode(',', $groupesId) . ')';
          $res = $sql->query($req);
