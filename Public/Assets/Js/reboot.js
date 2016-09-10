@@ -512,7 +512,7 @@ var planningController = function (idElement, options, creneaux)
 /**
  * Objet de manipulation du calendrier
  */
-var calendrierControleur = function ()
+var calendrierControleur = function (session)
 {
     $(document).ready(function() {
         $('#calendar').fullCalendar({
@@ -527,7 +527,7 @@ var calendrierControleur = function ()
             events: {
                 // on recharge la page en php si on doit changer / poser un groupe en particulier. Ce faisant, on pose un groupe dans l'url :
                 // url: 'php/get-events.php?groupe=X'
-                url: 'calendrier/wrapper_getEvenement.php',
+                url: 'calendrier/wrapper_getEvenement.php?session=' + session,
                 error: function() {
                     $('#script-warning').show();
                 }

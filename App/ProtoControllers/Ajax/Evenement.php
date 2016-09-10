@@ -8,22 +8,44 @@ namespace App\ProtoControllers\Ajax;
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina
  */
-class Evenement
+class Evenement extends \App\ProtoControllers\Ajax
 {
     /**
+     * Retourne une liste d'événements
      *
+     * @param array $filtres
+
+     * @return string
      */
-    public function get()
+    public function get(array $filtres)
     {
         $parametresRecherche = [];
-        $rechercheAuthorise = ['start', 'end'];
-        foreach ($_GET as $get => $valeur) {
-            if (in_array($get, $rechercheAuthorise)) {
+        $rechercheAuthorise = ['start', 'end', 'groupe'];
+        foreach ($filtres as $k => $valeur) {
+            if (in_array($k, $rechercheAuthorise)) {
                 // protéger les valeurs passées
-                $parametresRecherche[$get] = $valeur;
+                $parametresRecherche[$k] = $valeur;
             }
         }
-        header('Content-type: application/json');
+        /*
+        * Si gestion des groupe activée :
+        *   - récuperer tous les groupes auxquels l'utilisateur a droit
+        *   - si un groupe est demandé, array_intersect()
+        * Sinon :
+        *   - Tout rôle : comme existant (ça devrait être « open bar » normalement)
+        */
+
+
+        /* - Selon la session qui regarde, évaluer la portée de ce qu'il doit voir :
+        - Si c'est employé simple, ne voir que ceux du groupe, s'il n'a pas de groupe, que lui
+        - Si c'est un resp, prendre tous les groupes dont il est responsable (ou grand responsable) + comme un employé normal
+        - Si c'est un HR, tout prendre
+
+        $_SESSION['is_resp']"N"
+        $_SESSION['is_admin']"Y"
+        $_SESSION['is_hr']"N"
+        */
+
         $repos = new \App\ProtoControllers\Ajax\Employe\Heure\Repos();
         $lstRepos = $repos->getListe($parametresRecherche);
         $ferie = new \App\ProtoControllers\Ajax\Ferie();

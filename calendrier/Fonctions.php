@@ -1177,6 +1177,14 @@ class Fonctions
         } else {
             include_once INCLUDE_PATH . 'session.php';
         }
+        // get groupe droit
+        /*
+        * Si gestion des groupes activée :
+        *   - Affichage des groupes auxquels le role a droit
+        *   - Passer un groupe en paramètre que si explicitement demandé (option du select vide)
+        * Sinon :
+        *   - Comme existant
+        */
         $return .= '<h1>' . _('calendrier_titre') . '</h1>';
 
         $return .= '<div id="script-warning" style="display: none;
@@ -1196,7 +1204,7 @@ class Fonctions
 		right: 10px">loading...</div>
         <div id="calendar"></div>';
         $return .= '<script type="text/javascript">
-        new calendrierControleur();
+        new calendrierControleur("' . $session . '");
         </script>';
 
         return $return;
