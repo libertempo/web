@@ -45,11 +45,11 @@ class Evenement
             $lstConges
         );
 
-        //ddd($evenements);
-
-        // congés acceptés (rtt compris)
-        // congés en cours de validation
-        // absences
+        /*
+        * Pour ce qui est sujet à validation, on ne prend que les acceptés, donc ça implique d'avoir une conscience de la double / simple validation
+        * (Voir proposition sur les nouveaux états)
+        * À vérifier, voir avec Wouldsmina
+        */
 
         return json_encode($evenements);
     }
