@@ -3478,10 +3478,13 @@ class Fonctions
             } else {
                 $sql1=$sql1."u_resp_login='". $tab_new_user['resp_login']."', ";
             }
+            $seeAll = ($tab_new_user['is_admin'] || $tab_new_user['is_hr'])
+                ? 'Y'
+                : 'N';
 
             $sql1=$sql1."u_is_admin='".$tab_new_user['is_admin']."', ";
             $sql1=$sql1."u_is_hr='".$tab_new_user['is_hr']."', ";
-            $sql1=$sql1."u_see_all='".$tab_new_user['see_all']."', ";
+            $sql1=$sql1."u_see_all='". $seeAll . "', ";
             $sql1=$sql1."u_passwd='$motdepasse', ";
             $sql1=$sql1."u_quotite=".$tab_new_user['quotite'].",";
             $sql1=$sql1."u_heure_solde=".  \App\Helpers\Formatter::hour2Time($tab_new_user['solde_heure']).",";

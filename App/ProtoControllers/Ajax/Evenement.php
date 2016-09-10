@@ -17,7 +17,7 @@ class Evenement extends \App\ProtoControllers\Ajax
 
      * @return string
      */
-    public function get(array $filtres)
+    public function getListe(array $filtres)
     {
         $parametresRecherche = [];
         $rechercheAuthorise = ['start', 'end', 'groupe'];

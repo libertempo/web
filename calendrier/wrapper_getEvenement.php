@@ -17,4 +17,4 @@ session_id($session);
 session_start();
 
 $evenement = new \App\ProtoControllers\Ajax\Evenement();
-echo $evenement->get($_GET);
+echo $evenement->getListe($_GET);
