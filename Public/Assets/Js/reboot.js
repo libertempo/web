@@ -517,7 +517,7 @@ var calendrierControleur = function (session)
     $(document).ready(function() {
         $('#calendar').fullCalendar({
             header: {
-                left: 'prev,next today',
+                left: 'prev,today,next',
                 center: 'title',
                 right: 'month,agendaWeek,agendaDay'
             },
