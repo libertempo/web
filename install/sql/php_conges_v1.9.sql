@@ -276,6 +276,7 @@ CREATE TABLE IF NOT EXISTS `conges_users` (
   `u_email` varchar(100) DEFAULT NULL,
   `u_num_exercice` int(2) NOT NULL DEFAULT '0',
   `planning_id` int(11) UNSIGNED NOT NULL,
+  `u_heure_solde` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`u_login`),
   KEY `planning_id` (`planning_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

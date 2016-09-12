@@ -30,7 +30,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
         foreach ($put['demande'] as $id_heure => $statut) {
             if (\App\ProtoControllers\responsable::isRespDeUtilisateur($resp, $infoDemandes[$id_heure]['login'])) {
                 $return = $this->putResponsable($infoDemandes[$id_heure], $statut, $put, $errorLst);
-            } elseif (\App\ProtoControllers\responsable::isGrandRespDeUtilisateur($resp, \App\ProtoControllers\Utilisateur::getGroupesId($infoDemandes[$id_heure]['login']))) {
+            } elseif (\App\ProtoControllers\responsable::isGrandRespDeGroupe($resp, \App\ProtoControllers\Utilisateur::getGroupesId($infoDemandes[$id_heure]['login']))) {
                 $return = $this->putGrandResponsable($infoDemandes[$id_heure], $statut, $put, $errorLst);
             } else {
                 $errorLst[] = _('erreur_pas_responsable_de') . ' ' . $infoDemandes['id_heure']['login'];

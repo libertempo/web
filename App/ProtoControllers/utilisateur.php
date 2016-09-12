@@ -37,6 +37,7 @@ class Utilisateur
      */
     public static function getGroupesId($user)
     {
+        $ids = [];
         $sql = \includes\SQL::singleton();
         $req = 'SELECT gu_gid AS id
                     FROM conges_groupe_users 

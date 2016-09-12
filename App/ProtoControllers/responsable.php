@@ -99,7 +99,7 @@ class responsable
      * 
      * @return bool
      */
-    public static function isGrandRespDeUtilisateur($resp, array $groupesId) {
+    public static function isGrandRespDeGroupe($resp, array $groupesId) {
         $sql = \includes\SQL::singleton();
         $req = 'SELECT EXISTS (
                     SELECT ggr_gid
