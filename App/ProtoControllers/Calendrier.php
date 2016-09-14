@@ -28,11 +28,72 @@ class Calendrier
             include_once INCLUDE_PATH . 'session.php';
         }
 
+        $return .= '<div id="calendar-wrapper"><h1>' . _('calendrier_titre') . '</h1>';
+        $idGroupe = '';
+        // --------------
+        if (!empty($_POST) && $this->isSearch($_POST)) {
+            $champsRecherche = $_POST['search'];
+            //$champsSql       = $this->transformChampsRecherche($_POST);
+        } else {
+            $champsRecherche = [];
+            //$champsSql       = [];
+        }
+        // ------------------
+        $return .= $this->getFormulaireRecherche($champsRecherche, $idGroupe);
+
+        $return .= '<div id="warning"><code>wrapper_getEvenement</code> must be running.</div>
+        <div id="loading">Loading...</div>
+        <div id="calendar"></div>';
+        $return .= '<script type="text/javascript">
+        new calendrierControleur("' . $session . '", ' . $idGroupe . ');
+        </script></div>';
+
+        return $return;
+    }
+
+    /**
+     * Y-a-t-il une recherche dans l'avion ?
+     *
+     * @param array $post
+     *
+     * @return bool
+     */
+    private function isSearch(array $post)
+    {
+        return !empty($post['search']);
+    }
+
+    private function getFormulaireRecherche(array $champsRecherche, &$idGroupe)
+    {
         if($_SESSION['config']['gestion_groupes']) {
+            $idGroupe = 40;
             // form avec gestion des groupes
         } else {
             // form sans gestion des groupes
         }
+        $form = '<form method="post" action="" class="form-inline search" role="form"><div class="form-group">
+        <label class="control-label col-md-4" for="statut">Statut&nbsp;:</label>
+        <div class="col-md-8"><select class="form-control" name="search[statut]" id="statut">';
+        foreach (\App\Models\AHeure::getOptionsStatuts() as $key => $value) {
+            $selected = (isset($champs['statut']) && $key == $champs['statut'])
+                ? 'selected="selected"'
+                : '';
+            $form .= '<option value="' . $key . '" ' . $selected . '>' . $value . '</option>';
+        }
+        $form .= '</select></div></div><div class="form-group"><label class="control-label col-md-4" for="annee">Année&nbsp;:</label>
+        <div class="col-md-8"><select class="form-control" name="search[annee]" id="sel1">';
+        // groupe si éligible
+        foreach (\utilisateur\Fonctions::getOptionsAnnees() as $key => $value) {
+            $selected = (isset($champs['annee']) && $key == $champs['annee'])
+                ? 'selected="selected"'
+                : '';
+            $form .= '<option value="' . $key . '" ' . $selected . '>' . $value . '</option>';
+        }
+        $form .= '</select></div></div><div class="form-group"><div class="input-group">
+        <button type="submit" class="btn btn-default"><i class="fa fa-search" aria-hidden="true"></i></button>
+        &nbsp;<a href="' . ROOT_PATH . 'calendrier.php?session='. session_id() . '" type="reset" class="btn btn-default">Reset</a></div></div></form>';
+
+        return $form;
 
 
         // get groupe droit
@@ -43,20 +104,5 @@ class Calendrier
         * Sinon :
         *   - Comme existant
         */
-        $return .= '<div id="calendar-wrapper"><h1>' . _('calendrier_titre') . '</h1>';
-
-        $return .= '<div id="warning"><code>wrapper_getEvenement</code> must be running.</div>
-        <div id="loading">Loading...</div>
-        <div id="calendar"></div>';
-        $return .= '<script type="text/javascript">
-        new calendrierControleur("' . $session . '");
-        </script></div>'; // passer le groupe en parametre
-
-        return $return;
-    }
-
-    private function getFormulaireRecherche()
-    {
-
     }
 }

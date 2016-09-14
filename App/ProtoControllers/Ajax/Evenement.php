@@ -19,14 +19,26 @@ class Evenement extends \App\ProtoControllers\Ajax
      */
     public function getListe(array $filtres)
     {
-        $parametresRecherche = [];
-        $rechercheAuthorise = ['start', 'end', 'groupe'];
+        $rechercheCommune = [];
+        $rechercheAutorise = ['start', 'end', 'groupe'];
         foreach ($filtres as $k => $valeur) {
-            if (in_array($k, $rechercheAuthorise)) {
+            if (in_array($k, $rechercheAutorise, true)) {
                 // protéger les valeurs passées
-                $parametresRecherche[$k] = $valeur;
+                $rechercheCommune[$k] = $valeur;
             }
         }
+
+        if($_SESSION['config']['gestion_groupes']) {
+            $groupesDroits = [];
+            $rechercheGroupe = array_intersect($groupesDroits, [$rechercheCommune['groupe']]);
+            unset($rechercheCommune['groupe']);
+            //$rechercheUtilisateurs = getAllUsersInGroupes(['groupe'  => $rechercheGroupe]);
+            // get all utilisateurs dans ces groupes
+        } else {
+            //$rechercheUtilisateurs = getAllUsers();
+            // get all utilisateurs
+        }
+        $rechercheUtilisateurs = [];
         /*
         * Si gestion des groupe activée :
         *   - récuperer tous les groupes auxquels l'utilisateur a droit
@@ -47,17 +59,17 @@ class Evenement extends \App\ProtoControllers\Ajax
         */
 
         $repos = new \App\ProtoControllers\Ajax\Employe\Heure\Repos();
-        $lstRepos = $repos->getListe($parametresRecherche);
+        $lstRepos = $repos->getListe($rechercheCommune + $rechercheUtilisateurs);
         $ferie = new \App\ProtoControllers\Ajax\Ferie();
-        $lstFeries = $ferie->getListe($parametresRecherche);
+        $lstFeries = $ferie->getListe($rechercheCommune);
         $weekEnd = new \App\ProtoControllers\Ajax\WeekEnd();
-        $lstWeekEnd = $weekEnd->getListe($parametresRecherche);
+        $lstWeekEnd = $weekEnd->getListe($rechercheCommune);
         $fermeture = new \App\ProtoControllers\Ajax\Fermeture();
-        $lstFermetures = $fermeture->getListe($parametresRecherche);
+        $lstFermetures = $fermeture->getListe($rechercheCommune + $rechercheUtilisateurs);
         $additionnelle = new \App\ProtoControllers\Ajax\Employe\Heure\Additionnelle();
-        $lstAdditionnelles = $additionnelle->getListe($parametresRecherche);
+        $lstAdditionnelles = $additionnelle->getListe($rechercheCommune + $rechercheUtilisateurs);
         $conge = new \App\ProtoControllers\Ajax\Employe\Conge();
-        $lstConges = $conge->getListe($parametresRecherche);
+        $lstConges = $conge->getListe($rechercheCommune + $rechercheUtilisateurs);
         $evenements = array_merge(
             $lstRepos,
             $lstFeries,
