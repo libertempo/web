@@ -8,7 +8,7 @@ namespace App\ProtoControllers;
  * @author wouldsmina <wouldsmina@tuxfamily.org>
  * @author Prytoegrian <prytoegrian@protonmail.com>
  */
-class responsable
+class Responsable
 {
     /**
      * Retourne l'id des groupes d'un responsable
@@ -88,7 +88,7 @@ class responsable
      * @return bool
      */
     public static function isRespDeUtilisateur($resp, $user) {
-        return \App\ProtoControllers\responsable::isRespDirect($resp, $user) || \App\ProtoControllers\responsable::isRespGroupe($resp, \App\ProtoControllers\Utilisateur::getGroupesId($user));
+        return $this->isRespDirect($resp, $user) || $this->isRespGroupe($resp, \App\ProtoControllers\Utilisateur::getGroupesId($user));
     }
     
     /**

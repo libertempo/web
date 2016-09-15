@@ -28,9 +28,9 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
         $infoDemandes = $this->getInfoDemandes(array_keys($put['demande']));
 
         foreach ($put['demande'] as $id_heure => $statut) {
-            if (\App\ProtoControllers\responsable::isRespDeUtilisateur($resp, $infoDemandes[$id_heure]['login'])) {
+            if (\App\ProtoControllers\Responsable::isRespDeUtilisateur($resp, $infoDemandes[$id_heure]['login'])) {
                 $return = $this->putResponsable($infoDemandes[$id_heure], $statut, $put, $errorLst);
-            } elseif (\App\ProtoControllers\responsable::isGrandRespDeGroupe($resp, \App\ProtoControllers\Utilisateur::getGroupesId($infoDemandes[$id_heure]['login']))) {
+            } elseif (\App\ProtoControllers\Responsable::isGrandRespDeGroupe($resp, \App\ProtoControllers\Utilisateur::getGroupesId($infoDemandes[$id_heure]['login']))) {
                 $return = $this->putGrandResponsable($infoDemandes[$id_heure], $statut, $put, $errorLst);
             } else {
                 $errorLst[] = _('erreur_pas_responsable_de') . ' ' . $infoDemandes['id_heure']['login'];
@@ -54,7 +54,7 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
                 $return = $this->updateStatutRefus($id_heure, $put['comment_refus'][$id_heure]);
                 log_action(0, '', '', 'Refus de la demande d\'heure additionnelle ' . $id_heure . ' de ' . $infoDemande['login']);
             } elseif (\App\Models\AHeure::ACCEPTE === $statut) {
-                if (\App\ProtoControllers\responsable::isDoubleValGroupe($infoDemande['login'])) {
+                if (\App\ProtoControllers\Responsable::isDoubleValGroupe($infoDemande['login'])) {
                     $return = $this->updateStatutPremiereValidation($id_heure);
                     log_action(0, '', '', 'Demande d\'heure additionnelle ' . $id_heure . ' de ' . $infoDemande['login'] . ' transmise au grand responsable');
                 } else {
@@ -83,7 +83,7 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
                 $return = $this->updateStatutRefus($id_heure, $put['comment_refus'][$id_heure]);
                 log_action(0, '', '', 'Refus de la demande d\'heure additionnelle ' . $id_heure . ' de ' . $infoDemande['login']);
             } elseif (\App\Models\AHeure::ACCEPTE === $statut) {
-                if (\App\ProtoControllers\responsable::isDoubleValGroupe($infoDemande['login'])) {
+                if (\App\ProtoControllers\Responsable::isDoubleValGroupe($infoDemande['login'])) {
                     $return = $this->putValidationFinale($id_heure);
                     log_action(0, '', '', 'Validation de la demande d\'heure additionnelle ' . $id_heure . ' de ' . $infoDemande['login']);
                 } else {
@@ -247,7 +247,9 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
         ob_start();
         $table->render();
         $return .= ob_get_clean();
-        $return .= '<div class="form-group"><input type="submit" class="btn btn-success" value="' . _('form_submit') . '" /></div>';
+        if (!empty($demandesResp) && !empty($demandesGrandResp) ) {
+            $return .= '<div class="form-group"><input type="submit" class="btn btn-success" value="' . _('form_submit') . '" /></div>';
+        }
         $return .='</form>';
 
         return $return;
@@ -259,13 +261,13 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
       */
     protected function getIdDemandesResponsable($resp)
     {
-        $groupId = \App\ProtoControllers\responsable::getIdGroupeResp($resp);
+        $groupId = \App\ProtoControllers\Responsable::getIdGroupeResp($resp);
         if (empty($groupId)) {
             return [];
         }
 
         $usersResp = [];
-        $usersResp = \App\ProtoControllers\responsable::getUsersGroupe($groupId);
+        $usersResp = \App\ProtoControllers\Responsable::getUsersGroupe($groupId);
         if (empty($usersResp)) {
             return [];
         }
@@ -288,12 +290,12 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
       */
     protected function getIdDemandesGrandResponsable($gResp)
     {
-        $groupId = \App\ProtoControllers\responsable::getIdGroupeGrandResponsable($gResp);
+        $groupId = \App\ProtoControllers\Responsable::getIdGroupeGrandResponsable($gResp);
         if (empty($groupId)) {
             return [];
         }
         
-        $usersResp = \App\ProtoControllers\responsable::getUsersGroupe($groupId);
+        $usersResp = \App\ProtoControllers\Responsable::getUsersGroupe($groupId);
         if (empty($usersResp)) {
             return [];
         }
