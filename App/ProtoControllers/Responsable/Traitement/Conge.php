@@ -80,7 +80,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         ob_start();
         $table->render();
         $return .= ob_get_clean();
-        if (!empty($demandesResp) && !empty($demandesGrandResp) ) {
+        if (!empty($demandesResp) || !empty($demandesGrandResp) ) {
             $return .= '<div class="form-group"><input type="submit" class="btn btn-success" value="' . _('form_submit') . '" /></div>';
         }
         $return .='</form>';
@@ -163,13 +163,22 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         if ($this->isDemandeTraitable($infoDemande['p_etat'])) { // demande est traitable
             if (\App\Models\Conge::REFUSE === $statut) {
                 $return = $this->updateStatutRefus($id_conge, $put['comment_refus'][$id_conge]);
+                if($_SESSION['config']['mail_refus_conges_alerte_user']) {
+                    alerte_mail($_SESSION['userlogin'], $infoDemande['p_login'], $infoDemande['p_num'], "refus_conges");
+                }
                 log_action($infoDemande['p_num'], 'refus', '', $infoDemande['p_login'], 'traitement demande ' . $id_conge . ' (' . $infoDemande['p_login'] . ') (' . $infoDemande['p_nb_jours'] . ' jours) : refus');
             } elseif (\App\Models\Conge::ACCEPTE === $statut) {
                 if (\App\ProtoControllers\Responsable::isDoubleValGroupe($infoDemande['p_login'])) {
                     $return = $this->updateStatutPremiereValidation($id_conge);
+                    if($_SESSION['config']['mail_valid_conges_alerte_user']) {
+                        alerte_mail($_SESSION['userlogin'], $infoDemande['p_login'], $infoDemande['p_num'], "valid_conges");
+                    }
                     log_action($infoDemande['p_num'], 'valid', $infoDemande['p_login'], 'traitement demande conges ' . $id_conge . ' de ' . $infoDemande['p_login'] . ' première validation');
                 } else {
                     $return = $this->putValidationFinale($id_conge);
+                    if($_SESSION['config']['mail_valid_conges_alerte_user']) {
+                        alerte_mail($_SESSION['userlogin'], $infoDemande['p_login'], $infoDemande['p_num'], "accept_conges");
+                    }
                     log_action($infoDemande['p_num'], 'ok', $infoDemande['p_login'], 'traitement demande ' . $id_conge . ' (' . $infoDemande['p_login'] . ') (' . $infoDemande['p_nb_jours'] . ' jours) : OK');
                 }
             }
@@ -363,16 +372,17 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
     protected function getIdDemandesResponsable($resp)
     { 
         $groupId = \App\ProtoControllers\Responsable::getIdGroupeResp($resp);
-        if (empty($groupId)) {
-            return [];
-        }
+
 
         $usersResp = [];
         $usersResp = \App\ProtoControllers\Responsable::getUsersGroupe($groupId);
+
+        $usersRespDirect = \App\ProtoControllers\Responsable::getUsersRespDirect($resp);
+        $usersResp = array_merge($usersResp,$usersRespDirect);
         if (empty($usersResp)) {
             return [];
         }
-
+        
         $ids = [];
         $sql = \includes\SQL::singleton();
         $req = 'SELECT p_num AS id

@@ -247,7 +247,7 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
         ob_start();
         $table->render();
         $return .= ob_get_clean();
-        if (!empty($demandesResp) && !empty($demandesGrandResp) ) {
+        if (!empty($demandesResp) || !empty($demandesGrandResp) ) {
             $return .= '<div class="form-group"><input type="submit" class="btn btn-success" value="' . _('form_submit') . '" /></div>';
         }
         $return .='</form>';
@@ -262,16 +262,17 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
     protected function getIdDemandesResponsable($resp)
     {
         $groupId = \App\ProtoControllers\Responsable::getIdGroupeResp($resp);
-        if (empty($groupId)) {
-            return [];
-        }
 
         $usersResp = [];
         $usersResp = \App\ProtoControllers\Responsable::getUsersGroupe($groupId);
+
+        $usersRespDirect = \App\ProtoControllers\Responsable::getUsersRespDirect($resp);
+        $usersResp = array_merge($usersResp,$usersRespDirect);
+        
         if (empty($usersResp)) {
             return [];
         }
-
+        
         $ids = [];
         $sql = \includes\SQL::singleton();
         $req = 'SELECT id_heure AS id

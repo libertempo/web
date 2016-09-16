@@ -79,6 +79,29 @@ class Responsable
          return $users;
     }
 
+    
+    /**
+     * Retourne le login des utilisateurs d'un responsable direct
+     *
+     * @param string $resp
+     * 
+     * @return array $users
+     */
+    public static function getUsersRespDirect($resp)
+    {
+        
+        $users = [];
+        
+         $sql = \includes\SQL::singleton();
+         $req = 'SELECT u_login FROM `conges_users` WHERE u_resp_login ="'. $resp . '"';
+         $res = $sql->query($req);
+
+         while ($data = $res->fetch_array()) {
+             $users[] = $data['u_login'];
+         }
+         return $users;
+    }
+
     /**
      * Vérifie si un utilisateur est bien le responsable d'un employé
      * 
@@ -88,7 +111,7 @@ class Responsable
      * @return bool
      */
     public static function isRespDeUtilisateur($resp, $user) {
-        return $this->isRespDirect($resp, $user) || $this->isRespGroupe($resp, \App\ProtoControllers\Utilisateur::getGroupesId($user));
+        return \App\ProtoControllers\Responsable::isRespDirect($resp, $user) || \App\ProtoControllers\Responsable::isRespGroupe($resp, \App\ProtoControllers\Utilisateur::getGroupesId($user));
     }
     
     /**
