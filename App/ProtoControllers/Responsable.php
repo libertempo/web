@@ -190,6 +190,10 @@ class Responsable
     {
         $groupes = [];
         $groupes = \App\ProtoControllers\Utilisateur::getGroupesId($user);
+        if(empty($groupes)){
+            return false;
+        }
+        
         $sql = \includes\SQL::singleton();
         $req = 'SELECT EXISTS (
                     SELECT g_double_valid
