@@ -2191,7 +2191,7 @@ class Fonctions
 
     public static function commit_update_user($u_login_to_update, &$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, &$tab_new_reliquat, &$return)
     {
-        $dataUser = \App\ProtoControllers\Utilisateur::getDataByLogin($u_login_to_update);
+        $dataUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($u_login_to_update);
         $PHP_SELF = $_SERVER['PHP_SELF'];
         $session  = session_id();
         $erreurs = [];
