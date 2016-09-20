@@ -19,6 +19,9 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         $notice = '';
         $errorsLst  = [];
 
+        
+        $return .= '<h1>' . _('resp_traite_demandes_titre_tableau_1') . '</h1>';
+
         if (!empty($_POST)) {
             if (0 >= (int) $this->post($_POST, $notice, $errorsLst)) {
                 $errors = '';
@@ -29,14 +32,13 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
                         }
                         $errors .= '<li>' . $key . ' : ' . $value . '</li>';
                     }
-                    $return .= '<div class="alert alert-danger">' . _('erreur_recommencer') . '<ul>' . $errors . '</ul></div>';
+                    $return .= '<br><div class="alert alert-danger">' . _('erreur_recommencer') . '<ul>' . $errors . '</ul></div>';
                 } elseif(!empty($notice)) {
-                    $return .= '<div class="alert alert-info">' .  $notice . '.</div>';
+                    $return .= '<br><div class="alert alert-info">' .  $notice . '.</div>';
                 }
             }
         }
 
-        $return .= '<h1>' . _('resp_traite_demandes_titre_tableau_1') . '</h1>';
         $return .= '<form action="" method="post" class="form-group">';
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses([
