@@ -110,7 +110,7 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
         $sql = \includes\SQL::singleton();
 
         $req   = 'UPDATE heure_additionnelle
-                SET statut = ' . \App\Models\AHeure::STATUT_OK . '
+                SET statut = ' . \App\Models\AHeure::STATUT_VALIDATION_FINALE . '
                 WHERE id_heure = '. (int) $demandeId;
         $query = $sql->query($req);
 
@@ -151,7 +151,7 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
         $sql = \includes\SQL::singleton();
 
         $req   = 'UPDATE heure_additionnelle
-                SET statut = ' . \App\Models\AHeure::STATUT_VALIDE . '
+                SET statut = ' . \App\Models\AHeure::STATUT_PREMIERE_VALIDATION . '
                 WHERE id_heure = '. (int) $demandeId;
         $query = $sql->query($req);
 
@@ -307,7 +307,7 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
         $req = 'SELECT id_heure AS id
                 FROM heure_additionnelle
                 WHERE login IN (\'' . implode('\',\'', $usersResp) . '\')
-                AND statut = '.AHeure::STATUT_VALIDE;
+                AND statut = '.AHeure::STATUT_PREMIERE_VALIDATION;
         $res = $sql->query($req);
         while ($data = $res->fetch_array()) {
             $ids[] = (int) $data['id'];

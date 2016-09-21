@@ -390,8 +390,8 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
         $timestampFin   = strtotime($jour . ' ' . $heureFin);
         $statuts = [
             AHeure::STATUT_DEMANDE,
-            AHeure::STATUT_VALIDE,
-            AHeure::STATUT_OK,
+            AHeure::STATUT_PREMIERE_VALIDATION,
+            AHeure::STATUT_VALIDATION_FINALE,
         ];
 
         $sql = \includes\SQL::singleton();

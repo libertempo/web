@@ -4,7 +4,7 @@ namespace App\ProtoControllers\Responsable\Traitement;
 use App\Models\AHeure;
 
 /**
- * ProtoContrôleur de validation d'heures additionnelles
+ * ProtoContrôleur de validation d'heures de repos
  *
  * @since  1.9
  * @author Prytoegrian <prytoegrian@protonmail.com>
@@ -110,7 +110,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
         $sql = \includes\SQL::singleton();
 
         $req   = 'UPDATE heure_repos
-                SET statut = ' . AHeure::STATUT_OK . '
+                SET statut = ' . AHeure::STATUT_VALIDATION_FINALE . '
                 WHERE id_heure = '. (int) $demandeId;
         $query = $sql->query($req);
 
@@ -150,7 +150,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
         $sql = \includes\SQL::singleton();
 
         $req   = 'UPDATE heure_repos
-                SET statut = ' . AHeure::STATUT_VALIDE . '
+                SET statut = ' . AHeure::STATUT_PREMIERE_VALIDATION . '
                 WHERE id_heure = '. (int) $demandeId;
         $query = $sql->query($req);
 
@@ -306,7 +306,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
         $req = 'SELECT id_heure AS id
                 FROM heure_repos
                 WHERE login IN (\'' . implode(',', $usersResp) . '\')
-                AND statut = '.AHeure::STATUT_VALIDE;
+                AND statut = '.AHeure::STATUT_PREMIERE_VALIDATION;
         $res = $sql->query($req);
         while ($data = $res->fetch_array()) {
             $ids[] = (int) $data['id'];

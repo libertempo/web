@@ -198,7 +198,7 @@ abstract class ATraitement
      */
     public function isDemandeTraitable($statut)
     {
-        return ($statut != \App\Models\AHeure::STATUT_ANNUL || $statut != \App\Models\AHeure::STATUT_OK || $statut != \App\Models\AHeure::STATUT_REFUS);
+        return ($statut != \App\Models\AHeure::STATUT_ANNUL || $statut != \App\Models\AHeure::STATUT_VALIDATION_FINALE || $statut != \App\Models\AHeure::STATUT_REFUS);
     }
 
     /**

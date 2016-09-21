@@ -283,7 +283,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         $sql = \includes\SQL::singleton();
 
         $req   = 'UPDATE conges_periode
-                SET p_etat = \'' . \App\Models\Conge::STATUT_VALIDE . '\'
+                SET p_etat = \'' . \App\Models\Conge::STATUT_PREMIERE_VALIDATION . '\'
                 WHERE p_num = '. (int) $demandeId;
         $query = $sql->query($req);
 
@@ -323,7 +323,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         $sql = \includes\SQL::singleton();
 
         $req   = 'UPDATE conges_periode
-                SET p_etat = \'' . \App\Models\Conge::STATUT_OK . '\'
+                SET p_etat = \'' . \App\Models\Conge::STATUT_VALIDATION_FINALE . '\'
                 WHERE p_num = '. (int) $demandeId;
         $query = $sql->query($req);
 
@@ -424,7 +424,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         $req = 'SELECT p_num AS id
                 FROM conges_periode
                 WHERE p_login IN (\'' . implode(',', $usersResp) . '\')
-                AND p_etat = \''. \App\Models\Conge::STATUT_VALIDE .'\'';
+                AND p_etat = \''. \App\Models\Conge::STATUT_PREMIERE_VALIDATION .'\'';
         $res = $sql->query($req);
         while ($data = $res->fetch_array()) {
             $ids[] = (int) $data['id'];
@@ -486,7 +486,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
      */
     public function isDemandeTraitable($statut)
     {
-        return ($statut != \App\Models\conge::STATUT_ANNUL || $statut != \App\Models\Conge::STATUT_OK || $statut != \App\Models\Conge::STATUT_REFUS);
+        return ($statut != \App\Models\conge::STATUT_ANNUL || $statut != \App\Models\Conge::STATUT_VALIDATION_FINALE || $statut != \App\Models\Conge::STATUT_REFUS);
     }
     
     /**
