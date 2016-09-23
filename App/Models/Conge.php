@@ -89,7 +89,7 @@ class Conge
                 $text = 'statut_demande';
                 break;
             case static::STATUT_PREMIERE_VALIDATION:
-                $text = 'STATUT_PREMIERE_VALIDATION';
+                $text = 'statut_premiere_validation';
                 break;
             case static::STATUT_VALIDATION_FINALE:
                 $text = 'statut_validation_finale';
