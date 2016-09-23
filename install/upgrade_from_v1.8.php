@@ -102,6 +102,8 @@ $periodeAdditionnelle = "CREATE TABLE heure_additionnelle (
     fin INT(11) NOT NULL,
     duree INT NOT NULL,
     statut INT NOT NULL DEFAULT 0,
+    comment VARCHAR(50) NOT NULL DEFAULT '',
+    comment_refus VARCHAR(50) NOT NULL DEFAULT '',
     PRIMARY KEY (`id_heure`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
 $resPeriodeAdditionnelle = $sql->query($periodeAdditionnelle);
@@ -113,9 +115,16 @@ $periodeRepos = "CREATE TABLE heure_repos (
     fin INT(11) NOT NULL,
     duree INT NOT NULL,
     statut INT NOT NULL DEFAULT 0,
+    comment VARCHAR(50) NOT NULL DEFAULT '',
+    comment_refus VARCHAR(50) NOT NULL DEFAULT '',
     PRIMARY KEY (`id_heure`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
 $resPeriodeRepos = $sql->query($periodeRepos);
+
+// création du solde d'heure
+$soldeheure = "ALTER TABLE conges_users
+               ADD u_heure_solde INT(11) NOT NULL DEFAULT '0'";
+$ressoldeheure = $sql->query($soldeheure);
 
 // on renvoit à la page mise_a_jour.php (là d'ou on vient)
 echo "<a href=\"mise_a_jour.php?etape=2&version=$version&lang=$lang\">upgrade_from_v1.8  OK</a><br>\n";

@@ -20,13 +20,13 @@ class Conge
      * Constante de statut de première validation
      * @var string
      */
-    const STATUT_VALIDE = 'valid';
+    const STATUT_PREMIERE_VALIDATION = 'valid';
 
     /**
      * Constante de statut de seconde validation
      * @var string
      */
-    const STATUT_OK = 'ok';
+    const STATUT_VALIDATION_FINALE = 'ok';
 
     /**
      * Constante de refus par l'un des validateurs
@@ -47,6 +47,13 @@ class Conge
     const STATUT_AJOUT = 'ajout';
 
     /**
+     * Constantes du formulaire de traitement des demandes
+     * à terme, vu que c'est une logique métier qui dépend de plusieurs modèles, à mettre dans un service ou une spécification
+     */
+    const ACCEPTE       = '1';
+    const REFUSE        = '2';
+
+    /**
      * Retourne les options de select des statuts
      *
      * @return array
@@ -55,8 +62,8 @@ class Conge
     {
         $statuts = [
             static::STATUT_DEMANDE,
-            static::STATUT_VALIDE,
-            static::STATUT_OK,
+            static::STATUT_PREMIERE_VALIDATION,
+            static::STATUT_VALIDATION_FINALE,
             static::STATUT_REFUS,
             static::STATUT_ANNUL
         ];
@@ -81,11 +88,11 @@ class Conge
             case static::STATUT_DEMANDE:
                 $text = 'statut_demande';
                 break;
-            case static::STATUT_VALIDE:
-                $text = 'statut_valide';
+            case static::STATUT_PREMIERE_VALIDATION:
+                $text = 'statut_premiere_validation';
                 break;
-            case static::STATUT_OK:
-                $text = 'statut_ok';
+            case static::STATUT_VALIDATION_FINALE:
+                $text = 'statut_validation_finale';
                 break;
             case static::STATUT_REFUS:
                 $text = 'statut_refus';

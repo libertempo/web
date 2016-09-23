@@ -68,7 +68,7 @@ class Formatter
             throw new \Exception(_('Heure_mal_formee'));
         }
 
-        return mktime($matches[1], $matches[5], 0, 1, 1, 70);
+        return ($matches[1]*3600+$matches[5]*60);
     }
 
     /**
@@ -85,5 +85,24 @@ class Formatter
     {
         $pattern = '/^(((0?|1)[0-9])|(2[0-3])):[0-5][0-9]$/';
         return preg_match($pattern, $heure);
+    }
+
+    /**
+     * convertit un timestamp en une durée
+     *
+     * @param string $secondes
+     *
+     * @access public
+     * @static
+     * @return string
+     * @since  1.9
+     */
+    public static function Timestamp2Duree($secondes) 
+    {
+        if (!is_numeric($secondes) || 0 > $secondes) {
+            throw new \Exception(_('TimeStamp_mal_formee'));
+        }
+        $t = (int) $secondes;
+        return sprintf('%02d:%02d', ($t/3600),($t/60%60));
     }
 }

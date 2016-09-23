@@ -43,13 +43,13 @@ abstract class AHeure
      * Constante de statut de première validation
      * @var string
      */
-    const STATUT_VALIDE  = 2;
+    const STATUT_PREMIERE_VALIDATION  = 2;
 
     /**
      * Constante de statut de seconde validation
      * @var string
      */
-    const STATUT_OK      = 3;
+    const STATUT_VALIDATION_FINALE      = 3;
 
     /**
      * Constante de refus par l'un des validateurs
@@ -63,6 +63,12 @@ abstract class AHeure
      */
     const STATUT_ANNUL   = 5;
 
+    /**
+     * Constantes du formulaire de traitement des demandes
+     * à terme, vu que c'est une logique métier qui dépend de plusieurs modèles, à mettre dans un service ou une spécification
+     */
+    const ACCEPTE       = '1';
+    const REFUSE        = '2';
 
     /**
      * Retourne les options de select des statuts
@@ -73,8 +79,8 @@ abstract class AHeure
     {
         $statuts = [
             static::STATUT_DEMANDE,
-            static::STATUT_VALIDE,
-            static::STATUT_OK,
+            static::STATUT_PREMIERE_VALIDATION,
+            static::STATUT_VALIDATION_FINALE,
             static::STATUT_REFUS,
             static::STATUT_ANNUL
         ];
@@ -99,11 +105,11 @@ abstract class AHeure
             case static::STATUT_DEMANDE:
                 $text = 'statut_demande';
                 break;
-            case static::STATUT_VALIDE:
-                $text = 'statut_valide';
+            case static::STATUT_PREMIERE_VALIDATION:
+                $text = 'status_premiere_validation';
                 break;
-            case static::STATUT_OK:
-                $text = 'statut_ok';
+            case static::STATUT_VALIDATION_FINALE:
+                $text = 'statut_validation_finale';
                 break;
             case static::STATUT_REFUS:
                 $text = 'statut_refus';
