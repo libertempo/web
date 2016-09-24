@@ -65,6 +65,14 @@ class Calendrier
 
     private function getFormulaireRecherche(array $champsRecherche, &$idGroupe)
     {
+        // get groupe droit
+        /*
+        * Si gestion des groupes activée :
+        *   - Affichage des groupes auxquels le role a droit
+        *   - Passer un groupe en paramètre que si explicitement demandé (option du select vide)
+        * Sinon :
+        *   - Comme existant
+        */
         if($_SESSION['config']['gestion_groupes']) {
             $idGroupe = 40;
             // form avec gestion des groupes
@@ -94,15 +102,5 @@ class Calendrier
         &nbsp;<a href="' . ROOT_PATH . 'calendrier.php?session='. session_id() . '" type="reset" class="btn btn-default">Reset</a></div></div></form>';
 
         return $form;
-
-
-        // get groupe droit
-        /*
-        * Si gestion des groupes activée :
-        *   - Affichage des groupes auxquels le role a droit
-        *   - Passer un groupe en paramètre que si explicitement demandé (option du select vide)
-        * Sinon :
-        *   - Comme existant
-        */
     }
 }

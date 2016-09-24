@@ -68,7 +68,9 @@ class Conge
         $sql = \includes\SQL::singleton();
         $req = 'SELECT *
                 FROM conges_periode CP
-                    INNER JOIN conges_type_absence CTA ON (CP.p_type = CTA.ta_id) '
+                    INNER JOIN conges_type_absence CTA ON (CP.p_type = CTA.ta_id)
+                WHERE p_date_deb >= "' . $params['start'] . '"
+                    AND p_date_deb <= "' . $params['end'] . '"'
                 . ((!empty($where)) ? '
                 WHERE ' . implode(' AND ', $where) : '');
         $res = $sql->query($req);

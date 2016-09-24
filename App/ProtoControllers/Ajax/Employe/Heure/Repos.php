@@ -11,7 +11,11 @@ namespace App\ProtoControllers\Ajax\Employe\Heure;
 class Repos
 {
     /**
+     * Retourne la liste des heures de repos satisfaisant aux critères fournis
      *
+     * @param array $parametresRecherche Critères de filtres
+     *
+     * @return array utilisables par le calendrier
      */
     public function getListe(array $parametresRecherche)
     {
@@ -34,27 +38,27 @@ class Repos
      * SQL
      */
 
-    protected function getListeId(array $params)
+
+    /**
+     * Retourne la liste des id d'heures de repos satisfaisant aux critères
+     *
+     * @param array $params
+     *
+     * @return array
+     */
+    private function getListeId(array $params)
     {
-        $where = [];
-        if (!empty($params)) {
-            foreach ($params as $key => $value) {
-                switch ($key) {
-                    case 'start':
-                        $where[] = 'debut >= ' . strtotime($value);
-                        break;
-                    case 'end':
-                        $where[] = 'debut <= ' . strtotime($value);
-                        break;
-                }
-            }
-        }
-        $where[] = 'duree > 0';
+        $users = (!empty($params['users']))
+            ? ' AND login IN ("' . implode('","', $value) . '")'
+            : '';
         $ids = [];
         $sql = \includes\SQL::singleton();
         $req = 'SELECT id_heure AS id
-                FROM heure_repos '
-                . ((!empty($where)) ? ' WHERE ' . implode(' AND ', $where) : '');
+                FROM heure_repos
+                WHERE debut >= "' . strtotime($params['start']) . '"
+                    AND debut <= "' . strtotime($params['end']) . '"
+                    AND duree > 0 ' .
+                    $users;
         $res = $sql->query($req);
         while ($data = $res->fetch_array()) {
             $ids[] = (int) $data['id'];
@@ -64,19 +68,23 @@ class Repos
     }
 
     /**
+     * Retourne une liste d'heures de repos en fonction de ses id
      *
+     * @param array $listeId
      */
     private function getListeSQL(array $listeId)
     {
         if (empty($listeId)) {
             return [];
         }
+
+        $listeId = array_map('intval', $listeId);
         $sql = \includes\SQL::singleton();
         $req = 'SELECT *
                 FROM heure_repos
                 WHERE id_heure IN (' . implode(',', $listeId) . ')
                 ORDER BY debut DESC, statut ASC';
 
-        return $sql->query($req)->fetch_all(MYSQLI_ASSOC);
+        return $sql->query($req)->fetch_all(\MYSQLI_ASSOC);
     }
 }

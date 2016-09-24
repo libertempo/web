@@ -30,7 +30,38 @@ class Utilisateur
     }
 
     /**
-     * Retourne si un utilisateur a le rôle de de RH
+     * Retourne la liste des groupes visibles par un utilisateur
+     *
+     * @param string $utilisateur
+     *
+     * @return array
+     * @todo À déporter dans un objet droit associé au modèle utilisateur
+     */
+    public static function getListeGroupesVisibles($utilisateur)
+    {
+        if(!$_SESSION['config']['gestion_groupes']) {
+            return [];
+        }
+
+        $groupesVisibles = [];
+        if (\App\ProtoControllers\Utilisateur::isRH($utilisateur)
+            || \App\ProtoControllers\Utilisateur::isAdmin($utilisateur)
+        ) {
+            $groupesVisibles = \App\ProtoControllers\Groupe::getListeId();
+        } elseif (\App\ProtoControllers\Utilisateur::isResponsable()) {
+            $groupesResponsable = \App\ProtoControllers\Responsable::getIdGroupeResp($utilisateur);
+            $groupesGrandResponsable = \App\ProtoControllers\Responsable::getIdGroupeGrandResponsable($utilisateur);
+            $groupesEmploye = \App\ProtoControllers\Utilisateur::getGroupesId($utilisateur);
+            $groupesVisibles = $groupesResponsable + $groupesGrandResponsable + $groupesEmploye;
+        } else {
+            $groupesVisibles = \App\ProtoControllers\Utilisateur::getGroupesId($utilisateur);
+        }
+
+        return $groupesVisibles;
+    }
+
+    /**
+     * Retourne si un utilisateur a le rôle de RH
      *
      * @param string $utilisateur
      *
