@@ -14,6 +14,8 @@ if (isset($_GET['session'])) {
     $session = session_id();
 }
 
+/* TODO après les tests de dev : si session vide :: exit */
+
 session_name($session);
 session_id($session);
 session_start();
@@ -21,4 +23,4 @@ session_start();
 $_SESSION['config'] = init_config_tab();
 
 $evenement = new \App\ProtoControllers\Ajax\Evenement();
-echo $evenement->getListe($_GET);
+echo $evenement->getListe($_GET, $_SESSION['u_login']);

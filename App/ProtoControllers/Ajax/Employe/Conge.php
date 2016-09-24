@@ -47,7 +47,7 @@ class Conge
      * SQL
      */
 
-    protected function getListeSQL(array $params)
+    private function getListeSQL(array $params)
     {
         $where = [];
         if (!empty($params)) {
@@ -64,7 +64,7 @@ class Conge
         }
 
         /* TODO actuellement, il y a un bug, les rôles autre que utilisateur n'ont pas de valorisation de p_nb_jours en cas de fermeture */
-        $where[] = 'p_nb_jours > "0.0"';
+        $where[] = 'CP.p_nb_jours > "0.0"';
         $sql = \includes\SQL::singleton();
         $req = 'SELECT *
                 FROM conges_periode CP

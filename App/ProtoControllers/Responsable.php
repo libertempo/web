@@ -14,7 +14,7 @@ class Responsable
      * Retourne l'id des groupes d'un responsable
      *
      * @param string $resp
-     * 
+     *
      * @return array $ids
      */
     public static function getIdGroupeResp($resp)
@@ -36,7 +36,7 @@ class Responsable
      * Retourne l'id des groupes d'un grand responsable
      *
      * @param string $gresp
-     * 
+     *
      * @return array $ids
      */
     public static function getIdGroupeGrandResponsable($gresp)
@@ -53,45 +53,19 @@ class Responsable
          return $ids;
     }
 
-    /**
-     * Retourne le login des membres d'une liste de groupes
-     *
-     * @param array $groupesId
-     * 
-     * @return array $users
-     */
-    public static function getUsersGroupe(array $groupesId)
-    {
-        if (empty($groupesId)) {
-            return [];
-        }
-        
-        $users = [];
-        
-         $sql = \includes\SQL::singleton();
-         $req = 'SELECT gu_login FROM `conges_groupe_users` WHERE gu_gid IN (' . implode(',', $groupesId) . ')';
-         $res = $sql->query($req);
 
-         while ($data = $res->fetch_array()) {
-             $users[] = $data['gu_login'];
-         }
-
-         return $users;
-    }
-
-    
     /**
      * Retourne le login des utilisateurs d'un responsable direct
      *
      * @param string $resp
-     * 
+     *
      * @return array $users
      */
     public static function getUsersRespDirect($resp)
     {
-        
+
         $users = [];
-        
+
          $sql = \includes\SQL::singleton();
          $req = 'SELECT u_login FROM `conges_users` WHERE u_resp_login ="'. $resp . '"';
          $res = $sql->query($req);
@@ -104,22 +78,22 @@ class Responsable
 
     /**
      * Vérifie si un utilisateur est bien le responsable d'un employé
-     * 
+     *
      * @param string $resp
      * @param string $user
-     * 
+     *
      * @return bool
      */
     public static function isRespDeUtilisateur($resp, $user) {
         return \App\ProtoControllers\Responsable::isRespDirect($resp, $user) || \App\ProtoControllers\Responsable::isRespGroupe($resp, \App\ProtoControllers\Utilisateur::getGroupesId($user));
     }
-    
+
     /**
      * Vérifie si un utilisateur est bien le grand responsable d'un employé
-     * 
+     *
      * @param string $resp
      * @param array $groupesId
-     * 
+     *
      * @return bool
      */
     public static function isGrandRespDeGroupe($resp, array $groupesId) {
@@ -137,10 +111,10 @@ class Responsable
 
     /**
      * Verifie si un utilisateur est responsable d'une liste de groupe
-     * 
+     *
      * @param string $resp
      * @param array $groupesId
-     * 
+     *
      * @return bool
      */
     public static function isRespGroupe($resp, array $groupesId)
@@ -159,18 +133,18 @@ class Responsable
 
     /**
      *  Verifie si un utilisateur est responsable d'un employé
-     * 
+     *
      * @param string $resp
      * @param string $user
-     * 
+     *
      * @return bool
      */
     public static function isRespDirect($resp, $user)
     {
         $sql = \includes\SQL::singleton();
         $req = 'SELECT EXISTS (
-                    SELECT u_resp_login 
-                    FROM conges_users 
+                    SELECT u_resp_login
+                    FROM conges_users
                     WHERE u_login ="'.\includes\SQL::quote($user).'"
                         AND u_resp_login ="'.\includes\SQL::quote($resp).'"
            )';
@@ -181,9 +155,9 @@ class Responsable
 
     /**
      * Vérifie si le groupe d'un employé est en double validation
-     * 
+     *
      * @param string $user
-     * 
+     *
      * @return bool
      */
     public static function isDoubleValGroupe($user)
@@ -193,7 +167,7 @@ class Responsable
         if(empty($groupes)){
             return false;
         }
-        
+
         $sql = \includes\SQL::singleton();
         $req = 'SELECT EXISTS (
                     SELECT g_double_valid

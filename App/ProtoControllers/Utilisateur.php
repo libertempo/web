@@ -10,23 +10,88 @@ namespace App\ProtoControllers;
  */
 class Utilisateur
 {
-
     /*
      * SQL
      */
+
+    public static function getListId()
+    {
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT u_login
+                FROM conges_users';
+        $result = $sql->query($req);
+
+        $users = [];
+        while ($data = $result->fetch_array()) {
+            $users[] = $data['u_login'];
+        }
+
+        return $users;
+    }
+
+    /**
+     * Retourne si un utilisateur a le rôle de de RH
+     *
+     * @param string $utilisateur
+     *
+     * @return bool
+     * @todo On devrait pouvoir factoriser les isX via getRole() mais actuellement un utilisateur peut avoir plusieurs rôle en simultanée. Il faudra empêcher ça, et ainsi faire pointer les isX() sur getRole(). Et mettre des constantes
+     */
+    public static function isRH($utilisateur)
+    {
+        $donneesUtilisateur = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($utilisateur);
+
+        return (!empty($donneesUtilisateur))
+            ? $donneesUtilisateur['u_is_hr']
+            : false;
+    }
+
+    /**
+     * Retourne si un utilisateur a le rôle d'admin
+     *
+     * @param string $utilisateur
+     *
+     * @return bool
+     * @todo On devrait pouvoir factoriser les isX via getRole() mais actuellement un utilisateur peut avoir plusieurs rôle en simultanée. Il faudra empêcher ça, et ainsi faire pointer les isX() sur getRole(). Et mettre des constantes
+     */
+    public static function isAdmin($utilisateur)
+    {
+        $donneesUtilisateur = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($utilisateur);
+
+        return (!empty($donneesUtilisateur))
+            ? $donneesUtilisateur['u_is_admin']
+            : false;
+    }
+
+    /**
+     * Retourne si un utilisateur a le rôle de responsable
+     *
+     * @param string $utilisateur
+     *
+     * @return bool
+     * @todo On devrait pouvoir factoriser les isX via getRole() mais actuellement un utilisateur peut avoir plusieurs rôle en simultanée. Il faudra empêcher ça, et ainsi faire pointer les isX() sur getRole(). Et mettre des constantes
+     */
+    public static function isResponsable($utilisateur)
+    {
+        $donneesUtilisateur = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($utilisateur);
+
+        return (!empty($donneesUtilisateur))
+            ? $donneesUtilisateur['u_is_resp']
+            : false;
+    }
 
     /**
      * Retourne les informations d'un utilisateur
      *
      * @param string $login
-     * 
+     *
      * @return string $donnees
      */
     public static function getDonneesUtilisateur($login)
     {
         $sql = \includes\SQL::singleton();
         $req = 'SELECT *
-                FROM conges_users 
+                FROM conges_users
                 WHERE u_login = \''.  \includes\SQL::quote($login).'\'';
         $query = $sql->query($req);
         $donnees = $query->fetch_array();
@@ -49,14 +114,14 @@ class Utilisateur
                 FROM conges_users
                 WHERE planning_id = ' . $planningId;
 
-        return $sql->query($req)->fetch_all(MYSQLI_ASSOC);
+        return $sql->query($req)->fetch_all(\MYSQLI_ASSOC);
     }
 
     /**
-     * retourne les identifiants de groupe auquel un utilisateur appartient
-     * 
+     * Retourne les identifiants de groupe auquel un utilisateur appartient
+     *
      * @param string $user
-     * 
+     *
      * @return array $ids
      */
     public static function getGroupesId($user)
@@ -64,7 +129,7 @@ class Utilisateur
         $ids = [];
         $sql = \includes\SQL::singleton();
         $req = 'SELECT gu_gid AS id
-                    FROM conges_groupe_users 
+                    FROM conges_groupe_users
                     WHERE gu_login ="'.\includes\SQL::quote($user).'"';
         $res = $sql->query($req);
         while ($data = $res->fetch_array()) {
@@ -73,12 +138,12 @@ class Utilisateur
 
         return $ids;
     }
-    
+
     /**
      * Retourne le solde de conges (selon le type) d'un utilisateur
      *
      * @param string $login
-     * @param int $typeId 
+     * @param int $typeId
      *
      * @return int $solde
      */
@@ -92,7 +157,7 @@ class Utilisateur
 
         return $solde;
     }
-    
+
     /**
      * Vérifie si l'utilisateur a des congés en cours
      *

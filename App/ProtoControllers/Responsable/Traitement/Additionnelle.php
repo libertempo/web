@@ -40,7 +40,7 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
         $notice = _('traitement_effectue');
         return $return;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -100,10 +100,10 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
 
     /**
      * Mise a jour du statut de la demande d'heure
-     * 
+     *
      * @param int $demandeId
-     * 
-     * @return int 
+     *
+     * @return int
      */
     protected function updateStatutValidationFinale($demandeId)
     {
@@ -116,14 +116,14 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
 
         return $sql->affected_rows;
     }
-    
-    
+
+
     /**
      * Refus de la demande d'heure
-     * 
+     *
      * @param int $demandeId
      * @param int $comment
-     * 
+     *
      * @return int
      */
     protected function updateStatutRefus($demandeId, $comment)
@@ -138,12 +138,12 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
 
         return $sql->affected_rows;
     }
-    
+
     /**
      * Première validation de la demande d'heure
-     * 
+     *
      * @param int $demandeId
-     * 
+     *
      * @return int
      */
     protected function updateStatutPremiereValidation($demandeId)
@@ -160,9 +160,9 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
 
     /**
      * Ajout de la demande additionnelle au solde d'heure du demandeur
-     * 
+     *
      * @param int $demandeId
-     * 
+     *
      * @return int
      */
     protected function updateSolde($demandeId)
@@ -265,15 +265,15 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
         $groupId = \App\ProtoControllers\Responsable::getIdGroupeResp($resp);
 
         $usersResp = [];
-        $usersResp = \App\ProtoControllers\Responsable::getUsersGroupe($groupId);
+        $usersResp = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupId);
 
         $usersRespDirect = \App\ProtoControllers\Responsable::getUsersRespDirect($resp);
         $usersResp = array_merge($usersResp,$usersRespDirect);
-        
+
         if (empty($usersResp)) {
             return [];
         }
-        
+
         $ids = [];
         $sql = \includes\SQL::singleton();
         $req = 'SELECT id_heure AS id
@@ -296,12 +296,12 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
         if (empty($groupId)) {
             return [];
         }
-        
-        $usersResp = \App\ProtoControllers\Responsable::getUsersGroupe($groupId);
+
+        $usersResp = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupId);
         if (empty($usersResp)) {
             return [];
         }
-        
+
         $ids = [];
         $sql = \includes\SQL::singleton();
         $req = 'SELECT id_heure AS id
@@ -321,7 +321,7 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
     protected function getInfoDemandes(array $listId)
     {
         $infoDemande =[];
-        
+
         if (empty($listId)) {
             return [];
         }
@@ -330,7 +330,7 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
                 FROM heure_additionnelle
                 WHERE id_heure IN (' . implode(',', $listId) . ')
                 ORDER BY debut DESC, statut ASC';
-        
+
         $ListeDemande = $sql->query($req)->fetch_all(MYSQLI_ASSOC);
         foreach ($ListeDemande as $demande){
             $infoDemande[$demande['id_heure']] = $demande;

@@ -264,7 +264,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
 
 
         $usersResp = [];
-        $usersResp = \App\ProtoControllers\Responsable::getUsersGroupe($groupId);
+        $usersResp = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupId);
 
         $usersRespDirect = \App\ProtoControllers\Responsable::getUsersRespDirect($resp);
         $usersResp = array_merge($usersResp,$usersRespDirect);
@@ -296,7 +296,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
             return [];
         }
         
-        $usersResp = \App\ProtoControllers\Responsable::getUsersGroupe($groupId);
+        $usersResp = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupId);
         if (empty($usersResp)) {
             return [];
         }

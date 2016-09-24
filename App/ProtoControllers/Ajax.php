@@ -4,7 +4,7 @@ namespace App\ProtoControllers;
 /**
  *
  */
-class Ajax {
+abstract class Ajax {
 
     public function __construct()
     {
