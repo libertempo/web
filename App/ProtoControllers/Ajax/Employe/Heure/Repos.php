@@ -26,8 +26,9 @@ class Repos
             $repos[] = [
                 'start' => date('c', $heureRepos['debut']),
                 'end' => date('c', $heureRepos['fin']),
-                'className' => 'heureRepos',
-                'title' => '« ' . $heureRepos['login'] . ' » - Repos',
+                'className' => 'heureRepos statut' . $heureRepos['statut'],
+
+                'title' => 'Heure(s) de repos - ' . $heureRepos['u_prenom'] . ' ' . $heureRepos['u_nom'],
             ];
         }
 
@@ -48,17 +49,15 @@ class Repos
      */
     private function getListeId(array $params)
     {
-        $users = (!empty($params['users']))
-            ? ' AND login IN ("' . implode('","', $value) . '")'
-            : '';
         $ids = [];
         $sql = \includes\SQL::singleton();
         $req = 'SELECT id_heure AS id
                 FROM heure_repos
                 WHERE debut >= "' . strtotime($params['start']) . '"
                     AND debut <= "' . strtotime($params['end']) . '"
-                    AND duree > 0 ' .
-                    $users;
+                    AND duree > 0
+                    AND login IN ("' . implode('","', $params['users']) . '")
+                    AND statut = ' . \App\Models\AHeure::STATUT_VALIDATION_FINALE;
         $res = $sql->query($req);
         while ($data = $res->fetch_array()) {
             $ids[] = (int) $data['id'];
@@ -81,7 +80,8 @@ class Repos
         $listeId = array_map('intval', $listeId);
         $sql = \includes\SQL::singleton();
         $req = 'SELECT *
-                FROM heure_repos
+                FROM heure_repos HR
+                    INNER JOIN conges_users CU ON (HR.login = CU.u_login)
                 WHERE id_heure IN (' . implode(',', $listeId) . ')
                 ORDER BY debut DESC, statut ASC';
 

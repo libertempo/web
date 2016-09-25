@@ -45,7 +45,7 @@ class Calendrier
         <div id="loading">Loading...</div>
         <div id="calendar"></div>';
         $return .= '<script type="text/javascript">
-        new calendrierControleur("' . $session . '", ' . $idGroupe . ');
+        new calendrierControleur("' . $session . '", "' . $idGroupe . '");
         </script></div>';
 
         return $return;
@@ -74,12 +74,13 @@ class Calendrier
         *   - Comme existant
         */
         if($_SESSION['config']['gestion_groupes']) {
-            $idGroupe = 40;
+            //$idGroupe = 70;
             // form avec gestion des groupes
         } else {
             // form sans gestion des groupes
         }
-        $form = '<form method="post" action="" class="form-inline search" role="form"><div class="form-group">
+        $form = 'grouper à afficher';
+        $form .= '<form method="post" action="" class="form-inline search" role="form"><div class="form-group">
         <label class="control-label col-md-4" for="statut">Statut&nbsp;:</label>
         <div class="col-md-8"><select class="form-control" name="search[statut]" id="statut">';
         foreach (\App\Models\AHeure::getOptionsStatuts() as $key => $value) {

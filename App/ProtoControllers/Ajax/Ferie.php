@@ -24,7 +24,7 @@ class Ferie
         foreach ($liste as $jour) {
             $feries[] = [
                 'start' => $jour['jf_date'],
-                'className' => 'feries',
+                'className' => 'ferie',
                 'title' => 'Ferié',
             ];
         }

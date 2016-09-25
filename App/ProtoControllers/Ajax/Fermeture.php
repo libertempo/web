@@ -43,7 +43,11 @@ class Fermeture
      * @param array $parametresRecherche
      *
      * @return array
-     * TODO : faire un filtre sur les groupes en partant des utilisateurs
+     * TODO : faire un filtre sur les groupes en partant des utilisateurs. Sinon on passe les groupes en paramètre :
+     *  - si les groupes sont activés
+     *      - si un groupe est demandé : on affiche que celui là
+     *      - sinon on affiche tout ceux dans les droits
+     *  - sinon : on prend tout
      */
     private function getListeSQL(array $parametresRecherche)
     {

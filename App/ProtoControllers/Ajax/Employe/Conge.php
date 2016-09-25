@@ -35,8 +35,8 @@ class Conge
             $conges[] = [
                 'start' => date('c', strtotime($strDebut)),
                 'end' => date('c', strtotime($strFin)),
-                'className' => 'conge',
-                'title' => '« ' . $conge['p_login'] . ' » - Congé',
+                'className' => $conge['ta_type'] . ' ' . $conge['p_etat'],
+                'title' => $conge['ta_libelle'] . ' - ' . $conge['u_prenom'] . ' ' . $conge['u_nom'],
             ];
         }
 
@@ -47,32 +47,21 @@ class Conge
      * SQL
      */
 
+    /**
+     * @TODO actuellement, il y a un bug, les rôles autre que utilisateur n'ont pas de valorisation de p_nb_jours en cas de fermeture
+     */
     private function getListeSQL(array $params)
     {
-        $where = [];
-        if (!empty($params)) {
-            foreach ($params as $key => $value) {
-                switch ($key) {
-                    case 'start':
-                        $where[] = 'p_date_deb >= "' . $value . '"';
-                        break;
-                    case 'end':
-                        $where[] = 'p_date_deb <= "' . $value . '"';
-                        break;
-                }
-            }
-        }
-
-        /* TODO actuellement, il y a un bug, les rôles autre que utilisateur n'ont pas de valorisation de p_nb_jours en cas de fermeture */
-        $where[] = 'CP.p_nb_jours > "0.0"';
         $sql = \includes\SQL::singleton();
         $req = 'SELECT *
                 FROM conges_periode CP
                     INNER JOIN conges_type_absence CTA ON (CP.p_type = CTA.ta_id)
+                    INNER JOIN conges_users CU ON (CP.p_login = CU.u_login)
                 WHERE p_date_deb >= "' . $params['start'] . '"
-                    AND p_date_deb <= "' . $params['end'] . '"'
-                . ((!empty($where)) ? '
-                WHERE ' . implode(' AND ', $where) : '');
+                    AND p_date_deb <= "' . $params['end'] . '"
+                    AND p_nb_jours > "0.0"
+                    AND p_login IN ("' . implode('","', $params['users']) . '")
+                    AND p_etat = "' . \App\Models\Conge::STATUT_VALIDATION_FINALE . '"';
         $res = $sql->query($req);
         $conges = [];
         while ($data = $res->fetch_assoc()) {

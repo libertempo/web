@@ -27,7 +27,7 @@ class Additionnelle
                 'start' => date('c', $heureAdditionnelle['debut']),
                 'end' => date('c', $heureAdditionnelle['fin']),
                 'className' => 'heureAdditionnelle',
-                'title' => '« ' . $heureAdditionnelle['login'] . ' » - Additionnelle',
+                'title' => 'Heure(s) additionnelle(s) - ' . $heureAdditionnelle['u_prenom'] . ' ' . $heureAdditionnelle['u_nom'],
             ];
         }
 
@@ -49,17 +49,15 @@ class Additionnelle
      */
     private function getListeId(array $params)
     {
-        $users = (!empty($params['users']))
-            ? ' AND login IN ("' . implode('","', $value) . '")'
-            : '';
         $ids = [];
         $sql = \includes\SQL::singleton();
         $req = 'SELECT id_heure AS id
                 FROM heure_additionnelle
                 WHERE debut >= "' . strtotime($params['start']) . '"
                     AND debut <= "' . strtotime($params['end']) . '"
-                    AND duree > 0 ' .
-                    $users;
+                    AND duree > 0
+                    AND login IN ("' . implode('","', $params['users']) . '")
+                    AND statut = ' . \App\Models\AHeure::STATUT_VALIDATION_FINALE;
         $res = $sql->query($req);
         while ($data = $res->fetch_array()) {
             $ids[] = (int) $data['id'];
@@ -82,7 +80,8 @@ class Additionnelle
         $listeId = array_map('intval', $listeId);
         $sql = \includes\SQL::singleton();
         $req = 'SELECT *
-                FROM heure_additionnelle
+                FROM heure_additionnelle HA
+                    INNER JOIN conges_users CU ON (HA.login = CU.u_login)
                 WHERE id_heure IN (' . implode(',', $listeId) . ')
                 ORDER BY debut DESC, statut ASC';
 

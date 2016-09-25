@@ -976,3 +976,20 @@ form.search {
     top: 10px;
     right: 10px
 }
+
+#calendar .week-end, #calendar .ferie {
+    background: #C7C7C7;
+    border: 1px solid #C7C7C7;
+    color: black;
+}
+
+#calendar .fermeture {
+    background: #CEB6FF;
+    border: #CEB6FF;
+    color: black;
+}
+
+#calendar .ok {
+    background: #1ABC9C;
+    border: #1ABC9C;
+}
