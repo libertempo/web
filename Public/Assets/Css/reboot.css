@@ -985,11 +985,28 @@ form.search {
 
 #calendar .fermeture {
     background: #CEB6FF;
-    border: #CEB6FF;
+    border: 1px solid #CEB6FF;
     color: black;
 }
 
-#calendar .ok {
+#calendar .ok.conges {
     background: #1ABC9C;
-    border: #1ABC9C;
+    border: 1px solid #1ABC9C;
+}
+
+#calendar .ok.conges_exceptionnels {
+    background: #9ce6f8;
+    border: 1px solid #9ce6f8;
+    color:black;
+}
+
+#calendar .ok.absences {
+    background: #FFC1FF;
+    border: 1px solid #FFC1FF;
+    color: black;
+}
+
+#calendar .statut_3.heure {
+    background: #FF530D;
+    border: 1px solid #FF530D;
 }

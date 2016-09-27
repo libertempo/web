@@ -4,3 +4,4 @@ cfg/env.php
 cfg/dbconnect.php
 cfg/config_ldap.php
 Public/Assets/fullcalendar/demos/
+.idea/

@@ -26,7 +26,7 @@ class Repos
             $repos[] = [
                 'start' => date('c', $heureRepos['debut']),
                 'end' => date('c', $heureRepos['fin']),
-                'className' => 'heureRepos statut' . $heureRepos['statut'],
+                'className' => 'heure statut_' .  $heureRepos['statut'],
 
                 'title' => 'Heure(s) de repos - ' . $heureRepos['u_prenom'] . ' ' . $heureRepos['u_nom'],
             ];

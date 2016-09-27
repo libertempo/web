@@ -29,6 +29,7 @@ class Evenement extends \App\ProtoControllers\Ajax
             }
         }
 
+        /* Logique métier « application wide » */
         $rechercheUtilisateurs = [];
         if($_SESSION['config']['gestion_groupes']) {
             $groupesDroits = \App\ProtoControllers\Utilisateur::getListeGroupesVisibles($utilisateur);

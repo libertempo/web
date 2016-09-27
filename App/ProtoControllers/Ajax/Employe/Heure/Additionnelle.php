@@ -26,7 +26,7 @@ class Additionnelle
             $additionnelle[] = [
                 'start' => date('c', $heureAdditionnelle['debut']),
                 'end' => date('c', $heureAdditionnelle['fin']),
-                'className' => 'heureAdditionnelle',
+                'className' => 'heure statut_' .  $heureAdditionnelle['statut'],
                 'title' => 'Heure(s) additionnelle(s) - ' . $heureAdditionnelle['u_prenom'] . ' ' . $heureAdditionnelle['u_nom'],
             ];
         }
