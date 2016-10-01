@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "55c9762e8a0f61798d222e3d9adfc4b5",
-    "content-hash": "e9c210835f3036c52d8b86200ab53d6d",
+    "hash": "3bd168248f5a689daa008519597f52f4",
+    "content-hash": "0859f683fd5a652060cb4b27ccf06029",
     "packages": [
         {
             "name": "jasig/phpcas",
@@ -210,6 +210,60 @@
             "time": "2015-12-11 10:13:58"
         },
         {
+            "name": "symfony/options-resolver",
+            "version": "v2.8.11",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/options-resolver.git",
+                "reference": "b6f982782a0624d37b5416c2c96fb99ce5ab74d5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/options-resolver/zipball/b6f982782a0624d37b5416c2c96fb99ce5ab74d5",
+                "reference": "b6f982782a0624d37b5416c2c96fb99ce5ab74d5",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.9"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.8-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\OptionsResolver\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony OptionsResolver Component",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "config",
+                "configuration",
+                "options"
+            ],
+            "time": "2016-06-29 05:29:29"
+        },
+        {
             "name": "tecnickcom/tcpdf",
             "version": "6.2.6",
             "source": {
@@ -271,6 +325,64 @@
                 "qrcode"
             ],
             "time": "2015-01-28 18:51:40"
+        },
+        {
+            "name": "yohang/calendr",
+            "version": "1.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/yohang/CalendR.git",
+                "reference": "33fd08498954dd98fa7cf9a7fe8df05199bde889"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/yohang/CalendR/zipball/33fd08498954dd98fa7cf9a7fe8df05199bde889",
+                "reference": "33fd08498954dd98fa7cf9a7fe8df05199bde889",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0",
+                "symfony/options-resolver": "^2.3"
+            },
+            "require-dev": {
+                "doctrine/cache": "^1.1",
+                "doctrine/common": "^2.4",
+                "doctrine/orm": "^2.4",
+                "google/google-api-php-client": "^0.6.2",
+                "phpunit/phpunit": "^4.0",
+                "silex/silex": "^1.1",
+                "twig/twig": "^1.13"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "CalendR": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Yohan GIARELLI",
+                    "email": "yohan@giarel.li",
+                    "homepage": "http://yohan.giarel.li"
+                }
+            ],
+            "description": "Object Oriented calendar management",
+            "homepage": "https://github.com/yohang/CalendR",
+            "keywords": [
+                "calendar",
+                "date",
+                "events"
+            ],
+            "time": "2015-12-28 11:14:45"
         }
     ],
     "packages-dev": [],

@@ -1,0 +1,54 @@
+{
+    "name": "yohang/calendr",
+    "description": "Object Oriented calendar management",
+    "keywords": ["date", "calendar", "events"],
+    "homepage": "https://github.com/yohang/CalendR",
+    "type": "library",
+    "license": "MIT",
+    "authors": [{
+        "name": "Yohan GIARELLI",
+        "email": "yohan@giarel.li",
+        "homepage": "http://yohan.giarel.li"
+    }],
+    "require": {
+        "php": ">=5.3.0",
+        "symfony/options-resolver": "^2.3"
+    },
+
+    "require-dev": {
+        "doctrine/cache":               "^1.1",
+        "doctrine/common":              "^2.4",
+        "doctrine/orm":                 "^2.4",
+        "google/google-api-php-client": "^0.6.2",
+        "phpunit/phpunit":              "^4.0",
+        "silex/silex":                  "^1.1",
+        "twig/twig":                    "^1.13"
+    },
+
+    "autoload": {
+        "psr-0": { "CalendR": "src/" }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.1.x-dev"
+        }
+    },
+
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "google/google-api-php-client",
+                "version": "0.6.2",
+                "dist": {
+                    "url": "http://google-api-php-client.googlecode.com/files/google-api-php-client-0.6.2.tar.gz",
+                    "type": "tar"
+                },
+                "autoload": {
+                    "classmap": ["src/"]
+                }
+            }
+        }
+    ]
+
+}
