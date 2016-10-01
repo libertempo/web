@@ -447,18 +447,13 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
      */
     protected function update(array $data, $user, $id)
     {
-        $jour = \App\Helpers\Formatter::dateFr2Iso($data['jour']);
-        $timestampDebut = strtotime($jour . ' ' . $data['debut_heure']);
-        $timestampFin   = strtotime($jour . ' ' . $data['fin_heure']);
-        $duree = $this->countDuree($timestampDebut, $timestampFin);
-        $comment = \includes\SQL::quote($data['comment']);
         $sql   = \includes\SQL::singleton();
         $toInsert = [];
         $req   = 'UPDATE heure_additionnelle
-                SET debut = ' . $timestampDebut . ',
-                    fin = ' . $timestampFin . ',
-                    duree = ' . $duree . ',
-                    comment = \'' . $comment . '\'
+                SET debut = ' . $data['debut'] . ',
+                    fin = ' . $data['fin'] . ',
+                    duree = ' . $data['duree'] . ',
+                    comment = \'' . $data['comment'] . '\'
                 WHERE id_heure = '. (int) $id . '
                 AND login = "' . $user . '"';
         $query = $sql->query($req);

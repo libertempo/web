@@ -152,6 +152,7 @@ abstract class AHeure
         $jour  = \App\Helpers\Formatter::dateFr2Iso($post['jour']);
         $debut = strtotime($jour . ' ' . $post['debut_heure']);
         $fin   = strtotime($jour . ' ' . $post['fin_heure']);
+        $comment = \includes\SQL::quote($post['comment']);
         $planningUser = \utilisateur\Fonctions::getUserPlanning($user);
         $duree = (is_null($planningUser)) ? 0 : $this->countDuree($debut,   $fin, $planningUser);
 
@@ -159,6 +160,7 @@ abstract class AHeure
             'debut' => (int) $debut,
             'fin'   => (int) $fin,
             'duree' => (int) $duree,
+            'comment' => $comment,
         ];
     }
 
