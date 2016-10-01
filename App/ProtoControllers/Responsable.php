@@ -128,6 +128,39 @@ class Responsable
         
         return 0 < (int) $query->fetch_array()[0];
     }
+    
+    public static function getResponsablesUtilisateur($user) {
+        
+        $responsables = \App\ProtoControllers\Responsable::getResponsableGroupe(\App\ProtoControllers\Utilisateur::getGroupesId($user));
+        array_push($responsables,\App\ProtoControllers\Responsable::getResponsableDirect($user));
+
+        return $responsables;
+    }
+
+    public static function getResponsableDirect($user) {
+        
+        $resp = [];
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT u_resp_login FROM conges_users WHERE u_login ="' . $user . '"';
+        $res = $sql->query($req);
+        return $res->fetch_array()['u_resp_login'];
+        
+    }
+    
+    private function getResponsableGroupe(array $groupesId) {
+        
+        $responsable = [];
+        
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT gr_login FROM conges_groupe_resp WHERE gr_gid IN (\'' . implode(',', $groupesId) . '\')';
+        $res = $sql->query($req);
+
+         while ($data = $res->fetch_array()) {
+             $responsable[] = $data['gr_login'];
+         }
+         
+         return $responsable;
+    }
 
     /**
      * Vérifie si un utilisateur est bien le responsable d'un employé

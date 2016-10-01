@@ -67,6 +67,14 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
             $return = NIL_INT;
         }
         $errors = array_merge($errors, $localError);
+        if( 0 < $return) {
+            $notif = new \App\Libraries\Notification\Additionnelle($id);
+            $send = $notif->send();
+
+            if (false === $send) {
+                $localError[] = _('erreur_envoi_mail') . ': ' . $infoDemande['login'];
+            }
+        }
         return $return;
     }
 
@@ -95,6 +103,14 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
             $return = NIL_INT;
         }
         $errors = array_merge($errors, $localError);
+        if( 0 < $return) {
+            $notif = new \App\Libraries\Notification\Additionnelle($id);
+            $send = $notif->send();
+
+            if (false === $send) {
+                $localError[] = _('erreur_envoi_mail') . ': ' . $infoDemande['login'];
+            }
+        }
         return $return;
     }
 

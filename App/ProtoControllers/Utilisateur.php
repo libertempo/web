@@ -207,6 +207,19 @@ class Utilisateur
     }
 
     /**
+     * Récupère l'adresse email de l'utilisateur
+     * 
+     * @todo En attendant l'objet ldap utilisation de find_email_adress_for_user
+     * 
+     * @param string $login
+     * @return string $mail
+     */    
+    public static function getEmailUtilisateur($login)  {
+        require_once ROOT_PATH.'fonctions_conges.php';
+        return find_email_adress_for_user($login);
+    }
+    
+    /**
      * Vérifie si l'utilisateur a des congés en cours
      *
      * @param string $login

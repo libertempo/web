@@ -66,6 +66,15 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
             $localError[] = _('demande_deja_traite') . ': ' . $infoDemande['login'];
             $return = NIL_INT;
         }
+        
+        if( 0 < $return) {
+            $notif = new \App\Libraries\Notification\Repos($id);
+            $send = $notif->send();
+
+            if (false === $send) {
+                $localError[] = _('erreur_envoi_mail') . ': ' . $infoDemande['login'];
+            }
+        }
         $errors = array_merge($errors, $localError);
         return $return;
     }
@@ -93,6 +102,15 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
         } else {
             $localError[] = _('demande_deja_traite') . ': ' . $infoDemande['login'];
             $return = NIL_INT;
+        }
+        
+        if( 0 < $return) {
+            $notif = new \App\Libraries\Notification\Repos($id);
+            $send = $notif->send();
+
+            if (false === $send) {
+                $localError[] = _('erreur_envoi_mail') . ': ' . $infoDemande['login'];
+            }
         }
         $errors = array_merge($errors, $localError);
 
