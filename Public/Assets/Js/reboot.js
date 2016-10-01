@@ -537,6 +537,5 @@ var calendrierControleur = function (session, idGroupe)
                 $('#loading').toggle(bool);
             }
         });
-
     });
 }
