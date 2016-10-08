@@ -954,6 +954,8 @@ form.search {
     border-radius : 3px;
 }
 
+/* FULLCALENDAR */
+
 #calendar-wrapper {
     padding : 15px;
 }
@@ -968,6 +970,10 @@ form.search {
     font-weight: bold;
     font-size: 12px;
     color: red;
+}
+
+#calendar-wrapper h2 {
+    text-align: center;
 }
 
 #calendar-wrapper > #loading {
@@ -1009,4 +1015,81 @@ form.search {
 #calendar .statut_3.heure {
     background: #FF530D;
     border: 1px solid #FF530D;
+}
+
+/* CALENDRIER */
+table#calendrier {
+    height: 90%;
+    margin: 15px auto;
+    border-collapse: collapse;;
+}
+
+table#calendrier th {
+    height: 1%;
+    color: #717171;
+    text-align: center;
+}
+
+table#calendrier td {
+    /* TODO: flexbox */
+    height: 160px;
+    border: 1px solid #ddd;
+    vertical-align: top;
+}
+
+table#calendrier .semaineId {
+    width: 30px;
+    margin: auto;
+    text-align: center;
+    vertical-align: middle;
+    color: #AAA;
+    border: 0;
+}
+
+table#calendrier td .jourId {
+    margin: 5px 5px 0 0;
+    text-align: right;
+    color: #AAA;
+}
+
+table#calendrier td .event {
+    height: 1.2em;
+    padding: 0 5px;
+    line-height: 1.2em;
+    border-radius: 2px;
+    text-overflow: ellipsis;
+    width: 185px;
+    white-space:nowrap;
+    overflow: hidden;
+    cursor: help;
+}
+
+table#calendrier td .event.conges {
+    background: #1ABC9C;
+    border: 1px solid #1ABC9C;
+}
+
+table#calendrier td .event.absences {
+    background: #FFC1FF;
+    border: 1px solid #FFC1FF;
+}
+
+table#calendrier td .event.conges_exceptionnels {
+    background: #9ce6f8;
+    border: 1px solid #9ce6f8;
+    /*color:black;*/
+}
+
+table#calendrier td .event.heure {
+    background: #FF530D;
+    border: 1px solid #FF530D;
+}
+
+table#calendrier td.horsMois {
+    background: #A9A9A9;
+    opacity: 0.7;
+}
+
+table#calendrier td.horsMois .jourId {
+    color : #555;
 }

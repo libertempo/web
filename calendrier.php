@@ -10,6 +10,6 @@ $add_css = NULL;
 header_menu('', 'Libertempo : '._('calendrier_titre'), $add_css);
 
 $conge = new \App\ProtoControllers\Calendrier();
-echo $conge->get();
+echo $conge->get2();
 
 bottom();

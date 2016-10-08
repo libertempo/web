@@ -30,6 +30,7 @@ class Evenement extends \App\ProtoControllers\Ajax
         }
 
         /* Logique métier « application wide » */
+        /******** REMPLACÉ PAR LA BusinessCollection ******* */
         $rechercheUtilisateurs = [];
         if($_SESSION['config']['gestion_groupes']) {
             $groupesDroits = \App\ProtoControllers\Utilisateur::getListeGroupesVisibles($utilisateur);
@@ -44,6 +45,7 @@ class Evenement extends \App\ProtoControllers\Ajax
         } else {
             $rechercheUtilisateurs = \App\ProtoControllers\Utilisateur::getListId();
         }
+        /********** FIN REMPLACÉ PAR LA BusinessCollection */
 
         $ferie = new \App\ProtoControllers\Ajax\Ferie();
         $lstFeries = $ferie->getListe($rechercheCommune);
