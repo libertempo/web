@@ -160,7 +160,6 @@ class Calendrier
         $calendar->getEventManager()->addProvider('provider', $fournisseur);
         $month = $calendar->getMonth($dateDebut);
         $eventCollection = $calendar->getEvents($month);
-        //d($eventCollection);
 
         $return = '<h2>' . strftime('%B %G', $month->getBegin()->getTimestamp()) . '</h2>';
         $return .= '<div id="calendrier">';
@@ -182,24 +181,17 @@ class Calendrier
                 $today = ($day->isCurrent()) ? 'today' : '';
                 $return .= '<div class="cellule ' . $class . '">';
                 $return .= '<div class="jourId ' . $today . '">' . $day->getBegin()->format('j') . '</div>';
-                $hasTitle = false;
-                //d($day->getBegin()->format('d/m/Y'), $eventCollection->find($day));
                 foreach ($eventCollection->find($day->getBegin()) as $event) {
-                    // si on veut espérer aligner les évenements multi jour, on peut utiliser le uid
-                    // on peut aussi faire en sorte de représenter l'événement differemment s'il est multijour, genre avec une pointe
                     $title = $event->getTitle();
                     $avecTitle = (!empty($title)) ? 'evenement-avec-title': '';
                     $return .= '<div class="' . $avecTitle . ' ' . $event->getClass() . '"
                     title="' . $title . '"><div class="contenu">' . $event->getName() . '</div>';
-                    //d($event->getBegin(), $day->getBegin(), $event->getEnd());
-                    $return .= ($day->getBegin() < $event->getEnd()) ? '<div class="multijour"></div>' : '';
+                    /* Un événement qui se termine est forcément avant la fin de la journée */
+                    $return .= ($day->getEnd() < $event->getEnd()) ? '<div class="multijour"></div>' : '';
                     $return .= '</div>';
                 }
                 /* Event test */
-                //$return .= '<div class="event conges" title="[Congé] Congés payés de Saul Goodman du 12-07-2016 au 18-07-2016">Saul Goodman</div>';
-                //$return .= '<div class="event absences" title="[Absence] Formation de Capitaine Archibald Haddock du 12-07-2016 au 18-07-2016">Capitaine Archibald Haddock</div>';
                 //$return .= '<div class="event heure" title="[Heure] Heure de repos de Tarte Tatin du 12-07-2016 à 9h30 au 12-07-2016 à 11h">Tarte Tatin</div>';
-                //$return .= '<div class="event conges_exceptionnels" title="[Congés exceptionnels] Maladie de Tartampion Champignac du 12-07-2016 au 18-07-2016">Tartampion Champignac</div>';
                 $return .= '</div>';
             }
             $return .= '</div>';

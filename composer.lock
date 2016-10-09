@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "3bd168248f5a689daa008519597f52f4",
-    "content-hash": "0859f683fd5a652060cb4b27ccf06029",
+    "hash": "dd7fcf6837af0d3ae6ada06426b70110",
+    "content-hash": "bbb9dfa75c7b58bd4fa1180a9ced73b0",
     "packages": [
         {
             "name": "jasig/phpcas",
@@ -211,25 +211,25 @@
         },
         {
             "name": "symfony/options-resolver",
-            "version": "v2.8.11",
+            "version": "v3.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/options-resolver.git",
-                "reference": "b6f982782a0624d37b5416c2c96fb99ce5ab74d5"
+                "reference": "30605874d99af0cde6c41fd39e18546330c38100"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/options-resolver/zipball/b6f982782a0624d37b5416c2c96fb99ce5ab74d5",
-                "reference": "b6f982782a0624d37b5416c2c96fb99ce5ab74d5",
+                "url": "https://api.github.com/repos/symfony/options-resolver/zipball/30605874d99af0cde6c41fd39e18546330c38100",
+                "reference": "30605874d99af0cde6c41fd39e18546330c38100",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.9"
+                "php": ">=5.5.9"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.8-dev"
+                    "dev-master": "3.1-dev"
                 }
             },
             "autoload": {
@@ -261,7 +261,7 @@
                 "configuration",
                 "options"
             ],
-            "time": "2016-06-29 05:29:29"
+            "time": "2016-05-12 15:59:27"
         },
         {
             "name": "tecnickcom/tcpdf",
@@ -328,35 +328,34 @@
         },
         {
             "name": "yohang/calendr",
-            "version": "1.1.1",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yohang/CalendR.git",
-                "reference": "33fd08498954dd98fa7cf9a7fe8df05199bde889"
+                "reference": "019c651adbb952fed4d76f944cee5b46bf687be5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yohang/CalendR/zipball/33fd08498954dd98fa7cf9a7fe8df05199bde889",
-                "reference": "33fd08498954dd98fa7cf9a7fe8df05199bde889",
+                "url": "https://api.github.com/repos/yohang/CalendR/zipball/019c651adbb952fed4d76f944cee5b46bf687be5",
+                "reference": "019c651adbb952fed4d76f944cee5b46bf687be5",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0",
-                "symfony/options-resolver": "^2.3"
+                "php": "^5.5|^7.0",
+                "symfony/options-resolver": "^2.7|^3.0"
             },
             "require-dev": {
-                "doctrine/cache": "^1.1",
-                "doctrine/common": "^2.4",
-                "doctrine/orm": "^2.4",
-                "google/google-api-php-client": "^0.6.2",
+                "doctrine/cache": "^1.5",
+                "doctrine/common": "^2.5",
+                "doctrine/orm": "^2.5",
                 "phpunit/phpunit": "^4.0",
-                "silex/silex": "^1.1",
-                "twig/twig": "^1.13"
+                "silex/silex": "^1.3",
+                "twig/twig": "^1.23"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.1.x-dev"
+                    "dev-master": "2.0.x-dev"
                 }
             },
             "autoload": {
@@ -382,7 +381,7 @@
                 "date",
                 "events"
             ],
-            "time": "2015-12-28 11:14:45"
+            "time": "2016-04-17 15:22:39"
         }
     ],
     "packages-dev": [],

@@ -32,18 +32,12 @@ class Evenement extends \App\ProtoControllers\Ajax
         if (!empty($rechercheUtilisateurs)) {
             $repos = new \App\ProtoControllers\Ajax\Employe\Heure\Repos();
             $lstRepos = $repos->getListe($rechercheCommune + ['users' => $rechercheUtilisateurs]);
-            $fermeture = new \App\ProtoControllers\Ajax\Fermeture();
-            $lstFermetures = $fermeture->getListe($rechercheCommune + ['users' => $rechercheUtilisateurs]);
             $additionnelle = new \App\ProtoControllers\Ajax\Employe\Heure\Additionnelle();
             $lstAdditionnelles = $additionnelle->getListe($rechercheCommune + ['users' => $rechercheUtilisateurs]);
-            $conge = new \App\ProtoControllers\Ajax\Employe\Conge();
-            $lstConges = $conge->getListe($rechercheCommune + ['users' => $rechercheUtilisateurs]);
             $evenements = array_merge(
                 $evenements,
                 $lstRepos,
-                $lstFermetures,
                 $lstAdditionnelles,
-                $lstConges
             );
         }
 

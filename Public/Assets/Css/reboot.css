@@ -1147,6 +1147,16 @@ div#calendrier div.event.heure .multijour {
     border-left: 0.675em solid #FF530D;
 }
 
+div#calendrier div.cellule .event.fermeture {
+    background: #CEB6FF;
+    border: 1px solid #CEB6FF;
+    color: black;
+}
+
+div#calendrier div.event.fermeture .multijour {
+    border-left: 0.675em solid #CEB6FF;
+}
+
 div#calendrier div.cellule.horsMois {
     background: #A9A9A9;
     opacity: 0.7;

@@ -78,15 +78,18 @@ class BusinessCollection
                     ? array_intersect($groupesVisiblesUtilisateur, [$this->groupeAConsulter])
                     : $groupesVisiblesUtilisateur;
                 $utilisateursATrouver = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupesATrouver);
+                $fermeture = new Collection\Fermeture($this->dateDebut, $this->dateFin, $groupesATrouver);
             } else {
                 $utilisateursATrouver = \App\ProtoControllers\Utilisateur::getListId();
+                $fermeture = new Collection\Fermeture($this->dateDebut, $this->dateFin, []);
             }
 
             $ferie = new Collection\Ferie($this->dateDebut, $this->dateFin);
             $weekend = new Collection\Weekend($this->dateDebut, $this->dateFin);
             $this->evenements = array_merge(
                 $ferie->getListe(),
-                $weekend->getListe()
+                $weekend->getListe(),
+                $fermeture->getListe()
             );
 
             if (!empty($utilisateursATrouver)) {
@@ -97,6 +100,7 @@ class BusinessCollection
                 );
             }
         }
+
         return $this->evenements;
     }
 }
