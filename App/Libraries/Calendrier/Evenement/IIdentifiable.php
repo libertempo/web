@@ -1,4 +1,5 @@
 <?php
+namespace App\Libraries\Calendrier\Evenement;
 
 /**
  * Interface des événements identifiables : nom, etc.

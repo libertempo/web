@@ -1018,26 +1018,36 @@ form.search {
 }
 
 /* CALENDRIER */
-table#calendrier {
+div#calendrier {
     height: 90%;
     margin: 15px auto;
-    border-collapse: collapse;;
+}
+div#calendrier div.ligne {
+    width: 100%;
+    display: flex;
 }
 
-table#calendrier th {
-    height: 1%;
+div#calendrier div.en-tete {
     color: #717171;
     text-align: center;
 }
 
-table#calendrier td {
-    /* TODO: flexbox */
+div#calendrier div.cellule, div#calendrier div.en-tete {
+    width: 20%;
+}
+
+div#calendrier div.cellule {
     height: 160px;
+    overflow: hidden;
     border: 1px solid #ddd;
     vertical-align: top;
 }
 
-table#calendrier .semaineId {
+div#calendrier div.cellule:hover {
+    overflow: auto;
+}
+
+div#calendrier .semaineId {
     width: 30px;
     margin: auto;
     text-align: center;
@@ -1046,50 +1056,62 @@ table#calendrier .semaineId {
     border: 0;
 }
 
-table#calendrier td .jourId {
-    margin: 5px 5px 0 0;
+div#calendrier div.cellule .jourId {
+    padding: 3px;
     text-align: right;
     color: #AAA;
 }
 
-table#calendrier td .event {
-    height: 1.2em;
+div#calendrier div.cellule.horsMois .jourId {
+    color : #555;
+}
+
+div#calendrier div.cellule:not(.horsMois) .today.jourId {
+    background: #009ec5;
+    color : #555;
+}
+
+div#calendrier div.cellule .event {
+    height: 1.25em;
     padding: 0 5px;
     line-height: 1.2em;
     border-radius: 2px;
-    text-overflow: ellipsis;
-    width: 185px;
-    white-space:nowrap;
+    /* a remettre en cause si on arrive à mettre « more » quand beaucoup d'événements */
     overflow: hidden;
+}
+
+div#calendrier div.cellule .evenement-avec-title {
     cursor: help;
 }
 
-table#calendrier td .event.conges {
+div#calendrier div.cellule .event.week-end, div#calendrier div.cellule .event.ferie {
+    /*background: #C7C7C7;
+    border: 1px solid #C7C7C7;*/
+    /*color: black;*/
+}
+
+div#calendrier div.cellule .event.conges {
     background: #1ABC9C;
     border: 1px solid #1ABC9C;
 }
 
-table#calendrier td .event.absences {
+div#calendrier div.cellule .event.absences {
     background: #FFC1FF;
     border: 1px solid #FFC1FF;
 }
 
-table#calendrier td .event.conges_exceptionnels {
+div#calendrier div.cellule .event.conges_exceptionnels {
     background: #9ce6f8;
     border: 1px solid #9ce6f8;
     /*color:black;*/
 }
 
-table#calendrier td .event.heure {
+div#calendrier div.cellule .event.heure {
     background: #FF530D;
     border: 1px solid #FF530D;
 }
 
-table#calendrier td.horsMois {
+div#calendrier div.cellule.horsMois {
     background: #A9A9A9;
     opacity: 0.7;
-}
-
-table#calendrier td.horsMois .jourId {
-    color : #555;
 }

@@ -1,7 +1,6 @@
 <?php
 namespace App\Libraries\Calendrier\Evenement;
 
-use IIdentifiable;
 use CalendR\Event\AbstractEvent;
 
 /**
@@ -33,16 +32,30 @@ class Commun extends AbstractEvent implements IIdentifiable
     protected $class;
 
     /**
-     * @param string Identifiant unique au sein du calendrier
-     * @param \DateTime Date de début
-     * @param \DateTime Date de fin
-     * @param string Classe html
+     * @var string
      */
-    public function __construct($uid, \DateTime $debut, \DateTime $fin, $class)
+    protected $name;
+
+    /**
+     * @var string Title Html
+     */
+    protected $title;
+
+    /**
+     * @param string $uid Identifiant unique au sein du calendrier
+     * @param \DateTime $debut Date de début
+     * @param \DateTime $fin Date de fin
+     * @param string $name
+     * @param string $title Title Html
+     * @param string $class Classe html
+     */
+    public function __construct($uid, \DateTime $debut, \DateTime $fin, $name, $title, $class)
     {
         $this->uid = (string) $uid;
         $this->debut = clone $debut;
         $this->fin = clone $fin;
+        $this->name = (string) $name;
+        $this->title = (string) $title;
         $this->class = (string) $class;
     }
 
@@ -75,7 +88,7 @@ class Commun extends AbstractEvent implements IIdentifiable
      */
     public function getName()
     {
-        return null;
+        return $this->name;
     }
 
     /**
@@ -83,7 +96,7 @@ class Commun extends AbstractEvent implements IIdentifiable
      */
     public function getTitle()
     {
-        return null;
+        return $this->title;
     }
 
     /**
@@ -91,6 +104,6 @@ class Commun extends AbstractEvent implements IIdentifiable
      */
     public function getClass()
     {
-        return null;
+        return 'event ' . $this->class;
     }
 }

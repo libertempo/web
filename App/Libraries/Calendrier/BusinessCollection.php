@@ -44,7 +44,7 @@ class BusinessCollection
     public function __construct($utilisateur, $isGroupesGeres, $groupe = NIL_INT)
     {
         $this->utilisateur = (string) $utilisateur;
-        $this->groupeGere = (bool) $isGroupesGeres;
+        $this->isGroupesGeres = (bool) $isGroupesGeres;
         $this->groupe = (int) $groupe;
     }
 
@@ -57,24 +57,23 @@ class BusinessCollection
     {
         /* Logique métier « application wide » */
         $utilisateursATrouver = [];
-        if (null === $evenements) {
-            if($isGroupesGeres) {
+        if (null === $this->evenements) {
+            if($this->isGroupesGeres) {
                 $groupesVisiblesUtilisateur = \App\ProtoControllers\Utilisateur::getListeGroupesVisibles($this->utilisateur);
-                if (NIL_INT !== $this->groupe) {
-                    $groupesATrouver = array_intersect($groupesVisiblesUtilisateur, [$this->groupe]);
-                } else {
-                    $groupesATrouver = $groupesVisiblesUtilisateur;
-                }
+                $groupesATrouver = (NIL_INT !== $this->groupe)
+                    ? array_intersect($groupesVisiblesUtilisateur, [$this->groupe])
+                    : $groupesVisiblesUtilisateur;
                 $utilisateursATrouver = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupesATrouver);
             } else {
                 $utilisateursATrouver = \App\ProtoControllers\Utilisateur::getListId();
             }
 
             $weekEnd = new \App\ProtoControllers\Ajax\WeekEnd();
-            $lstWeekEnd = $weekEnd->getListe($rechercheCommune);
-            $evenements = array_merge(
+            //$lstWeekEnd = $weekEnd->getListe($rechercheCommune);
+            $this->evenements = array_merge(
                 (new \App\Libraries\Calendrier\Collection\Ferie())->getListe(),
-                $lstWeekEnd
+                //$lstWeekEnd
+                []
             );
 
             // obtient les événements en fonction de groupe / rôle (les dates sont gérés par le calendrier)

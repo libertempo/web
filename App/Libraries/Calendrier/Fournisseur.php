@@ -33,6 +33,7 @@ class Fournisseur implements ProviderInterface, \IteratorAggregate, \Countable
      */
     public function getEvents(\DateTime $begin, \DateTime $end, array $options = [])
     {
+        return $this->evenements;
         $sent = [];
         foreach ($this->evenements as $evenement) {
             // critères d'inclusion / exclusion basés sur période et options

@@ -14,6 +14,7 @@ use \App\Libraries\Calendrier\Evenement;
  * Ne doit être contacté que par \App\Libraries\Calendrier\BusinessCollection
  *
  * @TODO supprimer le requétage à la migration vers le MVC REST
+ * @TODO remettre filtre sur période, sinon ça va niquer les perfs
  */
 class Ferie // extends or implements ?
 {
@@ -25,12 +26,13 @@ class Ferie // extends or implements ?
     public function getListe()
     {
         $feries = [];
+        $name = 'Jour férié';
+        $title = null;
+        $class = 'ferie';
         foreach ($this->getListeSQL() as $jour) {
             $dateJour = new \DateTime($jour['jf_date']);
             $uid = uniqid('ferie');
-            $class = $uid;
-
-            $feries[] = new Evenement\Commun($uid, $dateJour, $dateJour, $class);
+            $feries[] = new Evenement\Commun($uid, $dateJour, $dateJour, $name, $title, $class);
             /*$feries[] = [
                 'start' => $jour['jf_date'],
                 'className' => 'ferie',

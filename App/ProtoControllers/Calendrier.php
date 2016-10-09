@@ -73,8 +73,9 @@ class Calendrier
             include_once INCLUDE_PATH . 'session.php';
         }
 
+        /* Div auto fermé par le bottom */
         $return .= '<div id="calendar-wrapper"><h1>' . _('calendrier_titre') . '</h1>';
-        $idGroupe = '';
+        $idGroupe = NIL_INT;
         // --------------
         if (!empty($_POST) && $this->isSearch($_POST)) {
             $champsRecherche = $_POST['search'];
@@ -87,7 +88,7 @@ class Calendrier
         if (!empty($_GET['begin'])) {
             $dateDebut = new \DateTime($_GET['begin']);
         } else {
-            $dateDebut = new \DateTime('2016-10-01');
+            $dateDebut = new \DateTime(date('Y') . '-' . date('m') . '-01');
         }
         if (!empty($_GET['end'])) {
             $dateFin = new \DateTime($_GET['end']);
@@ -97,54 +98,53 @@ class Calendrier
         }
         $return .= $this->getFormulaireRecherche($champsRecherche, $idGroupe, $dateDebut, $dateFin);
 
-        $collectionEvenement = new \App\Libraries\Evenement\Collection($_SESSION['userlogin'], $_SESSION['config']['gestion_groupes']);
-        $fournisseur = new \App\Libraries\Evenement\Fournisseur($collection);
-
+        $businessCollection = new \App\Libraries\Calendrier\BusinessCollection($_SESSION['userlogin'], $_SESSION['config']['gestion_groupes'], $idGroupe);
+        $fournisseur = new \App\Libraries\Calendrier\Fournisseur($businessCollection);
         $calendar = new \CalendR\Calendar();
         $calendar->getEventManager()->addProvider('provider', $fournisseur);
         $month = $calendar->getMonth($dateDebut);
         $eventCollection = $calendar->getEvents($month);
-        d($eventCollection);
 
         $return .= '<h2>' . $month->format('F Y') . '</h2>';
-        $return .= '<table id="calendrier">';
+        $return .= '<div id="calendrier">';
 
-        // Iterate over your month and get weeks
         $pweek = $calendar->getWeek(2016, 1);
-        $return .= '<tr><th></th>';
+        $return .= '<div class="ligne"><div class="semaineId"></div>';
         foreach ($pweek as $day) {
-            $return .= '<th>' . $day->getBegin()->format('D') . '</th>';
+            $return .= '<div class="en-tete">' . $day->getBegin()->format('D') . '</div>';
         }
-        $return .= '</tr>';
-
-        // Iterate over your month and get weeks
+        $return .= '</div>';
         foreach ($month as $week) {
-            $return .= '<tr><td class="semaineId">' . $week . '</td>';
-
-            // Iterate over your month and get days
+            $return .= '<div class="ligne"><div class="semaineId">' . $week . '</div>';
             foreach ($week as $day) {
+                /* Vérification que le jour est bien dans le mois */
+                $class = (!$month->includes($day)) ? 'horsMois' : '';
+                $today = ($day->isCurrent()) ? 'today' : '';
+                $return .= '<div class="cellule ' . $class . '">';
+                $return .= '<div class="jourId ' . $today . '">' . $day->getBegin()->format('j') . '</div>';
+                $hasTitle = false;
                 foreach ($eventCollection->find($day) as $event) {
-                    $return .= $event;
-                }
-                // Check days that are out of your month
-                $class = (!$month->includes($day)) ? 'class="horsMois"' : '';
-                $return .= '<td ' . $class . '>';
-                $return .= '<div class="jourId">' . $day->getBegin()->format('j') . '</div>';
-                /* Event test */
-                $return .= '<div class="event conges" title="[Congé] Congés payés de Saul Goodman du 12-07-2016 au 18-07-2016">Saul Goodman</div>';
-                $return .= '<div class="event absences" title="[Absence] Formation de Capitaine Archibald Haddock du 12-07-2016 au 18-07-2016">Capitaine Archibald Haddock</div>';
-                $return .= '<div class="event heure" title="[Heure] Heure de repos de Tarte Tatin du 12-07-2016 à 9h30 au 12-07-2016 à 11h">Tarte Tatin</div>';
-                $return .= '<div class="event conges_exceptionnels" title="[Congés exceptionnels] Maladie de Tartampion Champignac du 12-07-2016 au 18-07-2016">Tartampion Champignac</div>';
-                $return .= '</td>';
-            }
-            $return .= '</tr>';
-        }
+                    $a = 0;
+                    while ($a <= 10) {
+                        # code...
+                        $title = $event->getTitle();
+                        $avecTitle = (!empty($title)) ? 'evenement-avec-title': '';
+                        $return .= '<div class="' . $avecTitle . ' ' . $event->getClass() . '"
+                        title="' . $event->getTitle() . '">' . $event->getName() . '</div>';
+                        ++$a;
+                    }
 
-        $return .= '</table>';
-        // type de l'événement en title
-        // On travaille uniquement sur des dates ISO 8601
-        // pour le mois prev / succ, il faudrait passer par \DateTime->modify() pour les urls
-        // passage dans l'url de begin mois, de fin de mois et vue. Pour les autres vues on chargera trop mais c'est pas méchant
+                }
+                /* Event test */
+                //$return .= '<div class="event conges" title="[Congé] Congés payés de Saul Goodman du 12-07-2016 au 18-07-2016">Saul Goodman</div>';
+                //$return .= '<div class="event absences" title="[Absence] Formation de Capitaine Archibald Haddock du 12-07-2016 au 18-07-2016">Capitaine Archibald Haddock</div>';
+                //$return .= '<div class="event heure" title="[Heure] Heure de repos de Tarte Tatin du 12-07-2016 à 9h30 au 12-07-2016 à 11h">Tarte Tatin</div>';
+                //$return .= '<div class="event conges_exceptionnels" title="[Congés exceptionnels] Maladie de Tartampion Champignac du 12-07-2016 au 18-07-2016">Tartampion Champignac</div>';
+                $return .= '</div>';
+            }
+            $return .= '</div>';
+        }
+        $return .= '</div>';
 
         return $return;
     }

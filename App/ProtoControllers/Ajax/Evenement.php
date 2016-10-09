@@ -47,14 +47,9 @@ class Evenement extends \App\ProtoControllers\Ajax
         }
         /********** FIN REMPLACÉ PAR LA BusinessCollection */
 
-        $ferie = new \App\ProtoControllers\Ajax\Ferie();
-        $lstFeries = $ferie->getListe($rechercheCommune);
         $weekEnd = new \App\ProtoControllers\Ajax\WeekEnd();
         $lstWeekEnd = $weekEnd->getListe($rechercheCommune);
-        $evenements = array_merge(
-            $lstFeries,
-            $lstWeekEnd
-        );
+        $evenements = $lstWeekEnd;
 
         if (!empty($rechercheUtilisateurs)) {
             $repos = new \App\ProtoControllers\Ajax\Employe\Heure\Repos();
