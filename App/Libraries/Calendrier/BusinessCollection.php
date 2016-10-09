@@ -6,7 +6,7 @@ use \CalendR\Event\EventInterface;
 /**
  * Constructeur de la liste des événements selon des règles métiers
  *
- * Ne doit contacter que \App\Libraries\Calendrier\Collection\Ferie
+ * Ne doit contacter que Collection\*
  * Ne doit être contacté que par \App\ProtoControllers\Calendrier
  *
  * @TODO rendre testable en créant les modèles (et bannir le static)
@@ -82,16 +82,20 @@ class BusinessCollection
                 $utilisateursATrouver = \App\ProtoControllers\Utilisateur::getListId();
             }
 
-            $weekEnd = new \App\ProtoControllers\Ajax\WeekEnd();
-            //$lstWeekEnd = $weekEnd->getListe($rechercheCommune);
+            $ferie = new Collection\Ferie($this->dateDebut, $this->dateFin);
+            $weekend = new Collection\Weekend($this->dateDebut, $this->dateFin);
             $this->evenements = array_merge(
-                (new \App\Libraries\Calendrier\Collection\Ferie($this->dateDebut, $this->dateFin))->getListe(),
-                //$lstWeekEnd
-                []
+                $ferie->getListe(),
+                $weekend->getListe()
             );
 
-            // obtient les événements en fonction de groupe / rôle (les dates sont gérés par le calendrier)
-            // en bouclant sur tous les types d'événements
+            if (!empty($utilisateursATrouver)) {
+                $conge = new Collection\Conge($this->dateDebut, $this->dateFin, $utilisateursATrouver);
+                $this->evenements = array_merge(
+                    $this->evenements,
+                    $conge->getListe()
+                );
+            }
         }
         return $this->evenements;
     }

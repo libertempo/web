@@ -1,7 +1,8 @@
 <?php
 namespace App\Libraries\Calendrier\Evenement;
 
-use CalendR\Event\AbstractEvent;
+use CalendR\Event\EventInterface;
+use CalendR\Period\PeriodInterface;
 
 /**
  * Événement commun
@@ -9,7 +10,7 @@ use CalendR\Event\AbstractEvent;
  * Ne doit contacter personne
  * Ne doit être contacté que par \App\Libraries\Collection\Ferie
  */
-class Commun extends AbstractEvent implements IIdentifiable
+class Commun implements IIdentifiable, EventInterface
 {
     /**
      * @var \DateTime Date de début
@@ -105,5 +106,31 @@ class Commun extends AbstractEvent implements IIdentifiable
     public function getClass()
     {
         return 'event ' . $this->class;
+    }
+
+    /**
+     * {@inheritDoc}
+     * Parce que c'est n'importe quoi d'exclure la fin
+     */
+    public function contains(\DateTime $datetime)
+    {
+        return $datetime >= $this->getBegin() && $datetime <= $this->getEnd();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function containsPeriod(PeriodInterface $period)
+    {
+        return $this->contains($period->getBegin()) && $this->contains($period->getEnd());
+    }
+
+    /**
+     * {@inheritDoc}
+     * Parce que c'est n'importe quoi d'exclure la fin
+     */
+    public function isDuring(PeriodInterface $period)
+    {
+        return $this->getBegin() >= $period->getBegin() && $this->getEnd() <= $period->getEnd();
     }
 }

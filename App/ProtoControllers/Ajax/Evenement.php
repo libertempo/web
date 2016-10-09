@@ -29,28 +29,6 @@ class Evenement extends \App\ProtoControllers\Ajax
             }
         }
 
-        /* Logique métier « application wide » */
-        /******** REMPLACÉ PAR LA BusinessCollection ******* */
-        $rechercheUtilisateurs = [];
-        if($_SESSION['config']['gestion_groupes']) {
-            $groupesDroits = \App\ProtoControllers\Utilisateur::getListeGroupesVisibles($utilisateur);
-            if (!empty($rechercheCommune['groupe'])) {
-                $rechercheGroupe = array_intersect($groupesDroits, [$rechercheCommune['groupe']]);
-                unset($rechercheCommune['groupe']);
-            } else {
-                $rechercheGroupe = $groupesDroits;
-            }
-
-            $rechercheUtilisateurs = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($rechercheGroupe);
-        } else {
-            $rechercheUtilisateurs = \App\ProtoControllers\Utilisateur::getListId();
-        }
-        /********** FIN REMPLACÉ PAR LA BusinessCollection */
-
-        $weekEnd = new \App\ProtoControllers\Ajax\WeekEnd();
-        $lstWeekEnd = $weekEnd->getListe($rechercheCommune);
-        $evenements = $lstWeekEnd;
-
         if (!empty($rechercheUtilisateurs)) {
             $repos = new \App\ProtoControllers\Ajax\Employe\Heure\Repos();
             $lstRepos = $repos->getListe($rechercheCommune + ['users' => $rechercheUtilisateurs]);

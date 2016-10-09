@@ -1044,7 +1044,7 @@ div#calendrier div.cellule {
 }
 
 div#calendrier div.cellule:hover {
-    overflow: auto;
+    overflow-y: auto;
 }
 
 div#calendrier .semaineId {
@@ -1072,11 +1072,32 @@ div#calendrier div.cellule:not(.horsMois) .today.jourId {
 }
 
 div#calendrier div.cellule .event {
-    height: 1.25em;
+    width:95%;
+    height: 24px;
+    line-height: 24px;
     padding: 0 5px;
-    line-height: 1.2em;
+    margin: 1px 0;
     border-radius: 2px;
+    background-color: #1ABC9C;
+    position:relative;
+}
+
+div#calendrier div.event .contenu {
+    width: 80%;
+    white-space: nowrap;
     overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+div#calendrier div.event .multijour {
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 10px solid #1ABC9C;
+    position: absolute;
+    top: 2px;
+    right: -8px;
 }
 
 div#calendrier div.cellule .evenement-avec-title {
@@ -1084,9 +1105,9 @@ div#calendrier div.cellule .evenement-avec-title {
 }
 
 div#calendrier div.cellule .event.weekend, div#calendrier div.cellule .event.ferie {
-    /*background: #C7C7C7;
-    border: 1px solid #C7C7C7;*/
-    /*color: black;*/
+    background: #C7C7C7;
+    border: 1px solid #C7C7C7;
+    color: black;
 }
 
 div#calendrier div.cellule .event.conges {
@@ -1094,20 +1115,36 @@ div#calendrier div.cellule .event.conges {
     border: 1px solid #1ABC9C;
 }
 
+div#calendrier div.event.conges .multijour {
+    border-left: 0.675em solid #1ABC9C;
+}
+
 div#calendrier div.cellule .event.absences {
     background: #FFC1FF;
     border: 1px solid #FFC1FF;
 }
 
+div#calendrier div.event.absences .multijour {
+    border-left: 0.675em solid #FFC1FF;
+}
+
 div#calendrier div.cellule .event.conges_exceptionnels {
     background: #9ce6f8;
     border: 1px solid #9ce6f8;
-    /*color:black;*/
+    color:black;
+}
+
+div#calendrier div.event.conges_exceptionnels .multijour {
+    border-left: 0.675em solid #9ce6f8;
 }
 
 div#calendrier div.cellule .event.heure {
     background: #FF530D;
     border: 1px solid #FF530D;
+}
+
+div#calendrier div.event.heure .multijour {
+    border-left: 0.675em solid #FF530D;
 }
 
 div#calendrier div.cellule.horsMois {

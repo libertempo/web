@@ -9,7 +9,6 @@ include_once INCLUDE_PATH .'fonction.php';
 $add_css = NULL;
 header_menu('', 'Libertempo : '._('calendrier_titre'), $add_css);
 
-$conge = new \App\ProtoControllers\Calendrier();
-echo $conge->get2();
+echo (new \App\ProtoControllers\Calendrier())->get();
 
 bottom();

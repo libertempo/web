@@ -30,11 +30,6 @@ class Ferie extends \App\Libraries\Calendrier\ACollection
             $dateJour = new \DateTime($jour['jf_date']);
             $uid = uniqid('ferie');
             $feries[] = new Evenement\Commun($uid, $dateJour, $dateJour, $name, $title, $class);
-            /*$feries[] = [
-                'start' => $jour['jf_date'],
-                'className' => 'ferie',
-                'title' => 'Ferié',
-            ];*/
         }
 
         return $feries;
