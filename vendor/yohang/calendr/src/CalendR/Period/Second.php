@@ -10,28 +10,6 @@ namespace CalendR\Period;
 class Second extends PeriodAbstract
 {
     /**
-     * @param \DateTime        $begin
-     * @param FactoryInterface $factory
-     *
-     * @throws Exception\NotASecond
-     */
-    public function __construct(\DateTime $begin, $factory = null)
-    {
-        parent::__construct($factory);
-        if ($this->getFactory()->getStrictDates() && !self::isValid($begin)) {
-            throw new Exception\NotASecond();
-        }
-
-        // Not in strict mode, accept any timestamp and set the begin date back to the beginning of this period.
-        $this->begin = clone $begin;
-        // Still do this to make sure there aren't any microseconds.
-        $this->begin->setTime($this->begin->format('G'), $this->begin->format('i'), $this->begin->format('s'));
-
-        $this->end = clone $begin;
-        $this->end->add($this->getDateInterval());
-    }
-
-    /**
      * Returns the period as a DatePeriod.
      *
      * @return \DatePeriod

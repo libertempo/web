@@ -15,27 +15,6 @@ class Minute extends PeriodAbstract implements \Iterator
     private $current;
 
     /**
-     * @param \DateTime        $begin
-     * @param FactoryInterface $factory
-     *
-     * @throws Exception\NotAMinute
-     */
-    public function __construct(\DateTime $begin, $factory = null)
-    {
-        parent::__construct($factory);
-        if ($this->getFactory()->getStrictDates() && !self::isValid($begin)) {
-            throw new Exception\NotAMinute();
-        }
-
-        // Not in strict mode, accept any timestamp and set the begin date back to the beginning of this period.
-        $this->begin = clone $begin;
-        $this->begin->setTime($this->begin->format('G'), $this->begin->format('i'), 0);
-
-        $this->end = clone $begin;
-        $this->end->add($this->getDateInterval());
-    }
-
-    /**
      * Returns the period as a DatePeriod.
      *
      * @return \DatePeriod

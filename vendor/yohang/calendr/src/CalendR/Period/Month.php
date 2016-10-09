@@ -15,28 +15,6 @@ class Month extends PeriodAbstract implements \Iterator
     private $current;
 
     /**
-     * @param \DateTime        $start
-     * @param FactoryInterface $factory
-     *
-     * @throws Exception\NotAMonth
-     */
-    public function __construct(\DateTime $start, $factory = null)
-    {
-        parent::__construct($factory);
-        if ($this->getFactory()->getStrictDates() && !self::isValid($start)) {
-            throw new Exception\NotAMonth();
-        }
-
-        // Not in strict mode, accept any timestamp and set the begin date back to the beginning of this period.
-        $this->begin = clone $start;
-        $this->begin->setDate($this->begin->format('Y'), $this->begin->format('m'), 1);
-        $this->begin->setTime(0, 0, 0);
-
-        $this->end = clone $this->begin;
-        $this->end->add($this->getDateInterval());
-    }
-
-    /**
      * Returns the period as a DatePeriod.
      *
      * @return \DatePeriod
@@ -95,42 +73,6 @@ class Month extends PeriodAbstract implements \Iterator
         $lastDay->sub(new \DateInterval('P1D'));
 
         return $this->getFactory()->findFirstDayOfWeek($lastDay)->add(new \DateInterval('P6D'));
-    }
-
-    /**
-     * Returns the monday of the first week of this month.
-     *
-     * @deprecated see self::getFirstDayOfFirstWeek
-     *
-     * @return \DateTime
-     */
-    public function getFirstMonday()
-    {
-        $delta = $this->begin->format('w') ?: 7;
-        --$delta;
-
-        $monday = clone $this->begin;
-        $monday->sub(new \DateInterval(sprintf('P%sD', $delta)));
-
-        return $monday;
-    }
-
-    /**
-     * Returns the sunday of the last week of this month.
-     *
-     * @deprecated see self::getLastDayOfLastWeek
-     *
-     * @return \DateTime
-     */
-    public function getLastSunday()
-    {
-        $sunday = clone $this->end;
-        $sunday->sub(new \DateInterval('P1D'));
-
-        $delta = 7 - ($sunday->format('w') ?: 7);
-        $sunday->add(new \DateInterval(sprintf('P%sD', $delta)));
-
-        return $sunday;
     }
 
     /*

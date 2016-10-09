@@ -12,7 +12,6 @@
 namespace CalendR\Period;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * The period factory.
@@ -29,7 +28,7 @@ class Factory implements FactoryInterface
     protected $options;
 
     /**
-     * @var OptionsResolverInterface
+     * @var OptionsResolver
      */
     protected $resolver;
 
@@ -111,7 +110,8 @@ class Factory implements FactoryInterface
      */
     public function setOption($name, $value)
     {
-        $this->resolver->replaceDefaults($this->options);
+        $this->resolver->clear();
+        $this->resolver->setDefaults($this->options);
         $this->options = $this->resolver->resolve(array($name => $value));
     }
 
@@ -145,7 +145,6 @@ class Factory implements FactoryInterface
                     'year_class' => 'CalendR\Period\Year',
                     'range_class' => 'CalendR\Period\Range',
                     'first_weekday' => Day::MONDAY,
-                    'strict_dates' => false,
                 )
             );
             $this->setDefaultOptions($this->resolver);
@@ -157,9 +156,9 @@ class Factory implements FactoryInterface
     /**
      * Override this method if you have to change default/allowed options.
      *
-     * @param OptionsResolverInterface $resolver
+     * @param OptionsResolver $resolver
      */
-    protected function setDefaultOptions(OptionsResolverInterface $resolver)
+    protected function setDefaultOptions(OptionsResolver $resolver)
     {
     }
 
@@ -189,21 +188,5 @@ class Factory implements FactoryInterface
         $day->sub(new \DateInterval(sprintf('P%sD', $delta)));
 
         return $day;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getStrictDates()
-    {
-        return $this->getOption('strict_dates');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setStrictDates($strict)
-    {
-        $this->setOption('strict_dates', (bool) $strict);
     }
 }
