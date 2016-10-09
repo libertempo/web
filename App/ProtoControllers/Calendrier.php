@@ -98,7 +98,7 @@ class Calendrier
         }
         $return .= $this->getFormulaireRecherche($champsRecherche, $idGroupe, $dateDebut, $dateFin);
 
-        $businessCollection = new \App\Libraries\Calendrier\BusinessCollection($_SESSION['userlogin'], $_SESSION['config']['gestion_groupes'], $idGroupe);
+        $businessCollection = new \App\Libraries\Calendrier\BusinessCollection($dateDebut, $dateFin, $_SESSION['userlogin'], $_SESSION['config']['gestion_groupes'], $idGroupe);
         $fournisseur = new \App\Libraries\Calendrier\Fournisseur($businessCollection);
         $calendar = new \CalendR\Calendar();
         $calendar->getEventManager()->addProvider('provider', $fournisseur);
@@ -124,15 +124,10 @@ class Calendrier
                 $return .= '<div class="jourId ' . $today . '">' . $day->getBegin()->format('j') . '</div>';
                 $hasTitle = false;
                 foreach ($eventCollection->find($day) as $event) {
-                    $a = 0;
-                    while ($a <= 10) {
-                        # code...
-                        $title = $event->getTitle();
-                        $avecTitle = (!empty($title)) ? 'evenement-avec-title': '';
-                        $return .= '<div class="' . $avecTitle . ' ' . $event->getClass() . '"
-                        title="' . $event->getTitle() . '">' . $event->getName() . '</div>';
-                        ++$a;
-                    }
+                    $title = $event->getTitle();
+                    $avecTitle = (!empty($title)) ? 'evenement-avec-title': '';
+                    $return .= '<div class="' . $avecTitle . ' ' . $event->getClass() . '"
+                    title="' . $event->getTitle() . '">' . $event->getName() . '</div>';
 
                 }
                 /* Event test */

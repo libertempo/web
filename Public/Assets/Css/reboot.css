@@ -1076,7 +1076,6 @@ div#calendrier div.cellule .event {
     padding: 0 5px;
     line-height: 1.2em;
     border-radius: 2px;
-    /* a remettre en cause si on arrive à mettre « more » quand beaucoup d'événements */
     overflow: hidden;
 }
 

@@ -14,14 +14,11 @@ use \App\Libraries\Calendrier\Evenement;
  * Ne doit être contacté que par \App\Libraries\Calendrier\BusinessCollection
  *
  * @TODO supprimer le requétage à la migration vers le MVC REST
- * @TODO remettre filtre sur période, sinon ça va niquer les perfs
  */
-class Ferie // extends or implements ?
+class Ferie extends \App\Libraries\Calendrier\ACollection
 {
     /**
-     * Retourne la collection de jours feriés
-     *
-     * @return \CalendR\Event\EventInterface[]
+     * {@inheritDoc}
      */
     public function getListe()
     {
@@ -59,6 +56,8 @@ class Ferie // extends or implements ?
         $sql = \includes\SQL::singleton();
         $req = 'SELECT *
                 FROM conges_jours_feries
+                WHERE jf_date >= "' . $this->dateDebut->format('Y-m-d') . '"
+                    AND jf_date <= "' . $this->dateFin->format('Y-m-d') . '"
                 ORDER BY jf_date ASC';
 
         return $sql->query($req)->fetch_all(\MYSQLI_ASSOC);

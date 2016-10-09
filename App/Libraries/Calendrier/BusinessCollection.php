@@ -6,7 +6,7 @@ use \CalendR\Event\EventInterface;
 /**
  * Constructeur de la liste des événements selon des règles métiers
  *
- * Ne doit contacter personne
+ * Ne doit contacter que \App\Libraries\Calendrier\Collection\Ferie
  * Ne doit être contacté que par \App\ProtoControllers\Calendrier
  *
  * @TODO rendre testable en créant les modèles (et bannir le static)
@@ -18,6 +18,16 @@ class BusinessCollection
      * @var EventInterface[] Liste des événements satisfaisant aux critères du métier
      */
     private $evenements;
+
+    /**
+     * @var \DateTime
+     */
+    private $dateDebut;
+
+    /**
+     * @var \DateTime
+     */
+    private $dateFin;
 
     /**
      * @var string Identifiant de l'utilisateur
@@ -32,20 +42,24 @@ class BusinessCollection
     /**
     * @var int Groupe dont on veut voir les événements
      */
-    private $groupe;
+    private $groupeAConsulter;
 
     /**
      * Construit une collection d'événements en suivant des critères métiers
      *
+     * @param \DateTime $dateDebut
+     * @param \DateTime $dateFin
      * @param string $utilisateur Identifiant de l'observateur
      * @param bool $isGroupesGeres Si la gestion des groupes est demandée
-     * @param int $groupe Groupe dont on veut voir les événements
+     * @param int $groupeAConsulter Groupe dont on veut voir les événements
      */
-    public function __construct($utilisateur, $isGroupesGeres, $groupe = NIL_INT)
+    public function __construct(\DateTime $dateDebut, \DateTime $dateFin, $utilisateur, $isGroupesGeres, $groupeAConsulter = NIL_INT)
     {
+        $this->dateDebut = clone $dateDebut;
+        $this->dateFin = clone $dateFin;
         $this->utilisateur = (string) $utilisateur;
         $this->isGroupesGeres = (bool) $isGroupesGeres;
-        $this->groupe = (int) $groupe;
+        $this->groupeAConsulter = (int) $groupeAConsulter;
     }
 
     /**
@@ -60,8 +74,8 @@ class BusinessCollection
         if (null === $this->evenements) {
             if($this->isGroupesGeres) {
                 $groupesVisiblesUtilisateur = \App\ProtoControllers\Utilisateur::getListeGroupesVisibles($this->utilisateur);
-                $groupesATrouver = (NIL_INT !== $this->groupe)
-                    ? array_intersect($groupesVisiblesUtilisateur, [$this->groupe])
+                $groupesATrouver = (NIL_INT !== $this->groupeAConsulter)
+                    ? array_intersect($groupesVisiblesUtilisateur, [$this->groupeAConsulter])
                     : $groupesVisiblesUtilisateur;
                 $utilisateursATrouver = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupesATrouver);
             } else {
@@ -71,7 +85,7 @@ class BusinessCollection
             $weekEnd = new \App\ProtoControllers\Ajax\WeekEnd();
             //$lstWeekEnd = $weekEnd->getListe($rechercheCommune);
             $this->evenements = array_merge(
-                (new \App\Libraries\Calendrier\Collection\Ferie())->getListe(),
+                (new \App\Libraries\Calendrier\Collection\Ferie($this->dateDebut, $this->dateFin))->getListe(),
                 //$lstWeekEnd
                 []
             );
