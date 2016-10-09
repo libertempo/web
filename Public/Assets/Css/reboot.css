@@ -1083,7 +1083,7 @@ div#calendrier div.cellule .evenement-avec-title {
     cursor: help;
 }
 
-div#calendrier div.cellule .event.week-end, div#calendrier div.cellule .event.ferie {
+div#calendrier div.cellule .event.weekend, div#calendrier div.cellule .event.ferie {
     /*background: #C7C7C7;
     border: 1px solid #C7C7C7;*/
     /*color: black;*/

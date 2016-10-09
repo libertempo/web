@@ -104,11 +104,6 @@
         <script type="text/javascript" src="<?= ASSETS_PATH ?>bootstrap-datepicker/locales/bootstrap-datepicker.fr.js"></script>
         <script type="text/javascript" src="<?= ASSETS_PATH ?>bootstrap-timepicker/js/bootstrap-timepicker.min.js"></script>
         <script type="text/javascript" src="<?= JS_PATH ?>reboot.js"></script>
-        <?php /* FULLCALENDAR */ ?>
-        <link type="text/css" href="<?= ASSETS_PATH ?>fullcalendar/fullcalendar.min.css" rel="stylesheet" />
-        <script type="text/javascript" src="<?= ASSETS_PATH ?>fullcalendar/lib/moment.min.js"></script>
-        <script type="text/javascript" src="<?= ASSETS_PATH ?>fullcalendar/fullcalendar.min.js"></script>
-        <script type="text/javascript" src="<?= ASSETS_PATH ?>fullcalendar/lang-all.js"></script>
         <?= $additional_head ?>
     </head>
     <body id="top" class="hbox connected <?= ($printable) ? 'printable' : '' ?>">

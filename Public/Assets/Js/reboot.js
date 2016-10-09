@@ -508,34 +508,3 @@ var planningController = function (idElement, options, creneaux)
         }
     }
 }
-
-/**
- * Objet de manipulation du calendrier
- *
- * @param string session Id de session
- * @param int Id
- */
-var calendrierControleur = function (session, idGroupe)
-{
-    $(document).ready(function() {
-        $('#calendar').fullCalendar({
-            header: {
-                left: 'prev,today,next',
-                center: 'title',
-                right: 'month,agendaWeek,agendaDay'
-            },
-            lang: 'fr',
-            editable: false,
-            eventLimit: true, // allow "more" link when too many events
-            events: {
-                url: 'calendrier/wrapper_getEvenement.php?session=' + session + '&groupe=' + idGroupe,
-                error: function() {
-                    $('#script-warning').show();
-                }
-            },
-            loading: function(bool) {
-                $('#loading').toggle(bool);
-            }
-        });
-    });
-}
