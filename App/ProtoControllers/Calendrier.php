@@ -181,16 +181,6 @@ class Calendrier
                 $today = ($day->isCurrent()) ? 'today' : '';
                 $return .= '<div class="cellule ' . $class . '">';
                 $return .= '<div class="jourId ' . $today . '">' . $day->getBegin()->format('j') . '</div>';
-                /* Tous les évenements qui contiennent des jours */
-                foreach ($eventCollection->find($day->getBegin()) as $event) {
-                    $title = $event->getTitle();
-                    $avecTitle = (!empty($title)) ? 'evenement-avec-title': '';
-                    $return .= '<div class="' . $avecTitle . ' ' . $event->getClass() . '"
-                    title="' . $title . '"><div class="contenu">' . $event->getName() . '</div>';
-                    /* Un événement qui se termine est forcément avant la fin de la journée */
-                    $return .= ($day->getEnd() < $event->getEnd()) ? '<div class="multijour"></div>' : '';
-                    $return .= '</div>';
-                }
                 /* Tous les événements qui sont contenus dans des jours */
                 foreach ($eventCollection->find($day) as $event) {
                     $title = $event->getTitle();
@@ -201,8 +191,6 @@ class Calendrier
                     $return .= ($day->getEnd() < $event->getEnd()) ? '<div class="multijour"></div>' : '';
                     $return .= '</div>';
                 }
-                /* Event test */
-                //$return .= '<div class="event heure" title="[Heure] Heure de repos de Tarte Tatin du 12-07-2016 à 9h30 au 12-07-2016 à 11h">Tarte Tatin</div>';
                 $return .= '</div>';
             }
             $return .= '</div>';

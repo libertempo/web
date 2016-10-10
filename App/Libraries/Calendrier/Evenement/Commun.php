@@ -110,12 +110,10 @@ class Commun implements IIdentifiable, EventInterface
 
     /**
      * {@inheritDoc}
-     *
-     * Parce que c'est n'importe quoi d'exclure la fin
      */
     public function contains(\DateTime $datetime)
     {
-        return $datetime >= $this->getBegin() && $datetime <= $this->getEnd();
+        return $datetime >= $this->getBegin() && $datetime < $this->getEnd();
     }
 
     /**
@@ -128,11 +126,9 @@ class Commun implements IIdentifiable, EventInterface
 
     /**
      * {@inheritDoc}
-     *
-     * Parce que c'est n'importe quoi d'exclure la fin
      */
     public function isDuring(PeriodInterface $period)
     {
-        return $this->getBegin() >= $period->getBegin() && $this->getEnd() <= $period->getEnd();
+        return $this->getBegin() >= $period->getBegin() && $this->getEnd() < $period->getEnd();
     }
 }

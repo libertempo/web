@@ -9,7 +9,7 @@ use \App\Libraries\Calendrier\BusinessCollection;
  * Fournisseur d'événements pour le calendrier
  *
  * Ne doit contacter personne
- * Ne doit être contacté que par \CalendR\Calendar
+ * Ne doit être contacté que par \CalendR\Calendar et \App\ProtoControllers\Calendrier
  *
  * @TODO benchmark sur la taille de collection
  */

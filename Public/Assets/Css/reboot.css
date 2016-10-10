@@ -1073,8 +1073,8 @@ div#calendrier div.cellule:not(.horsMois) .today.jourId {
 
 div#calendrier div.cellule .event {
     width:95%;
-    height: 24px;
-    line-height: 24px;
+    height: 22px;
+    line-height: 22px;
     padding: 0 5px;
     margin: 1px 0;
     border-radius: 2px;
@@ -1096,7 +1096,7 @@ div#calendrier div.event .multijour {
     border-bottom: 10px solid transparent;
     border-left: 10px solid #1ABC9C;
     position: absolute;
-    top: 2px;
+    top: 1px;
     right: -8px;
 }
 
@@ -1123,6 +1123,7 @@ div#calendrier div.event.conges .multijour {
 div#calendrier div.cellule .event.absences {
     background: #FFC1FF;
     border: 1px solid #FFC1FF;
+    color: #444;
 }
 
 div#calendrier div.event.absences .multijour {
@@ -1142,6 +1143,7 @@ div#calendrier div.event.conges_exceptionnels .multijour {
 div#calendrier div.cellule .event.heure {
     background: #FF530D;
     border: 1px solid #FF530D;
+    color: white;
 }
 
 div#calendrier div.event.heure .multijour {

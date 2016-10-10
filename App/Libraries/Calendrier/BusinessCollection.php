@@ -95,10 +95,12 @@ class BusinessCollection
             if (!empty($utilisateursATrouver)) {
                 $conge = new Collection\Conge($this->dateDebut, $this->dateFin, $utilisateursATrouver);
                 $repos = new Collection\Heure\Repos($this->dateDebut, $this->dateFin, $utilisateursATrouver);
+                $additionnelle = new Collection\Heure\Additionnelle($this->dateDebut, $this->dateFin, $utilisateursATrouver);
                 $this->evenements = array_merge(
                     $this->evenements,
                     $conge->getListe(),
-                    $repos->getListe()
+                    $repos->getListe(),
+                    $additionnelle->getListe()
                 );
             }
         }
