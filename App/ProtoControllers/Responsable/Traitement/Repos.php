@@ -40,7 +40,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
         $notice = _('traitement_effectue');
         return $return;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -100,10 +100,10 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
 
     /**
      * Mise a jour du statut de la demande d'heure de repos
-     * 
+     *
      * @param int $demandeId
-     * 
-     * @return int 
+     *
+     * @return int
      */
     protected function updateStatutValidationFinale($demandeId)
     {
@@ -116,13 +116,13 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
 
         return $sql->affected_rows;
     }
-    
+
     /**
      * Refus de la demande d'heure de repos
-     * 
+     *
      * @param int $demandeId
      * @param int $comm
-     * 
+     *
      * @return int
      */
     protected function updateStatutRefus($demandeId, $comment)
@@ -137,13 +137,13 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
 
         return $sql->affected_rows;
     }
-    
+
     /**
      * Première validation de la demande d'heure de repos
-     * 
+     *
      * @param int $demandeId
-     * 
-     * @return int 
+     *
+     * @return int
      */
     protected function updateStatutPremiereValidation($demandeId)
     {
@@ -159,9 +159,9 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
 
     /**
      * Soustraction de la demande de repos au solde du demandeur
-     * 
+     *
      * @param int $demandeId
-     * 
+     *
      * @return int
      */
     protected function updateSolde($demandeId)
@@ -170,8 +170,8 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
         $sql = \includes\SQL::singleton();
 
         $req   = 'UPDATE conges_users
-                SET u_heure_solde = u_heure_solde-' .$user[0]['duree'] . '
-                WHERE u_login = \''. $user[0]['login'] .'\'';
+                SET u_heure_solde = u_heure_solde-' .$user[$demandeId]['duree'] . '
+                WHERE u_login = \''. $user[$demandeId]['login'] .'\'';
         $query = $sql->query($req);
 
         return $sql->affected_rows;
@@ -226,7 +226,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
         $childTable .= '<th>' . _('divers_accepter_maj_1') . '</th><th>' . _('divers_refuser_maj_1') . '</th><th>' . _('resp_traite_demandes_attente') . '</th>';
         $childTable .= '<th>' . _('resp_traite_demandes_motif_refus') . '</th>';
         $childTable .= '</tr></thead><tbody>';
-        
+
         $demandesResp = $this->getDemandesResponsable($_SESSION['userlogin']);
         $demandesGrandResp = $this->getDemandesGrandResponsable($_SESSION['userlogin']);
         if (empty($demandesResp) && empty($demandesGrandResp) ) {
@@ -254,7 +254,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
 
         return $return;
     }
-    
+
      /**
       * {@inheritDoc}
       */
@@ -268,11 +268,11 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
 
         $usersRespDirect = \App\ProtoControllers\Responsable::getUsersRespDirect($resp);
         $usersResp = array_merge($usersResp,$usersRespDirect);
-        
+
         if (empty($usersResp)) {
             return [];
         }
-        
+
         $ids = [];
         $sql = \includes\SQL::singleton();
         $req = 'SELECT id_heure AS id
@@ -295,12 +295,12 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
         if (empty($groupId)) {
             return [];
         }
-        
+
         $usersResp = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupId);
         if (empty($usersResp)) {
             return [];
         }
-        
+
         $ids = [];
         $sql = \includes\SQL::singleton();
         $req = 'SELECT id_heure AS id
@@ -320,7 +320,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
     protected function getInfoDemandes(array $listId)
     {
         $infoDemande =[];
-        
+
         if (empty($listId)) {
             return [];
         }
@@ -331,9 +331,9 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
                 ORDER BY debut DESC, statut ASC';
 
         $ListeDemande = $sql->query($req)->fetch_all(MYSQLI_ASSOC);
-        
+
         foreach ($ListeDemande as $demande){
-            $infoDemande[$demande['p_num']] = $demande;
+            $infoDemande[$demande['id_heure']] = $demande;
         }
 
         return $infoDemande;

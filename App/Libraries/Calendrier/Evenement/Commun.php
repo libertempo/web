@@ -110,6 +110,7 @@ class Commun implements IIdentifiable, EventInterface
 
     /**
      * {@inheritDoc}
+     *
      * Parce que c'est n'importe quoi d'exclure la fin
      */
     public function contains(\DateTime $datetime)
@@ -127,6 +128,7 @@ class Commun implements IIdentifiable, EventInterface
 
     /**
      * {@inheritDoc}
+     *
      * Parce que c'est n'importe quoi d'exclure la fin
      */
     public function isDuring(PeriodInterface $period)

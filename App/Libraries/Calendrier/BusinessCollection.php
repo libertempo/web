@@ -94,9 +94,11 @@ class BusinessCollection
 
             if (!empty($utilisateursATrouver)) {
                 $conge = new Collection\Conge($this->dateDebut, $this->dateFin, $utilisateursATrouver);
+                $repos = new Collection\Heure\Repos($this->dateDebut, $this->dateFin, $utilisateursATrouver);
                 $this->evenements = array_merge(
                     $this->evenements,
-                    $conge->getListe()
+                    $conge->getListe(),
+                    $repos->getListe()
                 );
             }
         }

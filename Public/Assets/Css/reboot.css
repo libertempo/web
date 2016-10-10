@@ -1063,12 +1063,12 @@ div#calendrier div.cellule .jourId {
 }
 
 div#calendrier div.cellule.horsMois .jourId {
-    color : #555;
+    color : white;
 }
 
 div#calendrier div.cellule:not(.horsMois) .today.jourId {
     background: #009ec5;
-    color : #555;
+    color : white;
 }
 
 div#calendrier div.cellule .event {
@@ -1107,12 +1107,13 @@ div#calendrier div.cellule .evenement-avec-title {
 div#calendrier div.cellule .event.weekend, div#calendrier div.cellule .event.ferie {
     background: #C7C7C7;
     border: 1px solid #C7C7C7;
-    color: black;
+    color: #444;
 }
 
 div#calendrier div.cellule .event.conges {
     background: #1ABC9C;
     border: 1px solid #1ABC9C;
+    color: white;
 }
 
 div#calendrier div.event.conges .multijour {
@@ -1131,7 +1132,7 @@ div#calendrier div.event.absences .multijour {
 div#calendrier div.cellule .event.conges_exceptionnels {
     background: #9ce6f8;
     border: 1px solid #9ce6f8;
-    color:black;
+    color: #444;
 }
 
 div#calendrier div.event.conges_exceptionnels .multijour {
@@ -1150,7 +1151,7 @@ div#calendrier div.event.heure .multijour {
 div#calendrier div.cellule .event.fermeture {
     background: #CEB6FF;
     border: 1px solid #CEB6FF;
-    color: black;
+    color: #444;
 }
 
 div#calendrier div.event.fermeture .multijour {

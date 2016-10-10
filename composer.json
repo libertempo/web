@@ -25,6 +25,9 @@
     },
     "require": {
         "php": "^5.5|^7.0",
+        "ext-mbstring": "*",
+        "ext-mysqli": "*",
+        "ext-Reflection": "*",
         "raveren/kint": "^1.0",
         "spipu/html2pdf": "v4.4.0",
         "phpmailer/phpmailer": "5.2.10",
