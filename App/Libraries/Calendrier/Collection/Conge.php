@@ -41,6 +41,7 @@ class Conge extends \App\Libraries\Calendrier\ACollection
         $longueurMax = 10;
         foreach ($this->getListeSQL() as $jour) {
             $class = $jour['ta_type'];
+            /* TODO: unescape_string ? */
             $identite = $jour['u_prenom'] . ' ' . $jour['u_nom'];
             $userName = ($longueurMax < mb_strlen($identite))
                 ? substr($identite, 0, $longueurMax) . ['...']

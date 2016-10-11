@@ -13,39 +13,30 @@ namespace App\ProtoControllers;
 class Calendrier
 {
     /**
+     * @var int
+     */
+    const VUE_MOIS = 1;
+
+    /**
+     * @var int
+     */
+    const VUE_SEMAINE = 2;
+
+    /**
      * Retourne la page du calendrier
      *
      * @return string
      */
     public function get()
     {
-        $return = '';
-        $session=(isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : session_id()));
-
-        if(substr($session, 0, 9)!="phpconges") {
-            session_start();
-            // on initialise le tableau des variables de config
-            $_SESSION['config']=init_config_tab();
-            if(empty($_SESSION['userlogin'])) {
-                redirect( ROOT_PATH . 'index.php' );
-            }
-        } else {
-            include_once INCLUDE_PATH . 'session.php';
-        }
-
         /* Div auto fermé par le bottom */
-        $return .= '<div id="calendar-wrapper"><h1>' . _('calendrier_titre') . '</h1>';
+        $return = '<div id="calendar-wrapper"><h1>' . _('calendrier_titre') . '</h1>';
         $idGroupe = NIL_INT;
-        $vue = NIL_INT;
-        // --------------
-        if (!empty($_POST) && $this->isSearch($_POST)) {
-            $champsRecherche = $_POST['search'];
-            //$champsSql       = $this->transformChampsRecherche($_POST);
-        } else {
-            $champsRecherche = [];
-            //$champsSql       = [];
+        $vue = static::VUE_MOIS;
+        if (!empty($_GET) && $this->isSearch($_GET)) {
+            $vue = (int) $_GET['search']['vue'];
+            $idGroupe = (int) $_GET['search']['groupe'];
         }
-        // ------------------
         if (!empty($_GET['begin'])) {
             $dateDebut = new \DateTime($_GET['begin']);
         } else {
@@ -70,70 +61,100 @@ class Calendrier
      *
      * @return bool
      */
-    private function isSearch(array $post)
+    private function isSearch(array $get)
     {
-        return !empty($post['search']);
+        return !empty($get['search']);
     }
 
+    /**
+     * Retourne le formulaire de recherche
+     *
+     * @param int $vue Vue du calendrier demandée
+     * @param int $idGroupe Groupe à consulter
+     * @param \DateTime $dateDebut
+     * @param \DateTime $dateFin
+     *
+     * @return string
+     */
     private function getFormulaireRecherche($vue, &$idGroupe, \DateTime $dateDebut, \DateTime $dateFin)
     {
-        //ddd($dateDebut, $dateFin);
-        // get groupe droit
-        /*
-        * Si gestion des groupes activée :
-        *   - Affichage des groupes auxquels le role a droit
-        *   - Passer un groupe en paramètre que si explicitement demandé (option du select vide)
-        * Sinon :
-        *   - Comme existant
-        */
-        if($_SESSION['config']['gestion_groupes']) {
-            //$idGroupe = 70;
-            // form avec gestion des groupes
-        } else {
-            // form sans gestion des groupes
-        }
-        //$form = 'vue [mois [par defaut] / semaine / jour ] / groupe à afficher si applicable -- les boutons à part font prev et succ';
-        $form = '<form method="post" action="" class="form-inline search" role="form"><div class="form-group">
-        <label class="control-label col-md-4" for="statut">Vue&nbsp;:</label>
-        <div class="col-md-8"><select class="form-control" name="search[statut]" id="statut">';
-        $form .= '<option value="0">Mois</option>';
+        $session=(isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : session_id()));
 
-        foreach (\App\Models\AHeure::getOptionsStatuts() as $key => $value) {
-            $selected = (isset($champs['statut']) && $key == $champs['statut'])
+        if(substr($session, 0, 9)!="phpconges") {
+            session_start();
+            $_SESSION['config']=init_config_tab();
+            if(empty($_SESSION['userlogin'])) {
+                redirect( ROOT_PATH . 'index.php' );
+            }
+        } else {
+            include_once INCLUDE_PATH . 'session.php';
+        }
+
+        $form = '<form method="get" action="" class="form-inline search" role="form"><div class="form-group col-md-4 col-sm-4">
+        <label class="control-label col-md-3 col-sm-3" for="vue">Vue&nbsp;:</label>
+        <div class="col-md-8 col-sm-8"><select class="form-control" name="search[vue]" id="vue">';
+
+        foreach ($this->getOptionsVue() as $valeur => $label) {
+            $selected = ($valeur === $vue)
                 ? 'selected="selected"'
                 : '';
-            $form .= '<option value="' . $key . '" ' . $selected . '>' . $value . '</option>';
+            $form .= '<option value="' . $valeur . '" ' . $selected . '>' . _($label) . '</option>';
         }
-        $form .= '<option value="' . $key . '" ' . $selected . '>Mois</option>';
         $form .= '</select></div></div>';
+        if($_SESSION['config']['gestion_groupes']) {
+            $form .= '<div class="form-group col-md-4 col-sm-5">
+            <label class="control-label col-md-3 col-sm-3" for="groupe">Groupe&nbsp;:</label>
+            <div class="col-md-8 col-sm-8"><select class="form-control" name="search[groupe]" id="groupe">';
+            $form .= '<option value="' . NIL_INT . '">Tous</option>';
+
+            foreach (\App\ProtoControllers\Groupe::getOptions() as $valeur => $label) {
+                $selected = ($valeur ===  $idGroupe)
+                    ? 'selected="selected"'
+                    : '';
+                $form .= '<option value="' . $valeur . '" ' . $selected . '>' . _($label) . '</option>';
+            }
+            $form .= '</select></div></div>';
+        }
 
         $urlCalendrier = ROOT_PATH . 'calendrier.php';
         $queryBase = [
-            'session' => session_id(),
+            'session' => $session,
+            'search[vue]' => $vue,
+            'search[groupe]' => $idGroupe,
         ];
         $dateDebutPrev = clone $dateDebut;
         $dateDebutPrev->modify('-1 month');
         $queryPrev = [
             'begin' => $dateDebutPrev->format(('Y-m-d')),
             'end'   => $dateDebut->format('Y-m-d'),
-            'vue'   => 1,
-            // groupe
         ];
         $dateFinNext = clone $dateFin;
         $dateFinNext->modify('+1 month');
         $queryNext = [
             'begin' => $dateFin->format('Y-m-d'),
             'end'   => $dateFinNext->format('Y-m-d'),
-            'vue'   => 1,
-            // groupe
         ];
-        $form .= '<div class="form-group"><div class="input-group">
+        $form .= '<div class="form-group"><div class="input-group pull-right">
         <button type="submit" class="btn btn-default"><i class="fa fa-search" aria-hidden="true"></i></button></div></div>';
+        $form .= '<input type="hidden" name="session" value="' . $session . '" />';
         $form .= '</form>';
         $form .= '<div class="btn-group pull-right"><a class="btn btn-default" href="' . $urlCalendrier . '?' . http_build_query($queryBase + $queryPrev) . '"><i class="fa fa-chevron-left" aria-hidden="true"></i></a>';
         $form .= '<a class="btn btn-default" href="' . $urlCalendrier . '?' . http_build_query($queryBase + $queryNext) . '"><i class="fa fa-chevron-right" aria-hidden="true"></i></a></div>';
 
         return $form;
+    }
+
+    /**
+     * Retourne les options de select des vues
+     *
+     * @return array
+     */
+    private function getOptionsVue()
+    {
+        return [
+            static::VUE_MOIS => 'vue_mois',
+            static::VUE_SEMAINE => 'vue_semaine',
+        ];
     }
 
     /**

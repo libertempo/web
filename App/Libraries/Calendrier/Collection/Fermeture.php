@@ -64,7 +64,7 @@ class Fermeture extends \App\Libraries\Calendrier\ACollection
     {
         $reqGroupe = '';
         if (!empty($this->groupesATrouver)) {
-            $reqGroupe = 'AND jf_gif IN (' . implode(',', $this->groupesATrouver) . ')';
+            $reqGroupe = 'AND jf_gid IN (' . implode(',', $this->groupesATrouver) . ')';
         }
         $sql = \includes\SQL::singleton();
         $req = 'SELECT *
