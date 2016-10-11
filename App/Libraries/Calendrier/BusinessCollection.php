@@ -56,7 +56,10 @@ class BusinessCollection
     public function __construct(\DateTime $dateDebut, \DateTime $dateFin, $utilisateur, $isGroupesGeres, $groupeAConsulter = NIL_INT)
     {
         $this->dateDebut = clone $dateDebut;
+        /* Extension des bordures de dates */
+        $this->dateDebut->modify('-1 week');
         $this->dateFin = clone $dateFin;
+        $this->dateFin->modify('+1 week');
         $this->utilisateur = (string) $utilisateur;
         $this->isGroupesGeres = (bool) $isGroupesGeres;
         $this->groupeAConsulter = (int) $groupeAConsulter;
