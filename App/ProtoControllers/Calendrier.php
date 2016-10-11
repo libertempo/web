@@ -35,7 +35,9 @@ class Calendrier
         $vue = static::VUE_MOIS;
         if (!empty($_GET) && $this->isSearch($_GET)) {
             $vue = (int) $_GET['search']['vue'];
-            $idGroupe = (int) $_GET['search']['groupe'];
+            if (isset($_GET['search']['groupe'])) {
+                $idGroupe = (int) $_GET['search']['groupe'];
+            }
         }
         if (!empty($_GET['begin'])) {
             $dateDebut = new \DateTime($_GET['begin']);
@@ -179,28 +181,146 @@ class Calendrier
         $fournisseur = new \App\Libraries\Calendrier\Fournisseur($businessCollection);
         $calendar = new \CalendR\Calendar();
         $calendar->getEventManager()->addProvider('provider', $fournisseur);
+        /* Suis pas fan de la répartition par if, mais ça a l'air de faire le job */
+        if (static::VUE_SEMAINE === $vue) {
+            return $this->getCalendrierSemaine($calendar, $dateDebut);
+        } else {
+            return $this->getCalendrierMois($calendar, $dateDebut);
+        }
+    }
+
+    /**
+     * Retourne la vue à la semaine du calendrier
+     *
+     * @param \CalendR\Calendar $calendar
+     * @param \DateTime $dateDebut
+     *
+     * @return string
+     */
+    private function getCalendrierSemaine(\CalendR\Calendar $calendar, \DateTime $dateDebut)
+    {
+        $week = $calendar->getWeek($dateDebut);
+        $eventCollection = $calendar->getEvents($week);
+
+        $return = '<h2>Semaine ' . $week->getBegin()->format('W – Y') . '</h2>';
+        $return .= '<div id="calendrierSemaine" class="calendrier">';
+
+        /* Affichage de l'en-tête */
+        $pweek = $calendar->getWeek(2016, 1);
+        $return .= '<div class="semaine"><div class="minuteId"></div>';
+        foreach ($week as $day) {
+            $return .= '<div class="en-tete">' . strftime('%a', $day->getBegin()->getTimestamp()) . '</div>';
+        }
+        $return .= '</div>';
+        $return .= '<div class="semaine">';
+        /* Affichage des événements à la journée du calendrier */
+        $inflated = [];
+        foreach ($week as $day) {
+            $return .= '<div class="celluleJour"><div class="evenementJour">';
+            $today = ($day->isCurrent()) ? 'today' : '';
+            $return .= '<div class="jourId ' . $today . '">' . $day->getBegin()->format('j') . '</div>';
+            foreach ($eventCollection->find($day) as $event) {
+                /* Suppression des événements qui sont plus fins que la journée */
+                if ($event->getBegin() <= $day->getBegin()) {
+                    $title = $event->getTitle();
+                    $avecTitle = (!empty($title)) ? 'evenement-avec-title': '';
+                    $return .= '<div class="' . $avecTitle . ' ' . $event->getClass() . '"
+                    title="' . $title . '"><div class="contenu">' . $event->getName() . '</div>';
+                    /* Un événement qui se termine est forcément avant la fin de la journée */
+                    $return .= ($day->getEnd() < $event->getEnd()) ? '<div class="multijour"></div>' : '';
+                    $return .= '</div>';
+                }
+            }
+            $return .= '</div>';
+
+            foreach ($day as $hour) {
+                foreach ($hour as $minute) {
+                    if (0 === $minute->format('i') % 30) {
+                        $demiHeure = clone $minute->getBegin();
+                        $demiHeure->modify('+30 minutes');
+                        $evenementsPeriode = [];
+                        foreach ($eventCollection->find($minute) as $event) {
+                            /* Suppression des événements qui sont plus fins que la journée */
+                            if ($event->getBegin() > $day->getBegin()
+                                && $event->containsPeriod($minute)
+                            ) {
+                                $title = $event->getTitle();
+                                $avecTitle = (!empty($title)) ? 'evenement-avec-title': '';
+                                $evenementsPeriode[] = '<div class="' . $avecTitle . ' ' . $event->getClass() . '"
+                                title="' . $title . '"><div class="contenu">' . $event->getName() . '</div>';
+                                /* Un événement qui se termine est forcément avant la fin de la période */
+                                $evenementsPeriode[] = ($demiHeure < $event->getEnd()) ? '<div class="multijour"></div>' : '';
+                                $evenementsPeriode[] = '</div>';
+                            }
+                        }
+                        if (!isset($inflated[$minute->format('H\:i')])
+                            && !empty($evenementsPeriode)
+                        ) {
+                            $inflated[$minute->format('H\:i')] = true;
+                        }
+                        $toInflate = (isset($inflated[$minute->format('H\:i')]) && $inflated[$minute->format('H\:i')])
+                            ? 'inflate'
+                            : '';
+                        $return .= '<div class="celluleMinute ' . $toInflate . '">' . implode('', $evenementsPeriode) . '</div>';
+                        
+                    }
+                }
+            }
+            $return .= '</div>';
+        }
+        /* Affichage des heures */
+        $return .= '<div class="minuteId"><div class="enteteMinute"></div><div>';
+        foreach ($week as $day) {
+            foreach ($day as $hour) {
+                foreach ($hour as $minute) {
+                    if (0 === $minute->format('i') % 30) {
+                        $toInflate = (isset($inflated[$minute->format('H\:i')]) && $inflated[$minute->format('H\:i')])
+                            ? 'inflate'
+                            : '';
+                        $return .= '<div class="celluleMinute ' . $toInflate . '">' . $minute->format('H\:i') . '</div>';
+                    }
+                }
+            }
+            break;
+        }
+        $return .= '</div></div>';
+        $return .= '</div>';
+
+        return $return;
+    }
+
+    /**
+     * Retourne la vue au mois du calendrier
+     *
+     * @param \CalendR\Calendar $calendar
+     * @param \DateTime $dateDebut
+     *
+     * @return string
+     */
+    private function getCalendrierMois(\CalendR\Calendar $calendar, \DateTime $dateDebut)
+    {
         $month = $calendar->getMonth($dateDebut);
         $eventCollection = $calendar->getEvents($month);
 
         $return = '<h2>' . strftime('%B %G', $month->getBegin()->getTimestamp()) . '</h2>';
-        $return .= '<div id="calendrier">';
+        $return .= '<div id="calendrierMois" class="calendrier">';
 
         /* Affichage de l'en-tête */
         $pweek = $calendar->getWeek(2016, 1);
-        $return .= '<div class="ligne"><div class="semaineId"></div>';
+        $return .= '<div class="semaine"><div class="semaineId"></div>';
         foreach ($pweek as $day) {
             $return .= '<div class="en-tete">' . strftime('%a', $day->getBegin()->getTimestamp()) . '</div>';
         }
         $return .= '</div>';
 
-        /* Affichage du corps du calendrier */
+        /* Affichage des événements du calendrier */
         foreach ($month as $week) {
-            $return .= '<div class="ligne"><div class="semaineId">' . $week . '</div>';
+            $return .= '<div class="semaine"><div class="semaineId">' . $week . '</div>';
             foreach ($week as $day) {
                 /* Vérification que le jour est bien dans le mois */
                 $class = (!$month->includes($day)) ? 'horsMois' : '';
                 $today = ($day->isCurrent()) ? 'today' : '';
-                $return .= '<div class="cellule ' . $class . '">';
+                $return .= '<div class="celluleJour ' . $class . '">';
                 $return .= '<div class="jourId ' . $today . '">' . $day->getBegin()->format('j') . '</div>';
                 /* Tous les événements qui sont contenus dans des jours */
                 foreach ($eventCollection->find($day) as $event) {
