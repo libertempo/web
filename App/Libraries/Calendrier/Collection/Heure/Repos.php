@@ -26,7 +26,7 @@ class Repos extends \App\Libraries\Calendrier\ACollection
      * {@inheritDoc}
      * @param array $utilisateursATrouver Liste d'utilisateurs dont on veut voir les heures de repos
      */
-    public function __construct(\DateTime $dateDebut, \DateTime $dateFin, array $utilisateursATrouver)
+    public function __construct(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, array $utilisateursATrouver)
     {
         parent::__construct($dateDebut, $dateFin);
         $this->utilisateursATrouver = $utilisateursATrouver;

@@ -23,6 +23,56 @@ class Calendrier
     const VUE_SEMAINE = 2;
 
     /**
+     * @var \DateTimeInterface Date de début de récolte du calendrier
+     */
+    private $dateDebut;
+
+    /**
+     * @var \DateTimeInterface Date de fin de récolte du calendrier
+     */
+    private $dateFin;
+
+    /**
+     * @var \DateTimeInterface Date de début de période précédente
+     */
+    private $dateDebutPrecedente;
+
+    /**
+     * @var \DateTimeInterface Date de fin de période suivante
+     */
+    private $dateFinSuivante;
+
+    /**
+     * @var string Identifiant de session
+     */
+    private $session;
+
+    /**
+     * @var int Vue du calendrier à consulter
+     */
+    private $vue = self::VUE_MOIS;
+
+    /**
+     * @var int Id du groupe dont on veut voir les événements
+     */
+    private $idGroupe = NIL_INT;
+
+    public function __construct()
+    {
+        $this->session=(isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : session_id()));
+
+        if(substr($this->session, 0, 9)!="phpconges") {
+            session_start();
+            $_SESSION['config']=init_config_tab();
+            if(empty($_SESSION['userlogin'])) {
+                redirect( ROOT_PATH . 'index.php' );
+            }
+        } else {
+            include_once INCLUDE_PATH . 'session.php';
+        }
+    }
+
+    /**
      * Retourne la page du calendrier
      *
      * @return string
@@ -31,34 +81,32 @@ class Calendrier
     {
         /* Div auto fermé par le bottom */
         $return = '<div id="calendar-wrapper"><h1>' . _('calendrier_titre') . '</h1>';
-        $idGroupe = NIL_INT;
-        $vue = static::VUE_MOIS;
         if (!empty($_GET) && $this->isSearch($_GET)) {
-            $vue = (int) $_GET['search']['vue'];
+            $this->vue = (int) $_GET['search']['vue'];
             if (isset($_GET['search']['groupe'])) {
-                $idGroupe = (int) $_GET['search']['groupe'];
+                $this->idGroupe = (int) $_GET['search']['groupe'];
             }
         }
         if (!empty($_GET['begin'])) {
-            $dateDebut = new \DateTime($_GET['begin']);
-        } elseif (static::VUE_SEMAINE === $vue) {
+            $this->dateDebut = new \DateTimeImmutable($_GET['begin']);
+        } elseif (static::VUE_SEMAINE === $this->vue) {
             $dateDebut = new \DateTime();
             $dateDebut->setISODate(date('Y'), date('W'));
             $dateDebut->setTime(0, 0);
+            $this->dateDebut = new \DateTimeImmutable($dateDebut->format('Y-m-d'));
         } else {
-            $dateDebut = new \DateTime(date('Y') . '-' . date('m') . '-01');
+            $this->dateDebut = new \DateTimeImmutable(date('Y') . '-' . date('m') . '-01');
         }
         if (!empty($_GET['end'])) {
-            $dateFin = new \DateTime($_GET['end']);
-        } elseif (static::VUE_SEMAINE === $vue) {
-            $dateFin = clone $dateDebut;
-            $dateFin->modify('+1 week');
+            $this->dateFin = new \DateTimeImmutable($_GET['end']);
+        } elseif (static::VUE_SEMAINE === $this->vue) {
+            $this->dateFin = $this->dateDebut->modify('+1 week');
         } else {
-            $dateFin = clone $dateDebut;
-            $dateFin->modify('+1 month');
+            $this->dateFin = $this->dateDebut->modify('+1 month');
         }
-        $return .= $this->getFormulaireRecherche($vue, $idGroupe, $dateDebut, $dateFin);
-        $return .= $this->getCalendrier($vue, $idGroupe, $dateDebut, $dateFin);
+
+        $return .= $this->getFormulaireRecherche();
+        $return .= $this->getCalendrier();
 
         return $return;
     }
@@ -66,7 +114,7 @@ class Calendrier
     /**
      * Y-a-t-il une recherche dans l'avion ?
      *
-     * @param array $post
+     * @param array $get
      *
      * @return bool
      */
@@ -78,33 +126,16 @@ class Calendrier
     /**
      * Retourne le formulaire de recherche
      *
-     * @param int $vue Vue du calendrier demandée
-     * @param int $idGroupe Groupe à consulter
-     * @param \DateTime $dateDebut
-     * @param \DateTime $dateFin
-     *
      * @return string
      */
-    private function getFormulaireRecherche($vue, &$idGroupe, \DateTime $dateDebut, \DateTime $dateFin)
+    private function getFormulaireRecherche()
     {
-        $session=(isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : session_id()));
-
-        if(substr($session, 0, 9)!="phpconges") {
-            session_start();
-            $_SESSION['config']=init_config_tab();
-            if(empty($_SESSION['userlogin'])) {
-                redirect( ROOT_PATH . 'index.php' );
-            }
-        } else {
-            include_once INCLUDE_PATH . 'session.php';
-        }
-
         $form = '<form method="get" action="" class="form-inline search" role="form"><div class="form-group col-md-4 col-sm-4">
         <label class="control-label col-md-3 col-sm-3" for="vue">Vue&nbsp;:</label>
         <div class="col-md-8 col-sm-8"><select class="form-control" name="search[vue]" id="vue">';
 
         foreach ($this->getOptionsVue() as $valeur => $label) {
-            $selected = ($valeur === $vue)
+            $selected = ($valeur === $this->vue)
                 ? 'selected="selected"'
                 : '';
             $form .= '<option value="' . $valeur . '" ' . $selected . '>' . _($label) . '</option>';
@@ -117,7 +148,7 @@ class Calendrier
             $form .= '<option value="' . NIL_INT . '">Tous</option>';
 
             foreach (\App\ProtoControllers\Groupe::getOptions() as $valeur => $label) {
-                $selected = ($valeur ===  $idGroupe)
+                $selected = ($valeur ===  $this->idGroupe)
                     ? 'selected="selected"'
                     : '';
                 $form .= '<option value="' . $valeur . '" ' . $selected . '>' . _($label) . '</option>';
@@ -127,7 +158,7 @@ class Calendrier
 
         $form .= '<div class="form-group"><div class="input-group pull-right">
         <button type="submit" class="btn btn-default"><i class="fa fa-search" aria-hidden="true"></i></button></div></div>';
-        $form .= '<input type="hidden" name="session" value="' . $session . '" />';
+        $form .= '<input type="hidden" name="session" value="' . $this->session . '" />';
         $form .= '</form>';
 
         return $form;
@@ -149,33 +180,74 @@ class Calendrier
     /**
      * Retourne la vue du calendrier
      *
-     * @param int $vue Sélection des différents affichage du calendrier
-     * @param int $idGroupe Groupe dont on veut voir les événements
-     * @param \DateTime $dateDebut
-     * @param \DateTime $dateFin
-     *
      * @return string
      */
-    private function getCalendrier($vue, $idGroupe, \DateTime $dateDebut, \DateTime $dateFin)
+    private function getCalendrier()
     {
         $businessCollection = new \App\Libraries\Calendrier\BusinessCollection(
-            $dateDebut,
-            $dateFin,
+            $this->dateDebut,
+            $this->dateFin,
             $_SESSION['userlogin'],
             $_SESSION['config']['gestion_groupes'],
-            $idGroupe
+            $this->idGroupe
         );
         $fournisseur = new \App\Libraries\Calendrier\Fournisseur($businessCollection);
         $calendar = new \CalendR\Calendar();
         $calendar->getEventManager()->addProvider('provider', $fournisseur);
         /* Suis pas fan de la répartition par if, mais ça a l'air de faire le job */
-        if (static::VUE_SEMAINE === $vue) {
-            $return = $this->getPaginationSemaine($vue, $idGroupe, $dateDebut);
-            $return .= $this->getCalendrierSemaine($calendar, $dateDebut);
+        if (static::VUE_SEMAINE === $this->vue) {
+            $this->setPeriodesSemaine();
+            $return = $this->getActions();
+            $return .= $this->getPagination();
+            $return .= $this->getCalendrierSemaine($calendar);
         } else {
-            $return = $this->getPaginationMois($vue, $idGroupe, $dateDebut, $dateFin);
-            $return .= $this->getCalendrierMois($calendar, $dateDebut);
+            $this->setPeriodesMois();
+            $return = $this->getActions();
+            $return .= $this->getPagination();
+            $return .= $this->getCalendrierMois($calendar);
         }
+
+        return $return;
+    }
+
+    /**
+     * Défini les périodes utiles pour le calendrier à la semaine
+     */
+    private function setPeriodesSemaine()
+    {
+        $this->dateDebutPrecedente = $this->dateDebut->modify('-1 week');
+        $this->dateFin = $this->dateDebut->modify('+1 week');
+        $this->dateFinSuivante = $this->dateFin->modify('+1 week');
+    }
+
+    /**
+     * Défini les périodes utiles pour le calendrier au mois
+     */
+    private function setPeriodesMois()
+    {
+        $this->dateDebutPrecedente = $this->dateDebut->modify('-1 month');
+        $this->dateFinSuivante = $this->dateFin->modify('+1 month');
+    }
+
+    /**
+     * Retourne les boutons d'actions
+     *
+     * @return string
+     */
+    private function getActions()
+    {
+        $urlCalendrier = ROOT_PATH . 'calendrier.php';
+        $query = [
+            'session' => $this->session,
+            'search[vue]' => $this->vue,
+            'search[groupe]' => $this->idGroupe,
+            'begin' => $this->dateDebut->format('Y-m-d'),
+            'end' => $this->dateFin->format('Y-m-d'),
+            'pdf' => null,
+        ];
+
+        $return = '<a class="btn btn-default pull-left" href="' . $urlCalendrier . '?' . http_build_query($query) . '"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Exporter</a>';
+        $return .= '';
 
         return $return;
     }
@@ -184,13 +256,13 @@ class Calendrier
      * Retourne la vue à la semaine du calendrier
      *
      * @param \CalendR\Calendar $calendar
-     * @param \DateTime $dateDebut
      *
      * @return string
      */
-    private function getCalendrierSemaine(\CalendR\Calendar $calendar, \DateTime $dateDebut)
+    private function getCalendrierSemaine(\CalendR\Calendar $calendar)
     {
-        $week = $calendar->getWeek($dateDebut);
+        /* TODO: La lib ne gère pas les immutables, faire une PR */
+        $week = $calendar->getWeek(new \DateTime($this->dateDebut->format('Y-m-d')));
         $eventCollection = $calendar->getEvents($week);
 
         $return = '<h2>Semaine ' . $week->getBegin()->format('W – Y') . '</h2>';
@@ -283,13 +355,13 @@ class Calendrier
      * Retourne la vue au mois du calendrier
      *
      * @param \CalendR\Calendar $calendar
-     * @param \DateTime $dateDebut
      *
      * @return string
      */
-    private function getCalendrierMois(\CalendR\Calendar $calendar, \DateTime $dateDebut)
+    private function getCalendrierMois(\CalendR\Calendar $calendar)
     {
-        $month = $calendar->getMonth($dateDebut);
+        /* TODO: La lib ne gère pas les immutables, faire une PR */
+        $month = $calendar->getMonth(new \DateTime($this->dateDebut->format('Y-m-d')));
         $eventCollection = $calendar->getEvents($month);
 
         $return = '<h2>' . strftime('%B %G', $month->getBegin()->getTimestamp()) . '</h2>';
@@ -332,59 +404,25 @@ class Calendrier
     }
 
     /**
-     *
-     */
-    private function getPaginationSemaine($vue, $idGroupe, \DateTime $dateDebut)
-    {
-        $dateDebutPrec = clone $dateDebut;
-        $dateDebutPrec->modify('-1 week');
-        $dateDebutSuc = clone $dateDebut;
-        $dateDebutSuc->modify('+1 week');
-        $dateFinSuc = clone $dateDebutSuc;
-        $dateFinSuc->modify('+1 week');
-
-        return $this->getPagination($vue, $idGroupe, $dateDebutPrec, $dateDebut, $dateDebutSuc, $dateFinSuc);
-    }
-
-    /**
-     *
-     */
-    private function getPaginationMois($vue, $idGroupe, \DateTime $dateDebut, \DateTime $dateFin)
-    {
-        $dateDebutPrec = clone $dateDebut;
-        $dateDebutPrec->modify('-1 month');
-        $dateFinSuc = clone $dateFin;
-        $dateFinSuc->modify('+1 month');
-
-        return $this->getPagination($vue, $idGroupe, $dateDebutPrec, $dateDebut, $dateFin, $dateFinSuc);
-    }
-
-    /**
      * Retourne la pagination
-     *
-     * @param int $vue Sélection des différents affichage du calendrier
-     * @param int $idGroupe Groupe dont on veut voir les événements
-     * @param \DateTime $dateDebut
-     * @param \DateTime $dateFin
      *
      * @return string
      */
-    private function getPagination($vue, $idGroupe, \DateTime $debutPrec, \DateTime $dateFinPrec, \DateTime $dateDebutSuc, \DateTime $dateFinSuc)
+    private function getPagination()
     {
-        $session=(isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : session_id()));
         $urlCalendrier = ROOT_PATH . 'calendrier.php';
         $queryBase = [
-            'session' => $session,
-            'search[vue]' => $vue,
-            'search[groupe]' => $idGroupe,
+            'session' => $this->session,
+            'search[vue]' => $this->vue,
+            'search[groupe]' => $this->idGroupe,
         ];
         $queryPrec = [
-            'begin' => $debutPrec->format(('Y-m-d')),
-            'end'   => $dateFinPrec->format('Y-m-d'),
+            'begin' => $this->dateDebutPrecedente->format(('Y-m-d')),
+            'end'   => $this->dateDebut->format('Y-m-d'),
         ];
         $querySuc = [
-            'begin' => $dateDebutSuc->format('Y-m-d'),
-            'end'   => $dateFinSuc->format('Y-m-d'),
+            'begin' => $this->dateFin->format('Y-m-d'),
+            'end'   => $this->dateFinSuivante->format('Y-m-d'),
         ];
 
         $return = '<div class="btn-group pull-right"><a class="btn btn-default" href="' . $urlCalendrier . '?' . http_build_query($queryBase + $queryPrec) . '"><i class="fa fa-chevron-left" aria-hidden="true"></i></a>';

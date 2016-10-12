@@ -26,7 +26,7 @@ class Fermeture extends \App\Libraries\Calendrier\ACollection
      * {@inheritDoc}
      * @param array $groupesATrouver Liste des groupes dont on veut voir les fermetures
      */
-    public function __construct(\DateTime $dateDebut, \DateTime $dateFin, array $groupesATrouver)
+    public function __construct(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, array $groupesATrouver)
     {
         parent::__construct($dateDebut, $dateFin);
         $this->groupesATrouver = $groupesATrouver;

@@ -20,12 +20,12 @@ class BusinessCollection
     private $evenements;
 
     /**
-     * @var \DateTime
+     * @var \DateTimeInterface
      */
     private $dateDebut;
 
     /**
-     * @var \DateTime
+     * @var \DateTimeInterface
      */
     private $dateFin;
 
@@ -47,13 +47,13 @@ class BusinessCollection
     /**
      * Construit une collection d'événements en suivant des critères métiers
      *
-     * @param \DateTime $dateDebut
-     * @param \DateTime $dateFin
+     * @param \DateTimeInterface $dateDebut
+     * @param \DateTimeInterface $dateFin
      * @param string $utilisateur Identifiant de l'observateur
      * @param bool $isGroupesGeres Si la gestion des groupes est demandée
      * @param int $groupeAConsulter Groupe dont on veut voir les événements
      */
-    public function __construct(\DateTime $dateDebut, \DateTime $dateFin, $utilisateur, $isGroupesGeres, $groupeAConsulter = NIL_INT)
+    public function __construct(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, $utilisateur, $isGroupesGeres, $groupeAConsulter = NIL_INT)
     {
         $this->dateDebut = clone $dateDebut;
         /* Extension des bordures de dates */

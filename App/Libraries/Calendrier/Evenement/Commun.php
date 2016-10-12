@@ -8,17 +8,17 @@ use CalendR\Period\PeriodInterface;
  * Événement commun
  *
  * Ne doit contacter personne
- * Ne doit être contacté que par \App\Libraries\Collection\Ferie
+ * Ne doit être contacté que par \App\Libraries\Collection\*
  */
 class Commun implements IIdentifiable, EventInterface
 {
     /**
-     * @var \DateTime Date de début
+     * @var \DateTimeInterface Date de début
      */
     protected $debut;
 
     /**
-     * @var \DateTime Date de fin
+     * @var \DateTimeInterface Date de fin
      */
     protected $fin;
 
@@ -44,13 +44,13 @@ class Commun implements IIdentifiable, EventInterface
 
     /**
      * @param string $uid Identifiant unique au sein du calendrier
-     * @param \DateTime $debut Date de début
-     * @param \DateTime $fin Date de fin
+     * @param \DateTimeInterface $debut Date de début
+     * @param \DateTimeInterface $fin Date de fin
      * @param string $name
      * @param string $title Title Html
      * @param string $class Classe html
      */
-    public function __construct($uid, \DateTime $debut, \DateTime $fin, $name, $title, $class)
+    public function __construct($uid, \DateTimeInterface $debut, \DateTimeInterface $fin, $name, $title, $class)
     {
         $this->uid = (string) $uid;
         $this->debut = clone $debut;

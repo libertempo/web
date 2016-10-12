@@ -14,20 +14,20 @@ namespace App\Libraries\Calendrier;
 abstract class ACollection
 {
     /**
-     * @var \DateTime
+     * @var \DateTimeInterface
      */
     protected $dateDebut;
 
     /**
-     * @var \DateTime
+     * @var \DateTimeInterface
      */
     protected $dateFin;
 
     /**
-     * @param \DateTime $dateDebut
-     * @param \DateTime $dateFin
+     * @param \DateTimeInterface $dateDebut
+     * @param \DateTimeInterface $dateFin
      */
-    public function __construct(\DateTime $dateDebut, \DateTime $dateFin)
+    public function __construct(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
     {
         $this->dateDebut = clone $dateDebut;
         $this->dateFin = clone $dateFin;
