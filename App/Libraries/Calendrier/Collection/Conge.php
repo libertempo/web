@@ -38,21 +38,17 @@ class Conge extends \App\Libraries\Calendrier\ACollection
     public function getListe()
     {
         $conges = [];
-        $longueurMax = 10;
         foreach ($this->getListeSQL() as $jour) {
             $class = $jour['ta_type'];
             /* TODO: unescape_string ? */
-            $identite = $jour['u_prenom'] . ' ' . $jour['u_nom'];
-            $userName = ($longueurMax < mb_strlen($identite))
-                ? substr($identite, 0, $longueurMax) . ['...']
-                : $identite;
-            $name = $userName . ' - ' . $jour['ta_libelle'];
+            $nomComplet = \App\ProtoControllers\Utilisateur::getNomComplet($jour['u_prenom'], $jour['u_nom'], true);
+            $name = $nomComplet . ' - ' . $jour['ta_libelle'];
 
             $dateDebut = $this->getDebutPeriode($jour['p_date_deb'], $jour['p_demi_jour_deb']);
             $dateFin = $this->getFinPeriode($jour['p_date_fin'], $jour['p_demi_jour_fin']);
 
             /* afficher le format long que si l'heure est != 00:00 || 23:59 (?) */
-            $title = '[' . $jour['ta_type'] . '] ' . $jour['ta_libelle'] . ' de ' . $jour['u_login'] . ' du ' . $dateDebut->format('d/m/Y à H\:i') . ' au ' . $dateFin->format('d/m/Y à H\:i');
+            $title = '[' . $jour['ta_type'] . '] ' . $jour['ta_libelle'] . ' de ' . $nomComplet . ' du ' . $dateDebut->format('d/m/Y à H\:i') . ' au ' . $dateFin->format('d/m/Y à H\:i');
             $uid = uniqid('ferie');
             $conges[] = new Evenement\Commun($uid, $dateDebut, $dateFin, $name, $title, $class);
         }

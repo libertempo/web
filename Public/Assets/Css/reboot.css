@@ -983,39 +983,6 @@ form.search {
     right: 10px
 }
 
-#calendar .week-end, #calendar .ferie {
-    background: #C7C7C7;
-    border: 1px solid #C7C7C7;
-    color: black;
-}
-
-#calendar .fermeture {
-    background: #CEB6FF;
-    border: 1px solid #CEB6FF;
-    color: black;
-}
-
-#calendar .ok.conges {
-    background: #1ABC9C;
-    border: 1px solid #1ABC9C;
-}
-
-#calendar .ok.conges_exceptionnels {
-    background: #9ce6f8;
-    border: 1px solid #9ce6f8;
-    color:black;
-}
-
-#calendar .ok.absences {
-    background: #FFC1FF;
-    border: 1px solid #FFC1FF;
-    color: black;
-}
-
-#calendar .statut_3.heure {
-    background: #FF530D;
-    border: 1px solid #FF530D;
-}
 
 /* CALENDRIER */
 div.calendrier {
@@ -1030,7 +997,6 @@ div.calendrier div.semaine {
 
 div#calendrierSemaine div.colonne {
     width: 20%;
-    /*display: flex;*/
 }
 
 div.calendrier div.en-tete {

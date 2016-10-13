@@ -233,4 +233,17 @@ class Utilisateur
 
         return $additionnelle->exists($params);
     }
+
+    /**
+     *
+     */
+    public static function getNomComplet($prenom, $nom, $initialPrenomSeulement = false) {
+        $prenom = ucfirst($prenom);
+        $nom = ucfirst($nom);
+        if ($initialPrenomSeulement && 0 < strlen($prenom)) {
+            $prenom = $prenom[0] . '.';
+        }
+
+        return $prenom . ' ' . $nom;
+    }
 }

@@ -79,13 +79,11 @@ class Calendrier
      */
     public function get()
     {
-        /* Div auto fermé par le bottom */
-        $return = '<div id="calendar-wrapper"><h1>' . _('calendrier_titre') . '</h1>';
         if (!empty($_GET) && $this->isSearch($_GET)) {
             $this->vue = (int) $_GET['search']['vue'];
-            if (isset($_GET['search']['groupe'])) {
-                $this->idGroupe = (int) $_GET['search']['groupe'];
-            }
+        }
+        if (isset($_GET['search']['groupe'])) {
+            $this->idGroupe = (int) $_GET['search']['groupe'];
         }
         if (!empty($_GET['begin'])) {
             $this->dateDebut = new \DateTimeImmutable($_GET['begin']);
@@ -104,7 +102,12 @@ class Calendrier
         } else {
             $this->dateFin = $this->dateDebut->modify('+1 month');
         }
+        if ($this->isExportPDF()) {
+            return $this->getCalendrierPDF();
+        }
 
+        /* Div auto fermé par le bottom */
+        $return = '<div id="calendar-wrapper"><h1>' . _('calendrier_titre') . '</h1>';
         $return .= $this->getFormulaireRecherche();
         $return .= $this->getCalendrier();
 
@@ -121,6 +124,14 @@ class Calendrier
     private function isSearch(array $get)
     {
         return !empty($get['search']);
+    }
+
+    /**
+     *
+     */
+    private function isExportPDF()
+    {
+        return isset($_GET['pdf']);
     }
 
     /**
@@ -175,6 +186,21 @@ class Calendrier
             static::VUE_MOIS => 'vue_mois',
             static::VUE_SEMAINE => 'vue_semaine',
         ];
+    }
+
+    private function getCalendrierPDF()
+    {
+        /*$pdf = new \TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+
+        $css = '';
+        //ob_start();
+        //$table->render();
+        //$return .= ob_get_clean();
+        $html = $this->getCalendrier();
+        $pdf->writeHTML($html, true, false, true, false, '');
+        $pdf->Output('example_061.pdf', 'S');*/
+
+        return $pdf;
     }
 
     /**
@@ -236,18 +262,19 @@ class Calendrier
      */
     private function getActions()
     {
-        $urlCalendrier = ROOT_PATH . 'calendrier.php';
+        $urlCalendrier = ROOT_PATH . 'calendrier-pdf.php';
         $query = [
             'session' => $this->session,
             'search[vue]' => $this->vue,
             'search[groupe]' => $this->idGroupe,
             'begin' => $this->dateDebut->format('Y-m-d'),
             'end' => $this->dateFin->format('Y-m-d'),
-            'pdf' => null,
+            'pdf' => '',
         ];
 
         $return = '<a class="btn btn-default pull-left" href="' . $urlCalendrier . '?' . http_build_query($query) . '"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Exporter</a>';
-        $return .= '';
+        //$return = '<a class="btn btn-default pull-left" href="vendor/tecnickcom/tcpdf/examples/example_061.php?' . http_build_query($query) . '"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Exporter</a>';
+        ///home/rlecault/Projet/www/libertempo/vendor/tecnickcom/tcpdf/examples/example_061.php
 
         return $return;
     }

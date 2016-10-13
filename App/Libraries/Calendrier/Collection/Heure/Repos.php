@@ -38,21 +38,17 @@ class Repos extends \App\Libraries\Calendrier\ACollection
     public function getListe()
     {
         $heures = [];
-        $longueurMax = 10;
         $class = 'heure';
         foreach ($this->getListeSQL($this->getListeId()) as $heure) {
-            $identite = $heure['u_prenom'] . ' ' . $heure['u_nom'];
-            $userName = ($longueurMax < mb_strlen($identite))
-                ? substr($identite, 0, $longueurMax) . ['...']
-                : $identite;
-            $name = $userName . ' - Heure(s) de repos';
+            $nomComplet = \App\ProtoControllers\Utilisateur::getNomComplet($heure['u_prenom'],  $heure['u_nom'], true);
+            $name = $nomComplet . ' - Heure(s) de repos';
             $dateDebut = new \DateTime();
             $dateDebut->setTimestamp($heure['debut']);
             $dateFin = new \DateTime();
             $dateFin->setTimestamp($heure['fin']);
             $statut = ' statut_' . $heure['statut'];
 
-            $title = 'Heure(s) de repos de ' . $heure['u_login'] . ' le ' . $dateDebut->format('d/m/Y') . ' de ' . $dateDebut->format('H\:i') . ' à ' . $dateFin->format('H\:i');
+            $title = 'Heure(s) de repos de ' . $nomComplet . ' le ' . $dateDebut->format('d/m/Y') . ' de ' . $dateDebut->format('H\:i') . ' à ' . $dateFin->format('H\:i');
             $uid = uniqid('repos');
             $heures[] = new Evenement\Commun($uid, $dateDebut, $dateFin, $name, $title, $class);
         }

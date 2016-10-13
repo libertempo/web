@@ -38,21 +38,17 @@ class Additionnelle extends \App\Libraries\Calendrier\ACollection
     public function getListe()
     {
         $heures = [];
-        $longueurMax = 10;
         $class = 'heure';
         foreach ($this->getListeSQL($this->getListeId()) as $heure) {
-            $identite = $heure['u_prenom'] . ' ' . $heure['u_nom'];
-            $userName = ($longueurMax < mb_strlen($identite))
-                ? substr($identite, 0, $longueurMax) . ['...']
-                : $identite;
-            $name = $userName . ' - Heure(s) additionnelles';
+            $nomComplet = \App\ProtoControllers\Utilisateur::getNomComplet($heure['u_prenom'],  $heure['u_nom'], true);
+            $name = $nomComplet . ' - Heure(s) additionnelles';
             $dateDebut = new \DateTime();
             $dateDebut->setTimestamp($heure['debut']);
             $dateFin = new \DateTime();
             $dateFin->setTimestamp($heure['fin']);
             $statut = ' statut_' . $heure['statut'];
 
-            $title = 'Heure(s) additionnelles de ' . $heure['u_login'] . ' le ' . $dateDebut->format('d/m/Y') . ' de ' . $dateDebut->format('H\:i') . ' à ' . $dateFin->format('H\:i');
+            $title = 'Heure(s) additionnelles de ' . $nomComplet . ' le ' . $dateDebut->format('d/m/Y') . ' de ' . $dateDebut->format('H\:i') . ' à ' . $dateFin->format('H\:i');
             $uid = uniqid('additionnelle');
             $heures[] = new Evenement\Commun($uid, $dateDebut, $dateFin, $name, $title, $class);
         }
