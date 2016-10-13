@@ -1,50 +1,5 @@
 [
     {
-        "name": "spipu/html2pdf",
-        "version": "v4.4.0",
-        "version_normalized": "4.4.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/spipu/html2pdf.git",
-            "reference": "2b86b570dd9058c1fc2383503d8b8628a977292d"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/spipu/html2pdf/zipball/2b86b570dd9058c1fc2383503d8b8628a977292d",
-            "reference": "2b86b570dd9058c1fc2383503d8b8628a977292d",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.2"
-        },
-        "time": "2015-12-11 10:13:58",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "files": [
-                "html2pdf.class.php"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "LGPL"
-        ],
-        "authors": [
-            {
-                "name": "Spipu",
-                "homepage": "https://github.com/spipu",
-                "role": "Developer"
-            }
-        ],
-        "description": "PHP library to convert Html into Pdf",
-        "homepage": "http://html2pdf.fr/",
-        "keywords": [
-            "html",
-            "html2pdf",
-            "pdf"
-        ]
-    },
-    {
         "name": "phpmailer/phpmailer",
         "version": "v5.2.10",
         "version_normalized": "5.2.10.0",

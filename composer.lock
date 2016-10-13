@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "dd7fcf6837af0d3ae6ada06426b70110",
-    "content-hash": "bbb9dfa75c7b58bd4fa1180a9ced73b0",
+    "hash": "c91127bda0817ce5ed7ce0ab829e4a69",
+    "content-hash": "3e0091f15c280f827f4ffa4d1b5c5d46",
     "packages": [
         {
             "name": "jasig/phpcas",
@@ -165,49 +165,6 @@
                 "php"
             ],
             "time": "2015-09-16 14:09:00"
-        },
-        {
-            "name": "spipu/html2pdf",
-            "version": "v4.4.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/spipu/html2pdf.git",
-                "reference": "2b86b570dd9058c1fc2383503d8b8628a977292d"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/spipu/html2pdf/zipball/2b86b570dd9058c1fc2383503d8b8628a977292d",
-                "reference": "2b86b570dd9058c1fc2383503d8b8628a977292d",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.2"
-            },
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "html2pdf.class.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "LGPL"
-            ],
-            "authors": [
-                {
-                    "name": "Spipu",
-                    "homepage": "https://github.com/spipu",
-                    "role": "Developer"
-                }
-            ],
-            "description": "PHP library to convert Html into Pdf",
-            "homepage": "http://html2pdf.fr/",
-            "keywords": [
-                "html",
-                "html2pdf",
-                "pdf"
-            ],
-            "time": "2015-12-11 10:13:58"
         },
         {
             "name": "symfony/options-resolver",
@@ -390,6 +347,10 @@
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "php": "^5.5|^7.0",
+        "ext-mbstring": "*",
+        "ext-reflection": "*"
+    },
     "platform-dev": []
 }
