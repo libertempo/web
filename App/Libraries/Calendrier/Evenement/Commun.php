@@ -9,8 +9,11 @@ use CalendR\Period\PeriodInterface;
  *
  * Ne doit contacter personne
  * Ne doit être contacté que par \App\Libraries\Collection\*
+ * Doit être immuable
+ *
+ * @see \Tests\Units\App\Libraries\Calendrier\Evenement\Commun
  */
-class Commun implements IIdentifiable, EventInterface
+final class Commun implements IIdentifiable, EventInterface
 {
     /**
      * @var \DateTimeInterface Date de début
