@@ -10,7 +10,7 @@ namespace App\ProtoControllers;
  * Ne doit contacter que \App\Libraries\Calendrier\BusinessCollection, \App\Libraries\Calendrier\Fournisseur
  * Ne doit être contacté que par la page en procédural
  */
-class Calendrier
+final class Calendrier
 {
     /**
      * @var int
@@ -102,9 +102,6 @@ class Calendrier
         } else {
             $this->dateFin = $this->dateDebut->modify('+1 month');
         }
-        if ($this->isExportPDF()) {
-            return $this->getCalendrierPDF();
-        }
 
         /* Div auto fermé par le bottom */
         $return = '<div id="calendar-wrapper"><h1>' . _('calendrier_titre') . '</h1>';
@@ -127,21 +124,13 @@ class Calendrier
     }
 
     /**
-     *
-     */
-    private function isExportPDF()
-    {
-        return isset($_GET['pdf']);
-    }
-
-    /**
      * Retourne le formulaire de recherche
      *
      * @return string
      */
     private function getFormulaireRecherche()
     {
-        $form = '<form method="get" action="" class="form-inline search" role="form"><div class="form-group col-md-4 col-sm-4">
+        $form = '<form method="get" action="" class="form-inline search" role="form"><div class="form-group col-md-4 col-sm-5">
         <label class="control-label col-md-3 col-sm-3" for="vue">Vue&nbsp;:</label>
         <div class="col-md-8 col-sm-8"><select class="form-control" name="search[vue]" id="vue">';
 
@@ -188,21 +177,6 @@ class Calendrier
         ];
     }
 
-    private function getCalendrierPDF()
-    {
-        /*$pdf = new \TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
-
-        $css = '';
-        //ob_start();
-        //$table->render();
-        //$return .= ob_get_clean();
-        $html = $this->getCalendrier();
-        $pdf->writeHTML($html, true, false, true, false, '');
-        $pdf->Output('example_061.pdf', 'S');*/
-
-        return $pdf;
-    }
-
     /**
      * Retourne la vue du calendrier
      *
@@ -223,13 +197,11 @@ class Calendrier
         /* Suis pas fan de la répartition par if, mais ça a l'air de faire le job */
         if (static::VUE_SEMAINE === $this->vue) {
             $this->setPeriodesSemaine();
-            $return = $this->getActions();
-            $return .= $this->getPagination();
+            $return = $this->getPagination();
             $return .= $this->getCalendrierSemaine($calendar);
         } else {
             $this->setPeriodesMois();
-            $return = $this->getActions();
-            $return .= $this->getPagination();
+            $return = $this->getPagination();
             $return .= $this->getCalendrierMois($calendar);
         }
 
@@ -253,30 +225,6 @@ class Calendrier
     {
         $this->dateDebutPrecedente = $this->dateDebut->modify('-1 month');
         $this->dateFinSuivante = $this->dateFin->modify('+1 month');
-    }
-
-    /**
-     * Retourne les boutons d'actions
-     *
-     * @return string
-     */
-    private function getActions()
-    {
-        $urlCalendrier = ROOT_PATH . 'calendrier-pdf.php';
-        $query = [
-            'session' => $this->session,
-            'search[vue]' => $this->vue,
-            'search[groupe]' => $this->idGroupe,
-            'begin' => $this->dateDebut->format('Y-m-d'),
-            'end' => $this->dateFin->format('Y-m-d'),
-            'pdf' => '',
-        ];
-
-        $return = '<a class="btn btn-default pull-left" href="' . $urlCalendrier . '?' . http_build_query($query) . '"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Exporter</a>';
-        //$return = '<a class="btn btn-default pull-left" href="vendor/tecnickcom/tcpdf/examples/example_061.php?' . http_build_query($query) . '"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Exporter</a>';
-        ///home/rlecault/Projet/www/libertempo/vendor/tecnickcom/tcpdf/examples/example_061.php
-
-        return $return;
     }
 
     /**

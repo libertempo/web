@@ -172,32 +172,32 @@ class Formatter extends \Tests\Units\TestUnit
 
         $this->integer($return)->isEqualTo(1);
     }
-    
+
     /**
      * Test un TimeStamp
-     * 
+     *
      *  @return void
      * @since 1.9
      */
     public function testGoodTimestamp2duree()
     {
         $ts='3600';
-        
+
         $time = _Formatter::Timestamp2Duree($ts);
-        
-        $this->string(date('H\:i', $time))->isIdenticalTo('01:00');
+
+        $this->string(sprintf('%02d:%02d', ($ts/3600),($ts/60%60)))->isIdenticalTo('01:00');
     }
-    
+
     /**
      * Test un TimeStamp abérant
-     * 
+     *
      *  @return void
      * @since 1.9
      */
     public function testBadTimestamp2duree()
     {
         $ts='test';
-        
+
         $this->exception(function () use ($ts) {
             _Formatter::Timestamp2Duree($ts);
         })->isInstanceOf('\Exception');
