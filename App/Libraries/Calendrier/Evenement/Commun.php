@@ -13,7 +13,7 @@ use CalendR\Period\PeriodInterface;
  *
  * @see \Tests\Units\App\Libraries\Calendrier\Evenement\Commun
  */
-final class Commun implements IIdentifiable, EventInterface
+final class Commun implements EventInterface
 {
     /**
      * @var \DateTimeInterface Date de début
