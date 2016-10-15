@@ -9,9 +9,9 @@ namespace App\Libraries;
  */
 abstract Class ANotification {
 
-    private $data;
-    private $Notification;
-    private $envoiMail;
+    protected $data;
+    protected $Notification;
+    protected $envoiMail;
 
     public function __construct($id) {
         $this->data = $this->getData($id);
@@ -69,7 +69,6 @@ abstract Class ANotification {
         foreach ($notification['destinataire'] as $destinataire) {
             $mail->AddAddress($destinataire);
         }
-        $mail->AddAddress($notification['destinataire']);
         $mail->SetLanguage( 'fr', ROOT_PATH . 'vendor/phpmailer/phpmailer/language/');
         
         $mail->Subject = $notification['sujet'];
@@ -77,7 +76,6 @@ abstract Class ANotification {
 
         $return[] = $mail->Send();
         }
-        
         return $return;
     }
 

@@ -216,7 +216,7 @@ class Utilisateur
      */    
     public static function getEmailUtilisateur($login)  {
         require_once ROOT_PATH.'fonctions_conges.php';
-        return find_email_adress_for_user($login);
+        return find_email_adress_for_user($login)[1];
     }
     
     /**
