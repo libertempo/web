@@ -684,66 +684,13 @@ footer{
   }
 }
 
-// big calendar
-h3.current-month {
-  @include font-size(16);
-  font-weight: bold;
-  text-align: center;
-}
-
-#main-calendar {
-
-  .calendar {
-    border : solid 1px $gray;
-    @include font-size(12);
-    td, th {
-      padding: 2px;
-      border: solid 1px $gray;
-    }
-
-    .cal-user {
-      font-weight: bold;
-      @include font-size(13);
-      text-align: left;
-    }
-  }
-
   .cal-day {
     position: relative;
-    .cal-tooltip {
-      position: absolute;
-      padding: 10px;
-      border: solid $gray 1px;
-      background: $firm-color;
-      color: $white;
-      border-color: $firm-color;
-      display: none;
-      z-index: 1;
-      top: 22px;
-      left: -1px;
-      min-width: 200px;
-      text-align: left;
-
-      hr{
-        margin: 5px 0;
-      }
-
-      .current-date {
-        font-weight: bold;
-      }
-
-      &:hover {
-        display: block;
-      }
-    }
 
     &:hover{
       background: $firm-color;
       color: $white;
       border-color: $firm-color;
-      .cal-tooltip {
-        display: block;
-      }
     }
   }
 
@@ -758,10 +705,6 @@ h3.current-month {
       width: 25%;
       padding: 0;
     }
-  }
-
-  .cal-percent {
-    text-align: right;
   }
 }
 
