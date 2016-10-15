@@ -174,7 +174,7 @@ class Formatter extends \Tests\Units\TestUnit
     }
 
     /**
-     * Test un TimeStamp
+     * Test la transformation d'un nombre de secondes en hh:ii
      *
      *  @return void
      * @since 1.9
@@ -185,7 +185,7 @@ class Formatter extends \Tests\Units\TestUnit
 
         $time = _Formatter::Timestamp2Duree($ts);
 
-        $this->string(sprintf('%02d:%02d', ($ts/3600),($ts/60%60)))->isIdenticalTo('01:00');
+        $this->string($time)->isIdenticalTo('01:00');
     }
 
     /**
