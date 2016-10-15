@@ -47,10 +47,9 @@ class Conge extends \App\Libraries\Calendrier\ACollection
             $dateDebut = $this->getDebutPeriode($jour['p_date_deb'], $jour['p_demi_jour_deb']);
             $dateFin = $this->getFinPeriode($jour['p_date_fin'], $jour['p_demi_jour_fin']);
 
-            /* afficher le format long que si l'heure est != 00:00 || 23:59 (?) */
-            $title = '[' . $jour['ta_type'] . '] ' . $jour['ta_libelle'] . ' de ' . $nomComplet . ' du ' . $dateDebut->format('d/m/Y à H\:i') . ' au ' . $dateFin->format('d/m/Y à H\:i');
+            $title = '[' . $jour['ta_type'] . '] ' . $jour['ta_libelle'] . ' de ' . $nomComplet . ' du ' . $dateDebut['date']->format('d/m/Y') . ' ' . $dateDebut['creneau'] . ' au ' . $dateFin['date']->format('d/m/Y') . ' ' . $dateFin['creneau'];
             $uid = uniqid('ferie');
-            $conges[] = new Evenement\Commun($uid, $dateDebut, $dateFin, $name, $title, $class);
+            $conges[] = new Evenement\Commun($uid, $dateDebut['date'], $dateFin['date'], $name, $title, $class);
         }
 
         return $conges;
@@ -58,22 +57,26 @@ class Conge extends \App\Libraries\Calendrier\ACollection
 
     private function getDebutPeriode($dateDebut, $demiJournee)
     {
-        // TODO pour le moment, si c'est un creneau de matin, on le place à 00:00 -> 11:59 / Creneaux du soir 12:00 -> 23:59
-        // Il faudra préciser davantage avec le planning
         $debut = ('am' === $demiJournee)
-            ? $dateDebut . ' 00:00'
+            ? $dateDebut
             : $dateDebut . ' 11:59';
-        return new \DateTime($debut);
+        $creneau = ('am' === $demiJournee)
+            ? _('debut_matin')
+            : _('debut_apres-midi');
+
+        return ['date' => new \DateTime($debut), 'creneau' => $creneau];
     }
 
     private function getFinPeriode($dateFin, $demiJournee)
     {
-        // TODO pour le moment, si c'est un creneau de matin, on le place à 00:00 -> 11:59 / Creneaux du soir 12:00 -> 23:59
-        // Il faudra préciser davantage avec le planning
         $fin = ('am' === $demiJournee)
             ? $dateFin . ' 11:59'
             : $dateFin . ' 23:59';
-        return new \DateTime($fin);
+        $creneau = ('am' === $demiJournee)
+            ? _('debut_apres-midi')
+            : _('fin_apres-midi');
+
+            return ['date' => new \DateTime($fin), 'creneau' => $creneau];
     }
 
 
