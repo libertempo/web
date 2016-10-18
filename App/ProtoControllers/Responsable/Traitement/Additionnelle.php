@@ -68,7 +68,7 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
         }
         $errors = array_merge($errors, $localError);
         if( 0 < $return) {
-            $notif = new \App\Libraries\Notification\Additionnelle($id);
+            $notif = new \App\Libraries\Notification\Additionnelle($id_heure);
             $send = $notif->send();
 
             if (false === $send) {

@@ -116,7 +116,7 @@ abstract class ATraitement
             $sql->getPdoObj()->rollback();
             return NIL_INT;
         }
-        return $sql->affected_rows;
+        return $updateStatut;
     }
 
     /**

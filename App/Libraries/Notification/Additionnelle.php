@@ -53,11 +53,11 @@ Class Additionnelle extends \App\Libraries\ANotification {
         return $return;
     }
 
-    private function getNotificationEmployePremierValidation() {
+    protected function getNotificationEmployePremierValidation() {
 
         $return['sujet'] = "Première validation d'heure additionnelle";
-        $return['expediteur'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($_SESSION['login']);
-        $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($_SESSION['login']);
+        $return['expediteur'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($_SESSION['userlogin']);
+        $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($_SESSION['userlogin']);
         $return['destinataire'][] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($this->data['login']);
 
         $return['message'] = $infoUser['u_prenom'] . " " . $infoUser['u_nom'] . " a validé votre demande d'heure additionnelle du ... . Il doit maintenant être traité en deuxième validation.";
@@ -65,11 +65,11 @@ Class Additionnelle extends \App\Libraries\ANotification {
         return $return;
     }
 
-    private function getNotificationValidationFinale() {
+    protected function getNotificationValidationFinale() {
 
         $return['sujet'] = "Demande d'heure additionnelle validé";
-        $return['expediteur'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($_SESSION['login']);
-        $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($_SESSION['login']);
+        $return['expediteur'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($_SESSION['userlogin']);
+        $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($_SESSION['userlogin']);
         $return['destinataire'][] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($this->data['login']);
 
 
@@ -78,11 +78,11 @@ Class Additionnelle extends \App\Libraries\ANotification {
         return $return;
     }
 
-    private function getNotificationRefus() {
+    protected function getNotificationRefus() {
 
         $return['sujet'] = "Demande d'heure additionnelle refusé";
-        $return['expediteur'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($_SESSION['login']);
-        $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($_SESSION['login']);
+        $return['expediteur'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($_SESSION['userlogin']);
+        $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($_SESSION['userlogin']);
         $return['destinataire'][] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($this->data['login']);
 
         $return['message'] = $infoUser['u_prenom'] . " " . $infoUser['u_nom'] . " a refusé la demande d'heure additionnelle du ... de ... à ... .";
@@ -90,7 +90,7 @@ Class Additionnelle extends \App\Libraries\ANotification {
         return $return;
     }
 
-    private function getNotificationAnnulation() {
+    protected function getNotificationAnnulation() {
 
         $return['sujet'] = "Demande d'heure additionnelle annulée";
         $return['expediteur'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($this->data['login']);

@@ -55,8 +55,8 @@ Class Repos extends \App\Libraries\ANotification {
     private function getNotificationEmployePremierValidation() {
 
         $return['sujet'] = "Première validation d'heure de repos";
-        $return['expediteur'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($_SESSION['login']);
-        $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($_SESSION['login']);
+        $return['expediteur'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($_SESSION['userlogin']);
+        $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($_SESSION['userlogin']);
         $return['destinataire'][] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($this->data['login']);
 
         $return['message'] = $infoUser['u_prenom'] . " " . $infoUser['u_nom'] . " a validé (première validation) une demande d'heure de repos pour vous dans l'application de gestion des congés. Il doit maintenant être accepté en deuxième validation.";
@@ -67,8 +67,8 @@ Class Repos extends \App\Libraries\ANotification {
     private function getNotificationValidationFinale() {
 
         $return['sujet'] = "Demande d'heure de repos validé";
-        $return['expediteur'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($_SESSION['login']);
-        $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($_SESSION['login']);
+        $return['expediteur'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($_SESSION['userlogin']);
+        $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($_SESSION['userlogin']);
         $return['destinataire'][] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($this->data['login']);
 
 
@@ -80,8 +80,8 @@ Class Repos extends \App\Libraries\ANotification {
     private function getNotificationRefus() {
 
         $return['sujet'] = "Demande d'heure de repos refusé";
-        $return['expediteur'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($_SESSION['login']);
-        $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($_SESSION['login']);
+        $return['expediteur'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($_SESSION['userlogin']);
+        $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($_SESSION['userlogin']);
         $return['destinataire'][] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($this->data['login']);
 
         $return['message'] = $infoUser['u_prenom'] . " " . $infoUser['u_nom'] . " a refusé une demande d'heure de repos pour vous dans l'application de gestion des congés.";
