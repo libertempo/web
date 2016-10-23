@@ -27,7 +27,11 @@ Class Additionnelle extends \App\Libraries\ANotification {
                 WHERE id_heure =' . $id;
 
         $data = $sql->query($req)->fetch_array();
-
+        
+        $data['jour']   = date('d/m/Y', $data['debut']);
+        $data['debut']  = date('H\:i', $data['debut']);
+        $data['fin']    = date('H\:i', $data['fin']);
+        $data['duree']    = \App\Helpers\Formatter::Timestamp2Duree($data['duree']);
 
         return $data;
     }
@@ -48,8 +52,9 @@ Class Additionnelle extends \App\Libraries\ANotification {
             $return['destinataire'][] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($responsable);
         }
 
-        $return['message'] = $infoUser['u_prenom'] . " " . $infoUser['u_nom'] . " solicite une demande d'ajout d'heure additionnelle pour le ... du ... au ... soit ... heure(s). Vous devez traiter cette demande";
+        $return['message'] = $infoUser['u_prenom'] . " " . $infoUser['u_nom'] . " solicite une demande d'ajout d'heure additionnelle pour le ". $this->data['jour'] ." de ". $this->data['debut'] ." a ". $this->data['fin'] ." soit ". $this->data['duree'] ." heure(s). Vous devez traiter cette demande";
 
+        $return['config'] = 'mail_new_demande_alerte_resp';
         return $return;
     }
 
@@ -62,6 +67,7 @@ Class Additionnelle extends \App\Libraries\ANotification {
 
         $return['message'] = $infoUser['u_prenom'] . " " . $infoUser['u_nom'] . " a validé votre demande d'heure additionnelle du ... . Il doit maintenant être traité en deuxième validation.";
 
+        $return['config'] = 'mail_prem_valid_conges_alerte_user';
         return $return;
     }
 
@@ -75,6 +81,7 @@ Class Additionnelle extends \App\Libraries\ANotification {
 
         $return['message'] = $infoUser['u_prenom'] . " " . $infoUser['u_nom'] . " a accepté la demande d'heure additionnelle du ... de ... à ... .";
 
+        $return['config'] = 'mail_valid_conges_alerte_user';
         return $return;
     }
 
@@ -87,6 +94,7 @@ Class Additionnelle extends \App\Libraries\ANotification {
 
         $return['message'] = $infoUser['u_prenom'] . " " . $infoUser['u_nom'] . " a refusé la demande d'heure additionnelle du ... de ... à ... .";
 
+        $return['config'] = 'mail_valid_conges_alerte_user';
         return $return;
     }
 
@@ -102,6 +110,7 @@ Class Additionnelle extends \App\Libraries\ANotification {
 
         $return['message'] = $infoUser['u_prenom'] . " " . $infoUser['u_nom'] . " a annulée la demande d'heure additionnelle du ... de ... à ... commentaire_refus.";
 
+        $return['config'] = 'mail_supp_demande_alerte_resp';
         return $return;
     }
 }

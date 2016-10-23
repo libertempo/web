@@ -64,17 +64,19 @@ abstract Class ANotification {
         }
         
         foreach ($this->Notification as $notification){
-        $mail->ClearAddresses();
-        $mail->From = $notification['expediteur'];
-        foreach ($notification['destinataire'] as $destinataire) {
-            $mail->AddAddress($destinataire);
-        }
-        $mail->SetLanguage( 'fr', ROOT_PATH . 'vendor/phpmailer/phpmailer/language/');
+            if(!$this->canSend($notification['config'])){
+                $mail->ClearAddresses();
+                $mail->From = $notification['expediteur'];
+                foreach ($notification['destinataire'] as $destinataire) {
+                    $mail->AddAddress($destinataire);
+                }
+                $mail->SetLanguage( 'fr', ROOT_PATH . 'vendor/phpmailer/phpmailer/language/');
         
-        $mail->Subject = $notification['sujet'];
-        $mail->Body = $notification['message'];
+                $mail->Subject = $notification['sujet'];
+                $mail->Body = $notification['message'];
 
-        $return[] = $mail->Send();
+                $return[] = $mail->Send();
+            }
         }
         return $return;
     }
@@ -112,25 +114,8 @@ abstract Class ANotification {
         return $NotifContent;
     }
     
-    protected function canSend() {
-        switch ($this->data['statut']) {
-            case \App\Models\Heure\Additionnelle::STATUT_DEMANDE:
-                $this->envoiMail = $_SESSION['config']['mail_new_demande_alerte_resp'];
-                break;
-            case \App\Models\Heure\Additionnelle::STATUT_PREMIERE_VALIDATION:
-                $this->envoiMail = $_SESSION['config']['mail_prem_valid_conges_alerte_user'];
-                break;
-            case \App\Models\Heure\Additionnelle::STATUT_VALIDATION_FINALE:
-                $this->envoiMail = $_SESSION['config']['mail_valid_conges_alerte_user'];
-                break;
-            case \App\Models\Heure\Additionnelle::STATUT_REFUS:
-                $this->envoiMail = $_SESSION['config']['mail_valid_conges_alerte_user'];
-                break;
-            case \App\Models\Heure\Additionnelle::STATUT_ANNUL:
-                $this->envoiMail = $_SESSION['config']['mail_supp_demande_alerte_resp'];
-                break;
-        }
-        return $this->envoiMail;
+    protected function canSend($optionName) {
+        return $_SESSION['config'][$optionName];
     }
 
 }
