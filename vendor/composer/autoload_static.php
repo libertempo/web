@@ -7,12 +7,61 @@ namespace Composer\Autoload;
 class ComposerStaticInitfd23b7dd905d561816f77d072cde6740
 {
     public static $files = array (
+        '253c157292f75eb38082b5acb06f3f01' => __DIR__ . '/..' . '/nikic/fast-route/src/functions.php',
         '75d4b1647cdbc77a59f72bcb74df0995' => __DIR__ . '/..' . '/spipu/html2pdf/html2pdf.class.php',
         '6bc45d0537e6858fd179bdbc31d62c79' => __DIR__ . '/..' . '/raveren/kint/Kint.class.php',
     );
 
+    public static $prefixLengthsPsr4 = array (
+        'S' => 
+        array (
+            'Slim\\' => 5,
+        ),
+        'P' => 
+        array (
+            'Psr\\Http\\Message\\' => 17,
+        ),
+        'I' => 
+        array (
+            'Interop\\Container\\' => 18,
+        ),
+        'F' => 
+        array (
+            'FastRoute\\' => 10,
+        ),
+    );
+
+    public static $prefixDirsPsr4 = array (
+        'Slim\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/slim/slim/Slim',
+        ),
+        'Psr\\Http\\Message\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/http-message/src',
+        ),
+        'Interop\\Container\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/container-interop/container-interop/src/Interop/Container',
+        ),
+        'FastRoute\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/nikic/fast-route/src',
+        ),
+    );
+
     public static $fallbackDirsPsr4 = array (
         0 => __DIR__ . '/../..' . '/',
+    );
+
+    public static $prefixesPsr0 = array (
+        'P' => 
+        array (
+            'Pimple' => 
+            array (
+                0 => __DIR__ . '/..' . '/pimple/pimple/src',
+            ),
+        ),
     );
 
     public static $classMap = array (
@@ -85,7 +134,10 @@ class ComposerStaticInitfd23b7dd905d561816f77d072cde6740
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
+            $loader->prefixLengthsPsr4 = ComposerStaticInitfd23b7dd905d561816f77d072cde6740::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitfd23b7dd905d561816f77d072cde6740::$prefixDirsPsr4;
             $loader->fallbackDirsPsr4 = ComposerStaticInitfd23b7dd905d561816f77d072cde6740::$fallbackDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitfd23b7dd905d561816f77d072cde6740::$prefixesPsr0;
             $loader->classMap = ComposerStaticInitfd23b7dd905d561816f77d072cde6740::$classMap;
 
         }, null, ClassLoader::class);
