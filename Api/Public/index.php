@@ -3,8 +3,8 @@
  * API de Libertempo
  * @version 0.1
  */
-
-require_once dirname(__DIR__) . '/vendor/autoload.php';
+define('ROOT_PATH', dirname(__DIR__));
+require_once ROOT_PATH. '/vendor/autoload.php';
 
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -181,7 +181,7 @@ $app->get('/{ressource:[a-z_]+}/{ressourceId:[0-9]+}', function(ServerRequestInt
 $app->get('/{ressource:[a-z_]+}', function(ServerRequestInterface $request, ResponseInterface $response, $args) {
     // snake to StudlyCaps
     // drop the plural
-    $class = '\Api\App\\' . $args['ressource'] . '\Controller';
+    $class = '\Api\App\\' . ucfirst($args['ressource']) . '\Controller';
     if (!class_exists($class, true)) {
         $data = [
             'code' => 404,
@@ -197,6 +197,13 @@ $app->get('/{ressource:[a-z_]+}', function(ServerRequestInterface $request, Resp
     }
 
     try {
+        $data = [
+            'code' => 200,
+            'status' => 'success',
+            'message' => ':-)',
+            'data' => '',
+        ];
+        return $response->withJson($data, 200);
         //* Check api key : 401 *
         //$controller = new $class($request, $response);
         // si pas droit d'acces id user : 403
