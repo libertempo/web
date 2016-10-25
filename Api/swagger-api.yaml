@@ -1,0 +1,170 @@
+################################################
+# Descripteur de l'API de Libertempo par Swagger
+################################################
+swagger: '2.0'
+info:
+  title: API de Libertempo
+# description:
+  version: "0.1"
+# the domain of the service
+host: libertempo.fr
+# array of all schemes that your API supports
+schemes:
+  - http
+# will be prefixed to all paths
+basePath: /api
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /plannings:
+    get:
+      summary: Liste des plannings d'employés
+#      description:
+      parameters:
+        - name: statuts
+          in: query
+          description: Liste des statuts
+          required: false
+          type: array
+          items:
+            type: integer
+#        - name: startAfter
+#          in: query
+#          description: Point de départ (exclu) à partir duquel la liste doit récupérer les résultats
+#          required: false
+#          type: number
+#          format: double
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Plannings'
+        default:
+          description: Erreur inattendue
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - Plannings
+    post:
+      summary: Ajoute un nouveau planning
+#     description:
+      parameters:
+        - name: name
+          in: formData
+          description: Nom du planning
+          required: true
+          type: string
+        - name: statut
+          in: formData
+          description: Statut
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            type: integer
+        default:
+          description: Erreur inattendue
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - Plannings
+    parameters:
+      - name: apiKey
+        in: header
+        description: API token
+        required: true
+        type: integer
+        format: int64
+      - name: userId
+        in: header
+        description: Id de l'utilisateur de l'application
+        required: true
+        type: integer
+  /plannings/{id}:
+    get:
+      summary: Planning d'employé
+#      description:
+      tags:
+        - Plannings
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Planning'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    put:
+      summary: Met à jour un planning d'employé
+      parameters:
+      - name: name
+        in: formData
+        type: string
+        description: Nom du planning
+      - name: status
+        in: formData
+        type: integer
+        description: Statut
+      responses:
+        200:
+          description: OK
+          schema:
+            type: integer
+        default:
+          description: Erreur inattendue
+          schema:
+            $ref: '#/definitions/Error'
+    parameters:
+    - name: id
+      in: path
+      description: Identifiant unique du planning
+      required: true
+      type: integer
+    - name: apiKey
+      in: header
+      description: API token
+      required: true
+      type: integer
+      format: int64
+    - name: userId
+      in: header
+      description: Id de l'utilisateur de l'application
+      required: true
+      type: integer
+definitions:
+  Plannings:
+    type: object
+    properties:
+      elements:
+        type: array
+        items:
+          $ref: '#/definitions/Planning' 
+  Planning:
+    type: object
+    properties:
+      planning_id:
+        type: integer
+        description: L'identifiant unique du planning
+      name:
+        type: string
+        description: Nom du planning
+      statut:
+        type: integer
+        description: Statut
+  Error:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
