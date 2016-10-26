@@ -3,32 +3,32 @@
  * API de Libertempo
  * @version 0.1
  */
-define('ROOT_PATH', dirname(__DIR__));
+define('ROOT_PATH', dirname(dirname(__DIR__)));
 require_once ROOT_PATH. '/vendor/autoload.php';
 
+use Api\App\Helpers\Formatter;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
+/* Handlers par défaut */
 $container['notFoundHandler'] = function () {
     return function (ServerRequestInterface $request, ResponseInterface $response, \Exception $exception) {
-        $data = [
+        return $response->withJson([
             'code' => 404,
             'status' => 'error',
             'message' => 'Not Found',
-            'data' => '« ' . $request->getUri()->getPath() . ' » is not a valid resource name ',
-        ];
-        return $response->withJson($data, 404);
+            'data' => '« ' . $request->getUri()->getPath() . ' » is not a valid resource name',
+        ], 404);
     };
 };
 $container['errorHandler'] = function () {
     return function (ServerRequestInterface $request, ResponseInterface $response, \Exception $exception) {
-        $data = [
+        return $response->withJson([
             'code' => 500,
             'status' => 'fail',
             'message' => 'Internal Server Error',
             'data' => $exception->getMessage(),
-        ];
-        return $response->withJson($data, 500);
+        ], 500);
     };
 };
 $container['notAllowedHandler'] = function () {
@@ -40,6 +40,7 @@ $container['notAllowedHandler'] = function () {
             'message' => 'Method Not Allowed',
             'data' => 'Method on « ' . $request->getUri()->getPath() . ' » must be one of : ' . $methodString,
         ];
+
         return $response
             ->withHeader('Allow', $methodString)
             ->withJson($data, 405);
@@ -47,11 +48,6 @@ $container['notAllowedHandler'] = function () {
 };
 
 $app = new \Slim\App($container);
-
-$app->post('/hello', function (ServerRequestInterface $request, ResponseInterface $response, $args) {
-    $a = $response->withJson(['test' => 'baba'], 200);
-    return $a;
-});
 
 /**
  * creation des controllers
@@ -62,162 +58,124 @@ $app->post('/hello', function (ServerRequestInterface $request, ResponseInterfac
  * creation des collections
  */
 
- /**
-  * querystring que pour GET et pour la recherche d'éléments !!
-  */
-
-
 /**
- * PUT planningsIdPut
- * Summary: Met à jour un planning d&#39;employé
- * Notes:
- * Output-Formats: [application/json]
- */
-$app->put('/plannings/{id}', function($request, $response, $args) {
-    $headers = $request->getHeaders();
-    /* Check api key and error access : 401 */
-    // $planning->putOne($id)
-
-    $name = $args['name'];    $status = $args['status'];
-
-    $response->write('How about implementing planningsIdPut as a PUT method ?');
-    return $response;
-});
-// injection de la request et de la response dans le controleur, pour le test
-
-/**
- * sinon on peut faire par groupe, si c'est possible :
- * $app->group('/api/plannings', function () {
- *      $this->get('/');
- *      $this->post('/');
- *      $this->group('/{id}', function () {
- *          $this->get('/');
- *          $this->put('/');
- *          ...
- *      });
- *      ...
- *      $this->any(); // return 405
-  * });
-  *
-  *
-  * si ce n'est pas possible, on fait un fallback :
-  *
-  * $app->any('/api/{resource:[a-z_]+}', function () {
-  * // si pas droit d'acces, 403
-  * // to StudlyCaps
-  * // drop the plural
-  * // si pas de ressource, 404
-  * // get method by request
-  * // appel de la methode sur la ressource, si methode inexistant, 405
-  * })
-  *
-  * mais pour tout ce qui peut l'être, on précise en amont
-  * '/api/{resource:[a-z_]+}/{resourceId:[0-9]+}', '/api/maRessource/{resourceId:[0-9]+}/dessous', ...
- */
-
-
-/**
-* GET planningsIdGet
-* Summary: Planning d&#39;employé
-* Notes:
-* Output-Formats: [application/json]
+* Routage de la découverte des urls
 */
-$app->get('/plannings/{id}', function($request, $response, $args) {
+$app->get('/hello_world', function($request, $response, $args) {
     $headers = $request->getHeaders();
     /* Check api key and error access : 401 */
-    // $planning->getOne($id)
 
     $response->withJson('How about implementing planningsIdGet as a GET method ?');
-    return $response;
-});
 
-
-/**
- * GET planningsGet
- * Summary: Liste des plannings d&#39;employés
- * Notes:
- * Output-Formats: [application/json]
- */
-$app->get('/plannings', function($request, $response, $args) {
-    $headers = $request->getHeaders();
-    $queryParams = $request->getQueryParams();
-    $statuts = $queryParams['statuts'];
-    /* Check api key and error access : 401 */
-    // $planning->getList()
-    var_dump('query', $queryParams);
-
-
-    $response->write('How about implementing planningsGet as a GET method ?');
-    var_dump($response);
     return $response;
 });
 
 /**
- * POST planningsPost
- * Summary: Ajoute un nouveau planning
- * Notes:
- * Output-Formats: [application/json]
+ * Routage général des options
  */
-$app->post('/plannings', function($request, $response, $args) {
-    $headers = $request->getHeaders();
-    /* Check api key and error access : 401 */
-    // $planning->postOne() : 201 on success, return resource link in header location
+/*
+$app->options('/{ressource:[a-z_]+}',
+    function(ServerRequestInterface $request, ResponseInterface $response, $args) {
+        // snake to StudlyCaps
+        // drop the plural
+        $class = '\Api\App\\' . ucfirst($args['ressource']) . '\Controller';
+        /* Ressource n'existe pas => 404 *
+        if (!class_exists($class, true)) {
+            return call_user_func(
+                $this->notFoundHandler,
+                $request,
+                $response,
+                new \Exception('')
+            );
+        }
+        $method = $request->getMethod();
+        $controller = new $class($request, $response);
+        /* Methode non applicable à la ressource => 405 *
+        if (!is_callable([$controller, $method])
+            || !in_array($method, $controller->getAvailablesMethods(), true)
+        ) {
+            return call_user_func(
+                $this->notAllowedHandler,
+                $request,
+                $response,
+                array_map('strtoupper', $controller->getAvailablesMethods())
+            );
+        }
 
-    $name = $args['name'];    $statut = $args['statut'];
+        return call_user_func([$controller, $method]);
+    }
+);
+*/
 
-    $response->write('How about implementing planningsPost as a POST method ?');
-    return $response;
-});
-
-$app->get('/{ressource:[a-z_]+}/{ressourceId:[0-9]+}', function(ServerRequestInterface $request, ResponseInterface $response, $args) {
-    $headers = $request->getHeaders();
-    /* Check api key and error access : 401 */
-    // $planning->putOne($id)
-
-    $response->write('Voici un Nope avec la ressource ' . $args['ressource'] . ' de lid ' . $args['ressourceId']);
-    return $response;
-});
-
-$app->get('/{ressource:[a-z_]+}', function(ServerRequestInterface $request, ResponseInterface $response, $args) {
-    // snake to StudlyCaps
-    // drop the plural
-    $class = '\Api\App\\' . ucfirst($args['ressource']) . '\Controller';
+/**
+ * Routage général des détails
+ */
+$app->map(['GET', 'PUT', 'DELETE'], '/{ressource:[a-z_]+}/{ressourceId:[0-9]+}', function(ServerRequestInterface $request, ResponseInterface $response, $args) {
+    $class = Formatter::getSingularTerm(Formatter::getStudlyCapsFromSnake($args['ressource']));
+    /* Ressource n'existe pas => 404 */
     if (!class_exists($class, true)) {
-        $data = [
-            'code' => 404,
-            'status' => 'error',
-            'message' => '« ' . $args['ressource'] . ' » is not a valid resource name',
-            'data' => $class,
-        ];
-        return $response->withJson($data, 404);
-        // 404 (pour la collection. Pour la ressource, on en aura aussi un plus loin)
+        return call_user_func(
+            $this->notFoundHandler,
+            $request,
+            $response,
+            new \Exception('Not Found')
+        );
     }
-    if (!is_callable([$class, 'get'])) {
-        // 405
-    }
-
-    try {
-        $data = [
-            'code' => 200,
-            'status' => 'success',
-            'message' => ':-)',
-            'data' => '',
-        ];
-        return $response->withJson($data, 200);
-        //* Check api key : 401 *
-        //$controller = new $class($request, $response);
-        // si pas droit d'acces id user : 403
-        //return $controller->get();
-    } catch (\Exception $e) {
-        // cas d'erreur normalise
+    $method = $request->getMethod();
+    /* Methode non applicable à la ressource => 405 */
+    $controller = new $class($request, $response);
+    $availablesMethods = array_map('strtoupper', $controller->getAvailablesMethods());
+    if (!is_callable([$controller, $method])
+        || !in_array($method, $availablesMethods, true)
+    ) {
+        return call_user_func(
+            $this->notAllowedHandler,
+            $request,
+            $response,
+            $availablesMethods
+        );
     }
 
-
-
-    $headers = $request->getHeaders();
-    // $planning->putOne($id)
+    return call_user_func([$controller, $method], $args['ressourceId']);
 });
 
+/**
+ * Routage général des collections
+ */
+$app->map(
+    ['GET', 'POST'],
+    '/{ressource:[a-z_]+}',
+    function(ServerRequestInterface $request, ResponseInterface $response, $args) {
+        $class = Formatter::getSingularTerm(Formatter::getStudlyCapsFromSnake($args['ressource']));
+        $class = '\Api\App\\' . $class . '\Controller';
+        /* Ressource n'existe pas => 404 */
+        if (!class_exists($class, true)) {
+            return call_user_func(
+                $this->notFoundHandler,
+                $request,
+                $response,
+                new \Exception('Not Found')
+            );
+        }
+        $method = $request->getMethod();
+        $controller = new $class($request, $response);
+        $availablesMethods = array_map('strtoupper', $controller->getAvailablesMethods());
+        /* Méthode non applicable à la ressource => 405 */
+        if (!is_callable([$controller, $method])
+            || !in_array($method, $availablesMethods, true)
+        ) {
+            return call_user_func(
+                $this->notAllowedHandler,
+                $request,
+                $response,
+                $availablesMethods
+            );
+        }
+
+        return call_user_func([$controller, $method]);
+    }
+);
 
 
+/* Jump in ! */
 $app->run();
