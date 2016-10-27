@@ -10,27 +10,48 @@ use Api\App\Helpers\Formatter;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
-/* Handlers par défaut */
+/**************************
+ * Handlers par défaut
+ **************************/
+$container['unauthorizedHandler'] = function () {
+    return function (ServerRequestInterface $request, ResponseInterface $response) {
+        $data = [
+            'code' => 401,
+            'status' => 'error',
+            'message' => 'Unauthorized',
+            'data' => 'Bad API Key',
+        ];
+
+        return $response
+            ->withJson($data, 401);
+    };
+};
+
+$container['forbiddenHandler'] = function () {
+    return function (ServerRequestInterface $request, ResponseInterface $response) {
+        $data = [
+            'code' => 403,
+            'status' => 'error',
+            'message' => 'Forbidden',
+            'data' => 'User has not access to « ' . $request->getUri()->getPath() . ' » resource',
+        ];
+
+        return $response
+            ->withJson($data, 403);
+    };
+};
+
 $container['notFoundHandler'] = function () {
-    return function (ServerRequestInterface $request, ResponseInterface $response, \Exception $exception) {
+    return function (ServerRequestInterface $request, ResponseInterface $response) {
         return $response->withJson([
             'code' => 404,
             'status' => 'error',
             'message' => 'Not Found',
-            'data' => '« ' . $request->getUri()->getPath() . ' » is not a valid resource name',
+            'data' => '« ' . $request->getUri()->getPath() . ' » is not a valid resource',
         ], 404);
     };
 };
-$container['errorHandler'] = function () {
-    return function (ServerRequestInterface $request, ResponseInterface $response, \Exception $exception) {
-        return $response->withJson([
-            'code' => 500,
-            'status' => 'fail',
-            'message' => 'Internal Server Error',
-            'data' => $exception->getMessage(),
-        ], 500);
-    };
-};
+
 $container['notAllowedHandler'] = function () {
     return function (ServerRequestInterface $request, ResponseInterface $response, array $methods) {
         $methodString = implode(', ', $methods);
@@ -47,6 +68,17 @@ $container['notAllowedHandler'] = function () {
     };
 };
 
+$container['errorHandler'] = function () {
+    return function (ServerRequestInterface $request, ResponseInterface $response, \Exception $exception) {
+        return $response->withJson([
+            'code' => 500,
+            'status' => 'fail',
+            'message' => 'Internal Server Error',
+            'data' => $exception->getMessage(),
+        ], 500);
+    };
+};
+
 $app = new \Slim\App($container);
 
 /**
@@ -57,6 +89,14 @@ $app = new \Slim\App($container);
  * creation des domain models
  * creation des collections
  */
+ /**************************
+  * Connexion stockage
+  **************************/
+$storageConnector = '';
+
+ /**************************
+  * Routage
+  **************************/
 
 /**
 * Routage de la découverte des urls
@@ -84,8 +124,7 @@ $app->options('/{ressource:[a-z_]+}',
             return call_user_func(
                 $this->notFoundHandler,
                 $request,
-                $response,
-                new \Exception('')
+                $response
             );
         }
         $method = $request->getMethod();
@@ -117,8 +156,7 @@ $app->map(['GET', 'PUT', 'DELETE'], '/{ressource:[a-z_]+}/{ressourceId:[0-9]+}',
         return call_user_func(
             $this->notFoundHandler,
             $request,
-            $response,
-            new \Exception('Not Found')
+            $response
         );
     }
     $method = $request->getMethod();
@@ -145,34 +183,60 @@ $app->map(['GET', 'PUT', 'DELETE'], '/{ressource:[a-z_]+}/{ressourceId:[0-9]+}',
 $app->map(
     ['GET', 'POST'],
     '/{ressource:[a-z_]+}',
-    function(ServerRequestInterface $request, ResponseInterface $response, $args) {
+    function(ServerRequestInterface $request, ResponseInterface $response, $args) use ($storageConnector) {
+        $allGetVars = $this->request->getQueryParams();
+        var_dump($allGetVars);
+        exit();
         $class = Formatter::getSingularTerm(Formatter::getStudlyCapsFromSnake($args['ressource']));
-        $class = '\Api\App\\' . $class . '\Controller';
+        $controllerClass = '\Api\App\\' . $class . '\Controller';
+        $repoClass = '\Api\App\\' . $class . '\Repository';
         /* Ressource n'existe pas => 404 */
-        if (!class_exists($class, true)) {
+        if (!class_exists($controllerClass, true)
+            || !class_exists($repoClass, true)
+        ) {
             return call_user_func(
                 $this->notFoundHandler,
                 $request,
-                $response,
-                new \Exception('Not Found')
+                $response
             );
         }
         $method = $request->getMethod();
-        $controller = new $class($request, $response);
-        $availablesMethods = array_map('strtoupper', $controller->getAvailablesMethods());
-        /* Méthode non applicable à la ressource => 405 */
-        if (!is_callable([$controller, $method])
-            || !in_array($method, $availablesMethods, true)
-        ) {
+        try {
+            $repository = new $repoClass($storageConnector);
+            $controller = new $class($request, $response, $repository);
+            $availablesMethods = array_map('strtoupper', $controller->getAvailablesMethods());
+            /* Méthode non applicable à la ressource => 405 */
+            if (!is_callable([$controller, $method])
+                || !in_array($method, $availablesMethods, true)
+            ) {
+                return call_user_func(
+                    $this->notAllowedHandler,
+                    $request,
+                    $response,
+                    $availablesMethods
+                );
+            }
+            return call_user_func([$controller, $method]);
+        /* La méthode par exception est une mauvaise piste, car il faut la répeter partout. On peut trouver mieux que ça */
+        } catch (\DomainException $e) {
             return call_user_func(
-                $this->notAllowedHandler,
+                $this->unauthorizedHandler,
                 $request,
-                $response,
-                $availablesMethods
+                $response
+            );
+        } catch (\LogicException $e) {
+            return call_user_func(
+                $this->forbiddenHandler,
+                $request,
+                $response
+            );
+        } catch (Exception $e) {
+            return call_user_func(
+                $this->notFoundHandler,
+                $request,
+                $response
             );
         }
-
-        return call_user_func([$controller, $method]);
     }
 );
 
