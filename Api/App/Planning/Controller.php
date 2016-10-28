@@ -1,6 +1,8 @@
 <?php
 namespace Api\App\Planning;
 
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Contrôleur de plannings
@@ -9,11 +11,14 @@ namespace Api\App\Planning;
  * @author Wouldsmina
  *
  * @since 0.1
+ *
+ * Ne devrait être contacté que par le routeur
+ * Ne devrait contacter que le Planning\Repository
  */
 final class Controller extends \Api\App\Libraries\Controller
 {
     /**
-     *
+     * {@inheritDoc}
      */
     public function getAvailablesMethods()
     {
@@ -21,14 +26,22 @@ final class Controller extends \Api\App\Libraries\Controller
         return ['get'];
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public function getResourceName()
+    {
+        return 'plannings';
+    }
+
     /*************************************************
      * GET
      *************************************************/
 
     /**
-     * Execute l'ordbre HTTP GET
+     * Execute l'ordre HTTP GET
      *
-     * @return string JSON selon le format ['code', 'status', 'message', 'data']
+     * @return ResponseInterface
      */
     public function get($id = -1)
     {
@@ -44,50 +57,68 @@ final class Controller extends \Api\App\Libraries\Controller
      *
      * @param int $id ID de l'élément
      *
-     * @return string JSON bien formé
+     * @return ResponseInterface
      */
     private function getOne($id)
     {
         $id = (int) $id;
-        $data = [
-            'code' => 404,
-            'status' => 'error',
-            'message' => 'Not Found',
-            'data' => 'Element « ' . $id . ' » of « planning » is not a valid resource',
-        ];
-        return $this->response->withJson($data, 404);
+        $planning = $this->repository->getOne($id);
+        $code = -1;
+        $data = [];
 
-        $data = [
-            'code' => 200,
-            'status' => 'success',
-            'message' => ':-)',
-            'data' => 'banana unique',
-        ];
+        if (empty($planning)) {
+            $code = 404;
+            $data = [
+                'code' => $code,
+                'status' => 'error',
+                'message' => 'Not Found',
+                'data' => 'Element « ' . $id . ' » of « ' . $this->getResourceName() . ' » is not a valid resource',
+            ];
+        } else {
+            $code = 200;
+            $data = [
+                'code' => $code,
+                'status' => 'success',
+                'message' => '',
+                'data' => [],
+            ];
+        }
 
-        return $this->response->withJson($data, 200);
+        return $this->response->withJson($data, $code);
     }
 
     /**
      * Retourne une collection de plannings
      *
-     * @return string JSON bien formé
+     * @return ResponseInterface
      */
     private function getList()
     {
-        /**
-         * querystring que pour GET et pour la recherche d'éléments !!
-         */
-        //$allGetVars = $this->request->getQueryParams();
-        //var_dump($allGetVars);
+        $plannings = $this->repository->getList(
+            $this->request->getQueryParams()
+        );
+        $code = -1;
+        $data = [];
 
-        $data = [
-            'code' => 200,
-            'status' => 'success',
-            'message' => ':-)',
-            'data' => 'banana list',
-        ];
+        if (empty($plannings)) {
+            $code = 404;
+            $data = [
+                'code' => $code,
+                'status' => 'error',
+                'message' => 'Not Found',
+                'data' => ' « ' . $this->getResourceName() . ' » is not a valid resource',
+            ];
+        } else {
+            $code = 200;
+            $data = [
+                'code' => $code,
+                'status' => 'success',
+                'message' => '',
+                'data' => [],
+            ];
+        }
 
-        return $this->response->withJson($data, 200);
+        return $this->response->withJson($data, $code);
     }
 
     /*************************************************

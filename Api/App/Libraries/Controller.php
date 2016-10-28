@@ -3,11 +3,12 @@ namespace Api\App\Libraries;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use \Api\App\Libraries\Repository;
 
 /**
  * Contrôleur principal
  */
-class Controller
+abstract class Controller
 {
     /**
      * @var ServerRequestInterface Requête HTTP
@@ -19,32 +20,58 @@ class Controller
      */
     protected $response;
 
-    public function __construct(ServerRequestInterface $request, ResponseInterface $response)
-    {
+    /**
+     * @var Repository Repository de la ressource
+     */
+    protected $repository;
+
+    /**
+     * @var Repository Repository de la ressource
+     */
+    private $utilisateurRepository;
+
+    public function __construct(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        Repository $repository,
+        Repository $utilisateurRepository
+    ) {
         $this->request = $request;
         $this->response = $response;
+        $this->repository = $repository;
+        $this->utilisateurRepository = $utilisateurRepository;
 
         if (!$this->isApiKeyOk()) {
+            // Preciser la bonne exception
+            throw new \DomainException("Error Processing Request", 1);
             return $this->getResponseErrorAuthentication();
         }
-        //$this->checkApiKey();
-        //$this->getUser();
+        //$this->utilisateur = $utilisateurRepository->get();// iduser
+        if (!$this->isResourceXXXForUser()) {
+            // Preciser la bonne exception
+            throw new \LogicException("Error Processing Request", 1);
 
-        // check api keys, else 401
-        // get user by Id given
-        // check if user authorized to access to the resource, else 403
+            return $this->getResponseErrorAccess();
+        }
+        //$this->checkApiKey();
+        // getUserById() dans le repository associé et set dans le contrôleur
     }
 
     /**
+     * Vérifie que la clé d'api fournie est la bonne
      *
+     * @return bool
      */
     private function isApiKeyOk()
     {
-
+        //oauth ?
+        return true;
     }
 
     /**
+     * Retourne une réponse d'erreur 401
      *
+     * @return string JSON bien formé
      */
     private function getResponseErrorAuthentication()
     {
@@ -52,18 +79,29 @@ class Controller
     }
 
     /**
-     * 
+     * Vérifie que la ressource est accessible pour l'utilisateur courant
+     *
+     * @return bool
      */
     private function isResourceXXXForUser()
     {
+        //$utilisateur = $this->utilisateurRepository->get();
+        // qu'est ce que ça veut dire qu'une ressource est accessible, et où le mettre ?
 
+        return true;
     }
 
     /**
+     * Retourne les méthodes HTTP disponibles au sens de la ressource
      *
+     * @return string
      */
-    private function getResponseErrorAccess()
-    {
+    abstract public function getAvailablesMethods();
 
-    }
+    /**
+     * Retourne le nom de la ressource (au pluriel)
+     *
+     * @return string
+     */
+    abstract public function getResourceName();
 }

@@ -6,7 +6,6 @@
 define('ROOT_PATH', dirname(dirname(__DIR__)));
 require_once ROOT_PATH. '/vendor/autoload.php';
 
-use Api\App\Helpers\Formatter;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -79,6 +78,64 @@ $container['errorHandler'] = function () {
     };
 };
 
+$container['createStack'] = function () {
+    return function (
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        \Interop\Container\ContainerInterface $dic,
+        $resourceName
+    ) {
+        $class = \Api\App\Helpers\Formatter::getSingularTerm(
+            \Api\App\Helpers\Formatter::getStudlyCapsFromSnake($resourceName)
+        );
+        $controllerClass = '\Api\App\\' . $class . '\Controller';
+        $daoClass = '';
+        $repoClass = '\Api\App\\' . $class . '\Repository';
+        $repoUtilisateurClass = '\Api\App\\Utilisateur\Repository';
+        $daoUtilisateurClass = '';
+        /* Ressource n'existe pas => 404 */
+        if (!class_exists($controllerClass, true)
+            || !class_exists($repoClass, true)
+            || !class_exists($repoUtilisateurClass, true)
+        ) {
+            return call_user_func(
+                $dic->notFoundHandler,
+                $request,
+                $response
+            );
+        }
+        try {
+            // Connexion stockage
+            $storageConnector = '';
+
+            return new $controllerClass(
+                $request,
+                $response,
+                new $repoClass($storageConnector),
+                new $repoUtilisateurClass($storageConnector)
+            );
+        } catch (\DomainException $e) {
+            return call_user_func(
+                $dic->unauthorizedHandler,
+                $request,
+                $response
+            );
+        } catch (\LogicException $e) {
+            return call_user_func(
+                $dic->forbiddenHandler,
+                $request,
+                $response
+            );
+        } catch (\Exception $e) {
+            return call_user_func(
+                $dic->notFoundHandler,
+                $request,
+                $response
+            );
+        }
+    };
+};
+
 $app = new \Slim\App($container);
 
 /**
@@ -89,10 +146,6 @@ $app = new \Slim\App($container);
  * creation des domain models
  * creation des collections
  */
- /**************************
-  * Connexion stockage
-  **************************/
-$storageConnector = '';
 
  /**************************
   * Routage
@@ -150,7 +203,9 @@ $app->options('/{ressource:[a-z_]+}',
  * Routage général des détails
  */
 $app->map(['GET', 'PUT', 'DELETE'], '/{ressource:[a-z_]+}/{ressourceId:[0-9]+}', function(ServerRequestInterface $request, ResponseInterface $response, $args) {
-    $class = Formatter::getSingularTerm(Formatter::getStudlyCapsFromSnake($args['ressource']));
+    $class = \Api\App\Helpers\Formatter::getSingularTerm(
+        \Api\App\Helpers\Formatter::getStudlyCapsFromSnake($resourceName)
+    );
     /* Ressource n'existe pas => 404 */
     if (!class_exists($class, true)) {
         return call_user_func(
@@ -183,60 +238,34 @@ $app->map(['GET', 'PUT', 'DELETE'], '/{ressource:[a-z_]+}/{ressourceId:[0-9]+}',
 $app->map(
     ['GET', 'POST'],
     '/{ressource:[a-z_]+}',
-    function(ServerRequestInterface $request, ResponseInterface $response, $args) use ($storageConnector) {
-        $allGetVars = $this->request->getQueryParams();
-        var_dump($allGetVars);
-        exit();
-        $class = Formatter::getSingularTerm(Formatter::getStudlyCapsFromSnake($args['ressource']));
-        $controllerClass = '\Api\App\\' . $class . '\Controller';
-        $repoClass = '\Api\App\\' . $class . '\Repository';
-        /* Ressource n'existe pas => 404 */
-        if (!class_exists($controllerClass, true)
-            || !class_exists($repoClass, true)
+    function(ServerRequestInterface $request, ResponseInterface $response, $args) {
+        $tryCreateController = call_user_func(
+            $this->createStack,
+            $request,
+            $response,
+            $this,
+            $args['ressource']
+        );
+
+        if ($tryCreateController instanceof ResponseInterface) {
+            return $tryCreateController;
+        }
+
+        $availablesMethods = array_map('strtoupper', $tryCreateController->getAvailablesMethods());
+        $method = $request->getMethod();
+        /* Méthode non applicable à la ressource => 405 */
+        if (!is_callable([$tryCreateController, $method])
+            || !in_array($method, $availablesMethods, true)
         ) {
             return call_user_func(
-                $this->notFoundHandler,
+                $this->notAllowedHandler,
                 $request,
-                $response
+                $response,
+                $availablesMethods
             );
         }
-        $method = $request->getMethod();
-        try {
-            $repository = new $repoClass($storageConnector);
-            $controller = new $class($request, $response, $repository);
-            $availablesMethods = array_map('strtoupper', $controller->getAvailablesMethods());
-            /* Méthode non applicable à la ressource => 405 */
-            if (!is_callable([$controller, $method])
-                || !in_array($method, $availablesMethods, true)
-            ) {
-                return call_user_func(
-                    $this->notAllowedHandler,
-                    $request,
-                    $response,
-                    $availablesMethods
-                );
-            }
-            return call_user_func([$controller, $method]);
-        /* La méthode par exception est une mauvaise piste, car il faut la répeter partout. On peut trouver mieux que ça */
-        } catch (\DomainException $e) {
-            return call_user_func(
-                $this->unauthorizedHandler,
-                $request,
-                $response
-            );
-        } catch (\LogicException $e) {
-            return call_user_func(
-                $this->forbiddenHandler,
-                $request,
-                $response
-            );
-        } catch (Exception $e) {
-            return call_user_func(
-                $this->notFoundHandler,
-                $request,
-                $response
-            );
-        }
+
+        return call_user_func([$tryCreateController, $method]);
     }
 );
 
