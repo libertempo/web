@@ -4,7 +4,7 @@ namespace Api\App\Libraries;
 /**
  * Garant de la cohérence métier du modèle en relation.
  * Autrement dit, c'est lui qui va chercher les données (dépendances comprises),
- * pour former un Domain model bien formé
+ * pour construire un Domain model bien formé
  *
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina

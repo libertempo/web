@@ -12,6 +12,8 @@ namespace Api\App\Planning;
  *
  * Ne devrait être contacté que par le Planning\Controller
  * Ne devrait contacter que le Planning\Model, Planning\Dao
+ *
+ * mettre une option "with-dependencies" pour avoir ou non les dépendances dans le json résultant
  */
 class Repository extends \Api\App\Libraries\Repository
 {
@@ -56,7 +58,7 @@ class Repository extends \Api\App\Libraries\Repository
         Limit (nb elements)
         filter (dimensions forced)
         */
-        $data = $this->dao->getList($parametres);
+        $data = $this->dao->getList($this->getParamsConsumer2Dao($parametres));
         if (empty($data)) {
             throw new \UnexpectedValueException('No resource match with these parameters');
         }
@@ -102,10 +104,17 @@ class Repository extends \Api\App\Libraries\Repository
      */
     private function getParamsConsumer2Dao(array $paramsConsumer)
     {
+        $filterInt = function ($var) {
+            return filter_var(
+                $var,
+                FILTER_VALIDATE_INT,
+                ['options' => ['min_range' => 1]]
+            );
+        };
         return [
-            'limit',
-            'start-after', // -> lt vu que l'ordre est constant (id desc)
-            'filters' => [],
+            'limit' => $filterInt($paramsConsumer['limit']),
+            'lt' => $filterInt($paramsConsumer['start-after']),
+            'gt' => $filterInt($paramsConsumer['start-before']),
         ];
     }
 }

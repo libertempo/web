@@ -34,7 +34,7 @@ abstract class Controller
     protected $repository;
 
     /**
-     * @var Repository Repository de la ressource
+     * @var Repository Repository de l'utilisateur
      */
     private $utilisateurRepository;
 
