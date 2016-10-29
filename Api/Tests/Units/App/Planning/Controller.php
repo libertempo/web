@@ -76,7 +76,9 @@ final class Controller extends \Atoum
      */
     public function testGetOneFound()
     {
-        $this->repository->getMockController()->getOne = ['a'];
+        $this->repository->getMockController()->getOne = function () {
+            return new \Api\App\Planning\Model(32, []);
+        };
         $controller = new _Controller($this->request, $this->response, $this->repository, $this->utilisateurRepository);
 
         $response = $controller->get(99);

@@ -72,7 +72,7 @@ final class Controller extends \Api\App\Libraries\Controller
                 'code' => $code,
                 'status' => 'success',
                 'message' => '',
-                'data' => [],
+                'data' => $this->buildData($planning),
             ];
         } catch (\DomainException $e) {
             $code = 404;
@@ -121,6 +121,16 @@ final class Controller extends \Api\App\Libraries\Controller
         }
 
         return $this->response->withJson($data, $code);
+    }
+
+    /**
+     * Construit le « data » du json
+     */
+    private function buildData(Model $model)
+    {
+        return [
+            'id' => $model->getId(),
+        ];
     }
 
     /*************************************************

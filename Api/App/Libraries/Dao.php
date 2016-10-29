@@ -23,11 +23,16 @@ abstract class Dao
 
     public function getById($id)
     {
+        return [];
+    }
 
+    public function getList(array $parametres)
+    {
+        return [];
     }
 
     /**
-     * 
+     *
      */
     abstract protected function getTableName();
 }

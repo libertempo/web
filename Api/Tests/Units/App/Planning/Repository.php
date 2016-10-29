@@ -25,9 +25,6 @@ final class Repository extends \Atoum
         $this->dao = new \mock\Api\App\Planning\Dao();
     }
 
-    // getListeFound
-    // getListeNotFound
-
     /**
      * Teste la méthode getOne avec un id non trouvé
      */
@@ -53,9 +50,40 @@ final class Repository extends \Atoum
         ];
         $repository = new _Repository($this->dao);
 
-        $model = $repository->getOne(99);
+        $model = $repository->getOne(42);
 
         $this->object($model)->isInstanceOf('\Api\App\Libraries\Model');
-        $this->integer($model->getId())->isIdenticalTo(99);
+        $this->integer($model->getId())->isIdenticalTo(42);
+    }
+
+    /**
+     * Teste la méthode getList avec des critères non pertinents
+     */
+    public function testGetListNotFound()
+    {
+        $this->dao->getMockController()->getList = [];
+        $repository = new _Repository($this->dao);
+
+        $this->exception(function () use ($repository) {
+            $repository->getList([]);
+        })->isInstanceOf('\UnexpectedValueException');
+    }
+
+    /**
+     * Teste la méthode getList avec des critères pertinents
+     */
+    public function testGetListFound()
+    {
+        $this->dao->getMockController()->getList = [[
+            'planning_id' => '42',
+            'name' => 'H2G2',
+            'status' => '8',
+        ]];
+        $repository = new _Repository($this->dao);
+
+        $models = $repository->getList([]);
+
+        $this->array($models)->hasKey(42);
+        $this->object($models[42])->isInstanceOf('\Api\App\Libraries\Model');
     }
 }
