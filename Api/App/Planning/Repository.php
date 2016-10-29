@@ -49,6 +49,7 @@ class Repository extends \Api\App\Libraries\Repository
      */
     public function getList(array $parametres)
     {
+        /* retourner une collection pour avoir le total, hors limite forcée (utile pour la pagination) */
         /*
         several params :
         offset (first, !isset => 0) / start-after ?
@@ -103,7 +104,7 @@ class Repository extends \Api\App\Libraries\Repository
     {
         return [
             'limit',
-            'offset',
+            'start-after', // -> lt vu que l'ordre est constant (id desc)
             'filters' => [],
         ];
     }

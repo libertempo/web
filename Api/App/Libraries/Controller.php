@@ -7,6 +7,14 @@ use \Api\App\Libraries\Repository;
 
 /**
  * Contrôleur principal
+ *
+ * @author Prytoegrian <prytoegrian@protonmail.com>
+ * @author Wouldsmina
+ *
+ * @since 0.1
+ *
+ * Ne devrait être contacté par personne
+ * Ne devrait contacter personne
  */
 abstract class Controller
 {
@@ -86,7 +94,7 @@ abstract class Controller
     private function isResourceXXXForUser()
     {
         //$utilisateur = $this->utilisateurRepository->get();
-        // qu'est ce que ça veut dire qu'une ressource est accessible, et où le mettre ?
+        // qu'est ce que ça veut dire qu'une ressource est accessible, et où le mettre ? dépend du rôle ?
 
         return true;
     }

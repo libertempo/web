@@ -10,6 +10,9 @@ namespace Api\App\Libraries;
  * @author Wouldsmina
  *
  * @since 0.1
+ *
+ * Ne devrait être contacté par personne
+ * Ne devrait contacter personne
  */
 abstract class Repository
 {

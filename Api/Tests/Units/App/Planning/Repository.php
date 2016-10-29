@@ -14,7 +14,7 @@ use \Api\App\Planning\Repository as _Repository;
 final class Repository extends \Atoum
 {
     /**
-     * @var \mock\Api\App\Planning\Dao $dao Mock du DAO du planning
+     * @var \mock\Api\App\Planning\Dao Mock du DAO du planning
      */
     private $dao;
 

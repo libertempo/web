@@ -13,4 +13,20 @@ class Dao extends \Api\App\Libraries\Dao
     {
 
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getById($id)
+    {
+        return [];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getList(array $parametres)
+    {
+        return [];
+    }
 }

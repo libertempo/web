@@ -4,7 +4,14 @@ namespace Api\App\Libraries;
 /**
  * Domain Model
  *
+ * @author Prytoegrian <prytoegrian@protonmail.com>
+ * @author Wouldsmina
+ *
+ * @since 0.1
+ *
  * @see https://en.wikipedia.org/wiki/Domain_model
+ * Ne devrait être contacté par personne
+ * Ne devrait contacter personne
  */
 class Model
 {
