@@ -21,8 +21,7 @@ $container['unauthorizedHandler'] = function () {
             'data' => 'Bad API Key',
         ];
 
-        return $response
-            ->withJson($data, 401);
+        return $response->withJson($data, 401);
     };
 };
 
@@ -35,8 +34,7 @@ $container['forbiddenHandler'] = function () {
             'data' => 'User has not access to « ' . $request->getUri()->getPath() . ' » resource',
         ];
 
-        return $response
-            ->withJson($data, 403);
+        return $response->withJson($data, 403);
     };
 };
 
@@ -89,14 +87,16 @@ $container['createStack'] = function () {
             \Api\App\Helpers\Formatter::getStudlyCapsFromSnake($resourceName)
         );
         $controllerClass = '\Api\App\\' . $class . '\Controller';
-        $daoClass = '';
+        $daoClass = '\Api\App\\' . $class . '\Dao';
         $repoClass = '\Api\App\\' . $class . '\Repository';
         $repoUtilisateurClass = '\Api\App\\Utilisateur\Repository';
-        $daoUtilisateurClass = '';
+        $daoUtilisateurClass = '\Api\App\\Utilisateur\Dao';
         /* Ressource n'existe pas => 404 */
         if (!class_exists($controllerClass, true)
             || !class_exists($repoClass, true)
             || !class_exists($repoUtilisateurClass, true)
+            || !class_exists($daoClass, true)
+            || !class_exists($daoUtilisateurClass, true)
         ) {
             return call_user_func(
                 $dic->notFoundHandler,
@@ -111,8 +111,8 @@ $container['createStack'] = function () {
             return new $controllerClass(
                 $request,
                 $response,
-                new $repoClass($storageConnector),
-                new $repoUtilisateurClass($storageConnector)
+                new $repoClass(new $daoClass($storageConnector)),
+                new $repoUtilisateurClass(new $daoUtilisateurClass($storageConnector))
             );
         } catch (\DomainException $e) {
             return call_user_func(
@@ -126,6 +126,7 @@ $container['createStack'] = function () {
                 $request,
                 $response
             );
+        /* Fallback */
         } catch (\Exception $e) {
             return call_user_func(
                 $dic->notFoundHandler,
@@ -139,7 +140,7 @@ $container['createStack'] = function () {
 $app = new \Slim\App($container);
 
 /**
- * creation des controllers
+ * creation des controllers X
  * // creation des repositories
  * creation des acces db
  * creation des dao

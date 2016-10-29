@@ -1,7 +1,6 @@
 <?php
 namespace Api\App\Planning;
 
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -11,6 +10,7 @@ use Psr\Http\Message\ResponseInterface;
  * @author Wouldsmina
  *
  * @since 0.1
+ * @see \Api\Tests\Units\App\Planning\Controller
  *
  * Ne devrait être contacté que par le routeur
  * Ne devrait contacter que le Planning\Repository
@@ -57,24 +57,16 @@ final class Controller extends \Api\App\Libraries\Controller
      *
      * @param int $id ID de l'élément
      *
-     * @return ResponseInterface
+     * @return ResponseInterface, 404 si l'élément n'est pas trouvé, 200 sinon
+     * @throws \Exception en cas d'erreur inconnue (fallback, ne doit pas arriver)
      */
     private function getOne($id)
     {
         $id = (int) $id;
-        $planning = $this->repository->getOne($id);
         $code = -1;
         $data = [];
-
-        if (empty($planning)) {
-            $code = 404;
-            $data = [
-                'code' => $code,
-                'status' => 'error',
-                'message' => 'Not Found',
-                'data' => 'Element « ' . $id . ' » of « ' . $this->getResourceName() . ' » is not a valid resource',
-            ];
-        } else {
+        try {
+            $planning = $this->repository->getOne($id);
             $code = 200;
             $data = [
                 'code' => $code,
@@ -82,6 +74,16 @@ final class Controller extends \Api\App\Libraries\Controller
                 'message' => '',
                 'data' => [],
             ];
+        } catch (\DomainException $e) {
+            $code = 404;
+            $data = [
+                'code' => $code,
+                'status' => 'error',
+                'message' => 'Not Found',
+                'data' => 'Element « ' . $this->getResourceName() . '#' . $id . ' » is not a valid resource',
+            ];
+        } catch (\Exception $e) {
+            throw $e;
         }
 
         return $this->response->withJson($data, $code);

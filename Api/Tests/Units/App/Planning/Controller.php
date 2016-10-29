@@ -11,7 +11,7 @@ use \Api\App\Planning\Controller as _Controller;
  *
  * @since 0.1
  */
-class Controller extends \Atoum
+final class Controller extends \Atoum
 {
     /**
      * @var \mock\Slim\Http\Request Mock de la requête HTTP
@@ -96,7 +96,9 @@ class Controller extends \Atoum
      */
     public function testGetOneNotFound()
     {
-        $this->repository->getMockController()->getOne = [];
+        $this->repository->getMockController()->getOne = function () {
+            throw new \DomainException('');
+        };
         $controller = new _Controller($this->request, $this->response, $this->repository, $this->utilisateurRepository);
 
         $response = $controller->get(99);

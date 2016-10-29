@@ -11,15 +11,15 @@ namespace Api\App\Libraries;
  *
  * @since 0.1
  */
-class Repository
+abstract class Repository
 {
     /**
-     * Connecteur à la BDD
+     * @var \Api\App\Libraries\Dao $dao Data Access Object
      */
-    protected $storageConnector;
+    protected $dao;
 
-    public function __construct($storageConnector)
+    public function __construct(\Api\App\Libraries\Dao $dao)
     {
-        $this->storageConnector = $storageConnector;
+        $this->dao = $dao;
     }
 }

@@ -2,9 +2,15 @@
 namespace Api\App\Planning;
 
 /**
- * 
+ *
  */
-class Dao
+class Dao extends \Api\App\Libraries\Dao
 {
+    /**
+     * 
+     */
+    final protected function getTableName()
+    {
 
+    }
 }

@@ -11,29 +11,51 @@ use \Api\App\Planning\Repository as _Repository;
  *
  * @since 0.1
  */
-class Repository extends \Atoum
+final class Repository extends \Atoum
 {
-    // getOneFound
-    // getOneNotFound
+    /**
+     * @var \mock\Api\App\Planning\Dao $dao Mock du DAO du planning
+     */
+    private $dao;
+
+    public function beforeTestMethod($method)
+    {
+        $this->mockGenerator->orphanize('__construct');
+        $this->mockGenerator->shuntParentClassCalls();
+        $this->dao = new \mock\Api\App\Planning\Dao();
+    }
+
     // getListeFound
     // getListeNotFound
 
     /**
-     *
+     * Teste la méthode getOne avec un id non trouvé
      */
     public function testGetOneNotFound()
     {
-        /*
-            cas d'erreur :
-                id pas dans le domaine de def (pas de préconditions, impossible à deviner)
-                retour pas de type model (postconditions)
-        */
-        $connector = '';
-        $repository = new _Repository($connector);
+        $this->dao->getMockController()->getById = [];
+        $repository = new _Repository($this->dao);
 
         $this->exception(function () use ($repository) {
-            $get = $repository->getOne(999);
-            d($get);
-        })->isInstanceOf('\Exception');
+            $repository->getOne(99);
+        })->isInstanceOf('\DomainException');
+    }
+
+    /**
+     * Teste la méthode getOne avec un id trouvé
+     */
+    public function testGetOneFound()
+    {
+        $this->dao->getMockController()->getById = [
+            'planning_id' => '42',
+            'name' => 'H2G2',
+            'status' => '8',
+        ];
+        $repository = new _Repository($this->dao);
+
+        $model = $repository->getOne(99);
+
+        $this->object($model)->isInstanceOf('\Api\App\Libraries\Model');
+        $this->integer($model->getId())->isIdenticalTo(99);
     }
 }

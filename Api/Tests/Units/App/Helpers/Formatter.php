@@ -6,7 +6,7 @@ use \Api\App\Helpers\Formatter as _Formatter;
 /**
  * Test des petits utilitaires de l'application
  */
-class Formatter extends \Atoum
+final class Formatter extends \Atoum
 {
     /**
      * Teste la mise en StudlyCaps d'un mot en snake_case
