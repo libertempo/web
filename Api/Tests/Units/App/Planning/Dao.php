@@ -41,7 +41,7 @@ final class Dao extends \Atoum
      */
     public function testGetByIdNotFound()
     {
-        $this->statement->getMockController()->fetchAll = [];
+        $this->statement->getMockController()->fetch = [];
         $dao = new _Dao($this->connector);
 
         $get = $dao->getById(99);
@@ -54,12 +54,36 @@ final class Dao extends \Atoum
      */
     public function testGetByIdFound()
     {
-        $this->statement->getMockController()->fetchAll = [[
-            'a'
-        ]];
+        $this->statement->getMockController()->fetch = ['a'];
         $dao = new _Dao($this->connector);
 
         $get = $dao->getById(99);
+
+        $this->array($get)->isNotEmpty();
+    }
+
+    /**
+     * Teste la méthode getList avec des critères non pertinents
+     */
+    public function testGetListNotFound()
+    {
+        $this->statement->getMockController()->fetchAll = [];
+        $dao = new _Dao($this->connector);
+
+        $get = $dao->getList([]);
+
+        $this->array($get)->isEmpty();
+    }
+
+    /**
+    * Teste la méthode getList avec des critères pertinents
+     */
+    public function testGetListFound()
+    {
+        $this->statement->getMockController()->fetchAll = [['a']];
+        $dao = new _Dao($this->connector);
+
+        $get = $dao->getList([]);
 
         $this->array($get[0])->isNotEmpty();
     }

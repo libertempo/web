@@ -44,6 +44,12 @@ class Dao extends \Api\App\Libraries\Dao
      */
     public function getList(array $parametres)
     {
-        return [];
+        $req = $this->storageConnector->prepare(
+            'SELECT *
+            FROM ' . $this->getTableName() . ''
+        );
+        $req->execute();
+
+        return $req->fetchAll(\PDO::FETCH_ASSOC);
     }
 }

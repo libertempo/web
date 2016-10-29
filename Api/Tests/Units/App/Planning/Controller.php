@@ -77,7 +77,10 @@ final class Controller extends \Atoum
     public function testGetOneFound()
     {
         $this->repository->getMockController()->getOne = function () {
-            return new \Api\App\Planning\Model(32, []);
+            return new \Api\App\Planning\Model(32, [
+                'name' => 'name',
+                'status' => 8,
+            ]);
         };
         $controller = new _Controller($this->request, $this->response, $this->repository, $this->utilisateurRepository);
 
@@ -122,7 +125,10 @@ final class Controller extends \Atoum
     {
         $this->request->getMockController()->getQueryParams = [];
         $this->repository->getMockController()->getList = [
-            42 => new \Api\App\Planning\Model(42, []),
+            42 => new \Api\App\Planning\Model(42, [
+                'name' => 'name',
+                'status' => 9,
+            ]),
         ];
         $controller = new _Controller($this->request, $this->response, $this->repository, $this->utilisateurRepository);
 

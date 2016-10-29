@@ -54,19 +54,4 @@ abstract class Dao
      * @return string
      */
     abstract protected function getTableName();
-
-    public function beginTransaction()
-    {
-
-    }
-
-    public function commit()
-    {
-
-    }
-
-    public function rollback()
-    {
-
-    }
 }

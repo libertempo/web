@@ -141,6 +141,8 @@ final class Controller extends \Api\App\Libraries\Controller
     {
         return [
             'id' => $model->getId(),
+            'name' => $model->getName(),
+            'status' => $model->getStatus(),
         ];
     }
 

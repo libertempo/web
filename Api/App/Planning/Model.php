@@ -15,4 +15,13 @@ namespace Api\App\Planning;
  */
 class Model extends \Api\App\Libraries\Model
 {
+    public function getName()
+    {
+        return $this->data['name'];
+    }
+
+    public function getStatus()
+    {
+        return (int) $this->data['status'];
+    }
 }
