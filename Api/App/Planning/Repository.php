@@ -44,7 +44,7 @@ class Repository extends \Api\App\Libraries\Repository
      * @param array $parametres
      * @example [offset => 4, start-after => 23, filter => 'name::chapo|status::1,3']
      *
-     * @return array [$IdObjet => $objet]
+     * @return array [$objetId => $objet]
      * @throws \UnexpectedValueException Si les critères ne sont pas pertinents
      */
     public function getList(array $parametres)
@@ -68,7 +68,7 @@ class Repository extends \Api\App\Libraries\Repository
             $model = new Model($modelId, $modelData);
             $models[$model->getId()] = $model;
         }
-        
+
         return $models;
     }
 
@@ -95,6 +95,7 @@ class Repository extends \Api\App\Libraries\Repository
      * Essentiel pour séparer / traduire les contextes Client / DAO
      *
      * @param array $paramsConsumer Paramètres reçus
+     * @example [offset => 4, start-after => 23, filter => 'name::chapo|status::1,3']
      *
      * @return array
      */

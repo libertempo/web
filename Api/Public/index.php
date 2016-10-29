@@ -89,8 +89,8 @@ $container['createStack'] = function () {
         $controllerClass = '\Api\App\\' . $class . '\Controller';
         $daoClass = '\Api\App\\' . $class . '\Dao';
         $repoClass = '\Api\App\\' . $class . '\Repository';
-        $repoUtilisateurClass = '\Api\App\\Utilisateur\Repository';
-        $daoUtilisateurClass = '\Api\App\\Utilisateur\Dao';
+        $repoUtilisateurClass = '\Api\App\Utilisateur\Repository';
+        $daoUtilisateurClass = '\Api\App\Utilisateur\Dao';
         /* Ressource n'existe pas => 404 */
         if (!class_exists($controllerClass, true)
             || !class_exists($repoClass, true)

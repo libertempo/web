@@ -121,7 +121,9 @@ final class Controller extends \Atoum
     public function testGetListFound()
     {
         $this->request->getMockController()->getQueryParams = [];
-        $this->repository->getMockController()->getList = ['a'];
+        $this->repository->getMockController()->getList = [
+            42 => new \Api\App\Planning\Model(42, []),
+        ];
         $controller = new _Controller($this->request, $this->response, $this->repository, $this->utilisateurRepository);
 
         $response = $controller->get();
@@ -132,8 +134,9 @@ final class Controller extends \Atoum
             ->integer['code']->isIdenticalTo(200)
             ->string['status']->isIdenticalTo('success')
             ->string['message']->isIdenticalTo('')
-            ->array['data']->isNotEmpty()
+            //->array['data']->hasSize(1) // l'asserter atoum en sucre syntaxique est buggé, faire un ticket
         ;
+        $this->array($data['data'][0])->hasKey('id');
     }
 
     /**
@@ -142,7 +145,10 @@ final class Controller extends \Atoum
     public function testGetListNotFound()
     {
         $this->request->getMockController()->getQueryParams = [];
-        $this->repository->getMockController()->getList = [];
+        $this->repository->getMockController()->getList = function () {
+            throw new \UnexpectedValueException('');
+
+        };
         $controller = new _Controller($this->request, $this->response, $this->repository, $this->utilisateurRepository);
 
         $response = $controller->get();

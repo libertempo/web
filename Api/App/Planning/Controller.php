@@ -84,47 +84,58 @@ final class Controller extends \Api\App\Libraries\Controller
             ];
         } catch (\Exception $e) {
             throw $e;
+        } finally {
+            return $this->response->withJson($data, $code);
         }
-
-        return $this->response->withJson($data, $code);
     }
 
     /**
-     * Retourne une collection de plannings
+     * Retourne un tableau de plannings
      *
      * @return ResponseInterface
+     * @throws \Exception en cas d'erreur inconnue (fallback, ne doit pas arriver)
      */
     private function getList()
     {
-        $plannings = $this->repository->getList(
-            $this->request->getQueryParams()
-        );
+
         $code = -1;
         $data = [];
-
-        if (empty($plannings)) {
-            $code = 404;
-            $data = [
-                'code' => $code,
-                'status' => 'error',
-                'message' => 'Not Found',
-                'data' => ' « ' . $this->getResourceName() . ' » is not a valid resource',
-            ];
-        } else {
+        try {
+            $plannings = $this->repository->getList(
+                $this->request->getQueryParams()
+            );
+            $models = [];
+            foreach ($plannings as $planning) {
+                $models[] = $this->buildData($planning);
+            }
             $code = 200;
             $data = [
                 'code' => $code,
                 'status' => 'success',
                 'message' => '',
-                'data' => [],
+                'data' => $models,
             ];
+        } catch (\UnexpectedValueException $e) {
+            $code = 404;
+            $data = [
+                'code' => $code,
+                'status' => 'error',
+                'message' => 'Not Found',
+                'data' => 'No result',
+            ];
+        } catch (\Exception $e) {
+            throw $e;
+        } finally {
+            return $this->response->withJson($data, $code);
         }
-
-        return $this->response->withJson($data, $code);
     }
 
     /**
      * Construit le « data » du json
+     *
+     * @param Model $model Planning
+     *
+     * @return array
      */
     private function buildData(Model $model)
     {
