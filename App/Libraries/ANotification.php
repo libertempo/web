@@ -26,11 +26,9 @@ abstract Class ANotification {
      * @return boolean
      */
     public function send() {
+
     $return = [];
-        if(!$this->canSend()){
-            return true;
-        }
-        
+
         // init du mail
         $mail = new \PHPMailer();
 
@@ -115,7 +113,12 @@ abstract Class ANotification {
     }
     
     protected function canSend($optionName) {
-        return $_SESSION['config'][$optionName];
+        if(isset($_SESSION['config'][$optionName])){
+            return $_SESSION['config'][$optionName];
+        } else {
+            // @todo : faire une exeption
+            return false;
+        }
     }
 
 }

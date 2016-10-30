@@ -150,7 +150,7 @@ class Additionnelle extends \App\ProtoControllers\Employe\AHeure
     {
         if (!$this->hasErreurs($post, $user, $errorsLst)) {
             $data = $this->dataModel2Db($post, $user);
-            $id   = $this->insert($data, $user, $idHeure);
+            $id   = $this->insert($data, $user);
             log_action($idHeure, 'demande', '', 'demande d\'heure additionnelle ' . $id);
             $notif = new \App\Libraries\Notification\Additionnelle($id);
             $send = $notif->send();
