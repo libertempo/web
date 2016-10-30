@@ -96,8 +96,8 @@ Class Repos extends \App\Libraries\ANotification {
 
         $return['message'] = $infoResp['u_prenom'] . " " . $infoResp['u_nom'] . " a refusé(e) votre demande d'heure de repos du ". $this->data['jour'] ." de ". $this->data['debut'] ." à ". $this->data['fin'] .".";
 
-        if(!is_null($infoResp['comment_refus'])){
-            $return['message'] .= "\nCommentaire : " . $infoResp['comment_refus'];
+        if(!is_null($this->data['comment_refus'])){
+            $return['message'] .= "\nCommentaire : " . $this->data['comment_refus'];
         }
         
         $return['config'] = 'mail_valid_conges_alerte_user';

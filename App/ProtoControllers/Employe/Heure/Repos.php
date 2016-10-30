@@ -142,7 +142,7 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
             $data = $this->dataModel2Db($post, $user);
             $id   = $this->insert($data, $user);
             log_action($id, 'demande', '', 'demande d\'heure de repos ' . $id);
-            $notif = new \App\Libraries\Notification\repos($id);
+            $notif = new \App\Libraries\Notification\Repos($id);
             $send = $notif->send();
 
             if (false === $send) {
