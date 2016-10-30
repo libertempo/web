@@ -9,8 +9,11 @@ namespace App\Libraries\Notification;
  */
 Class Repos extends \App\Libraries\ANotification {
 
+
     /**
      * récupère les données de l'évenemment
+     * 
+     * @todo déplacer la requete vers le protocontroller
      * @param int $id
      * 
      * @return array
@@ -26,7 +29,11 @@ Class Repos extends \App\Libraries\ANotification {
                 WHERE id_heure =' . $id;
 
         $data = $sql->query($req)->fetch_array();
-
+        
+        $data['jour']   = date('d/m/Y', $data['debut']);
+        $data['debut']  = date('H\:i', $data['debut']);
+        $data['fin']    = date('H\:i', $data['fin']);
+        $data['duree']    = \App\Helpers\Formatter::Timestamp2Duree($data['duree']);
 
         return $data;
     }
@@ -47,49 +54,57 @@ Class Repos extends \App\Libraries\ANotification {
             $return['destinataire'][] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($responsable);
         }
 
-        $return['message'] = $infoUser['u_prenom'] . " " . $infoUser['u_nom'] . " a solicité une demande d'heure de repos dans l'application de gestion des congés.";
+        $return['message'] = $infoUser['u_prenom'] . " " . $infoUser['u_nom'] . " solicite une demande d'ajout d'heure de repos pour le ". $this->data['jour'] ." de ". $this->data['debut'] ." à ". $this->data['fin'] ." soit ". $this->data['duree'] ." heure(s). Vous devez traiter cette demande";
 
+        $return['config'] = 'mail_new_demande_alerte_resp';
         return $return;
     }
 
-    private function getNotificationEmployePremierValidation() {
+    protected function getNotificationEmployePremierValidation() {
 
         $return['sujet'] = "Première validation d'heure de repos";
         $return['expediteur'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($_SESSION['userlogin']);
         $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($_SESSION['userlogin']);
         $return['destinataire'][] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($this->data['login']);
 
-        $return['message'] = $infoUser['u_prenom'] . " " . $infoUser['u_nom'] . " a validé (première validation) une demande d'heure de repos pour vous dans l'application de gestion des congés. Il doit maintenant être accepté en deuxième validation.";
+        $return['message'] = $infoUser['u_prenom'] . " " . $infoUser['u_nom'] . " a validé(e) votre demande d'heure de repos du  ". $this->data['jour'] ." de ". $this->data['debut'] ." à ". $this->data['fin'] .". Il doit maintenant être traité en deuxième validation.";
 
+        $return['config'] = 'mail_prem_valid_conges_alerte_user';
         return $return;
     }
 
-    private function getNotificationValidationFinale() {
+    protected function getNotificationValidationFinale() {
 
-        $return['sujet'] = "Demande d'heure de repos validé";
+        $return['sujet'] = "Demande d'heure de repos validée";
         $return['expediteur'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($_SESSION['userlogin']);
         $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($_SESSION['userlogin']);
         $return['destinataire'][] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($this->data['login']);
 
 
-        $return['message'] = $infoUser['u_prenom'] . " " . $infoUser['u_nom'] . " a accepté une demande d'heure de repos pour vous dans l'application de gestion des congés.";
+        $return['message'] = $infoUser['u_prenom'] . " " . $infoUser['u_nom'] . " a accepté la demande d'heure de repos du ". $this->data['jour'] ." de ". $this->data['debut'] ." à ". $this->data['fin'] .".";
 
+        $return['config'] = 'mail_valid_conges_alerte_user';
         return $return;
     }
 
-    private function getNotificationRefus() {
+    protected function getNotificationRefus() {
 
-        $return['sujet'] = "Demande d'heure de repos refusé";
+        $return['sujet'] = "Demande d'heure de repos refusée";
         $return['expediteur'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($_SESSION['userlogin']);
-        $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($_SESSION['userlogin']);
+        $infoResp = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($_SESSION['userlogin']);
         $return['destinataire'][] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($this->data['login']);
 
-        $return['message'] = $infoUser['u_prenom'] . " " . $infoUser['u_nom'] . " a refusé une demande d'heure de repos pour vous dans l'application de gestion des congés.";
+        $return['message'] = $infoResp['u_prenom'] . " " . $infoResp['u_nom'] . " a refusé(e) votre demande d'heure de repos du ". $this->data['jour'] ." de ". $this->data['debut'] ." à ". $this->data['fin'] .".";
 
+        if(!is_null($infoResp['comment_refus'])){
+            $return['message'] .= "\nCommentaire : " . $infoResp['comment_refus'];
+        }
+        
+        $return['config'] = 'mail_valid_conges_alerte_user';
         return $return;
     }
 
-    private function getNotificationAnnulation() {
+    protected function getNotificationAnnulation() {
 
         $return['sujet'] = "Demande d'heure de repos annulée";
         $return['expediteur'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($this->data['login']);
@@ -99,8 +114,25 @@ Class Repos extends \App\Libraries\ANotification {
             $return['destinataire'][] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($responsable);
         }
 
-        $return['message'] = $infoUser['u_prenom'] . " " . $infoUser['u_nom'] . " a annulée une demande d'heure de repos.";
+        $return['message'] = $infoUser['u_prenom'] . " " . $infoUser['u_nom'] . " a annulé(e) la demande d'heure de repos du  ". $this->data['jour'] ." de ". $this->data['debut'] ." à ". $this->data['fin'] .".";
 
+        $return['config'] = 'mail_supp_demande_alerte_resp';
+        return $return;
+    }
+    
+    protected function getNotificationGrandResponsablePremiereValidation() {
+        $return['sujet'] = "Demande d'heure de repos";
+        $return['expediteur'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($_SESSION['userlogin']);
+        $grandResponsables = \App\ProtoControllers\Responsable::getLoginGrandResponsableUtilisateur($this->data['login']);
+        $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($this->data['login']);
+        $infoResp = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($_SESSION['userlogin']);
+        foreach ($responsables as $responsable) {
+            $return['destinataire'][] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($responsable);
+        }
+
+    $return['message'] = $infoResp['u_prenom'] . " " . $infoResp['u_nom'] . " a validé(e) la demande d'ajout d'heure de repos de ".$infoUser['u_prenom']." ".$infoUser['u_nom']." pour le ". $this->data['jour'] ." de ". $this->data['debut'] ." à ". $this->data['fin'] ." soit ". $this->data['duree'] ." heure(s). Vous devez traiter cette demande";
+
+        $return['config'] = 'mail_new_demande_alerte_resp';
         return $return;
     }
 }

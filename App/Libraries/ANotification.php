@@ -62,7 +62,7 @@ abstract Class ANotification {
         }
         
         foreach ($this->Notification as $notification){
-            if(!$this->canSend($notification['config'])){
+            if($this->canSend($notification['config'])){
                 $mail->ClearAddresses();
                 $mail->From = $notification['expediteur'];
                 foreach ($notification['destinataire'] as $destinataire) {
@@ -116,7 +116,7 @@ abstract Class ANotification {
         if(isset($_SESSION['config'][$optionName])){
             return $_SESSION['config'][$optionName];
         } else {
-            // @todo : faire une exeption
+            throw new Exception('Option introuvable');
             return false;
         }
     }

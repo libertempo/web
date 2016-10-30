@@ -96,6 +96,10 @@ Class Additionnelle extends \App\Libraries\ANotification {
 
         $return['message'] = $infoResp['u_prenom'] . " " . $infoResp['u_nom'] . " a refusé(e) votre demande d'heure additionnelle du ". $this->data['jour'] ." de ". $this->data['debut'] ." à ". $this->data['fin'] .".";
 
+        if(!is_null($infoResp['comment_refus'])){
+            $return['message'] .= "\nCommentaire : " . $infoResp['comment_refus'];
+        }
+        
         $return['config'] = 'mail_valid_conges_alerte_user';
         return $return;
     }
