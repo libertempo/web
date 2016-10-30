@@ -111,10 +111,17 @@ class Repository extends \Api\App\Libraries\Repository
                 ['options' => ['min_range' => 1]]
             );
         };
-        return [
-            'limit' => $filterInt($paramsConsumer['limit']),
-            'lt' => $filterInt($paramsConsumer['start-after']),
-            'gt' => $filterInt($paramsConsumer['start-before']),
-        ];
+        $results = [];
+        if (!empty($paramsConsumer['limit'])) {
+            $results['limit'] = $filterInt($paramsConsumer['limit']);
+        }
+        if (!empty($paramsConsumer['start-after'])) {
+            $results['lt'] = $filterInt($paramsConsumer['start-after']);
+
+        }
+        if (!empty($paramsConsumer['limit'])) {
+            $results['gt'] = $filterInt($paramsConsumer['start-before']);
+        }
+        return $results;
     }
 }
