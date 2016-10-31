@@ -6,7 +6,7 @@
 
  [libertempo.tuxfamily.org](http://libertempo.tuxfamily.org)
 
-#Présentation
+# Présentation
 
 
 Libertempo est une application web interactive de gestion des congés du personnel. Elle a pour objectif de rendre la gestion des congés accessible à tous.
@@ -24,3 +24,7 @@ Rendez vous sur la [documentation](http://libertempo.tuxfamily.org/Documentation
 # Licence
 
 Libertempo est un logiciel libre sous [Licence Publique Générale GNU Version 2](http://www.linux-france.org/article/these/gpl.html)
+
+# Contact
+Nous sommes joignable par mail : 	libertempo@lists.tuxfamily.org
+ou directement par irc à l'adresse : irc://irc.tuxfamily.org/Libertempo. Accès direct par webclient [ici](https://client02.chat.mibbit.com/?url=irc%3A%2F%2Firc.tuxfamily.org%2FLibertempo)
