@@ -19,12 +19,12 @@ Vous pouvez télécharger la version stable la plus récente directement depuis 
 Chaque nouvelle version est mise à disposition sur [github](https://github.com/wouldsmina/Libertempo/releases) et sur [libertempo.tuxfamily.org](http://libertempo.tuxfamily.org/Telechargement)
 
 # Installation
-Rendez vous sur la [documentation](http://libertempo.tuxfamily.org/Documentation)
+Rendez vous sur la [documentation](http://libertempo.tuxfamily.org/Documentation).
 
 # Licence
 
-Libertempo est un logiciel libre sous [Licence Publique Générale GNU Version 2](http://www.linux-france.org/article/these/gpl.html)
+Libertempo est un logiciel libre sous [Licence Publique Générale GNU Version 2](http://www.linux-france.org/article/these/gpl.html).
 
 # Contact
-Nous sommes joignable par mail : 	libertempo@lists.tuxfamily.org
-ou directement par irc à l'adresse : irc://irc.tuxfamily.org/Libertempo. Accès direct par webclient [ici](https://client02.chat.mibbit.com/?url=irc%3A%2F%2Firc.tuxfamily.org%2FLibertempo)
+Nous sommes joignable par mail : 	libertempo@lists.tuxfamily.org.
+ou directement par irc à l'adresse : irc://irc.tuxfamily.org/Libertempo. Accès direct par webclient [ici](https://client02.chat.mibbit.com/?url=irc%3A%2F%2Firc.tuxfamily.org%2FLibertempo).
