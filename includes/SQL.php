@@ -140,7 +140,7 @@ class Database extends \mysqli
 		self::$hist[$nb]['results'] = is_object($result) ? $result->num_rows : ($result ? 'TRUE': 'FALSE');
 		if ($this->errno != 0)
 		{
-			$dump_name = DUMP_PATH . 'sql_'.time().'.dump';
+			$dump_name = DUMP_PATH . 'sql_' . date('c') . '.dump';
 			$fh = fopen( $dump_name , 'a+');
 			if($fh ==! false) {
 				fputs ($fh, "\n".'##################################################');
