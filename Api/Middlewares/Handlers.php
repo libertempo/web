@@ -74,7 +74,7 @@ $container['errorHandler'] = function () {
     };
 };
 
-$container['createStack'] = function () {
+$container['createDefaultStack'] = function () {
     return function (
         ServerRequestInterface $request,
         ResponseInterface $response,
@@ -128,7 +128,7 @@ $container['createStack'] = function () {
     };
 };
 
-$container['callDetail'] = function () {
+$container['callDefaultDetail'] = function () {
     return function (
         ServerRequestInterface $request,
         ResponseInterface $response,
@@ -137,7 +137,7 @@ $container['callDetail'] = function () {
         $id
     ) {
         $tryCreateController = call_user_func(
-            $dic->createStack,
+            $dic->createDefaultStack,
             $request,
             $response,
             $dic,
@@ -152,7 +152,7 @@ $container['callDetail'] = function () {
     };
 };
 
-$container['callList'] = function () {
+$container['callDefaultList'] = function () {
     return function (
         ServerRequestInterface $request,
         ResponseInterface $response,
@@ -160,7 +160,7 @@ $container['callList'] = function () {
         $resourceName
     ) {
         $tryCreateController = call_user_func(
-            $dic->createStack,
+            $dic->createDefaultStack,
             $request,
             $response,
             $dic,

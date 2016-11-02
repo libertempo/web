@@ -43,7 +43,7 @@ class Formatter
     /**
      * Met au singulier un terme
      *
-     * Comme il n'y a aucun moyen rapide de distinguer un « s » final légitime
+     * Comme il n'y a aucun moyen rapide de distinguer un « s / x » final légitime
      * d'un mot au pluriel, fait la brute épaisse
      *
      * @param string $terme
@@ -53,7 +53,7 @@ class Formatter
     public static function getSingularTerm($terme)
     {
         $len = strlen($terme);
-        if ('s' === $terme[$len - 1]) {
+        if (in_array($terme[$len - 1], ['s', 'x'], true)) {
             return substr($terme, 0, $len - 1);
         }
 

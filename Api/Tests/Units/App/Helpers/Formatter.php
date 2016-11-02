@@ -69,6 +69,18 @@ final class Formatter extends \Atoum
     }
 
     /**
+     * Teste la mise au singulier d'une phrase avec « x »  final
+     */
+    public function testGetSingularTermWithFinalX()
+    {
+        $term = 'Phrase avec x';
+
+        $singular = _Formatter::getSingularTerm($term);
+
+        $this->string($singular)->isIdenticalTo('Phrase avec ');
+    }
+
+    /**
      * Teste la mise au singulier d'une phrase sans « s » final
      */
     public function testGetSingulaTermWithoutFinalS()
