@@ -14,8 +14,8 @@ et qu'on se retrouve avec deux framework.
 J'ai étudié les alternatives Lumen et Laravel, mais tous les frameworks semblent s'être pris d'amour pour le pattern ActiveRecord,
 qui est une horreur en terme de principe SOLID et je me refuse à coder ça...
 
-* Je tente quelque chose dans l'arboresence de fichiers.
+* Je tente quelque chose dans l'arborescence de fichiers.
 Bien que l'on suive le pattern MVC, je ne suis pas la traditionnelle arbo avec les répertoires Models - Views - Controllers. À mon sens,
-ce n'est pas ça que doit présenter l'arbo de premier abord. Une archi doit présenter l'intention de l'appli ; aussi, les unités de connaissances métiers sont mis en lumière, à l'instar de package.
+ce n'est pas ça que doit présenter l'arbo de premier abord. Une archi doit présenter l'intention de l'appli ; aussi, les unités de connaissances métiers sont mis en lumière, à l'instar de packages.
 
 ~ Prytoegrian

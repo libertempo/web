@@ -98,18 +98,4 @@ abstract class Controller
 
         return true;
     }
-
-    /**
-     * Retourne les méthodes HTTP disponibles au sens de la ressource
-     *
-     * @return string
-     */
-    abstract public function getAvailablesMethods();
-
-    /**
-     * Retourne le nom de la ressource (au pluriel)
-     *
-     * @return string
-     */
-    abstract public function getResourceName();
 }

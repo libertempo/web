@@ -89,19 +89,6 @@ $container['createStack'] = function () {
         $repoClass = '\Api\App\\' . $class . '\Repository';
         $repoUtilisateurClass = '\Api\App\Utilisateur\Repository';
         $daoUtilisateurClass = '\Api\App\Utilisateur\Dao';
-        /* Ressource n'existe pas => 404 */
-        if (!class_exists($controllerClass, true)
-            || !class_exists($repoClass, true)
-            || !class_exists($repoUtilisateurClass, true)
-            || !class_exists($daoClass, true)
-            || !class_exists($daoUtilisateurClass, true)
-        ) {
-            return call_user_func(
-                $dic->notFoundHandler,
-                $request,
-                $response
-            );
-        }
         try {
             // Connexion stockage
             require_once CONFIG_PATH . 'dbconnect.php';
@@ -117,13 +104,13 @@ $container['createStack'] = function () {
                 new $repoClass(new $daoClass($storageConnector)),
                 new $repoUtilisateurClass(new $daoUtilisateurClass($storageConnector))
             );
-        } catch (\DomainException $e) {
+        } catch (\DomainException $e) { // UnauthorizedException extends UnexpectedValueException
             return call_user_func(
                 $dic->unauthorizedHandler,
                 $request,
                 $response
             );
-        } catch (\LogicException $e) {
+        } catch (\LogicException $e) { // ForbiddenException extends Exception
             return call_user_func(
                 $dic->forbiddenHandler,
                 $request,
@@ -138,5 +125,52 @@ $container['createStack'] = function () {
                 $e
             );
         }
+    };
+};
+
+$container['callDetail'] = function () {
+    return function (
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        \Interop\Container\ContainerInterface $dic,
+        $resourceName,
+        $id
+    ) {
+        $tryCreateController = call_user_func(
+            $dic->createStack,
+            $request,
+            $response,
+            $dic,
+            $resourceName
+        );
+
+        if ($tryCreateController instanceof ResponseInterface) {
+            return $tryCreateController;
+        }
+
+        return call_user_func([$tryCreateController, $request->getMethod()], $id);
+    };
+};
+
+$container['callList'] = function () {
+    return function (
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        \Interop\Container\ContainerInterface $dic,
+        $resourceName
+    ) {
+        $tryCreateController = call_user_func(
+            $dic->createStack,
+            $request,
+            $response,
+            $dic,
+            $resourceName
+        );
+
+        if ($tryCreateController instanceof ResponseInterface) {
+            return $tryCreateController;
+        }
+
+        return call_user_func([$tryCreateController, $request->getMethod()]);
     };
 };

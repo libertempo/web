@@ -39,43 +39,7 @@ $app->get('/hello_world', function($request, $response, $args) {
     return $response;
 });
 
-/**
- * Routage général des options
- */
-/*
-$app->options('/{ressource:[a-z_]+}',
-    function(ServerRequestInterface $request, ResponseInterface $response, $args) {
-        // snake to StudlyCaps
-        // drop the plural
-        $class = '\Api\App\\' . ucfirst($args['ressource']) . '\Controller';
-        /* Ressource n'existe pas => 404 *
-        if (!class_exists($class, true)) {
-            return call_user_func(
-                $this->notFoundHandler,
-                $request,
-                $response
-            );
-        }
-        $method = $request->getMethod();
-        $controller = new $class($request, $response);
-        /* Methode non applicable à la ressource => 405 *
-        if (!is_callable([$controller, $method])
-            || !in_array($method, $controller->getAvailablesMethods(), true)
-        ) {
-            return call_user_func(
-                $this->notAllowedHandler,
-                $request,
-                $response,
-                array_map('strtoupper', $controller->getAvailablesMethods())
-            );
-        }
-
-        return call_user_func([$controller, $method]);
-    }
-);
-*/
-
-require_once ROUTE_PATH . 'Default.php';
+require_once ROUTE_PATH . 'Plannings.php';
 
 /* Jump in ! */
 $app->run();

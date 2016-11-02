@@ -17,23 +17,6 @@ use Psr\Http\Message\ResponseInterface;
  */
 final class Controller extends \Api\App\Libraries\Controller
 {
-    /**
-     * {@inheritDoc}
-     */
-    public function getAvailablesMethods()
-    {
-        // peut être pas utile si les seules méthodes publiques sont les méthodes de request, faut voir
-        return ['get'];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getResourceName()
-    {
-        return 'plannings';
-    }
-
     /*************************************************
      * GET
      *************************************************/
@@ -80,7 +63,7 @@ final class Controller extends \Api\App\Libraries\Controller
                 'code' => $code,
                 'status' => 'error',
                 'message' => 'Not Found',
-                'data' => 'Element « ' . $this->getResourceName() . '#' . $id . ' » is not a valid resource',
+                'data' => 'Element « plannings#' . $id . ' » is not a valid resource',
             ];
         } catch (\Exception $e) {
             throw $e;
@@ -145,22 +128,4 @@ final class Controller extends \Api\App\Libraries\Controller
             'status' => $model->getStatus(),
         ];
     }
-
-    /*************************************************
-     * OPTIONS
-     *************************************************/
-
-/*
-    public function options()
-    {
-        $data = [
-            'code' => 200,
-            'status' => 'success',
-            'message' => ':-)',
-            'data' => $this->getAvailablesMethods(),
-        ];
-
-        return $this->response->withJson($data, 200);
-    }
-    */
 }

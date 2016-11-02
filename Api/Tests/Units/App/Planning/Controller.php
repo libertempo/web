@@ -48,30 +48,6 @@ final class Controller extends \Atoum
     }
 
     /**
-     * Teste les méthodes Http du contrat du contrôleur
-     */
-    public function testGetAvailablesMethods()
-    {
-        $controller = new _Controller($this->request, $this->response, $this->repository, $this->utilisateurRepository);
-
-        $availables = $controller->getAvailablesMethods();
-
-        $this->array($availables)->isIdenticalTo(['get']);
-    }
-
-    /**
-     * Teste le nom de la ressource
-     */
-    public function testGetRessourceName()
-    {
-        $controller = new _Controller($this->request, $this->response, $this->repository, $this->utilisateurRepository);
-
-        $resourceName = $controller->getResourceName();
-
-        $this->string($resourceName)->isIdenticalTo('plannings');
-    }
-
-    /**
      * Teste la méthode get d'un détail trouvé
      */
     public function testGetOneFound()
