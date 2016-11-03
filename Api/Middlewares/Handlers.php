@@ -81,14 +81,13 @@ $container['createDefaultStack'] = function () {
         \Interop\Container\ContainerInterface $dic,
         $resourceName
     ) {
+        // array_map sur $resourceName[]
         $class = \Api\App\Helpers\Formatter::getSingularTerm(
             \Api\App\Helpers\Formatter::getStudlyCapsFromSnake($resourceName)
         );
         $controllerClass = '\Api\App\\' . $class . '\Controller';
         $daoClass = '\Api\App\\' . $class . '\Dao';
         $repoClass = '\Api\App\\' . $class . '\Repository';
-        $repoUtilisateurClass = '\Api\App\Utilisateur\Repository';
-        $daoUtilisateurClass = '\Api\App\Utilisateur\Dao';
         try {
             // Connexion stockage
             require_once CONFIG_PATH . 'dbconnect.php';
@@ -101,20 +100,7 @@ $container['createDefaultStack'] = function () {
             return new $controllerClass(
                 $request,
                 $response,
-                new $repoClass(new $daoClass($storageConnector)),
-                new $repoUtilisateurClass(new $daoUtilisateurClass($storageConnector))
-            );
-        } catch (\DomainException $e) { // UnauthorizedException extends UnexpectedValueException
-            return call_user_func(
-                $dic->unauthorizedHandler,
-                $request,
-                $response
-            );
-        } catch (\LogicException $e) { // ForbiddenException extends Exception
-            return call_user_func(
-                $dic->forbiddenHandler,
-                $request,
-                $response
+                new $repoClass(new $daoClass($storageConnector))
             );
         /* Fallback */
         } catch (\Exception $e) {
@@ -147,6 +133,7 @@ $container['callDefaultDetail'] = function () {
         if ($tryCreateController instanceof ResponseInterface) {
             return $tryCreateController;
         }
+        // if !empty($dataSearch) -> setDatasearch in controller (id de ressource principale)
 
         return call_user_func([$tryCreateController, $request->getMethod()], $id);
     };
@@ -170,6 +157,7 @@ $container['callDefaultList'] = function () {
         if ($tryCreateController instanceof ResponseInterface) {
             return $tryCreateController;
         }
+        // if !empty($dataSearch) -> setDatasearch in controller (id de ressource principale)
 
         return call_user_func([$tryCreateController, $request->getMethod()]);
     };

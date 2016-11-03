@@ -8,6 +8,40 @@
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
+/* Sécurité via authentification */
+$app->add(function (ServerRequestInterface $request, ResponseInterface $response, callable $next) {
+    /**
+     * TODO
+     */
+    if ((new \Api\Middlewares\Authentication($request))->isTokenApiOk()) {
+        return $next($request, $response);
+    } else {
+        return call_user_func(
+            $this->unauthorizedHandler,
+            $request,
+            $response
+        );
+    }
+});
+
+/* Sécurité via droits d'accès sur la ressource */
+$app->add(function (ServerRequestInterface $request, ResponseInterface $response, callable $next) {
+    /**
+     * TODO
+     *
+     * qu'est ce que ça veut dire qu'une ressource est accessible, et où le mettre ? dépend du rôle ?
+     */
+    if (true) {
+        return $next($request, $response);
+    } else {
+        return call_user_func(
+            $this->forbiddenHandler,
+            $request,
+            $response
+        );
+    }
+});
+
 $app->group('/plannings', function() {
     $resourceName = 'plannings';
     $this->group('/{planningId:[0-9]+}', function () use ($resourceName) {
@@ -48,10 +82,13 @@ $app->group('/plannings', function() {
                 '',
                 function(ServerRequestInterface $request, ResponseInterface $response, array $args) use ($resourceName) {
                     $data = ['planningId' => (int) $args['planningId']];
+
                     return call_user_func(
-                        $this->notFoundHandler,
+                        $this->callDefaultList,
                         $request,
-                        $response
+                        $response,
+                        $this,
+                        $resourceName
                     );
             })->setName('creneau-liste');
 
