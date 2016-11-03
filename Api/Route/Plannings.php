@@ -42,6 +42,11 @@ $app->add(function (ServerRequestInterface $request, ResponseInterface $response
     }
 });
 
+/* Construction du contrôleur pour le Dependencies Injection Container */
+$app->add(function (ServerRequestInterface $request, ResponseInterface $response, callable $next) {
+    // WIP dépot du contrôleur dans le DIC
+});
+
 $app->group('/plannings', function() {
     $resourceName = 'plannings';
     $this->group('/{planningId:[0-9]+}', function () use ($resourceName) {
