@@ -16,17 +16,17 @@ class Dao extends \Api\App\Libraries\Dao
 {
     /**
      * @inheritDoc
+     *
+     * @param int $planningId Contrainte de recherche sur le planning
      */
-    public function getById($id)
+    public function getById($id, $planningId = -1)
     {
-        $res = $this->storageConnector->prepare(
-            'SELECT *
-            FROM ' . $this->getTableName() . '
-            WHERE creneau_id = :id'
-        );
-        $res->execute([
-            ':id' => (int) $id,
-        ]);
+
+        $req = 'SELECT * FROM ' . $this->getTableName();
+        $filters = $this->getFilters(['id' => $id, 'planningId' => $planningId]);
+        $req .= $filters['where'];
+        $res = $this->storageConnector->prepare($req);
+        $res->execute($filters['bind']);
 
         return $res->fetch(\PDO::FETCH_ASSOC);
     }
@@ -39,9 +39,6 @@ class Dao extends \Api\App\Libraries\Dao
         $req = 'SELECT * FROM ' . $this->getTableName();
         $filters = $this->getFilters($parametres);
         $req .= $filters['where'];
-        if (!empty($parametres['limit'])) {
-            $req .= ' LIMIT 0,' . $parametres['limit'];
-        }
         $res = $this->storageConnector->prepare($req);
         $res->execute($filters['bind']);
 
@@ -60,7 +57,6 @@ class Dao extends \Api\App\Libraries\Dao
      * Retourne le tableau des filtres à appliquer à la requête
      *
      * @param array $parametres
-     * @example [filter => [], lt => 23, limit => 4]
      *
      * @return array ['where' => clause complète, 'bind' => variables[]]
      */
@@ -68,13 +64,13 @@ class Dao extends \Api\App\Libraries\Dao
     {
         $where = [];
         $bind = [];
-        if (!empty($parametres['lt'])) {
-            $where[] = 'planning_id < :lt';
-            $bind[':lt'] = $parametres['lt'];
+        if (!empty($parametres['id'])) {
+            $where[] = 'creneau_id = :id';
+            $bind[':id'] = $parametres['id'];
         }
-        if (!empty($parametres['gt'])) {
-            $where[] = 'planning_id > :gt';
-            $bind[':gt'] = $parametres['gt'];
+        if (!empty($parametres['planning_id'])) {
+            $where[] = 'planning_id = :planningId';
+            $bind[':planningId'] = $parametres['planning_id'];
         }
 
         return [

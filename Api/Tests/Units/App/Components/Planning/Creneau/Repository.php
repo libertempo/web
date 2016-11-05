@@ -34,7 +34,7 @@ final class Repository extends \Atoum
         $repository = new _Repository($this->dao);
 
         $this->exception(function () use ($repository) {
-            $repository->getOne(99);
+            $repository->getOne(99, 23);
         })->isInstanceOf('\DomainException');
     }
 
@@ -54,7 +54,7 @@ final class Repository extends \Atoum
         ];
         $repository = new _Repository($this->dao);
 
-        $model = $repository->getOne(42);
+        $model = $repository->getOne(42, 23);
 
         $this->object($model)->isInstanceOf('\Api\App\Libraries\Model');
         $this->integer($model->getId())->isIdenticalTo(42);
@@ -69,7 +69,7 @@ final class Repository extends \Atoum
         $repository = new _Repository($this->dao);
 
         $this->exception(function () use ($repository) {
-            $repository->getList([]);
+            $repository->getList(['planningId' => 58]);
         })->isInstanceOf('\UnexpectedValueException');
     }
 
@@ -89,7 +89,7 @@ final class Repository extends \Atoum
         ]];
         $repository = new _Repository($this->dao);
 
-        $models = $repository->getList([]);
+        $models = $repository->getList(['planningId' => 53]);
 
         $this->array($models)->hasKey(42);
         $this->object($models[42])->isInstanceOf('\Api\App\Libraries\Model');

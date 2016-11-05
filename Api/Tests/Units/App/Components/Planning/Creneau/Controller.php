@@ -55,7 +55,7 @@ final class Controller extends \Api\Tests\Units\App\Libraries\Controller
         $this->repository->getMockController()->getOne = $this->model;
         $controller = new _Controller($this->repository);
 
-        $response = $controller->get($this->request, $this->response, ['creneauId' => 99]);
+        $response = $controller->get($this->request, $this->response, ['creneauId' => 99, 'planningId' => 45]);
         $data = json_decode((string) $response->getBody(), true);
 
         $this->integer($response->getStatusCode())->isIdenticalTo(200);
@@ -77,7 +77,7 @@ final class Controller extends \Api\Tests\Units\App\Libraries\Controller
         };
         $controller = new _Controller($this->repository);
 
-        $response = $controller->get($this->request, $this->response, ['creneauId' => 99]);
+        $response = $controller->get($this->request, $this->response, ['creneauId' => 99, 'planningId' => 45]);
         $data = json_decode((string) $response->getBody(), true);
 
         $this->integer($response->getStatusCode())->isIdenticalTo(404);
@@ -100,7 +100,7 @@ final class Controller extends \Api\Tests\Units\App\Libraries\Controller
         $controller = new _Controller($this->repository);
 
         $this->exception(function () use ($controller) {
-            $controller->get($this->request, $this->response, ['creneauId' => 99]);
+            $controller->get($this->request, $this->response, ['creneauId' => 99, 'planningId' => 45]);
         })->isInstanceOf('\Exception');
     }
 
@@ -109,13 +109,12 @@ final class Controller extends \Api\Tests\Units\App\Libraries\Controller
      */
     public function testGetListFound()
     {
-        $this->request->getMockController()->getQueryParams = [];
         $this->repository->getMockController()->getList = [
             42 => $this->model,
         ];
         $controller = new _Controller($this->repository);
 
-        $response = $controller->get($this->request, $this->response, []);
+        $response = $controller->get($this->request, $this->response, ['planningId' => 45]);
         $data = json_decode((string) $response->getBody(), true);
 
         $this->integer($response->getStatusCode())->isIdenticalTo(200);
@@ -133,14 +132,12 @@ final class Controller extends \Api\Tests\Units\App\Libraries\Controller
      */
     public function testGetListNotFound()
     {
-        $this->request->getMockController()->getQueryParams = [];
         $this->repository->getMockController()->getList = function () {
             throw new \UnexpectedValueException('');
-
         };
         $controller = new _Controller($this->repository);
 
-        $response = $controller->get($this->request, $this->response, []);
+        $response = $controller->get($this->request, $this->response, ['planningId' => 45]);
         $data = json_decode((string) $response->getBody(), true);
 
         $this->integer($response->getStatusCode())->isIdenticalTo(404);
@@ -157,14 +154,13 @@ final class Controller extends \Api\Tests\Units\App\Libraries\Controller
      */
     public function testGetListFallback()
     {
-        $this->request->getMockController()->getQueryParams = [];
         $this->repository->getMockController()->getList = function () {
             throw new \Exception('');
         };
         $controller = new _Controller($this->repository);
 
         $this->exception(function () use ($controller) {
-            $controller->get($this->request, $this->response, []);
+            $controller->get($this->request, $this->response, ['planningId' => 45]);
         })->isInstanceOf('\Exception');
     }
 }

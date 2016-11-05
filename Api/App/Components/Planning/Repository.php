@@ -106,7 +106,7 @@ class Repository extends \Api\App\Libraries\Repository
             $results['lt'] = $filterInt($paramsConsumer['start-after']);
 
         }
-        if (!empty($paramsConsumer['limit'])) {
+        if (!empty($paramsConsumer['start-before'])) {
             $results['gt'] = $filterInt($paramsConsumer['start-before']);
         }
         return $results;

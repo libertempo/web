@@ -17,11 +17,13 @@ class Repository extends \Api\App\Libraries\Repository
 {
     /**
      * @inheritDoc
+     *
+     * @param int $planningId Contrainte de recherche sur le planning
      */
-    public function getOne($id)
+    public function getOne($id, $planningId = -1)
     {
         $id = (int) $id;
-        $data = $this->dao->getById($id);
+        $data = $this->dao->getById($id, $planningId);
         if (empty($data)) {
             throw new \DomainException('Creneau#' . $id . ' is not a valid resource');
         }
@@ -39,12 +41,6 @@ class Repository extends \Api\App\Libraries\Repository
     public function getList(array $parametres)
     {
         /* retourner une collection pour avoir le total, hors limite forcée (utile pour la pagination) */
-        /*
-        several params :
-        offset (first, !isset => 0) / start-after ?
-        Limit (nb elements)
-        filter (dimensions forced)
-        */
         $data = $this->dao->getList($this->getParamsConsumer2Dao($parametres));
         if (empty($data)) {
             throw new \UnexpectedValueException('No resource match with these parameters');
@@ -90,7 +86,6 @@ class Repository extends \Api\App\Libraries\Repository
      * Essentiel pour séparer / traduire les contextes Client / DAO
      *
      * @param array $paramsConsumer Paramètres reçus
-     * @example [offset => 4, start-after => 23, filter => 'name::chapo|status::1,3']
      *
      * @return array
      */
@@ -104,16 +99,10 @@ class Repository extends \Api\App\Libraries\Repository
             );
         };
         $results = [];
-        if (!empty($paramsConsumer['limit'])) {
-            $results['limit'] = $filterInt($paramsConsumer['limit']);
+        if (!empty($paramsConsumer['planningId'])) {
+            $results['planning_id'] = $filterInt($paramsConsumer['planningId']);
         }
-        if (!empty($paramsConsumer['start-after'])) {
-            $results['lt'] = $filterInt($paramsConsumer['start-after']);
 
-        }
-        if (!empty($paramsConsumer['limit'])) {
-            $results['gt'] = $filterInt($paramsConsumer['start-before']);
-        }
         return $results;
     }
 }
