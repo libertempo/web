@@ -1,8 +1,6 @@
 <?php
 namespace Api\App\Libraries;
 
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
 use \Api\App\Libraries\Repository;
 
 /**
@@ -19,27 +17,11 @@ use \Api\App\Libraries\Repository;
 abstract class Controller
 {
     /**
-     * @var ServerRequestInterface Requête HTTP
-     */
-    protected $request;
-
-    /**
-     * @var ResponseInterface Réponse HTTP
-     */
-    protected $response;
-
-    /**
      * @var Repository Repository de la ressource
      */
     protected $repository;
 
-    public function __construct(
-        ServerRequestInterface $request,
-        ResponseInterface $response,
-        Repository $repository
-    ) {
-        $this->request = $request;
-        $this->response = $response;
+    public function __construct(Repository $repository) {
         $this->repository = $repository;
     }
 }

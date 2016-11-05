@@ -1,7 +1,8 @@
 <?php
 namespace Api\App\Planning;
 
-use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface as IRequest;
+use Psr\Http\Message\ResponseInterface as IResponse;
 
 /**
  * Contrôleur de plannings
@@ -17,6 +18,11 @@ use Psr\Http\Message\ResponseInterface;
  */
 final class Controller extends \Api\App\Libraries\Controller
 {
+    public function post(IRequest $request, IResponse $response, array $arguments)
+    {
+        ddd($request, $response, $arguments);
+    }
+
     /*************************************************
      * GET
      *************************************************/
@@ -24,15 +30,15 @@ final class Controller extends \Api\App\Libraries\Controller
     /**
      * Execute l'ordre HTTP GET
      *
-     * @return ResponseInterface
+     * @return IResponse
      */
-    public function get($id = -1)
+    public function get(IRequest $request, IResponse $response, array $arguments)
     {
-        if (-1 === $id) {
+        if (!isset($arguments['planningId'])) {
             return $this->getList();
         }
 
-        return $this->getOne($id);
+        return $this->getOne($arguments['planningId']);
     }
 
     /**
@@ -40,11 +46,12 @@ final class Controller extends \Api\App\Libraries\Controller
      *
      * @param int $id ID de l'élément
      *
-     * @return ResponseInterface, 404 si l'élément n'est pas trouvé, 200 sinon
+     * @return IResponse, 404 si l'élément n'est pas trouvé, 200 sinon
      * @throws \Exception en cas d'erreur inconnue (fallback, ne doit pas arriver)
      */
     private function getOne($id)
     {
+        ddd('getOne');
         $id = (int) $id;
         $code = -1;
         $data = [];
@@ -80,7 +87,7 @@ final class Controller extends \Api\App\Libraries\Controller
      */
     private function getList()
     {
-
+        ddd('getListe');
         $code = -1;
         $data = [];
         try {

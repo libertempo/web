@@ -3,6 +3,9 @@
  * API de Libertempo
  * @version 0.1
  */
+use Psr\Http\Message\ServerRequestInterface as IRequest;
+use Psr\Http\Message\ResponseInterface as IResponse;
+
 define('ROOT_PATH', dirname(dirname(__DIR__)) . '/');
 define('CONFIG_PATH', ROOT_PATH . 'cfg/');
 define('API_PATH', ROOT_PATH . 'Api/');
@@ -14,27 +17,14 @@ define('ROUTE_PATH', API_PATH . 'Route/');
 define('_PHP_CONGES', 1);
 require_once ROOT_PATH . 'vendor/autoload.php';
 $container = [];
-require_once MIDDLEWARE_PATH . 'Handlers.php';
+require_once API_PATH . 'Handlers.php';
 
 $app = new \Slim\App($container);
 
-/**
- * creation des controllers X
- * // creation des repositories X
- * creation des acces db X
- * creation des dao
- * creation des domain models
- * creation des collections
- */
+require_once API_PATH . 'Middlewares.php';
 
-/**
-* Routage de la découverte des urls
-*/
-$app->get('/hello_world', function($request, $response, $args) {
-    $headers = $request->getHeaders();
-    /* Check api key and error access : 401 */
-
-    $response->withJson('How about implementing planningsIdGet as a GET method ?');
+$app->get('/hello_world', function(IRequest $request, IResponse $response) {
+    $response->withJson('Hi there !');
 
     return $response;
 });

@@ -1,116 +1,32 @@
 <?php
-
 /*
  * Doit être importé après la création de $app. Ne créé rien.
  *
  * La convention de nommage est de mettre les routes au pluriel
  */
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
 
-/* Sécurité via authentification */
-$app->add(function (ServerRequestInterface $request, ResponseInterface $response, callable $next) {
-    /**
-     * TODO
-     */
-    if ((new \Api\Middlewares\Authentication($request))->isTokenApiOk()) {
-        return $next($request, $response);
-    } else {
-        return call_user_func(
-            $this->unauthorizedHandler,
-            $request,
-            $response
-        );
-    }
-});
-
-/* Sécurité via droits d'accès sur la ressource */
-$app->add(function (ServerRequestInterface $request, ResponseInterface $response, callable $next) {
-    /**
-     * TODO
-     *
-     * qu'est ce que ça veut dire qu'une ressource est accessible, et où le mettre ? dépend du rôle ?
-     */
-    if (true) {
-        return $next($request, $response);
-    } else {
-        return call_user_func(
-            $this->forbiddenHandler,
-            $request,
-            $response
-        );
-    }
-});
-
-/* Construction du contrôleur pour le Dependencies Injection Container */
-$app->add(function (ServerRequestInterface $request, ResponseInterface $response, callable $next) {
-    // WIP dépot du contrôleur dans le DIC
-});
-
+/* Routes sur le planning et associés */
 $app->group('/plannings', function() {
-    $resourceName = 'plannings';
-    $this->group('/{planningId:[0-9]+}', function () use ($resourceName) {
+    $this->group('/{planningId:[0-9]+}', function () {
         /* Detail */
-        $this->map(
-            ['GET', 'DELETE', 'PUT'],
-            '',
-            function(ServerRequestInterface $request, ResponseInterface $response, $args) use ($resourceName) {
-                return call_user_func(
-                    $this->callDefaultDetail,
-                    $request,
-                    $response,
-                    $this,
-                    $resourceName,
-                    $args['planningId']
-                );
-        })->setName('planning-detail');
+        $this->get('', '\Api\App\Planning\Controller:get')->setName('getPlanningDetail');
+        //$this->put('', '\Api\App\Planning\Controller:put')->setName('putPlanningDetail');
+        //$this->delete('', '\Api\App\Planning\Controller:delete')->setName('putPlanningDetail');
 
         /* Dependances de plannings */
         $this->group('/creneaux', function () {
-            $resourceName = 'creneaux';
             /* Detail creneaux */
-            $this->map(
-            ['GET', 'DELETE', 'PUT'],
-            '/{creneauId:[0-9]+}',
-            function(ServerRequestInterface $request, ResponseInterface $response, array $args) use ($resourceName) {
-                $data = ['planningId' => (int) $args['planningId']];
-                return call_user_func(
-                    $this->notFoundHandler,
-                    $request,
-                    $response
-                );
-            })->setName('creneau-detail');
+            //$this->get('/{creneauId:[0-9]+}', '\Api\App\Planning\Creneau\Controller:get')->setName('getPlanningCreneauDetail');
+            //$this->put('/{creneauId:[0-9]+}', '\Api\App\Planning\Creneau\Controller:put')->setName('putPlanningCreneauDetail');
+            //$this->delete('/{creneauId:[0-9]+}', '\Api\App\Planning\Creneau\Controller:delete')->setName('deletePlanningCreneauDetail');
 
             /* Collection creneaux */
-            $this->map(
-                ['GET', 'POST'],
-                '',
-                function(ServerRequestInterface $request, ResponseInterface $response, array $args) use ($resourceName) {
-                    $data = ['planningId' => (int) $args['planningId']];
-
-                    return call_user_func(
-                        $this->callDefaultList,
-                        $request,
-                        $response,
-                        $this,
-                        $resourceName
-                    );
-            })->setName('creneau-liste');
-
+            $this->get('', '\Api\App\Planning\Creneau\Controller:get')->setName('getPlanningCreneauListe');
+            //$this->post('', '\Api\App\Planning\Creneau\Controller:post')->setName('postPlanningCreneauListe');
         });
     });
 
     /* Collection */
-    $this->map(
-        ['GET', 'POST'],
-        '',
-        function(ServerRequestInterface $request, ResponseInterface $response, $args) use ($resourceName) {
-            return call_user_func(
-                $this->callDefaultList,
-                $request,
-                $response,
-                $this,
-                $resourceName
-            );
-    })->setName('planning-liste');
+    $this->get('', '\Api\App\Planning\Controller:get')->setName('getPlanningListe');
+    $this->post('', '\Api\App\Planning\Controller:post')->setName('postPlanningListe');
 });
