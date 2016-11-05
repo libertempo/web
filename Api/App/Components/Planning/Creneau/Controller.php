@@ -52,45 +52,80 @@ final class Controller extends \Api\App\Libraries\Controller
      * @return IResponse, 404 si l'élément n'est pas trouvé, 200 sinon
      * @throws \Exception en cas d'erreur inconnue (fallback, ne doit pas arriver)
      */
-    private function getOne($id)
+    private function getOne(IResponse $response, $id)
     {
-        ddd('getOne');
         $id = (int) $id;
         $code = -1;
         $data = [];
         try {
-            $planning = $this->repository->getOne($id);
+            $creneau = $this->repository->getOne($id);
             $code = 200;
             $data = [
                 'code' => $code,
                 'status' => 'success',
                 'message' => '',
-                'data' => $this->buildData($planning),
+                'data' => $this->buildData($creneau),
             ];
+
+            return $response->withJson($data, $code);
         } catch (\DomainException $e) {
             $code = 404;
             $data = [
                 'code' => $code,
                 'status' => 'error',
                 'message' => 'Not Found',
-                'data' => 'Element « plannings#' . $id . ' » is not a valid resource',
+                'data' => 'Element « creneaux#' . $id . ' » is not a valid resource',
             ];
+
+            return $response->withJson($data, $code);
         } catch (\Exception $e) {
             throw $e;
-        } finally {
-            return $response->withJson($data, $code);
         }
     }
 
     /**
      * Retourne un tableau de plannings
      *
+     * @param IRequest $request Requête Http
+     * @param IResponse $response Réponse Http
+     *
      * @return IResponse
      * @throws \Exception en cas d'erreur inconnue (fallback, ne doit pas arriver)
      */
-    private function getList()
+    private function getList(IRequest $request, IResponse $response)
     {
-        ddd('getliste');
+        $code = -1;
+        $data = [];
+        try {
+            $creneaux = $this->repository->getList(
+                $request->getQueryParams()
+            );
+            $models = [];
+            foreach ($creneaux as $creneau) {
+                $models[] = $this->buildData($creneau);
+            }
+            $code = 200;
+            $data = [
+                'code' => $code,
+                'status' => 'success',
+                'message' => '',
+                'data' => $models,
+            ];
+
+            return $response->withJson($data, $code);
+        } catch (\UnexpectedValueException $e) {
+            $code = 404;
+            $data = [
+                'code' => $code,
+                'status' => 'error',
+                'message' => 'Not Found',
+                'data' => 'No result',
+            ];
+
+            return $response->withJson($data, $code);
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 
     /**
@@ -102,5 +137,14 @@ final class Controller extends \Api\App\Libraries\Controller
      */
     private function buildData(Model $model)
     {
+        return [
+            'id' => $model->getId(),
+            'planningId' => $model->getPlanningId(),
+            'jourId' => $model->getJourId(),
+            'typeSemaine' => $model->getTypeSemaine(),
+            'typePeriode' => $model->getTypePeriode(),
+            'debut' => $model->getDebut(),
+            'fin' => $model->getFin(),
+        ];
     }
 }

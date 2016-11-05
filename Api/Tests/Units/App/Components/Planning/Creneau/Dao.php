@@ -1,10 +1,10 @@
 <?php
-namespace Api\Tests\Units\App\Components\Planning;
+namespace Api\Tests\Units\App\Components\Planning\Creneau;
 
-use \Api\App\Components\Planning\Dao as _Dao;
+use \Api\App\Components\Planning\Creneau\Dao as _Dao;
 
 /**
- * Classe de test du DAO de planning
+ * Classe de test du DAO de créneau de planning
  *
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina

@@ -24,11 +24,6 @@ abstract class Dao
         $this->storageConnector = $storageConnector;
     }
 
-    public function getStorageConnector()
-    {
-        return $this->storageConnector;
-    }
-
     /**
      * Retourne une ressource unique
      *

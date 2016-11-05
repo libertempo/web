@@ -1,10 +1,10 @@
 <?php
-namespace Api\Tests\Units\App\Components\Planning;
+namespace Api\Tests\Units\App\Components\Planning\Creneau;
 
-use \Api\App\Components\Planning\Controller as _Controller;
+use \Api\App\Components\Planning\Creneau\Controller as _Controller;
 
 /**
- * Classe de test du contrôleur de planning
+ * Classe de test du contrôleur de créneau de planning
  *
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina
@@ -14,7 +14,7 @@ use \Api\App\Components\Planning\Controller as _Controller;
 final class Controller extends \Api\Tests\Units\App\Libraries\Controller
 {
     /**
-     * @var \mock\Api\App\Components\Planning\Repository Mock du repository associé
+     * @var \mock\Api\App\Components\Planning\Creneau\Repository Mock du repository associé
      */
     private $repository;
 
@@ -31,12 +31,16 @@ final class Controller extends \Api\Tests\Units\App\Libraries\Controller
         parent::beforeTestMethod($method);
         $this->mockGenerator->orphanize('__construct');
         $this->mockGenerator->shuntParentClassCalls();
-        $this->repository = new \mock\Api\App\Components\Planning\Repository();
+        $this->repository = new \mock\Api\App\Components\Planning\Creneau\Repository();
         $this->mockGenerator->orphanize('__construct');
-        $this->model = new \mock\Api\App\Components\Planning\Model();
+        $this->model = new \mock\Api\App\Components\Planning\Creneau\Model();
         $this->model->getMockController()->getId = 42;
-        $this->model->getMockController()->getName = 12;
-        $this->model->getMockController()->getStatus = 12;
+        $this->model->getMockController()->getPlanningId = 12;
+        $this->model->getMockController()->getJourId = 12;
+        $this->model->getMockController()->getTypeSemaine = 12;
+        $this->model->getMockController()->getTypePeriode = 12;
+        $this->model->getMockController()->getDebut = 12;
+        $this->model->getMockController()->getFin = 12;
     }
 
     /*************************************************
@@ -51,7 +55,7 @@ final class Controller extends \Api\Tests\Units\App\Libraries\Controller
         $this->repository->getMockController()->getOne = $this->model;
         $controller = new _Controller($this->repository);
 
-        $response = $controller->get($this->request, $this->response, ['planningId' => 99]);
+        $response = $controller->get($this->request, $this->response, ['creneauId' => 99]);
         $data = json_decode((string) $response->getBody(), true);
 
         $this->integer($response->getStatusCode())->isIdenticalTo(200);
@@ -73,7 +77,7 @@ final class Controller extends \Api\Tests\Units\App\Libraries\Controller
         };
         $controller = new _Controller($this->repository);
 
-        $response = $controller->get($this->request, $this->response, ['planningId' => 99]);
+        $response = $controller->get($this->request, $this->response, ['creneauId' => 99]);
         $data = json_decode((string) $response->getBody(), true);
 
         $this->integer($response->getStatusCode())->isIdenticalTo(404);
@@ -96,7 +100,7 @@ final class Controller extends \Api\Tests\Units\App\Libraries\Controller
         $controller = new _Controller($this->repository);
 
         $this->exception(function () use ($controller) {
-            $controller->get($this->request, $this->response, ['planningId' => 99]);
+            $controller->get($this->request, $this->response, ['creneauId' => 99]);
         })->isInstanceOf('\Exception');
     }
 

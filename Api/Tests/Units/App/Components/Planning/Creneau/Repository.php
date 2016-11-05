@@ -1,10 +1,10 @@
 <?php
-namespace Api\Tests\Units\App\Components\Planning;
+namespace Api\Tests\Units\App\Components\Planning\Creneau;
 
-use \Api\App\Components\Planning\Repository as _Repository;
+use \Api\App\Components\Planning\Creneau\Repository as _Repository;
 
 /**
- * Classe de test du repository de planning
+ * Classe de test du repository de créneau de planning
  *
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina
@@ -14,7 +14,7 @@ use \Api\App\Components\Planning\Repository as _Repository;
 final class Repository extends \Atoum
 {
     /**
-     * @var \mock\Api\App\Components\Planning\Dao Mock du DAO du planning
+     * @var \mock\Api\App\Components\Planning\Creneau\Dao Mock du DAO du planning
      */
     private $dao;
 
@@ -22,7 +22,7 @@ final class Repository extends \Atoum
     {
         $this->mockGenerator->orphanize('__construct');
         $this->mockGenerator->shuntParentClassCalls();
-        $this->dao = new \mock\Api\App\Components\Planning\Dao();
+        $this->dao = new \mock\Api\App\Components\Planning\Creneau\Dao();
     }
 
     /**
@@ -44,9 +44,13 @@ final class Repository extends \Atoum
     public function testGetOneFound()
     {
         $this->dao->getMockController()->getById = [
-            'planning_id' => '42',
-            'name' => 'H2G2',
-            'status' => '8',
+            'creneau_id' => '42',
+            'planning_id' => 99,
+            'jour_id' => 99,
+            'type_semaine' => 99,
+            'type_periode' => 99,
+            'debut' => 99,
+            'fin' => 99,
         ];
         $repository = new _Repository($this->dao);
 
@@ -75,9 +79,13 @@ final class Repository extends \Atoum
     public function testGetListFound()
     {
         $this->dao->getMockController()->getList = [[
-            'planning_id' => '42',
-            'name' => 'H2G2',
-            'status' => '8',
+            'creneau_id' => '42',
+            'planning_id' => 99,
+            'jour_id' => 99,
+            'type_semaine' => 99,
+            'type_periode' => 99,
+            'debut' => 99,
+            'fin' => 99,
         ]];
         $repository = new _Repository($this->dao);
 

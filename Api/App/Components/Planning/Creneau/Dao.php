@@ -19,6 +19,16 @@ class Dao extends \Api\App\Libraries\Dao
      */
     public function getById($id)
     {
+        $res = $this->storageConnector->prepare(
+            'SELECT *
+            FROM ' . $this->getTableName() . '
+            WHERE creneau_id = :id'
+        );
+        $res->execute([
+            ':id' => (int) $id,
+        ]);
+
+        return $res->fetch(\PDO::FETCH_ASSOC);
     }
 
     /**
@@ -26,6 +36,16 @@ class Dao extends \Api\App\Libraries\Dao
      */
     public function getList(array $parametres)
     {
+        $req = 'SELECT * FROM ' . $this->getTableName();
+        $filters = $this->getFilters($parametres);
+        $req .= $filters['where'];
+        if (!empty($parametres['limit'])) {
+            $req .= ' LIMIT 0,' . $parametres['limit'];
+        }
+        $res = $this->storageConnector->prepare($req);
+        $res->execute($filters['bind']);
+
+        return $res->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     /**
@@ -33,5 +53,35 @@ class Dao extends \Api\App\Libraries\Dao
      */
     final protected function getTableName()
     {
+        return 'planning_creneau';
+    }
+
+    /**
+     * Retourne le tableau des filtres à appliquer à la requête
+     *
+     * @param array $parametres
+     * @example [filter => [], lt => 23, limit => 4]
+     *
+     * @return array ['where' => clause complète, 'bind' => variables[]]
+     */
+    private function getFilters(array $parametres)
+    {
+        $where = [];
+        $bind = [];
+        if (!empty($parametres['lt'])) {
+            $where[] = 'planning_id < :lt';
+            $bind[':lt'] = $parametres['lt'];
+        }
+        if (!empty($parametres['gt'])) {
+            $where[] = 'planning_id > :gt';
+            $bind[':gt'] = $parametres['gt'];
+        }
+
+        return [
+            'where' => !empty($where)
+                ? ' WHERE ' . implode(' AND ', $where)
+                : '',
+            'bind' => $bind,
+        ];
     }
 }

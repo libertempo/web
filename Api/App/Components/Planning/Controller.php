@@ -33,6 +33,7 @@ final class Controller extends \Api\App\Libraries\Controller
      * @param IResponse $response Réponse Http
      *
      * @return IResponse
+     * @throws \Exception en cas d'erreur inconnue (fallback, ne doit pas arriver)
      */
     public function get(IRequest $request, IResponse $response, array $arguments)
     {
@@ -66,6 +67,8 @@ final class Controller extends \Api\App\Libraries\Controller
                 'message' => '',
                 'data' => $this->buildData($planning),
             ];
+
+            return $response->withJson($data, $code);
         } catch (\DomainException $e) {
             $code = 404;
             $data = [
@@ -74,10 +77,10 @@ final class Controller extends \Api\App\Libraries\Controller
                 'message' => 'Not Found',
                 'data' => 'Element « plannings#' . $id . ' » is not a valid resource',
             ];
+
+            return $response->withJson($data, $code);
         } catch (\Exception $e) {
             throw $e;
-        } finally {
-            return $response->withJson($data, $code);
         }
     }
 
@@ -109,6 +112,8 @@ final class Controller extends \Api\App\Libraries\Controller
                 'message' => '',
                 'data' => $models,
             ];
+
+            return $response->withJson($data, $code);
         } catch (\UnexpectedValueException $e) {
             $code = 404;
             $data = [
@@ -117,10 +122,10 @@ final class Controller extends \Api\App\Libraries\Controller
                 'message' => 'Not Found',
                 'data' => 'No result',
             ];
+
+            return $response->withJson($data, $code);
         } catch (\Exception $e) {
             throw $e;
-        } finally {
-            return $response->withJson($data, $code);
         }
     }
 
