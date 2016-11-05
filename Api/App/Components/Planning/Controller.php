@@ -1,5 +1,5 @@
 <?php
-namespace Api\App\Planning;
+namespace Api\App\Components\Planning;
 
 use Psr\Http\Message\ServerRequestInterface as IRequest;
 use Psr\Http\Message\ResponseInterface as IResponse;
@@ -11,7 +11,7 @@ use Psr\Http\Message\ResponseInterface as IResponse;
  * @author Wouldsmina
  *
  * @since 0.1
- * @see \Api\Tests\Units\App\Planning\Controller
+ * @see \Api\Tests\Units\App\Components\Planning\Controller
  *
  * Ne devrait être contacté que par le routeur
  * Ne devrait contacter que le Planning\Repository
@@ -20,7 +20,6 @@ final class Controller extends \Api\App\Libraries\Controller
 {
     public function post(IRequest $request, IResponse $response, array $arguments)
     {
-        ddd($request, $response, $arguments);
     }
 
     /*************************************************
@@ -30,28 +29,31 @@ final class Controller extends \Api\App\Libraries\Controller
     /**
      * Execute l'ordre HTTP GET
      *
+     * @param IRequest $request Requête Http
+     * @param IResponse $response Réponse Http
+     *
      * @return IResponse
      */
     public function get(IRequest $request, IResponse $response, array $arguments)
     {
         if (!isset($arguments['planningId'])) {
-            return $this->getList();
+            return $this->getList($request, $response);
         }
 
-        return $this->getOne($arguments['planningId']);
+        return $this->getOne($response, $arguments['planningId']);
     }
 
     /**
      * Retourne un élément unique
      *
+     * @param IResponse $response Réponse Http
      * @param int $id ID de l'élément
      *
      * @return IResponse, 404 si l'élément n'est pas trouvé, 200 sinon
      * @throws \Exception en cas d'erreur inconnue (fallback, ne doit pas arriver)
      */
-    private function getOne($id)
+    private function getOne(IResponse $response, $id)
     {
-        ddd('getOne');
         $id = (int) $id;
         $code = -1;
         $data = [];
@@ -75,24 +77,26 @@ final class Controller extends \Api\App\Libraries\Controller
         } catch (\Exception $e) {
             throw $e;
         } finally {
-            return $this->response->withJson($data, $code);
+            return $response->withJson($data, $code);
         }
     }
 
     /**
      * Retourne un tableau de plannings
      *
-     * @return ResponseInterface
+     * @param IRequest $request Requête Http
+     * @param IResponse $response Réponse Http
+     *
+     * @return IResponse
      * @throws \Exception en cas d'erreur inconnue (fallback, ne doit pas arriver)
      */
-    private function getList()
+    private function getList(IRequest $request, IResponse $response)
     {
-        ddd('getListe');
         $code = -1;
         $data = [];
         try {
             $plannings = $this->repository->getList(
-                $this->request->getQueryParams()
+                $request->getQueryParams()
             );
             $models = [];
             foreach ($plannings as $planning) {
@@ -116,7 +120,7 @@ final class Controller extends \Api\App\Libraries\Controller
         } catch (\Exception $e) {
             throw $e;
         } finally {
-            return $this->response->withJson($data, $code);
+            return $response->withJson($data, $code);
         }
     }
 

@@ -1,7 +1,7 @@
 <?php
-namespace Api\Tests\Units\App\Planning;
+namespace Api\Tests\Units\App\Components\Planning;
 
-use \Api\App\Planning\Controller as _Controller;
+use \Api\App\Components\Planning\Controller as _Controller;
 
 /**
  * Classe de test du contrôleur de planning
@@ -24,7 +24,7 @@ final class Controller extends \Atoum
     private $response;
 
     /**
-     * @var \mock\Api\App\Planning\Repository Mock du repository associé
+     * @var \mock\Api\App\Components\Planning\Repository Mock du repository associé
      */
     private $repository;
 
@@ -43,8 +43,8 @@ final class Controller extends \Atoum
         $this->request = new \mock\Slim\Http\Request();
         $this->response = new \mock\Slim\Http\Response();
         $this->mockGenerator->orphanize('__construct');
-        $this->repository = new \mock\Api\App\Planning\Repository();
-        $this->utilisateurRepository = new \mock\Api\App\Planning\Repository();
+        $this->repository = new \mock\Api\App\Components\Planning\Repository();
+        $this->utilisateurRepository = new \mock\Api\App\Components\Planning\Repository();
     }
 
     /**
@@ -53,7 +53,7 @@ final class Controller extends \Atoum
     public function testGetOneFound()
     {
         $this->repository->getMockController()->getOne = function () {
-            return new \Api\App\Planning\Model(32, [
+            return new \Api\App\Components\Planning\Model(32, [
                 'name' => 'name',
                 'status' => 8,
             ]);
@@ -101,7 +101,7 @@ final class Controller extends \Atoum
     {
         $this->request->getMockController()->getQueryParams = [];
         $this->repository->getMockController()->getList = [
-            42 => new \Api\App\Planning\Model(42, [
+            42 => new \Api\App\Components\Planning\Model(42, [
                 'name' => 'name',
                 'status' => 9,
             ]),

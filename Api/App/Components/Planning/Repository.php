@@ -1,5 +1,5 @@
 <?php
-namespace Api\App\Planning;
+namespace Api\App\Components\Planning;
 
 /**
  * {@inheritDoc}
@@ -8,12 +8,10 @@ namespace Api\App\Planning;
  * @author Wouldsmina
  *
  * @since 0.1
- * @see \Api\Tests\Units\App\Planning\Repository
+ * @see \Api\Tests\Units\App\Components\Planning\Repository
  *
  * Ne devrait être contacté que par le Planning\Controller
  * Ne devrait contacter que le Planning\Model, Planning\Dao
- *
- * mettre une option "with-dependencies" pour avoir ou non les dépendances dans le json résultant
  */
 class Repository extends \Api\App\Libraries\Repository
 {

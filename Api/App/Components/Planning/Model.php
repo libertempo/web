@@ -1,5 +1,5 @@
 <?php
-namespace Api\App\Planning;
+namespace Api\App\Components\Planning;
 
 /**
  * {@inheritDoc}
@@ -8,7 +8,7 @@ namespace Api\App\Planning;
  * @author Wouldsmina
  *
  * @since 0.1
- * @see \Api\Tests\Units\App\Planning\Model
+ * @see \Api\Tests\Units\App\Components\Planning\Model
  *
  * Ne devrait être contacté que par le Planning\Repository
  * Ne devrait contacter personne

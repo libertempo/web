@@ -10,17 +10,25 @@ use Psr\Http\Message\ResponseInterface as IResponse;
 /* Middleware 5 : construction du contrôleur pour le Dependencies Injection Container */
 $app->add(function (IRequest $request, IResponse $response, callable $next) {
     $ressourcePath = str_replace('|', '\\', $request->getAttribute('nomRessources'));
-    $controllerClass = '\Api\App\\' . $ressourcePath . '\Controller';
-    $daoClass = '\Api\App\\' . $ressourcePath . '\Dao';
-    $repoClass = '\Api\App\\' . $ressourcePath . '\Repository';
+    $controllerClass = '\Api\App\Components\\' . $ressourcePath . '\Controller';
+    $daoClass = '\Api\App\Components\\' . $ressourcePath . '\Dao';
+    $repoClass = '\Api\App\Components\\' . $ressourcePath . '\Repository';
 
-    $this[$controllerClass] = new $controllerClass(
-        new $repoClass(
-            new $daoClass($this['storageConnector'])
-        )
-    );
+    if (class_exists($controllerClass, true)) {
+        $this[$controllerClass] = new $controllerClass(
+            new $repoClass(
+                new $daoClass($this['storageConnector'])
+            )
+        );
 
-    return $next($request, $response);
+        return $next($request, $response);
+    } else {
+        return call_user_func(
+            $this->notFoundHandler,
+            $request,
+            $response
+        );
+    }
 });
 
 /* Middleware 4 : découverte et mise en forme des noms de ressources */
@@ -45,10 +53,11 @@ $app->add(function (IRequest $request, IResponse $response, callable $next) {
     try {
         require_once CONFIG_PATH . 'dbconnect.php';
         $this['storageConnector'] = new \PDO(
-        'mysql:host=localhost;dbname=' . $mysql_database,
-        $mysql_user,
-        $mysql_pass
-    );
+            'mysql:host=localhost;dbname=' . $mysql_database,
+            $mysql_user,
+            $mysql_pass
+        );
+
     return $next($request, $response);
     /* Fallback */
     } catch (\Exception $e) {
@@ -72,9 +81,9 @@ $app->add(function (IRequest $request, IResponse $response, callable $next) {
         return $next($request, $response);
     } else {
         return call_user_func(
-        $this->forbiddenHandler,
-        $request,
-        $response
+            $this->forbiddenHandler,
+            $request,
+            $response
         );
     }
 });
@@ -88,9 +97,9 @@ $app->add(function (IRequest $request, IResponse $response, callable $next) {
         return $next($request, $response);
     } else {
         return call_user_func(
-        $this->unauthorizedHandler,
-        $request,
-        $response
+            $this->unauthorizedHandler,
+            $request,
+            $response
         );
     }
 });

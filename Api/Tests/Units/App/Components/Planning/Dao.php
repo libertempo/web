@@ -1,7 +1,7 @@
 <?php
-namespace Api\Tests\Units\App\Planning;
+namespace Api\Tests\Units\App\Components\Planning;
 
-use \Api\App\Planning\Dao as _Dao;
+use \Api\App\Components\Planning\Dao as _Dao;
 
 /**
  *

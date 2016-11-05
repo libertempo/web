@@ -1,5 +1,5 @@
 <?php
-namespace Api\App\Planning;
+namespace Api\App\Components\Planning;
 
 /**
  * {@inheritDoc}

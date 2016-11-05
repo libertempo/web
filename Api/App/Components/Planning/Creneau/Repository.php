@@ -1,5 +1,5 @@
 <?php
-namespace Api\App\Planning\Creneau;
+namespace Api\App\Components\Planning\Creneau;
 
 /**
  * {@inheritDoc}
@@ -8,7 +8,7 @@ namespace Api\App\Planning\Creneau;
  * @author Wouldsmina
  *
  * @since 0.1
- * @see \Api\Tests\Units\App\Planning\Repository
+ * @see \Api\Tests\Units\App\Components\Planning\Repository
  *
  * Ne devrait être contacté que par le Planning\Creneau\Controller, Planning\Repository
  * Ne devrait contacter que le Planning\Creneau\Model, Planning\Creneau\Dao

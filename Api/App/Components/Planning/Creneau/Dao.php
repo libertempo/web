@@ -1,5 +1,5 @@
 <?php
-namespace Api\App\Planning\Creneau;
+namespace Api\App\Components\Planning\Creneau;
 
 /**
  * {@inheritDoc}

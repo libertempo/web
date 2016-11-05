@@ -1,7 +1,7 @@
 <?php
-namespace Api\Tests\Units\App\Planning;
+namespace Api\Tests\Units\App\Components\Planning;
 
-use \Api\App\Planning\Repository as _Repository;
+use \Api\App\Components\Planning\Repository as _Repository;
 
 /**
  * Classe de test du contrôleur de planning
@@ -14,7 +14,7 @@ use \Api\App\Planning\Repository as _Repository;
 final class Repository extends \Atoum
 {
     /**
-     * @var \mock\Api\App\Planning\Dao Mock du DAO du planning
+     * @var \mock\Api\App\Components\Planning\Dao Mock du DAO du planning
      */
     private $dao;
 
@@ -22,7 +22,7 @@ final class Repository extends \Atoum
     {
         $this->mockGenerator->orphanize('__construct');
         $this->mockGenerator->shuntParentClassCalls();
-        $this->dao = new \mock\Api\App\Planning\Dao();
+        $this->dao = new \mock\Api\App\Components\Planning\Dao();
     }
 
     /**

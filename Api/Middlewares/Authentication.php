@@ -1,7 +1,7 @@
 <?php
 namespace Api\Middlewares;
 
-use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ServerRequestInterface as IRequest;
 
 /**
  * Authentification
@@ -11,11 +11,11 @@ use Psr\Http\Message\ServerRequestInterface;
 class Authentication
 {
     /**
-     * @var ServerRequestInterface
+     * @var IRequest
      */
     private $request;
 
-    public function __construct(ServerRequestInterface $request)
+    public function __construct(IRequest $request)
     {
         $this->request = $request;
     }
