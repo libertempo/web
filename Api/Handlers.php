@@ -8,6 +8,18 @@ use Psr\Http\Message\ResponseInterface as IResponse;
 /**************************
  * Handlers par défaut
  **************************/
+$container['badRequestHandler'] = function () {
+    return function (IRequest $request, IResponse $response) {
+        $data = [
+            'code' => 400,
+            'status' => 'error',
+            'message' => 'Bad Request',
+            'data' => 'Request Content-Type and Accept must be set on application/json only',
+        ];
+
+        return $response->withJson($data, 400);
+    };
+};
 $container['unauthorizedHandler'] = function () {
     return function (IRequest $request, IResponse $response) {
         $data = [

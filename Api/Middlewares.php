@@ -7,7 +7,7 @@
 use Psr\Http\Message\ServerRequestInterface as IRequest;
 use Psr\Http\Message\ResponseInterface as IResponse;
 
-/* Middleware 5 : construction du contrôleur pour le Dependencies Injection Container */
+/* Middleware 6 : construction du contrôleur pour le Dependencies Injection Container */
 $app->add(function (IRequest $request, IResponse $response, callable $next) {
     $ressourcePath = str_replace('|', '\\', $request->getAttribute('nomRessources'));
     $controllerClass = '\Api\App\Components\\' . $ressourcePath . '\Controller';
@@ -31,7 +31,7 @@ $app->add(function (IRequest $request, IResponse $response, callable $next) {
     }
 });
 
-/* Middleware 4 : découverte et mise en forme des noms de ressources */
+/* Middleware 5 : découverte et mise en forme des noms de ressources */
 $app->add(function (IRequest $request, IResponse $response, callable $next) {
     $path = trim(trim($request->getUri()->getPath()), '/');
     $paths = explode('/', $path);
@@ -48,7 +48,7 @@ $app->add(function (IRequest $request, IResponse $response, callable $next) {
     return $next($request, $response);
 });
 
-/* Middleware 3 : connexion DB */
+/* Middleware 4 : connexion DB */
 $app->add(function (IRequest $request, IResponse $response, callable $next) {
     try {
         require_once CONFIG_PATH . 'dbconnect.php';
@@ -66,6 +66,23 @@ $app->add(function (IRequest $request, IResponse $response, callable $next) {
             $request,
             $response,
             $e
+        );
+    }
+});
+
+/* Middleware 3 : vérification des headers (peut-être 1 ?) */
+$app->add(function (IRequest $request, IResponse $response, callable $next) {
+    /* /!\ Headers non versionnés */
+    $json = 'application/json';
+    if (($request->hasHeader('Accept') && $request->getHeaderLine('Accept') === $json)
+        && ($request->hasHeader('Content-Type') && $request->getHeaderLine('Content-Type') === $json)
+    ) {
+        return $next($request, $response);
+    } else {
+        return call_user_func(
+            $this->badRequestHandler,
+            $request,
+            $response
         );
     }
 });
