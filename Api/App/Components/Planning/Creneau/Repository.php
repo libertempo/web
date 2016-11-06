@@ -15,6 +15,10 @@ namespace Api\App\Components\Planning\Creneau;
  */
 class Repository extends \Api\App\Libraries\Repository
 {
+    /*************************************************
+     * GET
+     *************************************************/
+
     /**
      * @inheritDoc
      *
@@ -104,5 +108,16 @@ class Repository extends \Api\App\Libraries\Repository
         }
 
         return $results;
+    }
+
+    /*************************************************
+     * POST
+     *************************************************/
+
+    /**
+     * @inheritDoc
+     */
+    public function postOne(array $data)
+    {
     }
 }

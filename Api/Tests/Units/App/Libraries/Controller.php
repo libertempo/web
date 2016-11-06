@@ -1,6 +1,8 @@
 <?php
 namespace Api\Tests\Units\App\Libraries;
 
+use Psr\Http\Message\ResponseInterface as IResponse;
+
 /**
  * Classe de base des tests sur les contrôleurs
  *
@@ -17,9 +19,14 @@ class Controller extends \Atoum
     protected $request;
 
     /**
-     * @var \mock\Slim\\Http\Response Mock de la réponse HTTP
+     * @var \mock\Slim\Http\Response Mock de la réponse HTTP
      */
     protected $response;
+
+    /**
+     * @var \mock\Slim\Slim\Router Mock du routeur
+     */
+    protected $router;
 
     /**
      * Init des tests
@@ -30,5 +37,37 @@ class Controller extends \Atoum
         $this->mockGenerator->shuntParentClassCalls();
         $this->request = new \mock\Slim\Http\Request();
         $this->response = new \mock\Slim\Http\Response();
+        $this->router = new \mock\Slim\Router();
+    }
+
+    /**
+     * Retourne le json décodé
+     *
+     * @param string $json
+     *
+     * @return array | mixed si le json est mal formé
+     */
+    protected function getJsonDecoded($json)
+    {
+        return json_decode((string) $json, true);
+    }
+
+    /**
+     * Lance un pool d'assertion d'erreur
+     *
+     * @param IResponse $response Réponse Http
+     * @param int $code Code d'erreur Http attendu
+     */
+    protected function assertError(IResponse $response, $code)
+    {
+        $data = $this->getJsonDecoded($response->getBody());
+
+        $this->integer($response->getStatusCode())->isIdenticalTo($code);
+        $this->array($data)
+            ->integer['code']->isIdenticalTo($code)
+            ->string['status']->isIdenticalTo('error')
+            ->string['message']->isNotEqualTo('')
+            ->array['data']->isNotEmpty()
+        ;
     }
 }

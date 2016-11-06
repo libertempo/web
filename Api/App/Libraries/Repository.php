@@ -46,4 +46,15 @@ abstract class Repository
      * @throws \UnexpectedValueException Si les critères ne sont pas pertinents
      */
     abstract public function getList(array $parametres);
+
+    /**
+     * Poste une ressource unique
+     *
+     * @param array $data Données à poster
+     *
+     * @return int Id de la ressource nouvellement insérée
+     * @throws \DomainException Si un élément de la ressource n'est pas dans le bon domaine de définition
+     * @throws \BadMethodCallException Si un élément requis n'est pas présent
+     */
+    abstract public function postOne(array $data);
 }

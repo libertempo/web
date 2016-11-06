@@ -18,10 +18,6 @@ use Psr\Http\Message\ResponseInterface as IResponse;
  */
 final class Controller extends \Api\App\Libraries\Controller
 {
-    public function post(IRequest $request, IResponse $response, array $arguments)
-    {
-    }
-
     /*************************************************
      * GET
      *************************************************/
@@ -41,7 +37,7 @@ final class Controller extends \Api\App\Libraries\Controller
             return $this->getList($request, $response);
         }
 
-        return $this->getOne($response, $arguments['planningId']);
+        return $this->getOne($response, (int) $arguments['planningId']);
     }
 
     /**
@@ -55,9 +51,6 @@ final class Controller extends \Api\App\Libraries\Controller
      */
     private function getOne(IResponse $response, $id)
     {
-        $id = (int) $id;
-        $code = -1;
-        $data = [];
         try {
             $planning = $this->repository->getOne($id);
             $code = 200;
@@ -95,8 +88,6 @@ final class Controller extends \Api\App\Libraries\Controller
      */
     private function getList(IRequest $request, IResponse $response)
     {
-        $code = -1;
-        $data = [];
         try {
             $plannings = $this->repository->getList(
                 $request->getQueryParams()
@@ -143,5 +134,71 @@ final class Controller extends \Api\App\Libraries\Controller
             'name' => $model->getName(),
             'status' => $model->getStatus(),
         ];
+    }
+
+    /*************************************************
+     * POST
+     *************************************************/
+
+     /**
+      * Execute l'ordre HTTP POST
+      *
+      * @param IRequest $request Requête Http
+      * @param IResponse $response Réponse Http
+      *
+      * @return IResponse
+      * @throws \Exception en cas d'erreur inconnue (fallback, ne doit pas arriver)
+      */
+    public function post(IRequest $request, IResponse $response)
+    {
+        $body = $request->getParsedBody();
+        if (null === $body) {
+            $code = 400;
+            $data = [
+                'code' => $code,
+                'status' => 'error',
+                'message' => 'Bad Request',
+                'data' => 'Body request is not a json',
+            ];
+
+            return $response->withJson($data, $code);
+        }
+
+        try {
+            $planningId = $this->repository->postOne($body);
+            $code = 200;
+            $data = [
+                'code' => $code,
+                'status' => 'success',
+                'message' => '',
+                'data' => $this->router->pathFor('getPlanningDetail', [
+                    'planningId' => $planningId
+                ]),
+            ];
+
+            return $response->withJson($data, $code);
+        } catch (\BadMethodCallException $e) {
+            $code = 412;
+            $data = [
+                'code' => $code,
+                'status' => 'error',
+                'message' => 'Precondition Failed',
+                'data' => 'Missing required argument',
+            ];
+
+            return $response->withJson($data, $code);
+        } catch (\DomainException $e) {
+            $code = 412;
+            $data = [
+                'code' => $code,
+                'status' => 'error',
+                'message' => 'Precondition Failed',
+                'data' => $e->getMessage(),
+            ];
+
+            return $response->withJson($data, $code);
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 }

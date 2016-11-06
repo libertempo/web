@@ -15,6 +15,10 @@ namespace Api\App\Components\Planning;
  */
 class Repository extends \Api\App\Libraries\Repository
 {
+    /*************************************************
+     * GET
+     *************************************************/
+
     /**
      * @inheritDoc
      */
@@ -110,5 +114,16 @@ class Repository extends \Api\App\Libraries\Repository
             $results['gt'] = $filterInt($paramsConsumer['start-before']);
         }
         return $results;
+    }
+
+    /*************************************************
+     * POST
+     *************************************************/
+
+    /**
+     * @inheritDoc
+     */
+    public function postOne(array $data)
+    {
     }
 }

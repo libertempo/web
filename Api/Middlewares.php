@@ -18,7 +18,8 @@ $app->add(function (IRequest $request, IResponse $response, callable $next) {
         $this[$controllerClass] = new $controllerClass(
             new $repoClass(
                 new $daoClass($this['storageConnector'])
-            )
+            ),
+            $this->router
         );
 
         return $next($request, $response);

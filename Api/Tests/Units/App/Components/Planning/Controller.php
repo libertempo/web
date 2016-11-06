@@ -49,10 +49,10 @@ final class Controller extends \Api\Tests\Units\App\Libraries\Controller
     public function testGetOneFound()
     {
         $this->repository->getMockController()->getOne = $this->model;
-        $controller = new _Controller($this->repository);
+        $controller = new _Controller($this->repository, $this->router);
 
         $response = $controller->get($this->request, $this->response, ['planningId' => 99]);
-        $data = json_decode((string) $response->getBody(), true);
+        $data = $this->getJsonDecoded($response->getBody());
 
         $this->integer($response->getStatusCode())->isIdenticalTo(200);
         $this->array($data)
@@ -71,18 +71,11 @@ final class Controller extends \Api\Tests\Units\App\Libraries\Controller
         $this->repository->getMockController()->getOne = function () {
             throw new \DomainException('');
         };
-        $controller = new _Controller($this->repository);
+        $controller = new _Controller($this->repository, $this->router);
 
         $response = $controller->get($this->request, $this->response, ['planningId' => 99]);
-        $data = json_decode((string) $response->getBody(), true);
 
-        $this->integer($response->getStatusCode())->isIdenticalTo(404);
-        $this->array($data)
-            ->integer['code']->isIdenticalTo(404)
-            ->string['status']->isIdenticalTo('error')
-            ->string['message']->isNotEqualTo('')
-            ->array['data']->isNotEmpty()
-        ;
+        $this->assertError($response, 404);
     }
 
     /**
@@ -93,7 +86,7 @@ final class Controller extends \Api\Tests\Units\App\Libraries\Controller
         $this->repository->getMockController()->getOne = function () {
             throw new \Exception('');
         };
-        $controller = new _Controller($this->repository);
+        $controller = new _Controller($this->repository, $this->router);
 
         $this->exception(function () use ($controller) {
             $controller->get($this->request, $this->response, ['planningId' => 99]);
@@ -109,10 +102,10 @@ final class Controller extends \Api\Tests\Units\App\Libraries\Controller
         $this->repository->getMockController()->getList = [
             42 => $this->model,
         ];
-        $controller = new _Controller($this->repository);
+        $controller = new _Controller($this->repository, $this->router);
 
         $response = $controller->get($this->request, $this->response, []);
-        $data = json_decode((string) $response->getBody(), true);
+        $data = $this->getJsonDecoded($response->getBody());
 
         $this->integer($response->getStatusCode())->isIdenticalTo(200);
         $this->array($data)
@@ -134,18 +127,12 @@ final class Controller extends \Api\Tests\Units\App\Libraries\Controller
             throw new \UnexpectedValueException('');
 
         };
-        $controller = new _Controller($this->repository);
+        $controller = new _Controller($this->repository, $this->router);
 
         $response = $controller->get($this->request, $this->response, []);
-        $data = json_decode((string) $response->getBody(), true);
 
-        $this->integer($response->getStatusCode())->isIdenticalTo(404);
-        $this->array($data)
-            ->integer['code']->isIdenticalTo(404)
-            ->string['status']->isIdenticalTo('error')
-            ->string['message']->isNotEqualTo('')
-            ->array['data']->isNotEmpty()
-        ;
+        $this->assertError($response, 404);
+
     }
 
     /**
@@ -157,10 +144,98 @@ final class Controller extends \Api\Tests\Units\App\Libraries\Controller
         $this->repository->getMockController()->getList = function () {
             throw new \Exception('');
         };
-        $controller = new _Controller($this->repository);
+        $controller = new _Controller($this->repository, $this->router);
 
         $this->exception(function () use ($controller) {
             $controller->get($this->request, $this->response, []);
+        })->isInstanceOf('\Exception');
+    }
+
+    /*************************************************
+     * POST
+     *************************************************/
+
+    /**
+     * Teste la méthode post d'un json mal formé
+     */
+    public function testPostJsonBadFormat()
+    {
+        // Le framework fait du traitement, un mauvais json est simplement null
+        $this->request->getMockController()->getParsedBody = null;
+        $controller = new _Controller($this->repository, $this->router);
+
+        $response = $controller->post($this->request, $this->response);
+
+        $this->assertError($response, 400);
+    }
+
+    /**
+     * Teste la méthode post avec des arguments manquants
+     */
+    public function testPostMissingRequiredArgs()
+    {
+        $this->request->getMockController()->getParsedBody = [];
+        $this->repository->getMockController()->postOne = function () {
+            throw new \BadMethodCallException('');
+        };
+        $controller = new _Controller($this->repository, $this->router);
+
+        $response = $controller->post($this->request, $this->response);
+
+        $this->assertError($response, 412);
+    }
+
+    /**
+     * Teste la méthode post avec un argument incohérent
+     */
+    public function testPostBadDomain()
+    {
+        $this->request->getMockController()->getParsedBody = [];
+        $this->repository->getMockController()->postOne = function () {
+            throw new \DomainException('Status doit être un int');
+        };
+        $controller = new _Controller($this->repository, $this->router);
+
+        $response = $controller->post($this->request, $this->response);
+
+        $this->assertError($response, 412);
+    }
+
+    /**
+     * Teste la méthode post Ok
+     */
+    public function testPostOk()
+    {
+        $this->request->getMockController()->getParsedBody = [];
+        $this->router->getMockController()->pathFor = '';
+        $this->repository->getMockController()->postOne = 42;
+        $controller = new _Controller($this->repository, $this->router);
+
+        $response = $controller->post($this->request, $this->response);
+        $data = $this->getJsonDecoded($response->getBody());
+
+        $this->integer($response->getStatusCode())->isIdenticalTo(200);
+        $this->array($data)
+            ->integer['code']->isIdenticalTo(200)
+            ->string['status']->isIdenticalTo('success')
+            ->string['message']->isIdenticalTo('')
+            ->array['data']->isNotEmpty()
+        ;
+    }
+
+    /**
+     * Teste le fallback de la méthode post
+     */
+    public function testGetPostFallback()
+    {
+        $this->request->getMockController()->getParsedBody = [];
+        $this->repository->getMockController()->postOne = function () {
+            throw new \Exception('');
+        };
+        $controller = new _Controller($this->repository, $this->router);
+
+        $this->exception(function () use ($controller) {
+            $controller->post($this->request, $this->response);
         })->isInstanceOf('\Exception');
     }
 }

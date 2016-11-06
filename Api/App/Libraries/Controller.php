@@ -2,6 +2,7 @@
 namespace Api\App\Libraries;
 
 use \Api\App\Libraries\Repository;
+use \Slim\Interfaces\RouterInterface as IRouter;
 
 /**
  * Contrôleur principal
@@ -21,7 +22,13 @@ abstract class Controller
      */
     protected $repository;
 
-    public function __construct(Repository $repository) {
+    /**
+     * @var IRouter Routeur de l'application
+     */
+    protected $router;
+
+    public function __construct(Repository $repository, IRouter $router) {
         $this->repository = $repository;
+        $this->router = $router;
     }
 }

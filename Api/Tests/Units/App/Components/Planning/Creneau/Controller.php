@@ -26,8 +26,7 @@ final class Controller extends \Api\Tests\Units\App\Libraries\Controller
     /**
      * Init des tests
      */
-    public function beforeTestMethod($method)
-    {
+    public function beforeTestMethod($method) {
         parent::beforeTestMethod($method);
         $this->mockGenerator->orphanize('__construct');
         $this->mockGenerator->shuntParentClassCalls();
@@ -53,10 +52,10 @@ final class Controller extends \Api\Tests\Units\App\Libraries\Controller
     public function testGetOneFound()
     {
         $this->repository->getMockController()->getOne = $this->model;
-        $controller = new _Controller($this->repository);
+        $controller = new _Controller($this->repository, $this->router);
 
         $response = $controller->get($this->request, $this->response, ['creneauId' => 99, 'planningId' => 45]);
-        $data = json_decode((string) $response->getBody(), true);
+        $data = $this->getJsonDecoded($response->getBody());
 
         $this->integer($response->getStatusCode())->isIdenticalTo(200);
         $this->array($data)
@@ -75,18 +74,11 @@ final class Controller extends \Api\Tests\Units\App\Libraries\Controller
         $this->repository->getMockController()->getOne = function () {
             throw new \DomainException('');
         };
-        $controller = new _Controller($this->repository);
+        $controller = new _Controller($this->repository, $this->router);
 
         $response = $controller->get($this->request, $this->response, ['creneauId' => 99, 'planningId' => 45]);
-        $data = json_decode((string) $response->getBody(), true);
 
-        $this->integer($response->getStatusCode())->isIdenticalTo(404);
-        $this->array($data)
-            ->integer['code']->isIdenticalTo(404)
-            ->string['status']->isIdenticalTo('error')
-            ->string['message']->isNotEqualTo('')
-            ->array['data']->isNotEmpty()
-        ;
+        $this->assertError($response, 404);
     }
 
     /**
@@ -97,7 +89,7 @@ final class Controller extends \Api\Tests\Units\App\Libraries\Controller
         $this->repository->getMockController()->getOne = function () {
             throw new \Exception('');
         };
-        $controller = new _Controller($this->repository);
+        $controller = new _Controller($this->repository, $this->router);
 
         $this->exception(function () use ($controller) {
             $controller->get($this->request, $this->response, ['creneauId' => 99, 'planningId' => 45]);
@@ -112,10 +104,10 @@ final class Controller extends \Api\Tests\Units\App\Libraries\Controller
         $this->repository->getMockController()->getList = [
             42 => $this->model,
         ];
-        $controller = new _Controller($this->repository);
+        $controller = new _Controller($this->repository, $this->router);
 
         $response = $controller->get($this->request, $this->response, ['planningId' => 45]);
-        $data = json_decode((string) $response->getBody(), true);
+        $data = $this->getJsonDecoded($response->getBody());
 
         $this->integer($response->getStatusCode())->isIdenticalTo(200);
         $this->array($data)
@@ -135,18 +127,11 @@ final class Controller extends \Api\Tests\Units\App\Libraries\Controller
         $this->repository->getMockController()->getList = function () {
             throw new \UnexpectedValueException('');
         };
-        $controller = new _Controller($this->repository);
+        $controller = new _Controller($this->repository, $this->router);
 
         $response = $controller->get($this->request, $this->response, ['planningId' => 45]);
-        $data = json_decode((string) $response->getBody(), true);
 
-        $this->integer($response->getStatusCode())->isIdenticalTo(404);
-        $this->array($data)
-            ->integer['code']->isIdenticalTo(404)
-            ->string['status']->isIdenticalTo('error')
-            ->string['message']->isNotEqualTo('')
-            ->array['data']->isNotEmpty()
-        ;
+        $this->assertError($response, 404);
     }
 
     /**
@@ -157,7 +142,7 @@ final class Controller extends \Api\Tests\Units\App\Libraries\Controller
         $this->repository->getMockController()->getList = function () {
             throw new \Exception('');
         };
-        $controller = new _Controller($this->repository);
+        $controller = new _Controller($this->repository, $this->router);
 
         $this->exception(function () use ($controller) {
             $controller->get($this->request, $this->response, ['planningId' => 45]);

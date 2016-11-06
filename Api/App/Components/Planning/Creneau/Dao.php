@@ -21,7 +21,6 @@ class Dao extends \Api\App\Libraries\Dao
      */
     public function getById($id, $planningId = -1)
     {
-
         $req = 'SELECT * FROM ' . $this->getTableName();
         $filters = $this->getFilters(['id' => $id, 'planningId' => $planningId]);
         $req .= $filters['where'];
