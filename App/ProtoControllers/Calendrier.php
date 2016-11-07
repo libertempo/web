@@ -23,6 +23,16 @@ final class Calendrier
     const VUE_SEMAINE = 2;
 
     /**
+     * @var \DateTimeInterface Date de debut de la période courante
+     */
+    private $dateDebutMaintenant;
+
+    /**
+     * @var \DateTimeInterface Date de fin de la période courante
+     */
+    private $dateFinMaintenant;
+
+    /**
      * @var \DateTimeInterface Date de début de récolte du calendrier
      */
     private $dateDebut;
@@ -102,6 +112,7 @@ final class Calendrier
         } else {
             $this->dateFin = $this->dateDebut->modify('+1 month');
         }
+        $this->setDatesCourantes();
 
         /* Div auto fermé par le bottom */
         $return = '<div id="calendar-wrapper"><h1>' . _('calendrier_titre') . '</h1>';
@@ -109,6 +120,22 @@ final class Calendrier
         $return .= $this->getCalendrier();
 
         return $return;
+    }
+
+    /**
+     * Défini les dates de la période courante
+     */
+    private function setDatesCourantes()
+    {
+        if (static::VUE_SEMAINE === $this->vue) {
+            $this->dateDebutMaintenant = new \DateTimeImmutable();
+            $this->dateDebutMaintenant->setISODate(date('Y'), date('W'));
+            $this->dateDebutMaintenant->setTime(0, 0);
+            $this->dateFinMaintenant = $this->dateDebutMaintenant->modify('+1 week');
+        } else {
+            $this->dateDebutMaintenant = new \DateTimeImmutable(date('Y') . '-' . date('m') . '-01');
+            $this->dateFinMaintenant = $this->dateDebutMaintenant->modify('+1 month');
+        }
     }
 
     /**
@@ -197,11 +224,11 @@ final class Calendrier
         /* Suis pas fan de la répartition par if, mais ça a l'air de faire le job */
         if (static::VUE_SEMAINE === $this->vue) {
             $this->setPeriodesSemaine();
-            $return = $this->getPagination();
+            $return = $this->getNavigation();
             $return .= $this->getCalendrierSemaine($calendar);
         } else {
             $this->setPeriodesMois();
-            $return = $this->getPagination();
+            $return = $this->getNavigation();
             $return .= $this->getCalendrierMois($calendar);
         }
 
@@ -379,11 +406,11 @@ final class Calendrier
     }
 
     /**
-     * Retourne la pagination
+     * Retourne la navigation
      *
      * @return string
      */
-    private function getPagination()
+    private function getNavigation()
     {
         $urlCalendrier = ROOT_PATH . 'calendrier.php';
         $queryBase = [
@@ -392,8 +419,12 @@ final class Calendrier
             'search[groupe]' => $this->idGroupe,
         ];
         $queryPrec = [
-            'begin' => $this->dateDebutPrecedente->format(('Y-m-d')),
+            'begin' => $this->dateDebutPrecedente->format('Y-m-d'),
             'end'   => $this->dateDebut->format('Y-m-d'),
+        ];
+        $queryCurrent = [
+            'begin' => $this->dateDebutMaintenant->format('Y-m-d'),
+            'end'   => $this->dateFinMaintenant->format('Y-m-d'),
         ];
         $querySuc = [
             'begin' => $this->dateFin->format('Y-m-d'),
@@ -401,6 +432,7 @@ final class Calendrier
         ];
 
         $return = '<div class="btn-group pull-right"><a class="btn btn-default" href="' . $urlCalendrier . '?' . http_build_query($queryBase + $queryPrec) . '"><i class="fa fa-chevron-left" aria-hidden="true"></i></a>';
+        $return .= '<a class="btn btn-default" title="' . _('retour_periode_courante') . '" href="' . $urlCalendrier . '?' . http_build_query($queryBase + $queryCurrent) . '"><i class="fa fa-home" aria-hidden="true"></i></a>';
         $return .= '<a class="btn btn-default" href="' . $urlCalendrier . '?' . http_build_query($queryBase + $querySuc) . '"><i class="fa fa-chevron-right" aria-hidden="true"></i></a></div>';
 
         return $return;
