@@ -1,6 +1,7 @@
 <?php
 namespace Api\App\Components\Planning;
 
+use Api\App\Exceptions\MissingArgumentException;
 use Psr\Http\Message\ServerRequestInterface as IRequest;
 use Psr\Http\Message\ResponseInterface as IResponse;
 
@@ -177,7 +178,7 @@ final class Controller extends \Api\App\Libraries\Controller
             ];
 
             return $response->withJson($data, $code);
-        } catch (\BadMethodCallException $e) {
+        } catch (MissingArgumentException $e) {
             $code = 412;
             $data = [
                 'code' => $code,

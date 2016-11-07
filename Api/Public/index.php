@@ -9,7 +9,6 @@ use Psr\Http\Message\ResponseInterface as IResponse;
 define('ROOT_PATH', dirname(dirname(__DIR__)) . '/');
 define('CONFIG_PATH', ROOT_PATH . 'cfg/');
 define('API_PATH', ROOT_PATH . 'Api/');
-define('MIDDLEWARE_PATH', API_PATH . 'Middlewares/');
 
 define('ROUTE_PATH', API_PATH . 'Route/');
 

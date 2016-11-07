@@ -35,4 +35,6 @@ class Model
     {
         return $this->id;
     }
+
+    // populate pour le set massif (private) avec un retour d'erreur collectif, sinon dans dataUpdated
 }

@@ -25,6 +25,10 @@ final class Repository extends \Atoum
         $this->dao = new \mock\Api\App\Components\Planning\Dao();
     }
 
+    /*************************************************
+     * GET
+     *************************************************/
+
     /**
      * Teste la méthode getOne avec un id non trouvé
      */
@@ -85,5 +89,29 @@ final class Repository extends \Atoum
 
         $this->array($models)->hasKey(42);
         $this->object($models[42])->isInstanceOf('\Api\App\Libraries\Model');
+    }
+
+    /*************************************************
+     * POST
+     *************************************************/
+
+    // test ok avec id de retour
+    // test avec exception DomainException si valeur pas dans le bon domaine
+
+    /**
+     * Teste la méthode postOne avec un champ manquant
+     */
+    public function testPostOneMissingArg()
+    {
+        $repository = new _Repository($this->dao);
+
+        $this->exception(function () use ($repository) {
+            $repository->postOne(['name' => 'bob']);
+        })->isInstanceOf('\Exception');
+    }
+
+    public function testPostOneBadDomain()
+    {
+        
     }
 }

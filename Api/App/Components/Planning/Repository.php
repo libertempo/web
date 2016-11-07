@@ -1,6 +1,8 @@
 <?php
 namespace Api\App\Components\Planning;
 
+use Api\App\Exceptions\MissingArgumentException;
+
 /**
  * {@inheritDoc}
  *
@@ -125,5 +127,45 @@ class Repository extends \Api\App\Libraries\Repository
      */
     public function postOne(array $data)
     {
+        /*
+         * pour le post, on set le model (vide) dans le contrôleur pour pouvoir
+         * travailler dessus (et le mock), mais à vide. Les différents set ici
+         * renverrons les infos nécessaires au retour d'erreur. Sinon model.dataUpdated
+         *
+         * Pour le put, dans le contrôleur, on get le model et on fait pareil
+         *
+         * par essence, un modèle en transit ne peut pas être immuable
+         */
+        if (!$this->hasAllRequired($data)) {
+            throw new MissingArgumentException('');
+        }
+    }
+
+    /**
+     * Vérifie que les données passées possèdent bien tous les champs requis
+     *
+     * @param array $data
+     *
+     * @return bool
+     */
+    private function hasAllRequired(array $data)
+    {
+        foreach ($this->getRequired() as $value) {
+            if (!isset($data[$value])) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Retourne la liste des champs requis
+     *
+     * @return array
+     */
+    private function getRequired()
+    {
+        return ['name', 'status'];
     }
 }

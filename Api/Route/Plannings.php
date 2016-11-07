@@ -6,27 +6,29 @@
  */
 
 /* Routes sur le planning et associés */
-$app->group('/plannings', function() {
-    $this->group('/{planningId:[0-9]+}', function () {
+$app->group('/plannings', function () {
+    $planningNS = '\Api\App\Components\Planning\Controller';
+    $this->group('/{planningId:[0-9]+}', function () use ($planningNS) {
         /* Detail */
-        $this->get('', '\Api\App\Components\Planning\Controller:get')->setName('getPlanningDetail');
-        //$this->put('', '\Api\App\Components\Planning\Controller:put')->setName('putPlanningDetail');
-        //$this->delete('', '\Api\App\Components\Planning\Controller:delete')->setName('putPlanningDetail');
+        $this->get('', $planningNS . ':get')->setName('getPlanningDetail');
+        //$this->put('', $planningNS . ':put')->setName('putPlanningDetail');
+        //$this->delete('', $planningNS . ':delete')->setName('putPlanningDetail');
 
         /* Dependances de plannings */
         $this->group('/creneaux', function () {
+            $creneauNS = '\Api\App\Components\Planning\Creneau\Controller';
             /* Detail creneaux */
-            $this->get('/{creneauId:[0-9]+}', '\Api\App\Components\Planning\Creneau\Controller:get')->setName('getPlanningCreneauDetail');
-            //$this->put('/{creneauId:[0-9]+}', '\Api\App\Components\Planning\Creneau\Controller:put')->setName('putPlanningCreneauDetail');
-            //$this->delete('/{creneauId:[0-9]+}', '\Api\App\Components\Planning\Creneau\Controller:delete')->setName('deletePlanningCreneauDetail');
+            $this->get('/{creneauId:[0-9]+}', $creneauNS . ':get')->setName('getPlanningCreneauDetail');
+            //$this->put('/{creneauId:[0-9]+}', $creneauNS . ':put')->setName('putPlanningCreneauDetail');
+            //$this->delete('/{creneauId:[0-9]+}', $creneauNS . ':delete')->setName('deletePlanningCreneauDetail');
 
             /* Collection creneaux */
-            $this->get('', '\Api\App\Components\Planning\Creneau\Controller:get')->setName('getPlanningCreneauListe');
-            //$this->post('', '\Api\App\Components\Planning\Creneau\Controller:post')->setName('postPlanningCreneauListe');
+            $this->get('', $creneauNS . ':get')->setName('getPlanningCreneauListe');
+            //$this->post('', $creneauNS . ':post')->setName('postPlanningCreneauListe');
         });
     });
 
     /* Collection */
-    $this->get('', '\Api\App\Components\Planning\Controller:get')->setName('getPlanningListe');
-    $this->post('', '\Api\App\Components\Planning\Controller:post')->setName('postPlanningListe');
+    $this->get('', $planningNS .  ':get')->setName('getPlanningListe');
+    $this->post('', $planningNS .  ':post')->setName('postPlanningListe');
 });

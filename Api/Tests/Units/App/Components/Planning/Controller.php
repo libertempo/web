@@ -176,7 +176,7 @@ final class Controller extends \Api\Tests\Units\App\Libraries\Controller
     {
         $this->request->getMockController()->getParsedBody = [];
         $this->repository->getMockController()->postOne = function () {
-            throw new \BadMethodCallException('');
+            throw new \Api\App\Exceptions\MissingArgumentException('');
         };
         $controller = new _Controller($this->repository, $this->router);
 

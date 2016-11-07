@@ -1,6 +1,8 @@
 <?php
 namespace Api\App\Libraries;
 
+use Api\App\Exceptions\MissingArgumentException;
+
 /**
  * Garant de la cohérence métier du modèle en relation.
  * Autrement dit, c'est lui qui va chercher les données (dépendances comprises),
@@ -53,8 +55,8 @@ abstract class Repository
      * @param array $data Données à poster
      *
      * @return int Id de la ressource nouvellement insérée
+     * @throws MissingArgumentException Si un élément requis n'est pas présent
      * @throws \DomainException Si un élément de la ressource n'est pas dans le bon domaine de définition
-     * @throws \BadMethodCallException Si un élément requis n'est pas présent
      */
     abstract public function postOne(array $data);
 }
