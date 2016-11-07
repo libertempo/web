@@ -105,6 +105,7 @@ class Weekend extends \App\Libraries\Calendrier\ACollection
 
     /*
      * SQL
+     * @TODO dégager lors de la mise en place de l'objet configuration
      */
 
 
