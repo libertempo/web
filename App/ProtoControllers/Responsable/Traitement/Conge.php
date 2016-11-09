@@ -19,7 +19,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         $notice = '';
         $errorsLst  = [];
 
-        
+
         $return .= '<h1>' . _('resp_traite_demandes_titre_tableau_1') . '</h1>';
 
         if (!empty($_POST)) {
@@ -89,7 +89,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
         return $return;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -97,7 +97,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
     {
         $i=true;
         $Table='';
-        
+
         foreach ( $demandes as $demande ) {
             $id = $demande['p_num'];
             $infoUtilisateur = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($demande['p_login']);
@@ -110,13 +110,13 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
             }  else {
                 $demideb = _('form_pm');
             }
-            
+
             if($demande['p_demi_jour_fin']=="am") {
                 $demifin = _('form_am');
             } else {
                 $demifin = _('form_pm');
             }
-            
+
             $Table .= '<tr class="'.($i?'i':'p').'">';
             $Table .= '<td><b>'.$infoUtilisateur['u_nom'].'</b><br>'.$infoUtilisateur['u_prenom'].'</td>';
             $Table .= '<td>'.$debut.'<span class="demi">' . $demideb . '</span></td><td>'.$fin.'<span class="demi">' . $demifin . '</span></td>';
@@ -129,7 +129,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
             $Table .= '<td><input class="form-control" type="text" name="comment_refus['.$id.']" size="20" maxlength="100"></td></tr>';
             $i = !$i;
             }
-            
+
         return $Table;
     }
 
@@ -154,7 +154,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         $notice = _('traitement_effectue');
         return $return;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -226,17 +226,17 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
     /**
      * Validation finale avec prise en compte des reliquats
-     * 
+     *
      * @param type $demandeId
      * @return int
      */
-    protected function putValidationFinale($demandeId) 
+    protected function putValidationFinale($demandeId)
     {
         $demande = $this->getInfoDemandes(explode(" ", $demandeId))[$demandeId];
         $SoldeReliquat = $this->getReliquatconge($demande['p_login'], $demande['p_type']);
 
         if($this->isOptionReliquatActive() && $this->isReliquatUtilisable($demande['p_date_fin']) && 0 < $SoldeReliquat) {
-        
+
             if($SoldeReliquat>=$demande['p_nb_jours']) {
                 $sql = \includes\SQL::singleton();
                 $sql->getPdoObj()->begin_transaction();
@@ -270,12 +270,12 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
             log_action($demande['p_num'],"ok", $demande['p_login'], 'traitement demande ' . $demande['p_num'] . ' (' . $demande['p_login'] . ') (' . $demande['p_nb_jours'] . ' jours) : OK');
         }
     }
-    
+
     /**
      * Première validation de la demande de congé
-     * 
+     *
      * @param int $demandeId
-     * 
+     *
      * @return int
      */
     protected function updateStatutPremiereValidation($demandeId)
@@ -289,14 +289,14 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
         return $sql->affected_rows;
     }
-    
+
     /**
      * Refus de la demande de congé
-     * 
+     *
      * @param int $demandeId
      * @param int $comm
-     * 
-     * @return int $id 
+     *
+     * @return int $id
      */
     protected function updateStatutRefus($demandeId, $comm)
     {
@@ -310,13 +310,13 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
         return $sql->affected_rows;
     }
-    
+
     /**
      * Validation finale de la demande de conges
-     * 
+     *
      * @param int $demandeId
-     * 
-     * @return int $id 
+     *
+     * @return int $id
      */
     protected function updateStatutValidationFinale($demandeId)
     {
@@ -329,14 +329,14 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
         return $sql->affected_rows;
     }
-    
+
     /**
      * Mise a jour du solde (selon le type de congés) du demandeur
-     * 
+     *
      * @param string $user
      * @param int $duree
      * @param int $typeId
-     * 
+     *
      * @return int
      */
     protected function updateSoldeUser($user,$duree,$typeId)
@@ -351,14 +351,14 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
         return $sql->affected_rows;
     }
-    
+
     /**
      * Mise a jour du reliquat (selon le type de congés) du demandeur
-     * 
+     *
      * @param string $user
      * @param int $duree
      * @param int $typeId
-     * 
+     *
      * @return int
      */
     protected function updateReliquatUser($user,$duree,$typeId)
@@ -378,19 +378,19 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
       * {@inheritDoc}
       */
     protected function getIdDemandesResponsable($resp)
-    { 
+    {
         $groupId = \App\ProtoControllers\Responsable::getIdGroupeResp($resp);
 
 
         $usersResp = [];
-        $usersResp = \App\ProtoControllers\Responsable::getUsersGroupe($groupId);
+        $usersResp = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupId);
 
         $usersRespDirect = \App\ProtoControllers\Responsable::getUsersRespDirect($resp);
         $usersResp = array_merge($usersResp,$usersRespDirect);
         if (empty($usersResp)) {
             return [];
         }
-        
+
         $ids = [];
         $sql = \includes\SQL::singleton();
         $req = 'SELECT p_num AS id
@@ -413,12 +413,12 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         if (empty($groupId)) {
             return [];
         }
-        
-        $usersResp = \App\ProtoControllers\Responsable::getUsersGroupe($groupId);
+
+        $usersResp = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupId);
         if (empty($usersResp)) {
             return [];
         }
-        
+
         $ids = [];
         $sql = \includes\SQL::singleton();
         $req = 'SELECT p_num AS id
@@ -438,7 +438,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
     protected function getInfoDemandes(array $listId)
     {
         $infoDemande =[];
-        
+
         if (empty($listId)) {
             return [];
         }
@@ -447,9 +447,9 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
                 FROM conges_periode
                 WHERE p_num IN (' . implode(',', $listId) . ')
                 ORDER BY p_date_deb DESC, p_etat ASC';
-        
+
         $ListeDemande = $sql->query($req)->fetch_all(MYSQLI_ASSOC);
-        
+
         foreach ($ListeDemande as $demande){
             $infoDemande[$demande['p_num']] = $demande;
         }
@@ -461,7 +461,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
      * Retourne le reliquat de conges (selon le type) d'un utilisateur
      *
      * @param string $login
-     * @param int $typeId 
+     * @param int $typeId
      *
      * @return int $rel
      */
@@ -475,20 +475,20 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
         return $rel;
     }
-    
+
     /**
      * Verifie si la demande n'a pas déja été traité
-     * 
+     *
      * @param string $statutDb
      * @param string $statut
-     * 
+     *
      * @return bool
      */
     public function isDemandeTraitable($statut)
     {
         return ($statut != \App\Models\conge::STATUT_ANNUL || $statut != \App\Models\Conge::STATUT_VALIDATION_FINALE || $statut != \App\Models\Conge::STATUT_REFUS);
     }
-    
+
     /**
      * verifie que les reliquats sont autorisées
      *
@@ -504,7 +504,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
         return $query->fetch_array()[0];
     }
-    
+
    /**
      * verifie si la date limite d'usage des reliquats n'est pas dépassée
      *
@@ -518,21 +518,21 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
                     FROM conges_config
                     WHERE conf_nom = "jour_mois_limite_reliquats"';
         $query = $sql->query($req);
-        
+
         $dlimite = $query->fetch_array()[0];
         if ($dlimite == 0) {
             return true;
         }
         return $findemande < $dlimite;
     }
-    
-    
-    
+
+
+
     /**
      * verifie si la date limite d'usage des reliquats n'est pas dépassée
      *
      * @param int $type
-     * 
+     *
      * @return string $tLabel
      */
     public function getTypeLabel($type)

@@ -228,7 +228,7 @@ function session_create($username)
 {
     if ($username != "")
     {
-	if(isset($_SESSION)) unset($_SESSION);
+        if(isset($_SESSION)) unset($_SESSION);
         $session = "phpconges".md5(uniqid(rand()));
         session_name($session);
         session_id($session);
@@ -263,8 +263,7 @@ function session_update($session)
 {
    if ($session != "")
    {
-        $maintenant=time();
-        $_SESSION['timestamp_last']=$maintenant;
+        $_SESSION['timestamp_last'] = time();
    }
 }
 

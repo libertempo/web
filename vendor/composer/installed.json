@@ -1,50 +1,5 @@
 [
     {
-        "name": "spipu/html2pdf",
-        "version": "v4.4.0",
-        "version_normalized": "4.4.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/spipu/html2pdf.git",
-            "reference": "2b86b570dd9058c1fc2383503d8b8628a977292d"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/spipu/html2pdf/zipball/2b86b570dd9058c1fc2383503d8b8628a977292d",
-            "reference": "2b86b570dd9058c1fc2383503d8b8628a977292d",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.2"
-        },
-        "time": "2015-12-11 10:13:58",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "files": [
-                "html2pdf.class.php"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "LGPL"
-        ],
-        "authors": [
-            {
-                "name": "Spipu",
-                "homepage": "https://github.com/spipu",
-                "role": "Developer"
-            }
-        ],
-        "description": "PHP library to convert Html into Pdf",
-        "homepage": "http://html2pdf.fr/",
-        "keywords": [
-            "html",
-            "html2pdf",
-            "pdf"
-        ]
-    },
-    {
         "name": "phpmailer/phpmailer",
         "version": "v5.2.10",
         "version_normalized": "5.2.10.0",
@@ -272,6 +227,121 @@
             "debug",
             "kint",
             "php"
+        ]
+    },
+    {
+        "name": "symfony/options-resolver",
+        "version": "v3.1.5",
+        "version_normalized": "3.1.5.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/symfony/options-resolver.git",
+            "reference": "30605874d99af0cde6c41fd39e18546330c38100"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/options-resolver/zipball/30605874d99af0cde6c41fd39e18546330c38100",
+            "reference": "30605874d99af0cde6c41fd39e18546330c38100",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.5.9"
+        },
+        "time": "2016-05-12 15:59:27",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "3.1-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Symfony\\Component\\OptionsResolver\\": ""
+            },
+            "exclude-from-classmap": [
+                "/Tests/"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com"
+            },
+            {
+                "name": "Symfony Community",
+                "homepage": "https://symfony.com/contributors"
+            }
+        ],
+        "description": "Symfony OptionsResolver Component",
+        "homepage": "https://symfony.com",
+        "keywords": [
+            "config",
+            "configuration",
+            "options"
+        ]
+    },
+    {
+        "name": "yohang/calendr",
+        "version": "2.0.0",
+        "version_normalized": "2.0.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/yohang/CalendR.git",
+            "reference": "019c651adbb952fed4d76f944cee5b46bf687be5"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/yohang/CalendR/zipball/019c651adbb952fed4d76f944cee5b46bf687be5",
+            "reference": "019c651adbb952fed4d76f944cee5b46bf687be5",
+            "shasum": ""
+        },
+        "require": {
+            "php": "^5.5|^7.0",
+            "symfony/options-resolver": "^2.7|^3.0"
+        },
+        "require-dev": {
+            "doctrine/cache": "^1.5",
+            "doctrine/common": "^2.5",
+            "doctrine/orm": "^2.5",
+            "phpunit/phpunit": "^4.0",
+            "silex/silex": "^1.3",
+            "twig/twig": "^1.23"
+        },
+        "time": "2016-04-17 15:22:39",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "CalendR": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Yohan GIARELLI",
+                "email": "yohan@giarel.li",
+                "homepage": "http://yohan.giarel.li"
+            }
+        ],
+        "description": "Object Oriented calendar management",
+        "homepage": "https://github.com/yohang/CalendR",
+        "keywords": [
+            "calendar",
+            "date",
+            "events"
         ]
     }
 ]

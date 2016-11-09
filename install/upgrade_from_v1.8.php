@@ -74,8 +74,6 @@ $addPlanningCreneau = 'CREATE TABLE `planning_creneau` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8';
 $sql->query($addPlanningCreneau);
 
-$sql->getPdoObj()->commit();
-
 //suppression des droits de conges
 $del_conges_acl = "DELETE FROM conges_groupe_resp WHERE gr_login = 'conges';";
 $res_del_conges_acl = \includes\SQL::query($del_conges_acl);
@@ -125,6 +123,42 @@ $resPeriodeRepos = $sql->query($periodeRepos);
 $soldeheure = "ALTER TABLE conges_users
                ADD u_heure_solde INT(11) NOT NULL DEFAULT '0'";
 $ressoldeheure = $sql->query($soldeheure);
+
+
+/* Modification sur conges_config */
+$dropUserAfficheCalendrier = 'ALTER TABLE conges_config DROP user_affiche_calendrier';
+$sql->query($dropUserAfficheCalendrier);
+$dropRespAfficheCalendrier = 'ALTER TABLE conges_config DROP resp_affiche_calendrier';
+$sql->query($dropRespAfficheCalendrier);
+$dropAfficheCalendrier = 'ALTER TABLE conges_config DROP affiche_groupe_in_calendrier';
+$sql->query($dropAfficheCalendrier);
+$dropAllGroupe = 'ALTER TABLE conges_config DROP calendrier_select_all_groups';
+$sql->query($dropAllGroupe);
+$consultCalendrier = 'ALTER TABLE conges_config DROP consult_calendrier_sans_auth';
+$sql->query($consultCalendrier);
+
+/* Modification sur see_all : si hr ou admin, oui ; sinon non */
+$reqSeeAll = 'SELECT * FROM conges_users;';
+$seeAllYes = [];
+$seeAllNo = [];
+$res = $sql->query($resSeeAll);
+while ($data = $res->fetch_array()) {
+    if ($data['u_is_admin'] || $data['u_is_hr']) {
+        $seeAllYes[] = $data['u_login'];
+    } else {
+        $seeAllNo[] = $data['u_login'];
+    }
+}
+if (!empty($seeAllYes)) {
+    $reqSeeAllYes = 'UPDATE conges_users SET u_see_all = "Y" WHERE u_login IN (' . implode(', ', $seeAllYes) . ')';
+    $sql->query($reqSeeAllYes);
+}
+if (!empty($seeAllNo)) {
+    $reqSeeAllNo = 'UPDATE conges_users SET u_see_all = "N" WHERE u_login IN (' . implode(', ', $seeAllNo) . ')';
+    $sql->query($reqSeeAllNo);
+}
+
+$sql->getPdoObj()->commit();
 
 // on renvoit à la page mise_a_jour.php (là d'ou on vient)
 echo "<a href=\"mise_a_jour.php?etape=2&version=$version&lang=$lang\">upgrade_from_v1.8  OK</a><br>\n";

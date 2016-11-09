@@ -412,11 +412,7 @@ footer {
     padding: 20px;
     text-align: right
 }
-.calendar {
-    font-size: 13px;
-    font-size: 1.3rem;
-    padding-bottom: 50px
-}
+
 .calendar.calendar-year {
     overflow: hidden
 }
@@ -476,79 +472,7 @@ footer {
 .calendar .month table .month-out {
     background-color: #f3f5f9
 }
-h3.current-month {
-    font-size: 16px;
-    font-size: 1.6rem;
-    font-weight: bold;
-    text-align: center
-}
-#main-calendar .calendar {
-    border: solid 1px #bbb;
-    font-size: 12px;
-    font-size: 1.2rem
-}
-#main-calendar .calendar td,
-#main-calendar .calendar th {
-    padding: 2px;
-    border: solid 1px #bbb
-}
-#main-calendar .calendar .cal-user {
-    font-weight: bold;
-    font-size: 13px;
-    font-size: 1.3rem;
-    text-align: left
-}
-#main-calendar .cal-day {
-    position: relative
-}
-#main-calendar .cal-day .cal-tooltip {
-    position: absolute;
-    padding: 10px;
-    border: solid #bbb 1px;
-    background: #00aad4;
-    color: #fff;
-    border-color: #00aad4;
-    display: none;
-    z-index: 1;
-    top: 22px;
-    left: -1px;
-    min-width: 200px;
-    text-align: left
-}
-#main-calendar .cal-day .cal-tooltip hr {
-    margin: 5px 0
-}
-#main-calendar .cal-day .cal-tooltip .type-abscence {
-    text-transform: uppercase
-}
-#main-calendar .cal-day .cal-tooltip .current-date {
-    font-weight: bold
-}
-#main-calendar .cal-day .cal-tooltip:hover {
-    display: block
-}
-#main-calendar .cal-day:hover {
-    background: #00aad4;
-    color: #fff;
-    border-color: #00aad4
-}
-#main-calendar .cal-day:hover .cal-tooltip {
-    display: block
-}
-#main-calendar .calendar-nav {
-    width: 100%;
-    margin: 20px 0;
-    padding: 0
-}
-#main-calendar .calendar-nav li {
-    list-style-type: none;
-    display: inline-block;
-    width: 25%;
-    padding: 0
-}
-#main-calendar .cal-percent {
-    text-align: right
-}
+
 .table-calendar {
     min-width: 320px
 }
@@ -662,238 +586,6 @@ h3.current-month {
     background-color: #f6f8fb;
     border-color: #eceff6
 }
-#main-calendar table td {
-    border: 1px solid #000;
-    min-width: 2em;
-}
-
-/* style pour les cellules du calendriers */
-td.cal-day_weekend {
-    background-color: #DCDCDC;
-}
-td.cal-day_fermeture {
-    background-color: #CEB6FF;
-}
-
-td.cal-day_semaine_travail_am_conges_pm{
-    background: -webkit-linear-gradient(45deg,#FFFFFF 50%,#8addf2 0%);
-    background: -o-linear-gradient(45deg,#FFFFFF 50%,#8addf2 0%);
-    background: -moz-linear-gradient(45deg,#FFFFFF 50%,#8addf2 0%);
-    background: linear-gradient(45deg,#FFFFFF 50%,#8addf2 0%);
-}
-
-td.cal-day_semaine_travail_am_rtt_pm{
-    background: -webkit-linear-gradient(45deg,#FFFFFF 50%,#ffffad 0%);
-    background: -o-linear-gradient(45deg,#FFFFFF 50%,#ffffad 0%);
-    background: -moz-linear-gradient(45deg,#FFFFFF 50%,#ffffad 0%);
-    background: linear-gradient(45deg,#FFFFFF 50%,#ffffad 0%);
-}
-
-td.cal-day_semaine_travail_am_demande_pm{
-    background: -webkit-linear-gradient(45deg,#FFFFFF 50%,#ffc1ff 0%);
-    background: -o-linear-gradient(45deg,#FFFFFF 50%,#ffc1ff 0%);
-    background: -moz-linear-gradient(45deg,#FFFFFF 50%,#ffc1ff 0%);
-    background: linear-gradient(45deg,#FFFFFF 50%,#ffc1ff 0%);
-}
-
-td.cal-day_semaine_travail_am_autre_pm{
-    background: -webkit-linear-gradient(45deg,#FFFFFF 50%,#F4F4F4 0%);
-    background: -o-linear-gradient(45deg,#FFFFFF 50%,#F4F4F4 0%);
-    background: -moz-linear-gradient(45deg,#FFFFFF 50%,#F4F4F4 0%);
-    background: linear-gradient(45deg,#FFFFFF 50%,#F4F4F4 0%);
-}
-
-td.cal-day_semaine_travail_am_fermeture_pm{
-    background: -webkit-linear-gradient(45deg,#FFFFFF 50%,#CEB6FF 0%);
-    background: -o-linear-gradient(45deg,#FFFFFF 50%,#CEB6FF 0%);
-    background: -moz-linear-gradient(45deg,#FFFFFF 50%,#CEB6FF 0%);
-    background: linear-gradient(45deg,#FFFFFF 50%,#CEB6FF 0%);
-}
-
-td.cal-day_semaine_conges_am_conges_pm{background-color: #8addf2;}
-
-td.cal-day_semaine_conges_am_travail_pm{
-    background: -webkit-linear-gradient(45deg,#8addf2 50%,#FFFFFF 0%);
-    background: -o-linear-gradient(45deg,#8addf2 50%,#FFFFFF 0%);
-    background: -moz-linear-gradient(45deg,#8addf2 50%,#FFFFFF 0%);
-    background: linear-gradient(45deg,#8addf2 50%,#FFFFFF 0%);
-}
-
-td.cal-day_semaine_conges_am_demande_pm{
-    background: -webkit-linear-gradient(45deg,#8addf2 50%,#ffc1ff 0%);
-    background: -o-linear-gradient(45deg,#8addf2 50%,#ffc1ff 0%);
-    background: -moz-linear-gradient(45deg,#8addf2 50%,#ffc1ff 0%);
-    background: linear-gradient(45deg,#8addf2 50%,#ffc1ff 0%);
-}
-
-td.cal-day_semaine_conges_am_rtt_pm{
-    background: -webkit-linear-gradient(45deg,#8addf2 50%,#ffffad 0%);
-    background: -o-linear-gradient(45deg,#8addf2 50%,#ffffad 0%);
-    background: -moz-linear-gradient(45deg,#8addf2 50%,#ffffad 0%);
-    background: linear-gradient(45deg,#8addf2 50%,#ffffad 0%);
-}
-
-td.cal-day_semaine_conges_am_autre_pm{
-    background: -webkit-linear-gradient(45deg,#8addf2 50%,#F4F4F4 0%);
-    background: -o-linear-gradient(45deg,#8addf2 50%,#F4F4F4 0%);
-    background: -moz-linear-gradient(45deg,#8addf2 50%,#F4F4F4 0%);
-    background: linear-gradient(45deg,#8addf2 50%,#F4F4F4 0%);
-}
-
-td.cal-day_semaine_conges_am_fermeture_pm{
-    background: -webkit-linear-gradient(45deg,#8addf2 50%,#CEB6FF 0%);
-    background: -o-linear-gradient(45deg,#8addf2 50%,#CEB6FF 0%);
-    background: -moz-linear-gradient(45deg,#8addf2 50%,#CEB6FF 0%);
-    background: linear-gradient(45deg,#8addf2 50%,#CEB6FF 0%);
-}
-
-td.cal-day_semaine_rtt_am_rtt_pm{background-color: #ffffad;}
-
-td.cal-day_semaine_rtt_am_conges_pm{
-    background: -webkit-linear-gradient(45deg,#ffffad 50%,#8addf2 0%);
-    background: -o-linear-gradient(45deg,#ffffad 50%,#8addf2 0%);
-    background: -moz-linear-gradient(45deg,#ffffad 50%,#8addf2 0%);
-    background: linear-gradient(45deg,#ffffad 50%,#8addf2 0%);
-}
-
-td.cal-day_semaine_rtt_am_travail_pm{
-    background: -webkit-linear-gradient(45deg,#ffffad 50%,#FFFFFF 0%);
-    background: -o-linear-gradient(45deg,#ffffad 50%,#FFFFFF 0%);
-    background: -moz-linear-gradient(45deg,#ffffad 50%,#FFFFFF 0%);
-    background: linear-gradient(45deg,#ffffad 50%,#FFFFFF 0%);
-}
-
-td.cal-day_semaine_rtt_am_demande_pm{
-    background: -webkit-linear-gradient(45deg,#ffffad 50%,#ffc1ff 0%);
-    background: -o-linear-gradient(45deg,#ffffad 50%,#ffc1ff 0%);
-    background: -moz-linear-gradient(45deg,#ffffad 50%,#ffc1ff 0%);
-    background: linear-gradient(45deg,#ffffad 50%,#ffc1ff 0%);
-}
-
-td.cal-day_semaine_rtt_am_autre_pm{
-    background: -webkit-linear-gradient(45deg,#ffffad 50%,#F4F4F4 0%);
-    background: -o-linear-gradient(45deg,#ffffad 50%,#F4F4F4 0%);
-    background: -moz-linear-gradient(45deg,#ffffad 50%,#F4F4F4 0%);
-    background: linear-gradient(45deg,#ffffad 50%,#F4F4F4 0%);
-}
-
-td.cal-day_semaine_rtt_am_fermeture_pm{
-    background: -webkit-linear-gradient(45deg,#ffffad 50%,#CEB6FF 0%);
-    background: -o-linear-gradient(45deg,#ffffad 50%,#CEB6FF 0%);
-    background: -moz-linear-gradient(45deg,#ffffad 50%,#CEB6FF 0%);
-    background: linear-gradient(45deg,#ffffad 50%,#CEB6FF 0%);
-}
-
-td.cal-day_semaine_demande_am_demande_pm{background-color: #ffc1ff;}
-
-td.cal-day_semaine_demande_am_travail_pm{
-    background: -webkit-linear-gradient(45deg,#ffc1ff 50%,#FFFFFF 0%);
-    background: -o-linear-gradient(45deg,#ffc1ff 50%,#FFFFFF 0%);
-    background: -moz-linear-gradient(45deg,#ffc1ff 50%,#FFFFFF 0%);
-    background: linear-gradient(45deg,#ffc1ff 50%,#FFFFFF 0%);
-}
-
-td.cal-day_semaine_demande_am_conges_pm{
-    background: -webkit-linear-gradient(45deg,#ffc1ff 50%,#8addf2 0%);
-    background: -o-linear-gradient(45deg,#ffc1ff 50%,#8addf2 0%);
-    background: -moz-linear-gradient(45deg,#ffc1ff 50%,#8addf2 0%);
-    background: linear-gradient(45deg,#ffc1ff 50%,#8addf2 0%);
-}
-
-td.cal-day_semaine_demande_am_rtt_pm{
-    background: -webkit-linear-gradient(45deg,#ffc1ff 50%,#ffffad 0%);
-    background: -o-linear-gradient(45deg,#ffc1ff 50%,#ffffad 0%);
-    background: -moz-linear-gradient(45deg,#ffc1ff 50%,#ffffad 0%);
-    background: linear-gradient(45deg,#ffc1ff 50%,#ffffad 0%);
-}
-
-td.cal-day_semaine_demande_am_autre_pm{
-    background: -webkit-linear-gradient(45deg,#ffc1ff 50%,#F4F4F4 0%);
-    background: -o-linear-gradient(45deg,#ffc1ff 50%,#F4F4F4 0%);
-    background: -moz-linear-gradient(45deg,#ffc1ff 50%,#F4F4F4 0%);
-    background: linear-gradient(45deg,#ffc1ff 50%,#F4F4F4 0%);
-}
-
-td.cal-day_semaine_demande_am_fermeture_pm{
-    background: -webkit-linear-gradient(45deg,#ffc1ff 50%,#CEB6FF 0%);
-    background: -o-linear-gradient(45deg,#ffc1ff 50%,#CEB6FF 0%);
-    background: -moz-linear-gradient(45deg,#ffc1ff 50%,#CEB6FF 0%);
-    background: linear-gradient(45deg,#ffc1ff 50%,#CEB6FF 0%);
-}
-
-td.cal-day_semaine_autre_am_autre_pm{background-color: #F4F4F4;}
-
-td.cal-day_semaine_autre_am_conges_pm{
-    background: -webkit-linear-gradient(45deg,#F4F4F4 50%,#8addf2 0%);
-    background: -o-linear-gradient(45deg,#F4F4F4 50%,#8addf2 0%);
-    background: -moz-linear-gradient(45deg,#F4F4F4 50%,#8addf2 0%);
-    background: linear-gradient(45deg,#F4F4F4 50%,#8addf2 0%);
-}
-
-td.cal-day_semaine_autre_am_travail_pm{
-    background: -webkit-linear-gradient(45deg,#F4F4F4 50%,#FFFFFF 0%);
-    background: -o-linear-gradient(45deg,#F4F4F4 50%,#FFFFFF 0%);
-    background: -moz-linear-gradient(45deg,#F4F4F4 50%,#FFFFFF 0%);
-    background: linear-gradient(45deg,#F4F4F4 50%,#FFFFFF 0%);
-}
-
-td.cal-day_semaine_autre_am_demande_pm{
-    background: -webkit-linear-gradient(45deg,#F4F4F4 50%,#ffc1ff 0%);
-    background: -o-linear-gradient(45deg,#F4F4F4 50%,#ffc1ff 0%);
-    background: -moz-linear-gradient(45deg,#F4F4F4 50%,#ffc1ff 0%);
-    background: linear-gradient(45deg,#F4F4F4 50%,#ffc1ff 0%);
-}
-
-td.cal-day_semaine_autre_am_rtt_pm{
-    background: -webkit-linear-gradient(45deg,#F4F4F4 50%,#ffffad 0%);
-    background: -o-linear-gradient(45deg,#F4F4F4 50%,#ffffad 0%);
-    background: -moz-linear-gradient(45deg,#F4F4F4 50%,#ffffad 0%);
-    background: linear-gradient(45deg,#F4F4F4 50%,#ffffad 0%);
-}
-
-td.cal-day_semaine_autre_am_fermeture_pm{
-    background: -webkit-linear-gradient(45deg,#F4F4F4 50%,#CEB6FF 0%);
-    background: -o-linear-gradient(45deg,#F4F4F4 50%,#CEB6FF 0%);
-    background: -moz-linear-gradient(45deg,#F4F4F4 50%,#CEB6FF 0%);
-    background: linear-gradient(45deg,#F4F4F4 50%,#CEB6FF 0%);
-}
-
-td.cal-day_semaine_fermeture_am_fermeture_pm{background-color: #CEB6FF;}
-
-td.cal-day_semaine_fermeture_am_travail_pm{
-    background: -webkit-linear-gradient(45deg,#CEB6FF 50%,#FFFFFF 0%);
-    background: -o-linear-gradient(45deg,#CEB6FF 50%,#FFFFFF 0%);
-    background: -moz-linear-gradient(45deg,#CEB6FF 50%,#FFFFFF 0%);
-    background: linear-gradient(45deg,#CEB6FF 50%,#FFFFFF 0%);
-}
-
-td.cal-day_semaine_fermeture_am_conges_pm{
-    background: -webkit-linear-gradient(45deg,#CEB6FF 50%,#8addf2 0%);
-    background: -o-linear-gradient(45deg,#CEB6FF 50%,#8addf2 0%);
-    background: -moz-linear-gradient(45deg,#CEB6FF 50%,#8addf2 0%);
-    background: linear-gradient(45deg,#CEB6FF 50%,#8addf2 0%);
-}
-
-td.cal-day_semaine_fermeture_am_rtt_pm{
-    background: -webkit-linear-gradient(45deg,#CEB6FF 50%,#ffffad 0%);
-    background: -o-linear-gradient(45deg,#CEB6FF 50%,#ffffad 0%);
-    background: -moz-linear-gradient(45deg,#CEB6FF 50%,#ffffad 0%);
-    background: linear-gradient(45deg,#CEB6FF 50%,#ffffad 0%);
-}
-
-td.cal-day_semaine_fermeture_am_demande_pm{
-    background: -webkit-linear-gradient(45deg,#CEB6FF 50%,#ffc1ff 0%);
-    background: -o-linear-gradient(45deg,#CEB6FF 50%,#ffc1ff 0%);
-    background: -moz-linear-gradient(45deg,#CEB6FF 50%,#ffc1ff 0%);
-    background: linear-gradient(45deg,#CEB6FF 50%,#ffc1ff 0%);
-}
-
-td.cal-day_semaine_fermeture_am_autre_pm{
-    background: -webkit-linear-gradient(45deg,#CEB6FF 50%,#CEB6FF 0%);
-    background: -o-linear-gradient(45deg,#CEB6FF 50%,#CEB6FF 0%);
-    background: -moz-linear-gradient(45deg,#CEB6FF 50%,#CEB6FF 0%);
-    background: linear-gradient(45deg,#CEB6FF 50%,#CEB6FF 0%);
-}
 
 .separator {
     height : 20px;
@@ -952,4 +644,202 @@ form.search {
     line-height : 30px;
     background : #F4F4F4;
     border-radius : 3px;
+}
+
+/* CALENDRIER */
+
+#calendar-wrapper {
+    padding : 15px;
+}
+
+#calendar-wrapper h2 {
+    text-align: center;
+}
+
+div.calendrier {
+    height: 90%;
+    margin: 15px auto;
+}
+
+div.calendrier div.semaine {
+    width: 100%;
+    display: flex;
+}
+
+div#calendrierSemaine div.colonne {
+    width: 20%;
+}
+
+div.calendrier div.en-tete {
+    color: #717171;
+    text-align: center;
+}
+
+div.calendrier div.celluleJour, div.calendrier div.en-tete {
+    width: 20%;
+}
+
+div#calendrierMois div.celluleJour, div#calendrierSemaine div.celluleJour  .evenementJour, div#calendrierSemaine div.celluleMinute {
+    border: 1px solid #ddd;
+}
+
+div#calendrierMois div.celluleJour, div#calendrierSemaine div.celluleJour  .evenementJour, div#calendrierSemaine div.celluleMinute.inflate {
+    height: 160px;
+    overflow: hidden;
+    vertical-align: top;
+}
+
+div#calendrierSemaine div.celluleMinute {
+    height: 22px;
+}
+
+div#calendrierSemaine div.minuteId {
+    order : 1;
+}
+
+div#calendrierSemaine div.celluleJour {
+    order : 2;
+}
+
+div#calendrierSemaine div.minuteId  .enteteMinute {
+    height: 160px;
+    margin-bottom: 10px;
+}
+
+div#calendrierSemaine div.celluleJour  .evenementJour {
+    margin-bottom: 10px;
+}
+
+div#calendrierMois div.celluleJour:hover, div#calendrierSemaine div.celluleJour  .evenementJour:hover, div#calendrierSemaine div.celluleMinute:hover {
+    overflow-y: auto;
+}
+
+div#calendrierMois .semaineId, div#calendrierSemaine .minuteId {
+    padding: 0 4px;
+    margin: auto;
+    text-align: center;
+    vertical-align: middle;
+    color: #AAA;
+    border: 0;
+}
+
+div.calendrier div.celluleJour .jourId {
+    padding: 3px;
+    text-align: right;
+    color: #AAA;
+}
+
+div.calendrier div.celluleJour.horsMois .jourId {
+    color : white;
+}
+
+div.calendrier div.celluleJour:not(.horsMois) .today.jourId {
+    background: #009ec5;
+    color : white;
+}
+
+div.calendrier div.celluleJour .event {
+    width:95%;
+    height: 22px;
+    line-height: 22px;
+    padding: 0 5px;
+    margin: 1px 0;
+    border-radius: 2px;
+    background-color: #1ABC9C;
+    position:relative;
+}
+
+div.calendrier div.event .contenu {
+    width: 180px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@media (max-width: 1600px) {
+    div.calendrier div.event .contenu {
+        width: 150px;
+    }
+}
+
+@media (max-width: 1280px) {
+    div.calendrier div.event .contenu {
+        width: 100px;
+    }
+}
+
+div.calendrier div.event .multijour {
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 10px solid #1ABC9C;
+    position: absolute;
+    top: 1px;
+    right: -8px;
+}
+
+div.calendrier div.celluleJour .evenement-avec-title {
+    cursor: help;
+}
+
+div.calendrier div.celluleJour .event.weekend, div.calendrier div.celluleJour .event.ferie {
+    background: #C7C7C7;
+    border: 1px solid #C7C7C7;
+    color: #444;
+}
+
+div.calendrier div.celluleJour .event.conges {
+    background: #1ABC9C;
+    border: 1px solid #1ABC9C;
+    color: white;
+}
+
+div.calendrier div.event.conges .multijour {
+    border-left: 0.675em solid #1ABC9C;
+}
+
+div.calendrier div.celluleJour .event.absences {
+    background: #FFC1FF;
+    border: 1px solid #FFC1FF;
+    color: #444;
+}
+
+div.calendrier div.event.absences .multijour {
+    border-left: 0.675em solid #FFC1FF;
+}
+
+div.calendrier div.celluleJour .event.conges_exceptionnels {
+    background: #9ce6f8;
+    border: 1px solid #9ce6f8;
+    color: #444;
+}
+
+div.calendrier div.event.conges_exceptionnels .multijour {
+    border-left: 0.675em solid #9ce6f8;
+}
+
+div.calendrier div.celluleJour .event.heure {
+    background: #FF530D;
+    border: 1px solid #FF530D;
+    color: white;
+}
+
+div.calendrier div.event.heure .multijour {
+    border-left: 0.675em solid #FF530D;
+}
+
+div.calendrier div.celluleJour .event.fermeture {
+    background: #CEB6FF;
+    border: 1px solid #CEB6FF;
+    color: #444;
+}
+
+div.calendrier div.event.fermeture .multijour {
+    border-left: 0.675em solid #CEB6FF;
+}
+
+div.calendrier div.celluleJour.horsMois {
+    background: #A9A9A9;
+    opacity: 0.7;
 }

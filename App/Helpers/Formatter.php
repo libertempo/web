@@ -97,7 +97,7 @@ class Formatter
      * @return string
      * @since  1.9
      */
-    public static function Timestamp2Duree($secondes) 
+    public static function Timestamp2Duree($secondes)
     {
         if (!is_numeric($secondes) || 0 > $secondes) {
             throw new \Exception(_('TimeStamp_mal_formee'));

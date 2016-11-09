@@ -7,12 +7,35 @@ namespace Composer\Autoload;
 class ComposerStaticInitfd23b7dd905d561816f77d072cde6740
 {
     public static $files = array (
-        '75d4b1647cdbc77a59f72bcb74df0995' => __DIR__ . '/..' . '/spipu/html2pdf/html2pdf.class.php',
         '6bc45d0537e6858fd179bdbc31d62c79' => __DIR__ . '/..' . '/raveren/kint/Kint.class.php',
+    );
+
+    public static $prefixLengthsPsr4 = array (
+        'S' => 
+        array (
+            'Symfony\\Component\\OptionsResolver\\' => 34,
+        ),
+    );
+
+    public static $prefixDirsPsr4 = array (
+        'Symfony\\Component\\OptionsResolver\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/options-resolver',
+        ),
     );
 
     public static $fallbackDirsPsr4 = array (
         0 => __DIR__ . '/../..' . '/',
+    );
+
+    public static $prefixesPsr0 = array (
+        'C' => 
+        array (
+            'CalendR' => 
+            array (
+                0 => __DIR__ . '/..' . '/yohang/calendr/src',
+            ),
+        ),
     );
 
     public static $classMap = array (
@@ -85,7 +108,10 @@ class ComposerStaticInitfd23b7dd905d561816f77d072cde6740
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
+            $loader->prefixLengthsPsr4 = ComposerStaticInitfd23b7dd905d561816f77d072cde6740::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitfd23b7dd905d561816f77d072cde6740::$prefixDirsPsr4;
             $loader->fallbackDirsPsr4 = ComposerStaticInitfd23b7dd905d561816f77d072cde6740::$fallbackDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitfd23b7dd905d561816f77d072cde6740::$prefixesPsr0;
             $loader->classMap = ComposerStaticInitfd23b7dd905d561816f77d072cde6740::$classMap;
 
         }, null, ClassLoader::class);

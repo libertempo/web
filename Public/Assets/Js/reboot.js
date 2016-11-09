@@ -111,7 +111,7 @@ function generateDatePicker(opts, compter = true)
 function generateTimePicker(elementId, opts)
 {
     var defaultOpts = {
-        minuteStep             : 15,
+        minuteStep             : 30,
         showInputs             : false,
         showMeridian           : false,
         showWidgetOnAddonClick : false,
