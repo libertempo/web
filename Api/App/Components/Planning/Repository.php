@@ -15,7 +15,7 @@ use Api\App\Exceptions\MissingArgumentException;
  * Ne devrait être contacté que par le Planning\Controller
  * Ne devrait contacter que le Planning\Model, Planning\Dao
  */
-class Repository extends \Api\App\Libraries\Repository
+class Repository extends \Api\App\Libraries\ARepository
 {
     /*************************************************
      * GET

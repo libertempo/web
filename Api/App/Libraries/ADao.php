@@ -12,7 +12,7 @@ namespace Api\App\Libraries;
  * Ne devrait être contacté par personne
  * Ne devrait contacter personne
  */
-abstract class Dao
+abstract class ADao
 {
     /**
      * @var \PDO Connecteur à la BDD

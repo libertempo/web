@@ -16,19 +16,19 @@ use Api\App\Exceptions\MissingArgumentException;
  * Ne devrait être contacté par personne
  * Ne devrait contacter personne
  */
-abstract class Repository
+abstract class ARepository
 {
     /**
-     * @var \Api\App\Libraries\Dao $dao Data Access Object
+     * @var \Api\App\Libraries\ADao $dao Data Access Object
      */
     protected $dao;
 
     /**
-     * @var \Api\App\Libraries\Model $model Domain Model
+     * @var \Api\App\Libraries\AModel $model Domain Model
      */
     protected $model;
 
-    public function __construct(\Api\App\Libraries\Dao $dao)
+    public function __construct(\Api\App\Libraries\ADao $dao)
     {
         $this->dao = $dao;
     }
@@ -36,7 +36,7 @@ abstract class Repository
     /**
      * Insère un modèle de travail dans le repository
      */
-    public function setModel(\Api\App\Libraries\Model $model)
+    public function setModel(\Api\App\Libraries\AModel $model)
     {
         $this->model = $model;
     }
@@ -46,7 +46,7 @@ abstract class Repository
      *
      * @param int $id Id potentiel de ressource
      *
-     * @return \Api\App\Libraries\Model
+     * @return \Api\App\Libraries\AModel
      * @throws \DomainException Si $id n'est pas dans le domaine de définition
      */
     abstract public function getOne($id);

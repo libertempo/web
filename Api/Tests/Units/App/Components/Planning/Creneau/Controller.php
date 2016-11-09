@@ -11,7 +11,7 @@ use \Api\App\Components\Planning\Creneau\Controller as _Controller;
  *
  * @since 0.1
  */
-final class Controller extends \Api\Tests\Units\App\Libraries\Controller
+final class Controller extends \Api\Tests\Units\App\Libraries\AController
 {
     /**
      * @var \mock\Api\App\Components\Planning\Creneau\Repository Mock du repository associé

@@ -4,7 +4,7 @@ namespace Api\App\Utilisateur;
 /**
  *
  */
-class Dao extends \Api\App\Libraries\Dao
+class Dao extends \Api\App\Libraries\ADao
 {
     /**
      *

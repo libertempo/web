@@ -12,7 +12,7 @@ namespace Api\App\Components\Planning\Creneau;
  * Ne devrait être contacté que par Planning\Creneau\Repository
  * Ne devrait contacter personne
  */
-class Dao extends \Api\App\Libraries\Dao
+class Dao extends \Api\App\Libraries\ADao
 {
     /**
      * @inheritDoc

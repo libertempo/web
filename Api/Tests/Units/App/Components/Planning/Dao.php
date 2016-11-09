@@ -11,7 +11,7 @@ use \Api\App\Components\Planning\Dao as _Dao;
  *
  * @since 0.1
  */
-final class Dao extends \Api\Tests\Units\App\Libraries\Dao
+final class Dao extends \Api\Tests\Units\App\Libraries\ADao
 {
     /**
      * Teste la méthode getById avec un id non trouvé

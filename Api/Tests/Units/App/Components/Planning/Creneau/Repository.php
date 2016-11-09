@@ -56,7 +56,7 @@ final class Repository extends \Atoum
 
         $model = $repository->getOne(42, 23);
 
-        $this->object($model)->isInstanceOf('\Api\App\Libraries\Model');
+        $this->object($model)->isInstanceOf('\Api\App\Libraries\AModel');
         $this->integer($model->getId())->isIdenticalTo(42);
     }
 
@@ -92,6 +92,6 @@ final class Repository extends \Atoum
         $models = $repository->getList(['planningId' => 53]);
 
         $this->array($models)->hasKey(42);
-        $this->object($models[42])->isInstanceOf('\Api\App\Libraries\Model');
+        $this->object($models[42])->isInstanceOf('\Api\App\Libraries\AModel');
     }
 }

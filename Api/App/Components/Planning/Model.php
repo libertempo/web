@@ -13,7 +13,7 @@ namespace Api\App\Components\Planning;
  * Ne devrait être contacté que par le Planning\Repository
  * Ne devrait contacter personne
  */
-class Model extends \Api\App\Libraries\Model
+class Model extends \Api\App\Libraries\AModel
 {
     public function getName()
     {
@@ -36,5 +36,5 @@ class Model extends \Api\App\Libraries\Model
          */
     }
 
-    // isPure() ? 
+    // isPure() ?
 }

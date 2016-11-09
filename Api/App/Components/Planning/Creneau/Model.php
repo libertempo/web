@@ -13,7 +13,7 @@ namespace Api\App\Components\Planning\Creneau;
  * Ne devrait être contacté que par le Planning\Creneau\Repository
  * Ne devrait contacter personne
  */
-class Model extends \Api\App\Libraries\Model
+class Model extends \Api\App\Libraries\AModel
 {
     public function getPlanningId()
     {

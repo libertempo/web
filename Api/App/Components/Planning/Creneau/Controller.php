@@ -16,7 +16,7 @@ use Psr\Http\Message\ResponseInterface as IResponse;
  * Ne devrait être contacté que par le routeur
  * Ne devrait contacter que le Planning\Repository
  */
-final class Controller extends \Api\App\Libraries\Controller
+final class Controller extends \Api\App\Libraries\AController
 {
     public function post(IRequest $request, IResponse $response, array $arguments)
     {

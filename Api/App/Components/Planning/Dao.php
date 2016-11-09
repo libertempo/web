@@ -12,7 +12,7 @@ namespace Api\App\Components\Planning;
  * Ne devrait être contacté que par Planning\Repository
  * Ne devrait contacter personne
  */
-class Dao extends \Api\App\Libraries\Dao
+class Dao extends \Api\App\Libraries\ADao
 {
     /**
      * {@inheritDoc}

@@ -1,7 +1,7 @@
 <?php
 namespace Api\App\Libraries;
 
-use \Api\App\Libraries\Repository;
+use \Api\App\Libraries\ARepository;
 use \Slim\Interfaces\RouterInterface as IRouter;
 
 /**
@@ -15,10 +15,10 @@ use \Slim\Interfaces\RouterInterface as IRouter;
  * Ne devrait être contacté par personne
  * Ne devrait contacter personne
  */
-abstract class Controller
+abstract class AController
 {
     /**
-     * @var Repository Repository de la ressource
+     * @var ARepository Repository de la ressource
      */
     protected $repository;
 
@@ -27,7 +27,7 @@ abstract class Controller
      */
     protected $router;
 
-    public function __construct(Repository $repository, IRouter $router) {
+    public function __construct(ARepository $repository, IRouter $router) {
         $this->repository = $repository;
         $this->router = $router;
     }

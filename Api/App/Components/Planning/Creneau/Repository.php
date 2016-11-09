@@ -13,7 +13,7 @@ namespace Api\App\Components\Planning\Creneau;
  * Ne devrait être contacté que par le Planning\Creneau\Controller, Planning\Repository
  * Ne devrait contacter que le Planning\Creneau\Model, Planning\Creneau\Dao
  */
-class Repository extends \Api\App\Libraries\Repository
+class Repository extends \Api\App\Libraries\ARepository
 {
     /*************************************************
      * GET

@@ -4,9 +4,9 @@ namespace Api\App\Utilisateur;
 /**
  * {@inheritDoc}
  *
- * Ne devrait être contacté que par le \Api\App\Libraries\Controller
+ * Ne devrait être contacté que par le \Api\App\Libraries\AController
  * Ne devrait contacter que le Planning\Model, Planning\Dao */
-class Repository extends \Api\App\Libraries\Repository
+class Repository extends \Api\App\Libraries\ARepository
 {
     /**
      *
