@@ -795,6 +795,13 @@ div.calendrier div.celluleJour .event.conges {
     color: white;
 }
 
+div.calendrier div.celluleJour .event.conges_demande,
+div.calendrier div.celluleJour .event.conges_valid,
+div.calendrier div.celluleJour .event.heure_1,
+div.calendrier div.celluleJour .event.heure_2 {
+    opacity: 0.7;
+}
+
 div.calendrier div.event.conges .multijour {
     border-left: 0.675em solid #1ABC9C;
 }

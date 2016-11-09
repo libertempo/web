@@ -23,13 +23,23 @@ class Repos extends \App\Libraries\Calendrier\ACollection
     private $utilisateursATrouver;
 
     /**
+     * @var bool Si l'utilisateur a la possiblité de voir les événements non encore validés
+     */
+    private $canVoirEnTransit;
+
+    /**
      * {@inheritDoc}
      * @param array $utilisateursATrouver Liste d'utilisateurs dont on veut voir les heures de repos
      */
-    public function __construct(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, array $utilisateursATrouver)
-    {
+    public function __construct(
+        \DateTimeInterface $dateDebut,
+        \DateTimeInterface $dateFin,
+        array $utilisateursATrouver,
+        $canVoirEnTransit
+    ) {
         parent::__construct($dateDebut, $dateFin);
         $this->utilisateursATrouver = $utilisateursATrouver;
+        $this->canVoirEnTransit = (bool) $canVoirEnTransit;
     }
 
     /**
@@ -38,10 +48,13 @@ class Repos extends \App\Libraries\Calendrier\ACollection
     public function getListe()
     {
         $heures = [];
-        $class = 'heure';
         foreach ($this->getListeSQL($this->getListeId()) as $heure) {
+            $class = 'heure heure_' . $heure['statut'];
             $nomComplet = \App\ProtoControllers\Utilisateur::getNomComplet($heure['u_prenom'],  $heure['u_nom'], true);
             $name = $nomComplet . ' - Heure(s) de repos';
+            if (\App\Models\AHeure::STATUT_VALIDATION_FINALE !== $heure['statut']) {
+                $name = '[En demande]  ' . $name;
+            }
             $dateDebut = new \DateTime();
             $dateDebut->setTimestamp($heure['debut']);
             $dateFin = new \DateTime();
@@ -70,13 +83,20 @@ class Repos extends \App\Libraries\Calendrier\ACollection
     private function getListeId()
     {
         $ids = [];
+        $etats[] = \App\Models\AHeure::STATUT_VALIDATION_FINALE;
+        if ($this->canVoirEnTransit) {
+            $etats = array_merge($etats, [
+                \App\Models\AHeure::STATUT_DEMANDE,
+                \App\Models\AHeure::STATUT_PREMIERE_VALIDATION
+            ]);
+        }
         $req = 'SELECT id_heure AS id
                 FROM heure_repos
                 WHERE debut >= "' . $this->dateDebut->getTimestamp() . '"
                     AND debut <= "' . $this->dateFin->getTimestamp() . '"
                     AND duree > 0
                     AND login IN ("' . implode('","', $this->utilisateursATrouver) . '")
-                    AND statut = ' . \App\Models\AHeure::STATUT_VALIDATION_FINALE;
+                    AND statut IN ("' . implode('","', $etats) . '")';
         $sql = \includes\SQL::singleton();
         $res = $sql->query($req);
         while ($data = $res->fetch_array()) {

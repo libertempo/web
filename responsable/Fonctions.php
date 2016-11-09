@@ -1644,6 +1644,8 @@ class Fonctions
             $return .= '<td>' . _('resp_traite_user_motif_refus') . '</td>';
             if($_SESSION['config']['affiche_date_traitement']) {
                 $return .= '<td>' . _('divers_date_traitement') . '</td>';
+            } else {
+                $return .= '<td></td>';
             }
             $return .= '</tr>';
 
@@ -2142,5 +2144,5 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $table->render();
 
         return ob_get_clean();
-    }    
+    }
 }
