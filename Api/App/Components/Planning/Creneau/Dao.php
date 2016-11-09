@@ -14,6 +14,10 @@ namespace Api\App\Components\Planning\Creneau;
  */
 class Dao extends \Api\App\Libraries\ADao
 {
+    /*************************************************
+     * GET
+     *************************************************/
+
     /**
      * @inheritDoc
      *
@@ -45,14 +49,6 @@ class Dao extends \Api\App\Libraries\ADao
     }
 
     /**
-     * @inheritDoc
-     */
-    final protected function getTableName()
-    {
-        return 'planning_creneau';
-    }
-
-    /**
      * Retourne le tableau des filtres à appliquer à la requête
      *
      * @param array $parametres
@@ -78,5 +74,24 @@ class Dao extends \Api\App\Libraries\ADao
                 : '',
             'bind' => $bind,
         ];
+    }
+
+    /*************************************************
+     * POST
+     *************************************************/
+
+    /**
+     * @inheritDoc
+     */
+    public function post(array $data)
+    {
+    }
+
+    /**
+     * @inheritDoc
+     */
+    final protected function getTableName()
+    {
+        return 'planning_creneau';
     }
 }

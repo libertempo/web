@@ -14,13 +14,9 @@ namespace Api\App\Components\Planning;
  */
 class Dao extends \Api\App\Libraries\ADao
 {
-    /**
-     * {@inheritDoc}
-     */
-    final protected function getTableName()
-    {
-        return 'planning';
-    }
+    /*************************************************
+     * GET
+     *************************************************/
 
     /**
      * {@inheritDoc}
@@ -83,5 +79,24 @@ class Dao extends \Api\App\Libraries\ADao
                 : '',
             'bind' => $bind,
         ];
+    }
+
+    /*************************************************
+     * POST
+     *************************************************/
+
+    /**
+     * @inheritDoc
+     */
+    public function post(array $data)
+    {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    final protected function getTableName()
+    {
+        return 'planning';
     }
 }

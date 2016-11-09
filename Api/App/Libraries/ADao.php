@@ -24,6 +24,10 @@ abstract class ADao
         $this->storageConnector = $storageConnector;
     }
 
+    /*************************************************
+     * GET
+     *************************************************/
+
     /**
      * Retourne une ressource unique
      *
@@ -42,6 +46,17 @@ abstract class ADao
      * @return array, vide si les critères ne sont pas pertinents
      */
     abstract public function getList(array $parametres);
+
+    /*************************************************
+     * POST
+     *************************************************/
+
+    /**
+     * Poste une nouvelle ressource
+     *
+     * @return int Id de la ressource nouvellement créée
+     */
+    abstract public function post(array $data);
 
     /**
      * Retourne le nom de la table

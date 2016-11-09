@@ -34,6 +34,21 @@ class Model extends \Api\App\Libraries\AModel
          * chaque set a son propre domaine, et set erreur avec ses erreurs propres et ne fait pas le set
          * si erreur != vide, \DomainException avec les erreur en json
          */
+        $erreurs = $this->getErreurs();
+        if (!empty($erreurs)) {
+            throw new \DomainException(json_encode($erreurs));
+        }
+    }
+
+    private function setName()
+    {
+        // domaine de name ?
+
+    }
+
+    private function setStatus()
+    {
+        // domaine de status ?
     }
 
     // isPure() ?

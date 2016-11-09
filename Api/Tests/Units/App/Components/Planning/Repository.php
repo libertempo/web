@@ -95,10 +95,6 @@ final class Repository extends \Atoum
      * POST
      *************************************************/
 
-    // test ok avec id de retour
-    // test avec exception DomainException si valeur pas dans le bon domaine
-    // test fallback
-
     /**
      * Teste la méthode postOne avec un champ manquant
      */
@@ -126,5 +122,23 @@ final class Repository extends \Atoum
         $this->exception(function () use ($repository) {
             $repository->postOne(['name' => 'bob', 'status' => 'bab']);
         })->isInstanceOf('\DomainException');
+    }
+
+    /**
+     * Teste la méthode postOne quand tout est ok
+     */
+    public function testPostOneOk()
+    {
+        $repository = new _Repository($this->dao);
+        $model = new \mock\Api\App\Components\Planning\Model([]);
+        $model->getMockController()->populate = '';
+        $model->getMockController()->getName = 'name';
+        $model->getMockController()->getStatus = 'status';
+        $repository->setModel($model);
+        $this->dao->getMockController()->post = 3;
+
+        $post = $repository->postOne(['name' => 'bob', 'status' => 'pop']);
+
+        $this->integer($post);
     }
 }

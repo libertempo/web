@@ -25,6 +25,11 @@ abstract class AModel
      */
     protected $data;
 
+    /**
+     * @var array $erreurs Erreurs de domaine sur l'édition de l'objet
+     */
+    private $erreurs;
+
     public function __construct(array $data, $id = -1)
     {
         if (-1 !== $id) {
@@ -48,4 +53,20 @@ abstract class AModel
     abstract public function populate(array $data);
 
     // populate pour le set massif (private) avec un retour d'erreur collectif, sinon dans dataUpdated
+
+    /**
+     * 
+     */
+    protected function setErreur($champ, $message)
+    {
+        $this->erreurs[$champ][] = $message;
+    }
+
+    /**
+     *
+     */
+    protected function getErreurs()
+    {
+        return $this->erreurs;
+    }
 }

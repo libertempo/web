@@ -142,6 +142,9 @@ class Repository extends \Api\App\Libraries\ARepository
 
         try {
             $this->model->populate($data);
+            $dataDao = $this->getModel2DataDao($this->model);
+
+            return $this->dao->post($dataDao);
         } catch (\Exception $e) {
             throw $e;
         }
