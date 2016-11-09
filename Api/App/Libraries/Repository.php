@@ -23,9 +23,22 @@ abstract class Repository
      */
     protected $dao;
 
+    /**
+     * @var \Api\App\Libraries\Model $model Domain Model
+     */
+    protected $model;
+
     public function __construct(\Api\App\Libraries\Dao $dao)
     {
         $this->dao = $dao;
+    }
+
+    /**
+     * Insère un modèle de travail dans le repository
+     */
+    public function setModel(\Api\App\Libraries\Model $model)
+    {
+        $this->model = $model;
     }
 
     /**

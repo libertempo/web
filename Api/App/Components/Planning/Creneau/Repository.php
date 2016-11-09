@@ -36,7 +36,7 @@ class Repository extends \Api\App\Libraries\Repository
         $modelId = $modelData['id'];
         unset($modelData['id']);
 
-        return new Model($modelId, $modelData);
+        return new Model($modelData, $modelId);
     }
 
     /**
@@ -56,7 +56,7 @@ class Repository extends \Api\App\Libraries\Repository
 
             $modelId = $modelData['id'];
             unset($modelData['id']);
-            $model = new Model($modelId, $modelData);
+            $model = new Model($modelData, $modelId);
             $models[$model->getId()] = $model;
         }
 

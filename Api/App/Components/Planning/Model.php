@@ -24,4 +24,17 @@ class Model extends \Api\App\Libraries\Model
     {
         return (int) $this->data['status'];
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function populate(array $data)
+    {
+        /*
+         * chaque set a son propre domaine, et set erreur avec ses erreurs propres et ne fait pas le set
+         * si erreur != vide, \DomainException avec les erreur en json
+         */
+    }
+
+    // isPure() ? 
 }

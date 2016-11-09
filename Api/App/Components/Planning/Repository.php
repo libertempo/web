@@ -36,7 +36,7 @@ class Repository extends \Api\App\Libraries\Repository
         $modelId = $modelData['id'];
         unset($modelData['id']);
 
-        return new Model($modelId, $modelData);
+        return new Model($modelData, $modelId);
     }
 
     /**
@@ -61,7 +61,7 @@ class Repository extends \Api\App\Libraries\Repository
             $modelData = $this->getDataDao2Model($value);
             $modelId = $modelData['id'];
             unset($modelData['id']);
-            $model = new Model($modelId, $modelData);
+            $model = new Model($modelData, $modelId);
             $models[$model->getId()] = $model;
         }
 
@@ -139,6 +139,27 @@ class Repository extends \Api\App\Libraries\Repository
         if (!$this->hasAllRequired($data)) {
             throw new MissingArgumentException('');
         }
+
+        try {
+            $this->model->populate($data);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Effectue le mapping des éléments venant du modèle pour qu'ils soient compréhensibles pour la DAO
+     *
+     * @param Model $model
+     *
+     * @return array
+     */
+    private function getModel2DataDao(Model $model)
+    {
+        return [
+            'name' => $model->getName(),
+            'status' => $model->getStatus(),
+        ];
     }
 
     /**
@@ -150,7 +171,7 @@ class Repository extends \Api\App\Libraries\Repository
      */
     private function hasAllRequired(array $data)
     {
-        foreach ($this->getRequired() as $value) {
+        foreach ($this->getListRequired() as $value) {
             if (!isset($data[$value])) {
                 return false;
             }
@@ -164,7 +185,7 @@ class Repository extends \Api\App\Libraries\Repository
      *
      * @return array
      */
-    private function getRequired()
+    private function getListRequired()
     {
         return ['name', 'status'];
     }

@@ -44,4 +44,11 @@ class Model extends \Api\App\Libraries\Model
     {
         return (int) $this->data['fin'];
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function populate(array $data)
+    {
+    }
 }

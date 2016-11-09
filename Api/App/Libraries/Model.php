@@ -13,7 +13,7 @@ namespace Api\App\Libraries;
  * Ne devrait être contacté par personne
  * Ne devrait contacter personne
  */
-class Model
+abstract class Model
 {
     /**
      * @var int $id Identifiant unique de l'élément dans la liste
@@ -25,9 +25,11 @@ class Model
      */
     protected $data;
 
-    public function __construct($id, array $data)
+    public function __construct(array $data, $id = -1)
     {
-        $this->id = (int) $id;
+        if (-1 !== $id) {
+            $this->id = (int) $id;
+        }
         $this->data = $data;
     }
 
@@ -35,6 +37,15 @@ class Model
     {
         return $this->id;
     }
+
+    /**
+     * Insère massivement des nouvelles données dans le modèle
+     *
+     * @param array $data Données à insérer / mettre à jour
+     *
+     * @throws \DomainException Si une ou plusieurs données ne sont pas dans les bons domaines de définition
+     */
+    abstract public function populate(array $data);
 
     // populate pour le set massif (private) avec un retour d'erreur collectif, sinon dans dataUpdated
 }

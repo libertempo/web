@@ -166,6 +166,7 @@ final class Controller extends \Api\App\Libraries\Controller
         }
 
         try {
+            $this->repository->setModel(new Model([]));
             $planningId = $this->repository->postOne($body);
             $code = 200;
             $data = [
@@ -194,7 +195,7 @@ final class Controller extends \Api\App\Libraries\Controller
                 'code' => $code,
                 'status' => 'error',
                 'message' => 'Precondition Failed',
-                'data' => $e->getMessage(),
+                'data' => $e->getMessage(), // exploser pour avoir toutes les données en erreur ?
             ];
 
             return $response->withJson($data, $code);
