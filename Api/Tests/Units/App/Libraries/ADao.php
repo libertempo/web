@@ -9,7 +9,7 @@ namespace Api\Tests\Units\App\Libraries;
  *
  * @since 0.1
  */
-class Dao extends \Atoum
+class ADao extends \Atoum
 {
     /**
      * @var \mock\PDO Mock du connecteur
@@ -20,7 +20,7 @@ class Dao extends \Atoum
      * @var \mock\PDOStatement Mock du curseur de résultat PDO
      */
     protected $statement;
-    
+
     /**
      * Init des tests
      */

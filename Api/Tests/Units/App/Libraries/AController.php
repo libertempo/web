@@ -11,7 +11,7 @@ use Psr\Http\Message\ResponseInterface as IResponse;
  *
  * @since 0.1
  */
-class Controller extends \Atoum
+class AController extends \Atoum
 {
     /**
      * @var \mock\Slim\Http\Request Mock de la requête HTTP

@@ -16,7 +16,7 @@ class Repository extends \Api\App\Libraries\ARepository
         return [];
     }
 
-    public function getList()
+    public function getList(array $parametres)
     {
         return [];
     }
