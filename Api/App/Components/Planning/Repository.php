@@ -32,11 +32,7 @@ class Repository extends \Api\App\Libraries\ARepository
             throw new \DomainException('Planning#' . $id . ' is not a valid resource');
         }
 
-        $modelData = $this->getDataDao2Model($data);
-        $modelId = $modelData['id'];
-        unset($modelData['id']);
-
-        return new Model($modelData, $modelId);
+        return new Model($this->getDataDao2Model($data));
     }
 
     /**
@@ -58,10 +54,7 @@ class Repository extends \Api\App\Libraries\ARepository
 
         $models = [];
         foreach ($data as $value) {
-            $modelData = $this->getDataDao2Model($value);
-            $modelId = $modelData['id'];
-            unset($modelData['id']);
-            $model = new Model($modelData, $modelId);
+            $model = new Model($this->getDataDao2Model($value));
             $models[$model->getId()] = $model;
         }
 

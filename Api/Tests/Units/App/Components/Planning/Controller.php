@@ -226,7 +226,7 @@ final class Controller extends \Api\Tests\Units\App\Libraries\AController
     /**
      * Teste le fallback de la méthode post
      */
-    public function testGetPostFallback()
+    public function testPostFallback()
     {
         $this->request->getMockController()->getParsedBody = [];
         $this->repository->getMockController()->postOne = function () {

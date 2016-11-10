@@ -2,7 +2,7 @@
 namespace Api\App\Components\Planning;
 
 /**
- * {@inheritDoc}
+ * @inheritDoc
  *
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina
@@ -15,14 +15,32 @@ namespace Api\App\Components\Planning;
  */
 class Model extends \Api\App\Libraries\AModel
 {
+    /**
+     * Retourne la donnée la plus à jour du champ name
+     *
+     * @return string
+     */
     public function getName()
     {
+        if (isset($this->dataUpdated['name'])) {
+            return $this->dataUpdated['name'];
+        }
+
         return $this->data['name'];
     }
 
+    /**
+     * Retourne la donnée la plus à jour du champ status
+     *
+     * @return int
+     */
     public function getStatus()
     {
-        return (int) $this->data['status'];
+        if (isset($this->dataUpdated['status'])) {
+            return $this->dataUpdated['status'];
+        }
+
+        return $this->data['status'];
     }
 
     /**
@@ -30,26 +48,49 @@ class Model extends \Api\App\Libraries\AModel
      */
     public function populate(array $data)
     {
-        /*
-         * chaque set a son propre domaine, et set erreur avec ses erreurs propres et ne fait pas le set
-         * si erreur != vide, \DomainException avec les erreur en json
-         */
+        $this->setName($data['name']);
+        $this->setStatus($data['status']);
+
         $erreurs = $this->getErreurs();
         if (!empty($erreurs)) {
             throw new \DomainException(json_encode($erreurs));
         }
     }
 
-    private function setName()
+    /**
+     * Tente l'insertion d'une donnée en tant que champ « name »
+     *
+     * Stocke une erreur si la donnée ne colle pas au domaine
+     *
+     * @param string $name
+     */
+    private function setName($name)
     {
         // domaine de name ?
+        if (empty($name)) {
+            $this->setErreur('name', 'Le champ est vide');
+            return;
+        }
 
+        $this->dataUpdated['name'] = $name;
     }
 
-    private function setStatus()
+
+    /**
+     * Tente l'insertion d'une donnée en tant que champ « status »
+     *
+     * Stocke une erreur si la donnée ne colle pas au domaine
+     *
+     * @param string $status
+     */
+    private function setStatus($status)
     {
         // domaine de status ?
-    }
+        if (empty($status)) {
+            $this->setErreur('status', 'Le champ est vide');
+            return;
+        }
 
-    // isPure() ?
+        $this->dataUpdated['status'] = $status;
+    }
 }

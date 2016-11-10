@@ -23,21 +23,41 @@ abstract class AModel
     /**
      * @var array $data Données de l'objet
      */
-    protected $data;
+    protected $data = [];
+
+    /**
+     * @var array $data Données d'édition de l'objet
+     */
+    protected $dataUpdated = [];
 
     /**
      * @var array $erreurs Erreurs de domaine sur l'édition de l'objet
      */
-    private $erreurs;
+    private $erreurs = [];
 
-    public function __construct(array $data, $id = -1)
+    /**
+     * Construit l'objet de manière pure,
+     * autrement dit, avec données vérifiées au sens du domaine, donc venant du stockage
+     *
+     * Oblige par construction à avoir un offset 'id' dans le paramètre
+     *
+     * @param array $data
+     */
+    public function __construct(array $data)
     {
-        if (-1 !== $id) {
+        if (isset($data['id'])) {
+            $id = $data['id'];
             $this->id = (int) $id;
+            unset($data['id']);
+            $this->data = $data;
         }
-        $this->data = $data;
     }
 
+    /**
+     * Retourne l'identifiant unique de l'objet
+     *
+     * @return int
+     */
     public function getId()
     {
         return $this->id;
@@ -52,10 +72,11 @@ abstract class AModel
      */
     abstract public function populate(array $data);
 
-    // populate pour le set massif (private) avec un retour d'erreur collectif, sinon dans dataUpdated
-
     /**
-     * 
+     * Ajoute une erreur au champ
+     *
+     * @param string $champ Champ
+     * @param string $message Message d'erreur
      */
     protected function setErreur($champ, $message)
     {
@@ -63,7 +84,9 @@ abstract class AModel
     }
 
     /**
+     * Retourne la liste des erreurs de domaine
      *
+     * @return array
      */
     protected function getErreurs()
     {
