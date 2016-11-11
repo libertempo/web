@@ -58,6 +58,17 @@ abstract class ADao
      */
     abstract public function post(array $data);
 
+    /*************************************************
+     * PUT
+     *************************************************/
+
+    /**
+     * Poste une nouvelle ressource
+     *
+     * @return int Id de la ressource nouvellement créée
+     */
+    abstract public function put(array $data);
+
     /**
      * Retourne le nom de la table
      *

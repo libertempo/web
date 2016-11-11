@@ -120,15 +120,6 @@ class Repository extends \Api\App\Libraries\ARepository
      */
     public function postOne(array $data)
     {
-        /*
-         * pour le post, on set le model (vide) dans le contrôleur pour pouvoir
-         * travailler dessus (et le mock), mais à vide. Les différents set ici
-         * renverrons les infos nécessaires au retour d'erreur. Sinon model.dataUpdated
-         *
-         * Pour le put, dans le contrôleur, on get le model et on fait pareil
-         *
-         * par essence, un modèle en transit ne peut pas être immuable
-         */
         if (!$this->hasAllRequired($data)) {
             throw new MissingArgumentException('');
         }
@@ -195,5 +186,17 @@ class Repository extends \Api\App\Libraries\ARepository
      */
     public function putOne(array $data)
     {
+        if (!$this->hasAllRequired($data)) {
+            throw new MissingArgumentException('');
+        }
+
+        try {
+            $this->model->populate($data);
+            $dataDao = $this->getModel2DataDao($this->model);
+
+            return $this->dao->put($dataDao);
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 }

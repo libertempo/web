@@ -101,6 +101,17 @@ class Dao extends \Api\App\Libraries\ADao
         return $this->storageConnector->lastInsertId();
     }
 
+    /*************************************************
+     * PUT
+     *************************************************/
+
+    /**
+     * @inheritDoc
+     */
+    public function put(array $data)
+    {
+    }
+
     /**
      * @inheritDoc
      */

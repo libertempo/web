@@ -220,6 +220,7 @@ final class Controller extends \Api\App\Libraries\AController
         }
 
         try {
+            $this->repository->setModel($planning);
             $this->repository->putOne($body);
             $code = 204;
             $data = [

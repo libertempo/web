@@ -18,11 +18,21 @@ final class Repository extends \Atoum
      */
     private $dao;
 
+    /**
+     * @var \mock\Api\App\Components\Planning\Model Mock du Modèle de planning
+     */
+    private $model;
+
     public function beforeTestMethod($method)
     {
         $this->mockGenerator->orphanize('__construct');
         $this->mockGenerator->shuntParentClassCalls();
         $this->dao = new \mock\Api\App\Components\Planning\Dao();
+        $this->mockGenerator->orphanize('__construct');
+        $this->model = new \mock\Api\App\Components\Planning\Model();
+        $this->model->getMockController()->getId = 42;
+        $this->model->getMockController()->getName = 12;
+        $this->model->getMockController()->getStatus = 12;
     }
 
     /*************************************************
@@ -108,7 +118,7 @@ final class Repository extends \Atoum
     }
 
     /**
-     * Teste la méthode postOne avec un champ manquant
+     * Teste la méthode postOne avec un champ incohérent
      */
     public function testPostOneBadDomain()
     {
@@ -140,5 +150,51 @@ final class Repository extends \Atoum
         $post = $repository->postOne(['name' => 'bob', 'status' => 'pop']);
 
         $this->integer($post);
+    }
+
+    /*************************************************
+     * PUT
+     *************************************************/
+
+    /**
+     * Teste la méthode putOne avec un champ manquant
+     */
+    public function testPutOneMissingArgument()
+    {
+        $repository = new _Repository($this->dao);
+
+        $this->exception(function () use ($repository) {
+            $repository->putOne(['name' => 'bob']);
+        })->isInstanceOf('\Api\App\Exceptions\MissingArgumentException');
+    }
+
+    /**
+     * Teste la méthode putOne avec un champ incohérent
+     */
+    public function testPutOneBadDomain()
+    {
+        $repository = new _Repository($this->dao);
+        $model = new \mock\Api\App\Components\Planning\Model([]);
+        $model->getMockController()->populate = function () {
+            throw new \DomainException('');
+        };
+        $repository->setModel($model);
+
+        $this->exception(function () use ($repository) {
+            $repository->putOne(['name' => 'bob', 'status' => 'bab']);
+        })->isInstanceOf('\DomainException');
+    }
+
+    /**
+     * Teste la méthode putOne tout ok
+     */
+    public function testPutOneOk()
+    {
+        $repository = new _Repository($this->dao);
+        $repository->setModel($this->model);
+
+        $result = $repository->putOne(['name' => 'baba', 'status' => 4]);
+
+        $this->variable($result)->isNull();
     }
 }

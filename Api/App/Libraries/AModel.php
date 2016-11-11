@@ -2,7 +2,7 @@
 namespace Api\App\Libraries;
 
 /**
- * Domain Model
+ * Domain Model. Par essence, ne peut pas être immuable.
  *
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina
