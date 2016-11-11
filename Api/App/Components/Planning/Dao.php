@@ -19,7 +19,7 @@ class Dao extends \Api\App\Libraries\ADao
      *************************************************/
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getById($id)
     {
@@ -36,7 +36,7 @@ class Dao extends \Api\App\Libraries\ADao
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getList(array $parametres)
     {
@@ -90,10 +90,19 @@ class Dao extends \Api\App\Libraries\ADao
      */
     public function post(array $data)
     {
+        $req = 'INSERT INTO ' . $this->getTableName() . ' (name, status)
+            VALUES (:name, :status)';
+        $res = $this->storageConnector->prepare($req);
+        $res->execute([
+            ':name' => $data['name'],
+            'status' => $data['status']
+        ]);
+
+        return $this->storageConnector->lastInsertId();
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     final protected function getTableName()
     {

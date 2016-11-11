@@ -13,6 +13,10 @@ use \Api\App\Components\Planning\Dao as _Dao;
  */
 final class Dao extends \Api\Tests\Units\App\Libraries\ADao
 {
+    /*************************************************
+     * GET
+     *************************************************/
+
     /**
      * Teste la méthode getById avec un id non trouvé
      */
@@ -63,5 +67,25 @@ final class Dao extends \Api\Tests\Units\App\Libraries\ADao
         $get = $dao->getList([]);
 
         $this->array($get[0])->isNotEmpty();
+    }
+
+    /*************************************************
+     * POST
+     *************************************************/
+
+    /**
+    * Teste la méthode post quand tout est ok
+     */
+    public function testPostOk()
+    {
+        $this->connector->getMockController()->lastInsertId = 314;
+        $dao = new _Dao($this->connector);
+
+        $postId = $dao->post([
+            'name' => 'name',
+            'status' => 59,
+        ]);
+
+        $this->integer($postId)->isIdenticalTo(314);
     }
 }

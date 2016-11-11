@@ -53,13 +53,15 @@ $app->add(function (IRequest $request, IResponse $response, callable $next) {
 $app->add(function (IRequest $request, IResponse $response, callable $next) {
     try {
         require_once CONFIG_PATH . 'dbconnect.php';
-        $this['storageConnector'] = new \PDO(
+        $dbh = new \PDO(
             'mysql:host=localhost;dbname=' . $mysql_database,
             $mysql_user,
             $mysql_pass
         );
+        $dbh->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        $this['storageConnector'] = $dbh;
 
-    return $next($request, $response);
+        return $next($request, $response);
     /* Fallback */
     } catch (\Exception $e) {
         return call_user_func(
