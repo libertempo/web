@@ -28,6 +28,7 @@ final class Controller extends \Api\App\Libraries\AController
      *
      * @param IRequest $request Requête Http
      * @param IResponse $response Réponse Http
+     * @param array $arguments Arguments de route
      *
      * @return IResponse
      * @throws \Exception en cas d'erreur inconnue (fallback, ne doit pas arriver)
@@ -154,21 +155,13 @@ final class Controller extends \Api\App\Libraries\AController
     {
         $body = $request->getParsedBody();
         if (null === $body) {
-            $code = 400;
-            $data = [
-                'code' => $code,
-                'status' => 'error',
-                'message' => 'Bad Request',
-                'data' => 'Body request is not a json',
-            ];
-
-            return $response->withJson($data, $code);
+            return $this->getResponseBadRequest($response);
         }
 
         try {
             $this->repository->setModel(new Model([]));
             $planningId = $this->repository->postOne($body);
-            $code = 200;
+            $code = 201;
             $data = [
                 'code' => $code,
                 'status' => 'success',
@@ -180,27 +173,77 @@ final class Controller extends \Api\App\Libraries\AController
 
             return $response->withJson($data, $code);
         } catch (MissingArgumentException $e) {
-            $code = 412;
-            $data = [
-                'code' => $code,
-                'status' => 'error',
-                'message' => 'Precondition Failed',
-                'data' => 'Missing required argument',
-            ];
-
-            return $response->withJson($data, $code);
+            return $this->getResponseMissingArgument($response);
         } catch (\DomainException $e) {
-            $code = 412;
+            return $this->getResponseBadDomainArgument($response, $e);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /*************************************************
+     * PUT
+     *************************************************/
+
+    /**
+     * Execute l'ordre HTTP PUT
+     *
+     * @param IRequest $request Requête Http
+     * @param IResponse $response Réponse Http
+     * @param array $arguments Arguments de route
+     *
+     * @return IResponse
+     * @throws \Exception en cas d'erreur inconnue (fallback, ne doit pas arriver)
+     */
+    public function put(IRequest $request, IResponse $response, array $arguments)
+    {
+        $body = $request->getParsedBody();
+        if (null === $body) {
+            return $this->getResponseBadRequest($response);
+        }
+
+        $id = (int) $arguments['planningId'];
+        try {
+            $planning = $this->repository->getOne($id);
+        } catch (\DomainException $e) {
+            $code = 404;
             $data = [
                 'code' => $code,
                 'status' => 'error',
-                'message' => 'Precondition Failed',
-                'data' => $e->getMessage(), // exploser pour avoir toutes les données en erreur ?
+                'message' => 'Not Found',
+                'data' => 'Element « plannings#' . $id . ' » is not a valid resource',
             ];
 
             return $response->withJson($data, $code);
         } catch (\Exception $e) {
             throw $e;
         }
+
+        try {
+            $this->repository->putOne($body);
+            $code = 204;
+            $data = [
+                'code' => $code,
+                'status' => 'success',
+                'message' => '',
+                'data' => '',
+            ];
+
+            return $response->withJson($data, $code);
+        } catch (MissingArgumentException $e) {
+            return $this->getResponseMissingArgument($response);
+        } catch (\DomainException $e) {
+            return $this->getResponseBadDomainArgument($response, $e);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /*************************************************
+     * DELETE
+     *************************************************/
+
+    public function delete()
+    {
     }
 }

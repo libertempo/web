@@ -68,7 +68,8 @@ abstract class AModel
      *
      * @param array $data Données à insérer / mettre à jour
      *
-     * @throws \DomainException Si une ou plusieurs données ne sont pas dans les bons domaines de définition
+     * @throws \DomainException Si une ou plusieurs données ne sont pas dans les bons domaines de définition, où les erreurs sont jsonEncodée dans le message
+     * @example ['nomChamp' => [listeErreurs]]
      */
     abstract public function populate(array $data);
 

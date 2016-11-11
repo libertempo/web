@@ -112,4 +112,15 @@ class Repository extends \Api\App\Libraries\ARepository
     public function postOne(array $data)
     {
     }
+
+    /*************************************************
+     * PUT
+     *************************************************/
+
+    /**
+     * @inheritDoc
+     */
+    public function putOne(array $data)
+    {
+    }
 }

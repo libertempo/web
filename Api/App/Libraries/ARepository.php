@@ -72,4 +72,14 @@ abstract class ARepository
      * @throws \DomainException Si un élément de la ressource n'est pas dans le bon domaine de définition
      */
     abstract public function postOne(array $data);
+
+    /**
+     * Met à jour une ressource unique
+     *
+     * @param array $data Données à mettre à jour
+     *
+     * @throws MissingArgumentException Si un élément requis n'est pas présent
+     * @throws \DomainException Si un élément de la ressource n'est pas dans le bon domaine de définition
+     */
+    abstract public function putOne(array $data);
 }

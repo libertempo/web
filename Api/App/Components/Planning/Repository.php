@@ -138,7 +138,6 @@ class Repository extends \Api\App\Libraries\ARepository
             $dataDao = $this->getModel2DataDao($this->model);
 
             return $this->dao->post($dataDao);
-        // TODO : /!\ Surveiller le comportement si c'est un cas d'erreur de domaine (où le message est un json) et le fallback inconnu
         } catch (\Exception $e) {
             throw $e;
         }
@@ -185,5 +184,16 @@ class Repository extends \Api\App\Libraries\ARepository
     private function getListRequired()
     {
         return ['name', 'status'];
+    }
+
+    /*************************************************
+     * PUT
+     *************************************************/
+
+    /**
+     * @inheritDoc
+     */
+    public function putOne(array $data)
+    {
     }
 }

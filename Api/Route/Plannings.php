@@ -11,7 +11,7 @@ $app->group('/plannings', function () {
     $this->group('/{planningId:[0-9]+}', function () use ($planningNS) {
         /* Detail */
         $this->get('', $planningNS . ':get')->setName('getPlanningDetail');
-        //$this->put('', $planningNS . ':put')->setName('putPlanningDetail');
+        $this->put('', $planningNS . ':put')->setName('putPlanningDetail');
         //$this->delete('', $planningNS . ':delete')->setName('putPlanningDetail');
 
         /* Dependances de plannings */

@@ -9,7 +9,7 @@ namespace Api\Tests\Units\App\Libraries;
  *
  * @since 0.1
  */
-class ADao extends \Atoum
+abstract class ADao extends \Atoum
 {
     /**
      * @var \mock\PDO Mock du connecteur
