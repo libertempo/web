@@ -94,7 +94,7 @@ class Dao extends \Api\App\Libraries\ADao
     /**
      * @inheritDoc
      */
-    public function put(array $data)
+    public function put(array $data, $id)
     {
     }
 

@@ -95,7 +95,7 @@ class Dao extends \Api\App\Libraries\ADao
         $res = $this->storageConnector->prepare($req);
         $res->execute([
             ':name' => $data['name'],
-            'status' => $data['status']
+            'status' => $data['status'],
         ]);
 
         return $this->storageConnector->lastInsertId();
@@ -108,8 +108,17 @@ class Dao extends \Api\App\Libraries\ADao
     /**
      * @inheritDoc
      */
-    public function put(array $data)
+    public function put(array $data, $id)
     {
+        $req = 'UPDATE ' . $this->getTableName() . '
+            SET name = :name, status = :status
+            WHERE id = :id';
+        $res = $this->storageConnector->prepare($req);
+        $res->execute([
+            ':name' => $data['name'],
+            'status' => $data['status'],
+            'id' => $id,
+        ]);
     }
 
     /**

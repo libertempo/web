@@ -88,4 +88,23 @@ final class Dao extends \Api\Tests\Units\App\Libraries\ADao
 
         $this->integer($postId)->isIdenticalTo(314);
     }
+
+    /*************************************************
+     * PUT
+     *************************************************/
+
+    /**
+    * Teste la méthode put quand tout est ok
+     */
+    public function testPutOk()
+    {
+        $dao = new _Dao($this->connector);
+
+        $put = $dao->put([
+            'name' => 'name',
+            'status' => 59,
+        ], 12);
+
+        $this->variable($put)->isNull();
+    }
 }

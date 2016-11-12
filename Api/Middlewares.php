@@ -58,6 +58,7 @@ $app->add(function (IRequest $request, IResponse $response, callable $next) {
             $mysql_user,
             $mysql_pass
         );
+        // MYSQL_ATTR_FOUND_ROWS
         $dbh->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         $this['storageConnector'] = $dbh;
 

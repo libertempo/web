@@ -54,6 +54,8 @@ abstract class ADao
     /**
      * Poste une nouvelle ressource
      *
+     * @param array $data Données à insérer
+     *
      * @return int Id de la ressource nouvellement créée
      */
     abstract public function post(array $data);
@@ -65,9 +67,10 @@ abstract class ADao
     /**
      * Poste une nouvelle ressource
      *
-     * @return int Id de la ressource nouvellement créée
+     * @param array $data Données à mettre à jour
+     * @param int $id Id de l'élément à mettre à jour
      */
-    abstract public function put(array $data);
+    abstract public function put(array $data, $id);
 
     /**
      * Retourne le nom de la table
