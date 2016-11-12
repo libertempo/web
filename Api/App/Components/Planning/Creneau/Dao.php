@@ -98,6 +98,17 @@ class Dao extends \Api\App\Libraries\ADao
     {
     }
 
+    /*************************************************
+     * DELETE
+     *************************************************/
+
+    /**
+     * @inheritDoc
+     */
+    public function delete($id)
+    {
+    }
+
     /**
      * @inheritDoc
      */

@@ -23,11 +23,6 @@ abstract class ARepository
      */
     protected $dao;
 
-    /**
-     * @var \Api\App\Libraries\AModel $model Domain Model
-     */
-    protected $model;
-
     public function __construct(\Api\App\Libraries\ADao $dao)
     {
         $this->dao = $dao;

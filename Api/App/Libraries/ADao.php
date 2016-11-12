@@ -72,6 +72,19 @@ abstract class ADao
      */
     abstract public function put(array $data, $id);
 
+    /*************************************************
+     * DELETE
+     *************************************************/
+
+    /**
+     * Poste une nouvelle ressource
+     *
+     * @param int $id Id de l'élément à mettre à supprimer
+     *
+     * @return int Nombre d'éléments affectés
+     */
+    abstract public function delete($id);
+
     /**
      * Retourne le nom de la table
      *

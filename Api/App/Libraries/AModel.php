@@ -93,4 +93,14 @@ abstract class AModel
     {
         return $this->erreurs;
     }
+
+    /**
+     * Purge toutes les données de l'objet
+     */
+    public function reset()
+    {
+        $this->id = null;
+        $this->data = [];
+        $this->dataUpdated = [];
+    }
 }

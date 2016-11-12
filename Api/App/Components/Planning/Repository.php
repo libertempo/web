@@ -210,5 +210,11 @@ class Repository extends \Api\App\Libraries\ARepository
      */
     public function deleteOne(AModel $model)
     {
+        try {
+            $model->reset();
+            $this->dao->delete($model->getId());
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 }

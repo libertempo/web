@@ -198,24 +198,31 @@ final class Repository extends \Atoum
      * DELETE
      *************************************************/
 
-    // delete ok
-
+    /**
+     * Teste le fallback de la méthode deleteOne
+     */
     public function testDeleteFallback()
     {
-        $repository = new _Repository($this->dao);
-        $model = new \mock\Api\App\Components\Planning\Model([]);
-        $model->getMockController()->populate = function () {
-            throw new \DomainException('');
+        $this->dao->getMockController()->delete = function () {
+            throw new \LogicException('');
         };
+        $repository = new _Repository($this->dao);
 
-        $this->exception(function () use ($repository, $model) {
-            $repository->putOne(['name' => 'bob', 'status' => 'bab'], $model);
-        })->isInstanceOf('\DomainException');
+        $this->exception(function () use ($repository) {
+            $repository->deleteOne(new \mock\Api\App\Components\Planning\Model([]));
+        })->isInstanceOf('\LogicException');
 
     }
 
+    /**
+     * Teste la méthode deleteOne tout ok
+     */
     public function testDeleteOk()
     {
+        $this->dao->getMockController()->delete = 4;
+        $repository = new _Repository($this->dao);
+        $model = new \mock\Api\App\Components\Planning\Model([]);
 
+        $this->variable($repository->deleteOne($model))->isNull();
     }
 }
