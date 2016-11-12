@@ -13,6 +13,10 @@ use \Api\App\Components\Planning\Creneau\Repository as _Repository;
  */
 final class Repository extends \Atoum
 {
+    /*************************************************
+     * GET
+     *************************************************/
+
     /**
      * @var \mock\Api\App\Components\Planning\Creneau\Dao Mock du DAO du planning
      */
@@ -94,4 +98,12 @@ final class Repository extends \Atoum
         $this->array($models)->hasKey(42);
         $this->object($models[42])->isInstanceOf('\Api\App\Libraries\AModel');
     }
+
+    /*************************************************
+     * POST
+     *************************************************/
+
+    // post avec un argument manquant
+    // post avec un argument dans le bad domaine
+    //
 }
