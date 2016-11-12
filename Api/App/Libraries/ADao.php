@@ -65,7 +65,7 @@ abstract class ADao
      *************************************************/
 
     /**
-     * Poste une nouvelle ressource
+     * Met à jour une ressource
      *
      * @param array $data Données à mettre à jour
      * @param int $id Id de l'élément à mettre à jour
@@ -77,9 +77,9 @@ abstract class ADao
      *************************************************/
 
     /**
-     * Poste une nouvelle ressource
+     * Détruit une nouvelle ressource
      *
-     * @param int $id Id de l'élément à mettre à supprimer
+     * @param int $id Id de l'élément à supprimer
      *
      * @return int Nombre d'éléments affectés
      */

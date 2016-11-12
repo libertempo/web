@@ -11,7 +11,7 @@ use \Api\App\Components\Planning\Model as _Model;
  *
  * @since 0.1
  */
-final class Model extends \Atoum
+final class Model extends \Api\Tests\Units\App\Libraries\AModel
 {
     /**
      * Teste la méthode __construct avec un Id (typiquement lors d'un get())
@@ -66,5 +66,19 @@ final class Model extends \Atoum
 
         $this->string($model->getName())->isIdenticalTo($name);
         $this->integer($model->getStatus())->isIdenticalTo($status);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function testReset()
+    {
+        $id = 3;
+        $name = 'name';
+        $status = 4;
+
+        $model = new _Model(['id' => $id, 'name' => 'name', 'status' => $status]);
+
+        $this->assertReset($model);
     }
 }

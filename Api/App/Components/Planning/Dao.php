@@ -130,6 +130,12 @@ class Dao extends \Api\App\Libraries\ADao
      */
     public function delete($id)
     {
+        $req = 'DELETE FROM ' . $this->getTableName() . '
+            WHERE id = :id';
+        $res = $this->storageConnector->prepare($req);
+        $res->execute([':id' => $id]);
+
+        return $res->rowCount();
     }
 
     /**

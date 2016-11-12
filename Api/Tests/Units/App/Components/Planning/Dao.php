@@ -57,7 +57,7 @@ final class Dao extends \Api\Tests\Units\App\Libraries\ADao
     }
 
     /**
-    * Teste la méthode getList avec des critères pertinents
+     * Teste la méthode getList avec des critères pertinents
      */
     public function testGetListFound()
     {
@@ -74,7 +74,7 @@ final class Dao extends \Api\Tests\Units\App\Libraries\ADao
      *************************************************/
 
     /**
-    * Teste la méthode post quand tout est ok
+     * Teste la méthode post quand tout est ok
      */
     public function testPostOk()
     {
@@ -94,7 +94,7 @@ final class Dao extends \Api\Tests\Units\App\Libraries\ADao
      *************************************************/
 
     /**
-    * Teste la méthode put quand tout est ok
+     * Teste la méthode put quand tout est ok
      */
     public function testPutOk()
     {
@@ -106,5 +106,22 @@ final class Dao extends \Api\Tests\Units\App\Libraries\ADao
         ], 12);
 
         $this->variable($put)->isNull();
+    }
+
+    /*************************************************
+     * DELETE
+     *************************************************/
+
+    /**
+     * Teste la méthode delete quand tout est ok
+     */
+    public function testDeleteOk()
+    {
+        $this->statement->getMockController()->rowCount = 1;
+        $dao = new _Dao($this->connector);
+
+        $res = $dao->delete(7);
+
+        $this->integer($res)->isIdenticalTo(1);
     }
 }
