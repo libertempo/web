@@ -1,6 +1,7 @@
 <?php
 namespace Api\App\Components\Planning\Creneau;
 
+use Api\App\Exceptions\MissingArgumentException;
 use Psr\Http\Message\ServerRequestInterface as IRequest;
 use Psr\Http\Message\ResponseInterface as IResponse;
 
@@ -18,10 +19,6 @@ use Psr\Http\Message\ResponseInterface as IResponse;
  */
 final class Controller extends \Api\App\Libraries\AController
 {
-    public function post(IRequest $request, IResponse $response, array $arguments)
-    {
-    }
-
     /*************************************************
      * GET
      *************************************************/
@@ -145,5 +142,51 @@ final class Controller extends \Api\App\Libraries\AController
             'debut' => $model->getDebut(),
             'fin' => $model->getFin(),
         ];
+    }
+
+    /*************************************************
+     * POST
+     *************************************************/
+
+     /**
+      * Execute l'ordre HTTP POST
+      *
+      * @param IRequest $request Requête Http
+      * @param IResponse $response Réponse Http
+      *
+      * @return IResponse
+      * @throws \Exception en cas d'erreur inconnue (fallback, ne doit pas arriver)
+      */
+    public function post(IRequest $request, IResponse $response)
+    {
+        $body = $request->getParsedBody();
+        if (null === $body) {
+            return $this->getResponseBadRequest($response);
+        }
+
+        try {
+            $creneauxIds = $this->repository->postList($body);
+            $dataMessage = [];
+            foreach ($creneauxIds as $id) {
+                $dataMessage[] = $this->router->pathFor('getPlanningCreneauDetail', [
+                    'creneauId' => $id,
+                ]);
+            }
+            $code = 201;
+            $data = [
+                'code' => $code,
+                'status' => 'success',
+                'message' => '',
+                'data' => $dataMessage,
+            ];
+
+            return $response->withJson($data, $code);
+        } catch (MissingArgumentException $e) {
+            return $this->getResponseMissingArgument($response);
+        } catch (\DomainException $e) {
+            return $this->getResponseBadDomainArgument($response, $e);
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 }

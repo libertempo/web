@@ -24,7 +24,7 @@ $app->group('/plannings', function () {
 
             /* Collection creneaux */
             $this->get('', $creneauNS . ':get')->setName('getPlanningCreneauListe');
-            //$this->post('', $creneauNS . ':post')->setName('postPlanningCreneauListe');
+            $this->post('', $creneauNS . ':post')->setName('postPlanningCreneauListe');
         });
     });
 

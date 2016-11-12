@@ -67,7 +67,7 @@ final class Controller extends \Api\Tests\Units\App\Libraries\AController
     }
 
     /**
-    * Teste la méthode get d'un détail non trouvé
+     * Teste la méthode get d'un détail non trouvé
      */
     public function testGetOneNotFound()
     {
@@ -97,7 +97,7 @@ final class Controller extends \Api\Tests\Units\App\Libraries\AController
     }
 
     /**
-    * Teste la méthode get d'une liste trouvée
+     * Teste la méthode get d'une liste trouvée
      */
     public function testGetListFound()
     {
@@ -120,7 +120,7 @@ final class Controller extends \Api\Tests\Units\App\Libraries\AController
     }
 
     /**
-    * Teste la méthode get d'une liste non trouvée
+     * Teste la méthode get d'une liste non trouvée
      */
     public function testGetListNotFound()
     {
@@ -147,5 +147,95 @@ final class Controller extends \Api\Tests\Units\App\Libraries\AController
         $this->exception(function () use ($controller) {
             $controller->get($this->request, $this->response, ['planningId' => 45]);
         })->isInstanceOf('\Exception');
+    }
+
+    /*************************************************
+     * POST
+     *************************************************/
+
+    // post ok
+
+    /**
+     * Teste la méthode post d'un json mal formé
+     */
+    public function testPostJsonBadformat()
+    {
+        // Le framework fait du traitement, un mauvais json est simplement null
+        $this->request->getMockController()->getParsedBody = null;
+        $controller = new _Controller($this->repository, $this->router);
+
+        $response = $controller->post($this->request, $this->response);
+
+        $this->assertError($response, 400);
+    }
+
+    /**
+     * Teste la méthode post avec un argument de body manquant
+     */
+    public function testPostMissingArgument()
+    {
+        $this->request->getMockController()->getParsedBody = [[]];
+        $this->repository->getMockController()->postList = function () {
+            throw new \Api\App\Exceptions\MissingArgumentException('');
+        };
+        $controller = new _Controller($this->repository, $this->router);
+
+        $response = $controller->post($this->request, $this->response);
+
+        $this->assertError($response, 412);
+    }
+
+    /**
+     * Teste la méthode post avec un argument de body incohérent
+     */
+    public function testPostBadDomain()
+    {
+        $this->request->getMockController()->getParsedBody = [[]];
+        $this->repository->getMockController()->postList = function () {
+            throw new \DomainException('');
+        };
+        $controller = new _Controller($this->repository, $this->router);
+
+        $response = $controller->post($this->request, $this->response);
+
+        $this->assertError($response, 412);
+    }
+
+    /**
+     * Teste le fallback de la méthode post
+     */
+    public function testPostFallback()
+    {
+        $this->request->getMockController()->getParsedBody = [[]];
+        $this->repository->getMockController()->postList = function () {
+            throw new \LogicException('');
+        };
+        $controller = new _Controller($this->repository, $this->router);
+
+        $this->exception(function () use ($controller) {
+            $controller->post($this->request, $this->response);
+        })->isInstanceOf('\Exception');
+    }
+    /**
+     * Teste la méthode post tout ok
+     */
+    public function testPostOk()
+    {
+        $this->request->getMockController()->getParsedBody = [[]];
+        $this->router->getMockController()->pathFor = '';
+        $this->repository->getMockController()->postList = [42, 74, 314];
+        $controller = new _Controller($this->repository, $this->router);
+
+        $response = $controller->post($this->request, $this->response);
+        $data = $this->getJsonDecoded($response->getBody());
+
+        $this->integer($response->getStatusCode())->isIdenticalTo(201);
+        $this->array($data)
+            ->integer['code']->isIdenticalTo(201)
+            ->string['status']->isIdenticalTo('success')
+            ->string['message']->isIdenticalTo('')
+            ->array['data']->isNotEmpty()
+        ;
+        $this->integer(count($data['data']))->isIdenticalTo(3);
     }
 }

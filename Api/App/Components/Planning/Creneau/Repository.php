@@ -1,6 +1,7 @@
 <?php
 namespace Api\App\Components\Planning\Creneau;
 
+use Api\App\Exceptions\MissingArgumentException;
 use Api\App\Libraries\AModel;
 
 /**
@@ -107,6 +108,19 @@ class Repository extends \Api\App\Libraries\ARepository
     /*************************************************
      * POST
      *************************************************/
+
+    /**
+     * Poste une liste de ressource
+     *
+     * @param array $data Tableau de données à poster
+     *
+     * @return array Tableau d'id des créneaux nouvellement créés
+     * @throws MissingArgumentException Si un élément requis n'est pas présent
+     * @throws \DomainException Si un élément de la ressource n'est pas dans le bon domaine de définition
+     */
+    public function postList(array $data)
+    {
+    }
 
     /**
      * @inheritDoc
