@@ -33,14 +33,6 @@ abstract class ARepository
         $this->dao = $dao;
     }
 
-    /**
-     * Insère un modèle de travail dans le repository
-     */
-    public function setModel(\Api\App\Libraries\AModel $model)
-    {
-        $this->model = $model;
-    }
-
     /*************************************************
      * GET
      *************************************************/
@@ -74,12 +66,13 @@ abstract class ARepository
      * Poste une ressource unique
      *
      * @param array $data Données à poster
+     * @param AModel $model [Vide par définition]
      *
      * @return int Id de la ressource nouvellement insérée
      * @throws MissingArgumentException Si un élément requis n'est pas présent
      * @throws \DomainException Si un élément de la ressource n'est pas dans le bon domaine de définition
      */
-    abstract public function postOne(array $data);
+    abstract public function postOne(array $data, AModel $model);
 
     /*************************************************
      * PUT
@@ -89,11 +82,12 @@ abstract class ARepository
      * Met à jour une ressource unique
      *
      * @param array $data Données à mettre à jour
+     * @param AModel $model
      *
      * @throws MissingArgumentException Si un élément requis n'est pas présent
      * @throws \DomainException Si un élément de la ressource n'est pas dans le bon domaine de définition
      */
-    abstract public function putOne(array $data);
+    abstract public function putOne(array $data, AModel $model);
 
     /*************************************************
      * DELETE
@@ -102,7 +96,7 @@ abstract class ARepository
     /**
      * Détruit une ressource unique
      *
-     * @param int $id Id de la ressource
+     * @param AModel $model
      */
-    abstract public function deleteOne($id);
+    abstract public function deleteOne(AModel $model);
 }

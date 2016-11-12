@@ -2,6 +2,7 @@
 namespace Api\App\Components\Planning;
 
 use Api\App\Exceptions\MissingArgumentException;
+use Api\App\Libraries\AModel;
 
 /**
  * {@inheritDoc}
@@ -40,7 +41,7 @@ class Repository extends \Api\App\Libraries\ARepository
      */
     public function getList(array $parametres)
     {
-        /* retourner une collection pour avoir le total, hors limite forcée (utile pour la pagination) */
+        /* TODO: retourner une collection pour avoir le total, hors limite forcée (utile pour la pagination) */
         /*
         several params :
         offset (first, !isset => 0) / start-after ?
@@ -118,15 +119,15 @@ class Repository extends \Api\App\Libraries\ARepository
     /**
      * @inheritDoc
      */
-    public function postOne(array $data)
+    public function postOne(array $data, AModel $model)
     {
         if (!$this->hasAllRequired($data)) {
             throw new MissingArgumentException('');
         }
 
         try {
-            $this->model->populate($data);
-            $dataDao = $this->getModel2DataDao($this->model);
+            $model->populate($data);
+            $dataDao = $this->getModel2DataDao($model);
 
             return $this->dao->post($dataDao);
         } catch (\Exception $e) {
@@ -141,7 +142,7 @@ class Repository extends \Api\App\Libraries\ARepository
      *
      * @return array
      */
-    private function getModel2DataDao(Model $model)
+    private function getModel2DataDao(AModel $model)
     {
         return [
             'name' => $model->getName(),
@@ -184,17 +185,17 @@ class Repository extends \Api\App\Libraries\ARepository
     /**
      * @inheritDoc
      */
-    public function putOne(array $data)
+    public function putOne(array $data, AModel $model)
     {
         if (!$this->hasAllRequired($data)) {
             throw new MissingArgumentException('');
         }
 
         try {
-            $this->model->populate($data);
-            $dataDao = $this->getModel2DataDao($this->model);
+            $model->populate($data);
+            $dataDao = $this->getModel2DataDao($model);
 
-            return $this->dao->put($dataDao, $this->model->getId());
+            return $this->dao->put($dataDao, $model->getId());
         } catch (\Exception $e) {
             throw $e;
         }
@@ -207,7 +208,7 @@ class Repository extends \Api\App\Libraries\ARepository
     /**
      * @inheritDoc
      */
-    public function deleteOne($id)
+    public function deleteOne(AModel $model)
     {
     }
 }

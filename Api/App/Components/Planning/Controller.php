@@ -143,8 +143,7 @@ final class Controller extends \Api\App\Libraries\AController
         }
 
         try {
-            $this->repository->setModel(new Model([]));
-            $planningId = $this->repository->postOne($body);
+            $planningId = $this->repository->postOne($body, new Model([]));
             $code = 201;
             $data = [
                 'code' => $code,
@@ -196,8 +195,7 @@ final class Controller extends \Api\App\Libraries\AController
         }
 
         try {
-            $this->repository->setModel($planning);
-            $this->repository->putOne($body);
+            $this->repository->putOne($body, $planning);
             $code = 204;
             $data = [
                 'code' => $code,
@@ -234,8 +232,8 @@ final class Controller extends \Api\App\Libraries\AController
     {
         $id = (int) $arguments['planningId'];
         try {
-            $this->repository->getOne($id);
-            $this->repository->deleteOne($id);
+            $planning = $this->repository->getOne($id);
+            $this->repository->deleteOne($planning);
             $code = 200;
             $data = [
                 'code' => $code,

@@ -113,7 +113,7 @@ final class Repository extends \Atoum
         $repository = new _Repository($this->dao);
 
         $this->exception(function () use ($repository) {
-            $repository->postOne(['name' => 'bob']);
+            $repository->postOne(['name' => 'bob'], new \mock\Api\App\Components\Planning\Model([]));
         })->isInstanceOf('\Api\App\Exceptions\MissingArgumentException');
     }
 
@@ -127,10 +127,9 @@ final class Repository extends \Atoum
         $model->getMockController()->populate = function () {
             throw new \DomainException('');
         };
-        $repository->setModel($model);
 
-        $this->exception(function () use ($repository) {
-            $repository->postOne(['name' => 'bob', 'status' => 'bab']);
+        $this->exception(function () use ($repository, $model) {
+            $repository->postOne(['name' => 'bob', 'status' => 'bab'], $model);
         })->isInstanceOf('\DomainException');
     }
 
@@ -144,10 +143,9 @@ final class Repository extends \Atoum
         $model->getMockController()->populate = '';
         $model->getMockController()->getName = 'name';
         $model->getMockController()->getStatus = 'status';
-        $repository->setModel($model);
         $this->dao->getMockController()->post = 3;
 
-        $post = $repository->postOne(['name' => 'bob', 'status' => 'pop']);
+        $post = $repository->postOne(['name' => 'bob', 'status' => 'pop'], $model);
 
         $this->integer($post);
     }
@@ -164,7 +162,7 @@ final class Repository extends \Atoum
         $repository = new _Repository($this->dao);
 
         $this->exception(function () use ($repository) {
-            $repository->putOne(['name' => 'bob']);
+            $repository->putOne(['name' => 'bob'], new \mock\Api\App\Components\Planning\Model([]));
         })->isInstanceOf('\Api\App\Exceptions\MissingArgumentException');
     }
 
@@ -178,10 +176,9 @@ final class Repository extends \Atoum
         $model->getMockController()->populate = function () {
             throw new \DomainException('');
         };
-        $repository->setModel($model);
 
-        $this->exception(function () use ($repository) {
-            $repository->putOne(['name' => 'bob', 'status' => 'bab']);
+        $this->exception(function () use ($repository, $model) {
+            $repository->putOne(['name' => 'bob', 'status' => 'bab'], $model);
         })->isInstanceOf('\DomainException');
     }
 
@@ -191,10 +188,34 @@ final class Repository extends \Atoum
     public function testPutOneOk()
     {
         $repository = new _Repository($this->dao);
-        $repository->setModel($this->model);
 
-        $result = $repository->putOne(['name' => 'baba', 'status' => 4]);
+        $result = $repository->putOne(['name' => 'baba', 'status' => 4], $this->model);
 
         $this->variable($result)->isNull();
+    }
+
+    /*************************************************
+     * DELETE
+     *************************************************/
+
+    // delete ok
+
+    public function testDeleteFallback()
+    {
+        $repository = new _Repository($this->dao);
+        $model = new \mock\Api\App\Components\Planning\Model([]);
+        $model->getMockController()->populate = function () {
+            throw new \DomainException('');
+        };
+
+        $this->exception(function () use ($repository, $model) {
+            $repository->putOne(['name' => 'bob', 'status' => 'bab'], $model);
+        })->isInstanceOf('\DomainException');
+
+    }
+
+    public function testDeleteOk()
+    {
+
     }
 }

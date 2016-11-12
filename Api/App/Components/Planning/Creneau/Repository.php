@@ -1,6 +1,8 @@
 <?php
 namespace Api\App\Components\Planning\Creneau;
 
+use Api\App\Libraries\AModel;
+
 /**
  * {@inheritDoc}
  *
@@ -109,7 +111,7 @@ class Repository extends \Api\App\Libraries\ARepository
     /**
      * @inheritDoc
      */
-    public function postOne(array $data)
+    public function postOne(array $data, AModel $model)
     {
     }
 
@@ -120,7 +122,7 @@ class Repository extends \Api\App\Libraries\ARepository
     /**
      * @inheritDoc
      */
-    public function putOne(array $data)
+    public function putOne(array $data, AModel $model)
     {
     }
 
@@ -131,7 +133,7 @@ class Repository extends \Api\App\Libraries\ARepository
     /**
      * @inheritDoc
      */
-    public function deleteOne($id)
+    public function deleteOne(AModel $model)
     {
     }
 }
