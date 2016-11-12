@@ -199,4 +199,15 @@ class Repository extends \Api\App\Libraries\ARepository
             throw $e;
         }
     }
+
+    /*************************************************
+     * DELETE
+     *************************************************/
+
+    /**
+     * @inheritDoc
+     */
+    public function deleteOne($id)
+    {
+    }
 }

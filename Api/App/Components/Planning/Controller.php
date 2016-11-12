@@ -65,15 +65,7 @@ final class Controller extends \Api\App\Libraries\AController
 
             return $response->withJson($data, $code);
         } catch (\DomainException $e) {
-            $code = 404;
-            $data = [
-                'code' => $code,
-                'status' => 'error',
-                'message' => 'Not Found',
-                'data' => 'Element « plannings#' . $id . ' » is not a valid resource',
-            ];
-
-            return $response->withJson($data, $code);
+            return $this->getResponseNotFound($response, 'Element « plannings#' . $id . ' » is not a valid resource');
         } catch (\Exception $e) {
             throw $e;
         }
@@ -108,15 +100,7 @@ final class Controller extends \Api\App\Libraries\AController
 
             return $response->withJson($data, $code);
         } catch (\UnexpectedValueException $e) {
-            $code = 404;
-            $data = [
-                'code' => $code,
-                'status' => 'error',
-                'message' => 'Not Found',
-                'data' => 'No result',
-            ];
-
-            return $response->withJson($data, $code);
+            return $this->getResponseNotFound($response, 'No result');
         } catch (\Exception $e) {
             throw $e;
         }
@@ -206,15 +190,7 @@ final class Controller extends \Api\App\Libraries\AController
         try {
             $planning = $this->repository->getOne($id);
         } catch (\DomainException $e) {
-            $code = 404;
-            $data = [
-                'code' => $code,
-                'status' => 'error',
-                'message' => 'Not Found',
-                'data' => 'Element « plannings#' . $id . ' » is not a valid resource',
-            ];
-
-            return $response->withJson($data, $code);
+            return $this->getResponseNotFound($response, 'Element « plannings#' . $id . ' » is not a valid resource');
         } catch (\Exception $e) {
             throw $e;
         }
@@ -244,7 +220,35 @@ final class Controller extends \Api\App\Libraries\AController
      * DELETE
      *************************************************/
 
-    public function delete()
+     /**
+      * Execute l'ordre HTTP DELETE
+      *
+      * @param IRequest $request Requête Http
+      * @param IResponse $response Réponse Http
+      * @param array $arguments Arguments de route
+      *
+      * @return IResponse
+      * @throws \Exception en cas d'erreur inconnue (fallback, ne doit pas arriver)
+      */
+    public function delete(IRequest $request, IResponse $response, array $arguments)
     {
+        $id = (int) $arguments['planningId'];
+        try {
+            $this->repository->getOne($id);
+            $this->repository->deleteOne($id);
+            $code = 200;
+            $data = [
+                'code' => $code,
+                'status' => 'success',
+                'message' => '',
+                'data' => '',
+            ];
+
+            return $response->withJson($data, $code);
+        } catch (\DomainException $e) {
+            return $this->getResponseNotFound($response, 'Element « plannings#' . $id . ' » is not a valid resource');
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 }

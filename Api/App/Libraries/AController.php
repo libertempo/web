@@ -28,7 +28,8 @@ abstract class AController
      */
     protected $router;
 
-    public function __construct(ARepository $repository, IRouter $router) {
+    public function __construct(ARepository $repository, IRouter $router)
+    {
         $this->repository = $repository;
         $this->router = $router;
     }
@@ -42,15 +43,7 @@ abstract class AController
      */
     protected function getResponseBadRequest(IResponse $response)
     {
-        $code = 400;
-        $data = [
-            'code' => $code,
-            'status' => 'error',
-            'message' => 'Bad Request',
-            'data' => 'Body request is not a json',
-        ];
-
-        return $response->withJson($data, $code);
+        return $this->getResponseError($response, 'Bad Request', 'Body request is not a json', 400);
     }
 
     /**
@@ -62,32 +55,52 @@ abstract class AController
      */
     protected function getResponseMissingArgument(IResponse $response)
     {
-        $code = 412;
-        $data = [
-            'code' => $code,
-            'status' => 'error',
-            'message' => 'Precondition Failed',
-            'data' => 'Missing required argument',
-        ];
-
-        return $response->withJson($data, $code);
+        return $this->getResponseError($response, 'Precondition Failed', 'Missing required argument', 412);
     }
 
     /**
      * Retourne une réponse normalisée d'argument en bad domaine
      *
      * @param IResponse $response Réponse Http
+     * @param \Exception $e Tableau des champs en erreur jsonEncodé
      *
      * @return IResponse
      */
     protected function getResponseBadDomainArgument(IResponse $response, \Exception $e)
     {
-        $code = 412;
+        return $this->getResponseError($response, 'Precondition Failed', json_decode($e->getMessage(), true), 412);
+    }
+
+    /**
+     * Retourne une réponse normalisée d'élément non trouvé
+     *
+     * @param IResponse $response Réponse Http
+     * @param string $messageData Message data d'un json bien formé
+     *
+     * @return IResponse
+     */
+    protected function getResponseNotFound(IResponse $response, $messageData)
+    {
+        return $this->getResponseError($response, 'Not Found', $messageData, 404);
+    }
+
+    /**
+     * Retourne une réponse d'erreur normalisée
+     *
+     * @param IResponse $response Réponse Http
+     * @param string $message Précision de l'erreur
+     * @param mixed $messageData Message data d'un json bien formé
+     * @param int $code Code Http
+     *
+     * @return IResponse
+     */
+    private function getResponseError(IResponse $response, $message, $messageData, $code)
+    {
         $data = [
             'code' => $code,
             'status' => 'error',
-            'message' => 'Precondition Failed',
-            'data' => json_decode($e->getMessage(), true),
+            'message' => $message,
+            'data' => $messageData,
         ];
 
         return $response->withJson($data, $code);

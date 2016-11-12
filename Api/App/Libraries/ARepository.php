@@ -41,6 +41,10 @@ abstract class ARepository
         $this->model = $model;
     }
 
+    /*************************************************
+     * GET
+     *************************************************/
+
     /**
      * Retourne une ressource unique
      *
@@ -62,6 +66,10 @@ abstract class ARepository
      */
     abstract public function getList(array $parametres);
 
+    /*************************************************
+     * POST
+     *************************************************/
+
     /**
      * Poste une ressource unique
      *
@@ -73,6 +81,10 @@ abstract class ARepository
      */
     abstract public function postOne(array $data);
 
+    /*************************************************
+     * PUT
+     *************************************************/
+
     /**
      * Met à jour une ressource unique
      *
@@ -82,4 +94,15 @@ abstract class ARepository
      * @throws \DomainException Si un élément de la ressource n'est pas dans le bon domaine de définition
      */
     abstract public function putOne(array $data);
+
+    /*************************************************
+     * DELETE
+     *************************************************/
+
+    /**
+     * Détruit une ressource unique
+     *
+     * @param int $id Id de la ressource
+     */
+    abstract public function deleteOne($id);
 }

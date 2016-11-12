@@ -64,7 +64,7 @@ final class Controller extends \Api\Tests\Units\App\Libraries\AController
     }
 
     /**
-    * Teste la méthode get d'un détail non trouvé
+     * Teste la méthode get d'un détail non trouvé
      */
     public function testGetOneNotFound()
     {
@@ -94,7 +94,7 @@ final class Controller extends \Api\Tests\Units\App\Libraries\AController
     }
 
     /**
-    * Teste la méthode get d'une liste trouvée
+     * Teste la méthode get d'une liste trouvée
      */
     public function testGetListFound()
     {
@@ -118,7 +118,7 @@ final class Controller extends \Api\Tests\Units\App\Libraries\AController
     }
 
     /**
-    * Teste la méthode get d'une liste non trouvée
+     * Teste la méthode get d'une liste non trouvée
      */
     public function testGetListNotFound()
     {
@@ -243,8 +243,8 @@ final class Controller extends \Api\Tests\Units\App\Libraries\AController
      *************************************************/
 
     /**
-    * Teste la méthode put d'un json mal formé
-    */
+     * Teste la méthode put d'un json mal formé
+     */
     public function testPutJsonBadFormat()
     {
         // Le framework fait du traitement, un mauvais json est simplement null
@@ -257,7 +257,7 @@ final class Controller extends \Api\Tests\Units\App\Libraries\AController
     }
 
     /**
-    * Teste la méthode put avec un détail non trouvé (id en Bad domaine)
+     * Teste la méthode put avec un détail non trouvé (id en Bad domaine)
      */
     public function testPutNotFound()
     {
@@ -341,7 +341,7 @@ final class Controller extends \Api\Tests\Units\App\Libraries\AController
     }
 
     /**
-    * Teste la méthode post Ok
+     * Teste la méthode put Ok
      */
     public function testPutOk()
     {
@@ -360,6 +360,60 @@ final class Controller extends \Api\Tests\Units\App\Libraries\AController
             ->string['status']->isIdenticalTo('success')
             ->string['message']->isIdenticalTo('')
             ->string['data']->isIdenticalTo('')
+        ;
+    }
+
+    /*************************************************
+     * DELETE
+     *************************************************/
+
+    /**
+     * Teste la méthode delete avec un détail non trouvé (id en Bad domaine)
+     */
+    public function testDeleteNotFound()
+    {
+        $this->repository->getMockController()->getOne = function () {
+            throw new \DomainException('');
+        };
+        $controller = new _Controller($this->repository, $this->router);
+
+        $response = $controller->delete($this->request, $this->response, ['planningId' => 99]);
+
+        $this->boolean($response->isNotFound())->isTrue();
+    }
+
+    /**
+     * Teste le fallback de la méthode delete
+     */
+    public function testDeleteFallback()
+    {
+        $this->repository->getMockController()->getOne = function () {
+            throw new \LogicException('');
+        };
+        $controller = new _Controller($this->repository, $this->router);
+
+        $this->exception(function () use ($controller) {
+            $controller->delete($this->request, $this->response, ['planningId' => 99]);
+        })->isInstanceOf('\Exception');
+    }
+
+    /**
+     * Teste la méthode delete Ok
+     */
+    public function testDeleteOk()
+    {
+        $this->repository->getMockController()->getOne = $this->model;
+        $controller = new _Controller($this->repository, $this->router);
+
+        $response = $controller->delete($this->request, $this->response, ['planningId' => 99]);
+        $data = $this->getJsonDecoded($response->getBody());
+
+        $this->integer($response->getStatusCode())->isIdenticalTo(200);
+        $this->array($data)
+            ->integer['code']->isIdenticalTo(200)
+            ->string['status']->isIdenticalTo('success')
+            ->string['message']->isIdenticalTo('')
+            ->array['data']->isNotEmpty()
         ;
     }
 }

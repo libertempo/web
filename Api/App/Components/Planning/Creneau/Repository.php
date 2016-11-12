@@ -123,4 +123,15 @@ class Repository extends \Api\App\Libraries\ARepository
     public function putOne(array $data)
     {
     }
+
+    /*************************************************
+     * DELETE
+     *************************************************/
+
+    /**
+     * @inheritDoc
+     */
+    public function deleteOne($id)
+    {
+    }
 }

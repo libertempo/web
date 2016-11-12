@@ -12,7 +12,7 @@ $app->group('/plannings', function () {
         /* Detail */
         $this->get('', $planningNS . ':get')->setName('getPlanningDetail');
         $this->put('', $planningNS . ':put')->setName('putPlanningDetail');
-        //$this->delete('', $planningNS . ':delete')->setName('putPlanningDetail');
+        $this->delete('', $planningNS . ':delete')->setName('deletePlanningDetail');
 
         /* Dependances de plannings */
         $this->group('/creneaux', function () {
