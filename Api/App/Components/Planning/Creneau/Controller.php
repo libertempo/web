@@ -165,7 +165,7 @@ final class Controller extends \Api\App\Libraries\AController
         }
 
         try {
-            $creneauxIds = $this->repository->postList($body);
+            $creneauxIds = $this->repository->postList($body, new Model([]));
             $dataMessage = [];
             foreach ($creneauxIds as $id) {
                 $dataMessage[] = $this->router->pathFor('getPlanningCreneauDetail', [

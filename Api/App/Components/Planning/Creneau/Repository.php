@@ -113,13 +113,32 @@ class Repository extends \Api\App\Libraries\ARepository
      * Poste une liste de ressource
      *
      * @param array $data Tableau de données à poster
+     * @param AModel $model [Vide par définition]
      *
      * @return array Tableau d'id des créneaux nouvellement créés
      * @throws MissingArgumentException Si un élément requis n'est pas présent
      * @throws \DomainException Si un élément de la ressource n'est pas dans le bon domaine de définition
      */
-    public function postList(array $data)
+    public function postList(array $data, AModel $model)
     {
+        $postIds = [];
+        $this->dao->beginTransaction();
+        foreach ($data as $creneau) {
+            try {
+                $postIds[] = $this->postOne($creneau, $model);
+                /*
+                 * Le plus cool aurait été de cloner l'objet de base,
+                 * mais le clonage de mock est nul, donc on reset pour la boucle
+                 */
+                $model->reset();
+            } catch (\Exception $e) {
+                $this->dao->rollback();
+                throw $e;
+            }
+        }
+        $this->dao->commit();
+
+        return $postIds;
     }
 
     /**
@@ -127,6 +146,65 @@ class Repository extends \Api\App\Libraries\ARepository
      */
     public function postOne(array $data, AModel $model)
     {
+        if (!$this->hasAllRequired($data)) {
+            throw new MissingArgumentException('');
+        }
+
+        try {
+            $model->populate($data);
+            $dataDao = $this->getModel2DataDao($model);
+
+            return $this->dao->post($dataDao);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Effectue le mapping des éléments venant du modèle pour qu'ils soient compréhensibles pour la DAO
+     *
+     * @param Model $model
+     *
+     * @return array
+     */
+    private function getModel2DataDao(AModel $model)
+    {
+        return [
+            'planning_id' => $model->getPlanningId(),
+            'jour_id' => $model->getJourId(),
+            'type_semaine' => $model->getTypeSemaine(),
+            'type_periode' => $model->getTypePeriode(),
+            'debut' => $model->getDebut(),
+            'fin' => $model->getFin(),
+        ];
+    }
+
+    /**
+     * Vérifie que les données passées possèdent bien tous les champs requis
+     *
+     * @param array $data
+     *
+     * @return bool
+     */
+    private function hasAllRequired(array $data)
+    {
+        foreach ($this->getListRequired() as $value) {
+            if (!isset($data[$value])) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Retourne la liste des champs requis
+     *
+     * @return array
+     */
+    private function getListRequired()
+    {
+        return ['planningId', 'jourId', 'typeSemaine', 'typePeriode', 'debut', 'fin'];
     }
 
     /*************************************************

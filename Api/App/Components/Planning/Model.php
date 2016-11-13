@@ -37,10 +37,10 @@ class Model extends \Api\App\Libraries\AModel
     public function getStatus()
     {
         if (isset($this->dataUpdated['status'])) {
-            return $this->dataUpdated['status'];
+            return (int) $this->dataUpdated['status'];
         }
 
-        return $this->data['status'];
+        return (int) $this->data['status'];
     }
 
     /**

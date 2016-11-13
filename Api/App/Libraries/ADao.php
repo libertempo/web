@@ -91,4 +91,34 @@ abstract class ADao
      * @return string
      */
     abstract protected function getTableName();
+
+    /**
+     * Initie une transaction
+     *
+     * @return bool
+     */
+    public function beginTransaction()
+    {
+        return $this->storageConnector->beginTransaction();
+    }
+
+    /**
+     * Valide une transaction
+     *
+     * @return bool
+     */
+    public function commit()
+    {
+        return $this->storageConnector->commit();
+    }
+
+    /**
+     * Annule une transaction
+     *
+     * @return bool
+     */
+    public function rollback()
+    {
+        return $this->storageConnector->rollBack();
+    }
 }

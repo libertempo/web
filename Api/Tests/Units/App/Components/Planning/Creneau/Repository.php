@@ -13,21 +13,16 @@ use \Api\App\Components\Planning\Creneau\Repository as _Repository;
  */
 final class Repository extends \Atoum
 {
-    /*************************************************
-     * GET
-     *************************************************/
-
-    /**
-     * @var \mock\Api\App\Components\Planning\Creneau\Dao Mock du DAO du planning
-     */
-    private $dao;
-
     public function beforeTestMethod($method)
     {
         $this->mockGenerator->orphanize('__construct');
         $this->mockGenerator->shuntParentClassCalls();
         $this->dao = new \mock\Api\App\Components\Planning\Creneau\Dao();
     }
+
+    /*************************************************
+    * GET
+    *************************************************/
 
     /**
      * Teste la méthode getOne avec un id non trouvé
@@ -103,7 +98,128 @@ final class Repository extends \Atoum
      * POST
      *************************************************/
 
-    // post avec un argument manquant
-    // post avec un argument dans le bad domaine
-    //
+    /**
+     * Teste la méthode postList avec un champ manquant
+     */
+    public function testPostListException()
+    {
+        $repository = new _Repository($this->dao);
+        $model = new \mock\Api\App\Components\Planning\Creneau\Model([]);
+        $model->getMockController()->populate = function () {
+            throw new \LogicException('');
+        };
+        $data = [
+            'planningId' => 34,
+            'jourId' => 23,
+            'typeSemaine' => 15,
+            'typePeriode' => 57,
+            'debut' => 83,
+            'fin' => 92,
+        ];
+
+        $this->exception(function () use ($repository, $data, $model) {
+            $repository->postList([$data], $model);
+        })->isInstanceOf('\LogicException');
+    }
+
+    /**
+     * Teste la méthode postList tout ok
+     */
+    public function testPostListOk()
+    {
+        $repository = new _Repository($this->dao);
+        $model = new \mock\Api\App\Components\Planning\Creneau\Model([]);
+        $model->getMockController()->populate = '';
+        $model->getMockController()->getPlanningId = 3;
+        $model->getMockController()->getJourId = 4;
+        $model->getMockController()->getTypeSemaine = 5;
+        $model->getMockController()->getTypePeriode = 6;
+        $model->getMockController()->getDebut = 7;
+        $model->getMockController()->getFin = 8;
+        $data = [
+            [
+                'planningId' => 34,
+                'jourId' => 6,
+                'typeSemaine' => 2,
+                'typePeriode' => 1,
+                'debut' => 13,
+                'fin' => 2,
+            ]
+        ];
+        $this->dao->getMockController()->post[1] = 3;
+        $this->dao->getMockController()->post[2] = 9;
+
+
+        $post = $repository->postList($data, $model);
+
+        foreach ($post as $postId) {
+            $this->integer($postId);
+        }
+    }
+
+    /**
+     * Teste la méthode postOne avec un champ manquant
+     */
+    public function testPostOneMissingArgument()
+    {
+        $repository = new _Repository($this->dao);
+        $model = new \mock\Api\App\Components\Planning\Creneau\Model([]);
+
+        $this->exception(function () use ($repository, $model) {
+            $repository->postOne([], $model);
+        })->isInstanceOf('\Api\App\Exceptions\MissingArgumentException');
+    }
+
+    /**
+     * Teste la méthode postOne avec un champ incohérent
+     */
+    public function testPostOneBadDomain()
+    {
+        $repository = new _Repository($this->dao);
+        $model = new \mock\Api\App\Components\Planning\Creneau\Model([]);
+        $model->getMockController()->populate = function () {
+            throw new \DomainException('');
+        };
+        $data = [
+            'planningId' => 34,
+            'jourId' => 23,
+            'typeSemaine' => 15,
+            'typePeriode' => 57,
+            'debut' => 83,
+            'fin' => 92,
+        ];
+
+        $this->exception(function () use ($repository, $data, $model) {
+            $repository->postOne($data, $model);
+        })->isInstanceOf('\DomainException');
+    }
+
+    /**
+     * Teste la méthode postOne tout ok
+     */
+    public function testPostOneOk()
+    {
+        $repository = new _Repository($this->dao);
+        $model = new \mock\Api\App\Components\Planning\Creneau\Model([]);
+        $model->getMockController()->populate = '';
+        $model->getMockController()->getPlanningId = 3;
+        $model->getMockController()->getJourId = 4;
+        $model->getMockController()->getTypeSemaine = 5;
+        $model->getMockController()->getTypePeriode = 6;
+        $model->getMockController()->getDebut = 7;
+        $model->getMockController()->getFin = 8;
+        $data = [
+            'planningId' => 34,
+            'jourId' => 2,
+            'typeSemaine' => 0,
+            'typePeriode' => 2,
+            'debut' => 83,
+            'fin' => 92,
+        ];
+        $this->dao->getMockController()->post = 3;
+
+        $post = $repository->postOne($data, $model);
+
+        $this->integer($post);
+    }
 }
