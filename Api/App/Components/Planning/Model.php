@@ -22,11 +22,7 @@ class Model extends \Api\App\Libraries\AModel
      */
     public function getName()
     {
-        if (isset($this->dataUpdated['name'])) {
-            return $this->dataUpdated['name'];
-        }
-
-        return $this->data['name'];
+        return $this->getFreshData('name');
     }
 
     /**
@@ -36,11 +32,7 @@ class Model extends \Api\App\Libraries\AModel
      */
     public function getStatus()
     {
-        if (isset($this->dataUpdated['status'])) {
-            return (int) $this->dataUpdated['status'];
-        }
-
-        return (int) $this->data['status'];
+        return (int) $this->getFreshData('status');
     }
 
     /**

@@ -103,4 +103,20 @@ abstract class AModel
         $this->data = [];
         $this->dataUpdated = [];
     }
+
+    /**
+     * Retourne la donnée la plus à jour du champ $data
+     *
+     * @param string $data
+     *
+     * @return string
+     */
+    protected function getFreshData($data)
+    {
+        if (isset($this->dataUpdated[$data])) {
+            return $this->dataUpdated[$data];
+        }
+
+        return $this->data[$data];
+    }
 }

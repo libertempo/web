@@ -15,58 +15,64 @@ namespace Api\App\Components\Planning\Creneau;
  */
 class Model extends \Api\App\Libraries\AModel
 {
+    /**
+     * Retourne la donnée la plus à jour du champ planning id
+     *
+     * @return int
+     */
     public function getPlanningId()
     {
-        if (isset($this->dataUpdated['planningId'])) {
-            return $this->dataUpdated['planningId'];
-        }
-
-        return (int) $this->data['planningId'];
+        return (int) $this->getFreshData('planningId');
     }
 
+    /**
+     * Retourne la donnée la plus à jour du champ jour id
+     *
+     * @return int
+     */
     public function getJourId()
     {
-        if (isset($this->dataUpdated['jourId'])) {
-            return $this->dataUpdated['jourId'];
-        }
-
-        return (int) $this->data['jourId'];
+        return (int) $this->getFreshData('jourId');
     }
 
+    /**
+     * Retourne la donnée la plus à jour du champ type semaine
+     *
+     * @return int
+     */
     public function getTypeSemaine()
     {
-        if (isset($this->dataUpdated['typeSemaine'])) {
-            return $this->dataUpdated['typeSemaine'];
-        }
-
-        return (int) $this->data['typeSemaine'];
+        return (int) $this->getFreshData('typeSemaine');
     }
 
+    /**
+     * Retourne la donnée la plus à jour du champ type periode
+     *
+     * @return int
+     */
     public function getTypePeriode()
     {
-        if (isset($this->dataUpdated['typePeriode'])) {
-            return $this->dataUpdated['typePeriode'];
-        }
-
-        return (int) $this->data['typePeriode'];
+        return (int) $this->getFreshData('typePeriode');
     }
 
+    /**
+     * Retourne la donnée la plus à jour du champ debut
+     *
+     * @return int
+     */
     public function getDebut()
     {
-        if (isset($this->dataUpdated['debut'])) {
-            return $this->dataUpdated['debut'];
-        }
-
-        return (int) $this->data['debut'];
+        return (int) $this->getFreshData('debut');
     }
 
+    /**
+     * Retourne la donnée la plus à jour du champ fin
+     *
+     * @return int
+     */
     public function getFin()
     {
-        if (isset($this->dataUpdated['fin'])) {
-            return $this->dataUpdated['fin'];
-        }
-
-        return (int) $this->data['fin'];
+        return (int) $this->getFreshData('fin');
     }
 
     /**
