@@ -9,14 +9,8 @@ namespace App\Libraries\Notification;
  */
 Class Additionnelle extends \App\Libraries\ANotification {
 
-
     /**
-     * récupère les données de l'évenemment
-     * 
-     * @todo déplacer la requete vers le protocontroller
-     * @param int $id
-     * 
-     * @return array
+     * {@inheritDoc}
      */
     protected function getData($id) {
 
@@ -39,7 +33,8 @@ Class Additionnelle extends \App\Libraries\ANotification {
     }
 
     /**
-     * notification nouvelle demande
+     * notification d'une nouvelle demande d'heures additionnelles
+     * au responsable du demandeur
      * 
      * @param array $data
      * @return array
@@ -60,6 +55,13 @@ Class Additionnelle extends \App\Libraries\ANotification {
         return $return;
     }
 
+    /**
+     * notification d'une première validation 
+     * au demandeur d'heures additionnelles
+     * 
+     * @param array $data
+     * @return array
+     */
     protected function getNotificationEmployePremierValidation() {
 
         $return['sujet'] = "Première validation d'heure additionnelle";
@@ -73,6 +75,13 @@ Class Additionnelle extends \App\Libraries\ANotification {
         return $return;
     }
 
+    /**
+     * notification d'une validation finale
+     * au demandeur d'heures additionnelles
+     * 
+     * @param array $data
+     * @return array
+     */
     protected function getNotificationValidationFinale() {
 
         $return['sujet'] = "Demande d'heure additionnelle validée";
@@ -86,7 +95,14 @@ Class Additionnelle extends \App\Libraries\ANotification {
         $return['config'] = 'mail_valid_conges_alerte_user';
         return $return;
     }
-
+    
+    /**
+     * notification d'un refus
+     * au demandeur d'heures additionnelles
+     * 
+     * @param array $data
+     * @return array
+     */
     protected function getNotificationRefus() {
 
         $return['sujet'] = "Demande d'heure additionnelle refusée";
@@ -103,7 +119,14 @@ Class Additionnelle extends \App\Libraries\ANotification {
         $return['config'] = 'mail_valid_conges_alerte_user';
         return $return;
     }
-
+    
+    /**
+     * notification d'une annulation par le demandeur
+     * à son responsable
+     * 
+     * @param array $data
+     * @return array
+     */
     protected function getNotificationAnnulation() {
 
         $return['sujet'] = "Demande d'heure additionnelle annulée";
@@ -120,6 +143,13 @@ Class Additionnelle extends \App\Libraries\ANotification {
         return $return;
     }
     
+    /**
+     * notification d'une première validation
+     * au grand responsable du demandeur d'heures additionnelles
+     * 
+     * @param array $data
+     * @return array
+     */
     protected function getNotificationGrandResponsablePremiereValidation() {
         $return['sujet'] = "Demande d'heure additionnelle";
         $return['expediteur'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($_SESSION['userlogin']);

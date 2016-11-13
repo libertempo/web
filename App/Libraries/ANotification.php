@@ -13,6 +13,14 @@ abstract Class ANotification {
     protected $Notification;
     protected $envoiMail;
 
+    /**
+     * 
+     * implémente les informations de la demande d'heure
+     * ainsi que du contenu du mail
+     * 
+     * @param int $id
+     * 
+     */
     public function __construct($id) {
         $this->data = $this->getData($id);
         $this->Notification = $this->getNotificationContent();
@@ -21,7 +29,7 @@ abstract Class ANotification {
 
     /**
      * 
-     * Transmet la notification par mail
+     * Transmet les notifications par mail
      * 
      * @return boolean
      */
@@ -79,14 +87,19 @@ abstract Class ANotification {
         return $return;
     }
 
+    /**
+     * récupère les données de l'évenemment
+     * 
+     * @todo déplacer la requete vers le protocontroller
+     * @param int $id
+     * 
+     * @return array
+     */
     abstract protected function getData($id);
 
     /**
-     * construction de la notification
-     * @todo isoler l'option d'envoi d'un mail dans une méthode
-     * après avoir réduit les différentes options des mails
+     * selection du contenu de la notification
      * 
-     * @param array $data
      * @return array
      */
     protected function getNotificationContent() {
@@ -112,6 +125,14 @@ abstract Class ANotification {
         return $NotifContent;
     }
     
+    /**
+     * Controle de l'option d'envoi de mails selon la notification
+     * 
+     * @param string $optionName
+     * @return boolean
+     * @throws Exception
+     * 
+     */
     protected function canSend($optionName) {
         if(isset($_SESSION['config'][$optionName])){
             return $_SESSION['config'][$optionName];
