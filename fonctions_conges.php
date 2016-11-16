@@ -1399,39 +1399,26 @@ connecter alors qu'il n'a pas de compte dans
 }
 
 
-// verifie si un user est responasble ou pas
-// renvoit TRUE si le login est responsable dans la table conges_users, FALSE sinon.
+/**
+ * verifie si un user est responsable ou pas
+ *
+ * @param string $login Paramètre inutile, mais à but de compat
+ */
 function is_resp($login)
 {
-    static $sql_is_resp = array();
-    if (!isset($sql_is_resp[$login]))
-    {
-        // recup de qq infos sur le user
-        $select_info='SELECT u_is_resp FROM conges_users WHERE u_login="'.\includes\SQL::quote($login).'"';
-        $ReqLog_info = \includes\SQL::query($select_info);
-        $resultat_info = $ReqLog_info->fetch_array();
-        $sql_is_resp[$login]=$resultat_info["u_is_resp"];
-    }
-
-    return ($sql_is_resp[$login]=='Y');
+    return isset($_SESSION['is_resp']) && 'Y' === $_SESSION['is_resp'];
 }
 
-// verifie si un user est HR ou pas
-// renvoit TRUE si le login est HR dans la table conges_users, FALSE sinon.
+/**
+ * verifie si un user est HR ou pas
+ *
+ * @param string $login Paramètre inutile, mais à but de compat
+ */
 function is_hr($login)
 {
-    static $sql_is_hr = array();
-    if (!isset($sql_is_hr[$login]))
-    {
-        // recup de qq infos sur le user
-        $select_info='SELECT u_is_hr FROM conges_users WHERE u_login="'. \includes\SQL::quote($login).'";';
-        $ReqLog_info = \includes\SQL::query($select_info);
-        $resultat_info = $ReqLog_info->fetch_array();
-        $sql_is_hr[$login]=$resultat_info["u_is_hr"];
-    }
-
-    return ($sql_is_hr[$login]=='Y');
+    return isset($_SESSION['is_hr']) && 'Y' === $_SESSION['is_hr'];
 }
+
 // verifie si un user est valide ou pas
 // renvoit TRUE si le login est enable dans la table conges_users, FALSE sinon.
 function is_active($login)
@@ -1499,27 +1486,15 @@ function is_gr_group_of_user($resp_login, $user_login)
     return false;
 }
 
-
-
-// verifie si un user est administrateur ou pas
-// renvoit TRUE si le login est administrateur dans la table conges_users, FALSE sinon.
+/**
+ * verifie si un user est admin ou pas
+ *
+ * @param string $login Paramètre inutile, mais à but de compat
+ */
 function is_admin($login)
 {
-    static $sql_is_admin = array();
-    if (!isset($sql_is_admin[$login])) {
-        // recup de qq infos sur le user
-        $select_info='SELECT u_is_admin FROM conges_users WHERE u_login="'. \includes\SQL::quote($login).'";';
-        $ReqLog_info = \includes\SQL::query($select_info);
-
-        $resultat_info = $ReqLog_info->fetch_array();
-        $sql_is_admin[$login]=$resultat_info["u_is_admin"];
-    }
-
-    return ($sql_is_admin[$login]=='Y');
+    return isset($_SESSION['is_admin']) && 'Y' === $_SESSION['is_admin'];
 }
-
-
-
 
 // on insert une nouvelle periode dans la table periode
 // retourne le num d'auto_incremente (p_num) ou 0 en cas l'erreur
