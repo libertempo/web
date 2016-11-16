@@ -1894,7 +1894,8 @@ class Fonctions
         // GET / POST
         $choix_action                 = getpost_variable('choix_action');
         $year_calendrier_saisie        = getpost_variable('year_calendrier_saisie', 0);
-        $tab_checkbox_j_chome        = getpost_variable('tab_checkbox_j_chome');
+        $checkbox = getpost_variable('tab_checkbox_j_chome');
+        $tab_checkbox_j_chome = (!is_array($checkbox) || empty($checkbox)) ? [] : $checkbox;
         /*************************************/
 
         // si l'année n'est pas renseignée, on prend celle du jour
