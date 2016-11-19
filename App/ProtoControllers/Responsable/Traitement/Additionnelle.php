@@ -223,7 +223,7 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
         $childTable .= '<th>' . _('duree') . '</th>';
         $childTable .= '<th>' . _('divers_solde') . '</th>';
         $childTable .= '<th>' . _('divers_comment_maj_1') . '</th>';
-        $childTable .= '<th>' . _('divers_accepter_maj_1') . '</th><th>' . _('divers_refuser_maj_1') . '</th><th>' . _('resp_traite_demandes_attente') . '</th>';
+        $childTable .= '<th>' . _('divers_accepter_maj_1') . '</th><th>' . _('divers_refuser_maj_1') . '</th><th>' . _('resp_traite_demandes_attente') . '</th><th></th>';
         $childTable .= '<th>' . _('resp_traite_demandes_motif_refus') . '</th>';
         $childTable .= '</tr></thead><tbody>';
 

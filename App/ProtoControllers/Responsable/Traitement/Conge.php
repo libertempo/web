@@ -57,20 +57,20 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         $childTable .= '<th>' . _('divers_comment_maj_1') . '</th>';
         $childTable .= '<th>' . _('divers_accepter_maj_1') . '</th>';
         $childTable .= '<th>' . _('divers_refuser_maj_1') . '</th>';
-        $childTable .= '<th>' . _('resp_traite_demandes_attente') . '</th>';
+        $childTable .= '<th>' . _('resp_traite_demandes_attente') . '</th><th></th>';
         $childTable .= '<th>' . _('resp_traite_demandes_motif_refus') . '</th>';
         $childTable .= '</tr></thead><tbody>';
 
         $demandesResp = $this->getDemandesResponsable($_SESSION['userlogin']);
         $demandesGrandResp = $this->getDemandesGrandResponsable($_SESSION['userlogin']);
         if (empty($demandesResp) && empty($demandesGrandResp) ) {
-            $childTable .= '<tr><td colspan="11"><center>' . _('resp_traite_demandes_aucune_demande') . '</center></td></tr>';
+            $childTable .= '<tr><td colspan="12"><center>' . _('resp_traite_demandes_aucune_demande') . '</center></td></tr>';
         } else {
             if(!empty($demandesResp)) {
                 $childTable .= $this->getFormDemandes($demandesResp);
             }
             if (!empty($demandesGrandResp)) {
-                $childTable .='<tr align="center"><td class="histo" style="background-color: #CCC;" colspan="11"><i>'._('resp_etat_users_titre_double_valid').'</i></td></tr>';
+                $childTable .='<tr align="center"><td class="histo" style="background-color: #CCC;" colspan="12"><i>'._('resp_etat_users_titre_double_valid').'</i></td></tr>';
                 $childTable .= $this->getFormDemandes($demandesGrandResp);
 
             }
@@ -97,21 +97,22 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
     {
         $i=true;
         $Table='';
+        $session = (isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : session_id()));
 
-        foreach ( $demandes as $demande ) {
+        foreach ($demandes as $demande) {
             $id = $demande['p_num'];
             $infoUtilisateur = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($demande['p_login']);
             $solde = \App\ProtoControllers\Utilisateur::getSoldeconge($demande['p_login'],$demande['p_type']);
             $type = $this->getTypeLabel($demande['p_type']);
             $debut = \App\Helpers\Formatter::dateIso2Fr($demande['p_date_deb']);
             $fin = \App\Helpers\Formatter::dateIso2Fr($demande['p_date_fin']);
-            if($demande['p_demi_jour_deb']=="am") {
+            if ($demande['p_demi_jour_deb']=="am") {
                 $demideb = _('form_am');
             }  else {
                 $demideb = _('form_pm');
             }
 
-            if($demande['p_demi_jour_fin']=="am") {
+            if ($demande['p_demi_jour_fin']=="am") {
                 $demifin = _('form_am');
             } else {
                 $demifin = _('form_pm');
@@ -126,9 +127,20 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
             $Table .= '<td><input type="radio" name="demande['.$id.']" value="1"></td>';
             $Table .= '<td><input type="radio" name="demande['.$id.']" value="2"></td>';
             $Table .= '<td><input type="radio" name="demande['.$id.']" value="NULL" checked></td>';
+
+            /* Informations pour le positionnement du calendrier */
+            list($anneeDebut, $moisDebut) = explode('-', $demande['p_date_deb']);
+            $dateDebut = new \DateTimeImmutable($anneeDebut . '-' . $moisDebut . '-01');
+            $paramsCalendrier = [
+                'session' => $session,
+                'vue' => \App\ProtoControllers\Calendrier::VUE_MOIS,
+                'begin' => $dateDebut->format('Y-m-d'),
+                'end' => $dateDebut->modify('+1 month')->format('Y-m-d'),
+            ];
+            $Table .= '<td><a href="' . ROOT_PATH . 'calendrier.php?' . http_build_query($paramsCalendrier) . '" title="' . _('consulter_calendrier_de_periode') . '"><i class="fa fa-lg fa-calendar" aria-hidden="true"></i></a></td>';
             $Table .= '<td><input class="form-control" type="text" name="comment_refus['.$id.']" size="20" maxlength="100"></td></tr>';
             $i = !$i;
-            }
+        }
 
         return $Table;
     }
