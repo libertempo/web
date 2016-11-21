@@ -63,7 +63,8 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
         $demandesResp = $this->getDemandesResponsable($_SESSION['userlogin']);
         $demandesGrandResp = $this->getDemandesGrandResponsable($_SESSION['userlogin']);
-        if (empty($demandesResp) && empty($demandesGrandResp) ) {
+        $demandesRespAbsent = $this->getDemandesResponsableAbsent($_SESSION['userlogin']);
+        if (empty($demandesResp) && empty($demandesGrandResp) && empty($demandesRespAbsent) ) {
             $childTable .= '<tr><td colspan="11"><center>' . _('resp_traite_demandes_aucune_demande') . '</center></td></tr>';
         } else {
             if(!empty($demandesResp)) {
@@ -72,7 +73,11 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
             if (!empty($demandesGrandResp)) {
                 $childTable .='<tr align="center"><td class="histo" style="background-color: #CCC;" colspan="11"><i>'._('resp_etat_users_titre_double_valid').'</i></td></tr>';
                 $childTable .= $this->getFormDemandes($demandesGrandResp);
-
+            }
+            
+            if (!empty($demandesRespAbsent)) {
+                $childTable .='<tr align="center"><td class="histo" style="background-color: #CCC;" colspan="11"><i>'._('traitement_demande_par_delegation').'</i></td></tr>';
+                $childTable .= $this->getFormDemandes($demandesRespAbsent);
             }
         }
 
@@ -404,6 +409,42 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         return $ids;
     }
 
+
+    /**
+    * {@inheritDoc}
+    */
+    protected function getIdDemandesResponsableAbsent($resp)
+    { 
+        $groupId = \App\ProtoControllers\Responsable::getIdGroupeResp($resp);
+
+        $ids = [];
+        $usersResp = [];
+        $usersRespResp = [];
+        $usersResp = \App\ProtoControllers\Responsable::getUsersGroupe($groupId);
+
+        $usersRespDirect = \App\ProtoControllers\Responsable::getUsersRespDirect($resp);
+        $usersResp = array_merge($usersResp,$usersRespDirect);
+        
+        foreach ($usersResp as $user) {
+            if (is_resp($user)) {
+                $usersRespResp[] = $user;
+            }
+        }
+        
+        if (empty($usersRespResp)) {
+            return [];
+        }
+        
+        foreach ($usersRespResp as $respResp) {
+            if (\App\ProtoControllers\Responsable::isRespAbsent($respResp)){
+                $ids = array_merge($ids,  $this->getidDemandesResponsable($respResp));
+            }
+        }
+        
+        return $ids;
+    }
+
+    
      /**
       * {@inheritDoc}
       */

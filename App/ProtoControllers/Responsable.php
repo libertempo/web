@@ -77,6 +77,26 @@ class Responsable
     }
 
     /**
+     * Vérifie si le responsable est absent
+     * 
+     * @param string $resp identifiant du responsable
+     * 
+     * @return bool
+     */
+    public static function isRespAbsent($resp){
+        $req = 'SELECT EXISTS (
+                    SELECT p_num FROM conges_periode WHERE p_login = "'
+                    . \includes\SQL::quote($resp).'" AND p_etat = \''. \App\Models\Conge::STATUT_VALIDATION_FINALE
+                    . '\' AND TO_DAYS(conges_periode.p_date_deb) <= TO_DAYS(NOW()) 
+                    AND TO_DAYS(conges_periode.p_date_fin) >= TO_DAYS(NOW())
+                )';
+        
+        $query = $sql->query($req);
+        
+        return 0 < (int) $query->fetch_array()[0];
+    }
+
+    /**
      * Vérifie si un utilisateur est bien le responsable d'un employé
      *
      * @param string $resp

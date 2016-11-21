@@ -65,6 +65,15 @@ abstract class ATraitement
      * @return array $ids
      */
     abstract protected function getIdDemandesResponsable($resp);
+    
+    /**
+     * Transmet à respN+2 les id des demandes des utilisateurs d'un respN+1 absent
+     * 
+     * @param string $resp login du respN+2
+     * 
+     * @return array $ids 
+     */
+    abstract protected function getIdDemandesResponsableAbsent($resp);
 
     /**
      * Retourne la liste détaillée des demandes
@@ -127,6 +136,17 @@ abstract class ATraitement
     public function getDemandesResponsable($resp)
     {
         $demandesId = $this->getIdDemandesResponsable($resp);
+        if (empty($demandesId)) {
+            return [];
+        }
+        $demandes = $this->getInfoDemandes($demandesId);
+
+        return $demandes;
+    }
+    
+    public function getDemandesResponsableAbsent($resp) 
+    {
+        $demandesId = $this->getIdDemandesResponsableAbsent($resp);
         if (empty($demandesId)) {
             return [];
         }
