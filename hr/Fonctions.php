@@ -2682,7 +2682,7 @@ class Fonctions
 
             // on met à jour la table conges_periode .
             $etat = "annul" ;
-            $sql1 = 'UPDATE conges_periode SET p_etat = "'.\includes\SQL::quote($etat).'" WHERE p_num='.\includes\SQL::quote($sql_num_periode).'" AND p_etat=\'ok\';';
+            $sql1 = 'UPDATE conges_periode SET p_etat = "'.\includes\SQL::quote($etat).'" WHERE p_num="'.\includes\SQL::quote($sql_num_periode).'" AND p_etat=\'ok\';';
             $ReqLog = \includes\SQL::query($sql1);
 
             if ($ReqLog && \includes\SQL::getVar('affected_rows')) {
