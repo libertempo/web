@@ -424,6 +424,7 @@ INSERT IGNORE INTO `conges_config` VALUES ('calcul_auto_jours_feries_france', 'F
 
 INSERT IGNORE INTO `conges_config` (`conf_nom`, `conf_valeur`, `conf_groupe`, `conf_type`, `conf_commentaire`) VALUES ('export_ical', 'true', '15_ical', 'boolean', 'config_comment__export_ical'),
 ('export_ical_salt', 'Jao%iT}', '15_ical', 'texte', 'config_comment_export_ical_salt');
+INSERT IGNORE INTO `conges_config` (`conf_nom`, `conf_valeur`, `conf_groupe`, `conf_type`, `conf_commentaire`) VALUES ('resp_association_planning', 'FALSE', '06_Responsable', 'boolean', 'config_comment_resp_association_planning');
 
 #
 # Contenu de la table `conges_type_absence`

@@ -158,6 +158,10 @@ if (!empty($seeAllNo)) {
     $sql->query($reqSeeAllNo);
 }
 
+/* Autorisation pour le responsable d'associer employé <> planning */
+$reqInsertAssociation = 'INSERT IGNORE INTO `conges_config` (`conf_nom`, `conf_valeur`, `conf_groupe`, `conf_type`, `conf_commentaire`) VALUES ("resp_association_planning", "FALSE", "06_Responsable", "boolean", "config_comment_resp_association_planning")';
+$sql->query($reqInsertAssociation);
+
 $sql->getPdoObj()->commit();
 
 // on renvoit à la page mise_a_jour.php (là d'ou on vient)
