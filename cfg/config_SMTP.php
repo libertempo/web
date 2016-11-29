@@ -25,5 +25,16 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *************************************************************************************************/
 
+//Config SMTP
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
-echo \responsable\Fonctions::getListePlanningModule();
+
+
+$config_SMTP_host = "smtp.gmail.com";		//adresse serveur smtp
+$config_SMTP_port = 465; 	//port smtp
+$config_SMTP_sec  = "SSL/TLS";		//ssl, tls ou vide
+$config_SMTP_user = "";		//nom utilisateur (peut être vide)
+$config_SMTP_pwd = "";		//mot de passe (peut être vide)
+
+// uncomment this if you want receive mails when a SQL error is found.
+//if (!defined( 'ERROR_MAIL_REPORT' ))
+// define('ERROR_MAIL_REPORT',	'your@mail.adress');
