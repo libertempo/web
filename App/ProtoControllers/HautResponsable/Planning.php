@@ -52,8 +52,8 @@ class Planning
                 $sql = \includes\SQL::singleton();
                 $sql->getPdoObj()->begin_transaction();
                 $idPlanning = static::insertPlanning($post);
-                \App\ProtoControllers\Responsable\Creneau::deleteCreneauList($idPlanning);
-                $idLastCreneau = static::postCreneauxList($post['creneaux'], $idPlanning, $errors);
+                Planning\Creneau::deleteCreneauList($idPlanning);
+                $idLastCreneau = Planning\Creneau::postCreneauxList($post['creneaux'], $idPlanning, $errors);
                 if (0 < $idPlanning && 0 < $idLastCreneau) {
                     $sql->getPdoObj()->commit();
                 } else {
@@ -67,6 +67,105 @@ class Planning
 
             return $idPlanning;
         }
+    }
+
+    /**
+     * Met à jour un planning
+     *
+     * @param int   $id
+     * @param array $put
+     * @param array &$errors
+     *
+     * @return int
+     */
+    private static function putPlanning($id, array $put, array &$errors)
+    {
+        $utilisateurs = \App\ProtoControllers\Utilisateur::getListByPlanning($id);
+        /* TODO: Peut mieux faire */
+        foreach ($utilisateurs as $utilisateur) {
+            $login = $utilisateur['u_login'];
+            if (\App\ProtoControllers\Utilisateur::hasCongesEnCours($login)
+                || \App\ProtoControllers\Utilisateur::hasHeureReposEnCours($login)
+                || \App\ProtoControllers\Utilisateur::hasHeureAdditionnelleEnCours($login)
+            ) {
+                $errors['Planning'] = _('demande_en_cours_sur_planning');
+                return NIL_INT;
+            }
+        }
+        if (empty($put['name'])) {
+            $errors['Nom'] = _('champ_necessaire');
+            return NIL_INT;
+        }
+        if (static::existPlanningName($put['name'], $id)) {
+            $errors['Nom'] = _('nom_existe_deja');
+            return NIL_INT;
+        }
+
+        if (!empty($put['creneaux'])) {
+            $sql = \includes\SQL::singleton();
+            $sql->getPdoObj()->begin_transaction();
+            $idPlanning = static::updatePlanning($id, $put);
+            Planning\Creneau::deleteCreneauList($idPlanning);
+            if (0 < $idPlanning) {
+                $idLastCreneau = Planning\Creneau::postCreneauxList($put['creneaux'], $idPlanning, $errors);
+                if (0 < $idLastCreneau) {
+                    $sql->getPdoObj()->commit();
+                } else {
+                    $sql->getPdoObj()->rollback();
+                    return NIL_INT;
+                }
+            } else {
+                $sql->getPdoObj()->rollback();
+            }
+        } else {
+            $idPlanning = static::updatePlanning($id, $put);
+        }
+
+        return $idPlanning;
+    }
+
+    /**
+     * Supprime un planning
+     *
+     * @param int   $id
+     * @param array &$errors
+     * @param string $notice
+     *
+     * @return int
+     */
+    private static function deletePlanning($id, array &$errors, &$notice)
+    {
+        // si planning inexistant ou faisant partie des non supprimable
+        if (!static::isDeletable($id)) {
+            $errors[] = _('planning_non_supprimable');
+            return NIL_INT;
+        }
+
+        $sql = \includes\SQL::singleton();
+        $sql->getPdoObj()->begin_transaction();
+        $res = static::deleteSql($id);
+        Planning\Creneau::deleteCreneauList($id);
+        if (0 < $res) {
+            $notice = _('planning_supprime');
+            $sql->getPdoObj()->commit();
+            return $res;
+        } else {
+            $sql->getPdoObj()->rollback();
+            return NIL_INT;
+        }
+    }
+
+    /**
+     * Patche un planning
+     *
+     * @param int   $id
+     * @param array $patch
+     *
+     * @return int
+     */
+    private static function patchPlanning($id, array $patch)
+    {
+        return self::patchSql($id, $patch);
     }
 
     /*
@@ -85,6 +184,52 @@ class Planning
         $req = 'SELECT planning_id AS id
                 FROM planning
                 WHERE status = ' . \App\Models\Planning::STATUS_ACTIVE;
+        $res = $sql->query($req);
+        while ($data = $res->fetch_array()) {
+            $ids[] = (int) $data['id'];
+        }
+
+        return $ids;
+    }
+
+    /**
+     * Retourne la liste des plannings
+     *
+     * @param array $listId
+     *
+     * @return array
+     */
+    public static function getListPlanning(array $listId)
+    {
+        if (empty($listId)) {
+            return [];
+        }
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT *
+                FROM planning
+                WHERE planning_id IN (' . implode(',', $listId) . ')
+                ORDER BY planning_id DESC';
+
+        return $sql->query($req)->fetch_all(MYSQLI_ASSOC);
+    }
+
+    /**
+     * Retourne la liste des id de planning utilisés
+     *
+     * @param array $listId
+     *
+     * @return array
+     */
+    public static function getListPlanningUsed(array $listId)
+    {
+        if (empty($listId)) {
+            return [];
+        }
+        $ids = [];
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT planning_id AS id
+                FROM conges_users
+                WHERE planning_id IN (' . implode(',', $listId) . ')';
         $res = $sql->query($req);
         while ($data = $res->fetch_array()) {
             $ids[] = (int) $data['id'];
@@ -131,5 +276,105 @@ class Planning
         $query = $sql->query($req);
 
         return $sql->insert_id;
+    }
+
+    /**
+     * Met à jour un planning en base
+     *
+     * @param int   $id
+     * @param array $put
+     *
+     * @return int
+     */
+    private static function updatePlanning($id, array $put)
+    {
+        $sql = \includes\SQL::singleton();
+        $req = 'UPDATE planning
+                SET name = "' . htmlspecialchars($sql->quote($put['name'])) . '"
+                WHERE planning_id = ' . $id;
+        $sql->query($req);
+
+        return $id;
+    }
+
+    /**
+     * Vérifie qu'un planning est supprimable
+     *
+     * @param int $id
+     *
+     * @return bool
+     */
+    private static function isDeletable($id)
+    {
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT EXISTS (
+                    SELECT planning_id
+                    FROM conges_users
+                    WHERE planning_id = ' . (int) $id . '
+                )';
+        $query = $sql->query($req);
+
+        return 0 >= (int) $query->fetch_array()[0];
+    }
+
+    /**
+     * Vérifie qu'un planning est visible dans l'application
+     *
+     * @param int $id
+     *
+     * @return bool
+     */
+    public static function isVisible($id)
+    {
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT EXISTS (
+                    SELECT planning_id
+                    FROM planning
+                    WHERE planning_id = ' . (int) $id . '
+                      AND status = ' . \App\Models\Planning::STATUS_ACTIVE . '
+                )';
+        $query = $sql->query($req);
+
+        return 0 < (int) $query->fetch_array()[0];
+    }
+
+    /**
+     * Supprime un planning de la base
+     *
+     * @param int $id
+     *
+     * @return int
+     */
+    private static function deleteSql($id)
+    {
+        $sql = \includes\SQL::singleton();
+        $req = 'UPDATE planning
+                SET status = ' . \App\Models\Planning::STATUS_DELETED . '
+                WHERE planning_id = ' . (int) $id . '
+                LIMIT 1';
+        $sql->query($req);
+
+        return 0 < $sql->affected_rows ? $id : NIL_INT;
+    }
+
+    /**
+     * Met à jour le statut d'un planning en base
+     *
+     * @param int $id
+     * @param array $patch
+     *
+     * @return int
+     * @TODO : j'aime pas cette méthode, à supprimer dès que possible
+     * @since 1.9
+     */
+    private static function patchSql($id, array $patch)
+    {
+        $sql = \includes\SQL::singleton();
+        $req = 'UPDATE planning
+                SET status = ' . (int) $patch['status'] . '
+                WHERE planning_id = ' . $id;
+        $sql->query($req);
+
+        return 0 < $sql->affected_rows ? $id : NIL_INT;
     }
 }

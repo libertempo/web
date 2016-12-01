@@ -179,5 +179,4 @@ class Responsable
 
         return 0 < (int) $query->fetch_array()[0];
     }
-
 }
