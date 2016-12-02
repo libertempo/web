@@ -87,7 +87,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         ob_start();
         $table->render();
         $return .= ob_get_clean();
-        if (!empty($demandesResp) || !empty($demandesGrandResp) ) {
+        if (!empty($demandesResp) || !empty($demandesGrandResp) || !empty($demandesRespAbsent) ) {
             $return .= '<div class="form-group"><input type="submit" class="btn btn-success" value="' . _('form_submit') . '" /></div>';
         }
         $return .='</form>';
@@ -147,12 +147,12 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         $infoDemandes = $this->getInfoDemandes(array_keys($put['demande']));
 
         foreach ($put['demande'] as $id_conge => $statut) {
-            if (\App\ProtoControllers\Responsable::isRespDeUtilisateur($resp, $infoDemandes[$id_conge]['p_login'])) {
+            if (\App\ProtoControllers\Responsable::isRespDeUtilisateur($resp, $infoDemandes[$id_conge]['p_login']) || \App\ProtoControllers\Responsable::isRespParDelegation($resp, $infoDemandes[$id_conge]['p_login'])) {
                 $return = $this->putResponsable($infoDemandes[$id_conge], $statut, $put, $errorLst);
             } elseif (\App\ProtoControllers\Responsable::isGrandRespDeGroupe($resp, \App\ProtoControllers\Utilisateur::getGroupesId($infoDemandes[$id_conge]['p_login']))) {
                 $return = $this->putGrandResponsable($infoDemandes[$id_conge], $statut, $put, $errorLst);
             } else {
-                $errorLst[] = _('erreur_pas_responsable_de') . ' ' . $infoDemandes['id_conge']['p_login'];
+                $errorLst[] = _('erreur_pas_responsable_de') . ' ' . $infoDemandes[$id_conge]['p_login'];
                 $return = NIL_INT;
             }
         }
@@ -389,7 +389,6 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
         $usersResp = [];
         $usersResp = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupId);
-
         $usersRespDirect = \App\ProtoControllers\Responsable::getUsersRespDirect($resp);
         $usersResp = array_merge($usersResp,$usersRespDirect);
         if (empty($usersResp)) {
@@ -400,7 +399,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         $sql = \includes\SQL::singleton();
         $req = 'SELECT p_num AS id
                 FROM conges_periode
-                WHERE p_login IN (\'' . implode(',', $usersResp) . '\')
+                WHERE p_login IN (\'' . implode('\',\'', $usersResp) . '\')
                 AND p_etat = \''. \App\Models\Conge::STATUT_DEMANDE.'\'';
         $res = $sql->query($req);
         while ($data = $res->fetch_array()) {
@@ -411,10 +410,17 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
 
     /**
-    * {@inheritDoc}
-    */
+     * Transmet à respN+2 les id des demandes des utilisateurs d'un respN+1 absent
+     * 
+     * @param string $resp login du respN+2
+     * 
+     * @return array $ids 
+     */
     protected function getIdDemandesResponsableAbsent($resp)
     { 
+        if(!$_SESSION['config']['gestion_cas_absence_responsable']){
+            return [];
+        }
         $groupId = \App\ProtoControllers\Responsable::getIdGroupeResp($resp);
 
         $ids = [];
@@ -566,8 +572,6 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         }
         return $findemande < $dlimite;
     }
-
-
 
     /**
      * verifie si la date limite d'usage des reliquats n'est pas dépassée
