@@ -62,7 +62,7 @@ class Planning
                 }
             } else {
                 $idPlanning = static::insertPlanning($post);
-                static::deleteCreneauList($idPlanning);
+                Planning\Creneau::deleteCreneauList($idPlanning);
             }
 
             return $idPlanning;

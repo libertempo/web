@@ -1,6 +1,8 @@
 <?php
 namespace App\ProtoControllers\HautResponsable\Planning;
 
+use \App\Models\Planning\Creneau as ModelCreneau;
+
 /**
  * ProtoContrôleur de créneau, en attendant la migration vers le MVC REST
  *
@@ -47,15 +49,15 @@ class Creneau
         $pattern = '/^(([01]?[0-9])|(2[0-3])):[0-5][0-9]$/';
         foreach ($periodes as $typeCreneau => $creneaux) {
             foreach ($creneaux as $creneauxJour) {
-                $debut = $creneauxJour[\App\Models\Planning\Creneau::TYPE_HEURE_DEBUT];
-                $fin   = $creneauxJour[\App\Models\Planning\Creneau::TYPE_HEURE_FIN];
+                $debut = $creneauxJour[ModelCreneau::TYPE_HEURE_DEBUT];
+                $fin   = $creneauxJour[ModelCreneau::TYPE_HEURE_FIN];
                 if (-1 !== strnatcmp($debut, $fin)) {
                     $localError['Créneaux de travail'][] = _('date_fin_superieure_date_debut');
                 }
                 if (!preg_match($pattern, $debut) || !preg_match($pattern, $fin))  {
                     $localError['Créneaux de travail'][] = _('format_heure_incorrect');
                 }
-                if (!empty($precedentsCreneauxJours) && 1 !== strnatcmp($debut, $precedentsCreneauxJours[\App\Models\Planning\Creneau::TYPE_HEURE_FIN])) {
+                if (!empty($precedentsCreneauxJours) && 1 !== strnatcmp($debut, $precedentsCreneauxJours[ModelCreneau::TYPE_HEURE_FIN])) {
                     $localError['Créneaux de travail'][] = _('creneaux_consecutifs');
                 }
                 $precedentsCreneauxJours = $creneauxJour;
@@ -66,11 +68,59 @@ class Creneau
         return empty($localError);
     }
 
+    /**
+     * Organise les Creneaux selon leurs critères de groupement à partir des infos de l'utilisateur
+     *
+     * @param array $list
+     *
+     * @return array
+     */
+    private static function groupCreneauxFromUser(array $list)
+    {
+        $grouped = [];
+        foreach ($list as $jourId => $periodes) {
+            foreach ($periodes as $typeCreneau => $creneaux) {
+                foreach ($creneaux as $creneauxJour) {
+                    $grouped[$jourId][$typeCreneau][] = [
+                        ModelCreneau::TYPE_HEURE_DEBUT => $creneauxJour[ModelCreneau::TYPE_HEURE_DEBUT],
+                        ModelCreneau::TYPE_HEURE_FIN => $creneauxJour[ModelCreneau::TYPE_HEURE_FIN]
+                    ];
+                }
+            }
+        }
+
+        return $grouped;
+    }
+
+    /**
+     * Organise les Creneaux selon leurs critères de groupement à partir des infos de la BDD
+     *
+     * @param array $creneaux
+     *
+     * @return array
+     */
+    private static function groupCreneauxFromDb(array $creneaux)
+    {
+        $grouped = [];
+        foreach ($creneaux as $creneau) {
+            $jourId      = $creneau['jour_id'];
+            $typePeriode = $creneau['type_periode'];
+            $debut       = date('H\:i', $creneau['debut']);
+            $fin         = date('H\:i', $creneau['fin']);
+
+            $grouped[$jourId][$typePeriode][] = [
+                ModelCreneau::TYPE_HEURE_DEBUT => $debut,
+                ModelCreneau::TYPE_HEURE_FIN   => $fin,
+            ];
+        }
+
+        return $grouped;
+    }
+
     /*
      * SQL
      *
      */
-
 
     /**
      * Supprime tous les créneaux d'un planning donné
@@ -116,5 +166,32 @@ class Creneau
         $query = $sql->query($req);
 
         return $sql->insert_id;
+    }
+
+    /**
+     * Retourne les créneaux de travail groupés
+     *
+     * @param array $post        Totalité des données postées par l'utilisateur
+     * @param int   $idPlanning
+     * @param int   $typeSemaine
+     *
+     * @return array
+     */
+    public static function getCreneauxGroupes(array $post, $idPlanning, $typeSemaine)
+    {
+        if (!empty($post['creneaux'][$typeSemaine])) {
+            return static::groupCreneauxFromUser($post['creneaux'][$typeSemaine]);
+        }
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT *
+                FROM planning_creneau
+                WHERE planning_id = ' . (int) $idPlanning . '
+                  AND type_semaine = ' . (int) $typeSemaine;
+        $res = $sql->query($req);
+        if (!$res->num_rows) {
+            return [];
+        }
+
+        return static::groupCreneauxFromDb($res->fetch_all(\MYSQLI_ASSOC));
     }
 }
