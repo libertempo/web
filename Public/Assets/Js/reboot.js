@@ -138,6 +138,10 @@ var semaineDisplayer = function (idElement, idCommon, typeSemaines, texts)
     this.idCommon     = idCommon;
     this.typeSemaines = typeSemaines;
     this.texts        = texts;
+
+    /**
+     * Lance l'initialisation de l'afficheur
+     */
     this.init = function ()
     {
         var displayedNot = false;
@@ -167,6 +171,8 @@ var semaineDisplayer = function (idElement, idCommon, typeSemaines, texts)
             }
 
         }.bind(this));
+
+        return this;
     }
 
     /**
@@ -273,6 +279,14 @@ var semaineDisplayer = function (idElement, idCommon, typeSemaines, texts)
         // TODO : not with reference sur un autre form ?
         return document.getElementById(typeSemaine).querySelectorAll('input[type=hidden]');
     }
+
+    /**
+     * Lance l'initialisation de l'afficheur en mode lecture seule
+     */
+    this.readOnly = function ()
+    {
+        this.element.style.display = 'none';
+    }
 }
 
 /**
@@ -287,6 +301,10 @@ var planningController = function (idElement, options, creneaux)
     this.fin   = this.options['typeHeureFin'];
     this.incrementMatin = 0;
     this.incrementApresMidi = 0;
+
+    /**
+     * Lance l'initialisation de l'afficheur
+     */
     this.init = function ()
     {
         this.element.addEventListener('click', function () {
@@ -506,5 +524,21 @@ var planningController = function (idElement, options, creneaux)
                 return brother;
             }
         }
+    }
+
+    /**
+     * Lance l'initialisation de l'afficheur en mode lecture seule
+     */
+    this.readOnly = function ()
+    {
+        /* Remplissage des valeurs préexistantes */
+        this._addPeriods(creneaux);
+        var boutons = document.getElementById(this.options.tableId).querySelectorAll('button');
+        //console.log(this.options.tableId, boutons);
+        for (var i = 0; i < boutons.length; ++i) {
+            var bouton = boutons[i].style.display = 'none';
+            console.log(bouton);
+        }
+
     }
 }
