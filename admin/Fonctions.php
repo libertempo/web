@@ -2253,10 +2253,7 @@ class Fonctions
 
         /* Si l'on change le planning de l'utilisateur sans le pouvoir */
         if ($dataUser['planning_id'] != $tab_new_user['planning_utilisateur']) {
-            if (\App\ProtoControllers\Utilisateur::hasCongesEnCours($u_login_to_update)
-                || \App\ProtoControllers\Utilisateur::hasHeureReposEnCours($u_login_to_update)
-                || \App\ProtoControllers\Utilisateur::hasHeureAdditionnelleEnCours($u_login_to_update)
-            ) {
+            if (\App\ProtoControllers\Utilisateur::hasSortiesEnCours($u_login_to_update)) {
                 $erreurs['Planning'] = _('demande_en_cours_sur_planning');
                 $valid_5 = false;
             }
@@ -2611,7 +2608,7 @@ class Fonctions
         ob_start();
         $table->render();
         $return .= ob_get_clean();
-        $listPlanning = \App\ProtoControllers\Responsable\Planning::getListPlanning(\App\ProtoControllers\Responsable\Planning::getListPlanningId());
+        $listPlanning = \App\ProtoControllers\HautResponsable\Planning::getListPlanning(\App\ProtoControllers\HautResponsable\Planning::getListPlanningId());
         $return .= '<br><hr/>';
         $return .= '<h4>' . _('planning_utilisateur') . '</h4>';
         $return .= '<select name="planning_utilisateur" class="form-control">';
@@ -3273,7 +3270,7 @@ class Fonctions
         ob_start();
         $table->render();
         $return .= ob_get_clean();
-        $listPlanning = \App\ProtoControllers\Responsable\Planning::getListPlanning(\App\ProtoControllers\Responsable\Planning::getListPlanningId());
+        $listPlanning = \App\ProtoControllers\HautResponsable\Planning::getListPlanning(\App\ProtoControllers\HautResponsable\Planning::getListPlanningId());
         $return .= '<br><hr/>';
         $return .= '<h4>' . _('planning_utilisateur') . '</h4>';
         $return .= '<select name="planning_utilisateur" class="form-control">';

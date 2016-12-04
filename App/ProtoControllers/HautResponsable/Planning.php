@@ -48,22 +48,22 @@ class Planning
                 return NIL_INT;
             }
 
-            if (!empty($post['creneaux'])) {
-                $sql = \includes\SQL::singleton();
-                $sql->getPdoObj()->begin_transaction();
-                $idPlanning = static::insertPlanning($post);
-                Planning\Creneau::deleteCreneauList($idPlanning);
-                $idLastCreneau = Planning\Creneau::postCreneauxList($post['creneaux'], $idPlanning, $errors);
-                if (0 < $idPlanning && 0 < $idLastCreneau) {
-                    $sql->getPdoObj()->commit();
-                } else {
-                    $sql->getPdoObj()->rollback();
-                    return NIL_INT;
-                }
+            $sql = \includes\SQL::singleton();
+            $sql->getPdoObj()->begin_transaction();
+            $rollback = false;
+
+            $idPlanning = static::insertPlanning($post);
+            if (0 < $idPlanning) {
+                $rollback = !static::setDependencies($idPlanning, $post, $errors);
             } else {
-                $idPlanning = static::insertPlanning($post);
-                Planning\Creneau::deleteCreneauList($idPlanning);
+                $rollback = true;
             }
+
+            if ($rollback) {
+                $sql->getPdoObj()->rollback();
+                return NIL_INT;
+            }
+            $sql->getPdoObj()->commit();
 
             return $idPlanning;
         }
@@ -81,13 +81,8 @@ class Planning
     private static function putPlanning($id, array $put, array &$errors)
     {
         $utilisateurs = \App\ProtoControllers\Utilisateur::getListByPlanning($id);
-        /* TODO: Peut mieux faire */
         foreach ($utilisateurs as $utilisateur) {
-            $login = $utilisateur['u_login'];
-            if (\App\ProtoControllers\Utilisateur::hasCongesEnCours($login)
-                || \App\ProtoControllers\Utilisateur::hasHeureReposEnCours($login)
-                || \App\ProtoControllers\Utilisateur::hasHeureAdditionnelleEnCours($login)
-            ) {
+            if (\App\ProtoControllers\Utilisateur::hasSortiesEnCours($utilisateur['u_login'])) {
                 $errors['Planning'] = _('demande_en_cours_sur_planning');
                 return NIL_INT;
             }
@@ -101,27 +96,56 @@ class Planning
             return NIL_INT;
         }
 
-        if (!empty($put['creneaux'])) {
-            $sql = \includes\SQL::singleton();
-            $sql->getPdoObj()->begin_transaction();
-            $idPlanning = static::updatePlanning($id, $put);
-            Planning\Creneau::deleteCreneauList($idPlanning);
-            if (0 < $idPlanning) {
-                $idLastCreneau = Planning\Creneau::postCreneauxList($put['creneaux'], $idPlanning, $errors);
-                if (0 < $idLastCreneau) {
-                    $sql->getPdoObj()->commit();
-                } else {
-                    $sql->getPdoObj()->rollback();
-                    return NIL_INT;
-                }
-            } else {
-                $sql->getPdoObj()->rollback();
-            }
+        $sql = \includes\SQL::singleton();
+        $sql->getPdoObj()->begin_transaction();
+        $rollback = false;
+
+        $idPlanning = static::updatePlanning($id, $put);
+        if (0 < $idPlanning) {
+            $rollback = !static::setDependencies($idPlanning, $put, $errors);
         } else {
-            $idPlanning = static::updatePlanning($id, $put);
+            $rollback = true;
         }
 
+        if ($rollback) {
+            $sql->getPdoObj()->rollback();
+            return NIL_INT;
+        }
+        $sql->getPdoObj()->commit();
+
         return $idPlanning;
+    }
+
+    /**
+     * Tente de définir les dépendances d'un planning
+     *
+     * @param int $idPlanning
+     * @param array $put
+     * @param array &$errors Erreurs à remonter
+     *
+     * @return bool False, en cas d'échec
+     */
+    private static function setDependencies($idPlanning, array $put, array &$errors)
+    {
+        $idPlanning = (int) $idPlanning;
+        Planning\Creneau::deleteCreneauList($idPlanning);
+        if (!empty($put['creneaux'])) {
+            $idLastCreneau = Planning\Creneau::postCreneauxList($put['creneaux'], $idPlanning, $errors);
+            if (0 >= $idLastCreneau) {
+                return false;
+            }
+        }
+        \App\ProtoControllers\Utilisateur::deleteListAssociationPlanning($idPlanning);
+        if (!empty($put['utilisateurs'])) {
+            // on ne peut pas supprimer par erreur des employés associés && en cours
+            // Vu qu'on ne peut pas modifier le planning
+            $utilisateursAffectes = \App\ProtoControllers\Utilisateur::putListAssociationPlanning($put['utilisateurs'], (int) $idPlanning);
+            if ($utilisateursAffectes < count($put['utilisateurs'])) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

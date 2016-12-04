@@ -3483,13 +3483,50 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         return ob_get_clean();
     }
 
+    /**
+     * Retourne la séquence de formulaire des employés associés au planning
+     *
+     * @param int $idPlanning
+     *
+     * @return string
+     */
     private static function getFormPlanningEmployes($idPlanning)
     {
-        $return = $idPlanning;
+        $idPlanning = (int) $idPlanning;
+        $return = '';
+        $utilisateursAssocies = \App\ProtoControllers\Utilisateur::getListByPlanning(0);
+
+        if (NIL_INT !== $idPlanning) {
+            $utilisateursAssocies = array_merge($utilisateursAssocies, \App\ProtoControllers\Utilisateur::getListByPlanning($idPlanning));
+        }
+        $utilisateursAssocies = array_map(
+            function ($utilisateur) {
+                return [
+                    'login' => $utilisateur['u_login'],
+                    'nom' => $utilisateur['u_nom'],
+                    'prenom' => $utilisateur['u_prenom'],
+                    'planningId' => (int) $utilisateur['planning_id'],
+                ];
+            },
+            $utilisateursAssocies
+        );
+        if (empty($utilisateursAssocies)) {
+            $return .= '<div>Tous les utilisateurs sont déjà associés.</div>';
+        } else {
+            foreach ($utilisateursAssocies as $utilisateur) {
+                $disabled = (\App\ProtoControllers\Utilisateur::hasSortiesEnCours($utilisateur['login']))
+                    ? 'disabled '
+                    : '';
+                $checked = ($idPlanning === $utilisateur['planningId'])
+                    ? 'checked '
+                    : '';
+                $nom = \App\ProtoControllers\Utilisateur::getNomComplet($utilisateur['prenom'], $utilisateur['nom']);
+                $return .= '<div class="checkbox">
+                    <label><input type="checkbox" name="utilisateurs[]" value="' . $utilisateur['login'] . '" ' . $disabled . $checked . ' />&nbsp;' . $nom  . '</label>
+                </div>';
+            }
+        }
 
         return $return;
-        // recupération des employés éligibles (déjà associés + sans association que je peux modifier)
-        /// je peux modifier : tous mes subalternes si je suis simple resp, <= + moi si je suis aussi rh
-        // verrouillage des employés qui ?
     }
 }
