@@ -20,7 +20,7 @@ Class Additionnelle extends \App\Libraries\ANotification {
         $sql = \includes\SQL::singleton();
         $req = 'SELECT *
                 FROM heure_additionnelle
-                WHERE id_heure =' . $id;
+                WHERE id_heure =' . (int) $id;
 
         $data = $sql->query($req)->fetch_array();
         
@@ -33,87 +33,71 @@ Class Additionnelle extends \App\Libraries\ANotification {
     }
 
     /**
-     * notification d'une nouvelle demande d'heures additionnelles
-     * au responsable du demandeur
-     * 
-     * @param array $data
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getNotificationDemande() {
+    protected function getContenuDemande($data) {
 
         $return['sujet'] = "Demande d'heure additionnelle";
-        $return['expediteur'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($this->data['login']);
-        $responsables = \App\ProtoControllers\Responsable::getResponsablesUtilisateur($this->data['login']);
-        $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($this->data['login']);
+        $return['expediteur'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($data['login']);
+        $responsables = \App\ProtoControllers\Responsable::getResponsablesUtilisateur($data['login']);
+        $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($data['login']);
         foreach ($responsables as $responsable) {
             $return['destinataire'][] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($responsable);
         }
 
-        $return['message'] = $infoUser['u_prenom'] . " " . $infoUser['u_nom'] . " solicite une demande d'ajout d'heure additionnelle pour le ". $this->data['jour'] ." de ". $this->data['debut'] ." à ". $this->data['fin'] ." soit ". $this->data['duree'] ." heure(s). Vous devez traiter cette demande";
+        $return['message'] = $infoUser['u_prenom'] . " " . $infoUser['u_nom'] . " solicite une demande d'ajout d'heure additionnelle pour le ". $data['jour'] ." de ". $data['debut'] ." à ". $data['fin'] ." soit ". $data['duree'] ." heure(s). Vous devez traiter cette demande";
 
         $return['config'] = 'mail_new_demande_alerte_resp';
         return $return;
     }
 
     /**
-     * notification d'une première validation 
-     * au demandeur d'heures additionnelles
-     * 
-     * @param array $data
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getNotificationEmployePremierValidation() {
+    protected function getContenuEmployePremierValidation($data) {
 
         $return['sujet'] = "Première validation d'heure additionnelle";
         $return['expediteur'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($_SESSION['userlogin']);
         $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($_SESSION['userlogin']);
-        $return['destinataire'][] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($this->data['login']);
+        $return['destinataire'][] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($data['login']);
 
-        $return['message'] = $infoUser['u_prenom'] . " " . $infoUser['u_nom'] . " a validé(e) votre demande d'heure additionnelle du  ". $this->data['jour'] ." de ". $this->data['debut'] ." à ". $this->data['fin'] .". Il doit maintenant être traité en deuxième validation.";
+        $return['message'] = $infoUser['u_prenom'] . " " . $infoUser['u_nom'] . " a validé(e) votre demande d'heure additionnelle du  ". $data['jour'] ." de ". $data['debut'] ." à ". $data['fin'] .". Il doit maintenant être traité en deuxième validation.";
 
         $return['config'] = 'mail_prem_valid_conges_alerte_user';
         return $return;
     }
 
     /**
-     * notification d'une validation finale
-     * au demandeur d'heures additionnelles
-     * 
-     * @param array $data
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getNotificationValidationFinale() {
+    protected function getContenuValidationFinale($data) {
 
         $return['sujet'] = "Demande d'heure additionnelle validée";
         $return['expediteur'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($_SESSION['userlogin']);
         $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($_SESSION['userlogin']);
-        $return['destinataire'][] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($this->data['login']);
+        $return['destinataire'][] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($data['login']);
 
 
-        $return['message'] = $infoUser['u_prenom'] . " " . $infoUser['u_nom'] . " a accepté la demande d'heure additionnelle du ". $this->data['jour'] ." de ". $this->data['debut'] ." à ". $this->data['fin'] .".";
+        $return['message'] = $infoUser['u_prenom'] . " " . $infoUser['u_nom'] . " a accepté la demande d'heure additionnelle du ". $data['jour'] ." de ". $data['debut'] ." à ". $data['fin'] .".";
 
         $return['config'] = 'mail_valid_conges_alerte_user';
         return $return;
     }
     
     /**
-     * notification d'un refus
-     * au demandeur d'heures additionnelles
-     * 
-     * @param array $data
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getNotificationRefus() {
+    protected function getContenuRefus($data) {
 
         $return['sujet'] = "Demande d'heure additionnelle refusée";
         $return['expediteur'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($_SESSION['userlogin']);
         $infoResp = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($_SESSION['userlogin']);
-        $return['destinataire'][] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($this->data['login']);
+        $return['destinataire'][] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($data['login']);
 
-        $return['message'] = $infoResp['u_prenom'] . " " . $infoResp['u_nom'] . " a refusé(e) votre demande d'heure additionnelle du ". $this->data['jour'] ." de ". $this->data['debut'] ." à ". $this->data['fin'] .".";
+        $return['message'] = $infoResp['u_prenom'] . " " . $infoResp['u_nom'] . " a refusé(e) votre demande d'heure additionnelle du ". $data['jour'] ." de ". $data['debut'] ." à ". $data['fin'] .".";
 
-        if(!is_null($this->data['comment_refus'])){
-            $return['message'] .= "\nCommentaire : " . $this->data['comment_refus'];
+        if(!is_null($data['comment_refus'])){
+            $return['message'] .= "\nCommentaire : " . $data['comment_refus'];
         }
         
         $return['config'] = 'mail_valid_conges_alerte_user';
@@ -121,46 +105,38 @@ Class Additionnelle extends \App\Libraries\ANotification {
     }
     
     /**
-     * notification d'une annulation par le demandeur
-     * à son responsable
-     * 
-     * @param array $data
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getNotificationAnnulation() {
+    protected function getContenuAnnulation($data) {
 
         $return['sujet'] = "Demande d'heure additionnelle annulée";
-        $return['expediteur'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($this->data['login']);
-        $responsables = \App\ProtoControllers\Responsable::getResponsablesUtilisateur($this->data['login']);
-        $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($this->data['login']);
+        $return['expediteur'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($data['login']);
+        $responsables = \App\ProtoControllers\Responsable::getResponsablesUtilisateur($data['login']);
+        $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($data['login']);
         foreach ($responsables as $responsable) {
             $return['destinataire'][] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($responsable);
         }
 
-        $return['message'] = $infoUser['u_prenom'] . " " . $infoUser['u_nom'] . " a annulé(e) la demande d'heure additionnelle du  ". $this->data['jour'] ." de ". $this->data['debut'] ." à ". $this->data['fin'] .".";
+        $return['message'] = $infoUser['u_prenom'] . " " . $infoUser['u_nom'] . " a annulé(e) la demande d'heure additionnelle du  ". $data['jour'] ." de ". $data['debut'] ." à ". $data['fin'] .".";
 
         $return['config'] = 'mail_supp_demande_alerte_resp';
         return $return;
     }
     
     /**
-     * notification d'une première validation
-     * au grand responsable du demandeur d'heures additionnelles
-     * 
-     * @param array $data
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getNotificationGrandResponsablePremiereValidation() {
+    protected function getContenuGrandResponsablePremiereValidation($data) {
         $return['sujet'] = "Demande d'heure additionnelle";
         $return['expediteur'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($_SESSION['userlogin']);
-        $grandResponsables = \App\ProtoControllers\Responsable::getLoginGrandResponsableUtilisateur($this->data['login']);
-        $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($this->data['login']);
+        $grandResponsables = \App\ProtoControllers\Responsable::getLoginGrandResponsableUtilisateur($data['login']);
+        $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($data['login']);
         $infoResp = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($_SESSION['userlogin']);
         foreach ($responsables as $responsable) {
             $return['destinataire'][] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($responsable);
         }
 
-    $return['message'] = $infoResp['u_prenom'] . " " . $infoResp['u_nom'] . " a validé(e) la demande d'ajout d'heure additionnelle de ".$infoUser['u_prenom']." ".$infoUser['u_nom']." pour le ". $this->data['jour'] ." de ". $this->data['debut'] ." à ". $this->data['fin'] ." soit ". $this->data['duree'] ." heure(s). Vous devez traiter cette demande";
+    $return['message'] = $infoResp['u_prenom'] . " " . $infoResp['u_nom'] . " a validé(e) la demande d'ajout d'heure additionnelle de ".$infoUser['u_prenom']." ".$infoUser['u_nom']." pour le ". $data['jour'] ." de ". $data['debut'] ." à ". $data['fin'] ." soit ". $data['duree'] ." heure(s). Vous devez traiter cette demande";
 
         $return['config'] = 'mail_new_demande_alerte_resp';
         return $return;

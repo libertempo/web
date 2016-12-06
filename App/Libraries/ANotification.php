@@ -9,8 +9,7 @@ namespace App\Libraries;
  */
 abstract Class ANotification {
 
-    protected $data;
-    protected $Notification;
+    protected $contenuNotification;
     protected $envoiMail;
 
     /**
@@ -22,8 +21,11 @@ abstract Class ANotification {
      * 
      */
     public function __construct($id) {
-        $this->data = $this->getData($id);
-        $this->Notification = $this->getNotificationContent();
+        if(is_int($id)){
+            $this->contenuNotification = $this->getContenu($id);
+        } else {
+            throw new Exception('erreur id');
+        }
     }
 
 
@@ -69,7 +71,7 @@ abstract Class ANotification {
             }
         }
         
-        foreach ($this->Notification as $notification){
+        foreach ($this->contenuNotification as $notification){
             if($this->canSend($notification['config'])){
                 $mail->ClearAddresses();
                 $mail->From = $notification['expediteur'];
@@ -102,24 +104,25 @@ abstract Class ANotification {
      * 
      * @return array
      */
-    protected function getNotificationContent() {
+    protected function getContenu($id) {
+        $data = $this->getData($id);
         $notifContent = [];
         switch ($this->data['statut']) {
-            case \App\Models\Heure\Additionnelle::STATUT_DEMANDE:
-                $NotifContent[] = $this->getNotificationDemande();
+            case \App\Models\AHeure::STATUT_DEMANDE:
+                $NotifContent[] = $this->getContenuDemande($data);
                 break;
-            case \App\Models\Heure\Additionnelle::STATUT_PREMIERE_VALIDATION:
-                $NotifContent[] = $this->getNotificationEmployePremiereValidation();
-                $NotifContent[] = $this->getNotificationGrandResponsablePremiereValidation();
+            case \App\Models\AHeure::STATUT_PREMIERE_VALIDATION:
+                $NotifContent[] = $this->getContenuEmployePremiereValidation($data);
+                $NotifContent[] = $this->getContenuGrandResponsablePremiereValidation($data);
                 break;
-            case \App\Models\Heure\Additionnelle::STATUT_VALIDATION_FINALE:
-                $NotifContent[] = $this->getNotificationValidationFinale();
+            case \App\Models\AHeure::STATUT_VALIDATION_FINALE:
+                $NotifContent[] = $this->getContenuValidationFinale($data);
                 break;
-            case \App\Models\Heure\Additionnelle::STATUT_REFUS:
-                $NotifContent[] = $this->getNotificationRefus();
+            case \App\Models\AHeure::STATUT_REFUS:
+                $NotifContent[] = $this->getContenuRefus($data);
                 break;
-            case \App\Models\Heure\Additionnelle::STATUT_ANNUL:
-                $NotifContent[] = $this->getNotificationAnnulation();
+            case \App\Models\AHeure::STATUT_ANNUL:
+                $NotifContent[] = $this->getContenuAnnulation($data);
                 break;
         }
         return $NotifContent;
@@ -133,13 +136,62 @@ abstract Class ANotification {
      * @throws Exception
      * 
      */
-    protected function canSend($optionName) {
-        if(isset($_SESSION['config'][$optionName])){
-            return $_SESSION['config'][$optionName];
-        } else {
-            throw new Exception('Option introuvable');
-            return false;
-        }
+    private function canSend($optionName) {
+        return isset($_SESSION['config'][$optionName]) ? $_SESSION['config'][$optionName] : false;
     }
 
+    /**
+     * notification d'une nouvelle demande d'heures
+     * au responsable du demandeur
+     * 
+     * @param array $data
+     * @return array
+     */
+    abstract protected function getContenuDemande($data);
+    
+    /**
+     * notification d'une première validation 
+     * au demandeur d'heures
+     * 
+     * @param array $data
+     * @return array
+     */
+    abstract protected function getContenuEmployePremierValidation($data);
+    
+    /**
+     * notification d'une validation finale
+     * au demandeur d'heures
+     * 
+     * @param array $data
+     * @return array
+     */
+    abstract protected function getContenuValidationFinale($data);
+    
+    /**
+     * notification d'un refus
+     * au demandeur d'heures
+     * 
+     * @param array $data
+     * @return array
+     */
+    abstract protected function getContenuRefus($data);
+    
+    /**
+     * notification d'une annulation par le demandeur
+     * à son responsable
+     * 
+     * @param array $data
+     * @return array
+     */
+    abstract protected function getContenuAnnulation($data);
+    
+    /**
+     * notification d'une première validation
+     * au grand responsable du demandeur d'heures
+     * 
+     * @param array $data
+     * @return array
+     */
+    abstract protected function getContenuGrandResponsablePremiereValidation($data);
+    
 }
