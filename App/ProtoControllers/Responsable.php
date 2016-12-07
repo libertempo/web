@@ -106,7 +106,10 @@ class Responsable
     public static function getRespsUtilisateur($user){
         $groupesId = \App\ProtoControllers\Utilisateur::getGroupesId($user);
 
-        return array_merge(\App\ProtoControllers\Responsable::getRespDirect($user), \App\ProtoControllers\Responsable::getRespsGroupes($groupesId));
+        $return = array_merge(\App\ProtoControllers\Responsable::getRespDirect($user), \App\ProtoControllers\Responsable::getRespsGroupes($groupesId));
+        $return = array_unique($return);
+        
+        return $return;
     }
     
     /**
