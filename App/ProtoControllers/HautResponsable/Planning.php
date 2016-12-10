@@ -240,6 +240,8 @@ class Planning extends \App\ProtoControllers\APlanning
         if (empty($listId)) {
             return [];
         }
+
+        $listId = array_map('intval', $listId);
         $sql = \includes\SQL::singleton();
         $req = 'SELECT *
                 FROM planning
@@ -261,6 +263,7 @@ class Planning extends \App\ProtoControllers\APlanning
         if (empty($listId)) {
             return [];
         }
+        $listId = array_map('intval', $listId);
         $ids = [];
         $sql = \includes\SQL::singleton();
         $req = 'SELECT planning_id AS id
@@ -327,7 +330,7 @@ class Planning extends \App\ProtoControllers\APlanning
         $sql = \includes\SQL::singleton();
         $req = 'UPDATE planning
                 SET name = "' . htmlspecialchars($sql->quote($put['name'])) . '"
-                WHERE planning_id = ' . $id;
+                WHERE planning_id = ' . (int) $id;
         $sql->query($req);
 
         return $id;
