@@ -3494,24 +3494,10 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
     {
         $idPlanning = (int) $idPlanning;
         $return = '';
-        $utilisateursAssocies = \App\ProtoControllers\Utilisateur::getListByPlanning(0);
+        $utilisateursAssocies = \App\ProtoControllers\HautResponsable\Planning::getListeUtilisateursAssocies($idPlanning);
 
-        if (NIL_INT !== $idPlanning) {
-            $utilisateursAssocies = array_merge($utilisateursAssocies, \App\ProtoControllers\Utilisateur::getListByPlanning($idPlanning));
-        }
-        $utilisateursAssocies = array_map(
-            function ($utilisateur) {
-                return [
-                    'login' => $utilisateur['u_login'],
-                    'nom' => $utilisateur['u_nom'],
-                    'prenom' => $utilisateur['u_prenom'],
-                    'planningId' => (int) $utilisateur['planning_id'],
-                ];
-            },
-            $utilisateursAssocies
-        );
         if (empty($utilisateursAssocies)) {
-            $return .= '<div>Tous les utilisateurs sont déjà associés.</div>';
+            $return .= '<div>' . _('hr_tout_utilisateur_associe') . '</div>';
         } else {
             foreach ($utilisateursAssocies as $utilisateur) {
                 $disabled = (\App\ProtoControllers\Utilisateur::hasSortiesEnCours($utilisateur['login']))

@@ -2,13 +2,13 @@
 namespace App\ProtoControllers\HautResponsable;
 
 /**
- * ProtoContrôleur de planning, en attendant la migration vers le MVC REST
+ * ProtoContrôleur de planning de haut responsable, en attendant la migration vers le MVC REST
  *
  * @since  1.9
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina
  */
-class Planning
+class Planning extends \App\ProtoControllers\APlanning
 {
     /**
      * Poste un nouveau planning
@@ -192,6 +192,16 @@ class Planning
     private static function patchPlanning($id, array $patch)
     {
         return self::patchSql($id, $patch);
+    }
+
+    /**
+     * Retourne la liste des utilisateurs associés au planning disponibles pour le haut responsable
+     *
+     * {@inheritDoc}
+     */
+    public static function getListeUtilisateursAssocies($idPlanning)
+    {
+        return parent::getListeUtilisateursAssocies($idPlanning);
     }
 
     /*
