@@ -1448,6 +1448,9 @@ msgstr "// AFFICHAGE DU CALENDRIER SANS AUTHENTIFICATION<br>//------------------
 msgid "config_comment_resp_ajoute_conges"
 msgstr "// AJOUT DE JOURS DE CONGÉS PAR LE RESPONSABLE<br>//--------------------------------------------------------------------------------------------<br>// si à FALSE : Le responsable ne peut pas ajouter (créditer) de jours de congés à ses utilisateurs.<br>// si à TRUE : Le responsable peut ajouter (créditer) des jours de congés à ses utilisateurs. (FALSE est la valeur par défaut)"
 
+msgid "config_comment_resp_association_planning"
+msgstr "// ASSOCIATION POSSIBLE DES PLANNING PAR LE RESPONSABLE :<br>//--------------------------------------------------------------------------------------------<br>// si à FALSE : le responsable n'a pas l'autorisation d'associer les plannings de ses subalternes.<br>// si à TRUE : le responsable est le délégué du RH pour l'association des plannings à ses subalternes.<br> /!\ Le responsable peut ainsi écraser une association faite par le RH"
+
 msgid "mail_remplace_date_debut"
 msgstr "__DATE_DEBUT__ sera automatiquement remplacé par la date de début de l'absence concernée."
 
