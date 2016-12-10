@@ -1959,11 +1959,9 @@ enctype="application/x-www-form-urlencoded"><a  title="' . _('form_modif') . '" 
         $return    = '';
         $message   = '';
         $errorsLst = [];
-        $notice    = '';
-        $valueName = '';
         if (!empty($_POST)) {
-            if (0 < (int) \App\ProtoControllers\HautResponsable\Planning::postPlanning($_POST, $errorsLst, $notice)) {
-                log_action(0, '', '', 'Édition du planning ' . $_POST['name']);
+            if (0 < (int) \App\ProtoControllers\Responsable\Planning::putPlanning($id, $_POST, $errorsLst)) {
+                log_action(0, '', '', 'Édition des associations du planning ' . $id);
                 redirect(ROOT_PATH . 'responsable/resp_index.php?session='. session_id() . '&onglet=liste_planning', false);
             } else {
                 if (!empty($errorsLst)) {
@@ -1976,7 +1974,6 @@ enctype="application/x-www-form-urlencoded"><a  title="' . _('form_modif') . '" 
                     }
                     $message = '<div class="alert alert-danger">' . _('erreur_recommencer') . ' :<ul>' . $errors . '</ul></div>';
                 }
-                $valueName = $_POST['name'];
             }
         }
 
@@ -2131,6 +2128,16 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             },
             $utilisateursAssocies
         );
+
+        $subalternes = \App\ProtoControllers\Responsable::getUsersRespDirect($_SESSION['userlogin']);
+
+        $utilisateursAssocies = array_filter(
+            $utilisateursAssocies,
+            function ($utilisateurs) use ($subalternes) {
+                return in_array($utilisateurs['login'], $subalternes);
+            }
+        );
+
         if (empty($utilisateursAssocies)) {
             $return .= '<div>Tous les utilisateurs sont déjà associés.</div>';
         } else {

@@ -80,6 +80,7 @@ class Planning
      */
     private static function putPlanning($id, array $put, array &$errors)
     {
+        $id = (int) $id;
         $utilisateurs = \App\ProtoControllers\Utilisateur::getListByPlanning($id);
         foreach ($utilisateurs as $utilisateur) {
             if (\App\ProtoControllers\Utilisateur::hasSortiesEnCours($utilisateur['u_login'])) {
@@ -139,8 +140,8 @@ class Planning
         if (!empty($put['utilisateurs'])) {
             // on ne peut pas supprimer par erreur des employés associés && en cours
             // Vu qu'on ne peut pas modifier le planning
-            $utilisateursAffectes = \App\ProtoControllers\Utilisateur::putListAssociationPlanning($put['utilisateurs'], (int) $idPlanning);
-            if ($utilisateursAffectes < count($put['utilisateurs'])) {
+            $hasUtilisateursAffectes = \App\ProtoControllers\Utilisateur::putListAssociationPlanning($put['utilisateurs'], (int) $idPlanning);
+            if (!$hasUtilisateursAffectes) {
                 return false;
             }
         }
@@ -159,6 +160,7 @@ class Planning
      */
     private static function deletePlanning($id, array &$errors, &$notice)
     {
+        $id = (int) $id;
         // si planning inexistant ou faisant partie des non supprimable
         if (!static::isDeletable($id)) {
             $errors[] = _('planning_non_supprimable');

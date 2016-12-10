@@ -534,10 +534,14 @@ var planningController = function (idElement, options, creneaux)
         /* Remplissage des valeurs préexistantes */
         this._addPeriods(creneaux);
         var boutons = document.getElementById(this.options.tableId).querySelectorAll('button');
-        //console.log(this.options.tableId, boutons);
         for (var i = 0; i < boutons.length; ++i) {
-            var bouton = boutons[i].style.display = 'none';
-            console.log(bouton);
+            bouton = boutons[i].style.display = 'none';
+        }
+
+        var inputs = document.getElementById(this.options.tableId).querySelectorAll('input');
+
+        for (var i = 0; i < inputs.length; ++i) {
+            inputs[i].style.display = 'none';
         }
 
     }

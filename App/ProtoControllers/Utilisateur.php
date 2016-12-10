@@ -280,7 +280,7 @@ class Utilisateur
     {
         $sql = \includes\SQL::singleton();
         $req = 'UPDATE conges_users
-            set planning_id = 0
+            SET planning_id = 0
             WHERE planning_id = ' . (int) $idPlanning;
         $sql->query($req);
 
@@ -301,9 +301,9 @@ class Utilisateur
         $utilisateursListe = array_map([$sql, 'quote'], $utilisateursListe);
         $req = 'UPDATE conges_users
             SET planning_id = ' . (int) $idPlanning  . '
-            WHERE u_login IN ("' . implode("','", $utilisateursListe) . '")';
+            WHERE u_login IN ("' . implode('","', $utilisateursListe) . '")';
         $sql->query($req);
-        
-        return $sql->affected_rows;
+
+        return (bool) $sql->affected_rows;
     }
 }
