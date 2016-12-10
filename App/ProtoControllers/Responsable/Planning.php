@@ -65,4 +65,15 @@ class Planning extends \App\ProtoControllers\APlanning
             }
         );
     }
+
+    /**
+     * Vérifie qu'un planning est visible dans l'application au sens du responsable
+     *
+     * {@inheritDoc}
+     */
+    public static function isVisible($id)
+    {
+        return \App\ProtoControllers\Responsable::canAssociatePLanning() && parent::isVisible($id);
+    }
+
 }

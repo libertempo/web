@@ -38,4 +38,25 @@ class APlanning
 
         return $utilisateursAssocies;
     }
+
+    /**
+     * Vérifie qu'un planning est visible dans l'application
+     *
+     * @param int $id
+     *
+     * @return bool
+     */
+    public static function isVisible($id)
+    {
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT EXISTS (
+                    SELECT planning_id
+                    FROM planning
+                    WHERE planning_id = ' . (int) $id . '
+                      AND status = ' . \App\Models\Planning::STATUS_ACTIVE . '
+                )';
+        $query = $sql->query($req);
+
+        return 0 < (int) $query->fetch_array()[0];
+    }
 }

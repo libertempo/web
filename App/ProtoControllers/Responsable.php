@@ -179,4 +179,12 @@ class Responsable
 
         return 0 < (int) $query->fetch_array()[0];
     }
+
+    /**
+     *
+     */
+    public static function canAssociatePLanning()
+    {
+        return $_SESSION['config']['double_validation_conges'];
+    }
 }

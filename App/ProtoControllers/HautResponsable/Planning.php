@@ -354,24 +354,13 @@ class Planning extends \App\ProtoControllers\APlanning
     }
 
     /**
-     * Vérifie qu'un planning est visible dans l'application
+     * Vérifie qu'un planning est visible dans l'application au sens du RH
      *
-     * @param int $id
-     *
-     * @return bool
+     * {@inheritDoc}
      */
     public static function isVisible($id)
     {
-        $sql = \includes\SQL::singleton();
-        $req = 'SELECT EXISTS (
-                    SELECT planning_id
-                    FROM planning
-                    WHERE planning_id = ' . (int) $id . '
-                      AND status = ' . \App\Models\Planning::STATUS_ACTIVE . '
-                )';
-        $query = $sql->query($req);
-
-        return 0 < (int) $query->fetch_array()[0];
+        return parent::isVisible($id);
     }
 
     /**
