@@ -270,18 +270,25 @@ class Utilisateur
     }
 
     /**
-     * Supprime toutes les associations des utilisateurs à ce planning
+     * Supprime les associations des utilisateurs à ce planning
      *
      * @param int $idPlanning
+     * @param array $utilisateurs Liste des utilisateurs dont on veut supprimer les associations
      *
      * @return bool
      */
-    public static function deleteListAssociationPlanning($idPlanning)
+    public static function deleteListAssociationPlanning($idPlanning, array $utilisateurs = [])
     {
+        $where[] = 'planning_id = ' . (int) $idPlanning;
         $sql = \includes\SQL::singleton();
+        if (!empty($utilisateurs)) {
+            $utilisateurs = array_map([$sql, 'quote', $utilisateurs]);
+            $where[] = 'u_login IN ("' . implode('","', $utilisateurs) . '")';
+        }
         $req = 'UPDATE conges_users
             SET planning_id = 0
-            WHERE planning_id = ' . (int) $idPlanning;
+            WHERE ' . implode(' AND ', $where);
+        ddd($req);
         $sql->query($req);
 
         return (bool) $sql->affected_rows;

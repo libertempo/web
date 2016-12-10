@@ -1,37 +1,68 @@
 <?php
-/*************************************************************************************************
-Libertempo : Gestion Interactive des Congés
-Copyright (C) 2015 (Wouldsmina)
-Copyright (C) 2015 (Prytoegrian)
-Copyright (C) 2005 (cedric chauvineau)
-
-Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
-termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
-Ce programme est distribué car potentiellement utile, mais SANS AUCUNE GARANTIE,
-ni explicite ni implicite, y compris les garanties de commercialisation ou d'adaptation
-dans un but spécifique. Reportez-vous à la Licence Publique Générale GNU pour plus de détails.
-Vous devez avoir reçu une copie de la Licence Publique Générale GNU en même temps
-que ce programme ; si ce n'est pas le cas, écrivez à la Free Software Foundation,
-Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, États-Unis.
-*************************************************************************************************
-This program is free software; you can redistribute it and/or modify it under the terms
-of the GNU General Public License as published by the Free Software Foundation; either
-version 2 of the License, or any later version.
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the GNU General Public License for more details.
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*************************************************************************************************/
 namespace App\ProtoControllers\Responsable;
 
 /**
- * ProtoContrôleur de planning, en attendant la migration vers le MVC REST
+ * ProtoContrôleur de planning du responsable, en attendant la migration vers le MVC REST
  *
  * @since  1.9
  * @author Prytoegrian <prytoegrian@protonmail.com>
  */
-class Planning
+class Planning extends \App\ProtoControllers\APlanning
 {
+    /**
+     * Met à jour un planning
+     *
+     * @param int   $id
+     * @param array $put
+     * @param array &$errors
+     *
+     * @return int
+     */
+    public static function putPlanning($id, array $put, array &$errors)
+    {
+        $id = (int) $id;
+        $utilisateurs = \App\ProtoControllers\Utilisateur::getListByPlanning($id);
+        foreach ($utilisateurs as $utilisateur) {
+            if (\App\ProtoControllers\Utilisateur::hasSortiesEnCours($utilisateur['u_login'])) {
+                $errors['Planning'] = _('demande_en_cours_sur_planning');
+                return NIL_INT;
+            }
+        }
+
+        $subalternes =  \App\ProtoControllers\Responsable::getUsersRespDirect($_SESSION['userlogin']);
+        \App\ProtoControllers\Utilisateur::deleteListAssociationPlanning($id, $subalternes);
+        $utilisateursAssocies = array_intersect($put['utilisateurs'], $subalternes);
+        ddd($utilisateursAssocies, $subalternes, $put['utilisateurs']);
+        if (!empty($utilisateursAssocies)) {
+            // on ne peut pas supprimer par erreur des employés associés && en cours
+            // Vu qu'on ne peut pas modifier le planning
+            $hasUtilisateursAffectes = \App\ProtoControllers\Utilisateur::putListAssociationPlanning($utilisateursAssocies, $id);
+            if (!$hasUtilisateursAffectes) {
+                return false;
+            }
+        }
+
+        return $id;
+    }
+
+    /**
+     * Retourne la liste des utilisateurs associés au planning disponibles pour le responsable
+     *
+     * @param int $idPlanning
+     *
+     * @return array ['login', 'nom', 'prenom', 'planningId']
+     */
+    public static function getListeUtilisateursAssocies($idPlanning)
+    {
+        $utilisateursAssocies = parent::getListeUtilisateursAssocies($idPlanning);
+
+        $subalternes = \App\ProtoControllers\Responsable::getUsersRespDirect($_SESSION['userlogin']);
+
+        return $utilisateursAssocies = array_filter(
+            $utilisateursAssocies,
+            function ($utilisateurs) use ($subalternes) {
+                return in_array($utilisateurs['login'], $subalternes);
+            }
+        );
+    }
 }
