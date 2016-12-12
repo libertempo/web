@@ -185,6 +185,6 @@ class Responsable
      */
     public static function canAssociatePLanning()
     {
-        return $_SESSION['config']['double_validation_conges'];
+        return $_SESSION['config']['resp_association_planning'];
     }
 }

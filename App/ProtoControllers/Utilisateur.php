@@ -282,13 +282,12 @@ class Utilisateur
         $where[] = 'planning_id = ' . (int) $idPlanning;
         $sql = \includes\SQL::singleton();
         if (!empty($utilisateurs)) {
-            $utilisateurs = array_map([$sql, 'quote', $utilisateurs]);
+            $utilisateurs = array_map([$sql, 'quote'], $utilisateurs);
             $where[] = 'u_login IN ("' . implode('","', $utilisateurs) . '")';
         }
         $req = 'UPDATE conges_users
             SET planning_id = 0
             WHERE ' . implode(' AND ', $where);
-        ddd($req);
         $sql->query($req);
 
         return (bool) $sql->affected_rows;

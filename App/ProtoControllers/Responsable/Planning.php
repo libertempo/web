@@ -32,7 +32,6 @@ class Planning extends \App\ProtoControllers\APlanning
         $subalternes =  \App\ProtoControllers\Responsable::getUsersRespDirect($_SESSION['userlogin']);
         \App\ProtoControllers\Utilisateur::deleteListAssociationPlanning($id, $subalternes);
         $utilisateursAssocies = array_intersect($put['utilisateurs'], $subalternes);
-        ddd($utilisateursAssocies, $subalternes, $put['utilisateurs']);
         if (!empty($utilisateursAssocies)) {
             // on ne peut pas supprimer par erreur des employés associés && en cours
             // Vu qu'on ne peut pas modifier le planning
