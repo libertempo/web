@@ -437,10 +437,6 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
             }
         }
         
-        if (empty($usersRespResp)) {
-            return [];
-        }
-        
         foreach ($usersRespResp as $respResp) {
             if (\App\ProtoControllers\Responsable::isRespAbsent($respResp)){
                 $ids = array_merge($ids,  $this->getidDemandesResponsable($respResp));

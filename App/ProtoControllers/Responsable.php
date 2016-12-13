@@ -90,11 +90,7 @@ class Responsable
                 WHERE u_login ="'.\includes\SQL::quote($user).'"';
         $query = $sql->query($req);
     
-        while ($data = $query->fetch_array()) {
-            $respLogin[] = $data['u_resp_login'];
-        }
-
-        return $respLogin;
+    return $query->fetch_array()[0]['u_resp_login'];
     }
     
     /**
@@ -106,7 +102,8 @@ class Responsable
     public static function getRespsUtilisateur($user){
         $groupesId = \App\ProtoControllers\Utilisateur::getGroupesId($user);
 
-        $return = array_merge(\App\ProtoControllers\Responsable::getRespDirect($user), \App\ProtoControllers\Responsable::getRespsGroupes($groupesId));
+        $return = \App\ProtoControllers\Responsable::getRespsGroupes($groupesId);
+        $return[] = \App\ProtoControllers\Responsable::getRespDirect($user);
         $return = array_unique($return);
         
         return $return;
@@ -121,13 +118,13 @@ class Responsable
     public static function getRespsGroupes(array $groupesId)
     {
         $sql = \includes\SQL::singleton();
-        $req = 'SELECT gr_login
+        $req = 'SELECT gr_login,gr_gid
                 FROM conges_groupe_resp
                 WHERE gr_gid IN (\'' . implode(',', $groupesId) . '\')';
         $query = $sql->query($req);
         
         while ($data = $query->fetch_array()) {
-            $respLogin[] = $data['gr_login'];
+            $respLogin[$data['gr_gid']] = $data['gr_login'];
         }
 
         return $respLogin;
@@ -189,7 +186,7 @@ class Responsable
             }
         }
         
-        if (is_null($usersRespRespAbs)){
+        if (empty($usersRespRespAbs)){
             return FALSE;
         }
         

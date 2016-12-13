@@ -137,15 +137,19 @@ abstract class ATraitement
         return $demandes;
     }
     
+    /**
+     * Retourne les demandes des utilisateurs responsable et absent
+     * 
+     * @param string $resp
+     * @return array
+     */
     public function getDemandesResponsableAbsent($resp) 
     {
         $demandesId = $this->getIdDemandesResponsableAbsent($resp);
         if (empty($demandesId)) {
             return [];
         }
-        $demandes = $this->getInfoDemandes($demandesId);
-
-        return $demandes;
+        return $this->getInfoDemandes($demandesId);
     }
     
     /**
