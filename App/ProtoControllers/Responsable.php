@@ -105,7 +105,6 @@ class Responsable
         $return = \App\ProtoControllers\Responsable::getRespsGroupes($groupesId);
         $return[] = \App\ProtoControllers\Responsable::getRespDirect($user);
         $return = array_unique($return);
-        
         return $return;
     }
     
@@ -178,10 +177,10 @@ class Responsable
         }
         $usersRespRespAbs = [];
         $groupesIdResp = \App\ProtoControllers\Responsable::getIdGroupeResp($resp);
-        $usersResp = \App\ProtoControllers\Responsable::getUsersGroupe($groupesIdResp);
+        $usersResp = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupesIdResp);
         $usersResp = array_merge($usersResp,\App\ProtoControllers\Responsable::getUsersRespDirect($resp));
         foreach ($usersResp as $userResp) {
-            if(is_resp($userResp) && \App\ProtoControllers\Responsable::isRespAbsent($userResp)){
+            if(\App\ProtoControllers\Utilisateur::isResponsable($userResp) && \App\ProtoControllers\Responsable::isRespAbsent($userResp)){
                 $usersRespRespAbs[] = $userResp;
             }
         }

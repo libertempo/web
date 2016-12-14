@@ -426,7 +426,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         $ids = [];
         $usersResp = [];
         $usersRespResp = [];
-        $usersResp = \App\ProtoControllers\Responsable::getUsersGroupe($groupId);
+        $usersResp = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupId);
 
         $usersRespDirect = \App\ProtoControllers\Responsable::getUsersRespDirect($resp);
         $usersResp = array_merge($usersResp,$usersRespDirect);
