@@ -100,35 +100,13 @@ class Responsable
      * @return array
      */
     public static function getRespsUtilisateur($user){
-        $groupesId = \App\ProtoControllers\Utilisateur::getGroupesId($user);
-
-        $return = \App\ProtoControllers\Responsable::getRespsGroupes($groupesId);
+        $groupeIds = \App\ProtoControllers\Utilisateur::getGroupesId($user);
+        $return = \App\ProtoControllers\Responsable::getListResponsableByGroupeIds($groupeIds);
         $return[] = \App\ProtoControllers\Responsable::getRespDirect($user);
         $return = array_unique($return);
         return $return;
     }
     
-    /**
-     * Retourne les responsables des groupes
-     * 
-     * @param array $groupesId
-     * @return array
-     */
-    public static function getRespsGroupes(array $groupesId)
-    {
-        $sql = \includes\SQL::singleton();
-        $req = 'SELECT gr_login,gr_gid
-                FROM conges_groupe_resp
-                WHERE gr_gid IN (\'' . implode(',', $groupesId) . '\')';
-        $query = $sql->query($req);
-        
-        while ($data = $query->fetch_array()) {
-            $respLogin[$data['gr_gid']] = $data['gr_login'];
-        }
-
-        return $respLogin;
-    }
-
     /**
      * Vérifie si le responsable est absent
      * 
