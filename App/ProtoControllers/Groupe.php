@@ -19,7 +19,12 @@ class Groupe
     {
         $options = [];
         foreach (static::getListe() as $groupe) {
-            $options[$groupe['g_gid']] = $groupe['g_groupename'];
+            if (!isset($options[$groupe['g_gid']])) {
+                $options[$groupe['g_gid']] = [
+                    'nom' => $groupe['g_groupename'],
+                ];
+            }
+            $options[$groupe['g_gid']]['utilisateurs'][] = $groupe['gu_login'];
         }
 
         return $options;
@@ -41,11 +46,12 @@ class Groupe
     {
         $sql = \includes\SQL::singleton();
         $req = 'SELECT *
-                FROM conges_groupe';
+                FROM conges_groupe CG
+                    INNER JOIN conges_groupe_users CGU ON (CG.g_gid = CGU.gu_gid)';
         $result = $sql->query($req);
 
         $groupes = [];
-        while ($data = $result->fetch_array()) {
+        while ($data = $result->fetch_assoc()) {
             $groupes[] = $data;
         }
 

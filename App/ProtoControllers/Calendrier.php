@@ -174,11 +174,12 @@ final class Calendrier
             <div class="col-md-8 col-sm-8"><select class="form-control" name="search[groupe]" id="groupe">';
             $form .= '<option value="' . NIL_INT . '">Tous</option>';
 
-            foreach (\App\ProtoControllers\Groupe::getOptions() as $valeur => $label) {
-                $selected = ($valeur ===  $this->idGroupe)
+            foreach (\App\ProtoControllers\Groupe::getOptions() as $id => $groupe) {
+                ddd($groupe);
+                $selected = ($id ===  $this->idGroupe)
                     ? 'selected="selected"'
                     : '';
-                $form .= '<option value="' . $valeur . '" ' . $selected . '>' . _($label) . '</option>';
+                $form .= '<option value="' . $id . '" ' . $selected . '>' . $groupe['nom'] . '</option>';
             }
             $form .= '</select></div></div>';
         }

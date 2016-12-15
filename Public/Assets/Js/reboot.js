@@ -546,3 +546,24 @@ var planningController = function (idElement, options, creneaux)
 
     }
 }
+
+
+var selectAssociationPlanning = function (idElement, associationGroupe) {
+    this.element = document.getElementById(idElement);
+    this.associationsGroupe = associationGroupe;
+    this.element.addEventListener('change', function () {
+        console.log('coucou', this.value);
+    });
+    console.table(associationGroupe);
+
+    this._filterUsers = function ()
+    {
+        // _resetFilter
+        // set hidden ceux qui ne sont pas éligibles
+    }
+
+    this._resetFilter = function ()
+    {
+
+    }
+}
