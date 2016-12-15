@@ -23,13 +23,23 @@ class Conge extends \App\Libraries\Calendrier\ACollection
     private $utilisateursATrouver;
 
     /**
+     * @var bool Si l'utilisateur a la possiblité de voir les événements non encore validés
+     */
+    private $canVoirEnTransit;
+
+    /**
      * {@inheritDoc}
      * @param array $utilisateursATrouver Liste d'utilisateurs dont on veut voir les congés
      */
-    public function __construct(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, array $utilisateursATrouver)
-    {
+    public function __construct(
+        \DateTimeInterface $dateDebut,
+        \DateTimeInterface $dateFin,
+        array $utilisateursATrouver,
+        $canVoirEnTransit
+    ) {
         parent::__construct($dateDebut, $dateFin);
         $this->utilisateursATrouver = $utilisateursATrouver;
+        $this->canVoirEnTransit = (bool) $canVoirEnTransit;
     }
 
     /**
@@ -39,10 +49,13 @@ class Conge extends \App\Libraries\Calendrier\ACollection
     {
         $conges = [];
         foreach ($this->getListeSQL() as $jour) {
-            $class = $jour['ta_type'];
+            $class = $jour['ta_type'] . ' ' . $jour['ta_type'] . '_' . $jour['p_etat'];
             /* TODO: unescape_string ? */
             $nomComplet = \App\ProtoControllers\Utilisateur::getNomComplet($jour['u_prenom'], $jour['u_nom'], true);
             $name = $nomComplet . ' - ' . $jour['ta_libelle'];
+            if (\App\Models\Conge::STATUT_VALIDATION_FINALE !== $jour['p_etat']) {
+                $name = '[En demande]  ' . $name;
+            }
 
             $dateDebut = $this->getDebutPeriode($jour['p_date_deb'], $jour['p_demi_jour_deb']);
             $dateFin = $this->getFinPeriode($jour['p_date_fin'], $jour['p_demi_jour_fin']);
@@ -94,6 +107,13 @@ class Conge extends \App\Libraries\Calendrier\ACollection
     private function getListeSQL()
     {
         $sql = \includes\SQL::singleton();
+        $etats[] = \App\Models\Conge::STATUT_VALIDATION_FINALE;
+        if ($this->canVoirEnTransit) {
+            $etats = array_merge($etats, [
+                \App\Models\Conge::STATUT_DEMANDE,
+                \App\Models\Conge::STATUT_PREMIERE_VALIDATION
+            ]);
+        }
         $req = 'SELECT *
                 FROM conges_periode CP
                     INNER JOIN conges_type_absence CTA ON (CP.p_type = CTA.ta_id)
@@ -101,7 +121,7 @@ class Conge extends \App\Libraries\Calendrier\ACollection
                 WHERE p_date_deb >= "' . $this->dateDebut->format('Y-m-d') . '"
                     AND p_date_deb <= "' . $this->dateFin->format('Y-m-d') . '"
                     AND p_login IN ("' . implode('","', $this->utilisateursATrouver) . '")
-                    AND p_etat = "' . \App\Models\Conge::STATUT_VALIDATION_FINALE . '"';
+                    AND p_etat IN ("' . implode('","', $etats) . '")';
         $res = $sql->query($req);
         $conges = [];
         while ($data = $res->fetch_assoc()) {

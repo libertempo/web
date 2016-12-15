@@ -215,6 +215,7 @@ final class Calendrier
             $this->dateDebut,
             $this->dateFin,
             $_SESSION['userlogin'],
+            $this->canSessionVoirEvenementEnTransit($_SESSION),
             $_SESSION['config']['gestion_groupes'],
             $this->idGroupe
         );
@@ -233,6 +234,13 @@ final class Calendrier
         }
 
         return $return;
+    }
+
+    private function canSessionVoirEvenementEnTransit(array $donnessUtilisateur)
+    {
+        return (isset($donnessUtilisateur['is_resp']) && 'Y' === $donnessUtilisateur['is_resp'])
+            || (isset($donnessUtilisateur['is_rh']) && 'Y' === $donnessUtilisateur['is_rh'])
+            || (isset($donnessUtilisateur['is_admin']) && 'Y' === $donnessUtilisateur['is_admin']);
     }
 
     /**

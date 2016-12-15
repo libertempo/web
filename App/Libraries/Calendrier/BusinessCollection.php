@@ -35,6 +35,11 @@ class BusinessCollection
     private $utilisateur;
 
     /**
+     * @var bool Si l'utilisateur a la possiblité de voir les événements non encore validés final
+     */
+    private $canVoirEnTransit;
+
+    /**
     * @var bool Si la gestion des groupes est demandée
      */
     private $isGroupesGeres;
@@ -53,14 +58,21 @@ class BusinessCollection
      * @param bool $isGroupesGeres Si la gestion des groupes est demandée
      * @param int $groupeAConsulter Groupe dont on veut voir les événements
      */
-    public function __construct(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, $utilisateur, $isGroupesGeres, $groupeAConsulter = NIL_INT)
-    {
+    public function __construct(
+        \DateTimeInterface $dateDebut,
+        \DateTimeInterface $dateFin,
+        $utilisateur,
+        $canVoirEnTransit,
+        $isGroupesGeres,
+        $groupeAConsulter = NIL_INT
+    ){
         $this->dateDebut = clone $dateDebut;
         /* Extension des bordures de dates */
         $this->dateDebut->modify('-1 week');
         $this->dateFin = clone $dateFin;
         $this->dateFin->modify('+1 week');
         $this->utilisateur = (string) $utilisateur;
+        $this->canVoirEnTransit = (bool) $canVoirEnTransit;
         $this->isGroupesGeres = (bool) $isGroupesGeres;
         $this->groupeAConsulter = (int) $groupeAConsulter;
     }
@@ -96,9 +108,9 @@ class BusinessCollection
             );
 
             if (!empty($utilisateursATrouver)) {
-                $conge = new Collection\Conge($this->dateDebut, $this->dateFin, $utilisateursATrouver);
-                $repos = new Collection\Heure\Repos($this->dateDebut, $this->dateFin, $utilisateursATrouver);
-                $additionnelle = new Collection\Heure\Additionnelle($this->dateDebut, $this->dateFin, $utilisateursATrouver);
+                $conge = new Collection\Conge($this->dateDebut, $this->dateFin, $utilisateursATrouver, $this->canVoirEnTransit);
+                $repos = new Collection\Heure\Repos($this->dateDebut, $this->dateFin, $utilisateursATrouver, $this->canVoirEnTransit);
+                $additionnelle = new Collection\Heure\Additionnelle($this->dateDebut, $this->dateFin, $utilisateursATrouver, $this->canVoirEnTransit);
                 $this->evenements = array_merge(
                     $this->evenements,
                     $conge->getListe(),
