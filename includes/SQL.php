@@ -147,9 +147,6 @@ class Database extends \mysqli
 				fputs ($fh, "\n".'Date : '. date('Y-m-d H:i:s (T)') );
 				fputs ($fh, "\n".'**************************************************');
 				fputs ($fh, "\n".'--------------------------------------------------');
-				fputs ($fh, "\n".'=> Curent erreur log');
-				fputs ($fh, "\n".$error_msg_sumary);
-				fputs ($fh, "\n".'--------------------------------------------------');
 				fputs ($fh, "\n".'=> Last erreur log');
 				fputs ($fh, "\n".var_export(error_get_last(), true));
 				fputs ($fh, "\n".'**************************************************');
