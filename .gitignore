@@ -3,3 +3,4 @@ debug/
 cfg/env.php
 cfg/dbconnect.php
 /nbproject/
+/dump/*.dump
