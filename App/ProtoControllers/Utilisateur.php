@@ -144,7 +144,8 @@ class Utilisateur
         $req = 'SELECT *
                 FROM conges_users
                 WHERE planning_id = ' . $planningId . '
-                    AND u_is_admin = "N"';
+                    AND u_is_admin = "N"
+                ORDER BY u_login';
 
         return $sql->query($req)->fetch_all(\MYSQLI_ASSOC);
     }

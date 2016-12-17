@@ -2126,6 +2126,26 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         if (empty($utilisateursAssocies)) {
             $return .= '<div>' . _('resp_tout_utilisateur_associe') . '</div>';
         } else {
+            $hasGroup = $_SESSION['config']['gestion_groupes'];
+            if($hasGroup) {
+                $return .= '<div class="form-group col-md-4 col-sm-5">
+                <label class="control-label col-md-3 col-sm-3" for="groupe">Groupe&nbsp;:</label>
+                <div class="col-md-8 col-sm-8"><select class="form-control" name="groupeId" id="groupe">';
+                $return .= '<option value="' . NIL_INT . '">Tous</option>';
+
+                $optionsGroupes = \App\ProtoControllers\Groupe::getOptions();
+
+                foreach ($optionsGroupes as $id => $groupe) {
+                    $return .= '<option value="' . $id . '">' . $groupe['nom'] . '</option>';
+                }
+                $return .= '</select></div></div><br><br><br>';
+                $associations = array_map(function ($groupe) {
+                        return $groupe['utilisateurs'];
+                    },
+                    $optionsGroupes
+                );
+            }
+            $return .= '<div>';
             foreach ($utilisateursAssocies as $utilisateur) {
                 $disabled = (\App\ProtoControllers\Utilisateur::hasSortiesEnCours($utilisateur['login']))
                     ? 'disabled '
@@ -2134,9 +2154,16 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
                     ? 'checked '
                     : '';
                 $nom = \App\ProtoControllers\Utilisateur::getNomComplet($utilisateur['prenom'], $utilisateur['nom']);
-                $return .= '<div class="checkbox">
+                $return .= '<div class="checkbox-utilisateur" data-user-login="' . $utilisateur['login'] . '">
                     <label><input type="checkbox" name="utilisateurs[]" value="' . $utilisateur['login'] . '" ' . $disabled . $checked . ' />&nbsp;' . $nom  . '</label>
                 </div>';
+            }
+            $return .= '</div>';
+            if($hasGroup) {
+                $return .= '<script type="text/javascript">
+                console.log(\'test\');
+                new selectAssociationPlanning("groupe", ' . json_encode($associations) . ', ' . NIL_INT . ');
+                </script>';
             }
         }
 

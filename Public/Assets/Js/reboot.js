@@ -548,22 +548,60 @@ var planningController = function (idElement, options, creneaux)
 }
 
 
-var selectAssociationPlanning = function (idElement, associationGroupe) {
+/**
+ * Objet de gestion des utilisateurs de planning
+ *
+ * @param string idElement Identifiant du HTMLElement
+ * @param Object associationsGroupe Associations groupes <> utilisateurs
+ * @param int nilId Nullité numérique
+ */
+var selectAssociationPlanning = function (idElement, associationsGroupe, nilId)
+{
     this.element = document.getElementById(idElement);
-    this.associationsGroupe = associationGroupe;
-    this.element.addEventListener('change', function () {
-        console.log('coucou', this.value);
-    });
-    console.table(associationGroupe);
+    this.associationsGroupe = associationsGroupe;
+    this.nilId = parseInt(nilId);
+    this.utilisateurs = document.querySelectorAll('form > div > div.checkbox-utilisateur');
 
-    this._filterUsers = function ()
+    /**
+     * Event
+     */
+    this.element.addEventListener('change', function (e) {
+        var idGroupe = e.target.value;
+        if (this.nilId != idGroupe) {
+            this._filterUsers(idGroupe);
+        } else {
+            this._resetFilter();
+        }
+    }.bind(this));
+
+    /**
+     * Filtre les utilisateurs en fonction du groupe passé
+     *
+     * @param int idGroupe
+     */
+    this._filterUsers = function (idGroupe)
     {
-        // _resetFilter
-        // set hidden ceux qui ne sont pas éligibles
+        this._resetFilter();
+        idGroupe = parseInt(idGroupe);
+        if (this.associationsGroupe.hasOwnProperty(idGroupe)) {
+            var groupe = this.associationsGroupe[idGroupe];
+            for (var i = 0; i < this.utilisateurs.length; ++i) {
+                var utilisateur = this.utilisateurs[i];
+                var utilisateurName = utilisateur.dataset.userLogin;
+                if (-1 == groupe.indexOf(utilisateurName)) {
+                    utilisateur.style.display = 'none';
+                }
+            }
+        }
     }
 
+    /**
+     * Annule tout filtre de groupe
+     */
     this._resetFilter = function ()
     {
-
+        for (var i = 0; i < this.utilisateurs.length; ++i) {
+            this.utilisateurs[i].style.display = 'block';
+        }
     }
 }
