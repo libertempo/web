@@ -404,9 +404,17 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
             $req .= ' AND id_heure !=' . $id;
         }
         $req .= ')';
-        $query = $sql->query($req);
+        $queryRep = $sql->query($req);
+        
+        $req = 'SELECT EXISTS (SELECT statut
+                FROM heure_additionnelle
+                WHERE login = "' . $user . '"
+                    AND statut IN (' . implode(',', $statuts) . ')
+                    AND (debut <= ' . $timestampFin . ' AND fin >= ' . $timestampDebut . '))';
 
-        return 0 < (int) $query->fetch_array()[0];
+        $queryAdd = $sql->query($req);
+
+        return 0 < (int) $queryRep->fetch_array()[0] || 0 < (int) $queryAdd->fetch_array()[0];
     }
 
     /**
