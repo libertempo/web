@@ -69,10 +69,9 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
         
         if( 0 < $return) {
             $notif = new \App\Libraries\Notification\Repos($id_heure);
-            $send = $notif->send();
-
-            if (false === $send) {
+            if (!$notif->send()) {
                 $localError[] = _('erreur_envoi_mail') . ': ' . $infoDemande['login'];
+                $return = NIL_INT;
             }
         }
         $errors = array_merge($errors, $localError);

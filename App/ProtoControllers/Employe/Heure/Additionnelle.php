@@ -115,15 +115,19 @@ class Additionnelle extends \App\ProtoControllers\Employe\AHeure
      */
     protected function delete($id, $user, array &$errorsLst, &$notice)
     {
+        $return = NIL_INT;
         if (NIL_INT !== $this->deleteSQL($id, $user, $errorsLst)) {
             log_action($id, 'annul', '', 'Annulation de la demande d\'heure additionnelle ' . $id);
             $notice = _('heure_additionnelle_annulee');
-            $notif = new \App\Libraries\Notification\Additionnelle($id);
-            $errorsLst[] = $notif->send();
+            $return = $id;
             
-            return $id;
+            $notif = new \App\Libraries\Notification\Additionnelle($id);
+            if(!$notif-send()) {
+                $errorsLst['email'] = _('erreur_envoi_mail');
+                $return = NIL_INT;
+            }
         }
-        return NIL_INT;
+        return $return;
     }
 
     /**
@@ -148,17 +152,17 @@ class Additionnelle extends \App\ProtoControllers\Employe\AHeure
      */
     protected function post(array $post, array &$errorsLst, $user)
     {
+        $return = NIL_INT;
         if (!$this->hasErreurs($post, $user, $errorsLst)) {
             $data = $this->dataModel2Db($post, $user);
             $id   = $this->insert($data, $user);
             log_action($idHeure, 'demande', '', 'demande d\'heure additionnelle ' . $id);
+            $return = $id;
             $notif = new \App\Libraries\Notification\Additionnelle($id);
-            $send = $notif->send();
-
-            if (false === $send) {
+            if (!$notif->send()) {
                 $errorsLst['email'] = _('erreur_envoi_mail');
+                $return = NIL_INT;
             }
-            return $id;
         }
         return NIL_INT;
     }

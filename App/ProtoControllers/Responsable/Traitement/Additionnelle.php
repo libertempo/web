@@ -66,15 +66,14 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
             $localError[] = _('demande_deja_traite') . ': ' . $infoDemande['login'];
             $return = NIL_INT;
         }
-        $errors = array_merge($errors, $localError);
         if( 0 < $return) {
             $notif = new \App\Libraries\Notification\Additionnelle($id_heure);
-            $send = $notif->send();
-
-            if (false === $send) {
+            if (!$notif->send()) {
                 $localError[] = _('erreur_envoi_mail') . ': ' . $infoDemande['login'];
+                $return = NIL_INT;
             }
         }
+        $errors = array_merge($errors, $localError);
         return $return;
     }
 
@@ -102,15 +101,14 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
             $localError[] = _('demande_deja_traite') . ': ' . $infoDemande['login'];
             $return = NIL_INT;
         }
-        $errors = array_merge($errors, $localError);
         if( 0 < $return) {
             $notif = new \App\Libraries\Notification\Additionnelle($id);
-            $send = $notif->send();
-
-            if (false === $send) {
+            if (!$notif->send()) {
                 $localError[] = _('erreur_envoi_mail') . ': ' . $infoDemande['login'];
+                $return = NIL_INT;
             }
         }
+        $errors = array_merge($errors, $localError);
         return $return;
     }
 

@@ -138,19 +138,20 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
      */
     protected function post(array $post, array &$errorsLst, $user)
     {
+        $return =NIL_INT;
         if (!$this->hasErreurs($post, $user, $errorsLst)) {
             $data = $this->dataModel2Db($post, $user);
             $id   = $this->insert($data, $user);
             log_action($id, 'demande', '', 'demande d\'heure de repos ' . $id);
-            $notif = new \App\Libraries\Notification\Repos($id);
-            $send = $notif->send();
-
-            if (false === $send) {
-                $errorsLst['email'] = _('erreur_envoi_mail');
-            }
             return $id;
+
+            $notif = new \App\Libraries\Notification\Repos($id);
+            if (!$notif->send()) {
+                $errorsLst['email'] = _('erreur_envoi_mail');
+                $return = NIL_INT;
+            }
         }
-        return NIL_INT;
+        return $return;
     }
 
     /**
@@ -232,18 +233,19 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
      */
     protected function delete($id, $user, array &$errorsLst, &$notice)
     {
+        $return = NIL_INT;
         if (NIL_INT !== $this->deleteSQL($id, $user, $errorsLst)) {
             log_action($id, 'annul', '', 'Annulation de la demande d\'heure de repos ' . $id);
             $notice = _('heure_repos_annulee');
-            $notif = new \App\Libraries\Notification\repos($id);
-            $send = $notif->send();
-
-            if (false === $send) {
-                $errorsLst['email'] = _('erreur_envoi_mail');
-            }
             return $id;
+
+            $notif = new \App\Libraries\Notification\repos($id);
+            if (!$notif->send()) {
+                $errorsLst['email'] = _('erreur_envoi_mail');
+                $return = NIL_INT;
+            }
         }
-        return NIL_INT;
+        return $return;
     }
 
     /**
