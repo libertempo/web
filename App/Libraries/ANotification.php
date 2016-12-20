@@ -86,11 +86,7 @@ abstract Class ANotification {
                 $return[] = $mail->Send();
             }
         }
-        if (in_array("false", $return)){
-            return (bool)FALSE;
-        } else {
-            return (bool)TRUE;
-        }
+        return !in_array("false", $return)
     }
 
     /**
