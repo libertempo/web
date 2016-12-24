@@ -12,16 +12,25 @@ include_once ROOT_PATH .'fonctions_conges.php' ;
 
 $PHP_SELF=$_SERVER['PHP_SELF'];
 
-$session=session_id();
+$session= htmlentities(session_id());
 
 //recup de la langue
 $lang=(isset($_GET['lang']) ? $_GET['lang'] : ((isset($_POST['lang'])) ? $_POST['lang'] : "") ) ;
+$lang = htmlentities($lang, ENT_QUOTES | ENT_HTML401);
 
 //recup de la config db
 $dbserver=(isset($_GET['dbserver']) ? $_GET['dbserver'] : ((isset($_POST['dbserver'])) ? $_POST['dbserver'] : "") ) ;
+$dbserver = htmlentities($dbserver, ENT_QUOTES | ENT_HTML401);
+
 $dbuser=(isset($_GET['dbuser']) ? $_GET['dbuser'] : ((isset($_POST['dbuser'])) ? $_POST['dbuser'] : "") ) ;
+$dbuser = htmlentities($dbuser, ENT_QUOTES | ENT_HTML401);
+
 $dbpasswd=(isset($_GET['dbpasswd']) ? $_GET['dbpasswd'] : ((isset($_POST['dbpasswd'])) ? $_POST['dbpasswd'] : "") ) ;
+$dbpasswd = htmlentities($dbpasswd, ENT_QUOTES | ENT_HTML401);
+
 $dbdb=(isset($_GET['dbdb']) ? $_GET['dbdb'] : ((isset($_POST['dbdb'])) ? $_POST['dbdb'] : "") ) ;
+$dbdb = htmlentities($dbdb, ENT_QUOTES | ENT_HTML401);
+
 
     if($lang=="") {
         header_popup();
@@ -56,7 +65,7 @@ $dbdb=(isset($_GET['dbdb']) ? $_GET['dbdb'] : ((isset($_POST['dbdb'])) ? $_POST[
             echo  _('db_configuration_user');
             echo '<INPUT type="text" value="conges" name="dbuser"><br>';
             echo  _('db_configuration_password');
-            echo '<INPUT type="password" name="dbpasswd"><br>';
+            echo '<INPUT type="password" name="dbpasswd" autocomplete="off"><br>';
             echo "<INPUT type=\"hidden\" value=\"".$lang."\" name=\"lang\"><br>";
             echo "<br>\n";
             echo "<input type=\"submit\" value=\"OK\">\n";
@@ -96,7 +105,7 @@ $dbdb=(isset($_GET['dbdb']) ? $_GET['dbdb'] : ((isset($_POST['dbdb'])) ? $_POST[
                 echo  _('db_configuration_user');
                 echo '<INPUT type="text" value="conges" name="dbuser"><br>';
                 echo  _('db_configuration_password');
-                echo '<INPUT type="password" name="dbpasswd"><br>';
+                echo '<INPUT type="password" name="dbpasswd" autocomplete="off"><br>';
                 echo "<INPUT type=\"hidden\" value=\"".$lang."\" name=\"lang\"><br>";
                 echo "<br>\n";
                 echo "<input type=\"submit\" value=\"OK\">\n";

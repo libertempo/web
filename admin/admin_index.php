@@ -20,7 +20,7 @@ verif_droits_user($session, 'is_admin');
 // SERVER
 $PHP_SELF=$_SERVER['PHP_SELF'];
 // GET / POST
-$onglet = getpost_variable('onglet', 'admin-users');
+$onglet = htmlentities(getpost_variable('onglet', 'admin-users'), ENT_QUOTES | ENT_HTML401);
 
 
 /*********************************/

@@ -144,8 +144,8 @@ class Fonctions
         // SERVER
         $PHP_SELF=$_SERVER['PHP_SELF'];
         // GET / POST
-        $action         = getpost_variable('action', "") ;
-        $login_par      = getpost_variable('login_par', "") ;
+        $action         = htmlentities(getpost_variable('action', ""), ENT_QUOTES | ENT_HTML401);
+        $login_par      = htmlentities(getpost_variable('login_par', ""), ENT_QUOTES | ENT_HTML401);
 
         /*************************************/
 
@@ -844,6 +844,7 @@ class Fonctions
         $timeout=2 ;  // temps d'attente pour rafraichir l'écran après l'update !
 
         foreach($tab_new_values as $key => $value ) {
+            $value = htmlentities($value, ENT_QUOTES | ENT_HTML401);
             // CONTROLE gestion_conges_exceptionnels
             // si désactivation les conges exceptionnels, on verif s'il y a des conges exceptionnels enregistres ! si oui : changement impossible !
             if(($key=="gestion_conges_exceptionnels") && ($value=="FALSE") ) {

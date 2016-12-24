@@ -589,8 +589,8 @@ class Fonctions
             $return .= '</thead>';
             $return .= '<tbody>';
 
-            $text_passwd1    = '<input class="form-control" type="password" name="new_passwd1" size="10" maxlength="20" value="">';
-            $text_passwd2    = '<input class="form-control" type="password" name="new_passwd2" size="10" maxlength="20" value="">';
+            $text_passwd1    = '<input class="form-control" type="password" name="new_passwd1" size="10" maxlength="20" value="" autocomplete="off">';
+            $text_passwd2    = '<input class="form-control" type="password" name="new_passwd2" size="10" maxlength="20" value="" autocomplete="off">';
             $return .= '<tr>';
             $return .= '<td>'.($text_passwd1).'</td><td>'.($text_passwd2).'</td>'."\n";
             $return .= '</tr>';

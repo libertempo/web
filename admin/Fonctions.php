@@ -1280,7 +1280,7 @@ class Fonctions
     public static function groupeModule($onglet)
     {
         $saisie_group           = getpost_variable('saisie_group') ;
-        $new_group_name         = addslashes( getpost_variable('new_group_name')) ;
+        $new_group_name         = htmlentities(addslashes( getpost_variable('new_group_name')), ENT_QUOTES | ENT_HTML401);
         $new_group_libelle      = addslashes( getpost_variable('new_group_libelle')) ;
         $new_group_double_valid = getpost_variable('new_group_double_valid');
         $return = '';
@@ -1538,10 +1538,10 @@ class Fonctions
         // recup des parametres reçus :
         // SERVER
 
-        $u_login            = getpost_variable('u_login') ;
-        $u_login_to_update  = getpost_variable('u_login_to_update') ;
-        $new_pwd1           = getpost_variable('new_pwd1') ;
-        $new_pwd2           = getpost_variable('new_pwd2') ;
+        $u_login            = htmlentities(getpost_variable('u_login'), ENT_QUOTES | ENT_HTML401);
+        $u_login_to_update  = htmlentities(getpost_variable('u_login_to_update'), ENT_QUOTES | ENT_HTML401);
+        $new_pwd1           = htmlentities(getpost_variable('new_pwd1'), ENT_QUOTES | ENT_HTML401);
+        $new_pwd2           = htmlentities(getpost_variable('new_pwd2'), ENT_QUOTES | ENT_HTML401=;
 
         if($u_login!="") {
             $return = '<H1>' . _('admin_chg_passwd_titre') . ' : ' . $u_login . '</H1>';
@@ -2710,10 +2710,10 @@ class Fonctions
      */
     public static function modifUserModule($session, $onglet)
     {
-        $u_login              = getpost_variable('u_login') ;
-        $u_login_to_update    = getpost_variable('u_login_to_update') ;
-        $tab_checkbox_sem_imp = getpost_variable('tab_checkbox_sem_imp') ;
-        $tab_checkbox_sem_p   = getpost_variable('tab_checkbox_sem_p') ;
+        $u_login              = htmlentities(getpost_variable('u_login'));
+        $u_login_to_update    = htmlentities(getpost_variable('u_login_to_update')) ;
+        $tab_checkbox_sem_imp = htmlentities(getpost_variable('tab_checkbox_sem_imp')) ;
+        $tab_checkbox_sem_p   = htmlentities(getpost_variable('tab_checkbox_sem_p')) ;
         $return = '';
 
         // TITRE
