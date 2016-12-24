@@ -1066,7 +1066,7 @@ class Fonctions
     public static function pageTraiteUserModule($onglet)
     {
         //var pour hr_traite_user.php
-        $user_login                 = getpost_variable('user_login') ;
+        $user_login                 = htmlentities(getpost_variable('user_login'), ENT_QUOTES | ENT_HTML401);
         $tab_checkbox_annule        = getpost_variable('tab_checkbox_annule') ;
         $tab_radio_traite_demande   = getpost_variable('tab_radio_traite_demande') ;
         $new_demande_conges         = getpost_variable('new_demande_conges', 0) ;
@@ -1107,7 +1107,7 @@ class Fonctions
             $year_calendrier_saisie_fin     = getpost_variable('year_calendrier_saisie_fin', 0) ;
             $mois_calendrier_saisie_fin     = getpost_variable('mois_calendrier_saisie_fin', 0) ;
             $tri_date                       = getpost_variable('tri_date', "ascendant") ;
-            $year_affichage                 = getpost_variable('year_affichage' , date("Y") );
+            $year_affichage                 = htmlentities(getpost_variable('year_affichage' , date("Y") ), ENT_QUOTES | ENT_HTML401);
 
             $return .= \hr\Fonctions::affichage($user_login,  $year_affichage, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $tri_date, $onglet);
         }
@@ -3024,7 +3024,7 @@ class Fonctions
         // GET / POST
         $choix_action         = getpost_variable('choix_action');
         $year                 = getpost_variable('year', 0);
-        $groupe_id            = getpost_variable('groupe_id');
+        $groupe_id            = htmlentities(getpost_variable('groupe_id'), ENT_QUOTES | ENT_HTML401);
         $id_type_conges       = getpost_variable('id_type_conges');
         $new_date_debut       = getpost_variable('new_date_debut'); // valeur par dédaut = aujourd'hui
         $new_date_fin         = getpost_variable('new_date_fin');   // valeur par dédaut = aujourd'hui
@@ -3069,7 +3069,7 @@ class Fonctions
         /*   COMPOSITION DES ONGLETS...  */
         /*********************************/
 
-        $onglet = getpost_variable('onglet');
+        $onglet = htmlentities(getpost_variable('onglet'), ENT_QUOTES | ENT_HTML401);
 
         if(!$onglet) {
             $onglet = 'saisie';

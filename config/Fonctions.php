@@ -177,8 +177,8 @@ class Fonctions
 
         // update de la table
         foreach($tab_new_values as $nom_mail => $tab_mail) {
-            $subject = addslashes($tab_mail['subject']);
-            $body = addslashes($tab_mail['body']) ;
+            $subject = htmlspecialchars(addslashes($tab_mail['subject']));
+            $body = htmlspecialchars(addslashes($tab_mail['body']));
             $req_update='UPDATE conges_mail SET mail_subject=\''.$subject.'\', mail_body=\''.$body.'\' WHERE mail_nom="'. \includes\SQL::quote($nom_mail).'" ';
             $result1 = \includes\SQL::query($req_update);
         }
@@ -384,6 +384,9 @@ class Fonctions
         } else {
             $URL = "$PHP_SELF?session=$session&onglet=type_absence";
         }
+        $tab_new_values['libelle'] = htmlentities($tab_new_values['libelle'], ENT_QUOTES | ENT_HTML401);
+        $tab_new_values['short_libelle'] = htmlentities($tab_new_values['short_libelle']);
+        $tab_new_values['type'] = htmlentities($tab_new_values['type'], ENT_QUOTES | ENT_HTML401);
 
         // verif de la saisie
         $erreur=FALSE ;
@@ -809,7 +812,7 @@ class Fonctions
         // GET / POST
         $action         = getpost_variable('action') ;
         $tab_new_values = getpost_variable('tab_new_values');
-        $id_to_update   = getpost_variable('id_to_update');
+        $id_to_update   = htmlentities(getpost_variable('id_to_update'), ENT_QUOTES | ENT_HTML401);
 
         /*********************************/
 

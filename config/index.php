@@ -25,8 +25,8 @@ verif_droits_user($session, "is_admin");
 
 $_SESSION['from_config']=TRUE;  // initialise ce flag pour changer le bouton de retour des popup
 
-	$onglet = getpost_variable('onglet');
-	
+	$onglet = htmlentities(getpost_variable('onglet'), ENT_QUOTES | ENT_HTML401);
+
 	if(!$onglet && $_SESSION['userlogin']=="admin")
 	{
 		$onglet = 'general';
@@ -38,9 +38,9 @@ $_SESSION['from_config']=TRUE;  // initialise ce flag pour changer le bouton de 
 			$onglet = 'type_absence';
 		elseif($_SESSION['config']['affiche_bouton_config_mail_pour_admin'])
 			$onglet = 'config_mail';
-		
-	} 
-	
+
+	}
+
 	/*********************************/
 	/*   COMPOSITION DES ONGLETS...  */
 	/*********************************/
@@ -55,21 +55,21 @@ $_SESSION['from_config']=TRUE;  // initialise ce flag pour changer le bouton de 
 
 	if($_SESSION['config']['affiche_bouton_config_mail_pour_admin'] || $_SESSION['userlogin']=="admin")
 		$onglets['mail'] = _('install_config_mail');
-	
+
 	$onglets['logs'] = _('config_logs');
-	
+
 	/*********************************/
 	/*   COMPOSITION DU HEADER...    */
 	/*********************************/
-	
+
 	$add_css = '<style>#onglet_menu .onglet{ width: '. (str_replace(',', '.', 100 / count($onglets) )).'% ;}</style>';
 	header_menu('', 'Libertempo : '._('admin_button_config_1'),$add_css);
-	
-	
+
+
 	/*********************************/
 	/*   AFFICHAGE DES ONGLETS...  */
 	/*********************************/
-	
+
 	echo '<div id="onglet_menu">';
 	foreach($onglets as $key => $title) {
 		echo '<div class="onglet '.($onglet == $key ? ' active': '').'" >
@@ -88,6 +88,5 @@ $_SESSION['from_config']=TRUE;  // initialise ce flag pour changer le bouton de 
 		else {
 			include_once ROOT_PATH . 'config/config_'.$onglet.'.php';
 		}
-		
-	echo '</div>';
 
+	echo '</div>';

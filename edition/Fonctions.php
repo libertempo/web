@@ -238,7 +238,7 @@ class Fonctions
         // SERVER
         $PHP_SELF=$_SERVER['PHP_SELF'];
         // GET / POST
-        $user_login = getpost_variable('user_login', $_SESSION['userlogin']) ;
+        $user_login = htmlentities(getpost_variable('user_login', $_SESSION['userlogin']), ENT_QUOTES | ENT_HTML401);
         $return = '';
         header_popup( _('editions_titre') .' : '.$user_login);
 
