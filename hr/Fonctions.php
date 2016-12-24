@@ -1107,7 +1107,7 @@ class Fonctions
             $year_calendrier_saisie_fin     = getpost_variable('year_calendrier_saisie_fin', 0) ;
             $mois_calendrier_saisie_fin     = getpost_variable('mois_calendrier_saisie_fin', 0) ;
             $tri_date                       = getpost_variable('tri_date', "ascendant") ;
-            $year_affichage                 = htmlentities(getpost_variable('year_affichage' , date("Y") ), ENT_QUOTES | ENT_HTML401);
+            $year_affichage                 = (int) getpost_variable('year_affichage' , date("Y") );
 
             $return .= \hr\Fonctions::affichage($user_login,  $year_affichage, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $tri_date, $onglet);
         }

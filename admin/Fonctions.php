@@ -1059,7 +1059,7 @@ class Fonctions
     {
         $change_group_users    = getpost_variable('change_group_users') ;
         $change_user_groups    = getpost_variable('change_user_groups') ;
-        $choix_group        = getpost_variable('choix_group') ;
+        $choix_group        = (int) getpost_variable('choix_group') ;
         $choix_user            = getpost_variable('choix_user') ;
         $return = '';
 
