@@ -246,6 +246,38 @@ abstract class AHeure
         return $champs;
     }
 
+    /**
+     * Vérifie le chevauchement entre les heures demandées et les congés
+     *
+     * @param string $jour
+     * @param string $heureDebut
+     * @param string $heureFin
+     * @param string $user
+     *
+     * @return bool
+     * @todo Employer le planning de $idPlanningUser pour déduire la demi-journée
+     */
+    protected function isChevauchementConges($jour, $heureDebut, $heureFin, $user)
+    {
+        $idPlanningUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($user)['planning_id'];
+        $date = \App\Helpers\Formatter::dateFr2Iso($jour);
+        
+        if($heureDebut < 12){
+            $optDebut = 'am';
+        } else {
+            $optDebut = 'pm';
+        }
+        
+        if($heureFin < 12){
+            $optFin = 'am';
+        } else {
+            $optFin = 'pm';
+        }
+        
+        $periode = make_tab_demi_jours_periode($date, $date, $optDebut, $optFin);
+        $comment='';
+        return verif_periode_chevauche_periode_user($date, $date, $user, '', $periode, &$comment);
+    }
     /*
      * SQL
      */
