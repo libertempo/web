@@ -993,12 +993,12 @@ class Fonctions
         $PHP_SELF=$_SERVER['PHP_SELF'];
         // GET / POST
         $selected      = htmlentities(getpost_variable('selected'), ENT_QUOTES | ENT_HTML401);
-        $printable     = htmlentities(getpost_variable('printable', 0), ENT_QUOTES | ENT_HTML401);
-        $year          = htmlentities(getpost_variable('year', date("Y")), ENT_QUOTES | ENT_HTML401);
-        $mois          = htmlentities(getpost_variable('mois', date("n")), ENT_QUOTES | ENT_HTML401);
-        $first_jour    = htmlentities(getpost_variable('first_jour', 1), ENT_QUOTES | ENT_HTML401);
+        $printable     = (int) getpost_variable('printable', 0);
+        $year          = (int) getpost_variable('year', date("Y"));
+        $mois          = (int) getpost_variable('mois', date("n"));
+        $first_jour    = (int) getpost_variable('first_jour', 1);
         //    $first_load    = getpost_variable('first_load', "Y") ;
-        $select_groupe = htmlentities(getpost_variable('select_groupe', 0), ENT_QUOTES | ENT_HTML401);
+        $select_groupe = (int) getpost_variable('select_groupe', 0);
 
 
         /*************************************/
