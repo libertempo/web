@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "c1b9dbac883db42b57348aa176e41a2e",
-    "content-hash": "e887c0fd91682e0ffc1b60a648d1db00",
+    "hash": "9728748da47b72cfdbcf0d7fde7951c4",
+    "content-hash": "c2fb4461c59df2f2b45adc3a098a903b",
     "packages": [
         {
             "name": "jasig/phpcas",
@@ -62,16 +62,16 @@
         },
         {
             "name": "phpmailer/phpmailer",
-            "version": "v5.2.20",
+            "version": "v5.2.21",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPMailer/PHPMailer.git",
-                "reference": "efde5edb3da8e1d257e030e3c2d922c4de6e5d09"
+                "reference": "1d51856b76c06fc687fcd9180efa7a0bed0d761e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/efde5edb3da8e1d257e030e3c2d922c4de6e5d09",
-                "reference": "efde5edb3da8e1d257e030e3c2d922c4de6e5d09",
+                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/1d51856b76c06fc687fcd9180efa7a0bed0d761e",
+                "reference": "1d51856b76c06fc687fcd9180efa7a0bed0d761e",
                 "shasum": ""
             },
             "require": {
@@ -118,7 +118,7 @@
                 }
             ],
             "description": "PHPMailer is a full-featured email creation and transfer class for PHP",
-            "time": "2016-12-28 13:36:42"
+            "time": "2016-12-28 15:35:48"
         },
         {
             "name": "raveren/kint",
