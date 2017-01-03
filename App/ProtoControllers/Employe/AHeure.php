@@ -133,6 +133,10 @@ abstract class AHeure
         if (is_null($planningUser)) {
             $localErrors['Planning'] = _('aucun_planning_associe_utilisateur');
         }
+        $data = $this->dataModel2Db($post, $user);
+        if (0 >= $data['duree']) {
+            $localErrors['Durée'] = _('duree_nulle');
+        }
 
         $errorsLst = array_merge($errorsLst, $localErrors);
 
@@ -261,22 +265,22 @@ abstract class AHeure
     {
         $idPlanningUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($user)['planning_id'];
         $date = \App\Helpers\Formatter::dateFr2Iso($jour);
-        
+
         if($heureDebut < 12){
             $optDebut = 'am';
         } else {
             $optDebut = 'pm';
         }
-        
+
         if($heureFin < 12){
             $optFin = 'am';
         } else {
             $optFin = 'pm';
         }
-        
+
         $periode = make_tab_demi_jours_periode($date, $date, $optDebut, $optFin);
         $comment='';
-        return verif_periode_chevauche_periode_user($date, $date, $user, '', $periode, &$comment);
+        return verif_periode_chevauche_periode_user($date, $date, $user, '', $periode, $comment);
     }
     /*
      * SQL
