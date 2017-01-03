@@ -86,7 +86,7 @@ abstract Class ANotification {
                 $return[] = $mail->Send();
             }
         }
-        return !in_array("false", $return)
+        return !in_array(false, $return);
     }
 
     /**
@@ -107,7 +107,7 @@ abstract Class ANotification {
     protected function getContenu($id) {
         $data = $this->getData($id);
         $notifContent = [];
-        switch ($this->data['statut']) {
+        switch ($data['statut']) {
             case \App\Models\AHeure::STATUT_DEMANDE:
                 $NotifContent[] = $this->getContenuDemande($data);
                 break;

@@ -153,10 +153,9 @@ class Responsable
     }
 
     public static function getResponsableDirect($user) {
-        
         $resp = [];
         $sql = \includes\SQL::singleton();
-        $req = 'SELECT u_resp_login FROM conges_users WHERE u_login ="' . SQL::quote($user) . '"';
+        $req = 'SELECT u_resp_login FROM conges_users WHERE u_login ="' . \includes\SQL::quote($user) . '"';
         $res = $sql->query($req);
         return $res->fetch_array()['u_resp_login'];
         
