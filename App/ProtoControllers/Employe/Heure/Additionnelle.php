@@ -122,7 +122,7 @@ class Additionnelle extends \App\ProtoControllers\Employe\AHeure
             $return = $id;
             
             $notif = new \App\Libraries\Notification\Additionnelle($id);
-            if(!$notif-send()) {
+            if(!$notif->send()) {
                 $errorsLst['email'] = _('erreur_envoi_mail');
                 $return = NIL_INT;
             }
@@ -265,7 +265,6 @@ class Additionnelle extends \App\ProtoControllers\Employe\AHeure
                     $message = '<div class="alert alert-danger">' . _('erreur_recommencer') . ' :<ul>' . $errors . '</ul></div>';
                 }
             } elseif ('DELETE' === $_POST['_METHOD'] && !empty($notice)) {
-                log_action(0, '', '', 'Annulation de l\'heure additionnelle ' . $_POST['id_heure']);
                 $message = '<div class="alert alert-info">' .  $notice . '.</div>';
             } else {
                 log_action(0, '', '', 'Récupération de l\'heure additionnelle ' . $_POST['id_heure']);

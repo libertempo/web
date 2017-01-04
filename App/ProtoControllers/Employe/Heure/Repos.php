@@ -237,9 +237,9 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
         if (NIL_INT !== $this->deleteSQL($id, $user, $errorsLst)) {
             log_action($id, 'annul', '', 'Annulation de la demande d\'heure de repos ' . $id);
             $notice = _('heure_repos_annulee');
-            return $id;
+            $return = $id;
 
-            $notif = new \App\Libraries\Notification\repos($id);
+            $notif = new \App\Libraries\Notification\Repos($id);
             if (!$notif->send()) {
                 $errorsLst['email'] = _('erreur_envoi_mail');
                 $return = NIL_INT;
@@ -266,7 +266,6 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
                     $message = '<div class="alert alert-danger">' . _('erreur_recommencer') . ' :<ul>' . $errors . '</ul></div>';
                 }
             } elseif ('DELETE' === $_POST['_METHOD'] && !empty($notice)) {
-                log_action(0, '', '', 'Annulation de l\'heure de repos ' . $_POST['id_heure']);
                 $message = '<div class="alert alert-info">' .  $notice . '.</div>';
             } else {
                 log_action(0, '', '', 'Récupération de l\'heure de repos ' . $_POST['id_heure']);

@@ -21,6 +21,7 @@ abstract Class ANotification {
      * 
      */
     public function __construct($id) {
+        $id = (int)$id;
         if(is_int($id)){
             $this->contenuNotification = $this->getContenu($id);
         } else {
@@ -80,8 +81,8 @@ abstract Class ANotification {
                 }
                 $mail->SetLanguage( 'fr', ROOT_PATH . 'vendor/phpmailer/phpmailer/language/');
         
-                $mail->Subject = $notification['sujet'];
-                $mail->Body = $notification['message'];
+                $mail->Subject = utf8_decode ( $notification['sujet'] );
+                $mail->Body = utf8_decode ( $notification['message'] );
 
                 $return[] = $mail->Send();
             }
