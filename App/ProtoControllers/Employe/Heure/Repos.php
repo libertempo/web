@@ -209,52 +209,6 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
     /**
      * {@inheritDoc}
      */
-    protected function getTypePeriode($debut, $fin, array $planning)
-    {
-        /*
-         * Comme pour le moment on ne peut prendre une heure de repos que sur un jour,
-         * on prend arbitrairement le début...
-         */
-        $numeroSemaine = date('W', $debut);
-        $realWeekType  = \utilisateur\Fonctions::getRealWeekType($planning, $numeroSemaine);
-        if (!isset($planning[$realWeekType])) {
-            return 0;
-        }
-        $planningWeek = $planning[$realWeekType];
-        $jourId = date('N', $debut);
-        if (!isset($planningWeek[$jourId])) {
-            return 0;
-        }
-        $planningJour = $planningWeek[$jourId];
-        $horodateDebut = \App\Helpers\Formatter::hour2Time(date('H\:i', $debut));
-        $horodateFin   = \App\Helpers\Formatter::hour2Time(date('H\:i', $fin));
-        $debutMatin = false;
-
-        if (isset($planningJour[Creneau::TYPE_PERIODE_MATIN])) {
-            if (!isset($planningJour[Creneau::TYPE_PERIODE_APRES_MIDI])) {
-                return Creneau::TYPE_PERIODE_MATIN;
-            }
-            $planningMatin = $planningJour[Creneau::TYPE_PERIODE_MATIN];
-            $dernierCreneauMatin = $planningMatin[count($planningMatin) - 1];
-            $planningApresMidi = $planningJour[Creneau::TYPE_PERIODE_APRES_MIDI];
-            $premierCreneauApresMidi = current($planningApresMidi);
-            if ($horodateDebut <= $dernierCreneauMatin[Creneau::TYPE_HEURE_FIN]) {
-                if ($horodateFin < $premierCreneauApresMidi[Creneau::TYPE_HEURE_DEBUT]) {
-                    return Creneau::TYPE_PERIODE_MATIN;
-                }
-                return Creneau::TYPE_PERIODE_MATIN_APRES_MIDI;
-            }
-            return Creneau::TYPE_PERIODE_APRES_MIDI;
-        } else {
-            if (isset($planningJour[Creneau::TYPE_PERIODE_APRES_MIDI])) {
-                return Creneau::TYPE_PERIODE_APRES_MIDI;
-            }
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     protected function delete($id, $user, array &$errorsLst, &$notice)
     {
         if (NIL_INT !== $this->deleteSQL($id, $user, $errorsLst)) {

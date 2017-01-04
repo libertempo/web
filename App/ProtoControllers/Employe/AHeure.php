@@ -2,6 +2,7 @@
 namespace App\ProtoControllers\Employe;
 
 use \App\Models;
+use App\Models\Planning\Creneau;
 
 /**
  * ProtoContrôleur abstrait d'heures, en attendant la migration vers le MVC REST
@@ -197,8 +198,45 @@ abstract class AHeure
      *
      * @return int Parmi ceux de \App\Models\Planning\Creneau::TYPE_PERIODE_*
      */
-    abstract protected function getTypePeriode($debut, $fin, array $planning);
+     protected function getTypePeriode($debut, $fin, array $planning)
+     {
+         /*
+          * Comme pour le moment on ne peut prendre une heure que sur un jour,
+          * on prend arbitrairement le début...
+          */
+         $numeroSemaine = date('W', $debut);
+         $realWeekType  = \utilisateur\Fonctions::getRealWeekType($planning, $numeroSemaine);
+         if (!isset($planning[$realWeekType])) {
+             return 0;
+         }
+         $planningWeek = $planning[$realWeekType];
+         $jourId = date('N', $debut);
+         if (!isset($planningWeek[$jourId])) {
+             return 0;
+         }
+         $planningJour = $planningWeek[$jourId];
+         $horodateDebut = \App\Helpers\Formatter::hour2Time(date('H\:i', $debut));
+         $horodateFin   = \App\Helpers\Formatter::hour2Time(date('H\:i', $fin));
+         $debutMatin = false;
 
+         if (isset($planningJour[Creneau::TYPE_PERIODE_MATIN])) {
+             if (!isset($planningJour[Creneau::TYPE_PERIODE_APRES_MIDI])) {
+                 return Creneau::TYPE_PERIODE_MATIN;
+             }
+             $planningMatin = $planningJour[Creneau::TYPE_PERIODE_MATIN];
+             $dernierCreneauMatin = $planningMatin[count($planningMatin) - 1];
+             $planningApresMidi = $planningJour[Creneau::TYPE_PERIODE_APRES_MIDI];
+             $premierCreneauApresMidi = current($planningApresMidi);
+
+             if ($horodateFin <= $dernierCreneauMatin[Creneau::TYPE_HEURE_FIN]) {
+                 return Creneau::TYPE_PERIODE_MATIN;
+             } elseif ($horodateDebut >= $premierCreneauApresMidi[Creneau::TYPE_HEURE_DEBUT]) {
+                 return Creneau::TYPE_PERIODE_APRES_MIDI;
+             }
+             return Creneau::TYPE_PERIODE_MATIN_APRES_MIDI;
+         }
+         return Creneau::TYPE_PERIODE_APRES_MIDI;
+     }
     /**
      * Vérifie que l'utilisateur a bien le droit d'éditer la ressource
      *
