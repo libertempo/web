@@ -160,12 +160,19 @@ abstract class AHeure
         $fin   = strtotime($jour . ' ' . $post['fin_heure']);
         $comment = \includes\SQL::quote($post['comment']);
         $planningUser = \utilisateur\Fonctions::getUserPlanning($user);
-        $duree = (is_null($planningUser)) ? 0 : $this->countDuree($debut,   $fin, $planningUser);
+        if (is_null($planningUser)) {
+            $duree = 0;
+            $typePeriode = 0;
+        } else {
+            $duree = $this->countDuree($debut, $fin, $planningUser);
+            $typePeriode = $this->getTypePeriode($debut, $fin, $planningUser);
+        }
 
         return [
             'debut' => (int) $debut,
             'fin'   => (int) $fin,
             'duree' => (int) $duree,
+            'typePeriode' => (int) $typePeriode,
             'comment' => $comment,
         ];
     }
@@ -177,9 +184,20 @@ abstract class AHeure
      * @param int   $fin
      * @param array $planning
      *
-     * @return int
+     * @return int Nombre de secondes de la durée totale
      */
     abstract protected function countDuree($debut, $fin, array $planning);
+
+    /**
+     * Retourne le type de période de l'heure
+     *
+     * @param int   $debut
+     * @param int   $fin
+     * @param array $planning
+     *
+     * @return int Parmi ceux de \App\Models\Planning\Creneau::TYPE_PERIODE_*
+     */
+    abstract protected function getTypePeriode($debut, $fin, array $planning);
 
     /**
      * Vérifie que l'utilisateur a bien le droit d'éditer la ressource

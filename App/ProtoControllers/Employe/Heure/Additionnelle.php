@@ -244,6 +244,11 @@ class Additionnelle extends \App\ProtoControllers\Employe\AHeure
         return $reelleDuree - $aSoustraire;
     }
 
+    protected function getTypePeriode($debut, $fin, array $planning)
+    {
+        return 0;
+    }
+
     /**
      * {@inheritDoc}
      */

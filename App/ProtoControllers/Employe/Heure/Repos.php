@@ -2,6 +2,7 @@
 namespace App\ProtoControllers\Employe\Heure;
 
 use \App\Models\AHeure;
+use App\Models\Planning\Creneau;
 
 /**
  * ProtoContrôleur d'heures de repos, en attendant la migration vers le MVC REST
@@ -146,9 +147,7 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
         if (NIL_INT === $realWeekType) {
             return 0;
         } else {
-            /*
-             * ... Pareil pour le jour
-             */
+            /* … Pareil pour le jour */
             $planningWeek = $planning[$realWeekType];
             $jourId = date('N', $debut);
             /* Si le jour n'est pas travaillé */
@@ -179,8 +178,8 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
         /* Double foreach pour lisser les créneaux matin / après midi sur le même plan */
         foreach ($planningJour as $creneaux) {
             foreach ($creneaux as $creneau) {
-                $creneauDebut = (int) $creneau[\App\Models\Planning\Creneau::TYPE_HEURE_DEBUT];
-                $creneauFin   = (int) $creneau[\App\Models\Planning\Creneau::TYPE_HEURE_FIN];
+                $creneauDebut = (int) $creneau[Creneau::TYPE_HEURE_DEBUT];
+                $creneauFin   = (int) $creneau[Creneau::TYPE_HEURE_FIN];
 
                 if ($horodateDebut <= $creneauDebut) {
                     if ($horodateFin <= $creneauDebut) {
@@ -205,6 +204,52 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
         }
 
         return $reelleDuree;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getTypePeriode($debut, $fin, array $planning)
+    {
+        /*
+         * Comme pour le moment on ne peut prendre une heure de repos que sur un jour,
+         * on prend arbitrairement le début...
+         */
+        $numeroSemaine = date('W', $debut);
+        $realWeekType  = \utilisateur\Fonctions::getRealWeekType($planning, $numeroSemaine);
+        if (!isset($planning[$realWeekType])) {
+            return 0;
+        }
+        $planningWeek = $planning[$realWeekType];
+        $jourId = date('N', $debut);
+        if (!isset($planningWeek[$jourId])) {
+            return 0;
+        }
+        $planningJour = $planningWeek[$jourId];
+        $horodateDebut = \App\Helpers\Formatter::hour2Time(date('H\:i', $debut));
+        $horodateFin   = \App\Helpers\Formatter::hour2Time(date('H\:i', $fin));
+        $debutMatin = false;
+
+        if (isset($planningJour[Creneau::TYPE_PERIODE_MATIN])) {
+            if (!isset($planningJour[Creneau::TYPE_PERIODE_APRES_MIDI])) {
+                return Creneau::TYPE_PERIODE_MATIN;
+            }
+            $planningMatin = $planningJour[Creneau::TYPE_PERIODE_MATIN];
+            $dernierCreneauMatin = $planningMatin[count($planningMatin) - 1];
+            $planningApresMidi = $planningJour[Creneau::TYPE_PERIODE_APRES_MIDI];
+            $premierCreneauApresMidi = current($planningApresMidi);
+            if ($horodateDebut <= $dernierCreneauMatin[Creneau::TYPE_HEURE_FIN]) {
+                if ($horodateFin < $premierCreneauApresMidi[Creneau::TYPE_HEURE_DEBUT]) {
+                    return Creneau::TYPE_PERIODE_MATIN;
+                }
+                return Creneau::TYPE_PERIODE_MATIN_APRES_MIDI;
+            }
+            return Creneau::TYPE_PERIODE_APRES_MIDI;
+        } else {
+            if (isset($planningJour[Creneau::TYPE_PERIODE_APRES_MIDI])) {
+                return Creneau::TYPE_PERIODE_APRES_MIDI;
+            }
+        }
     }
 
     /**
@@ -307,7 +352,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
     protected function getFormulaireRecherche(array $champs)
     {
         $form = '<form method="post" action="" class="form-inline search" role="form"><div class="form-group"><label class="control-label col-md-4" for="statut">Statut&nbsp;:</label><div class="col-md-8"><select class="form-control" name="search[statut]" id="statut">';
-        foreach (\App\Models\AHeure::getOptionsStatuts() as $key => $value) {
+        foreach (AHeure::getOptionsStatuts() as $key => $value) {
             $selected = (isset($champs['statut']) && $key == $champs['statut'])
                 ? 'selected="selected"'
                 : '';
@@ -395,8 +440,25 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
     protected function insert(array $data, $user)
     {
         $sql = \includes\SQL::singleton();
-        $req = 'INSERT INTO heure_repos (id_heure, login, debut, fin, duree, statut, comment) VALUES
-        (NULL, "' . $user . '", ' . (int) $data['debut'] . ', '. (int) $data['fin'] .', '. (int) $data['duree'] . ', ' . AHeure::STATUT_DEMANDE . ', "' . \includes\SQL::quote($data['comment']) . '")';
+        $req = 'INSERT INTO heure_repos (
+            id_heure,
+            login,
+            debut,
+            fin,
+            duree,
+            type_periode,
+            statut,
+            comment
+        ) VALUES (
+            NULL,
+            "' . $user . '",
+            ' . (int) $data['debut'] . ',
+            ' . (int) $data['fin'] .',
+            ' . (int) $data['duree'] . ',
+            ' . (int) $data['typePeriode'] . ',
+            ' . AHeure::STATUT_DEMANDE . ',
+            "' . \includes\SQL::quote($data['comment']) . '"
+        )';
         $query = $sql->query($req);
 
         return $sql->insert_id;
