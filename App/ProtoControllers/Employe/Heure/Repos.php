@@ -195,7 +195,7 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
                 } elseif ($horodateDebut > $creneauDebut && $horodateDebut < $creneauFin) {
                     /* $horodateDebut > $creneauDebut */
                     if ($horodateFin > $creneauDebut && $horodateFin <= $creneauFin) {
-                        $reelleDuree += $creneauFin - $horodateDebut;
+                        $reelleDuree += $horodateFin - $horodateDebut;
                     } else {
                         /* $horodateFin > $creneauFin */
                         $reelleDuree += $creneauFin - $horodateDebut;
@@ -383,38 +383,10 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
     /**
      * {@inheritDoc}
      */
-    protected function isChevauchement($jour, $heureDebut, $heureFin, $id, $user)
+    protected function isChevauchement($jour, $heureDebut, $heureFin, $user, $id)
     {
-        $jour = \App\Helpers\Formatter::dateFr2Iso($jour);
-        $timestampDebut = strtotime($jour . ' ' . $heureDebut);
-        $timestampFin   = strtotime($jour . ' ' . $heureFin);
-        $statuts = [
-            AHeure::STATUT_DEMANDE,
-            AHeure::STATUT_PREMIERE_VALIDATION,
-            AHeure::STATUT_VALIDATION_FINALE,
-        ];
-
-        $sql = \includes\SQL::singleton();
-        $req = 'SELECT EXISTS (SELECT statut
-                FROM heure_repos
-                WHERE login = "' . $user . '"
-                    AND statut IN (' . implode(',', $statuts) . ')
-                    AND (debut <= ' . $timestampFin . ' AND fin >= ' . $timestampDebut . ')';
-        if (NIL_INT !== $id) {
-            $req .= ' AND id_heure !=' . $id;
-        }
-        $req .= ')';
-        $queryRep = $sql->query($req);
-        
-        $req = 'SELECT EXISTS (SELECT statut
-                FROM heure_additionnelle
-                WHERE login = "' . $user . '"
-                    AND statut IN (' . implode(',', $statuts) . ')
-                    AND (debut <= ' . $timestampFin . ' AND fin >= ' . $timestampDebut . '))';
-
-        $queryAdd = $sql->query($req);
-
-        return 0 < (int) $queryRep->fetch_array()[0] || 0 < (int) $queryAdd->fetch_array()[0];
+        return $this->isChevauchementHeureAdditionnelle($jour, $heureDebut, $heureFin, $user)
+        || $this->isChevauchementHeureRepos($jour, $heureDebut, $heureFin, $user, $id);
     }
 
     /**

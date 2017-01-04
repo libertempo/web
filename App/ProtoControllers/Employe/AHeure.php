@@ -1,6 +1,8 @@
 <?php
 namespace App\ProtoControllers\Employe;
 
+use \App\Models;
+
 /**
  * ProtoContrôleur abstrait d'heures, en attendant la migration vers le MVC REST
  *
@@ -126,7 +128,7 @@ abstract class AHeure
         if (NIL_INT !== strnatcmp($post['debut_heure'], $post['fin_heure'])) {
             $localErrors['Heure de début / Heure de fin'] = _('verif_saisie_erreur_heure_fin_avant_debut');
         }
-        if ($this->isChevauchement($post['jour'], $post['debut_heure'], $post['fin_heure'], $id, $_SESSION['userlogin'])) {
+        if ($this->isChevauchement($post['jour'], $post['debut_heure'], $post['fin_heure'], $_SESSION['userlogin'], $id)) {
             $localErrors['Cohérence'] = _('Chevauchement_heure_avec_existant');
         }
         $planningUser = \utilisateur\Fonctions::getUserPlanning($user);
@@ -292,12 +294,87 @@ abstract class AHeure
      * @param string $jour
      * @param string $heureDebut
      * @param string $heureFin
-     * @param int    $id
      * @param string $user
+     * @param int    $id
      *
      * @return bool
      */
-    abstract protected function isChevauchement($jour, $heureDebut, $heureFin, $id, $user);
+    abstract protected function isChevauchement($jour, $heureDebut, $heureFin, $user, $id);
+
+    /**
+     * Vérifie le chevauchement entre les heures demandées et les heures additionnelles
+     *
+     * @param string $jour
+     * @param string $heureDebut
+     * @param string $heureFin
+     * @param string $user
+     * @param int    $id
+     *
+     * @return bool
+     */
+    protected function isChevauchementHeureAdditionnelle($jour, $heureDebut, $heureFin, $user, $id = NIL_INT)
+    {
+        $jour = \App\Helpers\Formatter::dateFr2Iso($jour);
+        $timestampDebut = strtotime($jour . ' ' . $heureDebut);
+        $timestampFin   = strtotime($jour . ' ' . $heureFin);
+        $statuts = [
+            Models\AHeure::STATUT_DEMANDE,
+            Models\AHeure::STATUT_PREMIERE_VALIDATION,
+            Models\AHeure::STATUT_VALIDATION_FINALE,
+        ];
+
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT EXISTS (SELECT statut
+                FROM heure_additionnelle
+                WHERE login = "' . $user . '"
+                    AND statut IN (' . implode(',', $statuts) . ')
+                    AND (debut <= ' . $timestampFin . ' AND fin >= ' . $timestampDebut . ')';
+        if (NIL_INT !== $id) {
+            $req .= ' AND id_heure !=' . $id;
+        }
+        $req .= ')';
+        $queryAdd = $sql->query($req);
+
+        return 0 < (int) $queryAdd->fetch_array()[0];
+    }
+
+    /**
+     * Vérifie le chevauchement entre les heures demandées et les heures de repos
+     *
+     * @param string $jour
+     * @param string $heureDebut
+     * @param string $heureFin
+     * @param string $user
+     * @param int    $id
+     *
+     * @return bool
+     */
+    protected function isChevauchementHeureRepos($jour, $heureDebut, $heureFin, $user, $id = NIL_INT)
+    {
+        $jour = \App\Helpers\Formatter::dateFr2Iso($jour);
+        $timestampDebut = strtotime($jour . ' ' . $heureDebut);
+        $timestampFin   = strtotime($jour . ' ' . $heureFin);
+        $statuts = [
+            Models\AHeure::STATUT_DEMANDE,
+            Models\AHeure::STATUT_PREMIERE_VALIDATION,
+            Models\AHeure::STATUT_VALIDATION_FINALE,
+        ];
+
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT EXISTS (SELECT statut
+                FROM heure_repos
+                WHERE login = "' . $user . '"
+                    AND statut IN (' . implode(',', $statuts) . ')
+                    AND (debut <= ' . $timestampFin . ' AND fin >= ' . $timestampDebut . ')';
+        if (NIL_INT !== $id) {
+            $req .= ' AND id_heure !=' . $id;
+        }
+        $req .= ')';
+        $queryRep = $sql->query($req);
+
+
+        return 0 < (int) $queryRep->fetch_array()[0];
+    }
 
     /**
      * Ajoute une demande d'heures dans la BDD
