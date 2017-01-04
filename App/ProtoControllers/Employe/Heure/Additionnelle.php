@@ -391,8 +391,24 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
     protected function insert(array $data, $user)
     {
         $sql = \includes\SQL::singleton();
-        $req = 'INSERT INTO heure_additionnelle (id_heure, login, debut, fin, duree, statut, comment) VALUES
-        (NULL, "' . $user . '", ' . (int) $data['debut'] . ', '. (int) $data['fin'] .', '. (int) $data['duree'] . ', ' . AHeure::STATUT_DEMANDE . ', "'. \includes\SQL::quote($data['comment']) .'")';
+        $req = 'INSERT INTO heure_additionnelle (
+            id_heure,
+            login,
+            debut,
+            fin,
+            duree,
+            type_periode,
+            statut,
+            comment
+        ) VALUES (
+            NULL,
+            "' . $user . '",
+            ' . (int) $data['debut'] . ',
+            '. (int) $data['fin'] .',
+            '. (int) $data['duree'] . ',
+            ' . (int) $data['typePeriode'] . ',
+            ' . AHeure::STATUT_DEMANDE . ', "'. \includes\SQL::quote($data['comment']) .'"
+        )';
         $query = $sql->query($req);
 
         return $sql->insert_id;
@@ -404,11 +420,11 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
     protected function update(array $data, $user, $id)
     {
         $sql   = \includes\SQL::singleton();
-        $toInsert = [];
         $req   = 'UPDATE heure_additionnelle
-                SET debut = ' . $data['debut'] . ',
-                    fin = ' . $data['fin'] . ',
-                    duree = ' . $data['duree'] . ',
+                SET debut = ' . (int) $data['debut'] . ',
+                    fin = ' . (int) $data['fin'] . ',
+                    duree = ' . (int) $data['duree'] . ',
+                    type_periode = ' . (int) $data['typePeriode'] . ',
                     comment = \'' . $data['comment'] . '\'
                 WHERE id_heure = '. (int) $id . '
                 AND login = "' . $user . '"';

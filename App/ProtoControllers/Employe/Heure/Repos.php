@@ -424,11 +424,11 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
     protected function update(array $data, $user, $id)
     {
         $sql   = \includes\SQL::singleton();
-        $toInsert = [];
         $req   = 'UPDATE heure_repos
-                SET debut = ' . $data['debut'] . ',
-                    fin = ' . $data['fin'] . ',
-                    duree = ' . $data['duree'] . ',
+                SET debut = ' . (int) $data['debut'] . ',
+                    fin = ' . (int) $data['fin'] . ',
+                    duree = ' . (int) $data['duree'] . ',
+                    type_periode = ' . (int) $data['typePeriode'] . ',
                     comment = \''.$data['comment'].'\'
                 WHERE id_heure = '. (int) $id . '
                 AND login = "' . $user . '"';
