@@ -585,4 +585,19 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
         return $tLabel;
     }
+    
+    /**
+     * Retourne le nombre de demande en cours d'un responsable
+     * 
+     * @param $resp
+     * 
+     * @return int
+     */
+    public function getNbDemandesATraiter($resp)
+    {
+        $demandesResp = $this->getIdDemandesResponsable($resp);
+        $demandesGResp = $this->getIdDemandesGrandResponsable($resp);
+        $demandesDeleg = $this->getIdDemandesResponsableAbsent($resp);
+        return count($demandesResp) + count($demandesGResp) + count($demandesDeleg);
+    }
 }
