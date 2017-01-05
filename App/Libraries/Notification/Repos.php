@@ -39,9 +39,11 @@ Class Repos extends \App\Libraries\ANotification {
     protected function getContenuDemande($data) {
 
         $return['sujet'] = "[CONGES] Demande d'heure de repos";
-        $return['expediteur'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($data['login']);
+        $return['expediteur']['mail'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($data['login']);
         $responsables = \App\ProtoControllers\Responsable::getResponsablesUtilisateur($data['login']);
         $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($data['login']);
+        $return['expediteur']['nom'] = $infoUser['u_nom']." ".$infoUser['u_prenom'];
+
         foreach ($responsables as $responsable) {
             $return['destinataire'][] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($responsable);
         }
@@ -58,8 +60,10 @@ Class Repos extends \App\Libraries\ANotification {
     protected function getContenuEmployePremierValidation($data) {
 
         $return['sujet'] = "[CONGES] Première validation d'heure de repos";
-        $return['expediteur'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($_SESSION['userlogin']);
+        $return['expediteur']['mail'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($_SESSION['userlogin']);
         $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($_SESSION['userlogin']);
+        $return['expediteur']['nom'] = $infoUser['u_nom']." ".$infoUser['u_prenom'];
+
         $return['destinataire'][] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($data['login']);
 
         $return['message'] = $infoUser['u_prenom'] . " " . $infoUser['u_nom'] . " a validé(e) votre demande d'heure de repos du  ". $data['jour'] ." de ". $data['debut'] ." à ". $data['fin'] .". Il doit maintenant être traité en deuxième validation.";
@@ -74,10 +78,10 @@ Class Repos extends \App\Libraries\ANotification {
     protected function getContenuValidationFinale($data) {
 
         $return['sujet'] = "[CONGES] Demande d'heure de repos validée";
-        $return['expediteur'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($_SESSION['userlogin']);
+        $return['expediteur']['mail'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($_SESSION['userlogin']);
         $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($_SESSION['userlogin']);
+        $return['expediteur']['nom'] = $infoUser['u_nom']." ".$infoUser['u_prenom'];
         $return['destinataire'][] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($data['login']);
-
 
         $return['message'] = $infoUser['u_prenom'] . " " . $infoUser['u_nom'] . " a accepté la demande d'heure de repos du ". $data['jour'] ." de ". $data['debut'] ." à ". $data['fin'] .".";
 
@@ -91,8 +95,9 @@ Class Repos extends \App\Libraries\ANotification {
     protected function getContenuRefus($data) {
 
         $return['sujet'] = "[CONGES] Demande d'heure de repos refusée";
-        $return['expediteur'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($_SESSION['userlogin']);
+        $return['expediteur']['mail'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($_SESSION['userlogin']);
         $infoResp = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($_SESSION['userlogin']);
+        $return['expediteur']['nom'] = $infoResp['u_nom']." ".$infoResp['u_prenom'];
         $return['destinataire'][] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($data['login']);
 
         $return['message'] = $infoResp['u_prenom'] . " " . $infoResp['u_nom'] . " a refusé(e) votre demande d'heure de repos du ". $data['jour'] ." de ". $data['debut'] ." à ". $data['fin'] .".";
@@ -111,9 +116,10 @@ Class Repos extends \App\Libraries\ANotification {
     protected function getContenuAnnulation($data) {
 
         $return['sujet'] = "[CONGES] Demande d'heure de repos annulée";
-        $return['expediteur'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($data['login']);
+        $return['expediteur']['mail'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($data['login']);
         $responsables = \App\ProtoControllers\Responsable::getResponsablesUtilisateur($data['login']);
         $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($data['login']);
+        $return['expediteur']['nom'] = $infoUser['u_nom']." ".$infoUser['u_prenom'];
         foreach ($responsables as $responsable) {
             $return['destinataire'][] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($responsable);
         }
@@ -129,10 +135,12 @@ Class Repos extends \App\Libraries\ANotification {
      */
     protected function getContenuGrandResponsablePremiereValidation($data) {
         $return['sujet'] = "[CONGES] Demande d'heure de repos";
-        $return['expediteur'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($_SESSION['userlogin']);
+        $return['expediteur']['mail'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($_SESSION['userlogin']);
         $grandResponsables = \App\ProtoControllers\Responsable::getLoginGrandResponsableUtilisateur($data['login']);
         $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($data['login']);
         $infoResp = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($_SESSION['userlogin']);
+        $return['expediteur']['nom'] = $infoResp['u_nom']." ".$infoResp['u_prenom'];
+
         foreach ($responsables as $responsable) {
             $return['destinataire'][] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($responsable);
         }
