@@ -101,7 +101,7 @@ class Responsable
      */
     public static function getRespsUtilisateur($user){
         $groupeIds = \App\ProtoControllers\Utilisateur::getGroupesId($user);
-        $return = \App\ProtoControllers\Responsable::getListResponsableByGroupeIds($groupeIds);
+        $return = \App\ProtoControllers\Groupe\Responsable::getListResponsableByGroupeIds($groupeIds);
         $return[] = \App\ProtoControllers\Responsable::getRespDirect($user);
         $return = array_unique($return);
         return $return;
@@ -162,7 +162,6 @@ class Responsable
                 $usersRespRespAbs[] = $userResp;
             }
         }
-        
         if (empty($usersRespRespAbs)){
             return FALSE;
         }
