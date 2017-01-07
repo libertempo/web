@@ -129,16 +129,17 @@ abstract class AHeure
         if (NIL_INT !== strnatcmp($post['debut_heure'], $post['fin_heure'])) {
             $localErrors['Heure de début / Heure de fin'] = _('verif_saisie_erreur_heure_fin_avant_debut');
         }
-        if ($this->isChevauchement($post['jour'], $post['debut_heure'], $post['fin_heure'], $_SESSION['userlogin'], $id)) {
-            $localErrors['Cohérence'] = _('Chevauchement_heure_avec_existant');
-        }
         $planningUser = \utilisateur\Fonctions::getUserPlanning($user);
         if (is_null($planningUser)) {
             $localErrors['Planning'] = _('aucun_planning_associe_utilisateur');
-        }
-        $data = $this->dataModel2Db($post, $user);
-        if (0 >= $data['duree']) {
-            $localErrors['Durée'] = _('duree_nulle');
+        } else {
+            if ($this->isChevauchement($post['jour'], $post['debut_heure'], $post['fin_heure'], $_SESSION['userlogin'], $id)) {
+                $localErrors['Cohérence'] = _('Chevauchement_heure_avec_existant');
+            }
+            $data = $this->dataModel2Db($post, $user);
+            if (0 >= $data['duree']) {
+                $localErrors['Durée'] = _('duree_nulle');
+            }
         }
 
         $errorsLst = array_merge($errorsLst, $localErrors);
@@ -309,42 +310,6 @@ abstract class AHeure
     }
 
     /**
-     * Vérifie le chevauchement entre les heures demandées et les congés
-     *
-     * @param string $jour
-     * @param string $heureDebut
-     * @param string $heureFin
-     * @param string $user
-     *
-     * @return bool
-     * @todo Employer le planning de $idPlanningUser pour déduire la demi-journée
-     */
-    protected function isChevauchementConges($jour, $heureDebut, $heureFin, $user)
-    {
-        $idPlanningUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($user)['planning_id'];
-        $date = \App\Helpers\Formatter::dateFr2Iso($jour);
-
-        if($heureDebut < 12){
-            $optDebut = 'am';
-        } else {
-            $optDebut = 'pm';
-        }
-
-        if($heureFin < 12){
-            $optFin = 'am';
-        } else {
-            $optFin = 'pm';
-        }
-
-        $periode = make_tab_demi_jours_periode($date, $date, $optDebut, $optFin);
-        $comment='';
-        return verif_periode_chevauche_periode_user($date, $date, $user, '', $periode, $comment);
-    }
-    /*
-     * SQL
-     */
-
-    /**
      * Vérifie le chevauchement entre les heures demandées et l'existant
      *
      * @param string $jour
@@ -431,6 +396,66 @@ abstract class AHeure
 
         return 0 < (int) $queryRep->fetch_array()[0];
     }
+
+    /**
+     * Vérifie le chevauchement entre les heures demandées et les congés
+     *
+     * @param string $jour
+     * @param string $heureDebut
+     * @param string $heureFin
+     * @param string $user
+     *
+     * @return bool
+     */
+    protected function isChevauchementConges($jour, $heureDebut, $heureFin, $user)
+    {
+        $jour = \App\Helpers\Formatter::dateFr2Iso($jour);
+        $timestampDebut = strtotime($jour . ' ' . $heureDebut);
+        $timestampFin   = strtotime($jour . ' ' . $heureFin);
+        $planningUser = \utilisateur\Fonctions::getUserPlanning($user);
+        if (!is_array($planningUser)) {
+            return false;
+        }
+        $typePeriode = $this->getTypePeriode($timestampDebut, $timestampFin, $planningUser);
+        if (!in_array($typePeriode, Creneau::getListeTypePeriode())) {
+            return false;
+        }
+        $statuts = [
+            Models\Conge::STATUT_DEMANDE,
+            Models\Conge::STATUT_PREMIERE_VALIDATION,
+            Models\Conge::STATUT_VALIDATION_FINALE,
+        ];
+        $where[] = '(p_date_deb < "' . $jour . '" AND p_date_fin > "' . $jour . '")';
+        switch ($typePeriode) {
+            case Creneau::TYPE_PERIODE_MATIN:
+                $demiJournee = 'AND p_demi_jour_deb = "am"';
+                break;
+            case Creneau::TYPE_PERIODE_APRES_MIDI:
+                $demiJournee = 'AND p_demi_jour_deb = "pm"';
+                break;
+
+            default:
+                $demiJournee = '';
+                break;
+        }
+        $where[] = '(p_date_deb = "' . $jour . '" ' . $demiJournee . ') OR (p_date_fin = "' . $jour . '" ' . $demiJournee . ')';
+
+        // A DEPLACER
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT EXISTS (
+            SELECT p_num
+            FROM conges_periode
+            WHERE p_etat IN ("' . implode('","', $statuts) . '")
+            AND (' . implode(' OR ', $where) . ')
+        )';
+        $queryConges = $sql->query($req);
+
+        return 0 < (int) $queryConges->fetch_array()[0];
+    }
+
+    /*
+     * SQL
+     */
 
     /**
      * Ajoute une demande d'heures dans la BDD

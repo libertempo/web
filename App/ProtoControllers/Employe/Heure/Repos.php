@@ -385,7 +385,9 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
     protected function isChevauchement($jour, $heureDebut, $heureFin, $user, $id)
     {
         return $this->isChevauchementHeureAdditionnelle($jour, $heureDebut, $heureFin, $user)
-        || $this->isChevauchementHeureRepos($jour, $heureDebut, $heureFin, $user, $id);
+            || $this->isChevauchementHeureRepos($jour, $heureDebut, $heureFin, $user, $id)
+            || $this->isChevauchementConges($jour, $heureDebut, $heureFin, $user)
+        ;
     }
 
     /**
