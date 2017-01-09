@@ -433,7 +433,6 @@ abstract class AHeure
             case Creneau::TYPE_PERIODE_APRES_MIDI:
                 $demiJournee = 'AND p_demi_jour_deb = "pm"';
                 break;
-
             default:
                 $demiJournee = '';
                 break;
