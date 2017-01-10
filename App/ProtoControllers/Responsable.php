@@ -90,7 +90,7 @@ class Responsable
                 WHERE u_login ="'.\includes\SQL::quote($user).'"';
         $query = $sql->query($req);
     
-    return $query->fetch_array()[0]['u_resp_login'];
+        return $query->fetch_array()['u_resp_login'];
     }
     
     /**
@@ -100,9 +100,10 @@ class Responsable
      * @return array
      */
     public static function getRespsUtilisateur($user){
+        $return = [];
         $groupeIds = \App\ProtoControllers\Utilisateur::getGroupesId($user);
         $return = \App\ProtoControllers\Groupe\Responsable::getListResponsableByGroupeIds($groupeIds);
-        $return[] = \App\ProtoControllers\Responsable::getRespDirect($user);
+        $return [] = \App\ProtoControllers\Responsable::getRespDirect($user);
         $return = array_unique($return);
         return $return;
     }

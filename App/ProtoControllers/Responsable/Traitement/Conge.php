@@ -396,14 +396,8 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         }
 
         $ids = [];
-        $sql = \includes\SQL::singleton();
-        $req = 'SELECT p_num AS id
-                FROM conges_periode
-                WHERE p_login IN (\'' . implode('\',\'', $usersResp) . '\')
-                AND p_etat = \''. \App\Models\Conge::STATUT_DEMANDE.'\'';
-        $res = $sql->query($req);
-        while ($data = $res->fetch_array()) {
-            $ids[] = (int) $data['id'];
+        foreach ($usersResp as $user) {
+            $ids = array_merge($ids,\App\ProtoControllers\Employe\Conge::getIdDemandesUtilisateur($user));
         }
         return $ids;
     }
@@ -421,28 +415,43 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         if(!$_SESSION['config']['gestion_cas_absence_responsable']){
             return [];
         }
-        $groupId = \App\ProtoControllers\Responsable::getIdGroupeResp($resp);
+        $groupesIdResponsable = \App\ProtoControllers\Responsable::getIdGroupeResp($resp);
 
         $ids = [];
-        $usersResp = [];
+        $usersgroupesIdResponsable = [];
         $usersRespResp = [];
-        $usersResp = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupId);
+        $usersgroupesIdResponsable = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupesIdResponsable);
 
         $usersRespDirect = \App\ProtoControllers\Responsable::getUsersRespDirect($resp);
-        $usersResp = array_merge($usersResp,$usersRespDirect);
+        $usersgroupesIdResponsable = array_merge($usersgroupesIdResponsable,$usersRespDirect);
         
-        foreach ($usersResp as $user) {
+        foreach ($usersgroupesIdResponsable as $user) {
             if (is_resp($user)) {
-                $usersRespResp[] = $user;
+                $usersduRespResponsable[] = $user;
             }
         }
-        
-        foreach ($usersRespResp as $respResp) {
-            if (\App\ProtoControllers\Responsable::isRespAbsent($respResp)){
-                $ids = array_merge($ids,  $this->getidDemandesResponsable($respResp));
+        if(empty($usersduRespResponsable)){
+            return [];
+        }
+        foreach ($usersduRespResponsable as $userduRespResponsable) {
+            if (\App\ProtoControllers\Responsable::isRespAbsent($userduRespResponsable)){
+                $usersGroupes = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds(\App\ProtoControllers\Responsable::getIdGroupeResp($userduRespResponsable));
+                $respDirectUser = \App\ProtoControllers\Responsable::getUsersRespDirect($userduRespResponsable);;
+                $allUsersResp = array_unique(array_merge($usersGroupes,$respDirectUser));
+                foreach ($allUsersResp as $userResp){
+                    $delegation = TRUE;
+                    $respsUser = \App\ProtoControllers\Responsable::getRespsUtilisateur($userResp);
+                    foreach ($respsUser as $respUser){
+                        if (!\App\ProtoControllers\Responsable::isRespAbsent($respUser)){
+                            $delegation = FALSE;
+                        }
+                    }
+                    if($delegation){
+                        $ids = array_merge($ids, \App\ProtoControllers\Employe\Conge::getidDemandesUtilisateur($userResp));
+                    }
+                }
             }
         }
-        
         return $ids;
     }
 
