@@ -434,29 +434,42 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
             return [];
         }
         foreach ($usersduRespResponsable as $userduRespResponsable) {
-            if (\App\ProtoControllers\Responsable::isRespAbsent($userduRespResponsable)){
-                $usersGroupes = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds(\App\ProtoControllers\Responsable::getIdGroupeResp($userduRespResponsable));
-                $respDirectUser = \App\ProtoControllers\Responsable::getUsersRespDirect($userduRespResponsable);;
-                $allUsersResp = array_unique(array_merge($usersGroupes,$respDirectUser));
-                foreach ($allUsersResp as $userResp){
-                    $delegation = TRUE;
-                    $respsUser = \App\ProtoControllers\Responsable::getRespsUtilisateur($userResp);
-                    foreach ($respsUser as $respUser){
-                        if (!\App\ProtoControllers\Responsable::isRespAbsent($respUser)){
-                            $delegation = FALSE;
-                        }
-                    }
-                    if($delegation){
-                        $ids = array_merge($ids, \App\ProtoControllers\Employe\Conge::getidDemandesUtilisateur($userResp));
-                    }
+            if (!\App\ProtoControllers\Responsable::isRespAbsent($userduRespResponsable)){
+                continue;
+            }
+            $usersGroupes = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds(\App\ProtoControllers\Responsable::getIdGroupeResp($userduRespResponsable));
+            $respDirectUser = \App\ProtoControllers\Responsable::getUsersRespDirect($userduRespResponsable);
+            $allUsersResp = array_unique(array_merge($usersGroupes,$respDirectUser));
+            $ids = $this->getIdDemandeDelegable($allUsersResp);
+        }
+        return $ids;
+    }
+
+    /**
+     * Retourne les id des demandes délégable
+     * 
+     * @param array $usersRespAbsent
+     * @return array $id
+     */
+    protected function getIdDemandeDelegable($usersRespAbsent) {
+        $ids = [];
+        foreach ($usersRespAbsent as $userResp){
+            $delegation = TRUE;
+            $respsUser = \App\ProtoControllers\Responsable::getRespsUtilisateur($userResp);
+            foreach ($respsUser as $respUser){
+                if (!\App\ProtoControllers\Responsable::isRespAbsent($respUser)){
+                    $delegation = FALSE;
+            break;
                 }
+            }
+            if($delegation){
+                $ids = array_merge($ids, \App\ProtoControllers\Employe\Conge::getidDemandesUtilisateur($userResp));
             }
         }
         return $ids;
     }
 
-    
-     /**
+    /**
       * {@inheritDoc}
       */
     protected function getIdDemandesGrandResponsable($gResp)
