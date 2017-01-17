@@ -35,24 +35,24 @@ abstract class ATraitement
 
     /**
      * Vérifie et traite une demande en tant que responsable
-     * 
+     *
      * @param array $infoDemande
      * @param int $statut
      * @param array $put
      * @param array $errors
-     * 
+     *
      * @return int
      */
     abstract protected function putResponsable(array $infoDemande, $statut, array $put, array &$errors);
 
     /**
      * Vérifie et traite une demande en tant que grand responsable
-     * 
+     *
      * @param array $infoDemande
      * @param int $statut
      * @param array $put
      * @param array $errors
-     * 
+     *
      * @return int
      */
     abstract protected function putGrandResponsable(array $infoDemande, $statut, array $put, array &$errors);
@@ -74,7 +74,7 @@ abstract class ATraitement
      * @param array $listId
      *
      * @return array $infoDemande
-     * 
+     *
      */
     abstract protected function getInfoDemandes(array $listId);
 
@@ -83,7 +83,7 @@ abstract class ATraitement
      *
      * @param array  $post
      * @param string $notice
-     * @param array $errorLst 
+     * @param array $errorLst
      *
      * @return int
      */
@@ -98,16 +98,16 @@ abstract class ATraitement
 
     /**
      * Traitement d'une validation avec modification du solde
-     * 
+     *
      * @param int $demandeId
-     * 
+     *
      * @return int
      */
     protected function putValidationFinale($demandeId)
     {
         $sql = \includes\SQL::singleton();
         $sql->getPdoObj()->begin_transaction();
-        
+
         $updateSolde = $this->updateSolde($demandeId);
         $updateStatut = $this->updateStatutValidationFinale($demandeId);
         if (0 < $updateSolde && 0 < $updateStatut) {
@@ -118,12 +118,12 @@ abstract class ATraitement
         }
         return $sql->affected_rows;
     }
-    
+
     /**
      * Retourne les demandes en cours d'un responsable
-     * 
+     *
      * @param string $resp login du responsable
-     * 
+     *
      * @return array $demandes
      */
     public function getDemandesResponsable($resp)
@@ -136,7 +136,7 @@ abstract class ATraitement
 
         return $demandes;
     }
-    
+
     /**
      * Retourne les demandes des utilisateurs responsable et absent
      * 
@@ -154,18 +154,19 @@ abstract class ATraitement
     
     /**
      * Retourne un tableau html des demandes à traiter
-     * 
+     *
      * @param array $demandes
-     * 
+     *
      * @return string
      */
     protected function getFormDemandes(array $demandes)
     {
         $i=true;
         $Table='';
-        
-        foreach ( $demandes as $demande ) {
-           $jour   = date('d/m/Y', $demande['debut']);
+        $session = (isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : session_id()));
+
+        foreach ($demandes as $demande) {
+            $jour   = date('d/m/Y', $demande['debut']);
             $debut  = date('H\:i', $demande['debut']);
             $fin    = date('H\:i', $demande['fin']);
             $duree  = \App\Helpers\Formatter::Timestamp2Duree($demande['duree']);
@@ -179,19 +180,29 @@ abstract class ATraitement
             $Table .= '<td><input type="radio" name="demande['.$id.']" value="1"></td>';
             $Table .= '<td><input type="radio" name="demande['.$id.']" value="2"></td>';
             $Table .= '<td><input type="radio" name="demande['.$id.']" value="NULL" checked></td>';
+
+            /* Informations pour le positionnement du calendrier */
+            $dateDebut = new \DateTimeImmutable(date('Y-m', $demande['debut']) . '-01');
+            $paramsCalendrier = [
+                'session' => $session,
+                'vue' => \App\ProtoControllers\Calendrier::VUE_MOIS,
+                'begin' => $dateDebut->format('Y-m-d'),
+                'end' => $dateDebut->modify('+1 month')->format('Y-m-d'),
+            ];
+            $Table .= '<td><a href="' . ROOT_PATH . 'calendrier.php?' . http_build_query($paramsCalendrier) . '" title="' . _('consulter_calendrier_de_periode') . '"><i class="fa fa-lg fa-calendar" aria-hidden="true"></i></a></td>';
             $Table .= '<td><input class="form-control" type="text" name="comment_refus['.$id.']" size="20" maxlength="100"></td></tr>';
 
             $i = !$i;
-            }
-            
+        }
+
         return $Table;
     }
 
     /**
      * Retourne le détail des demandes à traiter en tant que grand responsable
-     * 
+     *
      * @param string $resp
-     * 
+     *
      * @return array $demandes
      */
     public function getDemandesGrandResponsable($resp)
@@ -207,10 +218,10 @@ abstract class ATraitement
 
     /**
      * Verifie si la demande n'a pas déja été traité
-     * 
+     *
      * @param string $statutDb
      * @param string $statut
-     * 
+     *
      * @return bool
      */
     public function isDemandeTraitable($statut)
@@ -220,16 +231,16 @@ abstract class ATraitement
 
     /**
      * Retourne le nombre de demande en cours d'un responsable
-     * 
+     *
      * @param $resp
-     * 
+     *
      * @return int
      */
     public function getNbDemandesATraiter($resp)
     {
         $demandesResp= $this->getIdDemandesResponsable($resp);
         $demandesGResp=  $this->getIdDemandesGrandResponsable($resp);
-        
+
         return count($demandesResp) + count($demandesGResp);
     }
 }
