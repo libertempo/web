@@ -74,8 +74,9 @@ function compter($user, $num_current_periode, $date_debut, $date_fin, $opt_debut
 
 		/************************************************************/
 		// 2 : on verifie que le conges demandé ne chevauche pas une periode deja posée
-		if(verif_periode_chevauche_periode_user($date_debut, $date_fin, $user, $num_current_periode, $tab_periode_calcul, $comment, $num_update) )
+		if(verif_periode_chevauche_periode_user($date_debut, $date_fin, $user, $num_current_periode, $tab_periode_calcul, $comment, $num_update)) {
 			return 0;
+        }
 
 
 		/************************************************************/
@@ -316,6 +317,29 @@ function verif_periode_chevauche_periode_user($date_debut, $date_fin, $user, $nu
 	}// fin du while
 	/**********************************************/
 	// Ensuite verifie en parcourant le tableau qu'on vient de crée (s'il n'est pas vide)
+    $donneesPeriodeDebut = $tab_periode_calcul[$date_debut];
+    $donneesPeriodeFin = $tab_periode_calcul[$date_fin];
+    if (1 == $donneesPeriodeDebut['am']) {
+        $periodeDebut = (1 == $donneesPeriodeDebut['pm'])
+            ? \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN_APRES_MIDI
+            : \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN;
+    } elseif (1 == $donneesPeriodeDebut['pm']) {
+        $periodeDebut = \App\Models\Planning\Creneau::TYPE_PERIODE_APRES_MIDI;
+    }
+
+    if (1 == $donneesPeriodeDebut['pm']) {
+        $periodeFin = (1 == $donneesPeriodeDebut['am'])
+            ? \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN_APRES_MIDI
+            : \App\Models\Planning\Creneau::TYPE_PERIODE_APRES_MIDI;
+    } elseif (1 == $donneesPeriodeDebut['am']) {
+        $periodeFin = \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN;
+    }
+
+    $conge = new \App\ProtoControllers\Employe\Conge();
+    if ($conge->isChevauchementHeures($date_debut, $periodeDebut, $date_fin, $periodeFin)) {
+        return false;
+    }
+
 	if(count($tab_periode_deja_prise)!=0)
 	{
 		$current_day=$date_debut;
@@ -346,6 +370,8 @@ function verif_periode_chevauche_periode_user($date_debut, $date_fin, $user, $nu
 			$current_day=jour_suivant($current_day);
 		}// fin du while
 	}
+
+
 	return FALSE ;
 
 	/************************************************************/
