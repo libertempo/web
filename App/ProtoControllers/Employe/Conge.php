@@ -308,6 +308,27 @@ class Conge
     }
 
     /**
+     * Retourne les demandes d'un employé
+     * 
+     */
+    public static function getIdDemandesUtilisateur($user) {
+        
+        $ids = [];
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT p_num AS id
+                FROM conges_periode
+                WHERE p_login = \'' . $sql->quote($user) . '\'
+                AND p_etat = \''. \App\Models\Conge::STATUT_DEMANDE.'\'';
+        $res = $sql->query($req);
+        while ($data = $res->fetch_array()) {
+            $ids[] = (int) $data['id'];
+        }
+        
+        return $ids;
+    }
+
+
+    /**
      * Vérifie l'existence de congé basée sur les critères fournis
      *
      * @param array $params

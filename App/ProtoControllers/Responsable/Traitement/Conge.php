@@ -63,7 +63,8 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
         $demandesResp = $this->getDemandesResponsable($_SESSION['userlogin']);
         $demandesGrandResp = $this->getDemandesGrandResponsable($_SESSION['userlogin']);
-        if (empty($demandesResp) && empty($demandesGrandResp) ) {
+        $demandesRespAbsent = $this->getDemandesResponsableAbsent($_SESSION['userlogin']);
+        if (empty($demandesResp) && empty($demandesGrandResp) && empty($demandesRespAbsent) ) {
             $childTable .= '<tr><td colspan="12"><center>' . _('resp_traite_demandes_aucune_demande') . '</center></td></tr>';
         } else {
             if(!empty($demandesResp)) {
@@ -72,7 +73,11 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
             if (!empty($demandesGrandResp)) {
                 $childTable .='<tr align="center"><td class="histo" style="background-color: #CCC;" colspan="12"><i>'._('resp_etat_users_titre_double_valid').'</i></td></tr>';
                 $childTable .= $this->getFormDemandes($demandesGrandResp);
-
+            }
+            
+            if (!empty($demandesRespAbsent)) {
+                $childTable .='<tr align="center"><td class="histo" style="background-color: #CCC;" colspan="11"><i>'._('traitement_demande_par_delegation').'</i></td></tr>';
+                $childTable .= $this->getFormDemandes($demandesRespAbsent);
             }
         }
 
@@ -82,7 +87,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         ob_start();
         $table->render();
         $return .= ob_get_clean();
-        if (!empty($demandesResp) || !empty($demandesGrandResp) ) {
+        if (!empty($demandesResp) || !empty($demandesGrandResp) || !empty($demandesRespAbsent) ) {
             $return .= '<div class="form-group"><input type="submit" class="btn btn-success" value="' . _('form_submit') . '" /></div>';
         }
         $return .='</form>';
@@ -154,12 +159,12 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         $infoDemandes = $this->getInfoDemandes(array_keys($put['demande']));
 
         foreach ($put['demande'] as $id_conge => $statut) {
-            if (\App\ProtoControllers\Responsable::isRespDeUtilisateur($resp, $infoDemandes[$id_conge]['p_login'])) {
+            if (\App\ProtoControllers\Responsable::isRespDeUtilisateur($resp, $infoDemandes[$id_conge]['p_login']) || \App\ProtoControllers\Responsable::isRespParDelegation($resp, $infoDemandes[$id_conge]['p_login'])) {
                 $return = $this->putResponsable($infoDemandes[$id_conge], $statut, $put, $errorLst);
             } elseif (\App\ProtoControllers\Responsable::isGrandRespDeGroupe($resp, \App\ProtoControllers\Utilisateur::getGroupesId($infoDemandes[$id_conge]['p_login']))) {
                 $return = $this->putGrandResponsable($infoDemandes[$id_conge], $statut, $put, $errorLst);
             } else {
-                $errorLst[] = _('erreur_pas_responsable_de') . ' ' . $infoDemandes['id_conge']['p_login'];
+                $errorLst[] = _('erreur_pas_responsable_de') . ' ' . $infoDemandes[$id_conge]['p_login'];
                 $return = NIL_INT;
             }
         }
@@ -396,7 +401,6 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
         $usersResp = [];
         $usersResp = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupId);
-
         $usersRespDirect = \App\ProtoControllers\Responsable::getUsersRespDirect($resp);
         $usersResp = array_merge($usersResp,$usersRespDirect);
         if (empty($usersResp)) {
@@ -404,19 +408,80 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         }
 
         $ids = [];
-        $sql = \includes\SQL::singleton();
-        $req = 'SELECT p_num AS id
-                FROM conges_periode
-                WHERE p_login IN (\'' . implode(',', $usersResp) . '\')
-                AND p_etat = \''. \App\Models\Conge::STATUT_DEMANDE.'\'';
-        $res = $sql->query($req);
-        while ($data = $res->fetch_array()) {
-            $ids[] = (int) $data['id'];
+        foreach ($usersResp as $user) {
+            $ids = array_merge($ids,\App\ProtoControllers\Employe\Conge::getIdDemandesUtilisateur($user));
         }
         return $ids;
     }
 
-     /**
+
+    /**
+     * Transmet à respN+2 les id des demandes des utilisateurs d'un respN+1 absent
+     * 
+     * @param string $resp login du respN+2
+     * 
+     * @return array $ids 
+     */
+    protected function getIdDemandesResponsableAbsent($resp)
+    { 
+        if(!$_SESSION['config']['gestion_cas_absence_responsable']){
+            return [];
+        }
+        $groupesIdResponsable = \App\ProtoControllers\Responsable::getIdGroupeResp($resp);
+
+        $ids = [];
+        $usersgroupesIdResponsable = [];
+        $usersRespResp = [];
+        $usersgroupesIdResponsable = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupesIdResponsable);
+
+        $usersRespDirect = \App\ProtoControllers\Responsable::getUsersRespDirect($resp);
+        $usersgroupesIdResponsable = array_merge($usersgroupesIdResponsable,$usersRespDirect);
+        
+        foreach ($usersgroupesIdResponsable as $user) {
+            if (is_resp($user)) {
+                $usersduRespResponsable[] = $user;
+            }
+        }
+        if(empty($usersduRespResponsable)){
+            return [];
+        }
+        foreach ($usersduRespResponsable as $userduRespResponsable) {
+            if (!\App\ProtoControllers\Responsable::isRespAbsent($userduRespResponsable)){
+                continue;
+            }
+            $usersGroupes = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds(\App\ProtoControllers\Responsable::getIdGroupeResp($userduRespResponsable));
+            $respDirectUser = \App\ProtoControllers\Responsable::getUsersRespDirect($userduRespResponsable);
+            $allUsersResp = array_unique(array_merge($usersGroupes,$respDirectUser));
+            $ids = $this->getIdDemandeDelegable($allUsersResp);
+        }
+        return $ids;
+    }
+
+    /**
+     * Retourne les id des demandes délégable
+     * 
+     * @param array $usersRespAbsent
+     * @return array $id
+     */
+    protected function getIdDemandeDelegable($usersRespAbsent) {
+        $ids = [];
+        foreach ($usersRespAbsent as $userResp){
+            $delegation = TRUE;
+            $respsUser = \App\ProtoControllers\Responsable::getRespsUtilisateur($userResp);
+            foreach ($respsUser as $respUser){
+                if (!\App\ProtoControllers\Responsable::isRespAbsent($respUser)){
+                    $delegation = FALSE;
+            break;
+                }
+            }
+            if($delegation){
+                $ids = array_merge($ids, \App\ProtoControllers\Employe\Conge::getidDemandesUtilisateur($userResp));
+            }
+        }
+        return $ids;
+    }
+
+    /**
       * {@inheritDoc}
       */
     protected function getIdDemandesGrandResponsable($gResp)
@@ -538,8 +603,6 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         return $findemande < $dlimite;
     }
 
-
-
     /**
      * verifie si la date limite d'usage des reliquats n'est pas dépassée
      *
@@ -555,5 +618,20 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         $tLabel = $query->fetch_array()[0];
 
         return $tLabel;
+    }
+    
+    /**
+     * Retourne le nombre de demande en cours d'un responsable
+     * 
+     * @param $resp
+     * 
+     * @return int
+     */
+    public function getNbDemandesATraiter($resp)
+    {
+        $demandesResp = $this->getIdDemandesResponsable($resp);
+        $demandesGResp = $this->getIdDemandesGrandResponsable($resp);
+        $demandesDeleg = $this->getIdDemandesResponsableAbsent($resp);
+        return count($demandesResp) + count($demandesGResp) + count($demandesDeleg);
     }
 }

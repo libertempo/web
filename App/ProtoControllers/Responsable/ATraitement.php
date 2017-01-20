@@ -65,6 +65,8 @@ abstract class ATraitement
      * @return array $ids
      */
     abstract protected function getIdDemandesResponsable($resp);
+    
+
 
     /**
      * Retourne la liste détaillée des demandes
@@ -135,6 +137,21 @@ abstract class ATraitement
         return $demandes;
     }
 
+    /**
+     * Retourne les demandes des utilisateurs responsable et absent
+     * 
+     * @param string $resp
+     * @return array
+     */
+    public function getDemandesResponsableAbsent($resp) 
+    {
+        $demandesId = $this->getIdDemandesResponsableAbsent($resp);
+        if (empty($demandesId)) {
+            return [];
+        }
+        return $this->getInfoDemandes($demandesId);
+    }
+    
     /**
      * Retourne un tableau html des demandes à traiter
      *

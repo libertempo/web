@@ -75,6 +75,59 @@ class Responsable
          }
          return $users;
     }
+    
+    /**
+     * Retourne le responsable direct d'un utilisateur
+     * 
+     * @param string $user
+     * @return array
+     */
+    public static function getRespDirect($user)
+    {
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT u_resp_login 
+                FROM conges_users 
+                WHERE u_login ="'.\includes\SQL::quote($user).'"';
+        $query = $sql->query($req);
+    
+        return $query->fetch_array()['u_resp_login'];
+    }
+    
+    /**
+     * Retourne les responsables de groupes et direct d'un utilisateur
+     * 
+     * @param string $user
+     * @return array
+     */
+    public static function getRespsUtilisateur($user){
+        $return = [];
+        $groupeIds = \App\ProtoControllers\Utilisateur::getGroupesId($user);
+        $return = \App\ProtoControllers\Groupe\Responsable::getListResponsableByGroupeIds($groupeIds);
+        $return [] = \App\ProtoControllers\Responsable::getRespDirect($user);
+        $return = array_unique($return);
+        return $return;
+    }
+    
+    /**
+     * Vérifie si le responsable est absent
+     * 
+     * @param string $resp identifiant du responsable
+     * 
+     * @return bool
+     */
+    public static function isRespAbsent($resp){
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT EXISTS (
+                    SELECT p_num FROM conges_periode WHERE p_login = "'
+                    . \includes\SQL::quote($resp).'" AND p_etat = \''. \App\Models\Conge::STATUT_VALIDATION_FINALE
+                    . '\' AND TO_DAYS(conges_periode.p_date_deb) <= TO_DAYS(NOW()) 
+                    AND TO_DAYS(conges_periode.p_date_fin) >= TO_DAYS(NOW())
+                )';
+        
+        $query = $sql->query($req);
+        
+        return 0 < (int) $query->fetch_array()[0];
+    }
 
     /**
      * Vérifie si un utilisateur est bien le responsable d'un employé
@@ -88,6 +141,40 @@ class Responsable
         return \App\ProtoControllers\Responsable::isRespDirect($resp, $user) || \App\ProtoControllers\Responsable::isRespGroupe($resp, \App\ProtoControllers\Utilisateur::getGroupesId($user));
     }
 
+    /**
+     * Vérifie si un utilisateur est responsable par délégation d'un employé
+     * 
+     * 
+     * @param type $resp
+     * @param type $user
+     * 
+     * @return boolean
+     */
+    public static function isRespParDelegation($resp, $user) {
+        if(!$_SESSION['config']['gestion_cas_absence_responsable']){
+            return FALSE;
+        }
+        $usersRespRespAbs = [];
+        $groupesIdResp = \App\ProtoControllers\Responsable::getIdGroupeResp($resp);
+        $usersResp = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupesIdResp);
+        $usersResp = array_merge($usersResp,\App\ProtoControllers\Responsable::getUsersRespDirect($resp));
+        foreach ($usersResp as $userResp) {
+            if(\App\ProtoControllers\Utilisateur::isResponsable($userResp) && \App\ProtoControllers\Responsable::isRespAbsent($userResp)){
+                $usersRespRespAbs[] = $userResp;
+            }
+        }
+        if (empty($usersRespRespAbs)){
+            return FALSE;
+        }
+        
+        $RespsUser = \App\ProtoControllers\Responsable::getRespsUtilisateur($user);
+        $RespUserPresent = array_diff($RespsUser,$usersRespRespAbs);
+        if (empty($RespUserPresent)){
+            return TRUE;
+        }
+
+        return FALSE;
+    }
     /**
      * Vérifie si un utilisateur est bien le grand responsable d'un employé
      *
