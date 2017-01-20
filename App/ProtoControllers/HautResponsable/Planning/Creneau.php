@@ -1,36 +1,14 @@
 <?php
-/*************************************************************************************************
-Libertempo : Gestion Interactive des Congés
-Copyright (C) 2015 (Wouldsmina)
-Copyright (C) 2015 (Prytoegrian)
-Copyright (C) 2005 (cedric chauvineau)
+namespace App\ProtoControllers\HautResponsable\Planning;
 
-Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
-termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
-Ce programme est distribué car potentiellement utile, mais SANS AUCUNE GARANTIE,
-ni explicite ni implicite, y compris les garanties de commercialisation ou d'adaptation
-dans un but spécifique. Reportez-vous à la Licence Publique Générale GNU pour plus de détails.
-Vous devez avoir reçu une copie de la Licence Publique Générale GNU en même temps
-que ce programme ; si ce n'est pas le cas, écrivez à la Free Software Foundation,
-Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, États-Unis.
-*************************************************************************************************
-This program is free software; you can redistribute it and/or modify it under the terms
-of the GNU General Public License as published by the Free Software Foundation; either
-version 2 of the License, or any later version.
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the GNU General Public License for more details.
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*************************************************************************************************/
-namespace App\ProtoControllers\Responsable;
+use \App\Models\Planning\Creneau as ModelCreneau;
 
 /**
  * ProtoContrôleur de créneau, en attendant la migration vers le MVC REST
  *
  * @since  1.9
  * @author Prytoegrian <prytoegrian@protonmail.com>
+ * @author Wouldsmina
  */
 class Creneau
 {
@@ -47,13 +25,13 @@ class Creneau
     {
         foreach ($post as $typeSemaine => $jours) {
             foreach ($jours as $jourId => $periodes) {
-                if (!\App\ProtoControllers\Responsable\Creneau::verifieCoherenceCreneaux($periodes, $errors)) {
+                if (!static::verifieCoherenceCreneaux($periodes, $errors)) {
                     return NIL_INT;
                 }
             }
         }
 
-        return \App\ProtoControllers\Responsable\Creneau::insertCreneauList($post, $idPlanning);
+        return static::insertCreneauList($post, $idPlanning);
     }
 
     /**
@@ -71,15 +49,15 @@ class Creneau
         $pattern = '/^(([01]?[0-9])|(2[0-3])):[0-5][0-9]$/';
         foreach ($periodes as $typeCreneau => $creneaux) {
             foreach ($creneaux as $creneauxJour) {
-                $debut = $creneauxJour[\App\Models\Planning\Creneau::TYPE_HEURE_DEBUT];
-                $fin   = $creneauxJour[\App\Models\Planning\Creneau::TYPE_HEURE_FIN];
+                $debut = $creneauxJour[ModelCreneau::TYPE_HEURE_DEBUT];
+                $fin   = $creneauxJour[ModelCreneau::TYPE_HEURE_FIN];
                 if (-1 !== strnatcmp($debut, $fin)) {
                     $localError['Créneaux de travail'][] = _('date_fin_superieure_date_debut');
                 }
                 if (!preg_match($pattern, $debut) || !preg_match($pattern, $fin))  {
                     $localError['Créneaux de travail'][] = _('format_heure_incorrect');
                 }
-                if (!empty($precedentsCreneauxJours) && 1 !== strnatcmp($debut, $precedentsCreneauxJours[\App\Models\Planning\Creneau::TYPE_HEURE_FIN])) {
+                if (!empty($precedentsCreneauxJours) && 1 !== strnatcmp($debut, $precedentsCreneauxJours[ModelCreneau::TYPE_HEURE_FIN])) {
                     $localError['Créneaux de travail'][] = _('creneaux_consecutifs');
                 }
                 $precedentsCreneauxJours = $creneauxJour;
@@ -104,8 +82,8 @@ class Creneau
             foreach ($periodes as $typeCreneau => $creneaux) {
                 foreach ($creneaux as $creneauxJour) {
                     $grouped[$jourId][$typeCreneau][] = [
-                        \App\Models\Planning\Creneau::TYPE_HEURE_DEBUT => $creneauxJour[\App\Models\Planning\Creneau::TYPE_HEURE_DEBUT],
-                        \App\Models\Planning\Creneau::TYPE_HEURE_FIN => $creneauxJour[\App\Models\Planning\Creneau::TYPE_HEURE_FIN]
+                        ModelCreneau::TYPE_HEURE_DEBUT => $creneauxJour[ModelCreneau::TYPE_HEURE_DEBUT],
+                        ModelCreneau::TYPE_HEURE_FIN => $creneauxJour[ModelCreneau::TYPE_HEURE_FIN]
                     ];
                 }
             }
@@ -131,20 +109,18 @@ class Creneau
             $fin         = date('H\:i', $creneau['fin']);
 
             $grouped[$jourId][$typePeriode][] = [
-                \App\Models\Planning\Creneau::TYPE_HEURE_DEBUT => $debut,
-                \App\Models\Planning\Creneau::TYPE_HEURE_FIN   => $fin,
+                ModelCreneau::TYPE_HEURE_DEBUT => $debut,
+                ModelCreneau::TYPE_HEURE_FIN   => $fin,
             ];
         }
 
         return $grouped;
     }
 
-
     /*
      * SQL
      *
      */
-
 
     /**
      * Supprime tous les créneaux d'un planning donné
@@ -204,7 +180,7 @@ class Creneau
     public static function getCreneauxGroupes(array $post, $idPlanning, $typeSemaine)
     {
         if (!empty($post['creneaux'][$typeSemaine])) {
-            return \App\ProtoControllers\Responsable\Creneau::groupCreneauxFromUser($post['creneaux'][$typeSemaine]);
+            return static::groupCreneauxFromUser($post['creneaux'][$typeSemaine]);
         }
         $sql = \includes\SQL::singleton();
         $req = 'SELECT *
@@ -216,6 +192,6 @@ class Creneau
             return [];
         }
 
-        return \App\ProtoControllers\Responsable\Creneau::groupCreneauxFromDb($res->fetch_all(\MYSQLI_ASSOC));
+        return static::groupCreneauxFromDb($res->fetch_all(\MYSQLI_ASSOC));
     }
 }

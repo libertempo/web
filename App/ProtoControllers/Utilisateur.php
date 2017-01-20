@@ -143,7 +143,9 @@ class Utilisateur
         $sql = \includes\SQL::singleton();
         $req = 'SELECT *
                 FROM conges_users
-                WHERE planning_id = ' . $planningId;
+                WHERE planning_id = ' . $planningId . '
+                    AND u_login <> "admin"
+                ORDER BY u_login';
 
         return $sql->query($req)->fetch_all(\MYSQLI_ASSOC);
     }
@@ -187,6 +189,21 @@ class Utilisateur
         $solde = $query->fetch_array()[0];
 
         return $solde;
+    }
+
+    /**
+     * Vérifie si l'utilisateur a des sorties en cours
+     *
+     * @param string $login
+     *
+     * @return bool
+     */
+    public static function hasSortiesEnCours($login)
+    {
+        return static::hasCongesEnCours($login)
+            || static::hasHeureReposEnCours($login)
+            || static::hasHeureAdditionnelleEnCours($login)
+        ;
     }
 
     /**
@@ -235,7 +252,13 @@ class Utilisateur
     }
 
     /**
+     * Retourne le nom formaté de l'employé
      *
+     * @param string $prenom
+     * @param string $nom
+     * @param bool $initialPrenomSeulement
+     *
+     * @return string
      */
     public static function getNomComplet($prenom, $nom, $initialPrenomSeulement = false) {
         $prenom = ucfirst($prenom);
@@ -245,5 +268,49 @@ class Utilisateur
         }
 
         return $prenom . ' ' . $nom;
+    }
+
+    /**
+     * Supprime les associations des utilisateurs à ce planning
+     *
+     * @param int $idPlanning
+     * @param array $utilisateurs Liste des utilisateurs dont on veut supprimer les associations
+     *
+     * @return bool
+     */
+    public static function deleteListAssociationPlanning($idPlanning, array $utilisateurs = [])
+    {
+        $where[] = 'planning_id = ' . (int) $idPlanning;
+        $sql = \includes\SQL::singleton();
+        if (!empty($utilisateurs)) {
+            $utilisateurs = array_map([$sql, 'quote'], $utilisateurs);
+            $where[] = 'u_login IN ("' . implode('","', $utilisateurs) . '")';
+        }
+        $req = 'UPDATE conges_users
+            SET planning_id = 0
+            WHERE ' . implode(' AND ', $where);
+        $sql->query($req);
+
+        return (bool) $sql->affected_rows;
+    }
+
+    /**
+     * Définit une association massive entre les utilisateurs et le planning
+     *
+     * @param array $utilisateurListe
+     * @param int $idPlanning
+     *
+     * @return int Nombre d'utilisateurs affectés
+     */
+    public static function putListAssociationPlanning(array $utilisateursListe, $idPlanning)
+    {
+        $sql = \includes\SQL::singleton();
+        $utilisateursListe = array_map([$sql, 'quote'], $utilisateursListe);
+        $req = 'UPDATE conges_users
+            SET planning_id = ' . (int) $idPlanning  . '
+            WHERE u_login IN ("' . implode('","', $utilisateursListe) . '")';
+        $sql->query($req);
+
+        return (bool) $sql->affected_rows;
     }
 }

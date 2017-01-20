@@ -424,6 +424,7 @@ INSERT IGNORE INTO `conges_config` VALUES ('calcul_auto_jours_feries_france', 'F
 
 INSERT IGNORE INTO `conges_config` (`conf_nom`, `conf_valeur`, `conf_groupe`, `conf_type`, `conf_commentaire`) VALUES ('export_ical', 'true', '15_ical', 'boolean', 'config_comment__export_ical'),
 ('export_ical_salt', 'Jao%iT}', '15_ical', 'texte', 'config_comment_export_ical_salt');
+INSERT IGNORE INTO `conges_config` (`conf_nom`, `conf_valeur`, `conf_groupe`, `conf_type`, `conf_commentaire`) VALUES ('resp_association_planning', 'FALSE', '06_Responsable', 'boolean', 'config_comment_resp_association_planning');
 
 #
 # Contenu de la table `conges_type_absence`
@@ -432,7 +433,7 @@ INSERT IGNORE INTO `conges_config` (`conf_nom`, `conf_valeur`, `conf_groupe`, `c
 INSERT IGNORE INTO `conges_type_absence` VALUES (1, 'conges', 'congés payés', 'cp');
 INSERT IGNORE INTO `conges_type_absence` VALUES (2, 'conges', 'rtt', 'rtt');
 INSERT IGNORE INTO `conges_type_absence` VALUES (3, 'absences', 'formation', 'fo');
-INSERT IGNORE INTO `conges_type_absence` VALUES (4, 'absences', 'misson', 'mi');
+INSERT IGNORE INTO `conges_type_absence` VALUES (4, 'absences', 'mission', 'mi');
 INSERT IGNORE INTO `conges_type_absence` VALUES (5, 'absences', 'autre', 'ab');
 INSERT IGNORE INTO `conges_type_absence` VALUES (6, 'absences', 'malade', 'mal');
 INSERT IGNORE INTO `conges_type_absence` VALUES (11, 'conges_exceptionnels', 'enfant malade', 'enf');

@@ -66,8 +66,10 @@ if( $_SESSION['config']['user_saisie_demande'] )
     $onglets['jours_chomes'] = _('admin_button_jours_chomes_1');
 
 $onglets['cloture_year'] = _('resp_cloture_exercice_titre');
+$onglets['liste_planning'] = _('hr_liste_planning');
+$onglets['ajout_planning'] = _('hr_ajout_planning');
 
-if ( !isset($onglets[ $onglet ]) && !in_array($onglet, array('traite_user')))
+if ( !isset($onglets[ $onglet ]) && !in_array($onglet, ['traite_user', 'modif_planning']))
     $onglet = 'page_principale';
 
 /*********************************/

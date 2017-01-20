@@ -436,7 +436,7 @@ INSERT IGNORE INTO `conges_config` (`conf_nom`, `conf_valeur`, `conf_groupe`, `c
 INSERT IGNORE INTO `conges_type_absence` VALUES (1, 'conges', 'congés payés', 'cp');
 INSERT IGNORE INTO `conges_type_absence` VALUES (2, 'conges', 'rtt', 'rtt');
 INSERT IGNORE INTO `conges_type_absence` VALUES (3, 'absences', 'formation', 'fo');
-INSERT IGNORE INTO `conges_type_absence` VALUES (4, 'absences', 'misson', 'mi');
+INSERT IGNORE INTO `conges_type_absence` VALUES (4, 'absences', 'mission', 'mi');
 INSERT IGNORE INTO `conges_type_absence` VALUES (5, 'absences', 'autre', 'ab');
 INSERT IGNORE INTO `conges_type_absence` VALUES (6, 'absences', 'malade', 'mal');
 

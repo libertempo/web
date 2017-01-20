@@ -2210,7 +2210,6 @@ class Fonctions
         $valid_3=TRUE;
         $valid_reliquat=TRUE;
         $valid_4 = true;
-        $valid_5 = true;
 
         // verification de la validite de la saisie du nombre de jours annuels et du solde pour chaque type de conges
         foreach($tab_type_conges as $id_conges => $libelle) {
@@ -2251,19 +2250,8 @@ class Fonctions
             $valid_4=FALSE;
         }
 
-        /* Si l'on change le planning de l'utilisateur sans le pouvoir */
-        if ($dataUser['planning_id'] != $tab_new_user['planning_utilisateur']) {
-            if (\App\ProtoControllers\Utilisateur::hasCongesEnCours($u_login_to_update)
-                || \App\ProtoControllers\Utilisateur::hasHeureReposEnCours($u_login_to_update)
-                || \App\ProtoControllers\Utilisateur::hasHeureAdditionnelleEnCours($u_login_to_update)
-            ) {
-                $erreurs['Planning'] = _('demande_en_cours_sur_planning');
-                $valid_5 = false;
-            }
-        }
-
         // si aucune erreur de saisie n'a ete commise
-        if(($valid_1) && ($valid_2) && ($valid_3) && ($valid_4) && ($valid_5) && ($valid_reliquat) && $tab_new_user['login']!="") {
+        if(($valid_1) && ($valid_2) && ($valid_3) && ($valid_4) && ($valid_reliquat) && $tab_new_user['login']!="") {
             // UPDATE de la table conges_users
             $sql = 'UPDATE conges_users SET u_nom="'. \includes\SQL::quote($tab_new_user['nom']).'", u_prenom="'.\includes\SQL::quote($tab_new_user['prenom']).'", u_is_resp="'. \includes\SQL::quote($tab_new_user['is_resp']).'", u_resp_login=';
             if($tab_new_user['resp_login'] == 'no_resp') {
@@ -2271,7 +2259,7 @@ class Fonctions
             } else {
                 $sql .='"'.\includes\SQL::quote($tab_new_user['resp_login']).'",';
             }
-            $sql .= 'u_heure_solde='. \App\Helpers\Formatter::hour2Time($tab_new_user['solde_heure']).',u_is_admin="'. \includes\SQL::quote($tab_new_user['is_admin']).'",u_is_hr="'.\includes\SQL::quote($tab_new_user['is_hr']).'",u_is_active="'.\includes\SQL::quote($tab_new_user['is_active']).'",u_see_all="'.\includes\SQL::quote($tab_new_user['see_all']).'",u_login="'.\includes\SQL::quote($tab_new_user['login']).'",u_quotite="'.\includes\SQL::quote($tab_new_user['quotite']).'",u_email="'. \includes\SQL::quote($tab_new_user['email']).'", planning_id = ' . (int) $tab_new_user['planning_utilisateur'] . ' WHERE u_login="'.\includes\SQL::quote($u_login_to_update).'"' ;
+            $sql .= 'u_heure_solde='. \App\Helpers\Formatter::hour2Time($tab_new_user['solde_heure']).',u_is_admin="'. \includes\SQL::quote($tab_new_user['is_admin']).'",u_is_hr="'.\includes\SQL::quote($tab_new_user['is_hr']).'",u_is_active="'.\includes\SQL::quote($tab_new_user['is_active']).'",u_see_all="'.\includes\SQL::quote($tab_new_user['see_all']).'",u_login="'.\includes\SQL::quote($tab_new_user['login']).'",u_quotite="'.\includes\SQL::quote($tab_new_user['quotite']).'",u_email="'. \includes\SQL::quote($tab_new_user['email']).'" WHERE u_login="'.\includes\SQL::quote($u_login_to_update).'"' ;
 
             \includes\SQL::query($sql);
 
@@ -2611,17 +2599,12 @@ class Fonctions
         ob_start();
         $table->render();
         $return .= ob_get_clean();
-        $listPlanning = \App\ProtoControllers\Responsable\Planning::getListPlanning(\App\ProtoControllers\Responsable\Planning::getListPlanningId());
+        $planning = \App\ProtoControllers\HautResponsable\Planning::getListPlanning((array) ((int) $tab_user['planningId']))[0];
         $return .= '<br><hr/>';
-        $return .= '<h4>' . _('planning_utilisateur') . '</h4>';
-        $return .= '<select name="planning_utilisateur" class="form-control">';
-        $return .= '<option value="0"></option>';
-        foreach ($listPlanning as $planning) {
-            $selected = ($tab_user['planningId'] === $planning['planning_id']) ? 'selected="selected"' : '';
-            $return .= '<option value="' . $planning['planning_id'] . '" ' . $selected . '>' . $planning['name'] . '</option>';
-        }
+        $return .= '<h4>' . _('admin_planning_utilisateur') . '</h4>';
+        $return .= '<div>' . $planning['name'] . '</div>';
 
-        $return .= '</select><hr /><input class="btn btn-success" type="submit" value="' . _('form_submit') . '"> ';
+        $return .= '<hr /><input class="btn btn-success" type="submit" value="' . _('form_submit') . '"> ';
         $return .= '<a class="btn btn-default" href="admin_index.php?session=' . $session . '&onglet=admin-users">' . _('form_cancel') . '</a>';
         $return .= '</form>';
         return $return;
@@ -2641,7 +2624,6 @@ class Fonctions
     {
         $u_login              = getpost_variable('u_login') ;
         $u_login_to_update    = getpost_variable('u_login_to_update') ;
-        $planningUtilisateur  = getpost_variable('planning_utilisateur');
         $return = '';
 
         // TITRE
@@ -2676,7 +2658,6 @@ class Fonctions
             $tab_new_user['jour']       = getpost_variable('new_jour') ;
             $tab_new_user['mois']       = getpost_variable('new_mois') ;
             $tab_new_user['year']       = getpost_variable('new_year') ;
-            $tab_new_user['planning_utilisateur'] = getpost_variable('planning_utilisateur');
             $echo  = '';
 
             $ok = \admin\Fonctions::commit_update_user($u_login_to_update, $tab_new_user, $tab_new_jours_an, $tab_new_solde, $tab_new_reliquat, $echo);
@@ -3273,15 +3254,7 @@ class Fonctions
         ob_start();
         $table->render();
         $return .= ob_get_clean();
-        $listPlanning = \App\ProtoControllers\Responsable\Planning::getListPlanning(\App\ProtoControllers\Responsable\Planning::getListPlanningId());
-        $return .= '<br><hr/>';
-        $return .= '<h4>' . _('planning_utilisateur') . '</h4>';
-        $return .= '<select name="planning_utilisateur" class="form-control">';
-        $return .= '<option value="0"></option>';
-        foreach ($listPlanning as $planning) {
-            $return .= '<option value="' . $planning['planning_id'] . '">' . $planning['name'] . '</option>';
-        }
-        $return .= '</select><br><hr />';
+        $return .= '<br>';
 
         // si gestion des groupes :  affichage des groupe pour y affecter le user
         if($_SESSION['config']['gestion_groupes'])
@@ -3489,7 +3462,6 @@ class Fonctions
             $sql1=$sql1."u_quotite=".$tab_new_user['quotite'].",";
             $sql1=$sql1."u_heure_solde=".  \App\Helpers\Formatter::hour2Time($tab_new_user['solde_heure']).",";
             $sql1=$sql1." u_email='".$tab_new_user['email']."' ";
-            $sql1 .= ', planning_id = ' . (int) $tab_new_user['planningId'];
             $result1 = \includes\SQL::query($sql1);
 
 
@@ -3606,7 +3578,6 @@ class Fonctions
                 $tab_new_user[$login]['is_admin']   = getpost_variable('new_is_admin');
                 $tab_new_user[$login]['is_hr']      = getpost_variable('new_is_hr');
                 $tab_new_user[$login]['see_all']    = getpost_variable('new_see_all');
-                $tab_new_user[$login]['planningId'] = getpost_variable('planning_utilisateur');
 
                 if ($_SESSION['config']['how_to_connect_user'] == "dbconges") {
                     $tab_new_user[$login]['password1'] = getpost_variable('new_password1');
@@ -3640,7 +3611,6 @@ class Fonctions
             $tab_new_user[0]['new_jour'] = getpost_variable('new_jour');
             $tab_new_user[0]['new_mois'] = getpost_variable('new_mois');
             $tab_new_user[0]['new_year'] = getpost_variable('new_year');
-            $tab_new_user[0]['planningId'] = getpost_variable('planning_utilisateur');
         }
 
         $checkbox_user_groups = getpost_variable('checkbox_user_groups') ;

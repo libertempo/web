@@ -57,7 +57,7 @@ verif_droits_user($session, "is_resp");
     $DemandesAdd = new \App\ProtoControllers\Responsable\Traitement\Additionnelle;
     $DemandesRep = new \App\ProtoControllers\Responsable\Traitement\Repos;
     $DemandesConges = new \App\ProtoControllers\Responsable\Traitement\Conge;
-    
+
     if( $_SESSION['config']['user_saisie_demande'] ) {
 
         $nbbadgeConges='';
@@ -67,7 +67,7 @@ verif_droits_user($session, "is_resp");
         }
         $onglets['traitement_demandes'] = _('resp_menu_button_traite_demande').$nbbadgeConges ;
     }
-    
+
     $nbbadgeDem='';
     $nbdemandes = $DemandesAdd->getNbDemandesATraiter($_SESSION['userlogin']);
     if ( 0 < $nbdemandes )
@@ -75,7 +75,7 @@ verif_droits_user($session, "is_resp");
         $nbbadgeDem = ' <span class="badge">'. $nbdemandes .'</span>';
     }
     $onglets['traitement_heures_additionnelles'] = _('resp_menu_button_traite_additionnelle').$nbbadgeDem;
-    
+
     $nbbadgeRep = '';
     $nbdemandes = $DemandesRep->getNbDemandesATraiter($_SESSION['userlogin']);
     if ( 0 < $nbdemandes )
@@ -88,7 +88,6 @@ verif_droits_user($session, "is_resp");
         $onglets['ajout_conges'] = _('resp_ajout_conges_titre');
 
     $onglets['liste_planning'] = _('resp_liste_planning');
-    $onglets['ajout_planning'] = _('resp_ajout_planning');
 
     if (false)
         $onglets['cloture_exercice'] = _('button_cloture');

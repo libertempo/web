@@ -357,7 +357,7 @@ CREATE TABLE `conges_type_absence` (
 INSERT INTO `conges_type_absence` VALUES (1, 'conges', 'congés payés', 'cp');
 INSERT INTO `conges_type_absence` VALUES (2, 'conges', 'rtt', 'rtt');
 INSERT INTO `conges_type_absence` VALUES (3, 'absences', 'formation', 'fo');
-INSERT INTO `conges_type_absence` VALUES (4, 'absences', 'misson', 'mi');
+INSERT INTO `conges_type_absence` VALUES (4, 'absences', 'mission', 'mi');
 INSERT INTO `conges_type_absence` VALUES (5, 'absences', 'autre', 'ab');
 
 

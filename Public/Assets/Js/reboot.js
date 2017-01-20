@@ -138,6 +138,10 @@ var semaineDisplayer = function (idElement, idCommon, typeSemaines, texts)
     this.idCommon     = idCommon;
     this.typeSemaines = typeSemaines;
     this.texts        = texts;
+
+    /**
+     * Lance l'initialisation de l'afficheur
+     */
     this.init = function ()
     {
         var displayedNot = false;
@@ -167,6 +171,8 @@ var semaineDisplayer = function (idElement, idCommon, typeSemaines, texts)
             }
 
         }.bind(this));
+
+        return this;
     }
 
     /**
@@ -273,6 +279,14 @@ var semaineDisplayer = function (idElement, idCommon, typeSemaines, texts)
         // TODO : not with reference sur un autre form ?
         return document.getElementById(typeSemaine).querySelectorAll('input[type=hidden]');
     }
+
+    /**
+     * Lance l'initialisation de l'afficheur en mode lecture seule
+     */
+    this.readOnly = function ()
+    {
+        this.element.style.display = 'none';
+    }
 }
 
 /**
@@ -287,6 +301,10 @@ var planningController = function (idElement, options, creneaux)
     this.fin   = this.options['typeHeureFin'];
     this.incrementMatin = 0;
     this.incrementApresMidi = 0;
+
+    /**
+     * Lance l'initialisation de l'afficheur
+     */
     this.init = function ()
     {
         this.element.addEventListener('click', function () {
@@ -505,6 +523,85 @@ var planningController = function (idElement, options, creneaux)
             if (0 > heurePeriode.localeCompare(heureBrother)) {
                 return brother;
             }
+        }
+    }
+
+    /**
+     * Lance l'initialisation de l'afficheur en mode lecture seule
+     */
+    this.readOnly = function ()
+    {
+        /* Remplissage des valeurs préexistantes */
+        this._addPeriods(creneaux);
+        var boutons = document.getElementById(this.options.tableId).querySelectorAll('button');
+        for (var i = 0; i < boutons.length; ++i) {
+            bouton = boutons[i].style.display = 'none';
+        }
+
+        var inputs = document.getElementById(this.options.tableId).querySelectorAll('input');
+
+        for (var i = 0; i < inputs.length; ++i) {
+            inputs[i].style.display = 'none';
+        }
+
+    }
+}
+
+
+/**
+ * Objet de gestion des utilisateurs de planning
+ *
+ * @param string idElement Identifiant du HTMLElement
+ * @param Object associationsGroupe Associations groupes <> utilisateurs
+ * @param int nilId Nullité numérique
+ */
+var selectAssociationPlanning = function (idElement, associationsGroupe, nilId)
+{
+    this.element = document.getElementById(idElement);
+    this.associationsGroupe = associationsGroupe;
+    this.nilId = parseInt(nilId);
+    this.utilisateurs = document.querySelectorAll('form > div > div.checkbox-utilisateur');
+
+    /**
+     * Event
+     */
+    this.element.addEventListener('change', function (e) {
+        var idGroupe = e.target.value;
+        if (this.nilId != idGroupe) {
+            this._filterUsers(idGroupe);
+        } else {
+            this._resetFilter();
+        }
+    }.bind(this));
+
+    /**
+     * Filtre les utilisateurs en fonction du groupe passé
+     *
+     * @param int idGroupe
+     */
+    this._filterUsers = function (idGroupe)
+    {
+        this._resetFilter();
+        idGroupe = parseInt(idGroupe);
+        if (this.associationsGroupe.hasOwnProperty(idGroupe)) {
+            var groupe = this.associationsGroupe[idGroupe];
+            for (var i = 0; i < this.utilisateurs.length; ++i) {
+                var utilisateur = this.utilisateurs[i];
+                var utilisateurName = utilisateur.dataset.userLogin;
+                if (-1 == groupe.indexOf(utilisateurName)) {
+                    utilisateur.style.display = 'none';
+                }
+            }
+        }
+    }
+
+    /**
+     * Annule tout filtre de groupe
+     */
+    this._resetFilter = function ()
+    {
+        for (var i = 0; i < this.utilisateurs.length; ++i) {
+            this.utilisateurs[i].style.display = 'block';
         }
     }
 }

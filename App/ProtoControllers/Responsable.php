@@ -180,4 +180,11 @@ class Responsable
         return 0 < (int) $query->fetch_array()[0];
     }
 
+    /**
+     *
+     */
+    public static function canAssociatePLanning()
+    {
+        return $_SESSION['config']['resp_association_planning'];
+    }
 }
