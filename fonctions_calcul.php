@@ -327,16 +327,16 @@ function verif_periode_chevauche_periode_user($date_debut, $date_fin, $user, $nu
         $periodeDebut = \App\Models\Planning\Creneau::TYPE_PERIODE_APRES_MIDI;
     }
 
-    if (1 == $donneesPeriodeDebut['pm']) {
-        $periodeFin = (1 == $donneesPeriodeDebut['am'])
+    if (1 == $donneesPeriodeFin['pm']) {
+        $periodeFin = (1 == $donneesPeriodeFin['am'])
             ? \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN_APRES_MIDI
             : \App\Models\Planning\Creneau::TYPE_PERIODE_APRES_MIDI;
-    } elseif (1 == $donneesPeriodeDebut['am']) {
+    } elseif (1 == $donneesPeriodeFin['am']) {
         $periodeFin = \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN;
     }
 
     $conge = new \App\ProtoControllers\Employe\Conge();
-    if ($conge->isChevauchementHeures($date_debut, $periodeDebut, $date_fin, $periodeFin)) {
+    if ($conge->isChevauchement($user, $date_debut, $periodeDebut, $date_fin, $periodeFin)) {
         return false;
     }
 

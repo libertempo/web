@@ -332,9 +332,10 @@ class Conge
     }
 
     /**
-     * Vérifie le chevauchement entre les conges demandés et les heures,
+     * Vérifie le chevauchement des conges demandés et les heures,
      * additionnelles comme repos
      *
+     * @param string $user Login de l'utilisateur
      * @param string $dateDebut Date au format YYYY-mm-dd
      * @param int $typeCreneauDebut Type de période parmi Creneau::TYPE_PERIODE_*
      * @param string $dateFin Date au format YYYY-mm-dd
@@ -342,7 +343,57 @@ class Conge
      *
      * @return bool
      */
-    public function isChevauchementHeures($dateDebut, $typeCreneauDebut, $dateFin, $typeCreneauFin)
+    public function isChevauchement($user, $dateDebut, $typeCreneauDebut, $dateFin, $typeCreneauFin)
+    {
+        return $this->isChevauchementHeuresRepos($user, $dateDebut, $typeCreneauDebut, $dateFin, $typeCreneauFin)
+            || $this->isChevauchementHeuresAdditionnelles($user, $dateDebut, $typeCreneauDebut, $dateFin, $typeCreneauFin);
+    }
+
+    /**
+     * Vérifie le chevauchement des conges demandés et les heures de repos
+     *
+     * @param string $user Login de l'utilisateur
+     * @param string $dateDebut Date au format YYYY-mm-dd
+     * @param int $typeCreneauDebut Type de période parmi Creneau::TYPE_PERIODE_*
+     * @param string $dateFin Date au format YYYY-mm-dd
+     * @param int $typeCreneauFin Type de période parmi Creneau::TYPE_PERIODE_*
+     *
+     * @return bool
+     */
+    private function isChevauchementHeuresRepos($user, $dateDebut, $typeCreneauDebut, $dateFin, $typeCreneauFin)
+    {
+        return $this->isChevauchementHeures($user, $dateDebut, $typeCreneauDebut, $dateFin, $typeCreneauFin, 'heure_repos');
+    }
+
+    /**
+     * Vérifie le chevauchement des conges demandés et les heures additionnelles
+     *
+     * @param string $user Login de l'utilisateur
+     * @param string $dateDebut Date au format YYYY-mm-dd
+     * @param int $typeCreneauDebut Type de période parmi Creneau::TYPE_PERIODE_*
+     * @param string $dateFin Date au format YYYY-mm-dd
+     * @param int $typeCreneauFin Type de période parmi Creneau::TYPE_PERIODE_*
+     *
+     * @return bool
+     */
+    private function isChevauchementHeuresAdditionnelles($user, $dateDebut, $typeCreneauDebut, $dateFin, $typeCreneauFin)
+    {
+        return $this->isChevauchementHeures($user, $dateDebut, $typeCreneauDebut, $dateFin, $typeCreneauFin, 'heure_additionnelle');
+    }
+
+    /**
+     * Vérifie le chevauchement des conges demandés et les heures, selon son type
+     *
+     * @param string $user Login de l'utilisateur
+     * @param string $dateDebut Date au format YYYY-mm-dd
+     * @param int $typeCreneauDebut Type de période parmi Creneau::TYPE_PERIODE_*
+     * @param string $dateFin Date au format YYYY-mm-dd
+     * @param int $typeCreneauFin Type de période parmi Creneau::TYPE_PERIODE_*
+     * @param string $typeHeure Heure de repos ou additionnelle
+     *
+     * @return bool
+     */
+    private function isChevauchementHeures($user, $dateDebut, $typeCreneauDebut, $dateFin, $typeCreneauFin, $typeHeure)
     {
         $sql = \includes\SQL::singleton();
         $filtresDates[] = '(dateDebutHeure > "' . $dateDebut . '" AND dateDebutHeure < "' . $dateFin . '")';
@@ -354,7 +405,7 @@ class Conge
         }
         if (Creneau::TYPE_PERIODE_MATIN_APRES_MIDI
  === $typeCreneauFin) {
-            $filtresDates[] = '(dateDebutHeure = "' . $dateDebut . '")';
+            $filtresDates[] = '(dateDebutHeure = "' . $dateFin . '")';
         } else {
             $filtresDates[] = '(dateDebutHeure = "' . $dateFin . '" AND type_periode IN (' . $typeCreneauFin . ',' . Creneau::TYPE_PERIODE_MATIN_APRES_MIDI . '))';
         }
@@ -367,9 +418,10 @@ class Conge
         $req = 'SELECT EXISTS (
             SELECT *
             FROM
-                (SELECT id_heure, DATE_FORMAT(FROM_UNIXTIME(debut), "%Y-%m-%d") AS dateDebutHeure, type_periode, statut, debut
-            FROM heure_repos) tmp
+                (SELECT *, DATE_FORMAT(FROM_UNIXTIME(debut), "%Y-%m-%d") AS dateDebutHeure
+            FROM ' .  $typeHeure . ') tmp
             WHERE statut IN ("' . implode('","', $etats) . '")
+                AND login = "' . $sql->quote($user) . '"
                 AND (' . implode(' OR ', $filtresDates) . ')
         )';
         $queryConges = $sql->query($req);
