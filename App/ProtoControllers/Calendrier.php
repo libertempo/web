@@ -175,7 +175,6 @@ final class Calendrier
             $form .= '<option value="' . NIL_INT . '">Tous</option>';
 
             foreach (\App\ProtoControllers\Groupe::getOptions() as $id => $groupe) {
-                ddd($groupe);
                 $selected = ($id ===  $this->idGroupe)
                     ? 'selected="selected"'
                     : '';
