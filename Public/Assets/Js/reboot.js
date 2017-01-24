@@ -44,8 +44,8 @@ function compter_jours()
         var session = document.forms["dem_conges"].session.value;
         var d_debut = document.forms["dem_conges"].new_debut.value;
         var d_fin = document.forms["dem_conges"].new_fin.value;
-        var opt_deb = document.forms["dem_conges"].new_demi_jour_deb.value;
-        var opt_fin = document.forms["dem_conges"].new_demi_jour_fin.value;
+	    var opt_deb = document.querySelector('input[name = "new_demi_jour_deb"]:checked').value;
+	    var opt_fin = document.querySelector('input[name = "new_demi_jour_fin"]:checked').value;
         var p_num = "";
 
         if( document.forms["dem_conges"].p_num_to_update ) {
