@@ -1,31 +1,4 @@
 <?php
-/*************************************************************************************************
-Libertempo : Gestion Interactive des Congés
-Copyright (C) 2015 (Wouldsmina)
-Copyright (C) 2015 (Prytoegrian)
-Copyright (C) 2005 (cedric chauvineau)
-
-Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
-termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
-Ce programme est distribué car potentiellement utile, mais SANS AUCUNE GARANTIE,
-ni explicite ni implicite, y compris les garanties de commercialisation ou d'adaptation
-dans un but spécifique. Reportez-vous à la Licence Publique Générale GNU pour plus de détails.
-Vous devez avoir reçu une copie de la Licence Publique Générale GNU en même temps
-que ce programme ; si ce n'est pas le cas, écrivez à la Free Software Foundation,
-Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, États-Unis.
-*************************************************************************************************
-This program is free software; you can redistribute it and/or modify it under the terms
-of the GNU General Public License as published by the Free Software Foundation; either
-version 2 of the License, or any later version.
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the GNU General Public License for more details.
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*************************************************************************************************/
-
-//#################################################################################################
 
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 
@@ -1380,39 +1353,26 @@ connecter alors qu'il n'a pas de compte dans
 }
 
 
-// verifie si un user est responasble ou pas
-// renvoit TRUE si le login est responsable dans la table conges_users, FALSE sinon.
+/**
+ * verifie si un user est responsable ou pas
+ *
+ * @param string $login Paramètre inutile, mais à but de compat
+ */
 function is_resp($login)
 {
-    static $sql_is_resp = array();
-    if (!isset($sql_is_resp[$login]))
-    {
-        // recup de qq infos sur le user
-        $select_info='SELECT u_is_resp FROM conges_users WHERE u_login="'.\includes\SQL::quote($login).'"';
-        $ReqLog_info = \includes\SQL::query($select_info);
-        $resultat_info = $ReqLog_info->fetch_array();
-        $sql_is_resp[$login]=$resultat_info["u_is_resp"];
-    }
-
-    return ($sql_is_resp[$login]=='Y');
+    return isset($_SESSION['is_resp']) && 'Y' === $_SESSION['is_resp'];
 }
 
-// verifie si un user est HR ou pas
-// renvoit TRUE si le login est HR dans la table conges_users, FALSE sinon.
+/**
+ * verifie si un user est HR ou pas
+ *
+ * @param string $login Paramètre inutile, mais à but de compat
+ */
 function is_hr($login)
 {
-    static $sql_is_hr = array();
-    if (!isset($sql_is_hr[$login]))
-    {
-        // recup de qq infos sur le user
-        $select_info='SELECT u_is_hr FROM conges_users WHERE u_login="'. \includes\SQL::quote($login).'";';
-        $ReqLog_info = \includes\SQL::query($select_info);
-        $resultat_info = $ReqLog_info->fetch_array();
-        $sql_is_hr[$login]=$resultat_info["u_is_hr"];
-    }
-
-    return ($sql_is_hr[$login]=='Y');
+    return isset($_SESSION['is_hr']) && 'Y' === $_SESSION['is_hr'];
 }
+
 // verifie si un user est valide ou pas
 // renvoit TRUE si le login est enable dans la table conges_users, FALSE sinon.
 function is_active($login)
@@ -1480,27 +1440,15 @@ function is_gr_group_of_user($resp_login, $user_login)
     return false;
 }
 
-
-
-// verifie si un user est administrateur ou pas
-// renvoit TRUE si le login est administrateur dans la table conges_users, FALSE sinon.
+/**
+ * verifie si un user est admin ou pas
+ *
+ * @param string $login Paramètre inutile, mais à but de compat
+ */
 function is_admin($login)
 {
-    static $sql_is_admin = array();
-    if (!isset($sql_is_admin[$login])) {
-        // recup de qq infos sur le user
-        $select_info='SELECT u_is_admin FROM conges_users WHERE u_login="'. \includes\SQL::quote($login).'";';
-        $ReqLog_info = \includes\SQL::query($select_info);
-
-        $resultat_info = $ReqLog_info->fetch_array();
-        $sql_is_admin[$login]=$resultat_info["u_is_admin"];
-    }
-
-    return ($sql_is_admin[$login]=='Y');
+    return isset($_SESSION['is_admin']) && 'Y' === $_SESSION['is_admin'];
 }
-
-
-
 
 // on insert une nouvelle periode dans la table periode
 // retourne le num d'auto_incremente (p_num) ou 0 en cas l'erreur

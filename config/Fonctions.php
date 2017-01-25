@@ -1,28 +1,4 @@
 <?php
-/*************************************************************************************************
-Libertempo : Gestion Interactive des Congés
-Copyright (C) 2015 (Wouldsmina)
-Copyright (C) 2015 (Prytoegrian)
-Copyright (C) 2005 (cedric chauvineau)
-Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
-termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
-Ce programme est distribué car potentiellement utile, mais SANS AUCUNE GARANTIE,
-ni explicite ni implicite, y compris les garanties de commercialisation ou d'adaptation
-dans un but spécifique. Reportez-vous à la Licence Publique Générale GNU pour plus de détails.
-Vous devez avoir reçu une copie de la Licence Publique Générale GNU en même temps
-que ce programme ; si ce n'est pas le cas, écrivez à la Free Software Foundation,
-Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, États-Unis.
-*************************************************************************************************
-This program is free software; you can redistribute it and/or modify it under the terms
-of the GNU General Public License as published by the Free Software Foundation; either
-version 2 of the License, or any later version.
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the GNU General Public License for more details.
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*************************************************************************************************/
 namespace config;
 
 /**
@@ -168,8 +144,8 @@ class Fonctions
         // SERVER
         $PHP_SELF=$_SERVER['PHP_SELF'];
         // GET / POST
-        $action         = getpost_variable('action', "") ;
-        $login_par      = getpost_variable('login_par', "") ;
+        $action         = htmlentities(getpost_variable('action', ""), ENT_QUOTES | ENT_HTML401);
+        $login_par      = htmlentities(getpost_variable('login_par', ""), ENT_QUOTES | ENT_HTML401);
 
         /*************************************/
 
@@ -201,8 +177,8 @@ class Fonctions
 
         // update de la table
         foreach($tab_new_values as $nom_mail => $tab_mail) {
-            $subject = addslashes($tab_mail['subject']);
-            $body = addslashes($tab_mail['body']) ;
+            $subject = htmlspecialchars(addslashes($tab_mail['subject']));
+            $body = htmlspecialchars(addslashes($tab_mail['body']));
             $req_update='UPDATE conges_mail SET mail_subject=\''.$subject.'\', mail_body=\''.$body.'\' WHERE mail_nom="'. \includes\SQL::quote($nom_mail).'" ';
             $result1 = \includes\SQL::query($req_update);
         }
@@ -408,6 +384,9 @@ class Fonctions
         } else {
             $URL = "$PHP_SELF?session=$session&onglet=type_absence";
         }
+        $tab_new_values['libelle'] = htmlentities($tab_new_values['libelle'], ENT_QUOTES | ENT_HTML401);
+        $tab_new_values['short_libelle'] = htmlentities($tab_new_values['short_libelle']);
+        $tab_new_values['type'] = htmlentities($tab_new_values['type'], ENT_QUOTES | ENT_HTML401);
 
         // verif de la saisie
         $erreur=FALSE ;
@@ -833,7 +812,7 @@ class Fonctions
         // GET / POST
         $action         = getpost_variable('action') ;
         $tab_new_values = getpost_variable('tab_new_values');
-        $id_to_update   = getpost_variable('id_to_update');
+        $id_to_update   = htmlentities(getpost_variable('id_to_update'), ENT_QUOTES | ENT_HTML401);
 
         /*********************************/
 
@@ -868,6 +847,7 @@ class Fonctions
         $timeout=2 ;  // temps d'attente pour rafraichir l'écran après l'update !
 
         foreach($tab_new_values as $key => $value ) {
+            $value = htmlentities($value, ENT_QUOTES | ENT_HTML401);
             // CONTROLE gestion_conges_exceptionnels
             // si désactivation les conges exceptionnels, on verif s'il y a des conges exceptionnels enregistres ! si oui : changement impossible !
             if(($key=="gestion_conges_exceptionnels") && ($value=="FALSE") ) {

@@ -1,27 +1,5 @@
 <?php
-/*************************************************************************************************
-Libertempo : Gestion Interactive des Congés
-Copyright (C) 2005 (cedric chauvineau)
 
-Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
-termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
-Ce programme est distribué car potentiellement utile, mais SANS AUCUNE GARANTIE,
-ni explicite ni implicite, y compris les garanties de commercialisation ou d'adaptation
-dans un but spécifique. Reportez-vous à la Licence Publique Générale GNU pour plus de détails.
-Vous devez avoir reçu une copie de la Licence Publique Générale GNU en même temps
-que ce programme ; si ce n'est pas le cas, écrivez à la Free Software Foundation,
-Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, États-Unis.
-*************************************************************************************************
-This program is free software; you can redistribute it and/or modify it under the terms
-of the GNU General Public License as published by the Free Software Foundation; either
-version 2 of the License, or any later version.
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the GNU General Public License for more details.
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*************************************************************************************************/
 namespace hr;
 
 /**
@@ -527,7 +505,7 @@ class Fonctions
             {
                 // recup di motif de refus
                 $motif_refus=addslashes($tab_text_refus[$numero_int]);
-                $sql3 = 'UPDATE conges_periode SET p_etat=\'refus\', p_motif_refus='.\includes\SQL::quote($motif_annul).', p_date_traitement=NOW() WHERE p_num="'.\includes\SQL::quote($numero_int).'" AND ( p_etat=\'valid\' OR p_etat=\'demande\' );';
+                $sql3 = 'UPDATE conges_periode SET p_etat=\'refus\', p_motif_refus='.\includes\SQL::quote($motif_refus).', p_date_traitement=NOW() WHERE p_num="'.\includes\SQL::quote($numero_int).'" AND ( p_etat=\'valid\' OR p_etat=\'demande\' );';
                 $ReqLog3 = \includes\SQL::query($sql3);
 
                 if ($ReqLog3 && \includes\SQL::getVar('affected_rows')) {
@@ -1091,7 +1069,7 @@ class Fonctions
     public static function pageTraiteUserModule($onglet)
     {
         //var pour hr_traite_user.php
-        $user_login                 = getpost_variable('user_login') ;
+        $user_login                 = htmlentities(getpost_variable('user_login'), ENT_QUOTES | ENT_HTML401);
         $tab_checkbox_annule        = getpost_variable('tab_checkbox_annule') ;
         $tab_radio_traite_demande   = getpost_variable('tab_radio_traite_demande') ;
         $new_demande_conges         = getpost_variable('new_demande_conges', 0) ;
@@ -1132,7 +1110,7 @@ class Fonctions
             $year_calendrier_saisie_fin     = getpost_variable('year_calendrier_saisie_fin', 0) ;
             $mois_calendrier_saisie_fin     = getpost_variable('mois_calendrier_saisie_fin', 0) ;
             $tri_date                       = getpost_variable('tri_date', "ascendant") ;
-            $year_affichage                 = getpost_variable('year_affichage' , date("Y") );
+            $year_affichage                 = (int) getpost_variable('year_affichage' , date("Y") );
 
             $return .= \hr\Fonctions::affichage($user_login,  $year_affichage, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $tri_date, $onglet);
         }
@@ -1919,7 +1897,8 @@ class Fonctions
         // GET / POST
         $choix_action                 = getpost_variable('choix_action');
         $year_calendrier_saisie        = getpost_variable('year_calendrier_saisie', 0);
-        $tab_checkbox_j_chome        = getpost_variable('tab_checkbox_j_chome');
+        $checkbox = getpost_variable('tab_checkbox_j_chome');
+        $tab_checkbox_j_chome = (!is_array($checkbox) || empty($checkbox)) ? [] : $checkbox;
         /*************************************/
 
         // si l'année n'est pas renseignée, on prend celle du jour
@@ -2395,6 +2374,7 @@ class Fonctions
 
         if($cloture_users=="TRUE") {
             $tab_cloture_users       = getpost_variable('tab_cloture_users');
+            $tab_commentaire_saisie       = getpost_variable('tab_commentaire_saisie'); //a vérifier
             $return .= \hr\Fonctions::cloture_users($tab_type_cong, $tab_cloture_users, $tab_commentaire_saisie);
 
             redirect( ROOT_PATH .'hr/hr_index.php?session='.$session, false);
@@ -2685,7 +2665,7 @@ class Fonctions
 
             // on met à jour la table conges_periode .
             $etat = "annul" ;
-            $sql1 = 'UPDATE conges_periode SET p_etat = "'.\includes\SQL::quote($etat).'" WHERE p_num='.\includes\SQL::quote($sql_num_periode).'" AND p_etat=\'ok\';';
+            $sql1 = 'UPDATE conges_periode SET p_etat = "'.\includes\SQL::quote($etat).'" WHERE p_num='.\includes\SQL::quote($sql_num_periode).' AND p_etat=\'ok\';';
             $ReqLog = \includes\SQL::query($sql1);
 
             if ($ReqLog && \includes\SQL::getVar('affected_rows')) {
@@ -3047,7 +3027,7 @@ class Fonctions
         // GET / POST
         $choix_action         = getpost_variable('choix_action');
         $year                 = getpost_variable('year', 0);
-        $groupe_id            = getpost_variable('groupe_id');
+        $groupe_id            = htmlentities(getpost_variable('groupe_id'), ENT_QUOTES | ENT_HTML401);
         $id_type_conges       = getpost_variable('id_type_conges');
         $new_date_debut       = getpost_variable('new_date_debut'); // valeur par dédaut = aujourd'hui
         $new_date_fin         = getpost_variable('new_date_fin');   // valeur par dédaut = aujourd'hui
@@ -3092,7 +3072,7 @@ class Fonctions
         /*   COMPOSITION DES ONGLETS...  */
         /*********************************/
 
-        $onglet = getpost_variable('onglet');
+        $onglet = htmlentities(getpost_variable('onglet'), ENT_QUOTES | ENT_HTML401);
 
         if(!$onglet) {
             $onglet = 'saisie';

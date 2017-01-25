@@ -1,29 +1,5 @@
 <?php
-/*************************************************************************************************
-Libertempo : Gestion Interactive des Congés
-Copyright (C) 2015 (Wouldsmina)
-Copyright (C) 2015 (Prytoegrian)
-Copyright (C) 2005 (cedric chauvineau)
 
-Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
-termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
-Ce programme est distribué car potentiellement utile, mais SANS AUCUNE GARANTIE,
-ni explicite ni implicite, y compris les garanties de commercialisation ou d'adaptation
-dans un but spécifique. Reportez-vous à la Licence Publique Générale GNU pour plus de détails.
-Vous devez avoir reçu une copie de la Licence Publique Générale GNU en même temps
-que ce programme ; si ce n'est pas le cas, écrivez à la Free Software Foundation,
-Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, États-Unis.
-*************************************************************************************************
-This program is free software; you can redistribute it and/or modify it under the terms
-of the GNU General Public License as published by the Free Software Foundation; either
-version 2 of the License, or any later version.
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the GNU General Public License for more details.
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*************************************************************************************************/
 namespace utilisateur;
 
 /**
@@ -193,27 +169,27 @@ class Fonctions
         $new_demande_conges = getpost_variable('new_demande_conges', 0);
 
         if( $new_demande_conges == 1 && $_SESSION['config']['user_saisie_demande'] ) {
-            $new_debut        = getpost_variable('new_debut');
-            $new_demi_jour_deb  = getpost_variable('new_demi_jour_deb');
-            $new_fin        = getpost_variable('new_fin');
-            $new_demi_jour_fin  = getpost_variable('new_demi_jour_fin');
-            $new_comment        = getpost_variable('new_comment');
-            $new_type        = getpost_variable('new_type');
+            $new_debut        = htmlentities(getpost_variable('new_debut'), ENT_QUOTES | ENT_HTML401);
+            $new_demi_jour_deb  = htmlentities(getpost_variable('new_demi_jour_deb'), ENT_QUOTES | ENT_HTML401);
+            $new_fin        = htmlentities(getpost_variable('new_fin'), ENT_QUOTES | ENT_HTML401);
+            $new_demi_jour_fin  = htmlentities(getpost_variable('new_demi_jour_fin'), ENT_QUOTES | ENT_HTML401);
+            $new_comment        = htmlentities(getpost_variable('new_comment'), ENT_QUOTES | ENT_HTML401);
+            $new_type        = htmlentities(getpost_variable('new_type'), ENT_QUOTES | ENT_HTML401);
 
             $user_login        = $_SESSION['userlogin'];
 
             if( $_SESSION['config']['disable_saise_champ_nb_jours_pris'] ) {
                 $new_nb_jours = compter($user_login, '', $new_debut,  $new_fin, $new_demi_jour_deb, $new_demi_jour_fin, $new_comment);
             } else {
-                $new_nb_jours = getpost_variable('new_nb_jours') ;
+                $new_nb_jours = htmlentities(getpost_variable('new_nb_jours'), ENT_QUOTES | ENT_HTML401);
             }
 
             $return .= \utilisateur\Fonctions::new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type);
         } else {
-            $year_calendrier_saisie_debut   = getpost_variable('year_calendrier_saisie_debut'   , date('Y'));
-            $mois_calendrier_saisie_debut   = getpost_variable('mois_calendrier_saisie_debut'   , date('m'));
-            $year_calendrier_saisie_fin     = getpost_variable('year_calendrier_saisie_fin'     , date('Y'));
-            $mois_calendrier_saisie_fin     = getpost_variable('mois_calendrier_saisie_fin'     , date('m'));
+            $year_calendrier_saisie_debut   = (int) getpost_variable('year_calendrier_saisie_debut'   , date('Y'));
+            $mois_calendrier_saisie_debut   = (int) getpost_variable('mois_calendrier_saisie_debut'   , date('m'));
+            $year_calendrier_saisie_fin     = (int) getpost_variable('year_calendrier_saisie_fin'     , date('Y'));
+            $mois_calendrier_saisie_fin     = (int) getpost_variable('mois_calendrier_saisie_fin'     , date('m'));
 
             /**************************/
             /* Nouvelle Demande */
@@ -653,8 +629,8 @@ class Fonctions
             $return .= '</thead>';
             $return .= '<tbody>';
 
-            $text_passwd1    = '<input class="form-control" type="password" name="new_passwd1" size="10" maxlength="20" value="">';
-            $text_passwd2    = '<input class="form-control" type="password" name="new_passwd2" size="10" maxlength="20" value="">';
+            $text_passwd1    = '<input class="form-control" type="password" name="new_passwd1" size="10" maxlength="20" value="" autocomplete="off">';
+            $text_passwd2    = '<input class="form-control" type="password" name="new_passwd2" size="10" maxlength="20" value="" autocomplete="off">';
             $return .= '<tr>';
             $return .= '<td>'.($text_passwd1).'</td><td>'.($text_passwd2).'</td>'."\n";
             $return .= '</tr>';

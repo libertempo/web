@@ -150,36 +150,31 @@ class Database extends \mysqli
 		self::$hist[$nb]['results'] = is_object($result) ? $result->num_rows : ($result ? 'TRUE': 'FALSE');
 		if ($this->errno != 0)
 		{
-			$dump_name = DUMP_PATH . 'sql_'.time().'.dump';
-			{ // dump me
-				$fh = fopen( $dump_name , 'a+');
-				if($fh ==! false) {
-					fputs ($fh, "\n".'##################################################');
-					fputs ($fh, "\n".'Date : '. date('Y-m-d H:i:s (T)') );
-					fputs ($fh, "\n".'**************************************************');
-					fputs ($fh, "\n".'--------------------------------------------------');
-					fputs ($fh, "\n".'=> Curent erreur log');
-					fputs ($fh, "\n".$error_msg_sumary);
-					fputs ($fh, "\n".'--------------------------------------------------');
-					fputs ($fh, "\n".'=> Last erreur log');
-					fputs ($fh, "\n".var_export(error_get_last(), true));
-					fputs ($fh, "\n".'**************************************************');
-					fputs ($fh, "\n".'--------------------------------------------------');
-					fputs ($fh, "\n".'=> Debug Backtrace');
-					fputs ($fh, "\n".var_export($backtraces, true));
-					fputs ($fh, "\n".'**************************************************');
-					fputs ($fh, "\n".'--------------------------------------------------');
-					fputs ($fh, "\n".'=> Var dump $_REQUEST');
-					fputs ($fh, "\n".var_export($_REQUEST, true));
-					fputs ($fh, "\n".'--------------------------------------------------');
-					fputs ($fh, "\n".'=> Var dump $_SESSION');
-					fputs ($fh, "\n".var_export((isset($_SESSION) ? $_SESSION : array() ), true));
-					fputs ($fh, "\n".'--------------------------------------------------');
-					fputs ($fh, "\n".'=> Var dump $_SERVER');
-					fputs ($fh, "\n".var_export($_SERVER, true));
-					fputs ($fh, "\n".'**************************************************');
-					fclose ($fh);
-				}
+			$dump_name = DUMP_PATH . 'sql_' . date('c') . '.dump';
+			$fh = fopen( $dump_name , 'a+');
+			if($fh ==! false) {
+				fputs ($fh, "\n".'##################################################');
+				fputs ($fh, "\n".'Date : '. date('Y-m-d H:i:s (T)') );
+				fputs ($fh, "\n".'**************************************************');
+				fputs ($fh, "\n".'--------------------------------------------------');
+				fputs ($fh, "\n".'=> Last erreur log');
+				fputs ($fh, "\n".var_export(error_get_last(), true));
+				fputs ($fh, "\n".'**************************************************');
+				fputs ($fh, "\n".'--------------------------------------------------');
+				fputs ($fh, "\n".'=> Debug Backtrace');
+				fputs ($fh, "\n".var_export($backtraces, true));
+				fputs ($fh, "\n".'**************************************************');
+				fputs ($fh, "\n".'--------------------------------------------------');
+				fputs ($fh, "\n".'=> Var dump $_REQUEST');
+				fputs ($fh, "\n".var_export($_REQUEST, true));
+				fputs ($fh, "\n".'--------------------------------------------------');
+				fputs ($fh, "\n".'=> Var dump $_SESSION');
+				fputs ($fh, "\n".var_export((isset($_SESSION) ? $_SESSION : array() ), true));
+				fputs ($fh, "\n".'--------------------------------------------------');
+				fputs ($fh, "\n".'=> Var dump $_SERVER');
+				fputs ($fh, "\n".var_export($_SERVER, true));
+				fputs ($fh, "\n".'**************************************************');
+				fclose ($fh);
 			}
 
 			if (defined('ERROR_MAIL_REPORT'))
