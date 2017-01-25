@@ -337,6 +337,7 @@ function verif_periode_chevauche_periode_user($date_debut, $date_fin, $user, $nu
 
     $conge = new \App\ProtoControllers\Employe\Conge();
     if ($conge->isChevauchement($user, $date_debut, $periodeDebut, $date_fin, $periodeFin)) {
+        $comment =  _('demande_heure_chevauche_demande') ;
         return false;
     }
 
