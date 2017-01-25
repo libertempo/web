@@ -1,107 +1,5 @@
 [
     {
-<<<<<<< HEAD
-        "name": "phpmailer/phpmailer",
-        "version": "v5.2.10",
-        "version_normalized": "5.2.10.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/PHPMailer/PHPMailer.git",
-            "reference": "07005ecbb80d11ec8c0f067bb37e8909cc7fcbb7"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/07005ecbb80d11ec8c0f067bb37e8909cc7fcbb7",
-            "reference": "07005ecbb80d11ec8c0f067bb37e8909cc7fcbb7",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.0.0"
-        },
-        "require-dev": {
-            "phpdocumentor/phpdocumentor": "*",
-            "phpunit/phpunit": "4.3.*"
-        },
-        "time": "2015-05-04 12:37:21",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "classmap": [
-                "class.phpmailer.php",
-                "class.smtp.php",
-                "class.pop3.php",
-                "extras/EasyPeasyICS.php",
-                "extras/ntlm_sasl_client.php"
-=======
-        "name": "spipu/html2pdf",
-        "version": "v4.4.0",
-        "version_normalized": "4.4.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/spipu/html2pdf.git",
-            "reference": "2b86b570dd9058c1fc2383503d8b8628a977292d"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/spipu/html2pdf/zipball/2b86b570dd9058c1fc2383503d8b8628a977292d",
-            "reference": "2b86b570dd9058c1fc2383503d8b8628a977292d",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.2"
-        },
-        "time": "2015-12-11 10:13:58",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "files": [
-                "html2pdf.class.php"
->>>>>>> develop
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-<<<<<<< HEAD
-            "LGPL-2.1"
-        ],
-        "authors": [
-            {
-                "name": "Jim Jagielski",
-                "email": "jimjag@gmail.com"
-            },
-            {
-                "name": "Marcus Bointon",
-                "email": "phpmailer@synchromedia.co.uk"
-            },
-            {
-                "name": "Andy Prevost",
-                "email": "codeworxtech@users.sourceforge.net"
-            },
-            {
-                "name": "Brent R. Matzelle"
-            }
-        ],
-        "description": "PHPMailer is a full-featured email creation and transfer class for PHP"
-=======
-            "LGPL"
-        ],
-        "authors": [
-            {
-                "name": "Spipu",
-                "homepage": "https://github.com/spipu",
-                "role": "Developer"
-            }
-        ],
-        "description": "PHP library to convert Html into Pdf",
-        "homepage": "http://html2pdf.fr/",
-        "keywords": [
-            "html",
-            "html2pdf",
-            "pdf"
-        ]
->>>>>>> develop
-    },
-    {
         "name": "tecnickcom/tcpdf",
         "version": "6.2.6",
         "version_normalized": "6.2.6.0",
@@ -275,39 +173,6 @@
         ]
     },
     {
-<<<<<<< HEAD
-        "name": "symfony/options-resolver",
-        "version": "v3.1.5",
-        "version_normalized": "3.1.5.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/symfony/options-resolver.git",
-            "reference": "30605874d99af0cde6c41fd39e18546330c38100"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/symfony/options-resolver/zipball/30605874d99af0cde6c41fd39e18546330c38100",
-            "reference": "30605874d99af0cde6c41fd39e18546330c38100",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.5.9"
-        },
-        "time": "2016-05-12 15:59:27",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "3.1-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Symfony\\Component\\OptionsResolver\\": ""
-            },
-            "exclude-from-classmap": [
-                "/Tests/"
-=======
         "name": "phpmailer/phpmailer",
         "version": "v5.2.21",
         "version_normalized": "5.2.21.0",
@@ -344,12 +209,10 @@
                 "class.pop3.php",
                 "extras/EasyPeasyICS.php",
                 "extras/ntlm_sasl_client.php"
->>>>>>> develop
             ]
         },
         "notification-url": "https://packagist.org/downloads/",
         "license": [
-<<<<<<< HEAD
             "MIT"
         ],
         "authors": [
@@ -428,27 +291,61 @@
             "date",
             "events"
         ]
-=======
-            "LGPL-2.1"
+    },
+    {
+        "name": "symfony/options-resolver",
+        "version": "v3.2.2",
+        "version_normalized": "3.2.2.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/symfony/options-resolver.git",
+            "reference": "855429e3e9014b9dafee2a667de304c3aaa86fe6"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/options-resolver/zipball/855429e3e9014b9dafee2a667de304c3aaa86fe6",
+            "reference": "855429e3e9014b9dafee2a667de304c3aaa86fe6",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.5.9"
+        },
+        "time": "2017-01-02 20:32:22",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "3.2-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Symfony\\Component\\OptionsResolver\\": ""
+            },
+            "exclude-from-classmap": [
+                "/Tests/"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
         ],
         "authors": [
             {
-                "name": "Jim Jagielski",
-                "email": "jimjag@gmail.com"
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com"
             },
             {
-                "name": "Marcus Bointon",
-                "email": "phpmailer@synchromedia.co.uk"
-            },
-            {
-                "name": "Andy Prevost",
-                "email": "codeworxtech@users.sourceforge.net"
-            },
-            {
-                "name": "Brent R. Matzelle"
+                "name": "Symfony Community",
+                "homepage": "https://symfony.com/contributors"
             }
         ],
-        "description": "PHPMailer is a full-featured email creation and transfer class for PHP"
->>>>>>> develop
+        "description": "Symfony OptionsResolver Component",
+        "homepage": "https://symfony.com",
+        "keywords": [
+            "config",
+            "configuration",
+            "options"
+        ]
     }
 ]
