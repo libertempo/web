@@ -10,6 +10,10 @@ $PHP_SELF=$_SERVER['PHP_SELF'];
 
 //recup de la langue
 $lang=(isset($_GET['lang']) ? $_GET['lang'] : ((isset($_POST['lang'])) ? $_POST['lang'] : "") ) ;
+$lang = htmlentities($lang, ENT_QUOTES | ENT_HTML401);
+if (!in_array($lang, ['fr_FR', 'en_US', 'es_ES'], true)) {
+    $lang = '';
+}
 
 
 	header_popup('PHP_CONGES : Installation');

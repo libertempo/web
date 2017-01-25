@@ -618,7 +618,7 @@ class Fonctions
      */
     public static function groupeResponsableModule($onglet)
     {
-        $choix_group    = getpost_variable('choix_group') ;
+        $choix_group    = htmlentities(getpost_variable('choix_group'), ENT_QUOTES | ENT_HTML401);
         $choix_resp     = getpost_variable('choix_resp') ;
         $return = '';
 
@@ -1059,7 +1059,7 @@ class Fonctions
     {
         $change_group_users    = getpost_variable('change_group_users') ;
         $change_user_groups    = getpost_variable('change_user_groups') ;
-        $choix_group        = getpost_variable('choix_group') ;
+        $choix_group        = (int) getpost_variable('choix_group') ;
         $choix_user            = getpost_variable('choix_user') ;
         $return = '';
 
@@ -1280,7 +1280,7 @@ class Fonctions
     public static function groupeModule($onglet)
     {
         $saisie_group           = getpost_variable('saisie_group') ;
-        $new_group_name         = addslashes( getpost_variable('new_group_name')) ;
+        $new_group_name         = htmlentities(addslashes( getpost_variable('new_group_name')), ENT_QUOTES | ENT_HTML401);
         $new_group_libelle      = addslashes( getpost_variable('new_group_libelle')) ;
         $new_group_double_valid = getpost_variable('new_group_double_valid');
         $return = '';
@@ -1501,8 +1501,8 @@ class Fonctions
         $ReqLog1 = \includes\SQL::query($sql1);
 
         while ($resultat1 = $ReqLog1->fetch_array()) {
-            $text_pwd1="<input type=\"password\" name=\"new_pwd1\" size=\"10\" maxlength=\"30\" value=\"\">" ;
-            $text_pwd2="<input type=\"password\" name=\"new_pwd2\" size=\"10\" maxlength=\"30\" value=\"\">" ;
+            $text_pwd1="<input type=\"password\" name=\"new_pwd1\" size=\"10\" maxlength=\"30\" value=\"\" autocomplete=\"off\">" ;
+            $text_pwd2="<input type=\"password\" name=\"new_pwd2\" size=\"10\" maxlength=\"30\" value=\"\" autocomplete=\"off\">" ;
             $childTable .= '<td>' . $resultat1["u_login"] . '</td><td>' . $resultat1["u_nom"] . '</td><td>' . $resultat1["u_prenom"] . '</td><td>' . $text_pwd1 . '</td><td>' . $text_pwd2 . '</td>';
         }
         $childTable .= '<tr>';
@@ -1538,10 +1538,10 @@ class Fonctions
         // recup des parametres reçus :
         // SERVER
 
-        $u_login            = getpost_variable('u_login') ;
-        $u_login_to_update  = getpost_variable('u_login_to_update') ;
-        $new_pwd1           = getpost_variable('new_pwd1') ;
-        $new_pwd2           = getpost_variable('new_pwd2') ;
+        $u_login            = htmlentities(getpost_variable('u_login'), ENT_QUOTES | ENT_HTML401);
+        $u_login_to_update  = htmlentities(getpost_variable('u_login_to_update'), ENT_QUOTES | ENT_HTML401);
+        $new_pwd1           = htmlentities(getpost_variable('new_pwd1'), ENT_QUOTES | ENT_HTML401);
+        $new_pwd2           = htmlentities(getpost_variable('new_pwd2'), ENT_QUOTES | ENT_HTML401);
 
         if($u_login!="") {
             $return = '<H1>' . _('admin_chg_passwd_titre') . ' : ' . $u_login . '</H1>';
@@ -2710,10 +2710,10 @@ class Fonctions
      */
     public static function modifUserModule($session, $onglet)
     {
-        $u_login              = getpost_variable('u_login') ;
-        $u_login_to_update    = getpost_variable('u_login_to_update') ;
-        $tab_checkbox_sem_imp = getpost_variable('tab_checkbox_sem_imp') ;
-        $tab_checkbox_sem_p   = getpost_variable('tab_checkbox_sem_p') ;
+        $u_login              = htmlentities(getpost_variable('u_login'));
+        $u_login_to_update    = htmlentities(getpost_variable('u_login_to_update')) ;
+        $tab_checkbox_sem_imp = htmlentities(getpost_variable('tab_checkbox_sem_imp')) ;
+        $tab_checkbox_sem_p   = htmlentities(getpost_variable('tab_checkbox_sem_p')) ;
         $return = '';
 
         // TITRE
@@ -2733,14 +2733,14 @@ class Fonctions
             $tab_new_solde      = getpost_variable('tab_new_solde') ;
             $tab_new_reliquat   = getpost_variable('tab_new_reliquat') ;
 
-            $tab_new_user['login']      = getpost_variable('new_login') ;
-            $tab_new_user['nom']    = getpost_variable('new_nom') ;
-            $tab_new_user['prenom']     = getpost_variable('new_prenom') ;
-            $tab_new_user['quotite']    = getpost_variable('new_quotite') ;
-            $tab_new_user['is_resp']    = getpost_variable('new_is_resp') ;
-            $tab_new_user['resp_login'] = getpost_variable('new_resp_login') ;
-            $tab_new_user['is_admin']   = getpost_variable('new_is_admin') ;
-            $tab_new_user['is_hr']      = getpost_variable('new_is_hr') ;
+            $tab_new_user['login']      = htmlentities(getpost_variable('new_login'), ENT_QUOTES | ENT_HTML401);
+            $tab_new_user['nom']    = htmlentities(getpost_variable('new_nom'), ENT_QUOTES | ENT_HTML401);
+            $tab_new_user['prenom']     = htmlentities(getpost_variable('new_prenom'), ENT_QUOTES | ENT_HTML401);
+            $tab_new_user['quotite']    = htmlentities(getpost_variable('new_quotite'), ENT_QUOTES | ENT_HTML401);
+            $tab_new_user['is_resp']    = htmlentities(getpost_variable('new_is_resp'), ENT_QUOTES | ENT_HTML401);
+            $tab_new_user['resp_login'] = htmlentities(getpost_variable('new_resp_login'), ENT_QUOTES | ENT_HTML401);
+            $tab_new_user['is_admin']   = htmlentities(getpost_variable('new_is_admin'), ENT_QUOTES | ENT_HTML401);
+            $tab_new_user['is_hr']      = htmlentities(getpost_variable('new_is_hr'), ENT_QUOTES | ENT_HTML401);
             $tab_new_user['is_active']  = getpost_variable('new_is_active') ;
             $tab_new_user['see_all']    = getpost_variable('new_see_all') ;
             $tab_new_user['email']      = getpost_variable('new_email') ;
@@ -3911,11 +3911,11 @@ class Fonctions
                     $tab_new_user[$login]['email']  = $info[$ldap_libelle_mail][0] ;
                 }
 
-                $tab_new_user[$login]['quotite']    = getpost_variable('new_quotite');
-                $tab_new_user[$login]['is_resp']    = getpost_variable('new_is_resp');
-                $tab_new_user[$login]['resp_login'] = getpost_variable('new_resp_login');
-                $tab_new_user[$login]['is_admin']   = getpost_variable('new_is_admin');
-                $tab_new_user[$login]['is_hr']      = getpost_variable('new_is_hr');
+                $tab_new_user[$login]['quotite']    = htmlentities(getpost_variable('new_quotite'), ENT_QUOTES | ENT_HTML401);
+                $tab_new_user[$login]['is_resp']    = htmlentities(getpost_variable('new_is_resp'), ENT_QUOTES | ENT_HTML401);
+                $tab_new_user[$login]['resp_login'] = htmlentities(getpost_variable('new_resp_login'), ENT_QUOTES | ENT_HTML401);
+                $tab_new_user[$login]['is_admin']   = htmlentities(getpost_variable('new_is_admin'), ENT_QUOTES | ENT_HTML401);
+                $tab_new_user[$login]['is_hr']      = htmlentities(getpost_variable('new_is_hr'), ENT_QUOTES | ENT_HTML401);
                 $tab_new_user[$login]['see_all']    = getpost_variable('new_see_all');
 
                 if ($_SESSION['config']['how_to_connect_user'] == "dbconges") {
@@ -3931,21 +3931,21 @@ class Fonctions
                 $tab_new_user[$login]['new_year'] = getpost_variable('new_year');
             }
         } else {
-            $tab_new_user[0]['login']      = getpost_variable('new_login');
-            $tab_new_user[0]['nom']        = getpost_variable('new_nom');
-            $tab_new_user[0]['prenom']     = getpost_variable('new_prenom');
+            $tab_new_user[0]['login']      = htmlentities(getpost_variable('new_login'), ENT_QUOTES | ENT_HTML401);
+            $tab_new_user[0]['nom']        = htmlentities(getpost_variable('new_nom'), ENT_QUOTES | ENT_HTML401);
+            $tab_new_user[0]['prenom']     = htmlentities(getpost_variable('new_prenom'), ENT_QUOTES | ENT_HTML401);
             $tab_new_user[0]['quotite']    = getpost_variable('new_quotite');
-            $tab_new_user[0]['is_resp']    = getpost_variable('new_is_resp');
-            $tab_new_user[0]['resp_login'] = getpost_variable('new_resp_login');
-            $tab_new_user[0]['is_admin']   = getpost_variable('new_is_admin');
-            $tab_new_user[0]['is_hr']      = getpost_variable('new_is_hr');
+            $tab_new_user[0]['is_resp']    = htmlentities(getpost_variable('new_is_resp'), ENT_QUOTES | ENT_HTML401);
+            $tab_new_user[0]['resp_login'] = htmlentities(getpost_variable('new_resp_login'), ENT_QUOTES | ENT_HTML401);
+            $tab_new_user[0]['is_admin']   = htmlentities(getpost_variable('new_is_admin'), ENT_QUOTES | ENT_HTML401);
+            $tab_new_user[0]['is_hr']      = htmlentities(getpost_variable('new_is_hr'), ENT_QUOTES | ENT_HTML401);
             $tab_new_user[0]['see_all']    = getpost_variable('new_see_all');
 
             if ($_SESSION['config']['how_to_connect_user'] == "dbconges") {
                 $tab_new_user[0]['password1']    = getpost_variable('new_password1');
                 $tab_new_user[0]['password2']    = getpost_variable('new_password2');
             }
-            $tab_new_user[0]['email']    = getpost_variable('new_email');
+            $tab_new_user[0]['email']    = htmlentities(getpost_variable('new_email'), ENT_QUOTES | ENT_HTML401);
             $tab_new_jours_an            = getpost_variable('tab_new_jours_an');
             $tab_new_solde               = getpost_variable('tab_new_solde');
             $tab_checkbox_sem_imp        = getpost_variable('tab_checkbox_sem_imp');

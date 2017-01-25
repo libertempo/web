@@ -129,27 +129,27 @@ class Fonctions
         $new_demande_conges = getpost_variable('new_demande_conges', 0);
 
         if( $new_demande_conges == 1 && $_SESSION['config']['user_saisie_demande'] ) {
-            $new_debut        = getpost_variable('new_debut');
-            $new_demi_jour_deb  = getpost_variable('new_demi_jour_deb');
-            $new_fin        = getpost_variable('new_fin');
-            $new_demi_jour_fin  = getpost_variable('new_demi_jour_fin');
-            $new_comment        = getpost_variable('new_comment');
-            $new_type        = getpost_variable('new_type');
+            $new_debut        = htmlentities(getpost_variable('new_debut'), ENT_QUOTES | ENT_HTML401);
+            $new_demi_jour_deb  = htmlentities(getpost_variable('new_demi_jour_deb'), ENT_QUOTES | ENT_HTML401);
+            $new_fin        = htmlentities(getpost_variable('new_fin'), ENT_QUOTES | ENT_HTML401);
+            $new_demi_jour_fin  = htmlentities(getpost_variable('new_demi_jour_fin'), ENT_QUOTES | ENT_HTML401);
+            $new_comment        = htmlentities(getpost_variable('new_comment'), ENT_QUOTES | ENT_HTML401);
+            $new_type        = htmlentities(getpost_variable('new_type'), ENT_QUOTES | ENT_HTML401);
 
             $user_login        = $_SESSION['userlogin'];
 
             if( $_SESSION['config']['disable_saise_champ_nb_jours_pris'] ) {
                 $new_nb_jours = compter($user_login, '', $new_debut,  $new_fin, $new_demi_jour_deb, $new_demi_jour_fin, $new_comment);
             } else {
-                $new_nb_jours = getpost_variable('new_nb_jours') ;
+                $new_nb_jours = htmlentities(getpost_variable('new_nb_jours'), ENT_QUOTES | ENT_HTML401);
             }
 
             $return .= \utilisateur\Fonctions::new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type);
         } else {
-            $year_calendrier_saisie_debut   = getpost_variable('year_calendrier_saisie_debut'   , date('Y'));
-            $mois_calendrier_saisie_debut   = getpost_variable('mois_calendrier_saisie_debut'   , date('m'));
-            $year_calendrier_saisie_fin     = getpost_variable('year_calendrier_saisie_fin'     , date('Y'));
-            $mois_calendrier_saisie_fin     = getpost_variable('mois_calendrier_saisie_fin'     , date('m'));
+            $year_calendrier_saisie_debut   = (int) getpost_variable('year_calendrier_saisie_debut'   , date('Y'));
+            $mois_calendrier_saisie_debut   = (int) getpost_variable('mois_calendrier_saisie_debut'   , date('m'));
+            $year_calendrier_saisie_fin     = (int) getpost_variable('year_calendrier_saisie_fin'     , date('Y'));
+            $mois_calendrier_saisie_fin     = (int) getpost_variable('mois_calendrier_saisie_fin'     , date('m'));
 
             /**************************/
             /* Nouvelle Demande */
@@ -589,8 +589,8 @@ class Fonctions
             $return .= '</thead>';
             $return .= '<tbody>';
 
-            $text_passwd1    = '<input class="form-control" type="password" name="new_passwd1" size="10" maxlength="20" value="">';
-            $text_passwd2    = '<input class="form-control" type="password" name="new_passwd2" size="10" maxlength="20" value="">';
+            $text_passwd1    = '<input class="form-control" type="password" name="new_passwd1" size="10" maxlength="20" value="" autocomplete="off">';
+            $text_passwd2    = '<input class="form-control" type="password" name="new_passwd2" size="10" maxlength="20" value="" autocomplete="off">';
             $return .= '<tr>';
             $return .= '<td>'.($text_passwd1).'</td><td>'.($text_passwd2).'</td>'."\n";
             $return .= '</tr>';

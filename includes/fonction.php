@@ -188,6 +188,7 @@ function session_is_valid($session)
     if( (isset($_SESSION['timestamp_last'])) && (isset($_SESSION['config'])) )
     {
         $difference = time() - $_SESSION['timestamp_last'];
+
         if ( ($session==session_id()) && ($difference < $_SESSION['config']['duree_session']) )
             return true;
     }

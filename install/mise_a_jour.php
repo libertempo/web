@@ -11,11 +11,20 @@ $PHP_SELF=$_SERVER['PHP_SELF'];
 
 //recup de la langue
 $lang=(isset($_GET['lang']) ? $_GET['lang'] : ((isset($_POST['lang'])) ? $_POST['lang'] : "") ) ;
+$lang = htmlentities($lang, ENT_QUOTES | ENT_HTML401);
+if (!in_array($lang, ['fr_FR', 'en_US', 'es_ES'], true)) {
+    $lang = '';
+}
 
 // recup des parametres
 $action = (isset($_GET['action']) ? $_GET['action'] : (isset($_POST['action']) ? $_POST['action'] : "")) ;
+$action = htmlentities($action, ENT_QUOTES | ENT_HTML401);
+
 $version = (isset($_GET['version']) ? $_GET['version'] : (isset($_POST['version']) ? $_POST['version'] : "")) ;
+$version = htmlentities($version, ENT_QUOTES | ENT_HTML401);
 $etape = (isset($_GET['etape']) ? $_GET['etape'] : (isset($_POST['etape']) ? $_POST['etape'] : 0 )) ;
+$etape = htmlentities($etape, ENT_QUOTES | ENT_HTML401);
+
 
 if($version == 0) {  // la version à mettre à jour dans le formulaire de index.php n'a pas été choisie : renvoit sur le formulaire
     redirect( ROOT_PATH . 'install/index.php?lang='.$lang);

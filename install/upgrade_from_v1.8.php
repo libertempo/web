@@ -14,6 +14,10 @@ $PHP_SELF=$_SERVER['PHP_SELF'];
 
 $version = (isset($_GET['version']) ? $_GET['version'] : (isset($_POST['version']) ? $_POST['version'] : "")) ;
 $lang = (isset($_GET['lang']) ? $_GET['lang'] : (isset($_POST['lang']) ? $_POST['lang'] : "")) ;
+$lang = htmlentities($lang, ENT_QUOTES | ENT_HTML401);
+if (!in_array($lang, ['fr_FR', 'en_US', 'es_ES'], true)) {
+    $lang = '';
+}
 
 $ssoad="UPDATE conges_config SET conf_type = 'enum=dbconges/ldap/CAS/SSO' WHERE conf_nom = 'how_to_connect_user';";
 $res_ssoad=\includes\SQL::query($ssoad);

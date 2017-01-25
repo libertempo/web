@@ -1828,9 +1828,9 @@ class Fonctions
         $tab_text_annul = getpost_variable('tab_text_annul') ;
         $new_demande_conges = getpost_variable('new_demande_conges', 0) ;
         $new_debut = getpost_variable('new_debut') ;
-        $new_demi_jour_deb = getpost_variable('new_demi_jour_deb') ;
+        $new_demi_jour_deb = htmlentities(getpost_variable('new_demi_jour_deb'), ENT_QUOTES | ENT_HTML401);
         $new_fin = getpost_variable('new_fin') ;
-        $new_demi_jour_fin = getpost_variable('new_demi_jour_fin') ;
+        $new_demi_jour_fin = htmlentities(getpost_variable('new_demi_jour_fin'), ENT_QUOTES | ENT_HTML401);
         $return = '';
 
         if($_SESSION['config']['disable_saise_champ_nb_jours_pris']) { // zone de texte en readonly et grisée
@@ -1839,9 +1839,9 @@ class Fonctions
             $new_nb_jours = getpost_variable('new_nb_jours') ;
         }
 
-        $new_comment = getpost_variable('new_comment') ;
-        $new_type = getpost_variable('new_type') ;
-        $year_affichage = getpost_variable('year_affichage' , date("Y") );
+        $new_comment = htmlentities(getpost_variable('new_comment'), ENT_QUOTES | ENT_HTML401);
+        $new_type = htmlentities(getpost_variable('new_type'), ENT_QUOTES | ENT_HTML401);
+        $year_affichage = (int) getpost_variable('year_affichage' , date("Y") );
 
         /*************************************/
 

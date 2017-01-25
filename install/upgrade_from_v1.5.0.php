@@ -12,7 +12,12 @@ include_once INCLUDE_PATH .'fonction.php';
 $PHP_SELF=$_SERVER['PHP_SELF'];
 
 $version = (isset($_GET['version']) ? $_GET['version'] : (isset($_POST['version']) ? $_POST['version'] : "")) ;
+$version = htmlentities($version, ENT_QUOTES | ENT_HTML401);
 $lang = (isset($_GET['lang']) ? $_GET['lang'] : (isset($_POST['lang']) ? $_POST['lang'] : "")) ;
+$lang = htmlentities($lang, ENT_QUOTES | ENT_HTML401);
+if (!in_array($lang, ['fr_FR', 'en_US', 'es_ES'], true)) {
+    $lang = '';
+}
 
 $old_conf = array(
     'bgcolor',
