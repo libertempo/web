@@ -111,7 +111,7 @@
             <section>
                 <header class="main-header">
                     <i class="icon-ellipsis-vertical toolbar-toggle"></i>
-                    <h2 class="brand"><a href="<?= ROOT_PATH . $home ?>" title="Accueil">Libertempo</a></h2>
+                    <h2 class="brand"><a href="<?= ROOT_PATH . $home ?>" title="Accueil"><img src="<?= IMG_PATH ?>Libertempo64.png" alt="Libertempo"></a></h2>
                 </header>
                 <div class="tools">
                     <div class="profil-info">

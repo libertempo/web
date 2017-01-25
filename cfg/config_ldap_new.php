@@ -1,32 +1,4 @@
 <?php
-/*************************************************************************************************
-Libertempo : Gestion Interactive des Congés
-Copyright (C) 2015 (Wouldsmina)Copyright (C) 2015 (Prytoegrian)Copyright (C) 2005 (cedric chauvineau)
-
-Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les 
-termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
-Ce programme est distribué car potentiellement utile, mais SANS AUCUNE GARANTIE, 
-ni explicite ni implicite, y compris les garanties de commercialisation ou d'adaptation 
-dans un but spécifique. Reportez-vous à la Licence Publique Générale GNU pour plus de détails.
-Vous devez avoir reçu une copie de la Licence Publique Générale GNU en même temps 
-que ce programme ; si ce n'est pas le cas, écrivez à la Free Software Foundation, 
-Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, États-Unis.
-*************************************************************************************************
-This program is free software; you can redistribute it and/or modify it under the terms
-of the GNU General Public License as published by the Free Software Foundation; either 
-version 2 of the License, or any later version.
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
-without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
-See the GNU General Public License for more details.
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*************************************************************************************************/
-
-
-
-//  CONFIG ACCES AU SERVEUR LDAP (optionnelle)
-//----------------------------------------------
 
 /*****************************************************************/
 /*			PARAMATRAGE LDAP
@@ -43,12 +15,8 @@ de la chose. Pour dégrossir ces notions, le web sera votre ami.
 Notions de base : http://www.commentcamarche.net/ldap/ldapintro.php3
 http://www-sop.inria.fr/semir/personnel/Laurent.Mirtain/ldap-livre.html
 
-Je vous conseille également afin d'avoir une bonne visilité de votre
-arborescence ldap d'utiliser "LDAP Browser", qui va vous permettre de vous
-aider à renseigner les champs de ce fichier...
-
 Nous n'utiliserons pas tous les champs de l'annuaire. Voici la liste des champs
-utilisés (et pour vous aider 2 exemples de paramétrage pour ActiveDirectory2003 et OpenLDAP)
+utilisés (et pour vous aider 2 exemples de paramétrage pour ActiveDirectory2008 et OpenLDAP)
 
 - $config_ldap_server : nom de votre serveur ayant le ldap (ou adresse IP).
 	Pour info, fonctionne aussi en ldaps.
@@ -73,7 +41,7 @@ utilisés (et pour vous aider 2 exemples de paramétrage pour ActiveDirectory200
 
 
 - $config_ldap_user : s'il faut s'identifier pour accéder au ldap, rentrer un login ici.
-	Pour un AD2003, il me semble que c'est obligatoire. Il est vivement conseillé 
+	Pour un AD2008, c'est obligatoire et il est conseillé d'ajouter le nom de domaine avant le login. Il est aussi conseillé 
 	de créer un utilisateur qui ne servira qu'à cela (et ainsi évitera de mettre en clair
 	le mot de passe d'un utilisateur existant), et interdire l'accès aux PC de cet utilisateur.
 	(cf votre documentation (ou votre bible) ;-) Windows Server...)
@@ -145,29 +113,6 @@ $config_ldap_filtre_complet
 	Je recherche tous les (utilisateurs) displayName=* ET
 			(dont l'affectation 'supannAffectation' commence par Scien*
 			   OU l'affectation 'supannAffectation' est DROIT)
-
-
-**********************************************************************
-
-INFORMATION IMPORTANTE :
-
-	Je ne répondrai pas aux questions concernant le ldap, sa configuration,
-	son utilisation. 
-	Si vous êtes le responsable de la mise en place des congés, veuillez
-	voir votre responsable informatique / administrateur réseau.
-	Si vous êtes administrateur réseau, chercher sur le net pour configurer
-	un ldap.
-	
-	Pourquoi ? Tout simplement parce que je n'ai pas mis en place de ldap,
-	et que j'utilise celui qui a été mis à ma disposition.
-
-
-					Didier CHABAUD
-					Université d'Auvergne
-					Décembre 2005
-
-
-********************************************************************/
 
 /********************************************************************/
 

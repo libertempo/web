@@ -45,5 +45,5 @@ include TEMPLATE_PATH . 'template_define.php';
     </head>
     <body class="login">
         <header>
-            <h1 class="login-heading">Libertempo</h1>
+            <h1 class="login-heading"><img src="<?= IMG_PATH ?>Libertempo143x39.png" alt="Libertempo"></h1>
         </header>
