@@ -319,11 +319,11 @@ function verif_saisie_new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new
     {
         echo '<br>'. _('verif_saisie_erreur_nb_jours_bad') .'<br>';
         $verif = false;
-    }
-    elseif ( preg_match('/([0-9]+)\,([0-9]{1,2})$/', $new_nb_jours, $reg) )
+    } elseif ( preg_match('/([0-9]+)\,([0-9]{1,2})$/', $new_nb_jours, $reg)) {
         $new_nb_jours=$reg[1].'.'.$reg[2]; // on remplace la virgule par un point pour les décimaux
+    }
 
-    // si la date de fin est antéreieure à la date debut
+    // si la date de fin est antérieure à la date debut
     if(strnatcmp($new_debut, $new_fin)>0)
     {
         echo '<br>'. _('verif_saisie_erreur_fin_avant_debut') .'<br>';
@@ -334,6 +334,25 @@ function verif_saisie_new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new
     if( $new_debut == $new_fin && $new_demi_jour_deb=='pm' && $new_demi_jour_fin == 'am' )
     {
         echo '<br>'. _('verif_saisie_erreur_debut_apres_fin') .'<br>';
+        $verif = false;
+    }
+
+    // Ensuite verifie en parcourant le tableau qu'on vient de crée (s'il n'est pas vide)
+    if ('am' == $new_demi_jour_deb) {
+        $periodeDebut = \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN;
+    } else {
+        $periodeDebut = \App\Models\Planning\Creneau::TYPE_PERIODE_APRES_MIDI;
+    }
+
+    if ('am' == $new_demi_jour_fin) {
+        $periodeFin = \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN;
+    } else {
+        $periodeFin = \App\Models\Planning\Creneau::TYPE_PERIODE_APRES_MIDI;
+    }
+
+    $conge = new \App\ProtoControllers\Employe\Conge();
+    if ($conge->isChevauchement($_SESSION['userlogin'], $new_debut, $periodeDebut, $new_fin, $periodeFin)) {
+        echo '<br>'. _('demande_heure_chevauche_demande') .'<br>';
         $verif = false;
     }
     return $verif;

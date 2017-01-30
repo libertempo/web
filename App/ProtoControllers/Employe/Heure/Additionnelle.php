@@ -1,32 +1,8 @@
 <?php
-/*************************************************************************************************
-Libertempo : Gestion Interactive des Congés
-Copyright (C) 2015 (Wouldsmina)
-Copyright (C) 2015 (Prytoegrian)
-Copyright (C) 2005 (cedric chauvineau)
-
-Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
-termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
-Ce programme est distribué car potentiellement utile, mais SANS AUCUNE GARANTIE,
-ni explicite ni implicite, y compris les garanties de commercialisation ou d'adaptation
-dans un but spécifique. Reportez-vous à la Licence Publique Générale GNU pour plus de détails.
-Vous devez avoir reçu une copie de la Licence Publique Générale GNU en même temps
-que ce programme ; si ce n'est pas le cas, écrivez à la Free Software Foundation,
-Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, États-Unis.
-*************************************************************************************************
-This program is free software; you can redistribute it and/or modify it under the terms
-of the GNU General Public License as published by the Free Software Foundation; either
-version 2 of the License, or any later version.
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the GNU General Public License for more details.
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*************************************************************************************************/
 namespace App\ProtoControllers\Employe\Heure;
 
 use \App\Models\AHeure;
+use App\Models\Planning\Creneau;
 
 /**
  * ProtoContrôleur d'heures additionnelles, en attendant la migration vers le MVC REST
@@ -403,30 +379,12 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
     /**
      * {@inheritDoc}
      */
-    protected function isChevauchement($jour, $heureDebut, $heureFin, $id, $user)
+    protected function isChevauchement($jour, $heureDebut, $heureFin, $user, $id)
     {
-        $jour = \App\Helpers\Formatter::dateFr2Iso($jour);
-        $timestampDebut = strtotime($jour . ' ' . $heureDebut);
-        $timestampFin   = strtotime($jour . ' ' . $heureFin);
-        $statuts = [
-            AHeure::STATUT_DEMANDE,
-            AHeure::STATUT_PREMIERE_VALIDATION,
-            AHeure::STATUT_VALIDATION_FINALE,
-        ];
-
-        $sql = \includes\SQL::singleton();
-        $req = 'SELECT EXISTS (SELECT statut
-                FROM heure_additionnelle
-                WHERE login = "' . $user . '"
-                    AND statut IN (' . implode(',', $statuts) . ')
-                    AND (debut <= ' . $timestampFin . ' AND fin >= ' . $timestampDebut . ')';
-        if (NIL_INT !== $id) {
-            $req .= ' AND id_heure !=' . $id;
-        }
-        $req .= ')';
-        $query = $sql->query($req);
-
-        return 0 < (int) $query->fetch_array()[0];
+        return $this->isChevauchementHeureAdditionnelle($jour, $heureDebut, $heureFin, $user, $id)
+            || $this->isChevauchementHeureRepos($jour, $heureDebut, $heureFin, $user)
+            || $this->isChevauchementConges($jour, $heureDebut, $heureFin, $user)
+        ;
     }
 
     /**
@@ -435,8 +393,24 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
     protected function insert(array $data, $user)
     {
         $sql = \includes\SQL::singleton();
-        $req = 'INSERT INTO heure_additionnelle (id_heure, login, debut, fin, duree, statut, comment) VALUES
-        (NULL, "' . $user . '", ' . (int) $data['debut'] . ', '. (int) $data['fin'] .', '. (int) $data['duree'] . ', ' . AHeure::STATUT_DEMANDE . ', "'. \includes\SQL::quote($data['comment']) .'")';
+        $req = 'INSERT INTO heure_additionnelle (
+            id_heure,
+            login,
+            debut,
+            fin,
+            duree,
+            type_periode,
+            statut,
+            comment
+        ) VALUES (
+            NULL,
+            "' . $user . '",
+            ' . (int) $data['debut'] . ',
+            '. (int) $data['fin'] .',
+            '. (int) $data['duree'] . ',
+            ' . (int) $data['typePeriode'] . ',
+            ' . AHeure::STATUT_DEMANDE . ', "'. \includes\SQL::quote($data['comment']) .'"
+        )';
         $query = $sql->query($req);
 
         return $sql->insert_id;
@@ -448,11 +422,11 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
     protected function update(array $data, $user, $id)
     {
         $sql   = \includes\SQL::singleton();
-        $toInsert = [];
         $req   = 'UPDATE heure_additionnelle
-                SET debut = ' . $data['debut'] . ',
-                    fin = ' . $data['fin'] . ',
-                    duree = ' . $data['duree'] . ',
+                SET debut = ' . (int) $data['debut'] . ',
+                    fin = ' . (int) $data['fin'] . ',
+                    duree = ' . (int) $data['duree'] . ',
+                    type_periode = ' . (int) $data['typePeriode'] . ',
                     comment = \'' . $data['comment'] . '\'
                 WHERE id_heure = '. (int) $id . '
                 AND login = "' . $user . '"';

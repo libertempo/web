@@ -2,6 +2,7 @@
 namespace App\ProtoControllers\Employe\Heure;
 
 use \App\Models\AHeure;
+use App\Models\Planning\Creneau;
 
 /**
  * ProtoContrôleur d'heures de repos, en attendant la migration vers le MVC REST
@@ -146,9 +147,7 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
         if (NIL_INT === $realWeekType) {
             return 0;
         } else {
-            /*
-             * ... Pareil pour le jour
-             */
+            /* … Pareil pour le jour */
             $planningWeek = $planning[$realWeekType];
             $jourId = date('N', $debut);
             /* Si le jour n'est pas travaillé */
@@ -179,8 +178,8 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
         /* Double foreach pour lisser les créneaux matin / après midi sur le même plan */
         foreach ($planningJour as $creneaux) {
             foreach ($creneaux as $creneau) {
-                $creneauDebut = (int) $creneau[\App\Models\Planning\Creneau::TYPE_HEURE_DEBUT];
-                $creneauFin   = (int) $creneau[\App\Models\Planning\Creneau::TYPE_HEURE_FIN];
+                $creneauDebut = (int) $creneau[Creneau::TYPE_HEURE_DEBUT];
+                $creneauFin   = (int) $creneau[Creneau::TYPE_HEURE_FIN];
 
                 if ($horodateDebut <= $creneauDebut) {
                     if ($horodateFin <= $creneauDebut) {
@@ -195,7 +194,7 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
                 } elseif ($horodateDebut > $creneauDebut && $horodateDebut < $creneauFin) {
                     /* $horodateDebut > $creneauDebut */
                     if ($horodateFin > $creneauDebut && $horodateFin <= $creneauFin) {
-                        $reelleDuree += $creneauFin - $horodateDebut;
+                        $reelleDuree += $horodateFin - $horodateDebut;
                     } else {
                         /* $horodateFin > $creneauFin */
                         $reelleDuree += $creneauFin - $horodateDebut;
@@ -307,7 +306,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
     protected function getFormulaireRecherche(array $champs)
     {
         $form = '<form method="post" action="" class="form-inline search" role="form"><div class="form-group"><label class="control-label col-md-4" for="statut">Statut&nbsp;:</label><div class="col-md-8"><select class="form-control" name="search[statut]" id="statut">';
-        foreach (\App\Models\AHeure::getOptionsStatuts() as $key => $value) {
+        foreach (AHeure::getOptionsStatuts() as $key => $value) {
             $selected = (isset($champs['statut']) && $key == $champs['statut'])
                 ? 'selected="selected"'
                 : '';
@@ -383,30 +382,12 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
     /**
      * {@inheritDoc}
      */
-    protected function isChevauchement($jour, $heureDebut, $heureFin, $id, $user)
+    protected function isChevauchement($jour, $heureDebut, $heureFin, $user, $id)
     {
-        $jour = \App\Helpers\Formatter::dateFr2Iso($jour);
-        $timestampDebut = strtotime($jour . ' ' . $heureDebut);
-        $timestampFin   = strtotime($jour . ' ' . $heureFin);
-        $statuts = [
-            AHeure::STATUT_DEMANDE,
-            AHeure::STATUT_PREMIERE_VALIDATION,
-            AHeure::STATUT_VALIDATION_FINALE,
-        ];
-
-        $sql = \includes\SQL::singleton();
-        $req = 'SELECT EXISTS (SELECT statut
-                FROM heure_repos
-                WHERE login = "' . $user . '"
-                    AND statut IN (' . implode(',', $statuts) . ')
-                    AND (debut <= ' . $timestampFin . ' AND fin >= ' . $timestampDebut . ')';
-        if (NIL_INT !== $id) {
-            $req .= ' AND id_heure !=' . $id;
-        }
-        $req .= ')';
-        $query = $sql->query($req);
-
-        return 0 < (int) $query->fetch_array()[0];
+        return $this->isChevauchementHeureAdditionnelle($jour, $heureDebut, $heureFin, $user)
+            || $this->isChevauchementHeureRepos($jour, $heureDebut, $heureFin, $user, $id)
+            || $this->isChevauchementConges($jour, $heureDebut, $heureFin, $user)
+        ;
     }
 
     /**
@@ -415,8 +396,25 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
     protected function insert(array $data, $user)
     {
         $sql = \includes\SQL::singleton();
-        $req = 'INSERT INTO heure_repos (id_heure, login, debut, fin, duree, statut, comment) VALUES
-        (NULL, "' . $user . '", ' . (int) $data['debut'] . ', '. (int) $data['fin'] .', '. (int) $data['duree'] . ', ' . AHeure::STATUT_DEMANDE . ', "' . \includes\SQL::quote($data['comment']) . '")';
+        $req = 'INSERT INTO heure_repos (
+            id_heure,
+            login,
+            debut,
+            fin,
+            duree,
+            type_periode,
+            statut,
+            comment
+        ) VALUES (
+            NULL,
+            "' . $user . '",
+            ' . (int) $data['debut'] . ',
+            ' . (int) $data['fin'] .',
+            ' . (int) $data['duree'] . ',
+            ' . (int) $data['typePeriode'] . ',
+            ' . AHeure::STATUT_DEMANDE . ',
+            "' . \includes\SQL::quote($data['comment']) . '"
+        )';
         $query = $sql->query($req);
 
         return $sql->insert_id;
@@ -428,11 +426,11 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
     protected function update(array $data, $user, $id)
     {
         $sql   = \includes\SQL::singleton();
-        $toInsert = [];
         $req   = 'UPDATE heure_repos
-                SET debut = ' . $data['debut'] . ',
-                    fin = ' . $data['fin'] . ',
-                    duree = ' . $data['duree'] . ',
+                SET debut = ' . (int) $data['debut'] . ',
+                    fin = ' . (int) $data['fin'] . ',
+                    duree = ' . (int) $data['duree'] . ',
+                    type_periode = ' . (int) $data['typePeriode'] . ',
                     comment = \''.$data['comment'].'\'
                 WHERE id_heure = '. (int) $id . '
                 AND login = "' . $user . '"';

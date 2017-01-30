@@ -95,6 +95,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
             $return = NIL_INT;
         }
         $errors = array_merge($errors, $localError);
+
         return $return;
     }
 
