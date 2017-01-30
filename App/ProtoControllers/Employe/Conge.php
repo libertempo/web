@@ -287,10 +287,10 @@ class Conge
 
     /**
      * Retourne les demandes d'un employé
-     * 
+     *
      */
     public static function getIdDemandesUtilisateur($user) {
-        
+
         $ids = [];
         $sql = \includes\SQL::singleton();
         $req = 'SELECT p_num AS id
@@ -301,7 +301,7 @@ class Conge
         while ($data = $res->fetch_array()) {
             $ids[] = (int) $data['id'];
         }
-        
+
         return $ids;
     }
 
