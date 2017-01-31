@@ -73,6 +73,9 @@ abstract Class ANotification {
         }
         
         foreach ($this->contenuNotification as $notification){
+            if (empty($notification['destinataire'][0])) {
+                continue;
+            }
             if($this->canSend($notification['config'])){
                 $mail->ClearAddresses();
                 $mail->From = $notification['expediteur']['mail'];
