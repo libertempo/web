@@ -339,12 +339,12 @@ class Fonctions
                 $radio_fin_pm="<input type=\"radio\" $compte name=\"new_demi_jour_fin\" value=\"pm\" checked>". _('form_pm') ;
             }
             if($_SESSION['config']['disable_saise_champ_nb_jours_pris'])
-                $text_nb_jours="<input class=\"form-control\" type=\"text\" name=\"new_nb_jours\" size=\"5\" maxlength=\"30\" value=\"$sql_nb_jours\" style=\"background-color: #D4D4D4; \" readonly=\"readonly\">" ;
+                $text_nb_jours="<input class=\"form-control\" type=\"text\" name=\"new_nb_jours\" size=\"5\" maxlength=\"30\" value=\"$sql_nb_jours\" style=\"background-color: #D4D4D4; \" readonly=\"readonly\"><br><br>" ;
             else
-                $text_nb_jours="<input class=\"form-control\" type=\"text\" name=\"new_nb_jours\" size=\"5\" maxlength=\"30\" value=\"$sql_nb_jours\">" ;
+                $text_nb_jours="<input class=\"form-control\" type=\"text\" name=\"new_nb_jours\" size=\"5\" maxlength=\"30\" value=\"$sql_nb_jours\"><br><br>" ;
 
 
-            $text_commentaire="<input class=\"form-control\" type=\"text\" name=\"new_comment\" size=\"15\" maxlength=\"30\" value=\"$sql_commentaire\">" ;
+            $text_commentaire="<input class=\"form-control\" type=\"text\" name=\"new_comment\" size=\"15\" maxlength=\"30\" value=\"$sql_commentaire\"><br><br>" ;
         }
         $return .= '</tr>';
 
