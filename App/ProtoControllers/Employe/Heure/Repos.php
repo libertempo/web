@@ -305,7 +305,7 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
                 $jour   = date('d/m/Y', $repos['debut']);
                 $debut  = date('H\:i', $repos['debut']);
                 $fin    = date('H\:i', $repos['fin']);
-                $duree  = date('H\:i', $repos['duree']);
+                $duree  = \App\Helpers\Formatter::Timestamp2Duree($repos['duree']);
                 $statut = AHeure::statusText($repos['statut']);
                 $comment = \includes\SQL::quote($repos['comment']);
                 if (AHeure::STATUT_DEMANDE == $repos['statut']) {

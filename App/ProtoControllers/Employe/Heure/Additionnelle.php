@@ -300,7 +300,7 @@ class Additionnelle extends \App\ProtoControllers\Employe\AHeure
                 $jour   = date('d/m/Y', $additionnelle['debut']);
                 $debut  = date('H\:i', $additionnelle['debut']);
                 $fin    = date('H\:i', $additionnelle['fin']);
-                $duree  = date('H\:i', $additionnelle['duree']);
+                $duree  = \App\Helpers\Formatter::Timestamp2Duree($additionnelle['duree']);
                 $statut = AHeure::statusText($additionnelle['statut']);
                 $comment = \includes\SQL::quote($additionnelle['comment']);
                 if (AHeure::STATUT_DEMANDE == $additionnelle['statut']) {
