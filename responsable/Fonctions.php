@@ -1079,7 +1079,7 @@ class Fonctions
                         }
                     }
                     $soldeHeure = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($current_login)['u_heure_solde'];
-                    $return .= '<td>' . \App\Helpers\Formatter::Timestamp2Duree($soldeHeure) . '</td>';
+                    $return .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($soldeHeure) . '</td>';
                     $return .= '<td>' . $text_affich_user . '</td>';
                     if($_SESSION['config']['editions_papier']) {
                         $return .= '<td>' . $text_edit_papier . '</td>';

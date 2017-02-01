@@ -2377,7 +2377,7 @@ class Fonctions
         $childTable .= '<td>' . $tab_user['prenom'] . '</td>';
         $childTable .= '<td>' . $tab_user['login'] . '</td>';
         $childTable .= '<td>' . $tab_user['quotite'] . '</td>';
-        $childTable .= '<td>' . \App\Helpers\Formatter::Timestamp2Duree($tab_user['solde_heure']) . '</td>';
+        $childTable .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($tab_user['solde_heure']) . '</td>';
         $childTable .= '<td>' . $tab_user['is_resp'] . '</td>';
         $childTable .= '<td>' . $tab_user['resp_login'] . '</td>';
         $childTable .= '<td>' . $tab_user['is_admin'] . '</td>';
@@ -2400,7 +2400,7 @@ class Fonctions
         $text_nom="<input class=\"form-control\" type=\"text\" name=\"new_nom\" size=\"10\" maxlength=\"30\" value=\"".$tab_user['nom']."\">" ;
         $text_prenom="<input class=\"form-control\" type=\"text\" name=\"new_prenom\" size=\"10\" maxlength=\"30\" value=\"".$tab_user['prenom']."\">" ;
         $text_quotite="<input class=\"form-control\" type=\"text\" name=\"new_quotite\" size=\"3\" maxlength=\"3\" value=\"".$tab_user['quotite']."\">" ;
-        $text_solde_heure="<input class=\"form-control\" type=\"text\" name=\"new_solde_heure\" id=\"" . $soldeHeureId . "\"  size=\"6\" maxlength=\"6\" value=\"".  \App\Helpers\Formatter::Timestamp2Duree($tab_user['solde_heure'])."\">" ;
+        $text_solde_heure="<input class=\"form-control\" type=\"text\" name=\"new_solde_heure\" id=\"" . $soldeHeureId . "\"  size=\"6\" maxlength=\"6\" value=\"".  \App\Helpers\Formatter::timestamp2Duree($tab_user['solde_heure'])."\">" ;
         if($tab_user['is_resp']=="Y") {
             $text_is_resp="<select class=\"form-control\" name=\"new_is_resp\" id=\"is_resp_id\" ><option value=\"Y\">Y</option><option value=\"N\">N</option></select>" ;
         } else {

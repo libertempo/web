@@ -116,7 +116,7 @@ abstract class ATraitement
             $sql->getPdoObj()->rollback();
             return NIL_INT;
         }
-        return $sql->affected_rows;
+        return $updateStatut;
     }
 
     /**
@@ -169,10 +169,10 @@ abstract class ATraitement
             $jour   = date('d/m/Y', $demande['debut']);
             $debut  = date('H\:i', $demande['debut']);
             $fin    = date('H\:i', $demande['fin']);
-            $duree  = \App\Helpers\Formatter::Timestamp2Duree($demande['duree']);
+            $duree  = \App\Helpers\Formatter::timestamp2Duree($demande['duree']);
             $id = $demande['id_heure'];
             $infoUtilisateur = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($demande['login']);
-            $solde = \App\Helpers\Formatter::Timestamp2Duree($infoUtilisateur['u_heure_solde']);
+            $solde = \App\Helpers\Formatter::timestamp2Duree($infoUtilisateur['u_heure_solde']);
             $Table .= '<tr class="'.($i?'i':'p').'">';
             $Table .= '<td><b>'.$infoUtilisateur['u_nom'].'</b><br>'.$infoUtilisateur['u_prenom'].'</td><td>'.$jour.'</td><td>'.$debut.'</td><td>'.$fin.'</td><td>'.$duree.'</td><td>'.$solde.'</td>';
             $Table .= '<input type="hidden" name="_METHOD" value="PUT" />';

@@ -88,7 +88,7 @@ class Formatter
     }
 
     /**
-     * convertit un timestamp en une durée
+     * Convertit un timestamp en une durée
      *
      * @param string $secondes
      *
@@ -97,12 +97,16 @@ class Formatter
      * @return string
      * @since  1.9
      */
-    public static function Timestamp2Duree($secondes)
+    public static function timestamp2Duree($timestamp)
     {
-        if (!is_numeric($secondes) || 0 > $secondes) {
-            throw new \Exception(_('TimeStamp_mal_formee'));
-        }
-        $t = (int) $secondes;
-        return sprintf('%02d:%02d', ($t/3600),($t/60%60));
+        $timestamp = (int) $timestamp;
+        $secondes = abs($timestamp/60%60);
+        $heures = abs($timestamp/3600);
+        $duree = sprintf('%02d:%02d', $heures, $secondes);
+
+        return (0 < $timestamp)
+            ? $duree
+            : '-' . $duree
+        ;
     }
 }

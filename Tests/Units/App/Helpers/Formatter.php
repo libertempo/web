@@ -174,32 +174,30 @@ class Formatter extends \Tests\Units\TestUnit
     }
 
     /**
-     * Test la transformation d'un nombre de secondes en hh:ii
+     * Test la transformation d'un nombre de secondes positif en hh:ii
      *
-     *  @return void
      * @since 1.9
      */
-    public function testGoodTimestamp2duree()
+    public function testPositifTimestamp2Duree()
     {
-        $ts='3600';
+        $ts = '3600';
 
-        $time = _Formatter::Timestamp2Duree($ts);
+        $time = _Formatter::timestamp2Duree($ts);
 
         $this->string($time)->isIdenticalTo('01:00');
     }
 
     /**
-     * Test un TimeStamp abérant
+    * Test la transformation d'un nombre de secondes négatif en hh:ii
      *
-     *  @return void
      * @since 1.9
      */
-    public function testBadTimestamp2duree()
+    public function testNegatifTimestamp2Duree()
     {
-        $ts='test';
+        $ts = - 3600;
 
-        $this->exception(function () use ($ts) {
-            _Formatter::Timestamp2Duree($ts);
-        })->isInstanceOf('\Exception');
+        $time = _Formatter::timestamp2Duree($ts);
+
+        $this->string($time)->isIdenticalTo('-01:00');
     }
 }
