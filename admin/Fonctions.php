@@ -1321,6 +1321,7 @@ class Fonctions
 
 
         // AFFICHAGE TABLEAU
+        $tmp = 0;
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses([
             'table',
@@ -1332,14 +1333,16 @@ class Fonctions
         $childTable = '<thead>';
         $childTable .= '<tr>';
         $childTable .= '<th>' .  _('user') . '</th>';
-        $childTable .= '<th>' . _('divers_quotite_maj_1') . '</th>';
+        $childTable .= '<th style="border-right: 2px solid #e6e6e6;">' . _('divers_quotite_maj_1') . '</th>';
         foreach ($tab_type_conges as $id_type_cong => $libelle) {
             $childTable .= '<th>' . $libelle . ' / ' . _('divers_an') . '</th>';
-            $childTable .= '<th>' . _('divers_solde') . ' ' . $libelle . '</th>';
+            $childTable .= '<th colspan="2" style="border-right: 2px solid #e6e6e6;">' . _('divers_solde') . ' ' . $libelle . '</th>';
+            $tmp ++;
         }
 
         foreach ($tab_type_conges_exceptionnels as $id_type_cong => $libelle) {
-            $childTable .= '<th>' . _('divers_solde') . ' ' . $libelle . '</th>';
+            $childTable .= '<th style="border-right: 2px solid #e6e6e6;">' . _('divers_solde') . ' ' . $libelle . '</th>';
+            $tmp ++;
         }
         $childTable .= '<th></th>';
         $childTable .= '<th></th>';
@@ -1348,6 +1351,12 @@ class Fonctions
         }
         $childTable .= '</tr>';
         $childTable .= '</thead>';
+        $childTable .= '<thead><tr><th></th><th style="text-align: center; border-right: 2px solid #e6e6e6;"></th>';
+        for($i=0;$i<$tmp;$i++) {
+            $childTable .= '<th style="text-align: center; border-right: 1px solid #e6e6e6;">' . _('divers_an_maj') .
+                '</th><th style="text-align: center; border-right: 2px solid #e6e6e6;">' . _('divers_solde_maj') . '</th>';
+        }
+        $childTable .= '</tr></thead>';
         $childTable .= '<tbody>';
 
         // Récuperation des informations des users:
@@ -1393,15 +1402,15 @@ class Fonctions
 
             $childTable .= '<span class="responsable"> responsable : <strong>' . $tab_current_infos['resp_login'] . '</strong></span>';
 
-            $childTable .= '</td><td>' . $tab_current_infos['quotite'] . ' %</td>';
+            $childTable .= '</td><td style="text-align: center; border-right: 2px solid #e6e6e6;">' . $tab_current_infos['quotite'] . ' %</td>';
 
             //tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
             $tab_conges=$tab_current_infos['conges'];
 
             foreach($tab_type_conges as $id_conges => $libelle) {
                 if (isset($tab_conges[$libelle])) {
-                    $childTable .= '<td>' . $tab_conges[$libelle]['nb_an'] . '</td>';
-                    $childTable .= '<td>' . $tab_conges[$libelle]['solde'] . '</td>';
+                    $childTable .= '<td style="text-align: center; border-right: 2px solid #e6e6e6;">' . $tab_conges[$libelle]['nb_an'] . '</td>';
+                    $childTable .= '<td style="text-align: center; border-right: 2px solid #e6e6e6;">' . $tab_conges[$libelle]['solde'] . '</td>';
                 } else {
                     $childTable .= '<td>0</td>';
                     $childTable .= '<td>0</td>';
