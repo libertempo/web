@@ -111,7 +111,6 @@ abstract Class ANotification {
      */
     protected function getContenu($id) {
         $data = $this->getData($id);
-        $notifContent = [];
         switch ($data['statut']) {
             case \App\Models\AHeure::STATUT_DEMANDE:
                 $NotifContent[] = $this->getContenuDemande($data);
