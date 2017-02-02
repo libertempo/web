@@ -27,7 +27,7 @@ class Additionnelle extends \App\ProtoControllers\Employe\AHeure
         $comment = '';
 
         if (!empty($_POST)) {
-            if (0 >= (int) $this->post($_POST, $errorsLst, $notice)) {
+            if (0 >= (int) $this->postHtmlCommon($_POST, $errorsLst, $notice)) {
                 $errors = '';
                 if (!empty($errorsLst)) {
                     foreach ($errorsLst as $key => $value) {
@@ -115,12 +115,19 @@ class Additionnelle extends \App\ProtoControllers\Employe\AHeure
      */
     protected function delete($id, $user, array &$errorsLst, &$notice)
     {
+        $return = NIL_INT;
         if (NIL_INT !== $this->deleteSQL($id, $user, $errorsLst)) {
             log_action($id, 'annul', '', 'Annulation de la demande d\'heure additionnelle ' . $id);
             $notice = _('heure_additionnelle_annulee');
-            return $id;
+            $return = $id;
+            
+            $notif = new \App\Libraries\Notification\Additionnelle($id);
+            if(!$notif->send()) {
+                $errorsLst['email'] = _('erreur_envoi_mail');
+                $return = NIL_INT;
+            }
         }
-        return NIL_INT;
+        return $return;
     }
 
     /**
@@ -133,13 +140,33 @@ class Additionnelle extends \App\ProtoControllers\Employe\AHeure
             $data = $this->dataModel2Db($put, $user);
             $id   = $this->update($data, $user, $idHeure);
             log_action($idHeure, 'modif', '', 'Modification demande d\'heure additionnelle ' . $idHeure);
-
+            
             return $id;
         }
 
         return NIL_INT;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    protected function post(array $post, array &$errorsLst, $user)
+    {
+        $return = NIL_INT;
+        if (!$this->hasErreurs($post, $user, $errorsLst)) {
+            $data = $this->dataModel2Db($post, $user);
+            $id   = $this->insert($data, $user);
+            log_action($id, 'demande', '', 'demande d\'heure additionnelle ' . $id);
+            $return = $id;
+            $notif = new \App\Libraries\Notification\Additionnelle($id);
+            if (!$notif->send()) {
+                $errorsLst['email'] = _('erreur_envoi_mail');
+                $return = NIL_INT;
+            }
+        }
+        return NIL_INT;
+    }
+    
     /**
      * {@inheritDoc}
      */
@@ -229,7 +256,7 @@ class Additionnelle extends \App\ProtoControllers\Employe\AHeure
         $errorsLst = [];
         $notice    = '';
         if (!empty($_POST) && !$this->isSearch($_POST)) {
-            if (0 >= (int) $this->post($_POST, $errorsLst, $notice)) {
+            if (0 >= (int) $this->postHtmlCommon($_POST, $errorsLst, $notice)) {
                 $errors = '';
                 if (!empty($errorsLst)) {
                     foreach ($errorsLst as $value) {
@@ -238,7 +265,6 @@ class Additionnelle extends \App\ProtoControllers\Employe\AHeure
                     $message = '<div class="alert alert-danger">' . _('erreur_recommencer') . ' :<ul>' . $errors . '</ul></div>';
                 }
             } elseif ('DELETE' === $_POST['_METHOD'] && !empty($notice)) {
-                log_action(0, '', '', 'Annulation de l\'heure additionnelle ' . $_POST['id_heure']);
                 $message = '<div class="alert alert-info">' .  $notice . '.</div>';
             } else {
                 log_action(0, '', '', 'Récupération de l\'heure additionnelle ' . $_POST['id_heure']);
@@ -274,7 +300,7 @@ class Additionnelle extends \App\ProtoControllers\Employe\AHeure
                 $jour   = date('d/m/Y', $additionnelle['debut']);
                 $debut  = date('H\:i', $additionnelle['debut']);
                 $fin    = date('H\:i', $additionnelle['fin']);
-                $duree  = date('H\:i', $additionnelle['duree']);
+                $duree  = \App\Helpers\Formatter::Timestamp2Duree($additionnelle['duree']);
                 $statut = AHeure::statusText($additionnelle['statut']);
                 $comment = \includes\SQL::quote($additionnelle['comment']);
                 if (AHeure::STATUT_DEMANDE == $additionnelle['statut']) {

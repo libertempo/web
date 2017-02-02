@@ -27,7 +27,7 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
         $comment    = '';
 
         if (!empty($_POST)) {
-            if (0 >= (int) $this->post($_POST, $errorsLst, $notice)) {
+            if (0 >= (int) $this->postHtmlCommon($_POST, $errorsLst, $notice)) {
                 $errors = '';
                 if (!empty($errorsLst)) {
                     foreach ($errorsLst as $key => $value) {
@@ -104,7 +104,6 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
         <input class="form-control" style="width:45%" type="text" id="' . $finId . '"  value="' . $valueFin . '" name="fin_heure"></div></td><td><input class="form-control" type="text" name="comment" value="'.$comment.'" size="20" maxlength="100"></td></tr>';
         $childTable .= '</tbody>';
         $childTable .= '<script type="text/javascript">generateTimePicker("' . $debutId . '");generateTimePicker("' . $finId . '");</script>';
-
         $table->addChild($childTable);
         ob_start();
         $table->render();
@@ -130,6 +129,28 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
         }
 
         return NIL_INT;
+    }
+    
+    
+    /**
+     * {@inheritDoc}
+     */
+    protected function post(array $post, array &$errorsLst, $user)
+    {
+        $return =NIL_INT;
+        if (!$this->hasErreurs($post, $user, $errorsLst)) {
+            $data = $this->dataModel2Db($post, $user);
+            $id   = $this->insert($data, $user);
+            log_action($id, 'demande', '', 'demande d\'heure de repos ' . $id);
+            $return = $id;
+
+            $notif = new \App\Libraries\Notification\Repos($id);
+            if (!$notif->send()) {
+                $errorsLst['email'] = _('erreur_envoi_mail');
+                $return = NIL_INT;
+            }
+        }
+        return $return;
     }
 
     /**
@@ -174,7 +195,6 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
         $horodateDebut = \App\Helpers\Formatter::hour2Time(date('H\:i', $debut));
         $horodateFin   = \App\Helpers\Formatter::hour2Time(date('H\:i', $fin));
         $reelleDuree   = 0;
-
         /* Double foreach pour lisser les créneaux matin / après midi sur le même plan */
         foreach ($planningJour as $creneaux) {
             foreach ($creneaux as $creneau) {
@@ -184,9 +204,10 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
                 if ($horodateDebut <= $creneauDebut) {
                     if ($horodateFin <= $creneauDebut) {
                         // On ne cumule rien
+                        
                         break;
                     } elseif ($horodateFin > $creneauDebut && $horodateFin <= $creneauFin) {
-                        $reelleDuree += $fin - $creneauDebut;
+                        $reelleDuree += $horodateFin - $creneauDebut;
                     } else {
                         /* $horodateFin > $creneauFin */
                         $reelleDuree += $creneauFin - $creneauDebut;
@@ -202,7 +223,6 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
                 }
             }
         }
-
         return $reelleDuree;
     }
 
@@ -211,12 +231,19 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
      */
     protected function delete($id, $user, array &$errorsLst, &$notice)
     {
+        $return = NIL_INT;
         if (NIL_INT !== $this->deleteSQL($id, $user, $errorsLst)) {
             log_action($id, 'annul', '', 'Annulation de la demande d\'heure de repos ' . $id);
             $notice = _('heure_repos_annulee');
-            return $id;
+            $return = $id;
+
+            $notif = new \App\Libraries\Notification\Repos($id);
+            if (!$notif->send()) {
+                $errorsLst['email'] = _('erreur_envoi_mail');
+                $return = NIL_INT;
+            }
         }
-        return NIL_INT;
+        return $return;
     }
 
     /**
@@ -228,7 +255,7 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
         $errorsLst = [];
         $notice    = '';
         if (!empty($_POST) && !$this->isSearch($_POST)) {
-            if (0 >= (int) $this->post($_POST, $errorsLst, $notice)) {
+            if (0 >= (int) $this->postHtmlCommon($_POST, $errorsLst, $notice)) {
                 $errors = '';
                 if (!empty($errorsLst)) {
                     foreach ($errorsLst as $value) {
@@ -237,7 +264,6 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
                     $message = '<div class="alert alert-danger">' . _('erreur_recommencer') . ' :<ul>' . $errors . '</ul></div>';
                 }
             } elseif ('DELETE' === $_POST['_METHOD'] && !empty($notice)) {
-                log_action(0, '', '', 'Annulation de l\'heure de repos ' . $_POST['id_heure']);
                 $message = '<div class="alert alert-info">' .  $notice . '.</div>';
             } else {
                 log_action(0, '', '', 'Récupération de l\'heure de repos ' . $_POST['id_heure']);
@@ -277,7 +303,7 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
                 $jour   = date('d/m/Y', $repos['debut']);
                 $debut  = date('H\:i', $repos['debut']);
                 $fin    = date('H\:i', $repos['fin']);
-                $duree  = date('H\:i', $repos['duree']);
+                $duree  = \App\Helpers\Formatter::Timestamp2Duree($repos['duree']);
                 $statut = AHeure::statusText($repos['statut']);
                 $comment = \includes\SQL::quote($repos['comment']);
                 if (AHeure::STATUT_DEMANDE == $repos['statut']) {
