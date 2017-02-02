@@ -244,14 +244,10 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
                 redirect(ROOT_PATH . 'utilisateur/user_index.php?session='. session_id() . '&onglet=liste_heure_repos', false);
             }
         }
-        if (!empty($_POST) && $this->isSearch($_POST)) {
-            $champsRecherche = $_POST['search'];
-            $champsSql       = $this->transformChampsRecherche($_POST);
-        } else {
-            $champsRecherche = [];
-            $champsSql       = [];
-        }
-        $params = $champsSql + [
+        $champsRecherche = (!empty($_POST) && $this->isSearch($_POST))
+            ? $this->transformChampsRecherche($_POST)
+            : ['statut' => AHeure::STATUT_DEMANDE];
+        $params = $champsRecherche + [
             'login' => $_SESSION['userlogin'],
         ];
 
