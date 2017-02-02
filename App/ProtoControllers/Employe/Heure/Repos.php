@@ -104,7 +104,6 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
         <input class="form-control" style="width:45%" type="text" id="' . $finId . '"  value="' . $valueFin . '" name="fin_heure"></div></td><td><input class="form-control" type="text" name="comment" value="'.$comment.'" size="20" maxlength="100"></td></tr>';
         $childTable .= '</tbody>';
         $childTable .= '<script type="text/javascript">generateTimePicker("' . $debutId . '");generateTimePicker("' . $finId . '");</script>';
-
         $table->addChild($childTable);
         ob_start();
         $table->render();
@@ -196,7 +195,6 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
         $horodateDebut = \App\Helpers\Formatter::hour2Time(date('H\:i', $debut));
         $horodateFin   = \App\Helpers\Formatter::hour2Time(date('H\:i', $fin));
         $reelleDuree   = 0;
-
         /* Double foreach pour lisser les créneaux matin / après midi sur le même plan */
         foreach ($planningJour as $creneaux) {
             foreach ($creneaux as $creneau) {
@@ -206,9 +204,10 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
                 if ($horodateDebut <= $creneauDebut) {
                     if ($horodateFin <= $creneauDebut) {
                         // On ne cumule rien
+                        
                         break;
                     } elseif ($horodateFin > $creneauDebut && $horodateFin <= $creneauFin) {
-                        $reelleDuree += $fin - $creneauDebut;
+                        $reelleDuree += $fin - $debut;
                     } else {
                         /* $horodateFin > $creneauFin */
                         $reelleDuree += $creneauFin - $creneauDebut;
@@ -224,7 +223,6 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
                 }
             }
         }
-
         return $reelleDuree;
     }
 
