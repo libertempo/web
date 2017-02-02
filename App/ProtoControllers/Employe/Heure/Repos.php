@@ -207,7 +207,7 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
                         
                         break;
                     } elseif ($horodateFin > $creneauDebut && $horodateFin <= $creneauFin) {
-                        $reelleDuree += $fin - $debut;
+                        $reelleDuree += $horodateFin - $horodateDebut;
                     } else {
                         /* $horodateFin > $creneauFin */
                         $reelleDuree += $creneauFin - $creneauDebut;
