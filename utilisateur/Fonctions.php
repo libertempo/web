@@ -502,7 +502,7 @@ class Fonctions
             $sql_nb_jours=affiche_decimal($resultat1["p_nb_jours"]);
             //$sql_type=$resultat1["p_type"];
             $sql_type= \utilisateur\Fonctions::get_libelle_abs($resultat1["p_type"]);
-            $sql_comment=$resultat1["p_commentaire"];
+            $sql_comment=htmlentities($resultat1["p_commentaire"], ENT_QUOTES | ENT_HTML401);
 
             $return .= '<td>' . $sql_date_deb . '_' . $demi_j_deb . '</td>';
             $return .= '<td>' . $sql_date_fin . '_' . $demi_j_fin . '</td>';
