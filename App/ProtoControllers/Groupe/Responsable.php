@@ -27,7 +27,8 @@ class Responsable {
                 FROM conges_groupe_resp
                 WHERE gr_gid IN (\'' . implode(',', $groupeIds) . '\')';
         $query = $sql->query($req);
-        
+
+        $respLogin = [];
         while ($data = $query->fetch_array()) {
             $respLogin[$data['gr_gid']] = $data['gr_login'];
         }

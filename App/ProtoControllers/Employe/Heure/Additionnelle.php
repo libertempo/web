@@ -435,7 +435,8 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
             '. (int) $data['fin'] .',
             '. (int) $data['duree'] . ',
             ' . (int) $data['typePeriode'] . ',
-            ' . AHeure::STATUT_DEMANDE . ', "'. \includes\SQL::quote($data['comment']) .'"
+            ' . (int) $data['statut'] . ',
+            "'. \includes\SQL::quote($data['comment']) .'"
         )';
         $query = $sql->query($req);
 

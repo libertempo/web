@@ -3,6 +3,7 @@ namespace App\ProtoControllers\Employe;
 
 use \App\Models;
 use App\Models\Planning\Creneau;
+use App\ProtoControllers\Responsable;
 
 /**
  * ProtoContrôleur abstrait d'heures, en attendant la migration vers le MVC REST
@@ -163,6 +164,10 @@ abstract class AHeure
         $jour  = \App\Helpers\Formatter::dateFr2Iso($post['jour']);
         $debut = strtotime($jour . ' ' . $post['debut_heure']);
         $fin   = strtotime($jour . ' ' . $post['fin_heure']);
+        $statut = !empty(Responsable::getRespsUtilisateur($user))
+            ? Models\AHeure::STATUT_DEMANDE
+            : Models\AHeure::STATUT_VALIDATION_FINALE
+        ;
         $comment = \includes\SQL::quote($post['comment']);
         $planningUser = \utilisateur\Fonctions::getUserPlanning($user);
         if (is_null($planningUser)) {
@@ -179,6 +184,7 @@ abstract class AHeure
             'duree' => (int) $duree,
             'typePeriode' => (int) $typePeriode,
             'comment' => $comment,
+            'statut' => $statut,
         ];
     }
 
