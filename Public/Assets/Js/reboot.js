@@ -319,6 +319,14 @@ var planningController = function (idElement, options, creneaux)
             }
             var debutVal = document.getElementById(this.options['debutId']).value;
             var finVal = document.getElementById(this.options['finId']).value;
+            /* Positionnement des datasets pour la réorganisation dynamique (et un bon comparo) */
+            var patternHour = new RegExp('^[0-9]:[0-5][0-9]$');
+            if (patternHour.test(debutVal)) {
+                debutVal = '0' + debutVal;
+            }
+            if (patternHour.test(finVal)) {
+                finVal = '0' + finVal;
+            }
             if (this.options['nilInt'] != jourSelectionne && 0 != typePeriodeSelected && '' != debutVal && '' != finVal) {
                 if (!this._alreadyExistPeriod(jourSelectionne, debutVal, finVal)) {
                     if (this._checkTimeValue(debutVal) && this._checkTimeValue(finVal)) {
@@ -462,14 +470,6 @@ var planningController = function (idElement, options, creneaux)
         buttonTag.appendChild(iMinus);
         span.appendChild(buttonTag);
         span.appendChild(this._getHiddenFieldPeriod(jourSelectionne, typePeriodeSelected, debutVal, finVal));
-        /* Positionnement des datasets pour la réorganisation dynamique */
-        var patternHour = new RegExp('^[0-9]:[0-5][0-9]$');
-        if (patternHour.test(debutVal)) {
-            debutVal = '0' + debutVal;
-        }
-        if (patternHour.test(finVal)) {
-            finVal = '0' + finVal;
-        }
         span.dataset.heures = debutVal + '-' + finVal;
 
         return span;
