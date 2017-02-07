@@ -20,7 +20,7 @@ class Fonctions
         // $tab_new_nb_conges_all[$id_conges]= nb_jours
         // $tab_calcul_proportionnel[$id_conges]= TRUE / FALSE
 
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -79,7 +79,7 @@ class Fonctions
 
     public static function ajout_global($tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -140,7 +140,7 @@ class Fonctions
 
     public static function ajout_conges($tab_champ_saisie, $tab_commentaire_saisie)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -177,7 +177,7 @@ class Fonctions
 
     public static function affichage_saisie_globale_groupe($tab_type_conges)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -253,7 +253,7 @@ class Fonctions
 
     public static function affichage_saisie_globale_pour_tous($tab_type_conges)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -292,7 +292,7 @@ class Fonctions
 
     public static function affichage_saisie_user_par_user($tab_type_conges, $tab_type_conges_exceptionnels, $tab_all_users_du_resp, $tab_all_users_du_grand_resp)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -415,7 +415,7 @@ class Fonctions
 
     public static function saisie_ajout( $tab_type_conges)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -517,7 +517,7 @@ class Fonctions
     // cloture / debut d'exercice pour TOUS les users d'un groupe'
     public static function cloture_globale_groupe($group_id, $tab_type_conges)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -541,7 +541,7 @@ class Fonctions
     // cloture / debut d'exercice pour TOUS les users du resp (ou grand resp)
     public static function cloture_globale($tab_type_conges)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -670,7 +670,7 @@ class Fonctions
     // cloture / debut d'exercice user par user pour les users du resp (ou grand resp)
     public static function cloture_users($tab_type_conges, $tab_cloture_users, $tab_commentaire_saisie)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -708,7 +708,7 @@ class Fonctions
 
     public static function affichage_cloture_globale_groupe($tab_type_conges)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -784,7 +784,7 @@ class Fonctions
 
     public static function affichage_cloture_globale_pour_tous($tab_type_conges)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -844,7 +844,7 @@ class Fonctions
 
     public static function affichage_cloture_user_par_user($tab_type_conges, $tab_all_users_du_resp, $tab_all_users_du_grand_resp)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -918,7 +918,7 @@ class Fonctions
 
     public static function saisie_cloture( $tab_type_conges)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -1146,7 +1146,7 @@ class Fonctions
 
     public static function new_conges($user_login, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type_id)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -1198,7 +1198,7 @@ class Fonctions
 
     public static function traite_demandes($user_login, $tab_radio_traite_demande, $tab_text_refus)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF']; ;
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $session=session_id();
         $return = '';
 
@@ -1284,7 +1284,7 @@ class Fonctions
 
     public static function annule_conges($user_login, $tab_checkbox_annule, $tab_text_annul)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF']; ;
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $session=session_id() ;
         $return = '';
 
@@ -1333,7 +1333,7 @@ class Fonctions
     //affiche l'état des conges du user (avec le formulaire pour le responsable)
     public static function affiche_etat_conges_user_for_resp($user_login, $year_affichage, $tri_date, $onglet)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF']; ;
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $session=session_id() ;
         $return = '';
 
@@ -1483,7 +1483,7 @@ class Fonctions
     //affiche l'état des demande en attente de 2ieme validation du user (avec le formulaire pour le responsable)
     public static function affiche_etat_demande_2_valid_user_for_resp($user_login)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF']; ;
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $session=session_id() ;
         $return = '';
 
@@ -1587,7 +1587,7 @@ class Fonctions
     //affiche l'état des demandes du user (avec le formulaire pour le responsable)
     public static function affiche_etat_demande_user_for_resp($user_login, $tab_user, $tab_grd_resp)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF']; ;
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $session=session_id();
         $return = '';
 
@@ -1703,7 +1703,7 @@ class Fonctions
 
     public static function affichage($user_login,  $year_affichage, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $tri_date)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF']; ;
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $session=session_id();
         $return = '';
 

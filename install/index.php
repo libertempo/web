@@ -10,7 +10,7 @@ include_once INCLUDE_PATH .'fonction.php';
 
 include_once ROOT_PATH .'fonctions_conges.php' ;
 
-$PHP_SELF=$_SERVER['PHP_SELF'];
+$PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 
 $session= htmlentities(session_id());
 

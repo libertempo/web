@@ -128,7 +128,7 @@ class Fonctions
 
     public static function traite_all_demande_en_cours($tab_bt_radio, $tab_text_refus)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -192,7 +192,7 @@ class Fonctions
     public static function affiche_all_demandes_en_cours($tab_type_conges)
     {
         $return = '';
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $count1=0;
         $count2=0;
@@ -391,7 +391,7 @@ class Fonctions
 
     public static function new_conges($user_login, $numero_int, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type_id)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -443,7 +443,7 @@ class Fonctions
 
     public static function traite_demandes($user_login, $tab_radio_traite_demande, $tab_text_refus)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF']; ;
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $session=session_id();
         $return = '';
 
@@ -527,7 +527,7 @@ class Fonctions
 
     public static function annule_conges($user_login, $tab_checkbox_annule, $tab_text_annul)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF']; ;
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $session=session_id() ;
         $return = '';
 
@@ -577,7 +577,7 @@ class Fonctions
     //affiche l'état des conges du user (avec le formulaire pour le responsable)
     public static function affiche_etat_conges_user_for_resp($user_login, $year_affichage, $tri_date)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF']; ;
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $session=session_id() ;
         $return = '';
 
@@ -725,7 +725,7 @@ class Fonctions
     //affiche l'état des demande en attente de 2ieme validation du user (avec le formulaire pour le responsable)
     public static function affiche_etat_demande_2_valid_user_for_resp($user_login)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF']; ;
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $session=session_id() ;
         $return = '';
 
@@ -826,7 +826,7 @@ class Fonctions
     //affiche l'état des demande du user (avec le formulaire pour le responsable)
     public static function affiche_etat_demande_user_for_resp($user_login, $tab_user, $tab_grd_resp)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF']; ;
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $session=session_id() ;
         $return = '';
 
@@ -946,7 +946,7 @@ class Fonctions
 
     public static function affichage($user_login,  $year_affichage, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $tri_date, $onglet)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF']; ;
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $session=session_id();
         $return = '';
 
@@ -1148,7 +1148,7 @@ class Fonctions
     public static function ajout_global_groupe($choix_groupe, $tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all)
     {
 
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
 
         // recup de la liste des users d'un groupe donné
@@ -1202,7 +1202,7 @@ class Fonctions
 
     public static function ajout_global($tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -1256,7 +1256,7 @@ class Fonctions
 
     public static function ajout_conges($tab_champ_saisie, $tab_commentaire_saisie)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -1282,7 +1282,7 @@ class Fonctions
 
     public static function affichage_saisie_globale_groupe($tab_type_conges)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -1340,7 +1340,7 @@ class Fonctions
 
     public static function affichage_saisie_globale_pour_tous($tab_type_conges)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -1379,7 +1379,7 @@ class Fonctions
 
     public static function affichage_saisie_user_par_user($tab_type_conges, $tab_type_conges_exceptionnels, $tab_all_users_du_hr, $tab_all_users_du_grand_resp)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -1500,7 +1500,7 @@ class Fonctions
 
     public static function saisie_ajout( $tab_type_conges)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -1663,7 +1663,7 @@ class Fonctions
 
     public static function commit_saisie($tab_checkbox_j_chome)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -1694,7 +1694,7 @@ class Fonctions
 
     public static function confirm_saisie($tab_checkbox_j_chome)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -1833,7 +1833,7 @@ class Fonctions
 
     public static function saisie($year_calendrier_saisie)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -1893,7 +1893,7 @@ class Fonctions
         /*************************************/
         // recup des parametres reçus :
         // SERVER
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         // GET / POST
         $choix_action                 = getpost_variable('choix_action');
         $year_calendrier_saisie        = getpost_variable('year_calendrier_saisie', 0);
@@ -1956,7 +1956,7 @@ class Fonctions
     // cloture / debut d'exercice pour TOUS les users d'un groupe'
     public static function cloture_globale_groupe($group_id, $tab_type_conges)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -1976,7 +1976,7 @@ class Fonctions
     // cloture / debut d'exercice pour TOUS les users du resp (ou grand resp)
     public static function cloture_globale($tab_type_conges)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -2097,7 +2097,7 @@ class Fonctions
     // cloture / debut d'exercice user par user pour les users du resp (ou grand resp)
     public static function cloture_users($tab_type_conges, $tab_cloture_users, $tab_commentaire_saisie)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -2121,7 +2121,7 @@ class Fonctions
 
     public static function affichage_cloture_globale_groupe($tab_type_conges)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -2179,7 +2179,7 @@ class Fonctions
 
     public static function affichage_cloture_globale_pour_tous($tab_type_conges)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -2245,7 +2245,7 @@ class Fonctions
 
     public static function affichage_cloture_user_par_user($tab_type_conges, $tab_all_users_du_hr, $tab_all_users_du_grand_resp)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -2311,7 +2311,7 @@ class Fonctions
 
     public static function saisie_cloture( $tab_type_conges)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -2628,7 +2628,7 @@ class Fonctions
 
     public static function commit_annul_fermeture($fermeture_id, $groupe_id)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -2701,7 +2701,7 @@ class Fonctions
 
     public static function commit_new_fermeture($new_date_debut, $new_date_fin, $groupe_id, $id_type_conges)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -2790,7 +2790,7 @@ class Fonctions
 
     public static function confirm_annul_fermeture($fermeture_id, $groupe_id, $fermeture_date_debut, $fermeture_date_fin)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -2877,7 +2877,7 @@ class Fonctions
 
     public static function saisie_dates_fermeture($year, $groupe_id, $new_date_debut, $new_date_fin, $code_erreur)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -2916,7 +2916,7 @@ class Fonctions
 
     public static function saisie_groupe_fermeture()
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -3023,7 +3023,7 @@ class Fonctions
         /*************************************/
         // recup des parametres reçus :
         // SERVER
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         // GET / POST
         $choix_action         = getpost_variable('choix_action');
         $year                 = getpost_variable('year', 0);

@@ -16,7 +16,7 @@ include_once INCLUDE_PATH .'session.php';
 	/*************************************/
 	// recup des parametres reçus :
 	// SERVER
-	$PHP_SELF=$_SERVER['PHP_SELF'];
+	$PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 	// GET	/ POST
 	$action     = getpost_variable('action') ;
 	$new_mois = getpost_variable('new_mois', date("m")) ;
@@ -32,7 +32,7 @@ include_once INCLUDE_PATH .'session.php';
 
 function form_saisie($action, $new_mois, $new_year)
 {
-	$PHP_SELF=$_SERVER['PHP_SELF'];
+	$PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 	$session=session_id();
 
 	header_popup();

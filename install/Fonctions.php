@@ -167,7 +167,7 @@ class Fonctions {
     public static function lance_install($lang)
     {
 
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 
         include CONFIG_PATH .'dbconnect.php' ;
         include ROOT_PATH .'version.php' ;
@@ -205,7 +205,7 @@ class Fonctions {
             $sql_update_lang="UPDATE conges_config SET conf_valeur = '$lang' WHERE conf_nom='lang' ";
             $result_update_lang = \includes\SQL::query($sql_update_lang) ;
 
-            $tab_url=explode("/", $_SERVER['PHP_SELF']);
+            $tab_url=explode("/", filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 
             array_pop($tab_url);
             array_pop($tab_url);
@@ -233,7 +233,7 @@ class Fonctions {
     public static function lance_maj($lang, $installed_version, $config_php_conges_version, $etape)
     {
 
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         include CONFIG_PATH .'dbconnect.php' ;
 
 

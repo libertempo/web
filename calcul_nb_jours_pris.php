@@ -20,7 +20,7 @@ $p_num="";
 /*************************************/
 // recup des parametres reçus :
 // SERVER
-$PHP_SELF=$_SERVER['PHP_SELF'];
+$PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 // GET  / POST
 $user       = getpost_variable('user') ;
 $date_debut = getpost_variable('date_debut') ;
@@ -37,7 +37,7 @@ if( ($user!="") && ($date_debut!="") && ($date_fin!="") && ($opt_debut!="") && (
 
 function affichage($user, $date_debut, $date_fin, $opt_debut, $opt_fin, $p_num="")
 {
-	$PHP_SELF=$_SERVER['PHP_SELF'];
+	$PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 	$session=session_id();
 	$comment="&nbsp;" ;
 
