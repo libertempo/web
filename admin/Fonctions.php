@@ -9,7 +9,7 @@ class Fonctions
     // modifie, pour un resp donné,  les groupes dont il est resp et grands_resp
     public static function modif_resp_groupes($choix_resp, &$checkbox_resp_group, &$checkbox_grd_resp_group)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -62,7 +62,7 @@ class Fonctions
     // affiche pour un resp des cases à cocher devant les groupes possibles pour les selectionner.
     public static function affiche_gestion_responsable_groupes($choix_resp, $onglet)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -247,7 +247,7 @@ class Fonctions
     // affiche le tableau des responsables pour choisir sur lequel on va gerer les groupes dont il est resp
     public static function affiche_choix_responsable_groupes()
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -304,7 +304,7 @@ class Fonctions
     // modifie, pour un groupe donné,  ses resp et grands_resp
     public static function modif_group_responsables($choix_group, &$checkbox_group_resp, &$checkbox_group_grd_resp)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -358,7 +358,7 @@ class Fonctions
     // affiche pour un groupe des cases à cocher devant les resp et grand_resp possibles pour les selectionner.
     public static function affiche_gestion_groupes_responsables($choix_group, $onglet)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -530,7 +530,7 @@ class Fonctions
     // affiche le tableau des groupes pour choisir sur quel groupe on va gerer les responsables
     public static function affiche_choix_groupes_responsables()
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -581,7 +581,7 @@ class Fonctions
     // affichage des pages de gestion des responsables des groupes
     public static function affiche_choix_gestion_groupes_responsables($choix_group, $choix_resp, $onglet)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -642,7 +642,7 @@ class Fonctions
 
     public static function modif_user_groups($choix_user, &$checkbox_user_groups)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -666,7 +666,7 @@ class Fonctions
 
     public static function modif_group_users($choix_group, &$checkbox_group_users)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -701,7 +701,7 @@ class Fonctions
     }
 
     public static function affiche_gestion_groupes_users($choix_group, $onglet) {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -803,7 +803,7 @@ class Fonctions
 
     public static function affiche_choix_groupes_users()
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -858,7 +858,7 @@ class Fonctions
 
     public static function affiche_gestion_user_groupes($choix_user, $onglet)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -883,7 +883,7 @@ class Fonctions
 
     public static function affiche_choix_user_groupes()
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -1022,7 +1022,7 @@ class Fonctions
 
     public static function affiche_choix_gestion_groupes_users($choix_group, $choix_user, $onglet)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return   = '';
 
         if( $choix_group!="" )     // si un groupe choisi : on affiche la gestion par groupe
@@ -1090,7 +1090,7 @@ class Fonctions
 
     public static function verif_new_param_group($new_group_name, $new_group_libelle)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -1131,7 +1131,7 @@ class Fonctions
 
     public static function ajout_groupe($new_group_name, $new_group_libelle, $new_group_double_valid)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -1164,7 +1164,7 @@ class Fonctions
 
     public static function affiche_gestion_groupes($new_group_name, $new_group_libelle, $onglet)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -1437,7 +1437,7 @@ class Fonctions
     public static function commit_update($u_login_to_update, $new_pwd1, $new_pwd2)
     {
 
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -1471,7 +1471,7 @@ class Fonctions
 
     public static function modifier($u_login, $onglet)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -1691,7 +1691,7 @@ class Fonctions
 
     public static function restaure($fichier_restaure_name, $fichier_restaure_tmpname, $fichier_restaure_size, $fichier_restaure_error)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -1751,7 +1751,7 @@ class Fonctions
     // RESTAURATION
     public static function choix_restaure()
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -1798,7 +1798,7 @@ class Fonctions
 
     public static function commit_sauvegarde($type_sauvegarde)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -1836,7 +1836,7 @@ class Fonctions
 
     public static function sauve($type_sauvegarde)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -1868,7 +1868,7 @@ class Fonctions
     // SAUVEGARDE
     public static function choix_sauvegarde()
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -1916,7 +1916,7 @@ class Fonctions
     // CHOIX
     public static function choix_save_restore()
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -1979,7 +1979,7 @@ class Fonctions
         /*************************************/
         // recup des parametres reçus :
         // SERVER
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         // GET / POST
         $choix_action    = getpost_variable('choix_action');
         $type_sauvegarde = getpost_variable('type_sauvegarde');
@@ -2021,7 +2021,7 @@ class Fonctions
 
     public static function commit_update_groupe($group_to_update, $new_groupname, $new_comment, $new_double_valid)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
         $result   = TRUE;
@@ -2052,7 +2052,7 @@ class Fonctions
 
     public static function modifier_groupe($group, $onglet)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -2167,7 +2167,7 @@ class Fonctions
     public static function commit_update_user($u_login_to_update, &$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, &$tab_new_reliquat, &$return)
     {
         $dataUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($u_login_to_update);
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $erreurs = [];
 
@@ -2320,7 +2320,7 @@ class Fonctions
 
     public static function modifier_user($u_login, $onglet)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
         $soldeHeureId = uniqid();
@@ -2654,7 +2654,7 @@ class Fonctions
 
     public static function suppression_group($group_to_delete)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -2688,7 +2688,7 @@ class Fonctions
 
     public static function confirmer($group, $onglet)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -2774,7 +2774,7 @@ class Fonctions
 
     public static function suppression($u_login_to_delete)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -2810,7 +2810,7 @@ class Fonctions
 
     public static function confirmer_suppression($u_login, $onglet)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -3028,7 +3028,7 @@ class Fonctions
     // affichage du formulaire de saisie d'un nouveau user
     public static function affiche_formulaire_ajout_user(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, $onglet)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -3254,7 +3254,7 @@ class Fonctions
 
     public static function verif_new_param(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, &$return = null)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -3393,7 +3393,7 @@ class Fonctions
 
     public static function ajout_user(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, $checkbox_user_groups)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
         $verifFalse = '';

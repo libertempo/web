@@ -4,7 +4,7 @@ defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 
 $timeout=2 ; // refresh après maj.
 
-$PHP_SELF=$_SERVER['PHP_SELF'];
+$PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 
 if(!isset($session) || $session == "")
     $URL = "$PHP_SELF";

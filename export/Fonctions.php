@@ -9,7 +9,7 @@ class Fonctions
 {
     public static function form_saisie($user, $date_debut, $date_fin)
     {
-    	$PHP_SELF=$_SERVER['PHP_SELF'];
+    	$PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
     	$session=session_id();
 
     	$date_today=date("d-m-Y");
@@ -50,7 +50,7 @@ class Fonctions
     	/*************************************/
     	// recup des parametres reçus :
     	// SERVER
-    	$PHP_SELF=$_SERVER['PHP_SELF'];
+    	$PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
     	// GET	/ POST
     	$action     = getpost_variable('action') ;
     	$user_login = getpost_variable('user_login') ;

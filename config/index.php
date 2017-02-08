@@ -16,7 +16,7 @@ include_once ROOT_PATH .'fonctions_conges.php' ;
 $_SESSION['config']=init_config_tab();      // on initialise le tableau des variables de config
 include_once INCLUDE_PATH .'session.php';
 
-$PHP_SELF=$_SERVER['PHP_SELF'];
+$PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 
 $session=session_id();
 

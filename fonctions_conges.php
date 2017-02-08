@@ -67,7 +67,7 @@ function get_j_name_fr_2c($timestamp)
 
 function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet)
 {
-    $PHP_SELF=$_SERVER['PHP_SELF'];
+    $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
     $session=session_id();
     $new_date_fin = date('d/m/Y');
     $return = '';
