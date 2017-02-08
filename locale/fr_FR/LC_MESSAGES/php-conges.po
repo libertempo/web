@@ -1699,3 +1699,256 @@ msgstr "Cette demande chevauche une autre demande déjà validée"
 
 msgid "demande_heure_non_editable"
 msgstr "Cette demande n'est plus accessible"
+
+msgid "session_pas_de_compte_dans_dbconges"
+msgstr "Votre compte est introuvable dans Libertempo"
+
+msgid "session_contactez_admin"
+msgstr "Merci de contacter l'administrateur"
+
+msgid "aucun_planning_associe_utilisateur"
+msgstr "Aucun planning n'est associé à cet utilisateur"
+
+msgid "Exporter cal"
+msgstr "Exporter cal"
+
+msgid "nombre_incorrect"
+msgstr "Nombre incorrect"
+
+msgid "admin_planning_utilisateur"
+msgstr "Planning de l'utilisateur"
+
+msgid "solde_heure"
+msgstr "solde d'heure"
+
+msgid "Mail_test_ok"
+msgstr "Test effectué. Vérifiez vos courriels"
+
+msgid "user_liste_conge"
+msgstr "Liste des congés"
+
+msgid "divers_ajout_heure_repos"
+msgstr "Demande d'heures de repos"
+
+msgid "user_liste_heure_repos"
+msgstr "Liste des heures de repos"
+
+msgid "user_liste_heure_additionnelle"
+msgstr "Liste des heures additionnelle"
+
+msgid "divers_ajout_heure_additionnelle"
+msgstr "Demande d'heure additionnelle"
+
+msgid "fin_matin"
+msgstr "fin de matinée"
+
+msgid "debut_matin"
+msgstr "début de matinée"
+
+msgid "debut_apres-midi"
+msgstr "début d'après-midi"
+
+msgid "fin_apres-midi"
+msgstr "fin d'après-midi"
+
+msgid "Date_mal_formee"
+msgstr "Date mal formée"
+
+msgid "Heure_mal_formee"
+msgstr "Heure mal formée"
+
+msgid "aucun_resultat"
+msgstr "Aucun Résultat"
+
+msgid "traitement_demande_par_delegation"
+msgstr "Traitement des demandes par délégation"
+
+msgid "consulter_calendrier_de_periode"
+msgstr "Consulter le calendrier de la période"
+
+msgid "erreur_pas_responsable_de"
+msgstr "Vous n'êtes pas responsable de "
+
+msgid "traitement_effectue"
+msgstr "Traitement effectué"
+
+msgid "erreur_envoi_mail"
+msgstr "Email non envoyé!"
+
+msgid "traitement_heure_repos_titre"
+msgstr "Traitement des heures de repos"
+
+msgid "traitement_non_autorise"
+msgstr "Traitement d'une demande non autorisé"
+
+msgid "demande_deja_traite"
+msgstr "Demande Déjà Traité"
+
+msgid "traitement_heure_additionnelle_titre"
+msgstr "Traitement des heures additionnelles"
+
+msgid "jour"
+msgstr "jour"
+
+msgid "duree"
+msgstr"durée"
+
+msgid "champ_necessaire"
+msgstr "Champ nécessaire"
+
+msgid "nom_existe_deja"
+msgstr "Ce nom de planning existe déjà"
+
+msgid "demande_en_cours_sur_planning"
+msgstr "Des demandes sont en cours à partir de ce planning"
+
+msgid "planning_non_supprimable"
+msgstr "Planning non supprimable"
+
+msgid "planning_supprime"
+msgstr "Planning supprimé"
+
+msgid "creneaux_consecutifs"
+msgstr "Créneaux consécutifs"
+
+msgid "user_liste_conge_titre"
+msgstr "Liste des congés"
+
+msgid "Format_heure_incorrect"
+msgstr "Format de l'heure incorrect"
+
+msgid "verif_saisie_erreur_heure_fin_avant_debut"
+msgstr "L'heure de fin débute avant l'heure de début"
+
+msgid "Chevauchement_heure_avec_existant"
+msgstr "Chevauchement avec une heure validé ou en attente de validation"
+
+msgid "duree_nulle"
+msgstr "la durée est nulle"
+
+msgid "user_modif_heure_repos_titre"
+msgstr "Modification d'une demande d'heure de repos"
+
+msgid "user_ajout_heure_repos_titre"
+msgstr "Ajout d'une demande d'heure de repos"
+
+msgid "creneau"
+msgstr "créneau"
+
+msgid "heure_repos_annulee"
+msgstr "Heure de repos annulée"
+
+msgid "user_liste_heure_repos_titre"
+msgstr "Liste des heures de repos"
+
+msgid "Annuler"
+msgstr "Annuler"
+
+msgid "heure_non_modifiable"
+msgstr "heure non modifiable"
+
+msgid "heure_non_supprimable"
+msgstr "heure non supprimable"
+
+msgid "user_ajout_heure_additionnelle_titre"
+msgstr "Ajout d'une demande d'heure additionnelle"
+
+msgid "heure_additionnelle_annulee"
+msgstr "Heure additionnelle annulée"
+
+msgid "user_liste_heure_additionnelle_titre"
+msgstr "Liste des heures additionnelles"
+
+msgid "resp_affichage_liste_planning_titre"
+msgstr "Liste des plannings"
+
+msgid "resp_modif_planning_titre"
+msgstr "Modificaton du planning"
+
+msgid "Nom"
+msgstr "Nom"
+
+msgid "Creneaux"
+msgstr "Créneaux"
+
+msgid "resp_temps_partiel_sem"
+msgstr "semaine"
+
+msgid "resp_temps_partiel_sem_impaires"
+msgstr "Semaines impaires"
+
+msgid "resp_temps_partiel_sem_paires"
+msgstr "Semaines paires"
+
+msgid "Semaines_identiques"
+msgstr "Semaines identiques"
+
+msgid "Semaines_differenciees"
+msgstr "Semaines differenciées"
+
+msgid "Option_manquante"
+msgstr "Option manquante"
+
+msgid "resp_tout_utilisateur_associe"
+msgstr "Tout les utilisateurs sont associés à un planning"
+
+msgid "resp_menu_button_traite_additionnelle"
+msgstr "traiter les demandes"
+
+msgid "resp_menu_button_traite_repos"
+msgstr "traiter les demandes"
+
+msgid "resp_liste_planning"
+msgstr "Liste des plannings"
+
+msgid "hr_affichage_liste_planning_titre"
+msgstr "Liste des plannings"
+
+msgid "planning_used"
+msgstr "Planning en cours d'utilisation"
+
+msgid "hr_modif_planning_titre"
+msgstr "Modification du planning"
+
+msgid "hr_ajout_planning_titre"
+msgstr "Ajout d'un planning"
+
+msgid "hr_temps_partiel_sem"
+msgstr "semaine"
+
+msgid "hr_temps_partiel_sem_impaires"
+msgstr "Semaines impaires"
+
+msgid "hr_temps_partiel_sem_paires"
+msgstr "Semaines paires"
+
+msgid "hr_tout_utilisateur_associe"
+msgstr "Tout les utilisateurs sont associés à un planning"
+
+msgid "hr_liste_planning"
+msgstr "Liste des plannings"
+
+msgid "hr_ajout_planning"
+msgstr "Nouveau planning"
+
+msgid "statut_demande"
+msgstr "Demande"
+
+msgid "statut_premiere_validation"
+msgstr "Validation premier niveau"
+
+msgid "statut_validation_finale"
+msgstr "Validé"
+
+msgid "statut_refus"
+msgstr "Refusé"
+
+msgid "statut_annul"
+msgstr "Annulé"
+
+msgid "statut_inconnu"
+msgstr "Inconnu"
+
+msgid "Creneaux_travail"
+msgstr "Créneaux de travail"
+
