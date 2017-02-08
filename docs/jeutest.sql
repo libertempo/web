@@ -132,26 +132,19 @@ INSERT INTO `conges_solde_user` VALUES('bernard', 12, 0.00, 0.00, 0.00);
 INSERT INTO `conges_solde_user` VALUES('marie', 11, 0.00, 0.00, 0.00);
 INSERT INTO `conges_solde_user` VALUES('marie', 12, 0.00, 0.00, 0.00);
 
----
---- Contenu de la table `conges_type_absence`
----
-
-INSERT INTO `conges_type_absence` VALUES(11, 'conges_exceptionnels', 'enfant malade', 'enf');
-INSERT INTO `conges_type_absence` VALUES(12, 'conges_exceptionnels', 'maladie', 'mal');
-
 --
 -- Contenu de la table `conges_users`
 --
 
-INSERT INTO `conges_users` VALUES('albert', 'dupont', 'albert', 'N', 'marie', 'N', 'N', 'N', 'Y', '6c5bc43b443975b806740d8e41146479', 80, '', 0, 7);
-INSERT INTO `conges_users` VALUES('bernard', 'simon', 'bernard', 'N', 'marie', 'N', 'N', 'N', 'Y', '78d6810e1299959f3a8db157045aa926', 100, '', 0, 8);
-INSERT INTO `conges_users` VALUES('cecile', 'fabre', 'cecile', 'N', 'marie', 'N', 'N', 'N', 'Y', '0231a1bba275eac1ebb37acb638175e1', 80, '', 0, 7);
-INSERT INTO `conges_users` VALUES('georges', 'simeon', 'georges', 'N', 'paolo', 'N', 'N', 'N', 'Y', 'c5c6c8e77d4534ba39f5afec86a3a23a', 50, '', 0, 7);
-INSERT INTO `conges_users` VALUES('jean', 'gauthier', 'jean', 'N', 'marie', 'N', 'N', 'N', 'Y', 'b71985397688d6f1820685dde534981b', 100, '', 0, 7);
-INSERT INTO `conges_users` VALUES('kevin', 'legrand', 'kevin', 'N', 'paolo', 'N', 'N', 'N', 'Y', '9d5e3ecdeb4cdb7acfd63075ae046672', 100, '', 0, 7);
-INSERT INTO `conges_users` VALUES('marie', 'trinte', 'marie', 'Y', 'marie', 'Y', 'N', 'N', 'Y', 'b3725122c9d3bfef5664619e08e31877', 100, '', 0, 8);
-INSERT INTO `conges_users` VALUES('paolo', 'durand', 'paolo', 'Y', 'pierre', 'Y', 'N', 'Y', 'Y', '969044ea4df948fb0392308cfff9cdce', 100, '', 0, 7);
-INSERT INTO `conges_users` VALUES('pierre', 'point', 'pierre', 'Y', 'conges', 'N', 'Y', 'Y', 'Y', '84675f2baf7140037b8f5afe54eef841', 100, '', 0, 7);
+INSERT INTO `conges_users` VALUES('albert', 'dupont', 'albert', 'N', 'marie', 'N', 'N', 'N', 'Y', '6c5bc43b443975b806740d8e41146479', 80, '', 0, 7, 0);
+INSERT INTO `conges_users` VALUES('bernard', 'simon', 'bernard', 'N', 'marie', 'N', 'N', 'N', 'Y', '78d6810e1299959f3a8db157045aa926', 100, '', 0, 8, 0);
+INSERT INTO `conges_users` VALUES('cecile', 'fabre', 'cecile', 'N', 'marie', 'N', 'N', 'N', 'Y', '0231a1bba275eac1ebb37acb638175e1', 80, '', 0, 7, 0);
+INSERT INTO `conges_users` VALUES('georges', 'simeon', 'georges', 'N', 'paolo', 'N', 'N', 'N', 'Y', 'c5c6c8e77d4534ba39f5afec86a3a23a', 50, '', 0, 7, 0);
+INSERT INTO `conges_users` VALUES('jean', 'gauthier', 'jean', 'N', 'marie', 'N', 'N', 'N', 'Y', 'b71985397688d6f1820685dde534981b', 100, '', 0, 7, 0);
+INSERT INTO `conges_users` VALUES('kevin', 'legrand', 'kevin', 'N', 'paolo', 'N', 'N', 'N', 'Y', '9d5e3ecdeb4cdb7acfd63075ae046672', 100, '', 0, 7, 0);
+INSERT INTO `conges_users` VALUES('marie', 'trinte', 'marie', 'Y', 'marie', 'Y', 'N', 'N', 'Y', 'b3725122c9d3bfef5664619e08e31877', 100, '', 0, 8, 0);
+INSERT INTO `conges_users` VALUES('paolo', 'durand', 'paolo', 'Y', 'pierre', 'Y', 'N', 'Y', 'Y', '969044ea4df948fb0392308cfff9cdce', 100, '', 0, 7, 0);
+INSERT INTO `conges_users` VALUES('pierre', 'point', 'pierre', 'Y', 'conges', 'N', 'Y', 'Y', 'Y', '84675f2baf7140037b8f5afe54eef841', 100, '', 0, 7, 0);
 
 --
 -- Contenu de la table `planning`
