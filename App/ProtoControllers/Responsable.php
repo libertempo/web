@@ -22,7 +22,7 @@ class Responsable
         $ids = [];
 
         $sql = \includes\SQL::singleton();
-        $req = 'SELECT gr_gid AS id FROM `conges_groupe_resp` WHERE gr_login =\''.$resp.'\'';
+        $req = 'SELECT gr_gid AS id FROM `conges_groupe_resp` WHERE gr_login =\'' . $resp . '\'';
         $res = $sql->query($req);
 
         while ($data = $res->fetch_array()) {
@@ -41,18 +41,17 @@ class Responsable
      */
     public static function getIdGroupeGrandResponsable($gresp)
     {
-        $ids=[];
-         $sql = \includes\SQL::singleton();
-         $req = 'SELECT ggr_gid AS id FROM `conges_groupe_grd_resp` WHERE ggr_login =\''.$gresp.'\'';
-         $res = $sql->query($req);
+        $ids = [];
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT ggr_gid AS id FROM `conges_groupe_grd_resp` WHERE ggr_login =\'' . $gresp . '\'';
+        $res = $sql->query($req);
 
-         while ($data = $res->fetch_array()) {
-             $ids[] = (int) $data['id'];
-         }
+        while ($data = $res->fetch_array()) {
+            $ids[] = (int) $data['id'];
+        }
 
-         return $ids;
+        return $ids;
     }
-
 
     /**
      * Retourne le login des utilisateurs d'un responsable direct
@@ -66,14 +65,14 @@ class Responsable
 
         $users = [];
 
-         $sql = \includes\SQL::singleton();
-         $req = 'SELECT u_login FROM `conges_users` WHERE u_resp_login ="'. $resp . '"';
-         $res = $sql->query($req);
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT u_login FROM `conges_users` WHERE u_resp_login ="' . $resp . '"';
+        $res = $sql->query($req);
 
-         while ($data = $res->fetch_array()) {
-             $users[] = $data['u_login'];
-         }
-         return $users;
+        while ($data = $res->fetch_array()) {
+            $users[] = $data['u_login'];
+        }
+        return $users;
     }
 
     /**
@@ -87,7 +86,7 @@ class Responsable
         $sql = \includes\SQL::singleton();
         $req = 'SELECT u_resp_login
                 FROM conges_users
-                WHERE u_login ="'.\includes\SQL::quote($user).'"';
+                WHERE u_login ="' . \includes\SQL::quote($user) . '"';
         $query = $sql->query($req);
 
         return $query->fetch_array()['u_resp_login'];
@@ -99,15 +98,39 @@ class Responsable
      * @param string $user
      * @return array
      */
-    public static function getRespsUtilisateur($user){
-        $groupeIds = \App\ProtoControllers\Utilisateur::getGroupesId($user);
+    public static function getRespsUtilisateur($user)
+    {
+        $groupeIds          = \App\ProtoControllers\Utilisateur::getGroupesId($user);
         $responsablesGroupe = \App\ProtoControllers\Groupe\Responsable::getListResponsableByGroupeIds($groupeIds);
-        $responsableDirect = \App\ProtoControllers\Responsable::getRespDirect($user);
+        $responsableDirect  = \App\ProtoControllers\Responsable::getRespDirect($user);
         if (!empty($responsableDirect)) {
             return array_unique(array_merge($responsablesGroupe + [$responsableDirect]));
         }
 
         return $responsablesGroupe;
+    }
+
+    /**
+     * Retourne le login des utilisateurs d'un grand responsable
+     *
+     * @param string $gresp
+     *
+     * @return array $users
+     */
+    public static function getUsersGrandResponsable($gresp)
+    {
+
+        $users = [];
+
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT gu_login FROM `conges_groupe_grd_resp` as gr, `conges_groupe_users` as gu WHERE gr.ggr_gid = gu.gu_gid AND  ggr_login =\'' . $gresp . '\'';
+        $res = $sql->query($req);
+
+        print($req . '<br />');
+        while ($data = $res->fetch_array()) {
+            $users[] = $data['gu_login'];
+        }
+        return $users;
     }
 
     /**
@@ -117,12 +140,13 @@ class Responsable
      *
      * @return bool
      */
-    public static function isRespAbsent($resp){
+    public static function isRespAbsent($resp)
+    {
         $sql = \includes\SQL::singleton();
         $req = 'SELECT EXISTS (
                     SELECT p_num FROM conges_periode WHERE p_login = "'
-                    . \includes\SQL::quote($resp).'" AND p_etat = \''. \App\Models\Conge::STATUT_VALIDATION_FINALE
-                    . '\' AND TO_DAYS(conges_periode.p_date_deb) <= TO_DAYS(NOW())
+        . \includes\SQL::quote($resp) . '" AND p_etat = \'' . \App\Models\Conge::STATUT_VALIDATION_FINALE
+            . '\' AND TO_DAYS(conges_periode.p_date_deb) <= TO_DAYS(NOW())
                     AND TO_DAYS(conges_periode.p_date_fin) >= TO_DAYS(NOW())
                 )';
 
@@ -131,51 +155,55 @@ class Responsable
         return 0 < (int) $query->fetch_array()[0];
     }
 
-    public static function getLoginGrandResponsableUtilisateur($user) {
+    public static function getLoginGrandResponsableUtilisateur($user)
+    {
         $groupesIdUser = \App\ProtoControllers\Utilisateur::getGroupesId($user);
-        
+
         $grandResp = [];
-        $sql = \includes\SQL::singleton();
-        $req = 'select ggr_login FROM conges_groupe_grd_resp where ggr_gid  IN (\'' . implode(',', $groupesIdUser) . '\')';
-        $res = $sql->query($req);
-        
+        $sql       = \includes\SQL::singleton();
+        $req       = 'select ggr_login FROM conges_groupe_grd_resp where ggr_gid  IN (\'' . implode(',', $groupesIdUser) . '\')';
+        $res       = $sql->query($req);
+
         while ($data = $res->fetch_array()) {
-             $grandResp[] = $data['ggr_login'];
+            $grandResp[] = $data['ggr_login'];
         }
         return $grandResp;
     }
 
-    public static function getResponsablesUtilisateur($user) {
-        
-        $responsables = \App\ProtoControllers\Responsable::getResponsableGroupe(\App\ProtoControllers\Utilisateur::getGroupesId($user));
+    public static function getResponsablesUtilisateur($user)
+    {
+
+        $responsables   = \App\ProtoControllers\Responsable::getResponsableGroupe(\App\ProtoControllers\Utilisateur::getGroupesId($user));
         $responsables[] = \App\ProtoControllers\Responsable::getResponsableDirect($user);
-        $responsables = array_unique($responsables);
-        
+        $responsables   = array_unique($responsables);
+
         return $responsables;
     }
 
-    public static function getResponsableDirect($user) {
+    public static function getResponsableDirect($user)
+    {
         $resp = [];
-        $sql = \includes\SQL::singleton();
-        $req = 'SELECT u_resp_login FROM conges_users WHERE u_login ="' . \includes\SQL::quote($user) . '"';
-        $res = $sql->query($req);
+        $sql  = \includes\SQL::singleton();
+        $req  = 'SELECT u_resp_login FROM conges_users WHERE u_login ="' . \includes\SQL::quote($user) . '"';
+        $res  = $sql->query($req);
         return $res->fetch_array()['u_resp_login'];
-        
+
     }
-    
-    private static function getResponsableGroupe(array $groupesId) {
-        
+
+    private static function getResponsableGroupe(array $groupesId)
+    {
+
         $responsable = [];
-        
+
         $sql = \includes\SQL::singleton();
         $req = 'SELECT gr_login FROM conges_groupe_resp WHERE gr_gid IN (\'' . implode(',', $groupesId) . '\')';
         $res = $sql->query($req);
 
-         while ($data = $res->fetch_array()) {
-             $responsable[] = $data['gr_login'];
-         }
-         
-         return $responsable;
+        while ($data = $res->fetch_array()) {
+            $responsable[] = $data['gr_login'];
+        }
+
+        return $responsable;
     }
 
     /**
@@ -186,7 +214,8 @@ class Responsable
      *
      * @return bool
      */
-    public static function isRespDeUtilisateur($resp, $user) {
+    public static function isRespDeUtilisateur($resp, $user)
+    {
         return \App\ProtoControllers\Responsable::isRespDirect($resp, $user) || \App\ProtoControllers\Responsable::isRespGroupe($resp, \App\ProtoControllers\Utilisateur::getGroupesId($user));
     }
 
@@ -199,30 +228,31 @@ class Responsable
      *
      * @return boolean
      */
-    public static function isRespParDelegation($resp, $user) {
-        if(!$_SESSION['config']['gestion_cas_absence_responsable']){
-            return FALSE;
+    public static function isRespParDelegation($resp, $user)
+    {
+        if (!$_SESSION['config']['gestion_cas_absence_responsable']) {
+            return false;
         }
         $usersRespRespAbs = [];
-        $groupesIdResp = \App\ProtoControllers\Responsable::getIdGroupeResp($resp);
-        $usersResp = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupesIdResp);
-        $usersResp = array_merge($usersResp,\App\ProtoControllers\Responsable::getUsersRespDirect($resp));
+        $groupesIdResp    = \App\ProtoControllers\Responsable::getIdGroupeResp($resp);
+        $usersResp        = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupesIdResp);
+        $usersResp        = array_merge($usersResp, \App\ProtoControllers\Responsable::getUsersRespDirect($resp));
         foreach ($usersResp as $userResp) {
-            if(\App\ProtoControllers\Utilisateur::isResponsable($userResp) && \App\ProtoControllers\Responsable::isRespAbsent($userResp)){
+            if (\App\ProtoControllers\Utilisateur::isResponsable($userResp) && \App\ProtoControllers\Responsable::isRespAbsent($userResp)) {
                 $usersRespRespAbs[] = $userResp;
             }
         }
-        if (empty($usersRespRespAbs)){
-            return FALSE;
+        if (empty($usersRespRespAbs)) {
+            return false;
         }
 
-        $RespsUser = \App\ProtoControllers\Responsable::getRespsUtilisateur($user);
-        $RespUserPresent = array_diff($RespsUser,$usersRespRespAbs);
-        if (empty($RespUserPresent)){
-            return TRUE;
+        $RespsUser       = \App\ProtoControllers\Responsable::getRespsUtilisateur($user);
+        $RespUserPresent = array_diff($RespsUser, $usersRespRespAbs);
+        if (empty($RespUserPresent)) {
+            return true;
         }
 
-        return FALSE;
+        return false;
     }
     /**
      * Vérifie si un utilisateur est bien le grand responsable d'un employé
@@ -232,13 +262,14 @@ class Responsable
      *
      * @return bool
      */
-    public static function isGrandRespDeGroupe($resp, array $groupesId) {
+    public static function isGrandRespDeGroupe($resp, array $groupesId)
+    {
         $sql = \includes\SQL::singleton();
         $req = 'SELECT EXISTS (
                     SELECT ggr_gid
                     FROM conges_groupe_grd_resp
                     WHERE ggr_gid IN (\'' . implode(',', $groupesId) . '\')
-                        AND ggr_login = "'.\includes\SQL::quote($resp).'"
+                        AND ggr_login = "' . \includes\SQL::quote($resp) . '"
                 )';
         $query = $sql->query($req);
 
@@ -260,7 +291,7 @@ class Responsable
                     SELECT gr_gid
                     FROM conges_groupe_resp
                     WHERE gr_gid IN (\'' . implode(',', $groupesId) . '\')
-                        AND gr_login = "'.\includes\SQL::quote($resp).'"
+                        AND gr_login = "' . \includes\SQL::quote($resp) . '"
                 )';
         $query = $sql->query($req);
 
@@ -281,12 +312,12 @@ class Responsable
         $req = 'SELECT EXISTS (
                     SELECT u_resp_login
                     FROM conges_users
-                    WHERE u_login ="'.\includes\SQL::quote($user).'"
-                        AND u_resp_login ="'.\includes\SQL::quote($resp).'"
+                    WHERE u_login ="' . \includes\SQL::quote($user) . '"
+                        AND u_resp_login ="' . \includes\SQL::quote($resp) . '"
            )';
-    $query = $sql->query($req);
+        $query = $sql->query($req);
 
-    return 0 < (int) $query->fetch_array()[0];
+        return 0 < (int) $query->fetch_array()[0];
     }
 
     /**
@@ -300,7 +331,7 @@ class Responsable
     {
         $groupes = [];
         $groupes = \App\ProtoControllers\Utilisateur::getGroupesId($user);
-        if(empty($groupes)){
+        if (empty($groupes)) {
             return false;
         }
 
@@ -308,7 +339,7 @@ class Responsable
         $req = 'SELECT EXISTS (
                     SELECT g_double_valid
                     FROM conges_groupe
-                    WHERE g_gid ='. $groupes[0] . '
+                    WHERE g_gid =' . $groupes[0] . '
                     AND g_double_valid = "Y"
                 )';
         $query = $sql->query($req);

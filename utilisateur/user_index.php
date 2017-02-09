@@ -44,13 +44,17 @@ if( $_SESSION['config']['user_saisie_demande'] || $_SESSION['config']['user_sais
 }
 $onglets['liste_heure_additionnelle'] = _('user_liste_heure_additionnelle');
 
+$onglets['liste_absents_jour'] = _('user_liste_absents_jour');
+
 if( $_SESSION['config']['auth'] && $_SESSION['config']['user_ch_passwd'] ) {
     $onglets['changer_mot_de_passe'] = _('user_onglet_change_passwd');
 }
 
+
 if ( !isset($onglets[ $onglet ]) && !in_array($onglet, array('modif_demande','suppr_demande','modif_heure_repos', 'modif_heure_additionnelle'))) {
     $onglet = 'nouvelle_absence';
 }
+
 
 /*********************************/
 /*   COMPOSITION DU HEADER...    */
