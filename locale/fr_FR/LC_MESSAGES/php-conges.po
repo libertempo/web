@@ -1791,7 +1791,7 @@ msgid "jour"
 msgstr "jour"
 
 msgid "duree"
-msgstr"durée"
+msgstr "durée"
 
 msgid "champ_necessaire"
 msgstr "Champ nécessaire"
