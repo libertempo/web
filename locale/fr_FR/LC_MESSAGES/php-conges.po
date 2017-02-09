@@ -1734,10 +1734,10 @@ msgid "user_liste_heure_repos"
 msgstr "Liste des heures de repos"
 
 msgid "user_liste_heure_additionnelle"
-msgstr "Liste des heures additionnelle"
+msgstr "Liste des heures additionnelles"
 
 msgid "divers_ajout_heure_additionnelle"
-msgstr "Demande d'heure additionnelle"
+msgstr "Demande d'heures additionnelles"
 
 msgid "fin_matin"
 msgstr "fin de matinée"
@@ -1782,7 +1782,7 @@ msgid "traitement_non_autorise"
 msgstr "Traitement d'une demande non autorisé"
 
 msgid "demande_deja_traite"
-msgstr "Demande Déjà Traité"
+msgstr "Demande Déjà traitée"
 
 msgid "traitement_heure_additionnelle_titre"
 msgstr "Traitement des heures additionnelles"
@@ -1890,7 +1890,7 @@ msgid "Option_manquante"
 msgstr "Option manquante"
 
 msgid "resp_tout_utilisateur_associe"
-msgstr "Tout les utilisateurs sont associés à un planning"
+msgstr "Tous les utilisateurs sont associés à un planning"
 
 msgid "resp_menu_button_traite_additionnelle"
 msgstr "traiter les demandes"
@@ -1923,7 +1923,7 @@ msgid "hr_temps_partiel_sem_paires"
 msgstr "Semaines paires"
 
 msgid "hr_tout_utilisateur_associe"
-msgstr "Tout les utilisateurs sont associés à un planning"
+msgstr "Tous les utilisateurs sont associés à un planning"
 
 msgid "hr_liste_planning"
 msgstr "Liste des plannings"
@@ -1935,7 +1935,7 @@ msgid "statut_demande"
 msgstr "Demande"
 
 msgid "statut_premiere_validation"
-msgstr "Validation premier niveau"
+msgstr "Pré-validé"
 
 msgid "statut_validation_finale"
 msgstr "Validé"
