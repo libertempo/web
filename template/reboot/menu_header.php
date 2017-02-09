@@ -42,7 +42,6 @@
     $onglet = getpost_variable('onglet');
     // toolbar contextuelle au mode
     $mod_toolbar = [];
-
     switch($tmp) {
         case 'admin':
             $mod_toolbar[] = '<a href="#" onClick="OpenPopUp(\''. ROOT_PATH .'admin/admin_db_sauve.php?session=' . $session . '\', \'\', 800, 600); return false;"><i class="fa fa-save"></i><span>' . _('admin_button_save_db_2') . '</span></a>';
