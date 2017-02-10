@@ -156,7 +156,7 @@ class Conge
             $date = date('Y-m-d');
         }
         $sql         = \includes\SQL::singleton();
-        $responsable = 'pierre'; // TODO get nom du responsable
+        //$responsable = 'pierre'; // TODO get nom du responsable
         if (empty($responsable)) {
             // ne pas d'utiliser BETWEEN pour avoir les entrées inclusive
             $req = "SELECT u_nom, u_prenom, p_date_fin, p_demi_jour_fin
@@ -177,7 +177,7 @@ class Conge
 
                 $req = "SELECT u_nom, u_prenom, p_date_fin, p_demi_jour_fin
                 FROM conges_periode as p, conges_users as u
-                WHERE " . implode(' AND ', $where) . " AND p.p_etat = '" . \App\Models\Conge::STATUT_PREMIERE_VALIDATION . "' AND p.p_date_deb <= '$date' AND '$date' <= p.p_date_fin AND u.u_login = p.p_login";
+                WHERE " . implode(' AND ', $where) . " AND p.p_etat = '" . \App\Models\Conge::STATUT_VALIDATION_FINALE . "' AND p.p_date_deb <= '$date' AND '$date' <= p.p_date_fin AND u.u_login = p.p_login";
             }
         }
         print_r($req . '<br />');
