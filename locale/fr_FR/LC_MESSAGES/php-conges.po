@@ -1529,6 +1529,9 @@ msgstr "// AFFICHAGE DES DEMANDES DE CONGÉS DES UTILISATEURS DANS LE CALENDRIER
 msgid "config_comment_calcul_auto_jours_feries_france"
 msgstr "// SAISIE DES JOURS FÉRIÉS DE L'ANNÉE : <br>//--------------------------------------------------------------------------------------------<br>// si à FALSE : la saisie des jours fériés de l'année par l'administrateur se fait à la main. (FALSE est la valeur par défaut)<br>// si à TRUE : lors de la saisie des jours fériés de l'année par l'administrateur, les jours fériés (de France) sont automatiquement renseignés (il n'y a plus qu'à vérifier et valider)."
 
+msgid "config_comment_absents_du_jour"
+msgstr "// ABSENTS DU JOUR : <br>//--------------------------------------------------------------------------------------------<br>// si à none : les absents du jour ne seront pas affichés. (none est la valeur par défaut)<br>// si à resp : tous les absents du jour ayant le même responsable seront affichés (affichage par service)<br>// si à grresp : tous les absents du jour ayant le même grand responsable seront affichés (affichage par direction)<br>// si à all : tous les absents du jour seront affichés"
+
 msgid "config_comment_gestion_cas_absence_responsable"
 msgstr "// PRISE EN COMPTE DES ABSENCES DU RESPONSABLE : <br>//--------------------------------------------------------------------------------------------<br>// si à FALSE : en cas d'absence de leur responsable, les demandes des utilisateurs attendent le retour de celui-ci. (FALSE est la valeur par défaut)<br>// si à TRUE : en cas d'absence de leur responsable, les demandes des utilisateurs sont transmises au responsable du responsable qui peut alors les traiter."
 
@@ -1539,7 +1542,7 @@ msgid "config_comment_texte_page_login"
 msgstr "// TEXTE DE LA PAGE D'ACCUEIL<br>//------------------<br>// texte qui apparaîtra sous l'image sur la page de connexion (peut être vide)"
 
 msgid "config_comment_solde_toujours_positif"
-msgstr "// SOLDES TOUJOURS POSITIFS : <br>//--------------------------------------------------------------------------------------------<br>// si à FALSE : le solde d'un congé peut être négatif. (FALSE est la valeur par défaut)<br>// si à TRUE : le solde d'un congé ne peut pas être négatif (un utilisateur ne peut poser un congé si son solde devient négatif)."
+msgstr "// SOLDES TOUJOURS POSITIFS : <br>//--------------------------------------------------------------------------------------------// si à FALSE : le solde d'un congé peut être négatif. (FALSE est la valeur par défaut)<br>// si à TRUE : le solde d'un congé ne peut pas être négatif (un utilisateur ne peut poser un congé si son solde devient négatif)."
 
 msgid "verif_solde_erreur_part_1"
 msgstr "Attention le nombre de jours d'absence demandé"
