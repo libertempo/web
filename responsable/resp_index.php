@@ -63,7 +63,8 @@ verif_droits_user($session, "is_resp");
     if( $_SESSION['config']['resp_ajoute_conges'] )
         $onglets['ajout_conges'] = _('resp_ajout_conges_titre');
 
-    $onglets['liste_planning'] = _('resp_liste_planning');
+    if( $_SESSION['config']['resp_association_planning'] )
+        $onglets['liste_planning'] = _('resp_liste_planning');
 
     if (false)
         $onglets['cloture_exercice'] = _('button_cloture');
