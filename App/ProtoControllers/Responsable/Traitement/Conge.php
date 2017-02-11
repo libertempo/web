@@ -467,7 +467,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         $ids = [];
         foreach ($usersRespAbsent as $userResp){
             $delegation = TRUE;
-            $respsUser = \App\ProtoControllers\Responsable::getRespsUtilisateur($userResp);
+            $respsUser = \App\ProtoControllers\Responsable::getResponsablesUtilisateur($userResp);
             foreach ($respsUser as $respUser){
                 if (!\App\ProtoControllers\Responsable::isRespAbsent($respUser)){
                     $delegation = FALSE;

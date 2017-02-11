@@ -164,7 +164,7 @@ abstract class AHeure
         $jour  = \App\Helpers\Formatter::dateFr2Iso($post['jour']);
         $debut = strtotime($jour . ' ' . $post['debut_heure']);
         $fin   = strtotime($jour . ' ' . $post['fin_heure']);
-        $statut = !empty(Responsable::getRespsUtilisateur($user))
+        $statut = !empty(Responsable::getResponsablesUtilisateur($user))
             ? Models\AHeure::STATUT_DEMANDE
             : Models\AHeure::STATUT_VALIDATION_FINALE
         ;
