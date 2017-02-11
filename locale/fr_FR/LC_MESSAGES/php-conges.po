@@ -1952,3 +1952,8 @@ msgstr "Inconnu"
 msgid "Creneaux_travail"
 msgstr "Créneaux de travail"
 
+msgid "vue_mois"
+msgstr "Mensuel"
+
+msgid "vue_semaine"
+msgstr "Hebdomadaire"
