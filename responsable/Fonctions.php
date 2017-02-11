@@ -1348,7 +1348,7 @@ class Fonctions
         $return .= '</ul>';
         $return .= '</div>';
 
-        $return .= '<h2>' . _('resp_traite_user_etat_conges') . $year_affichage . '</h2>';
+        $return .= '<h2>' . _('resp_traite_user_etat_conges') . ' ' . $year_affichage . '</h2>';
 
         // Récupération des informations de speriodes de conges/absences
         $sql3 = "SELECT p_login, p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_nb_jours, p_commentaire, p_type, p_etat, p_motif_refus, p_date_demande, p_date_traitement, p_num FROM conges_periode " .
@@ -1814,28 +1814,54 @@ class Fonctions
     /**
      * Encapsule le comportement du module de gestion des congés des utilisateurs
      *
-     * @return void
-     * @access public
+     * @return string
      * @static
      */
     public static function traiteUserModule()
     {
-        //var pour resp_traite_user.php
-        $user_login   = htmlentities(getpost_variable('user_login'), ENT_QUOTES | ENT_HTML401);
-        $year_calendrier_saisie_debut = htmlentities(getpost_variable('year_calendrier_saisie_debut', 0), ENT_QUOTES | ENT_HTML401);
-        $mois_calendrier_saisie_debut = htmlentities(getpost_variable('mois_calendrier_saisie_debut', 0), ENT_QUOTES | ENT_HTML401);
+        $entities = function ($element) {
+            return htmlentities($element, ENT_QUOTES | ENT_HTML401);
+        };
+        $userLogin = $entities(getpost_variable('user_login'));
+
+        if ( !is_resp_of_user($_SESSION['userlogin'] , $userLogin)) {
+            redirect(ROOT_PATH . 'deconnexion.php');
+            exit;
+        }
+
+        $return = self::traiterUserConge($userLogin);
+        $return .= self::traiteUserHeure();
+
+        return $return;
+    }
+
+    /**
+     * Traite les congés de l'utilisateur
+     *
+     * @param string $user_login
+     *
+     * @return string
+     */
+    private static function traiterUserConge($user_login)
+    {
+        $entities = function ($element) {
+            return htmlentities($element, ENT_QUOTES | ENT_HTML401);
+        };
+        $year_calendrier_saisie_debut = $entities(getpost_variable('year_calendrier_saisie_debut', 0));
+        $mois_calendrier_saisie_debut = $entities(getpost_variable('mois_calendrier_saisie_debut', 0));
         $year_calendrier_saisie_fin = getpost_variable('year_calendrier_saisie_fin', 0) ;
-        $mois_calendrier_saisie_fin = htmlentities(getpost_variable('mois_calendrier_saisie_fin', 0), ENT_QUOTES | ENT_HTML401);
-        $tri_date = htmlentities(getpost_variable('tri_date', "ascendant"), ENT_QUOTES | ENT_HTML401);
-        $tab_checkbox_annule = htmlentities(getpost_variable('tab_checkbox_annule'), ENT_QUOTES | ENT_HTML401);
-        $tab_radio_traite_demande = htmlentities(getpost_variable('tab_radio_traite_demande'), ENT_QUOTES | ENT_HTML401);
-        $tab_text_refus = htmlentities(getpost_variable('tab_text_refus'), ENT_QUOTES | ENT_HTML401);
-        $tab_text_annul = htmlentities(getpost_variable('tab_text_annul'), ENT_QUOTES | ENT_HTML401);
+        $mois_calendrier_saisie_fin = $entities(getpost_variable('mois_calendrier_saisie_fin', 0));
+        $tri_date = $entities(getpost_variable('tri_date', "ascendant"));
+        $tab_checkbox_annule = array_map($entities, getpost_variable('tab_checkbox_annule', []));
+        $tab_radio_traite_demande = array_map($entities, getpost_variable('tab_radio_traite_demande', []));
+        $tab_text_refus = array_map($entities, getpost_variable('tab_text_refus', []));
+        $tab_text_annul = array_map($entities, (array) getpost_variable('tab_text_annul', []));
         $new_demande_conges = getpost_variable('new_demande_conges', 0) ;
-        $new_debut = htmlentities(getpost_variable('new_debut'), ENT_QUOTES | ENT_HTML401);
-        $new_demi_jour_deb = htmlentities(getpost_variable('new_demi_jour_deb'), ENT_QUOTES | ENT_HTML401);
-        $new_fin = htmlentities(getpost_variable('new_fin'), ENT_QUOTES | ENT_HTML401);
-        $new_demi_jour_fin = htmlentities(getpost_variable('new_demi_jour_fin'), ENT_QUOTES | ENT_HTML401);
+        $new_debut = $entities(getpost_variable('new_debut'));
+        $new_demi_jour_deb = $entities(getpost_variable('new_demi_jour_deb'));
+        $new_fin = $entities(getpost_variable('new_fin'));
+        $new_demi_jour_fin = $entities(getpost_variable('new_demi_jour_fin'));
+
         $return = '';
 
         if($_SESSION['config']['disable_saise_champ_nb_jours_pris']) { // zone de texte en readonly et grisée
@@ -1844,26 +1870,18 @@ class Fonctions
             $new_nb_jours = getpost_variable('new_nb_jours') ;
         }
 
-        $new_comment = htmlentities(getpost_variable('new_comment'), ENT_QUOTES | ENT_HTML401);
-        $new_type = htmlentities(getpost_variable('new_type'), ENT_QUOTES | ENT_HTML401);
+        $new_comment = $entities(getpost_variable('new_comment'));
+        $new_type = $entities(getpost_variable('new_type'));
         $year_affichage = (int) getpost_variable('year_affichage' , date("Y") );
-
-        /*************************************/
-
-        if ( !is_resp_of_user($_SESSION['userlogin'] , $user_login)) {
-            redirect(ROOT_PATH . 'deconnexion.php');
-            exit;
-        }
 
         /************************************/
 
-
         // si une annulation de conges a été selectionée :
-        if($tab_checkbox_annule!="") {
+        if(!empty($tab_checkbox_annule)) {
             $return .= \responsable\Fonctions::annule_conges($user_login, $tab_checkbox_annule, $tab_text_annul);
         }
         // si le traitement des demandes a été selectionée :
-        elseif($tab_radio_traite_demande!="") {
+        elseif(!empty($tab_radio_traite_demande)) {
             $return .= \responsable\Fonctions::traite_demandes($user_login, $tab_radio_traite_demande, $tab_text_refus);
         }
         // si un nouveau conges ou absence a été saisi pour un user :
@@ -1872,7 +1890,13 @@ class Fonctions
         } else {
             $return .= \responsable\Fonctions::affichage($user_login,  $year_affichage, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $tri_date);
         }
+
         return $return;
+    }
+
+    private static function traiteUserHeure()
+    {
+        return '';
     }
 
     /**
