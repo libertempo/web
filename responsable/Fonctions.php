@@ -1821,20 +1821,20 @@ class Fonctions
     public static function traiteUserModule()
     {
         //var pour resp_traite_user.php
-        $user_login   = getpost_variable('user_login') ;
-        $year_calendrier_saisie_debut = getpost_variable('year_calendrier_saisie_debut', 0) ;
-        $mois_calendrier_saisie_debut = getpost_variable('mois_calendrier_saisie_debut', 0) ;
+        $user_login   = htmlentities(getpost_variable('user_login'), ENT_QUOTES | ENT_HTML401);
+        $year_calendrier_saisie_debut = htmlentities(getpost_variable('year_calendrier_saisie_debut', 0), ENT_QUOTES | ENT_HTML401);
+        $mois_calendrier_saisie_debut = htmlentities(getpost_variable('mois_calendrier_saisie_debut', 0), ENT_QUOTES | ENT_HTML401);
         $year_calendrier_saisie_fin = getpost_variable('year_calendrier_saisie_fin', 0) ;
-        $mois_calendrier_saisie_fin = getpost_variable('mois_calendrier_saisie_fin', 0) ;
-        $tri_date = getpost_variable('tri_date', "ascendant") ;
-        $tab_checkbox_annule = getpost_variable('tab_checkbox_annule') ;
-        $tab_radio_traite_demande = getpost_variable('tab_radio_traite_demande') ;
-        $tab_text_refus = getpost_variable('tab_text_refus') ;
-        $tab_text_annul = getpost_variable('tab_text_annul') ;
+        $mois_calendrier_saisie_fin = htmlentities(getpost_variable('mois_calendrier_saisie_fin', 0), ENT_QUOTES | ENT_HTML401);
+        $tri_date = htmlentities(getpost_variable('tri_date', "ascendant"), ENT_QUOTES | ENT_HTML401);
+        $tab_checkbox_annule = htmlentities(getpost_variable('tab_checkbox_annule'), ENT_QUOTES | ENT_HTML401);
+        $tab_radio_traite_demande = htmlentities(getpost_variable('tab_radio_traite_demande'), ENT_QUOTES | ENT_HTML401);
+        $tab_text_refus = htmlentities(getpost_variable('tab_text_refus'), ENT_QUOTES | ENT_HTML401);
+        $tab_text_annul = htmlentities(getpost_variable('tab_text_annul'), ENT_QUOTES | ENT_HTML401);
         $new_demande_conges = getpost_variable('new_demande_conges', 0) ;
-        $new_debut = getpost_variable('new_debut') ;
+        $new_debut = htmlentities(getpost_variable('new_debut'), ENT_QUOTES | ENT_HTML401);
         $new_demi_jour_deb = htmlentities(getpost_variable('new_demi_jour_deb'), ENT_QUOTES | ENT_HTML401);
-        $new_fin = getpost_variable('new_fin') ;
+        $new_fin = htmlentities(getpost_variable('new_fin'), ENT_QUOTES | ENT_HTML401);
         $new_demi_jour_fin = htmlentities(getpost_variable('new_demi_jour_fin'), ENT_QUOTES | ENT_HTML401);
         $return = '';
 
