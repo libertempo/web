@@ -26,24 +26,29 @@ class Fonctions
         // AFFICHAGE TABLEAU (premiere ligne)
         $return = '';
         $return .= '<h2>'. _('hr_traite_user_etat_conges') . '</H2>';
-        $return .= '<table cellpadding="2" class="tablo" width="80%">';
+        $return .= '<table cellpadding="2" class="table table-striped table-hover table-responsive table-condensed">';
         $return .= '<thead>';
         $return .= '<tr>';
         $return .= '<th>' . _('divers_nom_maj') . '</th>';
         $return .= '<th>' . _('divers_prenom_maj') . '</th>';
-        $return .= '<th>' . _('divers_quotite_maj_1') . '</th>';
+        $return .= '<th style="border-right: 2px solid #e6e6e6;">'. _('divers_quotite_maj_1') .'</th>' ;
+        $tmp = 0;
         $nb_colonnes = 3;
         foreach($tab_type_cong as $id_conges => $libelle) {
             // cas d'une absence ou d'un congé
-            $return .= '<th>' . $libelle . ' / ' . _('divers_an_maj') . '</th>';
+            /*$return .= '<th>' . $libelle . ' / ' . _('divers_an_maj') . '</th>';
             $return .= '<th>'. _('divers_solde_maj') . ' ' . $libelle . '</th>';
+            $nb_colonnes += 2;*/
+            $return .= '<th colspan="2" style="text-align: center; border-right: 2px solid #e6e6e6;">'.$libelle.'</th>';
             $nb_colonnes += 2;
+            $tmp ++;
         }
         // conges exceptionnels
         if ($_SESSION['config']['gestion_conges_exceptionnels']) {
             foreach($tab_type_conges_exceptionnels as $id_type_cong => $libelle) {
-                $return .= '<th>'. _('divers_solde_maj') . ' ' . $libelle . '</th>';
+                $return .= '<th style="text-align: center; border-right: 2px solid #e6e6e6;">'. _('divers_solde_maj') . ' ' . $libelle . '</th>';
                 $nb_colonnes += 1;
+                $tmp ++;
             }
         }
         $return .= '<th></th>';
@@ -54,6 +59,12 @@ class Fonctions
         }
         $return .= '</tr>';
         $return .= '</thead>';
+        $return .= '<thead><tr><th></th><th></th><th style="text-align: center; border-right: 2px solid #e6e6e6;"></th>';
+        for($i=0;$i<$tmp;$i++) {
+            $return .= '<th style="text-align: center; border-right: 2px solid #e6e6e6;">/' . _('divers_an_maj') .
+                '</th><th style="text-align: center; border-right: 2px solid #e6e6e6;">' . _('divers_solde_maj') . '</th>';
+        }
+        $return .= '</tr></thead>';
         $return .= '<tbody>';
 
         /***********************************/
@@ -79,7 +90,7 @@ class Fonctions
                 } else {
                     $return .= '<tr class="hidden">';
                 }
-                $return .= '<td>' . $tab_current_user['nom'] . '</td><td>' . $tab_current_user['prenom'] . '</td><td>' . $tab_current_user['quotite'] . '%</td>';
+                $return .= '<td>' . $tab_current_user['nom'] . '</td><td>' . $tab_current_user['prenom'] . '</td><td style="text-align: center; border-right: 2px solid #e6e6e6;">' . $tab_current_user['quotite'] . '%</td>';
                 foreach($tab_type_cong as $id_conges => $libelle) {
                     $nbAn = isset($tab_conges[$libelle]['nb_an'])
                         ? $tab_conges[$libelle]['nb_an']
@@ -87,8 +98,8 @@ class Fonctions
                     $solde = isset($tab_conges[$libelle]['solde'])
                         ? $tab_conges[$libelle]['solde']
                         : 0;
-                    $return .= '<td>'.$nbAn.'</td>';
-                    $return .= '<td>'. $solde .'</td>';
+                    $return .= '<td style="text-align: center; border-right: 2px solid #e6e6e6;">'.$nbAn.'</td>';
+                    $return .= '<td style="text-align: center; border-right: 2px solid #e6e6e6;">'. $solde .'</td>';
                 }
                 if ($_SESSION['config']['gestion_conges_exceptionnels']) {
                     foreach($tab_type_conges_exceptionnels as $id_type_cong => $libelle)
