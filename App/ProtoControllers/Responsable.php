@@ -159,7 +159,7 @@ class Responsable
         $sql = \includes\SQL::singleton();
         $req = 'SELECT gr_login FROM conges_groupe_resp 
                     WHERE gr_gid IN (\'' . implode(',', $groupesId) . '\')
-                    AND gr_gid =! "'. $_SESSION['userlogin'] .'"';
+                    AND gr_login != "'. $_SESSION['userlogin'] .'"';
         $res = $sql->query($req);
 
          while ($data = $res->fetch_array()) {
