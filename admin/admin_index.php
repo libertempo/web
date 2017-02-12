@@ -18,7 +18,7 @@ verif_droits_user($session, 'is_admin');
 /*************************************/
 // recup des parametres reçus :
 // SERVER
-$PHP_SELF=$_SERVER['PHP_SELF'];
+$PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 // GET / POST
 $onglet = htmlentities(getpost_variable('onglet', 'admin-users'), ENT_QUOTES | ENT_HTML401);
 
