@@ -1969,3 +1969,12 @@ msgstr "Vous n'avez aucune demande à traiter"
 
 msgid "contacter_rh"
 msgstr "Contacter le gestionnaire des ressources humaines"
+
+msgid "pas_d_absents"
+msgstr "Il n'y a pas d'absents"
+
+msgid "user_liste_absents_jour"
+msgstr "Absents du jour"
+
+msgid "user_liste_absents_jour_titre"
+msgstr "Liste des absents du jour"
