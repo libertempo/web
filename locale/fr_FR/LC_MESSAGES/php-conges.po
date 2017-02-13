@@ -1702,3 +1702,12 @@ msgstr "Cette demande chevauche une autre demande déjà validée"
 
 msgid "demande_heure_non_editable"
 msgstr "Cette demande n'est plus accessible"
+
+msgid "pas_d_absents"
+msgstr "Il n'y a pas d'absents"
+
+msgid "user_liste_absents_jour"
+msgstr "Absents du jour"
+
+msgid "user_liste_absents_jour_titre"
+msgstr "Liste des absents du jour"

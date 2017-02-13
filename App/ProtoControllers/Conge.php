@@ -140,65 +140,60 @@ class Conge
 
     /**
      * Liste les personnes absentes a une date précise sous un responsable, le but est en fonction du responsable d'aller chercher les personnes qu'ils gèrent et qui sont en congés à la date demandée
-     * Si le responsable est vide on prend toutes les personnes de la base
-     * Si la date est vide on prend la date d'aujourd'hui
      *
-     * @param string $responsable, use u_prenom like 'marie'
-     * @param date $date
+     * @param string $user, utiliser u_prenom comme 'marie', si le user est vide on prend toutes les personnes de la base
+     * @param date $date, Si la date est vide on prend la date d'aujourd'hui
+     * @param string $grade, 'resp' ou 'grresp' ou null demande les utilisateurs du responsable direct 'resp' ou les utilisateurs partageant le même groupe 'grresp'
      *
      * @return array liste des utilisateurs et leurs date de fin de congés
+     *
+     * Ex de return [
+     *      ['pierre', 'point', '2017-02-09', 'am'],
+     *      ['paolo', 'durand', '2017-02-21', 'pm'],
+     *      ['jean', 'gauthier', '2017-02-14', 'pm']
+     *  ];
+     *
+     * note: Mettre dans un Model lors du refactor MVC
      */
 
-    public function getListeAbsentDateSousResponsable($responsable = null, $date = null)
+    public function getListeAbsentDateSousResponsable($user = null, $date = null, $grade = null)
     {
+        $listeAbsents = [];
         // Si la date est vide on prend la date d'aujourd'hui
         if (empty($date)) {
             $date = date('Y-m-d');
         }
-        $sql         = \includes\SQL::singleton();
-        //$responsable = 'pierre'; // TODO get nom du responsable
-        if (empty($responsable)) {
+        $sql = \includes\SQL::singleton();
+        if (empty($grade) || empty($user)) {
             // ne pas d'utiliser BETWEEN pour avoir les entrées inclusive
             $req = "SELECT u_nom, u_prenom, p_date_fin, p_demi_jour_fin
                 FROM conges_periode as p, conges_users as u
                 WHERE p.p_etat = '" . \App\Models\Conge::STATUT_VALIDATION_FINALE . "'  AND p.p_date_deb <= '$date' AND '$date' <= p.p_date_fin AND u.u_login = p.p_login";
         } else {
-            if (false) {
-                // TEST
-                $req = "SELECT u_nom, u_prenom, p_date_fin, p_demi_jour_fin
+            if ($grade == 'resp') {
+                $responsableDirect = \App\ProtoControllers\Responsable::getRespDirect($user);
+                $req               = "SELECT u_nom, u_prenom, p_date_fin, p_demi_jour_fin
                 FROM conges_periode as p, conges_users as u
-                WHERE u.u_resp_login = '$responsable' AND p.p_etat = '" . \App\Models\Conge::STATUT_VALIDATION_FINALE . "' AND p.p_date_deb <= '$date' AND '$date' <= p.p_date_fin AND u.u_login = p.p_login";
-            } else {
-                $ids = \App\ProtoControllers\Responsable::getUsersGrandResponsable($responsable);
-                print("<pre>");
-                print_r($ids);
-                print("</pre>");
-                $where[] = 'u.u_login IN ("' . implode('","', $ids) . '")';
-
-                $req = "SELECT u_nom, u_prenom, p_date_fin, p_demi_jour_fin
-                FROM conges_periode as p, conges_users as u
-                WHERE " . implode(' AND ', $where) . " AND p.p_etat = '" . \App\Models\Conge::STATUT_VALIDATION_FINALE . "' AND p.p_date_deb <= '$date' AND '$date' <= p.p_date_fin AND u.u_login = p.p_login";
+                WHERE u.u_resp_login = '$responsableDirect' AND p.p_etat = '" . \App\Models\Conge::STATUT_VALIDATION_FINALE . "' AND p.p_date_deb <= '$date' AND '$date' <= p.p_date_fin AND u.u_login = p.p_login";
+            } else if ($grade == 'grresp') {
+                $req = "SELECT DISTINCT u_nom, u_prenom, p_date_fin, p_demi_jour_fin
+                    FROM conges_periode as p, conges_users as u, conges_groupe_users as gu
+                    WHERE gu.gu_gid = (SELECT gu_gid FROM conges_groupe_users WHERE gu_login = '$user') AND p.p_etat = '" . \App\Models\Conge::STATUT_VALIDATION_FINALE . "' AND p.p_date_deb <= '$date' AND '$date' <= p.p_date_fin AND u.u_login = p.p_login";
             }
         }
-        print_r($req . '<br />');
-        $res = $sql->query($req);
+        if (!empty($req)) {
+            $res = $sql->query($req);
 
-        $listeAbsents = [];
-        while ($data = $res->fetch_array()) {
-            $absent             = array();
-            $absent['nom']      = $data['u_nom'];
-            $absent['prenom']   = $data['u_prenom'];
-            $absent['date_fin'] = $data['p_date_fin'] . ' ' . $data['p_demi_jour_fin'];
-            $listeAbsents[]     = $absent;
+            while ($data = $res->fetch_array()) {
+                $absent             = array();
+                $absent['nom']      = $data['u_nom'];
+                $absent['prenom']   = $data['u_prenom'];
+                $absent['date_fin'] = $data['p_date_fin'] . ' ' . $data['p_demi_jour_fin'];
+                $listeAbsents[]     = $absent;
+            }
         }
-
-        var_dump($listeAbsents);
         return $listeAbsents;
-        // return [
-        //     ['pierre', 'point', '2017-02-09', 'am'],
-        //     ['paolo', 'durand', '2017-02-21', 'pm'],
-        //     ['jean', 'gauthier', '2017-02-14', 'pm']
-        // ];
+
     }
 
     /**
