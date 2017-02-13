@@ -1,4 +1,5 @@
 <?php
+// Controller
 defined('_PHP_CONGES') or die('Restricted access');
 if (!empty($_SESSION['config']['absents_du_jour']) && $_SESSION['config']['absents_du_jour'] == "none") {
     redirect(ROOT_PATH . 'deconnexion.php');
