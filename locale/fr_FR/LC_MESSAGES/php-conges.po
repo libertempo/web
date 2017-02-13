@@ -411,7 +411,7 @@ msgid "resp_menu_button_retour_main"
 msgstr "Page Principale"
 
 msgid "resp_menu_button_traite_demande"
-msgstr "Traiter toutes les Demandes"
+msgstr "Traitement congés"
 
 msgid "resp_etat_users_afficher"
 msgstr "Afficher"
@@ -1320,7 +1320,7 @@ msgid "ie_non_gere"
 msgstr "Internet Explorer n'est pas pris en charge par Libertempo!<br>utilisez un autre navigateur"
 
 msgid "resp_traite_demandes_titre_tableau_1"
-msgstr "Demandes à valider"
+msgstr "Traitement des congés"
 
 msgid "resp_traite_demandes_titre_tableau_2"
 msgstr "Demandes en deuxième validation"
@@ -1893,10 +1893,10 @@ msgid "resp_tout_utilisateur_associe"
 msgstr "Tous les utilisateurs sont associés à un planning"
 
 msgid "resp_menu_button_traite_additionnelle"
-msgstr "traiter les demandes"
+msgstr "Traitement heures additionnelles"
 
 msgid "resp_menu_button_traite_repos"
-msgstr "traiter les demandes"
+msgstr "Traitement heures de repos"
 
 msgid "resp_liste_planning"
 msgstr "Liste des plannings"
@@ -1957,3 +1957,6 @@ msgstr "Mensuel"
 
 msgid "vue_semaine"
 msgstr "Hebdomadaire"
+
+msgid "aucune_demande"
+msgstr "Vous n'avez aucune demande à traiter"

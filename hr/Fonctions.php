@@ -346,7 +346,7 @@ class Fonctions
         $return .= '<br>';
 
         if(($count1==0) && ($count2==0)) {
-            $return .= '<strong>' . _('resp_traite_demandes_aucune_demande') . '</strong>';
+            $return .= '<strong>' . _('aucune_demande') . '</strong>';
         } else {
             $return .= '<hr/>';
             $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
