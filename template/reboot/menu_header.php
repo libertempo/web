@@ -13,7 +13,7 @@
     }
     //user mode
     $user_mode = '';
-    $tmp = dirname($_SERVER['PHP_SELF']);
+    $tmp = dirname(filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL));
     $tmp = explode('/',$tmp);
     $tmp = array_pop($tmp);
     $adminActive = $userActive = $respActive = $hrActive = $calendarActive = '';

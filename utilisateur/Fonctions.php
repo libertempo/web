@@ -57,7 +57,7 @@ class Fonctions
         $new_fin = convert_date($new_fin);
         $return = '';
 
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
 
         // verif validité des valeurs saisies
@@ -239,7 +239,7 @@ class Fonctions
 
     public static function modifier($p_num_to_update, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $p_etat, $onglet)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
         $VerifNb = verif_saisie_decimal($new_nb_jours);
@@ -272,7 +272,7 @@ class Fonctions
 
     public static function confirmer($p_num, $onglet)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -433,7 +433,7 @@ class Fonctions
 
     public static function suppression($p_num_to_delete, $onglet)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -463,7 +463,7 @@ class Fonctions
 
     public static function confirmerSuppression($p_num, $onglet)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -560,7 +560,7 @@ class Fonctions
 
     public static function change_passwd( $new_passwd1, $new_passwd2)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -609,7 +609,7 @@ class Fonctions
         if($change_passwd==1) {
             $return .= \utilisateur\Fonctions::change_passwd($new_passwd1, $new_passwd2);
         } else {
-            $PHP_SELF=$_SERVER['PHP_SELF'];
+            $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
             $session=session_id();
 
             $return .= '<h1>' . _('user_change_password') . '</h1>';
@@ -817,7 +817,7 @@ class Fonctions
     {
         $return = '';
 
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
 
         $duree_demande_1="";
@@ -1095,7 +1095,7 @@ class Fonctions
     public static function saisie_echange_rtt($user_login, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet)
     {
         $return = '';
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $mois_calendrier_saisie_debut_prec=0; $year_calendrier_saisie_debut_prec=0;
         $mois_calendrier_saisie_debut_suiv=0; $year_calendrier_saisie_debut_suiv=0;

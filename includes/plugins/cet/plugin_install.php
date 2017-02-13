@@ -2,7 +2,7 @@
 include_once ROOT_PATH . 'define.php';
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 
-$PHP_SELF=$_SERVER['PHP_SELF'];
+$PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 $timeout=2 ; // refresh après maj.
 
 if(!isset($session) || $session == "")
