@@ -577,7 +577,7 @@ class Fonctions
             if($result)
                 $return .= _('form_modif_ok') ." <br><br> \n";
             else
-                $return .= _('form_mofif_not_ok') ."<br><br> \n";
+                $return .= _('form_modif_not_ok') ."<br><br> \n";
         }
 
         $comment_log = 'changement Password';

@@ -86,23 +86,23 @@ class Conge
     {
         switch ($status) {
             case static::STATUT_DEMANDE:
-                $text = 'statut_demande';
+                $text = _('statut_demande');
                 break;
             case static::STATUT_PREMIERE_VALIDATION:
-                $text = 'statut_premiere_validation';
+                $text = _('statut_premiere_validation');
                 break;
             case static::STATUT_VALIDATION_FINALE:
-                $text = 'statut_validation_finale';
+                $text = _('statut_validation_finale');
                 break;
             case static::STATUT_REFUS:
-                $text = 'statut_refus';
+                $text = _('statut_refus');
                 break;
             case static::STATUT_ANNUL:
-                $text = 'statut_annul';
+                $text = _('statut_annul');
                 break;
 
             default:
-                $text = 'statut_inconnu';
+                $text = _('statut_inconnu');
                 break;
         }
 
