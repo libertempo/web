@@ -65,7 +65,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         $demandesGrandResp = $this->getDemandesGrandResponsable($_SESSION['userlogin']);
         $demandesRespAbsent = $this->getDemandesResponsableAbsent($_SESSION['userlogin']);
         if (empty($demandesResp) && empty($demandesGrandResp) && empty($demandesRespAbsent) ) {
-            $childTable .= '<tr><td colspan="12"><center>' . _('resp_traite_demandes_aucune_demande') . '</center></td></tr>';
+            $childTable .= '<tr><td colspan="12"><center>' . _('aucune_demande') . '</center></td></tr>';
         } else {
             if(!empty($demandesResp)) {
                 $childTable .= $this->getFormDemandes($demandesResp);

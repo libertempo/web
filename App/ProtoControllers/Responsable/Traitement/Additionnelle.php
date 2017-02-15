@@ -244,7 +244,7 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
         $demandesResp = $this->getDemandesResponsable($_SESSION['userlogin']);
         $demandesGrandResp = $this->getDemandesGrandResponsable($_SESSION['userlogin']);
         if (empty($demandesResp) && empty($demandesGrandResp) ) {
-            $childTable .= '<tr><td colspan="11"><center>' . _('aucun_resultat') . '</center></td></tr>';
+            $childTable .= '<tr><td colspan="11"><center>' . _('aucune_demande') . '</center></td></tr>';
         } else {
             if(!empty($demandesResp)) {
                 $childTable .= $this->getFormDemandes($demandesResp);
