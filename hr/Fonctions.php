@@ -505,7 +505,7 @@ class Fonctions
             {
                 // recup di motif de refus
                 $motif_refus=addslashes($tab_text_refus[$numero_int]);
-                $sql3 = 'UPDATE conges_periode SET p_etat=\'refus\', p_motif_refus='.\includes\SQL::quote($motif_refus).', p_date_traitement=NOW() WHERE p_num="'.\includes\SQL::quote($numero_int).'" AND ( p_etat=\'valid\' OR p_etat=\'demande\' );';
+                $sql3 = 'UPDATE conges_periode SET p_etat=\'refus\', p_motif_refus="'.\includes\SQL::quote($motif_refus).'", p_date_traitement=NOW() WHERE p_num="'.\includes\SQL::quote($numero_int).'" AND ( p_etat=\'valid\' OR p_etat=\'demande\' );';
                 $ReqLog3 = \includes\SQL::query($sql3);
 
                 if ($ReqLog3 && \includes\SQL::getVar('affected_rows')) {

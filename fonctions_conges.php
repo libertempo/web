@@ -84,9 +84,9 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
     {
         // attention : IE6 : bug avec les "OnChange" sur les boutons radio!!! (on remplace par OnClick)
         if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) ) {
-            $return .= 'onClick="compter_jours();return true;"';
+            $return .= 'onClick="compter_jours();return true;" ';
         } else {
-            $return .= 'onChange="compter_jours();return false;"';
+            $return .= 'onChange="compter_jours();return false;" ';
         }
     }
     $return .= 'value="am" checked>&nbsp;' .  _('form_am');
@@ -95,9 +95,9 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
     if($_SESSION['config']['rempli_auto_champ_nb_jours_pris'])
     {
         if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) ) {
-            $return .= 'onClick="compter_jours();return true;"';
+            $return .= 'onClick="compter_jours();return true;" ';
         } else {
-            $return .= 'onChange="compter_jours();return false;"';
+            $return .= 'onChange="compter_jours();return false;" ';
         }
     }
     $return .= 'value="pm">&nbsp;' .  _('form_pm');
@@ -114,9 +114,9 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
     {
         // attention : IE6 : bug avec les "OnChange" sur les boutons radio!!! (on remplace par OnClick)
         if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) ) {
-            $return .= 'onClick="compter_jours();return true;"' ;
+            $return .= 'onClick="compter_jours();return true;" ' ;
         } else {
-            $return .= 'onChange="compter_jours();return false;"' ;
+            $return .= 'onChange="compter_jours();return false;" ' ;
         }
     }
     $return .= 'value="am">&nbsp;'. _('form_am');
@@ -125,9 +125,9 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
     if($_SESSION['config']['rempli_auto_champ_nb_jours_pris'])
     {
         if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) ) {
-            $return .= 'onClick="compter_jours();return true;"' ;
+            $return .= 'onClick="compter_jours();return true;" ' ;
         } else {
-            $return .= 'onChange="compter_jours();return false;"' ;
+            $return .= 'onChange="compter_jours();return false;" ' ;
         }
     }
     $return .= 'value="pm" checked>&nbsp;' . _('form_pm');
@@ -928,9 +928,9 @@ function affiche_cellule_jour_cal_saisie($login, $j_timestamp, $td_second_class,
         {
             // attention : IE6 : bug avec les "OnChange" sur les boutons radio!!! (on remplace par OnClick)
             if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) )
-                echo 'onClick="compter_jours();return true;"';
+                echo 'onClick="compter_jours();return true;" ';
             else
-                echo 'onChange="compter_jours();return false;"';
+                echo 'onChange="compter_jours();return false;" ';
         }
         echo ' value="'.$date_j.'"></td>';
     }

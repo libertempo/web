@@ -3,6 +3,7 @@ debug/
 cfg/env.php
 cfg/dbconnect.php
 cfg/config_ldap.php
+cfg/config_SMTP.php
 .idea/
 /nbproject/
 /dump/*.dump
