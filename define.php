@@ -24,6 +24,9 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     define('DUMP_PATH',        ROOT_PATH . 'dump/');
     define('TEMPLATE_PATH',    ROOT_PATH . 'template/reboot/');
     define('PLUGINS_DIR',      INCLUDE_PATH . 'plugins/');
+    define('NIL_INT',          -1);
+    define('STATUS_ACTIVE',    1);
+    define('STATUS_DELETED',   2);
 
     require_once ROOT_PATH . 'vendor/autoload.php';
     require_once ROOT_PATH . 'vendor/raveren/kint/Kint.class.php';
@@ -51,7 +54,7 @@ if (!defined( 'DEFINE_INCLUDE' )) {
                 $debug[] = [
                     'Kint' => @d(func_get_args()),
                     'Backtrace' => '<pre>' . print_r(debug_backtrace(), true) . '</pre>',
-                    'LastError' => error_get_last(),
+                    'LastError' => '<pre>' . print_r(error_get_last(), true)  .'</pre>',
                 ];
             }
             register_shutdown_function(function () {

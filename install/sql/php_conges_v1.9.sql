@@ -17,47 +17,6 @@ CREATE TABLE IF NOT EXISTS `conges_appli` (
 # --------------------------------------------------------
 
 #
-# Structure de la table `conges_artt`
-#
-
-CREATE TABLE IF NOT EXISTS `conges_artt` (
-  `a_login` varbinary(99) NOT NULL DEFAULT '',
-  `sem_imp_lu_am` varchar(10) DEFAULT NULL,
-  `sem_imp_lu_pm` varchar(10) DEFAULT NULL,
-  `sem_imp_ma_am` varchar(10) DEFAULT NULL,
-  `sem_imp_ma_pm` varchar(10) DEFAULT NULL,
-  `sem_imp_me_am` varchar(10) DEFAULT NULL,
-  `sem_imp_me_pm` varchar(10) DEFAULT NULL,
-  `sem_imp_je_am` varchar(10) DEFAULT NULL,
-  `sem_imp_je_pm` varchar(10) DEFAULT NULL,
-  `sem_imp_ve_am` varchar(10) DEFAULT NULL,
-  `sem_imp_ve_pm` varchar(10) DEFAULT NULL,
-  `sem_imp_sa_am` varchar(10) DEFAULT NULL,
-  `sem_imp_sa_pm` varchar(10) DEFAULT NULL,
-  `sem_imp_di_am` varchar(10) DEFAULT NULL,
-  `sem_imp_di_pm` varchar(10) DEFAULT NULL,
-  `sem_p_lu_am` varchar(10) DEFAULT NULL,
-  `sem_p_lu_pm` varchar(10) DEFAULT NULL,
-  `sem_p_ma_am` varchar(10) DEFAULT NULL,
-  `sem_p_ma_pm` varchar(10) DEFAULT NULL,
-  `sem_p_me_am` varchar(10) DEFAULT NULL,
-  `sem_p_me_pm` varchar(10) DEFAULT NULL,
-  `sem_p_je_am` varchar(10) DEFAULT NULL,
-  `sem_p_je_pm` varchar(10) DEFAULT NULL,
-  `sem_p_ve_am` varchar(10) DEFAULT NULL,
-  `sem_p_ve_pm` varchar(10) DEFAULT NULL,
-  `sem_p_sa_am` varchar(10) DEFAULT NULL,
-  `sem_p_sa_pm` varchar(10) DEFAULT NULL,
-  `sem_p_di_am` varchar(10) DEFAULT NULL,
-  `sem_p_di_pm` varchar(10) DEFAULT NULL,
-  `a_date_debut_grille` date NOT NULL DEFAULT '0000-00-00',
-  `a_date_fin_grille` date NOT NULL DEFAULT '9999-12-31',
-  PRIMARY KEY (`a_login`,`a_date_fin_grille`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
-# --------------------------------------------------------
-
-#
 # Structure de la table `conges_config`
 #
 
@@ -316,10 +275,63 @@ CREATE TABLE IF NOT EXISTS `conges_users` (
   `u_quotite` int(3) DEFAULT '100',
   `u_email` varchar(100) DEFAULT NULL,
   `u_num_exercice` int(2) NOT NULL DEFAULT '0',
+  `planning_id` int(11) UNSIGNED NOT NULL,
+  `u_heure_solde` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`u_login`),
-  KEY `u_login` (`u_login`)
+  KEY `planning_id` (`planning_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+#
+# Structure de la table `planning`
+#
+
+CREATE TABLE IF NOT EXISTS `planning` (
+  `planning_id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `name` VARCHAR(50) NOT NULL DEFAULT "",
+  `status` TINYINT(3) UNSIGNED NOT NULL DEFAULT 0,
+  KEY `status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+#
+# Structure de la table `planning_creneau`
+#
+
+CREATE TABLE IF NOT EXISTS `planning_creneau` (
+  `creneau_id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `planning_id` INT(11) UNSIGNED NOT NULL,
+  `jour_id` TINYINT(3) UNSIGNED NOT NULL,
+  `type_semaine` TINYINT(3) UNSIGNED NOT NULL,
+  `type_periode` TINYINT(3) UNSIGNED NOT NULL,
+  `debut` INT(11) UNSIGNED NOT NULL,
+  `fin` INT(11) UNSIGNED NOT NULL,
+  KEY `planning_id` (`planning_id`,`type_semaine`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `heure_additionnelle` (
+  `id_heure` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `login` varbinary(99) NOT NULL,
+  `debut` int(11) NOT NULL,
+  `fin` int(11) NOT NULL,
+  `duree` int(11) NOT NULL,
+  `type_periode` int(3) NOT NULL,
+  `statut` int(11) NOT NULL DEFAULT 0,
+  `comment` VARCHAR(50) NOT NULL DEFAULT '',
+  `comment_refus` VARCHAR(50) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id_heure`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `heure_repos` (
+  `id_heure` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `login` varbinary(99) NOT NULL,
+  `debut` int(11) NOT NULL,
+  `fin` int(11) NOT NULL,
+  `duree` int(11) NOT NULL,
+  `type_periode` int(3) NOT NULL,
+  `statut` int(11) NOT NULL DEFAULT 0,
+  `comment` VARCHAR(50) NOT NULL DEFAULT '',
+  `comment_refus` VARCHAR(50) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id_heure`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 #
 # Contenu de la table `conges_appli`
@@ -335,13 +347,6 @@ INSERT IGNORE INTO `conges_appli` VALUES ('demande_conges_bgcolor', '#E7C4C4');
 INSERT IGNORE INTO `conges_appli` VALUES ('absence_autre_bgcolor', '#D3FFB6');
 INSERT IGNORE INTO `conges_appli` VALUES ('fermeture_bgcolor', '#7B9DE6');
 
-# --------------------------------------------------------
-
-#
-# Contenu de la table `conges_artt`
-#
-
-INSERT IGNORE INTO `conges_artt` VALUES ('admin', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0000-00-00', '9999-12-31');
 
 # --------------------------------------------------------
 
@@ -349,7 +354,7 @@ INSERT IGNORE INTO `conges_artt` VALUES ('admin', NULL, NULL, NULL, NULL, NULL, 
 # Contenu de la table `conges_users`
 #
 
-INSERT IGNORE INTO `conges_users` VALUES ('admin', 'Libertempo', 'admin', 'N', 'admin', 'Y', 'N','Y','N', '636d61cf9094a62a81836f3737d9c0da', 100, NULL, 0);
+INSERT IGNORE INTO `conges_users` VALUES ('admin', 'Libertempo', 'admin', 'N', 'admin', 'Y', 'N','Y','N', '636d61cf9094a62a81836f3737d9c0da', 100, NULL, 0, 0, 0);
 
 #
 # Contenu de la table `conges_config`
@@ -363,14 +368,11 @@ INSERT IGNORE INTO `conges_config` VALUES ('URL_ACCUEIL_CONGES', 'http://mon-ser
 INSERT IGNORE INTO `conges_config` VALUES ('auth', 'TRUE', '04_Authentification', 'boolean', 'config_comment_auth');
 INSERT IGNORE INTO `conges_config` VALUES ('how_to_connect_user', 'dbconges', '04_Authentification', 'enum=dbconges/ldap/CAS/SSO', 'config_comment_how_to_connect_user');
 INSERT IGNORE INTO `conges_config` VALUES ('export_users_from_ldap', 'FALSE', '04_Authentification', 'boolean', 'config_comment_export_users_from_ldap');
-INSERT IGNORE INTO `conges_config` VALUES ('consult_calendrier_sans_auth', 'FALSE', '04_Authentification', 'boolean', 'config_comment_consult_calendrier_sans_auth');
 
 INSERT IGNORE INTO `conges_config` VALUES ('user_saisie_demande', 'TRUE', '05_Utilisateur', 'boolean', 'config_comment_user_saisie_demande');
-INSERT IGNORE INTO `conges_config` VALUES ('user_affiche_calendrier', 'TRUE', '05_Utilisateur', 'boolean', 'config_comment_user_affiche_calendrier');
 INSERT IGNORE INTO `conges_config` VALUES ('user_saisie_mission', 'TRUE', '05_Utilisateur', 'boolean', 'config_comment_user_saisie_mission');
 INSERT IGNORE INTO `conges_config` VALUES ('user_ch_passwd', 'TRUE', '05_Utilisateur', 'boolean', 'config_comment_user_ch_passwd');
 
-INSERT IGNORE INTO `conges_config` VALUES ('resp_affiche_calendrier', 'TRUE', '06_Responsable', 'boolean', 'config_comment_resp_affiche_calendrier');
 INSERT IGNORE INTO `conges_config` VALUES ('resp_saisie_mission', 'FALSE', '06_Responsable', 'boolean', 'config_comment_resp_saisie_mission');
 INSERT IGNORE INTO `conges_config` VALUES ('resp_ajoute_conges', 'TRUE', '06_Responsable', 'boolean', 'config_comment_resp_ajoute_conges');
 INSERT IGNORE INTO `conges_config` VALUES ('gestion_cas_absence_responsable', 'FALSE', '06_Responsable', 'boolean', 'config_comment_gestion_cas_absence_responsable');
@@ -395,8 +397,6 @@ INSERT IGNORE INTO `conges_config` VALUES ('samedi_travail', 'FALSE', '09_jours 
 INSERT IGNORE INTO `conges_config` VALUES ('dimanche_travail', 'FALSE', '09_jours ouvrables', 'boolean', 'config_comment_dimanche_travail');
 
 INSERT IGNORE INTO `conges_config` VALUES ('gestion_groupes', 'FALSE', '10_Gestion par groupes', 'boolean', 'config_comment_gestion_groupes');
-INSERT IGNORE INTO `conges_config` VALUES ('affiche_groupe_in_calendrier', 'FALSE', '10_Gestion par groupes', 'boolean', 'config_comment_affiche_groupe_in_calendrier');
-INSERT IGNORE INTO `conges_config` VALUES ('calendrier_select_all_groups', 'FALSE', '10_Gestion par groupes', 'boolean', 'config_comment_calendrier_select_all_groups');
 INSERT IGNORE INTO `conges_config` VALUES ('fermeture_par_groupe', 'FALSE', '10_Gestion par groupes', 'boolean', 'config_comment_fermeture_par_groupe');
 
 INSERT IGNORE INTO `conges_config` VALUES ('editions_papier', 'TRUE', '11_Editions papier', 'boolean', 'config_comment_editions_papier');
@@ -426,6 +426,7 @@ INSERT IGNORE INTO `conges_config` VALUES ('calcul_auto_jours_feries_france', 'F
 
 INSERT IGNORE INTO `conges_config` (`conf_nom`, `conf_valeur`, `conf_groupe`, `conf_type`, `conf_commentaire`) VALUES ('export_ical', 'true', '15_ical', 'boolean', 'config_comment__export_ical'),
 ('export_ical_salt', 'Jao%iT}', '15_ical', 'texte', 'config_comment_export_ical_salt');
+INSERT IGNORE INTO `conges_config` (`conf_nom`, `conf_valeur`, `conf_groupe`, `conf_type`, `conf_commentaire`) VALUES ('resp_association_planning', 'FALSE', '06_Responsable', 'boolean', 'config_comment_resp_association_planning');
 
 #
 # Contenu de la table `conges_type_absence`
@@ -434,7 +435,7 @@ INSERT IGNORE INTO `conges_config` (`conf_nom`, `conf_valeur`, `conf_groupe`, `c
 INSERT IGNORE INTO `conges_type_absence` VALUES (1, 'conges', 'congés payés', 'cp');
 INSERT IGNORE INTO `conges_type_absence` VALUES (2, 'conges', 'rtt', 'rtt');
 INSERT IGNORE INTO `conges_type_absence` VALUES (3, 'absences', 'formation', 'fo');
-INSERT IGNORE INTO `conges_type_absence` VALUES (4, 'absences', 'misson', 'mi');
+INSERT IGNORE INTO `conges_type_absence` VALUES (4, 'absences', 'mission', 'mi');
 INSERT IGNORE INTO `conges_type_absence` VALUES (5, 'absences', 'autre', 'ab');
 INSERT IGNORE INTO `conges_type_absence` VALUES (6, 'absences', 'malade', 'mal');
 INSERT IGNORE INTO `conges_type_absence` VALUES (11, 'conges_exceptionnels', 'enfant malade', 'enf');
@@ -453,4 +454,3 @@ INSERT IGNORE INTO `conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUE
 INSERT IGNORE INTO `conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUES ('mail_new_absence_conges', 'APPLI CONGES - Nouvelle absence', ' __SENDER_NAME__ vous informe qu\'il sera absent. Ce type de congés ne necéssite pas de validation. Vous pouvez consulter votre application Libertempo : __URL_ACCUEIL_CONGES__/\r\n\r\n-------------------------------------------------------------------------------------------------------\r\nCeci est un message automatique. ');
 INSERT IGNORE INTO `conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUES ('mail_modif_demande_conges', 'APPLI CONGES - Modification demande', ' __SENDER_NAME__ à modifié une demande non traité. Vous pouvez consulter votre application Libertempo : __URL_ACCUEIL_CONGES__/\r\n\r\n-------------------------------------------------------------------------------------------------------\r\nCeci est un message automatique.');
 INSERT IGNORE INTO `conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUES ('mail_supp_demande_conges', 'APPLI CONGES - Suppression demande', ' __SENDER_NAME__ à supprimé une demande non traité. Vous pouvez consulter votre application Libertempo : __URL_ACCUEIL_CONGES__/\r\n\r\n-------------------------------------------------------------------------------------------------------\r\nCeci est un message automatique.');
-

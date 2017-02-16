@@ -18,7 +18,7 @@ verif_droits_user($session, "is_hr");
 /*************************************/
 // recup des parametres reçus :
 // SERVER
-$PHP_SELF=$_SERVER['PHP_SELF'];
+$PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 // GET / POST
 $onglet = getpost_variable('onglet', "page_principale");
 
@@ -40,8 +40,10 @@ if( $_SESSION['config']['user_saisie_demande'] )
     $onglets['jours_chomes'] = _('admin_button_jours_chomes_1');
 
 $onglets['cloture_year'] = _('resp_cloture_exercice_titre');
+$onglets['liste_planning'] = _('hr_liste_planning');
+$onglets['ajout_planning'] = _('hr_ajout_planning');
 
-if ( !isset($onglets[ $onglet ]) && !in_array($onglet, array('traite_user')))
+if ( !isset($onglets[ $onglet ]) && !in_array($onglet, ['traite_user', 'modif_planning']))
     $onglet = 'page_principale';
 
 /*********************************/

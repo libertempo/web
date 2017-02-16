@@ -13,7 +13,7 @@
     }
     //user mode
     $user_mode = '';
-    $tmp = dirname($_SERVER['PHP_SELF']);
+    $tmp = dirname(filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL));
     $tmp = explode('/',$tmp);
     $tmp = array_pop($tmp);
     $adminActive = $userActive = $respActive = $hrActive = $calendarActive = '';
@@ -91,16 +91,18 @@
         <meta name="theme-color" content="#ffffff">
         <?php /* BOOTSTRAP */?>
         <link type="text/css" href="<?= ASSETS_PATH ?>bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen,print">
+        <link type="text/css" href="<?= CSS_PATH ?>datepicker.css" rel="stylesheet" media="screen">
+        <link type="text/css" href="<?= ASSETS_PATH ?>bootstrap-timepicker/css/bootstrap-timepicker.min.css" rel="stylesheet" media="screen" />
         <?php /* FONT AWESOME */ ?>
         <link href="<?= ASSETS_PATH ?>font-awesome/css/font-awesome.css" rel="stylesheet">
         <?php /* REBOOT STYLE */ ?>
         <link type="text/css" href="<?= CSS_PATH ?>reboot.css" rel="stylesheet" media="screen,print">
-        <link type="text/css" href="<?= CSS_PATH ?>datepicker.css" rel="stylesheet" media="screen">
         <?php /* JQUERY */ ?>
         <script type="text/javascript" src="<?= ASSETS_PATH ?>jquery/js/jquery-1.7.1.min.js"></script>
         <script type="text/javascript" src="<?= ASSETS_PATH  ?>bootstrap/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="<?= ASSETS_PATH ?>bootstrap-datepicker/bootstrap-datepicker.js"></script>
         <script type="text/javascript" src="<?= ASSETS_PATH ?>bootstrap-datepicker/locales/bootstrap-datepicker.fr.js"></script>
+        <script type="text/javascript" src="<?= ASSETS_PATH ?>bootstrap-timepicker/js/bootstrap-timepicker.min.js"></script>
         <script type="text/javascript" src="<?= JS_PATH ?>reboot.js"></script>
         <?= $additional_head ?>
     </head>
@@ -154,7 +156,7 @@
                             <i class="fa fa-user mini"></i>
                         </a>
                     </div>
-                    <?php if('active' === $calendarActive || ( ($_SESSION['config']['user_affiche_calendrier'] && $tmp=='utilisateur') || ($_SESSION['config']['resp_affiche_calendrier'] && $tmp=='responsable') || in_array($tmp, ['hr', 'admin', 'config']))): ?>
+                    <?php if('active' === $calendarActive || $tmp=='utilisateur' || $tmp=='responsable' || in_array($tmp, ['hr', 'admin', 'config'])): ?>
                     <div class="separator"></div>
                     <div class="menu-link <?= $calendarActive ?>">
                         <a title="<?= _('button_calendar') ?>" href="<?= ROOT_PATH ?>calendrier.php?session=<?= $session ?>">

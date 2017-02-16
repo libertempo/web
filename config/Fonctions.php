@@ -9,7 +9,7 @@ class Fonctions
 {
     public static function commit_vider_table_logs($session)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
         $sql_delete="TRUNCATE TABLE conges_logs ";
@@ -30,7 +30,7 @@ class Fonctions
 
     public static function confirmer_vider_table_logs($session)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
         $return .= '<center>';
@@ -47,7 +47,7 @@ class Fonctions
 
     public static function affichage($login_par, $session)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
         //requête qui récupère les logs
@@ -142,7 +142,7 @@ class Fonctions
         /*************************************/
         // recup des parametres reçus :
         // SERVER
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         // GET / POST
         $action         = htmlentities(getpost_variable('action', ""), ENT_QUOTES | ENT_HTML401);
         $login_par      = htmlentities(getpost_variable('login_par', ""), ENT_QUOTES | ENT_HTML401);
@@ -165,7 +165,7 @@ class Fonctions
 
     public static function commit_modif($tab_new_values, $session)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
         if($session=="") {
@@ -193,7 +193,7 @@ class Fonctions
 
     public static function test_config($tab_new_values, $session)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
         if($session=="") {
@@ -220,7 +220,7 @@ class Fonctions
 
     public static function affichage_config_mail($tab_new_values, $session)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
         if($session=="") {
@@ -316,7 +316,7 @@ class Fonctions
         /*************************************/
         // recup des parametres reçus :
         // SERVER
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         // GET / POST
         $action = getpost_variable('action') ;
         $tab_new_values = getpost_variable('tab_new_values');
@@ -376,7 +376,7 @@ class Fonctions
 
     public static function commit_ajout(&$tab_new_values, $session)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
         if($session=="") {
@@ -449,7 +449,7 @@ class Fonctions
 
     public static function commit_suppr($session, $id_to_update)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
         if($session=="") {
@@ -477,7 +477,7 @@ class Fonctions
 
     public static function supprimer($session, $id_to_update)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
         if($session=="") {
@@ -530,7 +530,7 @@ class Fonctions
 
     public static function commit_modif_absence(&$tab_new_values, $session, $id_to_update)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
         if($session=="") {
@@ -583,7 +583,7 @@ class Fonctions
 
     public static function modifier(&$tab_new_values, $session, $id_to_update)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
         if($session=="") {
@@ -646,7 +646,7 @@ class Fonctions
 
     public static function affichage_absence($tab_new_values,$session)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
         if($session=="") {
@@ -808,7 +808,7 @@ class Fonctions
         /*************************************/
         // recup des parametres reçus :
         // SERVER
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         // GET / POST
         $action         = getpost_variable('action') ;
         $tab_new_values = getpost_variable('tab_new_values');
@@ -835,7 +835,7 @@ class Fonctions
 
     public static function commit_saisie(&$tab_new_values, $session)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
         if($session=="") {
@@ -913,7 +913,7 @@ class Fonctions
 
     public static function affichage_configuration($session)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
         // affiche_bouton_retour($session);
@@ -1108,7 +1108,7 @@ class Fonctions
         /*************************************/
         // recup des parametres reçus :
         // SERVER
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         // GET / POST
         $action         = getpost_variable('action') ;
         $tab_new_values = getpost_variable('tab_new_values');

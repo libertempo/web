@@ -6,9 +6,14 @@ defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 // retourne le nb de jours  (opt_debut et opt_fin ont les valeurs "am" ou "pm"
 function compter($user, $num_current_periode, $date_debut, $date_fin, $opt_debut, $opt_fin, &$comment,  $num_update = null)
 {
-
 	$date_debut = convert_date($date_debut);
 	$date_fin = convert_date($date_fin);
+
+    $planningUser = \utilisateur\Fonctions::getUserPlanning($user);
+    if (is_null($planningUser)) {
+        $comment = _('aucun_planning_associe_utilisateur');
+        return 0;
+    }
 
 	// verif si date_debut est bien anterieure à date_fin
 	// ou si meme jour mais debut l'apres midi et fin le matin
@@ -44,8 +49,9 @@ function compter($user, $num_current_periode, $date_debut, $date_fin, $opt_debut
 
 		/************************************************************/
 		// 2 : on verifie que le conges demandé ne chevauche pas une periode deja posée
-		if(verif_periode_chevauche_periode_user($date_debut, $date_fin, $user, $num_current_periode, $tab_periode_calcul, $comment, $num_update) )
+		if(verif_periode_chevauche_periode_user($date_debut, $date_fin, $user, $num_current_periode, $tab_periode_calcul, $comment, $num_update)) {
 			return 0;
+        }
 
 
 		/************************************************************/
@@ -102,7 +108,7 @@ function compter($user, $num_current_periode, $date_debut, $date_fin, $opt_debut
 				// verif des rtt ou temp partiel (dans la table rtt)
 				$val_matin="N";
 				$val_aprem="N";
-				recup_infos_artt_du_jour($user, $timestamp_du_jour, $val_matin, $val_aprem);
+				recup_infos_artt_du_jour($user, $timestamp_du_jour, $val_matin, $val_aprem, $planningUser);
 
 				if($val_matin=="Y")  // rtt le matin
 					$tab_periode_calcul[$current_day]['am']=0;
@@ -111,20 +117,12 @@ function compter($user, $num_current_periode, $date_debut, $date_fin, $opt_debut
 					$tab_periode_calcul[$current_day]['pm']=0;
 			}
 
-			$current_day=jour_suivant($current_day);
-		}
+            $nb_jours = $nb_jours + $tab_periode_calcul[$current_day]['am'] + $tab_periode_calcul[$current_day]['pm'];
 
-		/************************************************************/
-		// 3 : on va avancer jour par jour jusqu'à la date limite pour compter le nb de demi jour à 1
-		$current_day=$date_debut;
-		$date_limite=jour_suivant($date_fin);
-		while($current_day!=$date_limite)
-		{
-			$nb_jours = $nb_jours + $tab_periode_calcul[$current_day]['am'] + $tab_periode_calcul[$current_day]['pm'];
 			$current_day=jour_suivant($current_day);
 		}
-		 $nb_jours = $nb_jours * 0.5;
-		 $VerifDec = verif_saisie_decimal($nb_jours);
+		$nb_jours = $nb_jours * 0.5;
+		$VerifDec = verif_saisie_decimal($nb_jours);
 		return $nb_jours;
 	}
 	else
@@ -161,7 +159,7 @@ function verif_jours_feries_saisis($date)
 		$tab_date=explode("/", $date); // date est de la forme dd/mm/YYYY
 		$an=$tab_date[2];
 	}
-	if(substr_count($date,'-')) 
+	if(substr_count($date,'-'))
 	{
 		$tab_date=explode("-", $date); // date est de la forme yyyy-mm-dd
 		$an=$tab_date[0];
@@ -294,6 +292,30 @@ function verif_periode_chevauche_periode_user($date_debut, $date_fin, $user, $nu
 	}// fin du while
 	/**********************************************/
 	// Ensuite verifie en parcourant le tableau qu'on vient de crée (s'il n'est pas vide)
+    $donneesPeriodeDebut = $tab_periode_calcul[$date_debut];
+    $donneesPeriodeFin = $tab_periode_calcul[$date_fin];
+    if (1 == $donneesPeriodeDebut['am']) {
+        $periodeDebut = (1 == $donneesPeriodeDebut['pm'])
+            ? \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN_APRES_MIDI
+            : \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN;
+    } elseif (1 == $donneesPeriodeDebut['pm']) {
+        $periodeDebut = \App\Models\Planning\Creneau::TYPE_PERIODE_APRES_MIDI;
+    }
+
+    if (1 == $donneesPeriodeFin['pm']) {
+        $periodeFin = (1 == $donneesPeriodeFin['am'])
+            ? \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN_APRES_MIDI
+            : \App\Models\Planning\Creneau::TYPE_PERIODE_APRES_MIDI;
+    } elseif (1 == $donneesPeriodeFin['am']) {
+        $periodeFin = \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN;
+    }
+
+    $conge = new \App\ProtoControllers\Employe\Conge();
+    if ($conge->isChevauchement($user, $date_debut, $periodeDebut, $date_fin, $periodeFin)) {
+        $comment =  _('demande_heure_chevauche_demande');
+        return true;
+    }
+
 	if(count($tab_periode_deja_prise)!=0)
 	{
 		$current_day=$date_debut;
@@ -324,6 +346,8 @@ function verif_periode_chevauche_periode_user($date_debut, $date_fin, $user, $nu
 			$current_day=jour_suivant($current_day);
 		}// fin du while
 	}
+
+
 	return FALSE ;
 
 	/************************************************************/
@@ -337,5 +361,3 @@ function round_to_half($num)
 	else if($num < $half - 0.25) return floor($num);
 	else return $half;
 }
-
-

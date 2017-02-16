@@ -203,7 +203,7 @@ function session_create($username)
 {
     if ($username != "")
     {
-	if(isset($_SESSION)) unset($_SESSION);
+        if(isset($_SESSION)) unset($_SESSION);
         $session = "phpconges".md5(uniqid(rand()));
         session_name($session);
         session_id($session);
@@ -238,8 +238,7 @@ function session_update($session)
 {
    if ($session != "")
    {
-        $maintenant=time();
-        $_SESSION['timestamp_last']=$maintenant;
+        $_SESSION['timestamp_last'] = time();
    }
 }
 
@@ -267,7 +266,7 @@ function session_delete($session)
 //
 function session_saisie_user_password($erreur, $session_username, $session_password)
 {
-   $PHP_SELF=$_SERVER['PHP_SELF'];
+   $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 
     $config_php_conges_version      = $_SESSION['config']['php_conges_version'];
     $config_url_site_web_php_conges = $_SESSION['config']['url_site_web_php_conges'];

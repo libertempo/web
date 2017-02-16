@@ -147,6 +147,7 @@ class Fonctions {
         // affichage de la liste des versions ...
         echo "<select name=\"version\">\n";
         echo "<option value=\"0\">". _('install_installed_version') ."</option>\n";
+        echo "<option value=\"1.8.1\">v1.8.1</option>\n";
         echo "<option value=\"1.8\">v1.8</option>\n";
         echo "<option value=\"1.7.0\">v1.7.0</option>\n";
         echo "<option value=\"1.6.0\">v1.6.x</option>\n";
@@ -167,7 +168,7 @@ class Fonctions {
     public static function lance_install($lang)
     {
 
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 
         include CONFIG_PATH .'dbconnect.php' ;
         include ROOT_PATH .'version.php' ;
@@ -205,7 +206,7 @@ class Fonctions {
             $sql_update_lang="UPDATE conges_config SET conf_valeur = '$lang' WHERE conf_nom='lang' ";
             $result_update_lang = \includes\SQL::query($sql_update_lang) ;
 
-            $tab_url=explode("/", $_SERVER['PHP_SELF']);
+            $tab_url=explode("/", filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 
             array_pop($tab_url);
             array_pop($tab_url);
@@ -233,7 +234,7 @@ class Fonctions {
     public static function lance_maj($lang, $installed_version, $config_php_conges_version, $etape)
     {
 
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         include CONFIG_PATH .'dbconnect.php' ;
 
 
@@ -302,24 +303,29 @@ class Fonctions {
                 $file_upgrade='upgrade_from_v1.5.0.php';
                 $new_installed_version="1.6.0";
                 // execute le script php d'upgrade de la version1.5.0 (vers la suivante (1.6.0))
-                echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$file_upgrade?version=$new_installed_version&lang=$lang\">";
+                echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$file_upgrade?etape=2&version=$new_installed_version&lang=$lang\">";
             } elseif($start_version=="1.6.0") {
                 $file_upgrade='upgrade_from_v1.6.0.php';
                 $new_installed_version="1.7.0";
                 // execute le script php d'upgrade de la version1.6.0 (vers la suivante (1.7.0))
-                echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$file_upgrade?version=$new_installed_version&lang=$lang\">";
+                echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$file_upgrade?etape=2&version=$new_installed_version&lang=$lang\">";
             } elseif($start_version=="1.7.0") {
                 $file_upgrade='upgrade_from_v1.7.0.php';
                 $new_installed_version="1.8";
                 // execute le script php d'upgrade de la version1.7.0 (vers la suivante (1.8))
-                echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$file_upgrade?version=$new_installed_version&lang=$lang\">";
-            } elseif($start_version=="1.8") {
-                $file_upgrade='upgrade_from_v1.8.php';
-                $new_installed_version="1.9";
-                // execute le script php d'upgrade de la version1.8 (vers la suivante (1.9))
-                echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$file_upgrade?version=$new_installed_version&lang=$lang\">";
+                echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$file_upgrade?etape=2&version=$new_installed_version&lang=$lang\">";
+	    } elseif($start_version=="1.8") {
+		$file_upgrade='upgrade_from_v1.8.php';
+		$new_installed_version="1.8.1";
+		// execute le script php d'upgrade de la version1.8 (vers la suivante (1.8.1))
+		echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$file_upgrade?etape=2&version=$new_installed_version&lang=$lang\">";
+            } elseif($start_version=="1.8.1") {
+		$file_upgrade='upgrade_from_v1.8.1.php';
+		$new_installed_version="1.9";
+		// execute le script php d'upgrade de la version 1.8.1 (vers la suivante (1.9))
+		echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$file_upgrade?etape=2&version=$new_installed_version&lang=$lang\">";
             } else {
-                echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$PHP_SELF?etape=3&version=$new_installed_version&lang=$lang\">";
+                echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$PHP_SELF?etape=3&version=$installed_version&lang=$lang\">";
             }
         }
         //*** ETAPE 3

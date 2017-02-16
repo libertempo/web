@@ -57,7 +57,7 @@ class Fonctions
         $new_fin = convert_date($new_fin);
         $return = '';
 
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
 
         // verif validité des valeurs saisies
@@ -107,6 +107,46 @@ class Fonctions
         $return .= '<a class="btn" href="' . $PHP_SELF . '?session=' . $session . '">' . _('form_retour') . '</a>';
 
         return $return;
+    }
+
+    /**
+     * Retourne les options de select des années
+     *
+     * @return array
+     */
+    public static function getOptionsAnnees()
+    {
+        $current = date('Y');
+
+        return [
+            $current => $current,
+            $current - 1 => $current - 1,
+            $current - 2 => $current - 2,
+        ];
+    }
+
+    /**
+     * Retourne le timestamp du dernier jour de l'année
+     *
+     * @param string $annee
+     *
+     * @return string
+     */
+    public static function getTimestampDernierJourAnnee($annee)
+    {
+        return mktime(23, 59, 59, 12, 31, $annee);
+    }
+
+    /**
+     * Retourne le timestamp du premier jour de l'année
+     *
+     * @param string $annee
+     *
+     * @return string
+     */
+    public static function getTimestampPremierJourAnnee($annee)
+    {
+        return mktime(0, 0, 0, 1, 1, $annee);
     }
 
     /**
@@ -199,7 +239,7 @@ class Fonctions
 
     public static function modifier($p_num_to_update, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $p_etat, $onglet)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
         $VerifNb = verif_saisie_decimal($new_nb_jours);
@@ -222,7 +262,7 @@ class Fonctions
 
         $return .= _('form_modif_ok') . '<br><br>';
         /* APPEL D'UNE AUTRE PAGE */
-        $return .= '<form action="'.ROOT_PATH .'utilisateur/user_index.php?session='.$session.'&onglet=demandes_en_cours" method="POST">';
+        $return .= '<form action="'.ROOT_PATH .'utilisateur/user_index.php?session='.$session.'&onglet=liste_conge" method="POST">';
         $return .= '<input class="btn" type="submit" value="'. _('form_submit') .'">';
         $return .= '</form>';
 
@@ -232,7 +272,7 @@ class Fonctions
 
     public static function confirmer($p_num, $onglet)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -323,7 +363,7 @@ class Fonctions
         $return .= '<input type="hidden" name="onglet" value="' . $onglet . '">';
         $return .= '<p id="comment_nbj" style="color:red">&nbsp;</p>';
         $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
-        $return .= '<a class="btn" href="' . $PHP_SELF . '?session=' . $session . '&onglet=demandes_en_cours">' . _('form_cancel') . '</a>';
+        $return .= '<a class="btn" href="' . $PHP_SELF . '?session=' . $session . '&onglet=liste_conge">' . _('form_cancel') . '</a>';
         $return .= '</form>';
 
         return $return;
@@ -393,7 +433,7 @@ class Fonctions
 
     public static function suppression($p_num_to_delete, $onglet)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -413,7 +453,7 @@ class Fonctions
             $return .= _('form_modif_not_ok') ."<br><br> \n";
 
         /* APPEL D'UNE AUTRE PAGE */
-        $return .= '<form action="'.ROOT_PATH .'utilisateur/user_index.php?session='.$session.'&onglet=demandes_en_cours" method="POST">';
+        $return .= '<form action="'.ROOT_PATH .'utilisateur/user_index.php?session='.$session.'&onglet=liste_conge" method="POST">';
         $return .= '<input class="btn" type="submit" value="'. _('form_submit') .'">';
         $return .= '</form>';
         $return .= '<a href="">';
@@ -423,7 +463,7 @@ class Fonctions
 
     public static function confirmerSuppression($p_num, $onglet)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -478,7 +518,7 @@ class Fonctions
         $return .= '<input type="hidden" name="session" value="' . $session . '">';
         $return .= '<input type="hidden" name="onglet" value="' . $onglet . '">';
         $return .= '<input class="btn btn-danger" type="submit" value="' . _('form_supprim') . '">';
-        $return .= '<a class="btn" href="' . $PHP_SELF . '?session=' . $session . '&onglet=demandes_en_cours">' . _('form_cancel') . '</a>';
+        $return .= '<a class="btn" href="' . $PHP_SELF . '?session=' . $session . '&onglet=liste_conge">' . _('form_cancel') . '</a>';
         $return .= '</form>';
 
         return $return;
@@ -520,7 +560,7 @@ class Fonctions
 
     public static function change_passwd( $new_passwd1, $new_passwd2)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -537,7 +577,7 @@ class Fonctions
             if($result)
                 $return .= _('form_modif_ok') ." <br><br> \n";
             else
-                $return .= _('form_mofif_not_ok') ."<br><br> \n";
+                $return .= _('form_modif_not_ok') ."<br><br> \n";
         }
 
         $comment_log = 'changement Password';
@@ -569,7 +609,7 @@ class Fonctions
         if($change_passwd==1) {
             $return .= \utilisateur\Fonctions::change_passwd($new_passwd1, $new_passwd2);
         } else {
-            $PHP_SELF=$_SERVER['PHP_SELF'];
+            $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
             $session=session_id();
 
             $return .= '<h1>' . _('user_change_password') . '</h1>';
@@ -602,130 +642,6 @@ class Fonctions
             $return .= '<input type="hidden" name="change_passwd" value=1>';
             $return .= '<input class="btn btn-success" type="submit" value="'. _('form_submit') .'">';
             $return .= '</form>';
-        }
-
-        return $return;
-    }
-
-    /**
-     * Encapsule le comportement du module de demande en cours
-     *
-     * @param string $session Clé de session
-
-     *
-     * @return void
-     * @access public
-     * @static
-     */
-    public static function demandeEnCoursModule($session)
-    {
-        $return = '';
-        if($_SESSION['config']['where_to_find_user_email']=="ldap"){
-            include_once CONFIG_PATH .'config_ldap.php';
-        }
-
-
-        // on initialise le tableau global des jours fériés s'il ne l'est pas déjà :
-        init_tab_jours_feries();
-
-        $return .= '<h1>' . _('user_etat_demandes') . '</h1>';
-
-        $tri_date = getpost_variable('tri_date', "ascendant");
-
-
-        // Récupération des informations
-        // on ne recup QUE les periodes de type "conges"(cf table conges_type_absence) ET QUE les demandes
-        $sql3 = 'SELECT p_login, p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_nb_jours, p_commentaire, p_type, p_etat, p_motif_refus, p_date_demande, p_date_traitement, p_num, ta_libelle
-            FROM conges_periode as a, conges_type_absence as b
-            WHERE a.p_login = "'. \includes\SQL::quote($_SESSION['userlogin']).'"
-            AND (a.p_type=b.ta_id)
-            AND ( (b.ta_type=\'conges\') OR (b.ta_type=\'conges_exceptionnels\') )
-            AND ((p_etat=\'demande\') OR (p_etat=\'valid\')) ';
-        if($tri_date=='descendant')
-            $sql3=$sql3.' ORDER BY p_date_deb DESC ;';
-        else
-            $sql3=$sql3.' ORDER BY p_date_deb ASC ;';
-        $ReqLog3 = \includes\SQL::query($sql3) ;
-
-        $count3=$ReqLog3->num_rows;
-        if($count3==0) {
-            $return .= '<b>'. _('user_demandes_aucune_demande') .'</b>';
-        } else {
-            // AFFICHAGE TABLEAU
-            $return .= '<table class="table table-responsive table-condensed table-stripped table-hover">';
-            $return .= '<thead>';
-            $return .= '<tr>';
-            $return .= '<th>';
-            $return .= _('divers_debut_maj_1')  ;
-            $return .= '</th>';
-            $return .= '<th>'. _('divers_fin_maj_1') .'</th>';
-            $return .= '<th>'. _('divers_type_maj_1') .'</th>';
-            $return .= '<th>'. _('divers_nb_jours_pris_maj_1') .'</th>';
-            $return .= '<th>'. _('divers_comment_maj_1') .'</th>';
-            $return .= '<th></th><th></th>' ;
-            if( $_SESSION['config']['affiche_date_traitement'] ) {
-                $return .= '<th >'. _('divers_date_traitement') .'</th>';
-            }
-            $return .= '</tr>';
-            $return .= '</thead>';
-            $return .= '<tbody>';
-
-            $i = true;
-            while ($resultat3 = $ReqLog3->fetch_array()) {
-                $sql_p_date_deb                = eng_date_to_fr($resultat3["p_date_deb"]);
-                $sql_p_date_fin                = eng_date_to_fr($resultat3["p_date_fin"]);
-                $sql_p_demi_jour_deb        = $resultat3["p_demi_jour_deb"];
-                $sql_p_demi_jour_fin        = $resultat3["p_demi_jour_fin"];
-
-                if($sql_p_demi_jour_deb=="am")
-                    $demi_j_deb="mat";
-                else
-                    $demi_j_deb="aprm";
-
-                if($sql_p_demi_jour_fin=="am")
-                    $demi_j_fin="mat";
-                else
-                    $demi_j_fin="aprm";
-
-                $sql_p_nb_jours            = $resultat3["p_nb_jours"];
-                $sql_p_commentaire        = $resultat3["p_commentaire"];
-                $sql_p_type                = $resultat3["ta_libelle"];
-                $sql_p_etat                = $resultat3["p_etat"];
-                $sql_p_date_demande        = $resultat3["p_date_demande"];
-                $sql_p_date_traitement    = $resultat3["p_date_traitement"];
-                $sql_p_num                = $resultat3["p_num"];
-
-                // si on peut modifier une demande :on defini le lien à afficher
-                if( !$_SESSION['config']['interdit_modif_demande'] ) {
-                    //on ne peut pas modifier une demande qui a déja été validé une fois (si on utilise la double validation)
-                    if($sql_p_etat=="valid")
-                        $user_modif_demande="&nbsp;";
-                    else
-                        $user_modif_demande="<a href=\"user_index.php?session=$session&p_num=$sql_p_num&onglet=modif_demande\">". _('form_modif') ."</a>" ;
-                }
-                $user_suppr_demande="<a href=\"user_index.php?session=$session&p_num=$sql_p_num&onglet=suppr_demande\">". _('form_supprim') ."</a>" ;
-                $return .= '<tr class="'.($i?'i':'p').'">';
-                $return .= '<td class="histo">'.schars($sql_p_date_deb).' _ '.schars($demi_j_deb).'</td>';
-                $return .= '<td class="histo">'.schars($sql_p_date_fin).' _ '.schars($demi_j_fin).'</td>' ;
-                $return .= '<td class="histo">'.schars($sql_p_type).'</td>' ;
-                $return .= '<td class="histo">'.affiche_decimal($sql_p_nb_jours).'</td>' ;
-                $return .= '<td class="histo">'.schars($sql_p_commentaire).'</td>' ;
-                if( !$_SESSION['config']['interdit_modif_demande'] ) {
-                    $return .= '<td class="histo">'.($user_modif_demande).'</td>' ;
-                }
-                $return .= '<td class="histo">'.($user_suppr_demande).'</td>'."\n" ;
-
-                if( $_SESSION['config']['affiche_date_traitement'] ) {
-                    if($sql_p_date_demande == NULL)
-                        $return .= '<td class="histo-left">'. _('divers_demande') .' : '.$sql_p_date_demande.'<br>'. _('divers_traitement') .' : '.$sql_p_date_traitement.'</td>';
-                    else
-                        $return .= '<td class="histo-left">'. _('divers_demande') .' : '.$sql_p_date_demande.'<br>'. _('divers_traitement') .' : pas traité</td>';
-                }
-                $return .= '</tr>';
-                $i = !$i;
-            }
-            $return .= '</tbody>';
-            $return .= '</table>' ;
         }
 
         return $return;
@@ -772,6 +688,7 @@ class Fonctions
 
         $start_nb_day_before = $first_jour_mois_rang -1;
         $stop_nb_day_before = 7 - $last_jour_mois_rang ;
+        $planningUser = \utilisateur\Fonctions::getUserPlanning($user_login);
 
 
         for ( $i = - $start_nb_day_before; $i <= $nb_jours_mois + $stop_nb_day_before; $i ++) {
@@ -788,7 +705,7 @@ class Fonctions
             else {
                 $val_matin='';
                 $val_aprem='';
-                recup_infos_artt_du_jour($user_login, $j_timestamp, $val_matin, $val_aprem);
+                recup_infos_artt_du_jour($user_login, $j_timestamp, $val_matin, $val_aprem, $planningUser);
                 $return .= \utilisateur\Fonctions::affiche_cellule_calendrier_echange_presence_saisie_semaine($val_matin, $val_aprem, $year, $mois, $i+1);
             }
 
@@ -830,6 +747,7 @@ class Fonctions
 
         $start_nb_day_before = $first_jour_mois_rang -1;
         $stop_nb_day_before = 7 - $last_jour_mois_rang ;
+        $planningUser = \utilisateur\Fonctions::getUserPlanning($user_login);
 
 
         for ( $i = - $start_nb_day_before; $i <= $nb_jours_mois + $stop_nb_day_before; $i ++) {
@@ -845,7 +763,7 @@ class Fonctions
             else {
                 $val_matin='';
                 $val_aprem='';
-                recup_infos_artt_du_jour($user_login, $j_timestamp, $val_matin, $val_aprem);
+                recup_infos_artt_du_jour($user_login, $j_timestamp, $val_matin, $val_aprem, $planningUser);
                 $return .= \utilisateur\Fonctions::affiche_cellule_calendrier_echange_absence_saisie_semaine($val_matin, $val_aprem, $year, $mois, $i+1);
             }
 
@@ -899,7 +817,7 @@ class Fonctions
     {
         $return = '';
 
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
 
         $duree_demande_1="";
@@ -1177,7 +1095,7 @@ class Fonctions
     public static function saisie_echange_rtt($user_login, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet)
     {
         $return = '';
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $mois_calendrier_saisie_debut_prec=0; $year_calendrier_saisie_debut_prec=0;
         $mois_calendrier_saisie_debut_suiv=0; $year_calendrier_saisie_debut_suiv=0;
@@ -1317,300 +1235,239 @@ class Fonctions
             $mois_calendrier_saisie_fin   = getpost_variable('mois_calendrier_saisie_fin', date('m'));
 
             $return .= '<h1>'. _('user_echange_rtt') .'</h1>';
+            if (!\utilisateur\Fonctions::hasUserPlanning($_SESSION['userlogin'])) {
+                $return .= '<div class="alert alert-danger">' . _('aucun_planning_associe_utilisateur') . '</div>';
 
-            //affiche le formulaire de saisie d'une nouvelle demande de conges
-            $return .= \utilisateur\Fonctions::saisie_echange_rtt($_SESSION['userlogin'], $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet);
+            } else {
+                //affiche le formulaire de saisie d'une nouvelle demande de conges
+                $return .= \utilisateur\Fonctions::saisie_echange_rtt($_SESSION['userlogin'], $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet);
+            }
         }
 
         return $return;
     }
 
     /**
-     * Encapsule le comportement du module de l'historique des congés
+     * Retourne vrai si l'utilisateur a un planning associé
      *
-     * @param string $session  Clé de session
-     * @param string $PHP_SELF
+     * @param string $user
      *
-     * @return void
-     * @access public
-     * @static
+     * @return bool
      */
-    public static function historiqueCongesModule($session, $PHP_SELF)
+    public static function hasUserPlanning($user)
     {
-        $return = '';
-        if($_SESSION['config']['where_to_find_user_email']=="ldap"){
-            include_once CONFIG_PATH .'config_ldap.php';
-        }
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT EXISTS (
+            SELECT planning_id
+            FROM conges_users
+                INNER JOIN planning USING (planning_id)
+            WHERE u_login ="' . $sql->quote($user) . '"
+            AND planning.status = ' . \App\Models\Planning::STATUS_ACTIVE . '
+        )';
+        $query = $sql->query($req);
 
-        $tri_date = getpost_variable('tri_date', "ascendant");
-        $year_affichage = getpost_variable('year_affichage' , date("Y") );
-
-        $return .= '<h1>' . _('user_historique_conges') . '</h1>';
-
-        //affiche le tableau de l'hitorique des conges
-
-
-        // affichage de l'année et des boutons de défilement
-        $year_affichage_prec = $year_affichage-1 ;
-        $year_affichage_suiv = $year_affichage+1 ;
-
-        $return .= '<b>';
-        $return .= '<a href="' . $PHP_SELF . '?session=' . $session . '&onglet=historique_conges&year_affichage=' . $year_affichage_prec . '"><<</a>';
-        $return .= '&nbsp&nbsp&nbsp  ' . schars($year_affichage) . ' &nbsp&nbsp&nbsp';
-        $return .= '<a href="' . schars($PHP_SELF) . '?session=' . schars($session) . '&onglet=historique_conges&year_affichage=' . schars($year_affichage_suiv) . '">>></a>';
-        $return .= '</b><br><br>';
-
-
-        // Récupération des informations
-        // on ne recup QUE les periodes de type "conges"(cf table conges_type_absence) ET pas les demandes
-        $sql2 = "SELECT p_login, p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_nb_jours, p_commentaire, p_type, p_etat, p_motif_refus, p_date_demande, p_date_traitement, ta_libelle
-            FROM conges_periode as a, conges_type_absence as b
-            WHERE a.p_login = '".$_SESSION['userlogin']."'
-            AND (a.p_type=b.ta_id)
-            AND ( (b.ta_type='conges') OR (b.ta_type='conges_exceptionnels') )
-            AND (p_etat='ok' OR  p_etat='refus' OR  p_etat='annul')
-            AND (p_date_deb LIKE '$year_affichage%' OR p_date_fin LIKE '$year_affichage%') ";
-
-        if($tri_date=="descendant")
-            $sql2=$sql2." ORDER BY p_date_deb DESC ";
-        else
-            $sql2=$sql2." ORDER BY p_date_deb ASC ";
-
-        $ReqLog2 = \includes\SQL::query($sql2) ;
-
-        $count2=$ReqLog2->num_rows;
-        if($count2==0) {
-            $return .= '<b>' . _('user_conges_aucun_conges') . '</b><br>';
-        } else {
-            // AFFICHAGE TABLEAU
-            $return .= '<table class="table table-responsive table-condensed table-stripped table-hover">';
-            $return .= '<thead>';
-            $return .= '<tr>';
-            $return .= '<th>';
-            $return .= _('divers_debut_maj_1');
-            $return .= '</th>';
-            $return .= '<th>' . _('divers_fin_maj_1') . '</th>';
-            $return .= '<th>' . _('divers_type_maj_1') . '</th>';
-            $return .= '<th>' . _('divers_nb_jours_maj_1') . '</th>';
-            $return .= '<th>' . _('divers_comment_maj_1') . '</th>';
-            $return .= '<th>' . _('divers_etat_maj_1') . '</th>';
-            $return .= '<th>' . _('divers_motif_refus') . '</th>';
-            if($_SESSION['config']['affiche_date_traitement']) {
-                $return .= '<td>' . _('divers_date_traitement') . '</td>';
-            }
-
-            $return .= '</tr>';
-            $return .= '</thead>';
-            $return .= '<tbody>';
-
-            $i = true;
-            while ($resultat2 = $ReqLog2->fetch_array()) {
-                $sql_p_date_deb = eng_date_to_fr($resultat2["p_date_deb"]);
-                $sql_p_demi_jour_deb = $resultat2["p_demi_jour_deb"];
-                if($sql_p_demi_jour_deb=="am") $demi_j_deb="mat";  else $demi_j_deb="aprm";
-                $sql_p_date_fin = eng_date_to_fr($resultat2["p_date_fin"]);
-                $sql_p_demi_jour_fin = $resultat2["p_demi_jour_fin"];
-                if($sql_p_demi_jour_fin=="am") $demi_j_fin="mat";  else $demi_j_fin="aprm";
-                $sql_p_nb_jours = $resultat2["p_nb_jours"];
-                $sql_p_commentaire = $resultat2["p_commentaire"];
-                //$sql_p_type = $resultat2["p_type"];
-                $sql_p_type = $resultat2["ta_libelle"];
-                $sql_p_etat = $resultat2["p_etat"];
-                $sql_p_motif_refus=$resultat2["p_motif_refus"] ;
-                $sql_p_date_demande = $resultat2["p_date_demande"];
-                $sql_p_date_traitement = $resultat2["p_date_traitement"];
-
-                $return .= '<tr class="' . ($i ? 'i' : 'p') . '">';
-                $return .= '<td class="histo">' . schars($sql_p_date_deb) . ' _ ' . schars($demi_j_deb) . '</td>';
-                $return .= '<td class="histo">' . schars($sql_p_date_fin) . ' _ ' . schars($demi_j_fin) . '</td>' ;
-                $return .= '<td class="histo">' . schars($sql_p_type) . '</td>';
-                $return .= '<td class="histo">' . affiche_decimal($sql_p_nb_jours) . '</td>';
-                $return .= '<td class="histo">' . schars($sql_p_commentaire) . '</td>';
-
-
-                $return .= '<td>';
-                if($sql_p_etat=="refus")
-                    $return .= _('divers_refuse') ;
-                elseif($sql_p_etat=="annul")
-                    $return .= _('divers_annule') ;
-                else
-                    $return .= schars($sql_p_etat);
-                $return .= '</td>';
-
-
-                if($sql_p_etat=="refus") {
-                    if($sql_p_motif_refus=="")
-                        $sql_p_motif_refus= _('divers_inconnu') ;
-                    $return .= '<td class="histo">' . schars($sql_p_motif_refus) . '</td>';
-                } elseif($sql_p_etat=="annul") {
-                    if($sql_p_motif_refus=="")
-                        $sql_p_motif_refus= _('divers_inconnu') ;
-                    $return .= '<td class="histo">' . schars($sql_p_motif_refus) . '</td>';
-                } elseif($sql_p_etat=="ok") {
-                    if($sql_p_motif_refus=="")
-                        $sql_p_motif_refus=" ";
-                    $return .= '<td class="histo">' . schars($sql_p_motif_refus) . '</td>';
-                }
-                $return .= '</td>';
-
-                if($_SESSION['config']['affiche_date_traitement']) {
-                    $return .= '<td class="histo-left">' . schars( _('divers_demande')) . ' : ' . schars($sql_p_date_demande) . '<br>';
-                    $text_lang_a_afficher="divers_traitement_$sql_p_etat" ; // p_etat='ok' OR  p_etat='refus' OR  p_etat='annul' .....
-                    $return .= schars( _($text_lang_a_afficher) ) . ' : ' . schars($sql_p_date_traitement).'</td>';
-                }
-
-                $return .= '</tr>';
-                $i = !$i;
-            }
-            $return .= '</tbody>';
-            $return .= '</table>';
-        }
-        $return .= '<br><br>';
-
-        return $return;
+        return 0 < (int) $query->fetch_array()[0];
     }
 
     /**
-     * Encapsule le comportement du module de l'historique des autres absences
+     * Retourne le planning de l'utilisateur organisé selon la hiérarchie habituelle
+     * @example planningId[typeSemaine][jourId][typePeriode][creneaux]
      *
-     * @param string $onglet Nom de l'onglet à afficher
-     * @param string $session  Clé de session
-     * @param string $PHP_SELF
+     * @param string $user
      *
-     * @return void
+     * @return ?array
+     * @TODO $dataPlanning peut être nullable (php7.1)
+     */
+    public static function getUserPlanning($user)
+    {
+        $dataPlanning = null;
+        $sql = \includes\SQL::singleton();
+        $reqUser = 'SELECT planning.*
+            FROM conges_users
+                INNER JOIN planning USING (planning_id)
+            WHERE u_login = "' . $sql->quote($user) . '"
+                AND planning.status = ' . \App\Models\Planning::STATUS_ACTIVE;
+        $queryUser = $sql->query($reqUser);
+        $planning = $queryUser->fetch_array();
+        if (!empty($planning)) {
+            $dataPlanning = [];
+            $reqCreneau = 'SELECT *
+                FROM planning_creneau
+                WHERE planning_id = ' . $planning['planning_id'];
+            $queryCreneau = $sql->query($reqCreneau);
+
+            while ($data = $queryCreneau->fetch_array()) {
+                $dataPlanning[$data['type_semaine']][$data['jour_id']][$data['type_periode']][] = [
+                    \App\Models\Planning\Creneau::TYPE_HEURE_DEBUT => $data['debut'],
+                    \App\Models\Planning\Creneau::TYPE_HEURE_FIN   => $data['fin'],
+                ];
+            }
+        }
+
+        return $dataPlanning;
+    }
+
+    /**
+     * Retourne le type de semaine applicable pour un planning et un numéro de semaine donnés
+     *
+     * @param array $planningUser
+     * @param int   $weekOfDay
+     *
+     * @return int
+     */
+    public static function getRealWeekType(array $planningUser, $weekOfDay)
+    {
+        $typeSemaineDuJour = ($weekOfDay & 1)
+            ? \App\Models\Planning\Creneau::TYPE_SEMAINE_IMPAIRE
+            : \App\Models\Planning\Creneau::TYPE_SEMAINE_PAIRE;
+        if (isset($planningUser[$typeSemaineDuJour])) {
+            return $typeSemaineDuJour;
+        } elseif (isset($planningUser[\App\Models\Planning\Creneau::TYPE_SEMAINE_COMMUNE])) {
+            return \App\Models\Planning\Creneau::TYPE_SEMAINE_COMMUNE;
+        } else {
+            return NIL_INT;
+        }
+    }
+
+    /**
+     * Vérifie que le jour est travaillé selon le planning
+     *
+     * @param array $planningWeek
+     * @param int   $jourId
+     */
+    public static function isWorkingDay(array $planningWeek, $jourId)
+    {
+        return isset($planningWeek[$jourId]);
+    }
+
+    /**
+    * Vérifie qu'une matinée est travaillée pour un jour de planning donné
+     *
+     * @param array $planningDay
+     *
+     * @return bool
+     */
+    public static function isWorkingMorning(array $planningDay)
+    {
+        return \utilisateur\Fonctions::isWorkingPeriodType($planningDay, \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN);
+    }
+
+    /**
+     * Vérifie qu'une après midi est travaillée pour un jour de planning donné
+     *
+     * @param array $planningDay
+     *
+     * @return bool
+     */
+    public static function isWorkingAfternoon(array $planningDay)
+    {
+        return \utilisateur\Fonctions::isWorkingPeriodType($planningDay, \App\Models\Planning\Creneau::TYPE_PERIODE_APRES_MIDI);
+    }
+
+    /**
+     * Vérifie qu'un type de période est travaillé pour un jour de planning donné
+     *
+     * @param array $planningDay
+     * @param int   $periodType
+     *
+     * @return bool
+     */
+    private static function isWorkingPeriodType(array $planningDay, $periodType)
+    {
+        return isset($planningDay[$periodType]);
+    }
+
+    /**
+     * Retourne les jours de la semaine à désactiver dans datepicker
+     *
+     * @return array
      * @access public
      * @static
      */
-    public static function historiqueAutresAbsencesModule($onglet, $session, $PHP_SELF)
+    public static function getDatePickerDaysOfWeekDisabled()
     {
-        $return = '';
-        if($_SESSION['config']['where_to_find_user_email']=="ldap"){
-            include_once CONFIG_PATH .'config_ldap.php';
+        $daysOfWeekDisabled = [];
+
+        if (false == $_SESSION['config']['dimanche_travail']) {
+            $daysOfWeekDisabled[] = 0;
+        }
+        if (false == $_SESSION['config']['samedi_travail']) {
+            $daysOfWeekDisabled[] = 6;
+        }
+        return $daysOfWeekDisabled;
+    }
+
+    /**
+     * Retourne les jours fériés à désactiver dans datepicker
+     *
+     * @return array
+     * @access public
+     * @static
+     */
+    public static function getDatePickerJoursFeries()
+    {
+        $Jferies      = [];
+
+        if (is_array($_SESSION["tab_j_feries"])) {
+            foreach ($_SESSION["tab_j_feries"] as $date) {
+                $Jferies[] = \App\Helpers\Formatter::dateIso2Fr($date);
+            }
         }
 
-        $tri_date = getpost_variable('tri_date', "ascendant");
-        $year_affichage = getpost_variable('year_affichage' , date("Y") );
+        return $Jferies;
+    }
 
-        $return = '<h1>'. _('user_historique_abs') .' :</h1>';
+    /**
+     * Retourne les jours de fermeture à désactiver dans datepicker
+     *
+     * @return array
+     * @access public
+     * @static
+     */
+    public static function getDatePickerFermeture()
+    {
+        $Fermeture      = [];
 
-        // affichage de l'année et des boutons de défilement
-        $year_affichage_prec = $year_affichage-1 ;
-        $year_affichage_suiv = $year_affichage+1 ;
-
-        $return .= '<b>';
-        $return .= '<a href="' . $PHP_SELF . '?session=' . $session . '&onglet=historique_autres_absences&year_affichage=' . $year_affichage_prec . '"><<</a>';
-        $return .= '&nbsp&nbsp&nbsp ' . $year_affichage . '&nbsp&nbsp&nbsp';
-        $return .= '<a href="' . $PHP_SELF . '?session=' . $session . '&onglet=historique_autres_absences&year_affichage=' . $year_affichage_suiv . '">>></a>';
-        $return .= '</b><br><br>';
-
-
-        // Récupération des informations
-        $sql4 = 'SELECT p_login, p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_nb_jours, p_commentaire, p_type, p_etat, p_motif_refus, p_date_demande, p_date_traitement, p_num, ta_libelle
-            FROM conges_periode as a, conges_type_absence as b
-            WHERE a.p_login = "'.\includes\SQL::quote($_SESSION['userlogin']).'"
-            AND (a.p_type=b.ta_id)
-            AND (b.ta_type=\'absences\')
-            AND (p_date_deb LIKE \''.intval($year_affichage).'%\' OR p_date_fin LIKE \''.intval($year_affichage).'%\') ';
-
-        if($tri_date=="descendant")
-            $sql4=$sql4." ORDER BY p_date_deb DESC ";
-        else
-            $sql4=$sql4." ORDER BY p_date_deb ASC ";
-
-        $ReqLog4 = \includes\SQL::query($sql4) ;
-
-        $count4=$ReqLog4->num_rows;
-        if($count4==0) {
-            $return .= '<b>' . _('user_abs_aucune_abs') . '</b><br>';
-        } else {
-            // AFFICHAGE TABLEAU
-            $return .= '<table cellpadding="2"  class="tablo" width="80%">';
-            $return .= '<thead>';
-            $return .= '<tr>';
-            $return .= '<td>';
-            $return .= '<a href="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '&tri_date=descendant"><img src="' . IMG_PATH . '1downarrow-16x16.png" width="16" height="16" border="0" title="trier"></a>';
-            $return .= _('divers_debut_maj_1');
-            $return .= '<a href="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '&tri_date=ascendant"><img src="' . IMG_PATH . '1uparrow-16x16.png" width="16" height="16" border="0" title="trier"></a>';
-            $return .= '</td>';
-            $return .= '<td>' . _('divers_fin_maj_1') . '</td>';
-            $return .= '<td>' . _('user_abs_type') . '</td>';
-            $return .= '<td>' . _('divers_nb_jours_maj_1') . '</td>';
-            $return .= '<td>' . _('divers_comment_maj_1') . '</td>';
-            $return .= '<td>' . _('divers_etat_maj_1') . '</td>';
-            $return .= '<td></td><td></td>';
-            if($_SESSION['config']['affiche_date_traitement']) {
-                $return .= '<td>' . _('divers_date_traitement') . '</td>';
+        if (isset($_SESSION["tab_j_fermeture"]) && is_array($_SESSION["tab_j_fermeture"])) {
+            foreach ($_SESSION["tab_j_fermeture"] as $date) {
+                $Fermeture[] = \App\Helpers\Formatter::dateIso2Fr($date);
             }
-            $return .= '</tr>';
-            $return .= '</thead>';
-            $return .= '<tbody>';
-
-            $i = true;
-            while ($resultat4 = $ReqLog4->fetch_array()) {
-                $sql_login= $resultat4["p_login"];
-                $sql_date_deb= eng_date_to_fr($resultat4["p_date_deb"]);
-                $sql_p_demi_jour_deb = $resultat4["p_demi_jour_deb"];
-                if($sql_p_demi_jour_deb=="am") $demi_j_deb="mat";  else $demi_j_deb="aprm";
-                $sql_date_fin= eng_date_to_fr($resultat4["p_date_fin"]);
-                $sql_p_demi_jour_fin = $resultat4["p_demi_jour_fin"];
-                if($sql_p_demi_jour_fin=="am") $demi_j_fin="mat";  else $demi_j_fin="aprm";
-                $sql_nb_jours= affiche_decimal($resultat4["p_nb_jours"]);
-                $sql_commentaire= $resultat4["p_commentaire"];
-                //$sql_type=$resultat4["p_type"];
-                $sql_type=$resultat4["ta_libelle"];
-                $sql_etat=$resultat4["p_etat"];
-                $sql_motif_refus=$resultat4["p_motif_refus"] ;
-                $sql_date_demande = $resultat4["p_date_demande"];
-                $sql_date_traitement = $resultat4["p_date_traitement"];
-                $sql_num= $resultat4["p_num"];
-
-                // si le user a le droit de saisir lui meme ses absences et qu'elle n'est pas deja annulee, on propose de modifier ou de supprimer
-                if(($sql_etat != "annul")&&($_SESSION['config']['user_saisie_mission'])) {
-                    $user_modif_mission="<a href=\"user_index.php?session=$session&p_num=$sql_num&onglet=modif_demande\">". _('form_modif') ."</a>" ;
-                    $user_suppr_mission="<a href=\"user_index.php?session=$session&p_num=$sql_num&onglet=suppr_demande\">". _('form_supprim') ."</a>" ;
-                } else {
-                    $user_modif_mission=" - " ;
-                    $user_suppr_mission=" - " ;
-                }
-
-                $return .= '<tr class="'.($i ? 'i' : 'p') . '">';
-                $return .= '<td class="histo">' . schars($sql_date_deb) . ' _ ' . schars($demi_j_deb) . '</td>';
-                $return .= '<td class="histo">' . schars($sql_date_fin) . ' _ ' . schars($demi_j_fin) . '</td>' ;
-                $return .= '<td class="histo">' . schars($sql_type) . '</td>';
-                $return .= '<td class="histo">' . affiche_decimal($sql_nb_jours) . '</td>' ;
-                $return .= '<td class="histo">' . schars($sql_commentaire) . '</td>';
-
-                if($sql_etat=="refus") {
-                    if($sql_motif_refus=="")
-                        $sql_motif_refus= _('divers_inconnu') ;
-                    $return .= '<br><i>".'.schars( _('divers_motif_refus') ).'." : '.schars($sql_motif_refus).'</i>';
-                } elseif($sql_etat=="annul") {
-                    if($sql_motif_refus=="")
-                        $sql_motif_refus= _('divers_inconnu') ;
-                    $return .= '<br><i>".'.schars( _('divers_motif_annul') ).'." : '.schars($sql_motif_refus).'</i>';
-                }
-                $return .= '</td>';
-                $return .= '<td>';
-                if($sql_etat=="refus")
-                    $return .= _('divers_refuse') ;
-                elseif($sql_etat=="annul")
-                    $return .= _('divers_annule') ;
-                else
-                    $return .= schars($sql_etat);
-                $return .= '</td>';
-                $return .= '<td class="histo">' . ($user_modif_mission) . '</td>';
-                $return .= '<td class="histo">'.($user_suppr_mission).'</td>'."\n";
-                if($_SESSION['config']['affiche_date_traitement']) {
-                    $return .= '<td class="histo-left">' . schars(_('divers_demande') ) . ' : ' . schars($sql_date_demande) . '<br>' . schars(_('divers_traitement') ) . ' : ' . schars($sql_date_traitement) . '</td>';
-                }
-                $return .= '</tr>';
-                $i = !$i;
-            }
-            $return .= '</tbody>';
-            $return .= '</table>';
         }
-        $return .= '<br><br>';
 
-        return $return;
+        return $Fermeture;
+    }
+
+    /**
+     * Retourne le jour de début du calendrier dans datepicker
+     *
+     * @return string
+     * @access public
+     * @static
+     */
+    public static function getDatePickerStartDate()
+    {
+        return ($_SESSION['config']['interdit_saisie_periode_date_passee']) ? 'd' : '';
+    }
+
+
+    // --------------------------------------
+
+    /*
+    * TODO: Où sont passées les heures validées (!= en cours donc) ?
+    */
+
+    public static function getOptionsTypeConges()
+    {
+        $options = [];
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT ta_libelle, ta_short_libelle
+                FROM conges_type_absence';
+        $res = $sql->query($req);
+
+        while ($data = $res->fetch_array()) {
+            $options[$data['ta_short_libelle']] = $data['ta_libelle'];
+        }
+
+        return $options;
     }
 }

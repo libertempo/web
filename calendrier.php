@@ -1,5 +1,4 @@
 <?php
-
 define('ROOT_PATH', '');
 require_once ROOT_PATH . 'define.php';
 
@@ -8,7 +7,8 @@ $session = htmlentities($session, ENT_QUOTES | ENT_HTML401);
 
 include_once ROOT_PATH .'fonctions_conges.php';
 include_once INCLUDE_PATH .'fonction.php';
-$add_css = NULL;
-header_menu('', 'Libertempo : '._('calendrier_titre'), $add_css);
-echo \calendrier\Fonctions::calendrierModule($session);
+header_menu('', 'Libertempo : '._('calendrier_titre'));
+
+echo (new \App\ProtoControllers\Calendrier())->get();
+
 bottom();

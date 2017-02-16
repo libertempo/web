@@ -5,23 +5,20 @@ include ROOT_PATH . 'define.php';
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 
 /*******************************************************************/
-// SCRIPT DE MIGRATION DE LA VERSION 1.8 vers 1.9
+// SCRIPT DE MIGRATION DE LA VERSION 1.8 vers 1.8.1
 /*******************************************************************/
 include ROOT_PATH .'fonctions_conges.php' ;
 include INCLUDE_PATH .'fonction.php';
 
-$PHP_SELF=$_SERVER['PHP_SELF'];
+$PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 
 $version = (isset($_GET['version']) ? $_GET['version'] : (isset($_POST['version']) ? $_POST['version'] : "")) ;
+$version = htmlentities($version, ENT_QUOTES | ENT_HTML401);
 $lang = (isset($_GET['lang']) ? $_GET['lang'] : (isset($_POST['lang']) ? $_POST['lang'] : "")) ;
 $lang = htmlentities($lang, ENT_QUOTES | ENT_HTML401);
 if (!in_array($lang, ['fr_FR', 'en_US', 'es_ES'], true)) {
     $lang = '';
 }
-
-$ssoad="UPDATE conges_config SET conf_type = 'enum=dbconges/ldap/CAS/SSO' WHERE conf_nom = 'how_to_connect_user';";
-$res_ssoad=\includes\SQL::query($ssoad);
-
 //suppression des droits de conges
 $del_conges_acl = "DELETE FROM conges_groupe_resp WHERE gr_login = 'conges';";
 $res_del_conges_acl = \includes\SQL::query($del_conges_acl);

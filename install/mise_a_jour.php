@@ -7,7 +7,7 @@ include_once ROOT_PATH .'fonctions_conges.php' ;
 include_once INCLUDE_PATH .'fonction.php';
 include ROOT_PATH .'version.php' ;
 
-$PHP_SELF=$_SERVER['PHP_SELF'];
+$PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 
 //recup de la langue
 $lang=(isset($_GET['lang']) ? $_GET['lang'] : ((isset($_POST['lang'])) ? $_POST['lang'] : "") ) ;

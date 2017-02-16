@@ -9,7 +9,7 @@ class Fonctions
     // modifie, pour un resp donné,  les groupes dont il est resp et grands_resp
     public static function modif_resp_groupes($choix_resp, &$checkbox_resp_group, &$checkbox_grd_resp_group)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -62,7 +62,7 @@ class Fonctions
     // affiche pour un resp des cases à cocher devant les groupes possibles pour les selectionner.
     public static function affiche_gestion_responsable_groupes($choix_resp, $onglet)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -247,7 +247,7 @@ class Fonctions
     // affiche le tableau des responsables pour choisir sur lequel on va gerer les groupes dont il est resp
     public static function affiche_choix_responsable_groupes()
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -304,7 +304,7 @@ class Fonctions
     // modifie, pour un groupe donné,  ses resp et grands_resp
     public static function modif_group_responsables($choix_group, &$checkbox_group_resp, &$checkbox_group_grd_resp)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -358,7 +358,7 @@ class Fonctions
     // affiche pour un groupe des cases à cocher devant les resp et grand_resp possibles pour les selectionner.
     public static function affiche_gestion_groupes_responsables($choix_group, $onglet)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -530,7 +530,7 @@ class Fonctions
     // affiche le tableau des groupes pour choisir sur quel groupe on va gerer les responsables
     public static function affiche_choix_groupes_responsables()
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -581,7 +581,7 @@ class Fonctions
     // affichage des pages de gestion des responsables des groupes
     public static function affiche_choix_gestion_groupes_responsables($choix_group, $choix_resp, $onglet)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -642,7 +642,7 @@ class Fonctions
 
     public static function modif_user_groups($choix_user, &$checkbox_user_groups)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -666,7 +666,7 @@ class Fonctions
 
     public static function modif_group_users($choix_group, &$checkbox_group_users)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -701,7 +701,7 @@ class Fonctions
     }
 
     public static function affiche_gestion_groupes_users($choix_group, $onglet) {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -803,7 +803,7 @@ class Fonctions
 
     public static function affiche_choix_groupes_users()
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -858,7 +858,7 @@ class Fonctions
 
     public static function affiche_gestion_user_groupes($choix_user, $onglet)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -883,7 +883,7 @@ class Fonctions
 
     public static function affiche_choix_user_groupes()
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -1022,7 +1022,7 @@ class Fonctions
 
     public static function affiche_choix_gestion_groupes_users($choix_group, $choix_user, $onglet)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return   = '';
 
         if( $choix_group!="" )     // si un groupe choisi : on affiche la gestion par groupe
@@ -1090,7 +1090,7 @@ class Fonctions
 
     public static function verif_new_param_group($new_group_name, $new_group_libelle)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -1131,7 +1131,7 @@ class Fonctions
 
     public static function ajout_groupe($new_group_name, $new_group_libelle, $new_group_double_valid)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -1164,7 +1164,7 @@ class Fonctions
 
     public static function affiche_gestion_groupes($new_group_name, $new_group_libelle, $onglet)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -1238,7 +1238,7 @@ class Fonctions
         $table->addClasses([
             'table',
         ]);
-        $childTable = '<head><tr>';
+        $childTable = '<thead><tr>';
         $childTable .= '<th><b>' . _('admin_groupes_groupe') . '</b></th>';
         $childTable .= '<th>' . _('admin_groupes_libelle') . ' / ' . _('divers_comment_maj_1') . '</th>';
         if($_SESSION['config']['double_validation_conges']) {
@@ -1437,7 +1437,7 @@ class Fonctions
     public static function commit_update($u_login_to_update, $new_pwd1, $new_pwd2)
     {
 
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -1471,7 +1471,7 @@ class Fonctions
 
     public static function modifier($u_login, $onglet)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -1691,7 +1691,7 @@ class Fonctions
 
     public static function restaure($fichier_restaure_name, $fichier_restaure_tmpname, $fichier_restaure_size, $fichier_restaure_error)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -1751,7 +1751,7 @@ class Fonctions
     // RESTAURATION
     public static function choix_restaure()
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -1798,7 +1798,7 @@ class Fonctions
 
     public static function commit_sauvegarde($type_sauvegarde)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -1836,7 +1836,7 @@ class Fonctions
 
     public static function sauve($type_sauvegarde)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -1868,7 +1868,7 @@ class Fonctions
     // SAUVEGARDE
     public static function choix_sauvegarde()
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -1916,7 +1916,7 @@ class Fonctions
     // CHOIX
     public static function choix_save_restore()
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -1979,7 +1979,7 @@ class Fonctions
         /*************************************/
         // recup des parametres reçus :
         // SERVER
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         // GET / POST
         $choix_action    = getpost_variable('choix_action');
         $type_sauvegarde = getpost_variable('type_sauvegarde');
@@ -2021,7 +2021,7 @@ class Fonctions
 
     public static function commit_update_groupe($group_to_update, $new_groupname, $new_comment, $new_double_valid)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
         $result   = TRUE;
@@ -2052,7 +2052,7 @@ class Fonctions
 
     public static function modifier_groupe($group, $onglet)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -2164,82 +2164,12 @@ class Fonctions
         return $return;
     }
 
-    public static function tab_grille_rtt_from_checkbox($tab_checkbox_sem_imp, $tab_checkbox_sem_p)
+    public static function commit_update_user($u_login_to_update, &$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, &$tab_new_reliquat, &$return)
     {
-        $tab_grille=array();
-        $semaine=array("lu", "ma", "me", "je", "ve", "sa", "di");
-
-        // initialiastaion du tableau
-        foreach($semaine as $day) {
-            $key1="sem_imp_".$day."_am";
-            $key2="sem_imp_".$day."_pm";
-            $tab_grille[$key1] = "";
-            $tab_grille[$key2] = "";
-            $key3="sem_p_".$day."_am";
-            $key4="sem_p_".$day."_pm";
-            $tab_grille[$key3] = "";
-            $tab_grille[$key4] = "";
-        }
-
-        // mise a jour du tab avec les valeurs des chechbox
-        if($tab_checkbox_sem_imp!="") {
-            while (list ($key, $val) = each ($tab_checkbox_sem_imp)) {
-                $tab_grille[$key]=$val;
-            }
-        }
-        if($tab_checkbox_sem_p!="") {
-            while (list ($key, $val) = each ($tab_checkbox_sem_p)) {
-                $tab_grille[$key]=$val;
-            }
-        }
-        return $tab_grille;
-    }
-
-    public static function get_current_grille_rtt($u_login_to_update)
-    {
-        $tab_grille=array();
-
-        $sql = 'SELECT * FROM conges_artt WHERE a_login="'. \includes\SQL::quote($u_login_to_update).'" AND a_date_fin_grille=\'9999-12-31\' ';
-        $ReqLog1 = \includes\SQL::query($sql);
-
-        while ($resultat1 = $ReqLog1->fetch_array()) {
-            $tab_grille['sem_imp_lu_am'] = $resultat1['sem_imp_lu_am'] ;
-            $tab_grille['sem_imp_lu_pm'] = $resultat1['sem_imp_lu_pm'] ;
-            $tab_grille['sem_imp_ma_am'] = $resultat1['sem_imp_ma_am'] ;
-            $tab_grille['sem_imp_ma_pm'] = $resultat1['sem_imp_ma_pm'] ;
-            $tab_grille['sem_imp_me_am'] = $resultat1['sem_imp_me_am'] ;
-            $tab_grille['sem_imp_me_pm'] = $resultat1['sem_imp_me_pm'] ;
-            $tab_grille['sem_imp_je_am'] = $resultat1['sem_imp_je_am'] ;
-            $tab_grille['sem_imp_je_pm'] = $resultat1['sem_imp_je_pm'] ;
-            $tab_grille['sem_imp_ve_am'] = $resultat1['sem_imp_ve_am'] ;
-            $tab_grille['sem_imp_ve_pm'] = $resultat1['sem_imp_ve_pm'] ;
-            $tab_grille['sem_imp_sa_am'] = $resultat1['sem_imp_sa_am'] ;
-            $tab_grille['sem_imp_sa_pm'] = $resultat1['sem_imp_sa_pm'] ;
-            $tab_grille['sem_imp_di_am'] = $resultat1['sem_imp_di_am'] ;
-            $tab_grille['sem_imp_di_pm'] = $resultat1['sem_imp_di_pm'] ;
-            $tab_grille['sem_p_lu_am'] = $resultat1['sem_p_lu_am'] ;
-            $tab_grille['sem_p_lu_pm'] = $resultat1['sem_p_lu_pm'] ;
-            $tab_grille['sem_p_ma_am'] = $resultat1['sem_p_ma_am'] ;
-            $tab_grille['sem_p_ma_pm'] = $resultat1['sem_p_ma_pm'] ;
-            $tab_grille['sem_p_me_am'] = $resultat1['sem_p_me_am'] ;
-            $tab_grille['sem_p_me_pm'] = $resultat1['sem_p_me_pm'] ;
-            $tab_grille['sem_p_je_am'] = $resultat1['sem_p_je_am'] ;
-            $tab_grille['sem_p_je_pm'] = $resultat1['sem_p_je_pm'] ;
-            $tab_grille['sem_p_ve_am'] = $resultat1['sem_p_ve_am'] ;
-            $tab_grille['sem_p_ve_pm'] = $resultat1['sem_p_ve_pm'] ;
-            $tab_grille['sem_p_sa_am'] = $resultat1['sem_p_sa_am'] ;
-            $tab_grille['sem_p_sa_pm'] = $resultat1['sem_p_sa_pm'] ;
-            $tab_grille['sem_p_di_am'] = $resultat1['sem_p_di_am'] ;
-            $tab_grille['sem_p_di_pm'] = $resultat1['sem_p_di_pm'] ;
-        }
-        return $tab_grille;
-    }
-
-    public static function commit_update_user($u_login_to_update, &$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, &$tab_new_reliquat, $tab_checkbox_sem_imp, $tab_checkbox_sem_p)
-    {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $dataUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($u_login_to_update);
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
-        $return   = '';
+        $erreurs = [];
 
         $result=TRUE;
 
@@ -2249,20 +2179,27 @@ class Fonctions
         if ($_SESSION['config']['gestion_conges_exceptionnels']) {
             $tab_type_conges_excep=recup_tableau_types_conges_exceptionnels();
         }
-        $return .= htmlentities($u_login_to_update) . '---' . htmlentities($tab_new_user['nom']) . '---' . htmlentities($tab_new_user['prenom']) . '---' . htmlentities($tab_new_user['quotite']) . '---' . htmlentities($tab_new_user['is_resp']) . '---' . htmlentities($tab_new_user['resp_login']) . '---';
-        $return .= htmlentities($tab_new_user['is_admin']) . '---' . htmlentities($tab_new_user['is_hr']) . '---' . htmlentities($tab_new_user['is_active']) . '---' . htmlentities($tab_new_user['see_all']) . '---' . htmlentities($tab_new_user['email']) . '---' . htmlentities($tab_new_user['login']) . '<br>';
-
 
         $valid_1=TRUE;
         $valid_2=TRUE;
         $valid_3=TRUE;
         $valid_reliquat=TRUE;
+        $valid_4 = true;
 
         // verification de la validite de la saisie du nombre de jours annuels et du solde pour chaque type de conges
         foreach($tab_type_conges as $id_conges => $libelle) {
             $valid_1=$valid_1 && verif_saisie_decimal($tab_new_jours_an[$id_conges]);  //verif la bonne saisie du nombre d?cimal
             $valid_2=$valid_2 && verif_saisie_decimal($tab_new_solde[$id_conges]);  //verif la bonne saisie du nombre d?cimal
             $valid_reliquat=$valid_reliquat && verif_saisie_decimal($tab_new_reliquat[$id_conges]);  //verif la bonne saisie du nombre d?cimal
+        }
+        if (false === $valid_1) {
+            $erreurs['Nombre jour annuel'] = _('nombre_incorrect');
+        }
+        if (false === $valid_2) {
+            $erreurs['Solde congés'] = _('nombre_incorrect');
+        }
+        if (false === $valid_reliquat) {
+            $erreurs['Nombre reliquat'] = _('nombre_incorrect');
         }
 
         // si l'application gere les conges exceptionnels ET si des types de conges exceptionnels ont été définis
@@ -2276,8 +2213,20 @@ class Fonctions
             $valid_3=TRUE;
         }
 
+        if (false === $valid_3) {
+            $erreurs['Solde congés exceptionnels'] = _('nombre_incorrect');
+        }
+
+        if(!\admin\Fonctions::FormAddUserSoldeHeureOk($tab_new_user['solde_heure'])
+            || !\admin\Fonctions::FormAddUserQuotiteOk($tab_new_user['quotite'])
+            || !\admin\Fonctions::FormAddUserNameOk($tab_new_user['nom'])
+            || !\admin\Fonctions::FormAddUserNameOk($tab_new_user['prenom']))
+        {
+            $valid_4=FALSE;
+        }
+
         // si aucune erreur de saisie n'a ete commise
-        if(($valid_1) && ($valid_2) && ($valid_3) && ($valid_reliquat) && $tab_new_user['login']!="") {
+        if(($valid_1) && ($valid_2) && ($valid_3) && ($valid_4) && ($valid_reliquat) && $tab_new_user['login']!="") {
             // UPDATE de la table conges_users
             $sql = 'UPDATE conges_users SET u_nom="'. \includes\SQL::quote($tab_new_user['nom']).'", u_prenom="'.\includes\SQL::quote($tab_new_user['prenom']).'", u_is_resp="'. \includes\SQL::quote($tab_new_user['is_resp']).'", u_resp_login=';
             if($tab_new_user['resp_login'] == 'no_resp') {
@@ -2285,7 +2234,7 @@ class Fonctions
             } else {
                 $sql .='"'.\includes\SQL::quote($tab_new_user['resp_login']).'",';
             }
-            $sql .= 'u_is_admin="'. \includes\SQL::quote($tab_new_user['is_admin']).'",u_is_hr="'.\includes\SQL::quote($tab_new_user['is_hr']).'",u_is_active="'.\includes\SQL::quote($tab_new_user['is_active']).'",u_see_all="'.\includes\SQL::quote($tab_new_user['see_all']).'",u_login="'.\includes\SQL::quote($tab_new_user['login']).'",u_quotite="'.\includes\SQL::quote($tab_new_user['quotite']).'",u_email="'. \includes\SQL::quote($tab_new_user['email']).'" WHERE u_login="'.\includes\SQL::quote($u_login_to_update).'"' ;
+            $sql .= 'u_heure_solde='. \App\Helpers\Formatter::hour2Time($tab_new_user['solde_heure']).',u_is_admin="'. \includes\SQL::quote($tab_new_user['is_admin']).'",u_is_hr="'.\includes\SQL::quote($tab_new_user['is_hr']).'",u_is_active="'.\includes\SQL::quote($tab_new_user['is_active']).'",u_see_all="'.\includes\SQL::quote($tab_new_user['see_all']).'",u_login="'.\includes\SQL::quote($tab_new_user['login']).'",u_quotite="'.\includes\SQL::quote($tab_new_user['quotite']).'",u_email="'. \includes\SQL::quote($tab_new_user['email']).'" WHERE u_login="'.\includes\SQL::quote($u_login_to_update).'"' ;
 
             \includes\SQL::query($sql);
 
@@ -2294,7 +2243,6 @@ class Fonctions
             /* Mise a jour de la table conges_solde_user   */
             foreach($tab_type_conges as $id_conges => $libelle) {
                 $sql = 'REPLACE INTO conges_solde_user SET su_nb_an=\''.strtr(round_to_half($tab_new_jours_an[$id_conges]),",",".").'\',su_solde=\''.strtr(round_to_half($tab_new_solde[$id_conges]),",",".").'\',su_reliquat=\''.strtr(round_to_half($tab_new_reliquat[$id_conges]),",",".").'\',su_login="'.\includes\SQL::quote($u_login_to_update).'",su_abs_id='.intval($id_conges).';';
-                $return .= $sql;
                 \includes\SQL::query($sql);
 
             }
@@ -2302,94 +2250,15 @@ class Fonctions
             if ($_SESSION['config']['gestion_conges_exceptionnels']) {
                 foreach($tab_type_conges_excep as $id_conges => $libelle) {
                     $sql = 'REPLACE INTO conges_solde_user SET su_nb_an=0, su_solde=\''.strtr(round_to_half($tab_new_solde[$id_conges]),",",".").'\', su_reliquat=\''.strtr(round_to_half($tab_new_reliquat[$id_conges]),",",".").'\', su_login="'.\includes\SQL::quote($u_login_to_update).'", su_abs_id='.intval($id_conges).';';
-                    $return .= $sql;
                     \includes\SQL::query($sql);
                 }
             }
 
             /*************************************/
-            /* Mise a jour de la table artt si besoin :   */
-            $tab_grille_rtt_actuelle = \admin\Fonctions::get_current_grille_rtt($u_login_to_update);
-            $tab_new_grille_rtt= \admin\Fonctions::tab_grille_rtt_from_checkbox($tab_checkbox_sem_imp, $tab_checkbox_sem_p);
-
-            if($tab_grille_rtt_actuelle != $tab_new_grille_rtt) {
-                $new_date_deb_grille=$tab_new_user['year']."-".$tab_new_user['mois']."-".$tab_new_user['jour'];
-
-                /****************************/
-                /***   phase 1 :  ***/
-                // si la derniere grille est ancienne, on l'update (on update la date de fin de grille)
-                // sinon, si la derniere grille date d'aujourd'hui, on la supprime
-
-                // on regarde si la grille artt a deja été modifiée aujourd'hui :
-                $sql='SELECT a_date_fin_grille FROM conges_artt
-                    WHERE a_login="'.\includes\SQL::quote($u_login_to_update).'" AND a_date_debut_grille="'. \includes\SQL::quote($new_date_deb_grille).'";';
-                $result_grille = \includes\SQL::query($sql);
-
-                $count_grille=$result_grille->num_rows;
-
-                if($count_grille==0) {  // si pas de grille modifiée aujourd'hui : on update la date de fin de la derniere grille
-
-                    // date de fin de la grille précedent :
-                    // $new_date_fin_grille = $new_date_deb_grille -1 jour !
-                    $new_jour_num= (integer) $tab_new_user['jour'];
-                    $new_mois_num= (integer) $tab_new_user['mois'];
-                    $new_year_num= (integer) $tab_new_user['year'];
-                    $new_date_fin_grille=date("Y-m-d", mktime(0, 0, 0, $new_mois_num, $new_jour_num-1, $new_year_num)); // int mktime(int hour, int minute, int second, int month, int day, int year )
-
-                    // UPDATE de la table conges_artt
-                    // en fait, on update la dernière grille (on update la date de fin de grille), et on ajoute une nouvelle
-                    // grille (avec sa date de début de grille)
-
-                    // on update la dernière grille (on update la date de fin de grille)
-                    $sql = 'UPDATE conges_artt SET a_date_fin_grille="'. \includes\SQL::quote($new_date_fin_grille).'" WHERE a_login="'. \includes\SQL::quote($u_login_to_update).'"  AND a_date_fin_grille=\'9999-12-31\' ';
-                    \includes\SQL::query($sql);
-                } else {// si une grille modifiée aujourd'hui : on delete cette grille
-                    $sql='DELETE FROM conges_artt WHERE a_login="'. \includes\SQL::quote($u_login_to_update).'" AND a_date_debut_grille="'. \includes\SQL::quote($new_date_deb_grille).'"';
-                    \includes\SQL::query($sql);
-                }
-
-                /****************************/
-                /***   phase 2 :  ***/
-                // on Insert la nouvelle grille (celle qui commence aujourd'hui)
-                //  on met à 'Y' les demi-journées de rtt (et seulement celles là)
-                $list_columns="";
-                $list_valeurs="";
-                $i=0;
-                if($tab_checkbox_sem_imp!="") {
-                    while (list ($key, $val) = each ($tab_checkbox_sem_imp)) {
-                        if($i!=0) {
-                            $list_columns=$list_columns.", ";
-                            $list_valeurs=$list_valeurs.", ";
-                        }
-                        $list_columns=$list_columns." $key ";
-                        $list_valeurs=$list_valeurs." '$val' ";
-                        $i=$i+1;
-                    }
-                }
-                if($tab_checkbox_sem_p!="") {
-                    while (list ($key, $val) = each ($tab_checkbox_sem_p)) {
-                        if($i!=0) {
-                            $list_columns=$list_columns.", ";
-                            $list_valeurs=$list_valeurs.", ";
-                        }
-                        $list_columns=$list_columns." $key ";
-                        $list_valeurs=$list_valeurs." '$val' ";
-                        $i=$i+1;
-                    }
-                }
-                if( ($list_columns!="") && ($list_valeurs!="") ) {
-                    $sql = "INSERT INTO conges_artt (a_login, $list_columns, a_date_debut_grille ) VALUES ('$u_login_to_update', $list_valeurs, '$new_date_deb_grille') " ;
-                    \includes\SQL::query($sql);
-                }
-            }
 
             // Si changement du login, (on a dèja updaté la table users (mais pas les responsables !!!)) on update toutes les autres tables
             // (les grilles artt, les periodes de conges et les échanges de rtt, etc ....) avec le nouveau login
             if($tab_new_user['login'] != $u_login_to_update) {
-                // update table artt
-                $sql = 'UPDATE conges_artt SET a_login="'. \includes\SQL::quote($tab_new_user['login']).'" WHERE a_login="'. \includes\SQL::quote($u_login_to_update).'" ';
-                \includes\SQL::query($sql);
-
                 // update table echange_rtt
                 $sql = 'UPDATE conges_echange_rtt SET e_login="'. \includes\SQL::quote($tab_new_user['login']).'" WHERE e_login="'. \includes\SQL::quote($u_login_to_update).'" ';
                 \includes\SQL::query($sql);
@@ -2421,7 +2290,6 @@ class Fonctions
                 // update table conges_users
                 $sql = 'UPDATE conges_users SET u_resp_login="'. \includes\SQL::quote($tab_new_user['login']).'" WHERE u_resp_login="'. \includes\SQL::quote($u_login_to_update).'" ' ;
                 \includes\SQL::query($sql);
-
             }
 
             if($tab_new_user['login'] != $u_login_to_update) {
@@ -2434,17 +2302,29 @@ class Fonctions
 
             $return .= _('form_modif_ok') . ' !<br><br>';
 
+            return true;
+
         } else { // en cas d'erreur de saisie
-            $return .= _('form_modif_not_ok') . ' !<br><br>';
+            // composition des erreurs
+            $errors = '';
+            if (!empty($erreurs)) {
+                foreach ($erreurs as $erreur) {
+                    $errors .= '<li>' . $erreur . '</li>';
+                }
+            }
+            $return .= '<div class="alert alert-danger">' . _('erreur_recommencer') . ' :<ul>' . $errors . '</ul><br /><a href="admin_index.php?onglet=modif_user&session=' . $session . '&u_login=' . $u_login_to_update . '">' . _('form_retour') . '</a></div>';
+
+            return false;
         }
-        return $return;
     }
 
-    public static function modifier_user($u_login, $tab_checkbox_sem_imp, $tab_checkbox_sem_p, $onglet)
+    public static function modifier_user($u_login, $onglet)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
+        $soldeHeureId = uniqid();
+
 
         // recup du tableau des types de conges (seulement les conges)
         $tab_type_conges=recup_tableau_types_conges();
@@ -2476,6 +2356,7 @@ class Fonctions
         $childTable .= '<th>' . _('divers_prenom_maj_1') . '</th>';
         $childTable .= '<th>' . _('divers_login_maj_1') . '</th>';
         $childTable .= '<th>' . _('divers_quotite_maj_1') . '</th>';
+        $childTable .= '<th>' . _('solde_heure') . '</th>';
         $childTable .= '<th>' . _('admin_users_is_resp') . '</th>';
         $childTable .= '<th>' . _('admin_users_resp_login') . '</th>';
         $childTable .= '<th>' . _('admin_users_is_admin') . '</th>';
@@ -2490,12 +2371,13 @@ class Fonctions
         $childTable .= '</thead>';
         $childTable .= '<tbody>';
 
-        // AFICHAGE DE LA LIGNE DES VALEURS ACTUELLES A MOFIDIER
+        // AFFICHAGE DE LA LIGNE DES VALEURS ACTUELLES A MODIFIER
         $childTable .= '<tr>';
         $childTable .= '<td>' . $tab_user['nom']. '</td>';
         $childTable .= '<td>' . $tab_user['prenom'] . '</td>';
         $childTable .= '<td>' . $tab_user['login'] . '</td>';
         $childTable .= '<td>' . $tab_user['quotite'] . '</td>';
+        $childTable .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($tab_user['solde_heure']) . '</td>';
         $childTable .= '<td>' . $tab_user['is_resp'] . '</td>';
         $childTable .= '<td>' . $tab_user['resp_login'] . '</td>';
         $childTable .= '<td>' . $tab_user['is_admin'] . '</td>';
@@ -2518,6 +2400,7 @@ class Fonctions
         $text_nom="<input class=\"form-control\" type=\"text\" name=\"new_nom\" size=\"10\" maxlength=\"30\" value=\"".$tab_user['nom']."\">" ;
         $text_prenom="<input class=\"form-control\" type=\"text\" name=\"new_prenom\" size=\"10\" maxlength=\"30\" value=\"".$tab_user['prenom']."\">" ;
         $text_quotite="<input class=\"form-control\" type=\"text\" name=\"new_quotite\" size=\"3\" maxlength=\"3\" value=\"".$tab_user['quotite']."\">" ;
+        $text_solde_heure="<input class=\"form-control\" type=\"text\" name=\"new_solde_heure\" id=\"" . $soldeHeureId . "\"  size=\"6\" maxlength=\"6\" value=\"".  \App\Helpers\Formatter::timestamp2Duree($tab_user['solde_heure'])."\">" ;
         if($tab_user['is_resp']=="Y") {
             $text_is_resp="<select class=\"form-control\" name=\"new_is_resp\" id=\"is_resp_id\" ><option value=\"Y\">Y</option><option value=\"N\">N</option></select>" ;
         } else {
@@ -2574,6 +2457,7 @@ class Fonctions
         $childTable .= '<td>' . $text_prenom . '</td>';
         $childTable .= '<td>' . $text_login . '</td>';
         $childTable .= '<td>' . $text_quotite . '</td>';
+        $childTable .= '<td>' . $text_solde_heure . '</td>';
         $childTable .= '<td>' . $text_is_resp . '</td>';
         $childTable .= '<td>' . $text_resp_login . '</td>';
         $childTable .= '<td>' . $text_is_admin . '</td>';
@@ -2584,6 +2468,8 @@ class Fonctions
             $childTable .= '<td>' . $text_email . '</td>';
         }
         $childTable .= '</tr></tbody>';
+        $childTable .= '<script type="text/javascript">generateTimePicker("' . $soldeHeureId . '");</script>';
+
         $table->addChild($childTable);
         ob_start();
         $table->render();
@@ -2682,18 +2568,19 @@ class Fonctions
         }
 
         $childTable .= '</tbody>';
+        $childTable .= '<script type="text/javascript">generateTimePicker("' . $soldeHeureId . '");</script>';
+
         $table->addChild($childTable);
         ob_start();
         $table->render();
         $return .= ob_get_clean();
+        $planning = \App\ProtoControllers\HautResponsable\Planning::getListPlanning((array) ((int) $tab_user['planningId']))[0];
         $return .= '<br><hr/>';
+        $return .= '<h4>' . _('admin_planning_utilisateur') . '</h4>';
+        $return .= '<div>' . $planning['name'] . '</div>';
 
-        /*********************************************************/
-        // saisie des jours d'abscence RTT ou temps partiel:
-        $return .= \admin\Fonctions::saisie_jours_absence_temps_partiel($u_login);
-        $return .= '<hr/>';
-        $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
-        $return .= '<a class="btn" href="admin_index.php?session=' . $session . '&onglet=admin-users">' . _('form_cancel') . '</a>';
+        $return .= '<hr /><input class="btn btn-success" type="submit" value="' . _('form_submit') . '"> ';
+        $return .= '<a class="btn btn-default" href="admin_index.php?session=' . $session . '&onglet=admin-users">' . _('form_cancel') . '</a>';
         $return .= '</form>';
         return $return;
     }
@@ -2727,7 +2614,7 @@ class Fonctions
 
 
         if($u_login!="") {
-            $return .= \admin\Fonctions::modifier_user($u_login, $tab_checkbox_sem_imp, $tab_checkbox_sem_p, $onglet);
+            $return .= \admin\Fonctions::modifier_user($u_login, $onglet);
         } elseif($u_login_to_update!="") {
             $tab_new_jours_an   = getpost_variable('tab_new_jours_an') ;
             $tab_new_solde      = getpost_variable('tab_new_solde') ;
@@ -2737,6 +2624,7 @@ class Fonctions
             $tab_new_user['nom']    = htmlentities(getpost_variable('new_nom'), ENT_QUOTES | ENT_HTML401);
             $tab_new_user['prenom']     = htmlentities(getpost_variable('new_prenom'), ENT_QUOTES | ENT_HTML401);
             $tab_new_user['quotite']    = htmlentities(getpost_variable('new_quotite'), ENT_QUOTES | ENT_HTML401);
+            $tab_new_user['solde_heure']    = htmlentities(getpost_variable('new_solde_heure'), ENT_QUOTES | ENT_HTML401);;
             $tab_new_user['is_resp']    = htmlentities(getpost_variable('new_is_resp'), ENT_QUOTES | ENT_HTML401);
             $tab_new_user['resp_login'] = htmlentities(getpost_variable('new_resp_login'), ENT_QUOTES | ENT_HTML401);
             $tab_new_user['is_admin']   = htmlentities(getpost_variable('new_is_admin'), ENT_QUOTES | ENT_HTML401);
@@ -2747,11 +2635,15 @@ class Fonctions
             $tab_new_user['jour']       = getpost_variable('new_jour') ;
             $tab_new_user['mois']       = getpost_variable('new_mois') ;
             $tab_new_user['year']       = getpost_variable('new_year') ;
+            $echo  = '';
 
-            echo \admin\Fonctions::commit_update_user($u_login_to_update, $tab_new_user, $tab_new_jours_an, $tab_new_solde, $tab_new_reliquat, $tab_checkbox_sem_imp, $tab_checkbox_sem_p);
-            redirect( ROOT_PATH .'admin/admin_index.php?session='.$session.'&onglet=admin-users', false);
-            exit;
-
+            $ok = \admin\Fonctions::commit_update_user($u_login_to_update, $tab_new_user, $tab_new_jours_an, $tab_new_solde, $tab_new_reliquat, $echo);
+            if ($ok) {
+                redirect( ROOT_PATH .'admin/admin_index.php?session='.$session.'&onglet=admin-users', false);
+                exit;
+            } else {
+                $return .= $echo;
+            }
         } else {
             // renvoit sur la page principale .
             redirect( ROOT_PATH .'admin/admin_index.php?session='.$session.'&onglet=admin-users', false);
@@ -2762,7 +2654,7 @@ class Fonctions
 
     public static function suppression_group($group_to_delete)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -2796,7 +2688,7 @@ class Fonctions
 
     public static function confirmer($group, $onglet)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -2882,7 +2774,7 @@ class Fonctions
 
     public static function suppression($u_login_to_delete)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -2891,9 +2783,6 @@ class Fonctions
 
         $sql2 = 'DELETE FROM conges_periode WHERE p_login = "'. \includes\SQL::quote($u_login_to_delete).'"';
         $result2 = \includes\SQL::query($sql2);
-
-        $sql3 = 'DELETE FROM conges_artt WHERE a_login = "'. \includes\SQL::quote($u_login_to_delete).'"';
-        $result3 = \includes\SQL::query($sql3);
 
         $sql4 = 'DELETE FROM conges_echange_rtt WHERE e_login = "'. \includes\SQL::quote($u_login_to_delete).'"';
         $result4 = \includes\SQL::query($sql4);
@@ -2921,7 +2810,7 @@ class Fonctions
 
     public static function confirmer_suppression($u_login, $onglet)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -3139,7 +3028,7 @@ class Fonctions
     // affichage du formulaire de saisie d'un nouveau user
     public static function affiche_formulaire_ajout_user(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, $onglet)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -3180,6 +3069,7 @@ class Fonctions
             $childTable .= '<th>' . _('divers_prenom_maj_1') . '</th>';
         }
         $childTable .= '<th>' . _('divers_quotite_maj_1') . '</th>';
+        $childTable .= '<th>' . _('solde_heure') . '</th>';
         $childTable .= '<th>' . _('admin_new_users_is_resp') . '</th>';
         $childTable .= '<th>' . _('divers_responsable_maj_1') . '</th>';
         $childTable .= '<th>' . _('admin_new_users_is_admin') . '</th>';
@@ -3193,6 +3083,8 @@ class Fonctions
             $childTable .= '<th>' . _('admin_new_users_password') . '</th>';
         }
         $childTable .= '</tr></thead><tbody>';
+        $soldeHeureId = uniqid();
+
 
         $text_nom="<input class=\"form-control\" type=\"text\" name=\"new_nom\" size=\"10\" maxlength=\"30\" value=\"".$tab_new_user['nom']."\">" ;
         $text_prenom="<input class=\"form-control\" type=\"text\" name=\"new_prenom\" size=\"10\" maxlength=\"30\" value=\"".$tab_new_user['prenom']."\">" ;
@@ -3200,6 +3092,7 @@ class Fonctions
             $tab_new_user['quotite']=100;
         }
         $text_quotite="<input class=\"form-control\" type=\"text\" name=\"new_quotite\" size=\"3\" maxlength=\"3\" value=\"".$tab_new_user['quotite']."\">" ;
+        $text_solde_heure="<input class=\"form-control\" type=\"text\" name=\"new_solde_heure\" id=\"" . $soldeHeureId . "\" size=\"6\" maxlength=\"6\" value=\"".$tab_new_user['solde_heure']."\">" ;
         $text_is_resp="<select class=\"form-control\" name=\"new_is_resp\" ><option value=\"N\">N</option><option value=\"Y\">Y</option></select>" ;
 
         // PREPARATION DES OPTIONS DU SELECT du resp_login
@@ -3264,6 +3157,7 @@ class Fonctions
         }
 
         $childTable .= '<td>' . $text_quotite . '</td>';
+        $childTable .= '<td>' . $text_solde_heure . '</td>';
         $childTable .= '<td>' . $text_is_resp . '</td>';
         $childTable .= '<td>' . $text_resp_login . '</td>';
         $childTable .= '<td>' . $text_is_admin . '</td>';
@@ -3277,11 +3171,12 @@ class Fonctions
             $childTable .= '<td>' . $text_password2 . '</td>';
         }
         $childTable .= '</tr></tbody>';
+        $childTable .= '<script type="text/javascript">generateTimePicker("' . $soldeHeureId . '");</script>';
         $table->addChild($childTable);
         ob_start();
         $table->render();
         $return .= ob_get_clean();
-        $return .= '<br>';
+        $return .= '<br><hr />';
 
 
         /****************************************/
@@ -3338,10 +3233,6 @@ class Fonctions
         $return .= ob_get_clean();
         $return .= '<br>';
 
-        // saisie de la grille des jours d'absence ARTT ou temps partiel:
-        $return .= \admin\Fonctions::saisie_jours_absence_temps_partiel($tab_new_user['login']);
-
-
         // si gestion des groupes :  affichage des groupe pour y affecter le user
         if($_SESSION['config']['gestion_groupes'])
         {
@@ -3356,14 +3247,14 @@ class Fonctions
         $return .= '<hr>';
         $return .= '<input type="hidden" name="saisie_user" value="ok">';
         $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
-        $return .= '<a class="btn" href="' . $PHP_SELF . '?session=' . $session . '">' . _('form_cancel') . '</a>';
+        $return .= ' <a class="btn btn-default" href="' . $PHP_SELF . '?session=' . $session . '">' . _('form_cancel') . '</a>';
         $return .= '</form>';
         return $return;
     }
 
     public static function verif_new_param(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, &$return = null)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -3392,6 +3283,7 @@ class Fonctions
             $return .= '<input type="hidden" name="new_is_hr" value="' . $tab_new_user['is_hr'] . '">';
             $return .= '<input type="hidden" name="new_see_all" value="' . $tab_new_user['see_all'] . '">';
             $return .= '<input type="hidden" name="new_quotite" value="' . $tab_new_user['quotite'] . '">';
+            $return .= '<input type="hidden" name="new_heure_solde" value="' . $tab_new_user['solde_heure'] . '">';
             $return .= '<input type="hidden" name="new_email" value="' . $tab_new_user['email'] . '">';
             foreach($tab_new_jours_an as $id_cong => $jours_an) {
                 $return .= '<input type="hidden" name="tab_new_jours_an[$id_cong]" value="' . $tab_new_jours_an[$id_cong] . '">';
@@ -3420,6 +3312,7 @@ class Fonctions
                 $return .= '<input type="hidden" name="new_is_admin" value="' . $tab_new_user['is_admin'] . '">';
                 $return .= '<input type="hidden" name="new_is_hr" value="' . $tab_new_user['is_hr'] . '">';
                 $return .= '<input type="hidden" name="new_quotite" value="' . $tab_new_user['quotite'] . '">';
+                $return .= '<input type="hidden" name="new_heure_solde" value="' . $tab_new_user['solde_heure'] . '">';
                 $return .= '<input type="hidden" name="new_email" value="' . $tab_new_user['email'] . '">';
 
                 foreach($tab_new_jours_an as $id_cong => $jours_an) {
@@ -3443,6 +3336,7 @@ class Fonctions
                 $return .= '<input type="hidden" name="new_is_admin" value="' . $tab_new_user['is_admin'] . '">';
                 $return .= '<input type="hidden" name="new_is_hr" value="' . $tab_new_user['is_hr'] . '">';
                 $return .= '<input type="hidden" name="new_quotite" value="' . $tab_new_user['quotite'] . '">';
+                $return .= '<input type="hidden" name="new_heure_solde" value="' . $tab_new_user['solde_heure'] . '">';
                 $return .= '<input type="hidden" name="new_email" value="' . $tab_new_user['email'] . '">';
 
                 foreach($tab_new_jours_an as $id_cong => $jours_an) {
@@ -3463,10 +3357,17 @@ class Fonctions
 
     public static function test_form_add_user($tab_new_user) {
         if($_SESSION['config']['export_users_from_ldap']) {
-            return \admin\Fonctions::FormAddUserLoginOk($tab_new_user['login']) && \admin\Fonctions::FormAddUserQuotiteOk($tab_new_user['quotite']);
+            return \admin\Fonctions::FormAddUserLoginOk($tab_new_user['login']) && \admin\Fonctions::FormAddUserQuotiteOk($tab_new_user['quotite']) && \admin\Fonctions::FormAddUserSoldeHeureOk($tab_new_user['solde_heure']);
         } else {
-            return \admin\Fonctions::FormAddUserLoginOk($tab_new_user['login']) && \admin\Fonctions::FormAddUserQuotiteOk($tab_new_user['quotite']) && \admin\Fonctions::FormAddUserNameOk($tab_new_user['nom']) && \admin\Fonctions::FormAddUserNameOk($tab_new_user['prenom']) && \admin\Fonctions::FormAddUserpasswdOk($tab_new_user['password1'],$tab_new_user['password2']);
+            return \admin\Fonctions::FormAddUserLoginOk($tab_new_user['login']) && \admin\Fonctions::FormAddUserQuotiteOk($tab_new_user['quotite'])  && \admin\Fonctions::FormAddUserSoldeHeureOk($tab_new_user['solde_heure']) && \admin\Fonctions::FormAddUserNameOk($tab_new_user['nom']) && \admin\Fonctions::FormAddUserNameOk($tab_new_user['prenom']) && \admin\Fonctions::FormAddUserpasswdOk($tab_new_user['password1'],$tab_new_user['password2']);
         }
+    }
+
+    public static function FormAddUserSoldeHeureOk($solde_heure){
+        if (empty($solde_heure)) {
+            return false;
+        }
+        return \App\Helpers\Formatter::isHourFormat($solde_heure);
     }
 
     public static function FormAddUserLoginOk($login) {
@@ -3490,9 +3391,9 @@ class Fonctions
         }
     }
 
-    public static function ajout_user(&$tab_new_user, $tab_checkbox_sem_imp, $tab_checkbox_sem_p, &$tab_new_jours_an, &$tab_new_solde, $checkbox_user_groups)
+    public static function ajout_user(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, $checkbox_user_groups)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
         $verifFalse = '';
@@ -3527,12 +3428,16 @@ class Fonctions
             } else {
                 $sql1=$sql1."u_resp_login='". $tab_new_user['resp_login']."', ";
             }
+            $seeAll = ($tab_new_user['is_admin'] || $tab_new_user['is_hr'])
+                ? 'Y'
+                : 'N';
 
             $sql1=$sql1."u_is_admin='".$tab_new_user['is_admin']."', ";
             $sql1=$sql1."u_is_hr='".$tab_new_user['is_hr']."', ";
-            $sql1=$sql1."u_see_all='".$tab_new_user['see_all']."', ";
+            $sql1=$sql1."u_see_all='". $seeAll . "', ";
             $sql1=$sql1."u_passwd='$motdepasse', ";
             $sql1=$sql1."u_quotite=".$tab_new_user['quotite'].",";
+            $sql1=$sql1."u_heure_solde=".  \App\Helpers\Formatter::hour2Time($tab_new_user['solde_heure']).",";
             $sql1=$sql1." u_email='".$tab_new_user['email']."' ";
             $result1 = \includes\SQL::query($sql1);
 
@@ -3545,29 +3450,6 @@ class Fonctions
                 $result3 = \includes\SQL::query($sql3);
             }
 
-
-            /*****************************/
-            /* INSERT dans conges_artt  */
-            $list_colums_to_insert="a_login";
-            $list_values_to_insert="'".$tab_new_user['login']."'";
-            // on parcours le tableau des jours d'absence semaine impaire
-            if($tab_checkbox_sem_imp!="") {
-                while (list ($key, $val) = each ($tab_checkbox_sem_imp)) {
-                    $list_colums_to_insert="$list_colums_to_insert, $key";
-                    $list_values_to_insert="$list_values_to_insert, '$val'";
-                }
-            }
-            if($tab_checkbox_sem_p!="") {
-                while (list ($key, $val) = each ($tab_checkbox_sem_p)) {
-                    $list_colums_to_insert="$list_colums_to_insert, $key";
-                    $list_values_to_insert="$list_values_to_insert, '$val'";
-                }
-            }
-
-            $sql2 = "INSERT INTO conges_artt ($list_colums_to_insert, a_date_debut_grille) VALUES ($list_values_to_insert, '$new_date_deb_grille')" ;
-            $result2 = \includes\SQL::query($sql2);
-
-
             /***********************************/
             /* ajout du user dans ses groupes  */
             $result4=TRUE;
@@ -3576,8 +3458,7 @@ class Fonctions
             }
 
             /*****************************/
-
-            if($result1 && $result2 && $result3 && $result4) {
+            if($result1 && $result3 && $result4) {
                 $return .= _('form_modif_ok') . '<br><br>';
             } else {
                 $return .= _('form_modif_not_ok') . '<br><br>';
@@ -3595,250 +3476,6 @@ class Fonctions
         }
         return $return;
     }
-
-    // saisie de la grille des jours d'absence ARTT ou temps partiel:
-    public static function saisie_jours_absence_temps_partiel($login)
-    {
-        $return = '';
-
-        /* initialisation des variables **************/
-        $checked_option_sem_imp_lu_am='';
-        $checked_option_sem_imp_lu_pm='';
-        $checked_option_sem_imp_ma_am='';
-        $checked_option_sem_imp_ma_pm='';
-        $checked_option_sem_imp_me_am='';
-        $checked_option_sem_imp_me_pm='';
-        $checked_option_sem_imp_je_am='';
-        $checked_option_sem_imp_je_pm='';
-        $checked_option_sem_imp_ve_am='';
-        $checked_option_sem_imp_ve_pm='';
-        $checked_option_sem_imp_sa_am='';
-        $checked_option_sem_imp_sa_pm='';
-        $checked_option_sem_imp_di_am='';
-        $checked_option_sem_imp_di_pm='';
-        $checked_option_sem_p_lu_am='';
-        $checked_option_sem_p_lu_pm='';
-        $checked_option_sem_p_ma_am='';
-        $checked_option_sem_p_ma_pm='';
-        $checked_option_sem_p_me_am='';
-        $checked_option_sem_p_me_pm='';
-        $checked_option_sem_p_je_am='';
-        $checked_option_sem_p_je_pm='';
-        $checked_option_sem_p_ve_am='';
-        $checked_option_sem_p_ve_pm='';
-        $checked_option_sem_p_sa_am='';
-        $checked_option_sem_p_sa_pm='';
-        $checked_option_sem_p_di_am='';
-        $checked_option_sem_p_di_pm='';
-        /*********************************************/
-
-        // recup des données de la dernière table artt du user :
-        $sql1 = 'SELECT * FROM conges_artt WHERE a_login="'. \includes\SQL::quote($login).'" AND a_date_fin_grille=\'9999-12-31\' '  ;
-        $ReqLog1 = \includes\SQL::query($sql1);
-
-        while ($resultat1 = $ReqLog1->fetch_array()) {
-            if($resultat1['sem_imp_lu_am']=='Y') $checked_option_sem_imp_lu_am=' checked';
-            if($resultat1['sem_imp_lu_pm']=='Y') $checked_option_sem_imp_lu_pm=' checked';
-            if($resultat1['sem_imp_ma_am']=='Y') $checked_option_sem_imp_ma_am=' checked';
-            if($resultat1['sem_imp_ma_pm']=='Y') $checked_option_sem_imp_ma_pm=' checked';
-            if($resultat1['sem_imp_me_am']=='Y') $checked_option_sem_imp_me_am=' checked';
-            if($resultat1['sem_imp_me_pm']=='Y') $checked_option_sem_imp_me_pm=' checked';
-            if($resultat1['sem_imp_je_am']=='Y') $checked_option_sem_imp_je_am=' checked';
-            if($resultat1['sem_imp_je_pm']=='Y') $checked_option_sem_imp_je_pm=' checked';
-            if($resultat1['sem_imp_ve_am']=='Y') $checked_option_sem_imp_ve_am=' checked';
-            if($resultat1['sem_imp_ve_pm']=='Y') $checked_option_sem_imp_ve_pm=' checked';
-            if($resultat1['sem_imp_sa_am']=='Y') $checked_option_sem_imp_sa_am=' checked';
-            if($resultat1['sem_imp_sa_pm']=='Y') $checked_option_sem_imp_sa_pm=' checked';
-            if($resultat1['sem_imp_di_am']=='Y') $checked_option_sem_imp_di_am=' checked';
-            if($resultat1['sem_imp_di_pm']=='Y') $checked_option_sem_imp_di_pm=' checked';
-            if($resultat1['sem_p_lu_am']=='Y') $checked_option_sem_p_lu_am=' checked';
-            if($resultat1['sem_p_lu_pm']=='Y') $checked_option_sem_p_lu_pm=' checked';
-            if($resultat1['sem_p_ma_am']=='Y') $checked_option_sem_p_ma_am=' checked';
-            if($resultat1['sem_p_ma_pm']=='Y') $checked_option_sem_p_ma_pm=' checked';
-            if($resultat1['sem_p_me_am']=='Y') $checked_option_sem_p_me_am=' checked';
-            if($resultat1['sem_p_me_pm']=='Y') $checked_option_sem_p_me_pm=' checked';
-            if($resultat1['sem_p_je_am']=='Y') $checked_option_sem_p_je_am=' checked';
-            if($resultat1['sem_p_je_pm']=='Y') $checked_option_sem_p_je_pm=' checked';
-            if($resultat1['sem_p_ve_am']=='Y') $checked_option_sem_p_ve_am=' checked';
-            if($resultat1['sem_p_ve_pm']=='Y') $checked_option_sem_p_ve_pm=' checked';
-            if($resultat1['sem_p_sa_am']=='Y') $checked_option_sem_p_sa_am=' checked';
-            if($resultat1['sem_p_sa_pm']=='Y') $checked_option_sem_p_sa_pm=' checked';
-            if($resultat1['sem_p_di_am']=='Y') $checked_option_sem_p_di_am=' checked';
-            if($resultat1['sem_p_di_pm']=='Y') $checked_option_sem_p_di_pm=' checked';
-            $date_deb_grille=$resultat1['a_date_debut_grille'];
-            $date_fin_grille=$resultat1['a_date_fin_grille'];
-        }
-
-        $return .= '<h4>'. _('admin_temps_partiel_titre') .' :</h4>';
-        $table = new \App\Libraries\Structure\Table();
-        $table->addClasses([
-            'table',
-            'table-hover',
-            'table-responsive',
-            'table-striped',
-            'table-condensed'
-        ]);
-        $childTable = '<tr>';
-        $childTable .= '<td>';
-        //tableau semaines impaires
-        $childTable .= '<b><u>'. _('admin_temps_partiel_sem_impaires') .' :</u></b><br>';
-        $tab_checkbox_sem_imp=array();
-        $imp_lu_am='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_lu_am]" value="Y" '.$checked_option_sem_imp_lu_am.'>';
-        $imp_lu_pm='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_lu_pm]" value="Y" '.$checked_option_sem_imp_lu_pm.'>';
-        $imp_ma_am='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_ma_am]" value="Y" '.$checked_option_sem_imp_ma_am.'>';
-        $imp_ma_pm='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_ma_pm]" value="Y" '.$checked_option_sem_imp_ma_pm.'>';
-        $imp_me_am='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_me_am]" value="Y" '.$checked_option_sem_imp_me_am.'>';
-        $imp_me_pm='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_me_pm]" value="Y" '.$checked_option_sem_imp_me_pm.'>';
-        $imp_je_am='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_je_am]" value="Y" '.$checked_option_sem_imp_je_am.'>';
-        $imp_je_pm='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_je_pm]" value="Y" '.$checked_option_sem_imp_je_pm.'>';
-        $imp_ve_am='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_ve_am]" value="Y" '.$checked_option_sem_imp_ve_am.'>';
-        $imp_ve_pm='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_ve_pm]" value="Y" '.$checked_option_sem_imp_ve_pm.'>';
-        if($_SESSION['config']['samedi_travail']) {
-            $imp_sa_am='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_sa_am]" value="Y" '.$checked_option_sem_imp_sa_am.'>';
-            $imp_sa_pm='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_sa_pm]" value="Y" '.$checked_option_sem_imp_sa_pm.'>';
-        }
-        if($_SESSION['config']['dimanche_travail']) {
-            $imp_di_am='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_di_am]" value="Y" '.$checked_option_sem_imp_di_am.'>';
-            $imp_di_pm='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_di_pm]" value="Y" '.$checked_option_sem_imp_di_pm.'>';
-        }
-
-        $tableImpaire = new \App\Libraries\Structure\Table();
-        $tableImpaire->addClasses([
-            'tablo',
-        ]);
-        $childImpaireTable = '<thead><tr><td></td>';
-        $childImpaireTable .= '<td class="histo">'. _('lundi') .'</td>';
-        $childImpaireTable .= '<td class="histo">'. _('mardi') .'</td>';
-        $childImpaireTable .= '<td class="histo">'. _('mercredi') .'</td>';
-        $childImpaireTable .= '<td class="histo">'. _('jeudi') .'</td>';
-        $childImpaireTable .= '<td class="histo">'. _('vendredi') .'</td>';
-        if($_SESSION['config']['samedi_travail']) {
-            $childImpaireTable .= '<td class="histo">'. _('samedi') .'</td>';
-        }
-        if($_SESSION['config']['dimanche_travail']) {
-            $childImpaireTable .= '<td class="histo">'. _('dimanche') .'</td>';
-        }
-        $childImpaireTable .= '</tr></thead><tbody>';
-        $childImpaireTable .= '<tr align="center">';
-        $childImpaireTable .= '<td class="histo">'. _('admin_temps_partiel_am') .'</td>';
-        $childImpaireTable .= '<td class="histo">' . $imp_lu_am . '</td>';
-        $childImpaireTable .= '<td class="histo">' . $imp_ma_am . '</td>';
-        $childImpaireTable .= '<td class="histo">' . $imp_me_am . '</td>';
-        $childImpaireTable .= '<td class="histo">' . $imp_je_am . '</td>';
-        $childImpaireTable .= '<td class="histo">' . $imp_ve_am . '</td>';
-        if($_SESSION['config']['samedi_travail']) {
-            $childImpaireTable .= '<td class="histo">' . $imp_sa_am . '</td>';
-        }
-        if($_SESSION['config']['dimanche_travail']) {
-            $childImpaireTable .= '<td class="histo">' . $imp_di_am . '</td>';
-        }
-        $childImpaireTable .= '</tr>';
-        $childImpaireTable .= '<tr align="center">';
-        $childImpaireTable .= '<td class="histo">'. _('admin_temps_partiel_pm') .'</td>';
-        $childImpaireTable .= '<td class="histo">' . $imp_lu_pm . '</td>';
-        $childImpaireTable .= '<td class="histo">' . $imp_ma_pm . '</td>';
-        $childImpaireTable .= '<td class="histo">' . $imp_me_pm . '</td>';
-        $childImpaireTable .= '<td class="histo">' . $imp_je_pm . '</td>';
-        $childImpaireTable .= '<td class="histo">' . $imp_ve_pm . '</td>';
-        if($_SESSION['config']['samedi_travail']) {
-            $childImpaireTable .= '<td class="histo">' . $imp_sa_pm . '</td>';
-        }
-        if($_SESSION['config']['dimanche_travail']) {
-            $childImpaireTable .= '<td class="histo">' . $imp_di_pm . '</td>';
-        }
-        $childImpaireTable .= '</tr></tbody>';
-        $tableImpaire->addChild($childImpaireTable);
-        ob_start();
-        $tableImpaire->render();
-        $childTable .= ob_get_clean();
-
-        $childTable .= '</td><td><img src="'. IMG_PATH . 'shim.gif" width="15" height="2" border="0" vspace="0" hspace="0"></td><td>';
-
-        //tableau semaines paires
-        $childTable .= '<b><u>'. _('admin_temps_partiel_sem_paires') .':</u></b><br>';
-        $tab_checkbox_sem_p=array();
-        $p_lu_am='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_lu_am]" value="Y" '.$checked_option_sem_p_lu_am.'>';
-        $p_lu_pm='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_lu_pm]" value="Y" '.$checked_option_sem_p_lu_pm.'>';
-        $p_ma_am='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_ma_am]" value="Y" '.$checked_option_sem_p_ma_am.'>';
-        $p_ma_pm='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_ma_pm]" value="Y" '.$checked_option_sem_p_ma_pm.'>';
-        $p_me_am='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_me_am]" value="Y" '.$checked_option_sem_p_me_am.'>';
-        $p_me_pm='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_me_pm]" value="Y" '.$checked_option_sem_p_me_pm.'>';
-        $p_je_am='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_je_am]" value="Y" '.$checked_option_sem_p_je_am.'>';
-        $p_je_pm='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_je_pm]" value="Y" '.$checked_option_sem_p_je_pm.'>';
-        $p_ve_am='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_ve_am]" value="Y" '.$checked_option_sem_p_ve_am.'>';
-        $p_ve_pm='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_ve_pm]" value="Y" '.$checked_option_sem_p_ve_pm.'>';
-        $p_sa_am='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_sa_am]" value="Y" '.$checked_option_sem_p_sa_am.'>';
-        $p_sa_pm='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_sa_pm]" value="Y" '.$checked_option_sem_p_sa_pm.'>';
-        $p_di_am='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_di_am]" value="Y" '.$checked_option_sem_p_di_am.'>';
-        $p_di_pm='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_di_pm]" value="Y" '.$checked_option_sem_p_di_pm.'>';
-
-        $tablePaire = new \App\Libraries\Structure\Table();
-        $tablePaire->addClasses([
-            'tablo',
-        ]);
-        $childPaireTable = '<thead><tr><td></td>';
-        $childPaireTable .= '<td class="histo">'. _('lundi') .'</td>';
-        $childPaireTable .= '<td class="histo">'. _('mardi') .'</td>';
-        $childPaireTable .= '<td class="histo">'. _('mercredi') .'</td>';
-        $childPaireTable .= '<td class="histo">'. _('jeudi') .'</td>';
-        $childPaireTable .= '<td class="histo">'. _('vendredi') .'</td>';
-        if($_SESSION['config']['samedi_travail']) {
-            $childPaireTable .= '<td class="histo">'. _('samedi') .'</td>';
-        }
-        if($_SESSION['config']['dimanche_travail']) {
-            $childPaireTable .= '<td class="histo">'. _('dimanche') .'</td>';
-        }
-        $childPaireTable .= '</tr></thead><tbody>';
-        $childPaireTable .= '<tr align="center">';
-        $childPaireTable .= '<td class="histo">'. _('admin_temps_partiel_am') .'</td>';
-        $childPaireTable .= '<td class="histo">' . $p_lu_am . '</td>';
-        $childPaireTable .= '<td class="histo">' . $p_ma_am . '</td>';
-        $childPaireTable .= '<td class="histo">' . $p_me_am . '</td>';
-        $childPaireTable .= '<td class="histo">' . $p_je_am . '</td>';
-        $childPaireTable .= '<td class="histo">' . $p_ve_am . '</td>';
-        if($_SESSION['config']['samedi_travail']) {
-            $childPaireTable .= '<td class="histo">' . $p_sa_am . '</td>';
-        }
-        if($_SESSION['config']['dimanche_travail']) {
-            $childPaireTable .= '<td class="histo">' . $p_di_am . '</td>';
-        }
-        $childPaireTable .= '</tr>';
-        $childPaireTable .= '<tr align="center">';
-        $childPaireTable .= '<td class="histo">'. _('admin_temps_partiel_pm') .'</td>';
-        $childPaireTable .= '<td class="histo">'.$p_lu_pm.'</td>';
-        $childPaireTable .= '<td class="histo">'.$p_ma_pm.'</td>';
-        $childPaireTable .= '<td class="histo">'.$p_me_pm.'</td>';
-        $childPaireTable .= '<td class="histo">'.$p_je_pm.'</td>';
-        $childPaireTable .= '<td class="histo">'.$p_ve_pm.'</td>';
-        if($_SESSION['config']['samedi_travail']) {
-            $childPaireTable .= '<td class="histo">' . $p_sa_pm . '</td>';
-        }
-        if($_SESSION['config']['dimanche_travail']) {
-            $childPaireTable .= '<td class="histo">' . $p_di_pm . '</td>';
-        }
-        $childPaireTable .= '</tr></tbody>';
-        $tablePaire->addChild($childPaireTable);
-        ob_start();
-        $tablePaire->render();
-        $childTable .= ob_get_clean();
-        $childTable .= '</td></tr>';
-        $childTable .= '<tr>';
-        $childTable .= '<td colspan="3" class="inline-date">';
-        $jour_default=date('d');
-        $mois_default=date('m');
-        $year_default=date('Y');
-        $childTable .= '<strong>' . _('admin_temps_partiel_date_valid') . "</strong> ";
-        $childTable .= affiche_selection_new_jour($jour_default);  // la variable est $new_jour
-        $childTable .= affiche_selection_new_mois($mois_default);  // la variable est $new_mois
-        $childTable .= affiche_selection_new_year($year_default-2, $year_default+10, $year_default );  // la variable est $new_year
-        $childTable .= '</td></tr>';
-        $table->addChild($childTable);
-        ob_start();
-        $table->render();
-        $return .= ob_get_clean();
-        return $return;
-    }
-
 
     public static function commit_modif_user_groups($choix_user, &$checkbox_user_groups)
     {
@@ -3912,6 +3549,7 @@ class Fonctions
                 }
 
                 $tab_new_user[$login]['quotite']    = htmlentities(getpost_variable('new_quotite'), ENT_QUOTES | ENT_HTML401);
+                $tab_new_user[$login]['solde_heure']= htmlentities(getpost_variable('new_solde_heure'), ENT_QUOTES | ENT_HTML401);
                 $tab_new_user[$login]['is_resp']    = htmlentities(getpost_variable('new_is_resp'), ENT_QUOTES | ENT_HTML401);
                 $tab_new_user[$login]['resp_login'] = htmlentities(getpost_variable('new_resp_login'), ENT_QUOTES | ENT_HTML401);
                 $tab_new_user[$login]['is_admin']   = htmlentities(getpost_variable('new_is_admin'), ENT_QUOTES | ENT_HTML401);
@@ -3924,8 +3562,6 @@ class Fonctions
                 }
                 $tab_new_jours_an                 = getpost_variable('tab_new_jours_an');
                 $tab_new_solde                    = getpost_variable('tab_new_solde') ;
-                $tab_checkbox_sem_imp             = getpost_variable('tab_checkbox_sem_imp');
-                $tab_checkbox_sem_p               = getpost_variable('tab_checkbox_sem_p');
                 $tab_new_user[$login]['new_jour'] = getpost_variable('new_jour');
                 $tab_new_user[$login]['new_mois'] = getpost_variable('new_mois');
                 $tab_new_user[$login]['new_year'] = getpost_variable('new_year');
@@ -3936,6 +3572,7 @@ class Fonctions
             $tab_new_user[0]['prenom']     = htmlentities(getpost_variable('new_prenom'), ENT_QUOTES | ENT_HTML401);
             $tab_new_user[0]['quotite']    = getpost_variable('new_quotite');
             $tab_new_user[0]['is_resp']    = htmlentities(getpost_variable('new_is_resp'), ENT_QUOTES | ENT_HTML401);
+            $tab_new_user[0]['solde_heure']= htmlentities(getpost_variable('new_solde_heure'), ENT_QUOTES | ENT_HTML401);
             $tab_new_user[0]['resp_login'] = htmlentities(getpost_variable('new_resp_login'), ENT_QUOTES | ENT_HTML401);
             $tab_new_user[0]['is_admin']   = htmlentities(getpost_variable('new_is_admin'), ENT_QUOTES | ENT_HTML401);
             $tab_new_user[0]['is_hr']      = htmlentities(getpost_variable('new_is_hr'), ENT_QUOTES | ENT_HTML401);
@@ -3948,8 +3585,6 @@ class Fonctions
             $tab_new_user[0]['email']    = htmlentities(getpost_variable('new_email'), ENT_QUOTES | ENT_HTML401);
             $tab_new_jours_an            = getpost_variable('tab_new_jours_an');
             $tab_new_solde               = getpost_variable('tab_new_solde');
-            $tab_checkbox_sem_imp        = getpost_variable('tab_checkbox_sem_imp');
-            $tab_checkbox_sem_p          = getpost_variable('tab_checkbox_sem_p');
             $tab_new_user[0]['new_jour'] = getpost_variable('new_jour');
             $tab_new_user[0]['new_mois'] = getpost_variable('new_mois');
             $tab_new_user[0]['new_year'] = getpost_variable('new_year');
@@ -3962,10 +3597,10 @@ class Fonctions
         if($saisie_user=="ok") {
             if($_SESSION['config']['export_users_from_ldap']) {
                 foreach($tab_login as $login) {
-                    $return .= \admin\Fonctions::ajout_user($tab_new_user[$login], $tab_checkbox_sem_imp, $tab_checkbox_sem_p, $tab_new_jours_an, $tab_new_solde, $checkbox_user_groups);
+                    $return .= \admin\Fonctions::ajout_user($tab_new_user[$login], $tab_new_jours_an, $tab_new_solde, $checkbox_user_groups);
                 }
             } else {
-                $return .= \admin\Fonctions::ajout_user($tab_new_user[0], $tab_checkbox_sem_imp, $tab_checkbox_sem_p, $tab_new_jours_an, $tab_new_solde, $checkbox_user_groups);
+                $return .= \admin\Fonctions::ajout_user($tab_new_user[0], $tab_new_jours_an, $tab_new_solde, $checkbox_user_groups);
             }
         } else {
             $return .= \admin\Fonctions::affiche_formulaire_ajout_user($tab_new_user[0], $tab_new_jours_an, $tab_new_solde, $onglet);

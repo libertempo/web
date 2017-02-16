@@ -46,6 +46,7 @@ class Fonctions
                 $nb_colonnes += 1;
             }
         }
+        $return .= '<th>'. _('solde_heure') .'</th>' ;
         $return .= '<th></th>';
         $nb_colonnes += 1;
         if($_SESSION['config']['editions_papier']) {
@@ -99,6 +100,8 @@ class Fonctions
                         $return .= '<td>' . $solde .'</td>';
                     }
                 }
+                $soldeHeure = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($current_login)['u_heure_solde'];
+                $return .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($soldeHeure) . '</td>';
                 $return .= '<td>' . $text_affich_user . '</td>';
                 if($_SESSION['config']['editions_papier']) {
                     $return .= '<td>' . $text_edit_papier . '</td>';
@@ -125,7 +128,7 @@ class Fonctions
 
     public static function traite_all_demande_en_cours($tab_bt_radio, $tab_text_refus)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -189,7 +192,7 @@ class Fonctions
     public static function affiche_all_demandes_en_cours($tab_type_conges)
     {
         $return = '';
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $count1=0;
         $count2=0;
@@ -343,7 +346,7 @@ class Fonctions
         $return .= '<br>';
 
         if(($count1==0) && ($count2==0)) {
-            $return .= '<strong>' . _('resp_traite_demandes_aucune_demande') . '</strong>';
+            $return .= '<strong>' . _('aucune_demande') . '</strong>';
         } else {
             $return .= '<hr/>';
             $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
@@ -388,7 +391,7 @@ class Fonctions
 
     public static function new_conges($user_login, $numero_int, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type_id)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -440,7 +443,7 @@ class Fonctions
 
     public static function traite_demandes($user_login, $tab_radio_traite_demande, $tab_text_refus)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF']; ;
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $session=session_id();
         $return = '';
 
@@ -524,7 +527,7 @@ class Fonctions
 
     public static function annule_conges($user_login, $tab_checkbox_annule, $tab_text_annul)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF']; ;
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $session=session_id() ;
         $return = '';
 
@@ -574,7 +577,7 @@ class Fonctions
     //affiche l'état des conges du user (avec le formulaire pour le responsable)
     public static function affiche_etat_conges_user_for_resp($user_login, $year_affichage, $tri_date)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF']; ;
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $session=session_id() ;
         $return = '';
 
@@ -722,7 +725,7 @@ class Fonctions
     //affiche l'état des demande en attente de 2ieme validation du user (avec le formulaire pour le responsable)
     public static function affiche_etat_demande_2_valid_user_for_resp($user_login)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF']; ;
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $session=session_id() ;
         $return = '';
 
@@ -823,7 +826,7 @@ class Fonctions
     //affiche l'état des demande du user (avec le formulaire pour le responsable)
     public static function affiche_etat_demande_user_for_resp($user_login, $tab_user, $tab_grd_resp)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF']; ;
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $session=session_id() ;
         $return = '';
 
@@ -943,7 +946,7 @@ class Fonctions
 
     public static function affichage($user_login,  $year_affichage, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $tri_date, $onglet)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF']; ;
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $session=session_id();
         $return = '';
 
@@ -1032,7 +1035,7 @@ class Fonctions
                 $return .= '<h3>' . _('resp_traite_user_etat_demandes_2_valid') . '</h3>';
 
                 //affiche l'état des demande en attente de 2ieme valid du user (avec le formulaire pour le responsable)
-                $return .= affiche_etat_demande_2_valid_user_for_resp($user_login);
+                $return .= self::affiche_etat_demande_2_valid_user_for_resp($user_login);
 
                 $return .= '<hr align="center" size="2" width="90%">';
             }
@@ -1145,7 +1148,7 @@ class Fonctions
     public static function ajout_global_groupe($choix_groupe, $tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all)
     {
 
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
 
         // recup de la liste des users d'un groupe donné
@@ -1199,7 +1202,7 @@ class Fonctions
 
     public static function ajout_global($tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -1253,7 +1256,7 @@ class Fonctions
 
     public static function ajout_conges($tab_champ_saisie, $tab_commentaire_saisie)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -1279,7 +1282,7 @@ class Fonctions
 
     public static function affichage_saisie_globale_groupe($tab_type_conges)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -1337,7 +1340,7 @@ class Fonctions
 
     public static function affichage_saisie_globale_pour_tous($tab_type_conges)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -1376,7 +1379,7 @@ class Fonctions
 
     public static function affichage_saisie_user_par_user($tab_type_conges, $tab_type_conges_exceptionnels, $tab_all_users_du_hr, $tab_all_users_du_grand_resp)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -1497,7 +1500,7 @@ class Fonctions
 
     public static function saisie_ajout( $tab_type_conges)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -1660,7 +1663,7 @@ class Fonctions
 
     public static function commit_saisie($tab_checkbox_j_chome)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -1691,7 +1694,7 @@ class Fonctions
 
     public static function confirm_saisie($tab_checkbox_j_chome)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -1830,7 +1833,7 @@ class Fonctions
 
     public static function saisie($year_calendrier_saisie)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -1865,7 +1868,7 @@ class Fonctions
         $return .= '</div>';
         $return .= '<div class="actions">';
         $return .= '<input type="hidden" name="choix_action" value="commit">';
-        $return .= '<input class="btn" type="submit" value="' . _('form_submit') . '">';
+        $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
         $return .= '</div>';
         $return .= '</form>';
 
@@ -1890,7 +1893,7 @@ class Fonctions
         /*************************************/
         // recup des parametres reçus :
         // SERVER
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         // GET / POST
         $choix_action                 = getpost_variable('choix_action');
         $year_calendrier_saisie        = getpost_variable('year_calendrier_saisie', 0);
@@ -1953,7 +1956,7 @@ class Fonctions
     // cloture / debut d'exercice pour TOUS les users d'un groupe'
     public static function cloture_globale_groupe($group_id, $tab_type_conges)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -1973,7 +1976,7 @@ class Fonctions
     // cloture / debut d'exercice pour TOUS les users du resp (ou grand resp)
     public static function cloture_globale($tab_type_conges)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -2094,7 +2097,7 @@ class Fonctions
     // cloture / debut d'exercice user par user pour les users du resp (ou grand resp)
     public static function cloture_users($tab_type_conges, $tab_cloture_users, $tab_commentaire_saisie)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -2118,7 +2121,7 @@ class Fonctions
 
     public static function affichage_cloture_globale_groupe($tab_type_conges)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -2176,7 +2179,7 @@ class Fonctions
 
     public static function affichage_cloture_globale_pour_tous($tab_type_conges)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -2242,7 +2245,7 @@ class Fonctions
 
     public static function affichage_cloture_user_par_user($tab_type_conges, $tab_all_users_du_hr, $tab_all_users_du_grand_resp)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -2308,7 +2311,7 @@ class Fonctions
 
     public static function saisie_cloture( $tab_type_conges)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -2625,7 +2628,7 @@ class Fonctions
 
     public static function commit_annul_fermeture($fermeture_id, $groupe_id)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -2698,7 +2701,7 @@ class Fonctions
 
     public static function commit_new_fermeture($new_date_debut, $new_date_fin, $groupe_id, $id_type_conges)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -2787,7 +2790,7 @@ class Fonctions
 
     public static function confirm_annul_fermeture($fermeture_id, $groupe_id, $fermeture_date_debut, $fermeture_date_fin)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -2874,7 +2877,7 @@ class Fonctions
 
     public static function saisie_dates_fermeture($year, $groupe_id, $new_date_debut, $new_date_fin, $code_erreur)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -2913,7 +2916,7 @@ class Fonctions
 
     public static function saisie_groupe_fermeture()
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -3020,7 +3023,7 @@ class Fonctions
         /*************************************/
         // recup des parametres reçus :
         // SERVER
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         // GET / POST
         $choix_action         = getpost_variable('choix_action');
         $year                 = getpost_variable('year', 0);
@@ -3207,6 +3210,315 @@ class Fonctions
             $return .= $title;
             $return .= \hr\Fonctions::commit_annul_fermeture($fermeture_id, $groupe_id);
         }
+        return $return;
+    }
+
+    /**
+     * Encapsule le comportement du module de liste des plannings
+     *
+     * @return string
+     * @TODO trouver dans quelle condition un planning ne pourrait pas être modifié
+     */
+    public static function getListePlanningModule()
+    {
+        $message   = '';
+        $errorsLst = [];
+        $notice    = '';
+        if (!empty($_POST)) {
+            if (0 >= (int) \App\ProtoControllers\HautResponsable\Planning::postPlanning($_POST, $errorsLst, $notice)) {
+                $errors = '';
+                if (!empty($errorsLst)) {
+                    foreach ($errorsLst as $value) {
+                        $errors .= '<li>' . $value . '</li>';
+                    }
+                    $message = '<div class="alert alert-danger">' . _('erreur_recommencer') . ' :<ul>' . $errors . '</ul></div>';
+                }
+            } elseif ('DELETE' === $_POST['_METHOD'] && !empty($notice)) {
+                log_action(0, '', '', 'Suppression du planning ' . $_POST['planning_id']);
+                $message = '<form action="" method="post" accept-charset="UTF-8"
+enctype="application/x-www-form-urlencoded"><input type="hidden" name="planning_id" value="' . $_POST['planning_id'] . '" /><input type="hidden" name="status" value="' . \App\Models\Planning::STATUS_ACTIVE . '" /><input type="hidden" name="_METHOD" value="PATCH" /><div class="alert alert-info">' .  $notice . '. <button type="submit" class="btn btn-link alert-link">' . _('Annuler') . '</button></div></form>';
+            } else {
+                log_action(0, '', '', 'Récupération du planning ' . $_POST['planning_id']);
+                redirect(ROOT_PATH . 'hr/hr_index.php?session='. session_id() . '&onglet=liste_planning', false);
+            }
+        }
+
+        /* Préparation et requêtage */
+        $listPlanningId = \App\ProtoControllers\HautResponsable\Planning::getListPlanningId();
+
+        $return = '<h1>' . _('hr_affichage_liste_planning_titre') . '</h1>';
+        $return .= $message;
+        $session = session_id();
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-hover',
+            'table-responsive',
+            'table-condensed',
+            'table-striped',
+        ]);
+        $childTable = '<thead><tr><th>' . _('divers_nom_maj_1') . '</th><th style="width:10%"></th></tr></thead><tbody>';
+        if (empty($listPlanningId)) {
+            $childTable .= '<tr><td colspan="2"><center>' . _('aucun_resultat') . '</center></td></tr>';
+        } else {
+            $listIdUsed   = \App\ProtoControllers\HautResponsable\Planning::getListPlanningUsed($listPlanningId);
+            $listPlanning = \App\ProtoControllers\HautResponsable\Planning::getListPlanning($listPlanningId);
+            foreach ($listPlanning as $planning) {
+                $childTable .= '<tr><td>' . $planning['name'] . '</td>';
+                $childTable .= '<td><form action="" method="post" accept-charset="UTF-8"
+enctype="application/x-www-form-urlencoded"><a  title="' . _('form_modif') . '" href="hr_index.php?onglet=modif_planning&id=' . $planning['planning_id'] .
+                '&session=' . $session . '"><i class="fa fa-pencil"></i></a>&nbsp;&nbsp;';
+                if (in_array($planning['planning_id'], $listIdUsed)) {
+                    $childTable .= '<button title="' . _('planning_used') . '" type="button" class="btn btn-link disabled"><i class="fa fa-times-circle"></i></button>';
+                } else {
+                    $childTable .= '<input type="hidden" name="planning_id" value="' . $planning['planning_id'] . '" /><input type="hidden" name="_METHOD" value="DELETE" /><button type="submit" class="btn btn-link" title="' . _('form_supprim') . '"><i class="fa fa-times-circle"></i></button>';
+                }
+                $childTable .= '</form></td></tr>';
+            }
+        }
+        $childTable .= '</tbody>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
+
+        return $return;
+    }
+
+    /**
+     * Encapsule le comportement du module d'ajout / modification de planning
+     *
+     * @param int $id
+     *
+     * @return string
+     */
+    public static function getFormPlanningModule($id = NIL_INT)
+    {
+        $return    = '';
+        $message   = '';
+        $errorsLst = [];
+        $notice    = '';
+        $valueName = '';
+        if (!empty($_POST)) {
+            if (0 < (int) \App\ProtoControllers\HautResponsable\Planning::postPlanning($_POST, $errorsLst, $notice)) {
+                log_action(0, '', '', 'Édition du planning ' . $_POST['name']);
+                redirect(ROOT_PATH . 'hr/hr_index.php?session='. session_id() . '&onglet=liste_planning', false);
+            } else {
+                if (!empty($errorsLst)) {
+                    $errors = '';
+                    foreach ($errorsLst as $key => $value) {
+                        if (is_array($value)) {
+                            $value = implode(' / ', $value);
+                        }
+                        $errors .= '<li>' . $key . ' : ' . $value . '</li>';
+                    }
+                    $message = '<div class="alert alert-danger">' . _('erreur_recommencer') . ' :<ul>' . $errors . '</ul></div>';
+                }
+                $valueName = $_POST['name'];
+            }
+        }
+
+        if (NIL_INT !== $id) {
+            $return .= '<h1>' . _('hr_modif_planning_titre') . '</h1>';
+        } else {
+            $return .= '<h1>' . _('hr_ajout_planning_titre') . '</h1>';
+        }
+        $return .= $message;
+
+        $return .= '<form action="" method="post" accept-charset="UTF-8"
+enctype="application/x-www-form-urlencoded" class="form-group">';
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-hover',
+            'table-responsive',
+            'table-striped',
+            'table-condensed'
+        ]);
+        $childTable = '<thead><tr><th class="col-md-4">' . _('Nom') .'</th><th></th></tr></thead><tbody>';
+        if (NIL_INT !== $id) {
+            $sql   = 'SELECT * FROM planning WHERE planning_id = ' . $id;
+            $query = \includes\SQL::query($sql);
+            $data = $query->fetch_assoc();
+            $valueName = $data['name'];
+            $childTable .= '<tr><td>' . $valueName . '<input type="hidden" name="planning_id" value="' . $id . '" /><input type="hidden" name="_METHOD" value="PUT" /></td><td></td></tr>';
+        }
+        $idSemaine = uniqid();
+        $childTable .= '<tr><td><input type="text" name="name" value="' . $valueName . '" class="form-control" required /></td>';
+        $childTable .= '<td><input type="button" id="' . $idSemaine . '" class="btn btn-default " /></td></tr></tbody>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
+        $return .= '<h3>' . _('Creneaux') . '</h3>';
+        $idCommune = uniqid();
+        $return .= '<div id="' . $idCommune . '"><h4>' . _('hr_temps_partiel_sem') . '</h4>';
+
+        $return .= \hr\Fonctions::getFormPlanningTable(\App\Models\Planning\Creneau::TYPE_SEMAINE_COMMUNE, $id, $_POST);
+        $idImpaire = uniqid();
+        $return .= '</div><div id="' . $idImpaire . '"><h4>' . _('hr_temps_partiel_sem_impaires') . '</h4>';
+        $idPaire = uniqid();
+        $return .= \hr\Fonctions::getFormPlanningTable(\App\Models\Planning\Creneau::TYPE_SEMAINE_IMPAIRE, $id, $_POST);
+        $return .= '</div><div id="' . $idPaire . '"><h4>' .  _('hr_temps_partiel_sem_paires') . '</h4>';
+
+        $return .= \hr\Fonctions::getFormPlanningTable(\App\Models\Planning\Creneau::TYPE_SEMAINE_PAIRE, $id, $_POST);
+        $typeSemaine = [
+            \App\Models\Planning\Creneau::TYPE_SEMAINE_COMMUNE => $idCommune,
+            \App\Models\Planning\Creneau::TYPE_SEMAINE_IMPAIRE => $idImpaire,
+            \App\Models\Planning\Creneau::TYPE_SEMAINE_PAIRE   => $idPaire,
+        ];
+        $text = [
+            'common'    => _('Semaines_identiques'),
+            'notCommon' => _('Semaines_differenciees'),
+        ];
+        $return .= '</div><script>new semaineDisplayer("' . $idSemaine . '", "' . \App\Models\Planning\Creneau::TYPE_SEMAINE_COMMUNE . '", ' . json_encode($typeSemaine) . ', ' . json_encode($text) . ').init()</script>';
+        $return .= '<h3>Employés associés</h3>';
+        $return .= self::getFormPlanningEmployes($id);
+        $return .= '<br><input type="submit" class="btn btn-success" value="' . _('form_submit') . '" />';
+        $return .='</form>';
+
+        return $return;
+    }
+
+    /**
+     * Retourne la structure d'une table de créneaux de planning
+     *
+     * @param int $typeSemaine
+     * @param int $idPlanning
+     * @param array $postPlanning
+     *
+     * @return string
+     */
+    private static function getFormPlanningTable($typeSemaine, $idPlanning, array $postPlanning)
+    {
+        /* Recupération des créneaux (postés ou existants) pour le JS */
+        $creneauxGroupes = \App\ProtoControllers\HautResponsable\Planning\Creneau::getCreneauxGroupes($postPlanning, $idPlanning, $typeSemaine);
+
+        $jours = [
+            // ISO-8601
+            1 => _('Lundi'),
+            2 => _('Mardi'),
+            3 => _('Mercredi'),
+            4 => _('Jeudi'),
+            5 => _('Vendredi'),
+        ];
+        if (false !== $_SESSION['config']['samedi_travail']) {
+            $jours[6] = _('Samedi');
+        }
+        if (false !== $_SESSION['config']['dimanche_travail']) {
+            $jours[7] = _('Dimanche');
+        }
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-hover',
+            'table-responsive',
+            'table-striped',
+            'table-condensed'
+        ]);
+        $linkId       = uniqid();
+        $selectJourId = uniqid();
+        $debutId      = uniqid();
+        $finId        = uniqid();
+        $helperId     = uniqid();
+        $childTable = '<thead><tr><th width="20%">' . _('Jour') . '</th><th>' . _('Creneaux_travail') . '</th><tr></thead><tbody>';
+        $childTable .= '<tr><td><select class="form-control" id="' . $selectJourId . '"><option value="' . NIL_INT . '"></option>';
+
+        foreach ($jours as $id => $jour) {
+            $childTable .= '<option value="' . $id . '">' . $jour . '</option>';
+        }
+
+        $childTable .= '</select></td>';
+        $childTable .= '<td><div class="form-inline col-xs-3"><input type="text" id="' . $debutId . '" class="form-control" style="width:45%" />&nbsp;<i class="fa fa-caret-right"></i>&nbsp;<input type="text" id="' . $finId . '" class="form-control" style="width:45%" size="8" /></div>';
+        $childTable .= '&nbsp;&nbsp;<div class="form-inline col-xs-4"><label class="radio-inline"><input type="radio" name="periode" value="' . \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN . '">' . _('form_am') . '</label>';
+        $childTable .= '<label class="radio-inline"><input type="radio" name="periode" value="' . \App\Models\Planning\Creneau::TYPE_PERIODE_APRES_MIDI . '">' . _('form_pm') . '</label>';
+        $childTable .= '&nbsp;&nbsp; <button type="button" class="btn btn-default btn-sm" id="' .  $linkId . '"><i class="fa fa-plus link" ></i></button></div>';
+        $childTable .= '<span class="text-danger" id="' . $helperId . '"></span></td></tr>';
+        $childTable .= '<script type="text/javascript">generateTimePicker("' . $debutId . '");generateTimePicker("' . $finId . '");</script>';
+        foreach ($jours as $id => $jour) {
+            $childTable .= '<tr data-id-jour=' . $id . '><td name="nom">' . $jour . '</td><td class="creneaux"></td></tr>';
+        }
+        $childTable .= '</tbody>';
+        $options = [
+            'selectJourId'          => $selectJourId,
+            'tableId'               => $table->getId(),
+            'debutId'               => $debutId,
+            'finId'                 => $finId,
+            'typeSemaine'           => $typeSemaine,
+            'typePeriodeMatin'      => \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN,
+            'typeHeureDebut'        => \App\Models\Planning\Creneau::TYPE_HEURE_DEBUT,
+            'typeHeureFin'          => \App\Models\Planning\Creneau::TYPE_HEURE_FIN,
+            'helperId'              => $helperId,
+            'nilInt'                => NIL_INT,
+            'erreurFormatHeure'     => _('Format_heure_incorrect'),
+            'erreurOptionManquante' => _('Option_manquante'),
+        ];
+        $childTable .= '<script type="text/javascript">
+        new planningController("' . $linkId . '", ' . json_encode($options) . ', ' . json_encode($creneauxGroupes) . ').init();
+        </script>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+
+        return ob_get_clean();
+    }
+
+    /**
+     * Retourne la séquence de formulaire des employés associés au planning
+     *
+     * @param int $idPlanning
+     *
+     * @return string
+     */
+    private static function getFormPlanningEmployes($idPlanning)
+    {
+        $idPlanning = (int) $idPlanning;
+        $return = '';
+        $utilisateursAssocies = \App\ProtoControllers\HautResponsable\Planning::getListeUtilisateursAssocies($idPlanning);
+
+        if (empty($utilisateursAssocies)) {
+            $return .= '<div>' . _('hr_tout_utilisateur_associe') . '</div>';
+        } else {
+            $hasGroup = $_SESSION['config']['gestion_groupes'];
+            if($hasGroup) {
+                $return .= '<div class="form-group col-md-4 col-sm-5">
+                <label class="control-label col-md-3 col-sm-3" for="groupe">Groupe&nbsp;:</label>
+                <div class="col-md-8 col-sm-8"><select class="form-control" name="groupeId" id="groupe">';
+                $return .= '<option value="' . NIL_INT . '">Tous</option>';
+
+                $optionsGroupes = \App\ProtoControllers\Groupe::getOptions();
+
+                foreach ($optionsGroupes as $id => $groupe) {
+                    $return .= '<option value="' . $id . '">' . $groupe['nom'] . '</option>';
+                }
+                $return .= '</select></div></div><br><br><br>';
+                $associations = array_map(function ($groupe) {
+                        return $groupe['utilisateurs'];
+                    },
+                    $optionsGroupes
+                );
+            }
+            $return .= '<div>';
+            foreach ($utilisateursAssocies as $utilisateur) {
+                $disabled = (\App\ProtoControllers\Utilisateur::hasSortiesEnCours($utilisateur['login']))
+                    ? 'disabled '
+                    : '';
+                $checked = ($idPlanning === $utilisateur['planningId'])
+                    ? 'checked '
+                    : '';
+                $nom = \App\ProtoControllers\Utilisateur::getNomComplet($utilisateur['prenom'], $utilisateur['nom']);
+                $return .= '<div class="checkbox-utilisateur" data-user-login="' . $utilisateur['login'] . '">
+                    <label><input type="checkbox" name="utilisateurs[]" value="' . $utilisateur['login'] . '" ' . $disabled . $checked . ' />&nbsp;' . $nom  . '</label>
+                </div>';
+            }
+            $return .= '</div>';
+            if($hasGroup) {
+                $return .= '<script type="text/javascript">
+                new selectAssociationPlanning("groupe", ' . json_encode($associations) . ', ' . NIL_INT . ');
+                </script>';
+            }
+        }
+
         return $return;
     }
 }
