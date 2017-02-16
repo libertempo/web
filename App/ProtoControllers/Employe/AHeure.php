@@ -311,7 +311,9 @@ abstract class AHeure
                 $champs['timestampDebut'] = \utilisateur\Fonctions::getTimestampPremierJourAnnee($value);
                 $champs['timestampFin'] = \utilisateur\Fonctions::getTimestampDernierJourAnnee($value);
             } else {
-                $champs[$key] = (int) $value;
+                if ($value !== "all") { // si la valeur est différent de tout le paramètres est passé au champ pour la futur requête sql
+                    $champs[$key] = (int) $value;
+                }
             }
         }
 
