@@ -1474,7 +1474,7 @@ class Fonctions
             $return .= '</table>';
 
             $return .= '<input type="hidden" name="user_login" value="' . $user_login . '">';
-            $return .= '<input class="btn" type="submit" value="' . _('form_submit') . '">';
+            $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
             $return .= '</form>';
         }
         return $return;
@@ -1906,10 +1906,23 @@ class Fonctions
     {
         //$return .= \responsable\Fonctions::affiche_etat_conges_user_for_resp($user_login,  $year_affichage, $tri_date, $onglet);
         $year = (int) getpost_variable('year_affichage_heure', date("Y"));
+        $commentairesAnnulation = getpost_variable('commentaireAnnulation', []);
+        $annulation = getpost_variable('annulation', []);
+
+        d($year, $userLogin, $commentairesAnnulation, $annulation, $_POST);
+        // manipuler les informations venant du formulaire
 
         return self::getFormulaireAnnulationHeures($userLogin, $year);
     }
 
+    /**
+     * Formulaire d'affichage des heures additionelles à manipuler
+     *
+     * @param string $userLogin
+     * @param int $year
+     *
+     * @return string
+     */
     private static function getFormulaireAnnulationHeures($userLogin, $year)
     {
         $yearPrec = $year - 1;
@@ -1925,12 +1938,20 @@ class Fonctions
         $return .= '<li><a class="action next" href="' . $url . '?session=' . $session . '&onglet=traite_user&user_login=' . $userLogin . '&year_affichage_heure=' . $yearSucc . '"><i class="fa fa-chevron-right"></i></a></li>';
         $return .= '</ul>';
         $return .= '</div>';
-        $return .= '<h2>' . _('resp_traite_user_etat_heures') . ' ' . $year . '</h2>';
+        $return .= '<h2>' . _('resp_traite_user_etat_heures_additionnelles') . ' ' . $year . '</h2>';
 
         /* Récupération des heures éligibles */
         $additionnelles = new \App\ProtoControllers\Employe\Heure\Additionnelle();
-        $heuresIds = $additionnelles->getListeId([]);
+        $debutTime = mktime(0, 0, 0, 1, 1, $year);
+        $finTime = mktime(0, 0, 0, 1, 1, $yearSucc);
+        $params = [
+            'login' => $userLogin,
+            'timestampDebut' => $debutTime,
+            'timestampFin' => $finTime,
+        ];
+        $heuresIds = $additionnelles->getListeId($params);
 
+        $return .= '<form action="" method="POST">';
         $return .= '<table class="table table-hover table-responsive table-condensed table-striped">';
         $return .= '<thead>';
         $return .= '<tr align="center">';
@@ -1938,44 +1959,61 @@ class Fonctions
         $return .= '<th>' . _('debut') . '</th>';
         $return .= '<th>' . _('fin') . '</th>';
         $return .= '<th>' . _('duree') . '</th>';
-        $return .= '<th>' . _('type') . '</th>';
+        $return .= '<th>' . _('commentaire') . '</th>';
         $return .= '<th>' . _('statut') . '</th>';
         $return .= '<th>' . _('annuler') . '</th>';
-        $return .= '<th>' . _('commentaire') . '</th>';
+        $return .= '<th>' . _('motif annulation') . '</th>';
+
         $return .= '</tr>';
         $return .= '</thead>';
         $return .= '<tbody>';
         if (empty($heuresIds)) {
-            $return .= '<td colspan=8><center><b>' . _('resp_traite_user_aucune_heure') . '</b></center></td>';
+            $return .= '<td colspan=9><center><b>' . _('resp_traite_user_aucune_heure_additionnelle') . '</b></center></td>';
         } else {
             $heures = $additionnelles->getListeSQL($heuresIds);
+            $numElement = 1;
             foreach ($heures as $heure) {
+                $idHeure = (int) $heure['id_heure'];
                 $jour   = date('d/m/Y', $heure['debut']);
                 $debut  = date('H\:i', $heure['debut']);
                 $fin    = date('H\:i', $heure['fin']);
                 $duree  = \App\Helpers\Formatter::Timestamp2Duree($heure['duree']);
                 $statut = \App\Models\AHeure::statusText($heure['statut']);
                 $comment = \includes\SQL::quote($heure['comment']);
-                $return .= '<tr>';
+                $commentaireRefus = \includes\SQL::quote($heure['comment_refus']);
+                if (empty($commentaireRefus)) {
+                    $commentaireRefus = _('divers_inconnu');
+                }
+
+                switch ($heure['statut']) {
+                    case \App\Models\AHeure::STATUT_ANNUL:
+                    case \App\Models\AHeure::STATUT_REFUS:
+                        $annulation = '';
+                        $commentaireAnnulation = '<i>' . _('resp_traite_user_motif') . ' : ' . $commentaireRefus . '</i>';
+                        break;
+                    default:
+                        $annulation = '<input type="checkbox" name="annulation[' . $idHeure . ']" />';
+                        $commentaireAnnulation = '<input type="text" name="commentaireAnnulation[' . $idHeure . ']" size="20" max="100"/>';
+                        break;
+                }
+                $return .= '<tr class="' . (($numElement % 2 == 0) ? 'i' : 'p') . '">';
                 $return .= '<td>' . $jour . '</td>';
                 $return .= '<td>' . $debut . '</td>';
                 $return .= '<td>' . $fin . '</td>';
                 $return .= '<td>' . $duree . '</td>';
-                $return .= '<td>type</td>';
-                $return .= '<td>' . $statut . '</td>';
-                $return .= '<td>annulation</td>';
                 $return .= '<td>' . $comment . '</td>';
-
-                /* voir avec smina pour la méthodo sur le formulaire d'annulation */
-
-
-
+                $return .= '<td>' . $statut . '</td>';
+                $return .= '<td>' . $annulation . '</td>';
+                $return .= '<td>' . $commentaireAnnulation . '</td>';
                 $return .= '</tr>';
-
+                ++$numElement;
             }
         }
         $return .= '</tbody>';
         $return .= '</table>';
+        $return .= '<input type="hidden" name="userLogin" value="' . $userLogin . '">';
+        $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
+        $return .= '</form>';
 
         return $return;
     }

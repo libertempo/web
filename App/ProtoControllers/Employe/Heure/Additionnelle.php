@@ -456,7 +456,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
                     type_periode = ' . (int) $data['typePeriode'] . ',
                     comment = \'' . $data['comment'] . '\'
                 WHERE id_heure = '. (int) $id . '
-                AND login = "' . $user . '"';
+                    AND login = "' . $user . '"';
         $query = $sql->query($req);
 
         return $id;
@@ -471,7 +471,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
         $req = 'UPDATE heure_additionnelle
                 SET statut = ' . AHeure::STATUT_ANNUL . '
                 WHERE id_heure = ' . (int) $id . '
-                AND login = "' . $user . '"';
+                    AND login = "' . $user . '"';
         $sql->query($req);
 
         return 0 < $sql->affected_rows ? $id : NIL_INT;
