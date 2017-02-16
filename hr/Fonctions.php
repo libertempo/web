@@ -417,7 +417,7 @@ class Fonctions
             /* UPDATE table "conges_solde_user" (jours restants) */
             // on retranche les jours seulement pour des conges pris (pas pour les absences)
             // donc seulement si le type de l'absence qu'on annule est un "conges"
-            if($tab_tout_type_abs[$new_type_id]['type']=="conges") {
+            if($tab_tout_type_abs[$new_type_id]['type']=="conges" || $tab_tout_type_abs[$user_type_abs_id]['type']=="conges_exceptionnels") {
                 $user_nb_jours_pris_float=(float) $new_nb_jours ;
                 soustrait_solde_et_reliquat_user($user_login, $numero_int, $user_nb_jours_pris_float, $new_type_id, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin);
             }
