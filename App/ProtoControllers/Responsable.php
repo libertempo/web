@@ -94,23 +94,6 @@ class Responsable
     }
 
     /**
-     * Retourne les responsables de groupes et direct d'un utilisateur
-     *
-     * @param string $user
-     * @return array
-     */
-    public static function getRespsUtilisateur($user){
-        $groupeIds = \App\ProtoControllers\Utilisateur::getGroupesId($user);
-        $responsablesGroupe = \App\ProtoControllers\Groupe\Responsable::getListResponsableByGroupeIds($groupeIds);
-        $responsableDirect = \App\ProtoControllers\Responsable::getRespDirect($user);
-        if (!empty($responsableDirect)) {
-            return array_unique(array_merge($responsablesGroupe + [$responsableDirect]));
-        }
-
-        return $responsablesGroupe;
-    }
-
-    /**
      * Vérifie si le responsable est absent
      *
      * @param string $resp identifiant du responsable
@@ -145,6 +128,12 @@ class Responsable
         return $grandResp;
     }
 
+    /**
+     * Retourne les responsables de groupes et direct d'un utilisateur
+     *
+     * @param string $user
+     * @return array
+     */
     public static function getResponsablesUtilisateur($user) {
         
         $responsables = \App\ProtoControllers\Responsable::getResponsableGroupe(\App\ProtoControllers\Utilisateur::getGroupesId($user));
@@ -168,7 +157,9 @@ class Responsable
         $responsable = [];
         
         $sql = \includes\SQL::singleton();
-        $req = 'SELECT gr_login FROM conges_groupe_resp WHERE gr_gid IN (\'' . implode(',', $groupesId) . '\')';
+        $req = 'SELECT gr_login FROM conges_groupe_resp 
+                    WHERE gr_gid IN (\'' . implode(',', $groupesId) . '\')
+                    AND gr_login != "'. $_SESSION['userlogin'] .'"';
         $res = $sql->query($req);
 
          while ($data = $res->fetch_array()) {
@@ -187,7 +178,9 @@ class Responsable
      * @return bool
      */
     public static function isRespDeUtilisateur($resp, $user) {
-        return \App\ProtoControllers\Responsable::isRespDirect($resp, $user) || \App\ProtoControllers\Responsable::isRespGroupe($resp, \App\ProtoControllers\Utilisateur::getGroupesId($user));
+        return $resp != $user 
+                && (\App\ProtoControllers\Responsable::isRespDirect($resp, $user) 
+                || \App\ProtoControllers\Responsable::isRespGroupe($resp, \App\ProtoControllers\Utilisateur::getGroupesId($user)));
     }
 
     /**
@@ -216,7 +209,7 @@ class Responsable
             return FALSE;
         }
 
-        $RespsUser = \App\ProtoControllers\Responsable::getRespsUtilisateur($user);
+        $RespsUser = \App\ProtoControllers\Responsable::getResponsablesUtilisateur($user);
         $RespUserPresent = array_diff($RespsUser,$usersRespRespAbs);
         if (empty($RespUserPresent)){
             return TRUE;
