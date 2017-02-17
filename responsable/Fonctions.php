@@ -1837,12 +1837,10 @@ class Fonctions
         $new_fin = getpost_variable('new_fin') ;
         $new_demi_jour_fin = htmlentities(getpost_variable('new_demi_jour_fin'), ENT_QUOTES | ENT_HTML401);
         $return = '';
+        
+        //$new_nb_jours = getpost_variable('new_nb_jours') ;
 
-        if($_SESSION['config']['disable_saise_champ_nb_jours_pris']) { // zone de texte en readonly et grisée
-            $new_nb_jours = compter($user_login, '', $new_debut,  $new_fin, $new_demi_jour_deb, $new_demi_jour_fin, $comment);
-        } else {
-            $new_nb_jours = getpost_variable('new_nb_jours') ;
-        }
+        $new_nb_jours = compter($user_login, '', $new_debut,  $new_fin, $new_demi_jour_deb, $new_demi_jour_fin, $comment);
 
         $new_comment = htmlentities(getpost_variable('new_comment'), ENT_QUOTES | ENT_HTML401);
         $new_type = htmlentities(getpost_variable('new_type'), ENT_QUOTES | ENT_HTML401);
