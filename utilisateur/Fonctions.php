@@ -81,8 +81,6 @@ class Fonctions
                 $new_etat = 'ok' ;
             }
 
-            $new_comment = addslashes($new_comment);
-
             $periode_num = insert_dans_periode($_SESSION['userlogin'], $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type, $new_etat, 0);
 
             if ( $periode_num != 0 ) {
@@ -243,6 +241,8 @@ class Fonctions
         $session=session_id() ;
         $return = '';
         $VerifNb = verif_saisie_decimal($new_nb_jours);
+        $new_comment = htmlentities($new_comment, ENT_QUOTES | ENT_HTML401);
+
         $sql1 = "UPDATE conges_periode
             SET p_date_deb='$new_debut', p_demi_jour_deb='$new_demi_jour_deb', p_date_fin='$new_fin', p_demi_jour_fin='$new_demi_jour_fin', p_nb_jours='$new_nb_jours', p_commentaire='". \includes\SQL::quote($new_comment)  ."', ";
         if($p_etat=="demande")
@@ -312,7 +312,7 @@ class Fonctions
                 $demi_j_fin= _('divers_pm_short') ;
             $sql_nb_jours=$resultat1["p_nb_jours"];
             $aff_nb_jours=affiche_decimal($sql_nb_jours);
-            $sql_commentaire=htmlentities($resultat1["p_commentaire"], ENT_QUOTES | ENT_HTML401);
+            $sql_commentaire=$resultat1["p_commentaire"];
             $sql_etat=$resultat1["p_etat"];
 
             $return .= '<td>' . $sql_date_deb . '_' . $demi_j_deb . '</td><td>' . $sql_date_fin  . '_' . $demi_j_fin . '</td><td>' . $aff_nb_jours . '</td><td>' . $sql_commentaire . '</td>';

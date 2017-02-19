@@ -91,12 +91,12 @@ class Conge
 
                 /** Messages complémentaires */
                 if (!empty($conges["p_commentaire"])) {
-                    $messageDemande = '> Demande ' . $dateDemande . ":\n" . schars($conges["p_commentaire"]);
+                    $messageDemande = '> Demande ' . $dateDemande . ":\n" . $conges["p_commentaire"];
                 } else {
                     $messageDemande = '';
                 }
                 if (!empty($conges["p_motif_refus"])) {
-                    $messageReponse = '> Réponse ' . $dateReponse . ":\n" . schars($conges["p_motif_refus"]);
+                    $messageReponse = '> Réponse ' . $dateReponse . ":\n" . $conges["p_motif_refus"];
                 } else {
                     $messageReponse = '';
                 }
