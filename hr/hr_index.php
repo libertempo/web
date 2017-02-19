@@ -11,6 +11,8 @@ include_once INCLUDE_PATH .'fonction.php';
 include_once INCLUDE_PATH .'session.php';
 include_once ROOT_PATH .'fonctions_calcul.php';
 
+$config = new \App\Libraries\Configuration();
+
 // verif des droits du user à afficher la page
 verif_droits_user($session, "is_hr");
 
@@ -32,7 +34,7 @@ $onglets = array();
 
 $onglets['page_principale'] = _('resp_menu_button_retour_main');
 
-if( $_SESSION['config']['user_saisie_demande'] )
+if($config->canUserSaisieDemande())
     $onglets['traitement_demandes'] = _('resp_menu_button_traite_demande');
 
 // if( $_SESSION['config']['resp_ajoute_conges'] )

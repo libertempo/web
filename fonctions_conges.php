@@ -67,6 +67,8 @@ function get_j_name_fr_2c($timestamp)
 
 function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet)
 {
+    $config = new \App\Libraries\Configuration();
+
     $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
     $session=session_id();
     $new_date_fin = date('d/m/Y');
@@ -151,7 +153,7 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
     // si le user a droit de saisir une demande de conges ET si on est PAS dans une fenetre de responsable
     // OU si le user n'a pas droit de saisir une demande de conges ET si on est dans une fenetre de responsable
     // OU si le user est un RH ou un admin
-    if( ( $_SESSION['config']['user_saisie_demande'] && $user_login==$_SESSION['userlogin'] ) || ( $_SESSION['config']['user_saisie_demande']==FALSE && $user_login!=$_SESSION['userlogin'] ) || is_hr($_SESSION['userlogin']) || is_admin($_SESSION['userlogin']) )
+    if( ( $config->canUserSaisieDemande() && $user_login==$_SESSION['userlogin'] ) || ( !$config->canUserSaisieDemande() && $user_login!=$_SESSION['userlogin'] ) || is_hr($_SESSION['userlogin']) || is_admin($_SESSION['userlogin']) )
     {
         // congés
         $return .= '<div class="col-md-4">';
@@ -188,7 +190,7 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
 
     // si le user a droit de saisir une demande de conges ET si on est PAS dans une fenetre de responsable
     // OU si le user n'a pas droit de saisir une demande de conges ET si on est dans une fenetre de responsable
-    if( ($_SESSION['config']['gestion_conges_exceptionnels']) && ((($_SESSION['config']['user_saisie_demande'])&&($user_login==$_SESSION['userlogin'])) || (($_SESSION['config']['user_saisie_demande']==FALSE)&&($user_login!=$_SESSION['userlogin'])) ) )
+    if( ($_SESSION['config']['gestion_conges_exceptionnels']) && ((($config->canUserSaisieDemande())&&($user_login==$_SESSION['userlogin'])) || ((!$config->canUserSaisieDemande())&&($user_login!=$_SESSION['userlogin'])) ) )
     {
         // congés exceptionnels
         $return .= '<div class="col-md-4">';

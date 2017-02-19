@@ -1713,6 +1713,8 @@ class Fonctions
 
     public static function affichage($user_login, $year_affichage, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $tri_date)
     {
+        $config = new \App\Libraries\Configuration();
+
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $session=session_id();
         $return = '';
@@ -1755,7 +1757,7 @@ class Fonctions
         /* SAISIE NOUVEAU CONGES */
         /*************************/
         // dans le cas ou les users ne peuvent pas saisir de demande, le responsable saisi les congès :
-        if( !$_SESSION['config']['user_saisie_demande'] || $_SESSION['config']['resp_saisie_mission'] ) {
+        if( !$config->canUserSaisieDemande() || $_SESSION['config']['resp_saisie_mission'] ) {
             // si les mois et année ne sont pas renseignés, on prend ceux du jour
             if($year_calendrier_saisie_debut==0) {
                 $year_calendrier_saisie_debut=date("Y");
@@ -1782,7 +1784,7 @@ class Fonctions
         /*********************/
         /* Etat des Demandes */
         /*********************/
-        if($_SESSION['config']['user_saisie_demande']) {
+        if($config->canUserSaisieDemande()) {
             //verif si le user est bien un user du resp (et pas seulement du grand resp)
             if(strstr($list_all_users_du_resp, "'$user_login'")!=FALSE) {
                 $return .= '<h2>' . _('resp_traite_user_etat_demandes') . '</h2>';

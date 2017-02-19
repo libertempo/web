@@ -951,6 +951,8 @@ class Fonctions
 
     public static function affichage($user_login,  $year_affichage, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $tri_date, $onglet)
     {
+        $config = new \App\Libraries\Configuration();
+
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $session=session_id();
         $return = '';
@@ -1048,7 +1050,7 @@ class Fonctions
         /*********************/
         /* Etat des Demandes */
         /*********************/
-        if($_SESSION['config']['user_saisie_demande']) {
+        if($config->canUserSaisieDemande()) {
             //verif si le user est bien un user du resp (et pas seulement du grad resp)
             if(strstr($list_all_users_du_hr, "'$user_login'")!=FALSE) {
                 $return .= '<h3>' . _('resp_traite_user_etat_demandes') . '</h3>';

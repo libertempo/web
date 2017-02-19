@@ -158,6 +158,8 @@ class Fonctions
      */
     public static function nouvelleAbsenceModule($onglet)
     {
+        $config = new \App\Libraries\Configuration();
+
         // on initialise le tableau global des jours fériés s'il ne l'est pas déjà :
         init_tab_jours_feries();
         $return = '';
@@ -166,7 +168,7 @@ class Fonctions
 
         $new_demande_conges = getpost_variable('new_demande_conges', 0);
 
-        if( $new_demande_conges == 1 && $_SESSION['config']['user_saisie_demande'] ) {
+        if( $new_demande_conges == 1 && $config->canUserSaisieDemande()) {
             $new_debut        = htmlentities(getpost_variable('new_debut'), ENT_QUOTES | ENT_HTML401);
             $new_demi_jour_deb  = htmlentities(getpost_variable('new_demi_jour_deb'), ENT_QUOTES | ENT_HTML401);
             $new_fin        = htmlentities(getpost_variable('new_fin'), ENT_QUOTES | ENT_HTML401);
