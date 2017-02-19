@@ -10,6 +10,9 @@ if (!is_readable( CONFIG_PATH .'dbconnect.php'))
 
 include_once INCLUDE_PATH .'fonction.php';
 include_once ROOT_PATH .'fonctions_conges.php'; // for init_config_tab()
+
+$config = new \App\Libraries\Configuration();
+
 $_SESSION['config']=init_config_tab();      // on initialise le tableau des variables de config
 
 
@@ -66,7 +69,7 @@ else
 		session_destroy();
 
 	// Si CAS alors on utilise le login CAS pour la session
-	if ( $_SESSION['config']['how_to_connect_user'] == "cas" && $_GET['cas'] != "no" )
+	if ( $config->getHowToConnectUser() == "cas" && $_GET['cas'] != "no" )
 	{
 		//redirection vers l'url d'authentification CAS
 		$usernameCAS = authentification_passwd_conges_CAS();
@@ -83,7 +86,7 @@ else
 		}
 	}
 	// Si SSO, on utilise les identifiants de session pour se connecter
-	else if ( $_SESSION['config']['how_to_connect_user'] == "SSO" )
+	else if ( $config->getHowToConnectUser() == "SSO" )
 	{
 		$usernameSSO = authentification_AD_SSO();
 		if($usernameSSO != "")
@@ -116,7 +119,7 @@ else
 			// le user doit etre authentifié dans la table conges (login + passwd) ou dans le ldap.
 			// si on a trouve personne qui correspond au couple user/password
 
-			if ( $_SESSION['config']['how_to_connect_user'] == "ldap" && $session_username != "admin" )
+			if ( $config->getHowToConnectUser() == "ldap" && $session_username != "admin" )
 			{
 				$username_ldap = authentification_ldap_conges($session_username,$session_password);
 				if ( $username_ldap != $session_username)
@@ -149,7 +152,7 @@ else
 					}
 				}
 			} // fin du if test avec ldap
-			elseif ( $_SESSION['config']['how_to_connect_user'] == "dbconges" || $session_username == "admin" )
+			elseif ( $config->getHowToConnectUser() == "dbconges" || $session_username == "admin" )
 			{
 				$username_conges = autentification_passwd_conges($session_username,$session_password);
 				if ( $username_conges != $session_username)
