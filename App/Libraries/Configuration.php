@@ -23,7 +23,7 @@ class Configuration {
         $sql = \includes\SQL::singleton();
         $res = $sql->query($req);
         while ($data = $res->fetch_array()) {
-            $groupe = $data['config_groupe'];
+            $groupe = $data['conf_groupe'];
             $nom = $data['conf_nom'];
             $this->data[$groupe][$nom] = [
                 'valeur' => $data['conf_valeur'],
@@ -67,7 +67,7 @@ class Configuration {
      * @return mixed
      */
     private function getGroupeLibertempoValeur($nom) {
-        return $this->getValeur($nom, '00_libertempo');
+        return $this->getValeur($nom, '01_Serveur Web');
     }
 
     /**
