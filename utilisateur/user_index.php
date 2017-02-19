@@ -8,6 +8,7 @@ include_once INCLUDE_PATH . 'fonction.php';
 include_once INCLUDE_PATH . 'session.php';
 include_once ROOT_PATH . 'fonctions_calcul.php';
 
+$config = new \App\Libraries\Configuration();
 if ($_SESSION['config']['where_to_find_user_email'] == "ldap") {
     include CONFIG_PATH . 'config_ldap.php';
 }
