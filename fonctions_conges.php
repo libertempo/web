@@ -902,6 +902,8 @@ function eng_date_to_fr($une_date)
 // affichage de la cellule correspondant au jour dans les calendrier de saisie (demande de conges, etc ...)
 function affiche_cellule_jour_cal_saisie($login, $j_timestamp, $td_second_class, $result)
 {
+    $config = new \App\Libraries\Configuration();
+
     $date_j=date('Y-m-d', $j_timestamp);
     $j=date('d', $j_timestamp);
     $class_am='travail_am';
@@ -930,7 +932,7 @@ function affiche_cellule_jour_cal_saisie($login, $j_timestamp, $td_second_class,
     $year_today=date('Y');
     $timestamp_today = mktime (0,0,0,$mois_today,$jour_today,$year_today);
     // si la saisie de conges pour une periode passée est interdite : pas de case à cocher dans les dates avant aujourd'hui
-    if( $_SESSION['config']['interdit_saisie_periode_date_passee']  && $j_timestamp < $timestamp_today )
+    if( $config->canUserSaisieDemandePasse()  && $j_timestamp < $timestamp_today )
         echo '<td  class="cal-saisie '.$td_second_class.' '.$class_am.' '.$class_pm.'">'.$j.'</td>';
     else
     {
