@@ -43,7 +43,7 @@ class Configuration {
 
     /**
      * Retourne la langue
-     * 
+     * @todo a supprimer. non utilisé
      * @return string
      */
     public function getLang() {
@@ -78,7 +78,13 @@ class Configuration {
     public function canUserSaisieDemande() {
         return $this->getGroupeUtilisateurValeur('user_saisie_demande');
     }
-
+    
+    /**
+     * Autorise la saisie d'une demande de mission par l'employé
+     * @todo a supprimer au profit de canUserSaisieDemande()
+     * 
+     * @return boolean
+     */
     public function canUserSaisieMission() {
         return $this->getGroupeUtilisateurValeur('user_saisie_mission');
     }
