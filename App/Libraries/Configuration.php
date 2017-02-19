@@ -89,6 +89,13 @@ class Configuration {
         return $this->getGroupeUtilisateurValeur('user_saisie_mission');
     }
 
+    /**
+     * Autorise la modification du mot de passe par l'employé
+     * le mot de passe n'est modifiable que si 
+     * authentification locale
+     * 
+     * @return boolean
+     */
     public function canUserChangePassword() {
         if ($this->getHowToConnectUser() == !'dbconges') {
             return FALSE;
