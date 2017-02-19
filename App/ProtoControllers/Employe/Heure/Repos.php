@@ -250,6 +250,7 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
      */
     public function getListe()
     {
+        $config = new \App\Libraries\Configuration();
         $message   = '';
         $errorsLst = [];
         $notice    = '';
@@ -304,11 +305,14 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
                 $duree  = \App\Helpers\Formatter::Timestamp2Duree($repos['duree']);
                 $statut = AHeure::statusText($repos['statut']);
                 $comment = \includes\SQL::quote($repos['comment']);
-                if (AHeure::STATUT_DEMANDE == $repos['statut']) {
+                if (AHeure::STATUT_DEMANDE == $repos['statut'] && $config->canUserModifieDemande()) {
                     $modification = '<a title="' . _('form_modif') . '" href="user_index.php?onglet=modif_heure_repos&id=' . $repos['id_heure'] . '"><i class="fa fa-pencil"></i></a>';
-                    $annulation   = '<input type="hidden" name="id_heure" value="' . $repos['id_heure'] . '" /><input type="hidden" name="_METHOD" value="DELETE" /><button type="submit" class="btn btn-link" title="' . _('Annuler') . '"><i class="fa fa-times-circle"></i></button>';
                 } else {
                     $modification = '<i class="fa fa-pencil disabled" title="'  . _('heure_non_modifiable') . '"></i>';
+                }
+                if (AHeure::STATUT_DEMANDE == $repos['statut']) {
+                    $annulation   = '<input type="hidden" name="id_heure" value="' . $repos['id_heure'] . '" /><input type="hidden" name="_METHOD" value="DELETE" /><button type="submit" class="btn btn-link" title="' . _('Annuler') . '"><i class="fa fa-times-circle"></i></button>';
+                } else {
                     $annulation   = '<button title="' . _('heure_non_supprimable') . '" type="button" class="btn btn-link disabled"><i class="fa fa-times-circle"></i></button>';
                 }
                 $childTable .= '<tr><td>' . $jour . '</td><td>' . $debut . '</td><td>' . $fin . '</td><td>' . $duree . '</td><td>' . $statut . '</td><td>' . $comment . '</td><td><form action="" method="post" accept-charset="UTF-8"
@@ -484,6 +488,11 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
      */
     public function canUserEdit($id, $user)
     {
+        $config = new \App\Libraries\Configuration();
+        if(!$config->canUserModifieDemande()){
+            return FALSE;
+        }
+        
         $sql = \includes\SQL::singleton();
         $req = 'SELECT EXISTS (
                     SELECT id_heure

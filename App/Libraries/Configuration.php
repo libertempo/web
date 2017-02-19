@@ -116,6 +116,11 @@ class Configuration {
         return !$this->getGroupeUtilisateurValeur('interdit_saisie_periode_date_passee');
     }
 
+    /**
+     * Controle si l'utilisateur peut modifier une demande
+     * 
+     * @return boolean
+     */
     public function canUserModifieDemande() {
         return !$this->getGroupeUtilisateurValeur('interdit_modif_demande');
     }
@@ -422,10 +427,6 @@ class Configuration {
             throw new \Exception('Donnée de configuration inexistante');
         }
         $config = $this->data[$groupe][$nom];
-
-        if ('boolean' === $config['type']) {
-            return (bool) $config['valeur'];
-        }
 
         return $config['valeur'];
     }

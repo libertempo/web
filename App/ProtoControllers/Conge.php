@@ -17,6 +17,8 @@ class Conge
      */
     public function getListe()
     {
+        $config = new \App\Libraries\Configuration();
+
         $return = '';
         $errorsLst = [];
         if ($_SESSION['config']['where_to_find_user_email'] == "ldap") {
@@ -68,7 +70,7 @@ class Conge
         } else {
             $i = true;
             $listeConges = $this->getListeSQL($listId);
-            $interdictionModification = $_SESSION['config']['interdit_modif_demande'];
+            $modificationAutorisee = $config->canUserModifieDemande();
             $affichageDateTraitement = $_SESSION['config']['affiche_date_traitement'];
             foreach ($listeConges as $conges) {
                 /** Dates demande / traitement */
@@ -103,7 +105,7 @@ class Conge
                 $user_modif_demande = "&nbsp;";
 
                 // si on peut modifier une demande :on defini le lien à afficher
-                if (!$interdictionModification && $conges["p_etat"] != "valid") {
+                if($modificationAutorisee && $conges["p_etat"] != "valid") {
                     //on ne peut pas modifier une demande qui a déja été validé une fois (si on utilise la double validation)
                     $user_modif_demande = '<a href="user_index.php?p_num=' . $conges['p_num'] . '&onglet=modif_demande">' . _('form_modif') . '</a>';
                 }
@@ -120,7 +122,7 @@ class Conge
                 }
                 $childTable .= '</td>';
                 $childTable .= '<td class="histo">';
-                if (!$interdictionModification) {
+                if($modificationAutorisee) {
                     $childTable .= $user_modif_demande . '&nbsp;&nbsp;';
                 }
                 $childTable .= ($user_suppr_demande) . '</td>' . "\n";
