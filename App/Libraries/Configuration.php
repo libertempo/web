@@ -107,6 +107,11 @@ class Configuration {
         return !$this->getGroupeUtilisateurValeur('disable_saise_champ_nb_jours_pris');
     }
 
+    /**
+     * Controle si l'utilisateur peut saisir une demande dans le passé
+     * 
+     * @return boolean
+     */
     public function canUserSaisieDemandePasse() {
         return !$this->getGroupeUtilisateurValeur('interdit_saisie_periode_date_passee');
     }
