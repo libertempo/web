@@ -20,6 +20,8 @@ class Conge
      */
     public function getListe()
     {
+        $config = new \App\Libraries\Configuration();
+
         $return = '';
         $errorsLst = [];
         if ($_SESSION['config']['where_to_find_user_email'] == "ldap") {
@@ -67,7 +69,7 @@ class Conge
         } else {
             $i = true;
             $listeConges = $this->getListeSQL($listId);
-            $interdictionModification = $_SESSION['config']['interdit_modif_demande'];
+            $modificationAutorisee = $config->canUserModifieDemande();
             $affichageDateTraitement = $_SESSION['config']['affiche_date_traitement'];
             foreach ($listeConges as $conges) {
                 /** Dates demande / traitement */
