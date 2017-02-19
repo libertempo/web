@@ -317,6 +317,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
      */
     protected function updateStatutRefus($demandeId, $comm)
     {
+        $comm = htmlentities($comm, ENT_QUOTES | ENT_HTML401);
         $sql = \includes\SQL::singleton();
 
         $req   = 'UPDATE conges_periode
