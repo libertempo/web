@@ -355,6 +355,15 @@ function verif_saisie_new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new
         echo '<br>'. _('demande_heure_chevauche_demande') .'<br>';
         $verif = false;
     }
+    
+    $tab_periode_calcul = make_tab_demi_jours_periode($new_debut, $new_fin, $new_demi_jour_deb, $new_demi_jour_fin);
+    if(verif_periode_chevauche_periode_user($new_debut, $new_fin, $_SESSION['userlogin'], "", $tab_periode_calcul, $new_comment)){
+        echo '<br>'._('calcul_nb_jours_commentaire') .'<br>';
+        $verif = false;
+    }
+    
+    $new_comment = htmlentities($new_comment, ENT_QUOTES | ENT_HTML401);
+
     return $verif;
 }
 
@@ -1481,7 +1490,7 @@ function insert_dans_periode($login, $date_deb, $demi_jour_deb, $date_fin, $demi
     else
         $num_new_demande = 1;
 
-    $sql2 = "INSERT INTO conges_periode SET p_login='$login',p_date_deb='$date_deb', p_demi_jour_deb='$demi_jour_deb',p_date_fin='$date_fin', p_demi_jour_fin='$demi_jour_fin', p_nb_jours='$nb_jours', p_commentaire='$commentaire', p_type='$id_type_abs', p_etat='$etat', ";
+    $sql2 = "INSERT INTO conges_periode SET p_login='$login',p_date_deb='$date_deb', p_demi_jour_deb='$demi_jour_deb',p_date_fin='$date_fin', p_demi_jour_fin='$demi_jour_fin', p_nb_jours='$nb_jours', p_commentaire='".\includes\SQL::quote($commentaire)."', p_type='$id_type_abs', p_etat='$etat', ";
 
     if($id_fermeture!=0)
         $sql2 = $sql2." p_fermeture_id='$id_fermeture' ," ;
