@@ -28,7 +28,7 @@ $onglets = array();
 
 $onglets['liste_conge'] = _('user_liste_conge');
 
-if ($config->canUserSaisieDemande() || $_SESSION['config']['user_saisie_mission']) {
+if ($config->canUserSaisieDemande() || $config->canUserSaisieMission()) {
     $onglets['nouvelle_absence'] = _('divers_nouvelle_absence');
 }
 
@@ -37,12 +37,12 @@ if ($_SESSION['config']['user_echange_rtt']) {
 }
 
 if ($_SESSION['config']['gestion_heures']) {
-    if ($config->canUserSaisieDemande() || $_SESSION['config']['user_saisie_mission']) {
+    if ($config->canUserSaisieDemande() || $config->canUserSaisieMission()) {
         $onglets['ajout_heure_repos'] = _('divers_ajout_heure_repos');
     }
     $onglets['liste_heure_repos'] = _('user_liste_heure_repos');
     
-    if ($config->canUserSaisieDemande() || $_SESSION['config']['user_saisie_mission']) {
+    if ($config->canUserSaisieDemande() || $config->canUserSaisieMission()) {
         $onglets['ajout_heure_additionnelle'] = _('divers_ajout_heure_additionnelle');
     }
     $onglets['liste_heure_additionnelle'] = _('user_liste_heure_additionnelle');
