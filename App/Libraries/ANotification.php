@@ -116,7 +116,7 @@ abstract Class ANotification {
                 $NotifContent[] = $this->getContenuDemande($data);
                 break;
             case \App\Models\AHeure::STATUT_PREMIERE_VALIDATION:
-                $NotifContent[] = $this->getContenuEmployePremiereValidation($data);
+                $NotifContent[] = $this->getContenuEmployePremierValidation($data);
                 $NotifContent[] = $this->getContenuGrandResponsablePremiereValidation($data);
                 break;
             case \App\Models\AHeure::STATUT_VALIDATION_FINALE:
