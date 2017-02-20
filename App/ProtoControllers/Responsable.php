@@ -192,7 +192,8 @@ class Responsable
      * @return boolean
      */
     public static function isRespParDelegation($resp, $user) {
-        if(!$_SESSION['config']['gestion_cas_absence_responsable']){
+        $config = new \App\Libraries\Configuration();
+        if(!$config->isGestionResponsableAbsent()){
             return FALSE;
         }
         $usersRespRespAbs = [];

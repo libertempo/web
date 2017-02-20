@@ -431,7 +431,8 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
      */
     protected function getIdDemandesResponsableAbsent($resp)
     { 
-        if(!$_SESSION['config']['gestion_cas_absence_responsable']){
+        $config = new \App\Libraries\Configuration();
+        if(!$config->isGestionResponsableAbsent()){
             return [];
         }
         $groupesIdResponsable = \App\ProtoControllers\Responsable::getIdGroupeResp($resp);

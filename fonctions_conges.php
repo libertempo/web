@@ -535,6 +535,7 @@ function date_fr($code, $timestmp)
 function alerte_mail($login_expediteur, $destinataire, $num_periode, $objet)
 {
 
+    $config = new \App\Libraries\Configuration();
     /*********************************************/
     // recup des infos concernant l'expéditeur ....
     $mail_array        = find_email_adress_for_user($login_expediteur);
@@ -560,7 +561,7 @@ function alerte_mail($login_expediteur, $destinataire, $num_periode, $objet)
             else
             {
                 // on change l'objet si c'est un "new_demande" à un resp absent et qu'on gere les absence de resp !
-                if( $_SESSION['config']['gestion_cas_absence_responsable'] && $item_presence == 'absent' && $objet == 'new_demande' )
+                if( $config->isGestionResponsableAbsent() && $item_presence == 'absent' && $objet == 'new_demande' )
                     $new_objet  = 'new_demande_resp_absent';
                 else
                     $new_objet  = $objet;
@@ -976,7 +977,7 @@ function get_groups_name()
 // renvoie une liste de login entre quotes et séparés par des virgules
 function get_list_all_users_du_resp($resp_login)
 {
-
+    $config = new \App\Libraries\Configuration();
     $list_users="";
     $sql1="SELECT DISTINCT(u_login) FROM conges_users WHERE u_login!='conges' AND u_login!='admin' AND u_login!='$resp_login'";
     $sql1 = $sql1." AND  ( u_resp_login='$resp_login' " ;
@@ -1003,7 +1004,7 @@ function get_list_all_users_du_resp($resp_login)
     /************************************/
     // gestion des absence des responsables :
     // on recup la liste des users des resp absents, dont $resp_login est responsable
-    if($_SESSION['config']['gestion_cas_absence_responsable'])
+    if($config->isGestionResponsableAbsent())
     {
         // recup liste des resp absents, dont $resp_login est responsable
         $sql_2='SELECT DISTINCT(u_login) FROM conges_users WHERE u_is_resp=\'Y\' AND u_login!="'.\includes\SQL::quote($resp_login).'" AND u_login!=\'conges\' AND u_login!=\'admin\'';
@@ -1258,6 +1259,7 @@ function get_list_all_groupes()
 //renvoit un tableau indexé de resp_login => "absent" ou "present"
 function get_tab_resp_du_user($user_login)
 {
+    $config = new \App\Libraries\Configuration();
     $tab_resp=array();
     // recup du resp indiqué dans la table users (sauf s'il est resp de lui meme)
     $req = 'SELECT u_resp_login FROM conges_users WHERE u_login=\''.\includes\SQL::quote($user_login).'\';';
@@ -1292,7 +1294,7 @@ function get_tab_resp_du_user($user_login)
     /************************************/
     // gestion des absence des responsables :
     // on verifie que les resp sont présents, si tous absent, on cherhe les resp des resp, et ainsi de suite ....
-    if($_SESSION['config']['gestion_cas_absence_responsable'])
+    if($config->isGestionResponsableAbsent())
     {
         // on va verifier si les resp récupérés sont absents
         $nb_present=count($tab_resp);

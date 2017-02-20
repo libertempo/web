@@ -154,6 +154,11 @@ class Configuration {
         return $this->getGroupeResponsableValeur('resp_ajoute_conges');
     }
 
+    /**
+     * Gestion de la délégation de traitement en cas d'absence
+     * 
+     * @return boolean
+     */
     public function isGestionResponsableAbsent() {
         return $this->getGroupeResponsableValeur('gestion_cas_absence_responsable');
     }
