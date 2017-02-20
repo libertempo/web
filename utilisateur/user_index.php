@@ -35,13 +35,13 @@ if( $_SESSION['config']['user_echange_rtt'] ) {
 }
 
 $onglets['liste_conge'] = _('user_liste_conge');
-if( $_SESSION['config']['user_saisie_demande'] || $_SESSION['config']['user_saisie_mission'] ) {
-    $onglets['ajout_heure_repos'] = _('divers_ajout_heure_repos');
-}
+// if( $_SESSION['config']['user_saisie_demande'] || $_SESSION['config']['user_saisie_mission'] ) {
+//     $onglets['ajout_heure_repos'] = _('divers_ajout_heure_repos');
+// }
 $onglets['liste_heure_repos'] = _('user_liste_heure_repos');
-if( $_SESSION['config']['user_saisie_demande'] || $_SESSION['config']['user_saisie_mission'] ) {
-    $onglets['ajout_heure_additionnelle'] = _('divers_ajout_heure_additionnelle');
-}
+// if( $_SESSION['config']['user_saisie_demande'] || $_SESSION['config']['user_saisie_mission'] ) {
+//     $onglets['ajout_heure_additionnelle'] = _('divers_ajout_heure_additionnelle');
+// }
 $onglets['liste_heure_additionnelle'] = _('user_liste_heure_additionnelle');
 
 if( $_SESSION['config']['auth'] && $_SESSION['config']['user_ch_passwd'] ) {

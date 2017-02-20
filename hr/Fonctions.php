@@ -3280,7 +3280,9 @@ enctype="application/x-www-form-urlencoded"><input type="hidden" name="planning_
         /* Préparation et requêtage */
         $listPlanningId = \App\ProtoControllers\HautResponsable\Planning::getListPlanningId();
 
-        $return = '<h1>' . _('hr_affichage_liste_planning_titre') . '</h1>';
+        $return = '';
+        $return .= '<a href="' . ROOT_PATH . 'hr/hr_index.php?session='. session_id().'&amp;onglet=ajout_planning" style="float:right" class="btn btn-success">' . _('hr_ajout_planning') . '</a>';
+        $return .= '<h1>' . _('hr_affichage_liste_planning_titre') . '</h1>';
         $return .= $message;
         $session = session_id();
         $table = new \App\Libraries\Structure\Table();
