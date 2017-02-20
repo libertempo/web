@@ -1727,7 +1727,7 @@ class Fonctions
         /* SAISIE NOUVEAU CONGES */
         /*************************/
         // dans le cas ou les users ne peuvent pas saisir de demande, le responsable saisi les congès :
-        if( !$config->canUserSaisieDemande() || $_SESSION['config']['resp_saisie_mission'] ) {
+        if( !$config->canUserSaisieDemande() || $config->canResponsableSaisieMission() ) {
             /*************************/
             /* SAISIE NOUVEAU CONGES */
             /*************************/

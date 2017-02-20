@@ -136,6 +136,11 @@ class Configuration {
         return $this->getValeur($nom, '05_Utilisateur');
     }
 
+    /**
+     * Autorise le responsable a saisir une mission pour un employé
+     * 
+     * @return boolean
+     */
     public function canResponsableSaisieMission() {
         return $this->getGroupeResponsableValeur('resp_saisie_mission');
     }
