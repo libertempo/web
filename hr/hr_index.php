@@ -37,7 +37,6 @@ $onglets['page_principale'] = _('resp_menu_button_retour_main');
 if($config->canUserSaisieDemande())
     $onglets['traitement_demandes'] = _('resp_menu_button_traite_demande');
 
-// if( $_SESSION['config']['resp_ajoute_conges'] )
     $onglets['ajout_conges'] = _('resp_ajout_conges_titre');
     $onglets['jours_chomes'] = _('admin_button_jours_chomes_1');
 
