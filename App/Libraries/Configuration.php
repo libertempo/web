@@ -137,7 +137,7 @@ class Configuration {
     }
 
     /**
-     * Autorise le responsable a saisir une mission pour un employé
+     * Permet aux responsables de saisir une mission pour leurs employés
      * 
      * @return boolean
      */
@@ -145,6 +145,11 @@ class Configuration {
         return $this->getGroupeResponsableValeur('resp_saisie_mission');
     }
 
+    /**
+     * Permet aux responsables d'ajouter des jours de congés
+     * 
+     * @return boolean
+     */
     public function canResponsableAjouteConges() {
         return $this->getGroupeResponsableValeur('resp_ajoute_conges');
     }
