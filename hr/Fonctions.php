@@ -20,6 +20,7 @@ class Fonctions
      */
     public static function pagePrincipaleModule(array $tab_type_cong, array $tab_type_conges_exceptionnels, $session)
     {
+        $config = new \App\Libraries\Configuration();
         /***********************************/
         // AFFICHAGE ETAT CONGES TOUS USERS
         /***********************************/
@@ -77,7 +78,7 @@ class Fonctions
                 $tab_conges=$tab_current_user['conges'];
                 $text_affich_user="<a href=\"hr_index.php?session=$session&onglet=traite_user&user_login=$current_login\" title=\""._('resp_etat_users_afficher')."\"><i class=\"fa fa-eye\"></i></a>" ;
                 $text_edit_papier="<a href=\"../edition/edit_user.php?session=$session&user_login=$current_login\" target=\"_blank\" title=\""._('resp_etat_users_imprim')."\"><i class=\"fa fa-file-text\"></i></a>";
-                if($tab_current_user['is_active'] == "Y" || $_SESSION['config']['print_disable_users'] == 'TRUE') {
+                if($tab_current_user['is_active'] == "Y" || $config->isUtilisateurDesactiveVisible()) {
                     $return .= '<tr>';
                 } else {
                     $return .= '<tr class="hidden">';

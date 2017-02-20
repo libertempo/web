@@ -163,7 +163,12 @@ class Configuration {
         return $this->getGroupeResponsableValeur('gestion_cas_absence_responsable');
     }
 
-    public function isDisabledUtilisateurVisible() {
+    /**
+     * Gestion des utilisateur désactivé
+     * 
+     * @return boolean
+     */
+    public function isUtilisateurDesactiveVisible() {
         return $this->getGroupeResponsableValeur('print_disable_users');
     }
 
