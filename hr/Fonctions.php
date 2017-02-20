@@ -19,6 +19,7 @@ class Fonctions
      */
     public static function pagePrincipaleModule(array $tab_type_cong, array $tab_type_conges_exceptionnels)
     {
+        $config = new \App\Libraries\Configuration();
         /***********************************/
         // AFFICHAGE ETAT CONGES TOUS USERS
         /***********************************/
