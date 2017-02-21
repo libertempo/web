@@ -206,6 +206,10 @@ class Configuration {
         return $this->getGroupeAdministrateurValeur('admin_change_passwd');
     }
 
+    /**
+     * Permet aux admin d'accéder a la configuration globale
+     * @return boolean
+     */
     public function canAdminAccessConfig() {
         return $this->getGroupeAdministrateurValeur('affiche_bouton_config_pour_admin');
     }
