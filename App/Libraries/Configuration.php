@@ -207,13 +207,19 @@ class Configuration {
     }
 
     /**
-     * Permet aux admin d'accéder a la configuration globale
+     * Permet aux admin d'accéder à la configuration globale
+     * 
      * @return boolean
      */
     public function canAdminAccessConfig() {
         return $this->getGroupeAdministrateurValeur('affiche_bouton_config_pour_admin');
     }
 
+    /**
+     * Permet aux admin d'accéder à la configuration des types de congés
+     * 
+     * @return boolean
+     */
     public function canAdminConfigTypesConges() {
         return $this->getGroupeAdministrateurValeur('affiche_bouton_config_absence_pour_admin');
     }
