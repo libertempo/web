@@ -11,7 +11,7 @@ include_once ROOT_PATH .'fonctions_calcul.php';
 // verif des droits du user à afficher la page
 verif_droits_user('is_admin');
 
-
+$config = new \App\Libraries\Configuration();
 
 /*************************************/
 // recup des parametres reçus :
@@ -31,7 +31,7 @@ $onglets = array();
 $onglets['admin-users']    = _('admin_onglet_gestion_user');
 //$onglets['ajout-user']    = _('admin_onglet_add_user');
 
-if( $_SESSION['config']['admin_see_all'] || $_SESSION['userlogin']=="admin" || is_hr($_SESSION['userlogin']) ) {
+if( $config->canAdminSeeAll() || $_SESSION['userlogin']=="admin" || is_hr($_SESSION['userlogin']) ) {
     $onglets['admin-group'] = _('admin_onglet_gestion_groupe');
 }
 
