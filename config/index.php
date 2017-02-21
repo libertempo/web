@@ -36,7 +36,7 @@ $_SESSION['from_config']=TRUE;  // initialise ce flag pour changer le bouton de 
 
 		if($config->canAdminAccessConfig())
 			$onglet = 'general';
-		elseif($_SESSION['config']['affiche_bouton_config_absence_pour_admin'])
+		elseif($config->canAdminConfigTypesConges())
 			$onglet = 'type_absence';
 		elseif($_SESSION['config']['affiche_bouton_config_mail_pour_admin'])
 			$onglet = 'config_mail';
@@ -52,7 +52,7 @@ $_SESSION['from_config']=TRUE;  // initialise ce flag pour changer le bouton de 
 	if($config->canAdminAccessConfig() || $_SESSION['userlogin']=="admin")
 		$onglets['general'] = _('install_config_appli');
 
-	if($_SESSION['config']['affiche_bouton_config_absence_pour_admin'] || $_SESSION['userlogin']=="admin")
+	if($config->canAdminConfigTypesConges() || $_SESSION['userlogin']=="admin")
 		$onglets['type_absence'] = _('install_config_types_abs');
 
 	if($_SESSION['config']['affiche_bouton_config_mail_pour_admin'] || $_SESSION['userlogin']=="admin")
