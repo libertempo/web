@@ -11,6 +11,8 @@ if (empty(session_id())) {
 
 include_once ROOT_PATH .'fonctions_conges.php' ;
 
+$config = new \App\Libraries\Configuration();
+
 $_SESSION['config']=init_config_tab();      // on initialise le tableau des variables de config
 include_once INCLUDE_PATH .'session.php';
 
@@ -28,7 +30,7 @@ $_SESSION['from_config']=TRUE;  // initialise ce flag pour changer le bouton de 
 		$onglet = 'general';
 	} elseif (!$onglet && $_SESSION['userlogin']!="admin") {
 
-		if($_SESSION['config']['affiche_bouton_config_pour_admin'])
+		if($config->canAdminAccessConfig())
 			$onglet = 'general';
 		elseif($_SESSION['config']['affiche_bouton_config_absence_pour_admin'])
 			$onglet = 'type_absence';
@@ -43,7 +45,7 @@ $_SESSION['from_config']=TRUE;  // initialise ce flag pour changer le bouton de 
 
 	$onglets = array();
 
-	if($_SESSION['config']['affiche_bouton_config_pour_admin'] || $_SESSION['userlogin']=="admin")
+	if($config->canAdminAccessConfig() || $_SESSION['userlogin']=="admin")
 		$onglets['general'] = _('install_config_appli');
 
 	if($_SESSION['config']['affiche_bouton_config_absence_pour_admin'] || $_SESSION['userlogin']=="admin")
