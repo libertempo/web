@@ -97,7 +97,7 @@ class Configuration {
      * @return boolean
      */
     public function canUserChangePassword() {
-        if ($this->getHowToConnectUser() == !'dbconges') {
+        if ($this->getHowToConnectUser() != 'dbconges') {
             return FALSE;
         }
         return $this->getGroupeUtilisateurValeur('user_ch_passwd');
@@ -183,12 +183,24 @@ class Configuration {
         return $this->getValeur($nom, '06_Responsable');
     }
 
+    /**
+     * Permet aux responsables avec les droits admin de voir tous les utilisateurs
+     * 
+     * @return boolean
+     */
     public function canAdminSeeAll() {
         return $this->getGroupeAdministrateurValeur('admin_see_all');
     }
 
+    /**
+     * Permet aux admin de changer les mot de passe
+     * le mot de passe n'est modifiable que si 
+     * authentification locale
+     * 
+     * @return boolean
+     */
     public function canAdminChangePassword() {
-        if ($this->getHowToConnectUser() == !'dbconges') {
+        if ($this->getHowToConnectUser() !='dbconges') {
             return FALSE;
         }
         return $this->getGroupeAdministrateurValeur('admin_change_passwd');
