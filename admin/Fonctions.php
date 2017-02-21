@@ -1345,7 +1345,7 @@ class Fonctions
         }
         $childTable .= '<th></th>';
         $childTable .= '<th></th>';
-        if($_SESSION['config']['admin_change_passwd']) {
+        if($config->canAdminChangePassword()) {
             $childTable .= '<th></th>';
         }
         $childTable .= '</tr>';
@@ -1420,7 +1420,7 @@ class Fonctions
 
             $childTable .= '<td>' . $admin_modif_user . '</td>';
             $childTable .= '<td>' . $admin_suppr_user . '</td>';
-            if(($_SESSION['config']['admin_change_passwd']) && ($config->getHowToConnectUser() == "dbconges")) {
+            if(($config->canAdminChangePassword()) && ($config->getHowToConnectUser() == "dbconges")) {
                 $childTable .= '<td>' . $admin_chg_pwd_user . '</td>';
             }
             $childTable .= '</tr>';
