@@ -1481,7 +1481,7 @@ function insert_dans_periode($login, $date_deb, $demi_jour_deb, $date_fin, $demi
     else
         $num_new_demande = 1;
 
-    $sql2 = "INSERT INTO conges_periode SET p_login='$login',p_date_deb='$date_deb', p_demi_jour_deb='$demi_jour_deb',p_date_fin='$date_fin', p_demi_jour_fin='$demi_jour_fin', p_nb_jours='$nb_jours', p_commentaire='$commentaire', p_type='$id_type_abs', p_etat='$etat', ";
+    $sql2 = "INSERT INTO conges_periode SET p_login='$login',p_date_deb='$date_deb', p_demi_jour_deb='$demi_jour_deb',p_date_fin='$date_fin', p_demi_jour_fin='$demi_jour_fin', p_nb_jours='$nb_jours', p_commentaire='" . addslashes( $commentaire ) . "', p_type='$id_type_abs', p_etat='$etat', ";
 
     if($id_fermeture!=0)
         $sql2 = $sql2." p_fermeture_id='$id_fermeture' ," ;
