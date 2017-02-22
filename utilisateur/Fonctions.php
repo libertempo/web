@@ -178,11 +178,7 @@ class Fonctions
 
             $user_login        = $_SESSION['userlogin'];
 
-            if( $_SESSION['config']['disable_saise_champ_nb_jours_pris'] ) {
-                $new_nb_jours = compter($user_login, '', $new_debut,  $new_fin, $new_demi_jour_deb, $new_demi_jour_fin, $new_comment);
-            } else {
-                $new_nb_jours = htmlentities(getpost_variable('new_nb_jours'), ENT_QUOTES | ENT_HTML401);
-            }
+            $new_nb_jours = compter($user_login, '', $new_debut,  $new_fin, $new_demi_jour_deb, $new_demi_jour_fin, $new_comment);
 
             $return .= \utilisateur\Fonctions::new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type);
         } else {
@@ -317,10 +313,7 @@ class Fonctions
 
             $return .= '<td>' . $sql_date_deb . '_' . $demi_j_deb . '</td><td>' . $sql_date_fin  . '_' . $demi_j_fin . '</td><td>' . $aff_nb_jours . '</td><td>' . $sql_commentaire . '</td>';
 
-            $compte ="";
-            if($_SESSION['config']['rempli_auto_champ_nb_jours_pris']) {
-                $compte = 'onChange="compter_jours();return false;"';
-            }
+            $compte = 'onChange="compter_jours();return false;"';
 
             $text_debut="<input class=\"form-control date\" type=\"text\" name=\"new_debut\" size=\"10\" maxlength=\"30\" value=\"" . revert_date($sql_date_deb) . "\">" ;
             if($sql_demi_jour_deb=="am") {
@@ -338,11 +331,8 @@ class Fonctions
                 $radio_fin_am="<input type=\"radio\" $compte name=\"new_demi_jour_fin\" value=\"am\">". _('form_am') ;
                 $radio_fin_pm="<input type=\"radio\" $compte name=\"new_demi_jour_fin\" value=\"pm\" checked>". _('form_pm') ;
             }
-            if($_SESSION['config']['disable_saise_champ_nb_jours_pris'])
-                $text_nb_jours="<input class=\"form-control\" type=\"text\" name=\"new_nb_jours\" size=\"5\" maxlength=\"30\" value=\"$sql_nb_jours\" style=\"background-color: #D4D4D4; \" readonly=\"readonly\">" ;
-            else
-                $text_nb_jours="<input class=\"form-control\" type=\"text\" name=\"new_nb_jours\" size=\"5\" maxlength=\"30\" value=\"$sql_nb_jours\">" ;
-
+            
+            $text_nb_jours = "<span id='new_nb_jours'>$sql_nb_jours</span>";
 
             $text_commentaire="<input class=\"form-control\" type=\"text\" name=\"new_comment\" size=\"15\" maxlength=\"30\" value=\"$sql_commentaire\">" ;
         }
@@ -394,11 +384,8 @@ class Fonctions
         //conversion des dates
         $new_debut = convert_date($new_debut);
         $new_fin = convert_date($new_fin);
+        $new_nb_jours = compter($user_login, $p_num_to_update, $new_debut,  $new_fin, $new_demi_jour_deb, $new_demi_jour_fin, $new_comment);
 
-        if ($_SESSION['config']['disable_saise_champ_nb_jours_pris'])
-            $new_nb_jours = compter($user_login, $p_num_to_update, $new_debut,  $new_fin, $new_demi_jour_deb, $new_demi_jour_fin, $new_comment);
-        else
-            $new_nb_jours = getpost_variable('new_nb_jours');
 
         /*************************************/
 
