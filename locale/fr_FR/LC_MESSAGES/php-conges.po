@@ -1960,3 +1960,6 @@ msgstr "Hebdomadaire"
 
 msgid "aucune_demande"
 msgstr "Vous n'avez aucune demande à traiter"
+
+msgid "contacter_rh"
+msgstr "Contacter le gestionnaire des ressources humaines"
