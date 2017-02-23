@@ -66,8 +66,8 @@ $periodeAdditionnelle = "CREATE TABLE heure_additionnelle (
     duree INT NOT NULL,
     type_periode int(3) NOT NULL,
     statut INT NOT NULL DEFAULT 0,
-    comment VARCHAR(50) NOT NULL DEFAULT '',
-    comment_refus VARCHAR(50) NOT NULL DEFAULT '',
+    comment VARCHAR(250) NOT NULL DEFAULT '',
+    comment_refus VARCHAR(250) NOT NULL DEFAULT '',
     PRIMARY KEY (`id_heure`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
 $resPeriodeAdditionnelle = $sql->query($periodeAdditionnelle);
@@ -80,8 +80,8 @@ $periodeRepos = "CREATE TABLE heure_repos (
     duree INT NOT NULL,
     type_periode int(3) NOT NULL,
     statut INT NOT NULL DEFAULT 0,
-    comment VARCHAR(50) NOT NULL DEFAULT '',
-    comment_refus VARCHAR(50) NOT NULL DEFAULT '',
+    comment VARCHAR(250) NOT NULL DEFAULT '',
+    comment_refus VARCHAR(250) NOT NULL DEFAULT '',
     PRIMARY KEY (`id_heure`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
 $resPeriodeRepos = $sql->query($periodeRepos);
@@ -91,6 +91,14 @@ $soldeheure = "ALTER TABLE conges_users
                ADD u_heure_solde INT(11) NOT NULL DEFAULT '0'";
 $ressoldeheure = $sql->query($soldeheure);
 
+//augmentation taille commentaires
+$tailleComm = "ALTER TABLE conges_periode 
+                CHANGE p_commentaire p_commentaire VARCHAR(250)";
+$restailleComm = $sql->query($tailleComm);
+
+$tailleCommRefus = "ALTER TABLE conges_periode 
+                CHANGE p_motif_refus p_motif_refus VARCHAR(250)";
+$restailleCommRefus = $sql->query($tailleCommRefus);
 
 /* Modification sur conges_config */
 $dropUserAfficheCalendrier = "DELETE FROM conges_config WHERE conf_nom = 'user_affiche_calendrier'";

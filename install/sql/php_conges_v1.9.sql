@@ -172,11 +172,11 @@ CREATE TABLE IF NOT EXISTS `conges_periode` (
   `p_date_fin` date NOT NULL DEFAULT '0000-00-00',
   `p_demi_jour_fin` enum('am','pm') NOT NULL DEFAULT 'pm',
   `p_nb_jours` decimal(5,2) NOT NULL DEFAULT '0.00',
-  `p_commentaire` varchar(50) DEFAULT NULL,
+  `p_commentaire` varchar(250) DEFAULT NULL,
   `p_type` int(2) unsigned NOT NULL DEFAULT '1',
   `p_etat` enum('ok','valid','demande','ajout','refus','annul') NOT NULL DEFAULT 'demande',
   `p_edition_id` int(11) DEFAULT NULL,
-  `p_motif_refus` varchar(110) DEFAULT NULL,
+  `p_motif_refus` varchar(250) DEFAULT NULL,
   `p_date_demande` datetime DEFAULT NULL,
   `p_date_traitement` datetime DEFAULT NULL,
   `p_fermeture_id` int(5) DEFAULT NULL,
@@ -315,8 +315,8 @@ CREATE TABLE IF NOT EXISTS `heure_additionnelle` (
   `duree` int(11) NOT NULL,
   `type_periode` int(3) NOT NULL,
   `statut` int(11) NOT NULL DEFAULT 0,
-  `comment` VARCHAR(50) NOT NULL DEFAULT '',
-  `comment_refus` VARCHAR(50) NOT NULL DEFAULT '',
+  `comment` VARCHAR(250) NOT NULL DEFAULT '',
+  `comment_refus` VARCHAR(250) NOT NULL DEFAULT '',
   PRIMARY KEY (`id_heure`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -328,8 +328,8 @@ CREATE TABLE IF NOT EXISTS `heure_repos` (
   `duree` int(11) NOT NULL,
   `type_periode` int(3) NOT NULL,
   `statut` int(11) NOT NULL DEFAULT 0,
-  `comment` VARCHAR(50) NOT NULL DEFAULT '',
-  `comment_refus` VARCHAR(50) NOT NULL DEFAULT '',
+  `comment` VARCHAR(250) NOT NULL DEFAULT '',
+  `comment_refus` VARCHAR(250) NOT NULL DEFAULT '',
   PRIMARY KEY (`id_heure`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
