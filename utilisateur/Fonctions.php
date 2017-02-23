@@ -241,7 +241,6 @@ class Fonctions
         $session=session_id() ;
         $return = '';
         $VerifNb = verif_saisie_decimal($new_nb_jours);
-        $new_comment = htmlentities($new_comment, ENT_QUOTES | ENT_HTML401);
 
         $sql1 = "UPDATE conges_periode
             SET p_date_deb='$new_debut', p_demi_jour_deb='$new_demi_jour_deb', p_date_fin='$new_fin', p_demi_jour_fin='$new_demi_jour_fin', p_nb_jours='$new_nb_jours', p_commentaire='". \includes\SQL::quote($new_comment)  ."', ";
@@ -388,7 +387,8 @@ class Fonctions
         $new_demi_jour_deb = getpost_variable('new_demi_jour_deb');
         $new_fin           = getpost_variable('new_fin');
         $new_demi_jour_fin = getpost_variable('new_demi_jour_fin');
-        $new_comment       = getpost_variable('new_comment');
+        $new_comment       = htmlentities(getpost_variable('new_comment'), ENT_QUOTES | ENT_HTML401);
+
         $return            = '';
 
         //conversion des dates
