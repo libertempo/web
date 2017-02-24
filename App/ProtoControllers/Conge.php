@@ -24,7 +24,7 @@ class Conge
         }
 
         if(!empty($_POST) && !$this->isSearch($_POST)) {
-            if (0 < (int) \utilisateur\Fonctions::postDemandeCongesHeure($_POST, $errorsLst)) {
+            if (0 < (int) \utilisateur\Fonctions::postDemandeCongesHeure($_POST, $errorsLst)) {// TODO la fonction postDemandeCongesHeure n'existe pas !!!!
                 $return .= '<div class="alert alert-info">'._('suppr_succes').'</div>';
             }
         }
