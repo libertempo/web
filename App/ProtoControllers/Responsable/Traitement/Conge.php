@@ -394,6 +394,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
      /**
       * {@inheritDoc}
+      * @todo après refonte gestion des groupes retirer array_diff
       */
     protected function getIdDemandesResponsable($resp)
     {
@@ -404,6 +405,10 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         $usersResp = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupId);
         $usersRespDirect = \App\ProtoControllers\Responsable::getUsersRespDirect($resp);
         $usersResp = array_merge($usersResp,$usersRespDirect);
+
+        // un utilisateur ne peut etre son propre responsable
+        $usersResp = array_diff($usersResp,[$_SESSION['userlogin']]);
+
         if (empty($usersResp)) {
             return [];
         }

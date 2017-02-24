@@ -30,8 +30,7 @@ class Utilisateur {
         $sql = \includes\SQL::singleton();
         $req = 'SELECT gu_login
                 FROM `conges_groupe_users`
-                WHERE gu_gid IN (' . implode(',', $groupeIds) . ') 
-                AND gu_login != "'. $_SESSION['userlogin'] .'"';
+                WHERE gu_gid IN (' . implode(',', $groupeIds) . ')';
         $res = $sql->query($req);
 
         $users = [];
