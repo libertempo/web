@@ -1830,6 +1830,7 @@ class Fonctions
         }
 
         $return = self::traiterUserConge($userLogin);
+        $return .= '<hr  />';
         $return .= self::traiteUserHeureAdditionnelle($userLogin);
 
         return $return;
@@ -1904,15 +1905,17 @@ class Fonctions
      */
     private static function traiteUserHeureAdditionnelle($userLogin)
     {
-        //$return .= \responsable\Fonctions::affiche_etat_conges_user_for_resp($user_login,  $year_affichage, $tri_date, $onglet);
         $year = (int) getpost_variable('year_affichage_heure', date("Y"));
         $commentairesAnnulation = getpost_variable('commentaireAnnulation', []);
         $annulation = getpost_variable('annulation', []);
+        $annulation = array_map(function ($idHeure) {
+            return (int) $idHeure;
+        }, array_keys($annulation));
 
         d($year, $userLogin, $commentairesAnnulation, $annulation, $_POST);
         // manipuler les informations venant du formulaire
 
-        return self::getFormulaireAnnulationHeures($userLogin, $year);
+        return self::getFormulaireAnnulationHeuresAdditionnelles($userLogin, $year);
     }
 
     /**
@@ -1923,7 +1926,7 @@ class Fonctions
      *
      * @return string
      */
-    private static function getFormulaireAnnulationHeures($userLogin, $year)
+    private static function getFormulaireAnnulationHeuresAdditionnelles($userLogin, $year)
     {
         $yearPrec = $year - 1;
         $yearSucc = $year + 1;
@@ -1971,7 +1974,7 @@ class Fonctions
             $return .= '<td colspan=9><center><b>' . _('resp_traite_user_aucune_heure_additionnelle') . '</b></center></td>';
         } else {
             $heures = $additionnelles->getListeSQL($heuresIds);
-            $numElement = 1;
+            $positionElement = 1;
             foreach ($heures as $heure) {
                 $idHeure = (int) $heure['id_heure'];
                 $jour   = date('d/m/Y', $heure['debut']);
@@ -1996,7 +1999,7 @@ class Fonctions
                         $commentaireAnnulation = '<input type="text" name="commentaireAnnulation[' . $idHeure . ']" size="20" max="100"/>';
                         break;
                 }
-                $return .= '<tr class="' . (($numElement % 2 == 0) ? 'i' : 'p') . '">';
+                $return .= '<tr class="' . (($positionElement % 2 == 0) ? 'i' : 'p') . '">';
                 $return .= '<td>' . $jour . '</td>';
                 $return .= '<td>' . $debut . '</td>';
                 $return .= '<td>' . $fin . '</td>';
@@ -2006,7 +2009,7 @@ class Fonctions
                 $return .= '<td>' . $annulation . '</td>';
                 $return .= '<td>' . $commentaireAnnulation . '</td>';
                 $return .= '</tr>';
-                ++$numElement;
+                ++$positionElement;
             }
         }
         $return .= '</tbody>';
