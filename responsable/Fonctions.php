@@ -1313,7 +1313,7 @@ class Fonctions
                 /* UPDATE table "conges_solde_user" (jours restants) */
                 // on re-crédite les jours seulement pour des conges pris (pas pour les absences)
                 // donc seulement si le type de l'absence qu'on annule est un "conges"
-                if($tab_tout_type_abs[$user_type_abs_id]['type']=="conges") {
+                if(in_array($tab_tout_type_abs[$user_type_abs_id]['type'],["conges","conges_exceptionnels"])) {
                     $sql2 = 'UPDATE conges_solde_user SET su_solde = su_solde+"'. \includes\SQL::quote($user_nb_jours_pris_float).'" WHERE su_login="'. \includes\SQL::quote($user_login).'" AND su_abs_id="'. \includes\SQL::quote($user_type_abs_id).'";';
                     $ReqLog2 = \includes\SQL::query($sql2);
                 }

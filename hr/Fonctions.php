@@ -417,7 +417,7 @@ class Fonctions
             /* UPDATE table "conges_solde_user" (jours restants) */
             // on retranche les jours seulement pour des conges pris (pas pour les absences)
             // donc seulement si le type de l'absence qu'on annule est un "conges"
-            if($tab_tout_type_abs[$new_type_id]['type']=="conges") {
+            if($tab_tout_type_abs[$new_type_id]['type']=="conges" || $tab_tout_type_abs[$user_type_abs_id]['type']=="conges_exceptionnels") {
                 $user_nb_jours_pris_float=(float) $new_nb_jours ;
                 soustrait_solde_et_reliquat_user($user_login, $numero_int, $user_nb_jours_pris_float, $new_type_id, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin);
             }
@@ -557,7 +557,7 @@ class Fonctions
                 /* UPDATE table "conges_solde_user" (jours restants) */
                 // on re-crédite les jours seulement pour des conges pris (pas pour les absences)
                 // donc seulement si le type de l'absence qu'on annule est un "conges"
-                if($tab_tout_type_abs[$user_type_abs_id]['type']=="conges") {
+                if(in_array($tab_tout_type_abs[$user_type_abs_id]['type'],["conges","conges_exceptionnels"])) {
                     $sql2 = 'UPDATE conges_solde_user SET su_solde = su_solde+"'. \includes\SQL::quote($user_nb_jours_pris).'" WHERE su_login="'. \includes\SQL::quote($user_login).'" AND su_abs_id="'. \includes\SQL::quote($user_type_abs_id).'";';
                     $ReqLog2 = \includes\SQL::query($sql2);
                 }
@@ -986,28 +986,60 @@ class Fonctions
         /*************************/
         /* SAISIE NOUVEAU CONGES */
         /*************************/
-        // dans le cas ou les users ne peuvent pas saisir de demande, le responsable saisi les congès :
-        if(($_SESSION['config']['user_saisie_demande']==FALSE)||($_SESSION['config']['resp_saisie_mission'])) {
-
-            // si les mois et année ne sont pas renseignés, on prend ceux du jour
-            if($year_calendrier_saisie_debut==0) {
-                $year_calendrier_saisie_debut=date("Y");
+        /* Génération du datePicker et de ses options */
+        $daysOfWeekDisabled = [];
+        $datesDisabled      = [];
+        if ((false == $_SESSION['config']['dimanche_travail'])
+            && (false == $_SESSION['config']['samedi_travail'])
+        ) {
+            $daysOfWeekDisabled = [0,6];
+        } else {
+            if (false == $_SESSION['config']['dimanche_travail']) {
+                $daysOfWeekDisabled = [0];
             }
-            if($mois_calendrier_saisie_debut==0) {
-                $mois_calendrier_saisie_debut=date("m");
+            if (false == $_SESSION['config']['samedi_travail']) {
+                $daysOfWeekDisabled = [6];
             }
-            if($year_calendrier_saisie_fin==0) {
-                $year_calendrier_saisie_fin=date("Y");
-            }
-            if($mois_calendrier_saisie_fin==0) {
-                $mois_calendrier_saisie_fin=date("m");
-            }
-            $return .= '<h3>' . _('resp_traite_user_new_conges') . '</h3>';
-
-            $return .= saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet);
-
-            $return .= '<hr align="center" size="2" width="90%">';
         }
+
+        if (is_array($_SESSION["tab_j_feries"])) {
+            foreach ($_SESSION["tab_j_feries"] as $date) {
+                $datesDisabled[] = \App\Helpers\Formatter::dateIso2Fr($date);
+            }
+        }
+
+        if (is_array($_SESSION["tab_j_fermeture"])) {
+            foreach ($_SESSION["tab_j_fermeture"] as $date) {
+                $datesDisabled[] = \App\Helpers\Formatter::dateIso2Fr($date);
+            }
+        }
+        $startDate =  '';
+
+        $datePickerOpts = [
+            'daysOfWeekDisabled' => $daysOfWeekDisabled,
+            'datesDisabled'      => $datesDisabled,
+            'startDate'          => $startDate,
+        ];
+        $return .= '<script>generateDatePicker(' . json_encode($datePickerOpts) . ');</script>';
+            
+        // si les mois et année ne sont pas renseignés, on prend ceux du jour
+        if($year_calendrier_saisie_debut==0) {
+            $year_calendrier_saisie_debut=date("Y");
+        }
+        if($mois_calendrier_saisie_debut==0) {
+            $mois_calendrier_saisie_debut=date("m");
+        }
+        if($year_calendrier_saisie_fin==0) {
+            $year_calendrier_saisie_fin=date("Y");
+        }
+        if($mois_calendrier_saisie_fin==0) {
+            $mois_calendrier_saisie_fin=date("m");
+        }
+        $return .= '<h3>' . _('resp_traite_user_new_conges') . '</h3>';
+
+        $return .= saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet);
+
+        $return .= '<hr align="center" size="2" width="90%">';
 
         /*********************/
         /* Etat des Demandes */
@@ -1104,7 +1136,7 @@ class Fonctions
                 $new_nb_jours   = getpost_variable('new_nb_jours') ;
             }
 
-            $return .= \hr\Fonctions::new_conges($user_login, $numero_int, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type);
+            $return .= \hr\Fonctions::new_conges($user_login, "", $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type);
         } else {
             $year_calendrier_saisie_debut   = getpost_variable('year_calendrier_saisie_debut', 0) ;
             $mois_calendrier_saisie_debut   = getpost_variable('mois_calendrier_saisie_debut', 0) ;
