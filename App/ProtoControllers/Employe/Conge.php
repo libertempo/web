@@ -104,16 +104,7 @@ class Conge
                 $demi_j_deb = ($conges["p_demi_jour_deb"]=="am") ? 'matin' : 'après-midi';
 
                 $demi_j_fin = ($conges["p_demi_jour_fin"] =="am") ? 'matin' : 'après-midi';
-                $user_modif_demande = '<i class="fa fa-pencil disabled"></i>';
-                $user_suppr_demande = '<i class="fa fa-times-circle disabled"></i>';
 
-                // si on peut modifier une demande on defini le lien à afficher
-                if($conges["p_etat"] == \App\Models\Conge::STATUT_DEMANDE) {
-                    if(!$interdictionModification){
-                        $user_modif_demande = '<a href="user_index.php?session=' . $session . '&p_num=' . $conges['p_num'] . '&onglet=modif_demande"><i class="fa fa-pencil"></i></a>' ;
-                    }
-                    $user_suppr_demande = '<a href="user_index.php?session=' . $session . '&p_num=' . $conges['p_num'] . '&onglet=suppr_demande"><i class="fa fa-times-circle"></i></a>';
-                }
                 $childTable .= '<tr class="'.($i?'i':'p').'">';
                 $childTable .= '<td class="histo">' . \App\Helpers\Formatter::dateIso2Fr($conges["p_date_deb"]) . ' <span class="demi">' . schars($demi_j_deb) . '</span></td>';
                 $childTable .= '<td class="histo">' . \App\Helpers\Formatter::dateIso2Fr($conges["p_date_fin"]) . ' <span class="demi">' . schars($demi_j_fin) . '</span></td>' ;
@@ -126,6 +117,18 @@ class Conge
                 }
                 $childTable .= '</td>' ;
                 $childTable .= '<td class="histo">';
+
+                $user_modif_demande = '<i class="fa fa-pencil disabled"></i>';
+                $user_suppr_demande = '<i class="fa fa-times-circle disabled"></i>';
+
+                // si on peut modifier une demande on defini le lien à afficher
+                if($conges["p_etat"] == \App\Models\Conge::STATUT_DEMANDE) {
+                    if(!$interdictionModification){
+                        $user_modif_demande = '<a href="user_index.php?session=' . $session . '&p_num=' . $conges['p_num'] . '&onglet=modif_demande"><i class="fa fa-pencil"></i></a>' ;
+                    }
+                    $user_suppr_demande = '<a href="user_index.php?session=' . $session . '&p_num=' . $conges['p_num'] . '&onglet=suppr_demande"><i class="fa fa-times-circle"></i></a>';
+                }
+                
                 if(!$interdictionModification) {
                     $childTable .= $user_modif_demande . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
                 }
