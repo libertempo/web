@@ -214,7 +214,7 @@ class Fonctions
                 }
             }
 
-            if (is_array($_SESSION["tab_j_fermeture"])) {
+            if (isset($_SESSION["tab_j_fermeture"]) && is_array($_SESSION["tab_j_fermeture"])) {
                 foreach ($_SESSION["tab_j_fermeture"] as $date) {
                     $datesDisabled[] = \App\Helpers\Formatter::dateIso2Fr($date);
                 }
@@ -278,6 +278,42 @@ class Fonctions
         // Récupération des informations
         $sql1 = 'SELECT p_login, p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_nb_jours, p_commentaire, p_etat, p_num FROM conges_periode where p_num = "'. \includes\SQL::quote($p_num).'"';
         $ReqLog1 = \includes\SQL::query($sql1) ;
+
+        /* Génération du datePicker et de ses options */
+        $daysOfWeekDisabled = [];
+        $datesDisabled      = [];
+        if ((false == $_SESSION['config']['dimanche_travail'])
+            && (false == $_SESSION['config']['samedi_travail'])
+        ) {
+            $daysOfWeekDisabled = [0,6];
+        } else {
+            if (false == $_SESSION['config']['dimanche_travail']) {
+                $daysOfWeekDisabled = [0];
+            }
+            if (false == $_SESSION['config']['samedi_travail']) {
+                $daysOfWeekDisabled = [6];
+            }
+        }
+
+        if (is_array($_SESSION["tab_j_feries"])) {
+            foreach ($_SESSION["tab_j_feries"] as $date) {
+                $datesDisabled[] = \App\Helpers\Formatter::dateIso2Fr($date);
+            }
+        }
+
+        if (isset($_SESSION["tab_j_fermeture"]) && is_array($_SESSION["tab_j_fermeture"])) {
+            foreach ($_SESSION["tab_j_fermeture"] as $date) {
+                $datesDisabled[] = \App\Helpers\Formatter::dateIso2Fr($date);
+            }
+        }
+        $startDate = ($_SESSION['config']['interdit_saisie_periode_date_passee']) ? 'd' : '';
+
+        $datePickerOpts = [
+            'daysOfWeekDisabled' => $daysOfWeekDisabled,
+            'datesDisabled'      => $datesDisabled,
+            'startDate'          => $startDate,
+        ];
+        $return .= '<script>generateDatePicker(' . json_encode($datePickerOpts) . ');</script>';
 
         // AFFICHAGE TABLEAU
 
