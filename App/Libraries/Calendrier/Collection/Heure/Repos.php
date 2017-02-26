@@ -52,7 +52,7 @@ class Repos extends \App\Libraries\Calendrier\ACollection
             $class = 'heure heure_' . $heure['statut'];
             $nomComplet = \App\ProtoControllers\Utilisateur::getNomComplet($heure['u_prenom'],  $heure['u_nom'], true);
             $name = $nomComplet . ' - Heure(s) de repos';
-            if (\App\Models\AHeure::STATUT_VALIDATION_FINALE !== $heure['statut']) {
+            if (in_array($heure['statut'],[\App\Models\AHeure::STATUT_DEMANDE,\App\Models\AHeure::STATUT_PREMIERE_VALIDATION])) {
                 $name = '[En demande]  ' . $name;
             }
             $dateDebut = new \DateTime();

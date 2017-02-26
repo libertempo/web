@@ -51,8 +51,8 @@ class Additionnelle extends \App\Libraries\Calendrier\ACollection
         foreach ($this->getListeSQL($this->getListeId()) as $heure) {
             $class = 'heure heure_' . $heure['statut'];
             $nomComplet = \App\ProtoControllers\Utilisateur::getNomComplet($heure['u_prenom'],  $heure['u_nom'], true);
-            $name = $nomComplet . ' - Heure(s) additionnelles';
-            if (\App\Models\AHeure::STATUT_VALIDATION_FINALE !== $heure['statut']) {
+            $name = $nomComplet . ' - Heure(s) additionnelle(s)';
+            if (in_array($heure['statut'],[\App\Models\AHeure::STATUT_DEMANDE,\App\Models\AHeure::STATUT_PREMIERE_VALIDATION])) {
                 $name = '[En demande]  ' . $name;
             }
             $dateDebut = new \DateTime();
@@ -61,7 +61,7 @@ class Additionnelle extends \App\Libraries\Calendrier\ACollection
             $dateFin->setTimestamp($heure['fin']);
             $statut = ' statut_' . $heure['statut'];
 
-            $title = 'Heure(s) additionnelles de ' . $nomComplet . ' le ' . $dateDebut->format('d/m/Y') . ' de ' . $dateDebut->format('H\:i') . ' à ' . $dateFin->format('H\:i');
+            $title = 'Heure(s) additionnelle(s) de ' . $nomComplet . ' le ' . $dateDebut->format('d/m/Y') . ' de ' . $dateDebut->format('H\:i') . ' à ' . $dateFin->format('H\:i');
             $uid = uniqid('additionnelle');
             $heures[] = new Evenement\Commun($uid, $dateDebut, $dateFin, $name, $title, $class);
         }
