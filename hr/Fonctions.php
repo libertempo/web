@@ -1122,7 +1122,7 @@ class Fonctions
                 $new_nb_jours   = getpost_variable('new_nb_jours') ;
             }
 
-            $return .= \hr\Fonctions::new_conges($user_login, $numero_int, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type);
+            $return .= \hr\Fonctions::new_conges($user_login, "", $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type);
         } else {
             $year_calendrier_saisie_debut   = getpost_variable('year_calendrier_saisie_debut', 0) ;
             $mois_calendrier_saisie_debut   = getpost_variable('mois_calendrier_saisie_debut', 0) ;
