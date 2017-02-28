@@ -3455,7 +3455,8 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $debutId      = uniqid();
         $finId        = uniqid();
         $helperId     = uniqid();
-        $childTable = '<thead><tr><th width="20%">' . _('Jour') . '</th><th>' . _('Creneaux_travail') . '</th><tr></thead><tbody>';
+        $dureeHebdoId = uniqid();
+        $childTable = '<thead><tr><th width="20%">' . _('Jour') . '</th><th>' . _('Creneaux_travail') . '</th><th id="' . $dureeHebdoId .'"></th><tr></thead><tbody>';
         $childTable .= '<tr><td><select class="form-control" id="' . $selectJourId . '"><option value="' . NIL_INT . '"></option>';
 
         foreach ($jours as $id => $jour) {
@@ -3483,6 +3484,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             'typeHeureDebut'        => \App\Models\Planning\Creneau::TYPE_HEURE_DEBUT,
             'typeHeureFin'          => \App\Models\Planning\Creneau::TYPE_HEURE_FIN,
             'helperId'              => $helperId,
+            'dureeHebdoId'          => $dureeHebdoId,
             'nilInt'                => NIL_INT,
             'erreurFormatHeure'     => _('Format_heure_incorrect'),
             'erreurOptionManquante' => _('Option_manquante'),
