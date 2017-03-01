@@ -5,24 +5,23 @@ namespace App\Libraries;
 /**
  * Objet de gestion des notifications
  * 
- * 
  */
-abstract Class ANotification {
-
+abstract Class ANotification 
+{
     protected $contenuNotification;
     protected $envoiMail;
 
     /**
-     * 
      * implémente les informations de la demande d'heure
      * ainsi que du contenu du mail
      * 
-     * @param int $id
-     * 
+     * @param int $id 
      */
-    public function __construct($id) {
-        $id = (int)$id;
-        if(is_int($id)){
+    public function __construct($id) 
+    {
+        $id = (int) $id;
+        if(is_int($id)) 
+        {
             $this->contenuNotification = $this->getContenu($id);
         } else {
             throw new Exception('erreur id');
@@ -31,39 +30,44 @@ abstract Class ANotification {
 
 
     /**
-     * 
      * Transmet les notifications par mail
      * 
      * @return boolean
      */
-    public function send() {
-
-    $return = [];
+    public function send() 
+    {
+        $return = [];
 
         // init du mail
         $mail = new \PHPMailer();
 
-        if (file_exists(CONFIG_PATH . 'config_SMTP.php')) {
+        if (file_exists(CONFIG_PATH . 'config_SMTP.php')) 
+        {
             include CONFIG_PATH . 'config_SMTP.php';
 
-            if (!empty($config_SMTP_host)) {
+            if (!empty($config_SMTP_host)) 
+            {
                 $mail->IsSMTP();
                 $mail->Host = $config_SMTP_host;
                 $mail->Port = $config_SMTP_port;
 
-                if (!empty($config_SMTP_user)) {
+                if (!empty($config_SMTP_user)) 
+                {
                     $mail->SMTPAuth = true;
                     $mail->Username = $config_SMTP_user;
                     $mail->Password = $config_SMTP_pwd;
                 }
-                if (!empty($config_SMTP_sec)) {
+                
+                if (!empty($config_SMTP_sec)) 
+                {
                     $mail->SMTPSecure = $config_SMTP_sec;
                 } else {
                     $mail->SMTPAutoTLS = false;
                 }
             }
         } else {
-            if (file_exists('/usr/sbin/sendmail')) {
+            if (file_exists('/usr/sbin/sendmail')) 
+            {
                 $mail->IsSendmail();   // send message using the $Sendmail program
             } elseif (file_exists('/var/qmail/bin/sendmail')) {
                 $mail->IsQmail(); // send message using the qmail MTA
@@ -72,17 +76,23 @@ abstract Class ANotification {
             }
         }
         
-        foreach ($this->contenuNotification as $notification){
-            if (empty($notification['destinataire'][0])) {
+        foreach ($this->contenuNotification as $notification)
+        {
+            if (empty($notification['destinataire'][0])) 
+            {
                 continue;
             }
-            if($this->canSend($notification['config'])){
+            
+            if($this->canSend($notification['config']))
+            {
                 $mail->ClearAddresses();
                 $mail->From = $notification['expediteur']['mail'];
                 $mail->FromName = $notification['expediteur']['nom'];
-                foreach ($notification['destinataire'] as $destinataire) {
+                foreach ($notification['destinataire'] as $destinataire) 
+                {
                     $mail->AddAddress($destinataire);
                 }
+                
                 $mail->SetLanguage( 'fr', ROOT_PATH . 'vendor/phpmailer/phpmailer/language/');
         
                 $mail->Subject = utf8_decode ( $notification['sujet'] );
@@ -91,11 +101,12 @@ abstract Class ANotification {
                 $return[] = $mail->Send();
             }
         }
+        
         return !in_array(false, $return);
     }
 
     /**
-     * récupère les données de l'évenemment
+     * Récupère les données de l'évenemment
      * 
      * @todo déplacer la requete vers le protocontroller
      * @param int $id
@@ -105,12 +116,14 @@ abstract Class ANotification {
     abstract protected function getData($id);
 
     /**
-     * selection du contenu de la notification
+     * Selection du contenu de la notification
      * 
      * @return array
      */
-    protected function getContenu($id) {
+    protected function getContenu($id) 
+    {
         $data = $this->getData($id);
+        
         switch ($data['statut']) {
             case \App\Models\AHeure::STATUT_DEMANDE:
                 $NotifContent[] = $this->getContenuDemande($data);
@@ -140,12 +153,13 @@ abstract Class ANotification {
      * @throws Exception
      * 
      */
-    private function canSend($optionName) {
+    private function canSend($optionName) 
+    {
         return isset($_SESSION['config'][$optionName]) ? $_SESSION['config'][$optionName] : false;
     }
 
     /**
-     * notification d'une nouvelle demande d'heures
+     * Notification d'une nouvelle demande d'heures
      * au responsable du demandeur
      * 
      * @param array $data
@@ -154,7 +168,7 @@ abstract Class ANotification {
     abstract protected function getContenuDemande($data);
     
     /**
-     * notification d'une première validation 
+     * Notification d'une première validation 
      * au demandeur d'heures
      * 
      * @param array $data
@@ -163,7 +177,7 @@ abstract Class ANotification {
     abstract protected function getContenuEmployePremierValidation($data);
     
     /**
-     * notification d'une validation finale
+     * Notification d'une validation finale
      * au demandeur d'heures
      * 
      * @param array $data
@@ -172,7 +186,7 @@ abstract Class ANotification {
     abstract protected function getContenuValidationFinale($data);
     
     /**
-     * notification d'un refus
+     * Notification d'un refus
      * au demandeur d'heures
      * 
      * @param array $data
@@ -181,7 +195,7 @@ abstract Class ANotification {
     abstract protected function getContenuRefus($data);
     
     /**
-     * notification d'une annulation par le demandeur
+     * Notification d'une annulation par le demandeur
      * à son responsable
      * 
      * @param array $data
@@ -190,7 +204,7 @@ abstract Class ANotification {
     abstract protected function getContenuAnnulation($data);
     
     /**
-     * notification d'une première validation
+     * Notification d'une première validation
      * au grand responsable du demandeur d'heures
      * 
      * @param array $data
