@@ -16,7 +16,7 @@ Libertempo se veut être au plus proche des règles inhérentes aux réglementat
 # Version recommandée
 Vous pouvez télécharger la version stable la plus récente directement depuis [master](https://github.com/wouldsmina/Libertempo/archive/master.zip). ![build_status](https://travis-ci.org/wouldsmina/Libertempo.svg?branch=master)
 
-Chaque nouvelle version est mise à disposition sur [github](https://github.com/wouldsmina/Libertempo/releases) et sur [libertempo.tuxfamily.org](http://libertempo.tuxfamily.org/Telechargement)
+Chaque nouvelle version est mise à disposition sur [github](https://github.com/wouldsmina/Libertempo/releases) et sur [libertempo.tuxfamily.org](http://libertempo.tuxfamily.org/downloads/)
 
 # Installation
 Rendez vous sur la [documentation](http://libertempo.tuxfamily.org/Documentation).
