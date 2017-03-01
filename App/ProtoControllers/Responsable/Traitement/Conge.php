@@ -400,12 +400,13 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
     {
         $groupId = \App\ProtoControllers\Responsable::getIdGroupeResp($resp);
 
-
         $usersResp = [];
         $usersResp = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupId);
         $usersRespDirect = \App\ProtoControllers\Responsable::getUsersRespDirect($resp);
-        $usersResp = array_merge($usersResp,$usersRespDirect);
 
+        // merge tous les utilisateurs dont il est le responsable direct et tous les utilisateurs dont il est le chef de groupe
+        // si un utilisateur est dans les deux tableaux on supprime le doublon
+        $usersResp = array_unique(array_merge($usersResp,$usersRespDirect));
         // un utilisateur ne peut etre son propre responsable
         $usersResp = array_diff($usersResp,[$_SESSION['userlogin']]);
 
