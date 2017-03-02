@@ -111,23 +111,26 @@ abstract Class ANotification {
      */
     protected function getContenu($id) {
         $data = $this->getData($id);
-        switch ($data['statut']) {
-            case \App\Models\AHeure::STATUT_DEMANDE:
-                $NotifContent[] = $this->getContenuDemande($data);
-                break;
-            case \App\Models\AHeure::STATUT_PREMIERE_VALIDATION:
-                $NotifContent[] = $this->getContenuEmployePremierValidation($data);
-                $NotifContent[] = $this->getContenuGrandResponsablePremiereValidation($data);
-                break;
-            case \App\Models\AHeure::STATUT_VALIDATION_FINALE:
-                $NotifContent[] = $this->getContenuValidationFinale($data);
-                break;
-            case \App\Models\AHeure::STATUT_REFUS:
-                $NotifContent[] = $this->getContenuRefus($data);
-                break;
-            case \App\Models\AHeure::STATUT_ANNUL:
-                $NotifContent[] = $this->getContenuAnnulation($data);
-                break;
+        $NotifContent = [];
+        if (isset($data['statut'])) {
+            switch ($data['statut']) {
+                case \App\Models\AHeure::STATUT_DEMANDE:
+                    $NotifContent[] = $this->getContenuDemande($data);
+                    break;
+                case \App\Models\AHeure::STATUT_PREMIERE_VALIDATION:
+                    $NotifContent[] = $this->getContenuEmployePremierValidation($data);
+                    $NotifContent[] = $this->getContenuGrandResponsablePremiereValidation($data);
+                    break;
+                case \App\Models\AHeure::STATUT_VALIDATION_FINALE:
+                    $NotifContent[] = $this->getContenuValidationFinale($data);
+                    break;
+                case \App\Models\AHeure::STATUT_REFUS:
+                    $NotifContent[] = $this->getContenuRefus($data);
+                    break;
+                case \App\Models\AHeure::STATUT_ANNUL:
+                    $NotifContent[] = $this->getContenuAnnulation($data);
+                    break;
+            }
         }
         return $NotifContent;
     }
