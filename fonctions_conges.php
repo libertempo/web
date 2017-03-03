@@ -1919,6 +1919,20 @@ function recup_infos_du_user($login, $list_groups_double_valid)
         return FALSE;
 }
 
+
+function sortParActif($a, $b) {
+    if( $a['is_active'] == 'N' && $b['is_active'] == 'N') {
+        return $b['prenom'] < $a['prenom'];
+    }
+    if( $a['is_active'] == 'N'){
+        return 1;
+    }
+    if( $b['is_active'] == 'N'){
+        return -1;
+    }
+    return 0;
+}
+
 // renvoit un tableau de tableau contenant les informations de tous les users
 function recup_infos_all_users()
 {
