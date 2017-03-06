@@ -1,28 +1,4 @@
 <?php
-/*************************************************************************************************
-Libertempo : Gestion Interactive des Congés
-Copyright (C) 2015 (Wouldsmina)
-Copyright (C) 2015 (Prytoegrian)
-Copyright (C) 2005 (cedric chauvineau)
-Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
-termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
-Ce programme est distribué car potentiellement utile, mais SANS AUCUNE GARANTIE,
-ni explicite ni implicite, y compris les garanties de commercialisation ou d'adaptation
-dans un but spécifique. Reportez-vous à la Licence Publique Générale GNU pour plus de détails.
-Vous devez avoir reçu une copie de la Licence Publique Générale GNU en même temps
-que ce programme ; si ce n'est pas le cas, écrivez à la Free Software Foundation,
-Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, États-Unis.
-*************************************************************************************************
-This program is free software; you can redistribute it and/or modify it under the terms
-of the GNU General Public License as published by the Free Software Foundation; either
-version 2 of the License, or any later version.
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the GNU General Public License for more details.
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*************************************************************************************************/
 namespace config;
 
 /**
@@ -33,7 +9,7 @@ class Fonctions
 {
     public static function commit_vider_table_logs($session)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
         $sql_delete="TRUNCATE TABLE conges_logs ";
@@ -54,7 +30,7 @@ class Fonctions
 
     public static function confirmer_vider_table_logs($session)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
         $return .= '<center>';
@@ -71,7 +47,7 @@ class Fonctions
 
     public static function affichage($login_par, $session)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
         //requête qui récupère les logs
@@ -84,28 +60,29 @@ class Fonctions
         $ReqLog1 = \includes\SQL::query($sql1);
 
         if($ReqLog1->num_rows !=0) {
-            if($session=="") {
-                $return .= '<form action="' . $PHP_SELF . '?onglet=logs" method="POST">';
-            } else {
-                $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=logs" method="POST">';
-            }
+            $return .= '<br>';
+            $table = new \App\Libraries\Structure\Table();
+            $table->addClasses([
+                'table',
+                'table-hover',
+                'table-striped',
+                'table-condensed'
+            ]);
 
-            $return .= '<br><table class="table table-hover table-stripped table-condensed">';
-
-            $return .= '<tr><td class="histo" colspan="5">' . _('voir_les_logs_par') . '</td>';
+            $childTable = '<tr><td class="histo" colspan="5">' . _('voir_les_logs_par') . '</td>';
             if($login_par!="") {
-                $return .= '<tr><td class="histo" colspan="5">' . _('voir_tous_les_logs') . '<a href="' . $PHP_SELF . '?session=' . $session . '&onglet=logs">' . _('voir_tous_les_logs') . '</a></td>';
+                $childTable .= '<tr><td class="histo" colspan="5">' . _('voir_tous_les_logs') . '<a href="' . $PHP_SELF . '?session=' . $session . '&onglet=logs">' . _('voir_tous_les_logs') . '</a></td>';
             }
-            $return .= '<tr><td class="histo" colspan="5">&nbsp;</td>';
+            $childTable .= '<tr><td class="histo" colspan="5">&nbsp;</td>';
 
             // titres
-            $return .= '<tr>';
-            $return .= '<td>' . _('divers_date_maj_1') . '</td>';
-            $return .= '<td>' . _('divers_fait_par_maj_1') . '</td>';
-            $return .= '<td>' . _('divers_pour_maj_1') . '</td>';
-            $return .= '<td>' . _('divers_comment_maj_1') . '</td>';
-            $return .= '<td>' . _('divers_etat_maj_1') . '</td>';
-            $return .= '</tr>';
+            $childTable .= '<tr>';
+            $childTable .= '<td>' . _('divers_date_maj_1') . '</td>';
+            $childTable .= '<td>' . _('divers_fait_par_maj_1') . '</td>';
+            $childTable .= '<td>' . _('divers_pour_maj_1') . '</td>';
+            $childTable .= '<td>' . _('divers_comment_maj_1') . '</td>';
+            $childTable .= '<td>' . _('divers_etat_maj_1') . '</td>';
+            $childTable .= '</tr>';
 
             // affichage des logs
             while ($data = $ReqLog1->fetch_array()) {
@@ -115,16 +92,24 @@ class Fonctions
                 $log_log_comment = $data['log_comment'];
                 $log_log_date = $data['log_date'];
 
-                $return .= '<tr>';
-                $return .= '<td>' . $log_log_date . '</td>';
-                $return .= '<td><a href="' . $PHP_SELF . '?session=' . $session . '&onglet=logs&login_par=' . $log_login_par . '"><b>' . $log_login_par . '</b></a></td>';
-                $return .= '<td>' . $log_login_pour . '</td>';
-                $return .= '<td>' . $log_log_comment . '</td>';
-                $return .= '<td>' . $log_log_etat . '</td>';
-                $return .= '</tr>';
+                $childTable .= '<tr>';
+                $childTable .= '<td>' . $log_log_date . '</td>';
+                $childTable .= '<td><a href="' . $PHP_SELF . '?session=' . $session . '&onglet=logs&login_par=' . $log_login_par . '"><b>' . $log_login_par . '</b></a></td>';
+                $childTable .= '<td>' . $log_login_pour . '</td>';
+                $childTable .= '<td>' . $log_log_comment . '</td>';
+                $childTable .= '<td>' . $log_log_etat . '</td>';
+                $childTable .= '</tr>';
             }
 
-            $return .= '</table>';
+            $table->addChild($childTable);
+            ob_start();
+            $table->render();
+            $return .= ob_get_clean();
+            if($session=="") {
+                $return .= '<form action="' . $PHP_SELF . '?onglet=logs" method="POST">';
+            } else {
+                $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=logs" method="POST">';
+            }
 
             // affichage du bouton pour vider les logs
             $return .= '<input type="hidden" name="action" value="suppr_logs">';
@@ -157,10 +142,10 @@ class Fonctions
         /*************************************/
         // recup des parametres reçus :
         // SERVER
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         // GET / POST
-        $action         = getpost_variable('action', "") ;
-        $login_par      = getpost_variable('login_par', "") ;
+        $action         = htmlentities(getpost_variable('action', ""), ENT_QUOTES | ENT_HTML401);
+        $login_par      = htmlentities(getpost_variable('login_par', ""), ENT_QUOTES | ENT_HTML401);
 
         /*************************************/
 
@@ -180,7 +165,7 @@ class Fonctions
 
     public static function commit_modif($tab_new_values, $session)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
         if($session=="") {
@@ -192,8 +177,8 @@ class Fonctions
 
         // update de la table
         foreach($tab_new_values as $nom_mail => $tab_mail) {
-            $subject = addslashes($tab_mail['subject']);
-            $body = addslashes($tab_mail['body']) ;
+            $subject = htmlspecialchars(addslashes($tab_mail['subject']));
+            $body = htmlspecialchars(addslashes($tab_mail['body']));
             $req_update='UPDATE conges_mail SET mail_subject=\''.$subject.'\', mail_body=\''.$body.'\' WHERE mail_nom="'. \includes\SQL::quote($nom_mail).'" ';
             $result1 = \includes\SQL::query($req_update);
         }
@@ -208,7 +193,7 @@ class Fonctions
 
     public static function test_config($tab_new_values, $session)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
         if($session=="") {
@@ -235,7 +220,7 @@ class Fonctions
 
     public static function affichage_config_mail($tab_new_values, $session)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
         if($session=="") {
@@ -272,35 +257,36 @@ class Fonctions
             $comment =  _($key)  ;
 
             $return .= '<br>';
-            $return .= '<table>';
-            $return .= '<tr><td>';
-            $return .= '<fieldset class="cal_saisie">';
-            $return .= '<legend class="boxlogin">' . $legend . '</legend>';
-            $return .= '<i>' . $comment . '</i><br><br>';
-            $return .= '<table>';
-            $return .= '<tr>';
-            $return .= '<td class="config" valign="top"><b>' .  _('config_mail_subject') . '</b></td>';
-            $return .= '<td class="config"><input class="form-control" type="text" size="80" name="tab_new_values[' . $mail_nom . '][subject]" value="' . $mail_subject . '"></td>';
-            $return .= '</tr>';
-            $return .= '<tr>';
-            $return .= '<td class="config" valign="top"><b>' . _('config_mail_body') . '</b></td>';
-            $return .= '<td class="config"><textarea class="form-control" rows="6" cols="80" name="tab_new_values[' . $mail_nom . '][body]" value="' . $mail_body . '">' . $mail_body . '</textarea></td>';
-            $return .= '</tr><tr>';
-            $return .= '<td class="config">&nbsp;</td>';
-            $return .= '<td class="config">';
-            $return .= '<i>' . _('mail_remplace_url_accueil_comment') . '<br>';
-            $return .= _('mail_remplace_sender_name_comment') . '<br>';
-            $return .= _('mail_remplace_destination_name_comment') . '<br>';
-            $return .= _('mail_remplace_nb_jours') . '<br>';
-            $return .= _('mail_remplace_date_debut') . '<br>';
-            $return .= _('mail_remplace_date_fin') . '<br>';
-            $return .= _('mail_remplace_commentaire') . '<br>';
-            $return .= _('mail_remplace_type_absence') . '<br>';
-            $return .= _('mail_remplace_retour_ligne_comment') . '</i>';
-            $return .= '</td></tr>';
-            $return .= '</table>';
-            $return .= '</td></tr>';
-            $return .= '</table>';
+            $table = new \App\Libraries\Structure\Table();
+            $table->addChild('<tr><td><fieldset class="cal_saisie"><legend class="boxlogin">' . $legend . '</legend><i>' . $comment . '</i><br><br>');
+            $subTable = new \App\Libraries\Structure\Table();
+            $table->addChild($subTable);
+            $childSubTable = '<tr>';
+            $childSubTable .= '<td class="config" valign="top"><b>' .  _('config_mail_subject') . '</b></td>';
+            $childSubTable .= '<td class="config"><input class="form-control" type="text" size="80" name="tab_new_values[' . $mail_nom . '][subject]" value="' . $mail_subject . '"></td>';
+            $childSubTable .= '</tr>';
+            $childSubTable .= '<tr>';
+            $childSubTable .= '<td class="config" valign="top"><b>' . _('config_mail_body') . '</b></td>';
+            $childSubTable .= '<td class="config"><textarea class="form-control" rows="6" cols="80" name="tab_new_values[' . $mail_nom . '][body]" value="' . $mail_body . '">' . $mail_body . '</textarea></td>';
+            $childSubTable .= '</tr><tr>';
+            $childSubTable .= '<td class="config">&nbsp;</td>';
+            $childSubTable .= '<td class="config">';
+            $childSubTable .= '<i>' . _('mail_remplace_url_accueil_comment') . '<br>';
+            $childSubTable .= _('mail_remplace_sender_name_comment') . '<br>';
+            $childSubTable .= _('mail_remplace_destination_name_comment') . '<br>';
+            $childSubTable .= _('mail_remplace_nb_jours') . '<br>';
+            $childSubTable .= _('mail_remplace_date_debut') . '<br>';
+            $childSubTable .= _('mail_remplace_date_fin') . '<br>';
+            $childSubTable .= _('mail_remplace_commentaire') . '<br>';
+            $childSubTable .= _('mail_remplace_type_absence') . '<br>';
+            $childSubTable .= _('mail_remplace_retour_ligne_comment') . '</i>';
+            $childSubTable .= '</td></tr>';
+            $subTable->addChild($childSubTable);
+            $table->addChild('</fieldset></td></tr>');
+
+            ob_start();
+            $table->render();
+            $return .= ob_get_clean();
         }
 
         $return .= '<input type="hidden" name="action" value="modif">';
@@ -330,7 +316,7 @@ class Fonctions
         /*************************************/
         // recup des parametres reçus :
         // SERVER
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         // GET / POST
         $action = getpost_variable('action') ;
         $tab_new_values = getpost_variable('tab_new_values');
@@ -390,7 +376,7 @@ class Fonctions
 
     public static function commit_ajout(&$tab_new_values, $session)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
         if($session=="") {
@@ -398,6 +384,9 @@ class Fonctions
         } else {
             $URL = "$PHP_SELF?session=$session&onglet=type_absence";
         }
+        $tab_new_values['libelle'] = htmlentities($tab_new_values['libelle'], ENT_QUOTES | ENT_HTML401);
+        $tab_new_values['short_libelle'] = htmlentities($tab_new_values['short_libelle']);
+        $tab_new_values['type'] = htmlentities($tab_new_values['type'], ENT_QUOTES | ENT_HTML401);
 
         // verif de la saisie
         $erreur=FALSE ;
@@ -460,7 +449,7 @@ class Fonctions
 
     public static function commit_suppr($session, $id_to_update)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
         if($session=="") {
@@ -488,7 +477,7 @@ class Fonctions
 
     public static function supprimer($session, $id_to_update)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
         if($session=="") {
@@ -541,7 +530,7 @@ class Fonctions
 
     public static function commit_modif_absence(&$tab_new_values, $session, $id_to_update)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
         if($session=="") {
@@ -594,7 +583,7 @@ class Fonctions
 
     public static function modifier(&$tab_new_values, $session, $id_to_update)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
         if($session=="") {
@@ -626,16 +615,21 @@ class Fonctions
         $text_short_libelle ="<input class=\"form-control\" type=\"text\" name=\"tab_new_values[short_libelle]\" size=\"3\" maxlength=\"3\" value=\"$sql_short_libelle\" >";
 
         // affichage
-        $return .= '<table cellpadding="2" class="tablo">';
-        $return .= '<tr>';
-        $return .= '<td><b><u>' . _('config_abs_libelle') . '</b></u></td>';
-        $return .= '<td><b><u>' . _('config_abs_libelle_short') . '</b></u></td>';
-        $return .= '<td>' . _('divers_type') . '</td>';
-        $return .= '</tr>';
-        $return .= '<tr><td><b>' . $sql_libelle . '</b></td><td>' . $sql_short_libelle . '</td><td>' . $sql_type . '</td></tr>';
-        $return .= '<tr><td><b>' . $text_libelle . '</b></td><td>' . $text_short_libelle . '</td><td></td></tr>';
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClass('table');
+        $table->addAttribute('cellpadding', 2);
+        $childTable = '<tr>';
+        $childTable .= '<td><b><u>' . _('config_abs_libelle') . '</b></u></td>';
+        $childTable .= '<td><b><u>' . _('config_abs_libelle_short') . '</b></u></td>';
+        $childTable .= '<td>' . _('divers_type') . '</td>';
+        $childTable .= '</tr>';
+        $childTable .= '<tr><td><b>' . $sql_libelle . '</b></td><td>' . $sql_short_libelle . '</td><td>' . $sql_type . '</td></tr>';
+        $childTable .= '<tr><td><b>' . $text_libelle . '</b></td><td>' . $text_short_libelle . '</td><td></td></tr>';
+        $table->addChild($childTable);
 
-        $return .= '</table>';
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
         $return .= '<br>';
         $return .= '<input type="hidden" name="action" value="commit_modif">';
         $return .= '<input type="hidden" name="id_to_update" value="' . $id_to_update . '">';
@@ -652,7 +646,7 @@ class Fonctions
 
     public static function affichage_absence($tab_new_values,$session)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
         if($session=="") {
@@ -690,12 +684,19 @@ class Fonctions
                 $ReqLog1 = \includes\SQL::query($sql1);
 
                 if($ReqLog1->num_rows !=0) {
-                    $return .= '<table class="table table-hover table-responsive table-condensed table-striped">';
-                    $return .= '<tr>';
-                    $return .= '<th>' . _('config_abs_libelle') . '</th>';
-                    $return .= '<th>' . _('config_abs_libelle_short') . '</th>';
-                    $return .= '<th></th>';
-                    $return .= '</tr>';
+                    $table = new \App\Libraries\Structure\Table();
+                    $table->addClasses([
+                        'table',
+                        'table-hover',
+                        'table-responsive',
+                        'table-condensed',
+                        'table-striped'
+                    ]);
+                    $childTable = '<tr>';
+                    $childTable .= '<th>' . _('config_abs_libelle') . '</th>';
+                    $childTable .= '<th>' . _('config_abs_libelle_short') . '</th>';
+                    $childTable .= '<th></th>';
+                    $childTable .= '</tr>';
 
                     while ($data = $ReqLog1->fetch_array()) {
                         $ta_id = $data['ta_id'];
@@ -710,10 +711,13 @@ class Fonctions
                             $text_suppr="<a href=\"$PHP_SELF?session=$session&action=suppr&id_to_update=$ta_id&onglet=type_absence\" title=\"". _('form_supprim') ."\"><i class=\"fa fa-times-circle\"></i></a>";
                         }
 
-                        $return .= '<tr><td><strong>' . $ta_libelle . '</strong></td><td>' . $ta_short_libelle . '</td><td class="action">' . $text_modif . '&nbsp;' . $text_suppr . '</td></tr>';
+                        $childTable .= '<tr><td><strong>' . $ta_libelle . '</strong></td><td>' . $ta_short_libelle . '</td><td class="action">' . $text_modif . '&nbsp;' . $text_suppr . '</td></tr>';
                     }
-
-                    $return .= '</table><hr/>';
+                    $table->addChild($childTable);
+                    ob_start();
+                    $table->render();
+                    $return .= ob_get_clean();
+                    $return .= '<hr/>';
                 }
             }
         }
@@ -723,36 +727,47 @@ class Fonctions
         $return .= '<h2>' . _('config_abs_add_type_abs') . '</h2>';
         $return .= '<p>' . _('config_abs_add_type_abs_comment') . '</p>';
         $return .= '<form action="' . $URL . '" method="POST">';
-        $return .= '<table class="table table-hover table-responsive table-condensed table-striped">';
-        $return .= '<tr>';
-        $return .= '<th>' . _('config_abs_libelle') . '</th>';
-        $return .= '<th>' . _('config_abs_libelle_short') . '</th>';
-        $return .= '<th>' . _('divers_type') . '</th>';
-        $return .= '</tr>';
-        $return .= '<tr>';
+        $tableAjout = new \App\Libraries\Structure\Table();
+        $tableAjout->addClasses([
+            'table',
+            'table-hover',
+            'table-responsive',
+            'table-condensed',
+            'table-striped'
+        ]);
+
+        $childTableAjout = '<tr>';
+        $childTableAjout .= '<th>' . _('config_abs_libelle') . '</th>';
+        $childTableAjout .= '<th>' . _('config_abs_libelle_short') . '</th>';
+        $childTableAjout .= '<th>' . _('divers_type') . '</th>';
+        $childTableAjout .= '</tr>';
+        $childTableAjout .= '<tr>';
         $new_libelle = ( isset($tab_new_values['libelle']) ? $tab_new_values['libelle'] : "" );
         $new_short_libelle = ( isset($tab_new_values['short_libelle']) ? $tab_new_values['short_libelle'] : "" ) ;
         $new_type = ( isset($tab_new_values['type']) ? $tab_new_values['type'] : "" ) ;
-        $return .= '<td><input class="form-control" type="text" name="tab_new_values[libelle]" size="20" maxlength="20" value="' . $new_libelle . '"></td>';
-        $return .= '<td><input class="form-control" type="text" name="tab_new_values[short_libelle]" size="3" maxlength="3" value="' . $new_short_libelle . '" ></td>';
-        $return .= '<td>';
+        $childTableAjout .= '<td><input class="form-control" type="text" name="tab_new_values[libelle]" size="20" maxlength="20" value="' . $new_libelle . '"></td>';
+        $childTableAjout .= '<td><input class="form-control" type="text" name="tab_new_values[short_libelle]" size="3" maxlength="3" value="' . $new_short_libelle . '" ></td>';
+        $childTableAjout .= '<td>';
 
-        $return .= '<select class="form-control" name=tab_new_values[type]>';
+        $childTableAjout .= '<select class="form-control" name=tab_new_values[type]>';
 
         foreach($tab_enum as $option) {
             if( ($option=="conges_exceptionnels") &&  ($_SESSION['config']['gestion_conges_exceptionnels']==FALSE)) {
             } else {
                 if($option==$new_type) {
-                    $return .= '<option selected>' . $option . '</option>';
+                    $childTableAjout .= '<option selected>' . $option . '</option>';
                 } else {
-                    $return .= '<option>' . $option . '</option>';
+                    $childTableAjout .= '<option>' . $option . '</option>';
                 }
             }
         }
 
-        $return .= '</select>';
-        $return .= '</td></tr>';
-        $return .= '</table>';
+        $childTableAjout .= '</select>';
+        $childTableAjout .= '</td></tr>';
+        $tableAjout->addChild($childTableAjout);
+        ob_start();
+        $tableAjout->render();
+        $return .= ob_get_clean();
         $return .= '<input type="hidden" name="action" value="new">';
         $return .= '<hr/>';
         $return .= '<input type="submit" class="btn btn-success" value="' . _('form_ajout') . '"><br>';
@@ -793,11 +808,11 @@ class Fonctions
         /*************************************/
         // recup des parametres reçus :
         // SERVER
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         // GET / POST
         $action         = getpost_variable('action') ;
         $tab_new_values = getpost_variable('tab_new_values');
-        $id_to_update   = getpost_variable('id_to_update');
+        $id_to_update   = htmlentities(getpost_variable('id_to_update'), ENT_QUOTES | ENT_HTML401);
 
         /*********************************/
 
@@ -820,7 +835,7 @@ class Fonctions
 
     public static function commit_saisie(&$tab_new_values, $session)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
         if($session=="") {
@@ -832,6 +847,7 @@ class Fonctions
         $timeout=2 ;  // temps d'attente pour rafraichir l'écran après l'update !
 
         foreach($tab_new_values as $key => $value ) {
+            $value = htmlentities($value, ENT_QUOTES | ENT_HTML401);
             // CONTROLE gestion_conges_exceptionnels
             // si désactivation les conges exceptionnels, on verif s'il y a des conges exceptionnels enregistres ! si oui : changement impossible !
             if(($key=="gestion_conges_exceptionnels") && ($value=="FALSE") ) {
@@ -897,7 +913,7 @@ class Fonctions
 
     public static function affichage_configuration($session)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
         // affiche_bouton_retour($session);
@@ -917,80 +933,79 @@ class Fonctions
         $ReqLog1 = \includes\SQL::query($sql1);
 
         $old_groupe="";
-        while ($data =$ReqLog1->fetch_array()) {
-            $conf_nom = $data['conf_nom'];
-            $conf_valeur = $data['conf_valeur'];
-            $conf_groupe = $data['conf_groupe'];
-            $conf_type = strtolower($data['conf_type']);
-            $conf_commentaire = strtolower($data['conf_commentaire']);
-
-            // changement de groupe de variables
-            if($old_groupe != $conf_groupe) {
-                if($old_groupe!="") {
-                    $return .= '</td></tr>';
-                    $return .= '<tr><td align="right">';
-                    $return .= '<input type="submit" class="btn"  value="' . _('form_save_modif') . '"><br>';
-                    $return .= '</td></tr>';
-                    $return .= '</table>';
-                }
-                $return .= '<br>';
-                $return .= '<table width="100%">';
-                $return .= '<tr><td>';
-                $return .= '<fieldset class="cal_saisie '. $conf_nom . '">';
-                $return .= '<legend class="boxlogin">' . _($conf_groupe) . '</legend>';
-                $old_groupe = $conf_groupe;
-            }
-
-            // si on est sur le parametre "lang" on liste les fichiers de langue du répertoire install/lang
-            if($conf_nom=="lang") {
-                $return .= 'Choisissez votre langue :<br>';
-                $return .= 'Choose your language :<br>';
-                // affichage de la liste des langues supportées ...
-                // on lit le contenu du répertoire lang et on parse les nom de ficher (ex lang_fr_francais.php)
-                //affiche_select_from_lang_directory("tab_new_values[$conf_nom]");
-                $return .= affiche_select_from_lang_directory('lang', $conf_valeur);
-            } else {
-                // affichage commentaire
-                $return .= '<br><i>' . _($conf_commentaire) . '</i><br>';
-
-                // affichage saisie variable
-                if($conf_nom=="installed_version") {
-                    $return .= '<b>' . $conf_nom . '&nbsp;&nbsp;=&nbsp;&nbsp;' . $conf_valeur . '</b><br>';
-                } elseif( ($conf_type=="texte") || ($conf_type=="path") ) {
-                    $return .= '<b>' . $conf_nom . '</b>&nbsp;=&nbsp;<input type="text" class="form-control" size="50" maxlength="200" name="tab_new_values[' . $conf_nom . ']" value="' . $conf_valeur . '"><br>';
-                } elseif($conf_type=="boolean") {
-                    $return .= '<b>' . $conf_nom . '</b>&nbsp;=&nbsp;<select class="form-control" name="tab_new_values[' . $conf_nom . ']">';
-                    $return .= '<option value="TRUE"';
-                    if($conf_valeur=="TRUE") {
-                        $return .= ' selected';
-                    }
-                    $return .= '>TRUE</option>';
-                    $return .= '<option value="FALSE"';
-                    if($conf_valeur=="FALSE") {
-                        $return .= ' selected';
-                    }
-                    $return .= '>FALSE</option>';
-                    $return .= '</select><br>';
-                } elseif(substr($conf_type,0,4)=="enum") {
-                    $return .= '<b>' . $conf_nom . '</b>&nbsp;=&nbsp;<select class="form-control" name="tab_new_values[' . $conf_nom . ']">';
-                    $options=explode("/", substr(strstr($conf_type, '='),1));
-                    for($i=0; $i<count($options); $i++) {
-                        $return .= '<option value="' . $options[$i] . '"';
-                        if($conf_valeur==$options[$i]) {
-                            $return .= ' selected';
-                        }
-                        $return .= '>' . $options[$i] . '</option>';
-                    }
-                    $return .= '</select><br>';
-                }
-                $return .= '<br>';
-            }
+        $config = [];
+        while ($data = $ReqLog1->fetch_array()) {
+            $config[$data['conf_groupe']][] = $data;
         }
 
-        $return .= '</td></tr>';
-        $return .= '<tr><td align="right">';
-        $return .= '<input type="submit" class="btn"  value="' . _('form_save_modif') . '"><br>';
-        $return .= '</td></tr>';
+        foreach ($config as $groupName => $group) {
+            $return .= '<br>';
+            $table = new \App\Libraries\Structure\Table();
+            $table->addAttribute('width', '100%');
+            $childTable = '<tr><td>';
+            $childTable .= '<fieldset class="cal_saisie '. $groupName . '">';
+            $childTable .= '<legend class="boxlogin">' . _($groupName) . '</legend>';
+
+            foreach ($group as $data) {
+                $conf_nom = $data['conf_nom'];
+                $conf_valeur = $data['conf_valeur'];
+                $conf_groupe = $data['conf_groupe'];
+                $conf_type = strtolower($data['conf_type']);
+                $conf_commentaire = strtolower($data['conf_commentaire']);
+
+                if($conf_nom=="lang") {
+                    $childTable .= _('choisir_langue').'<br>';
+                    // affichage de la liste des langues supportées ...
+                    // on lit le contenu du répertoire lang et on parse les nom de ficher (ex lang_fr_francais.php)
+                    //affiche_select_from_lang_directory("tab_new_values[$conf_nom]");
+                    $childTable .= affiche_select_from_lang_directory('lang', $conf_valeur);
+                } else {
+                    // affichage commentaire
+                    $childTable .= '<br><i>' . _($conf_commentaire) . '</i><br>';
+
+                    // affichage saisie variable
+                    if($conf_nom=="installed_version") {
+                        $childTable .= '<b>' . $conf_nom . '&nbsp;&nbsp;=&nbsp;&nbsp;' . $conf_valeur . '</b><br>';
+                    } elseif( ($conf_type=="texte") || ($conf_type=="path") ) {
+                        $childTable .= '<b>' . $conf_nom . '</b>&nbsp;=&nbsp;<input type="text" class="form-control" size="50" maxlength="200" name="tab_new_values[' . $conf_nom . ']" value="' . $conf_valeur . '"><br>';
+                    } elseif($conf_type=="boolean") {
+                        $childTable .= '<b>' . $conf_nom . '</b>&nbsp;=&nbsp;<select class="form-control" name="tab_new_values[' . $conf_nom . ']">';
+                        $childTable .= '<option value="TRUE"';
+                        if($conf_valeur=="TRUE") {
+                            $childTable .= ' selected';
+                        }
+                        $childTable .= '>TRUE</option>';
+                        $childTable .= '<option value="FALSE"';
+                        if($conf_valeur=="FALSE") {
+                            $childTable .= ' selected';
+                        }
+                        $childTable .= '>FALSE</option>';
+                        $childTable .= '</select><br>';
+                    } elseif(substr($conf_type,0,4)=="enum") {
+                        $childTable .= '<b>' . $conf_nom . '</b>&nbsp;=&nbsp;<select class="form-control" name="tab_new_values[' . $conf_nom . ']">';
+                        $options=explode("/", substr(strstr($conf_type, '='),1));
+                        for($i=0; $i<count($options); $i++) {
+                            $childTable .= '<option value="' . $options[$i] . '"';
+                            if($conf_valeur==$options[$i]) {
+                                $childTable .= ' selected';
+                            }
+                            $childTable .= '>' . $options[$i] . '</option>';
+                        }
+                        $childTable .= '</select><br>';
+                    }
+                    $childTable .= '<br>';
+                }
+            }
+
+            $childTable .= '</td></tr>';
+            $childTable .= '<tr><td align="right">';
+            $childTable .= '<input type="submit" class="btn"  value="' . _('form_save_modif') . '"><br>';
+            $childTable .= '</td></tr>';
+            $table->addChild($childTable);
+            ob_start();
+            $table->render();
+            $return .= ob_get_clean();
+        }
 
 
         /******************* GESTION DES PLUGINS V1.7 *************************/
@@ -1012,14 +1027,15 @@ class Fonctions
 
         $my_plugins = scandir(PLUGINS_DIR);
         $plug_count = 0;
-        $return .= '<table width="100%">';
-        $return .= '<tr><td>';
-        $return .= '<fieldset class="cal_saisie plugins">';
-        $return .= '<legend class="boxlogin">Plugins</legend>';
+        $tableAddon = new \App\Libraries\Structure\Table();
+        $tableAddon->addAttribute('width', '100%');
+        $childTableAddon = '<tr><td>';
+        $childTableAddon .= '<fieldset class="cal_saisie plugins">';
+        $childTableAddon .= '<legend class="boxlogin">Plugins</legend>';
         foreach($my_plugins as $my_plugin) {
             if(is_dir(PLUGINS_DIR."/$my_plugin") && !preg_match("/^\./",$my_plugin)) {
-                $return .= 'Plugin détecté : ';
-                $return .= '<b>' . $my_plugin . '</b> This plugin is installed ? :
+                $childTableAddon .= _('plugin_detect').'<br>';
+                $childTableAddon .= '<b>' . $my_plugin . ' : </b>'._('plugin_install').'
                     <select class="form-control" name=tab_new_values[' . $my_plugin . '_installed]>';
 
                 $sql_plug="SELECT p_is_active, p_is_install FROM conges_plugins WHERE p_name = '".$my_plugin."';";
@@ -1028,40 +1044,43 @@ class Fonctions
                     while($plug = $ReqLog_plug->fetch_array()){
                         $p_install = $plug["p_is_install"];
                         if ($p_install == '1') {
-                            $return .= '<option selected="selected" value="1">Y</option><option value="0">N</option>';
+                            $childTableAddon .= '<option selected="selected" value="1">Y</option><option value="0">N</option>';
                         } else {
-                            $return .= '<option value="1">Y</option><option selected="selected" value="0">N</option>';
+                            $childTableAddon .= '<option value="1">Y</option><option selected="selected" value="0">N</option>';
                         }
-                        $return .= '</select>';
-                        $return .= ' ... Is activated ? : <select class="form-control" name=tab_new_values[' . $my_plugin . '_activated]>';
+                        $childTableAddon .= '</select>';
+                        $childTableAddon .= _('plugin_active').' <select class="form-control" name=tab_new_values[' . $my_plugin . '_activated]>';
                         $p_active = $plug["p_is_active"];
                         if ($p_active == '1') {
-                            $return .= '<option selected="selected" value="1">Y</option><option value="0">N</option>';
+                            $childTableAddon .= '<option selected="selected" value="1">Y</option><option value="0">N</option>';
                         } else {
-                            $return .= '<option value="1">Y</option><option selected="selected" value="0">N</option>';
+                            $childTableAddon .= '<option value="1">Y</option><option selected="selected" value="0">N</option>';
                         }
                     }
                 } else {
-                    $return .= '<option value="1">Y</option><option selected="selected" value="0">N</option>';
-                    $return .= '</select>';
-                    $return .= ' ... Is activated ? : <select class="form-control" name=tab_new_values[' . $my_plugin . '_activated]>';
-                    $return .= '<option value="1">Y</option><option selected="selected" value="0">N</option>';
+                    $childTableAddon .= '<option value="1">Y</option><option selected="selected" value="0">N</option>';
+                    $childTableAddon .= '</select>';
+                    $childTableAddon .= _('plugin_active').' <select class="form-control" name=tab_new_values[' . $my_plugin . '_activated]>';
+                    $childTableAddon .= '<option value="1">Y</option><option selected="selected" value="0">N</option>';
                 }
-                $return .= '</select>';
-                $return .= '<br />';
+                $childTableAddon .= '</select>';
+                $childTableAddon .= '<br />';
                 $plug_count++;
             }
         }
         if($plug_count == 0){
-            $return .= 'No plugin detected.';
+            $childTableAddon .= _('no_plugin');
         }
-        $return .= '</td></tr>';
-        $return .= '<tr><td align="right">';
-        $return .= '<input type="submit" class="btn"  value="' . _('form_save_modif') . '"><br>';
-        $return .= '</td></tr>';
+        $childTableAddon .= '</td></tr>';
+        $childTableAddon .= '<tr><td align="right">';
+        $childTableAddon .= '<input type="submit" class="btn"  value="' . _('form_save_modif') . '"><br>';
+        $childTableAddon .= '</td></tr>';
         /**********************************************************************/
 
-        $return .= '</table>';
+        $tableAddon->addChild($childTableAddon);
+        ob_start();
+        $tableAddon->render();
+        $return .= ob_get_clean();
         $return .= '</form>';
         return $return;
     }
@@ -1089,7 +1108,7 @@ class Fonctions
         /*************************************/
         // recup des parametres reçus :
         // SERVER
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         // GET / POST
         $action         = getpost_variable('action') ;
         $tab_new_values = getpost_variable('tab_new_values');

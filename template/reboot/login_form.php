@@ -33,7 +33,7 @@ if ($erreur == 'login_passwd_incorrect') {
     <form method="post" action="<?= $PHP_SELF ?>">
         <h2 class="form-signin-heading">Connexion</h2>
         <input type="text" id="session_username" class="form-control" name="session_username" value="<?= $session_username ?>" placeholder="<?= _('divers_login_maj_1') ?>" autofocus>
-        <input type="password" id="session_password" class="form-control" name="session_password" placeholder="Mot de passe"/>
+        <input type="password" id="session_password" class="form-control" name="session_password" placeholder="Mot de passe" autocomplete="off"/>
         <?php echo affiche_select_from_lang_directory('lang',$lang_selected); ?>
         <button type="submit" class="btn btn-lg btn-primary btn-block"><?= _('form_submit') ?></button>
     </form>

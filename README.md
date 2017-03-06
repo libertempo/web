@@ -1,46 +1,30 @@
-Libertempo Fork de php_conges
-
-	Application web intéractive de gestion des congés du personnels d'un service. 
-	
-	** Libertempo se veut très paramètrable afin de fournir ou non diverses fonctionnalités aux utilisateurs. **
-	** Libertempo est multi-langues. **
+ ![Logo](http://libertempo.tuxfamily.org/Logo-Libertempo.png)
 
 
-INSTALL
-
-Create a database for this application with a user who can access it and modify informations on it (grant access).
-
-Copy and edits proprely this files :
-	cfg/dconfig_CAS_new.php	to 	cfg/config_CAS.php
-	cfg/config_ldap_new.php	to 	cfg/config_ldap.php
-	define_new.php		to 	define.php
+----------
 
 
-Then copy your Libertempo directory to your Apache DocumentRoot
-Open a browser and go to http://[server address]/[Libertempo directory]/install
+ [libertempo.tuxfamily.org](http://libertempo.tuxfamily.org)
 
-Default user : "admin" / password : "responsable"
-Default manager : "conges" / password : "conges"
-
-----
-UPGRADE FROM v1.5
-
-Copy (and edit):
-	dbconnect.php 		to 	cfg/dbconnect.php
-	define_new.php		to	define.php
+# Présentation
 
 
-Go to your [Libertempo] URL, in /install subdirectory to migrate your application.
+Libertempo est une application web interactive de gestion des congés du personnel. Elle a pour objectif de rendre la gestion des congés accessible à tous.
 
----
-# After installation
+Libertempo se veut être au plus proche des règles inhérentes aux réglementations françaises tout en restant paramétrable afin de répondre aux particularités et conventions des entreprises et des administrations. 
 
- - About security
+# Version recommandée
+Vous pouvez télécharger la version stable la plus récente directement depuis [master](https://github.com/wouldsmina/Libertempo/archive/master.zip). ![build_status](https://travis-ci.org/wouldsmina/Libertempo.svg?branch=master)
 
-Do not forget to place .htaccess (deny from all) file into your install subdirectory !
-	http://httpd.apache.org/docs/2.2/howto/htaccess.html
+Chaque nouvelle version est mise à disposition sur [github](https://github.com/wouldsmina/Libertempo/releases) et sur [libertempo.tuxfamily.org](http://libertempo.tuxfamily.org/downloads/)
 
-----
-CONFIGURE
-Change the template if you want in this file :
-	Copy the original files in template/reboot directory to a new one and change the value in define.php.
+# Installation
+Rendez vous sur la [documentation](http://libertempo.tuxfamily.org/Documentation).
+
+# Licence
+
+Libertempo est un logiciel libre sous [Licence Publique Générale GNU Version 2](http://www.linux-france.org/article/these/gpl.html).
+
+# Contact
+Nous sommes joignable par mail : 	libertempo@lists.tuxfamily.org.
+ou directement par irc à l'adresse : irc://irc.tuxfamily.org/Libertempo. Accès direct par webclient [ici](https://client02.chat.mibbit.com/?url=irc%3A%2F%2Firc.tuxfamily.org%2FLibertempo).

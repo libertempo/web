@@ -1,29 +1,5 @@
 <?php
-/*************************************************************************************************
-Libertempo : Gestion Interactive des Congés
-Copyright (C) 2015 (Wouldsmina)
-Copyright (C) 2015 (Prytoegrian)
-Copyright (C) 2005 (cedric chauvineau)
 
-Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
-termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
-Ce programme est distribué car potentiellement utile, mais SANS AUCUNE GARANTIE,
-ni explicite ni implicite, y compris les garanties de commercialisation ou d'adaptation
-dans un but spécifique. Reportez-vous à la Licence Publique Générale GNU pour plus de détails.
-Vous devez avoir reçu une copie de la Licence Publique Générale GNU en même temps
-que ce programme ; si ce n'est pas le cas, écrivez à la Free Software Foundation,
-Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, États-Unis.
-*************************************************************************************************
-This program is free software; you can redistribute it and/or modify it under the terms
-of the GNU General Public License as published by the Free Software Foundation; either
-version 2 of the License, or any later version.
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the GNU General Public License for more details.
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*************************************************************************************************/
 namespace responsable;
 
 /**
@@ -44,7 +20,7 @@ class Fonctions
         // $tab_new_nb_conges_all[$id_conges]= nb_jours
         // $tab_calcul_proportionnel[$id_conges]= TRUE / FALSE
 
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -103,7 +79,7 @@ class Fonctions
 
     public static function ajout_global($tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -164,7 +140,7 @@ class Fonctions
 
     public static function ajout_conges($tab_champ_saisie, $tab_commentaire_saisie)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -201,7 +177,7 @@ class Fonctions
 
     public static function affichage_saisie_globale_groupe($tab_type_conges)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -277,7 +253,7 @@ class Fonctions
 
     public static function affichage_saisie_globale_pour_tous($tab_type_conges)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -316,7 +292,7 @@ class Fonctions
 
     public static function affichage_saisie_user_par_user($tab_type_conges, $tab_type_conges_exceptionnels, $tab_all_users_du_resp, $tab_all_users_du_grand_resp)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -439,7 +415,7 @@ class Fonctions
 
     public static function saisie_ajout( $tab_type_conges)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -541,7 +517,7 @@ class Fonctions
     // cloture / debut d'exercice pour TOUS les users d'un groupe'
     public static function cloture_globale_groupe($group_id, $tab_type_conges)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -565,7 +541,7 @@ class Fonctions
     // cloture / debut d'exercice pour TOUS les users du resp (ou grand resp)
     public static function cloture_globale($tab_type_conges)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -694,7 +670,7 @@ class Fonctions
     // cloture / debut d'exercice user par user pour les users du resp (ou grand resp)
     public static function cloture_users($tab_type_conges, $tab_cloture_users, $tab_commentaire_saisie)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -732,7 +708,7 @@ class Fonctions
 
     public static function affichage_cloture_globale_groupe($tab_type_conges)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -808,7 +784,7 @@ class Fonctions
 
     public static function affichage_cloture_globale_pour_tous($tab_type_conges)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -857,7 +833,7 @@ class Fonctions
         if($tab_current_user['num_exercice'] < $_SESSION['config']['num_exercice']) {
             $return .= '<td align="center" class="histo"><input type="checkbox" name="tab_cloture_users[' . $current_login . ']" value="TRUE" checked></td>';
         } else {
-            $return .= '<td align="center" class="histo"><img src="' . TEMPLATE_PATH . 'img/stop.png" width="16" height="16" border="0" ></td>';
+            $return .= '<td align="center" class="histo"><img src="' . IMG_PATH . 'stop.png" width="16" height="16" border="0" ></td>';
         }
 
         $comment_cloture =  _('resp_cloture_exercice_commentaire') ." ".date("m/Y");
@@ -868,7 +844,7 @@ class Fonctions
 
     public static function affichage_cloture_user_par_user($tab_type_conges, $tab_all_users_du_resp, $tab_all_users_du_grand_resp)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -942,7 +918,7 @@ class Fonctions
 
     public static function saisie_cloture( $tab_type_conges)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
@@ -1046,7 +1022,7 @@ class Fonctions
         $return .= '<tr>';
         $return .= '<th>' . _('divers_nom_maj') .'</th>';
         $return .= '<th>'. _('divers_prenom_maj') .'</th>';
-        $return .= '<th>'. _('divers_quotite_maj_1') .'</th>' ;
+        $return .= '<th>'. _('divers_quotite_maj_1') .'</th>';
         $nb_colonnes = 3;
         foreach($tab_type_cong as $id_conges => $libelle) {
             // cas d'une absence ou d'un congé
@@ -1061,6 +1037,7 @@ class Fonctions
                 $nb_colonnes += 1;
             }
         }
+        $return .= '<th>'. _('solde_heure') .'</th>' ;
         $return .= '<th></th>';
         $nb_colonnes += 1;
         if($_SESSION['config']['editions_papier']) {
@@ -1101,6 +1078,8 @@ class Fonctions
                             $return .= '<td>' . $tab_conges[$libelle]['solde'] . '</td>';
                         }
                     }
+                    $soldeHeure = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($current_login)['u_heure_solde'];
+                    $return .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($soldeHeure) . '</td>';
                     $return .= '<td>' . $text_affich_user . '</td>';
                     if($_SESSION['config']['editions_papier']) {
                         $return .= '<td>' . $text_edit_papier . '</td>';
@@ -1167,7 +1146,7 @@ class Fonctions
 
     public static function new_conges($user_login, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type_id)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -1219,7 +1198,7 @@ class Fonctions
 
     public static function traite_demandes($user_login, $tab_radio_traite_demande, $tab_text_refus)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF']; ;
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $session=session_id();
         $return = '';
 
@@ -1305,7 +1284,7 @@ class Fonctions
 
     public static function annule_conges($user_login, $tab_checkbox_annule, $tab_text_annul)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF']; ;
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $session=session_id() ;
         $return = '';
 
@@ -1334,7 +1313,7 @@ class Fonctions
                 /* UPDATE table "conges_solde_user" (jours restants) */
                 // on re-crédite les jours seulement pour des conges pris (pas pour les absences)
                 // donc seulement si le type de l'absence qu'on annule est un "conges"
-                if($tab_tout_type_abs[$user_type_abs_id]['type']=="conges") {
+                if(in_array($tab_tout_type_abs[$user_type_abs_id]['type'],["conges","conges_exceptionnels"])) {
                     $sql2 = 'UPDATE conges_solde_user SET su_solde = su_solde+"'. \includes\SQL::quote($user_nb_jours_pris_float).'" WHERE su_login="'. \includes\SQL::quote($user_login).'" AND su_abs_id="'. \includes\SQL::quote($user_type_abs_id).'";';
                     $ReqLog2 = \includes\SQL::query($sql2);
                 }
@@ -1354,7 +1333,7 @@ class Fonctions
     //affiche l'état des conges du user (avec le formulaire pour le responsable)
     public static function affiche_etat_conges_user_for_resp($user_login, $year_affichage, $tri_date, $onglet)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF']; ;
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $session=session_id() ;
         $return = '';
 
@@ -1399,9 +1378,9 @@ class Fonctions
             $return .= '<thead>';
             $return .= '<tr align="center">';
             $return .= '<th>';
-            // echo " <a href=\"$PHP_SELF?session=$session&user_login=$user_login&onglet=$onglet&tri_date=descendant\"><img src=\"". TEMPLATE_PATH ."img/1downarrow-16x16.png\" width=\"16\" height=\"16\" border=\"0\" title=\"trier\"></a>\n";
+            // echo " <a href=\"$PHP_SELF?session=$session&user_login=$user_login&onglet=$onglet&tri_date=descendant\"><img src=\"". IMG_PATH ."1downarrow-16x16.png\" width=\"16\" height=\"16\" border=\"0\" title=\"trier\"></a>\n";
             $return .= _('divers_debut_maj_1');
-            // echo " <a href=\"$PHP_SELF?session=$session&user_login=$user_login&onglet=$onglet&tri_date=ascendant\"><img src=\"". TEMPLATE_PATH ."img/1uparrow-16x16.png\" width=\"16\" height=\"16\" border=\"0\" title=\"trier\"></a>\n";
+            // echo " <a href=\"$PHP_SELF?session=$session&user_login=$user_login&onglet=$onglet&tri_date=ascendant\"><img src=\"". IMG_PATH ."1uparrow-16x16.png\" width=\"16\" height=\"16\" border=\"0\" title=\"trier\"></a>\n";
             $return .= '</th>';
             $return .= '<th>' . _('divers_fin_maj_1') . '</th>';
             $return .= '<th>' . _('divers_nb_jours_pris_maj_1') . '</th>';
@@ -1504,7 +1483,7 @@ class Fonctions
     //affiche l'état des demande en attente de 2ieme validation du user (avec le formulaire pour le responsable)
     public static function affiche_etat_demande_2_valid_user_for_resp($user_login)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF']; ;
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $session=session_id() ;
         $return = '';
 
@@ -1608,7 +1587,7 @@ class Fonctions
     //affiche l'état des demandes du user (avec le formulaire pour le responsable)
     public static function affiche_etat_demande_user_for_resp($user_login, $tab_user, $tab_grd_resp)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF']; ;
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $session=session_id();
         $return = '';
 
@@ -1641,6 +1620,8 @@ class Fonctions
             $return .= '<td>' . _('resp_traite_user_motif_refus') . '</td>';
             if($_SESSION['config']['affiche_date_traitement']) {
                 $return .= '<td>' . _('divers_date_traitement') . '</td>';
+            } else {
+                $return .= '<td></td>';
             }
             $return .= '</tr>';
 
@@ -1722,7 +1703,7 @@ class Fonctions
 
     public static function affichage($user_login,  $year_affichage, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $tri_date)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF']; ;
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $session=session_id();
         $return = '';
 
@@ -1746,7 +1727,6 @@ class Fonctions
             get_tab_grd_resp_du_user($user_login, $tab_grd_resp);
         }
 
-        include_once ROOT_PATH . 'fonctions_javascript.php' ;
         /********************/
         /* Titre */
         /********************/
@@ -1853,9 +1833,9 @@ class Fonctions
         $tab_text_annul = getpost_variable('tab_text_annul') ;
         $new_demande_conges = getpost_variable('new_demande_conges', 0) ;
         $new_debut = getpost_variable('new_debut') ;
-        $new_demi_jour_deb = getpost_variable('new_demi_jour_deb') ;
+        $new_demi_jour_deb = htmlentities(getpost_variable('new_demi_jour_deb'), ENT_QUOTES | ENT_HTML401);
         $new_fin = getpost_variable('new_fin') ;
-        $new_demi_jour_fin = getpost_variable('new_demi_jour_fin') ;
+        $new_demi_jour_fin = htmlentities(getpost_variable('new_demi_jour_fin'), ENT_QUOTES | ENT_HTML401);
         $return = '';
 
         if($_SESSION['config']['disable_saise_champ_nb_jours_pris']) { // zone de texte en readonly et grisée
@@ -1864,9 +1844,9 @@ class Fonctions
             $new_nb_jours = getpost_variable('new_nb_jours') ;
         }
 
-        $new_comment = getpost_variable('new_comment') ;
-        $new_type = getpost_variable('new_type') ;
-        $year_affichage = getpost_variable('year_affichage' , date("Y") );
+        $new_comment = htmlentities(getpost_variable('new_comment'), ENT_QUOTES | ENT_HTML401);
+        $new_type = htmlentities(getpost_variable('new_type'), ENT_QUOTES | ENT_HTML401);
+        $year_affichage = (int) getpost_variable('year_affichage' , date("Y") );
 
         /*************************************/
 
@@ -1895,416 +1875,274 @@ class Fonctions
         return $return;
     }
 
-    public static function traite_all_demande_en_cours( $tab_bt_radio, $tab_text_refus)
+    /**
+     * Encapsule le comportement du module de liste des plannings
+     *
+     * @return string
+     * @TODO trouver dans quelle condition un planning ne pourrait pas être modifié
+     */
+    public static function getListePlanningModule()
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
-        $session=session_id();
-        $return = '';
+        $message   = '';
+        $errorsLst = [];
+        $notice    = '';
 
-        while($elem_tableau = each($tab_bt_radio)) {
-            $champs = explode("--", $elem_tableau['value']);
-            $user_login=$champs[0];
-            $user_nb_jours_pris=$champs[1];
-            $type_abs=$champs[2];   // id du type de conges demandé
-            $date_deb=$champs[3];
-            $demi_jour_deb=$champs[4];
-            $date_fin=$champs[5];
-            $demi_jour_fin=$champs[6];
-            $reponse=$champs[7];
-
-            $numero=$elem_tableau['key'];
-            $numero_int=(int) $numero;
-            $return .= $numero . '---' . $user_login . '---' . $user_nb_jours_pris . '---' . $reponse . '<br>';
-
-            /* Modification de la table conges_periode */
-            if(strcmp($reponse, "VALID")==0) {
-                /* UPDATE table "conges_periode" */
-                $sql1 = 'UPDATE conges_periode SET p_etat=\'valid\', p_date_traitement=NOW() WHERE p_num="'. \includes\SQL::quote($numero_int).'" AND p_etat=\'demande\';';
-                /* On valide l'UPDATE dans la table "conges_periode" ! */
-                $ReqLog1 = \includes\SQL::query($sql1) ;
-                if ($ReqLog1 && \includes\SQL::getVar('affected_rows') ) {
-
-                    // Log de l'action
-                    log_action($numero_int, "valid", $user_login, "traite demande $numero ($user_login) ($user_nb_jours_pris jours) : $reponse");
-
-                    //envoi d'un mail d'alerte au user et au responsable du resp (pour double validation) (si demandé dans config de libertempo)
-                    if($_SESSION['config']['mail_prem_valid_conges_alerte_user']) {
-                        alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "valid_conges");
-                    }
-                }
-            }
-
-            if(strcmp($reponse, "OK")==0) {
-                /* UPDATE table "conges_periode" */
-                $sql1 = 'UPDATE conges_periode SET p_etat="ok", p_date_traitement=NOW() WHERE p_num="'.\includes\SQL::quote($numero_int).'" AND ( p_etat=\'valid\' OR p_etat=\'demande\' );';
-                /* On valide l'UPDATE dans la table "conges_periode" ! */
-                $ReqLog1 = \includes\SQL::query($sql1) ;
-                if ($ReqLog1 && \includes\SQL::getVar('affected_rows') ) {
-
-                    // Log de l'action
-                    log_action($numero_int,"ok", $user_login, "traite demande $numero ($user_login) ($user_nb_jours_pris jours) : $reponse");
-
-                    /* UPDATE table "conges_solde_user" (jours restants) */
-                    soustrait_solde_et_reliquat_user($user_login, $numero_int, $user_nb_jours_pris, $type_abs, $date_deb, $demi_jour_deb, $date_fin, $demi_jour_fin);
-
-                    //envoi d'un mail d'alerte au user (si demandé dans config de php_conges)
-                    if($_SESSION['config']['mail_valid_conges_alerte_user']) {
-                        alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "accept_conges");
-                    }
-                }
-            } elseif(strcmp($reponse, "not_OK")==0) {
-                // recup du motif de refus
-                $motif_refus=addslashes($tab_text_refus[$numero_int]);
-                $sql1 = 'UPDATE conges_periode SET p_etat=\'refus\', p_motif_refus=\''.$motif_refus.'\', p_date_traitement=NOW() WHERE p_num="'. \includes\SQL::quote($numero_int).'" AND ( p_etat=\'valid\' OR p_etat=\'demande\' );';
-
-                /* On valide l'UPDATE dans la table ! */
-                $ReqLog1 = \includes\SQL::query($sql1) ;
-                if ($ReqLog1 && \includes\SQL::getVar('affected_rows')) {
-
-                    // Log de l'action
-                    log_action($numero_int,"refus", $user_login, "traite demande $numero ($user_login) ($user_nb_jours_pris jours) : refus");
-
-
-                    //envoi d'un mail d'alerte au user (si demandé dans config de php_conges)
-                    if($_SESSION['config']['mail_refus_conges_alerte_user']) {
-                        alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "refus_conges");
-                    }
-                }
-            }
-        }
-        $return .= _('form_modif_ok') . '<br><br>';
-        /* APPEL D'UNE AUTRE PAGE au bout d'une tempo de 2secondes */
-        $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $PHP_SELF  . '?session=' . $session . '&onglet=traitement_demandes">';
-        return $return;
-    }
-
-    public static function affiche_all_demandes_en_cours($tab_type_conges)
-    {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
-        $session=session_id() ;
-        $count1=0;
-        $count2=0;
-        $return = '';
-
-        $tab_type_all_abs = recup_tableau_tout_types_abs();
-
-        // recup du tableau des types de conges (seulement les conges exceptionnels)
-        $tab_type_conges_exceptionnels=array();
-        if ($_SESSION['config']['gestion_conges_exceptionnels']) {
-            $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
-        }
-
-        /*********************************/
-        // Récupération des informations
-        /*********************************/
-
-        // Récup dans un tableau de tableau des informations de tous les users dont $_SESSION['userlogin'] est responsable
-        $tab_all_users_du_resp=recup_infos_all_users_du_resp($_SESSION['userlogin']);
-
-        // si tableau des users du resp n'est pas vide
-        if( count($tab_all_users_du_resp) !=0 ) {
-            // constitution de la liste (séparé par des virgules) des logins ...
-            $list_users_du_resp="";
-            foreach($tab_all_users_du_resp as $current_login => $tab_current_user) {
-                if($list_users_du_resp=="") {
-                    $list_users_du_resp= "'$current_login'" ;
-                } else {
-                    $list_users_du_resp=$list_users_du_resp.", '$current_login'" ;
-                }
-            }
-        }
-
-
-        // Récup dans un tableau de tableau des informations de tous les users dont $_SESSION['userlogin'] est GRAND responsable
-        if( $_SESSION['config']['double_validation_conges'] ) {
-            $tab_all_users_du_grand_resp=recup_infos_all_users_du_grand_resp($_SESSION['userlogin']);
-
-            // si tableau des users du grand resp n'est pas vide
-            if( count($tab_all_users_du_grand_resp)!=0 ) {
-                // constitution de la liste (séparé par des virgules) des logins ...
-                $list_users_du_grand_resp="";
-                foreach($tab_all_users_du_grand_resp as $current_login => $tab_current_user) {
-                    if($list_users_du_grand_resp=="") {
-                        $list_users_du_grand_resp= "'$current_login'" ;
-                    } else {
-                        $list_users_du_grand_resp=$list_users_du_grand_resp.", '$current_login'" ;
-                    }
-                }
-            }
-        }
-
-        /*********************************/
-
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=traitement_demandes" method="POST">';
-
-        /*********************************/
-        /* TABLEAU DES DEMANDES DES USERS DONT ON EST LE RESP */
-        /*********************************/
-
-        // si tableau des users du resp n'est pas vide
-        if( count($tab_all_users_du_resp)!=0 ) {
-
-            // Récup des demandes en cours pour les users dont $_SESSION['userlogin'] est responsable :
-            $sql1 = "SELECT p_num, p_login, p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_nb_jours, p_commentaire, p_type, p_date_demande, p_date_traitement FROM conges_periode ";
-            $sql1=$sql1." WHERE p_etat =\"demande\" ";
-            $sql1=$sql1." AND p_login IN ($list_users_du_resp)  ";
-            $sql1=$sql1." ORDER BY p_num";
-
-            $ReqLog1 = \includes\SQL::query($sql1) ;
-
-            $count1=$ReqLog1->num_rows;
-            if($count1!=0) {
-                // AFFICHAGE TABLEAU DES DEMANDES EN COURS
-
-                $return .= '<h3>' . _('resp_traite_demandes_titre_tableau_1') . '</h3>';
-                $return .= '<table cellpadding="2" class="table table-hover table-responsive table-condensed table-striped">';
-                $return .= '<thead>';
-                $return .= '<tr>';
-                $return .= '<th>' . _('divers_nom_maj_1') . '<br>' . _('divers_prenom_maj_1') . '</th>';
-                $return .= '<th>' . _('divers_quotite_maj_1') . '</th>';
-                $return .= '<th>' . _('divers_type_maj_1') . '</th>';
-                $return .= '<th>' . _('divers_debut_maj_1') . '</th>';
-                $return .= '<th>' . _('divers_fin_maj_1') . '</th>' ;
-                $return .= '<th>' . _('divers_comment_maj_1') . '</th>';
-                $return .= '<th>' . _('resp_traite_demandes_nb_jours') . '</th>';
-                // foreach($tab_type_conges as $id_conges => $libelle)
-                // {
-                // 	echo "<th>". _('divers_solde_maj_1') ."<br>$libelle</th>" ;
-                // }
-                // if ($_SESSION['config']['gestion_conges_exceptionnels'])
-                // foreach($tab_type_conges_exceptionnels as $id_conges => $libelle)
-                // {
-                // 	echo "<th>". _('divers_solde_maj_1') ."<br>$libelle</th>" ;
-                // }
-                $return .= '<th>' . _('divers_solde') . '</th>';
-                $return .= '<th>' . _('divers_accepter_maj_1') . '</th>';
-                $return .= '<th>' . _('divers_refuser_maj_1') . '</th>';
-                $return .= '<th>' . _('resp_traite_demandes_attente') . '</th>' ;
-                $return .= '<th>' . _('resp_traite_demandes_motif_refus') . '</th>';
-                if($_SESSION['config']['affiche_date_traitement']) {
-                    $return .= '<th>' . _('divers_date_traitement') . '</th>';
-                }
-                $return .= '</tr>';
-                $return .= '</thead>';
-                $return .= '<tbody>';
-
-                $i = true;
-                $tab_bt_radio=array();
-                while ($resultat1 = $ReqLog1->fetch_array()) {
-                    /** sur la ligne ,   **/
-                    /** le 1er bouton radio est <input type="radio" name="tab_bt_radio[valeur de p_num]" value="[valeur de p_login]--[valeur p_nb_jours]--$type--OK"> */
-                    /**  et le 2ieme est <input type="radio" name="tab_bt_radio[valeur de p_num]" value="[valeur de p_login]--[valeur p_nb_jours]--$type--not_OK"> */
-                    /**  et le 3ieme est <input type="radio" name="tab_bt_radio[valeur de p_num]" value="[valeur de p_login]--[valeur p_nb_jours]--$type--RIEN"> */
-
-                    $sql_p_date_deb = $resultat1["p_date_deb"];
-                    $sql_p_date_deb_fr = eng_date_to_fr($resultat1["p_date_deb"]);
-                    $sql_p_demi_jour_deb=$resultat1["p_demi_jour_deb"] ;
-                    if($sql_p_demi_jour_deb=="am") $demi_j_deb="matin";  else $demi_j_deb="après-midi";
-                    $sql_p_date_fin = $resultat1["p_date_fin"];
-                    $sql_p_date_fin_fr = eng_date_to_fr($resultat1["p_date_fin"]);
-                    $sql_p_demi_jour_fin=$resultat1["p_demi_jour_fin"] ;
-                    if($sql_p_demi_jour_fin=="am") $demi_j_fin="matin";  else $demi_j_fin="après-midi";
-                    $sql_p_commentaire = $resultat1["p_commentaire"];
-                    $sql_p_num = $resultat1["p_num"];
-                    $sql_p_login = $resultat1["p_login"];
-                    $sql_p_nb_jours = affiche_decimal($resultat1["p_nb_jours"]);
-                    $sql_p_type = $resultat1["p_type"];
-                    $sql_p_date_demande = $resultat1["p_date_demande"];
-                    $sql_p_date_traitement = $resultat1["p_date_traitement"];
-
-                    // on construit la chaine qui servira de valeur à passer dans les boutons-radio
-                    $chaine_bouton_radio = "$sql_p_login--$sql_p_nb_jours--$sql_p_type--$sql_p_date_deb--$sql_p_demi_jour_deb--$sql_p_date_fin--$sql_p_demi_jour_fin";
-
-                    // si le user fait l'objet d'une double validation on a pas le meme resultat sur le bouton !
-                    if($tab_all_users_du_resp[$sql_p_login]['double_valid'] == "Y") {
-                        // si on est a la fois resp et grand resp
-                        if( (count($tab_all_users_du_grand_resp)!=0 ) && (array_key_exists($sql_p_login, $tab_all_users_du_grand_resp)) ) {
-                            $boutonradio1="<input type=\"radio\" name=\"tab_bt_radio[$sql_p_num]\" value=\"$chaine_bouton_radio--OK\">";
-                        } else { //on est QUe resp
-                            $boutonradio1="<input type=\"radio\" name=\"tab_bt_radio[$sql_p_num]\" value=\"$chaine_bouton_radio--VALID\">";
-                        }
-                    } else {
-                        $boutonradio1="<input type=\"radio\" name=\"tab_bt_radio[$sql_p_num]\" value=\"$chaine_bouton_radio--OK\">";
-                    }
-
-                    $boutonradio2="<input type=\"radio\" name=\"tab_bt_radio[$sql_p_num]\" value=\"$chaine_bouton_radio--not_OK\">";
-                    $boutonradio3="<input type=\"radio\" name=\"tab_bt_radio[$sql_p_num]\" value=\"$chaine_bouton_radio--RIEN\" checked>";
-
-                    $text_refus="<input class=\"form-control\" type=\"text\" name=\"tab_text_refus[$sql_p_num]\" size=\"20\" max=\"100\">";
-
-                    $return .= '<tr class="'.($i?'i':'p').'">';
-                    $return .= '<td><b>' . $tab_all_users_du_resp[$sql_p_login]['nom'] . '</b><br>' . $tab_all_users_du_resp[$sql_p_login]['prenom'] . '</td><td>' . $tab_all_users_du_resp[$sql_p_login]['quotite'] . '%</td>';
-                    $return .= '<td>' . $tab_type_all_abs[$sql_p_type]['libelle'] . '</td>';
-                    $return .= '<td>' . $sql_p_date_deb_fr . '<span class="demi">' . $demi_j_deb . '</span></td><td>' . $sql_p_date_fin_fr . '<span class="demi">' . $demi_j_fin . '</span></td><td>' . $sql_p_commentaire . '</td><td><b>' . $sql_p_nb_jours . '</b></td>';
-                    $tab_conges=$tab_all_users_du_resp[$sql_p_login]['conges'];
-                    $return .= '<td>' . $tab_conges[$tab_type_all_abs[$sql_p_type]['libelle']]['solde'] . '</td>';
-                    // foreach($tab_type_conges as $id_conges => $libelle)
-                    // {
-                    // 	echo "<td>".$tab_conges[$libelle]['solde']."</td>";
-                    // }
-                    // if ($_SESSION['config']['gestion_conges_exceptionnels'])
-                    // foreach($tab_type_conges_exceptionnels as $id_conges => $libelle)
-                    // {
-                    // 	echo "<td>".$tab_conges[$libelle]['solde']."</td>";
-                    // }
-                    // echo "<td>".$tab_type_all_abs[$sql_p_type]['libelle']."</td>\n";
-                    $return .= '<td>' . $boutonradio1 . '</td><td>' . $boutonradio2 . '</td><td>' . $boutonradio3 . '</td><td>' . $text_refus . '</td>';
-                    if($_SESSION['config']['affiche_date_traitement']) {
-                        if($sql_p_date_demande == NULL) {
-                            $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : ' . $sql_p_date_traitement . '</td>';
-                        } else {
-                            $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : pas traité</td>';
-                        }
-                    }
-
-                    $return .= '</tr>';
-                    $i = !$i;
-                } // while
-                $return .= '</tbody>';
-                $return .= '</table>';
-            } //if($count1!=0)
-        } //if( count($tab_all_users_du_resp)!=0 )
-
-
-        /*********************************/
-        /* TABLEAU DES DEMANDES DES USERS DONT ON EST LE GRAND RESP */
-        /*********************************/
-
-        if($_SESSION['config']['double_validation_conges']) {
-
-            // si tableau des users du grand resp n'est pas vide
-            if( count($tab_all_users_du_grand_resp)!=0 ) {
-
-                // Récup des demandes en cours pour les users dont $_SESSION['userlogin'] est GRAND responsable :
-                $sql2 = "SELECT p_num, p_login, p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_nb_jours, p_commentaire, p_type, p_date_demande, p_date_traitement FROM conges_periode ";
-                $sql2=$sql2." WHERE p_etat =\"valid\" ";
-                $sql2=$sql2." AND p_login IN ($list_users_du_grand_resp) ";
-                $sql2=$sql2." ORDER BY p_num";
-
-                $ReqLog2 = \includes\SQL::query($sql2) ;
-
-                $count2=$ReqLog2->num_rows;
-                if($count2!=0) {
-                    // AFFICHAGE TABLEAU DES DEMANDES EN COURS POUR DEUXIEME VALIDATION
-
-                    $return .= '<h3>' . _('resp_traite_demandes_titre_tableau_2') . '</h3>';
-
-                    $return .= '<table class="table table-hover table-responsive table-condensed table-striped">';
-                    $return .= '<thead>';
-                    $return .= '<tr>';
-                    $return .= '<th><b>' . _('divers_nom_maj_1') . '</b><br>' . _('divers_prenom_maj_1') . '</th>';
-                    $return .= '<th>' . _('divers_quotite_maj_1') . '</th>';
-                    $return .= '<th>' . _('divers_debut_maj_1') . '</th>';
-                    $return .= '<th>' . _('divers_fin_maj_1') . '</th>';
-                    $return .= '<th>' . _('divers_comment_maj_1') . '</th>';
-                    $return .= '<th>' . _('resp_traite_demandes_nb_jours') . '</th>';
-                    foreach($tab_type_conges as $id_conges => $libelle) {
-                        $return .= '<th>' . _('divers_solde_maj_1') . '<br>' . $libelle . '</th>';
-                    }
-                    $return .= '<th>' . _('divers_type_maj_1') . '</th>';
-                    $return .= '<th>' . _('divers_accepter_maj_1') . '</th>';
-                    $return .= '<th>' . _('divers_refuser_maj_1') . '</th>';
-                    $return .= '<th>' . _('resp_traite_demandes_attente') . '</th>';
-                    $return .= '<th>' . _('resp_traite_demandes_motif_refus') . '</th>';
-                    if($_SESSION['config']['affiche_date_traitement']) {
-                        $return .= '<th>' . _('divers_date_traitement') . '</th>';
-                    }
-                    $return .= '</tr>';
-                    $return .= '</thead>';
-                    $return .= '<tbody>';
-
-                    $i = true;
-                    $tab_bt_radio=array();
-                    while ($resultat2 = $ReqLog2->fetch_array()) {
-                        /** sur la ligne ,   **/
-                        /** le 1er bouton radio est <input type="radio" name="tab_bt_radio[valeur de p_num]" value="[valeur de p_login]--[valeur p_nb_jours]--$type--OK"> */
-                        /**  et le 2ieme est <input type="radio" name="tab_bt_radio[valeur de p_num]" value="[valeur de p_login]--[valeur p_nb_jours]--$type--not_OK"> */
-                        /**  et le 3ieme est <input type="radio" name="tab_bt_radio[valeur de p_num]" value="[valeur de p_login]--[valeur p_nb_jours]--$type--RIEN"> */
-
-                        $sql_p_date_deb = $resultat2["p_date_deb"];
-                        $sql_p_date_deb_fr = eng_date_to_fr($resultat2["p_date_deb"]);
-                        $sql_p_demi_jour_deb=$resultat2["p_demi_jour_deb"] ;
-                        if($sql_p_demi_jour_deb=="am") $demi_j_deb="matin";  else $demi_j_deb="après-midi";
-                        $sql_p_date_fin = $resultat2["p_date_fin"];
-                        $sql_p_date_fin_fr = eng_date_to_fr($resultat2["p_date_fin"]);
-                        $sql_p_demi_jour_fin=$resultat2["p_demi_jour_fin"] ;
-                        if($sql_p_demi_jour_fin=="am") $demi_j_fin="matin";  else $demi_j_fin="après-midi";
-                        $sql_p_commentaire = $resultat2["p_commentaire"];
-                        $sql_p_num = $resultat2["p_num"];
-                        $sql_p_login = $resultat2["p_login"];
-                        $sql_p_nb_jours = affiche_decimal($resultat2["p_nb_jours"]);
-                        $sql_p_type = $resultat2["p_type"];
-                        $sql_p_date_demande = $resultat2["p_date_demande"];
-                        $sql_p_date_traitement = $resultat2["p_date_traitement"];
-
-                        // on construit la chaine qui servira de valeur à passer dans les boutons-radio
-                        $chaine_bouton_radio = "$sql_p_login--$sql_p_nb_jours--$sql_p_type--$sql_p_date_deb--$sql_p_demi_jour_deb--$sql_p_date_fin--$sql_p_demi_jour_fin";
-
-                        $boutonradio1="<input type=\"radio\" name=\"tab_bt_radio[$sql_p_num]\" value=\"$chaine_bouton_radio--OK\">";
-                        $boutonradio2="<input type=\"radio\" name=\"tab_bt_radio[$sql_p_num]\" value=\"$chaine_bouton_radio--not_OK\">";
-                        $boutonradio3="<input type=\"radio\" name=\"tab_bt_radio[$sql_p_num]\" value=\"$chaine_bouton_radio--RIEN\" checked>";
-
-                        $text_refus="<input class=\"form-control\" type=\"text\" name=\"tab_text_refus[$sql_p_num]\" size=\"20\" max=\"100\">";
-
-                        $return .= '<tr class="'.($i?'i':'p').'">';
-                        $return .= '<td><strong>' . $tab_all_users_du_grand_resp[$sql_p_login]['nom'] . '</strong><br>' . $tab_all_users_du_grand_resp[$sql_p_login]['prenom'] . '</td><td>' . $tab_all_users_du_grand_resp[$sql_p_login]['quotite'] . '%</td>';
-                        $return .= '<td>' . $sql_p_date_deb_fr . '<span class="demi">' . $demi_j_deb . '<span></td><td>' . $sql_p_date_fin_fr . '<span class="demi">' . $demi_j_fin . '</span></td><td>' . $sql_p_commentaire . '</td><td><b>' . $sql_p_nb_jours . '</b></td>';
-                        $tab_conges=$tab_all_users_du_grand_resp[$sql_p_login]['conges'];
-                        foreach($tab_type_conges as $id_conges => $libelle) {
-                            $return .= '<td>' . $tab_conges[$libelle]['solde'] . '</td>';
-                        }
-                        $return .= '<td>' . $tab_type_all_abs[$sql_p_type]['libelle'] . '</td>';
-                        $return .= '<td>' . $boutonradio1 . '</td><td>' . $boutonradio2 . '</td><td>' . $boutonradio3 . '</td><td>' . $text_refus . '</td>';
-                        if($_SESSION['config']['affiche_date_traitement']) {
-                            $return .= '<td class="histo-left">' . _('divers_demande') . ' : '. $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : ' . $sql_p_date_traitement . '</td>';
-                        }
-
-                        $return .= '</tr>';
-                        $i = !$i;
-                    } //while
-                    $return .= '</tbody>';
-                    $return .= '</table>';
-                } //if($count2!=0)
-            } //if( count($tab_all_users_du_grand_resp)!=0 )
-        } //if($_SESSION['config']['double_validation_conges'])
-
-        $return .= '<br>';
-
-        if(($count1==0) && ($count2==0)) {
-            $return .= '<strong>' . _('resp_traite_demandes_aucune_demande') . '</strong>';
+        /* Préparation et requêtage */
+        $listPlanningId = \App\ProtoControllers\HautResponsable\Planning::getListPlanningId();
+        $return = '<h1>' . _('resp_affichage_liste_planning_titre') . '</h1>';
+        $return .= $message;
+        $session = session_id();
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-hover',
+            'table-responsive',
+            'table-condensed',
+            'table-striped',
+        ]);
+        $childTable = '<thead><tr><th>' . _('divers_nom_maj_1') . '</th><th style="width:10%"></th></tr></thead><tbody>';
+        if (empty($listPlanningId)) {
+            $childTable .= '<tr><td colspan="2"><center>' . _('aucun_resultat') . '</center></td></tr>';
         } else {
-            $return .= '<hr/>';
-            $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
+            $listIdUsed   = \App\ProtoControllers\HautResponsable\Planning::getListPlanningUsed($listPlanningId);
+            $listPlanning = \App\ProtoControllers\HautResponsable\Planning::getListPlanning($listPlanningId);
+            foreach ($listPlanning as $planning) {
+                $childTable .= '<tr><td>' . $planning['name'] . '</td>';
+                $childTable .= '<td><form action="" method="post" accept-charset="UTF-8"
+enctype="application/x-www-form-urlencoded"><a  title="' . _('form_modif') . '" href="resp_index.php?onglet=modif_planning&id=' . $planning['planning_id'] .
+                '&session=' . $session . '"><i class="fa fa-pencil"></i></a>&nbsp;&nbsp;';
+                $childTable .= '</form></td></tr>';
+            }
         }
+        $childTable .= '</tbody>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
 
-        $return .= '</form>';
         return $return;
     }
 
     /**
-     * Encapsule le comportement du module de traitement des congés des utilisateurs sous la responsabilité du responsable
+     * Encapsule le comportement du module de modification de planning
      *
-     * @return void
-     * @access public
-     * @static
+     * @param int $id
+     *
+     * @return string
      */
-    public static function traitementDemandesModule($tab_type_cong)
+    public static function getFormPlanningModule($id)
     {
-        //var pour resp_traite_demande_all.php
-        $tab_bt_radio   = getpost_variable('tab_bt_radio');
-        $tab_text_refus = getpost_variable('tab_text_refus');
-        $return = '';
-
-        // titre
-        $return .= '<h1>' . _('resp_traite_demandes_titre') . '</h1>';
-
-
-        // si le tableau des bouton radio des demandes est vide , on affiche les demandes en cours
-        if($tab_bt_radio=="") {
-            $return .= \responsable\Fonctions::affiche_all_demandes_en_cours($tab_type_cong);
-        } else {
-            $return .= \responsable\Fonctions::traite_all_demande_en_cours( $tab_bt_radio, $tab_text_refus);
+        $return    = '';
+        $message   = '';
+        $errorsLst = [];
+        if (!empty($_POST)) {
+            if (0 < (int) \App\ProtoControllers\Responsable\Planning::putPlanning($id, $_POST, $errorsLst)) {
+                log_action(0, '', '', 'Édition des associations du planning ' . $id);
+                redirect(ROOT_PATH . 'responsable/resp_index.php?session='. session_id() . '&onglet=liste_planning', false);
+            } else {
+                if (!empty($errorsLst)) {
+                    $errors = '';
+                    foreach ($errorsLst as $key => $value) {
+                        if (is_array($value)) {
+                            $value = implode(' / ', $value);
+                        }
+                        $errors .= '<li>' . $key . ' : ' . $value . '</li>';
+                    }
+                    $message = '<div class="alert alert-danger">' . _('erreur_recommencer') . ' :<ul>' . $errors . '</ul></div>';
+                }
+            }
         }
+
+        $return .= '<h1>' . _('resp_modif_planning_titre') . '</h1>';
+        $return .= $message;
+
+        $return .= '<form action="" method="post" accept-charset="UTF-8"
+enctype="application/x-www-form-urlencoded" class="form-group">';
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-hover',
+            'table-responsive',
+            'table-striped',
+            'table-condensed'
+        ]);
+        $childTable = '<thead><tr><th class="col-md-4">' . _('Nom') .'</th><th></th></tr></thead><tbody>';
+        $sql   = 'SELECT * FROM planning WHERE planning_id = ' . $id;
+        $query = \includes\SQL::query($sql);
+        $data = $query->fetch_assoc();
+        $valueName = $data['name'];
+        $idSemaine = uniqid();
+        $childTable .= '<tr><td>' . $valueName . '<input type="hidden" name="planning_id" value="' . $id . '" /><input type="hidden" name="_METHOD" value="PUT" /></td><td><input type="button" id="' . $idSemaine . '" class="btn btn-default " /></td></tr></tbody>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
+        $return .= '<h3>' . _('Creneaux') . '</h3>';
+        $idCommune = uniqid();
+        $return .= '<div id="' . $idCommune . '"><h4>' . _('resp_temps_partiel_sem') . '</h4>';
+
+        $return .= static::getFormPlanningTable(\App\Models\Planning\Creneau::TYPE_SEMAINE_COMMUNE, $id, $_POST);
+        $idImpaire = uniqid();
+        $return .= '</div><div id="' . $idImpaire . '"><h4>' . _('resp_temps_partiel_sem_impaires') . '</h4>';
+        $idPaire = uniqid();
+        $return .= static::getFormPlanningTable(\App\Models\Planning\Creneau::TYPE_SEMAINE_IMPAIRE, $id, $_POST);
+        $return .= '</div><div id="' . $idPaire . '"><h4>' .  _('resp_temps_partiel_sem_paires') . '</h4>';
+
+        $return .= static::getFormPlanningTable(\App\Models\Planning\Creneau::TYPE_SEMAINE_PAIRE, $id, $_POST);
+        $typeSemaine = [
+            \App\Models\Planning\Creneau::TYPE_SEMAINE_COMMUNE => $idCommune,
+            \App\Models\Planning\Creneau::TYPE_SEMAINE_IMPAIRE => $idImpaire,
+            \App\Models\Planning\Creneau::TYPE_SEMAINE_PAIRE   => $idPaire,
+        ];
+        $text = [
+            'common'    => _('Semaines_identiques'),
+            'notCommon' => _('Semaines_differenciees'),
+        ];
+        $return .= '</div><script>new semaineDisplayer("' . $idSemaine . '", "' . \App\Models\Planning\Creneau::TYPE_SEMAINE_COMMUNE . '", ' . json_encode($typeSemaine) . ', ' . json_encode($text) . ').init().readOnly()</script>';
+        $return .= '<h3>Employés associés</h3>';
+        $return .= self::getFormPlanningEmployes($id);
+        $return .= '<br><input type="submit" class="btn btn-success" value="' . _('form_submit') . '" />';
+        $return .='</form>';
+
+        return $return;
+    }
+
+    /**
+     * Retourne la structure d'une table de créneaux de planning
+     *
+     * @param int $typeSemaine
+     * @param int $idPlanning
+     * @param array $postPlanning
+     *
+     * @return string
+     */
+    private static function getFormPlanningTable($typeSemaine, $idPlanning, array $postPlanning)
+    {
+        /* Recupération des créneaux (postés ou existants) pour le JS */
+        $creneauxGroupes = \App\ProtoControllers\HautResponsable\Planning\Creneau::getCreneauxGroupes($postPlanning, $idPlanning, $typeSemaine);
+
+        $jours = [
+            // ISO-8601
+            1 => _('Lundi'),
+            2 => _('Mardi'),
+            3 => _('Mercredi'),
+            4 => _('Jeudi'),
+            5 => _('Vendredi'),
+        ];
+        if (false !== $_SESSION['config']['samedi_travail']) {
+            $jours[6] = _('Samedi');
+        }
+        if (false !== $_SESSION['config']['dimanche_travail']) {
+            $jours[7] = _('Dimanche');
+        }
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-hover',
+            'table-responsive',
+            'table-striped',
+            'table-condensed'
+        ]);
+        $linkId       = uniqid();
+        $selectJourId = uniqid();
+        $debutId      = uniqid();
+        $finId        = uniqid();
+        $helperId     = uniqid();
+        $childTable = '<thead><tr><th width="20%">' . _('Jour') . '</th><th>' . _('Creneaux_travail') . '</th><tr></thead><tbody>';
+        foreach ($jours as $id => $jour) {
+            $childTable .= '<tr data-id-jour=' . $id . '><td name="nom">' . $jour . '</td><td class="creneaux"></td></tr>';
+        }
+        $childTable .= '</tbody>';
+        $options = [
+            'selectJourId'          => $selectJourId,
+            'tableId'               => $table->getId(),
+            'debutId'               => $debutId,
+            'finId'                 => $finId,
+            'typeSemaine'           => $typeSemaine,
+            'typePeriodeMatin'      => \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN,
+            'typeHeureDebut'        => \App\Models\Planning\Creneau::TYPE_HEURE_DEBUT,
+            'typeHeureFin'          => \App\Models\Planning\Creneau::TYPE_HEURE_FIN,
+            'helperId'              => $helperId,
+            'nilInt'                => NIL_INT,
+            'erreurFormatHeure'     => _('Format_heure_incorrect'),
+            'erreurOptionManquante' => _('Option_manquante'),
+        ];
+        $childTable .= '<script type="text/javascript">
+        new planningController("' . $linkId . '", ' . json_encode($options) . ', ' . json_encode($creneauxGroupes) . ').readOnly();
+        </script>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+
+        return ob_get_clean();
+    }
+
+    /**
+     * Retourne la séquence de formulaire des employés associés au planning
+     *
+     * @param int $idPlanning
+     *
+     * @return string
+     */
+    private static function getFormPlanningEmployes($idPlanning)
+    {
+        $idPlanning = (int) $idPlanning;
+        $return = '';
+        $utilisateursAssocies = \App\ProtoControllers\Responsable\Planning::getListeUtilisateursAssocies($idPlanning);
+
+        $subalternes = \App\ProtoControllers\Responsable::getUsersRespDirect($_SESSION['userlogin']);
+
+        $utilisateursAssocies = array_filter(
+            $utilisateursAssocies,
+            function ($utilisateurs) use ($subalternes) {
+                return in_array($utilisateurs['login'], $subalternes);
+            }
+        );
+
+        if (empty($utilisateursAssocies)) {
+            $return .= '<div>' . _('resp_tout_utilisateur_associe') . '</div>';
+        } else {
+            $hasGroup = $_SESSION['config']['gestion_groupes'];
+            if($hasGroup) {
+                $return .= '<div class="form-group col-md-4 col-sm-5">
+                <label class="control-label col-md-3 col-sm-3" for="groupe">Groupe&nbsp;:</label>
+                <div class="col-md-8 col-sm-8"><select class="form-control" name="groupeId" id="groupe">';
+                $return .= '<option value="' . NIL_INT . '">Tous</option>';
+
+                $optionsGroupes = \App\ProtoControllers\Groupe::getOptions();
+
+                foreach ($optionsGroupes as $id => $groupe) {
+                    $return .= '<option value="' . $id . '">' . $groupe['nom'] . '</option>';
+                }
+                $return .= '</select></div></div><br><br><br>';
+                $associations = array_map(function ($groupe) {
+                        return $groupe['utilisateurs'];
+                    },
+                    $optionsGroupes
+                );
+            }
+            $return .= '<div>';
+            foreach ($utilisateursAssocies as $utilisateur) {
+                $disabled = (\App\ProtoControllers\Utilisateur::hasSortiesEnCours($utilisateur['login']))
+                    ? 'disabled '
+                    : '';
+                $checked = ($idPlanning === $utilisateur['planningId'])
+                    ? 'checked '
+                    : '';
+                $nom = \App\ProtoControllers\Utilisateur::getNomComplet($utilisateur['prenom'], $utilisateur['nom']);
+                $return .= '<div class="checkbox-utilisateur" data-user-login="' . $utilisateur['login'] . '">
+                    <label><input type="checkbox" name="utilisateurs[]" value="' . $utilisateur['login'] . '" ' . $disabled . $checked . ' />&nbsp;' . $nom  . '</label>
+                </div>';
+            }
+            $return .= '</div>';
+            if($hasGroup) {
+                $return .= '<script type="text/javascript">
+                console.log(\'test\');
+                new selectAssociationPlanning("groupe", ' . json_encode($associations) . ', ' . NIL_INT . ');
+                </script>';
+            }
+        }
+
         return $return;
     }
 }

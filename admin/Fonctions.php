@@ -1,29 +1,4 @@
 <?php
-/*************************************************************************************************
-Libertempo : Gestion Interactive des Congés
-Copyright (C) 2015 (Wouldsmina)
-Copyright (C) 2015 (Prytoegrian)
-Copyright (C) 2005 (cedric chauvineau)
-
-Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
-termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
-Ce programme est distribué car potentiellement utile, mais SANS AUCUNE GARANTIE,
-ni explicite ni implicite, y compris les garanties de commercialisation ou d'adaptation
-dans un but spécifique. Reportez-vous à la Licence Publique Générale GNU pour plus de détails.
-Vous devez avoir reçu une copie de la Licence Publique Générale GNU en même temps
-que ce programme ; si ce n'est pas le cas, écrivez à la Free Software Foundation,
-Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, États-Unis.
-*************************************************************************************************
-This program is free software; you can redistribute it and/or modify it under the terms
-of the GNU General Public License as published by the Free Software Foundation; either
-version 2 of the License, or any later version.
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the GNU General Public License for more details.
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*************************************************************************************************/
 namespace admin;
 
 /**
@@ -34,7 +9,7 @@ class Fonctions
     // modifie, pour un resp donné,  les groupes dont il est resp et grands_resp
     public static function modif_resp_groupes($choix_resp, &$checkbox_resp_group, &$checkbox_grd_resp_group)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -87,7 +62,7 @@ class Fonctions
     // affiche pour un resp des cases à cocher devant les groupes possibles pour les selectionner.
     public static function affiche_gestion_responsable_groupes($choix_resp, $onglet)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -142,16 +117,23 @@ class Fonctions
         $return .= '<h3>Responsable</h3>';
         /*******************************************/
         //AFFICHAGE DU TABLEAU DES GROUPES DONT RESP EST RESPONSABLE
-        $return .= '<table class="table table-hover table-responsive table-condensed table-striped">';
-        $return .= '<thead>';
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-hover',
+            'table-responsive',
+            'table-condensed',
+            'table-striped',
+        ]);
+        $childTable = '<thead>';
         // affichage TITRE
-        $return .= '<tr>';
-        $return .= '<th>&nbsp;</th>';
-        $return .= '<th>' . _('admin_groupes_groupe') . '</th>';
-        $return .= '<th>' . _('admin_groupes_libelle') . '</th>';
-        $return .= '</tr>';
-        $return .= '</thead>';
-        $return .= '<tbody>';
+        $childTable .= '<tr>';
+        $childTable .= '<th>&nbsp;</th>';
+        $childTable .= '<th>' . _('admin_groupes_groupe') . '</th>';
+        $childTable .= '<th>' . _('admin_groupes_libelle') . '</th>';
+        $childTable .= '</tr>';
+        $childTable .= '</thead>';
+        $childTable .= '<tbody>';
 
         // on rempli un autre tableau des groupes dont resp est responsables
         $tab_resp=array();
@@ -177,15 +159,18 @@ class Fonctions
                 $class="histo";
             }
 
-            $return .= '<tr class="' . (!($i%2) ? 'i' : 'p') . '">';
-            $return .= '<td>' . $case_a_cocher . '</td>';
-            $return .= '<td class="' . $class . '">' . $group . '</td>';
-            $return .= '<td class="' . $class . '">' . $comment . '</td>';
-            $return .= '</tr>';
+            $childTable .= '<tr class="' . (!($i%2) ? 'i' : 'p') . '">';
+            $childTable .= '<td>' . $case_a_cocher . '</td>';
+            $childTable .= '<td class="' . $class . '">' . $group . '</td>';
+            $childTable .= '<td class="' . $class . '">' . $comment . '</td>';
+            $childTable .= '</tr>';
         }
 
         $return .= '</tbody>';
-        $return .= '</table>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
         /*******************************************/
         $return .= '</div>';
         // si on a configuré la double validation
@@ -194,13 +179,20 @@ class Fonctions
             $return .= '<h3>Grand Responsable</h3>';
             /*******************************************/
             //AFFICHAGE DU TABLEAU DES GROUPES DONT RESP EST GRAND RESPONSABLE
-            $return .= '<table class="table table-hover table-responsive table-condensed table-striped">';
-            $return .= '<thead>';
-            $return .= '<th>&nbsp;</th>';
-            $return .= '<th>' . _('admin_groupes_groupe') . '</th>';
-            $return .= '<th>' . _('admin_groupes_libelle') . '</th>';
-            $return .= '</tr>';
-            $return .= '</thead><tbody>';
+            $table = new \App\Libraries\Structure\Table();
+            $table->addClasses([
+                'table',
+                'table-hover',
+                'table-responsive',
+                'table-condensed',
+                'table-striped',
+            ]);
+            $childTable = '<thead>';
+            $childTable .= '<th>&nbsp;</th>';
+            $childTable .= '<th>' . _('admin_groupes_groupe') . '</th>';
+            $childTable .= '<th>' . _('admin_groupes_libelle') . '</th>';
+            $childTable .= '</tr>';
+            $childTable .= '</thead><tbody>';
 
             // on rempli un autre tableau des groupes dont resp est GRAND responsables
             $tab_grd_resp=array();
@@ -226,14 +218,19 @@ class Fonctions
                     $class="histo";
                 }
 
-                $return .= '<tr class="' . (!($i%2) ? 'i' : 'p') . '">';
-                $return .= '<td>' . $case_a_cocher . '</td>';
-                $return .= '<td class="' . $class . '">' . $group . '</td>';
-                $return .= '<td class="' . $class . '">' . $comment . '</td>';
-                $return .= '</tr>';
+                $childTable .= '<tr class="' . (!($i%2) ? 'i' : 'p') . '">';
+                $childTable .= '<td>' . $case_a_cocher . '</td>';
+                $childTable .= '<td class="' . $class . '">' . $group . '</td>';
+                $childTable .= '<td class="' . $class . '">' . $comment . '</td>';
+                $childTable .= '</tr>';
             }
 
-            $return .= '</tbody></table></div>';
+            $childTable .= '</tbody>';
+            $table->addChild($childTable);
+            ob_start();
+            $table->render();
+            $return .= ob_get_clean();
+            $return .= '</div>';
             /*******************************************/
         }
 
@@ -250,7 +247,7 @@ class Fonctions
     // affiche le tableau des responsables pour choisir sur lequel on va gerer les groupes dont il est resp
     public static function affiche_choix_responsable_groupes()
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -265,18 +262,24 @@ class Fonctions
         /*************************/
         // AFFICHAGE TABLEAU
         $return .= '<h2>' . _('admin_aff_choix_resp_titre') . '</h2>';
-        $return .= '<table class="table table-hover table-responsive table-condensed table-striped">';
-        $return .= '<thead>';
-        $return .= '<tr>';
-        $return .= '<th>' . _('divers_responsable_maj_1') . '</th>';
-        $return .= '<th>' . _('divers_login') . '</th>';
-        $return .= '</tr>';
-        $return .= '</thead>';
-        $return .= '<tbody>';
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-hover',
+            'table-responsive',
+            'table-condensed',
+            'table-striped',
+        ]);
+        $childTable = '<thead>';
+        $childTable .= '<tr>';
+        $childTable .= '<th>' . _('divers_responsable_maj_1') . '</th>';
+        $childTable .= '<th>' . _('divers_login') . '</th>';
+        $childTable .= '</tr>';
+        $childTable .= '</thead>';
+        $childTable .= '<tbody>';
 
         $i = true;
-        while ($resultat_resp = $ReqLog_resp->fetch_array())
-        {
+        while ($resultat_resp = $ReqLog_resp->fetch_array()) {
 
             $sql_login=$resultat_resp["u_login"] ;
             $sql_nom=$resultat_resp["u_nom"] ;
@@ -284,20 +287,24 @@ class Fonctions
 
             $text_choix_resp="<a href=\"$PHP_SELF?session=$session&onglet=admin-group-responsables&choix_resp=$sql_login\"><strong>$sql_nom&nbsp;$sql_prenom</strong></a>" ;
 
-            $return .= '<tr class="' . ($i ? 'i' : 'p') . '">';
-            $return .= '<td>' . $text_choix_resp . '</td>';
-            $return .= '<td>' . $sql_login . '</td>';
-            $return .= '</tr>';
+            $childTable .= '<tr class="' . ($i ? 'i' : 'p') . '">';
+            $childTable .= '<td>' . $text_choix_resp . '</td>';
+            $childTable .= '<td>' . $sql_login . '</td>';
+            $childTable .= '</tr>';
             $i = !$i;
         }
-        $return .= '</tbody></table>';
+        $childTable .= '</tbody>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
         return $return;
     }
 
     // modifie, pour un groupe donné,  ses resp et grands_resp
     public static function modif_group_responsables($choix_group, &$checkbox_group_resp, &$checkbox_group_grd_resp)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -351,7 +358,7 @@ class Fonctions
     // affiche pour un groupe des cases à cocher devant les resp et grand_resp possibles pour les selectionner.
     public static function affiche_gestion_groupes_responsables($choix_group, $onglet)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -393,17 +400,24 @@ class Fonctions
 
         /*******************************************/
         //AFFICHAGE DU TABLEAU DES RESPONSBLES DU GROUPE
-        $return .= '<table class="table table-hover table-responsive table-condensed table-striped">';
-        $return .= '<thead>';
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-hover',
+            'table-responsive',
+            'table-condensed',
+            'table-striped',
+        ]);
+        $childTable = '<thead>';
 
         // affichage TITRE
-        $return .= '<tr>';
-        $return .= '<th>&nbsp;</th>';
-        $return .= '<th>' . _('divers_personne_maj_1') . '</th>';
-        $return .= '<th>' . _('divers_login') . '</th>';
-        $return .= '</tr>';
-        $return .= '</thead>';
-        $return .= '<tbody>';
+        $childTable .= '<tr>';
+        $childTable .= '<th>&nbsp;</th>';
+        $childTable .= '<th>' . _('divers_personne_maj_1') . '</th>';
+        $childTable .= '<th>' . _('divers_login') . '</th>';
+        $childTable .= '</tr>';
+        $childTable .= '</thead>';
+        $childTable .= '<tbody>';
 
         // on rempli un autre tableau des responsables du groupe
         $tab_group=array();
@@ -429,13 +443,17 @@ class Fonctions
                 $class="histo";
             }
 
-            $return .= '<tr class="' . (!($i%2) ? 'i' : 'p') . '">';
-            $return .= '<td>' . $case_a_cocher . '</td>';
-            $return .= '<td class="' . $class . '">' . $nom . '&nbsp;' . $prenom . '</td>';
-            $return .= '<td class="' . $class . '">' . $login . '</td>';
-            $return .= '</tr>';
+            $childTable .= '<tr class="' . (!($i%2) ? 'i' : 'p') . '">';
+            $childTable .= '<td>' . $case_a_cocher . '</td>';
+            $childTable .= '<td class="' . $class . '">' . $nom . '&nbsp;' . $prenom . '</td>';
+            $childTable .= '<td class="' . $class . '">' . $login . '</td>';
+            $childTable .= '</tr>';
         }
-        $return .= '</tbody></table>';
+        $childTable .= '</tbody>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
         /*******************************************/
         $return .= '</div>';
         $return .= '<div class="col-md-6">';
@@ -444,15 +462,22 @@ class Fonctions
             $return .= '<h3>' . _('admin_gestion_groupe_grand_resp_responsables') . '</h3>';
             /*******************************************/
             //AFFICHAGE DU TABLEAU DES GRANDS RESPONSBLES DU GROUPE
-            $return .= '<table class="table table-hover table-responsive table-condensed table-striped">';
-            $return .= '<thead>';
+            $table = new \App\Libraries\Structure\Table();
+            $table->addClasses([
+                'table',
+                'table-hover',
+                'table-responsive',
+                'table-condensed',
+                'table-striped',
+            ]);
+            $childTable = '<thead>';
 
             // affichage TITRE
-            $return .= '<tr>';
-            $return .= '<th>&nbsp;</th>';
-            $return .= '<th>' . _('divers_personne_maj_1') . '&nbsp;:</th>';
-            $return .= '<th>' . _('divers_login') . '&nbsp;:</th>';
-            $return .= '</tr></thead><tbody>';
+            $childTable .= '<tr>';
+            $childTable .= '<th>&nbsp;</th>';
+            $childTable .= '<th>' . _('divers_personne_maj_1') . '&nbsp;:</th>';
+            $childTable .= '<th>' . _('divers_login') . '&nbsp;:</th>';
+            $childTable .= '</tr></thead><tbody>';
 
             // on rempli un autre tableau des grands responsables du groupe
             $tab_group_grd=array();
@@ -478,13 +503,18 @@ class Fonctions
                     $class="histo";
                 }
 
-                $return .= '<tr class="' . (!($i%2) ? 'i' : 'p') . '">';
-                $return .= '<td>' . $case_a_cocher . '</td>';
-                $return .= '<td class="' . $class . '">' . $nom . '&nbsp;' . $prenom . '</td>';
-                $return .= '<td class="' . $class . '">' . $login . '</td>';
-                $return .= '</tr>';
+                $childTable .= '<tr class="' . (!($i%2) ? 'i' : 'p') . '">';
+                $childTable .= '<td>' . $case_a_cocher . '</td>';
+                $childTable .= '<td class="' . $class . '">' . $nom . '&nbsp;' . $prenom . '</td>';
+                $childTable .= '<td class="' . $class . '">' . $login . '</td>';
+                $childTable .= '</tr>';
+
             }
-            $return .= '</tbody></table>';
+            $childTable .= '</tbody>';
+            $table->addChild($childTable);
+            ob_start();
+            $table->render();
+            $return .= ob_get_clean();
             /*******************************************/
         }
 
@@ -500,7 +530,7 @@ class Fonctions
     // affiche le tableau des groupes pour choisir sur quel groupe on va gerer les responsables
     public static function affiche_choix_groupes_responsables()
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -513,36 +543,45 @@ class Fonctions
         // AFFICHAGE TABLEAU
         $return .= '<h1>' . _('admin_onglet_groupe_resp') . '</h1>';
         $return .= '<h2>' . _('admin_aff_choix_groupe_titre') . '</h2>';
-        $return .= '<table class="table table-hover table-responsive table-condensed table-striped">';
-        $return .= '<thead>';
-        $return .= '<tr>';
-        $return .= '<th>' . _('admin_groupes_groupe') . '</th>';
-        $return .= '<th>' . _('admin_groupes_libelle') . '</th>';
-        $return .= '</tr></thead><tbody>';
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-hover',
+            'table-responsive',
+            'table-condensed',
+            'table-striped',
+        ]);
+        $childTable = '<thead>';
+        $childTable .= '<tr>';
+        $childTable .= '<th>' . _('admin_groupes_groupe') . '</th>';
+        $childTable .= '<th>' . _('admin_groupes_libelle') . '</th>';
+        $childTable .= '</tr></thead><tbody>';
 
         $ReqLog_gr = \includes\SQL::query($sql_gr);
-        while ($resultat_gr = $ReqLog_gr->fetch_array())
-        {
+        while ($resultat_gr = $ReqLog_gr->fetch_array()) {
             $sql_gid=$resultat_gr["g_gid"] ;
             $sql_groupename=$resultat_gr["g_groupename"] ;
             $sql_comment=$resultat_gr["g_comment"] ;
 
             $text_choix_group="<a href=\"$PHP_SELF?session=$session&onglet=admin-group-responsables&choix_group=$sql_gid\"><strong>$sql_groupename</strong></a>" ;
 
-            $return .= '<tr>';
-            $return .= '<td>' . $text_choix_group . '</td>';
-            $return .= '<td>' . $sql_comment . '</td>';
-            $return .= '</tr>';
+            $childTable .= '<tr>';
+            $childTable .= '<td>' . $text_choix_group . '</td>';
+            $childTable .= '<td>' . $sql_comment . '</td>';
+            $childTable .= '</tr>';
         }
-        $return .= '</tbody>';
-        $return .= '</table>';
+        $childTable .= '</tbody>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
         return $return;
     }
 
     // affichage des pages de gestion des responsables des groupes
     public static function affiche_choix_gestion_groupes_responsables($choix_group, $choix_resp, $onglet)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -579,7 +618,7 @@ class Fonctions
      */
     public static function groupeResponsableModule($onglet)
     {
-        $choix_group    = getpost_variable('choix_group') ;
+        $choix_group    = htmlentities(getpost_variable('choix_group'), ENT_QUOTES | ENT_HTML401);
         $choix_resp     = getpost_variable('choix_resp') ;
         $return = '';
 
@@ -603,7 +642,7 @@ class Fonctions
 
     public static function modif_user_groups($choix_user, &$checkbox_user_groups)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -619,7 +658,7 @@ class Fonctions
         log_action(0, "", $choix_user, $comment_log);
 
         /* APPEL D'UNE AUTRE PAGE */
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session. ' &onglet=admin-group-users" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '?session=' . $session. '&onglet=admin-group-users" method="POST">';
         $return .= '<input type="submit" value="' . _('form_retour') . '">';
         $return .= '</form>';
         return $return;
@@ -627,7 +666,7 @@ class Fonctions
 
     public static function modif_group_users($choix_group, &$checkbox_group_users)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -662,7 +701,7 @@ class Fonctions
     }
 
     public static function affiche_gestion_groupes_users($choix_group, $onglet) {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -683,17 +722,24 @@ class Fonctions
 
         //AFFICHAGE DU TABLEAU DES USERS DU GROUPE
         $return .= '<h2>' . _('admin_gestion_groupe_users_membres') . ' <strong>' . $sql_group . '</strong>, ' . $sql_comment . '</h2>';
-        $return .= '<table class="table table-hover table-responsive table-condensed table-striped">';
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-hover',
+            'table-condensed',
+            'table-striped',
+            'table-condensed',
+        ]);
 
         // affichage TITRE
-        $return .= '<thead>';
-        $return .= '<tr>';
-        $return .= '<th></th>';
-        $return .= '<th>' . _('divers_personne_maj_1') . '</th>';
-        $return .= '<th>' . _('divers_login') . '</th>';
-        $return .= '</tr>';
-        $return .= '</thead>';
-        $return .= '<tbody>';
+        $childTable = '<thead>';
+        $childTable .= '<tr>';
+        $childTable .= '<th></th>';
+        $childTable .= '<th>' . _('divers_personne_maj_1') . '</th>';
+        $childTable .= '<th>' . _('divers_login') . '</th>';
+        $childTable .= '</tr>';
+        $childTable .= '</thead>';
+        $childTable .= '<tbody>';
 
         // affichage des users
 
@@ -734,15 +780,18 @@ class Fonctions
                 $class="histo";
             }
 
-            $return .= '<tr class="' . (!($i%2) ? 'i' :'p') . '">';
-            $return .= '<td>' . $case_a_cocher . '</td>';
-            $return .= '<td class="' . $class . '">' . $nom . ' ' . $prenom . '</td>';
-            $return .= '<td class="' . $class . '">' . $login . '</td>';
-            $return .= '</tr>';
+            $childTable .= '<tr class="' . (!($i%2) ? 'i' :'p') . '">';
+            $childTable .= '<td>' . $case_a_cocher . '</td>';
+            $childTable .= '<td class="' . $class . '">' . $nom . ' ' . $prenom . '</td>';
+            $childTable .= '<td class="' . $class . '">' . $login . '</td>';
+            $childTable .= '</tr>';
         }
 
-        $return .= '<tbody>';
-        $return .= '</table>';
+        $childTable .= '<tbody>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
         $return .= '<hr/>';
         $return .= '<input type="hidden" name="change_group_users" value="ok">';
         $return .= '<input type="hidden" name="choix_group" value="' .  $choix_group . '">';
@@ -754,7 +803,7 @@ class Fonctions
 
     public static function affiche_choix_groupes_users()
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -768,38 +817,48 @@ class Fonctions
 
         // AFFICHAGE TABLEAU
         $return .= '<h2>' . _('admin_aff_choix_groupe_titre') . '</h2>';
-        $return .= '<table class="table table-hover table-responsive table-condensed table-striped">';
-        $return .= '<thead>';
-        $return .= '<tr>';
-        $return .= '<th>' . _('admin_groupes_groupe') . '</th>';
-        $return .= '<th>' . _('admin_groupes_libelle') . '</th>';
-        $return .= '</tr>';
-        $return .= '</thead>';
-        $return .= '<tbody>';
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-hover',
+            'table-striped',
+            'table-responsive',
+            'table-condensed',
+        ]);
+        $childTable = '<thead>';
+        $childTable .= '<tr>';
+        $childTable .= '<th>' . _('admin_groupes_groupe') . '</th>';
+        $childTable .= '<th>' . _('admin_groupes_libelle') . '</th>';
+        $childTable .= '</tr>';
+        $childTable .= '</thead>';
+        $childTable .= '<tbody>';
 
         $i = true;
         $ReqLog_gr = \includes\SQL::query($sql_gr);
         while ($resultat_gr = $ReqLog_gr->fetch_array()) {
-
             $sql_gid=$resultat_gr["g_gid"] ;
             $sql_group=$resultat_gr["g_groupename"] ;
             $sql_comment=$resultat_gr["g_comment"] ;
 
             $choix_group="<a href=\"$PHP_SELF?session=$session&onglet=admin-group-users&choix_group=$sql_gid\"><b>$sql_group</b></a>" ;
 
-            $return .= '<tr class="'.($i ? 'i' : 'p').'">';
-            $return .= '<td><b>' . $choix_group .'</b></td>';
-            $return .= '<td>' . $sql_comment . '</td>';
-            $return .= '</tr>';
+            $childTable .= '<tr class="'.($i ? 'i' : 'p').'">';
+            $childTable .= '<td><b>' . $choix_group .'</b></td>';
+            $childTable .= '<td>' . $sql_comment . '</td>';
+            $childTable .= '</tr>';
             $i = !$i;
         }
-        $return .= '</tbody></table>';
+        $childTable .= '</tbody>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
         return $return;
     }
 
     public static function affiche_gestion_user_groupes($choix_user, $onglet)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -824,7 +883,7 @@ class Fonctions
 
     public static function affiche_choix_user_groupes()
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -839,14 +898,22 @@ class Fonctions
 
         // AFFICHAGE TABLEAU
         $return .= '<h2>' . _('admin_aff_choix_user_titre') . '</h2>';
-        $return .= '<table class="table table-hover table-responsive table-condensed table-striped">';
-        $return .= '<thead>';
-        $return .= '<tr>';
-        $return .= '<th>' . _('divers_nom_maj_1') . '  ' . _('divers_prenom_maj_1') . '</th>';
-        $return .= '<th>' . _('divers_login_maj_1') . '</th>';
-        $return .= '</tr>';
-        $return .= '</thead>';
-        $return .= '<tbody>';
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-hover',
+            'table-responsive',
+            'table-striped',
+            'table-condensed',
+        ]);
+
+        $childTable = '<thead>';
+        $childTable .= '<tr>';
+        $childTable .= '<th>' . _('divers_nom_maj_1') . '  ' . _('divers_prenom_maj_1') . '</th>';
+        $childTable .= '<th>' . _('divers_login_maj_1') . '</th>';
+        $childTable .= '</tr>';
+        $childTable .= '</thead>';
+        $childTable .= '<tbody>';
 
         $i = true;
         $ReqLog_user = \includes\SQL::query($sql_user);
@@ -858,13 +925,17 @@ class Fonctions
 
             $choix="<a href=\"$PHP_SELF?session=$session&onglet=admin-group-users&choix_user=$sql_login\"><b>$sql_nom $sql_prenom</b></a>" ;
 
-            $return .= '<tr class="'.( $i ? 'i' : 'p').'">';
-            $return .= '<td>' . $choix . '</td>';
-            $return .= '<td>' . $sql_login . '</td>';
-            $return .= '</tr>';
+            $childTable .= '<tr class="'.( $i ? 'i' : 'p').'">';
+            $childTable .= '<td>' . $choix . '</td>';
+            $childTable .= '<td>' . $sql_login . '</td>';
+            $childTable .= '</tr>';
             $i = !$i;
         }
-        $return .= '</tbody></table>';
+        $childTable .= '</tbody>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
         return $return;
     }
 
@@ -874,15 +945,22 @@ class Fonctions
         $return .= '<h2>' . _('admin_gestion_groupe_users_group_of_user') . (($choix_user!='') ? ' <strong>' . $choix_user . '</strong>' : '') . '</h2>';
 
         //AFFICHAGE DU TABLEAU DES GROUPES DU USER
-        $return .= '<table class="table table-hover table-responsive table-condensed table-striped">';
-        $return .= '<thead>';
-        $return .= '<tr>';
-        $return .= '<th></th>';
-        $return .= '<th>' . _('admin_groupes_groupe') . '</th>';
-        $return .= '<th>' . _('admin_groupes_libelle') . '</th>';
-        $return .= '</tr>';
-        $return .= '</thead>';
-        $return .= '<tbody>';
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-hover',
+            'table-responsive',
+            'table-striped',
+            'table-condensed'
+        ]);
+        $childTable = '<thead>';
+        $childTable .= '<tr>';
+        $childTable .= '<th></th>';
+        $childTable .= '<th>' . _('admin_groupes_groupe') . '</th>';
+        $childTable .= '<th>' . _('admin_groupes_libelle') . '</th>';
+        $childTable .= '</tr>';
+        $childTable .= '</thead>';
+        $childTable .= '<tbody>';
 
         // affichage des groupes
 
@@ -891,7 +969,7 @@ class Fonctions
         $sql_g = "SELECT g_gid, g_groupename, g_comment FROM conges_groupe ORDER BY g_groupename "  ;
         $ReqLog_g = \includes\SQL::query($sql_g);
 
-        while($resultat_g=$ReqLog_g->fetch_array()) {
+        while ($resultat_g=$ReqLog_g->fetch_array()) {
             $tab_gg=array();
             $tab_gg["gid"]=$resultat_g["g_gid"];
             $tab_gg["groupename"]=$resultat_g["g_groupename"];
@@ -907,8 +985,7 @@ class Fonctions
             $sql_gu = 'SELECT gu_gid FROM conges_groupe_users WHERE gu_login="'. \includes\SQL::quote($choix_user).'" ORDER BY gu_gid ';
             $ReqLog_gu = \includes\SQL::query($sql_gu);
 
-            while($resultat_gu=$ReqLog_gu->fetch_array())
-            {
+            while ($resultat_gu=$ReqLog_gu->fetch_array()) {
                 $tab_user[]=$resultat_gu["gu_gid"];
             }
         }
@@ -928,20 +1005,24 @@ class Fonctions
                 $class="histo";
             }
 
-            $return .= '<tr class="' . (!($i%2) ? 'i' : 'p') . '">';
-            $return .= '<td>' . $case_a_cocher .  '</td>';
-            $return .= '<td class="' . $class . '">' . $group . '&nbsp</td>';
-            $return .= '<td class="' . $class . '">' . $libelle . '</td>';
-            $return .= '</tr>';
+            $childTable .= '<tr class="' . (!($i%2) ? 'i' : 'p') . '">';
+            $childTable .= '<td>' . $case_a_cocher .  '</td>';
+            $childTable .= '<td class="' . $class . '">' . $group . '&nbsp</td>';
+            $childTable .= '<td class="' . $class . '">' . $libelle . '</td>';
+            $childTable .= '</tr>';
         }
 
-        $return .= '<tbody></table>';
+        $childTable .= '<tbody>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
         return $return;
     }
 
     public static function affiche_choix_gestion_groupes_users($choix_group, $choix_user, $onglet)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return   = '';
 
         if( $choix_group!="" )     // si un groupe choisi : on affiche la gestion par groupe
@@ -978,7 +1059,7 @@ class Fonctions
     {
         $change_group_users    = getpost_variable('change_group_users') ;
         $change_user_groups    = getpost_variable('change_user_groups') ;
-        $choix_group        = getpost_variable('choix_group') ;
+        $choix_group        = (int) getpost_variable('choix_group') ;
         $choix_user            = getpost_variable('choix_user') ;
         $return = '';
 
@@ -1009,7 +1090,7 @@ class Fonctions
 
     public static function verif_new_param_group($new_group_name, $new_group_libelle)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -1050,7 +1131,7 @@ class Fonctions
 
     public static function ajout_groupe($new_group_name, $new_group_libelle, $new_group_double_valid)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -1083,7 +1164,7 @@ class Fonctions
 
     public static function affiche_gestion_groupes($new_group_name, $new_group_libelle, $onglet)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -1097,21 +1178,27 @@ class Fonctions
 
         // AFFICHAGE TABLEAU
         $return .= '<h2>' . _('admin_gestion_groupe_etat') . '</h2>';
-        $return .= '<table class="table table-hover table-responsive table-condensed table-striped">';
-        $return .= '<thead>';
-        $return .= '<tr>';
-        $return .= '<th>' . _('admin_groupes_groupe') . '</th>';
-        $return .= '<th>' . _('admin_groupes_libelle') . '</th>';
-        $return .= '<th>' . _('admin_groupes_nb_users') . '</th>';
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-hover',
+            'table-responsive',
+            'table-striped',
+            'table-condensed'
+        ]);
+        $childTable = '<thead>';
+        $childTable .= '<tr>';
+        $childTable .= '<th>' . _('admin_groupes_groupe') . '</th>';
+        $childTable .= '<th>' . _('admin_groupes_libelle') . '</th>';
+        $childTable .= '<th>' . _('admin_groupes_nb_users') . '</th>';
         if($_SESSION['config']['double_validation_conges']) {
-            $return .= '<th>' . _('admin_groupes_double_valid') . '</th>';
+            $childTable .= '<th>' . _('admin_groupes_double_valid') . '</th>';
         }
-        $return .= '<th></th></tr></thead><tbody>';
+        $childTable .= '<th></th></tr></thead><tbody>';
 
         $i = true;
         $ReqLog_gr = \includes\SQL::query($sql_gr);
-        while ($resultat_gr = $ReqLog_gr->fetch_array())
-        {
+        while ($resultat_gr = $ReqLog_gr->fetch_array()) {
             $sql_gid=$resultat_gr["g_gid"] ;
             $sql_group=$resultat_gr["g_groupename"] ;
             $sql_comment=$resultat_gr["g_comment"] ;
@@ -1121,18 +1208,23 @@ class Fonctions
             $admin_modif_group = '<a href="admin_index.php?onglet=modif_group&session=' . $session . '&group=' . $sql_gid . '" title="' . _('form_modif') . '"><i class="fa fa-pencil"></i></a>';
             $admin_suppr_group = '<a href="admin_index.php?onglet=suppr_group&session=' . $session . '&group=' . $sql_gid . '" title="' . _('form_supprim') . '"><i class="fa fa-times-circle"></i></a>';
 
-            $return .= '<tr class="' . ($i ? 'i' : 'p') . '">';
-            $return .= '<td><b>' . $sql_group .'</b></td>';
-            $return .= '<td>' . $sql_comment . '</td>';
-            $return .= '<td>' . $nb_users_groupe . '</td>';
+            $childTable .= '<tr class="' . ($i ? 'i' : 'p') . '">';
+            $childTable .= '<td><b>' . $sql_group .'</b></td>';
+            $childTable .= '<td>' . $sql_comment . '</td>';
+            $childTable .= '<td>' . $nb_users_groupe . '</td>';
             if($_SESSION['config']['double_validation_conges']) {
-                $return .= '<td>' . $sql_double_valid . '</td>';
+                $childTable .= '<td>' . $sql_double_valid . '</td>';
             }
-            $return .= '<td class="action">' . $admin_modif_group . ' ' . $admin_suppr_group . '</td>';
-            $return .= '</tr>';
+            $childTable .= '<td class="action">' . $admin_modif_group . ' ' . $admin_suppr_group . '</td>';
+            $childTable .= '</tr>';
             $i = !$i;
         }
-        $return .= '</tbody></table><hr/>';
+        $childTable .= '</tbody>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
+        $return .= '<hr/>';
 
         /*********************/
         /* Ajout Groupe      */
@@ -1142,25 +1234,34 @@ class Fonctions
 
         $return .= '<h2>' . _('admin_groupes_new_groupe') . '</h2>';
         $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '" method="POST">';
-        $return .= '<table class="tablo"><thead><tr>';
-        $return .= '<th><b>' . _('admin_groupes_groupe') . '</b></th>';
-        $return .= '<th>' . _('admin_groupes_libelle') . ' / ' . _('divers_comment_maj_1') . '</th>';
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+        ]);
+        $childTable = '<thead><tr>';
+        $childTable .= '<th><b>' . _('admin_groupes_groupe') . '</b></th>';
+        $childTable .= '<th>' . _('admin_groupes_libelle') . ' / ' . _('divers_comment_maj_1') . '</th>';
         if($_SESSION['config']['double_validation_conges']) {
-            $return .= '<th>' . _('admin_groupes_double_valid') . '</th>';
+            $childTable .= '<th>' . _('admin_groupes_double_valid') . '</th>';
         }
-        $return .= '</tr></thead><tbody>';
+        $childTable .= '</tr></thead><tbody>';
 
         $text_groupname = '<input class="form-control" type="text" name="new_group_name" size="30" maxlength="50" value="' . $new_group_name . '">';
         $text_libelle = '<input class="form-control" type="text" name="new_group_libelle" size="50" maxlength="250" value="' . $new_group_libelle . '">';
 
-        $return .= '<tr>';
-        $return .= '<td>' . $text_groupname . '</td>';
-        $return .= '<td>' . $text_libelle . '</td>';
+        $childTable .= '<tr>';
+        $childTable .= '<td>' . $text_groupname . '</td>';
+        $childTable .= '<td>' . $text_libelle . '</td>';
         if($_SESSION['config']['double_validation_conges']) {
             $text_double_valid = '<select class="form-control" name="new_group_double_valid"><option value="N">N</option><option value="Y">Y</option></select>';
-            $return .= '<td>' . $text_double_valid . '</td>';
+            $childTable .= '<td>' . $text_double_valid . '</td>';
         }
-        $return .= '</tr></tbody></table><hr>';
+        $childTable .= '</tr></tbody>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
+        $return .= '<hr>';
         $return .= '<input type="hidden" name="saisie_group" value="ok">';
         $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
         $return .= '</form>';
@@ -1179,7 +1280,7 @@ class Fonctions
     public static function groupeModule($onglet)
     {
         $saisie_group           = getpost_variable('saisie_group') ;
-        $new_group_name         = addslashes( getpost_variable('new_group_name')) ;
+        $new_group_name         = htmlentities(addslashes( getpost_variable('new_group_name')), ENT_QUOTES | ENT_HTML401);
         $new_group_libelle      = addslashes( getpost_variable('new_group_libelle')) ;
         $new_group_double_valid = getpost_variable('new_group_double_valid');
         $return = '';
@@ -1220,27 +1321,34 @@ class Fonctions
 
 
         // AFFICHAGE TABLEAU
-        $return .= '<table class="table table-hover table-responsive table-condensed table-striped" >';
-        $return .= '<thead>';
-        $return .= '<tr>';
-        $return .= '<th>' .  _('user') . '</th>';
-        $return .= '<th>' . _('divers_quotite_maj_1') . '</th>';
-        foreach($tab_type_conges as $id_type_cong => $libelle) {
-            $return .= '<th>' . $libelle . ' / ' . _('divers_an') . '</th>';
-            $return .= '<th>' . _('divers_solde') . ' ' . $libelle . '</th>';
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-hover',
+            'table-responsive',
+            'table-striped',
+            'table-condensed'
+        ]);
+        $childTable = '<thead>';
+        $childTable .= '<tr>';
+        $childTable .= '<th>' .  _('user') . '</th>';
+        $childTable .= '<th>' . _('divers_quotite_maj_1') . '</th>';
+        foreach ($tab_type_conges as $id_type_cong => $libelle) {
+            $childTable .= '<th>' . $libelle . ' / ' . _('divers_an') . '</th>';
+            $childTable .= '<th>' . _('divers_solde') . ' ' . $libelle . '</th>';
         }
 
-        foreach($tab_type_conges_exceptionnels as $id_type_cong => $libelle) {
-            $return .= '<th>' . _('divers_solde') . ' ' . $libelle . '</th>';
+        foreach ($tab_type_conges_exceptionnels as $id_type_cong => $libelle) {
+            $childTable .= '<th>' . _('divers_solde') . ' ' . $libelle . '</th>';
         }
-        $return .= '<th></th>';
-        $return .= '<th></th>';
+        $childTable .= '<th></th>';
+        $childTable .= '<th></th>';
         if($_SESSION['config']['admin_change_passwd']) {
-            $return .= '<th></th>';
+            $childTable .= '<th></th>';
         }
-        $return .= '</tr>';
-        $return .= '</thead>';
-        $return .= '<tbody>';
+        $childTable .= '</tr>';
+        $childTable .= '</thead>';
+        $childTable .= '<tbody>';
 
         // Récuperation des informations des users:
         $tab_info_users=array();
@@ -1252,17 +1360,17 @@ class Fonctions
         }
 
         $i = true;
-        foreach($tab_info_users as $current_login => $tab_current_infos) {
+        foreach ($tab_info_users as $current_login => $tab_current_infos) {
             $admin_modif_user= '<a href="admin_index.php?onglet=modif_user&session=' . $session . '&u_login=' . $current_login . '" title="' . _('form_modif') . '"><i class="fa fa-pencil"></i></a>';
             $admin_suppr_user = '<a href="admin_index.php?onglet=suppr_user&session=' . $session . '&u_login=' . $current_login . '" title="' . _('form_supprim') . '"><i class="fa fa-times-circle"></i></a>';
             $admin_chg_pwd_user = '<a href="admin_index.php?onglet=chg_pwd_user&session=' . $session . '&u_login=' . $current_login . '" title="' . _('form_password') . '"><i class="fa fa-key"></i></a>';
 
 
-            $return .= '<tr class="' . (($tab_current_infos['is_active']=='Y') ? 'actif' : 'inactif') . '">';
-            $return .= '<td class="utilisateur"><strong>' . $tab_current_infos['nom'] . ' ' . $tab_current_infos['prenom'] . '</strong>';
-            $return .= '<span class="login">' . $current_login . '</span>';
+            $childTable .= '<tr class="' . (($tab_current_infos['is_active']=='Y') ? 'actif' : 'inactif') . '">';
+            $childTable .= '<td class="utilisateur"><strong>' . $tab_current_infos['nom'] . ' ' . $tab_current_infos['prenom'] . '</strong>';
+            $childTable .= '<span class="login">' . $current_login . '</span>';
             if($_SESSION['config']['where_to_find_user_email']=="dbconges") {
-                $return .= '<span class="mail">' . $tab_current_infos['email'] . '</span>';
+                $childTable .= '<span class="mail">' . $tab_current_infos['email'] . '</span>';
             }
             // droit utilisateur
             $rights = array();
@@ -1280,51 +1388,56 @@ class Fonctions
             }
 
             if(count($rights) > 0) {
-                $return .= '<span class="rights">' . implode(', ', $rights) . '</span>';
+                $childTable .= '<span class="rights">' . implode(', ', $rights) . '</span>';
             }
 
-            $return .= '<span class="responsable"> responsable : <strong>' . $tab_current_infos['resp_login'] . '</strong></span>';
+            $childTable .= '<span class="responsable"> responsable : <strong>' . $tab_current_infos['resp_login'] . '</strong></span>';
 
-            $return .= '</td><td>' . $tab_current_infos['quotite'] . ' %</td>';
+            $childTable .= '</td><td>' . $tab_current_infos['quotite'] . ' %</td>';
 
             //tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
             $tab_conges=$tab_current_infos['conges'];
 
             foreach($tab_type_conges as $id_conges => $libelle) {
                 if (isset($tab_conges[$libelle])) {
-                    $return .= '<td>' . $tab_conges[$libelle]['nb_an'] . '</td>';
-                    $return .= '<td>' . $tab_conges[$libelle]['solde'] . '</td>';
+                    $childTable .= '<td>' . $tab_conges[$libelle]['nb_an'] . '</td>';
+                    $childTable .= '<td>' . $tab_conges[$libelle]['solde'] . '</td>';
                 } else {
-                    $return .= '<td>0</td>';
-                    $return .= '<td>0</td>';
+                    $childTable .= '<td>0</td>';
+                    $childTable .= '<td>0</td>';
                 }
             }
 
             foreach($tab_type_conges_exceptionnels as $id_conges => $libelle) {
                 if (isset($tab_conges[$libelle])) {
-                    $return .= '<td>' . $tab_conges[$libelle]['solde'] . '</td>';
+                    $childTable .= '<td>' . $tab_conges[$libelle]['solde'] . '</td>';
                 } else {
-                    $return .= '<td>0</td>';
+                    $childTable .= '<td>0</td>';
                 }
             }
 
-            $return .= '<td>' . $admin_modif_user . '</td>';
-            $return .= '<td>' . $admin_suppr_user . '</td>';
+            $childTable .= '<td>' . $admin_modif_user . '</td>';
+            $childTable .= '<td>' . $admin_suppr_user . '</td>';
             if(($_SESSION['config']['admin_change_passwd']) && ($_SESSION['config']['how_to_connect_user'] == "dbconges")) {
-                $return .= '<td>' . $admin_chg_pwd_user . '</td>';
+                $childTable .= '<td>' . $admin_chg_pwd_user . '</td>';
             }
-            $return .= '</tr>';
+            $childTable .= '</tr>';
             $i = !$i;
         }
 
-        $return .= '</tbody></table><br>';
+        $childTable .= '</tbody>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
+        $return .= '<br>';
         return $return;
     }
 
     public static function commit_update($u_login_to_update, $new_pwd1, $new_pwd2)
     {
 
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -1358,7 +1471,7 @@ class Fonctions
 
     public static function modifier($u_login, $onglet)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -1367,32 +1480,38 @@ class Fonctions
         /********************/
         // AFFICHAGE TABLEAU
         $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '&u_login_to_update=' . $u_login . '" method="POST">';
-        $return .= '<table cellpadding="2" class="tablo" width="80%">';
-        $return .= '<thead>';
-        $return .= '<tr>';
-        $return .= '<th>' . _('divers_login_maj_1') . '</th>';
-        $return .= '<th>' . _('divers_nom_maj_1') . '</th>';
-        $return .= '<th>' . _('divers_prenom_maj_1') . '</th>';
-        $return .= '<th>' . _('admin_users_password_1') . '</th>';
-        $return .= '<th>' . _('admin_users_password_2') . '</th>';
-        $return .= '</tr>';
-        $return .= '</thead>';
-        $return .= '<tbody>';
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses(['tablo']);
+        $table->addAttribute('width', '80%');
+        $childTable = '<thead>';
+        $childTable .= '<tr>';
+        $childTable .= '<th>' . _('divers_login_maj_1') . '</th>';
+        $childTable .= '<th>' . _('divers_nom_maj_1') . '</th>';
+        $childTable .= '<th>' . _('divers_prenom_maj_1') . '</th>';
+        $childTable .= '<th>' . _('admin_users_password_1') . '</th>';
+        $childTable .= '<th>' . _('admin_users_password_2') . '</th>';
+        $childTable .= '</tr>';
+        $childTable .= '</thead>';
+        $childTable .= '<tbody>';
 
-        $return .= '<tr align="center">';
+        $childTable .= '<tr align="center">';
 
         // Récupération des informations
         $sql1 = 'SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_login = "'. \includes\SQL::quote($u_login).'"';
         $ReqLog1 = \includes\SQL::query($sql1);
 
         while ($resultat1 = $ReqLog1->fetch_array()) {
-            $text_pwd1="<input type=\"password\" name=\"new_pwd1\" size=\"10\" maxlength=\"30\" value=\"\">" ;
-            $text_pwd2="<input type=\"password\" name=\"new_pwd2\" size=\"10\" maxlength=\"30\" value=\"\">" ;
-            $return .= '<td>' . $resultat1["u_login"] . '</td><td>' . $resultat1["u_nom"] . '</td><td>' . $resultat1["u_prenom"] . '</td><td>' . $text_pwd1 . '</td><td>' . $text_pwd2 . '</td>';
+            $text_pwd1="<input type=\"password\" name=\"new_pwd1\" size=\"10\" maxlength=\"30\" value=\"\" autocomplete=\"off\">" ;
+            $text_pwd2="<input type=\"password\" name=\"new_pwd2\" size=\"10\" maxlength=\"30\" value=\"\" autocomplete=\"off\">" ;
+            $childTable .= '<td>' . $resultat1["u_login"] . '</td><td>' . $resultat1["u_nom"] . '</td><td>' . $resultat1["u_prenom"] . '</td><td>' . $text_pwd1 . '</td><td>' . $text_pwd2 . '</td>';
         }
-        $return .= '<tr>';
-        $return .= '<tbody>';
-        $return .= '</table>';
+        $childTable .= '<tr>';
+        $childTable .= '</tbody>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
+
         $return .= '<input type="submit" value="' . _('form_submit') . '">';
         $return .= '</form>';
 
@@ -1419,10 +1538,10 @@ class Fonctions
         // recup des parametres reçus :
         // SERVER
 
-        $u_login            = getpost_variable('u_login') ;
-        $u_login_to_update  = getpost_variable('u_login_to_update') ;
-        $new_pwd1           = getpost_variable('new_pwd1') ;
-        $new_pwd2           = getpost_variable('new_pwd2') ;
+        $u_login            = htmlentities(getpost_variable('u_login'), ENT_QUOTES | ENT_HTML401);
+        $u_login_to_update  = htmlentities(getpost_variable('u_login_to_update'), ENT_QUOTES | ENT_HTML401);
+        $new_pwd1           = htmlentities(getpost_variable('new_pwd1'), ENT_QUOTES | ENT_HTML401);
+        $new_pwd2           = htmlentities(getpost_variable('new_pwd2'), ENT_QUOTES | ENT_HTML401);
 
         if($u_login!="") {
             $return = '<H1>' . _('admin_chg_passwd_titre') . ' : ' . $u_login . '</H1>';
@@ -1572,7 +1691,7 @@ class Fonctions
 
     public static function restaure($fichier_restaure_name, $fichier_restaure_tmpname, $fichier_restaure_size, $fichier_restaure_error)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -1585,35 +1704,45 @@ class Fonctions
         {
             //message d'erreur et renvoit sur la page précédente (choix fichier)
             $return.= '<form action="' . $PHP_SELF . '?session=' . $session . '" method="POST">';
-            $return.= '<table>';
-            $return.= '<tr>';
-            $return.= '<th>' . _('admin_sauve_db_bad_file') . ' : <br>' . $fichier_restaure_name .'</th>';
-            $return.= '</tr><tr>';
-            $return.= '<td align="center">';
-            $return.= '<input type="hidden" name="choix_action" value="restaure">';
-            $return.= '<input type="submit" value="' . _('form_redo') . '">';
-            $return.= '</td>';
-            $return.= '</tr><tr>';
-            $return.= '<td align="center">';
-            $return.= '<input type="button" value="' . _('form_cancel') . '" onClick="javascript:window.close();">';
-            $return.= '</td>';
-            $return.= '</tr></table></form>';
+            $table = new \App\Libraries\Structure\Table();
+            $childTable = '<tr>';
+            $childTable .= '<th>' . _('admin_sauve_db_bad_file') . ' : <br>' . $fichier_restaure_name .'</th>';
+            $childTable .= '</tr><tr>';
+            $childTable .= '<td align="center">';
+            $childTable .= '<input type="hidden" name="choix_action" value="restaure">';
+            $childTable .= '<input type="submit" value="' . _('form_redo') . '">';
+            $childTable .= '</td>';
+            $childTable .= '</tr><tr>';
+            $childTable .= '<td align="center">';
+            $childTable .= '<input type="button" value="' . _('form_cancel') . '" onClick="window.close();">';
+            $childTable .= '</td>';
+            $childTable .= '</tr>';
+            $table->addChild($childTable);
+            ob_start();
+            $table->render();
+            $return .= ob_get_clean();
+            $return .= '</form>';
         } else {
             $result = execute_sql_file($fichier_restaure_tmpname);
 
             $return .= '<form action="" method="POST">';
-            $return .= '<table>';
-            $return .= '<tr>';
-            $return .= '<th>' . _('admin_sauve_db_restaure_ok') . ' !</th>';
-            $return .= '</tr>';
-            $return .= '<tr>';
-            $return .= '<td align="center">&nbsp;</td>';
-            $return .= '</tr>';
-            $return .= '<tr>';
-            $return .= '<td align="center">';
-            $return .= '<input type="button" value="' . _('form_close_window') . '" onClick="javascript:window.close();">';
-            $return .= '</td>';
-            $return .= '</tr></table></form>';
+            $table = new \App\Libraries\Structure\Table();
+            $childTable = '<tr>';
+            $childTable .= '<th>' . _('admin_sauve_db_restaure_ok') . ' !</th>';
+            $childTable .= '</tr>';
+            $childTable .= '<tr>';
+            $childTable .= '<td align="center">&nbsp;</td>';
+            $childTable .= '</tr>';
+            $childTable .= '<tr>';
+            $childTable .= '<td align="center">';
+            $childTable .= '<input type="button" value="' . _('form_close_window') . '" onClick="window.close();">';
+            $childTable .= '</td>';
+            $childTable .= '</tr>';
+            $table->addChild($childTable);
+            ob_start();
+            $table->render();
+            $return .= ob_get_clean();
+            $return .= '</form>';
         }
         echo $return;
         bottom();
@@ -1622,7 +1751,7 @@ class Fonctions
     // RESTAURATION
     public static function choix_restaure()
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -1630,33 +1759,38 @@ class Fonctions
 
         $return .= '<h1>' . _('admin_sauve_db_titre') . '</h1>';
         $return .= '<form enctype="multipart/form-data" action="' . $PHP_SELF . '?session=' . $session . '" method="POST">';
-        $return .= '<table>';
-        $return .= '<tr>';
-        $return .= '<th>' . _('admin_sauve_db_restaure') . '<br>' . _('admin_sauve_db_file_to_restore') . ' :</th>';
-        $return .= '</tr>';
-        $return .= '<tr>';
-        $return .= '<td align="center"><input type="file" name="fichier_restaure"></td>';
-        $return .= '</tr>';
-        $return .= '<tr>';
-        $return .= '<td align="center">&nbsp;</td>';
-        $return .= '</tr>';
-        $return .= '<tr>';
-        $return .= '<td align="center"><font color="red">' . _('admin_sauve_db_warning') . ' !</font></td>';
-        $return .= '</tr>';
-        $return .= '<tr>';
-        $return .= '<td align="center">&nbsp;</td>';
-        $return .= '</tr>';
-        $return .= '<tr>';
-        $return .= '<td align="center">';
-        $return .= '<input type="hidden" name="choix_action" value="restaure">';
-        $return .= '<input type="submit" value="' . _('admin_sauve_db_do_restaure') . '">';
-        $return .= '</td>';
-        $return .= '</tr>';
-        $return .= '<tr>';
-        $return .= '<td align="center">';
-        $return .= '<input type="button" value="' . _('form_cancel') . '" onClick="javascript:window.close();">';
-        $return .= '</td>';
-        $return .= '</tr></table></form>';
+        $table = new \App\Libraries\Structure\Table();
+        $childTable = '<tr>';
+        $childTable .= '<th>' . _('admin_sauve_db_restaure') . '<br>' . _('admin_sauve_db_file_to_restore') . ' :</th>';
+        $childTable .= '</tr>';
+        $childTable .= '<tr>';
+        $childTable .= '<td align="center"><input type="file" name="fichier_restaure"></td>';
+        $childTable .= '</tr>';
+        $childTable .= '<tr>';
+        $childTable .= '<td align="center">&nbsp;</td>';
+        $childTable .= '</tr>';
+        $childTable .= '<tr>';
+        $childTable .= '<td align="center"><font color="red">' . _('admin_sauve_db_warning') . ' !</font></td>';
+        $childTable .= '</tr>';
+        $childTable .= '<tr>';
+        $childTable .= '<td align="center">&nbsp;</td>';
+        $childTable .= '</tr>';
+        $childTable .= '<tr>';
+        $childTable .= '<td align="center">';
+        $childTable .= '<input type="hidden" name="choix_action" value="restaure">';
+        $childTable .= '<input type="submit" value="' . _('admin_sauve_db_do_restaure') . '">';
+        $childTable .= '</td>';
+        $childTable .= '</tr>';
+        $childTable .= '<tr>';
+        $childTable .= '<td align="center">';
+        $childTable .= '<input type="button" value="' . _('form_cancel') . '" onClick="window.close();">';
+        $childTable .= '</td>';
+        $childTable .= '</tr>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
+        $return .= '</form>';
 
         echo $return;
         bottom();
@@ -1664,7 +1798,7 @@ class Fonctions
 
     public static function commit_sauvegarde($type_sauvegarde)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -1702,7 +1836,7 @@ class Fonctions
 
     public static function sauve($type_sauvegarde)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -1713,14 +1847,19 @@ class Fonctions
         $return .= '<h1>' . _('admin_sauve_db_titre') . '</h1>';
 
         $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '" method="POST">';
-        $return .= '<table>';
-        $return .= '<tr>';
-        $return .= '<th colspan="2">' . _('admin_sauve_db_save_ok') . ' ...</th>';
-        $return .= '</tr><tr>';
-        $return .= '<td colspan="2" align="center">';
-        $return .= '<input type="button" value="' . _('form_close_window') . '" onClick="javascript:window.close();">';
-        $return .= '</td>';
-        $return .= '</tr></table></form>';
+        $table = new \App\Libraries\Structure\Table();
+        $childTable = '<tr>';
+        $childTable .= '<th colspan="2">' . _('admin_sauve_db_save_ok') . ' ...</th>';
+        $childTable .= '</tr><tr>';
+        $childTable .= '<td colspan="2" align="center">';
+        $childTable .= '<input type="button" value="' . _('form_close_window') . '" onClick="window.close();">';
+        $childTable .= '</td>';
+        $childTable .= '</tr>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
+        $return .= '</form>';
 
         echo $return;
         bottom();
@@ -1729,7 +1868,7 @@ class Fonctions
     // SAUVEGARDE
     public static function choix_sauvegarde()
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -1739,29 +1878,35 @@ class Fonctions
         $return .= '<h1>' . _('admin_sauve_db_titre') . '</h1>';
 
         $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '" method="POST">';
-        $return .= '<table><tr>';
-        $return .= '<th colspan="2">' . _('admin_sauve_db_options') . '</th>';
-        $return .= '</tr><tr>';
-        $return .= '<td><input type="radio" name="type_sauvegarde" value="all" checked></td>';
-        $return .= '<td>' . _('admin_sauve_db_complete') . '</td>';
-        $return .= '</tr><tr>';
-        $return .= '<td><input type="radio" name="type_sauvegarde" value="data"></td>';
-        $return .= '<td>' . _('admin_sauve_db_data_only') . '</td>';
-        $return .= '</tr><tr>';
-        $return .= '<td colspan="2" align="center">';
-        $return .= '&nbsp;';
-        $return .= '</td>';
-        $return .= '</tr>';
-        $return .= '<tr>';
-        $return .= '<td colspan="2" align="center">';
-        $return .= '<input type="hidden" name="choix_action" value="sauvegarde">';
-        $return .= '<input type="submit" value="' . _('admin_sauve_db_do_sauve') . '">';
-        $return .= '</td>';
-        $return .= '</tr><tr>';
-        $return .= '<td colspan="2" align="center">';
-        $return .= '<input type="button" value="' . _('form_cancel') . '" onClick="javascript:window.close();">';
-        $return .= '</td>';
-        $return .= '</tr></table></form>';
+        $table = new \App\Libraries\Structure\Table();
+        $childTable = '<tr>';
+        $childTable .= '<th colspan="2">' . _('admin_sauve_db_options') . '</th>';
+        $childTable .= '</tr><tr>';
+        $childTable .= '<td><input type="radio" name="type_sauvegarde" value="all" checked></td>';
+        $childTable .= '<td>' . _('admin_sauve_db_complete') . '</td>';
+        $childTable .= '</tr><tr>';
+        $childTable .= '<td><input type="radio" name="type_sauvegarde" value="data"></td>';
+        $childTable .= '<td>' . _('admin_sauve_db_data_only') . '</td>';
+        $childTable .= '</tr><tr>';
+        $childTable .= '<td colspan="2" align="center">';
+        $childTable .= '&nbsp;';
+        $childTable .= '</td>';
+        $childTable .= '</tr>';
+        $childTable .= '<tr>';
+        $childTable .= '<td colspan="2" align="center">';
+        $childTable .= '<input type="hidden" name="choix_action" value="sauvegarde">';
+        $childTable .= '<input type="submit" value="' . _('admin_sauve_db_do_sauve') . '">';
+        $childTable .= '</td>';
+        $childTable .= '</tr><tr>';
+        $childTable .= '<td colspan="2" align="center">';
+        $childTable .= '<input type="button" value="' . _('form_cancel') . '" onClick="window.close();">';
+        $childTable .= '</td>';
+        $childTable .= '</tr>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
+        $return .= '</form>';
 
         echo $return;
 
@@ -1771,7 +1916,7 @@ class Fonctions
     // CHOIX
     public static function choix_save_restore()
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -1780,32 +1925,37 @@ class Fonctions
         $return .= '<h1>' . _('admin_sauve_db_titre') . '</h1>';
 
         $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '" method="POST">';
-        $return .= '<table>';
-        $return .= '<tr>';
-        $return .= '<th colspan="2">' . _('admin_sauve_db_choisissez') . ' :</th>';
-        $return .= '</tr>';
-        $return .= '<tr>';
-        $return .= '<td><input type="radio" name="choix_action" value="sauvegarde" checked></td>';
-        $return .= '<td><b>' . _('admin_sauve_db_sauve') . '</b></td>';
-        $return .= '</tr>';
-        $return .= '<tr>';
-        $return .= '<td><input type="radio" name="choix_action" value="restaure" /></td>';
-        $return .= '<td><b>' . _('admin_sauve_db_restaure') . '</b></td>';
-        $return .= '</tr>';
-        $return .= '<tr>';
-        $return .= '<td colspan="2" align="center">';
-        $return .= '&nbsp;';
-        $return .= '</td>';
-        $return .= '</tr>';
-        $return .= '<tr>';
-        $return .= '<td colspan=2" align="center">';
-        $return .= '<input type="submit" value="' . _('form_submit') . '">';
-        $return .= '</td>';
-        $return .= '</tr>';
-        $return .= '<tr>';
-        $return .= '<td colspan="2" align="center">';
-        $return .= '<input type="button" value="' . _('form_cancel') . '" onClick="javascript:window.close();">';
-        $return .= '</td></tr></table></form>';
+        $table = new \App\Libraries\Structure\Table();
+        $childTable = '<tr>';
+        $childTable .= '<th colspan="2">' . _('admin_sauve_db_choisissez') . ' :</th>';
+        $childTable .= '</tr>';
+        $childTable .= '<tr>';
+        $childTable .= '<td><input type="radio" name="choix_action" value="sauvegarde" checked></td>';
+        $childTable .= '<td><b>' . _('admin_sauve_db_sauve') . '</b></td>';
+        $childTable .= '</tr>';
+        $childTable .= '<tr>';
+        $childTable .= '<td><input type="radio" name="choix_action" value="restaure" /></td>';
+        $childTable .= '<td><b>' . _('admin_sauve_db_restaure') . '</b></td>';
+        $childTable .= '</tr>';
+        $childTable .= '<tr>';
+        $childTable .= '<td colspan="2" align="center">';
+        $childTable .= '&nbsp;';
+        $childTable .= '</td>';
+        $childTable .= '</tr>';
+        $childTable .= '<tr>';
+        $childTable .= '<td colspan=2" align="center">';
+        $childTable .= '<input type="submit" value="' . _('form_submit') . '">';
+        $childTable .= '</td>';
+        $childTable .= '</tr>';
+        $childTable .= '<tr>';
+        $childTable .= '<td colspan="2" align="center">';
+        $childTable .= '<input type="button" value="' . _('form_cancel') . '" onClick="window.close();">';
+        $childTable .= '</td></tr>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
+        $return .= '</form>';
         echo $return;
         bottom();
     }
@@ -1829,7 +1979,7 @@ class Fonctions
         /*************************************/
         // recup des parametres reçus :
         // SERVER
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         // GET / POST
         $choix_action    = getpost_variable('choix_action');
         $type_sauvegarde = getpost_variable('type_sauvegarde');
@@ -1871,7 +2021,7 @@ class Fonctions
 
     public static function commit_update_groupe($group_to_update, $new_groupname, $new_comment, $new_double_valid)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
         $result   = TRUE;
@@ -1902,7 +2052,7 @@ class Fonctions
 
     public static function modifier_groupe($group, $onglet)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -1911,15 +2061,22 @@ class Fonctions
 
         // AFFICHAGE TABLEAU
         $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '&group_to_update=' . $group . '" method="POST">';
-        $return .= '<table class="table table-hover table-responsive table-condensed table-striped">';
-        $return .= '<thead>';
-        $return .= '<tr>';
-        $return .= '<th>' . _('admin_groupes_groupe') . '</th>';
-        $return .= '<th>' . _('admin_groupes_libelle') . ' / ' . _('divers_comment_maj_1') . '</th>';
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-hover',
+            'table-responsive',
+            'table-striped',
+            'table-condensed'
+        ]);
+        $childTable = '<thead>';
+        $childTable .= '<tr>';
+        $childTable .= '<th>' . _('admin_groupes_groupe') . '</th>';
+        $childTable .= '<th>' . _('admin_groupes_libelle') . ' / ' . _('divers_comment_maj_1') . '</th>';
         if($_SESSION['config']['double_validation_conges']) {
-            $return .= '<th>' . _('admin_groupes_double_valid') . '</th>';
+            $childTable .= '<th>' . _('admin_groupes_double_valid') . '</th>';
         }
-        $return .= '</tr></thead><tbody>';
+        $childTable .= '</tr></thead><tbody>';
 
         $ReqLog1 = \includes\SQL::query($sql1);
         while ($resultat1 = $ReqLog1->fetch_array()) {
@@ -1929,23 +2086,23 @@ class Fonctions
         }
 
 
-        // AFICHAGE DE LA LIGNE DES VALEURS ACTUELLES A MOFIDIER
-        $return .= '<tr>';
-        $return .= '<td>' . $sql_groupename . '</td>';
-        $return .= '<td>' . $sql_comment . '</td>';
+        // AFICHAGE DE LA LIGNE DES VALEURS ACTUELLES A MODIFIER
+        $childTable .= '<tr>';
+        $childTable .= '<td>' . $sql_groupename . '</td>';
+        $childTable .= '<td>' . $sql_comment . '</td>';
         if($_SESSION['config']['double_validation_conges']) {
-            $return .= '<td>' . $sql_double_valid . '</td>';
+            $childTable .= '<td>' . $sql_double_valid . '</td>';
         }
-        $return .= '</tr>';
+        $childTable .= '</tr>';
 
         // contruction des champs de saisie
         $text_group="<input class=\"form-control\" type=\"text\" name=\"new_groupname\" size=\"30\" maxlength=\"50\" value=\"".$sql_groupename."\">" ;
         $text_comment="<input class=\"form-control\" type=\"text\" name=\"new_comment\" size=\"50\" maxlength=\"200\" value=\"".$sql_comment."\">" ;
 
         // AFFICHAGE ligne de saisie
-        $return .= '<tr>';
-        $return .= '<td>' . $text_group . '</td>';
-        $return .= '<td>' . $text_comment . '</td>';
+        $childTable .= '<tr>';
+        $childTable .= '<td>' . $text_group . '</td>';
+        $childTable .= '<td>' . $text_comment . '</td>';
         if($_SESSION['config']['double_validation_conges']) {
             $text_double_valid="<select class=\"form-control\" name=\"new_double_valid\" ><option value=\"N\" ";
             if($sql_double_valid=="N") {
@@ -1956,9 +2113,14 @@ class Fonctions
                 $text_double_valid=$text_double_valid."SELECTED";
             }
             $text_double_valid=$text_double_valid.">Y</option></select>" ;
-            $return .= '<td>' . $text_double_valid . '</td>';
+            $childTable .= '<td>' . $text_double_valid . '</td>';
         }
-        $return .= '</tr></tbody></table><hr/>';
+        $childTable .= '</tr></tbody>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
+        $return .= '<hr/>';
         $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
         $return .= '<a class="btn" href="admin_index.php?session=' . $session . '&onglet=admin-group">' . _('form_cancel') . '</a>';
         $return .= '</form>';
@@ -2002,82 +2164,12 @@ class Fonctions
         return $return;
     }
 
-    public static function tab_grille_rtt_from_checkbox($tab_checkbox_sem_imp, $tab_checkbox_sem_p)
+    public static function commit_update_user($u_login_to_update, &$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, &$tab_new_reliquat, &$return)
     {
-        $tab_grille=array();
-        $semaine=array("lu", "ma", "me", "je", "ve", "sa", "di");
-
-        // initialiastaion du tableau
-        foreach($semaine as $day) {
-            $key1="sem_imp_".$day."_am";
-            $key2="sem_imp_".$day."_pm";
-            $tab_grille[$key1] = "";
-            $tab_grille[$key2] = "";
-            $key3="sem_p_".$day."_am";
-            $key4="sem_p_".$day."_pm";
-            $tab_grille[$key3] = "";
-            $tab_grille[$key4] = "";
-        }
-
-        // mise a jour du tab avec les valeurs des chechbox
-        if($tab_checkbox_sem_imp!="") {
-            while (list ($key, $val) = each ($tab_checkbox_sem_imp)) {
-                $tab_grille[$key]=$val;
-            }
-        }
-        if($tab_checkbox_sem_p!="") {
-            while (list ($key, $val) = each ($tab_checkbox_sem_p)) {
-                $tab_grille[$key]=$val;
-            }
-        }
-        return $tab_grille;
-    }
-
-    public static function get_current_grille_rtt($u_login_to_update)
-    {
-        $tab_grille=array();
-
-        $sql = 'SELECT * FROM conges_artt WHERE a_login="'. \includes\SQL::quote($u_login_to_update).'" AND a_date_fin_grille=\'9999-12-31\' ';
-        $ReqLog1 = \includes\SQL::query($sql);
-
-        while ($resultat1 = $ReqLog1->fetch_array()) {
-            $tab_grille['sem_imp_lu_am'] = $resultat1['sem_imp_lu_am'] ;
-            $tab_grille['sem_imp_lu_pm'] = $resultat1['sem_imp_lu_pm'] ;
-            $tab_grille['sem_imp_ma_am'] = $resultat1['sem_imp_ma_am'] ;
-            $tab_grille['sem_imp_ma_pm'] = $resultat1['sem_imp_ma_pm'] ;
-            $tab_grille['sem_imp_me_am'] = $resultat1['sem_imp_me_am'] ;
-            $tab_grille['sem_imp_me_pm'] = $resultat1['sem_imp_me_pm'] ;
-            $tab_grille['sem_imp_je_am'] = $resultat1['sem_imp_je_am'] ;
-            $tab_grille['sem_imp_je_pm'] = $resultat1['sem_imp_je_pm'] ;
-            $tab_grille['sem_imp_ve_am'] = $resultat1['sem_imp_ve_am'] ;
-            $tab_grille['sem_imp_ve_pm'] = $resultat1['sem_imp_ve_pm'] ;
-            $tab_grille['sem_imp_sa_am'] = $resultat1['sem_imp_sa_am'] ;
-            $tab_grille['sem_imp_sa_pm'] = $resultat1['sem_imp_sa_pm'] ;
-            $tab_grille['sem_imp_di_am'] = $resultat1['sem_imp_di_am'] ;
-            $tab_grille['sem_imp_di_pm'] = $resultat1['sem_imp_di_pm'] ;
-            $tab_grille['sem_p_lu_am'] = $resultat1['sem_p_lu_am'] ;
-            $tab_grille['sem_p_lu_pm'] = $resultat1['sem_p_lu_pm'] ;
-            $tab_grille['sem_p_ma_am'] = $resultat1['sem_p_ma_am'] ;
-            $tab_grille['sem_p_ma_pm'] = $resultat1['sem_p_ma_pm'] ;
-            $tab_grille['sem_p_me_am'] = $resultat1['sem_p_me_am'] ;
-            $tab_grille['sem_p_me_pm'] = $resultat1['sem_p_me_pm'] ;
-            $tab_grille['sem_p_je_am'] = $resultat1['sem_p_je_am'] ;
-            $tab_grille['sem_p_je_pm'] = $resultat1['sem_p_je_pm'] ;
-            $tab_grille['sem_p_ve_am'] = $resultat1['sem_p_ve_am'] ;
-            $tab_grille['sem_p_ve_pm'] = $resultat1['sem_p_ve_pm'] ;
-            $tab_grille['sem_p_sa_am'] = $resultat1['sem_p_sa_am'] ;
-            $tab_grille['sem_p_sa_pm'] = $resultat1['sem_p_sa_pm'] ;
-            $tab_grille['sem_p_di_am'] = $resultat1['sem_p_di_am'] ;
-            $tab_grille['sem_p_di_pm'] = $resultat1['sem_p_di_pm'] ;
-        }
-        return $tab_grille;
-    }
-
-    public static function commit_update_user($u_login_to_update, &$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, &$tab_new_reliquat, $tab_checkbox_sem_imp, $tab_checkbox_sem_p)
-    {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $dataUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($u_login_to_update);
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
-        $return   = '';
+        $erreurs = [];
 
         $result=TRUE;
 
@@ -2087,20 +2179,27 @@ class Fonctions
         if ($_SESSION['config']['gestion_conges_exceptionnels']) {
             $tab_type_conges_excep=recup_tableau_types_conges_exceptionnels();
         }
-        $return .= htmlentities($u_login_to_update) . '---' . htmlentities($tab_new_user['nom']) . '---' . htmlentities($tab_new_user['prenom']) . '---' . htmlentities($tab_new_user['quotite']) . '---' . htmlentities($tab_new_user['is_resp']) . '---' . htmlentities($tab_new_user['resp_login']) . '---';
-        $return .= htmlentities($tab_new_user['is_admin']) . '---' . htmlentities($tab_new_user['is_hr']) . '---' . htmlentities($tab_new_user['is_active']) . '---' . htmlentities($tab_new_user['see_all']) . '---' . htmlentities($tab_new_user['email']) . '---' . htmlentities($tab_new_user['login']) . '<br>';
-
 
         $valid_1=TRUE;
         $valid_2=TRUE;
         $valid_3=TRUE;
         $valid_reliquat=TRUE;
+        $valid_4 = true;
 
         // verification de la validite de la saisie du nombre de jours annuels et du solde pour chaque type de conges
         foreach($tab_type_conges as $id_conges => $libelle) {
             $valid_1=$valid_1 && verif_saisie_decimal($tab_new_jours_an[$id_conges]);  //verif la bonne saisie du nombre d?cimal
             $valid_2=$valid_2 && verif_saisie_decimal($tab_new_solde[$id_conges]);  //verif la bonne saisie du nombre d?cimal
             $valid_reliquat=$valid_reliquat && verif_saisie_decimal($tab_new_reliquat[$id_conges]);  //verif la bonne saisie du nombre d?cimal
+        }
+        if (false === $valid_1) {
+            $erreurs['Nombre jour annuel'] = _('nombre_incorrect');
+        }
+        if (false === $valid_2) {
+            $erreurs['Solde congés'] = _('nombre_incorrect');
+        }
+        if (false === $valid_reliquat) {
+            $erreurs['Nombre reliquat'] = _('nombre_incorrect');
         }
 
         // si l'application gere les conges exceptionnels ET si des types de conges exceptionnels ont été définis
@@ -2114,10 +2213,28 @@ class Fonctions
             $valid_3=TRUE;
         }
 
+        if (false === $valid_3) {
+            $erreurs['Solde congés exceptionnels'] = _('nombre_incorrect');
+        }
+
+        if(!\admin\Fonctions::FormAddUserSoldeHeureOk($tab_new_user['solde_heure'])
+            || !\admin\Fonctions::FormAddUserQuotiteOk($tab_new_user['quotite'])
+            || !\admin\Fonctions::FormAddUserNameOk($tab_new_user['nom'])
+            || !\admin\Fonctions::FormAddUserNameOk($tab_new_user['prenom']))
+        {
+            $valid_4=FALSE;
+        }
+
         // si aucune erreur de saisie n'a ete commise
-        if(($valid_1) && ($valid_2) && ($valid_3) && ($valid_reliquat) && $tab_new_user['login']!="") {
+        if(($valid_1) && ($valid_2) && ($valid_3) && ($valid_4) && ($valid_reliquat) && $tab_new_user['login']!="") {
             // UPDATE de la table conges_users
-            $sql = 'UPDATE conges_users SET u_nom="'. \includes\SQL::quote($tab_new_user['nom']).'", u_prenom="'.\includes\SQL::quote($tab_new_user['prenom']).'", u_is_resp="'. \includes\SQL::quote($tab_new_user['is_resp']).'", u_resp_login="'.\includes\SQL::quote($tab_new_user['resp_login']).'",u_is_admin="'. \includes\SQL::quote($tab_new_user['is_admin']).'",u_is_hr="'.\includes\SQL::quote($tab_new_user['is_hr']).'",u_is_active="'.\includes\SQL::quote($tab_new_user['is_active']).'",u_see_all="'.\includes\SQL::quote($tab_new_user['see_all']).'",u_login="'.\includes\SQL::quote($tab_new_user['login']).'",u_quotite="'.\includes\SQL::quote($tab_new_user['quotite']).'",u_email="'. \includes\SQL::quote($tab_new_user['email']).'" WHERE u_login="'.\includes\SQL::quote($u_login_to_update).'"' ;
+            $sql = 'UPDATE conges_users SET u_nom="'. \includes\SQL::quote($tab_new_user['nom']).'", u_prenom="'.\includes\SQL::quote($tab_new_user['prenom']).'", u_is_resp="'. \includes\SQL::quote($tab_new_user['is_resp']).'", u_resp_login=';
+            if($tab_new_user['resp_login'] == 'no_resp') {
+                $sql .='NULL , ';
+            } else {
+                $sql .='"'.\includes\SQL::quote($tab_new_user['resp_login']).'",';
+            }
+            $sql .= 'u_heure_solde='. \App\Helpers\Formatter::hour2Time($tab_new_user['solde_heure']).',u_is_admin="'. \includes\SQL::quote($tab_new_user['is_admin']).'",u_is_hr="'.\includes\SQL::quote($tab_new_user['is_hr']).'",u_is_active="'.\includes\SQL::quote($tab_new_user['is_active']).'",u_see_all="'.\includes\SQL::quote($tab_new_user['see_all']).'",u_login="'.\includes\SQL::quote($tab_new_user['login']).'",u_quotite="'.\includes\SQL::quote($tab_new_user['quotite']).'",u_email="'. \includes\SQL::quote($tab_new_user['email']).'" WHERE u_login="'.\includes\SQL::quote($u_login_to_update).'"' ;
 
             \includes\SQL::query($sql);
 
@@ -2126,7 +2243,6 @@ class Fonctions
             /* Mise a jour de la table conges_solde_user   */
             foreach($tab_type_conges as $id_conges => $libelle) {
                 $sql = 'REPLACE INTO conges_solde_user SET su_nb_an=\''.strtr(round_to_half($tab_new_jours_an[$id_conges]),",",".").'\',su_solde=\''.strtr(round_to_half($tab_new_solde[$id_conges]),",",".").'\',su_reliquat=\''.strtr(round_to_half($tab_new_reliquat[$id_conges]),",",".").'\',su_login="'.\includes\SQL::quote($u_login_to_update).'",su_abs_id='.intval($id_conges).';';
-                $return .= $sql;
                 \includes\SQL::query($sql);
 
             }
@@ -2134,94 +2250,15 @@ class Fonctions
             if ($_SESSION['config']['gestion_conges_exceptionnels']) {
                 foreach($tab_type_conges_excep as $id_conges => $libelle) {
                     $sql = 'REPLACE INTO conges_solde_user SET su_nb_an=0, su_solde=\''.strtr(round_to_half($tab_new_solde[$id_conges]),",",".").'\', su_reliquat=\''.strtr(round_to_half($tab_new_reliquat[$id_conges]),",",".").'\', su_login="'.\includes\SQL::quote($u_login_to_update).'", su_abs_id='.intval($id_conges).';';
-                    $return .= $sql;
                     \includes\SQL::query($sql);
                 }
             }
 
             /*************************************/
-            /* Mise a jour de la table artt si besoin :   */
-            $tab_grille_rtt_actuelle = \admin\Fonctions::get_current_grille_rtt($u_login_to_update);
-            $tab_new_grille_rtt= \admin\Fonctions::tab_grille_rtt_from_checkbox($tab_checkbox_sem_imp, $tab_checkbox_sem_p);
-
-            if($tab_grille_rtt_actuelle != $tab_new_grille_rtt) {
-                $new_date_deb_grille=$tab_new_user['year']."-".$tab_new_user['mois']."-".$tab_new_user['jour'];
-
-                /****************************/
-                /***   phase 1 :  ***/
-                // si la derniere grille est ancienne, on l'update (on update la date de fin de grille)
-                // sinon, si la derniere grille date d'aujourd'hui, on la supprime
-
-                // on regarde si la grille artt a deja été modifiée aujourd'hui :
-                $sql='SELECT a_date_fin_grille FROM conges_artt
-                    WHERE a_login="'.\includes\SQL::quote($u_login_to_update).'" AND a_date_debut_grille="'. \includes\SQL::quote($new_date_deb_grille).'";';
-                $result_grille = \includes\SQL::query($sql);
-
-                $count_grille=$result_grille->num_rows;
-
-                if($count_grille==0) {  // si pas de grille modifiée aujourd'hui : on update la date de fin de la derniere grille
-
-                    // date de fin de la grille précedent :
-                    // $new_date_fin_grille = $new_date_deb_grille -1 jour !
-                    $new_jour_num= (integer) $tab_new_user['jour'];
-                    $new_mois_num= (integer) $tab_new_user['mois'];
-                    $new_year_num= (integer) $tab_new_user['year'];
-                    $new_date_fin_grille=date("Y-m-d", mktime(0, 0, 0, $new_mois_num, $new_jour_num-1, $new_year_num)); // int mktime(int hour, int minute, int second, int month, int day, int year )
-
-                    // UPDATE de la table conges_artt
-                    // en fait, on update la dernière grille (on update la date de fin de grille), et on ajoute une nouvelle
-                    // grille (avec sa date de début de grille)
-
-                    // on update la dernière grille (on update la date de fin de grille)
-                    $sql = 'UPDATE conges_artt SET a_date_fin_grille="'. \includes\SQL::quote($new_date_fin_grille).'" WHERE a_login="'. \includes\SQL::quote($u_login_to_update).'"  AND a_date_fin_grille=\'9999-12-31\' ';
-                    \includes\SQL::query($sql);
-                } else {// si une grille modifiée aujourd'hui : on delete cette grille
-                    $sql='DELETE FROM conges_artt WHERE a_login="'. \includes\SQL::quote($u_login_to_update).'" AND a_date_debut_grille="'. \includes\SQL::quote($new_date_deb_grille).'"';
-                    \includes\SQL::query($sql);
-                }
-
-                /****************************/
-                /***   phase 2 :  ***/
-                // on Insert la nouvelle grille (celle qui commence aujourd'hui)
-                //  on met à 'Y' les demi-journées de rtt (et seulement celles là)
-                $list_columns="";
-                $list_valeurs="";
-                $i=0;
-                if($tab_checkbox_sem_imp!="") {
-                    while (list ($key, $val) = each ($tab_checkbox_sem_imp)) {
-                        if($i!=0) {
-                            $list_columns=$list_columns.", ";
-                            $list_valeurs=$list_valeurs.", ";
-                        }
-                        $list_columns=$list_columns." $key ";
-                        $list_valeurs=$list_valeurs." '$val' ";
-                        $i=$i+1;
-                    }
-                }
-                if($tab_checkbox_sem_p!="") {
-                    while (list ($key, $val) = each ($tab_checkbox_sem_p)) {
-                        if($i!=0) {
-                            $list_columns=$list_columns.", ";
-                            $list_valeurs=$list_valeurs.", ";
-                        }
-                        $list_columns=$list_columns." $key ";
-                        $list_valeurs=$list_valeurs." '$val' ";
-                        $i=$i+1;
-                    }
-                }
-                if( ($list_columns!="") && ($list_valeurs!="") ) {
-                    $sql = "INSERT INTO conges_artt (a_login, $list_columns, a_date_debut_grille ) VALUES ('$u_login_to_update', $list_valeurs, '$new_date_deb_grille') " ;
-                    \includes\SQL::query($sql);
-                }
-            }
 
             // Si changement du login, (on a dèja updaté la table users (mais pas les responsables !!!)) on update toutes les autres tables
             // (les grilles artt, les periodes de conges et les échanges de rtt, etc ....) avec le nouveau login
             if($tab_new_user['login'] != $u_login_to_update) {
-                // update table artt
-                $sql = 'UPDATE conges_artt SET a_login="'. \includes\SQL::quote($tab_new_user['login']).'" WHERE a_login="'. \includes\SQL::quote($u_login_to_update).'" ';
-                \includes\SQL::query($sql);
-
                 // update table echange_rtt
                 $sql = 'UPDATE conges_echange_rtt SET e_login="'. \includes\SQL::quote($tab_new_user['login']).'" WHERE e_login="'. \includes\SQL::quote($u_login_to_update).'" ';
                 \includes\SQL::query($sql);
@@ -2253,7 +2290,6 @@ class Fonctions
                 // update table conges_users
                 $sql = 'UPDATE conges_users SET u_resp_login="'. \includes\SQL::quote($tab_new_user['login']).'" WHERE u_resp_login="'. \includes\SQL::quote($u_login_to_update).'" ' ;
                 \includes\SQL::query($sql);
-
             }
 
             if($tab_new_user['login'] != $u_login_to_update) {
@@ -2266,17 +2302,29 @@ class Fonctions
 
             $return .= _('form_modif_ok') . ' !<br><br>';
 
+            return true;
+
         } else { // en cas d'erreur de saisie
-            $return .= _('form_modif_not_ok') . ' !<br><br>';
+            // composition des erreurs
+            $errors = '';
+            if (!empty($erreurs)) {
+                foreach ($erreurs as $erreur) {
+                    $errors .= '<li>' . $erreur . '</li>';
+                }
+            }
+            $return .= '<div class="alert alert-danger">' . _('erreur_recommencer') . ' :<ul>' . $errors . '</ul><br /><a href="admin_index.php?onglet=modif_user&session=' . $session . '&u_login=' . $u_login_to_update . '">' . _('form_retour') . '</a></div>';
+
+            return false;
         }
-        return $return;
     }
 
-    public static function modifier_user($u_login, $tab_checkbox_sem_imp, $tab_checkbox_sem_p, $onglet)
+    public static function modifier_user($u_login, $onglet)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
+        $soldeHeureId = uniqid();
+
 
         // recup du tableau des types de conges (seulement les conges)
         $tab_type_conges=recup_tableau_types_conges();
@@ -2294,44 +2342,53 @@ class Fonctions
         /********************/
         $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '&u_login_to_update=' . $u_login . '" method="POST">';
         // AFFICHAGE TABLEAU DES INFOS
-        $return .= '<table class="table table-hover table-responsive table-condensed table-striped">';
-        $return .= '<thead>';
-        $return .= '<tr>';
-        $return .= '<th>' . _('divers_nom_maj_1') . '</th>';
-        $return .= '<th>' . _('divers_prenom_maj_1') . '</th>';
-        $return .= '<th>' . _('divers_login_maj_1') . '</th>';
-        $return .= '<th>' . _('divers_quotite_maj_1') . '</th>';
-        $return .= '<th>' . _('admin_users_is_resp') . '</th>';
-        $return .= '<th>' . _('admin_users_resp_login') . '</th>';
-        $return .= '<th>' . _('admin_users_is_admin') . '</th>';
-        $return .= '<th>' . _('admin_users_is_hr') . '</th>';
-        $return .= '<th>' . _('admin_users_is_active') . '</th>';
-        $return .= '<th>' . _('admin_users_see_all') . '</th>';
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-hover',
+            'table-responsive',
+            'table-striped',
+            'table-condensed'
+        ]);
+        $childTable = '<thead>';
+        $childTable .= '<tr>';
+        $childTable .= '<th>' . _('divers_nom_maj_1') . '</th>';
+        $childTable .= '<th>' . _('divers_prenom_maj_1') . '</th>';
+        $childTable .= '<th>' . _('divers_login_maj_1') . '</th>';
+        $childTable .= '<th>' . _('divers_quotite_maj_1') . '</th>';
+        $childTable .= '<th>' . _('solde_heure') . '</th>';
+        $childTable .= '<th>' . _('admin_users_is_resp') . '</th>';
+        $childTable .= '<th>' . _('admin_users_resp_login') . '</th>';
+        $childTable .= '<th>' . _('admin_users_is_admin') . '</th>';
+        $childTable .= '<th>' . _('admin_users_is_hr') . '</th>';
+        $childTable .= '<th>' . _('admin_users_is_active') . '</th>';
+        $childTable .= '<th>' . _('admin_users_see_all') . '</th>';
 
         if($_SESSION['config']['where_to_find_user_email']=="dbconges") {
-            $return .= '<th>' . _('admin_users_mail') . '</th>';
+            $childTable .= '<th>' . _('admin_users_mail') . '</th>';
         }
-        $return .= '</tr>';
-        $return .= '</thead>';
-        $return .= '<tbody>';
+        $childTable .= '</tr>';
+        $childTable .= '</thead>';
+        $childTable .= '<tbody>';
 
-        // AFICHAGE DE LA LIGNE DES VALEURS ACTUELLES A MOFIDIER
-        $return .= '<tr>';
-        $return .= '<td>' . $tab_user['nom']. '</td>';
-        $return .= '<td>' . $tab_user['prenom'] . '</td>';
-        $return .= '<td>' . $tab_user['login'] . '</td>';
-        $return .= '<td>' . $tab_user['quotite'] . '</td>';
-        $return .= '<td>' . $tab_user['is_resp'] . '</td>';
-        $return .= '<td>' . $tab_user['resp_login'] . '</td>';
-        $return .= '<td>' . $tab_user['is_admin'] . '</td>';
-        $return .= '<td>' . $tab_user['is_hr'] . '</td>';
-        $return .= '<td>' . $tab_user['is_active'] . '</td>';
-        $return .= '<td>' . $tab_user['see_all'] . '</td>';
+        // AFFICHAGE DE LA LIGNE DES VALEURS ACTUELLES A MODIFIER
+        $childTable .= '<tr>';
+        $childTable .= '<td>' . $tab_user['nom']. '</td>';
+        $childTable .= '<td>' . $tab_user['prenom'] . '</td>';
+        $childTable .= '<td>' . $tab_user['login'] . '</td>';
+        $childTable .= '<td>' . $tab_user['quotite'] . '</td>';
+        $childTable .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($tab_user['solde_heure']) . '</td>';
+        $childTable .= '<td>' . $tab_user['is_resp'] . '</td>';
+        $childTable .= '<td>' . $tab_user['resp_login'] . '</td>';
+        $childTable .= '<td>' . $tab_user['is_admin'] . '</td>';
+        $childTable .= '<td>' . $tab_user['is_hr'] . '</td>';
+        $childTable .= '<td>' . $tab_user['is_active'] . '</td>';
+        $childTable .= '<td>' . $tab_user['see_all'] . '</td>';
 
         if($_SESSION['config']['where_to_find_user_email']=="dbconges") {
-            $return .= '<td>' . $tab_user['email'] . '</td>';
+            $childTable .= '<td>' . $tab_user['email'] . '</td>';
         }
-        $return .= '</tr>';
+        $childTable .= '</tr>';
 
         // contruction des champs de saisie
         if($_SESSION['config']['export_users_from_ldap']) {
@@ -2343,6 +2400,7 @@ class Fonctions
         $text_nom="<input class=\"form-control\" type=\"text\" name=\"new_nom\" size=\"10\" maxlength=\"30\" value=\"".$tab_user['nom']."\">" ;
         $text_prenom="<input class=\"form-control\" type=\"text\" name=\"new_prenom\" size=\"10\" maxlength=\"30\" value=\"".$tab_user['prenom']."\">" ;
         $text_quotite="<input class=\"form-control\" type=\"text\" name=\"new_quotite\" size=\"3\" maxlength=\"3\" value=\"".$tab_user['quotite']."\">" ;
+        $text_solde_heure="<input class=\"form-control\" type=\"text\" name=\"new_solde_heure\" id=\"" . $soldeHeureId . "\"  size=\"6\" maxlength=\"6\" value=\"".  \App\Helpers\Formatter::timestamp2Duree($tab_user['solde_heure'])."\">" ;
         if($tab_user['is_resp']=="Y") {
             $text_is_resp="<select class=\"form-control\" name=\"new_is_resp\" id=\"is_resp_id\" ><option value=\"Y\">Y</option><option value=\"N\">N</option></select>" ;
         } else {
@@ -2378,7 +2436,7 @@ class Fonctions
         }
 
 
-        $text_resp_login="<select class=\"form-control\" name=\"new_resp_login\" id=\"resp_login_id\" >" ;
+        $text_resp_login="<select class=\"form-control\" name=\"new_resp_login\" id=\"resp_login_id\" ><option value=\"no_resp\">". _('admin_users_no_resp') ."</option>" ;
         // construction des options du SELECT pour new_resp_login
         $sql2 = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_is_resp = \"Y\" ORDER BY u_nom,u_prenom"  ;
         $ReqLog2 = \includes\SQL::query($sql2);
@@ -2394,114 +2452,135 @@ class Fonctions
         $text_resp_login=$text_resp_login."</select>" ;
 
         // AFFICHAGE ligne de saisie
-        $return .= '<tr class="update-line">';
-        $return .= '<td>' . $text_nom . '</td>';
-        $return .= '<td>' . $text_prenom . '</td>';
-        $return .= '<td>' . $text_login . '</td>';
-        $return .= '<td>' . $text_quotite . '</td>';
-        $return .= '<td>' . $text_is_resp . '</td>';
-        $return .= '<td>' . $text_resp_login . '</td>';
-        $return .= '<td>' . $text_is_admin . '</td>';
-        $return .= '<td>' . $text_is_hr . '</td>';
-        $return .= '<td>' . $text_is_active . '</td>';
-        $return .= '<td>' . $text_see_all . '</td>';
+        $childTable .= '<tr class="update-line">';
+        $childTable .= '<td>' . $text_nom . '</td>';
+        $childTable .= '<td>' . $text_prenom . '</td>';
+        $childTable .= '<td>' . $text_login . '</td>';
+        $childTable .= '<td>' . $text_quotite . '</td>';
+        $childTable .= '<td>' . $text_solde_heure . '</td>';
+        $childTable .= '<td>' . $text_is_resp . '</td>';
+        $childTable .= '<td>' . $text_resp_login . '</td>';
+        $childTable .= '<td>' . $text_is_admin . '</td>';
+        $childTable .= '<td>' . $text_is_hr . '</td>';
+        $childTable .= '<td>' . $text_is_active . '</td>';
+        $childTable .= '<td>' . $text_see_all . '</td>';
         if($_SESSION['config']['where_to_find_user_email']=="dbconges") {
-            $return .= '<td>' . $text_email . '</td>';
+            $childTable .= '<td>' . $text_email . '</td>';
         }
-        $return .= '</tr></tbody></table><br><hr/>';
+        $childTable .= '</tr></tbody>';
+        $childTable .= '<script type="text/javascript">generateTimePicker("' . $soldeHeureId . '");</script>';
+
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
+        $return .= '<br><hr/>';
 
         // AFFICHAGE TABLEAU DES conges annuels et soldes
-        $return .= '<table class="table table-hover table-responsive table-condensed table-striped">';
-        $return .= '<thead>';
-        $return .= '<tr>';
-        $return .= '<th></th>';
-        $return .= '<th colspan="2">' . _('admin_modif_nb_jours_an') . ' </th>';
-        $return .= '<th colspan="2">' . _('divers_solde') . '</th>';
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-hover',
+            'table-responsive',
+            'table-striped',
+            'table-condensed'
+        ]);
+        $childTable = '<thead>';
+        $childTable .= '<tr>';
+        $childTable .= '<th></th>';
+        $childTable .= '<th colspan="2">' . _('admin_modif_nb_jours_an') . ' </th>';
+        $childTable .= '<th colspan="2">' . _('divers_solde') . '</th>';
         if( $_SESSION['config']['autorise_reliquats_exercice'] ) {
-            $return .= '<th colspan="2">' . _('divers_reliquat') . '</th>';
+            $childTable .= '<th colspan="2">' . _('divers_reliquat') . '</th>';
         }
-        $return .= '</tr></thead><tbody>';
+        $childTable .= '</tr></thead><tbody>';
 
         $i = true;
         foreach($tab_type_conges as $id_type_cong => $libelle) {
-            $return .= '<tr class="' . ($i? 'i' : 'p') . '">';
-            $return .= '<td>' . $libelle . '</td>';
+            $childTable .= '<tr class="' . ($i? 'i' : 'p') . '">';
+            $childTable .= '<td>' . $libelle . '</td>';
             // jours / an
 
             if (isset($tab_user['conges'][$libelle])) {
-                $return .= '<td>' . $tab_user['conges'][$libelle]['nb_an'] . '</td>';
+                $childTable .= '<td>' . $tab_user['conges'][$libelle]['nb_an'] . '</td>';
                 $text_jours_an="<input class=\"form-control\" type=\"text\" name=\"tab_new_jours_an[$id_type_cong]\" size=\"5\" maxlength=\"5\" value=\"".$tab_user['conges'][$libelle]['nb_an']."\">" ;
             } else {
-                $return .= '<td>0</td>';
+                $childTable .= '<td>0</td>';
                 $text_jours_an='<input class=\"form-control\" type="text" name="tab_new_jours_an['.$id_type_cong.']" size="5" maxlength="5" value="0">' ;
             }
 
-            $return .= '<td>' . $text_jours_an . '</td>';
+            $childTable .= '<td>' . $text_jours_an . '</td>';
 
             // solde
             if (isset($tab_user['conges'][$libelle])) {
-                $return .= '<td>' . $tab_user['conges'][$libelle]['solde'] . '</td>';
+                $childTable .= '<td>' . $tab_user['conges'][$libelle]['solde'] . '</td>';
                 $text_solde_jours="<input class=\"form-control\" type=\"text\" name=\"tab_new_solde[$id_type_cong]\" size=\"5\" maxlength=\"5\" value=\"".$tab_user['conges'][$libelle]['solde']."\">" ;
             } else {
-                $return .= '<td>0</td>';
+                $childTable .= '<td>0</td>';
                 $text_solde_jours='<input class=\"form-control\" type="text" name="tab_new_solde['.$id_type_cong.']" size="5" maxlength="5" value="0">' ;
             }
 
-            $return .= '<td>' . $text_solde_jours . '</td>';
+            $childTable .= '<td>' . $text_solde_jours . '</td>';
 
             // reliquat
             // si on ne les utilise pas, on initialise qd meme le tableau (<input type=\"hidden\") ...
             if($_SESSION['config']['autorise_reliquats_exercice']) {
                 if (isset($tab_user['conges'][$libelle])) {
-                    $return .= '<td>' . $tab_user['conges'][$libelle]['reliquat'] . '</td>';
+                    $childTable .= '<td>' . $tab_user['conges'][$libelle]['reliquat'] . '</td>';
                     $text_reliquats_jours="<input class=\"form-control\" type=\"text\" name=\"tab_new_reliquat[$id_type_cong]\" size=\"5\" maxlength=\"5\" value=\"".$tab_user['conges'][$libelle]['reliquat']."\">" ;
 
                 } else {
-                    $return .= '<td>0</td>';
+                    $childTable .= '<td>0</td>';
                     $text_reliquats_jours='<input class=\"form-control\" type="text" name="tab_new_reliquat['.$id_type_cong.']" size="5" maxlength="5" value="0">' ;
                 }
-                $return .= '<td>' . $text_reliquats_jours . '</td>';
+                $childTable .= '<td>' . $text_reliquats_jours . '</td>';
             } else {
-                $return .= '<input type="hidden" name="tab_new_reliquat[$id_type_cong]" value="0">';
+                $childTable .= '<input type="hidden" name="tab_new_reliquat[$id_type_cong]" value="0">';
             }
-            $return .= '</tr>';
+            $childTable .= '</tr>';
             $i = !$i;
         }
 
         // recup du tableau des types de conges (seulement les conges)
         if ($_SESSION['config']['gestion_conges_exceptionnels']) {
             foreach($tab_type_conges_exceptionnels as $id_type_cong_exp => $libelle) {
-                $return .= '<tr class="' . ($i ? 'i' : 'p') . '">';
-                $return .= '<td>' . $libelle . '</td>';
+                $childTable .= '<tr class="' . ($i ? 'i' : 'p') . '">';
+                $childTable .= '<td>' . $libelle . '</td>';
                 // jours / an
-                $return .= '<td>0</td>';
-                $return .= '<td>0</td>';
+                $childTable .= '<td>0</td>';
+                $childTable .= '<td>0</td>';
                 // solde
-                $return .= '<td>' . $tab_user['conges'][$libelle]['solde'] . '</td>';
+                $childTable .= '<td>' . $tab_user['conges'][$libelle]['solde'] . '</td>';
                 $text_solde_jours="<input class=\"form-control\" type=\"text\" name=\"tab_new_solde[$id_type_cong_exp]\" size=\"5\" maxlength=\"5\" value=\"".$tab_user['conges'][$libelle]['solde']."\">" ;
-                $return .= '<td>' . $text_solde_jours . '</td>';
+                $childTable .= '<td>' . $text_solde_jours . '</td>';
                 // reliquat
                 // si on ne les utilise pas, on initialise qd meme le tableau (<input type=\"hidden\") ...
                 if($_SESSION['config']['autorise_reliquats_exercice']) {
-                    $return .= '<td>' . $tab_user['conges'][$libelle]['reliquat'] . '</td>';
+                    $childTable .= '<td>' . $tab_user['conges'][$libelle]['reliquat'] . '</td>';
                     $text_reliquats_jours="<input class=\"form-control\" type=\"text\" name=\"tab_new_reliquat[$id_type_cong_exp]\" size=\"5\" maxlength=\"5\" value=\"".$tab_user['conges'][$libelle]['reliquat']."\">" ;
-                    $return .= '<td>' . $text_reliquats_jours . '</td>';
+                    $childTable .= '<td>' . $text_reliquats_jours . '</td>';
                 } else {
-                    $return .= '<input type="hidden" name="tab_new_reliquat[' . $id_type_cong_exp . ']" value="0">';
+                    $childTable .= '<input type="hidden" name="tab_new_reliquat[' . $id_type_cong_exp . ']" value="0">';
                 }
-                $return .= '</tr>';
+                $childTable .= '</tr>';
                 $i = !$i;
             }
         }
 
-        $return .= '</tbody></table><br><hr/>';
+        $childTable .= '</tbody>';
+        $childTable .= '<script type="text/javascript">generateTimePicker("' . $soldeHeureId . '");</script>';
 
-        /*********************************************************/
-        // saisie des jours d'abscence RTT ou temps partiel:
-        $return .= \admin\Fonctions::saisie_jours_absence_temps_partiel($u_login);
-        $return .= '<hr/>';
-        $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
-        $return .= '<a class="btn" href="admin_index.php?session=' . $session . '&onglet=admin-users">' . _('form_cancel') . '</a>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
+        $planning = \App\ProtoControllers\HautResponsable\Planning::getListPlanning((array) ((int) $tab_user['planningId']))[0];
+        $return .= '<br><hr/>';
+        $return .= '<h4>' . _('admin_planning_utilisateur') . '</h4>';
+        $return .= '<div>' . $planning['name'] . '</div>';
+
+        $return .= '<hr /><input class="btn btn-success" type="submit" value="' . _('form_submit') . '"> ';
+        $return .= '<a class="btn btn-default" href="admin_index.php?session=' . $session . '&onglet=admin-users">' . _('form_cancel') . '</a>';
         $return .= '</form>';
         return $return;
     }
@@ -2518,10 +2597,10 @@ class Fonctions
      */
     public static function modifUserModule($session, $onglet)
     {
-        $u_login              = getpost_variable('u_login') ;
-        $u_login_to_update    = getpost_variable('u_login_to_update') ;
-        $tab_checkbox_sem_imp = getpost_variable('tab_checkbox_sem_imp') ;
-        $tab_checkbox_sem_p   = getpost_variable('tab_checkbox_sem_p') ;
+        $u_login              = htmlentities(getpost_variable('u_login'));
+        $u_login_to_update    = htmlentities(getpost_variable('u_login_to_update')) ;
+        $tab_checkbox_sem_imp = htmlentities(getpost_variable('tab_checkbox_sem_imp')) ;
+        $tab_checkbox_sem_p   = htmlentities(getpost_variable('tab_checkbox_sem_p')) ;
         $return = '';
 
         // TITRE
@@ -2535,31 +2614,36 @@ class Fonctions
 
 
         if($u_login!="") {
-            $return .= \admin\Fonctions::modifier_user($u_login, $tab_checkbox_sem_imp, $tab_checkbox_sem_p, $onglet);
+            $return .= \admin\Fonctions::modifier_user($u_login, $onglet);
         } elseif($u_login_to_update!="") {
             $tab_new_jours_an   = getpost_variable('tab_new_jours_an') ;
             $tab_new_solde      = getpost_variable('tab_new_solde') ;
             $tab_new_reliquat   = getpost_variable('tab_new_reliquat') ;
 
-            $tab_new_user['login']      = getpost_variable('new_login') ;
-            $tab_new_user['nom']    = getpost_variable('new_nom') ;
-            $tab_new_user['prenom']     = getpost_variable('new_prenom') ;
-            $tab_new_user['quotite']    = getpost_variable('new_quotite') ;
-            $tab_new_user['is_resp']    = getpost_variable('new_is_resp') ;
-            $tab_new_user['resp_login'] = getpost_variable('new_resp_login') ;
-            $tab_new_user['is_admin']   = getpost_variable('new_is_admin') ;
-            $tab_new_user['is_hr']      = getpost_variable('new_is_hr') ;
+            $tab_new_user['login']      = htmlentities(getpost_variable('new_login'), ENT_QUOTES | ENT_HTML401);
+            $tab_new_user['nom']    = htmlentities(getpost_variable('new_nom'), ENT_QUOTES | ENT_HTML401);
+            $tab_new_user['prenom']     = htmlentities(getpost_variable('new_prenom'), ENT_QUOTES | ENT_HTML401);
+            $tab_new_user['quotite']    = htmlentities(getpost_variable('new_quotite'), ENT_QUOTES | ENT_HTML401);
+            $tab_new_user['solde_heure']    = htmlentities(getpost_variable('new_solde_heure'), ENT_QUOTES | ENT_HTML401);;
+            $tab_new_user['is_resp']    = htmlentities(getpost_variable('new_is_resp'), ENT_QUOTES | ENT_HTML401);
+            $tab_new_user['resp_login'] = htmlentities(getpost_variable('new_resp_login'), ENT_QUOTES | ENT_HTML401);
+            $tab_new_user['is_admin']   = htmlentities(getpost_variable('new_is_admin'), ENT_QUOTES | ENT_HTML401);
+            $tab_new_user['is_hr']      = htmlentities(getpost_variable('new_is_hr'), ENT_QUOTES | ENT_HTML401);
             $tab_new_user['is_active']  = getpost_variable('new_is_active') ;
             $tab_new_user['see_all']    = getpost_variable('new_see_all') ;
             $tab_new_user['email']      = getpost_variable('new_email') ;
             $tab_new_user['jour']       = getpost_variable('new_jour') ;
             $tab_new_user['mois']       = getpost_variable('new_mois') ;
             $tab_new_user['year']       = getpost_variable('new_year') ;
+            $echo  = '';
 
-            echo \admin\Fonctions::commit_update_user($u_login_to_update, $tab_new_user, $tab_new_jours_an, $tab_new_solde, $tab_new_reliquat, $tab_checkbox_sem_imp, $tab_checkbox_sem_p);
-            redirect( ROOT_PATH .'admin/admin_index.php?session='.$session.'&onglet=admin-users', false);
-            exit;
-
+            $ok = \admin\Fonctions::commit_update_user($u_login_to_update, $tab_new_user, $tab_new_jours_an, $tab_new_solde, $tab_new_reliquat, $echo);
+            if ($ok) {
+                redirect( ROOT_PATH .'admin/admin_index.php?session='.$session.'&onglet=admin-users', false);
+                exit;
+            } else {
+                $return .= $echo;
+            }
         } else {
             // renvoit sur la page principale .
             redirect( ROOT_PATH .'admin/admin_index.php?session='.$session.'&onglet=admin-users', false);
@@ -2570,7 +2654,7 @@ class Fonctions
 
     public static function suppression_group($group_to_delete)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -2604,7 +2688,7 @@ class Fonctions
 
     public static function confirmer($group, $onglet)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -2618,26 +2702,38 @@ class Fonctions
         // AFFICHAGE TABLEAU
 
         $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet.'&group_to_delete=' . $group . '" method="POST">';
-        $return .= '<table class="table table-hover table-responsive table-condensed table-striped">';
-        $return .= '<thead>';
-        $return .= '<tr>';
-        $return .= '<th><b>' . _('admin_groupes_groupe') . '</b></th>';
-        $return .= '<th><b>' . _('admin_groupes_libelle') . ' / ' . _('divers_comment_maj_1') . '</b></th>';
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-hover',
+            'table-responsive',
+            'table-striped',
+            'table-condensed'
+        ]);
+        $childTable = '<thead>';
+        $childTable .= '<tr>';
+        $childTable .= '<th><b>' . _('admin_groupes_groupe') . '</b></th>';
+        $childTable .= '<th><b>' . _('admin_groupes_libelle') . ' / ' . _('divers_comment_maj_1') . '</b></th>';
         if($_SESSION['config']['double_validation_conges']) {
-            $return .= '<th><b>' . _('admin_groupes_double_valid') . '</b></th>';
+            $childTable .= '<th><b>' . _('admin_groupes_double_valid') . '</b></th>';
         }
-        $return .= '</tr></thead><tbody><tr>';
+        $childTable .= '</tr></thead><tbody><tr>';
         while ($resultat1 = $ReqLog1->fetch_array()) {
             $sql_groupname=$resultat1["g_groupename"];
             $sql_comment=$resultat1["g_comment"];
             $sql_double_valid=$resultat1["g_double_valid"] ;
-            $return .= '<td>&nbsp;' . $sql_groupname . '&nbsp;</td>';
-            $return .= '<td>&nbsp;' . $sql_comment . '&nbsp;</td>';
+            $childTable .= '<td>&nbsp;' . $sql_groupname . '&nbsp;</td>';
+            $childTable .= '<td>&nbsp;' . $sql_comment . '&nbsp;</td>';
             if($_SESSION['config']['double_validation_conges']) {
-                $return .= '<td>' . $sql_double_valid . '</td>';
+                $childTable .= '<td>' . $sql_double_valid . '</td>';
             }
         }
-        $return .= '</tr></tbody></table><hr/>';
+        $childTable .= '</tr></tbody>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
+        $return .= '<hr/>';
         $return .= '<input class="btn btn-danger" type="submit" value="' . _('form_supprim') . '">';
         $return .= '<a class="btn" href="admin_index.php?session=' . $session . '&onglet=admin-group">' . _('form_cancel') . '</a>';
         $return .= '</form>';
@@ -2678,7 +2774,7 @@ class Fonctions
 
     public static function suppression($u_login_to_delete)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -2687,9 +2783,6 @@ class Fonctions
 
         $sql2 = 'DELETE FROM conges_periode WHERE p_login = "'. \includes\SQL::quote($u_login_to_delete).'"';
         $result2 = \includes\SQL::query($sql2);
-
-        $sql3 = 'DELETE FROM conges_artt WHERE a_login = "'. \includes\SQL::quote($u_login_to_delete).'"';
-        $result3 = \includes\SQL::query($sql3);
 
         $sql4 = 'DELETE FROM conges_echange_rtt WHERE e_login = "'. \includes\SQL::quote($u_login_to_delete).'"';
         $result4 = \includes\SQL::query($sql4);
@@ -2717,7 +2810,7 @@ class Fonctions
 
     public static function confirmer_suppression($u_login, $onglet)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -2726,15 +2819,22 @@ class Fonctions
         /*****************************/
         // AFFICHAGE TABLEAU
         $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '&u_login_to_delete=' . $u_login . '" method="POST">';
-        $return .= '<table class="table table-hover table-responsive table-condensed table-striped">';
-        $return .= '<thead>';
-        $return .= '<tr>';
-        $return .= '<th>' . _('divers_login_maj_1') . '</th>';
-        $return .= '<th>'. _('divers_nom_maj_1') . '</th>';
-        $return .= '<th>' . _('divers_prenom_maj_1') . '</th>';
-        $return .= '</tr>';
-        $return .= '</thead>';
-        $return .= '<tbody>';
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-hover',
+            'table-responsive',
+            'table-striped',
+            'table-condensed'
+        ]);
+        $childTable = '<thead>';
+        $childTable .= '<tr>';
+        $childTable .= '<th>' . _('divers_login_maj_1') . '</th>';
+        $childTable .= '<th>'. _('divers_nom_maj_1') . '</th>';
+        $childTable .= '<th>' . _('divers_prenom_maj_1') . '</th>';
+        $childTable .= '</tr>';
+        $childTable .= '</thead>';
+        $childTable .= '<tbody>';
 
         // Récupération des informations
         $sql1 = 'SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_login = "'. \includes\SQL::quote($u_login).'"';
@@ -2742,13 +2842,17 @@ class Fonctions
 
         $return .= '<tr>';
         while ($resultat1 = $ReqLog1->fetch_array()) {
-            $return .= '<td>' . $resultat1["u_login"] . '</td>';
-            $return .= '<td>' . $resultat1["u_nom"] . '</td>';
-            $return .= '<td>' . $resultat1["u_prenom"] . '</td>';
+            $childTable .= '<td>' . $resultat1["u_login"] . '</td>';
+            $childTable .= '<td>' . $resultat1["u_nom"] . '</td>';
+            $childTable .= '<td>' . $resultat1["u_prenom"] . '</td>';
         }
-        $return .= '</tr>';
-        $return .= '</tbody>';
-        $return .= '</table><br>';
+        $childTable .= '</tr>';
+        $childTable .= '</tbody>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
+        $return .= '<br>';
         $return .= '<input class="btn btn-danger" type="submit" value="' . _('form_supprim') . '">';
         $return .= '<a class="btn" href="admin_index.php?session=' . $session . '&onglet=admin-users">' . _('form_cancel') . '</a>';
         $return .= '</form>';
@@ -2841,21 +2945,28 @@ class Fonctions
     {
         $return = '';
         //AFFICHAGE DU TABLEAU DES GROUPES DU USER
-        $return .= '<table class="table table-hover table-responsive table-condensed table-striped">';
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-hover',
+            'table-responsive',
+            'table-striped',
+            'table-condensed'
+        ]);
 
         // affichage TITRE
-        $return .= '<thead>';
-        $return .= '<tr>';
-        $return .= '<th colspan=3><h3>' . _('admin_gestion_groupe_users_group_of_new_user') . ' :</h3></th>';
-        $return .= '</tr>';
+        $childTable = '<thead>';
+        $childTable .= '<tr>';
+        $childTable .= '<th colspan=3><h3>' . _('admin_gestion_groupe_users_group_of_new_user') . ' :</h3></th>';
+        $childTable .= '</tr>';
 
-        $return .= '<tr>';
-        $return .= '<th>&nbsp;</th>';
-        $return .= '<th>&nbsp;' . _('admin_groupes_groupe') . '&nbsp;:</th>';
-        $return .= '<th>&nbsp;' . _('admin_groupes_libelle') . '&nbsp;:</th>';
-        $return .= '</tr>';
-        $return .= '</thead>';
-        $return .= '<tbody>';
+        $childTable .= '<tr>';
+        $childTable .= '<th>&nbsp;</th>';
+        $childTable .= '<th>&nbsp;' . _('admin_groupes_groupe') . '&nbsp;:</th>';
+        $childTable .= '<th>&nbsp;' . _('admin_groupes_libelle') . '&nbsp;:</th>';
+        $childTable .= '</tr>';
+        $childTable .= '</thead>';
+        $childTable .= '<tbody>';
 
         // affichage des groupes
 
@@ -2900,20 +3011,24 @@ class Fonctions
                 $class="histo";
             }
 
-            $return .= '<tr class="'.(!($i%2) ? 'i' : 'p').'">';
-            $return .= '<td>' . $case_a_cocher . '</td>';
-            $return .= '<td class="' . $class . '">&nbsp;' . $group . '&nbsp</td>';
-            $return .= '<td class="' . $class . '">&nbsp;' . $libelle . '&nbsp;</td>';
-            $return .= '</tr>';
+            $childTable .= '<tr class="'.(!($i%2) ? 'i' : 'p').'">';
+            $childTable .= '<td>' . $case_a_cocher . '</td>';
+            $childTable .= '<td class="' . $class . '">&nbsp;' . $group . '&nbsp</td>';
+            $childTable .= '<td class="' . $class . '">&nbsp;' . $libelle . '&nbsp;</td>';
+            $childTable .= '</tr>';
         }
-        $return .= '<tbody></table>';
+        $childTable .= '<tbody>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
         return $return;
     }
 
     // affichage du formulaire de saisie d'un nouveau user
     public static function affiche_formulaire_ajout_user(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, $onglet)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -2936,31 +3051,40 @@ class Fonctions
 
         /****************************************/
         // tableau des infos de user
-
-        $return .= '<table class="table table-hover table-responsive table-condensed table-striped" >';
-        $return .= '<thead>';
-        $return .= '<tr>';
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-hover',
+            'table-responsive',
+            'table-striped',
+            'table-condensed'
+        ]);
+        $childTable = '<thead>';
+        $childTable .= '<tr>';
         if ($_SESSION['config']['export_users_from_ldap'] ) {
-            $return .= '<th>' . _('divers_nom_maj_1') . ' ' . _('divers_prenom_maj_1') . '</th>';
+            $childTable .= '<th>' . _('divers_nom_maj_1') . ' ' . _('divers_prenom_maj_1') . '</th>';
         } else {
-            $return .= '<th>' . _('divers_login_maj_1') . '</th>';
-            $return .= '<th>' . _('divers_nom_maj_1') . '</th>';
-            $return .= '<th>' . _('divers_prenom_maj_1') . '</th>';
+            $childTable .= '<th>' . _('divers_login_maj_1') . '</th>';
+            $childTable .= '<th>' . _('divers_nom_maj_1') . '</th>';
+            $childTable .= '<th>' . _('divers_prenom_maj_1') . '</th>';
         }
-        $return .= '<th>' . _('divers_quotite_maj_1') . '</th>';
-        $return .= '<th>' . _('admin_new_users_is_resp') . '</th>';
-        $return .= '<th>' . _('divers_responsable_maj_1') . '</th>';
-        $return .= '<th>' . _('admin_new_users_is_admin') . '</th>';
-        $return .= '<th>' . _('admin_new_users_is_hr') . '</th>';
-        $return .= '<th>' . _('admin_new_users_see_all') . '</th>';
+        $childTable .= '<th>' . _('divers_quotite_maj_1') . '</th>';
+        $childTable .= '<th>' . _('solde_heure') . '</th>';
+        $childTable .= '<th>' . _('admin_new_users_is_resp') . '</th>';
+        $childTable .= '<th>' . _('divers_responsable_maj_1') . '</th>';
+        $childTable .= '<th>' . _('admin_new_users_is_admin') . '</th>';
+        $childTable .= '<th>' . _('admin_new_users_is_hr') . '</th>';
+        $childTable .= '<th>' . _('admin_new_users_see_all') . '</th>';
         if ( !$_SESSION['config']['export_users_from_ldap'] ) {
-            $return .= '<th>' . _('admin_users_mail') . '</th>';
+            $childTable .= '<th>' . _('admin_users_mail') . '</th>';
         }
         if ($_SESSION['config']['how_to_connect_user'] == "dbconges") {
-            $return .= '<th>' . _('admin_new_users_password') . '</th>';
-            $return .= '<th>' . _('admin_new_users_password') . '</th>';
+            $childTable .= '<th>' . _('admin_new_users_password') . '</th>';
+            $childTable .= '<th>' . _('admin_new_users_password') . '</th>';
         }
-        $return .= '</tr></thead><tbody>';
+        $childTable .= '</tr></thead><tbody>';
+        $soldeHeureId = uniqid();
+
 
         $text_nom="<input class=\"form-control\" type=\"text\" name=\"new_nom\" size=\"10\" maxlength=\"30\" value=\"".$tab_new_user['nom']."\">" ;
         $text_prenom="<input class=\"form-control\" type=\"text\" name=\"new_prenom\" size=\"10\" maxlength=\"30\" value=\"".$tab_new_user['prenom']."\">" ;
@@ -2968,6 +3092,7 @@ class Fonctions
             $tab_new_user['quotite']=100;
         }
         $text_quotite="<input class=\"form-control\" type=\"text\" name=\"new_quotite\" size=\"3\" maxlength=\"3\" value=\"".$tab_new_user['quotite']."\">" ;
+        $text_solde_heure="<input class=\"form-control\" type=\"text\" name=\"new_solde_heure\" id=\"" . $soldeHeureId . "\" size=\"6\" maxlength=\"6\" value=\"".$tab_new_user['solde_heure']."\">" ;
         $text_is_resp="<select class=\"form-control\" name=\"new_is_resp\" ><option value=\"N\">N</option><option value=\"Y\">Y</option></select>" ;
 
         // PREPARATION DES OPTIONS DU SELECT du resp_login
@@ -3002,7 +3127,7 @@ class Fonctions
 
         // AFFICHAGE DE LA LIGNE DE SAISIE D'UN NOUVEAU USER
 
-        $return .= '<tr class="update-line">';
+        $childTable .= '<tr class="update-line">';
         // Aj. D.Chabaud - Université d'Auvergne - Sept. 2005
         if ($_SESSION['config']['export_users_from_ldap'] ) {
             // Récupération de la liste des utilisateurs via un ldap :
@@ -3024,75 +3149,89 @@ class Fonctions
                 $i++;
             }
             $lst_users .= "</select>\n";
-            $return .= '<td>' . $lst_users . '</td>';
+            $childTable .= '<td>' . $lst_users . '</td>';
         } else {
-            $return .= '<td>' . $text_login . '</td>';
-            $return .= '<td>' . $text_nom . '</td>';
-            $return .= '<td>' . $text_prenom . '</td>';
+            $childTable .= '<td>' . $text_login . '</td>';
+            $childTable .= '<td>' . $text_nom . '</td>';
+            $childTable .= '<td>' . $text_prenom . '</td>';
         }
 
-        $return .= '<td>' . $text_quotite . '</td>';
-        $return .= '<td>' . $text_is_resp . '</td>';
-        $return .= '<td>' . $text_resp_login . '</td>';
-        $return .= '<td>' . $text_is_admin . '</td>';
-        $return .= '<td>' . $text_is_hr . '</td>';
-        $return .= '<td>' . $text_see_all . '</td>';
+        $childTable .= '<td>' . $text_quotite . '</td>';
+        $childTable .= '<td>' . $text_solde_heure . '</td>';
+        $childTable .= '<td>' . $text_is_resp . '</td>';
+        $childTable .= '<td>' . $text_resp_login . '</td>';
+        $childTable .= '<td>' . $text_is_admin . '</td>';
+        $childTable .= '<td>' . $text_is_hr . '</td>';
+        $childTable .= '<td>' . $text_see_all . '</td>';
         if ( !$_SESSION['config']['export_users_from_ldap'] ) {
-            $return .= '<td>' . $text_email . '</td>';
+            $childTable .= '<td>' . $text_email . '</td>';
         }
         if ($_SESSION['config']['how_to_connect_user'] == "dbconges") {
-            $return .= '<td>' . $text_password1 . '</td>';
-            $return .= '<td>' . $text_password2 . '</td>';
+            $childTable .= '<td>' . $text_password1 . '</td>';
+            $childTable .= '<td>' . $text_password2 . '</td>';
         }
-        $return .= '</tr></tbody></table><br>';
+        $childTable .= '</tr></tbody>';
+        $childTable .= '<script type="text/javascript">generateTimePicker("' . $soldeHeureId . '");</script>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
+        $return .= '<br><hr />';
 
 
         /****************************************/
         //tableau des conges annuels et soldes
-
-        $return .= '<table class="table table-hover table-responsive table-condensed table-striped">';
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-hover',
+            'table-responsive',
+            'table-striped',
+            'table-condensed'
+        ]);
         // ligne de titres
-        $return .= '<thead>';
-        $return .= '<tr>';
-        $return .= '<th></th>';
-        $return .= '<th>' . _('admin_new_users_nb_par_an') . '</th>';
-        $return .= '<th>' . _('divers_solde') . '</th>';
-        $return .= '</tr>';
-        $return .= '</thead>';
-        $return .= '<tbody>';
+        $childTable = '<thead>';
+        $childTable .= '<tr>';
+        $childTable .= '<th></th>';
+        $childTable .= '<th>' . _('admin_new_users_nb_par_an') . '</th>';
+        $childTable .= '<th>' . _('divers_solde') . '</th>';
+        $childTable .= '</tr>';
+        $childTable .= '</thead>';
+        $childTable .= '<tbody>';
 
         $i = true;
         // ligne de saisie des valeurs
         foreach($tab_type_conges as $id_type_cong => $libelle) {
-            $return .= '<tr class="'.($i?'i':'p').'">';
+            $childTable .= '<tr class="'.($i?'i':'p').'">';
             $value_jours_an = ( isset($tab_new_jours_an[$id_type_cong]) ? $tab_new_jours_an[$id_type_cong] : 0 );
             $value_solde_jours = ( isset($tab_new_solde[$id_type_cong]) ? $tab_new_solde[$id_type_cong] : 0 );
             $text_jours_an="<input class=\"form-control\" type=\"text\" name=\"tab_new_jours_an[$id_type_cong]\" size=\"5\" maxlength=\"5\" value=\"$value_jours_an\">" ;
             $text_solde_jours="<input class=\"form-control\" type=\"text\" name=\"tab_new_solde[$id_type_cong]\" size=\"5\" maxlength=\"5\" value=\"$value_solde_jours\">" ;
-            $return .= '<td>' . $libelle . '</td>';
-            $return .= '<td>' . $text_jours_an.  '</td>';
-            $return .= '<td>' . $text_solde_jours . '</td>';
-            $return .= '</tr>';
+            $childTable .= '<td>' . $libelle . '</td>';
+            $childTable .= '<td>' . $text_jours_an.  '</td>';
+            $childTable .= '<td>' . $text_solde_jours . '</td>';
+            $childTable .= '</tr>';
             $i = !$i;
         }
         if ($_SESSION['config']['gestion_conges_exceptionnels']) {
             foreach($tab_type_conges_exceptionnels as $id_type_cong => $libelle) {
-                $return .= '<tr class="'.($i?'i':'p').'">';
+                $childTable .= '<tr class="'.($i?'i':'p').'">';
                 $value_solde_jours = ( isset($tab_new_solde[$id_type_cong]) ? $tab_new_solde[$id_type_cong] : 0 );
                 $text_jours_an="<input type=\"hidden\" name=\"tab_new_jours_an[$id_type_cong]\" size=\"5\" maxlength=\"5\" value=\"0\"> &nbsp; " ;
                 $text_solde_jours="<input class=\"form-control\" type=\"text\" name=\"tab_new_solde[$id_type_cong]\" size=\"5\" maxlength=\"5\" value=\"$value_solde_jours\">" ;
-                $return .= '<td>'.  $libelle . '</td>';
-                $return .= '<td>' . $text_jours_an . '</td>';
-                $return .= '<td>' . $text_solde_jours . '</td>';
-                $return .= '</tr>';
+                $childTable .= '<td>'.  $libelle . '</td>';
+                $childTable .= '<td>' . $text_jours_an . '</td>';
+                $childTable .= '<td>' . $text_solde_jours . '</td>';
+                $childTable .= '</tr>';
                 $i = !$i;
             }
         }
-        $return .= '</tbody></table><br>';
-
-        // saisie de la grille des jours d'absence ARTT ou temps partiel:
-        $return .= \admin\Fonctions::saisie_jours_absence_temps_partiel($tab_new_user['login']);
-
+        $childTable .= '</tbody>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
+        $return .= '<br>';
 
         // si gestion des groupes :  affichage des groupe pour y affecter le user
         if($_SESSION['config']['gestion_groupes'])
@@ -3108,14 +3247,14 @@ class Fonctions
         $return .= '<hr>';
         $return .= '<input type="hidden" name="saisie_user" value="ok">';
         $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
-        $return .= '<a class="btn" href="' . $PHP_SELF . '?session=' . $session . '">' . _('form_cancel') . '</a>';
+        $return .= ' <a class="btn btn-default" href="' . $PHP_SELF . '?session=' . $session . '">' . _('form_cancel') . '</a>';
         $return .= '</form>';
         return $return;
     }
 
     public static function verif_new_param(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, &$return = null)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
 
@@ -3123,7 +3262,7 @@ class Fonctions
             $valid=verif_saisie_decimal($tab_new_jours_an[$id_cong]);    //verif la bonne saisie du nombre décimal
             $valid=verif_saisie_decimal($tab_new_solde[$id_cong]);    //verif la bonne saisie du nombre décimal
         }
- 
+
         // verif des parametres reçus :
         // si on travaille avec la base dbconges, on teste tout, mais si on travaille avec ldap, on ne teste pas les champs qui viennent de ldap ...
         if(!\admin\Fonctions::test_form_add_user($tab_new_user)) {
@@ -3144,6 +3283,7 @@ class Fonctions
             $return .= '<input type="hidden" name="new_is_hr" value="' . $tab_new_user['is_hr'] . '">';
             $return .= '<input type="hidden" name="new_see_all" value="' . $tab_new_user['see_all'] . '">';
             $return .= '<input type="hidden" name="new_quotite" value="' . $tab_new_user['quotite'] . '">';
+            $return .= '<input type="hidden" name="new_heure_solde" value="' . $tab_new_user['solde_heure'] . '">';
             $return .= '<input type="hidden" name="new_email" value="' . $tab_new_user['email'] . '">';
             foreach($tab_new_jours_an as $id_cong => $jours_an) {
                 $return .= '<input type="hidden" name="tab_new_jours_an[$id_cong]" value="' . $tab_new_jours_an[$id_cong] . '">';
@@ -3172,6 +3312,7 @@ class Fonctions
                 $return .= '<input type="hidden" name="new_is_admin" value="' . $tab_new_user['is_admin'] . '">';
                 $return .= '<input type="hidden" name="new_is_hr" value="' . $tab_new_user['is_hr'] . '">';
                 $return .= '<input type="hidden" name="new_quotite" value="' . $tab_new_user['quotite'] . '">';
+                $return .= '<input type="hidden" name="new_heure_solde" value="' . $tab_new_user['solde_heure'] . '">';
                 $return .= '<input type="hidden" name="new_email" value="' . $tab_new_user['email'] . '">';
 
                 foreach($tab_new_jours_an as $id_cong => $jours_an) {
@@ -3195,6 +3336,7 @@ class Fonctions
                 $return .= '<input type="hidden" name="new_is_admin" value="' . $tab_new_user['is_admin'] . '">';
                 $return .= '<input type="hidden" name="new_is_hr" value="' . $tab_new_user['is_hr'] . '">';
                 $return .= '<input type="hidden" name="new_quotite" value="' . $tab_new_user['quotite'] . '">';
+                $return .= '<input type="hidden" name="new_heure_solde" value="' . $tab_new_user['solde_heure'] . '">';
                 $return .= '<input type="hidden" name="new_email" value="' . $tab_new_user['email'] . '">';
 
                 foreach($tab_new_jours_an as $id_cong => $jours_an) {
@@ -3215,10 +3357,17 @@ class Fonctions
 
     public static function test_form_add_user($tab_new_user) {
         if($_SESSION['config']['export_users_from_ldap']) {
-            return \admin\Fonctions::FormAddUserLoginOk($tab_new_user['login']) && \admin\Fonctions::FormAddUserQuotiteOk($tab_new_user['quotite']);
+            return \admin\Fonctions::FormAddUserLoginOk($tab_new_user['login']) && \admin\Fonctions::FormAddUserQuotiteOk($tab_new_user['quotite']) && \admin\Fonctions::FormAddUserSoldeHeureOk($tab_new_user['solde_heure']);
         } else {
-            return \admin\Fonctions::FormAddUserLoginOk($tab_new_user['login']) && \admin\Fonctions::FormAddUserQuotiteOk($tab_new_user['quotite']) && \admin\Fonctions::FormAddUserNameOk($tab_new_user['nom']) && \admin\Fonctions::FormAddUserNameOk($tab_new_user['prenom']) && \admin\Fonctions::FormAddUserpasswdOk($tab_new_user['password1'],$tab_new_user['password2']);
+            return \admin\Fonctions::FormAddUserLoginOk($tab_new_user['login']) && \admin\Fonctions::FormAddUserQuotiteOk($tab_new_user['quotite'])  && \admin\Fonctions::FormAddUserSoldeHeureOk($tab_new_user['solde_heure']) && \admin\Fonctions::FormAddUserNameOk($tab_new_user['nom']) && \admin\Fonctions::FormAddUserNameOk($tab_new_user['prenom']) && \admin\Fonctions::FormAddUserpasswdOk($tab_new_user['password1'],$tab_new_user['password2']);
         }
+    }
+
+    public static function FormAddUserSoldeHeureOk($solde_heure){
+        if (empty($solde_heure)) {
+            return false;
+        }
+        return \App\Helpers\Formatter::isHourFormat($solde_heure);
     }
 
     public static function FormAddUserLoginOk($login) {
@@ -3242,9 +3391,9 @@ class Fonctions
         }
     }
 
-    public static function ajout_user(&$tab_new_user, $tab_checkbox_sem_imp, $tab_checkbox_sem_p, &$tab_new_jours_an, &$tab_new_solde, $checkbox_user_groups)
+    public static function ajout_user(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, $checkbox_user_groups)
     {
-        $PHP_SELF = $_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
         $verifFalse = '';
@@ -3279,12 +3428,16 @@ class Fonctions
             } else {
                 $sql1=$sql1."u_resp_login='". $tab_new_user['resp_login']."', ";
             }
+            $seeAll = ($tab_new_user['is_admin'] || $tab_new_user['is_hr'])
+                ? 'Y'
+                : 'N';
 
             $sql1=$sql1."u_is_admin='".$tab_new_user['is_admin']."', ";
             $sql1=$sql1."u_is_hr='".$tab_new_user['is_hr']."', ";
-            $sql1=$sql1."u_see_all='".$tab_new_user['see_all']."', ";
+            $sql1=$sql1."u_see_all='". $seeAll . "', ";
             $sql1=$sql1."u_passwd='$motdepasse', ";
             $sql1=$sql1."u_quotite=".$tab_new_user['quotite'].",";
+            $sql1=$sql1."u_heure_solde=".  \App\Helpers\Formatter::hour2Time($tab_new_user['solde_heure']).",";
             $sql1=$sql1." u_email='".$tab_new_user['email']."' ";
             $result1 = \includes\SQL::query($sql1);
 
@@ -3297,29 +3450,6 @@ class Fonctions
                 $result3 = \includes\SQL::query($sql3);
             }
 
-
-            /*****************************/
-            /* INSERT dans conges_artt  */
-            $list_colums_to_insert="a_login";
-            $list_values_to_insert="'".$tab_new_user['login']."'";
-            // on parcours le tableau des jours d'absence semaine impaire
-            if($tab_checkbox_sem_imp!="") {
-                while (list ($key, $val) = each ($tab_checkbox_sem_imp)) {
-                    $list_colums_to_insert="$list_colums_to_insert, $key";
-                    $list_values_to_insert="$list_values_to_insert, '$val'";
-                }
-            }
-            if($tab_checkbox_sem_p!="") {
-                while (list ($key, $val) = each ($tab_checkbox_sem_p)) {
-                    $list_colums_to_insert="$list_colums_to_insert, $key";
-                    $list_values_to_insert="$list_values_to_insert, '$val'";
-                }
-            }
-
-            $sql2 = "INSERT INTO conges_artt ($list_colums_to_insert, a_date_debut_grille) VALUES ($list_values_to_insert, '$new_date_deb_grille')" ;
-            $result2 = \includes\SQL::query($sql2);
-
-
             /***********************************/
             /* ajout du user dans ses groupes  */
             $result4=TRUE;
@@ -3328,8 +3458,7 @@ class Fonctions
             }
 
             /*****************************/
-
-            if($result1 && $result2 && $result3 && $result4) {
+            if($result1 && $result3 && $result4) {
                 $return .= _('form_modif_ok') . '<br><br>';
             } else {
                 $return .= _('form_modif_not_ok') . '<br><br>';
@@ -3347,221 +3476,6 @@ class Fonctions
         }
         return $return;
     }
-
-    // saisie de la grille des jours d'absence ARTT ou temps partiel:
-    public static function saisie_jours_absence_temps_partiel($login)
-    {
-        $return = '';
-
-        /* initialisation des variables **************/
-        $checked_option_sem_imp_lu_am='';
-        $checked_option_sem_imp_lu_pm='';
-        $checked_option_sem_imp_ma_am='';
-        $checked_option_sem_imp_ma_pm='';
-        $checked_option_sem_imp_me_am='';
-        $checked_option_sem_imp_me_pm='';
-        $checked_option_sem_imp_je_am='';
-        $checked_option_sem_imp_je_pm='';
-        $checked_option_sem_imp_ve_am='';
-        $checked_option_sem_imp_ve_pm='';
-        $checked_option_sem_imp_sa_am='';
-        $checked_option_sem_imp_sa_pm='';
-        $checked_option_sem_imp_di_am='';
-        $checked_option_sem_imp_di_pm='';
-        $checked_option_sem_p_lu_am='';
-        $checked_option_sem_p_lu_pm='';
-        $checked_option_sem_p_ma_am='';
-        $checked_option_sem_p_ma_pm='';
-        $checked_option_sem_p_me_am='';
-        $checked_option_sem_p_me_pm='';
-        $checked_option_sem_p_je_am='';
-        $checked_option_sem_p_je_pm='';
-        $checked_option_sem_p_ve_am='';
-        $checked_option_sem_p_ve_pm='';
-        $checked_option_sem_p_sa_am='';
-        $checked_option_sem_p_sa_pm='';
-        $checked_option_sem_p_di_am='';
-        $checked_option_sem_p_di_pm='';
-        /*********************************************/
-
-        // recup des données de la dernière table artt du user :
-        $sql1 = 'SELECT * FROM conges_artt WHERE a_login="'. \includes\SQL::quote($login).'" AND a_date_fin_grille=\'9999-12-31\' '  ;
-        $ReqLog1 = \includes\SQL::query($sql1);
-
-        while ($resultat1 = $ReqLog1->fetch_array()) {
-            if($resultat1['sem_imp_lu_am']=='Y') $checked_option_sem_imp_lu_am=' checked';
-            if($resultat1['sem_imp_lu_pm']=='Y') $checked_option_sem_imp_lu_pm=' checked';
-            if($resultat1['sem_imp_ma_am']=='Y') $checked_option_sem_imp_ma_am=' checked';
-            if($resultat1['sem_imp_ma_pm']=='Y') $checked_option_sem_imp_ma_pm=' checked';
-            if($resultat1['sem_imp_me_am']=='Y') $checked_option_sem_imp_me_am=' checked';
-            if($resultat1['sem_imp_me_pm']=='Y') $checked_option_sem_imp_me_pm=' checked';
-            if($resultat1['sem_imp_je_am']=='Y') $checked_option_sem_imp_je_am=' checked';
-            if($resultat1['sem_imp_je_pm']=='Y') $checked_option_sem_imp_je_pm=' checked';
-            if($resultat1['sem_imp_ve_am']=='Y') $checked_option_sem_imp_ve_am=' checked';
-            if($resultat1['sem_imp_ve_pm']=='Y') $checked_option_sem_imp_ve_pm=' checked';
-            if($resultat1['sem_imp_sa_am']=='Y') $checked_option_sem_imp_sa_am=' checked';
-            if($resultat1['sem_imp_sa_pm']=='Y') $checked_option_sem_imp_sa_pm=' checked';
-            if($resultat1['sem_imp_di_am']=='Y') $checked_option_sem_imp_di_am=' checked';
-            if($resultat1['sem_imp_di_pm']=='Y') $checked_option_sem_imp_di_pm=' checked';
-            if($resultat1['sem_p_lu_am']=='Y') $checked_option_sem_p_lu_am=' checked';
-            if($resultat1['sem_p_lu_pm']=='Y') $checked_option_sem_p_lu_pm=' checked';
-            if($resultat1['sem_p_ma_am']=='Y') $checked_option_sem_p_ma_am=' checked';
-            if($resultat1['sem_p_ma_pm']=='Y') $checked_option_sem_p_ma_pm=' checked';
-            if($resultat1['sem_p_me_am']=='Y') $checked_option_sem_p_me_am=' checked';
-            if($resultat1['sem_p_me_pm']=='Y') $checked_option_sem_p_me_pm=' checked';
-            if($resultat1['sem_p_je_am']=='Y') $checked_option_sem_p_je_am=' checked';
-            if($resultat1['sem_p_je_pm']=='Y') $checked_option_sem_p_je_pm=' checked';
-            if($resultat1['sem_p_ve_am']=='Y') $checked_option_sem_p_ve_am=' checked';
-            if($resultat1['sem_p_ve_pm']=='Y') $checked_option_sem_p_ve_pm=' checked';
-            if($resultat1['sem_p_sa_am']=='Y') $checked_option_sem_p_sa_am=' checked';
-            if($resultat1['sem_p_sa_pm']=='Y') $checked_option_sem_p_sa_pm=' checked';
-            if($resultat1['sem_p_di_am']=='Y') $checked_option_sem_p_di_am=' checked';
-            if($resultat1['sem_p_di_pm']=='Y') $checked_option_sem_p_di_pm=' checked';
-            $date_deb_grille=$resultat1['a_date_debut_grille'];
-            $date_fin_grille=$resultat1['a_date_fin_grille'];
-        }
-
-        $return .= '<h4>'. _('admin_temps_partiel_titre') .' :</h4>';
-        $return .= '<table class="table table-hover table-responsive table-condensed table-striped">';
-        $return .= '<tr>';
-        $return .= '<td>';
-        //tableau semaines impaires
-        $return .= '<b><u>'. _('admin_temps_partiel_sem_impaires') .' :</u></b><br>';
-        $tab_checkbox_sem_imp=array();
-        $imp_lu_am='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_lu_am]" value="Y" '.$checked_option_sem_imp_lu_am.'>';
-        $imp_lu_pm='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_lu_pm]" value="Y" '.$checked_option_sem_imp_lu_pm.'>';
-        $imp_ma_am='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_ma_am]" value="Y" '.$checked_option_sem_imp_ma_am.'>';
-        $imp_ma_pm='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_ma_pm]" value="Y" '.$checked_option_sem_imp_ma_pm.'>';
-        $imp_me_am='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_me_am]" value="Y" '.$checked_option_sem_imp_me_am.'>';
-        $imp_me_pm='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_me_pm]" value="Y" '.$checked_option_sem_imp_me_pm.'>';
-        $imp_je_am='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_je_am]" value="Y" '.$checked_option_sem_imp_je_am.'>';
-        $imp_je_pm='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_je_pm]" value="Y" '.$checked_option_sem_imp_je_pm.'>';
-        $imp_ve_am='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_ve_am]" value="Y" '.$checked_option_sem_imp_ve_am.'>';
-        $imp_ve_pm='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_ve_pm]" value="Y" '.$checked_option_sem_imp_ve_pm.'>';
-        if($_SESSION['config']['samedi_travail']) {
-            $imp_sa_am='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_sa_am]" value="Y" '.$checked_option_sem_imp_sa_am.'>';
-            $imp_sa_pm='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_sa_pm]" value="Y" '.$checked_option_sem_imp_sa_pm.'>';
-        }
-        if($_SESSION['config']['dimanche_travail']) {
-            $imp_di_am='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_di_am]" value="Y" '.$checked_option_sem_imp_di_am.'>';
-            $imp_di_pm='<input type="checkbox" name="tab_checkbox_sem_imp[sem_imp_di_pm]" value="Y" '.$checked_option_sem_imp_di_pm.'>';
-        }
-
-        $return .= '<table cellpadding="1" class="tablo"><thead><tr><td></td>';
-        $return .= '<td class="histo">'. _('lundi') .'</td>';
-        $return .= '<td class="histo">'. _('mardi') .'</td>';
-        $return .= '<td class="histo">'. _('mercredi') .'</td>';
-        $return .= '<td class="histo">'. _('jeudi') .'</td>';
-        $return .= '<td class="histo">'. _('vendredi') .'</td>';
-        if($_SESSION['config']['samedi_travail']) {
-            $return .= '<td class="histo">'. _('samedi') .'</td>';
-        }
-        if($_SESSION['config']['dimanche_travail']) {
-            $return .= '<td class="histo">'. _('dimanche') .'</td>';
-        }
-        $return .= '</tr></thead><tbody>';
-        $return .= '<tr align="center">';
-        $return .= '<td class="histo">'. _('admin_temps_partiel_am') .'</td>';
-        $return .= '<td class="histo">' . $imp_lu_am . '</td>';
-        $return .= '<td class="histo">' . $imp_ma_am . '</td>';
-        $return .= '<td class="histo">' . $imp_me_am . '</td>';
-        $return .= '<td class="histo">' . $imp_je_am . '</td>';
-        $return .= '<td class="histo">' . $imp_ve_am . '</td>';
-        if($_SESSION['config']['samedi_travail']) {
-            $return .= '<td class="histo">' . $imp_sa_am . '</td>';
-        }
-        if($_SESSION['config']['dimanche_travail']) {
-            $return .= '<td class="histo">' . $imp_di_am . '</td>';
-        }
-        $return .= '</tr>';
-        $return .= '<tr align="center">';
-        $return .= '<td class="histo">'. _('admin_temps_partiel_pm') .'</td>';
-        $return .= '<td class="histo">' . $imp_lu_pm . '</td>';
-        $return .= '<td class="histo">' . $imp_ma_pm . '</td>';
-        $return .= '<td class="histo">' . $imp_me_pm . '</td>';
-        $return .= '<td class="histo">' . $imp_je_pm . '</td>';
-        $return .= '<td class="histo">' . $imp_ve_pm . '</td>';
-        if($_SESSION['config']['samedi_travail']) {
-            $return .= '<td class="histo">' . $imp_sa_pm . '</td>';
-        }
-        if($_SESSION['config']['dimanche_travail']) {
-            $return .= '<td class="histo">' . $imp_di_pm . '</td>';
-        }
-        $return .= '</tr></tbody></table>';
-        $return .= '</td><td><img src="'. TEMPLATE_PATH . 'img/shim.gif" width="15" height="2" border="0" vspace="0" hspace="0"></td><td>';
-
-        //tableau semaines paires
-        $return .= '<b><u>'. _('admin_temps_partiel_sem_paires') .':</u></b><br>';
-        $tab_checkbox_sem_p=array();
-        $p_lu_am='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_lu_am]" value="Y" '.$checked_option_sem_p_lu_am.'>';
-        $p_lu_pm='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_lu_pm]" value="Y" '.$checked_option_sem_p_lu_pm.'>';
-        $p_ma_am='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_ma_am]" value="Y" '.$checked_option_sem_p_ma_am.'>';
-        $p_ma_pm='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_ma_pm]" value="Y" '.$checked_option_sem_p_ma_pm.'>';
-        $p_me_am='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_me_am]" value="Y" '.$checked_option_sem_p_me_am.'>';
-        $p_me_pm='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_me_pm]" value="Y" '.$checked_option_sem_p_me_pm.'>';
-        $p_je_am='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_je_am]" value="Y" '.$checked_option_sem_p_je_am.'>';
-        $p_je_pm='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_je_pm]" value="Y" '.$checked_option_sem_p_je_pm.'>';
-        $p_ve_am='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_ve_am]" value="Y" '.$checked_option_sem_p_ve_am.'>';
-        $p_ve_pm='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_ve_pm]" value="Y" '.$checked_option_sem_p_ve_pm.'>';
-        $p_sa_am='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_sa_am]" value="Y" '.$checked_option_sem_p_sa_am.'>';
-        $p_sa_pm='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_sa_pm]" value="Y" '.$checked_option_sem_p_sa_pm.'>';
-        $p_di_am='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_di_am]" value="Y" '.$checked_option_sem_p_di_am.'>';
-        $p_di_pm='<input type="checkbox" name="tab_checkbox_sem_p[sem_p_di_pm]" value="Y" '.$checked_option_sem_p_di_pm.'>';
-
-        $return .= '<table cellpadding="1"  class="tablo"><thead><tr><td></td>';
-        $return .= '<td class="histo">'. _('lundi') .'</td>';
-        $return .= '<td class="histo">'. _('mardi') .'</td>';
-        $return .= '<td class="histo">'. _('mercredi') .'</td>';
-        $return .= '<td class="histo">'. _('jeudi') .'</td>';
-        $return .= '<td class="histo">'. _('vendredi') .'</td>';
-        if($_SESSION['config']['samedi_travail']) {
-        $return .= '<td class="histo">'. _('samedi') .'</td>';
-        }
-        if($_SESSION['config']['dimanche_travail']) {
-            $return .= '<td class="histo">'. _('dimanche') .'</td>';
-        }
-        $return .= '</tr></thead><tbody>';
-        $return .= '<tr align="center">';
-        $return .= '<td class="histo">'. _('admin_temps_partiel_am') .'</td>';
-        $return .= '<td class="histo">' . $p_lu_am . '</td>';
-        $return .= '<td class="histo">' . $p_ma_am . '</td>';
-        $return .= '<td class="histo">' . $p_me_am . '</td>';
-        $return .= '<td class="histo">' . $p_je_am . '</td>';
-        $return .= '<td class="histo">' . $p_ve_am . '</td>';
-        if($_SESSION['config']['samedi_travail']) {
-            $return .= '<td class="histo">' . $p_sa_am . '</td>';
-        }
-        if($_SESSION['config']['dimanche_travail']) {
-            $return .= '<td class="histo">' . $p_di_am . '</td>';
-        }
-        $return .= '</tr>';
-        $return .= '<tr align="center">';
-        $return .= '<td class="histo">'. _('admin_temps_partiel_pm') .'</td>';
-        $return .= '<td class="histo">'.$p_lu_pm.'</td>';
-        $return .= '<td class="histo">'.$p_ma_pm.'</td>';
-        $return .= '<td class="histo">'.$p_me_pm.'</td>';
-        $return .= '<td class="histo">'.$p_je_pm.'</td>';
-        $return .= '<td class="histo">'.$p_ve_pm.'</td>';
-        if($_SESSION['config']['samedi_travail']) {
-            $return .= '<td class="histo">' . $p_sa_pm . '</td>';
-        }
-        if($_SESSION['config']['dimanche_travail']) {
-            $return .= '<td class="histo">' . $p_di_pm . '</td>';
-        }
-        $return .= '</tr></tbody></table></td></tr>';
-        $return .= '<tr>';
-        $return .= '<td colspan="3" class="inline-date">';
-        $jour_default=date('d');
-        $mois_default=date('m');
-        $year_default=date('Y');
-        $return .= '<strong>' . _('admin_temps_partiel_date_valid') . "</strong> ";
-        $return .= affiche_selection_new_jour($jour_default);  // la variable est $new_jour
-        $return .= affiche_selection_new_mois($mois_default);  // la variable est $new_mois
-        $return .= affiche_selection_new_year($year_default-2, $year_default+10, $year_default );  // la variable est $new_year
-        $return .= '</td></tr></table>';
-        return $return;
-    }
-
 
     public static function commit_modif_user_groups($choix_user, &$checkbox_user_groups)
     {
@@ -3583,10 +3497,6 @@ class Fonctions
         }
         return $result_insert;
     }
-
-
-
-
 
     /**
      * Encapsule le comportement du module d'ajout d'utilisateurs
@@ -3638,11 +3548,12 @@ class Fonctions
                     $tab_new_user[$login]['email']  = $info[$ldap_libelle_mail][0] ;
                 }
 
-                $tab_new_user[$login]['quotite']    = getpost_variable('new_quotite');
-                $tab_new_user[$login]['is_resp']    = getpost_variable('new_is_resp');
-                $tab_new_user[$login]['resp_login'] = getpost_variable('new_resp_login');
-                $tab_new_user[$login]['is_admin']   = getpost_variable('new_is_admin');
-                $tab_new_user[$login]['is_hr']      = getpost_variable('new_is_hr');
+                $tab_new_user[$login]['quotite']    = htmlentities(getpost_variable('new_quotite'), ENT_QUOTES | ENT_HTML401);
+                $tab_new_user[$login]['solde_heure']= htmlentities(getpost_variable('new_solde_heure'), ENT_QUOTES | ENT_HTML401);
+                $tab_new_user[$login]['is_resp']    = htmlentities(getpost_variable('new_is_resp'), ENT_QUOTES | ENT_HTML401);
+                $tab_new_user[$login]['resp_login'] = htmlentities(getpost_variable('new_resp_login'), ENT_QUOTES | ENT_HTML401);
+                $tab_new_user[$login]['is_admin']   = htmlentities(getpost_variable('new_is_admin'), ENT_QUOTES | ENT_HTML401);
+                $tab_new_user[$login]['is_hr']      = htmlentities(getpost_variable('new_is_hr'), ENT_QUOTES | ENT_HTML401);
                 $tab_new_user[$login]['see_all']    = getpost_variable('new_see_all');
 
                 if ($_SESSION['config']['how_to_connect_user'] == "dbconges") {
@@ -3651,32 +3562,29 @@ class Fonctions
                 }
                 $tab_new_jours_an                 = getpost_variable('tab_new_jours_an');
                 $tab_new_solde                    = getpost_variable('tab_new_solde') ;
-                $tab_checkbox_sem_imp             = getpost_variable('tab_checkbox_sem_imp');
-                $tab_checkbox_sem_p               = getpost_variable('tab_checkbox_sem_p');
                 $tab_new_user[$login]['new_jour'] = getpost_variable('new_jour');
                 $tab_new_user[$login]['new_mois'] = getpost_variable('new_mois');
                 $tab_new_user[$login]['new_year'] = getpost_variable('new_year');
             }
         } else {
-            $tab_new_user[0]['login']      = getpost_variable('new_login');
-            $tab_new_user[0]['nom']        = getpost_variable('new_nom');
-            $tab_new_user[0]['prenom']     = getpost_variable('new_prenom');
+            $tab_new_user[0]['login']      = htmlentities(getpost_variable('new_login'), ENT_QUOTES | ENT_HTML401);
+            $tab_new_user[0]['nom']        = htmlentities(getpost_variable('new_nom'), ENT_QUOTES | ENT_HTML401);
+            $tab_new_user[0]['prenom']     = htmlentities(getpost_variable('new_prenom'), ENT_QUOTES | ENT_HTML401);
             $tab_new_user[0]['quotite']    = getpost_variable('new_quotite');
-            $tab_new_user[0]['is_resp']    = getpost_variable('new_is_resp');
-            $tab_new_user[0]['resp_login'] = getpost_variable('new_resp_login');
-            $tab_new_user[0]['is_admin']   = getpost_variable('new_is_admin');
-            $tab_new_user[0]['is_hr']      = getpost_variable('new_is_hr');
+            $tab_new_user[0]['is_resp']    = htmlentities(getpost_variable('new_is_resp'), ENT_QUOTES | ENT_HTML401);
+            $tab_new_user[0]['solde_heure']= htmlentities(getpost_variable('new_solde_heure'), ENT_QUOTES | ENT_HTML401);
+            $tab_new_user[0]['resp_login'] = htmlentities(getpost_variable('new_resp_login'), ENT_QUOTES | ENT_HTML401);
+            $tab_new_user[0]['is_admin']   = htmlentities(getpost_variable('new_is_admin'), ENT_QUOTES | ENT_HTML401);
+            $tab_new_user[0]['is_hr']      = htmlentities(getpost_variable('new_is_hr'), ENT_QUOTES | ENT_HTML401);
             $tab_new_user[0]['see_all']    = getpost_variable('new_see_all');
 
             if ($_SESSION['config']['how_to_connect_user'] == "dbconges") {
                 $tab_new_user[0]['password1']    = getpost_variable('new_password1');
                 $tab_new_user[0]['password2']    = getpost_variable('new_password2');
             }
-            $tab_new_user[0]['email']    = getpost_variable('new_email');
+            $tab_new_user[0]['email']    = htmlentities(getpost_variable('new_email'), ENT_QUOTES | ENT_HTML401);
             $tab_new_jours_an            = getpost_variable('tab_new_jours_an');
             $tab_new_solde               = getpost_variable('tab_new_solde');
-            $tab_checkbox_sem_imp        = getpost_variable('tab_checkbox_sem_imp');
-            $tab_checkbox_sem_p          = getpost_variable('tab_checkbox_sem_p');
             $tab_new_user[0]['new_jour'] = getpost_variable('new_jour');
             $tab_new_user[0]['new_mois'] = getpost_variable('new_mois');
             $tab_new_user[0]['new_year'] = getpost_variable('new_year');
@@ -3689,10 +3597,10 @@ class Fonctions
         if($saisie_user=="ok") {
             if($_SESSION['config']['export_users_from_ldap']) {
                 foreach($tab_login as $login) {
-                    $return .= \admin\Fonctions::ajout_user($tab_new_user[$login], $tab_checkbox_sem_imp, $tab_checkbox_sem_p, $tab_new_jours_an, $tab_new_solde, $checkbox_user_groups);
+                    $return .= \admin\Fonctions::ajout_user($tab_new_user[$login], $tab_new_jours_an, $tab_new_solde, $checkbox_user_groups);
                 }
             } else {
-                $return .= \admin\Fonctions::ajout_user($tab_new_user[0], $tab_checkbox_sem_imp, $tab_checkbox_sem_p, $tab_new_jours_an, $tab_new_solde, $checkbox_user_groups);
+                $return .= \admin\Fonctions::ajout_user($tab_new_user[0], $tab_new_jours_an, $tab_new_solde, $checkbox_user_groups);
             }
         } else {
             $return .= \admin\Fonctions::affiche_formulaire_ajout_user($tab_new_user[0], $tab_new_jours_an, $tab_new_solde, $onglet);

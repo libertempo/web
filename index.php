@@ -1,30 +1,4 @@
 <?php
-/*************************************************************************************************
-Libertempo : Gestion Interactive des Congés
-Copyright (C) 2015 (Wouldsmina)
-Copyright (C) 2015 (Prytoegrian)
-Copyright (C) 2005 (cedric chauvineau)
-
-Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
-termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
-Ce programme est distribué car potentiellement utile, mais SANS AUCUNE GARANTIE,
-ni explicite ni implicite, y compris les garanties de commercialisation ou d'adaptation
-dans un but spécifique. Reportez-vous à la Licence Publique Générale GNU pour plus de détails.
-Vous devez avoir reçu une copie de la Licence Publique Générale GNU en même temps
-que ce programme ; si ce n'est pas le cas, écrivez à la Free Software Foundation,
-Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, États-Unis.
-*************************************************************************************************
-This program is free software; you can redistribute it and/or modify it under the terms
-of the GNU General Public License as published by the Free Software Foundation; either
-version 2 of the License, or any later version.
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the GNU General Public License for more details.
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*************************************************************************************************/
-
 define('ROOT_PATH', '');
 require_once 'define.php';
 
@@ -60,37 +34,37 @@ if($err = getpost_variable('error', false))
 if($_SESSION['config']['auth'] == FALSE)    // si pas d'autentification (cf config de php_conges)
 {
 	$login = getpost_variable('login');
-	if(empty($login)) 
+	if(empty($login))
 	{
 	    // redirect( ROOT_PATH .'erreur.php?error_num=1');
-		
+
 		header_error();
 		printf("<h1>ERREUR !</h1>\n");
 		// authentification Error
 		echo '<p>' . _('erreur_user') . "</p>\n";
 		echo '<p>' . _('erreur_login_password') . "</p>\n" ;
 		bottom();
-		
+
 		exit();
 	}
-	else 
+	else
 	{
 		if(session_id()!="")
 			session_destroy();
-		
+
 		// on initialise la nouvelle session
 		ini_set ( "session.gc_maxlifetime", $_SESSION['config']['duree_session'] );
 		session_create($login);
 	}
 }
-else 
+else
 {
 	$session_username = isset($_POST['session_username']) ? $_POST['session_username'] : '';
 	$session_password = isset($_POST['session_password']) ? $_POST['session_password'] : '';
 
 	if(session_id()!="")
 		session_destroy();
-					
+
 	// Si CAS alors on utilise le login CAS pour la session
 	if ( $_SESSION['config']['how_to_connect_user'] == "cas" && $_GET['cas'] != "no" )
 	{
@@ -108,13 +82,32 @@ else
 			exit;
 		}
 	}
-	else 
+	// Si SSO, on utilise les identifiants de session pour se connecter
+	else if ( $_SESSION['config']['how_to_connect_user'] == "SSO" )
+	{
+		$usernameSSO = authentification_AD_SSO();
+		if($usernameSSO != "")
+		{
+			session_create( $usernameSSO );
+		}
+		else//dans ce cas l'utilisateur n'a pas encore été enregistré dans la base de données db_conges
+		{
+			header_error();
+
+			echo  _('session_pas_de_compte_dans_dbconges') ."<br>\n";
+			echo  _('session_contactez_admin') ."\n";
+
+			bottom();
+			exit;
+		}
+	}
+	else
 	{
 		if (($session_username == "") || ($session_password == "")) // si login et passwd non saisis
 		{
 			//  SAISIE LOGIN / PASSWORD :
 			session_saisie_user_password("", "", ""); // appel du formulaire d'authentification (login/password)
-			
+
 			exit;
 		}
 		else
@@ -124,7 +117,7 @@ else
 			// si on a trouve personne qui correspond au couple user/password
 
 			if ( $_SESSION['config']['how_to_connect_user'] == "ldap" && $session_username != "admin" )
-			{	
+			{
 				$username_ldap = authentification_ldap_conges($session_username,$session_password);
 				if ( $username_ldap != $session_username)
 				{
@@ -134,7 +127,7 @@ else
 					$erreur="login_passwd_incorrect";
 					// appel du formulaire d'intentification (login/password)
 					session_saisie_user_password($erreur, $session_username, $session_password);
-					
+
 					exit;
 				}
 				else
@@ -150,14 +143,14 @@ else
 
 						echo  _('session_pas_de_compte_dans_dbconges') ."<br>\n";
 						echo  _('session_contactez_admin') ."\n";
-						
+
 						bottom();
 						exit;
 					}
 				}
 			} // fin du if test avec ldap
 			elseif ( $_SESSION['config']['how_to_connect_user'] == "dbconges" || $session_username == "admin" )
-			{				
+			{
 				$username_conges = autentification_passwd_conges($session_username,$session_password);
 				if ( $username_conges != $session_username)
 				{
@@ -167,7 +160,7 @@ else
 					$erreur="login_passwd_incorrect";
 					// appel du formulaire d'intentification (login/password)
 					session_saisie_user_password($erreur, $session_username, $session_password);
-					
+
 					exit;
 				}
 				else
@@ -184,7 +177,7 @@ else
 
 if(isset($_SESSION['userlogin']))
 {
-	$request= "SELECT u_nom, u_passwd, u_prenom, u_is_resp FROM conges_users where u_login = '". \includes\SQL::quote($_SESSION['userlogin'])."' " ;
+	$request= "SELECT u_nom, u_passwd, u_prenom, u_is_resp, u_is_hr, u_is_admin  FROM conges_users where u_login = '". \includes\SQL::quote($_SESSION['userlogin'])."' " ;
 	$rs = \includes\SQL::query($request );
 	if($rs->num_rows != 1)
 	{
@@ -196,7 +189,9 @@ if(isset($_SESSION['userlogin']))
 		$row = $rs->fetch_array();
 		$NOM=$row["u_nom"];
 		$PRENOM=$row["u_prenom"];
-		$is_resp=$row["u_is_resp"]; 
+        $is_admin = $row["u_is_admin"];
+        $is_hr = $row["u_is_hr"];
+		$is_resp = $row["u_is_resp"];
 
 		// si le login est celui d'un responsable ET on est pas en mode "responsable virtuel"
 		// OU on est en mode "responsable virtuel" avec login= celui du resp virtuel
@@ -208,10 +203,13 @@ if(isset($_SESSION['userlogin']))
 			else
 				redirect( ROOT_PATH .$return_url . '?session=' . $session );
 		}
-		elseif ($_SESSION['userlogin']=="admin")
+		elseif ('Y' === $is_admin)
 		{
-			// redirection vers responsable/resp_index.php
 			redirect( ROOT_PATH .'admin/admin_index.php?session=' . $session );
+		}
+        elseif ( $is_hr == "Y" )
+		{
+			redirect( ROOT_PATH .'hr/hr_index.php?session=' . $session );
 		}
 		elseif ( $is_resp=="Y" )
 		{
@@ -226,4 +224,3 @@ if(isset($_SESSION['userlogin']))
 
 	}
 }
-

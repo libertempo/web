@@ -1,29 +1,5 @@
 <?php
-/*************************************************************************************************
-Libertempo : Gestion Interactive des Congés
-Copyright (C) 2015 (Wouldsmina)
-Copyright (C) 2015 (Prytoegrian)
-Copyright (C) 2005 (cedric chauvineau)
 
-Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
-termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
-Ce programme est distribué car potentiellement utile, mais SANS AUCUNE GARANTIE,
-ni explicite ni implicite, y compris les garanties de commercialisation ou d'adaptation
-dans un but spécifique. Reportez-vous à la Licence Publique Générale GNU pour plus de détails.
-Vous devez avoir reçu une copie de la Licence Publique Générale GNU en même temps
-que ce programme ; si ce n'est pas le cas, écrivez à la Free Software Foundation,
-Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, États-Unis.
-*************************************************************************************************
-This program is free software; you can redistribute it and/or modify it under the terms
-of the GNU General Public License as published by the Free Software Foundation; either
-version 2 of the License, or any later version.
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the GNU General Public License for more details.
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*************************************************************************************************/
 namespace edition;
 
 /**
@@ -68,11 +44,11 @@ class Fonctions
             foreach($tab_editions_user as $id_edition => $tab_ed) {
                 //$text_edit_a_nouveau="<a href=\"edition_papier.php?session=$session&user_login=$login&edit_id=$sql_id\">Editer à nouveau</a>" ;
                 $text_edit_a_nouveau="<a href=\"edition_papier.php?session=$session&user_login=$login&edit_id=$id_edition\">" .
-                        "<img src=\"". TEMPLATE_PATH . "img/fileprint_16x16_2.png\" width=\"16\" height=\"16\" border=\"0\" title=\"". _('editions_edit_again') ."\" alt=\"". _('editions_edit_again') ."\">" .
+                        "<img src=\"". IMG_PATH . "fileprint_16x16_2.png\" width=\"16\" height=\"16\" border=\"0\" title=\"". _('editions_edit_again') ."\" alt=\"". _('editions_edit_again') ."\">" .
                         " ". _('editions_edit_again')  .
                         "</a>\n";
                 $text_edit_pdf_a_nouveau="<a href=\"edition_pdf.php?session=$session&user_login=$login&edit_id=$id_edition\">" .
-                        "<img src=\"". TEMPLATE_PATH . "img/pdf_16x16_2.png\" width=\"16\" height=\"16\" border=\"0\" title=\"". _('editions_edit_again_pdf') ."\" alt=\"". _('editions_edit_again_pdf') ."\">" .
+                        "<img src=\"". IMG_PATH . "pdf_16x16_2.png\" width=\"16\" height=\"16\" border=\"0\" title=\"". _('editions_edit_again_pdf') ."\" alt=\"". _('editions_edit_again_pdf') ."\">" .
                         " ". _('editions_edit_again_pdf')  .
                         "</a>\n";
 
@@ -195,13 +171,13 @@ class Fonctions
             $return .= '<tr align="center">';
             $return .= '<td width="200">';
             $return .= '<a href="edition_papier.php?session=' . $session . '&user_login=' . $login . '&edit_id=0">';
-            $return .= '<img src="' . TEMPLATE_PATH . 'img/fileprint_2.png" width="22" height="22" border="0" title="' . _('editions_lance_edition') . '" alt="' . _('editions_lance_edition') . '">';
+            $return .= '<img src="' . IMG_PATH . 'fileprint_2.png" width="22" height="22" border="0" title="' . _('editions_lance_edition') . '" alt="' . _('editions_lance_edition') . '">';
             $return .= '<b>' . _('editions_lance_edition') . '</b>';
             $return .= '</a>';
             $return .= '</td>';
             $return .= '<td width="200">';
             $return .= '<a href="edition_pdf.php?session=' . $session . '&user_login=' . $login . '&edit_id=0">';
-            $return .= '<img src="' . TEMPLATE_PATH . 'img/pdf_22x22_2.png" width="22" height="22" border="0" title="' . _('editions_pdf_edition') . '" alt="' . _('editions_pdf_edition') . '">';
+            $return .= '<img src="' . IMG_PATH . 'pdf_22x22_2.png" width="22" height="22" border="0" title="' . _('editions_pdf_edition') . '" alt="' . _('editions_pdf_edition') . '">';
             $return .= '<b>' . _('editions_pdf_edition') . '</b>';
             $return .= '</a>';
             $return .= '</td>';
@@ -217,7 +193,7 @@ class Fonctions
 
     public static function affichage($login)
     {
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
 
@@ -260,9 +236,9 @@ class Fonctions
         /*************************************/
         // recup des parametres reçus :
         // SERVER
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         // GET / POST
-        $user_login = getpost_variable('user_login', $_SESSION['userlogin']) ;
+        $user_login = htmlentities(getpost_variable('user_login', $_SESSION['userlogin']), ENT_QUOTES | ENT_HTML401);
         $return = '';
         header_popup( _('editions_titre') .' : '.$user_login);
 
@@ -559,7 +535,7 @@ class Fonctions
 
         /************************************/
 
-        $css = '<link href="'. TEMPLATE_PATH .'style_calendar_edition.css" rel="stylesheet" type="text/css">';
+        $css = '<link href="'. CSS_PATH .'style_calendar_edition.css" rel="stylesheet" type="text/css">';
 
         header_popup(_('editions_etat_conges').' : '.$user_login , $css);
 
@@ -857,153 +833,147 @@ class Fonctions
 
     public static function edition_pdf($login, $edit_id)
     {
-        $fpdf_filename = LIBRARY_PATH .'tcpdf/tcpdf.php';
-        // verif si la librairie fpdf est présente
-        if (!is_readable($fpdf_filename)) {
-            echo  _('fpdf_not_valid') ."<br> !";
+        // recup du tableau des types de conges (seulement les conges)
+        $tab_type_cong=recup_tableau_types_conges();
+        // recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
+        if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+            $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
         } else {
-            // recup du tableau des types de conges (seulement les conges)
-            $tab_type_cong=recup_tableau_types_conges();
-            // recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
-            if ($_SESSION['config']['gestion_conges_exceptionnels']) {
-                $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
-            } else {
-                $tab_type_conges_exceptionnels=array();
-            }
-            // recup du tableau de tous les types de conges
-            $tab_type_all_cong=recup_tableau_tout_types_abs();
-
-            // recup infos du user
-            $tab_info_user = \edition\Fonctions::recup_info_user_pour_edition($login);
-
-            // recup infos de l'édition
-            $tab_info_edition = \edition\Fonctions::recup_info_edition($edit_id);
-
-
-            /**************************************/
-            /* on commence l'affichage ...        */
-            /**************************************/
-            header('content-type: application/pdf');
-            //header('content-Disposition: attachement; filename="downloaded.pdf"');    // pour IE
-
-            $pdf=new \edition\PDF( 'P', 'mm', 'A4', true, "UTF-8");
-            $pdf->AddPage();
-            $pdf->SetFillColor(200);
-
-            /**************************************/
-            /* affichage du texte en haut de page */
-            /**************************************/
-            // fait dans le header de la classe (cf + haut)
-
-            /**************************************/
-            /* affichage du TITRE                 */
-            /**************************************/
-            $pdf->SetFont('Times', 'B', 18);
-            $pdf->Cell(0, 5, $tab_info_user['nom']." ".  $tab_info_user['prenom'],0,1,'C');
-            $pdf->Ln(5);
-            $pdf->SetFont('Times', 'B', 13);
-            $tab_date=explode("-", $tab_info_edition['date']);
-            $pdf->Cell(0, 5,  _('editions_bilan_au') ." ".$tab_date[2]." / ".$tab_date[1]." / ".$tab_date[0],0,1,'C');
-            $pdf->Ln(4);
-
-            /****************************/
-            /* tableau Bilan des Conges */
-            /****************************/
-            // affichage en pdf du tableau récapitulatif des solde de congés d'un user
-            \edition\Fonctions::affiche_pdf_tableau_bilan_conges_user_edtion($pdf, $tab_info_user, $tab_info_edition, $tab_type_cong, $tab_type_conges_exceptionnels) ;
-
-            // affichage de la quotité
-            $pdf->SetFont('Times', 'B', 13);
-            $quotite=$tab_info_user['quotite'];
-            $pdf->Cell(0, 5,  _('divers_quotite') ."  :  $quotite % ",0,1,'C');
-            $pdf->Ln(4);
-            $pdf->Ln(8);
-
-
-            $pdf->SetFont('Times', 'BU', 11);
-            $pdf->Cell(0, 5,  _('editions_historique') ." :",0,1,'C');
-            $pdf->Ln(5);
-            /*********************************************/
-            /* Tableau Historique des Conges et demandes */
-            /*********************************************/
-            $pdf->SetFont('Times', 'B', 10);
-
-            //test d'une ligne à 120 caractères
-            //$ligne120="123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
-            //$pdf->Cell(0, 5, $ligne120 ,0,1,'C');
-
-            // Récupération des informations
-            // on ne recup QUE les periodes de l'edition choisie
-            $sql2 = "SELECT p_login, p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_nb_jours, p_commentaire, p_type, p_etat, p_date_demande, p_date_traitement ";
-            $sql2=$sql2."FROM conges_periode ";
-            $sql2=$sql2."WHERE p_edition_id = $edit_id ";
-            $sql2=$sql2."ORDER BY p_date_deb ASC ";
-            $ReqLog2 = \includes\SQL::query($sql2) ;
-
-            $count2=$ReqLog2->num_rows;
-            if($count2==0) {
-                $pdf->Cell(0, 5,  _('editions_aucun_conges') ." ...",0,1,'C');
-                $pdf->Ln(5);
-            } else {
-                // AFFICHAGE TABLEAU
-                // decalage pour centrer
-                $decalage = 5;
-
-                /*************************************/
-                /* affichage anciens soldes          */
-                /*************************************/
-                // affichage en pdf des anciens soldes de congés d'un user
-                \edition\Fonctions::affiche_pdf_ancien_solde($pdf, $login, $edit_id, $tab_type_cong, $tab_type_conges_exceptionnels, $decalage) ;
-
-                $pdf->Ln(2);
-
-                // (largeur totale page = 210 ( - 2x10 de marge))
-                // tailles des cellules du tableau
-                if($_SESSION['config']['affiche_date_traitement']) {
-                    \edition\Fonctions::affiche_tableau_conges_avec_date_traitement($pdf, $ReqLog2, $decalage, $tab_type_all_cong);
-                } else {
-                    \edition\Fonctions::affiche_tableau_conges_normal($pdf, $ReqLog2, $decalage, $tab_type_all_cong);
-                }
-
-                $pdf->Ln(2);
-
-                /*************************************/
-                /* affichage nouveaux soldes         */
-                /*************************************/
-                // affichage en pdf des nouveaux soldes de congés d'un user
-                \edition\Fonctions::affiche_pdf_nouveau_solde($pdf, $login, $tab_info_edition, $tab_type_cong, $tab_type_conges_exceptionnels, $decalage) ;
-            }
-
-            $pdf->Ln(8);
-
-            /*************************************/
-            /* affichage des zones de signature  */
-            /*************************************/
-            $pdf->SetFont('Times', 'B', 10);
-            // decalage pour centrer
-            $pdf->Cell(20);
-            $pdf->Cell(70, 5,  _('editions_date') ." :",0,0);
-            $pdf->Cell(70, 5,  _('editions_date') ." :",0,1);
-            // decalage pour centrer
-            $pdf->Cell(20);
-            $pdf->Cell(70, 5,  _('editions_signature_1') ." :",0,0);
-            $pdf->Cell(70, 5,  _('editions_signature_2') ." :",0,1);
-
-            $pdf->SetFont('Times', 'I', 10);
-            // decalage pour centrer
-            $pdf->Cell(20);
-            $pdf->Cell(70, 5, "",0,0);
-            $pdf->Cell(70, 5, "(". _('editions_cachet_etab') .")",0,1);
-
-            $pdf->Ln(30);
-
-            /*************************************/
-            /* affichage du texte en bas de page */
-            /*************************************/
-            // fait dans le footer de la classe (cf + haut)
-
-            $pdf->Output();
+            $tab_type_conges_exceptionnels=array();
         }
+        // recup du tableau de tous les types de conges
+        $tab_type_all_cong=recup_tableau_tout_types_abs();
+
+        // recup infos du user
+        $tab_info_user = \edition\Fonctions::recup_info_user_pour_edition($login);
+
+        // recup infos de l'édition
+        $tab_info_edition = \edition\Fonctions::recup_info_edition($edit_id);
+
+
+        /**************************************/
+        /* on commence l'affichage ...        */
+        /**************************************/
+        header('content-type: application/pdf');
+        //header('content-Disposition: attachement; filename="downloaded.pdf"');    // pour IE
+
+        $pdf=new \edition\PDF( 'P', 'mm', 'A4', true, "UTF-8");
+        $pdf->AddPage();
+        $pdf->SetFillColor(200);
+
+        /**************************************/
+        /* affichage du texte en haut de page */
+        /**************************************/
+        // fait dans le header de la classe (cf + haut)
+
+        /**************************************/
+        /* affichage du TITRE                 */
+        /**************************************/
+        $pdf->SetFont('Times', 'B', 18);
+        $pdf->Cell(0, 5, $tab_info_user['nom']." ".  $tab_info_user['prenom'],0,1,'C');
+        $pdf->Ln(5);
+        $pdf->SetFont('Times', 'B', 13);
+        $tab_date=explode("-", $tab_info_edition['date']);
+        $pdf->Cell(0, 5,  _('editions_bilan_au') ." ".$tab_date[2]." / ".$tab_date[1]." / ".$tab_date[0],0,1,'C');
+        $pdf->Ln(4);
+
+        /****************************/
+        /* tableau Bilan des Conges */
+        /****************************/
+        // affichage en pdf du tableau récapitulatif des solde de congés d'un user
+        \edition\Fonctions::affiche_pdf_tableau_bilan_conges_user_edtion($pdf, $tab_info_user, $tab_info_edition, $tab_type_cong, $tab_type_conges_exceptionnels) ;
+
+        // affichage de la quotité
+        $pdf->SetFont('Times', 'B', 13);
+        $quotite=$tab_info_user['quotite'];
+        $pdf->Cell(0, 5,  _('divers_quotite') ."  :  $quotite % ",0,1,'C');
+        $pdf->Ln(4);
+        $pdf->Ln(8);
+
+
+        $pdf->SetFont('Times', 'BU', 11);
+        $pdf->Cell(0, 5,  _('editions_historique') ." :",0,1,'C');
+        $pdf->Ln(5);
+        /*********************************************/
+        /* Tableau Historique des Conges et demandes */
+        /*********************************************/
+        $pdf->SetFont('Times', 'B', 10);
+
+        //test d'une ligne à 120 caractères
+        //$ligne120="123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
+        //$pdf->Cell(0, 5, $ligne120 ,0,1,'C');
+
+        // Récupération des informations
+        // on ne recup QUE les periodes de l'edition choisie
+        $sql2 = "SELECT p_login, p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_nb_jours, p_commentaire, p_type, p_etat, p_date_demande, p_date_traitement ";
+        $sql2=$sql2."FROM conges_periode ";
+        $sql2=$sql2."WHERE p_edition_id = $edit_id ";
+        $sql2=$sql2."ORDER BY p_date_deb ASC ";
+        $ReqLog2 = \includes\SQL::query($sql2) ;
+
+        $count2=$ReqLog2->num_rows;
+        if($count2==0) {
+            $pdf->Cell(0, 5,  _('editions_aucun_conges') ." ...",0,1,'C');
+            $pdf->Ln(5);
+        } else {
+            // AFFICHAGE TABLEAU
+            // decalage pour centrer
+            $decalage = 5;
+
+            /*************************************/
+            /* affichage anciens soldes          */
+            /*************************************/
+            // affichage en pdf des anciens soldes de congés d'un user
+            \edition\Fonctions::affiche_pdf_ancien_solde($pdf, $login, $edit_id, $tab_type_cong, $tab_type_conges_exceptionnels, $decalage) ;
+
+            $pdf->Ln(2);
+
+            // (largeur totale page = 210 ( - 2x10 de marge))
+            // tailles des cellules du tableau
+            if($_SESSION['config']['affiche_date_traitement']) {
+                \edition\Fonctions::affiche_tableau_conges_avec_date_traitement($pdf, $ReqLog2, $decalage, $tab_type_all_cong);
+            } else {
+                \edition\Fonctions::affiche_tableau_conges_normal($pdf, $ReqLog2, $decalage, $tab_type_all_cong);
+            }
+
+            $pdf->Ln(2);
+
+            /*************************************/
+            /* affichage nouveaux soldes         */
+            /*************************************/
+            // affichage en pdf des nouveaux soldes de congés d'un user
+            \edition\Fonctions::affiche_pdf_nouveau_solde($pdf, $login, $tab_info_edition, $tab_type_cong, $tab_type_conges_exceptionnels, $decalage) ;
+        }
+
+        $pdf->Ln(8);
+
+        /*************************************/
+        /* affichage des zones de signature  */
+        /*************************************/
+        $pdf->SetFont('Times', 'B', 10);
+        // decalage pour centrer
+        $pdf->Cell(20);
+        $pdf->Cell(70, 5,  _('editions_date') ." :",0,0);
+        $pdf->Cell(70, 5,  _('editions_date') ." :",0,1);
+        // decalage pour centrer
+        $pdf->Cell(20);
+        $pdf->Cell(70, 5,  _('editions_signature_1') ." :",0,0);
+        $pdf->Cell(70, 5,  _('editions_signature_2') ." :",0,1);
+
+        $pdf->SetFont('Times', 'I', 10);
+        // decalage pour centrer
+        $pdf->Cell(20);
+        $pdf->Cell(70, 5, "",0,0);
+        $pdf->Cell(70, 5, "(". _('editions_cachet_etab') .")",0,1);
+
+        $pdf->Ln(30);
+
+        /*************************************/
+        /* affichage du texte en bas de page */
+        /*************************************/
+        // fait dans le footer de la classe (cf + haut)
+
+        $pdf->Output();
     }
 
     /**
@@ -1184,7 +1154,7 @@ class Fonctions
     public static function enregistrement_edition($login)
     {
 
-        $PHP_SELF=$_SERVER['PHP_SELF'];
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 
         $tab_solde_user=array();
         $sql1 = 'SELECT su_abs_id, su_solde FROM conges_solde_user where su_login = "'. \includes\SQL::quote($login).'"';
@@ -1247,7 +1217,7 @@ class Fonctions
         $sql_update = 'UPDATE conges_periode SET p_edition_id=\''.$new_edition_id.'\'
                 WHERE p_login = \''.$login.'\'
                 AND p_edition_id IS NULL
-                AND (p_type IN (\''.$list_abs_id.'\') )
+                AND (p_type IN ('.$list_abs_id.') )
                 AND (p_etat!=\'demande\') ';
         $ReqLog_update = \includes\SQL::query($sql_update);
 

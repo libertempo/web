@@ -1,30 +1,4 @@
 <?php
-/*************************************************************************************************
-Libertempo : Gestion Interactive des Congés
-Copyright (C) 2015 (Wouldsmina)
-Copyright (C) 2015 (Prytoegrian)
-Copyright (C) 2005 (cedric chauvineau)
-
-Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
-termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
-Ce programme est distribué car potentiellement utile, mais SANS AUCUNE GARANTIE,
-ni explicite ni implicite, y compris les garanties de commercialisation ou d'adaptation
-dans un but spécifique. Reportez-vous à la Licence Publique Générale GNU pour plus de détails.
-Vous devez avoir reçu une copie de la Licence Publique Générale GNU en même temps
-que ce programme ; si ce n'est pas le cas, écrivez à la Free Software Foundation,
-Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, États-Unis.
-*************************************************************************************************
-This program is free software; you can redistribute it and/or modify it under the terms
-of the GNU General Public License as published by the Free Software Foundation; either
-version 2 of the License, or any later version.
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the GNU General Public License for more details.
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*************************************************************************************************/
-
 
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 
@@ -115,7 +89,7 @@ function header_login($title = '' , $additional_head = '' ) {
     }else
         throw new Exception('Warning : Ne peux ouvrir deux header !!! previous = '.$last_use['file']);
 
-    $type_bottom = 'error';
+    $type_bottom = 'login';
 
     if (empty($title))
         $title = 'Libertempo';
@@ -148,7 +122,7 @@ function bouton($name, $icon ,$link, $active = false)
     $link = str_replace('"','\\"',$link);
     echo '<div class="button_div'.($active?' active':'').'">
             <a href="'. $link .'">
-                <img src="'. TEMPLATE_PATH .'img/'.$icon.'" title="'.$name.'" alt="'.$name.'">
+                <img src="'. IMG_PATH . $icon.'" title="'.$name.'" alt="'.$name.'">
                 <span>'.$name.'</span>
             </a>
         </div>';
@@ -159,8 +133,8 @@ function bouton_popup($name, $icon ,$link, $popup_name, $size_x, $size_y, $activ
     $name = str_replace('"','\\"',$name);
 
     echo '<div class="button_div'.($active?' active':'').'">
-            <a href="javascript:void(0);" onClick="javascript:OpenPopUp(\''. $link .'\',\''.$popup_name.'\','.$size_x.','.$size_y.');">
-                <img src="'. TEMPLATE_PATH .'img/'.$icon.'" title="'.$name.'" alt="'.$name.'">
+            <a href="#" onClick="OpenPopUp(\''. $link .'\',\''.$popup_name.'\','.$size_x.','.$size_y.');">
+                <img src="'. IMG_PATH . $icon.'" title="'.$name.'" alt="'.$name.'">
                 <span>'.$name.'</span>
             </a>
         </div>';
@@ -214,6 +188,7 @@ function session_is_valid($session)
     if( (isset($_SESSION['timestamp_last'])) && (isset($_SESSION['config'])) )
     {
         $difference = time() - $_SESSION['timestamp_last'];
+
         if ( ($session==session_id()) && ($difference < $_SESSION['config']['duree_session']) )
             return true;
     }
@@ -228,7 +203,7 @@ function session_create($username)
 {
     if ($username != "")
     {
-	if(isset($_SESSION)) unset($_SESSION);
+        if(isset($_SESSION)) unset($_SESSION);
         $session = "phpconges".md5(uniqid(rand()));
         session_name($session);
         session_id($session);
@@ -263,8 +238,7 @@ function session_update($session)
 {
    if ($session != "")
    {
-        $maintenant=time();
-        $_SESSION['timestamp_last']=$maintenant;
+        $_SESSION['timestamp_last'] = time();
    }
 }
 
@@ -292,7 +266,7 @@ function session_delete($session)
 //
 function session_saisie_user_password($erreur, $session_username, $session_password)
 {
-   $PHP_SELF=$_SERVER['PHP_SELF'];
+   $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 
     $config_php_conges_version      = $_SESSION['config']['php_conges_version'];
     $config_url_site_web_php_conges = $_SESSION['config']['url_site_web_php_conges'];
@@ -373,10 +347,6 @@ function authentification_ldap_conges($username,$password)
 // - renvoie ""        si authentification FAIL
 function authentification_passwd_conges_CAS()
 {
-    // import de la librairie CAS
-    include( LIBRARY_PATH .'CAS/CAS.php');
-    // import des paramètres du serveur CAS
-
     $config_CAS_host       =$_SESSION['config']['CAS_host'];
     $config_CAS_portNumber =$_SESSION['config']['CAS_portNumber'];
     $config_CAS_URI        =$_SESSION['config']['CAS_URI'];
@@ -385,32 +355,33 @@ function authentification_passwd_conges_CAS()
     global $connexionCAS;
     global $logoutCas;
 
-    phpCAS::setDebug();
+
+    \phpCAS::setDebug();
 
     // initialisation phpCAS
     if($connexionCAS!="active")
     {
-        $CASCnx = phpCAS::client(CAS_VERSION_2_0,$config_CAS_host,$config_CAS_portNumber,$config_CAS_URI);
+        $CASCnx = \phpCAS::client(CAS_VERSION_2_0,$config_CAS_host,$config_CAS_portNumber,$config_CAS_URI);
         $connexionCAS = "active";
 
     }
 
     if($logoutCas==1)
     {
-        phpCAS::logout();
+        \phpCAS::logout();
     }
 
 
     // Vérification SSL
-    if(isset($config_CAS_CACERT))
-        phpCAS::setCasServerCACert ($config_CAS_CACERT);
+    if(!empty($config_CAS_CACERT))
+        \phpCAS::setCasServerCACert ($config_CAS_CACERT);
     else
-        phpCAS::setNoCasServerValidation();
+        \phpCAS::setNoCasServerValidation();
 
     // authentificationCAS (redirection vers la page d'authentification de CAS)
-    phpCAS::forceAuthentication();
+    \phpCAS::forceAuthentication();
 
-    $usernameCAS = phpCAS::getUser();
+    $usernameCAS = \phpCAS::getUser();
 
     //On nettoie la session créée par phpCAS
     session_destroy();
@@ -431,8 +402,6 @@ function authentification_passwd_conges_CAS()
 
 function deconnexion_CAS($url="")
 {
-    // import de la librairie CAS
-    include( LIBRARY_PATH .'CAS/CAS.php');
     // import des parametres du serveur CAS
 
     $config_CAS_host       =$_SESSION['config']['CAS_host'];
@@ -444,12 +413,12 @@ function deconnexion_CAS($url="")
     // initialisation phpCAS
     if($connexionCAS!="active")
     {
-        $CASCnx = phpCAS::client(CAS_VERSION_2_0,$config_CAS_host,$config_CAS_portNumber,$config_CAS_URI);
+        $CASCnx = \phpCAS::client(CAS_VERSION_2_0,$config_CAS_host,$config_CAS_portNumber,$config_CAS_URI);
         $connexionCAS = "active";
 
     }
 
-    phpCAS::logoutWithUrl($url);
+    \phpCAS::logoutWithUrl($url);
 }
 
 
@@ -475,4 +444,22 @@ function unhash_user($huser_test)
 			$user = $clear_user;
 	}
 	return $user;
+}
+
+function authentification_AD_SSO()
+{
+	$cred = explode('@',$_SERVER['REMOTE_USER']);
+	if(count($cred)==1)
+		$userAD = $cred[0];
+	else
+		$userAD = $cred[1];
+
+	//ON VERIFIE ICI QUE L'UTILISATEUR EST DEJA ENREGISTRE SOUS DBCONGES
+	$req_conges = 'SELECT u_login FROM conges_users WHERE u_login=\''. SQL::quote($userAD).'\'';
+	$res_conges = SQL::query($req_conges) ;
+	$num_row_conges = $res_conges->num_rows;
+	if($num_row_conges !=0)
+		return $userAD;
+
+	return '';
 }

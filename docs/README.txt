@@ -2,14 +2,14 @@
 ****         Libertempo           ****
 ***************************************
 
-RETROUVEZ LA DOCUMENTATION À JOUR SUR http://libertempo.tuxfamily.org
+RETROUVEZ LA DOCUMENTATION ï¿½ JOUR SUR http://libertempo.tuxfamily.org
 
 
 SOMMAIRE :
 ----------
 -> Descriptif
--> Fonctionnalités
--> Prérequis
+-> Fonctionnalitï¿½s
+-> Prï¿½requis
 -> Licence
 -> Installation
 -> configuration
@@ -24,49 +24,49 @@ SOMMAIRE :
 
 -> DESCRIPTIF :
 -----------------
-	Application web intéractive de gestion des congés du personnels d'un service .
+	Application web intï¿½ractive de gestion des congï¿½s du personnels d'un service .
 	
-	** Libertempo se veut très paramètrable afin de fournir ou non diverses fonctionnalités aux utilisateurs. **
+	** Libertempo se veut trï¿½s paramï¿½trable afin de fournir ou non diverses fonctionnalitï¿½s aux utilisateurs. **
 	** Libertempo est multi-langues. **
 	
-	Cette application se présente en 5 volets :
+	Cette application se prï¿½sente en 5 volets :
 	
 	1 - volet utilisateur :
-	   Les utilisateurs ont accès au bilan et à l'historique de leurs congés. Ils ont également accès au calendrier
-	   des congés de tous les personnels du service.
-	   Ce calendrier donne une représentation graphique des absences des personnes (congés, artt, temps partiels).
-	   Dans sa version par défaut, les utilisateurs peuvent également saisir leurs demandes de congés. Chaque demande 
-	   est ensuite acceptée ou refusée par le responsable. L'utilisateur à alors également accès à l'historique de ces
+	   Les utilisateurs ont accï¿½s au bilan et ï¿½ l'historique de leurs congï¿½s. Ils ont ï¿½galement accï¿½s au calendrier
+	   des congï¿½s de tous les personnels du service.
+	   Ce calendrier donne une reprï¿½sentation graphique des absences des personnes (congï¿½s, artt, temps partiels).
+	   Dans sa version par dï¿½faut, les utilisateurs peuvent ï¿½galement saisir leurs demandes de congï¿½s. Chaque demande 
+	   est ensuite acceptï¿½e ou refusï¿½e par le responsable. L'utilisateur ï¿½ alors ï¿½galement accï¿½s ï¿½ l'historique de ces
 	   demandes.
-	   Cependant, une option de configuration permet de supprimer cette possibilité. Dans ce cas, c'est le responsable
-	   qui saisi les congés des personnels.
+	   Cependant, une option de configuration permet de supprimer cette possibilitï¿½. Dans ce cas, c'est le responsable
+	   qui saisi les congï¿½s des personnels.
 	
 	2 - volet responsable :
-	   permet à un ou plusieurs responsables de gérer les demandes de congés des utilisateurs, de remettre les congés 
-	   à jour en début d'année, etc ....
-	   L'application peut également fonctionner en mode "responsable générique virtuel", ce qui permet d'avoir plusieurs 
-	   responsables rééls (physiques) qui se connectent avec le même login pour gérer les congés des personnels.
-	   Choisir ce mode de fonctionnement entraine que tous les utilisateurs d'Libertempo sont traités comme des utilisateurs
-	   classiques (même s'ils sont enregistrés comme responsable dans la database !!!).
-	   (le login du responsable virtuel est "conges" et le mot de passe par défaut est "conges" ... à changer au + vite)
+	   permet ï¿½ un ou plusieurs responsables de gï¿½rer les demandes de congï¿½s des utilisateurs, de remettre les congï¿½s 
+	   ï¿½ jour en dï¿½but d'annï¿½e, etc ....
+	   L'application peut ï¿½galement fonctionner en mode "responsable gï¿½nï¿½rique virtuel", ce qui permet d'avoir plusieurs 
+	   responsables rï¿½ï¿½ls (physiques) qui se connectent avec le mï¿½me login pour gï¿½rer les congï¿½s des personnels.
+	   Choisir ce mode de fonctionnement entraine que tous les utilisateurs d'Libertempo sont traitï¿½s comme des utilisateurs
+	   classiques (mï¿½me s'ils sont enregistrï¿½s comme responsable dans la database !!!).
+	   (le login du responsable virtuel est "conges" et le mot de passe par dï¿½faut est "conges" ... ï¿½ changer au + vite)
 	
 	3 - volet administrateur : 
-	   Ce volet ne sert qu'a administrer les utilisateurs ou les groupes dans la base de données. (ajout, suppression, modification, 
-	   changement de mot de passe, ...). On peut également y trouver des outils pour géréer les jours fériés, gérer les types 
-	   de congés, configurer l'application.
+	   Ce volet ne sert qu'a administrer les utilisateurs ou les groupes dans la base de donnï¿½es. (ajout, suppression, modification, 
+	   changement de mot de passe, ...). On peut ï¿½galement y trouver des outils pour gï¿½rï¿½er les jours fï¿½riï¿½s, gï¿½rer les types 
+	   de congï¿½s, configurer l'application.
 
 	
 	Le principe de fonctionnement utilisateurs/responsables est simple :
-	Chaque utilisateur est rattaché à un responsable (cf structure de la base de données). C'est ce responsable
-	qui valide des demandes de congés de l'utilisateur, ou saisi les congés de ce dernier (en fonction des options de
+	Chaque utilisateur est rattachï¿½ ï¿½ un responsable (cf structure de la base de donnï¿½es). C'est ce responsable
+	qui valide des demandes de congï¿½s de l'utilisateur, ou saisi les congï¿½s de ce dernier (en fonction des options de
 	configuration choisies).
 
 	4 - volet RH :
-	   Permet d'afficher/éditer un état des congés par utilisateur, de traiter les demandes de congés globalement, d'ajouter des congés (par utilisateurs, groupe ou globalement) et de cloturer l'exercice.
+	   Permet d'afficher/ï¿½diter un ï¿½tat des congï¿½s par utilisateur, de traiter les demandes de congï¿½s globalement, d'ajouter des congï¿½s (par utilisateurs, groupe ou globalement) et de cloturer l'exercice.
 
 	5 - volet installation /configuration :
-	   En principe, ce volet ne sert qu'une fois, lors de la mise en place de l'application. Il sert à installer (ou mettre 
-	   à jour) l'application, et à la configurer selon le mode de fonctionnement voulu par l'établissement.
+	   En principe, ce volet ne sert qu'une fois, lors de la mise en place de l'application. Il sert ï¿½ installer (ou mettre 
+	   ï¿½ jour) l'application, et ï¿½ la configurer selon le mode de fonctionnement voulu par l'ï¿½tablissement.
 
 
 ----------------------------------------------------------------------------------------
@@ -74,45 +74,45 @@ SOMMAIRE :
 
 -> FONCTIONNALITES :
 ----------------------------
-	Libertempo propose de nombreuses fonctionalités. La plupart de celles ci sont paramétrables dans la configuration d u logiciel.
-	Elles peuvent alors être activées ou désactivées, ou autorisées pour certains utilisateur plutôt que d'autres ....
+	Libertempo propose de nombreuses fonctionalitï¿½s. La plupart de celles ci sont paramï¿½trables dans la configuration d u logiciel.
+	Elles peuvent alors ï¿½tre activï¿½es ou dï¿½sactivï¿½es, ou autorisï¿½es pour certains utilisateur plutï¿½t que d'autres ....
 	
-	Les Principales fonctionnalités sont les suivantes :
+	Les Principales fonctionnalitï¿½s sont les suivantes :
 	---------------------------------------------------------------------------------------
-		- gestion des congés soit par le responsable seul , soit par système de demande par l'utilisateur / validation par le responsable.
-		- gestion des absences pour mission, formation, etc ...(absences sans perte de congés) par l'utilisateur ou par le responsable.
-		- gestion des congés et absences par demi-journées.
+		- gestion des congï¿½s soit par le responsable seul , soit par systï¿½me de demande par l'utilisateur / validation par le responsable.
+		- gestion des absences pour mission, formation, etc ...(absences sans perte de congï¿½s) par l'utilisateur ou par le responsable.
+		- gestion des congï¿½s et absences par demi-journï¿½es.
 		- calcul automatique du nombre de jours pris (lors d'une demande de conges) 
-		- possibilité de validation des demandes de congés par "double validation" (par le responsable direct + un responsable supérieur).
+		- possibilitï¿½ de validation des demandes de congï¿½s par "double validation" (par le responsable direct + un responsable supï¿½rieur).
 		- gestion des rtt et des temps partiels.
-		- affichage de l'historiques des congés, de l'historiques des absences, et de l'historiques des demandes en cours .
-		- paramètrage des types de conges/absence : Possibilité d'ajouter / supprimmer des types de congés ou d'absences qui seront gérées par l'application.
-		- possibilité de fonctionner avec un responsable virtuel. (Cela permet d'avoir plusieurs responsables rééls identifiés avec le même login pour gérer les congés des personnels.)
-		- possibilité de fonctionnement par groupes d'utilisateurs.
-		- possibilité pour le responsable de refuser et d'annuler les absences d'un utilisateur.
+		- affichage de l'historiques des congï¿½s, de l'historiques des absences, et de l'historiques des demandes en cours .
+		- paramï¿½trage des types de conges/absence : Possibilitï¿½ d'ajouter / supprimmer des types de congï¿½s ou d'absences qui seront gï¿½rï¿½es par l'application.
+		- possibilitï¿½ de fonctionner avec un responsable virtuel. (Cela permet d'avoir plusieurs responsables rï¿½ï¿½ls identifiï¿½s avec le mï¿½me login pour gï¿½rer les congï¿½s des personnels.)
+		- possibilitï¿½ de fonctionnement par groupes d'utilisateurs.
+		- possibilitï¿½ pour le responsable de refuser et d'annuler les absences d'un utilisateur.
 		- gestion des utilisateurs (ajout, suprpession, modification, ...)
-		- possibilité, pour le responsable, d'ajouter des congés par utilisateur, par groupe, ou pour tous (une seule saisie) .
-			(avec possibilité d'indiquer si l'ajout est proportionnel à la quotité (temps partiel) des utilisateurs ou non)
-		- possibilité d'authentifier les utilisateurs sur un annuaire de type LDAP ou Active-Directory.
-		- possibilité d'exporter les utilisateurs depuis un annuaire LDAP
-		- possibilité d'authentification des utilisateur sur un serveur CAS.
-		- module de saisie les jours chômés/jours fériés (nécéssaire pour la fonction de calcul automatique)
-		- envoi possible de mail d'avertissement (en cas de demande de congès par un utilisateur, de validation, de refus ou d'annulation par un responsable)
-		- possibilité, pour les utilisateurs et/ou les responsables, d'afficher le calendrier des congés / absences de tous ou partie des utilisateurs..
-		- possibilité pour les utilisateurs d'exporter leurs congés dans un fichier au format ics ou vcs (calendriers, agenda, et plannings électroniques)
-		- Possibilité de prise en compte des samedis et dimanches ouvrés.
-		- éditions papier : génération d'état imprimables ou au format PDF.
-		- possibilité d'afficher dans les historiques et les éditions papier, les dates et heures de demande de congés par l'utilisateur, et de traitement de la demande par le responsable.
-		- lisibilité du calendrier accrue : surlignage automatique de la ligne du calendrier/ sélection colorisé d'une ligne
+		- possibilitï¿½, pour le responsable, d'ajouter des congï¿½s par utilisateur, par groupe, ou pour tous (une seule saisie) .
+			(avec possibilitï¿½ d'indiquer si l'ajout est proportionnel ï¿½ la quotitï¿½ (temps partiel) des utilisateurs ou non)
+		- possibilitï¿½ d'authentifier les utilisateurs sur un annuaire de type LDAP ou Active-Directory.
+		- possibilitï¿½ d'exporter les utilisateurs depuis un annuaire LDAP
+		- possibilitï¿½ d'authentification des utilisateur sur un serveur CAS.
+		- module de saisie les jours chï¿½mï¿½s/jours fï¿½riï¿½s (nï¿½cï¿½ssaire pour la fonction de calcul automatique)
+		- envoi possible de mail d'avertissement (en cas de demande de congï¿½s par un utilisateur, de validation, de refus ou d'annulation par un responsable)
+		- possibilitï¿½, pour les utilisateurs et/ou les responsables, d'afficher le calendrier des congï¿½s / absences de tous ou partie des utilisateurs..
+		- possibilitï¿½ pour les utilisateurs d'exporter leurs congï¿½s dans un fichier au format ics ou vcs (calendriers, agenda, et plannings ï¿½lectroniques)
+		- Possibilitï¿½ de prise en compte des samedis et dimanches ouvrï¿½s.
+		- ï¿½ditions papier : gï¿½nï¿½ration d'ï¿½tat imprimables ou au format PDF.
+		- possibilitï¿½ d'afficher dans les historiques et les ï¿½ditions papier, les dates et heures de demande de congï¿½s par l'utilisateur, et de traitement de la demande par le responsable.
+		- lisibilitï¿½ du calendrier accrue : surlignage automatique de la ligne du calendrier/ sï¿½lection colorisï¿½ d'une ligne
 		- gestion des sessions utilisateurs
 		- application multi-langues
 		- Module d'installation
 		- Module de configuration
-		- Possibilité d'avoir sur la page administrateur, un bouton d'accès au formulaire de config de l'appli.
-		- possibilité que certains utilisateurs privilégiés puissent voir les conges de tout le monde dans le calendrier.
-		- fonctionnalité de sauvegarde/restauration de la database (dans le module administrateur).
-		- fourniture d'un jeu d'utilisateurs de test (pour prise en main du logiciel après installation)
-		- mise en page basée sur feuille de style (css)
+		- Possibilitï¿½ d'avoir sur la page administrateur, un bouton d'accï¿½s au formulaire de config de l'appli.
+		- possibilitï¿½ que certains utilisateurs privilï¿½giï¿½s puissent voir les conges de tout le monde dans le calendrier.
+		- fonctionnalitï¿½ de sauvegarde/restauration de la database (dans le module administrateur).
+		- fourniture d'un jeu d'utilisateurs de test (pour prise en main du logiciel aprï¿½s installation)
+		- mise en page basï¿½e sur feuille de style (css)
 
 
 ----------------------------------------------------------------------------------------
@@ -121,9 +121,9 @@ SOMMAIRE :
 -> PREREQUIS :
 -----------------
 	serveur web + PHP + MySQL
-	Libertempo a été testé sous apache (v1.3.x et v2) et PHP (v4.2.x , 4.3.x et 5.x) et MySQL (v3.23.x et v4.x)
-	(configuration de PHP  : "track_vars" à "enable" et "magic_quotes_gpc" à "on" )
-	(Notez que depuis PHP 4.0.3, track_vars est toujours activée.)
+	Libertempo a ï¿½tï¿½ testï¿½ sous apache (v1.3.x et v2) et PHP (v4.2.x , 4.3.x et 5.x) et MySQL (v3.23.x et v4.x)
+	(configuration de PHP  : "track_vars" ï¿½ "enable" et "magic_quotes_gpc" ï¿½ "on" )
+	(Notez que depuis PHP 4.0.3, track_vars est toujours activï¿½e.)
 
 
 
@@ -134,16 +134,19 @@ SOMMAIRE :
 -------------
 	(voir fichier license.txt ou http://www.linux-france.org/article/these/gpl.html )
 	/*************************************************************************************************
-	Libertempo : Gestion Interactive des Congés. Fork de PHPCongés Copyright (C) 2005 (cédric Chauvineau)
+	Libertempo : Gestion Interactive des Congï¿½s. Fork de PHPCongï¿½s
+        Copyright (C) 2015 (Wouldsmina)
+        Copyright (C) 2015 (Prytoegrian)
+        Copyright (C) 2005 (cedric chauvineau)
 	
 	Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les 
-	termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
-	Ce programme est distribué car potentiellement utile, mais SANS AUCUNE GARANTIE, 
+	termes de la Licence Publique Gï¿½nï¿½rale GNU publiï¿½e par la Free Software Foundation.
+	Ce programme est distribuï¿½ car potentiellement utile, mais SANS AUCUNE GARANTIE, 
 	ni explicite ni implicite, y compris les garanties de commercialisation ou d'adaptation 
-	dans un but spécifique. Reportez-vous à la Licence Publique Générale GNU pour plus de détails.
-	Vous devez avoir reçu une copie de la Licence Publique Générale GNU en même temps 
-	que ce programme ; si ce n'est pas le cas, écrivez à la Free Software Foundation, 
-	Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, États-Unis.
+	dans un but spï¿½cifique. Reportez-vous ï¿½ la Licence Publique Gï¿½nï¿½rale GNU pour plus de dï¿½tails.
+	Vous devez avoir reï¿½u une copie de la Licence Publique Gï¿½nï¿½rale GNU en mï¿½me temps 
+	que ce programme ; si ce n'est pas le cas, ï¿½crivez ï¿½ la Free Software Foundation, 
+	Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, ï¿½tats-Unis.
 	*************************************************************************************************
 	This program is free software; you can redistribute it and/or modify it under the terms
 	of the GNU General Public License as published by the Free Software Foundation; either 

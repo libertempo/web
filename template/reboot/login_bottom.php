@@ -37,5 +37,5 @@ $total = 0;
     </div>
 <?php endif; ?>
 </footer>
-<body>
+</body>
 </html>

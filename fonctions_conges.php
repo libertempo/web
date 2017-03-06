@@ -1,31 +1,4 @@
 <?php
-/*************************************************************************************************
-Libertempo : Gestion Interactive des Congés
-Copyright (C) 2015 (Wouldsmina)
-Copyright (C) 2015 (Prytoegrian)
-Copyright (C) 2005 (cedric chauvineau)
-
-Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
-termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
-Ce programme est distribué car potentiellement utile, mais SANS AUCUNE GARANTIE,
-ni explicite ni implicite, y compris les garanties de commercialisation ou d'adaptation
-dans un but spécifique. Reportez-vous à la Licence Publique Générale GNU pour plus de détails.
-Vous devez avoir reçu une copie de la Licence Publique Générale GNU en même temps
-que ce programme ; si ce n'est pas le cas, écrivez à la Free Software Foundation,
-Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, États-Unis.
-*************************************************************************************************
-This program is free software; you can redistribute it and/or modify it under the terms
-of the GNU General Public License as published by the Free Software Foundation; either
-version 2 of the License, or any later version.
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the GNU General Public License for more details.
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*************************************************************************************************/
-
-//#################################################################################################
 
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 
@@ -94,7 +67,7 @@ function get_j_name_fr_2c($timestamp)
 
 function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet)
 {
-    $PHP_SELF=$_SERVER['PHP_SELF'];
+    $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
     $session=session_id();
     $new_date_fin = date('d/m/Y');
     $return = '';
@@ -104,15 +77,16 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
         <div class="col-md-6">
         <div class="form-inline">';
     $return .= '<div class="form-group"><label for="new_deb">' . _('divers_date_debut') . '</label><input type="text" class="form-control date" name="new_debut" value="' . $new_date_fin . '"></div>';
+
     $return .= '<input type="radio" name="new_demi_jour_deb" ';
 
     if($_SESSION['config']['rempli_auto_champ_nb_jours_pris'])
     {
         // attention : IE6 : bug avec les "OnChange" sur les boutons radio!!! (on remplace par OnClick)
         if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) ) {
-            $return .= 'onClick="compter_jours();return true;"';
+            $return .= 'onClick="compter_jours();return true;" ';
         } else {
-            $return .= 'onChange="compter_jours();return false;"';
+            $return .= 'onChange="compter_jours();return false;" ';
         }
     }
     $return .= 'value="am" checked>&nbsp;' .  _('form_am');
@@ -121,9 +95,9 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
     if($_SESSION['config']['rempli_auto_champ_nb_jours_pris'])
     {
         if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) ) {
-            $return .= 'onClick="compter_jours();return true;"';
+            $return .= 'onClick="compter_jours();return true;" ';
         } else {
-            $return .= 'onChange="compter_jours();return false;"';
+            $return .= 'onChange="compter_jours();return false;" ';
         }
     }
     $return .= 'value="pm">&nbsp;' .  _('form_pm');
@@ -140,9 +114,9 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
     {
         // attention : IE6 : bug avec les "OnChange" sur les boutons radio!!! (on remplace par OnClick)
         if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) ) {
-            $return .= 'onClick="compter_jours();return true;"' ;
+            $return .= 'onClick="compter_jours();return true;" ' ;
         } else {
-            $return .= 'onChange="compter_jours();return false;"' ;
+            $return .= 'onChange="compter_jours();return false;" ' ;
         }
     }
     $return .= 'value="am">&nbsp;'. _('form_am');
@@ -151,9 +125,9 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
     if($_SESSION['config']['rempli_auto_champ_nb_jours_pris'])
     {
         if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) ) {
-            $return .= 'onClick="compter_jours();return true;"' ;
+            $return .= 'onClick="compter_jours();return true;" ' ;
         } else {
-            $return .= 'onChange="compter_jours();return false;"' ;
+            $return .= 'onChange="compter_jours();return false;" ' ;
         }
     }
     $return .= 'value="pm" checked>&nbsp;' . _('form_pm');
@@ -345,11 +319,11 @@ function verif_saisie_new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new
     {
         echo '<br>'. _('verif_saisie_erreur_nb_jours_bad') .'<br>';
         $verif = false;
-    }
-    elseif ( preg_match('/([0-9]+)\,([0-9]{1,2})$/', $new_nb_jours, $reg) )
+    } elseif ( preg_match('/([0-9]+)\,([0-9]{1,2})$/', $new_nb_jours, $reg)) {
         $new_nb_jours=$reg[1].'.'.$reg[2]; // on remplace la virgule par un point pour les décimaux
+    }
 
-    // si la date de fin est antéreieure à la date debut
+    // si la date de fin est antérieure à la date debut
     if(strnatcmp($new_debut, $new_fin)>0)
     {
         echo '<br>'. _('verif_saisie_erreur_fin_avant_debut') .'<br>';
@@ -362,6 +336,34 @@ function verif_saisie_new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new
         echo '<br>'. _('verif_saisie_erreur_debut_apres_fin') .'<br>';
         $verif = false;
     }
+
+    // Ensuite verifie en parcourant le tableau qu'on vient de crée (s'il n'est pas vide)
+    if ('am' == $new_demi_jour_deb) {
+        $periodeDebut = \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN;
+    } else {
+        $periodeDebut = \App\Models\Planning\Creneau::TYPE_PERIODE_APRES_MIDI;
+    }
+
+    if ('am' == $new_demi_jour_fin) {
+        $periodeFin = \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN;
+    } else {
+        $periodeFin = \App\Models\Planning\Creneau::TYPE_PERIODE_APRES_MIDI;
+    }
+
+    $conge = new \App\ProtoControllers\Employe\Conge();
+    if ($conge->isChevauchement($_SESSION['userlogin'], $new_debut, $periodeDebut, $new_fin, $periodeFin)) {
+        echo '<br>'. _('demande_heure_chevauche_demande') .'<br>';
+        $verif = false;
+    }
+    
+    $tab_periode_calcul = make_tab_demi_jours_periode($new_debut, $new_fin, $new_demi_jour_deb, $new_demi_jour_fin);
+    if(verif_periode_chevauche_periode_user($new_debut, $new_fin, $_SESSION['userlogin'], "", $tab_periode_calcul, $new_comment)){
+        echo '<br>'._('calcul_nb_jours_commentaire') .'<br>';
+        $verif = false;
+    }
+    
+    $new_comment = htmlentities($new_comment, ENT_QUOTES | ENT_HTML401);
+
     return $verif;
 }
 
@@ -382,7 +384,7 @@ function get_td_class_of_the_day_in_the_week($timestamp_du_jour)
 
 // recup des infos ARTT ou Temps Partiel :
 // attention : les param $val_matin et $val_aprem sont passées par référence (avec &) car on change leur valeur
-function recup_infos_artt_du_jour($sql_login, $j_timestamp, &$val_matin, &$val_aprem)
+function recup_infos_artt_du_jour($sql_login, $j_timestamp, &$val_matin, &$val_aprem, array $planningUser)
 {
     $num_semaine = date('W', $j_timestamp);
     $jour_name_fr_2c = get_j_name_fr_2c($j_timestamp); // nom du jour de la semaine en francais sur 2 caracteres
@@ -407,30 +409,27 @@ function recup_infos_artt_du_jour($sql_login, $j_timestamp, &$val_matin, &$val_a
                 $val_aprem = 'Y';
             else
                 $val_aprem = 'N';
-        }
-        // sinon, on lit la table conges_artt normalement
-        else
-        {
-            $par_sem = $num_semaine % 2 == 0 ? 'p' : 'imp';
-
-            //on calcule la key du tableau $result_artt qui correspond au jour j que l'on est en train d'afficher
-            $key_artt_matin = 'sem_'.$par_sem.'_'.$jour_name_fr_2c.'_am' ;
-            $key_artt_aprem = 'sem_'.$par_sem.'_'.$jour_name_fr_2c.'_pm' ;
-
-            // recup des ARTT et temps-partiels du user
-            $sql_artt='SELECT '.\includes\SQL::quote($key_artt_matin).', '.\includes\SQL::quote($key_artt_aprem).' FROM conges_artt WHERE a_login = "'.\includes\SQL::quote($sql_login).'" AND a_date_debut_grille <=  "'.\includes\SQL::quote($date_j).'" AND a_date_fin_grille >= "'.\includes\SQL::quote($date_j).'";';
-            $res_artt = \includes\SQL::query($sql_artt);
-            $result_artt = $res_artt->fetch_array();
-
-            if($result_artt[$key_artt_matin] == 'Y')
-                $val_matin='Y';
-            else
-                $val_matin='N';
-
-            if($result_artt[$key_artt_aprem] == 'Y')
-                $val_aprem='Y';
-            else
-                $val_aprem='N';
+        } else {
+            /* Sinon, on s'appuie sur le planning normalement */
+            $realWeekType = \utilisateur\Fonctions::getRealWeekType($planningUser, $num_semaine);
+            if (NIL_INT === $realWeekType) {
+                /* Si la semaine n'est pas travaillée */
+                $val_matin = 'Y';
+                $val_aprem = 'Y';
+            } else {
+                $planningWeek = $planningUser[$realWeekType];
+                $jourId = date('N', $j_timestamp);
+                if (!\utilisateur\Fonctions::isWorkingDay($planningWeek, $jourId)) {
+                    /* Si le jour n'est pas travaillé */
+                    $val_matin = 'Y';
+                    $val_aprem = 'Y';
+                } else {
+                    /* Vérification si le créneau est travaillé */
+                    $planningDay = $planningWeek[$jourId];
+                    $val_matin = (\utilisateur\Fonctions::isWorkingMorning($planningDay)) ? 'N' : 'Y';
+                    $val_aprem = (\utilisateur\Fonctions::isWorkingAfternoon($planningDay)) ? 'N' : 'Y';
+                }
+            }
         }
     }
 }
@@ -438,19 +437,13 @@ function recup_infos_artt_du_jour($sql_login, $j_timestamp, &$val_matin, &$val_a
 
 // recup des infos ARTT ou Temps Partiel :
 // attention : les param $val_matin et $val_aprem sont passées par référence (avec &) car on change leur valeur
-function recup_infos_artt_du_jour_from_tab($sql_login, $j_timestamp, &$val_matin, &$val_aprem, $tab_rtt_echange, $tab_rtt_planifiees)
+function recup_infos_artt_du_jour_from_tab($sql_login, $j_timestamp, &$val_matin, &$val_aprem, $tab_rtt_echange, array $planningUser)
 {
 
     //$tab_rtt_echange  //tableau indexé dont la clé est la date sous forme yyyy-mm-dd
     //il contient pour chaque clé (chaque jour): un tableau indéxé ($tab_jour_rtt_echange) (clé= login)
     // qui contient lui même un tableau ($tab_echange) contenant les infos des echanges de rtt pour ce
     // jour et ce login (valeur du matin + valeur de l'apres midi ('Y' si rtt, 'N' sinon) )
-    //$tab_rtt_planifiees  //tableau indexé dont la clé est le login_user
-    // il contient pour chaque clé login : un tableau ($tab_user_grille) indexé dont la
-    // clé est la date_fin_grille.
-    // qui contient lui meme pour chaque clé : un tableau ($tab_user_rtt) qui contient enfin
-    // les infos pour le matin et l'après midi ('Y' si rtt, 'N' sinon) sur 2 semaines
-    // ( du sem_imp_lu_am au sem_p_ve_pm ) + la date de début et de fin de la grille
 
     $num_semaine = date('W', $j_timestamp);
     $jour_name_fr_2c = get_j_name_fr_2c($j_timestamp); // nom du jour de la semaine en francais sur 2 caracteres
@@ -467,44 +460,37 @@ function recup_infos_artt_du_jour_from_tab($sql_login, $j_timestamp, &$val_matin
             $val_matin = $tab_day[$sql_login]["val_matin"];
             $val_aprem = $tab_day[$sql_login]["val_aprem"];
         }
-        // sinon, on lit la table conges_artt normalement
         else
         {
-            $par_sem = $num_semaine % 2 == 0 ? 'p' : 'imp';
-
-            //on calcule la key du tableau $result_artt qui correspond au jour j que l'on est en train d'afficher
-            $key_artt_matin = 'sem_'.$par_sem.'_'.$jour_name_fr_2c.'_am' ;
-            $key_artt_aprem = 'sem_'.$par_sem.'_'.$jour_name_fr_2c.'_pm' ;
-
-            // recup des ARTT et temps-partiels du user :
-            // recup des grille du user
-            $tab_grille_user = array();
-            if(array_key_exists($sql_login, $tab_rtt_planifiees))
-                $tab_grille_user = $tab_rtt_planifiees[$sql_login];
-            // parcours du tableau des grille pour trouver la key qui correspond à la bonne période
-            if(count($tab_grille_user))
-            {
-                foreach ($tab_grille_user as $key => $value)
-                {
-                    if( $date_j >= $value['date_debut_grille'] && $date_j <= $value['date_fin_grille'] ) // date_jour comprise entre date_deb_grille et date_fin grille
-                    {
-                        $val_matin  = $value[$key_artt_matin];
-                        $val_aprem  = $value[$key_artt_aprem];
-                    }
+            /* Sinon, on s'appuie sur le planning normalement */
+            $realWeekType = \utilisateur\Fonctions::getRealWeekType($planningUser, $num_semaine);
+            if (NIL_INT === $realWeekType) {
+                /* Si la semaine n'est pas travaillée */
+                $val_matin = 'Y';
+                $val_aprem = 'Y';
+            } else {
+                $planningWeek = $planningUser[$realWeekType];
+                $jourId = date('N', $j_timestamp);
+                if (!\utilisateur\Fonctions::isWorkingDay($planningWeek, $jourId)) {
+                    /* Si le jour n'est pas travaillé */
+                    $val_matin = 'Y';
+                    $val_aprem = 'Y';
+                } else {
+                    /* Vérification si le créneau est travaillé */
+                    $planningDay = $planningWeek[$jourId];
+                    $val_matin = (\utilisateur\Fonctions::isWorkingMorning($planningDay)) ? 'N' : 'Y';
+                    $val_aprem = (\utilisateur\Fonctions::isWorkingAfternoon($planningDay)) ? 'N' : 'Y';
                 }
             }
         }
     }
 }
 
-
-
-
 // verif validité d'un nombre saisi (decimal ou non)
 //  (attention : le $nombre est passé par référence car on le modifie si besoin)
 function verif_saisie_decimal(&$nombre)
 {
-    $nombre = number_format(floatval($nombre), 1, '.', '' );  
+    $nombre = number_format(floatval($nombre), 1, '.', '' );
     return true;
 }
 
@@ -622,12 +608,9 @@ function alerte_mail($login_expediteur, $destinataire, $num_periode, $objet)
 // construit et envoie le mail
 function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $mail_dest_name, $mail_dest_addr, $num_periode)
 {
-
-    require_once( LIBRARY_PATH .'phpmailer/PHPMailerAutoload.php' );  // ajout de la classe phpmailer
-
     /*********************************************/
     // init du mail
-    $mail = new PHPMailer();
+    $mail = new \PHPMailer();
 
     if (file_exists(CONFIG_PATH .'config_SMTP.php')) {
         include CONFIG_PATH .'config_SMTP.php';
@@ -660,7 +643,7 @@ function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $m
     }
 
     // initialisation du langage utilisé par php_mailer
-    $mail->SetLanguage( 'fr', LIBRARY_PATH .'phpmailer/language/');
+    $mail->SetLanguage( 'fr', ROOT_PATH . 'vendor/phpmailer/phpmailer/language/');
     $mail->FromName    = $mail_sender_name;
     $mail->From        = $mail_sender_addr;
     $mail->AddAddress($mail_dest_addr);
@@ -672,7 +655,7 @@ function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $m
         // affiche : "23 / 01 / 2008 (am)"
         $sql_date_deb = "01 / 01 / 2001 (am)";
         // affiche : "23 / 01 / 2008 (am)"
-        $sql_date_deb = "02 / 01 / 2001 (am)";
+        $sql_date_fin = "02 / 01 / 2001 (am)";
         $sql_nb_jours = 2;
         $sql_commentaire = "Test comment";
         $sql_type_absence = "cp";
@@ -843,37 +826,6 @@ function recup_tableau_rtt_echange($mois, $first_jour, $year,  $tab_logins = fal
 }
 
 
-
-/**************************************************/
-/* recup dans un tableau des rtt planifiées  pour tous les users */
-/**************************************************/
-function recup_tableau_rtt_planifiees($mois, $first_jour, $year , $tab_logins = false ) {
-
-    $tab_rtt_planifiees=array();
-    //tableau indexé dont la clé est le login_user
-    // il contient pour chaque clé login : un tableau ($tab_user_grille) indexé dont la
-    // clé est la date_fin_grille.
-    // qui contient lui meme pour chaque clé : un tableau ($tab_user_rtt) qui contient enfin
-    // les infos pour le matin et l'après midi ('Y' si rtt, 'N' sinon) sur 2 semaines
-    // ( du sem_imp_lu_am au sem_p_ve_pm ) + la date de début et de fin de la grille
-
-    // construction du tableau $tab_rtt_planifie:
-    $sql    = 'SELECT a_login AS login, a_date_debut_grille AS date_debut_grille, a_date_fin_grille AS date_fin_grille,
-            sem_imp_lu_am, sem_imp_lu_pm, sem_imp_ma_am, sem_imp_ma_pm, sem_imp_me_am, sem_imp_me_pm,
-            sem_imp_je_am, sem_imp_je_pm, sem_imp_ve_am, sem_imp_ve_pm, sem_imp_sa_am, sem_imp_sa_pm,
-            sem_imp_di_am, sem_imp_di_pm, sem_p_lu_am, sem_p_lu_pm, sem_p_ma_am, sem_p_ma_pm,
-            sem_p_me_am, sem_p_me_pm, sem_p_je_am, sem_p_je_pm, sem_p_ve_am, sem_p_ve_pm,
-            sem_p_sa_am, sem_p_sa_pm, sem_p_di_am, sem_p_di_pm
-            FROM conges_artt'.($tab_logins === false ?'': ' WHERE a_login IN ( \''.implode('\', \'', $tab_logins ).'\')').';';
-    $result = \includes\SQL::query($sql);
-
-    while($l = $result->fetch_array()) // pour chaque lignes
-        $tab_rtt_planifiees[ $l['login'] ][ $l['date_fin_grille'] ] = $l;
-
-    return $tab_rtt_planifiees;
-}
-
-
 // affiche une liste déroulante des jours du mois : la variable est $new_jour
 function affiche_selection_new_jour($default)
 {
@@ -954,10 +906,11 @@ function affiche_cellule_jour_cal_saisie($login, $j_timestamp, $td_second_class,
     $class_pm='travail_pm';
     $val_matin='';
     $val_aprem='';
+    $planningUser = \utilisateur\Fonctions::getUserPlanning($login);
 
     // recup des infos ARTT ou Temps Partiel :
     // la fonction suivante change les valeurs de $val_matin $val_aprem ....
-    recup_infos_artt_du_jour($login, $j_timestamp, $val_matin, $val_aprem);
+    recup_infos_artt_du_jour($login, $j_timestamp, $val_matin, $val_aprem, $planningUser);
 
     //## AFICHAGE ##
     if($val_matin=='Y')
@@ -984,9 +937,9 @@ function affiche_cellule_jour_cal_saisie($login, $j_timestamp, $td_second_class,
         {
             // attention : IE6 : bug avec les "OnChange" sur les boutons radio!!! (on remplace par OnClick)
             if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) )
-                echo 'onClick="compter_jours();return true;"';
+                echo 'onClick="compter_jours();return true;" ';
             else
-                echo 'onChange="compter_jours();return false;"';
+                echo 'onChange="compter_jours();return false;" ';
         }
         echo ' value="'.$date_j.'"></td>';
     }
@@ -1031,7 +984,7 @@ function get_list_all_users_du_resp($resp_login)
     }
 
     $sql1=$sql1." ) " ;
-    $sql1 = $sql1." ORDER BY u_nom " ;
+    $sql1 = $sql1." ORDER BY u_login " ;
     $ReqLog1 = \includes\SQL::query($sql1);
 
     while ($resultat1 = $ReqLog1->fetch_array())
@@ -1060,7 +1013,7 @@ function get_list_all_users_du_resp($resp_login)
         }
 
         $sql_2=$sql_2." ) " ;
-        $sql_2 = $sql_2." ORDER BY u_nom " ;
+        $sql_2 = $sql_2." ORDER BY u_login " ;
 
         $ReqLog_2 = \includes\SQL::query($sql_2);
 
@@ -1096,7 +1049,7 @@ function get_list_users_du_groupe($group_id)
     $sql1='SELECT DISTINCT(gu_login) FROM conges_groupe_users WHERE gu_gid = '.intval($group_id).' ORDER BY gu_login ';
     $ReqLog1 = \includes\SQL::query($sql1);
     while ($resultat1 = $ReqLog1->fetch_array())
-        $list_users[] = '"'.\includes\SQL::quote($resultat1["gu_login"]).'"';
+        $list_users[] = "'".\includes\SQL::quote($resultat1["gu_login"])."'";
 
     $list_users = implode(' , ', $list_users);
     return $list_users;
@@ -1428,39 +1381,26 @@ connecter alors qu'il n'a pas de compte dans
 }
 
 
-// verifie si un user est responasble ou pas
-// renvoit TRUE si le login est responsable dans la table conges_users, FALSE sinon.
+/**
+ * verifie si un user est responsable ou pas
+ *
+ * @param string $login Paramètre inutile, mais à but de compat
+ */
 function is_resp($login)
 {
-    static $sql_is_resp = array();
-    if (!isset($sql_is_resp[$login]))
-    {
-        // recup de qq infos sur le user
-        $select_info='SELECT u_is_resp FROM conges_users WHERE u_login="'.\includes\SQL::quote($login).'"';
-        $ReqLog_info = \includes\SQL::query($select_info);
-        $resultat_info = $ReqLog_info->fetch_array();
-        $sql_is_resp[$login]=$resultat_info["u_is_resp"];
-    }
-
-    return ($sql_is_resp[$login]=='Y');
+    return isset($_SESSION['is_resp']) && 'Y' === $_SESSION['is_resp'];
 }
 
-// verifie si un user est HR ou pas
-// renvoit TRUE si le login est HR dans la table conges_users, FALSE sinon.
+/**
+ * verifie si un user est HR ou pas
+ *
+ * @param string $login Paramètre inutile, mais à but de compat
+ */
 function is_hr($login)
 {
-    static $sql_is_hr = array();
-    if (!isset($sql_is_hr[$login]))
-    {
-        // recup de qq infos sur le user
-        $select_info='SELECT u_is_hr FROM conges_users WHERE u_login="'. \includes\SQL::quote($login).'";';
-        $ReqLog_info = \includes\SQL::query($select_info);
-        $resultat_info = $ReqLog_info->fetch_array();
-        $sql_is_hr[$login]=$resultat_info["u_is_hr"];
-    }
-
-    return ($sql_is_hr[$login]=='Y');
+    return isset($_SESSION['is_hr']) && 'Y' === $_SESSION['is_hr'];
 }
+
 // verifie si un user est valide ou pas
 // renvoit TRUE si le login est enable dans la table conges_users, FALSE sinon.
 function is_active($login)
@@ -1528,27 +1468,15 @@ function is_gr_group_of_user($resp_login, $user_login)
     return false;
 }
 
-
-
-// verifie si un user est administrateur ou pas
-// renvoit TRUE si le login est administrateur dans la table conges_users, FALSE sinon.
+/**
+ * verifie si un user est admin ou pas
+ *
+ * @param string $login Paramètre inutile, mais à but de compat
+ */
 function is_admin($login)
 {
-    static $sql_is_admin = array();
-    if (!isset($sql_is_admin[$login])) {
-        // recup de qq infos sur le user
-        $select_info='SELECT u_is_admin FROM conges_users WHERE u_login="'. \includes\SQL::quote($login).'";';
-        $ReqLog_info = \includes\SQL::query($select_info);
-
-        $resultat_info = $ReqLog_info->fetch_array();
-        $sql_is_admin[$login]=$resultat_info["u_is_admin"];
-    }
-
-    return ($sql_is_admin[$login]=='Y');
+    return isset($_SESSION['is_admin']) && 'Y' === $_SESSION['is_admin'];
 }
-
-
-
 
 // on insert une nouvelle periode dans la table periode
 // retourne le num d'auto_incremente (p_num) ou 0 en cas l'erreur
@@ -1562,7 +1490,7 @@ function insert_dans_periode($login, $date_deb, $demi_jour_deb, $date_fin, $demi
     else
         $num_new_demande = 1;
 
-    $sql2 = "INSERT INTO conges_periode SET p_login='$login',p_date_deb='$date_deb', p_demi_jour_deb='$demi_jour_deb',p_date_fin='$date_fin', p_demi_jour_fin='$demi_jour_fin', p_nb_jours='$nb_jours', p_commentaire='$commentaire', p_type='$id_type_abs', p_etat='$etat', ";
+    $sql2 = "INSERT INTO conges_periode SET p_login='$login',p_date_deb='$date_deb', p_demi_jour_deb='$demi_jour_deb',p_date_fin='$date_fin', p_demi_jour_fin='$demi_jour_fin', p_nb_jours='$nb_jours', p_commentaire='".\includes\SQL::quote($commentaire)."', p_type='$id_type_abs', p_etat='$etat', ";
 
     if($id_fermeture!=0)
         $sql2 = $sql2." p_fermeture_id='$id_fermeture' ," ;
@@ -1947,7 +1875,7 @@ function affiche_tableau_bilan_conges_user($login)
 function recup_infos_du_user($login, $list_groups_double_valid)
 {
     $tab=array();
-    $sql1 = 'SELECT u_login, u_nom, u_prenom, u_is_resp, u_resp_login, u_is_admin, u_is_hr, u_is_active, u_see_all, u_passwd, u_quotite, u_email, u_num_exercice FROM conges_users ' .
+    $sql1 = 'SELECT * FROM conges_users ' .
             'WHERE u_login="'.\includes\SQL::quote($login).'";';
     $ReqLog = \includes\SQL::query($sql1) ;
 
@@ -1965,8 +1893,10 @@ function recup_infos_du_user($login, $list_groups_double_valid)
         $tab_user['see_all']    = $resultat['u_see_all'];
         $tab_user['passwd']    = $resultat['u_passwd'];
         $tab_user['quotite']    = $resultat['u_quotite'];
+        $tab_user['solde_heure']    = $resultat['u_heure_solde'];
         $tab_user['email']    = $resultat['u_email'];
         $tab_user['num_exercice'] = $resultat['u_num_exercice'];
+        $tab_user['planningId']   = $resultat['planning_id'];
         $tab_user['conges']    = recup_tableau_conges_for_user($login, false);
 
         $tab_user['double_valid'] = "N";
@@ -2170,6 +2100,8 @@ function affiche_select_from_lang_directory( $select_name, $default )
 // retourne TRUE ou FALSE
 function log_action($num_periode, $etat_periode, $login_pour, $comment)
 {
+    $comment = htmlentities($comment, ENT_QUOTES | ENT_HTML401);
+
     if(isset($_SESSION['userlogin']))
         $user = $_SESSION['userlogin'] ;
     else
