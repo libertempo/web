@@ -1179,7 +1179,6 @@ class Fonctions
 
     public static function ajout_global_groupe($choix_groupe, $tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all)
     {
-
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
 
@@ -1190,7 +1189,7 @@ class Fonctions
             if($nb_jours!=0) {
                 $comment = $tab_new_comment_all[$id_conges];
 
-                $sql1="SELECT u_login, u_quotite FROM conges_users WHERE u_login IN ($list_users) ORDER BY u_login ";
+                $sql1="SELECT u_login, u_quotite FROM conges_users WHERE u_login IN ($list_users) AND u_is_active='Y' ORDER BY u_login ";
                 $ReqLog1 = \includes\SQL::query($sql1);
 
                 while ($resultat1 = $ReqLog1->fetch_array()) {
@@ -1295,6 +1294,7 @@ class Fonctions
         foreach($tab_champ_saisie as $user_name => $tab_conges)   // tab_champ_saisie[$current_login][$id_conges]=valeur du nb de jours ajouté saisi
         {
           foreach($tab_conges as $id_conges => $user_nb_jours_ajout) {
+
             $valid=verif_saisie_decimal($user_nb_jours_ajout);   //verif la bonne saisie du nombre décimal
             if($valid) {
               if($user_nb_jours_ajout!=0) {
@@ -1448,35 +1448,38 @@ class Fonctions
             $tab_champ_saisie_conges=array();
 
             $i = true;
+            asort($tab_all_users_du_hr);
             // affichage des users dont on est responsable :
             foreach($tab_all_users_du_hr as $current_login => $tab_current_user) {
-                $return .= '<tr class="' . ($i ? 'i' : 'p') . '">';
-                //tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
-                $tab_conges=$tab_current_user['conges'];
+                if($tab_current_user['is_active'] == "Y") {
+                    $return .= '<tr class="' . ($i ? 'i' : 'p') . '">';
+                    //tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
+                    $tab_conges=$tab_current_user['conges'];
 
-                /** sur la ligne ,   **/
-                $return .= '<td>' . $tab_current_user['nom'] . '</td>';
-                $return .= '<td>' . $tab_current_user['prenom'] . '</td>';
-                $return .= '<td>' . $tab_current_user['quotite'] . '%</td>';
+                    /** sur la ligne ,   **/
+                    $return .= '<td>' . $tab_current_user['nom'] . '</td>';
+                    $return .= '<td>' . $tab_current_user['prenom'] . '</td>';
+                    $return .= '<td>' . $tab_current_user['quotite'] . '%</td>';
 
-                foreach($tab_type_conges as $id_conges => $libelle) {
-                    /** le champ de saisie est <input type="text" name="tab_champ_saisie[valeur de u_login][id_du_type_de_conges]" value="[valeur du nb de jours ajouté saisi]"> */
-                    $champ_saisie_conges="<input class=\"form-control\" type=\"text\" name=\"tab_champ_saisie[$current_login][$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\">";
-                    $return .= '<td>' . $tab_conges[$libelle]['nb_an'] . ' <i>(' . $tab_conges[$libelle]['solde'] . ')</i></td>';
-                    $return .= '<td align="center" class="histo">' . $champ_saisie_conges . '</td>';
-                }
-                if ($_SESSION['config']['gestion_conges_exceptionnels']) {
-                    foreach($tab_type_conges_exceptionnels as $id_conges => $libelle) {
+                    foreach($tab_type_conges as $id_conges => $libelle) {
                         /** le champ de saisie est <input type="text" name="tab_champ_saisie[valeur de u_login][id_du_type_de_conges]" value="[valeur du nb de jours ajouté saisi]"> */
                         $champ_saisie_conges="<input class=\"form-control\" type=\"text\" name=\"tab_champ_saisie[$current_login][$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\">";
-                        $return .= '<td><i>(' . $tab_conges[$libelle]['solde'] . ')</i></td>';
+                        $return .= '<td>' . $tab_conges[$libelle]['nb_an'] . ' <i>(' . $tab_conges[$libelle]['solde'] . ')</i></td>';
                         $return .= '<td align="center" class="histo">' . $champ_saisie_conges . '</td>';
                     }
+                    if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+                        foreach($tab_type_conges_exceptionnels as $id_conges => $libelle) {
+                            /** le champ de saisie est <input type="text" name="tab_champ_saisie[valeur de u_login][id_du_type_de_conges]" value="[valeur du nb de jours ajouté saisi]"> */
+                            $champ_saisie_conges="<input class=\"form-control\" type=\"text\" name=\"tab_champ_saisie[$current_login][$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\">";
+                            $return .= '<td><i>(' . $tab_conges[$libelle]['solde'] . ')</i></td>';
+                            $return .= '<td align="center" class="histo">' . $champ_saisie_conges . '</td>';
+                        }
+                    }
+                    $return .= '<td align="center" class="histo"><input class="form-control" type="text" name="tab_commentaire_saisie[' . $current_login . ']" size="30" maxlength="200" value=""></td>';
+                    $return .= '</tr>';
+                    $cpt_lignes++ ;
+                    $i = !$i;
                 }
-                $return .= '<td align="center" class="histo"><input class="form-control" type="text" name="tab_commentaire_saisie[' . $current_login . ']" size="30" maxlength="200" value=""></td>';
-                $return .= '</tr>';
-                $cpt_lignes++ ;
-                $i = !$i;
             }
 
             $return .= '</tbody>';
@@ -1515,7 +1518,7 @@ class Fonctions
     {
         $list_users="";
 
-        $sql1="SELECT DISTINCT(u_login) FROM conges_users WHERE u_login!='conges' AND u_login!='admin'  ORDER BY u_nom  ";
+        $sql1="SELECT DISTINCT(u_login) FROM conges_users WHERE u_login!='conges' AND u_login!='admin' AND u_is_active='Y' ORDER BY u_nom  ";
         $ReqLog1 = \includes\SQL::query($sql1);
 
         while ($resultat1 = $ReqLog1->fetch_array())
