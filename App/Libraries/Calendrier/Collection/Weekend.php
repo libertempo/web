@@ -41,12 +41,12 @@ class Weekend extends \App\Libraries\Calendrier\ACollection
         }
 
         $weekend = [];
-        $name = 'Week-end';
-        $title = null;
-        $class = 'weekend';
+        $name    = 'Week-end';
+        $title   = null;
+        $class   = 'weekend';
         foreach ($liste as $jour) {
-            $dateJour = new \DateTime($jour);
-            $uid = uniqid('weekend');
+            $dateJour  = new \DateTime($jour);
+            $uid       = uniqid('weekend');
             $weekend[] = new Evenement\Commun($uid, $dateJour, $dateJour, $name, $title, $class);
         }
 
@@ -83,7 +83,7 @@ class Weekend extends \App\Libraries\Calendrier\ACollection
     private function getListeJourSemaine($jourSemaine)
     {
         $debut = $this->dateDebut->getTimestamp();
-        $fin = $this->dateFin->getTimestamp();
+        $fin   = $this->dateFin->getTimestamp();
         if ($debut > $fin) {
             throw new \Exception('Date de début supérieure à date de fin');
         }
@@ -93,7 +93,7 @@ class Weekend extends \App\Libraries\Calendrier\ACollection
             /* Si on est sur le jour clé, on append la liste et on tape une semaine au dessus */
             if (date('w', $debut) == $jourSemaine) {
                 $listeJourSemaine[] = date('Y-m-d', $debut);
-                $debut = strtotime('+1 week', $debut);
+                $debut              = strtotime('+1 week', $debut);
             } else {
                 $debut = strtotime('+1 day', $debut);
             }
@@ -102,12 +102,10 @@ class Weekend extends \App\Libraries\Calendrier\ACollection
         return $listeJourSemaine;
     }
 
-
     /*
      * SQL
      * @TODO dégager lors de la mise en place de l'objet configuration
      */
-
 
     private function isSamediTravaille()
     {

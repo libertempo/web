@@ -23,23 +23,21 @@ class Ferie extends \App\Libraries\Calendrier\ACollection
     public function getListe()
     {
         $feries = [];
-        $name = 'Jour férié';
-        $title = null;
-        $class = 'ferie';
+        $name   = 'Jour férié';
+        $title  = null;
+        $class  = 'ferie';
         foreach ($this->getListeSQL() as $jour) {
             $dateJour = new \DateTime($jour['jf_date']);
-            $uid = uniqid('ferie');
+            $uid      = uniqid('ferie');
             $feries[] = new Evenement\Commun($uid, $dateJour, $dateJour, $name, $title, $class);
         }
 
         return $feries;
     }
 
-
     /*
      * SQL
      */
-
 
     /**
      * Retourne tous les jours fériés

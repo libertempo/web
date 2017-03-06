@@ -37,23 +37,21 @@ class Fermeture extends \App\Libraries\Calendrier\ACollection
     public function getListe()
     {
         $fermeture = [];
-        $name = 'Fermeture';
-        $title = null;
-        $class = 'fermeture';
+        $name      = 'Fermeture';
+        $title     = null;
+        $class     = 'fermeture';
         foreach ($this->getListeSQL() as $jour) {
-            $dateJour = new \DateTime($jour['jf_date']);
-            $uid = uniqid('fermeture');
+            $dateJour    = new \DateTime($jour['jf_date']);
+            $uid         = uniqid('fermeture');
             $fermeture[] = new Evenement\Commun($uid, $dateJour, $dateJour, $name, $title, $class);
         }
 
         return $fermeture;
     }
 
-
     /*
      * SQL
      */
-
 
     /**
      * Retourne les jours de fermeture satisfaisant aux critères de période

@@ -44,9 +44,9 @@ class Creneau
      */
     private static function verifieCoherenceCreneaux(array $periodes, array &$errors)
     {
-        $localError = [];
+        $localError              = [];
         $precedentsCreneauxJours = [];
-        $pattern = '/^(([01]?[0-9])|(2[0-3])):[0-5][0-9]$/';
+        $pattern                 = '/^(([01]?[0-9])|(2[0-3])):[0-5][0-9]$/';
         foreach ($periodes as $typeCreneau => $creneaux) {
             foreach ($creneaux as $creneauxJour) {
                 $debut = $creneauxJour[ModelCreneau::TYPE_HEURE_DEBUT];
@@ -54,7 +54,7 @@ class Creneau
                 if (-1 !== strnatcmp($debut, $fin)) {
                     $localError['Créneaux de travail'][] = _('date_fin_superieure_date_debut');
                 }
-                if (!preg_match($pattern, $debut) || !preg_match($pattern, $fin))  {
+                if (!preg_match($pattern, $debut) || !preg_match($pattern, $fin)) {
                     $localError['Créneaux de travail'][] = _('format_heure_incorrect');
                 }
                 if (!empty($precedentsCreneauxJours) && 1 !== strnatcmp($debut, $precedentsCreneauxJours[ModelCreneau::TYPE_HEURE_FIN])) {
@@ -83,7 +83,7 @@ class Creneau
                 foreach ($creneaux as $creneauxJour) {
                     $grouped[$jourId][$typeCreneau][] = [
                         ModelCreneau::TYPE_HEURE_DEBUT => $creneauxJour[ModelCreneau::TYPE_HEURE_DEBUT],
-                        ModelCreneau::TYPE_HEURE_FIN => $creneauxJour[ModelCreneau::TYPE_HEURE_FIN]
+                        ModelCreneau::TYPE_HEURE_FIN   => $creneauxJour[ModelCreneau::TYPE_HEURE_FIN],
                     ];
                 }
             }
@@ -148,21 +148,21 @@ class Creneau
      */
     private static function insertCreneauList(array $list, $idPlanning)
     {
-        $sql = \includes\SQL::singleton();
+        $sql      = \includes\SQL::singleton();
         $toInsert = [];
         foreach ($list as $typeSemaine => $jours) {
             foreach ($jours as $jourId => $periodes) {
                 foreach ($periodes as $typeCreneau => $creneaux) {
                     foreach ($creneaux as $creneauxJour) {
-                        $timeDebut = \App\Helpers\Formatter::hour2Time($creneauxJour[\App\Models\Planning\Creneau::TYPE_HEURE_DEBUT]);
-                        $timeFin   = \App\Helpers\Formatter::hour2Time($creneauxJour[\App\Models\Planning\Creneau::TYPE_HEURE_FIN]);
+                        $timeDebut  = \App\Helpers\Formatter::hour2Time($creneauxJour[\App\Models\Planning\Creneau::TYPE_HEURE_DEBUT]);
+                        $timeFin    = \App\Helpers\Formatter::hour2Time($creneauxJour[\App\Models\Planning\Creneau::TYPE_HEURE_FIN]);
                         $toInsert[] = '(null, ' . (int) $idPlanning . ', ' . (int) $jourId . ', ' . (int) $typeSemaine . ', ' . (int) $typeCreneau . ', "' . (int) $timeDebut . '", "' . (int) $timeFin . '")';
                     }
                 }
             }
         }
         // insertion multiple en fonction de la liste
-        $req = 'INSERT INTO planning_creneau (creneau_id, planning_id, jour_id, type_semaine, type_periode, debut, fin) VALUES ' . implode(', ', $toInsert);
+        $req   = 'INSERT INTO planning_creneau (creneau_id, planning_id, jour_id, type_semaine, type_periode, debut, fin) VALUES ' . implode(', ', $toInsert);
         $query = $sql->query($req);
 
         return $sql->insert_id;

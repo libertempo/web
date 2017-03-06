@@ -1,4 +1,4 @@
 <?php
 
-defined( '_PHP_CONGES' ) or die( 'Restricted access' );
+defined('_PHP_CONGES') or die('Restricted access');
 echo \config\Fonctions::logModule($session);

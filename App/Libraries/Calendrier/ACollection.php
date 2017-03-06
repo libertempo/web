@@ -30,7 +30,7 @@ abstract class ACollection
     public function __construct(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
     {
         $this->dateDebut = clone $dateDebut;
-        $this->dateFin = clone $dateFin;
+        $this->dateFin   = clone $dateFin;
     }
 
     /**

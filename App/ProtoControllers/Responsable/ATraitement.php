@@ -32,7 +32,6 @@ abstract class ATraitement
      */
     abstract public function put(array $put, $resp, &$notice, array &$errors);
 
-
     /**
      * Vérifie et traite une demande en tant que responsable
      *
@@ -65,8 +64,6 @@ abstract class ATraitement
      * @return array $ids
      */
     abstract protected function getIdDemandesResponsable($resp);
-
-
 
     /**
      * Retourne la liste détaillée des demandes
@@ -108,7 +105,7 @@ abstract class ATraitement
         $sql = \includes\SQL::singleton();
         $sql->getPdoObj()->begin_transaction();
 
-        $updateSolde = $this->updateSolde($demandeId);
+        $updateSolde  = $this->updateSolde($demandeId);
         $updateStatut = $this->updateStatutValidationFinale($demandeId);
         if (0 < $updateSolde && 0 < $updateStatut) {
             $sql->getPdoObj()->commit();
@@ -161,36 +158,36 @@ abstract class ATraitement
      */
     protected function getFormDemandes(array $demandes)
     {
-        $i=true;
-        $Table='';
+        $i       = true;
+        $Table   = '';
         $session = (isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : session_id()));
 
         foreach ($demandes as $demande) {
-            $jour   = date('d/m/Y', $demande['debut']);
-            $debut  = date('H\:i', $demande['debut']);
-            $fin    = date('H\:i', $demande['fin']);
-            $duree  = \App\Helpers\Formatter::timestamp2Duree($demande['duree']);
-            $id = $demande['id_heure'];
+            $jour            = date('d/m/Y', $demande['debut']);
+            $debut           = date('H\:i', $demande['debut']);
+            $fin             = date('H\:i', $demande['fin']);
+            $duree           = \App\Helpers\Formatter::timestamp2Duree($demande['duree']);
+            $id              = $demande['id_heure'];
             $infoUtilisateur = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($demande['login']);
-            $solde = \App\Helpers\Formatter::timestamp2Duree($infoUtilisateur['u_heure_solde']);
-            $Table .= '<tr class="'.($i?'i':'p').'">';
-            $Table .= '<td><b>'.$infoUtilisateur['u_nom'].'</b><br>'.$infoUtilisateur['u_prenom'].'</td><td>'.$jour.'</td><td>'.$debut.'</td><td>'.$fin.'</td><td>'.$duree.'</td><td>'.$solde.'</td>';
+            $solde           = \App\Helpers\Formatter::timestamp2Duree($infoUtilisateur['u_heure_solde']);
+            $Table .= '<tr class="' . ($i ? 'i' : 'p') . '">';
+            $Table .= '<td><b>' . $infoUtilisateur['u_nom'] . '</b><br>' . $infoUtilisateur['u_prenom'] . '</td><td>' . $jour . '</td><td>' . $debut . '</td><td>' . $fin . '</td><td>' . $duree . '</td><td>' . $solde . '</td>';
             $Table .= '<input type="hidden" name="_METHOD" value="PUT" />';
             $Table .= '<td>' . $demande['comment'] . '</td>';
-            $Table .= '<td><input type="radio" name="demande['.$id.']" value="1"></td>';
-            $Table .= '<td><input type="radio" name="demande['.$id.']" value="2"></td>';
-            $Table .= '<td><input type="radio" name="demande['.$id.']" value="NULL" checked></td>';
+            $Table .= '<td><input type="radio" name="demande[' . $id . ']" value="1"></td>';
+            $Table .= '<td><input type="radio" name="demande[' . $id . ']" value="2"></td>';
+            $Table .= '<td><input type="radio" name="demande[' . $id . ']" value="NULL" checked></td>';
 
             /* Informations pour le positionnement du calendrier */
-            $dateDebut = new \DateTimeImmutable(date('Y-m', $demande['debut']) . '-01');
+            $dateDebut        = new \DateTimeImmutable(date('Y-m', $demande['debut']) . '-01');
             $paramsCalendrier = [
                 'session' => $session,
-                'vue' => \App\ProtoControllers\Calendrier::VUE_MOIS,
-                'begin' => $dateDebut->format('Y-m-d'),
-                'end' => $dateDebut->modify('+1 month')->format('Y-m-d'),
+                'vue'     => \App\ProtoControllers\Calendrier::VUE_MOIS,
+                'begin'   => $dateDebut->format('Y-m-d'),
+                'end'     => $dateDebut->modify('+1 month')->format('Y-m-d'),
             ];
             $Table .= '<td><a href="' . ROOT_PATH . 'calendrier.php?' . http_build_query($paramsCalendrier) . '" title="' . _('consulter_calendrier_de_periode') . '"><i class="fa fa-lg fa-calendar" aria-hidden="true"></i></a></td>';
-            $Table .= '<td><input class="form-control" type="text" name="comment_refus['.$id.']" size="20" maxlength="100"></td></tr>';
+            $Table .= '<td><input class="form-control" type="text" name="comment_refus[' . $id . ']" size="20" maxlength="100"></td></tr>';
 
             $i = !$i;
         }
@@ -238,8 +235,8 @@ abstract class ATraitement
      */
     public function getNbDemandesATraiter($resp)
     {
-        $demandesResp= $this->getIdDemandesResponsable($resp);
-        $demandesGResp=  $this->getIdDemandesGrandResponsable($resp);
+        $demandesResp  = $this->getIdDemandesResponsable($resp);
+        $demandesGResp = $this->getIdDemandesGrandResponsable($resp);
 
         return count($demandesResp) + count($demandesGResp);
     }

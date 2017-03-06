@@ -55,10 +55,10 @@ final class Commun implements EventInterface
      */
     public function __construct($uid, \DateTimeInterface $debut, \DateTimeInterface $fin, $name, $title, $class)
     {
-        $this->uid = (string) $uid;
+        $this->uid   = (string) $uid;
         $this->debut = clone $debut;
-        $this->fin = clone $fin;
-        $this->name = (string) $name;
+        $this->fin   = clone $fin;
+        $this->name  = (string) $name;
         $this->title = (string) $title;
         $this->class = (string) $class;
     }

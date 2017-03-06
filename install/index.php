@@ -6,139 +6,137 @@ require_once ROOT_PATH . 'define.php';
 session_start();
 $_SESSION['lang'] = 'fr_FR';
 
-include_once INCLUDE_PATH .'fonction.php';
+include_once INCLUDE_PATH . 'fonction.php';
 
-include_once ROOT_PATH .'fonctions_conges.php' ;
+include_once ROOT_PATH . 'fonctions_conges.php';
 
 $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 
-$session= htmlentities(session_id());
+$session = htmlentities(session_id());
 
 //recup de la langue
-$lang=(isset($_GET['lang']) ? $_GET['lang'] : ((isset($_POST['lang'])) ? $_POST['lang'] : "") ) ;
+$lang = (isset($_GET['lang']) ? $_GET['lang'] : ((isset($_POST['lang'])) ? $_POST['lang'] : ""));
 $lang = htmlentities($lang, ENT_QUOTES | ENT_HTML401);
 
 //recup de la config db
-$dbserver=(isset($_GET['dbserver']) ? $_GET['dbserver'] : ((isset($_POST['dbserver'])) ? $_POST['dbserver'] : "") ) ;
+$dbserver = (isset($_GET['dbserver']) ? $_GET['dbserver'] : ((isset($_POST['dbserver'])) ? $_POST['dbserver'] : ""));
 $dbserver = htmlentities($dbserver, ENT_QUOTES | ENT_HTML401);
 
-$dbuser=(isset($_GET['dbuser']) ? $_GET['dbuser'] : ((isset($_POST['dbuser'])) ? $_POST['dbuser'] : "") ) ;
+$dbuser = (isset($_GET['dbuser']) ? $_GET['dbuser'] : ((isset($_POST['dbuser'])) ? $_POST['dbuser'] : ""));
 $dbuser = htmlentities($dbuser, ENT_QUOTES | ENT_HTML401);
 
-$dbpasswd=(isset($_GET['dbpasswd']) ? $_GET['dbpasswd'] : ((isset($_POST['dbpasswd'])) ? $_POST['dbpasswd'] : "") ) ;
+$dbpasswd = (isset($_GET['dbpasswd']) ? $_GET['dbpasswd'] : ((isset($_POST['dbpasswd'])) ? $_POST['dbpasswd'] : ""));
 $dbpasswd = htmlentities($dbpasswd, ENT_QUOTES | ENT_HTML401);
 
-$dbdb=(isset($_GET['dbdb']) ? $_GET['dbdb'] : ((isset($_POST['dbdb'])) ? $_POST['dbdb'] : "") ) ;
+$dbdb = (isset($_GET['dbdb']) ? $_GET['dbdb'] : ((isset($_POST['dbdb'])) ? $_POST['dbdb'] : ""));
 $dbdb = htmlentities($dbdb, ENT_QUOTES | ENT_HTML401);
 
+if ($lang == "") {
+    header_popup();
+    echo "<br><br>\n";
+    echo "Choisissez votre langue :<br> \n";
+    echo "Choose your language :<br>\n";
+    echo "<form action=\"$PHP_SELF?session=$session\" method=\"POST\">\n";
+    // affichage de la liste des langues supportées ...
+    // on lit le contenu du répertoire lang et on parse les nom de ficher (ex lang_fr_francais.php)
+    echo affiche_select_from_lang_directory("", "");
 
-    if($lang=="") {
-        header_popup();
-        echo "<br><br>\n";
-        echo "Choisissez votre langue :<br> \n";
-        echo "Choose your language :<br>\n";
+    echo "<br>\n";
+    echo "<input type=\"submit\" value=\"OK\">\n";
+    echo "</form>\n";
+    bottom();
+} elseif (\install\Fonctions::test_dbconnect_file() != true) {
+    $_SESSION['langue'] = $lang; // sert ensuite pour mettre la langue dans la table config
+    //        $tab_lang_file = glob("lang/lang_".$lang.'_*.php');
+    //        include$tab_lang_file[0] ;
+    //        include$lang_file ;
+
+    header_popup();
+    echo "<center>\n";
+    echo "<br><br>\n";
+    if ($dbserver == "" || $dbuser == "" || $dbpasswd == "") {
+        echo _('db_configuration');
         echo "<form action=\"$PHP_SELF?session=$session\" method=\"POST\">\n";
-        // affichage de la liste des langues supportées ...
-        // on lit le contenu du répertoire lang et on parse les nom de ficher (ex lang_fr_francais.php)
-        echo affiche_select_from_lang_directory("", "");
-
+        echo _('db_configuration_server');
+        echo '<INPUT type="text" value="localhost" name="dbserver"><br>';
+        echo _('db_configuration_name');
+        echo '<INPUT type="text" value="db_conges" name="dbdb"><br>';
+        echo _('db_configuration_user');
+        echo '<INPUT type="text" value="conges" name="dbuser"><br>';
+        echo _('db_configuration_password');
+        echo '<INPUT type="password" name="dbpasswd" autocomplete="off"><br>';
+        echo "<INPUT type=\"hidden\" value=\"" . $lang . "\" name=\"lang\"><br>";
         echo "<br>\n";
         echo "<input type=\"submit\" value=\"OK\">\n";
         echo "</form>\n";
-        bottom();
-    } elseif(\install\Fonctions::test_dbconnect_file()!=TRUE) {
-        $_SESSION['langue']=$lang;      // sert ensuite pour mettre la langue dans la table config
-//        $tab_lang_file = glob("lang/lang_".$lang.'_*.php');
-//        include$tab_lang_file[0] ;
-//        include$lang_file ;
 
+    } else {
+        $is_dbconf_ok = \install\Fonctions::write_db_config($dbserver, $dbuser, $dbpasswd, $dbdb);
+        if ($is_dbconf_ok != true) {
+            echo "le dossier " . CONFIG_PATH . " n'est pas accessible en écriture";
+        } else {
+            echo _('db_configuration_ok');
+            echo "<br><a href=\"$PHP_SELF?session=$session&lang=$lang\"> continuez....</a><br>\n";
+        }
+    }
+    bottom();
+} else {
+    include_once CONFIG_PATH . 'dbconnect.php';
+    include_once ROOT_PATH . 'version.php';
+
+    if (!\install\Fonctions::test_database()) {
         header_popup();
         echo "<center>\n";
         echo "<br><br>\n";
-        if($dbserver=="" || $dbuser=="" || $dbpasswd=="") {
-            echo  _('db_configuration');
+        echo "<b>" . _('install_db_inaccessible') . " ... <br><br>\n";
+        echo _('install_verifiez_param_file');
+        echo "(" . _('install_verifiez_priv_mysql') . ")<br><br>\n";
+
+        echo "<center>\n";
+        echo "<br><br>\n";
+        if ($dbserver == "" || $dbuser == "" || $dbpasswd == "") {
+            echo _('db_configuration');
             echo "<form action=\"$PHP_SELF?session=$session\" method=\"POST\">\n";
-            echo  _('db_configuration_server');
+            echo _('db_configuration_server');
             echo '<INPUT type="text" value="localhost" name="dbserver"><br>';
-            echo  _('db_configuration_name');
+            echo _('db_configuration_name');
             echo '<INPUT type="text" value="db_conges" name="dbdb"><br>';
-            echo  _('db_configuration_user');
+            echo _('db_configuration_user');
             echo '<INPUT type="text" value="conges" name="dbuser"><br>';
-            echo  _('db_configuration_password');
+            echo _('db_configuration_password');
             echo '<INPUT type="password" name="dbpasswd" autocomplete="off"><br>';
-            echo "<INPUT type=\"hidden\" value=\"".$lang."\" name=\"lang\"><br>";
+            echo "<INPUT type=\"hidden\" value=\"" . $lang . "\" name=\"lang\"><br>";
             echo "<br>\n";
             echo "<input type=\"submit\" value=\"OK\">\n";
             echo "</form>\n";
-
         } else {
-            $is_dbconf_ok= \install\Fonctions::write_db_config($dbserver,$dbuser,$dbpasswd,$dbdb);
-            if($is_dbconf_ok!=true) {
-                echo "le dossier ".CONFIG_PATH." n'est pas accessible en écriture";
+            $is_dbconf_ok = write_db_config($dbserver, $dbuser, $dbpasswd, $dbdb);
+            if ($is_dbconf_ok != true) {
+                echo "le dossier " . CONFIG_PATH . " n'est pas accessible en écriture";
             } else {
                 echo _('db_configuration_ok');
                 echo "<br><a href=\"$PHP_SELF?session=$session&lang=$lang\"> continuez....</a><br>\n";
             }
         }
+
         bottom();
     } else {
-        include_once CONFIG_PATH .'dbconnect.php';
-        include_once ROOT_PATH .'version.php';
+        $installed_version = \install\Fonctions::get_installed_version();
+        $installed_version = 0;
 
-        if(!\install\Fonctions::test_database()) {
-            header_popup();
-            echo "<center>\n";
-            echo "<br><br>\n";
-            echo "<b>". _('install_db_inaccessible') ." ... <br><br>\n";
-            echo  _('install_verifiez_param_file');
-            echo "(". _('install_verifiez_priv_mysql') .")<br><br>\n";
-
-            echo "<center>\n";
-            echo "<br><br>\n";
-            if($dbserver=="" || $dbuser=="" || $dbpasswd=="") {
-                echo  _('db_configuration');
-                echo "<form action=\"$PHP_SELF?session=$session\" method=\"POST\">\n";
-                echo  _('db_configuration_server');
-                echo '<INPUT type="text" value="localhost" name="dbserver"><br>';
-                echo  _('db_configuration_name');
-                echo '<INPUT type="text" value="db_conges" name="dbdb"><br>';
-                echo  _('db_configuration_user');
-                echo '<INPUT type="text" value="conges" name="dbuser"><br>';
-                echo  _('db_configuration_password');
-                echo '<INPUT type="password" name="dbpasswd" autocomplete="off"><br>';
-                echo "<INPUT type=\"hidden\" value=\"".$lang."\" name=\"lang\"><br>";
-                echo "<br>\n";
-                echo "<input type=\"submit\" value=\"OK\">\n";
-                echo "</form>\n";
-            } else {
-                $is_dbconf_ok=write_db_config($dbserver,$dbuser,$dbpasswd,$dbdb);
-                if($is_dbconf_ok!=true) {
-                    echo "le dossier ".CONFIG_PATH." n'est pas accessible en écriture";
-                } else {
-                    echo _('db_configuration_ok');
-                    echo "<br><a href=\"$PHP_SELF?session=$session&lang=$lang\"> continuez....</a><br>\n";
-                }
-            }
-
-            bottom();
+        if ($installed_version == 0) // num de version inconnu
+        {
+            \install\Fonctions::install($lang);
         } else {
-            $installed_version = \install\Fonctions::get_installed_version();
-            $installed_version = 0;
-
-            if($installed_version==0)   // num de version inconnu
-            {
-                \install\Fonctions::install($lang);
+            // on compare la version déclarée dans la database avec la version déclarée dans le fichier de config
+            if ($installed_version != $config_php_conges_version) {
+                // on attaque une mise a jour à partir de la version installée
+                echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=mise_a_jour.php?version=$installed_version&lang=$lang\">";
             } else {
-                // on compare la version déclarée dans la database avec la version déclarée dans le fichier de config
-                if($installed_version != $config_php_conges_version) {
-                    // on attaque une mise a jour à partir de la version installée
-                    echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=mise_a_jour.php?version=$installed_version&lang=$lang\">";
-                } else {
-                    // pas de mise a jour a faire : on propose les pages de config
-                    echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=../config/\">";
-                }
+                // pas de mise a jour a faire : on propose les pages de config
+                echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=../config/\">";
             }
-
-
         }
+
     }
+}

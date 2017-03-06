@@ -4,41 +4,43 @@ namespace App\Libraries;
 
 /**
  * Objet de gestion des notifications
- * 
- * 
+ *
+ *
  */
-abstract Class ANotification {
+abstract class ANotification
+{
 
     protected $contenuNotification;
     protected $envoiMail;
 
     /**
-     * 
+     *
      * implémente les informations de la demande d'heure
      * ainsi que du contenu du mail
-     * 
+     *
      * @param int $id
-     * 
+     *
      */
-    public function __construct($id) {
-        $id = (int)$id;
-        if(is_int($id)){
+    public function __construct($id)
+    {
+        $id = (int) $id;
+        if (is_int($id)) {
             $this->contenuNotification = $this->getContenu($id);
         } else {
             throw new Exception('erreur id');
         }
     }
 
-
     /**
-     * 
+     *
      * Transmet les notifications par mail
-     * 
+     *
      * @return boolean
      */
-    public function send() {
+    public function send()
+    {
 
-    $return = [];
+        $return = [];
 
         // init du mail
         $mail = new \PHPMailer();
@@ -64,29 +66,29 @@ abstract Class ANotification {
             }
         } else {
             if (file_exists('/usr/sbin/sendmail')) {
-                $mail->IsSendmail();   // send message using the $Sendmail program
+                $mail->IsSendmail(); // send message using the $Sendmail program
             } elseif (file_exists('/var/qmail/bin/sendmail')) {
                 $mail->IsQmail(); // send message using the qmail MTA
             } else {
                 $mail->IsMail(); // send message using PHP mail() function
             }
         }
-        
-        foreach ($this->contenuNotification as $notification){
+
+        foreach ($this->contenuNotification as $notification) {
             if (empty($notification['destinataire'][0])) {
                 continue;
             }
-            if($this->canSend($notification['config'])){
+            if ($this->canSend($notification['config'])) {
                 $mail->ClearAddresses();
-                $mail->From = $notification['expediteur']['mail'];
+                $mail->From     = $notification['expediteur']['mail'];
                 $mail->FromName = $notification['expediteur']['nom'];
                 foreach ($notification['destinataire'] as $destinataire) {
                     $mail->AddAddress($destinataire);
                 }
-                $mail->SetLanguage( 'fr', ROOT_PATH . 'vendor/phpmailer/phpmailer/language/');
-        
-                $mail->Subject = utf8_decode ( $notification['sujet'] );
-                $mail->Body = utf8_decode ( $notification['message'] );
+                $mail->SetLanguage('fr', ROOT_PATH . 'vendor/phpmailer/phpmailer/language/');
+
+                $mail->Subject = utf8_decode($notification['sujet']);
+                $mail->Body    = utf8_decode($notification['message']);
 
                 $return[] = $mail->Send();
             }
@@ -96,20 +98,21 @@ abstract Class ANotification {
 
     /**
      * récupère les données de l'évenemment
-     * 
+     *
      * @todo déplacer la requete vers le protocontroller
      * @param int $id
-     * 
+     *
      * @return array
      */
     abstract protected function getData($id);
 
     /**
      * selection du contenu de la notification
-     * 
+     *
      * @return array
      */
-    protected function getContenu($id) {
+    protected function getContenu($id)
+    {
         $data = $this->getData($id);
         switch ($data['statut']) {
             case \App\Models\AHeure::STATUT_DEMANDE:
@@ -131,71 +134,72 @@ abstract Class ANotification {
         }
         return $NotifContent;
     }
-    
+
     /**
      * Controle de l'option d'envoi de mails selon la notification
-     * 
+     *
      * @param string $optionName
      * @return boolean
      * @throws Exception
-     * 
+     *
      */
-    private function canSend($optionName) {
+    private function canSend($optionName)
+    {
         return isset($_SESSION['config'][$optionName]) ? $_SESSION['config'][$optionName] : false;
     }
 
     /**
      * notification d'une nouvelle demande d'heures
      * au responsable du demandeur
-     * 
+     *
      * @param array $data
      * @return array
      */
     abstract protected function getContenuDemande($data);
-    
+
     /**
-     * notification d'une première validation 
+     * notification d'une première validation
      * au demandeur d'heures
-     * 
+     *
      * @param array $data
      * @return array
      */
     abstract protected function getContenuEmployePremierValidation($data);
-    
+
     /**
      * notification d'une validation finale
      * au demandeur d'heures
-     * 
+     *
      * @param array $data
      * @return array
      */
     abstract protected function getContenuValidationFinale($data);
-    
+
     /**
      * notification d'un refus
      * au demandeur d'heures
-     * 
+     *
      * @param array $data
      * @return array
      */
     abstract protected function getContenuRefus($data);
-    
+
     /**
      * notification d'une annulation par le demandeur
      * à son responsable
-     * 
+     *
      * @param array $data
      * @return array
      */
     abstract protected function getContenuAnnulation($data);
-    
+
     /**
      * notification d'une première validation
      * au grand responsable du demandeur d'heures
-     * 
+     *
      * @param array $data
      * @return array
      */
     abstract protected function getContenuGrandResponsablePremiereValidation($data);
-    
+
 }

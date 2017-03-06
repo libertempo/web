@@ -34,14 +34,14 @@ class Groupe
      * SQL
      */
 
-     /**
-      * Retourne la liste des groupes de l'application
-      *
-      * Il est fort probable que cette méthode change de portée. Pour le moment c'est pas utile
-      *
-      * @return array
-      * @todo unescape_string ?
-      */
+    /**
+     * Retourne la liste des groupes de l'application
+     *
+     * Il est fort probable que cette méthode change de portée. Pour le moment c'est pas utile
+     *
+     * @return array
+     * @todo unescape_string ?
+     */
     private static function getListe()
     {
         $sql = \includes\SQL::singleton();

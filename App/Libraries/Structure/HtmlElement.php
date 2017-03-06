@@ -103,7 +103,7 @@ abstract class HtmlElement implements Interfaces\IHtmlElement
      * @inheritdoc
      * @see Interfaces\IRenderable
      */
-    public abstract function render();
+    abstract public function render();
 
     /**
      * Render les classes de l'élément

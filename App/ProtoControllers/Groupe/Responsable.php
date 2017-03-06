@@ -8,7 +8,8 @@ namespace App\ProtoControllers\Groupe;
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina <wouldsmina@tuxfamily.org>
  */
-class Responsable {
+class Responsable
+{
     /*
      * SQL
      */

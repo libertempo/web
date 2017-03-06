@@ -188,13 +188,13 @@ class Formatter extends \Tests\Units\TestUnit
     }
 
     /**
-    * Test la transformation d'un nombre de secondes négatif en hh:ii
+     * Test la transformation d'un nombre de secondes négatif en hh:ii
      *
      * @since 1.9
      */
     public function testNegatifTimestamp2Duree()
     {
-        $ts = - 3600;
+        $ts = -3600;
 
         $time = _Formatter::timestamp2Duree($ts);
 

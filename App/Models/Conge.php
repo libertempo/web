@@ -50,8 +50,8 @@ class Conge
      * Constantes du formulaire de traitement des demandes
      * à terme, vu que c'est une logique métier qui dépend de plusieurs modèles, à mettre dans un service ou une spécification
      */
-    const ACCEPTE       = '1';
-    const REFUSE        = '2';
+    const ACCEPTE = '1';
+    const REFUSE  = '2';
 
     /**
      * Retourne les options de select des statuts
@@ -65,7 +65,7 @@ class Conge
             static::STATUT_PREMIERE_VALIDATION,
             static::STATUT_VALIDATION_FINALE,
             static::STATUT_REFUS,
-            static::STATUT_ANNUL
+            static::STATUT_ANNUL,
         ];
         $options = [];
         foreach ($statuts as $value) {

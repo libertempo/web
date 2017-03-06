@@ -39,7 +39,7 @@ class Additionnelle extends \App\Libraries\Calendrier\ACollection
     ) {
         parent::__construct($dateDebut, $dateFin);
         $this->utilisateursATrouver = $utilisateursATrouver;
-        $this->canVoirEnTransit = (bool) $canVoirEnTransit;
+        $this->canVoirEnTransit     = (bool) $canVoirEnTransit;
     }
 
     /**
@@ -49,10 +49,10 @@ class Additionnelle extends \App\Libraries\Calendrier\ACollection
     {
         $heures = [];
         foreach ($this->getListeSQL($this->getListeId()) as $heure) {
-            $class = 'heure heure_' . $heure['statut'];
-            $nomComplet = \App\ProtoControllers\Utilisateur::getNomComplet($heure['u_prenom'],  $heure['u_nom'], true);
-            $name = $nomComplet . ' - Heure(s) additionnelle(s)';
-            if (in_array($heure['statut'],[\App\Models\AHeure::STATUT_DEMANDE,\App\Models\AHeure::STATUT_PREMIERE_VALIDATION])) {
+            $class      = 'heure heure_' . $heure['statut'];
+            $nomComplet = \App\ProtoControllers\Utilisateur::getNomComplet($heure['u_prenom'], $heure['u_nom'], true);
+            $name       = $nomComplet . ' - Heure(s) additionnelle(s)';
+            if (in_array($heure['statut'], [\App\Models\AHeure::STATUT_DEMANDE, \App\Models\AHeure::STATUT_PREMIERE_VALIDATION])) {
                 $name = '[En demande]  ' . $name;
             }
             $dateDebut = new \DateTime();
@@ -61,19 +61,17 @@ class Additionnelle extends \App\Libraries\Calendrier\ACollection
             $dateFin->setTimestamp($heure['fin']);
             $statut = ' statut_' . $heure['statut'];
 
-            $title = 'Heure(s) additionnelle(s) de ' . $nomComplet . ' le ' . $dateDebut->format('d/m/Y') . ' de ' . $dateDebut->format('H\:i') . ' à ' . $dateFin->format('H\:i');
-            $uid = uniqid('additionnelle');
+            $title    = 'Heure(s) additionnelle(s) de ' . $nomComplet . ' le ' . $dateDebut->format('d/m/Y') . ' de ' . $dateDebut->format('H\:i') . ' à ' . $dateFin->format('H\:i');
+            $uid      = uniqid('additionnelle');
             $heures[] = new Evenement\Commun($uid, $dateDebut, $dateFin, $name, $title, $class);
         }
 
         return $heures;
     }
 
-
     /*
      * SQL
      */
-
 
     /**
      * Retourne la liste des id d'heures additionnelles satisfaisant aux critères
@@ -82,12 +80,12 @@ class Additionnelle extends \App\Libraries\Calendrier\ACollection
      */
     private function getListeId()
     {
-        $ids = [];
+        $ids     = [];
         $etats[] = \App\Models\AHeure::STATUT_VALIDATION_FINALE;
         if ($this->canVoirEnTransit) {
             $etats = array_merge($etats, [
                 \App\Models\AHeure::STATUT_DEMANDE,
-                \App\Models\AHeure::STATUT_PREMIERE_VALIDATION
+                \App\Models\AHeure::STATUT_PREMIERE_VALIDATION,
             ]);
         }
         $req = 'SELECT id_heure AS id
@@ -120,7 +118,7 @@ class Additionnelle extends \App\Libraries\Calendrier\ACollection
         }
 
         $listeId = array_map('intval', $listeId);
-        $req = 'SELECT *
+        $req     = 'SELECT *
                 FROM heure_additionnelle HA
                     INNER JOIN conges_users CU ON (HA.login = CU.u_login)
                 WHERE id_heure IN (' . implode(',', $listeId) . ')

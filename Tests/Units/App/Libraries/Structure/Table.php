@@ -45,8 +45,8 @@ class Table extends \Tests\Units\TestUnit
         $this->output(function () use ($table, $child) {
             $this->when($table->render())
                 ->mock($child)
-                    ->call('render')
-                        ->once();
+                ->call('render')
+                ->once();
         });
     }
 }

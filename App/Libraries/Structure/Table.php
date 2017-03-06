@@ -27,12 +27,12 @@ class Table extends HtmlElement implements Interfaces\IHeritable
      */
     public function render()
     {
-        echo '<table id="' .  $this->getId() . '"';
+        echo '<table id="' . $this->getId() . '"';
         $this->renderClasses();
         $this->renderAttributes();
         echo '>';
         foreach ($this->children as $child) {
-            if ($child instanceOf Interfaces\IRenderable) {
+            if ($child instanceof Interfaces\IRenderable) {
                 $child->render();
             } else {
                 /* 1.9 TODO: On peut ajouter n'importe quel fils quitte à faire n'importe quoi,

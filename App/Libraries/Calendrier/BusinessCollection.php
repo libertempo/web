@@ -40,12 +40,12 @@ class BusinessCollection
     private $canVoirEnTransit;
 
     /**
-    * @var bool Si la gestion des groupes est demandée
+     * @var bool Si la gestion des groupes est demandée
      */
     private $isGroupesGeres;
 
     /**
-    * @var int Groupe dont on veut voir les événements
+     * @var int Groupe dont on veut voir les événements
      */
     private $groupeAConsulter;
 
@@ -65,15 +65,15 @@ class BusinessCollection
         $canVoirEnTransit,
         $isGroupesGeres,
         $groupeAConsulter = NIL_INT
-    ){
+    ) {
         $this->dateDebut = clone $dateDebut;
         /* Extension des bordures de dates */
         $this->dateDebut->modify('-1 week');
         $this->dateFin = clone $dateFin;
         $this->dateFin->modify('+1 week');
-        $this->utilisateur = (string) $utilisateur;
+        $this->utilisateur      = (string) $utilisateur;
         $this->canVoirEnTransit = (bool) $canVoirEnTransit;
-        $this->isGroupesGeres = (bool) $isGroupesGeres;
+        $this->isGroupesGeres   = (bool) $isGroupesGeres;
         $this->groupeAConsulter = (int) $groupeAConsulter;
     }
 
@@ -87,20 +87,20 @@ class BusinessCollection
         /* Logique métier « application wide » */
         $utilisateursATrouver = [];
         if (null === $this->evenements) {
-            if($this->isGroupesGeres) {
+            if ($this->isGroupesGeres) {
                 $groupesVisiblesUtilisateur = \App\ProtoControllers\Utilisateur::getListeGroupesVisibles($this->utilisateur);
-                $groupesATrouver = (NIL_INT !== $this->groupeAConsulter)
-                    ? array_intersect($groupesVisiblesUtilisateur, [$this->groupeAConsulter])
-                    : $groupesVisiblesUtilisateur;
+                $groupesATrouver            = (NIL_INT !== $this->groupeAConsulter)
+                ? array_intersect($groupesVisiblesUtilisateur, [$this->groupeAConsulter])
+                : $groupesVisiblesUtilisateur;
                 $utilisateursATrouver = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupesATrouver);
-                $fermeture = new Collection\Fermeture($this->dateDebut, $this->dateFin, $groupesATrouver);
+                $fermeture            = new Collection\Fermeture($this->dateDebut, $this->dateFin, $groupesATrouver);
             } else {
                 $utilisateursATrouver = \App\ProtoControllers\Utilisateur::getListId();
-                $fermeture = new Collection\Fermeture($this->dateDebut, $this->dateFin, []);
+                $fermeture            = new Collection\Fermeture($this->dateDebut, $this->dateFin, []);
             }
 
-            $ferie = new Collection\Ferie($this->dateDebut, $this->dateFin);
-            $weekend = new Collection\Weekend($this->dateDebut, $this->dateFin);
+            $ferie            = new Collection\Ferie($this->dateDebut, $this->dateFin);
+            $weekend          = new Collection\Weekend($this->dateDebut, $this->dateFin);
             $this->evenements = array_merge(
                 $ferie->getListe(),
                 $weekend->getListe(),
@@ -108,9 +108,9 @@ class BusinessCollection
             );
 
             if (!empty($utilisateursATrouver)) {
-                $conge = new Collection\Conge($this->dateDebut, $this->dateFin, $utilisateursATrouver, $this->canVoirEnTransit);
-                $repos = new Collection\Heure\Repos($this->dateDebut, $this->dateFin, $utilisateursATrouver, $this->canVoirEnTransit);
-                $additionnelle = new Collection\Heure\Additionnelle($this->dateDebut, $this->dateFin, $utilisateursATrouver, $this->canVoirEnTransit);
+                $conge            = new Collection\Conge($this->dateDebut, $this->dateFin, $utilisateursATrouver, $this->canVoirEnTransit);
+                $repos            = new Collection\Heure\Repos($this->dateDebut, $this->dateFin, $utilisateursATrouver, $this->canVoirEnTransit);
+                $additionnelle    = new Collection\Heure\Additionnelle($this->dateDebut, $this->dateFin, $utilisateursATrouver, $this->canVoirEnTransit);
                 $this->evenements = array_merge(
                     $this->evenements,
                     $conge->getListe(),

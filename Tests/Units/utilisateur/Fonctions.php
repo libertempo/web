@@ -64,7 +64,7 @@ class Fonctions extends \Tests\Units\TestUnit
     public function testGetRealWeekTypeNone()
     {
         $planningUser = [54 => []];
-        $res = _Fonctions::getRealWeekType($planningUser, 2);
+        $res          = _Fonctions::getRealWeekType($planningUser, 2);
         $this->integer($res)->isIdenticalTo(NIL_INT);
     }
 

@@ -69,13 +69,13 @@ final class Calendrier
 
     public function __construct()
     {
-        $this->session=(isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : session_id()));
+        $this->session = (isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : session_id()));
 
-        if(substr($this->session, 0, 9)!="phpconges") {
+        if (substr($this->session, 0, 9) != "phpconges") {
             session_start();
-            $_SESSION['config']=init_config_tab();
-            if(empty($_SESSION['userlogin'])) {
-                redirect( ROOT_PATH . 'index.php' );
+            $_SESSION['config'] = init_config_tab();
+            if (empty($_SESSION['userlogin'])) {
+                redirect(ROOT_PATH . 'index.php');
             }
         } else {
             include_once INCLUDE_PATH . 'session.php';
@@ -134,7 +134,7 @@ final class Calendrier
             $this->dateFinMaintenant = $this->dateDebutMaintenant->modify('+1 week');
         } else {
             $this->dateDebutMaintenant = new \DateTimeImmutable(date('Y') . '-' . date('m') . '-01');
-            $this->dateFinMaintenant = $this->dateDebutMaintenant->modify('+1 month');
+            $this->dateFinMaintenant   = $this->dateDebutMaintenant->modify('+1 month');
         }
     }
 
@@ -163,21 +163,21 @@ final class Calendrier
 
         foreach ($this->getOptionsVue() as $valeur => $label) {
             $selected = ($valeur === $this->vue)
-                ? 'selected="selected"'
-                : '';
+            ? 'selected="selected"'
+            : '';
             $form .= '<option value="' . $valeur . '" ' . $selected . '>' . _($label) . '</option>';
         }
         $form .= '</select></div></div>';
-        if($_SESSION['config']['gestion_groupes']) {
+        if ($_SESSION['config']['gestion_groupes']) {
             $form .= '<div class="form-group col-md-4 col-sm-5">
             <label class="control-label col-md-3 col-sm-3" for="groupe">Groupe&nbsp;:</label>
             <div class="col-md-8 col-sm-8"><select class="form-control" name="search[groupe]" id="groupe">';
             $form .= '<option value="' . NIL_INT . '">Tous</option>';
 
             foreach (\App\ProtoControllers\Groupe::getOptions() as $id => $groupe) {
-                $selected = ($id ===  $this->idGroupe)
-                    ? 'selected="selected"'
-                    : '';
+                $selected = ($id === $this->idGroupe)
+                ? 'selected="selected"'
+                : '';
                 $form .= '<option value="' . $id . '" ' . $selected . '>' . $groupe['nom'] . '</option>';
             }
             $form .= '</select></div></div>';
@@ -199,7 +199,7 @@ final class Calendrier
     private function getOptionsVue()
     {
         return [
-            static::VUE_MOIS => 'vue_mois',
+            static::VUE_MOIS    => 'vue_mois',
             static::VUE_SEMAINE => 'vue_semaine',
         ];
     }
@@ -220,7 +220,7 @@ final class Calendrier
             $this->idGroupe
         );
         $fournisseur = new \App\Libraries\Calendrier\Fournisseur($businessCollection);
-        $calendar = new \CalendR\Calendar();
+        $calendar    = new \CalendR\Calendar();
         $calendar->getEventManager()->addProvider('provider', $fournisseur);
         /* Suis pas fan de la répartition par if, mais ça a l'air de faire le job */
         if (static::VUE_SEMAINE === $this->vue) {
@@ -249,8 +249,8 @@ final class Calendrier
     private function setPeriodesSemaine()
     {
         $this->dateDebutPrecedente = $this->dateDebut->modify('-1 week');
-        $this->dateFin = $this->dateDebut->modify('+1 week');
-        $this->dateFinSuivante = $this->dateFin->modify('+1 week');
+        $this->dateFin             = $this->dateDebut->modify('+1 week');
+        $this->dateFinSuivante     = $this->dateFin->modify('+1 week');
     }
 
     /**
@@ -259,7 +259,7 @@ final class Calendrier
     private function setPeriodesMois()
     {
         $this->dateDebutPrecedente = $this->dateDebut->modify('-1 month');
-        $this->dateFinSuivante = $this->dateFin->modify('+1 month');
+        $this->dateFinSuivante     = $this->dateFin->modify('+1 month');
     }
 
     /**
@@ -272,7 +272,7 @@ final class Calendrier
     private function getCalendrierSemaine(\CalendR\Calendar $calendar)
     {
         /* TODO: La lib ne gère pas les immutables, faire une PR */
-        $week = $calendar->getWeek(new \DateTime($this->dateDebut->format('Y-m-d')));
+        $week            = $calendar->getWeek(new \DateTime($this->dateDebut->format('Y-m-d')));
         $eventCollection = $calendar->getEvents($week);
 
         $return = '<h2>Semaine ' . $week->getBegin()->format('W – Y') . '</h2>';
@@ -295,8 +295,8 @@ final class Calendrier
             foreach ($eventCollection->find($day) as $event) {
                 /* Suppression des événements qui sont plus fins que la journée */
                 if ($event->getBegin() <= $day->getBegin()) {
-                    $title = $event->getTitle();
-                    $avecTitle = (!empty($title)) ? 'evenement-avec-title': '';
+                    $title     = $event->getTitle();
+                    $avecTitle = (!empty($title)) ? 'evenement-avec-title' : '';
                     $return .= '<div class="' . $avecTitle . ' ' . $event->getClass() . '"
                     title="' . $title . '"><div class="contenu">' . $event->getName() . '</div>';
                     /* Un événement qui se termine est forcément avant la fin de la journée */
@@ -317,8 +317,8 @@ final class Calendrier
                             if ($event->getBegin() > $day->getBegin()
                                 && $event->containsPeriod($minute)
                             ) {
-                                $title = $event->getTitle();
-                                $avecTitle = (!empty($title)) ? 'evenement-avec-title': '';
+                                $title               = $event->getTitle();
+                                $avecTitle           = (!empty($title)) ? 'evenement-avec-title' : '';
                                 $evenementsPeriode[] = '<div class="' . $avecTitle . ' ' . $event->getClass() . '"
                                 title="' . $title . '"><div class="contenu">' . $event->getName() . '</div>';
                                 /* Un événement qui se termine est forcément avant la fin de la période */
@@ -332,8 +332,8 @@ final class Calendrier
                             $inflated[$minute->format('H\:i')] = true;
                         }
                         $toInflate = (isset($inflated[$minute->format('H\:i')]) && $inflated[$minute->format('H\:i')])
-                            ? 'inflate'
-                            : '';
+                        ? 'inflate'
+                        : '';
                         $return .= '<div class="celluleMinute ' . $toInflate . '">' . implode('', $evenementsPeriode) . '</div>';
                     }
                 }
@@ -347,8 +347,8 @@ final class Calendrier
                 foreach ($hour as $minute) {
                     if (0 === $minute->format('i') % 30) {
                         $toInflate = (isset($inflated[$minute->format('H\:i')]) && $inflated[$minute->format('H\:i')])
-                            ? 'inflate'
-                            : '';
+                        ? 'inflate'
+                        : '';
                         $return .= '<div class="celluleMinute ' . $toInflate . '">' . $minute->format('H\:i') . '</div>';
                     }
                 }
@@ -371,7 +371,7 @@ final class Calendrier
     private function getCalendrierMois(\CalendR\Calendar $calendar)
     {
         /* TODO: La lib ne gère pas les immutables, faire une PR */
-        $month = $calendar->getMonth(new \DateTime($this->dateDebut->format('Y-m-d')));
+        $month           = $calendar->getMonth(new \DateTime($this->dateDebut->format('Y-m-d')));
         $eventCollection = $calendar->getEvents($month);
 
         $return = '<h2>' . strftime('%B %G', $month->getBegin()->getTimestamp()) . '</h2>';
@@ -396,8 +396,8 @@ final class Calendrier
                 $return .= '<div class="jourId ' . $today . '">' . $day->getBegin()->format('j') . '</div>';
                 /* Tous les événements qui sont contenus dans des jours */
                 foreach ($eventCollection->find($day) as $event) {
-                    $title = $event->getTitle();
-                    $avecTitle = (!empty($title)) ? 'evenement-avec-title': '';
+                    $title     = $event->getTitle();
+                    $avecTitle = (!empty($title)) ? 'evenement-avec-title' : '';
                     $return .= '<div class="' . $avecTitle . ' ' . $event->getClass() . '"
                     title="' . $title . '"><div class="contenu">' . $event->getName() . '</div>';
                     /* Un événement qui se termine est forcément avant la fin de la journée */
@@ -421,9 +421,9 @@ final class Calendrier
     private function getNavigation()
     {
         $urlCalendrier = ROOT_PATH . 'calendrier.php';
-        $queryBase = [
-            'session' => $this->session,
-            'search[vue]' => $this->vue,
+        $queryBase     = [
+            'session'        => $this->session,
+            'search[vue]'    => $this->vue,
             'search[groupe]' => $this->idGroupe,
         ];
         $queryPrec = [

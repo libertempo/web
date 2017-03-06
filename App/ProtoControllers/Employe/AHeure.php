@@ -1,9 +1,9 @@
 <?php
 namespace App\ProtoControllers\Employe;
 
-use \App\Models;
 use App\Models\Planning\Creneau;
 use App\ProtoControllers\Responsable;
+use \App\Models;
 
 /**
  * ProtoContrôleur abstrait d'heures, en attendant la migration vers le MVC REST
@@ -62,16 +62,16 @@ abstract class AHeure
     }
 
     /**
-    * Créé une demande d'heures
-    *
-    * @param array  $post
-    * @param array  &$errorsLst
-    * @param string $user
-    *
-    * @return int
-    */
+     * Créé une demande d'heures
+     *
+     * @param array  $post
+     * @param array  &$errorsLst
+     * @param string $user
+     *
+     * @return int
+     */
     abstract protected function post(array $post, array &$errorsLst, $user);
-    
+
     /**
      * Supprime une demande d'heures
      *
@@ -161,30 +161,30 @@ abstract class AHeure
      */
     protected function dataModel2Db(array $post, $user)
     {
-        $jour  = \App\Helpers\Formatter::dateFr2Iso($post['jour']);
-        $debut = strtotime($jour . ' ' . $post['debut_heure']);
-        $fin   = strtotime($jour . ' ' . $post['fin_heure']);
+        $jour   = \App\Helpers\Formatter::dateFr2Iso($post['jour']);
+        $debut  = strtotime($jour . ' ' . $post['debut_heure']);
+        $fin    = strtotime($jour . ' ' . $post['fin_heure']);
         $statut = !empty(Responsable::getResponsablesUtilisateur($user))
-            ? Models\AHeure::STATUT_DEMANDE
-            : Models\AHeure::STATUT_VALIDATION_FINALE
+        ? Models\AHeure::STATUT_DEMANDE
+        : Models\AHeure::STATUT_VALIDATION_FINALE
         ;
-        $comment = \includes\SQL::quote($post['comment']);
+        $comment      = \includes\SQL::quote($post['comment']);
         $planningUser = \utilisateur\Fonctions::getUserPlanning($user);
         if (is_null($planningUser)) {
-            $duree = 0;
+            $duree       = 0;
             $typePeriode = 0;
         } else {
-            $duree = $this->countDuree($debut, $fin, $planningUser);
+            $duree       = $this->countDuree($debut, $fin, $planningUser);
             $typePeriode = $this->getTypePeriode($debut, $fin, $planningUser);
         }
 
         return [
-            'debut' => (int) $debut,
-            'fin'   => (int) $fin,
-            'duree' => (int) $duree,
+            'debut'       => (int) $debut,
+            'fin'         => (int) $fin,
+            'duree'       => (int) $duree,
             'typePeriode' => (int) $typePeriode,
-            'comment' => $comment,
-            'statut' => $statut,
+            'comment'     => $comment,
+            'statut'      => $statut,
         ];
     }
 
@@ -208,45 +208,45 @@ abstract class AHeure
      *
      * @return int Parmi ceux de \App\Models\Planning\Creneau::TYPE_PERIODE_*
      */
-     protected function getTypePeriode($debut, $fin, array $planning)
-     {
-         /*
-          * Comme pour le moment on ne peut prendre une heure que sur un jour,
-          * on prend arbitrairement le début...
-          */
-         $numeroSemaine = date('W', $debut);
-         $realWeekType  = \utilisateur\Fonctions::getRealWeekType($planning, $numeroSemaine);
-         if (!isset($planning[$realWeekType])) {
-             return 0;
-         }
-         $planningWeek = $planning[$realWeekType];
-         $jourId = date('N', $debut);
-         if (!isset($planningWeek[$jourId])) {
-             return 0;
-         }
-         $planningJour = $planningWeek[$jourId];
-         $horodateDebut = \App\Helpers\Formatter::hour2Time(date('H\:i', $debut));
-         $horodateFin   = \App\Helpers\Formatter::hour2Time(date('H\:i', $fin));
-         $debutMatin = false;
+    protected function getTypePeriode($debut, $fin, array $planning)
+    {
+        /*
+         * Comme pour le moment on ne peut prendre une heure que sur un jour,
+         * on prend arbitrairement le début...
+         */
+        $numeroSemaine = date('W', $debut);
+        $realWeekType  = \utilisateur\Fonctions::getRealWeekType($planning, $numeroSemaine);
+        if (!isset($planning[$realWeekType])) {
+            return 0;
+        }
+        $planningWeek = $planning[$realWeekType];
+        $jourId       = date('N', $debut);
+        if (!isset($planningWeek[$jourId])) {
+            return 0;
+        }
+        $planningJour  = $planningWeek[$jourId];
+        $horodateDebut = \App\Helpers\Formatter::hour2Time(date('H\:i', $debut));
+        $horodateFin   = \App\Helpers\Formatter::hour2Time(date('H\:i', $fin));
+        $debutMatin    = false;
 
-         if (isset($planningJour[Creneau::TYPE_PERIODE_MATIN])) {
-             if (!isset($planningJour[Creneau::TYPE_PERIODE_APRES_MIDI])) {
-                 return Creneau::TYPE_PERIODE_MATIN;
-             }
-             $planningMatin = $planningJour[Creneau::TYPE_PERIODE_MATIN];
-             $dernierCreneauMatin = $planningMatin[count($planningMatin) - 1];
-             $planningApresMidi = $planningJour[Creneau::TYPE_PERIODE_APRES_MIDI];
-             $premierCreneauApresMidi = current($planningApresMidi);
+        if (isset($planningJour[Creneau::TYPE_PERIODE_MATIN])) {
+            if (!isset($planningJour[Creneau::TYPE_PERIODE_APRES_MIDI])) {
+                return Creneau::TYPE_PERIODE_MATIN;
+            }
+            $planningMatin           = $planningJour[Creneau::TYPE_PERIODE_MATIN];
+            $dernierCreneauMatin     = $planningMatin[count($planningMatin) - 1];
+            $planningApresMidi       = $planningJour[Creneau::TYPE_PERIODE_APRES_MIDI];
+            $premierCreneauApresMidi = current($planningApresMidi);
 
-             if ($horodateFin <= $dernierCreneauMatin[Creneau::TYPE_HEURE_FIN]) {
-                 return Creneau::TYPE_PERIODE_MATIN;
-             } elseif ($horodateDebut >= $premierCreneauApresMidi[Creneau::TYPE_HEURE_DEBUT]) {
-                 return Creneau::TYPE_PERIODE_APRES_MIDI;
-             }
-             return Creneau::TYPE_PERIODE_MATIN_APRES_MIDI;
-         }
-         return Creneau::TYPE_PERIODE_APRES_MIDI;
-     }
+            if ($horodateFin <= $dernierCreneauMatin[Creneau::TYPE_HEURE_FIN]) {
+                return Creneau::TYPE_PERIODE_MATIN;
+            } elseif ($horodateDebut >= $premierCreneauApresMidi[Creneau::TYPE_HEURE_DEBUT]) {
+                return Creneau::TYPE_PERIODE_APRES_MIDI;
+            }
+            return Creneau::TYPE_PERIODE_MATIN_APRES_MIDI;
+        }
+        return Creneau::TYPE_PERIODE_APRES_MIDI;
+    }
     /**
      * Vérifie que l'utilisateur a bien le droit d'éditer la ressource
      *
@@ -309,7 +309,7 @@ abstract class AHeure
         foreach ($search as $key => $value) {
             if ('annee' === $key) {
                 $champs['timestampDebut'] = \utilisateur\Fonctions::getTimestampPremierJourAnnee($value);
-                $champs['timestampFin'] = \utilisateur\Fonctions::getTimestampDernierJourAnnee($value);
+                $champs['timestampFin']   = \utilisateur\Fonctions::getTimestampDernierJourAnnee($value);
             } else {
                 $champs[$key] = (int) $value;
             }
@@ -344,10 +344,10 @@ abstract class AHeure
      */
     protected function isChevauchementHeureAdditionnelle($jour, $heureDebut, $heureFin, $user, $id = NIL_INT)
     {
-        $jour = \App\Helpers\Formatter::dateFr2Iso($jour);
+        $jour           = \App\Helpers\Formatter::dateFr2Iso($jour);
         $timestampDebut = strtotime($jour . ' ' . $heureDebut);
         $timestampFin   = strtotime($jour . ' ' . $heureFin);
-        $statuts = [
+        $statuts        = [
             Models\AHeure::STATUT_DEMANDE,
             Models\AHeure::STATUT_PREMIERE_VALIDATION,
             Models\AHeure::STATUT_VALIDATION_FINALE,
@@ -381,10 +381,10 @@ abstract class AHeure
      */
     protected function isChevauchementHeureRepos($jour, $heureDebut, $heureFin, $user, $id = NIL_INT)
     {
-        $jour = \App\Helpers\Formatter::dateFr2Iso($jour);
+        $jour           = \App\Helpers\Formatter::dateFr2Iso($jour);
         $timestampDebut = strtotime($jour . ' ' . $heureDebut);
         $timestampFin   = strtotime($jour . ' ' . $heureFin);
-        $statuts = [
+        $statuts        = [
             Models\AHeure::STATUT_DEMANDE,
             Models\AHeure::STATUT_PREMIERE_VALIDATION,
             Models\AHeure::STATUT_VALIDATION_FINALE,
@@ -402,7 +402,6 @@ abstract class AHeure
         $req .= ')';
         $queryRep = $sql->query($req);
 
-
         return 0 < (int) $queryRep->fetch_array()[0];
     }
 
@@ -418,10 +417,10 @@ abstract class AHeure
      */
     protected function isChevauchementConges($jour, $heureDebut, $heureFin, $user)
     {
-        $jour = \App\Helpers\Formatter::dateFr2Iso($jour);
+        $jour           = \App\Helpers\Formatter::dateFr2Iso($jour);
         $timestampDebut = strtotime($jour . ' ' . $heureDebut);
         $timestampFin   = strtotime($jour . ' ' . $heureFin);
-        $planningUser = \utilisateur\Fonctions::getUserPlanning($user);
+        $planningUser   = \utilisateur\Fonctions::getUserPlanning($user);
         if (!is_array($planningUser)) {
             return false;
         }

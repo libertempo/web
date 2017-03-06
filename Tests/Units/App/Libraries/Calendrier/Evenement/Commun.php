@@ -30,13 +30,13 @@ class Commun extends \Tests\Units\TestUnit
      */
     public function beforeTestMethod($method)
     {
-        $uid = 'uniqid';
-        $debut = new \DateTimeImmutable($this->debutEvenement);
-        $fin = new \DateTimeImmutable($this->finEvenement);
-        $name = 'John Malkovich';
-        $title = 'titre';
-        $class = 'class';
-        $this->tested = new _Commun($uid, $debut, $fin, $name, $title, $class);
+        $uid            = 'uniqid';
+        $debut          = new \DateTimeImmutable($this->debutEvenement);
+        $fin            = new \DateTimeImmutable($this->finEvenement);
+        $name           = 'John Malkovich';
+        $title          = 'titre';
+        $class          = 'class';
+        $this->tested   = new _Commun($uid, $debut, $fin, $name, $title, $class);
         $this->calendar = new \CalendR\Calendar();
     }
 
@@ -199,7 +199,7 @@ class Commun extends \Tests\Units\TestUnit
      */
     public function testIsDuringAfterEnd()
     {
-        $date = new \DateTime('2006-12-28');
+        $date    = new \DateTime('2006-12-28');
         $semaine = $this->calendar->getWeek($date);
 
         $this->boolean($this->tested->isDuring($semaine))->isFalse();
@@ -210,11 +210,11 @@ class Commun extends \Tests\Units\TestUnit
      */
     public function testIsDuringInPeriod()
     {
-        $debut = new \DateTimeImmutable($this->debutEvenement);
-        $fin = new \DateTimeImmutable('2006-12-28');
+        $debut  = new \DateTimeImmutable($this->debutEvenement);
+        $fin    = new \DateTimeImmutable('2006-12-28');
         $tested = new _Commun('', $debut, $fin, '', '', '');
-        $date = new \DateTime('2006-12-01');
-        $mois = $this->calendar->getMonth($date);
+        $date   = new \DateTime('2006-12-01');
+        $mois   = $this->calendar->getMonth($date);
 
         $this->boolean($tested->isDuring($mois))->isTrue();
     }

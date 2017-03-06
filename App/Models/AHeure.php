@@ -1,5 +1,6 @@
 <?php
 namespace App\Models;
+
 /**
  * Modèle d'heures
  *
@@ -19,32 +20,32 @@ abstract class AHeure
      * Constante de statut de première validation
      * @var string
      */
-    const STATUT_PREMIERE_VALIDATION  = 2;
+    const STATUT_PREMIERE_VALIDATION = 2;
 
     /**
      * Constante de statut de seconde validation
      * @var string
      */
-    const STATUT_VALIDATION_FINALE      = 3;
+    const STATUT_VALIDATION_FINALE = 3;
 
     /**
      * Constante de refus par l'un des validateurs
      * @var string
      */
-    const STATUT_REFUS   = 4;
+    const STATUT_REFUS = 4;
 
     /**
      * Constante d'annulation par l'employé
      * @var string
      */
-    const STATUT_ANNUL   = 5;
+    const STATUT_ANNUL = 5;
 
     /**
      * Constantes du formulaire de traitement des demandes
      * à terme, vu que c'est une logique métier qui dépend de plusieurs modèles, à mettre dans un service ou une spécification
      */
-    const ACCEPTE       = '1';
-    const REFUSE        = '2';
+    const ACCEPTE = '1';
+    const REFUSE  = '2';
 
     /**
      * Retourne les options de select des statuts
@@ -58,7 +59,7 @@ abstract class AHeure
             static::STATUT_PREMIERE_VALIDATION,
             static::STATUT_VALIDATION_FINALE,
             static::STATUT_REFUS,
-            static::STATUT_ANNUL
+            static::STATUT_ANNUL,
         ];
         $options = [];
         foreach ($statuts as $value) {

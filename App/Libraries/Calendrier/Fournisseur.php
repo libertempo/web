@@ -1,9 +1,9 @@
 <?php
 namespace App\Libraries\Calendrier;
 
+use \App\Libraries\Calendrier\BusinessCollection;
 use \CalendR\Event\EventInterface;
 use \CalendR\Event\Provider\ProviderInterface;
-use \App\Libraries\Calendrier\BusinessCollection;
 
 /**
  * Fournisseur d'événements pour le calendrier

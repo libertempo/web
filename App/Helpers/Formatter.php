@@ -68,7 +68,7 @@ class Formatter
             throw new \Exception(_('Heure_mal_formee'));
         }
 
-        return ($matches[1]*3600+$matches[5]*60);
+        return ($matches[1] * 3600 + $matches[5] * 60);
     }
 
     /**
@@ -100,13 +100,13 @@ class Formatter
     public static function timestamp2Duree($timestamp)
     {
         $timestamp = (int) $timestamp;
-        $secondes = abs($timestamp/60%60);
-        $heures = abs($timestamp/3600);
-        $duree = sprintf('%02d:%02d', $heures, $secondes);
+        $secondes  = abs($timestamp / 60 % 60);
+        $heures    = abs($timestamp / 3600);
+        $duree     = sprintf('%02d:%02d', $heures, $secondes);
 
         return (0 < $timestamp)
-            ? $duree
-            : '-' . $duree
+        ? $duree
+        : '-' . $duree
         ;
     }
 }

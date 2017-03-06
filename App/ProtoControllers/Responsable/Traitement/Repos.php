@@ -24,7 +24,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
      */
     public function put(array $put, $resp, &$notice, array &$errorLst)
     {
-        $return = '1';
+        $return       = '1';
         $infoDemandes = $this->getInfoDemandes(array_keys($put['demande']));
 
         foreach ($put['demande'] as $id_heure => $statut) {
@@ -34,7 +34,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
                 $return = $this->putGrandResponsable($infoDemandes[$id_heure], $statut, $put, $errorLst);
             } else {
                 $errorLst[] = _('erreur_pas_responsable_de') . ' ' . $infoDemandes[$id_heure]['login'];
-                $return = NIL_INT;
+                $return     = NIL_INT;
             }
         }
         $notice = _('traitement_effectue');
@@ -47,12 +47,13 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
     protected function putResponsable(array $infoDemande, $statut, array $put, array &$errors)
     {
         $localError = [];
-        $return = NIL_INT;
-        $id_heure = $infoDemande['id_heure'];
-        if ($this->isDemandeTraitable($infoDemande['statut'])) { // demande est traitable
+        $return     = NIL_INT;
+        $id_heure   = $infoDemande['id_heure'];
+        if ($this->isDemandeTraitable($infoDemande['statut'])) {
+            // demande est traitable
             if (AHeure::REFUSE === $statut) {
                 $return = $this->updateStatutRefus($id_heure, $put['comment_refus'][$id_heure]);
-                    log_action(0, '', '', 'Refus de la demande d\'heure de repos ' . $id_heure . ' de ' . $infoDemande['login']);
+                log_action(0, '', '', 'Refus de la demande d\'heure de repos ' . $id_heure . ' de ' . $infoDemande['login']);
             } elseif (AHeure::ACCEPTE === $statut) {
                 if (\App\ProtoControllers\Responsable::isDoubleValGroupe($infoDemande['login'])) {
                     $return = $this->updateStatutPremiereValidation($id_heure);
@@ -64,14 +65,14 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
             }
         } else {
             $localError[] = _('demande_deja_traite') . ': ' . $infoDemande['login'];
-            $return = NIL_INT;
+            $return       = NIL_INT;
         }
-        
-        if( 0 < $return) {
+
+        if (0 < $return) {
             $notif = new \App\Libraries\Notification\Repos($id_heure);
             if (!$notif->send()) {
                 $localError[] = _('erreur_envoi_mail') . ': ' . $infoDemande['login'];
-                $return = NIL_INT;
+                $return       = NIL_INT;
             }
         }
         $errors = array_merge($errors, $localError);
@@ -84,9 +85,10 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
     protected function putGrandResponsable(array $infoDemande, $statut, array $put, array &$errors)
     {
         $localError = [];
-        $return = NIL_INT;
-        $id_heure = $infoDemande['id_heure'];
-        if ($this->isDemandeTraitable($infoDemande['statut'])) { // demande est traitable
+        $return     = NIL_INT;
+        $id_heure   = $infoDemande['id_heure'];
+        if ($this->isDemandeTraitable($infoDemande['statut'])) {
+            // demande est traitable
             if (AHeure::REFUSE === $statut) {
                 $return = $this->updateStatutRefus($id_heure, $put['comment_refus'][$id_heure]);
                 log_action(0, '', '', 'Refus de la demande d\'heure de repos ' . $id_heure . ' de ' . $infoDemande['login']);
@@ -95,17 +97,17 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
                     $return = $this->putValidationFinale($id_heure);
                     log_action(0, '', '', 'Validation de la demande d\'heure de repos ' . $id_heure . ' de ' . $infoDemande['login']);
                 } else {
-                $localError[] = _('traitement_non_autorise') . ': ' . $infoDemande['login'];
+                    $localError[] = _('traitement_non_autorise') . ': ' . $infoDemande['login'];
                 }
             }
         } else {
             $localError[] = _('demande_deja_traite') . ': ' . $infoDemande['login'];
-            $return = NIL_INT;
+            $return       = NIL_INT;
         }
-        
-        if( 0 < $return) {
+
+        if (0 < $return) {
             $notif = new \App\Libraries\Notification\Repos($id);
-            $send = $notif->send();
+            $send  = $notif->send();
 
             if (false === $send) {
                 $localError[] = _('erreur_envoi_mail') . ': ' . $infoDemande['login'];
@@ -127,9 +129,9 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
     {
         $sql = \includes\SQL::singleton();
 
-        $req   = 'UPDATE heure_repos
+        $req = 'UPDATE heure_repos
                 SET statut = ' . AHeure::STATUT_VALIDATION_FINALE . '
-                WHERE id_heure = '. (int) $demandeId;
+                WHERE id_heure = ' . (int) $demandeId;
         $query = $sql->query($req);
 
         return $sql->affected_rows;
@@ -147,10 +149,10 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
     {
         $sql = \includes\SQL::singleton();
 
-        $req   = 'UPDATE heure_repos
+        $req = 'UPDATE heure_repos
                 SET statut = ' . AHeure::STATUT_REFUS . ',
                     comment_refus = \'' . \includes\SQL::quote($comment) . '\'
-                WHERE id_heure = '. (int) $demandeId;
+                WHERE id_heure = ' . (int) $demandeId;
         $query = $sql->query($req);
 
         return $sql->affected_rows;
@@ -167,9 +169,9 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
     {
         $sql = \includes\SQL::singleton();
 
-        $req   = 'UPDATE heure_repos
+        $req = 'UPDATE heure_repos
                 SET statut = ' . AHeure::STATUT_PREMIERE_VALIDATION . '
-                WHERE id_heure = '. (int) $demandeId;
+                WHERE id_heure = ' . (int) $demandeId;
         $query = $sql->query($req);
 
         return $sql->affected_rows;
@@ -184,12 +186,12 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
      */
     protected function updateSolde($demandeId)
     {
-        $user = $this->getInfoDemandes(explode(" ",$demandeId));
-        $sql = \includes\SQL::singleton();
+        $user = $this->getInfoDemandes(explode(" ", $demandeId));
+        $sql  = \includes\SQL::singleton();
 
-        $req   = 'UPDATE conges_users
-                SET u_heure_solde = u_heure_solde-' .$user[$demandeId]['duree'] . '
-                WHERE u_login = \''. $user[$demandeId]['login'] .'\'';
+        $req = 'UPDATE conges_users
+                SET u_heure_solde = u_heure_solde-' . $user[$demandeId]['duree'] . '
+                WHERE u_login = \'' . $user[$demandeId]['login'] . '\'';
         $query = $sql->query($req);
 
         return $sql->affected_rows;
@@ -200,10 +202,10 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
      */
     public function getForm()
     {
-        $return     = '';
-        $notice = '';
-        $errorsLst  = [];
-        $i = true;
+        $return    = '';
+        $notice    = '';
+        $errorsLst = [];
+        $i         = true;
 
         $return .= '<h1>' . _('traitement_heure_repos_titre') . '</h1>';
 
@@ -218,8 +220,8 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
                         $errors .= '<li>' . $key . ' : ' . $value . '</li>';
                     }
                     $return .= '<br><div class="alert alert-danger">' . _('erreur_recommencer') . '<ul>' . $errors . '</ul></div>';
-                } elseif(!empty($notice)) {
-                    $return .= '<br><div class="alert alert-info">' .  $notice . '.</div>';
+                } elseif (!empty($notice)) {
+                    $return .= '<br><div class="alert alert-info">' . $notice . '.</div>';
 
                 }
             }
@@ -232,7 +234,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
             'table-hover',
             'table-responsive',
             'table-striped',
-            'table-condensed'
+            'table-condensed',
         ]);
         $childTable = '<thead><tr><th>' . _('divers_nom_maj_1') . '<br>' . _('divers_prenom_maj_1') . '</th>';
         $childTable .= '<th>' . _('jour') . '</th>';
@@ -245,12 +247,12 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
         $childTable .= '<th>' . _('resp_traite_demandes_motif_refus') . '</th>';
         $childTable .= '</tr></thead><tbody>';
 
-        $demandesResp = $this->getDemandesResponsable($_SESSION['userlogin']);
+        $demandesResp      = $this->getDemandesResponsable($_SESSION['userlogin']);
         $demandesGrandResp = $this->getDemandesGrandResponsable($_SESSION['userlogin']);
-        if (empty($demandesResp) && empty($demandesGrandResp) ) {
+        if (empty($demandesResp) && empty($demandesGrandResp)) {
             $childTable .= '<tr><td colspan="12"><center>' . _('aucune_demande') . '</center></td></tr>';
         } else {
-            if(!empty($demandesResp)) {
+            if (!empty($demandesResp)) {
                 $childTable .= $this->getFormDemandes($demandesResp);
             }
             if (!empty($demandesGrandResp)) {
@@ -265,27 +267,26 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
         ob_start();
         $table->render();
         $return .= ob_get_clean();
-        if (!empty($demandesResp) || !empty($demandesGrandResp) ) {
+        if (!empty($demandesResp) || !empty($demandesGrandResp)) {
             $return .= '<div class="form-group"><input type="submit" class="btn btn-success" value="' . _('form_submit') . '" /></div>';
         }
-        $return .='</form>';
+        $return .= '</form>';
 
         return $return;
     }
 
-     /**
-      * {@inheritDoc}
-      */
+    /**
+     * {@inheritDoc}
+     */
     protected function getIdDemandesResponsable($resp)
     {
         $groupId = \App\ProtoControllers\Responsable::getIdGroupeResp($resp);
-
 
         $usersResp = [];
         $usersResp = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupId);
 
         $usersRespDirect = \App\ProtoControllers\Responsable::getUsersRespDirect($resp);
-        $usersResp = array_merge($usersResp,$usersRespDirect);
+        $usersResp       = array_merge($usersResp, $usersRespDirect);
 
         if (empty($usersResp)) {
             return [];
@@ -296,7 +297,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
         $req = 'SELECT id_heure AS id
                 FROM heure_repos
                 WHERE login IN (\'' . implode(',', $usersResp) . '\')
-                AND statut = '.AHeure::STATUT_DEMANDE;
+                AND statut = ' . AHeure::STATUT_DEMANDE;
         $res = $sql->query($req);
         while ($data = $res->fetch_array()) {
             $ids[] = (int) $data['id'];
@@ -304,9 +305,9 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
         return $ids;
     }
 
-     /**
-      * {@inheritDoc}
-      */
+    /**
+     * {@inheritDoc}
+     */
     protected function getIdDemandesGrandResponsable($gResp)
     {
         $groupId = \App\ProtoControllers\Responsable::getIdGroupeGrandResponsable($gResp);
@@ -324,7 +325,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
         $req = 'SELECT id_heure AS id
                 FROM heure_repos
                 WHERE login IN (\'' . implode(',', $usersResp) . '\')
-                AND statut = '.AHeure::STATUT_PREMIERE_VALIDATION;
+                AND statut = ' . AHeure::STATUT_PREMIERE_VALIDATION;
         $res = $sql->query($req);
         while ($data = $res->fetch_array()) {
             $ids[] = (int) $data['id'];
@@ -337,7 +338,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
      */
     protected function getInfoDemandes(array $listId)
     {
-        $infoDemande =[];
+        $infoDemande = [];
 
         if (empty($listId)) {
             return [];
@@ -350,7 +351,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
 
         $ListeDemande = $sql->query($req)->fetch_all(MYSQLI_ASSOC);
 
-        foreach ($ListeDemande as $demande){
+        foreach ($ListeDemande as $demande) {
             $infoDemande[$demande['id_heure']] = $demande;
         }
 

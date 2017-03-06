@@ -20,7 +20,7 @@ class Planning extends \App\ProtoControllers\APlanning
      */
     public static function putPlanning($id, array $put, array &$errors)
     {
-        $id = (int) $id;
+        $id           = (int) $id;
         $utilisateurs = \App\ProtoControllers\Utilisateur::getListByPlanning($id);
         foreach ($utilisateurs as $utilisateur) {
             if (\App\ProtoControllers\Utilisateur::hasSortiesEnCours($utilisateur['u_login'])) {
@@ -29,7 +29,7 @@ class Planning extends \App\ProtoControllers\APlanning
             }
         }
 
-        $subalternes =  \App\ProtoControllers\Responsable::getUsersRespDirect($_SESSION['userlogin']);
+        $subalternes = \App\ProtoControllers\Responsable::getUsersRespDirect($_SESSION['userlogin']);
         \App\ProtoControllers\Utilisateur::deleteListAssociationPlanning($id, $subalternes);
         $utilisateursAssocies = array_intersect($put['utilisateurs'], $subalternes);
         if (!empty($utilisateursAssocies)) {

@@ -6,13 +6,11 @@
  * @param int    MyWidth  entier indiquant la largeur de la fenêtre en pixels
  * @param int    MyHeight entier indiquant la hauteur de la fenêtre en pixels
  */
-function OpenPopUp(MyFile,MyWindow,MyWidth,MyHeight)
-{
-    var ns4 = (document.layers)? true:false; //NS 4
-    var ie4 = (document.all)? true:false; //IE 4
-    var dom = (document.getElementById)? true:false; //DOM
+function OpenPopUp(MyFile, MyWindow, MyWidth, MyHeight) {
+    var ns4 = (document.layers) ? true : false; //NS 4
+    var ie4 = (document.all) ? true : false; //IE 4
+    var dom = (document.getElementById) ? true : false; //DOM
     var xMax, yMax, xOffset, yOffset;;
-
     if (ie4 || dom) {
         xMax = screen.width;
         yMax = screen.height;
@@ -23,129 +21,105 @@ function OpenPopUp(MyFile,MyWindow,MyWidth,MyHeight)
         xMax = 800;
         yMax = 600;
     }
-    xOffset = (xMax - MyWidth)/2;
-    yOffset = (yMax - MyHeight)/2;
-    window.open(MyFile,MyWindow,'width='+MyWidth
-        +',height='+MyHeight
-        +',screenX='+xOffset
-        +',screenY='+yOffset
-        +',top='+yOffset
-        +',left='+xOffset
-        +',scrollbars=yes,resizable=yes');
+    xOffset = (xMax - MyWidth) / 2;
+    yOffset = (yMax - MyHeight) / 2;
+    window.open(MyFile, MyWindow, 'width=' + MyWidth + ',height=' + MyHeight + ',screenX=' + xOffset + ',screenY=' + yOffset + ',top=' + yOffset + ',left=' + xOffset + ',scrollbars=yes,resizable=yes');
 }
-
 /**
  * Compte le nombre de jours de congés entre deux dates en fonctions du contexte (temps partiel, jours fériés, fermeture, ...)
  */
-function compter_jours()
-{
-    $(document).ready(function () {
+function compter_jours() {
+    $(document).ready(function() {
         var login = document.forms["dem_conges"].user_login.value;
         var session = document.forms["dem_conges"].session.value;
         var d_debut = document.forms["dem_conges"].new_debut.value;
         var d_fin = document.forms["dem_conges"].new_fin.value;
-	    var opt_deb = document.querySelector('input[name = "new_demi_jour_deb"]:checked').value;
-	    var opt_fin = document.querySelector('input[name = "new_demi_jour_fin"]:checked').value;
+        var opt_deb = document.querySelector('input[name = "new_demi_jour_deb"]:checked').value;
+        var opt_fin = document.querySelector('input[name = "new_demi_jour_fin"]:checked').value;
         var p_num = "";
-
-        if( document.forms["dem_conges"].p_num_to_update ) {
+        if (document.forms["dem_conges"].p_num_to_update) {
             var p_num = document.forms["dem_conges"].p_num_to_update.value;
         }
-
-        if( (d_debut) && (d_fin)) {
-            var page = '../calcul_nb_jours_pris.php?session=' + session + '&date_debut=' + d_debut + '&date_fin=' + d_fin+'&user=' + login + '&opt_debut=' +opt_deb + '&opt_fin=' + opt_fin + '&p_num=' +p_num;
-
+        if ((d_debut) && (d_fin)) {
+            var page = '../calcul_nb_jours_pris.php?session=' + session + '&date_debut=' + d_debut + '&date_fin=' + d_fin + '&user=' + login + '&opt_debut=' + opt_deb + '&opt_fin=' + opt_fin + '&p_num=' + p_num;
             $.ajax({
-                type : 'GET',
-                url : page,
-                dataType : 'text', // expected returned data format.
-                success : function(data)
-                {
+                type: 'GET',
+                url: page,
+                dataType: 'text', // expected returned data format.
+                success: function(data) {
                     var arr = new Array();
                     arr = JSON.parse(data);
-                    document.forms["dem_conges"].new_nb_jours.value=arr["nb"];
+                    document.forms["dem_conges"].new_nb_jours.value = arr["nb"];
                     document.getElementById('comment_nbj').innerHTML = arr["comm"];
                 },
             });
         }
     });
 }
-
 /**
  * Génère le datepicker sur un champ, paramétré par des options précises
  *
  * @param object opts
  */
-function generateDatePicker(opts, compter = true)
-{
+function generateDatePicker(opts, compter = true) {
     var defaultOpts = {
-        format             : 'dd/mm/yyyy',
-        language           : 'fr',
-        autoclose          : true,
-        todayHighlight     : true,
-        daysOfWeekDisabled : [],
-        datesDisabled      : [],
-        startDate          : ''
+        format: 'dd/mm/yyyy',
+        language: 'fr',
+        autoclose: true,
+        todayHighlight: true,
+        daysOfWeekDisabled: [],
+        datesDisabled: [],
+        startDate: ''
     };
     var toApply = defaultOpts;
-
     /* On ne peut pas écraser une option qui n'existe en défaut */
     for (var i in defaultOpts) {
         toApply[i] = (undefined !== opts[i]) ? opts[i] : defaultOpts[i];
     }
-    $(document).ready(function () {
+    $(document).ready(function() {
         $('input.date').datepicker(toApply).on("change", function() {
-            if( compter == true) {
+            if (compter == true) {
                 compter_jours();
             }
         });
     });
 }
-
 /**
  * Génère le timePicker sur un champ, paramétré par des options précises
  *
  * @param string elementId L'id unique du champ sur lequel on applique le timePicker
  * @param object opts
  */
-function generateTimePicker(elementId, opts)
-{
+function generateTimePicker(elementId, opts) {
     var defaultOpts = {
-        minuteStep             : 30,
-        showInputs             : false,
-        showMeridian           : false,
-        showWidgetOnAddonClick : false,
-        defaultTime            : '12:00',
+        minuteStep: 30,
+        showInputs: false,
+        showMeridian: false,
+        showWidgetOnAddonClick: false,
+        defaultTime: '12:00',
     };
     var toApply = defaultOpts;
-
     if (undefined !== opts) {
         /* On ne peut pas écraser une option qui n'existe en défaut */
         for (var i in defaultOpts) {
             toApply[i] = (undefined !== opts[i]) ? opts[i] : defaultOpts[i];
         }
     }
-
     $('#' + elementId).timepicker(toApply);
 }
-
 /**
  * Objet de présentation de l'affichage des semaines
  */
-var semaineDisplayer = function (idElement, idCommon, typeSemaines, texts)
-{
-    this.element      = document.getElementById(idElement);
-    this.idCommon     = idCommon;
+var semaineDisplayer = function(idElement, idCommon, typeSemaines, texts) {
+    this.element = document.getElementById(idElement);
+    this.idCommon = idCommon;
     this.typeSemaines = typeSemaines;
-    this.texts        = texts;
-
+    this.texts = texts;
     /**
      * Lance l'initialisation de l'afficheur
      */
-    this.init = function ()
-    {
+    this.init = function() {
         var displayedNot = false;
-
         for (var idType in this.typeSemaines) {
             if (this.typeSemaines.hasOwnProperty(idType)) {
                 if (idType !== this.idCommon) {
@@ -160,56 +134,45 @@ var semaineDisplayer = function (idElement, idCommon, typeSemaines, texts)
         if (!displayedNot) {
             this._unclickedElement(this.element);
         }
-
         /* Événementiel */
-        this.element.addEventListener('click', function (e) {
+        this.element.addEventListener('click', function(e) {
             var element = e.target;
             if (element.classList.contains('active')) {
                 this._unclickedElement(element);
             } else {
                 this._clickedElement(element);
             }
-
         }.bind(this));
-
         return this;
     }
-
     /**
      * Présente l'élément comme cliqué en affichant les semaines correspondantes
      */
-    this._clickedElement = function (element)
-    {
+    this._clickedElement = function(element) {
         element.classList.add('active');
         element.value = this.texts['common'];
         this._displayNotCommon();
     }
-
     /**
      * Présente l'élément comme non cliqué en affichant les semaines correspondantes
      */
-    this._unclickedElement = function (element)
-    {
+    this._unclickedElement = function(element) {
         element.classList.remove('active');
         element.value = this.texts['notCommon'];
         this._displayCommon();
     }
-
     /**
      * Vérifie que la semaine a des inputs décisifs en son sein
      *
      * @return bool
      */
-    this._hasWeekInputs = function (typeSemaine)
-    {
+    this._hasWeekInputs = function(typeSemaine) {
         return 0 < this._getWeekInputs(typeSemaine).length;
     }
-
     /**
      * Affiche les semaines non communes
      */
-    this._displayNotCommon = function ()
-    {
+    this._displayNotCommon = function() {
         /* Show not common */
         for (var idType in this.typeSemaines) {
             if (this.typeSemaines.hasOwnProperty(idType)) {
@@ -219,19 +182,15 @@ var semaineDisplayer = function (idElement, idCommon, typeSemaines, texts)
                 }
             }
         }
-
         /* Hide common */
         this._hideBlock(this.typeSemaines[this.idCommon]);
     }
-
     /**
      * Affiche les semaines communes
      */
-    this._displayCommon = function ()
-    {
+    this._displayCommon = function() {
         /* Show common */
         this._showBlock(this.typeSemaines[this.idCommon]);
-
         /* Hide not common */
         for (var idType in this.typeSemaines) {
             if (this.typeSemaines.hasOwnProperty(idType)) {
@@ -242,72 +201,58 @@ var semaineDisplayer = function (idElement, idCommon, typeSemaines, texts)
             }
         }
     }
-
     /**
      * Affiche un bloc et active tous les champs décisifs en son sein
      */
-    this._showBlock = function (typeSemaine)
-    {
+    this._showBlock = function(typeSemaine) {
         var inputs = this._getWeekInputs(typeSemaine);
         for (var i = 0; i < inputs.length; ++i) {
             inputs[i].disabled = '';
         }
-
         document.getElementById(typeSemaine).style.display = 'block';
     }
-
     /**
      * Cache un bloc et désactive tous les champs décisifs en son sein
      */
-    this._hideBlock = function (typeSemaine)
-    {
+    this._hideBlock = function(typeSemaine) {
         var inputs = this._getWeekInputs(typeSemaine);
         for (var i = 0; i < inputs.length; ++i) {
             inputs[i].disabled = 'disabled';
         }
-
         document.getElementById(typeSemaine).style.display = 'none';
     }
-
     /**
      * Retourne tous les inputs décisifs de la semaine
      *
      * @return Object
      */
-    this._getWeekInputs = function (typeSemaine)
-    {
+    this._getWeekInputs = function(typeSemaine) {
         // TODO : not with reference sur un autre form ?
         return document.getElementById(typeSemaine).querySelectorAll('input[type=hidden]');
     }
-
     /**
      * Lance l'initialisation de l'afficheur en mode lecture seule
      */
-    this.readOnly = function ()
-    {
+    this.readOnly = function() {
         this.element.style.display = 'none';
     }
 }
-
 /**
  * Objet de manipulation du planning
  */
-var planningController = function (idElement, options, creneaux)
-{
+var planningController = function(idElement, options, creneaux) {
     this.element = document.getElementById(idElement);
     this.options = options;
     this.typeSemaine = this.options['typeSemaine'];
     this.debut = this.options['typeHeureDebut'];
-    this.fin   = this.options['typeHeureFin'];
+    this.fin = this.options['typeHeureFin'];
     this.incrementMatin = 0;
     this.incrementApresMidi = 0;
-
     /**
      * Lance l'initialisation de l'afficheur
      */
-    this.init = function ()
-    {
-        this.element.addEventListener('click', function () {
+    this.init = function() {
+        this.element.addEventListener('click', function() {
             var select = document.getElementById(this.options['selectJourId']);
             var jourSelectionne = select.options[select.selectedIndex].value;
             var radios = document.body.querySelectorAll('input[type="radio"]');
@@ -340,39 +285,31 @@ var planningController = function (idElement, options, creneaux)
                 this._fillHelper(this.options['erreurOptionManquante']);
             }
         }.bind(this));
-
         /* Remplissage des valeurs préexistantes */
         this._addPeriods(creneaux);
     }
-
     /**
      * Vérifie qu'une période n'existe pas déjà sur le jour demandé
      */
-    this._alreadyExistPeriod = function (jour, debut, fin) {
+    this._alreadyExistPeriod = function(jour, debut, fin) {
         var table = document.getElementById(this.options['tableId']);
-        var ligneCible = table.querySelector('tr[data-id-jour="' +  jour + '"]');
-
+        var ligneCible = table.querySelector('tr[data-id-jour="' + jour + '"]');
         return null !== ligneCible.querySelector('span[data-heures="' + debut + '-' + fin + '"]');
     }
-
     /**
      * Vide le helper
      */
-    this._emptyHelper = function ()
-    {
+    this._emptyHelper = function() {
         document.getElementById(this.options['helperId']).innerHTML = '';
     }
-
     /**
      * Remplis le helper avec le texte fourni
      *
      * @param string text
      */
-    this._fillHelper = function (text)
-    {
+    this._fillHelper = function(text) {
         document.getElementById(this.options['helperId']).innerHTML = text;
     }
-
     /**
      * Vérifie que l'heure respecte bien un format donné
      *
@@ -380,14 +317,11 @@ var planningController = function (idElement, options, creneaux)
      *
      * @return bool
      */
-    this._checkTimeValue = function (timeValue)
-    {
-        timeValue   = timeValue.trim();
+    this._checkTimeValue = function(timeValue) {
+        timeValue = timeValue.trim();
         var pattern = new RegExp("^(([01]?[0-9])|(2[0-3])):[0-5][0-9]$");
-
         return pattern.test(timeValue);
     }
-
     /**
      * Ajoute une liste de périodes au planning
      *
@@ -395,8 +329,7 @@ var planningController = function (idElement, options, creneaux)
      *
      * @return void
      */
-    this._addPeriods = function (creneaux)
-    {
+    this._addPeriods = function(creneaux) {
         for (var jour in creneaux) {
             var dataJour = creneaux[jour];
             for (var periode in dataJour) {
@@ -411,7 +344,6 @@ var planningController = function (idElement, options, creneaux)
             }
         }
     }
-
     /**
      * Ajoute une nouvelle période au planning
      *
@@ -422,14 +354,11 @@ var planningController = function (idElement, options, creneaux)
      *
      * @return void
      */
-    this._addPeriod = function (jourSelectionne, typePeriodeSelected, debutVal, finVal)
-    {
+    this._addPeriod = function(jourSelectionne, typePeriodeSelected, debutVal, finVal) {
         var table = document.getElementById(this.options['tableId']);
-        var ligneCible = table.querySelector('tr[data-id-jour="' +  jourSelectionne + '"]');
+        var ligneCible = table.querySelector('tr[data-id-jour="' + jourSelectionne + '"]');
         var cellCible = ligneCible.getElementsByClassName('creneaux')[0];
-
         var periode = this._getVisiblePeriod(jourSelectionne, typePeriodeSelected, debutVal, finVal);
-
         var allPeriods = ligneCible.querySelectorAll('span[data-heures]');
         if (0 < allPeriods.length) {
             cellCible.insertBefore(periode, this._findSuccPeriod(periode, allPeriods));
@@ -437,7 +366,6 @@ var planningController = function (idElement, options, creneaux)
             cellCible.appendChild(periode);
         }
     }
-
     /**
      * Retourne la structure DOM d'une période à afficher
      *
@@ -448,20 +376,20 @@ var planningController = function (idElement, options, creneaux)
      *
      * @return HTMLSpanElement
      */
-    this._getVisiblePeriod = function (jourSelectionne, typePeriodeSelected, debutVal, finVal) {
+    this._getVisiblePeriod = function(jourSelectionne, typePeriodeSelected, debutVal, finVal) {
         var span = document.createElement('span');
         var iBaseTag = document.createElement('i');
         var iTo = iBaseTag.cloneNode(false);
         var buttonTag = document.createElement('button');
         buttonTag.className = 'btn btn-default btn-xs';
         buttonTag.type = 'button';
-        buttonTag.addEventListener('click', function (e) {
+        buttonTag.addEventListener('click', function(e) {
             this._removePeriod(buttonTag.parentNode);
         }.bind(this));
         iTo.className = 'fa fa-caret-right';
         var debut = document.createTextNode(' ' + debutVal + ' ');
-        var labelTypePeriode = (this.options['typePeriodeMatin'] == typePeriodeSelected ) ? 'am' : 'pm';
-        var fin   = document.createTextNode(' ' + finVal + ' (' + labelTypePeriode + ') ');
+        var labelTypePeriode = (this.options['typePeriodeMatin'] == typePeriodeSelected) ? 'am' : 'pm';
+        var fin = document.createTextNode(' ' + finVal + ' (' + labelTypePeriode + ') ');
         var iMinus = iBaseTag.cloneNode(false);
         iMinus.className = 'fa fa-minus';
         span.appendChild(debut);
@@ -471,10 +399,8 @@ var planningController = function (idElement, options, creneaux)
         span.appendChild(buttonTag);
         span.appendChild(this._getHiddenFieldPeriod(jourSelectionne, typePeriodeSelected, debutVal, finVal));
         span.dataset.heures = debutVal + '-' + finVal;
-
         return span;
     }
-
     /**
      * Retourne la structure DOM des champs cachés d'une période à afficher
      *
@@ -485,8 +411,8 @@ var planningController = function (idElement, options, creneaux)
      *
      * @return HTMLSpanElement
      */
-    this._getHiddenFieldPeriod = function (jourSelectionne, typePeriodeSelected, debutVal, finVal) {
-        var span  = document.createElement('span');
+    this._getHiddenFieldPeriod = function(jourSelectionne, typePeriodeSelected, debutVal, finVal) {
+        var span = document.createElement('span');
         var input = document.createElement('input');
         var debut = input.cloneNode(false);
         var prefixName = 'creneaux[' + this.typeSemaine + '][' + jourSelectionne + '][' + typePeriodeSelected + ']';
@@ -495,29 +421,25 @@ var planningController = function (idElement, options, creneaux)
         } else {
             var prefixName = prefixName + '[' + (++this.incrementMatin) + ']';
         }
-        debut.type  = 'hidden';
-        debut.name  = prefixName + '[' + this.debut + ']';
+        debut.type = 'hidden';
+        debut.name = prefixName + '[' + this.debut + ']';
         debut.value = debutVal;
-        var fin     = input.cloneNode(false);
-        fin.type    = 'hidden';
-        fin.name    = prefixName + '[' + this.fin + ']';
-        fin.value   = finVal;
+        var fin = input.cloneNode(false);
+        fin.type = 'hidden';
+        fin.name = prefixName + '[' + this.fin + ']';
+        fin.value = finVal;
         span.appendChild(debut);
         span.appendChild(fin);
-
         return span;
     }
-
     /**
      * Supprime une période du planning
      *
      * @return void
      */
-    this._removePeriod = function (period)
-    {
+    this._removePeriod = function(period) {
         period.parentNode.removeChild(period);
     }
-
     /**
      * Retourne la période suivante à period dans l'ordre lexicographique parmi allPeriods
      *
@@ -526,8 +448,7 @@ var planningController = function (idElement, options, creneaux)
      *
      * @return HTMLSpanElement | null
      */
-    this._findSuccPeriod = function (period, allPeriods)
-    {
+    this._findSuccPeriod = function(period, allPeriods) {
         for (var i = 0; i < allPeriods.length; ++i) {
             var brother = allPeriods[i];
             var heurePeriode = period.dataset.heures;
@@ -537,29 +458,22 @@ var planningController = function (idElement, options, creneaux)
             }
         }
     }
-
     /**
      * Lance l'initialisation de l'afficheur en mode lecture seule
      */
-    this.readOnly = function ()
-    {
+    this.readOnly = function() {
         /* Remplissage des valeurs préexistantes */
         this._addPeriods(creneaux);
         var boutons = document.getElementById(this.options.tableId).querySelectorAll('button');
         for (var i = 0; i < boutons.length; ++i) {
             bouton = boutons[i].style.display = 'none';
         }
-
         var inputs = document.getElementById(this.options.tableId).querySelectorAll('input');
-
         for (var i = 0; i < inputs.length; ++i) {
             inputs[i].style.display = 'none';
         }
-
     }
 }
-
-
 /**
  * Objet de gestion des utilisateurs de planning
  *
@@ -567,17 +481,15 @@ var planningController = function (idElement, options, creneaux)
  * @param Object associationsGroupe Associations groupes <> utilisateurs
  * @param int nilId Nullité numérique
  */
-var selectAssociationPlanning = function (idElement, associationsGroupe, nilId)
-{
+var selectAssociationPlanning = function(idElement, associationsGroupe, nilId) {
     this.element = document.getElementById(idElement);
     this.associationsGroupe = associationsGroupe;
     this.nilId = parseInt(nilId);
     this.utilisateurs = document.querySelectorAll('form > div > div.checkbox-utilisateur');
-
     /**
      * Event
      */
-    this.element.addEventListener('change', function (e) {
+    this.element.addEventListener('change', function(e) {
         var idGroupe = e.target.value;
         if (this.nilId != idGroupe) {
             this._filterUsers(idGroupe);
@@ -585,14 +497,12 @@ var selectAssociationPlanning = function (idElement, associationsGroupe, nilId)
             this._resetFilter();
         }
     }.bind(this));
-
     /**
      * Filtre les utilisateurs en fonction du groupe passé
      *
      * @param int idGroupe
      */
-    this._filterUsers = function (idGroupe)
-    {
+    this._filterUsers = function(idGroupe) {
         this._resetFilter();
         idGroupe = parseInt(idGroupe);
         if (this.associationsGroupe.hasOwnProperty(idGroupe)) {
@@ -606,12 +516,10 @@ var selectAssociationPlanning = function (idElement, associationsGroupe, nilId)
             }
         }
     }
-
     /**
      * Annule tout filtre de groupe
      */
-    this._resetFilter = function ()
-    {
+    this._resetFilter = function() {
         for (var i = 0; i < this.utilisateurs.length; ++i) {
             this.utilisateurs[i].style.display = 'block';
         }

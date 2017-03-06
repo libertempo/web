@@ -80,7 +80,7 @@ class Planning extends \App\ProtoControllers\APlanning
      */
     private static function putPlanning($id, array $put, array &$errors)
     {
-        $id = (int) $id;
+        $id           = (int) $id;
         $utilisateurs = \App\ProtoControllers\Utilisateur::getListByPlanning($id);
         foreach ($utilisateurs as $utilisateur) {
             if (\App\ProtoControllers\Utilisateur::hasSortiesEnCours($utilisateur['u_login'])) {
@@ -242,8 +242,8 @@ class Planning extends \App\ProtoControllers\APlanning
         }
 
         $listId = array_map('intval', $listId);
-        $sql = \includes\SQL::singleton();
-        $req = 'SELECT *
+        $sql    = \includes\SQL::singleton();
+        $req    = 'SELECT *
                 FROM planning
                 WHERE planning_id IN (' . implode(',', $listId) . ')
                 ORDER BY planning_id DESC';
@@ -264,9 +264,9 @@ class Planning extends \App\ProtoControllers\APlanning
             return [];
         }
         $listId = array_map('intval', $listId);
-        $ids = [];
-        $sql = \includes\SQL::singleton();
-        $req = 'SELECT planning_id AS id
+        $ids    = [];
+        $sql    = \includes\SQL::singleton();
+        $req    = 'SELECT planning_id AS id
                 FROM conges_users
                 WHERE planning_id IN (' . implode(',', $listId) . ')';
         $res = $sql->query($req);
@@ -309,8 +309,8 @@ class Planning extends \App\ProtoControllers\APlanning
      */
     private static function insertPlanning(array $planning)
     {
-        $sql   = \includes\SQL::singleton();
-        $req   = 'INSERT INTO planning (planning_id, name, status)
+        $sql = \includes\SQL::singleton();
+        $req = 'INSERT INTO planning (planning_id, name, status)
                   VALUES (null, "' . htmlspecialchars($sql->quote($planning['name'])) . '", ' . \App\Models\Planning::STATUS_ACTIVE . ')';
         $query = $sql->query($req);
 

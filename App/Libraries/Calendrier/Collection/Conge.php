@@ -39,7 +39,7 @@ class Conge extends \App\Libraries\Calendrier\ACollection
     ) {
         parent::__construct($dateDebut, $dateFin);
         $this->utilisateursATrouver = $utilisateursATrouver;
-        $this->canVoirEnTransit = (bool) $canVoirEnTransit;
+        $this->canVoirEnTransit     = (bool) $canVoirEnTransit;
     }
 
     /**
@@ -52,16 +52,16 @@ class Conge extends \App\Libraries\Calendrier\ACollection
             $class = $jour['ta_type'] . ' ' . $jour['ta_type'] . '_' . $jour['p_etat'];
             /* TODO: unescape_string ? */
             $nomComplet = \App\ProtoControllers\Utilisateur::getNomComplet($jour['u_prenom'], $jour['u_nom'], true);
-            $name = $nomComplet . ' - ' . $jour['ta_libelle'];
+            $name       = $nomComplet . ' - ' . $jour['ta_libelle'];
             if (\App\Models\Conge::STATUT_VALIDATION_FINALE !== $jour['p_etat']) {
                 $name = '[En demande]  ' . $name;
             }
 
             $dateDebut = $this->getDebutPeriode($jour['p_date_deb'], $jour['p_demi_jour_deb']);
-            $dateFin = $this->getFinPeriode($jour['p_date_fin'], $jour['p_demi_jour_fin']);
+            $dateFin   = $this->getFinPeriode($jour['p_date_fin'], $jour['p_demi_jour_fin']);
 
-            $title = '[' . $jour['ta_type'] . '] ' . $jour['ta_libelle'] . ' de ' . $nomComplet . ' du ' . $dateDebut['date']->format('d/m/Y') . ' ' . $dateDebut['creneau'] . ' au ' . $dateFin['date']->format('d/m/Y') . ' ' . $dateFin['creneau'];
-            $uid = uniqid('ferie');
+            $title    = '[' . $jour['ta_type'] . '] ' . $jour['ta_libelle'] . ' de ' . $nomComplet . ' du ' . $dateDebut['date']->format('d/m/Y') . ' ' . $dateDebut['creneau'] . ' au ' . $dateFin['date']->format('d/m/Y') . ' ' . $dateFin['creneau'];
+            $uid      = uniqid('ferie');
             $conges[] = new Evenement\Commun($uid, $dateDebut['date'], $dateFin['date'], $name, $title, $class);
         }
 
@@ -71,11 +71,11 @@ class Conge extends \App\Libraries\Calendrier\ACollection
     private function getDebutPeriode($dateDebut, $demiJournee)
     {
         $debut = ('am' === $demiJournee)
-            ? $dateDebut
-            : $dateDebut . ' 11:59';
+        ? $dateDebut
+        : $dateDebut . ' 11:59';
         $creneau = ('am' === $demiJournee)
-            ? _('debut_matin')
-            : _('debut_apres-midi');
+        ? _('debut_matin')
+        : _('debut_apres-midi');
 
         return ['date' => new \DateTime($debut), 'creneau' => $creneau];
     }
@@ -83,20 +83,18 @@ class Conge extends \App\Libraries\Calendrier\ACollection
     private function getFinPeriode($dateFin, $demiJournee)
     {
         $fin = ('am' === $demiJournee)
-            ? $dateFin . ' 11:59'
-            : $dateFin . ' 23:59';
+        ? $dateFin . ' 11:59'
+        : $dateFin . ' 23:59';
         $creneau = ('am' === $demiJournee)
-            ? _('debut_apres-midi')
-            : _('fin_apres-midi');
+        ? _('debut_apres-midi')
+        : _('fin_apres-midi');
 
-            return ['date' => new \DateTime($fin), 'creneau' => $creneau];
+        return ['date' => new \DateTime($fin), 'creneau' => $creneau];
     }
-
 
     /*
      * SQL
      */
-
 
     /**
      * Retourne la liste des congés du stockage satisfaisant aux critères
@@ -106,12 +104,12 @@ class Conge extends \App\Libraries\Calendrier\ACollection
      */
     private function getListeSQL()
     {
-        $sql = \includes\SQL::singleton();
+        $sql     = \includes\SQL::singleton();
         $etats[] = \App\Models\Conge::STATUT_VALIDATION_FINALE;
         if ($this->canVoirEnTransit) {
             $etats = array_merge($etats, [
                 \App\Models\Conge::STATUT_DEMANDE,
-                \App\Models\Conge::STATUT_PREMIERE_VALIDATION
+                \App\Models\Conge::STATUT_PREMIERE_VALIDATION,
             ]);
         }
         $req = 'SELECT *
@@ -122,7 +120,7 @@ class Conge extends \App\Libraries\Calendrier\ACollection
                     AND p_date_deb <= "' . $this->dateFin->format('Y-m-d') . '"
                     AND p_login IN ("' . implode('","', $this->utilisateursATrouver) . '")
                     AND p_etat IN ("' . implode('","', $etats) . '")';
-        $res = $sql->query($req);
+        $res    = $sql->query($req);
         $conges = [];
         while ($data = $res->fetch_assoc()) {
             $conges[] = $data;

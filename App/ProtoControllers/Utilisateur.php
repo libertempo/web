@@ -39,7 +39,7 @@ class Utilisateur
      */
     public static function getListeGroupesVisibles($utilisateur)
     {
-        if(!$_SESSION['config']['gestion_groupes']) {
+        if (!$_SESSION['config']['gestion_groupes']) {
             return [];
         }
 
@@ -49,10 +49,10 @@ class Utilisateur
         ) {
             $groupesVisibles = \App\ProtoControllers\Groupe::getListeId();
         } elseif (\App\ProtoControllers\Utilisateur::isResponsable()) {
-            $groupesResponsable = \App\ProtoControllers\Responsable::getIdGroupeResp($utilisateur);
+            $groupesResponsable      = \App\ProtoControllers\Responsable::getIdGroupeResp($utilisateur);
             $groupesGrandResponsable = \App\ProtoControllers\Responsable::getIdGroupeGrandResponsable($utilisateur);
-            $groupesEmploye = \App\ProtoControllers\Utilisateur::getGroupesId($utilisateur);
-            $groupesVisibles = $groupesResponsable + $groupesGrandResponsable + $groupesEmploye;
+            $groupesEmploye          = \App\ProtoControllers\Utilisateur::getGroupesId($utilisateur);
+            $groupesVisibles         = $groupesResponsable + $groupesGrandResponsable + $groupesEmploye;
         } else {
             $groupesVisibles = \App\ProtoControllers\Utilisateur::getGroupesId($utilisateur);
         }
@@ -73,8 +73,8 @@ class Utilisateur
         $donneesUtilisateur = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($utilisateur);
 
         return (!empty($donneesUtilisateur))
-            ? $donneesUtilisateur['u_is_hr']
-            : false;
+        ? $donneesUtilisateur['u_is_hr']
+        : false;
     }
 
     /**
@@ -90,8 +90,8 @@ class Utilisateur
         $donneesUtilisateur = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($utilisateur);
 
         return (!empty($donneesUtilisateur))
-            ? $donneesUtilisateur['u_is_admin']
-            : false;
+        ? $donneesUtilisateur['u_is_admin']
+        : false;
     }
 
     /**
@@ -107,8 +107,8 @@ class Utilisateur
         $donneesUtilisateur = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($utilisateur);
 
         return (!empty($donneesUtilisateur))
-            ? $donneesUtilisateur['u_is_resp']
-            : false;
+        ? $donneesUtilisateur['u_is_resp']
+        : false;
     }
 
     /**
@@ -123,25 +123,25 @@ class Utilisateur
         $sql = \includes\SQL::singleton();
         $req = 'SELECT *
                 FROM conges_users
-                WHERE u_login = \''.  \includes\SQL::quote($login).'\'';
-        $query = $sql->query($req);
+                WHERE u_login = \'' . \includes\SQL::quote($login) . '\'';
+        $query   = $sql->query($req);
         $donnees = $query->fetch_array();
 
         return $donnees;
     }
 
-     /**
-      * Retourne la liste des utilisateurs associés à un planning
-      *
-      * @param int $planningId
-      *
-      * @return array
-      */
+    /**
+     * Retourne la liste des utilisateurs associés à un planning
+     *
+     * @param int $planningId
+     *
+     * @return array
+     */
     public static function getListByPlanning($planningId)
     {
         $planningId = (int) $planningId;
-        $sql = \includes\SQL::singleton();
-        $req = 'SELECT *
+        $sql        = \includes\SQL::singleton();
+        $req        = 'SELECT *
                 FROM conges_users
                 WHERE planning_id = ' . $planningId . '
                     AND u_login <> "admin"
@@ -163,7 +163,7 @@ class Utilisateur
         $sql = \includes\SQL::singleton();
         $req = 'SELECT gu_gid AS id
                     FROM conges_groupe_users
-                    WHERE gu_login ="'.\includes\SQL::quote($user).'"';
+                    WHERE gu_login ="' . \includes\SQL::quote($user) . '"';
         $res = $sql->query($req);
         while ($data = $res->fetch_array()) {
             $ids[] = (int) $data['id'];
@@ -183,8 +183,8 @@ class Utilisateur
     public static function getSoldeconge($login, $typeId)
     {
         $sql = \includes\SQL::singleton();
-        $req = 'SELECT su_solde FROM conges_solde_user WHERE su_login = \''.$login.'\'
-                AND su_abs_id ='. (int) $typeId;
+        $req = 'SELECT su_solde FROM conges_solde_user WHERE su_login = \'' . $login . '\'
+                AND su_abs_id =' . (int) $typeId;
         $query = $sql->query($req);
         $solde = $query->fetch_array()[0];
 
@@ -201,24 +201,25 @@ class Utilisateur
     public static function hasSortiesEnCours($login)
     {
         return static::hasCongesEnCours($login)
-            || static::hasHeureReposEnCours($login)
-            || static::hasHeureAdditionnelleEnCours($login)
+        || static::hasHeureReposEnCours($login)
+        || static::hasHeureAdditionnelleEnCours($login)
         ;
     }
 
     /**
      * Récupère l'adresse email de l'utilisateur
-     * 
+     *
      * @todo En attendant l'objet ldap utilisation de find_email_adress_for_user
-     * 
+     *
      * @param string $login
      * @return string $mail
-     */    
-    public static function getEmailUtilisateur($login)  {
-        require_once ROOT_PATH.'fonctions_conges.php';
+     */
+    public static function getEmailUtilisateur($login)
+    {
+        require_once ROOT_PATH . 'fonctions_conges.php';
         return find_email_adress_for_user($login)[1];
     }
-    
+
     /**
      * Vérifie si l'utilisateur a des congés en cours
      *
@@ -229,7 +230,7 @@ class Utilisateur
     public static function hasCongesEnCours($login)
     {
         $params = ['p_login' => $login, 'p_etat' => \App\Models\Conge::STATUT_DEMANDE];
-        $conge = new \App\ProtoControllers\Employe\Conge();
+        $conge  = new \App\ProtoControllers\Employe\Conge();
 
         return $conge->exists($params);
     }
@@ -244,7 +245,7 @@ class Utilisateur
     public static function hasHeureReposEnCours($login)
     {
         $params = ['login' => $login, 'statut' => \App\Models\Heure\Repos::STATUT_DEMANDE];
-        $repos = new \App\ProtoControllers\Employe\Heure\Repos();
+        $repos  = new \App\ProtoControllers\Employe\Heure\Repos();
 
         return $repos->exists($params);
     }
@@ -258,7 +259,7 @@ class Utilisateur
      */
     public static function hasHeureAdditionnelleEnCours($login)
     {
-        $params = ['login' => $login, 'statut' => \App\Models\Heure\Additionnelle::STATUT_DEMANDE];
+        $params        = ['login' => $login, 'statut' => \App\Models\Heure\Additionnelle::STATUT_DEMANDE];
         $additionnelle = new \App\ProtoControllers\Employe\Heure\Additionnelle();
 
         return $additionnelle->exists($params);
@@ -273,9 +274,10 @@ class Utilisateur
      *
      * @return string
      */
-    public static function getNomComplet($prenom, $nom, $initialPrenomSeulement = false) {
+    public static function getNomComplet($prenom, $nom, $initialPrenomSeulement = false)
+    {
         $prenom = ucfirst($prenom);
-        $nom = ucfirst($nom);
+        $nom    = ucfirst($nom);
         if ($initialPrenomSeulement && 0 < strlen($prenom)) {
             $prenom = $prenom[0] . '.';
         }
@@ -294,10 +296,10 @@ class Utilisateur
     public static function deleteListAssociationPlanning($idPlanning, array $utilisateurs = [])
     {
         $where[] = 'planning_id = ' . (int) $idPlanning;
-        $sql = \includes\SQL::singleton();
+        $sql     = \includes\SQL::singleton();
         if (!empty($utilisateurs)) {
             $utilisateurs = array_map([$sql, 'quote'], $utilisateurs);
-            $where[] = 'u_login IN ("' . implode('","', $utilisateurs) . '")';
+            $where[]      = 'u_login IN ("' . implode('","', $utilisateurs) . '")';
         }
         $req = 'UPDATE conges_users
             SET planning_id = 0
@@ -317,10 +319,10 @@ class Utilisateur
      */
     public static function putListAssociationPlanning(array $utilisateursListe, $idPlanning)
     {
-        $sql = \includes\SQL::singleton();
+        $sql               = \includes\SQL::singleton();
         $utilisateursListe = array_map([$sql, 'quote'], $utilisateursListe);
-        $req = 'UPDATE conges_users
-            SET planning_id = ' . (int) $idPlanning  . '
+        $req               = 'UPDATE conges_users
+            SET planning_id = ' . (int) $idPlanning . '
             WHERE u_login IN ("' . implode('","', $utilisateursListe) . '")';
         $sql->query($req);
 

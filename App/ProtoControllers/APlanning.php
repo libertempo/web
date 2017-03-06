@@ -27,9 +27,9 @@ class APlanning
         $utilisateursAssocies = array_map(
             function ($utilisateur) {
                 return [
-                    'login' => $utilisateur['u_login'],
-                    'nom' => $utilisateur['u_nom'],
-                    'prenom' => $utilisateur['u_prenom'],
+                    'login'      => $utilisateur['u_login'],
+                    'nom'        => $utilisateur['u_nom'],
+                    'prenom'     => $utilisateur['u_prenom'],
                     'planningId' => (int) $utilisateur['planning_id'],
                 ];
             },

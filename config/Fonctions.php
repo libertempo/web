@@ -10,9 +10,9 @@ class Fonctions
     public static function commit_vider_table_logs($session)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $return = '';
+        $return   = '';
 
-        $sql_delete="TRUNCATE TABLE conges_logs ";
+        $sql_delete    = "TRUNCATE TABLE conges_logs ";
         $ReqLog_delete = \includes\SQL::query($sql_delete);
 
         // ecriture de cette action dans les logs
@@ -20,18 +20,17 @@ class Fonctions
         log_action(0, "", "", $comment_log);
 
         $return .= '<span class="messages">' . _('form_modif_ok') . '</span><br>';
-        if($session=="") {
-            redirect( ROOT_PATH . 'config/index.php?onglet=logs');
-        }
-        else {
-            redirect( ROOT_PATH . 'config/index.php?session=' . $session . '&onglet=logs');
+        if ($session == "") {
+            redirect(ROOT_PATH . 'config/index.php?onglet=logs');
+        } else {
+            redirect(ROOT_PATH . 'config/index.php?session=' . $session . '&onglet=logs');
         }
     }
 
     public static function confirmer_vider_table_logs($session)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $return = '';
+        $return   = '';
 
         $return .= '<center>';
         $return .= '<br><h2>' . _('confirm_vider_logs') . '</h2><br>';
@@ -48,29 +47,29 @@ class Fonctions
     public static function affichage($login_par, $session)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $return = '';
+        $return   = '';
 
         //requête qui récupère les logs
         $sql1 = "SELECT log_user_login_par, log_user_login_pour, log_etat, log_comment, log_date FROM conges_logs ";
-        if($login_par!="") {
-            $sql1 = $sql1." WHERE log_user_login_par = '$login_par' ";
+        if ($login_par != "") {
+            $sql1 = $sql1 . " WHERE log_user_login_par = '$login_par' ";
         }
-        $sql1 = $sql1." ORDER BY log_date";
+        $sql1 = $sql1 . " ORDER BY log_date";
 
         $ReqLog1 = \includes\SQL::query($sql1);
 
-        if($ReqLog1->num_rows !=0) {
+        if ($ReqLog1->num_rows != 0) {
             $return .= '<br>';
             $table = new \App\Libraries\Structure\Table();
             $table->addClasses([
                 'table',
                 'table-hover',
                 'table-striped',
-                'table-condensed'
+                'table-condensed',
             ]);
 
             $childTable = '<tr><td class="histo" colspan="5">' . _('voir_les_logs_par') . '</td>';
-            if($login_par!="") {
+            if ($login_par != "") {
                 $childTable .= '<tr><td class="histo" colspan="5">' . _('voir_tous_les_logs') . '<a href="' . $PHP_SELF . '?session=' . $session . '&onglet=logs">' . _('voir_tous_les_logs') . '</a></td>';
             }
             $childTable .= '<tr><td class="histo" colspan="5">&nbsp;</td>';
@@ -86,11 +85,11 @@ class Fonctions
 
             // affichage des logs
             while ($data = $ReqLog1->fetch_array()) {
-                $log_login_par = $data['log_user_login_par'];
-                $log_login_pour = $data['log_user_login_pour'];
-                $log_log_etat = $data['log_etat'];
+                $log_login_par   = $data['log_user_login_par'];
+                $log_login_pour  = $data['log_user_login_pour'];
+                $log_log_etat    = $data['log_etat'];
                 $log_log_comment = $data['log_comment'];
-                $log_log_date = $data['log_date'];
+                $log_log_date    = $data['log_date'];
 
                 $childTable .= '<tr>';
                 $childTable .= '<td>' . $log_log_date . '</td>';
@@ -105,7 +104,7 @@ class Fonctions
             ob_start();
             $table->render();
             $return .= ob_get_clean();
-            if($session=="") {
+            if ($session == "") {
                 $return .= '<form action="' . $PHP_SELF . '?onglet=logs" method="POST">';
             } else {
                 $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=logs" method="POST">';
@@ -144,17 +143,16 @@ class Fonctions
         // SERVER
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         // GET / POST
-        $action         = htmlentities(getpost_variable('action', ""), ENT_QUOTES | ENT_HTML401);
-        $login_par      = htmlentities(getpost_variable('login_par', ""), ENT_QUOTES | ENT_HTML401);
+        $action    = htmlentities(getpost_variable('action', ""), ENT_QUOTES | ENT_HTML401);
+        $login_par = htmlentities(getpost_variable('login_par', ""), ENT_QUOTES | ENT_HTML401);
 
         /*************************************/
 
         // header_menu('CONGES : Configuration', $_SESSION['config']['titre_admin_index']);
 
-
-        if($action=="suppr_logs") {
+        if ($action == "suppr_logs") {
             $return .= \config\Fonctions::confirmer_vider_table_logs($session);
-        } elseif($action=="commit_suppr_logs") {
+        } elseif ($action == "commit_suppr_logs") {
             \config\Fonctions::commit_vider_table_logs($session);
         } else {
             $return .= \config\Fonctions::affichage($login_par, $session);
@@ -166,21 +164,20 @@ class Fonctions
     public static function commit_modif($tab_new_values, $session)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $return = '';
+        $return   = '';
 
-        if($session=="") {
+        if ($session == "") {
             $URL = "$PHP_SELF?onglet=mail";
         } else {
             $URL = "$PHP_SELF?session=$session&onglet=mail";
         }
 
-
         // update de la table
-        foreach($tab_new_values as $nom_mail => $tab_mail) {
-            $subject = htmlspecialchars(addslashes($tab_mail['subject']));
-            $body = htmlspecialchars(addslashes($tab_mail['body']));
-            $req_update='UPDATE conges_mail SET mail_subject=\''.$subject.'\', mail_body=\''.$body.'\' WHERE mail_nom="'. \includes\SQL::quote($nom_mail).'" ';
-            $result1 = \includes\SQL::query($req_update);
+        foreach ($tab_new_values as $nom_mail => $tab_mail) {
+            $subject    = htmlspecialchars(addslashes($tab_mail['subject']));
+            $body       = htmlspecialchars(addslashes($tab_mail['body']));
+            $req_update = 'UPDATE conges_mail SET mail_subject=\'' . $subject . '\', mail_body=\'' . $body . '\' WHERE mail_nom="' . \includes\SQL::quote($nom_mail) . '" ';
+            $result1    = \includes\SQL::query($req_update);
         }
         $return .= '<span class="messages">' . _('form_modif_ok') . '</span><br>';
 
@@ -194,18 +191,18 @@ class Fonctions
     public static function test_config($tab_new_values, $session)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $return = '';
+        $return   = '';
 
-        if($session=="") {
+        if ($session == "") {
             $URL = "$PHP_SELF?onglet=mail";
         } else {
             $URL = "$PHP_SELF?session=$session&onglet=mail";
         }
 
         // update de la table
-        $mail_array             = find_email_adress_for_user($_SESSION['userlogin']);
-        $mail_sender_name       = $mail_array[0];
-        $mail_sender_addr       = $mail_array[1];
+        $mail_array       = find_email_adress_for_user($_SESSION['userlogin']);
+        $mail_sender_name = $mail_array[0];
+        $mail_sender_addr = $mail_array[1];
         constuct_and_send_mail("valid_conges", "Test email", $mail_sender_addr, $mail_sender_name, $mail_sender_addr, "test");
         //  echo "<p>Mail sent</p>"; exit(0);
 
@@ -221,9 +218,9 @@ class Fonctions
     public static function affichage_config_mail($tab_new_values, $session)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $return = '';
+        $return   = '';
 
-        if($session=="") {
+        if ($session == "") {
             $URL = "$PHP_SELF?onglet=mail";
         } else {
             $URL = "$PHP_SELF?session=$session&onglet=mail";
@@ -237,7 +234,7 @@ class Fonctions
         // affichage de la liste des type d'absence existants
 
         //requête qui récupère les informations de la table conges_type_absence
-        $sql1 = "SELECT * FROM conges_mail ";
+        $sql1    = "SELECT * FROM conges_mail ";
         $ReqLog1 = \includes\SQL::query($sql1);
 
         $return .= '<form method="POST" action="' . $URL . '">';
@@ -248,13 +245,13 @@ class Fonctions
 
         $return .= '<form action="' . $URL . '" method="POST">';
         while ($data = $ReqLog1->fetch_array()) {
-            $mail_nom = stripslashes($data['mail_nom']);
+            $mail_nom     = stripslashes($data['mail_nom']);
             $mail_subject = stripslashes($data['mail_subject']);
-            $mail_body = stripslashes($data['mail_body']);
+            $mail_body    = stripslashes($data['mail_body']);
 
-            $legend =$mail_nom ;
-            $key = $mail_nom."_comment";
-            $comment =  _($key)  ;
+            $legend  = $mail_nom;
+            $key     = $mail_nom . "_comment";
+            $comment = _($key);
 
             $return .= '<br>';
             $table = new \App\Libraries\Structure\Table();
@@ -262,7 +259,7 @@ class Fonctions
             $subTable = new \App\Libraries\Structure\Table();
             $table->addChild($subTable);
             $childSubTable = '<tr>';
-            $childSubTable .= '<td class="config" valign="top"><b>' .  _('config_mail_subject') . '</b></td>';
+            $childSubTable .= '<td class="config" valign="top"><b>' . _('config_mail_subject') . '</b></td>';
             $childSubTable .= '<td class="config"><input class="form-control" type="text" size="80" name="tab_new_values[' . $mail_nom . '][subject]" value="' . $mail_subject . '"></td>';
             $childSubTable .= '</tr>';
             $childSubTable .= '<tr>';
@@ -311,21 +308,20 @@ class Fonctions
         verif_droits_user($session, "is_admin");
         $return = '';
 
-
         /*** initialisation des variables ***/
         /*************************************/
         // recup des parametres reçus :
         // SERVER
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         // GET / POST
-        $action = getpost_variable('action') ;
+        $action         = getpost_variable('action');
         $tab_new_values = getpost_variable('tab_new_values');
         /*********************************/
 
-        if($action=="modif") {
+        if ($action == "modif") {
             $return .= \config\Fonctions::commit_modif($tab_new_values, $session);
         }
-        if($action=="test") {
+        if ($action == "test") {
             $return .= \config\Fonctions::test_config($tab_new_values, $session);
         }
 
@@ -337,11 +333,11 @@ class Fonctions
     // recup l'id de la derniere absence (le max puisque c'est un auto incrément)
     public static function get_last_absence_id()
     {
-        $req_1="SELECT MAX(ta_id) FROM conges_type_absence ";
+        $req_1 = "SELECT MAX(ta_id) FROM conges_type_absence ";
         $res_1 = \includes\SQL::query($req_1);
         $row_1 = $res_1->fetch_row();
-        if(!$row_1) {
-            return 0;     // si la table est vide, on renvoit 0
+        if (!$row_1) {
+            return 0; // si la table est vide, on renvoit 0
         } else {
             return $row_1[0];
         }
@@ -354,19 +350,19 @@ class Fonctions
     public static function get_tab_from_mysql_enum_field($table, $column)
     {
 
-        $tab=array();
+        $tab      = array();
         $req_enum = "DESCRIBE $table $column";
         $res_enum = \includes\SQL::query($req_enum);
 
         while ($row_enum = $res_enum->fetch_array()) {
-            $sql_type=$row_enum['Type'];
+            $sql_type = $row_enum['Type'];
             // exemple : enum('autre','labo','fonction','personne','web', ....
             $liste_enum = strstr($sql_type, '(');
-            $liste_enum = substr($liste_enum, 1);    // on vire le premier caractere
-            $liste_enum = substr($liste_enum, 0, strlen($liste_enum)-1);    // on vire le dernier caractere
-            $option = strtok($liste_enum,"','");
+            $liste_enum = substr($liste_enum, 1); // on vire le premier caractere
+            $liste_enum = substr($liste_enum, 0, strlen($liste_enum) - 1); // on vire le dernier caractere
+            $option     = strtok($liste_enum, "','");
             while ($option) {
-                $tab[]=$option;
+                $tab[]  = $option;
                 $option = strtok("','");
             }
         }
@@ -377,36 +373,35 @@ class Fonctions
     public static function commit_ajout(&$tab_new_values, $session)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $return = '';
+        $return   = '';
 
-        if($session=="") {
+        if ($session == "") {
             $URL = "$PHP_SELF?onglet=type_absence";
         } else {
             $URL = "$PHP_SELF?session=$session&onglet=type_absence";
         }
-        $tab_new_values['libelle'] = htmlentities($tab_new_values['libelle'], ENT_QUOTES | ENT_HTML401);
+        $tab_new_values['libelle']       = htmlentities($tab_new_values['libelle'], ENT_QUOTES | ENT_HTML401);
         $tab_new_values['short_libelle'] = htmlentities($tab_new_values['short_libelle']);
-        $tab_new_values['type'] = htmlentities($tab_new_values['type'], ENT_QUOTES | ENT_HTML401);
+        $tab_new_values['type']          = htmlentities($tab_new_values['type'], ENT_QUOTES | ENT_HTML401);
 
         // verif de la saisie
-        $erreur=FALSE ;
+        $erreur = false;
         // verif si pas de " ' , . ; % ?
-        if( (preg_match('/.*[?%;.,"\'].*$/', $tab_new_values['libelle'])) || (preg_match('/.*[?%;.,"\'].*$/', $tab_new_values['short_libelle'])) ) {
+        if ((preg_match('/.*[?%;.,"\'].*$/', $tab_new_values['libelle'])) || (preg_match('/.*[?%;.,"\'].*$/', $tab_new_values['short_libelle']))) {
             $return .= '<br>' . _('config_abs_saisie_not_ok') . ' : ' . _('config_abs_bad_caracteres') . ' " \' , . ; % ? <br>';
-            $erreur=TRUE;
+            $erreur = true;
         }
         // verif si les champs sont vides
-        if( (strlen($tab_new_values['libelle'])==0) || (strlen($tab_new_values['short_libelle'])==0) || (strlen($tab_new_values['type'])==0) ) {
+        if ((strlen($tab_new_values['libelle']) == 0) || (strlen($tab_new_values['short_libelle']) == 0) || (strlen($tab_new_values['type']) == 0)) {
             $return .= '<br>' . _('config_abs_saisie_not_ok') . ' : ' . _('config_abs_champs_vides') . '<br>';
-            $erreur=TRUE;
+            $erreur = true;
         }
 
-
-        if($erreur) {
+        if ($erreur) {
             $return .= '<br>';
             $return .= '<form action="' . $URL . '" method="POST">';
             $return .= '<input type="hidden" name="id_to_update" value="' . $id_to_update . '">';
-            $return .= '<input type="hidden" name="tab_new_values[libelle]" value="' . $tab_new_values['libelle']. '">';
+            $return .= '<input type="hidden" name="tab_new_values[libelle]" value="' . $tab_new_values['libelle'] . '">';
             $return .= '<input type="hidden" name="tab_new_values[short_libelle]" value="' . $tab_new_values['short_libelle'] . '">';
             $return .= '<input type="hidden" name="tab_new_values[type]" value="' . $tab_new_values['type'] . '">';
             $return .= '<input type="submit" value="' . _('form_redo') . '" >';
@@ -414,25 +409,25 @@ class Fonctions
             $return .= '<br><br>';
         } else {
             // ajout dans la table conges_type_absence
-            $req_insert1="INSERT INTO conges_type_absence (ta_libelle, ta_short_libelle, ta_type) " .
-                "VALUES ('".$tab_new_values['libelle']."', '".$tab_new_values['short_libelle']."', '".$tab_new_values['type']."') ";
+            $req_insert1 = "INSERT INTO conges_type_absence (ta_libelle, ta_short_libelle, ta_type) " .
+                "VALUES ('" . $tab_new_values['libelle'] . "', '" . $tab_new_values['short_libelle'] . "', '" . $tab_new_values['type'] . "') ";
             $result1 = \includes\SQL::query($req_insert1);
 
             // on recup l'id de l'absence qu'on vient de créer
             $new_abs_id = \config\Fonctions::get_last_absence_id();
 
-            if($new_abs_id!=0) {
+            if ($new_abs_id != 0) {
                 // ajout dans la table conges_solde_user (pour chaque user !!)(si c'est un conges, pas si c'est une absence)
-                if( ($tab_new_values['type']=="conges") || ($tab_new_values['type']=="conges_exceptionnels") ) {
+                if (($tab_new_values['type'] == "conges") || ($tab_new_values['type'] == "conges_exceptionnels")) {
                     // recup de users :
-                    $sql_users="SELECT DISTINCT(u_login) FROM conges_users WHERE u_login!='conges' AND u_login!='admin' " ;
+                    $sql_users = "SELECT DISTINCT(u_login) FROM conges_users WHERE u_login!='conges' AND u_login!='admin' ";
 
                     $ReqLog_users = \includes\SQL::query($sql_users);
 
                     while ($resultat1 = $ReqLog_users->fetch_array()) {
-                        $current_login=$resultat1["u_login"];
+                        $current_login = $resultat1["u_login"];
 
-                        $req_insert2="INSERT INTO conges_solde_user (su_login, su_abs_id, su_nb_an, su_solde, su_reliquat) " .
+                        $req_insert2 = "INSERT INTO conges_solde_user (su_login, su_abs_id, su_nb_an, su_solde, su_reliquat) " .
                             "VALUES ('$current_login', $new_abs_id, 0, 0, 0) ";
                         $result2 = \includes\SQL::query($req_insert2);
                     }
@@ -440,7 +435,7 @@ class Fonctions
                 $return .= '<span class="messages">' . _('form_modif_ok') . '</span><br>';
             }
 
-            $comment_log = "config : ajout_type_absence : ".$tab_new_values['libelle']."  (".$tab_new_values['short_libelle'].") (type : ".$tab_new_values['type'].") ";
+            $comment_log = "config : ajout_type_absence : " . $tab_new_values['libelle'] . "  (" . $tab_new_values['short_libelle'] . ") (type : " . $tab_new_values['type'] . ") ";
             log_action(0, "", "", $comment_log);
             $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $URL . '">';
         }
@@ -450,21 +445,21 @@ class Fonctions
     public static function commit_suppr($session, $id_to_update)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $return = '';
+        $return   = '';
 
-        if($session=="") {
+        if ($session == "") {
             $URL = "$PHP_SELF?onglet=type_absence";
         } else {
             $URL = "$PHP_SELF?session=$session&onglet=type_absence";
         }
 
         // delete dans la table conges_type_absence
-        $req_delete1='DELETE FROM conges_type_absence WHERE ta_id='. \includes\SQL::quote($id_to_update);
-        $result1 = \includes\SQL::query($req_delete1);
+        $req_delete1 = 'DELETE FROM conges_type_absence WHERE ta_id=' . \includes\SQL::quote($id_to_update);
+        $result1     = \includes\SQL::query($req_delete1);
 
         // delete dans la table conges_solde_user
-        $req_delete2='DELETE FROM conges_solde_user WHERE su_abs_id='.\includes\SQL::quote($id_to_update);
-        $result2 = \includes\SQL::query($req_delete2);
+        $req_delete2 = 'DELETE FROM conges_solde_user WHERE su_abs_id=' . \includes\SQL::quote($id_to_update);
+        $result2     = \includes\SQL::query($req_delete2);
 
         $return .= '<span class="messages">' . _('form_modif_ok') . '</span><br>';
 
@@ -478,23 +473,22 @@ class Fonctions
     public static function supprimer($session, $id_to_update)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $return = '';
+        $return   = '';
 
-        if($session=="") {
+        if ($session == "") {
             $URL = "$PHP_SELF?onglet=type_absence";
         } else {
             $URL = "$PHP_SELF?session=$session&onglet=type_absence";
         }
 
-
         // verif si pas de periode de ce type de conges !!!
         //requête qui récupère les informations de la table conges_periode
-        $sql1 = 'SELECT p_num FROM conges_periode WHERE p_type="'. \includes\SQL::quote($id_to_update).'"';
+        $sql1    = 'SELECT p_num FROM conges_periode WHERE p_type="' . \includes\SQL::quote($id_to_update) . '"';
         $ReqLog1 = \includes\SQL::query($sql1);
 
-        $count= ($ReqLog1->num_rows) ;
+        $count = ($ReqLog1->num_rows);
 
-        if( $count!=0 ) {
+        if ($count != 0) {
             $return .= '<center>';
             $return .= '<br>' . _('config_abs_suppr_impossible') . '<br>' . _('config_abs_already_used') . '<br>';
 
@@ -531,37 +525,36 @@ class Fonctions
     public static function commit_modif_absence(&$tab_new_values, $session, $id_to_update)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $return = '';
+        $return   = '';
 
-        if($session=="") {
+        if ($session == "") {
             $URL = "$PHP_SELF";
         } else {
             $URL = "$PHP_SELF?session=$session";
         }
 
-
         // verif de la saisie
-        $erreur=FALSE ;
+        $erreur = false;
         // verif si pas de " ' , . ; % ?
-        if( (preg_match('/.*[?%;.,"\'].*$/', $tab_new_values['libelle'])) || (preg_match('/.*[?%;.,"\'].*$/', $tab_new_values['short_libelle'])) ) {
+        if ((preg_match('/.*[?%;.,"\'].*$/', $tab_new_values['libelle'])) || (preg_match('/.*[?%;.,"\'].*$/', $tab_new_values['short_libelle']))) {
             $return .= '<br>' . _('config_abs_saisie_not_ok') . ' : ' . _('config_abs_bad_caracteres') . ' " \' , . ; % ? <br>';
-            $erreur=TRUE;
+            $erreur = true;
         }
         // verif si les champs sont vides
-        if( (strlen($tab_new_values['libelle'])==0) || (strlen($tab_new_values['short_libelle'])==0) ) {
+        if ((strlen($tab_new_values['libelle']) == 0) || (strlen($tab_new_values['short_libelle']) == 0)) {
             $return .= '<br>' . _('config_abs_saisie_not_ok') . ' : ' . _('config_abs_champs_vides') . '<br>';
-            $erreur=TRUE;
+            $erreur = true;
         }
 
-        if($erreur) {
+        if ($erreur) {
             $return .= '<br>';
-            if($session=="") {
+            if ($session == "") {
                 $return .= '<form action="' . $PHP_SELF . '?onglet=type_absence" method="POST">';
             } else {
                 $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=type_absence" method="POST">';
             }
             $return .= '<input type="hidden" name="action" value="modif">';
-            $return .= '<input type="hidden" name="id_to_update" value="' . $id_to_update .'">';
+            $return .= '<input type="hidden" name="id_to_update" value="' . $id_to_update . '">';
             $return .= '<input type="hidden" name="tab_new_values[libelle]" value="' . $tab_new_values['libelle'] . '">';
             $return .= '<input type="hidden" name="tab_new_values[short_libelle]" value="' . $tab_new_values['short_libelle'] . '">';
             $return .= '<input type="submit" value="' . _('form_redo') . '" >';
@@ -569,12 +562,12 @@ class Fonctions
             $return .= '<br><br>';
         } else {
             // update de la table
-            $req_update='UPDATE conges_type_absence SET ta_libelle=\''.$tab_new_values['libelle'].'\', ta_short_libelle=\''.$tab_new_values['short_libelle'].'\' WHERE ta_id="'. \includes\SQL::quote($id_to_update).'" ';
-            $result1 = \includes\SQL::query($req_update);
+            $req_update = 'UPDATE conges_type_absence SET ta_libelle=\'' . $tab_new_values['libelle'] . '\', ta_short_libelle=\'' . $tab_new_values['short_libelle'] . '\' WHERE ta_id="' . \includes\SQL::quote($id_to_update) . '" ';
+            $result1    = \includes\SQL::query($req_update);
 
             $return .= '<span class="messages">' . _('form_modif_ok') . '</span><br>';
 
-            $comment_log = "config : modif_type_absence ($id_to_update): ".$tab_new_values['libelle']."  (".$tab_new_values['short_libelle'].") ";
+            $comment_log = "config : modif_type_absence ($id_to_update): " . $tab_new_values['libelle'] . "  (" . $tab_new_values['short_libelle'] . ") ";
             log_action(0, "", "", $comment_log);
             $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $URL . '">';
         }
@@ -584,9 +577,9 @@ class Fonctions
     public static function modifier(&$tab_new_values, $session, $id_to_update)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $return = '';
+        $return   = '';
 
-        if($session=="") {
+        if ($session == "") {
             $URL = "$PHP_SELF?onglet=type_absence";
         } else {
             $URL = "$PHP_SELF?session=$session&onglet=type_absence";
@@ -598,21 +591,21 @@ class Fonctions
         $return .= '<br>';
 
         // recup des infos du type de conges / absences
-        $sql_cong='SELECT ta_type, ta_libelle, ta_short_libelle FROM conges_type_absence WHERE ta_id = '. \includes\SQL::quote($id_to_update);
+        $sql_cong = 'SELECT ta_type, ta_libelle, ta_short_libelle FROM conges_type_absence WHERE ta_id = ' . \includes\SQL::quote($id_to_update);
 
         $ReqLog_cong = \includes\SQL::query($sql_cong);
 
-        if($resultat_cong = $ReqLog_cong->fetch_array()) {
-            $sql_type=$resultat_cong['ta_type'];
-            $sql_libelle= $resultat_cong['ta_libelle'];
-            $sql_short_libelle= $resultat_cong['ta_short_libelle'];
+        if ($resultat_cong = $ReqLog_cong->fetch_array()) {
+            $sql_type          = $resultat_cong['ta_type'];
+            $sql_libelle       = $resultat_cong['ta_libelle'];
+            $sql_short_libelle = $resultat_cong['ta_short_libelle'];
         }
 
         // mise en place du formulaire
         $return .= '<form action="' . $URL . '" method="POST">';
 
-        $text_libelle ="<input class=\"form-control\" type=\"text\" name=\"tab_new_values[libelle]\" size=\"20\" maxlength=\"20\" value=\"$sql_libelle\" >";
-        $text_short_libelle ="<input class=\"form-control\" type=\"text\" name=\"tab_new_values[short_libelle]\" size=\"3\" maxlength=\"3\" value=\"$sql_short_libelle\" >";
+        $text_libelle       = "<input class=\"form-control\" type=\"text\" name=\"tab_new_values[libelle]\" size=\"20\" maxlength=\"20\" value=\"$sql_libelle\" >";
+        $text_short_libelle = "<input class=\"form-control\" type=\"text\" name=\"tab_new_values[short_libelle]\" size=\"3\" maxlength=\"3\" value=\"$sql_short_libelle\" >";
 
         // affichage
         $table = new \App\Libraries\Structure\Table();
@@ -644,12 +637,12 @@ class Fonctions
         return $return;
     }
 
-    public static function affichage_absence($tab_new_values,$session)
+    public static function affichage_absence($tab_new_values, $session)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $return = '';
+        $return   = '';
 
-        if($session=="") {
+        if ($session == "") {
             $URL = "$PHP_SELF?onglet=type_absence";
         } else {
             $URL = "$PHP_SELF?session=$session&onglet=type_absence";
@@ -662,35 +655,34 @@ class Fonctions
 
         // affiche_bouton_retour($session);
 
-
         // affichage de la liste des type d'absence existants
 
         $tab_enum = \config\Fonctions::get_tab_from_mysql_enum_field("conges_type_absence", "ta_type");
 
-        foreach($tab_enum as $ta_type) {
-            if( ($ta_type=="conges_exceptionnels") &&  ($_SESSION['config']['gestion_conges_exceptionnels']==FALSE)) {
+        foreach ($tab_enum as $ta_type) {
+            if (($ta_type == "conges_exceptionnels") && ($_SESSION['config']['gestion_conges_exceptionnels'] == false)) {
             } else {
-                $divers_maj_1 = 'divers_' . $ta_type . '_maj_1';
+                $divers_maj_1       = 'divers_' . $ta_type . '_maj_1';
                 $config_abs_comment = 'config_abs_comment_' . $ta_type;
 
-                $legend= _($divers_maj_1)  ;
-                $comment= _($config_abs_comment)  ;
+                $legend  = _($divers_maj_1);
+                $comment = _($config_abs_comment);
 
                 $return .= '<h2>' . $legend . '</h2>';
                 $return .= '<p>' . $comment . '</p>';
 
                 //requête qui récupère les informations de la table conges_type_absence
-                $sql1 = 'SELECT * FROM conges_type_absence WHERE ta_type = "'. \includes\SQL::quote($ta_type).'"';
+                $sql1    = 'SELECT * FROM conges_type_absence WHERE ta_type = "' . \includes\SQL::quote($ta_type) . '"';
                 $ReqLog1 = \includes\SQL::query($sql1);
 
-                if($ReqLog1->num_rows !=0) {
+                if ($ReqLog1->num_rows != 0) {
                     $table = new \App\Libraries\Structure\Table();
                     $table->addClasses([
                         'table',
                         'table-hover',
                         'table-responsive',
                         'table-condensed',
-                        'table-striped'
+                        'table-striped',
                     ]);
                     $childTable = '<tr>';
                     $childTable .= '<th>' . _('config_abs_libelle') . '</th>';
@@ -699,16 +691,16 @@ class Fonctions
                     $childTable .= '</tr>';
 
                     while ($data = $ReqLog1->fetch_array()) {
-                        $ta_id = $data['ta_id'];
-                        $ta_libelle = $data['ta_libelle'];
+                        $ta_id            = $data['ta_id'];
+                        $ta_libelle       = $data['ta_libelle'];
                         $ta_short_libelle = $data['ta_short_libelle'];
 
-                        if($session=="") {
-                            $text_modif="<a href=\"$PHP_SELF?action=modif&id_to_update=$ta_id&onglet=type_absence\" title=\"". _('form_modif') ."\"><i class=\"fa fa-pencil\"></i></a>";
-                            $text_suppr="<a href=\"$PHP_SELF?action=suppr&id_to_update=$ta_id&onglet=type_absence\" title=\"". _('form_supprim') ."\"><i class=\"fa fa-times-circle\"></i></a>";
+                        if ($session == "") {
+                            $text_modif = "<a href=\"$PHP_SELF?action=modif&id_to_update=$ta_id&onglet=type_absence\" title=\"" . _('form_modif') . "\"><i class=\"fa fa-pencil\"></i></a>";
+                            $text_suppr = "<a href=\"$PHP_SELF?action=suppr&id_to_update=$ta_id&onglet=type_absence\" title=\"" . _('form_supprim') . "\"><i class=\"fa fa-times-circle\"></i></a>";
                         } else {
-                            $text_modif="<a href=\"$PHP_SELF?session=$session&action=modif&id_to_update=$ta_id&onglet=type_absence\" title=\"". _('form_modif') ."\"><i class=\"fa fa-pencil\"></i></a>";
-                            $text_suppr="<a href=\"$PHP_SELF?session=$session&action=suppr&id_to_update=$ta_id&onglet=type_absence\" title=\"". _('form_supprim') ."\"><i class=\"fa fa-times-circle\"></i></a>";
+                            $text_modif = "<a href=\"$PHP_SELF?session=$session&action=modif&id_to_update=$ta_id&onglet=type_absence\" title=\"" . _('form_modif') . "\"><i class=\"fa fa-pencil\"></i></a>";
+                            $text_suppr = "<a href=\"$PHP_SELF?session=$session&action=suppr&id_to_update=$ta_id&onglet=type_absence\" title=\"" . _('form_supprim') . "\"><i class=\"fa fa-times-circle\"></i></a>";
                         }
 
                         $childTable .= '<tr><td><strong>' . $ta_libelle . '</strong></td><td>' . $ta_short_libelle . '</td><td class="action">' . $text_modif . '&nbsp;' . $text_suppr . '</td></tr>';
@@ -733,7 +725,7 @@ class Fonctions
             'table-hover',
             'table-responsive',
             'table-condensed',
-            'table-striped'
+            'table-striped',
         ]);
 
         $childTableAjout = '<tr>';
@@ -742,19 +734,19 @@ class Fonctions
         $childTableAjout .= '<th>' . _('divers_type') . '</th>';
         $childTableAjout .= '</tr>';
         $childTableAjout .= '<tr>';
-        $new_libelle = ( isset($tab_new_values['libelle']) ? $tab_new_values['libelle'] : "" );
-        $new_short_libelle = ( isset($tab_new_values['short_libelle']) ? $tab_new_values['short_libelle'] : "" ) ;
-        $new_type = ( isset($tab_new_values['type']) ? $tab_new_values['type'] : "" ) ;
+        $new_libelle       = (isset($tab_new_values['libelle']) ? $tab_new_values['libelle'] : "");
+        $new_short_libelle = (isset($tab_new_values['short_libelle']) ? $tab_new_values['short_libelle'] : "");
+        $new_type          = (isset($tab_new_values['type']) ? $tab_new_values['type'] : "");
         $childTableAjout .= '<td><input class="form-control" type="text" name="tab_new_values[libelle]" size="20" maxlength="20" value="' . $new_libelle . '"></td>';
         $childTableAjout .= '<td><input class="form-control" type="text" name="tab_new_values[short_libelle]" size="3" maxlength="3" value="' . $new_short_libelle . '" ></td>';
         $childTableAjout .= '<td>';
 
         $childTableAjout .= '<select class="form-control" name=tab_new_values[type]>';
 
-        foreach($tab_enum as $option) {
-            if( ($option=="conges_exceptionnels") &&  ($_SESSION['config']['gestion_conges_exceptionnels']==FALSE)) {
+        foreach ($tab_enum as $option) {
+            if (($option == "conges_exceptionnels") && ($_SESSION['config']['gestion_conges_exceptionnels'] == false)) {
             } else {
-                if($option==$new_type) {
+                if ($option == $new_type) {
                     $childTableAjout .= '<option selected>' . $option . '</option>';
                 } else {
                     $childTableAjout .= '<option>' . $option . '</option>';
@@ -785,24 +777,22 @@ class Fonctions
      */
     public static function typeAbsenceModule()
     {
-        $session=(isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : "") ) ;
-        $return = '';
+        $session = (isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : ""));
+        $return  = '';
 
-        if (file_exists(CONFIG_PATH .'config_ldap.php')) {
-            include_once CONFIG_PATH .'config_ldap.php';
+        if (file_exists(CONFIG_PATH . 'config_ldap.php')) {
+            include_once CONFIG_PATH . 'config_ldap.php';
         }
 
         // include_once ROOT_PATH .'fonctions_conges.php' ;
         // include_once INCLUDE_PATH .'fonction.php';
-        if(!isset($_SESSION['config'])) {
-            $_SESSION['config']=init_config_tab();      // on initialise le tableau des variables de config
+        if (!isset($_SESSION['config'])) {
+            $_SESSION['config'] = init_config_tab(); // on initialise le tableau des variables de config
         }
-        include_once INCLUDE_PATH .'session.php';
+        include_once INCLUDE_PATH . 'session.php';
 
         // verif des droits du user à afficher la page
         verif_droits_user($session, "is_admin");
-
-
 
         /*** initialisation des variables ***/
         /*************************************/
@@ -810,21 +800,21 @@ class Fonctions
         // SERVER
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         // GET / POST
-        $action         = getpost_variable('action') ;
+        $action         = getpost_variable('action');
         $tab_new_values = getpost_variable('tab_new_values');
         $id_to_update   = htmlentities(getpost_variable('id_to_update'), ENT_QUOTES | ENT_HTML401);
 
         /*********************************/
 
-        if($action=="new") {
-            $return .= \config\Fonctions::commit_ajout($tab_new_values,$session);
-        } elseif($action=="modif") {
+        if ($action == "new") {
+            $return .= \config\Fonctions::commit_ajout($tab_new_values, $session);
+        } elseif ($action == "modif") {
             $return .= \config\Fonctions::modifier($tab_new_values, $session, $id_to_update);
-        } elseif($action=="commit_modif") {
+        } elseif ($action == "commit_modif") {
             $return .= \config\Fonctions::commit_modif_absence($tab_new_values, $session, $id_to_update);
-        } elseif($action=="suppr") {
+        } elseif ($action == "suppr") {
             $return .= \config\Fonctions::supprimer($session, $id_to_update);
-        } elseif($action=="commit_suppr") {
+        } elseif ($action == "commit_suppr") {
             $return .= \config\Fonctions::commit_suppr($session, $id_to_update);
         } else {
             $return .= \config\Fonctions::affichage_absence($tab_new_values, $session);
@@ -836,70 +826,70 @@ class Fonctions
     public static function commit_saisie(&$tab_new_values, $session)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $return = '';
+        $return   = '';
 
-        if($session=="") {
+        if ($session == "") {
             $URL = "$PHP_SELF";
         } else {
             $URL = "$PHP_SELF?session=$session";
         }
 
-        $timeout=2 ;  // temps d'attente pour rafraichir l'écran après l'update !
+        $timeout = 2; // temps d'attente pour rafraichir l'écran après l'update !
 
-        foreach($tab_new_values as $key => $value ) {
+        foreach ($tab_new_values as $key => $value) {
             $value = htmlentities($value, ENT_QUOTES | ENT_HTML401);
             // CONTROLE gestion_conges_exceptionnels
             // si désactivation les conges exceptionnels, on verif s'il y a des conges exceptionnels enregistres ! si oui : changement impossible !
-            if(($key=="gestion_conges_exceptionnels") && ($value=="FALSE") ) {
-                $sql_abs="SELECT ta_id, ta_libelle FROM conges_type_absence WHERE ta_type='conges_exceptionnels' ";
+            if (($key == "gestion_conges_exceptionnels") && ($value == "FALSE")) {
+                $sql_abs    = "SELECT ta_id, ta_libelle FROM conges_type_absence WHERE ta_type='conges_exceptionnels' ";
                 $ReqLog_abs = \includes\SQL::query($sql_abs);
 
-                if($ReqLog_abs->num_rows !=0) {
+                if ($ReqLog_abs->num_rows != 0) {
                     $return .= '<b>' . _('config_abs_desactive_cong_excep_impossible') . '</b><br>';
-                    $value = "TRUE" ;
-                    $timeout=5 ;
+                    $value   = "TRUE";
+                    $timeout = 5;
                 }
             }
 
             // CONTROLE jour_mois_limite_reliquats
             // si modif de jour_mois_limite_reliquats, on verifie le format ( 0 ou jj-mm) , sinon : changement impossible !
-            if( ($key=="jour_mois_limite_reliquats") && ($value!= "0") ) {
-                $t=explode("-", $value);
-                if(checkdate($t[1], $t[0], date("Y"))==FALSE) {
+            if (($key == "jour_mois_limite_reliquats") && ($value != "0")) {
+                $t = explode("-", $value);
+                if (checkdate($t[1], $t[0], date("Y")) == false) {
                     $return .= '<b>' . _('config_jour_mois_limite_reliquats_modif_impossible') . '</b><br>';
-                    $sql_date="SELECT conf_valeur FROM conges_config WHERE conf_nom='jour_mois_limite_reliquats' ";
+                    $sql_date    = "SELECT conf_valeur FROM conges_config WHERE conf_nom='jour_mois_limite_reliquats' ";
                     $ReqLog_date = \includes\SQL::query($sql_date);
-                    $data = $ReqLog_date->fetch_row();
-                    $value = $data[0] ;
-                    $timeout=5 ;
+                    $data        = $ReqLog_date->fetch_row();
+                    $value       = $data[0];
+                    $timeout     = 5;
                 }
             }
 
-            if(preg_match("/_installed$/",$key) && ($value=="1")) {
-                $plugin = explode("_",$key);
+            if (preg_match("/_installed$/", $key) && ($value == "1")) {
+                $plugin = explode("_", $key);
                 $plugin = $plugin[0];
                 install_plugin($plugin);
-            } elseif(preg_match("/_installed$/",$key) && ($value=="0")) {
-                $plugin = explode("_",$key);
+            } elseif (preg_match("/_installed$/", $key) && ($value == "0")) {
+                $plugin = explode("_", $key);
                 $plugin = $plugin[0];
                 uninstall_plugin($plugin);
             }
-            if(preg_match("/_activated$/",$key) && ($value=="1")) {
-                $plugin = explode("_",$key);
+            if (preg_match("/_activated$/", $key) && ($value == "1")) {
+                $plugin = explode("_", $key);
                 $plugin = $plugin[0];
                 activate_plugin($plugin);
-            } elseif(preg_match("/_activated$/",$key) && ($value=="0")) {
-                $plugin = explode("_",$key);
+            } elseif (preg_match("/_activated$/", $key) && ($value == "0")) {
+                $plugin = explode("_", $key);
                 $plugin = $plugin[0];
                 disable_plugin($plugin);
             }
 
             // Mise à jour
-            $sql2 = 'UPDATE conges_config SET conf_valeur = \''.addslashes($value).'\' WHERE conf_nom ="'. \includes\SQL::quote($key).'" ';
+            $sql2    = 'UPDATE conges_config SET conf_valeur = \'' . addslashes($value) . '\' WHERE conf_nom ="' . \includes\SQL::quote($key) . '" ';
             $ReqLog2 = \includes\SQL::query($sql2);
         }
 
-        $_SESSION['config']=init_config_tab();      // on re-initialise le tableau des variables de config
+        $_SESSION['config'] = init_config_tab(); // on re-initialise le tableau des variables de config
 
         // enregistrement dans les logs
         $comment_log = "nouvelle configuration de php_conges ";
@@ -914,14 +904,13 @@ class Fonctions
     public static function affichage_configuration($session)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $return = '';
+        $return   = '';
 
         // affiche_bouton_retour($session);
 
-
         // affichage de la liste des variables
 
-        if($session=="") {
+        if ($session == "") {
             $return .= '<form action="' . $PHP_SELF . '" method="POST">';
         } else {
             $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '" method="POST">';
@@ -929,11 +918,11 @@ class Fonctions
         $return .= '<input type="hidden" name="action" value="commit">';
 
         //requête qui récupère les informations de config
-        $sql1 = "SELECT * FROM conges_config ORDER BY conf_groupe ASC";
+        $sql1    = "SELECT * FROM conges_config ORDER BY conf_groupe ASC";
         $ReqLog1 = \includes\SQL::query($sql1);
 
-        $old_groupe="";
-        $config = [];
+        $old_groupe = "";
+        $config     = [];
         while ($data = $ReqLog1->fetch_array()) {
             $config[$data['conf_groupe']][] = $data;
         }
@@ -943,18 +932,18 @@ class Fonctions
             $table = new \App\Libraries\Structure\Table();
             $table->addAttribute('width', '100%');
             $childTable = '<tr><td>';
-            $childTable .= '<fieldset class="cal_saisie '. $groupName . '">';
+            $childTable .= '<fieldset class="cal_saisie ' . $groupName . '">';
             $childTable .= '<legend class="boxlogin">' . _($groupName) . '</legend>';
 
             foreach ($group as $data) {
-                $conf_nom = $data['conf_nom'];
-                $conf_valeur = $data['conf_valeur'];
-                $conf_groupe = $data['conf_groupe'];
-                $conf_type = strtolower($data['conf_type']);
+                $conf_nom         = $data['conf_nom'];
+                $conf_valeur      = $data['conf_valeur'];
+                $conf_groupe      = $data['conf_groupe'];
+                $conf_type        = strtolower($data['conf_type']);
                 $conf_commentaire = strtolower($data['conf_commentaire']);
 
-                if($conf_nom=="lang") {
-                    $childTable .= _('choisir_langue').'<br>';
+                if ($conf_nom == "lang") {
+                    $childTable .= _('choisir_langue') . '<br>';
                     // affichage de la liste des langues supportées ...
                     // on lit le contenu du répertoire lang et on parse les nom de ficher (ex lang_fr_francais.php)
                     //affiche_select_from_lang_directory("tab_new_values[$conf_nom]");
@@ -964,29 +953,29 @@ class Fonctions
                     $childTable .= '<br><i>' . _($conf_commentaire) . '</i><br>';
 
                     // affichage saisie variable
-                    if($conf_nom=="installed_version") {
+                    if ($conf_nom == "installed_version") {
                         $childTable .= '<b>' . $conf_nom . '&nbsp;&nbsp;=&nbsp;&nbsp;' . $conf_valeur . '</b><br>';
-                    } elseif( ($conf_type=="texte") || ($conf_type=="path") ) {
+                    } elseif (($conf_type == "texte") || ($conf_type == "path")) {
                         $childTable .= '<b>' . $conf_nom . '</b>&nbsp;=&nbsp;<input type="text" class="form-control" size="50" maxlength="200" name="tab_new_values[' . $conf_nom . ']" value="' . $conf_valeur . '"><br>';
-                    } elseif($conf_type=="boolean") {
+                    } elseif ($conf_type == "boolean") {
                         $childTable .= '<b>' . $conf_nom . '</b>&nbsp;=&nbsp;<select class="form-control" name="tab_new_values[' . $conf_nom . ']">';
                         $childTable .= '<option value="TRUE"';
-                        if($conf_valeur=="TRUE") {
+                        if ($conf_valeur == "TRUE") {
                             $childTable .= ' selected';
                         }
                         $childTable .= '>TRUE</option>';
                         $childTable .= '<option value="FALSE"';
-                        if($conf_valeur=="FALSE") {
+                        if ($conf_valeur == "FALSE") {
                             $childTable .= ' selected';
                         }
                         $childTable .= '>FALSE</option>';
                         $childTable .= '</select><br>';
-                    } elseif(substr($conf_type,0,4)=="enum") {
+                    } elseif (substr($conf_type, 0, 4) == "enum") {
                         $childTable .= '<b>' . $conf_nom . '</b>&nbsp;=&nbsp;<select class="form-control" name="tab_new_values[' . $conf_nom . ']">';
-                        $options=explode("/", substr(strstr($conf_type, '='),1));
-                        for($i=0; $i<count($options); $i++) {
+                        $options = explode("/", substr(strstr($conf_type, '='), 1));
+                        for ($i = 0; $i < count($options); $i++) {
                             $childTable .= '<option value="' . $options[$i] . '"';
-                            if($conf_valeur==$options[$i]) {
+                            if ($conf_valeur == $options[$i]) {
                                 $childTable .= ' selected';
                             }
                             $childTable .= '>' . $options[$i] . '</option>';
@@ -1006,7 +995,6 @@ class Fonctions
             $table->render();
             $return .= ob_get_clean();
         }
-
 
         /******************* GESTION DES PLUGINS V1.7 *************************/
 
@@ -1032,16 +1020,16 @@ class Fonctions
         $childTableAddon = '<tr><td>';
         $childTableAddon .= '<fieldset class="cal_saisie plugins">';
         $childTableAddon .= '<legend class="boxlogin">Plugins</legend>';
-        foreach($my_plugins as $my_plugin) {
-            if(is_dir(PLUGINS_DIR."/$my_plugin") && !preg_match("/^\./",$my_plugin)) {
-                $childTableAddon .= _('plugin_detect').'<br>';
-                $childTableAddon .= '<b>' . $my_plugin . ' : </b>'._('plugin_install').'
+        foreach ($my_plugins as $my_plugin) {
+            if (is_dir(PLUGINS_DIR . "/$my_plugin") && !preg_match("/^\./", $my_plugin)) {
+                $childTableAddon .= _('plugin_detect') . '<br>';
+                $childTableAddon .= '<b>' . $my_plugin . ' : </b>' . _('plugin_install') . '
                     <select class="form-control" name=tab_new_values[' . $my_plugin . '_installed]>';
 
-                $sql_plug="SELECT p_is_active, p_is_install FROM conges_plugins WHERE p_name = '".$my_plugin."';";
+                $sql_plug    = "SELECT p_is_active, p_is_install FROM conges_plugins WHERE p_name = '" . $my_plugin . "';";
                 $ReqLog_plug = \includes\SQL::query($sql_plug);
-                if($ReqLog_plug->num_rows !=0) {
-                    while($plug = $ReqLog_plug->fetch_array()){
+                if ($ReqLog_plug->num_rows != 0) {
+                    while ($plug = $ReqLog_plug->fetch_array()) {
                         $p_install = $plug["p_is_install"];
                         if ($p_install == '1') {
                             $childTableAddon .= '<option selected="selected" value="1">Y</option><option value="0">N</option>';
@@ -1049,7 +1037,7 @@ class Fonctions
                             $childTableAddon .= '<option value="1">Y</option><option selected="selected" value="0">N</option>';
                         }
                         $childTableAddon .= '</select>';
-                        $childTableAddon .= _('plugin_active').' <select class="form-control" name=tab_new_values[' . $my_plugin . '_activated]>';
+                        $childTableAddon .= _('plugin_active') . ' <select class="form-control" name=tab_new_values[' . $my_plugin . '_activated]>';
                         $p_active = $plug["p_is_active"];
                         if ($p_active == '1') {
                             $childTableAddon .= '<option selected="selected" value="1">Y</option><option value="0">N</option>';
@@ -1060,7 +1048,7 @@ class Fonctions
                 } else {
                     $childTableAddon .= '<option value="1">Y</option><option selected="selected" value="0">N</option>';
                     $childTableAddon .= '</select>';
-                    $childTableAddon .= _('plugin_active').' <select class="form-control" name=tab_new_values[' . $my_plugin . '_activated]>';
+                    $childTableAddon .= _('plugin_active') . ' <select class="form-control" name=tab_new_values[' . $my_plugin . '_activated]>';
                     $childTableAddon .= '<option value="1">Y</option><option selected="selected" value="0">N</option>';
                 }
                 $childTableAddon .= '</select>';
@@ -1068,7 +1056,7 @@ class Fonctions
                 $plug_count++;
             }
         }
-        if($plug_count == 0){
+        if ($plug_count == 0) {
             $childTableAddon .= _('no_plugin');
         }
         $childTableAddon .= '</td></tr>';
@@ -1101,8 +1089,8 @@ class Fonctions
         $return = '';
 
         /*** initialisation des variables ***/
-        $action="";
-        $tab_new_values=array();
+        $action         = "";
+        $tab_new_values = array();
         /************************************/
 
         /*************************************/
@@ -1110,12 +1098,12 @@ class Fonctions
         // SERVER
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         // GET / POST
-        $action         = getpost_variable('action') ;
+        $action         = getpost_variable('action');
         $tab_new_values = getpost_variable('tab_new_values');
 
         /*************************************/
 
-        if($action=="commit") {
+        if ($action == "commit") {
             $return .= \config\Fonctions::commit_saisie($tab_new_values, $session);
         } else {
             $return .= '<div class="wrapper configure">';

@@ -19,14 +19,14 @@ class Creneau
     /**
      * @var int Types d'heures
      */
-    const TYPE_HEURE_DEBUT     = 1;
-    const TYPE_HEURE_FIN       = 2;
+    const TYPE_HEURE_DEBUT = 1;
+    const TYPE_HEURE_FIN   = 2;
 
     /**
      * @var int Types de périodes
      */
-    const TYPE_PERIODE_MATIN      = 1;
-    const TYPE_PERIODE_APRES_MIDI = 2;
+    const TYPE_PERIODE_MATIN            = 1;
+    const TYPE_PERIODE_APRES_MIDI       = 2;
     const TYPE_PERIODE_MATIN_APRES_MIDI = 3;
 
     public static function getListeTypePeriode()
