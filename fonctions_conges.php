@@ -124,6 +124,9 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
     $return .= '</div>';
     $return .= '</div>';
     $return .= '</div>';
+    $return .= '<br />';
+    $return .= '<label>' . _('saisie_conges_nb_jours') .'&nbsp</label>';
+    $return .= '<span id="new_nb_jours"></span>';
     $return .= '<hr/>';
 
     /*****************/
@@ -199,9 +202,6 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
 
 
     // zones de texte
-    $return .= '<label>' . _('saisie_conges_nb_jours') .'&nbsp</label>';
-
-    $return .= '<span id="new_nb_jours"></span>';
 
     $return .= '<p id="comment_nbj" style="color:red">&nbsp;</p>';
     $return .= '<br>';
