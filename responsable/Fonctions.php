@@ -1906,16 +1906,52 @@ class Fonctions
     private static function traiteUserHeureAdditionnelle($userLogin)
     {
         $year = (int) getpost_variable('year_affichage_heure', date("Y"));
-        $commentairesAnnulation = getpost_variable('commentaireAnnulation', []);
-        $annulation = getpost_variable('annulation', []);
-        $annulation = array_map(function ($idHeure) {
+        $entities = function ($element) {
+            return htmlentities($element, ENT_QUOTES | ENT_HTML401);
+        };
+        $commentairesAnnulation = array_map($entities, getpost_variable('commentaireAnnulation', []));
+        $annulations = getpost_variable('annulation', []);
+        $IdsAnnules = array_map(function ($idHeure) {
             return (int) $idHeure;
-        }, array_keys($annulation));
+        }, array_keys($annulations));
 
-        d($year, $userLogin, $commentairesAnnulation, $annulation, $_POST);
-        // manipuler les informations venant du formulaire
+        if (!empty($annulations)) {
+            $aAnnuler = [];
+            foreach ($IdsAnnules as $IdAnnule) {
+                $commentaire = isset($commentairesAnnulation[$IdAnnule])
+                    ? $commentairesAnnulation[$IdAnnule]
+                    : '';
+                $aAnnuler[] = [
+                    'id' => $IdAnnule,
+                    'commentaire' => $commentaire,
+                ];
+            }
+            self::annulerHeuresAdditionnelles($userLogin, $aAnnuler);
+        }
 
-        return self::getFormulaireAnnulationHeuresAdditionnelles($userLogin, $year);
+        return self::getFormulaireAnnulationHeuresAdditionnelles($userLogin, $year, $commentairesAnnulation);
+    }
+
+    private static function annulerHeuresAdditionnelles($userLogin, array $annulations)
+    {
+        $sql = \includes\SQL::singleton();
+        $pdo = $sql->getPdoObj();
+        $pdo->begin_transaction();
+        $transactionACommiter = true;
+
+        foreach ($annulations as $annulation) {
+            $req = 'UPDATE heure_additionnelle
+                SET statut = ' . \App\Models\AHeure::STATUT_ANNUL . ', comment_refus = "' . $sql->quote($annulation['commentaire']) . '"
+                WHERE id_heure = ' . (int) $annulation['id'];
+            $transactionACommiter = $sql->query($req) && $transactionACommiter;
+        }
+
+        if ($transactionACommiter) {
+            $pdo->commit();
+            return;
+        }
+        $pdo->rollback();
+        return;
     }
 
     /**
@@ -1951,6 +1987,7 @@ class Fonctions
             'login' => $userLogin,
             'timestampDebut' => $debutTime,
             'timestampFin' => $finTime,
+            'statut' => [\App\Models\AHeure::STATUT_VALIDATION_FINALE, \App\Models\AHeure::STATUT_ANNUL],
         ];
         $heuresIds = $additionnelles->getListeId($params);
 
@@ -1959,13 +1996,13 @@ class Fonctions
         $return .= '<thead>';
         $return .= '<tr align="center">';
         $return .= '<th>' . _('jour') . '</th>';
-        $return .= '<th>' . _('debut') . '</th>';
-        $return .= '<th>' . _('fin') . '</th>';
+        $return .= '<th>' . _('divers_debut_maj_1') . '</th>';
+        $return .= '<th>' . _('divers_fin_maj_1') . '</th>';
         $return .= '<th>' . _('duree') . '</th>';
-        $return .= '<th>' . _('commentaire') . '</th>';
-        $return .= '<th>' . _('statut') . '</th>';
-        $return .= '<th>' . _('annuler') . '</th>';
-        $return .= '<th>' . _('motif annulation') . '</th>';
+        $return .= '<th>' . _('divers_comment_maj_1') . '</th>';
+        $return .= '<th>' . _('divers_etat_maj_1') . '</th>';
+        $return .= '<th>' . _('resp_traite_user_annul') . '</th>';
+        $return .= '<th>' . _('resp_traite_user_motif_annul') . '</th>';
 
         $return .= '</tr>';
         $return .= '</thead>';

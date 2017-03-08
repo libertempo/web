@@ -367,7 +367,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
                         $where[] = 'debut <= ' . $value;
                         break;
                     default:
-                        $where[] = $key . ' = "' . $value . '"';
+                        $where[] = $key . ' IN ("' . implode('", "', (array) $value) . '")';
                         break;
                 }
             }
