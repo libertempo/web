@@ -1889,7 +1889,7 @@ class Fonctions
 
         /* Préparation et requêtage */
         $listPlanningId = \App\ProtoControllers\HautResponsable\Planning::getListPlanningId();
-        $return = '<h1>' . _('resp_affichage_liste_planning_titre') . '</h1>';
+        $return = '<h1>' . _('resp_liste_planning') . '</h1>';
         $return .= $message;
         $session = session_id();
         $table = new \App\Libraries\Structure\Table();

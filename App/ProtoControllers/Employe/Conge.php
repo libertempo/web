@@ -34,6 +34,9 @@ class Conge
         // on initialise le tableau global des jours fériés s'il ne l'est pas déjà :
         init_tab_jours_feries();
 
+        if( $_SESSION['config']['user_saisie_demande'] || $_SESSION['config']['user_saisie_mission'] ) {
+            $return .= '<a href="' . ROOT_PATH . 'utilisateur/user_index.php?session='. session_id().'&amp;onglet=nouvelle_absence" style="float:right" class="btn btn-success">' . _('divers_nouvelle_absence') . '</a>';
+        }
         $return .= '<h1>' . _('user_liste_conge_titre') . '</h1>';
 
         if (!empty($_POST) && $this->isSearch($_POST)) {
