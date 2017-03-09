@@ -2356,7 +2356,9 @@ class Fonctions
         $childTable .= '<th>' . _('divers_prenom_maj_1') . '</th>';
         $childTable .= '<th>' . _('divers_login_maj_1') . '</th>';
         $childTable .= '<th>' . _('divers_quotite_maj_1') . '</th>';
-        $childTable .= '<th>' . _('solde_heure') . '</th>';
+        if ($_SESSION['config']['gestion_heures'] ) {
+            $childTable .= '<th>' . _('solde_heure') . '</th>';
+        }
         $childTable .= '<th>' . _('admin_users_is_resp') . '</th>';
         $childTable .= '<th>' . _('admin_users_resp_login') . '</th>';
         $childTable .= '<th>' . _('admin_users_is_admin') . '</th>';
@@ -2377,7 +2379,9 @@ class Fonctions
         $childTable .= '<td>' . $tab_user['prenom'] . '</td>';
         $childTable .= '<td>' . $tab_user['login'] . '</td>';
         $childTable .= '<td>' . $tab_user['quotite'] . '</td>';
-        $childTable .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($tab_user['solde_heure']) . '</td>';
+        if ($_SESSION['config']['gestion_heures'] ) {
+            $childTable .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($tab_user['solde_heure']) . '</td>';
+        }
         $childTable .= '<td>' . $tab_user['is_resp'] . '</td>';
         $childTable .= '<td>' . $tab_user['resp_login'] . '</td>';
         $childTable .= '<td>' . $tab_user['is_admin'] . '</td>';
@@ -2457,7 +2461,9 @@ class Fonctions
         $childTable .= '<td>' . $text_prenom . '</td>';
         $childTable .= '<td>' . $text_login . '</td>';
         $childTable .= '<td>' . $text_quotite . '</td>';
-        $childTable .= '<td>' . $text_solde_heure . '</td>';
+        if ($_SESSION['config']['gestion_heures'] ) {
+            $childTable .= '<td>' . $text_solde_heure . '</td>';
+        }
         $childTable .= '<td>' . $text_is_resp . '</td>';
         $childTable .= '<td>' . $text_resp_login . '</td>';
         $childTable .= '<td>' . $text_is_admin . '</td>';
@@ -2574,10 +2580,14 @@ class Fonctions
         ob_start();
         $table->render();
         $return .= ob_get_clean();
-        $planning = \App\ProtoControllers\HautResponsable\Planning::getListPlanning((array) ((int) $tab_user['planningId']))[0];
+        $planning = \App\ProtoControllers\HautResponsable\Planning::getListPlanning((array) ((int) $tab_user['planningId']));
+        $planningName = '';
+        if(!empty($planning)){
+            $planningName = $planning[0]['name'];
+        }
         $return .= '<br><hr/>';
         $return .= '<h4>' . _('admin_planning_utilisateur') . '</h4>';
-        $return .= '<div>' . $planning['name'] . '</div>';
+        $return .= '<div>' . $planningName . '</div>';
 
         $return .= '<hr /><input class="btn btn-success" type="submit" value="' . _('form_submit') . '"> ';
         $return .= '<a class="btn btn-default" href="admin_index.php?session=' . $session . '&onglet=admin-users">' . _('form_cancel') . '</a>';
@@ -3069,7 +3079,9 @@ class Fonctions
             $childTable .= '<th>' . _('divers_prenom_maj_1') . '</th>';
         }
         $childTable .= '<th>' . _('divers_quotite_maj_1') . '</th>';
-        $childTable .= '<th>' . _('solde_heure') . '</th>';
+        if ($_SESSION['config']['gestion_heures'] ) {
+            $childTable .= '<th>' . _('solde_heure') . '</th>';
+        }
         $childTable .= '<th>' . _('admin_new_users_is_resp') . '</th>';
         $childTable .= '<th>' . _('divers_responsable_maj_1') . '</th>';
         $childTable .= '<th>' . _('admin_new_users_is_admin') . '</th>';
@@ -3157,7 +3169,9 @@ class Fonctions
         }
 
         $childTable .= '<td>' . $text_quotite . '</td>';
-        $childTable .= '<td>' . $text_solde_heure . '</td>';
+        if ($_SESSION['config']['gestion_heures'] ) {
+            $childTable .= '<td>' . $text_solde_heure . '</td>';
+        }
         $childTable .= '<td>' . $text_is_resp . '</td>';
         $childTable .= '<td>' . $text_resp_login . '</td>';
         $childTable .= '<td>' . $text_is_admin . '</td>';
