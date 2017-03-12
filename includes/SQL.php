@@ -135,7 +135,7 @@ class Database extends \mysqli
         foreach ( $backtraces as $k => $b ) {
             if (isset($b['file']) && basename($b['file']) != 'sql.class.php') {
                 $f = $b;
-        break;
+            break;
             }
         }
 
