@@ -115,7 +115,7 @@ class Database extends \mysqli
     {
         parent::__construct (  $host , $username , $passwd , $dbname );
         $this->query('SET NAMES \'utf8\';');
-                $this->query("SET @@SESSION.sql_mode='';");
+        $this->query("SET SESSION.sql_mode='';");
     }
 
     public function multi_query($query) {
@@ -140,7 +140,7 @@ class Database extends \mysqli
         }
 
         if ($f !='') {
-        self::$hist[$nb]['back'] = $f;
+            self::$hist[$nb]['back'] = $f;
         }
 
         self::$hist[$nb]['query'] = $query;
@@ -213,15 +213,10 @@ class Database extends \mysqli
 
 class Database_MySQLi_Result extends \MySQLi_Result
 {
-    public function fetch()
-    {
-        return $this->fetch_assoc();
-    }
-
     public function fetch_all()
     {
         $rows = array();
-        while($row = $this->fetch())
+        while($row = $this->fetch_assoc())
         {
             $rows[] = $row;
         }
