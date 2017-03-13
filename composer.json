@@ -25,7 +25,7 @@
     },
     "require": {
         "php": "^5.5|^7.0",
-        "ext-php-mysql": "^5.5|^7.0",
+        "ext-php5-mysql": "^5.5",
         "ext-mbstring": "*",
         "ext-Reflection": "*",
         "raveren/kint": "^1.0",
