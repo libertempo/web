@@ -651,8 +651,8 @@
     },
     {
         "name": "Libertempo/libertempo-api",
-        "version": "dev-develop",
-        "version_normalized": "dev-develop",
+        "version": "0.1.0",
+        "version_normalized": "0.1.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/Libertempo/libertempo-api.git",

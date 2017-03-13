@@ -4,12 +4,12 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "4aac8c2fcd386ec2cac6a4257bf5587c",
-    "content-hash": "4941ff0894cd70d0a8215c3a0904585d",
+    "hash": "ad62768ccfa273443000400ff6f3faa0",
+    "content-hash": "4238adb0520aaea3a3f59f8557169707",
     "packages": [
         {
             "name": "Libertempo/libertempo-api",
-            "version": "dev-develop",
+            "version": "0.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Libertempo/libertempo-api.git",
@@ -684,9 +684,7 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "libertempo/libertempo-api": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
