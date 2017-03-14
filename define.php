@@ -23,6 +23,8 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     define('LOCALE_PATH',      ROOT_PATH . 'locale/');
     define('DUMP_PATH',        ROOT_PATH . 'dump/');
     define('TEMPLATE_PATH',    ROOT_PATH . 'template/reboot/');
+    define('API_PATH', ABSOLUTE_SYSPATH . 'vendor/Libertempo/libertempo-api/');
+    define('API_URL', ROOT_PATH . 'api/');
     define('PLUGINS_DIR',      INCLUDE_PATH . 'plugins/');
     define('NIL_INT',          -1);
     define('STATUS_ACTIVE',    1);
@@ -36,7 +38,6 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     switch (ENV) {
         case ENV_DEV:
             error_reporting(-1);
-            \Kint::enabled(true);
             // no break;
         case ENV_TEST:
             \Kint::enabled(true);

@@ -165,12 +165,13 @@ class Fonctions {
     }
 
     // install la nouvelle version dans une database vide ... et config
+
     public static function lance_install($lang)
     {
 
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 
-        include CONFIG_PATH .'dbconnect.php' ;
+        include CONFIG_PATH . 'dbconnect.php';
         include ROOT_PATH .'version.php' ;
 
         //verif si create / alter table possible !!!
