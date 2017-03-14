@@ -14,7 +14,7 @@ class Responsable {
      */
 
     /**
-     * Retourne le login des responsable d'une liste de groupes
+     * Retourne le login des responsables d'une liste de groupes
      *
      * @param array $groupesId
      *

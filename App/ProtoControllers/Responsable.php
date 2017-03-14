@@ -136,7 +136,7 @@ class Responsable
      */
     public static function getResponsablesUtilisateur($user) {
         
-        $responsables = \App\ProtoControllers\Responsable::getResponsableGroupe(\App\ProtoControllers\Utilisateur::getGroupesId($user));
+        $responsables = \App\ProtoControllers\Groupe\Responsable::getListResponsableByGroupeIds(\App\ProtoControllers\Utilisateur::getGroupesId($user));
         $responsables[] = \App\ProtoControllers\Responsable::getResponsableDirect($user);
         $responsables = array_unique($responsables);
         
@@ -151,21 +151,28 @@ class Responsable
         return $res->fetch_array()['u_resp_login'];
         
     }
-    
-    private static function getResponsableGroupe(array $groupesId) {
-        
-        $responsable = [];
-        
-        $sql = \includes\SQL::singleton();
-        $req = 'SELECT gr_login FROM conges_groupe_resp 
-                    WHERE gr_gid IN (\'' . implode(',', $groupesId) . '\')';
-        $res = $sql->query($req);
 
-         while ($data = $res->fetch_array()) {
-             $responsable[] = $data['gr_login'];
-         }
-         
-         return $responsable;
+    /**
+     * Retourne le login des responsables
+     *
+     * @param array $groupesId
+     *
+     * @return array
+     */
+    public static function  getListResponsable()
+    {
+        $respLogin = [];
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT u_login
+                FROM conges_users
+                WHERE u_is_resp = "Y"';
+        $query = $sql->query($req);
+
+        while ($data = $query->fetch_array()) {
+            $respLogin[] = $data['u_login'];
+        }
+        
+        return $respLogin;
     }
 
     /**
@@ -179,7 +186,7 @@ class Responsable
     public static function isRespDeUtilisateur($resp, $user) {
         return $resp != $user 
                 && (\App\ProtoControllers\Responsable::isRespDirect($resp, $user) 
-                || \App\ProtoControllers\Responsable::isRespGroupe($resp, \App\ProtoControllers\Utilisateur::getGroupesId($user)));
+                || \App\ProtoControllers\Groupe::isResponsableGroupe($resp, \App\ProtoControllers\Utilisateur::getGroupesId($user)));
     }
 
     /**
@@ -231,28 +238,6 @@ class Responsable
                     FROM conges_groupe_grd_resp
                     WHERE ggr_gid IN (\'' . implode(',', $groupesId) . '\')
                         AND ggr_login = "'.\includes\SQL::quote($resp).'"
-                )';
-        $query = $sql->query($req);
-
-        return 0 < (int) $query->fetch_array()[0];
-    }
-
-    /**
-     * Verifie si un utilisateur est responsable d'une liste de groupe
-     *
-     * @param string $resp
-     * @param array $groupesId
-     *
-     * @return bool
-     */
-    public static function isRespGroupe($resp, array $groupesId)
-    {
-        $sql = \includes\SQL::singleton();
-        $req = 'SELECT EXISTS (
-                    SELECT gr_gid
-                    FROM conges_groupe_resp
-                    WHERE gr_gid IN (\'' . implode(',', $groupesId) . '\')
-                        AND gr_login = "'.\includes\SQL::quote($resp).'"
                 )';
         $query = $sql->query($req);
 

@@ -361,10 +361,10 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
     {
         $sql = \includes\SQL::singleton();
 
-        $req   = 'UPDATE conges_solde_user
-                SET su_solde = su_solde-' .number_format($duree,2) . '
-                WHERE su_login = \''. $user .'\'
-                AND su_abs_id = '. (int) $typeId;
+        $req = 'UPDATE conges_solde_user
+                    SET su_solde = su_solde-' .number_format($duree,2) . '
+                    WHERE su_login = \''. $user .'\'
+                    AND su_abs_id = '. (int) $typeId;
         $query = $sql->query($req);
 
         return $sql->affected_rows;

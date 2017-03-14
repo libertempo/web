@@ -37,12 +37,11 @@ class Groupe
      /**
       * Retourne la liste des groupes de l'application
       *
-      * Il est fort probable que cette méthode change de portée. Pour le moment c'est pas utile
       *
       * @return array
       * @todo unescape_string ?
       */
-    private static function getListe()
+    public static function getListe()
     {
         $sql = \includes\SQL::singleton();
         $req = 'SELECT *
@@ -52,10 +51,44 @@ class Groupe
 
         $groupes = [];
         while ($data = $result->fetch_assoc()) {
-            $groupes[] = $data;
+            $groupes[$data['g_gid']] = $data;
         }
 
         return $groupes;
+    }
+
+    /**
+     * Retourne le nom d'un groupe
+     * 
+     * @param int $id
+     * @return string
+     */
+    public static function getInfosGroupe($id) 
+    {
+        $sql = \includes\SQL::singleton();
+        $req="SELECT *
+              FROM conges_groupe
+              WHERE g_gid=". $id;
+        $res = $sql->query($req);
+        
+        $infos = $res->fetch_array();
+            $infosGroupe = [
+                'nom' => $infos['g_groupename'],
+                'doubleValidation' => ($infos['g_double_valid'] =="Y")?true:false,
+                'comment' => $infos['g_comment']
+            ];
+        
+        return $infosGroupe;
+    }
+    
+    public function isDoubleValidation($id) {
+        $sql = \includes\SQL::singleton();
+        $req="SELECT g_double_valid
+              FROM conges_groupe
+              WHERE g_gid=". $id;
+        $res = $sql->query($req);
+        
+        return ($res->fetch_array()['g_double_valid'] =="Y")?true:false;
     }
 
     /**
@@ -76,5 +109,49 @@ class Groupe
         }
 
         return $groupes;
+    }
+
+    /**
+     * Verifie si un utilisateur est responsable d'une liste de groupe
+     *
+     * @param string $resp
+     * @param array $groupesId
+     *
+     * @return bool
+     */
+    public static function isResponsableGroupe($resp, array $groupesId)
+    {
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT EXISTS (
+                    SELECT gr_gid
+                    FROM conges_groupe_resp
+                    WHERE gr_gid IN (\'' . implode(',', $groupesId) . '\')
+                        AND gr_login = "'.\includes\SQL::quote($resp).'"
+                )';
+        $query = $sql->query($req);
+
+        return 0 < (int) $query->fetch_array()[0];
+    }
+
+    /**
+     * Verifie si un utilisateur est grand responsable d'une liste de groupe
+     *
+     * @param string $resp
+     * @param array $groupesId
+     *
+     * @return bool
+     */
+    public static function isGrandResponsableGroupe($resp, array $groupesId)
+    {
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT EXISTS (
+                    SELECT ggr_gid
+                    FROM conges_groupe_grd_resp
+                    WHERE ggr_gid IN (\'' . implode(',', $groupesId) . '\')
+                        AND ggr_login = "'.\includes\SQL::quote($resp).'"
+                )';
+        $query = $sql->query($req);
+
+        return 0 < (int) $query->fetch_array()[0];
     }
 }

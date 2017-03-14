@@ -41,7 +41,7 @@ if( $_SESSION['config']['gestion_groupes'] ) {
         $onglets['admin-group-responsables'] = _('admin_onglet_groupe_resp');
 }
 
-if ( !isset($onglets[ $onglet ]) && !in_array($onglet, array('chg_pwd_user', 'modif_group', 'modif_user', 'suppr_group','suppr_user')))
+if ( !isset($onglets[ $onglet ]) && !in_array($onglet, array('chg_pwd_user', 'ajout_group', 'modif_group', 'modif_user', 'suppr_group','suppr_user')))
     $onglet = 'admin-users';
 
 /*********************************/

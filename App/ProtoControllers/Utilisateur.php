@@ -14,11 +14,14 @@ class Utilisateur
      * SQL
      */
 
-    public static function getListId()
+    public static function getListId($withAdmin = FALSE)
     {
         $sql = \includes\SQL::singleton();
         $req = 'SELECT u_login
                 FROM conges_users';
+        if(!$withAdmin){
+            $req .= ' WHERE u_login != "admin"';
+        }
         $result = $sql->query($req);
 
         $users = [];
