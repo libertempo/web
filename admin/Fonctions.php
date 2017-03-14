@@ -2185,6 +2185,7 @@ class Fonctions
         $valid_3=TRUE;
         $valid_reliquat=TRUE;
         $valid_4 = true;
+        $valid_5 = true;
 
         // verification de la validite de la saisie du nombre de jours annuels et du solde pour chaque type de conges
         foreach($tab_type_conges as $id_conges => $libelle) {
@@ -2217,16 +2218,17 @@ class Fonctions
             $erreurs['Solde congés exceptionnels'] = _('nombre_incorrect');
         }
 
-        if(!\admin\Fonctions::FormAddUserSoldeHeureOk($tab_new_user['solde_heure'])
-            || !\admin\Fonctions::FormAddUserQuotiteOk($tab_new_user['quotite'])
+        if(!\admin\Fonctions::FormAddUserQuotiteOk($tab_new_user['quotite'])
             || !\admin\Fonctions::FormAddUserNameOk($tab_new_user['nom'])
             || !\admin\Fonctions::FormAddUserNameOk($tab_new_user['prenom']))
         {
             $valid_4=FALSE;
         }
-
+        if ($_SESSION['config']['gestion_heures'] && !\admin\Fonctions::FormAddUserSoldeHeureOk($tab_new_user['solde_heure'])) {
+            $valid_5=FALSE;
+        }
         // si aucune erreur de saisie n'a ete commise
-        if(($valid_1) && ($valid_2) && ($valid_3) && ($valid_4) && ($valid_reliquat) && $tab_new_user['login']!="") {
+        if(($valid_1) && ($valid_2) && ($valid_3) && ($valid_4) && ($valid_5) && ($valid_reliquat) && $tab_new_user['login']!="") {
             // UPDATE de la table conges_users
             $sql = 'UPDATE conges_users SET u_nom="'. \includes\SQL::quote($tab_new_user['nom']).'", u_prenom="'.\includes\SQL::quote($tab_new_user['prenom']).'", u_is_resp="'. \includes\SQL::quote($tab_new_user['is_resp']).'", u_resp_login=';
             if($tab_new_user['resp_login'] == 'no_resp') {
@@ -2234,7 +2236,10 @@ class Fonctions
             } else {
                 $sql .='"'.\includes\SQL::quote($tab_new_user['resp_login']).'",';
             }
-            $sql .= 'u_heure_solde='. \App\Helpers\Formatter::hour2Time($tab_new_user['solde_heure']).',u_is_admin="'. \includes\SQL::quote($tab_new_user['is_admin']).'",u_is_hr="'.\includes\SQL::quote($tab_new_user['is_hr']).'",u_is_active="'.\includes\SQL::quote($tab_new_user['is_active']).'",u_see_all="'.\includes\SQL::quote($tab_new_user['see_all']).'",u_login="'.\includes\SQL::quote($tab_new_user['login']).'",u_quotite="'.\includes\SQL::quote($tab_new_user['quotite']).'",u_email="'. \includes\SQL::quote($tab_new_user['email']).'" WHERE u_login="'.\includes\SQL::quote($u_login_to_update).'"' ;
+            if ($_SESSION['config']['gestion_heures']) {
+                $sql .='u_heure_solde='. \App\Helpers\Formatter::hour2Time($tab_new_user['solde_heure']).',';
+            }
+            $sql .= 'u_is_admin="'. \includes\SQL::quote($tab_new_user['is_admin']).'",u_is_hr="'.\includes\SQL::quote($tab_new_user['is_hr']).'",u_is_active="'.\includes\SQL::quote($tab_new_user['is_active']).'",u_see_all="'.\includes\SQL::quote($tab_new_user['see_all']).'",u_login="'.\includes\SQL::quote($tab_new_user['login']).'",u_quotite="'.\includes\SQL::quote($tab_new_user['quotite']).'",u_email="'. \includes\SQL::quote($tab_new_user['email']).'" WHERE u_login="'.\includes\SQL::quote($u_login_to_update).'"' ;
 
             \includes\SQL::query($sql);
 
@@ -2634,7 +2639,9 @@ class Fonctions
             $tab_new_user['nom']    = htmlentities(getpost_variable('new_nom'), ENT_QUOTES | ENT_HTML401);
             $tab_new_user['prenom']     = htmlentities(getpost_variable('new_prenom'), ENT_QUOTES | ENT_HTML401);
             $tab_new_user['quotite']    = htmlentities(getpost_variable('new_quotite'), ENT_QUOTES | ENT_HTML401);
-            $tab_new_user['solde_heure']    = htmlentities(getpost_variable('new_solde_heure'), ENT_QUOTES | ENT_HTML401);;
+            if ($_SESSION['config']['gestion_heures'] ) {
+                $tab_new_user['solde_heure']    = htmlentities(getpost_variable('new_solde_heure'), ENT_QUOTES | ENT_HTML401);
+            }
             $tab_new_user['is_resp']    = htmlentities(getpost_variable('new_is_resp'), ENT_QUOTES | ENT_HTML401);
             $tab_new_user['resp_login'] = htmlentities(getpost_variable('new_resp_login'), ENT_QUOTES | ENT_HTML401);
             $tab_new_user['is_admin']   = htmlentities(getpost_variable('new_is_admin'), ENT_QUOTES | ENT_HTML401);
