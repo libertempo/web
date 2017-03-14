@@ -16,13 +16,13 @@ $fileConnectorApi = API_PATH . 'configuration.json';
 $dataConnectorApi = [
     'db' => [
         'serveur' => $mysql_serveur,
-        'database' => $mysql_database,
+        'base' => $mysql_database,
         'utilisateur' => $mysql_user,
-        'mot_de_passe' => $mysql_pass,
-    ],
+        'mot_de_passe' => $mysql_pass
+    ]
 ];
 
-$fh = fopen($fileConnectorApi, 'r+');
+$fh = fopen($fileConnectorApi, 'w');
 if (false === fwrite($fh, json_encode($dataConnectorApi))) {
     exit('Écriture impossible.' . "\n");
 }
