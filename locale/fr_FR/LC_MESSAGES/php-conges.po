@@ -333,7 +333,7 @@ msgid "divers_absences_maj_1"
 msgstr "Absences"
 
 msgid "divers_nouvelle_absence"
-msgstr "Nouvelle Absence"
+msgstr "Nouveau Congé"
 
 msgid "divers_mois_precedent"
 msgstr "mois précédent"
@@ -1318,9 +1318,6 @@ msgstr "Grands Responsables du Groupe"
 
 msgid "ie_non_gere"
 msgstr "Internet Explorer n'est pas pris en charge par Libertempo!<br>utilisez un autre navigateur"
-
-msgid "resp_traite_demandes_titre_tableau_1"
-msgstr "Traitement des congés"
 
 msgid "resp_traite_demandes_titre_tableau_2"
 msgstr "Demandes en deuxième validation"

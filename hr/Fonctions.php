@@ -25,7 +25,7 @@ class Fonctions
         /***********************************/
         // AFFICHAGE TABLEAU (premiere ligne)
         $return = '';
-        $return .= '<h2>'. _('hr_traite_user_etat_conges') . '</H2>';
+        $return .= '<h1>'. _('hr_traite_user_etat_conges') . '</h1>';
         $return .= '<table cellpadding="2" class="tablo" width="80%">';
         $return .= '<thead>';
         $return .= '<tr>';
@@ -247,7 +247,7 @@ class Fonctions
             $count1 = $ReqLog1->num_rows;
             if($count1!=0) {
                 // AFFICHAGE TABLEAU DES DEMANDES EN COURS
-                $return .= '<h3>' . _('resp_traite_demandes_titre_tableau_1') . '</h3>';
+                //$return .= '<h3>' . _('resp_traite_demandes_titre') . '</h3>';
                 $return .= '<table cellpadding="2" class="table table-hover table-responsive table-condensed table-striped">';
                 $return .= '<thead>';
                 $return .= '<tr>';
@@ -375,7 +375,7 @@ class Fonctions
         $tab_text_refus = getpost_variable('tab_text_refus');
 
         // titre
-        $return .= '<h2>'. _('resp_traite_demandes_titre') .'</h2>';
+        $return .= '<h1>'. _('resp_traite_demandes_titre') .'</h1>';
 
         // si le tableau des bouton radio des demandes est vide , on affiche les demandes en cours
         if( $tab_bt_radio == '' ) {
@@ -972,7 +972,7 @@ class Fonctions
         /********************/
         /* Titre */
         /********************/
-        $return .= '<h2>'. _('resp_traite_user_titre') . ' ' . $tab_user['prenom'] . ' ' . $tab_user['nom'] . '.</h2>';
+        $return .= '<h3>'. _('resp_traite_user_titre') . ' ' . $tab_user['prenom'] . ' ' . $tab_user['nom'] . '.</h3>';
 
 
         /********************/
@@ -1035,7 +1035,7 @@ class Fonctions
         if($mois_calendrier_saisie_fin==0) {
             $mois_calendrier_saisie_fin=date("m");
         }
-        $return .= '<h3>' . _('resp_traite_user_new_conges') . '</h3>';
+        $return .= '<h1>' . _('resp_traite_user_new_conges') . '</h1>';
 
         $return .= saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet);
 
@@ -1891,13 +1891,22 @@ class Fonctions
         $return .= '<div class="calendar">';
         $months = array('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12');
 
+        $i = 0;
         foreach ($months as $month) {
+            if($i%4 == 0){
+                $return .= '<div class="row">';
+            }
             $return .= '<div class="month">';
             $return .= '<div class="wrapper">';
             $return .= \hr\Fonctions::affiche_calendrier_saisie_jours_chomes($year_calendrier_saisie, $month, $tab_year);
             $return .= '</div>';
             $return .= '</div>';
+            if($i%4 == 3){
+                $return .= '</div>';
+            }
+            $i++;
         }
+        $return .= '</div>';
         $return .= '</div>';
         $return .= '<div class="actions">';
         $return .= '<input type="hidden" name="choix_action" value="commit">';
@@ -1942,7 +1951,7 @@ class Fonctions
         $add_css = '<style>#onglet_menu .onglet{ width: 50% ;}</style>';
 
         //    header_menu('hr', NULL, $add_css);
-
+        $return .= '<h1>'. _('admin_button_jours_chomes_1') . '</h1>';
         $return .= '<div class="pager">';
         $return .= '<div class="onglet calendar-nav">';
         // navigation
@@ -2403,7 +2412,7 @@ class Fonctions
         $tab_type_cong = ( recup_tableau_types_conges() + recup_tableau_types_conges_exceptionnels()  );
 
         // titre
-        $return .= '<h2>'. _('resp_cloture_exercice_titre') . '</H2>';
+        $return .= '<h1>'. _('resp_cloture_exercice_titre') . '</h1>';
 
         if($cloture_users=="TRUE") {
             $tab_cloture_users       = getpost_variable('tab_cloture_users');
