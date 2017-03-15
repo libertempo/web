@@ -295,7 +295,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
         $sql = \includes\SQL::singleton();
         $req = 'SELECT id_heure AS id
                 FROM heure_repos
-                WHERE login IN (\'' . implode(',', $usersResp) . '\')
+                WHERE login IN (\'' . implode('\',\'', $usersResp) . '\')
                 AND statut = '.AHeure::STATUT_DEMANDE;
         $res = $sql->query($req);
         while ($data = $res->fetch_array()) {
