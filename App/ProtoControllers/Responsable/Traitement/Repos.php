@@ -286,7 +286,8 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
 
         $usersRespDirect = \App\ProtoControllers\Responsable::getUsersRespDirect($resp);
         $usersResp = array_merge($usersResp,$usersRespDirect);
-
+        $usersResp = array_diff($usersResp,[$_SESSION['userlogin']]);
+        
         if (empty($usersResp)) {
             return [];
         }
