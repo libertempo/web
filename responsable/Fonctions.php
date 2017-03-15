@@ -1914,18 +1914,18 @@ class Fonctions
         };
         $commentairesAnnulation = array_map($entities, getpost_variable('commentaireAnnulationAdditionnelle', []));
         $annulations = getpost_variable('annulationAdditionnelle', []);
-        $IdsAnnules = array_map(function ($idHeure) {
+        $idsAnnules = array_map(function ($idHeure) {
             return (int) $idHeure;
         }, array_keys($annulations));
 
         if (!empty($annulations)) {
             $aAnnuler = [];
-            foreach ($IdsAnnules as $IdAnnule) {
-                $commentaire = isset($commentairesAnnulation[$IdAnnule])
-                    ? $commentairesAnnulation[$IdAnnule]
+            foreach ($idsAnnules as $idAnnule) {
+                $commentaire = isset($commentairesAnnulation[$idAnnule])
+                    ? $commentairesAnnulation[$idAnnule]
                     : '';
                 $aAnnuler[] = [
-                    'id' => $IdAnnule,
+                    'id' => $idAnnule,
                     'commentaire' => $commentaire,
                 ];
             }
@@ -1943,10 +1943,18 @@ class Fonctions
         $transactionACommiter = true;
 
         foreach ($annulations as $annulation) {
-            $req = 'UPDATE heure_additionnelle
+            $id = (int) $annulation['id'];
+            $reqAnnulation = 'UPDATE heure_additionnelle
                 SET statut = ' . \App\Models\AHeure::STATUT_ANNUL . ', comment_refus = "' . $sql->quote($annulation['commentaire']) . '"
-                WHERE id_heure = ' . (int) $annulation['id'];
-            $transactionACommiter = $sql->query($req) && $transactionACommiter;
+                WHERE id_heure = ' . $id;
+
+            $reqSoustraction = 'UPDATE conges_users
+                SET u_heure_solde = u_heure_solde -
+                    (SELECT duree FROM heure_additionnelle WHERE id_heure = ' . $id . ')
+                WHERE u_login = "' . $userLogin . '"';
+            $transactionACommiter = $sql->query($reqAnnulation)
+                && $sql->query($reqSoustraction)
+                && $transactionACommiter;
         }
 
         if ($transactionACommiter) {
@@ -2076,18 +2084,18 @@ class Fonctions
         };
         $commentairesAnnulation = array_map($entities, getpost_variable('commentaireAnnulationRepos', []));
         $annulations = getpost_variable('annulationRepos', []);
-        $IdsAnnules = array_map(function ($idHeure) {
+        $idsAnnules = array_map(function ($idHeure) {
             return (int) $idHeure;
         }, array_keys($annulations));
 
         if (!empty($annulations)) {
             $aAnnuler = [];
-            foreach ($IdsAnnules as $IdAnnule) {
-                $commentaire = isset($commentairesAnnulation[$IdAnnule])
-                    ? $commentairesAnnulation[$IdAnnule]
+            foreach ($idsAnnules as $idAnnule) {
+                $commentaire = isset($commentairesAnnulation[$idAnnule])
+                    ? $commentairesAnnulation[$idAnnule]
                     : '';
                 $aAnnuler[] = [
-                    'id' => $IdAnnule,
+                    'id' => $idAnnule,
                     'commentaire' => $commentaire,
                 ];
             }
@@ -2105,10 +2113,18 @@ class Fonctions
         $transactionACommiter = true;
 
         foreach ($annulations as $annulation) {
-            $req = 'UPDATE heure_repos
+            $id = (int) $annulation['id'];
+            $reqAnnulation = 'UPDATE heure_repos
                 SET statut = ' . \App\Models\AHeure::STATUT_ANNUL . ', comment_refus = "' . $sql->quote($annulation['commentaire']) . '"
-                WHERE id_heure = ' . (int) $annulation['id'];
-            $transactionACommiter = $sql->query($req) && $transactionACommiter;
+                WHERE id_heure = ' . $id;
+
+            $reqAjout = 'UPDATE conges_users
+                SET u_heure_solde = u_heure_solde +
+                    (SELECT duree FROM heure_repos WHERE id_heure = ' . $id . ')
+                WHERE u_login = "' . $userLogin . '"';
+            $transactionACommiter = $sql->query($reqAnnulation)
+                && $sql->query($reqAjout)
+                && $transactionACommiter;
         }
 
         if ($transactionACommiter) {

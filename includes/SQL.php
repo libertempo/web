@@ -115,7 +115,7 @@ class Database extends \mysqli
     {
         parent::__construct (  $host , $username , $passwd , $dbname );
         $this->query('SET NAMES \'utf8\';');
-        $this->query("SET SESSION.sql_mode='';");
+        $this->query("SET @@SESSION.sql_mode='';");
     }
 
     public function multi_query($query) {

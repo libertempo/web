@@ -2576,7 +2576,7 @@ class Fonctions
         $return .= ob_get_clean();
         $plannings = \App\ProtoControllers\HautResponsable\Planning::getListPlanning((array) ((int) $tab_user['planningId']));
         if (empty($plannings)) {
-            $planningName = 'Aucun planning';
+            $planningName = _('Aucun_planning');
         } else {
             $planningName = $plannings[0]['name'];
         }
