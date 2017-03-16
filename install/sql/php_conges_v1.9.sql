@@ -277,8 +277,11 @@ CREATE TABLE IF NOT EXISTS `conges_users` (
   `u_num_exercice` int(2) NOT NULL DEFAULT '0',
   `planning_id` int(11) UNSIGNED NOT NULL,
   `u_heure_solde` int(11) NOT NULL DEFAULT '0',
+  `date_inscription` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `token` VARCHAR(100),
   PRIMARY KEY (`u_login`),
-  KEY `planning_id` (`planning_id`)
+  KEY `planning_id` (`planning_id`),
+  KEY `token` (`token`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 #
