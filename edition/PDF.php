@@ -10,7 +10,7 @@ class PDF extends \TCPDF
         /* affichage du texte en haut de page */
         /**************************************/
         $this->SetFont('Times','',10);
-        $this->Cell(0,3, html_entity_decode($_SESSION['config']['texte_haut_edition_papier']),0,1,'C');
+        $this->Cell(0,3, html_entity_decode($_SESSION['config']['texte_haut_edition_papier'], ENT_QUOTES),0,1,'C');
         $this->Ln(10);
     }
 
@@ -21,7 +21,7 @@ class PDF extends \TCPDF
         /**************************************/
         $this->SetFont('Times','',10);
         //$pdf->Cell(0,6, 'texte_haut_edition_papier',0,1,'C');
-        $this->Cell(0,3, html_entity_decode($_SESSION['config']['texte_bas_edition_papier']),0,1,'C');
+        $this->Cell(0,3, html_entity_decode($_SESSION['config']['texte_bas_edition_papier'], ENT_QUOTES),0,1,'C');
         $this->Ln(10);
     }
 }
