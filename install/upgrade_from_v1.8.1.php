@@ -142,6 +142,7 @@ $alterApiUser = 'ALTER TABLE `conges_users`
     ADD `date_inscription` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     ADD `token` VARCHAR(100),
     ADD INDEX `token` (`token`)';
+$sql->query($alterApiUser);
 
 $sql->getPdoObj()->commit();
 
