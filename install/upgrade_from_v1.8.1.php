@@ -140,7 +140,7 @@ $sql->query($reqInsertAssociation);
 /* Ajout des champs de l'utilisateur requis pour l'API */
 $alterApiUser = 'ALTER TABLE `conges_users`
     ADD `date_inscription` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    ADD `token` VARCHAR(100),
+    ADD `token` VARCHAR(100),
     ADD INDEX `token` (`token`)';
 $sql->query($alterApiUser);
 
