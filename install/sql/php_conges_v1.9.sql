@@ -349,6 +349,7 @@ INSERT IGNORE INTO `conges_appli` VALUES ('conges_bgcolor', '#DEDEDE');
 INSERT IGNORE INTO `conges_appli` VALUES ('demande_conges_bgcolor', '#E7C4C4');
 INSERT IGNORE INTO `conges_appli` VALUES ('absence_autre_bgcolor', '#D3FFB6');
 INSERT IGNORE INTO `conges_appli` VALUES ('fermeture_bgcolor', '#7B9DE6');
+INSERT IGNORE INTO `conges_appli` VALUES ('token_instance', '');
 
 
 # --------------------------------------------------------

@@ -1,7 +1,6 @@
 <?php
 define('ROOT_PATH', '');
 require_once 'define.php';
-// test
 
 // test si dbconnect.php est présent !
 if (!is_readable( CONFIG_PATH .'dbconnect.php'))

@@ -144,6 +144,10 @@ $alterApiUser = 'ALTER TABLE `conges_users`
     ADD INDEX `token`';
 $sql->query($alterApiUser);
 
+/* Ajout du token d'instance */
+$addApiToken = 'INSERT IGNORE INTO `conges_appli` VALUES ("token_instance", "")';
+$sql->query($addApiToken);
+
 $sql->getPdoObj()->commit();
 
 // on renvoit à la page mise_a_jour.php (là d'ou on vient)
