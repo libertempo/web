@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "9f3bce430bb1b93b6a661703995fae6e",
-    "content-hash": "896d01aa8c7338c80452bb51882d2a54",
+    "hash": "5ef21d30398212c777e09e7ee145f330",
+    "content-hash": "39de9b528563f60736f6f889f37ab7d7",
     "packages": [
         {
             "name": "Libertempo/libertempo-api",
@@ -683,9 +683,9 @@
     ],
     "packages-dev": [],
     "aliases": [],
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "stability-flags": [],
-    "prefer-stable": false,
+    "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": "^5.5|^7.0",
