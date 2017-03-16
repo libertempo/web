@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "3a73c7cc0906ecd647d49090fe38ebeb",
-    "content-hash": "0c4fd75e0e129e2c84762eb0dbf526a0",
+    "hash": "9f3bce430bb1b93b6a661703995fae6e",
+    "content-hash": "896d01aa8c7338c80452bb51882d2a54",
     "packages": [
         {
             "name": "Libertempo/libertempo-api",
@@ -49,7 +49,7 @@
             "support": {
                 "email": "libertempo@lists.tuxfamily.org",
                 "irc": "irc://irc.tuxfamily.org/#Libertempo",
-                "source": "https://github.com/Libertempo/libertempo-api/tree/v.0.1.0",
+                "source": "https://github.com/Libertempo/libertempo-api/tree/0.1.0",
                 "issues": "https://github.com/Libertempo/libertempo-api/issues"
             },
             "time": "2017-02-27 22:45:46"

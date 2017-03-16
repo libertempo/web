@@ -296,6 +296,59 @@
         ]
     },
     {
+        "name": "raveren/kint",
+        "version": "1.1",
+        "version_normalized": "1.1.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/kint-php/kint.git",
+            "reference": "a8549198558560b24e2879c6bac2875de5371483"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/kint-php/kint/zipball/a8549198558560b24e2879c6bac2875de5371483",
+            "reference": "a8549198558560b24e2879c6bac2875de5371483",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.1.0"
+        },
+        "time": "2017-01-15 14:23:43",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "files": [
+                "Kint.class.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Rokas Šleinius",
+                "homepage": "https://github.com/kint-php"
+            },
+            {
+                "name": "Contributors",
+                "homepage": "https://github.com/kint-php/kint/contributors"
+            }
+        ],
+        "description": "Kint - debugging helper for PHP developers",
+        "homepage": "https://github.com/kint-php/kint",
+        "keywords": [
+            "debug",
+            "kint",
+            "php"
+        ]
+    },
+    {
         "name": "psr/container",
         "version": "1.0.0",
         "version_normalized": "1.0.0.0",
@@ -597,59 +650,6 @@
         ]
     },
     {
-        "name": "raveren/kint",
-        "version": "1.1",
-        "version_normalized": "1.1.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/kint-php/kint.git",
-            "reference": "a8549198558560b24e2879c6bac2875de5371483"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/kint-php/kint/zipball/a8549198558560b24e2879c6bac2875de5371483",
-            "reference": "a8549198558560b24e2879c6bac2875de5371483",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.1.0"
-        },
-        "time": "2017-01-15 14:23:43",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.0.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "files": [
-                "Kint.class.php"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Rokas Šleinius",
-                "homepage": "https://github.com/kint-php"
-            },
-            {
-                "name": "Contributors",
-                "homepage": "https://github.com/kint-php/kint/contributors"
-            }
-        ],
-        "description": "Kint - debugging helper for PHP developers",
-        "homepage": "https://github.com/kint-php/kint",
-        "keywords": [
-            "debug",
-            "kint",
-            "php"
-        ]
-    },
-    {
         "name": "Libertempo/libertempo-api",
         "version": "0.1.0",
         "version_normalized": "0.1.0.0",
@@ -670,7 +670,7 @@
         },
         "time": "2017-02-27 22:45:46",
         "type": "library",
-        "installation-source": "source",
+        "installation-source": "dist",
         "autoload": {
             "psr-4": {
                 "": "."
@@ -694,7 +694,7 @@
         "support": {
             "email": "libertempo@lists.tuxfamily.org",
             "irc": "irc://irc.tuxfamily.org/#Libertempo",
-            "source": "https://github.com/Libertempo/libertempo-api/tree/v.0.1.0",
+            "source": "https://github.com/Libertempo/libertempo-api/tree/0.1.0",
             "issues": "https://github.com/Libertempo/libertempo-api/issues"
         }
     }
