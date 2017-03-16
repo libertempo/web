@@ -141,7 +141,7 @@ Class Repos extends \App\Libraries\ANotification {
         $infoResp = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($_SESSION['userlogin']);
         $return['expediteur']['nom'] = $infoResp['u_nom']." ".$infoResp['u_prenom'];
 
-        foreach ($responsables as $responsable) {
+        foreach ($grandResponsables as $responsable) {
             $return['destinataire'][] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($responsable);
         }
 
