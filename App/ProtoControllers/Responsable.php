@@ -93,14 +93,12 @@ class Responsable
     }
 
     /**
-<<<<<<< 7862c53e0673bfa7804d9c1277e70e917485c8c9
-=======
      * Retourne les responsables de groupes et direct d'un utilisateur
      *
      * @param string $user
      * @return array
      */
-    public static function getRespsUtilisateur($user)
+    /*public static function getRespsUtilisateur($user)
     {
         $groupeIds          = \App\ProtoControllers\Utilisateur::getGroupesId($user);
         $responsablesGroupe = \App\ProtoControllers\Groupe\Responsable::getListResponsableByGroupeIds($groupeIds);
@@ -110,33 +108,11 @@ class Responsable
         }
 
         return $responsablesGroupe;
-    }
+    }*/
+
 
     /**
-     * Retourne le login des utilisateurs d'un grand responsable
-     *
-     * @param string $gresp
-     *
-     * @return array $users
-     */
-    public static function getUsersGrandResponsable($gresp)
-    {
 
-        $users = [];
-
-        $sql = \includes\SQL::singleton();
-        $req = 'SELECT gu_login FROM `conges_groupe_grd_resp` as gr, `conges_groupe_users` as gu WHERE gr.ggr_gid = gu.gu_gid AND  ggr_login =\'' . $gresp . '\'';
-        $res = $sql->query($req);
-
-        print($req . '<br />');
-        while ($data = $res->fetch_array()) {
-            $users[] = $data['gu_login'];
-        }
-        return $users;
-    }
-
-    /**
->>>>>>> Développement d'une fonctionnalité qui affiche la liste des absents de la journée, les requêtes correspondant à chaque type d'utilisateur sont fait, le menu et l'interface ont été développés
      * Vérifie si le responsable est absent
      *
      * @param string $resp identifiant du responsable
@@ -223,16 +199,12 @@ class Responsable
      *
      * @return bool
      */
-<<<<<<< 7862c53e0673bfa7804d9c1277e70e917485c8c9
     public static function isRespDeUtilisateur($resp, $user) {
         return $resp != $user 
                 && (\App\ProtoControllers\Responsable::isRespDirect($resp, $user) 
                 || \App\ProtoControllers\Responsable::isRespGroupe($resp, \App\ProtoControllers\Utilisateur::getGroupesId($user)));
-=======
-    public static function isRespDeUtilisateur($resp, $user)
-    {
-        return \App\ProtoControllers\Responsable::isRespDirect($resp, $user) || \App\ProtoControllers\Responsable::isRespGroupe($resp, \App\ProtoControllers\Utilisateur::getGroupesId($user));
->>>>>>> Développement d'une fonctionnalité qui affiche la liste des absents de la journée, les requêtes correspondant à chaque type d'utilisateur sont fait, le menu et l'interface ont été développés
+        // TODO REVIEW
+        // return \App\ProtoControllers\Responsable::isRespDirect($resp, $user) || \App\ProtoControllers\Responsable::isRespGroupe($resp, \App\ProtoControllers\Utilisateur::getGroupesId($user));
     }
 
     /**
@@ -262,17 +234,12 @@ class Responsable
             return false;
         }
 
-<<<<<<< 7862c53e0673bfa7804d9c1277e70e917485c8c9
         $RespsUser = \App\ProtoControllers\Responsable::getResponsablesUtilisateur($user);
+        // TODO REVIEW
+        //$RespsUser       = \App\ProtoControllers\Responsable::getRespsUtilisateur($user);
         $RespUserPresent = array_diff($RespsUser,$usersRespRespAbs);
         if (empty($RespUserPresent)){
             return TRUE;
-=======
-        $RespsUser       = \App\ProtoControllers\Responsable::getRespsUtilisateur($user);
-        $RespUserPresent = array_diff($RespsUser, $usersRespRespAbs);
-        if (empty($RespUserPresent)) {
-            return true;
->>>>>>> Développement d'une fonctionnalité qui affiche la liste des absents de la journée, les requêtes correspondant à chaque type d'utilisateur sont fait, le menu et l'interface ont été développés
         }
 
         return false;
