@@ -335,8 +335,11 @@ class Fonctions {
         //*** ETAPE 3
         elseif($etape==3)
         {
+            /* Reset du token d'instance à chaque version */
+            \includes\SQL::query('UPDATE `conges_appli` SET appli_valeur =  "' . hash('sha256', time() . rand()) . '" WHERE appli_variable = "token_instance"');
+
             // FIN
-            // test si fichiers config.php ou config_old.php existent encore (si oui : demande de les éffacer !
+            // test si fichiers config.php ou config_old.php existent encore (si oui : demande de les effacer !
             if( (\install\Fonctions::test_config_file()) || (\install\Fonctions::test_old_config_file()) )
             {
                 if(test_config_file())

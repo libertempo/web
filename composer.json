@@ -1,8 +1,11 @@
 {
-    "name": "wouldsmina/Libertempo",
+    "name": "Libertempo/Libertempo-web",
     "keywords": ["congés", "leaves"],
-    "homepage": "https://github.com/wouldsmina/Libertempo",
+    "homepage": "https://github.com/Libertempo/Libertempo-web",
     "license": "GPL-2.0",
+    "replace" : {
+        "wouldsmina/Libertempo": "^1.8",
+    },
     "authors": [
         {
             "name": "wouldsmina",
