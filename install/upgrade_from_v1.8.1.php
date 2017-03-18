@@ -141,11 +141,11 @@ $sql->query($reqInsertAssociation);
 $alterApiUser = 'ALTER TABLE `conges_users`
     ADD `date_inscription` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     ADD `token` VARCHAR(100) NOT NULL DEFAULT "",
-    ADD INDEX `token`';
+    ADD INDEX `token` (`token`)';
 $sql->query($alterApiUser);
 
 /* Ajout du token d'instance */
-$addApiToken = 'INSERT IGNORE INTO `conges_appli` VALUES ("token_instance", "")';
+$addApiToken = 'INSERT IGNORE INTO `conges_appli` VALUES ("token_instance", "' . hash('sha256', time() . rand()) . '")';
 $sql->query($addApiToken);
 
 $sql->getPdoObj()->commit();

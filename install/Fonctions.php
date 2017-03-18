@@ -195,9 +195,12 @@ class Fonctions {
         {
             //on execute le script [nouvelle vesion].sql qui crée et initialise les tables
             $file_sql="sql/php_conges_v$config_php_conges_version.sql";
-            if(file_exists($file_sql))
+            if(file_exists($file_sql)) {
                 $result = execute_sql_file($file_sql);
-
+            }
+            if (0 <= version_compare($config_php_conges_version, '1.9')) {
+                \includes\SQL::query('UPDATE `conges_appli` SET appli_valeur =  "' . hash('sha256', time() . rand()) . '" WHERE appli_variable = "token_instance"');
+            }
 
             /*************************************/
             // FIN : mise à jour de la "installed_version" et de la langue dans la table conges_config

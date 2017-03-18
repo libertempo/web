@@ -281,7 +281,7 @@ CREATE TABLE IF NOT EXISTS `conges_users` (
   `token` VARCHAR(100) NOT NULL DEFAULT '',
   PRIMARY KEY (`u_login`),
   KEY `planning_id` (`planning_id`),
-  KEY `token`
+  KEY `token` (`token`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 #
