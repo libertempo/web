@@ -28,14 +28,14 @@ $onglet = getpost_variable('onglet', "page_principale");
 $onglets = array();
 
 $onglets['page_principale'] = _('resp_menu_button_retour_main');
-$DemandesAdd                = new \App\ProtoControllers\Responsable\Traitement\Additionnelle;
-$DemandesRep                = new \App\ProtoControllers\Responsable\Traitement\Repos;
-$DemandesConges             = new \App\ProtoControllers\Responsable\Traitement\Conge;
+$DemandesAdd = new \App\ProtoControllers\Responsable\Traitement\Additionnelle;
+$DemandesRep = new \App\ProtoControllers\Responsable\Traitement\Repos;
+$DemandesConges = new \App\ProtoControllers\Responsable\Traitement\Conge;
 
 if ($_SESSION['config']['user_saisie_demande']) {
 
     $nbbadgeConges = '';
-    $nbdemandes    = $DemandesConges->getNbDemandesATraiter($_SESSION['userlogin']);
+    $nbdemandes = $DemandesConges->getNbDemandesATraiter($_SESSION['userlogin']);
     if (0 < $nbdemandes) {
         $nbbadgeConges = ' <span class="badge">' . $nbdemandes . '</span>';
     }
@@ -64,10 +64,6 @@ if ($_SESSION['config']['resp_ajoute_conges']) {
 
 if ($_SESSION['config']['resp_association_planning']) {
     $onglets['liste_planning'] = _('resp_liste_planning');
-}
-
-if (false) {
-    $onglets['cloture_exercice'] = _('button_cloture');
 }
 
 if (!isset($onglets[$onglet]) && !in_array($onglet, array('traite_user', 'modif_planning'))) {

@@ -2171,7 +2171,7 @@ class Fonctions
         $session  = session_id();
         $erreurs = [];
 
-        $result=TRUE;
+        $result=true;
 
         // recup du tableau des types de conges (seulement les conges)
         $tab_type_conges = recup_tableau_types_conges();
@@ -2180,10 +2180,10 @@ class Fonctions
             $tab_type_conges_excep=recup_tableau_types_conges_exceptionnels();
         }
 
-        $valid_1=TRUE;
-        $valid_2=TRUE;
-        $valid_3=TRUE;
-        $valid_reliquat=TRUE;
+        $valid_1=true;
+        $valid_2=true;
+        $valid_3=true;
+        $valid_reliquat=true;
         $valid_4 = true;
         $valid_5 = true;
 
@@ -2205,13 +2205,13 @@ class Fonctions
 
         // si l'application gere les conges exceptionnels ET si des types de conges exceptionnels ont été définis
         if (($_SESSION['config']['gestion_conges_exceptionnels'])&&(count($tab_type_conges_excep) > 0)) {
-            $valid_3=TRUE;
+            $valid_3=true;
             // vérification de la validité de la saisie du nombre de jours annuels et du solde pour chaque type de conges exceptionnels
             foreach($tab_type_conges_excep as $id_conges => $libelle) {
                 $valid_3 = $valid_3 && verif_saisie_decimal($tab_new_solde[$id_conges]);  //verif la bonne saisie du nombre décimal
             }
         } else { // sinon on considère $valid_3 comme vrai
-            $valid_3=TRUE;
+            $valid_3=true;
         }
 
         if (false === $valid_3) {
@@ -2222,10 +2222,10 @@ class Fonctions
             || !\admin\Fonctions::FormAddUserNameOk($tab_new_user['nom'])
             || !\admin\Fonctions::FormAddUserNameOk($tab_new_user['prenom']))
         {
-            $valid_4=FALSE;
+            $valid_4=false;
         }
         if ($_SESSION['config']['gestion_heures'] && !\admin\Fonctions::FormAddUserSoldeHeureOk($tab_new_user['solde_heure'])) {
-            $valid_5=FALSE;
+            $valid_5=false;
         }
         // si aucune erreur de saisie n'a ete commise
         if(($valid_1) && ($valid_2) && ($valid_3) && ($valid_4) && ($valid_5) && ($valid_reliquat) && $tab_new_user['login']!="") {
