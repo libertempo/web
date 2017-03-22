@@ -8,8 +8,9 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     define('ENV_PROD', 3);
     define('DEFINE_INCLUDE',   true);
     define('SHOW_SQL',         false);
-    define('ABSOLUTE_SYSPATH', dirname(__FILE__) . '/');
-    define('DEBUG_SYSPATH',    ABSOLUTE_SYSPATH . 'debug/');
+    define('DS',               DIRECTORY_SEPARATOR);
+    define('ABSOLUTE_SYSPATH', dirname(__FILE__) . DS);
+    define('DEBUG_SYSPATH',    ABSOLUTE_SYSPATH . 'debug' . DS);
     define('PUBLIC_PATH',      ROOT_PATH . 'Public/');
     define('ASSETS_PATH',      PUBLIC_PATH . 'Assets/');
     define('JS_PATH',          ASSETS_PATH . 'Js/');
