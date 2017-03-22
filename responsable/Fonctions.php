@@ -1,6 +1,7 @@
 <?php
 
 namespace responsable;
+use App\ProtoControllers\Groupe\Utilisateur;
 
 /**
 * Regroupement des fonctions liées au responsable
@@ -1348,7 +1349,7 @@ class Fonctions
         $return .= '</ul>';
         $return .= '</div>';
 
-        $return .= '<h2>' . _('resp_traite_user_etat_conges') . $year_affichage . '</h2>';
+        $return .= '<h2>' . _('resp_traite_user_etat_conges') . ' ' . $year_affichage . '</h2>';
 
         // Récupération des informations de speriodes de conges/absences
         $sql3 = "SELECT p_login, p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_nb_jours, p_commentaire, p_type, p_etat, p_motif_refus, p_date_demande, p_date_traitement, p_num FROM conges_periode " .
@@ -1474,7 +1475,7 @@ class Fonctions
             $return .= '</table>';
 
             $return .= '<input type="hidden" name="user_login" value="' . $user_login . '">';
-            $return .= '<input class="btn" type="submit" value="' . _('form_submit') . '">';
+            $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
             $return .= '</form>';
         }
         return $return;
@@ -1701,7 +1702,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affichage($user_login,  $year_affichage, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $tri_date)
+    public static function affichage($user_login, $year_affichage, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $tri_date)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $session=session_id();
@@ -1814,28 +1815,59 @@ class Fonctions
     /**
      * Encapsule le comportement du module de gestion des congés des utilisateurs
      *
-     * @return void
-     * @access public
+     * @return string
      * @static
      */
     public static function traiteUserModule()
     {
-        //var pour resp_traite_user.php
-        $user_login   = getpost_variable('user_login') ;
-        $year_calendrier_saisie_debut = getpost_variable('year_calendrier_saisie_debut', 0) ;
-        $mois_calendrier_saisie_debut = getpost_variable('mois_calendrier_saisie_debut', 0) ;
+        $entities = function ($element) {
+            return htmlentities($element, ENT_QUOTES | ENT_HTML401);
+        };
+        $userLogin = $entities(getpost_variable('user_login'));
+
+        if ( !is_resp_of_user($_SESSION['userlogin'] , $userLogin)) {
+            redirect(ROOT_PATH . 'deconnexion.php');
+            exit;
+        }
+
+        $return = self::traiterUserConge($userLogin);
+        $return .= '<hr  />';
+        $return .= self::traiteUserHeureAdditionnelle($userLogin);
+        $return .= '<hr />';
+        $return .= self::traiteUserHeureRepos($userLogin);
+
+        return $return;
+    }
+
+    /**
+     * Traite les congés de l'utilisateur
+     *
+     * @param string $user_login
+     *
+     * @return string
+     */
+    private static function traiterUserConge($user_login)
+    {
+        $entities = function ($element) {
+            return htmlentities($element, ENT_QUOTES | ENT_HTML401);
+        };
+        $year_affichage = (int) getpost_variable('year_affichage', date("Y"));
+
+        $year_calendrier_saisie_debut = $entities(getpost_variable('year_calendrier_saisie_debut', 0));
+        $mois_calendrier_saisie_debut = $entities(getpost_variable('mois_calendrier_saisie_debut', 0));
         $year_calendrier_saisie_fin = getpost_variable('year_calendrier_saisie_fin', 0) ;
-        $mois_calendrier_saisie_fin = getpost_variable('mois_calendrier_saisie_fin', 0) ;
-        $tri_date = getpost_variable('tri_date', "ascendant") ;
-        $tab_checkbox_annule = getpost_variable('tab_checkbox_annule') ;
-        $tab_radio_traite_demande = getpost_variable('tab_radio_traite_demande') ;
-        $tab_text_refus = getpost_variable('tab_text_refus') ;
-        $tab_text_annul = getpost_variable('tab_text_annul') ;
+        $mois_calendrier_saisie_fin = $entities(getpost_variable('mois_calendrier_saisie_fin', 0));
+        $tri_date = $entities(getpost_variable('tri_date', "ascendant"));
+        $tab_checkbox_annule = array_map($entities, getpost_variable('tab_checkbox_annule', []));
+        $tab_radio_traite_demande = array_map($entities, getpost_variable('tab_radio_traite_demande', []));
+        $tab_text_refus = array_map($entities, getpost_variable('tab_text_refus', []));
+        $tab_text_annul = array_map($entities, (array) getpost_variable('tab_text_annul', []));
         $new_demande_conges = getpost_variable('new_demande_conges', 0) ;
-        $new_debut = getpost_variable('new_debut') ;
-        $new_demi_jour_deb = htmlentities(getpost_variable('new_demi_jour_deb'), ENT_QUOTES | ENT_HTML401);
-        $new_fin = getpost_variable('new_fin') ;
-        $new_demi_jour_fin = htmlentities(getpost_variable('new_demi_jour_fin'), ENT_QUOTES | ENT_HTML401);
+        $new_debut = $entities(getpost_variable('new_debut'));
+        $new_demi_jour_deb = $entities(getpost_variable('new_demi_jour_deb'));
+        $new_fin = $entities(getpost_variable('new_fin'));
+        $new_demi_jour_fin = $entities(getpost_variable('new_demi_jour_fin'));
+
         $return = '';
 
         if($_SESSION['config']['disable_saise_champ_nb_jours_pris']) { // zone de texte en readonly et grisée
@@ -1844,26 +1876,17 @@ class Fonctions
             $new_nb_jours = getpost_variable('new_nb_jours') ;
         }
 
-        $new_comment = htmlentities(getpost_variable('new_comment'), ENT_QUOTES | ENT_HTML401);
-        $new_type = htmlentities(getpost_variable('new_type'), ENT_QUOTES | ENT_HTML401);
-        $year_affichage = (int) getpost_variable('year_affichage' , date("Y") );
-
-        /*************************************/
-
-        if ( !is_resp_of_user($_SESSION['userlogin'] , $user_login)) {
-            redirect(ROOT_PATH . 'deconnexion.php');
-            exit;
-        }
+        $new_comment = $entities(getpost_variable('new_comment'));
+        $new_type = $entities(getpost_variable('new_type'));
 
         /************************************/
 
-
         // si une annulation de conges a été selectionée :
-        if($tab_checkbox_annule!="") {
+        if(!empty($tab_checkbox_annule)) {
             $return .= \responsable\Fonctions::annule_conges($user_login, $tab_checkbox_annule, $tab_text_annul);
         }
         // si le traitement des demandes a été selectionée :
-        elseif($tab_radio_traite_demande!="") {
+        elseif(!empty($tab_radio_traite_demande)) {
             $return .= \responsable\Fonctions::traite_demandes($user_login, $tab_radio_traite_demande, $tab_text_refus);
         }
         // si un nouveau conges ou absence a été saisi pour un user :
@@ -1872,6 +1895,347 @@ class Fonctions
         } else {
             $return .= \responsable\Fonctions::affichage($user_login,  $year_affichage, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $tri_date);
         }
+
+        return $return;
+    }
+
+    /**
+     * Traite les heures additionnelles de l'utilisateur
+     *
+     * @param string $userLogin
+     *
+     * @return string
+     */
+    private static function traiteUserHeureAdditionnelle($userLogin)
+    {
+        $year = (int) getpost_variable('year_affichage_heure_additionnelle', date("Y"));
+        $entities = function ($element) {
+            return htmlentities($element, ENT_QUOTES | ENT_HTML401);
+        };
+        $commentairesAnnulation = array_map($entities, getpost_variable('commentaireAnnulationAdditionnelle', []));
+        $annulations = getpost_variable('annulationAdditionnelle', []);
+        $idsAnnules = array_map(function ($idHeure) {
+            return (int) $idHeure;
+        }, array_keys($annulations));
+
+        if (!empty($annulations)) {
+            $aAnnuler = [];
+            foreach ($idsAnnules as $idAnnule) {
+                $commentaire = isset($commentairesAnnulation[$idAnnule])
+                    ? $commentairesAnnulation[$idAnnule]
+                    : '';
+                $aAnnuler[] = [
+                    'id' => $idAnnule,
+                    'commentaire' => $commentaire,
+                ];
+            }
+            self::annulerHeureAdditionnelle($userLogin, $aAnnuler);
+        }
+
+        return self::getFormulaireAnnulationHeureAdditionnelle($userLogin, $year);
+    }
+
+    private static function annulerHeureAdditionnelle($userLogin, array $annulations)
+    {
+        $sql = \includes\SQL::singleton();
+        $pdo = $sql->getPdoObj();
+        $pdo->begin_transaction();
+        $transactionACommiter = true;
+
+        foreach ($annulations as $annulation) {
+            $id = (int) $annulation['id'];
+            $reqAnnulation = 'UPDATE heure_additionnelle
+                SET statut = ' . \App\Models\AHeure::STATUT_ANNUL . ', comment_refus = "' . $sql->quote($annulation['commentaire']) . '"
+                WHERE id_heure = ' . $id;
+
+            $reqSoustraction = 'UPDATE conges_users
+                SET u_heure_solde = u_heure_solde -
+                    (SELECT duree FROM heure_additionnelle WHERE id_heure = ' . $id . ')
+                WHERE u_login = "' . $userLogin . '"';
+            $transactionACommiter = $sql->query($reqAnnulation)
+                && $sql->query($reqSoustraction)
+                && $transactionACommiter;
+        }
+
+        if ($transactionACommiter) {
+            $pdo->commit();
+            return;
+        }
+        $pdo->rollback();
+        return;
+    }
+
+    /**
+     * Formulaire d'affichage des heures additionelles à manipuler
+     *
+     * @param string $userLogin
+     * @param int $year
+     *
+     * @return string
+     */
+    private static function getFormulaireAnnulationHeureAdditionnelle($userLogin, $year)
+    {
+        $yearPrec = $year - 1;
+        $yearSucc = $year + 1;
+        $url = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $session = session_id();
+        $return = '';
+
+        $return .= '<div class="calendar-nav">';
+        $return .= '<ul>';
+        $return .= '<li><a class="action previous" href="' . $url . '?session=' . $session . '&onglet=traite_user&user_login=' . $userLogin . '&year_affichage_heure_additionnelle=' . $yearPrec . '"><i class="fa fa-chevron-left"></i></a></li>';
+        $return .= '<li class="current-year">' . $year . '</li>';
+        $return .= '<li><a class="action next" href="' . $url . '?session=' . $session . '&onglet=traite_user&user_login=' . $userLogin . '&year_affichage_heure_additionnelle=' . $yearSucc . '"><i class="fa fa-chevron-right"></i></a></li>';
+        $return .= '</ul>';
+        $return .= '</div>';
+        $return .= '<h2>' . _('resp_traite_user_etat_heures_additionnelles') . ' ' . $year . '</h2>';
+
+        /* Récupération des heures éligibles */
+        $additionnelles = new \App\ProtoControllers\Employe\Heure\Additionnelle();
+        $debutTime = mktime(0, 0, 0, 1, 1, $year);
+        $finTime = mktime(0, 0, 0, 1, 1, $yearSucc);
+        $params = [
+            'login' => $userLogin,
+            'timestampDebut' => $debutTime,
+            'timestampFin' => $finTime,
+            'statut' => [\App\Models\AHeure::STATUT_VALIDATION_FINALE, \App\Models\AHeure::STATUT_ANNUL],
+        ];
+        $heuresIds = $additionnelles->getListeId($params);
+
+        $return .= '<form action="" method="POST">';
+        $return .= '<table class="table table-hover table-responsive table-condensed table-striped">';
+        $return .= '<thead>';
+        $return .= '<tr align="center">';
+        $return .= '<th>' . _('jour') . '</th>';
+        $return .= '<th>' . _('divers_debut_maj_1') . '</th>';
+        $return .= '<th>' . _('divers_fin_maj_1') . '</th>';
+        $return .= '<th>' . _('duree') . '</th>';
+        $return .= '<th>' . _('divers_comment_maj_1') . '</th>';
+        $return .= '<th>' . _('divers_etat_maj_1') . '</th>';
+        $return .= '<th>' . _('resp_traite_user_annul') . '</th>';
+        $return .= '<th>' . _('resp_traite_user_motif_annul') . '</th>';
+
+        $return .= '</tr>';
+        $return .= '</thead>';
+        $return .= '<tbody>';
+        if (empty($heuresIds)) {
+            $return .= '<td colspan=9><center><b>' . _('resp_traite_user_aucune_heure_additionnelle') . '</b></center></td>';
+        } else {
+            $heures = $additionnelles->getListeSQL($heuresIds);
+            $positionElement = 1;
+            foreach ($heures as $heure) {
+                $idHeure = (int) $heure['id_heure'];
+                $jour   = date('d/m/Y', $heure['debut']);
+                $debut  = date('H\:i', $heure['debut']);
+                $fin    = date('H\:i', $heure['fin']);
+                $duree  = \App\Helpers\Formatter::Timestamp2Duree($heure['duree']);
+                $statut = \App\Models\AHeure::statusText($heure['statut']);
+                $comment = \includes\SQL::quote($heure['comment']);
+                $commentaireRefus = \includes\SQL::quote($heure['comment_refus']);
+                if (empty($commentaireRefus)) {
+                    $commentaireRefus = _('divers_inconnu');
+                }
+
+                switch ($heure['statut']) {
+                    case \App\Models\AHeure::STATUT_ANNUL:
+                    case \App\Models\AHeure::STATUT_REFUS:
+                        $annulation = '';
+                        $commentaireAnnulation = '<i>' . _('resp_traite_user_motif') . ' : ' . $commentaireRefus . '</i>';
+                        break;
+                    default:
+                        $annulation = '<input type="checkbox" name="annulationAdditionnelle[' . $idHeure . ']" />';
+                        $commentaireAnnulation = '<input type="text" name="commentaireAnnulationAdditionnelle[' . $idHeure . ']" size="20" max="100"/>';
+                        break;
+                }
+                $return .= '<tr class="' . (($positionElement % 2 == 0) ? 'i' : 'p') . '">';
+                $return .= '<td>' . $jour . '</td>';
+                $return .= '<td>' . $debut . '</td>';
+                $return .= '<td>' . $fin . '</td>';
+                $return .= '<td>' . $duree . '</td>';
+                $return .= '<td>' . $comment . '</td>';
+                $return .= '<td>' . $statut . '</td>';
+                $return .= '<td>' . $annulation . '</td>';
+                $return .= '<td>' . $commentaireAnnulation . '</td>';
+                $return .= '</tr>';
+                ++$positionElement;
+            }
+        }
+        $return .= '</tbody>';
+        $return .= '</table>';
+        $return .= '<input type="hidden" name="userLogin" value="' . $userLogin . '">';
+        $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
+        $return .= '</form>';
+
+        return $return;
+    }
+
+    /**
+     * Traite les heures de repos de l'utilisateur
+     *
+     * @param string $userLogin
+     *
+     * @return string
+     */
+    private static function traiteUserHeureRepos($userLogin)
+    {
+        $year = (int) getpost_variable('year_affichage_heure_repos', date("Y"));
+        $entities = function ($element) {
+            return htmlentities($element, ENT_QUOTES | ENT_HTML401);
+        };
+        $commentairesAnnulation = array_map($entities, getpost_variable('commentaireAnnulationRepos', []));
+        $annulations = getpost_variable('annulationRepos', []);
+        $idsAnnules = array_map(function ($idHeure) {
+            return (int) $idHeure;
+        }, array_keys($annulations));
+
+        if (!empty($annulations)) {
+            $aAnnuler = [];
+            foreach ($idsAnnules as $idAnnule) {
+                $commentaire = isset($commentairesAnnulation[$idAnnule])
+                    ? $commentairesAnnulation[$idAnnule]
+                    : '';
+                $aAnnuler[] = [
+                    'id' => $idAnnule,
+                    'commentaire' => $commentaire,
+                ];
+            }
+            self::annulerHeureRepos($userLogin, $aAnnuler);
+        }
+
+        return self::getFormulaireAnnulationHeureRepos($userLogin, $year, $commentairesAnnulation);
+    }
+
+    private static function annulerHeureRepos($userLogin, array $annulations)
+    {
+        $sql = \includes\SQL::singleton();
+        $pdo = $sql->getPdoObj();
+        $pdo->begin_transaction();
+        $transactionACommiter = true;
+
+        foreach ($annulations as $annulation) {
+            $id = (int) $annulation['id'];
+            $reqAnnulation = 'UPDATE heure_repos
+                SET statut = ' . \App\Models\AHeure::STATUT_ANNUL . ', comment_refus = "' . $sql->quote($annulation['commentaire']) . '"
+                WHERE id_heure = ' . $id;
+
+            $reqAjout = 'UPDATE conges_users
+                SET u_heure_solde = u_heure_solde +
+                    (SELECT duree FROM heure_repos WHERE id_heure = ' . $id . ')
+                WHERE u_login = "' . $userLogin . '"';
+            $transactionACommiter = $sql->query($reqAnnulation)
+                && $sql->query($reqAjout)
+                && $transactionACommiter;
+        }
+
+        if ($transactionACommiter) {
+            $pdo->commit();
+            return;
+        }
+        $pdo->rollback();
+        return;
+    }
+
+    /**
+     * Formulaire d'affichage des heures de repos à manipuler
+     *
+     * @param string $userLogin
+     * @param int $year
+     *
+     * @return string
+     */
+    private static function getFormulaireAnnulationHeureRepos($userLogin, $year)
+    {
+        $yearPrec = $year - 1;
+        $yearSucc = $year + 1;
+        $url = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $session = session_id();
+        $return = '';
+
+        $return .= '<div class="calendar-nav">';
+        $return .= '<ul>';
+        $return .= '<li><a class="action previous" href="' . $url . '?session=' . $session . '&onglet=traite_user&user_login=' . $userLogin . '&year_affichage_heure_repos=' . $yearPrec . '"><i class="fa fa-chevron-left"></i></a></li>';
+        $return .= '<li class="current-year">' . $year . '</li>';
+        $return .= '<li><a class="action next" href="' . $url . '?session=' . $session . '&onglet=traite_user&user_login=' . $userLogin . '&year_affichage_heure_repos=' . $yearSucc . '"><i class="fa fa-chevron-right"></i></a></li>';
+        $return .= '</ul>';
+        $return .= '</div>';
+        $return .= '<h2>' . _('resp_traite_user_etat_heures_repos') . ' ' . $year . '</h2>';
+
+        /* Récupération des heures éligibles */
+        $repos = new \App\ProtoControllers\Employe\Heure\Repos();
+        $debutTime = mktime(0, 0, 0, 1, 1, $year);
+        $finTime = mktime(0, 0, 0, 1, 1, $yearSucc);
+        $params = [
+            'login' => $userLogin,
+            'timestampDebut' => $debutTime,
+            'timestampFin' => $finTime,
+            'statut' => [\App\Models\AHeure::STATUT_VALIDATION_FINALE, \App\Models\AHeure::STATUT_ANNUL],
+        ];
+        $heuresIds = $repos->getListeId($params);
+
+        $return .= '<form action="" method="POST">';
+        $return .= '<table class="table table-hover table-responsive table-condensed table-striped">';
+        $return .= '<thead>';
+        $return .= '<tr align="center">';
+        $return .= '<th>' . _('jour') . '</th>';
+        $return .= '<th>' . _('divers_debut_maj_1') . '</th>';
+        $return .= '<th>' . _('divers_fin_maj_1') . '</th>';
+        $return .= '<th>' . _('duree') . '</th>';
+        $return .= '<th>' . _('divers_comment_maj_1') . '</th>';
+        $return .= '<th>' . _('divers_etat_maj_1') . '</th>';
+        $return .= '<th>' . _('resp_traite_user_annul') . '</th>';
+        $return .= '<th>' . _('resp_traite_user_motif_annul') . '</th>';
+        $return .= '</tr>';
+        $return .= '</thead>';
+        $return .= '<tbody>';
+        if (empty($heuresIds)) {
+            $return .= '<td colspan=9><center><b>' . _('resp_traite_user_aucune_heure_repos') . '</b></center></td>';
+        } else {
+            $heures = $repos->getListeSQL($heuresIds);
+            $positionElement = 1;
+            foreach ($heures as $heure) {
+                $idHeure = (int) $heure['id_heure'];
+                $jour   = date('d/m/Y', $heure['debut']);
+                $debut  = date('H\:i', $heure['debut']);
+                $fin    = date('H\:i', $heure['fin']);
+                $duree  = \App\Helpers\Formatter::Timestamp2Duree($heure['duree']);
+                $statut = \App\Models\AHeure::statusText($heure['statut']);
+                $comment = \includes\SQL::quote($heure['comment']);
+                $commentaireRefus = \includes\SQL::quote($heure['comment_refus']);
+                if (empty($commentaireRefus)) {
+                    $commentaireRefus = _('divers_inconnu');
+                }
+
+                switch ($heure['statut']) {
+                    case \App\Models\AHeure::STATUT_ANNUL:
+                    case \App\Models\AHeure::STATUT_REFUS:
+                        $annulation = '';
+                        $commentaireAnnulation = '<i>' . _('resp_traite_user_motif') . ' : ' . $commentaireRefus . '</i>';
+                        break;
+                    default:
+                        $annulation = '<input type="checkbox" name="annulationRepos[' . $idHeure . ']" />';
+                        $commentaireAnnulation = '<input type="text" name="commentaireAnnulationRepos[' . $idHeure . ']" size="20" max="100"/>';
+                        break;
+                }
+                $return .= '<tr class="' . (($positionElement % 2 == 0) ? 'i' : 'p') . '">';
+                $return .= '<td>' . $jour . '</td>';
+                $return .= '<td>' . $debut . '</td>';
+                $return .= '<td>' . $fin . '</td>';
+                $return .= '<td>' . $duree . '</td>';
+                $return .= '<td>' . $comment . '</td>';
+                $return .= '<td>' . $statut . '</td>';
+                $return .= '<td>' . $annulation . '</td>';
+                $return .= '<td>' . $commentaireAnnulation . '</td>';
+                $return .= '</tr>';
+                ++$positionElement;
+            }
+        }
+
+        $return .= '</tbody>';
+        $return .= '</table>';
+        $return .= '<input type="hidden" name="userLogin" value="' . $userLogin . '">';
+        $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
+        $return .= '</form>';
+
         return $return;
     }
 
