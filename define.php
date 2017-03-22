@@ -8,8 +8,9 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     define('ENV_PROD', 3);
     define('DEFINE_INCLUDE',   true);
     define('SHOW_SQL',         false);
-    define('ABSOLUTE_SYSPATH', dirname(__FILE__) . '/');
-    define('DEBUG_SYSPATH',    ABSOLUTE_SYSPATH . 'debug/');
+    define('DS',               DIRECTORY_SEPARATOR);
+    define('ABSOLUTE_SYSPATH', dirname(__FILE__) . DS);
+    define('DEBUG_SYSPATH',    ABSOLUTE_SYSPATH . 'debug' . DS);
     define('PUBLIC_PATH',      ROOT_PATH . 'Public/');
     define('ASSETS_PATH',      PUBLIC_PATH . 'Assets/');
     define('JS_PATH',          ASSETS_PATH . 'Js/');
@@ -18,7 +19,7 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     define('CSS_PATH',         ASSETS_PATH . 'Css/');
     define('LIBRARY_PATH',     ROOT_PATH . 'library/');
     define('INCLUDE_PATH',     ROOT_PATH . 'includes/');
-    define('CONFIG_PATH',      ROOT_PATH . 'cfg/');
+    define('CONFIG_PATH',      realpath(ROOT_PATH) . DS . 'cfg'. DS);
     define('INSTALL_PATH',     ROOT_PATH . 'install/');
     define('LOCALE_PATH',      ROOT_PATH . 'locale/');
     define('DUMP_PATH',        ROOT_PATH . 'dump/');
