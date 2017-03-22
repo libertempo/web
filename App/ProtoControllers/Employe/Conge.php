@@ -20,7 +20,7 @@ class Conge
      */
     public function getListe()
     {
-        $return    = '';
+        $return = '';
         $errorsLst = [];
         if ($_SESSION['config']['where_to_find_user_email'] == "ldap") {
             include_once CONFIG_PATH . 'config_ldap.php';
@@ -38,9 +38,10 @@ class Conge
 
         if (!empty($_POST) && $this->isSearch($_POST)) {
             $champsRecherche = $_POST['search'];
-            $champsSql       = $this->transformChampsRecherche($_POST);
+            $champsSql = $this->transformChampsRecherche($_POST);
         } else {
             $champsRecherche = [
+                // exemple de recherche
                 //'type' => 'cp',
             ];
             $champsSql = [];
@@ -63,16 +64,16 @@ class Conge
         $childTable = '<thead><tr><th>' . _('divers_debut_maj_1') . '</th><th>' . _('divers_fin_maj_1') . '</th><th>' . _('divers_type_maj_1') . '</th><th>' . _('divers_nb_jours_pris_maj_1') . '</th><th>Statut</th><th></th><th></th>';
         $childTable .= '</tr>';
         $childTable .= '</thead><tbody>';
-        $listId  = $this->getListeId($params);
+        $listId = $this->getListeId($params);
         $session = session_id();
         if (empty($listId)) {
             $colonnes = 8;
             $childTable .= '<tr><td colspan="' . $colonnes . '"><center>' . _('aucun_resultat') . '</center></td></tr>';
         } else {
-            $i                        = true;
-            $listeConges              = $this->getListeSQL($listId);
+            $i = true;
+            $listeConges = $this->getListeSQL($listId);
             $interdictionModification = $_SESSION['config']['interdit_modif_demande'];
-            $affichageDateTraitement  = $_SESSION['config']['affiche_date_traitement'];
+            $affichageDateTraitement = $_SESSION['config']['affiche_date_traitement'];
             foreach ($listeConges as $conges) {
                 /** Dates demande / traitement */
                 $dateDemande = '';
@@ -80,11 +81,11 @@ class Conge
                 if ($affichageDateTraitement) {
                     if (!empty($conges["p_date_demande"])) {
                         list($date, $heure) = explode(' ', $conges["p_date_demande"]);
-                        $dateDemande        = '(' . \App\Helpers\Formatter::dateIso2Fr($date) . ' ' . $heure . ') ';
+                        $dateDemande = '(' . \App\Helpers\Formatter::dateIso2Fr($date) . ' ' . $heure . ') ';
                     }
                     if (null != $conges["p_date_traitement"]) {
                         list($date, $heure) = explode(' ', $conges["p_date_traitement"]);
-                        $dateReponse        = '(' . \App\Helpers\Formatter::dateIso2Fr($date) . ' ' . $heure . ') ';
+                        $dateReponse = '(' . \App\Helpers\Formatter::dateIso2Fr($date) . ' ' . $heure . ') ';
                     }
                 }
 
@@ -101,9 +102,9 @@ class Conge
                 }
 
                 $demi_j_deb = ($conges["p_demi_jour_deb"] == "am") ? 'matin' : 'après-midi';
-                $demi_j_fin = ($conges["p_demi_jour_fin"] =="am") ? 'matin' : 'après-midi';
+                $demi_j_fin = ($conges["p_demi_jour_fin"] == "am") ? 'matin' : 'après-midi';
 
-                $childTable .= '<tr class="'.($i?'i':'p').'">';
+                $childTable .= '<tr class="' . ($i ? 'i' : 'p') . '">';
 
                 $childTable .= '<td class="histo">' . \App\Helpers\Formatter::dateIso2Fr($conges["p_date_deb"]) . ' <span class="demi">' . schars($demi_j_deb) . '</span></td>';
                 $childTable .= '<td class="histo">' . \App\Helpers\Formatter::dateIso2Fr($conges["p_date_fin"]) . ' <span class="demi">' . schars($demi_j_fin) . '</span></td>';
@@ -117,19 +118,18 @@ class Conge
                 $childTable .= '</td>';
                 $childTable .= '<td class="histo">';
 
-
                 $user_modif_demande = '<i class="fa fa-pencil disabled"></i>';
                 $user_suppr_demande = '<i class="fa fa-times-circle disabled"></i>';
 
                 // si on peut modifier une demande on defini le lien à afficher
-                if($conges["p_etat"] == \App\Models\Conge::STATUT_DEMANDE) {
-                    if(!$interdictionModification){
-                        $user_modif_demande = '<a href="user_index.php?session=' . $session . '&p_num=' . $conges['p_num'] . '&onglet=modif_demande"><i class="fa fa-pencil"></i></a>' ;
+                if ($conges["p_etat"] == \App\Models\Conge::STATUT_DEMANDE) {
+                    if (!$interdictionModification) {
+                        $user_modif_demande = '<a href="user_index.php?session=' . $session . '&p_num=' . $conges['p_num'] . '&onglet=modif_demande"><i class="fa fa-pencil"></i></a>';
                     }
                     $user_suppr_demande = '<a href="user_index.php?session=' . $session . '&p_num=' . $conges['p_num'] . '&onglet=suppr_demande"><i class="fa fa-times-circle"></i></a>';
                 }
-                
-                if(!$interdictionModification) {
+
+                if (!$interdictionModification) {
                     $childTable .= $user_modif_demande . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 
                 }
@@ -169,14 +169,14 @@ class Conge
     protected function getFormulaireRecherche(array $champs)
     {
         $session = session_id();
-        $form    = '';
-        $form    = '<form method="post" action="" class="form-inline search" role="form">';
+        $form = '';
+        $form = '<form method="post" action="" class="form-inline search" role="form">';
         $form .= '<div class="form-group"><label class="control-label col-md-4" for="statut">Statut&nbsp;:</label><div class="col-md-8"><select class="form-control" name="search[p_etat]" id="statut">';
         $form .= '<option value="all">' . _('tous_statuts') . '</option>';
         foreach (\App\Models\Conge::getOptionsStatuts() as $key => $value) {
             $selected = (isset($champs['p_etat']) && $key == $champs['p_etat'])
-            ? 'selected="selected"'
-            : '';
+                ? 'selected="selected"'
+                : '';
             $form .= '<option value="' . $key . '" ' . $selected . '>' . $value . '</option>';
         }
         $form .= '</select></div></div>';
@@ -215,9 +215,10 @@ class Conge
         foreach ($search as $key => $value) {
             if ('annee' === $key) {
                 $champs['dateDebut'] = ((int) $value) . '-01-01';
-                $champs['dateFin']   = ((int) $value) . '-12-31';
+                $champs['dateFin'] = ((int) $value) . '-12-31';
             } else {
-                if ($value !== "all") { // si la valeur est différent de tout le paramètres est passé au champ pour la futur requête sql
+                if ($value !== "all") {
+                    // si la valeur est différent de tout le paramètres est passé au champ pour la futur requête sql
                     $champs[$key] = $value;
                 }
             }
@@ -264,7 +265,7 @@ class Conge
         $req = 'SELECT p_num AS id
                 FROM conges_periode CP
                     INNER JOIN conges_type_absence CTA ON (CP.p_type = CTA.ta_id) '
-            . ((!empty($where)) ? ' WHERE ' . implode(' AND ', $where) : '');
+                . ((!empty($where)) ? ' WHERE ' . implode(' AND ', $where) : '');
         $res = $sql->query($req);
         while ($data = $res->fetch_array()) {
             $ids[] = (int) $data['id'];
@@ -405,7 +406,7 @@ class Conge
      */
     private function isChevauchementHeures($user, $dateDebut, $typeCreneauDebut, $dateFin, $typeCreneauFin, $typeHeure)
     {
-        $sql            = \includes\SQL::singleton();
+        $sql = \includes\SQL::singleton();
         $filtresDates[] = '(dateDebutHeure > "' . $dateDebut . '" AND dateDebutHeure < "' . $dateFin . '")';
         if (Creneau::TYPE_PERIODE_MATIN_APRES_MIDI
             === $typeCreneauDebut) {
