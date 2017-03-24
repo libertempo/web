@@ -130,8 +130,7 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
 
         return NIL_INT;
     }
-    
-    
+
     /**
      * {@inheritDoc}
      */
@@ -204,7 +203,7 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
                 if ($horodateDebut <= $creneauDebut) {
                     if ($horodateFin <= $creneauDebut) {
                         // On ne cumule rien
-                        
+
                         break;
                     } elseif ($horodateFin > $creneauDebut && $horodateFin <= $creneauFin) {
                         $reelleDuree += $horodateFin - $creneauDebut;
@@ -353,7 +352,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
     /**
      * {@inheritDoc}
      */
-    protected function getListeId(array $params)
+    public function getListeId(array $params)
     {
         $where = [];
         if (!empty($params)) {
@@ -366,8 +365,8 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
                         $where[] = 'debut <= ' . $value;
                         break;
                     default:
-                        $where[] = $key . ' = "' . $value . '"';
-                        break;
+                    $where[] = $key . ' IN ("' . implode('", "', (array) $value) . '")';
+                    break;
                 }
             }
         }
@@ -387,7 +386,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
     /**
      * {@inheritDoc}
      */
-    protected function getListeSQL(array $listId)
+    public function getListeSQL(array $listId)
     {
         if (empty($listId)) {
             return [];
