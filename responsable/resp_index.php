@@ -42,21 +42,19 @@ if ($_SESSION['config']['user_saisie_demande']) {
     $onglets['traitement_demandes'] = _('resp_menu_button_traite_demande') . $nbbadgeConges;
 }
 
-if ($_SESSION['config']['gestion_heures']) {
-    $nbbadgeRep = '';
-    $nbdemandes = $DemandesRep->getNbDemandesATraiter($_SESSION['userlogin']);
-    if (0 < $nbdemandes) {
-        $nbbadgeRep = ' <span class="badge">' . $nbdemandes . '</span>';
-    }
-    $onglets['traitement_heures_repos'] = _('resp_menu_button_traite_repos') . $nbbadgeRep;
-
-    $nbbadgeDem = '';
-    $nbdemandes = $DemandesAdd->getNbDemandesATraiter($_SESSION['userlogin']);
-    if (0 < $nbdemandes) {
-        $nbbadgeDem = ' <span class="badge">' . $nbdemandes . '</span>';
-    }
-    $onglets['traitement_heures_additionnelles'] = _('resp_menu_button_traite_additionnelle') . $nbbadgeDem;
+$nbbadgeDem = '';
+$nbdemandes = $DemandesAdd->getNbDemandesATraiter($_SESSION['userlogin']);
+if (0 < $nbdemandes) {
+    $nbbadgeDem = ' <span class="badge">' . $nbdemandes . '</span>';
 }
+$onglets['traitement_heures_additionnelles'] = _('resp_menu_button_traite_additionnelle') . $nbbadgeDem;
+
+$nbbadgeRep = '';
+$nbdemandes = $DemandesRep->getNbDemandesATraiter($_SESSION['userlogin']);
+if (0 < $nbdemandes) {
+    $nbbadgeRep = ' <span class="badge">' . $nbdemandes . '</span>';
+}
+$onglets['traitement_heures_repos'] = _('resp_menu_button_traite_repos') . $nbbadgeRep;
 
 if ($_SESSION['config']['resp_ajoute_conges']) {
     $onglets['ajout_conges'] = _('resp_ajout_conges_titre');
