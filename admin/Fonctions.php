@@ -3454,6 +3454,7 @@ class Fonctions
                 : 'N';
 
             $sql1=$sql1."u_is_admin='".$tab_new_user['is_admin']."', ";
+            $sql1=$sql1."planning_id = 0, ";
             $sql1=$sql1."u_is_hr='".$tab_new_user['is_hr']."', ";
             $sql1=$sql1."u_see_all='". $seeAll . "', ";
             $sql1=$sql1."u_passwd='$motdepasse', ";
