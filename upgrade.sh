@@ -4,7 +4,7 @@ define('ROOT_PATH', '');
 
 require_once 'define.php';
 
-$fileConnector = './cfg/dbconnect.php';
+$fileConnector = CONFIG_PATH . 'dbconnect.php';
 
 if (!file_exists($fileConnector)) {
     exit('Fichier de connexion introuvable' . "\n");
@@ -12,7 +12,7 @@ if (!file_exists($fileConnector)) {
 
 require_once $fileConnector;
 
-$fileConnectorApi = API_PATH . 'configuration.json';
+$fileConnectorApi = API_SYSPATH . 'configuration.json';
 $dataConnectorApi = [
     'db' => [
         'serveur' => $mysql_serveur,
