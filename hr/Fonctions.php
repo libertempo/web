@@ -1128,9 +1128,6 @@ class Fonctions
             $new_type           = getpost_variable('new_type') ;
 
             $new_nb_jours = compter($user_login, '', $new_debut,  $new_fin, $new_demi_jour_deb, $new_demi_jour_fin, $comment);
-            if ($new_nb_jours <= 0 ) {
-                $new_nb_jours      = getpost_variable('new_nb_jours');
-            }
 
             $return .= \hr\Fonctions::new_conges($user_login, "", $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type);
         } else {
