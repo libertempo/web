@@ -40,17 +40,12 @@ class Conge
             $champsRecherche = $_POST['search'];
             $champsSql = $this->transformChampsRecherche($_POST);
         } else {
-            $champsRecherche = [
-                // exemple de recherche
-                //'type' => 'cp',
-            ];
+            $champsRecherche = [];
             $champsSql = [];
         }
         $params = $champsSql + [
             'p_login' => $_SESSION['userlogin'],
-            //'type'    => 'cp',
-            //'p_etat'  => 'demande',
-        ]; // champs par défaut écrasés par postés
+        ]; // champs par défaut écrasés par posté
         $return .= $this->getFormulaireRecherche($champsRecherche);
 
         $table = new \App\Libraries\Structure\Table();
