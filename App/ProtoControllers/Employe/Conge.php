@@ -402,14 +402,12 @@ class Conge
     {
         $sql = \includes\SQL::singleton();
         $filtresDates[] = '(dateDebutHeure > "' . $dateDebut . '" AND dateDebutHeure < "' . $dateFin . '")';
-        if (Creneau::TYPE_PERIODE_MATIN_APRES_MIDI
- === $typeCreneauDebut) {
+        if (Creneau::TYPE_PERIODE_MATIN_APRES_MIDI === $typeCreneauDebut) {
             $filtresDates[] = '(dateDebutHeure = "' . $dateDebut . '")';
         } else {
             $filtresDates[] = '(dateDebutHeure = "' . $dateDebut . '" AND type_periode IN (' . $typeCreneauDebut . ',' . Creneau::TYPE_PERIODE_MATIN_APRES_MIDI . '))';
         }
-        if (Creneau::TYPE_PERIODE_MATIN_APRES_MIDI
- === $typeCreneauFin) {
+        if (Creneau::TYPE_PERIODE_MATIN_APRES_MIDI === $typeCreneauFin) {
             $filtresDates[] = '(dateDebutHeure = "' . $dateFin . '")';
         } else {
             $filtresDates[] = '(dateDebutHeure = "' . $dateFin . '" AND type_periode IN (' . $typeCreneauFin . ',' . Creneau::TYPE_PERIODE_MATIN_APRES_MIDI . '))';
