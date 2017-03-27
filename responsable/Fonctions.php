@@ -1876,8 +1876,6 @@ class Fonctions
         $new_demi_jour_fin = htmlentities(getpost_variable('new_demi_jour_fin'), ENT_QUOTES | ENT_HTML401);
         $return = '';
         
-        //$new_nb_jours = getpost_variable('new_nb_jours') ;
-
         $new_nb_jours = compter($user_login, '', $new_debut,  $new_fin, $new_demi_jour_deb, $new_demi_jour_fin, $comment);
 
         $new_comment = htmlentities(getpost_variable('new_comment'), ENT_QUOTES | ENT_HTML401);

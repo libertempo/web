@@ -348,7 +348,11 @@ class Fonctions
 
             $return .= '<td>' . $sql_date_deb . '_' . $demi_j_deb . '</td><td>' . $sql_date_fin  . '_' . $demi_j_fin . '</td><td>' . $aff_nb_jours . '</td><td>' . $sql_commentaire . '</td>';
 
-            $compte = 'onChange="compter_jours();return false;"';
+            if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) ) {
+                $compte = 'onClick="compter_jours();return true;" ' ;
+            } else {
+                $compte = 'onChange="compter_jours();return false;" ' ;
+            }
 
             $text_debut="<input class=\"form-control date\" type=\"text\" name=\"new_debut\" size=\"10\" maxlength=\"30\" value=\"" . revert_date($sql_date_deb) . "\">" ;
             if($sql_demi_jour_deb=="am") {
