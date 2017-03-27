@@ -105,8 +105,8 @@ class Creneau
         foreach ($creneaux as $creneau) {
             $jourId      = $creneau['jour_id'];
             $typePeriode = $creneau['type_periode'];
-            $debut       = date('H\:i', $creneau['debut']);
-            $fin         = date('H\:i', $creneau['fin']);
+            $debut       = \App\Helpers\Formatter::timestamp2Duree($creneau['debut']);
+            $fin         = \App\Helpers\Formatter::timestamp2Duree($creneau['fin']);
 
             $grouped[$jourId][$typePeriode][] = [
                 ModelCreneau::TYPE_HEURE_DEBUT => $debut,

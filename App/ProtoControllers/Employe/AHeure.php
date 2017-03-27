@@ -71,7 +71,7 @@ abstract class AHeure
     * @return int
     */
     abstract protected function post(array $post, array &$errorsLst, $user);
-    
+
     /**
      * Supprime une demande d'heures
      *
@@ -505,7 +505,7 @@ abstract class AHeure
      *
      * @return array
      */
-    abstract protected function getListeId(array $params);
+    abstract public function getListeId(array $params);
 
     /**
      * Retourne une liste d'heures
@@ -514,5 +514,5 @@ abstract class AHeure
      *
      * @return array
      */
-    abstract protected function getListeSQL(array $listId);
+    abstract public function getListeSQL(array $listId);
 }
