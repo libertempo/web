@@ -136,6 +136,8 @@ if (!empty($seeAllNo)) {
 /* Autorisation pour le responsable d'associer employé <> planning */
 $reqInsertAssociation = 'INSERT IGNORE INTO `conges_config` (`conf_nom`, `conf_valeur`, `conf_groupe`, `conf_type`, `conf_commentaire`) VALUES ("resp_association_planning", "FALSE", "06_Responsable", "boolean", "config_comment_resp_association_planning")';
 $sql->query($reqInsertAssociation);
+$reqInsert = 'INSERT IGNORE INTO `conges_config` VALUES ("gestion_heures", "TRUE", "12_Fonctionnement de l\'Etablissement", "boolean", "config_comment_gestion_heures")';
+$sql->query($reqInsert);
 
 $sql->getPdoObj()->commit();
 

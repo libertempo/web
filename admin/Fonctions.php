@@ -2590,6 +2590,9 @@ class Fonctions
         if(!empty($planning)){
             $planningName = $planning[0]['name'];
         }
+        else {
+            $planningName = _('Aucun_planning');
+        } 
         $return .= '<br><hr/>';
         $return .= '<h4>' . _('admin_planning_utilisateur') . '</h4>';
         $return .= '<div>' . $planningName . '</div>';
