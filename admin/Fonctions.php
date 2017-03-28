@@ -2574,10 +2574,15 @@ class Fonctions
         ob_start();
         $table->render();
         $return .= ob_get_clean();
-        $planning = \App\ProtoControllers\HautResponsable\Planning::getListPlanning((array) ((int) $tab_user['planningId']))[0];
+        $plannings = \App\ProtoControllers\HautResponsable\Planning::getListPlanning((array) ((int) $tab_user['planningId']));
+        if (empty($plannings)) {
+            $planningName = _('Aucun_planning');
+        } else {
+            $planningName = $plannings[0]['name'];
+        }
         $return .= '<br><hr/>';
         $return .= '<h4>' . _('admin_planning_utilisateur') . '</h4>';
-        $return .= '<div>' . $planning['name'] . '</div>';
+        $return .= '<div>' . $planningName . '</div>';
 
         $return .= '<hr /><input class="btn btn-success" type="submit" value="' . _('form_submit') . '"> ';
         $return .= '<a class="btn btn-default" href="admin_index.php?session=' . $session . '&onglet=admin-users">' . _('form_cancel') . '</a>';
@@ -3433,6 +3438,7 @@ class Fonctions
                 : 'N';
 
             $sql1=$sql1."u_is_admin='".$tab_new_user['is_admin']."', ";
+            $sql1=$sql1."planning_id = 0, ";
             $sql1=$sql1."u_is_hr='".$tab_new_user['is_hr']."', ";
             $sql1=$sql1."u_see_all='". $seeAll . "', ";
             $sql1=$sql1."u_passwd='$motdepasse', ";

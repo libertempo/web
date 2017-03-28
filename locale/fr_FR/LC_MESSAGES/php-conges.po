@@ -324,13 +324,13 @@ msgid "divers_conges"
 msgstr "congés"
 
 msgid "divers_conges_maj_1"
-msgstr "congés"
+msgstr "Congés"
 
 msgid "divers_absences"
 msgstr "absences"
 
 msgid "divers_absences_maj_1"
-msgstr "absences"
+msgstr "Absences"
 
 msgid "divers_nouvelle_absence"
 msgstr "Nouvelle Absence"
@@ -885,7 +885,7 @@ msgid "config_abs_libelle_short"
 msgstr "libellé court"
 
 msgid "config_abs_add_type_abs"
-msgstr "ajouter un type d'absence"
+msgstr "Ajouter un type d'absence"
 
 msgid "config_abs_add_type_abs_comment"
 msgstr "Saisissez le type d'absence que vous voulez ajouter"
@@ -1372,6 +1372,9 @@ msgstr "IMPOSSIBLE de désactiver les congés exceptionnels! (aucun congé excep
 
 msgid "divers_conges_exceptionnels"
 msgstr "congés exceptionnels"
+
+msgid "divers_conges_exceptionnels_maj_1"
+msgstr "Congés exceptionnels"
 
 msgid "divers_semaine"
 msgstr "semaine"

@@ -138,7 +138,7 @@ Class Additionnelle extends \App\Libraries\ANotification {
         $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($data['login']);
         $infoResp = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($_SESSION['userlogin']);
         $return['expediteur']['nom'] = $infoResp['u_nom']." ".$infoResp['u_prenom'];
-        foreach ($responsables as $responsable) {
+        foreach ($grandResponsables as $responsable) {
             $return['destinataire'][] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($responsable);
         }
 
