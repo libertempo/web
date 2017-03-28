@@ -1931,11 +1931,8 @@ msgstr "Liste des plannings"
 msgid "hr_ajout_planning"
 msgstr "Nouveau planning"
 
-msgid "tous_types"
-msgstr "Tous Types"
-
-msgid "tous_statuts"
-msgstr "Tous Statuts"
+msgid "tous"
+msgstr "Tous"
 
 msgid "statut_demande"
 msgstr "Demande"

@@ -167,7 +167,7 @@ class Conge
         $form = '';
         $form = '<form method="post" action="" class="form-inline search" role="form">';
         $form .= '<div class="form-group"><label class="control-label col-md-4" for="statut">Statut&nbsp;:</label><div class="col-md-8"><select class="form-control" name="search[p_etat]" id="statut">';
-        $form .= '<option value="all">' . _('tous_statuts') . '</option>';
+        $form .= '<option value="all">' . _('tous') . '</option>';
         foreach (\App\Models\Conge::getOptionsStatuts() as $key => $value) {
             $selected = (isset($champs['p_etat']) && $key == $champs['p_etat'])
                 ? 'selected="selected"'
@@ -176,7 +176,7 @@ class Conge
         }
         $form .= '</select></div></div>';
         $form .= '<div class="form-group "><label class="control-label col-md-4" for="type">Type&nbsp;:</label><div class="col-md-8"><select class="form-control" name="search[type]" id="type">';
-        $form .= '<option value="all">' . _('tous_types') . '</option>';
+        $form .= '<option value="all">' . _('tous') . '</option>';
         foreach (\utilisateur\Fonctions::getOptionsTypeConges() as $key => $value) {
             $selected = (isset($champs['type']) && $key == $champs['type'])
             ? 'selected="selected"'
