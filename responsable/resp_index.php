@@ -28,13 +28,10 @@ $onglet = getpost_variable('onglet', "page_principale");
 $onglets = array();
 
 $onglets['page_principale'] = _('resp_menu_button_retour_main');
-$DemandesAdd = new \App\ProtoControllers\Responsable\Traitement\Additionnelle;
-$DemandesRep = new \App\ProtoControllers\Responsable\Traitement\Repos;
-$DemandesConges = new \App\ProtoControllers\Responsable\Traitement\Conge;
 
 if ($_SESSION['config']['user_saisie_demande']) {
-
     $nbbadgeConges = '';
+    $DemandesConges = new \App\ProtoControllers\Responsable\Traitement\Conge;
     $nbdemandes = $DemandesConges->getNbDemandesATraiter($_SESSION['userlogin']);
     if (0 < $nbdemandes) {
         $nbbadgeConges = ' <span class="badge">' . $nbdemandes . '</span>';
@@ -44,6 +41,7 @@ if ($_SESSION['config']['user_saisie_demande']) {
 
 if ($_SESSION['config']['gestion_heures']) {
     $nbbadgeDem = '';
+    $DemandesAdd = new \App\ProtoControllers\Responsable\Traitement\Additionnelle;
     $nbdemandes = $DemandesAdd->getNbDemandesATraiter($_SESSION['userlogin']);
     if (0 < $nbdemandes) {
         $nbbadgeDem = ' <span class="badge">' . $nbdemandes . '</span>';
@@ -51,6 +49,7 @@ if ($_SESSION['config']['gestion_heures']) {
     $onglets['traitement_heures_additionnelles'] = _('resp_menu_button_traite_additionnelle') . $nbbadgeDem;
 
     $nbbadgeRep = '';
+    $DemandesRep = new \App\ProtoControllers\Responsable\Traitement\Repos;
     $nbdemandes = $DemandesRep->getNbDemandesATraiter($_SESSION['userlogin']);
     if (0 < $nbdemandes) {
         $nbbadgeRep = ' <span class="badge">' . $nbdemandes . '</span>';

@@ -2585,10 +2585,10 @@ class Fonctions
         ob_start();
         $table->render();
         $return .= ob_get_clean();
-        $planning = \App\ProtoControllers\HautResponsable\Planning::getListPlanning((array) ((int) $tab_user['planningId']));
+        $listPlannings = \App\ProtoControllers\HautResponsable\Planning::getListPlanning((array) ((int) $tab_user['planningId']));
         $planningName = '';
-        if(!empty($planning)){
-            $planningName = $planning[0]['name'];
+        if(!empty($listPlannings)){
+            $planningName = $listPlannings[0]['name'];
         }
         else {
             $planningName = _('Aucun_planning');
