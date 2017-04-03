@@ -213,17 +213,24 @@ INSERT INTO `conges_groupe_resp` VALUES (2, 'paolo');*/
     $nbDemande = 1;
     for ($i = 0; $i < $nombreUtilisateurs; $i++) {
         $prenom = $listeNoms[$randKeysNom[$i]];
-        $nbConges = rand(0, 5);
+        $nbConges = rand(0, 5); // Option "Peu" de congés
         if (1 == $nombreConges) {
+            // Option "Moyen" de congés
             $nbConges = rand(0, 15);
         }
         if (2 == $nombreConges) {
+            // Option "Beaucoup" de congés
             $nbConges = rand(5, 30);
         }
         for ($j = 0; $j < $nbConges; $j++) {
             $randDemande = rand(34, 45);
             $randDebut = rand(-3, 30);
             $randFin = floor(log(rand(1, 10)) * rand(0, 10)); // Répartition pseudo-logarithmique des congés pour être plus réaliste
+            $dateDemande = 'NOW() - INTERVAL ' . $randDemande . ' DAY';
+            $dateTraitement = 'NOW() - INTERVAL ' . ($randDemande - 3) . ' DAY';
+            $dateDebut = 'CURDATE() - INTERVAL ' . $randDebut . ' DAY';
+            $dateFin = 'CURDATE() - INTERVAL ' . ($randDebut - $randFin) . ' DAY';
+            
             $demiJourDeb = rand(0, 1);
             $demiJourFin = rand(0, 1);
             // On cherche le rare cas où on tombe sur le même jour avec la date de début l'après midi et la date de fin le matin
@@ -232,6 +239,7 @@ INSERT INTO `conges_groupe_resp` VALUES (2, 'paolo');*/
                     $demiJourFin = 1; // dans ce cas là met le congés seulement sur l'après midi
                 }
             }
+            // on transform le 0 en 'am et 1 en 'pm'
             if (0 == $demiJourDeb) {
                 $demiJourDeb = 'am';
             } else {
@@ -242,7 +250,7 @@ INSERT INTO `conges_groupe_resp` VALUES (2, 'paolo');*/
             } else {
                 $demiJourFin = 'pm';
             }
-            // calcule du nombre de jours pris
+            // calcul du nombre de jours pris
             $nbJours = $randFin;
             if (0 == $randFin) {
                 if ($demiJourFin === $demiJourDeb) {
@@ -261,12 +269,9 @@ INSERT INTO `conges_groupe_resp` VALUES (2, 'paolo');*/
                 }
             }
             $nbJours = returnFloatWithDot($nbJours);
-            $dateDemande = 'NOW() - INTERVAL ' . $randDemande . ' DAY';
-            $dateTraitement = 'NOW() - INTERVAL ' . ($randDemande - 3) . ' DAY';
-            $dateDebut = 'CURDATE() - INTERVAL ' . $randDebut . ' DAY';
-            $dateFin = 'CURDATE() - INTERVAL ' . ($randDebut - $randFin) . ' DAY';
-            $isAbsence = rand(0, 4);
+            
             // une chance sur 4 d'avoir une absence
+            $isAbsence = rand(0, 4);
             if (4 === $isAbsence) {
                 $typeConges = rand(3, 6);
             } else {
@@ -285,6 +290,7 @@ INSERT INTO `conges_groupe_resp` VALUES (2, 'paolo');*/
             $nbDemande++;
         }
     }
+
     $sqlJoursFeries = "-- Contenu de la table `conges_jours_feries`\n";
     $sqlJoursFeries .= "INSERT INTO `conges_jours_feries` VALUES(CONCAT(YEAR(NOW()), '-01-01'));\n";
     $sqlJoursFeries .= "INSERT INTO `conges_jours_feries` VALUES(CONCAT(YEAR(NOW()), '-04-06'));\n";
