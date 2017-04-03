@@ -3181,6 +3181,9 @@ class Fonctions
         if ($_SESSION['config']['gestion_heures'] ) {
             $text_solde_heure="<input class=\"form-control\" type=\"text\" name=\"new_solde_heure\" id=\"" . $soldeHeureId . "\" size=\"6\" maxlength=\"6\" value=\"".$tab_new_user['solde_heure']."\">" ;
             $childTable .= '<td>' . $text_solde_heure . '</td>';
+        }else{
+            $text_solde_heure="<input class=\"form-control\" type=\"hidden\" name=\"new_solde_heure\" id=\"" . $soldeHeureId . "\" size=\"6\" maxlength=\"6\" value=\"0\">" ;
+            $childTable .= $text_solde_heure; // le champ hidden est ajouté à l'extérieur du tableau
         }
         $childTable .= '<td>' . $text_is_resp . '</td>';
         $childTable .= '<td>' . $text_resp_login . '</td>';
