@@ -11,6 +11,22 @@ include_once INCLUDE_PATH . 'fonction.php';
 // SERVER
 $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 
+// récupération des valeurs par défaut
+if (!empty($_POST)) {
+    $nombreUtilisateurs = $_POST['nombreUtilisateurs'];
+    $nombreGroupes = $_POST['nombreGroupes'];
+    $nombreConges = $_POST['nombreConges'];
+} else {
+    $nombreUtilisateurs = 10;
+    $nombreGroupes = 1;
+    $nombreConges = 0;
+}
+$selectedNombreGroupes = array_fill(1, 3, '');
+$selectedNombreGroupes[$nombreGroupes] = 'selected="selected"';
+
+$selectedNombreConges = array_fill(0, 3, '');
+$selectedNombreConges[$nombreConges] = 'selected="selected"';
+
 $listeNoms = ["abel", "absolon", "achille", "adam", "adelaide", "adele", "adeline", "adolphe", "adrien", "adrienne", "agathe", "agnes", "aime", "aimee", "alain", "albert", "albertine", "alexandre", "alexandrie", "alexis", "alfred", "alice", "aline", "alison", "alphonse", "alphonsine", "amarante", "amaury", "ambre", "ambroise", "amedee", "amelie", "anais", "anastasie", "anatole", "andre", "andree", "angele", "angeline", "angelique", "anne", "annette", "anselme", "antoine", "antoinette", "apollinaire", "apolline", "ariane", "arianne", "arienne", "aristide", "arlette", "armand", "armel", "armelle", "arnaud", "arnaude", "aude", "auguste", "augustin", "aurele", "aurelie", "aurelien", "aurore", "avril", "axelle", "baptiste", "barbara", "barnabe", "barthelemy", "basile", "bastien", "baudouin", "beatrice", "benedicte", "benjamin", "benjamine", "benoit", "benoite", "bernadette", "bernard", "bernardine", "berthe", "bertrand", "blaise", "blanche", "boniface", "brice", "brigitte", "bruno", "camille", "carine", "carole", "caroline", "catherine", "cecile", "celeste", "celestin", "celestine", "celine", "cerise", "cesaire", "cesar", "chantal", "chante", "charles", "charline", "charlot", "charlotte", "chloe", "christelle", "christian", "christiane", "christianne", "christine", "christophe", "claire", "clarice", "clarisse", "claude", "claudette", "claudine", "clemence", "clement", "clementine", "clothilde", "colette", "colombain", "colombe", "constance", "constant", "constantin", "corentin", "corin", "corinne", "cosette", "cunegonde", "cyrille", "damien", "daniel", "daniele", "danielle", "david", "delphine", "denis", "denise", "dennis", "desire", "desiree", "diane", "dianne", "didier", "dieudonne", "dieudonnee", "dimitri", "diodore", "dion", "dominique", "donat", "donatien", "donatienne", "doriane", "dorothee", "edgar", "edgard", "edith", "edmond", "edouard", "edwige", "eleonore", "eliane", "elisabeth", "elise", "elodie", "eloi", "eloise", "emeline", "emile", "emilie", "emilien", "emma", "emmanuel", "emmanuelle", "eric", "ermenegilde", "esme", "esmee", "esther", "etienne", "eugene", "eugenie", "eulalie", "eustache", "evariste", "eve", "evette", "evrard", "fabien", "fabienne", "fabiola", "fabrice", "faustine", "felicie", "felicien", "felicienne", "felix", "ferdinand", "fernand", "fernande", "fiacre", "fifi", "firmin", "flavie", "florence", "florentin", "florette", "florian", "florianne", "francine", "franck", "françois", "françoise", "frederic", "frederique", "gabriel", "gabrielle", "gaetan", "gaetane", "gaspard", "gaston", "gautier", "genevieve", "geoffroi", "georges", "georgette", "georgine", "gerald", "gerard", "geraud", "germain", "germaine", "gervais", "gervaise", "ghislain", "ghislaine", "gigi", "gilbert", "gilberte", "gilles", "gisele", "giselle", "gisselle", "godelieve", "gratien", "gregoire", "guillaume", "gustave", "guy", "gwenaelle", "hannah", "hector", "helene", "heloise", "henri", "henriette", "herbert", "hercule", "hermine", "herve", "hilaire", "hippolyte", "honore", "honorine", "horace", "hortense", "hubert", "hugues", "humbert", "hyacinthe", "ignace", "ines", "irene", "irene", "irenee", "isabel", "isabelle", "isidore", "jacinthe", "jacqueline", "jacques", "jean", "jean", "jeanine", "jean", "jeanne", "jeannette", "jeannine", "jeannot", "jeremie", "jerome", "joachim", "joceline", "joel", "joelle", "jolie", "josee", "joseph", "josephe", "josephine", "josette", "josiane", "josue", "jourdain", "judith", "jules", "juliane", "julie", "julien", "julienne", "juliette", "juste", "justin", "justine", "lambert", "laure", "laurence", "laurent", "laurentine", "laurette", "lazare", "lea", "leandre", "leon", "leonard", "leonce", "leonie", "leonne", "leontine", "leopold", "liane", "lionel", "lisette", "loic", "lothaire", "louis", "louise", "loup", "luc", "lucas", "luce", "lucie", "lucien", "lucienne", "lucile", "lucille", "lucinde", "lucrece", "lunete", "lydie", "madeleine", "madeline", "manon", "marc", "marcel", "marceline", "marcelle", "marcellette", "marcellin", "marcelline", "margot", "marguerite", "marianne", "marie", "marielle", "mariette", "marin", "marine", "marise", "marius", "marthe", "martin", "martine", "mathieu", "mathilde", "mathis", "matthieu", "maurice", "maxime", "maximilien", "maximilienne", "melanie", "melissa", "michel", "michele", "micheline", "michelle", "mignon", "mirabelle", "mireille", "modeste", "modestine", "monique", "morgaine", "morgane", "muriel", "myriam", "nadia", "nadine", "narcisse", "natalie", "nathalie", "nazaire", "nicholas", "nicodeme", "nicolas", "nicole", "nicolette", "nina", "ninette", "ninon", "noe", "noel", "noella", "noelle", "noemie", "oceane", "odette", "odile", "odilon", "olivie", "olivier", "olympe", "onesime", "oriane", "orianne", "osanne", "ouida", "ozanne", "papillion", "pascal", "pascale", "pascaline", "paschal", "patrice", "patrick", "paul", "paule", "paulette", "pauline", "penelope", "perceval", "perrine", "philbert", "philibert", "philippe", "philippine", "pierre", "pierrick", "placide", "pons", "prosper", "quentin", "rachel", "rainier", "raoul", "raphael", "raphael", "raymond", "raymonde", "rebecca", "regine", "regis", "reine", "remi", "remy", "renard", "renaud", "rene", "renee", "reynaud", "richard", "robert", "roch", "rochelle", "rodolph", "rodolphe", "rodrigue", "roger", "roland", "rolande", "romain", "romaine", "rosalie", "rose", "roselle", "rosemonde", "rosette", "rosine", "roxane", "roxanne", "sabine", "sacha", "said", "salome", "samuel", "sandrine", "sarah", "sebastien", "sebastienne", "seraphine", "serge", "severin", "severine", "sibylle", "sidonie", "simon", "simone", "solange", "sophie", "stephane", "stephanie", "suzanne", "suzette", "sybille", "sylvain", "sylvaine", "sylvestre", "sylviane", "sylvianne", "sylvie", "tatienne", "telesphore", "theirn", "theo", "theodore", "theophile", "therese", "thibault", "thierry", "thomas", "timothee", "toinette", "toussaint", "tristan", "ulrich", "urbain", "valentin", "valentine", "valere", "valerie", "valery", "veronique", "vespasien", "victoire", "victor", "victorine", "vienne", "vincent", "violette", "virginie", "vivien", "vivienne", "xavier", "yanick", "yann", "yannic", "yannick", "yolande", "yseult", "yves", "yvette", "yvonne", "zacharie", "zephyrine", "zoe"];
 
 $listeGroupes = [
@@ -97,20 +113,20 @@ $return = '';
 $return .= "<h2>Génération de jeu de données SQL</h2>";
 $return .= "<form method='post' class='form-inline'>";
 $return .= "<p><label for='nombreUtilisateurs'>Nombre d'utilisateurs: </label>";
-$return .= "<input type='number' class='form-control' name='nombreUtilisateurs' id='nombreUtilisateurs' required value='10' min='3' max='" . count($listeNoms) . "' /></p>";
+$return .= "<input type='number' class='form-control' name='nombreUtilisateurs' id='nombreUtilisateurs' required value='$nombreUtilisateurs' min='3' max='" . count($listeNoms) . "' /></p>";
 
 $return .= "<p><label for='nombreGroupes'>Nombre de groupes: </label>";
 $return .= "<select class='form-control' name='nombreGroupes' id='nombreGroupes'>";
-$return .= "<option value='1'>Peu</option>";
-$return .= "<option value='2'>Moyen</option>";
-$return .= "<option value='3'>Beaucoup</option>";
+$return .= "<option value='1' $selectedNombreGroupes[1]>Peu</option>";
+$return .= "<option value='2' $selectedNombreGroupes[2]>Moyen</option>";
+$return .= "<option value='3' $selectedNombreGroupes[3]>Beaucoup</option>";
 $return .= "</select></p>";
 
 $return .= "<p><label for='nombreConges'>Nombre de congés: </label>";
 $return .= "<select class='form-control' name='nombreConges' id='nombreConges'>";
-$return .= "<option value='0'>Peu</option>";
-$return .= "<option value='1'>Moyen</option>";
-$return .= "<option value='2'>Beaucoup</option>";
+$return .= "<option value='0' $selectedNombreConges[0]>Peu</option>";
+$return .= "<option value='1' $selectedNombreConges[1]>Moyen</option>";
+$return .= "<option value='2' $selectedNombreConges[2]>Beaucoup</option>";
 $return .= "</select></p>";
 
 $return .= "<input type='submit' class='btn btn-default' value='Générer' />";
@@ -223,14 +239,16 @@ INSERT INTO `conges_groupe_resp` VALUES (2, 'paolo');*/
             $nbConges = rand(5, 30);
         }
         for ($j = 0; $j < $nbConges; $j++) {
-            $randDemande = rand(34, 45);
-            $randDebut = rand(-3, 30);
+            $randDebut = rand(-30, 90);
             $randFin = floor(log(rand(1, 10)) * rand(0, 10)); // Répartition pseudo-logarithmique des congés pour être plus réaliste
-            $dateDemande = 'NOW() - INTERVAL ' . $randDemande . ' DAY';
-            $dateTraitement = 'NOW() - INTERVAL ' . ($randDemande - 3) . ' DAY';
+            $randDemande = rand(6, 60);
+            $randTraitement = rand(0, 5);
+            $dateDemande = $randDebut + $randDemande;
+            $sqlDemande = 'NOW() - INTERVAL ' . $dateDemande . ' DAY';
+            $dateTraitement = 'NOW() - INTERVAL ' . ($dateDemande - $randTraitement) . ' DAY';
             $dateDebut = 'CURDATE() - INTERVAL ' . $randDebut . ' DAY';
             $dateFin = 'CURDATE() - INTERVAL ' . ($randDebut - $randFin) . ' DAY';
-            
+
             $demiJourDeb = rand(0, 1);
             $demiJourFin = rand(0, 1);
             // On cherche le rare cas où on tombe sur le même jour avec la date de début l'après midi et la date de fin le matin
@@ -269,7 +287,7 @@ INSERT INTO `conges_groupe_resp` VALUES (2, 'paolo');*/
                 }
             }
             $nbJours = returnFloatWithDot($nbJours);
-            
+
             // une chance sur 4 d'avoir une absence
             $isAbsence = rand(0, 4);
             if (4 === $isAbsence) {
@@ -286,7 +304,7 @@ INSERT INTO `conges_groupe_resp` VALUES (2, 'paolo');*/
             }if ('demande' == $etat) {
                 $dateTraitement = "NULL";
             }
-            $sqlCongesPeriode .= "INSERT INTO `conges_periode` VALUES ('" . $prenom . "', " . $dateDebut . ", '" . $demiJourDeb . "', " . $dateFin . ", '" . $demiJourFin . "', " . $nbJours . ", '', " . $typeConges . ", '" . $etat . "', NULL, '" . $commentaireRefus . "', " . $dateDemande . ", " . $dateTraitement . ", NULL, " . $nbDemande . ");\n";
+            $sqlCongesPeriode .= "INSERT INTO `conges_periode` VALUES ('" . $prenom . "', " . $dateDebut . ", '" . $demiJourDeb . "', " . $dateFin . ", '" . $demiJourFin . "', " . $nbJours . ", '', " . $typeConges . ", '" . $etat . "', NULL, '" . $commentaireRefus . "', " . $sqlDemande . ", " . $dateTraitement . ", NULL, " . $nbDemande . ");\n";
             $nbDemande++;
         }
     }
