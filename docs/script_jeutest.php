@@ -143,6 +143,7 @@ if (!empty($_POST)) {
     $nombreUtilisateurs = $_POST['nombreUtilisateurs'];
     $nombreGroupes = $_POST['nombreGroupes'];
     $nombreConges = $_POST['nombreConges'];
+    $responsableGroupe = array(); // liste des responsable de groupe et des responsable
 
     // Empêche le nombre d'utilisateurs d'être supérieur au nombre de prénoms disponible
     if ($nombreUtilisateurs >= count($listeNoms)) {
@@ -168,26 +169,30 @@ if (!empty($_POST)) {
     }
 
     $sqlGroupeUsers = "-- Contenu de la table `conges_groupe_users`\n\n";
+    $currentGroupe = 1;
     for ($i = 0; $i < $nombreUtilisateurs; $i++) {
         $prenom = $listeNoms[$randKeysNom[$i]];
         $numeroGroupe = floor($i / ($nombreUtilisateurs / $nombreGroupes)) + 1;
+        // Le premier utilisateur qui rentrera dans un nouveau groupe sera le responsable de ce groupe
+        if ($currentGroupe !== $numeroGroupe) {
+            $responsableGroupe[] = $prenom;
+            $currentGroupe = $numeroGroupe;
+        }
         $sqlGroupeUsers .= "INSERT INTO `conges_groupe_users` VALUES (" . $numeroGroupe . ", '" . $prenom . "');\n";
     }
-/*
---
---Contenudelatable`conges_groupe_grd_resp`
---
 
-INSERT INTO `conges_groupe_grd_resp` VALUES (2, 'pierre');
+    /*
+    $sqlGroupeGrandResponsable = "-- Contenu de la table `conges_groupe_grd_resp`\n\n";
+    INSERT INTO `conges_groupe_grd_resp` VALUES (2, 'pierre');
+     */
 
---
---Contenudelatable`conges_groupe_resp`
---
-
-INSERT INTO `conges_groupe_resp` VALUES (1, 'marie');
-INSERT INTO `conges_groupe_resp` VALUES (2, 'paolo');*/
+    $sqlGroupeResponsable = "-- Contenu de la table `conges_groupe_resp`\n\n";
+    for ($i = 0; $i < count($responsableGroupe); $i++) {
+        $sqlGroupeResponsable .= "INSERT INTO `conges_groupe_resp` VALUES (" . $i . ", '" . $responsableGroupe[$i] . "');\n";
+    }
 
     $sqlCongesUser = "-- Contenu de la table `conges_users`\n\n";
+    $responsable = 'pierre';
     for ($i = 0; $i < $nombreUtilisateurs; $i++) {
         $prenom = $listeNoms[$randKeysNom[$i]];
         $quotite = 100;
@@ -207,9 +212,21 @@ INSERT INTO `conges_groupe_resp` VALUES (2, 'paolo');*/
         $isHr = 'N';
         $isActive = 'Y';
         $isAdmin = 'N';
+        $isResponsable = 'N';
+        if (is_int(array_search($prenom, $responsableGroupe))) {
+            $isResponsable = 'Y';
+            $responsable = 'pierre';
+        }
 
-        $sqlCongesUser .= "INSERT INTO `conges_users` VALUES ('" . $prenom . "', '" . $prenom . "', 'pierre', 'Y', 'conges', '" . $isAdmin . "', '" . $isHr . "', '" . $isActive . "', 'N', '" . $password . "', " . $quotite . ", '', 0, 7, " . $heureSolde . ");\n";
+        $sqlCongesUser .= "INSERT INTO `conges_users` VALUES ('" . $prenom . "', '" . $prenom . "', '" . $prenom . "', '" . $isResponsable . "', '" . $responsable . "', '" . $isAdmin . "', '" . $isHr . "', '" . $isActive . "', 'N', '" . $password . "', " . $quotite . ", '', 0, 7, " . $heureSolde . ");\n";
+
+        if (is_int(array_search($prenom, $responsableGroupe))) {
+            // Le prochain utilisateur aura pour responsable la personne courante si celle ci est responsable de son groupe
+            $responsable = $prenom;
+        }
     }
+    // A la fin on ajoute l'utilisateur Pierre qui est RH, il est aussi le responsable des responsables (n+2 des autres utilisateurs)
+    $sqlCongesUser .= "INSERT INTO `conges_users` VALUES('pierre', 'point', 'pierre', 'Y', 'conges', 'N', 'Y', 'Y', 'N', '84675f2baf7140037b8f5afe54eef841', 100, '', 0, 7, 0);";
 
     $sqlCongesSoldeUser = "-- Contenu de la table `conges_solde_user`\n\n";
     for ($i = 0; $i < $nombreUtilisateurs; $i++) {
@@ -302,35 +319,37 @@ INSERT INTO `conges_groupe_resp` VALUES (2, 'paolo');*/
                 $tabCommentaireRefus = ['', '', '', 'impossible', 'non', 'demande trop tardive'];
                 $commentaireRefus = $tabCommentaireRefus[rand(0, count($tabCommentaireRefus) - 1)];
             }if ('demande' == $etat) {
-                $dateTraitement = "NULL";
+                $dateTraitement = "null";
             }
-            $sqlCongesPeriode .= "INSERT INTO `conges_periode` VALUES ('" . $prenom . "', " . $dateDebut . ", '" . $demiJourDeb . "', " . $dateFin . ", '" . $demiJourFin . "', " . $nbJours . ", '', " . $typeConges . ", '" . $etat . "', NULL, '" . $commentaireRefus . "', " . $sqlDemande . ", " . $dateTraitement . ", NULL, " . $nbDemande . ");\n";
+            $sqlCongesPeriode .= "INSERT INTO `conges_periode` VALUES ('" . $prenom . "', " . $dateDebut . ", '" . $demiJourDeb . "', " . $dateFin . ", '" . $demiJourFin . "', " . $nbJours . ", '', " . $typeConges . ", '" . $etat . "', null, '" . $commentaireRefus . "', " . $sqlDemande . ", " . $dateTraitement . ", null, " . $nbDemande . ");\n";
             $nbDemande++;
         }
     }
 
     $sqlJoursFeries = "-- Contenu de la table `conges_jours_feries`\n";
-    $sqlJoursFeries .= "INSERT INTO `conges_jours_feries` VALUES(CONCAT(YEAR(NOW()), '-01-01'));\n";
-    $sqlJoursFeries .= "INSERT INTO `conges_jours_feries` VALUES(CONCAT(YEAR(NOW()), '-04-06'));\n";
-    $sqlJoursFeries .= "INSERT INTO `conges_jours_feries` VALUES(CONCAT(YEAR(NOW()), '-05-01'));\n";
-    $sqlJoursFeries .= "INSERT INTO `conges_jours_feries` VALUES(CONCAT(YEAR(NOW()), '-05-08'));\n";
-    $sqlJoursFeries .= "INSERT INTO `conges_jours_feries` VALUES(CONCAT(YEAR(NOW()), '-05-14'));\n";
-    $sqlJoursFeries .= "INSERT INTO `conges_jours_feries` VALUES(CONCAT(YEAR(NOW()), '-07-14'));\n";
-    $sqlJoursFeries .= "INSERT INTO `conges_jours_feries` VALUES(CONCAT(YEAR(NOW()), '-08-15'));\n";
-    $sqlJoursFeries .= "INSERT INTO `conges_jours_feries` VALUES(CONCAT(YEAR(NOW()), '-11-01'));\n";
-    $sqlJoursFeries .= "INSERT INTO `conges_jours_feries` VALUES(CONCAT(YEAR(NOW()), '-11-11'));\n";
-    $sqlJoursFeries .= "INSERT INTO `conges_jours_feries` VALUES(CONCAT(YEAR(NOW()), '-12-25'));\n";
+    $sqlJoursFeries .= "INSERT INTO `conges_jours_feries` VALUES (CONCAT(YEAR(NOW()), '-01-01'));\n";
+    $sqlJoursFeries .= "INSERT INTO `conges_jours_feries` VALUES (CONCAT(YEAR(NOW()), '-04-06'));\n";
+    $sqlJoursFeries .= "INSERT INTO `conges_jours_feries` VALUES (CONCAT(YEAR(NOW()), '-05-01'));\n";
+    $sqlJoursFeries .= "INSERT INTO `conges_jours_feries` VALUES (CONCAT(YEAR(NOW()), '-05-08'));\n";
+    $sqlJoursFeries .= "INSERT INTO `conges_jours_feries` VALUES (CONCAT(YEAR(NOW()), '-05-14'));\n";
+    $sqlJoursFeries .= "INSERT INTO `conges_jours_feries` VALUES (CONCAT(YEAR(NOW()), '-07-14'));\n";
+    $sqlJoursFeries .= "INSERT INTO `conges_jours_feries` VALUES (CONCAT(YEAR(NOW()), '-08-15'));\n";
+    $sqlJoursFeries .= "INSERT INTO `conges_jours_feries` VALUES (CONCAT(YEAR(NOW()), '-11-01'));\n";
+    $sqlJoursFeries .= "INSERT INTO `conges_jours_feries` VALUES (CONCAT(YEAR(NOW()), '-11-11'));\n";
+    $sqlJoursFeries .= "INSERT INTO `conges_jours_feries` VALUES (CONCAT(YEAR(NOW()), '-12-25'));\n";
 
     $sqlPlanning = "-- Contenu de la table `planning`\n";
     $sqlPlanning .= 'INSERT INTO planning (planning_id, name, status) VALUES (7, "planning_type", 1), (8, "planning_sans_creneau", 1);';
 
-    $sqlPlanningCreneau = "-- Contenu de la table `planning_creneau`\n";
+    $sqlPlanningCreneau = "-- Contenu de la table`planning_creneau`\n";
     $sqlPlanningCreneau .= 'INSERT INTO planning_creneau (creneau_id, planning_id, jour_id, type_semaine, type_periode, debut, fin) VALUES ("", 7, 1, 1, 1, "28800", "45000"), ("", 7, 1, 1, 2, "50400", "59400"), ("", 7, 1, 1, 2, "64800", "72000"), ("", 7, 2, 1, 1, "28800", "45000"), ("", 7, 2, 1, 2, "50400", "59400"), ("", 7, 2, 1, 2, "64800", "72000"), ("", 7, 3, 1, 1, "28800", "45000"), ("", 7, 3, 1, 2, "50400", "59400"), ("", 7, 3, 1, 2, "64800", "72000"), ("", 7, 4, 1, 1, "28800", "45000"), ("", 7, 4, 1, 2, "50400", "59400"), ("", 7, 4, 1, 2, "64800", "72000"), ("", 7, 5, 1, 1, "28800", "45000"), ("", 7, 5, 1, 2, "50400", "59400"), ("", 7, 5, 1, 2, "64800", "72000");';
 
     $sql = '';
     $sql .= $sqlGroupe;
     $sql .= "\n\n";
     $sql .= $sqlGroupeUsers;
+    $sql .= "\n\n";
+    $sql .= $sqlGroupeResponsable;
     $sql .= "\n\n";
     $sql .= $sqlCongesUser;
     $sql .= "\n\n";
@@ -344,8 +363,21 @@ INSERT INTO `conges_groupe_resp` VALUES (2, 'paolo');*/
     $sql .= "\n\n";
     $sql .= $sqlJoursFeries;
 
-    echo "<hr />";
+    echo "<hr/> ";
     echo "<h2>Jeu de données SQL</h2>";
+    echo "<p>Pour chaque utilisateur le mot de passe correspond au nom de l'utilisateur par exemple<br />login = pierre,<br /> mot de passe = pierre</p>";
+    echo "Liste des utilisateurs crée :";
+    echo "<ul>";
+    echo "<li>pierre (rôle de RH et N+2)</li>";
+    for ($i = 0; $i < $nombreUtilisateurs; $i++) {
+        $prenom = $listeNoms[$randKeysNom[$i]];
+        if (is_int(array_search($prenom, $responsableGroupe))) {
+            echo "<li>$prenom (rôle de responsable, responsable du groupe " . $listeGroupes[array_search($prenom, $responsableGroupe)][1] . ")</li>";
+        } else {
+            echo "<li>$prenom</li>";
+        }
+    }
+    echo "</ul>";
     echo "<textarea class='form-control' rows='20'>$sql</textarea>";
 }
 
