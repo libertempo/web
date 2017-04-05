@@ -188,6 +188,20 @@ class Formatter extends \Tests\Units\TestUnit
     }
 
     /**
+     * Test la transformation d'un timestamp équivalent à 0
+     *
+     * @since 1.9
+     */
+    public function testZeroTimestamp2Duree()
+    {
+        $ts = '0';
+
+        $time = _Formatter::timestamp2Duree($ts);
+
+        $this->string($time)->isIdenticalTo('00:00');
+    }
+
+    /**
     * Test la transformation d'un nombre de secondes négatif en hh:ii
      *
      * @since 1.9

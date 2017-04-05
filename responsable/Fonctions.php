@@ -1038,7 +1038,10 @@ class Fonctions
                 $nb_colonnes += 1;
             }
         }
-        $return .= '<th>'. _('solde_heure') .'</th>' ;
+        if ($_SESSION['config']['gestion_heures']) {
+            $return .= '<th>'. _('solde_heure') .'</th>' ;
+            $nb_colonnes += 1;
+        }
         $return .= '<th></th>';
         $nb_colonnes += 1;
         if($_SESSION['config']['editions_papier']) {
@@ -1079,8 +1082,10 @@ class Fonctions
                             $return .= '<td>' . $tab_conges[$libelle]['solde'] . '</td>';
                         }
                     }
-                    $soldeHeure = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($current_login)['u_heure_solde'];
-                    $return .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($soldeHeure) . '</td>';
+                    if ($_SESSION['config']['gestion_heures']) {
+                        $soldeHeure = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($current_login)['u_heure_solde'];
+                        $return .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($soldeHeure) . '</td>';
+                    }
                     $return .= '<td>' . $text_affich_user . '</td>';
                     if($_SESSION['config']['editions_papier']) {
                         $return .= '<td>' . $text_edit_papier . '</td>';
@@ -1129,6 +1134,10 @@ class Fonctions
                         foreach($tab_type_conges_exceptionnels as $id_type_cong => $libelle) {
                             $return .= '<td>' . $tab_conges_2[$libelle]['solde'] . '</td>';
                         }
+                    }
+                    if ($_SESSION['config']['gestion_heures']) {
+                        $soldeHeure = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($current_login_2)['u_heure_solde'];
+                        $return .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($soldeHeure) . '</td>';
                     }
                     $return .= '<td>' . $text_affich_user . '</td>';
                     if($_SESSION['config']['editions_papier']) {
@@ -1831,11 +1840,13 @@ class Fonctions
         }
 
         $return = self::traiterUserConge($userLogin);
-        $return .= '<hr  />';
-        $return .= self::traiteUserHeureAdditionnelle($userLogin);
-        $return .= '<hr />';
-        $return .= self::traiteUserHeureRepos($userLogin);
+        if ($_SESSION['config']['gestion_heures']) {
+            $return .= '<hr  />';
 
+            $return .= self::traiteUserHeureAdditionnelle($userLogin);
+            $return .= '<hr />';
+            $return .= self::traiteUserHeureRepos($userLogin);
+        }
         return $return;
     }
 
