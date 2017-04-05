@@ -18,14 +18,14 @@ class Conge
     public function getListe()
     {
         $return = '';
-        $errorsLst=[];
-        if($_SESSION['config']['where_to_find_user_email']=="ldap"){
-            include_once CONFIG_PATH .'config_ldap.php';
+        $errorsLst = [];
+        if ($_SESSION['config']['where_to_find_user_email'] == "ldap") {
+            include_once CONFIG_PATH . 'config_ldap.php';
         }
 
-        if(!empty($_POST) && !$this->isSearch($_POST)) {
+        if (!empty($_POST) && !$this->isSearch($_POST)) {
             if (0 < (int) \utilisateur\Fonctions::postDemandeCongesHeure($_POST, $errorsLst)) {
-                $return .= '<div class="alert alert-info">'._('suppr_succes').'</div>';
+                $return .= '<div class="alert alert-info">' . _('suppr_succes') . '</div>';
             }
         }
         // on initialise le tableau global des jours fériés s'il ne l'est pas déjà :
@@ -35,20 +35,20 @@ class Conge
 
         if (!empty($_POST) && $this->isSearch($_POST)) {
             $champsRecherche = $_POST['search'];
-            $champsSql       = $this->transformChampsRecherche($_POST);
+            $champsSql = $this->transformChampsRecherche($_POST);
         } else {
             $champsRecherche = [
                 'type' => 'cp',
             ];
-            $champsSql       = [];
+            $champsSql = [];
         }
         $params = $champsSql + [
             'p_login' => $_SESSION['userlogin'],
-            'type'    => 'cp',
-            'p_etat'  => 'demande',
+            'type' => 'cp',
+            'p_etat' => 'demande',
         ]; // champs par défaut écrasés par postés
 
-        $return.= $this->getFormulaireRecherche($champsRecherche);
+        $return .= $this->getFormulaireRecherche($champsRecherche);
 
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses([
@@ -58,14 +58,14 @@ class Conge
             'table-condensed',
             'table-striped',
         ]);
-        $childTable = '<thead><tr><th>' . _('divers_debut_maj_1') . '</th><th>'. _('divers_fin_maj_1') .'</th><th>'. _('divers_type_maj_1') .'</th><th>'. _('divers_nb_jours_pris_maj_1') .'</th><th>Statut</th><th></th><th></th>';
+        $childTable = '<thead><tr><th>' . _('divers_debut_maj_1') . '</th><th>' . _('divers_fin_maj_1') . '</th><th>' . _('divers_type_maj_1') . '</th><th>' . _('divers_nb_jours_pris_maj_1') . '</th><th>Statut</th><th></th><th></th>';
         $childTable .= '</tr>';
         $childTable .= '</thead><tbody>';
         $listId = $this->getListeId($params);
         $session = session_id();
         if (empty($listId)) {
             $colonnes = 8;
-            $childTable .= '<tr><td colspan="' . $colonnes . '"><center>' . _('aucun_resultat') .'</center></td></tr>';
+            $childTable .= '<tr><td colspan="' . $colonnes . '"><center>' . _('aucun_resultat') . '</center></td></tr>';
         } else {
             $i = true;
             $listeConges = $this->getListeSQL($listId);
@@ -80,7 +80,7 @@ class Conge
                         list($date, $heure) = explode(' ', $conges["p_date_demande"]);
                         $dateDemande = '(' . \App\Helpers\Formatter::dateIso2Fr($date) . ' ' . $heure . ') ';
                     }
-                    if(null != $conges["p_date_traitement"]) {
+                    if (null != $conges["p_date_traitement"]) {
                         list($date, $heure) = explode(' ', $conges["p_date_traitement"]);
                         $dateReponse = '(' . \App\Helpers\Formatter::dateIso2Fr($date) . ' ' . $heure . ') ';
                     }
@@ -98,33 +98,33 @@ class Conge
                     $messageReponse = '';
                 }
 
-                $demi_j_deb = ($conges["p_demi_jour_deb"]=="am") ? 'matin' : 'après-midi';
+                $demi_j_deb = ($conges["p_demi_jour_deb"] == "am") ? 'matin' : 'après-midi';
 
-                $demi_j_fin = ($conges["p_demi_jour_fin"] =="am") ? 'matin' : 'après-midi';
-                $user_modif_demande="&nbsp;";
+                $demi_j_fin = ($conges["p_demi_jour_fin"] == "am") ? 'matin' : 'après-midi';
+                $user_modif_demande = "&nbsp;";
 
                 // si on peut modifier une demande :on defini le lien à afficher
-                if( !$interdictionModification && $conges["p_etat"] != "valid") {
+                if (!$interdictionModification && $conges["p_etat"] != "valid") {
                     //on ne peut pas modifier une demande qui a déja été validé une fois (si on utilise la double validation)
-                    $user_modif_demande = '<a href="user_index.php?session=' . $session . '&p_num=' . $conges['p_num'] . '&onglet=modif_demande">' . _('form_modif') . '</a>' ;
+                    $user_modif_demande = '<a href="user_index.php?session=' . $session . '&p_num=' . $conges['p_num'] . '&onglet=modif_demande">' . _('form_modif') . '</a>';
                 }
                 $user_suppr_demande = '<a href="user_index.php?session=' . $session . '&p_num=' . $conges['p_num'] . '&onglet=suppr_demande">' . _('form_supprim') . '</a>';
-                $childTable .= '<tr class="'.($i?'i':'p').'">';
+                $childTable .= '<tr class="' . ($i ? 'i' : 'p') . '">';
                 $childTable .= '<td class="histo">' . \App\Helpers\Formatter::dateIso2Fr($conges["p_date_deb"]) . ' <span class="demi">' . schars($demi_j_deb) . '</span></td>';
-                $childTable .= '<td class="histo">' . \App\Helpers\Formatter::dateIso2Fr($conges["p_date_fin"]) . ' <span class="demi">' . schars($demi_j_fin) . '</span></td>' ;
-                $childTable .= '<td class="histo">'.schars($conges["ta_libelle"]).'</td>' ;
-                $childTable .= '<td class="histo">'.affiche_decimal($conges["p_nb_jours"]).'</td>' ;
+                $childTable .= '<td class="histo">' . \App\Helpers\Formatter::dateIso2Fr($conges["p_date_fin"]) . ' <span class="demi">' . schars($demi_j_fin) . '</span></td>';
+                $childTable .= '<td class="histo">' . schars($conges["ta_libelle"]) . '</td>';
+                $childTable .= '<td class="histo">' . affiche_decimal($conges["p_nb_jours"]) . '</td>';
                 $childTable .= '<td>' . \App\Models\Conge::statusText($conges["p_etat"]) . '</td>';
                 $childTable .= '<td class="histo">';
                 if (!empty($messageDemande) || !empty($messageReponse)) {
                     $childTable .= '<i class="fa fa-comments" aria-hidden="true" title="' . $messageDemande . "\n\n" . $messageReponse . '"></i>';
                 }
-                $childTable .= '</td>' ;
+                $childTable .= '</td>';
                 $childTable .= '<td class="histo">';
-                if(!$interdictionModification) {
+                if (!$interdictionModification) {
                     $childTable .= $user_modif_demande . '&nbsp;&nbsp;';
                 }
-                $childTable .= ($user_suppr_demande) . '</td>'."\n" ;
+                $childTable .= ($user_suppr_demande) . '</td>' . "\n";
                 $childTable .= '</tr>';
                 $i = !$i;
             }
@@ -136,6 +136,23 @@ class Conge
         $return .= ob_get_clean();
 
         return $return;
+    }
+
+    /**
+     * Retourne un congés en fonction de son p_num (id)
+     *
+     * @param int $p_num
+     *
+     * @return array
+     */
+    public static function getConge($p_num)
+    {
+        if (empty($p_num)) {
+            return [];
+        }
+        $sql = \includes\SQL::singleton();
+        $req = "SELECT * FROM conges_periode WHERE p_num = $p_num";
+        return $sql->query($req)->fetch_array(MYSQLI_ASSOC);
     }
 
     /**
@@ -165,27 +182,27 @@ class Conge
         $form .= '<div class="form-group"><label class="control-label col-md-4" for="statut">Statut&nbsp;:</label><div class="col-md-8"><select class="form-control" name="search[p_etat]" id="statut">';
         foreach (\App\Models\Conge::getOptionsStatuts() as $key => $value) {
             $selected = (isset($champs['p_etat']) && $key == $champs['p_etat'])
-                ? 'selected="selected"'
-                : '';
+            ? 'selected="selected"'
+            : '';
             $form .= '<option value="' . $key . '" ' . $selected . '>' . $value . '</option>';
         }
         $form .= '</select></div></div>';
         $form .= '<div class="form-group "><label class="control-label col-md-4" for="type">Type&nbsp;:</label><div class="col-md-8"><select class="form-control" name="search[type]" id="type">';
         foreach (\utilisateur\Fonctions::getOptionsTypeConges() as $key => $value) {
             $selected = (isset($champs['type']) && $key == $champs['type'])
-                ? 'selected="selected"'
-                : '';
+            ? 'selected="selected"'
+            : '';
             $form .= '<option value="' . $key . '" ' . $selected . '>' . $value . '</option>';
         }
         $form .= '</select></div></div>';
         $form .= '<div class="form-group"><label class="control-label col-md-4" for="annee">Année&nbsp;:</label><div class="col-md-8"><select class="form-control" name="search[annee]" id="sel1">';
         foreach (\utilisateur\Fonctions::getOptionsAnnees() as $key => $value) {
             $selected = (isset($champs['annee']) && $key == $champs['annee'])
-                ? 'selected="selected"'
-                : '';
+            ? 'selected="selected"'
+            : '';
             $form .= '<option value="' . $key . '" ' . $selected . '>' . $value . '</option>';
         }
-        $form .= '</select></div></div><div class="form-group"><div class="input-group"><button type="submit" class="btn btn-default"><i class="fa fa-search" aria-hidden="true"></i></button>&nbsp;<a href="' . ROOT_PATH . 'utilisateur/user_index.php?session='. $session . '&onglet=liste_conge" type="reset" class="btn btn-default">Reset</a></div></div></form>';
+        $form .= '</select></div></div><div class="form-group"><div class="input-group"><button type="submit" class="btn btn-default"><i class="fa fa-search" aria-hidden="true"></i></button>&nbsp;<a href="' . ROOT_PATH . 'utilisateur/user_index.php?session=' . $session . '&onglet=liste_conge" type="reset" class="btn btn-default">Reset</a></div></div></form>';
 
         return $form;
     }
@@ -204,7 +221,7 @@ class Conge
         foreach ($search as $key => $value) {
             if ('annee' === $key) {
                 $champs['dateDebut'] = ((int) $value) . '-01-01';
-                $champs['dateFin']   = ((int) $value) . '-12-31';
+                $champs['dateFin'] = ((int) $value) . '-12-31';
             } else {
                 $champs[$key] = $value;
             }
@@ -217,13 +234,13 @@ class Conge
      * SQL
      */
 
-     /**
-      * Retourne une liste d'id de congés
-      *
-      * @param array $params Paramètres de recherche
-      *
-      * @return array
-      */
+    /**
+     * Retourne une liste d'id de congés
+     *
+     * @param array $params Paramètres de recherche
+     *
+     * @return array
+     */
     protected function getListeId(array $params)
     {
         if (!empty($params)) {
@@ -250,7 +267,7 @@ class Conge
         $req = 'SELECT p_num AS id
                 FROM conges_periode CP
                     INNER JOIN conges_type_absence CTA ON (CP.p_type = CTA.ta_id) '
-                . ((!empty($where)) ? ' WHERE ' . implode(' AND ', $where) : '');
+            . ((!empty($where)) ? ' WHERE ' . implode(' AND ', $where) : '');
         $res = $sql->query($req);
         while ($data = $res->fetch_array()) {
             $ids[] = (int) $data['id'];
