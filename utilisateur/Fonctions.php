@@ -426,10 +426,9 @@ class Fonctions
         $new_comment       = htmlentities(getpost_variable('new_comment'), ENT_QUOTES | ENT_HTML401);
 
         $return            = '';
-        $conge = \App\ProtoControllers\Conge::getConge($p_num);
-        $isBonUser = ($conge["p_login"] == $_SESSION['userlogin']);
+        $isAllowed = self::canUserManipulateConge($p_num, $_SESSION['userlogin']);
 
-        if ($conge["p_etat"] != \App\Models\Conge::STATUT_DEMANDE || $_SESSION['config']['interdit_modif_demande'] || !$isBonUser) {
+        if (!$isAllowed || $_SESSION['config']['interdit_modif_demande']) {
             $session = (isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : session_id()));
             redirect(ROOT_PATH . 'utilisateur/user_index.php?session=' . $session);
         }
@@ -582,9 +581,9 @@ class Fonctions
         $p_num_to_delete = getpost_variable('p_num_to_delete');
         $return          = '';
         /*************************************/
-        $conge = \App\ProtoControllers\Conge::getConge($p_num);
-        $isBonUser = ($conge["p_login"] == $_SESSION['userlogin']);
-        if ($conge["p_etat"] != \App\Models\Conge::STATUT_DEMANDE || !$isBonUser) {
+        
+        $isAllowed = self::canUserManipulateConge($p_num, $_SESSION['userlogin']);
+        if (!$isAllowed) {
             $session = (isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : session_id()));
             redirect(ROOT_PATH . 'utilisateur/user_index.php?session=' . $session);
         }
@@ -1518,5 +1517,16 @@ class Fonctions
         }
 
         return $options;
+    }
+
+    public static function canUserManipulateConge($idConge, $user) {
+        if (empty($idConge) && empty($user)) {
+            return false;
+        }
+        $conge = \App\ProtoControllers\Conge::getConge($idConge);
+        if (($conge["p_etat"]  == \App\Models\Conge::STATUT_DEMANDE) && ($conge['p_login'] == $user)){
+            return true;
+        }
+        return false;
     }
 }

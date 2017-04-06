@@ -182,24 +182,24 @@ class Conge
         $form .= '<div class="form-group"><label class="control-label col-md-4" for="statut">Statut&nbsp;:</label><div class="col-md-8"><select class="form-control" name="search[p_etat]" id="statut">';
         foreach (\App\Models\Conge::getOptionsStatuts() as $key => $value) {
             $selected = (isset($champs['p_etat']) && $key == $champs['p_etat'])
-            ? 'selected="selected"'
-            : '';
+                ? 'selected="selected"'
+                : '';
             $form .= '<option value="' . $key . '" ' . $selected . '>' . $value . '</option>';
         }
         $form .= '</select></div></div>';
         $form .= '<div class="form-group "><label class="control-label col-md-4" for="type">Type&nbsp;:</label><div class="col-md-8"><select class="form-control" name="search[type]" id="type">';
         foreach (\utilisateur\Fonctions::getOptionsTypeConges() as $key => $value) {
             $selected = (isset($champs['type']) && $key == $champs['type'])
-            ? 'selected="selected"'
-            : '';
+                ? 'selected="selected"'
+                : '';
             $form .= '<option value="' . $key . '" ' . $selected . '>' . $value . '</option>';
         }
         $form .= '</select></div></div>';
         $form .= '<div class="form-group"><label class="control-label col-md-4" for="annee">Année&nbsp;:</label><div class="col-md-8"><select class="form-control" name="search[annee]" id="sel1">';
         foreach (\utilisateur\Fonctions::getOptionsAnnees() as $key => $value) {
             $selected = (isset($champs['annee']) && $key == $champs['annee'])
-            ? 'selected="selected"'
-            : '';
+                ? 'selected="selected"'
+                : '';
             $form .= '<option value="' . $key . '" ' . $selected . '>' . $value . '</option>';
         }
         $form .= '</select></div></div><div class="form-group"><div class="input-group"><button type="submit" class="btn btn-default"><i class="fa fa-search" aria-hidden="true"></i></button>&nbsp;<a href="' . ROOT_PATH . 'utilisateur/user_index.php?session=' . $session . '&onglet=liste_conge" type="reset" class="btn btn-default">Reset</a></div></div></form>';
@@ -267,7 +267,7 @@ class Conge
         $req = 'SELECT p_num AS id
                 FROM conges_periode CP
                     INNER JOIN conges_type_absence CTA ON (CP.p_type = CTA.ta_id) '
-            . ((!empty($where)) ? ' WHERE ' . implode(' AND ', $where) : '');
+                . ((!empty($where)) ? ' WHERE ' . implode(' AND ', $where) : '');
         $res = $sql->query($req);
         while ($data = $res->fetch_array()) {
             $ids[] = (int) $data['id'];
