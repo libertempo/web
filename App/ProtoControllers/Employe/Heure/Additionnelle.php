@@ -164,7 +164,7 @@ class Additionnelle extends \App\ProtoControllers\Employe\AHeure
                 $return = NIL_INT;
             }
         }
-        return NIL_INT;
+        return $return;
     }
 
     /**
