@@ -295,43 +295,42 @@ class Fonctions {
             {
                     echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$PHP_SELF?etape=2&version=$installed_version&lang=$lang\">";
             }
-        }
-        //*** ETAPE 2
-        elseif($etape==2)
-        {
-                $start_version=$installed_version ;
+        } elseif($etape==2) {
+            $start_version = $installed_version ;
 
-            //on lance l'execution (include) des scripts d'upgrade l'un après l'autre jusqu a la version voulue ($config_php_conges_version) ..
-            if($start_version=="1.7.0") {
-                $file_upgrade='upgrade_from_v1.7.0.php';
-                $new_installed_version="1.8";
-                // execute le script php d'upgrade de la version1.7.0 (vers la suivante (1.8))
-                echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$file_upgrade?etape=2&version=$new_installed_version&lang=$lang\">";
-	    } elseif($start_version=="1.8") {
-		$file_upgrade='upgrade_from_v1.8.php';
-		$new_installed_version="1.8.1";
-		// execute le script php d'upgrade de la version1.8 (vers la suivante (1.8.1))
-		echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$file_upgrade?etape=2&version=$new_installed_version&lang=$lang\">";
-            } elseif($start_version=="1.8.1") {
-		$file_upgrade='upgrade_from_v1.8.1.php';
-		$new_installed_version="1.9";
-		// execute le script php d'upgrade de la version 1.8.1 (vers la suivante (1.9))
-		echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$file_upgrade?etape=2&version=$new_installed_version&lang=$lang\">";
-            } elseif($start_version=="1.9") {
-		$file_upgrade='upgrade_from_v1.9.php';
-		$new_installed_version="1.10";
-		// execute le script php d'upgrade de la version 1.9 (vers la suivante (1.10))
-		echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$file_upgrade?etape=2&version=$new_installed_version&lang=$lang\">";
+            //on lance l'execution (include) des scripts d'upgrade l'un après l'autre jusqu'à la version voulue ($config_php_conges_version) ..
+            if(($start_version == "1.5.0") || ($start_version == "1.5.1")) {
+                $file_upgrade = 'upgrade_from_v1.5.0.php';
+                $new_installed_version = "1.6.0";
+            } elseif($start_version == "1.6.0") {
+                $file_upgrade = 'upgrade_from_v1.6.0.php';
+                $new_installed_version = "1.7.0";
+            } elseif($start_version == "1.7.0") {
+                $file_upgrade = 'upgrade_from_v1.7.0.php';
+                $new_installed_version = "1.8";
+            } elseif($start_version == "1.8") {
+                $file_upgrade = 'upgrade_from_v1.8.php';
+                $new_installed_version = "1.8.1";
+            } elseif($start_version == "1.8.1") {
+                $file_upgrade = 'upgrade_from_v1.8.1.php';
+                $new_installed_version = "1.9";
+            } elseif($start_version == "1.9") {
+                $file_upgrade = 'upgrade_from_v1.9.php';
+                $new_installed_version = "1.10";
             } else {
-                echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$PHP_SELF?etape=3&version=$installed_version&lang=$lang\">";
+                $file_upgrade = '';
+                $new_installed_version = $installed_version;
+                $etape = 3;
             }
-        }
-        //*** ETAPE 3
-        elseif($etape==3)
-        {
+            try {
+                \admin\Fonctions::sauvegardeAsFile($start_version, $new_installed_version);
+                echo '<META HTTP-EQUIV=REFRESH CONTENT="0; URL=' . $file_upgrade . '?etape=' . $etape . '&version=' . $new_installed_version . '&lang=' . $lang . '>';
+            } catch (\Exception $e) {
+                echo 'Abandon de la mise à jour : ' . $e->getMessage();
+            }
+        } elseif($etape==3) {
             /* Reset du token d'instance à chaque version */
             \includes\SQL::query('UPDATE `conges_appli` SET appli_valeur =  "' . hash('sha256', time() . rand()) . '" WHERE appli_variable = "token_instance"');
-
             // FIN
             // test si fichiers config.php ou config_old.php existent encore (si oui : demande de les effacer !
             if( (\install\Fonctions::test_config_file()) || (\install\Fonctions::test_old_config_file()) )

@@ -1814,40 +1814,58 @@ class Fonctions
 
     public static function commit_sauvegarde($type_sauvegarde)
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
-        $return   = '';
-
         header("Pragma: no-cache");
         header("Content-Type: text/x-delimtext; name=\"php_conges_".$type_sauvegarde.".sql\"");
         header("Content-disposition: attachment; filename=php_conges_".$type_sauvegarde.".sql");
 
-        //
-        // Build the sql script file...
-        //
-        $maintenant=date("d-m-Y H:i:s");
-        $return .= "#\n";
-        $return .= "# PHP_CONGES\n";
-        $return .= "#\n# DATE : $maintenant\n";
-        $return .= "#\n";
+        echo static::getDataFile($type_sauvegarde);
+    }
+
+    /**
+     *
+     */
+    public static function sauvegardeAsFile($previousVersion, $newVersion)
+    {
+        $typeSauvegarde = 'all';
+        $contentFile = static::getDataFile($typeSauvegarde);
+        $filename = BACKUP_PATH . 'php_conges_' . $typeSauvegarde .'.sql'; // nom de migration
+
+        //if (false === file_put_contents($filename, $contentFile)) {
+        if (true) {
+            throw new \Exception('Échec de l\'écriture de la sauvegarde');
+        }
+    }
+
+    /**
+     * Retourne les données de sauvegarde
+     *
+     * @param string $typeSauvegarde Si on veut sauvegarder la structure seule ou les données
+     *
+     * @return string
+     */
+    private static function getDataFile($typeSauvegarde)
+    {
+        $content = "#\n";
+        $content .= "# PHP_CONGES\n";
+        $content .= "#\n# DATE : " . date("d-m-Y H:i:s") . "\n";
+        $content .= "#\n";
 
         //recup de la liste des tables
-        $sql1="SHOW TABLES";
-        $ReqLog = \includes\SQL::query($sql1) ;
+        $ReqLog = \includes\SQL::query('SHOW TABLES');
         while ($resultat = $ReqLog->fetch_array()) {
-            $table=$resultat[0] ;
-
-            $return .= "#\n#\n# TABLE: $table \n#\n";
-            if(($type_sauvegarde=="all") || ($type_sauvegarde=="structure") ) {
-                $return .= "# Struture : \n#\n";
-                $return .= \admin\Fonctions::get_table_structure($table);
+            $table = $resultat[0];
+            $content .= "#\n#\n# TABLE: $table \n#\n";
+            if(($typeSauvegarde=="all") || ($typeSauvegarde=="structure") ) {
+                $content .= "# Struture : \n#\n";
+                $content .= static::get_table_structure($table);
             }
-            if(($type_sauvegarde=="all") || ($type_sauvegarde=="data") ) {
-                $return .= "# Data : \n#\n";
-                $return .= \admin\Fonctions::get_table_data($table);
+            if(($typeSauvegarde=="all") || ($typeSauvegarde=="data") ) {
+                $content .= "# Data : \n#\n";
+                $content .= static::get_table_data($table);
             }
         }
-        echo $return;
+
+        return $content;
     }
 
     public static function sauve($type_sauvegarde)
@@ -2015,10 +2033,10 @@ class Fonctions
         if($choix_action=="") {
             \admin\Fonctions::choix_save_restore();
         } elseif($choix_action=="sauvegarde") {
-            if( (!isset($type_sauvegarde)) || ($type_sauvegarde=="") ) {
+            if(!isset($type_sauvegarde) || $type_sauvegarde=="") {
                 \admin\Fonctions::choix_sauvegarde();
             } else {
-                if( (!isset($commit)) || ($commit=="") ) {
+                if( (!isset($commit)) || ($commit=="")) {
                     \admin\Fonctions::sauve($type_sauvegarde);
                 } else {
                     \admin\Fonctions::commit_sauvegarde($type_sauvegarde);
@@ -2608,7 +2626,7 @@ class Fonctions
         }
         else {
             $planningName = _('Aucun_planning');
-        } 
+        }
         $return .= '<br><hr/>';
         $return .= '<h4>' . _('admin_planning_utilisateur') . '</h4>';
         $return .= '<div>' . $planningName . '</div>';
