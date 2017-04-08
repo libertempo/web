@@ -54,6 +54,7 @@ class Gestion {
         $data = [];
         $data['grandResponsables'] = [];
         $data['responsables'] = [];
+        $data['employes'] = [];
         if(key_exists('group', $post)) {
             $data['id'] = (int) $post['group'];
         }
@@ -73,8 +74,10 @@ class Gestion {
             $data['isDoubleValidation'] = 'N';
         }
 
-        foreach ($post['checkbox_group_users'] as $user => $value) {
-            $data['employes'][] = htmlentities($user, ENT_QUOTES | ENT_HTML401);
+        if(!empty($post['checkbox_group_users'])){
+            foreach ($post['checkbox_group_users'] as $user => $value) {
+                $data['employes'][] = htmlentities($user, ENT_QUOTES | ENT_HTML401);
+            }
         }
         
         if(!empty($post['checkbox_group_resps'])){
@@ -84,8 +87,10 @@ class Gestion {
         }
         
         if('Y' == $data['isDoubleValidation']){
-            foreach ($post['checkbox_group_grand_resps'] as $grandresp => $value) {
-                $data['grandResponsables'][] = $grandresp;
+            if(!empty($post['checkbox_group_grand_resps'])){
+                foreach ($post['checkbox_group_grand_resps'] as $grandresp => $value) {
+                    $data['grandResponsables'][] = $grandresp;
+                }
             }
         }
         
@@ -420,8 +425,14 @@ class Gestion {
                     }
                     $return .= '<div class="alert alert-danger">' . _('erreur_recommencer') . '<ul>' . $errors . '</ul></div>';
                 }
+                $infosGroupe =  [
+                    'nom' => $_POST['new_group_name'],
+                    'doubleValidation' => $_POST['new_group_double_valid'],
+                    'comment' => $_POST['new_group_libelle']
+                ];
             } else {
-                $notice = '<div class="alert alert-info">' . _('traitement_effectue') . '</div>';
+                log_action(0, 'groupe', '', 'groupe traité avec succès');
+                redirect(ROOT_PATH . 'admin/admin_index.php?session='. session_id() . '&onglet=admin-group', false);
             }
         }
 
@@ -463,7 +474,7 @@ class Gestion {
         if($_SESSION['config']['double_validation_conges']) {
             $selectN = $infosGroupe['doubleValidation'] == 'N' ? 'selected="selected"':'';
             $selectY = $infosGroupe['doubleValidation'] == 'Y' ? 'selected="selected"':'';
-            $childTable .= '<td><select class="form-control" name="new_group_double_valid" id="'. $selectId .'" onchange="return divGrandResp();"><option value="N" '.$selectN.'>N</option><option value="Y" '.$selectY .'>Y</option></select></td>';
+            $childTable .= '<td><select class="form-control" name="new_group_double_valid" id="'. $selectId .'" onchange="showDivGroupeGrandResp(\''. $selectId .'\',\''. $DivGrandRespId .'\');"><option value="N" '.$selectN.'>N</option><option value="Y" '.$selectY .'>Y</option></select></td>';
         }
         $childTable .= '</tr></tbody>';
         $table->addChild($childTable);
@@ -718,7 +729,7 @@ class Gestion {
         
         $return = true;
         
-        if($this->isAutorisee()){
+        if(!$this->isAutorisee()){
             $errors[] = _('non autorisée');
             return false;
         }
@@ -802,6 +813,6 @@ class Gestion {
     }
     
     protected function isAutorisee() {
-        return is_hr($_SESSION['userlogin']) ||  is_admin($_SESSION['userlogin']);
+        return is_admin($_SESSION['userlogin']);
     }
 }

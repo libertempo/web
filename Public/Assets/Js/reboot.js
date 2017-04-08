@@ -617,3 +617,12 @@ var selectAssociationPlanning = function (idElement, associationsGroupe, nilId)
         }
     }
 }
+
+function showDivGroupeGrandResp(selectId,DivGrandRespId) { 
+    if(document.getElementById(selectId).value=='Y') { 
+        document.getElementById(DivGrandRespId).style.display='block'; 
+    } else {
+        document.getElementById(DivGrandRespId).style.display='none'; 
+    }
+    return false;
+}   
