@@ -245,9 +245,8 @@ class Fonctions {
         if($etape==0)
         {
             //avant tout , on conseille une sauvegarde de la database !! (cf vieux index.php)
-            echo "<h3>". _('install_maj_passer_de') ." <font color=\"black\">$installed_version</font> ". _('install_maj_a_version') ." <font color=\"black\">$config_php_conges_version</font> .</h3>\n";
-            echo "<h3><font color=\"red\">". _('install_maj_sauvegardez') ." !!!</font></h3>\n";
-            echo "<h2>....</h2>\n";
+            echo "<h3>". _('install_maj_passer_de') ." <font color=\"black\">$installed_version</font> ". _('install_maj_a_version') ." <font color=\"black\">$config_php_conges_version</font>.</h3>\n";
+            echo "<h3><font color=\"red\">". _('install_maj_cas_echec_backup') .".</font></h3>\n";
             echo "<br>\n";
             echo "<form action=\"$PHP_SELF?lang=$lang\" method=\"POST\">\n";
             echo "<input type=\"hidden\" name=\"etape\" value=\"1\">\n";
