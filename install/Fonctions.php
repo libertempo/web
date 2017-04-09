@@ -324,7 +324,7 @@ class Fonctions {
             }
             try {
                 \admin\Fonctions::sauvegardeAsFile($start_version, $new_installed_version);
-                echo '<META HTTP-EQUIV=REFRESH CONTENT="0; URL=' . $file_upgrade . '?etape=' . $etape . '&version=' . $new_installed_version . '&lang=' . $lang . '>';
+                echo '<META HTTP-EQUIV=REFRESH CONTENT="0; URL=' . $file_upgrade . '?etape=' . $etape . '&version=' . $new_installed_version . '&lang=' . $lang . '">';
             } catch (\Exception $e) {
                 echo 'Abandon de la mise à jour : ' . $e->getMessage();
             }
