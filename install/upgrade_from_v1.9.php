@@ -49,3 +49,6 @@ $sql->getPdoObj()->commit();
 
 $del_config_db="DELETE FROM conges_config WHERE conf_nom = 'disable_saise_champ_nb_jours_pris';";
 $res_del_config_from_db=\includes\SQL::query($del_config_db);
+
+// on renvoit à la page mise_a_jour.php (là d'ou on vient)
+echo "<a href=\"mise_a_jour.php?etape=3&version=$version&lang=$lang\">upgrade_from_v1.9  OK</a><br>\n";
