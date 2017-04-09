@@ -1613,96 +1613,13 @@ class Fonctions
     // recup de la structure d'une table sous forme de CREATE ...
     public static function get_table_structure($table)
     {
-        $chaine_drop="DROP TABLE IF EXISTS  `$table` ;\n";
-        $chaine_create = "CREATE TABLE `$table` ( ";
+        $drop = "DROP TABLE IF EXISTS  `$table` ;\n";
 
         // description des champs :
-        $sql_champs='SHOW FIELDS FROM '. \includes\SQL::quote($table);
-        $ReqLog_champs = \includes\SQL::query($sql_champs) ;
-        $count_champs=$ReqLog_champs->num_rows;
-        $i=0;
-        while ($resultat_champs = $ReqLog_champs->fetch_array())
-        {
-            $sql_field=$resultat_champs['Field'];
-            $sql_type=$resultat_champs['Type'];
-            $sql_null=$resultat_champs['Null'];
-            $sql_key=$resultat_champs['Key'];
-            $sql_default=$resultat_champs['Default'];
-            $sql_extra=$resultat_champs['Extra'];
-
-            $chaine_create=$chaine_create." `$sql_field` $sql_type ";
-            if($sql_null != "YES")
-                $chaine_create=$chaine_create." NOT NULL ";
-            if(!empty($sql_default))
-            {
-                if($sql_default=="CURRENT_TIMESTAMP")
-                    $chaine_create=$chaine_create." default $sql_default ";        // pas de quotes !
-                else
-                    $chaine_create=$chaine_create." default '$sql_default' ";
-            }
-            if(!empty($sql_extra))
-                $chaine_create=$chaine_create." $sql_extra ";
-            if($i<$count_champs-1)
-                $chaine_create=$chaine_create.",";
-            $i++;
-        }
-
-        // description des index :
-        $sql_index = 'SHOW KEYS FROM '. \includes\SQL::quote($table).'';
-        $ReqLog_index = \includes\SQL::query($sql_index) ;
-        $count_index=$ReqLog_index->num_rows;
-        $i=0;
-
-        // il faut faire une liste pour prendre les PRIMARY, le nom de la colonne et
-        // genérer un PRIMARY KEY ('key1'), PRIMARY KEY ('key2', ...)
-        // puis on regarde ceux qui ne sont pas PRIMARY et on regarde s'ils sont UNIQUE ou pas et
-        // on génére une liste= UNIQUE 'key1' ('key1') , 'key2' ('key2') , ....
-        // ou une liste= KEY key1' ('key1') , 'key2' ('key2') , ....
-        $list_primary="";
-        $list_unique="";
-        $list_key="";
-        while ($resultat_index = $ReqLog_index->fetch_array())
-        {
-            $sql_key_name=$resultat_index['Key_name'];
-            $sql_column_name=$resultat_index['Column_name'];
-            $sql_non_unique=$resultat_index['Non_unique'];
-
-            if($sql_key_name=="PRIMARY")
-            {
-                if($list_primary=="")
-                    $list_primary=" PRIMARY KEY (`$sql_column_name` ";
-                else
-                    $list_primary=$list_primary.", `$sql_column_name` ";
-            }
-            elseif($sql_non_unique== 0)
-            {
-                if($list_unique=="")
-                    $list_unique=" UNIQUE  `$sql_column_name` (`$sql_key_name`) ";
-                else
-                    $list_unique = $list_unique.", `$sql_column_name` (`$sql_key_name`) ";
-            }
-            else
-            {
-                if($list_key=="")
-                    $list_key=" KEY  `$sql_column_name` (`$sql_key_name`) ";
-                else
-                    $list_key=$list_key.", KEY `$sql_column_name` (`$sql_key_name`) ";
-            }
-        }
-
-        if($list_primary!="")
-            $list_primary=$list_primary." ) ";
-
-        if($list_primary!="")
-            $chaine_create=$chaine_create.",    ".$list_primary;
-        if($list_unique!="")
-            $chaine_create=$chaine_create.",    ".$list_unique;
-        if($list_key!="")
-            $chaine_create=$chaine_create.",    ".$list_key;
-
-        $chaine_create=$chaine_create." ) DEFAULT CHARSET=latin1;\n#\n";
-
-        return($chaine_drop.$chaine_create);
+        $req = 'SHOW CREATE TABLE '. \includes\SQL::quote($table);
+        $descriptor = \includes\SQL::query($req) ;
+        $resultDescriptor = $ReqLog_champs->fetch_array();
+        return $drop . $resultDescriptor['Create Table'] . ";\n#\n";
     }
 
     public static function restaure($fichier_restaure_name, $fichier_restaure_tmpname, $fichier_restaure_size, $fichier_restaure_error)
@@ -1828,10 +1745,9 @@ class Fonctions
     {
         $typeSauvegarde = 'all';
         $contentFile = static::getDataFile($typeSauvegarde);
-        $filename = BACKUP_PATH . 'php_conges_' . $typeSauvegarde .'.sql'; // nom de migration
+        $filename = BACKUP_PATH . 'php_conges_' . $typeSauvegarde .'_' . $previousVersion . '__' . $newVersion . '.sql'; // nom de migration
 
-        //if (false === file_put_contents($filename, $contentFile)) {
-        if (true) {
+        if (false === file_put_contents($filename, $contentFile)) {
             throw new \Exception('Échec de l\'écriture de la sauvegarde');
         }
     }
