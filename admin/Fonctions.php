@@ -1618,7 +1618,7 @@ class Fonctions
         // description des champs :
         $req = 'SHOW CREATE TABLE '. \includes\SQL::quote($table);
         $descriptor = \includes\SQL::query($req) ;
-        $resultDescriptor = $ReqLog_champs->fetch_array();
+        $resultDescriptor = $descriptor->fetch_array();
         return $drop . $resultDescriptor['Create Table'] . ";\n#\n";
     }
 
