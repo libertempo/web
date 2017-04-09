@@ -51,6 +51,8 @@ class Fonctions
     // verifie les parametre de la nouvelle demande :si ok : enregistre la demande dans table conges_periode
     public static function new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type)
     {
+        $config = new \App\Libraries\Configuration();
+
         //conversion des dates
         $new_debut = convert_date($new_debut);
         $new_fin = convert_date($new_fin);
@@ -84,7 +86,7 @@ class Fonctions
             if ( $periode_num != 0 ) {
                 $return .= schars( _('form_modif_ok') ) . ' !<br><br>.';
                 //envoi d'un mail d'alerte au responsable (si demandé dans config de php_conges)
-                if($_SESSION['config']['mail_new_demande_alerte_resp']){
+                if($config->isSendMailDemandeResponsable()){
                     if(in_array(\utilisateur\Fonctions::get_type_abs($new_type), array('absences'))) {
                         alerte_mail($_SESSION['userlogin'], ":responsable:", $periode_num, "new_absence_conges");
                     } else {
