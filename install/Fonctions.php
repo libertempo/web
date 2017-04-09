@@ -297,14 +297,7 @@ class Fonctions {
         } elseif($etape==2) {
             $start_version = $installed_version ;
 
-            //on lance l'execution (include) des scripts d'upgrade l'un après l'autre jusqu'à la version voulue ($config_php_conges_version) ..
-            if(($start_version == "1.5.0") || ($start_version == "1.5.1")) {
-                $file_upgrade = 'upgrade_from_v1.5.0.php';
-                $new_installed_version = "1.6.0";
-            } elseif($start_version == "1.6.0") {
-                $file_upgrade = 'upgrade_from_v1.6.0.php';
-                $new_installed_version = "1.7.0";
-            } elseif($start_version == "1.7.0") {
+            if($start_version == "1.7.0") {
                 $file_upgrade = 'upgrade_from_v1.7.0.php';
                 $new_installed_version = "1.8";
             } elseif($start_version == "1.8") {
@@ -327,7 +320,7 @@ class Fonctions {
             } catch (\Exception $e) {
                 echo 'Abandon de la mise à jour : ' . $e->getMessage();
             }
-        } elseif($etape==3) {
+        } elseif($etape == 3) {
             /* Reset du token d'instance à chaque version */
             \includes\SQL::query('UPDATE `conges_appli` SET appli_valeur =  "' . hash('sha256', time() . rand()) . '" WHERE appli_variable = "token_instance"');
             // FIN
