@@ -654,7 +654,7 @@ class Gestion {
     public function getResponsables($id = NIL_INT){
         $infoResponsables = [];
         
-        $respsLogin = \App\ProtoControllers\Responsable::getListResponsable();
+        $respsLogin = \App\ProtoControllers\Responsable::getListResponsable(true);
         foreach ($respsLogin as $login) {
             $donnees = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($login);
             $responsables[$login] = [
@@ -682,7 +682,7 @@ class Gestion {
     public function getGrandResponsables($id = NIL_INT){
         $infoResponsables = [];
         
-        $respsLogin = \App\ProtoControllers\Responsable::getListResponsable();
+        $respsLogin = \App\ProtoControllers\Responsable::getListResponsable(true);
         foreach ($respsLogin as $login) {
             $donnees = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($login);
             $responsables[$login] = [
@@ -709,7 +709,7 @@ class Gestion {
      */
     public function getEmployes($idGroupe = NIL_INT){
         $infoUtilisateurs = [];
-        $idsUtilisateurs = \App\ProtoControllers\Utilisateur::getListId();
+        $idsUtilisateurs = \App\ProtoControllers\Utilisateur::getListId(true);
         foreach ($idsUtilisateurs as $login) {
             $donnees = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($login);
             $employes[$login] = [
@@ -813,6 +813,6 @@ class Gestion {
     }
     
     protected function isAutorisee() {
-        return is_admin($_SESSION['userlogin']);
+        return \App\ProtoControllers\Utilisateur::isAdmin($_SESSION['userlogin']);
     }
 }

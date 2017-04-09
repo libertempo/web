@@ -159,13 +159,16 @@ class Responsable
      *
      * @return array
      */
-    public static function  getListResponsable()
+    public static function  getListResponsable($activeSeul = false)
     {
         $respLogin = [];
         $sql = \includes\SQL::singleton();
         $req = 'SELECT u_login
                 FROM conges_users
                 WHERE u_is_resp = "Y"';
+        if($activeSeul){
+            $req .= ' AND u_is_active = Y';
+        }
         $query = $sql->query($req);
 
         while ($data = $query->fetch_array()) {
