@@ -1739,7 +1739,12 @@ class Fonctions
     }
 
     /**
+     * Écrit un fichier de sauvegarde de version dans le répertoire de backup
      *
+     * @param string $previousVersion Version de départ (courante)
+     * @param string $newVersion Version visée
+     *
+     * @throws \Exception en cas d'échec d'écriture de fichier
      */
     public static function sauvegardeAsFile($previousVersion, $newVersion)
     {
