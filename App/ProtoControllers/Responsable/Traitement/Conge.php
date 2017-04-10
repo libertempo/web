@@ -179,14 +179,14 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         if ($this->isDemandeTraitable($infoDemande['p_etat'])) { // demande est traitable
             if (\App\Models\Conge::REFUSE === $statut) {
                 $return = $this->updateStatutRefus($id_conge, $put['comment_refus'][$id_conge]);
-                if($_SESSION['config']['mail_refus_conges_alerte_user']) {
+                if($config->isSendMailRefusUtilisateur()) {
                     alerte_mail($_SESSION['userlogin'], $infoDemande['p_login'], $infoDemande['p_num'], "refus_conges");
                 }
                 log_action($infoDemande['p_num'], 'refus', '', $infoDemande['p_login'], 'traitement demande ' . $id_conge . ' (' . $infoDemande['p_login'] . ') (' . $infoDemande['p_nb_jours'] . ' jours) : refus');
             } elseif (\App\Models\Conge::ACCEPTE === $statut) {
                 if (\App\ProtoControllers\Responsable::isDoubleValGroupe($infoDemande['p_login'])) {
                     $return = $this->updateStatutPremiereValidation($id_conge);
-                    if($config->isSendMailValidationUtilisateur()) {
+                    if($config->isSendMailPremierValidationUtilisateur()) {
                         alerte_mail($_SESSION['userlogin'], $infoDemande['p_login'], $infoDemande['p_num'], "valid_conges");
                     }
                     log_action($infoDemande['p_num'], 'valid', $infoDemande['p_login'], 'traitement demande conges ' . $id_conge . ' de ' . $infoDemande['p_login'] . ' première validation');
@@ -216,7 +216,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         if ($this->isDemandeTraitable($infoDemande['p_etat'])) { // demande est traitable
             if (\App\Models\Conge::REFUSE === $statut) {
                 $return = $this->updateStatutRefus($id_conge, $put['comment_refus'][$id_conge]);
-                if($_SESSION['config']['mail_refus_conges_alerte_user']) {
+                if($config->isSendMailRefusUtilisateur()) {
                     alerte_mail($_SESSION['userlogin'], $infoDemande['p_login'], $infoDemande['p_num'], "refus_conges");
                 }
                 log_action($infoDemande['p_num'], 'refus', '', $infoDemande['p_login'], 'traitement demande ' . $id_conge . ' (' . $infoDemande['p_login'] . ') (' . $infoDemande['p_nb_jours'] . ' jours) : refus');

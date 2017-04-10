@@ -1260,7 +1260,7 @@ class Fonctions
                     log_action($numero_int,"refus", $user_login, "traite demande $numero ($user_login) ($user_nb_jours_pris jours) : $date_deb");
 
                     //envoi d'un mail d'alerte au user (si demandé dans config de php_conges)
-                    if($_SESSION['config']['mail_refus_conges_alerte_user']) {
+                    if($config->isSendMailRefusUtilisateur()) {
                         alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "refus_conges");
                     }
                 }
