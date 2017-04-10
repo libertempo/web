@@ -1274,6 +1274,7 @@ class Fonctions
 
     public static function annule_conges($user_login, $tab_checkbox_annule, $tab_text_annul)
     {
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $return = '';
 
@@ -1308,7 +1309,7 @@ class Fonctions
                 }
 
                 //envoi d'un mail d'alerte au user (si demandé dans config de php_conges)
-                if($_SESSION['config']['mail_annul_conges_alerte_user']) {
+                if($config->isSendMailAnnulationCongesUtilisateur()) {
                     alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "annul_conges");
                 }
             }
