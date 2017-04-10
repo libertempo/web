@@ -303,10 +303,11 @@ function verif_saisie_new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new
 // (une classe pour les jours de semaine et une pour les jours de week end)
 function get_td_class_of_the_day_in_the_week($timestamp_du_jour)
 {
+    $config = new \App\Libraries\Configuration();
     $j_name = date('D', $timestamp_du_jour);
     $j_date = date('Y-m-d', $timestamp_du_jour);
 
-    if( ( $j_name=='Sat' && !$_SESSION['config']['samedi_travail'] ) || ($j_name=='Sun' && !$_SESSION['config']['dimanche_travail'] ) || est_chome($timestamp_du_jour) || est_ferme($timestamp_du_jour) )
+    if(( $j_name=='Sat' && !$config->isSamediOuvrable()) || ($j_name=='Sun' && !$config->isDimancheOuvrable()) || est_chome($timestamp_du_jour) || est_ferme($timestamp_du_jour))
         return 'weekend';
     else
         return 'semaine';
@@ -317,11 +318,12 @@ function get_td_class_of_the_day_in_the_week($timestamp_du_jour)
 // attention : les param $val_matin et $val_aprem sont passées par référence (avec &) car on change leur valeur
 function recup_infos_artt_du_jour($sql_login, $j_timestamp, &$val_matin, &$val_aprem, array $planningUser)
 {
+    $config = new \App\Libraries\Configuration();
     $num_semaine = date('W', $j_timestamp);
     $jour_name_fr_2c = get_j_name_fr_2c($j_timestamp); // nom du jour de la semaine en francais sur 2 caracteres
 
     // on ne cherche pas d'artt les samedis ou dimanches quand il ne sont pas travaillés (cf config de php_conges)
-    if ( ( $jour_name_fr_2c != 'sa' || $_SESSION['config']['samedi_travail'] )  && ( $jour_name_fr_2c != 'di' || $_SESSION['config']['dimanche_travail'] ) )
+    if (($jour_name_fr_2c != 'sa' || $config->isSamediOuvrable())  && ( $jour_name_fr_2c != 'di' || $config->isDimancheOuvrable()))
     {
         // verif si le jour fait l'objet d'un echange ....
         $date_j            = date('Y-m-d', $j_timestamp);

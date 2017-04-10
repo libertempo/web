@@ -2400,6 +2400,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
      */
     private static function getFormPlanningTable($typeSemaine, $idPlanning, array $postPlanning)
     {
+        $config = new \App\Libraries\Configuration();
         /* Recupération des créneaux (postés ou existants) pour le JS */
         $creneauxGroupes = \App\ProtoControllers\HautResponsable\Planning\Creneau::getCreneauxGroupes($postPlanning, $idPlanning, $typeSemaine);
 
@@ -2411,10 +2412,10 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             4 => _('Jeudi'),
             5 => _('Vendredi'),
         ];
-        if (false !== $_SESSION['config']['samedi_travail']) {
+        if ($config->isSamediOuvrable()) {
             $jours[6] = _('Samedi');
         }
-        if (false !== $_SESSION['config']['dimanche_travail']) {
+        if ($config->isDimancheOuvrable()) {
             $jours[7] = _('Dimanche');
         }
         $table = new \App\Libraries\Structure\Table();

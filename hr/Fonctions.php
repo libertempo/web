@@ -1011,15 +1011,15 @@ class Fonctions
         /* Génération du datePicker et de ses options */
         $daysOfWeekDisabled = [];
         $datesDisabled      = [];
-        if ((false == $_SESSION['config']['dimanche_travail'])
-            && (false == $_SESSION['config']['samedi_travail'])
+        if ((!$config->isDimancheOuvrable())
+            && (!$config->isSamediOuvrable())
         ) {
             $daysOfWeekDisabled = [0,6];
         } else {
-            if (false == $_SESSION['config']['dimanche_travail']) {
+            if (!$config->isDimancheOuvrable()) {
                 $daysOfWeekDisabled = [0];
             }
-            if (false == $_SESSION['config']['samedi_travail']) {
+            if (!$config->isSamediOuvrable()) {
                 $daysOfWeekDisabled = [6];
             }
         }
@@ -2428,6 +2428,7 @@ class Fonctions
 
     public static function affiche_calendrier_fermeture_mois($year, $mois, $tab_year)
     {
+        $config = new \App\Libraries\Configuration();
         $jour_today=date("j");
         $jour_today_name=date("D");
         $return = '';
@@ -2458,7 +2459,7 @@ class Fonctions
         $return .= '<tr>';
         // affichage des cellules vides jusqu'au 1 du mois ...
         for($i=1; $i<$first_jour_mois_rang; $i++) {
-            if( (($i==6)&&($_SESSION['config']['samedi_travail']==FALSE)) || (($i==7)&&($_SESSION['config']['dimanche_travail']==FALSE)) ) {
+            if( (($i==6)&&(!$config->isSamediOuvrable())) || (($i==7)&&(!$config->isDimancheOuvrable())) ) {
                 $bgcolor=$_SESSION['config']['week_end_bgcolor'];
             } else {
                 $bgcolor=$_SESSION['config']['semaine_bgcolor'];
@@ -2544,7 +2545,7 @@ class Fonctions
             $return .= '<td  class="cal-saisie ' . $td_second_class . '">' . $j_day . '</td>';
         }
         for($i; $i<36-$first_jour_mois_rang+1; $i++) {
-            if( (($i==35-$first_jour_mois_rang)&&($_SESSION['config']['samedi_travail']==FALSE)) || (($i==36-$first_jour_mois_rang)&&($_SESSION['config']['dimanche_travail']==FALSE)) ) {
+            if((($i==35-$first_jour_mois_rang)&&(!$config->isSamediOuvrable())) || (($i==36-$first_jour_mois_rang)&&(!$config->isDimancheOuvrable()))) {
                 $bgcolor=$_SESSION['config']['week_end_bgcolor'];
             } else {
                 $bgcolor=$_SESSION['config']['semaine_bgcolor'];
@@ -2568,7 +2569,7 @@ class Fonctions
             $return .= '<td  class="cal-saisie ' . $td_second_class . '">' . $j_day . '</td>';
         }
         for($i; $i<43-$first_jour_mois_rang+1; $i++) {
-            if( (($i==42-$first_jour_mois_rang)&&($_SESSION['config']['samedi_travail']==FALSE)) || (($i==43-$first_jour_mois_rang)&&($_SESSION['config']['dimanche_travail']==FALSE))) {
+            if( (($i==42-$first_jour_mois_rang)&&(!$config->isSamediOuvrable())) || (($i==43-$first_jour_mois_rang)&&(!$config->isDimancheOuvrable()))) {
                 $bgcolor=$_SESSION['config']['week_end_bgcolor'];
             } else {
                 $bgcolor=$_SESSION['config']['semaine_bgcolor'];
@@ -3416,6 +3417,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
      */
     private static function getFormPlanningTable($typeSemaine, $idPlanning, array $postPlanning)
     {
+        $config = new \App\Libraries\Configuration();
         /* Recupération des créneaux (postés ou existants) pour le JS */
         $creneauxGroupes = \App\ProtoControllers\HautResponsable\Planning\Creneau::getCreneauxGroupes($postPlanning, $idPlanning, $typeSemaine);
 
@@ -3427,10 +3429,10 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             4 => _('Jeudi'),
             5 => _('Vendredi'),
         ];
-        if (false !== $_SESSION['config']['samedi_travail']) {
+        if ($config->isSamediOuvrable()) {
             $jours[6] = _('Samedi');
         }
-        if (false !== $_SESSION['config']['dimanche_travail']) {
+        if ($config->isDimancheOuvrable()) {
             $jours[7] = _('Dimanche');
         }
         $table = new \App\Libraries\Structure\Table();
