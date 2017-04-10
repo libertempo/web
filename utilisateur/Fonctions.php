@@ -235,6 +235,7 @@ class Fonctions
 
     public static function modifier($p_num_to_update, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $p_etat, $onglet)
     {
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
         $VerifNb = verif_saisie_decimal($new_nb_jours);
@@ -249,7 +250,7 @@ class Fonctions
 
         $result = \includes\SQL::query($sql1) ;
 
-        if($_SESSION['config']['mail_modif_demande_alerte_resp']) {
+        if($config->isSendMailAnnulationCongesUtilisateur()) {
             alerte_mail($_SESSION['userlogin'], ":responsable:", $p_num_to_update, "modif_demande_conges");
         }
         $comment_log = "modification de demande num $p_num_to_update ($new_nb_jours jour(s)) ( de $new_debut $new_demi_jour_deb a $new_fin $new_demi_jour_fin) ($new_comment)";
@@ -468,10 +469,11 @@ class Fonctions
 
     public static function suppression($p_num_to_delete, $onglet)
     {
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
-        if($_SESSION['config']['mail_supp_demande_alerte_resp']) {
+        if($config->isSendMailSupprimeDemandeResponsable()) {
             alerte_mail($_SESSION['userlogin'], ":responsable:", $p_num_to_delete, "supp_demande_conges");
         }
 
