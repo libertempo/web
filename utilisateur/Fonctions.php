@@ -199,15 +199,15 @@ class Fonctions
             /* Génération du datePicker et de ses options */
             $daysOfWeekDisabled = [];
             $datesDisabled      = [];
-            if ((false == $_SESSION['config']['dimanche_travail'])
-                && (false == $_SESSION['config']['samedi_travail'])
+            if ((!$config->isDimancheOuvrable())
+                && (!$config->isSamediOuvrable())
             ) {
                 $daysOfWeekDisabled = [0,6];
             } else {
-                if (false == $_SESSION['config']['dimanche_travail']) {
+                if (!$config->isDimancheOuvrable()) {
                     $daysOfWeekDisabled = [0];
                 }
-                if (false == $_SESSION['config']['samedi_travail']) {
+                if (!$config->isSamediOuvrable()) {
                     $daysOfWeekDisabled = [6];
                 }
             }
@@ -276,6 +276,7 @@ class Fonctions
 
     public static function confirmer($p_num, $onglet)
     {
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
@@ -288,14 +289,14 @@ class Fonctions
         $daysOfWeekDisabled = [];
         $datesDisabled      = [];
         if ((false == $_SESSION['config']['dimanche_travail'])
-            && (false == $_SESSION['config']['samedi_travail'])
+            && (!$config->isSamediOuvrable())
         ) {
             $daysOfWeekDisabled = [0,6];
         } else {
-            if (false == $_SESSION['config']['dimanche_travail']) {
+            if (!$config->isDimancheOuvrable()) {
                 $daysOfWeekDisabled = [0];
             }
-            if (false == $_SESSION['config']['samedi_travail']) {
+            if (!$config->isSamediOuvrable()) {
                 $daysOfWeekDisabled = [6];
             }
         }
@@ -1440,12 +1441,13 @@ class Fonctions
      */
     public static function getDatePickerDaysOfWeekDisabled()
     {
+        $config = new \App\Libraries\Configuration();
         $daysOfWeekDisabled = [];
 
-        if (false == $_SESSION['config']['dimanche_travail']) {
+        if (!$config->isDimancheOuvrable()) {
             $daysOfWeekDisabled[] = 0;
         }
-        if (false == $_SESSION['config']['samedi_travail']) {
+        if (!$config->isSamediOuvrable()) {
             $daysOfWeekDisabled[] = 6;
         }
         return $daysOfWeekDisabled;
