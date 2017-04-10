@@ -133,6 +133,7 @@ class Fonctions
 
     public static function traite_all_demande_en_cours($tab_bt_radio, $tab_text_refus)
     {
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
@@ -166,7 +167,7 @@ class Fonctions
                     soustrait_solde_et_reliquat_user($user_login, $numero_int, $user_nb_jours_pris, $type_abs, $date_deb, $demi_jour_deb, $date_fin, $demi_jour_fin);
 
                     //envoi d'un mail d'alerte au user (si demandé dans config de php_conges)
-                    if($_SESSION['config']['mail_valid_conges_alerte_user'])
+                    if($config->isSendMailValidationUtilisateur())
                         alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "accept_conges");
                 }
             } elseif(strcmp($reponse, "not_OK")==0) {
@@ -448,6 +449,7 @@ class Fonctions
 
     public static function traite_demandes($user_login, $tab_radio_traite_demande, $tab_text_refus)
     {
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $session=session_id();
         $return = '';
@@ -487,7 +489,7 @@ class Fonctions
                     }
 
                     //envoi d'un mail d'alerte au user (si demandé dans config de php_conges)
-                    if($_SESSION['config']['mail_valid_conges_alerte_user']) {
+                    if($config->isSendMailValidationUtilisateur()) {
                         alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "accept_conges");
                     }
                 }
@@ -502,7 +504,7 @@ class Fonctions
                     log_action($numero_int,"valid", $user_login, "traite demande $numero ($user_login) ($user_nb_jours_pris jours) : $date_deb");
 
                     //envoi d'un mail d'alerte au user (si demandé dans config de php_conges)
-                    if($_SESSION['config']['mail_valid_conges_alerte_user']) {
+                    if($config->isSendMailValidationUtilisateur()) {
                         alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "valid_conges");
                     }
                 }

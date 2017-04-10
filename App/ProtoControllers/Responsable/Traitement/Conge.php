@@ -177,6 +177,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
      */
     protected function putResponsable(array $infoDemande, $statut, array $put, array &$errorLst)
     {
+        $config = new \App\Libraries\Configuration();
         $return = NIL_INT;
         $id_conge = $infoDemande['p_num'];
         if ($this->isDemandeTraitable($infoDemande['p_etat'])) { // demande est traitable
@@ -189,13 +190,13 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
             } elseif (\App\Models\Conge::ACCEPTE === $statut) {
                 if (\App\ProtoControllers\Responsable::isDoubleValGroupe($infoDemande['p_login'])) {
                     $return = $this->updateStatutPremiereValidation($id_conge);
-                    if($_SESSION['config']['mail_valid_conges_alerte_user']) {
+                    if($config->isSendMailValidationUtilisateur()) {
                         alerte_mail($_SESSION['userlogin'], $infoDemande['p_login'], $infoDemande['p_num'], "valid_conges");
                     }
                     log_action($infoDemande['p_num'], 'valid', $infoDemande['p_login'], 'traitement demande conges ' . $id_conge . ' de ' . $infoDemande['p_login'] . ' première validation');
                 } else {
                     $return = $this->putValidationFinale($id_conge);
-                    if($_SESSION['config']['mail_valid_conges_alerte_user']) {
+                    if($config->isSendMailValidationUtilisateur()) {
                         alerte_mail($_SESSION['userlogin'], $infoDemande['p_login'], $infoDemande['p_num'], "accept_conges");
                     }
                     log_action($infoDemande['p_num'], 'ok', $infoDemande['p_login'], 'traitement demande ' . $id_conge . ' (' . $infoDemande['p_login'] . ') (' . $infoDemande['p_nb_jours'] . ' jours) : OK');
@@ -213,6 +214,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
      */
     protected function putGrandResponsable(array $infoDemande, $statut, array $put, array &$errorLst)
     {
+        $config = new \App\Libraries\Configuration();
         $return = NIL_INT;
         $id_conge = $infoDemande['p_num'];
         if ($this->isDemandeTraitable($infoDemande['p_etat'])) { // demande est traitable
@@ -225,7 +227,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
             } elseif (\App\Models\Conge::ACCEPTE === $statut) {
                 if (\App\ProtoControllers\Responsable::isDoubleValGroupe($infoDemande['p_login'])) {
                     $return = $this->putValidationFinale($id_conge);
-                    if($_SESSION['config']['mail_valid_conges_alerte_user']) {
+                    if($config->isSendMailValidationUtilisateur()) {
                         alerte_mail($_SESSION['userlogin'], $infoDemande['p_login'], $infoDemande['p_num'], "accept_conges");
                     }
                     log_action($infoDemande['p_num'], 'ok', $infoDemande['p_login'], 'traitement demande ' . $id_conge . ' (' . $infoDemande['p_login'] . ') (' . $infoDemande['p_nb_jours'] . ' jours) : OK');
