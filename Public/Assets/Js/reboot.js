@@ -331,7 +331,7 @@ var planningController = function (idElement, options, creneaux)
     /**
      * Calcul le temps de travail hebdomadaire du planning
      * Utilise le model creneauxList
-     * @return {int} minuteHedboLe nombre de minutes travaillées par mois
+     * @return {int} minuteHedbo Le nombre de minutes travaillées par mois
      */
     this._calculDureeHebdomadaire = function () {
         var minuteHedbo = 0;
@@ -575,16 +575,15 @@ var planningController = function (idElement, options, creneaux)
      *
      * @return void
      */
-    this._removePeriod = function (period, jourSelectionne, typePeriodeSelected, debutVal, finVal)
+    this._removePeriod = function (period, jourSelectionne, debutVal, finVal)
     {
         // Change le model
         if (typeof this.creneauxList[jourSelectionne] !== "undefined") {
-            function searchCreneaux(creneauxArray) {
+            var index = this.creneauxList[jourSelectionne].findIndex(function(creneauxArray) {
                 return (creneauxArray[0]==debutVal && creneauxArray[1] == finVal);
-            }
-            var ind = this.creneauxList[jourSelectionne].findIndex(searchCreneaux);
-            if (ind != -1) {
-                this.creneauxList[jourSelectionne].splice(ind, 1);
+            });
+            if (index != -1) {
+                this.creneauxList[jourSelectionne].splice(index, 1);
             }
         }
         period.parentNode.removeChild(period);
