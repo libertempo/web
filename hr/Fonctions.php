@@ -38,7 +38,6 @@ class Fonctions
         if ($_SESSION['config']['gestion_conges_exceptionnels']) {
             $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
         }
-
         // AFFICHAGE TABLEAU
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses([
@@ -135,7 +134,7 @@ class Fonctions
             }
 
                 $childTable .= '<td>' . $text_affich_user . '</td>';
-                if($_SESSION['config']['editions_papier']) {
+                if($config->canEditPapier()) {
                     $text_edit_papier="<a href=\"../edition/edit_user.php?user_login=$current_login\" target=\"_blank\" title=\""._('resp_etat_users_imprim')."\"><i class=\"fa fa-file-text\"></i></a>";
                     $childTable .= '<td>' . $text_edit_papier . '</td>';
                 }
