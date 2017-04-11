@@ -61,7 +61,7 @@
             '&user_login=' . $_SESSION['userlogin'] .
             '\', \'\', 600, 400);return false;">
             <i class="fa fa-download"></i><span>' . _('Exporter cal') . '</span></a>';
-            if($_SESSION['config']['editions_papier'])
+            if($config->canEditPapier())
                 $mod_toolbar[] = "<a href=\"" . ROOT_PATH . "edition/edit_user.php?session=$session\"><i class=\"fa fa-file-text\"></i><span>"._('button_editions')."</span></a>";
         break;
     }

@@ -52,7 +52,7 @@ class Fonctions
         }
         $return .= '<th></th>';
         $nb_colonnes += 1;
-        if($_SESSION['config']['editions_papier']) {
+        if($config->canEditPapier()) {
             $return .= '<th></th>';
             $nb_colonnes += 1;
         }
@@ -108,7 +108,7 @@ class Fonctions
                     $return .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($soldeHeure) . '</td>';
                 }
                 $return .= '<td>' . $text_affich_user . '</td>';
-                if($_SESSION['config']['editions_papier']) {
+                if($config->canEditPapier()) {
                     $return .= '<td>' . $text_edit_papier . '</td>';
                 }
 

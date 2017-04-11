@@ -282,6 +282,7 @@ class Fonctions
 
     public static function edition_papier($login, $edit_id)
     {
+        $config = new \App\Libraries\Configuration();
         $session=session_id();
         $return = '';
 
@@ -307,7 +308,7 @@ class Fonctions
         /**************************************/
         $return .= '<table cellpadding="0" cellspacing="0" border="0" width="770">';
         $return .= '<tr align="center">';
-        $return .= '<td>' . $_SESSION['config']['texte_haut_edition_papier'] . '<br><br></td>';
+        $return .= '<td>' . $config->getTextHaut() . '<br><br></td>';
         $return .= '</tr>';
         $return .= '</table>';
 
@@ -502,7 +503,7 @@ class Fonctions
         $return .= '<!-- affichage du texte en bas de page -->';
         $return .= '<table cellpadding="0" cellspacing="0" border="0" width="770">';
         $return .= '<tr align="center">';
-        $return .= '<td><br>' . $_SESSION['config']['texte_bas_edition_papier'] . '</td>';
+        $return .= '<td><br>' . $config->getTextBas() . '</td>';
         $return .= '</tr>';
         $return .= '</table>';
 
