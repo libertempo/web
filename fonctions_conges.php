@@ -1065,7 +1065,9 @@ function get_tab_resp_du_user($user_login)
 // le login du user est passé en paramêtre ainsi que le tableau (vide) des resp
 function get_tab_grd_resp_du_user($user_login, &$tab_grd_resp)
 {
+    $config = new \App\Libraries\Configuration();
     // recup des resp des groupes du user
+<<<<<<< HEAD
     $list_groups=get_list_groupes_du_user($user_login);
     if($list_groups!=""){
         $tab_gid=explode(",", $list_groups);
@@ -1078,6 +1080,25 @@ function get_tab_grd_resp_du_user($user_login, &$tab_grd_resp)
                 //attention à ne pas mettre 2 fois le meme resp dans le tableau
                 if (in_array($resultat1["ggr_login"], $tab_grd_resp)==FALSE){
                     $tab_grd_resp[]=$resultat1["ggr_login"];
+=======
+    if($config->isGroupeActive())
+    {
+        $list_groups=get_list_groupes_du_user($user_login);
+        if($list_groups!="")
+        {
+            $tab_gid=explode(",", $list_groups);
+            foreach($tab_gid as $gid)
+            {
+                $gid=trim($gid);
+                $sql1='SELECT ggr_login FROM conges_groupe_grd_resp WHERE ggr_gid='.\includes\SQL::quote($gid);
+                $ReqLog1 = \includes\SQL::query($sql1);
+
+                while ($resultat1 = $ReqLog1->fetch_array())
+                {
+                    //attention à ne pas mettre 2 fois le meme resp dans le tableau
+                    if (in_array($resultat1["ggr_login"], $tab_grd_resp)==FALSE)
+                        $tab_grd_resp[]=$resultat1["ggr_login"];
+>>>>>>> usage de la méthode isGroupeActive() et canFermeturePasGroupe()
                 }
             }
         }
@@ -1165,6 +1186,7 @@ function is_resp_direct_of_user($resp_login, $user_login)
 
 function is_resp_group_of_user($resp_login, $user_login)
 {
+<<<<<<< HEAD
     $ReqLog_info = \includes\SQL::query('SELECT count(*)
             FROM `conges_groupe_users`
             JOIN conges_groupe_resp ON gr_gid = gu_gid
@@ -1172,11 +1194,30 @@ function is_resp_group_of_user($resp_login, $user_login)
             AND gr_login = \''.\includes\SQL::quote($resp_login).'\';');
     $resultat_info = $ReqLog_info->fetch_array();
     return ($resultat_info[0] != 0);
+=======
+    $config = new \App\Libraries\Configuration();
+    if ($config->isGroupeActive())
+    {
+        $ReqLog_info = \includes\SQL::query('SELECT count(*)
+                FROM `conges_groupe_users`
+                JOIN conges_groupe_resp ON gr_gid = gu_gid
+                WHERE gu_login = \''.\includes\SQL::quote($user_login).'\'
+                AND gr_login = \''.\includes\SQL::quote($resp_login).'\';');
+        $resultat_info = $ReqLog_info->fetch_array();
+        return ($resultat_info[0] != 0);
+    }
+    return false;
+>>>>>>> usage de la méthode isGroupeActive() et canFermeturePasGroupe()
 }
 
 function is_gr_group_of_user($resp_login, $user_login)
 {
+<<<<<<< HEAD
     if ($_SESSION['config']['double_validation_conges'])
+=======
+    $config = new \App\Libraries\Configuration();
+    if ($config->isGroupeActive() && $_SESSION['config']['double_validation_conges'])
+>>>>>>> usage de la méthode isGroupeActive() et canFermeturePasGroupe()
     {
 
         $ReqLog_info = \includes\SQL::query('SELECT count(*)

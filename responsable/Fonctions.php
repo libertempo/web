@@ -412,6 +412,7 @@ class Fonctions
 
     public static function saisie_ajout( $tab_type_conges)
     {
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
@@ -902,6 +903,7 @@ class Fonctions
 
     public static function saisie_cloture( $tab_type_conges)
     {
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
@@ -2469,6 +2471,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
      */
     private static function getFormPlanningEmployes($idPlanning)
     {
+        $config = new \App\Libraries\Configuration();
         $idPlanning = (int) $idPlanning;
         $return = '';
         $utilisateursAssocies = \App\ProtoControllers\Responsable\Planning::getListeUtilisateursAssocies($idPlanning);

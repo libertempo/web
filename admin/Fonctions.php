@@ -2032,7 +2032,11 @@ class Fonctions
             /***********************************/
             /* ajout du user dans ses groupes  */
             $result4=TRUE;
+<<<<<<< HEAD
             if( ($checkbox_user_groups!="") ) {
+=======
+            if(($config->isGroupeActive()) && ($checkbox_user_groups!="")) {
+>>>>>>> usage de la méthode isGroupeActive() et canFermeturePasGroupe()
                 $result4= \admin\Fonctions::commit_modif_user_groups($tab_new_user['login'], $checkbox_user_groups);
             }
 
