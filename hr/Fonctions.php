@@ -1543,6 +1543,7 @@ class Fonctions
 
     public static function saisie_ajout( $tab_type_conges)
     {
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
@@ -1568,7 +1569,7 @@ class Fonctions
 
             /***********************************************************************/
             /* SAISIE GROUPE pour tous les utilisateurs d'un groupe du responsable */
-            if( $_SESSION['config']['gestion_groupes'] ) {
+            if($config->isGroupeActive()) {
                 $return .= \hr\Fonctions::affichage_saisie_globale_groupe($tab_type_conges);
             }
             $return .= '<br>';
@@ -2354,6 +2355,7 @@ class Fonctions
 
     public static function saisie_cloture( $tab_type_conges)
     {
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
@@ -2371,7 +2373,7 @@ class Fonctions
 
             /***********************************************************************/
             /* SAISIE GROUPE pour tous les utilisateurs d'un groupe du responsable */
-            if( $_SESSION['config']['gestion_groupes']) {
+            if($config->isGroupeActive()) {
                 $return .= \hr\Fonctions::affichage_cloture_globale_groupe($tab_type_conges);
             }
             $return .= '<br>';
@@ -2961,6 +2963,7 @@ class Fonctions
 
     public static function saisie_groupe_fermeture()
     {
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
@@ -2979,7 +2982,7 @@ class Fonctions
         $return .= '</form>';
         $return .= '</div>';
 
-        if($_SESSION['config']['gestion_groupes'] && $_SESSION['config']['fermeture_par_groupe']) {
+        if($config->isGroupeActive() && $config->canFermetureParGroupe()) {
             /********************/
             /* Choix Groupe     */
             /********************/
@@ -3518,6 +3521,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
      */
     private static function getFormPlanningEmployes($idPlanning)
     {
+        $config = new \App\Libraries\Configuration();
         $idPlanning = (int) $idPlanning;
         $return = '';
         $utilisateursAssocies = \App\ProtoControllers\HautResponsable\Planning::getListeUtilisateursAssocies($idPlanning);
@@ -3525,7 +3529,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         if (empty($utilisateursAssocies)) {
             $return .= '<div>' . _('hr_tout_utilisateur_associe') . '</div>';
         } else {
-            $hasGroup = $_SESSION['config']['gestion_groupes'];
+            $hasGroup = $config->isGroupeActive();
             if($hasGroup) {
                 $return .= '<div class="form-group col-md-4 col-sm-5">
                 <label class="control-label col-md-3 col-sm-3" for="groupe">Groupe&nbsp;:</label>

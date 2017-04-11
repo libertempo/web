@@ -984,7 +984,7 @@ function get_list_all_users_du_resp($resp_login)
     $list_users="";
     $sql1="SELECT DISTINCT(u_login) FROM conges_users WHERE u_login!='conges' AND u_login!='admin' AND u_login!='$resp_login'";
     $sql1 = $sql1." AND  ( u_resp_login='$resp_login' " ;
-    if($_SESSION['config']['gestion_groupes'] )
+    if($config->isGroupeActive())
     {
         $list_users_group=get_list_users_des_groupes_du_resp_sauf_resp($resp_login);
         if($list_users_group!="")
@@ -1013,7 +1013,7 @@ function get_list_all_users_du_resp($resp_login)
         $sql_2='SELECT DISTINCT(u_login) FROM conges_users WHERE u_is_resp=\'Y\' AND u_login!="'.\includes\SQL::quote($resp_login).'" AND u_login!=\'conges\' AND u_login!=\'admin\'';
         $sql_2 = $sql_2." AND  ( u_resp_login='$resp_login' " ;
 
-        if($_SESSION['config']['gestion_groupes'] )
+        if($config->isGroupeActive())
         {
             $list_users_group=get_list_users_des_groupes_du_resp_sauf_resp($resp_login);
             if($list_users_group!="")
@@ -1272,7 +1272,7 @@ function get_tab_resp_du_user($user_login)
         $tab_resp[$rec['u_resp_login']]="present";
 
     // recup des resp des groupes du user
-    if($_SESSION['config']['gestion_groupes'])
+    if($config->isGroupeActive())
     {
         $list_groups=get_list_groupes_du_user($user_login);
         if($list_groups!="")
@@ -1343,8 +1343,9 @@ function get_tab_resp_du_user($user_login)
 // le login du user est passé en paramêtre ainsi que le tableau (vide) des resp
 function get_tab_grd_resp_du_user($user_login, &$tab_grd_resp)
 {
+    $config = new \App\Libraries\Configuration();
     // recup des resp des groupes du user
-    if($_SESSION['config']['gestion_groupes'])
+    if($config->isGroupeActive())
     {
         $list_groups=get_list_groupes_du_user($user_login);
         if($list_groups!="")
@@ -1448,7 +1449,8 @@ function is_resp_direct_of_user($resp_login, $user_login)
 
 function is_resp_group_of_user($resp_login, $user_login)
 {
-    if ( $_SESSION['config']['gestion_groupes'] )
+    $config = new \App\Libraries\Configuration();
+    if ($config->isGroupeActive())
     {
         $ReqLog_info = \includes\SQL::query('SELECT count(*)
                 FROM `conges_groupe_users`
@@ -1463,7 +1465,8 @@ function is_resp_group_of_user($resp_login, $user_login)
 
 function is_gr_group_of_user($resp_login, $user_login)
 {
-    if ( $_SESSION['config']['gestion_groupes'] && $_SESSION['config']['double_validation_conges'])
+    $config = new \App\Libraries\Configuration();
+    if ($config->isGroupeActive() && $_SESSION['config']['double_validation_conges'])
     {
 
         $ReqLog_info = \includes\SQL::query('SELECT count(*)
