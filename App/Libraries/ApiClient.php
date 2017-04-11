@@ -55,7 +55,7 @@ final class ApiClient
         $response = $this->client->send($request);
 
         if (500 === $response->getStatusCode()) {
-            throw new \ErrorException('Response isn\'t json');
+            throw new \ErrorException('Server error');
         }
 
         $body = json_decode($response->getBody(), true);
