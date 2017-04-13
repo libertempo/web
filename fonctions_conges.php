@@ -1296,7 +1296,6 @@ function get_tab_resp_du_user($user_login)
         $ReqLog_2 = \includes\SQL::query($req);
         $rec = $ReqLog_2->fetch_array();
         if ($rec['u_is_active'] == 'N') {
-            //unset($tab_resp[$current_resp]);
             $nb_present=$nb_present-1;
             $tab_resp[$current_resp]="absent";
         }

@@ -1622,9 +1622,6 @@ msgstr "Droits RH ?"
 msgid "hr_traite_user_etat_conges"
 msgstr "État des congés des Utilisateurs :"
 
-msgid "config_comment_print_disable_users"
-msgstr "// AFFICHAGE DES UTILISATEURS DESACTIVES : <br>//--------------------------------------------------------------------------------------------<br>// si à FALSE : pas d'affichage, dans la liste des utilisateurs, des utilisateurs qui ont été désactivés. (FALSE est la valeur par défaut)<br>// si à TRUE : affichage, dans la liste des utilisateurs, des utilisateurs qui on été désactivés."
-
 msgid "config_comment_affiche_jours_current_month_calendrier"
 msgstr "// AFFICHAGE DU NB DE JOURS PRIS DURANT LE MOIS AFFICHé (POUR CHAQUE TYPE D'ABSENCE) : <br>//--------------------------------------------------------------------------------------------<br>// si à FALSE : pas d'affichage, dans le calendrier, pour chaque utilisateur, pour chaque type de congé, à coté du solde, du nb de jours pris durant le mois affiché. (FALSE est la valeur par défaut)<br>// si à TRUE : affichage, dans le calendrier, pour chaque utilisateur, pour chaque type de congé, à coté du solde, du nb de jours pris durant le mois affiché."
 
