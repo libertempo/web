@@ -46,7 +46,9 @@ class Fonctions
                 $nb_colonnes += 1;
             }
         }
-        $return .= '<th>'. _('solde_heure') .'</th>' ;
+        if ($_SESSION['config']['gestion_heures']) {
+            $return .= '<th>'. _('solde_heure') .'</th>' ;
+        }
         $return .= '<th></th>';
         $nb_colonnes += 1;
         if($_SESSION['config']['editions_papier']) {
@@ -100,8 +102,10 @@ class Fonctions
                         $return .= '<td>' . $solde .'</td>';
                     }
                 }
-                $soldeHeure = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($current_login)['u_heure_solde'];
-                $return .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($soldeHeure) . '</td>';
+                if ($_SESSION['config']['gestion_heures']) {
+                    $soldeHeure = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($current_login)['u_heure_solde'];
+                    $return .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($soldeHeure) . '</td>';
+                }
                 $return .= '<td>' . $text_affich_user . '</td>';
                 if($_SESSION['config']['editions_papier']) {
                     $return .= '<td>' . $text_edit_papier . '</td>';
