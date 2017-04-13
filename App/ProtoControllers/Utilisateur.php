@@ -190,7 +190,25 @@ class Utilisateur
 
         return $solde;
     }
+    
+     /**
+     * Retourne le solde d'heure au format timestamp d'un utilisateur
+     *
+     * @param string $login
+     * @param int $typeId
+     *
+     * @return int $timestamp
+     */   
+    public static function getSoldeHeure($login)
+    {
+        $sql = \includes\SQL::singleton();
+        $req = 'SELECT u_heure_solde FROM conges_users WHERE u_login = \''.$login.'\'';
+        $query = $sql->query($req);
+        $timestamp = $query->fetch_array()[0];
 
+        return $timestamp;
+    }
+    
     /**
      * Vérifie si l'utilisateur a des sorties en cours
      *
