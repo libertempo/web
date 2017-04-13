@@ -187,7 +187,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
                 }
                 log_action($infoDemande['p_num'], 'refus', '', $infoDemande['p_login'], 'traitement demande ' . $id_conge . ' (' . $infoDemande['p_login'] . ') (' . $infoDemande['p_nb_jours'] . ' jours) : refus');
             } elseif (\App\Models\Conge::ACCEPTE === $statut) {
-                if (\App\ProtoControllers\Responsable::isDoubleValGroupe($infoDemande['p_login']) && !\App\ProtoControllers\Responsable::isRespDeUtilisateur($_SESSION['userlogin'], $infoDemande['p_login'])) {
+                if (\App\ProtoControllers\Responsable::isDoubleValGroupe($infoDemande['p_login'])) {
                     $return = $this->updateStatutPremiereValidation($id_conge);
                     if($_SESSION['config']['mail_valid_conges_alerte_user']) {
                         alerte_mail($_SESSION['userlogin'], $infoDemande['p_login'], $infoDemande['p_num'], "valid_conges");
@@ -400,12 +400,13 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
     {
         $groupId = \App\ProtoControllers\Responsable::getIdGroupeResp($resp);
 
-
         $usersResp = [];
         $usersResp = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupId);
         $usersRespDirect = \App\ProtoControllers\Responsable::getUsersRespDirect($resp);
-        $usersResp = array_merge($usersResp,$usersRespDirect);
 
+        // merge tous les utilisateurs dont il est le responsable direct et tous les utilisateurs dont il est le chef de groupe
+        // si un utilisateur est dans les deux tableaux on supprime le doublon
+        $usersResp = array_unique(array_merge($usersResp,$usersRespDirect));
         // un utilisateur ne peut etre son propre responsable
         $usersResp = array_diff($usersResp,[$_SESSION['userlogin']]);
 
