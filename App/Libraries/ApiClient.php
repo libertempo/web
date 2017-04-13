@@ -37,6 +37,7 @@ final class ApiClient
         }
         $this->uri = $uri;
         if (null === $client) {
+            // mettre une methode getclient pour tester cette partie
             $baseURIApi = $_SERVER['HTTP_HOST'] . '/';// api/
             $client = new \GuzzleHttp\Client([
                 'base_uri' => $baseURIApi,
@@ -66,6 +67,9 @@ final class ApiClient
         return $body;
     }
 
+    /**
+     * @todo pour garantir l'immuabilité
+     */
     public function __clone()
     {
         // throw ...
