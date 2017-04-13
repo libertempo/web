@@ -102,7 +102,7 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
             $return = NIL_INT;
         }
         if( 0 < $return) {
-            $notif = new \App\Libraries\Notification\Additionnelle($id);
+            $notif = new \App\Libraries\Notification\Additionnelle($id_heure);
             if (!$notif->send()) {
                 $localError[] = _('erreur_envoi_mail') . ': ' . $infoDemande['login'];
                 $return = NIL_INT;
@@ -283,7 +283,8 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
 
         $usersRespDirect = \App\ProtoControllers\Responsable::getUsersRespDirect($resp);
         $usersResp = array_merge($usersResp,$usersRespDirect);
-
+        $usersResp = array_diff($usersResp,[$_SESSION['userlogin']]);
+        
         if (empty($usersResp)) {
             return [];
         }
