@@ -183,7 +183,7 @@ class Utilisateur
     public static function getSoldeconge($login, $typeId)
     {
         $sql = \includes\SQL::singleton();
-        $req = 'SELECT su_solde FROM conges_solde_user WHERE su_login = \''.$login.'\'
+        $req = 'SELECT su_solde FROM conges_solde_user WHERE su_login = \'' . \includes\SQL::quote($login) . '\'
                 AND su_abs_id ='. (int) $typeId;
         $query = $sql->query($req);
         $solde = $query->fetch_array()[0];
@@ -202,7 +202,7 @@ class Utilisateur
     public static function getSoldeHeure($login)
     {
         $sql = \includes\SQL::singleton();
-        $req = 'SELECT u_heure_solde FROM conges_users WHERE u_login = \''.$login.'\'';
+        $req = 'SELECT u_heure_solde FROM conges_users WHERE u_login = \'' . \includes\SQL::quote($login) . '\'';
         $query = $sql->query($req);
         $timestamp = $query->fetch_array()[0];
 
