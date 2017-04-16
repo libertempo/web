@@ -363,7 +363,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
         $req = 'UPDATE conges_solde_user
                     SET su_solde = su_solde-' .number_format($duree,2) . '
-                    WHERE su_login = \''. $user .'\'
+                    WHERE su_login = \''. \includes\SQL::quote($user) .'\'
                     AND su_abs_id = '. (int) $typeId;
         $query = $sql->query($req);
 
@@ -385,7 +385,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
         $req   = 'UPDATE conges_solde_user
                 SET su_reliquat = su_reliquat-' .number_format($duree,2) . '
-                WHERE su_login = \''. $user .'\'
+                WHERE su_login = \''. \includes\SQL::quote($user) .'\'
                 AND su_abs_id = '. (int) $typeId;
         $query = $sql->query($req);
 
@@ -552,7 +552,8 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
     public function getReliquatconge($login, $typeId)
     {
         $sql = \includes\SQL::singleton();
-        $req = 'SELECT su_reliquat FROM conges_solde_user WHERE su_login = \''.$login.'\'
+        $req = 'SELECT su_reliquat FROM conges_solde_user 
+                WHERE su_login = \'' . \includes\SQL::quote($login) . '\'
                 AND su_abs_id ='. (int) $typeId;
         $query = $sql->query($req);
         $rel = $query->fetch_array()[0];
@@ -620,7 +621,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
     public function getTypeLabel($type)
     {
         $sql = \includes\SQL::singleton();
-        $req = 'SELECT ta_libelle FROM conges_type_absence WHERE ta_id = '.$type;
+        $req = 'SELECT ta_libelle FROM conges_type_absence WHERE ta_id = ' . $type;
         $query = $sql->query($req);
         $tLabel = $query->fetch_array()[0];
 

@@ -167,7 +167,7 @@ class Responsable
                 FROM conges_users
                 WHERE u_is_resp = "Y"';
         if($activeSeul){
-            $req .= ' AND u_is_active = Y';
+            $req .= ' AND u_is_active = "Y"';
         }
         $query = $sql->query($req);
 

@@ -58,7 +58,7 @@ class Groupe
     }
 
     /**
-     * Retourne le nom d'un groupe
+     * Retourne les informations d'un groupe
      * 
      * @param int $id
      * @return string
@@ -72,23 +72,22 @@ class Groupe
         $res = $sql->query($req);
         
         $infos = $res->fetch_array();
+
+        if(!empty($infos)){
             $infosGroupe = [
                 'nom' => $infos['g_groupename'],
-                'doubleValidation' => ($infos['g_double_valid'] =="Y")?true:false,
+                'doubleValidation' => $infos['g_double_valid'],
                 'comment' => $infos['g_comment']
             ];
+        } else {
+            $infosGroupe = [
+                'nom' => '',
+                'doubleValidation' => '',
+                'comment' => ''
+            ];
+        }
         
         return $infosGroupe;
-    }
-    
-    public function isDoubleValidation($id) {
-        $sql = \includes\SQL::singleton();
-        $req="SELECT g_double_valid
-              FROM conges_groupe
-              WHERE g_gid=". $id;
-        $res = $sql->query($req);
-        
-        return ($res->fetch_array()['g_double_valid'] =="Y")?true:false;
     }
 
     /**
@@ -126,7 +125,7 @@ class Groupe
                     SELECT gr_gid
                     FROM conges_groupe_resp
                     WHERE gr_gid IN (\'' . implode(',', $groupesId) . '\')
-                        AND gr_login = "'.\includes\SQL::quote($resp).'"
+                        AND gr_login = "' . \includes\SQL::quote($resp) . '"
                 )';
         $query = $sql->query($req);
 
@@ -148,7 +147,7 @@ class Groupe
                     SELECT ggr_gid
                     FROM conges_groupe_grd_resp
                     WHERE ggr_gid IN (\'' . implode(',', $groupesId) . '\')
-                        AND ggr_login = "'.\includes\SQL::quote($resp).'"
+                        AND ggr_login = "' . \includes\SQL::quote($resp) . '"
                 )';
         $query = $sql->query($req);
 

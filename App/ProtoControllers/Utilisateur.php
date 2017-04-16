@@ -23,7 +23,7 @@ class Utilisateur
             $req .= ' WHERE u_login != "admin"';
         }
         if($activeSeul){
-            $req .= ' AND u_is_active = Y';
+            $req .= ' AND u_is_active = "Y"';
         }
         $result = $sql->query($req);
 
