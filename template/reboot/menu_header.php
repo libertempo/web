@@ -168,7 +168,6 @@
                             </a>
                     </div>
                     <?php endif; ?>
-                   <?php if($_SESSION['config']['auth']): ?>
                     <div class="separator"></div>
                     <div class="menu-link">
                         <a title="<?= _('button_deconnect') ?>" href="<?= ROOT_PATH ?>deconnexion.php?session=<?= $session ?>">
@@ -176,7 +175,6 @@
                             <i class="fa fa-power-off mini"></i>
                         </a>
                     </div>
-                    <?php endif; ?>
                 </div>
             </section>
         </aside>

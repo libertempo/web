@@ -503,9 +503,9 @@ class Fonctions
         //si on autorise les reliquats
         if($config->isReliquatsAutorise()) {
             // s'il y a une date limite d'utilisationdes reliquats (au format jj-mm)
-            if($_SESSION['config']['jour_mois_limite_reliquats']!=0) {
+            if($config->getDateLimiteReliquats() != 0) {
                 // nouvelle date limite au format aaa-mm-jj
-                $t=explode("-", $_SESSION['config']['jour_mois_limite_reliquats']);
+                $t=explode("-", $config->getDateLimiteReliquats());
                 $new_date_limite = date("Y")."-".$t[1]."-".$t[0];
 
                 //si la date limite n'a pas encore été updatée
@@ -620,11 +620,11 @@ class Fonctions
                     // ATTENTION : si le solde du user est négatif, on ne compte pas de reliquat et le nouveau solde est nb_jours_an + le solde actuel (qui est négatif)
                     if($user_solde_actuel>0) {
                         //calcul du reliquat pour l'exercice suivant
-                        if($_SESSION['config']['nb_maxi_jours_reliquats']!=0) {
-                            if($user_solde_actuel <= $_SESSION['config']['nb_maxi_jours_reliquats']) {
+                        if($config->getReliquatsMax() != 0) {
+                            if($user_solde_actuel <= $config->getReliquatsMax()) {
                                 $new_reliquat = $user_solde_actuel ;
                             } else {
-                                $new_reliquat = $_SESSION['config']['nb_maxi_jours_reliquats'] ;
+                                $new_reliquat = $config->getReliquatsMax();
                             }
                         } else {
                             $new_reliquat = $user_reliquat_actuel + $user_solde_actuel ;

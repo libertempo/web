@@ -425,17 +425,6 @@ class Configuration {
         return $this->getValeur($nom, '15_ical');
     }
 
-    /**
-     * désactive l'authentification!!
-     * A RETIRER
-     * 
-     * @return type
-     */
-    public function isAuthActive()
-    {
-        return $this->getGroupeAuthentificationValeur('auth');
-    }
-
     public function getHowToConnectUser() {
         return $this->getGroupeAuthentificationValeur('how_to_connect_user');
     }

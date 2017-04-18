@@ -2181,7 +2181,7 @@ function soustrait_solde_et_reliquat_user($user_login, $num_current_periode, $us
         $reliquat=get_reliquat_user_conges($user_login, $type_abs);
         //echo "reliquat = $reliquat<br>\n";
         // s'il y a une date limite d'utilisationdes reliquats (au format jj-mm)
-        if($_SESSION['config']['jour_mois_limite_reliquats']!=0)
+        if($config->getDateLimiteReliquats() != 0)
         {
             //si date_fin_conges < date_limite_reliquat => alors on décompte dans reliquats
             if($date_fin < $_SESSION['config']['date_limite_reliquats'])
