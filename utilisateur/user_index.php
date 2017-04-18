@@ -32,7 +32,7 @@ if ($config->canUserSaisieDemande() || $config->canUserSaisieMission()) {
     $onglets['nouvelle_absence'] = _('divers_nouvelle_absence');
 }
 
-if ($_SESSION['config']['user_echange_rtt']) {
+if ($config->canUserEchangeRTT()) {
     $onglets['echange_jour_absence'] = _('user_onglet_echange_abs');
 }
 

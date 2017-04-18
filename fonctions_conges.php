@@ -190,7 +190,7 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
 
     // si le user a droit de saisir une demande de conges ET si on est PAS dans une fenetre de responsable
     // OU si le user n'a pas droit de saisir une demande de conges ET si on est dans une fenetre de responsable
-    if( ($_SESSION['config']['gestion_conges_exceptionnels']) && ((($config->canUserSaisieDemande())&&($user_login==$_SESSION['userlogin'])) || ((!$config->canUserSaisieDemande())&&($user_login!=$_SESSION['userlogin'])) ) )
+    if( ($config->isCongesExceptionnelleActive()) && ((($config->canUserSaisieDemande())&&($user_login==$_SESSION['userlogin'])) || ((!$config->canUserSaisieDemande())&&($user_login!=$_SESSION['userlogin'])) ) )
     {
         // congés exceptionnels
         $return .= '<div class="col-md-4">';
@@ -1466,7 +1466,7 @@ function is_resp_group_of_user($resp_login, $user_login)
 function is_gr_group_of_user($resp_login, $user_login)
 {
     $config = new \App\Libraries\Configuration();
-    if ($config->isGroupeActive() && $_SESSION['config']['double_validation_conges'])
+    if ($config->isGroupeActive() && $config->isDoubleValidationActive())
     {
 
         $ReqLog_info = \includes\SQL::query('SELECT count(*)
@@ -1766,8 +1766,9 @@ function recup_tableau_types_conges_exceptionnels()
 // recup dans un tableau de tableau les infos des types de conges et absences
 function recup_tableau_tout_types_abs( )
 {
+    $config = new \App\Libraries\Configuration();
     $result = array();
-    if ( $_SESSION['config']['gestion_conges_exceptionnels'] ) // on prend tout les types de conges
+    if ($config->isCongesExceptionnelleActive()) // on prend tout les types de conges
         $request = 'SELECT ta_id, ta_type, ta_libelle, ta_short_libelle FROM conges_type_absence;';
     else // on prend tout les types de conges SAUF les conges exceptionnels
         $request = 'SELECT ta_id, ta_type, ta_libelle, ta_short_libelle FROM conges_type_absence WHERE conges_type_absence.ta_type != \'conges_exceptionnels\';';
@@ -1785,9 +1786,10 @@ function recup_tableau_tout_types_abs( )
 // recup dans un tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
 function recup_tableau_conges_for_user($login, $hide_conges_exceptionnels)
 {
+    $config = new \App\Libraries\Configuration();
     // on pourrait tout faire en un seule select, mais cela bug si on change la prise en charge des conges exceptionnels en cours d'utilisation ...
 
-    if ($_SESSION['config']['gestion_conges_exceptionnels'] && ! $hide_conges_exceptionnels) // on prend tout les types de conges
+    if ($config->isCongesExceptionnelleActive() && ! $hide_conges_exceptionnels) // on prend tout les types de conges
         $request = 'SELECT ta_libelle, su_nb_an, su_solde, su_reliquat FROM conges_solde_user, conges_type_absence WHERE conges_type_absence.ta_id = conges_solde_user.su_abs_id AND su_login = "'.\includes\SQL::quote($login).'" ORDER BY su_abs_id ASC;';
     else // on prend tout les types de conges SAUF les conges exceptionnels
         $request = 'SELECT ta_libelle, su_nb_an, su_solde, su_reliquat FROM conges_solde_user, conges_type_absence WHERE conges_type_absence.ta_type != \'conges_exceptionnels\' AND conges_type_absence.ta_id = conges_solde_user.su_abs_id AND su_login = "'.\includes\SQL::quote($login).'" ORDER BY su_abs_id ASC;';
@@ -1808,6 +1810,7 @@ function recup_tableau_conges_for_user($login, $hide_conges_exceptionnels)
 // recup dans un tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
 function recup_tableau_conges_for_users( $hide_conges_exceptionnels, $logins = false)
 {
+    $config = new \App\Libraries\Configuration();
     // on pourrait tout faire en un seule select, mais cela bug si on change la prise en charge des conges exceptionnels en cours d'utilisation ...
 
     if ($logins === false)
@@ -1815,7 +1818,7 @@ function recup_tableau_conges_for_users( $hide_conges_exceptionnels, $logins = f
     else
         $logins = ' AND su_login IN ( \''.implode('\', \'',$logins).'\') ';
 
-    if ($_SESSION['config']['gestion_conges_exceptionnels'] && ! $hide_conges_exceptionnels) // on prend tout les types de conges
+    if ($config->isCongesExceptionnelleActive() && ! $hide_conges_exceptionnels) // on prend tout les types de conges
         $request = 'SELECT su_login, ta_libelle,  su_nb_an, su_solde, su_reliquat FROM conges_solde_user, conges_type_absence WHERE conges_type_absence.ta_id = conges_solde_user.su_abs_id '.$logins.' ORDER BY ta_type , su_abs_id ASC';
     else // on prend tout les types de conges SAUF les conges exceptionnels
         $request = 'SELECT su_login, ta_libelle, su_nb_an, su_solde, su_reliquat FROM conges_solde_user, conges_type_absence WHERE conges_type_absence.ta_type != \'conges_exceptionnels\' AND conges_type_absence.ta_id = conges_solde_user.su_abs_id '.$logins.' ORDER BY su_abs_id ASC';
@@ -1837,6 +1840,7 @@ function recup_tableau_conges_for_users( $hide_conges_exceptionnels, $logins = f
 // affichage du tableau récapitulatif des solde de congés d'un user
 function affiche_tableau_bilan_conges_user($login)
 {
+    $config = new \App\Libraries\Configuration();
     $request = 'SELECT u_quotite FROM conges_users where u_login = "'. \includes\SQL::quote($login).'";';
     $ReqLog = \includes\SQL::query($request) ;
     $resultat = $ReqLog->fetch_array();
@@ -1847,7 +1851,7 @@ function affiche_tableau_bilan_conges_user($login)
     $tab_cong_user = recup_tableau_conges_for_user($login, true);
 
     // recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
-    if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+    if ($config->isCongesExceptionnelleActive()) {
         $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
     }
 
@@ -1858,7 +1862,7 @@ function affiche_tableau_bilan_conges_user($login)
     $return .= '<th class="titre">'. _('divers_quotite') .'</th>';
 
     foreach($tab_cong_user as $id => $val) {
-        if ($_SESSION['config']['gestion_conges_exceptionnels'] && in_array($id,$tab_type_conges_exceptionnels)) {
+        if ($config->isCongesExceptionnelleActive() && in_array($id,$tab_type_conges_exceptionnels)) {
             $return .= '<th class="solde">' . $id . '</th>';
         } else {
             $return .= '<th class="annuel">' . $id . ' / ' . _('divers_an_maj') . '</th><th class="solde">' . $id . '</th>';
@@ -1870,7 +1874,7 @@ function affiche_tableau_bilan_conges_user($login)
     $return .= '<tr>';
     $return .= '<td class="quotite">' . $sql_quotite . '%</td>';
     foreach($tab_cong_user as $id => $val) {
-        if ($_SESSION['config']['gestion_conges_exceptionnels']  && in_array($id,$tab_type_conges_exceptionnels)) {
+        if ($config->isCongesExceptionnelleActive()  && in_array($id,$tab_type_conges_exceptionnels)) {
             $return .= '<td class="solde">' . $val['solde'] . ($val['reliquat'] > 0 ? ' (' . _('dont_reliquat') . ' ' . $val['reliquat'] . ')' : '') . '</td>';
         } else {
             $return .= '<td class="annuel">' . $val['nb_an'] . '</td><td class="solde">' . $val['solde'] . ($val['reliquat'] > 0 ? ' (' . _('dont_reliquat') . ' ' . $val['reliquat'] . ')' : '') . '</td>';
@@ -1886,6 +1890,7 @@ function affiche_tableau_bilan_conges_user($login)
 // renvoit FALSE si erreur
 function recup_infos_du_user($login, $list_groups_double_valid)
 {
+    $config = new \App\Libraries\Configuration();
     $tab=array();
     $sql1 = 'SELECT * FROM conges_users ' .
             'WHERE u_login="'.\includes\SQL::quote($login).'";';
@@ -1914,7 +1919,7 @@ function recup_infos_du_user($login, $list_groups_double_valid)
         $tab_user['double_valid'] = "N";
 
         // on regarde ici si le user est dans un groupe qui fait l'objet d'une double validation
-        if($_SESSION['config']['double_validation_conges'])
+        if($config->isDoubleValidationActive())
         {
             if($list_groups_double_valid!="") // si $resp_login est responsable d'au moins un groupe a double validation
             {
@@ -2165,11 +2170,12 @@ function get_reliquat_user_conges($login, $type_abs)
 */
 function soustrait_solde_et_reliquat_user($user_login, $num_current_periode, $user_nb_jours_pris, $type_abs, $date_deb, $demi_jour_deb, $date_fin, $demi_jour_fin)
 {
+    $config = new \App\Libraries\Configuration();
 
     $VerifDec = verif_saisie_decimal($user_nb_jours_pris);
 
     //si on autorise les reliquats
-    if($_SESSION['config']['autorise_reliquats_exercice'])
+    if($config->isReliquatsAutorise())
     {
         //recup du reliquat du user pour ce type d'absence
         $reliquat=get_reliquat_user_conges($user_login, $type_abs);

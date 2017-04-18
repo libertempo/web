@@ -66,7 +66,7 @@ class Fonctions
         $valid = verif_saisie_new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment);
 
         // verifie que le solde de conges sera encore positif après validation
-        if( $_SESSION['config']['solde_toujours_positif'] ) {
+        if($config->canSoldeNegatif()) {
             $valid = $valid && \utilisateur\Fonctions::verif_solde_user($_SESSION['userlogin'], $new_type, $new_nb_jours);
         }
 
@@ -1268,12 +1268,13 @@ class Fonctions
      */
     public static function echangeJourAbsenceModule($onglet)
     {
+        $config = new \App\Libraries\Configuration();
         $return = '';
         init_tab_jours_feries();
 
         $new_echange_rtt    = getpost_variable('new_echange_rtt', 0);
 
-        if( $new_echange_rtt == 1 && $_SESSION['config']['user_echange_rtt'] ) {
+        if($new_echange_rtt == 1 && $config->canUserEchangeRTT()) {
 
             $new_debut                = getpost_variable('new_debut');
             $new_fin                  = getpost_variable('new_fin');

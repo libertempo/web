@@ -62,6 +62,7 @@ class Fonctions
     // affiche pour un resp des cases à cocher devant les groupes possibles pour les selectionner.
     public static function affiche_gestion_responsable_groupes($choix_resp, $onglet)
     {
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
@@ -174,7 +175,7 @@ class Fonctions
         /*******************************************/
         $return .= '</div>';
         // si on a configuré la double validation
-        if($_SESSION['config']['double_validation_conges']) {
+        if($config->isDoubleValidationActive()) {
             $return .= '<div class="col-md-6">';
             $return .= '<h3>Grand Responsable</h3>';
             /*******************************************/
@@ -358,6 +359,7 @@ class Fonctions
     // affiche pour un groupe des cases à cocher devant les resp et grand_resp possibles pour les selectionner.
     public static function affiche_gestion_groupes_responsables($choix_group, $onglet)
     {
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
@@ -458,7 +460,7 @@ class Fonctions
         $return .= '</div>';
         $return .= '<div class="col-md-6">';
         // si on a configuré la double validation et que le groupe considéré est a double valid
-        if( ($_SESSION['config']['double_validation_conges']) && ($sql_double_valid=="Y") ) {
+        if(($config->isDoubleValidationActive()) && ($sql_double_valid=="Y")) {
             $return .= '<h3>' . _('admin_gestion_groupe_grand_resp_responsables') . '</h3>';
             /*******************************************/
             //AFFICHAGE DU TABLEAU DES GRANDS RESPONSBLES DU GROUPE
@@ -1164,6 +1166,7 @@ class Fonctions
 
     public static function affiche_gestion_groupes($new_group_name, $new_group_libelle, $onglet)
     {
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
@@ -1191,7 +1194,7 @@ class Fonctions
         $childTable .= '<th>' . _('admin_groupes_groupe') . '</th>';
         $childTable .= '<th>' . _('admin_groupes_libelle') . '</th>';
         $childTable .= '<th>' . _('admin_groupes_nb_users') . '</th>';
-        if($_SESSION['config']['double_validation_conges']) {
+        if($config->isDoubleValidationActive()) {
             $childTable .= '<th>' . _('admin_groupes_double_valid') . '</th>';
         }
         $childTable .= '<th></th></tr></thead><tbody>';
@@ -1212,7 +1215,7 @@ class Fonctions
             $childTable .= '<td><b>' . $sql_group .'</b></td>';
             $childTable .= '<td>' . $sql_comment . '</td>';
             $childTable .= '<td>' . $nb_users_groupe . '</td>';
-            if($_SESSION['config']['double_validation_conges']) {
+            if($config->isDoubleValidationActive()) {
                 $childTable .= '<td>' . $sql_double_valid . '</td>';
             }
             $childTable .= '<td class="action">' . $admin_modif_group . ' ' . $admin_suppr_group . '</td>';
@@ -1241,7 +1244,7 @@ class Fonctions
         $childTable = '<thead><tr>';
         $childTable .= '<th><b>' . _('admin_groupes_groupe') . '</b></th>';
         $childTable .= '<th>' . _('admin_groupes_libelle') . ' / ' . _('divers_comment_maj_1') . '</th>';
-        if($_SESSION['config']['double_validation_conges']) {
+        if($config->isDoubleValidationActive()) {
             $childTable .= '<th>' . _('admin_groupes_double_valid') . '</th>';
         }
         $childTable .= '</tr></thead><tbody>';
@@ -1252,7 +1255,7 @@ class Fonctions
         $childTable .= '<tr>';
         $childTable .= '<td>' . $text_groupname . '</td>';
         $childTable .= '<td>' . $text_libelle . '</td>';
-        if($_SESSION['config']['double_validation_conges']) {
+        if($config->isDoubleValidationActive()) {
             $text_double_valid = '<select class="form-control" name="new_group_double_valid"><option value="N">N</option><option value="Y">Y</option></select>';
             $childTable .= '<td>' . $text_double_valid . '</td>';
         }
@@ -1317,7 +1320,7 @@ class Fonctions
         $tab_type_conges_exceptionnels = [];
 
         // recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
-        if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+        if ($config->isCongesExceptionnelleActive()) {
             $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
         }
 
@@ -2054,6 +2057,7 @@ class Fonctions
 
     public static function modifier_groupe($group, $onglet)
     {
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
@@ -2075,7 +2079,7 @@ class Fonctions
         $childTable .= '<tr>';
         $childTable .= '<th>' . _('admin_groupes_groupe') . '</th>';
         $childTable .= '<th>' . _('admin_groupes_libelle') . ' / ' . _('divers_comment_maj_1') . '</th>';
-        if($_SESSION['config']['double_validation_conges']) {
+        if($config->isDoubleValidationActive()) {
             $childTable .= '<th>' . _('admin_groupes_double_valid') . '</th>';
         }
         $childTable .= '</tr></thead><tbody>';
@@ -2092,7 +2096,7 @@ class Fonctions
         $childTable .= '<tr>';
         $childTable .= '<td>' . $sql_groupename . '</td>';
         $childTable .= '<td>' . $sql_comment . '</td>';
-        if($_SESSION['config']['double_validation_conges']) {
+        if($config->isDoubleValidationActive()) {
             $childTable .= '<td>' . $sql_double_valid . '</td>';
         }
         $childTable .= '</tr>';
@@ -2105,7 +2109,7 @@ class Fonctions
         $childTable .= '<tr>';
         $childTable .= '<td>' . $text_group . '</td>';
         $childTable .= '<td>' . $text_comment . '</td>';
-        if($_SESSION['config']['double_validation_conges']) {
+        if($config->isDoubleValidationActive()) {
             $text_double_valid="<select class=\"form-control\" name=\"new_double_valid\" ><option value=\"N\" ";
             if($sql_double_valid=="N") {
                 $text_double_valid=$text_double_valid."SELECTED";
@@ -2168,6 +2172,7 @@ class Fonctions
 
     public static function commit_update_user($u_login_to_update, &$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, &$tab_new_reliquat, &$return)
     {
+        $config = new \App\Libraries\Configuration();
         $dataUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($u_login_to_update);
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
@@ -2178,7 +2183,7 @@ class Fonctions
         // recup du tableau des types de conges (seulement les conges)
         $tab_type_conges = recup_tableau_types_conges();
         $tab_type_conges_excep=array();
-        if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+        if ($config->isCongesExceptionnelleActive()) {
             $tab_type_conges_excep=recup_tableau_types_conges_exceptionnels();
         }
 
@@ -2206,7 +2211,7 @@ class Fonctions
         }
 
         // si l'application gere les conges exceptionnels ET si des types de conges exceptionnels ont été définis
-        if (($_SESSION['config']['gestion_conges_exceptionnels'])&&(count($tab_type_conges_excep) > 0)) {
+        if (($config->isCongesExceptionnelleActive())&&(count($tab_type_conges_excep) > 0)) {
             $valid_3=true;
             // vérification de la validité de la saisie du nombre de jours annuels et du solde pour chaque type de conges exceptionnels
             foreach($tab_type_conges_excep as $id_conges => $libelle) {
@@ -2254,7 +2259,7 @@ class Fonctions
 
             }
 
-            if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+            if ($config->isCongesExceptionnelleActive()) {
                 foreach($tab_type_conges_excep as $id_conges => $libelle) {
                     $sql = 'REPLACE INTO conges_solde_user SET su_nb_an=0, su_solde=\''.strtr(round_to_half($tab_new_solde[$id_conges]),",",".").'\', su_reliquat=\''.strtr(round_to_half($tab_new_reliquat[$id_conges]),",",".").'\', su_login="'.\includes\SQL::quote($u_login_to_update).'", su_abs_id='.intval($id_conges).';';
                     \includes\SQL::query($sql);
@@ -2327,6 +2332,7 @@ class Fonctions
 
     public static function modifier_user($u_login, $onglet)
     {
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
@@ -2337,7 +2343,7 @@ class Fonctions
         $tab_type_conges=recup_tableau_types_conges();
 
         // recup du tableau des types de conges (seulement les conges)
-        if ( $_SESSION['config']['gestion_conges_exceptionnels'] ) {
+        if ($config->isCongesExceptionnelleActive()) {
             $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
         }
 
@@ -2503,7 +2509,7 @@ class Fonctions
         $childTable .= '<th></th>';
         $childTable .= '<th colspan="2">' . _('admin_modif_nb_jours_an') . ' </th>';
         $childTable .= '<th colspan="2">' . _('divers_solde') . '</th>';
-        if( $_SESSION['config']['autorise_reliquats_exercice'] ) {
+        if($config->isReliquatsAutorise()) {
             $childTable .= '<th colspan="2">' . _('divers_reliquat') . '</th>';
         }
         $childTable .= '</tr></thead><tbody>';
@@ -2537,7 +2543,7 @@ class Fonctions
 
             // reliquat
             // si on ne les utilise pas, on initialise qd meme le tableau (<input type=\"hidden\") ...
-            if($_SESSION['config']['autorise_reliquats_exercice']) {
+            if($config->isReliquatsAutorise()) {
                 if (isset($tab_user['conges'][$libelle])) {
                     $childTable .= '<td>' . $tab_user['conges'][$libelle]['reliquat'] . '</td>';
                     $text_reliquats_jours="<input class=\"form-control\" type=\"text\" name=\"tab_new_reliquat[$id_type_cong]\" size=\"5\" maxlength=\"5\" value=\"".$tab_user['conges'][$libelle]['reliquat']."\">" ;
@@ -2555,7 +2561,7 @@ class Fonctions
         }
 
         // recup du tableau des types de conges (seulement les conges)
-        if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+        if ($config->isCongesExceptionnelleActive()) {
             foreach($tab_type_conges_exceptionnels as $id_type_cong_exp => $libelle) {
                 $childTable .= '<tr class="' . ($i ? 'i' : 'p') . '">';
                 $childTable .= '<td>' . $libelle . '</td>';
@@ -2568,7 +2574,7 @@ class Fonctions
                 $childTable .= '<td>' . $text_solde_jours . '</td>';
                 // reliquat
                 // si on ne les utilise pas, on initialise qd meme le tableau (<input type=\"hidden\") ...
-                if($_SESSION['config']['autorise_reliquats_exercice']) {
+                if($config->isReliquatsAutorise()) {
                     $childTable .= '<td>' . $tab_user['conges'][$libelle]['reliquat'] . '</td>';
                     $text_reliquats_jours="<input class=\"form-control\" type=\"text\" name=\"tab_new_reliquat[$id_type_cong_exp]\" size=\"5\" maxlength=\"5\" value=\"".$tab_user['conges'][$libelle]['reliquat']."\">" ;
                     $childTable .= '<td>' . $text_reliquats_jours . '</td>';
@@ -2676,6 +2682,7 @@ class Fonctions
 
     public static function suppression_group($group_to_delete)
     {
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
@@ -2689,7 +2696,7 @@ class Fonctions
         $sql3 = 'DELETE FROM conges_groupe_resp WHERE gr_gid = '.\includes\SQL::quote($group_to_delete);
         $result3 = \includes\SQL::query($sql3);
 
-        if($_SESSION['config']['double_validation_conges']) {
+        if($config->isDoubleValidationActive()) {
             $sql4 = 'DELETE FROM conges_groupe_grd_resp WHERE ggr_gid = '.\includes\SQL::quote($group_to_delete);
             $result4 = \includes\SQL::query($sql4);
         }
@@ -2710,6 +2717,7 @@ class Fonctions
 
     public static function confirmer($group, $onglet)
     {
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
@@ -2736,7 +2744,7 @@ class Fonctions
         $childTable .= '<tr>';
         $childTable .= '<th><b>' . _('admin_groupes_groupe') . '</b></th>';
         $childTable .= '<th><b>' . _('admin_groupes_libelle') . ' / ' . _('divers_comment_maj_1') . '</b></th>';
-        if($_SESSION['config']['double_validation_conges']) {
+        if($config->isDoubleValidationActive()) {
             $childTable .= '<th><b>' . _('admin_groupes_double_valid') . '</b></th>';
         }
         $childTable .= '</tr></thead><tbody><tr>';
@@ -2746,7 +2754,7 @@ class Fonctions
             $sql_double_valid=$resultat1["g_double_valid"] ;
             $childTable .= '<td>&nbsp;' . $sql_groupname . '&nbsp;</td>';
             $childTable .= '<td>&nbsp;' . $sql_comment . '&nbsp;</td>';
-            if($_SESSION['config']['double_validation_conges']) {
+            if($config->isDoubleValidationActive()) {
                 $childTable .= '<td>' . $sql_double_valid . '</td>';
             }
         }
@@ -3060,7 +3068,7 @@ class Fonctions
         $tab_type_conges=recup_tableau_types_conges();
 
         // recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
-        if ($_SESSION['config']['gestion_conges_exceptionnels']){
+        if ($config->isCongesExceptionnelleActive()){
             $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
         }
 
@@ -3244,7 +3252,7 @@ class Fonctions
             $childTable .= '</tr>';
             $i = !$i;
         }
-        if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+        if ($config->isCongesExceptionnelleActive()) {
             foreach($tab_type_conges_exceptionnels as $id_type_cong => $libelle) {
                 $childTable .= '<tr class="'.($i?'i':'p').'">';
                 $value_solde_jours = ( isset($tab_new_solde[$id_type_cong]) ? $tab_new_solde[$id_type_cong] : 0 );

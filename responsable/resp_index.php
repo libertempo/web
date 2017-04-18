@@ -100,7 +100,7 @@ $tab_type_cong = recup_tableau_types_conges();
 
 // recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
 $tab_type_conges_exceptionnels = array();
-if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+if ($config->isCongesExceptionnelleActive()) {
     $tab_type_conges_exceptionnels = recup_tableau_types_conges_exceptionnels();
 }
 

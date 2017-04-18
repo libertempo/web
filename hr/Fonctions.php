@@ -41,7 +41,7 @@ class Fonctions
             $nb_colonnes += 2;
         }
         // conges exceptionnels
-        if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+        if ($config->isCongesExceptionnelleActive()) {
             foreach($tab_type_conges_exceptionnels as $id_type_cong => $libelle) {
                 $return .= '<th>'. _('divers_solde_maj') . ' ' . $libelle . '</th>';
                 $nb_colonnes += 1;
@@ -94,7 +94,7 @@ class Fonctions
                     $return .= '<td>'.$nbAn.'</td>';
                     $return .= '<td>'. $solde .'</td>';
                 }
-                if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+                if ($config->isCongesExceptionnelleActive()) {
                     foreach($tab_type_conges_exceptionnels as $id_type_cong => $libelle)
                     {
                         $solde = isset($tab_conges[$libelle]['solde'])
@@ -198,6 +198,7 @@ class Fonctions
     public static function affiche_all_demandes_en_cours($tab_type_conges)
     {
         $return = '';
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $count1=0;
@@ -207,7 +208,7 @@ class Fonctions
 
         // recup du tableau des types de conges (seulement les conges exceptionnels)
         $tab_type_conges_exceptionnels=array();
-        if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+        if ($config->isCongesExceptionnelleActive()) {
             $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
         }
 
@@ -322,17 +323,6 @@ class Fonctions
                     $return .= '<td>' . $sql_p_date_deb_fr . '<span class="demi">' . $demi_j_deb . '</span></td><td>' . $sql_p_date_fin_fr . '<span class="demi">' . $demi_j_fin . '</span></td><td>' . $sql_p_commentaire . '</td><td><b>' . $sql_p_nb_jours . '</b></td>';
                     $tab_conges=$tab_all_users[$sql_p_login]['conges'];
                     $return .= '<td>' . $tab_conges[$tab_type_all_abs[$sql_p_type]['libelle']]['solde'] . '</td>';
-                    // foreach($tab_type_conges as $id_conges => $libelle)
-                    // {
-                    //     echo '<td>'.$tab_conges[$libelle]['solde'].'</td>';
-                    // }
-
-                    // if ($_SESSION['config']['gestion_conges_exceptionnels'])
-                    //     foreach($tab_type_conges_exceptionnels as $id_conges => $libelle)
-                    //     {
-                    //         echo '<td>'.$tab_conges[$libelle]['solde'].'</td>';
-                    //     }
-                    // echo '<td>'.$tab_type_all_abs[$sql_p_type]['libelle'].'</td>';
                     $return .= '<td>' . $boutonradio1 . '</td><td>' . $boutonradio2 . '</td><td>' . $boutonradio3 . '</td><td>' . $text_refus . '</td>';
                     if($_SESSION['config']['affiche_date_traitement']) {
                         if($sql_p_date_demande == NULL) {
@@ -975,7 +965,7 @@ class Fonctions
         $list_all_users_du_hr=\hr\Fonctions::get_list_all_users_du_hr($_SESSION['userlogin']);
         // recup des grd resp du user
         $tab_grd_resp=array();
-        if($_SESSION['config']['double_validation_conges']) {
+        if($config->isDoubleValidationActive()) {
             get_tab_grd_resp_du_user($user_login, $tab_grd_resp);
         }
 
@@ -1069,7 +1059,7 @@ class Fonctions
         /*********************/
         /* Etat des Demandes en attente de 2ieme validation */
         /*********************/
-        if($_SESSION['config']['double_validation_conges']) {
+        if($config->isDoubleValidationActive()) {
             /*******************************/
             /* verif si le resp est grand_responsable pour ce user*/
 
@@ -1422,6 +1412,7 @@ class Fonctions
 
     public static function affichage_saisie_user_par_user($tab_type_conges, $tab_type_conges_exceptionnels, $tab_all_users_du_hr, $tab_all_users_du_grand_resp)
     {
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
@@ -1443,7 +1434,7 @@ class Fonctions
                 $return .= '<th>' . $libelle . '<br><i>(' . _('divers_solde') . ')</i></th>';
                 $return .= '<th>' . $libelle . '<br>' . _('resp_ajout_conges_nb_jours_ajout') . '</th>';
             }
-            if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+            if ($config->isCongesExceptionnelleActive()) {
                 foreach($tab_type_conges_exceptionnels as $id_conges => $libelle) {
                     $return .= '<th>' . $libelle . '<br><i>(' . _('divers_solde') . ')</i></th>';
                     $return .= '<th>' . $libelle . '<br>' . _('resp_ajout_conges_nb_jours_ajout') . '</th>';
@@ -1476,7 +1467,7 @@ class Fonctions
                     $return .= '<td>' . $tab_conges[$libelle]['nb_an'] . ' <i>(' . $tab_conges[$libelle]['solde'] . ')</i></td>';
                     $return .= '<td align="center" class="histo">' . $champ_saisie_conges . '</td>';
                 }
-                if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+                if ($config->isCongesExceptionnelleActive()) {
                     foreach($tab_type_conges_exceptionnels as $id_conges => $libelle) {
                         /** le champ de saisie est <input type="text" name="tab_champ_saisie[valeur de u_login][id_du_type_de_conges]" value="[valeur du nb de jours ajouté saisi]"> */
                         $champ_saisie_conges="<input class=\"form-control\" type=\"text\" name=\"tab_champ_saisie[$current_login][$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\">";
@@ -1549,7 +1540,7 @@ class Fonctions
         $return = '';
 
         // recup du tableau des types de conges (seulement les congesexceptionnels )
-        if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+        if ($config->isCongesExceptionnelleActive()) {
             $tab_type_conges_exceptionnels = recup_tableau_types_conges_exceptionnels();
         } else {
             $tab_type_conges_exceptionnels = array();
@@ -1978,8 +1969,9 @@ class Fonctions
     // calcule de la date limite d'utilisation des reliquats (si on utilise une date limite et qu'elle n'est pas encore calculée) et stockage dans la table
     public static function set_nouvelle_date_limite_reliquat()
     {
+        $config = new \App\Libraries\Configuration();
         //si on autorise les reliquats
-        if($_SESSION['config']['autorise_reliquats_exercice']) {
+        if($config->isReliquatsAutorise()) {
             // s'il y a une date limite d'utilisationdes reliquats (au format jj-mm)
             if($_SESSION['config']['jour_mois_limite_reliquats']!=0) {
                 // nouvelle date limite au format aaa-mm-jj
@@ -2064,6 +2056,7 @@ class Fonctions
     public static function cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $commentaire)
     {
         $return = '';
+        $config = new \App\Libraries\Configuration();
         // si le num d'exercice du user est < à celui de l'appli (il n'a pas encore été basculé): on le bascule d'exercice
         if($tab_current_user['num_exercice'] < $_SESSION['config']['num_exercice']) {
             // calcule de la date limite d'utilisation des reliquats (si on utilise une date limite et qu'elle n'est pas encore calculée)
@@ -2079,7 +2072,7 @@ class Fonctions
                 /**********************************************/
                 /* Modification de la table conges_solde_user */
 
-                if($_SESSION['config']['autorise_reliquats_exercice']) {
+                if($config->isReliquatsAutorise()) {
                     // ATTENTION : si le solde du user est négatif, on ne compte pas de reliquat et le nouveau solde est nb_jours_an + le solde actuel (qui est négatif)
                     if($user_solde_actuel>0) {
                         //calcul du reliquat pour l'exercice suivant
