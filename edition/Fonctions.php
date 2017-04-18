@@ -288,7 +288,7 @@ class Fonctions
         // recup du tableau des types de conges exceptionnels (seulement les conge sexceptionnels )
         $tab_type_cong=recup_tableau_types_conges();
         // recup du tableau des types de conges (seulement les conges)
-        if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+        if ($config->isCongesExceptionnelleActive()) {
             $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
         } else {
             $tab_type_conges_exceptionnels=array();
@@ -825,10 +825,11 @@ class Fonctions
 
     public static function edition_pdf($login, $edit_id)
     {
+        $config = new \App\Libraries\Configuration();
         // recup du tableau des types de conges (seulement les conges)
         $tab_type_cong=recup_tableau_types_conges();
         // recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
-        if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+        if ($config->isCongesExceptionnelleActive()) {
             $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
         } else {
             $tab_type_conges_exceptionnels=array();
@@ -1143,6 +1144,7 @@ class Fonctions
 
     public static function enregistrement_edition($login)
     {
+        $config = new \App\Libraries\Configuration();
 
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 
@@ -1178,7 +1180,7 @@ class Fonctions
                     SET se_id_edition=$new_edition_id, se_id_absence=$id_abs, se_solde=$tab_solde_user[$id_abs] ";
             $result_insert_2 = \includes\SQL::query($sql_insert_2);
         }
-        if ($_SESSION['config']['gestion_conges_exceptionnels'])
+        if ($config->isCongesExceptionnelleActive())
         {
             $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
             foreach($tab_type_conges_exceptionnels as $id_abs => $libelle)

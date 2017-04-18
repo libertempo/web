@@ -26,7 +26,7 @@ $onglets = array();
 
 $onglets['liste_conge'] = _('user_conge');
 
-if ($_SESSION['config']['user_echange_rtt']) {
+if ($config->canUserEchangeRTT()) {
     $onglets['echange_jour_absence'] = _('user_onglet_echange_abs');
 }
 

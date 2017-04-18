@@ -175,6 +175,7 @@ class Fonctions
 
     public static function affichage_saisie_globale_groupe($tab_type_conges)
     {
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
@@ -183,7 +184,7 @@ class Fonctions
 
         // on établi la liste complète des groupes dont on est le resp (ou le grd resp)
         $list_group_resp=get_list_groupes_du_resp($_SESSION['userlogin']);
-        if( ($_SESSION['config']['double_validation_conges']) && ($_SESSION['config']['grand_resp_ajout_conges']) ) {
+        if( ($config->isDoubleValidationActive()) && ($config->canGrandResponsableAjouteConge()) ) {
             $list_group_grd_resp=get_list_groupes_du_grand_resp($_SESSION['userlogin']);
         } else {
             $list_group_grd_resp="";
@@ -286,6 +287,7 @@ class Fonctions
 
     public static function affichage_saisie_user_par_user($tab_type_conges, $tab_type_conges_exceptionnels, $tab_all_users_du_resp, $tab_all_users_du_grand_resp)
     {
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
@@ -311,7 +313,7 @@ class Fonctions
                 $return .= '<th>' . $libelle . '<br><i>(' . _('divers_solde') . ')</i></th>';
                 $return .= '<th>' . $libelle . '<br>' . _('resp_ajout_conges_nb_jours_ajout') . '</th>';
             }
-            if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+            if ($config->isCongesExceptionnelleActive()) {
                 foreach($tab_type_conges_exceptionnels as $id_conges => $libelle) {
                     $return .= '<th>' . $libelle . '<br><i>(' . _('divers_solde') . ')</i></th>';
                     $return .= '<th>' . $libelle . '<br>' . _('resp_ajout_conges_nb_jours_ajout') . '</th>';
@@ -346,7 +348,7 @@ class Fonctions
                         $return .= '<td>' . $tab_conges[$libelle]['nb_an'] . ' <i>(' . $tab_conges[$libelle]['solde'] . ')</i></td>';
                         $return .= '<td align="center" class="histo">' . $champ_saisie_conges . '</td>';
                     }
-                    if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+                    if ($config->isCongesExceptionnelleActive()) {
                         foreach($tab_type_conges_exceptionnels as $id_conges => $libelle) {
                             /** le champ de saisie est <input type="text" name="tab_champ_saisie[valeur de u_login][id_du_type_de_conges]" value="[valeur du nb de jours ajouté saisi]"> */
                             $champ_saisie_conges="<input class=\"form-control\" type=\"text\" name=\"tab_champ_saisie[$current_login][$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\">";
@@ -417,7 +419,7 @@ class Fonctions
         $return = '';
 
         // recup du tableau des types de conges (seulement les congesexceptionnels )
-        if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+        if ($config->isCongesExceptionnelleActive()) {
             $tab_type_conges_exceptionnels = recup_tableau_types_conges_exceptionnels();
         } else {
             $tab_type_conges_exceptionnels = array();
@@ -489,8 +491,9 @@ class Fonctions
     // calcule de la date limite d'utilisation des reliquats (si on utilise une date limite et qu'elle n'est pas encore calculée) et stockage dans la table
     public static function set_nouvelle_date_limite_reliquat()
     {
+        $config = new \App\Libraries\Configuration();
         //si on autorise les reliquats
-        if($_SESSION['config']['autorise_reliquats_exercice']) {
+        if($config->isReliquatsAutorise()) {
             // s'il y a une date limite d'utilisationdes reliquats (au format jj-mm)
             if($_SESSION['config']['jour_mois_limite_reliquats']!=0) {
                 // nouvelle date limite au format aaa-mm-jj
@@ -534,6 +537,7 @@ class Fonctions
     // cloture / debut d'exercice pour TOUS les users du resp (ou grand resp)
     public static function cloture_globale($tab_type_conges)
     {
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
@@ -551,7 +555,7 @@ class Fonctions
                 $return .= cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $comment_cloture);
             }
             // traitement des users dont on est grand responsable :
-            if( ($_SESSION['config']['double_validation_conges']) && ($_SESSION['config']['grand_resp_ajout_conges']) ) {
+            if( ($config->isDoubleValidationActive()) && ($config->canGrandResponsableAjouteConge()) ) {
                 foreach($tab_all_users_du_grand_resp as $current_login => $tab_current_user) {
                     $return .= cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $comment_cloture);
                 }
@@ -586,6 +590,7 @@ class Fonctions
     public static function cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $commentaire)
     {
         $return = '';
+        $config = new \App\Libraries\Configuration();
         // si le num d'exercice du user est < à celui de l'appli (il n'a pas encore été basculé): on le bascule d'exercice
         if($tab_current_user['num_exercice'] < $_SESSION['config']['num_exercice']) {
             // calcule de la date limite d'utilisation des reliquats (si on utilise une date limite et qu'elle n'est pas encore calculée)
@@ -601,7 +606,7 @@ class Fonctions
                 /**********************************************/
                 /* Modification de la table conges_solde_user */
 
-                if($_SESSION['config']['autorise_reliquats_exercice']) {
+                if($config->isReliquatsAutorise()) {
                     // ATTENTION : si le solde du user est négatif, on ne compte pas de reliquat et le nouveau solde est nb_jours_an + le solde actuel (qui est négatif)
                     if($user_solde_actuel>0) {
                         //calcul du reliquat pour l'exercice suivant
@@ -662,6 +667,7 @@ class Fonctions
     // cloture / debut d'exercice user par user pour les users du resp (ou grand resp)
     public static function cloture_users($tab_type_conges, $tab_cloture_users, $tab_commentaire_saisie)
     {
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
@@ -681,7 +687,7 @@ class Fonctions
                 }
             }
             // traitement des users dont on est grand responsable :
-            if( ($_SESSION['config']['double_validation_conges']) && ($_SESSION['config']['grand_resp_ajout_conges']) ) {
+            if( ($config->isDoubleValidationActive()) && ($config->canGrandResponsableAjouteConge()) ) {
                 foreach($tab_all_users_du_grand_resp as $current_login => $tab_current_user) {
                     // tab_cloture_users[$current_login]=TRUE si checkbox "cloturer" est cochée
                     if( (isset($tab_cloture_users[$current_login])) && ($tab_cloture_users[$current_login]=TRUE) ) {
@@ -699,6 +705,7 @@ class Fonctions
 
     public static function affichage_cloture_globale_groupe($tab_type_conges)
     {
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
@@ -707,7 +714,7 @@ class Fonctions
 
         // on établi la liste complète des groupes dont on est le resp (ou le grd resp)
         $list_group_resp=get_list_groupes_du_resp($_SESSION['userlogin']);
-        if( ($_SESSION['config']['double_validation_conges']) && ($_SESSION['config']['grand_resp_ajout_conges']) ) {
+        if( ($config->isDoubleValidationActive()) && ($config->canGrandResponsableAjouteConge()) ) {
             $list_group_grd_resp=get_list_groupes_du_grand_resp($_SESSION['userlogin']);
         } else {
             $list_group_grd_resp="";
@@ -831,6 +838,7 @@ class Fonctions
 
     public static function affichage_cloture_user_par_user($tab_type_conges, $tab_all_users_du_resp, $tab_all_users_du_grand_resp)
     {
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
@@ -872,7 +880,7 @@ class Fonctions
             }
 
             // affichage des users dont on est grand responsable :
-            if( ($_SESSION['config']['double_validation_conges']) && ($_SESSION['config']['grand_resp_ajout_conges']) ) {
+            if( ($config->isDoubleValidationActive()) && ($config->canGrandResponsableAjouteConge()) ) {
                 $nb_colspan=50;
                 $return .= '<tr align="center"><td class="histo" style="background-color: #CCC;" colspan="' . $nb_colspan . '"><i>' . _('resp_etat_users_titre_double_valid') . '</i></td></tr>';
 
@@ -1015,7 +1023,7 @@ class Fonctions
             $nb_colonnes += 2;
         }
         // conges exceptionnels
-        if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+        if ($config->isCongesExceptionnelleActive()) {
             foreach($tab_type_conges_exceptionnels as $id_type_cong => $libelle) {
                 $return .= '<th>'. _('divers_solde_maj') . ' ' . $libelle . '</th>';
                 $nb_colonnes += 1;
@@ -1060,7 +1068,7 @@ class Fonctions
                         $return .= '<td>' . $tab_conges[$libelle]['nb_an'] . '</td>';
                         $return .= '<td>' . $tab_conges[$libelle]['solde'] . '</td>';
                     }
-                    if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+                    if ($config->isCongesExceptionnelleActive()) {
                         foreach($tab_type_conges_exceptionnels as $id_type_cong => $libelle) {
                             $return .= '<td>' . $tab_conges[$libelle]['solde'] . '</td>';
                         }
@@ -1082,7 +1090,7 @@ class Fonctions
         /***********************************/
         // AFFICHAGE DE USERS DONT LE RESP EST GRAND RESP
 
-        if($_SESSION['config']['double_validation_conges']) {
+        if($config->isDoubleValidationActive()) {
             // Récup dans un tableau de tableau des informations de tous les users dont $_SESSION['userlogin'] est GRAND responsable
             $tab_all_users_2=recup_infos_all_users_du_grand_resp($_SESSION['userlogin']);
 
@@ -1096,7 +1104,7 @@ class Fonctions
                     if($compteur==1)  // alors on affiche une ligne de titre
                     {
                         $nb_colspan=9;
-                        if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+                        if ($config->isCongesExceptionnelleActive()) {
                             $nb_colspan=10;
                         }
 
@@ -1113,7 +1121,7 @@ class Fonctions
                     foreach($tab_type_cong as $id_conges => $libelle) {
                         $return .= '<td>' . $tab_conges_2[$libelle]['nb_an'] . '</td><td>' . $tab_conges_2[$libelle]['solde'] . '</td>';
                     }
-                    if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+                    if ($config->isCongesExceptionnelleActive()) {
                         foreach($tab_type_conges_exceptionnels as $id_type_cong => $libelle) {
                             $return .= '<td>' . $tab_conges_2[$libelle]['solde'] . '</td>';
                         }
@@ -1710,7 +1718,7 @@ class Fonctions
 
         // recup des grd resp du user
         $tab_grd_resp=array();
-        if($_SESSION['config']['double_validation_conges']) {
+        if($config->isDoubleValidationActive()) {
             get_tab_grd_resp_du_user($user_login, $tab_grd_resp);
         }
 
@@ -1813,7 +1821,7 @@ class Fonctions
         /*********************/
         /* Etat des Demandes en attente de 2ieme validation */
         /*********************/
-        if($_SESSION['config']['double_validation_conges']) {
+        if($config->isDoubleValidationActive()) {
             /*******************************/
             /* verif si le resp est grand_responsable pour ce user*/
 
