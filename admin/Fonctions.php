@@ -2212,7 +2212,7 @@ class Fonctions
         $childTable .= '</tr>';
 
         // contruction des champs de saisie
-        if($_SESSION['config']['export_users_from_ldap']) {
+        if($config->isUsersExportFromLdap()) {
             $text_login="<input class=\"form-control\" type=\"text\" name=\"new_login\" size=\"10\" maxlength=\"98\" value=\"".$tab_user['login']."\" readonly>" ;
         } else {
             $text_login="<input class=\"form-control\" type=\"text\" name=\"new_login\" size=\"10\" maxlength=\"98\" value=\"".$tab_user['login']."\">" ;
@@ -2825,7 +2825,7 @@ class Fonctions
         ]);
         $childTable = '<thead>';
         $childTable .= '<tr>';
-        if ($_SESSION['config']['export_users_from_ldap'] ) {
+        if ($config->isUsersExportFromLdap()) {
             $childTable .= '<th>' . _('divers_nom_maj_1') . ' ' . _('divers_prenom_maj_1') . '</th>';
         } else {
             $childTable .= '<th>' . _('divers_login_maj_1') . '</th>';
@@ -2841,7 +2841,7 @@ class Fonctions
         $childTable .= '<th>' . _('admin_new_users_is_admin') . '</th>';
         $childTable .= '<th>' . _('admin_new_users_is_hr') . '</th>';
         $childTable .= '<th>' . _('admin_new_users_see_all') . '</th>';
-        if ( !$_SESSION['config']['export_users_from_ldap'] ) {
+        if (!$config->isUsersExportFromLdap()) {
             $childTable .= '<th>' . _('admin_users_mail') . '</th>';
         }
         if ($config->getHowToConnectUser() == "dbconges") {
@@ -2894,7 +2894,7 @@ class Fonctions
 
         $childTable .= '<tr class="update-line">';
         // Aj. D.Chabaud - Université d'Auvergne - Sept. 2005
-        if ($_SESSION['config']['export_users_from_ldap'] ) {
+        if ($config->isUsersExportFromLdap()) {
             // Récupération de la liste des utilisateurs via un ldap :
 
             // on crée 2 tableaux (1 avec les noms + prénoms, 1 avec les login)
@@ -2934,7 +2934,7 @@ class Fonctions
         $childTable .= '<td>' . $text_is_admin . '</td>';
         $childTable .= '<td>' . $text_is_hr . '</td>';
         $childTable .= '<td>' . $text_see_all . '</td>';
-        if ( !$_SESSION['config']['export_users_from_ldap'] ) {
+        if (!$config->isUsersExportFromLdap()) {
             $childTable .= '<td>' . $text_email . '</td>';
         }
         if ($config->getHowToConnectUser() == "dbconges") {
@@ -3122,7 +3122,7 @@ class Fonctions
     }
 
     public static function test_form_add_user($tab_new_user) {
-        if($_SESSION['config']['export_users_from_ldap']) {
+        if($config->isUsersExportFromLdap()) {
             return \admin\Fonctions::FormAddUserLoginOk($tab_new_user['login']) && \admin\Fonctions::FormAddUserQuotiteOk($tab_new_user['quotite']) && \admin\Fonctions::FormAddUserSoldeHeureOk($tab_new_user['solde_heure']);
         } else {
             return \admin\Fonctions::FormAddUserLoginOk($tab_new_user['login']) && \admin\Fonctions::FormAddUserQuotiteOk($tab_new_user['quotite'])  && \admin\Fonctions::FormAddUserSoldeHeureOk($tab_new_user['solde_heure']) && \admin\Fonctions::FormAddUserNameOk($tab_new_user['nom']) && \admin\Fonctions::FormAddUserNameOk($tab_new_user['prenom']) && \admin\Fonctions::FormAddUserpasswdOk($tab_new_user['password1'],$tab_new_user['password2']);
@@ -3289,7 +3289,7 @@ class Fonctions
         $return      = '';
 
         // si on recupere les users dans ldap et qu'on vient d'en créer un depuis la liste déroulante
-        if ($_SESSION['config']['export_users_from_ldap'] && isset($_POST['new_ldap_user'])) {
+        if ($config->isUsersExportFromLdap() && isset($_POST['new_ldap_user'])) {
             $index = 0;
             // On lance une boucle pour selectionner tous les items
             // traitements : $login contient les valeurs successives
@@ -3371,7 +3371,7 @@ class Fonctions
         /*************************************/
 
         if($saisie_user=="ok") {
-            if($_SESSION['config']['export_users_from_ldap']) {
+            if($config->isUsersExportFromLdap()) {
                 foreach($tab_login as $login) {
                     $return .= \admin\Fonctions::ajout_user($tab_new_user[$login], $tab_new_jours_an, $tab_new_solde, $checkbox_user_groups);
                 }

@@ -35,7 +35,7 @@ if ($_SESSION['config']['gestion_heures']) {
     $onglets['liste_heure_additionnelle'] = _('user_liste_heure_additionnelle');
 }
 
-if ($_SESSION['config']['auth'] && $config->canUserChangePassword()) {
+if ($config->canUserChangePassword()) {
     $onglets['changer_mot_de_passe'] = _('user_onglet_change_passwd');
 }
 
