@@ -1831,11 +1831,6 @@ function affiche_tableau_bilan_conges_user($login)
     $sql_quotite=$resultat['u_quotite'];
     $return = '';
 
-    if($_SESSION['config']['gestion_heures']){
-        $timestampSolde = \App\ProtoControllers\Utilisateur::getSoldeHeure($login);
-        $soldeHeure = \App\Helpers\Formatter::timestamp2Duree($timestampSolde);
-    }
-
     // recup dans un tableau de tableaux les nb et soldes de conges d'un user
     $tab_cong_user = recup_tableau_conges_for_user($login, true);
 
@@ -1875,7 +1870,8 @@ function affiche_tableau_bilan_conges_user($login)
         }
     }
     if($_SESSION['config']['gestion_heures']){
-        $return .= '<td class="solde">'. $soldeHeure .'</td>';
+        $timestampSolde = \App\ProtoControllers\Utilisateur::getSoldeHeure($login);
+        $return .= '<td class="solde">'. \App\Helpers\Formatter::timestamp2Duree($timestampSolde) .'</td>';
     }
     $return .= '</tr>';
     $return .= '</tbody>';
