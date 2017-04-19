@@ -21,7 +21,7 @@ class Conge
 
         $return = '';
         $errorsLst = [];
-        if ($_SESSION['config']['where_to_find_user_email'] == "ldap") {
+        if ($config->getMailFromLdap()) {
             include_once CONFIG_PATH . 'config_ldap.php';
         }
 
@@ -71,7 +71,7 @@ class Conge
             $i = true;
             $listeConges = $this->getListeSQL($listId);
             $modificationAutorisee = $config->canUserModifieDemande();
-            $affichageDateTraitement = $_SESSION['config']['affiche_date_traitement'];
+            $affichageDateTraitement = $config->canAfficheDateTraitement();
             foreach ($listeConges as $conges) {
                 /** Dates demande / traitement */
                 $dateDemande = '';

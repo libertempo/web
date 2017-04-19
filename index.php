@@ -24,7 +24,7 @@ if($err = getpost_variable('error', false))
 		case 'session-invalid':
 			header_error();
 			echo "<p>" . _('session_pas_session_ouverte') . "<p>\n";
-			echo "<p>" . _('divers_veuillez') ." <a href='" .$_SESSION['config']['URL_ACCUEIL_CONGES'] . "/index.php' target='_top'><strong>" . _('divers_vous_authentifier') . "</strong></a></p>\n";
+			echo "<p>" . _('divers_veuillez') ." <a href='" . $config->getUrlAccueil() . "/index.php' target='_top'><strong>" . _('divers_vous_authentifier') . "</strong></a></p>\n";
 			bottom();
 			exit();
 			break;
@@ -48,7 +48,7 @@ if ( $config->getHowToConnectUser() == "cas" && $_GET['cas'] != "no" )
                 echo  _('session_pas_de_compte_dans_dbconges') ."<br>\n";
                 echo  _('session_contactez_admin') ."\n";
 
-                $URL_ACCUEIL_CONGES=$_SESSION['config']['URL_ACCUEIL_CONGES'];
+                $URL_ACCUEIL_CONGES = $config->getUrlAccueil();
                 deconnexion_CAS($URL_ACCUEIL_CONGES);
                 bottom();
                 exit;

@@ -174,6 +174,7 @@ function disable_plugin($plugin){
 //
 function session_is_valid()
 {
+    $config = new \App\Libraries\Configuration();
    // ATTENTION:  on fixe l'id de session comme nom de session pour que , sur un meme pc, on puisse se loguer sous 2 users à la fois
    if (session_id() == "")
    {
@@ -184,7 +185,7 @@ function session_is_valid()
     {
         $difference = time() - $_SESSION['timestamp_last'];
 
-        if ( ($difference < $_SESSION['config']['duree_session']) )
+        if ( ($difference < $config->getDureeSession()) )
             return true;
     }
 
@@ -251,11 +252,11 @@ function session_delete()
 //
 function session_saisie_user_password($erreur, $session_username, $session_password)
 {
+$config = new \App\Libraries\Configuration();
    $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 
-    $config_php_conges_version      = $_SESSION['config']['php_conges_version'];
-    $config_url_site_web_php_conges = $_SESSION['config']['url_site_web_php_conges'];
-//    $config_stylesheet_file         = $_SESSION['config']['stylesheet_file'];
+    $config_php_conges_version      = $config->getInstalledVersion();
+    $config_url_site_web_php_conges = $config->getUrlAccueil();
 
     $return_url                     = getpost_variable('return_url', false);
 
@@ -409,26 +410,29 @@ function deconnexion_CAS($url="")
 
 function hash_user($user)
 {
-	$ics_salt = $_SESSION['config']['export_ical_salt'];
-	$huser = hash('sha256', $user . $ics_salt);
-	return $huser;
+    $config = new \App\Libraries\Configuration();
+    $ics_salt = $config->getIcalSalt();
+    $huser = hash('sha256', $user . $ics_salt);
+    return $huser;
 }
 
 function unhash_user($huser_test)
 {
-	$user = "";
-	$ics_salt = $_SESSION['config']['export_ical_salt'];
-	$req_user = 'SELECT u_login FROM conges_users';
-	$res_user = \includes\SQL::query($req_user) ;
+    $config = new \App\Libraries\Configuration();
+    $user = "";
+    $ics_salt = $config->getIcalSalt();
+    $req_user = 'SELECT u_login FROM conges_users';
+    $res_user = \includes\SQL::query($req_user) ;
 
-	while ($resultat = $res_user->fetch_assoc())
-	{
-		$clear_user = $resultat['u_login'];
-		$huser = hash('sha256', $clear_user . $ics_salt);
-		if( $huser_test == $huser )
-			$user = $clear_user;
-	}
-	return $user;
+    while ($resultat = $res_user->fetch_assoc())
+    {
+        $clear_user = $resultat['u_login'];
+        $huser = hash('sha256', $clear_user . $ics_salt);
+        if( $huser_test == $huser ){
+            $user = $clear_user;
+        }
+    }
+    return $user;
 }
 
 function authentification_AD_SSO()

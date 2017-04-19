@@ -9,7 +9,7 @@ include_once INCLUDE_PATH . 'session.php';
 include_once ROOT_PATH . 'fonctions_calcul.php';
 
 $config = new \App\Libraries\Configuration();
-if ($_SESSION['config']['where_to_find_user_email'] == "ldap") {
+if ($config->getMailFromLdap()) {
     include CONFIG_PATH . 'config_ldap.php';
 }
 
@@ -30,7 +30,7 @@ if ($config->canUserEchangeRTT()) {
     $onglets['echange_jour_absence'] = _('user_onglet_echange_abs');
 }
 
-if ($_SESSION['config']['gestion_heures']) {
+if ($config->isHeuresAutorise()) {
     $onglets['liste_heure_repos'] = _('user_liste_heure_repos');
     $onglets['liste_heure_additionnelle'] = _('user_liste_heure_additionnelle');
 }

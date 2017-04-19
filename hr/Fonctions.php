@@ -59,7 +59,7 @@ class Fonctions
         foreach ($tab_type_conges_exceptionnels as $id_type_cong => $libelle) {
             $childTable .= '<th>' . _('divers_solde') . ' ' . $libelle . '</th>';
         }
-        if ($_SESSION['config']['gestion_heures']) {
+        if ($config->isHeuresAutorise()) {
             $childTable .= '<th>'. _('solde_heure') .'</th>' ;
         }
         $childTable .= '<th></th>';
@@ -95,7 +95,6 @@ class Fonctions
                 if($tab_current_infos['is_resp'] == 'Y') {
                     $rights[] = 'responsable';
                 }
-<<<<<<< HEAD
                 if($tab_current_infos['is_hr'] == 'Y') {
                     $rights[] = 'RH';
                 }
@@ -118,15 +117,6 @@ class Fonctions
                     } else {
                         $childTable .= '<td>0</td>';
                         $childTable .= '<td>0</td>';
-=======
-                if ($config->isCongesExceptionnelleActive()) {
-                    foreach($tab_type_conges_exceptionnels as $id_type_cong => $libelle)
-                    {
-                        $solde = isset($tab_conges[$libelle]['solde'])
-                            ? $tab_conges[$libelle]['solde']
-                            : 0;
-                        $return .= '<td>' . $solde .'</td>';
->>>>>>> la je sais plus
                     }
                 }
 
@@ -138,7 +128,7 @@ class Fonctions
                     }
                 }
 
-            if ($_SESSION['config']['gestion_heures']) {
+            if ($config->isHeuresAutorise()) {
                 $soldeHeure = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($current_login)['u_heure_solde'];
                 $childTable .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($soldeHeure) . '</td>';
             }
@@ -299,7 +289,7 @@ class Fonctions
                 $return .= '<th>'. _('divers_refuser_maj_1') .'</th>' ;
                 $return .= '<th>' . _('resp_traite_demandes_attente') . '</th>';
                 $return .= '<th>'. _('resp_traite_demandes_motif_refus') . '</th>';
-                if( $_SESSION['config']['affiche_date_traitement'] ) {
+                if($config->canAfficheDateTraitement()) {
                     $return .= '<th>' . _('divers_date_traitement') . '</th>';
                 }
                 $return .= '</tr>';
@@ -353,7 +343,7 @@ class Fonctions
                     $tab_conges=$tab_all_users[$sql_p_login]['conges'];
                     $return .= '<td>' . $tab_conges[$tab_type_all_abs[$sql_p_type]['libelle']]['solde'] . '</td>';
                     $return .= '<td>' . $boutonradio1 . '</td><td>' . $boutonradio2 . '</td><td>' . $boutonradio3 . '</td><td>' . $text_refus . '</td>';
-                    if($_SESSION['config']['affiche_date_traitement']) {
+                    if($config->canAfficheDateTraitement()) {
                         if($sql_p_date_demande == NULL) {
                             $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : ' . $sql_p_date_traitement . '</td>';
                         } else {
@@ -601,6 +591,7 @@ class Fonctions
     //affiche l'état des conges du user (avec le formulaire pour le responsable)
     public static function affiche_etat_conges_user_for_resp($user_login, $year_affichage, $tri_date)
     {
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $return = '';
 
@@ -652,7 +643,7 @@ class Fonctions
             $return .= ' <th>'. _('divers_etat_maj_1') .'</th>';
             $return .= ' <th>'. _('resp_traite_user_annul') .'</th>';
             $return .= ' <th>'. _('resp_traite_user_motif_annul') .'</th>';
-            if( $_SESSION['config']['affiche_date_traitement'] ) {
+            if($config->canAfficheDateTraitement()) {
                 $return .= '<th>'. _('divers_date_traitement') .'</th>' ;
             }
             $return .= '</tr>';
@@ -725,7 +716,7 @@ class Fonctions
                 $return .= '<td>' . $casecocher1 . '</td>';
                 $return .= '<td>' . $text_annul . '</td>';
 
-                if($_SESSION['config']['affiche_date_traitement']) {
+                if($config->canAfficheDateTraitement()) {
                     if(empty($sql_p_date_demande)) {
                         $return .= '<td class="histo-left">' . _('divers_traitement') . ' : ' . $sql_p_date_traitement . '</td>';
                     } else {
@@ -748,6 +739,7 @@ class Fonctions
     //affiche l'état des demande en attente de 2ieme validation du user (avec le formulaire pour le responsable)
     public static function affiche_etat_demande_2_valid_user_for_resp($user_login)
     {
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $return = '';
 
@@ -777,7 +769,7 @@ class Fonctions
             $return .= '<th>'. _('divers_accepter_maj_1') .'</th>';
             $return .= '<th>'. _('divers_refuser_maj_1') .'</th>';
             $return .= '<th>'. _('resp_traite_user_motif_refus') .'</th>';
-            if($_SESSION['config']['affiche_date_traitement']) {
+            if($config->canAfficheDateTraitement()) {
                 $return .= '<th>'. _('divers_date_traitement') .'</th>' ;
             }
             $return .= '</tr>';
@@ -827,7 +819,7 @@ class Fonctions
                 $return .= '<td>' . $casecocher1 . '</td>';
                 $return .= '<td>' . $casecocher2 . '</td>';
                 $return .= '<td>' . $text_refus . '</td>';
-                if($_SESSION['config']['affiche_date_traitement']) {
+                if($config->canAfficheDateTraitement()) {
                     $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_date_demande . '<br>' . _('divers_traitement') . ' : ' . $sql_date_traitement . '</td>';
                 }
 
@@ -848,6 +840,7 @@ class Fonctions
     //affiche l'état des demande du user (avec le formulaire pour le responsable)
     public static function affiche_etat_demande_user_for_resp($user_login, $tab_user, $tab_grd_resp)
     {
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $return = '';
 
@@ -878,7 +871,7 @@ class Fonctions
             $return .= '<th>'. _('divers_accepter_maj_1') .'</th>';
             $return .= '<th>'. _('divers_refuser_maj_1') .'</th>';
             $return .= '<th>'. _('resp_traite_user_motif_refus') .'</th>';
-            if( $_SESSION['config']['affiche_date_traitement'] ) {
+            if($config->canAfficheDateTraitement()) {
                 $return .= '<th>'. _('divers_date_traitement') .'</th>' ;
             }
             $return .= '</tr>';
@@ -943,7 +936,7 @@ class Fonctions
                 $return .= '<td>' . $boutonradio1 . '</td>';
                 $return .= '<td>' . $boutonradio2 . '</td>';
                 $return .= '<td>' . $text_refus . '</td>';
-                if( $_SESSION['config']['affiche_date_traitement'] ) {
+                if($config->canAfficheDateTraitement()) {
                     if($sql_date_traitement==NULL) {
                         $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_date_demande . '<br>' . _('divers_traitement') . ' : pas traité</td>';
                     } else {
@@ -3196,7 +3189,7 @@ class Fonctions
             // CALENDRIER DES FERMETURES
             $return .= \hr\Fonctions::affiche_calendrier_fermeture($year);
         } elseif($choix_action=="saisie_dates") {
-            if($groupe_id=="") { // choix du groupe n'a pas été fait ($_SESSION['config']['fermeture_par_groupe']==FALSE)
+            if($groupe_id=="") {
                 $groupe_id=0;
             }
 

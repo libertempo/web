@@ -51,12 +51,23 @@ class Configuration {
     }
 
     /**
+     * Retourne une valeur du groupe de Libertempo par son nom
+     *
+     * @param string $nom
+     *
+     * @return mixed
+     */
+    private function getGroupeLibertempoValeur($nom) {
+        return $this->getValeur($nom, '00_libertempo');
+    }
+
+    /**
      * Retourne l'url racine du site
      * 
      * @return string
      */
     public function getUrlAccueil() {
-        return $this->getGroupeLibertempoValeur('URL_ACCUEIL_CONGES');
+        return $this->getGroupeServeurValeur('URL_ACCUEIL_CONGES');
     }
 
     /**
@@ -66,7 +77,7 @@ class Configuration {
      *
      * @return mixed
      */
-    private function getGroupeLibertempoValeur($nom) {
+    private function getGroupeServeurValeur($nom) {
         return $this->getValeur($nom, '01_Serveur Web');
     }
 
@@ -172,6 +183,10 @@ class Configuration {
         return $this->getGroupeResponsableValeur('print_disable_users');
     }
 
+    public function canResponsablesAssociatePlanning()
+    {
+        return $this->getGroupeResponsableValeur('resp_association_planning');
+    }
     /**
      * Retourne une valeur du groupe responsable par son nom
      *
@@ -392,6 +407,10 @@ class Configuration {
     {
         return $this->getGroupeFonctionnementEtablissementValeur('jour_mois_limite_reliquats');
     }
+
+    public function isHeuresAutorise() {
+        return $this->getGroupeFonctionnementEtablissementValeur('gestion_heures');
+    }
     /**
      * Retourne une valeur du groupe fonctionnement de l'établissement par son nom
      *
@@ -403,6 +422,15 @@ class Configuration {
         return $this->getValeur($nom, '12_Fonctionnement de l\'Etablissement');
     }
 
+    public function canAfficheDateTraitement()
+    {
+        return $this->getGroupeDiversValeur('affiche_date_traitement');
+    }
+
+    public function getDureeSession()
+    {
+        return $this->getGroupeDiversValeur('duree_session');
+    }
     /**
      * Retourne une valeur du groupe divers par son nom
      *
@@ -414,6 +442,14 @@ class Configuration {
         return $this->getValeur($nom, '13_Divers');
     }
 
+    public function isIcalActive() {
+        return $this->getGroupeIcalValeur('export_ical');
+    }
+
+    public function getIcalSalt()
+    {
+        return $this->getGroupeIcalValeur('export_ical_salt');
+    }
     /**
      * Retourne une valeur du groupe ical par son nom
      *

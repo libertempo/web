@@ -1,7 +1,8 @@
 <?php
 
 defined('_PHP_CONGES') or die('Restricted access');
-if (!\App\ProtoControllers\Responsable::canAssociatePLanning()) {
+$config = new \App\Libraries\Configuration();
+if (!$config->canResponsablesAssociatePlanning()) {
     redirect(ROOT_PATH . 'deconnexion.php');
 }
 echo \responsable\Fonctions::getListePlanningModule();

@@ -75,7 +75,6 @@ echo '</div>';
 $tab_type_cong=recup_tableau_types_conges();
 
 // recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
-//    if ($_SESSION['config']['gestion_conges_exceptionnels'])
 $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
 
 echo '<div class="'.$onglet.' main-content">';
