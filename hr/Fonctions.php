@@ -46,7 +46,9 @@ class Fonctions
                 $nb_colonnes += 1;
             }
         }
-        $return .= '<th>'. _('solde_heure') .'</th>' ;
+        if ($_SESSION['config']['gestion_heures']) {
+            $return .= '<th>'. _('solde_heure') .'</th>' ;
+        }
         $return .= '<th></th>';
         $nb_colonnes += 1;
         if($_SESSION['config']['editions_papier']) {
@@ -100,8 +102,10 @@ class Fonctions
                         $return .= '<td>' . $solde .'</td>';
                     }
                 }
-                $soldeHeure = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($current_login)['u_heure_solde'];
-                $return .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($soldeHeure) . '</td>';
+                if ($_SESSION['config']['gestion_heures']) {
+                    $soldeHeure = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($current_login)['u_heure_solde'];
+                    $return .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($soldeHeure) . '</td>';
+                }
                 $return .= '<td>' . $text_affich_user . '</td>';
                 if($_SESSION['config']['editions_papier']) {
                     $return .= '<td>' . $text_edit_papier . '</td>';
@@ -1155,12 +1159,12 @@ class Fonctions
     {
         $list_group="";
 
-        $sql1="SELECT g_gid FROM conges_groupe ORDER BY g_gid";
+        $sql1="SELECT DISTINCT gu_gid FROM conges_groupe_users ORDER BY gu_gid"; // Le but est de sélectionner tous les groupes ayant des utilisateurs
         $ReqLog1 = \includes\SQL::query($sql1);
 
         if($ReqLog1->num_rows != 0) {
             while ($resultat1 = $ReqLog1->fetch_array()) {
-                $current_group=$resultat1["g_gid"];
+                $current_group=$resultat1["gu_gid"];
                 if($list_group=="")
                     $list_group="$current_group";
                 else
@@ -1186,7 +1190,9 @@ class Fonctions
 
         // recup de la liste des users d'un groupe donné
         $list_users = get_list_users_du_groupe($choix_groupe);
-
+        if(empty($list_users)) {
+            return;
+        }
         foreach($tab_new_nb_conges_all as $id_conges => $nb_jours) {
             if($nb_jours!=0) {
                 $comment = $tab_new_comment_all[$id_conges];

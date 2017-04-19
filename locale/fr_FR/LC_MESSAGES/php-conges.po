@@ -1376,6 +1376,9 @@ msgstr "Congés exceptionnels"
 msgid "divers_semaine"
 msgstr "semaine"
 
+msgid "config_comment_gestion_heures"
+msgstr "// GESTION DES HEURES<br>//----------------------------------------------------------------------<br>// si à FALSE : les heures 'additionnelles' et 'repos' ne sont pas gérées.<br>// si à TRUE : il est possible pour l'utilisateur de demander des heures additionnelles et des heures de repos que le responsable peut valider (TRUE est la valeur par défaut)."
+
 msgid "config_comment_grand_resp_ajout_conges"
 msgstr "// AJOUT DE CONGÉS PAR LE GRAND RESPONSABLE <br>//----------------------------------------------------------------------<br>// ne fonctionne QUE si la double validation est activée !<br>// si à FALSE : un responsable ne peut ajouter (créditer) de congés qu'à ses utilisateurs directs (dont il est 'responsable').(FALSE est la valeur par défaut)<br>// si à TRUE : un responsable peut ajouter (créditer) des congés aux utilisateurs dont il est 'responsable' ET 'grand responsable' !"
 
@@ -1930,6 +1933,9 @@ msgstr "Liste des plannings"
 
 msgid "hr_ajout_planning"
 msgstr "Nouveau planning"
+
+msgid "tous"
+msgstr "Tous"
 
 msgid "statut_demande"
 msgstr "Demande"

@@ -187,7 +187,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
                 }
                 log_action($infoDemande['p_num'], 'refus', '', $infoDemande['p_login'], 'traitement demande ' . $id_conge . ' (' . $infoDemande['p_login'] . ') (' . $infoDemande['p_nb_jours'] . ' jours) : refus');
             } elseif (\App\Models\Conge::ACCEPTE === $statut) {
-                if (\App\ProtoControllers\Responsable::isDoubleValGroupe($infoDemande['p_login']) && !\App\ProtoControllers\Responsable::isRespDeUtilisateur($_SESSION['userlogin'], $infoDemande['p_login'])) {
+                if (\App\ProtoControllers\Responsable::isDoubleValGroupe($infoDemande['p_login'])) {
                     $return = $this->updateStatutPremiereValidation($id_conge);
                     if($_SESSION['config']['mail_valid_conges_alerte_user']) {
                         alerte_mail($_SESSION['userlogin'], $infoDemande['p_login'], $infoDemande['p_num'], "valid_conges");
