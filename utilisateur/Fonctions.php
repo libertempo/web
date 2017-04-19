@@ -227,7 +227,7 @@ class Fonctions
                 'startDate'          => $startDate,
             ];
             $return .= '<script>generateDatePicker(' . json_encode($datePickerOpts) . ');</script>';
-            $return .= '<h1>' . _('divers_nouvelle_absence') . '</h1>';
+            $return .= '<h1>' . _('resp_traite_user_new_conges') . '</h1>';
 
             //affiche le formulaire de saisie d'une nouvelle demande de conges
             $return .= saisie_nouveau_conges2($_SESSION['userlogin'], $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet);
