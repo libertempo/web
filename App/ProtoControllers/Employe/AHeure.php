@@ -71,7 +71,7 @@ abstract class AHeure
     * @return int
     */
     abstract protected function post(array $post, array &$errorsLst, $user);
-    
+
     /**
      * Supprime une demande d'heures
      *
@@ -311,7 +311,9 @@ abstract class AHeure
                 $champs['timestampDebut'] = \utilisateur\Fonctions::getTimestampPremierJourAnnee($value);
                 $champs['timestampFin'] = \utilisateur\Fonctions::getTimestampDernierJourAnnee($value);
             } else {
-                $champs[$key] = (int) $value;
+                if ($value !== "all") { // si la valeur est différent de "all" le paramètres est passé au champ pour la futur requête sql
+                    $champs[$key] = (int) $value;
+                }
             }
         }
 
@@ -503,7 +505,7 @@ abstract class AHeure
      *
      * @return array
      */
-    abstract protected function getListeId(array $params);
+    abstract public function getListeId(array $params);
 
     /**
      * Retourne une liste d'heures
@@ -512,5 +514,5 @@ abstract class AHeure
      *
      * @return array
      */
-    abstract protected function getListeSQL(array $listId);
+    abstract public function getListeSQL(array $listId);
 }

@@ -130,8 +130,7 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
 
         return NIL_INT;
     }
-    
-    
+
     /**
      * {@inheritDoc}
      */
@@ -204,7 +203,7 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
                 if ($horodateDebut <= $creneauDebut) {
                     if ($horodateFin <= $creneauDebut) {
                         // On ne cumule rien
-                        
+
                         break;
                     } elseif ($horodateFin > $creneauDebut && $horodateFin <= $creneauFin) {
                         $reelleDuree += $horodateFin - $creneauDebut;
@@ -272,7 +271,7 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
         }
         $champsRecherche = (!empty($_POST) && $this->isSearch($_POST))
             ? $this->transformChampsRecherche($_POST)
-            : ['statut' => AHeure::STATUT_DEMANDE];
+            : [];
         $params = $champsRecherche + [
             'login' => $_SESSION['userlogin'],
         ];
@@ -328,6 +327,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
     protected function getFormulaireRecherche(array $champs)
     {
         $form = '<form method="post" action="" class="form-inline search" role="form"><div class="form-group"><label class="control-label col-md-4" for="statut">Statut&nbsp;:</label><div class="col-md-8"><select class="form-control" name="search[statut]" id="statut">';
+        $form .= '<option value="all">' . _('tous') . '</option>';
         foreach (AHeure::getOptionsStatuts() as $key => $value) {
             $selected = (isset($champs['statut']) && $key == $champs['statut'])
                 ? 'selected="selected"'
@@ -353,7 +353,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
     /**
      * {@inheritDoc}
      */
-    protected function getListeId(array $params)
+    public function getListeId(array $params)
     {
         $where = [];
         if (!empty($params)) {
@@ -366,8 +366,8 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
                         $where[] = 'debut <= ' . $value;
                         break;
                     default:
-                        $where[] = $key . ' = "' . $value . '"';
-                        break;
+                    $where[] = $key . ' IN ("' . implode('", "', (array) $value) . '")';
+                    break;
                 }
             }
         }
@@ -387,7 +387,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
     /**
      * {@inheritDoc}
      */
-    protected function getListeSQL(array $listId)
+    public function getListeSQL(array $listId)
     {
         if (empty($listId)) {
             return [];
