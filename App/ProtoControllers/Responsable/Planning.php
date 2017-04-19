@@ -72,7 +72,8 @@ class Planning extends \App\ProtoControllers\APlanning
      */
     public static function isVisible($id)
     {
-        return \App\ProtoControllers\Responsable::canAssociatePLanning() && parent::isVisible($id);
+        $config = new \App\Libraries\Configuration();
+        return $config->canResponsablesAssociatePlanning() && parent::isVisible($id);
     }
 
 }

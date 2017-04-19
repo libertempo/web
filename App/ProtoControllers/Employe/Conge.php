@@ -24,7 +24,7 @@ class Conge
 
         $return = '';
         $errorsLst = [];
-        if ($_SESSION['config']['where_to_find_user_email'] == "ldap") {
+        if ($config->getMailFromLdap()) {
             include_once CONFIG_PATH . 'config_ldap.php';
         }
 
@@ -70,7 +70,7 @@ class Conge
             $i = true;
             $listeConges = $this->getListeSQL($listId);
             $modificationAutorisee = $config->canUserModifieDemande();
-            $affichageDateTraitement = $_SESSION['config']['affiche_date_traitement'];
+            $affichageDateTraitement = $config->canAfficheDateTraitement();
             foreach ($listeConges as $conges) {
                 /** Dates demande / traitement */
                 $dateDemande = '';
@@ -120,13 +120,13 @@ class Conge
 
                 // si on peut modifier une demande on defini le lien à afficher
                 if ($conges["p_etat"] == \App\Models\Conge::STATUT_DEMANDE) {
-                    if (!$interdictionModification) {
+                    if ($modificationAutorisee) {
                         $user_modif_demande = '<a href="user_index.php?session=' . $session . '&p_num=' . $conges['p_num'] . '&onglet=modif_demande"><i class="fa fa-pencil"></i></a>';
                     }
                     $user_suppr_demande = '<a href="user_index.php?session=' . $session . '&p_num=' . $conges['p_num'] . '&onglet=suppr_demande"><i class="fa fa-times-circle"></i></a>';
                 }
 
-                if (!$interdictionModification) {
+                if ($modificationAutorisee) {
                     $childTable .= $user_modif_demande . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 
                 }

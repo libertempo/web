@@ -1374,7 +1374,7 @@ class Fonctions
             $childTable .= '<tr class="' . (($tab_current_infos['is_active']=='Y') ? 'actif' : 'inactif') . '">';
             $childTable .= '<td class="utilisateur"><strong>' . $tab_current_infos['nom'] . ' ' . $tab_current_infos['prenom'] . '</strong>';
             $childTable .= '<span class="login">' . $current_login . '</span>';
-            if($_SESSION['config']['where_to_find_user_email']=="dbconges") {
+            if(!$config->getMailFromLdap()) {
                 $childTable .= '<span class="mail">' . $tab_current_infos['email'] . '</span>';
             }
             // droit utilisateur
@@ -2231,7 +2231,7 @@ class Fonctions
         {
             $valid_4=false;
         }
-        if ($_SESSION['config']['gestion_heures'] && !\admin\Fonctions::FormAddUserSoldeHeureOk($tab_new_user['solde_heure'])) {
+        if ($config->isHeuresAutorise() && !\admin\Fonctions::FormAddUserSoldeHeureOk($tab_new_user['solde_heure'])) {
             $valid_5=false;
         }
         // si aucune erreur de saisie n'a ete commise
@@ -2243,7 +2243,7 @@ class Fonctions
             } else {
                 $sql .='"'.\includes\SQL::quote($tab_new_user['resp_login']).'",';
             }
-            if ($_SESSION['config']['gestion_heures']) {
+            if ($config->isHeuresAutorise()) {
                 $sql .='u_heure_solde='. \App\Helpers\Formatter::hour2Time($tab_new_user['solde_heure']).',';
             }
             $sql .= 'u_is_admin="'. \includes\SQL::quote($tab_new_user['is_admin']).'",u_is_hr="'.\includes\SQL::quote($tab_new_user['is_hr']).'",u_is_active="'.\includes\SQL::quote($tab_new_user['is_active']).'",u_see_all="'.\includes\SQL::quote($tab_new_user['see_all']).'",u_login="'.\includes\SQL::quote($tab_new_user['login']).'",u_quotite="'.\includes\SQL::quote($tab_new_user['quotite']).'",u_email="'. \includes\SQL::quote($tab_new_user['email']).'" WHERE u_login="'.\includes\SQL::quote($u_login_to_update).'"' ;
@@ -2369,7 +2369,7 @@ class Fonctions
         $childTable .= '<th>' . _('divers_prenom_maj_1') . '</th>';
         $childTable .= '<th>' . _('divers_login_maj_1') . '</th>';
         $childTable .= '<th>' . _('divers_quotite_maj_1') . '</th>';
-        if ($_SESSION['config']['gestion_heures'] ) {
+        if ($config->isHeuresAutorise()) {
             $childTable .= '<th>' . _('solde_heure') . '</th>';
         }
         $childTable .= '<th>' . _('admin_users_is_resp') . '</th>';
@@ -2379,7 +2379,7 @@ class Fonctions
         $childTable .= '<th>' . _('admin_users_is_active') . '</th>';
         $childTable .= '<th>' . _('admin_users_see_all') . '</th>';
 
-        if($_SESSION['config']['where_to_find_user_email']=="dbconges") {
+        if(!$config->getMailFromLdap()) {
             $childTable .= '<th>' . _('admin_users_mail') . '</th>';
         }
         $childTable .= '</tr>';
@@ -2392,7 +2392,7 @@ class Fonctions
         $childTable .= '<td>' . $tab_user['prenom'] . '</td>';
         $childTable .= '<td>' . $tab_user['login'] . '</td>';
         $childTable .= '<td>' . $tab_user['quotite'] . '</td>';
-        if ($_SESSION['config']['gestion_heures'] ) {
+        if ($config->isHeuresAutorise()) {
             $childTable .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($tab_user['solde_heure']) . '</td>';
         }
         $childTable .= '<td>' . $tab_user['is_resp'] . '</td>';
@@ -2402,7 +2402,7 @@ class Fonctions
         $childTable .= '<td>' . $tab_user['is_active'] . '</td>';
         $childTable .= '<td>' . $tab_user['see_all'] . '</td>';
 
-        if($_SESSION['config']['where_to_find_user_email']=="dbconges") {
+        if(!$config->getMailFromLdap()) {
             $childTable .= '<td>' . $tab_user['email'] . '</td>';
         }
         $childTable .= '</tr>';
@@ -2447,7 +2447,7 @@ class Fonctions
             $text_see_all="<select class=\"form-control\" name=\"new_see_all\" ><option value=\"N\">N</option><option value=\"Y\">Y</option></select>" ;
         }
 
-        if($_SESSION['config']['where_to_find_user_email']=="dbconges") {
+        if(!$config->getMailFromLdap()) {
             $text_email="<input class=\"form-control\" type=\"text\" name=\"new_email\" size=\"10\" maxlength=\"99\" value=\"".$tab_user['email']."\">" ;
         }
 
@@ -2473,7 +2473,7 @@ class Fonctions
         $childTable .= '<td>' . $text_prenom . '</td>';
         $childTable .= '<td>' . $text_login . '</td>';
         $childTable .= '<td>' . $text_quotite . '</td>';
-        if ($_SESSION['config']['gestion_heures'] ) {
+        if ($config->isHeuresAutorise()) {
             $text_solde_heure="<input class=\"form-control\" type=\"text\" name=\"new_solde_heure\" id=\"" . $soldeHeureId . "\"  size=\"6\" maxlength=\"6\" value=\"".  \App\Helpers\Formatter::timestamp2Duree($tab_user['solde_heure'])."\">" ;
             $childTable .= '<td>' . $text_solde_heure . '</td>';
         }
@@ -2483,7 +2483,7 @@ class Fonctions
         $childTable .= '<td>' . $text_is_hr . '</td>';
         $childTable .= '<td>' . $text_is_active . '</td>';
         $childTable .= '<td>' . $text_see_all . '</td>';
-        if($_SESSION['config']['where_to_find_user_email']=="dbconges") {
+        if(!$config->getMailFromLdap()) {
             $childTable .= '<td>' . $text_email . '</td>';
         }
         $childTable .= '</tr></tbody>';
@@ -2623,6 +2623,7 @@ class Fonctions
      */
     public static function modifUserModule($session, $onglet)
     {
+        $config = new \App\Libraries\Configuration();
         $u_login              = htmlentities(getpost_variable('u_login'));
         $u_login_to_update    = htmlentities(getpost_variable('u_login_to_update')) ;
         $tab_checkbox_sem_imp = htmlentities(getpost_variable('tab_checkbox_sem_imp')) ;
@@ -2650,7 +2651,7 @@ class Fonctions
             $tab_new_user['nom']    = htmlentities(getpost_variable('new_nom'), ENT_QUOTES | ENT_HTML401);
             $tab_new_user['prenom']     = htmlentities(getpost_variable('new_prenom'), ENT_QUOTES | ENT_HTML401);
             $tab_new_user['quotite']    = htmlentities(getpost_variable('new_quotite'), ENT_QUOTES | ENT_HTML401);
-            if ($_SESSION['config']['gestion_heures'] ) {
+            if ($config->isHeuresAutorise()) {
                 $tab_new_user['solde_heure']    = htmlentities(getpost_variable('new_solde_heure'), ENT_QUOTES | ENT_HTML401);
             }
             $tab_new_user['is_resp']    = htmlentities(getpost_variable('new_is_resp'), ENT_QUOTES | ENT_HTML401);
@@ -3101,7 +3102,7 @@ class Fonctions
             $childTable .= '<th>' . _('divers_prenom_maj_1') . '</th>';
         }
         $childTable .= '<th>' . _('divers_quotite_maj_1') . '</th>';
-        if ($_SESSION['config']['gestion_heures'] ) {
+        if ($config->isHeuresAutorise()) {
             $childTable .= '<th>' . _('solde_heure') . '</th>';
         }
         $childTable .= '<th>' . _('admin_new_users_is_resp') . '</th>';
@@ -3190,7 +3191,7 @@ class Fonctions
         }
 
         $childTable .= '<td>' . $text_quotite . '</td>';
-        if ($_SESSION['config']['gestion_heures'] ) {
+        if ($config->isHeuresAutorise()) {
             $text_solde_heure="<input class=\"form-control\" type=\"text\" name=\"new_solde_heure\" id=\"" . $soldeHeureId . "\" size=\"6\" maxlength=\"6\" value=\"".$tab_new_user['solde_heure']."\">" ;
             $childTable .= '<td>' . $text_solde_heure . '</td>';
         }else{
@@ -3364,7 +3365,7 @@ class Fonctions
                 $return .= '</form>';
 
                 return true;
-            } elseif($_SESSION['config']['where_to_find_user_email'] == "dbconges" && strrchr($tab_new_user['email'], "@")==FALSE) {
+            } elseif(!$config->getMailFromLdap() && strrchr($tab_new_user['email'], "@")==FALSE) {
                 $return .= '<h3>' . _('admin_verif_bad_mail') . '</h3>';
                 $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=ajout-user" method="POST">';
                 $return .= '<input type="hidden" name="new_login" value="' . $tab_new_user['login'] . '">';

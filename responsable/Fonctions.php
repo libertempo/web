@@ -1049,7 +1049,7 @@ class Fonctions
                 $nb_colonnes += 1;
             }
         }
-        if ($_SESSION['config']['gestion_heures']) {
+        if ($config->isHeuresAutorise()) {
             $return .= '<th>'. _('solde_heure') .'</th>' ;
             $nb_colonnes += 1;
         }
@@ -1093,7 +1093,7 @@ class Fonctions
                             $return .= '<td>' . $tab_conges[$libelle]['solde'] . '</td>';
                         }
                     }
-                    if ($_SESSION['config']['gestion_heures']) {
+                    if ($config->isHeuresAutorise()) {
                         $soldeHeure = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($current_login)['u_heure_solde'];
                         $return .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($soldeHeure) . '</td>';
                     }
@@ -1146,7 +1146,7 @@ class Fonctions
                             $return .= '<td>' . $tab_conges_2[$libelle]['solde'] . '</td>';
                         }
                     }
-                    if ($_SESSION['config']['gestion_heures']) {
+                    if ($config->isHeuresAutorise()) {
                         $soldeHeure = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($current_login_2)['u_heure_solde'];
                         $return .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($soldeHeure) . '</td>';
                     }
@@ -1356,6 +1356,7 @@ class Fonctions
     //affiche l'état des conges du user (avec le formulaire pour le responsable)
     public static function affiche_etat_conges_user_for_resp($user_login, $year_affichage, $tri_date, $onglet)
     {
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $session=session_id() ;
         $return = '';
@@ -1412,7 +1413,7 @@ class Fonctions
             $return .= '<th>' . _('divers_etat_maj_1') . '</th>';
             $return .= '<th>' . _('resp_traite_user_annul') . '</th>';
             $return .= '<th>' . _('resp_traite_user_motif_annul') . '</th>';
-            if($_SESSION['config']['affiche_date_traitement']) {
+            if($config->canAfficheDateTraitement()) {
                 $return .= '<th>' . _('divers_date_traitement') . '</th>';
             }
             $return .= '</tr>';
@@ -1483,7 +1484,7 @@ class Fonctions
                 $return .= '</td>';
                 $return .= '<td>' . $casecocher1 . '</td>';
                 $return .= '<td>' . $text_annul . '</td>';
-                if($_SESSION['config']['affiche_date_traitement']) {
+                if($config->canAfficheDateTraitement()) {
                     if(empty($sql_p_date_traitement)) {
                         $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : pas traité</td>';
                     } else {
@@ -1506,6 +1507,7 @@ class Fonctions
     //affiche l'état des demande en attente de 2ieme validation du user (avec le formulaire pour le responsable)
     public static function affiche_etat_demande_2_valid_user_for_resp($user_login)
     {
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $session=session_id() ;
         $return = '';
@@ -1537,7 +1539,7 @@ class Fonctions
             $return .= '<th>' . _('divers_accepter_maj_1') . '</th>';
             $return .= '<th>' . _('divers_refuser_maj_1') . '</th>';
             $return .= '<th>' . _('resp_traite_user_motif_refus') . '</th>';
-            if($_SESSION['config']['affiche_date_traitement']) {
+            if($config->canAfficheDateTraitement()) {
                 $return .= '<th>' . _('divers_date_traitement') . '</th>';
             }
             $return .= '</tr>';
@@ -1587,7 +1589,7 @@ class Fonctions
                 $return .= '<td>' . $casecocher1 . '</td>';
                 $return .= '<td>' . $casecocher2 . '</td>';
                 $return .= '<td>' . $text_refus . '</td>';
-                if($_SESSION['config']['affiche_date_traitement']) {
+                if($config->canAfficheDateTraitement()) {
                     if(empty($sql_date_traitement)) {
                         $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_date_demande . '<br>' . _('divers_traitement') . ' : pas traité</td>';
                     } else {
@@ -1610,6 +1612,7 @@ class Fonctions
     //affiche l'état des demandes du user (avec le formulaire pour le responsable)
     public static function affiche_etat_demande_user_for_resp($user_login, $tab_user, $tab_grd_resp)
     {
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $session=session_id();
         $return = '';
@@ -1641,7 +1644,7 @@ class Fonctions
             $return .= '<td>' . _('divers_accepter_maj_1') . '</td>';
             $return .= '<td>' . _('divers_refuser_maj_1') . '</td>';
             $return .= '<td>' . _('resp_traite_user_motif_refus') . '</td>';
-            if($_SESSION['config']['affiche_date_traitement']) {
+            if($config->canAfficheDateTraitement()) {
                 $return .= '<td>' . _('divers_date_traitement') . '</td>';
             } else {
                 $return .= '<td></td>';
@@ -1704,7 +1707,7 @@ class Fonctions
                 $return .= '<td>' . $text_refus . '</td>';
                 $return .= '<td>' . $sql_date_demande . '</td>';
 
-                if($_SESSION['config']['affiche_date_traitement']) {
+                if($config->canAfficheDateTraitement()) {
                     if(empty($sql_date_traitement)) {
                         $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_date_demande . '<br>' . _('divers_traitement') . ' : pas traité</td>';
                     } else {
@@ -1844,6 +1847,7 @@ class Fonctions
      */
     public static function traiteUserModule()
     {
+        $config = new \App\Libraries\Configuration();
         $entities = function ($element) {
             return htmlentities($element, ENT_QUOTES | ENT_HTML401);
         };
@@ -1855,7 +1859,7 @@ class Fonctions
         }
 
         $return = self::traiterUserConge($userLogin);
-        if ($_SESSION['config']['gestion_heures']) {
+        if ($config->isHeuresAutorise()) {
             $return .= '<hr  />';
 
             $return .= self::traiteUserHeureAdditionnelle($userLogin);

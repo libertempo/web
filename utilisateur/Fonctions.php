@@ -288,7 +288,7 @@ class Fonctions
         /* Génération du datePicker et de ses options */
         $daysOfWeekDisabled = [];
         $datesDisabled      = [];
-        if ((false == $_SESSION['config']['dimanche_travail'])
+        if ((false == $config->isDimancheOuvrable())
             && (!$config->isSamediOuvrable())
         ) {
             $daysOfWeekDisabled = [0,6];
@@ -420,6 +420,7 @@ class Fonctions
      */
     public static function modificationAbsenceModule()
     {
+        $config = new \App\Libraries\Configuration();
         $user_login        = $_SESSION['userlogin'];
         $p_num             = getpost_variable('p_num');
         $onglet            = getpost_variable('onglet');
@@ -434,7 +435,7 @@ class Fonctions
         $return            = '';
         $isAllowed = self::canUserManipulateConge($p_num, $_SESSION['userlogin']);
 
-        if (!$isAllowed || $_SESSION['config']['interdit_modif_demande']) {
+        if (!$isAllowed || $config->canUserModifieDemande()) {
             $session = (isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : session_id()));
             redirect(ROOT_PATH . 'utilisateur/user_index.php?session=' . $session);
         }
@@ -652,8 +653,9 @@ class Fonctions
      */
     public static function modificationMotDePasseModule($onglet)
     {
+        $config = new \App\Libraries\Configuration();
         $return = '';
-        if($_SESSION['config']['where_to_find_user_email']=="ldap"){
+        if($config->getMailFromLdap()){
             include_once CONFIG_PATH .'config_ldap.php';
         }
 

@@ -41,7 +41,7 @@ if ($config->canUserSaisieDemande()) {
     $onglets['traitement_demandes'] = _('resp_menu_button_traite_demande') . $nbbadgeConges;
 }
 
-if ($_SESSION['config']['gestion_heures']) {
+if ($config->isHeuresAutorise()) {
     $nbbadgeDem = '';
     $DemandesAdd = new \App\ProtoControllers\Responsable\Traitement\Additionnelle;
     $nbdemandes = $DemandesAdd->getNbDemandesATraiter($_SESSION['userlogin']);
@@ -63,7 +63,7 @@ if ($config->canResponsableAjouteConges()) {
     $onglets['ajout_conges'] = _('resp_ajout_conges_titre');
 }
 
-if ($_SESSION['config']['resp_association_planning']) {
+if ($config->canResponsablesAssociatePlanning()) {
     $onglets['liste_planning'] = _('resp_liste_planning');
 }
 

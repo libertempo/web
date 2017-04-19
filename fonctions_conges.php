@@ -614,6 +614,7 @@ function alerte_mail($login_expediteur, $destinataire, $num_periode, $objet)
 // construit et envoie le mail
 function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $mail_dest_name, $mail_dest_addr, $num_periode)
 {
+    $config = new \App\Libraries\Configuration();
     /*********************************************/
     // init du mail
     $mail = new \PHPMailer();
@@ -703,7 +704,7 @@ function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $m
     }
     $sujet = $_SESSION['config'][$key1];
     $contenu = $_SESSION['config'][$key2];
-    $contenu = str_replace("__URL_ACCUEIL_CONGES__", $_SESSION['config']['URL_ACCUEIL_CONGES'], $contenu);
+    $contenu = str_replace("__URL_ACCUEIL_CONGES__", $config->getUrlAccueil(), $contenu);
     $contenu = str_replace("__SENDER_NAME__", $mail_sender_name, $contenu);
     $contenu = str_replace("__DESTINATION_NAME__", $mail_dest_name, $contenu);
     $contenu = str_replace("__NB_OF_DAY__", $sql_nb_jours, $contenu);
@@ -741,10 +742,10 @@ function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $m
 // renvoit un tableau a 2 valeurs : prenom+nom et email
 function find_email_adress_for_user($login)
 {
-
+    $config = new \App\Libraries\Configuration();
     $found_mail=array();
 
-    if($_SESSION['config']['where_to_find_user_email']=="ldap") // recherche du mail du user dans un annuaire LDAP
+    if($config->getMailFromLdap()) // recherche du mail du user dans un annuaire LDAP
     {
         // cnx à l'annuaire ldap :
         $ds = ldap_connect($_SESSION['config']['ldap_server']);
@@ -781,7 +782,7 @@ function find_email_adress_for_user($login)
             array_push($found_mail, $addr) ;
         }
     }
-    elseif($_SESSION['config']['where_to_find_user_email']=="dbconges") // recherche du mail du user dans la base db_conges
+    elseif(!$config->getMailFromLdap()) // recherche du mail du user dans la base db_conges
     {
         $req = 'SELECT u_nom, u_prenom, u_email FROM conges_users WHERE u_login="'.\includes\SQL::quote($login).'" ';
         $res = \includes\SQL::query($req);
@@ -2063,17 +2064,18 @@ function execute_sql_file($file)
 
 function verif_droits_user($session, $niveau_droits)
 {
+    $config = new \App\Libraries\Configuration();
     $niveau_droits = strtolower($niveau_droits);
 
     // verif si $_SESSION['is_admin'] ou $_SESSION['is_resp'] ou $_SESSION['is_hr'] =="N" ou $_SESSION['is_active'] =="N"
     if($_SESSION[$niveau_droits]=="N")
     {
         // on recupere les variable utiles pour le suite :
-        $url_accueil_conges = $_SESSION['config']['URL_ACCUEIL_CONGES'] ;
-        $lang_divers_acces_page_interdit =  _('divers_acces_page_interdit') ;
-        $lang_divers_user_disconnected    =  _('divers_user_disconnected') ;
-        $lang_divers_veuillez        =  _('divers_veuillez') ;
-        $lang_divers_vous_authentifier    =  _('divers_vous_authentifier') ;
+        $url_accueil_conges = $config->getUrlAccueil();
+        $lang_divers_acces_page_interdit =  _('divers_acces_page_interdit');
+        $lang_divers_user_disconnected    =  _('divers_user_disconnected');
+        $lang_divers_veuillez        =  _('divers_veuillez');
+        $lang_divers_vous_authentifier    =  _('divers_vous_authentifier');
 
         // on delete la session et on renvoit sur l'authentification (page d'accueil)
         session_delete($session);
