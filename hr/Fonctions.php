@@ -25,108 +25,131 @@ class Fonctions
         /***********************************/
         // AFFICHAGE TABLEAU (premiere ligne)
         $return = '';
-        $return .= '<h1>'. _('hr_traite_user_etat_conges') . '</h1>';
-        $return .= '<table cellpadding="2" class="tablo" width="80%">';
-        $return .= '<thead>';
-        $return .= '<tr>';
-        $return .= '<th>' . _('divers_nom_maj') . '</th>';
-        $return .= '<th>' . _('divers_prenom_maj') . '</th>';
-        $return .= '<th>' . _('divers_quotite_maj_1') . '</th>';
-        $nb_colonnes = 3;
-        foreach($tab_type_cong as $id_conges => $libelle) {
-            // cas d'une absence ou d'un congé
-            $return .= '<th>' . $libelle . ' / ' . _('divers_an_maj') . '</th>';
-            $return .= '<th>'. _('divers_solde_maj') . ' ' . $libelle . '</th>';
-            $nb_colonnes += 2;
-        }
-        // conges exceptionnels
+        $return .= '<h2>'. _('hr_traite_user_etat_conges') . '</H2>';
+        /*********************/
+        /* Etat Utilisateurs */
+        /*********************/
+
+        // recup du tableau des types de conges (seulement les conges)
+        $tab_type_conges=recup_tableau_types_conges();
+        $tab_type_conges_exceptionnels = [];
+
+        // recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
         if ($_SESSION['config']['gestion_conges_exceptionnels']) {
-            foreach($tab_type_conges_exceptionnels as $id_type_cong => $libelle) {
-                $return .= '<th>'. _('divers_solde_maj') . ' ' . $libelle . '</th>';
-                $nb_colonnes += 1;
-            }
+            $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
+        }
+
+        // AFFICHAGE TABLEAU
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-hover',
+            'table-responsive',
+            'table-striped',
+            'table-condensed'
+        ]);
+        $childTable = '<thead>';
+        $childTable .= '<tr>';
+        $childTable .= '<th>' .  _('user') . '</th>';
+        $childTable .= '<th>' . _('divers_quotite_maj_1') . '</th>';
+        foreach ($tab_type_conges as $id_type_cong => $libelle) {
+            $childTable .= '<th>' . $libelle . ' / ' . _('divers_an') . '</th>';
+            $childTable .= '<th>' . _('divers_solde') . ' ' . $libelle . '</th>';
+        }
+
+        foreach ($tab_type_conges_exceptionnels as $id_type_cong => $libelle) {
+            $childTable .= '<th>' . _('divers_solde') . ' ' . $libelle . '</th>';
         }
         if ($_SESSION['config']['gestion_heures']) {
-            $return .= '<th>'. _('solde_heure') .'</th>' ;
+            $childTable .= '<th>'. _('solde_heure') .'</th>' ;
         }
-        $return .= '<th></th>';
-        $nb_colonnes += 1;
-        if($_SESSION['config']['editions_papier']) {
-            $return .= '<th></th>';
-            $nb_colonnes += 1;
-        }
-        $return .= '</tr>';
-        $return .= '</thead>';
-        $return .= '<tbody>';
+        $childTable .= '<th></th>';
+        $childTable .= '<th></th>';
+        $childTable .= '</tr>';
+        $childTable .= '</thead>';
+        $childTable .= '<tbody>';
 
-        /***********************************/
-        // AFFICHAGE USERS
-        /***********************************/
-        // AFFICHAGE DE USERS DIRECTS DU RESP
+        // Récuperation des informations des users:
+        $tab_info_users=array();
+        $tab_info_users=\hr\Fonctions::recup_infos_all_users_du_hr($_SESSION['userlogin']);
 
-        // Récup dans un tableau de tableau des informations de tous les users dont $_SESSION['userlogin'] est responsable
-        $tab_all_users=\hr\Fonctions::recup_infos_all_users_du_hr($_SESSION['userlogin']);
-
-        if(count($tab_all_users)==0) {
+        if(count($tab_info_users)==0) {
             // si le tableau est vide (resp sans user !!) on affiche une alerte !
             $return .= '<tr><td class="histo" colspan="' . $nb_colonnes . '">' .  _('resp_etat_aucun_user') . '</td></tr>';
         } else {
-            //$i = true;
-            foreach($tab_all_users as $current_login => $tab_current_user) {
-                //tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
-                $tab_conges=$tab_current_user['conges'];
-                $text_affich_user="<a href=\"hr_index.php?session=$session&onglet=traite_user&user_login=$current_login\" title=\""._('resp_etat_users_afficher')."\"><i class=\"fa fa-eye\"></i></a>" ;
-                $text_edit_papier="<a href=\"../edition/edit_user.php?session=$session&user_login=$current_login\" target=\"_blank\" title=\""._('resp_etat_users_imprim')."\"><i class=\"fa fa-file-text\"></i></a>";
-                if($tab_current_user['is_active'] == "Y" || $_SESSION['config']['print_disable_users'] == 'TRUE') {
-                    $return .= '<tr>';
-                } else {
-                    $return .= '<tr class="hidden">';
-                }
-                $return .= '<td>' . $tab_current_user['nom'] . '</td><td>' . $tab_current_user['prenom'] . '</td><td>' . $tab_current_user['quotite'] . '%</td>';
-                foreach($tab_type_cong as $id_conges => $libelle) {
-                    $nbAn = isset($tab_conges[$libelle]['nb_an'])
-                        ? $tab_conges[$libelle]['nb_an']
-                        : 0;
-                    $solde = isset($tab_conges[$libelle]['solde'])
-                        ? $tab_conges[$libelle]['solde']
-                        : 0;
-                    $return .= '<td>'.$nbAn.'</td>';
-                    $return .= '<td>'. $solde .'</td>';
-                }
-                if ($_SESSION['config']['gestion_conges_exceptionnels']) {
-                    foreach($tab_type_conges_exceptionnels as $id_type_cong => $libelle)
-                    {
-                        $solde = isset($tab_conges[$libelle]['solde'])
-                            ? $tab_conges[$libelle]['solde']
-                            : 0;
-                        $return .= '<td>' . $solde .'</td>';
+            asort($tab_info_users);
+            foreach ($tab_info_users as $current_login => $tab_current_infos) {
+                if($tab_current_infos['is_active'] == "Y" || $_SESSION['config']['print_disable_users'] == 'TRUE') {
+                    $text_affich_user="<a href=\"hr_index.php?session=$session&onglet=traite_user&user_login=$current_login\" title=\""._('resp_etat_users_afficher')."\"><i class=\"fa fa-eye\"></i></a>" ;
+
+                    $childTable .= '<tr class="' . (($tab_current_infos['is_active']=='Y') ? 'actif' : 'inactif') . '">';
+                    $childTable .= '<td class="utilisateur"><strong>' . $tab_current_infos['nom'] . ' ' . $tab_current_infos['prenom'] . '</strong>';
+                    $childTable .= '<span class="login">' . $current_login . '</span>';
+                    if($_SESSION['config']['where_to_find_user_email']=="dbconges") {
+                        $childTable .= '<span class="mail">' . $tab_current_infos['email'] . '</span>';
                     }
-                }
+                    // droit utilisateur
+                    $rights = array();
+                    if($tab_current_infos['is_admin'] == 'Y') {
+                        $rights[] = 'administrateur';
+                    }
+                    if($tab_current_infos['is_resp'] == 'Y') {
+                        $rights[] = 'responsable';
+                    }
+                    if($tab_current_infos['is_hr'] == 'Y') {
+                        $rights[] = 'RH';
+                    }
+
+                    if(count($rights) > 0) {
+                        $childTable .= '<span class="rights">' . implode(', ', $rights) . '</span>';
+                    }
+
+                    $childTable .= '<span class="responsable"> responsable : <strong>' . $tab_current_infos['resp_login'] . '</strong></span>';
+
+                    $childTable .= '</td><td>' . $tab_current_infos['quotite'] . ' %</td>';
+
+                    //tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
+                    $tab_conges=$tab_current_infos['conges'];
+
+                    foreach($tab_type_conges as $id_conges => $libelle) {
+                        if (isset($tab_conges[$libelle])) {
+                            $childTable .= '<td>' . $tab_conges[$libelle]['nb_an'] . '</td>';
+                            $childTable .= '<td>' . $tab_conges[$libelle]['solde'] . '</td>';
+                        } else {
+                            $childTable .= '<td>0</td>';
+                            $childTable .= '<td>0</td>';
+                        }
+                    }
+
+                    foreach($tab_type_conges_exceptionnels as $id_conges => $libelle) {
+                        if (isset($tab_conges[$libelle])) {
+                            $childTable .= '<td>' . $tab_conges[$libelle]['solde'] . '</td>';
+                        } else {
+                            $childTable .= '<td>0</td>';
+                        }
+                    }
+
                 if ($_SESSION['config']['gestion_heures']) {
                     $soldeHeure = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($current_login)['u_heure_solde'];
-                    $return .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($soldeHeure) . '</td>';
-                }
-                $return .= '<td>' . $text_affich_user . '</td>';
-                if($_SESSION['config']['editions_papier']) {
-                    $return .= '<td>' . $text_edit_papier . '</td>';
+                    $childTable .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($soldeHeure) . '</td>';
                 }
 
-                $return .= '</tr>';
-                //$i = !$i;
+                    $childTable .= '<td>' . $text_affich_user . '</td>';
+                    if($_SESSION['config']['editions_papier']) {
+                        $text_edit_papier="<a href=\"../edition/edit_user.php?session=$session&user_login=$current_login\" target=\"_blank\" title=\""._('resp_etat_users_imprim')."\"><i class=\"fa fa-file-text\"></i></a>";
+                        $childTable .= '<td>' . $text_edit_papier . '</td>';
+                    }
+                    $childTable .= '</tr>';
+                }
             }
         }
 
-        $return .= '</tbody>';
-        $return .= '</table>';
-        $return .= '<script>
-        $(document).ready(function()
-            {
-            $("tr:not(.hidden):odd").css("background-color", "#F4F4F4");
-            $("#display_hidden").click(function () {
-                $(".hidden").slideToggle();
-                });
-            });
-        </script>';
+        $childTable .= '</tbody>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
+        $return .= '<br>';
         return $return;
     }
 
