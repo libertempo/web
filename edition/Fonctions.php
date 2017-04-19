@@ -600,7 +600,7 @@ class Fonctions
                 $demi_j_fin =  _('divers_pm_short') ;
             }
             $sql_p_nb_jours = $resultat2["p_nb_jours"];
-            $sql_p_commentaire = $resultat2["p_commentaire"];
+            $sql_p_commentaire = html_entity_decode($resultat2["p_commentaire"], ENT_QUOTES);
             $sql_p_type = $resultat2["p_type"];
             $sql_p_etat = $resultat2["p_etat"];
             $sql_p_date_demande = $resultat2["p_date_demande"];
@@ -694,7 +694,7 @@ class Fonctions
                 $demi_j_fin =  _('divers_pm_short') ;
             }
             $sql_p_nb_jours = $resultat2["p_nb_jours"];
-            $sql_p_commentaire = $resultat2["p_commentaire"];
+            $sql_p_commentaire = html_entity_decode($resultat2["p_commentaire"], ENT_QUOTES);
             $sql_p_type = $resultat2["p_type"];
             $sql_p_etat = $resultat2["p_etat"];
             $sql_p_date_demande = $resultat2["p_date_demande"];

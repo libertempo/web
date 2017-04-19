@@ -104,7 +104,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
         }
         
         if( 0 < $return) {
-            $notif = new \App\Libraries\Notification\Repos($id);
+            $notif = new \App\Libraries\Notification\Repos($id_heure);
             $send = $notif->send();
 
             if (false === $send) {
@@ -286,7 +286,8 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
 
         $usersRespDirect = \App\ProtoControllers\Responsable::getUsersRespDirect($resp);
         $usersResp = array_merge($usersResp,$usersRespDirect);
-
+        $usersResp = array_diff($usersResp,[$_SESSION['userlogin']]);
+        
         if (empty($usersResp)) {
             return [];
         }
@@ -295,7 +296,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
         $sql = \includes\SQL::singleton();
         $req = 'SELECT id_heure AS id
                 FROM heure_repos
-                WHERE login IN (\'' . implode(',', $usersResp) . '\')
+                WHERE login IN (\'' . implode('\',\'', $usersResp) . '\')
                 AND statut = '.AHeure::STATUT_DEMANDE;
         $res = $sql->query($req);
         while ($data = $res->fetch_array()) {
@@ -323,7 +324,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
         $sql = \includes\SQL::singleton();
         $req = 'SELECT id_heure AS id
                 FROM heure_repos
-                WHERE login IN (\'' . implode(',', $usersResp) . '\')
+                WHERE login IN (\'' . implode('\',\'', $usersResp) . '\')
                 AND statut = '.AHeure::STATUT_PREMIERE_VALIDATION;
         $res = $sql->query($req);
         while ($data = $res->fetch_array()) {

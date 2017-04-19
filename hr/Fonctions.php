@@ -60,7 +60,9 @@ class Fonctions
         foreach ($tab_type_conges_exceptionnels as $id_type_cong => $libelle) {
             $childTable .= '<th>' . _('divers_solde') . ' ' . $libelle . '</th>';
         }
-        $childTable .= '<th>'. _('solde_heure') .'</th>' ;
+        if ($_SESSION['config']['gestion_heures']) {
+            $childTable .= '<th>'. _('solde_heure') .'</th>' ;
+        }
         $childTable .= '<th></th>';
         $childTable .= '<th></th>';
         $childTable .= '</tr>';
@@ -127,8 +129,10 @@ class Fonctions
                         }
                     }
 
+                if ($_SESSION['config']['gestion_heures']) {
                     $soldeHeure = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($current_login)['u_heure_solde'];
                     $childTable .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($soldeHeure) . '</td>';
+                }
 
                     $childTable .= '<td>' . $text_affich_user . '</td>';
                     if($_SESSION['config']['editions_papier']) {
@@ -270,7 +274,7 @@ class Fonctions
             $count1 = $ReqLog1->num_rows;
             if($count1!=0) {
                 // AFFICHAGE TABLEAU DES DEMANDES EN COURS
-                $return .= '<h3>' . _('resp_traite_demandes_titre_tableau_1') . '</h3>';
+                //$return .= '<h3>' . _('resp_traite_demandes_titre') . '</h3>';
                 $return .= '<table cellpadding="2" class="table table-hover table-responsive table-condensed table-striped">';
                 $return .= '<thead>';
                 $return .= '<tr>';
@@ -398,7 +402,7 @@ class Fonctions
         $tab_text_refus = getpost_variable('tab_text_refus');
 
         // titre
-        $return .= '<h2>'. _('resp_traite_demandes_titre') .'</h2>';
+        $return .= '<h1>'. _('resp_traite_demandes_titre') .'</h1>';
 
         // si le tableau des bouton radio des demandes est vide , on affiche les demandes en cours
         if( $tab_bt_radio == '' ) {
@@ -995,7 +999,7 @@ class Fonctions
         /********************/
         /* Titre */
         /********************/
-        $return .= '<h2>'. _('resp_traite_user_titre') . ' ' . $tab_user['prenom'] . ' ' . $tab_user['nom'] . '.</h2>';
+        $return .= '<h3>'. _('resp_traite_user_titre') . ' ' . $tab_user['prenom'] . ' ' . $tab_user['nom'] . '.</h3>';
 
 
         /********************/
@@ -1058,7 +1062,7 @@ class Fonctions
         if($mois_calendrier_saisie_fin==0) {
             $mois_calendrier_saisie_fin=date("m");
         }
-        $return .= '<h3>' . _('resp_traite_user_new_conges') . '</h3>';
+        $return .= '<h1>' . _('resp_traite_user_new_conges') . '</h1>';
 
         $return .= saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet);
 
@@ -1178,12 +1182,12 @@ class Fonctions
     {
         $list_group="";
 
-        $sql1="SELECT g_gid FROM conges_groupe ORDER BY g_gid";
+        $sql1="SELECT DISTINCT gu_gid FROM conges_groupe_users ORDER BY gu_gid"; // Le but est de sélectionner tous les groupes ayant des utilisateurs
         $ReqLog1 = \includes\SQL::query($sql1);
 
         if($ReqLog1->num_rows != 0) {
             while ($resultat1 = $ReqLog1->fetch_array()) {
-                $current_group=$resultat1["g_gid"];
+                $current_group=$resultat1["gu_gid"];
                 if($list_group=="")
                     $list_group="$current_group";
                 else
@@ -1209,7 +1213,9 @@ class Fonctions
 
         // recup de la liste des users d'un groupe donné
         $list_users = get_list_users_du_groupe($choix_groupe);
-
+        if(empty($list_users)) {
+            return;
+        }
         foreach($tab_new_nb_conges_all as $id_conges => $nb_jours) {
             if($nb_jours!=0) {
                 $comment = $tab_new_comment_all[$id_conges];
@@ -1914,13 +1920,22 @@ class Fonctions
         $return .= '<div class="calendar">';
         $months = array('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12');
 
+        $i = 0;
         foreach ($months as $month) {
+            if($i%4 == 0){
+                $return .= '<div class="row">';
+            }
             $return .= '<div class="month">';
             $return .= '<div class="wrapper">';
             $return .= \hr\Fonctions::affiche_calendrier_saisie_jours_chomes($year_calendrier_saisie, $month, $tab_year);
             $return .= '</div>';
             $return .= '</div>';
+            if($i%4 == 3){
+                $return .= '</div>';
+            }
+            $i++;
         }
+        $return .= '</div>';
         $return .= '</div>';
         $return .= '<div class="actions">';
         $return .= '<input type="hidden" name="choix_action" value="commit">';
@@ -1965,7 +1980,7 @@ class Fonctions
         $add_css = '<style>#onglet_menu .onglet{ width: 50% ;}</style>';
 
         //    header_menu('hr', NULL, $add_css);
-
+        $return .= '<h1>'. _('admin_button_jours_chomes_1') . '</h1>';
         $return .= '<div class="pager">';
         $return .= '<div class="onglet calendar-nav">';
         // navigation
@@ -2426,7 +2441,7 @@ class Fonctions
         $tab_type_cong = ( recup_tableau_types_conges() + recup_tableau_types_conges_exceptionnels()  );
 
         // titre
-        $return .= '<h2>'. _('resp_cloture_exercice_titre') . '</H2>';
+        $return .= '<h1>'. _('resp_cloture_exercice_titre') . '</h1>';
 
         if($cloture_users=="TRUE") {
             $tab_cloture_users       = getpost_variable('tab_cloture_users');
