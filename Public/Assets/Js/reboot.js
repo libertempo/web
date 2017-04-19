@@ -517,7 +517,7 @@ var planningController = function (idElement, options, creneaux)
         buttonTag.className = 'btn btn-default btn-xs';
         buttonTag.type = 'button';
         buttonTag.addEventListener('click', function (e) {
-            this._removePeriod(buttonTag.parentNode, jourSelectionne, typePeriodeSelected, debutVal, finVal);
+            this._removePeriod(buttonTag.parentNode, jourSelectionne, debutVal, finVal);
         }.bind(this));
         iTo.className = 'fa fa-caret-right';
         var debut = document.createTextNode(' ' + debutVal + ' ');
