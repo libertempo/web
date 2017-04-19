@@ -553,7 +553,7 @@ class Gestion {
         }
         $childTable .= '</tr></thead><tbody>';
         $childTable .= '<tr>';
-        $childTable .= '<td><input class="form-control" type="text" name="new_group_name" size="30" maxlength="50" value="'. $infosGroupe['nom'].'" ></td>';
+        $childTable .= '<td><input class="form-control" type="text" name="new_group_name" size="30" maxlength="50" value="'. $infosGroupe['nom'].'" required></td>';
         $childTable .= '<td><input class="form-control" type="text" name="new_group_libelle" size="50" maxlength="250" value="'. $infosGroupe['comment'].'"></td>';
         if($_SESSION['config']['double_validation_conges']) {
             $selectN = $infosGroupe['doubleValidation'] == 'N' ? 'selected="selected"':'';
