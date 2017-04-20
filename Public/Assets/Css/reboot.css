@@ -652,6 +652,12 @@ form.search {
     padding : 15px;
 }
 
+#calendar-wrapper h1 {
+    font-size: 20px;
+    font-size: 2rem;
+    text-transform: uppercase
+}
+
 #calendar-wrapper h2 {
     text-align: center;
 }

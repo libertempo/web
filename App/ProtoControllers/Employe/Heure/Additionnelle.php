@@ -120,7 +120,7 @@ class Additionnelle extends \App\ProtoControllers\Employe\AHeure
             log_action($id, 'annul', '', 'Annulation de la demande d\'heure additionnelle ' . $id);
             $notice = _('heure_additionnelle_annulee');
             $return = $id;
-            
+
             $notif = new \App\Libraries\Notification\Additionnelle($id);
             if(!$notif->send()) {
                 $errorsLst['email'] = _('erreur_envoi_mail');
@@ -140,7 +140,7 @@ class Additionnelle extends \App\ProtoControllers\Employe\AHeure
             $data = $this->dataModel2Db($put, $user);
             $id   = $this->update($data, $user, $idHeure);
             log_action($idHeure, 'modif', '', 'Modification demande d\'heure additionnelle ' . $idHeure);
-            
+
             return $id;
         }
 
@@ -164,9 +164,9 @@ class Additionnelle extends \App\ProtoControllers\Employe\AHeure
                 $return = NIL_INT;
             }
         }
-        return NIL_INT;
+        return $return;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -273,7 +273,7 @@ class Additionnelle extends \App\ProtoControllers\Employe\AHeure
         }
         $champsRecherche = (!empty($_POST) && $this->isSearch($_POST))
             ? $this->transformChampsRecherche($_POST)
-            : ['statut' => AHeure::STATUT_DEMANDE];
+            : [];
         $params = $champsRecherche + [
             'login' => $_SESSION['userlogin'],
         ];
@@ -333,6 +333,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
     protected function getFormulaireRecherche(array $champs)
     {
         $form = '<form method="post" action="" class="form-inline search" role="form"><div class="form-group"><label class="control-label col-md-4" for="statut">Statut&nbsp;:</label><div class="col-md-8"><select class="form-control" name="search[statut]" id="statut">';
+        $form .= '<option value="all">' . _('tous') . '</option>';
         foreach (\App\Models\AHeure::getOptionsStatuts() as $key => $value) {
             $selected = (isset($champs['statut']) && $key === $champs['statut'])
                 ? 'selected="selected"'
@@ -358,7 +359,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
     /**
      * {@inheritDoc}
      */
-    protected function getListeId(array $params)
+    public function getListeId(array $params)
     {
         if (!empty($params)) {
             $where = [];
@@ -371,7 +372,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
                         $where[] = 'debut <= ' . $value;
                         break;
                     default:
-                        $where[] = $key . ' = "' . $value . '"';
+                        $where[] = $key . ' IN ("' . implode('", "', (array) $value) . '")';
                         break;
                 }
             }
@@ -392,7 +393,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
      /**
       * {@inheritDoc}
       */
-     protected function getListeSQL(array $listId)
+     public function getListeSQL(array $listId)
      {
          if (empty($listId)) {
              return [];
@@ -460,7 +461,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
                     type_periode = ' . (int) $data['typePeriode'] . ',
                     comment = \'' . $data['comment'] . '\'
                 WHERE id_heure = '. (int) $id . '
-                AND login = "' . $user . '"';
+                    AND login = "' . $user . '"';
         $query = $sql->query($req);
 
         return $id;
@@ -475,7 +476,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
         $req = 'UPDATE heure_additionnelle
                 SET statut = ' . AHeure::STATUT_ANNUL . '
                 WHERE id_heure = ' . (int) $id . '
-                AND login = "' . $user . '"';
+                    AND login = "' . $user . '"';
         $sql->query($req);
 
         return 0 < $sql->affected_rows ? $id : NIL_INT;

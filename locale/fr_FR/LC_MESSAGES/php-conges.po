@@ -324,16 +324,16 @@ msgid "divers_conges"
 msgstr "congés"
 
 msgid "divers_conges_maj_1"
-msgstr "congés"
+msgstr "Congés"
 
 msgid "divers_absences"
 msgstr "absences"
 
 msgid "divers_absences_maj_1"
-msgstr "absences"
+msgstr "Absences"
 
 msgid "divers_nouvelle_absence"
-msgstr "Nouvelle Absence"
+msgstr "Nouveau Congé"
 
 msgid "divers_mois_precedent"
 msgstr "mois précédent"
@@ -885,7 +885,7 @@ msgid "config_abs_libelle_short"
 msgstr "libellé court"
 
 msgid "config_abs_add_type_abs"
-msgstr "ajouter un type d'absence"
+msgstr "Ajouter un type d'absence"
 
 msgid "config_abs_add_type_abs_comment"
 msgstr "Saisissez le type d'absence que vous voulez ajouter"
@@ -1319,9 +1319,6 @@ msgstr "Grands Responsables du Groupe"
 msgid "ie_non_gere"
 msgstr "Internet Explorer n'est pas pris en charge par Libertempo!<br>utilisez un autre navigateur"
 
-msgid "resp_traite_demandes_titre_tableau_1"
-msgstr "Traitement des congés"
-
 msgid "resp_traite_demandes_titre_tableau_2"
 msgstr "Demandes en deuxième validation"
 
@@ -1373,8 +1370,14 @@ msgstr "IMPOSSIBLE de désactiver les congés exceptionnels! (aucun congé excep
 msgid "divers_conges_exceptionnels"
 msgstr "congés exceptionnels"
 
+msgid "divers_conges_exceptionnels_maj_1"
+msgstr "Congés exceptionnels"
+
 msgid "divers_semaine"
 msgstr "semaine"
+
+msgid "config_comment_gestion_heures"
+msgstr "// GESTION DES HEURES<br>//----------------------------------------------------------------------<br>// si à FALSE : les heures 'additionnelles' et 'repos' ne sont pas gérées.<br>// si à TRUE : il est possible pour l'utilisateur de demander des heures additionnelles et des heures de repos que le responsable peut valider (TRUE est la valeur par défaut)."
 
 msgid "config_comment_grand_resp_ajout_conges"
 msgstr "// AJOUT DE CONGÉS PAR LE GRAND RESPONSABLE <br>//----------------------------------------------------------------------<br>// ne fonctionne QUE si la double validation est activée !<br>// si à FALSE : un responsable ne peut ajouter (créditer) de congés qu'à ses utilisateurs directs (dont il est 'responsable').(FALSE est la valeur par défaut)<br>// si à TRUE : un responsable peut ajouter (créditer) des congés aux utilisateurs dont il est 'responsable' ET 'grand responsable' !"
@@ -1927,6 +1930,9 @@ msgstr "Plannings"
 
 msgid "hr_ajout_planning"
 msgstr "Nouveau planning"
+
+msgid "tous"
+msgstr "Tous"
 
 msgid "statut_demande"
 msgstr "Demande"
