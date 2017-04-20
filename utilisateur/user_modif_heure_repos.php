@@ -13,7 +13,7 @@ dans un but spécifique. Reportez-vous à la Licence Publique Générale GNU pou
 Vous devez avoir reçu une copie de la Licence Publique Générale GNU en même temps
 que ce programme ; si ce n'est pas le cas, écrivez à la Free Software Foundation,
 Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, États-Unis.
-*************************************************************************************************
+ *************************************************************************************************
 This program is free software; you can redistribute it and/or modify it under the terms
 of the GNU General Public License as published by the Free Software Foundation; either
 version 2 of the License, or any later version.
@@ -23,10 +23,14 @@ See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*************************************************************************************************/
+ *************************************************************************************************/
 
 defined('_PHP_CONGES') or die('Restricted access');
-$id    = (int) getpost_variable('id');
+if (!$_SESSION['config']['gestion_heures']) {
+    $session = (isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : session_id()));
+    redirect(ROOT_PATH . 'utilisateur/user_index.php?session=' . $session);
+}
+$id = (int) getpost_variable('id');
 $repos = new \App\ProtoControllers\Employe\Heure\Repos();
 if (0 >= $id || !$repos->canUserEdit($id, $_SESSION['userlogin'])) {
     redirect(ROOT_PATH . 'deconnexion.php');
