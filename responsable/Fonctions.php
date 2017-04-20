@@ -1770,7 +1770,7 @@ class Fonctions
                 $mois_calendrier_saisie_fin=date("m");
             }
 
-            $return .= '<h2>' . _('resp_traite_user_new_conges') . '</h2>';
+            $return .= '<h1>' . _('resp_traite_user_new_conges') . '</h1>';
 
             //affiche le formulaire de saisie d'une nouvelle demande de conges ou d'un  nouveau conges
             $onglet = "traite_user";
