@@ -20,3 +20,6 @@ if (!in_array($lang, ['fr_FR', 'en_US', 'es_ES'], true)) {
     $lang = '';
 }
 
+//suppression de la variable print_disable_users de la bdd
+$del_conf_from_db="DELETE FROM conges_config WHERE conf_nom = 'print_disable_users';";
+$res_del_conf_from_db=\includes\SQL::query($del_conf_from_db);
