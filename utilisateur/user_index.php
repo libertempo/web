@@ -25,6 +25,9 @@ $onglet = getpost_variable('onglet');
 
 $onglets = array();
 
+
+$onglets['liste_conge'] = _('user_liste_conge');
+
 if ($_SESSION['config']['user_saisie_demande'] || $_SESSION['config']['user_saisie_mission']) {
     $onglets['nouvelle_absence'] = _('divers_nouvelle_absence');
 }
@@ -32,8 +35,6 @@ if ($_SESSION['config']['user_saisie_demande'] || $_SESSION['config']['user_sais
 if ($_SESSION['config']['user_echange_rtt']) {
     $onglets['echange_jour_absence'] = _('user_onglet_echange_abs');
 }
-
-$onglets['liste_conge'] = _('user_liste_conge');
 
 if ($_SESSION['config']['gestion_heures']) {
     if ($_SESSION['config']['user_saisie_demande'] || $_SESSION['config']['user_saisie_mission']) {
@@ -51,8 +52,8 @@ if ($_SESSION['config']['auth'] && $_SESSION['config']['user_ch_passwd']) {
     $onglets['changer_mot_de_passe'] = _('user_onglet_change_passwd');
 }
 
-if (!isset($onglets[$onglet]) && !in_array($onglet, array('modif_demande', 'suppr_demande', 'modif_heure_repos', 'modif_heure_additionnelle'))) {
-    $onglet = 'nouvelle_absence';
+if ( !isset($onglets[ $onglet ]) && !in_array($onglet, array('modif_demande','suppr_demande','modif_heure_repos', 'modif_heure_additionnelle'))) {
+    $onglet = 'liste_conge';
 }
 
 /*********************************/
@@ -88,7 +89,7 @@ echo "</div>\n";
 /*   AFFICHAGE DE L'ONGLET ...    */
 /*********************************/
 
-echo '<div class="' . $onglet . ' wrapper">';
+echo '<div class="' . $onglet . ' main-content">';
 include ROOT_PATH . 'utilisateur/user_' . $onglet . '.php';
 echo '</div>';
 
