@@ -1718,8 +1718,8 @@ msgstr "solde d'heure"
 msgid "Mail_test_ok"
 msgstr "Test effectué. Vérifiez vos courriels"
 
-msgid "user_liste_conge"
-msgstr "Liste des congés"
+msgid "user_conge"
+msgstr "Congés"
 
 msgid "divers_ajout_heure_repos"
 msgstr "Demande d'heures de repos"
@@ -1853,9 +1853,6 @@ msgstr "Heure additionnelle annulée"
 msgid "user_liste_heure_additionnelle_titre"
 msgstr "Liste des heures additionnelles"
 
-msgid "resp_affichage_liste_planning_titre"
-msgstr "Liste des plannings"
-
 msgid "resp_modif_planning_titre"
 msgstr "Modificaton du planning"
 
@@ -1920,7 +1917,7 @@ msgid "hr_tout_utilisateur_associe"
 msgstr "Tous les utilisateurs sont associés à un planning"
 
 msgid "hr_liste_planning"
-msgstr "Liste des plannings"
+msgstr "Plannings"
 
 msgid "hr_ajout_planning"
 msgstr "Nouveau planning"

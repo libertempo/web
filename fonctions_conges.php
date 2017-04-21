@@ -1823,7 +1823,9 @@ function affiche_tableau_bilan_conges_user($login)
 
     $return .= '<table class="table table-hover table-responsive table-condensed table-bordered">';
     $return .= '<thead>';
-    $return .= '<tr><td></td><td colspan="' . (count($tab_cong_user) * 2 ) . '">SOLDES</td></tr>';
+    $colspan = count($tab_cong_user) * 2 + 1 ;
+    $colspan = $_SESSION['config']['gestion_heures'] ? $colspan + 1 : $colspan;
+    $return .= '<tr><td></td><td colspan="' . $colspan . '">SOLDES</td></tr>';
     $return .= '<tr>';
     $return .= '<th class="titre">'. _('divers_quotite') .'</th>';
 
@@ -1833,6 +1835,9 @@ function affiche_tableau_bilan_conges_user($login)
         } else {
             $return .= '<th class="annuel">' . $id . ' / ' . _('divers_an_maj') . '</th><th class="solde">' . $id . '</th>';
         }
+    }
+    if($_SESSION['config']['gestion_heures']){
+        $return .= '<th class="solde">' . _('heure') . '</th>';
     }
     $return .= '</tr>';
     $return .= '</thead>';
@@ -1845,6 +1850,10 @@ function affiche_tableau_bilan_conges_user($login)
         } else {
             $return .= '<td class="annuel">' . $val['nb_an'] . '</td><td class="solde">' . $val['solde'] . ($val['reliquat'] > 0 ? ' (' . _('dont_reliquat') . ' ' . $val['reliquat'] . ')' : '') . '</td>';
         }
+    }
+    if($_SESSION['config']['gestion_heures']){
+        $timestampSolde = \App\ProtoControllers\Utilisateur::getSoldeHeure($login);
+        $return .= '<td class="solde">'. \App\Helpers\Formatter::timestamp2Duree($timestampSolde) .'</td>';
     }
     $return .= '</tr>';
     $return .= '</tbody>';
