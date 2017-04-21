@@ -1343,9 +1343,14 @@ class Fonctions
         foreach ($tab_type_conges_exceptionnels as $id_type_cong => $libelle) {
             $childTable .= '<th>' . _('divers_solde') . ' ' . $libelle . '</th>';
         }
+
+        if($_SESSION['config']['gestion_heures']){
+            $childTable .= '<th>' . _('divers_solde') . ' ' . _('heures') . '</th>';
+        }
+
         $childTable .= '<th></th>';
         $childTable .= '<th></th>';
-        if($_SESSION['config']['admin_change_passwd']) {
+        if($_SESSION['config']['admin_change_passwd'] && ($_SESSION['config']['how_to_connect_user'] == "dbconges")) {
             $childTable .= '<th></th>';
         }
         $childTable .= '</tr>';
@@ -1416,6 +1421,10 @@ class Fonctions
                 } else {
                     $childTable .= '<td>0</td>';
                 }
+            }
+
+            if($_SESSION['config']['gestion_heures']){
+                $childTable .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($tab_current_infos['solde_heure']) . '</td>';
             }
 
             $childTable .= '<td>' . $admin_modif_user . '</td>';
