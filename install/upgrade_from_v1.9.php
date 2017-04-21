@@ -1,13 +1,14 @@
 <?php
 
 define('ROOT_PATH', '../');
-require_once ROOT_PATH . 'define.php';
+include ROOT_PATH . 'define.php';
+defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 
 /*******************************************************************/
-// SCRIPT DE MIGRATION DE LA VERSION 1.6.0 vers 1.7.0
+// SCRIPT DE MIGRATION DE LA VERSION 1.8 vers 1.8.1
 /*******************************************************************/
-include_once ROOT_PATH .'fonctions_conges.php' ;
-include_once INCLUDE_PATH .'fonction.php';
+include ROOT_PATH .'fonctions_conges.php' ;
+include INCLUDE_PATH .'fonction.php';
 
 $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 
@@ -19,8 +20,3 @@ if (!in_array($lang, ['fr_FR', 'en_US', 'es_ES'], true)) {
     $lang = '';
 }
 
-//étape 1 création de la table de gestion des plugins
-\install\Fonctions::e1_create_table_plugins();
-
-// on renvoit à la page mise_a_jour.php (là d'ou on vient)
-echo "<a href=\"mise_a_jour.php?etape=2&version=$version&lang=$lang\">upgrade_from_v1.6.0  OK</a><br>\n";

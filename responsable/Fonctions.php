@@ -1038,7 +1038,10 @@ class Fonctions
                 $nb_colonnes += 1;
             }
         }
-        $return .= '<th>'. _('solde_heure') .'</th>' ;
+        if ($_SESSION['config']['gestion_heures']) {
+            $return .= '<th>'. _('solde_heure') .'</th>' ;
+            $nb_colonnes += 1;
+        }
         $return .= '<th></th>';
         $nb_colonnes += 1;
         if($_SESSION['config']['editions_papier']) {
@@ -1079,8 +1082,10 @@ class Fonctions
                             $return .= '<td>' . $tab_conges[$libelle]['solde'] . '</td>';
                         }
                     }
-                    $soldeHeure = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($current_login)['u_heure_solde'];
-                    $return .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($soldeHeure) . '</td>';
+                    if ($_SESSION['config']['gestion_heures']) {
+                        $soldeHeure = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($current_login)['u_heure_solde'];
+                        $return .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($soldeHeure) . '</td>';
+                    }
                     $return .= '<td>' . $text_affich_user . '</td>';
                     if($_SESSION['config']['editions_papier']) {
                         $return .= '<td>' . $text_edit_papier . '</td>';
@@ -1129,6 +1134,10 @@ class Fonctions
                         foreach($tab_type_conges_exceptionnels as $id_type_cong => $libelle) {
                             $return .= '<td>' . $tab_conges_2[$libelle]['solde'] . '</td>';
                         }
+                    }
+                    if ($_SESSION['config']['gestion_heures']) {
+                        $soldeHeure = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($current_login_2)['u_heure_solde'];
+                        $return .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($soldeHeure) . '</td>';
                     }
                     $return .= '<td>' . $text_affich_user . '</td>';
                     if($_SESSION['config']['editions_papier']) {
@@ -1761,7 +1770,7 @@ class Fonctions
                 $mois_calendrier_saisie_fin=date("m");
             }
 
-            $return .= '<h2>' . _('resp_traite_user_new_conges') . '</h2>';
+            $return .= '<h1>' . _('resp_traite_user_new_conges') . '</h1>';
 
             //affiche le formulaire de saisie d'une nouvelle demande de conges ou d'un  nouveau conges
             $onglet = "traite_user";
@@ -1831,11 +1840,13 @@ class Fonctions
         }
 
         $return = self::traiterUserConge($userLogin);
-        $return .= '<hr  />';
-        $return .= self::traiteUserHeureAdditionnelle($userLogin);
-        $return .= '<hr />';
-        $return .= self::traiteUserHeureRepos($userLogin);
+        if ($_SESSION['config']['gestion_heures']) {
+            $return .= '<hr  />';
 
+            $return .= self::traiteUserHeureAdditionnelle($userLogin);
+            $return .= '<hr />';
+            $return .= self::traiteUserHeureRepos($userLogin);
+        }
         return $return;
     }
 
@@ -2253,7 +2264,7 @@ class Fonctions
 
         /* Préparation et requêtage */
         $listPlanningId = \App\ProtoControllers\HautResponsable\Planning::getListPlanningId();
-        $return = '<h1>' . _('resp_affichage_liste_planning_titre') . '</h1>';
+        $return = '<h1>' . _('resp_liste_planning') . '</h1>';
         $return .= $message;
         $session = session_id();
         $table = new \App\Libraries\Structure\Table();
