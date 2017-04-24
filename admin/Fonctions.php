@@ -1079,7 +1079,9 @@ class Fonctions
     public static function get_nb_users_du_groupe($group_id)
     {
 
-        $sql1='SELECT DISTINCT(cgu.gu_login) FROM conges_groupe_users AS cgu, conges_users AS cu WHERE cgu.gu_gid = '. \includes\SQL::quote($group_id).' AND cu.u_is_active != "N" AND cu.u_login=cgu.gu_login ORDER BY cgu.gu_login ';
+        $sql1='SELECT DISTINCT(cgu.gu_login) FROM conges_groupe_users AS cgu 
+                INNER JOIN conges_users AS cu ON (cu.u_login = cgu.gu_login) 
+                WHERE cgu.gu_gid = '. \includes\SQL::quote($group_id).' AND cu.u_is_active != "N" ORDER BY cgu.gu_login ';
         $ReqLog1 = \includes\SQL::query($sql1);
         $nb_users = $ReqLog1->num_rows;
 
