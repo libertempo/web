@@ -1756,6 +1756,44 @@ class Fonctions
         /*************************/
         // dans le cas ou les users ne peuvent pas saisir de demande, le responsable saisi les congès :
         if( !$_SESSION['config']['user_saisie_demande'] || $_SESSION['config']['resp_saisie_mission'] ) {
+            /*************************/
+            /* SAISIE NOUVEAU CONGES */
+            /*************************/
+            /* Génération du datePicker et de ses options */
+            $daysOfWeekDisabled = [];
+            $datesDisabled      = [];
+            if ((false == $_SESSION['config']['dimanche_travail'])
+                && (false == $_SESSION['config']['samedi_travail'])
+            ) {
+                $daysOfWeekDisabled = [0,6];
+            } else {
+                if (false == $_SESSION['config']['dimanche_travail']) {
+                    $daysOfWeekDisabled = [0];
+                }
+                if (false == $_SESSION['config']['samedi_travail']) {
+                    $daysOfWeekDisabled = [6];
+                }
+            }
+
+            if (is_array($_SESSION["tab_j_feries"])) {
+                foreach ($_SESSION["tab_j_feries"] as $date) {
+                    $datesDisabled[] = \App\Helpers\Formatter::dateIso2Fr($date);
+                }
+            }
+
+            if (!empty($_SESSION["tab_j_fermeture"]) && is_array($_SESSION["tab_j_fermeture"])) {
+                foreach ($_SESSION["tab_j_fermeture"] as $date) {
+                    $datesDisabled[] = \App\Helpers\Formatter::dateIso2Fr($date);
+                }
+            }
+            $startDate =  '';
+
+            $datePickerOpts = [
+                'daysOfWeekDisabled' => $daysOfWeekDisabled,
+                'datesDisabled'      => $datesDisabled,
+                'startDate'          => $startDate,
+            ];
+            $return .= '<script>generateDatePicker(' . json_encode($datePickerOpts) . ');</script>';
             // si les mois et année ne sont pas renseignés, on prend ceux du jour
             if($year_calendrier_saisie_debut==0) {
                 $year_calendrier_saisie_debut=date("Y");
@@ -1880,12 +1918,8 @@ class Fonctions
         $new_demi_jour_fin = $entities(getpost_variable('new_demi_jour_fin'));
 
         $return = '';
-
-        if($_SESSION['config']['disable_saise_champ_nb_jours_pris']) { // zone de texte en readonly et grisée
-            $new_nb_jours = compter($user_login, '', $new_debut,  $new_fin, $new_demi_jour_deb, $new_demi_jour_fin, $comment);
-        } else {
-            $new_nb_jours = getpost_variable('new_nb_jours') ;
-        }
+        
+        $new_nb_jours = compter($user_login, '', $new_debut,  $new_fin, $new_demi_jour_deb, $new_demi_jour_fin, $comment);
 
         $new_comment = $entities(getpost_variable('new_comment'));
         $new_type = $entities(getpost_variable('new_type'));

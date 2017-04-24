@@ -80,26 +80,21 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
 
     $return .= '<input type="radio" name="new_demi_jour_deb" ';
 
-    if($_SESSION['config']['rempli_auto_champ_nb_jours_pris'])
-    {
-        // attention : IE6 : bug avec les "OnChange" sur les boutons radio!!! (on remplace par OnClick)
-        if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) ) {
-            $return .= 'onClick="compter_jours();return true;" ';
-        } else {
-            $return .= 'onChange="compter_jours();return false;" ';
-        }
+    // attention : IE6 : bug avec les "OnChange" sur les boutons radio!!! (on remplace par OnClick)
+    if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) ) {
+        $return .= 'onClick="compter_jours();return true;" ';
+    } else {
+        $return .= 'onChange="compter_jours();return false;" ';
     }
     $return .= 'value="am" checked>&nbsp;' .  _('form_am');
     $return .= '<input type="radio" name="new_demi_jour_deb" ';
 
-    if($_SESSION['config']['rempli_auto_champ_nb_jours_pris'])
-    {
-        if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) ) {
-            $return .= 'onClick="compter_jours();return true;" ';
-        } else {
-            $return .= 'onChange="compter_jours();return false;" ';
-        }
+    if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) ) {
+        $return .= 'onClick="compter_jours();return true;" ';
+    } else {
+        $return .= 'onChange="compter_jours();return false;" ';
     }
+
     $return .= 'value="pm">&nbsp;' .  _('form_pm');
     $return .= '</div>';
     $return .= '</div>';
@@ -110,30 +105,28 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
     $return .= '</div>';
     $return .= '<input type="radio" name="new_demi_jour_fin" ';
 
-    if($_SESSION['config']['rempli_auto_champ_nb_jours_pris'])
-    {
-        // attention : IE6 : bug avec les "OnChange" sur les boutons radio!!! (on remplace par OnClick)
-        if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) ) {
-            $return .= 'onClick="compter_jours();return true;" ' ;
-        } else {
-            $return .= 'onChange="compter_jours();return false;" ' ;
-        }
+    // attention : IE6 : bug avec les "OnChange" sur les boutons radio!!! (on remplace par OnClick)
+    if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) ) {
+        $return .= 'onClick="compter_jours();return true;" ' ;
+    } else {
+        $return .= 'onChange="compter_jours();return false;" ' ;
     }
     $return .= 'value="am">&nbsp;'. _('form_am');
     $return .= '<input class="form-controm" type="radio" name="new_demi_jour_fin" ';
 
-    if($_SESSION['config']['rempli_auto_champ_nb_jours_pris'])
-    {
-        if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) ) {
-            $return .= 'onClick="compter_jours();return true;" ' ;
-        } else {
-            $return .= 'onChange="compter_jours();return false;" ' ;
-        }
+    if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) ) {
+        $return .= 'onClick="compter_jours();return true;" ' ;
+    } else {
+        $return .= 'onChange="compter_jours();return false;" ' ;
     }
+
     $return .= 'value="pm" checked>&nbsp;' . _('form_pm');
     $return .= '</div>';
     $return .= '</div>';
     $return .= '</div>';
+    $return .= '<br />';
+    $return .= '<label>' . _('saisie_conges_nb_jours') .'&nbsp</label>';
+    $return .= '<span id="new_nb_jours"></span>';
     $return .= '<hr/>';
 
     /*****************/
@@ -207,19 +200,9 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
     $return .= '<hr/>';
     $return .= '<label>' . _('divers_comment_maj_1') . '</label><input class="form-control" type="text" name="new_comment" size="25" maxlength="30" value="">';
 
+
     // zones de texte
-    $return .= '<label>' . _('saisie_conges_nb_jours') .'&nbsp</label>';
-    if($_SESSION['config']['disable_saise_champ_nb_jours_pris']) { // zone de texte en readonly et grisée
-        $text_nb_jours ='<input type="text" name="new_nb_jours" size="10" maxlength="30" value="" style="background-color: #D4D4D4; " readonly="readonly">' ;
-    } else {
-        $text_nb_jours ='<input type="text" name="new_nb_jours" size="10" maxlength="3" value="">' ;
-    }
 
-    $return .= $text_nb_jours;
-
-    if($_SESSION['config']['affiche_bouton_calcul_nb_jours_pris']) {
-        $return .= '<input type="button" class="btn btn-success" onclick="compter_jours();return false;" value="' . _('saisie_conges_compter_jours') . '">';
-    }
     $return .= '<p id="comment_nbj" style="color:red">&nbsp;</p>';
     $return .= '<br>';
     $return .= '<input type="hidden" name="user_login" value="' . $user_login . '">';
@@ -933,14 +916,13 @@ function affiche_cellule_jour_cal_saisie($login, $j_timestamp, $td_second_class,
     else
     {
         echo '<td  class="cal-saisie '.$td_second_class.' '.$class_am.' '.$class_pm.'">'.$j.'<input type="radio" name="'.$result.'" ';
-        if($_SESSION['config']['rempli_auto_champ_nb_jours_pris'])
-        {
-            // attention : IE6 : bug avec les "OnChange" sur les boutons radio!!! (on remplace par OnClick)
-            if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) )
-                echo 'onClick="compter_jours();return true;" ';
-            else
-                echo 'onChange="compter_jours();return false;" ';
-        }
+        
+        // attention : IE6 : bug avec les "OnChange" sur les boutons radio!!! (on remplace par OnClick)
+        if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) )
+            echo 'onClick="compter_jours();return true;" ';
+        else
+            echo 'onChange="compter_jours();return false;" ';
+    
         echo ' value="'.$date_j.'"></td>';
     }
 }

@@ -20,3 +20,12 @@ if (!in_array($lang, ['fr_FR', 'en_US', 'es_ES'], true)) {
     $lang = '';
 }
 
+//suppression de l'option calcul de nombre de jours, par défaut c'est automatique
+$del_config_db="DELETE FROM conges_config WHERE conf_nom = 'affiche_bouton_calcul_nb_jours_pris';";
+$res_del_config_from_db=\includes\SQL::query($del_config_db);
+
+$del_config_db="DELETE FROM conges_config WHERE conf_nom = 'rempli_auto_champ_nb_jours_pris';";
+$res_del_config_from_db=\includes\SQL::query($del_config_db);
+
+$del_config_db="DELETE FROM conges_config WHERE conf_nom = 'disable_saise_champ_nb_jours_pris';";
+$res_del_config_from_db=\includes\SQL::query($del_config_db);
