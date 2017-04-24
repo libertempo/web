@@ -271,12 +271,16 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
         }
         $champsRecherche = (!empty($_POST) && $this->isSearch($_POST))
             ? $this->transformChampsRecherche($_POST)
-            : ['statut' => AHeure::STATUT_DEMANDE];
+            : [];
         $params = $champsRecherche + [
             'login' => $_SESSION['userlogin'],
         ];
 
-        $return = '<h1>' . _('user_liste_heure_repos_titre') . '</h1>';
+        $return = '';
+        if( $_SESSION['config']['user_saisie_demande'] || $_SESSION['config']['user_saisie_mission'] ) {
+            $return .= '<a href="' . ROOT_PATH . 'utilisateur/user_index.php?session='. session_id().'&amp;onglet=ajout_heure_repos" style="float:right" class="btn btn-success">' . _('divers_ajout_heure_repos') . '</a>';
+        }
+        $return .= '<h1>' . _('user_liste_heure_repos_titre') . '</h1>';
         $return .= $this->getFormulaireRecherche($champsRecherche);
         $return .= $message;
         $table = new \App\Libraries\Structure\Table();
@@ -327,6 +331,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
     protected function getFormulaireRecherche(array $champs)
     {
         $form = '<form method="post" action="" class="form-inline search" role="form"><div class="form-group"><label class="control-label col-md-4" for="statut">Statut&nbsp;:</label><div class="col-md-8"><select class="form-control" name="search[statut]" id="statut">';
+        $form .= '<option value="all">' . _('tous') . '</option>';
         foreach (AHeure::getOptionsStatuts() as $key => $value) {
             $selected = (isset($champs['statut']) && $key == $champs['statut'])
                 ? 'selected="selected"'

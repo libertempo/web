@@ -104,7 +104,7 @@ class Formatter
         $heures = abs($timestamp/3600);
         $duree = sprintf('%02d:%02d', $heures, $secondes);
 
-        return (0 < $timestamp)
+        return (0 <= $timestamp)
             ? $duree
             : '-' . $duree
         ;

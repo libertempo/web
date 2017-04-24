@@ -1038,7 +1038,10 @@ class Fonctions
                 $nb_colonnes += 1;
             }
         }
-        $return .= '<th>'. _('solde_heure') .'</th>' ;
+        if ($_SESSION['config']['gestion_heures']) {
+            $return .= '<th>'. _('solde_heure') .'</th>' ;
+            $nb_colonnes += 1;
+        }
         $return .= '<th></th>';
         $nb_colonnes += 1;
         if($_SESSION['config']['editions_papier']) {
@@ -1079,8 +1082,10 @@ class Fonctions
                             $return .= '<td>' . $tab_conges[$libelle]['solde'] . '</td>';
                         }
                     }
-                    $soldeHeure = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($current_login)['u_heure_solde'];
-                    $return .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($soldeHeure) . '</td>';
+                    if ($_SESSION['config']['gestion_heures']) {
+                        $soldeHeure = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($current_login)['u_heure_solde'];
+                        $return .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($soldeHeure) . '</td>';
+                    }
                     $return .= '<td>' . $text_affich_user . '</td>';
                     if($_SESSION['config']['editions_papier']) {
                         $return .= '<td>' . $text_edit_papier . '</td>';
@@ -1129,6 +1134,10 @@ class Fonctions
                         foreach($tab_type_conges_exceptionnels as $id_type_cong => $libelle) {
                             $return .= '<td>' . $tab_conges_2[$libelle]['solde'] . '</td>';
                         }
+                    }
+                    if ($_SESSION['config']['gestion_heures']) {
+                        $soldeHeure = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($current_login_2)['u_heure_solde'];
+                        $return .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($soldeHeure) . '</td>';
                     }
                     $return .= '<td>' . $text_affich_user . '</td>';
                     if($_SESSION['config']['editions_papier']) {
@@ -1747,6 +1756,44 @@ class Fonctions
         /*************************/
         // dans le cas ou les users ne peuvent pas saisir de demande, le responsable saisi les congès :
         if( !$_SESSION['config']['user_saisie_demande'] || $_SESSION['config']['resp_saisie_mission'] ) {
+            /*************************/
+            /* SAISIE NOUVEAU CONGES */
+            /*************************/
+            /* Génération du datePicker et de ses options */
+            $daysOfWeekDisabled = [];
+            $datesDisabled      = [];
+            if ((false == $_SESSION['config']['dimanche_travail'])
+                && (false == $_SESSION['config']['samedi_travail'])
+            ) {
+                $daysOfWeekDisabled = [0,6];
+            } else {
+                if (false == $_SESSION['config']['dimanche_travail']) {
+                    $daysOfWeekDisabled = [0];
+                }
+                if (false == $_SESSION['config']['samedi_travail']) {
+                    $daysOfWeekDisabled = [6];
+                }
+            }
+
+            if (is_array($_SESSION["tab_j_feries"])) {
+                foreach ($_SESSION["tab_j_feries"] as $date) {
+                    $datesDisabled[] = \App\Helpers\Formatter::dateIso2Fr($date);
+                }
+            }
+
+            if (!empty($_SESSION["tab_j_fermeture"]) && is_array($_SESSION["tab_j_fermeture"])) {
+                foreach ($_SESSION["tab_j_fermeture"] as $date) {
+                    $datesDisabled[] = \App\Helpers\Formatter::dateIso2Fr($date);
+                }
+            }
+            $startDate =  '';
+
+            $datePickerOpts = [
+                'daysOfWeekDisabled' => $daysOfWeekDisabled,
+                'datesDisabled'      => $datesDisabled,
+                'startDate'          => $startDate,
+            ];
+            $return .= '<script>generateDatePicker(' . json_encode($datePickerOpts) . ');</script>';
             // si les mois et année ne sont pas renseignés, on prend ceux du jour
             if($year_calendrier_saisie_debut==0) {
                 $year_calendrier_saisie_debut=date("Y");
@@ -1761,7 +1808,7 @@ class Fonctions
                 $mois_calendrier_saisie_fin=date("m");
             }
 
-            $return .= '<h2>' . _('resp_traite_user_new_conges') . '</h2>';
+            $return .= '<h1>' . _('resp_traite_user_new_conges') . '</h1>';
 
             //affiche le formulaire de saisie d'une nouvelle demande de conges ou d'un  nouveau conges
             $onglet = "traite_user";
@@ -1831,11 +1878,13 @@ class Fonctions
         }
 
         $return = self::traiterUserConge($userLogin);
-        $return .= '<hr  />';
-        $return .= self::traiteUserHeureAdditionnelle($userLogin);
-        $return .= '<hr />';
-        $return .= self::traiteUserHeureRepos($userLogin);
+        if ($_SESSION['config']['gestion_heures']) {
+            $return .= '<hr  />';
 
+            $return .= self::traiteUserHeureAdditionnelle($userLogin);
+            $return .= '<hr />';
+            $return .= self::traiteUserHeureRepos($userLogin);
+        }
         return $return;
     }
 
@@ -1869,12 +1918,8 @@ class Fonctions
         $new_demi_jour_fin = $entities(getpost_variable('new_demi_jour_fin'));
 
         $return = '';
-
-        if($_SESSION['config']['disable_saise_champ_nb_jours_pris']) { // zone de texte en readonly et grisée
-            $new_nb_jours = compter($user_login, '', $new_debut,  $new_fin, $new_demi_jour_deb, $new_demi_jour_fin, $comment);
-        } else {
-            $new_nb_jours = getpost_variable('new_nb_jours') ;
-        }
+        
+        $new_nb_jours = compter($user_login, '', $new_debut,  $new_fin, $new_demi_jour_deb, $new_demi_jour_fin, $comment);
 
         $new_comment = $entities(getpost_variable('new_comment'));
         $new_type = $entities(getpost_variable('new_type'));
@@ -2253,7 +2298,7 @@ class Fonctions
 
         /* Préparation et requêtage */
         $listPlanningId = \App\ProtoControllers\HautResponsable\Planning::getListPlanningId();
-        $return = '<h1>' . _('resp_affichage_liste_planning_titre') . '</h1>';
+        $return = '<h1>' . _('resp_liste_planning') . '</h1>';
         $return .= $message;
         $session = session_id();
         $table = new \App\Libraries\Structure\Table();

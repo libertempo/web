@@ -20,7 +20,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         $errorsLst  = [];
 
 
-        $return .= '<h1>' . _('resp_traite_demandes_titre_tableau_1') . '</h1>';
+        $return .= '<h1>' . _('resp_traite_demandes_titre') . '</h1>';
 
         if (!empty($_POST)) {
             if (0 >= (int) $this->post($_POST, $notice, $errorsLst)) {

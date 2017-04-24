@@ -277,11 +277,8 @@ CREATE TABLE IF NOT EXISTS `conges_users` (
   `u_num_exercice` int(2) NOT NULL DEFAULT '0',
   `planning_id` int(11) UNSIGNED NOT NULL,
   `u_heure_solde` int(11) NOT NULL DEFAULT '0',
-  `date_inscription` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `token` VARCHAR(100) NOT NULL DEFAULT '',
   PRIMARY KEY (`u_login`),
-  KEY `planning_id` (`planning_id`),
-  KEY `token` (`token`)
+  KEY `planning_id` (`planning_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 #
@@ -349,7 +346,6 @@ INSERT IGNORE INTO `conges_appli` VALUES ('conges_bgcolor', '#DEDEDE');
 INSERT IGNORE INTO `conges_appli` VALUES ('demande_conges_bgcolor', '#E7C4C4');
 INSERT IGNORE INTO `conges_appli` VALUES ('absence_autre_bgcolor', '#D3FFB6');
 INSERT IGNORE INTO `conges_appli` VALUES ('fermeture_bgcolor', '#7B9DE6');
-INSERT IGNORE INTO `conges_appli` VALUES ('token_instance', '');
 
 
 # --------------------------------------------------------
@@ -358,7 +354,7 @@ INSERT IGNORE INTO `conges_appli` VALUES ('token_instance', '');
 # Contenu de la table `conges_users`
 #
 
-INSERT IGNORE INTO `conges_users` VALUES ('admin', 'Libertempo', 'admin', 'N', 'admin', 'Y', 'N','Y','N', '636d61cf9094a62a81836f3737d9c0da', 100, NULL, 0, 0, 0, null, '');
+INSERT IGNORE INTO `conges_users` VALUES ('admin', 'Libertempo', 'admin', 'N', 'admin', 'Y', 'N','Y','N', '636d61cf9094a62a81836f3737d9c0da', 100, NULL, 0, 0, 0);
 
 #
 # Contenu de la table `conges_config`
@@ -429,9 +425,6 @@ INSERT IGNORE INTO `conges_config` VALUES ('calcul_auto_jours_feries_france', 'F
 INSERT IGNORE INTO `conges_config` (`conf_nom`, `conf_valeur`, `conf_groupe`, `conf_type`, `conf_commentaire`) VALUES ('export_ical', 'true', '15_ical', 'boolean', 'config_comment__export_ical'),
 ('export_ical_salt', 'Jao%iT}', '15_ical', 'texte', 'config_comment_export_ical_salt');
 INSERT IGNORE INTO `conges_config` (`conf_nom`, `conf_valeur`, `conf_groupe`, `conf_type`, `conf_commentaire`) VALUES ('resp_association_planning', 'FALSE', '06_Responsable', 'boolean', 'config_comment_resp_association_planning');
-INSERT IGNORE INTO `conges_config` VALUES ('affiche_bouton_calcul_nb_jours_pris', 'TRUE', '05_Utilisateur', 'boolean', 'config_comment_affiche_bouton_calcul_nb_jours_pris');
-INSERT IGNORE INTO `conges_config` VALUES ('rempli_auto_champ_nb_jours_pris', 'TRUE', '05_Utilisateur', 'boolean', 'config_comment_rempli_auto_champ_nb_jours_pris');
-INSERT IGNORE INTO `conges_config` VALUES ('disable_saise_champ_nb_jours_pris', 'FALSE', '05_Utilisateur', 'boolean', 'config_comment_disable_saise_champ_nb_jours_pris');
 
 #
 # Contenu de la table `conges_type_absence`
