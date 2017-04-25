@@ -1705,9 +1705,6 @@ msgstr "Leave status of users:"
 msgid "hr_affiche_utilisateurs_inactifs"
 msgstr "Show / Hide inactive users"
 
-msgid "config_comment_print_disable_users"
-msgstr "// DISPLAY DISABLED USERS : <br>//--------------------------------------------------------------------------------------------<br>// if FALSE : disabled users not displayed in the list of supervisor users. (FALSE is the default) <br> // if TRUE : display the list of enabled and disabled users."
-
 msgid "config_comment_affiche_jours_current_month_calendrier"
 msgstr "// DISPLAY NB DAYS TAKEN DURING THE MONTH ( FOR EACH TYPE OF LEAVE ): <br>//------------------------------------------------------------<br>// if FALSE . no display, in the calendar for each user, for each type of leave , beside the balance, nb of days taken during the month displayed (FALSE is the default)<br>// if TRUE : display in the calendar for each user, for each type of leave , beside the balance, nb of days taken during the month displayed."
 
