@@ -1154,14 +1154,7 @@ class Fonctions
             $new_comment        = getpost_variable('new_comment') ;
             $new_type           = getpost_variable('new_type') ;
 
-            if( $_SESSION['config']['disable_saise_champ_nb_jours_pris'] ) {
-                $new_nb_jours = compter($user_login, '', $new_debut,  $new_fin, $new_demi_jour_deb, $new_demi_jour_fin, $comment);
-                if ($new_nb_jours <= 0 ) {
-                    $new_nb_jours      = getpost_variable('new_nb_jours');
-                }
-            } else {
-                $new_nb_jours   = getpost_variable('new_nb_jours') ;
-            }
+            $new_nb_jours = compter($user_login, '', $new_debut,  $new_fin, $new_demi_jour_deb, $new_demi_jour_fin, $comment);
 
             $return .= \hr\Fonctions::new_conges($user_login, "", $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type);
         } else {
@@ -3321,7 +3314,9 @@ enctype="application/x-www-form-urlencoded"><input type="hidden" name="planning_
         /* Préparation et requêtage */
         $listPlanningId = \App\ProtoControllers\HautResponsable\Planning::getListPlanningId();
 
-        $return = '<h1>' . _('hr_affichage_liste_planning_titre') . '</h1>';
+        $return = '';
+        $return .= '<a href="' . ROOT_PATH . 'hr/hr_index.php?session='. session_id().'&amp;onglet=ajout_planning" style="float:right" class="btn btn-success">' . _('hr_ajout_planning') . '</a>';
+        $return .= '<h1>' . _('hr_affichage_liste_planning_titre') . '</h1>';
         $return .= $message;
         $session = session_id();
         $table = new \App\Libraries\Structure\Table();

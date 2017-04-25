@@ -1138,12 +1138,6 @@ msgstr "//  Text at the bottom of the PAPER REPORTS<br>//-----------------------
 msgid "config_comment_user_echange_rtt"
 msgstr "//  CHANGE PART TIME AUTHORIZED FOR THE USERS<br>//---------------------------------------------------------------------------------------<br>// one authorizes or not the user to ponctually reverse a working day and an leave day (of part time)<br>// if at FALSE : no change authorized for the user (FALSE is the default value)<br>// if at TRUE : change authorized for the user"
 
-msgid "config_comment_affiche_bouton_calcul_nb_jours_pris"
-msgstr "//  BUTTON OF CALCULATION OF THE NB OF DAYS TAKEN<br>//--------------------------------------------------------------------------------------<br>// if at FALSE : one doesn't display the button of calculation of the nb of days taken during input of a new abscence<br>// if at TRUE : displays the button of calculation of the nb of days taken during input of a new abscence (TRUE is the default value)<br>// WARNING : if at TRUE : the days off must be typed in (see administration module)"
-
-msgid "config_comment_rempli_auto_champ_nb_jours_pris"
-msgstr "//  AUTOMATIC FILLING OF THE FIELD DURING THE CALL TO THE NB OF DAYS TAKEN CALCULATION<br>//--------------------------------------------------------------------------------------<br>// if at FALSE : the call to the nb of days taken calculation button doesn't automatically fills the field of the form (typed in manually)<br>// if at TRUE : the call to the nb of days taken calculation button automatically fills the field of the form (TRUE is the default value)"
-
 msgid "config_comment_duree_session"
 msgstr "// Max inactivity duration of a session before expiration (in secondes)"
 
@@ -1317,9 +1311,6 @@ msgstr "Export ical / vcal"
 
 msgid "button_export_2"
 msgstr "Export the events in the ical / vcal format"
-
-msgid "config_comment_disable_saise_champ_nb_jours_pris"
-msgstr "//  INPUT FORBIDDEN IN THE TEXT FIELD OF NB OF DAYS TAKEN<br>//--------------------------------------------------------------------------------------<br>// if at FALSE : the text field of the nb of days taken is active (manual input possible)(FALSE is the default value)<br>// if at TRUE : the text field of the nb of days taken is inactive (manual input impossible)"
 
 msgid "calcul_nb_jours_commentaire"
 msgstr "warning: this period overlaps other holidays !"

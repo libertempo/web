@@ -1079,12 +1079,6 @@ msgstr "// Texte au bas des ÉDITIONS PAPIER<br>//------------------------------
 msgid "config_comment_user_echange_rtt"
 msgstr "// ÉCHANGE RTT OU TEMPS PARTIEL AUTORISÉ POUR LES UTILISATEURS<br>//---------------------------------------------------------------------------------------<br>// on autorise ou non l'utilisateur à inverser ponctuellement un jour travaillé et un jour d'absence (de RTT ou temps partiel)<br>// si à FALSE : pas d'échange autorisé pour l'utilisateur (FALSE est la valeur par défaut)<br>// si à TRUE : échange autorisé pour l'utilisateur"
 
-msgid "config_comment_affiche_bouton_calcul_nb_jours_pris"
-msgstr "// BOUTON DE CALCUL DU NB DE JOURS PRIS<br>//--------------------------------------------------------------------------------------<br>// si à FALSE : on n'affiche pas le bouton du calcul nb de jours pris lors de la saisie d'une nouvelle absence<br>// si à TRUE : affiche le bouton du calcul du nb de jours pris lors de la saisie d'une nouvelle absence (TRUE est la valeur par défaut)<br>// ATTENTION : si à TRUE : les jours chômés doivent être saisis (voir le module d'administration)"
-
-msgid "config_comment_rempli_auto_champ_nb_jours_pris"
-msgstr "// REMPLISSAGE AUTOMATIQUE DU CHAMP LORS DE L'APPEL AU CALCUL DU NB DE JOURS PRIS<br>//--------------------------------------------------------------------------------------<br>// si à FALSE : l'appel au bouton de calcul du nb de jours pris ne remplit pas automatiquement le champ du formulaire (saisi à la main)<br>// si à TRUE : l'appel au bouton de calcul du nb de jours pris remplit automatiquement le champ du formulaire (TRUE est la valeur par défaut)"
-
 msgid "config_comment_duree_session"
 msgstr "// Durée max d'inactivité d'une session avant expiration (en secondes)"
 
@@ -1216,9 +1210,6 @@ msgstr "Exporter ical"
 
 msgid "button_export_2"
 msgstr "Pour consulter vos congés sur un agenda, copiez ce lien :"
-
-msgid "config_comment_disable_saise_champ_nb_jours_pris"
-msgstr "// SAISIE INTERDITE DANS LE CHAMP TEXTE DU NB DE JOURS PRIS<br>//--------------------------------------------------------------------------------------<br>// si à FALSE : le champ texte du nb de jours pris est actif (saisie à la main possible)(FALSE est la valeur par défaut)<br>// si à TRUE : le champ texte du nb de jours pris et inactif (saisie à la main impossible)"
 
 msgid "calcul_nb_jours_commentaire"
 msgstr "attention: cette période chevauche d'autres congés !"
@@ -1727,8 +1718,8 @@ msgstr "solde d'heure"
 msgid "Mail_test_ok"
 msgstr "Test effectué. Vérifiez vos courriels"
 
-msgid "user_liste_conge"
-msgstr "Liste des congés"
+msgid "user_conge"
+msgstr "Congés"
 
 msgid "divers_ajout_heure_repos"
 msgstr "Demande d'heures de repos"
@@ -1862,9 +1853,6 @@ msgstr "Heure additionnelle annulée"
 msgid "user_liste_heure_additionnelle_titre"
 msgstr "Liste des heures additionnelles"
 
-msgid "resp_affichage_liste_planning_titre"
-msgstr "Liste des plannings"
-
 msgid "resp_modif_planning_titre"
 msgstr "Modificaton du planning"
 
@@ -1929,7 +1917,7 @@ msgid "hr_tout_utilisateur_associe"
 msgstr "Tous les utilisateurs sont associés à un planning"
 
 msgid "hr_liste_planning"
-msgstr "Liste des plannings"
+msgstr "Plannings"
 
 msgid "hr_ajout_planning"
 msgstr "Nouveau planning"
