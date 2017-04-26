@@ -32,7 +32,7 @@ class Fonctions
             if($nb_jours!=0) {
                 $comment = $tab_new_comment_all[$id_conges];
 
-                $sql1="SELECT u_login, u_quotite FROM conges_users WHERE u_login IN ($list_users) ORDER BY u_login ";
+                $sql1="SELECT u_login, u_quotite FROM conges_users WHERE u_login IN ($list_users) AND u_is_active='Y' ORDER BY u_login ";
                 $ReqLog1 = \includes\SQL::query($sql1);
 
                 while ($resultat1 = $ReqLog1->fetch_array()) {
@@ -91,12 +91,12 @@ class Fonctions
         // (prend en compte le resp direct, les groupes, le resp virtuel, etc ...)
         // renvoit une liste de login entre quotes et séparés par des virgules
         $list_users_du_resp = get_list_all_users_du_resp($_SESSION['userlogin']);
-
+        
         foreach($tab_new_nb_conges_all as $id_conges => $nb_jours) {
             if($nb_jours!=0) {
                 $comment = $tab_new_comment_all[$id_conges];
 
-                $sql1="SELECT u_login, u_quotite FROM conges_users WHERE u_login IN ($list_users_du_resp) ORDER BY u_login ";
+                $sql1="SELECT u_login, u_quotite FROM conges_users WHERE u_login IN ($list_users_du_resp) AND u_is_active='Y' ORDER BY u_login ";
                 $ReqLog1 = \includes\SQL::query($sql1);
 
                 while($resultat1 = $ReqLog1->fetch_array()) {
@@ -335,44 +335,10 @@ class Fonctions
             $tab_champ_saisie_conges=array();
 
             $i = true;
+            asort($tab_all_users_du_resp);
             // affichage des users dont on est responsable :
             foreach($tab_all_users_du_resp as $current_login => $tab_current_user) {
-                $return .= '<tr class="'.($i?'i':'p').'">';
-                //tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
-                $tab_conges=$tab_current_user['conges'];
-
-                /** sur la ligne ,   **/
-                $return .= '<td>' . $tab_current_user['nom'] . '</td>';
-                $return .= '<td>' . $tab_current_user['prenom'] . '</td>';
-                $return .= '<td>' . $tab_current_user['quotite'] . '%</td>';
-
-                foreach($tab_type_conges as $id_conges => $libelle) {
-                    /** le champ de saisie est <input type="text" name="tab_champ_saisie[valeur de u_login][id_du_type_de_conges]" value="[valeur du nb de jours ajouté saisi]"> */
-                    $champ_saisie_conges="<input class=\"form-control\" type=\"text\" name=\"tab_champ_saisie[$current_login][$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\">";
-                    $return .= '<td>' . $tab_conges[$libelle]['nb_an'] . ' <i>(' . $tab_conges[$libelle]['solde'] . ')</i></td>';
-                    $return .= '<td align="center" class="histo">' . $champ_saisie_conges . '</td>';
-                }
-                if ($_SESSION['config']['gestion_conges_exceptionnels']) {
-                    foreach($tab_type_conges_exceptionnels as $id_conges => $libelle) {
-                        /** le champ de saisie est <input type="text" name="tab_champ_saisie[valeur de u_login][id_du_type_de_conges]" value="[valeur du nb de jours ajouté saisi]"> */
-                        $champ_saisie_conges="<input class=\"form-control\" type=\"text\" name=\"tab_champ_saisie[$current_login][$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\">";
-                        $return .= '<td><i>(' . $tab_conges[$libelle]['solde'] . ')</i></td>';
-                        $return .= '<td align="center" class="histo">' . $champ_saisie_conges . '</td>';
-                    }
-                }
-                $return .= '<td align="center" class="histo"><input class="form-control" type="text" name="tab_commentaire_saisie[' . $current_login . ']" size="30" maxlength="200" value=""></td>';
-                $return .= '</tr>';
-                $cpt_lignes++ ;
-                $i = !$i;
-            }
-
-            // affichage des users dont on est grand responsable :
-            if( ($_SESSION['config']['double_validation_conges']) && ($_SESSION['config']['grand_resp_ajout_conges']) ) {
-                $nb_colspan=50;
-                $return .= '<tr align="center"><td class="histo" style="background-color: #CCC;" colspan="' . $nb_colspan . '"><i>' . _('resp_etat_users_titre_double_valid') . '</i></td></tr>';
-
-                $i = true;
-                foreach($tab_all_users_du_grand_resp as $current_login => $tab_current_user) {
+                if($tab_current_user['is_active'] == "Y") {
                     $return .= '<tr class="'.($i?'i':'p').'">';
                     //tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
                     $tab_conges=$tab_current_user['conges'];
@@ -384,22 +350,61 @@ class Fonctions
 
                     foreach($tab_type_conges as $id_conges => $libelle) {
                         /** le champ de saisie est <input type="text" name="tab_champ_saisie[valeur de u_login][id_du_type_de_conges]" value="[valeur du nb de jours ajouté saisi]"> */
-                        $champ_saisie_conges="<input type=\"text\" name=\"tab_champ_saisie[$current_login][$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\">";
+                        $champ_saisie_conges="<input class=\"form-control\" type=\"text\" name=\"tab_champ_saisie[$current_login][$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\">";
                         $return .= '<td>' . $tab_conges[$libelle]['nb_an'] . ' <i>(' . $tab_conges[$libelle]['solde'] . ')</i></td>';
                         $return .= '<td align="center" class="histo">' . $champ_saisie_conges . '</td>';
                     }
                     if ($_SESSION['config']['gestion_conges_exceptionnels']) {
                         foreach($tab_type_conges_exceptionnels as $id_conges => $libelle) {
                             /** le champ de saisie est <input type="text" name="tab_champ_saisie[valeur de u_login][id_du_type_de_conges]" value="[valeur du nb de jours ajouté saisi]"> */
-                            $champ_saisie_conges="<input type=\"text\" name=\"tab_champ_saisie[$current_login][$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\">";
+                            $champ_saisie_conges="<input class=\"form-control\" type=\"text\" name=\"tab_champ_saisie[$current_login][$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\">";
                             $return .= '<td><i>(' . $tab_conges[$libelle]['solde'] . ')</i></td>';
                             $return .= '<td align="center" class="histo">' . $champ_saisie_conges . '</td>';
                         }
                     }
-                    $return .= '<td align="center" class="histo"><input type="text" name="tab_commentaire_saisie[' . $current_login . ']" size="30" maxlength="200" value=""></td>';
+                    $return .= '<td align="center" class="histo"><input class="form-control" type="text" name="tab_commentaire_saisie[' . $current_login . ']" size="30" maxlength="200" value=""></td>';
                     $return .= '</tr>';
                     $cpt_lignes++ ;
                     $i = !$i;
+                }
+            }
+
+            // affichage des users dont on est grand responsable :
+            if( ($_SESSION['config']['double_validation_conges']) && ($_SESSION['config']['grand_resp_ajout_conges']) ) {
+                $nb_colspan=50;
+                $return .= '<tr align="center"><td class="histo" style="background-color: #CCC;" colspan="' . $nb_colspan . '"><i>' . _('resp_etat_users_titre_double_valid') . '</i></td></tr>';
+
+                $i = true;
+                foreach($tab_all_users_du_grand_resp as $current_login => $tab_current_user) {
+                    if($tab_current_user['is_active'] == "Y") {
+                        $return .= '<tr class="'.($i?'i':'p').'">';
+                        //tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
+                        $tab_conges=$tab_current_user['conges'];
+
+                        /** sur la ligne ,   **/
+                        $return .= '<td>' . $tab_current_user['nom'] . '</td>';
+                        $return .= '<td>' . $tab_current_user['prenom'] . '</td>';
+                        $return .= '<td>' . $tab_current_user['quotite'] . '%</td>';
+
+                        foreach($tab_type_conges as $id_conges => $libelle) {
+                            /** le champ de saisie est <input type="text" name="tab_champ_saisie[valeur de u_login][id_du_type_de_conges]" value="[valeur du nb de jours ajouté saisi]"> */
+                            $champ_saisie_conges="<input type=\"text\" name=\"tab_champ_saisie[$current_login][$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\">";
+                            $return .= '<td>' . $tab_conges[$libelle]['nb_an'] . ' <i>(' . $tab_conges[$libelle]['solde'] . ')</i></td>';
+                            $return .= '<td align="center" class="histo">' . $champ_saisie_conges . '</td>';
+                        }
+                        if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+                            foreach($tab_type_conges_exceptionnels as $id_conges => $libelle) {
+                                /** le champ de saisie est <input type="text" name="tab_champ_saisie[valeur de u_login][id_du_type_de_conges]" value="[valeur du nb de jours ajouté saisi]"> */
+                                $champ_saisie_conges="<input type=\"text\" name=\"tab_champ_saisie[$current_login][$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\">";
+                                $return .= '<td><i>(' . $tab_conges[$libelle]['solde'] . ')</i></td>';
+                                $return .= '<td align="center" class="histo">' . $champ_saisie_conges . '</td>';
+                            }
+                        }
+                        $return .= '<td align="center" class="histo"><input type="text" name="tab_commentaire_saisie[' . $current_login . ']" size="30" maxlength="200" value=""></td>';
+                        $return .= '</tr>';
+                        $cpt_lignes++ ;
+                        $i = !$i;
+                    }
                 }
             }
 
@@ -1065,7 +1070,7 @@ class Fonctions
         } else {
             $i = true;
             foreach($tab_all_users as $current_login => $tab_current_user) {
-                if($tab_current_user['is_active'] == "Y" || $_SESSION['config']['print_disable_users'] == 'TRUE') {
+                if($tab_current_user['is_active'] == "Y") {
                     //tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
                     $tab_conges=$tab_current_user['conges'];
                     $text_affich_user="<a class=\"action show\" href=\"resp_index.php?session=$session&onglet=traite_user&user_login=$current_login\" title=\""._('resp_etat_users_afficher')."\"><i class=\"fa fa-eye\"></i></a>" ;

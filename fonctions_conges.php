@@ -1267,13 +1267,39 @@ function get_tab_resp_du_user($user_login)
         }
     }
 
+    /***************************/
+    // Gestion des responsable inactifs
+    // Si ils sont inactifs on les gère comme des responsables absents
+    $nb_present=count($tab_resp);
+    foreach ($tab_resp as $current_resp => $presence )
+    {
+        // verif dans la base si le current_resp est absent :
+        $req = 'SELECT u_is_active FROM conges_users WHERE u_login=\''.\includes\SQL::quote($current_resp).'\';';
+        $ReqLog_2 = \includes\SQL::query($req);
+        $rec = $ReqLog_2->fetch_array();
+        if ($rec['u_is_active'] == 'N') {
+            $nb_present=$nb_present-1;
+            $tab_resp[$current_resp]="absent";
+        }
+    }
+    if($nb_present==0)
+    {
+        $new_tab_resp=array();
+        foreach ($tab_resp as $current_resp => $presence)
+        {
+            // attention ,on evite le cas ou le user est son propre resp (sinon on boucle infiniment)
+            if($current_resp != $user_login)
+                $new_tab_resp = array_merge  ( $new_tab_resp , get_tab_resp_du_user($current_resp));
+        }
+        $tab_resp = array_merge  ( $tab_resp, $new_tab_resp);
+    }
+
     /************************************/
     // gestion des absence des responsables :
     // on verifie que les resp sont présents, si tous absent, on cherhe les resp des resp, et ainsi de suite ....
     if($_SESSION['config']['gestion_cas_absence_responsable'])
     {
         // on va verifier si les resp récupérés sont absents
-        $nb_present=count($tab_resp);
         foreach ($tab_resp as $current_resp => $presence )
         {
             // verif dans la base si le current_resp est absent :
@@ -1908,6 +1934,20 @@ function recup_infos_du_user($login, $list_groups_double_valid)
     }
     else
         return FALSE;
+}
+
+
+function sortParActif($a, $b) {
+    if( $a['is_active'] == 'N' && $b['is_active'] == 'N') {
+        return $b['prenom'] < $a['prenom'];
+    }
+    if( $a['is_active'] == 'N'){
+        return 1;
+    }
+    if( $b['is_active'] == 'N'){
+        return -1;
+    }
+    return 0;
 }
 
 // renvoit un tableau de tableau contenant les informations de tous les users

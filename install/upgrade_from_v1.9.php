@@ -20,6 +20,11 @@ if (!in_array($lang, ['fr_FR', 'en_US', 'es_ES'], true)) {
     $lang = '';
 }
 
+
+//suppression de la variable print_disable_users de la bdd
+$del_conf_from_db="DELETE FROM conges_config WHERE conf_nom = 'print_disable_users';";
+$res_del_conf_from_db=\includes\SQL::query($del_conf_from_db);
+
 //suppression de l'option calcul de nombre de jours, par défaut c'est automatique
 $del_config_db="DELETE FROM conges_config WHERE conf_nom = 'affiche_bouton_calcul_nb_jours_pris';";
 $res_del_config_from_db=\includes\SQL::query($del_config_db);
