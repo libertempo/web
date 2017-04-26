@@ -396,7 +396,7 @@ INSERT IGNORE INTO `conges_config` VALUES ('where_to_find_user_email', 'dbconges
 INSERT IGNORE INTO `conges_config` VALUES ('samedi_travail', 'FALSE', '09_jours ouvrables', 'boolean', 'config_comment_samedi_travail');
 INSERT IGNORE INTO `conges_config` VALUES ('dimanche_travail', 'FALSE', '09_jours ouvrables', 'boolean', 'config_comment_dimanche_travail');
 
-INSERT IGNORE INTO `conges_config` VALUES ('gestion_groupes', 'FALSE', '10_Gestion par groupes', 'boolean', 'config_comment_gestion_groupes');
+INSERT IGNORE INTO `conges_config` VALUES ('gestion_groupes', 'TRUE', '10_Gestion par groupes', 'boolean', 'config_comment_gestion_groupes');
 INSERT IGNORE INTO `conges_config` VALUES ('fermeture_par_groupe', 'FALSE', '10_Gestion par groupes', 'boolean', 'config_comment_fermeture_par_groupe');
 
 INSERT IGNORE INTO `conges_config` VALUES ('editions_papier', 'TRUE', '11_Editions papier', 'boolean', 'config_comment_editions_papier');
