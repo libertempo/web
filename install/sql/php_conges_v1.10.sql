@@ -376,7 +376,6 @@ INSERT IGNORE INTO `conges_config` VALUES ('user_ch_passwd', 'TRUE', '05_Utilisa
 INSERT IGNORE INTO `conges_config` VALUES ('resp_saisie_mission', 'FALSE', '06_Responsable', 'boolean', 'config_comment_resp_saisie_mission');
 INSERT IGNORE INTO `conges_config` VALUES ('resp_ajoute_conges', 'TRUE', '06_Responsable', 'boolean', 'config_comment_resp_ajoute_conges');
 INSERT IGNORE INTO `conges_config` VALUES ('gestion_cas_absence_responsable', 'FALSE', '06_Responsable', 'boolean', 'config_comment_gestion_cas_absence_responsable');
-INSERT IGNORE INTO `conges_config` VALUES ('print_disable_users',  'FALSE',  '06_Responsable',  'Boolean',  'config_comment_print_disable_users');
 
 INSERT IGNORE INTO `conges_config` VALUES ('admin_see_all', 'FALSE', '07_Administrateur', 'boolean', 'config_comment_admin_see_all');
 INSERT IGNORE INTO `conges_config` VALUES ('admin_change_passwd', 'TRUE', '07_Administrateur', 'boolean', 'config_comment_admin_change_passwd');
@@ -413,9 +412,6 @@ INSERT IGNORE INTO `conges_config` VALUES ('autorise_reliquats_exercice', 'TRUE'
 INSERT IGNORE INTO `conges_config` VALUES ('nb_maxi_jours_reliquats', '0', '12_Fonctionnement de l\'Etablissement', 'texte', 'config_comment_nb_maxi_jours_reliquats');
 INSERT IGNORE INTO `conges_config` VALUES ('jour_mois_limite_reliquats', '0', '12_Fonctionnement de l\'Etablissement', 'texte', 'config_comment_jour_mois_limite_reliquats');
 
-INSERT IGNORE INTO `conges_config` VALUES ('affiche_bouton_calcul_nb_jours_pris', 'TRUE', '05_Utilisateur', 'boolean', 'config_comment_affiche_bouton_calcul_nb_jours_pris');
-INSERT IGNORE INTO `conges_config` VALUES ('rempli_auto_champ_nb_jours_pris', 'TRUE', '05_Utilisateur', 'boolean', 'config_comment_rempli_auto_champ_nb_jours_pris');
-INSERT IGNORE INTO `conges_config` VALUES ('disable_saise_champ_nb_jours_pris', 'FALSE', '05_Utilisateur', 'boolean', 'config_comment_disable_saise_champ_nb_jours_pris');
 INSERT IGNORE INTO `conges_config` VALUES ('interdit_saisie_periode_date_passee', 'FALSE', '05_Utilisateur', 'boolean', 'config_comment_interdit_saisie_periode_date_passee');
 INSERT IGNORE INTO `conges_config` VALUES ('interdit_modif_demande', 'FALSE', '05_Utilisateur', 'boolean', 'config_comment_interdit_modif_demande');
 INSERT IGNORE INTO `conges_config` VALUES ('duree_session', '1800', '13_Divers', 'texte', 'config_comment_duree_session');

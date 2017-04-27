@@ -1138,12 +1138,6 @@ msgstr "//  Pie de pagina de las IMPRESIONES<br>//------------------------------
 msgid "config_comment_user_echange_rtt"
 msgstr "//  CAMBIO RTT O TIEMPO PARCIAL AUTORIZADO PARA LOS USUARIOS<br>//---------------------------------------------------------------------------------------<br>// autorizamos o no al usuario a invertir puntualmente un dia trabajado y un dia de ausencia (de rtt o tiempo parcial)<br>// si FALSE : cambio no autorizado para el usuario (FALSE es el valor por defecto)<br>// si TRUE : cambio autorizado para el usuario"
 
-msgid "config_comment_affiche_bouton_calcul_nb_jours_pris"
-msgstr "//  BOTON DE CALCULO DEL N? DE DIAS TOMADOS<br>//--------------------------------------------------------------------------------------<br>// si FALSE : no aparece el boton de calculo del n? de dias tomados cuando se efectua una nueva entrada de ausencia<br>// si TRUE : aparece el boton de calculod del n? de dias tomados cuando se efectua una nueva entrada de ausencia (TRUE es el valor por defecto)<br>// ATENCION : si es TRUE : los dias no trabajados deben ser registrados (ver el modulo de administracion)"
-
-msgid "config_comment_rempli_auto_champ_nb_jours_pris"
-msgstr "//  RELLENO AUTOMATICO DEL CAMPO EN EL MOMENTO DE LA SOLICITUD DEL CALCULO DEL N? DE DIAS TOMADOS<br>//--------------------------------------------------------------------------------------<br>// si FALSE : la solicitud al boton de calculo del n? de dias tomados no rellena automaticamente el campo del formulario (entrada a mano)<br>// si TRUE : la solicitud al boton de calculo del n? de dias tomados rellena automaticamente el campo del formulario (TRUE es el valor por defecto)"
-
 msgid "config_comment_duree_session"
 msgstr "// Duracion maxima de incatividad de una sesion antes de la expiracion (en segundos)"
 
@@ -1311,9 +1305,6 @@ msgstr "Exportar ical / vcal"
 
 msgid "button_export_2"
 msgstr "Exportar los eventos al formato ical / vcal"
-
-msgid "config_comment_disable_saise_champ_nb_jours_pris"
-msgstr "//  PROHIBIDO TECLEAR EN EL CAMPO TEXTO DEL N° DE DIAS TOMADOS<br>//--------------------------------------------------------------------------------------<br>// si - FALSE : el campo texto del n° de dias tomados es activo (coger la mano posible)(FALSE es el valor por defecto)<br>// si \\ TRUE : le champ texte du nb de jours pris et inactif (saisi  la main impossible)"
 
 msgid "calcul_nb_jours_commentaire"
 msgstr "atencion: este periodo se superpone con otras vacaciones !"

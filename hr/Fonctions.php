@@ -78,70 +78,70 @@ class Fonctions
             $return .= '<tr><td class="histo" colspan="' . $nb_colonnes . '">' .  _('resp_etat_aucun_user') . '</td></tr>';
         } else {
             asort($tab_info_users);
+            uasort($tab_info_users, "sortParActif");
             foreach ($tab_info_users as $current_login => $tab_current_infos) {
-                if($tab_current_infos['is_active'] == "Y" || $_SESSION['config']['print_disable_users'] == 'TRUE') {
-                    $text_affich_user="<a href=\"hr_index.php?session=$session&onglet=traite_user&user_login=$current_login\" title=\""._('resp_etat_users_afficher')."\"><i class=\"fa fa-eye\"></i></a>" ;
+                $text_affich_user="<a href=\"hr_index.php?session=$session&onglet=traite_user&user_login=$current_login\" title=\""._('resp_etat_users_afficher')."\"><i class=\"fa fa-eye\"></i></a>" ;
 
-                    $childTable .= '<tr class="' . (($tab_current_infos['is_active']=='Y') ? 'actif' : 'inactif') . '">';
-                    $childTable .= '<td class="utilisateur"><strong>' . $tab_current_infos['nom'] . ' ' . $tab_current_infos['prenom'] . '</strong>';
-                    $childTable .= '<span class="login">' . $current_login . '</span>';
-                    if($_SESSION['config']['where_to_find_user_email']=="dbconges") {
-                        $childTable .= '<span class="mail">' . $tab_current_infos['email'] . '</span>';
-                    }
-                    // droit utilisateur
-                    $rights = array();
-                    if($tab_current_infos['is_admin'] == 'Y') {
-                        $rights[] = 'administrateur';
-                    }
-                    if($tab_current_infos['is_resp'] == 'Y') {
-                        $rights[] = 'responsable';
-                    }
-                    if($tab_current_infos['is_hr'] == 'Y') {
-                        $rights[] = 'RH';
-                    }
-
-                    if(count($rights) > 0) {
-                        $childTable .= '<span class="rights">' . implode(', ', $rights) . '</span>';
-                    }
-
-                    $childTable .= '<span class="responsable"> responsable : <strong>' . $tab_current_infos['resp_login'] . '</strong></span>';
-
-                    $childTable .= '</td><td>' . $tab_current_infos['quotite'] . ' %</td>';
-
-                    //tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
-                    $tab_conges=$tab_current_infos['conges'];
-
-                    foreach($tab_type_conges as $id_conges => $libelle) {
-                        if (isset($tab_conges[$libelle])) {
-                            $childTable .= '<td>' . $tab_conges[$libelle]['nb_an'] . '</td>';
-                            $childTable .= '<td>' . $tab_conges[$libelle]['solde'] . '</td>';
-                        } else {
-                            $childTable .= '<td>0</td>';
-                            $childTable .= '<td>0</td>';
-                        }
-                    }
-
-                    foreach($tab_type_conges_exceptionnels as $id_conges => $libelle) {
-                        if (isset($tab_conges[$libelle])) {
-                            $childTable .= '<td>' . $tab_conges[$libelle]['solde'] . '</td>';
-                        } else {
-                            $childTable .= '<td>0</td>';
-                        }
-                    }
-
-                if ($_SESSION['config']['gestion_heures']) {
-                    $soldeHeure = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($current_login)['u_heure_solde'];
-                    $childTable .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($soldeHeure) . '</td>';
+                $childTable .= '<tr class="' . (($tab_current_infos['is_active']=='Y') ? 'actif' : 'inactif') . '">';
+                $childTable .= '<td class="utilisateur"><strong>' . $tab_current_infos['nom'] . ' ' . $tab_current_infos['prenom'] . '</strong>';
+                $childTable .= '<span class="login">' . $current_login . '</span>';
+                if($_SESSION['config']['where_to_find_user_email']=="dbconges") {
+                    $childTable .= '<span class="mail">' . $tab_current_infos['email'] . '</span>';
+                }
+                // droit utilisateur
+                $rights = array();
+                if($tab_current_infos['is_admin'] == 'Y') {
+                    $rights[] = 'administrateur';
+                }
+                if($tab_current_infos['is_resp'] == 'Y') {
+                    $rights[] = 'responsable';
+                }
+                if($tab_current_infos['is_hr'] == 'Y') {
+                    $rights[] = 'RH';
                 }
 
-                    $childTable .= '<td>' . $text_affich_user . '</td>';
-                    if($_SESSION['config']['editions_papier']) {
-                        $text_edit_papier="<a href=\"../edition/edit_user.php?session=$session&user_login=$current_login\" target=\"_blank\" title=\""._('resp_etat_users_imprim')."\"><i class=\"fa fa-file-text\"></i></a>";
-                        $childTable .= '<td>' . $text_edit_papier . '</td>';
-                    }
-                    $childTable .= '</tr>';
+                if(count($rights) > 0) {
+                    $childTable .= '<span class="rights">' . implode(', ', $rights) . '</span>';
                 }
+
+                $childTable .= '<span class="responsable"> responsable : <strong>' . $tab_current_infos['resp_login'] . '</strong></span>';
+
+                $childTable .= '</td><td>' . $tab_current_infos['quotite'] . ' %</td>';
+
+                //tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
+                $tab_conges=$tab_current_infos['conges'];
+
+                foreach($tab_type_conges as $id_conges => $libelle) {
+                    if (isset($tab_conges[$libelle])) {
+                        $childTable .= '<td>' . $tab_conges[$libelle]['nb_an'] . '</td>';
+                        $childTable .= '<td>' . $tab_conges[$libelle]['solde'] . '</td>';
+                    } else {
+                        $childTable .= '<td>0</td>';
+                        $childTable .= '<td>0</td>';
+                    }
+                }
+
+                foreach($tab_type_conges_exceptionnels as $id_conges => $libelle) {
+                    if (isset($tab_conges[$libelle])) {
+                        $childTable .= '<td>' . $tab_conges[$libelle]['solde'] . '</td>';
+                    } else {
+                        $childTable .= '<td>0</td>';
+                    }
+                }
+
+            if ($_SESSION['config']['gestion_heures']) {
+                $soldeHeure = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($current_login)['u_heure_solde'];
+                $childTable .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($soldeHeure) . '</td>';
             }
+
+                $childTable .= '<td>' . $text_affich_user . '</td>';
+                if($_SESSION['config']['editions_papier']) {
+                    $text_edit_papier="<a href=\"../edition/edit_user.php?session=$session&user_login=$current_login\" target=\"_blank\" title=\""._('resp_etat_users_imprim')."\"><i class=\"fa fa-file-text\"></i></a>";
+                    $childTable .= '<td>' . $text_edit_papier . '</td>';
+                }
+                $childTable .= '</tr>';
+            }
+        
         }
 
         $childTable .= '</tbody>';
@@ -1154,14 +1154,7 @@ class Fonctions
             $new_comment        = getpost_variable('new_comment') ;
             $new_type           = getpost_variable('new_type') ;
 
-            if( $_SESSION['config']['disable_saise_champ_nb_jours_pris'] ) {
-                $new_nb_jours = compter($user_login, '', $new_debut,  $new_fin, $new_demi_jour_deb, $new_demi_jour_fin, $comment);
-                if ($new_nb_jours <= 0 ) {
-                    $new_nb_jours      = getpost_variable('new_nb_jours');
-                }
-            } else {
-                $new_nb_jours   = getpost_variable('new_nb_jours') ;
-            }
+            $new_nb_jours = compter($user_login, '', $new_debut,  $new_fin, $new_demi_jour_deb, $new_demi_jour_fin, $comment);
 
             $return .= \hr\Fonctions::new_conges($user_login, "", $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type);
         } else {
@@ -1207,7 +1200,6 @@ class Fonctions
 
     public static function ajout_global_groupe($choix_groupe, $tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all)
     {
-
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
 
@@ -1220,7 +1212,7 @@ class Fonctions
             if($nb_jours!=0) {
                 $comment = $tab_new_comment_all[$id_conges];
 
-                $sql1="SELECT u_login, u_quotite FROM conges_users WHERE u_login IN ($list_users) ORDER BY u_login ";
+                $sql1="SELECT u_login, u_quotite FROM conges_users WHERE u_login IN ($list_users) AND u_is_active='Y' ORDER BY u_login ";
                 $ReqLog1 = \includes\SQL::query($sql1);
 
                 while ($resultat1 = $ReqLog1->fetch_array()) {
@@ -1325,6 +1317,7 @@ class Fonctions
         foreach($tab_champ_saisie as $user_name => $tab_conges)   // tab_champ_saisie[$current_login][$id_conges]=valeur du nb de jours ajouté saisi
         {
           foreach($tab_conges as $id_conges => $user_nb_jours_ajout) {
+
             $valid=verif_saisie_decimal($user_nb_jours_ajout);   //verif la bonne saisie du nombre décimal
             if($valid) {
               if($user_nb_jours_ajout!=0) {
@@ -1478,35 +1471,38 @@ class Fonctions
             $tab_champ_saisie_conges=array();
 
             $i = true;
+            asort($tab_all_users_du_hr);
             // affichage des users dont on est responsable :
             foreach($tab_all_users_du_hr as $current_login => $tab_current_user) {
-                $return .= '<tr class="' . ($i ? 'i' : 'p') . '">';
-                //tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
-                $tab_conges=$tab_current_user['conges'];
+                if($tab_current_user['is_active'] == "Y") {
+                    $return .= '<tr class="' . ($i ? 'i' : 'p') . '">';
+                    //tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
+                    $tab_conges=$tab_current_user['conges'];
 
-                /** sur la ligne ,   **/
-                $return .= '<td>' . $tab_current_user['nom'] . '</td>';
-                $return .= '<td>' . $tab_current_user['prenom'] . '</td>';
-                $return .= '<td>' . $tab_current_user['quotite'] . '%</td>';
+                    /** sur la ligne ,   **/
+                    $return .= '<td>' . $tab_current_user['nom'] . '</td>';
+                    $return .= '<td>' . $tab_current_user['prenom'] . '</td>';
+                    $return .= '<td>' . $tab_current_user['quotite'] . '%</td>';
 
-                foreach($tab_type_conges as $id_conges => $libelle) {
-                    /** le champ de saisie est <input type="text" name="tab_champ_saisie[valeur de u_login][id_du_type_de_conges]" value="[valeur du nb de jours ajouté saisi]"> */
-                    $champ_saisie_conges="<input class=\"form-control\" type=\"text\" name=\"tab_champ_saisie[$current_login][$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\">";
-                    $return .= '<td>' . $tab_conges[$libelle]['nb_an'] . ' <i>(' . $tab_conges[$libelle]['solde'] . ')</i></td>';
-                    $return .= '<td align="center" class="histo">' . $champ_saisie_conges . '</td>';
-                }
-                if ($_SESSION['config']['gestion_conges_exceptionnels']) {
-                    foreach($tab_type_conges_exceptionnels as $id_conges => $libelle) {
+                    foreach($tab_type_conges as $id_conges => $libelle) {
                         /** le champ de saisie est <input type="text" name="tab_champ_saisie[valeur de u_login][id_du_type_de_conges]" value="[valeur du nb de jours ajouté saisi]"> */
                         $champ_saisie_conges="<input class=\"form-control\" type=\"text\" name=\"tab_champ_saisie[$current_login][$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\">";
-                        $return .= '<td><i>(' . $tab_conges[$libelle]['solde'] . ')</i></td>';
+                        $return .= '<td>' . $tab_conges[$libelle]['nb_an'] . ' <i>(' . $tab_conges[$libelle]['solde'] . ')</i></td>';
                         $return .= '<td align="center" class="histo">' . $champ_saisie_conges . '</td>';
                     }
+                    if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+                        foreach($tab_type_conges_exceptionnels as $id_conges => $libelle) {
+                            /** le champ de saisie est <input type="text" name="tab_champ_saisie[valeur de u_login][id_du_type_de_conges]" value="[valeur du nb de jours ajouté saisi]"> */
+                            $champ_saisie_conges="<input class=\"form-control\" type=\"text\" name=\"tab_champ_saisie[$current_login][$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\">";
+                            $return .= '<td><i>(' . $tab_conges[$libelle]['solde'] . ')</i></td>';
+                            $return .= '<td align="center" class="histo">' . $champ_saisie_conges . '</td>';
+                        }
+                    }
+                    $return .= '<td align="center" class="histo"><input class="form-control" type="text" name="tab_commentaire_saisie[' . $current_login . ']" size="30" maxlength="200" value=""></td>';
+                    $return .= '</tr>';
+                    $cpt_lignes++ ;
+                    $i = !$i;
                 }
-                $return .= '<td align="center" class="histo"><input class="form-control" type="text" name="tab_commentaire_saisie[' . $current_login . ']" size="30" maxlength="200" value=""></td>';
-                $return .= '</tr>';
-                $cpt_lignes++ ;
-                $i = !$i;
             }
 
             $return .= '</tbody>';
@@ -1545,7 +1541,7 @@ class Fonctions
     {
         $list_users="";
 
-        $sql1="SELECT DISTINCT(u_login) FROM conges_users WHERE u_login!='conges' AND u_login!='admin'  ORDER BY u_nom  ";
+        $sql1="SELECT DISTINCT(u_login) FROM conges_users WHERE u_login!='conges' AND u_login!='admin' AND u_is_active='Y' ORDER BY u_nom  ";
         $ReqLog1 = \includes\SQL::query($sql1);
 
         while ($resultat1 = $ReqLog1->fetch_array())
@@ -3318,7 +3314,9 @@ enctype="application/x-www-form-urlencoded"><input type="hidden" name="planning_
         /* Préparation et requêtage */
         $listPlanningId = \App\ProtoControllers\HautResponsable\Planning::getListPlanningId();
 
-        $return = '<h1>' . _('hr_affichage_liste_planning_titre') . '</h1>';
+        $return = '';
+        $return .= '<a href="' . ROOT_PATH . 'hr/hr_index.php?session='. session_id().'&amp;onglet=ajout_planning" style="float:right" class="btn btn-success">' . _('hr_ajout_planning') . '</a>';
+        $return .= '<h1>' . _('hr_affichage_liste_planning_titre') . '</h1>';
         $return .= $message;
         $session = session_id();
         $table = new \App\Libraries\Structure\Table();

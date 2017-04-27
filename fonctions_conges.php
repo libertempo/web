@@ -80,26 +80,21 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
 
     $return .= '<input type="radio" name="new_demi_jour_deb" ';
 
-    if($_SESSION['config']['rempli_auto_champ_nb_jours_pris'])
-    {
-        // attention : IE6 : bug avec les "OnChange" sur les boutons radio!!! (on remplace par OnClick)
-        if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) ) {
-            $return .= 'onClick="compter_jours();return true;" ';
-        } else {
-            $return .= 'onChange="compter_jours();return false;" ';
-        }
+    // attention : IE6 : bug avec les "OnChange" sur les boutons radio!!! (on remplace par OnClick)
+    if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) ) {
+        $return .= 'onClick="compter_jours();return true;" ';
+    } else {
+        $return .= 'onChange="compter_jours();return false;" ';
     }
     $return .= 'value="am" checked>&nbsp;' .  _('form_am');
     $return .= '<input type="radio" name="new_demi_jour_deb" ';
 
-    if($_SESSION['config']['rempli_auto_champ_nb_jours_pris'])
-    {
-        if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) ) {
-            $return .= 'onClick="compter_jours();return true;" ';
-        } else {
-            $return .= 'onChange="compter_jours();return false;" ';
-        }
+    if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) ) {
+        $return .= 'onClick="compter_jours();return true;" ';
+    } else {
+        $return .= 'onChange="compter_jours();return false;" ';
     }
+
     $return .= 'value="pm">&nbsp;' .  _('form_pm');
     $return .= '</div>';
     $return .= '</div>';
@@ -110,30 +105,28 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
     $return .= '</div>';
     $return .= '<input type="radio" name="new_demi_jour_fin" ';
 
-    if($_SESSION['config']['rempli_auto_champ_nb_jours_pris'])
-    {
-        // attention : IE6 : bug avec les "OnChange" sur les boutons radio!!! (on remplace par OnClick)
-        if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) ) {
-            $return .= 'onClick="compter_jours();return true;" ' ;
-        } else {
-            $return .= 'onChange="compter_jours();return false;" ' ;
-        }
+    // attention : IE6 : bug avec les "OnChange" sur les boutons radio!!! (on remplace par OnClick)
+    if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) ) {
+        $return .= 'onClick="compter_jours();return true;" ' ;
+    } else {
+        $return .= 'onChange="compter_jours();return false;" ' ;
     }
     $return .= 'value="am">&nbsp;'. _('form_am');
     $return .= '<input class="form-controm" type="radio" name="new_demi_jour_fin" ';
 
-    if($_SESSION['config']['rempli_auto_champ_nb_jours_pris'])
-    {
-        if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) ) {
-            $return .= 'onClick="compter_jours();return true;" ' ;
-        } else {
-            $return .= 'onChange="compter_jours();return false;" ' ;
-        }
+    if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) ) {
+        $return .= 'onClick="compter_jours();return true;" ' ;
+    } else {
+        $return .= 'onChange="compter_jours();return false;" ' ;
     }
+
     $return .= 'value="pm" checked>&nbsp;' . _('form_pm');
     $return .= '</div>';
     $return .= '</div>';
     $return .= '</div>';
+    $return .= '<br />';
+    $return .= '<label>' . _('saisie_conges_nb_jours') .'&nbsp</label>';
+    $return .= '<span id="new_nb_jours"></span>';
     $return .= '<hr/>';
 
     /*****************/
@@ -207,19 +200,9 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
     $return .= '<hr/>';
     $return .= '<label>' . _('divers_comment_maj_1') . '</label><input class="form-control" type="text" name="new_comment" size="25" maxlength="30" value="">';
 
+
     // zones de texte
-    $return .= '<label>' . _('saisie_conges_nb_jours') .'&nbsp</label>';
-    if($_SESSION['config']['disable_saise_champ_nb_jours_pris']) { // zone de texte en readonly et grisée
-        $text_nb_jours ='<input type="text" name="new_nb_jours" size="10" maxlength="30" value="" style="background-color: #D4D4D4; " readonly="readonly">' ;
-    } else {
-        $text_nb_jours ='<input type="text" name="new_nb_jours" size="10" maxlength="3" value="">' ;
-    }
 
-    $return .= $text_nb_jours;
-
-    if($_SESSION['config']['affiche_bouton_calcul_nb_jours_pris']) {
-        $return .= '<input type="button" class="btn btn-success" onclick="compter_jours();return false;" value="' . _('saisie_conges_compter_jours') . '">';
-    }
     $return .= '<p id="comment_nbj" style="color:red">&nbsp;</p>';
     $return .= '<br>';
     $return .= '<input type="hidden" name="user_login" value="' . $user_login . '">';
@@ -933,14 +916,13 @@ function affiche_cellule_jour_cal_saisie($login, $j_timestamp, $td_second_class,
     else
     {
         echo '<td  class="cal-saisie '.$td_second_class.' '.$class_am.' '.$class_pm.'">'.$j.'<input type="radio" name="'.$result.'" ';
-        if($_SESSION['config']['rempli_auto_champ_nb_jours_pris'])
-        {
-            // attention : IE6 : bug avec les "OnChange" sur les boutons radio!!! (on remplace par OnClick)
-            if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) )
-                echo 'onClick="compter_jours();return true;" ';
-            else
-                echo 'onChange="compter_jours();return false;" ';
-        }
+        
+        // attention : IE6 : bug avec les "OnChange" sur les boutons radio!!! (on remplace par OnClick)
+        if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) )
+            echo 'onClick="compter_jours();return true;" ';
+        else
+            echo 'onChange="compter_jours();return false;" ';
+    
         echo ' value="'.$date_j.'"></td>';
     }
 }
@@ -1285,13 +1267,39 @@ function get_tab_resp_du_user($user_login)
         }
     }
 
+    /***************************/
+    // Gestion des responsable inactifs
+    // Si ils sont inactifs on les gère comme des responsables absents
+    $nb_present=count($tab_resp);
+    foreach ($tab_resp as $current_resp => $presence )
+    {
+        // verif dans la base si le current_resp est absent :
+        $req = 'SELECT u_is_active FROM conges_users WHERE u_login=\''.\includes\SQL::quote($current_resp).'\';';
+        $ReqLog_2 = \includes\SQL::query($req);
+        $rec = $ReqLog_2->fetch_array();
+        if ($rec['u_is_active'] == 'N') {
+            $nb_present=$nb_present-1;
+            $tab_resp[$current_resp]="absent";
+        }
+    }
+    if($nb_present==0)
+    {
+        $new_tab_resp=array();
+        foreach ($tab_resp as $current_resp => $presence)
+        {
+            // attention ,on evite le cas ou le user est son propre resp (sinon on boucle infiniment)
+            if($current_resp != $user_login)
+                $new_tab_resp = array_merge  ( $new_tab_resp , get_tab_resp_du_user($current_resp));
+        }
+        $tab_resp = array_merge  ( $tab_resp, $new_tab_resp);
+    }
+
     /************************************/
     // gestion des absence des responsables :
     // on verifie que les resp sont présents, si tous absent, on cherhe les resp des resp, et ainsi de suite ....
     if($_SESSION['config']['gestion_cas_absence_responsable'])
     {
         // on va verifier si les resp récupérés sont absents
-        $nb_present=count($tab_resp);
         foreach ($tab_resp as $current_resp => $presence )
         {
             // verif dans la base si le current_resp est absent :
@@ -1841,7 +1849,9 @@ function affiche_tableau_bilan_conges_user($login)
 
     $return .= '<table class="table table-hover table-responsive table-condensed table-bordered">';
     $return .= '<thead>';
-    $return .= '<tr><td></td><td colspan="' . (count($tab_cong_user) * 2 ) . '">SOLDES</td></tr>';
+    $colspan = count($tab_cong_user) * 2 + 1 ;
+    $colspan = $_SESSION['config']['gestion_heures'] ? $colspan + 1 : $colspan;
+    $return .= '<tr><td></td><td colspan="' . $colspan . '">SOLDES</td></tr>';
     $return .= '<tr>';
     $return .= '<th class="titre">'. _('divers_quotite') .'</th>';
 
@@ -1851,6 +1861,9 @@ function affiche_tableau_bilan_conges_user($login)
         } else {
             $return .= '<th class="annuel">' . $id . ' / ' . _('divers_an_maj') . '</th><th class="solde">' . $id . '</th>';
         }
+    }
+    if($_SESSION['config']['gestion_heures']){
+        $return .= '<th class="solde">' . _('heure') . '</th>';
     }
     $return .= '</tr>';
     $return .= '</thead>';
@@ -1863,6 +1876,10 @@ function affiche_tableau_bilan_conges_user($login)
         } else {
             $return .= '<td class="annuel">' . $val['nb_an'] . '</td><td class="solde">' . $val['solde'] . ($val['reliquat'] > 0 ? ' (' . _('dont_reliquat') . ' ' . $val['reliquat'] . ')' : '') . '</td>';
         }
+    }
+    if($_SESSION['config']['gestion_heures']){
+        $timestampSolde = \App\ProtoControllers\Utilisateur::getSoldeHeure($login);
+        $return .= '<td class="solde">'. \App\Helpers\Formatter::timestamp2Duree($timestampSolde) .'</td>';
     }
     $return .= '</tr>';
     $return .= '</tbody>';
@@ -1917,6 +1934,20 @@ function recup_infos_du_user($login, $list_groups_double_valid)
     }
     else
         return FALSE;
+}
+
+
+function sortParActif($a, $b) {
+    if( $a['is_active'] == 'N' && $b['is_active'] == 'N') {
+        return $b['prenom'] < $a['prenom'];
+    }
+    if( $a['is_active'] == 'N'){
+        return 1;
+    }
+    if( $b['is_active'] == 'N'){
+        return -1;
+    }
+    return 0;
 }
 
 // renvoit un tableau de tableau contenant les informations de tous les users
