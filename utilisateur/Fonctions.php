@@ -426,8 +426,13 @@ class Fonctions
         $new_comment       = htmlentities(getpost_variable('new_comment'), ENT_QUOTES | ENT_HTML401);
 
         $return            = '';
-        $isAllowed = self::canUserManipulateConge($p_num, $_SESSION['userlogin']);
-
+        // lors de la modification  p_num n'existe plus et est remplacé par p_num_update
+        if ($p_num != '') {
+            $id = $p_num;
+        } else {
+            $id = $p_num_to_update;
+        }
+        $isAllowed = self::canUserManipulateConge($id, $_SESSION['userlogin']);
         if (!$isAllowed || $_SESSION['config']['interdit_modif_demande']) {
             $session = (isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : session_id()));
             redirect(ROOT_PATH . 'utilisateur/user_index.php?session=' . $session);
@@ -581,8 +586,13 @@ class Fonctions
         $p_num_to_delete = getpost_variable('p_num_to_delete');
         $return          = '';
         /*************************************/
-        
-        $isAllowed = self::canUserManipulateConge($p_num, $_SESSION['userlogin']);
+        // lors de la modification  p_num n'existe plus et est remplacé par p_num_update
+        if ($p_num != '') {
+            $id = $p_num;
+        } else {
+            $id = $p_num_to_delete;
+        }
+        $isAllowed = self::canUserManipulateConge($id, $_SESSION['userlogin']);
         if (!$isAllowed) {
             $session = (isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : session_id()));
             redirect(ROOT_PATH . 'utilisateur/user_index.php?session=' . $session);
@@ -1520,7 +1530,7 @@ class Fonctions
     }
 
     public static function canUserManipulateConge($idConge, $user) {
-        if (empty($idConge) && empty($user)) {
+        if (empty($idConge) || empty($user)) {
             return false;
         }
         $conge = \App\ProtoControllers\Conge::getConge($idConge);
