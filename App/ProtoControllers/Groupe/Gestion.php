@@ -1026,9 +1026,16 @@ class Gestion {
             return false;
         }
 
-        foreach ($responsables as $responsable){
-            foreach ($employes as $employe){
-                if($employe == $responsable){
+        $employeEtResponsable = [];
+        foreach ($employes as $employe){
+            if(\App\ProtoControllers\Utilisateur::isResponsable($employe)){
+                $employesResponsable[] = $employe;
+            }
+        }
+
+        foreach ($employesResponsable as $employeResponsable){
+            foreach ($responsables as $responsable){
+                if(\App\ProtoControllers\Responsable::isRespDeUtilisateur($employeResponsable, $responsable)){
                     return true;
                     break;
                 }
