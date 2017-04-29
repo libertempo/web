@@ -17,19 +17,6 @@ $_SESSION['config']=init_config_tab();      // on initialise le tableau des vari
 /*** initialisation des variables ***/
 /************************************/
 
-if($err = getpost_variable('error', false))
-{
-	switch ($err) {
-		case 'session-invalid':
-			header_error();
-			echo "<p>" . _('session_pas_session_ouverte') . "<p>\n";
-			echo "<p>" . _('divers_veuillez') ." <a href='" .$_SESSION['config']['URL_ACCUEIL_CONGES'] . "/index.php' target='_top'><strong>" . _('divers_vous_authentifier') . "</strong></a></p>\n";
-			bottom();
-			exit();
-			break;
-	}
-}
-
 if($_SESSION['config']['auth'] == FALSE)    // si pas d'autentification (cf config de php_conges)
 {
 	$login = getpost_variable('login');
