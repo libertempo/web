@@ -277,8 +277,11 @@ CREATE TABLE IF NOT EXISTS `conges_users` (
   `u_num_exercice` int(2) NOT NULL DEFAULT '0',
   `planning_id` int(11) UNSIGNED NOT NULL,
   `u_heure_solde` int(11) NOT NULL DEFAULT '0',
+  `date_inscription` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `token` VARCHAR(100) NOT NULL DEFAULT '',
   PRIMARY KEY (`u_login`),
-  KEY `planning_id` (`planning_id`)
+  KEY `planning_id` (`planning_id`),
+  KEY `token` (`token`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 #
@@ -346,6 +349,7 @@ INSERT IGNORE INTO `conges_appli` VALUES ('conges_bgcolor', '#DEDEDE');
 INSERT IGNORE INTO `conges_appli` VALUES ('demande_conges_bgcolor', '#E7C4C4');
 INSERT IGNORE INTO `conges_appli` VALUES ('absence_autre_bgcolor', '#D3FFB6');
 INSERT IGNORE INTO `conges_appli` VALUES ('fermeture_bgcolor', '#7B9DE6');
+INSERT IGNORE INTO `conges_appli` VALUES ('token_instance', '');
 
 
 # --------------------------------------------------------
@@ -354,7 +358,7 @@ INSERT IGNORE INTO `conges_appli` VALUES ('fermeture_bgcolor', '#7B9DE6');
 # Contenu de la table `conges_users`
 #
 
-INSERT IGNORE INTO `conges_users` VALUES ('admin', 'Libertempo', 'admin', 'N', 'admin', 'Y', 'N','Y','N', '636d61cf9094a62a81836f3737d9c0da', 100, NULL, 0, 0, 0);
+INSERT IGNORE INTO `conges_users` VALUES ('admin', 'Libertempo', 'admin', 'N', 'admin', 'Y', 'N','Y','N', '636d61cf9094a62a81836f3737d9c0da', 100, NULL, 0, 0, 0, null, '');
 
 #
 # Contenu de la table `conges_config`
