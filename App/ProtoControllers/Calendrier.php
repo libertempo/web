@@ -62,6 +62,32 @@ final class Calendrier
      */
     private $idGroupe = NIL_INT;
 
+    public function __construct()
+    {
+        $this->session=(isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : session_id()));
+
+        if(substr($this->session, 0, 9)!="phpconges") {
+            session_start();
+            $_SESSION['config']=init_config_tab();
+            if(empty($_SESSION['userlogin'])) {
+                redirect( ROOT_PATH . 'index.php' );
+            }
+        } else {
+            include_once INCLUDE_PATH . 'session.php';
+        }
+    }
+
+    public function getAnother()
+    {
+        $debut = new \DateTimeImmutable(date('Y') . '-' . date('m') . '-01');
+        $fin = $debut->modify('+1 month');
+        ddd($debut, $fin);
+    }
+
+    /*
+     * récupérer les evenements qui sont associés à l'utilisateur
+     */
+
     /**
      * Retourne la page du calendrier
      *
