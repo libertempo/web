@@ -254,7 +254,7 @@ class Fonctions
         $return .= '<h1>' . _('admin_onglet_resp_groupe') . '</h1>';
 
         // Récuperation des informations :
-        $sql_resp = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_is_resp='Y' AND u_login!='conges' AND u_login!='admin' ORDER BY u_nom, u_prenom"  ;
+        $sql_resp = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_is_resp='Y' AND u_login!='conges' AND u_login!='admin' AND u_is_active !='N' ORDER BY u_nom, u_prenom"  ;
         $ReqLog_resp = \includes\SQL::query($sql_resp);
 
         /*************************/
@@ -382,7 +382,7 @@ class Fonctions
         //on rempli un tableau de tous les responsables avec le login, le nom, le prenom (tableau de tableau à 3 cellules
         // Récuperation des responsables :
         $tab_resp=array();
-        $sql_resp = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_login!='conges' AND u_is_resp='Y' ORDER BY u_nom, u_prenom "  ;
+        $sql_resp = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_login!='conges' AND u_is_active !='N' AND u_is_resp='Y' ORDER BY u_nom, u_prenom "  ;
         $ReqLog_resp = \includes\SQL::query($sql_resp);
 
         while($resultat_resp=$ReqLog_resp->fetch_array()) {
@@ -746,7 +746,7 @@ class Fonctions
         //on rempli un tableau de tous les users avec le login, le nom, le prenom (tableau de tableau à 3 cellules
         // Récuperation des utilisateurs :
         $tab_users=array();
-        $sql_users = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_login!='conges' AND u_login!='admin' ORDER BY u_nom, u_prenom "  ;
+        $sql_users = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_login!='conges' AND u_login!='admin' AND u_is_active!='N' ORDER BY u_nom, u_prenom "  ;
         $ReqLog_users = \includes\SQL::query($sql_users);
 
         while($resultat_users=$ReqLog_users->fetch_array()) {
@@ -894,7 +894,7 @@ class Fonctions
         /* Choix User       */
         /********************/
         // Récuperation des informations :
-        $sql_user = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_login!='conges' AND u_login!='admin' ORDER BY u_nom, u_prenom"  ;
+        $sql_user = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_login!='conges' AND u_login!='admin' AND u_is_active!='N' ORDER BY u_nom, u_prenom"  ;
 
         // AFFICHAGE TABLEAU
         $return .= '<h2>' . _('admin_aff_choix_user_titre') . '</h2>';
@@ -1079,9 +1079,10 @@ class Fonctions
     public static function get_nb_users_du_groupe($group_id)
     {
 
-        $sql1='SELECT DISTINCT(gu_login) FROM conges_groupe_users WHERE gu_gid = '. \includes\SQL::quote($group_id).' ORDER BY gu_login ';
+        $sql1='SELECT DISTINCT(cgu.gu_login) FROM conges_groupe_users AS cgu 
+                INNER JOIN conges_users AS cu ON (cu.u_login = cgu.gu_login) 
+                WHERE cgu.gu_gid = '. \includes\SQL::quote($group_id).' AND cu.u_is_active != "N" ORDER BY cgu.gu_login ';
         $ReqLog1 = \includes\SQL::query($sql1);
-
         $nb_users = $ReqLog1->num_rows;
 
         return $nb_users;
@@ -1365,7 +1366,8 @@ class Fonctions
         } else {
             $tab_info_users = recup_infos_all_users_du_resp($_SESSION['userlogin']);
         }
-
+        asort($tab_info_users);
+        uasort($tab_info_users, "sortParActif");
         $i = true;
         foreach ($tab_info_users as $current_login => $tab_current_infos) {
             $admin_modif_user= '<a href="admin_index.php?onglet=modif_user&session=' . $session . '&u_login=' . $current_login . '" title="' . _('form_modif') . '"><i class="fa fa-pencil"></i></a>';
@@ -1381,6 +1383,9 @@ class Fonctions
             }
             // droit utilisateur
             $rights = array();
+            if($tab_current_infos['is_active'] == 'N') {
+                $rights[] = 'inactif';
+            }
             if($tab_current_infos['is_admin'] == 'Y') {
                 $rights[] = 'administrateur';
             }
