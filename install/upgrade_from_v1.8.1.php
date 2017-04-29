@@ -140,17 +140,6 @@ $sql->query($reqInsertAssociation);
 $reqInsert = 'INSERT IGNORE INTO `conges_config` VALUES ("gestion_heures", "TRUE", "12_Fonctionnement de l\'Etablissement", "boolean", "config_comment_gestion_heures")';
 $sql->query($reqInsert);
 
-/* Ajout des champs de l'utilisateur requis pour l'API */
-$alterApiUser = 'ALTER TABLE `conges_users`
-    ADD `date_inscription` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    ADD `token` VARCHAR(100) NOT NULL DEFAULT "",
-    ADD INDEX `token` (`token`)';
-$sql->query($alterApiUser);
-
-/* Ajout du token d'instance */
-$addApiToken = 'INSERT IGNORE INTO `conges_appli` VALUES ("token_instance", "")';
-$sql->query($addApiToken);
-
 $sql->getPdoObj()->commit();
 
 // on renvoit à la page mise_a_jour.php (là d'ou on vient)
