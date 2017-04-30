@@ -670,7 +670,7 @@ class Gestion {
         $i = true;
         foreach ($this->getEmployes($idGroupe) as $login => $info){
             $childTable .= '<tr class="' . (($i) ? 'i' : 'p') . '">';
-            $childTable .='<td class="histo"><input type="checkbox" name="checkbox_group_users[' . $login . '] "' . (($info['isDansGroupe']) ? 'checked' : '') . '></td>';
+            $childTable .='<td class="histo"><input type="checkbox" id="Emp_' . $login . '" name="checkbox_group_users[' . $login . '] "' . (($info['isDansGroupe']) ? 'checked' : '') . '></td>';
             $childTable .= '<td class="histo">' . $info['nom'] . ' ' . $info['prenom'] . '</td>';
             $childTable .= '<td class="histo">' . $login . '</td>';
             $childTable .= '</tr>';
@@ -713,7 +713,7 @@ class Gestion {
         $i = true;
         foreach ($this->getResponsables($idGroupe) as $login => $info){
             $childTable .= '<tr class="' . (($i) ? 'i' : 'p') . '">';
-            $childTable .='<td class="histo"><input type="checkbox" name="checkbox_group_resps[' . $login . ']"' . (($info['isDansGroupe']) ? 'checked' : '') . '></td>';
+            $childTable .='<td class="histo"><input type="checkbox" id="Resp_' . $login . '" name="checkbox_group_resps[' . $login . ']" onchange="disableEmployeGroupe(\'' . $login . '\')" ' . (($info['isDansGroupe']) ? 'checked' : '') . '></td>';
             $childTable .= '<td class="histo">' . $info['nom'] . ' ' . $info['prenom'] . '</td>';
             $childTable .= '<td class="histo">' . $login . '</td>';
             $childTable .= '</tr>';

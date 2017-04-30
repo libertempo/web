@@ -625,4 +625,17 @@ function showDivGroupeGrandResp(selectId,DivGrandRespId) {
         document.getElementById(DivGrandRespId).style.display='none'; 
     }
     return false;
-}   
+}
+
+function disableEmployeGroupe(respLogin) {
+    var employe = 'Emp_' + respLogin;
+    var responsable = 'Resp_' + respLogin;
+    if (document.getElementById(responsable).checked) {
+        document.getElementById(employe).disabled = true;
+        document.getElementById(employe).checked = false;
+    } else {
+        document.getElementById(employe).disabled = false;
+    }
+
+}
+
