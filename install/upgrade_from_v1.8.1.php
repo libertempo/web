@@ -92,11 +92,11 @@ $soldeheure = "ALTER TABLE conges_users
 $ressoldeheure = $sql->query($soldeheure);
 
 //augmentation taille commentaires
-$tailleComm = "ALTER TABLE conges_periode 
+$tailleComm = "ALTER TABLE conges_periode
                 CHANGE p_commentaire p_commentaire VARCHAR(250)";
 $restailleComm = $sql->query($tailleComm);
 
-$tailleCommRefus = "ALTER TABLE conges_periode 
+$tailleCommRefus = "ALTER TABLE conges_periode
                 CHANGE p_motif_refus p_motif_refus VARCHAR(250)";
 $restailleCommRefus = $sql->query($tailleCommRefus);
 
