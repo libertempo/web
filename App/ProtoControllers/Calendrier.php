@@ -86,6 +86,10 @@ final class Calendrier
 
     /*
      * récupérer les evenements qui sont associés à l'utilisateur
+     * le pattern facade ferait bien le job, mais il faut éviter au maximum a création massive d'objet
+     *
+     * je ne sais pas quelle structure de données faire pour avoir de la rapidité sur l'exécution,
+     * de la souplesse sur l'utilisation
      */
 
     /**
