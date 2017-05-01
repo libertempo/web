@@ -81,6 +81,12 @@ final class Calendrier
     {
         $debut = new \DateTimeImmutable(date('Y') . '-' . date('m') . '-01');
         $fin = $debut->modify('+1 month');
+        $a = new \App\Libraries\Calendrier\Facade(
+            ['E', '4'],
+            \includes\SQL::singleton(),
+            $debut,
+            $fin
+        );
         ddd($debut, $fin);
     }
 

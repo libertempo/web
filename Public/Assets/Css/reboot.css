@@ -649,6 +649,22 @@ form.search {
 }
 
 /* CALENDRIER */
+table#calendrier {
+    width: 99%;
+    margin: auto;
+}
+
+#calendrier #entete th {
+    text-align: center;
+}
+tr.calendrier-employe {
+
+}
+
+td.calendrier-jour {
+    width: 2.5%;
+    border: 1px solid black;
+}
 
 #calendar-wrapper {
     padding : 15px;

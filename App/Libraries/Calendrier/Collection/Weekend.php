@@ -32,25 +32,7 @@ class Weekend extends \App\Libraries\Calendrier\ACollection
      */
     public function getListe()
     {
-        $liste = [];
-        if (!$this->isSamediTravaille()) {
-            $liste = array_merge($liste, $this->getListeSamedi());
-        }
-        if (!$this->isDimancheTravaille()) {
-            $liste = array_merge($liste, $this->getListeDimanche());
-        }
-
-        $weekend = [];
-        $name = 'Week-end';
-        $title = null;
-        $class = 'weekend';
-        foreach ($liste as $jour) {
-            $dateJour = new \DateTime($jour);
-            $uid = uniqid('weekend');
-            $weekend[] = new Evenement\Commun($uid, $dateJour, $dateJour, $name, $title, $class);
-        }
-
-        return $weekend;
+        return $this->getListeSamedi() + $this->getListeDimanche();
     }
 
     /**
@@ -60,7 +42,11 @@ class Weekend extends \App\Libraries\Calendrier\ACollection
      */
     private function getListeSamedi()
     {
-        return $this->getListeJourSemaine(static::JOUR_SAMEDI);
+        if (!$this->isSamediTravaille()) {
+            return $this->getListeJourSemaine(static::JOUR_SAMEDI);
+        }
+
+        return [];
     }
 
     /**
@@ -70,7 +56,11 @@ class Weekend extends \App\Libraries\Calendrier\ACollection
      */
     private function getListeDimanche()
     {
-        return $this->getListeJourSemaine(static::JOUR_DIMANCHE);
+        if (!$this->isDimancheTravaille()) {
+            return $this->getListeJourSemaine(static::JOUR_DIMANCHE);
+        }
+
+        return [];
     }
 
     /**
@@ -111,24 +101,22 @@ class Weekend extends \App\Libraries\Calendrier\ACollection
 
     private function isSamediTravaille()
     {
-        $sql = \includes\SQL::singleton();
         $req = 'SELECT *
             FROM conges_config
             WHERE conf_nom = "samedi_travail" LIMIT 1';
 
-        $res = $sql->query($req)->fetch_assoc();
+        $res = $this->db->query($req)->fetch_assoc();
 
         return 'TRUE' === $res['conf_valeur'];
     }
 
     private function isDimancheTravaille()
     {
-        $sql = \includes\SQL::singleton();
         $req = 'SELECT *
                 FROM conges_config
                 WHERE conf_nom = "dimanche_travail" LIMIT 1';
 
-        $res = $sql->query($req)->fetch_assoc();
+        $res = $this->db->query($req)->fetch_assoc();
 
         return 'TRUE' === $res['conf_valeur'];
     }

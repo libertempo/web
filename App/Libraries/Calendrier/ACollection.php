@@ -14,6 +14,11 @@ namespace App\Libraries\Calendrier;
 abstract class ACollection
 {
     /**
+     * @var \includes\SQL Objet de DB
+     */
+    protected $db;
+
+    /**
      * @var \DateTimeInterface
      */
     protected $dateDebut;
@@ -27,8 +32,9 @@ abstract class ACollection
      * @param \DateTimeInterface $dateDebut
      * @param \DateTimeInterface $dateFin
      */
-    public function __construct(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
+    public function __construct(\includes\SQL $db, \DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
     {
+        $this->db = $db;
         $this->dateDebut = clone $dateDebut;
         $this->dateFin = clone $dateFin;
     }
