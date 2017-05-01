@@ -74,7 +74,7 @@ class Weekend extends \App\Libraries\Calendrier\ACollection
     {
         $debut = $this->dateDebut->getTimestamp();
         $fin = $this->dateFin->getTimestamp();
-        if ($debut > $fin) {
+        if ($debut > $fin) { // ce devrait être une assertion
             throw new \Exception('Date de début supérieure à date de fin');
         }
 

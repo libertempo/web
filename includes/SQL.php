@@ -1,11 +1,6 @@
 <?php
 namespace includes;
 
-defined( '_PHP_CONGES' ) or die( 'Restricted access' );
-
-
-
-
 // class SQL, interface with mysqli, it's a singleton, non-static method can be call staticly
 // Build for PHP 5.3
 class SQL
