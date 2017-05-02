@@ -12,52 +12,49 @@ namespace App\Libraries\Calendrier;
  */
 class Facade
 {
-    private $evenements;
-
-    private $db;
-
-    /**
-     * @var \DateTimeInterface
-     */
-    protected $dateDebut;
-
-    /**
-     * @var \DateTimeInterface
-     */
-    protected $dateFin;
-
     public function __construct(array $employesATrouver, \includes\SQL $db, \DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
     {
         $this->db = $db;
         $this->dateDebut = $dateDebut;
         $this->dateFin = $dateFin;
         $this->fetchEvenements($employesATrouver);
-        // construction de jours feries, fermeture, weekend, ...
     }
 
+    private $evenements;
+
+    private $db;
+
     /**
-     *
+    * @var \DateTimeInterface
+    */
+    protected $dateDebut;
+
+    /**
+    * @var \DateTimeInterface
+    */
+    protected $dateFin;
+
+    /**
+     * Recupère la liste ordonnée des événements des employés
      */
     private function fetchEvenements(array $employesATrouver)
     {
         $this->fetchWeekends($employesATrouver);
+        // construction de jours feries, fermeture, cp, weekend, ...
     }
 
     /**
-     *
+     * Recupère la liste ordonnée des weekend des employés
      */
     private function fetchWeekends(array $employesATrouver)
     {
         $weekends = (new Collection\Weekend($this->db, $this->dateDebut, $this->dateFin))->getListe();
-        $types['types'] = 'weekend';
+        sort($weekends);
         foreach ($employesATrouver as $employe) {
-            foreach ($weekends as $weekend) {
-                $this->evenements[$employe]['dates'][] = [
-                    $weekend => $types,
-                ];
+            foreach ($weekends as $date) {
+                $this->evenements[$employe]['dates'][$date]['types'][] = 'weekend';
             }
         }
-        //ddd($this->evenements);
     }
 
     private function isDayWeekend()
@@ -68,17 +65,34 @@ class Facade
 
     public function getEmploye($idEmploye)
     {
-
+        $this->verificationExistenceEmploye($idEmploye);
     }
 
-    public function getEvenement($idEmploye, $date)
+    public function getEvenementsDate($idEmploye, $date)
     {
-
+        $this->verificationExistenceEmploye($idEmploye);
+        $this->verificationExistenceDateEmploye($idEmploye, $date);
+        return $this->evenements[$idEmploye]['dates'][$date]['types'];
     }
 
-    public function getTitle($idEmploye, $date)
+    public function getTitleDate($idEmploye, $date)
     {
+        $this->verificationExistenceEmploye($idEmploye);
+        $this->verificationExistenceDateEmploye($idEmploye, $date);
+    }
 
+    private function verificationExistenceEmploye($idEmploye)
+    {
+        if (!isset($this->evenements[$idEmploye])) {
+            throw new \DomainException('Employé inconnu');
+        }
+    }
+
+    private function verificationExistenceDateEmploye($idEmploye, $date)
+    {
+        if (!isset($this->evenements[$idEmploye]['dates'][$date])) {
+            throw new \DomainException('Date inexistante pour cet employé');
+        }
     }
 
     /*

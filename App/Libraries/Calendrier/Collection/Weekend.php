@@ -32,7 +32,7 @@ class Weekend extends \App\Libraries\Calendrier\ACollection
      */
     public function getListe()
     {
-        return $this->getListeSamedi() + $this->getListeDimanche();
+        return array_merge($this->getListeSamedi(), $this->getListeDimanche());
     }
 
     /**
