@@ -3472,10 +3472,10 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $childTable .= '&nbsp;&nbsp;<div class="form-inline col-xs-4"><label class="radio-inline"><input type="radio" name="periode" value="' . \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN . '">' . _('form_am') . '</label>';
         $childTable .= '<label class="radio-inline"><input type="radio" name="periode" value="' . \App\Models\Planning\Creneau::TYPE_PERIODE_APRES_MIDI . '">' . _('form_pm') . '</label>';
         $childTable .= '&nbsp;&nbsp; <button type="button" class="btn btn-default btn-sm" id="' .  $linkId . '"><i class="fa fa-plus link" ></i></button></div>';
-        $childTable .= '<span class="text-danger" id="' . $helperId . '"></span></td></tr>';
+        $childTable .= '<span class="text-danger" id="' . $helperId . '"></span></td><td></td></tr>';
         $childTable .= '<script type="text/javascript">generateTimePicker("' . $debutId . '");generateTimePicker("' . $finId . '");</script>';
         foreach ($jours as $id => $jour) {
-            $childTable .= '<tr data-id-jour=' . $id . '><td name="nom">' . $jour . '</td><td class="creneaux"></td></tr>';
+            $childTable .= '<tr data-id-jour=' . $id . '><td name="nom">' . $jour . '</td><td class="creneaux"></td><td></td></tr>';
         }
         $childTable .= '</tbody>';
         $options = [
