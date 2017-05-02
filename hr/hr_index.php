@@ -32,8 +32,14 @@ $onglets = array();
 
 $onglets['page_principale'] = _('resp_menu_button_retour_main');
 
-if( $_SESSION['config']['user_saisie_demande'] )
-    $onglets['traitement_demandes'] = _('resp_menu_button_traite_demande');
+if( $_SESSION['config']['user_saisie_demande'] ){
+	$nbBadgeConges = '';
+    $nbDemandes = \hr\Fonctions::getNbDemandesATraiter($_SESSION['userlogin']);
+    if (0 < $nbDemandes) {
+        $nbBadgeConges = ' <span class="badge">' . $nbDemandes . '</span>';
+    }
+    $onglets['traitement_demandes'] = _('resp_menu_button_traite_demande') . $nbBadgeConges;
+}
 
 // if( $_SESSION['config']['resp_ajoute_conges'] )
     $onglets['ajout_conges'] = _('resp_ajout_conges_titre');
