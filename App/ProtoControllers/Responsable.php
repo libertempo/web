@@ -77,23 +77,6 @@ class Responsable
     }
 
     /**
-     * Retourne le responsable direct d'un utilisateur
-     *
-     * @param string $user
-     * @return array
-     */
-    public static function getRespDirect($user)
-    {
-        $sql = \includes\SQL::singleton();
-        $req = 'SELECT u_resp_login
-                FROM conges_users
-                WHERE u_login ="'.\includes\SQL::quote($user).'"';
-        $query = $sql->query($req);
-
-        return $query->fetch_array()['u_resp_login'];
-    }
-
-    /**
      * Vérifie si le responsable est absent
      *
      * @param string $resp identifiant du responsable
@@ -143,6 +126,12 @@ class Responsable
         return $responsables;
     }
 
+    /**
+     * Retourne le responsable direct d'un utilisateur
+     *
+     * @param string $user
+     * @return array
+     */
     public static function getResponsableDirect($user) {
         $resp = [];
         $sql = \includes\SQL::singleton();

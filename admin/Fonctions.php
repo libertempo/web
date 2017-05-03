@@ -222,7 +222,8 @@ class Fonctions
                 $childTable .= '<span class="rights">' . implode(', ', $rights) . '</span>';
             }
 
-            $childTable .= '<span class="responsable"> responsable : <strong>' . $tab_current_infos['resp_login'] . '</strong></span>';
+            $responsables = \App\ProtoControllers\Responsable::getResponsablesUtilisateur($current_login);
+            $childTable .= '<span class="responsable"> responsables : <strong>' . implode(', ', $responsables) . '</strong></span>';
 
             $childTable .= '</td><td>' . $tab_current_infos['quotite'] . ' %</td>';
 
@@ -1275,14 +1276,6 @@ class Fonctions
         ob_start();
         $table->render();
         $return .= ob_get_clean();
-
-        // si gestion des groupes :  affichage des groupe pour y affecter le user
-        if($_SESSION['config']['gestion_groupes'])
-        {
-            $return .= '<br>';
-            $return .= \admin\Fonctions::affiche_tableau_affectation_user_groupes($u_login);
-        }
-
         $listPlannings = \App\ProtoControllers\HautResponsable\Planning::getListPlanning((array) ((int) $tab_user['planningId']));
         $planningName = '';
         if(!empty($listPlannings)){
