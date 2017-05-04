@@ -11,10 +11,10 @@
 
 Libertempo est une application web interactive de gestion des congés du personnel. Elle a pour objectif de rendre la gestion des congés accessible à tous.
 
-Libertempo se veut être au plus proche des règles inhérentes aux réglementations françaises tout en restant paramétrable afin de répondre aux particularités et conventions des entreprises et des administrations. 
+Libertempo se veut être au plus proche des règles inhérentes aux réglementations françaises tout en restant paramétrable afin de répondre aux particularités et conventions des entreprises et des administrations.
 
 # Version recommandée
-Vous pouvez télécharger la version stable la plus récente directement depuis [master](https://github.com/Libertempo/Libertempo-web/archive/master.zip). ![build_status](https://travis-ci.org/wouldsmina/Libertempo.svg?branch=master)
+Vous pouvez télécharger la version stable la plus récente directement depuis [master](https://github.com/Libertempo/Libertempo-web/archive/master.zip). ![build_status](https://travis-ci.org/Libertempo/Libertempo-web.svg?branch=master)
 
 Chaque nouvelle version est mise à disposition sur [github](https://github.com/Libertempo/Libertempo-web/releases) et sur [libertempo.tuxfamily.org](http://libertempo.tuxfamily.org/downloads/)
 

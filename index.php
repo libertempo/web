@@ -12,24 +12,10 @@ include_once INCLUDE_PATH .'fonction.php';
 include_once ROOT_PATH .'fonctions_conges.php'; // for init_config_tab()
 $_SESSION['config']=init_config_tab();      // on initialise le tableau des variables de config
 
-
 /***** DEBUT DU PROG *****/
 
 /*** initialisation des variables ***/
 /************************************/
-
-if($err = getpost_variable('error', false))
-{
-	switch ($err) {
-		case 'session-invalid':
-			header_error();
-			echo "<p>" . _('session_pas_session_ouverte') . "<p>\n";
-			echo "<p>" . _('divers_veuillez') ." <a href='" .$_SESSION['config']['URL_ACCUEIL_CONGES'] . "/index.php' target='_top'><strong>" . _('divers_vous_authentifier') . "</strong></a></p>\n";
-			bottom();
-			exit();
-			break;
-	}
-}
 
 if($_SESSION['config']['auth'] == FALSE)    // si pas d'autentification (cf config de php_conges)
 {
@@ -177,7 +163,7 @@ else
 
 if(isset($_SESSION['userlogin']))
 {
-	$request= "SELECT u_nom, u_passwd, u_prenom, u_is_resp, u_is_hr, u_is_admin  FROM conges_users where u_login = '". \includes\SQL::quote($_SESSION['userlogin'])."' " ;
+	$request= "SELECT u_nom, u_passwd, u_prenom, u_is_resp, u_is_hr, u_is_admin, u_is_active  FROM conges_users where u_login = '". \includes\SQL::quote($_SESSION['userlogin'])."' " ;
 	$rs = \includes\SQL::query($request );
 	if($rs->num_rows != 1)
 	{
@@ -192,7 +178,14 @@ if(isset($_SESSION['userlogin']))
         $is_admin = $row["u_is_admin"];
         $is_hr = $row["u_is_hr"];
 		$is_resp = $row["u_is_resp"];
-
+		$is_active = $row["u_is_active"];
+		if( $is_active == "N") {
+			header_error();
+			echo  _('session_compte_inactif') ."<br>\n";
+			echo  _('session_contactez_admin') ."\n";
+			bottom();
+			exit;
+		}
 		// si le login est celui d'un responsable ET on est pas en mode "responsable virtuel"
 		// OU on est en mode "responsable virtuel" avec login= celui du resp virtuel
 		$return_url = getpost_variable('return_url');

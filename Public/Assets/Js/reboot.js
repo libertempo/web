@@ -63,8 +63,8 @@ function compter_jours()
                 {
                     var arr = new Array();
                     arr = JSON.parse(data);
-                    document.forms["dem_conges"].new_nb_jours.value=arr["nb"];
                     document.getElementById('comment_nbj').innerHTML = arr["comm"];
+                    document.getElementById('new_nb_jours').innerHTML = arr["nb"];
                 },
             });
         }

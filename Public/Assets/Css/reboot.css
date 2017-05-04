@@ -361,7 +361,9 @@ a {
     color: #00aad4;
     font-weight: bold
 }
-
+.inactif {
+    color: #b66;
+}
 form .table tbody>tr>td,
 form .table-condensed tbody>tr>td {
     vertical-align: middle

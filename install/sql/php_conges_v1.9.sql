@@ -413,9 +413,6 @@ INSERT IGNORE INTO `conges_config` VALUES ('autorise_reliquats_exercice', 'TRUE'
 INSERT IGNORE INTO `conges_config` VALUES ('nb_maxi_jours_reliquats', '0', '12_Fonctionnement de l\'Etablissement', 'texte', 'config_comment_nb_maxi_jours_reliquats');
 INSERT IGNORE INTO `conges_config` VALUES ('jour_mois_limite_reliquats', '0', '12_Fonctionnement de l\'Etablissement', 'texte', 'config_comment_jour_mois_limite_reliquats');
 
-INSERT IGNORE INTO `conges_config` VALUES ('affiche_bouton_calcul_nb_jours_pris', 'TRUE', '05_Utilisateur', 'boolean', 'config_comment_affiche_bouton_calcul_nb_jours_pris');
-INSERT IGNORE INTO `conges_config` VALUES ('rempli_auto_champ_nb_jours_pris', 'TRUE', '05_Utilisateur', 'boolean', 'config_comment_rempli_auto_champ_nb_jours_pris');
-INSERT IGNORE INTO `conges_config` VALUES ('disable_saise_champ_nb_jours_pris', 'FALSE', '05_Utilisateur', 'boolean', 'config_comment_disable_saise_champ_nb_jours_pris');
 INSERT IGNORE INTO `conges_config` VALUES ('interdit_saisie_periode_date_passee', 'FALSE', '05_Utilisateur', 'boolean', 'config_comment_interdit_saisie_periode_date_passee');
 INSERT IGNORE INTO `conges_config` VALUES ('interdit_modif_demande', 'FALSE', '05_Utilisateur', 'boolean', 'config_comment_interdit_modif_demande');
 INSERT IGNORE INTO `conges_config` VALUES ('duree_session', '1800', '13_Divers', 'texte', 'config_comment_duree_session');
@@ -428,6 +425,9 @@ INSERT IGNORE INTO `conges_config` VALUES ('calcul_auto_jours_feries_france', 'F
 INSERT IGNORE INTO `conges_config` (`conf_nom`, `conf_valeur`, `conf_groupe`, `conf_type`, `conf_commentaire`) VALUES ('export_ical', 'true', '15_ical', 'boolean', 'config_comment__export_ical'),
 ('export_ical_salt', 'Jao%iT}', '15_ical', 'texte', 'config_comment_export_ical_salt');
 INSERT IGNORE INTO `conges_config` (`conf_nom`, `conf_valeur`, `conf_groupe`, `conf_type`, `conf_commentaire`) VALUES ('resp_association_planning', 'FALSE', '06_Responsable', 'boolean', 'config_comment_resp_association_planning');
+INSERT IGNORE INTO `conges_config` VALUES ('affiche_bouton_calcul_nb_jours_pris', 'TRUE', '05_Utilisateur', 'boolean', 'config_comment_affiche_bouton_calcul_nb_jours_pris');
+INSERT IGNORE INTO `conges_config` VALUES ('rempli_auto_champ_nb_jours_pris', 'TRUE', '05_Utilisateur', 'boolean', 'config_comment_rempli_auto_champ_nb_jours_pris');
+INSERT IGNORE INTO `conges_config` VALUES ('disable_saise_champ_nb_jours_pris', 'FALSE', '05_Utilisateur', 'boolean', 'config_comment_disable_saise_champ_nb_jours_pris');
 
 #
 # Contenu de la table `conges_type_absence`

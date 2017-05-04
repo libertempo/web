@@ -19,7 +19,6 @@ class Fonctions
         } else {
             $return .= _('form_modif_not_ok') . ' !<br><br>';
         }
-
         $comment_log = "mofification_des groupes auxquels $choix_user appartient" ;
         log_action(0, "", $choix_user, $comment_log);
 
@@ -189,7 +188,8 @@ class Fonctions
         } else {
             $tab_info_users = recup_infos_all_users_du_resp($_SESSION['userlogin']);
         }
-
+        asort($tab_info_users);
+        uasort($tab_info_users, "sortParActif");
         $i = true;
         foreach ($tab_info_users as $current_login => $tab_current_infos) {
             $admin_modif_user= '<a href="admin_index.php?onglet=modif_user&session=' . $session . '&u_login=' . $current_login . '" title="' . _('form_modif') . '"><i class="fa fa-pencil"></i></a>';
@@ -205,6 +205,9 @@ class Fonctions
             }
             // droit utilisateur
             $rights = array();
+            if($tab_current_infos['is_active'] == 'N') {
+                $rights[] = 'inactif';
+            }
             if($tab_current_infos['is_admin'] == 'Y') {
                 $rights[] = 'administrateur';
             }

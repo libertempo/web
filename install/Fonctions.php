@@ -164,12 +164,13 @@ class Fonctions {
     }
 
     // install la nouvelle version dans une database vide ... et config
+
     public static function lance_install($lang)
     {
 
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 
-        include CONFIG_PATH .'dbconnect.php' ;
+        include CONFIG_PATH . 'dbconnect.php';
         include ROOT_PATH .'version.php' ;
 
         //verif si create / alter table possible !!!
@@ -193,9 +194,12 @@ class Fonctions {
         {
             //on execute le script [nouvelle vesion].sql qui crée et initialise les tables
             $file_sql="sql/php_conges_v$config_php_conges_version.sql";
-            if(file_exists($file_sql))
+            if(file_exists($file_sql)) {
                 $result = execute_sql_file($file_sql);
-
+            }
+            if (0 <= version_compare($config_php_conges_version, '1.9')) {
+                \includes\SQL::query('UPDATE `conges_appli` SET appli_valeur =  "' . hash('sha256', time() . rand()) . '" WHERE appli_variable = "token_instance"');
+            }
 
             /*************************************/
             // FIN : mise à jour de la "installed_version" et de la langue dans la table conges_config
@@ -325,8 +329,11 @@ class Fonctions {
         //*** ETAPE 3
         elseif($etape==3)
         {
+            /* Reset du token d'instance à chaque version */
+            \includes\SQL::query('UPDATE `conges_appli` SET appli_valeur =  "' . hash('sha256', time() . rand()) . '" WHERE appli_variable = "token_instance"');
+
             // FIN
-            // test si fichiers config.php ou config_old.php existent encore (si oui : demande de les éffacer !
+            // test si fichiers config.php ou config_old.php existent encore (si oui : demande de les effacer !
             if( (\install\Fonctions::test_config_file()) || (\install\Fonctions::test_old_config_file()) )
             {
                 if(test_config_file())
