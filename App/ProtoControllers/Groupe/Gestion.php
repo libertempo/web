@@ -615,12 +615,12 @@ class Gestion {
 
         $return .= '<div class="col-md-6">';
         $return .= '<h2>' . _('admin_gestion_groupe_resp_responsables') . '</h2>';
-        $return .= $this->getFormChoixResponsable($idGroupe);
+        $return .= $this->getFormChoixResponsable($idGroupe,$selectId);
         $return .= '</div>';
 
         $return .= '<div class="col-md-6 hide" id="' . $DivGrandRespId . '">';
         $return .= '<h2>' . _('admin_gestion_groupe_grand_resp_responsables') . '</h2>';
-        $return .= $this->getFormChoixGrandResponsable($idGroupe);
+        $return .= $this->getFormChoixGrandResponsable($idGroupe,$selectId);
         $return .= '</div>';
         $return .= '</div>';
 
@@ -689,7 +689,7 @@ class Gestion {
      * @param int $idGroupe
      * @return string
      */
-    protected function getFormChoixResponsable($idGroupe)
+    protected function getFormChoixResponsable($idGroupe, $selectId)
     {
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses([
@@ -711,7 +711,7 @@ class Gestion {
         $i = true;
         foreach ($this->getResponsables($idGroupe) as $login => $info){
             $childTable .= '<tr class="' . (($i) ? 'i' : 'p') . '">';
-            $childTable .='<td class="histo"><input type="checkbox" id="Resp_' . $login . '" name="checkbox_group_resps[' . $login . ']" onchange="disableEmployeGroupe(this);" ' . (($info['isDansGroupe']) ? 'checked' : '') . '></td>';
+            $childTable .='<td class="histo"><input type="checkbox" id="Resp_' . $login . '" name="checkbox_group_resps[' . $login . ']" onchange="disableEmployeGroupe(this,\'' . $selectId . '\');" ' . (($info['isDansGroupe']) ? 'checked' : '') . '></td>';
             $childTable .= '<td class="histo">' . $info['nom'] . ' ' . $info['prenom'] . '</td>';
             $childTable .= '<td class="histo">' . $login . '</td>';
             $childTable .= '</tr>';
@@ -732,7 +732,7 @@ class Gestion {
      * @param int $idGroupe
      * @return string
      */
-    protected function getFormChoixGrandResponsable($idGroupe)
+    protected function getFormChoixGrandResponsable($idGroupe,$selectId)
     {
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses([
@@ -754,7 +754,7 @@ class Gestion {
         $i = true;
         foreach ($this->getGrandResponsables($idGroupe) as $login => $info){
             $childTable .= '<tr class="' . (($i) ? 'i' : 'p') . '">';
-            $childTable .='<td class="histo"><input type="checkbox" id="Gres_' . $login . '" name="checkbox_group_grand_resps[' . $login . ']" onchange="disableEmployeGroupe(this);"' . (($info['isDansGroupe']) ? 'checked' : '') . '></td>';
+            $childTable .='<td class="histo"><input type="checkbox" id="Gres_' . $login . '" name="checkbox_group_grand_resps[' . $login . ']" onchange="disableEmployeGroupe(this,\'' . $selectId . '\');"' . (($info['isDansGroupe']) ? 'checked' : '') . '></td>';
             $childTable .= '<td class="histo">' . $info['nom'] . ' ' . $info['prenom'] . '</td>';
             $childTable .= '<td class="histo">' . $login . '</td>';
             $childTable .= '</tr>';

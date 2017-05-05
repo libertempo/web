@@ -631,14 +631,24 @@ $(function(){
 	$('div[onload]').trigger('onload');
 });
 
-function disableEmployeGroupe(resp) {
-    var employe = 'Emp_' + resp.id.substring(5);
-    if (resp.checked) {
+function disableEmployeGroupe(checkbox,selectId) {
+    var login = checkbox.id.substring(5);
+    var employe = 'Emp_' + login;
+    if (checkbox.checked) {
         document.getElementById(employe).disabled = true;
         document.getElementById(employe).checked = false;
+        if(checkbox.id.substring(0,4) == 'Gres'){
+            document.getElementById('Resp_' + login).disabled = true;
+        } else if(document.getElementById(selectId).value=='Y') {
+            document.getElementById('Gres_' + login).disabled = true;
+        }
     } else {
         document.getElementById(employe).disabled = false;
+        if(checkbox.id.substring(0,4) == 'Gres'){
+            document.getElementById('Resp_' + login).disabled = false;
+        } else if(document.getElementById(selectId).value=='Y') {
+            document.getElementById('Gres_' + login).disabled = false;
+        }
     }
-
 }
 
