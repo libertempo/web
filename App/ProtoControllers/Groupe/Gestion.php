@@ -49,7 +49,7 @@ class Gestion {
                 $return = NIL_INT;
             } else {
                 if($this->isNomGroupeExist($data['nom'])){
-                    $errorLst[] = _('erreur_nom_groupe_existe');
+                    $errorLst[] = _('Ce nom de groupe existe déjà');
                     $return = NIL_INT;
                 } else {
                     if(NIL_INT !== $this->post($data, $errorLst)){
@@ -138,7 +138,7 @@ class Gestion {
 
         if($rollback){
             $sql->getPdoObj()->rollback();
-            $errorLst[] = _('erreur_inconnue');
+            $errorLst[] = _('Une erreur inconnue s\'est produite.');
             $return = NIL_INT;
         }
         $sql->getPdoObj()->commit();
@@ -239,7 +239,7 @@ class Gestion {
         $resultat = $deleteEmployes && $deleteResponsables && $deleteGrandResponsables && $deleteGroupe;
         if(!$resultat){
             $sql->getPdoObj()->rollback();
-            $errorLst[] = _('erreur_inconnue');
+            $errorLst[] = _('Une erreur inconnue s\'est produite.');
             return NIL_INT;
         }
         $sql->getPdoObj()->commit();
@@ -323,7 +323,7 @@ class Gestion {
 
         if($rollback){
             $sql->getPdoObj()->rollback();
-            $errorLst[] = _('erreur_inconnue');
+            $errorLst[] = _('Une erreur inconnue s\'est produite.');
             $return = NIL_INT;
         }
         $sql->getPdoObj()->commit();
@@ -573,7 +573,7 @@ class Gestion {
 
         $selectId = uniqid();
         $DivGrandRespId = uniqid();
-        $return .= '<div class="form-group">';
+        $return .= '<div onload="showDivGroupeGrandResp(\'' . $selectId . '\',\'' . $DivGrandRespId . '\');" class="form-group">';
         if(NIL_INT !== $idGroupe){
             $return .= '<h1>' . _('admin_modif_groupe_titre') . '</h1>';
         } else {
@@ -618,9 +618,7 @@ class Gestion {
         $return .= $this->getFormChoixResponsable($idGroupe);
         $return .= '</div>';
 
-        $divGrandRespCache = $infosGroupe['doubleValidation'] == 'Y' ? 'style="display:block;"' : 'style="display:none;"';
-
-        $return .= '<div class="col-md-6"  ' . $divGrandRespCache . ' id="' . $DivGrandRespId . '">';
+        $return .= '<div class="col-md-6 hide" id="' . $DivGrandRespId . '">';
         $return .= '<h2>' . _('admin_gestion_groupe_grand_resp_responsables') . '</h2>';
         $return .= $this->getFormChoixGrandResponsable($idGroupe);
         $return .= '</div>';
@@ -713,7 +711,7 @@ class Gestion {
         $i = true;
         foreach ($this->getResponsables($idGroupe) as $login => $info){
             $childTable .= '<tr class="' . (($i) ? 'i' : 'p') . '">';
-            $childTable .='<td class="histo"><input type="checkbox" id="Resp_' . $login . '" name="checkbox_group_resps[' . $login . ']" onchange="disableEmployeGroupe(\'' . $login . '\')" ' . (($info['isDansGroupe']) ? 'checked' : '') . '></td>';
+            $childTable .='<td class="histo"><input type="checkbox" id="Resp_' . $login . '" name="checkbox_group_resps[' . $login . ']" onchange="disableEmployeGroupe(\'' . $login . '\');" ' . (($info['isDansGroupe']) ? 'checked' : '') . '></td>';
             $childTable .= '<td class="histo">' . $info['nom'] . ' ' . $info['prenom'] . '</td>';
             $childTable .= '<td class="histo">' . $login . '</td>';
             $childTable .= '</tr>';
@@ -929,20 +927,19 @@ class Gestion {
         }
 
         if($this->isNomVide($data['nom'])){
-            $errors[] = _('erreur_nom_vide');
+            $errors[] = _('Le nom du groupe est obligatoire');
             $return = false;
         }
         if(!$this->isEmployeGroupeExist($data['employes'])){
-            $errors[] = _('erreur_groupe_employe');
+            $errors[] = _('Le groupe doit contenir au moins un employé');
             $return = false;
         }
 
         if($this->isResponsableEtEmploye($data['employes'], $data['responsables'])){
-            $errors[] = _('erreur_responsable_employe_groupe_interdit');
+            $errors[] = _('Le responsable ne peut pas etre membre du groupe');
             $return = false;
         }
-        if($this->isResponsableCirculaire($data['employes'], $data['responsables'])){
-            $errors[] = _('erreur_responsabilité circulaire');
+        if($this->isResponsableCirculaire($data['employes'], $data['responsables'], $errors)){
             $return = false;
         }
         if('Y' == $data['isDoubleValidation']){
@@ -1020,7 +1017,7 @@ class Gestion {
      * @param array $responsables
      * @return boolean
      */
-    protected function isResponsableCirculaire(array $employes, array $responsables)
+    protected function isResponsableCirculaire(array $employes, array $responsables, array &$errors)
     {
         if(empty($responsables) || empty($employes)){
             return false;
@@ -1036,6 +1033,7 @@ class Gestion {
         foreach ($employesResponsable as $employeResponsable){
             foreach ($responsables as $responsable){
                 if(\App\ProtoControllers\Responsable::isRespDeUtilisateur($employeResponsable, $responsable)){
+                    $errors[] = $employeResponsable . _('est responsable de ') . $responsable . _(' dans un autre groupe');
                     return true;
                     break;
                 }

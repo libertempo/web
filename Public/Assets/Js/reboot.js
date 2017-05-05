@@ -620,12 +620,16 @@ var selectAssociationPlanning = function (idElement, associationsGroupe, nilId)
 
 function showDivGroupeGrandResp(selectId,DivGrandRespId) { 
     if(document.getElementById(selectId).value=='Y') { 
-        document.getElementById(DivGrandRespId).style.display='block'; 
+        document.getElementById(DivGrandRespId).classList.remove('hide'); 
     } else {
-        document.getElementById(DivGrandRespId).style.display='none'; 
+        document.getElementById(DivGrandRespId).classList.add('hide'); 
     }
     return false;
 }
+
+$(function(){
+	$('div[onload]').trigger('onload');
+});
 
 function disableEmployeGroupe(respLogin) {
     var employe = 'Emp_' + respLogin;
