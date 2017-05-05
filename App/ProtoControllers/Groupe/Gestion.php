@@ -711,7 +711,7 @@ class Gestion {
         $i = true;
         foreach ($this->getResponsables($idGroupe) as $login => $info){
             $childTable .= '<tr class="' . (($i) ? 'i' : 'p') . '">';
-            $childTable .='<td class="histo"><input type="checkbox" id="Resp_' . $login . '" name="checkbox_group_resps[' . $login . ']" onchange="disableEmployeGroupe(\'' . $login . '\');" ' . (($info['isDansGroupe']) ? 'checked' : '') . '></td>';
+            $childTable .='<td class="histo"><input type="checkbox" id="Resp_' . $login . '" name="checkbox_group_resps[' . $login . ']" onchange="disableEmployeGroupe(this);" ' . (($info['isDansGroupe']) ? 'checked' : '') . '></td>';
             $childTable .= '<td class="histo">' . $info['nom'] . ' ' . $info['prenom'] . '</td>';
             $childTable .= '<td class="histo">' . $login . '</td>';
             $childTable .= '</tr>';
@@ -754,7 +754,7 @@ class Gestion {
         $i = true;
         foreach ($this->getGrandResponsables($idGroupe) as $login => $info){
             $childTable .= '<tr class="' . (($i) ? 'i' : 'p') . '">';
-            $childTable .='<td class="histo"><input type="checkbox" name="checkbox_group_grand_resps[' . $login . ']"' . (($info['isDansGroupe']) ? 'checked' : '') . '></td>';
+            $childTable .='<td class="histo"><input type="checkbox" id="Gres_' . $login . '" name="checkbox_group_grand_resps[' . $login . ']" onchange="disableEmployeGroupe(this);"' . (($info['isDansGroupe']) ? 'checked' : '') . '></td>';
             $childTable .= '<td class="histo">' . $info['nom'] . ' ' . $info['prenom'] . '</td>';
             $childTable .= '<td class="histo">' . $login . '</td>';
             $childTable .= '</tr>';
@@ -1008,6 +1008,22 @@ class Gestion {
             return false;
         }
         return !empty(array_intersect_assoc($employes, $responsables));
+    }
+
+    /**
+     * 
+     * vérifie si le responsable est aussi employé dans le même groupe
+     * 
+     * @param array $employes
+     * @param array $responsables
+     * @return boolean
+     */
+    protected function isGrandResponsableEtEmploye(array $employes, array $grandResponsables)
+    {
+        if(empty($grandResponsables) || empty($employes)){
+            return false;
+        }
+        return !empty(array_intersect_assoc($employes, $grandResponsables));
     }
 
     /**

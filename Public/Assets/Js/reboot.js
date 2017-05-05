@@ -631,10 +631,9 @@ $(function(){
 	$('div[onload]').trigger('onload');
 });
 
-function disableEmployeGroupe(respLogin) {
-    var employe = 'Emp_' + respLogin;
-    var responsable = 'Resp_' + respLogin;
-    if (document.getElementById(responsable).checked) {
+function disableEmployeGroupe(resp) {
+    var employe = 'Emp_' + resp.id.substring(5);
+    if (resp.checked) {
         document.getElementById(employe).disabled = true;
         document.getElementById(employe).checked = false;
     } else {
