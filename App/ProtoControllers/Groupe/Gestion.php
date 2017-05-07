@@ -534,6 +534,7 @@ class Gestion {
         $return = '';
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session = session_id();
+        $message = '';
 
         $errorsLst = [];
         if(!empty($_POST)){
@@ -546,7 +547,7 @@ class Gestion {
                         }
                         $errors .= '<li>' . $key . ' : ' . $value . '</li>';
                     }
-                    $return .= '<div class="alert alert-danger">' . _('erreur_recommencer') . '<ul>' . $errors . '</ul></div>';
+                    $message = '<br><div class="alert alert-danger">' . _('erreur_recommencer') . '<ul>' . $errors . '</ul></div>';
                 }
                 $infosGroupe = [
                     'nom' => htmlentities($_POST['new_group_name'], ENT_QUOTES | ENT_HTML401),
@@ -580,6 +581,7 @@ class Gestion {
             $return .= '<h1>' . _('admin_groupes_new_groupe') . '</h1>';
         }
 
+        $return .= $message;
         $return .= '<form method="post" action=""  role="form">';
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses([
@@ -711,7 +713,7 @@ class Gestion {
         $i = true;
         foreach ($this->getResponsables($idGroupe) as $login => $info){
             $childTable .= '<tr class="' . (($i) ? 'i' : 'p') . '">';
-            $childTable .='<td class="histo"><input type="checkbox" id="Resp_' . $login . '" name="checkbox_group_resps[' . $login . ']" onchange="disableEmployeGroupe(this,\'' . $selectId . '\');" ' . (($info['isDansGroupe']) ? 'checked' : '') . '></td>';
+            $childTable .='<td class="histo"><input type="checkbox" id="Resp_' . $login . '" name="checkbox_group_resps[' . $login . ']" onchange="disableCheckboxGroupe(this,\'' . $selectId . '\');" ' . (($info['isDansGroupe']) ? 'checked' : '') . '></td>';
             $childTable .= '<td class="histo">' . $info['nom'] . ' ' . $info['prenom'] . '</td>';
             $childTable .= '<td class="histo">' . $login . '</td>';
             $childTable .= '</tr>';
@@ -754,7 +756,7 @@ class Gestion {
         $i = true;
         foreach ($this->getGrandResponsables($idGroupe) as $login => $info){
             $childTable .= '<tr class="' . (($i) ? 'i' : 'p') . '">';
-            $childTable .='<td class="histo"><input type="checkbox" id="Gres_' . $login . '" name="checkbox_group_grand_resps[' . $login . ']" onchange="disableEmployeGroupe(this,\'' . $selectId . '\');"' . (($info['isDansGroupe']) ? 'checked' : '') . '></td>';
+            $childTable .='<td class="histo"><input type="checkbox" id="Gres_' . $login . '" name="checkbox_group_grand_resps[' . $login . ']" onchange="disableCheckboxGroupe(this,\'' . $selectId . '\');"' . (($info['isDansGroupe']) ? 'checked' : '') . '></td>';
             $childTable .= '<td class="histo">' . $info['nom'] . ' ' . $info['prenom'] . '</td>';
             $childTable .= '<td class="histo">' . $login . '</td>';
             $childTable .= '</tr>';
@@ -943,7 +945,12 @@ class Gestion {
             $return = false;
         }
         if('Y' == $data['isDoubleValidation']){
-            if(!$this->isResponsableGroupeExist($data['responsables']) || !$this->isGrandResponsableGroupeExist($data['grandResponsables'])){
+            if($this->isGrandResponsableEtAutre($data['employes'], $data['responsables'], $data['grandResponsables'])){
+                $errors[] = _('Le grand responsable ne peut pas etre membre ou responsable du groupe');
+                $return = false;
+            }
+            if(!$this->isResponsableGroupeExist($data['responsables']) 
+                || !$this->isGrandResponsableGroupeExist($data['grandResponsables'])){
                 $errors[] = _('au moins un responsable et un grand responsable sont obligatoires');
                 $return = false;
             }
@@ -1012,18 +1019,18 @@ class Gestion {
 
     /**
      * 
-     * vérifie si le responsable est aussi employé dans le même groupe
+     * vérifie si le  grand responsable est aussi employé ou responsable dans le même groupe
      * 
      * @param array $employes
      * @param array $responsables
      * @return boolean
      */
-    protected function isGrandResponsableEtEmploye(array $employes, array $grandResponsables)
+    protected function isGrandResponsableEtAutre(array $employes, array $responsables, array $grandResponsables)
     {
-        if(empty($grandResponsables) || empty($employes)){
+        if(empty($grandResponsables)){
             return false;
         }
-        return !empty(array_intersect_assoc($employes, $grandResponsables));
+        return !empty(array_intersect_assoc($grandResponsables, $employes)) || !empty(array_intersect_assoc($grandResponsables, $responsables));
     }
 
     /**

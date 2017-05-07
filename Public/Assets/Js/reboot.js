@@ -631,7 +631,7 @@ $(function(){
 	$('div[onload]').trigger('onload');
 });
 
-function disableEmployeGroupe(checkbox,selectId) {
+function disableCheckboxGroupe(checkbox,selectId) {
     var login = checkbox.id.substring(5);
     var employe = 'Emp_' + login;
     if (checkbox.checked) {
@@ -639,8 +639,10 @@ function disableEmployeGroupe(checkbox,selectId) {
         document.getElementById(employe).checked = false;
         if(checkbox.id.substring(0,4) == 'Gres'){
             document.getElementById('Resp_' + login).disabled = true;
+            document.getElementById('Resp_' + login).checked = false;
         } else if(document.getElementById(selectId).value=='Y') {
             document.getElementById('Gres_' + login).disabled = true;
+            document.getElementById('Gres_' + login).checked = false;
         }
     } else {
         document.getElementById(employe).disabled = false;
