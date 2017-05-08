@@ -33,9 +33,8 @@ $onglets = array();
 $onglets['admin-users']    = _('admin_onglet_gestion_user');
 //$onglets['ajout-user']    = _('admin_onglet_add_user');
 
-if( $_SESSION['config']['gestion_groupes'] ) {
-    if( $_SESSION['config']['admin_see_all'] || $_SESSION['userlogin']=="admin" || is_hr($_SESSION['userlogin']) )
-        $onglets['admin-group'] = _('admin_onglet_gestion_groupe');
+if( $_SESSION['config']['admin_see_all'] || $_SESSION['userlogin']=="admin" || is_hr($_SESSION['userlogin']) ) {
+    $onglets['admin-group'] = _('admin_onglet_gestion_groupe');
 }
 
 if ( !isset($onglets[ $onglet ]) && !in_array($onglet, array('chg_pwd_user', 'ajout_group', 'modif_group', 'modif_user', 'suppr_group', 'suppr_user', 'ajout-user')))

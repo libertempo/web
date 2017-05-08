@@ -45,10 +45,6 @@ class Utilisateur
      */
     public static function getListeGroupesVisibles($utilisateur)
     {
-        if(!$_SESSION['config']['gestion_groupes']) {
-            return [];
-        }
-
         $groupesVisibles = [];
         if (\App\ProtoControllers\Utilisateur::isRH($utilisateur)
             || \App\ProtoControllers\Utilisateur::isAdmin($utilisateur)

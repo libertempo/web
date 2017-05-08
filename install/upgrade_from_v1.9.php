@@ -34,6 +34,10 @@ $res_del_config_from_db=\includes\SQL::query($del_config_db);
 $del_config_db="DELETE FROM conges_config WHERE conf_nom = 'rempli_auto_champ_nb_jours_pris';";
 $res_del_config_from_db=\includes\SQL::query($del_config_db);
 
+//suppression de l'option de gestion des goupes
+$del_config_db="DELETE FROM conges_config WHERE conf_nom = 'gestion_groupes';";
+$res_del_config_from_db=\includes\SQL::query($del_config_db);
+
 /* Ajout des champs de l'utilisateur requis pour l'API */
 $alterApiUser = 'ALTER TABLE `conges_users`
     ADD `date_inscription` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

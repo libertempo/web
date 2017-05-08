@@ -1889,15 +1889,11 @@ class Fonctions
         $return .= ob_get_clean();
         $return .= '<br>';
 
-        // si gestion des groupes :  affichage des groupe pour y affecter le user
-        if($_SESSION['config']['gestion_groupes'])
-        {
-            $return .= '<br>';
-            if( $_SESSION['config']['admin_see_all'] || $_SESSION['userlogin']=="admin" ||  is_hr($_SESSION['userlogin']) ) {
-                $return .= \admin\Fonctions::affiche_tableau_affectation_user_groupes2("");
-            } else {
-                $return .= \admin\Fonctions::affiche_tableau_affectation_user_groupes2($_SESSION['userlogin']);
-            }
+        $return .= '<br>';
+        if( $_SESSION['config']['admin_see_all'] || $_SESSION['userlogin']=="admin" ||  is_hr($_SESSION['userlogin']) ) {
+            $return .= \admin\Fonctions::affiche_tableau_affectation_user_groupes2("");
+        } else {
+            $return .= \admin\Fonctions::affiche_tableau_affectation_user_groupes2($_SESSION['userlogin']);
         }
 
         $return .= '<hr>';
@@ -2110,7 +2106,7 @@ class Fonctions
             /***********************************/
             /* ajout du user dans ses groupes  */
             $result4=TRUE;
-            if( ($_SESSION['config']['gestion_groupes']) && ($checkbox_user_groups!="") ) {
+            if( ($checkbox_user_groups!="") ) {
                 $result4= \admin\Fonctions::commit_modif_user_groups($tab_new_user['login'], $checkbox_user_groups);
             }
 

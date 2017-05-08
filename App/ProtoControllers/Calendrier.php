@@ -168,21 +168,18 @@ final class Calendrier
             $form .= '<option value="' . $valeur . '" ' . $selected . '>' . _($label) . '</option>';
         }
         $form .= '</select></div></div>';
-        if($_SESSION['config']['gestion_groupes']) {
-            $form .= '<div class="form-group col-md-4 col-sm-5">
-            <label class="control-label col-md-3 col-sm-3" for="groupe">Groupe&nbsp;:</label>
-            <div class="col-md-8 col-sm-8"><select class="form-control" name="search[groupe]" id="groupe">';
-            $form .= '<option value="' . NIL_INT . '">Tous</option>';
+        $form .= '<div class="form-group col-md-4 col-sm-5">
+        <label class="control-label col-md-3 col-sm-3" for="groupe">Groupe&nbsp;:</label>
+        <div class="col-md-8 col-sm-8"><select class="form-control" name="search[groupe]" id="groupe">';
+        $form .= '<option value="' . NIL_INT . '">Tous</option>';
 
-            foreach (\App\ProtoControllers\Groupe::getOptions() as $id => $groupe) {
-                $selected = ($id ===  $this->idGroupe)
-                    ? 'selected="selected"'
-                    : '';
-                $form .= '<option value="' . $id . '" ' . $selected . '>' . $groupe['nom'] . '</option>';
-            }
-            $form .= '</select></div></div>';
+        foreach (\App\ProtoControllers\Groupe::getOptions() as $id => $groupe) {
+            $selected = ($id ===  $this->idGroupe)
+                ? 'selected="selected"'
+                : '';
+            $form .= '<option value="' . $id . '" ' . $selected . '>' . $groupe['nom'] . '</option>';
         }
-
+        $form .= '</select></div></div>';
         $form .= '<div class="form-group"><div class="input-group pull-right">
         <button type="submit" class="btn btn-default"><i class="fa fa-search" aria-hidden="true"></i></button></div></div>';
         $form .= '<input type="hidden" name="session" value="' . $this->session . '" />';
@@ -216,7 +213,6 @@ final class Calendrier
             $this->dateFin,
             $_SESSION['userlogin'],
             $this->canSessionVoirEvenementEnTransit($_SESSION),
-            $_SESSION['config']['gestion_groupes'],
             $this->idGroupe
         );
         $fournisseur = new \App\Libraries\Calendrier\Fournisseur($businessCollection);
