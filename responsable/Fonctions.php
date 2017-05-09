@@ -2542,7 +2542,6 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             }
             $return .= '</div>';
             $return .= '<script type="text/javascript">
-            console.log(\'test\');
             new selectAssociationPlanning("groupe", ' . json_encode($associations) . ', ' . NIL_INT . ');
             </script>';
         }
