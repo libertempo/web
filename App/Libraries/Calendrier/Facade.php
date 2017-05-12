@@ -52,7 +52,7 @@ class Facade
         sort($weekends);
         foreach ($employesATrouver as $employe) {
             foreach ($weekends as $date) {
-                $this->evenements[$employe]['dates'][$date]['types'][] = 'weekend';
+                $this->evenements[$employe]['dates'][$date]['evenements'][] = 'weekend';
             }
         }
     }
@@ -61,6 +61,12 @@ class Facade
     {
         // pour vérifier l'élément absorbant
         // pareil pour ferie ?
+        // alors ne rien faire pour les autres événements
+    }
+
+    private function isEvenementWeekend()
+    {
+        // purger la liste, car élément absorbant
     }
 
     public function getEmploye($idEmploye)
@@ -101,7 +107,7 @@ class Facade
      *      'nom' => 'Nom complet',
      *      'dates'  => [
      *          'dateY' => [
-     *              'types' => ['cp, 'rtt'],
+     *              'evenements' => ['cp, 'rtt'],
      *              'title' => '...'
      *          ],
      *      ],
