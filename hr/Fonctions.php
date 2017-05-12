@@ -3491,7 +3491,8 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $debutId      = uniqid();
         $finId        = uniqid();
         $helperId     = uniqid();
-        $childTable = '<thead><tr><th width="20%">' . _('Jour') . '</th><th>' . _('Creneaux_travail') . '</th><tr></thead><tbody>';
+        $dureeHebdoId = uniqid();
+        $childTable = '<thead><tr><th width="20%">' . _('Jour') . '</th><th>' . _('Creneaux_travail') . '</th><th id="' . $dureeHebdoId .'"></th><tr></thead><tbody>';
         $childTable .= '<tr><td><select class="form-control" id="' . $selectJourId . '"><option value="' . NIL_INT . '"></option>';
 
         foreach ($jours as $id => $jour) {
@@ -3503,10 +3504,10 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $childTable .= '&nbsp;&nbsp;<div class="form-inline col-xs-4"><label class="radio-inline"><input type="radio" name="periode" value="' . \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN . '">' . _('form_am') . '</label>';
         $childTable .= '<label class="radio-inline"><input type="radio" name="periode" value="' . \App\Models\Planning\Creneau::TYPE_PERIODE_APRES_MIDI . '">' . _('form_pm') . '</label>';
         $childTable .= '&nbsp;&nbsp; <button type="button" class="btn btn-default btn-sm" id="' .  $linkId . '"><i class="fa fa-plus link" ></i></button></div>';
-        $childTable .= '<span class="text-danger" id="' . $helperId . '"></span></td></tr>';
+        $childTable .= '<span class="text-danger" id="' . $helperId . '"></span></td><td></td></tr>';
         $childTable .= '<script type="text/javascript">generateTimePicker("' . $debutId . '");generateTimePicker("' . $finId . '");</script>';
         foreach ($jours as $id => $jour) {
-            $childTable .= '<tr data-id-jour=' . $id . '><td name="nom">' . $jour . '</td><td class="creneaux"></td></tr>';
+            $childTable .= '<tr data-id-jour=' . $id . '><td name="nom">' . $jour . '</td><td class="creneaux"></td><td></td></tr>';
         }
         $childTable .= '</tbody>';
         $options = [
@@ -3519,6 +3520,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             'typeHeureDebut'        => \App\Models\Planning\Creneau::TYPE_HEURE_DEBUT,
             'typeHeureFin'          => \App\Models\Planning\Creneau::TYPE_HEURE_FIN,
             'helperId'              => $helperId,
+            'dureeHebdoId'          => $dureeHebdoId,
             'nilInt'                => NIL_INT,
             'erreurFormatHeure'     => _('Format_heure_incorrect'),
             'erreurOptionManquante' => _('Option_manquante'),
