@@ -12,17 +12,20 @@ namespace App\Libraries\Calendrier;
  */
 class Facade
 {
-    public function __construct(array $employesATrouver, \includes\SQL $db, \DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
+    public function __construct(\App\Libraries\InjectableCreator $injectableCreator, array $employesATrouver, \DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
     {
-        $this->db = $db;
+        $this->injectableCreator = $injectableCreator;
         $this->dateDebut = $dateDebut;
         $this->dateFin = $dateFin;
         $this->fetchEvenements($employesATrouver);
     }
 
-    private $evenements;
+    private $injectableCreator;
 
-    private $db;
+    /**
+     * @var array Liste de résultats événements
+     */
+    private $evenements;
 
     /**
     * @var \DateTimeInterface
@@ -48,27 +51,46 @@ class Facade
      */
     private function fetchWeekends(array $employesATrouver)
     {
-        $weekends = (new Collection\Weekend($this->db, $this->dateDebut, $this->dateFin))->getListe();
-        sort($weekends);
-        foreach ($employesATrouver as $employe) {
-            foreach ($weekends as $date) {
-                $this->evenements[$employe]['dates'][$date]['evenements'][] = 'weekend';
+        $weekend = $this->injectableCreator->get(Collection\Weekend::class);
+        $weekendsListe = $weekend->getListe($this->dateDebut, $this->dateFin);
+        sort($weekendsListe);
+        foreach ($weekendsListe as $date) {
+            foreach ($employesATrouver as $employe) {
+                $this->setEvenementDate($employe, $date, 'weekend');
+                // pareil pour title
             }
         }
     }
 
-    private function isDayWeekend()
+    private function setEvenementDate($idEmploye, $date, $nomEvenement)
     {
+        if ($this->isEvenementWeekend($nomEvenement)) {
+            unset($this->evenements[$idEmploye]['dates'][$date]['evenements']);
+        }
+        if (!$this->isDayWeekend($idEmploye, $date)) {
+            $this->evenements[$idEmploye]['dates'][$date]['evenements'][] = $nomEvenement;
+        }
+    }
+
+    private function isDayWeekend($idEmploye, $date)
+    {
+        if (!isset($this->evenements[$idEmploye]) || !isset($this->evenements[$idEmploye]['dates'][$date])) {
+            return false;
+        }
+
+        return in_array('weekend', $this->evenements[$idEmploye]['dates'][$date]['evenements'], true);
         // pour vérifier l'élément absorbant
         // pareil pour ferie ?
-        // alors ne rien faire pour les autres événements
     }
 
-    private function isEvenementWeekend()
+    private function isEvenementWeekend($nomEvenement)
     {
-        // purger la liste, car élément absorbant
+        return 'weekend' === $nomEvenement;
     }
 
+    /**
+     * @TODO: utile ?
+     */
     public function getEmploye($idEmploye)
     {
         $this->verificationExistenceEmploye($idEmploye);
@@ -78,7 +100,7 @@ class Facade
     {
         $this->verificationExistenceEmploye($idEmploye);
         $this->verificationExistenceDateEmploye($idEmploye, $date);
-        return $this->evenements[$idEmploye]['dates'][$date]['types'];
+        return $this->evenements[$idEmploye]['dates'][$date]['evenements'];
     }
 
     public function getTitleDate($idEmploye, $date)
@@ -99,6 +121,14 @@ class Facade
         if (!isset($this->evenements[$idEmploye]['dates'][$date])) {
             throw new \DomainException('Date inexistante pour cet employé');
         }
+    }
+
+    /**
+     * @TODO : à but de test, à supprimer quand c'est terminé
+     */
+    public function getEvenements()
+    {
+        return $this->evenements;
     }
 
     /*

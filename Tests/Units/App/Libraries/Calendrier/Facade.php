@@ -13,37 +13,44 @@ use App\Libraries\Calendrier\Facade as _Facade;
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @see App\Libraries\Calendrier\Facade
  */
-class Facade  extends \Tests\Units\TestUnit
+class Facade extends \Tests\Units\TestUnit
 {
-    public function beforeTestMethod($method)
-    {
-        $this->dateDebut = new \DateTimeImmutable('2017-02-01');
-        $this->dateFin = new \DateTimeImmutable('2017-02-28');
-        $this->result = new \mock\MYSQLIResult();
-        $this->db = new \mock\includes\SQL();
-        $this->calling($this->db)->query = $this->result;
-    }
-
     private $dateDebut;
     private $dateFin;
     private $employes = ['Babar', 'Rintintin'];
-    private $result;
-    private $db;
+    private $injectableCreator;
+    private $weekend;
+
+    public function beforeTestMethod($method)
+    {
+        parent::beforeTestMethod($method);
+        $this->dateDebut = new \DateTimeImmutable('2017-02-01');
+        $this->dateFin = new \DateTimeImmutable('2017-02-28');
+        $this->mockGenerator->orphanize('__construct');
+        $this->injectableCreator = new \mock\App\Libraries\InjectableCreator();
+        $this->mockGenerator->orphanize('__construct');
+        $this->weekend = new \mock\App\Libraries\Calendrier\Collection\Weekend();
+        $this->calling($this->injectableCreator)->get = $this->weekend;
+    }
+
+    // testGetEvenementsDatePlusieurs
+
+    // pareil pour title, mais à ce stade, je ne sais pas encore ce que je veux
 
     public function testGetEvenementsDateEmployeInconnu()
     {
-        $this->getEvenementsExistenceKo();
+        $this->getEvenementsDateExistenceKo();
     }
 
     public function testGetEvenementsDateDateInconnue()
     {
-        $this->getEvenementsExistenceKo();
+        $this->getEvenementsDateExistenceKo();
     }
 
     private function getEvenementsDateExistenceKo()
     {
-        $this->calling($this->result)->fetch_assoc = ['conf_valeur' => 'TRUE'];
-        $calendrier = new _Facade($this->employes, $this->db, $this->dateDebut, $this->dateFin);
+        $this->calling($this->weekend)->getListe = [];
+        $calendrier = new _Facade($this->injectableCreator, $this->employes, $this->dateDebut, $this->dateFin);
 
         $this->exception(function () use ($calendrier) {
             $calendrier->getEvenementsDate('PetitLapin', '0000-00-00');
@@ -51,13 +58,18 @@ class Facade  extends \Tests\Units\TestUnit
     }
 
     /**
-     * provider
+     * Test de l'absorption des autres événements quand il y a un weekend
      */
-    public function testGetEvenementsDateWeekend()
+    public function testGetEvenenementsDateWeekend()
     {
-        $this->calling($this->result)->fetch_assoc = ['conf_valeur' => false];
-        $calendrier = new _Facade($this->employes, $this->db, $this->dateDebut, $this->dateFin);
+        // définition d'un autre événement avec weekend
+        $this->calling($this->weekend)->getListe = ['2017-02-12'];
+        $calendrier = new _Facade($this->injectableCreator, $this->employes, $this->dateDebut, $this->dateFin);
 
-        $this->array($calendrier->getEvenementsDate('Babar', '2017-02-05'))->isIdenticalTo(['weekend']);
+        $this->array($calendrier->getEvenementsDate('Babar', '2017-02-12'))
+            ->isIdenticalTo(['weekend']);
     }
+
+    // public function testGetEvenenementsDatePlusieurs()
+    // du coup le "plusieurs", pas avec weekend
 }
