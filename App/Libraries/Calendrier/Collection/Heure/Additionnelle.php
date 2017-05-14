@@ -32,12 +32,11 @@ class Additionnelle extends \App\Libraries\Calendrier\ACollection
      * @param array $utilisateursATrouver Liste d'utilisateurs dont on veut voir les heures additionnelles
      */
     public function __construct(
-        \DateTimeInterface $dateDebut,
-        \DateTimeInterface $dateFin,
+        \includes\SQL $db,
         array $utilisateursATrouver,
         $canVoirEnTransit
     ) {
-        parent::__construct($dateDebut, $dateFin);
+        parent::__construct($db);
         $this->utilisateursATrouver = $utilisateursATrouver;
         $this->canVoirEnTransit = (bool) $canVoirEnTransit;
     }
@@ -45,7 +44,7 @@ class Additionnelle extends \App\Libraries\Calendrier\ACollection
     /**
      * {@inheritDoc}
      */
-    public function getListe()
+    public function getListe(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
     {
         $heures = [];
         foreach ($this->getListeSQL($this->getListeId()) as $heure) {
@@ -97,8 +96,7 @@ class Additionnelle extends \App\Libraries\Calendrier\ACollection
                     AND duree > 0
                     AND login IN ("' . implode('","', $this->utilisateursATrouver) . '")
                     AND statut IN ("' . implode('","', $etats) . '")';
-        $sql = \includes\SQL::singleton();
-        $res = $sql->query($req);
+        $res = $this->db->query($req);
         while ($data = $res->fetch_array()) {
             $ids[] = (int) $data['id'];
         }
@@ -125,8 +123,7 @@ class Additionnelle extends \App\Libraries\Calendrier\ACollection
                     INNER JOIN conges_users CU ON (HA.login = CU.u_login)
                 WHERE id_heure IN (' . implode(',', $listeId) . ')
                 ORDER BY debut DESC, statut ASC';
-        $sql = \includes\SQL::singleton();
 
-        return $sql->query($req)->fetch_all(\MYSQLI_ASSOC);
+        return $this->db->query($req)->fetch_all(\MYSQLI_ASSOC);
     }
 }

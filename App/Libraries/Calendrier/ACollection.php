@@ -19,30 +19,21 @@ abstract class ACollection
     protected $db;
 
     /**
-     * @var \DateTimeInterface
-     */
-    protected $dateDebut;
-
-    /**
-     * @var \DateTimeInterface
-     */
-    protected $dateFin;
-
-    /**
      * @param \DateTimeInterface $dateDebut
      * @param \DateTimeInterface $dateFin
      */
-    public function __construct(\includes\SQL $db, \DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
+    public function __construct(\includes\SQL $db)
     {
         $this->db = $db;
-        $this->dateDebut = clone $dateDebut;
-        $this->dateFin = clone $dateFin;
     }
 
     /**
-     * Retourne la collection d'événements
+     * Retourne la collection d'événements relative à la période demandée
+     *
+     * @param \DateTimeInterface $dateDebut
+     * @param \DateTimeInterface $dateFin
      *
      * @return \CalendR\Event\EventInterface[]
      */
-    abstract public function getListe();
+    abstract public function getListe(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin);
 }

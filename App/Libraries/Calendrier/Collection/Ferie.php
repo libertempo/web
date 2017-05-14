@@ -20,7 +20,7 @@ class Ferie extends \App\Libraries\Calendrier\ACollection
     /**
      * {@inheritDoc}
      */
-    public function getListe()
+    public function getListe(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
     {
         $feries = [];
         $name = 'Jour férié';
@@ -48,13 +48,12 @@ class Ferie extends \App\Libraries\Calendrier\ACollection
      */
     private function getListeSQL()
     {
-        $sql = \includes\SQL::singleton();
         $req = 'SELECT *
                 FROM conges_jours_feries
                 WHERE jf_date >= "' . $this->dateDebut->format('Y-m-d') . '"
                     AND jf_date <= "' . $this->dateFin->format('Y-m-d') . '"
                 ORDER BY jf_date ASC';
 
-        return $sql->query($req)->fetch_all(\MYSQLI_ASSOC);
+        return $this->db->query($req)->fetch_all(\MYSQLI_ASSOC);
     }
 }

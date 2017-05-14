@@ -26,15 +26,15 @@ class Fermeture extends \App\Libraries\Calendrier\ACollection
      * {@inheritDoc}
      * @param array $groupesATrouver Liste des groupes dont on veut voir les fermetures
      */
-    public function __construct(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, array $groupesATrouver)
+    public function __construct(\includes\SQL $db, array $groupesATrouver)
     {
-        parent::__construct($dateDebut, $dateFin);
+        parent::__construct($db);
         $this->groupesATrouver = $groupesATrouver;
     }
     /**
      * {@inheritDoc}
      */
-    public function getListe()
+    public function getListe(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
     {
         $fermeture = [];
         $name = 'Fermeture';
@@ -66,7 +66,6 @@ class Fermeture extends \App\Libraries\Calendrier\ACollection
         if (!empty($this->groupesATrouver)) {
             $reqGroupe = 'AND jf_gid IN (' . implode(',', $this->groupesATrouver) . ')';
         }
-        $sql = \includes\SQL::singleton();
         $req = 'SELECT *
                 FROM conges_jours_fermeture
                 WHERE jf_date >= "' . $this->dateDebut->format('Y-m-d') . '"
@@ -74,6 +73,6 @@ class Fermeture extends \App\Libraries\Calendrier\ACollection
                     ' . $reqGroupe . '
                 ORDER BY jf_date ASC';
 
-        return $sql->query($req)->fetch_all(MYSQLI_ASSOC);
+        return $this->db->query($req)->fetch_all(MYSQLI_ASSOC);
     }
 }

@@ -32,12 +32,11 @@ class Conge extends \App\Libraries\Calendrier\ACollection
      * @param array $utilisateursATrouver Liste d'utilisateurs dont on veut voir les congés
      */
     public function __construct(
-        \DateTimeInterface $dateDebut,
-        \DateTimeInterface $dateFin,
+        \includes\SQL $db,
         array $utilisateursATrouver,
         $canVoirEnTransit
     ) {
-        parent::__construct($dateDebut, $dateFin);
+        parent::__construct($db);
         $this->utilisateursATrouver = $utilisateursATrouver;
         $this->canVoirEnTransit = (bool) $canVoirEnTransit;
     }
@@ -45,7 +44,7 @@ class Conge extends \App\Libraries\Calendrier\ACollection
     /**
      * {@inheritDoc}
      */
-    public function getListe()
+    public function getListe(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
     {
         $conges = [];
         foreach ($this->getListeSQL() as $jour) {
@@ -106,7 +105,6 @@ class Conge extends \App\Libraries\Calendrier\ACollection
      */
     private function getListeSQL()
     {
-        $sql = \includes\SQL::singleton();
         $etats[] = \App\Models\Conge::STATUT_VALIDATION_FINALE;
         if ($this->canVoirEnTransit) {
             $etats = array_merge($etats, [
@@ -122,7 +120,7 @@ class Conge extends \App\Libraries\Calendrier\ACollection
                     AND p_date_deb <= "' . $this->dateFin->format('Y-m-d') . '"
                     AND p_login IN ("' . implode('","', $this->utilisateursATrouver) . '")
                     AND p_etat IN ("' . implode('","', $etats) . '")';
-        $res = $sql->query($req);
+        $res = $this->db->query($req);
         $conges = [];
         while ($data = $res->fetch_assoc()) {
             $conges[] = $data;
