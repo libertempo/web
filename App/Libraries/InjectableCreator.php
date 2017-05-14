@@ -39,10 +39,7 @@ class InjectableCreator
 
         switch ($classname) {
             case 'App\Libraries\Calendrier\Collection\Weekend':
-                // TODO: à supprimer quand le mécanisme de l'injection sera opérationnel
-                $date = new \DateTimeImmutable('2015-02-13');
-
-                return new $classname($this->db, $date, $date);
+                return new $classname($this->db);
 
             default:
                 throw new \LogicException('Unknown « ' . $classname . ' »');

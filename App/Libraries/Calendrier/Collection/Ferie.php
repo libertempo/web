@@ -22,17 +22,9 @@ class Ferie extends \App\Libraries\Calendrier\ACollection
      */
     public function getListe(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
     {
-        $feries = [];
-        $name = 'Jour férié';
-        $title = null;
-        $class = 'ferie';
-        foreach ($this->getListeSQL() as $jour) {
-            $dateJour = new \DateTime($jour['jf_date']);
-            $uid = uniqid('ferie');
-            $feries[] = new Evenement\Commun($uid, $dateJour, $dateJour, $name, $title, $class);
-        }
-
-        return $feries;
+        return array_map(function ($res) {
+            return date('Y-m-d', strtotime($res['jf_date']));
+        }, $this->getListeSQL($dateDebut, $dateFin));
     }
 
 
@@ -46,12 +38,12 @@ class Ferie extends \App\Libraries\Calendrier\ACollection
      *
      * @return array
      */
-    private function getListeSQL()
+    private function getListeSQL(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
     {
-        $req = 'SELECT *
+        $req = 'SELECT jf_date
                 FROM conges_jours_feries
-                WHERE jf_date >= "' . $this->dateDebut->format('Y-m-d') . '"
-                    AND jf_date <= "' . $this->dateFin->format('Y-m-d') . '"
+                WHERE jf_date >= "' . $dateDebut->format('Y-m-d') . '"
+                    AND jf_date <= "' . $dateFin->format('Y-m-d') . '"
                 ORDER BY jf_date ASC';
 
         return $this->db->query($req)->fetch_all(\MYSQLI_ASSOC);

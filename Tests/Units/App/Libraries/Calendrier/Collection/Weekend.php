@@ -7,6 +7,7 @@ class Weekend extends \Tests\Units\TestUnit
 {
     public function beforeTestMethod($method)
     {
+        parent::beforeTestMethod($method);
         $this->result = new \mock\MYSQLIResult();
         $this->db = new \mock\includes\SQL();
         $this->calling($this->db)->query = $this->result;
