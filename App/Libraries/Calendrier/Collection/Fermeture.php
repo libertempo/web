@@ -4,49 +4,43 @@ namespace App\Libraries\Calendrier\Collection;
 use \App\Libraries\Calendrier\Evenement;
 
 /**
- * Collection d'événements de jours de fermeture de l'entreprise
+ * Collection de jours de fermeture de l'entreprise
  *
  * @since  1.9
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina
  *
- * Ne doit contacter que Evenement\Commun
- * Ne doit être contacté que par \App\Libraries\Calendrier\BusinessCollection
+ * Ne doit être contacté que par \App\Libraries\Calendrier\Facade
  *
  * @TODO supprimer le requétage à la migration vers le MVC REST
  */
-class Fermeture extends \App\Libraries\Calendrier\ACollection
+class Fermeture
 {
-    /**
-     * @var array $groupesATrouver Liste des groupes dont on veut voir les fermetures
-     */
-    private $groupesATrouver;
-
-    /**
-     * {@inheritDoc}
-     * @param array $groupesATrouver Liste des groupes dont on veut voir les fermetures
-     */
-    public function __construct(\includes\SQL $db, array $groupesATrouver)
+    public function __construct(\includes\SQL $db)
     {
-        parent::__construct($db);
-        $this->groupesATrouver = $groupesATrouver;
+        $this->db = $db;
     }
-    /**
-     * {@inheritDoc}
-     */
-    public function getListe(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
-    {
-        $fermeture = [];
-        $name = 'Fermeture';
-        $title = null;
-        $class = 'fermeture';
-        foreach ($this->getListeSQL() as $jour) {
-            $dateJour = new \DateTime($jour['jf_date']);
-            $uid = uniqid('fermeture');
-            $fermeture[] = new Evenement\Commun($uid, $dateJour, $dateJour, $name, $title, $class);
-        }
 
-        return $fermeture;
+    /**
+    * @var \includes\SQL Objet de DB
+    */
+    private $db;
+
+    /**
+      * Retourne la liste des jours fériés relative à la période demandée
+      *
+      * @param \DateTimeInterface $dateDebut
+      * @param \DateTimeInterface $dateFin
+      * @param array $groupesATrouver Liste des groupes dont on veut voir les fermetures
+      *
+      * @return array
+      */
+    public function getListe(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, array $groupesATrouver)
+    {
+        return array_map(function ($res) {
+            //TODO : se brancher sur le formatter (à modifier d'ailleurs)
+            return date('Y-m-d', strtotime($res['jf_date']));
+        }, $this->getListeSQL($dateDebut, $dateFin, $groupesATrouver));
     }
 
 
@@ -60,16 +54,16 @@ class Fermeture extends \App\Libraries\Calendrier\ACollection
      *
      * @return array
      */
-    private function getListeSQL()
+    private function getListeSQL(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, $groupesATrouver)
     {
         $reqGroupe = '';
-        if (!empty($this->groupesATrouver)) {
-            $reqGroupe = 'AND jf_gid IN (' . implode(',', $this->groupesATrouver) . ')';
+        if (!empty($groupesATrouver)) {
+            $reqGroupe = 'AND jf_gid IN (' . implode(',', $groupesATrouver) . ')';
         }
         $req = 'SELECT *
                 FROM conges_jours_fermeture
-                WHERE jf_date >= "' . $this->dateDebut->format('Y-m-d') . '"
-                    AND jf_date <= "' . $this->dateFin->format('Y-m-d') . '"
+                WHERE jf_date >= "' . $dateDebut->format('Y-m-d') . '"
+                    AND jf_date <= "' . $dateFin->format('Y-m-d') . '"
                     ' . $reqGroupe . '
                 ORDER BY jf_date ASC';
 

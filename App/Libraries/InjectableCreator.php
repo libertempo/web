@@ -39,6 +39,8 @@ class InjectableCreator
 
         switch ($classname) {
             case 'App\Libraries\Calendrier\Collection\Weekend':
+            case 'App\Libraries\Calendrier\Collection\Ferie':
+            case 'App\Libraries\Calendrier\Collection\Fermeture':
                 return new $classname($this->db);
 
             default:

@@ -662,23 +662,28 @@ table#calendrier {
     color : white;
 }
 
-tr.calendrier-employe {
-
-}
-
 td.calendrier-jour {
-    /*width: 2.5%;*/
     border: 1px solid #909090;
 }
 
-td.calendrier-jour.weekend {
+td.calendrier-jour.weekend, td.calendrier-jour.ferie {
     background: #AEAEAE;
+}
+
+td.calendrier-jour.fermeture {
+    background: #CEB6FF;
 }
 
 td.calendrier-jour.horsMois {
     background: #A9A9A9;
     opacity: 0.7;
 }
+
+
+
+
+
+/* ------ ANCIEN CALENDRIER ------ */
 
 #calendar-wrapper {
     padding : 15px;

@@ -49,6 +49,8 @@ class Facade
     private function fetchEvenements()
     {
         $this->fetchWeekends();
+        $this->fetchFeries();
+        $this->fetchFermeture();
         // construction de jours feries, fermeture, cp, weekend, ...
     }
 
@@ -66,6 +68,33 @@ class Facade
                 // pareil pour title
             }
         }
+    }
+
+    private function fetchFeries()
+    {
+        $feries = $this->injectableCreator->get(Collection\Ferie::class);
+        $feriesListe = $feries->getListe($this->dateDebut, $this->dateFin);
+        sort($feriesListe);
+        foreach ($feriesListe as $date) {
+            foreach ($this->employesATrouver as $employe) {
+                $this->setEvenementDate($employe, $date, 'ferie');
+                // pareil pour title
+            }
+        }
+    }
+
+    private function fetchFermeture()
+    {
+        $fermeture = $this->injectableCreator->get(Collection\Fermeture::class);
+        $fermetureListe = $fermeture->getListe($this->dateDebut, $this->dateFin, []);
+        sort($fermetureListe);
+        foreach ($fermetureListe as $date) {
+            foreach ($this->employesATrouver as $employe) {
+                $this->setEvenementDate($employe, $date, 'fermeture');
+                // pareil pour title
+            }
+        }
+
     }
 
     private function setEvenementDate($idEmploye, $date, $nomEvenement)
