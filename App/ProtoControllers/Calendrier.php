@@ -82,13 +82,13 @@ final class Calendrier
         $debut = new \DateTimeImmutable(date('Y') . '-' . date('m') . '-01');
         $fin = $debut->modify('+1 month');
         $a = new \App\Libraries\Calendrier\Facade(
+            new \App\Libraries\InjectableCreator(\includes\SQL::singleton()),
             ['E', '4'],
-            \includes\SQL::singleton(),
             $debut,
             $fin
         );
-        $a->fetchEvenements();
-        ddd($debut, $fin);
+        $b = $a->getEvenements();
+        ddd($b, $debut, $fin);
     }
 
     /*
@@ -96,7 +96,7 @@ final class Calendrier
      * le pattern facade ferait bien le job, mais il faut éviter au maximum a création massive d'objet
      *
      * je ne sais pas quelle structure de données faire pour avoir de la rapidité sur l'exécution,
-     * de la souplesse sur l'utilisation
+     * de la souplesse sur l'utilisation et de la fiabilité
      */
 
     /**
@@ -156,7 +156,7 @@ final class Calendrier
     }
 
     /**
-     * Y-a-t-il une recherche dans l'avion ?
+     * Y a-t-il une recherche dans l'avion ?
      *
      * @param array $get
      *
@@ -231,17 +231,11 @@ final class Calendrier
      */
     private function getCalendrier()
     {
-        $businessCollection = new \App\Libraries\Calendrier\BusinessCollection(
-            $this->dateDebut,
-            $this->dateFin,
-            $_SESSION['userlogin'],
-            $this->canSessionVoirEvenementEnTransit($_SESSION),
-            $_SESSION['config']['gestion_groupes'],
-            $this->idGroupe
-        );
-        $fournisseur = new \App\Libraries\Calendrier\Fournisseur($businessCollection);
+        // TODO: open bar sur les droits :O
+        $utilisateursATrouver = \App\ProtoControllers\Utilisateur::getListId();
+        $injectableCreator = new \App\Libraries\InjectableCreator(\includes\SQL::singleton());
+        $evenements = new \App\Libraries\Calendrier\Facade($injectableCreator, $utilisateursATrouver, $this->dateDebut, $this->dateFin);
         $calendar = new \CalendR\Calendar();
-        $calendar->getEventManager()->addProvider('provider', $fournisseur);
         /* Suis pas fan de la répartition par if, mais ça a l'air de faire le job */
         if (static::VUE_SEMAINE === $this->vue) {
             $this->setPeriodesSemaine();
@@ -250,7 +244,7 @@ final class Calendrier
         } else {
             $this->setPeriodesMois();
             $return = $this->getNavigation();
-            $return .= $this->getCalendrierMois($calendar);
+            $return .= $this->getCalendrierMois($calendar, $evenements);
         }
 
         return $return;
@@ -388,39 +382,57 @@ final class Calendrier
      *
      * @return string
      */
-    private function getCalendrierMois(\CalendR\Calendar $calendar)
+    private function getCalendrierMois(\CalendR\Calendar $calendar, \App\Libraries\Calendrier\Facade $evenements)
     {
+        //ddd($evenements);
         /* TODO: La lib ne gère pas les immutables, faire une PR */
         $month = $calendar->getMonth(new \DateTime($this->dateDebut->format('Y-m-d')));
-        $eventCollection = $calendar->getEvents($month);
 
         $return = '<h2>' . strftime('%B %G', $month->getBegin()->getTimestamp()) . '</h2>';
         $return .= '<div id="calendrierMois" class="calendrier">';
 
         /* Affichage de l'en-tête */
-        $pweek = $calendar->getWeek(2016, 1);
-        $return .= '<div class="semaine"><div class="semaineId"></div>';
-        foreach ($pweek as $day) {
-            $return .= '<div class="en-tete">' . strftime('%a', $day->getBegin()->getTimestamp()) . '</div>';
+        $return .= '<table id="calendrier">';
+        $return .= '<tr id="entete"><th></th>';
+        foreach ($month as $week) {
+            foreach ($week as $day) {
+                $today = ($day->isCurrent()) ? 'today' : '';
+                $jours[] = $day->getBegin()->format('Y-m-d');
+                $return .= '<th class="' . $today . '">' . $day->getBegin()->format('d') . '</th>';
+            }
         }
-        $return .= '</div>';
+        $return .= '</tr>';
+        foreach ($evenements->getEmployes() as $nom) {
+            $return .= '<tr class="calendrier-employe">';
+            $return .= '<td class="calendrier-nom">' . $nom . '</td>';
+            foreach ($jours as $jour) {
+                $classes = $this->getClassesJour($evenements, $nom, $jour);
+                // TODO: vrai title
+                $return .= '<td class="calendrier-jour ' . $classes . '" title="' . $jour . ' | ' . $nom . ' : <br>ee"></td>';
+            }
+            $return .= '</tr>';
+        }
+        $return .= '';
+        $return .= '</tr>';
+        $return .= '</table>';
 
         /* Affichage des événements du calendrier */
+        /*
         foreach ($month as $week) {
             $return .= '<div class="semaine"><div class="semaineId">' . $week . '</div>';
             foreach ($week as $day) {
-                /* Vérification que le jour est bien dans le mois */
+                /* Vérification que le jour est bien dans le mois *
                 $class = (!$month->includes($day)) ? 'horsMois' : '';
                 $today = ($day->isCurrent()) ? 'today' : '';
                 $return .= '<div class="celluleJour ' . $class . '">';
                 $return .= '<div class="jourId ' . $today . '">' . $day->getBegin()->format('j') . '</div>';
-                /* Tous les événements qui sont contenus dans des jours */
+                /* Tous les événements qui sont contenus dans des jours *
                 foreach ($eventCollection->find($day) as $event) {
                     $title = $event->getTitle();
                     $avecTitle = (!empty($title)) ? 'evenement-avec-title': '';
                     $return .= '<div class="' . $avecTitle . ' ' . $event->getClass() . '"
                     title="' . $title . '"><div class="contenu">' . $event->getName() . '</div>';
-                    /* Un événement qui se termine est forcément avant la fin de la journée */
+                    /* Un événement qui se termine est forcément avant la fin de la journée *
                     $return .= ($day->getEnd() < $event->getEnd()) ? '<div class="multijour"></div>' : '';
                     $return .= '</div>';
                 }
@@ -429,8 +441,20 @@ final class Calendrier
             $return .= '</div>';
         }
         $return .= '</div>';
+        */
 
         return $return;
+    }
+
+    private function getClassesJour(\App\Libraries\Calendrier\Facade $evenements, $nom, $jour)
+    {
+        $mois = $this->dateDebut->format('m');
+        $moisJour = date('m', strtotime($jour));
+        if ($mois !== $moisJour) {
+            return 'horsMois';
+        }
+
+        return implode(' ', $evenements->getEvenementsDate($nom, $jour));
     }
 
     /**

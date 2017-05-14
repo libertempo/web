@@ -17,12 +17,12 @@ class Weekend extends \Tests\Units\TestUnit
 
     public function testGetListeWeekendTravaille()
     {
-        $this->calling($this->result)->fetch_assoc = ['conf_valeur' => false];
+        $this->calling($this->result)->fetch_assoc = ['conf_valeur' => 'TRUE'];
         $date = new \DateTimeImmutable();
 
-        $weekend = new _Weekend($this->db, $date, $date);
+        $weekend = new _Weekend($this->db);
 
-        $this->array($weekend->getListe())->isEmpty();
+        $this->array($weekend->getListe($date, $date))->isEmpty();
     }
 
     public function testGetListeSamediNonTravailleSeulement()
@@ -32,7 +32,7 @@ class Weekend extends \Tests\Units\TestUnit
         $debut = new \DateTimeImmutable('2017-02-01');
         $fin = new \DateTimeImmutable('2017-02-28');
 
-        $weekend = new _Weekend($this->db, $debut, $fin);
+        $weekend = new _Weekend($this->db);
 
         $expected = [
             '2017-02-04',
@@ -41,7 +41,7 @@ class Weekend extends \Tests\Units\TestUnit
             '2017-02-25'
         ];
 
-        $this->array($weekend->getListe())->isIdenticalTo($expected);
+        $this->array($weekend->getListe($debut, $fin))->isIdenticalTo($expected);
     }
 
     public function testGetListeDimancheNonTravailleSeulement()
@@ -51,7 +51,7 @@ class Weekend extends \Tests\Units\TestUnit
         $debut = new \DateTimeImmutable('2017-02-01');
         $fin = new \DateTimeImmutable('2017-02-28');
 
-        $weekend = new _Weekend($this->db, $debut, $fin);
+        $weekend = new _Weekend($this->db);
 
         $expected = [
             '2017-02-05',
@@ -60,6 +60,6 @@ class Weekend extends \Tests\Units\TestUnit
             '2017-02-26'
         ];
 
-        $this->array($weekend->getListe())->isIdenticalTo($expected);
+        $this->array($weekend->getListe($debut, $fin))->isIdenticalTo($expected);
     }
 }

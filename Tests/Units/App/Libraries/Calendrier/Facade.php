@@ -33,21 +33,15 @@ class Facade extends \Tests\Units\TestUnit
         $this->calling($this->injectableCreator)->get = $this->weekend;
     }
 
-    // testGetEvenementsDatePlusieurs
+    public function testGetEmployes()
+    {
+        $this->calling($this->weekend)->getListe = [];
+        $calendrier = new _Facade($this->injectableCreator, $this->employes, $this->dateDebut, $this->dateFin);
 
-    // pareil pour title, mais à ce stade, je ne sais pas encore ce que je veux
+        $this->array($calendrier->getEmployes())->isIdenticalTo($this->employes);
+    }
 
     public function testGetEvenementsDateEmployeInconnu()
-    {
-        $this->getEvenementsDateExistenceKo();
-    }
-
-    public function testGetEvenementsDateDateInconnue()
-    {
-        $this->getEvenementsDateExistenceKo();
-    }
-
-    private function getEvenementsDateExistenceKo()
     {
         $this->calling($this->weekend)->getListe = [];
         $calendrier = new _Facade($this->injectableCreator, $this->employes, $this->dateDebut, $this->dateFin);
@@ -55,6 +49,15 @@ class Facade extends \Tests\Units\TestUnit
         $this->exception(function () use ($calendrier) {
             $calendrier->getEvenementsDate('PetitLapin', '0000-00-00');
         })->isInstanceOf('\DomainException');
+    }
+
+    public function testGetEvenementsDateDateInconnue()
+    {
+        $this->calling($this->weekend)->getListe = ['2017-02-12'];
+        $calendrier = new _Facade($this->injectableCreator, $this->employes, $this->dateDebut, $this->dateFin);
+
+        $this->array($calendrier->getEvenementsDate('Babar', '2017-02-10'))
+            ->isIdenticalTo([]);
     }
 
     /**
@@ -72,4 +75,6 @@ class Facade extends \Tests\Units\TestUnit
 
     // public function testGetEvenenementsDatePlusieurs()
     // du coup le "plusieurs", pas avec weekend
+    // pareil pour title, mais à ce stade, je ne sais pas encore ce que je veux
+
 }

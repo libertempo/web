@@ -657,13 +657,27 @@ table#calendrier {
 #calendrier #entete th {
     text-align: center;
 }
+#calendrier #entete th.today {
+    background: #009ec5;
+    color : white;
+}
+
 tr.calendrier-employe {
 
 }
 
 td.calendrier-jour {
-    width: 2.5%;
-    border: 1px solid black;
+    /*width: 2.5%;*/
+    border: 1px solid #909090;
+}
+
+td.calendrier-jour.weekend {
+    background: #AEAEAE;
+}
+
+td.calendrier-jour.horsMois {
+    background: #A9A9A9;
+    opacity: 0.7;
 }
 
 #calendar-wrapper {

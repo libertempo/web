@@ -30,9 +30,9 @@ class Weekend extends \App\Libraries\Calendrier\ACollection
     /**
      * {@inheritDoc}
      */
-    public function getListe()
+    public function getListe(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
     {
-        return array_merge($this->getListeSamedi(), $this->getListeDimanche());
+        return array_merge($this->getListeSamedi($dateDebut, $dateFin), $this->getListeDimanche($dateDebut, $dateFin));
     }
 
     /**
@@ -40,10 +40,10 @@ class Weekend extends \App\Libraries\Calendrier\ACollection
      *
      * @return array
      */
-    private function getListeSamedi()
+    private function getListeSamedi(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
     {
         if (!$this->isSamediTravaille()) {
-            return $this->getListeJourSemaine(static::JOUR_SAMEDI);
+            return $this->getListeJourSemaine(static::JOUR_SAMEDI, $dateDebut, $dateFin);
         }
 
         return [];
@@ -54,10 +54,10 @@ class Weekend extends \App\Libraries\Calendrier\ACollection
      *
      * @return array
      */
-    private function getListeDimanche()
+    private function getListeDimanche(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
     {
         if (!$this->isDimancheTravaille()) {
-            return $this->getListeJourSemaine(static::JOUR_DIMANCHE);
+            return $this->getListeJourSemaine(static::JOUR_DIMANCHE, $dateDebut, $dateFin);
         }
 
         return [];
@@ -70,10 +70,10 @@ class Weekend extends \App\Libraries\Calendrier\ACollection
      *
      * @return array
      */
-    private function getListeJourSemaine($jourSemaine)
+    private function getListeJourSemaine($jourSemaine, \DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
     {
-        $debut = $this->dateDebut->getTimestamp();
-        $fin = $this->dateFin->getTimestamp();
+        $debut = $dateDebut->getTimestamp();
+        $fin = $dateFin->getTimestamp();
         if ($debut > $fin) { // ce devrait être une assertion
             throw new \Exception('Date de début supérieure à date de fin');
         }

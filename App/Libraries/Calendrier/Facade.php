@@ -2,7 +2,7 @@
 namespace App\Libraries\Calendrier;
 
 /**
- * Construction du calendrier.
+ * Construction des événements du calendrier.
  * Application du design pattern Facade pour obfusquer la complexité du calendrier
  *
  * @link https://en.wikipedia.org/wiki/Facade_pattern
@@ -17,7 +17,8 @@ class Facade
         $this->injectableCreator = $injectableCreator;
         $this->dateDebut = $dateDebut;
         $this->dateFin = $dateFin;
-        $this->fetchEvenements($employesATrouver);
+        $this->employesATrouver = $employesATrouver;
+        $this->fetchEvenements();
     }
 
     private $injectableCreator;
@@ -30,32 +31,37 @@ class Facade
     /**
     * @var \DateTimeInterface
     */
-    protected $dateDebut;
+    private $dateDebut;
 
     /**
     * @var \DateTimeInterface
     */
-    protected $dateFin;
+    private $dateFin;
+
+    /**
+     * @var array
+     */
+    private $employesATrouver;
 
     /**
      * Recupère la liste ordonnée des événements des employés
      */
-    private function fetchEvenements(array $employesATrouver)
+    private function fetchEvenements()
     {
-        $this->fetchWeekends($employesATrouver);
+        $this->fetchWeekends();
         // construction de jours feries, fermeture, cp, weekend, ...
     }
 
     /**
      * Recupère la liste ordonnée des weekend des employés
      */
-    private function fetchWeekends(array $employesATrouver)
+    private function fetchWeekends()
     {
         $weekend = $this->injectableCreator->get(Collection\Weekend::class);
         $weekendsListe = $weekend->getListe($this->dateDebut, $this->dateFin);
         sort($weekendsListe);
         foreach ($weekendsListe as $date) {
-            foreach ($employesATrouver as $employe) {
+            foreach ($this->employesATrouver as $employe) {
                 $this->setEvenementDate($employe, $date, 'weekend');
                 // pareil pour title
             }
@@ -88,6 +94,11 @@ class Facade
         return 'weekend' === $nomEvenement;
     }
 
+    public function getEmployes()
+    {
+        return $this->employesATrouver;
+    }
+
     /**
      * @TODO: utile ?
      */
@@ -99,27 +110,25 @@ class Facade
     public function getEvenementsDate($idEmploye, $date)
     {
         $this->verificationExistenceEmploye($idEmploye);
-        $this->verificationExistenceDateEmploye($idEmploye, $date);
+        if (!isset($this->evenements[$idEmploye]['dates'][$date])) {
+            return [];
+        }
+
         return $this->evenements[$idEmploye]['dates'][$date]['evenements'];
     }
 
     public function getTitleDate($idEmploye, $date)
     {
         $this->verificationExistenceEmploye($idEmploye);
-        $this->verificationExistenceDateEmploye($idEmploye, $date);
+        if (!isset($this->evenements[$idEmploye]['dates'][$date])) {
+            return [];
+        }
     }
 
     private function verificationExistenceEmploye($idEmploye)
     {
         if (!isset($this->evenements[$idEmploye])) {
             throw new \DomainException('Employé inconnu');
-        }
-    }
-
-    private function verificationExistenceDateEmploye($idEmploye, $date)
-    {
-        if (!isset($this->evenements[$idEmploye]['dates'][$date])) {
-            throw new \DomainException('Date inexistante pour cet employé');
         }
     }
 

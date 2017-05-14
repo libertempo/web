@@ -7,6 +7,8 @@ namespace App\Libraries;
  * @since 1.10
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @see Tests\Units\App\Libraries\InjectableCreator
+ *
+ * Peut être contacté par tout ceux qui requierent un injectable
  */
 class InjectableCreator
 {
