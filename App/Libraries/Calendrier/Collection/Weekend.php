@@ -1,21 +1,18 @@
 <?php
 namespace App\Libraries\Calendrier\Collection;
 
-use \App\Libraries\Calendrier\Evenement;
-
 /**
- * Collection d'événements de weekend
+ * Collection de weekend
  *
  * @since  1.9
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina
  *
- * Ne doit contacter que Evenement\Commun
- * Ne doit être contacté que par \App\Libraries\Calendrier\BusinessCollection
+ * Ne doit être contacté que par \App\Libraries\Calendrier\Facade
  *
  * @TODO supprimer le requétage à la migration vers le MVC REST
  */
-class Weekend extends \App\Libraries\Calendrier\ACollection
+class Weekend
 {
     /**
      * @var int Identifiant du samedi dans les fonctions de date
@@ -27,8 +24,23 @@ class Weekend extends \App\Libraries\Calendrier\ACollection
      */
     const JOUR_DIMANCHE = 0;
 
+    public function __construct(\includes\SQL $db)
+    {
+        $this->db = $db;
+    }
+
     /**
-     * {@inheritDoc}
+    * @var \includes\SQL Objet de DB
+    */
+    private $db;
+
+    /**
+     * Retourne la liste des jours fériés relative à la période demandée
+     *
+     * @param \DateTimeInterface $dateDebut
+     * @param \DateTimeInterface $dateFin
+     *
+     * @return array
      */
     public function getListe(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
     {

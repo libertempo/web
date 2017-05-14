@@ -1,28 +1,41 @@
 <?php
 namespace App\Libraries\Calendrier\Collection;
 
-use \App\Libraries\Calendrier\Evenement;
-
 /**
- * Collection d'événements de jours fériés
+ * Collection de jours fériés
  *
  * @since  1.9
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina
  *
- * Ne doit contacter que Evenement\Commun
- * Ne doit être contacté que par \App\Libraries\Calendrier\BusinessCollection
+ * Ne doit être contacté que par \App\Libraries\Calendrier\Facade
  *
  * @TODO supprimer le requétage à la migration vers le MVC REST
  */
-class Ferie extends \App\Libraries\Calendrier\ACollection
+class Ferie
 {
+    public function __construct(\includes\SQL $db)
+    {
+        $this->db = $db;
+    }
+
     /**
-     * {@inheritDoc}
+    * @var \includes\SQL Objet de DB
+    */
+    private $db;
+
+    /**
+     * Retourne la liste des jours fériés relative à la période demandée
+     *
+     * @param \DateTimeInterface $dateDebut
+     * @param \DateTimeInterface $dateFin
+     *
+     * @return array
      */
     public function getListe(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
     {
         return array_map(function ($res) {
+            //TODO : se brancher sur le formatter (à modifier d'ailleurs)
             return date('Y-m-d', strtotime($res['jf_date']));
         }, $this->getListeSQL($dateDebut, $dateFin));
     }

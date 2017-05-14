@@ -15,7 +15,7 @@ use \App\Libraries\Calendrier\Evenement;
  *
  * @TODO supprimer le requétage à la migration vers le MVC REST
  */
-class Additionnelle extends \App\Libraries\Calendrier\ACollection
+class Additionnelle
 {
     /**
      * @var array $utilisateursATrouver Liste d'utilisateurs dont on veut voir les heures additionnelles
@@ -36,10 +36,15 @@ class Additionnelle extends \App\Libraries\Calendrier\ACollection
         array $utilisateursATrouver,
         $canVoirEnTransit
     ) {
-        parent::__construct($db);
+        $this->db = $db;
         $this->utilisateursATrouver = $utilisateursATrouver;
         $this->canVoirEnTransit = (bool) $canVoirEnTransit;
     }
+
+    /**
+    * @var \includes\SQL Objet de DB
+    */
+    private $db;
 
     /**
      * {@inheritDoc}

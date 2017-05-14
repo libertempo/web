@@ -4,7 +4,7 @@ namespace App\Libraries\Calendrier\Collection;
 use \App\Libraries\Calendrier\Evenement;
 
 /**
- * Collection d'événements de jours de congés
+ * Collection de jours de congés
  *
  * @since  1.9
  * @author Prytoegrian <prytoegrian@protonmail.com>
@@ -15,7 +15,7 @@ use \App\Libraries\Calendrier\Evenement;
  *
  * @TODO supprimer le requétage à la migration vers le MVC REST
  */
-class Conge extends \App\Libraries\Calendrier\ACollection
+class Conge
 {
     /**
      * @var array $utilisateursATrouver Liste d'utilisateurs dont on veut voir les congés
@@ -36,13 +36,23 @@ class Conge extends \App\Libraries\Calendrier\ACollection
         array $utilisateursATrouver,
         $canVoirEnTransit
     ) {
-        parent::__construct($db);
+        $this->db = $db;
         $this->utilisateursATrouver = $utilisateursATrouver;
         $this->canVoirEnTransit = (bool) $canVoirEnTransit;
     }
 
     /**
-     * {@inheritDoc}
+    * @var \includes\SQL Objet de DB
+    */
+    private $db;
+
+    /**
+     * Retourne la liste des jours fériés relative à la période demandée
+     *
+     * @param \DateTimeInterface $dateDebut
+     * @param \DateTimeInterface $dateFin
+     *
+     * @return array
      */
     public function getListe(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
     {
