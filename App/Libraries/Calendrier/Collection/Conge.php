@@ -111,7 +111,7 @@ class Conge
      * Retourne la liste des congés du stockage satisfaisant aux critères
      *
      * @return array
-     * @TODO actuellement, il y a un bug, les rôles autre que utilisateur n'ont as de valorisation de p_nb_jours en cas de fermeture
+     * @TODO actuellement, il y a un bug, les rôles autre que utilisateur n'ont pas de valorisation de p_nb_jours en cas de fermeture
      */
     private function getListeSQL()
     {
