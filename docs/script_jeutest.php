@@ -155,7 +155,18 @@ if (!empty($_POST)) {
 
     $randKeysNom = array_rand($listeNoms, $nombreUtilisateurs);
 
-    $sqlGroupe = "-- Contenu de la table `conges_groupe`\n\n";
+    $sqlGroupe = "-- purge des tables\n\n";
+    $sqlGroupe .= "DELETE FROM `conges_groupe`;\n";
+    $sqlGroupe .= "DELETE FROM `conges_groupe_users`;\n";
+    $sqlGroupe .= "DELETE FROM `conges_groupe_resp`;\n";
+    $sqlGroupe .= "DELETE FROM `conges_users`;\n";
+    $sqlGroupe .= "DELETE FROM `conges_solde_user`;\n";
+    $sqlGroupe .= "DELETE FROM `conges_periode`;\n";
+    $sqlGroupe .= "DELETE FROM `planning`;\n";
+    $sqlGroupe .= "DELETE FROM `planning_creneau`;\n";
+    $sqlGroupe .= "DELETE FROM `conges_jours_feries`;\n\n\n";
+    
+    $sqlGroupe .= "-- Contenu de la table `conges_groupe`\n\n";
     for ($i = 1; $i <= $nombreGroupes; $i++) {
         $doubleValidation = rand(0, 1);
         if ($doubleValidation) {

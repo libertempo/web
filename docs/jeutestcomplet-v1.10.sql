@@ -1,3 +1,15 @@
+-- purge des tables
+
+DELETE FROM `conges_groupe`;
+DELETE FROM `conges_groupe_users`;
+DELETE FROM `conges_groupe_resp`;
+DELETE FROM `conges_users`;
+DELETE FROM `conges_solde_user`;
+DELETE FROM `conges_periode`;
+DELETE FROM `planning`;
+DELETE FROM `planning_creneau`;
+DELETE FROM `conges_jours_feries`;
+
 -- Contenu de la table `conges_groupe`
 
 INSERT INTO `conges_groupe` VALUES (1, 'RH', 'Ressources Humaines', 'Y');
