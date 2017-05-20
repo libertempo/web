@@ -77,20 +77,6 @@ final class Calendrier
         }
     }
 
-    public function getAnother()
-    {
-        $debut = new \DateTimeImmutable(date('Y') . '-' . date('m') . '-01');
-        $fin = $debut->modify('+1 month');
-        $a = new \App\Libraries\Calendrier\Facade(
-            new \App\Libraries\InjectableCreator(\includes\SQL::singleton()),
-            ['E', '4'],
-            $debut,
-            $fin
-        );
-        $b = $a->getEvenements();
-        ddd($b, $debut, $fin);
-    }
-
     /*
      * récupérer les evenements qui sont associés à l'utilisateur
      * le pattern facade ferait bien le job, mais il faut éviter au maximum a création massive d'objet

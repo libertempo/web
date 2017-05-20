@@ -41,6 +41,7 @@ class InjectableCreator
             case 'App\Libraries\Calendrier\Collection\Weekend':
             case 'App\Libraries\Calendrier\Collection\Ferie':
             case 'App\Libraries\Calendrier\Collection\Fermeture':
+            case 'App\Libraries\Calendrier\Collection\Conge':
                 return new $classname($this->db);
 
             default:

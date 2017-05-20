@@ -51,7 +51,8 @@ class Facade
         $this->fetchWeekends();
         $this->fetchFeries();
         $this->fetchFermeture();
-        // construction de jours feries, fermeture, cp, weekend, ...
+        $this->fetchConges();
+        // construction de cp, heures...
     }
 
     /**
@@ -61,7 +62,6 @@ class Facade
     {
         $weekend = $this->injectableCreator->get(Collection\Weekend::class);
         $weekendsListe = $weekend->getListe($this->dateDebut, $this->dateFin);
-        sort($weekendsListe);
         foreach ($weekendsListe as $date) {
             foreach ($this->employesATrouver as $employe) {
                 $this->setEvenementDate($employe, $date, 'weekend');
@@ -74,7 +74,6 @@ class Facade
     {
         $feries = $this->injectableCreator->get(Collection\Ferie::class);
         $feriesListe = $feries->getListe($this->dateDebut, $this->dateFin);
-        sort($feriesListe);
         foreach ($feriesListe as $date) {
             foreach ($this->employesATrouver as $employe) {
                 $this->setEvenementDate($employe, $date, 'ferie');
@@ -87,14 +86,25 @@ class Facade
     {
         $fermeture = $this->injectableCreator->get(Collection\Fermeture::class);
         $fermetureListe = $fermeture->getListe($this->dateDebut, $this->dateFin, []);
-        sort($fermetureListe);
         foreach ($fermetureListe as $date) {
             foreach ($this->employesATrouver as $employe) {
                 $this->setEvenementDate($employe, $date, 'fermeture');
                 // pareil pour title
             }
         }
+    }
 
+    private function fetchConges()
+    {
+        $conge = $this->injectableCreator->get(Collection\Conge::class);
+        $congesListe = $conge->getListe($this->dateDebut, $this->dateFin, $this->employesATrouver, false);
+        foreach ($congesListe as $date) {
+            $suffixe = '*' !== $date['demiJournee']
+                ? $date['demiJournee']
+                : '';
+            $this->setEvenementDate($date['employe'], $date, 'conge_' . $suffixe . ' conge_' . $date['statut']);
+            // pareil pour title
+        }
     }
 
     private function setEvenementDate($idEmploye, $date, $nomEvenement)

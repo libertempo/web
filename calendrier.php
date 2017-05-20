@@ -7,7 +7,6 @@ include_once INCLUDE_PATH .'fonction.php';
 header_menu('', 'Libertempo : '._('calendrier_titre'));
 
 $calendar = new \CalendR\Calendar();
-//$a = (new \App\ProtoControllers\Calendrier())->getAnother();
 
 // recuperer les donnes et les injecter dans la vue ! @Timn
 //require_once VIEW_PATH . 'Calendrier.php';
