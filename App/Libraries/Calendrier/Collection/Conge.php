@@ -35,14 +35,13 @@ class Conge
         $conges = [];
         $canVoirEnTransit = (bool) $canVoirEnTransit;
         foreach ($this->getListeSQL($dateDebut, $dateFin, $utilisateursATrouver, $canVoirEnTransit) as $jour) {
-            $nomComplet = \App\ProtoControllers\Utilisateur::getNomComplet($jour['u_prenom'], $jour['u_nom'], true);
             /*
              * Par construction, les congés n'ont que le début et la fin.
              * On cherche donc les intersticiels...
              */
             foreach ($this->getListeJoursIntersticiels($jour['p_date_deb'], $jour['p_date_fin']) as $jourIntersticiel) {
                 $conges[$jourIntersticiel][] = [
-                    'employe' => $nomComplet,
+                    'employe' => $jour['p_login'],
                     'demiJournee' => '*',
                     'statut' => $jour['p_etat'],
                 ];
@@ -50,12 +49,12 @@ class Conge
 
             /* ... Puis on ajoute les bords */
             $conges[$jour['p_date_deb']][] = [
-                'employe' => $nomComplet,
+                'employe' => $jour['p_login'],
                 'demiJournee' => $jour['p_demi_jour_deb'],
                 'statut' => $jour['p_etat'],
             ];
             $conges[$jour['p_date_fin']][] = [
-                'employe' => $nomComplet,
+                'employe' => $jour['p_login'],
                 'demiJournee' => $jour['p_demi_jour_fin'],
                 'statut' => $jour['p_etat'],
             ];
@@ -110,7 +109,6 @@ class Conge
         $req = 'SELECT *
                 FROM conges_periode CP
                     INNER JOIN conges_type_absence CTA ON (CP.p_type = CTA.ta_id)
-                    INNER JOIN conges_users CU ON (CP.p_login = CU.u_login)
                 WHERE p_date_deb >= "' . $dateDebut->format('Y-m-d') . '"
                     AND p_date_deb <= "' . $dateFin->format('Y-m-d') . '"
                     AND p_login IN ("' . implode('","', $utilisateursATrouver) . '")

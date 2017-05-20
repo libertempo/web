@@ -35,8 +35,7 @@ class Conge extends \Tests\Units\TestUnit
     {
         $statut = \App\Models\Conge::STATUT_VALIDATION_FINALE;
         $this->calling($this->result)->fetch_all = [[
-            'u_prenom' => 'Perceval',
-            'u_nom' => 'Karadoc',
+            'p_login' => 'Perceval Karadoc',
             'p_demi_jour_deb' => 'pm',
             'p_demi_jour_fin' => 'am',
             'p_etat' => $statut,
@@ -46,7 +45,7 @@ class Conge extends \Tests\Units\TestUnit
 
         $conge = new _Conge($this->db, []);
 
-        $nomComplet = 'P. Karadoc';
+        $nomComplet = 'Perceval Karadoc';
         $expected = [
             '2017-02-12' => [[
                 'employe' => $nomComplet,

@@ -54,6 +54,7 @@ class Facade extends \Tests\Units\TestUnit
     public function testGetEvenementsDateDateInconnue()
     {
         $this->calling($this->weekend)->getListe = ['2017-02-12'];
+        $this->calling($this->weekend)->getListe[4] = [];
         $calendrier = new _Facade($this->injectableCreator, $this->employes, $this->dateDebut, $this->dateFin);
 
         $this->array($calendrier->getEvenementsDate('Babar', '2017-02-10'))
@@ -67,6 +68,7 @@ class Facade extends \Tests\Units\TestUnit
     {
         // définition d'un autre événement avec weekend
         $this->calling($this->weekend)->getListe = ['2017-02-12'];
+        $this->calling($this->weekend)->getListe[4] = [];
         $calendrier = new _Facade($this->injectableCreator, $this->employes, $this->dateDebut, $this->dateFin);
 
         $this->array($calendrier->getEvenementsDate('Babar', '2017-02-12'))

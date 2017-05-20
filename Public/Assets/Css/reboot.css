@@ -679,6 +679,19 @@ td.calendrier-jour.horsMois {
     opacity: 0.7;
 }
 
+td.calendrier-jour.conge {
+    background: #1ABC9C;
+}
+
+td.calendrier-jour.conge_am {
+    background: linear-gradient(90deg, rgba(255,0,0,0) 50%, #1ABC9C 50%);
+}
+
+td.calendrier-jour.conge_pm {
+    background: linear-gradient(90deg, #1ABC9C 50%, rgba(255,0,0,0) 50%);
+}
+
+
 
 
 

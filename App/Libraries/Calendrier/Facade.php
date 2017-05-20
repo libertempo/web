@@ -98,12 +98,14 @@ class Facade
     {
         $conge = $this->injectableCreator->get(Collection\Conge::class);
         $congesListe = $conge->getListe($this->dateDebut, $this->dateFin, $this->employesATrouver, false);
-        foreach ($congesListe as $date) {
-            $suffixe = '*' !== $date['demiJournee']
-                ? $date['demiJournee']
+        foreach ($congesListe as $jour => $evenementJours) {
+            foreach ($evenementJours as $evenement) {
+                $suffixe = '*' !== $evenement['demiJournee']
+                ? '_' . $evenement['demiJournee']
                 : '';
-            $this->setEvenementDate($date['employe'], $date, 'conge_' . $suffixe . ' conge_' . $date['statut']);
-            // pareil pour title
+                $this->setEvenementDate($evenement['employe'], $jour, 'conge' . $suffixe . ' conge_' . $evenement['statut']);
+                // pareil pour title
+            }
         }
     }
 
@@ -178,6 +180,8 @@ class Facade
     {
         return $this->evenements;
     }
+
+    // avoir un système de « get » pour tout récup à partir de là ? et on boucle à l'extérieur, plutôt que demander à chaque fois à la structure de données
 
     /*
      * $a = [
