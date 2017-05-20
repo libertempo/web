@@ -37,10 +37,13 @@ class Fermeture
       */
     public function getListe(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, array $groupesATrouver)
     {
-        return array_map(function ($res) {
+        $fermeture = array_map(function ($res) {
             //TODO : se brancher sur le formatter (à modifier d'ailleurs)
             return date('Y-m-d', strtotime($res['jf_date']));
         }, $this->getListeSQL($dateDebut, $dateFin, $groupesATrouver));
+        sort($fermeture);
+
+        return $fermeture;
     }
 
 

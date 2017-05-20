@@ -46,30 +46,33 @@ class Conge extends \Tests\Units\TestUnit
 
         $conge = new _Conge($this->db, []);
 
+        $nomComplet = 'P. Karadoc';
         $expected = [
-            'P. Karadoc' => [
-                [
-                    'jour' => '2017-02-13',
-                    'demiJournee' => '*',
-                    'statut' => $statut,
-                ], [
-                    'jour' => '2017-02-14',
-                    'demiJournee' => '*',
-                    'statut' => $statut,
-                ], [
-                    'jour' => '2017-02-12',
-                    'demiJournee' => 'pm',
-                    'statut' => $statut,
-                ], [
-                    'jour' => '2017-02-15',
-                    'demiJournee' => 'am',
-                    'statut' => $statut,
-                ],
-            ],
+            '2017-02-12' => [[
+                'employe' => $nomComplet,
+                'demiJournee' => 'pm',
+                'statut' => $statut,
+            ]],
+            '2017-02-13' => [[
+                'employe' => $nomComplet,
+                'demiJournee' => '*',
+                'statut' => $statut,
+            ]],
+            '2017-02-14' => [[
+                'employe' => $nomComplet,
+                'demiJournee' => '*',
+                'statut' => $statut,
+            ]],
+            '2017-02-15' => [[
+                'employe' => $nomComplet,
+                'demiJournee' => 'am',
+                'statut' => $statut,
+            ]],
         ];
         $date = new \DateTimeImmutable();
+        $liste = $conge->getListe($date, $date, [], false);
+        ksort($liste);
 
-        $this->array($conge->getListe($date, $date, [], false))
-            ->isIdenticalTo($expected);
+        $this->array($liste)->isIdenticalTo($expected);
     }
 }

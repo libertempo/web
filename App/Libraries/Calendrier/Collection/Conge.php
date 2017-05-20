@@ -41,25 +41,26 @@ class Conge
              * On cherche donc les intersticiels...
              */
             foreach ($this->getListeJoursIntersticiels($jour['p_date_deb'], $jour['p_date_fin']) as $jourIntersticiel) {
-                $conges[$nomComplet][] = [
-                    'jour' => $jourIntersticiel,
+                $conges[$jourIntersticiel][] = [
+                    'employe' => $nomComplet,
                     'demiJournee' => '*',
                     'statut' => $jour['p_etat'],
                 ];
             }
 
             /* ... Puis on ajoute les bords */
-            $conges[$nomComplet][] = [
-                'jour' => $jour['p_date_deb'],
+            $conges[$jour['p_date_deb']][] = [
+                'employe' => $nomComplet,
                 'demiJournee' => $jour['p_demi_jour_deb'],
                 'statut' => $jour['p_etat'],
             ];
-            $conges[$nomComplet][] = [
-                'jour' => $jour['p_date_fin'],
+            $conges[$jour['p_date_fin']][] = [
+                'employe' => $nomComplet,
                 'demiJournee' => $jour['p_demi_jour_fin'],
                 'statut' => $jour['p_etat'],
             ];
         }
+        ksort($conges);
 
         return $conges;
     }

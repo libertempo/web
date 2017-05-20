@@ -34,10 +34,13 @@ class Ferie
      */
     public function getListe(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
     {
-        return array_map(function ($res) {
+        $feries = array_map(function ($res) {
             //TODO : se brancher sur le formatter (à modifier d'ailleurs)
             return date('Y-m-d', strtotime($res['jf_date']));
         }, $this->getListeSQL($dateDebut, $dateFin));
+        sort($feries);
+
+        return $feries;
     }
 
 

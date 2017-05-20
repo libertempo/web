@@ -100,6 +100,7 @@ class Weekend
                 $debut = strtotime('+1 day', $debut);
             }
         }
+        sort($listeJourSemaine);
 
         return $listeJourSemaine;
     }
