@@ -50,12 +50,12 @@ class Conge
             /* ... Puis on ajoute les bords */
             $conges[$jour['p_date_deb']][] = [
                 'employe' => $jour['p_login'],
-                'demiJournee' => $jour['p_demi_jour_deb'],
+                'demiJournee' => ('pm' === $jour['p_demi_jour_deb']) ? $jour['p_demi_jour_deb'] : '*',
                 'statut' => $jour['p_etat'],
             ];
             $conges[$jour['p_date_fin']][] = [
                 'employe' => $jour['p_login'],
-                'demiJournee' => $jour['p_demi_jour_fin'],
+                'demiJournee' => ('am' === $jour['p_demi_jour_fin']) ? $jour['p_demi_jour_fin'] : '*',
                 'statut' => $jour['p_etat'],
             ];
         }
@@ -95,7 +95,6 @@ class Conge
      * @param bool $canVoirEnTransit Si l'utilisateur a la possiblité de voir les événements non encore validés
      *
      * @return array
-     * @TODO actuellement, il y a un bug, les rôles autre que utilisateur n'ont pas de valorisation de p_nb_jours en cas de fermeture
      */
     private function getListeSQL(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, array $utilisateursATrouver, $canVoirEnTransit)
     {
@@ -112,7 +111,8 @@ class Conge
                 WHERE p_date_deb >= "' . $dateDebut->format('Y-m-d') . '"
                     AND p_date_deb <= "' . $dateFin->format('Y-m-d') . '"
                     AND p_login IN ("' . implode('","', $utilisateursATrouver) . '")
-                    AND p_etat IN ("' . implode('","', $etats) . '")';
+                    AND p_etat IN ("' . implode('","', $etats) . '")
+                    AND p_fermeture_id IS NULL';
 
         return $this->db->query($req)->fetch_all(\MYSQLI_ASSOC);
     }
