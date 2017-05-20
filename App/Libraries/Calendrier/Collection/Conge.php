@@ -10,95 +10,74 @@ use \App\Libraries\Calendrier\Evenement;
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina
  *
- * Ne doit contacter que Evenement\Commun
- * Ne doit être contacté que par \App\Libraries\Calendrier\BusinessCollection
+ * Ne doit être contacté que par \App\Libraries\Calendrier\Facade
  *
  * @TODO supprimer le requétage à la migration vers le MVC REST
  */
 class Conge
 {
-    /**
-     * @var array $utilisateursATrouver Liste d'utilisateurs dont on veut voir les congés
-     */
-    private $utilisateursATrouver;
-
-    /**
-     * @var bool Si l'utilisateur a la possiblité de voir les événements non encore validés
-     */
-    private $canVoirEnTransit;
-
-    /**
-     * {@inheritDoc}
-     * @param array $utilisateursATrouver Liste d'utilisateurs dont on veut voir les congés
-     */
-    public function __construct(
-        \includes\SQL $db,
-        array $utilisateursATrouver,
-        $canVoirEnTransit
-    ) {
+    public function __construct(\includes\SQL $db) {
         $this->db = $db;
-        $this->utilisateursATrouver = $utilisateursATrouver;
-        $this->canVoirEnTransit = (bool) $canVoirEnTransit;
     }
-
-    /**
-    * @var \includes\SQL Objet de DB
-    */
-    private $db;
 
     /**
      * Retourne la liste des jours fériés relative à la période demandée
      *
      * @param \DateTimeInterface $dateDebut
      * @param \DateTimeInterface $dateFin
+     * @param array $utilisateursATrouver Liste d'utilisateurs dont on veut voir les congés
+     * @param bool $canVoirEnTransit Si l'utilisateur a la possiblité de voir les événements non encore validés
      *
      * @return array
      */
-    public function getListe(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
+    public function getListe(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, array $utilisateursATrouver, $canVoirEnTransit)
     {
         $conges = [];
-        foreach ($this->getListeSQL() as $jour) {
-            $class = $jour['ta_type'] . ' ' . $jour['ta_type'] . '_' . $jour['p_etat'];
-            /* TODO: unescape_string ? */
+        $canVoirEnTransit = (bool) $canVoirEnTransit;
+        foreach ($this->getListeSQL($dateDebut, $dateFin, $utilisateursATrouver, $canVoirEnTransit) as $jour) {
             $nomComplet = \App\ProtoControllers\Utilisateur::getNomComplet($jour['u_prenom'], $jour['u_nom'], true);
-            $name = $nomComplet . ' - ' . $jour['ta_libelle'];
-            if (\App\Models\Conge::STATUT_VALIDATION_FINALE !== $jour['p_etat']) {
-                $name = '[En demande]  ' . $name;
+            /*
+             * Par construction, les congés n'ont que le début et la fin.
+             * On cherche donc les intersticiels...
+             */
+            foreach ($this->getListeJoursIntersticiels($jour['p_date_deb'], $jour['p_date_fin']) as $jourIntersticiel) {
+                $conges[$nomComplet][] = [
+                    'jour' => $jourIntersticiel,
+                    'demiJournee' => '*',
+                    'statut' => $jour['p_etat'],
+                ];
             }
 
-            $dateDebut = $this->getDebutPeriode($jour['p_date_deb'], $jour['p_demi_jour_deb']);
-            $dateFin = $this->getFinPeriode($jour['p_date_fin'], $jour['p_demi_jour_fin']);
-
-            $title = '[' . $jour['ta_type'] . '] ' . $jour['ta_libelle'] . ' de ' . $nomComplet . ' du ' . $dateDebut['date']->format('d/m/Y') . ' ' . $dateDebut['creneau'] . ' au ' . $dateFin['date']->format('d/m/Y') . ' ' . $dateFin['creneau'];
-            $uid = uniqid('ferie');
-            $conges[] = new Evenement\Commun($uid, $dateDebut['date'], $dateFin['date'], $name, $title, $class);
+            /* ... Puis on ajoute les bords */
+            $conges[$nomComplet][] = [
+                'jour' => $jour['p_date_deb'],
+                'demiJournee' => $jour['p_demi_jour_deb'],
+                'statut' => $jour['p_etat'],
+            ];
+            $conges[$nomComplet][] = [
+                'jour' => $jour['p_date_fin'],
+                'demiJournee' => $jour['p_demi_jour_fin'],
+                'statut' => $jour['p_etat'],
+            ];
         }
 
         return $conges;
     }
 
-    private function getDebutPeriode($dateDebut, $demiJournee)
+    private function getListeJoursIntersticiels($debut, $fin)
     {
-        $debut = ('am' === $demiJournee)
-            ? $dateDebut
-            : $dateDebut . ' 11:59';
-        $creneau = ('am' === $demiJournee)
-            ? _('debut_matin')
-            : _('debut_apres-midi');
+        if ($debut === $fin || $debut > $fin) {
+            return [];
+        }
+        $debutComptage = strtotime('+1 day', strtotime($debut));
+        $finComptage = strtotime('-1 day', strtotime($fin));
+        $listeJours = [];
+        while ($debutComptage <= $finComptage) {
+            $listeJours[] = date('Y-m-d', $debutComptage);
+            $debutComptage = strtotime('+1 day', $debutComptage);
+        }
 
-        return ['date' => new \DateTime($debut), 'creneau' => $creneau];
-    }
-
-    private function getFinPeriode($dateFin, $demiJournee)
-    {
-        $fin = ('am' === $demiJournee)
-            ? $dateFin . ' 11:59'
-            : $dateFin . ' 23:59';
-        $creneau = ('am' === $demiJournee)
-            ? _('debut_apres-midi')
-            : _('fin_apres-midi');
-
-            return ['date' => new \DateTime($fin), 'creneau' => $creneau];
+        return $listeJours;
     }
 
 
@@ -110,13 +89,18 @@ class Conge
     /**
      * Retourne la liste des congés du stockage satisfaisant aux critères
      *
+     * @param \DateTimeInterface $dateDebut
+     * @param \DateTimeInterface $dateFin
+     * @param array $utilisateursATrouver Liste d'utilisateurs dont on veut voir les congés
+     * @param bool $canVoirEnTransit Si l'utilisateur a la possiblité de voir les événements non encore validés
+     *
      * @return array
      * @TODO actuellement, il y a un bug, les rôles autre que utilisateur n'ont pas de valorisation de p_nb_jours en cas de fermeture
      */
-    private function getListeSQL()
+    private function getListeSQL(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, array $utilisateursATrouver, $canVoirEnTransit)
     {
         $etats[] = \App\Models\Conge::STATUT_VALIDATION_FINALE;
-        if ($this->canVoirEnTransit) {
+        if ($canVoirEnTransit) {
             $etats = array_merge($etats, [
                 \App\Models\Conge::STATUT_DEMANDE,
                 \App\Models\Conge::STATUT_PREMIERE_VALIDATION
@@ -126,16 +110,11 @@ class Conge
                 FROM conges_periode CP
                     INNER JOIN conges_type_absence CTA ON (CP.p_type = CTA.ta_id)
                     INNER JOIN conges_users CU ON (CP.p_login = CU.u_login)
-                WHERE p_date_deb >= "' . $this->dateDebut->format('Y-m-d') . '"
-                    AND p_date_deb <= "' . $this->dateFin->format('Y-m-d') . '"
-                    AND p_login IN ("' . implode('","', $this->utilisateursATrouver) . '")
+                WHERE p_date_deb >= "' . $dateDebut->format('Y-m-d') . '"
+                    AND p_date_deb <= "' . $dateFin->format('Y-m-d') . '"
+                    AND p_login IN ("' . implode('","', $utilisateursATrouver) . '")
                     AND p_etat IN ("' . implode('","', $etats) . '")';
-        $res = $this->db->query($req);
-        $conges = [];
-        while ($data = $res->fetch_assoc()) {
-            $conges[] = $data;
-        }
 
-        return $conges;
+        return $this->db->query($req)->fetch_all(\MYSQLI_ASSOC);
     }
 }
