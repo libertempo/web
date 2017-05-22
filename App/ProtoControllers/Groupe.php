@@ -68,7 +68,7 @@ class Groupe
         $sql = \includes\SQL::singleton();
         $req="SELECT *
               FROM conges_groupe
-              WHERE g_gid=". $id;
+              WHERE g_gid=". (int) $id;
         $res = $sql->query($req);
         
         $infos = $res->fetch_array();

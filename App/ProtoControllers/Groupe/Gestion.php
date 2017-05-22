@@ -33,12 +33,8 @@ class Gestion {
                     }
                     break;
                 case 'PUT':
-                    if($this->isTraitable($data, $errorLst)){
-                        if(NIL_INT !== $this->put($data, $errorLst)){
-                            log_action(0, 'groupe', '', 'groupe ' . $data['nom'] . ' modifié');
-                        } else {
-                            return NIL_INT;
-                        }
+                    if($this->isTraitable($data, $errorLst) && NIL_INT !== $this->put($data, $errorLst)){
+                        log_action(0, 'groupe', '', 'groupe ' . $data['nom'] . ' modifié');
                     } else {
                         $return = NIL_INT;
                     }
@@ -85,16 +81,12 @@ class Gestion {
             $data['id'] = (int) $post['group'];
         }
 
-        if(!empty($post['checkbox_group_users'])){
-            foreach ($post['checkbox_group_users'] as $employe => $value){
-                $data['employes'][] = htmlentities($employe, ENT_QUOTES | ENT_HTML401);
-            }
+        foreach ($post['checkbox_group_users'] as $employe => $value){
+            $data['employes'][] = htmlentities($employe, ENT_QUOTES | ENT_HTML401);
         }
 
-        if(!empty($post['checkbox_group_resps'])){
-            foreach ($post['checkbox_group_resps'] as $resp => $value){
-                $data['responsables'][] = htmlentities($resp, ENT_QUOTES | ENT_HTML401);
-            }
+        foreach ($post['checkbox_group_resps'] as $resp => $value){
+            $data['responsables'][] = htmlentities($resp, ENT_QUOTES | ENT_HTML401);
         }
 
         if($_SESSION['config']['double_validation_conges'] && $post['new_group_double_valid'] == 'Y'){
@@ -161,9 +153,9 @@ class Gestion {
         $sql = \includes\SQL::singleton();
 
         $req = 'UPDATE conges_groupe 
-                    SET g_groupename = "' . $nom . '",
-                        g_comment = "' . $libelle . '",
-                        g_double_valid = "' . $isDoubleValidation . '"
+                    SET g_groupename = "' . \includes\SQL::quote($nom) . '",
+                        g_comment = "' . \includes\SQL::quote($libelle) . '",
+                        g_double_valid = "' . \includes\SQL::quote($isDoubleValidation) . '"
                     WHERE g_gid = ' . $idGroupe;
         return $sql->query($req);
     }
@@ -346,9 +338,9 @@ class Gestion {
 
         $req = 'INSERT INTO conges_groupe (g_gid,g_groupename,g_comment,g_double_valid)
                     VALUES  ("",
-                        "' . $nom . '",
-                        "' . $libelle . '",
-                        "' . $isDoubleValidation . '");';
+                        "' . \includes\SQL::quote($nom) . '",
+                        "' . \includes\SQL::quote($libelle) . '",
+                        "' . \includes\SQL::quote($isDoubleValidation) . '");';
 
         $query = $sql->query($req);
 
@@ -370,7 +362,7 @@ class Gestion {
         $req = '';
         foreach ($users as $user){
             $req .='INSERT INTO conges_groupe_users (gu_gid,gu_login) 
-                        VALUES (' . $idGroupe . ',"' . $user . '");';
+                        VALUES (' . $idGroupe . ',"' . \includes\SQL::quote($user) . '");';
         }
 
         $return = $sql->multi_query($req);
@@ -399,7 +391,7 @@ class Gestion {
         $req = '';
         foreach ($resps as $resp){
             $req .='INSERT INTO conges_groupe_resp (gr_gid,gr_login) 
-                        VALUES (' . $idGroupe . ',"' . $resp . '");';
+                        VALUES (' . $idGroupe . ',"' . \includes\SQL::quote($resp) . '");';
         }
 
         $return = $sql->multi_query($req);
@@ -429,7 +421,7 @@ class Gestion {
         $req = '';
         foreach ($grandResps as $grandResp){
             $req .='INSERT INTO conges_groupe_grd_resp (ggr_gid,ggr_login) 
-                        VALUES (' . $idGroupe . ',"' . $grandResp . '");';
+                        VALUES (' . $idGroupe . ',"' . \includes\SQL::quote($grandResp) . '");';
         }
 
         $return = $sql->multi_query($req);
@@ -535,6 +527,11 @@ class Gestion {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session = session_id();
         $message = '';
+        $infosGroupe = [
+            'nom' => '',
+            'doubleValidation' => '',
+            'comment' => ''
+        ];
 
         $errorsLst = [];
         if(!empty($_POST)){
@@ -563,11 +560,6 @@ class Gestion {
             }
         }
 
-        $infosGroupe = [
-            'nom' => '',
-            'doubleValidation' => '',
-            'comment' => ''
-        ];
         if(NIL_INT !== $idGroupe){
             $infosGroupe = \App\ProtoControllers\Groupe::getInfosGroupe($idGroupe);
         }
