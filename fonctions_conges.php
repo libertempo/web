@@ -34,7 +34,7 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
     } else {
         $return .= 'onChange="compter_jours();return false;" ';
     }
-    $return .= 'value="am" checked>&nbsp;' .  _('form_am');
+    $return .= 'value="am" checked>&nbsp;' .  _('form_debut_am') . '&nbsp;';
     $return .= '<input type="radio" name="new_demi_jour_deb" ';
 
     if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) ) {
@@ -43,7 +43,7 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
         $return .= 'onChange="compter_jours();return false;" ';
     }
 
-    $return .= 'value="pm">&nbsp;' .  _('form_pm');
+    $return .= 'value="pm">&nbsp;' .  _('form_debut_pm');
     $return .= '</div>';
     $return .= '</div>';
     $return .= '<div class="col-md-6">';
@@ -59,7 +59,7 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
     } else {
         $return .= 'onChange="compter_jours();return false;" ' ;
     }
-    $return .= 'value="am">&nbsp;'. _('form_am');
+    $return .= 'value="am">&nbsp;'. _('form_fin_am') . '&nbsp;';
     $return .= '<input class="form-controm" type="radio" name="new_demi_jour_fin" ';
 
     if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) ) {
@@ -68,7 +68,7 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
         $return .= 'onChange="compter_jours();return false;" ' ;
     }
 
-    $return .= 'value="pm" checked>&nbsp;' . _('form_pm');
+    $return .= 'value="pm" checked>&nbsp;' . _('form_fin_pm');
     $return .= '</div>';
     $return .= '</div>';
     $return .= '</div>';
