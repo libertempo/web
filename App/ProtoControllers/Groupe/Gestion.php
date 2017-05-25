@@ -81,11 +81,11 @@ class Gestion {
             $data['id'] = (int) $post['group'];
         }
 
-        foreach ($post['checkbox_group_users'] as $employe => $value){
+        foreach (array_keys($post['checkbox_group_users']) as $employe){
             $data['employes'][] = htmlentities($employe, ENT_QUOTES | ENT_HTML401);
         }
 
-        foreach ($post['checkbox_group_resps'] as $resp => $value){
+        foreach (array_keys($post['checkbox_group_resps']) as $resp){
             $data['responsables'][] = htmlentities($resp, ENT_QUOTES | ENT_HTML401);
         }
 
@@ -93,7 +93,7 @@ class Gestion {
             $data['isDoubleValidation'] = 'Y';
 
             if(!empty($post['checkbox_group_grand_resps'])){
-                foreach ($post['checkbox_group_grand_resps'] as $grandresp => $value){
+                foreach (array_keys($post['checkbox_group_grand_resps']) as $grandresp){
                     $data['grandResponsables'][] = htmlentities($grandresp, ENT_QUOTES | ENT_HTML401);
                 }
             }
