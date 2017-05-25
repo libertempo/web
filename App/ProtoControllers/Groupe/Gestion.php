@@ -33,7 +33,7 @@ class Gestion {
                     }
                     break;
                 case 'PUT':
-                    if($this->isTraitable($data, $errorLst) && NIL_INT !== $this->put($data, $errorLst)){
+                    if($this->isValid($data, $errorLst) && NIL_INT !== $this->put($data, $errorLst)){
                         log_action(0, 'groupe', '', 'groupe ' . $data['nom'] . ' modifié');
                     } else {
                         $return = NIL_INT;
@@ -41,7 +41,7 @@ class Gestion {
                     break;
             }
         } else {
-            if(!$this->isTraitable($data, $errorLst)){
+            if(!$this->isValid($data, $errorLst)){
                 $return = NIL_INT;
             } else {
                 if($this->isNomGroupeExist($data['nom'])){
@@ -910,7 +910,7 @@ class Gestion {
      * @param array $errors
      * @return boolean
      */
-    protected function isTraitable(array $data, array &$errors)
+    protected function isValid(array $data, array &$errors)
     {
 
         $return = true;
