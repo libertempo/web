@@ -41,12 +41,13 @@ class Groupe
       * @return array
       * @todo unescape_string ?
       */
-    public static function getListe($sql = "\includes\SQL::singleton")
+    public static function getListe()
     {
+        $sql = \includes\SQL::singleton();
         $req = 'SELECT *
                 FROM conges_groupe CG
                     INNER JOIN conges_groupe_users CGU ON (CG.g_gid = CGU.gu_gid)';
-        $result = $sql()->query($req);
+        $result = $sql->query($req);
 
         $groupes = [];
         while ($data = $result->fetch_assoc()) {
@@ -62,12 +63,13 @@ class Groupe
      * @param int $id
      * @return string
      */
-    public static function getInfosGroupe($id, $sql = "\includes\SQL::singleton") 
+    public static function getInfosGroupe($id) 
     {
+        $sql = \includes\SQL::singleton();
         $req="SELECT *
               FROM conges_groupe
               WHERE g_gid=". (int) $id;
-        $res = $sql()->query($req);
+        $res = $sql->query($req);
         
         $infos = $res->fetch_array();
 
@@ -93,11 +95,12 @@ class Groupe
      *
      * @return array
      */
-    public static function getListeId($sql = "\includes\SQL::singleton")
+    public static function getListeId()
     {
+        $sql = \includes\SQL::singleton();
         $req = 'SELECT g_gid
                 FROM conges_groupe';
-        $result = $sql()->query($req);
+        $result = $sql->query($req);
 
         $groupes = [];
         while ($data = $result->fetch_array()) {
@@ -115,15 +118,16 @@ class Groupe
      *
      * @return bool
      */
-    public static function isResponsableGroupe($resp, array $groupesId, $sql = "\includes\SQL::singleton")
+    public static function isResponsableGroupe($resp, array $groupesId)
     {
+        $sql = \includes\SQL::singleton();
         $req = 'SELECT EXISTS (
                     SELECT gr_gid
                     FROM conges_groupe_resp
                     WHERE gr_gid IN (\'' . implode(',', $groupesId) . '\')
                         AND gr_login = "' . \includes\SQL::quote($resp) . '"
                 )';
-        $query = $sql()->query($req);
+        $query = $sql->query($req);
 
         return 0 < (int) $query->fetch_array()[0];
     }
@@ -136,15 +140,16 @@ class Groupe
      *
      * @return bool
      */
-    public static function isGrandResponsableGroupe($resp, array $groupesId, $sql = "\includes\SQL::singleton")
+    public static function isGrandResponsableGroupe($resp, array $groupesId)
     {
+        $sql = \includes\SQL::singleton();
         $req = 'SELECT EXISTS (
                     SELECT ggr_gid
                     FROM conges_groupe_grd_resp
                     WHERE ggr_gid IN (\'' . implode(',', $groupesId) . '\')
                         AND ggr_login = "' . \includes\SQL::quote($resp) . '"
                 )';
-        $query = $sql()->query($req);
+        $query = $sql->query($req);
 
         return 0 < (int) $query->fetch_array()[0];
     }

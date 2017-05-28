@@ -47,8 +47,8 @@ class Utilisateur {
         $req = 'SELECT EXISTS (
                     SELECT gu_login
                     FROM `conges_groupe_users`
-                    WHERE gu_gid =' . $GroupeId . '
-                    AND gu_login ="' . $login . '"
+                    WHERE gu_gid =' . (int) $GroupeId . '
+                    AND gu_login ="' . \includes\SQL::quote($login) . '"
                 )';
         $query = $sql->query($req);
 

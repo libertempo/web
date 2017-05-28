@@ -250,7 +250,7 @@ class Gestion {
         $sql = \includes\SQL::singleton();
 
         $req = 'DELETE FROM conges_groupe_users 
-                    WHERE gu_gid = ' . $idGroupe . ';';
+                    WHERE gu_gid = ' . (int) $idGroupe . ';';
 
         return $sql->query($req);
     }
@@ -266,7 +266,7 @@ class Gestion {
         $sql = \includes\SQL::singleton();
 
         $req = 'DELETE FROM conges_groupe_resp 
-                    WHERE gr_gid = ' . $idGroupe . ';';
+                    WHERE gr_gid = ' . (int) $idGroupe . ';';
 
         return $sql->query($req);
     }
@@ -282,7 +282,7 @@ class Gestion {
         $sql = \includes\SQL::singleton();
 
         $req = 'DELETE FROM conges_groupe_grd_resp 
-                    WHERE ggr_gid = ' . $idGroupe . ';';
+                    WHERE ggr_gid = ' . (int) $idGroupe . ';';
 
         return $sql->query($req);
     }
@@ -391,7 +391,7 @@ class Gestion {
         $req = '';
         foreach ($resps as $resp){
             $req .='INSERT INTO conges_groupe_resp (gr_gid,gr_login) 
-                        VALUES (' . $idGroupe . ',"' . \includes\SQL::quote($resp) . '");';
+                        VALUES (' . (int) $idGroupe . ',"' . \includes\SQL::quote($resp) . '");';
         }
 
         $return = $sql->multi_query($req);
@@ -421,7 +421,7 @@ class Gestion {
         $req = '';
         foreach ($grandResps as $grandResp){
             $req .='INSERT INTO conges_groupe_grd_resp (ggr_gid,ggr_login) 
-                        VALUES (' . $idGroupe . ',"' . \includes\SQL::quote($grandResp) . '");';
+                        VALUES (' . (int) $idGroupe . ',"' . \includes\SQL::quote($grandResp) . '");';
         }
 
         $return = $sql->multi_query($req);
@@ -561,7 +561,7 @@ class Gestion {
         }
 
         if(NIL_INT !== $idGroupe){
-            $infosGroupe = \App\ProtoControllers\Groupe::getInfosGroupe($idGroupe);
+            $infosGroupe = \App\ProtoControllers\Groupe::getInfosGroupe($idGroupe, \includes\SQL::singleton());
         }
 
         $selectId = uniqid();
@@ -775,7 +775,7 @@ class Gestion {
         $return = '';
 
 
-        $infosGroupe = \App\ProtoControllers\Groupe::getInfosGroupe($idGroupe);
+        $infosGroupe = \App\ProtoControllers\Groupe::getInfosGroupe($idGroupe, \includes\SQL::singleton());
 
         $return .= '<form method="post" action="' . $PHP_SELF . '?session=' . $session . '&onglet=admin-group"  role="form">';
         $table = new \App\Libraries\Structure\Table();
@@ -976,7 +976,7 @@ class Gestion {
         $groupe = new \App\ProtoControllers\Groupe();
         $groupesIds = $groupe->getListeId();
         foreach ($groupesIds as $id){
-            $nomsGroupes[] = $groupe->getInfosGroupe($id)['nom'];
+            $nomsGroupes[] = $groupe->getInfosGroupe($id, \includes\SQL::singleton())['nom'];
         }
         return in_array($nomGroupe, $nomsGroupes);
     }
@@ -1050,7 +1050,6 @@ class Gestion {
                 if(\App\ProtoControllers\Responsable::isRespDeUtilisateur($employeResponsable, $responsable)){
                     $errors[] = $employeResponsable . _('est responsable de ') . $responsable . _(' dans un autre groupe');
                     return true;
-                    break;
                 }
             }
         }

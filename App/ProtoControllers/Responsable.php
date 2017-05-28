@@ -178,7 +178,7 @@ class Responsable
     public static function isRespDeUtilisateur($resp, $user) {
         return $resp != $user 
                 && (\App\ProtoControllers\Responsable::isRespDirect($resp, $user) 
-                || \App\ProtoControllers\Groupe::isResponsableGroupe($resp, \App\ProtoControllers\Utilisateur::getGroupesId($user)));
+                || \App\ProtoControllers\Groupe::isResponsableGroupe($resp, \App\ProtoControllers\Utilisateur::getGroupesId($user), \includes\SQL::singleton()));
     }
 
     /**
