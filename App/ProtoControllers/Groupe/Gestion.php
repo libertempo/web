@@ -488,7 +488,7 @@ class Gestion {
 
         $groupes = new \App\ProtoControllers\Groupe();
         $i = true;
-        foreach ($groupes->getListe() as $gid => $groupe){
+        foreach ($groupes->getListe(\includes\SQL::singleton()) as $gid => $groupe){
             $nbUtilisateursGroupe = count(\App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds([$gid]));
 
             $childTable .= '<tr class="' . ($i ? 'i' : 'p') . '">';

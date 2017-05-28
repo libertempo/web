@@ -41,9 +41,8 @@ class Groupe
       * @return array
       * @todo unescape_string ?
       */
-    public static function getListe()
+    public static function getListe(\includes\SQL $sql)
     {
-        $sql = \includes\SQL::singleton();
         $req = 'SELECT *
                 FROM conges_groupe CG
                     INNER JOIN conges_groupe_users CGU ON (CG.g_gid = CGU.gu_gid)';
@@ -63,9 +62,8 @@ class Groupe
      * @param int $id
      * @return string
      */
-    public static function getInfosGroupe($id) 
+    public static function getInfosGroupe($id, \includes\SQL $sql) 
     {
-        $sql = \includes\SQL::singleton();
         $req="SELECT *
               FROM conges_groupe
               WHERE g_gid=". (int) $id;
