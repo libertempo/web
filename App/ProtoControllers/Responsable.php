@@ -142,29 +142,25 @@ class Responsable
     }
 
     /**
-     * Retourne le login des responsables
+     * Retourne les infos des utilisateurs avec les droits responsables
      *
      * @param array $groupesId
      *
      * @return array
      */
-    public static function  getListResponsable($activeSeul = false)
+    public static function  getInfosResponsables($activeSeul = false)
     {
         $respLogin = [];
         $sql = \includes\SQL::singleton();
-        $req = 'SELECT u_login
+        $req = 'SELECT *
                 FROM conges_users
                 WHERE u_is_resp = "Y"';
         if($activeSeul){
             $req .= ' AND u_is_active = "Y"';
         }
         $query = $sql->query($req);
-
-        while ($data = $query->fetch_array()) {
-            $respLogin[] = $data['u_login'];
-        }
         
-        return $respLogin;
+        return $sql->query($req)->fetch_all(\MYSQLI_ASSOC);
     }
 
     /**

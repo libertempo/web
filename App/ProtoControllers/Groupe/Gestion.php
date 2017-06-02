@@ -15,7 +15,7 @@ class Gestion {
     protected function postHtmlCommon(array $post, array &$errorLst)
     {
         $user = $_SESSION['userlogin'];
-        $data = $this->dataModel2Db($post);
+        $data = $this->FormData2Array($post);
         $return = 1;
 
         if(!empty($post['_METHOD'])){
@@ -65,7 +65,7 @@ class Gestion {
      * @param array $post
      * @return array $data
      */
-    protected function dataModel2Db(array $post)
+    protected function FormData2Array(array $post)
     {
 
         $data = [
@@ -829,13 +829,13 @@ class Gestion {
     {
         $infoResponsables = [];
 
-        $respsLogin = \App\ProtoControllers\Responsable::getListResponsable(true);
-        foreach ($respsLogin as $login){
-            $donnees = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($login);
+        $infosResps = \App\ProtoControllers\Responsable::getInfosResponsables(true);
+        foreach ($infosResps as $infos){
+            $login = $infos['u_login'];
             $responsables[$login] = [
-                'nom' => $donnees['u_nom'],
-                'prenom' => $donnees['u_prenom'],
-                'login' => $donnees['u_login'],
+                'nom' => $infos['u_nom'],
+                'prenom' => $infos['u_prenom'],
+                'login' => $login,
                 'isDansGroupe' => false
             ];
 
@@ -858,18 +858,17 @@ class Gestion {
     {
         $infoResponsables = [];
 
-        $respsLogin = \App\ProtoControllers\Responsable::getListResponsable(true);
-        foreach ($respsLogin as $login){
-            $donnees = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($login);
-            $responsables[$login] = [
-                'nom' => $donnees['u_nom'],
-                'prenom' => $donnees['u_prenom'],
-                'login' => $donnees['u_login'],
+        $infosResps = \App\ProtoControllers\Responsable::getInfosResponsables(true);
+        foreach ($infosResps as $infos){
+            $responsables[$infos['u_login']] = [
+                'nom' => $infos['u_nom'],
+                'prenom' => $infos['u_prenom'],
+                'login' => $infos['u_login'],
                 'isDansGroupe' => false
             ];
 
             if(NIL_INT !== $idGroupe){
-                $responsables[$login]['isDansGroupe'] = \App\ProtoControllers\Groupe::isGrandResponsableGroupe($login, [$idGroupe]);
+                $responsables[$infos['u_login']]['isDansGroupe'] = \App\ProtoControllers\Groupe::isGrandResponsableGroupe($infos['u_login'], [$idGroupe]);
             }
         }
         return $responsables;
