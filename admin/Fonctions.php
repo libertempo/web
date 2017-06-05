@@ -1079,8 +1079,8 @@ class Fonctions
     public static function get_nb_users_du_groupe($group_id)
     {
 
-        $sql1='SELECT DISTINCT(cgu.gu_login) FROM conges_groupe_users AS cgu 
-                INNER JOIN conges_users AS cu ON (cu.u_login = cgu.gu_login) 
+        $sql1='SELECT DISTINCT(cgu.gu_login) FROM conges_groupe_users AS cgu
+                INNER JOIN conges_users AS cu ON (cu.u_login = cgu.gu_login)
                 WHERE cgu.gu_gid = '. \includes\SQL::quote($group_id).' AND cu.u_is_active != "N" ORDER BY cgu.gu_login ';
         $ReqLog1 = \includes\SQL::query($sql1);
         $nb_users = $ReqLog1->num_rows;
@@ -1750,7 +1750,7 @@ class Fonctions
     {
         $typeSauvegarde = 'all';
         $contentFile = static::getDataFile($typeSauvegarde);
-        $filename = BACKUP_PATH . 'php_conges_' . $typeSauvegarde .'_' . $previousVersion . '__' . $newVersion . '.sql'; // nom de migration
+        $filename = BACKUP_PATH . 'libertempo_' . $typeSauvegarde .'_' . $previousVersion . '__' . $newVersion . '.sql'; // nom de migration
 
         if (false === file_put_contents($filename, $contentFile)) {
             throw new \Exception('Échec de l\'écriture de la sauvegarde');
@@ -1767,7 +1767,7 @@ class Fonctions
     private static function getDataFile($typeSauvegarde)
     {
         $content = "#\n";
-        $content .= "# PHP_CONGES\n";
+        $content .= "# Libertempo\n";
         $content .= "#\n# DATE : " . date("d-m-Y H:i:s") . "\n";
         $content .= "#\n";
 
