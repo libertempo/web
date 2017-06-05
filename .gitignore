@@ -7,4 +7,4 @@ cfg/config_SMTP.php
 .idea/
 /nbproject/
 /dump/*.dump
-/backup/
+/backup/libertempo*

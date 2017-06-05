@@ -309,9 +309,15 @@ class Fonctions {
             } elseif($start_version == "1.9") {
                 $file_upgrade = 'upgrade_from_v1.9.php';
                 $new_installed_version = "1.10";
+            } else {
+                $file_upgrade = '';
+                $new_installed_version = $installed_version;
+                $etape = 3;
             }
             try {
-                \admin\Fonctions::sauvegardeAsFile($start_version, $new_installed_version);
+                if ($new_installed_version !== $start_version) {
+                    \admin\Fonctions::sauvegardeAsFile($start_version, $new_installed_version);
+                }
                 echo '<META HTTP-EQUIV=REFRESH CONTENT="0; URL=' . $file_upgrade . '?etape=' . $etape . '&version=' . $new_installed_version . '&lang=' . $lang . '">';
             } catch (\Exception $e) {
                 echo 'Abandon de la mise à jour : ' . $e->getMessage();
