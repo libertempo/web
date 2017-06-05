@@ -26,9 +26,9 @@ class Conge extends \Tests\Units\TestUnit
         $this->calling($this->result)->fetch_all = [];
         $date = new \DateTimeImmutable();
 
-        $cogne = new _Conge($this->db, []);
+        $conge = new _Conge($this->db);
 
-        $this->array($cogne->getListe($date, $date, [], false))->isEmpty();
+        $this->array($conge->getListe($date, $date, [], false))->isEmpty();
     }
 
     public function testGetListeFilled()
@@ -43,7 +43,7 @@ class Conge extends \Tests\Units\TestUnit
             'p_date_fin' => '2017-02-15'
         ],];
 
-        $conge = new _Conge($this->db, []);
+        $conge = new _Conge($this->db);
 
         $nomComplet = 'Perceval Karadoc';
         $expected = [

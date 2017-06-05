@@ -17,28 +17,8 @@ use \App\Libraries\Calendrier\Evenement;
  */
 class Additionnelle
 {
-    /**
-     * @var array $utilisateursATrouver Liste d'utilisateurs dont on veut voir les heures additionnelles
-     */
-    private $utilisateursATrouver;
-
-    /**
-     * @var bool Si l'utilisateur a la possiblité de voir les événements non encore validés
-     */
-    private $canVoirEnTransit;
-
-    /**
-     * {@inheritDoc}
-     * @param array $utilisateursATrouver Liste d'utilisateurs dont on veut voir les heures additionnelles
-     */
-    public function __construct(
-        \includes\SQL $db,
-        array $utilisateursATrouver,
-        $canVoirEnTransit
-    ) {
+    public function __construct(\includes\SQL $db) {
         $this->db = $db;
-        $this->utilisateursATrouver = $utilisateursATrouver;
-        $this->canVoirEnTransit = (bool) $canVoirEnTransit;
     }
 
     /**
@@ -47,27 +27,22 @@ class Additionnelle
     private $db;
 
     /**
-     * {@inheritDoc}
+     * Retourne la liste des heures additionnelles relative à la période demandée
+     *
+     * @param \DateTimeInterface $dateDebut
+     * @param \DateTimeInterface $dateFin
+     * @param array $utilisateursATrouver Liste d'utilisateurs dont on veut voir les heures
+     * @param bool $canVoirEnTransit Si l'utilisateur a la possiblité de voir les événements non encore validés
+     *
+     * @return array
      */
-    public function getListe(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
+    public function getListe(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, array $utilisateursATrouver, $canVoirEnTransit)
     {
         $heures = [];
-        foreach ($this->getListeSQL($this->getListeId()) as $heure) {
-            $class = 'heure heure_' . $heure['statut'];
-            $nomComplet = \App\ProtoControllers\Utilisateur::getNomComplet($heure['u_prenom'],  $heure['u_nom'], true);
-            $name = $nomComplet . ' - Heure(s) additionnelle(s)';
-            if (in_array($heure['statut'],[\App\Models\AHeure::STATUT_DEMANDE,\App\Models\AHeure::STATUT_PREMIERE_VALIDATION])) {
-                $name = '[En demande]  ' . $name;
-            }
-            $dateDebut = new \DateTime();
-            $dateDebut->setTimestamp($heure['debut']);
-            $dateFin = new \DateTime();
-            $dateFin->setTimestamp($heure['fin']);
-            $statut = ' statut_' . $heure['statut'];
-
-            $title = 'Heure(s) additionnelle(s) de ' . $nomComplet . ' le ' . $dateDebut->format('d/m/Y') . ' de ' . $dateDebut->format('H\:i') . ' à ' . $dateFin->format('H\:i');
-            $uid = uniqid('additionnelle');
-            $heures[] = new Evenement\Commun($uid, $dateDebut, $dateFin, $name, $title, $class);
+        $canVoirEnTransit = (bool) $canVoirEnTransit;
+        foreach ($this->getListeSQL($this->getListeId($dateDebut, $dateFin, $utilisateursATrouver, $canVoirEnTransit)) as $heure) {
+            ddd($heure);
+            $heures[] = ';';
         }
 
         return $heures;
@@ -84,11 +59,11 @@ class Additionnelle
      *
      * @return array
      */
-    private function getListeId()
+    private function getListeId(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, array $utilisateursATrouver, $canVoirEnTransit)
     {
         $ids = [];
         $etats[] = \App\Models\AHeure::STATUT_VALIDATION_FINALE;
-        if ($this->canVoirEnTransit) {
+        if ($canVoirEnTransit) {
             $etats = array_merge($etats, [
                 \App\Models\AHeure::STATUT_DEMANDE,
                 \App\Models\AHeure::STATUT_PREMIERE_VALIDATION
@@ -96,10 +71,10 @@ class Additionnelle
         }
         $req = 'SELECT id_heure AS id
                 FROM heure_additionnelle
-                WHERE debut >= "' . $this->dateDebut->getTimestamp() . '"
-                    AND debut <= "' . $this->dateFin->getTimestamp() . '"
+                WHERE debut >= "' . $dateDebut->getTimestamp() . '"
+                    AND debut <= "' . $dateFin->getTimestamp() . '"
                     AND duree > 0
-                    AND login IN ("' . implode('","', $this->utilisateursATrouver) . '")
+                    AND login IN ("' . implode('","', $utilisateursATrouver) . '")
                     AND statut IN ("' . implode('","', $etats) . '")';
         $res = $this->db->query($req);
         while ($data = $res->fetch_array()) {
@@ -125,7 +100,6 @@ class Additionnelle
         $listeId = array_map('intval', $listeId);
         $req = 'SELECT *
                 FROM heure_additionnelle HA
-                    INNER JOIN conges_users CU ON (HA.login = CU.u_login)
                 WHERE id_heure IN (' . implode(',', $listeId) . ')
                 ORDER BY debut DESC, statut ASC';
 

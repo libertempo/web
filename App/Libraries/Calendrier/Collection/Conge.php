@@ -21,7 +21,12 @@ class Conge
     }
 
     /**
-     * Retourne la liste des jours fériés relative à la période demandée
+    * @var \includes\SQL Objet de DB
+    */
+    private $db;
+
+    /**
+     * Retourne la liste des congés relative à la période demandée
      *
      * @param \DateTimeInterface $dateDebut
      * @param \DateTimeInterface $dateFin
