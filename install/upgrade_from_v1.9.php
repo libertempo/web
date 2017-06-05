@@ -51,4 +51,4 @@ $del_config_db="DELETE FROM conges_config WHERE conf_nom = 'disable_saise_champ_
 $res_del_config_from_db=\includes\SQL::query($del_config_db);
 
 // on renvoit à la page mise_a_jour.php (là d'ou on vient)
-echo "<a href=\"mise_a_jour.php?etape=3&version=$version&lang=$lang\">upgrade_from_v1.9  OK</a><br>\n";
+echo "Migration depuis v1.9 effectuée. <a href=\"mise_a_jour.php?etape=2&version=$version&lang=$lang\">Continuer.</a><br>\n";
