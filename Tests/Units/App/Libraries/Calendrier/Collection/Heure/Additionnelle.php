@@ -31,18 +31,18 @@ class Additionnelle extends \Tests\Units\TestUnit
 
     public function testGetListeFilled()
     {
-        $statut = \App\Models\AHeure::STATUT_VALIDATION_FINALE;
-        $this->calling($this->result)->fetch_all = [[
+        $this->calling($this->result)->fetch_all[1] = [['id' => 3]];
+        $this->calling($this->result)->fetch_all[2] = [[
             'login' => 'Provencal le Gaulois',
-            'debut' => 11912929182,
-            'fin' =>   11909128919,
+            'debut' => 1191929182,
+            'fin' =>   1199128919,
         ],];
 
         $heures = new _Additionnelle($this->db);
 
         $nomComplet = 'Provencal le Gaulois';
         $expected = [
-            '2017-02-12' => [[
+            '2007-10-09' => [[
                 'employe' => $nomComplet,
             ]],
         ];

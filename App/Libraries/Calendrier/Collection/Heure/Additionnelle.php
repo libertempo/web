@@ -1,8 +1,6 @@
 <?php
 namespace App\Libraries\Calendrier\Collection\Heure;
 
-use \App\Libraries\Calendrier\Evenement;
-
 /**
  * Collection d'événements des heures additionnelles
  *
@@ -10,9 +8,7 @@ use \App\Libraries\Calendrier\Evenement;
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina
  *
- * Ne doit contacter que Evenement\Commun
- * Ne doit être contacté que par \App\Libraries\Calendrier\BusinessCollection
- *
+ * Ne doit être contacté que par \App\Libraries\Calendrier\Facade
  * @TODO supprimer le requétage à la migration vers le MVC REST
  */
 class Additionnelle
@@ -41,8 +37,10 @@ class Additionnelle
         $heures = [];
         $canVoirEnTransit = (bool) $canVoirEnTransit;
         foreach ($this->getListeSQL($this->getListeId($dateDebut, $dateFin, $utilisateursATrouver, $canVoirEnTransit)) as $heure) {
-            ddd($heure);
-            $heures[] = ';';
+            $date = date('Y-m-d', $heure['debut']);
+            $heures[$date][] = [
+                'employe' => $heure['login'],
+            ];
         }
 
         return $heures;
@@ -77,7 +75,7 @@ class Additionnelle
                     AND login IN ("' . implode('","', $utilisateursATrouver) . '")
                     AND statut IN ("' . implode('","', $etats) . '")';
         $res = $this->db->query($req);
-        while ($data = $res->fetch_array()) {
+        foreach ($res->fetch_all(\MYSQLI_ASSOC) as $data) {
             $ids[] = (int) $data['id'];
         }
 

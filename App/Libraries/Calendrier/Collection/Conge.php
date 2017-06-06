@@ -1,8 +1,6 @@
 <?php
 namespace App\Libraries\Calendrier\Collection;
 
-use \App\Libraries\Calendrier\Evenement;
-
 /**
  * Collection de jours de congés
  *
@@ -11,7 +9,6 @@ use \App\Libraries\Calendrier\Evenement;
  * @author Wouldsmina
  *
  * Ne doit être contacté que par \App\Libraries\Calendrier\Facade
- *
  * @TODO supprimer le requétage à la migration vers le MVC REST
  */
 class Conge

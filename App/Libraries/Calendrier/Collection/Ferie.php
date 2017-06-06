@@ -9,7 +9,6 @@ namespace App\Libraries\Calendrier\Collection;
  * @author Wouldsmina
  *
  * Ne doit être contacté que par \App\Libraries\Calendrier\Facade
- *
  * @TODO supprimer le requétage à la migration vers le MVC REST
  */
 class Ferie
