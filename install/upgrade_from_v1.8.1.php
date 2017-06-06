@@ -143,4 +143,4 @@ $sql->query($reqInsert);
 $sql->getPdoObj()->commit();
 
 // on renvoit à la page mise_a_jour.php (là d'ou on vient)
-echo "<a href=\"mise_a_jour.php?etape=2&version=$version&lang=$lang\">upgrade_from_v1.8.1  OK</a><br>\n";
+echo "Migration depuis v1.8.1 effectuée. <a href=\"mise_a_jour.php?etape=2&version=$version&lang=$lang\">Continuer.</a><br>\n";
