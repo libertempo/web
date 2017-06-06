@@ -2687,6 +2687,7 @@ class Fonctions
             $current_login = trim($current_login);
             // on enleve les quotes qui ont été ajoutées lors de la creation de la liste
             $current_login = trim($current_login, "\'");
+            $current_login = trim($current_login, "\"");
             $comment="";
             if(verif_periode_chevauche_periode_user($date_debut, $date_fin, $current_login, $num_current_periode, $tab_periode_calcul, $comment))
                 return TRUE;
@@ -2720,6 +2721,7 @@ class Fonctions
             $current_login = trim($current_login);
             // on enleve les quotes qui ont été ajoutées lors de la creation de la liste
             $current_login = trim($current_login, "\'");
+            $current_login = trim($current_login, "\"");
 
             // on recupère les infos de la periode ....
             $sql_credit='SELECT p_num, p_nb_jours, p_type FROM conges_periode WHERE p_login="'. \includes\SQL::quote($current_login).'" AND p_fermeture_id="' . \includes\SQL::quote($fermeture_id) .'" AND p_etat=\'ok\'';
@@ -2815,6 +2817,7 @@ class Fonctions
             $current_login = trim($current_login);
             // on enleve les quotes qui ont été ajoutées lors de la creation de la liste
             $current_login = trim($current_login, "\'");
+            $current_login = trim($current_login, "\"");
 
             if (is_active($current_login)) {
                 // on compte le nb de jour à enlever au user (par periode et au total)
