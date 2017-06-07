@@ -40,6 +40,7 @@ class Additionnelle
             $date = date('Y-m-d', $heure['debut']);
             $heures[$date][] = [
                 'employe' => $heure['login'],
+                'statut' => $heure['statut']
             ];
         }
 

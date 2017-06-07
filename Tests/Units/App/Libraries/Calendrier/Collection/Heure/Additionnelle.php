@@ -36,6 +36,7 @@ class Additionnelle extends \Tests\Units\TestUnit
             'login' => 'Provencal le Gaulois',
             'debut' => 1191929182,
             'fin' =>   1199128919,
+            'statut' => \App\Models\AHeure::STATUT_VALIDATION_FINALE,
         ],];
 
         $heures = new _Additionnelle($this->db);
@@ -44,6 +45,7 @@ class Additionnelle extends \Tests\Units\TestUnit
         $expected = [
             '2007-10-09' => [[
                 'employe' => $nomComplet,
+                'statut' => \App\Models\AHeure::STATUT_VALIDATION_FINALE,
             ]],
         ];
         $date = new \DateTimeImmutable();
