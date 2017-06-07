@@ -26,6 +26,7 @@ class Fonctions
         $return .= '<form action="' . $PHP_SELF . '?session=' . $session. '&onglet=admin-group-users" method="POST">';
         $return .= '<input type="submit" value="' . _('form_retour') . '">';
         $return .= '</form>';
+
         return $return;
     }
 
@@ -436,96 +437,13 @@ class Fonctions
     // recup de la structure d'une table sous forme de CREATE ...
     public static function get_table_structure($table)
     {
-        $chaine_drop="DROP TABLE IF EXISTS  `$table` ;\n";
-        $chaine_create = "CREATE TABLE `$table` ( ";
+        $drop = "DROP TABLE IF EXISTS  `$table` ;\n";
 
         // description des champs :
-        $sql_champs='SHOW FIELDS FROM '. \includes\SQL::quote($table);
-        $ReqLog_champs = \includes\SQL::query($sql_champs) ;
-        $count_champs=$ReqLog_champs->num_rows;
-        $i=0;
-        while ($resultat_champs = $ReqLog_champs->fetch_array())
-        {
-            $sql_field=$resultat_champs['Field'];
-            $sql_type=$resultat_champs['Type'];
-            $sql_null=$resultat_champs['Null'];
-            $sql_key=$resultat_champs['Key'];
-            $sql_default=$resultat_champs['Default'];
-            $sql_extra=$resultat_champs['Extra'];
-
-            $chaine_create=$chaine_create." `$sql_field` $sql_type ";
-            if($sql_null != "YES")
-                $chaine_create=$chaine_create." NOT NULL ";
-            if(!empty($sql_default))
-            {
-                if($sql_default=="CURRENT_TIMESTAMP")
-                    $chaine_create=$chaine_create." default $sql_default ";        // pas de quotes !
-                else
-                    $chaine_create=$chaine_create." default '$sql_default' ";
-            }
-            if(!empty($sql_extra))
-                $chaine_create=$chaine_create." $sql_extra ";
-            if($i<$count_champs-1)
-                $chaine_create=$chaine_create.",";
-            $i++;
-        }
-
-        // description des index :
-        $sql_index = 'SHOW KEYS FROM '. \includes\SQL::quote($table).'';
-        $ReqLog_index = \includes\SQL::query($sql_index) ;
-        $count_index=$ReqLog_index->num_rows;
-        $i=0;
-
-        // il faut faire une liste pour prendre les PRIMARY, le nom de la colonne et
-        // genérer un PRIMARY KEY ('key1'), PRIMARY KEY ('key2', ...)
-        // puis on regarde ceux qui ne sont pas PRIMARY et on regarde s'ils sont UNIQUE ou pas et
-        // on génére une liste= UNIQUE 'key1' ('key1') , 'key2' ('key2') , ....
-        // ou une liste= KEY key1' ('key1') , 'key2' ('key2') , ....
-        $list_primary="";
-        $list_unique="";
-        $list_key="";
-        while ($resultat_index = $ReqLog_index->fetch_array())
-        {
-            $sql_key_name=$resultat_index['Key_name'];
-            $sql_column_name=$resultat_index['Column_name'];
-            $sql_non_unique=$resultat_index['Non_unique'];
-
-            if($sql_key_name=="PRIMARY")
-            {
-                if($list_primary=="")
-                    $list_primary=" PRIMARY KEY (`$sql_column_name` ";
-                else
-                    $list_primary=$list_primary.", `$sql_column_name` ";
-            }
-            elseif($sql_non_unique== 0)
-            {
-                if($list_unique=="")
-                    $list_unique=" UNIQUE  `$sql_column_name` (`$sql_key_name`) ";
-                else
-                    $list_unique = $list_unique.", `$sql_column_name` (`$sql_key_name`) ";
-            }
-            else
-            {
-                if($list_key=="")
-                    $list_key=" KEY  `$sql_column_name` (`$sql_key_name`) ";
-                else
-                    $list_key=$list_key.", KEY `$sql_column_name` (`$sql_key_name`) ";
-            }
-        }
-
-        if($list_primary!="")
-            $list_primary=$list_primary." ) ";
-
-        if($list_primary!="")
-            $chaine_create=$chaine_create.",    ".$list_primary;
-        if($list_unique!="")
-            $chaine_create=$chaine_create.",    ".$list_unique;
-        if($list_key!="")
-            $chaine_create=$chaine_create.",    ".$list_key;
-
-        $chaine_create=$chaine_create." ) DEFAULT CHARSET=latin1;\n#\n";
-
-        return($chaine_drop.$chaine_create);
+        $req = 'SHOW CREATE TABLE '. \includes\SQL::quote($table);
+        $descriptor = \includes\SQL::query($req) ;
+        $resultDescriptor = $descriptor->fetch_array();
+        return $drop . $resultDescriptor['Create Table'] . ";\n#\n";
     }
 
     public static function restaure($fichier_restaure_name, $fichier_restaure_tmpname, $fichier_restaure_size, $fichier_restaure_error)
@@ -637,40 +555,62 @@ class Fonctions
 
     public static function commit_sauvegarde($type_sauvegarde)
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
-        $return   = '';
-
         header("Pragma: no-cache");
         header("Content-Type: text/x-delimtext; name=\"php_conges_".$type_sauvegarde.".sql\"");
         header("Content-disposition: attachment; filename=php_conges_".$type_sauvegarde.".sql");
 
-        //
-        // Build the sql script file...
-        //
-        $maintenant=date("d-m-Y H:i:s");
-        $return .= "#\n";
-        $return .= "# PHP_CONGES\n";
-        $return .= "#\n# DATE : $maintenant\n";
-        $return .= "#\n";
+        echo static::getDataFile($type_sauvegarde);
+    }
+
+    /**
+     * Écrit un fichier de sauvegarde de version dans le répertoire de backup
+     *
+     * @param string $previousVersion Version de départ (courante)
+     * @param string $newVersion Version visée
+     *
+     * @throws \Exception en cas d'échec d'écriture de fichier
+     */
+    public static function sauvegardeAsFile($previousVersion, $newVersion)
+    {
+        $typeSauvegarde = 'all';
+        $contentFile = static::getDataFile($typeSauvegarde);
+        $filename = BACKUP_PATH . 'libertempo_' . $typeSauvegarde .'_' . $previousVersion . '__' . $newVersion . '.sql'; // nom de migration
+
+        if (false === file_put_contents($filename, $contentFile)) {
+            throw new \Exception('Échec de l\'écriture de la sauvegarde');
+        }
+    }
+
+    /**
+     * Retourne les données de sauvegarde
+     *
+     * @param string $typeSauvegarde Si on veut sauvegarder la structure seule ou les données
+     *
+     * @return string
+     */
+    private static function getDataFile($typeSauvegarde)
+    {
+        $content = "#\n";
+        $content .= "# Libertempo\n";
+        $content .= "#\n# DATE : " . date("d-m-Y H:i:s") . "\n";
+        $content .= "#\n";
 
         //recup de la liste des tables
-        $sql1="SHOW TABLES";
-        $ReqLog = \includes\SQL::query($sql1) ;
+        $ReqLog = \includes\SQL::query('SHOW TABLES');
         while ($resultat = $ReqLog->fetch_array()) {
-            $table=$resultat[0] ;
-
-            $return .= "#\n#\n# TABLE: $table \n#\n";
-            if(($type_sauvegarde=="all") || ($type_sauvegarde=="structure") ) {
-                $return .= "# Struture : \n#\n";
-                $return .= \admin\Fonctions::get_table_structure($table);
+            $table = $resultat[0];
+            $content .= "#\n#\n# TABLE: $table \n#\n";
+            if(($typeSauvegarde=="all") || ($typeSauvegarde=="structure") ) {
+                $content .= "# Struture : \n#\n";
+                $content .= static::get_table_structure($table);
             }
-            if(($type_sauvegarde=="all") || ($type_sauvegarde=="data") ) {
-                $return .= "# Data : \n#\n";
-                $return .= \admin\Fonctions::get_table_data($table);
+            if(($typeSauvegarde=="all") || ($typeSauvegarde=="data") ) {
+                $content .= "# Data : \n#\n";
+                $content .= static::get_table_data($table);
             }
         }
-        echo $return;
+
+        return $content;
     }
 
     public static function sauve($type_sauvegarde)
@@ -838,10 +778,10 @@ class Fonctions
         if($choix_action=="") {
             \admin\Fonctions::choix_save_restore();
         } elseif($choix_action=="sauvegarde") {
-            if( (!isset($type_sauvegarde)) || ($type_sauvegarde=="") ) {
+            if(!isset($type_sauvegarde) || $type_sauvegarde=="") {
                 \admin\Fonctions::choix_sauvegarde();
             } else {
-                if( (!isset($commit)) || ($commit=="") ) {
+                if( (!isset($commit)) || ($commit=="")) {
                     \admin\Fonctions::sauve($type_sauvegarde);
                 } else {
                     \admin\Fonctions::commit_sauvegarde($type_sauvegarde);
@@ -1286,7 +1226,7 @@ class Fonctions
         }
         else {
             $planningName = _('Aucun_planning');
-        } 
+        }
         $return .= '<br><hr/>';
         $return .= '<h4>' . _('admin_planning_utilisateur') . '</h4>';
         $return .= '<div>' . $planningName . '</div>';

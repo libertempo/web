@@ -1957,3 +1957,15 @@ msgstr "Vous n'avez aucune demande à traiter"
 
 msgid "contacter_rh"
 msgstr "Contacter le gestionnaire des ressources humaines"
+
+msgid "form_debut_am"
+msgstr "début de matinée"
+
+msgid "form_debut_pm"
+msgstr "début d'après-midi"
+
+msgid "form_fin_am"
+msgstr "fin de matinée"
+
+msgid "form_fin_pm"
+msgstr "fin d'après-midi"

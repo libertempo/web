@@ -356,19 +356,19 @@ class Fonctions
 
             $text_debut="<input class=\"form-control date\" type=\"text\" name=\"new_debut\" size=\"10\" maxlength=\"30\" value=\"" . revert_date($sql_date_deb) . "\">" ;
             if($sql_demi_jour_deb=="am") {
-                $radio_deb_am="<input type=\"radio\" $compte name=\"new_demi_jour_deb\" value=\"am\" checked>&nbsp;". _('form_am') ;
-                $radio_deb_pm="<input type=\"radio\" $compte name=\"new_demi_jour_deb\" value=\"pm\">&nbsp;". _('form_pm') ;
+                $radio_deb_am="<input type=\"radio\" $compte name=\"new_demi_jour_deb\" value=\"am\" checked>&nbsp;". _('form_debut_am') ;
+                $radio_deb_pm="<input type=\"radio\" $compte name=\"new_demi_jour_deb\" value=\"pm\">&nbsp;". _('form_debut_pm') ;
             } else {
-                $radio_deb_am="<input type=\"radio\" $compte name=\"new_demi_jour_deb\" value=\"am\">". _('form_am') ;
-                $radio_deb_pm="<input type=\"radio\" $compte name=\"new_demi_jour_deb\" value=\"pm\" checked>". _('form_pm') ;
+                $radio_deb_am="<input type=\"radio\" $compte name=\"new_demi_jour_deb\" value=\"am\">". _('form_debut_am') ;
+                $radio_deb_pm="<input type=\"radio\" $compte name=\"new_demi_jour_deb\" value=\"pm\" checked>". _('form_debut_pm') ;
             }
             $text_fin="<input class=\"form-control date\" type=\"text\" name=\"new_fin\" size=\"10\" maxlength=\"30\" value=\"" . revert_date($sql_date_fin) . "\">" ;
             if($sql_demi_jour_fin=="am") {
-                $radio_fin_am="<input type=\"radio\" $compte name=\"new_demi_jour_fin\" value=\"am\" checked>". _('form_am') ;
-                $radio_fin_pm="<input type=\"radio\" $compte name=\"new_demi_jour_fin\" value=\"pm\">". _('form_pm') ;
+                $radio_fin_am="<input type=\"radio\" $compte name=\"new_demi_jour_fin\" value=\"am\" checked>". _('form_fin_am') ;
+                $radio_fin_pm="<input type=\"radio\" $compte name=\"new_demi_jour_fin\" value=\"pm\">". _('form_fin_pm') ;
             } else {
-                $radio_fin_am="<input type=\"radio\" $compte name=\"new_demi_jour_fin\" value=\"am\">". _('form_am') ;
-                $radio_fin_pm="<input type=\"radio\" $compte name=\"new_demi_jour_fin\" value=\"pm\" checked>". _('form_pm') ;
+                $radio_fin_am="<input type=\"radio\" $compte name=\"new_demi_jour_fin\" value=\"am\">". _('form_fin_am') ;
+                $radio_fin_pm="<input type=\"radio\" $compte name=\"new_demi_jour_fin\" value=\"pm\" checked>". _('form_fin_pm') ;
             }
             $text_nb_jours = "<span id='new_nb_jours'>$sql_nb_jours</span>";
 
