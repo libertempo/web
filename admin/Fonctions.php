@@ -3361,7 +3361,8 @@ class Fonctions
     }
 
     public static function FormAddUserNameOk($name) {
-        return preg_match('/^[a-z\d\sàáâãäåçèéêëìíîïðòóôõöùúûüýÿ-]{2,20}$/i', $name);
+    	// Ajout de l'apostrophe comme caractère autorisé
+        return preg_match('/^[a-z\d\sàáâãäåçèéêëìíîïðòóôõöùúûüýÿ-\']{2,20}$/i', $name);
     }
 
     public static function FormAddUserpasswdOk($password1,$password2) {
@@ -3401,8 +3402,9 @@ class Fonctions
 
             $sql1 = "INSERT INTO conges_users SET ";
             $sql1=$sql1."u_login='".$tab_new_user['login']."', ";
-            $sql1=$sql1."u_nom='".addslashes($tab_new_user['nom'])."', ";
-            $sql1=$sql1."u_prenom='".addslashes($tab_new_user['prenom'])."', ";
+            // Fix pour les caractères spéciaux
+            $sql1=$sql1."u_nom='".addslashes(mb_convert_encoding($tab_new_user['nom'],"UTF-8","ISO-8859-15"))."', ";
+            $sql1=$sql1."u_prenom='".addslashes(mb_convert_encoding($tab_new_user['prenom'],"UTF-8","ISO-8859-15"))."', ";
             $sql1=$sql1."u_is_resp='".$tab_new_user['is_resp']."', ";
 
             if($tab_new_user['resp_login'] == 'no_resp') {
