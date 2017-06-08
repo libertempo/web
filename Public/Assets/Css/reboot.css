@@ -664,6 +664,7 @@ table#calendrier {
 
 td.calendrier-jour {
     border: 1px solid #909090;
+    position: relative;
 }
 
 td.calendrier-jour.weekend, td.calendrier-jour.ferie {
@@ -691,9 +692,23 @@ td.calendrier-jour.conge_pm {
     background: linear-gradient(90deg, #1ABC9C 50%, rgba(255,0,0,0) 50%);
 }
 
+td.calendrier-jour.heure_additionnelle_3 div.line-top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: #76b4f4;
+    height: 4px;
+}
 
-
-
+td.calendrier-jour.heure_repos_3 div.line-bottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #e01414;
+    height: 4px;
+}
 
 
 /* ------ ANCIEN CALENDRIER ------ */

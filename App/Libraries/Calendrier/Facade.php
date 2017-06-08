@@ -52,6 +52,7 @@ class Facade
         $this->fetchFeries();
         $this->fetchFermeture();
         $this->fetchConges();
+        $this->fetchHeuresAdditionnelles();
         // construction de cp, heures...
     }
 
@@ -98,13 +99,24 @@ class Facade
     {
         $conge = $this->injectableCreator->get(Collection\Conge::class);
         $congesListe = $conge->getListe($this->dateDebut, $this->dateFin, $this->employesATrouver, false);
-        foreach ($congesListe as $jour => $evenementJours) {
-            foreach ($evenementJours as $evenement) {
+        foreach ($congesListe as $jour => $evenementsJour) {
+            foreach ($evenementsJour as $evenement) {
                 $suffixe = '*' !== $evenement['demiJournee']
                 ? '_' . $evenement['demiJournee']
                 : '';
                 $this->setEvenementDate($evenement['employe'], $jour, 'conge' . $suffixe . ' conge_' . $evenement['statut']);
                 // pareil pour title
+            }
+        }
+    }
+
+    private function fetchHeuresAdditionnelles()
+    {
+        $heure = $this->injectableCreator->get(Collection\Heure\Additionnelle::class);
+        $heureListe = $heure->getListe($this->dateDebut, $this->dateFin, $this->employesATrouver, false);
+        foreach ($heureListe as $jour => $evenementsJour) {
+            foreach ($evenementsJour as $evenement) {
+                $this->setEvenementDate($evenement['employe'], $jour, 'heure_additionnelle_' . $evenement['statut']);
             }
         }
     }
