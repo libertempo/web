@@ -11,58 +11,44 @@ namespace App\Libraries\Calendrier;
  */
 class Facade
 {
-    public function __construct(\App\Libraries\InjectableCreator $injectableCreator, array $employesATrouver, \DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
+    public function __construct(
+        \App\Libraries\InjectableCreator $injectableCreator)
     {
         $this->injectableCreator = $injectableCreator;
-        $this->dateDebut = $dateDebut;
-        $this->dateFin = $dateFin;
-        $this->employesATrouver = $employesATrouver;
-        $this->fetchEvenements();
     }
 
     private $injectableCreator;
 
-    /**
-     * @var array Liste de résultats événements
-     */
-    private $evenements;
-
-    /**
-    * @var \DateTimeInterface
-    */
-    private $dateDebut;
-
-    /**
-    * @var \DateTimeInterface
-    */
-    private $dateFin;
-
-    /**
-     * @var array
-     */
     private $employesATrouver;
 
     /**
      * Recupère la liste ordonnée des événements des employés
+     *
+     * @param \DateTimeInterface $dateDebut
+     * @param \DateTimeInterface $dateFin
+     * @param array $employesATrouver Liste d'utilisateurs dont on veut voir les événements
+     * @param bool $canVoirEnTransit Si l'utilisateur a la possiblité de voir les événements non encore validés
      */
-    private function fetchEvenements()
+    public function fetchEvenements(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, array $employesATrouver, $canVoirEnTransit)
     {
-        $this->fetchWeekends();
-        $this->fetchFeries();
-        $this->fetchFermeture();
-        $this->fetchConges();
-        $this->fetchHeuresAdditionnelles();
-        $this->fetchHeuresRepos();
+        $canVoirEnTransit = (bool) $canVoirEnTransit;
+        $this->employesATrouver = $employesATrouver;
+        $this->fetchWeekends($dateDebut, $dateFin);
+        $this->fetchFeries($dateDebut, $dateFin);
+        $this->fetchFermeture($dateDebut, $dateFin);
+        $this->fetchConges($dateDebut, $dateFin);
+        $this->fetchHeuresAdditionnelles($dateDebut, $dateFin);
+        $this->fetchHeuresRepos($dateDebut, $dateFin);
         // construction de cp, heures...
     }
 
     /**
      * Recupère la liste ordonnée des weekend des employés
      */
-    private function fetchWeekends()
+    private function fetchWeekends(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
     {
         $weekend = $this->injectableCreator->get(Collection\Weekend::class);
-        $weekendsListe = $weekend->getListe($this->dateDebut, $this->dateFin);
+        $weekendsListe = $weekend->getListe($dateDebut, $dateFin);
         foreach ($weekendsListe as $date) {
             foreach ($this->employesATrouver as $employe) {
                 $this->setEvenementDate($employe, $date, 'weekend');
@@ -71,10 +57,13 @@ class Facade
         }
     }
 
-    private function fetchFeries()
+    /**
+     * Recupère la liste ordonnée des jours fériés des employés
+     */
+    private function fetchFeries(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
     {
         $feries = $this->injectableCreator->get(Collection\Ferie::class);
-        $feriesListe = $feries->getListe($this->dateDebut, $this->dateFin);
+        $feriesListe = $feries->getListe($dateDebut, $dateFin);
         foreach ($feriesListe as $date) {
             foreach ($this->employesATrouver as $employe) {
                 $this->setEvenementDate($employe, $date, 'ferie');
@@ -83,10 +72,10 @@ class Facade
         }
     }
 
-    private function fetchFermeture()
+    private function fetchFermeture(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
     {
         $fermeture = $this->injectableCreator->get(Collection\Fermeture::class);
-        $fermetureListe = $fermeture->getListe($this->dateDebut, $this->dateFin, []);
+        $fermetureListe = $fermeture->getListe($dateDebut, $dateFin, []);
         foreach ($fermetureListe as $date) {
             foreach ($this->employesATrouver as $employe) {
                 $this->setEvenementDate($employe, $date, 'fermeture');
@@ -95,10 +84,10 @@ class Facade
         }
     }
 
-    private function fetchConges()
+    private function fetchConges(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
     {
         $conge = $this->injectableCreator->get(Collection\Conge::class);
-        $congesListe = $conge->getListe($this->dateDebut, $this->dateFin, $this->employesATrouver, false);
+        $congesListe = $conge->getListe($dateDebut, $dateFin, $this->employesATrouver, false);
         foreach ($congesListe as $jour => $evenementsJour) {
             foreach ($evenementsJour as $evenement) {
                 $suffixe = '*' !== $evenement['demiJournee']
@@ -110,24 +99,24 @@ class Facade
         }
     }
 
-    private function fetchHeuresRepos()
+    private function fetchHeuresAdditionnelles(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
     {
-        $heure = $this->injectableCreator->get(Collection\Heure\Repos::class);
-        $heureListe = $heure->getListe($this->dateDebut, $this->dateFin, $this->employesATrouver, false);
+        $heure = $this->injectableCreator->get(Collection\Heure\Additionnelle::class);
+        $heureListe = $heure->getListe($dateDebut, $dateFin, $this->employesATrouver, false);
         foreach ($heureListe as $jour => $evenementsJour) {
             foreach ($evenementsJour as $evenement) {
-                $this->setEvenementDate($evenement['employe'], $jour, 'heure_repos_' . $evenement['statut']);
+                $this->setEvenementDate($evenement['employe'], $jour, 'heure_additionnelle_' . $evenement['statut']);
             }
         }
     }
 
-    private function fetchHeuresAdditionnelles()
+    private function fetchHeuresRepos(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
     {
-        $heure = $this->injectableCreator->get(Collection\Heure\Additionnelle::class);
-        $heureListe = $heure->getListe($this->dateDebut, $this->dateFin, $this->employesATrouver, false);
+        $heure = $this->injectableCreator->get(Collection\Heure\Repos::class);
+        $heureListe = $heure->getListe($dateDebut, $dateFin, $this->employesATrouver, false);
         foreach ($heureListe as $jour => $evenementsJour) {
             foreach ($evenementsJour as $evenement) {
-                $this->setEvenementDate($evenement['employe'], $jour, 'heure_additionnelle_' . $evenement['statut']);
+                $this->setEvenementDate($evenement['employe'], $jour, 'heure_repos_' . $evenement['statut']);
             }
         }
     }
@@ -203,20 +192,4 @@ class Facade
     {
         return $this->evenements;
     }
-
-    // avoir un système de « get » pour tout récup à partir de là ? et on boucle à l'extérieur, plutôt que demander à chaque fois à la structure de données
-
-    /*
-     * $a = [
-     *  'employeX' => [
-     *      'nom' => 'Nom complet',
-     *      'dates'  => [
-     *          'dateY' => [
-     *              'evenements' => ['cp, 'rtt'],
-     *              'title' => '...'
-     *          ],
-     *      ],
-     *  ],
-     * ];
-     */
 }

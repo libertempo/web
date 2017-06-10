@@ -36,7 +36,8 @@ class Facade extends \Tests\Units\TestUnit
     public function testGetEmployes()
     {
         $this->calling($this->weekend)->getListe = [];
-        $calendrier = new _Facade($this->injectableCreator, $this->employes, $this->dateDebut, $this->dateFin);
+        $calendrier = new _Facade($this->injectableCreator);
+        $calendrier->fetchEvenements($this->dateDebut, $this->dateFin, $this->employes, false);
 
         $this->array($calendrier->getEmployes())->isIdenticalTo($this->employes);
     }
@@ -44,7 +45,8 @@ class Facade extends \Tests\Units\TestUnit
     public function testGetEvenementsDateEmployeInconnu()
     {
         $this->calling($this->weekend)->getListe = [];
-        $calendrier = new _Facade($this->injectableCreator, $this->employes, $this->dateDebut, $this->dateFin);
+        $calendrier = new _Facade($this->injectableCreator);
+        $calendrier->fetchEvenements($this->dateDebut, $this->dateFin, $this->employes, false);
 
         $this->exception(function () use ($calendrier) {
             $calendrier->getEvenementsDate('PetitLapin', '0000-00-00');
@@ -57,7 +59,8 @@ class Facade extends \Tests\Units\TestUnit
         $this->calling($this->weekend)->getListe[4] = [];
         $this->calling($this->weekend)->getListe[5] = [];
         $this->calling($this->weekend)->getListe[6] = [];
-        $calendrier = new _Facade($this->injectableCreator, $this->employes, $this->dateDebut, $this->dateFin);
+        $calendrier = new _Facade($this->injectableCreator);
+        $calendrier->fetchEvenements($this->dateDebut, $this->dateFin, $this->employes, false);
 
         $this->array($calendrier->getEvenementsDate('Babar', '2017-02-10'))
             ->isIdenticalTo([]);
@@ -73,7 +76,8 @@ class Facade extends \Tests\Units\TestUnit
         $this->calling($this->weekend)->getListe[4] = [];
         $this->calling($this->weekend)->getListe[5] = [];
         $this->calling($this->weekend)->getListe[6] = [];
-        $calendrier = new _Facade($this->injectableCreator, $this->employes, $this->dateDebut, $this->dateFin);
+        $calendrier = new _Facade($this->injectableCreator);
+        $calendrier->fetchEvenements($this->dateDebut, $this->dateFin, $this->employes, false);
 
         $this->array($calendrier->getEvenementsDate('Babar', '2017-02-12'))
             ->isIdenticalTo(['weekend']);
