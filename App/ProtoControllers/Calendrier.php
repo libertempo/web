@@ -394,7 +394,7 @@ final class Calendrier
             foreach ($jours as $jour) {
                 $classes = $this->getClassesJour($evenements, $nom, $jour);
                 // TODO: vrai title
-                $return .= '<td class="calendrier-jour ' . $classes . '" title="' . $jour . ' | ' . $nom . ' : <br>ee"><div class="line-top"></div><div class="line-bottom"></div></td>';
+                $return .= '<td class="calendrier-jour ' . $classes . '" title="' . $jour . ' | ' . $nom . ' : <br>ee"><div class="triangle-top"></div><div class="triangle-bottom"></div></td>';
             }
             $return .= '</tr>';
         }
