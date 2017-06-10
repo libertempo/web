@@ -15,80 +15,21 @@ use \App\Libraries\Calendrier\Evenement;
  *
  * @TODO supprimer le requétage à la migration vers le MVC REST
  */
-class Repos
+final class Repos extends \App\Libraries\Calendrier\Collection\AHeure
 {
-    /**
-     * @var array $utilisateursATrouver Liste d'utilisateurs dont on veut voir les heures de repos
-     */
-    private $utilisateursATrouver;
-
-    /**
-     * @var bool Si l'utilisateur a la possiblité de voir les événements non encore validés
-     */
-    private $canVoirEnTransit;
-
-    /**
-     * {@inheritDoc}
-     * @param array $utilisateursATrouver Liste d'utilisateurs dont on veut voir les heures de repos
-     */
-    public function __construct(
-        \includes\SQL $db,
-        array $utilisateursATrouver,
-        $canVoirEnTransit
-    ) {
-        $this->db = $db;
-        $this->utilisateursATrouver = $utilisateursATrouver;
-        $this->canVoirEnTransit = (bool) $canVoirEnTransit;
-    }
-
-    /**
-    * @var \includes\SQL Objet de DB
-    */
-    private $db;
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getListe(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
-    {
-        $heures = [];
-        foreach ($this->getListeSQL($this->getListeId()) as $heure) {
-            $class = 'heure heure_' . $heure['statut'];
-            $nomComplet = \App\ProtoControllers\Utilisateur::getNomComplet($heure['u_prenom'],  $heure['u_nom'], true);
-            $name = $nomComplet . ' - Heure(s) de repos';
-            if (in_array($heure['statut'],[\App\Models\AHeure::STATUT_DEMANDE,\App\Models\AHeure::STATUT_PREMIERE_VALIDATION])) {
-                $name = '[En demande]  ' . $name;
-            }
-            $dateDebut = new \DateTime();
-            $dateDebut->setTimestamp($heure['debut']);
-            $dateFin = new \DateTime();
-            $dateFin->setTimestamp($heure['fin']);
-            $statut = ' statut_' . $heure['statut'];
-
-            $title = 'Heure(s) de repos de ' . $nomComplet . ' le ' . $dateDebut->format('d/m/Y') . ' de ' . $dateDebut->format('H\:i') . ' à ' . $dateFin->format('H\:i');
-            $uid = uniqid('repos');
-            $heures[] = new Evenement\Commun($uid, $dateDebut, $dateFin, $name, $title, $class);
-        }
-
-        return $heures;
-    }
-
-
     /*
      * SQL
      */
 
 
-    /**
-     * Retourne la liste des id d'heures de repos satisfaisant aux critères
-     *
-     * @return array
-     */
-    private function getListeId()
+     /**
+      * @inheritDoc
+      */
+    protected function getListeId(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, array $utilisateursATrouver, $canVoirEnTransit)
     {
         $ids = [];
         $etats[] = \App\Models\AHeure::STATUT_VALIDATION_FINALE;
-        if ($this->canVoirEnTransit) {
+        if ($canVoirEnTransit) {
             $etats = array_merge($etats, [
                 \App\Models\AHeure::STATUT_DEMANDE,
                 \App\Models\AHeure::STATUT_PREMIERE_VALIDATION
@@ -96,13 +37,13 @@ class Repos
         }
         $req = 'SELECT id_heure AS id
                 FROM heure_repos
-                WHERE debut >= "' . $this->dateDebut->getTimestamp() . '"
-                    AND debut <= "' . $this->dateFin->getTimestamp() . '"
+                WHERE debut >= "' . $dateDebut->getTimestamp() . '"
+                    AND debut <= "' . $dateFin->getTimestamp() . '"
                     AND duree > 0
-                    AND login IN ("' . implode('","', $this->utilisateursATrouver) . '")
+                    AND login IN ("' . implode('","', $utilisateursATrouver) . '")
                     AND statut IN ("' . implode('","', $etats) . '")';
         $res = $this->db->query($req);
-        while ($data = $res->fetch_array()) {
+        foreach ($res->fetch_all(\MYSQLI_ASSOC) as $data) {
             $ids[] = (int) $data['id'];
         }
 
@@ -110,13 +51,9 @@ class Repos
     }
 
     /**
-     * Retourne une liste d'heures de repos en fonction de ses id
-     *
-     * @param array $listeId
-     *
-     * @return array
+     * @inheritDoc
      */
-    private function getListeSQL(array $listeId)
+    protected function getListeSQL(array $listeId)
     {
         if (empty($listeId)) {
             return [];

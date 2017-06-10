@@ -11,54 +11,16 @@ namespace App\Libraries\Calendrier\Collection\Heure;
  * Ne doit être contacté que par \App\Libraries\Calendrier\Facade
  * @TODO supprimer le requétage à la migration vers le MVC REST
  */
-class Additionnelle
+final class Additionnelle extends \App\Libraries\Calendrier\Collection\AHeure
 {
-    public function __construct(\includes\SQL $db) {
-        $this->db = $db;
-    }
-
-    /**
-    * @var \includes\SQL Objet de DB
-    */
-    private $db;
-
-    /**
-     * Retourne la liste des heures additionnelles relative à la période demandée
-     *
-     * @param \DateTimeInterface $dateDebut
-     * @param \DateTimeInterface $dateFin
-     * @param array $utilisateursATrouver Liste d'utilisateurs dont on veut voir les heures
-     * @param bool $canVoirEnTransit Si l'utilisateur a la possiblité de voir les événements non encore validés
-     *
-     * @return array
-     */
-    public function getListe(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, array $utilisateursATrouver, $canVoirEnTransit)
-    {
-        $heures = [];
-        $canVoirEnTransit = (bool) $canVoirEnTransit;
-        foreach ($this->getListeSQL($this->getListeId($dateDebut, $dateFin, $utilisateursATrouver, $canVoirEnTransit)) as $heure) {
-            $date = date('Y-m-d', $heure['debut']);
-            $heures[$date][] = [
-                'employe' => $heure['login'],
-                'statut' => $heure['statut']
-            ];
-        }
-
-        return $heures;
-    }
-
-
     /*
      * SQL
      */
 
-
     /**
-     * Retourne la liste des id d'heures additionnelles satisfaisant aux critères
-     *
-     * @return array
+     * @inheritDoc
      */
-    private function getListeId(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, array $utilisateursATrouver, $canVoirEnTransit)
+    protected function getListeId(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, array $utilisateursATrouver, $canVoirEnTransit)
     {
         $ids = [];
         $etats[] = \App\Models\AHeure::STATUT_VALIDATION_FINALE;
@@ -84,13 +46,9 @@ class Additionnelle
     }
 
     /**
-     * Retourne une liste d'heures additionnelles en fonction de ses id
-     *
-     * @param array $listeId
-     *
-     * @return array
+     * @inheritDoc
      */
-    private function getListeSQL(array $listeId)
+    protected function getListeSQL(array $listeId)
     {
         if (empty($listeId)) {
             return [];
