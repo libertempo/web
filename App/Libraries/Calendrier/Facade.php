@@ -5,7 +5,6 @@ namespace App\Libraries\Calendrier;
  * Construction des événements du calendrier.
  * Application du design pattern Facade pour obfusquer la complexité du calendrier
  *
- * @link https://en.wikipedia.org/wiki/Facade_pattern
  * @since 1.10
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @see Tests\Units\App\Libraries\Calendrier\Facade
@@ -53,6 +52,7 @@ class Facade
         $this->fetchFermeture();
         $this->fetchConges();
         $this->fetchHeuresAdditionnelles();
+        $this->fetchHeuresRepos();
         // construction de cp, heures...
     }
 
@@ -106,6 +106,17 @@ class Facade
                 : '';
                 $this->setEvenementDate($evenement['employe'], $jour, 'conge' . $suffixe . ' conge_' . $evenement['statut']);
                 // pareil pour title
+            }
+        }
+    }
+
+    private function fetchHeuresRepos()
+    {
+        $heure = $this->injectableCreator->get(Collection\Heure\Repos::class);
+        $heureListe = $heure->getListe($this->dateDebut, $this->dateFin, $this->employesATrouver, false);
+        foreach ($heureListe as $jour => $evenementsJour) {
+            foreach ($evenementsJour as $evenement) {
+                $this->setEvenementDate($evenement['employe'], $jour, 'heure_repos_' . $evenement['statut']);
             }
         }
     }

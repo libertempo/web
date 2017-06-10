@@ -702,7 +702,7 @@ td.calendrier-jour.heure_additionnelle_3 div.triangle-top {
     border-left: 8px solid #6666ff;
 }
 
-td.calendrier-jour.heure_additionnelle_3 div.triangle-bottom {
+td.calendrier-jour.heure_repos_3 div.triangle-bottom {
     position: absolute;
     bottom: 0;
     left: 0;

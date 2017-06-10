@@ -43,6 +43,7 @@ class InjectableCreator
             case 'App\Libraries\Calendrier\Collection\Fermeture':
             case 'App\Libraries\Calendrier\Collection\Conge':
             case 'App\Libraries\Calendrier\Collection\Heure\Additionnelle':
+            case 'App\Libraries\Calendrier\Collection\Heure\Repos':
                 return new $classname($this->db);
 
             default:

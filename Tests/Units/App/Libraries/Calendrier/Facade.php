@@ -56,6 +56,7 @@ class Facade extends \Tests\Units\TestUnit
         $this->calling($this->weekend)->getListe = ['2017-02-12'];
         $this->calling($this->weekend)->getListe[4] = [];
         $this->calling($this->weekend)->getListe[5] = [];
+        $this->calling($this->weekend)->getListe[6] = [];
         $calendrier = new _Facade($this->injectableCreator, $this->employes, $this->dateDebut, $this->dateFin);
 
         $this->array($calendrier->getEvenementsDate('Babar', '2017-02-10'))
@@ -71,6 +72,7 @@ class Facade extends \Tests\Units\TestUnit
         $this->calling($this->weekend)->getListe = ['2017-02-12'];
         $this->calling($this->weekend)->getListe[4] = [];
         $this->calling($this->weekend)->getListe[5] = [];
+        $this->calling($this->weekend)->getListe[6] = [];
         $calendrier = new _Facade($this->injectableCreator, $this->employes, $this->dateDebut, $this->dateFin);
 
         $this->array($calendrier->getEvenementsDate('Babar', '2017-02-12'))
