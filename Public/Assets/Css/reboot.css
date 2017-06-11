@@ -654,12 +654,22 @@ table#calendrier {
     margin: auto;
 }
 
+
 #calendrier #entete th {
     text-align: center;
 }
+
+table#calendrier #entete th a {
+    text-decoration: none;
+    display: block;
+}
+
 #calendrier #entete th.today {
     background: #009ec5;
-    color : white;
+}
+
+#calendrier #entete th.today a {
+    color: white;
 }
 
 td.calendrier-jour {
