@@ -677,6 +677,24 @@ td.calendrier-jour {
     position: relative;
 }
 
+td.calendrier-jour .title {
+    position: absolute;
+    min-width: 200px;
+    margin-top: 10px;
+    margin-left: 20px;
+    padding: 5px;
+    border-radius: 3px;
+    background: white;
+    border: 1px solid #F4F4F4;
+    box-shadow: 0 0 2px #F4F4F4;
+    display: none;
+    z-index: 10;
+}
+
+td.calendrier-jour:hover .title {
+    display: block;
+}
+
 td.calendrier-jour.weekend, td.calendrier-jour.ferie {
     background: #AEAEAE;
 }
@@ -686,8 +704,7 @@ td.calendrier-jour.fermeture {
 }
 
 td.calendrier-jour.horsMois {
-    background: #A9A9A9;
-    opacity: 0.7;
+    background: #CCC;
 }
 
 td.calendrier-jour.conge {
@@ -721,6 +738,8 @@ td.calendrier-jour.heure_repos_3 div.triangle-bottom {
     border-top: 8px solid transparent;
     border-left: 8px solid #e01414;
 }
+
+
 
 
 /* ------ ANCIEN CALENDRIER ------ */

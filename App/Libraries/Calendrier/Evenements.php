@@ -20,6 +20,8 @@ class Evenements
 
     private $employesATrouver;
 
+    private $evenements;
+
     /**
      * Recupère la liste ordonnée des événements des employés
      *
@@ -49,8 +51,7 @@ class Evenements
         $weekendsListe = $weekend->getListe($dateDebut, $dateFin);
         foreach ($weekendsListe as $date) {
             foreach ($this->employesATrouver as $employe) {
-                $this->setEvenementDate($employe, $date, 'weekend');
-                // pareil pour title
+                $this->setEvenementDate($employe, $date, 'weekend', 'Week-end');
             }
         }
     }
@@ -64,8 +65,7 @@ class Evenements
         $feriesListe = $feries->getListe($dateDebut, $dateFin);
         foreach ($feriesListe as $date) {
             foreach ($this->employesATrouver as $employe) {
-                $this->setEvenementDate($employe, $date, 'ferie');
-                // pareil pour title
+                $this->setEvenementDate($employe, $date, 'ferie', 'Jour férié');
             }
         }
     }
@@ -76,8 +76,7 @@ class Evenements
         $fermetureListe = $fermeture->getListe($dateDebut, $dateFin, []);
         foreach ($fermetureListe as $date) {
             foreach ($this->employesATrouver as $employe) {
-                $this->setEvenementDate($employe, $date, 'fermeture');
-                // pareil pour title
+                $this->setEvenementDate($employe, $date, 'fermeture', 'Fermeture');
             }
         }
     }
@@ -91,8 +90,7 @@ class Evenements
                 $suffixe = '*' !== $evenement['demiJournee']
                 ? '_' . $evenement['demiJournee']
                 : '';
-                $this->setEvenementDate($evenement['employe'], $jour, 'conge' . $suffixe . ' conge_' . $evenement['statut']);
-                // pareil pour title
+                $this->setEvenementDate($evenement['employe'], $jour, 'conge' . $suffixe . ' conge_' . $evenement['statut'], 'Congé');
             }
         }
     }
@@ -103,7 +101,7 @@ class Evenements
         $heureListe = $heure->getListe($dateDebut, $dateFin, $this->employesATrouver, false);
         foreach ($heureListe as $jour => $evenementsJour) {
             foreach ($evenementsJour as $evenement) {
-                $this->setEvenementDate($evenement['employe'], $jour, 'heure_additionnelle_' . $evenement['statut']);
+                $this->setEvenementDate($evenement['employe'], $jour, 'heure_additionnelle_' . $evenement['statut'], 'Heure additionnelle');
             }
         }
     }
@@ -114,18 +112,19 @@ class Evenements
         $heureListe = $heure->getListe($dateDebut, $dateFin, $this->employesATrouver, false);
         foreach ($heureListe as $jour => $evenementsJour) {
             foreach ($evenementsJour as $evenement) {
-                $this->setEvenementDate($evenement['employe'], $jour, 'heure_repos_' . $evenement['statut']);
+                $this->setEvenementDate($evenement['employe'], $jour, 'heure_repos_' . $evenement['statut'], 'Heure de repos');
             }
         }
     }
 
-    private function setEvenementDate($idEmploye, $date, $nomEvenement)
+    private function setEvenementDate($idEmploye, $date, $idEvenement, $labelEvenement)
     {
-        if ($this->isEvenementWeekend($nomEvenement)) {
+        if ($this->isEvenementWeekend($idEvenement)) {
             unset($this->evenements[$idEmploye]['dates'][$date]['evenements']);
         }
         if (!$this->isDayWeekend($idEmploye, $date)) {
-            $this->evenements[$idEmploye]['dates'][$date]['evenements'][] = $nomEvenement;
+            $this->evenements[$idEmploye]['dates'][$date]['evenements'][] = $idEvenement;
+            $this->evenements[$idEmploye]['dates'][$date]['title'][] = $labelEvenement;
         }
     }
 
@@ -174,6 +173,9 @@ class Evenements
         if (!isset($this->evenements[$idEmploye]['dates'][$date])) {
             return [];
         }
+
+        return $this->evenements[$idEmploye]['dates'][$date]['title'];
+
     }
 
     private function verificationExistenceEmploye($idEmploye)

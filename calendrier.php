@@ -47,6 +47,15 @@ function getClassesJour(\App\Libraries\Calendrier\Evenements $evenements, $nom, 
     return implode(' ', $evenements->getEvenementsDate($nom, $jour));
 }
 
+function getTitleJour(\App\Libraries\Calendrier\Evenements $evenements, $nom, $jour)
+{
+    $title = implode('<br>*&nbsp;', $evenements->getTitleDate($nom, $jour));
+    if (!empty($title)) {
+        return $jour . ' :<br>*&nbsp;' . $title;
+    }
+    return '';
+}
+
 $calendar = new \CalendR\Calendar();
 $jourDemande = null;
 $moisDemande = null;

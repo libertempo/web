@@ -40,9 +40,13 @@ $moisSuivant = getUrlMois($moisDemande->modify('+1 month'), $session, $idGroupe)
         <tr class="calendrier-employe">
             <td class="calendrier-nom"><?= $nom ?></td>
             <?php foreach ($jours as $jour) : ?>
-            <td class="calendrier-jour <?= getClassesJour($evenements, $nom, $jour, $moisDemande) ?>" title=" | ">
+            <td class="calendrier-jour <?= getClassesJour($evenements, $nom, $jour, $moisDemande) ?>">
                 <div class="triangle-top"></div>
                 <div class="triangle-bottom"></div>
+                <?php $title = getTitleJour($evenements, $nom, $jour);
+                if (!empty($title)) {
+                    echo '<div class="title">' . $title . '</div>';
+                }?>
             </td>
             <?php endforeach ?>
         </tr>
