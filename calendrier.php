@@ -4,13 +4,82 @@ require_once ROOT_PATH . 'define.php';
 
 include_once ROOT_PATH .'fonctions_conges.php';
 include_once INCLUDE_PATH .'fonction.php';
-header_menu('', 'Libertempo : '._('calendrier_titre'));
+include_once ROOT_PATH .'fonctions_conges.php';
+
+if(substr($session, 0, 9)!="phpconges") {
+    session_start();
+    $_SESSION['config']=init_config_tab();
+    if(empty($_SESSION['userlogin'])) {
+        redirect(ROOT_PATH . 'index.php');
+    }
+} else {
+    include_once INCLUDE_PATH . 'session.php';
+}
+
+/**
+ * @return bool
+ */
+function canSessionVoirEvenementEnTransit(array $donneesUtilisateur)
+{
+    return (isset($donneesUtilisateur['is_resp']) && 'Y' === $donneesUtilisateur['is_resp'])
+        || (isset($donneesUtilisateur['is_rh']) && 'Y' === $donneesUtilisateur['is_rh'])
+        || (isset($donneesUtilisateur['is_admin']) && 'Y' === $donneesUtilisateur['is_admin']);
+}
+
+function getUrlMois(\DateTimeInterface $mois, $session, $idGroupe)
+{
+    $urlCalendrier = ROOT_PATH . 'calendrier.php';
+    $queryBase = [
+        'session' => $session,
+        'groupe' => $idGroupe,
+    ];
+
+    return $urlCalendrier . '?' . http_build_query($queryBase + ['mois' => $mois->format('Y-m')]);
+}
+
+function getClassesJour(\App\Libraries\Calendrier\Facade $evenements, $nom, $jour, \DateTimeInterface $moisDemande)
+{
+    $moisJour = date('m', strtotime($jour));
+    if ($moisDemande->format('m') !== $moisJour) {
+        return 'horsMois';
+    }
+
+    return implode(' ', $evenements->getEvenementsDate($nom, $jour));
+}
 
 $calendar = new \CalendR\Calendar();
+$calendrier = new \App\ProtoControllers\Calendrier($session, $_GET, $calendar);
+$jourDemande = null;
+$moisDemande = null;
 
-// recuperer les donnes et les injecter dans la vue ! @Timn
-//require_once VIEW_PATH . 'Calendrier.php';
+if (!empty($_GET['jour']) && false !== strtotime($_GET['jour'])) {
+    $jourDemande = new \DateTimeImmutable($_GET['jour']);
+} elseif (!empty($_GET['mois']) && false !== strtotime($_GET['mois'] . '-01')) {
+    $moisDemande = new \DateTimeImmutable($_GET['mois'] . '-01');
+} else {
+    $moisDemande = new \DateTimeImmutable(date('Y-m') . '-01');
+}
+$idGroupe = !empty($_GET['groupe'])
+    ? (int) $_GET['groupe']
+    : NIL_INT;
 
-echo (new \App\ProtoControllers\Calendrier())->get();
+$injectableCreator = new \App\Libraries\InjectableCreator(\includes\SQL::singleton());
+$evenements = new \App\Libraries\Calendrier\Facade($injectableCreator);
+$groupesVisiblesUserCourant = \App\ProtoControllers\Utilisateur::getListeGroupesVisibles($_SESSION['userlogin']);
+$utilisateursATrouver = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupesVisiblesUserCourant);
+
+header_menu('', 'Libertempo : '._('calendrier_titre'));
+
+if ($jourDemande instanceof \DateTimeInterface) {
+
+} else {
+    $evenements->fetchEvenements(
+        $moisDemande,
+        $moisDemande->modify('+1 month'),
+        $utilisateursATrouver,
+        canSessionVoirEvenementEnTransit($_SESSION)
+    );
+    require_once VIEW_PATH . 'Calendrier/Mois.php';
+}
 
 bottom();
