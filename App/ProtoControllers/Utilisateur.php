@@ -48,7 +48,7 @@ class Utilisateur
             || \App\ProtoControllers\Utilisateur::isAdmin($utilisateur)
         ) {
             $groupesVisibles = \App\ProtoControllers\Groupe::getListeId();
-        } elseif (\App\ProtoControllers\Utilisateur::isResponsable()) {
+        } elseif (\App\ProtoControllers\Utilisateur::isResponsable($utilisateur)) {
             $groupesResponsable = \App\ProtoControllers\Responsable::getIdGroupeResp($utilisateur);
             $groupesGrandResponsable = \App\ProtoControllers\Responsable::getIdGroupeGrandResponsable($utilisateur);
             $groupesEmploye = \App\ProtoControllers\Utilisateur::getGroupesId($utilisateur);
@@ -73,7 +73,7 @@ class Utilisateur
         $donneesUtilisateur = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($utilisateur);
 
         return (!empty($donneesUtilisateur))
-            ? $donneesUtilisateur['u_is_hr']
+            ? 'Y' === $donneesUtilisateur['u_is_hr']
             : false;
     }
 
@@ -90,7 +90,7 @@ class Utilisateur
         $donneesUtilisateur = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($utilisateur);
 
         return (!empty($donneesUtilisateur))
-            ? $donneesUtilisateur['u_is_admin']
+            ? 'Y' === $donneesUtilisateur['u_is_admin']
             : false;
     }
 
@@ -107,7 +107,7 @@ class Utilisateur
         $donneesUtilisateur = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($utilisateur);
 
         return (!empty($donneesUtilisateur))
-            ? $donneesUtilisateur['u_is_resp']
+            ? 'Y' === $donneesUtilisateur['u_is_resp']
             : false;
     }
 
@@ -130,13 +130,13 @@ class Utilisateur
         return $donnees;
     }
 
-     /**
-      * Retourne la liste des utilisateurs associés à un planning
-      *
-      * @param int $planningId
-      *
-      * @return array
-      */
+    /**
+     * Retourne la liste des utilisateurs associés à un planning
+     *
+     * @param int $planningId
+     *
+     * @return array
+     */
     public static function getListByPlanning($planningId)
     {
         $planningId = (int) $planningId;
@@ -190,7 +190,7 @@ class Utilisateur
 
         return $solde;
     }
-    
+
      /**
      * Retourne le solde d'heure au format timestamp d'un utilisateur
      *
@@ -198,7 +198,7 @@ class Utilisateur
      * @param int $typeId
      *
      * @return int $timestamp
-     */   
+     */
     public static function getSoldeHeure($login)
     {
         $sql = \includes\SQL::singleton();
@@ -208,7 +208,7 @@ class Utilisateur
 
         return $timestamp;
     }
-    
+
     /**
      * Vérifie si l'utilisateur a des sorties en cours
      *
@@ -226,17 +226,17 @@ class Utilisateur
 
     /**
      * Récupère l'adresse email de l'utilisateur
-     * 
+     *
      * @todo En attendant l'objet ldap utilisation de find_email_adress_for_user
-     * 
+     *
      * @param string $login
      * @return string $mail
-     */    
+     */
     public static function getEmailUtilisateur($login)  {
         require_once ROOT_PATH.'fonctions_conges.php';
         return find_email_adress_for_user($login)[1];
     }
-    
+
     /**
      * Vérifie si l'utilisateur a des congés en cours
      *
