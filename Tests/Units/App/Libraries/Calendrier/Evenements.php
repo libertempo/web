@@ -1,19 +1,16 @@
 <?php
 namespace Tests\Units\App\Libraries\Calendrier;
 
-use App\Libraries\Calendrier\Facade as _Facade;
+use App\Libraries\Calendrier\Evenements as _Evenements;
 
 /**
  * Classe de test du calendrier
  *
- * Rompt le principe du test unitaire, mais avec un Facade, c'est compliqué de faire autrement.
- * En cas d'idée pour isoler, hésitez pas.
- *
- * @since 1.10
+ * @since 1.9
  * @author Prytoegrian <prytoegrian@protonmail.com>
- * @see App\Libraries\Calendrier\Facade
+ * @see App\Libraries\Calendrier\Evenements
  */
-class Facade extends \Tests\Units\TestUnit
+class Evenements extends \Tests\Units\TestUnit
 {
     private $dateDebut;
     private $dateFin;
@@ -36,7 +33,7 @@ class Facade extends \Tests\Units\TestUnit
     public function testGetEmployes()
     {
         $this->calling($this->weekend)->getListe = [];
-        $calendrier = new _Facade($this->injectableCreator);
+        $calendrier = new _Evenements($this->injectableCreator);
         $calendrier->fetchEvenements($this->dateDebut, $this->dateFin, $this->employes, false);
 
         $this->array($calendrier->getEmployes())->isIdenticalTo($this->employes);
@@ -45,7 +42,7 @@ class Facade extends \Tests\Units\TestUnit
     public function testGetEvenementsDateEmployeInconnu()
     {
         $this->calling($this->weekend)->getListe = [];
-        $calendrier = new _Facade($this->injectableCreator);
+        $calendrier = new _Evenements($this->injectableCreator);
         $calendrier->fetchEvenements($this->dateDebut, $this->dateFin, $this->employes, false);
 
         $this->exception(function () use ($calendrier) {
@@ -59,7 +56,7 @@ class Facade extends \Tests\Units\TestUnit
         $this->calling($this->weekend)->getListe[4] = [];
         $this->calling($this->weekend)->getListe[5] = [];
         $this->calling($this->weekend)->getListe[6] = [];
-        $calendrier = new _Facade($this->injectableCreator);
+        $calendrier = new _Evenements($this->injectableCreator);
         $calendrier->fetchEvenements($this->dateDebut, $this->dateFin, $this->employes, false);
 
         $this->array($calendrier->getEvenementsDate('Babar', '2017-02-10'))
@@ -76,7 +73,7 @@ class Facade extends \Tests\Units\TestUnit
         $this->calling($this->weekend)->getListe[4] = [];
         $this->calling($this->weekend)->getListe[5] = [];
         $this->calling($this->weekend)->getListe[6] = [];
-        $calendrier = new _Facade($this->injectableCreator);
+        $calendrier = new _Evenements($this->injectableCreator);
         $calendrier->fetchEvenements($this->dateDebut, $this->dateFin, $this->employes, false);
 
         $this->array($calendrier->getEvenementsDate('Babar', '2017-02-12'))

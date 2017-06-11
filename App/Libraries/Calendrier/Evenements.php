@@ -3,13 +3,12 @@ namespace App\Libraries\Calendrier;
 
 /**
  * Construction des événements du calendrier.
- * Application du design pattern Facade pour obfusquer la complexité du calendrier
  *
- * @since 1.10
+ * @since 1.9
  * @author Prytoegrian <prytoegrian@protonmail.com>
- * @see Tests\Units\App\Libraries\Calendrier\Facade
+ * @see Tests\Units\App\Libraries\Calendrier\Evenements
  */
-class Facade
+class Evenements
 {
     public function __construct(
         \App\Libraries\InjectableCreator $injectableCreator)

@@ -37,7 +37,7 @@ function getUrlMois(\DateTimeInterface $date, $session, $idGroupe)
     return $urlCalendrier . '?' . http_build_query($queryBase + ['mois' => $date->format('Y-m')]);
 }
 
-function getClassesJour(\App\Libraries\Calendrier\Facade $evenements, $nom, $jour, \DateTimeInterface $moisDemande)
+function getClassesJour(\App\Libraries\Calendrier\Evenements $evenements, $nom, $jour, \DateTimeInterface $moisDemande)
 {
     $moisJour = date('m', strtotime($jour));
     if ($moisDemande->format('m') !== $moisJour) {
@@ -63,7 +63,7 @@ $idGroupe = !empty($_GET['groupe'])
     : NIL_INT;
 
 $injectableCreator = new \App\Libraries\InjectableCreator(\includes\SQL::singleton());
-$evenements = new \App\Libraries\Calendrier\Facade($injectableCreator);
+$evenements = new \App\Libraries\Calendrier\Evenements($injectableCreator);
 $groupesVisiblesUserCourant = \App\ProtoControllers\Utilisateur::getListeGroupesVisibles($_SESSION['userlogin']);
 $utilisateursATrouver = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupesVisiblesUserCourant);
 

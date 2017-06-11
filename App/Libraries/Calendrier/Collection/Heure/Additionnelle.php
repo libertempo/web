@@ -8,7 +8,7 @@ namespace App\Libraries\Calendrier\Collection\Heure;
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina
  *
- * Ne doit être contacté que par \App\Libraries\Calendrier\Facade
+ * Ne doit être contacté que par \App\Libraries\Calendrier\Evenements
  * @TODO supprimer le requétage à la migration vers le MVC REST
  */
 final class Additionnelle extends \App\Libraries\Calendrier\Collection\AHeure
