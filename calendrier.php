@@ -26,7 +26,7 @@ function canSessionVoirEvenementEnTransit(array $donneesUtilisateur)
         || (isset($donneesUtilisateur['is_admin']) && 'Y' === $donneesUtilisateur['is_admin']);
 }
 
-function getUrlMois(\DateTimeInterface $mois, $session, $idGroupe)
+function getUrlMois(\DateTimeInterface $date, $session, $idGroupe)
 {
     $urlCalendrier = ROOT_PATH . 'calendrier.php';
     $queryBase = [
@@ -34,7 +34,7 @@ function getUrlMois(\DateTimeInterface $mois, $session, $idGroupe)
         'groupe' => $idGroupe,
     ];
 
-    return $urlCalendrier . '?' . http_build_query($queryBase + ['mois' => $mois->format('Y-m')]);
+    return $urlCalendrier . '?' . http_build_query($queryBase + ['mois' => $date->format('Y-m')]);
 }
 
 function getClassesJour(\App\Libraries\Calendrier\Facade $evenements, $nom, $jour, \DateTimeInterface $moisDemande)
@@ -48,7 +48,6 @@ function getClassesJour(\App\Libraries\Calendrier\Facade $evenements, $nom, $jou
 }
 
 $calendar = new \CalendR\Calendar();
-$calendrier = new \App\ProtoControllers\Calendrier($session, $_GET, $calendar);
 $jourDemande = null;
 $moisDemande = null;
 
@@ -70,16 +69,6 @@ $utilisateursATrouver = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisa
 
 header_menu('', 'Libertempo : '._('calendrier_titre'));
 
-if ($jourDemande instanceof \DateTimeInterface) {
-
-} else {
-    $evenements->fetchEvenements(
-        $moisDemande,
-        $moisDemande->modify('+1 month'),
-        $utilisateursATrouver,
-        canSessionVoirEvenementEnTransit($_SESSION)
-    );
-    require_once VIEW_PATH . 'Calendrier/Mois.php';
-}
+require_once VIEW_PATH . 'Calendrier.php';
 
 bottom();
