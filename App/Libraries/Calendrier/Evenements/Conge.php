@@ -52,14 +52,16 @@ class Conge
             /* ... Puis on ajoute les bords */
             $conges[$jour['p_date_deb']][] = [
                 'employe' => $jour['p_login'],
-                'demiJournee' => ('pm' === $jour['p_demi_jour_deb']) ? $jour['p_demi_jour_deb'] : '*',
+                'demiJournee' => $this->getDemiJourneeDebut($jour['p_date_deb'], $jour['p_demi_jour_deb'], $jour['p_date_fin'], $jour['p_demi_jour_fin']),
                 'statut' => $jour['p_etat'],
             ];
-            $conges[$jour['p_date_fin']][] = [
-                'employe' => $jour['p_login'],
-                'demiJournee' => ('am' === $jour['p_demi_jour_fin']) ? $jour['p_demi_jour_fin'] : '*',
-                'statut' => $jour['p_etat'],
-            ];
+            if ($jour['p_date_fin'] !== $jour['p_date_deb']) {
+                $conges[$jour['p_date_fin']][] = [
+                    'employe' => $jour['p_login'],
+                    'demiJournee' => $this->getDemiJourneeFin($jour['p_date_deb'], $jour['p_demi_jour_deb'], $jour['p_date_fin'], $jour['p_demi_jour_fin']),
+                    'statut' => $jour['p_etat'],
+                ];
+            }
         }
         ksort($conges);
 
@@ -80,6 +82,32 @@ class Conge
         }
 
         return $listeJours;
+    }
+
+    private function getDemiJourneeDebut($debut, $demiJourneeDebut, $fin, $demiJourneeFin)
+    {
+        if ($debut < $fin) {
+            return 'am' === $demiJourneeDebut
+            ? '*'
+            : $demiJourneeDebut;
+        }
+
+        return $demiJourneeDebut === $demiJourneeFin
+            ? $demiJourneeDebut
+            : '*';
+    }
+
+    private function getDemiJourneeFin($debut, $demiJourneeDebut, $fin, $demiJourneeFin)
+    {
+        if ($debut < $fin) {
+            return 'pm' === $demiJourneeFin
+            ? '*'
+            : $demiJourneeFin;
+        }
+
+        return $demiJourneeDebut === $demiJourneeFin
+            ? $demiJourneeDebut
+            : '*';
     }
 
 

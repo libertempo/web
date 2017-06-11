@@ -712,11 +712,11 @@ td.calendrier-jour.conge {
 }
 
 td.calendrier-jour.conge_am {
-    background: linear-gradient(90deg, rgba(255,0,0,0) 50%, #1ABC9C 50%);
+    background: linear-gradient(90deg, #1ABC9C 50%, rgba(255,0,0,0) 50%);
 }
 
 td.calendrier-jour.conge_pm {
-    background: linear-gradient(90deg, #1ABC9C 50%, rgba(255,0,0,0) 50%);
+    background: linear-gradient(90deg, rgba(255,0,0,0) 50%, #1ABC9C 50%);
 }
 
 td.calendrier-jour.heure_additionnelle_3 div.triangle-top {

@@ -135,8 +135,6 @@ class Evenements
         }
 
         return in_array('weekend', $this->evenements[$idEmploye]['dates'][$date]['evenements'], true);
-        // pour vérifier l'élément absorbant
-        // pareil pour ferie ?
     }
 
     private function isEvenementWeekend($nomEvenement)

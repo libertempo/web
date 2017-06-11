@@ -31,7 +31,7 @@ class Conge extends \Tests\Units\TestUnit
         $this->array($conge->getListe($date, $date, [], false))->isEmpty();
     }
 
-    public function testGetListeFilled()
+    public function testGetListeFilledSeveralDays()
     {
         $statut = \App\Models\Conge::STATUT_VALIDATION_FINALE;
         $this->calling($this->result)->fetch_all = [[
@@ -65,6 +65,35 @@ class Conge extends \Tests\Units\TestUnit
             '2017-02-15' => [[
                 'employe' => $nomComplet,
                 'demiJournee' => 'am',
+                'statut' => $statut,
+            ]],
+        ];
+        $date = new \DateTimeImmutable();
+        $liste = $conge->getListe($date, $date, [], false);
+        ksort($liste);
+
+        $this->array($liste)->isIdenticalTo($expected);
+    }
+
+    public function testGetListeFilledOneDay()
+    {
+        $statut = \App\Models\Conge::STATUT_VALIDATION_FINALE;
+        $this->calling($this->result)->fetch_all = [[
+            'p_login' => 'Perceval Karadoc',
+            'p_demi_jour_deb' => 'am',
+            'p_demi_jour_fin' => 'pm',
+            'p_etat' => $statut,
+            'p_date_deb' => '2017-02-12',
+            'p_date_fin' => '2017-02-12'
+        ],];
+
+        $conge = new _Conge($this->db);
+
+        $nomComplet = 'Perceval Karadoc';
+        $expected = [
+            '2017-02-12' => [[
+                'employe' => $nomComplet,
+                'demiJournee' => '*',
                 'statut' => $statut,
             ]],
         ];
