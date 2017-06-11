@@ -30,9 +30,7 @@ $moisSuivant = getUrlMois($moisDemande->modify('+1 month'), $session, $idGroupe)
             $jourString = $day->getBegin()->format('Y-m-d');
             $jours[] = $jourString;
             ?>
-            <th class="<?= $today ?>">
-                <a href=?session=<?= $session ?>&jour=<?= $jourString ?>><?= $day->getBegin()->format('d') ?></a>
-            </th>
+            <th class="<?= $today ?>"><?= $day->getBegin()->format('d') ?></th>
             <?php endforeach ?>
             <?php endforeach ?>
         </tr>

@@ -659,16 +659,8 @@ table#calendrier {
     text-align: center;
 }
 
-table#calendrier #entete th a {
-    text-decoration: none;
-    display: block;
-}
-
 #calendrier #entete th.today {
     background: #009ec5;
-}
-
-#calendrier #entete th.today a {
     color: white;
 }
 
@@ -707,16 +699,28 @@ td.calendrier-jour.horsMois {
     background: #CCC;
 }
 
-td.calendrier-jour.conge {
+td.calendrier-jour.conge_all.conge_ok {
     background: #1ABC9C;
 }
 
-td.calendrier-jour.conge_am {
+td.calendrier-jour.conge_all.conge_demande, td.calendrier-jour.conge_all.conge_valid {
+    background: rgba(26, 188, 156, 0.5);
+}
+
+td.calendrier-jour.conge_am.conge_ok {
     background: linear-gradient(90deg, #1ABC9C 50%, rgba(255,0,0,0) 50%);
 }
 
-td.calendrier-jour.conge_pm {
-    background: linear-gradient(90deg, rgba(255,0,0,0) 50%, #1ABC9C 50%);
+td.calendrier-jour.conge_am.conge_demande, td.calendrier-jour.conge_am.conge_valid {
+    background: linear-gradient(90deg, rgba(26, 188, 156, 0.5) 50%, rgba(255,0,0,0) 50%);
+}
+
+td.calendrier-jour.conge_pm.conge_ok {
+    background: linear-gradient(90deg, rgba(255,0,0,0) 50%,  #1ABC9C 50%);
+}
+
+td.calendrier-jour.conge_pm.conge_demande, td.calendrier-jour.conge_pm.conge_valid {
+    background: linear-gradient(90deg, rgba(255,0,0,0) 50%, rgba(26, 188, 156, 0.5) 50%);
 }
 
 td.calendrier-jour.heure_additionnelle_3 div.triangle-top {
@@ -738,9 +742,6 @@ td.calendrier-jour.heure_repos_3 div.triangle-bottom {
     border-top: 8px solid transparent;
     border-left: 8px solid #e01414;
 }
-
-
-
 
 /* ------ ANCIEN CALENDRIER ------ */
 

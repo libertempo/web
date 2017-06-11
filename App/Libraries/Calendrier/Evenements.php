@@ -37,7 +37,7 @@ class Evenements
         $this->fetchWeekends($dateDebut, $dateFin);
         $this->fetchFeries($dateDebut, $dateFin);
         $this->fetchFermeture($dateDebut, $dateFin);
-        $this->fetchConges($dateDebut, $dateFin);
+        $this->fetchConges($dateDebut, $dateFin, $canVoirEnTransit);
         $this->fetchHeuresAdditionnelles($dateDebut, $dateFin);
         $this->fetchHeuresRepos($dateDebut, $dateFin);
     }
@@ -81,15 +81,15 @@ class Evenements
         }
     }
 
-    private function fetchConges(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
+    private function fetchConges(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, $canVoirEnTransit)
     {
         $conge = $this->injectableCreator->get(Evenements\Conge::class);
-        $congesListe = $conge->getListe($dateDebut, $dateFin, $this->employesATrouver, false);
+        $congesListe = $conge->getListe($dateDebut, $dateFin, $this->employesATrouver, $canVoirEnTransit);
         foreach ($congesListe as $jour => $evenementsJour) {
             foreach ($evenementsJour as $evenement) {
                 $suffixe = '*' !== $evenement['demiJournee']
                 ? '_' . $evenement['demiJournee']
-                : '';
+                : '_all';
                 $this->setEvenementDate($evenement['employe'], $jour, 'conge' . $suffixe . ' conge_' . $evenement['statut'], 'Congé');
             }
         }
