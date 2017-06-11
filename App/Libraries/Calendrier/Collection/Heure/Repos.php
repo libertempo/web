@@ -1,17 +1,12 @@
 <?php
 namespace App\Libraries\Calendrier\Collection\Heure;
 
-use \App\Libraries\Calendrier\Evenement;
-
 /**
  * Collection d'événements des heures de repos
  *
  * @since  1.9
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina
- *
- * Ne doit contacter que Evenement\Commun
- * Ne doit être contacté que par \App\Libraries\Calendrier\BusinessCollection
  *
  * @TODO supprimer le requétage à la migration vers le MVC REST
  */

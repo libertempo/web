@@ -39,7 +39,6 @@ class Facade
         $this->fetchConges($dateDebut, $dateFin);
         $this->fetchHeuresAdditionnelles($dateDebut, $dateFin);
         $this->fetchHeuresRepos($dateDebut, $dateFin);
-        // construction de cp, heures...
     }
 
     /**
