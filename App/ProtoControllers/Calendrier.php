@@ -218,12 +218,17 @@ final class Calendrier
     private function getCalendrier()
     {
         // TODO: open bar sur les droits :O
-        // (on prend les devants sur la pr des groupes) getAccessiblesGroupes()
-        // getUtilisateurs(getAccessiblesGroupes())
-        $utilisateursATrouver = \App\ProtoControllers\Utilisateur::getListId();
+        $groupesVisiblesUserCourant = \App\ProtoControllers\Utilisateur::getListeGroupesVisibles($_SESSION['userlogin']);
+        ddd($groupesVisiblesUserCourant);
+        $utilisateursATrouver = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupesVisiblesUserCourant);
+
         $injectableCreator = new \App\Libraries\InjectableCreator(\includes\SQL::singleton());
         $evenements = new \App\Libraries\Calendrier\Facade($injectableCreator);
-        $evenements->fetchEvenements($this->dateDebut, $this->dateFin, $utilisateursATrouver, false);
+        $evenements->fetchEvenements(
+            $this->dateDebut,
+            $this->dateFin,
+            $utilisateursATrouver, $this->canSessionVoirEvenementEnTransit($_SESSION)
+        );
         $calendar = new \CalendR\Calendar();
         /* Suis pas fan de la répartition par if, mais ça a l'air de faire le job */
         if (static::VUE_SEMAINE === $this->vue) {
