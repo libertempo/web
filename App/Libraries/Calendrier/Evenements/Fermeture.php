@@ -1,10 +1,10 @@
 <?php
-namespace App\Libraries\Calendrier\Collection;
+namespace App\Libraries\Calendrier\Evenements;
 
 use \App\Libraries\Calendrier\Evenement;
 
 /**
- * Collection de jours de fermeture de l'entreprise
+ * Evenements de jours de fermeture de l'entreprise
  *
  * @since  1.9
  * @author Prytoegrian <prytoegrian@protonmail.com>

@@ -1,7 +1,7 @@
 <?php
-namespace Tests\Units\App\Libraries\Calendrier\Collection\Heure;
+namespace Tests\Units\App\Libraries\Calendrier\Evenements\Heure;
 
-use App\Libraries\Calendrier\Collection\Heure\Repos as _Repos;
+use App\Libraries\Calendrier\Evenements\Heure\Repos as _Repos;
 
 /**
  * Classe de test des collections d'heures de repos
@@ -11,7 +11,7 @@ use App\Libraries\Calendrier\Collection\Heure\Repos as _Repos;
  * @author Wouldsmina
  *
  */
-class Repos extends \Tests\Units\App\Libraries\Calendrier\Collection\AHeure
+class Repos extends \Tests\Units\App\Libraries\Calendrier\Evenements\AHeure
 {
     protected function getTestedClass()
     {

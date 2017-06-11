@@ -1,5 +1,5 @@
 <?php
-namespace Tests\Units\App\Libraries\Calendrier\Collection;
+namespace Tests\Units\App\Libraries\Calendrier\Evenements;
 
 /**
  * Classe de test des collections d'heures

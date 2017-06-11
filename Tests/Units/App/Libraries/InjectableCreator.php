@@ -51,7 +51,7 @@ class InjectableCreator extends \Tests\Units\TestUnit
 
     public function testGetAuthorizedClass()
     {
-        $classname = \App\Libraries\Calendrier\Collection\Weekend::class;
+        $classname = \App\Libraries\Calendrier\Evenements\Weekend::class;
 
         $this->object($this->class->get($classname))->isInstanceOf($classname);
     }

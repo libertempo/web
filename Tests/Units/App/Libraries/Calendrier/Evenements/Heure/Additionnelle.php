@@ -1,7 +1,7 @@
 <?php
-namespace Tests\Units\App\Libraries\Calendrier\Collection\Heure;
+namespace Tests\Units\App\Libraries\Calendrier\Evenements\Heure;
 
-use App\Libraries\Calendrier\Collection\Heure\Additionnelle as _Additionnelle;
+use App\Libraries\Calendrier\Evenements\Heure\Additionnelle as _Additionnelle;
 
 /**
  * Classe de test des collections d'heures additionnelles
@@ -11,7 +11,7 @@ use App\Libraries\Calendrier\Collection\Heure\Additionnelle as _Additionnelle;
  * @author Wouldsmina
  *
  */
-class Additionnelle extends \Tests\Units\App\Libraries\Calendrier\Collection\AHeure
+class Additionnelle extends \Tests\Units\App\Libraries\Calendrier\Evenements\AHeure
 {
     protected function getTestedClass()
     {

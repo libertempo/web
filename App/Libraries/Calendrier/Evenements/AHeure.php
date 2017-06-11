@@ -1,8 +1,8 @@
 <?php
-namespace App\Libraries\Calendrier\Collection;
+namespace App\Libraries\Calendrier\Evenements;
 
 /**
- * Collection d'événements des heures
+ * Evenements d'événements des heures
  *
  * @since  1.9
  * @author Prytoegrian <prytoegrian@protonmail.com>

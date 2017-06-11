@@ -1,7 +1,7 @@
 <?php
-namespace Tests\Units\App\Libraries\Calendrier\Collection;
+namespace Tests\Units\App\Libraries\Calendrier\Evenements;
 
-use App\Libraries\Calendrier\Collection\Ferie as _Ferie;
+use App\Libraries\Calendrier\Evenements\Ferie as _Ferie;
 
 class Ferie extends \Tests\Units\TestUnit
 {

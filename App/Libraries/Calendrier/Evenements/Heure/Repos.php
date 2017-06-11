@@ -1,8 +1,8 @@
 <?php
-namespace App\Libraries\Calendrier\Collection\Heure;
+namespace App\Libraries\Calendrier\Evenements\Heure;
 
 /**
- * Collection d'événements des heures de repos
+ * Evenements d'événements des heures de repos
  *
  * @since  1.9
  * @author Prytoegrian <prytoegrian@protonmail.com>
@@ -10,7 +10,7 @@ namespace App\Libraries\Calendrier\Collection\Heure;
  *
  * @TODO supprimer le requétage à la migration vers le MVC REST
  */
-final class Repos extends \App\Libraries\Calendrier\Collection\AHeure
+final class Repos extends \App\Libraries\Calendrier\Evenements\AHeure
 {
     /*
      * SQL

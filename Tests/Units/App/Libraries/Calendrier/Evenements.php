@@ -26,7 +26,7 @@ class Evenements extends \Tests\Units\TestUnit
         $this->mockGenerator->orphanize('__construct');
         $this->injectableCreator = new \mock\App\Libraries\InjectableCreator();
         $this->mockGenerator->orphanize('__construct');
-        $this->weekend = new \mock\App\Libraries\Calendrier\Collection\Weekend();
+        $this->weekend = new \mock\App\Libraries\Calendrier\Evenements\Weekend();
         $this->calling($this->injectableCreator)->get = $this->weekend;
     }
 

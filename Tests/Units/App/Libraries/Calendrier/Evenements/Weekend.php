@@ -1,7 +1,7 @@
 <?php
-namespace Tests\Units\App\Libraries\Calendrier\Collection;
+namespace Tests\Units\App\Libraries\Calendrier\Evenements;
 
-use App\Libraries\Calendrier\Collection\Weekend as _Weekend;
+use App\Libraries\Calendrier\Evenements\Weekend as _Weekend;
 
 class Weekend extends \Tests\Units\TestUnit
 {

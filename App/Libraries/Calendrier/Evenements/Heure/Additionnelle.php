@@ -1,8 +1,8 @@
 <?php
-namespace App\Libraries\Calendrier\Collection\Heure;
+namespace App\Libraries\Calendrier\Evenements\Heure;
 
 /**
- * Collection d'événements des heures additionnelles
+ * Evenements d'événements des heures additionnelles
  *
  * @since  1.9
  * @author Prytoegrian <prytoegrian@protonmail.com>
@@ -11,7 +11,7 @@ namespace App\Libraries\Calendrier\Collection\Heure;
  * Ne doit être contacté que par \App\Libraries\Calendrier\Evenements
  * @TODO supprimer le requétage à la migration vers le MVC REST
  */
-final class Additionnelle extends \App\Libraries\Calendrier\Collection\AHeure
+final class Additionnelle extends \App\Libraries\Calendrier\Evenements\AHeure
 {
     /*
      * SQL

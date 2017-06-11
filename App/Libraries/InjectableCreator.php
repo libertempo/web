@@ -38,12 +38,12 @@ class InjectableCreator
         }
 
         switch ($classname) {
-            case 'App\Libraries\Calendrier\Collection\Weekend':
-            case 'App\Libraries\Calendrier\Collection\Ferie':
-            case 'App\Libraries\Calendrier\Collection\Fermeture':
-            case 'App\Libraries\Calendrier\Collection\Conge':
-            case 'App\Libraries\Calendrier\Collection\Heure\Additionnelle':
-            case 'App\Libraries\Calendrier\Collection\Heure\Repos':
+            case 'App\Libraries\Calendrier\Evenements\Weekend':
+            case 'App\Libraries\Calendrier\Evenements\Ferie':
+            case 'App\Libraries\Calendrier\Evenements\Fermeture':
+            case 'App\Libraries\Calendrier\Evenements\Conge':
+            case 'App\Libraries\Calendrier\Evenements\Heure\Additionnelle':
+            case 'App\Libraries\Calendrier\Evenements\Heure\Repos':
                 return new $classname($this->db);
 
             default:

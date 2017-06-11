@@ -1,7 +1,7 @@
 <?php
-namespace Tests\Units\App\Libraries\Calendrier\Collection;
+namespace Tests\Units\App\Libraries\Calendrier\Evenements;
 
-use App\Libraries\Calendrier\Collection\Fermeture as _Fermeture;
+use App\Libraries\Calendrier\Evenements\Fermeture as _Fermeture;
 
 class Fermeture extends \Tests\Units\TestUnit
 {

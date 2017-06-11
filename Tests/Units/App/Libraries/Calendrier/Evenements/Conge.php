@@ -1,7 +1,7 @@
 <?php
-namespace Tests\Units\App\Libraries\Calendrier\Collection;
+namespace Tests\Units\App\Libraries\Calendrier\Evenements;
 
-use App\Libraries\Calendrier\Collection\Conge as _Conge;
+use App\Libraries\Calendrier\Evenements\Conge as _Conge;
 
 /**
  * Classe de test des collections de congés

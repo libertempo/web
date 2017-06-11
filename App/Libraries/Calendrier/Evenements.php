@@ -45,7 +45,7 @@ class Evenements
      */
     private function fetchWeekends(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
     {
-        $weekend = $this->injectableCreator->get(Collection\Weekend::class);
+        $weekend = $this->injectableCreator->get(Evenements\Weekend::class);
         $weekendsListe = $weekend->getListe($dateDebut, $dateFin);
         foreach ($weekendsListe as $date) {
             foreach ($this->employesATrouver as $employe) {
@@ -60,7 +60,7 @@ class Evenements
      */
     private function fetchFeries(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
     {
-        $feries = $this->injectableCreator->get(Collection\Ferie::class);
+        $feries = $this->injectableCreator->get(Evenements\Ferie::class);
         $feriesListe = $feries->getListe($dateDebut, $dateFin);
         foreach ($feriesListe as $date) {
             foreach ($this->employesATrouver as $employe) {
@@ -72,7 +72,7 @@ class Evenements
 
     private function fetchFermeture(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
     {
-        $fermeture = $this->injectableCreator->get(Collection\Fermeture::class);
+        $fermeture = $this->injectableCreator->get(Evenements\Fermeture::class);
         $fermetureListe = $fermeture->getListe($dateDebut, $dateFin, []);
         foreach ($fermetureListe as $date) {
             foreach ($this->employesATrouver as $employe) {
@@ -84,7 +84,7 @@ class Evenements
 
     private function fetchConges(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
     {
-        $conge = $this->injectableCreator->get(Collection\Conge::class);
+        $conge = $this->injectableCreator->get(Evenements\Conge::class);
         $congesListe = $conge->getListe($dateDebut, $dateFin, $this->employesATrouver, false);
         foreach ($congesListe as $jour => $evenementsJour) {
             foreach ($evenementsJour as $evenement) {
@@ -99,7 +99,7 @@ class Evenements
 
     private function fetchHeuresAdditionnelles(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
     {
-        $heure = $this->injectableCreator->get(Collection\Heure\Additionnelle::class);
+        $heure = $this->injectableCreator->get(Evenements\Heure\Additionnelle::class);
         $heureListe = $heure->getListe($dateDebut, $dateFin, $this->employesATrouver, false);
         foreach ($heureListe as $jour => $evenementsJour) {
             foreach ($evenementsJour as $evenement) {
@@ -110,7 +110,7 @@ class Evenements
 
     private function fetchHeuresRepos(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
     {
-        $heure = $this->injectableCreator->get(Collection\Heure\Repos::class);
+        $heure = $this->injectableCreator->get(Evenements\Heure\Repos::class);
         $heureListe = $heure->getListe($dateDebut, $dateFin, $this->employesATrouver, false);
         foreach ($heureListe as $jour => $evenementsJour) {
             foreach ($evenementsJour as $evenement) {

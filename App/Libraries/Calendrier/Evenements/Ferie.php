@@ -1,8 +1,8 @@
 <?php
-namespace App\Libraries\Calendrier\Collection;
+namespace App\Libraries\Calendrier\Evenements;
 
 /**
- * Collection de jours fériés
+ * Evenements de jours fériés
  *
  * @since  1.9
  * @author Prytoegrian <prytoegrian@protonmail.com>
