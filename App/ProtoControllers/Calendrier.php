@@ -169,12 +169,16 @@ final class Calendrier
         }
         $form .= '</select></div></div>';
         if($_SESSION['config']['gestion_groupes']) {
+            $groupesVisiblesUtilisateur = \App\ProtoControllers\Utilisateur::getListeGroupesVisibles($_SESSION['userlogin']);
             $form .= '<div class="form-group col-md-4 col-sm-5">
             <label class="control-label col-md-3 col-sm-3" for="groupe">Groupe&nbsp;:</label>
             <div class="col-md-8 col-sm-8"><select class="form-control" name="search[groupe]" id="groupe">';
             $form .= '<option value="' . NIL_INT . '">Tous</option>';
 
             foreach (\App\ProtoControllers\Groupe::getOptions() as $id => $groupe) {
+                if (!in_array($id, $groupesVisiblesUtilisateur)) {
+                    continue;
+                }
                 $selected = ($id ===  $this->idGroupe)
                     ? 'selected="selected"'
                     : '';
