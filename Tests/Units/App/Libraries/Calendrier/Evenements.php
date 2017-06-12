@@ -16,7 +16,7 @@ class Evenements extends \Tests\Units\TestUnit
     private $dateFin;
     private $employes = ['Babar', 'Rintintin'];
     private $injectableCreator;
-    private $weekend;
+    private $evenement;
 
     public function beforeTestMethod($method)
     {
@@ -26,24 +26,15 @@ class Evenements extends \Tests\Units\TestUnit
         $this->mockGenerator->orphanize('__construct');
         $this->injectableCreator = new \mock\App\Libraries\InjectableCreator();
         $this->mockGenerator->orphanize('__construct');
-        $this->weekend = new \mock\App\Libraries\Calendrier\Evenements\Weekend();
-        $this->calling($this->injectableCreator)->get = $this->weekend;
-    }
-
-    public function testGetEmployes()
-    {
-        $this->calling($this->weekend)->getListe = [];
-        $calendrier = new _Evenements($this->injectableCreator);
-        $calendrier->fetchEvenements($this->dateDebut, $this->dateFin, $this->employes, false);
-
-        $this->array($calendrier->getEmployes())->isIdenticalTo($this->employes);
+        $this->evenement = new \mock\App\Libraries\Calendrier\Evenements\Weekend();
+        $this->calling($this->injectableCreator)->get = $this->evenement;
     }
 
     public function testGetEvenementsDateEmployeInconnu()
     {
-        $this->calling($this->weekend)->getListe = [];
+        $this->calling($this->evenement)->getListe = [];
         $calendrier = new _Evenements($this->injectableCreator);
-        $calendrier->fetchEvenements($this->dateDebut, $this->dateFin, $this->employes, false);
+        $calendrier->fetchEvenements($this->dateDebut, $this->dateFin, $this->employes, false, false);
 
         $this->exception(function () use ($calendrier) {
             $calendrier->getEvenementsDate('PetitLapin', '0000-00-00');
@@ -52,12 +43,12 @@ class Evenements extends \Tests\Units\TestUnit
 
     public function testGetEvenementsDateDateInconnue()
     {
-        $this->calling($this->weekend)->getListe = ['2017-02-12'];
-        $this->calling($this->weekend)->getListe[4] = [];
-        $this->calling($this->weekend)->getListe[5] = [];
-        $this->calling($this->weekend)->getListe[6] = [];
+        $this->calling($this->evenement)->getListe = ['2017-02-12'];
+        $this->calling($this->evenement)->getListe[4] = [];
+        $this->calling($this->evenement)->getListe[5] = [];
+        $this->calling($this->evenement)->getListe[6] = [];
         $calendrier = new _Evenements($this->injectableCreator);
-        $calendrier->fetchEvenements($this->dateDebut, $this->dateFin, $this->employes, false);
+        $calendrier->fetchEvenements($this->dateDebut, $this->dateFin, $this->employes, false, false);
 
         $this->array($calendrier->getEvenementsDate('Babar', '2017-02-10'))
             ->isIdenticalTo([]);
@@ -69,19 +60,14 @@ class Evenements extends \Tests\Units\TestUnit
     public function testGetEvenenementsDateWeekend()
     {
         // définition d'un autre événement avec weekend
-        $this->calling($this->weekend)->getListe = ['2017-02-12'];
-        $this->calling($this->weekend)->getListe[4] = [];
-        $this->calling($this->weekend)->getListe[5] = [];
-        $this->calling($this->weekend)->getListe[6] = [];
+        $this->calling($this->evenement)->getListe = ['2017-02-12'];
+        $this->calling($this->evenement)->getListe[4] = [];
+        $this->calling($this->evenement)->getListe[5] = [];
+        $this->calling($this->evenement)->getListe[6] = [];
         $calendrier = new _Evenements($this->injectableCreator);
-        $calendrier->fetchEvenements($this->dateDebut, $this->dateFin, $this->employes, false);
+        $calendrier->fetchEvenements($this->dateDebut, $this->dateFin, $this->employes, false, false);
 
         $this->array($calendrier->getEvenementsDate('Babar', '2017-02-12'))
             ->isIdenticalTo(['weekend']);
     }
-
-    // public function testGetEvenenementsDatePlusieurs()
-    // du coup le "plusieurs", pas avec weekend
-    // pareil pour title, mais à ce stade, je ne sais pas encore ce que je veux
-
 }

@@ -18,8 +18,6 @@ class Evenements
 
     private $injectableCreator;
 
-    private $employesATrouver;
-
     private $evenements;
 
     /**
@@ -35,26 +33,25 @@ class Evenements
     {
         $canVoirEnTransit = (bool) $canVoirEnTransit;
         $hasGestionHeure = (bool) $hasGestionHeure;
-        $this->employesATrouver = $employesATrouver;
-        $this->fetchWeekends($dateDebut, $dateFin);
-        $this->fetchFeries($dateDebut, $dateFin);
-        $this->fetchFermeture($dateDebut, $dateFin);
-        $this->fetchConges($dateDebut, $dateFin, $canVoirEnTransit);
+        $this->fetchWeekends($dateDebut, $dateFin, $employesATrouver);
+        $this->fetchFeries($dateDebut, $dateFin, $employesATrouver);
+        $this->fetchFermeture($dateDebut, $dateFin, $employesATrouver);
+        $this->fetchConges($dateDebut, $dateFin, $canVoirEnTransit, $employesATrouver);
         if ($hasGestionHeure) {
-            $this->fetchHeuresAdditionnelles($dateDebut, $dateFin, $canVoirEnTransit);
-            $this->fetchHeuresRepos($dateDebut, $dateFin, $canVoirEnTransit);
+            $this->fetchHeuresAdditionnelles($dateDebut, $dateFin, $canVoirEnTransit, $employesATrouver);
+            $this->fetchHeuresRepos($dateDebut, $dateFin, $canVoirEnTransit, $employesATrouver);
         }
     }
 
     /**
      * Recupère la liste ordonnée des weekend des employés
      */
-    private function fetchWeekends(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
+    private function fetchWeekends(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, array $employesATrouver)
     {
         $weekend = $this->injectableCreator->get(Evenements\Weekend::class);
         $weekendsListe = $weekend->getListe($dateDebut, $dateFin);
         foreach ($weekendsListe as $date) {
-            foreach ($this->employesATrouver as $employe) {
+            foreach ($employesATrouver as $employe) {
                 $this->setEvenementDate($employe, $date, 'weekend', 'Week-end');
             }
         }
@@ -63,32 +60,32 @@ class Evenements
     /**
      * Recupère la liste ordonnée des jours fériés des employés
      */
-    private function fetchFeries(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
+    private function fetchFeries(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, array $employesATrouver)
     {
         $feries = $this->injectableCreator->get(Evenements\Ferie::class);
         $feriesListe = $feries->getListe($dateDebut, $dateFin);
         foreach ($feriesListe as $date) {
-            foreach ($this->employesATrouver as $employe) {
+            foreach ($employesATrouver as $employe) {
                 $this->setEvenementDate($employe, $date, 'ferie', 'Jour férié');
             }
         }
     }
 
-    private function fetchFermeture(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
+    private function fetchFermeture(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, array $employesATrouver)
     {
         $fermeture = $this->injectableCreator->get(Evenements\Fermeture::class);
         $fermetureListe = $fermeture->getListe($dateDebut, $dateFin, []);
         foreach ($fermetureListe as $date) {
-            foreach ($this->employesATrouver as $employe) {
+            foreach ($employesATrouver as $employe) {
                 $this->setEvenementDate($employe, $date, 'fermeture', 'Fermeture');
             }
         }
     }
 
-    private function fetchConges(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, $canVoirEnTransit)
+    private function fetchConges(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, $canVoirEnTransit, array $employesATrouver)
     {
         $conge = $this->injectableCreator->get(Evenements\Conge::class);
-        $congesListe = $conge->getListe($dateDebut, $dateFin, $this->employesATrouver, $canVoirEnTransit);
+        $congesListe = $conge->getListe($dateDebut, $dateFin, $employesATrouver, $canVoirEnTransit);
         foreach ($congesListe as $jour => $evenementsJour) {
             foreach ($evenementsJour as $evenement) {
                 $suffixe = '*' !== $evenement['demiJournee']
@@ -99,10 +96,10 @@ class Evenements
         }
     }
 
-    private function fetchHeuresAdditionnelles(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, $canVoirEnTransit)
+    private function fetchHeuresAdditionnelles(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, $canVoirEnTransit, array $employesATrouver)
     {
         $heure = $this->injectableCreator->get(Evenements\Heure\Additionnelle::class);
-        $heureListe = $heure->getListe($dateDebut, $dateFin, $this->employesATrouver, $canVoirEnTransit);
+        $heureListe = $heure->getListe($dateDebut, $dateFin, $employesATrouver, $canVoirEnTransit);
         foreach ($heureListe as $jour => $evenementsJour) {
             foreach ($evenementsJour as $evenement) {
                 $this->setEvenementDate($evenement['employe'], $jour, 'heure_additionnelle_' . $evenement['statut'], 'Heure additionnelle');
@@ -110,10 +107,10 @@ class Evenements
         }
     }
 
-    private function fetchHeuresRepos(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, $canVoirEnTransit)
+    private function fetchHeuresRepos(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, $canVoirEnTransit, array $employesATrouver)
     {
         $heure = $this->injectableCreator->get(Evenements\Heure\Repos::class);
-        $heureListe = $heure->getListe($dateDebut, $dateFin, $this->employesATrouver, $canVoirEnTransit);
+        $heureListe = $heure->getListe($dateDebut, $dateFin, $employesATrouver, $canVoirEnTransit);
         foreach ($heureListe as $jour => $evenementsJour) {
             foreach ($evenementsJour as $evenement) {
                 $this->setEvenementDate($evenement['employe'], $jour, 'heure_repos_' . $evenement['statut'], 'Heure de repos');
@@ -144,11 +141,6 @@ class Evenements
     private function isEvenementWeekend($nomEvenement)
     {
         return 'weekend' === $nomEvenement;
-    }
-
-    public function getEmployes()
-    {
-        return $this->employesATrouver;
     }
 
     /**
@@ -185,13 +177,5 @@ class Evenements
         if (!isset($this->evenements[$idEmploye])) {
             throw new \DomainException('Employé inconnu');
         }
-    }
-
-    /**
-     * @TODO : à but de test, à supprimer quand c'est terminé
-     */
-    public function getEvenements()
-    {
-        return $this->evenements;
     }
 }
