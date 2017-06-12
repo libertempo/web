@@ -4,6 +4,7 @@
  * $calendar
  * $session
  * $evenements
+ * $groupesAVoir
  */
 
 /* Div auto fermé par le bottom */ ?>
@@ -16,7 +17,7 @@
             <select class="form-control" name="groupe" id="groupe">
                 <option value="<?= NIL_INT ?>">Tous</option>
                 <?php
-                    foreach (\App\ProtoControllers\Groupe::getOptions() as $id => $groupe) {
+                    foreach (\App\ProtoControllers\Groupe::getOptions($groupesAVoir) as $id => $groupe) {
                         $selected = ($id === $idGroupe)
                         ? 'selected="selected"'
                         : '';

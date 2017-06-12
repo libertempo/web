@@ -67,14 +67,16 @@ if (!empty($_GET['jour']) && false !== strtotime($_GET['jour'])) {
 } else {
     $moisDemande = new \DateTimeImmutable(date('Y-m') . '-01');
 }
-$idGroupe = !empty($_GET['groupe'])
-    ? (int) $_GET['groupe']
-    : NIL_INT;
 
 $injectableCreator = new \App\Libraries\InjectableCreator(\includes\SQL::singleton());
 $evenements = new \App\Libraries\Calendrier\Evenements($injectableCreator);
-$groupesVisiblesUserCourant = \App\ProtoControllers\Utilisateur::getListeGroupesVisibles($_SESSION['userlogin']);
-$utilisateursATrouver = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupesVisiblesUserCourant);
+$groupesAVoir = \App\ProtoControllers\Utilisateur::getListeGroupesVisibles($_SESSION['userlogin']);
+$idGroupe = NIL_INT;
+if (!empty($_GET['groupe']) && NIL_INT != $_GET['groupe']) {
+    $idGroupe = (int) (int) $_GET['groupe'];
+    $groupesAVoir = array_intersect([$idGroupe], $groupesAVoir);
+}
+$utilisateursATrouver = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupesAVoir);
 
 header_menu('', 'Libertempo : '._('calendrier_titre'));
 
