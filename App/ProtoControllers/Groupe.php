@@ -50,6 +50,10 @@ class Groupe
         $req = 'SELECT *
                 FROM conges_groupe CG
                     INNER JOIN conges_groupe_users CGU ON (CG.g_gid = CGU.gu_gid)';
+        if (!empty($listeId)) {
+            $listeId = array_map('intval', $listeId);
+            $req .= ' WHERE CG.g_gid IN (' . implode(',', $listeId) . ')';
+        }
         $result = $sql->query($req);
 
         $groupes = [];

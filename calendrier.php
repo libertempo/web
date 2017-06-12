@@ -70,7 +70,7 @@ if (!empty($_GET['jour']) && false !== strtotime($_GET['jour'])) {
 
 $injectableCreator = new \App\Libraries\InjectableCreator(\includes\SQL::singleton());
 $evenements = new \App\Libraries\Calendrier\Evenements($injectableCreator);
-$groupesAVoir = \App\ProtoControllers\Utilisateur::getListeGroupesVisibles($_SESSION['userlogin']);
+$groupesAVoir = $groupesVisiblesUtilisateur = \App\ProtoControllers\Utilisateur::getListeGroupesVisibles($_SESSION['userlogin']);
 $idGroupe = NIL_INT;
 if (!empty($_GET['groupe']) && NIL_INT != $_GET['groupe']) {
     $idGroupe = (int) (int) $_GET['groupe'];
