@@ -10,6 +10,7 @@
 $urlMoisDemande = getUrlMois($jourDemande, $session, $idGroupe);
 $jour = $calendar->getDay(new \DateTime($jourDemande->format('Y-m-d')));
 
+require_once VIEW_PATH . 'Calendrier.php';
 ?>
 <div class="btn-group pull-right">
     <a class="btn btn-default" href="<?= $urlMoisDemande ?>"><i class="fa fa-chevron-up" aria-hidden="true"></i>&nbsp;Retour au mois</a>
@@ -27,7 +28,7 @@ $jour = $calendar->getDay(new \DateTime($jourDemande->format('Y-m-d')));
             <th><?= $heureString ?></th>
             <?php endforeach ?>
         </tr>
-        <?php foreach ($evenements->getEmployes() as $nom) : ?>
+        <?php foreach ($utilisateursATrouver as $nom) : ?>
         <tr class="calendrier-employe">
             <td class="calendrier-nom"><?= $nom ?></td>
         </tr>

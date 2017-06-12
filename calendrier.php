@@ -78,6 +78,24 @@ $utilisateursATrouver = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisa
 
 header_menu('', 'Libertempo : '._('calendrier_titre'));
 
-require_once VIEW_PATH . 'Calendrier.php';
+if ($jourDemande instanceof \DateTimeInterface) {
+    $evenements->fetchEvenements(
+        $jourDemande,
+        $jourDemande->modify('+1 day'),
+        $utilisateursATrouver,
+        canSessionVoirEvenementEnTransit($_SESSION),
+        $_SESSION['config']['gestion_heures']
+    );
+    require_once VIEW_PATH . 'Calendrier/Jour.php';
+} else {
+    $evenements->fetchEvenements(
+        $moisDemande,
+        $moisDemande->modify('+1 month'),
+        $utilisateursATrouver,
+        canSessionVoirEvenementEnTransit($_SESSION),
+        $_SESSION['config']['gestion_heures']
+    );
+    require_once VIEW_PATH . 'Calendrier/Mois.php';
+}
 
 bottom();

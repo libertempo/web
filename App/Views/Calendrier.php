@@ -32,22 +32,3 @@
     </div>
     <input type="hidden" name="session" value="<?= $session ?>" />
 </form>
-
-<?php
-if ($jourDemande instanceof \DateTimeInterface) {
-    $evenements->fetchEvenements(
-        $jourDemande,
-        $jourDemande->modify('+1 day'),
-        $utilisateursATrouver,
-        canSessionVoirEvenementEnTransit($_SESSION)
-    );
-    require_once VIEW_PATH . 'Calendrier/Jour.php';
-} else {
-    $evenements->fetchEvenements(
-        $moisDemande,
-        $moisDemande->modify('+1 month'),
-        $utilisateursATrouver,
-        canSessionVoirEvenementEnTransit($_SESSION)
-    );
-    require_once VIEW_PATH . 'Calendrier/Mois.php';
-}

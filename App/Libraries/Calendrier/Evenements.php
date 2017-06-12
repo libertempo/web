@@ -29,17 +29,21 @@ class Evenements
      * @param \DateTimeInterface $dateFin
      * @param array $employesATrouver Liste d'utilisateurs dont on veut voir les événements
      * @param bool $canVoirEnTransit Si l'utilisateur a la possiblité de voir les événements non encore validés
+     * @param bool $hasGestionHeure
      */
-    public function fetchEvenements(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, array $employesATrouver, $canVoirEnTransit)
+    public function fetchEvenements(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, array $employesATrouver, $canVoirEnTransit, $hasGestionHeure)
     {
         $canVoirEnTransit = (bool) $canVoirEnTransit;
+        $hasGestionHeure = (bool) $hasGestionHeure;
         $this->employesATrouver = $employesATrouver;
         $this->fetchWeekends($dateDebut, $dateFin);
         $this->fetchFeries($dateDebut, $dateFin);
         $this->fetchFermeture($dateDebut, $dateFin);
         $this->fetchConges($dateDebut, $dateFin, $canVoirEnTransit);
-        $this->fetchHeuresAdditionnelles($dateDebut, $dateFin);
-        $this->fetchHeuresRepos($dateDebut, $dateFin);
+        if ($hasGestionHeure) {
+            $this->fetchHeuresAdditionnelles($dateDebut, $dateFin, $canVoirEnTransit);
+            $this->fetchHeuresRepos($dateDebut, $dateFin, $canVoirEnTransit);
+        }
     }
 
     /**
@@ -95,10 +99,10 @@ class Evenements
         }
     }
 
-    private function fetchHeuresAdditionnelles(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
+    private function fetchHeuresAdditionnelles(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, $canVoirEnTransit)
     {
         $heure = $this->injectableCreator->get(Evenements\Heure\Additionnelle::class);
-        $heureListe = $heure->getListe($dateDebut, $dateFin, $this->employesATrouver, false);
+        $heureListe = $heure->getListe($dateDebut, $dateFin, $this->employesATrouver, $canVoirEnTransit);
         foreach ($heureListe as $jour => $evenementsJour) {
             foreach ($evenementsJour as $evenement) {
                 $this->setEvenementDate($evenement['employe'], $jour, 'heure_additionnelle_' . $evenement['statut'], 'Heure additionnelle');
@@ -106,10 +110,10 @@ class Evenements
         }
     }
 
-    private function fetchHeuresRepos(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
+    private function fetchHeuresRepos(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, $canVoirEnTransit)
     {
         $heure = $this->injectableCreator->get(Evenements\Heure\Repos::class);
-        $heureListe = $heure->getListe($dateDebut, $dateFin, $this->employesATrouver, false);
+        $heureListe = $heure->getListe($dateDebut, $dateFin, $this->employesATrouver, $canVoirEnTransit);
         foreach ($heureListe as $jour => $evenementsJour) {
             foreach ($evenementsJour as $evenement) {
                 $this->setEvenementDate($evenement['employe'], $jour, 'heure_repos_' . $evenement['statut'], 'Heure de repos');

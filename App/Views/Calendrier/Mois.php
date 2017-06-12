@@ -5,12 +5,15 @@
  * $session
  * $evenements
  * $idGroupe
+ * $moisDemande
  */
 $mois = $calendar->getMonth(new \DateTime($moisDemande->format('Y-m-d')));
 $jours = [];
 $moisPrecedent = getUrlMois($moisDemande->modify('-1 month'), $session, $idGroupe);
 $moisCourant = getUrlMois(new \DateTimeImmutable(), $session, $idGroupe);
 $moisSuivant = getUrlMois($moisDemande->modify('+1 month'), $session, $idGroupe);
+
+require_once VIEW_PATH . 'Calendrier.php';
 ?>
 
 <div class="btn-group pull-right">
@@ -34,7 +37,7 @@ $moisSuivant = getUrlMois($moisDemande->modify('+1 month'), $session, $idGroupe)
             <?php endforeach ?>
             <?php endforeach ?>
         </tr>
-        <?php foreach ($evenements->getEmployes() as $nom) : ?>
+        <?php foreach ($utilisateursATrouver as $nom) : ?>
         <tr class="calendrier-employe">
             <td class="calendrier-nom"><?= $nom ?></td>
             <?php foreach ($jours as $jour) : ?>
