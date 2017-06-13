@@ -13,46 +13,48 @@ use GuzzleHttp\Psr7\Request;
 final class ApiClient
 {
     /**
-     * @var string URI relative vers la ressource à atteindre
-     */
-    private $uri;
-
-    /**
      * @var ClientInterface Client de la requête
      */
     private $client;
 
     /**
-     * @param string URI de la ressource
-     * @param ClientInterface $client Client de la requêTypeError
+     * @param ClientInterface $client Client de la requête
      *
      * @throws \RuntimeException if infrastructure pre-conditions aren't fulfilled
      */
-    public function __construct($uri, ClientInterface $client = null)
+    public function __construct(ClientInterface $client = null)
     {
         if (!extension_loaded('curl')) {
             if (false === ini_set('allow_url_fopen', true)) {
                 throw new \RuntimeException('cURL or allow_url_fopen are required');
             }
         }
-        $this->uri = $uri;
+        // @todo s'appuyer sur l'injectableCreator pour n'avoir qu'une route et que le client n'aie pas conscience de la tambouille
         if (null === $client) {
             // mettre une methode getclient pour tester cette partie
-            $baseURIApi = $_SERVER['HTTP_HOST'] . '/';// api/
+            $baseURIApi = $_SERVER['HTTP_HOST'] . '/api/';
             $client = new \GuzzleHttp\Client([
                 'base_uri' => $baseURIApi,
             ]);
         }
         $this->client = $client;
-        /*
-         * $request = new Request('PUT', 'http://httpbin.org/put');
-         * $response = $client->send($request, ['timeout' => 2]);
-         */
     }
 
-    public function get()
+    /**
+     * @param string $uri URI relative de la ressource
+     */
+    public function get($uri)
     {
-        $request = new Request('GET', 'install/index.php');
+        return $this->request('GET', $uri);
+    }
+
+    private function request($method, $uri)
+    {
+        $headers = [
+            'Content-Type' => 'application/json',
+            'Accept' => 'application/json',
+        ];
+        $request = new Request($method, $uri, $headers);
         $response = $this->client->send($request);
 
         if (500 === $response->getStatusCode()) {

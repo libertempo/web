@@ -2,6 +2,8 @@
 define('ROOT_PATH', '');
 require_once ROOT_PATH . 'define.php';
 
+$api = new \App\Libraries\ApiClient();
+
 include_once ROOT_PATH .'fonctions_conges.php';
 include_once INCLUDE_PATH .'fonction.php';
 include_once INCLUDE_PATH . 'session.php';
@@ -75,6 +77,8 @@ foreach ($utilisateursATrouver as $nom) {
 }
 
 header_menu('', 'Libertempo : '._('calendrier_titre'));
+
+d($api->get('hello_world'));
 
 if ($jourDemande instanceof \DateTimeInterface) {
     $evenements->fetchEvenements(

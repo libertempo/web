@@ -35,7 +35,7 @@ class ApiClient extends \Tests\Units\TestUnit
     {
         $this->function->extension_loaded = true;
 
-        $api = new _ApiClient('', $this->client);
+        $api = new _ApiClient($this->client);
 
         $this->object($api)->isInstanceOf('\App\Libraries\ApiClient');
     }
@@ -49,7 +49,7 @@ class ApiClient extends \Tests\Units\TestUnit
         $this->function->extension_loaded = false;
         $this->function->ini_set = true;
 
-        $api = new _ApiClient('', $this->client);
+        $api = new _ApiClient($this->client);
 
         $this->object($api)->isInstanceOf('\App\Libraries\ApiClient');
     }
@@ -64,7 +64,7 @@ class ApiClient extends \Tests\Units\TestUnit
         $this->function->ini_set = false;
 
         $this->exception(function () {
-            new _ApiClient('', $this->client);
+            new _ApiClient($this->client);
         })->isInstanceOf('\RuntimeException');
     }
 
@@ -79,7 +79,7 @@ class ApiClient extends \Tests\Units\TestUnit
     {
         $this->response->getMockController()->getStatusCode = 500;
 
-        $api = new _ApiClient('', $this->client);
+        $api = new _ApiClient($this->client);
 
         $this->exception(function () use ($api) {
             $api->get();
@@ -93,7 +93,7 @@ class ApiClient extends \Tests\Units\TestUnit
     {
         $this->response->getMockController()->getBody = '';
 
-        $api = new _ApiClient('', $this->client);
+        $api = new _ApiClient($this->client);
 
         $this->exception(function () use ($api) {
             $api->get();
@@ -113,7 +113,7 @@ class ApiClient extends \Tests\Units\TestUnit
         ];
         $this->response->getMockController()->getBody = json_encode($data);
 
-        $api = new _ApiClient('', $this->client);
+        $api = new _ApiClient($this->client);
         $get = $api->get();
 
         $this->array($get)
