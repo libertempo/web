@@ -4,11 +4,11 @@ namespace Middlewares;
 use Psr\Http\Message\ServerRequestInterface as IRequest;
 
 /**
- * Authentification
+ * Identification d'un utilisateur via la transmission du token
  *
  * @since 0.1
  */
-class Authentication
+final class Identification
 {
     /**
      * @var IRequest

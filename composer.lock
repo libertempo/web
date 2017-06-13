@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "ff7f7aee6977c0cc5b91369296318907",
-    "content-hash": "c4baa6d2f83b82425b6b78f75b841018",
+    "hash": "359391bede39020aa78b00818591e324",
+    "content-hash": "efdf07d9088358dcf490c4325bbb5282",
     "packages": [
         {
             "name": "Libertempo/libertempo-api",
-            "version": "0.1.0",
+            "version": "0.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Libertempo/libertempo-api.git",
-                "reference": "74ad03b3c1ced79809d476d38b5db42ded9f55d8"
+                "reference": "a894b7f36b9a304b5a856589b31179f5fa989b3c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Libertempo/libertempo-api/zipball/74ad03b3c1ced79809d476d38b5db42ded9f55d8",
-                "reference": "74ad03b3c1ced79809d476d38b5db42ded9f55d8",
+                "url": "https://api.github.com/repos/Libertempo/libertempo-api/zipball/a894b7f36b9a304b5a856589b31179f5fa989b3c",
+                "reference": "a894b7f36b9a304b5a856589b31179f5fa989b3c",
                 "shasum": ""
             },
             "require": {
@@ -49,10 +49,10 @@
             "support": {
                 "email": "libertempo@lists.tuxfamily.org",
                 "irc": "irc://irc.tuxfamily.org/#Libertempo",
-                "source": "https://github.com/Libertempo/libertempo-api/tree/0.1.0",
+                "source": "https://github.com/Libertempo/libertempo-api/tree/0.3.0",
                 "issues": "https://github.com/Libertempo/libertempo-api/issues"
             },
-            "time": "2017-02-27 22:45:46"
+            "time": "2017-06-13 06:31:27"
         },
         {
             "name": "container-interop/container-interop",

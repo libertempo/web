@@ -968,5 +968,54 @@
             "rest",
             "web service"
         ]
+    },
+    {
+        "name": "Libertempo/libertempo-api",
+        "version": "0.3.0",
+        "version_normalized": "0.3.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/Libertempo/libertempo-api.git",
+            "reference": "a894b7f36b9a304b5a856589b31179f5fa989b3c"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/Libertempo/libertempo-api/zipball/a894b7f36b9a304b5a856589b31179f5fa989b3c",
+            "reference": "a894b7f36b9a304b5a856589b31179f5fa989b3c",
+            "shasum": ""
+        },
+        "require": {
+            "raveren/kint": "^1.0",
+            "slim/slim": "^3.5"
+        },
+        "time": "2017-06-13 06:31:27",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "": "."
+            }
+        },
+        "license": [
+            "AGPL-3.0"
+        ],
+        "authors": [
+            {
+                "name": "wouldsmina",
+                "role": "Developer"
+            },
+            {
+                "name": "Prytoegrian",
+                "email": "prytoegrian@protonmail.com",
+                "homepage": "https://github.com/Prytoegrian",
+                "role": "Developer"
+            }
+        ],
+        "support": {
+            "email": "libertempo@lists.tuxfamily.org",
+            "irc": "irc://irc.tuxfamily.org/#Libertempo",
+            "source": "https://github.com/Libertempo/libertempo-api/tree/0.3.0",
+            "issues": "https://github.com/Libertempo/libertempo-api/issues"
+        }
     }
 ]

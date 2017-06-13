@@ -18,12 +18,11 @@ $app = new \Slim\App($container);
 require_once ROOT_PATH . 'Middlewares.php';
 
 $app->get('/hello_world', function(IRequest $request, IResponse $response) {
-    $response->withJson('Hi there !');
-
-    return $response;
+    return $response->withJson('Hi there !');
 });
 
 require_once ROUTE_PATH . 'Plannings.php';
+require_once ROUTE_PATH . 'Authentification.php';
 
 /* Jump in ! */
 $app->run();

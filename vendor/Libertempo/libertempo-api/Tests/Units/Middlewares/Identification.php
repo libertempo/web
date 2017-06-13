@@ -1,21 +1,21 @@
 <?php
 namespace Tests\Units\Middlewares;
 
-use Middlewares\Authentication as _Authentication;
+use Middlewares\Identification as _Identification;
 
 /**
- * Test de l'authentification
+ * Test de l'identification d'un utilisateur
  *
  * @since 0.1
  */
-class Authentication extends \Atoum
+final class Identification extends \Atoum
 {
     /**
      * @var \mock\Slim\Http\Request Mock de la requête HTTP
      */
     private $request;
 
-    public function beforeTestMethod()
+    public function beforeTestMethod($method)
     {
         $this->mockGenerator->orphanize('__construct');
         $this->mockGenerator->shuntParentClassCalls();
@@ -27,7 +27,7 @@ class Authentication extends \Atoum
      */
     public function testIsTokenApiOkOk()
     {
-        $auth = new _Authentication($this->request);
+        $auth = new _Identification($this->request);
 
         $this->boolean($auth->isTokenApiOk())->isTrue();
     }

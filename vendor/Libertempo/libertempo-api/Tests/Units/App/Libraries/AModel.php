@@ -14,7 +14,7 @@ use \App\Libraries\AModel as _AModel;
 abstract class AModel extends \Atoum
 {
     /**
-     * @var \App\Libraries\Model $model Modèle en cours de test
+     * @var \App\Libraries\AModel $model Modèle en cours de test
      */
     protected $model;
 
@@ -22,6 +22,11 @@ abstract class AModel extends \Atoum
     * Teste la méthode __construct avec un Id (typiquement lors d'un get())
      */
     abstract public function testConstructWithId();
+
+    /**
+     * Teste la méthode __construct sans Id (typiquement lors d'un post())
+     */
+    abstract public function testConstructWithoutId();
 
     /**
      * Asserters commun sur la construction avec id

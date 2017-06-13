@@ -4,37 +4,43 @@
  *
  * /!\ Les Middlewares sont executés en mode PILE : le premier de la liste est lancé en dernier
  */
+use App\Libraries\AControllerFactory;
 use Psr\Http\Message\ServerRequestInterface as IRequest;
 use Psr\Http\Message\ResponseInterface as IResponse;
 
 /* Middleware 6 : construction du contrôleur pour le Dependencies Injection Container */
 $app->add(function (IRequest $request, IResponse $response, callable $next) {
+    $reserved = ['HelloWorld'];
     $ressourcePath = str_replace('|', '\\', $request->getAttribute('nomRessources'));
-    $controllerClass = '\App\Components\\' . $ressourcePath . '\Controller';
-    $daoClass = '\App\Components\\' . $ressourcePath . '\Dao';
-    $repoClass = '\App\Components\\' . $ressourcePath . '\Repository';
+    if (!in_array($ressourcePath, $reserved, true)) {
+        try {
+            $controller = AControllerFactory::createController(
+                $ressourcePath,
+                $this['storageConnector'],
+                $this->router
+            );
+            $this[AControllerFactory::getControllerClassname($ressourcePath)] = $controller;
 
-    if (class_exists($controllerClass, true)) {
-        $this[$controllerClass] = new $controllerClass(
-            new $repoClass(
-                new $daoClass($this['storageConnector'])
-            ),
-            $this->router
-        );
-
-        return $next($request, $response);
-    } else {
-        return call_user_func(
-            $this->notFoundHandler,
-            $request,
-            $response
-        );
+        } catch (\DomainException $e) {
+            return call_user_func(
+                $this->notFoundHandler,
+                $request,
+                $response
+            );
+        }
     }
+
+    return $next($request, $response);
 });
 
 /* Middleware 5 : découverte et mise en forme des noms de ressources */
 $app->add(function (IRequest $request, IResponse $response, callable $next) {
     $path = trim(trim($request->getUri()->getPath()), '/');
+    if (0 === stripos($path, 'api')) {
+        $uriUpdated = $request->getUri()->withPath(substr($path, 4));
+        $request = $request->withUri($uriUpdated);
+        $path = trim(trim($request->getUri()->getPath()), '/');
+    }
     $paths = explode('/', $path);
     $ressources = [];
     foreach ($paths as $value) {
@@ -109,12 +115,16 @@ $app->add(function (IRequest $request, IResponse $response, callable $next) {
     }
 });
 
-/* Middleware 1 : sécurité via authentification */
+/* Middleware 1 : sécurité via identification */
 $app->add(function (IRequest $request, IResponse $response, callable $next) {
     /**
     * TODO
     */
-    if ((new \Middlewares\Authentication($request))->isTokenApiOk()) {
+    $reserved = ['Authentification'];
+    $ressourcePath = $request->getAttribute('nomRessources');
+    if (in_array($ressourcePath, $reserved, true)) {
+        return $next($request, $response);
+    } elseif ((new \Middlewares\Identification($request))->isTokenApiOk()) {
         return $next($request, $response);
     } else {
         return call_user_func(
