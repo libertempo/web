@@ -82,7 +82,7 @@ class ApiClient extends \Tests\Units\TestUnit
         $api = new _ApiClient($this->client);
 
         $this->exception(function () use ($api) {
-            $api->get();
+            $api->get('');
         })->isInstanceOf('\ErrorException');
     }
 
@@ -96,7 +96,7 @@ class ApiClient extends \Tests\Units\TestUnit
         $api = new _ApiClient($this->client);
 
         $this->exception(function () use ($api) {
-            $api->get();
+            $api->get('');
         })->isInstanceOf('\ErrorException');
     }
 
@@ -114,7 +114,7 @@ class ApiClient extends \Tests\Units\TestUnit
         $this->response->getMockController()->getBody = json_encode($data);
 
         $api = new _ApiClient($this->client);
-        $get = $api->get();
+        $get = $api->get('');
 
         $this->array($get)
             ->hasKey('code')

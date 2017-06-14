@@ -45,14 +45,22 @@ final class ApiClient
      */
     public function get($uri)
     {
-        return $this->request('GET', $uri);
+        return $this->request('GET', $uri, []);
     }
 
-    private function request($method, $uri)
+    public function authentification($login, $password)
     {
-        $headers = [
-            'Content-Type' => 'application/json',
-            'Accept' => 'application/json',
+        return $this->request('GET', 'authentification', [
+            'Authorization' => 'Basic ' . base64_encode($login . ':' . $password),
+        ]);
+    }
+
+    private function request($method, $uri, array $headers)
+    {
+        $json = 'application/json';
+        $headers += [
+            'Content-Type' => $json,
+            'Accept' => $json,
         ];
         $request = new Request($method, $uri, $headers);
         $response = $this->client->send($request);
