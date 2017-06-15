@@ -81,12 +81,16 @@ class Gestion {
             $data['id'] = (int) $post['group'];
         }
 
-        foreach (array_keys($post['checkbox_group_users']) as $employe){
-            $data['employes'][] = htmlentities($employe, ENT_QUOTES | ENT_HTML401);
+        if(key_exists('checkbox_group_users', $post)){
+            foreach (array_keys($post['checkbox_group_users']) as $employe){
+                $data['employes'][] = htmlentities($employe, ENT_QUOTES | ENT_HTML401);
+            }
         }
 
-        foreach (array_keys($post['checkbox_group_resps']) as $resp){
-            $data['responsables'][] = htmlentities($resp, ENT_QUOTES | ENT_HTML401);
+        if(key_exists('checkbox_group_resps', $post)){
+            foreach (array_keys($post['checkbox_group_resps']) as $resp){
+                $data['responsables'][] = htmlentities($resp, ENT_QUOTES | ENT_HTML401);
+            }
         }
 
         if($_SESSION['config']['double_validation_conges'] && $post['new_group_double_valid'] == 'Y'){
