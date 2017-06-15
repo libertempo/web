@@ -18,7 +18,7 @@ class Groupe
     public static function getOptions()
     {
         $options = [];
-        foreach (static::getListe() as $groupe) {
+        foreach (static::getListe(\includes\SQL::singleton()) as $groupe) {
             if (!isset($options[$groupe['g_gid']])) {
                 $options[$groupe['g_gid']] = [
                     'nom' => $groupe['g_groupename'],
