@@ -242,10 +242,8 @@ function session_update($session)
 //
 // destruction d'une session
 //
-function session_delete($session)
+function session_delete()
 {
-   if ($session != "")
-   {
      unset($_SESSION['userlogin']);
      unset($_SESSION['timestamp_start']);
      unset($_SESSION['timestamp_last']);
@@ -253,7 +251,6 @@ function session_delete($session)
      unset($_SESSION['config']);
      unset($_SESSION['lang']);
      session_destroy();
-   }
 }
 
 

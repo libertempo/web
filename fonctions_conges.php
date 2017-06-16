@@ -1757,7 +1757,7 @@ function execute_sql_file($file)
 
 // verif des droits du user à afficher la page qu'il demande (pour éviter les hacks par bricolage d'URL)
 
-function verif_droits_user($session, $niveau_droits)
+function verif_droits_user($niveau_droits)
 {
     $niveau_droits = strtolower($niveau_droits);
 
@@ -1772,7 +1772,7 @@ function verif_droits_user($session, $niveau_droits)
         $lang_divers_vous_authentifier    =  _('divers_vous_authentifier') ;
 
         // on delete la session et on renvoit sur l'authentification (page d'accueil)
-        session_delete($session);
+        session_delete();
 
         // message d'erreur !
         echo "<center>\n";

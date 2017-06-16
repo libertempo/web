@@ -20,7 +20,7 @@ if (session_id() == '' || !isset($_SESSION)) {
     if(session_is_valid($session) )
     session_update($session);
     else {
-        session_delete($session);
+        session_delete();
         $session_username="";
         $session_password="";
         $_SESSION['config']=init_config_tab();  // on recrée le tableau de config pour l'url du lien

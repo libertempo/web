@@ -23,7 +23,7 @@ if($how_to_connect_user=="cas")
     deconnexion_CAS($URL_ACCUEIL_CONGES);
 }
 
-session_delete($session);
+session_delete();
 
 $session="";
 $session_username="";

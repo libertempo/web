@@ -12,7 +12,7 @@ include_once INCLUDE_PATH .'session.php';
 include_once ROOT_PATH .'fonctions_calcul.php';
 
 // verif des droits du user à afficher la page
-verif_droits_user($session, "is_hr");
+verif_droits_user("is_hr");
 
 
 /*************************************/

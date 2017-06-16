@@ -141,7 +141,7 @@ class Fonctions
                 }
                 $childTable .= '</tr>';
             }
-        
+
         }
 
         $childTable .= '</tbody>';
@@ -1048,7 +1048,7 @@ class Fonctions
             'startDate'          => $startDate,
         ];
         $return .= '<script>generateDatePicker(' . json_encode($datePickerOpts) . ');</script>';
-            
+
         // si les mois et année ne sont pas renseignés, on prend ceux du jour
         if($year_calendrier_saisie_debut==0) {
             $year_calendrier_saisie_debut=date("Y");
@@ -1954,7 +1954,7 @@ class Fonctions
     public static function pageJoursChomesModule($session)
     {
         // verif des droits du user à afficher la page
-        verif_droits_user($session, "is_hr");
+        verif_droits_user( "is_hr");
         $return = '';
         /*** initialisation des variables ***/
         /*************************************/
@@ -3084,7 +3084,7 @@ class Fonctions
     public static function pageJoursFermetureModule($session)
     {
         // verif des droits du user à afficher la page
-        verif_droits_user($session, "is_hr");
+        verif_droits_user("is_hr");
         $return = '';
 
         /*** initialisation des variables ***/

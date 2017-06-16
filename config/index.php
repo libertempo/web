@@ -21,7 +21,7 @@ $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 $session=session_id();
 
 // verif des droits du user à afficher la page
-verif_droits_user($session, "is_admin");
+verif_droits_user("is_admin");
 
 $_SESSION['from_config']=TRUE;  // initialise ce flag pour changer le bouton de retour des popup
 
