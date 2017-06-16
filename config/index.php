@@ -4,9 +4,7 @@ define('ROOT_PATH', '../');
 require_once ROOT_PATH . 'define.php';
 include_once INCLUDE_PATH . 'fonction.php';
 
-$session =(isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : session_id()) ) ;
-
-if (empty($session)) {
+if (empty(session_id())) {
 	redirect(ROOT_PATH . 'index.php?return_url=config/index.php');
 }
 
@@ -17,8 +15,6 @@ $_SESSION['config']=init_config_tab();      // on initialise le tableau des vari
 include_once INCLUDE_PATH .'session.php';
 
 $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-
-$session=session_id();
 
 // verif des droits du user à afficher la page
 verif_droits_user("is_admin");
@@ -73,14 +69,14 @@ $_SESSION['from_config']=TRUE;  // initialise ce flag pour changer le bouton de 
 	echo '<div id="onglet_menu">';
 	foreach($onglets as $key => $title) {
 		echo '<div class="onglet '.($onglet == $key ? ' active': '').'" >
-			<a href="'.$PHP_SELF.'?session='.$session.'&onglet='.$key.'">'. $title .'</a>
+			<a href="'.$PHP_SELF.'?onglet='.$key.'">'. $title .'</a>
 		</div>';
 	}
 	echo '</div>';
 
 	echo '<div class="'.$onglet.' wrapper">';
 
-		echo '<a href="' . ROOT_PATH . "admin/admin_index.php?session=$session\" class=\"admin-back\"><i class=\"fa fa-arrow-circle-o-left\"></i>". _('form_retour')."</a>\n";
+		echo '<a href="' . ROOT_PATH . "admin/admin_index.php\" class=\"admin-back\"><i class=\"fa fa-arrow-circle-o-left\"></i>". _('form_retour')."</a>\n";
 
 		if($onglet == 'general') {
 			include_once ROOT_PATH . 'config/configure.php';
