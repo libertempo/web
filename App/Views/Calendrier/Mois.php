@@ -6,6 +6,7 @@
  * $evenements
  * $idGroupe
  * $moisDemande
+ * $employesATrouver
  */
 $mois = $calendar->getMonth(new \DateTime($moisDemande->format('Y-m-d')));
 $jours = [];
@@ -37,14 +38,14 @@ require_once VIEW_PATH . 'Calendrier.php';
             <?php endforeach ?>
             <?php endforeach ?>
         </tr>
-        <?php foreach ($utilisateursATrouver as $nom) : ?>
+        <?php foreach ($employesATrouver as $loginUtilisation => $nomComplet) : ?>
         <tr class="calendrier-employe">
-            <td class="calendrier-nom"><?= $nom ?></td>
+            <td class="calendrier-nom"><?= $nomComplet ?></td>
             <?php foreach ($jours as $jour) : ?>
-            <td class="calendrier-jour <?= getClassesJour($evenements, $nom, $jour, $moisDemande) ?>">
+            <td class="calendrier-jour <?= getClassesJour($evenements, $loginUtilisation, $jour, $moisDemande) ?>">
                 <div class="triangle-top"></div>
                 <div class="triangle-bottom"></div>
-                <?php $title = getTitleJour($evenements, $nom, $jour);
+                <?php $title = getTitleJour($evenements, $loginUtilisation, $jour);
                 if (!empty($title)) {
                     echo '<div class="title">' . $title . '</div>';
                 }?>
