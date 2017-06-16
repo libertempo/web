@@ -286,13 +286,13 @@ function verif_saisie_new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new
         echo '<br>'. _('demande_heure_chevauche_demande') .'<br>';
         $verif = false;
     }
-    
+
     $tab_periode_calcul = make_tab_demi_jours_periode($new_debut, $new_fin, $new_demi_jour_deb, $new_demi_jour_fin);
     if(verif_periode_chevauche_periode_user($new_debut, $new_fin, $_SESSION['userlogin'], "", $tab_periode_calcul, $new_comment)){
         echo '<br>'._('calcul_nb_jours_commentaire') .'<br>';
         $verif = false;
     }
-    
+
     $new_comment = htmlentities($new_comment, ENT_QUOTES | ENT_HTML401);
 
     return $verif;

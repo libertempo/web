@@ -10,7 +10,7 @@ class Fonctions
     public static function modif_resp_groupes($choix_resp, &$checkbox_resp_group, &$checkbox_grd_resp_group)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
+        $session  = '';
         $return   = '';
 
         $result_insert=TRUE;
@@ -63,7 +63,7 @@ class Fonctions
     public static function affiche_gestion_responsable_groupes($choix_resp, $onglet)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
+        $session  = '';
         $return   = '';
 
         $return .= '<h1>' . _('admin_onglet_resp_groupe') . '</h1>';
@@ -248,7 +248,7 @@ class Fonctions
     public static function affiche_choix_responsable_groupes()
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
+        $session  = '';
         $return   = '';
 
         $return .= '<h1>' . _('admin_onglet_resp_groupe') . '</h1>';
@@ -305,7 +305,7 @@ class Fonctions
     public static function modif_group_responsables($choix_group, &$checkbox_group_resp, &$checkbox_group_grd_resp)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
+        $session  = '';
         $return   = '';
 
         $result_insert=TRUE;
@@ -359,7 +359,7 @@ class Fonctions
     public static function affiche_gestion_groupes_responsables($choix_group, $onglet)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
+        $session  = '';
         $return   = '';
 
         $return .= '<h1>' . _('admin_onglet_groupe_resp') . '</h1>';
@@ -531,7 +531,7 @@ class Fonctions
     public static function affiche_choix_groupes_responsables()
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
+        $session  = '';
         $return   = '';
 
         /********************/
@@ -582,7 +582,7 @@ class Fonctions
     public static function affiche_choix_gestion_groupes_responsables($choix_group, $choix_resp, $onglet)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
+        $session  = '';
         $return   = '';
 
         if( $choix_group!="" )    // si un groupe choisi : on affiche la gestion par groupe
@@ -643,7 +643,7 @@ class Fonctions
     public static function modif_user_groups($choix_user, &$checkbox_user_groups)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session=session_id();
+        $session='';
         $return = '';
 
         $result_insert= \admin\Fonctions::commit_modif_user_groups($choix_user, $checkbox_user_groups);
@@ -667,7 +667,7 @@ class Fonctions
     public static function modif_group_users($choix_group, &$checkbox_group_users)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
+        $session  = '';
         $return   = '';
 
         // on supprime tous les anciens users du groupe puis on ajoute tous ceux qui sont dans le tableau checkbox (si il n'est pas vide)
@@ -702,7 +702,7 @@ class Fonctions
 
     public static function affiche_gestion_groupes_users($choix_group, $onglet) {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
+        $session  = '';
         $return   = '';
 
         $return .= '<h1>' . _('admin_onglet_groupe_user') . '</h1>';
@@ -804,7 +804,7 @@ class Fonctions
     public static function affiche_choix_groupes_users()
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
+        $session  = '';
         $return   = '';
 
         $return .= '<h1>' . _('admin_onglet_groupe_user') . '</h1>';
@@ -859,7 +859,7 @@ class Fonctions
     public static function affiche_gestion_user_groupes($choix_user, $onglet)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
+        $session  = '';
         $return   = '';
 
         $return .= '<h1>' . _('admin_onglet_user_groupe') . '</h1>';
@@ -884,7 +884,7 @@ class Fonctions
     public static function affiche_choix_user_groupes()
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
+        $session  = '';
         $return   = '';
 
         $return .= '<h1>' . _('admin_onglet_user_groupe') . '</h1>';
@@ -1092,7 +1092,7 @@ class Fonctions
     public static function verif_new_param_group($new_group_name, $new_group_libelle)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
+        $session  = '';
         $return   = '';
 
         // verif des parametres reçus :
@@ -1133,7 +1133,7 @@ class Fonctions
     public static function ajout_groupe($new_group_name, $new_group_libelle, $new_group_double_valid)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
+        $session  = '';
         $return   = '';
 
         if(\admin\Fonctions::verif_new_param_group($new_group_name, $new_group_libelle)==0)  // verif si les nouvelles valeurs sont coohérentes et n'existent pas déjà
@@ -1166,7 +1166,7 @@ class Fonctions
     public static function affiche_gestion_groupes($new_group_name, $new_group_libelle, $onglet)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
+        $session  = '';
         $return   = '';
 
         $return .= '<h1>' . _('admin_onglet_gestion_groupe') . '</h1>';
@@ -1297,16 +1297,14 @@ class Fonctions
     /**
      * Encapsule le comportement du module de gestion des utilisateurs
      *
-     * @param string $session
-     *
      * @return string
      * @access public
      * @static
      */
-    public static function userModule($session)
+    public static function userModule()
     {
         $return = '';
-        $return .= '<a href="' . ROOT_PATH . 'admin/admin_index.php?session='. session_id().'&amp;onglet=ajout-user" style="float:right" class="btn btn-success">' . _('admin_onglet_add_user') . '</a>';
+        $return .= '<a href="' . ROOT_PATH . 'admin/admin_index.php?onglet=ajout-user" style="float:right" class="btn btn-success">' . _('admin_onglet_add_user') . '</a>';
         $return .= '<h1>' . _('admin_onglet_gestion_user') . '</h1>';
 
         /*********************/
@@ -1370,9 +1368,9 @@ class Fonctions
         uasort($tab_info_users, "sortParActif");
         $i = true;
         foreach ($tab_info_users as $current_login => $tab_current_infos) {
-            $admin_modif_user= '<a href="admin_index.php?onglet=modif_user&session=' . $session . '&u_login=' . $current_login . '" title="' . _('form_modif') . '"><i class="fa fa-pencil"></i></a>';
-            $admin_suppr_user = '<a href="admin_index.php?onglet=suppr_user&session=' . $session . '&u_login=' . $current_login . '" title="' . _('form_supprim') . '"><i class="fa fa-times-circle"></i></a>';
-            $admin_chg_pwd_user = '<a href="admin_index.php?onglet=chg_pwd_user&session=' . $session . '&u_login=' . $current_login . '" title="' . _('form_password') . '"><i class="fa fa-key"></i></a>';
+            $admin_modif_user= '<a href="admin_index.php?onglet=modif_user&u_login=' . $current_login . '" title="' . _('form_modif') . '"><i class="fa fa-pencil"></i></a>';
+            $admin_suppr_user = '<a href="admin_index.php?onglet=suppr_user&u_login=' . $current_login . '" title="' . _('form_supprim') . '"><i class="fa fa-times-circle"></i></a>';
+            $admin_chg_pwd_user = '<a href="admin_index.php?onglet=chg_pwd_user&u_login=' . $current_login . '" title="' . _('form_password') . '"><i class="fa fa-key"></i></a>';
 
 
             $childTable .= '<tr class="' . (($tab_current_infos['is_active']=='Y') ? 'actif' : 'inactif') . '">';
@@ -1454,7 +1452,7 @@ class Fonctions
     {
 
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
+        $session  = '';
         $return   = '';
 
         if( (strlen($new_pwd1)!=0) && (strlen($new_pwd2)!=0) && (strcmp($new_pwd1, $new_pwd2)==0) ) {
@@ -1488,7 +1486,7 @@ class Fonctions
     public static function modifier($u_login, $onglet)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session=session_id();
+        $session='';
         $return = '';
 
         /********************/
@@ -1625,7 +1623,7 @@ class Fonctions
     public static function restaure($fichier_restaure_name, $fichier_restaure_tmpname, $fichier_restaure_size, $fichier_restaure_error)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
+        $session  = '';
         $return   = '';
 
         header_popup();
@@ -1685,7 +1683,7 @@ class Fonctions
     public static function choix_restaure()
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
+        $session  = '';
         $return   = '';
 
         header_popup();
@@ -1792,7 +1790,7 @@ class Fonctions
     public static function sauve($type_sauvegarde)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
+        $session  = '';
         $return   = '';
 
         redirect(ROOT_PATH .'admin/admin_db_sauve.php?session='.$session.'&choix_action=sauvegarde&type_sauvegarde='.$type_sauvegarde.'&commit=ok', false);
@@ -1824,7 +1822,7 @@ class Fonctions
     public static function choix_sauvegarde()
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
+        $session  = '';
         $return   = '';
 
 
@@ -1872,7 +1870,7 @@ class Fonctions
     public static function choix_save_restore()
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
+        $session  = '';
         $return   = '';
 
         header_popup();
@@ -1977,7 +1975,7 @@ class Fonctions
     public static function commit_update_groupe($group_to_update, $new_groupname, $new_comment, $new_double_valid)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
+        $session  = '';
         $return   = '';
         $result   = TRUE;
         $new_comment=addslashes($new_comment);
@@ -2008,7 +2006,6 @@ class Fonctions
     public static function modifier_groupe($group, $onglet)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
         $return   = '';
 
         // Récupération des informations
@@ -2077,7 +2074,7 @@ class Fonctions
         $return .= ob_get_clean();
         $return .= '<hr/>';
         $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
-        $return .= '<a class="btn" href="admin_index.php?session=' . $session . '&onglet=admin-group">' . _('form_cancel') . '</a>';
+        $return .= '<a class="btn" href="admin_index.php?onglet=admin-group">' . _('form_cancel') . '</a>';
         $return .= '</form>';
         return $return;
     }
@@ -2085,14 +2082,13 @@ class Fonctions
     /**
      * Encapsule le comportement du module de modif des groupes
      *
-     * @param string $session
      * @param mixed  $onglet
      *
      * @return void
      * @access public
      * @static
      */
-    public static function modifGroupeModule($session, $onglet)
+    public static function modifGroupeModule($onglet)
     {
         /*************************************/
         // recup des parametres reçus :
@@ -2114,7 +2110,7 @@ class Fonctions
             $return .= \admin\Fonctions::commit_update_groupe($group_to_update, $new_groupname, $new_comment, $new_double_valid);
         } else {
             // renvoit sur la page principale .
-            redirect( ROOT_PATH .'admin/admin_index.php?session='.$session.'&onglet=admin-group', false);
+            redirect( ROOT_PATH .'admin/admin_index.php?onglet=admin-group', false);
         }
         return $return;
     }
@@ -2123,7 +2119,6 @@ class Fonctions
     {
         $dataUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($u_login_to_update);
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
         $erreurs = [];
 
         $result=true;
@@ -2272,7 +2267,7 @@ class Fonctions
                     $errors .= '<li>' . $erreur . '</li>';
                 }
             }
-            $return .= '<div class="alert alert-danger">' . _('erreur_recommencer') . ' :<ul>' . $errors . '</ul><br /><a href="admin_index.php?onglet=modif_user&session=' . $session . '&u_login=' . $u_login_to_update . '">' . _('form_retour') . '</a></div>';
+            $return .= '<div class="alert alert-danger">' . _('erreur_recommencer') . ' :<ul>' . $errors . '</ul><br /><a href="admin_index.php?onglet=modif_user&u_login=' . $u_login_to_update . '">' . _('form_retour') . '</a></div>';
 
             return false;
         }
@@ -2281,7 +2276,6 @@ class Fonctions
     public static function modifier_user($u_login, $onglet)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
         $return   = '';
         $soldeHeureId = uniqid();
 
@@ -2300,7 +2294,7 @@ class Fonctions
         /********************/
         /* Etat utilisateur */
         /********************/
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '&u_login_to_update=' . $u_login . '" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '?onglet=' . $onglet . '&u_login_to_update=' . $u_login . '" method="POST">';
         // AFFICHAGE TABLEAU DES INFOS
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses([
@@ -2553,7 +2547,7 @@ class Fonctions
         $return .= '<div>' . $planningName . '</div>';
 
         $return .= '<hr /><input class="btn btn-success" type="submit" value="' . _('form_submit') . '"> ';
-        $return .= '<a class="btn btn-default" href="admin_index.php?session=' . $session . '&onglet=admin-users">' . _('form_cancel') . '</a>';
+        $return .= '<a class="btn btn-default" href="admin_index.php?onglet=admin-users">' . _('form_cancel') . '</a>';
         $return .= '</form>';
         return $return;
     }
@@ -2561,14 +2555,13 @@ class Fonctions
     /**
      * Encapsule le comportement du module de modification d'utilisateurs
      *
-     * @param string $session
      * @param string $onglet Nom de l'onglet à afficher
      *
      * @return string
      * @access public
      * @static
      */
-    public static function modifUserModule($session, $onglet)
+    public static function modifUserModule($onglet)
     {
         $u_login              = htmlentities(getpost_variable('u_login'));
         $u_login_to_update    = htmlentities(getpost_variable('u_login_to_update')) ;
@@ -2614,14 +2607,14 @@ class Fonctions
 
             $ok = \admin\Fonctions::commit_update_user($u_login_to_update, $tab_new_user, $tab_new_jours_an, $tab_new_solde, $tab_new_reliquat, $echo);
             if ($ok) {
-                redirect( ROOT_PATH .'admin/admin_index.php?session='.$session.'&onglet=admin-users', false);
+                redirect( ROOT_PATH .'admin/admin_index.php?onglet=admin-users', false);
                 exit;
             } else {
                 $return .= $echo;
             }
         } else {
             // renvoit sur la page principale .
-            redirect( ROOT_PATH .'admin/admin_index.php?session='.$session.'&onglet=admin-users', false);
+            redirect( ROOT_PATH .'admin/admin_index.php?onglet=admin-users', false);
             exit;
         }
         return $return;
@@ -2630,7 +2623,6 @@ class Fonctions
     public static function suppression_group($group_to_delete)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session=session_id();
         $return = '';
 
         $sql1 = 'DELETE FROM conges_groupe WHERE g_gid = '.\includes\SQL::quote($group_to_delete);
@@ -2657,14 +2649,13 @@ class Fonctions
         }
 
         /* APPEL D'UNE AUTRE PAGE au bout d'une tempo de 2secondes */
-        $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=admin_index.php?session=' . $session . '&onglet=admin-group">';
+        $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=admin_index.php?onglet=admin-group">';
         return $return;
     }
 
     public static function confirmer($group, $onglet)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
         $return   = '';
 
         /*******************/
@@ -2676,7 +2667,7 @@ class Fonctions
 
         // AFFICHAGE TABLEAU
 
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet.'&group_to_delete=' . $group . '" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '?onglet=' . $onglet.'&group_to_delete=' . $group . '" method="POST">';
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses([
             'table',
@@ -2710,7 +2701,7 @@ class Fonctions
         $return .= ob_get_clean();
         $return .= '<hr/>';
         $return .= '<input class="btn btn-danger" type="submit" value="' . _('form_supprim') . '">';
-        $return .= '<a class="btn" href="admin_index.php?session=' . $session . '&onglet=admin-group">' . _('form_cancel') . '</a>';
+        $return .= '<a class="btn" href="admin_index.php?onglet=admin-group">' . _('form_cancel') . '</a>';
         $return .= '</form>';
 
         return $return;
@@ -2719,14 +2710,13 @@ class Fonctions
     /**
      * Encapsule le comportement du module de suppression des groupes
      *
-     * @param string $session
      * @param string $onglet Nom de l'onglet à afficher
      *
      * @return void
      * @access public
      * @static
      */
-    public static function supprimerGroupeModule($session, $onglet)
+    public static function supprimerGroupeModule($onglet)
     {
         $group = getpost_variable('group');
         $group_to_delete = getpost_variable('group_to_delete');
@@ -2742,7 +2732,7 @@ class Fonctions
             $return .= \admin\Fonctions::suppression_group($group_to_delete);
         } else {
             // renvoit sur la page principale .
-            redirect( ROOT_PATH .'admin/admin_index.php?session='.$session.'&onglet=admin-group', false);
+            redirect( ROOT_PATH .'admin/admin_index.php?onglet=admin-group', false);
         }
         return $return;
     }
@@ -2750,7 +2740,7 @@ class Fonctions
     public static function suppression($u_login_to_delete)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
+        $session  = '';
         $return   = '';
 
         $sql1 = 'DELETE FROM conges_users WHERE u_login = "'. \includes\SQL::quote($u_login_to_delete).'"';
@@ -2786,7 +2776,7 @@ class Fonctions
     public static function confirmer_suppression($u_login, $onglet)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
+        $session  = '';
         $return   = '';
 
         /*****************************/
@@ -2837,14 +2827,13 @@ class Fonctions
     /**
      * Encapsule le comportement du module de suppression des utilisateurs
      *
-     * @param string $session
      * @param string $onglet
      *
      * @return string
      * @access public
      * @static
      */
-    public static function supprimerUtilisateurModule($session, $onglet)
+    public static function supprimerUtilisateurModule($onglet)
     {
         $return = '';
         /*************************************/
@@ -2868,11 +2857,11 @@ class Fonctions
             $return .= \admin\Fonctions::confirmer_suppression($u_login, $onglet);
         } elseif($u_login_to_delete!="") {
             echo \admin\Fonctions::suppression($u_login_to_delete);
-            redirect( ROOT_PATH .'admin/admin_index.php?session='.$session.'&onglet=admin-users', false);
+            redirect( ROOT_PATH .'admin/admin_index.php?onglet=admin-users', false);
             exit;
         } else {
             // renvoit sur la page principale .
-            redirect( ROOT_PATH .'admin/admin_index.php?session='.$session.'&onglet=admin-users', false);
+            redirect( ROOT_PATH .'admin/admin_index.php?onglet=admin-users', false);
             exit;
         }
         return $return;
@@ -3004,7 +2993,7 @@ class Fonctions
     public static function affiche_formulaire_ajout_user(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, $onglet)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session=session_id();
+        $session='';
         $return = '';
 
         // recup du tableau des types de conges (seulement les conges)
@@ -3237,7 +3226,7 @@ class Fonctions
     public static function verif_new_param(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, &$return = null)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
+        $session  = '';
         $return   = '';
 
         foreach($tab_new_jours_an as $id_cong => $jours_an) {
@@ -3376,7 +3365,7 @@ class Fonctions
     public static function ajout_user(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, $checkbox_user_groups)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
+        $session  = '';
         $return   = '';
         $verifFalse = '';
 

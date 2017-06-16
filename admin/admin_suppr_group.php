@@ -1,4 +1,4 @@
 <?php
 
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
-echo \admin\Fonctions::supprimerGroupeModule($session, $onglet);
+echo \admin\Fonctions::supprimerGroupeModule($onglet);
