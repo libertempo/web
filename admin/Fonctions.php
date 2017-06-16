@@ -10,7 +10,6 @@ class Fonctions
     public static function modif_resp_groupes($choix_resp, &$checkbox_resp_group, &$checkbox_grd_resp_group)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = '';
         $return   = '';
 
         $result_insert=TRUE;
@@ -53,7 +52,7 @@ class Fonctions
         log_action(0, "", $choix_resp, $comment_log);
 
         /* APPEL D'UNE AUTRE PAGE */
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=admin-group-responsables&choix_gestion_groupes_responsables=resp-group" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '?onglet=admin-group-responsables&choix_gestion_groupes_responsables=resp-group" method="POST">';
         $return .= '<input type="submit" value="' . _('form_retour') . '">';
         $return .= '</form>';
         return $return;
@@ -63,7 +62,6 @@ class Fonctions
     public static function affiche_gestion_responsable_groupes($choix_resp, $onglet)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = '';
         $return   = '';
 
         $return .= '<h1>' . _('admin_onglet_resp_groupe') . '</h1>';
@@ -111,7 +109,7 @@ class Fonctions
 
         /*****************************************************************************/
 
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '?onglet=' . $onglet . '" method="POST">';
         $return .= '<div class="row">';
         $return .= '<div class="col-md-6">';
         $return .= '<h3>Responsable</h3>';
@@ -239,7 +237,7 @@ class Fonctions
         $return .= '<input type="hidden" name="change_responsable_group" value="ok">';
         $return .= '<input type="hidden" name="choix_resp" value="' .  $choix_resp . '">';
         $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
-        $return .= '<a class="btn" href="' . $PHP_SELF . '?session=' . $session . '&onglet=admin-group-responsables&choix_gestion_groupes_responsables=resp-group">' . _('form_annul') . '</a>';
+        $return .= '<a class="btn" href="' . $PHP_SELF . '?onglet=admin-group-responsables&choix_gestion_groupes_responsables=resp-group">' . _('form_annul') . '</a>';
         $return .= '</form>';
         return $return;
     }
@@ -248,7 +246,6 @@ class Fonctions
     public static function affiche_choix_responsable_groupes()
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = '';
         $return   = '';
 
         $return .= '<h1>' . _('admin_onglet_resp_groupe') . '</h1>';
@@ -285,7 +282,7 @@ class Fonctions
             $sql_nom=$resultat_resp["u_nom"] ;
             $sql_prenom=$resultat_resp["u_prenom"] ;
 
-            $text_choix_resp="<a href=\"$PHP_SELF?session=$session&onglet=admin-group-responsables&choix_resp=$sql_login\"><strong>$sql_nom&nbsp;$sql_prenom</strong></a>" ;
+            $text_choix_resp="<a href=\"$PHP_SELF?onglet=admin-group-responsables&choix_resp=$sql_login\"><strong>$sql_nom&nbsp;$sql_prenom</strong></a>" ;
 
             $childTable .= '<tr class="' . ($i ? 'i' : 'p') . '">';
             $childTable .= '<td>' . $text_choix_resp . '</td>';
@@ -305,7 +302,6 @@ class Fonctions
     public static function modif_group_responsables($choix_group, &$checkbox_group_resp, &$checkbox_group_grd_resp)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = '';
         $return   = '';
 
         $result_insert=TRUE;
@@ -349,7 +345,7 @@ class Fonctions
         log_action(0, "", "", $comment_log);
 
         /* APPEL D'UNE AUTRE PAGE */
-        $return .= '<form action="' . $PHP_SELF . '?session=' .  $session . '&onglet=admin-group-responsables&choix_gestion_groupes_responsables=group-resp" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '?onglet=admin-group-responsables&choix_gestion_groupes_responsables=group-resp" method="POST">';
         $return .= '<input type="submit" value="' . _('form_retour') . '">';
         $return .= '</form>';
         return $return;
@@ -359,7 +355,6 @@ class Fonctions
     public static function affiche_gestion_groupes_responsables($choix_group, $onglet)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = '';
         $return   = '';
 
         $return .= '<h1>' . _('admin_onglet_groupe_resp') . '</h1>';
@@ -393,7 +388,7 @@ class Fonctions
             $tab_resp[]=$tab_r;
         }
         /*****************************************************************************/
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '?onglet=' . $onglet . '" method="POST">';
         $return .= '<div class="row">';
         $return .= '<div class="col-md-6">';
         $return .= '<h3>' . _('admin_gestion_groupe_resp_responsables') . '</h3>';
@@ -522,7 +517,7 @@ class Fonctions
         $return .= '<input type="hidden" name="change_group_responsables" value="ok">';
         $return .= '<input type="hidden" name="choix_group" value="' . $choix_group . ' ">';
         $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
-        $return .= '<a class="btn" href="'  . $PHP_SELF . '?session=' . $session . '&onglet=admin-group-responsables&choix_gestion_groupes_responsables=group-resp">' . _('form_annul') . '</a>';
+        $return .= '<a class="btn" href="'  . $PHP_SELF . '?onglet=admin-group-responsables&choix_gestion_groupes_responsables=group-resp">' . _('form_annul') . '</a>';
         $return .= '</form>';
         return $return;
     }
@@ -531,7 +526,6 @@ class Fonctions
     public static function affiche_choix_groupes_responsables()
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = '';
         $return   = '';
 
         /********************/
@@ -563,7 +557,7 @@ class Fonctions
             $sql_groupename=$resultat_gr["g_groupename"] ;
             $sql_comment=$resultat_gr["g_comment"] ;
 
-            $text_choix_group="<a href=\"$PHP_SELF?session=$session&onglet=admin-group-responsables&choix_group=$sql_gid\"><strong>$sql_groupename</strong></a>" ;
+            $text_choix_group="<a href=\"$PHP_SELF?onglet=admin-group-responsables&choix_group=$sql_gid\"><strong>$sql_groupename</strong></a>" ;
 
             $childTable .= '<tr>';
             $childTable .= '<td>' . $text_choix_group . '</td>';
@@ -582,7 +576,6 @@ class Fonctions
     public static function affiche_choix_gestion_groupes_responsables($choix_group, $choix_resp, $onglet)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = '';
         $return   = '';
 
         if( $choix_group!="" )    // si un groupe choisi : on affiche la gestion par groupe
@@ -643,7 +636,6 @@ class Fonctions
     public static function modif_user_groups($choix_user, &$checkbox_user_groups)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session='';
         $return = '';
 
         $result_insert= \admin\Fonctions::commit_modif_user_groups($choix_user, $checkbox_user_groups);
@@ -658,7 +650,7 @@ class Fonctions
         log_action(0, "", $choix_user, $comment_log);
 
         /* APPEL D'UNE AUTRE PAGE */
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session. '&onglet=admin-group-users" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '?onglet=admin-group-users" method="POST">';
         $return .= '<input type="submit" value="' . _('form_retour') . '">';
         $return .= '</form>';
         return $return;
@@ -667,7 +659,6 @@ class Fonctions
     public static function modif_group_users($choix_group, &$checkbox_group_users)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = '';
         $return   = '';
 
         // on supprime tous les anciens users du groupe puis on ajoute tous ceux qui sont dans le tableau checkbox (si il n'est pas vide)
@@ -694,7 +685,7 @@ class Fonctions
         log_action(0, "", "", $comment_log);
 
         /* APPEL D'UNE AUTRE PAGE */
-        $return .= '<form action="' . $PHP_SELF. '?session=' . $session . '&onglet=admin-group-users" method="POST">';
+        $return .= '<form action="' . $PHP_SELF. '?onglet=admin-group-users" method="POST">';
         $return .= '<input type="submit" value="' . _('form_retour') . '">';
         $return .= '</form>';
         return $return;
@@ -702,7 +693,6 @@ class Fonctions
 
     public static function affiche_gestion_groupes_users($choix_group, $onglet) {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = '';
         $return   = '';
 
         $return .= '<h1>' . _('admin_onglet_groupe_user') . '</h1>';
@@ -718,7 +708,7 @@ class Fonctions
         $sql_comment=$resultat_gr["g_comment"] ;
 
 
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '?onglet=' . $onglet . '" method="POST">';
 
         //AFFICHAGE DU TABLEAU DES USERS DU GROUPE
         $return .= '<h2>' . _('admin_gestion_groupe_users_membres') . ' <strong>' . $sql_group . '</strong>, ' . $sql_comment . '</h2>';
@@ -796,7 +786,7 @@ class Fonctions
         $return .= '<input type="hidden" name="change_group_users" value="ok">';
         $return .= '<input type="hidden" name="choix_group" value="' .  $choix_group . '">';
         $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
-        $return .= '<a class="btn" href="' . $PHP_SELF . '?session=' . $session . '&onglet=admin-group-users">' . _('form_annul') . '</a>';
+        $return .= '<a class="btn" href="' . $PHP_SELF . '?onglet=admin-group-users">' . _('form_annul') . '</a>';
         $return .= '</form>';
         return $return;
     }
@@ -804,7 +794,6 @@ class Fonctions
     public static function affiche_choix_groupes_users()
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = '';
         $return   = '';
 
         $return .= '<h1>' . _('admin_onglet_groupe_user') . '</h1>';
@@ -840,7 +829,7 @@ class Fonctions
             $sql_group=$resultat_gr["g_groupename"] ;
             $sql_comment=$resultat_gr["g_comment"] ;
 
-            $choix_group="<a href=\"$PHP_SELF?session=$session&onglet=admin-group-users&choix_group=$sql_gid\"><b>$sql_group</b></a>" ;
+            $choix_group="<a href=\"$PHP_SELF?onglet=admin-group-users&choix_group=$sql_gid\"><b>$sql_group</b></a>" ;
 
             $childTable .= '<tr class="'.($i ? 'i' : 'p').'">';
             $childTable .= '<td><b>' . $choix_group .'</b></td>';
@@ -859,7 +848,6 @@ class Fonctions
     public static function affiche_gestion_user_groupes($choix_user, $onglet)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = '';
         $return   = '';
 
         $return .= '<h1>' . _('admin_onglet_user_groupe') . '</h1>';
@@ -868,7 +856,7 @@ class Fonctions
         /* Affichage Groupes    */
         /************************/
 
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '?onglet=' . $onglet . '" method="POST">';
 
         $return .= \admin\Fonctions::affiche_tableau_affectation_user_groupes($choix_user);
 
@@ -876,7 +864,7 @@ class Fonctions
         $return .= '<input type="hidden" name="change_user_groups" value="ok">';
         $return .= '<input type="hidden" name="choix_user" value="' . $choix_user . '">';
         $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
-        $return .= '<a class="btn" href="' . $PHP_SELF . '?session=' . $session . '&onglet=admin-group-users">' . _('form_annul') . '</a>';
+        $return .= '<a class="btn" href="' . $PHP_SELF . '?onglet=admin-group-users">' . _('form_annul') . '</a>';
         $return .= '</form>';
         return $return;
     }
@@ -884,7 +872,6 @@ class Fonctions
     public static function affiche_choix_user_groupes()
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = '';
         $return   = '';
 
         $return .= '<h1>' . _('admin_onglet_user_groupe') . '</h1>';
@@ -923,7 +910,7 @@ class Fonctions
             $sql_nom=$resultat_user["u_nom"] ;
             $sql_prenom=$resultat_user["u_prenom"] ;
 
-            $choix="<a href=\"$PHP_SELF?session=$session&onglet=admin-group-users&choix_user=$sql_login\"><b>$sql_nom $sql_prenom</b></a>" ;
+            $choix="<a href=\"$PHP_SELF?onglet=admin-group-users&choix_user=$sql_login\"><b>$sql_nom $sql_prenom</b></a>" ;
 
             $childTable .= '<tr class="'.( $i ? 'i' : 'p').'">';
             $childTable .= '<td>' . $choix . '</td>';
@@ -1092,14 +1079,13 @@ class Fonctions
     public static function verif_new_param_group($new_group_name, $new_group_libelle)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = '';
         $return   = '';
 
         // verif des parametres reçus :
         if(strlen($new_group_name)==0) {
             $return .= '<H3>' . _('admin_verif_param_invalides') . '</H3>';
             $return .= '<new_group_name --- ' . $new_group_libelle . '<br>';
-            $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=admin-group" method="POST">';
+            $return .= '<form action="' . $PHP_SELF . '?onglet=admin-group" method="POST">';
             $return .= '<input type="hidden" name="new_group_name" value="' . $new_group_name . '">';
             $return .= '<input type="hidden" name="new_group_libelle" value="' . $new_group_libelle . '">';
 
@@ -1115,7 +1101,7 @@ class Fonctions
             $num_verif = $ReqLog_verif->num_rows;
             if ($num_verif!=0) {
                 $return .= '<H3>' . _('admin_verif_groupe_invalide') . '</H3>';
-                $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=admin-group" method="POST">';
+                $return .= '<form action="' . $PHP_SELF . '?onglet=admin-group" method="POST">';
                 $return .= '<input type="hidden" name="new_group_name" value="' . $new_group_name . '">';
                 $return .= '<input type="hidden" name="new_group_libelle" value="' . $new_group_libelle . '">';
 
@@ -1133,7 +1119,6 @@ class Fonctions
     public static function ajout_groupe($new_group_name, $new_group_libelle, $new_group_double_valid)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = '';
         $return   = '';
 
         if(\admin\Fonctions::verif_new_param_group($new_group_name, $new_group_libelle)==0)  // verif si les nouvelles valeurs sont coohérentes et n'existent pas déjà
@@ -1156,7 +1141,7 @@ class Fonctions
             log_action(0, "", "", $comment_log);
 
             /* APPEL D'UNE AUTRE PAGE */
-            $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=admin-group" method="POST">';
+            $return .= '<form action="' . $PHP_SELF . '?onglet=admin-group" method="POST">';
             $return .= '<input type="submit" value="' . _('form_retour') . '">';
             $return .= '</form>';
         }
@@ -1166,7 +1151,6 @@ class Fonctions
     public static function affiche_gestion_groupes($new_group_name, $new_group_libelle, $onglet)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = '';
         $return   = '';
 
         $return .= '<h1>' . _('admin_onglet_gestion_groupe') . '</h1>';
@@ -1206,8 +1190,8 @@ class Fonctions
             $sql_double_valid=$resultat_gr["g_double_valid"] ;
             $nb_users_groupe = \admin\Fonctions::get_nb_users_du_groupe($sql_gid);
 
-            $admin_modif_group = '<a href="admin_index.php?onglet=modif_group&session=' . $session . '&group=' . $sql_gid . '" title="' . _('form_modif') . '"><i class="fa fa-pencil"></i></a>';
-            $admin_suppr_group = '<a href="admin_index.php?onglet=suppr_group&session=' . $session . '&group=' . $sql_gid . '" title="' . _('form_supprim') . '"><i class="fa fa-times-circle"></i></a>';
+            $admin_modif_group = '<a href="admin_index.php?onglet=modif_group&group=' . $sql_gid . '" title="' . _('form_modif') . '"><i class="fa fa-pencil"></i></a>';
+            $admin_suppr_group = '<a href="admin_index.php?onglet=suppr_group&group=' . $sql_gid . '" title="' . _('form_supprim') . '"><i class="fa fa-times-circle"></i></a>';
 
             $childTable .= '<tr class="' . ($i ? 'i' : 'p') . '">';
             $childTable .= '<td><b>' . $sql_group .'</b></td>';
@@ -1234,7 +1218,7 @@ class Fonctions
         // TITRE
 
         $return .= '<h2>' . _('admin_groupes_new_groupe') . '</h2>';
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '?onglet=' . $onglet . '" method="POST">';
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses([
             'table',
@@ -1452,7 +1436,6 @@ class Fonctions
     {
 
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = '';
         $return   = '';
 
         if( (strlen($new_pwd1)!=0) && (strlen($new_pwd2)!=0) && (strcmp($new_pwd1, $new_pwd2)==0) ) {
@@ -1471,10 +1454,10 @@ class Fonctions
             log_action(0, "", $u_login_to_update, $comment_log);
 
             /* APPEL D'UNE AUTRE PAGE au bout d'une tempo de 2secondes */
-            $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=admin_index.php?session=' . $session . '&onglet=admin-users">';
+            $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=admin_index.php?onglet=admin-users">';
         } else {
             $return .= '<H3>' . _('admin_verif_param_invalides') . '</H3>';
-            $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=chg_pwd_user" method="POST">';
+            $return .= '<form action="' . $PHP_SELF . '?onglet=chg_pwd_user" method="POST">';
             $return .= '<input type="hidden" name="u_login" value="' . $u_login_to_update . '">';
 
             $return .= '<input type="submit" value="' . _('form_redo') . '">';
@@ -1486,14 +1469,13 @@ class Fonctions
     public static function modifier($u_login, $onglet)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session='';
         $return = '';
 
         /********************/
         /* Etat utilisateur */
         /********************/
         // AFFICHAGE TABLEAU
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '&u_login_to_update=' . $u_login . '" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '?onglet=' . $onglet . '&u_login_to_update=' . $u_login . '" method="POST">';
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses(['tablo']);
         $table->addAttribute('width', '80%');
@@ -1529,7 +1511,7 @@ class Fonctions
         $return .= '<input type="submit" value="' . _('form_submit') . '">';
         $return .= '</form>';
 
-        $return .= '<form action="admin_index.php?session=' . $session . '&onglet=admin-users" method="POST">';
+        $return .= '<form action="admin_index.php?onglet=admin-users" method="POST">';
         $return .= '<input type="submit" value="' . _('form_cancel') . '">';
         $return .= '</form>';
         return $return;
@@ -1539,13 +1521,12 @@ class Fonctions
      * Encapsule le comportement du module de gestion des groupes et des responsables
      *
      * @param string $onglet Nom de l'onglet à afficher
-     * @param string $session
      *
      * @return string
      * @access public
      * @static
      */
-    public static function changeMotDePasseUserModule($onglet, $session)
+    public static function changeMotDePasseUserModule($onglet)
     {
         $return = '';
         /*************************************/
@@ -1566,7 +1547,7 @@ class Fonctions
                 $return .= \admin\Fonctions::commit_update($u_login_to_update, $new_pwd1, $new_pwd2);
             } else {
                 // renvoit sur la page principale .
-                redirect( ROOT_PATH .'admin/admin_index.php?session='.$session.'&onglet=admin-users', false);
+                redirect( ROOT_PATH .'admin/admin_index.php?onglet=admin-users', false);
             }
         }
         return $return;
@@ -1623,7 +1604,6 @@ class Fonctions
     public static function restaure($fichier_restaure_name, $fichier_restaure_tmpname, $fichier_restaure_size, $fichier_restaure_error)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = '';
         $return   = '';
 
         header_popup();
@@ -1634,7 +1614,7 @@ class Fonctions
             //(cf code erreur dans fichier features.file-upload.errors.html de la doc php)
         {
             //message d'erreur et renvoit sur la page précédente (choix fichier)
-            $return.= '<form action="' . $PHP_SELF . '?session=' . $session . '" method="POST">';
+            $return.= '<form action="' . $PHP_SELF . '" method="POST">';
             $table = new \App\Libraries\Structure\Table();
             $childTable = '<tr>';
             $childTable .= '<th>' . _('admin_sauve_db_bad_file') . ' : <br>' . $fichier_restaure_name .'</th>';
@@ -1683,13 +1663,12 @@ class Fonctions
     public static function choix_restaure()
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = '';
         $return   = '';
 
         header_popup();
 
         $return .= '<h1>' . _('admin_sauve_db_titre') . '</h1>';
-        $return .= '<form enctype="multipart/form-data" action="' . $PHP_SELF . '?session=' . $session . '" method="POST">';
+        $return .= '<form enctype="multipart/form-data" action="' . $PHP_SELF . '" method="POST">';
         $table = new \App\Libraries\Structure\Table();
         $childTable = '<tr>';
         $childTable .= '<th>' . _('admin_sauve_db_restaure') . '<br>' . _('admin_sauve_db_file_to_restore') . ' :</th>';
@@ -1790,16 +1769,15 @@ class Fonctions
     public static function sauve($type_sauvegarde)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = '';
         $return   = '';
 
-        redirect(ROOT_PATH .'admin/admin_db_sauve.php?session='.$session.'&choix_action=sauvegarde&type_sauvegarde='.$type_sauvegarde.'&commit=ok', false);
+        redirect(ROOT_PATH .'admin/admin_db_sauve.php?choix_action=sauvegarde&type_sauvegarde='.$type_sauvegarde.'&commit=ok', false);
 
         header_popup();
 
         $return .= '<h1>' . _('admin_sauve_db_titre') . '</h1>';
 
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '" method="POST">';
         $table = new \App\Libraries\Structure\Table();
         $childTable = '<tr>';
         $childTable .= '<th colspan="2">' . _('admin_sauve_db_save_ok') . ' ...</th>';
@@ -1822,7 +1800,6 @@ class Fonctions
     public static function choix_sauvegarde()
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = '';
         $return   = '';
 
 
@@ -1830,7 +1807,7 @@ class Fonctions
 
         $return .= '<h1>' . _('admin_sauve_db_titre') . '</h1>';
 
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '" method="POST">';
         $table = new \App\Libraries\Structure\Table();
         $childTable = '<tr>';
         $childTable .= '<th colspan="2">' . _('admin_sauve_db_options') . '</th>';
@@ -1870,14 +1847,13 @@ class Fonctions
     public static function choix_save_restore()
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = '';
         $return   = '';
 
         header_popup();
 
         $return .= '<h1>' . _('admin_sauve_db_titre') . '</h1>';
 
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '" method="POST">';
         $table = new \App\Libraries\Structure\Table();
         $childTable = '<tr>';
         $childTable .= '<th colspan="2">' . _('admin_sauve_db_choisissez') . ' :</th>';
@@ -1916,16 +1892,14 @@ class Fonctions
     /**
      * Encapsule le comportement du module de sauvegarde / restauration de bdd
      *
-     * @param string $session
-     *
      * @return void
      * @access public
      * @static
      */
-    public static function saveRestoreModule($session)
+    public static function saveRestoreModule()
     {
         // verif des droits du user à afficher la page
-        verif_droits_user($session, "is_admin");
+        verif_droits_user( "is_admin");
 
 
         /*** initialisation des variables ***/
@@ -1968,14 +1942,13 @@ class Fonctions
                 \admin\Fonctions::restaure($fichier_restaure_name, $fichier_restaure_tmpname, $fichier_restaure_size, $fichier_restaure_error);
         } else {
             /* APPEL D'UNE AUTRE PAGE immediat */
-            echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=admin_index.php?session=$session&onglet=admin-users\">";
+            echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=admin_index.php?onglet=admin-users\">";
         }
     }
 
     public static function commit_update_groupe($group_to_update, $new_groupname, $new_comment, $new_double_valid)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = '';
         $return   = '';
         $result   = TRUE;
         $new_comment=addslashes($new_comment);
@@ -1999,7 +1972,7 @@ class Fonctions
         }
 
         /* APPEL D'UNE AUTRE PAGE au bout d'une tempo de 2secondes */
-        $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=admin_index.php?session=' . $session . '&onglet=admin-group">';
+        $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=admin_index.php?onglet=admin-group">';
         return $return;
     }
 
@@ -2012,7 +1985,7 @@ class Fonctions
         $sql1 = 'SELECT g_groupename, g_comment, g_double_valid FROM conges_groupe WHERE g_gid = "'. \includes\SQL::quote($group).'"';
 
         // AFFICHAGE TABLEAU
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '&group_to_update=' . $group . '" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '?onglet=' . $onglet . '&group_to_update=' . $group . '" method="POST">';
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses([
             'table',
@@ -2740,7 +2713,6 @@ class Fonctions
     public static function suppression($u_login_to_delete)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = '';
         $return   = '';
 
         $sql1 = 'DELETE FROM conges_users WHERE u_login = "'. \includes\SQL::quote($u_login_to_delete).'"';
@@ -2776,14 +2748,13 @@ class Fonctions
     public static function confirmer_suppression($u_login, $onglet)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = '';
         $return   = '';
 
         /*****************************/
         /* Etat Utilisateur en cours */
         /*****************************/
         // AFFICHAGE TABLEAU
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '&u_login_to_delete=' . $u_login . '" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '?onglet=' . $onglet . '&u_login_to_delete=' . $u_login . '" method="POST">';
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses([
             'table',
@@ -2819,7 +2790,7 @@ class Fonctions
         $return .= ob_get_clean();
         $return .= '<br>';
         $return .= '<input class="btn btn-danger" type="submit" value="' . _('form_supprim') . '">';
-        $return .= '<a class="btn" href="admin_index.php?session=' . $session . '&onglet=admin-users">' . _('form_cancel') . '</a>';
+        $return .= '<a class="btn" href="admin_index.php?onglet=admin-users">' . _('form_cancel') . '</a>';
         $return .= '</form>';
         return $return;
     }
@@ -2993,7 +2964,6 @@ class Fonctions
     public static function affiche_formulaire_ajout_user(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, $onglet)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session='';
         $return = '';
 
         // recup du tableau des types de conges (seulement les conges)
@@ -3011,7 +2981,7 @@ class Fonctions
         // TITRE
         $return .= '<h1>' . _('admin_new_users_titre') . '</h1>';
 
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '?onglet=' . $onglet . '" method="POST">';
 
         /****************************************/
         // tableau des infos de user
@@ -3218,7 +3188,7 @@ class Fonctions
         $return .= '<hr>';
         $return .= '<input type="hidden" name="saisie_user" value="ok">';
         $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
-        $return .= ' <a class="btn btn-default" href="' . $PHP_SELF . '?session=' . $session . '">' . _('form_cancel') . '</a>';
+        $return .= ' <a class="btn btn-default" href="' . $PHP_SELF . '">' . _('form_cancel') . '</a>';
         $return .= '</form>';
         return $return;
     }
@@ -3226,7 +3196,6 @@ class Fonctions
     public static function verif_new_param(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, &$return = null)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = '';
         $return   = '';
 
         foreach($tab_new_jours_an as $id_cong => $jours_an) {
@@ -3244,7 +3213,7 @@ class Fonctions
                 $return .= $tab_new_jours_an[$id_cong] . '---' . $tab_new_solde[$id_cong] . '<br>';
             }
 
-            $return .= '<form action="' . $PHP_SELF . '?session=' . $session .  '&onglet=ajout-user" method="POST">';
+            $return .= '<form action="' . $PHP_SELF . '?onglet=ajout-user" method="POST">';
             $return .= '<input type="hidden" name="new_login" value="' . $tab_new_user['login'] . '">';
             $return .= '<input type="hidden" name="new_nom" value="' . $tab_new_user['nom'] . '">';
             $return .= '<input type="hidden" name="new_prenom" value="' . $tab_new_user['prenom'] . '">';
@@ -3274,7 +3243,7 @@ class Fonctions
             $num_verif = $ReqLog_verif->num_rows;
             if ($num_verif!=0) {
                 $return .= '<h3><font color="red">' . _('admin_verif_login_exist') . '</font></h3>';
-                $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=ajout-user" method="POST">';
+                $return .= '<form action="' . $PHP_SELF . '?onglet=ajout-user" method="POST">';
                 $return .= '<input type="hidden" name="new_login" value="' . $tab_new_user['login'] . '">';
                 $return .= '<input type="hidden" name="new_nom" value="' . $tab_new_user['nom'] . '">';
                 $return .= '<input type="hidden" name="new_prenom" value="' . $tab_new_user['prenom'] . '">';
@@ -3298,7 +3267,7 @@ class Fonctions
                 return true;
             } elseif($_SESSION['config']['where_to_find_user_email'] == "dbconges" && strrchr($tab_new_user['email'], "@")==FALSE) {
                 $return .= '<h3>' . _('admin_verif_bad_mail') . '</h3>';
-                $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=ajout-user" method="POST">';
+                $return .= '<form action="' . $PHP_SELF . '?onglet=ajout-user" method="POST">';
                 $return .= '<input type="hidden" name="new_login" value="' . $tab_new_user['login'] . '">';
                 $return .= '<input type="hidden" name="new_nom" value="' . $tab_new_user['nom'] . '">';
                 $return .= '<input type="hidden" name="new_prenom" value="' . $tab_new_user['prenom'] . '">';
@@ -3365,7 +3334,6 @@ class Fonctions
     public static function ajout_user(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, $checkbox_user_groups)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = '';
         $return   = '';
         $verifFalse = '';
 
@@ -3440,7 +3408,7 @@ class Fonctions
             log_action(0, "", $tab_new_user['login'], $comment_log);
 
             /* APPEL D'UNE AUTRE PAGE */
-            $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=admin-users" method="POST">';
+            $return .= '<form action="' . $PHP_SELF . '?onglet=admin-users" method="POST">';
             $return .= '<input type="submit" value="' . _('form_retour') .'">';
             $return .= '</form>';
         } else {

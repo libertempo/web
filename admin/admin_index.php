@@ -11,7 +11,7 @@ include_once INCLUDE_PATH .'session.php';
 include_once ROOT_PATH .'fonctions_calcul.php';
 
 // verif des droits du user à afficher la page
-verif_droits_user($session, 'is_admin');
+verif_droits_user('is_admin');
 
 
 
@@ -58,7 +58,7 @@ header_menu('', 'Libertempo : '._('button_admin_mode'),$add_css);
 echo '<div id="onglet_menu">';
 foreach($onglets as $key => $title) {
     echo '<div class="onglet '.($onglet == $key ? ' active': '').'" >
-        <a href="'.$PHP_SELF.'?&onglet='.$key.'">'. $title .'</a>
+        <a href="'.$PHP_SELF.'?onglet='.$key.'">'. $title .'</a>
     </div>';
 }
 echo '</div>';
