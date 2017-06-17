@@ -2,13 +2,15 @@
 namespace App\Libraries;
 
 use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7;
+use GuzzleHttp\Exception;
 
 /**
  * Classe de consommation de l'API ; is immutable
  *
  * @author Prytoegrian <prytoegrian@protonmail.com>
- * @since 1.1
+ * @author Wouldsmina
+ * @since 1.9
  */
 final class ApiClient
 {
@@ -29,59 +31,83 @@ final class ApiClient
                 throw new \RuntimeException('cURL or allow_url_fopen are required');
             }
         }
-        // @todo s'appuyer sur l'injectableCreator pour n'avoir qu'une route et que le client n'aie pas conscience de la tambouille
-        if (null === $client) {
-            // mettre une methode getclient pour tester cette partie
-            $baseURIApi = $_SERVER['HTTP_HOST'] . '/api/';
-            $client = new \GuzzleHttp\Client([
-                'base_uri' => $baseURIApi,
-            ]);
-        }
         $this->client = $client;
     }
 
     /**
+     * Effectue l'ordre Http GET
+     *
      * @param string $uri URI relative de la ressource
+     *
+     * @return \stdClass Au format Jsend
      */
     public function get($uri)
     {
         return $this->request('GET', $uri, []);
     }
 
+
+    /**
+     * Récupère un token de l'API pour les futurs échanges
+     *
+     * @param string $login Login de l'utilisateur LT
+     * @param string $password MDP de l'utilisateur LT
+     *
+     * @return \stdClass Au format Jsend
+     */
     public function authentification($login, $password)
     {
-        return $this->request('GET', 'authentification', [
-            'Authorization' => 'Basic ' . base64_encode($login . ':' . $password),
-        ]);
+        $options = [
+            'headers' => [
+                'Authorization' => 'Basic ' . base64_encode($login . ':' . $password),
+            ],
+        ];
+        return $this->request('GET', 'authentification', $options);
     }
 
-    private function request($method, $uri, array $headers)
+    /**
+     * Effectue une requête HTTP
+     *
+     * @param string $method Ordre HTTP
+     * @param string $uri URI relative de la ressource
+     * @param array $options Options de requête
+     * @example ['headers' => [], 'body' => []]
+     *
+     * @return \stdClass Au format Jsend
+     * @throws \RuntimeException Si le serveur est KO (Http5XX)
+     * @throws \RuntimeException Si la réponse n'est pas du JSON
+     * @throws \LogicException Si la requête est mal formée (Http4XX)
+     */
+    private function request($method, $uri, array $options)
     {
         $json = 'application/json';
-        $headers += [
-            'Content-Type' => $json,
-            'Accept' => $json,
-        ];
-        $request = new Request($method, $uri, $headers);
-        $response = $this->client->send($request);
-
-        if (500 === $response->getStatusCode()) {
-            throw new \ErrorException('Server error');
+        $options = array_merge_recursive($options, [
+            'headers' => [
+                'Content-Type' => $json,
+                'Accept' => $json,
+            ],
+        ]);
+        try {
+            $response = $this->client->request($method, $uri, $options);
+        } catch (Exception\ServerException $e) {
+            throw new \RuntimeException('Erreur serveur : '. Psr7\str($e->getResponse()));
+        } catch (Exception\ClientException $e) {
+            throw new \LogicException('Erreur client : '. Psr7\str($e->getRequest()));
         }
 
-        $body = json_decode($response->getBody(), true);
+        $body = json_decode($response->getBody(), false);
         if (null === $body) {
-            throw new \ErrorException('Response isn\'t json');
+            throw new \RuntimeException('La réponse n\'est pas du JSON');
         }
 
         return $body;
     }
 
     /**
-     * @todo pour garantir l'immuabilité
+     * @throws \LogicException
      */
     public function __clone()
     {
-        // throw ...
+        throw new \LogicException('Clonage interdit');
     }
 }
