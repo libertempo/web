@@ -184,7 +184,7 @@ final class Calendrier
                 : '';
             $form .= '<option value="' . $id . '" ' . $selected . '>' . $groupe['nom'] . '</option>';
         }
-        $form .= '</select></div></div>'
+        $form .= '</select></div></div>';
 
         foreach (\App\ProtoControllers\Groupe::getOptions() as $id => $groupe) {
             $selected = ($id ===  $this->idGroupe)

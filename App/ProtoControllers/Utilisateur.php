@@ -49,7 +49,7 @@ class Utilisateur
         if (\App\ProtoControllers\Utilisateur::isRH($utilisateur)
             || \App\ProtoControllers\Utilisateur::isAdmin($utilisateur)
         ) {
-            $groupesVisibles = \App\ProtoControllers\Groupe::getListeId();
+            $groupesVisibles = \App\ProtoControllers\Groupe::getListeId(\includes\SQL::singleton());
         } elseif (\App\ProtoControllers\Utilisateur::isResponsable($utilisateur)) {
             $groupesResponsable = \App\ProtoControllers\Responsable::getIdGroupeResp($utilisateur);
             $groupesGrandResponsable = \App\ProtoControllers\Responsable::getIdGroupeGrandResponsable($utilisateur);

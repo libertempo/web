@@ -93,9 +93,8 @@ class Groupe
      *
      * @return array
      */
-    public static function getListeId()
+    public static function getListeId(\includes\SQL $sql)
     {
-        $sql = \includes\SQL::singleton();
         $req = 'SELECT g_gid
                 FROM conges_groupe';
         $result = $sql->query($req);
@@ -116,9 +115,8 @@ class Groupe
      *
      * @return bool
      */
-    public static function isResponsableGroupe($resp, array $groupesId)
+    public static function isResponsableGroupe($resp, array $groupesId, \includes\SQL $sql)
     {
-        $sql = \includes\SQL::singleton();
         $req = 'SELECT EXISTS (
                     SELECT gr_gid
                     FROM conges_groupe_resp
@@ -138,9 +136,8 @@ class Groupe
      *
      * @return bool
      */
-    public static function isGrandResponsableGroupe($resp, array $groupesId)
+    public static function isGrandResponsableGroupe($resp, array $groupesId, \includes\SQL $sql)
     {
-        $sql = \includes\SQL::singleton();
         $req = 'SELECT EXISTS (
                     SELECT ggr_gid
                     FROM conges_groupe_grd_resp

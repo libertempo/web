@@ -844,7 +844,7 @@ class Gestion {
             ];
 
             if(NIL_INT !== $idGroupe){
-                $responsables[$login]['isDansGroupe'] = \App\ProtoControllers\Groupe::isResponsableGroupe($login, [$idGroupe]);
+                $responsables[$login]['isDansGroupe'] = \App\ProtoControllers\Groupe::isResponsableGroupe($login, [$idGroupe], \includes\SQL::singleton());
             }
         }
         return $responsables;
@@ -872,7 +872,7 @@ class Gestion {
             ];
 
             if(NIL_INT !== $idGroupe){
-                $responsables[$infos['u_login']]['isDansGroupe'] = \App\ProtoControllers\Groupe::isGrandResponsableGroupe($infos['u_login'], [$idGroupe]);
+                $responsables[$infos['u_login']]['isDansGroupe'] = \App\ProtoControllers\Groupe::isGrandResponsableGroupe($infos['u_login'], [$idGroupe], \includes\SQL::singleton());
             }
         }
         return $responsables;
@@ -1041,7 +1041,7 @@ class Gestion {
             return false;
         }
 
-        $employeEtResponsable = [];
+        $employesResponsable = [];
         foreach ($employes as $employe){
             if(\App\ProtoControllers\Utilisateur::isResponsable($employe)){
                 $employesResponsable[] = $employe;
