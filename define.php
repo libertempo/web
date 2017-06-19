@@ -88,7 +88,16 @@ if (!defined( 'DEFINE_INCLUDE' )) {
             break;
     }
     session_start();
+    // @TODO: s'appuyer sur l'injectableCreator quand il sera là pour que le client n'aie pas conscience de la tambouille
+    $paths = explode('/', $_SERVER['PHP_SELF']);
+    array_pop($paths);
+    $host = $_SERVER['HTTP_HOST'] . implode('/', $paths);
+    $baseURIApi = $_SERVER['REQUEST_SCHEME'] . '://' . $host . '/api/';
 
+    $client = new \GuzzleHttp\Client([
+        'base_uri' => $baseURIApi,
+    ]);
+    $api = new \App\Libraries\ApiClient($client);
 
     /* Définition de headers de sécurité */
     header('X-XSS-Protection: 1; mode=block');

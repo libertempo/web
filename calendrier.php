@@ -78,7 +78,10 @@ foreach ($utilisateursATrouver as $nom) {
 
 header_menu('', 'Libertempo : '._('calendrier_titre'));
 
+// il faut chiffrer les mdp avec le meme algo, quel que soit le how_to_connect_user
 d($api->get('hello_world'));
+d($api->authentification('hr', 'none'));
+
 
 if ($jourDemande instanceof \DateTimeInterface) {
     $evenements->fetchEvenements(

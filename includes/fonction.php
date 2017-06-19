@@ -255,7 +255,7 @@ function session_saisie_user_password($erreur, $session_username, $session_passw
 
     $config_php_conges_version      = $_SESSION['config']['php_conges_version'];
     $config_url_site_web_php_conges = $_SESSION['config']['url_site_web_php_conges'];
-//    $config_stylesheet_file         = $_SESSION['config']['stylesheet_file'];
+    //    $config_stylesheet_file         = $_SESSION['config']['stylesheet_file'];
 
     $return_url                     = getpost_variable('return_url', false);
 
@@ -294,7 +294,7 @@ if (! navigator.cookieEnabled) {
 function autentification_passwd_conges($username,$password)
 {
     $password_md5=md5($password);
-//  $req_conges="SELECT u_passwd   FROM conges_users   WHERE u_login='$username' AND u_passwd='$password_md5' " ;
+    //  $req_conges="SELECT u_passwd   FROM conges_users   WHERE u_login='$username' AND u_passwd='$password_md5' " ;
     // on conserve le double mode d'autentificatio (nouveau cryptage (md5) ou ancien cryptage (mysql))
     $req_conges='SELECT u_passwd   FROM conges_users   WHERE u_login="'. \includes\SQL::quote( $username ) .'" AND ( u_passwd=\''. md5($password) .'\' OR u_passwd=PASSWORD("'. \includes\SQL::quote( $password ).'") ) ' ;
     $res_conges = \includes\SQL::query($req_conges) ;
@@ -447,4 +447,9 @@ function authentification_AD_SSO()
 		return $userAD;
 
 	return '';
+}
+
+function storeTokenApi(\App\Libraries\ApiClient $apiClient)
+{
+
 }
