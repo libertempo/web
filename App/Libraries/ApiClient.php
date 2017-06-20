@@ -24,7 +24,7 @@ final class ApiClient
      *
      * @throws \RuntimeException if infrastructure pre-conditions aren't fulfilled
      */
-    public function __construct(ClientInterface $client = null)
+    public function __construct(ClientInterface $client)
     {
         if (!extension_loaded('curl')) {
             if (false === ini_set('allow_url_fopen', true)) {
