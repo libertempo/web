@@ -114,4 +114,24 @@ class Groupe extends \Tests\Units\TestUnit
         
         $this->boolean($isResp)->isFalse;      
     }
+    
+    public function testisGrandResponsableGroupeVrai()
+    {
+        $this->calling($this->result)->fetch_array = [1];
+        $this->calling($this->db)->quote = 'LT';
+
+        $isResp = _Groupe::isGrandResponsableGroupe('LT', [1,2],$this->db);
+        
+        $this->boolean($isResp)->isTrue;
+    }    
+
+    public function testisGrandResponsableGroupeFaux()
+    {
+        $this->calling($this->result)->fetch_array = null;
+        $this->calling($this->db)->quote = 'LT';
+
+        $isResp = _Groupe::isGrandResponsableGroupe('LT', [1,2],$this->db);
+        
+        $this->boolean($isResp)->isFalse;      
+    }
 }

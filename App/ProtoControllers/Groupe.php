@@ -141,7 +141,7 @@ class Groupe
                     SELECT ggr_gid
                     FROM conges_groupe_grd_resp
                     WHERE ggr_gid IN (\'' . implode(',', $groupesId) . '\')
-                        AND ggr_login = "' . \includes\SQL::quote($resp) . '"
+                        AND ggr_login = "' . $sql->quote($resp) . '"
                 )';
         $query = $sql->query($req);
 
