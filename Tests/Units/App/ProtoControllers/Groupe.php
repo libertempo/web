@@ -13,7 +13,7 @@ class Groupe extends \Tests\Units\TestUnit
         parent::beforeTestMethod($method);
         $this->result = new \mock\Mysqli\Result();
         $this->db = new \mock\includes\SQL();
-        $this->calling($this->db)->query = $this->result;;
+        $this->calling($this->db)->query = $this->result;
     }
     
     public function testGetListeVide()
@@ -86,11 +86,32 @@ class Groupe extends \Tests\Units\TestUnit
     
     public function testgetListeIdRempli()
     {
-        $array = ['g_gid' => 1];
-        $this->calling($this->result)->fetch_array = $array;
-        $this->calling($this->result)->fetch_array[1] = null;
+        $array = array('g_gid' => '1');
+        $resultat = ['1'];
+        $this->calling($this->result)->fetch_array[1] = $array;
+        $this->calling($this->result)->fetch_array[2] = null;
         $ids = _Groupe::getListeId($this->db);
 
-        $this->array($ids)->isIdenticalTo($array);
+        $this->array($ids)->isIdenticalTo($resultat);
+    }
+    
+    public function testisResponsableGroupeVrai()
+    {
+        $this->calling($this->result)->fetch_array = [1];
+        $this->calling($this->db)->quote = 'LT';
+
+        $isResp = _Groupe::isResponsableGroupe('LT', [1,2],$this->db);
+        
+        $this->boolean($isResp)->isTrue;
+    }    
+
+    public function testisResponsableGroupeFaux()
+    {
+        $this->calling($this->result)->fetch_array = null;
+        $this->calling($this->db)->quote = 'LT';
+
+        $isResp = _Groupe::isResponsableGroupe('LT', [1,2],$this->db);
+        
+        $this->boolean($isResp)->isFalse;      
     }
 }

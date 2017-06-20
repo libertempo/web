@@ -98,7 +98,6 @@ class Groupe
         $req = 'SELECT g_gid
                 FROM conges_groupe';
         $result = $sql->query($req);
-
         $groupes = [];
         while ($data = $result->fetch_array()) {
             $groupes[] = $data['g_gid'];
@@ -121,7 +120,7 @@ class Groupe
                     SELECT gr_gid
                     FROM conges_groupe_resp
                     WHERE gr_gid IN (\'' . implode(',', $groupesId) . '\')
-                        AND gr_login = "' . \includes\SQL::quote($resp) . '"
+                        AND gr_login = "' . $sql->quote($resp) . '"
                 )';
         $query = $sql->query($req);
 
