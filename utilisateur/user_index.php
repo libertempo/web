@@ -26,25 +26,15 @@ $onglet = getpost_variable('onglet');
 
 $onglets = array();
 
-$onglets['liste_conge'] = _('user_liste_conge');
-
-if ($config->canUserSaisieDemande() || $config->canUserSaisieMission()) {
-    $onglets['nouvelle_absence'] = _('divers_nouvelle_absence');
-}
+$onglets['liste_conge'] = _('user_conge');
 
 if ($config->canUserEchangeRTT()) {
     $onglets['echange_jour_absence'] = _('user_onglet_echange_abs');
 }
 
+
 if ($config->isHeuresAutorise()) {
-    if ($config->canUserSaisieDemande() || $config->canUserSaisieMission()) {
-        $onglets['ajout_heure_repos'] = _('divers_ajout_heure_repos');
-    }
     $onglets['liste_heure_repos'] = _('user_liste_heure_repos');
-    
-    if ($config->canUserSaisieDemande() || $config->canUserSaisieMission()) {
-        $onglets['ajout_heure_additionnelle'] = _('divers_ajout_heure_additionnelle');
-    }
     $onglets['liste_heure_additionnelle'] = _('user_liste_heure_additionnelle');
 }
 
@@ -52,7 +42,7 @@ if ($config->canUserChangePassword()) {
     $onglets['changer_mot_de_passe'] = _('user_onglet_change_passwd');
 }
 
-if ( !isset($onglets[ $onglet ]) && !in_array($onglet, array('modif_demande','suppr_demande','modif_heure_repos', 'modif_heure_additionnelle'))) {
+if ( !isset($onglets[ $onglet ]) && !in_array($onglet, array('modif_demande','suppr_demande','modif_heure_repos', 'modif_heure_additionnelle', 'nouvelle_absence', 'ajout_heure_repos', 'ajout_heure_additionnelle'))) {
     $onglet = 'liste_conge';
 }
 
@@ -89,7 +79,7 @@ echo "</div>\n";
 /*   AFFICHAGE DE L'ONGLET ...    */
 /*********************************/
 
-echo '<div class="' . $onglet . ' wrapper">';
+echo '<div class="' . $onglet . ' main-content">';
 include ROOT_PATH . 'utilisateur/user_' . $onglet . '.php';
 echo '</div>';
 

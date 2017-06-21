@@ -361,7 +361,9 @@ a {
     color: #00aad4;
     font-weight: bold
 }
-
+.inactif {
+    color: #b66;
+}
 form .table tbody>tr>td,
 form .table-condensed tbody>tr>td {
     vertical-align: middle
@@ -650,6 +652,12 @@ form.search {
 
 #calendar-wrapper {
     padding : 15px;
+}
+
+#calendar-wrapper h1 {
+    font-size: 20px;
+    font-size: 2rem;
+    text-transform: uppercase
 }
 
 #calendar-wrapper h2 {

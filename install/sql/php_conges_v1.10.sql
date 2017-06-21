@@ -277,8 +277,11 @@ CREATE TABLE IF NOT EXISTS `conges_users` (
   `u_num_exercice` int(2) NOT NULL DEFAULT '0',
   `planning_id` int(11) UNSIGNED NOT NULL,
   `u_heure_solde` int(11) NOT NULL DEFAULT '0',
+  `date_inscription` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `token` VARCHAR(100) NOT NULL DEFAULT '',
   PRIMARY KEY (`u_login`),
-  KEY `planning_id` (`planning_id`)
+  KEY `planning_id` (`planning_id`),
+  KEY `token` (`token`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 #
@@ -346,6 +349,7 @@ INSERT IGNORE INTO `conges_appli` VALUES ('conges_bgcolor', '#DEDEDE');
 INSERT IGNORE INTO `conges_appli` VALUES ('demande_conges_bgcolor', '#E7C4C4');
 INSERT IGNORE INTO `conges_appli` VALUES ('absence_autre_bgcolor', '#D3FFB6');
 INSERT IGNORE INTO `conges_appli` VALUES ('fermeture_bgcolor', '#7B9DE6');
+INSERT IGNORE INTO `conges_appli` VALUES ('token_instance', '');
 
 
 # --------------------------------------------------------
@@ -354,7 +358,7 @@ INSERT IGNORE INTO `conges_appli` VALUES ('fermeture_bgcolor', '#7B9DE6');
 # Contenu de la table `conges_users`
 #
 
-INSERT IGNORE INTO `conges_users` VALUES ('admin', 'Libertempo', 'admin', 'N', 'admin', 'Y', 'N','Y','N', '636d61cf9094a62a81836f3737d9c0da', 100, NULL, 0, 0, 0);
+INSERT IGNORE INTO `conges_users` VALUES ('admin', 'Libertempo', 'admin', 'N', 'admin', 'Y', 'N','Y','N', '636d61cf9094a62a81836f3737d9c0da', 100, NULL, 0, 0, 0, null, '');
 
 #
 # Contenu de la table `conges_config`
@@ -375,7 +379,6 @@ INSERT IGNORE INTO `conges_config` VALUES ('user_ch_passwd', 'TRUE', '05_Utilisa
 INSERT IGNORE INTO `conges_config` VALUES ('resp_saisie_mission', 'FALSE', '06_Responsable', 'boolean', 'config_comment_resp_saisie_mission');
 INSERT IGNORE INTO `conges_config` VALUES ('resp_ajoute_conges', 'TRUE', '06_Responsable', 'boolean', 'config_comment_resp_ajoute_conges');
 INSERT IGNORE INTO `conges_config` VALUES ('gestion_cas_absence_responsable', 'FALSE', '06_Responsable', 'boolean', 'config_comment_gestion_cas_absence_responsable');
-INSERT IGNORE INTO `conges_config` VALUES ('print_disable_users',  'FALSE',  '06_Responsable',  'Boolean',  'config_comment_print_disable_users');
 
 INSERT IGNORE INTO `conges_config` VALUES ('admin_see_all', 'FALSE', '07_Administrateur', 'boolean', 'config_comment_admin_see_all');
 INSERT IGNORE INTO `conges_config` VALUES ('admin_change_passwd', 'TRUE', '07_Administrateur', 'boolean', 'config_comment_admin_change_passwd');
@@ -412,9 +415,6 @@ INSERT IGNORE INTO `conges_config` VALUES ('autorise_reliquats_exercice', 'TRUE'
 INSERT IGNORE INTO `conges_config` VALUES ('nb_maxi_jours_reliquats', '0', '12_Fonctionnement de l\'Etablissement', 'texte', 'config_comment_nb_maxi_jours_reliquats');
 INSERT IGNORE INTO `conges_config` VALUES ('jour_mois_limite_reliquats', '0', '12_Fonctionnement de l\'Etablissement', 'texte', 'config_comment_jour_mois_limite_reliquats');
 
-INSERT IGNORE INTO `conges_config` VALUES ('affiche_bouton_calcul_nb_jours_pris', 'TRUE', '05_Utilisateur', 'boolean', 'config_comment_affiche_bouton_calcul_nb_jours_pris');
-INSERT IGNORE INTO `conges_config` VALUES ('rempli_auto_champ_nb_jours_pris', 'TRUE', '05_Utilisateur', 'boolean', 'config_comment_rempli_auto_champ_nb_jours_pris');
-INSERT IGNORE INTO `conges_config` VALUES ('disable_saise_champ_nb_jours_pris', 'FALSE', '05_Utilisateur', 'boolean', 'config_comment_disable_saise_champ_nb_jours_pris');
 INSERT IGNORE INTO `conges_config` VALUES ('interdit_saisie_periode_date_passee', 'FALSE', '05_Utilisateur', 'boolean', 'config_comment_interdit_saisie_periode_date_passee');
 INSERT IGNORE INTO `conges_config` VALUES ('interdit_modif_demande', 'FALSE', '05_Utilisateur', 'boolean', 'config_comment_interdit_modif_demande');
 INSERT IGNORE INTO `conges_config` VALUES ('duree_session', '1800', '13_Divers', 'texte', 'config_comment_duree_session');

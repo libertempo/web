@@ -20,7 +20,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         $errorsLst  = [];
 
 
-        $return .= '<h1>' . _('resp_traite_demandes_titre_tableau_1') . '</h1>';
+        $return .= '<h1>' . _('resp_traite_demandes_titre') . '</h1>';
 
         if (!empty($_POST)) {
             if (0 >= (int) $this->post($_POST, $notice, $errorsLst)) {
@@ -510,7 +510,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         $sql = \includes\SQL::singleton();
         $req = 'SELECT p_num AS id
                 FROM conges_periode
-                WHERE p_login IN (\'' . implode(',', $usersResp) . '\')
+                WHERE p_login IN (\'' . implode('\',\'', $usersResp) . '\')
                 AND p_etat = \''. \App\Models\Conge::STATUT_PREMIERE_VALIDATION .'\'';
         $res = $sql->query($req);
         while ($data = $res->fetch_array()) {

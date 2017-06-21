@@ -277,7 +277,11 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
             'login' => $_SESSION['userlogin'],
         ];
 
-        $return = '<h1>' . _('user_liste_heure_repos_titre') . '</h1>';
+        $return = '';
+        if( $_SESSION['config']['user_saisie_demande'] || $_SESSION['config']['user_saisie_mission'] ) {
+            $return .= '<a href="' . ROOT_PATH . 'utilisateur/user_index.php?session='. session_id().'&amp;onglet=ajout_heure_repos" style="float:right" class="btn btn-success">' . _('divers_ajout_heure_repos') . '</a>';
+        }
+        $return .= '<h1>' . _('user_liste_heure_repos_titre') . '</h1>';
         $return .= $this->getFormulaireRecherche($champsRecherche);
         $return .= $message;
         $table = new \App\Libraries\Structure\Table();

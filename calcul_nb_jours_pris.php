@@ -47,11 +47,8 @@ function affichage($user, $date_debut, $date_fin, $opt_debut, $opt_fin, $p_num="
 	$nb_jours=compter($user, $p_num, $date_debut, $date_fin, $opt_debut, $opt_fin, $comment);
 	$tab['nb'] = $nb_jours;
 	$tab['comm'] = $comment;
-	if(!$_SESSION['config']['rempli_auto_champ_nb_jours_pris'])
-	{
-		$tab['nb'] = "";
-	}
-		echo json_encode($tab);
+
+	echo json_encode($tab);
 }
 
 
