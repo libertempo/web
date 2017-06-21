@@ -3395,7 +3395,7 @@ class Fonctions
             /* INSERT dans conges_users  */
             $motdepasse = ('dbconges' == $_SESSION['config']['how_to_connect_user'])
                 ? $tab_new_user['password1']
-                : 'NIL';
+                : 'none';
             $motdepasse = md5($motdepasse);
 
             $sql1 = "INSERT INTO conges_users SET ";
