@@ -148,10 +148,9 @@ class Responsable
      *
      * @return array
      */
-    public static function  getInfosResponsables($activeSeul = false)
+    public static function  getInfosResponsables(\includes\SQL $sql, $activeSeul = false)
     {
         $respLogin = [];
-        $sql = \includes\SQL::singleton();
         $req = 'SELECT *
                 FROM conges_users
                 WHERE u_is_resp = "Y"';

@@ -41,14 +41,13 @@ class Utilisateur {
         return $users;
     }
     
-    public static function isUtilisateurDansGroupe($login,$GroupeId)
+    public static function isUtilisateurDansGroupe($login, $GroupeId, \includes\SQL $sql)
     {
-        $sql = \includes\SQL::singleton();
         $req = 'SELECT EXISTS (
                     SELECT gu_login
                     FROM `conges_groupe_users`
                     WHERE gu_gid =' . (int) $GroupeId . '
-                    AND gu_login ="' . \includes\SQL::quote($login) . '"
+                    AND gu_login ="' . $sql->quote($login) . '"
                 )';
         $query = $sql->query($req);
 

@@ -833,7 +833,7 @@ class Gestion {
     {
         $infoResponsables = [];
 
-        $infosResps = \App\ProtoControllers\Responsable::getInfosResponsables(true);
+        $infosResps = \App\ProtoControllers\Responsable::getInfosResponsables(\includes\SQL::singleton(),true);
         foreach ($infosResps as $infos){
             $login = $infos['u_login'];
             $responsables[$login] = [
@@ -862,7 +862,7 @@ class Gestion {
     {
         $infoResponsables = [];
 
-        $infosResps = \App\ProtoControllers\Responsable::getInfosResponsables(true);
+        $infosResps = \App\ProtoControllers\Responsable::getInfosResponsables(\includes\SQL::singleton(),true);
         foreach ($infosResps as $infos){
             $responsables[$infos['u_login']] = [
                 'nom' => $infos['u_nom'],
@@ -899,7 +899,7 @@ class Gestion {
                 'isDansGroupe' => false
             ];
             if(NIL_INT != $idGroupe){
-                $employes[$login]['isDansGroupe'] = \App\ProtoControllers\Groupe\Utilisateur::isUtilisateurDansGroupe($login, $idGroupe);
+                $employes[$login]['isDansGroupe'] = \App\ProtoControllers\Groupe\Utilisateur::isUtilisateurDansGroupe($login, $idGroupe, \includes\SQL::singleton());
             }
         }
         return $employes;
