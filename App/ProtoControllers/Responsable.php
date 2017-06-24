@@ -132,7 +132,7 @@ class Responsable
      * @param string $user
      * @return array
      */
-    public static function getResponsableDirect($user) {
+    private static function getResponsableDirect($user) {
         $resp = [];
         $sql = \includes\SQL::singleton();
         $req = 'SELECT u_resp_login FROM conges_users WHERE u_login ="' . \includes\SQL::quote($user) . '"';
