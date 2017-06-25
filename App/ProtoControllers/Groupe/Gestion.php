@@ -150,7 +150,7 @@ class Gestion {
      * @param type $nom
      * @param type $libelle
      * @param type $isDoubleValidation
-     * @return type
+     * @return array
      */
     protected function updateGroupe($idGroupe, $nom, $libelle, $isDoubleValidation)
     {
@@ -170,7 +170,7 @@ class Gestion {
      * 
      * @param type $idGroupe
      * @param array $users
-     * @return type
+     * @return boolean
      */
     protected function updateEmployeGroupe($idGroupe, array $users)
     {
@@ -186,7 +186,7 @@ class Gestion {
      * 
      * @param type $idGroupe
      * @param array $resps
-     * @return type
+     * @return boolean
      */
     protected function updateResponsableGroupe($idGroupe, array $resps)
     {
@@ -202,7 +202,7 @@ class Gestion {
      * 
      * @param type $idGroupe
      * @param array $grandResps
-     * @return type
+     * @return boolean
      */
     protected function updateGrandResponsableGroupe($idGroupe, array $grandResps)
     {
@@ -356,7 +356,7 @@ class Gestion {
      * 
      * @param type $idGroupe
      * @param array $users
-     * @return type
+     * @return boolean
      */
     protected function insertEmployesGroupe($idGroupe, array $users)
     {
