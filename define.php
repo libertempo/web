@@ -82,6 +82,8 @@ if (!defined( 'DEFINE_INCLUDE' )) {
             });
             break;
     }
+    session_start();
+
 
     /* Définition de headers de sécurité */
     header('X-XSS-Protection: 1; mode=block');

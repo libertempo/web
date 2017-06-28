@@ -7,7 +7,6 @@ if (!is_readable( CONFIG_PATH .'dbconnect.php'))
 {
 	header("Location:". ROOT_PATH .'install/');
 }
-
 include_once INCLUDE_PATH .'fonction.php';
 include_once ROOT_PATH .'fonctions_conges.php'; // for init_config_tab()
 $_SESSION['config']=init_config_tab();      // on initialise le tableau des variables de config
@@ -16,7 +15,6 @@ $_SESSION['config']=init_config_tab();      // on initialise le tableau des vari
 
 /*** initialisation des variables ***/
 /************************************/
-
 if($_SESSION['config']['auth'] == FALSE)    // si pas d'autentification (cf config de php_conges)
 {
 	$login = getpost_variable('login');
@@ -171,7 +169,7 @@ if(isset($_SESSION['userlogin']))
 	}
 	else
 	{
-		$session=session_id();
+		$session='';
 		$row = $rs->fetch_array();
 		$NOM=$row["u_nom"];
 		$PRENOM=$row["u_prenom"];

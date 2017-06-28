@@ -181,7 +181,6 @@ function session_is_valid($session)
    // ATTENTION:  on fixe l'id de session comme nom de session pour que , sur un meme pc, on puisse se loguer sous 2 users à la fois
    if (session_id() == "")
    {
-      session_name($session);
       session_start();
    }
 
@@ -189,7 +188,7 @@ function session_is_valid($session)
     {
         $difference = time() - $_SESSION['timestamp_last'];
 
-        if ( ($session==session_id()) && ($difference < $_SESSION['config']['duree_session']) )
+        if ( ($difference < $_SESSION['config']['duree_session']) )
             return true;
     }
 
@@ -205,8 +204,6 @@ function session_create($username)
     {
         if(isset($_SESSION)) unset($_SESSION);
         $session = "phpconges".md5(uniqid(rand()));
-        session_name($session);
-        session_id($session);
 
         session_start();
         $_SESSION['userlogin']=$username;
@@ -228,7 +225,7 @@ function session_create($username)
     $comment_log = 'Connexion de '.$username;
     log_action(0, "", $username, $comment_log);
 
-    return   $session;
+    return $session;
 }
 
 //
@@ -245,10 +242,8 @@ function session_update($session)
 //
 // destruction d'une session
 //
-function session_delete($session)
+function session_delete()
 {
-   if ($session != "")
-   {
      unset($_SESSION['userlogin']);
      unset($_SESSION['timestamp_start']);
      unset($_SESSION['timestamp_last']);
@@ -256,7 +251,6 @@ function session_delete($session)
      unset($_SESSION['config']);
      unset($_SESSION['lang']);
      session_destroy();
-   }
 }
 
 
