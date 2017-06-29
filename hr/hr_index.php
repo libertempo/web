@@ -11,6 +11,8 @@ include_once INCLUDE_PATH .'fonction.php';
 include_once INCLUDE_PATH .'session.php';
 include_once ROOT_PATH .'fonctions_calcul.php';
 
+$config = new \App\Libraries\Configuration();
+
 // verif des droits du user à afficher la page
 verif_droits_user($session, "is_hr");
 
@@ -32,18 +34,17 @@ $onglets = array();
 
 $onglets['page_principale'] = _('resp_menu_button_retour_main');
 
-if( $_SESSION['config']['user_saisie_demande'] )
+if($config->canUserSaisieDemande())
     $onglets['traitement_demandes'] = _('resp_menu_button_traite_demande');
 
-// if( $_SESSION['config']['resp_ajoute_conges'] )
     $onglets['ajout_conges'] = _('resp_ajout_conges_titre');
     $onglets['jours_chomes'] = _('admin_button_jours_chomes_1');
 
 $onglets['cloture_year'] = _('resp_cloture_exercice_titre');
 $onglets['liste_planning'] = _('hr_liste_planning');
-$onglets['ajout_planning'] = _('hr_ajout_planning');
+//$onglets['ajout_planning'] = _('hr_ajout_planning');
 
-if ( !isset($onglets[ $onglet ]) && !in_array($onglet, ['traite_user', 'modif_planning']))
+if ( !isset($onglets[ $onglet ]) && !in_array($onglet, ['traite_user', 'modif_planning', 'ajout_planning']))
     $onglet = 'page_principale';
 
 /*********************************/
@@ -76,7 +77,6 @@ echo '</div>';
 $tab_type_cong=recup_tableau_types_conges();
 
 // recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
-//    if ($_SESSION['config']['gestion_conges_exceptionnels'])
 $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
 
 echo '<div class="'.$onglet.' main-content">';

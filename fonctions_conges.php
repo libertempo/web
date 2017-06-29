@@ -2,58 +2,6 @@
 
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 
-// affichage du calendrier avec les case à cocher, du mois du début du congés
-function  affiche_calendrier_saisie_date($user_login, $year, $mois, $type_debut_fin) {
-    $jour_today            = date('j');
-    $jour_today_name        = date('D');
-    $first_jour_mois_timestamp    = mktime(0,0,0,$mois,1,$year);
-    $last_jour_mois_timestamp    = mktime(0,0,0,$mois +1 , 0,$year);
-    $mois_name            = date_fr('F', $first_jour_mois_timestamp);
-    $first_jour_mois_rang        = date('w', $first_jour_mois_timestamp); // jour de la semaine en chiffre (0=dim , 6=sam)
-    $last_jour_mois_rang        = date('w', $last_jour_mois_timestamp); // jour de la semaine en chiffre (0=dim , 6=sam)
-    $nb_jours_mois            = ( $last_jour_mois_timestamp - $first_jour_mois_timestamp + 60*60 *12 ) / (24 * 60 * 60); // + 60*60 *12 for fucking DST
-
-    if( $first_jour_mois_rang == 0 )
-        $first_jour_mois_rang=7 ; // jour de la semaine en chiffre (1=lun , 7=dim)
-
-    if( $last_jour_mois_rang == 0 )
-        $last_jour_mois_rang=7 ; // jour de la semaine en chiffre (1=lun , 7=dim)
-
-    echo '<table class="calendrier_saisie_date_debut" cellpadding="0" cellspacing="0">
-        <thead>
-        <tr align="center" bgcolor="'.$_SESSION['config']['light_grey_bgcolor'].'">
-        <td colspan=7 class="titre"> '.$mois_name.' '.$year.' </td>
-        </tr>
-        <tr bgcolor="'.$_SESSION['config']['light_grey_bgcolor'].'">
-        <td class="cal-saisie2">'. _('lundi_1c') .'</td>
-        <td class="cal-saisie2">'. _('mardi_1c') .'</td>
-        <td class="cal-saisie2">'. _('mercredi_1c') .'</td>
-        <td class="cal-saisie2">'. _('jeudi_1c') .'</td>
-        <td class="cal-saisie2">'. _('vendredi_1c') .'</td>
-        <td class="cal-saisie2">'. _('samedi_1c') .'</td>
-        <td class="cal-saisie2">'. _('dimanche_1c') .'</td>
-        </tr>
-        </thead>
-        <tbody>';
-    $start_nb_day_before = $first_jour_mois_rang -1;
-    $stop_nb_day_before = 7 - $last_jour_mois_rang ;
-
-    for ( $i = - $start_nb_day_before; $i <= $nb_jours_mois + $stop_nb_day_before; $i ++) {
-        if ( ($i + $start_nb_day_before ) % 7 == 0)
-            echo '<tr>';
-        $j_timestamp=mktime (0,0,0,$mois, $i +1 ,$year);
-        $td_second_class = get_td_class_of_the_day_in_the_week($j_timestamp);
-                if ($i < 0 || $i > $nb_jours_mois )
-                    echo '<td class="'.$td_second_class.'">-</td>';
-                else
-                    affiche_cellule_jour_cal_saisie($user_login, $j_timestamp, $td_second_class, $type_debut_fin);
-                if ( ($i + $start_nb_day_before ) % 7 == 6)
-                    echo '<tr>';
-    }
-    echo '</tbody></table>';
-}
-
-
 // retourne le nom du jour de la semaine en francais sur 2 caracteres
 function get_j_name_fr_2c($timestamp)
 {
@@ -67,6 +15,8 @@ function get_j_name_fr_2c($timestamp)
 
 function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet)
 {
+    $config = new \App\Libraries\Configuration();
+
     $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
     $session=session_id();
     $new_date_fin = date('d/m/Y');
@@ -80,27 +30,22 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
 
     $return .= '<input type="radio" name="new_demi_jour_deb" ';
 
-    if($_SESSION['config']['rempli_auto_champ_nb_jours_pris'])
-    {
-        // attention : IE6 : bug avec les "OnChange" sur les boutons radio!!! (on remplace par OnClick)
-        if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) ) {
-            $return .= 'onClick="compter_jours();return true;" ';
-        } else {
-            $return .= 'onChange="compter_jours();return false;" ';
-        }
+    // attention : IE6 : bug avec les "OnChange" sur les boutons radio!!! (on remplace par OnClick)
+    if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) ) {
+        $return .= 'onClick="compter_jours();return true;" ';
+    } else {
+        $return .= 'onChange="compter_jours();return false;" ';
     }
-    $return .= 'value="am" checked>&nbsp;' .  _('form_am');
+    $return .= 'value="am" checked>&nbsp;' .  _('form_debut_am') . '&nbsp;';
     $return .= '<input type="radio" name="new_demi_jour_deb" ';
 
-    if($_SESSION['config']['rempli_auto_champ_nb_jours_pris'])
-    {
-        if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) ) {
-            $return .= 'onClick="compter_jours();return true;" ';
-        } else {
-            $return .= 'onChange="compter_jours();return false;" ';
-        }
+    if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) ) {
+        $return .= 'onClick="compter_jours();return true;" ';
+    } else {
+        $return .= 'onChange="compter_jours();return false;" ';
     }
-    $return .= 'value="pm">&nbsp;' .  _('form_pm');
+
+    $return .= 'value="pm">&nbsp;' .  _('form_debut_pm');
     $return .= '</div>';
     $return .= '</div>';
     $return .= '<div class="col-md-6">';
@@ -110,30 +55,28 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
     $return .= '</div>';
     $return .= '<input type="radio" name="new_demi_jour_fin" ';
 
-    if($_SESSION['config']['rempli_auto_champ_nb_jours_pris'])
-    {
-        // attention : IE6 : bug avec les "OnChange" sur les boutons radio!!! (on remplace par OnClick)
-        if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) ) {
-            $return .= 'onClick="compter_jours();return true;" ' ;
-        } else {
-            $return .= 'onChange="compter_jours();return false;" ' ;
-        }
+    // attention : IE6 : bug avec les "OnChange" sur les boutons radio!!! (on remplace par OnClick)
+    if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) ) {
+        $return .= 'onClick="compter_jours();return true;" ' ;
+    } else {
+        $return .= 'onChange="compter_jours();return false;" ' ;
     }
-    $return .= 'value="am">&nbsp;'. _('form_am');
+    $return .= 'value="am">&nbsp;'. _('form_fin_am') . '&nbsp;';
     $return .= '<input class="form-controm" type="radio" name="new_demi_jour_fin" ';
 
-    if($_SESSION['config']['rempli_auto_champ_nb_jours_pris'])
-    {
-        if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) ) {
-            $return .= 'onClick="compter_jours();return true;" ' ;
-        } else {
-            $return .= 'onChange="compter_jours();return false;" ' ;
-        }
+    if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) ) {
+        $return .= 'onClick="compter_jours();return true;" ' ;
+    } else {
+        $return .= 'onChange="compter_jours();return false;" ' ;
     }
-    $return .= 'value="pm" checked>&nbsp;' . _('form_pm');
+
+    $return .= 'value="pm" checked>&nbsp;' . _('form_fin_pm');
     $return .= '</div>';
     $return .= '</div>';
     $return .= '</div>';
+    $return .= '<br />';
+    $return .= '<label>' . _('saisie_conges_nb_jours') .'&nbsp</label>';
+    $return .= '<span id="new_nb_jours"></span>';
     $return .= '<hr/>';
 
     /*****************/
@@ -151,7 +94,7 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
     // si le user a droit de saisir une demande de conges ET si on est PAS dans une fenetre de responsable
     // OU si le user n'a pas droit de saisir une demande de conges ET si on est dans une fenetre de responsable
     // OU si le user est un RH ou un admin
-    if( ( $_SESSION['config']['user_saisie_demande'] && $user_login==$_SESSION['userlogin'] ) || ( $_SESSION['config']['user_saisie_demande']==FALSE && $user_login!=$_SESSION['userlogin'] ) || is_hr($_SESSION['userlogin']) || is_admin($_SESSION['userlogin']) )
+    if( ( $config->canUserSaisieDemande() && $user_login==$_SESSION['userlogin'] ) || ( !$config->canUserSaisieDemande() && $user_login!=$_SESSION['userlogin'] ) || is_hr($_SESSION['userlogin']) || is_admin($_SESSION['userlogin']) )
     {
         // congés
         $return .= '<div class="col-md-4">';
@@ -170,7 +113,7 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
     // si le user a droit de saisir une mission ET si on est PAS dans une fenetre de responsable
     // OU si le resp a droit de saisir une mission ET si on est PAS dans une fenetre dd'utilisateur
     // OU si le resp a droit de saisir une mission ET si le resp est resp de lui meme
-    if( (($_SESSION['config']['user_saisie_mission'])&&($user_login==$_SESSION['userlogin'])) || (($_SESSION['config']['resp_saisie_mission'])&&($user_login!=$_SESSION['userlogin'])) || (($_SESSION['config']['resp_saisie_mission'])&&(is_resp_of_user($_SESSION['userlogin'], $user_login))) )
+    if( (($config->canUserSaisieMission())&&($user_login==$_SESSION['userlogin'])) || (($config->canResponsableSaisieMission())&&($user_login!=$_SESSION['userlogin'])) || (($config->canResponsableSaisieMission())&&(is_resp_of_user($_SESSION['userlogin'], $user_login))) )
         {
         // absences
         $return .= '<div class="col-md-4">';
@@ -188,7 +131,7 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
 
     // si le user a droit de saisir une demande de conges ET si on est PAS dans une fenetre de responsable
     // OU si le user n'a pas droit de saisir une demande de conges ET si on est dans une fenetre de responsable
-    if( ($_SESSION['config']['gestion_conges_exceptionnels']) && ((($_SESSION['config']['user_saisie_demande'])&&($user_login==$_SESSION['userlogin'])) || (($_SESSION['config']['user_saisie_demande']==FALSE)&&($user_login!=$_SESSION['userlogin'])) ) )
+    if( ($config->isCongesExceptionnelleActive()) && ((($config->canUserSaisieDemande())&&($user_login==$_SESSION['userlogin'])) || ((!$config->canUserSaisieDemande())&&($user_login!=$_SESSION['userlogin'])) ) )
     {
         // congés exceptionnels
         $return .= '<div class="col-md-4">';
@@ -207,19 +150,9 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
     $return .= '<hr/>';
     $return .= '<label>' . _('divers_comment_maj_1') . '</label><input class="form-control" type="text" name="new_comment" size="25" maxlength="30" value="">';
 
+
     // zones de texte
-    $return .= '<label>' . _('saisie_conges_nb_jours') .'&nbsp</label>';
-    if($_SESSION['config']['disable_saise_champ_nb_jours_pris']) { // zone de texte en readonly et grisée
-        $text_nb_jours ='<input type="text" name="new_nb_jours" size="10" maxlength="30" value="" style="background-color: #D4D4D4; " readonly="readonly">' ;
-    } else {
-        $text_nb_jours ='<input type="text" name="new_nb_jours" size="10" maxlength="3" value="">' ;
-    }
 
-    $return .= $text_nb_jours;
-
-    if($_SESSION['config']['affiche_bouton_calcul_nb_jours_pris']) {
-        $return .= '<input type="button" class="btn btn-success" onclick="compter_jours();return false;" value="' . _('saisie_conges_compter_jours') . '">';
-    }
     $return .= '<p id="comment_nbj" style="color:red">&nbsp;</p>';
     $return .= '<br>';
     $return .= '<input type="hidden" name="user_login" value="' . $user_login . '">';
@@ -372,10 +305,11 @@ function verif_saisie_new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new
 // (une classe pour les jours de semaine et une pour les jours de week end)
 function get_td_class_of_the_day_in_the_week($timestamp_du_jour)
 {
+    $config = new \App\Libraries\Configuration();
     $j_name = date('D', $timestamp_du_jour);
     $j_date = date('Y-m-d', $timestamp_du_jour);
 
-    if( ( $j_name=='Sat' && !$_SESSION['config']['samedi_travail'] ) || ($j_name=='Sun' && !$_SESSION['config']['dimanche_travail'] ) || est_chome($timestamp_du_jour) || est_ferme($timestamp_du_jour) )
+    if(( $j_name=='Sat' && !$config->isSamediOuvrable()) || ($j_name=='Sun' && !$config->isDimancheOuvrable()) || est_chome($timestamp_du_jour) || est_ferme($timestamp_du_jour))
         return 'weekend';
     else
         return 'semaine';
@@ -386,11 +320,12 @@ function get_td_class_of_the_day_in_the_week($timestamp_du_jour)
 // attention : les param $val_matin et $val_aprem sont passées par référence (avec &) car on change leur valeur
 function recup_infos_artt_du_jour($sql_login, $j_timestamp, &$val_matin, &$val_aprem, array $planningUser)
 {
+    $config = new \App\Libraries\Configuration();
     $num_semaine = date('W', $j_timestamp);
     $jour_name_fr_2c = get_j_name_fr_2c($j_timestamp); // nom du jour de la semaine en francais sur 2 caracteres
 
     // on ne cherche pas d'artt les samedis ou dimanches quand il ne sont pas travaillés (cf config de php_conges)
-    if ( ( $jour_name_fr_2c != 'sa' || $_SESSION['config']['samedi_travail'] )  && ( $jour_name_fr_2c != 'di' || $_SESSION['config']['dimanche_travail'] ) )
+    if (($jour_name_fr_2c != 'sa' || $config->isSamediOuvrable())  && ( $jour_name_fr_2c != 'di' || $config->isDimancheOuvrable()))
     {
         // verif si le jour fait l'objet d'un echange ....
         $date_j            = date('Y-m-d', $j_timestamp);
@@ -434,58 +369,6 @@ function recup_infos_artt_du_jour($sql_login, $j_timestamp, &$val_matin, &$val_a
     }
 }
 
-
-// recup des infos ARTT ou Temps Partiel :
-// attention : les param $val_matin et $val_aprem sont passées par référence (avec &) car on change leur valeur
-function recup_infos_artt_du_jour_from_tab($sql_login, $j_timestamp, &$val_matin, &$val_aprem, $tab_rtt_echange, array $planningUser)
-{
-
-    //$tab_rtt_echange  //tableau indexé dont la clé est la date sous forme yyyy-mm-dd
-    //il contient pour chaque clé (chaque jour): un tableau indéxé ($tab_jour_rtt_echange) (clé= login)
-    // qui contient lui même un tableau ($tab_echange) contenant les infos des echanges de rtt pour ce
-    // jour et ce login (valeur du matin + valeur de l'apres midi ('Y' si rtt, 'N' sinon) )
-
-    $num_semaine = date('W', $j_timestamp);
-    $jour_name_fr_2c = get_j_name_fr_2c($j_timestamp); // nom du jour de la semaine en francais sur 2 caracteres
-
-    // on ne cherche pas d'artt les samedis ou dimanches quand il ne sont pas travaillés (cf config de php_conges)
-    if ( ( $jour_name_fr_2c != 'sa' || $_SESSION['config']['samedi_travail'] )  && ( $jour_name_fr_2c != 'di' || $_SESSION['config']['dimanche_travail'] ) )
-    {
-        // verif si le jour fait l'objet d'un echange ....
-        // si le jour est l'objet d'un echange, on tient compte de l'échange
-        $date_j = date('Y-m-d', $j_timestamp);
-        if(isset($tab_rtt_echange[$date_j]) && array_key_exists($sql_login, $tab_rtt_echange[$date_j]))   // si la periode correspond au user que l'on est en train de traiter
-        {
-            $tab_day = $tab_rtt_echange[$date_j];  // on recup le tableau du jour
-            $val_matin = $tab_day[$sql_login]["val_matin"];
-            $val_aprem = $tab_day[$sql_login]["val_aprem"];
-        }
-        else
-        {
-            /* Sinon, on s'appuie sur le planning normalement */
-            $realWeekType = \utilisateur\Fonctions::getRealWeekType($planningUser, $num_semaine);
-            if (NIL_INT === $realWeekType) {
-                /* Si la semaine n'est pas travaillée */
-                $val_matin = 'Y';
-                $val_aprem = 'Y';
-            } else {
-                $planningWeek = $planningUser[$realWeekType];
-                $jourId = date('N', $j_timestamp);
-                if (!\utilisateur\Fonctions::isWorkingDay($planningWeek, $jourId)) {
-                    /* Si le jour n'est pas travaillé */
-                    $val_matin = 'Y';
-                    $val_aprem = 'Y';
-                } else {
-                    /* Vérification si le créneau est travaillé */
-                    $planningDay = $planningWeek[$jourId];
-                    $val_matin = (\utilisateur\Fonctions::isWorkingMorning($planningDay)) ? 'N' : 'Y';
-                    $val_aprem = (\utilisateur\Fonctions::isWorkingAfternoon($planningDay)) ? 'N' : 'Y';
-                }
-            }
-        }
-    }
-}
-
 // verif validité d'un nombre saisi (decimal ou non)
 //  (attention : le $nombre est passé par référence car on le modifie si besoin)
 function verif_saisie_decimal(&$nombre)
@@ -493,8 +376,6 @@ function verif_saisie_decimal(&$nombre)
     $nombre = number_format(floatval($nombre), 1, '.', '' );
     return true;
 }
-
-
 
 // donne la date en francais (dans la langue voulue)(meme formats que la fonction PHP date() cf manuel php)
 function date_fr($code, $timestmp)
@@ -533,6 +414,7 @@ function date_fr($code, $timestmp)
 function alerte_mail($login_expediteur, $destinataire, $num_periode, $objet)
 {
 
+    $config = new \App\Libraries\Configuration();
     /*********************************************/
     // recup des infos concernant l'expéditeur ....
     $mail_array        = find_email_adress_for_user($login_expediteur);
@@ -558,7 +440,7 @@ function alerte_mail($login_expediteur, $destinataire, $num_periode, $objet)
             else
             {
                 // on change l'objet si c'est un "new_demande" à un resp absent et qu'on gere les absence de resp !
-                if( $_SESSION['config']['gestion_cas_absence_responsable'] && $item_presence == 'absent' && $objet == 'new_demande' )
+                if( $config->isGestionResponsableAbsent() && $item_presence == 'absent' && $objet == 'new_demande' )
                     $new_objet  = 'new_demande_resp_absent';
                 else
                     $new_objet  = $objet;
@@ -608,6 +490,7 @@ function alerte_mail($login_expediteur, $destinataire, $num_periode, $objet)
 // construit et envoie le mail
 function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $mail_dest_name, $mail_dest_addr, $num_periode)
 {
+    $config = new \App\Libraries\Configuration();
     /*********************************************/
     // init du mail
     $mail = new \PHPMailer();
@@ -697,7 +580,7 @@ function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $m
     }
     $sujet = $_SESSION['config'][$key1];
     $contenu = $_SESSION['config'][$key2];
-    $contenu = str_replace("__URL_ACCUEIL_CONGES__", $_SESSION['config']['URL_ACCUEIL_CONGES'], $contenu);
+    $contenu = str_replace("__URL_ACCUEIL_CONGES__", $config->getUrlAccueil(), $contenu);
     $contenu = str_replace("__SENDER_NAME__", $mail_sender_name, $contenu);
     $contenu = str_replace("__DESTINATION_NAME__", $mail_dest_name, $contenu);
     $contenu = str_replace("__NB_OF_DAY__", $sql_nb_jours, $contenu);
@@ -735,10 +618,10 @@ function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $m
 // renvoit un tableau a 2 valeurs : prenom+nom et email
 function find_email_adress_for_user($login)
 {
-
+    $config = new \App\Libraries\Configuration();
     $found_mail=array();
 
-    if($_SESSION['config']['where_to_find_user_email']=="ldap") // recherche du mail du user dans un annuaire LDAP
+    if($config->getMailFromLdap()) // recherche du mail du user dans un annuaire LDAP
     {
         // cnx à l'annuaire ldap :
         $ds = ldap_connect($_SESSION['config']['ldap_server']);
@@ -775,7 +658,7 @@ function find_email_adress_for_user($login)
             array_push($found_mail, $addr) ;
         }
     }
-    elseif($_SESSION['config']['where_to_find_user_email']=="dbconges") // recherche du mail du user dans la base db_conges
+    elseif(!$config->getMailFromLdap()) // recherche du mail du user dans la base db_conges
     {
         $req = 'SELECT u_nom, u_prenom, u_email FROM conges_users WHERE u_login="'.\includes\SQL::quote($login).'" ';
         $res = \includes\SQL::query($req);
@@ -794,59 +677,6 @@ function find_email_adress_for_user($login)
         return FALSE;
     }
     return $found_mail ;
-}
-
-
-/**************************************************/
-/* recup des échanges de rtt de chaque jour du mois pour tous les users et stockage dans 1 tableau de tableaux */
-/**************************************************/
-function recup_tableau_rtt_echange($mois, $first_jour, $year,  $tab_logins = false)
-{
-    $tab_rtt_echange=array();
-    //tableau indexé dont la clé est la date sous forme yyyy-mm-dd
-    //il contient pour chaque clé (chaque jour): un tableau indéxé ($tab_jour_rtt_echange) (clé= login)
-    // qui contient lui même un tableau ($tab_echange) contenant les infos des echanges de rtt pour ce
-    // jour et ce login (valeur du matin + valeur de l'apres midi ('Y' si rtt, 'N' sinon) )
-
-    // construction du tableau $tab_rtt_echange:
-
-    $date_deb   = date("Y-m-d", mktime (0,0,0,$mois, $first_jour, $year) );
-    $date_fin   = date("Y-m-d", mktime (0,0,0,$mois + 1 , $first_jour, $year) );
-
-    $sql    = 'SELECT e_login, e_absence, e_date_jour FROM conges_echange_rtt WHERE e_date_jour >= "'.\includes\SQL::quote($date_deb).'" AND  e_date_jour < "'.\includes\SQL::quote($date_fin).'"'.($tab_logins !== false ? 'AND e_login IN (\''.implode('\', \'', $tab_logins).'\')' : '' ).';';
-    $result = \includes\SQL::query($sql);
-    while($l = $result->fetch_array()) {
-        $tab_echange = array();
-        $tab_echange["val_matin"] = ($l["e_absence"]=='J' || $l["e_absence"]=='M' ? 'Y' : 'N');
-        $tab_echange["val_aprem"] = ($l["e_absence"]=='J' || $l["e_absence"]=='A' ? 'Y' : 'N');
-        $tab_rtt_echange[ $l['e_date_jour'] ][ $l["e_login"] ] = $tab_echange;
-    }
-
-    return $tab_rtt_echange;
-}
-
-
-// affiche une liste déroulante des jours du mois : la variable est $new_jour
-function affiche_selection_new_jour($default)
-{
-    $return = '';
-    $return .= '<select class="form-control" name="new_jour">';
-    for($i=1; $i<10; $i++) {
-        if($default=="0$i") {
-            $return .= '<option value="0' . $i . '" selected >0' . $i . '</option>';
-        } else {
-            $return .= '<option value="0' . $i . '">0' . $i . '</option>';
-        }
-    }
-    for($i=10; $i<32; $i++) {
-        if($default=="$i") {
-            $return .= '<option value="' . $i . '" selected >' . $i . '</option>';
-        } else {
-            $return .= '<option value="' . $i . '">' . $i . '</option>';
-        }
-    }
-    $return .= '</select>';
-    return $return;
 }
 
 // affiche une liste déroulante des mois de l'année : la variable est $new_mois
@@ -896,55 +726,6 @@ function eng_date_to_fr($une_date)
 
 }
 
-
-// affichage de la cellule correspondant au jour dans les calendrier de saisie (demande de conges, etc ...)
-function affiche_cellule_jour_cal_saisie($login, $j_timestamp, $td_second_class, $result)
-{
-    $date_j=date('Y-m-d', $j_timestamp);
-    $j=date('d', $j_timestamp);
-    $class_am='travail_am';
-    $class_pm='travail_pm';
-    $val_matin='';
-    $val_aprem='';
-    $planningUser = \utilisateur\Fonctions::getUserPlanning($login);
-
-    // recup des infos ARTT ou Temps Partiel :
-    // la fonction suivante change les valeurs de $val_matin $val_aprem ....
-    recup_infos_artt_du_jour($login, $j_timestamp, $val_matin, $val_aprem, $planningUser);
-
-    //## AFICHAGE ##
-    if($val_matin=='Y')
-    {
-        $class_am='rtt_am';
-    }
-    if($val_aprem=='Y')
-    {
-        $class_pm = 'rtt_pm';
-    }
-
-
-    $jour_today=date('j');
-    $mois_today=date('m');
-    $year_today=date('Y');
-    $timestamp_today = mktime (0,0,0,$mois_today,$jour_today,$year_today);
-    // si la saisie de conges pour une periode passée est interdite : pas de case à cocher dans les dates avant aujourd'hui
-    if( $_SESSION['config']['interdit_saisie_periode_date_passee']  && $j_timestamp < $timestamp_today )
-        echo '<td  class="cal-saisie '.$td_second_class.' '.$class_am.' '.$class_pm.'">'.$j.'</td>';
-    else
-    {
-        echo '<td  class="cal-saisie '.$td_second_class.' '.$class_am.' '.$class_pm.'">'.$j.'<input type="radio" name="'.$result.'" ';
-        if($_SESSION['config']['rempli_auto_champ_nb_jours_pris'])
-        {
-            // attention : IE6 : bug avec les "OnChange" sur les boutons radio!!! (on remplace par OnClick)
-            if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) )
-                echo 'onClick="compter_jours();return true;" ';
-            else
-                echo 'onChange="compter_jours();return false;" ';
-        }
-        echo ' value="'.$date_j.'"></td>';
-    }
-}
-
 // recup du nom d'un groupe grace à son group_id
 function get_group_name_from_id($groupe_id)
 {
@@ -954,29 +735,16 @@ function get_group_name_from_id($groupe_id)
     return $resultat_name["g_groupename"];
 }
 
-// recup du nom d'un groupe grace à son group_id
-function get_groups_name()
-{
-    $sql    = 'SELECT g_gid, g_groupename FROM conges_groupe;';
-    $requete    = \includes\SQL::query($sql);
-    $tab = array();
-    while( $l = $requete->fetch_array() )
-    {
-        $tab[ $l['g_gid'] ] = $l['g_groupename'];
-    }
-    return $tab;
-}
-
 // recup de la liste de TOUS les users dont $resp_login est responsable
 // (prend en compte le resp direct, les groupes, le resp virtuel, etc ...)
 // renvoie une liste de login entre quotes et séparés par des virgules
 function get_list_all_users_du_resp($resp_login)
 {
-
+    $config = new \App\Libraries\Configuration();
     $list_users="";
     $sql1="SELECT DISTINCT(u_login) FROM conges_users WHERE u_login!='conges' AND u_login!='admin' AND u_login!='$resp_login'";
     $sql1 = $sql1." AND  ( u_resp_login='$resp_login' " ;
-    if($_SESSION['config']['gestion_groupes'] )
+    if($config->isGroupeActive())
     {
         $list_users_group=get_list_users_des_groupes_du_resp_sauf_resp($resp_login);
         if($list_users_group!="")
@@ -999,13 +767,13 @@ function get_list_all_users_du_resp($resp_login)
     /************************************/
     // gestion des absence des responsables :
     // on recup la liste des users des resp absents, dont $resp_login est responsable
-    if($_SESSION['config']['gestion_cas_absence_responsable'])
+    if($config->isGestionResponsableAbsent())
     {
         // recup liste des resp absents, dont $resp_login est responsable
         $sql_2='SELECT DISTINCT(u_login) FROM conges_users WHERE u_is_resp=\'Y\' AND u_login!="'.\includes\SQL::quote($resp_login).'" AND u_login!=\'conges\' AND u_login!=\'admin\'';
         $sql_2 = $sql_2." AND  ( u_resp_login='$resp_login' " ;
 
-        if($_SESSION['config']['gestion_groupes'] )
+        if($config->isGroupeActive())
         {
             $list_users_group=get_list_users_des_groupes_du_resp_sauf_resp($resp_login);
             if($list_users_group!="")
@@ -1099,21 +867,6 @@ function get_list_groupes_du_grand_resp($resp_login)
     return $list_group;
 }
 
-// recup de la liste des logins des groupes dont $resp_login est grandresponsable
-function get_list_login_du_grand_resp($resp_login)
-{
-    $list_logins = array();
-    $sql1='SELECT gu_login FROM conges_groupe_grd_resp JOIN conges_groupe_users ON ggr_gid = gu_gid WHERE ggr_login="'.\includes\SQL::quote($resp_login).'";';
-    $ReqLog1 = \includes\SQL::query($sql1);
-
-    if($ReqLog1->num_rows!=0)
-    {
-        while ($resultat1 = $ReqLog1->fetch_array())
-                $list_logins[] = $resultat1["gu_login"];
-    }
-    return $list_logins;
-}
-
 // recup de la liste des groupes à double validation
 // renvoit une liste de gid séparés par des virgules
 function get_list_groupes_double_valid()
@@ -1180,24 +933,6 @@ function get_list_groupes_double_valid_du_grand_resp($resp_login)
     return $list_groupes_double_valid_du_grand_resp;
 }
 
-// recup de la liste des users des groupes dont $user_login est membre
-// renvoit une liste de login entre quotes et séparés par des virgules
-function get_list_users_des_groupes_du_user($user_login)
-{
-    $list_users=array();
-    $list_groups=get_list_groupes_du_user($user_login);
-    if($list_groups!="") // si $user_login est membre d'au moins un groupe
-    {
-        $sql1='SELECT DISTINCT(gu_login) FROM conges_groupe_users WHERE gu_gid IN ('.$list_groups.') ORDER BY gu_login ';
-        $ReqLog1 = \includes\SQL::query($sql1);
-
-        while ($resultat1 = $ReqLog1->fetch_array())
-            $list_users[] = '"'.\includes\SQL::quote($resultat1["gu_login"]).'"';
-    }
-    $list_users = implode(' , ', $list_users);
-    return $list_users;
-}
-
 // recup de la liste des groupes dont $resp_login est membre
 // renvoit une liste de group_id séparés par des virgules
 function get_list_groupes_du_user($user_login)
@@ -1231,29 +966,12 @@ function get_list_all_users()
     return $list_users;
 }
 
-
-// recup de la liste des groupes (tous)
-// renvoit une liste de group_id séparés par des virgules
-function get_list_all_groupes()
-{
-    $list_group = array();
-
-    // on select dans conges_groupe_users pour ne récupérer QUE les groupes qui ont des users !!
-    $sql1="SELECT DISTINCT(gu_gid) FROM conges_groupe_users ORDER BY gu_gid";
-    $ReqLog1 = \includes\SQL::query($sql1);
-
-    while ($resultat1 = $ReqLog1->fetch_array())
-        $list_group[] = $resultat1["gu_gid"];
-
-    return implode(',',$list_group);
-}
-
-
 // construit le tableau des responsables d'un user
 // le login du user est passé en paramêtre ainsi que le tableau (vide) des resp
 //renvoit un tableau indexé de resp_login => "absent" ou "present"
 function get_tab_resp_du_user($user_login)
 {
+    $config = new \App\Libraries\Configuration();
     $tab_resp=array();
     // recup du resp indiqué dans la table users (sauf s'il est resp de lui meme)
     $req = 'SELECT u_resp_login FROM conges_users WHERE u_login=\''.\includes\SQL::quote($user_login).'\';';
@@ -1263,7 +981,7 @@ function get_tab_resp_du_user($user_login)
         $tab_resp[$rec['u_resp_login']]="present";
 
     // recup des resp des groupes du user
-    if($_SESSION['config']['gestion_groupes'])
+    if($config->isGroupeActive())
     {
         $list_groups=get_list_groupes_du_user($user_login);
         if($list_groups!="")
@@ -1285,13 +1003,39 @@ function get_tab_resp_du_user($user_login)
         }
     }
 
+    /***************************/
+    // Gestion des responsable inactifs
+    // Si ils sont inactifs on les gère comme des responsables absents
+    $nb_present=count($tab_resp);
+    foreach ($tab_resp as $current_resp => $presence )
+    {
+        // verif dans la base si le current_resp est absent :
+        $req = 'SELECT u_is_active FROM conges_users WHERE u_login=\''.\includes\SQL::quote($current_resp).'\';';
+        $ReqLog_2 = \includes\SQL::query($req);
+        $rec = $ReqLog_2->fetch_array();
+        if ($rec['u_is_active'] == 'N') {
+            $nb_present=$nb_present-1;
+            $tab_resp[$current_resp]="absent";
+        }
+    }
+    if($nb_present==0)
+    {
+        $new_tab_resp=array();
+        foreach ($tab_resp as $current_resp => $presence)
+        {
+            // attention ,on evite le cas ou le user est son propre resp (sinon on boucle infiniment)
+            if($current_resp != $user_login)
+                $new_tab_resp = array_merge  ( $new_tab_resp , get_tab_resp_du_user($current_resp));
+        }
+        $tab_resp = array_merge  ( $tab_resp, $new_tab_resp);
+    }
+
     /************************************/
     // gestion des absence des responsables :
     // on verifie que les resp sont présents, si tous absent, on cherhe les resp des resp, et ainsi de suite ....
-    if($_SESSION['config']['gestion_cas_absence_responsable'])
+    if($config->isGestionResponsableAbsent())
     {
         // on va verifier si les resp récupérés sont absents
-        $nb_present=count($tab_resp);
         foreach ($tab_resp as $current_resp => $presence )
         {
             // verif dans la base si le current_resp est absent :
@@ -1334,8 +1078,9 @@ function get_tab_resp_du_user($user_login)
 // le login du user est passé en paramêtre ainsi que le tableau (vide) des resp
 function get_tab_grd_resp_du_user($user_login, &$tab_grd_resp)
 {
+    $config = new \App\Libraries\Configuration();
     // recup des resp des groupes du user
-    if($_SESSION['config']['gestion_groupes'])
+    if($config->isGroupeActive())
     {
         $list_groups=get_list_groupes_du_user($user_login);
         if($list_groups!="")
@@ -1439,7 +1184,8 @@ function is_resp_direct_of_user($resp_login, $user_login)
 
 function is_resp_group_of_user($resp_login, $user_login)
 {
-    if ( $_SESSION['config']['gestion_groupes'] )
+    $config = new \App\Libraries\Configuration();
+    if ($config->isGroupeActive())
     {
         $ReqLog_info = \includes\SQL::query('SELECT count(*)
                 FROM `conges_groupe_users`
@@ -1454,7 +1200,8 @@ function is_resp_group_of_user($resp_login, $user_login)
 
 function is_gr_group_of_user($resp_login, $user_login)
 {
-    if ( $_SESSION['config']['gestion_groupes'] && $_SESSION['config']['double_validation_conges'])
+    $config = new \App\Libraries\Configuration();
+    if ($config->isGroupeActive() && $config->isDoubleValidationActive())
     {
 
         $ReqLog_info = \includes\SQL::query('SELECT count(*)
@@ -1688,24 +1435,6 @@ function getpost_variable($variable, $default="")
    return   $valeur;
 }
 
-
-// recup TRUE si le user a "u_see_all" à 'Y' dans la table users, FALSE sinon
-function get_user_see_all($login)
-{
-
-    $request = 'SELECT u_see_all FROM conges_users WHERE u_login="'.\includes\SQL::quote($login).'";';
-    $data = \includes\SQL::query($request);
-
-    if($l = $data->fetch_array())
-    {
-        $see_all = $l['u_see_all'];
-        return ($see_all == 'Y');
-    }
-    else
-        return FALSE;
-}
-
-
 // recup dans un tableau des types de conges
 function recup_tableau_types_conges()
 {
@@ -1754,8 +1483,9 @@ function recup_tableau_types_conges_exceptionnels()
 // recup dans un tableau de tableau les infos des types de conges et absences
 function recup_tableau_tout_types_abs( )
 {
+    $config = new \App\Libraries\Configuration();
     $result = array();
-    if ( $_SESSION['config']['gestion_conges_exceptionnels'] ) // on prend tout les types de conges
+    if ($config->isCongesExceptionnelleActive()) // on prend tout les types de conges
         $request = 'SELECT ta_id, ta_type, ta_libelle, ta_short_libelle FROM conges_type_absence;';
     else // on prend tout les types de conges SAUF les conges exceptionnels
         $request = 'SELECT ta_id, ta_type, ta_libelle, ta_short_libelle FROM conges_type_absence WHERE conges_type_absence.ta_type != \'conges_exceptionnels\';';
@@ -1773,9 +1503,10 @@ function recup_tableau_tout_types_abs( )
 // recup dans un tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
 function recup_tableau_conges_for_user($login, $hide_conges_exceptionnels)
 {
+    $config = new \App\Libraries\Configuration();
     // on pourrait tout faire en un seule select, mais cela bug si on change la prise en charge des conges exceptionnels en cours d'utilisation ...
 
-    if ($_SESSION['config']['gestion_conges_exceptionnels'] && ! $hide_conges_exceptionnels) // on prend tout les types de conges
+    if ($config->isCongesExceptionnelleActive() && ! $hide_conges_exceptionnels) // on prend tout les types de conges
         $request = 'SELECT ta_libelle, su_nb_an, su_solde, su_reliquat FROM conges_solde_user, conges_type_absence WHERE conges_type_absence.ta_id = conges_solde_user.su_abs_id AND su_login = "'.\includes\SQL::quote($login).'" ORDER BY su_abs_id ASC;';
     else // on prend tout les types de conges SAUF les conges exceptionnels
         $request = 'SELECT ta_libelle, su_nb_an, su_solde, su_reliquat FROM conges_solde_user, conges_type_absence WHERE conges_type_absence.ta_type != \'conges_exceptionnels\' AND conges_type_absence.ta_id = conges_solde_user.su_abs_id AND su_login = "'.\includes\SQL::quote($login).'" ORDER BY su_abs_id ASC;';
@@ -1793,38 +1524,10 @@ function recup_tableau_conges_for_user($login, $hide_conges_exceptionnels)
     return $result;
 }
 
-// recup dans un tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
-function recup_tableau_conges_for_users( $hide_conges_exceptionnels, $logins = false)
-{
-    // on pourrait tout faire en un seule select, mais cela bug si on change la prise en charge des conges exceptionnels en cours d'utilisation ...
-
-    if ($logins === false)
-        $logins = '';
-    else
-        $logins = ' AND su_login IN ( \''.implode('\', \'',$logins).'\') ';
-
-    if ($_SESSION['config']['gestion_conges_exceptionnels'] && ! $hide_conges_exceptionnels) // on prend tout les types de conges
-        $request = 'SELECT su_login, ta_libelle,  su_nb_an, su_solde, su_reliquat FROM conges_solde_user, conges_type_absence WHERE conges_type_absence.ta_id = conges_solde_user.su_abs_id '.$logins.' ORDER BY ta_type , su_abs_id ASC';
-    else // on prend tout les types de conges SAUF les conges exceptionnels
-        $request = 'SELECT su_login, ta_libelle, su_nb_an, su_solde, su_reliquat FROM conges_solde_user, conges_type_absence WHERE conges_type_absence.ta_type != \'conges_exceptionnels\' AND conges_type_absence.ta_id = conges_solde_user.su_abs_id '.$logins.' ORDER BY su_abs_id ASC';
-
-    $data = \includes\SQL::query($request);
-
-    $result=array();
-    while ($l = $data->fetch_array())
-    {
-        $tab=array();
-        $tab['nb_an'] = affiche_decimal($l['su_nb_an']);
-        $tab['solde'] = affiche_decimal($l['su_solde']);
-        $tab['reliquat'] = affiche_decimal($l['su_reliquat']);
-        $result[ $l['su_login'] ][ $l['ta_libelle'] ]   = $tab;
-    }
-    return $result;
-}
-
 // affichage du tableau récapitulatif des solde de congés d'un user
 function affiche_tableau_bilan_conges_user($login)
 {
+    $config = new \App\Libraries\Configuration();
     $request = 'SELECT u_quotite FROM conges_users where u_login = "'. \includes\SQL::quote($login).'";';
     $ReqLog = \includes\SQL::query($request) ;
     $resultat = $ReqLog->fetch_array();
@@ -1835,7 +1538,7 @@ function affiche_tableau_bilan_conges_user($login)
     $tab_cong_user = recup_tableau_conges_for_user($login, true);
 
     // recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
-    if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+    if ($config->isCongesExceptionnelleActive()) {
         $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
     }
 
@@ -1848,7 +1551,7 @@ function affiche_tableau_bilan_conges_user($login)
     $return .= '<th class="titre">'. _('divers_quotite') .'</th>';
 
     foreach($tab_cong_user as $id => $val) {
-        if ($_SESSION['config']['gestion_conges_exceptionnels'] && in_array($id,$tab_type_conges_exceptionnels)) {
+        if ($config->isCongesExceptionnelleActive() && in_array($id,$tab_type_conges_exceptionnels)) {
             $return .= '<th class="solde">' . $id . '</th>';
         } else {
             $return .= '<th class="annuel">' . $id . ' / ' . _('divers_an_maj') . '</th><th class="solde">' . $id . '</th>';
@@ -1863,7 +1566,7 @@ function affiche_tableau_bilan_conges_user($login)
     $return .= '<tr>';
     $return .= '<td class="quotite">' . $sql_quotite . '%</td>';
     foreach($tab_cong_user as $id => $val) {
-        if ($_SESSION['config']['gestion_conges_exceptionnels']  && in_array($id,$tab_type_conges_exceptionnels)) {
+        if ($config->isCongesExceptionnelleActive()  && in_array($id,$tab_type_conges_exceptionnels)) {
             $return .= '<td class="solde">' . $val['solde'] . ($val['reliquat'] > 0 ? ' (' . _('dont_reliquat') . ' ' . $val['reliquat'] . ')' : '') . '</td>';
         } else {
             $return .= '<td class="annuel">' . $val['nb_an'] . '</td><td class="solde">' . $val['solde'] . ($val['reliquat'] > 0 ? ' (' . _('dont_reliquat') . ' ' . $val['reliquat'] . ')' : '') . '</td>';
@@ -1883,6 +1586,7 @@ function affiche_tableau_bilan_conges_user($login)
 // renvoit FALSE si erreur
 function recup_infos_du_user($login, $list_groups_double_valid)
 {
+    $config = new \App\Libraries\Configuration();
     $tab=array();
     $sql1 = 'SELECT * FROM conges_users ' .
             'WHERE u_login="'.\includes\SQL::quote($login).'";';
@@ -1911,7 +1615,7 @@ function recup_infos_du_user($login, $list_groups_double_valid)
         $tab_user['double_valid'] = "N";
 
         // on regarde ici si le user est dans un groupe qui fait l'objet d'une double validation
-        if($_SESSION['config']['double_validation_conges'])
+        if($config->isDoubleValidationActive())
         {
             if($list_groups_double_valid!="") // si $resp_login est responsable d'au moins un groupe a double validation
             {
@@ -1926,6 +1630,20 @@ function recup_infos_du_user($login, $list_groups_double_valid)
     }
     else
         return FALSE;
+}
+
+
+function sortParActif($a, $b) {
+    if( $a['is_active'] == 'N' && $b['is_active'] == 'N') {
+        return $b['prenom'] < $a['prenom'];
+    }
+    if( $a['is_active'] == 'N'){
+        return 1;
+    }
+    if( $b['is_active'] == 'N'){
+        return -1;
+    }
+    return 0;
 }
 
 // renvoit un tableau de tableau contenant les informations de tous les users
@@ -2055,17 +1773,18 @@ function execute_sql_file($file)
 
 function verif_droits_user($session, $niveau_droits)
 {
+    $config = new \App\Libraries\Configuration();
     $niveau_droits = strtolower($niveau_droits);
 
     // verif si $_SESSION['is_admin'] ou $_SESSION['is_resp'] ou $_SESSION['is_hr'] =="N" ou $_SESSION['is_active'] =="N"
     if($_SESSION[$niveau_droits]=="N")
     {
         // on recupere les variable utiles pour le suite :
-        $url_accueil_conges = $_SESSION['config']['URL_ACCUEIL_CONGES'] ;
-        $lang_divers_acces_page_interdit =  _('divers_acces_page_interdit') ;
-        $lang_divers_user_disconnected    =  _('divers_user_disconnected') ;
-        $lang_divers_veuillez        =  _('divers_veuillez') ;
-        $lang_divers_vous_authentifier    =  _('divers_vous_authentifier') ;
+        $url_accueil_conges = $config->getUrlAccueil();
+        $lang_divers_acces_page_interdit =  _('divers_acces_page_interdit');
+        $lang_divers_user_disconnected    =  _('divers_user_disconnected');
+        $lang_divers_veuillez        =  _('divers_veuillez');
+        $lang_divers_vous_authentifier    =  _('divers_vous_authentifier');
 
         // on delete la session et on renvoit sur l'authentification (page d'accueil)
         session_delete($session);
@@ -2162,17 +1881,18 @@ function get_reliquat_user_conges($login, $type_abs)
 */
 function soustrait_solde_et_reliquat_user($user_login, $num_current_periode, $user_nb_jours_pris, $type_abs, $date_deb, $demi_jour_deb, $date_fin, $demi_jour_fin)
 {
+    $config = new \App\Libraries\Configuration();
 
     $VerifDec = verif_saisie_decimal($user_nb_jours_pris);
 
     //si on autorise les reliquats
-    if($_SESSION['config']['autorise_reliquats_exercice'])
+    if($config->isReliquatsAutorise())
     {
         //recup du reliquat du user pour ce type d'absence
         $reliquat=get_reliquat_user_conges($user_login, $type_abs);
         //echo "reliquat = $reliquat<br>\n";
         // s'il y a une date limite d'utilisationdes reliquats (au format jj-mm)
-        if($_SESSION['config']['jour_mois_limite_reliquats']!=0)
+        if($config->getDateLimiteReliquats() != 0)
         {
             //si date_fin_conges < date_limite_reliquat => alors on décompte dans reliquats
             if($date_fin < $_SESSION['config']['date_limite_reliquats'])
@@ -2260,22 +1980,4 @@ function revert_date($date){
     $date_component = explode('-', $date);
 
     return implode('/', $date_component);
-}
-
-//date au format d/m/Y
-function get_nb_jour($date_deb, $date_fin, $demi_jour_deb, $demi_jour_fin){
-    $date_deb = new DateTime($date_deb); //inclusive
-    $date_fin = new DateTime($date_fin); //exclusive
-    $diff = $date_deb->diff($date_fin);
-    $diff = $diff->format("%a");
-
-    if($demi_jour_deb == 'am' && $demi_jour_fin =='pm') {
-        $diff = $diff + 1;
-    }
-
-    if($demi_jour_deb == $demi_jour_fin) {
-        $diff = $diff + 0.5;
-    }
-
-    return $diff;
 }

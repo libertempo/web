@@ -39,7 +39,8 @@ class Utilisateur
      */
     public static function getListeGroupesVisibles($utilisateur)
     {
-        if(!$_SESSION['config']['gestion_groupes']) {
+        $config = new \App\Libraries\Configuration();
+        if(!$config->isGroupeActive()) {
             return [];
         }
 

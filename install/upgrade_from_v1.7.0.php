@@ -81,4 +81,4 @@ $alter_solde="ALTER TABLE conges_solde_user MODIFY `su_reliquat` DECIMAL(5,2) NO
 $res_alter_solde=\includes\SQL::query($alter_solde);
 
 // on renvoit à la page mise_a_jour.php (là d'ou on vient)
-echo "<a href=\"mise_a_jour.php?etape=2&version=$version&lang=$lang\">upgrade_from_v1.7.0  OK</a><br>\n";
+echo "Migration depuis v1.7.0 effectuée. <a href=\"mise_a_jour.php?etape=2&version=$version&lang=$lang\">Continuer.</a><br>\n";

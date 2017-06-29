@@ -13,6 +13,8 @@ if (empty($session)) {
 
 include_once ROOT_PATH .'fonctions_conges.php' ;
 
+$config = new \App\Libraries\Configuration();
+
 $_SESSION['config']=init_config_tab();      // on initialise le tableau des variables de config
 include_once INCLUDE_PATH .'session.php';
 
@@ -32,11 +34,11 @@ $_SESSION['from_config']=TRUE;  // initialise ce flag pour changer le bouton de 
 		$onglet = 'general';
 	} elseif (!$onglet && $_SESSION['userlogin']!="admin") {
 
-		if($_SESSION['config']['affiche_bouton_config_pour_admin'])
+		if($config->canAdminAccessConfig())
 			$onglet = 'general';
-		elseif($_SESSION['config']['affiche_bouton_config_absence_pour_admin'])
+		elseif($config->canAdminConfigTypesConges())
 			$onglet = 'type_absence';
-		elseif($_SESSION['config']['affiche_bouton_config_mail_pour_admin'])
+		elseif($config->canAdminConfigMail())
 			$onglet = 'config_mail';
 
 	}
@@ -47,13 +49,13 @@ $_SESSION['from_config']=TRUE;  // initialise ce flag pour changer le bouton de 
 
 	$onglets = array();
 
-	if($_SESSION['config']['affiche_bouton_config_pour_admin'] || $_SESSION['userlogin']=="admin")
+	if($config->canAdminAccessConfig() || $_SESSION['userlogin']=="admin")
 		$onglets['general'] = _('install_config_appli');
 
-	if($_SESSION['config']['affiche_bouton_config_absence_pour_admin'] || $_SESSION['userlogin']=="admin")
+	if($config->canAdminConfigTypesConges() || $_SESSION['userlogin']=="admin")
 		$onglets['type_absence'] = _('install_config_types_abs');
 
-	if($_SESSION['config']['affiche_bouton_config_mail_pour_admin'] || $_SESSION['userlogin']=="admin")
+	if($config->canAdminConfigMail() || $_SESSION['userlogin']=="admin")
 		$onglets['mail'] = _('install_config_mail');
 
 	$onglets['logs'] = _('config_logs');

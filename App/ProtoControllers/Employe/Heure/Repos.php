@@ -250,6 +250,7 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
      */
     public function getListe()
     {
+        $config = new \App\Libraries\Configuration();
         $message   = '';
         $errorsLst = [];
         $notice    = '';
@@ -276,7 +277,11 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
             'login' => $_SESSION['userlogin'],
         ];
 
-        $return = '<h1>' . _('user_liste_heure_repos_titre') . '</h1>';
+        $return = '';
+        if( $_SESSION['config']['user_saisie_demande'] || $_SESSION['config']['user_saisie_mission'] ) {
+            $return .= '<a href="' . ROOT_PATH . 'utilisateur/user_index.php?session='. session_id().'&amp;onglet=ajout_heure_repos" style="float:right" class="btn btn-success">' . _('divers_ajout_heure_repos') . '</a>';
+        }
+        $return .= '<h1>' . _('user_liste_heure_repos_titre') . '</h1>';
         $return .= $this->getFormulaireRecherche($champsRecherche);
         $return .= $message;
         $table = new \App\Libraries\Structure\Table();
@@ -301,7 +306,7 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
                 $duree  = \App\Helpers\Formatter::Timestamp2Duree($repos['duree']);
                 $statut = AHeure::statusText($repos['statut']);
                 $comment = \includes\SQL::quote($repos['comment']);
-                if (AHeure::STATUT_DEMANDE == $repos['statut']) {
+                if (AHeure::STATUT_DEMANDE == $repos['statut'] && $config->canUserModifieDemande()) {
                     $modification = '<a title="' . _('form_modif') . '" href="user_index.php?onglet=modif_heure_repos&id=' . $repos['id_heure'] . '&session=' . $session . '"><i class="fa fa-pencil"></i></a>';
                     $annulation   = '<input type="hidden" name="id_heure" value="' . $repos['id_heure'] . '" /><input type="hidden" name="_METHOD" value="DELETE" /><button type="submit" class="btn btn-link" title="' . _('Annuler') . '"><i class="fa fa-times-circle"></i></button>';
                 } else {
@@ -481,6 +486,11 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
      */
     public function canUserEdit($id, $user)
     {
+        $config = new \App\Libraries\Configuration();
+        if(!$config->canUserModifieDemande()){
+            return FALSE;
+        }
+        
         $sql = \includes\SQL::singleton();
         $req = 'SELECT EXISTS (
                     SELECT id_heure

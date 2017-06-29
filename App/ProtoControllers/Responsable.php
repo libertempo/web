@@ -192,7 +192,8 @@ class Responsable
      * @return boolean
      */
     public static function isRespParDelegation($resp, $user) {
-        if(!$_SESSION['config']['gestion_cas_absence_responsable']){
+        $config = new \App\Libraries\Configuration();
+        if(!$config->isGestionResponsableAbsent()){
             return FALSE;
         }
         $usersRespRespAbs = [];
@@ -306,13 +307,5 @@ class Responsable
         $query = $sql->query($req);
 
         return 0 < (int) $query->fetch_array()[0];
-    }
-
-    /**
-     *
-     */
-    public static function canAssociatePLanning()
-    {
-        return $_SESSION['config']['resp_association_planning'];
     }
 }

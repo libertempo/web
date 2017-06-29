@@ -62,6 +62,7 @@ class Fonctions
     // affiche pour un resp des cases à cocher devant les groupes possibles pour les selectionner.
     public static function affiche_gestion_responsable_groupes($choix_resp, $onglet)
     {
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
@@ -174,7 +175,7 @@ class Fonctions
         /*******************************************/
         $return .= '</div>';
         // si on a configuré la double validation
-        if($_SESSION['config']['double_validation_conges']) {
+        if($config->isDoubleValidationActive()) {
             $return .= '<div class="col-md-6">';
             $return .= '<h3>Grand Responsable</h3>';
             /*******************************************/
@@ -254,7 +255,7 @@ class Fonctions
         $return .= '<h1>' . _('admin_onglet_resp_groupe') . '</h1>';
 
         // Récuperation des informations :
-        $sql_resp = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_is_resp='Y' AND u_login!='conges' AND u_login!='admin' ORDER BY u_nom, u_prenom"  ;
+        $sql_resp = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_is_resp='Y' AND u_login!='conges' AND u_login!='admin' AND u_is_active !='N' ORDER BY u_nom, u_prenom"  ;
         $ReqLog_resp = \includes\SQL::query($sql_resp);
 
         /*************************/
@@ -358,6 +359,7 @@ class Fonctions
     // affiche pour un groupe des cases à cocher devant les resp et grand_resp possibles pour les selectionner.
     public static function affiche_gestion_groupes_responsables($choix_group, $onglet)
     {
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
@@ -382,7 +384,7 @@ class Fonctions
         //on rempli un tableau de tous les responsables avec le login, le nom, le prenom (tableau de tableau à 3 cellules
         // Récuperation des responsables :
         $tab_resp=array();
-        $sql_resp = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_login!='conges' AND u_is_resp='Y' ORDER BY u_nom, u_prenom "  ;
+        $sql_resp = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_login!='conges' AND u_is_active !='N' AND u_is_resp='Y' ORDER BY u_nom, u_prenom "  ;
         $ReqLog_resp = \includes\SQL::query($sql_resp);
 
         while($resultat_resp=$ReqLog_resp->fetch_array()) {
@@ -458,7 +460,7 @@ class Fonctions
         $return .= '</div>';
         $return .= '<div class="col-md-6">';
         // si on a configuré la double validation et que le groupe considéré est a double valid
-        if( ($_SESSION['config']['double_validation_conges']) && ($sql_double_valid=="Y") ) {
+        if(($config->isDoubleValidationActive()) && ($sql_double_valid=="Y")) {
             $return .= '<h3>' . _('admin_gestion_groupe_grand_resp_responsables') . '</h3>';
             /*******************************************/
             //AFFICHAGE DU TABLEAU DES GRANDS RESPONSBLES DU GROUPE
@@ -746,7 +748,7 @@ class Fonctions
         //on rempli un tableau de tous les users avec le login, le nom, le prenom (tableau de tableau à 3 cellules
         // Récuperation des utilisateurs :
         $tab_users=array();
-        $sql_users = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_login!='conges' AND u_login!='admin' ORDER BY u_nom, u_prenom "  ;
+        $sql_users = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_login!='conges' AND u_login!='admin' AND u_is_active!='N' ORDER BY u_nom, u_prenom "  ;
         $ReqLog_users = \includes\SQL::query($sql_users);
 
         while($resultat_users=$ReqLog_users->fetch_array()) {
@@ -894,7 +896,7 @@ class Fonctions
         /* Choix User       */
         /********************/
         // Récuperation des informations :
-        $sql_user = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_login!='conges' AND u_login!='admin' ORDER BY u_nom, u_prenom"  ;
+        $sql_user = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_login!='conges' AND u_login!='admin' AND u_is_active!='N' ORDER BY u_nom, u_prenom"  ;
 
         // AFFICHAGE TABLEAU
         $return .= '<h2>' . _('admin_aff_choix_user_titre') . '</h2>';
@@ -1079,9 +1081,10 @@ class Fonctions
     public static function get_nb_users_du_groupe($group_id)
     {
 
-        $sql1='SELECT DISTINCT(gu_login) FROM conges_groupe_users WHERE gu_gid = '. \includes\SQL::quote($group_id).' ORDER BY gu_login ';
+        $sql1='SELECT DISTINCT(cgu.gu_login) FROM conges_groupe_users AS cgu
+                INNER JOIN conges_users AS cu ON (cu.u_login = cgu.gu_login)
+                WHERE cgu.gu_gid = '. \includes\SQL::quote($group_id).' AND cu.u_is_active != "N" ORDER BY cgu.gu_login ';
         $ReqLog1 = \includes\SQL::query($sql1);
-
         $nb_users = $ReqLog1->num_rows;
 
         return $nb_users;
@@ -1164,6 +1167,7 @@ class Fonctions
 
     public static function affiche_gestion_groupes($new_group_name, $new_group_libelle, $onglet)
     {
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
@@ -1191,7 +1195,7 @@ class Fonctions
         $childTable .= '<th>' . _('admin_groupes_groupe') . '</th>';
         $childTable .= '<th>' . _('admin_groupes_libelle') . '</th>';
         $childTable .= '<th>' . _('admin_groupes_nb_users') . '</th>';
-        if($_SESSION['config']['double_validation_conges']) {
+        if($config->isDoubleValidationActive()) {
             $childTable .= '<th>' . _('admin_groupes_double_valid') . '</th>';
         }
         $childTable .= '<th></th></tr></thead><tbody>';
@@ -1212,7 +1216,7 @@ class Fonctions
             $childTable .= '<td><b>' . $sql_group .'</b></td>';
             $childTable .= '<td>' . $sql_comment . '</td>';
             $childTable .= '<td>' . $nb_users_groupe . '</td>';
-            if($_SESSION['config']['double_validation_conges']) {
+            if($config->isDoubleValidationActive()) {
                 $childTable .= '<td>' . $sql_double_valid . '</td>';
             }
             $childTable .= '<td class="action">' . $admin_modif_group . ' ' . $admin_suppr_group . '</td>';
@@ -1241,7 +1245,7 @@ class Fonctions
         $childTable = '<thead><tr>';
         $childTable .= '<th><b>' . _('admin_groupes_groupe') . '</b></th>';
         $childTable .= '<th>' . _('admin_groupes_libelle') . ' / ' . _('divers_comment_maj_1') . '</th>';
-        if($_SESSION['config']['double_validation_conges']) {
+        if($config->isDoubleValidationActive()) {
             $childTable .= '<th>' . _('admin_groupes_double_valid') . '</th>';
         }
         $childTable .= '</tr></thead><tbody>';
@@ -1252,7 +1256,7 @@ class Fonctions
         $childTable .= '<tr>';
         $childTable .= '<td>' . $text_groupname . '</td>';
         $childTable .= '<td>' . $text_libelle . '</td>';
-        if($_SESSION['config']['double_validation_conges']) {
+        if($config->isDoubleValidationActive()) {
             $text_double_valid = '<select class="form-control" name="new_group_double_valid"><option value="N">N</option><option value="Y">Y</option></select>';
             $childTable .= '<td>' . $text_double_valid . '</td>';
         }
@@ -1304,8 +1308,10 @@ class Fonctions
      */
     public static function userModule($session)
     {
-        $return = '<h1>' . _('admin_onglet_gestion_user') . '</h1>';
-
+        $config = new \App\Libraries\Configuration();
+        $return = '';
+        $return .= '<a href="' . ROOT_PATH . 'admin/admin_index.php?session='. session_id().'&amp;onglet=ajout-user" style="float:right" class="btn btn-success">' . _('admin_onglet_add_user') . '</a>';
+        $return .= '<h1>' . _('admin_onglet_gestion_user') . '</h1>';
         /*********************/
         /* Etat Utilisateurs */
         /*********************/
@@ -1315,7 +1321,7 @@ class Fonctions
         $tab_type_conges_exceptionnels = [];
 
         // recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
-        if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+        if ($config->isCongesExceptionnelleActive()) {
             $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
         }
 
@@ -1348,7 +1354,7 @@ class Fonctions
 
         $childTable .= '<th></th>';
         $childTable .= '<th></th>';
-        if($_SESSION['config']['admin_change_passwd'] && ($_SESSION['config']['how_to_connect_user'] == "dbconges")) {
+        if($config->canAdminChangePassword()) {
             $childTable .= '<th></th>';
         }
         $childTable .= '</tr>';
@@ -1358,12 +1364,13 @@ class Fonctions
         // Récuperation des informations des users:
         $tab_info_users=array();
         // si l'admin peut voir tous les users  OU si l'admin n'est pas responsable
-        if( $_SESSION['config']['admin_see_all'] || $_SESSION['userlogin']=="admin" || is_hr($_SESSION['userlogin']) ) {
+        if( $config->canAdminSeeAll() || $_SESSION['userlogin']=="admin" || is_hr($_SESSION['userlogin']) ) {
             $tab_info_users = recup_infos_all_users();
         } else {
             $tab_info_users = recup_infos_all_users_du_resp($_SESSION['userlogin']);
         }
-
+        asort($tab_info_users);
+        uasort($tab_info_users, "sortParActif");
         $i = true;
         foreach ($tab_info_users as $current_login => $tab_current_infos) {
             $admin_modif_user= '<a href="admin_index.php?onglet=modif_user&session=' . $session . '&u_login=' . $current_login . '" title="' . _('form_modif') . '"><i class="fa fa-pencil"></i></a>';
@@ -1374,11 +1381,14 @@ class Fonctions
             $childTable .= '<tr class="' . (($tab_current_infos['is_active']=='Y') ? 'actif' : 'inactif') . '">';
             $childTable .= '<td class="utilisateur"><strong>' . $tab_current_infos['nom'] . ' ' . $tab_current_infos['prenom'] . '</strong>';
             $childTable .= '<span class="login">' . $current_login . '</span>';
-            if($_SESSION['config']['where_to_find_user_email']=="dbconges") {
+            if(!$config->getMailFromLdap()) {
                 $childTable .= '<span class="mail">' . $tab_current_infos['email'] . '</span>';
             }
             // droit utilisateur
             $rights = array();
+            if($tab_current_infos['is_active'] == 'N') {
+                $rights[] = 'inactif';
+            }
             if($tab_current_infos['is_admin'] == 'Y') {
                 $rights[] = 'administrateur';
             }
@@ -1427,7 +1437,7 @@ class Fonctions
 
             $childTable .= '<td>' . $admin_modif_user . '</td>';
             $childTable .= '<td>' . $admin_suppr_user . '</td>';
-            if(($_SESSION['config']['admin_change_passwd']) && ($_SESSION['config']['how_to_connect_user'] == "dbconges")) {
+            if(($config->canAdminChangePassword()) && ($config->getHowToConnectUser() == "dbconges")) {
                 $childTable .= '<td>' . $admin_chg_pwd_user . '</td>';
             }
             $childTable .= '</tr>';
@@ -1606,96 +1616,13 @@ class Fonctions
     // recup de la structure d'une table sous forme de CREATE ...
     public static function get_table_structure($table)
     {
-        $chaine_drop="DROP TABLE IF EXISTS  `$table` ;\n";
-        $chaine_create = "CREATE TABLE `$table` ( ";
+        $drop = "DROP TABLE IF EXISTS  `$table` ;\n";
 
         // description des champs :
-        $sql_champs='SHOW FIELDS FROM '. \includes\SQL::quote($table);
-        $ReqLog_champs = \includes\SQL::query($sql_champs) ;
-        $count_champs=$ReqLog_champs->num_rows;
-        $i=0;
-        while ($resultat_champs = $ReqLog_champs->fetch_array())
-        {
-            $sql_field=$resultat_champs['Field'];
-            $sql_type=$resultat_champs['Type'];
-            $sql_null=$resultat_champs['Null'];
-            $sql_key=$resultat_champs['Key'];
-            $sql_default=$resultat_champs['Default'];
-            $sql_extra=$resultat_champs['Extra'];
-
-            $chaine_create=$chaine_create." `$sql_field` $sql_type ";
-            if($sql_null != "YES")
-                $chaine_create=$chaine_create." NOT NULL ";
-            if(!empty($sql_default))
-            {
-                if($sql_default=="CURRENT_TIMESTAMP")
-                    $chaine_create=$chaine_create." default $sql_default ";        // pas de quotes !
-                else
-                    $chaine_create=$chaine_create." default '$sql_default' ";
-            }
-            if(!empty($sql_extra))
-                $chaine_create=$chaine_create." $sql_extra ";
-            if($i<$count_champs-1)
-                $chaine_create=$chaine_create.",";
-            $i++;
-        }
-
-        // description des index :
-        $sql_index = 'SHOW KEYS FROM '. \includes\SQL::quote($table).'';
-        $ReqLog_index = \includes\SQL::query($sql_index) ;
-        $count_index=$ReqLog_index->num_rows;
-        $i=0;
-
-        // il faut faire une liste pour prendre les PRIMARY, le nom de la colonne et
-        // genérer un PRIMARY KEY ('key1'), PRIMARY KEY ('key2', ...)
-        // puis on regarde ceux qui ne sont pas PRIMARY et on regarde s'ils sont UNIQUE ou pas et
-        // on génére une liste= UNIQUE 'key1' ('key1') , 'key2' ('key2') , ....
-        // ou une liste= KEY key1' ('key1') , 'key2' ('key2') , ....
-        $list_primary="";
-        $list_unique="";
-        $list_key="";
-        while ($resultat_index = $ReqLog_index->fetch_array())
-        {
-            $sql_key_name=$resultat_index['Key_name'];
-            $sql_column_name=$resultat_index['Column_name'];
-            $sql_non_unique=$resultat_index['Non_unique'];
-
-            if($sql_key_name=="PRIMARY")
-            {
-                if($list_primary=="")
-                    $list_primary=" PRIMARY KEY (`$sql_column_name` ";
-                else
-                    $list_primary=$list_primary.", `$sql_column_name` ";
-            }
-            elseif($sql_non_unique== 0)
-            {
-                if($list_unique=="")
-                    $list_unique=" UNIQUE  `$sql_column_name` (`$sql_key_name`) ";
-                else
-                    $list_unique = $list_unique.", `$sql_column_name` (`$sql_key_name`) ";
-            }
-            else
-            {
-                if($list_key=="")
-                    $list_key=" KEY  `$sql_column_name` (`$sql_key_name`) ";
-                else
-                    $list_key=$list_key.", KEY `$sql_column_name` (`$sql_key_name`) ";
-            }
-        }
-
-        if($list_primary!="")
-            $list_primary=$list_primary." ) ";
-
-        if($list_primary!="")
-            $chaine_create=$chaine_create.",    ".$list_primary;
-        if($list_unique!="")
-            $chaine_create=$chaine_create.",    ".$list_unique;
-        if($list_key!="")
-            $chaine_create=$chaine_create.",    ".$list_key;
-
-        $chaine_create=$chaine_create." ) DEFAULT CHARSET=latin1;\n#\n";
-
-        return($chaine_drop.$chaine_create);
+        $req = 'SHOW CREATE TABLE '. \includes\SQL::quote($table);
+        $descriptor = \includes\SQL::query($req) ;
+        $resultDescriptor = $descriptor->fetch_array();
+        return $drop . $resultDescriptor['Create Table'] . ";\n#\n";
     }
 
     public static function restaure($fichier_restaure_name, $fichier_restaure_tmpname, $fichier_restaure_size, $fichier_restaure_error)
@@ -1807,40 +1734,62 @@ class Fonctions
 
     public static function commit_sauvegarde($type_sauvegarde)
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
-        $return   = '';
-
         header("Pragma: no-cache");
         header("Content-Type: text/x-delimtext; name=\"php_conges_".$type_sauvegarde.".sql\"");
         header("Content-disposition: attachment; filename=php_conges_".$type_sauvegarde.".sql");
 
-        //
-        // Build the sql script file...
-        //
-        $maintenant=date("d-m-Y H:i:s");
-        $return .= "#\n";
-        $return .= "# PHP_CONGES\n";
-        $return .= "#\n# DATE : $maintenant\n";
-        $return .= "#\n";
+        echo static::getDataFile($type_sauvegarde);
+    }
+
+    /**
+     * Écrit un fichier de sauvegarde de version dans le répertoire de backup
+     *
+     * @param string $previousVersion Version de départ (courante)
+     * @param string $newVersion Version visée
+     *
+     * @throws \Exception en cas d'échec d'écriture de fichier
+     */
+    public static function sauvegardeAsFile($previousVersion, $newVersion)
+    {
+        $typeSauvegarde = 'all';
+        $contentFile = static::getDataFile($typeSauvegarde);
+        $filename = BACKUP_PATH . 'libertempo_' . $typeSauvegarde .'_' . $previousVersion . '__' . $newVersion . '.sql'; // nom de migration
+
+        if (false === file_put_contents($filename, $contentFile)) {
+            throw new \Exception('Échec de l\'écriture de la sauvegarde');
+        }
+    }
+
+    /**
+     * Retourne les données de sauvegarde
+     *
+     * @param string $typeSauvegarde Si on veut sauvegarder la structure seule ou les données
+     *
+     * @return string
+     */
+    private static function getDataFile($typeSauvegarde)
+    {
+        $content = "#\n";
+        $content .= "# Libertempo\n";
+        $content .= "#\n# DATE : " . date("d-m-Y H:i:s") . "\n";
+        $content .= "#\n";
 
         //recup de la liste des tables
-        $sql1="SHOW TABLES";
-        $ReqLog = \includes\SQL::query($sql1) ;
+        $ReqLog = \includes\SQL::query('SHOW TABLES');
         while ($resultat = $ReqLog->fetch_array()) {
-            $table=$resultat[0] ;
-
-            $return .= "#\n#\n# TABLE: $table \n#\n";
-            if(($type_sauvegarde=="all") || ($type_sauvegarde=="structure") ) {
-                $return .= "# Struture : \n#\n";
-                $return .= \admin\Fonctions::get_table_structure($table);
+            $table = $resultat[0];
+            $content .= "#\n#\n# TABLE: $table \n#\n";
+            if(($typeSauvegarde=="all") || ($typeSauvegarde=="structure") ) {
+                $content .= "# Struture : \n#\n";
+                $content .= static::get_table_structure($table);
             }
-            if(($type_sauvegarde=="all") || ($type_sauvegarde=="data") ) {
-                $return .= "# Data : \n#\n";
-                $return .= \admin\Fonctions::get_table_data($table);
+            if(($typeSauvegarde=="all") || ($typeSauvegarde=="data") ) {
+                $content .= "# Data : \n#\n";
+                $content .= static::get_table_data($table);
             }
         }
-        echo $return;
+
+        return $content;
     }
 
     public static function sauve($type_sauvegarde)
@@ -2008,10 +1957,10 @@ class Fonctions
         if($choix_action=="") {
             \admin\Fonctions::choix_save_restore();
         } elseif($choix_action=="sauvegarde") {
-            if( (!isset($type_sauvegarde)) || ($type_sauvegarde=="") ) {
+            if(!isset($type_sauvegarde) || $type_sauvegarde=="") {
                 \admin\Fonctions::choix_sauvegarde();
             } else {
-                if( (!isset($commit)) || ($commit=="") ) {
+                if( (!isset($commit)) || ($commit=="")) {
                     \admin\Fonctions::sauve($type_sauvegarde);
                 } else {
                     \admin\Fonctions::commit_sauvegarde($type_sauvegarde);
@@ -2061,6 +2010,7 @@ class Fonctions
 
     public static function modifier_groupe($group, $onglet)
     {
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
@@ -2082,7 +2032,7 @@ class Fonctions
         $childTable .= '<tr>';
         $childTable .= '<th>' . _('admin_groupes_groupe') . '</th>';
         $childTable .= '<th>' . _('admin_groupes_libelle') . ' / ' . _('divers_comment_maj_1') . '</th>';
-        if($_SESSION['config']['double_validation_conges']) {
+        if($config->isDoubleValidationActive()) {
             $childTable .= '<th>' . _('admin_groupes_double_valid') . '</th>';
         }
         $childTable .= '</tr></thead><tbody>';
@@ -2099,7 +2049,7 @@ class Fonctions
         $childTable .= '<tr>';
         $childTable .= '<td>' . $sql_groupename . '</td>';
         $childTable .= '<td>' . $sql_comment . '</td>';
-        if($_SESSION['config']['double_validation_conges']) {
+        if($config->isDoubleValidationActive()) {
             $childTable .= '<td>' . $sql_double_valid . '</td>';
         }
         $childTable .= '</tr>';
@@ -2112,7 +2062,7 @@ class Fonctions
         $childTable .= '<tr>';
         $childTable .= '<td>' . $text_group . '</td>';
         $childTable .= '<td>' . $text_comment . '</td>';
-        if($_SESSION['config']['double_validation_conges']) {
+        if($config->isDoubleValidationActive()) {
             $text_double_valid="<select class=\"form-control\" name=\"new_double_valid\" ><option value=\"N\" ";
             if($sql_double_valid=="N") {
                 $text_double_valid=$text_double_valid."SELECTED";
@@ -2175,6 +2125,7 @@ class Fonctions
 
     public static function commit_update_user($u_login_to_update, &$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, &$tab_new_reliquat, &$return)
     {
+        $config = new \App\Libraries\Configuration();
         $dataUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($u_login_to_update);
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
@@ -2185,7 +2136,7 @@ class Fonctions
         // recup du tableau des types de conges (seulement les conges)
         $tab_type_conges = recup_tableau_types_conges();
         $tab_type_conges_excep=array();
-        if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+        if ($config->isCongesExceptionnelleActive()) {
             $tab_type_conges_excep=recup_tableau_types_conges_exceptionnels();
         }
 
@@ -2213,7 +2164,7 @@ class Fonctions
         }
 
         // si l'application gere les conges exceptionnels ET si des types de conges exceptionnels ont été définis
-        if (($_SESSION['config']['gestion_conges_exceptionnels'])&&(count($tab_type_conges_excep) > 0)) {
+        if (($config->isCongesExceptionnelleActive())&&(count($tab_type_conges_excep) > 0)) {
             $valid_3=true;
             // vérification de la validité de la saisie du nombre de jours annuels et du solde pour chaque type de conges exceptionnels
             foreach($tab_type_conges_excep as $id_conges => $libelle) {
@@ -2233,7 +2184,7 @@ class Fonctions
         {
             $valid_4=false;
         }
-        if ($_SESSION['config']['gestion_heures'] && !\admin\Fonctions::FormAddUserSoldeHeureOk($tab_new_user['solde_heure'])) {
+        if ($config->isHeuresAutorise() && !\admin\Fonctions::FormAddUserSoldeHeureOk($tab_new_user['solde_heure'])) {
             $valid_5=false;
         }
         // si aucune erreur de saisie n'a ete commise
@@ -2245,7 +2196,7 @@ class Fonctions
             } else {
                 $sql .='"'.\includes\SQL::quote($tab_new_user['resp_login']).'",';
             }
-            if ($_SESSION['config']['gestion_heures']) {
+            if ($config->isHeuresAutorise()) {
                 $sql .='u_heure_solde='. \App\Helpers\Formatter::hour2Time($tab_new_user['solde_heure']).',';
             }
             $sql .= 'u_is_admin="'. \includes\SQL::quote($tab_new_user['is_admin']).'",u_is_hr="'.\includes\SQL::quote($tab_new_user['is_hr']).'",u_is_active="'.\includes\SQL::quote($tab_new_user['is_active']).'",u_see_all="'.\includes\SQL::quote($tab_new_user['see_all']).'",u_login="'.\includes\SQL::quote($tab_new_user['login']).'",u_quotite="'.\includes\SQL::quote($tab_new_user['quotite']).'",u_email="'. \includes\SQL::quote($tab_new_user['email']).'" WHERE u_login="'.\includes\SQL::quote($u_login_to_update).'"' ;
@@ -2261,7 +2212,7 @@ class Fonctions
 
             }
 
-            if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+            if ($config->isCongesExceptionnelleActive()) {
                 foreach($tab_type_conges_excep as $id_conges => $libelle) {
                     $sql = 'REPLACE INTO conges_solde_user SET su_nb_an=0, su_solde=\''.strtr(round_to_half($tab_new_solde[$id_conges]),",",".").'\', su_reliquat=\''.strtr(round_to_half($tab_new_reliquat[$id_conges]),",",".").'\', su_login="'.\includes\SQL::quote($u_login_to_update).'", su_abs_id='.intval($id_conges).';';
                     \includes\SQL::query($sql);
@@ -2334,6 +2285,7 @@ class Fonctions
 
     public static function modifier_user($u_login, $onglet)
     {
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
@@ -2344,7 +2296,7 @@ class Fonctions
         $tab_type_conges=recup_tableau_types_conges();
 
         // recup du tableau des types de conges (seulement les conges)
-        if ( $_SESSION['config']['gestion_conges_exceptionnels'] ) {
+        if ($config->isCongesExceptionnelleActive()) {
             $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
         }
 
@@ -2370,7 +2322,7 @@ class Fonctions
         $childTable .= '<th>' . _('divers_prenom_maj_1') . '</th>';
         $childTable .= '<th>' . _('divers_login_maj_1') . '</th>';
         $childTable .= '<th>' . _('divers_quotite_maj_1') . '</th>';
-        if ($_SESSION['config']['gestion_heures'] ) {
+        if ($config->isHeuresAutorise()) {
             $childTable .= '<th>' . _('solde_heure') . '</th>';
         }
         $childTable .= '<th>' . _('admin_users_is_resp') . '</th>';
@@ -2380,7 +2332,7 @@ class Fonctions
         $childTable .= '<th>' . _('admin_users_is_active') . '</th>';
         $childTable .= '<th>' . _('admin_users_see_all') . '</th>';
 
-        if($_SESSION['config']['where_to_find_user_email']=="dbconges") {
+        if(!$config->getMailFromLdap()) {
             $childTable .= '<th>' . _('admin_users_mail') . '</th>';
         }
         $childTable .= '</tr>';
@@ -2393,7 +2345,7 @@ class Fonctions
         $childTable .= '<td>' . $tab_user['prenom'] . '</td>';
         $childTable .= '<td>' . $tab_user['login'] . '</td>';
         $childTable .= '<td>' . $tab_user['quotite'] . '</td>';
-        if ($_SESSION['config']['gestion_heures'] ) {
+        if ($config->isHeuresAutorise()) {
             $childTable .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($tab_user['solde_heure']) . '</td>';
         }
         $childTable .= '<td>' . $tab_user['is_resp'] . '</td>';
@@ -2403,13 +2355,13 @@ class Fonctions
         $childTable .= '<td>' . $tab_user['is_active'] . '</td>';
         $childTable .= '<td>' . $tab_user['see_all'] . '</td>';
 
-        if($_SESSION['config']['where_to_find_user_email']=="dbconges") {
+        if(!$config->getMailFromLdap()) {
             $childTable .= '<td>' . $tab_user['email'] . '</td>';
         }
         $childTable .= '</tr>';
 
         // contruction des champs de saisie
-        if($_SESSION['config']['export_users_from_ldap']) {
+        if($config->isUsersExportFromLdap()) {
             $text_login="<input class=\"form-control\" type=\"text\" name=\"new_login\" size=\"10\" maxlength=\"98\" value=\"".$tab_user['login']."\" readonly>" ;
         } else {
             $text_login="<input class=\"form-control\" type=\"text\" name=\"new_login\" size=\"10\" maxlength=\"98\" value=\"".$tab_user['login']."\">" ;
@@ -2448,7 +2400,7 @@ class Fonctions
             $text_see_all="<select class=\"form-control\" name=\"new_see_all\" ><option value=\"N\">N</option><option value=\"Y\">Y</option></select>" ;
         }
 
-        if($_SESSION['config']['where_to_find_user_email']=="dbconges") {
+        if(!$config->getMailFromLdap()) {
             $text_email="<input class=\"form-control\" type=\"text\" name=\"new_email\" size=\"10\" maxlength=\"99\" value=\"".$tab_user['email']."\">" ;
         }
 
@@ -2474,7 +2426,7 @@ class Fonctions
         $childTable .= '<td>' . $text_prenom . '</td>';
         $childTable .= '<td>' . $text_login . '</td>';
         $childTable .= '<td>' . $text_quotite . '</td>';
-        if ($_SESSION['config']['gestion_heures'] ) {
+        if ($config->isHeuresAutorise()) {
             $text_solde_heure="<input class=\"form-control\" type=\"text\" name=\"new_solde_heure\" id=\"" . $soldeHeureId . "\"  size=\"6\" maxlength=\"6\" value=\"".  \App\Helpers\Formatter::timestamp2Duree($tab_user['solde_heure'])."\">" ;
             $childTable .= '<td>' . $text_solde_heure . '</td>';
         }
@@ -2484,7 +2436,7 @@ class Fonctions
         $childTable .= '<td>' . $text_is_hr . '</td>';
         $childTable .= '<td>' . $text_is_active . '</td>';
         $childTable .= '<td>' . $text_see_all . '</td>';
-        if($_SESSION['config']['where_to_find_user_email']=="dbconges") {
+        if(!$config->getMailFromLdap()) {
             $childTable .= '<td>' . $text_email . '</td>';
         }
         $childTable .= '</tr></tbody>';
@@ -2510,7 +2462,7 @@ class Fonctions
         $childTable .= '<th></th>';
         $childTable .= '<th colspan="2">' . _('admin_modif_nb_jours_an') . ' </th>';
         $childTable .= '<th colspan="2">' . _('divers_solde') . '</th>';
-        if( $_SESSION['config']['autorise_reliquats_exercice'] ) {
+        if($config->isReliquatsAutorise()) {
             $childTable .= '<th colspan="2">' . _('divers_reliquat') . '</th>';
         }
         $childTable .= '</tr></thead><tbody>';
@@ -2544,7 +2496,7 @@ class Fonctions
 
             // reliquat
             // si on ne les utilise pas, on initialise qd meme le tableau (<input type=\"hidden\") ...
-            if($_SESSION['config']['autorise_reliquats_exercice']) {
+            if($config->isReliquatsAutorise()) {
                 if (isset($tab_user['conges'][$libelle])) {
                     $childTable .= '<td>' . $tab_user['conges'][$libelle]['reliquat'] . '</td>';
                     $text_reliquats_jours="<input class=\"form-control\" type=\"text\" name=\"tab_new_reliquat[$id_type_cong]\" size=\"5\" maxlength=\"5\" value=\"".$tab_user['conges'][$libelle]['reliquat']."\">" ;
@@ -2562,7 +2514,7 @@ class Fonctions
         }
 
         // recup du tableau des types de conges (seulement les conges)
-        if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+        if ($config->isCongesExceptionnelleActive()) {
             foreach($tab_type_conges_exceptionnels as $id_type_cong_exp => $libelle) {
                 $childTable .= '<tr class="' . ($i ? 'i' : 'p') . '">';
                 $childTable .= '<td>' . $libelle . '</td>';
@@ -2575,7 +2527,7 @@ class Fonctions
                 $childTable .= '<td>' . $text_solde_jours . '</td>';
                 // reliquat
                 // si on ne les utilise pas, on initialise qd meme le tableau (<input type=\"hidden\") ...
-                if($_SESSION['config']['autorise_reliquats_exercice']) {
+                if($config->isReliquatsAutorise()) {
                     $childTable .= '<td>' . $tab_user['conges'][$libelle]['reliquat'] . '</td>';
                     $text_reliquats_jours="<input class=\"form-control\" type=\"text\" name=\"tab_new_reliquat[$id_type_cong_exp]\" size=\"5\" maxlength=\"5\" value=\"".$tab_user['conges'][$libelle]['reliquat']."\">" ;
                     $childTable .= '<td>' . $text_reliquats_jours . '</td>';
@@ -2601,7 +2553,7 @@ class Fonctions
         }
         else {
             $planningName = _('Aucun_planning');
-        } 
+        }
         $return .= '<br><hr/>';
         $return .= '<h4>' . _('admin_planning_utilisateur') . '</h4>';
         $return .= '<div>' . $planningName . '</div>';
@@ -2624,6 +2576,7 @@ class Fonctions
      */
     public static function modifUserModule($session, $onglet)
     {
+        $config = new \App\Libraries\Configuration();
         $u_login              = htmlentities(getpost_variable('u_login'));
         $u_login_to_update    = htmlentities(getpost_variable('u_login_to_update')) ;
         $tab_checkbox_sem_imp = htmlentities(getpost_variable('tab_checkbox_sem_imp')) ;
@@ -2651,7 +2604,7 @@ class Fonctions
             $tab_new_user['nom']    = htmlentities(getpost_variable('new_nom'), ENT_QUOTES | ENT_HTML401);
             $tab_new_user['prenom']     = htmlentities(getpost_variable('new_prenom'), ENT_QUOTES | ENT_HTML401);
             $tab_new_user['quotite']    = htmlentities(getpost_variable('new_quotite'), ENT_QUOTES | ENT_HTML401);
-            if ($_SESSION['config']['gestion_heures'] ) {
+            if ($config->isHeuresAutorise()) {
                 $tab_new_user['solde_heure']    = htmlentities(getpost_variable('new_solde_heure'), ENT_QUOTES | ENT_HTML401);
             }
             $tab_new_user['is_resp']    = htmlentities(getpost_variable('new_is_resp'), ENT_QUOTES | ENT_HTML401);
@@ -2683,6 +2636,7 @@ class Fonctions
 
     public static function suppression_group($group_to_delete)
     {
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
@@ -2696,7 +2650,7 @@ class Fonctions
         $sql3 = 'DELETE FROM conges_groupe_resp WHERE gr_gid = '.\includes\SQL::quote($group_to_delete);
         $result3 = \includes\SQL::query($sql3);
 
-        if($_SESSION['config']['double_validation_conges']) {
+        if($config->isDoubleValidationActive()) {
             $sql4 = 'DELETE FROM conges_groupe_grd_resp WHERE ggr_gid = '.\includes\SQL::quote($group_to_delete);
             $result4 = \includes\SQL::query($sql4);
         }
@@ -2717,6 +2671,7 @@ class Fonctions
 
     public static function confirmer($group, $onglet)
     {
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
@@ -2743,7 +2698,7 @@ class Fonctions
         $childTable .= '<tr>';
         $childTable .= '<th><b>' . _('admin_groupes_groupe') . '</b></th>';
         $childTable .= '<th><b>' . _('admin_groupes_libelle') . ' / ' . _('divers_comment_maj_1') . '</b></th>';
-        if($_SESSION['config']['double_validation_conges']) {
+        if($config->isDoubleValidationActive()) {
             $childTable .= '<th><b>' . _('admin_groupes_double_valid') . '</b></th>';
         }
         $childTable .= '</tr></thead><tbody><tr>';
@@ -2753,7 +2708,7 @@ class Fonctions
             $sql_double_valid=$resultat1["g_double_valid"] ;
             $childTable .= '<td>&nbsp;' . $sql_groupname . '&nbsp;</td>';
             $childTable .= '<td>&nbsp;' . $sql_comment . '&nbsp;</td>';
-            if($_SESSION['config']['double_validation_conges']) {
+            if($config->isDoubleValidationActive()) {
                 $childTable .= '<td>' . $sql_double_valid . '</td>';
             }
         }
@@ -3057,6 +3012,8 @@ class Fonctions
     // affichage du formulaire de saisie d'un nouveau user
     public static function affiche_formulaire_ajout_user(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, $onglet)
     {
+        $config = new \App\Libraries\Configuration();
+        
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
@@ -3065,7 +3022,7 @@ class Fonctions
         $tab_type_conges=recup_tableau_types_conges();
 
         // recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
-        if ($_SESSION['config']['gestion_conges_exceptionnels']){
+        if ($config->isCongesExceptionnelleActive()){
             $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
         }
 
@@ -3090,7 +3047,7 @@ class Fonctions
         ]);
         $childTable = '<thead>';
         $childTable .= '<tr>';
-        if ($_SESSION['config']['export_users_from_ldap'] ) {
+        if ($config->isUsersExportFromLdap()) {
             $childTable .= '<th>' . _('divers_nom_maj_1') . ' ' . _('divers_prenom_maj_1') . '</th>';
         } else {
             $childTable .= '<th>' . _('divers_login_maj_1') . '</th>';
@@ -3098,7 +3055,7 @@ class Fonctions
             $childTable .= '<th>' . _('divers_prenom_maj_1') . '</th>';
         }
         $childTable .= '<th>' . _('divers_quotite_maj_1') . '</th>';
-        if ($_SESSION['config']['gestion_heures'] ) {
+        if ($config->isHeuresAutorise()) {
             $childTable .= '<th>' . _('solde_heure') . '</th>';
         }
         $childTable .= '<th>' . _('admin_new_users_is_resp') . '</th>';
@@ -3106,10 +3063,10 @@ class Fonctions
         $childTable .= '<th>' . _('admin_new_users_is_admin') . '</th>';
         $childTable .= '<th>' . _('admin_new_users_is_hr') . '</th>';
         $childTable .= '<th>' . _('admin_new_users_see_all') . '</th>';
-        if ( !$_SESSION['config']['export_users_from_ldap'] ) {
+        if (!$config->isUsersExportFromLdap()) {
             $childTable .= '<th>' . _('admin_users_mail') . '</th>';
         }
-        if ($_SESSION['config']['how_to_connect_user'] == "dbconges") {
+        if ($config->getHowToConnectUser() == "dbconges") {
             $childTable .= '<th>' . _('admin_new_users_password') . '</th>';
             $childTable .= '<th>' . _('admin_new_users_password') . '</th>';
         }
@@ -3128,7 +3085,7 @@ class Fonctions
         // PREPARATION DES OPTIONS DU SELECT du resp_login
         $text_resp_login="<select class=\"form-control\" name=\"new_resp_login\" id=\"resp_login_id\" ><option value=\"no_resp\">". _('admin_users_no_resp') ."</option>" ;
 
-        if( $_SESSION['config']['admin_see_all'] || $_SESSION['userlogin']=="admin" || is_hr($_SESSION['userlogin'])) {
+        if( $config->canAdminSeeAll() || $_SESSION['userlogin']=="admin" || is_hr($_SESSION['userlogin'])) {
             $sql2 = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_is_resp = \"Y\" ORDER BY u_nom, u_prenom"  ;
         } else {
             $sql2 = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_is_resp = \"Y\" AND u_login=\"".$_SESSION['userlogin']."\" ORDER BY u_nom, u_prenom" ;
@@ -3159,7 +3116,7 @@ class Fonctions
 
         $childTable .= '<tr class="update-line">';
         // Aj. D.Chabaud - Université d'Auvergne - Sept. 2005
-        if ($_SESSION['config']['export_users_from_ldap'] ) {
+        if ($config->isUsersExportFromLdap()) {
             // Récupération de la liste des utilisateurs via un ldap :
 
             // on crée 2 tableaux (1 avec les noms + prénoms, 1 avec les login)
@@ -3187,7 +3144,7 @@ class Fonctions
         }
 
         $childTable .= '<td>' . $text_quotite . '</td>';
-        if ($_SESSION['config']['gestion_heures'] ) {
+        if ($config->isHeuresAutorise()) {
             $text_solde_heure="<input class=\"form-control\" type=\"text\" name=\"new_solde_heure\" id=\"" . $soldeHeureId . "\" size=\"6\" maxlength=\"6\" value=\"".$tab_new_user['solde_heure']."\">" ;
             $childTable .= '<td>' . $text_solde_heure . '</td>';
         }else{
@@ -3199,10 +3156,10 @@ class Fonctions
         $childTable .= '<td>' . $text_is_admin . '</td>';
         $childTable .= '<td>' . $text_is_hr . '</td>';
         $childTable .= '<td>' . $text_see_all . '</td>';
-        if ( !$_SESSION['config']['export_users_from_ldap'] ) {
+        if (!$config->isUsersExportFromLdap()) {
             $childTable .= '<td>' . $text_email . '</td>';
         }
-        if ($_SESSION['config']['how_to_connect_user'] == "dbconges") {
+        if ($config->getHowToConnectUser() == "dbconges") {
             $childTable .= '<td>' . $text_password1 . '</td>';
             $childTable .= '<td>' . $text_password2 . '</td>';
         }
@@ -3249,7 +3206,7 @@ class Fonctions
             $childTable .= '</tr>';
             $i = !$i;
         }
-        if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+        if ($config->isCongesExceptionnelleActive()) {
             foreach($tab_type_conges_exceptionnels as $id_type_cong => $libelle) {
                 $childTable .= '<tr class="'.($i?'i':'p').'">';
                 $value_solde_jours = ( isset($tab_new_solde[$id_type_cong]) ? $tab_new_solde[$id_type_cong] : 0 );
@@ -3270,10 +3227,10 @@ class Fonctions
         $return .= '<br>';
 
         // si gestion des groupes :  affichage des groupe pour y affecter le user
-        if($_SESSION['config']['gestion_groupes'])
+        if($config->isGroupeActive())
         {
             $return .= '<br>';
-            if( $_SESSION['config']['admin_see_all'] || $_SESSION['userlogin']=="admin" ||  is_hr($_SESSION['userlogin']) ) {
+            if( $config->canAdminSeeAll() || $_SESSION['userlogin']=="admin" ||  is_hr($_SESSION['userlogin']) ) {
                 $return .= \admin\Fonctions::affiche_tableau_affectation_user_groupes2("");
             } else {
                 $return .= \admin\Fonctions::affiche_tableau_affectation_user_groupes2($_SESSION['userlogin']);
@@ -3361,7 +3318,7 @@ class Fonctions
                 $return .= '</form>';
 
                 return true;
-            } elseif($_SESSION['config']['where_to_find_user_email'] == "dbconges" && strrchr($tab_new_user['email'], "@")==FALSE) {
+            } elseif(!$config->getMailFromLdap() && strrchr($tab_new_user['email'], "@")==FALSE) {
                 $return .= '<h3>' . _('admin_verif_bad_mail') . '</h3>';
                 $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=ajout-user" method="POST">';
                 $return .= '<input type="hidden" name="new_login" value="' . $tab_new_user['login'] . '">';
@@ -3392,7 +3349,7 @@ class Fonctions
     }
 
     public static function test_form_add_user($tab_new_user) {
-        if($_SESSION['config']['export_users_from_ldap']) {
+        if($config->isUsersExportFromLdap()) {
             return \admin\Fonctions::FormAddUserLoginOk($tab_new_user['login']) && \admin\Fonctions::FormAddUserQuotiteOk($tab_new_user['quotite']) && \admin\Fonctions::FormAddUserSoldeHeureOk($tab_new_user['solde_heure']);
         } else {
             return \admin\Fonctions::FormAddUserLoginOk($tab_new_user['login']) && \admin\Fonctions::FormAddUserQuotiteOk($tab_new_user['quotite'])  && \admin\Fonctions::FormAddUserSoldeHeureOk($tab_new_user['solde_heure']) && \admin\Fonctions::FormAddUserNameOk($tab_new_user['nom']) && \admin\Fonctions::FormAddUserNameOk($tab_new_user['prenom']) && \admin\Fonctions::FormAddUserpasswdOk($tab_new_user['password1'],$tab_new_user['password2']);
@@ -3419,7 +3376,9 @@ class Fonctions
     }
 
     public static function FormAddUserpasswdOk($password1,$password2) {
-        if($_SESSION['config']['how_to_connect_user']=='dbconges')
+        $config = new \App\Libraries\Configuration();
+
+        if($config->getHowToConnectUser() == 'dbconges')
         {
             return !(strlen($password1)==0 || strlen($password2)==0 || strcmp($password1, $password2)!=0);
         } else {
@@ -3429,6 +3388,8 @@ class Fonctions
 
     public static function ajout_user(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, $checkbox_user_groups)
     {
+        $config = new \App\Libraries\Configuration();
+
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session  = session_id();
         $return   = '';
@@ -3447,7 +3408,7 @@ class Fonctions
 
             /*****************************/
             /* INSERT dans conges_users  */
-            if ($_SESSION['config']['how_to_connect_user'] == "dbconges") {
+            if ($config->getHowToConnectUser() == "dbconges") {
                 $motdepasse = md5($tab_new_user['password1']);
             } else {
                 $motdepasse = "none";
@@ -3490,7 +3451,7 @@ class Fonctions
             /***********************************/
             /* ajout du user dans ses groupes  */
             $result4=TRUE;
-            if( ($_SESSION['config']['gestion_groupes']) && ($checkbox_user_groups!="") ) {
+            if(($config->isGroupeActive()) && ($checkbox_user_groups!="")) {
                 $result4= \admin\Fonctions::commit_modif_user_groups($tab_new_user['login'], $checkbox_user_groups);
             }
 
@@ -3546,11 +3507,13 @@ class Fonctions
      */
     public static function ajoutUtilisateurModule($onglet)
     {
+        $config = new \App\Libraries\Configuration();
+
         $saisie_user = getpost_variable('saisie_user');
         $return      = '';
 
         // si on recupere les users dans ldap et qu'on vient d'en créer un depuis la liste déroulante
-        if ($_SESSION['config']['export_users_from_ldap'] && isset($_POST['new_ldap_user'])) {
+        if ($config->isUsersExportFromLdap() && isset($_POST['new_ldap_user'])) {
             $index = 0;
             // On lance une boucle pour selectionner tous les items
             // traitements : $login contient les valeurs successives
@@ -3593,7 +3556,7 @@ class Fonctions
                 $tab_new_user[$login]['is_hr']      = htmlentities(getpost_variable('new_is_hr'), ENT_QUOTES | ENT_HTML401);
                 $tab_new_user[$login]['see_all']    = getpost_variable('new_see_all');
 
-                if ($_SESSION['config']['how_to_connect_user'] == "dbconges") {
+                if ($config->getHowToConnectUser() == "dbconges") {
                     $tab_new_user[$login]['password1'] = getpost_variable('new_password1');
                     $tab_new_user[$login]['password2'] = getpost_variable('new_password2');
                 }
@@ -3615,7 +3578,7 @@ class Fonctions
             $tab_new_user[0]['is_hr']      = htmlentities(getpost_variable('new_is_hr'), ENT_QUOTES | ENT_HTML401);
             $tab_new_user[0]['see_all']    = getpost_variable('new_see_all');
 
-            if ($_SESSION['config']['how_to_connect_user'] == "dbconges") {
+            if ($config->getHowToConnectUser() == "dbconges") {
                 $tab_new_user[0]['password1']    = getpost_variable('new_password1');
                 $tab_new_user[0]['password2']    = getpost_variable('new_password2');
             }
@@ -3632,7 +3595,7 @@ class Fonctions
         /*************************************/
 
         if($saisie_user=="ok") {
-            if($_SESSION['config']['export_users_from_ldap']) {
+            if($config->isUsersExportFromLdap()) {
                 foreach($tab_login as $login) {
                     $return .= \admin\Fonctions::ajout_user($tab_new_user[$login], $tab_new_jours_an, $tab_new_solde, $checkbox_user_groups);
                 }

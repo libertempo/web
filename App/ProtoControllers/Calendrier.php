@@ -157,6 +157,7 @@ final class Calendrier
      */
     private function getFormulaireRecherche()
     {
+        $config = new \App\Libraries\Configuration();
         $form = '<form method="get" action="" class="form-inline search" role="form"><div class="form-group col-md-4 col-sm-5">
         <label class="control-label col-md-3 col-sm-3" for="vue">Vue&nbsp;:</label>
         <div class="col-md-8 col-sm-8"><select class="form-control" name="search[vue]" id="vue">';
@@ -168,7 +169,7 @@ final class Calendrier
             $form .= '<option value="' . $valeur . '" ' . $selected . '>' . _($label) . '</option>';
         }
         $form .= '</select></div></div>';
-        if($_SESSION['config']['gestion_groupes']) {
+        if($config->isGroupeActive()) {
             $groupesVisiblesUtilisateur = \App\ProtoControllers\Utilisateur::getListeGroupesVisibles($_SESSION['userlogin']);
             $form .= '<div class="form-group col-md-4 col-sm-5">
             <label class="control-label col-md-3 col-sm-3" for="groupe">Groupe&nbsp;:</label>
@@ -215,12 +216,13 @@ final class Calendrier
      */
     private function getCalendrier()
     {
+        $config = new \App\Libraries\Configuration();
         $businessCollection = new \App\Libraries\Calendrier\BusinessCollection(
             $this->dateDebut,
             $this->dateFin,
             $_SESSION['userlogin'],
             $this->canSessionVoirEvenementEnTransit($_SESSION),
-            $_SESSION['config']['gestion_groupes'],
+            $config->isGroupeActive(),
             $this->idGroupe
         );
         $fournisseur = new \App\Libraries\Calendrier\Fournisseur($businessCollection);

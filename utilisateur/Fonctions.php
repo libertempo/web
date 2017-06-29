@@ -52,6 +52,8 @@ class Fonctions
     // verifie les parametre de la nouvelle demande :si ok : enregistre la demande dans table conges_periode
     public static function new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type)
     {
+        $config = new \App\Libraries\Configuration();
+
         //conversion des dates
         $new_debut = convert_date($new_debut);
         $new_fin = convert_date($new_fin);
@@ -64,7 +66,7 @@ class Fonctions
         $valid = verif_saisie_new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment);
 
         // verifie que le solde de conges sera encore positif après validation
-        if( $_SESSION['config']['solde_toujours_positif'] ) {
+        if($config->canSoldeNegatif()) {
             $valid = $valid && \utilisateur\Fonctions::verif_solde_user($_SESSION['userlogin'], $new_type, $new_nb_jours);
         }
 
@@ -86,7 +88,7 @@ class Fonctions
             if ( $periode_num != 0 ) {
                 $return .= schars( _('form_modif_ok') ) . ' !<br><br>.';
                 //envoi d'un mail d'alerte au responsable (si demandé dans config de php_conges)
-                if($_SESSION['config']['mail_new_demande_alerte_resp']){
+                if($config->isSendMailDemandeResponsable()){
                     if(in_array(\utilisateur\Fonctions::get_type_abs($new_type), array('absences'))) {
                         alerte_mail($_SESSION['userlogin'], ":responsable:", $periode_num, "new_absence_conges");
                     } else {
@@ -158,6 +160,8 @@ class Fonctions
      */
     public static function nouvelleAbsenceModule($onglet)
     {
+        $config = new \App\Libraries\Configuration();
+
         // on initialise le tableau global des jours fériés s'il ne l'est pas déjà :
         init_tab_jours_feries();
         $return = '';
@@ -166,7 +170,7 @@ class Fonctions
 
         $new_demande_conges = getpost_variable('new_demande_conges', 0);
 
-        if( $new_demande_conges == 1 && $_SESSION['config']['user_saisie_demande'] ) {
+        if( $new_demande_conges == 1 && $config->canUserSaisieDemande()) {
             $new_debut        = htmlentities(getpost_variable('new_debut'), ENT_QUOTES | ENT_HTML401);
             $new_demi_jour_deb  = htmlentities(getpost_variable('new_demi_jour_deb'), ENT_QUOTES | ENT_HTML401);
             $new_fin        = htmlentities(getpost_variable('new_fin'), ENT_QUOTES | ENT_HTML401);
@@ -176,11 +180,7 @@ class Fonctions
 
             $user_login        = $_SESSION['userlogin'];
 
-            if( $_SESSION['config']['disable_saise_champ_nb_jours_pris'] ) {
-                $new_nb_jours = compter($user_login, '', $new_debut,  $new_fin, $new_demi_jour_deb, $new_demi_jour_fin, $new_comment);
-            } else {
-                $new_nb_jours = htmlentities(getpost_variable('new_nb_jours'), ENT_QUOTES | ENT_HTML401);
-            }
+            $new_nb_jours = compter($user_login, '', $new_debut,  $new_fin, $new_demi_jour_deb, $new_demi_jour_fin, $new_comment);
 
             $return .= \utilisateur\Fonctions::new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type);
         } else {
@@ -195,15 +195,15 @@ class Fonctions
             /* Génération du datePicker et de ses options */
             $daysOfWeekDisabled = [];
             $datesDisabled      = [];
-            if ((false == $_SESSION['config']['dimanche_travail'])
-                && (false == $_SESSION['config']['samedi_travail'])
+            if ((!$config->isDimancheOuvrable())
+                && (!$config->isSamediOuvrable())
             ) {
                 $daysOfWeekDisabled = [0,6];
             } else {
-                if (false == $_SESSION['config']['dimanche_travail']) {
+                if (!$config->isDimancheOuvrable()) {
                     $daysOfWeekDisabled = [0];
                 }
-                if (false == $_SESSION['config']['samedi_travail']) {
+                if (!$config->isSamediOuvrable()) {
                     $daysOfWeekDisabled = [6];
                 }
             }
@@ -219,7 +219,7 @@ class Fonctions
                     $datesDisabled[] = \App\Helpers\Formatter::dateIso2Fr($date);
                 }
             }
-            $startDate = ($_SESSION['config']['interdit_saisie_periode_date_passee']) ? 'd' : '';
+            $startDate = ($config->canUserSaisieDemandePasse()) ? 'd' : '';
 
             $datePickerOpts = [
                 'daysOfWeekDisabled' => $daysOfWeekDisabled,
@@ -227,7 +227,7 @@ class Fonctions
                 'startDate'          => $startDate,
             ];
             $return .= '<script>generateDatePicker(' . json_encode($datePickerOpts) . ');</script>';
-            $return .= '<h1>' . _('divers_nouvelle_absence') . '</h1>';
+            $return .= '<h1>' . _('resp_traite_user_new_conges') . '</h1>';
 
             //affiche le formulaire de saisie d'une nouvelle demande de conges
             $return .= saisie_nouveau_conges2($_SESSION['userlogin'], $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet);
@@ -237,6 +237,7 @@ class Fonctions
 
     public static function modifier($p_num_to_update, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $p_etat, $onglet)
     {
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
@@ -252,7 +253,7 @@ class Fonctions
 
         $result = \includes\SQL::query($sql1) ;
 
-        if($_SESSION['config']['mail_modif_demande_alerte_resp']) {
+        if($config->isSendMailAnnulationCongesUtilisateur()) {
             alerte_mail($_SESSION['userlogin'], ":responsable:", $p_num_to_update, "modif_demande_conges");
         }
         $comment_log = "modification de demande num $p_num_to_update ($new_nb_jours jour(s)) ( de $new_debut $new_demi_jour_deb a $new_fin $new_demi_jour_fin) ($new_comment)";
@@ -271,6 +272,7 @@ class Fonctions
 
     public static function confirmer($p_num, $onglet)
     {
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id();
         $return = '';
@@ -282,15 +284,15 @@ class Fonctions
         /* Génération du datePicker et de ses options */
         $daysOfWeekDisabled = [];
         $datesDisabled      = [];
-        if ((false == $_SESSION['config']['dimanche_travail'])
-            && (false == $_SESSION['config']['samedi_travail'])
+        if ((false == $config->isDimancheOuvrable())
+            && (!$config->isSamediOuvrable())
         ) {
             $daysOfWeekDisabled = [0,6];
         } else {
-            if (false == $_SESSION['config']['dimanche_travail']) {
+            if (!$config->isDimancheOuvrable()) {
                 $daysOfWeekDisabled = [0];
             }
-            if (false == $_SESSION['config']['samedi_travail']) {
+            if (!$config->isSamediOuvrable()) {
                 $daysOfWeekDisabled = [6];
             }
         }
@@ -352,32 +354,29 @@ class Fonctions
 
             $return .= '<td>' . $sql_date_deb . '_' . $demi_j_deb . '</td><td>' . $sql_date_fin  . '_' . $demi_j_fin . '</td><td>' . $aff_nb_jours . '</td><td>' . $sql_commentaire . '</td>';
 
-            $compte ="";
-            if($_SESSION['config']['rempli_auto_champ_nb_jours_pris']) {
-                $compte = 'onChange="compter_jours();return false;"';
+            if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) ) {
+                $compte = 'onClick="compter_jours();return true;" ' ;
+            } else {
+                $compte = 'onChange="compter_jours();return false;" ' ;
             }
 
             $text_debut="<input class=\"form-control date\" type=\"text\" name=\"new_debut\" size=\"10\" maxlength=\"30\" value=\"" . revert_date($sql_date_deb) . "\">" ;
             if($sql_demi_jour_deb=="am") {
-                $radio_deb_am="<input type=\"radio\" $compte name=\"new_demi_jour_deb\" value=\"am\" checked>&nbsp;". _('form_am') ;
-                $radio_deb_pm="<input type=\"radio\" $compte name=\"new_demi_jour_deb\" value=\"pm\">&nbsp;". _('form_pm') ;
+                $radio_deb_am="<input type=\"radio\" $compte name=\"new_demi_jour_deb\" value=\"am\" checked>&nbsp;". _('form_debut_am') ;
+                $radio_deb_pm="<input type=\"radio\" $compte name=\"new_demi_jour_deb\" value=\"pm\">&nbsp;". _('form_debut_pm') ;
             } else {
-                $radio_deb_am="<input type=\"radio\" $compte name=\"new_demi_jour_deb\" value=\"am\">". _('form_am') ;
-                $radio_deb_pm="<input type=\"radio\" $compte name=\"new_demi_jour_deb\" value=\"pm\" checked>". _('form_pm') ;
+                $radio_deb_am="<input type=\"radio\" $compte name=\"new_demi_jour_deb\" value=\"am\">". _('form_debut_am') ;
+                $radio_deb_pm="<input type=\"radio\" $compte name=\"new_demi_jour_deb\" value=\"pm\" checked>". _('form_debut_pm') ;
             }
             $text_fin="<input class=\"form-control date\" type=\"text\" name=\"new_fin\" size=\"10\" maxlength=\"30\" value=\"" . revert_date($sql_date_fin) . "\">" ;
             if($sql_demi_jour_fin=="am") {
-                $radio_fin_am="<input type=\"radio\" $compte name=\"new_demi_jour_fin\" value=\"am\" checked>". _('form_am') ;
-                $radio_fin_pm="<input type=\"radio\" $compte name=\"new_demi_jour_fin\" value=\"pm\">". _('form_pm') ;
+                $radio_fin_am="<input type=\"radio\" $compte name=\"new_demi_jour_fin\" value=\"am\" checked>". _('form_fin_am') ;
+                $radio_fin_pm="<input type=\"radio\" $compte name=\"new_demi_jour_fin\" value=\"pm\">". _('form_fin_pm') ;
             } else {
-                $radio_fin_am="<input type=\"radio\" $compte name=\"new_demi_jour_fin\" value=\"am\">". _('form_am') ;
-                $radio_fin_pm="<input type=\"radio\" $compte name=\"new_demi_jour_fin\" value=\"pm\" checked>". _('form_pm') ;
+                $radio_fin_am="<input type=\"radio\" $compte name=\"new_demi_jour_fin\" value=\"am\">". _('form_fin_am') ;
+                $radio_fin_pm="<input type=\"radio\" $compte name=\"new_demi_jour_fin\" value=\"pm\" checked>". _('form_fin_pm') ;
             }
-            if($_SESSION['config']['disable_saise_champ_nb_jours_pris'])
-                $text_nb_jours="<input class=\"form-control\" type=\"text\" name=\"new_nb_jours\" size=\"5\" maxlength=\"30\" value=\"$sql_nb_jours\" style=\"background-color: #D4D4D4; \" readonly=\"readonly\"><br><br>" ;
-            else
-                $text_nb_jours="<input class=\"form-control\" type=\"text\" name=\"new_nb_jours\" size=\"5\" maxlength=\"30\" value=\"$sql_nb_jours\"><br><br>" ;
-
+            $text_nb_jours = "<span id='new_nb_jours'>$sql_nb_jours</span>";
 
             $text_commentaire="<input class=\"form-control\" type=\"text\" name=\"new_comment\" size=\"15\" maxlength=\"30\" value=\"$sql_commentaire\"><br><br>" ;
         }
@@ -414,6 +413,7 @@ class Fonctions
      */
     public static function modificationAbsenceModule()
     {
+        $config = new \App\Libraries\Configuration();
         $user_login        = $_SESSION['userlogin'];
         $p_num             = getpost_variable('p_num');
         $onglet            = getpost_variable('onglet');
@@ -433,7 +433,7 @@ class Fonctions
             $id = $p_num_to_update;
         }
         $isAllowed = self::canUserManipulateConge($id, $_SESSION['userlogin']);
-        if (!$isAllowed || $_SESSION['config']['interdit_modif_demande']) {
+        if (!$isAllowed || $config->canUserModifieDemande()) {
             $session = (isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : session_id()));
             redirect(ROOT_PATH . 'utilisateur/user_index.php?session=' . $session);
         }
@@ -441,11 +441,8 @@ class Fonctions
         //conversion des dates
         $new_debut = convert_date($new_debut);
         $new_fin = convert_date($new_fin);
+        $new_nb_jours = compter($user_login, $p_num_to_update, $new_debut,  $new_fin, $new_demi_jour_deb, $new_demi_jour_fin, $new_comment);
 
-        if ($_SESSION['config']['disable_saise_champ_nb_jours_pris'])
-            $new_nb_jours = compter($user_login, $p_num_to_update, $new_debut,  $new_fin, $new_demi_jour_deb, $new_demi_jour_fin, $new_comment);
-        else
-            $new_nb_jours = getpost_variable('new_nb_jours');
 
         /*************************************/
 
@@ -480,11 +477,12 @@ class Fonctions
 
     public static function suppression($p_num_to_delete, $onglet)
     {
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $session=session_id() ;
         $return = '';
 
-        if($_SESSION['config']['mail_supp_demande_alerte_resp']) {
+        if($config->isSendMailSupprimeDemandeResponsable()) {
             alerte_mail($_SESSION['userlogin'], ":responsable:", $p_num_to_delete, "supp_demande_conges");
         }
 
@@ -655,8 +653,9 @@ class Fonctions
      */
     public static function modificationMotDePasseModule($onglet)
     {
+        $config = new \App\Libraries\Configuration();
         $return = '';
-        if($_SESSION['config']['where_to_find_user_email']=="ldap"){
+        if($config->getMailFromLdap()){
             include_once CONFIG_PATH .'config_ldap.php';
         }
 
@@ -1271,12 +1270,13 @@ class Fonctions
      */
     public static function echangeJourAbsenceModule($onglet)
     {
+        $config = new \App\Libraries\Configuration();
         $return = '';
         init_tab_jours_feries();
 
         $new_echange_rtt    = getpost_variable('new_echange_rtt', 0);
 
-        if( $new_echange_rtt == 1 && $_SESSION['config']['user_echange_rtt'] ) {
+        if($new_echange_rtt == 1 && $config->canUserEchangeRTT()) {
 
             $new_debut                = getpost_variable('new_debut');
             $new_fin                  = getpost_variable('new_fin');
@@ -1444,12 +1444,13 @@ class Fonctions
      */
     public static function getDatePickerDaysOfWeekDisabled()
     {
+        $config = new \App\Libraries\Configuration();
         $daysOfWeekDisabled = [];
 
-        if (false == $_SESSION['config']['dimanche_travail']) {
+        if (!$config->isDimancheOuvrable()) {
             $daysOfWeekDisabled[] = 0;
         }
-        if (false == $_SESSION['config']['samedi_travail']) {
+        if (!$config->isSamediOuvrable()) {
             $daysOfWeekDisabled[] = 6;
         }
         return $daysOfWeekDisabled;
@@ -1504,7 +1505,8 @@ class Fonctions
      */
     public static function getDatePickerStartDate()
     {
-        return ($_SESSION['config']['interdit_saisie_periode_date_passee']) ? 'd' : '';
+        $config = new \App\Libraries\Configuration();
+        return ($config->canUserSaisieDemandePasse()) ? 'd' : '';
     }
 
 

@@ -20,9 +20,11 @@ class Conge
      */
     public function getListe()
     {
+        $config = new \App\Libraries\Configuration();
+
         $return = '';
         $errorsLst = [];
-        if ($_SESSION['config']['where_to_find_user_email'] == "ldap") {
+        if ($config->getMailFromLdap()) {
             include_once CONFIG_PATH . 'config_ldap.php';
         }
 
@@ -34,6 +36,9 @@ class Conge
         // on initialise le tableau global des jours fériés s'il ne l'est pas déjà :
         init_tab_jours_feries();
 
+        if( $_SESSION['config']['user_saisie_demande'] || $_SESSION['config']['user_saisie_mission'] ) {
+            $return .= '<a href="' . ROOT_PATH . 'utilisateur/user_index.php?session='. session_id().'&amp;onglet=nouvelle_absence" style="float:right" class="btn btn-success">' . _('divers_nouvelle_absence') . '</a>';
+        }
         $return .= '<h1>' . _('user_liste_conge_titre') . '</h1>';
 
         if (!empty($_POST) && $this->isSearch($_POST)) {
@@ -67,8 +72,8 @@ class Conge
         } else {
             $i = true;
             $listeConges = $this->getListeSQL($listId);
-            $interdictionModification = $_SESSION['config']['interdit_modif_demande'];
-            $affichageDateTraitement = $_SESSION['config']['affiche_date_traitement'];
+            $modificationAutorisee = $config->canUserModifieDemande();
+            $affichageDateTraitement = $config->canAfficheDateTraitement();
             foreach ($listeConges as $conges) {
                 /** Dates demande / traitement */
                 $dateDemande = '';
@@ -118,13 +123,13 @@ class Conge
 
                 // si on peut modifier une demande on defini le lien à afficher
                 if ($conges["p_etat"] == \App\Models\Conge::STATUT_DEMANDE) {
-                    if (!$interdictionModification) {
+                    if ($modificationAutorisee) {
                         $user_modif_demande = '<a href="user_index.php?session=' . $session . '&p_num=' . $conges['p_num'] . '&onglet=modif_demande"><i class="fa fa-pencil"></i></a>';
                     }
                     $user_suppr_demande = '<a href="user_index.php?session=' . $session . '&p_num=' . $conges['p_num'] . '&onglet=suppr_demande"><i class="fa fa-times-circle"></i></a>';
                 }
 
-                if (!$interdictionModification) {
+                if ($modificationAutorisee) {
                     $childTable .= $user_modif_demande . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 
                 }

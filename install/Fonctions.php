@@ -147,11 +147,10 @@ class Fonctions {
         // affichage de la liste des versions ...
         echo "<select name=\"version\">\n";
         echo "<option value=\"0\">". _('install_installed_version') ."</option>\n";
+        echo "<option value=\"1.9\">v1.9</option>\n";
         echo "<option value=\"1.8.1\">v1.8.1</option>\n";
         echo "<option value=\"1.8\">v1.8</option>\n";
         echo "<option value=\"1.7.0\">v1.7.0</option>\n";
-        echo "<option value=\"1.6.0\">v1.6.x</option>\n";
-        echo "<option value=\"1.5.1\">v1.5.x</option>\n";
         echo "</select>\n";
         echo "<br>\n";
         echo "<input type=\"hidden\" name=\"lang\" value=\"$lang\">\n";
@@ -165,12 +164,13 @@ class Fonctions {
     }
 
     // install la nouvelle version dans une database vide ... et config
+
     public static function lance_install($lang)
     {
 
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 
-        include CONFIG_PATH .'dbconnect.php' ;
+        include CONFIG_PATH . 'dbconnect.php';
         include ROOT_PATH .'version.php' ;
 
         //verif si create / alter table possible !!!
@@ -194,9 +194,12 @@ class Fonctions {
         {
             //on execute le script [nouvelle vesion].sql qui crée et initialise les tables
             $file_sql="sql/php_conges_v$config_php_conges_version.sql";
-            if(file_exists($file_sql))
+            if(file_exists($file_sql)) {
                 $result = execute_sql_file($file_sql);
-
+            }
+            if (0 <= version_compare($config_php_conges_version, '1.9')) {
+                \includes\SQL::query('UPDATE `conges_appli` SET appli_valeur =  "' . hash('sha256', time() . rand()) . '" WHERE appli_variable = "token_instance"');
+            }
 
             /*************************************/
             // FIN : mise à jour de la "installed_version" et de la langue dans la table conges_config
@@ -242,9 +245,8 @@ class Fonctions {
         if($etape==0)
         {
             //avant tout , on conseille une sauvegarde de la database !! (cf vieux index.php)
-            echo "<h3>". _('install_maj_passer_de') ." <font color=\"black\">$installed_version</font> ". _('install_maj_a_version') ." <font color=\"black\">$config_php_conges_version</font> .</h3>\n";
-            echo "<h3><font color=\"red\">". _('install_maj_sauvegardez') ." !!!</font></h3>\n";
-            echo "<h2>....</h2>\n";
+            echo "<h3>". _('install_maj_passer_de') ." <font color=\"black\">$installed_version</font> ". _('install_maj_a_version') ." <font color=\"black\">$config_php_conges_version</font>.</h3>\n";
+            echo "<h3><font color=\"red\">". _('install_maj_cas_echec_backup') .".</font></h3>\n";
             echo "<br>\n";
             echo "<form action=\"$PHP_SELF?lang=$lang\" method=\"POST\">\n";
             echo "<input type=\"hidden\" name=\"etape\" value=\"1\">\n";
@@ -292,47 +294,39 @@ class Fonctions {
             {
                     echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$PHP_SELF?etape=2&version=$installed_version&lang=$lang\">";
             }
-        }
-        //*** ETAPE 2
-        elseif($etape==2)
-        {
-                $start_version=$installed_version ;
+        } elseif($etape==2) {
+            $start_version = $installed_version ;
 
-            //on lance l'execution (include) des scripts d'upgrade l'un après l'autre jusqu a la version voulue ($config_php_conges_version) ..
-            if(($start_version=="1.5.0")||($start_version=="1.5.1")) {
-                $file_upgrade='upgrade_from_v1.5.0.php';
-                $new_installed_version="1.6.0";
-                // execute le script php d'upgrade de la version1.5.0 (vers la suivante (1.6.0))
-                echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$file_upgrade?etape=2&version=$new_installed_version&lang=$lang\">";
-            } elseif($start_version=="1.6.0") {
-                $file_upgrade='upgrade_from_v1.6.0.php';
-                $new_installed_version="1.7.0";
-                // execute le script php d'upgrade de la version1.6.0 (vers la suivante (1.7.0))
-                echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$file_upgrade?etape=2&version=$new_installed_version&lang=$lang\">";
-            } elseif($start_version=="1.7.0") {
-                $file_upgrade='upgrade_from_v1.7.0.php';
-                $new_installed_version="1.8";
-                // execute le script php d'upgrade de la version1.7.0 (vers la suivante (1.8))
-                echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$file_upgrade?etape=2&version=$new_installed_version&lang=$lang\">";
-	    } elseif($start_version=="1.8") {
-		$file_upgrade='upgrade_from_v1.8.php';
-		$new_installed_version="1.8.1";
-		// execute le script php d'upgrade de la version1.8 (vers la suivante (1.8.1))
-		echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$file_upgrade?etape=2&version=$new_installed_version&lang=$lang\">";
-            } elseif($start_version=="1.8.1") {
-		$file_upgrade='upgrade_from_v1.8.1.php';
-		$new_installed_version="1.9";
-		// execute le script php d'upgrade de la version 1.8.1 (vers la suivante (1.9))
-		echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$file_upgrade?etape=2&version=$new_installed_version&lang=$lang\">";
+            if($start_version == "1.7.0") {
+                $file_upgrade = 'upgrade_from_v1.7.0.php';
+                $new_installed_version = "1.8";
+            } elseif($start_version == "1.8") {
+                $file_upgrade = 'upgrade_from_v1.8.php';
+                $new_installed_version = "1.8.1";
+            } elseif($start_version == "1.8.1") {
+                $file_upgrade = 'upgrade_from_v1.8.1.php';
+                $new_installed_version = "1.9";
+            } elseif($start_version == "1.9") {
+                $file_upgrade = 'upgrade_from_v1.9.php';
+                $new_installed_version = "1.10";
             } else {
-                echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$PHP_SELF?etape=3&version=$installed_version&lang=$lang\">";
+                $file_upgrade = '';
+                $new_installed_version = $installed_version;
+                $etape = 3;
             }
-        }
-        //*** ETAPE 3
-        elseif($etape==3)
-        {
+            try {
+                if ($new_installed_version !== $start_version) {
+                    \admin\Fonctions::sauvegardeAsFile($start_version, $new_installed_version);
+                }
+                echo '<META HTTP-EQUIV=REFRESH CONTENT="0; URL=' . $file_upgrade . '?etape=' . $etape . '&version=' . $new_installed_version . '&lang=' . $lang . '">';
+            } catch (\Exception $e) {
+                echo 'Abandon de la mise à jour : ' . $e->getMessage();
+            }
+        } elseif($etape == 3) {
+            /* Reset du token d'instance à chaque version */
+            \includes\SQL::query('UPDATE `conges_appli` SET appli_valeur =  "' . hash('sha256', time() . rand()) . '" WHERE appli_variable = "token_instance"');
             // FIN
-            // test si fichiers config.php ou config_old.php existent encore (si oui : demande de les éffacer !
+            // test si fichiers config.php ou config_old.php existent encore (si oui : demande de les effacer !
             if( (\install\Fonctions::test_config_file()) || (\install\Fonctions::test_old_config_file()) )
             {
                 if(test_config_file())

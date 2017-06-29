@@ -141,7 +141,35 @@ abstract Class ANotification {
      * 
      */
     private function canSend($optionName) {
-        return isset($_SESSION['config'][$optionName]) ? $_SESSION['config'][$optionName] : false;
+        $config = new \App\Libraries\Configuration();
+
+        switch ($optionName) {
+            case 'mail_new_demande_alerte_resp':
+                return $config->isSendMailDemandeResponsable();
+
+                break;
+            case 'mail_prem_valid_conges_alerte_user':
+                return $config->isSendMailPremierValidationUtilisateur();
+
+                break;
+            case 'mail_valid_conges_alerte_user':
+                return $config->isSendMailValidationUtilisateur();
+
+                break;
+            case 'mail_supp_demande_alerte_resp':
+                return $config->isSendMailSupprimeDemandeResponsable();
+
+                break;
+            case 'mail_new_demande_alerte_resp':
+                return $config->isSendMailDemandeResponsable();
+
+                break;
+
+            default:
+                return false;
+
+                break;
+        }
     }
 
     /**
