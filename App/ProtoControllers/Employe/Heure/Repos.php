@@ -44,7 +44,7 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
                 $comment    = \includes\SQL::quote($_POST['comment']);
             } else {
                 log_action(0, 'demande', '', 'Nouvelle demande d\'heure de repos enregistrée');
-                redirect(ROOT_PATH . 'utilisateur/user_index.php?session='. session_id() . '&onglet=liste_heure_repos', false);
+                redirect(ROOT_PATH . 'utilisateur/user_index.php?onglet=liste_heure_repos', false);
             }
         }
 
@@ -266,7 +266,7 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
                 $message = '<div class="alert alert-info">' .  $notice . '.</div>';
             } else {
                 log_action(0, '', '', 'Récupération de l\'heure de repos ' . $_POST['id_heure']);
-                redirect(ROOT_PATH . 'utilisateur/user_index.php?session='. session_id() . '&onglet=liste_heure_repos', false);
+                redirect(ROOT_PATH . 'utilisateur/user_index.php?onglet=liste_heure_repos', false);
             }
         }
         $champsRecherche = (!empty($_POST) && $this->isSearch($_POST))
@@ -278,7 +278,7 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
 
         $return = '';
         if( $_SESSION['config']['user_saisie_demande'] || $_SESSION['config']['user_saisie_mission'] ) {
-            $return .= '<a href="' . ROOT_PATH . 'utilisateur/user_index.php?session='. session_id().'&amp;onglet=ajout_heure_repos" style="float:right" class="btn btn-success">' . _('divers_ajout_heure_repos') . '</a>';
+            $return .= '<a href="' . ROOT_PATH . 'utilisateur/user_index.php?onglet=ajout_heure_repos" style="float:right" class="btn btn-success">' . _('divers_ajout_heure_repos') . '</a>';
         }
         $return .= '<h1>' . _('user_liste_heure_repos_titre') . '</h1>';
         $return .= $this->getFormulaireRecherche($champsRecherche);
@@ -292,7 +292,6 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
             'table-striped',
         ]);
         $childTable = '<thead><tr><th>' . _('jour') . '</th><th>' . _('divers_debut_maj_1') . '</th><th>' . _('divers_fin_maj_1') . '</th><th>' . _('duree') . '</th><th>' . _('statut') . '</th><th>' . _('commentaire') . '</th><th></th></tr></thead><tbody>';
-        $session = session_id();
         $listId = $this->getListeId($params);
         if (empty($listId)) {
             $childTable .= '<tr><td colspan="6"><center>' . _('aucun_resultat') . '</center></td></tr>';
@@ -306,7 +305,7 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
                 $statut = AHeure::statusText($repos['statut']);
                 $comment = \includes\SQL::quote($repos['comment']);
                 if (AHeure::STATUT_DEMANDE == $repos['statut']) {
-                    $modification = '<a title="' . _('form_modif') . '" href="user_index.php?onglet=modif_heure_repos&id=' . $repos['id_heure'] . '&session=' . $session . '"><i class="fa fa-pencil"></i></a>';
+                    $modification = '<a title="' . _('form_modif') . '" href="user_index.php?onglet=modif_heure_repos&id=' . $repos['id_heure'] . '"><i class="fa fa-pencil"></i></a>';
                     $annulation   = '<input type="hidden" name="id_heure" value="' . $repos['id_heure'] . '" /><input type="hidden" name="_METHOD" value="DELETE" /><button type="submit" class="btn btn-link" title="' . _('Annuler') . '"><i class="fa fa-times-circle"></i></button>';
                 } else {
                     $modification = '<i class="fa fa-pencil disabled" title="'  . _('heure_non_modifiable') . '"></i>';
@@ -345,7 +344,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
                 : '';
             $form .= '<option value="' . $key . '" ' . $selected . '>' . $value . '</option>';
         }
-        $form .= '</select></div></div><div class="form-group"><div class="input-group"><button type="submit" class="btn btn-default"><i class="fa fa-search" aria-hidden="true"></i></button>&nbsp;<a href="' . ROOT_PATH . 'utilisateur/user_index.php?session='. session_id() . '&onglet=liste_heure_repos" type="reset" class="btn btn-default">Reset</a></div></div></form>';
+        $form .= '</select></div></div><div class="form-group"><div class="input-group"><button type="submit" class="btn btn-default"><i class="fa fa-search" aria-hidden="true"></i></button>&nbsp;<a href="' . ROOT_PATH . 'utilisateur/user_index.php?onglet=liste_heure_repos" type="reset" class="btn btn-default">Reset</a></div></div></form>';
 
         return $form;
     }
