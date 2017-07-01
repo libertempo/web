@@ -41,7 +41,6 @@ function compter_jours()
 {
     $(document).ready(function () {
         var login = document.forms["dem_conges"].user_login.value;
-        var session = document.forms["dem_conges"].session.value;
         var d_debut = document.forms["dem_conges"].new_debut.value;
         var d_fin = document.forms["dem_conges"].new_fin.value;
 	    var opt_deb = document.querySelector('input[name = "new_demi_jour_deb"]:checked').value;
@@ -53,7 +52,7 @@ function compter_jours()
         }
 
         if( (d_debut) && (d_fin)) {
-            var page = '../calcul_nb_jours_pris.php?session=' + session + '&date_debut=' + d_debut + '&date_fin=' + d_fin+'&user=' + login + '&opt_debut=' +opt_deb + '&opt_fin=' + opt_fin + '&p_num=' +p_num;
+            var page = '../calcul_nb_jours_pris.php?date_debut=' + d_debut + '&date_fin=' + d_fin+'&user=' + login + '&opt_debut=' +opt_deb + '&opt_fin=' + opt_fin + '&p_num=' +p_num;
 
             $.ajax({
                 type : 'GET',
@@ -313,7 +312,7 @@ var planningController = function (idElement, options, creneaux)
         var minuteHedbo = this._calculDureeHebdomadaire();
         this._affichageDureeHebdomadaire(minuteHedbo);
     }
-    
+
     /**
      * Affiche la durée de travail hebdomadaire, utilise l'option dureeHebdoId passée lors de la création de l'objet planningController
      * @param  {int} minuteHedbo Le nombre de minutes travaillées par mois
@@ -343,7 +342,7 @@ var planningController = function (idElement, options, creneaux)
             for (var j in this.creneauxList[i] ) {
                 creneau = this.creneauxList[i][j];
                 heureFin = creneau[1].split(':');
-                dFin.setHours(heureFin[0], heureFin[1]); 
+                dFin.setHours(heureFin[0], heureFin[1]);
                 heureDebut = creneau[0].split(':');
                 // cas du changement de jour ex: creneau de 22h30 à 5h30
                 if (heureDebut[0] > heureFin[0]) {

@@ -74,7 +74,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
                 $childTable .='<tr align="center"><td class="histo" style="background-color: #CCC;" colspan="12"><i>'._('resp_etat_users_titre_double_valid').'</i></td></tr>';
                 $childTable .= $this->getFormDemandes($demandesGrandResp);
             }
-            
+
             if (!empty($demandesRespAbsent)) {
                 $childTable .='<tr align="center"><td class="histo" style="background-color: #CCC;" colspan="11"><i>'._('traitement_demande_par_delegation').'</i></td></tr>';
                 $childTable .= $this->getFormDemandes($demandesRespAbsent);
@@ -102,7 +102,6 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
     {
         $i=true;
         $Table='';
-        $session = (isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : session_id()));
 
         foreach ($demandes as $demande) {
             $id = $demande['p_num'];
@@ -137,7 +136,6 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
             list($anneeDebut, $moisDebut) = explode('-', $demande['p_date_deb']);
             $dateDebut = new \DateTimeImmutable($anneeDebut . '-' . $moisDebut . '-01');
             $paramsCalendrier = [
-                'session' => $session,
                 'vue' => \App\ProtoControllers\Calendrier::VUE_MOIS,
                 'begin' => $dateDebut->format('Y-m-d'),
                 'end' => $dateDebut->modify('+1 month')->format('Y-m-d'),
@@ -424,13 +422,13 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
     /**
      * Transmet à respN+2 les id des demandes des utilisateurs d'un respN+1 absent
-     * 
+     *
      * @param string $resp login du respN+2
-     * 
-     * @return array $ids 
+     *
+     * @return array $ids
      */
     protected function getIdDemandesResponsableAbsent($resp)
-    { 
+    {
         if(!$_SESSION['config']['gestion_cas_absence_responsable']){
             return [];
         }
@@ -443,7 +441,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
         $usersRespDirect = \App\ProtoControllers\Responsable::getUsersRespDirect($resp);
         $usersgroupesIdResponsable = array_merge($usersgroupesIdResponsable,$usersRespDirect);
-        
+
         foreach ($usersgroupesIdResponsable as $user) {
             if (is_resp($user)) {
                 $usersduRespResponsable[] = $user;
@@ -466,7 +464,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
     /**
      * Retourne les id des demandes délégable
-     * 
+     *
      * @param array $usersRespAbsent
      * @return array $id
      */
@@ -626,12 +624,12 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
         return $tLabel;
     }
-    
+
     /**
      * Retourne le nombre de demande en cours d'un responsable
-     * 
+     *
      * @param $resp
-     * 
+     *
      * @return int
      */
     public function getNbDemandesATraiter($resp)

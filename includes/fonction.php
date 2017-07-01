@@ -45,7 +45,6 @@ function curPage() {
 
 function header_popup($title = '' , $additional_head = '' ) {
     global $type_bottom;
-    global $session;
 
     static $last_use = '';
     if ($last_use == '') {
@@ -63,7 +62,6 @@ function header_popup($title = '' , $additional_head = '' ) {
 
 function header_error($title = '' , $additional_head = '' ) {
     global $type_bottom;
-    global $session;
 
     static $last_use = '';
     if ($last_use == '') {
@@ -81,7 +79,6 @@ function header_error($title = '' , $additional_head = '' ) {
 
 function header_login($title = '' , $additional_head = '' ) {
     global $type_bottom;
-    global $session;
 
     static $last_use = '';
     if ($last_use == '') {
@@ -99,7 +96,6 @@ function header_login($title = '' , $additional_head = '' ) {
 
 function header_menu( $info ,$title = '' , $additional_head = '' ) {
     global $type_bottom;
-    global $session;
 
     static $last_use = '';
     if ($last_use == '') {
@@ -176,7 +172,7 @@ function disable_plugin($plugin){
 //
 // indique (TRUE / FALSE) si une session est valide (par / au temps de connexion)
 //
-function session_is_valid($session)
+function session_is_valid()
 {
    // ATTENTION:  on fixe l'id de session comme nom de session pour que , sur un meme pc, on puisse se loguer sous 2 users à la fois
    if (session_id() == "")
@@ -203,7 +199,6 @@ function session_create($username)
     if ($username != "")
     {
         if(isset($_SESSION)) unset($_SESSION);
-        $session = "phpconges".md5(uniqid(rand()));
 
         session_start();
         $_SESSION['userlogin']=$username;
@@ -212,20 +207,16 @@ function session_create($username)
         $_SESSION['timestamp_last']=$maintenant;
         if (function_exists('init_config_tab'))
             $_SESSION['config']=init_config_tab();      // on initialise le tableau des variables de config
-        //$session=session_id();
 
         if (isset($_REQUEST['lang']))
             $_SESSION['lang'] = $_REQUEST['lang'];
     }
-    else
-    {
-        $session="";
-    }
+
 
     $comment_log = 'Connexion de '.$username;
     log_action(0, "", $username, $comment_log);
 
-    return $session;
+    return;
 }
 
 //
