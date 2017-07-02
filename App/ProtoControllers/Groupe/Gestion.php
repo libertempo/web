@@ -977,7 +977,7 @@ class Gestion {
     {
         $nomsGroupes = [];
         $groupe = new \App\ProtoControllers\Groupe();
-        $groupesIds = $groupe->getListeId();
+        $groupesIds = $groupe->getListeId(\includes\SQL::singleton());
         foreach ($groupesIds as $id){
             $nomsGroupes[] = $groupe->getInfosGroupe($id, \includes\SQL::singleton())['nom'];
         }
