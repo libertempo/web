@@ -860,7 +860,7 @@ class Gestion {
      */
     protected function getGrandResponsables($idGroupe = NIL_INT)
     {
-        $infoResponsables = [];
+        $responsables = [];
 
         $infosResps = \App\ProtoControllers\Responsable::getInfosResponsables(\includes\SQL::singleton(),true);
         foreach ($infosResps as $infos){
@@ -888,7 +888,7 @@ class Gestion {
      */
     protected function getEmployes($idGroupe = NIL_INT)
     {
-        $infoUtilisateurs = [];
+        $employes = [];
         $idsUtilisateurs = \App\ProtoControllers\Utilisateur::getListId(true);
         foreach ($idsUtilisateurs as $login){
             $donnees = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($login);
