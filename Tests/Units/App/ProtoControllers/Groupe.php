@@ -34,8 +34,8 @@ class Groupe extends \Tests\Units\TestUnit
             'gu_login' => 'who'
         ];
         
-        $this->calling($this->result)->fetch_assoc[] = $array;
-        $this->calling($this->result)->fetch_assoc[] = null;
+        $this->calling($this->result)->fetch_assoc[1] = $array;
+        $this->calling($this->result)->fetch_assoc[2] = null;
         $liste = _Groupe::getListe($this->db);
         $this->array($liste)->hasKey(12)->child[12](function($child) use ($array)
         {
