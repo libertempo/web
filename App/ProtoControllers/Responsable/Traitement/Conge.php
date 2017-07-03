@@ -284,7 +284,6 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         } else {
             $id = $this->updateSoldeUser($demande['p_login'], $demande['p_nb_jours'], $demande['p_type']);
             $this->updateStatutValidationFinale($demande['p_num']);
-            log_action($demande['p_num'],"ok", $demande['p_login'], 'traitement demande ' . $demande['p_num'] . ' (' . $demande['p_login'] . ') (' . $demande['p_nb_jours'] . ' jours) : OK');
         }
     }
 
