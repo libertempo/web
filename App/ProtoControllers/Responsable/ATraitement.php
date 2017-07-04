@@ -163,7 +163,6 @@ abstract class ATraitement
     {
         $i=true;
         $Table='';
-        $session = (isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : session_id()));
 
         foreach ($demandes as $demande) {
             $jour   = date('d/m/Y', $demande['debut']);
@@ -184,7 +183,6 @@ abstract class ATraitement
             /* Informations pour le positionnement du calendrier */
             $dateDebut = new \DateTimeImmutable(date('Y-m', $demande['debut']) . '-01');
             $paramsCalendrier = [
-                'session' => $session,
                 'vue' => \App\ProtoControllers\Calendrier::VUE_MOIS,
                 'begin' => $dateDebut->format('Y-m-d'),
                 'end' => $dateDebut->modify('+1 month')->format('Y-m-d'),

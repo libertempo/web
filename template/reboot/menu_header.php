@@ -3,13 +3,13 @@
     include TEMPLATE_PATH . 'template_define.php';
     $printable = getpost_variable('printable');
     if (is_admin($_SESSION['userlogin'])) {
-        $home = 'admin/admin_index.php?session='.$session;
+        $home = 'admin/admin_index.php';
     } elseif (is_hr($_SESSION['userlogin'])) {
-        $home = 'hr/hr_index.php?session='.$session;
+        $home = 'hr/hr_index.php';
     } elseif (is_resp($_SESSION['userlogin'])) {
-        $home = 'responsable/resp_index.php?session='.$session;
+        $home = 'responsable/resp_index.php';
     } else {
-        $home = 'utilisateur/user_index.php?session='.$session;
+        $home = 'utilisateur/user_index.php';
     }
     //user mode
     $user_mode = '';
@@ -45,21 +45,20 @@
 
     switch($tmp) {
         case 'admin':
-            $mod_toolbar[] = '<a href="#" onClick="OpenPopUp(\''. ROOT_PATH .'admin/admin_db_sauve.php?session=' . $session . '\', \'\', 800, 600); return false;"><i class="fa fa-save"></i><span>' . _('admin_button_save_db_2') . '</span></a>';
+            $mod_toolbar[] = '<a href="#" onClick="OpenPopUp(\''. ROOT_PATH .'admin/admin_db_sauve.php\', \'\', 800, 600); return false;"><i class="fa fa-save"></i><span>' . _('admin_button_save_db_2') . '</span></a>';
             if($_SESSION['config']['affiche_bouton_config_pour_admin'] || $_SESSION['config']['affiche_bouton_config_absence_pour_admin'] || $_SESSION['config']['affiche_bouton_config_mail_pour_admin'] || $_SESSION['userlogin']=="admin" )
-                $mod_toolbar[] = "<a href=\"" . ROOT_PATH . "config/index.php?session=$session\"" . ($tmp == 'config' ? 'class="active"' : '') . "><i class=\"fa fa-th-list\"></i><span>" . _('admin_button_config_2') . "</span></a>";
+                $mod_toolbar[] = "<a href=\"" . ROOT_PATH . "config/index.php\"" . ($tmp == 'config' ? 'class="active"' : '') . "><i class=\"fa fa-th-list\"></i><span>" . _('admin_button_config_2') . "</span></a>";
         break;
         case 'hr':
-            $mod_toolbar[] = "<a href=\"" . ROOT_PATH . "hr/hr_jours_fermeture.php?session=$session\"><i class=\"fa fa-calendar\"></i><span>" . _('admin_button_jours_fermeture_2') . "</span></a>";
+            $mod_toolbar[] = "<a href=\"" . ROOT_PATH . "hr/hr_jours_fermeture.php\"><i class=\"fa fa-calendar\"></i><span>" . _('admin_button_jours_fermeture_2') . "</span></a>";
         break;
         case 'utilisateur':
             $mod_toolbar[] = '<a href="#"
-            onClick="OpenPopUp(\'' . ROOT_PATH . 'export/export_vcalendar.php?session=' . $session .
-            '&user_login=' . $_SESSION['userlogin'] .
+            onClick="OpenPopUp(\'' . ROOT_PATH . 'export/export_vcalendar.php?user_login=' . $_SESSION['userlogin'] .
             '\', \'\', 600, 400);return false;">
             <i class="fa fa-download"></i><span>' . _('Exporter cal') . '</span></a>';
             if($_SESSION['config']['editions_papier'])
-                $mod_toolbar[] = "<a href=\"" . ROOT_PATH . "edition/edit_user.php?session=$session\"><i class=\"fa fa-file-text\"></i><span>"._('button_editions')."</span></a>";
+                $mod_toolbar[] = "<a href=\"" . ROOT_PATH . "edition/edit_user.php\"><i class=\"fa fa-file-text\"></i><span>"._('button_editions')."</span></a>";
         break;
     }
 ?>
@@ -128,7 +127,7 @@
                     </div>
 					<?php if (is_admin($_SESSION['userlogin'])): ?>
                     <div class="menu-link <?= $adminActive ?>">
-                        <a title="<?= _('button_admin_mode');?>" href="<?= ROOT_PATH ?>admin/admin_index.php?session=<?= $session ?>" <?php print ($tmp == 'admin' || $tmp == 'config') ? 'active' : '' ;?>>
+                        <a title="<?= _('button_admin_mode');?>" href="<?= ROOT_PATH ?>admin/admin_index.php" <?php print ($tmp == 'admin' || $tmp == 'config') ? 'active' : '' ;?>>
                             <i class="fa fa-bolt fa-2x maxi"></i>
                             <i class="fa fa-bolt mini"></i>
 						</a>
@@ -136,7 +135,7 @@
 					<?php endif; ?>
 					<?php if (is_hr($_SESSION['userlogin'])): ?>
                     <div class="menu-link <?= $hrActive ?>">
-                        <a title="<?= _('button_hr_mode');?>" href="<?= ROOT_PATH ?>hr/hr_index.php?session=<?= $session ?>" <?php print ($tmp == 'hr') ? 'active' : '' ;?>>
+                        <a title="<?= _('button_hr_mode');?>" href="<?= ROOT_PATH ?>hr/hr_index.php" <?php print ($tmp == 'hr') ? 'active' : '' ;?>>
                             <i class="fa fa-sitemap fa-2x maxi"></i>
                             <i class="fa fa-sitemap mini"></i>
 						</a>
@@ -144,14 +143,14 @@
 					<?php endif; ?>
 					<?php if (is_resp($_SESSION['userlogin'])): ?>
                     <div class="menu-link <?= $respActive ?>">
-                        <a title="<?= _('button_responsable_mode');?>" href="<?= ROOT_PATH ?>responsable/resp_index.php?session=<?= $session ?>" <?php print ($tmp == 'utilisateur') ? 'active' : '' ;?>>
+                        <a title="<?= _('button_responsable_mode');?>" href="<?= ROOT_PATH ?>responsable/resp_index.php" <?php print ($tmp == 'utilisateur') ? 'active' : '' ;?>>
                             <i class="fa fa-users fa-2x maxi"></i>
                             <i class="fa fa-users mini"></i>
 						</a>
                     </div>
 					<?php endif; ?>
                     <div class="menu-link <?= $userActive ?>">
-                        <a title="<?= _('user') ?>" href="<?= ROOT_PATH ?>utilisateur/user_index.php?session=<?= $session ?>" <?php print ($tmp == 'utilisateur') ? 'active' : '' ;?>>
+                        <a title="<?= _('user') ?>" href="<?= ROOT_PATH ?>utilisateur/user_index.php" <?php print ($tmp == 'utilisateur') ? 'active' : '' ;?>>
                             <i class="fa fa-user fa-2x maxi"></i>
                             <i class="fa fa-user mini"></i>
                         </a>
@@ -159,7 +158,7 @@
                     <?php if('active' === $calendarActive || $tmp=='utilisateur' || $tmp=='responsable' || in_array($tmp, ['hr', 'admin', 'config'])): ?>
                     <div class="separator"></div>
                     <div class="menu-link <?= $calendarActive ?>">
-                        <a title="<?= _('button_calendar') ?>" href="<?= ROOT_PATH ?>calendrier.php?session=<?= $session ?>">
+                        <a title="<?= _('button_calendar') ?>" href="<?= ROOT_PATH ?>calendrier.php">
                             <i class="fa fa-calendar fa-2x maxi"></i>
                             <i class="fa fa-calendar mini"></i>
                             </a>
@@ -168,7 +167,7 @@
                    <?php if($_SESSION['config']['auth']): ?>
                     <div class="separator"></div>
                     <div class="menu-link">
-                        <a title="<?= _('button_deconnect') ?>" href="<?= ROOT_PATH ?>deconnexion.php?session=<?= $session ?>">
+                        <a title="<?= _('button_deconnect') ?>" href="<?= ROOT_PATH ?>deconnexion.php">
                             <i class="fa fa-power-off fa-2x maxi"></i>
                             <i class="fa fa-power-off mini"></i>
                         </a>

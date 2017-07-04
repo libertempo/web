@@ -7,7 +7,6 @@ if (!is_readable( CONFIG_PATH .'dbconnect.php'))
 {
 	header("Location:". ROOT_PATH .'install/');
 }
-
 include_once INCLUDE_PATH .'fonction.php';
 include_once ROOT_PATH .'fonctions_conges.php'; // for init_config_tab()
 $_SESSION['config']=init_config_tab();      // on initialise le tableau des variables de config
@@ -16,7 +15,6 @@ $_SESSION['config']=init_config_tab();      // on initialise le tableau des vari
 
 /*** initialisation des variables ***/
 /************************************/
-
 if($_SESSION['config']['auth'] == FALSE)    // si pas d'autentification (cf config de php_conges)
 {
 	$login = getpost_variable('login');
@@ -107,7 +105,6 @@ else
 				$username_ldap = authentification_ldap_conges($session_username,$session_password);
 				if ( $username_ldap != $session_username)
 				{
-					$session="";
 					$session_username="";
 					$session_password="";
 					$erreur="login_passwd_incorrect";
@@ -140,7 +137,6 @@ else
 				$username_conges = autentification_passwd_conges($session_username,$session_password);
 				if ( $username_conges != $session_username)
 				{
-					$session="";
 					$session_username="";
 					$session_password="";
 					$erreur="login_passwd_incorrect";
@@ -171,7 +167,6 @@ if(isset($_SESSION['userlogin']))
 	}
 	else
 	{
-		$session=session_id();
 		$row = $rs->fetch_array();
 		$NOM=$row["u_nom"];
 		$PRENOM=$row["u_prenom"];
@@ -192,27 +187,27 @@ if(isset($_SESSION['userlogin']))
 		if (!empty($return_url))
 		{
 			if (strpos($return_url,'?'))
-				redirect( ROOT_PATH . $return_url .'&session=' . $session );
+				redirect( ROOT_PATH . $return_url);
 			else
-				redirect( ROOT_PATH .$return_url . '?session=' . $session );
+				redirect( ROOT_PATH .$return_url);
 		}
 		elseif ('Y' === $is_admin)
 		{
-			redirect( ROOT_PATH .'admin/admin_index.php?session=' . $session );
+			redirect( ROOT_PATH .'admin/admin_index.php');
 		}
         elseif ( $is_hr == "Y" )
 		{
-			redirect( ROOT_PATH .'hr/hr_index.php?session=' . $session );
+			redirect( ROOT_PATH .'hr/hr_index.php');
 		}
 		elseif ( $is_resp=="Y" )
 		{
 			// redirection vers responsable/resp_index.php
-			redirect( ROOT_PATH .'responsable/resp_index.php?session=' . $session );
+			redirect( ROOT_PATH .'responsable/resp_index.php');
 		}
 		else
 		{
 			// redirection vers utilisateur/user_index.php
-			redirect( ROOT_PATH . 'utilisateur/user_index.php?session=' . $session );
+			redirect( ROOT_PATH . 'utilisateur/user_index.php');
 		}
 
 	}

@@ -3,14 +3,11 @@
 define('ROOT_PATH', '');
 require_once ROOT_PATH . 'define.php';
 
-$session=(isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : session_id()) ) ;
-
 include_once ROOT_PATH .'fonctions_conges.php';
 include_once INCLUDE_PATH .'fonction.php';
 include_once INCLUDE_PATH .'session.php';
 
 	/*** initialisation des variables ***/
-	$session=session_id();
 	/************************************/
 
 	/*************************************/
@@ -33,19 +30,18 @@ include_once INCLUDE_PATH .'session.php';
 function form_saisie($action, $new_mois, $new_year)
 {
 	$PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-	$session=session_id();
 
 	header_popup();
 
     if($action=="imprim") {
-        echo '<script type="text/javascript">OpenPopUp(\'calendrier.php?session=' . $session . '&printable=1&mois=' . $mois . '&year=' . $year . ',\'calendrier\',1000,600);</script>';
+        echo '<script type="text/javascript">OpenPopUp(\'calendrier.php?printable=1&mois=' . $mois . '&year=' . $year . ',\'calendrier\',1000,600);</script>';
     }
 
 
 	echo "<center>\n";
 	echo "<h3>". _('imprim_calendrier_titre') ."</h3>\n";
 
-	echo "<form action=\"$PHP_SELF?session=$session\" method=\"POST\">\n";
+	echo "<form action=\"$PHP_SELF\" method=\"POST\">\n";
 	echo "<table>\n";
 	// choix du mois et annee
 	echo "<tr>\n";
