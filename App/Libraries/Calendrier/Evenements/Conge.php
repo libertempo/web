@@ -128,6 +128,9 @@ class Conge
      */
     private function getListeSQL(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, array $utilisateursATrouver, $canVoirEnTransit)
     {
+        if (empty($utilisateursATrouver)) {
+            return [];
+        }
         $etats[] = \App\Models\Conge::STATUT_VALIDATION_FINALE;
         if ($canVoirEnTransit) {
             $etats = array_merge($etats, [

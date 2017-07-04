@@ -42,6 +42,7 @@ class InjectableCreator
             case 'App\Libraries\Calendrier\Evenements\Ferie':
             case 'App\Libraries\Calendrier\Evenements\Fermeture':
             case 'App\Libraries\Calendrier\Evenements\Conge':
+            case 'App\Libraries\Calendrier\Evenements\EchangeRtt':
             case 'App\Libraries\Calendrier\Evenements\Heure\Additionnelle':
             case 'App\Libraries\Calendrier\Evenements\Heure\Repos':
                 return new $classname($this->db);

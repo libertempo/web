@@ -6,7 +6,8 @@ use App\Libraries\Calendrier\Evenements\Conge as _Conge;
 /**
  * Classe de test des collections de congés
  *
- * Réfléchir à l'immuabilité de Conges et au défaut de design que ça pose de le faire sauter pour tirer parti de l'injectableCreator
+ * @since  1.9
+ * @author Prytoegrian <prytoegrian@protonmail.com>
  */
 class Conge extends \Tests\Units\TestUnit
 {
@@ -69,7 +70,7 @@ class Conge extends \Tests\Units\TestUnit
             ]],
         ];
         $date = new \DateTimeImmutable();
-        $liste = $conge->getListe($date, $date, [], false);
+        $liste = $conge->getListe($date, $date, ['Arthur'], false);
         ksort($liste);
 
         $this->array($liste)->isIdenticalTo($expected);
@@ -98,7 +99,7 @@ class Conge extends \Tests\Units\TestUnit
             ]],
         ];
         $date = new \DateTimeImmutable();
-        $liste = $conge->getListe($date, $date, [], false);
+        $liste = $conge->getListe($date, $date, ['Arthur'], false);
         ksort($liste);
 
         $this->array($liste)->isIdenticalTo($expected);

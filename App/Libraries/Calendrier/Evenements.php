@@ -37,6 +37,7 @@ class Evenements
         $this->fetchFeries($dateDebut, $dateFin, $employesATrouver);
         $this->fetchFermeture($dateDebut, $dateFin, $employesATrouver);
         $this->fetchConges($dateDebut, $dateFin, $canVoirEnTransit, $employesATrouver);
+        $this->fetchEchanges($dateDebut, $dateFin, $employesATrouver);
         if ($hasGestionHeure) {
             $this->fetchHeuresAdditionnelles($dateDebut, $dateFin, $canVoirEnTransit, $employesATrouver);
             $this->fetchHeuresRepos($dateDebut, $dateFin, $canVoirEnTransit, $employesATrouver);
@@ -92,6 +93,20 @@ class Evenements
                 ? '_' . $evenement['demiJournee']
                 : '_all';
                 $this->setEvenementDate($evenement['employe'], $jour, 'conge' . $suffixe . ' conge_' . $evenement['statut'], 'Congé');
+            }
+        }
+    }
+
+    private function fetchEchanges(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, array $employesATrouver)
+    {
+        $echange = $this->injectableCreator->get(Evenements\EchangeRtt::class);
+        $echangeListe = $echange->getListe($dateDebut, $dateFin, $employesATrouver);
+        foreach ($echangeListe as $jour => $evenementsJour) {
+            foreach ($evenementsJour as $evenement) {
+                $suffixe = '*' !== $evenement['demiJournee']
+                ? '_' . $evenement['demiJournee']
+                : '_all';
+                $this->setEvenementDate($evenement['employe'], $jour, 'echange' . $suffixe, 'Absence (échange jour)');
             }
         }
     }
