@@ -52,7 +52,7 @@ else
 		session_destroy();
 
 	// Si CAS alors on utilise le login CAS pour la session
-	if ( $_SESSION['config']['how_to_connect_user'] == "cas" && $_GET['cas'] != "no" )
+	if ( $_SESSION['config']['how_to_connect_user'] == "cas")
 	{
 		//redirection vers l'url d'authentification CAS
 		$usernameCAS = authentification_passwd_conges_CAS();
