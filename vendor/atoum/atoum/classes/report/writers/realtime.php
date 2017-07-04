@@ -2,9 +2,11 @@
 
 namespace mageekguy\atoum\report\writers;
 
-use mageekguy\atoum\reports;
+use
+	mageekguy\atoum\reports
+;
 
 interface realtime
 {
-    public function writeRealtimeReport(reports\realtime $report, $event);
+	public function writeRealtimeReport(reports\realtime $report, $event);
 }

@@ -2,10 +2,12 @@
 
 namespace mageekguy\atoum\report\fields;
 
-use mageekguy\atoum;
-use mageekguy\atoum\report;
+use
+	mageekguy\atoum,
+	mageekguy\atoum\report
+;
 
 abstract class runner extends report\field
 {
-    abstract public function setWithRunner(atoum\runner $runner, $event = null);
+	public abstract function setWithRunner(atoum\runner $runner, $event = null);
 }

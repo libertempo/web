@@ -10,9 +10,4 @@ class functional extends atoum\test
     {
         return '#(?:^|\\\)tests?\\\functionals?\\\#i';
     }
-
-    public function getTestedClassName()
-    {
-        return \stdClass::class;
-    }
 }

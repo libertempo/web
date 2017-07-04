@@ -5,5 +5,4 @@ php:
   - '7.0'
 notifications:
   irc: "irc.tuxfamily.org#Libertempo"
-before_script: composer require atoum/atoum
 script: vendor/bin/atoum

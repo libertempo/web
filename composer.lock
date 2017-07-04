@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "5498642bdc51c7a61bb69b4fb0c64e28",
-    "content-hash": "dfb7d5aa5dd9fc7199485fb5bb5478a8",
+    "hash": "842cdf592619524333f4481be0262bea",
+    "content-hash": "1f1bfdb7d6bbad1c5bd41f86a6a8fbe5",
     "packages": [
         {
             "name": "Libertempo/libertempo-api",
@@ -685,16 +685,16 @@
     "packages-dev": [
         {
             "name": "atoum/atoum",
-            "version": "3.0.0",
+            "version": "2.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/atoum/atoum.git",
-                "reference": "decb381ef771ada37f8850774a9e9770a3da506f"
+                "reference": "421aafc829d0a1120422ddc3fe5872ae1814add9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/atoum/atoum/zipball/decb381ef771ada37f8850774a9e9770a3da506f",
-                "reference": "decb381ef771ada37f8850774a9e9770a3da506f",
+                "url": "https://api.github.com/repos/atoum/atoum/zipball/421aafc829d0a1120422ddc3fe5872ae1814add9",
+                "reference": "421aafc829d0a1120422ddc3fe5872ae1814add9",
                 "shasum": ""
             },
             "require": {
@@ -703,18 +703,14 @@
                 "ext-session": "*",
                 "ext-tokenizer": "*",
                 "ext-xml": "*",
-                "php": "^5.6.0 || ^7.0.0"
+                "php": ">=5.3.3"
             },
             "replace": {
                 "mageekguy/atoum": "*"
             },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "~1.12"
-            },
             "suggest": {
                 "atoum/stubs": "Provides IDE support (like autocompletion) for atoum",
-                "ext-mbstring": "Provides support for UTF-8 strings",
-                "ext-xdebug": "Provides code coverage report (>= 2.3)"
+                "ext-mbstring": "Provides support for UTF-8 strings"
             },
             "bin": [
                 "bin/atoum"
@@ -722,7 +718,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.x-dev"
+                    "dev-master": "2.x-dev"
                 }
             },
             "autoload": {
@@ -765,7 +761,7 @@
                 "test",
                 "unit testing"
             ],
-            "time": "2017-02-22 13:05:37"
+            "time": "2017-02-11 13:23:43"
         }
     ],
     "aliases": [],

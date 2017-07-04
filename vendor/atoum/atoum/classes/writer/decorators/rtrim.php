@@ -2,12 +2,14 @@
 
 namespace mageekguy\atoum\writer\decorators;
 
-use mageekguy\atoum\writer;
+use
+	mageekguy\atoum\writer
+;
 
 class rtrim implements writer\decorator
 {
-    public function decorate($message)
-    {
-        return rtrim($message);
-    }
+	public function decorate($message)
+	{
+		return rtrim($message);
+	}
 }

@@ -46,6 +46,6 @@
     "minimum-stability": "dev",
     "prefer-stable" : true,
     "require-dev": {
-        "atoum/atoum": "3.0.0"
+        "atoum/atoum": "2.9.0"
     }
 }
