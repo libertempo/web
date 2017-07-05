@@ -4,104 +4,101 @@ namespace mageekguy\atoum\annotations;
 
 class extractor
 {
-	protected $handlers = array();
+    protected $handlers = [];
 
-	public function extract($comments)
-	{
-		$comments = trim((string) $comments);
+    public function extract($comments)
+    {
+        $comments = trim((string) $comments);
 
-		if (substr($comments, 0, 2) == '/*' && substr($comments, -2) == '*/')
-		{
-			$comments = preg_replace('#^\/\*+([^*])#', '\1', $comments);
-			$comments = preg_replace('#([^*])\*+/$#', '\1', $comments);
-			$comments = trim($comments);
+        if (substr($comments, 0, 2) == '/*' && substr($comments, -2) == '*/') {
+            $comments = preg_replace('#^\/\*+([^*])#', '\1', $comments);
+            $comments = preg_replace('#([^*])\*+/$#', '\1', $comments);
+            $comments = trim($comments);
 
-			foreach (preg_split("/\r?\n/", $comments) as $comment)
-			{
-				$cleanComment = ltrim($comment, "*@ \t\r\n\0\x0B");
+            foreach (preg_split("/\r?\n/", $comments) as $comment) {
+                $cleanComment = ltrim($comment, "* \t\r\n\0\x0B");
 
-				if ($cleanComment != $comment)
-				{
-					$comment = preg_split("/\s+/", $cleanComment);
+                if (preg_match('/^@/', $cleanComment) === 0) {
+                    continue;
+                }
 
-					if ($comment)
-					{
-						$annotation = strtolower($comment[0]);
+                $cleanComment = ltrim($cleanComment, "@");
 
-						switch (sizeof($comment))
-						{
-							case 1:
-								$value = true;
-								break;
+                if ($cleanComment != $comment) {
+                    $comment = preg_split("/\s+/", $cleanComment);
 
-							case 2:
-								$value = $comment[1];
-								break;
+                    if ($comment) {
+                        $annotation = strtolower($comment[0]);
 
-							default:
-								$value = join(' ', array_slice($comment, 1));
-						}
+                        switch (count($comment)) {
+                            case 1:
+                                $value = true;
+                                break;
 
-						foreach ($this->handlers as $handlerAnnotation => $handlerValue)
-						{
-							if ($annotation == strtolower($handlerAnnotation))
-							{
-								call_user_func_array($handlerValue, array($value));
-							}
-						}
-					}
-				}
-			}
-		}
+                            case 2:
+                                $value = $comment[1];
+                                break;
 
-		return $this;
-	}
+                            default:
+                                $value = implode(' ', array_slice($comment, 1));
+                        }
 
-	public function setHandler($annotation, \closure $handler)
-	{
-		$this->handlers[$annotation] = $handler;
+                        foreach ($this->handlers as $handlerAnnotation => $handlerValue) {
+                            if ($annotation == strtolower($handlerAnnotation)) {
+                                call_user_func_array($handlerValue, [$value]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
-		return $this;
-	}
+        return $this;
+    }
 
-	public function unsetHandler($annotation)
-	{
-		if (isset($this->handlers[$annotation]) === true)
-		{
-			unset($this->handlers[$annotation]);
-		}
+    public function setHandler($annotation, \closure $handler)
+    {
+        $this->handlers[$annotation] = $handler;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	public function getHandlers()
-	{
-		return $this->handlers;
-	}
+    public function unsetHandler($annotation)
+    {
+        if (isset($this->handlers[$annotation]) === true) {
+            unset($this->handlers[$annotation]);
+        }
 
-	public function resetHandlers()
-	{
-		$this->handlers = array();
+        return $this;
+    }
 
-		return $this;
-	}
+    public function getHandlers()
+    {
+        return $this->handlers;
+    }
 
-	public static function toBoolean($value)
-	{
-		switch (strtolower((string) $value))
-		{
-			case 'on':
-			case '1':
-			case 'true':
-				return true;
+    public function resetHandlers()
+    {
+        $this->handlers = [];
 
-			default:
-				return false;
-		}
-	}
+        return $this;
+    }
 
-	public static function toArray($value)
-	{
-		return array_values(array_unique(preg_split('/\s+/', $value)));
-	}
+    public static function toBoolean($value)
+    {
+        switch (strtolower((string) $value)) {
+            case 'on':
+            case '1':
+            case 'true':
+                return true;
+
+            default:
+                return false;
+        }
+    }
+
+    public static function toArray($value)
+    {
+        return array_values(array_unique(preg_split('/\s+/', $value)));
+    }
 }

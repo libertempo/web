@@ -701,17 +701,17 @@
     },
     {
         "name": "atoum/atoum",
-        "version": "2.9.0",
-        "version_normalized": "2.9.0.0",
+        "version": "3.0.0",
+        "version_normalized": "3.0.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/atoum/atoum.git",
-            "reference": "421aafc829d0a1120422ddc3fe5872ae1814add9"
+            "reference": "decb381ef771ada37f8850774a9e9770a3da506f"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/atoum/atoum/zipball/421aafc829d0a1120422ddc3fe5872ae1814add9",
-            "reference": "421aafc829d0a1120422ddc3fe5872ae1814add9",
+            "url": "https://api.github.com/repos/atoum/atoum/zipball/decb381ef771ada37f8850774a9e9770a3da506f",
+            "reference": "decb381ef771ada37f8850774a9e9770a3da506f",
             "shasum": ""
         },
         "require": {
@@ -720,23 +720,27 @@
             "ext-session": "*",
             "ext-tokenizer": "*",
             "ext-xml": "*",
-            "php": ">=5.3.3"
+            "php": "^5.6.0 || ^7.0.0"
         },
         "replace": {
             "mageekguy/atoum": "*"
         },
+        "require-dev": {
+            "friendsofphp/php-cs-fixer": "~1.12"
+        },
         "suggest": {
             "atoum/stubs": "Provides IDE support (like autocompletion) for atoum",
-            "ext-mbstring": "Provides support for UTF-8 strings"
+            "ext-mbstring": "Provides support for UTF-8 strings",
+            "ext-xdebug": "Provides code coverage report (>= 2.3)"
         },
-        "time": "2017-02-11 13:23:43",
+        "time": "2017-02-22 13:05:37",
         "bin": [
             "bin/atoum"
         ],
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "2.x-dev"
+                "dev-master": "3.x-dev"
             }
         },
         "installation-source": "dist",
