@@ -18,6 +18,11 @@ Vous pouvez télécharger la version stable la plus récente directement depuis 
 
 Chaque nouvelle version est mise à disposition sur [github](https://github.com/Libertempo/Libertempo-web/releases) et sur [libertempo.tuxfamily.org](http://libertempo.tuxfamily.org/downloads/)
 
+# Support minimum
+|-------|-----|
+| php   | 5.6 |
+| mysql | 5.6 |
+
 # Installation
 Rendez vous sur la [documentation](http://libertempo.tuxfamily.org/Documentation).
 
