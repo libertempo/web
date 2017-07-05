@@ -27,7 +27,7 @@
         "vendor-dir": "vendor"
     },
     "require": {
-        "php": "^5.5|^7.0",
+        "php": "^5.6|^7.0",
         "ext-mbstring": "*",
         "ext-Reflection": "*",
         "raveren/kint": "^1.0",
@@ -44,5 +44,8 @@
         }
     ],
     "minimum-stability": "dev",
-    "prefer-stable" : true
+    "prefer-stable" : true,
+    "require-dev": {
+        "atoum/atoum": "3.0.0"
+    }
 }
