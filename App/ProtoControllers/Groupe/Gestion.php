@@ -828,7 +828,7 @@ class Gestion {
      */
     protected function getResponsables($idGroupe = NIL_INT)
     {
-        $infoResponsables = [];
+        $responsables = [];
 
         $infosResps = \App\ProtoControllers\Responsable::getInfosResponsables(\includes\SQL::singleton(),true);
         foreach ($infosResps as $infos){
