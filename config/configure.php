@@ -1,2 +1,2 @@
 <?php
-echo \config\Fonctions::configurationModule($session);
+echo \config\Fonctions::configurationModule();

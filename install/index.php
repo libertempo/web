@@ -12,7 +12,6 @@ include_once ROOT_PATH .'fonctions_conges.php' ;
 
 $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 
-$session= htmlentities(session_id());
 
 //recup de la langue
 $lang=(isset($_GET['lang']) ? $_GET['lang'] : ((isset($_POST['lang'])) ? $_POST['lang'] : "") ) ;
@@ -37,7 +36,7 @@ $dbdb = htmlentities($dbdb, ENT_QUOTES | ENT_HTML401);
         echo "<br><br>\n";
         echo "Choisissez votre langue :<br> \n";
         echo "Choose your language :<br>\n";
-        echo "<form action=\"$PHP_SELF?session=$session\" method=\"POST\">\n";
+        echo "<form action=\"$PHP_SELF\" method=\"POST\">\n";
         // affichage de la liste des langues supportées ...
         // on lit le contenu du répertoire lang et on parse les nom de ficher (ex lang_fr_francais.php)
         echo affiche_select_from_lang_directory("", "");
@@ -57,7 +56,7 @@ $dbdb = htmlentities($dbdb, ENT_QUOTES | ENT_HTML401);
         echo "<br><br>\n";
         if($dbserver=="" || $dbuser=="" || $dbpasswd=="") {
             echo  _('db_configuration');
-            echo "<form action=\"$PHP_SELF?session=$session\" method=\"POST\">\n";
+            echo "<form action=\"$PHP_SELF\" method=\"POST\">\n";
             echo  _('db_configuration_server');
             echo '<INPUT type="text" value="localhost" name="dbserver"><br>';
             echo  _('db_configuration_name');
@@ -77,7 +76,7 @@ $dbdb = htmlentities($dbdb, ENT_QUOTES | ENT_HTML401);
                 echo "le dossier ".CONFIG_PATH." n'est pas accessible en écriture";
             } else {
                 echo _('db_configuration_ok');
-                echo "<br><a href=\"$PHP_SELF?session=$session&lang=$lang\"> continuez....</a><br>\n";
+                echo "<br><a href=\"$PHP_SELF?lang=$lang\"> continuez....</a><br>\n";
             }
         }
         bottom();
@@ -97,7 +96,7 @@ $dbdb = htmlentities($dbdb, ENT_QUOTES | ENT_HTML401);
             echo "<br><br>\n";
             if($dbserver=="" || $dbuser=="" || $dbpasswd=="") {
                 echo  _('db_configuration');
-                echo "<form action=\"$PHP_SELF?session=$session\" method=\"POST\">\n";
+                echo "<form action=\"$PHP_SELF\" method=\"POST\">\n";
                 echo  _('db_configuration_server');
                 echo '<INPUT type="text" value="localhost" name="dbserver"><br>';
                 echo  _('db_configuration_name');
@@ -116,7 +115,7 @@ $dbdb = htmlentities($dbdb, ENT_QUOTES | ENT_HTML401);
                     echo "le dossier ".CONFIG_PATH." n'est pas accessible en écriture";
                 } else {
                     echo _('db_configuration_ok');
-                    echo "<br><a href=\"$PHP_SELF?session=$session&lang=$lang\"> continuez....</a><br>\n";
+                    echo "<br><a href=\"$PHP_SELF?lang=$lang\"> continuez....</a><br>\n";
                 }
             }
 

@@ -53,11 +53,6 @@ final class Calendrier
     private $dateFinSuivante;
 
     /**
-     * @var string Identifiant de session
-     */
-    private $session;
-
-    /**
      * @var int Vue du calendrier à consulter
      */
     private $vue = self::VUE_MOIS;
@@ -66,21 +61,6 @@ final class Calendrier
      * @var int Id du groupe dont on veut voir les événements
      */
     private $idGroupe = NIL_INT;
-
-    public function __construct()
-    {
-        $this->session=(isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : session_id()));
-
-        if(substr($this->session, 0, 9)!="phpconges") {
-            session_start();
-            $_SESSION['config']=init_config_tab();
-            if(empty($_SESSION['userlogin'])) {
-                redirect( ROOT_PATH . 'index.php' );
-            }
-        } else {
-            include_once INCLUDE_PATH . 'session.php';
-        }
-    }
 
     /**
      * Retourne la page du calendrier
@@ -195,7 +175,6 @@ final class Calendrier
         $form .= '</select></div></div>';
         $form .= '<div class="form-group"><div class="input-group pull-right">
         <button type="submit" class="btn btn-default"><i class="fa fa-search" aria-hidden="true"></i></button></div></div>';
-        $form .= '<input type="hidden" name="session" value="' . $this->session . '" />';
         $form .= '</form>';
 
         return $form;
@@ -431,7 +410,6 @@ final class Calendrier
     {
         $urlCalendrier = ROOT_PATH . 'calendrier.php';
         $queryBase = [
-            'session' => $this->session,
             'search[vue]' => $this->vue,
             'search[groupe]' => $this->idGroupe,
         ];

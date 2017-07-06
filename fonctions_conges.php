@@ -16,11 +16,10 @@ function get_j_name_fr_2c($timestamp)
 function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet)
 {
     $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-    $session=session_id();
     $new_date_fin = date('d/m/Y');
     $return = '';
 
-    $return .= '<form NAME="dem_conges" action="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '" method="POST">
+    $return .= '<form NAME="dem_conges" action="' . $PHP_SELF . '?onglet=' . $onglet . '" method="POST">
         <div class="row">
         <div class="col-md-6">
         <div class="form-inline">';
@@ -155,10 +154,9 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
     $return .= '<br>';
     $return .= '<input type="hidden" name="user_login" value="' . $user_login . '">';
     $return .= '<input type="hidden" name="new_demande_conges" value=1>';
-    $return .= '<input type="hidden" name="session" value="' . $session . '">';
     // boutons du formulaire
     $return .= '<input type="submit" class="btn btn-success" value="' . _('form_submit') . '">';
-    $return .= '<a class="btn" href="' . $PHP_SELF . '?session=' . $session . '">' . _('form_cancel') . '</a>';
+    $return .= '<a class="btn" href="' . $PHP_SELF . '">' . _('form_cancel') . '</a>';
     $return .= '</form>';
     return $return;
 }
@@ -286,13 +284,13 @@ function verif_saisie_new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new
         echo '<br>'. _('demande_heure_chevauche_demande') .'<br>';
         $verif = false;
     }
-    
+
     $tab_periode_calcul = make_tab_demi_jours_periode($new_debut, $new_fin, $new_demi_jour_deb, $new_demi_jour_fin);
     if(verif_periode_chevauche_periode_user($new_debut, $new_fin, $_SESSION['userlogin'], "", $tab_periode_calcul, $new_comment)){
         echo '<br>'._('calcul_nb_jours_commentaire') .'<br>';
         $verif = false;
     }
-    
+
     $new_comment = htmlentities($new_comment, ENT_QUOTES | ENT_HTML401);
 
     return $verif;
@@ -1738,7 +1736,7 @@ function execute_sql_file($file)
 
 // verif des droits du user à afficher la page qu'il demande (pour éviter les hacks par bricolage d'URL)
 
-function verif_droits_user($session, $niveau_droits)
+function verif_droits_user($niveau_droits)
 {
     $niveau_droits = strtolower($niveau_droits);
 
@@ -1753,7 +1751,7 @@ function verif_droits_user($session, $niveau_droits)
         $lang_divers_vous_authentifier    =  _('divers_vous_authentifier') ;
 
         // on delete la session et on renvoit sur l'authentification (page d'accueil)
-        session_delete($session);
+        session_delete();
 
         // message d'erreur !
         echo "<center>\n";

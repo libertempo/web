@@ -49,6 +49,10 @@ $sql->query($alterApiUser);
 $addApiToken = 'INSERT IGNORE INTO `conges_appli` VALUES ("token_instance", "")';
 $sql->query($addApiToken);
 
+/* Modification de tous les mots de passe d'utilisateurs non db_conges */
+$updateUserMD5 = 'UPDATE `conges_users` SET u_passwd = "' . md5('none') . '" where u_passwd = "none"';
+$sql->query($updateUserMD5);
+
 $sql->getPdoObj()->commit();
 
 $del_config_db="DELETE FROM conges_config WHERE conf_nom = 'disable_saise_champ_nb_jours_pris';";

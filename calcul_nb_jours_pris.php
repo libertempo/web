@@ -3,7 +3,6 @@
 define('ROOT_PATH', '');
 require_once ROOT_PATH . 'define.php';
 
-$session=(isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : session_id()) ) ;
 
 include_once ROOT_PATH . 'fonctions_conges.php' ;
 include_once INCLUDE_PATH . 'fonction.php';
@@ -11,7 +10,6 @@ include_once INCLUDE_PATH . 'session.php';
 include_once ROOT_PATH . 'fonctions_calcul.php';
 
 /*** initialisation des variables ***/
-$session=session_id();
 $user="";
 $date_debut="";
 $date_fin="";
@@ -38,7 +36,6 @@ if( ($user!="") && ($date_debut!="") && ($date_fin!="") && ($opt_debut!="") && (
 function affichage($user, $date_debut, $date_fin, $opt_debut, $opt_fin, $p_num="")
 {
 	$PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-	$session=session_id();
 	$comment="&nbsp;" ;
 
 
@@ -50,6 +47,3 @@ function affichage($user, $date_debut, $date_fin, $opt_debut, $opt_fin, $p_num="
 
 	echo json_encode($tab);
 }
-
-
-
