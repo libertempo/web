@@ -2,7 +2,6 @@
 /*
  * Variables disponibles :
  * $calendar
- * $session
  * $evenements
  * $groupesVisiblesUtilisateur
  */
@@ -31,5 +30,4 @@
         <div class="input-group pull-right"><button type="submit" class="btn btn-default"><i class="fa fa-search" aria-hidden="true"></i></button>
         </div>
     </div>
-    <input type="hidden" name="session" value="<?= $session ?>" />
 </form>

@@ -2,12 +2,11 @@
 /*
  * Variables disponibles :
  * $calendar
- * $session
  * $evenements
  * $idGroupe
  * $jourDemande
  */
-$urlMoisDemande = getUrlMois($jourDemande, $session, $idGroupe);
+$urlMoisDemande = getUrlMois($jourDemande, $idGroupe);
 $jour = $calendar->getDay(new \DateTime($jourDemande->format('Y-m-d')));
 
 require_once VIEW_PATH . 'Calendrier.php';

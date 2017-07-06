@@ -4,17 +4,8 @@ require_once ROOT_PATH . 'define.php';
 
 include_once ROOT_PATH .'fonctions_conges.php';
 include_once INCLUDE_PATH .'fonction.php';
+include_once INCLUDE_PATH . 'session.php';
 include_once ROOT_PATH .'fonctions_conges.php';
-
-if(substr($session, 0, 9)!="phpconges") {
-    session_start();
-    $_SESSION['config']=init_config_tab();
-    if(empty($_SESSION['userlogin'])) {
-        redirect(ROOT_PATH . 'index.php');
-    }
-} else {
-    include_once INCLUDE_PATH . 'session.php';
-}
 
 /**
  * @return bool
@@ -26,11 +17,10 @@ function canSessionVoirEvenementEnTransit(array $donneesUtilisateur)
         || (isset($donneesUtilisateur['is_admin']) && 'Y' === $donneesUtilisateur['is_admin']);
 }
 
-function getUrlMois(\DateTimeInterface $date, $session, $idGroupe)
+function getUrlMois(\DateTimeInterface $date, $idGroupe)
 {
     $urlCalendrier = ROOT_PATH . 'calendrier.php';
     $queryBase = [
-        'session' => $session,
         'groupe' => $idGroupe,
     ];
 

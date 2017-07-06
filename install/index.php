@@ -3,7 +3,6 @@ define('ROOT_PATH', '../');
 require_once ROOT_PATH . 'define.php';
 
 //include_once ROOT_PATH .'fonctions_conges.php' ;
-session_start();
 $_SESSION['lang'] = 'fr_FR';
 
 include_once INCLUDE_PATH .'fonction.php';

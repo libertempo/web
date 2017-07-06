@@ -2,7 +2,6 @@
 /*
  * Variables disponibles :
  * $calendar
- * $session
  * $evenements
  * $idGroupe
  * $moisDemande
@@ -10,9 +9,9 @@
  */
 $mois = $calendar->getMonth(new \DateTime($moisDemande->format('Y-m-d')));
 $jours = [];
-$moisPrecedent = getUrlMois($moisDemande->modify('-1 month'), $session, $idGroupe);
-$moisCourant = getUrlMois(new \DateTimeImmutable(), $session, $idGroupe);
-$moisSuivant = getUrlMois($moisDemande->modify('+1 month'), $session, $idGroupe);
+$moisPrecedent = getUrlMois($moisDemande->modify('-1 month'), $idGroupe);
+$moisCourant = getUrlMois(new \DateTimeImmutable(), $idGroupe);
+$moisSuivant = getUrlMois($moisDemande->modify('+1 month'), $idGroupe);
 
 require_once VIEW_PATH . 'Calendrier.php';
 ?>
