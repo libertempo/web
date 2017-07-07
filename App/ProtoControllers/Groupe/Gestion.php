@@ -663,8 +663,15 @@ class Gestion {
         $childTable .= '<tbody>';
         $i = true;
         foreach ($this->getEmployes($idGroupe) as $login => $info){
+            $inputOption = '';
+            if(\App\ProtoControllers\Groupe::isResponsableGroupe($login, [$idGroupe], \includes\SQL::singleton())){
+                $inputOption = 'disabled';
+            } elseif($info['isDansGroupe']) {
+                $inputOption = 'checked';
+            }
+            
             $childTable .= '<tr class="' . (($i) ? 'i' : 'p') . '">';
-            $childTable .='<td class="histo"><input type="checkbox" id="Emp_' . $login . '" name="checkbox_group_users[' . $login . '] "' . (($info['isDansGroupe']) ? 'checked' : '') . '></td>';
+            $childTable .='<td class="histo"><input type="checkbox" id="Emp_' . $login . '" name="checkbox_group_users[' . $login . '] "' . $inputOption . '></td>';
             $childTable .= '<td class="histo">' . $info['nom'] . ' ' . $info['prenom'] . '</td>';
             $childTable .= '<td class="histo">' . $login . '</td>';
             $childTable .= '</tr>';
@@ -705,7 +712,7 @@ class Gestion {
         $childTable .= '</thead>';
         $childTable .= '<tbody>';
         $i = true;
-        foreach ($this->getResponsables($idGroupe) as $login => $info){
+        foreach ($this->getInfosResponsables($idGroupe) as $login => $info){
             $childTable .= '<tr class="' . (($i) ? 'i' : 'p') . '">';
             $childTable .='<td class="histo"><input type="checkbox" id="Resp_' . $login . '" name="checkbox_group_resps[' . $login . ']" onchange="disableCheckboxGroupe(this,\'' . $selectId . '\');" ' . (($info['isDansGroupe']) ? 'checked' : '') . '></td>';
             $childTable .= '<td class="histo">' . $info['nom'] . ' ' . $info['prenom'] . '</td>';
@@ -826,7 +833,7 @@ class Gestion {
      * @param int $idGroupe
      * @return array
      */
-    protected function getResponsables($idGroupe = NIL_INT)
+    protected function getInfosResponsables($idGroupe = NIL_INT)
     {
         $responsables = [];
 
