@@ -1013,7 +1013,7 @@ class Gestion {
         if(empty($responsables) || empty($employes)){
             return false;
         }
-        return !empty(array_intersect_assoc($employes, $responsables));
+        return !empty(array_intersect($employes, $responsables));
     }
 
     /**
