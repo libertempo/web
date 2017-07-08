@@ -550,9 +550,11 @@ class Gestion {
                 }
                 $infosGroupe = [
                     'nom' => htmlentities($_POST['new_group_name'], ENT_QUOTES | ENT_HTML401),
-                    'doubleValidation' => htmlentities($_POST['new_group_double_valid'], ENT_QUOTES | ENT_HTML401),
                     'comment' => htmlentities($_POST['new_group_libelle'], ENT_QUOTES | ENT_HTML401)
                 ];
+                if($_SESSION['config']['double_validation_conges']){
+                    $infosGroupe['doubleValidation'] = htmlentities($_POST['new_group_double_valid'], ENT_QUOTES | ENT_HTML401);
+                }
             } else {
                 if(key_exists('_METHOD', $_POST)){
                     redirect(ROOT_PATH . 'admin/admin_index.php?onglet=admin-group&notice=update', false);
@@ -1055,7 +1057,7 @@ class Gestion {
         foreach ($employesResponsable as $employeResponsable){
             foreach ($responsables as $responsable){
                 if(\App\ProtoControllers\Responsable::isRespDeUtilisateur($employeResponsable, $responsable)){
-                    $errors[] = $employeResponsable . _('est responsable de ') . $responsable . _(' dans un autre groupe');
+                    $errors[] = $employeResponsable . _(' est responsable de ') . $responsable . _(' dans un autre groupe');
                     return true;
                 }
             }
