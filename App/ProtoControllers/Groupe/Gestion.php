@@ -534,6 +534,7 @@ class Gestion {
             'doubleValidation' => '',
             'comment' => ''
         ];
+        $data = NULL;
 
         $errorsLst = [];
         if(!empty($_POST)){
@@ -548,13 +549,7 @@ class Gestion {
                     }
                     $message = '<br><div class="alert alert-danger">' . _('erreur_recommencer') . '<ul>' . $errors . '</ul></div>';
                 }
-                $infosGroupe = [
-                    'nom' => htmlentities($_POST['new_group_name'], ENT_QUOTES | ENT_HTML401),
-                    'comment' => htmlentities($_POST['new_group_libelle'], ENT_QUOTES | ENT_HTML401)
-                ];
-                if($_SESSION['config']['double_validation_conges']){
-                    $infosGroupe['doubleValidation'] = htmlentities($_POST['new_group_double_valid'], ENT_QUOTES | ENT_HTML401);
-                }
+                $data = $this->FormData2Array($_POST);
             } else {
                 if(key_exists('_METHOD', $_POST)){
                     redirect(ROOT_PATH . 'admin/admin_index.php?onglet=admin-group&notice=update', false);
@@ -564,7 +559,15 @@ class Gestion {
             }
         }
 
-        if(NIL_INT !== $idGroupe){
+        if(isset($data)){
+            $infosGroupe = [
+                'nom' => $data['nom'],
+                'comment' => $data['commentaire']
+            ];
+            if($_SESSION['config']['double_validation_conges']){
+                $infosGroupe['doubleValidation'] = $data['isDoubleValidation'];
+            }
+        } elseif(NIL_INT !== $idGroupe){
             $infosGroupe = \App\ProtoControllers\Groupe::getInfosGroupe($idGroupe, \includes\SQL::singleton());
         }
 
@@ -608,17 +611,17 @@ class Gestion {
         $return .= '<div class="row">';
         $return .= '<div class="col-md-6">';
         $return .= '<h2>' . _('admin_gestion_groupe_users_membres') . '</h2>';
-        $return .= $this->getFormChoixEmploye($idGroupe);
+        $return .= $this->getFormChoixEmploye($idGroupe, $data);
         $return .= '</div>';
 
         $return .= '<div class="col-md-6">';
         $return .= '<h2>' . _('admin_gestion_groupe_resp_responsables') . '</h2>';
-        $return .= $this->getFormChoixResponsable($idGroupe,$selectId);
+        $return .= $this->getFormChoixResponsable($idGroupe, $selectId, $data);
         $return .= '</div>';
 
         $return .= '<div class="col-md-6 hide" id="' . $DivGrandRespId . '">';
         $return .= '<h2>' . _('admin_gestion_groupe_grand_resp_responsables') . '</h2>';
-        $return .= $this->getFormChoixGrandResponsable($idGroupe,$selectId);
+        $return .= $this->getFormChoixGrandResponsable($idGroupe, $selectId, $data);
         $return .= '</div>';
         $return .= '</div>';
 
@@ -644,7 +647,7 @@ class Gestion {
      * @param int $id
      * @return string
      */
-    protected function getFormChoixEmploye($idGroupe)
+    protected function getFormChoixEmploye($idGroupe, $data = NULL)
     {
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses([
@@ -666,7 +669,14 @@ class Gestion {
         $i = true;
         foreach ($this->getEmployes($idGroupe) as $login => $info){
             $inputOption = '';
-            if(\App\ProtoControllers\Groupe::isResponsableGroupe($login, [$idGroupe], \includes\SQL::singleton())){
+
+            if(isset($data)){
+                if(in_array($login, $data['responsables']) || in_array($login, $data['grandResponsables'])){
+                    $inputOption = 'disabled';
+                } elseif(in_array($login, $data['employes'])){
+                    $inputOption = 'checked';
+                }
+            } elseif(\App\ProtoControllers\Groupe::isResponsableGroupe($login, [$idGroupe], \includes\SQL::singleton())){
                 $inputOption = 'disabled';
             } elseif($info['isDansGroupe']) {
                 $inputOption = 'checked';
@@ -694,7 +704,7 @@ class Gestion {
      * @param int $idGroupe
      * @return string
      */
-    protected function getFormChoixResponsable($idGroupe, $selectId)
+    protected function getFormChoixResponsable($idGroupe, $selectId, $data)
     {
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses([
@@ -715,8 +725,20 @@ class Gestion {
         $childTable .= '<tbody>';
         $i = true;
         foreach ($this->getInfosResponsables($idGroupe) as $login => $info){
+            $inputOption = '';
+
+            if(isset($data)){
+                if(in_array($login, $data['grandResponsables'])){
+                    $inputOption = 'disabled';
+                } elseif(in_array($login, $data['responsables'])){
+                    $inputOption = 'checked';
+                }
+            } elseif($info['isDansGroupe']) {
+                $inputOption = 'checked';
+            }
+
             $childTable .= '<tr class="' . (($i) ? 'i' : 'p') . '">';
-            $childTable .='<td class="histo"><input type="checkbox" id="Resp_' . $login . '" name="checkbox_group_resps[' . $login . ']" onchange="disableCheckboxGroupe(this,\'' . $selectId . '\');" ' . (($info['isDansGroupe']) ? 'checked' : '') . '></td>';
+            $childTable .='<td class="histo"><input type="checkbox" id="Resp_' . $login . '" name="checkbox_group_resps[' . $login . ']" onchange="disableCheckboxGroupe(this,\'' . $selectId . '\');" ' . $inputOption . '></td>';
             $childTable .= '<td class="histo">' . $info['nom'] . ' ' . $info['prenom'] . '</td>';
             $childTable .= '<td class="histo">' . $login . '</td>';
             $childTable .= '</tr>';
@@ -737,7 +759,7 @@ class Gestion {
      * @param int $idGroupe
      * @return string
      */
-    protected function getFormChoixGrandResponsable($idGroupe,$selectId)
+    protected function getFormChoixGrandResponsable($idGroupe,$selectId, $data)
     {
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses([
@@ -758,8 +780,18 @@ class Gestion {
         $childTable .= '<tbody>';
         $i = true;
         foreach ($this->getGrandResponsables($idGroupe) as $login => $info){
+            $inputOption = '';
+
+            if(isset($data)){
+                if(in_array($login, $data['grandResponsables'])){
+                    $inputOption = 'checked';
+                }
+            } elseif($info['isDansGroupe']) {
+                $inputOption = 'checked';
+            }
+
             $childTable .= '<tr class="' . (($i) ? 'i' : 'p') . '">';
-            $childTable .='<td class="histo"><input type="checkbox" id="Gres_' . $login . '" name="checkbox_group_grand_resps[' . $login . ']" onchange="disableCheckboxGroupe(this,\'' . $selectId . '\');"' . (($info['isDansGroupe']) ? 'checked' : '') . '></td>';
+            $childTable .='<td class="histo"><input type="checkbox" id="Gres_' . $login . '" name="checkbox_group_grand_resps[' . $login . ']" onchange="disableCheckboxGroupe(this,\'' . $selectId . '\');"' . $inputOption . '></td>';
             $childTable .= '<td class="histo">' . $info['nom'] . ' ' . $info['prenom'] . '</td>';
             $childTable .= '<td class="histo">' . $login . '</td>';
             $childTable .= '</tr>';
