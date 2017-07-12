@@ -35,7 +35,7 @@ class Groupe
      */
 
      /**
-      * Retourne la liste des groupes de l'application
+      * Retourne la liste des groupes et les employés associés
       *
       *
       * @return array
@@ -46,6 +46,27 @@ class Groupe
         $req = 'SELECT *
                 FROM conges_groupe CG
                     INNER JOIN conges_groupe_users CGU ON (CG.g_gid = CGU.gu_gid)';
+        $result = $sql->query($req);
+
+        $groupes = [];
+        while ($data = $result->fetch_assoc()) {
+            $groupes[] = $data;
+        }
+        return $groupes;
+    }
+
+     /**
+      * Retourne la liste des groupes contenant au moins un employé
+      *
+      *
+      * @return array
+      * @todo unescape_string ?
+      */
+    public static function getListeGroupes(\includes\SQL $sql)
+    {
+        $req = 'SELECT DISTINCT g_gid,g_groupename,g_comment,g_double_valid
+                FROM conges_groupe CG
+                INNER JOIN conges_groupe_users CGU ON (CG.g_gid = CGU.gu_gid);';
         $result = $sql->query($req);
 
         $groupes = [];

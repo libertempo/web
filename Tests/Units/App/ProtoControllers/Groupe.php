@@ -37,12 +37,37 @@ class Groupe extends \Tests\Units\TestUnit
         $this->calling($this->result)->fetch_assoc[1] = $array;
         $this->calling($this->result)->fetch_assoc[2] = null;
         $liste = _Groupe::getListe($this->db);
+        $this->array($liste)->hasKey(0)->child[0](function($child) use ($array)
+        {
+            $child->isIdenticalTo($array);
+        });
+    }
+
+    public function testGetListeGroupesVide()
+    {
+        $this->calling($this->result)->fetch_assoc = [];
+        $liste = _Groupe::getListeGroupes($this->db);
+        $this->array($liste)->isEmpty();
+    }
+
+    public function testGetListeGroupesRempli()
+    {
+        $array = [
+            'g_gid' => 12,
+            'g_groupename' => 'POLICE BOX',
+            'g_comment' => 'free for use of public',
+            'g_double_valid' => 'Y'
+        ];
+        
+        $this->calling($this->result)->fetch_assoc[1] = $array;
+        $this->calling($this->result)->fetch_assoc[2] = null;
+        $liste = _Groupe::getListeGroupes($this->db);
         $this->array($liste)->hasKey(12)->child[12](function($child) use ($array)
         {
             $child->isIdenticalTo($array);
         });
     }
-    
+
     public function testgetInfosGroupeVide()
     {
         $id = 1;
