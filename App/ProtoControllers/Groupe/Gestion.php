@@ -950,6 +950,9 @@ class Gestion {
      * @param array $data
      * @param array $errors
      * @return boolean
+     * 
+     * @todo activer isResponsableCirculaire() une fois le responsable direct retiré
+     * 
      */
     protected function isValid(array $data, array &$errors)
     {
@@ -965,6 +968,7 @@ class Gestion {
             $errors[] = _('Le nom du groupe est obligatoire');
             $return = false;
         }
+
         if(!$this->isEmployeGroupeExist($data['employes'])){
             $errors[] = _('Le groupe doit contenir au moins un employé');
             $return = false;
@@ -974,9 +978,11 @@ class Gestion {
             $errors[] = _('Le responsable ne peut pas etre membre du groupe');
             $return = false;
         }
-        if($this->isResponsableCirculaire($data['employes'], $data['responsables'], $errors)){
-            $return = false;
-        }
+
+//        if($this->isResponsableCirculaire($data['employes'], $data['responsables'], $errors)){
+//            $return = false;
+//        }
+
         if('Y' == $data['isDoubleValidation']){
             if($this->isGrandResponsableEtAutre($data['employes'], $data['responsables'], $data['grandResponsables'])){
                 $errors[] = _('Le grand responsable ne peut pas etre membre ou responsable du groupe');
