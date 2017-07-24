@@ -21,12 +21,52 @@ class Fonctions
 
     	header_popup();
 
-
-    	echo "<center>\n";
+		echo "<center>\n";
     	echo "<h1>". _('export_cal_titre') ."</h1>\n";
+		
+		echo <<<FORM
+			<div id="choix_options_ical">
+				<label>
+				<input type="radio" name="with_groups" value="0" checked /> Ne pas afficher les personnes de vos groupes
+				</label>
+				<label>
+				<input type="radio" name="with_groups" value="1"> Afficher les personnes de vos groupes</option>
+				</label>
+				<br />
+				<label>
+				<input type="radio" name="with_user_resp" value="0" checked /> Ne pas inclure les personnes dont vous êtes responsable
+				</label>
+				<label>
+				<input type="radio" name="with_user_resp" value="1" /> Inclure les personnes dont vous êtes responsable
+				</label>
+				<br />
+				<label>
+				<input type="radio" name="only_validated" value="0" checked /> Inclure tous les conges
+				</label>
+				<label>
+				<input type="radio" name="only_validated" value="1" /> Inclure uniquement les congés validés
+				</label>
+			</div>
+			<script>
+				$(document).ready(function(){
+					$('#choix_options_ical input').on('change', upd_link_options_ical)
+					upd_link_options_ical();
+					function upd_link_options_ical(){
+						var p_urls = "";
+						var composantes = ['with_groups', 'with_user_resp', 'only_validated' ];
+						for (var id in composantes){
+							val = $('input[name=' + composantes[id] + ']:checked').val();
+							p_urls += '&' + composantes[id] + '=' + val;
+						}
+						var link = '{$_SESSION['config']['URL_ACCUEIL_CONGES']}/export/ics_export.php?usr=$huser' + p_urls;
+						$('a#ical_link').prop('href', link).text(link)
+					}
+				})
+			</script>
+FORM;
 
     	echo _('button_export_2')."<br>";
-    	echo " <a href='".ROOT_PATH."export/ics_export.php?usr=".$huser."'>".$_SESSION['config']['URL_ACCUEIL_CONGES']."/export/ics_export.php?usr=".$huser."<a>";
+    	echo " <a id='ical_link' href='#'>chargement...</a><br>";
 
     	bottom();
     }
@@ -67,7 +107,7 @@ class Fonctions
     }
 
     // export des périodes des conges et d'absences comprise entre les 2 dates , dans un fichier texte au format ICAL
-    public static function export_ical($user_login)
+    public static function export_ical($user_login, $with_groups = false, $with_user_resp = false, $only_validated = false)
     {
     	$good_date_debut = date("Y-m-d", strtotime("-1 year"));
     	$good_date_fin = date("Y-m-d", strtotime('+1 year'));
@@ -92,9 +132,24 @@ class Fonctions
 
     		// SELECT des periodes à exporter .....
     		// on prend toutes les periodes de conges qui chevauchent la periode donnée par les dates demandées
-    		$sql_periodes="SELECT p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_commentaire, p_type, p_etat, p_date_demande  " .
-    				'FROM conges_periode WHERE p_login=\''. \includes\SQL::quote($user_login).'\' AND ((p_date_deb>=\''. \includes\SQL::quote($good_date_debut).'\' AND  p_date_deb<=\''.\includes\SQL::quote($good_date_fin).'\') OR (p_date_fin>=\''. \includes\SQL::quote($good_date_debut).'\' AND p_date_fin<=\''. \includes\SQL::quote($good_date_fin).'\'))';
-    		$res_periodes = \includes\SQL::query($sql_periodes);
+			$logins = [\includes\SQL::quote($user_login)];
+			if ($with_groups){
+				$users = get_list_users_des_groupes_du_user($user_login);
+				$logins = array_merge($logins,json_decode("[$users]"));
+			}
+			if ($with_user_resp){
+				$users = get_list_all_users_du_resp($user_login);
+				$logins = array_merge($logins,json_decode(str_replace('\'','"',"[$users]")));
+			}
+			
+    		$sql_periodes="SELECT p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_commentaire, p_type, p_etat, p_date_demande, u_nom, u_prenom  " .
+    				'FROM conges_periode LEFT JOIN conges_users ON (conges_users.u_login = conges_periode.p_login) WHERE p_login IN (\'' . implode('\',\'',$logins) . '\') AND ((p_date_deb>=\''. \includes\SQL::quote($good_date_debut).'\' AND  p_date_deb<=\''.\includes\SQL::quote($good_date_fin).'\') OR (p_date_fin>=\''. \includes\SQL::quote($good_date_debut).'\' AND p_date_fin<=\''. \includes\SQL::quote($good_date_fin).'\'))';
+  
+			if ($only_validated){
+				$sql_periodes .=  ' AND p_etat = \'ok\'';
+			}
+			
+			$res_periodes = \includes\SQL::query($sql_periodes);
 
     		if($num_periodes=$res_periodes->num_rows!=0)
     		{
@@ -133,6 +188,10 @@ class Fonctions
     					default:
     						$status="TENTATIVE";
     					}
+					$summary = $type_abs;
+					if ($result_periodes['p_login'] != $user_login AND $result_periodes['u_prenom'] AND $result_periodes['u_nom']){
+						$summary = '[' . $result_periodes['u_prenom'][0] . $result_periodes['u_nom'][0]. "] " . $summary;
+					}
     				if($sql_demi_jour_deb=="am")
     					$DTSTART=$tab_date_deb[0].$tab_date_deb[1].$tab_date_deb[2]."T070000Z";   // .....
     				else
@@ -148,10 +207,10 @@ class Fonctions
     						"ORGANIZER:MAILTO:".$tab_infos_user['email']."\r\n" .
     						"CREATED:$DTSTART\r\n" .
     						"STATUS:$status\r\n" .
-    						"UID:$user_login@Libertempo-$sql_date_dem\r\n";
+    						"UID:{$result_periodes['p_login']}@Libertempo-$sql_date_dem\r\n";
     				if($sql_comment!="")
     					echo "DESCRIPTION:$sql_comment\r\n";
-    				echo "SUMMARY:$type_abs\r\n" .
+    				echo "SUMMARY:$summary\r\n" .
     						"CLASS:PUBLIC\r\n" .
     						"PRIORITY:1\r\n" .
     						"DTSTART:$DTSTART\r\n" .
@@ -171,7 +230,7 @@ class Fonctions
      * @access public
      * @static
      */
-    public static function exportICSModule()
+    public static function exportICSModule($with_groups = false, $with_user_resp = false, $only_validated = false)
     {
         $_SESSION['config']=init_config_tab();      // on initialise le tableau des variables de config
         if($_SESSION['config']['export_ical']==FALSE) {
@@ -186,6 +245,6 @@ class Fonctions
         $session_username = unhash_user($usrh);
 
         if ($session_username != "")
-        	\export\Fonctions::export_ical($session_username);
+        	\export\Fonctions::export_ical($session_username, $with_groups, $with_user_resp, $only_validated);
     }
 }
