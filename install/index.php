@@ -81,7 +81,14 @@ $dbdb = htmlentities($dbdb, ENT_QUOTES | ENT_HTML401);
     } else {
         include_once CONFIG_PATH .'dbconnect.php';
         include_once ROOT_PATH .'version.php';
-        \install\Fonctions::setDataConfigApi($mysql_serveur, $mysql_database, $mysql_user, $mysql_pass);
+
+        $data = ['serveur' => $mysql_serveur, 'base' => $mysql_database, 'user' => $mysql_user, 'password' => $mysql_pass];
+        try {
+            \install\Fonctions::setDataConfigurationApi($data);
+        } catch (\Exception $e) {
+            // Message d'erreur client, pas d'idée :-/
+        }
+
 
         if(!\install\Fonctions::test_database()) {
             header_popup();

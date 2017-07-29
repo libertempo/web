@@ -372,21 +372,18 @@ class Fonctions {
     /**
      * Définit les données de configuration pour l'API
      *
-     * @param string $server Nom du serveur de DB
-     * @param string $database Nom de la DB
-     * @param string $user Nom de l'utilisateur ayant accès à la DB
-     * @param string $password
+     * @param array $data Données de configuration
      *
      * @throws \Exception En cas d'échec d'écriture
      */
-    public static function setDataConfigurationApi($server, $database, $user, $password)
+    public static function setDataConfigurationApi(array $data)
     {
         $data = [
             'db' => [
-                'serveur' => $server,
-                'base' => $database,
-                'utilisateur' => $user,
-                'mot_de_passe' => $password,
+                'serveur' => $data['serveur'],
+                'base' => $data['base'],
+                'utilisateur' => $data['user'],
+                'mot_de_passe' => $data['password'],
             ],
         ];
         if (false === file_put_contents(API_SYSPATH . 'configuration.json', json_encode($data))) {

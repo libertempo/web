@@ -12,19 +12,25 @@ use \install\Fonctions as _Fonctions;
  */
 class Fonctions extends \Tests\Units\TestUnit
 {
+    /**
+     * @inheritDoc
+     */
     public function beforeTestMethod($method)
     {
         parent::beforeTestMethod($method);
-        $this->server = '';
-        $this->database = '';
-        $this->user = '';
-        $this->password = '';
+
+        $this->data = [
+            'serveur' => 'serveur',
+            'base' => 'base',
+            'user' => 'user',
+            'password' => 'password',
+        ];
     }
 
-    private $server;
-    private $database;
-    private $user;
-    private $password;
+    /**
+     * @var array Données de configuration API
+     */
+    private $data;
 
     /**
      * Test de l'insertion des données de configuration pour l'api en cas d'échec
@@ -34,8 +40,22 @@ class Fonctions extends \Tests\Units\TestUnit
         $this->function->file_put_contents = false;
 
         $this->exception(function () {
-            _Fonctions::setDataConfigurationApi($this->server, $this->database, $this->user, $this->password);
+            _Fonctions::setDataConfigurationApi($this->data);
         })->isInstanceOf(\Exception::class)
         ->function('file_put_contents')->wasCalled()->once();
+    }
+
+    /**
+     * Test de l'insertion des données de configuration pour l'api avec succès
+     */
+    public function testSetDataConfigurationApiOk()
+    {
+        $this->function->file_put_contents = 314;
+
+        $result = _Fonctions::setDataConfigurationApi($this->data);
+        $this
+            ->variable($result)->isNull()
+            ->function('file_put_contents')->wasCalled()->once();
+
     }
 }
