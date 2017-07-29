@@ -29,7 +29,6 @@ $dbpasswd = htmlentities($dbpasswd, ENT_QUOTES | ENT_HTML401);
 $dbdb=(isset($_GET['dbdb']) ? $_GET['dbdb'] : ((isset($_POST['dbdb'])) ? $_POST['dbdb'] : "") ) ;
 $dbdb = htmlentities($dbdb, ENT_QUOTES | ENT_HTML401);
 
-
     if($lang=="") {
         header_popup();
         echo "<br><br>\n";
@@ -46,9 +45,9 @@ $dbdb = htmlentities($dbdb, ENT_QUOTES | ENT_HTML401);
         bottom();
     } elseif(\install\Fonctions::test_dbconnect_file()!=TRUE) {
         $_SESSION['langue']=$lang;      // sert ensuite pour mettre la langue dans la table config
-//        $tab_lang_file = glob("lang/lang_".$lang.'_*.php');
-//        include$tab_lang_file[0] ;
-//        include$lang_file ;
+        //        $tab_lang_file = glob("lang/lang_".$lang.'_*.php');
+        //        include$tab_lang_file[0] ;
+        //        include$lang_file ;
 
         header_popup();
         echo "<center>\n";
@@ -82,6 +81,7 @@ $dbdb = htmlentities($dbdb, ENT_QUOTES | ENT_HTML401);
     } else {
         include_once CONFIG_PATH .'dbconnect.php';
         include_once ROOT_PATH .'version.php';
+        \install\Fonctions::setDataConfigApi($mysql_serveur, $mysql_database, $mysql_user, $mysql_pass);
 
         if(!\install\Fonctions::test_database()) {
             header_popup();
@@ -136,7 +136,5 @@ $dbdb = htmlentities($dbdb, ENT_QUOTES | ENT_HTML401);
                     echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=../config/\">";
                 }
             }
-
-
         }
     }
