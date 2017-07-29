@@ -1,5 +1,5 @@
 <?php
-namespace Tests\Units\utilisateur;
+namespace Tests\Units\install;
 
 use \install\Fonctions as _Fonctions;
 
@@ -8,7 +8,7 @@ use \install\Fonctions as _Fonctions;
  *
  * @since  1.10
  * @author Prytoegrian <prytoegrian@protonmail.com>
- * @see    \utilisateur\Fonctions
+ * @see    \install\Fonctions
  */
 class Fonctions extends \Tests\Units\TestUnit
 {
@@ -27,7 +27,7 @@ class Fonctions extends \Tests\Units\TestUnit
     private $password;
 
     /**
-     * Test l'insertion des données de configuration pour l'api en cas d'échec
+     * Test de l'insertion des données de configuration pour l'api en cas d'échec
      */
     public function testSetDataConfigurationApiError()
     {
@@ -36,6 +36,6 @@ class Fonctions extends \Tests\Units\TestUnit
         $this->exception(function () {
             _Fonctions::setDataConfigurationApi($this->server, $this->database, $this->user, $this->password);
         })->isInstanceOf(\Exception::class)
-        ->function('session_start')->wasCalled()->once();
+        ->function('file_put_contents')->wasCalled()->once();
     }
 }

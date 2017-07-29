@@ -389,9 +389,7 @@ class Fonctions {
                 'mot_de_passe' => $password,
             ],
         ];
-        $a = file_put_contents(API_SYSPATH . 'configuration.json', json_encode($data));
-        d($a);
-        if (false === $a) {
+        if (false === file_put_contents(API_SYSPATH . 'configuration.json', json_encode($data))) {
             throw new \Exception('Création du fichier de config API impossible');
         }
     }
