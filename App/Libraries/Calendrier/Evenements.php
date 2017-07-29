@@ -146,7 +146,7 @@ class Evenements
 
     private function isDayWeekend($idEmploye, $date)
     {
-        if (!isset($this->evenements[$idEmploye]) || !isset($this->evenements[$idEmploye]['dates'][$date])) {
+        if (!isset($this->evenements[$idEmploye]['dates'][$date]['evenements'])) {
             return false;
         }
 
