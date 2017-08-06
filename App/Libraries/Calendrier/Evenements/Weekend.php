@@ -1,21 +1,17 @@
 <?php
-namespace App\Libraries\Calendrier\Collection;
-
-use \App\Libraries\Calendrier\Evenement;
+namespace App\Libraries\Calendrier\Evenements;
 
 /**
- * Collection d'événements de weekend
+ * Evenements de weekend
  *
  * @since  1.9
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina
  *
- * Ne doit contacter que Evenement\Commun
- * Ne doit être contacté que par \App\Libraries\Calendrier\BusinessCollection
- *
+ * Ne doit être contacté que par \App\Libraries\Calendrier\Evenements
  * @TODO supprimer le requétage à la migration vers le MVC REST
  */
-class Weekend extends \App\Libraries\Calendrier\ACollection
+class Weekend
 {
     /**
      * @var int Identifiant du samedi dans les fonctions de date
@@ -27,30 +23,27 @@ class Weekend extends \App\Libraries\Calendrier\ACollection
      */
     const JOUR_DIMANCHE = 0;
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getListe()
+    public function __construct(\includes\SQL $db)
     {
-        $liste = [];
-        if (!$this->isSamediTravaille()) {
-            $liste = array_merge($liste, $this->getListeSamedi());
-        }
-        if (!$this->isDimancheTravaille()) {
-            $liste = array_merge($liste, $this->getListeDimanche());
-        }
+        $this->db = $db;
+    }
 
-        $weekend = [];
-        $name = 'Week-end';
-        $title = null;
-        $class = 'weekend';
-        foreach ($liste as $jour) {
-            $dateJour = new \DateTime($jour);
-            $uid = uniqid('weekend');
-            $weekend[] = new Evenement\Commun($uid, $dateJour, $dateJour, $name, $title, $class);
-        }
+    /**
+    * @var \includes\SQL Objet de DB
+    */
+    private $db;
 
-        return $weekend;
+    /**
+     * Retourne la liste des jours fériés relative à la période demandée
+     *
+     * @param \DateTimeInterface $dateDebut
+     * @param \DateTimeInterface $dateFin
+     *
+     * @return array
+     */
+    public function getListe(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
+    {
+        return array_merge($this->getListeSamedi($dateDebut, $dateFin), $this->getListeDimanche($dateDebut, $dateFin));
     }
 
     /**
@@ -58,9 +51,13 @@ class Weekend extends \App\Libraries\Calendrier\ACollection
      *
      * @return array
      */
-    private function getListeSamedi()
+    private function getListeSamedi(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
     {
-        return $this->getListeJourSemaine(static::JOUR_SAMEDI);
+        if (!$this->isSamediTravaille()) {
+            return $this->getListeJourSemaine(static::JOUR_SAMEDI, $dateDebut, $dateFin);
+        }
+
+        return [];
     }
 
     /**
@@ -68,9 +65,13 @@ class Weekend extends \App\Libraries\Calendrier\ACollection
      *
      * @return array
      */
-    private function getListeDimanche()
+    private function getListeDimanche(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
     {
-        return $this->getListeJourSemaine(static::JOUR_DIMANCHE);
+        if (!$this->isDimancheTravaille()) {
+            return $this->getListeJourSemaine(static::JOUR_DIMANCHE, $dateDebut, $dateFin);
+        }
+
+        return [];
     }
 
     /**
@@ -80,11 +81,11 @@ class Weekend extends \App\Libraries\Calendrier\ACollection
      *
      * @return array
      */
-    private function getListeJourSemaine($jourSemaine)
+    private function getListeJourSemaine($jourSemaine, \DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
     {
-        $debut = $this->dateDebut->getTimestamp();
-        $fin = $this->dateFin->getTimestamp();
-        if ($debut > $fin) {
+        $debut = $dateDebut->getTimestamp();
+        $fin = $dateFin->getTimestamp();
+        if ($debut > $fin) { // ce devrait être une assertion
             throw new \Exception('Date de début supérieure à date de fin');
         }
 
@@ -98,6 +99,7 @@ class Weekend extends \App\Libraries\Calendrier\ACollection
                 $debut = strtotime('+1 day', $debut);
             }
         }
+        sort($listeJourSemaine);
 
         return $listeJourSemaine;
     }
@@ -111,24 +113,22 @@ class Weekend extends \App\Libraries\Calendrier\ACollection
 
     private function isSamediTravaille()
     {
-        $sql = \includes\SQL::singleton();
         $req = 'SELECT *
             FROM conges_config
             WHERE conf_nom = "samedi_travail" LIMIT 1';
 
-        $res = $sql->query($req)->fetch_assoc();
+        $res = $this->db->query($req)->fetch_assoc();
 
         return 'TRUE' === $res['conf_valeur'];
     }
 
     private function isDimancheTravaille()
     {
-        $sql = \includes\SQL::singleton();
         $req = 'SELECT *
                 FROM conges_config
                 WHERE conf_nom = "dimanche_travail" LIMIT 1';
 
-        $res = $sql->query($req)->fetch_assoc();
+        $res = $this->db->query($req)->fetch_assoc();
 
         return 'TRUE' === $res['conf_valeur'];
     }

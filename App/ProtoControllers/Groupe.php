@@ -13,12 +13,14 @@ class Groupe
     /**
      * Retourne les options de select des groupes
      *
+     * @param array $listeId Ids de groupes à formater en options
+     *
      * @return array
      */
-    public static function getOptions()
+    public static function getOptions(array $listeId = [])
     {
         $options = [];
-        foreach (static::getListe() as $groupe) {
+        foreach (static::getListe($listeId) as $groupe) {
             if (!isset($options[$groupe['g_gid']])) {
                 $options[$groupe['g_gid']] = [
                     'nom' => $groupe['g_groupename'],
@@ -42,12 +44,16 @@ class Groupe
       * @return array
       * @todo unescape_string ?
       */
-    private static function getListe()
+    private static function getListe(array $listeId = [])
     {
         $sql = \includes\SQL::singleton();
         $req = 'SELECT *
                 FROM conges_groupe CG
                     INNER JOIN conges_groupe_users CGU ON (CG.g_gid = CGU.gu_gid)';
+        if (!empty($listeId)) {
+            $listeId = array_map('intval', $listeId);
+            $req .= ' WHERE CG.g_gid IN (' . implode(',', $listeId) . ')';
+        }
         $result = $sql->query($req);
 
         $groupes = [];

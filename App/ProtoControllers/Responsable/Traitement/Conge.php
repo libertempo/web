@@ -134,11 +134,9 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
             /* Informations pour le positionnement du calendrier */
             list($anneeDebut, $moisDebut) = explode('-', $demande['p_date_deb']);
-            $dateDebut = new \DateTimeImmutable($anneeDebut . '-' . $moisDebut . '-01');
+            $mois = new \DateTimeImmutable($anneeDebut . '-' . $moisDebut . '-01');
             $paramsCalendrier = [
-                'vue' => \App\ProtoControllers\Calendrier::VUE_MOIS,
-                'begin' => $dateDebut->format('Y-m-d'),
-                'end' => $dateDebut->modify('+1 month')->format('Y-m-d'),
+                'mois' => $mois->format('Y-m'),
             ];
             $Table .= '<td><a href="' . ROOT_PATH . 'calendrier.php?' . http_build_query($paramsCalendrier) . '" title="' . _('consulter_calendrier_de_periode') . '"><i class="fa fa-lg fa-calendar" aria-hidden="true"></i></a></td>';
             $Table .= '<td><input class="form-control" type="text" name="comment_refus['.$id.']" size="20" maxlength="100"></td></tr>';
