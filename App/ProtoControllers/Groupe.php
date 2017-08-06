@@ -43,7 +43,7 @@ class Groupe
       * @return array
       * @todo unescape_string ?
       */
-    private static function getListe(\includes\SQL $sql, array $listeId = [])
+    public static function getListe(\includes\SQL $sql, array $listeId = [])
     {
         $req = 'SELECT *
                 FROM conges_groupe CG
