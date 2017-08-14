@@ -2,8 +2,6 @@
 define('ROOT_PATH', '');
 require_once ROOT_PATH . 'define.php';
 
-$api = new \App\Libraries\ApiClient();
-
 include_once ROOT_PATH .'fonctions_conges.php';
 include_once INCLUDE_PATH .'fonction.php';
 include_once INCLUDE_PATH . 'session.php';
@@ -60,7 +58,6 @@ if (!empty($_GET['jour']) && false !== strtotime($_GET['jour'])) {
     $moisDemande = new \DateTimeImmutable(date('Y-m') . '-01');
 }
 
-$injectableCreator = new \App\Libraries\InjectableCreator(\includes\SQL::singleton());
 $evenements = new \App\Libraries\Calendrier\Evenements($injectableCreator);
 $groupesAVoir = $groupesVisiblesUtilisateur = \App\ProtoControllers\Utilisateur::getListeGroupesVisibles($_SESSION['userlogin']);
 $idGroupe = NIL_INT;
@@ -77,11 +74,6 @@ foreach ($utilisateursATrouver as $nom) {
 }
 
 header_menu('', 'Libertempo : '._('calendrier_titre'));
-
-// il faut chiffrer les mdp avec le meme algo, quel que soit le how_to_connect_user
-d($api->get('hello_world'));
-d($api->authentification('hr', 'none'));
-
 
 if ($jourDemande instanceof \DateTimeInterface) {
     $evenements->fetchEvenements(

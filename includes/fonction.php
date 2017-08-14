@@ -449,7 +449,31 @@ function authentification_AD_SSO()
 	return '';
 }
 
-function storeTokenApi(\App\Libraries\ApiClient $apiClient)
+/**
+ * Tente l'authentification auprès de l'API et stocke le token dans la session
+ *
+ * @param \App\Libraries\ApiClient $api Client de contact API
+ * @param string $username
+ * @param string $userPassword
+ */
+function storeTokenApi(\App\Libraries\ApiClient $apiClient, $username, $userPassword)
 {
+    if ('dbconges' == $_SESSION['config']['how_to_connect_user']) {
+        try {
+            $dataUser = $apiClient->authentify($username, $userPassword);
+        } catch (\Exception $e) {
+            echo 'Une erreur de connexion est survenue : ' . $e->getMessage();
+            return;
+        }
+    }
+    else {
+        try {
+            $dataUser = $apiClient->authentifyNotNative($username);
+        } catch (\Exception $e) {
+            echo 'Une erreur de connexion est survenue : ' . $e->getMessage();
+            return;
+        }
+    }
 
+    $_SESSION['token'] = $dataUser->data;
 }

@@ -29,7 +29,6 @@ class InjectableCreator
      * @param string $classname
      *
      * @return object
-     * @throws \LogicException si la construction est interdite
      */
     public function get($classname)
     {
@@ -46,6 +45,16 @@ class InjectableCreator
             case 'App\Libraries\Calendrier\Evenements\Heure\Additionnelle':
             case 'App\Libraries\Calendrier\Evenements\Heure\Repos':
                 return new $classname($this->db);
+            case \App\Libraries\ApiClient::class:
+                $paths = explode('/', $_SERVER['PHP_SELF']);
+                array_pop($paths);
+                $host = $_SERVER['HTTP_HOST'] . implode('/', $paths);
+                $baseURIApi = $_SERVER['REQUEST_SCHEME'] . '://' . $host . '/api/';
+
+                $client = new \GuzzleHttp\Client([
+                    'base_uri' => $baseURIApi,
+                ]);
+                return new $classname($client);
 
             default:
                 throw new \LogicException('Unknown « ' . $classname . ' »');

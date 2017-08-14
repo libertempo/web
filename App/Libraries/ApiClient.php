@@ -48,18 +48,37 @@ final class ApiClient
 
 
     /**
-     * Récupère un token de l'API pour les futurs échanges
+     * Récupère un token de l'API pour les futurs échanges,
+     * en venant de la méthode native de connexion
      *
      * @param string $login Login de l'utilisateur LT
      * @param string $password MDP de l'utilisateur LT
      *
      * @return \stdClass Au format Jsend
      */
-    public function authentification($login, $password)
+    public function authentify($login, $password)
     {
         $options = [
             'headers' => [
                 'Authorization' => 'Basic ' . base64_encode($login . ':' . $password),
+            ],
+        ];
+        return $this->request('GET', 'authentification', $options);
+    }
+
+    /**
+     * Récupère un token de l'API pour les futurs échanges,
+     * en venant d'une autre méthode de connexion
+     *
+     * @param string $login Login de l'utilisateur LT
+     *
+     * @return \stdClass Au format Jsend
+     */
+    public function authentifyNotNative($login)
+    {
+        $options = [
+            'headers' => [
+                'Authorization' => 'Basic ' . base64_encode($login . ':' . 'none'),
             ],
         ];
         return $this->request('GET', 'authentification', $options);
@@ -74,8 +93,6 @@ final class ApiClient
      * @example ['headers' => [], 'body' => []]
      *
      * @return \stdClass Au format Jsend
-     * @throws \RuntimeException Si le serveur est KO (Http5XX)
-     * @throws \RuntimeException Si la réponse n'est pas du JSON
      * @throws \LogicException Si la requête est mal formée (Http4XX)
      */
     private function request($method, $uri, array $options)
@@ -104,7 +121,7 @@ final class ApiClient
     }
 
     /**
-     * @throws \LogicException
+     * Clonage interdit
      */
     public function __clone()
     {

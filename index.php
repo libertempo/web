@@ -73,6 +73,7 @@ else
 		if($usernameSSO != "")
 		{
 			session_create( $usernameSSO );
+			storeTokenApi($api, $usernameSSO, '');
 		}
 		else//dans ce cas l'utilisateur n'a pas encore été enregistré dans la base de données db_conges
 		{
@@ -119,6 +120,8 @@ else
 					{
 						// on initialise la nouvelle session
 						session_create($session_username);
+						storeTokenApi($api, $session_username, $session_password);
+
 					}
 					else//dans ce cas l'utilisateur n'a pas encore été enregistré dans la base de données db_conges
 					{
@@ -149,6 +152,7 @@ else
 				{
 					// on initialise la nouvelle session
 					session_create($session_username);
+					storeTokenApi($api, $session_username, $session_password);
 				}
 			}
 		}
