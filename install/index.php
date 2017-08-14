@@ -86,7 +86,8 @@ $dbdb = htmlentities($dbdb, ENT_QUOTES | ENT_HTML401);
         try {
             \install\Fonctions::setDataConfigurationApi($data);
         } catch (\Exception $e) {
-            // Message d'erreur client, pas d'idée :-/
+            echo 'Échec de l\'installation / mise à jour : ' . $e->getMessage();
+            exit();
         }
 
 

@@ -387,7 +387,7 @@ class Fonctions {
             ],
         ];
         if (false === file_put_contents(API_SYSPATH . 'configuration.json', json_encode($data))) {
-            throw new \Exception('Création du fichier de config API impossible');
+            throw new \Exception('Création du fichier de config API impossible. Les droits sont-ils bien configurés ?');
         }
     }
 }
