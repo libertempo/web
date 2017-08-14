@@ -1,4 +1,12 @@
 <?php
 
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
-echo \admin\Fonctions::supprimerGroupeModule($onglet);
+
+$id = (int) getpost_variable('group');
+
+if (0 >= $id) {
+    redirect(ROOT_PATH . 'deconnexion.php');
+}
+
+$gestionGroupes = new \App\ProtoControllers\Groupe\Gestion();
+echo $gestionGroupes->getFormConfirmSuppression($id);

@@ -736,11 +736,9 @@ function get_list_all_users_du_resp($resp_login)
     $list_users="";
     $sql1="SELECT DISTINCT(u_login) FROM conges_users WHERE u_login!='conges' AND u_login!='admin' AND u_login!='$resp_login'";
     $sql1 = $sql1." AND  ( u_resp_login='$resp_login' " ;
-    if($_SESSION['config']['gestion_groupes'] )
-    {
-        $list_users_group=get_list_users_des_groupes_du_resp_sauf_resp($resp_login);
-        if($list_users_group!="")
-            $sql1=$sql1." OR u_login IN ($list_users_group) ";
+    $list_users_group=get_list_users_des_groupes_du_resp_sauf_resp($resp_login);
+    if($list_users_group!=""){
+        $sql1=$sql1." OR u_login IN ($list_users_group) ";
     }
 
     $sql1=$sql1." ) " ;
@@ -765,11 +763,9 @@ function get_list_all_users_du_resp($resp_login)
         $sql_2='SELECT DISTINCT(u_login) FROM conges_users WHERE u_is_resp=\'Y\' AND u_login!="'.\includes\SQL::quote($resp_login).'" AND u_login!=\'conges\' AND u_login!=\'admin\'';
         $sql_2 = $sql_2." AND  ( u_resp_login='$resp_login' " ;
 
-        if($_SESSION['config']['gestion_groupes'] )
-        {
-            $list_users_group=get_list_users_des_groupes_du_resp_sauf_resp($resp_login);
-            if($list_users_group!="")
-                $sql_2=$sql_2." OR u_login IN ($list_users_group) ";
+        $list_users_group=get_list_users_des_groupes_du_resp_sauf_resp($resp_login);
+        if($list_users_group!=""){
+            $sql_2=$sql_2." OR u_login IN ($list_users_group) ";
         }
 
         $sql_2=$sql_2." ) " ;
@@ -972,24 +968,18 @@ function get_tab_resp_du_user($user_login)
         $tab_resp[$rec['u_resp_login']]="present";
 
     // recup des resp des groupes du user
-    if($_SESSION['config']['gestion_groupes'])
-    {
-        $list_groups=get_list_groupes_du_user($user_login);
-        if($list_groups!="")
-        {
-            $tab_gid=explode(",", $list_groups);
-            foreach($tab_gid as $gid)
-            {
-                $gid=trim($gid);
-                $sql2='SELECT gr_login FROM conges_groupe_resp WHERE gr_gid=' . \includes\SQL::quote($gid) . ' AND gr_login!=\'' . \includes\SQL::quote($user_login) . '\'';
-                $ReqLog1 = \includes\SQL::query($sql2);
+    $list_groups=get_list_groupes_du_user($user_login);
+    if($list_groups!=""){
+        $tab_gid=explode(",", $list_groups);
+        foreach($tab_gid as $gid){
+            $gid=trim($gid);
+            $sql2='SELECT gr_login FROM conges_groupe_resp WHERE gr_gid=' . \includes\SQL::quote($gid) . ' AND gr_login!=\'' . \includes\SQL::quote($user_login) . '\'';
+            $ReqLog1 = \includes\SQL::query($sql2);
 
-                while ($resultat1 = $ReqLog1->fetch_array())
-                {
-                    //attention à ne pas mettre 2 fois le meme resp dans le tableau
-                    if (in_array($resultat1["gr_login"], $tab_resp)==FALSE)
-                        $tab_resp[$resultat1["gr_login"]]="present";
-                }
+            while ($resultat1 = $ReqLog1->fetch_array()){
+                //attention à ne pas mettre 2 fois le meme resp dans le tableau
+                if (in_array($resultat1["gr_login"], $tab_resp)==FALSE)
+                    $tab_resp[$resultat1["gr_login"]]="present";
             }
         }
     }
@@ -1070,23 +1060,18 @@ function get_tab_resp_du_user($user_login)
 function get_tab_grd_resp_du_user($user_login, &$tab_grd_resp)
 {
     // recup des resp des groupes du user
-    if($_SESSION['config']['gestion_groupes'])
-    {
-        $list_groups=get_list_groupes_du_user($user_login);
-        if($list_groups!="")
-        {
-            $tab_gid=explode(",", $list_groups);
-            foreach($tab_gid as $gid)
-            {
-                $gid=trim($gid);
-                $sql1='SELECT ggr_login FROM conges_groupe_grd_resp WHERE ggr_gid='.\includes\SQL::quote($gid);
-                $ReqLog1 = \includes\SQL::query($sql1);
+    $list_groups=get_list_groupes_du_user($user_login);
+    if($list_groups!=""){
+        $tab_gid=explode(",", $list_groups);
+        foreach($tab_gid as $gid){
+            $gid=trim($gid);
+            $sql1='SELECT ggr_login FROM conges_groupe_grd_resp WHERE ggr_gid='.\includes\SQL::quote($gid);
+            $ReqLog1 = \includes\SQL::query($sql1);
 
-                while ($resultat1 = $ReqLog1->fetch_array())
-                {
-                    //attention à ne pas mettre 2 fois le meme resp dans le tableau
-                    if (in_array($resultat1["ggr_login"], $tab_grd_resp)==FALSE)
-                        $tab_grd_resp[]=$resultat1["ggr_login"];
+            while ($resultat1 = $ReqLog1->fetch_array()){
+                //attention à ne pas mettre 2 fois le meme resp dans le tableau
+                if (in_array($resultat1["ggr_login"], $tab_grd_resp)==FALSE){
+                    $tab_grd_resp[]=$resultat1["ggr_login"];
                 }
             }
         }
@@ -1174,22 +1159,18 @@ function is_resp_direct_of_user($resp_login, $user_login)
 
 function is_resp_group_of_user($resp_login, $user_login)
 {
-    if ( $_SESSION['config']['gestion_groupes'] )
-    {
-        $ReqLog_info = \includes\SQL::query('SELECT count(*)
-                FROM `conges_groupe_users`
-                JOIN conges_groupe_resp ON gr_gid = gu_gid
-                WHERE gu_login = \''.\includes\SQL::quote($user_login).'\'
-                AND gr_login = \''.\includes\SQL::quote($resp_login).'\';');
-        $resultat_info = $ReqLog_info->fetch_array();
-        return ($resultat_info[0] != 0);
-    }
-    return false;
+    $ReqLog_info = \includes\SQL::query('SELECT count(*)
+            FROM `conges_groupe_users`
+            JOIN conges_groupe_resp ON gr_gid = gu_gid
+            WHERE gu_login = \''.\includes\SQL::quote($user_login).'\'
+            AND gr_login = \''.\includes\SQL::quote($resp_login).'\';');
+    $resultat_info = $ReqLog_info->fetch_array();
+    return ($resultat_info[0] != 0);
 }
 
 function is_gr_group_of_user($resp_login, $user_login)
 {
-    if ( $_SESSION['config']['gestion_groupes'] && $_SESSION['config']['double_validation_conges'])
+    if ($_SESSION['config']['double_validation_conges'])
     {
 
         $ReqLog_info = \includes\SQL::query('SELECT count(*)

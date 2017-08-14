@@ -1562,9 +1562,7 @@ class Fonctions
 
             /***********************************************************************/
             /* SAISIE GROUPE pour tous les utilisateurs d'un groupe du responsable */
-            if( $_SESSION['config']['gestion_groupes'] ) {
-                $return .= \hr\Fonctions::affichage_saisie_globale_groupe($tab_type_conges);
-            }
+            $return .= \hr\Fonctions::affichage_saisie_globale_groupe($tab_type_conges);
             $return .= '<br>';
 
             /************************************************************/
@@ -2358,9 +2356,7 @@ class Fonctions
 
             /***********************************************************************/
             /* SAISIE GROUPE pour tous les utilisateurs d'un groupe du responsable */
-            if( $_SESSION['config']['gestion_groupes']) {
-                $return .= \hr\Fonctions::affichage_cloture_globale_groupe($tab_type_conges);
-            }
+            $return .= \hr\Fonctions::affichage_cloture_globale_groupe($tab_type_conges);
             $return .= '<br>';
 
             /************************************************************/
@@ -2958,7 +2954,7 @@ class Fonctions
         $return .= '</form>';
         $return .= '</div>';
 
-        if($_SESSION['config']['gestion_groupes'] && $_SESSION['config']['fermeture_par_groupe']) {
+        if($_SESSION['config']['fermeture_par_groupe']) {
             /********************/
             /* Choix Groupe     */
             /********************/
@@ -3504,25 +3500,22 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         if (empty($utilisateursAssocies)) {
             $return .= '<div>' . _('hr_tout_utilisateur_associe') . '</div>';
         } else {
-            $hasGroup = $_SESSION['config']['gestion_groupes'];
-            if($hasGroup) {
-                $return .= '<div class="form-group col-md-4 col-sm-5">
-                <label class="control-label col-md-3 col-sm-3" for="groupe">Groupe&nbsp;:</label>
-                <div class="col-md-8 col-sm-8"><select class="form-control" name="groupeId" id="groupe">';
-                $return .= '<option value="' . NIL_INT . '">Tous</option>';
+            $return .= '<div class="form-group col-md-4 col-sm-5">
+            <label class="control-label col-md-3 col-sm-3" for="groupe">Groupe&nbsp;:</label>
+            <div class="col-md-8 col-sm-8"><select class="form-control" name="groupeId" id="groupe">';
+            $return .= '<option value="' . NIL_INT . '">Tous</option>';
 
-                $optionsGroupes = \App\ProtoControllers\Groupe::getOptions();
+            $optionsGroupes = \App\ProtoControllers\Groupe::getOptions();
 
-                foreach ($optionsGroupes as $id => $groupe) {
-                    $return .= '<option value="' . $id . '">' . $groupe['nom'] . '</option>';
-                }
-                $return .= '</select></div></div><br><br><br>';
-                $associations = array_map(function ($groupe) {
-                        return $groupe['utilisateurs'];
-                    },
-                    $optionsGroupes
-                );
+            foreach ($optionsGroupes as $id => $groupe) {
+                $return .= '<option value="' . $id . '">' . $groupe['nom'] . '</option>';
             }
+            $return .= '</select></div></div><br><br><br>';
+            $associations = array_map(function ($groupe) {
+                    return $groupe['utilisateurs'];
+                },
+                $optionsGroupes
+            );
             $return .= '<div>';
             foreach ($utilisateursAssocies as $utilisateur) {
                 $disabled = (\App\ProtoControllers\Utilisateur::hasSortiesEnCours($utilisateur['login']))
@@ -3537,11 +3530,9 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
                 </div>';
             }
             $return .= '</div>';
-            if($hasGroup) {
-                $return .= '<script type="text/javascript">
-                new selectAssociationPlanning("groupe", ' . json_encode($associations) . ', ' . NIL_INT . ');
-                </script>';
-            }
+            $return .= '<script type="text/javascript">
+            new selectAssociationPlanning("groupe", ' . json_encode($associations) . ', ' . NIL_INT . ');
+            </script>';
         }
 
         return $return;

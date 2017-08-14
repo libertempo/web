@@ -113,10 +113,6 @@ class Database extends \mysqli
         $this->query("SET @@SESSION.sql_mode='';");
     }
 
-    public function multi_query($query) {
-        throw new Exception('Function disabled !' );
-    }
-
     public function getQuerys() {
         return self::$hist;
     }
