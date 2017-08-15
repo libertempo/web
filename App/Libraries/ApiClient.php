@@ -46,39 +46,44 @@ final class ApiClient
         return $this->request('GET', $uri, []);
     }
 
-
     /**
-     * Récupère un token de l'API pour les futurs échanges,
-     * en venant de la méthode native de connexion
+     * Récupère un token de l'API avec le connecteur DBConges
      *
      * @param string $login Login de l'utilisateur LT
      * @param string $password MDP de l'utilisateur LT
      *
      * @return \stdClass Au format Jsend
      */
-    public function authentify($login, $password)
+    public function authentifyDbConges($login, $password)
     {
-        $options = [
-            'headers' => [
-                'Authorization' => 'Basic ' . base64_encode($login . ':' . $password),
-            ],
-        ];
-        return $this->request('GET', 'authentification', $options);
+        return $this->authentifyCommon($login, $password);
     }
 
     /**
-     * Récupère un token de l'API pour les futurs échanges,
-     * en venant d'une autre méthode de connexion
+     * Récupère un token de l'API avec le connecteur tierce
      *
      * @param string $login Login de l'utilisateur LT
      *
      * @return \stdClass Au format Jsend
      */
-    public function authentifyNotNative($login)
+    public function authentifyThirdParty($login)
+    {
+        return $this->authentifyCommon($login, 'none');
+    }
+
+    /**
+     * Récupère un token de l'API pour les futurs échanges
+     *
+     * @param string $login Login de l'utilisateur LT
+     * @param string $password MDP de l'utilisateur LT
+     *
+     * @return \stdClass Au format Jsend
+     */
+    private function authentifyCommon($login, $password)
     {
         $options = [
             'headers' => [
-                'Authorization' => 'Basic ' . base64_encode($login . ':' . 'none'),
+                'Authorization' => 'Basic ' . base64_encode($login . ':' . $password),
             ],
         ];
         return $this->request('GET', 'authentification', $options);
@@ -109,6 +114,9 @@ final class ApiClient
         } catch (Exception\ServerException $e) {
             throw new \RuntimeException('Erreur serveur : '. Psr7\str($e->getResponse()));
         } catch (Exception\ClientException $e) {
+            if (404 === $e->getResponse()->getStatusCode()) {
+                throw new \App\Exceptions\NotFoundException();
+            }
             throw new \LogicException('Erreur client : '. Psr7\str($e->getRequest()));
         }
 
