@@ -1980,7 +1980,7 @@ msgid "format_heure_incorrect"
 msgstr "format heure incorrect"
 
 msgid "user_modif_heure_additionnelle_titre"
-msgstr "Modifification heure additionnelle titre"
+msgstr "Modification heure additionnelle titre"
 
 msgid "resp_traite_user_etat_heures_additionnelles"
 msgstr "Traitement des demandes d'heures additionnelles"
