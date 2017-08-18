@@ -1995,5 +1995,5 @@ msgid "resp_traite_user_etat_heures_repos"
 msgstr "Traitement des demandes d'heures de repos"
 
 msgid "install_maj_cas_echec_backup"
-msgstr "Attention! La base de donnée n'a pas pue être sauvegardé."
+msgstr "Attention! La base de donnée n'a pas pu être sauvegardée."
 
