@@ -77,23 +77,6 @@ class Responsable
     }
 
     /**
-     * Retourne le responsable direct d'un utilisateur
-     *
-     * @param string $user
-     * @return array
-     */
-    public static function getRespDirect($user)
-    {
-        $sql = \includes\SQL::singleton();
-        $req = 'SELECT u_resp_login
-                FROM conges_users
-                WHERE u_login ="'.\includes\SQL::quote($user).'"';
-        $query = $sql->query($req);
-
-        return $query->fetch_array()['u_resp_login'];
-    }
-
-    /**
      * Vérifie si le responsable est absent
      *
      * @param string $resp identifiant du responsable
@@ -136,14 +119,20 @@ class Responsable
      */
     public static function getResponsablesUtilisateur($user) {
         
-        $responsables = \App\ProtoControllers\Responsable::getResponsableGroupe(\App\ProtoControllers\Utilisateur::getGroupesId($user));
+        $responsables = \App\ProtoControllers\Groupe\Responsable::getListResponsableByGroupeIds(\App\ProtoControllers\Utilisateur::getGroupesId($user));
         $responsables[] = \App\ProtoControllers\Responsable::getResponsableDirect($user);
         $responsables = array_unique($responsables);
         
         return $responsables;
     }
 
-    public static function getResponsableDirect($user) {
+    /**
+     * Retourne le responsable direct d'un utilisateur
+     *
+     * @param string $user
+     * @return array
+     */
+    private static function getResponsableDirect($user) {
         $resp = [];
         $sql = \includes\SQL::singleton();
         $req = 'SELECT u_resp_login FROM conges_users WHERE u_login ="' . \includes\SQL::quote($user) . '"';
@@ -151,21 +140,26 @@ class Responsable
         return $res->fetch_array()['u_resp_login'];
         
     }
-    
-    private static function getResponsableGroupe(array $groupesId) {
-        
-        $responsable = [];
-        
-        $sql = \includes\SQL::singleton();
-        $req = 'SELECT gr_login FROM conges_groupe_resp 
-                    WHERE gr_gid IN (\'' . implode(',', $groupesId) . '\')';
-        $res = $sql->query($req);
 
-         while ($data = $res->fetch_array()) {
-             $responsable[] = $data['gr_login'];
-         }
-         
-         return $responsable;
+    /**
+     * Retourne les infos des utilisateurs avec les droits responsables
+     *
+     * @param array $groupesId
+     *
+     * @return array
+     */
+    public static function  getInfosResponsables(\includes\SQL $sql, $activeSeul = false)
+    {
+        $respLogin = [];
+        $req = 'SELECT *
+                FROM conges_users
+                WHERE u_is_resp = "Y"';
+        if($activeSeul){
+            $req .= ' AND u_is_active = "Y"';
+        }
+        $query = $sql->query($req);
+        
+        return $sql->query($req)->fetch_all(\MYSQLI_ASSOC);
     }
 
     /**
@@ -179,7 +173,7 @@ class Responsable
     public static function isRespDeUtilisateur($resp, $user) {
         return $resp != $user 
                 && (\App\ProtoControllers\Responsable::isRespDirect($resp, $user) 
-                || \App\ProtoControllers\Responsable::isRespGroupe($resp, \App\ProtoControllers\Utilisateur::getGroupesId($user)));
+                || \App\ProtoControllers\Groupe::isResponsableGroupe($resp, \App\ProtoControllers\Utilisateur::getGroupesId($user), \includes\SQL::singleton()));
     }
 
     /**
@@ -231,28 +225,6 @@ class Responsable
                     FROM conges_groupe_grd_resp
                     WHERE ggr_gid IN (\'' . implode(',', $groupesId) . '\')
                         AND ggr_login = "'.\includes\SQL::quote($resp).'"
-                )';
-        $query = $sql->query($req);
-
-        return 0 < (int) $query->fetch_array()[0];
-    }
-
-    /**
-     * Verifie si un utilisateur est responsable d'une liste de groupe
-     *
-     * @param string $resp
-     * @param array $groupesId
-     *
-     * @return bool
-     */
-    public static function isRespGroupe($resp, array $groupesId)
-    {
-        $sql = \includes\SQL::singleton();
-        $req = 'SELECT EXISTS (
-                    SELECT gr_gid
-                    FROM conges_groupe_resp
-                    WHERE gr_gid IN (\'' . implode(',', $groupesId) . '\')
-                        AND gr_login = "'.\includes\SQL::quote($resp).'"
                 )';
         $query = $sql->query($req);
 

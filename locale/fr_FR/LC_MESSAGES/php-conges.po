@@ -1545,7 +1545,7 @@ msgid "verif_solde_erreur_part_3"
 msgstr "et des congés à valider)"
 
 msgid "admin_groupes_nb_users"
-msgstr "nb membres"
+msgstr "nombre de membres"
 
 msgid "resp_cloture_exercice_titre"
 msgstr "clôture/début d'exercice"
