@@ -403,7 +403,7 @@ class Fonctions
         $new_fin = convert_date($new_fin);
 
         // verif validité des valeurs saisies
-        $valid=verif_saisie_new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment);
+        $valid = verif_saisie_new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $_SESSION['userlogin']);
 
         if($valid) {
             $return .= $user_login . '---' . $new_debut . '_' . $new_demi_jour_deb . '---' . $new_fin . '_' . $new_demi_jour_fin . '---' . $new_nb_jours . '---' . $new_comment . '---' . $new_type_id . '<br>';
@@ -1025,7 +1025,7 @@ class Fonctions
             'startDate'          => $startDate,
         ];
         $return .= '<script>generateDatePicker(' . json_encode($datePickerOpts) . ');</script>';
-            
+
         // si les mois et année ne sont pas renseignés, on prend ceux du jour
         if($year_calendrier_saisie_debut==0) {
             $year_calendrier_saisie_debut=date("Y");

@@ -61,7 +61,7 @@ class Fonctions
         $session=session_id();
 
         // verif validité des valeurs saisies
-        $valid = verif_saisie_new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment);
+        $valid = verif_saisie_new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $_SESSION['userlogin']);
 
         // verifie que le solde de conges sera encore positif après validation
         if( $_SESSION['config']['solde_toujours_positif'] ) {
