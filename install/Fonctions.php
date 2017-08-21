@@ -1,8 +1,6 @@
 <?php
 namespace install;
 
-defined( '_PHP_CONGES' ) or die( 'Restricted access' );
-
 /**
  * Regroupement de fonctions d'installation
  */
@@ -369,5 +367,27 @@ class Fonctions {
             PRIMARY KEY (`id`)
                 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
         $result_create_table_plugin = \includes\SQL::query($create_table_plugin_query);
+    }
+
+    /**
+     * Définit les données de configuration pour l'API
+     *
+     * @param array $data Données de configuration
+     *
+     * @throws \Exception En cas d'échec d'écriture
+     */
+    public static function setDataConfigurationApi(array $data)
+    {
+        $data = [
+            'db' => [
+                'serveur' => $data['serveur'],
+                'base' => $data['base'],
+                'utilisateur' => $data['user'],
+                'mot_de_passe' => $data['password'],
+            ],
+        ];
+        if (false === file_put_contents(API_SYSPATH . 'configuration.json', json_encode($data))) {
+            throw new \Exception('Création du fichier de config API impossible. Les droits sont-ils bien configurés ?');
+        }
     }
 }
