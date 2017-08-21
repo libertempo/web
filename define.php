@@ -39,6 +39,10 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     \Kint::enabled(false);
     \Kint::$theme = 'solarized-dark';
     switch (ENV) {
+        case ENV_PROD:
+            error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
+            ini_set("display_errors", 0);
+            break;
         case ENV_DEV:
             error_reporting(-1);
             // no break;
