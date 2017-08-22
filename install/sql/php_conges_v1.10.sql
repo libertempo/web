@@ -279,7 +279,7 @@ CREATE TABLE IF NOT EXISTS `conges_users` (
   `u_heure_solde` int(11) NOT NULL DEFAULT '0',
   `date_inscription` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `token` VARCHAR(100) NOT NULL DEFAULT '',
-  `last_access` TIMESTAMP NOT NULL,
+  `date_last_access` TIMESTAMP NOT NULL,
   PRIMARY KEY (`u_login`),
   KEY `planning_id` (`planning_id`),
   KEY `token` (`token`)
