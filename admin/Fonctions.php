@@ -2007,6 +2007,7 @@ class Fonctions
             $sql1=$sql1."u_passwd='$motdepasse', ";
             $sql1=$sql1."u_quotite=".$tab_new_user['quotite'].",";
             $sql1=$sql1."u_heure_solde=".  \App\Helpers\Formatter::hour2Time($tab_new_user['solde_heure']).",";
+            $sql1 .= 'date_inscription = "' . date('Y-m-d H:i') . '" ,';
             $sql1=$sql1." u_email='".$tab_new_user['email']."' ";
             $result1 = \includes\SQL::query($sql1);
 

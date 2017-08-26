@@ -40,9 +40,9 @@ $res_del_config_from_db=\includes\SQL::query($del_config_db);
 
 /* Ajout des champs de l'utilisateur requis pour l'API */
 $alterApiUser = 'ALTER TABLE `conges_users`
-    ADD `date_inscription` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ADD `date_inscription` DATETIME NOT NULL DEFAULT NOW(),
     ADD `token` VARCHAR(100) NOT NULL DEFAULT "",
-    ADD `date_last_access` TIMESTAMP NOT NULL,
+    ADD `date_last_access` DATETIME NOT NULL,
     ADD INDEX `token` (`token`)';
 $sql->query($alterApiUser);
 
