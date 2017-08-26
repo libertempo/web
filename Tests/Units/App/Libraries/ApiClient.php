@@ -108,7 +108,7 @@ class ApiClient extends \Tests\Units\TestUnit
     {
         return $this->requestServerError(function () {
             $api = new _ApiClient($this->client);
-            return $api->authentification('', '');
+            return $api->authentifyDbConges('', '');
         });
     }
 
@@ -139,7 +139,7 @@ class ApiClient extends \Tests\Units\TestUnit
     {
         return $this->requestClientError(function () {
             $api = new _ApiClient($this->client);
-            return $api->authentification('', '');
+            return $api->authentifyDbConges('', '');
         });
     }
 
@@ -170,7 +170,7 @@ class ApiClient extends \Tests\Units\TestUnit
     {
         return $this->requestIsNotJson(function () {
             $api = new _ApiClient($this->client);
-            return $api->authentification('', '');
+            return $api->authentifyDbConges('', '');
         });
     }
 
@@ -212,7 +212,7 @@ class ApiClient extends \Tests\Units\TestUnit
         $this->requestOk(
             function () use ($options) {
                 $api = new _ApiClient($this->client);
-                return $api->authentification('Kevin', 'Stuart');
+                return $api->authentifyDbConges('Kevin', 'Stuart');
             },
             'GET',
             'authentification',
@@ -244,7 +244,7 @@ class ApiClient extends \Tests\Units\TestUnit
         $api = new _ApiClient($this->client);
 
         $this->exception(function () use ($api) {
-            $b = clone $api;
+            clone $api;
         })->isInstanceOf(\LogicException::class);
     }
 }

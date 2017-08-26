@@ -114,9 +114,6 @@ final class ApiClient
         } catch (Exception\ServerException $e) {
             throw new \RuntimeException('Erreur serveur : '. Psr7\str($e->getResponse()));
         } catch (Exception\ClientException $e) {
-            if (404 === $e->getResponse()->getStatusCode()) {
-                throw new \App\Exceptions\NotFoundException();
-            }
             throw new \LogicException('Erreur client : '. Psr7\str($e->getRequest()));
         }
 
