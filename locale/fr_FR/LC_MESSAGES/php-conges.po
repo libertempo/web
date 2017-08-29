@@ -1974,10 +1974,7 @@ msgid "Aucun_planning"
 msgstr "Aucun planning"
 
 msgid "retour_periode_courante"
-msgstr "retour période courante"
-
-msgid "format_heure_incorrect"
-msgstr "format heure incorrect"
+msgstr "Retourner à la période courante"
 
 msgid "user_modif_heure_additionnelle_titre"
 msgstr "Modification heure additionnelle titre"
