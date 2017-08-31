@@ -49,7 +49,8 @@ class InjectableCreator
                 $paths = explode('/', $_SERVER['PHP_SELF']);
                 array_pop($paths);
                 $host = $_SERVER['HTTP_HOST'] . implode('/', $paths);
-                $baseURIApi = $_SERVER['REQUEST_SCHEME'] . '://' . $host . '/api/';
+                $protocole = true === stripos($_SERVER['SERVER_PROTOCOL'],'https') ? 'https' : 'http';
+                $baseURIApi = $protocole . '://' . $host . '/api/';
 
                 $client = new \GuzzleHttp\Client([
                     'base_uri' => $baseURIApi,
