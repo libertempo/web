@@ -28,7 +28,7 @@ class Gestion {
                             return NIL_INT;
                         }
                     } else {
-                        $errorLst[] = _('non autorisée');
+                        $errorLst[] = _('non autorisé');
                         $return = NIL_INT;
                     }
                     break;

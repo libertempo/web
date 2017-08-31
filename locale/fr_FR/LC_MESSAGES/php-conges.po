@@ -1969,3 +1969,28 @@ msgstr "fin de matinée"
 
 msgid "form_fin_pm"
 msgstr "fin d'après-midi"
+
+msgid "Aucun_planning"
+msgstr "Aucun planning"
+
+msgid "retour_periode_courante"
+msgstr "Retourner à la période courante"
+
+msgid "user_modif_heure_additionnelle_titre"
+msgstr "Modification heure additionnelle titre"
+
+msgid "resp_traite_user_etat_heures_additionnelles"
+msgstr "Traitement des demandes d'heures additionnelles"
+
+msgid "resp_traite_user_aucune_heure_additionnelle"
+msgstr "Aucune demande d'heure additionnelle à traiter"
+
+msgid "resp_traite_user_aucune_heure_repos"
+msgstr "Aucune demande d'heure de repos à traiter"
+
+msgid "resp_traite_user_etat_heures_repos"
+msgstr "Traitement des demandes d'heures de repos"
+
+msgid "install_maj_cas_echec_backup"
+msgstr "Attention! La base de donnée n'a pas pu être sauvegardée."
+
