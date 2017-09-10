@@ -129,8 +129,6 @@ class Fonctions
         $return .= '<a href="' . ROOT_PATH . 'admin/admin_index.php?onglet=ajout-user" style="float:right" class="btn btn-success">' . _('admin_onglet_add_user') . '</a>';
         $return .= '<h1>' . _('admin_onglet_gestion_user') . '</h1>';
 
-        $return = '<h1>' . _('admin_onglet_gestion_user') . '</h1>';
-
         /*********************/
         /* Etat Utilisateurs */
         /*********************/
