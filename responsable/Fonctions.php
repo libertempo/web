@@ -364,7 +364,7 @@ class Fonctions
             }
 
             // affichage des users dont on est grand responsable :
-            if( ($_SESSION['config']['double_validation_conges']) && ($_SESSION['config']['grand_resp_ajout_conges']) ) {
+            if( ($config->isDoubleValidationActive()) && ($config->canGrandResponsableAjouteConge()) ) {
                 $nb_colspan=50;
                 $return .= '<tr align="center"><td class="histo" style="background-color: #CCC;" colspan="' . $nb_colspan . '"><i>' . _('resp_etat_users_titre_double_valid') . '</i></td></tr>';
 
@@ -386,7 +386,7 @@ class Fonctions
                             $return .= '<td>' . $tab_conges[$libelle]['nb_an'] . ' <i>(' . $tab_conges[$libelle]['solde'] . ')</i></td>';
                             $return .= '<td align="center" class="histo">' . $champ_saisie_conges . '</td>';
                         }
-                        if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+                        if ($config->isCongesExceptionnelleActive()) {
                             foreach($tab_type_conges_exceptionnels as $id_conges => $libelle) {
                                 /** le champ de saisie est <input type="text" name="tab_champ_saisie[valeur de u_login][id_du_type_de_conges]" value="[valeur du nb de jours ajouté saisi]"> */
                                 $champ_saisie_conges="<input type=\"text\" name=\"tab_champ_saisie[$current_login][$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\">";
@@ -1750,15 +1750,15 @@ class Fonctions
             /* Génération du datePicker et de ses options */
             $daysOfWeekDisabled = [];
             $datesDisabled      = [];
-            if ((false == $_SESSION['config']['dimanche_travail'])
-                && (false == $_SESSION['config']['samedi_travail'])
+            if ((!$config->isDimancheOuvrable())
+                && (!$config->isSamediOuvrable())
             ) {
                 $daysOfWeekDisabled = [0,6];
             } else {
-                if (false == $_SESSION['config']['dimanche_travail']) {
+                if (!$config->isDimancheOuvrable()) {
                     $daysOfWeekDisabled = [0];
                 }
-                if (false == $_SESSION['config']['samedi_travail']) {
+                if (!$config->isSamediOuvrable()) {
                     $daysOfWeekDisabled = [6];
                 }
             }

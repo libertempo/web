@@ -45,6 +45,7 @@ function getTitleJour(\App\Libraries\Calendrier\Evenements $evenements, $nom, $j
     }
     return '';
 }
+$config = new \App\Libraries\Configuration();
 
 $calendar = new \CalendR\Calendar();
 $jourDemande = null;
@@ -82,7 +83,7 @@ if ($jourDemande instanceof \DateTimeInterface) {
         $jourDemande->modify('+1 day'),
         $utilisateursATrouver,
         canSessionVoirEvenementEnTransit($_SESSION),
-        $_SESSION['config']['gestion_heures']
+        $config->isHeuresAutorise()
     );
     require_once VIEW_PATH . 'Calendrier/Jour.php';
 } else {
@@ -91,7 +92,7 @@ if ($jourDemande instanceof \DateTimeInterface) {
         $moisDemande->modify('+1 month'),
         $utilisateursATrouver,
         canSessionVoirEvenementEnTransit($_SESSION),
-        $_SESSION['config']['gestion_heures']
+        $config->isHeuresAutorise()
     );
     require_once VIEW_PATH . 'Calendrier/Mois.php';
 }

@@ -321,11 +321,6 @@ class Configuration {
         return $this->getValeur($nom, '09_jours ouvrables');
     }
 
-    public function isGroupeActive()
-    {
-        return $this->getGroupeGestionGroupesValeur('gestion_groupes');
-    }
-
     public function canFermetureParGroupe()
     {
         return $this->getGroupeGestionGroupesValeur('fermeture_par_groupe');

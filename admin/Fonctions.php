@@ -167,13 +167,13 @@ class Fonctions
             $childTable .= '<th>' . _('divers_solde') . ' ' . $libelle . '</th>';
         }
 
-        if($_SESSION['config']['gestion_heures']){
+        if($config->isHeuresAutorise()){
             $childTable .= '<th>' . _('divers_solde') . ' ' . _('heures') . '</th>';
         }
 
         $childTable .= '<th></th>';
         $childTable .= '<th></th>';
-        if($config->canAdminChangePassword() && ($_SESSION['config']['how_to_connect_user'] == "dbconges")) {
+        if($config->canAdminChangePassword() && "dbconges" == $config->getHowToConnectUser()) {
             $childTable .= '<th></th>';
         }
         $childTable .= '</tr>';
@@ -251,7 +251,7 @@ class Fonctions
                 }
             }
 
-            if($_SESSION['config']['gestion_heures']){
+            if($config->isHeuresAutorise()){
                 $childTable .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($tab_current_infos['solde_heure']) . '</td>';
             }
 

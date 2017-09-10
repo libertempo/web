@@ -304,7 +304,7 @@ class Fonctions
                 $datesDisabled[] = \App\Helpers\Formatter::dateIso2Fr($date);
             }
         }
-        $startDate = ($_SESSION['config']['interdit_saisie_periode_date_passee']) ? 'd' : '';
+        $startDate = ($config->canUserSaisieDemandePasse()) ? 'd' : '';
 
         $datePickerOpts = [
             'daysOfWeekDisabled' => $daysOfWeekDisabled,

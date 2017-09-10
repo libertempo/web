@@ -280,7 +280,7 @@ class Additionnelle extends \App\ProtoControllers\Employe\AHeure
         ];
 
         $return = '';
-        if( $_SESSION['config']['user_saisie_demande'] || $_SESSION['config']['user_saisie_mission'] ) {
+        if($config->canUserSaisieDemande() || $config->canUserSaisieMission()) {
             $return .= '<a href="' . ROOT_PATH . 'utilisateur/user_index.php?onglet=ajout_heure_additionnelle" style="float:right" class="btn btn-success">' . _('divers_ajout_heure_additionnelle') . '</a>';
         }
         $return .= '<h1>' . _('user_liste_heure_additionnelle_titre') . '</h1>';

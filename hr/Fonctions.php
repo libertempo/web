@@ -84,7 +84,7 @@ class Fonctions
                 $childTable .= '<tr class="' . (($tab_current_infos['is_active']=='Y') ? 'actif' : 'inactif') . '">';
                 $childTable .= '<td class="utilisateur"><strong>' . $tab_current_infos['nom'] . ' ' . $tab_current_infos['prenom'] . '</strong>';
                 $childTable .= '<span class="login">' . $current_login . '</span>';
-                if($_SESSION['config']['where_to_find_user_email']=="dbconges") {
+                if(!$config->getMailFromLdap()) {
                     $childTable .= '<span class="mail">' . $tab_current_infos['email'] . '</span>';
                 }
                 // droit utilisateur
@@ -1470,7 +1470,7 @@ class Fonctions
                         $return .= '<td>' . $tab_conges[$libelle]['nb_an'] . ' <i>(' . $tab_conges[$libelle]['solde'] . ')</i></td>';
                         $return .= '<td align="center" class="histo">' . $champ_saisie_conges . '</td>';
                     }
-                    if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+                    if ($config->isCongesExceptionnelleActive()) {
                         foreach($tab_type_conges_exceptionnels as $id_conges => $libelle) {
                             /** le champ de saisie est <input type="text" name="tab_champ_saisie[valeur de u_login][id_du_type_de_conges]" value="[valeur du nb de jours ajouté saisi]"> */
                             $champ_saisie_conges="<input class=\"form-control\" type=\"text\" name=\"tab_champ_saisie[$current_login][$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\">";

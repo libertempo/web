@@ -1501,39 +1501,6 @@ function recup_tableau_conges_for_user($login, $hide_conges_exceptionnels)
     return $result;
 }
 
-<<<<<<< HEAD
-=======
-// recup dans un tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
-function recup_tableau_conges_for_users( $hide_conges_exceptionnels, $logins = false)
-{
-    $config = new \App\Libraries\Configuration();
-    // on pourrait tout faire en un seule select, mais cela bug si on change la prise en charge des conges exceptionnels en cours d'utilisation ...
-
-    if ($logins === false)
-        $logins = '';
-    else
-        $logins = ' AND su_login IN ( \''.implode('\', \'',$logins).'\') ';
-
-    if ($config->isCongesExceptionnelleActive() && ! $hide_conges_exceptionnels) // on prend tout les types de conges
-        $request = 'SELECT su_login, ta_libelle,  su_nb_an, su_solde, su_reliquat FROM conges_solde_user, conges_type_absence WHERE conges_type_absence.ta_id = conges_solde_user.su_abs_id '.$logins.' ORDER BY ta_type , su_abs_id ASC';
-    else // on prend tout les types de conges SAUF les conges exceptionnels
-        $request = 'SELECT su_login, ta_libelle, su_nb_an, su_solde, su_reliquat FROM conges_solde_user, conges_type_absence WHERE conges_type_absence.ta_type != \'conges_exceptionnels\' AND conges_type_absence.ta_id = conges_solde_user.su_abs_id '.$logins.' ORDER BY su_abs_id ASC';
-
-    $data = \includes\SQL::query($request);
-
-    $result=array();
-    while ($l = $data->fetch_array())
-    {
-        $tab=array();
-        $tab['nb_an'] = affiche_decimal($l['su_nb_an']);
-        $tab['solde'] = affiche_decimal($l['su_solde']);
-        $tab['reliquat'] = affiche_decimal($l['su_reliquat']);
-        $result[ $l['su_login'] ][ $l['ta_libelle'] ]   = $tab;
-    }
-    return $result;
-}
-
->>>>>>> la je sais plus
 // affichage du tableau récapitulatif des solde de congés d'un user
 function affiche_tableau_bilan_conges_user($login)
 {
@@ -1555,7 +1522,7 @@ function affiche_tableau_bilan_conges_user($login)
     $return .= '<table class="table table-hover table-responsive table-condensed table-bordered">';
     $return .= '<thead>';
     $colspan = count($tab_cong_user) * 2 + 1 ;
-    $colspan = $_SESSION['config']['gestion_heures'] ? $colspan + 1 : $colspan;
+    $colspan = $config->isHeuresAutorise() ? $colspan + 1 : $colspan;
     $return .= '<tr><td></td><td colspan="' . $colspan . '">SOLDES</td></tr>';
     $return .= '<tr>';
     $return .= '<th class="titre">'. _('divers_quotite') .'</th>';
@@ -1567,7 +1534,7 @@ function affiche_tableau_bilan_conges_user($login)
             $return .= '<th class="annuel">' . $id . ' / ' . _('divers_an_maj') . '</th><th class="solde">' . $id . '</th>';
         }
     }
-    if($_SESSION['config']['gestion_heures']){
+    if($config->isHeuresAutorise()){
         $return .= '<th class="solde">' . _('heure') . '</th>';
     }
     $return .= '</tr>';
@@ -1582,7 +1549,7 @@ function affiche_tableau_bilan_conges_user($login)
             $return .= '<td class="annuel">' . $val['nb_an'] . '</td><td class="solde">' . $val['solde'] . ($val['reliquat'] > 0 ? ' (' . _('dont_reliquat') . ' ' . $val['reliquat'] . ')' : '') . '</td>';
         }
     }
-    if($_SESSION['config']['gestion_heures']){
+    if($config->isHeuresAutorise()){
         $timestampSolde = \App\ProtoControllers\Utilisateur::getSoldeHeure($login);
         $return .= '<td class="solde">'. \App\Helpers\Formatter::timestamp2Duree($timestampSolde) .'</td>';
     }
