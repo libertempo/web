@@ -48,8 +48,9 @@ class InjectableCreator
             case \App\Libraries\ApiClient::class:
                 $paths = explode('/', $_SERVER['PHP_SELF']);
                 array_pop($paths);
+                $scheme = parse_url($_SESSION['config']['URL_ACCUEIL_CONGES'], \PHP_URL_SCHEME);
                 $host = $_SERVER['HTTP_HOST'] . implode('/', $paths);
-                $baseURIApi = 'http://' . $host . '/api/';
+                $baseURIApi = (false == $scheme ? 'http' : $scheme) . '://' . $host . '/api/';
 
                 $client = new \GuzzleHttp\Client([
                     'base_uri' => $baseURIApi,
