@@ -1,8 +1,8 @@
  ![Logo](http://libertempo.tuxfamily.org/Logo-Libertempo.png)
 
 
-[![BCH compliance](https://bettercodehub.com/edge/badge/Libertempo/Libertempo-web?branch=develop)](https://bettercodehub.com/) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/ed902981f4fb40bda7b90c199a0b4da1)](https://www.codacy.com/app/Libertempo/Libertempo-web?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Libertempo/Libertempo-web&amp;utm_campaign=Badge_Grade)
-
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ed902981f4fb40bda7b90c199a0b4da1)](https://www.codacy.com/app/Libertempo/Libertempo-web?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Libertempo/Libertempo-web&amp;utm_campaign=Badge_Grade)
+![build_status](https://travis-ci.org/Libertempo/Libertempo-web.svg?branch=master)
 
 ----------
 
@@ -17,7 +17,7 @@ Libertempo est une application web interactive de gestion des congés du personn
 Libertempo se veut être au plus proche des règles inhérentes aux réglementations françaises tout en restant paramétrable afin de répondre aux particularités et conventions des entreprises et des administrations.
 
 # Version recommandée
-Vous pouvez télécharger la version stable la plus récente directement depuis [master](https://github.com/Libertempo/Libertempo-web/archive/master.zip). ![build_status](https://travis-ci.org/Libertempo/Libertempo-web.svg?branch=master)
+Vous pouvez télécharger la version stable la plus récente directement depuis [master](https://github.com/Libertempo/Libertempo-web/archive/master.zip).
 
 Chaque nouvelle version est mise à disposition sur [github](https://github.com/Libertempo/Libertempo-web/releases) et sur [libertempo.tuxfamily.org](http://libertempo.tuxfamily.org/downloads/)
 
@@ -26,6 +26,7 @@ Chaque nouvelle version est mise à disposition sur [github](https://github.com/
 |-------|-----|
 | php   | 5.6 |
 | mysql | 5.6 |
+| apache| 2.4 |
 
 # Installation
 Rendez vous sur la [documentation](http://libertempo.tuxfamily.org/Documentation).
