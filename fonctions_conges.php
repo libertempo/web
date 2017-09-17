@@ -1266,7 +1266,7 @@ function init_config_tab()
 {
     static $userlogin = null;
     static $result = null;
-    if ($result === null || $userlogin != $_SESSION['userlogin'])
+    if ($result === null || (isset($_SESSION['userlogin']) && $userlogin != $_SESSION['userlogin']))
     {
 
         include ROOT_PATH .'version.php';

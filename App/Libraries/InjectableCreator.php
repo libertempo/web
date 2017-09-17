@@ -1,6 +1,8 @@
 <?php
 namespace App\Libraries;
 
+use App\Libraries\Calendrier\Evenements;
+
 /**
  * Gestionnaire minimal d'injection de dépendances
  *
@@ -37,17 +39,20 @@ class InjectableCreator
         }
 
         switch ($classname) {
-            case 'App\Libraries\Calendrier\Evenements\Weekend':
-            case 'App\Libraries\Calendrier\Evenements\Ferie':
-            case 'App\Libraries\Calendrier\Evenements\Fermeture':
-            case 'App\Libraries\Calendrier\Evenements\Conge':
-            case 'App\Libraries\Calendrier\Evenements\EchangeRtt':
-            case 'App\Libraries\Calendrier\Evenements\Heure\Additionnelle':
-            case 'App\Libraries\Calendrier\Evenements\Heure\Repos':
+            case Evenements\Weekend::class:
+            case Evenements\Ferie::class:
+            case Evenements\Fermeture::class:
+            case Evenements\Conge::class:
+            case Evenements\EchangeRtt::class:
+            case Evenements\Heure\Additionnelle::class:
+            case Evenements\Heure\Repos::class:
                 return new $classname($this->db);
             case \App\Libraries\ApiClient::class:
                 $paths = explode('/', $_SERVER['PHP_SELF']);
                 array_pop($paths);
+                // TODO à supprimer quand on aura un vrai DI
+                include_once ROOT_PATH .'fonctions_conges.php' ;
+                $_SESSION['config']=init_config_tab();
                 $scheme = parse_url($_SESSION['config']['URL_ACCUEIL_CONGES'], \PHP_URL_SCHEME);
                 $host = $_SERVER['HTTP_HOST'] . implode('/', $paths);
                 $baseURIApi = (false == $scheme ? 'http' : $scheme) . '://' . $host . '/api/';

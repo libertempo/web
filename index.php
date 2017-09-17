@@ -10,6 +10,8 @@ if (!is_readable( CONFIG_PATH .'dbconnect.php'))
 include_once INCLUDE_PATH .'fonction.php';
 include_once ROOT_PATH .'fonctions_conges.php'; // for init_config_tab()
 $_SESSION['config']=init_config_tab();      // on initialise le tableau des variables de config
+$injectableCreator = new \App\Libraries\InjectableCreator(\includes\SQL::singleton());
+$api = $injectableCreator->get(\App\Libraries\ApiClient::class);
 
 /***** DEBUT DU PROG *****/
 

@@ -27,7 +27,7 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     define('BACKUP_PATH',      ROOT_PATH . 'backup' . DS);
     define('TEMPLATE_PATH',    ROOT_PATH . 'template/reboot/');
     define('API_SYSPATH', ABSOLUTE_SYSPATH . 'vendor' . DS . 'Libertempo' . DS . 'libertempo-api' . DS);
-    define('API_URL', ROOT_PATH . 'api/');
+    define('API_PATH', ROOT_PATH . 'api/');
     define('PLUGINS_DIR',      INCLUDE_PATH . 'plugins/');
     define('NIL_INT',          -1);
     define('STATUS_ACTIVE',    1);
@@ -88,9 +88,6 @@ if (!defined( 'DEFINE_INCLUDE' )) {
             break;
     }
     session_start();
-
-    $injectableCreator = new \App\Libraries\InjectableCreator(\includes\SQL::singleton());
-    $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
 
     /* Définition de headers de sécurité */
     header('X-XSS-Protection: 1; mode=block');
