@@ -36,7 +36,7 @@ class Conge
         // on initialise le tableau global des jours fériés s'il ne l'est pas déjà :
         init_tab_jours_feries();
 
-        if($config->canUserSaisieDemande() || $config->canUserSaisieMission()) {
+        if ($config->canUserSaisieDemande() || $config->canUserSaisieMission()) {
             $return .= '<a href="' . ROOT_PATH . 'utilisateur/user_index.php?onglet=nouvelle_absence" style="float:right" class="btn btn-success">' . _('divers_nouvelle_absence') . '</a>';
         }
         $return .= '<h1>' . _('user_liste_conge_titre') . '</h1>';
@@ -71,13 +71,13 @@ class Conge
         } else {
             $i = true;
             $listeConges = $this->getListeSQL($listId);
-            $modificationAutorisee = $config->canUserModifieDemande();
-            $affichageDateTraitement = $config->canAfficheDateTraitement();
+            $modifAutorisee = $config->canUserModifieDemande();
+            $affichDateTraitement = $config->canAfficheDateTraitement();
             foreach ($listeConges as $conges) {
                 /** Dates demande / traitement */
                 $dateDemande = '';
                 $dateReponse = '';
-                if ($affichageDateTraitement) {
+                if ($affichDateTraitement) {
                     if (!empty($conges["p_date_demande"])) {
                         list($date, $heure) = explode(' ', $conges["p_date_demande"]);
                         $dateDemande = '(' . \App\Helpers\Formatter::dateIso2Fr($date) . ' ' . $heure . ') ';
@@ -122,13 +122,13 @@ class Conge
 
                 // si on peut modifier une demande on defini le lien à afficher
                 if ($conges["p_etat"] == \App\Models\Conge::STATUT_DEMANDE) {
-                    if ($modificationAutorisee) {
+                    if ($modifAutorisee) {
                         $user_modif_demande = '<a href="user_index.php?p_num=' . $conges['p_num'] . '&onglet=modif_demande"><i class="fa fa-pencil"></i></a>';
                     }
                     $user_suppr_demande = '<a href="user_index.php?p_num=' . $conges['p_num'] . '&onglet=suppr_demande"><i class="fa fa-times-circle"></i></a>';
                 }
 
-                if ($modificationAutorisee) {
+                if ($modifAutorisee) {
                     $childTable .= $user_modif_demande . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 
                 }

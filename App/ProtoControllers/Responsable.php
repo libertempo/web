@@ -187,7 +187,7 @@ class Responsable
      */
     public static function isRespParDelegation($resp, $user) {
         $config = new \App\Libraries\Configuration();
-        if(!$config->isGestionResponsableAbsent()){
+        if (!$config->isGestionResponsableAbsent()){
             return FALSE;
         }
         $usersRespRespAbs = [];

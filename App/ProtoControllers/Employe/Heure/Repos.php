@@ -278,7 +278,7 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
         ];
 
         $return = '';
-        if($config->canUserSaisieDemande() || $config->canUserSaisieMission()) {
+        if ($config->canUserSaisieDemande() || $config->canUserSaisieMission()) {
             $return .= '<a href="' . ROOT_PATH . 'utilisateur/user_index.php?onglet=ajout_heure_repos" style="float:right" class="btn btn-success">' . _('divers_ajout_heure_repos') . '</a>';
         }
         $return .= '<h1>' . _('user_liste_heure_repos_titre') . '</h1>';
@@ -489,7 +489,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
     public function canUserEdit($id, $user)
     {
         $config = new \App\Libraries\Configuration();
-        if(!$config->canUserModifieDemande()){
+        if (!$config->canUserModifieDemande()){
             return FALSE;
         }
         

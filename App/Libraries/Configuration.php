@@ -283,12 +283,12 @@ class Configuration {
     }
 
     public function getMailFromLdap(){
-        if($this->getGroupeMailValeur('where_to_find_user_email') == 'ldap')
+        if ($this->getGroupeMailValeur('where_to_find_user_email') == 'ldap')
         {
             return TRUE;
-        } else {
-            return FALSE;
-        }
+        } 
+
+        return FALSE;
     }
 
     /**

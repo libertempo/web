@@ -94,7 +94,7 @@ class Gestion {
             }
         }
 
-        if($config->isDoubleValidationActive() && $post['new_group_double_valid'] == 'Y'){
+        if ($config->isDoubleValidationActive() && $post['new_group_double_valid'] == 'Y'){
             $data['isDoubleValidation'] = 'Y';
 
             if(!empty($post['checkbox_group_grand_resps'])){
@@ -487,7 +487,7 @@ class Gestion {
         $childTable .= '<th>' . _('admin_groupes_groupe') . '</th>';
         $childTable .= '<th>' . _('admin_groupes_libelle') . '</th>';
         $childTable .= '<th>' . _('admin_groupes_nb_users') . '</th>';
-        if($config->isDoubleValidationActive()){
+        if ($config->isDoubleValidationActive()){
             $childTable .= '<th>' . _('admin_groupes_double_valid') . '</th>';
         }
         $childTable .= '<th></th></tr></thead><tbody>';
