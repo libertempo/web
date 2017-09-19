@@ -90,6 +90,6 @@ class Fonctions extends \Tests\Units\TestUnit
         $this->function->str_replace = '';
         $this->function->file_put_contents = '';
 
-        $this->string($class::addInstanceName($this->db))->isIdenticalTo($lt);
+        $this->string($class::addInstanceName($this->db))->isIdenticalTo($instance);
     }
 }
