@@ -201,6 +201,7 @@ function session_create($username)
         if(isset($_SESSION)) unset($_SESSION);
 
         session_start();
+        session_regenerate_id();
         $_SESSION['userlogin']=$username;
         $maintenant=time();
         $_SESSION['timestamp_start']=$maintenant;

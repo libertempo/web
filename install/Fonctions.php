@@ -207,7 +207,7 @@ class Fonctions {
             $sql_update_lang="UPDATE conges_config SET conf_valeur = '$lang' WHERE conf_nom='lang' ";
             $result_update_lang = \includes\SQL::query($sql_update_lang) ;
             /* Prénommage de l'instance et pointage API */
-            $instance = self::addInstanceName(\includes\SQL::singleton());
+            self::addInstanceName(\includes\SQL::singleton());
 
             $comment_log = "Install de php_conges (version = $config_php_conges_version) ";
             log_action(0, "", "", $comment_log);

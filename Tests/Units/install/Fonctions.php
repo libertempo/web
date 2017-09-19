@@ -83,9 +83,9 @@ class Fonctions extends \Tests\Units\TestUnit
     {
         $class = $this->testedClass()->getClass();
         $this->function->stripos = 1;
-        $lt = 'libertempo';
-        $this->function->mb_substr = $lt;
-        $this->function->parse_url = $lt;
+        $instance = 'libertempo';
+        $this->function->mb_substr = $instance;
+        $this->function->parse_url = $instance;
         $this->function->file_get_contents = '';
         $this->function->str_replace = '';
         $this->function->file_put_contents = '';

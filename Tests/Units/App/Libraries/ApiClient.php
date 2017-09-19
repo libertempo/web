@@ -151,8 +151,6 @@ class ApiClient extends \Tests\Units\TestUnit
             throw new \GuzzleHttp\Exception\ClientException('', $request);
         };
 
-        $api = new _ApiClient($this->client);
-
         $this->exception(function () use ($closure) {
             $closure();
         })->isInstanceOf(\LogicException::class);
