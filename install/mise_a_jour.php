@@ -8,13 +8,7 @@ include_once INCLUDE_PATH .'fonction.php';
 include ROOT_PATH .'version.php' ;
 
 $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-
-//recup de la langue
-$lang=(isset($_GET['lang']) ? $_GET['lang'] : ((isset($_POST['lang'])) ? $_POST['lang'] : "") ) ;
-$lang = htmlentities($lang, ENT_QUOTES | ENT_HTML401);
-if (!in_array($lang, ['fr_FR', 'en_US', 'es_ES'], true)) {
-    $lang = '';
-}
+$lang = 'fr_FR';
 
 // recup des parametres
 $action = (isset($_GET['action']) ? $_GET['action'] : (isset($_POST['action']) ? $_POST['action'] : "")) ;
