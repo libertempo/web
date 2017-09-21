@@ -112,9 +112,9 @@ final class ApiClient
         try {
             $response = $this->client->request($method, $uri, $options);
         } catch (Exception\ServerException $e) {
-            throw new \RuntimeException('Erreur serveur : '. Psr7\str($e->getResponse()));
+            throw new \RuntimeException('Erreur serveur : '. $this->formatError($e));
         } catch (Exception\ClientException $e) {
-            throw new \LogicException('Erreur client : '. Psr7\str($e->getRequest()));
+            throw new \LogicException('Erreur client : '. $this->formatError($e));
         }
 
         $body = json_decode($response->getBody(), false);
@@ -123,6 +123,18 @@ final class ApiClient
         }
 
         return $body;
+    }
+
+    /**
+     * Formate les erreurs pour afficher les informations nécessaires à la correction
+     *
+     * @param \Exception $exception
+     *
+     * @return string
+     */
+    private function formatError(\Exception $exception)
+    {
+        return 'Request -> ' . Psr7\str($exception->getRequest()) . ' | Response <- ' . Psr7\str($exception->getResponse());
     }
 
     /**
