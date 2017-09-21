@@ -48,14 +48,10 @@ class InjectableCreator
             case Evenements\Heure\Repos::class:
                 return new $classname($this->db);
             case \App\Libraries\ApiClient::class:
-                $paths = explode('/', $_SERVER['PHP_SELF']);
-                array_pop($paths);
                 // TODO à supprimer quand on aura un vrai DI
                 include_once ROOT_PATH .'fonctions_conges.php' ;
                 $_SESSION['config']=init_config_tab();
-                $scheme = parse_url($_SESSION['config']['URL_ACCUEIL_CONGES'], \PHP_URL_SCHEME);
-                $host = $_SERVER['HTTP_HOST'] . implode('/', $paths);
-                $baseURIApi = (false == $scheme ? 'http' : $scheme) . '://' . $host . '/api/';
+                $baseURIApi = $_SESSION['config']['URL_ACCUEIL_CONGES'] . '/api/';
 
                 $client = new \GuzzleHttp\Client([
                     'base_uri' => $baseURIApi,
