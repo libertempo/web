@@ -922,17 +922,17 @@
     },
     {
         "name": "Libertempo/libertempo-api",
-        "version": "0.3.1",
-        "version_normalized": "0.3.1.0",
+        "version": "0.3.2",
+        "version_normalized": "0.3.2.0",
         "source": {
             "type": "git",
             "url": "https://github.com/Libertempo/libertempo-api.git",
-            "reference": "b66ef5a8e81c86392480b226d1ac8f07ddd67aea"
+            "reference": "af435eba60055c1174ecddd050c739175a34df2a"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/Libertempo/libertempo-api/zipball/b66ef5a8e81c86392480b226d1ac8f07ddd67aea",
-            "reference": "b66ef5a8e81c86392480b226d1ac8f07ddd67aea",
+            "url": "https://api.github.com/repos/Libertempo/libertempo-api/zipball/af435eba60055c1174ecddd050c739175a34df2a",
+            "reference": "af435eba60055c1174ecddd050c739175a34df2a",
             "shasum": ""
         },
         "require": {
@@ -942,7 +942,7 @@
         "require-dev": {
             "atoum/atoum": "3.0.0"
         },
-        "time": "2017-09-21 21:26:35",
+        "time": "2017-09-21 22:29:41",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -968,7 +968,7 @@
         "support": {
             "email": "libertempo@lists.tuxfamily.org",
             "irc": "irc://irc.tuxfamily.org/#Libertempo",
-            "source": "https://github.com/Libertempo/libertempo-api/tree/0.3.1",
+            "source": "https://github.com/Libertempo/libertempo-api/tree/0.3.2",
             "issues": "https://github.com/Libertempo/libertempo-api/issues"
         }
     }

@@ -36,7 +36,7 @@ $app->add(function (IRequest $request, IResponse $response, callable $next) {
 /* Middleware 5 : découverte et mise en forme des noms de ressources */
 $app->add(function (IRequest $request, IResponse $response, callable $next) {
     $path = trim(trim($request->getUri()->getPath()), '/');
-    $api = '/api/';
+    $api = 'api/';
     $position = mb_stripos($path, $api);
     if (false !== $position) {
         $uriUpdated = $request->getUri()->withPath('/' . substr($path, $position + strlen($api)));
