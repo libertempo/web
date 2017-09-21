@@ -23,10 +23,14 @@
     },
     "license": "AGPL-3.0",
     "config": {
+        "bin-dir": "Vendor/Bin",
         "vendor-dir": "Vendor"
     },
     "require": {
         "raveren/kint": "^1.0",
         "slim/slim": "^3.5"
+    },
+    "require-dev": {
+        "atoum/atoum": "3.0.0"
     }
 }
