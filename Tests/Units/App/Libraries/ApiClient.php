@@ -114,8 +114,7 @@ class ApiClient extends \Tests\Units\TestUnit
 
     private function requestServerError(callable $closure)
     {
-        $this->mockGenerator->orphanize('__construct');
-        $request = new \mock\GuzzleHttp\Psr7\Request();
+        $request = new \mock\GuzzleHttp\Psr7\Request('GET', '');
         $response = new \mock\GuzzleHttp\Psr7\Response();
 
         $this->calling($this->client)->request = function () use ($request, $response) {
@@ -146,9 +145,10 @@ class ApiClient extends \Tests\Units\TestUnit
     private function requestClientError(callable $closure)
     {
         $request = new \mock\GuzzleHttp\Psr7\Request('GET', '');
+        $response = new \mock\GuzzleHttp\Psr7\Response();
 
-        $this->calling($this->client)->request = function () use ($request) {
-            throw new \GuzzleHttp\Exception\ClientException('', $request);
+        $this->calling($this->client)->request = function () use ($request, $response) {
+            throw new \GuzzleHttp\Exception\ClientException('', $request, $response);
         };
 
         $this->exception(function () use ($closure) {
