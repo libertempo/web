@@ -847,6 +847,7 @@ class Fonctions
         if ($_SESSION['config']['gestion_heures'] && !\admin\Fonctions::FormAddUserSoldeHeureOk($tab_new_user['solde_heure'])) {
             $valid_5=false;
         }
+
         // si aucune erreur de saisie n'a ete commise
         if(($valid_1) && ($valid_2) && ($valid_3) && ($valid_4) && ($valid_5) && ($valid_reliquat) && $tab_new_user['login']!="") {
             // UPDATE de la table conges_users
@@ -1256,9 +1257,9 @@ class Fonctions
             $tab_new_solde      = getpost_variable('tab_new_solde') ;
             $tab_new_reliquat   = getpost_variable('tab_new_reliquat') ;
 
-            $tab_new_user['login']      = htmlentities(getpost_variable('new_login'), ENT_QUOTES | ENT_HTML401);
-            $tab_new_user['nom']    = htmlentities(getpost_variable('new_nom'), ENT_QUOTES | ENT_HTML401);
-            $tab_new_user['prenom']     = htmlentities(getpost_variable('new_prenom'), ENT_QUOTES | ENT_HTML401);
+            $tab_new_user['login']      = htmlspecialchars(getpost_variable('new_login'), ENT_QUOTES | ENT_HTML401);
+            $tab_new_user['nom']    = htmlspecialchars(getpost_variable('new_nom'), ENT_QUOTES | ENT_HTML401);
+            $tab_new_user['prenom']     = htmlspecialchars(getpost_variable('new_prenom'), ENT_QUOTES | ENT_HTML401);
             $tab_new_user['quotite']    = htmlentities(getpost_variable('new_quotite'), ENT_QUOTES | ENT_HTML401);
             if ($_SESSION['config']['gestion_heures'] ) {
                 $tab_new_user['solde_heure']    = htmlentities(getpost_variable('new_solde_heure'), ENT_QUOTES | ENT_HTML401);
@@ -2085,6 +2086,7 @@ class Fonctions
         // si on recupere les users dans ldap et qu'on vient d'en créer un depuis la liste déroulante
         if ($_SESSION['config']['export_users_from_ldap'] && isset($_POST['new_ldap_user'])) {
             $index = 0;
+
             // On lance une boucle pour selectionner tous les items
             // traitements : $login contient les valeurs successives
             foreach($_POST['new_ldap_user'] as $login) {
@@ -2137,9 +2139,9 @@ class Fonctions
                 $tab_new_user[$login]['new_year'] = getpost_variable('new_year');
             }
         } else {
-            $tab_new_user[0]['login']      = htmlentities(getpost_variable('new_login'), ENT_QUOTES | ENT_HTML401);
-            $tab_new_user[0]['nom']        = htmlentities(getpost_variable('new_nom'), ENT_QUOTES | ENT_HTML401);
-            $tab_new_user[0]['prenom']     = htmlentities(getpost_variable('new_prenom'), ENT_QUOTES | ENT_HTML401);
+            $tab_new_user[0]['login']      = htmlspecialchars(getpost_variable('new_login'), ENT_QUOTES | ENT_HTML401);
+            $tab_new_user[0]['nom']        = htmlspecialchars(getpost_variable('new_nom'), ENT_QUOTES | ENT_HTML401);
+            $tab_new_user[0]['prenom']     = htmlspecialchars(getpost_variable('new_prenom'), ENT_QUOTES | ENT_HTML401);
             $tab_new_user[0]['quotite']    = getpost_variable('new_quotite');
             $tab_new_user[0]['is_resp']    = htmlentities(getpost_variable('new_is_resp'), ENT_QUOTES | ENT_HTML401);
             $tab_new_user[0]['solde_heure']= htmlentities(getpost_variable('new_solde_heure'), ENT_QUOTES | ENT_HTML401);
