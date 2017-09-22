@@ -12,6 +12,7 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     define('ABSOLUTE_SYSPATH', dirname(__FILE__) . DS);
     define('DEBUG_SYSPATH',    ABSOLUTE_SYSPATH . 'debug' . DS);
     define('PUBLIC_PATH',      ROOT_PATH . 'Public/');
+    define('VIEW_PATH', ROOT_PATH . 'App' . DS . 'Views' . DS);
     define('ASSETS_PATH',      PUBLIC_PATH . 'Assets/');
     define('JS_PATH',          ASSETS_PATH . 'Js/');
     define('IMG_PATH',         ASSETS_PATH . 'Img/');
@@ -23,7 +24,10 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     define('INSTALL_PATH',     ROOT_PATH . 'install/');
     define('LOCALE_PATH',      ROOT_PATH . 'locale/');
     define('DUMP_PATH',        ROOT_PATH . 'dump/');
+    define('BACKUP_PATH',      ROOT_PATH . 'backup' . DS);
     define('TEMPLATE_PATH',    ROOT_PATH . 'template/reboot/');
+    define('API_SYSPATH', ABSOLUTE_SYSPATH . 'vendor' . DS . 'Libertempo' . DS . 'libertempo-api' . DS);
+    define('API_PATH', ROOT_PATH . 'api/');
     define('PLUGINS_DIR',      INCLUDE_PATH . 'plugins/');
     define('NIL_INT',          -1);
     define('STATUS_ACTIVE',    1);
@@ -35,9 +39,12 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     \Kint::enabled(false);
     \Kint::$theme = 'solarized-dark';
     switch (ENV) {
+        case ENV_PROD:
+            error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
+            ini_set("display_errors", 0);
+            break;
         case ENV_DEV:
             error_reporting(-1);
-            \Kint::enabled(true);
             // no break;
         case ENV_TEST:
             \Kint::enabled(true);
@@ -80,6 +87,7 @@ if (!defined( 'DEFINE_INCLUDE' )) {
             });
             break;
     }
+    session_start();
 
     /* Définition de headers de sécurité */
     header('X-XSS-Protection: 1; mode=block');

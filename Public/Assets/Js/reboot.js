@@ -41,7 +41,6 @@ function compter_jours()
 {
     $(document).ready(function () {
         var login = document.forms["dem_conges"].user_login.value;
-        var session = document.forms["dem_conges"].session.value;
         var d_debut = document.forms["dem_conges"].new_debut.value;
         var d_fin = document.forms["dem_conges"].new_fin.value;
 	    var opt_deb = document.querySelector('input[name = "new_demi_jour_deb"]:checked').value;
@@ -53,7 +52,7 @@ function compter_jours()
         }
 
         if( (d_debut) && (d_fin)) {
-            var page = '../calcul_nb_jours_pris.php?session=' + session + '&date_debut=' + d_debut + '&date_fin=' + d_fin+'&user=' + login + '&opt_debut=' +opt_deb + '&opt_fin=' + opt_fin + '&p_num=' +p_num;
+            var page = '../calcul_nb_jours_pris.php?date_debut=' + d_debut + '&date_fin=' + d_fin+'&user=' + login + '&opt_debut=' +opt_deb + '&opt_fin=' + opt_fin + '&p_num=' +p_num;
 
             $.ajax({
                 type : 'GET',
@@ -63,8 +62,8 @@ function compter_jours()
                 {
                     var arr = new Array();
                     arr = JSON.parse(data);
-                    document.forms["dem_conges"].new_nb_jours.value=arr["nb"];
                     document.getElementById('comment_nbj').innerHTML = arr["comm"];
+                    document.getElementById('new_nb_jours').innerHTML = arr["nb"];
                 },
             });
         }
@@ -76,8 +75,9 @@ function compter_jours()
  *
  * @param object opts
  */
-function generateDatePicker(opts, compter = true)
+function generateDatePicker(opts, compter)
 {
+    var compter = (typeof compter !== 'undefined') ? compter : true;
     var defaultOpts = {
         format             : 'dd/mm/yyyy',
         language           : 'fr',
@@ -95,7 +95,7 @@ function generateDatePicker(opts, compter = true)
     }
     $(document).ready(function () {
         $('input.date').datepicker(toApply).on("change", function() {
-            if( compter == true) {
+            if(compter == true) {
                 compter_jours();
             }
         });
@@ -299,8 +299,61 @@ var planningController = function (idElement, options, creneaux)
     this.typeSemaine = this.options['typeSemaine'];
     this.debut = this.options['typeHeureDebut'];
     this.fin   = this.options['typeHeureFin'];
+    this.creneauxList = [];
     this.incrementMatin = 0;
     this.incrementApresMidi = 0;
+
+    /**
+     * Fonction appelé à chaque modification (ajout/suppression) de période du planning
+     * @return void
+     */
+    this._changePeriod = function () {
+        // On calcul et affiche la durée de travail hebdomadaire
+        var minuteHedbo = this._calculDureeHebdomadaire();
+        this._affichageDureeHebdomadaire(minuteHedbo);
+    }
+
+    /**
+     * Affiche la durée de travail hebdomadaire, utilise l'option dureeHebdoId passée lors de la création de l'objet planningController
+     * @param  {int} minuteHedbo Le nombre de minutes travaillées par mois
+     * @return void
+     */
+    this._affichageDureeHebdomadaire = function (minuteHedbo) {
+        if(typeof this.options['dureeHebdoId'] === "undefined") {
+            return;
+        }
+        var diffHrs = Math.floor(minuteHedbo / 60); // heures
+        var diffMins = Math.round(minuteHedbo % 60); // minutes
+        diffMins == 0 ? diffMins = '' : diffMins = diffMins + 'm';
+        document.getElementById(this.options['dureeHebdoId']).innerHTML = diffHrs + 'h ' + diffMins;
+    }
+
+    /**
+     * Calcul le temps de travail hebdomadaire du planning
+     * Utilise le model creneauxList
+     * @return {int} minuteHedbo Le nombre de minutes travaillées par mois
+     */
+    this._calculDureeHebdomadaire = function () {
+        var minuteHedbo = 0;
+        var creneau, heureFin, heureDebut;
+        var dFin = new Date();
+        var dDebut = new Date();
+        for (var i in this.creneauxList) {
+            for (var j in this.creneauxList[i] ) {
+                creneau = this.creneauxList[i][j];
+                heureFin = creneau[1].split(':');
+                dFin.setHours(heureFin[0], heureFin[1]);
+                heureDebut = creneau[0].split(':');
+                // cas du changement de jour ex: creneau de 22h30 à 5h30
+                if (heureDebut[0] > heureFin[0]) {
+                    heureDebut[0] -= 24;
+                }
+                dDebut.setHours(heureDebut[0], heureDebut[1]);
+                minuteHedbo += ((dFin - dDebut)% 86400000/ 60000);
+            }
+        }
+        return minuteHedbo;
+    }
 
     /**
      * Lance l'initialisation de l'afficheur
@@ -430,12 +483,20 @@ var planningController = function (idElement, options, creneaux)
 
         var periode = this._getVisiblePeriod(jourSelectionne, typePeriodeSelected, debutVal, finVal);
 
+        // Change le model
+        if (typeof this.creneauxList[jourSelectionne] === "undefined") {
+            this.creneauxList[jourSelectionne] = [];
+        }
+        var creneau = [debutVal,finVal];
+        this.creneauxList[jourSelectionne].push(creneau);
+
         var allPeriods = ligneCible.querySelectorAll('span[data-heures]');
         if (0 < allPeriods.length) {
             cellCible.insertBefore(periode, this._findSuccPeriod(periode, allPeriods));
         } else {
             cellCible.appendChild(periode);
         }
+        this._changePeriod();
     }
 
     /**
@@ -456,7 +517,7 @@ var planningController = function (idElement, options, creneaux)
         buttonTag.className = 'btn btn-default btn-xs';
         buttonTag.type = 'button';
         buttonTag.addEventListener('click', function (e) {
-            this._removePeriod(buttonTag.parentNode);
+            this._removePeriod(buttonTag.parentNode, jourSelectionne, debutVal, finVal);
         }.bind(this));
         iTo.className = 'fa fa-caret-right';
         var debut = document.createTextNode(' ' + debutVal + ' ');
@@ -508,14 +569,25 @@ var planningController = function (idElement, options, creneaux)
         return span;
     }
 
+
     /**
      * Supprime une période du planning
      *
      * @return void
      */
-    this._removePeriod = function (period)
+    this._removePeriod = function (period, jourSelectionne, debutVal, finVal)
     {
+        // Change le model
+        if (typeof this.creneauxList[jourSelectionne] !== "undefined") {
+            var index = this.creneauxList[jourSelectionne].findIndex(function(creneauxArray) {
+                return (creneauxArray[0]==debutVal && creneauxArray[1] == finVal);
+            });
+            if (index != -1) {
+                this.creneauxList[jourSelectionne].splice(index, 1);
+            }
+        }
         period.parentNode.removeChild(period);
+        this._changePeriod();
     }
 
     /**
@@ -617,3 +689,40 @@ var selectAssociationPlanning = function (idElement, associationsGroupe, nilId)
         }
     }
 }
+
+function showDivGroupeGrandResp(selectId,DivGrandRespId) { 
+    if(document.getElementById(selectId).value=='Y') { 
+        document.getElementById(DivGrandRespId).classList.remove('hide'); 
+    } else {
+        document.getElementById(DivGrandRespId).classList.add('hide'); 
+    }
+    return false;
+}
+
+$(function(){
+	$('div[onload]').trigger('onload');
+});
+
+function disableCheckboxGroupe(checkbox,selectId) {
+    var login = checkbox.id.substring(5);
+    var employe = 'Emp_' + login;
+    if (checkbox.checked) {
+        document.getElementById(employe).disabled = true;
+        document.getElementById(employe).checked = false;
+        if(checkbox.id.substring(0,4) == 'Gres'){
+            document.getElementById('Resp_' + login).disabled = true;
+            document.getElementById('Resp_' + login).checked = false;
+        } else if(document.getElementById(selectId).value=='Y') {
+            document.getElementById('Gres_' + login).disabled = true;
+            document.getElementById('Gres_' + login).checked = false;
+        }
+    } else {
+        document.getElementById(employe).disabled = false;
+        if(checkbox.id.substring(0,4) == 'Gres'){
+            document.getElementById('Resp_' + login).disabled = false;
+        } else if(document.getElementById(selectId).value=='Y') {
+            document.getElementById('Gres_' + login).disabled = false;
+        }
+    }
+}
+

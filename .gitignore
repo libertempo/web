@@ -1,3 +1,4 @@
+api/.htaccess
 tags
 debug/
 cfg/env.php
@@ -7,3 +8,4 @@ cfg/config_SMTP.php
 .idea/
 /nbproject/
 /dump/*.dump
+/backup/libertempo*

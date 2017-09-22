@@ -1,3 +1,3 @@
 <?php
 
-echo \config\Fonctions::mailModule($session);
+echo \config\Fonctions::mailModule();

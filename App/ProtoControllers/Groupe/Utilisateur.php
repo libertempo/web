@@ -40,4 +40,17 @@ class Utilisateur {
 
         return $users;
     }
+    
+    public static function isUtilisateurDansGroupe($login, $GroupeId, \includes\SQL $sql)
+    {
+        $req = 'SELECT EXISTS (
+                    SELECT gu_login
+                    FROM `conges_groupe_users`
+                    WHERE gu_gid =' . (int) $GroupeId . '
+                    AND gu_login ="' . $sql->quote($login) . '"
+                )';
+        $query = $sql->query($req);
+
+        return 0 < (int) $query->fetch_array()[0];
+    }
 }

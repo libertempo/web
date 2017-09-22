@@ -3,8 +3,6 @@
 define('ROOT_PATH', '../');
 require_once ROOT_PATH . 'define.php';
 
-$session = (isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : session_id()));
-
 include_once ROOT_PATH . 'fonctions_conges.php';
 include_once INCLUDE_PATH . 'fonction.php';
 include_once INCLUDE_PATH . 'session.php';
@@ -25,25 +23,14 @@ $onglet = getpost_variable('onglet');
 
 $onglets = array();
 
-if ($_SESSION['config']['user_saisie_demande'] || $_SESSION['config']['user_saisie_mission']) {
-    $onglets['nouvelle_absence'] = _('divers_nouvelle_absence');
-}
+$onglets['liste_conge'] = _('user_conge');
 
 if ($_SESSION['config']['user_echange_rtt']) {
     $onglets['echange_jour_absence'] = _('user_onglet_echange_abs');
 }
 
-$onglets['liste_conge'] = _('user_liste_conge');
-
 if ($_SESSION['config']['gestion_heures']) {
-    if ($_SESSION['config']['user_saisie_demande'] || $_SESSION['config']['user_saisie_mission']) {
-        $onglets['ajout_heure_repos'] = _('divers_ajout_heure_repos');
-    }
     $onglets['liste_heure_repos'] = _('user_liste_heure_repos');
-    
-    if ($_SESSION['config']['user_saisie_demande'] || $_SESSION['config']['user_saisie_mission']) {
-        $onglets['ajout_heure_additionnelle'] = _('divers_ajout_heure_additionnelle');
-    }
     $onglets['liste_heure_additionnelle'] = _('user_liste_heure_additionnelle');
 }
 
@@ -51,8 +38,8 @@ if ($_SESSION['config']['auth'] && $_SESSION['config']['user_ch_passwd']) {
     $onglets['changer_mot_de_passe'] = _('user_onglet_change_passwd');
 }
 
-if (!isset($onglets[$onglet]) && !in_array($onglet, array('modif_demande', 'suppr_demande', 'modif_heure_repos', 'modif_heure_additionnelle'))) {
-    $onglet = 'nouvelle_absence';
+if ( !isset($onglets[ $onglet ]) && !in_array($onglet, array('modif_demande','suppr_demande','modif_heure_repos', 'modif_heure_additionnelle', 'nouvelle_absence', 'ajout_heure_repos', 'ajout_heure_additionnelle'))) {
+    $onglet = 'liste_conge';
 }
 
 /*********************************/
@@ -69,7 +56,7 @@ header_menu('', 'Libertempo : ' . _('user'), $add_css);
 echo '<div id="onglet_menu">';
 foreach ($onglets as $key => $title) {
     echo '<div class="onglet ' . ($onglet == $key ? ' active' : '') . '" >
-        <a href="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $key . '">' . $title . '</a>
+        <a href="' . $PHP_SELF . '?onglet=' . $key . '">' . $title . '</a>
     </div>';
 }
 echo '</div>';
@@ -88,7 +75,7 @@ echo "</div>\n";
 /*   AFFICHAGE DE L'ONGLET ...    */
 /*********************************/
 
-echo '<div class="' . $onglet . ' wrapper">';
+echo '<div class="' . $onglet . ' main-content">';
 include ROOT_PATH . 'utilisateur/user_' . $onglet . '.php';
 echo '</div>';
 

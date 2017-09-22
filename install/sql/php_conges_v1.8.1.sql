@@ -317,7 +317,6 @@ CREATE TABLE IF NOT EXISTS `conges_users` (
   `u_email` varchar(100) DEFAULT NULL,
   `u_num_exercice` int(2) NOT NULL DEFAULT '0',
   PRIMARY KEY (`u_login`),
-  KEY `u_login` (`u_login`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
@@ -359,7 +358,7 @@ INSERT IGNORE INTO `conges_users` VALUES ('admin', 'Libertempo', 'admin', 'N', '
 INSERT IGNORE INTO `conges_config` VALUES ('installed_version', '0', '00_libertempo', 'texte', 'config_comment_installed_version');
 INSERT IGNORE INTO `conges_config` VALUES ('lang', 'fr', '00_libertempo', 'enum=fr/test', 'config_comment_lang');
 
-INSERT IGNORE INTO `conges_config` VALUES ('URL_ACCUEIL_CONGES', 'http://mon-serveur/mon-chemin/libertempo', '01_Serveur Web', 'texte', 'config_comment_URL_ACCUEIL_CONGES');
+INSERT IGNORE INTO `conges_config` VALUES ('URL_ACCUEIL_CONGES', '', '01_Serveur Web', 'texte', 'config_comment_URL_ACCUEIL_CONGES');
 
 INSERT IGNORE INTO `conges_config` VALUES ('auth', 'TRUE', '04_Authentification', 'boolean', 'config_comment_auth');
 INSERT IGNORE INTO `conges_config` VALUES ('how_to_connect_user', 'dbconges', '04_Authentification', 'enum=dbconges/ldap/CAS', 'config_comment_how_to_connect_user');
@@ -452,4 +451,3 @@ INSERT IGNORE INTO `conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUE
 INSERT IGNORE INTO `conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUES ('mail_new_absence_conges', 'APPLI CONGES - Nouvelle absence', ' __SENDER_NAME__ vous informe qu\'il sera absent. Ce type de congés ne necéssite pas de validation. Vous pouvez consulter votre application Libertempo : __URL_ACCUEIL_CONGES__/\r\n\r\n-------------------------------------------------------------------------------------------------------\r\nCeci est un message automatique. ');
 INSERT IGNORE INTO `conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUES ('mail_modif_demande_conges', 'APPLI CONGES - Modification demande', ' __SENDER_NAME__ à modifié une demande non traité. Vous pouvez consulter votre application Libertempo : __URL_ACCUEIL_CONGES__/\r\n\r\n-------------------------------------------------------------------------------------------------------\r\nCeci est un message automatique.');
 INSERT IGNORE INTO `conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUES ('mail_supp_demande_conges', 'APPLI CONGES - Suppression demande', ' __SENDER_NAME__ à supprimé une demande non traité. Vous pouvez consulter votre application Libertempo : __URL_ACCUEIL_CONGES__/\r\n\r\n-------------------------------------------------------------------------------------------------------\r\nCeci est un message automatique.');
-

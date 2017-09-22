@@ -3,16 +3,15 @@ define('ROOT_PATH', '../');
 require_once ROOT_PATH . 'define.php';
 
 //include_once ROOT_PATH .'fonctions_conges.php' ;
-session_start();
 $_SESSION['lang'] = 'fr_FR';
 
 include_once INCLUDE_PATH .'fonction.php';
 
 include_once ROOT_PATH .'fonctions_conges.php' ;
+session_regenerate_id(false);
 
 $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 
-$session= htmlentities(session_id());
 
 //recup de la langue
 $lang=(isset($_GET['lang']) ? $_GET['lang'] : ((isset($_POST['lang'])) ? $_POST['lang'] : "") ) ;
@@ -31,13 +30,12 @@ $dbpasswd = htmlentities($dbpasswd, ENT_QUOTES | ENT_HTML401);
 $dbdb=(isset($_GET['dbdb']) ? $_GET['dbdb'] : ((isset($_POST['dbdb'])) ? $_POST['dbdb'] : "") ) ;
 $dbdb = htmlentities($dbdb, ENT_QUOTES | ENT_HTML401);
 
-
     if($lang=="") {
         header_popup();
         echo "<br><br>\n";
         echo "Choisissez votre langue :<br> \n";
         echo "Choose your language :<br>\n";
-        echo "<form action=\"$PHP_SELF?session=$session\" method=\"POST\">\n";
+        echo "<form action=\"$PHP_SELF\" method=\"POST\">\n";
         // affichage de la liste des langues supportées ...
         // on lit le contenu du répertoire lang et on parse les nom de ficher (ex lang_fr_francais.php)
         echo affiche_select_from_lang_directory("", "");
@@ -48,16 +46,16 @@ $dbdb = htmlentities($dbdb, ENT_QUOTES | ENT_HTML401);
         bottom();
     } elseif(\install\Fonctions::test_dbconnect_file()!=TRUE) {
         $_SESSION['langue']=$lang;      // sert ensuite pour mettre la langue dans la table config
-//        $tab_lang_file = glob("lang/lang_".$lang.'_*.php');
-//        include$tab_lang_file[0] ;
-//        include$lang_file ;
+        //        $tab_lang_file = glob("lang/lang_".$lang.'_*.php');
+        //        include$tab_lang_file[0] ;
+        //        include$lang_file ;
 
         header_popup();
         echo "<center>\n";
         echo "<br><br>\n";
         if($dbserver=="" || $dbuser=="" || $dbpasswd=="") {
             echo  _('db_configuration');
-            echo "<form action=\"$PHP_SELF?session=$session\" method=\"POST\">\n";
+            echo "<form action=\"$PHP_SELF\" method=\"POST\">\n";
             echo  _('db_configuration_server');
             echo '<INPUT type="text" value="localhost" name="dbserver"><br>';
             echo  _('db_configuration_name');
@@ -77,13 +75,22 @@ $dbdb = htmlentities($dbdb, ENT_QUOTES | ENT_HTML401);
                 echo "le dossier ".CONFIG_PATH." n'est pas accessible en écriture";
             } else {
                 echo _('db_configuration_ok');
-                echo "<br><a href=\"$PHP_SELF?session=$session&lang=$lang\"> continuez....</a><br>\n";
+                echo "<br><a href=\"$PHP_SELF?lang=$lang\"> continuez....</a><br>\n";
             }
         }
         bottom();
     } else {
         include_once CONFIG_PATH .'dbconnect.php';
         include_once ROOT_PATH .'version.php';
+
+        $data = ['serveur' => $mysql_serveur, 'base' => $mysql_database, 'user' => $mysql_user, 'password' => $mysql_pass];
+        try {
+            \install\Fonctions::setDataConfigurationApi($data);
+        } catch (\Exception $e) {
+            echo 'Échec de l\'installation / mise à jour : ' . $e->getMessage();
+            exit();
+        }
+
 
         if(!\install\Fonctions::test_database()) {
             header_popup();
@@ -97,7 +104,7 @@ $dbdb = htmlentities($dbdb, ENT_QUOTES | ENT_HTML401);
             echo "<br><br>\n";
             if($dbserver=="" || $dbuser=="" || $dbpasswd=="") {
                 echo  _('db_configuration');
-                echo "<form action=\"$PHP_SELF?session=$session\" method=\"POST\">\n";
+                echo "<form action=\"$PHP_SELF\" method=\"POST\">\n";
                 echo  _('db_configuration_server');
                 echo '<INPUT type="text" value="localhost" name="dbserver"><br>';
                 echo  _('db_configuration_name');
@@ -116,7 +123,7 @@ $dbdb = htmlentities($dbdb, ENT_QUOTES | ENT_HTML401);
                     echo "le dossier ".CONFIG_PATH." n'est pas accessible en écriture";
                 } else {
                     echo _('db_configuration_ok');
-                    echo "<br><a href=\"$PHP_SELF?session=$session&lang=$lang\"> continuez....</a><br>\n";
+                    echo "<br><a href=\"$PHP_SELF?lang=$lang\"> continuez....</a><br>\n";
                 }
             }
 
@@ -138,7 +145,5 @@ $dbdb = htmlentities($dbdb, ENT_QUOTES | ENT_HTML401);
                     echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=../config/\">";
                 }
             }
-
-
         }
     }

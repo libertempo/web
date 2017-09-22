@@ -1,8 +1,6 @@
 <?php
 namespace install;
 
-defined( '_PHP_CONGES' ) or die( 'Restricted access' );
-
 /**
  * Regroupement de fonctions d'installation
  */
@@ -147,11 +145,10 @@ class Fonctions {
         // affichage de la liste des versions ...
         echo "<select name=\"version\">\n";
         echo "<option value=\"0\">". _('install_installed_version') ."</option>\n";
+        echo "<option value=\"1.9\">v1.9</option>\n";
         echo "<option value=\"1.8.1\">v1.8.1</option>\n";
         echo "<option value=\"1.8\">v1.8</option>\n";
         echo "<option value=\"1.7.0\">v1.7.0</option>\n";
-        echo "<option value=\"1.6.0\">v1.6.x</option>\n";
-        echo "<option value=\"1.5.1\">v1.5.x</option>\n";
         echo "</select>\n";
         echo "<br>\n";
         echo "<input type=\"hidden\" name=\"lang\" value=\"$lang\">\n";
@@ -165,12 +162,13 @@ class Fonctions {
     }
 
     // install la nouvelle version dans une database vide ... et config
+
     public static function lance_install($lang)
     {
 
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 
-        include CONFIG_PATH .'dbconnect.php' ;
+        include CONFIG_PATH . 'dbconnect.php';
         include ROOT_PATH .'version.php' ;
 
         //verif si create / alter table possible !!!
@@ -194,9 +192,12 @@ class Fonctions {
         {
             //on execute le script [nouvelle vesion].sql qui crée et initialise les tables
             $file_sql="sql/php_conges_v$config_php_conges_version.sql";
-            if(file_exists($file_sql))
+            if(file_exists($file_sql)) {
                 $result = execute_sql_file($file_sql);
-
+            }
+            if (0 <= version_compare($config_php_conges_version, '1.9')) {
+                \includes\SQL::query('UPDATE `conges_appli` SET appli_valeur =  "' . hash('sha256', time() . rand()) . '" WHERE appli_variable = "token_instance"');
+            }
 
             /*************************************/
             // FIN : mise à jour de la "installed_version" et de la langue dans la table conges_config
@@ -205,17 +206,8 @@ class Fonctions {
 
             $sql_update_lang="UPDATE conges_config SET conf_valeur = '$lang' WHERE conf_nom='lang' ";
             $result_update_lang = \includes\SQL::query($sql_update_lang) ;
-
-            $tab_url=explode("/", filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL));
-
-            array_pop($tab_url);
-            array_pop($tab_url);
-
-            $url_accueil= implode("/", $tab_url) ;  // on prend l'url complet sans le /install/install.php à la fin
-
-            $sql_update_lang="UPDATE conges_config SET conf_valeur = '$url_accueil' WHERE conf_nom='URL_ACCUEIL_CONGES' ";
-            $result_update_lang = \includes\SQL::query($sql_update_lang) ;
-
+            /* Prénommage de l'instance et pointage API */
+            self::addInstanceName(\includes\SQL::singleton());
 
             $comment_log = "Install de php_conges (version = $config_php_conges_version) ";
             log_action(0, "", "", $comment_log);
@@ -242,9 +234,8 @@ class Fonctions {
         if($etape==0)
         {
             //avant tout , on conseille une sauvegarde de la database !! (cf vieux index.php)
-            echo "<h3>". _('install_maj_passer_de') ." <font color=\"black\">$installed_version</font> ". _('install_maj_a_version') ." <font color=\"black\">$config_php_conges_version</font> .</h3>\n";
-            echo "<h3><font color=\"red\">". _('install_maj_sauvegardez') ." !!!</font></h3>\n";
-            echo "<h2>....</h2>\n";
+            echo "<h3>". _('install_maj_passer_de') ." <font color=\"black\">$installed_version</font> ". _('install_maj_a_version') ." <font color=\"black\">$config_php_conges_version</font>.</h3>\n";
+            echo "<h3><font color=\"red\">". _('install_maj_cas_echec_backup') .".</font></h3>\n";
             echo "<br>\n";
             echo "<form action=\"$PHP_SELF?lang=$lang\" method=\"POST\">\n";
             echo "<input type=\"hidden\" name=\"etape\" value=\"1\">\n";
@@ -292,47 +283,39 @@ class Fonctions {
             {
                     echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$PHP_SELF?etape=2&version=$installed_version&lang=$lang\">";
             }
-        }
-        //*** ETAPE 2
-        elseif($etape==2)
-        {
-                $start_version=$installed_version ;
+        } elseif($etape==2) {
+            $start_version = $installed_version ;
 
-            //on lance l'execution (include) des scripts d'upgrade l'un après l'autre jusqu a la version voulue ($config_php_conges_version) ..
-            if(($start_version=="1.5.0")||($start_version=="1.5.1")) {
-                $file_upgrade='upgrade_from_v1.5.0.php';
-                $new_installed_version="1.6.0";
-                // execute le script php d'upgrade de la version1.5.0 (vers la suivante (1.6.0))
-                echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$file_upgrade?etape=2&version=$new_installed_version&lang=$lang\">";
-            } elseif($start_version=="1.6.0") {
-                $file_upgrade='upgrade_from_v1.6.0.php';
-                $new_installed_version="1.7.0";
-                // execute le script php d'upgrade de la version1.6.0 (vers la suivante (1.7.0))
-                echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$file_upgrade?etape=2&version=$new_installed_version&lang=$lang\">";
-            } elseif($start_version=="1.7.0") {
-                $file_upgrade='upgrade_from_v1.7.0.php';
-                $new_installed_version="1.8";
-                // execute le script php d'upgrade de la version1.7.0 (vers la suivante (1.8))
-                echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$file_upgrade?etape=2&version=$new_installed_version&lang=$lang\">";
-	    } elseif($start_version=="1.8") {
-		$file_upgrade='upgrade_from_v1.8.php';
-		$new_installed_version="1.8.1";
-		// execute le script php d'upgrade de la version1.8 (vers la suivante (1.8.1))
-		echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$file_upgrade?etape=2&version=$new_installed_version&lang=$lang\">";
-            } elseif($start_version=="1.8.1") {
-		$file_upgrade='upgrade_from_v1.8.1.php';
-		$new_installed_version="1.9";
-		// execute le script php d'upgrade de la version 1.8.1 (vers la suivante (1.9))
-		echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$file_upgrade?etape=2&version=$new_installed_version&lang=$lang\">";
+            if($start_version == "1.7.0") {
+                $file_upgrade = 'upgrade_from_v1.7.0.php';
+                $new_installed_version = "1.8";
+            } elseif($start_version == "1.8") {
+                $file_upgrade = 'upgrade_from_v1.8.php';
+                $new_installed_version = "1.8.1";
+            } elseif($start_version == "1.8.1") {
+                $file_upgrade = 'upgrade_from_v1.8.1.php';
+                $new_installed_version = "1.9";
+            } elseif($start_version == "1.9") {
+                $file_upgrade = 'upgrade_from_v1.9.php';
+                $new_installed_version = "1.10";
             } else {
-                echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=$PHP_SELF?etape=3&version=$installed_version&lang=$lang\">";
+                $file_upgrade = '';
+                $new_installed_version = $installed_version;
+                $etape = 3;
             }
-        }
-        //*** ETAPE 3
-        elseif($etape==3)
-        {
+            try {
+                if ($new_installed_version !== $start_version) {
+                    \admin\Fonctions::sauvegardeAsFile($start_version, $new_installed_version);
+                }
+                echo '<META HTTP-EQUIV=REFRESH CONTENT="0; URL=' . $file_upgrade . '?etape=' . $etape . '&version=' . $new_installed_version . '&lang=' . $lang . '">';
+            } catch (\Exception $e) {
+                echo 'Abandon de la mise à jour : ' . $e->getMessage();
+            }
+        } elseif($etape == 3) {
+            /* Reset du token d'instance à chaque version */
+            \includes\SQL::query('UPDATE `conges_appli` SET appli_valeur =  "' . hash('sha256', time() . rand()) . '" WHERE appli_variable = "token_instance"');
             // FIN
-            // test si fichiers config.php ou config_old.php existent encore (si oui : demande de les éffacer !
+            // test si fichiers config.php ou config_old.php existent encore (si oui : demande de les effacer !
             if( (\install\Fonctions::test_config_file()) || (\install\Fonctions::test_old_config_file()) )
             {
                 if(test_config_file())
@@ -375,5 +358,51 @@ class Fonctions {
             PRIMARY KEY (`id`)
                 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
         $result_create_table_plugin = \includes\SQL::query($create_table_plugin_query);
+    }
+
+    /**
+     * Définit les données de configuration pour l'API
+     *
+     * @param array $data Données de configuration
+     *
+     * @throws \Exception En cas d'échec d'écriture
+     */
+    public static function setDataConfigurationApi(array $data)
+    {
+        $data = [
+            'db' => [
+                'serveur' => $data['serveur'],
+                'base' => $data['base'],
+                'utilisateur' => $data['user'],
+                'mot_de_passe' => $data['password'],
+            ],
+        ];
+        if (false === file_put_contents(API_SYSPATH . 'configuration.json', json_encode($data))) {
+            throw new \Exception('Création du fichier de config API impossible. Les droits sont-ils bien configurés ?');
+        }
+    }
+
+    /**
+     *
+     * @param \includes\SQL $db DB
+     */
+    public static function addInstanceName(\includes\SQL $db)
+    {
+        $url = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+        $positionInstall = stripos($url, 'install/');
+        if (false === $positionInstall) {
+            throw new \Exception("Le logiciel n'est pas installé correctement. veuillez recommencer");
+        }
+        $instance = mb_substr($url, 0, $positionInstall);
+
+        $requete = 'UPDATE `conges_config` SET conf_valeur = "' . $db->quote($instance) . '"
+        WHERE conf_nom = "URL_ACCUEIL_CONGES" LIMIT 1';
+        $db->query($requete);
+        $path = parse_url($instance, \PHP_URL_PATH);
+        $contentFile = file_get_contents(API_PATH . '.htaccess.example');
+        $newContent = str_replace('vendor', $path . 'vendor', $contentFile);
+        file_put_contents(API_PATH . '.htaccess', $newContent);
+
+        return $instance;
     }
 }

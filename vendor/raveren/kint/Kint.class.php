@@ -2,7 +2,7 @@
 /**
  * Kint is a zero-setup debugging tool to output information about variables and stack traces prettily and comfortably.
  *
- * https://github.com/raveren/kint
+ * https://github.com/kint-php/kint
  */
 
 
@@ -191,7 +191,7 @@ class Kint
 		# set mode for current run
 		$mode = self::enabled();
 		if ( $mode === true ) {
-			$mode = PHP_SAPI === 'cli'
+			$mode = (PHP_SAPI === 'cli' && self::$cliDetection === true)
 				? self::MODE_CLI
 				: self::MODE_RICH;
 		}
@@ -401,7 +401,8 @@ class Kint
 		}
 		$callee = $step;
 
-		if ( !isset( $callee['file'] ) || !is_readable( $callee['file'] ) ) return false;
+		if ( !isset( $callee['file'] ) || !is_readable( $callee['file'] ) )
+			return array( null, null, $callee, $previousCaller, $miniTrace );
 
 
 		# open the file and read it up to the position where the function call expression ended
@@ -453,7 +454,7 @@ class Kint
             \x07*
 
             # main call to Kint
-            {$codePattern}
+            ({$codePattern})
 
 			# spaces everywhere
             \x07*
@@ -469,7 +470,13 @@ class Kint
 
 		$modifiers  = end( $matches[1] );
 		$assignment = end( $matches[2] );
-		$bracket    = end( $matches[3] );
+		$callToKint = end( $matches[3] );
+		$bracket    = end( $matches[4] );
+
+		if ( empty( $callToKint ) ) {
+			# if a wrapper is misconfigured, don't display the whole file as variable name
+			return array( array(), $modifiers, $callee, $previousCaller, $miniTrace );
+		}
 
 		$modifiers = $modifiers[0];
 		if ( $assignment[1] !== -1 ) {

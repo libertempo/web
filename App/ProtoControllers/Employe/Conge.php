@@ -34,6 +34,9 @@ class Conge
         // on initialise le tableau global des jours fériés s'il ne l'est pas déjà :
         init_tab_jours_feries();
 
+        if( $_SESSION['config']['user_saisie_demande'] || $_SESSION['config']['user_saisie_mission'] ) {
+            $return .= '<a href="' . ROOT_PATH . 'utilisateur/user_index.php?onglet=nouvelle_absence" style="float:right" class="btn btn-success">' . _('divers_nouvelle_absence') . '</a>';
+        }
         $return .= '<h1>' . _('user_liste_conge_titre') . '</h1>';
 
         if (!empty($_POST) && $this->isSearch($_POST)) {
@@ -60,7 +63,6 @@ class Conge
         $childTable .= '</tr>';
         $childTable .= '</thead><tbody>';
         $listId = $this->getListeId($params);
-        $session = session_id();
         if (empty($listId)) {
             $colonnes = 8;
             $childTable .= '<tr><td colspan="' . $colonnes . '"><center>' . _('aucun_resultat') . '</center></td></tr>';
@@ -119,9 +121,9 @@ class Conge
                 // si on peut modifier une demande on defini le lien à afficher
                 if ($conges["p_etat"] == \App\Models\Conge::STATUT_DEMANDE) {
                     if (!$interdictionModification) {
-                        $user_modif_demande = '<a href="user_index.php?session=' . $session . '&p_num=' . $conges['p_num'] . '&onglet=modif_demande"><i class="fa fa-pencil"></i></a>';
+                        $user_modif_demande = '<a href="user_index.php?p_num=' . $conges['p_num'] . '&onglet=modif_demande"><i class="fa fa-pencil"></i></a>';
                     }
-                    $user_suppr_demande = '<a href="user_index.php?session=' . $session . '&p_num=' . $conges['p_num'] . '&onglet=suppr_demande"><i class="fa fa-times-circle"></i></a>';
+                    $user_suppr_demande = '<a href="user_index.php?p_num=' . $conges['p_num'] . '&onglet=suppr_demande"><i class="fa fa-times-circle"></i></a>';
                 }
 
                 if (!$interdictionModification) {
@@ -163,7 +165,6 @@ class Conge
      */
     protected function getFormulaireRecherche(array $champs)
     {
-        $session = session_id();
         $form = '';
         $form = '<form method="post" action="" class="form-inline search" role="form">';
         $form .= '<div class="form-group"><label class="control-label col-md-4" for="statut">Statut&nbsp;:</label><div class="col-md-8"><select class="form-control" name="search[p_etat]" id="statut">';
@@ -191,7 +192,7 @@ class Conge
             : '';
             $form .= '<option value="' . $key . '" ' . $selected . '>' . $value . '</option>';
         }
-        $form .= '</select></div></div><div class="form-group"><div class="input-group"><button type="submit" class="btn btn-default"><i class="fa fa-search" aria-hidden="true"></i></button>&nbsp;<a href="' . ROOT_PATH . 'utilisateur/user_index.php?session=' . $session . '&onglet=liste_conge" type="reset" class="btn btn-default">Reset</a></div></div></form>';
+        $form .= '</select></div></div><div class="form-group"><div class="input-group"><button type="submit" class="btn btn-default"><i class="fa fa-search" aria-hidden="true"></i></button>&nbsp;<a href="' . ROOT_PATH . 'utilisateur/user_index.php?onglet=liste_conge" type="reset" class="btn btn-default">Reset</a></div></div></form>';
 
         return $form;
     }

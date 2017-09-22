@@ -1,0 +1,6 @@
+exclude:
+- /vendor/.*
+- /Public/Assets/.*
+component_depth: 1
+languages:
+- php

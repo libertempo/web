@@ -20,7 +20,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         $errorsLst  = [];
 
 
-        $return .= '<h1>' . _('resp_traite_demandes_titre_tableau_1') . '</h1>';
+        $return .= '<h1>' . _('resp_traite_demandes_titre') . '</h1>';
 
         if (!empty($_POST)) {
             if (0 >= (int) $this->post($_POST, $notice, $errorsLst)) {
@@ -74,7 +74,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
                 $childTable .='<tr align="center"><td class="histo" style="background-color: #CCC;" colspan="12"><i>'._('resp_etat_users_titre_double_valid').'</i></td></tr>';
                 $childTable .= $this->getFormDemandes($demandesGrandResp);
             }
-            
+
             if (!empty($demandesRespAbsent)) {
                 $childTable .='<tr align="center"><td class="histo" style="background-color: #CCC;" colspan="11"><i>'._('traitement_demande_par_delegation').'</i></td></tr>';
                 $childTable .= $this->getFormDemandes($demandesRespAbsent);
@@ -102,7 +102,6 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
     {
         $i=true;
         $Table='';
-        $session = (isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : session_id()));
 
         foreach ($demandes as $demande) {
             $id = $demande['p_num'];
@@ -135,12 +134,9 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
             /* Informations pour le positionnement du calendrier */
             list($anneeDebut, $moisDebut) = explode('-', $demande['p_date_deb']);
-            $dateDebut = new \DateTimeImmutable($anneeDebut . '-' . $moisDebut . '-01');
+            $mois = new \DateTimeImmutable($anneeDebut . '-' . $moisDebut . '-01');
             $paramsCalendrier = [
-                'session' => $session,
-                'vue' => \App\ProtoControllers\Calendrier::VUE_MOIS,
-                'begin' => $dateDebut->format('Y-m-d'),
-                'end' => $dateDebut->modify('+1 month')->format('Y-m-d'),
+                'mois' => $mois->format('Y-m'),
             ];
             $Table .= '<td><a href="' . ROOT_PATH . 'calendrier.php?' . http_build_query($paramsCalendrier) . '" title="' . _('consulter_calendrier_de_periode') . '"><i class="fa fa-lg fa-calendar" aria-hidden="true"></i></a></td>';
             $Table .= '<td><input class="form-control" type="text" name="comment_refus['.$id.']" size="20" maxlength="100"></td></tr>';
@@ -284,7 +280,6 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         } else {
             $id = $this->updateSoldeUser($demande['p_login'], $demande['p_nb_jours'], $demande['p_type']);
             $this->updateStatutValidationFinale($demande['p_num']);
-            log_action($demande['p_num'],"ok", $demande['p_login'], 'traitement demande ' . $demande['p_num'] . ' (' . $demande['p_login'] . ') (' . $demande['p_nb_jours'] . ' jours) : OK');
         }
     }
 
@@ -361,10 +356,10 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
     {
         $sql = \includes\SQL::singleton();
 
-        $req   = 'UPDATE conges_solde_user
-                SET su_solde = su_solde-' .number_format($duree,2) . '
-                WHERE su_login = \''. $user .'\'
-                AND su_abs_id = '. (int) $typeId;
+        $req = 'UPDATE conges_solde_user
+                    SET su_solde = su_solde-' .number_format($duree,2) . '
+                    WHERE su_login = \''. \includes\SQL::quote($user) .'\'
+                    AND su_abs_id = '. (int) $typeId;
         $query = $sql->query($req);
 
         return $sql->affected_rows;
@@ -385,7 +380,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
         $req   = 'UPDATE conges_solde_user
                 SET su_reliquat = su_reliquat-' .number_format($duree,2) . '
-                WHERE su_login = \''. $user .'\'
+                WHERE su_login = \''. \includes\SQL::quote($user) .'\'
                 AND su_abs_id = '. (int) $typeId;
         $query = $sql->query($req);
 
@@ -424,13 +419,13 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
     /**
      * Transmet à respN+2 les id des demandes des utilisateurs d'un respN+1 absent
-     * 
+     *
      * @param string $resp login du respN+2
-     * 
-     * @return array $ids 
+     *
+     * @return array $ids
      */
     protected function getIdDemandesResponsableAbsent($resp)
-    { 
+    {
         if(!$_SESSION['config']['gestion_cas_absence_responsable']){
             return [];
         }
@@ -443,7 +438,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
         $usersRespDirect = \App\ProtoControllers\Responsable::getUsersRespDirect($resp);
         $usersgroupesIdResponsable = array_merge($usersgroupesIdResponsable,$usersRespDirect);
-        
+
         foreach ($usersgroupesIdResponsable as $user) {
             if (is_resp($user)) {
                 $usersduRespResponsable[] = $user;
@@ -466,7 +461,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
     /**
      * Retourne les id des demandes délégable
-     * 
+     *
      * @param array $usersRespAbsent
      * @return array $id
      */
@@ -507,7 +502,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         $sql = \includes\SQL::singleton();
         $req = 'SELECT p_num AS id
                 FROM conges_periode
-                WHERE p_login IN (\'' . implode(',', $usersResp) . '\')
+                WHERE p_login IN (\'' . implode('\',\'', $usersResp) . '\')
                 AND p_etat = \''. \App\Models\Conge::STATUT_PREMIERE_VALIDATION .'\'';
         $res = $sql->query($req);
         while ($data = $res->fetch_array()) {
@@ -552,7 +547,8 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
     public function getReliquatconge($login, $typeId)
     {
         $sql = \includes\SQL::singleton();
-        $req = 'SELECT su_reliquat FROM conges_solde_user WHERE su_login = \''.$login.'\'
+        $req = 'SELECT su_reliquat FROM conges_solde_user 
+                WHERE su_login = \'' . \includes\SQL::quote($login) . '\'
                 AND su_abs_id ='. (int) $typeId;
         $query = $sql->query($req);
         $rel = $query->fetch_array()[0];
@@ -620,18 +616,18 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
     public function getTypeLabel($type)
     {
         $sql = \includes\SQL::singleton();
-        $req = 'SELECT ta_libelle FROM conges_type_absence WHERE ta_id = '.$type;
+        $req = 'SELECT ta_libelle FROM conges_type_absence WHERE ta_id = ' . $type;
         $query = $sql->query($req);
         $tLabel = $query->fetch_array()[0];
 
         return $tLabel;
     }
-    
+
     /**
      * Retourne le nombre de demande en cours d'un responsable
-     * 
+     *
      * @param $resp
-     * 
+     *
      * @return int
      */
     public function getNbDemandesATraiter($resp)

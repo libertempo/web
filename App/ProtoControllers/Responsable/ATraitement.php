@@ -163,7 +163,6 @@ abstract class ATraitement
     {
         $i=true;
         $Table='';
-        $session = (isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : session_id()));
 
         foreach ($demandes as $demande) {
             $jour   = date('d/m/Y', $demande['debut']);
@@ -182,12 +181,9 @@ abstract class ATraitement
             $Table .= '<td><input type="radio" name="demande['.$id.']" value="NULL" checked></td>';
 
             /* Informations pour le positionnement du calendrier */
-            $dateDebut = new \DateTimeImmutable(date('Y-m', $demande['debut']) . '-01');
+            $mois = new \DateTimeImmutable(date('Y-m', $demande['debut']) . '-01');
             $paramsCalendrier = [
-                'session' => $session,
-                'vue' => \App\ProtoControllers\Calendrier::VUE_MOIS,
-                'begin' => $dateDebut->format('Y-m-d'),
-                'end' => $dateDebut->modify('+1 month')->format('Y-m-d'),
+                'mois' => $mois->format('Y-m'),
             ];
             $Table .= '<td><a href="' . ROOT_PATH . 'calendrier.php?' . http_build_query($paramsCalendrier) . '" title="' . _('consulter_calendrier_de_periode') . '"><i class="fa fa-lg fa-calendar" aria-hidden="true"></i></a></td>';
             $Table .= '<td><input class="form-control" type="text" name="comment_refus['.$id.']" size="20" maxlength="100"></td></tr>';

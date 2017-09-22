@@ -1,4 +1,4 @@
 <?php
 
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
-echo \admin\Fonctions::modifUserModule($session, $onglet);
+echo \admin\Fonctions::modifUserModule($onglet);
