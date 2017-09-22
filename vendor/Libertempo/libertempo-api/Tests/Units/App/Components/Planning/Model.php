@@ -30,7 +30,7 @@ final class Model extends \Tests\Units\App\Libraries\AModel
     }
 
     /**
-     * Teste la méthode __construct sans Id (typiquement lors d'un post())
+     * @inheritDoc
      */
     public function testConstructWithoutId()
     {

@@ -368,7 +368,7 @@ INSERT IGNORE INTO `conges_users` VALUES ('admin', 'Libertempo', 'admin', 'N', '
 INSERT IGNORE INTO `conges_config` VALUES ('installed_version', '0', '00_libertempo', 'texte', 'config_comment_installed_version');
 INSERT IGNORE INTO `conges_config` VALUES ('lang', 'fr', '00_libertempo', 'enum=fr/test', 'config_comment_lang');
 
-INSERT IGNORE INTO `conges_config` VALUES ('URL_ACCUEIL_CONGES', 'http://mon-serveur/mon-chemin/libertempo', '01_Serveur Web', 'texte', 'config_comment_URL_ACCUEIL_CONGES');
+INSERT IGNORE INTO `conges_config` VALUES ('URL_ACCUEIL_CONGES', '', '01_Serveur Web', 'texte', 'config_comment_URL_ACCUEIL_CONGES');
 
 INSERT IGNORE INTO `conges_config` VALUES ('auth', 'TRUE', '04_Authentification', 'boolean', 'config_comment_auth');
 INSERT IGNORE INTO `conges_config` VALUES ('how_to_connect_user', 'dbconges', '04_Authentification', 'enum=dbconges/ldap/CAS/SSO', 'config_comment_how_to_connect_user');

@@ -94,7 +94,7 @@ class Dao extends \App\Libraries\ADao
             VALUES (:name, :status)';
         $res = $this->storageConnector->prepare($req);
         $res->execute([
-            ':name' => $data['name'],
+            'name' => $data['name'],
             'status' => $data['status'],
         ]);
 
@@ -115,7 +115,7 @@ class Dao extends \App\Libraries\ADao
             WHERE id = :id';
         $res = $this->storageConnector->prepare($req);
         $res->execute([
-            ':name' => $data['name'],
+            'name' => $data['name'],
             'status' => $data['status'],
             'id' => $id,
         ]);
@@ -133,7 +133,7 @@ class Dao extends \App\Libraries\ADao
         $req = 'DELETE FROM ' . $this->getTableName() . '
             WHERE id = :id';
         $res = $this->storageConnector->prepare($req);
-        $res->execute([':id' => $id]);
+        $res->execute(['id' => $id]);
 
         return $res->rowCount();
     }
