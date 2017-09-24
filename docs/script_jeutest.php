@@ -227,7 +227,7 @@ if (!empty($_POST)) {
             $responsable = 'pierre';
         }
 
-        $sqlCongesUser .= "INSERT INTO `conges_users` VALUES ('" . $prenom . "', '" . $prenom . "', '" . $prenom . "', '" . $isResponsable . "', '" . $responsable . "', '" . $isAdmin . "', '" . $isHr . "', '" . $isActive . "', 'N', '" . $password . "', " . $quotite . ", '', 0, 7, " . $heureSolde . ",CURRENT_TIMESTAMP,'');\n";
+        $sqlCongesUser .= "INSERT INTO `conges_users` VALUES ('" . $prenom . "', '" . $prenom . "', '" . $prenom . "', '" . $isResponsable . "', '" . $responsable . "', '" . $isAdmin . "', '" . $isHr . "', '" . $isActive . "', 'N', '" . $password . "', " . $quotite . ", '', 0, 7, " . $heureSolde . ",CURRENT_TIMESTAMP,'', null);\n";
 
         if (is_int(array_search($prenom, $responsableGroupe))) {
             // Le prochain utilisateur aura pour responsable la personne courante si celle ci est responsable de son groupe
@@ -235,7 +235,7 @@ if (!empty($_POST)) {
         }
     }
     // A la fin on ajoute l'utilisateur Pierre qui est RH, il est aussi le responsable des responsables (n+2 des autres utilisateurs)
-    $sqlCongesUser .= "INSERT INTO `conges_users` VALUES('pierre', 'point', 'pierre', 'Y', 'conges', 'N', 'Y', 'Y', 'N', '84675f2baf7140037b8f5afe54eef841', 100, '', 0, 7, 0,CURRENT_TIMESTAMP,'');";
+    $sqlCongesUser .= "INSERT INTO `conges_users` VALUES('pierre', 'point', 'pierre', 'Y', 'conges', 'N', 'Y', 'Y', 'N', '84675f2baf7140037b8f5afe54eef841', 100, '', 0, 7, 0,CURRENT_TIMESTAMP,'', null);";
 
     $sqlCongesSoldeUser = "-- Contenu de la table `conges_solde_user`\n\n";
     for ($i = 0; $i < $nombreUtilisateurs; $i++) {
