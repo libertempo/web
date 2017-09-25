@@ -6,7 +6,7 @@ require_once ROOT_PATH . 'define.php';
 $_SESSION['lang'] = 'fr_FR';
 
 include_once INCLUDE_PATH .'fonction.php';
-
+session_delete();
 include_once ROOT_PATH .'fonctions_conges.php' ;
 session_regenerate_id(false);
 
