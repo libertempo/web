@@ -15,7 +15,7 @@ final class Identification
     /**
      * @var int Durée de validité du token fourni, en secondes
      */
-    const DUREE_SESSION = 5*60;
+    const DUREE_SESSION = 30*60;
     /**
      * @var \App\Libraries\AModel
      */
