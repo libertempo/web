@@ -1,7 +1,9 @@
 <?php
 namespace Middlewares;
 
+use App\Libraries\AModel;
 use Psr\Http\Message\ServerRequestInterface as IRequest;
+use App\Helpers\Formatter;
 
 /**
  * Identification d'un utilisateur via la transmission du token
@@ -11,13 +13,38 @@ use Psr\Http\Message\ServerRequestInterface as IRequest;
 final class Identification
 {
     /**
-     * @var IRequest
+     * @var int Durée de validité du token fourni, en secondes
      */
-    private $request;
+    const DUREE_SESSION = 5*60;
+    /**
+     * @var \App\Libraries\AModel
+     */
+    private $utilisateur;
 
-    public function __construct(IRequest $request)
+    public function __construct(IRequest $request, \App\Libraries\ARepository $repository)
     {
-        $this->request = $request;
+        $token = $request->getHeaderLine('Token');
+        if (empty($token)) {
+            return;
+        }
+        try {
+            $this->utilisateur = $repository->find([
+                'token' => $token,
+                'gt_date_last_access' => $this->getDateLastAccessAuthorized()
+            ]);
+        } catch (\UnexpectedValueException $e) {
+            return;
+        }
+    }
+
+    /**
+     * Retourne la date limite de dernier accès pour être considéré en ligne
+     *
+     * @return string
+     */
+    private function getDateLastAccessAuthorized()
+    {
+        return Formatter::timeToSQLDatetime(time() - static::DUREE_SESSION);
     }
 
     /**
@@ -25,8 +52,17 @@ final class Identification
      *
      * @return bool
      */
-    public function isTokenApiOk()
+    public function isTokenOk()
     {
-        return true;
+        return $this->getUtilisateur() instanceof AModel;
+    }
+
+    /**
+     * Retourne l'utilisateur courant
+     * @since 0.3
+     */
+    public function getUtilisateur()
+    {
+        return $this->utilisateur;
     }
 }

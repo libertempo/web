@@ -72,6 +72,7 @@ final class Dao extends \Tests\Units\App\Libraries\ADao
 
         $put = $dao->put([
             'token' => 'token',
+            'date_last_access' => 'date_last_access',
         ], 'Aladdin');
 
         $this->variable($put)->isNull();

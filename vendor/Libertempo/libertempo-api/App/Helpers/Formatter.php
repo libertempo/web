@@ -59,4 +59,17 @@ class Formatter
 
         return $terme;
     }
+
+    /**
+     * Fourni la datetime au format SQL d'un timestamp donné
+     *
+     * @param int $timestamp
+     *
+     * @return string
+     * @since 0.3
+     */
+    public static function timeToSQLDatetime($timestamp)
+    {
+        return date('Y-m-d H:i', $timestamp);
+    }
 }
