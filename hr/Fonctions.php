@@ -3261,9 +3261,6 @@ enctype="application/x-www-form-urlencoded"><input type="hidden" name="planning_
             }
         }
 
-        /* Préparation et requêtage */
-        $listPlanningId = \App\ProtoControllers\HautResponsable\Planning::getListPlanningId();
-
         $return = '';
         $return .= '<a href="' . ROOT_PATH . 'hr/hr_index.php?onglet=ajout_planning" style="float:right" class="btn btn-success">' . _('hr_ajout_planning') . '</a>';
         $return .= '<h1>' . _('hr_affichage_liste_planning_titre') . '</h1>';
@@ -3277,22 +3274,34 @@ enctype="application/x-www-form-urlencoded"><input type="hidden" name="planning_
             'table-striped',
         ]);
         $childTable = '<thead><tr><th>' . _('divers_nom_maj_1') . '</th><th style="width:10%"></th></tr></thead><tbody>';
+
+        $listPlanningId = \App\ProtoControllers\HautResponsable\Planning::getListPlanningId();
         if (empty($listPlanningId)) {
             $childTable .= '<tr><td colspan="2"><center>' . _('aucun_resultat') . '</center></td></tr>';
         } else {
             $listIdUsed   = \App\ProtoControllers\HautResponsable\Planning::getListPlanningUsed($listPlanningId);
-            $listPlanning = \App\ProtoControllers\HautResponsable\Planning::getListPlanning($listPlanningId);
-            foreach ($listPlanning as $planning) {
-                $childTable .= '<tr><td>' . $planning['name'] . '</td>';
-                $childTable .= '<td><form action="" method="post" accept-charset="UTF-8"
-enctype="application/x-www-form-urlencoded"><a  title="' . _('form_modif') . '" href="hr_index.php?onglet=modif_planning&id=' . $planning['planning_id'] .
-                '"><i class="fa fa-pencil"></i></a>&nbsp;&nbsp;';
-                if (in_array($planning['planning_id'], $listIdUsed)) {
-                    $childTable .= '<button title="' . _('planning_used') . '" type="button" class="btn btn-link disabled"><i class="fa fa-times-circle"></i></button>';
-                } else {
-                    $childTable .= '<input type="hidden" name="planning_id" value="' . $planning['planning_id'] . '" /><input type="hidden" name="_METHOD" value="DELETE" /><button type="submit" class="btn btn-link" title="' . _('form_supprim') . '"><i class="fa fa-times-circle"></i></button>';
+            $injectableCreator = new \App\Libraries\InjectableCreator(\includes\SQL::singleton());
+            $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
+            try {
+                $plannings = $api->get('plannings', $_SESSION['token']);
+                if (400 <= $plannings->code){
+                    throw new \Exception();
                 }
-                $childTable .= '</form></td></tr>';
+                foreach ($plannings->data as $planning) {
+                    $childTable .= '<tr><td>' . $planning->name . '</td>';
+                    $childTable .= '<td><form action="" method="post" accept-charset="UTF-8"
+    enctype="application/x-www-form-urlencoded"><a  title="' . _('form_modif') . '" href="hr_index.php?onglet=modif_planning&id=' . $planning->id .
+                    '"><i class="fa fa-pencil"></i></a>&nbsp;&nbsp;';
+                    if (in_array($planning->id, $listIdUsed)) {
+                        $childTable .= '<button title="' . _('planning_used') . '" type="button" class="btn btn-link disabled"><i class="fa fa-times-circle"></i></button>';
+                    } else {
+                        $childTable .= '<input type="hidden" name="planning_id" value="' . $planning->id . '" /><input type="hidden" name="_METHOD" value="DELETE" /><button type="submit" class="btn btn-link" title="' . _('form_supprim') . '"><i class="fa fa-times-circle"></i></button>';
+                    }
+                    $childTable .= '</form></td></tr>';
+                }
+            } catch (\Exception $e) {
+                // logger erreur
+                $childTable .= '<tr><td colspan="2"><center>' . _('erreur_recuperation_donnee') . '</center></td></tr>';
             }
         }
         $childTable .= '</tbody>';
