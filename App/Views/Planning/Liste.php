@@ -30,11 +30,11 @@
                     <?php else : ?>
                         <form action="" method="post" accept-charset="UTF-8"
                         enctype="application/x-www-form-urlencoded">
-                        <input type="hidden" name="planning_id" value="<?= $planning->id ?>" />
-                        <input type="hidden" name="_METHOD" value="DELETE" />
-                        <button type="submit" class="btn btn-link" title="<?= _('form_supprim') ?>"><i class="fa fa-times-circle"></i></button>
-                    </form>
-                <?php endif ?>
+                            <input type="hidden" name="planning_id" value="<?= $planning->id ?>" />
+                            <input type="hidden" name="_METHOD" value="DELETE" />
+                            <button type="submit" class="btn btn-link" title="<?= _('form_supprim') ?>"><i class="fa fa-times-circle"></i></button>
+                        </form>
+                    <?php endif ?>
                 <?php endif ?>
             </td>
         </tr>
