@@ -29,4 +29,4 @@ $sql->query($del_config_db);
 $sql->getPdoObj()->commit();
 
 // on renvoit à la page mise_a_jour.php (là d'ou on vient)
-echo "Migration depuis v1.9 effectuée. <a href=\"mise_a_jour.php?etape=2&version=$version&lang=$lang\">Continuer.</a><br>\n";
+printf("Migration depuis v1.10 effectuée. <a href=\"mise_a_jour.php?etape=2&version=%s&lang=%s\">Continuer.</a><br>\n", $version, $lang);

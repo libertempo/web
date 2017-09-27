@@ -24,6 +24,10 @@ enctype="application/x-www-form-urlencoded"><input type="hidden" name="planning_
 }
 
 $listPlanningId = \App\ProtoControllers\HautResponsable\Planning::getListPlanningId();
+$ajoutPlanning = '<a href="' . ROOT_PATH . 'hr/hr_index.php?onglet=ajout_planning" style="float:right" class="btn btn-success">' . _('hr_ajout_planning') .'</a>';
+$titre = _('hr_affichage_liste_planning_titre');
+$canDelete = true;
+$lienModif = 'hr_index.php?onglet=modif_planning';
 if (empty($listPlanningId)) {
     $listIdUsed = [];
     $plannings = [];
