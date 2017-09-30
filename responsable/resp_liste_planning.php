@@ -7,10 +7,9 @@ if (!\App\ProtoControllers\Responsable::canAssociatePLanning()) {
 
 $message   = '';
 $listPlanningId = \App\ProtoControllers\HautResponsable\Planning::getListPlanningId();
-$ajoutPlanning = '';
 $titre = _('resp_liste_planning');
 $lienModif = 'resp_index.php?onglet=modif_planning';
-$canDelete = false;
+$isHr = false;
 if (empty($listPlanningId)) {
     $listIdUsed = [];
     $plannings = [];

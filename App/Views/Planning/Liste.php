@@ -1,15 +1,16 @@
 <?php
 /*
- * $ajoutPlanning
  * $titre
  * $message
  * $listIdUsed
  * $plannings
- * $canDelete
+ * $isHr
  * $lienModif
  */
 ?>
-<?= $ajoutPlanning ?>
+<?php if ($isHr) : ?>
+<a href="<?= ROOT_PATH ?>hr/hr_index.php?onglet=ajout_planning" style="float:right" class="btn btn-success"><?= _('hr_ajout_planning') ?></a>
+<?php endif ?>
 <h1><?= $titre ?></h1>
 <?= $message ?>
 <table class="table table-hover table-responsive table-condensed table-striped">
@@ -24,7 +25,7 @@
         <tr><td><?= $planning->name ?></td>
             <td>
                 <a title="<?= _('form_modif') ?>" href="<?= $lienModif ?>&amp;id=<?= $planning->id ?>"><i class="fa fa-pencil"></i></a>&nbsp;&nbsp;
-                <?php if ($canDelete) : ?>
+                <?php if ($isHr) : ?>
                     <?php if (in_array($planning->id, $listIdUsed)) : ?>
                         <button title="<?= _('planning_used') ?>" type="button" class="btn btn-link disabled"><i class="fa fa-times-circle"></i></button>
                     <?php else : ?>
