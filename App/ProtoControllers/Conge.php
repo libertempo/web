@@ -17,7 +17,7 @@ class Conge
      */
     public function getListe()
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL);
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
         $return = '';
         $errorsLst = [];

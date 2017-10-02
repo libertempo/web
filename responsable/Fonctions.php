@@ -175,7 +175,7 @@ class Fonctions
 
     public static function affichage_saisie_globale_groupe($tab_type_conges)
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL);
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
@@ -287,7 +287,7 @@ class Fonctions
 
     public static function affichage_saisie_user_par_user($tab_type_conges, $tab_type_conges_exceptionnels, $tab_all_users_du_resp, $tab_all_users_du_grand_resp)
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL);
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
@@ -414,7 +414,7 @@ class Fonctions
 
     public static function saisie_ajout( $tab_type_conges)
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL);
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
@@ -491,7 +491,7 @@ class Fonctions
     // calcule de la date limite d'utilisation des reliquats (si on utilise une date limite et qu'elle n'est pas encore calculée) et stockage dans la table
     public static function set_nouvelle_date_limite_reliquat()
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL);
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         //si on autorise les reliquats
         if($config->isReliquatsAutorise()) {
             // s'il y a une date limite d'utilisationdes reliquats (au format jj-mm)
@@ -537,7 +537,7 @@ class Fonctions
     // cloture / debut d'exercice pour TOUS les users du resp (ou grand resp)
     public static function cloture_globale($tab_type_conges)
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL);
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
@@ -590,7 +590,7 @@ class Fonctions
     public static function cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $commentaire)
     {
         $return = '';
-        $config = new \App\Libraries\Configuration(\includes\SQL);
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         // si le num d'exercice du user est < à celui de l'appli (il n'a pas encore été basculé): on le bascule d'exercice
         if($tab_current_user['num_exercice'] < $_SESSION['config']['num_exercice']) {
             // calcule de la date limite d'utilisation des reliquats (si on utilise une date limite et qu'elle n'est pas encore calculée)
@@ -667,7 +667,7 @@ class Fonctions
     // cloture / debut d'exercice user par user pour les users du resp (ou grand resp)
     public static function cloture_users($tab_type_conges, $tab_cloture_users, $tab_commentaire_saisie)
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL);
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
@@ -705,7 +705,7 @@ class Fonctions
 
     public static function affichage_cloture_globale_groupe($tab_type_conges)
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL);
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
@@ -838,7 +838,7 @@ class Fonctions
 
     public static function affichage_cloture_user_par_user($tab_type_conges, $tab_all_users_du_resp, $tab_all_users_du_grand_resp)
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL);
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
@@ -911,7 +911,7 @@ class Fonctions
 
     public static function saisie_cloture( $tab_type_conges)
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL);
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
@@ -997,7 +997,7 @@ class Fonctions
      */
     public static function pagePrincipaleModule($tab_type_cong, $tab_type_conges_exceptionnels)
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL);
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $return = '';
         /***********************************/
         // AFFICHAGE ETAT CONGES TOUS USERS
@@ -1198,7 +1198,7 @@ class Fonctions
 
     public static function traite_demandes($user_login, $tab_radio_traite_demande, $tab_text_refus)
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL);
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $return = '';
 
@@ -1284,7 +1284,7 @@ class Fonctions
 
     public static function annule_conges($user_login, $tab_checkbox_annule, $tab_text_annul)
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL);
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $return = '';
 
@@ -1333,7 +1333,7 @@ class Fonctions
     //affiche l'état des conges du user (avec le formulaire pour le responsable)
     public static function affiche_etat_conges_user_for_resp($user_login, $year_affichage, $tri_date, $onglet)
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL);
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $return = '';
 
@@ -1480,7 +1480,7 @@ class Fonctions
     //affiche l'état des demande en attente de 2ieme validation du user (avec le formulaire pour le responsable)
     public static function affiche_etat_demande_2_valid_user_for_resp($user_login)
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL);
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $return = '';
 
@@ -1584,7 +1584,7 @@ class Fonctions
     //affiche l'état des demandes du user (avec le formulaire pour le responsable)
     public static function affiche_etat_demande_user_for_resp($user_login, $tab_user, $tab_grd_resp)
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL);
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $return = '';
 
@@ -1700,7 +1700,7 @@ class Fonctions
 
     public static function affichage($user_login, $year_affichage, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $tri_date)
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL);
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $return = '';
@@ -1856,7 +1856,7 @@ class Fonctions
      */
     public static function traiteUserModule()
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL);
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $entities = function ($element) {
             return htmlentities($element, ENT_QUOTES | ENT_HTML401);
         };
@@ -2414,7 +2414,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
      */
     private static function getFormPlanningTable($typeSemaine, $idPlanning, array $postPlanning)
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL);
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         /* Recupération des créneaux (postés ou existants) pour le JS */
         $creneauxGroupes = \App\ProtoControllers\HautResponsable\Planning\Creneau::getCreneauxGroupes($postPlanning, $idPlanning, $typeSemaine);
 
@@ -2483,7 +2483,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
      */
     private static function getFormPlanningEmployes($idPlanning)
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL);
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $idPlanning = (int) $idPlanning;
         $return = '';
         $utilisateursAssocies = \App\ProtoControllers\Responsable\Planning::getListeUtilisateursAssocies($idPlanning);

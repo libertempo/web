@@ -11,7 +11,7 @@ if (empty(session_id())) {
 
 include_once ROOT_PATH .'fonctions_conges.php' ;
 
-$config = new \App\Libraries\Configuration(\includes\SQL);
+$config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
 $_SESSION['config']=init_config_tab();      // on initialise le tableau des variables de config
 include_once INCLUDE_PATH .'session.php';

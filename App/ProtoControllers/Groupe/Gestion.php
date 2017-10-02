@@ -67,7 +67,7 @@ class Gestion {
      */
     protected function FormData2Array(array $post)
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL);
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
         $data = [
             'grandResponsables' => [],
@@ -445,7 +445,7 @@ class Gestion {
      */
     public function getFormListGroupe($message = '')
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL);
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
         $errorsLst = [];
         $return = '';
@@ -529,7 +529,7 @@ class Gestion {
      */
     public function getForm($idGroupe = NIL_INT)
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL);
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
         $return = '';
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
@@ -818,7 +818,7 @@ class Gestion {
      */
     public function getFormConfirmSuppression($idGroupe)
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL);
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';

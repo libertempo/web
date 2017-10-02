@@ -11,7 +11,7 @@ include_once ROOT_PATH .'fonctions_calcul.php';
 // verif des droits du user à afficher la page
 verif_droits_user('is_admin');
 
-$config = new \App\Libraries\Configuration(\includes\SQL);
+$config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
 /*************************************/
 // recup des parametres reçus :

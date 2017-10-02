@@ -15,7 +15,7 @@ function get_j_name_fr_2c($timestamp)
 
 function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet)
 {
-    $config = new \App\Libraries\Configuration(\includes\SQL);
+    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
     $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
     $new_date_fin = date('d/m/Y');
@@ -303,7 +303,7 @@ function verif_saisie_new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new
 // (une classe pour les jours de semaine et une pour les jours de week end)
 function get_td_class_of_the_day_in_the_week($timestamp_du_jour)
 {
-    $config = new \App\Libraries\Configuration(\includes\SQL);
+    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
     $j_name = date('D', $timestamp_du_jour);
     $j_date = date('Y-m-d', $timestamp_du_jour);
 
@@ -318,7 +318,7 @@ function get_td_class_of_the_day_in_the_week($timestamp_du_jour)
 // attention : les param $val_matin et $val_aprem sont passées par référence (avec &) car on change leur valeur
 function recup_infos_artt_du_jour($sql_login, $j_timestamp, &$val_matin, &$val_aprem, array $planningUser)
 {
-    $config = new \App\Libraries\Configuration(\includes\SQL);
+    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
     $num_semaine = date('W', $j_timestamp);
     $jour_name_fr_2c = get_j_name_fr_2c($j_timestamp); // nom du jour de la semaine en francais sur 2 caracteres
 
@@ -412,7 +412,7 @@ function date_fr($code, $timestmp)
 function alerte_mail($login_expediteur, $destinataire, $num_periode, $objet)
 {
 
-    $config = new \App\Libraries\Configuration(\includes\SQL);
+    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
     /*********************************************/
     // recup des infos concernant l'expéditeur ....
     $mail_array        = find_email_adress_for_user($login_expediteur);
@@ -488,7 +488,7 @@ function alerte_mail($login_expediteur, $destinataire, $num_periode, $objet)
 // construit et envoie le mail
 function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $mail_dest_name, $mail_dest_addr, $num_periode)
 {
-    $config = new \App\Libraries\Configuration(\includes\SQL);
+    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
     /*********************************************/
     // init du mail
     $mail = new \PHPMailer();
@@ -616,7 +616,7 @@ function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $m
 // renvoit un tableau a 2 valeurs : prenom+nom et email
 function find_email_adress_for_user($login)
 {
-    $config = new \App\Libraries\Configuration(\includes\SQL);
+    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
     $found_mail=array();
 
     if($config->getMailFromLdap()) // recherche du mail du user dans un annuaire LDAP
@@ -738,7 +738,7 @@ function get_group_name_from_id($groupe_id)
 // renvoie une liste de login entre quotes et séparés par des virgules
 function get_list_all_users_du_resp($resp_login)
 {
-    $config = new \App\Libraries\Configuration(\includes\SQL);
+    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
     $list_users="";
     $sql1="SELECT DISTINCT(u_login) FROM conges_users WHERE u_login!='conges' AND u_login!='admin' AND u_login!='$resp_login'";
     $sql1 = $sql1." AND  ( u_resp_login='$resp_login' " ;
@@ -965,7 +965,7 @@ function get_list_all_users()
 //renvoit un tableau indexé de resp_login => "absent" ou "present"
 function get_tab_resp_du_user($user_login)
 {
-    $config = new \App\Libraries\Configuration(\includes\SQL);
+    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
     $tab_resp=array();
     // recup du resp indiqué dans la table users (sauf s'il est resp de lui meme)
     $req = 'SELECT u_resp_login FROM conges_users WHERE u_login=\''.\includes\SQL::quote($user_login).'\';';
@@ -1066,7 +1066,7 @@ function get_tab_resp_du_user($user_login)
 // le login du user est passé en paramêtre ainsi que le tableau (vide) des resp
 function get_tab_grd_resp_du_user($user_login, &$tab_grd_resp)
 {
-    $config = new \App\Libraries\Configuration(\includes\SQL);
+    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
     // recup des resp des groupes du user
     $list_groups=get_list_groupes_du_user($user_login);
     if($list_groups!=""){
@@ -1178,7 +1178,7 @@ function is_resp_group_of_user($resp_login, $user_login)
 
 function is_gr_group_of_user($resp_login, $user_login)
 {
-    $config = new \App\Libraries\Configuration(\includes\SQL);
+    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
     if ($config->isDoubleValidationActive())
     {
         $ReqLog_info = \includes\SQL::query('SELECT count(*)
@@ -1460,7 +1460,7 @@ function recup_tableau_types_conges_exceptionnels()
 // recup dans un tableau de tableau les infos des types de conges et absences
 function recup_tableau_tout_types_abs( )
 {
-    $config = new \App\Libraries\Configuration(\includes\SQL);
+    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
     $result = array();
     if ($config->isCongesExceptionnelleActive()) // on prend tout les types de conges
         $request = 'SELECT ta_id, ta_type, ta_libelle, ta_short_libelle FROM conges_type_absence;';
@@ -1480,7 +1480,7 @@ function recup_tableau_tout_types_abs( )
 // recup dans un tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
 function recup_tableau_conges_for_user($login, $hide_conges_exceptionnels)
 {
-    $config = new \App\Libraries\Configuration(\includes\SQL);
+    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
     // on pourrait tout faire en un seule select, mais cela bug si on change la prise en charge des conges exceptionnels en cours d'utilisation ...
 
     if ($config->isCongesExceptionnelleActive() && ! $hide_conges_exceptionnels) // on prend tout les types de conges
@@ -1504,7 +1504,7 @@ function recup_tableau_conges_for_user($login, $hide_conges_exceptionnels)
 // affichage du tableau récapitulatif des solde de congés d'un user
 function affiche_tableau_bilan_conges_user($login)
 {
-    $config = new \App\Libraries\Configuration(\includes\SQL);
+    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
     $request = 'SELECT u_quotite FROM conges_users where u_login = "'. \includes\SQL::quote($login).'";';
     $ReqLog = \includes\SQL::query($request) ;
     $resultat = $ReqLog->fetch_array();
@@ -1563,7 +1563,7 @@ function affiche_tableau_bilan_conges_user($login)
 // renvoit FALSE si erreur
 function recup_infos_du_user($login, $list_groups_double_valid)
 {
-    $config = new \App\Libraries\Configuration(\includes\SQL);
+    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
     $tab=array();
     $sql1 = 'SELECT * FROM conges_users ' .
             'WHERE u_login="'.\includes\SQL::quote($login).'";';
@@ -1750,7 +1750,7 @@ function execute_sql_file($file)
 
 function verif_droits_user($niveau_droits)
 {
-    $config = new \App\Libraries\Configuration(\includes\SQL);
+    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
     $niveau_droits = strtolower($niveau_droits);
 
     // verif si $_SESSION['is_admin'] ou $_SESSION['is_resp'] ou $_SESSION['is_hr'] =="N" ou $_SESSION['is_active'] =="N"
@@ -1858,7 +1858,7 @@ function get_reliquat_user_conges($login, $type_abs)
 */
 function soustrait_solde_et_reliquat_user($user_login, $num_current_periode, $user_nb_jours_pris, $type_abs, $date_deb, $demi_jour_deb, $date_fin, $demi_jour_fin)
 {
-    $config = new \App\Libraries\Configuration(\includes\SQL);
+    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
     $VerifDec = verif_saisie_decimal($user_nb_jours_pris);
 

@@ -51,7 +51,7 @@ class Fonctions
     // verifie les parametre de la nouvelle demande :si ok : enregistre la demande dans table conges_periode
     public static function new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type)
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL);
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
         //conversion des dates
         $new_debut = convert_date($new_debut);
@@ -158,7 +158,7 @@ class Fonctions
      */
     public static function nouvelleAbsenceModule($onglet)
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL);
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
         // on initialise le tableau global des jours fériés s'il ne l'est pas déjà :
         init_tab_jours_feries();
@@ -235,7 +235,7 @@ class Fonctions
 
     public static function modifier($p_num_to_update, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $p_etat, $onglet)
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL);
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
         $VerifNb = verif_saisie_decimal($new_nb_jours);
@@ -269,7 +269,7 @@ class Fonctions
 
     public static function confirmer($p_num, $onglet)
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL);
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
@@ -408,7 +408,7 @@ class Fonctions
      */
     public static function modificationAbsenceModule()
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL);
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $user_login        = $_SESSION['userlogin'];
         $p_num             = getpost_variable('p_num');
         $onglet            = getpost_variable('onglet');
@@ -471,7 +471,7 @@ class Fonctions
 
     public static function suppression($p_num_to_delete, $onglet)
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL);
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
@@ -642,7 +642,7 @@ class Fonctions
      */
     public static function modificationMotDePasseModule($onglet)
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL);
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $return = '';
         if($config->getMailFromLdap()){
             include_once CONFIG_PATH .'config_ldap.php';
@@ -1256,7 +1256,7 @@ class Fonctions
      */
     public static function echangeJourAbsenceModule($onglet)
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL);
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $return = '';
         init_tab_jours_feries();
 
@@ -1430,7 +1430,7 @@ class Fonctions
      */
     public static function getDatePickerDaysOfWeekDisabled()
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL);
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $daysOfWeekDisabled = [];
 
         if (!$config->isDimancheOuvrable()) {
@@ -1491,7 +1491,7 @@ class Fonctions
      */
     public static function getDatePickerStartDate()
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL);
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         return ($config->canUserSaisieDemandePasse()) ? 'd' : '';
     }
 

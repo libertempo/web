@@ -12,7 +12,7 @@
         $home = 'utilisateur/user_index.php';
     }
     
-    $config = new \App\Libraries\Configuration(\includes\SQL);
+    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
     //user mode
     $user_mode = '';

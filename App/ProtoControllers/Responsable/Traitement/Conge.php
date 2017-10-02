@@ -173,7 +173,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
      */
     protected function putResponsable(array $infoDemande, $statut, array $put, array &$errorLst)
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL);
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $return = NIL_INT;
         $id_conge = $infoDemande['p_num'];
         if ($this->isDemandeTraitable($infoDemande['p_etat'])) { // demande est traitable
@@ -210,7 +210,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
      */
     protected function putGrandResponsable(array $infoDemande, $statut, array $put, array &$errorLst)
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL);
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $return = NIL_INT;
         $id_conge = $infoDemande['p_num'];
         if ($this->isDemandeTraitable($infoDemande['p_etat'])) { // demande est traitable
@@ -428,7 +428,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
      */
     protected function getIdDemandesResponsableAbsent($resp)
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL);
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         if(!$config->isGestionResponsableAbsent()){
             return [];
         }

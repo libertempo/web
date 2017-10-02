@@ -141,7 +141,7 @@ abstract Class ANotification {
      * 
      */
     private function canSend($optionName) {
-        $config = new \App\Libraries\Configuration(\includes\SQL);
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
         switch ($optionName) {
             case 'mail_new_demande_alerte_resp':
