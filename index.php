@@ -9,9 +9,7 @@ if (!is_readable( CONFIG_PATH .'dbconnect.php'))
 }
 include_once INCLUDE_PATH .'fonction.php';
 include_once ROOT_PATH .'fonctions_conges.php'; // for init_config_tab()
-
 $config = new \App\Libraries\Configuration();
-
 $_SESSION['config']=init_config_tab();      // on initialise le tableau des variables de config
 
 /***** DEBUT DU PROG *****/
@@ -61,6 +59,7 @@ else if ( $config->getHowToConnectUser() == "SSO" )
         if($usernameSSO != "")
         {
                 session_create( $usernameSSO );
+                storeTokenApi($api, $usernameSSO, '');
         }
         else//dans ce cas l'utilisateur n'a pas encore été enregistré dans la base de données db_conges
         {
@@ -107,6 +106,7 @@ else
                                 {
                                         // on initialise la nouvelle session
                                         session_create($session_username);
+                                        storeTokenApi($api, $session_username, $session_password);
                                 }
                                 else//dans ce cas l'utilisateur n'a pas encore été enregistré dans la base de données db_conges
                                 {
@@ -137,6 +137,7 @@ else
                         {
                                 // on initialise la nouvelle session
                                 session_create($session_username);
+                                storeTokenApi($api, $session_username, $session_password);
                         }
                 }
         }

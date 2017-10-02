@@ -235,7 +235,7 @@ function affiche_decimal($str)
 
 // verif validité des valeurs saisies lors d'une demande de conges par un user ou d'une saisie de conges par le responsable
 //  (attention : le $new_nb_jours est passé par référence car on le modifie si besoin)
-function verif_saisie_new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, &$new_nb_jours, $new_comment)
+function verif_saisie_new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, &$new_nb_jours, $new_comment, $login)
 {
     $verif = true;
 
@@ -282,13 +282,13 @@ function verif_saisie_new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new
     }
 
     $conge = new \App\ProtoControllers\Employe\Conge();
-    if ($conge->isChevauchement($_SESSION['userlogin'], $new_debut, $periodeDebut, $new_fin, $periodeFin)) {
+    if ($conge->isChevauchement($login, $new_debut, $periodeDebut, $new_fin, $periodeFin)) {
         echo '<br>'. _('demande_heure_chevauche_demande') .'<br>';
         $verif = false;
     }
 
     $tab_periode_calcul = make_tab_demi_jours_periode($new_debut, $new_fin, $new_demi_jour_deb, $new_demi_jour_fin);
-    if(verif_periode_chevauche_periode_user($new_debut, $new_fin, $_SESSION['userlogin'], "", $tab_periode_calcul, $new_comment)){
+    if(verif_periode_chevauche_periode_user($new_debut, $new_fin, $login, "", $tab_periode_calcul, $new_comment)){
         echo '<br>'._('calcul_nb_jours_commentaire') .'<br>';
         $verif = false;
     }
@@ -1274,7 +1274,7 @@ function init_config_tab()
 {
     static $userlogin = null;
     static $result = null;
-    if ($result === null || $userlogin != $_SESSION['userlogin'])
+    if ($result === null || (isset($_SESSION['userlogin']) && $userlogin != $_SESSION['userlogin']))
     {
 
         include ROOT_PATH .'version.php';

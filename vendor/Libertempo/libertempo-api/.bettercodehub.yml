@@ -1,0 +1,5 @@
+exclude:
+- /Vendor/.*
+component_depth: 1
+languages:
+- php

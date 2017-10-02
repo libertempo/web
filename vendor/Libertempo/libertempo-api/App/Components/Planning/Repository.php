@@ -63,13 +63,9 @@ class Repository extends \App\Libraries\ARepository
     }
 
     /**
-     * Effectue le mapping des éléments venant de la DAO pour qu'ils soient compréhensibles pour le Modèle
-     *
-     * @param array $dataDao
-     *
-     * @return array
+     * @inheritDoc
      */
-    private function getDataDao2Model(array $dataDao)
+    final protected function getDataDao2Model(array $dataDao)
     {
         return [
             'id' => $dataDao['planning_id'],
@@ -79,17 +75,9 @@ class Repository extends \App\Libraries\ARepository
     }
 
     /**
-     * Effectue le mapping des recherches du consommateur de l'API pour qu'elles
-     * soient traitables par la DAO
-     *
-     * Essentiel pour séparer / traduire les contextes Client / DAO
-     *
-     * @param array $paramsConsumer Paramètres reçus
-     * @example [offset => 4, start-after => 23, filter => 'name::chapo|status::1,3']
-     *
-     * @return array
+     * @inheritDoc
      */
-    private function getParamsConsumer2Dao(array $paramsConsumer)
+    final protected function getParamsConsumer2Dao(array $paramsConsumer)
     {
         $filterInt = function ($var) {
             return filter_var(
@@ -136,13 +124,9 @@ class Repository extends \App\Libraries\ARepository
     }
 
     /**
-     * Effectue le mapping des éléments venant du modèle pour qu'ils soient compréhensibles pour la DAO
-     *
-     * @param Model $model
-     *
-     * @return array
+     * @inheritDoc
      */
-    private function getModel2DataDao(AModel $model)
+    final protected function getModel2DataDao(AModel $model)
     {
         return [
             'name' => $model->getName(),

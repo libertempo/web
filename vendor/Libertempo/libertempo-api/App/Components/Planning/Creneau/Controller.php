@@ -161,7 +161,7 @@ final class Controller extends \App\Libraries\AController
     {
         $body = $request->getParsedBody();
         if (null === $body) {
-            return $this->getResponseBadRequest($response);
+            return $this->getResponseBadRequest($response, 'Body request is not a json content');
         }
 
         try {
@@ -208,7 +208,7 @@ final class Controller extends \App\Libraries\AController
     {
         $body = $request->getParsedBody();
         if (null === $body) {
-            return $this->getResponseBadRequest($response);
+            return $this->getResponseBadRequest($response, 'Body request is not a json content');
         }
 
         $id = (int) $arguments['creneauId'];

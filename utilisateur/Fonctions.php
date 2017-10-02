@@ -61,7 +61,7 @@ class Fonctions
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 
         // verif validité des valeurs saisies
-        $valid = verif_saisie_new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment);
+        $valid = verif_saisie_new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $_SESSION['userlogin']);
 
         // verifie que le solde de conges sera encore positif après validation
         if($config->canSoldeNegatif()) {
@@ -539,7 +539,7 @@ class Fonctions
             $sql_nb_jours=affiche_decimal($resultat1["p_nb_jours"]);
             //$sql_type=$resultat1["p_type"];
             $sql_type= \utilisateur\Fonctions::get_libelle_abs($resultat1["p_type"]);
-            $sql_comment=htmlentities($resultat1["p_commentaire"], ENT_QUOTES | ENT_HTML401);
+            $sql_comment = $resultat1["p_commentaire"];
 
             $return .= '<td>' . $sql_date_deb . '_' . $demi_j_deb . '</td>';
             $return .= '<td>' . $sql_date_fin . '_' . $demi_j_fin . '</td>';

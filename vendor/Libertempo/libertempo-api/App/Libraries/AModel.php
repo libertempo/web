@@ -46,8 +46,7 @@ abstract class AModel
     public function __construct(array $data)
     {
         if (isset($data['id'])) {
-            $id = $data['id'];
-            $this->id = (int) $id;
+            $this->setId($data['id']);
             unset($data['id']);
             $this->data = $data;
         }
@@ -74,12 +73,22 @@ abstract class AModel
     abstract public function populate(array $data);
 
     /**
+     * Insère l'identifiant unique de l'objet
+     *
+     * @return int
+     */
+    protected function setId($id)
+    {
+        $this->id = (int) $id;
+    }
+
+    /**
      * Ajoute une erreur au champ
      *
      * @param string $champ Champ
      * @param string $message Message d'erreur
      */
-    protected function setErreur($champ, $message)
+    final protected function setErreur($champ, $message)
     {
         $this->erreurs[$champ][] = $message;
     }
@@ -89,7 +98,7 @@ abstract class AModel
      *
      * @return array
      */
-    protected function getErreurs()
+    final protected function getErreurs()
     {
         return $this->erreurs;
     }
@@ -111,7 +120,7 @@ abstract class AModel
      *
      * @return string
      */
-    protected function getFreshData($data)
+    final protected function getFreshData($data)
     {
         if (isset($this->dataUpdated[$data])) {
             return $this->dataUpdated[$data];

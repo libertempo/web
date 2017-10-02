@@ -5,7 +5,6 @@ require_once ROOT_PATH . 'define.php';
 include_once ROOT_PATH .'fonctions_conges.php';
 include_once INCLUDE_PATH .'fonction.php';
 include_once INCLUDE_PATH . 'session.php';
-include_once ROOT_PATH .'fonctions_conges.php';
 
 /**
  * @return bool
@@ -47,6 +46,7 @@ function getTitleJour(\App\Libraries\Calendrier\Evenements $evenements, $nom, $j
 }
 $config = new \App\Libraries\Configuration();
 
+$injectableCreator = new \App\Libraries\InjectableCreator(\includes\SQL::singleton());
 $calendar = new \CalendR\Calendar();
 $jourDemande = null;
 $moisDemande = null;
@@ -59,7 +59,6 @@ if (!empty($_GET['jour']) && false !== strtotime($_GET['jour'])) {
     $moisDemande = new \DateTimeImmutable(date('Y-m') . '-01');
 }
 
-$injectableCreator = new \App\Libraries\InjectableCreator(\includes\SQL::singleton());
 $evenements = new \App\Libraries\Calendrier\Evenements($injectableCreator);
 $groupesAVoir = $groupesVisiblesUtilisateur = \App\ProtoControllers\Utilisateur::getListeGroupesVisibles($_SESSION['userlogin']);
 $idGroupe = NIL_INT;

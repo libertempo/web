@@ -19,7 +19,7 @@ final class Controller extends \Tests\Units\App\Libraries\AController
     private $repository;
 
     /**
-     * @var \mock\App\Components\Planning\Creneau\Model Mock du modèle associé
+     * @var \mock\App\Components\Planning\Model Mock du modèle associé
      */
     private $model;
 
@@ -125,7 +125,6 @@ final class Controller extends \Tests\Units\App\Libraries\AController
         $this->request->getMockController()->getQueryParams = [];
         $this->repository->getMockController()->getList = function () {
             throw new \UnexpectedValueException('');
-
         };
         $controller = new _Controller($this->repository, $this->router);
 

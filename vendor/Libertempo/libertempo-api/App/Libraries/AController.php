@@ -38,12 +38,13 @@ abstract class AController
      * Retourne une réponse 400 normalisée
      *
      * @param IResponse $response Réponse Http
+     * @param string $message Message d'erreur
      *
      * @return IResponse
      */
-    protected function getResponseBadRequest(IResponse $response)
+    protected function getResponseBadRequest(IResponse $response, $message)
     {
-        return $this->getResponseError($response, 'Bad Request', 'Body request is not a json', 400);
+        return $this->getResponseError($response, 'Bad Request', $message, 400);
     }
 
     /**

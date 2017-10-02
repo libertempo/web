@@ -206,17 +206,8 @@ class Fonctions {
 
             $sql_update_lang="UPDATE conges_config SET conf_valeur = '$lang' WHERE conf_nom='lang' ";
             $result_update_lang = \includes\SQL::query($sql_update_lang) ;
-
-            $tab_url=explode("/", filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL));
-
-            array_pop($tab_url);
-            array_pop($tab_url);
-
-            $url_accueil= implode("/", $tab_url) ;  // on prend l'url complet sans le /install/install.php à la fin
-
-            $sql_update_lang="UPDATE conges_config SET conf_valeur = '$url_accueil' WHERE conf_nom='URL_ACCUEIL_CONGES' ";
-            $result_update_lang = \includes\SQL::query($sql_update_lang) ;
-
+            /* Prénommage de l'instance et pointage API */
+            self::addInstanceName(\includes\SQL::singleton());
 
             $comment_log = "Install de php_conges (version = $config_php_conges_version) ";
             log_action(0, "", "", $comment_log);
@@ -389,5 +380,29 @@ class Fonctions {
         if (false === file_put_contents(API_SYSPATH . 'configuration.json', json_encode($data))) {
             throw new \Exception('Création du fichier de config API impossible. Les droits sont-ils bien configurés ?');
         }
+    }
+
+    /**
+     *
+     * @param \includes\SQL $db DB
+     */
+    public static function addInstanceName(\includes\SQL $db)
+    {
+        $url = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+        $positionInstall = stripos($url, 'install/');
+        if (false === $positionInstall) {
+            throw new \Exception("Le logiciel n'est pas installé correctement. veuillez recommencer");
+        }
+        $instance = mb_substr($url, 0, $positionInstall);
+
+        $requete = 'UPDATE `conges_config` SET conf_valeur = "' . $db->quote($instance) . '"
+        WHERE conf_nom = "URL_ACCUEIL_CONGES" LIMIT 1';
+        $db->query($requete);
+        $path = parse_url($instance, \PHP_URL_PATH);
+        $contentFile = file_get_contents(API_PATH . '.htaccess.example');
+        $newContent = str_replace('vendor', $path . 'vendor', $contentFile);
+        file_put_contents(API_PATH . '.htaccess', $newContent);
+
+        return $instance;
     }
 }
