@@ -597,7 +597,7 @@ class Fonctions
 
     public static function affichage_absence($tab_new_values)
     {
-        $config = new \App\Libraries\Configuration();
+        $config = new \App\Libraries\Configuration(\includes\SQL);
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 

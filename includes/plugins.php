@@ -4,7 +4,7 @@
 include_once ROOT_PATH . 'define.php';
 
 function find_plugins_activated(){
-    $config = new \App\Libraries\Configuration();
+    $config = new \App\Libraries\Configuration(\includes\SQL);
     $list_plugins = array();
     if(file_exists(CONFIG_PATH . '/dbconnect.php') && $config->getInstalledVersion() != "")
     {

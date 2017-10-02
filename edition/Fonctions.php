@@ -72,7 +72,7 @@ class Fonctions
 
     public static function affiche_nouvelle_edition($login)
     {
-        $config = new \App\Libraries\Configuration();
+        $config = new \App\Libraries\Configuration(\includes\SQL);
         $return = '';
         $return .= '<CENTER>';
 
@@ -277,7 +277,7 @@ class Fonctions
 
     public static function edition_papier($login, $edit_id)
     {
-        $config = new \App\Libraries\Configuration();
+        $config = new \App\Libraries\Configuration(\includes\SQL);
         $return = '';
 
         // recup infos du user
@@ -826,7 +826,7 @@ class Fonctions
 
     public static function edition_pdf($login, $edit_id)
     {
-        $config = new \App\Libraries\Configuration();
+        $config = new \App\Libraries\Configuration(\includes\SQL);
         // recup du tableau des types de conges (seulement les conges)
         $tab_type_cong=recup_tableau_types_conges();
         // recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
@@ -1145,7 +1145,7 @@ class Fonctions
 
     public static function enregistrement_edition($login)
     {
-        $config = new \App\Libraries\Configuration();
+        $config = new \App\Libraries\Configuration(\includes\SQL);
 
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 

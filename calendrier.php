@@ -44,7 +44,7 @@ function getTitleJour(\App\Libraries\Calendrier\Evenements $evenements, $nom, $j
     }
     return '';
 }
-$config = new \App\Libraries\Configuration();
+$config = new \App\Libraries\Configuration(\includes\SQL);
 
 $injectableCreator = new \App\Libraries\InjectableCreator(\includes\SQL::singleton());
 $calendar = new \CalendR\Calendar();

@@ -250,7 +250,7 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
      */
     public function getListe()
     {
-        $config = new \App\Libraries\Configuration();
+        $config = new \App\Libraries\Configuration(\includes\SQL);
         $message   = '';
         $errorsLst = [];
         $notice    = '';
@@ -488,7 +488,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
      */
     public function canUserEdit($id, $user)
     {
-        $config = new \App\Libraries\Configuration();
+        $config = new \App\Libraries\Configuration(\includes\SQL);
         if (!$config->canUserModifieDemande()){
             return FALSE;
         }

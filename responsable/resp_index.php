@@ -9,7 +9,7 @@ include_once INCLUDE_PATH . 'fonction.php';
 include_once INCLUDE_PATH . 'session.php';
 include_once ROOT_PATH . 'fonctions_calcul.php';
 
-$config = new \App\Libraries\Configuration();
+$config = new \App\Libraries\Configuration(\includes\SQL);
 
 // verif des droits du user à afficher la page
 verif_droits_user("is_resp");

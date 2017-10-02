@@ -19,7 +19,7 @@ class Fonctions
      */
     public static function pagePrincipaleModule(array $tab_type_cong, array $tab_type_conges_exceptionnels)
     {
-        $config = new \App\Libraries\Configuration();
+        $config = new \App\Libraries\Configuration(\includes\SQL);
         /***********************************/
         // AFFICHAGE ETAT CONGES TOUS USERS
         /***********************************/
@@ -154,7 +154,7 @@ class Fonctions
 
     public static function traite_all_demande_en_cours($tab_bt_radio, $tab_text_refus)
     {
-        $config = new \App\Libraries\Configuration();
+        $config = new \App\Libraries\Configuration(\includes\SQL);
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
@@ -218,7 +218,7 @@ class Fonctions
     public static function affiche_all_demandes_en_cours($tab_type_conges)
     {
         $return = '';
-        $config = new \App\Libraries\Configuration();
+        $config = new \App\Libraries\Configuration(\includes\SQL);
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $count1=0;
         $count2=0;
@@ -456,7 +456,7 @@ class Fonctions
 
     public static function traite_demandes($user_login, $tab_radio_traite_demande, $tab_text_refus)
     {
-        $config = new \App\Libraries\Configuration();
+        $config = new \App\Libraries\Configuration(\includes\SQL);
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $return = '';
 
@@ -541,7 +541,7 @@ class Fonctions
 
     public static function annule_conges($user_login, $tab_checkbox_annule, $tab_text_annul)
     {
-        $config = new \App\Libraries\Configuration();
+        $config = new \App\Libraries\Configuration(\includes\SQL);
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $return = '';
 
@@ -591,7 +591,7 @@ class Fonctions
     //affiche l'état des conges du user (avec le formulaire pour le responsable)
     public static function affiche_etat_conges_user_for_resp($user_login, $year_affichage, $tri_date)
     {
-        $config = new \App\Libraries\Configuration();
+        $config = new \App\Libraries\Configuration(\includes\SQL);
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $return = '';
 
@@ -739,7 +739,7 @@ class Fonctions
     //affiche l'état des demande en attente de 2ieme validation du user (avec le formulaire pour le responsable)
     public static function affiche_etat_demande_2_valid_user_for_resp($user_login)
     {
-        $config = new \App\Libraries\Configuration();
+        $config = new \App\Libraries\Configuration(\includes\SQL);
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $return = '';
 
@@ -840,7 +840,7 @@ class Fonctions
     //affiche l'état des demande du user (avec le formulaire pour le responsable)
     public static function affiche_etat_demande_user_for_resp($user_login, $tab_user, $tab_grd_resp)
     {
-        $config = new \App\Libraries\Configuration();
+        $config = new \App\Libraries\Configuration(\includes\SQL);
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $return = '';
 
@@ -960,7 +960,7 @@ class Fonctions
 
     public static function affichage($user_login,  $year_affichage, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $tri_date, $onglet)
     {
-        $config = new \App\Libraries\Configuration();
+        $config = new \App\Libraries\Configuration(\includes\SQL);
 
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $return = '';
@@ -1414,7 +1414,7 @@ class Fonctions
 
     public static function affichage_saisie_user_par_user($tab_type_conges, $tab_type_conges_exceptionnels, $tab_all_users_du_hr, $tab_all_users_du_grand_resp)
     {
-        $config = new \App\Libraries\Configuration();
+        $config = new \App\Libraries\Configuration(\includes\SQL);
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
@@ -1537,7 +1537,7 @@ class Fonctions
 
     public static function saisie_ajout( $tab_type_conges)
     {
-        $config = new \App\Libraries\Configuration();
+        $config = new \App\Libraries\Configuration(\includes\SQL);
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
@@ -1972,7 +1972,7 @@ class Fonctions
     // calcule de la date limite d'utilisation des reliquats (si on utilise une date limite et qu'elle n'est pas encore calculée) et stockage dans la table
     public static function set_nouvelle_date_limite_reliquat()
     {
-        $config = new \App\Libraries\Configuration();
+        $config = new \App\Libraries\Configuration(\includes\SQL);
         //si on autorise les reliquats
         if($config->isReliquatsAutorise()) {
             // s'il y a une date limite d'utilisationdes reliquats (au format jj-mm)
@@ -2057,7 +2057,7 @@ class Fonctions
     public static function cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $commentaire)
     {
         $return = '';
-        $config = new \App\Libraries\Configuration();
+        $config = new \App\Libraries\Configuration(\includes\SQL);
         // si le num d'exercice du user est < à celui de l'appli (il n'a pas encore été basculé): on le bascule d'exercice
         if($tab_current_user['num_exercice'] < $_SESSION['config']['num_exercice']) {
             // calcule de la date limite d'utilisation des reliquats (si on utilise une date limite et qu'elle n'est pas encore calculée)
@@ -2342,7 +2342,7 @@ class Fonctions
 
     public static function saisie_cloture( $tab_type_conges)
     {
-        $config = new \App\Libraries\Configuration();
+        $config = new \App\Libraries\Configuration(\includes\SQL);
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
@@ -2425,7 +2425,7 @@ class Fonctions
 
     public static function affiche_calendrier_fermeture_mois($year, $mois, $tab_year)
     {
-        $config = new \App\Libraries\Configuration();
+        $config = new \App\Libraries\Configuration(\includes\SQL);
         $jour_today=date("j");
         $jour_today_name=date("D");
         $return = '';
@@ -2941,7 +2941,7 @@ class Fonctions
 
     public static function saisie_groupe_fermeture()
     {
-        $config = new \App\Libraries\Configuration();
+        $config = new \App\Libraries\Configuration(\includes\SQL);
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
@@ -3415,7 +3415,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
      */
     private static function getFormPlanningTable($typeSemaine, $idPlanning, array $postPlanning)
     {
-        $config = new \App\Libraries\Configuration();
+        $config = new \App\Libraries\Configuration(\includes\SQL);
         /* Recupération des créneaux (postés ou existants) pour le JS */
         $creneauxGroupes = \App\ProtoControllers\HautResponsable\Planning\Creneau::getCreneauxGroupes($postPlanning, $idPlanning, $typeSemaine);
 
@@ -3499,7 +3499,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
      */
     private static function getFormPlanningEmployes($idPlanning)
     {
-        $config = new \App\Libraries\Configuration();
+        $config = new \App\Libraries\Configuration(\includes\SQL);
         $idPlanning = (int) $idPlanning;
         $return = '';
         $utilisateursAssocies = \App\ProtoControllers\HautResponsable\Planning::getListeUtilisateursAssocies($idPlanning);

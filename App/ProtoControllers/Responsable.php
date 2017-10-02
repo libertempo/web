@@ -186,7 +186,7 @@ class Responsable
      * @return boolean
      */
     public static function isRespParDelegation($resp, $user) {
-        $config = new \App\Libraries\Configuration();
+        $config = new \App\Libraries\Configuration(\includes\SQL);
         if (!$config->isGestionResponsableAbsent()){
             return FALSE;
         }

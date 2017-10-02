@@ -8,7 +8,7 @@ include_once INCLUDE_PATH . 'fonction.php';
 include_once INCLUDE_PATH . 'session.php';
 include_once ROOT_PATH . 'fonctions_calcul.php';
 
-$config = new \App\Libraries\Configuration();
+$config = new \App\Libraries\Configuration(\includes\SQL);
 if ($config->getMailFromLdap()) {
     include CONFIG_PATH . 'config_ldap.php';
 }

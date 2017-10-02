@@ -11,16 +11,16 @@ class Configuration {
 
     private $data;
 
-    public function __construct() {
-        $this->loadData();
+    public function __construct(\includes\SQL $sql) {
+        
+        $this->loadData($sql);
     }
 
     /**
      * Charge les données de configuration
      */
-    private function loadData() {
+    private function loadData(\includes\SQL $sql) {
         $req = 'SELECT * FROM conges_config ORDER BY conf_groupe';
-        $sql = \includes\SQL::singleton();
         $res = $sql->query($req);
         while ($data = $res->fetch_array()) {
             $groupe = $data['conf_groupe'];

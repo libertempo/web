@@ -6,7 +6,7 @@ class PDF extends \TCPDF
 {
     function Header()
     {
-        $config = new \App\Libraries\Configuration();
+        $config = new \App\Libraries\Configuration(\includes\SQL);
         /**************************************/
         /* affichage du texte en haut de page */
         /**************************************/
@@ -17,7 +17,7 @@ class PDF extends \TCPDF
 
     function Footer()
     {
-        $config = new \App\Libraries\Configuration();
+        $config = new \App\Libraries\Configuration(\includes\SQL);
         /**************************************/
         /* affichage du texte de bas de page */
         /**************************************/

@@ -7,7 +7,7 @@ include_once ROOT_PATH .'fonctions_conges.php';
 include_once INCLUDE_PATH .'fonction.php';
 include_once INCLUDE_PATH .'session.php';
 
-$config = new \App\Libraries\Configuration();
+$config = new \App\Libraries\Configuration(\includes\SQL);
 $how_to_connect_user = $config->getHowToConnectUser();
 $URL_ACCUEIL_CONGES = $config->getUrlAccueil();
 

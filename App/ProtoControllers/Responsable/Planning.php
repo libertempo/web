@@ -72,7 +72,7 @@ class Planning extends \App\ProtoControllers\APlanning
      */
     public static function isVisible($id)
     {
-        $config = new \App\Libraries\Configuration();
+        $config = new \App\Libraries\Configuration(\includes\SQL);
         return $config->canResponsablesAssociatePlanning() && parent::isVisible($id);
     }
 

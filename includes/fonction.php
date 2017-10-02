@@ -174,7 +174,7 @@ function disable_plugin($plugin){
 //
 function session_is_valid()
 {
-    $config = new \App\Libraries\Configuration();
+    $config = new \App\Libraries\Configuration(\includes\SQL);
    // ATTENTION:  on fixe l'id de session comme nom de session pour que , sur un meme pc, on puisse se loguer sous 2 users à la fois
    if (session_id() == "")
    {
@@ -253,7 +253,7 @@ function session_delete()
 //
 function session_saisie_user_password($erreur, $session_username, $session_password)
 {
-    $config = new \App\Libraries\Configuration();
+    $config = new \App\Libraries\Configuration(\includes\SQL);
     $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 
     $config_php_conges_version      = $config->getInstalledVersion();
@@ -412,7 +412,7 @@ function deconnexion_CAS($url="")
 
 function hash_user($user)
 {
-    $config = new \App\Libraries\Configuration();
+    $config = new \App\Libraries\Configuration(\includes\SQL);
     $ics_salt = $config->getIcalSalt();
     $huser = hash('sha256', $user . $ics_salt);
     return $huser;
@@ -420,7 +420,7 @@ function hash_user($user)
 
 function unhash_user($huser_test)
 {
-    $config = new \App\Libraries\Configuration();
+    $config = new \App\Libraries\Configuration(\includes\SQL);
     $user = "";
     $ics_salt = $config->getIcalSalt();
     $req_user = 'SELECT u_login FROM conges_users';
@@ -464,7 +464,7 @@ function authentification_AD_SSO()
  */
 function storeTokenApi(\App\Libraries\ApiClient $apiClient, $username, $userPassword)
 {
-    $config = new \App\Libraries\Configuration();
+    $config = new \App\Libraries\Configuration(\includes\SQL);
     try {
         if ('dbconges' == $config->getHowToConnectUser()) {
             $dataUser = $apiClient->authentifyDbConges($username, $userPassword);

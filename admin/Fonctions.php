@@ -124,7 +124,7 @@ class Fonctions
      */
     public static function userModule()
     {
-        $config = new \App\Libraries\Configuration();
+        $config = new \App\Libraries\Configuration(\includes\SQL);
         $return = '';
         $return .= '<a href="' . ROOT_PATH . 'admin/admin_index.php?onglet=ajout-user" style="float:right" class="btn btn-success">' . _('admin_onglet_add_user') . '</a>';
         $return .= '<h1>' . _('admin_onglet_gestion_user') . '</h1>';
@@ -787,7 +787,7 @@ class Fonctions
 
     public static function commit_update_user($u_login_to_update, &$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, &$tab_new_reliquat, &$return)
     {
-        $config = new \App\Libraries\Configuration();
+        $config = new \App\Libraries\Configuration(\includes\SQL);
         $dataUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($u_login_to_update);
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $erreurs = [];
@@ -947,7 +947,7 @@ class Fonctions
 
     public static function modifier_user($u_login, $onglet)
     {
-        $config = new \App\Libraries\Configuration();
+        $config = new \App\Libraries\Configuration(\includes\SQL);
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return   = '';
         $soldeHeureId = uniqid();
@@ -1236,7 +1236,7 @@ class Fonctions
      */
     public static function modifUserModule($onglet)
     {
-        $config = new \App\Libraries\Configuration();
+        $config = new \App\Libraries\Configuration(\includes\SQL);
         $u_login              = htmlentities(getpost_variable('u_login'));
         $u_login_to_update    = htmlentities(getpost_variable('u_login_to_update')) ;
         $tab_checkbox_sem_imp = htmlentities(getpost_variable('tab_checkbox_sem_imp')) ;
@@ -1296,7 +1296,7 @@ class Fonctions
 
     public static function confirmer($group, $onglet)
     {
-        $config = new \App\Libraries\Configuration();
+        $config = new \App\Libraries\Configuration(\includes\SQL);
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return   = '';
 
@@ -1602,7 +1602,7 @@ class Fonctions
     // affichage du formulaire de saisie d'un nouveau user
     public static function affiche_formulaire_ajout_user(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, $onglet)
     {
-        $config = new \App\Libraries\Configuration();
+        $config = new \App\Libraries\Configuration(\includes\SQL);
         
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
@@ -1960,7 +1960,7 @@ class Fonctions
     }
 
     public static function FormAddUserpasswdOk($password1,$password2) {
-        $config = new \App\Libraries\Configuration();
+        $config = new \App\Libraries\Configuration(\includes\SQL);
 
         if($config->getHowToConnectUser() == 'dbconges')
         {
@@ -1972,7 +1972,7 @@ class Fonctions
 
     public static function ajout_user(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, $checkbox_user_groups)
     {
-        $config = new \App\Libraries\Configuration();
+        $config = new \App\Libraries\Configuration(\includes\SQL);
 
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return   = '';
@@ -2090,7 +2090,7 @@ class Fonctions
      */
     public static function ajoutUtilisateurModule($onglet)
     {
-        $config = new \App\Libraries\Configuration();
+        $config = new \App\Libraries\Configuration(\includes\SQL);
 
         $saisie_user = getpost_variable('saisie_user');
         $return      = '';

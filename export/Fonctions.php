@@ -9,7 +9,7 @@ class Fonctions
 {
     public static function form_saisie($user, $date_debut, $date_fin)
     {
-        $config = new \App\Libraries\Configuration();
+        $config = new \App\Libraries\Configuration(\includes\SQL);
     	$PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 
     	$date_today=date("d-m-Y");
@@ -174,7 +174,7 @@ class Fonctions
      */
     public static function exportICSModule()
     {
-        $config = new \App\Libraries\Configuration();
+        $config = new \App\Libraries\Configuration(\includes\SQL);
         $_SESSION['config']=init_config_tab();      // on initialise le tableau des variables de config
         if(!$config->isIcalActive()) {
             header('HTTP/1.0 403 Forbidden');
