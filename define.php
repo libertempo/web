@@ -20,7 +20,7 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     define('CSS_PATH',         ASSETS_PATH . 'Css/');
     define('LIBRARY_PATH',     ROOT_PATH . 'library/');
     define('INCLUDE_PATH',     ROOT_PATH . 'includes/');
-    define('CONFIG_PATH',      realpath(ROOT_PATH) . DS . 'cfg'. DS);
+    define('CONFIG_PATH',      realpath(ABSOLUTE_SYSPATH) . DS . 'cfg'. DS);
     define('INSTALL_PATH',     ROOT_PATH . 'install/');
     define('LOCALE_PATH',      ROOT_PATH . 'locale/');
     define('DUMP_PATH',        ROOT_PATH . 'dump/');
