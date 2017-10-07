@@ -40,27 +40,6 @@
             $calendarActive = 'active';
     }
     $onglet = getpost_variable('onglet');
-    // toolbar contextuelle au mode
-    $mod_toolbar = [];
-
-    switch($tmp) {
-        case 'admin':
-            $mod_toolbar[] = '';
-            if($_SESSION['config']['affiche_bouton_config_pour_admin'] || $_SESSION['config']['affiche_bouton_config_absence_pour_admin'] || $_SESSION['config']['affiche_bouton_config_mail_pour_admin'] || $_SESSION['userlogin']=="admin" )
-                $mod_toolbar[] = "";
-        break;
-        case 'hr':
-            $mod_toolbar[] = "";
-        break;
-        case 'utilisateur':
-            $mod_toolbar[] = '<a href="#"
-            onClick="OpenPopUp(\'' . ROOT_PATH . 'export/export_vcalendar.php?user_login=' . $_SESSION['userlogin'] .
-            '\', \'\', 600, 400);return false;">
-            <i class="fa fa-download"></i><span>' . _('Exporter cal') . '</span></a>';
-            if($_SESSION['config']['editions_papier'])
-                $mod_toolbar[] = "<a href=\"" . ROOT_PATH . "edition/edit_user.php\"><i class=\"fa fa-file-text\"></i><span>"._('button_editions')."</span></a>";
-        break;
-    }
 
 function sousmenuAdmin()
 {
@@ -105,6 +84,31 @@ function sousmenuResponsable()
 
     if ($_SESSION['config']['resp_association_planning']) {
         $return .= '<a class="secondary" href="' . ROOT_PATH . 'responsable/resp_index.php?onglet=liste_planning">Plannings</a>';
+    }
+
+    return $return;
+}
+
+function sousmenuEmploye()
+{
+    $return = '';
+    $return .= '<a class="secondary" href="' . ROOT_PATH . 'utilisateur/user_index.php">Absences</a>';
+
+    if ($_SESSION['config']['user_echange_rtt']) {
+        $return .= '<a class="secondary" href="' . ROOT_PATH . 'utilisateur/user_index.php?onglet=echange_jour_absence">Échange de jours</a>';
+    }
+
+    if ($_SESSION['config']['gestion_heures']) {
+        $return .= '<a class="secondary" href="' . ROOT_PATH . 'utilisateur/user_index.php?onglet=liste_heure_repos">Heures de repos</a>';
+        $return .= '<a class="secondary" href="' . ROOT_PATH . 'utilisateur/user_index.php?onglet=liste_heure_additionnelle">Heures additionnelles</a>';
+    }
+
+    if ($_SESSION['config']['auth'] && $_SESSION['config']['user_ch_passwd']) {
+        $return .= '<a class="secondary" href="' . ROOT_PATH . 'utilisateur/user_index.php?onglet=changer_mot_de_passe">Changer mot de passe</a>';
+    }
+    $return .= '<a class="secondary" href="' . ROOT_PATH . 'export/export_vcalendar.php?user_login=hr">Export calendrier</a>';
+    if ($_SESSION['config']['editions_papier']) {
+        $return .= '<a class="secondary" href="' . ROOT_PATH . 'edition/edit_user.php">Édition papier</a>';
     }
 
     return $return;
@@ -191,6 +195,9 @@ function sousmenuResponsable()
                 <a class="primary <?= $userActive ?>" href="<?= ROOT_PATH ?>utilisateur/user_index.php" <?php print ($tmp == 'utilisateur') ? 'active' : '' ;?>>
                     <i class="fa fa-user"></i><?= _('user') ?>
                 </a>
+                <?php if ($tmp == 'utilisateur') : ?>
+                    <?= sousmenuEmploye(); ?>
+                <?php endif; ?>
                 <?php if('active' === $calendarActive || $tmp=='utilisateur' || $tmp=='responsable' || in_array($tmp, ['hr', 'admin', 'config'])): ?>
                 <a class="primary <?= $calendarActive ?>" href="<?= ROOT_PATH ?>calendrier.php">
                     <i class="fa fa-calendar"></i><?= _('button_calendar') ?>
@@ -205,14 +212,5 @@ function sousmenuResponsable()
         </aside>
         <section id="content">
             <section class="vbox">
-                <header class="header bg-white">
-                <?php if($mod_toolbar) : ?>
-                    <ul id="mod-toolbar" class="pull-right">
-                    <?php foreach ($mod_toolbar as $key => $link) : ?>
-                        <li><?php echo $link; ?></li>
-                    <?php endforeach;?>
-                    </ul>
-                <?php endif; ?>
-                </header>
                 <section id="scrollable">
                     <div class="wrapper bg-white">

@@ -16,11 +16,7 @@ html, body, #content {
     background-color: #fff;
     color: #717171
 }
-.header {
-    min-height: 66px;
-    line-height: 66px;
-    border-bottom: #eceff6 solid 1px
-}
+
 a, a:hover {
     text-decoration: none
 }
@@ -157,7 +153,7 @@ a, a:hover {
 
 #scrollable .wrapper {
     margin: 20px;
-    border: #eceff6 solid 1px
+    border: #eceff6 solid 1px;
 }
 #scrollable .wrapper .wrapper {
     border: none
