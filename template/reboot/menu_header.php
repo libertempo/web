@@ -54,9 +54,9 @@ function sousmenuHR()
     $return = '<a class="secondary" href="' . ROOT_PATH . 'hr/hr_index.php?onglet=page_principale">Page principale</a>';
 
     if ($_SESSION['config']['user_saisie_demande']) {
-        $return .= '<a class="secondary" href="' . ROOT_PATH . 'hr/hr_index.php?onglet=traitement_demandes">Traitement d\'absences</a>';
+        $return .= '<a class="secondary" href="' . ROOT_PATH . 'hr/hr_index.php?onglet=traitement_demandes">Validation de congés</a>';
     }
-    $return .= '<a class="secondary" href="' . ROOT_PATH . 'hr/hr_index.php?onglet=ajout_conges">Ajout de congés</a>
+    $return .= '<a class="secondary" href="' . ROOT_PATH . 'hr/hr_index.php?onglet=ajout_conges">Crédit de congés</a>
     <a class="secondary" href="' . ROOT_PATH . 'hr/hr_index.php?onglet=jours_chomes">Jours fériés</a>
     <a class="secondary" href="' . ROOT_PATH . 'hr/hr_index.php?onglet=cloture_year">Exercices</a>
     <a class="secondary" href="' . ROOT_PATH . 'hr/hr_index.php?onglet=liste_planning">Plannings</a>
@@ -70,12 +70,12 @@ function sousmenuResponsable()
     $return = '<a class="secondary" href="' . ROOT_PATH . 'responsable/resp_index.php">Page principale</a>';
 
     if ($_SESSION['config']['user_saisie_demande']) {
-        $return .= '<a class="secondary" href="' . ROOT_PATH . 'responsable/resp_index.php?onglet=traitement_demandes">Traitement d\'absences</a>';
+        $return .= '<a class="secondary" href="' . ROOT_PATH . 'responsable/resp_index.php?onglet=traitement_demandes">Validation de congés</a>';
     }
 
     if ($_SESSION['config']['gestion_heures']) {
-        $return .= '<a class="secondary" href="' . ROOT_PATH . 'responsable/resp_index.php?onglet=traitement_heures_additionnelles">Traitement d\'heures additionnelles</a>
-        <a class="secondary" href="' . ROOT_PATH . 'responsable/resp_index.php?onglet=traitement_heures_repos">Traitement d\'heures de repos</a>';
+        $return .= '<a class="secondary" href="' . ROOT_PATH . 'responsable/resp_index.php?onglet=traitement_heures_additionnelles">Validation d\'heures additionnelles</a>
+        <a class="secondary" href="' . ROOT_PATH . 'responsable/resp_index.php?onglet=traitement_heures_repos">Validation d\'heures de repos</a>';
     }
 
     if ($_SESSION['config']['resp_ajoute_conges']) {
@@ -92,7 +92,7 @@ function sousmenuResponsable()
 function sousmenuEmploye()
 {
     $return = '';
-    $return .= '<a class="secondary" href="' . ROOT_PATH . 'utilisateur/user_index.php">Absences</a>';
+    $return .= '<a class="secondary" href="' . ROOT_PATH . 'utilisateur/user_index.php">Congés</a>';
 
     if ($_SESSION['config']['user_echange_rtt']) {
         $return .= '<a class="secondary" href="' . ROOT_PATH . 'utilisateur/user_index.php?onglet=echange_jour_absence">Échange de jours</a>';
