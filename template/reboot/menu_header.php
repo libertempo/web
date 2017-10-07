@@ -61,6 +61,54 @@
                 $mod_toolbar[] = "<a href=\"" . ROOT_PATH . "edition/edit_user.php\"><i class=\"fa fa-file-text\"></i><span>"._('button_editions')."</span></a>";
         break;
     }
+
+function sousmenuAdmin()
+{
+    return '<a class="secondary" href="' . ROOT_PATH . 'admin/admin_index.php?onglet=admin-users">Utilisateurs</a>
+    <a class="secondary" href="' . ROOT_PATH . 'admin/admin_index.php?onglet=admin-group">Groupes</a>
+    <a class="secondary" href="' . ROOT_PATH . 'admin/admin_db_sauve.php">Backup</a>
+    <a class="secondary" href="' . ROOT_PATH . 'config/index.php">Configuration</a>';
+}
+
+function sousmenuHR()
+{
+    $return = '<a class="secondary" href="' . ROOT_PATH . 'hr/hr_index.php?onglet=page_principale">Page principale</a>';
+
+    if ($_SESSION['config']['user_saisie_demande']) {
+        $return .= '<a class="secondary" href="' . ROOT_PATH . 'hr/hr_index.php?onglet=traitement_demandes">Traitement d\'absences</a>';
+    }
+    $return .= '<a class="secondary" href="' . ROOT_PATH . 'hr/hr_index.php?onglet=ajout_conges">Ajout de congés</a>
+    <a class="secondary" href="' . ROOT_PATH . 'hr/hr_index.php?onglet=jours_chomes">Jours fériés</a>
+    <a class="secondary" href="' . ROOT_PATH . 'hr/hr_index.php?onglet=cloture_year">Exercices</a>
+    <a class="secondary" href="' . ROOT_PATH . 'hr/hr_index.php?onglet=liste_planning">Plannings</a>
+    <a class="secondary" href="' . ROOT_PATH . 'hr/hr_jours_fermeture.php">Jours de fermeture</a>';
+
+    return $return;
+}
+
+function sousmenuResponsable()
+{
+    $return = '<a class="secondary" href="' . ROOT_PATH . 'responsable/resp_index.php">Page principale</a>';
+
+    if ($_SESSION['config']['user_saisie_demande']) {
+        $return .= '<a class="secondary" href="' . ROOT_PATH . 'responsable/resp_index.php?onglet=traitement_demandes">Traitement d\'absences</a>';
+    }
+
+    if ($_SESSION['config']['gestion_heures']) {
+        $return .= '<a class="secondary" href="' . ROOT_PATH . 'responsable/resp_index.php?onglet=traitement_heures_additionnelles">Traitement d\'heures additionnelles</a>
+        <a class="secondary" href="' . ROOT_PATH . 'responsable/resp_index.php?onglet=traitement_heures_repos">Traitement d\'heures de repos</a>';
+    }
+
+    if ($_SESSION['config']['resp_ajoute_conges']) {
+        $return .= '<a class="secondary" href="' . ROOT_PATH . 'responsable/resp_index.php?onglet=ajout_conges">Ajout de congés</a>';
+    }
+
+    if ($_SESSION['config']['resp_association_planning']) {
+        $return .= '<a class="secondary" href="' . ROOT_PATH . 'responsable/resp_index.php?onglet=liste_planning">Plannings</a>';
+    }
+
+    return $return;
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -114,17 +162,14 @@
             <div class="tools">
                 <div class="primary profil-info">
                     <i class="fa fa-smile-o"></i>
-                    <?= $_SESSION['u_prenom'] ?> <?= $_SESSION['u_nom'] ?>
+                    <?= substr($_SESSION['u_prenom'], 0, 1) ?>.&nbsp;<?= $_SESSION['u_nom'] ?>
                 </div>
 				<?php if (is_admin($_SESSION['userlogin'])): ?>
                 <a class="primary <?= $adminActive ?>" href="<?= ROOT_PATH ?>admin/admin_index.php" <?php print ($tmp == 'admin' || $tmp == 'config') ? 'active' : '' ;?>>
                     <i class="fa fa-bolt"></i><?= _('button_admin_mode');?>
 				</a>
                 <?php if (($tmp == 'admin' || $tmp == 'config')) : ?>
-                <a class="secondary" href="<?= ROOT_PATH ?>admin/admin_index.php?onglet=admin-users">Utilisateurs</a>
-                <a class="secondary" href="<?= ROOT_PATH ?>admin/admin_index.php?onglet=admin-group">Groupes</a>
-                <a class="secondary" href="<?= ROOT_PATH ?>admin/admin_db_sauve.php">Backup</a>
-                <a class="secondary" href="<?= ROOT_PATH ?>config/index.php">Configuration</a>
+                <?= sousmenuAdmin(); ?>
                 <?php endif; ?>
 				<?php endif; ?>
 				<?php if (is_hr($_SESSION['userlogin'])): ?>
@@ -132,21 +177,16 @@
                     <i class="fa fa-sitemap"></i><?= _('button_hr_mode');?>
 				</a>
                 <?php if ($tmp == 'hr') : ?>
-                <a class="secondary" href="<?= ROOT_PATH ?>hr/hr_index.php?onglet=page_principale">Page principale</a>
-                <?php if ($_SESSION['config']['user_saisie_demande']) : ?>
-                <a class="secondary" href="<?= ROOT_PATH ?>hr/hr_index.php?onglet=traitement_demandes">Traitement d'absences</a>
-                <?php endif; ?>
-                <a class="secondary" href="<?= ROOT_PATH ?>hr/hr_index.php?onglet=ajout_conges">Ajout de congés</a>
-                <a class="secondary" href="<?= ROOT_PATH ?>hr/hr_index.php?onglet=jours_chomes">Jours fériés</a>
-                <a class="secondary" href="<?= ROOT_PATH ?>hr/hr_index.php?onglet=cloture_year">Exercices</a>
-                <a class="secondary" href="<?= ROOT_PATH ?>hr/hr_index.php?onglet=liste_planning">Plannings</a>
-                <a class="secondary" href="<?= ROOT_PATH ?>hr/hr_jours_fermeture.php">Jours de fermeture</a>
+                    <?= sousmenuHR(); ?>
                 <?php endif; ?>
 				<?php endif; ?>
 				<?php if (is_resp($_SESSION['userlogin'])): ?>
-                <a class="primary <?= $respActive ?>" href="<?= ROOT_PATH ?>responsable/resp_index.php" <?php print ($tmp == 'utilisateur') ? 'active' : '' ;?>>
+                <a class="primary <?= $respActive ?>" href="<?= ROOT_PATH ?>responsable/resp_index.php" <?php print ($tmp == 'responsable') ? 'active' : '' ;?>>
                     <i class="fa fa-users"></i><?= _('button_responsable_mode');?>
 				</a>
+                <?php if ($tmp == 'responsable') : ?>
+                    <?= sousmenuResponsable(); ?>
+                <?php endif; ?>
 				<?php endif; ?>
                 <a class="primary <?= $userActive ?>" href="<?= ROOT_PATH ?>utilisateur/user_index.php" <?php print ($tmp == 'utilisateur') ? 'active' : '' ;?>>
                     <i class="fa fa-user"></i><?= _('user') ?>
