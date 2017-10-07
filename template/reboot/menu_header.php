@@ -45,9 +45,9 @@
 
     switch($tmp) {
         case 'admin':
-            $mod_toolbar[] = '<a href="#" onClick="OpenPopUp(\''. ROOT_PATH .'admin/admin_db_sauve.php\', \'\', 800, 600); return false;"><i class="fa fa-save"></i><span>' . _('admin_button_save_db_2') . '</span></a>';
+            $mod_toolbar[] = '';
             if($_SESSION['config']['affiche_bouton_config_pour_admin'] || $_SESSION['config']['affiche_bouton_config_absence_pour_admin'] || $_SESSION['config']['affiche_bouton_config_mail_pour_admin'] || $_SESSION['userlogin']=="admin" )
-                $mod_toolbar[] = "<a href=\"" . ROOT_PATH . "config/index.php\"" . ($tmp == 'config' ? 'class="active"' : '') . "><i class=\"fa fa-th-list\"></i><span>" . _('admin_button_config_2') . "</span></a>";
+                $mod_toolbar[] = "";
         break;
         case 'hr':
             $mod_toolbar[] = "<a href=\"" . ROOT_PATH . "hr/hr_jours_fermeture.php\"><i class=\"fa fa-calendar\"></i><span>" . _('admin_button_jours_fermeture_2') . "</span></a>";
@@ -107,74 +107,50 @@
     </head>
     <body id="top" class="hbox connected <?= ($printable) ? 'printable' : '' ?>">
         <aside id="toolbar">
-            <section>
-                <header class="main-header">
-                    <i class="icon-ellipsis-vertical toolbar-toggle"></i>
-                    <h2 class="brand"><a href="<?= ROOT_PATH . $home ?>" title="Accueil"><img src="<?= IMG_PATH ?>Libertempo64.png" alt="Libertempo"></a></h2>
-                </header>
-                <div class="tools">
-                    <div class="profil-info">
-                        <i class="fa fa-smile-o"></i>
-                        <div class="wrapper">
-                            <div class="user-info">
-                                <div class="user-login"><?= $_SESSION['userlogin'] ?></div>
-                                <div class="user-name">
-                                    <span class="firstname"><?= $_SESSION['u_prenom'] ?></span>
-                                    <span class="name"><?= $_SESSION['u_nom'] ?></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-					<?php if (is_admin($_SESSION['userlogin'])): ?>
-                    <div class="menu-link <?= $adminActive ?>">
-                        <a title="<?= _('button_admin_mode');?>" href="<?= ROOT_PATH ?>admin/admin_index.php" <?php print ($tmp == 'admin' || $tmp == 'config') ? 'active' : '' ;?>>
-                            <i class="fa fa-bolt fa-2x maxi"></i>
-                            <i class="fa fa-bolt mini"></i>
-						</a>
-                    </div>
-					<?php endif; ?>
-					<?php if (is_hr($_SESSION['userlogin'])): ?>
-                    <div class="menu-link <?= $hrActive ?>">
-                        <a title="<?= _('button_hr_mode');?>" href="<?= ROOT_PATH ?>hr/hr_index.php" <?php print ($tmp == 'hr') ? 'active' : '' ;?>>
-                            <i class="fa fa-sitemap fa-2x maxi"></i>
-                            <i class="fa fa-sitemap mini"></i>
-						</a>
-                    </div>
-					<?php endif; ?>
-					<?php if (is_resp($_SESSION['userlogin'])): ?>
-                    <div class="menu-link <?= $respActive ?>">
-                        <a title="<?= _('button_responsable_mode');?>" href="<?= ROOT_PATH ?>responsable/resp_index.php" <?php print ($tmp == 'utilisateur') ? 'active' : '' ;?>>
-                            <i class="fa fa-users fa-2x maxi"></i>
-                            <i class="fa fa-users mini"></i>
-						</a>
-                    </div>
-					<?php endif; ?>
-                    <div class="menu-link <?= $userActive ?>">
-                        <a title="<?= _('user') ?>" href="<?= ROOT_PATH ?>utilisateur/user_index.php" <?php print ($tmp == 'utilisateur') ? 'active' : '' ;?>>
-                            <i class="fa fa-user fa-2x maxi"></i>
-                            <i class="fa fa-user mini"></i>
-                        </a>
-                    </div>
-                    <?php if('active' === $calendarActive || $tmp=='utilisateur' || $tmp=='responsable' || in_array($tmp, ['hr', 'admin', 'config'])): ?>
-                    <div class="separator"></div>
-                    <div class="menu-link <?= $calendarActive ?>">
-                        <a title="<?= _('button_calendar') ?>" href="<?= ROOT_PATH ?>calendrier.php">
-                            <i class="fa fa-calendar fa-2x maxi"></i>
-                            <i class="fa fa-calendar mini"></i>
-                            </a>
-                    </div>
-                    <?php endif; ?>
-                   <?php if($_SESSION['config']['auth']): ?>
-                    <div class="separator"></div>
-                    <div class="menu-link">
-                        <a title="<?= _('button_deconnect') ?>" href="<?= ROOT_PATH ?>deconnexion.php">
-                            <i class="fa fa-power-off fa-2x maxi"></i>
-                            <i class="fa fa-power-off mini"></i>
-                        </a>
-                    </div>
-                    <?php endif; ?>
+            <header class="main-header">
+                <i class="icon-ellipsis-vertical toolbar-toggle"></i>
+                <div class="brand"><a href="<?= ROOT_PATH . $home ?>" title="Accueil"><img src="<?= IMG_PATH ?>Libertempo64.png" alt="Libertempo"></a></div>
+            </header>
+            <div class="tools">
+                <div class="profil-info">
+                    <i class="fa fa-smile-o"></i>
+                    <?= $_SESSION['u_prenom'] ?> <?= $_SESSION['u_nom'] ?>
                 </div>
-            </section>
+				<?php if (is_admin($_SESSION['userlogin'])): ?>
+                <a class="primary <?= $adminActive ?>" href="<?= ROOT_PATH ?>admin/admin_index.php" <?php print ($tmp == 'admin' || $tmp == 'config') ? 'active' : '' ;?>>
+                    <i class="fa fa-bolt"></i><?= _('button_admin_mode');?>
+				</a>
+                <?php if (($tmp == 'admin' || $tmp == 'config')) : ?>
+                <a class="secondary" href="<?= ROOT_PATH ?>admin/admin_index.php?onglet=admin-users">Utilisateurs</a>
+                <a class="secondary" href="<?= ROOT_PATH ?>admin/admin_index.php?onglet=admin-group">Groupes</a>
+                <a class="secondary" href="<?= ROOT_PATH ?>admin/admin_db_sauve.php">Backup</a>
+                <a class="secondary" href="<?= ROOT_PATH ?>config/index.php">Configuration</a>
+                <?php endif; ?>
+				<?php endif; ?>
+				<?php if (is_hr($_SESSION['userlogin'])): ?>
+                <a class="primary <?= $hrActive ?>" title="<?= _('button_hr_mode');?>" href="<?= ROOT_PATH ?>hr/hr_index.php" <?php print ($tmp == 'hr') ? 'active' : '' ;?>>
+                    <i class="fa fa-sitemap"></i>
+				</a>
+				<?php endif; ?>
+				<?php if (is_resp($_SESSION['userlogin'])): ?>
+                <a class="primary <?= $respActive ?>" title="<?= _('button_responsable_mode');?>" href="<?= ROOT_PATH ?>responsable/resp_index.php" <?php print ($tmp == 'utilisateur') ? 'active' : '' ;?>>
+                    <i class="fa fa-users"></i>
+				</a>
+				<?php endif; ?>
+                <a class="primary <?= $userActive ?>" href="<?= ROOT_PATH ?>utilisateur/user_index.php" <?php print ($tmp == 'utilisateur') ? 'active' : '' ;?>>
+                    <i class="fa fa-user"></i><?= _('user') ?>
+                </a>
+                <?php if('active' === $calendarActive || $tmp=='utilisateur' || $tmp=='responsable' || in_array($tmp, ['hr', 'admin', 'config'])): ?>
+                <a class="primary <?= $calendarActive ?>" href="<?= ROOT_PATH ?>calendrier.php">
+                    <i class="fa fa-calendar"></i><?= _('button_calendar') ?>
+                </a>
+                <?php endif; ?>
+               <?php if($_SESSION['config']['auth']): ?>
+                <a class="primary" href="<?= ROOT_PATH ?>deconnexion.php">
+                    <i class="fa fa-power-off"></i><?= _('button_deconnect') ?>
+                </a>
+                <?php endif; ?>
+            </div>
         </aside>
         <section id="content">
             <section class="vbox">

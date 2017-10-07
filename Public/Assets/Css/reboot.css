@@ -17,11 +17,11 @@ html, body, #content {
     color: #717171
 }
 .header {
-    min-height: 61px;
-    line-height: 61px;
+    min-height: 66px;
+    line-height: 66px;
     border-bottom: #eceff6 solid 1px
 }
-a {
+a, a:hover {
     text-decoration: none
 }
 .login-heading {
@@ -78,41 +78,40 @@ a {
     background: #009ec5
 }
 #toolbar .main-header {
-    position: relative
+    height: 65px;
+    text-align: center;
 }
 #toolbar .toolbar-toggle {
     display: none
 }
-@media screen {
-    #toolbar {
-        position: relative;
-        width: 100px;
-        min-height: 100%;
-        display: table-cell;
-        vertical-align: top
-    }
+#toolbar {
+    width: 200px;
+    display: table-cell;
+    vertical-align: top
 }
-@media screen and (max-width: 767px) {
-    #toolbar .toolbar-toggle {}#toolbar .toolbar-toggle:hover {}#toolbar .tools {}
-}
-#toolbar .brand {
-    font-size: 17px;
-    margin: 0
-}
-#toolbar .brand a {
-    color: #edfbff;
+
+#toolbar a {
     display: block;
-    line-height: 60px;
-    padding: 0 20px;
-    text-align: center;
-    background: #009ec5;
-    border-bottom: solid 1px #0098bd
 }
-#toolbar .brand a:hover {
-    color: #FFF;
-    text-decoration: none;
+
+#toolbar a.primary {
+    color: #edfbff;
+    line-height: 40px;
+    padding: 0 20px;
+    border-bottom: solid 1px #0098bd;
+}
+
+#toolbar a.secondary {
+    color: #edfbff;
+    padding: 3px 20px;
+    line-height: 25px;
+    background: #007399;
+}
+
+#toolbar a.primary.active {
     background: #00aad4
 }
+
 #toolbar .nav {
     margin: 0;
     padding: 0
@@ -142,14 +141,13 @@ a {
         display: none
     }
 }
-@media screen and (min-width: 768px) {
-    #content {
-        margin-right:200px;
-        width:100%;
-        height:100%;
-        display:table-cell
-    }
+
+#content {
+    width:91%;
+    height:100%;
+    display:table-cell
 }
+
 #scrollable .wrapper {
     margin: 20px;
     border: #eceff6 solid 1px
@@ -161,23 +159,22 @@ a {
     padding: 20px
 }
 .profil-info {
-    padding: 20px;
+    height: 45px;
+    padding: 10px;
     background: #92cf5c;
-    color: #fff
+    color: #fff;
+    vertical-align: baseline;
 }
 .profil-info .fa-smile-o {
     float: left;
-    font-size: 24px;
-    font-size: 2.4rem
+    font-size: 1.5em;
+    margin-right: 10px;
 }
 .profil-info .user-login {
     text-transform: uppercase
 }
 .profil-info .user-login .name {
     font-weight: bold
-}
-.profil-info .wrapper {
-    margin-left: 40px
 }
 
 .mod-info .nav>li>a {
@@ -212,9 +209,7 @@ a {
     font-size: 1.3rem;
     color: #717171
 }
-@media screen and (max-width: 767px) {
-    #mod-toolbar li a {}
-}
+
 #mod-toolbar li a:hover,
 #mod-toolbar li a.active {
     color: #FFF;
@@ -224,19 +219,8 @@ a {
 #mod-toolbar li a i {
     margin-right: 10px
 }
-@media screen and (max-width: 1023px) {
-    #mod-toolbar li a i {
-        margin-right: 0;
-        font-size: 17px;
-        font-size: 1.7rem
-    }
-}
-@media screen and (max-width: 1023px) {
-    #mod-toolbar li a span {
-        display: none
-    }
-}
-.content-title {
+
+content-title {
     font-size: 14px;
     font-size: 1.4rem;
     line-height: 40px;
@@ -573,14 +557,8 @@ footer {
     top: 4px
 }
 
-.menu-link a {
-    display: block;
-    text-align: center;
-    padding: 17px;
-    color: #FFF
-}
-
-.menu-link i{
+#toolbar a i{
+    font-size: 1.5em;
     margin-right:5px
 }
 
@@ -589,41 +567,10 @@ footer {
     border-color: #eceff6
 }
 
-.separator {
-    height : 20px;
-}
-
-.menu-link:hover i {
-    color: #076791;
-}
-
-.menu-link.active i {
+#toolbar a.active i {
     color: #05415C;
 }
 
-@media screen and (min-width: 768px){
-    .menu-link i.mini {
-        display: none;
-    }
-}
-
-@media screen and (max-width: 767px) {
-    .menu-link i.maxi {
-        display: none;
-    }
-    .menu-link a {
-        padding: 10px 0;
-    }
-    #toolbar {
-        width: 50px;
-    }
-    #toolbar .brand a {
-        padding: 0 10px;
-    }
-    .profil-info {
-        padding : 5px;
-    }
-}
 
 /*fonts*/
 
