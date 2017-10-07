@@ -94,22 +94,29 @@ a, a:hover {
     display: block;
 }
 
-#toolbar a.primary {
+#toolbar .primary {
     color: #edfbff;
+    font-weight: bold;
     line-height: 40px;
-    padding: 0 20px;
+    padding: 0 10px;
     border-bottom: solid 1px #0098bd;
+}
+
+#toolbar .primary i {
+    margin-right: 10px;
 }
 
 #toolbar a.secondary {
     color: #edfbff;
     padding: 3px 20px;
     line-height: 25px;
-    background: #007399;
+    background: #0086b3;
 }
 
-#toolbar a.primary.active {
-    background: #00aad4
+#toolbar .primary.active, #toolbar .primary:not(.profil-info):hover {
+    background: #00aad4;
+    color: #05415C;
+    transition : 0.3s;
 }
 
 #toolbar .nav {
@@ -159,22 +166,12 @@ a, a:hover {
     padding: 20px
 }
 .profil-info {
-    height: 45px;
-    padding: 10px;
-    background: #92cf5c;
-    color: #fff;
-    vertical-align: baseline;
+    text-shadow: 1px 1px #555;
+    border-top: solid 1px #0098bd;
+
 }
 .profil-info .fa-smile-o {
-    float: left;
     font-size: 1.5em;
-    margin-right: 10px;
-}
-.profil-info .user-login {
-    text-transform: uppercase
-}
-.profil-info .user-login .name {
-    font-weight: bold
 }
 
 .mod-info .nav>li>a {
@@ -566,11 +563,6 @@ footer {
     background-color: #f6f8fb;
     border-color: #eceff6
 }
-
-#toolbar a.active i {
-    color: #05415C;
-}
-
 
 /*fonts*/
 

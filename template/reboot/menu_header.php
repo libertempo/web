@@ -50,7 +50,7 @@
                 $mod_toolbar[] = "";
         break;
         case 'hr':
-            $mod_toolbar[] = "<a href=\"" . ROOT_PATH . "hr/hr_jours_fermeture.php\"><i class=\"fa fa-calendar\"></i><span>" . _('admin_button_jours_fermeture_2') . "</span></a>";
+            $mod_toolbar[] = "";
         break;
         case 'utilisateur':
             $mod_toolbar[] = '<a href="#"
@@ -112,7 +112,7 @@
                 <div class="brand"><a href="<?= ROOT_PATH . $home ?>" title="Accueil"><img src="<?= IMG_PATH ?>Libertempo64.png" alt="Libertempo"></a></div>
             </header>
             <div class="tools">
-                <div class="profil-info">
+                <div class="primary profil-info">
                     <i class="fa fa-smile-o"></i>
                     <?= $_SESSION['u_prenom'] ?> <?= $_SESSION['u_nom'] ?>
                 </div>
@@ -128,13 +128,24 @@
                 <?php endif; ?>
 				<?php endif; ?>
 				<?php if (is_hr($_SESSION['userlogin'])): ?>
-                <a class="primary <?= $hrActive ?>" title="<?= _('button_hr_mode');?>" href="<?= ROOT_PATH ?>hr/hr_index.php" <?php print ($tmp == 'hr') ? 'active' : '' ;?>>
-                    <i class="fa fa-sitemap"></i>
+                <a class="primary <?= $hrActive ?>" href="<?= ROOT_PATH ?>hr/hr_index.php" <?php print ($tmp == 'hr') ? 'active' : '' ;?>>
+                    <i class="fa fa-sitemap"></i><?= _('button_hr_mode');?>
 				</a>
+                <?php if ($tmp == 'hr') : ?>
+                <a class="secondary" href="<?= ROOT_PATH ?>hr/hr_index.php?onglet=page_principale">Page principale</a>
+                <?php if ($_SESSION['config']['user_saisie_demande']) : ?>
+                <a class="secondary" href="<?= ROOT_PATH ?>hr/hr_index.php?onglet=traitement_demandes">Traitement d'absences</a>
+                <?php endif; ?>
+                <a class="secondary" href="<?= ROOT_PATH ?>hr/hr_index.php?onglet=ajout_conges">Ajout de congés</a>
+                <a class="secondary" href="<?= ROOT_PATH ?>hr/hr_index.php?onglet=jours_chomes">Jours fériés</a>
+                <a class="secondary" href="<?= ROOT_PATH ?>hr/hr_index.php?onglet=cloture_year">Exercices</a>
+                <a class="secondary" href="<?= ROOT_PATH ?>hr/hr_index.php?onglet=liste_planning">Plannings</a>
+                <a class="secondary" href="<?= ROOT_PATH ?>hr/hr_jours_fermeture.php">Jours de fermeture</a>
+                <?php endif; ?>
 				<?php endif; ?>
 				<?php if (is_resp($_SESSION['userlogin'])): ?>
-                <a class="primary <?= $respActive ?>" title="<?= _('button_responsable_mode');?>" href="<?= ROOT_PATH ?>responsable/resp_index.php" <?php print ($tmp == 'utilisateur') ? 'active' : '' ;?>>
-                    <i class="fa fa-users"></i>
+                <a class="primary <?= $respActive ?>" href="<?= ROOT_PATH ?>responsable/resp_index.php" <?php print ($tmp == 'utilisateur') ? 'active' : '' ;?>>
+                    <i class="fa fa-users"></i><?= _('button_responsable_mode');?>
 				</a>
 				<?php endif; ?>
                 <a class="primary <?= $userActive ?>" href="<?= ROOT_PATH ?>utilisateur/user_index.php" <?php print ($tmp == 'utilisateur') ? 'active' : '' ;?>>
