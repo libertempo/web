@@ -204,7 +204,7 @@ function sousmenuEmploye()
                 </a>
                 <?php endif; ?>
                <?php if($_SESSION['config']['auth']): ?>
-                <a class="primary" href="<?= ROOT_PATH ?>deconnexion.php">
+                <a id="deconnexion" class="primary" href="<?= ROOT_PATH ?>deconnexion.php">
                     <i class="fa fa-power-off"></i><?= _('button_deconnect') ?>
                 </a>
                 <?php endif; ?>

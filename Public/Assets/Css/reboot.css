@@ -114,6 +114,13 @@ a, a:hover {
     text-shadow: 1px 1px #AAA;
 }
 
+#deconnexion {
+    position: absolute;
+    width: 200px;
+    bottom: 0;
+    border-top: 1px solid #0098bd;
+}
+
 #toolbar .nav {
     margin: 0;
     padding: 0
