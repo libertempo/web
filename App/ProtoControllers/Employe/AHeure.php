@@ -35,7 +35,7 @@ abstract class AHeure
      *
      * @return int
      */
-    protected function postHtmlCommon(array $post, array &$errorsLst, &$notice)
+    public function postHtmlCommon(array $post, array &$errorsLst, &$notice)
     {
         $user = $_SESSION['userlogin'];
         if (!empty($post['_METHOD'])) {
@@ -302,7 +302,7 @@ abstract class AHeure
      *
      * @return array
      */
-    protected function transformChampsRecherche(array $post)
+    public function transformChampsRecherche(array $post)
     {
         $champs = [];
         $search = $post['search'];
