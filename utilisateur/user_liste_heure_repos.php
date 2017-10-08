@@ -1,10 +1,8 @@
 <?php
-
 defined('_PHP_CONGES') or die('Restricted access');
 if (!$_SESSION['config']['gestion_heures']) {
     redirect(ROOT_PATH . 'utilisateur/user_index.php');
 }
-
 use \App\Models\AHeure;
 $repos = new \App\ProtoControllers\Employe\Heure\Repos();
 
@@ -36,15 +34,17 @@ $params = $champsRecherche + [
 ];
 
 $canUserSaisi = $_SESSION['config']['user_saisie_demande'] || $_SESSION['config']['user_saisie_mission'];
+$urlSaisie = 'utilisateur/user_index.php?onglet=ajout_heure_repos';
+$texteSaisie = _('divers_ajout_heure_repos');
 $titre = _('user_liste_heure_repos_titre');
 
 $listId = $repos->getListeId($params);
-$dataRepos = [];
+$dataHeures = [];
 if (!empty($listId)) {
     $listeRepos = $repos->getListeSQL($listId);
     foreach ($listeRepos as $repos) {
         $data = new \stdClass;
-        $dataRepos[] = $data;
+        $dataHeures[] = $data;
         $data->jour = date('d/m/Y', $repos['debut']);
         $data->debut = date('H\:i', $repos['debut']);
         $data->fin = date('H\:i', $repos['fin']);
@@ -52,8 +52,9 @@ if (!empty($listId)) {
         $data->statut = AHeure::statusText($repos['statut']);
         $data->comment = \includes\SQL::quote($repos['comment']);
         $data->isModifiable = AHeure::STATUT_DEMANDE == $repos['statut'];
+        $data->urlModification = 'user_index.php?onglet=modif_heure_repos&id=' . $repos['id_heure'];
         $data->idHeure = $repos['id_heure'];
     }
 }
 
-require_once VIEW_PATH . 'Employe/Repos/Liste.php';
+require_once VIEW_PATH . 'Employe/Heure/Liste.php';

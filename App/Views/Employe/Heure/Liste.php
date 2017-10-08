@@ -4,14 +4,16 @@
  * $errorsLst
  * $notice
  * $champsRecherche
- * $dataRepos
+ * $dataHeures
+ * $urlSaisie
+ * $texteSaisie
  */
 
 use \App\Models\AHeure;
 
 ?>
 <?php if ($canUserSaisi) : ?>
-    <a href="<?= ROOT_PATH ?>utilisateur/user_index.php?onglet=ajout_heure_repos" style="float:right" class="btn btn-success"><?= _('divers_ajout_heure_repos') ?></a>
+    <a href="<?= ROOT_PATH . $urlSaisie ?>" style="float:right" class="btn btn-success"><?= $texteSaisie ?></a>
 <?php endif; ?>
 <h1><?= $titre ?></h1>
 <?php if (!empty($errorsLst)) : ?>
@@ -75,25 +77,25 @@ use \App\Models\AHeure;
         </tr>
     </thead>
     <tbody>
-    <?php if (empty($dataRepos)) : ?>
+    <?php if (empty($dataHeures)) : ?>
         <tr><td colspan="7"><center><?= _('aucun_resultat') ?></center></td></tr>
     <?php else : ?>
-        <?php foreach ($dataRepos as $repos) : ?>
+        <?php foreach ($dataHeures as $heure) : ?>
             <tr>
-                <td><?= $repos->jour ?></td>
-                <td><?= $repos->debut ?></td>
-                <td><?= $repos->fin ?></td>
-                <td><?= $repos->duree ?></td>
-                <td><?= $repos->statut ?></td>
-                <td><?= $repos->comment ?></td>
+                <td><?= $heure->jour ?></td>
+                <td><?= $heure->debut ?></td>
+                <td><?= $heure->fin ?></td>
+                <td><?= $heure->duree ?></td>
+                <td><?= $heure->statut ?></td>
+                <td><?= $heure->comment ?></td>
                 <td>
                 <?php if ($data->isModifiable) : ?>
                     <form action="" method="post" accept-charset="UTF-8"
             enctype="application/x-www-form-urlencoded">
-                        <a title="<?= _('form_modif') ?>" href="user_index.php?onglet=modif_heure_repos&amp;id=<?= $repos->idHeure ?>">
+                        <a title="<?= _('form_modif') ?>" href="<?= $heure->urlModification ?>">
                             <i class="fa fa-pencil"></i>
                         </a>
-                        <input type="hidden" name="id_heure" value="<?= $repos->idHeure ?>" />
+                        <input type="hidden" name="id_heure" value="<?= $heure->idHeure ?>" />
                         <input type="hidden" name="_METHOD" value="DELETE" />
                         <button type="submit" class="btn btn-link" title="<?= _('Annuler') ?>"><i class="fa fa-times-circle"></i></button>
                     </form>

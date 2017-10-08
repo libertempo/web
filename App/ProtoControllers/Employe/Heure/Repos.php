@@ -245,20 +245,6 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
         return $return;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getListe()
-    {
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getFormulaireRecherche(array $champs)
-    {
-    }
-
     /*
      * SQL
      */

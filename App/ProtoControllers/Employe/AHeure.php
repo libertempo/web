@@ -268,13 +268,6 @@ abstract class AHeure
     abstract public function canUserDelete($id, $user);
 
     /**
-     * Liste des heures
-     *
-     * @return string
-     */
-    abstract public function getListe();
-
-    /**
      * Y-a-t-il une recherche dans l'avion ?
      *
      * @param array $post
@@ -285,15 +278,6 @@ abstract class AHeure
     {
         return !empty($post['search']);
     }
-
-    /**
-     * Retourne le formulaire de recherche de la liste
-     *
-     * @param array $champs Champs de recherche (postés ou défaut)
-     *
-     * @return string
-     */
-    abstract protected function getFormulaireRecherche(array $champs);
 
     /**
      * Transforme les champs de recherche afin d'être compris par la bdd
