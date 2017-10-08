@@ -163,7 +163,10 @@ a, a:hover {
 .profil-info {
     text-shadow: 1px 1px #555;
     border-top: solid 1px #0098bd;
-
+    width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .profil-info .fa-smile-o {
     font-size: 1.5em;
