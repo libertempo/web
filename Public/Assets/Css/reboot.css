@@ -71,7 +71,11 @@ a, a:hover {
     border-color: transparent
 }
 #toolbar {
-    background: #009ec5
+    background: #009ec5;
+    width: 200px;
+    display: table-cell;
+    vertical-align: top;
+    border-right: 2px outset #009ec5;
 }
 #toolbar .main-header {
     height: 65px;
@@ -79,11 +83,6 @@ a, a:hover {
 }
 #toolbar .toolbar-toggle {
     display: none
-}
-#toolbar {
-    width: 200px;
-    display: table-cell;
-    vertical-align: top
 }
 
 #toolbar a {
@@ -95,7 +94,7 @@ a, a:hover {
     font-weight: bold;
     line-height: 40px;
     padding: 0 10px;
-    border-bottom: solid 1px #0098bd;
+    border-bottom: 1px solid #0098bd;
 }
 
 #toolbar .primary i {
@@ -110,9 +109,9 @@ a, a:hover {
 }
 
 #toolbar .primary.active, #toolbar .primary:not(.profil-info):hover {
-    background: #00aad4;
     color: #05415C;
-    transition : 0.3s;
+    transition : 0.2s;
+    text-shadow: 1px 1px #AAA;
 }
 
 #toolbar .nav {
