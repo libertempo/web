@@ -1762,32 +1762,6 @@ function verif_droits_user($niveau_droits)
     }
 }
 
-
-// on lit le contenu du répertoire lang et on parse les nom de ficher (ex lang_fr_francais.php)
-function affiche_select_from_lang_directory( $select_name, $default )
-{
-    $return = '';
-    if(empty($select_name)){
-        $select_name = 'lang';
-    }
-    if(empty($default)){
-        $default = 'fr_FR';
-    }
-    $return .= '<select id="' . $select_name . '" name="' . $select_name . '" class="form-control">';
-    $langs = glob( LOCALE_PATH .'*' );
-    $return .= 'langs = ' . var_export( $langs, true );
-    foreach($langs as $lang ) {
-        $lang = basename($lang);
-        if( $lang == $default ) {
-            $return .= '<option value="' . $lang . '" selected >' . $lang . '</option>';
-        } else {
-            $return .= '<option value="' . $lang . '">' . $lang . '</option>';
-        }
-    }
-    $return .= '</select>';
-    return $return;
-}
-
 // on insert les logs des periodes de conges
 // retourne TRUE ou FALSE
 function log_action($num_periode, $etat_periode, $login_pour, $comment)
