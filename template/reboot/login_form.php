@@ -1,13 +1,5 @@
 <?php
-include INCLUDE_PATH.'misc.class.php';
 
-$locales_browser = new HTTPLocale();
-$lang_browser    = $locales_browser->language;
-$country_browser = $locales_browser->country;
-$lang_selected   = '';
-if($lang_browser && $country_browser) {
-    $lang_selected = $lang_browser."_".strtoupper($country_browser);
-}
 $error_message = NULL;
 if ($erreur == 'login_passwd_incorrect') {
     $error_message = _('login_passwd_incorrect');
@@ -36,7 +28,6 @@ if ($erreur == 'login_passwd_incorrect') {
         <h2 class="form-signin-heading">Connexion</h2>
         <input type="text" id="session_username" class="form-control" name="session_username" value="<?= $session_username ?>" placeholder="<?= _('divers_login_maj_1') ?>" autofocus>
         <input type="password" id="session_password" class="form-control" name="session_password" placeholder="Mot de passe" autocomplete="off"/>
-        <?php echo affiche_select_from_lang_directory('lang',$lang_selected); ?>
         <button type="submit" class="btn btn-lg btn-primary btn-block"><?= _('form_submit') ?></button>
     </form>
     <script type="text/javascript">$('#login_form .submit').button();</script>

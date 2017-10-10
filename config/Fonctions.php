@@ -882,11 +882,7 @@ class Fonctions
                 $conf_commentaire = strtolower($data['conf_commentaire']);
 
                 if($conf_nom=="lang") {
-                    $childTable .= _('choisir_langue').'<br>';
-                    // affichage de la liste des langues supportées ...
-                    // on lit le contenu du répertoire lang et on parse les nom de ficher (ex lang_fr_francais.php)
-                    //affiche_select_from_lang_directory("tab_new_values[$conf_nom]");
-                    $childTable .= affiche_select_from_lang_directory('lang', $conf_valeur);
+                    $childTable .= '<b>Langue installée &nbsp;&nbsp;=&nbsp;&nbsp;' . $conf_valeur . '</b><br>';
                 } else {
                     // affichage commentaire
                     $childTable .= '<br><i>' . _($conf_commentaire) . '</i><br>';
