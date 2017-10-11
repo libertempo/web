@@ -166,7 +166,7 @@ function sousmenuEmploye()
             <div class="tools">
                 <div class="primary profil-info">
                     <i class="fa fa-smile-o"></i>
-                    <?= substr($_SESSION['u_prenom'], 0, 1) ?>.&nbsp;<?= $_SESSION['u_nom'] ?>
+                    <?= \App\ProtoControllers\Utilisateur::getNomComplet($_SESSION['u_prenom'], $_SESSION['u_nom'], true) ?>
                 </div>
 				<?php if (is_admin($_SESSION['userlogin'])): ?>
                 <a class="primary <?= $adminActive ?>" href="<?= ROOT_PATH ?>admin/admin_index.php" <?php print ($tmp == 'admin' || $tmp == 'config') ? 'active' : '' ;?>>

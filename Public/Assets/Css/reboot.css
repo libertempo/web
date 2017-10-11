@@ -108,7 +108,7 @@ a, a:hover {
     background: #0086b3;
 }
 
-#toolbar .primary.active, #toolbar .primary:not(.profil-info):hover {
+#toolbar a.active, #toolbar a:not(.profil-info):hover {
     color: #05415C;
     transition : 0.2s;
     text-shadow: 1px 1px #AAA;
@@ -620,6 +620,13 @@ table#calendrier {
 #calendrier #entete th.today {
     background: #009ec5;
     color: white;
+}
+
+td.calendrier-nom {
+    width: 175px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 td.calendrier-jour {
