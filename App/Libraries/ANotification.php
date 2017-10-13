@@ -22,7 +22,7 @@ abstract Class ANotification {
      */
     public function __construct($id) {
         $id = (int)$id;
-        if(is_int($id)){
+        if (is_int($id)){
             $this->contenuNotification = $this->getContenu($id);
         } else {
             throw new Exception('erreur id');
@@ -76,7 +76,7 @@ abstract Class ANotification {
             if (empty($notification['destinataire'][0])) {
                 continue;
             }
-            if($this->canSend($notification['config'])){
+            if ($this->canSend($notification['config'])){
                 $mail->ClearAddresses();
                 $mail->From = $notification['expediteur']['mail'];
                 $mail->FromName = $notification['expediteur']['nom'];

@@ -48,7 +48,7 @@ class Configuration extends \Tests\Units\TestUnit
     public function testcanUserSaisieDemande()
     {
         $canDemande = $this->config->canUserSaisieDemande();
-        $this->variable($canDemande)->isIdenticalTo('TRUE');
+        $this->boolean($canDemande)->isTrue;
     }
 
     public function testgetInstalledVersion()

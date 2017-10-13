@@ -33,7 +33,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
                         $errors .= '<li>' . $key . ' : ' . $value . '</li>';
                     }
                     $return .= '<br><div class="alert alert-danger">' . _('erreur_recommencer') . '<ul>' . $errors . '</ul></div>';
-                } elseif(!empty($notice)) {
+                } elseif (!empty($notice)) {
                     $return .= '<br><div class="alert alert-info">' .  $notice . '.</div>';
                 }
             }
@@ -67,7 +67,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         if (empty($demandesResp) && empty($demandesGrandResp) && empty($demandesRespAbsent) ) {
             $childTable .= '<tr><td colspan="12"><center>' . _('aucune_demande') . '</center></td></tr>';
         } else {
-            if(!empty($demandesResp)) {
+            if (!empty($demandesResp)) {
                 $childTable .= $this->getFormDemandes($demandesResp);
             }
             if (!empty($demandesGrandResp)) {
@@ -179,20 +179,20 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         if ($this->isDemandeTraitable($infoDemande['p_etat'])) { // demande est traitable
             if (\App\Models\Conge::REFUSE === $statut) {
                 $return = $this->updateStatutRefus($id_conge, $put['comment_refus'][$id_conge]);
-                if($config->isSendMailRefusUtilisateur()) {
+                if ($config->isSendMailRefusUtilisateur()) {
                     alerte_mail($_SESSION['userlogin'], $infoDemande['p_login'], $infoDemande['p_num'], "refus_conges");
                 }
                 log_action($infoDemande['p_num'], 'refus', '', $infoDemande['p_login'], 'traitement demande ' . $id_conge . ' (' . $infoDemande['p_login'] . ') (' . $infoDemande['p_nb_jours'] . ' jours) : refus');
             } elseif (\App\Models\Conge::ACCEPTE === $statut) {
                 if (\App\ProtoControllers\Responsable::isDoubleValGroupe($infoDemande['p_login'])) {
                     $return = $this->updateStatutPremiereValidation($id_conge);
-                    if($config->isSendMailPremierValidationUtilisateur()) {
+                    if ($config->isSendMailPremierValidationUtilisateur()) {
                         alerte_mail($_SESSION['userlogin'], $infoDemande['p_login'], $infoDemande['p_num'], "valid_conges");
                     }
                     log_action($infoDemande['p_num'], 'valid', $infoDemande['p_login'], 'traitement demande conges ' . $id_conge . ' de ' . $infoDemande['p_login'] . ' première validation');
                 } else {
                     $return = $this->putValidationFinale($id_conge);
-                    if($config->isSendMailValidationUtilisateur()) {
+                    if ($config->isSendMailValidationUtilisateur()) {
                         alerte_mail($_SESSION['userlogin'], $infoDemande['p_login'], $infoDemande['p_num'], "accept_conges");
                     }
                     log_action($infoDemande['p_num'], 'ok', $infoDemande['p_login'], 'traitement demande ' . $id_conge . ' (' . $infoDemande['p_login'] . ') (' . $infoDemande['p_nb_jours'] . ' jours) : OK');
@@ -216,14 +216,14 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         if ($this->isDemandeTraitable($infoDemande['p_etat'])) { // demande est traitable
             if (\App\Models\Conge::REFUSE === $statut) {
                 $return = $this->updateStatutRefus($id_conge, $put['comment_refus'][$id_conge]);
-                if($config->isSendMailRefusUtilisateur()) {
+                if ($config->isSendMailRefusUtilisateur()) {
                     alerte_mail($_SESSION['userlogin'], $infoDemande['p_login'], $infoDemande['p_num'], "refus_conges");
                 }
                 log_action($infoDemande['p_num'], 'refus', '', $infoDemande['p_login'], 'traitement demande ' . $id_conge . ' (' . $infoDemande['p_login'] . ') (' . $infoDemande['p_nb_jours'] . ' jours) : refus');
             } elseif (\App\Models\Conge::ACCEPTE === $statut) {
                 if (\App\ProtoControllers\Responsable::isDoubleValGroupe($infoDemande['p_login'])) {
                     $return = $this->putValidationFinale($id_conge);
-                    if($config->isSendMailValidationUtilisateur()) {
+                    if ($config->isSendMailValidationUtilisateur()) {
                         alerte_mail($_SESSION['userlogin'], $infoDemande['p_login'], $infoDemande['p_num'], "accept_conges");
                     }
                     log_action($infoDemande['p_num'], 'ok', $infoDemande['p_login'], 'traitement demande ' . $id_conge . ' (' . $infoDemande['p_login'] . ') (' . $infoDemande['p_nb_jours'] . ' jours) : OK');
@@ -250,9 +250,9 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         $demande = $this->getInfoDemandes(explode(" ", $demandeId))[$demandeId];
         $SoldeReliquat = $this->getReliquatconge($demande['p_login'], $demande['p_type']);
 
-        if($this->isOptionReliquatActive() && $this->isReliquatUtilisable($demande['p_date_fin']) && 0 < $SoldeReliquat) {
+        if ($this->isOptionReliquatActive() && $this->isReliquatUtilisable($demande['p_date_fin']) && 0 < $SoldeReliquat) {
 
-            if($SoldeReliquat>=$demande['p_nb_jours']) {
+            if ($SoldeReliquat>=$demande['p_nb_jours']) {
                 $sql = \includes\SQL::singleton();
                 $sql->getPdoObj()->begin_transaction();
                 $updateReliquat = $this->updateReliquatUser($demande['p_login'], $demande['p_nb_jours'], $demande['p_type']);
@@ -429,7 +429,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
     protected function getIdDemandesResponsableAbsent($resp)
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
-        if(!$config->isGestionResponsableAbsent()){
+        if (!$config->isGestionResponsableAbsent()){
             return [];
         }
         $groupesIdResponsable = \App\ProtoControllers\Responsable::getIdGroupeResp($resp);
@@ -447,7 +447,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
                 $usersduRespResponsable[] = $user;
             }
         }
-        if(empty($usersduRespResponsable)){
+        if (empty($usersduRespResponsable)){
             return [];
         }
         foreach ($usersduRespResponsable as $userduRespResponsable) {
@@ -479,7 +479,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
             break;
                 }
             }
-            if($delegation){
+            if ($delegation){
                 $ids = array_merge($ids, \App\ProtoControllers\Employe\Conge::getidDemandesUtilisateur($userResp));
             }
         }

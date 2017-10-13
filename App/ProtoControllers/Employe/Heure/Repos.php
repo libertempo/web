@@ -489,7 +489,7 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
     public function canUserEdit($id, $user)
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
-        if (!$config->canUserModifieDemande()){
+        if (!$config->canUserModifieDemande()) {
             return FALSE;
         }
         

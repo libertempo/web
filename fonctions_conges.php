@@ -1300,29 +1300,6 @@ function init_config_tab()
         }
 
         /******************************************/
-        //  recup des variables de la table conges_config
-
-        $sql_config = "SELECT conf_nom, conf_valeur, conf_type FROM conges_config;";
-        $req_config = \includes\SQL::query($sql_config) ;
-
-        while ($data = $req_config->fetch_array())
-        {
-            $key    = $data[0];
-            $value    = $data[1];
-            $type    = $data[2];
-
-            if($value == "FALSE")
-                $value = false;
-            elseif($value == "TRUE")
-                $value = true;
-            elseif($type == "path")
-                $value =  ROOT_PATH ."/".$value ;
-
-            $tab[$key] = $value;
-        }
-
-
-        /******************************************/
         //  recup des mails dans  la table conges_mail
         $sql_mail = "SELECT mail_nom, mail_subject, mail_body FROM conges_mail;";
         $req_mail = \includes\SQL::query($sql_mail) ;

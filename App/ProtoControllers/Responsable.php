@@ -154,7 +154,7 @@ class Responsable
         $req = 'SELECT *
                 FROM conges_users
                 WHERE u_is_resp = "Y"';
-        if($activeSeul){
+        if ($activeSeul){
             $req .= ' AND u_is_active = "Y"';
         }
         $query = $sql->query($req);
@@ -195,7 +195,7 @@ class Responsable
         $usersResp = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupesIdResp);
         $usersResp = array_merge($usersResp,\App\ProtoControllers\Responsable::getUsersRespDirect($resp));
         foreach ($usersResp as $userResp) {
-            if(\App\ProtoControllers\Utilisateur::isResponsable($userResp) && \App\ProtoControllers\Responsable::isRespAbsent($userResp)){
+            if (\App\ProtoControllers\Utilisateur::isResponsable($userResp) && \App\ProtoControllers\Responsable::isRespAbsent($userResp)){
                 $usersRespRespAbs[] = $userResp;
             }
         }
@@ -265,7 +265,7 @@ class Responsable
     {
         $groupes = [];
         $groupes = \App\ProtoControllers\Utilisateur::getGroupesId($user);
-        if(empty($groupes)){
+        if (empty($groupes)){
             return false;
         }
 

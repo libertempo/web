@@ -109,7 +109,7 @@ class Configuration {
      */
     public function canUserChangePassword() {
         if ($this->getHowToConnectUser() != 'dbconges') {
-            return FALSE;
+            return false;
         }
         return $this->getGroupeUtilisateurValeur('user_ch_passwd');
     }
@@ -282,13 +282,8 @@ class Configuration {
         return $this->getGroupeMailValeur('mail_supp_demande_alerte_resp');
     }
 
-    public function getMailFromLdap(){
-        if ($this->getGroupeMailValeur('where_to_find_user_email') == 'ldap')
-        {
-            return TRUE;
-        } 
-
-        return FALSE;
+    public function getMailFromLdap() {
+        return $this->getGroupeMailValeur('where_to_find_user_email') == 'ldap';
     }
 
     /**
@@ -383,7 +378,7 @@ class Configuration {
         return $this->getGroupeFonctionnementEtablissementValeur('gestion_conges_exceptionnels');
     }
     
-    public function canSoldeNegatif()
+    public function canSoldeNegatif ()
     {
         return !$this->getGroupeFonctionnementEtablissementValeur('solde_toujours_positif');
     }
@@ -489,6 +484,10 @@ class Configuration {
             throw new \Exception('Donnée de configuration inexistante');
         }
         $config = $this->data[$groupe][$nom];
+
+        if ('boolean' === $config['type'] ) {
+            return 'TRUE' === $config['valeur'];
+        }
 
         return $config['valeur'];
     }
