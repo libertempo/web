@@ -16,16 +16,19 @@
     $tmp = dirname(filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL));
     $tmp = explode('/',$tmp);
     $tmp = array_pop($tmp);
-    $adminActive = $userActive = $respActive = $hrActive = $calendarActive = '';
+    $adminActive = $userActive = $respActive = $hrActive = $calendarActive = $configActive = '';
     switch ($tmp) {
         case "utilisateur":
             $user_mode = _('user');
             $userActive = 'active';
             break;
         case "admin":
-        case "config":
             $user_mode = _('button_admin_mode');
             $adminActive = 'active';
+            break;
+        case "config":
+            $user_mode = _('button_config_mode');
+            $configActive = 'active';
             break;
         case "responsable":
             $user_mode = _('button_responsable_mode');
@@ -45,8 +48,15 @@ function sousmenuAdmin()
 {
     return '<a class="secondary" href="' . ROOT_PATH . 'admin/admin_index.php?onglet=admin-users">Utilisateurs</a>
     <a class="secondary" href="' . ROOT_PATH . 'admin/admin_index.php?onglet=admin-group">Groupes</a>
-    <a class="secondary" href="' . ROOT_PATH . 'admin/admin_db_sauve.php">Backup</a>
-    <a class="secondary" href="' . ROOT_PATH . 'config/index.php">Configuration</a>';
+    <a class="secondary" href="' . ROOT_PATH . 'admin/admin_db_sauve.php">Backup</a>';
+}
+
+function sousmenuConfiguration()
+{
+    return '<a class="secondary" href="' . ROOT_PATH . 'config/index.php?onglet=general">Config. générale</a>
+    <a class="secondary" href="' . ROOT_PATH . 'config/index.php?onglet=type_absence">Type de congés</a>
+    <a class="secondary" href="' . ROOT_PATH . 'config/index.php?onglet=mail">Mails</a>
+    <a class="secondary" href="' . ROOT_PATH . 'config/index.php?onglet=logs">Journaux</a>';
 }
 
 function sousmenuHR()
@@ -169,11 +179,17 @@ function sousmenuEmploye()
                     <?= \App\ProtoControllers\Utilisateur::getNomComplet($_SESSION['u_prenom'], $_SESSION['u_nom'], true) ?>
                 </div>
 				<?php if (is_admin($_SESSION['userlogin'])): ?>
-                <a class="primary <?= $adminActive ?>" href="<?= ROOT_PATH ?>admin/admin_index.php" <?php print ($tmp == 'admin' || $tmp == 'config') ? 'active' : '' ;?>>
+                <a class="primary <?= $adminActive ?>" href="<?= ROOT_PATH ?>admin/admin_index.php" <?php print ($tmp == 'admin') ? 'active' : '' ;?>>
                     <i class="fa fa-bolt"></i><?= _('button_admin_mode');?>
 				</a>
-                <?php if (($tmp == 'admin' || $tmp == 'config')) : ?>
+                <?php if ($tmp == 'admin') : ?>
                 <?= sousmenuAdmin(); ?>
+                <?php endif; ?>
+                <a class="primary <?= $configActive ?>" href="<?= ROOT_PATH ?>config/index.php" <?php print ($tmp == 'config') ? 'active' : '' ;?>>
+                    <i class="fa fa-cog"></i><?= _('button_config_mode');?>
+				</a>
+                <?php if ($tmp == 'config') : ?>
+                <?= sousmenuConfiguration(); ?>
                 <?php endif; ?>
 				<?php endif; ?>
 				<?php if (is_hr($_SESSION['userlogin'])): ?>

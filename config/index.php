@@ -66,17 +66,8 @@ $_SESSION['from_config']=TRUE;  // initialise ce flag pour changer le bouton de 
 	/*   AFFICHAGE DES ONGLETS...  */
 	/*********************************/
 
-	echo '<div id="onglet_menu">';
-	foreach($onglets as $key => $title) {
-		echo '<div class="onglet '.($onglet == $key ? ' active': '').'" >
-			<a href="'.$PHP_SELF.'?onglet='.$key.'">'. $title .'</a>
-		</div>';
-	}
-	echo '</div>';
 
 	echo '<div class="'.$onglet.' wrapper">';
-
-		echo '<a href="' . ROOT_PATH . "admin/admin_index.php\" class=\"admin-back\"><i class=\"fa fa-arrow-circle-o-left\"></i>". _('form_retour')."</a>\n";
 
 		if($onglet == 'general') {
 			include_once ROOT_PATH . 'config/configure.php';
