@@ -251,27 +251,17 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
     {
         $demande = $this->getInfoDemandes(explode(" ", $demandeId))[$demandeId];
         $SoldeReliquat = $this->getReliquatconge($demande['p_login'], $demande['p_type']);
+        $sql = \includes\SQL::singleton();
 
-        if($this->isOptionReliquatActive() && $this->isReliquatUtilisable($demande['p_date_fin']) && 0 < $SoldeReliquat) {
-
+        if (!$this->isOptionReliquatActive()) {
+            $id = $this->updateSoldeUser($demande['p_login'], $demande['p_nb_jours'], $demande['p_type']);
+            $this->updateStatutValidationFinale($demande['p_num']);
+            log_action($demande['p_num'],"ok", $demande['p_login'], 'traitement demande ' . $demande['p_num'] . ' (' . $demande['p_login'] . ') (' . $demande['p_nb_jours'] . ' jours) : OK');
+        } elseif ($this->isReliquatUtilisable($demande['p_date_fin']) && 0 < $SoldeReliquat) {
             if($SoldeReliquat>=$demande['p_nb_jours']) {
-                $sql = \includes\SQL::singleton();
                 $sql->getPdoObj()->begin_transaction();
                 $updateReliquat = $this->updateReliquatUser($demande['p_login'], $demande['p_nb_jours'], $demande['p_type']);
-                $updateStatut = $this->updateStatutValidationFinale($demande['p_num']);
-                if (0 < $updateReliquat && 0 < $updateStatut) {
-                    $sql->getPdoObj()->commit();
-                } else {
-                    $sql->getPdoObj()->rollback();
-                    return NIL_INT;
-                }
-                return $demande['p_num'];
-            } else {
-                $ResteSolde = $demande['p_nb_jours'] - $SoldeReliquat;
-                $sql = \includes\SQL::singleton();
-                $sql->getPdoObj()->begin_transaction();
-                $updateReliquat = $this->updateReliquatUser($demande['p_login'], $SoldeReliquat, $demande['p_type']);
-                $updateSolde = $this->updateSoldeUser($demande['p_login'], $ResteSolde, $demande['p_type']);
+                $updateSolde = $this->updateSoldeUser($demande['p_login'], $demande['p_nb_jours'], $demande['p_type']);
                 $updateStatut = $this->updateStatutValidationFinale($demande['p_num']);
                 if (0 < $updateReliquat && 0 < $updateStatut && 0 < $updateSolde) {
                     $sql->getPdoObj()->commit();
@@ -279,13 +269,36 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
                     $sql->getPdoObj()->rollback();
                     return NIL_INT;
                 }
-                return 1;
+            } else {
+                $sql->getPdoObj()->begin_transaction();
+                $updateReliquat = $this->updateReliquatUser($demande['p_login'], $SoldeReliquat, $demande['p_type']);
+                $updateSolde = $this->updateSoldeUser($demande['p_login'], $demande['p_nb_jours'], $demande['p_type']);
+                $updateStatut = $this->updateStatutValidationFinale($demande['p_num']);
+                if (0 < $updateReliquat && 0 < $updateStatut && 0 < $updateSolde) {
+                    $sql->getPdoObj()->commit();
+                } else {
+                    $sql->getPdoObj()->rollback();
+                    return NIL_INT;
+                }
             }
         } else {
+            if (0 < $SoldeReliquat && !$this->isReliquatUtilisable(date("m-d")) ){
+                $sql->getPdoObj()->begin_transaction();
+                $updateSolde = $this->updateSoldeUser($demande['p_login'], $SoldeReliquat, $demande['p_type']);
+                $updateReliquat = $this->updateReliquatUser($demande['p_login'], $SoldeReliquat, $demande['p_type']);
+                log_action(0,"reliquat", $demande['p_login'], 'annulation reliquat perdu. (date_limite_reliquat)');
+                if (0 < $updateReliquat && 0 < $updateSolde) {
+                    $sql->getPdoObj()->commit();
+                } else {
+                    $sql->getPdoObj()->rollback();
+                    return NIL_INT;
+                }
+            }
             $id = $this->updateSoldeUser($demande['p_login'], $demande['p_nb_jours'], $demande['p_type']);
             $this->updateStatutValidationFinale($demande['p_num']);
             log_action($demande['p_num'],"ok", $demande['p_login'], 'traitement demande ' . $demande['p_num'] . ' (' . $demande['p_login'] . ') (' . $demande['p_nb_jours'] . ' jours) : OK');
         }
+        return $demande['p_num'];
     }
 
     /**
