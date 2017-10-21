@@ -234,7 +234,7 @@ class Fonctions
         // GET / POST
         $user_login = htmlentities(getpost_variable('user_login', $_SESSION['userlogin']), ENT_QUOTES | ENT_HTML401);
         $return = '';
-        header_popup( _('editions_titre') .' : '.$user_login);
+        header_menu( _('editions_titre') . ' : ' . $user_login);
 
 
         /*************************************/
@@ -245,7 +245,10 @@ class Fonctions
         }
 
         /************************************/
+        $return .= '<div class="main-content">';
         $return .= \edition\Fonctions::affichage($user_login);
+        $return .= '</div>';
+
         return $return;
     }
 
