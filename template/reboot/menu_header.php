@@ -116,7 +116,6 @@ function sousmenuEmploye()
     if ($_SESSION['config']['auth'] && $_SESSION['config']['user_ch_passwd']) {
         $return .= '<a class="secondary" href="' . ROOT_PATH . 'utilisateur/user_index.php?onglet=changer_mot_de_passe">Changer mot de passe</a>';
     }
-    $return .= '<a class="secondary" href="' . ROOT_PATH . 'export/export_vcalendar.php?user_login=hr">Export calendrier</a>';
     if ($_SESSION['config']['editions_papier']) {
         $return .= '<a class="secondary" href="' . ROOT_PATH . 'edition/edit_user.php">Édition papier</a>';
     }
