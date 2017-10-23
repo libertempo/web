@@ -58,8 +58,7 @@ $_SESSION['from_config']=TRUE;  // initialise ce flag pour changer le bouton de 
 	/*   COMPOSITION DU HEADER...    */
 	/*********************************/
 
-	$add_css = '<style>#onglet_menu .onglet{ width: '. (str_replace(',', '.', 100 / count($onglets) )).'% ;}</style>';
-	header_menu('', 'Libertempo : '._('admin_button_config_1'),$add_css);
+	header_menu('', 'Libertempo : '._('admin_button_config_1'),'');
 
 
 	/*********************************/
@@ -67,7 +66,7 @@ $_SESSION['from_config']=TRUE;  // initialise ce flag pour changer le bouton de 
 	/*********************************/
 
 
-	echo '<div class="'.$onglet.' wrapper">';
+	echo '<div class="'.$onglet.' wrapper main-content">';
 
 		if($onglet == 'general') {
 			include_once ROOT_PATH . 'config/configure.php';

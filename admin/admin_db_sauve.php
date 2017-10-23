@@ -27,5 +27,8 @@ function commit_sauvegarde($type_sauvegarde)
 // verif des droits du user à afficher la page
 verif_droits_user('is_admin');
 header_menu('', 'Libertempo : '._('button_admin_mode'),'');
+echo '<div class="main-content">';
 
 \admin\Fonctions::saveRestoreModule();
+
+echo '</div>';

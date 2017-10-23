@@ -24,7 +24,7 @@ class Fonctions
         /***********************************/
         // AFFICHAGE TABLEAU (premiere ligne)
         $return = '';
-        $return .= '<h2>'. _('hr_traite_user_etat_conges') . '</H2>';
+        $return .= '<h1>'. _('hr_traite_user_etat_conges') . '</h1>';
         /*********************/
         /* Etat Utilisateurs */
         /*********************/
