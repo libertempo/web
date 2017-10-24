@@ -283,9 +283,9 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
             }
         } else {
             $sql->getPdoObj()->begin_transaction();
-            $updateSolde = $this->updateSoldeUser($user, $SoldeReliquat, $typeId);
+            $updateSolde = $this->updateSoldeUser($user, $SoldeReliquat + $duree, $typeId);
             $updateReliquat = $this->updateReliquatUser($user, $SoldeReliquat, $typeId);
-            log_action(0,"reliquat", $user, 'annulation reliquat perdu. (date_limite_reliquat)');
+            log_action(0,"reliquat", $user, 'retrait reliquat perdu (-' . $SoldeReliquat . ' jours). (date_limite_reliquat)');
             if (0 < $updateReliquat && 0 < $updateSolde) {
                 $sql->getPdoObj()->commit();
                 return 1;
