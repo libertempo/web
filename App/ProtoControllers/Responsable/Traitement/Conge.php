@@ -259,12 +259,12 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
             return $this->updateSoldeUser($user, $duree, $typeId);
         }
         
+        $SoldeReliquat = $this->getReliquatconge($user, $typeId);
         if (0 >= $SoldeReliquat) {
             return $this->updateSoldeUser($user, $duree, $typeId);
         }
 
         $sql = \includes\SQL::singleton();
-        $SoldeReliquat = $this->getReliquatconge($user, $typeId);
 
         if ($this->isReliquatUtilisable(date("m-d"))) {
             $sql->getPdoObj()->begin_transaction();
@@ -283,9 +283,9 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
             }
         } else {
             $sql->getPdoObj()->begin_transaction();
-            $updateSolde = $this->updateSoldeUser($demande['p_login'], $SoldeReliquat, $demande['p_type']);
-            $updateReliquat = $this->updateReliquatUser($demande['p_login'], $SoldeReliquat, $demande['p_type']);
-            log_action(0,"reliquat", $demande['p_login'], 'annulation reliquat perdu. (date_limite_reliquat)');
+            $updateSolde = $this->updateSoldeUser($user, $SoldeReliquat, $typeId);
+            $updateReliquat = $this->updateReliquatUser($user, $SoldeReliquat, $typeId);
+            log_action(0,"reliquat", $user, 'annulation reliquat perdu. (date_limite_reliquat)');
             if (0 < $updateReliquat && 0 < $updateSolde) {
                 $sql->getPdoObj()->commit();
                 return 1;
