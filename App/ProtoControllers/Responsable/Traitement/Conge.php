@@ -250,7 +250,6 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
     protected function putValidationFinale($demandeId)
     {
         $demande = $this->getInfoDemandes(explode(" ", $demandeId))[$demandeId];
-        $sql = \includes\SQL::singleton();
         if (0 < $this->updateSoldeReliquatEmploye($demande['p_login'], $demande['p_nb_jours'], $demande['p_type'])) {
             return $this->updateStatutValidationFinale($demande['p_num']);
         } else {
@@ -258,13 +257,13 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         }
     }
 
-    protected function updateSoldeReliquatEmploye($user,$duree,$typeId)
+    protected function updateSoldeReliquatEmploye($user, $duree, $typeId)
     {
         if (!$this->isOptionReliquatActive()) {
             return $this->updateSoldeUser($user, $duree, $typeId);
         }
         
-        if (0 >= $SoldeReliquat){
+        if (0 >= $SoldeReliquat) {
             return $this->updateSoldeUser($user, $duree, $typeId);
         }
 
@@ -273,7 +272,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
         if ($this->isReliquatUtilisable(date("m-d"))) {
             $sql->getPdoObj()->begin_transaction();
-            if($SoldeReliquat>=$duree) {
+            if ($SoldeReliquat>=$duree) {
                 $updateReliquat = $this->updateReliquatUser($user, $duree, $typeId);
                 $updateSolde = $this->updateSoldeUser($user, $duree, $typeId);
             } else {
@@ -372,7 +371,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
      *
      * @return int
      */
-    protected function updateSoldeUser($user,$duree,$typeId)
+    protected function updateSoldeUser($user, $duree, $typeId)
     {
         $sql = \includes\SQL::singleton();
 
