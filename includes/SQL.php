@@ -1,11 +1,6 @@
 <?php
 namespace includes;
 
-defined( '_PHP_CONGES' ) or die( 'Restricted access' );
-
-
-
-
 // class SQL, interface with mysqli, it's a singleton, non-static method can be call staticly
 // Build for PHP 5.3
 class SQL
@@ -116,10 +111,6 @@ class Database extends \mysqli
         parent::__construct (  $host , $username , $passwd , $dbname );
         $this->query('SET NAMES \'utf8\';');
         $this->query("SET @@SESSION.sql_mode='';");
-    }
-
-    public function multi_query($query) {
-        throw new Exception('Function disabled !' );
     }
 
     public function getQuerys() {

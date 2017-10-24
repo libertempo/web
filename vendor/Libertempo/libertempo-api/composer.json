@@ -1,0 +1,36 @@
+{
+    "name": "Libertempo/libertempo-api",
+    "authors": [
+        {
+            "name": "wouldsmina",
+            "role": "Developer"
+        },
+        {
+            "name": "Prytoegrian",
+            "email": "prytoegrian@protonmail.com",
+            "homepage": "https://github.com/Prytoegrian",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "email": "libertempo@lists.tuxfamily.org",
+        "irc": "irc://irc.tuxfamily.org/#Libertempo"
+    },
+    "autoload": {
+        "psr-4": {
+            "": "."
+        }
+    },
+    "license": "AGPL-3.0",
+    "config": {
+        "bin-dir": "Vendor/Bin",
+        "vendor-dir": "Vendor"
+    },
+    "require": {
+        "raveren/kint": "^1.0",
+        "slim/slim": "^3.5"
+    },
+    "require-dev": {
+        "atoum/atoum": "3.0.0"
+    }
+}

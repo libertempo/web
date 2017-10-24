@@ -6,644 +6,9 @@ namespace admin;
 */
 class Fonctions
 {
-    // modifie, pour un resp donné,  les groupes dont il est resp et grands_resp
-    public static function modif_resp_groupes($choix_resp, &$checkbox_resp_group, &$checkbox_grd_resp_group)
-    {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
-        $return   = '';
-
-        $result_insert=TRUE;
-        $result_insert_2=TRUE;
-
-        //echo "responsable : $choix_resp<br>\n";
-        // on supprime tous les anciens resps du groupe puis on ajoute tous ceux qui sont dans le tableau de la checkbox
-        $sql_del = 'DELETE FROM conges_groupe_resp WHERE gr_login="'. \includes\SQL::quote($choix_resp).'"';
-        $ReqLog_del = \includes\SQL::query($sql_del);
-
-        // on supprime tous les anciens grands resps du groupe puis on ajoute tous ceux qui sont dans le tableau de la checkbox
-        $sql_del_2 = 'DELETE FROM conges_groupe_grd_resp WHERE ggr_login="'. \includes\SQL::quote($choix_resp).'"';
-        $ReqLog_del_2 = \includes\SQL::query($sql_del_2);
-
-        // ajout des resp qui sont dans la checkbox
-        if($checkbox_resp_group!="") // si la checkbox contient qq chose
-        {
-            foreach($checkbox_resp_group as $gid => $value) {
-                $sql_insert = "INSERT INTO conges_groupe_resp SET gr_gid=$gid, gr_login='$choix_resp' "  ;
-                $result_insert = \includes\SQL::query($sql_insert);
-            }
-        }
-
-        // ajout des grands resp qui sont dans la checkbox
-        if($checkbox_grd_resp_group!="") // si la checkbox contient qq chose
-        {
-            foreach($checkbox_grd_resp_group as $grd_gid => $value) {
-                $sql_insert_2 = "INSERT INTO conges_groupe_grd_resp SET ggr_gid=$grd_gid, ggr_login='$choix_resp' "  ;
-                $result_insert_2 = \includes\SQL::query($sql_insert_2);
-            }
-        }
-
-        if(($result_insert) && ($result_insert_2) ) {
-            $return .= _('form_modif_ok') . ' !<br><br>';
-        } else {
-            $return .= _('form_modif_not_ok') . ' !<br><br>';
-        }
-
-        $comment_log = "mofification groupes dont $choix_resp est responsable ou grand responsable" ;
-        log_action(0, "", $choix_resp, $comment_log);
-
-        /* APPEL D'UNE AUTRE PAGE */
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=admin-group-responsables&choix_gestion_groupes_responsables=resp-group" method="POST">';
-        $return .= '<input type="submit" value="' . _('form_retour') . '">';
-        $return .= '</form>';
-        return $return;
-    }
-
-    // affiche pour un resp des cases à cocher devant les groupes possibles pour les selectionner.
-    public static function affiche_gestion_responsable_groupes($choix_resp, $onglet)
-    {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
-        $return   = '';
-
-        $return .= '<h1>' . _('admin_onglet_resp_groupe') . '</h1>';
-
-        /****************************/
-        /* Affichage Responsable    */
-        /****************************/
-        // Récuperation des informations :
-        $sql_r = 'SELECT u_nom, u_prenom FROM conges_users WHERE u_login="'. \includes\SQL::quote($choix_resp).'"';
-        $ReqLog_r = \includes\SQL::query($sql_r);
-
-        $resultat_r = $ReqLog_r->fetch_array();
-        $sql_nom=$resultat_r["u_nom"] ;
-        $sql_prenom=$resultat_r["u_prenom"] ;
-
-        $return .= '<h2>Responsable : <strong>' . $sql_prenom . ' ' . $sql_nom .'</strong></h2>';
-        $return .= '<hr/>';
-
-        //on rempli un tableau de tous les groupe avec le groupename, le commentaire (tableau de tableaux à 3 cellules)
-        // Récuperation des groupes :
-        $tab_groupe=array();
-        $sql_groupe = "SELECT g_gid, g_groupename, g_comment FROM conges_groupe ORDER BY g_groupename "  ;
-        $ReqLog_groupe = \includes\SQL::query($sql_groupe);
-
-        while($resultat_groupe=$ReqLog_groupe->fetch_array()) {
-            $tab_g=array();
-            $tab_g["gid"]=$resultat_groupe["g_gid"];
-            $tab_g["group"]=$resultat_groupe["g_groupename"];
-            $tab_g["comment"]=$resultat_groupe["g_comment"];
-            $tab_groupe[]=$tab_g;
-        }
-
-        //on rempli un tableau de tous les groupes a double validation avec le groupename, le commentaire (tableau de tableau à 3 cellules)
-        $tab_groupe_dbl_valid=array();
-        $sql_g2 = "SELECT g_gid, g_groupename, g_comment FROM conges_groupe WHERE g_double_valid='Y' ORDER BY g_groupename "  ;
-        $ReqLog_g2 = \includes\SQL::query($sql_g2);
-
-        while($resultat_groupe_2=$ReqLog_g2->fetch_array()) {
-            $tab_g_2=array();
-            $tab_g_2["gid"]=$resultat_groupe_2["g_gid"];
-            $tab_g_2["group"]=$resultat_groupe_2["g_groupename"];
-            $tab_g_2["comment"]=$resultat_groupe_2["g_comment"];
-            $tab_groupe_dbl_valid[]=$tab_g_2;
-        }
-
-        /*****************************************************************************/
-
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '" method="POST">';
-        $return .= '<div class="row">';
-        $return .= '<div class="col-md-6">';
-        $return .= '<h3>Responsable</h3>';
-        /*******************************************/
-        //AFFICHAGE DU TABLEAU DES GROUPES DONT RESP EST RESPONSABLE
-        $table = new \App\Libraries\Structure\Table();
-        $table->addClasses([
-            'table',
-            'table-hover',
-            'table-responsive',
-            'table-condensed',
-            'table-striped',
-        ]);
-        $childTable = '<thead>';
-        // affichage TITRE
-        $childTable .= '<tr>';
-        $childTable .= '<th>&nbsp;</th>';
-        $childTable .= '<th>' . _('admin_groupes_groupe') . '</th>';
-        $childTable .= '<th>' . _('admin_groupes_libelle') . '</th>';
-        $childTable .= '</tr>';
-        $childTable .= '</thead>';
-        $childTable .= '<tbody>';
-
-        // on rempli un autre tableau des groupes dont resp est responsables
-        $tab_resp=array();
-        $sql_r = 'SELECT gr_gid FROM conges_groupe_resp WHERE gr_login="'. \includes\SQL::quote($choix_resp).'" ORDER BY gr_gid ';
-        $ReqLog_r = \includes\SQL::query($sql_r);
-
-        while($resultat_r=$ReqLog_r->fetch_array()) {
-            $tab_resp[]=$resultat_r["gr_gid"];
-        }
-
-        // ensuite on affiche tous les groupes avec une case cochée si exist groupename dans le 2ieme tableau
-        $count = count($tab_groupe);
-        for ($i = 0; $i < $count; $i++) {
-            $gid=$tab_groupe[$i]["gid"] ;
-            $group=$tab_groupe[$i]["group"] ;
-            $comment=$tab_groupe[$i]["comment"] ;
-
-            if (in_array ($gid, $tab_resp)) {
-                $case_a_cocher="<input type=\"checkbox\" name=\"checkbox_resp_group[$gid]\" value=\"$gid\" checked>";
-                $class="histo-big";
-            } else {
-                $case_a_cocher="<input type=\"checkbox\" name=\"checkbox_resp_group[$gid]\" value=\"$gid\">";
-                $class="histo";
-            }
-
-            $childTable .= '<tr class="' . (!($i%2) ? 'i' : 'p') . '">';
-            $childTable .= '<td>' . $case_a_cocher . '</td>';
-            $childTable .= '<td class="' . $class . '">' . $group . '</td>';
-            $childTable .= '<td class="' . $class . '">' . $comment . '</td>';
-            $childTable .= '</tr>';
-        }
-
-        $return .= '</tbody>';
-        $table->addChild($childTable);
-        ob_start();
-        $table->render();
-        $return .= ob_get_clean();
-        /*******************************************/
-        $return .= '</div>';
-        // si on a configuré la double validation
-        if($_SESSION['config']['double_validation_conges']) {
-            $return .= '<div class="col-md-6">';
-            $return .= '<h3>Grand Responsable</h3>';
-            /*******************************************/
-            //AFFICHAGE DU TABLEAU DES GROUPES DONT RESP EST GRAND RESPONSABLE
-            $table = new \App\Libraries\Structure\Table();
-            $table->addClasses([
-                'table',
-                'table-hover',
-                'table-responsive',
-                'table-condensed',
-                'table-striped',
-            ]);
-            $childTable = '<thead>';
-            $childTable .= '<th>&nbsp;</th>';
-            $childTable .= '<th>' . _('admin_groupes_groupe') . '</th>';
-            $childTable .= '<th>' . _('admin_groupes_libelle') . '</th>';
-            $childTable .= '</tr>';
-            $childTable .= '</thead><tbody>';
-
-            // on rempli un autre tableau des groupes dont resp est GRAND responsables
-            $tab_grd_resp=array();
-            $sql_gr = 'SELECT ggr_gid FROM conges_groupe_grd_resp WHERE ggr_login="'. \includes\SQL::quote($choix_resp).'" ORDER BY ggr_gid ';
-            $ReqLog_gr = \includes\SQL::query($sql_gr);
-
-            while($resultat_gr=$ReqLog_gr->fetch_array()) {
-                $tab_grd_resp[]=$resultat_gr["ggr_gid"];
-            }
-
-            // ensuite on affiche tous les groupes avec une case cochée si exist groupename dans le 2ieme tableau
-            $count = count($tab_groupe_dbl_valid);
-            for ($i = 0; $i < $count; $i++) {
-                $gid=$tab_groupe_dbl_valid[$i]["gid"] ;
-                $group=$tab_groupe_dbl_valid[$i]["group"] ;
-                $comment=$tab_groupe_dbl_valid[$i]["comment"] ;
-
-                if (in_array($gid, $tab_grd_resp)) {
-                    $case_a_cocher="<input type=\"checkbox\" name=\"checkbox_grd_resp_group[$gid]\" value=\"$gid\" checked>";
-                    $class="histo-big";
-                } else {
-                    $case_a_cocher="<input type=\"checkbox\" name=\"checkbox_grd_resp_group[$gid]\" value=\"$gid\">";
-                    $class="histo";
-                }
-
-                $childTable .= '<tr class="' . (!($i%2) ? 'i' : 'p') . '">';
-                $childTable .= '<td>' . $case_a_cocher . '</td>';
-                $childTable .= '<td class="' . $class . '">' . $group . '</td>';
-                $childTable .= '<td class="' . $class . '">' . $comment . '</td>';
-                $childTable .= '</tr>';
-            }
-
-            $childTable .= '</tbody>';
-            $table->addChild($childTable);
-            ob_start();
-            $table->render();
-            $return .= ob_get_clean();
-            $return .= '</div>';
-            /*******************************************/
-        }
-
-        $return .= '</div>';
-        $return .= '<hr/>';
-        $return .= '<input type="hidden" name="change_responsable_group" value="ok">';
-        $return .= '<input type="hidden" name="choix_resp" value="' .  $choix_resp . '">';
-        $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
-        $return .= '<a class="btn" href="' . $PHP_SELF . '?session=' . $session . '&onglet=admin-group-responsables&choix_gestion_groupes_responsables=resp-group">' . _('form_annul') . '</a>';
-        $return .= '</form>';
-        return $return;
-    }
-
-    // affiche le tableau des responsables pour choisir sur lequel on va gerer les groupes dont il est resp
-    public static function affiche_choix_responsable_groupes()
-    {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
-        $return   = '';
-
-        $return .= '<h1>' . _('admin_onglet_resp_groupe') . '</h1>';
-
-        // Récuperation des informations :
-        $sql_resp = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_is_resp='Y' AND u_login!='conges' AND u_login!='admin' ORDER BY u_nom, u_prenom"  ;
-        $ReqLog_resp = \includes\SQL::query($sql_resp);
-
-        /*************************/
-        /* Choix Responsable     */
-        /*************************/
-        // AFFICHAGE TABLEAU
-        $return .= '<h2>' . _('admin_aff_choix_resp_titre') . '</h2>';
-        $table = new \App\Libraries\Structure\Table();
-        $table->addClasses([
-            'table',
-            'table-hover',
-            'table-responsive',
-            'table-condensed',
-            'table-striped',
-        ]);
-        $childTable = '<thead>';
-        $childTable .= '<tr>';
-        $childTable .= '<th>' . _('divers_responsable_maj_1') . '</th>';
-        $childTable .= '<th>' . _('divers_login') . '</th>';
-        $childTable .= '</tr>';
-        $childTable .= '</thead>';
-        $childTable .= '<tbody>';
-
-        $i = true;
-        while ($resultat_resp = $ReqLog_resp->fetch_array()) {
-
-            $sql_login=$resultat_resp["u_login"] ;
-            $sql_nom=$resultat_resp["u_nom"] ;
-            $sql_prenom=$resultat_resp["u_prenom"] ;
-
-            $text_choix_resp="<a href=\"$PHP_SELF?session=$session&onglet=admin-group-responsables&choix_resp=$sql_login\"><strong>$sql_nom&nbsp;$sql_prenom</strong></a>" ;
-
-            $childTable .= '<tr class="' . ($i ? 'i' : 'p') . '">';
-            $childTable .= '<td>' . $text_choix_resp . '</td>';
-            $childTable .= '<td>' . $sql_login . '</td>';
-            $childTable .= '</tr>';
-            $i = !$i;
-        }
-        $childTable .= '</tbody>';
-        $table->addChild($childTable);
-        ob_start();
-        $table->render();
-        $return .= ob_get_clean();
-        return $return;
-    }
-
-    // modifie, pour un groupe donné,  ses resp et grands_resp
-    public static function modif_group_responsables($choix_group, &$checkbox_group_resp, &$checkbox_group_grd_resp)
-    {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
-        $return   = '';
-
-        $result_insert=TRUE;
-        $result_insert_2=TRUE;
-
-        //echo "groupe : $choix_group<br>\n";
-        // on supprime tous les anciens resp du groupe puis on ajoute tous ceux qui sont dans le tableau de la checkbox
-        $sql_del = 'DELETE FROM conges_groupe_resp WHERE gr_gid='.\includes\SQL::quote($choix_group);
-        $ReqLog_del = \includes\SQL::query($sql_del);
-
-        // on supprime tous les anciens grand resp du groupe puis on ajoute tous ceux qui sont dans le tableau de la checkbox
-        $sql_del_2 = 'DELETE FROM conges_groupe_grd_resp WHERE ggr_gid='. \includes\SQL::quote($choix_group);
-        $ReqLog_del_2 = \includes\SQL::query($sql_del_2);
-
-
-        // ajout des resp qui sont dans la checkbox
-        if($checkbox_group_resp!="") // si la checkbox contient qq chose
-        {
-            foreach($checkbox_group_resp as $login => $value) {
-                $sql_insert = "INSERT INTO conges_groupe_resp SET gr_gid=$choix_group, gr_login='$login' "  ;
-                $result_insert = \includes\SQL::query($sql_insert);
-            }
-        }
-
-        // ajout des grands resp qui sont dans la checkbox
-        if($checkbox_group_grd_resp!="") // si la checkbox contient qq chose
-        {
-            foreach($checkbox_group_grd_resp as $grd_login => $grd_value) {
-                $sql_insert_2 = "INSERT INTO conges_groupe_grd_resp SET ggr_gid=$choix_group, ggr_login='$grd_login' "  ;
-                $result_insert_2 = \includes\SQL::query($sql_insert_2);
-            }
-        }
-
-        if( ($result_insert) && ($result_insert_2) ) {
-            $return .= _('form_modif_ok') . ' !<br><br>';
-        } else {
-            $return .= _('form_modif_not_ok') . ' !<br><br>';
-        }
-
-        $comment_log = "mofification_responsables_du_groupe : $choix_group" ;
-        log_action(0, "", "", $comment_log);
-
-        /* APPEL D'UNE AUTRE PAGE */
-        $return .= '<form action="' . $PHP_SELF . '?session=' .  $session . '&onglet=admin-group-responsables&choix_gestion_groupes_responsables=group-resp" method="POST">';
-        $return .= '<input type="submit" value="' . _('form_retour') . '">';
-        $return .= '</form>';
-        return $return;
-    }
-
-    // affiche pour un groupe des cases à cocher devant les resp et grand_resp possibles pour les selectionner.
-    public static function affiche_gestion_groupes_responsables($choix_group, $onglet)
-    {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
-        $return   = '';
-
-        $return .= '<h1>' . _('admin_onglet_groupe_resp') . '</h1>';
-
-        /***********************/
-        /* Affichage Groupe    */
-        /***********************/
-        // Récuperation des informations :
-        $sql_gr = 'SELECT g_groupename, g_comment, g_double_valid FROM conges_groupe WHERE g_gid='.\includes\SQL::quote($choix_group);
-        $ReqLog_gr = \includes\SQL::query($sql_gr);
-
-        $resultat_gr = $ReqLog_gr->fetch_array();
-        $sql_groupename=$resultat_gr["g_groupename"] ;
-        $sql_comment=$resultat_gr["g_comment"] ;
-        $sql_double_valid=$resultat_gr["g_double_valid"] ;
-
-        // AFFICHAGE NOM DU GROUPE
-        $return .= '<h2>Groupe : <strong>' . $sql_groupename . '</strong></h2>';
-        $return .= '<hr/>';
-        //on rempli un tableau de tous les responsables avec le login, le nom, le prenom (tableau de tableau à 3 cellules
-        // Récuperation des responsables :
-        $tab_resp=array();
-        $sql_resp = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_login!='conges' AND u_is_resp='Y' ORDER BY u_nom, u_prenom "  ;
-        $ReqLog_resp = \includes\SQL::query($sql_resp);
-
-        while($resultat_resp=$ReqLog_resp->fetch_array()) {
-            $tab_r=array();
-            $tab_r["login"]=$resultat_resp["u_login"];
-            $tab_r["nom"]=$resultat_resp["u_nom"];
-            $tab_r["prenom"]=$resultat_resp["u_prenom"];
-            $tab_resp[]=$tab_r;
-        }
-        /*****************************************************************************/
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '" method="POST">';
-        $return .= '<div class="row">';
-        $return .= '<div class="col-md-6">';
-        $return .= '<h3>' . _('admin_gestion_groupe_resp_responsables') . '</h3>';
-
-        /*******************************************/
-        //AFFICHAGE DU TABLEAU DES RESPONSBLES DU GROUPE
-        $table = new \App\Libraries\Structure\Table();
-        $table->addClasses([
-            'table',
-            'table-hover',
-            'table-responsive',
-            'table-condensed',
-            'table-striped',
-        ]);
-        $childTable = '<thead>';
-
-        // affichage TITRE
-        $childTable .= '<tr>';
-        $childTable .= '<th>&nbsp;</th>';
-        $childTable .= '<th>' . _('divers_personne_maj_1') . '</th>';
-        $childTable .= '<th>' . _('divers_login') . '</th>';
-        $childTable .= '</tr>';
-        $childTable .= '</thead>';
-        $childTable .= '<tbody>';
-
-        // on rempli un autre tableau des responsables du groupe
-        $tab_group=array();
-        $sql_gr = 'SELECT gr_login FROM conges_groupe_resp WHERE gr_gid='. \includes\SQL::quote($choix_group).' ORDER BY gr_login ';
-        $ReqLog_gr = \includes\SQL::query($sql_gr);
-
-        while($resultat_gr=$ReqLog_gr->fetch_array()) {
-            $tab_group[]=$resultat_gr["gr_login"];
-        }
-
-        // ensuite on affiche tous les responsables avec une case cochée si exist login dans le 2ieme tableau
-        $count = count($tab_resp);
-        for ($i = 0; $i < $count; $i++) {
-            $login=$tab_resp[$i]["login"] ;
-            $nom=$tab_resp[$i]["nom"] ;
-            $prenom=$tab_resp[$i]["prenom"] ;
-
-            if (in_array ($login, $tab_group)) {
-                $case_a_cocher="<input type=\"checkbox\" name=\"checkbox_group_resp[$login]\" value=\"$login\" checked>";
-                $class="histo-big";
-            } else {
-                $case_a_cocher="<input type=\"checkbox\" name=\"checkbox_group_resp[$login]\" value=\"$login\">";
-                $class="histo";
-            }
-
-            $childTable .= '<tr class="' . (!($i%2) ? 'i' : 'p') . '">';
-            $childTable .= '<td>' . $case_a_cocher . '</td>';
-            $childTable .= '<td class="' . $class . '">' . $nom . '&nbsp;' . $prenom . '</td>';
-            $childTable .= '<td class="' . $class . '">' . $login . '</td>';
-            $childTable .= '</tr>';
-        }
-        $childTable .= '</tbody>';
-        $table->addChild($childTable);
-        ob_start();
-        $table->render();
-        $return .= ob_get_clean();
-        /*******************************************/
-        $return .= '</div>';
-        $return .= '<div class="col-md-6">';
-        // si on a configuré la double validation et que le groupe considéré est a double valid
-        if( ($_SESSION['config']['double_validation_conges']) && ($sql_double_valid=="Y") ) {
-            $return .= '<h3>' . _('admin_gestion_groupe_grand_resp_responsables') . '</h3>';
-            /*******************************************/
-            //AFFICHAGE DU TABLEAU DES GRANDS RESPONSBLES DU GROUPE
-            $table = new \App\Libraries\Structure\Table();
-            $table->addClasses([
-                'table',
-                'table-hover',
-                'table-responsive',
-                'table-condensed',
-                'table-striped',
-            ]);
-            $childTable = '<thead>';
-
-            // affichage TITRE
-            $childTable .= '<tr>';
-            $childTable .= '<th>&nbsp;</th>';
-            $childTable .= '<th>' . _('divers_personne_maj_1') . '&nbsp;:</th>';
-            $childTable .= '<th>' . _('divers_login') . '&nbsp;:</th>';
-            $childTable .= '</tr></thead><tbody>';
-
-            // on rempli un autre tableau des grands responsables du groupe
-            $tab_group_grd=array();
-            $sql_ggr = 'SELECT ggr_login FROM conges_groupe_grd_resp WHERE ggr_gid='. \includes\SQL::quote($choix_group).' ORDER BY ggr_login ';
-            $ReqLog_ggr = \includes\SQL::query($sql_ggr);
-
-            while($resultat_ggr=$ReqLog_ggr->fetch_array()) {
-                $tab_group_grd[]=$resultat_ggr["ggr_login"];
-            }
-
-            // ensuite on affiche tous les grands responsables avec une case cochée si exist login dans le 3ieme tableau
-            $count = count($tab_resp);
-            for ($i = 0; $i < $count; $i++) {
-                $login=$tab_resp[$i]["login"] ;
-                $nom=$tab_resp[$i]["nom"] ;
-                $prenom=$tab_resp[$i]["prenom"] ;
-
-                if (in_array ($login, $tab_group_grd)) {
-                    $case_a_cocher="<input type=\"checkbox\" name=\"checkbox_group_grd_resp[$login]\" value=\"$login\" checked>";
-                    $class="histo-big";
-                } else {
-                    $case_a_cocher="<input type=\"checkbox\" name=\"checkbox_group_grd_resp[$login]\" value=\"$login\">";
-                    $class="histo";
-                }
-
-                $childTable .= '<tr class="' . (!($i%2) ? 'i' : 'p') . '">';
-                $childTable .= '<td>' . $case_a_cocher . '</td>';
-                $childTable .= '<td class="' . $class . '">' . $nom . '&nbsp;' . $prenom . '</td>';
-                $childTable .= '<td class="' . $class . '">' . $login . '</td>';
-                $childTable .= '</tr>';
-
-            }
-            $childTable .= '</tbody>';
-            $table->addChild($childTable);
-            ob_start();
-            $table->render();
-            $return .= ob_get_clean();
-            /*******************************************/
-        }
-
-        $return .= '</div></div><hr/>';
-        $return .= '<input type="hidden" name="change_group_responsables" value="ok">';
-        $return .= '<input type="hidden" name="choix_group" value="' . $choix_group . ' ">';
-        $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
-        $return .= '<a class="btn" href="'  . $PHP_SELF . '?session=' . $session . '&onglet=admin-group-responsables&choix_gestion_groupes_responsables=group-resp">' . _('form_annul') . '</a>';
-        $return .= '</form>';
-        return $return;
-    }
-
-    // affiche le tableau des groupes pour choisir sur quel groupe on va gerer les responsables
-    public static function affiche_choix_groupes_responsables()
-    {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
-        $return   = '';
-
-        /********************/
-        /* Choix Groupe     */
-        /********************/
-        // Récuperation des informations :
-        $sql_gr = "SELECT g_gid, g_groupename, g_comment FROM conges_groupe ORDER BY g_groupename"  ;
-
-        // AFFICHAGE TABLEAU
-        $return .= '<h1>' . _('admin_onglet_groupe_resp') . '</h1>';
-        $return .= '<h2>' . _('admin_aff_choix_groupe_titre') . '</h2>';
-        $table = new \App\Libraries\Structure\Table();
-        $table->addClasses([
-            'table',
-            'table-hover',
-            'table-responsive',
-            'table-condensed',
-            'table-striped',
-        ]);
-        $childTable = '<thead>';
-        $childTable .= '<tr>';
-        $childTable .= '<th>' . _('admin_groupes_groupe') . '</th>';
-        $childTable .= '<th>' . _('admin_groupes_libelle') . '</th>';
-        $childTable .= '</tr></thead><tbody>';
-
-        $ReqLog_gr = \includes\SQL::query($sql_gr);
-        while ($resultat_gr = $ReqLog_gr->fetch_array()) {
-            $sql_gid=$resultat_gr["g_gid"] ;
-            $sql_groupename=$resultat_gr["g_groupename"] ;
-            $sql_comment=$resultat_gr["g_comment"] ;
-
-            $text_choix_group="<a href=\"$PHP_SELF?session=$session&onglet=admin-group-responsables&choix_group=$sql_gid\"><strong>$sql_groupename</strong></a>" ;
-
-            $childTable .= '<tr>';
-            $childTable .= '<td>' . $text_choix_group . '</td>';
-            $childTable .= '<td>' . $sql_comment . '</td>';
-            $childTable .= '</tr>';
-        }
-        $childTable .= '</tbody>';
-        $table->addChild($childTable);
-        ob_start();
-        $table->render();
-        $return .= ob_get_clean();
-        return $return;
-    }
-
-    // affichage des pages de gestion des responsables des groupes
-    public static function affiche_choix_gestion_groupes_responsables($choix_group, $choix_resp, $onglet)
-    {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
-        $return   = '';
-
-        if( $choix_group!="" )    // si un groupe choisi : on affiche la gestion par groupe
-        {
-            $return .= \admin\Fonctions::affiche_gestion_groupes_responsables($choix_group, $onglet);
-        }
-        elseif( $choix_resp!="" )     // si un resp choisi : on affiche la gestion par resp
-        {
-            $return .= \admin\Fonctions::affiche_gestion_responsable_groupes($choix_resp, $onglet);
-        }
-        else    // si pas de groupe ou de resp choisi : on affiche les choix
-        {
-            $return .= '<div class="row">';
-            $return .= '<div class="col-md-6">';
-            $return .= \admin\Fonctions::affiche_choix_groupes_responsables();
-            $return .= '</div>';
-            $return .= '<div class="col-md-6">';
-            $return .= \admin\Fonctions::affiche_choix_responsable_groupes();
-            $return .= '</div>';
-            $return .= '</div>';
-        }
-        return $return;
-    }
-
-    /**
-     * Encapsule le comportement du module de gestion des groupes et des responsables
-     *
-     * @param string $onglet Nom de l'onglet à afficher
-     *
-     * @return void
-     * @access public
-     * @static
-     */
-    public static function groupeResponsableModule($onglet)
-    {
-        $choix_group    = htmlentities(getpost_variable('choix_group'), ENT_QUOTES | ENT_HTML401);
-        $choix_resp     = getpost_variable('choix_resp') ;
-        $return = '';
-
-        $change_group_responsables    = getpost_variable('change_group_responsables') ;
-        $change_responsable_group    = getpost_variable('change_responsable_group') ;
-
-        if($change_group_responsables=="ok") {
-            $checkbox_group_resp        = getpost_variable('checkbox_group_resp') ;
-            $checkbox_group_grd_resp    = getpost_variable('checkbox_group_grd_resp') ;
-            $return .= \admin\Fonctions::modif_group_responsables($choix_group, $checkbox_group_resp, $checkbox_group_grd_resp);
-        } elseif($change_responsable_group=="ok") {
-            $checkbox_resp_group        = getpost_variable('checkbox_resp_group') ;
-            $checkbox_grd_resp_group    = getpost_variable('checkbox_grd_resp_group') ;
-
-            $return .= \admin\Fonctions::modif_resp_groupes($choix_resp, $checkbox_resp_group, $checkbox_grd_resp_group);
-        } else {
-            $return .= \admin\Fonctions::affiche_choix_gestion_groupes_responsables($choix_group, $choix_resp, $onglet);
-        }
-        return $return;
-    }
-
     public static function modif_user_groups($choix_user, &$checkbox_user_groups)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session=session_id();
         $return = '';
 
         $result_insert= \admin\Fonctions::commit_modif_user_groups($choix_user, $checkbox_user_groups);
@@ -653,296 +18,20 @@ class Fonctions
         } else {
             $return .= _('form_modif_not_ok') . ' !<br><br>';
         }
-
         $comment_log = "mofification_des groupes auxquels $choix_user appartient" ;
         log_action(0, "", $choix_user, $comment_log);
 
         /* APPEL D'UNE AUTRE PAGE */
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session. '&onglet=admin-group-users" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '?onglet=admin-group-users" method="POST">';
         $return .= '<input type="submit" value="' . _('form_retour') . '">';
         $return .= '</form>';
-        return $return;
-    }
 
-    public static function modif_group_users($choix_group, &$checkbox_group_users)
-    {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
-        $return   = '';
-
-        // on supprime tous les anciens users du groupe puis on ajoute tous ceux qui sont dans le tableau checkbox (si il n'est pas vide)
-        $sql_del = 'DELETE FROM conges_groupe_users WHERE gu_gid='. \includes\SQL::quote($choix_group).' ';
-        $ReqLog_del = \includes\SQL::query($sql_del);
-
-        if(is_array($checkbox_group_users) && count ($checkbox_group_users)!=0) {
-            foreach($checkbox_group_users as $login => $value) {
-                //$login=$checkbox_group_users[$i] ;
-                $sql_insert = "INSERT INTO conges_groupe_users SET gu_gid=$choix_group, gu_login='$login' "  ;
-                $result_insert = \includes\SQL::query($sql_insert);
-            }
-        } else {
-            $result_insert=TRUE;
-        }
-
-        if($result_insert) {
-            $return .= _('form_modif_ok') . '<br><br>';
-        } else {
-            $return .= _('form_modif_not_ok') . '<br><br>';
-        }
-
-        $comment_log = "mofification_users_du_groupe : $choix_group" ;
-        log_action(0, "", "", $comment_log);
-
-        /* APPEL D'UNE AUTRE PAGE */
-        $return .= '<form action="' . $PHP_SELF. '?session=' . $session . '&onglet=admin-group-users" method="POST">';
-        $return .= '<input type="submit" value="' . _('form_retour') . '">';
-        $return .= '</form>';
-        return $return;
-    }
-
-    public static function affiche_gestion_groupes_users($choix_group, $onglet) {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
-        $return   = '';
-
-        $return .= '<h1>' . _('admin_onglet_groupe_user') . '</h1>';
-
-        /************************/
-        /* Affichage Groupes    */
-        /************************/
-        // Récuperation des informations :
-        $sql_gr = 'SELECT g_groupename, g_comment FROM conges_groupe WHERE g_gid='. \includes\SQL::quote($choix_group);
-        $ReqLog_gr = \includes\SQL::query($sql_gr);
-        $resultat_gr = $ReqLog_gr->fetch_array();
-        $sql_group=$resultat_gr["g_groupename"] ;
-        $sql_comment=$resultat_gr["g_comment"] ;
-
-
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '" method="POST">';
-
-        //AFFICHAGE DU TABLEAU DES USERS DU GROUPE
-        $return .= '<h2>' . _('admin_gestion_groupe_users_membres') . ' <strong>' . $sql_group . '</strong>, ' . $sql_comment . '</h2>';
-        $table = new \App\Libraries\Structure\Table();
-        $table->addClasses([
-            'table',
-            'table-hover',
-            'table-condensed',
-            'table-striped',
-            'table-condensed',
-        ]);
-
-        // affichage TITRE
-        $childTable = '<thead>';
-        $childTable .= '<tr>';
-        $childTable .= '<th></th>';
-        $childTable .= '<th>' . _('divers_personne_maj_1') . '</th>';
-        $childTable .= '<th>' . _('divers_login') . '</th>';
-        $childTable .= '</tr>';
-        $childTable .= '</thead>';
-        $childTable .= '<tbody>';
-
-        // affichage des users
-
-        //on rempli un tableau de tous les users avec le login, le nom, le prenom (tableau de tableau à 3 cellules
-        // Récuperation des utilisateurs :
-        $tab_users=array();
-        $sql_users = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_login!='conges' AND u_login!='admin' ORDER BY u_nom, u_prenom "  ;
-        $ReqLog_users = \includes\SQL::query($sql_users);
-
-        while($resultat_users=$ReqLog_users->fetch_array()) {
-            $tab_u=array();
-            $tab_u["login"]=$resultat_users["u_login"];
-            $tab_u["nom"]=$resultat_users["u_nom"];
-            $tab_u["prenom"]=$resultat_users["u_prenom"];
-            $tab_users[]=$tab_u;
-        }
-        // on rempli un autre tableau des users du groupe
-        $tab_group=array();
-        $sql_gu = 'SELECT gu_login FROM conges_groupe_users WHERE gu_gid="'. \includes\SQL::quote($choix_group).'" ORDER BY gu_login ';
-        $ReqLog_gu = \includes\SQL::query($sql_gu);
-
-        while($resultat_gu=$ReqLog_gu->fetch_array()){
-            $tab_group[]=$resultat_gu["gu_login"];
-        }
-
-        // ensuite on affiche tous les users avec une case cochée si exist login dans le 2ieme tableau
-        $count = count($tab_users);
-        for ($i = 0; $i < $count; $i++) {
-            $login=$tab_users[$i]["login"] ;
-            $nom=$tab_users[$i]["nom"] ;
-            $prenom=$tab_users[$i]["prenom"] ;
-
-            if (in_array($login, $tab_group)) {
-                $case_a_cocher="<input type=\"checkbox\" name=\"checkbox_group_users[$login]\" value=\"$login\" checked>";
-                $class="histo-big";
-            } else {
-                $case_a_cocher="<input type=\"checkbox\" name=\"checkbox_group_users[$login]\" value=\"$login\">";
-                $class="histo";
-            }
-
-            $childTable .= '<tr class="' . (!($i%2) ? 'i' :'p') . '">';
-            $childTable .= '<td>' . $case_a_cocher . '</td>';
-            $childTable .= '<td class="' . $class . '">' . $nom . ' ' . $prenom . '</td>';
-            $childTable .= '<td class="' . $class . '">' . $login . '</td>';
-            $childTable .= '</tr>';
-        }
-
-        $childTable .= '<tbody>';
-        $table->addChild($childTable);
-        ob_start();
-        $table->render();
-        $return .= ob_get_clean();
-        $return .= '<hr/>';
-        $return .= '<input type="hidden" name="change_group_users" value="ok">';
-        $return .= '<input type="hidden" name="choix_group" value="' .  $choix_group . '">';
-        $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
-        $return .= '<a class="btn" href="' . $PHP_SELF . '?session=' . $session . '&onglet=admin-group-users">' . _('form_annul') . '</a>';
-        $return .= '</form>';
-        return $return;
-    }
-
-    public static function affiche_choix_groupes_users()
-    {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
-        $return   = '';
-
-        $return .= '<h1>' . _('admin_onglet_groupe_user') . '</h1>';
-
-        /********************/
-        /* Choix Groupe     */
-        /********************/
-        // Récuperation des informations :
-        $sql_gr = "SELECT g_gid, g_groupename, g_comment FROM conges_groupe ORDER BY g_groupename"  ;
-
-        // AFFICHAGE TABLEAU
-        $return .= '<h2>' . _('admin_aff_choix_groupe_titre') . '</h2>';
-        $table = new \App\Libraries\Structure\Table();
-        $table->addClasses([
-            'table',
-            'table-hover',
-            'table-striped',
-            'table-responsive',
-            'table-condensed',
-        ]);
-        $childTable = '<thead>';
-        $childTable .= '<tr>';
-        $childTable .= '<th>' . _('admin_groupes_groupe') . '</th>';
-        $childTable .= '<th>' . _('admin_groupes_libelle') . '</th>';
-        $childTable .= '</tr>';
-        $childTable .= '</thead>';
-        $childTable .= '<tbody>';
-
-        $i = true;
-        $ReqLog_gr = \includes\SQL::query($sql_gr);
-        while ($resultat_gr = $ReqLog_gr->fetch_array()) {
-            $sql_gid=$resultat_gr["g_gid"] ;
-            $sql_group=$resultat_gr["g_groupename"] ;
-            $sql_comment=$resultat_gr["g_comment"] ;
-
-            $choix_group="<a href=\"$PHP_SELF?session=$session&onglet=admin-group-users&choix_group=$sql_gid\"><b>$sql_group</b></a>" ;
-
-            $childTable .= '<tr class="'.($i ? 'i' : 'p').'">';
-            $childTable .= '<td><b>' . $choix_group .'</b></td>';
-            $childTable .= '<td>' . $sql_comment . '</td>';
-            $childTable .= '</tr>';
-            $i = !$i;
-        }
-        $childTable .= '</tbody>';
-        $table->addChild($childTable);
-        ob_start();
-        $table->render();
-        $return .= ob_get_clean();
-        return $return;
-    }
-
-    public static function affiche_gestion_user_groupes($choix_user, $onglet)
-    {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
-        $return   = '';
-
-        $return .= '<h1>' . _('admin_onglet_user_groupe') . '</h1>';
-
-        /************************/
-        /* Affichage Groupes    */
-        /************************/
-
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '" method="POST">';
-
-        $return .= \admin\Fonctions::affiche_tableau_affectation_user_groupes($choix_user);
-
-        $return .= '<hr/>';
-        $return .= '<input type="hidden" name="change_user_groups" value="ok">';
-        $return .= '<input type="hidden" name="choix_user" value="' . $choix_user . '">';
-        $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
-        $return .= '<a class="btn" href="' . $PHP_SELF . '?session=' . $session . '&onglet=admin-group-users">' . _('form_annul') . '</a>';
-        $return .= '</form>';
-        return $return;
-    }
-
-    public static function affiche_choix_user_groupes()
-    {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
-        $return   = '';
-
-        $return .= '<h1>' . _('admin_onglet_user_groupe') . '</h1>';
-
-
-        /********************/
-        /* Choix User       */
-        /********************/
-        // Récuperation des informations :
-        $sql_user = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_login!='conges' AND u_login!='admin' ORDER BY u_nom, u_prenom"  ;
-
-        // AFFICHAGE TABLEAU
-        $return .= '<h2>' . _('admin_aff_choix_user_titre') . '</h2>';
-        $table = new \App\Libraries\Structure\Table();
-        $table->addClasses([
-            'table',
-            'table-hover',
-            'table-responsive',
-            'table-striped',
-            'table-condensed',
-        ]);
-
-        $childTable = '<thead>';
-        $childTable .= '<tr>';
-        $childTable .= '<th>' . _('divers_nom_maj_1') . '  ' . _('divers_prenom_maj_1') . '</th>';
-        $childTable .= '<th>' . _('divers_login_maj_1') . '</th>';
-        $childTable .= '</tr>';
-        $childTable .= '</thead>';
-        $childTable .= '<tbody>';
-
-        $i = true;
-        $ReqLog_user = \includes\SQL::query($sql_user);
-        while ($resultat_user = $ReqLog_user->fetch_array()) {
-
-            $sql_login=$resultat_user["u_login"] ;
-            $sql_nom=$resultat_user["u_nom"] ;
-            $sql_prenom=$resultat_user["u_prenom"] ;
-
-            $choix="<a href=\"$PHP_SELF?session=$session&onglet=admin-group-users&choix_user=$sql_login\"><b>$sql_nom $sql_prenom</b></a>" ;
-
-            $childTable .= '<tr class="'.( $i ? 'i' : 'p').'">';
-            $childTable .= '<td>' . $choix . '</td>';
-            $childTable .= '<td>' . $sql_login . '</td>';
-            $childTable .= '</tr>';
-            $i = !$i;
-        }
-        $childTable .= '</tbody>';
-        $table->addChild($childTable);
-        ob_start();
-        $table->render();
-        $return .= ob_get_clean();
         return $return;
     }
 
     public static function affiche_tableau_affectation_user_groupes($choix_user)
     {
         $return = '';
-        $return .= '<h2>' . _('admin_gestion_groupe_users_group_of_user') . (($choix_user!='') ? ' <strong>' . $choix_user . '</strong>' : '') . '</h2>';
 
         //AFFICHAGE DU TABLEAU DES GROUPES DU USER
         $table = new \App\Libraries\Structure\Table();
@@ -955,6 +44,9 @@ class Fonctions
         ]);
         $childTable = '<thead>';
         $childTable .= '<tr>';
+        $childTable .= '<th colspan=3><h4>' . _('admin_gestion_groupe_users_group_of_new_user') . ' :</h4></th>';
+        $childTable .= '</tr>';
+        $childTable .= '<tr>';
         $childTable .= '<th></th>';
         $childTable .= '<th>' . _('admin_groupes_groupe') . '</th>';
         $childTable .= '<th>' . _('admin_groupes_libelle') . '</th>';
@@ -966,7 +58,11 @@ class Fonctions
 
         //on rempli un tableau de tous les groupes avec le nom et libellé (tableau de tableau à 3 cellules)
         $tab_groups=array();
-        $sql_g = "SELECT g_gid, g_groupename, g_comment FROM conges_groupe ORDER BY g_groupename "  ;
+        $sql_g = "SELECT g_gid, g_groupename, g_comment FROM conges_groupe";
+        if($choix_user!="") {
+            $sql_g .= " WHERE g_gid NOT IN (SELECT gr_gid FROM conges_groupe_resp WHERE gr_login =\"" . \includes\SQL::quote($choix_user) . "\")";
+        }
+        $sql_g .= " ORDER BY g_groupename";
         $ReqLog_g = \includes\SQL::query($sql_g);
 
         while ($resultat_g=$ReqLog_g->fetch_array()) {
@@ -1020,291 +116,18 @@ class Fonctions
         return $return;
     }
 
-    public static function affiche_choix_gestion_groupes_users($choix_group, $choix_user, $onglet)
-    {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $return   = '';
-
-        if( $choix_group!="" )     // si un groupe choisi : on affiche la gestion par groupe
-        {
-            $return .= \admin\Fonctions::affiche_gestion_groupes_users($choix_group, $onglet);
-        } elseif( $choix_user!="" )     // si un user choisi : on affiche la gestion par user
-        {
-            $return .= \admin\Fonctions::affiche_gestion_user_groupes($choix_user, $onglet);
-        }
-        else    // si pas de groupe ou de user choisi : on affiche les choix
-        {
-            $return .= '<div class="row">';
-            $return .= '<div class="col-md-6">';
-            $return .= \admin\Fonctions::affiche_choix_groupes_users();
-            $return .= '</div>';
-            $return .= '<div class="col-md-6">';
-            $return .= \admin\Fonctions::affiche_choix_user_groupes();
-            $return .= '</div>';
-            $return .= '</div>';
-        }
-        return $return;
-    }
-
-    /**
-     * Encapsule le comportement du module de la gestion de groupes et d'utilisateurs
-     *
-     * @param string $onglet Nom de l'onglet à afficher
-     *
-     * @return void
-     * @access public
-     * @static
-     */
-    public static function groupUserModule($onglet)
-    {
-        $change_group_users    = getpost_variable('change_group_users') ;
-        $change_user_groups    = getpost_variable('change_user_groups') ;
-        $choix_group        = (int) getpost_variable('choix_group') ;
-        $choix_user            = getpost_variable('choix_user') ;
-        $return = '';
-
-        if($change_group_users=="ok") {
-            $checkbox_group_users    = getpost_variable('checkbox_group_users');
-            $return .= \admin\Fonctions::modif_group_users($choix_group, $checkbox_group_users);
-        } elseif($change_user_groups=="ok") {
-            $checkbox_user_groups    = getpost_variable('checkbox_user_groups');
-            $return .= \admin\Fonctions::modif_user_groups($choix_user, $checkbox_user_groups);
-        } else {
-            $return .= \admin\Fonctions::affiche_choix_gestion_groupes_users($choix_group, $choix_user, $onglet);
-        }
-        return $return;
-    }
-
-    // recup le nombre de users d'un groupe donné
-    public static function get_nb_users_du_groupe($group_id)
-    {
-
-        $sql1='SELECT DISTINCT(gu_login) FROM conges_groupe_users WHERE gu_gid = '. \includes\SQL::quote($group_id).' ORDER BY gu_login ';
-        $ReqLog1 = \includes\SQL::query($sql1);
-
-        $nb_users = $ReqLog1->num_rows;
-
-        return $nb_users;
-
-    }
-
-    public static function verif_new_param_group($new_group_name, $new_group_libelle)
-    {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
-        $return   = '';
-
-        // verif des parametres reçus :
-        if(strlen($new_group_name)==0) {
-            $return .= '<H3>' . _('admin_verif_param_invalides') . '</H3>';
-            $return .= '<new_group_name --- ' . $new_group_libelle . '<br>';
-            $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=admin-group" method="POST">';
-            $return .= '<input type="hidden" name="new_group_name" value="' . $new_group_name . '">';
-            $return .= '<input type="hidden" name="new_group_libelle" value="' . $new_group_libelle . '">';
-
-            $return .= '<input type="hidden" name="saisie_group" value="faux">';
-            $return .= '<input type="submit" value="' . _('form_redo') . '">';
-            $return .= '</form>';
-
-            return true;
-        } else {
-            // verif si le groupe demandé n'existe pas déjà ....
-            $sql_verif='select g_groupename from conges_groupe where g_groupename="'. \includes\SQL::quote($new_group_name).'" ';
-            $ReqLog_verif = \includes\SQL::query($sql_verif);
-            $num_verif = $ReqLog_verif->num_rows;
-            if ($num_verif!=0) {
-                $return .= '<H3>' . _('admin_verif_groupe_invalide') . '</H3>';
-                $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=admin-group" method="POST">';
-                $return .= '<input type="hidden" name="new_group_name" value="' . $new_group_name . '">';
-                $return .= '<input type="hidden" name="new_group_libelle" value="' . $new_group_libelle . '">';
-
-                $return .= '<input type="hidden" name="saisie_group" value="faux">';
-                $return .= '<input type="submit" value="' . _('form_redo') . '">';
-                $return .= '</form>';
-
-                return true;
-            } else {
-                return false;
-            }
-        }
-    }
-
-    public static function ajout_groupe($new_group_name, $new_group_libelle, $new_group_double_valid)
-    {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
-        $return   = '';
-
-        if(\admin\Fonctions::verif_new_param_group($new_group_name, $new_group_libelle)==0)  // verif si les nouvelles valeurs sont coohérentes et n'existent pas déjà
-        {
-            $ngm=stripslashes($new_group_name);
-            $return .= $ngm . '---' . $new_group_libelle . '<br>';
-
-            $sql1 = "INSERT INTO conges_groupe SET g_groupename='$new_group_name', g_comment='$new_group_libelle', g_double_valid ='$new_group_double_valid' " ;
-            $result = \includes\SQL::query($sql1);
-
-            $new_gid= \includes\SQL::getVar('insert_id');
-
-            if($result) {
-                $return .= _('form_modif_ok') . '<br><br>';
-            } else {
-                $return .= _('form_modif_not_ok') . '<br><br>';
-            }
-
-            $comment_log = "ajout_groupe : $new_gid / $new_group_name / $new_group_libelle (double_validation : $new_group_double_valid)" ;
-            log_action(0, "", "", $comment_log);
-
-            /* APPEL D'UNE AUTRE PAGE */
-            $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=admin-group" method="POST">';
-            $return .= '<input type="submit" value="' . _('form_retour') . '">';
-            $return .= '</form>';
-        }
-        return $return;
-    }
-
-    public static function affiche_gestion_groupes($new_group_name, $new_group_libelle, $onglet)
-    {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
-        $return   = '';
-
-        $return .= '<h1>' . _('admin_onglet_gestion_groupe') . '</h1>';
-
-        /*********************/
-        /* Etat Groupes       */
-        /*********************/
-        // Récuperation des informations :
-        $sql_gr = "SELECT g_gid, g_groupename, g_comment, g_double_valid FROM conges_groupe ORDER BY g_groupename"  ;
-
-        // AFFICHAGE TABLEAU
-        $return .= '<h2>' . _('admin_gestion_groupe_etat') . '</h2>';
-        $table = new \App\Libraries\Structure\Table();
-        $table->addClasses([
-            'table',
-            'table-hover',
-            'table-responsive',
-            'table-striped',
-            'table-condensed'
-        ]);
-        $childTable = '<thead>';
-        $childTable .= '<tr>';
-        $childTable .= '<th>' . _('admin_groupes_groupe') . '</th>';
-        $childTable .= '<th>' . _('admin_groupes_libelle') . '</th>';
-        $childTable .= '<th>' . _('admin_groupes_nb_users') . '</th>';
-        if($_SESSION['config']['double_validation_conges']) {
-            $childTable .= '<th>' . _('admin_groupes_double_valid') . '</th>';
-        }
-        $childTable .= '<th></th></tr></thead><tbody>';
-
-        $i = true;
-        $ReqLog_gr = \includes\SQL::query($sql_gr);
-        while ($resultat_gr = $ReqLog_gr->fetch_array()) {
-            $sql_gid=$resultat_gr["g_gid"] ;
-            $sql_group=$resultat_gr["g_groupename"] ;
-            $sql_comment=$resultat_gr["g_comment"] ;
-            $sql_double_valid=$resultat_gr["g_double_valid"] ;
-            $nb_users_groupe = \admin\Fonctions::get_nb_users_du_groupe($sql_gid);
-
-            $admin_modif_group = '<a href="admin_index.php?onglet=modif_group&session=' . $session . '&group=' . $sql_gid . '" title="' . _('form_modif') . '"><i class="fa fa-pencil"></i></a>';
-            $admin_suppr_group = '<a href="admin_index.php?onglet=suppr_group&session=' . $session . '&group=' . $sql_gid . '" title="' . _('form_supprim') . '"><i class="fa fa-times-circle"></i></a>';
-
-            $childTable .= '<tr class="' . ($i ? 'i' : 'p') . '">';
-            $childTable .= '<td><b>' . $sql_group .'</b></td>';
-            $childTable .= '<td>' . $sql_comment . '</td>';
-            $childTable .= '<td>' . $nb_users_groupe . '</td>';
-            if($_SESSION['config']['double_validation_conges']) {
-                $childTable .= '<td>' . $sql_double_valid . '</td>';
-            }
-            $childTable .= '<td class="action">' . $admin_modif_group . ' ' . $admin_suppr_group . '</td>';
-            $childTable .= '</tr>';
-            $i = !$i;
-        }
-        $childTable .= '</tbody>';
-        $table->addChild($childTable);
-        ob_start();
-        $table->render();
-        $return .= ob_get_clean();
-        $return .= '<hr/>';
-
-        /*********************/
-        /* Ajout Groupe      */
-        /*********************/
-
-        // TITRE
-
-        $return .= '<h2>' . _('admin_groupes_new_groupe') . '</h2>';
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '" method="POST">';
-        $table = new \App\Libraries\Structure\Table();
-        $table->addClasses([
-            'table',
-        ]);
-        $childTable = '<thead><tr>';
-        $childTable .= '<th><b>' . _('admin_groupes_groupe') . '</b></th>';
-        $childTable .= '<th>' . _('admin_groupes_libelle') . ' / ' . _('divers_comment_maj_1') . '</th>';
-        if($_SESSION['config']['double_validation_conges']) {
-            $childTable .= '<th>' . _('admin_groupes_double_valid') . '</th>';
-        }
-        $childTable .= '</tr></thead><tbody>';
-
-        $text_groupname = '<input class="form-control" type="text" name="new_group_name" size="30" maxlength="50" value="' . $new_group_name . '">';
-        $text_libelle = '<input class="form-control" type="text" name="new_group_libelle" size="50" maxlength="250" value="' . $new_group_libelle . '">';
-
-        $childTable .= '<tr>';
-        $childTable .= '<td>' . $text_groupname . '</td>';
-        $childTable .= '<td>' . $text_libelle . '</td>';
-        if($_SESSION['config']['double_validation_conges']) {
-            $text_double_valid = '<select class="form-control" name="new_group_double_valid"><option value="N">N</option><option value="Y">Y</option></select>';
-            $childTable .= '<td>' . $text_double_valid . '</td>';
-        }
-        $childTable .= '</tr></tbody>';
-        $table->addChild($childTable);
-        ob_start();
-        $table->render();
-        $return .= ob_get_clean();
-        $return .= '<hr>';
-        $return .= '<input type="hidden" name="saisie_group" value="ok">';
-        $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
-        $return .= '</form>';
-        return $return;
-    }
-
-    /**
-     * Encapsule le comportement du module de gestion des groupes
-     *
-     * @param string $onglet Nom de l'onglet à afficher
-     *
-     * @return string
-     * @access public
-     * @static
-     */
-    public static function groupeModule($onglet)
-    {
-        $saisie_group           = getpost_variable('saisie_group') ;
-        $new_group_name         = htmlentities(addslashes( getpost_variable('new_group_name')), ENT_QUOTES | ENT_HTML401);
-        $new_group_libelle      = addslashes( getpost_variable('new_group_libelle')) ;
-        $new_group_double_valid = getpost_variable('new_group_double_valid');
-        $return = '';
-
-        if($saisie_group=="ok") {
-            $return .= \admin\Fonctions::ajout_groupe($new_group_name, $new_group_libelle, $new_group_double_valid);
-        } else {
-            $return .= \admin\Fonctions::affiche_gestion_groupes($new_group_name, $new_group_libelle, $onglet);
-        }
-        return $return;
-    }
-
     /**
      * Encapsule le comportement du module de gestion des utilisateurs
      *
-     * @param string $session
-     *
      * @return string
      * @access public
      * @static
      */
-    public static function userModule($session)
+    public static function userModule()
     {
-        $return = '<h1>' . _('admin_onglet_gestion_user') . '</h1>';
+        $return = '';
+        $return .= '<a href="' . ROOT_PATH . 'admin/admin_index.php?onglet=ajout-user" style="float:right" class="btn btn-success">' . _('admin_onglet_add_user') . '</a>';
+        $return .= '<h1>' . _('admin_onglet_gestion_user') . '</h1>';
 
         /*********************/
         /* Etat Utilisateurs */
@@ -1363,12 +186,13 @@ class Fonctions
         } else {
             $tab_info_users = recup_infos_all_users_du_resp($_SESSION['userlogin']);
         }
-
+        asort($tab_info_users);
+        uasort($tab_info_users, "sortParActif");
         $i = true;
         foreach ($tab_info_users as $current_login => $tab_current_infos) {
-            $admin_modif_user= '<a href="admin_index.php?onglet=modif_user&session=' . $session . '&u_login=' . $current_login . '" title="' . _('form_modif') . '"><i class="fa fa-pencil"></i></a>';
-            $admin_suppr_user = '<a href="admin_index.php?onglet=suppr_user&session=' . $session . '&u_login=' . $current_login . '" title="' . _('form_supprim') . '"><i class="fa fa-times-circle"></i></a>';
-            $admin_chg_pwd_user = '<a href="admin_index.php?onglet=chg_pwd_user&session=' . $session . '&u_login=' . $current_login . '" title="' . _('form_password') . '"><i class="fa fa-key"></i></a>';
+            $admin_modif_user= '<a href="admin_index.php?onglet=modif_user&u_login=' . $current_login . '" title="' . _('form_modif') . '"><i class="fa fa-pencil"></i></a>';
+            $admin_suppr_user = '<a href="admin_index.php?onglet=suppr_user&u_login=' . $current_login . '" title="' . _('form_supprim') . '"><i class="fa fa-times-circle"></i></a>';
+            $admin_chg_pwd_user = '<a href="admin_index.php?onglet=chg_pwd_user&u_login=' . $current_login . '" title="' . _('form_password') . '"><i class="fa fa-key"></i></a>';
 
 
             $childTable .= '<tr class="' . (($tab_current_infos['is_active']=='Y') ? 'actif' : 'inactif') . '">';
@@ -1379,6 +203,9 @@ class Fonctions
             }
             // droit utilisateur
             $rights = array();
+            if($tab_current_infos['is_active'] == 'N') {
+                $rights[] = 'inactif';
+            }
             if($tab_current_infos['is_admin'] == 'Y') {
                 $rights[] = 'administrateur';
             }
@@ -1396,7 +223,8 @@ class Fonctions
                 $childTable .= '<span class="rights">' . implode(', ', $rights) . '</span>';
             }
 
-            $childTable .= '<span class="responsable"> responsable : <strong>' . $tab_current_infos['resp_login'] . '</strong></span>';
+            $responsables = \App\ProtoControllers\Responsable::getResponsablesUtilisateur($current_login);
+            $childTable .= '<span class="responsable"> responsables : <strong>' . implode(', ', $responsables) . '</strong></span>';
 
             $childTable .= '</td><td>' . $tab_current_infos['quotite'] . ' %</td>';
 
@@ -1447,7 +275,6 @@ class Fonctions
     {
 
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
         $return   = '';
 
         if( (strlen($new_pwd1)!=0) && (strlen($new_pwd2)!=0) && (strcmp($new_pwd1, $new_pwd2)==0) ) {
@@ -1466,10 +293,10 @@ class Fonctions
             log_action(0, "", $u_login_to_update, $comment_log);
 
             /* APPEL D'UNE AUTRE PAGE au bout d'une tempo de 2secondes */
-            $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=admin_index.php?session=' . $session . '&onglet=admin-users">';
+            $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=admin_index.php?onglet=admin-users">';
         } else {
             $return .= '<H3>' . _('admin_verif_param_invalides') . '</H3>';
-            $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=chg_pwd_user" method="POST">';
+            $return .= '<form action="' . $PHP_SELF . '?onglet=chg_pwd_user" method="POST">';
             $return .= '<input type="hidden" name="u_login" value="' . $u_login_to_update . '">';
 
             $return .= '<input type="submit" value="' . _('form_redo') . '">';
@@ -1481,14 +308,13 @@ class Fonctions
     public static function modifier($u_login, $onglet)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session=session_id();
         $return = '';
 
         /********************/
         /* Etat utilisateur */
         /********************/
         // AFFICHAGE TABLEAU
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '&u_login_to_update=' . $u_login . '" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '?onglet=' . $onglet . '&u_login_to_update=' . $u_login . '" method="POST">';
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses(['tablo']);
         $table->addAttribute('width', '80%');
@@ -1524,7 +350,7 @@ class Fonctions
         $return .= '<input type="submit" value="' . _('form_submit') . '">';
         $return .= '</form>';
 
-        $return .= '<form action="admin_index.php?session=' . $session . '&onglet=admin-users" method="POST">';
+        $return .= '<form action="admin_index.php?onglet=admin-users" method="POST">';
         $return .= '<input type="submit" value="' . _('form_cancel') . '">';
         $return .= '</form>';
         return $return;
@@ -1534,13 +360,12 @@ class Fonctions
      * Encapsule le comportement du module de gestion des groupes et des responsables
      *
      * @param string $onglet Nom de l'onglet à afficher
-     * @param string $session
      *
      * @return string
      * @access public
      * @static
      */
-    public static function changeMotDePasseUserModule($onglet, $session)
+    public static function changeMotDePasseUserModule($onglet)
     {
         $return = '';
         /*************************************/
@@ -1561,7 +386,7 @@ class Fonctions
                 $return .= \admin\Fonctions::commit_update($u_login_to_update, $new_pwd1, $new_pwd2);
             } else {
                 // renvoit sur la page principale .
-                redirect( ROOT_PATH .'admin/admin_index.php?session='.$session.'&onglet=admin-users', false);
+                redirect( ROOT_PATH .'admin/admin_index.php?onglet=admin-users', false);
             }
         }
         return $return;
@@ -1606,102 +431,18 @@ class Fonctions
     // recup de la structure d'une table sous forme de CREATE ...
     public static function get_table_structure($table)
     {
-        $chaine_drop="DROP TABLE IF EXISTS  `$table` ;\n";
-        $chaine_create = "CREATE TABLE `$table` ( ";
+        $drop = "DROP TABLE IF EXISTS  `$table` ;\n";
 
         // description des champs :
-        $sql_champs='SHOW FIELDS FROM '. \includes\SQL::quote($table);
-        $ReqLog_champs = \includes\SQL::query($sql_champs) ;
-        $count_champs=$ReqLog_champs->num_rows;
-        $i=0;
-        while ($resultat_champs = $ReqLog_champs->fetch_array())
-        {
-            $sql_field=$resultat_champs['Field'];
-            $sql_type=$resultat_champs['Type'];
-            $sql_null=$resultat_champs['Null'];
-            $sql_key=$resultat_champs['Key'];
-            $sql_default=$resultat_champs['Default'];
-            $sql_extra=$resultat_champs['Extra'];
-
-            $chaine_create=$chaine_create." `$sql_field` $sql_type ";
-            if($sql_null != "YES")
-                $chaine_create=$chaine_create." NOT NULL ";
-            if(!empty($sql_default))
-            {
-                if($sql_default=="CURRENT_TIMESTAMP")
-                    $chaine_create=$chaine_create." default $sql_default ";        // pas de quotes !
-                else
-                    $chaine_create=$chaine_create." default '$sql_default' ";
-            }
-            if(!empty($sql_extra))
-                $chaine_create=$chaine_create." $sql_extra ";
-            if($i<$count_champs-1)
-                $chaine_create=$chaine_create.",";
-            $i++;
-        }
-
-        // description des index :
-        $sql_index = 'SHOW KEYS FROM '. \includes\SQL::quote($table).'';
-        $ReqLog_index = \includes\SQL::query($sql_index) ;
-        $count_index=$ReqLog_index->num_rows;
-        $i=0;
-
-        // il faut faire une liste pour prendre les PRIMARY, le nom de la colonne et
-        // genérer un PRIMARY KEY ('key1'), PRIMARY KEY ('key2', ...)
-        // puis on regarde ceux qui ne sont pas PRIMARY et on regarde s'ils sont UNIQUE ou pas et
-        // on génére une liste= UNIQUE 'key1' ('key1') , 'key2' ('key2') , ....
-        // ou une liste= KEY key1' ('key1') , 'key2' ('key2') , ....
-        $list_primary="";
-        $list_unique="";
-        $list_key="";
-        while ($resultat_index = $ReqLog_index->fetch_array())
-        {
-            $sql_key_name=$resultat_index['Key_name'];
-            $sql_column_name=$resultat_index['Column_name'];
-            $sql_non_unique=$resultat_index['Non_unique'];
-
-            if($sql_key_name=="PRIMARY")
-            {
-                if($list_primary=="")
-                    $list_primary=" PRIMARY KEY (`$sql_column_name` ";
-                else
-                    $list_primary=$list_primary.", `$sql_column_name` ";
-            }
-            elseif($sql_non_unique== 0)
-            {
-                if($list_unique=="")
-                    $list_unique=" UNIQUE  `$sql_column_name` (`$sql_key_name`) ";
-                else
-                    $list_unique = $list_unique.", `$sql_column_name` (`$sql_key_name`) ";
-            }
-            else
-            {
-                if($list_key=="")
-                    $list_key=" KEY  `$sql_column_name` (`$sql_key_name`) ";
-                else
-                    $list_key=$list_key.", KEY `$sql_column_name` (`$sql_key_name`) ";
-            }
-        }
-
-        if($list_primary!="")
-            $list_primary=$list_primary." ) ";
-
-        if($list_primary!="")
-            $chaine_create=$chaine_create.",    ".$list_primary;
-        if($list_unique!="")
-            $chaine_create=$chaine_create.",    ".$list_unique;
-        if($list_key!="")
-            $chaine_create=$chaine_create.",    ".$list_key;
-
-        $chaine_create=$chaine_create." ) DEFAULT CHARSET=latin1;\n#\n";
-
-        return($chaine_drop.$chaine_create);
+        $req = 'SHOW CREATE TABLE '. \includes\SQL::quote($table);
+        $descriptor = \includes\SQL::query($req) ;
+        $resultDescriptor = $descriptor->fetch_array();
+        return $drop . $resultDescriptor['Create Table'] . ";\n#\n";
     }
 
     public static function restaure($fichier_restaure_name, $fichier_restaure_tmpname, $fichier_restaure_size, $fichier_restaure_error)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
         $return   = '';
 
         header_popup();
@@ -1712,7 +453,7 @@ class Fonctions
             //(cf code erreur dans fichier features.file-upload.errors.html de la doc php)
         {
             //message d'erreur et renvoit sur la page précédente (choix fichier)
-            $return.= '<form action="' . $PHP_SELF . '?session=' . $session . '" method="POST">';
+            $return.= '<form action="' . $PHP_SELF . '" method="POST">';
             $table = new \App\Libraries\Structure\Table();
             $childTable = '<tr>';
             $childTable .= '<th>' . _('admin_sauve_db_bad_file') . ' : <br>' . $fichier_restaure_name .'</th>';
@@ -1761,13 +502,12 @@ class Fonctions
     public static function choix_restaure()
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
         $return   = '';
 
         header_popup();
 
         $return .= '<h1>' . _('admin_sauve_db_titre') . '</h1>';
-        $return .= '<form enctype="multipart/form-data" action="' . $PHP_SELF . '?session=' . $session . '" method="POST">';
+        $return .= '<form enctype="multipart/form-data" action="' . $PHP_SELF . '" method="POST">';
         $table = new \App\Libraries\Structure\Table();
         $childTable = '<tr>';
         $childTable .= '<th>' . _('admin_sauve_db_restaure') . '<br>' . _('admin_sauve_db_file_to_restore') . ' :</th>';
@@ -1807,55 +547,76 @@ class Fonctions
 
     public static function commit_sauvegarde($type_sauvegarde)
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
-        $return   = '';
-
         header("Pragma: no-cache");
         header("Content-Type: text/x-delimtext; name=\"php_conges_".$type_sauvegarde.".sql\"");
         header("Content-disposition: attachment; filename=php_conges_".$type_sauvegarde.".sql");
 
-        //
-        // Build the sql script file...
-        //
-        $maintenant=date("d-m-Y H:i:s");
-        $return .= "#\n";
-        $return .= "# PHP_CONGES\n";
-        $return .= "#\n# DATE : $maintenant\n";
-        $return .= "#\n";
+        echo static::getDataFile($type_sauvegarde);
+    }
+
+    /**
+     * Écrit un fichier de sauvegarde de version dans le répertoire de backup
+     *
+     * @param string $previousVersion Version de départ (courante)
+     * @param string $newVersion Version visée
+     *
+     * @throws \Exception en cas d'échec d'écriture de fichier
+     */
+    public static function sauvegardeAsFile($previousVersion, $newVersion)
+    {
+        $typeSauvegarde = 'all';
+        $contentFile = static::getDataFile($typeSauvegarde);
+        $filename = BACKUP_PATH . 'libertempo_' . $typeSauvegarde .'_' . $previousVersion . '__' . $newVersion . '.sql'; // nom de migration
+
+        if (false === file_put_contents($filename, $contentFile)) {
+            throw new \Exception('Échec de l\'écriture de la sauvegarde');
+        }
+    }
+
+    /**
+     * Retourne les données de sauvegarde
+     *
+     * @param string $typeSauvegarde Si on veut sauvegarder la structure seule ou les données
+     *
+     * @return string
+     */
+    private static function getDataFile($typeSauvegarde)
+    {
+        $content = "#\n";
+        $content .= "# Libertempo\n";
+        $content .= "#\n# DATE : " . date("d-m-Y H:i:s") . "\n";
+        $content .= "#\n";
 
         //recup de la liste des tables
-        $sql1="SHOW TABLES";
-        $ReqLog = \includes\SQL::query($sql1) ;
+        $ReqLog = \includes\SQL::query('SHOW TABLES');
         while ($resultat = $ReqLog->fetch_array()) {
-            $table=$resultat[0] ;
-
-            $return .= "#\n#\n# TABLE: $table \n#\n";
-            if(($type_sauvegarde=="all") || ($type_sauvegarde=="structure") ) {
-                $return .= "# Struture : \n#\n";
-                $return .= \admin\Fonctions::get_table_structure($table);
+            $table = $resultat[0];
+            $content .= "#\n#\n# TABLE: $table \n#\n";
+            if(($typeSauvegarde=="all") || ($typeSauvegarde=="structure") ) {
+                $content .= "# Struture : \n#\n";
+                $content .= static::get_table_structure($table);
             }
-            if(($type_sauvegarde=="all") || ($type_sauvegarde=="data") ) {
-                $return .= "# Data : \n#\n";
-                $return .= \admin\Fonctions::get_table_data($table);
+            if(($typeSauvegarde=="all") || ($typeSauvegarde=="data") ) {
+                $content .= "# Data : \n#\n";
+                $content .= static::get_table_data($table);
             }
         }
-        echo $return;
+
+        return $content;
     }
 
     public static function sauve($type_sauvegarde)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
         $return   = '';
 
-        redirect(ROOT_PATH .'admin/admin_db_sauve.php?session='.$session.'&choix_action=sauvegarde&type_sauvegarde='.$type_sauvegarde.'&commit=ok', false);
+        redirect(ROOT_PATH .'admin/admin_db_sauve.php?choix_action=sauvegarde&type_sauvegarde='.$type_sauvegarde.'&commit=ok', false);
 
         header_popup();
 
         $return .= '<h1>' . _('admin_sauve_db_titre') . '</h1>';
 
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '" method="POST">';
         $table = new \App\Libraries\Structure\Table();
         $childTable = '<tr>';
         $childTable .= '<th colspan="2">' . _('admin_sauve_db_save_ok') . ' ...</th>';
@@ -1878,7 +639,6 @@ class Fonctions
     public static function choix_sauvegarde()
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
         $return   = '';
 
 
@@ -1886,7 +646,7 @@ class Fonctions
 
         $return .= '<h1>' . _('admin_sauve_db_titre') . '</h1>';
 
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '" method="POST">';
         $table = new \App\Libraries\Structure\Table();
         $childTable = '<tr>';
         $childTable .= '<th colspan="2">' . _('admin_sauve_db_options') . '</th>';
@@ -1926,14 +686,13 @@ class Fonctions
     public static function choix_save_restore()
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
         $return   = '';
 
         header_popup();
 
         $return .= '<h1>' . _('admin_sauve_db_titre') . '</h1>';
 
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '" method="POST">';
         $table = new \App\Libraries\Structure\Table();
         $childTable = '<tr>';
         $childTable .= '<th colspan="2">' . _('admin_sauve_db_choisissez') . ' :</th>';
@@ -1972,16 +731,14 @@ class Fonctions
     /**
      * Encapsule le comportement du module de sauvegarde / restauration de bdd
      *
-     * @param string $session
-     *
      * @return void
      * @access public
      * @static
      */
-    public static function saveRestoreModule($session)
+    public static function saveRestoreModule()
     {
         // verif des droits du user à afficher la page
-        verif_droits_user($session, "is_admin");
+        verif_droits_user( "is_admin");
 
 
         /*** initialisation des variables ***/
@@ -2008,10 +765,10 @@ class Fonctions
         if($choix_action=="") {
             \admin\Fonctions::choix_save_restore();
         } elseif($choix_action=="sauvegarde") {
-            if( (!isset($type_sauvegarde)) || ($type_sauvegarde=="") ) {
+            if(!isset($type_sauvegarde) || $type_sauvegarde=="") {
                 \admin\Fonctions::choix_sauvegarde();
             } else {
-                if( (!isset($commit)) || ($commit=="") ) {
+                if( (!isset($commit)) || ($commit=="")) {
                     \admin\Fonctions::sauve($type_sauvegarde);
                 } else {
                     \admin\Fonctions::commit_sauvegarde($type_sauvegarde);
@@ -2024,160 +781,14 @@ class Fonctions
                 \admin\Fonctions::restaure($fichier_restaure_name, $fichier_restaure_tmpname, $fichier_restaure_size, $fichier_restaure_error);
         } else {
             /* APPEL D'UNE AUTRE PAGE immediat */
-            echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=admin_index.php?session=$session&onglet=admin-users\">";
+            echo "<META HTTP-EQUIV=REFRESH CONTENT=\"0; URL=admin_index.php?onglet=admin-users\">";
         }
-    }
-
-    public static function commit_update_groupe($group_to_update, $new_groupname, $new_comment, $new_double_valid)
-    {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
-        $return   = '';
-        $result   = TRUE;
-        $new_comment=addslashes($new_comment);
-        $return .= $group_to_update .  '---' . $new_groupname . '---' . $new_comment . '---' . $new_double_valid . '<br>';
-
-        // UPDATE de la table conges_groupe
-        $sql1 = 'UPDATE conges_groupe  SET g_groupename=\''.$new_groupname.'\', g_comment=\''.$new_comment.'\' , g_double_valid=\''.$new_double_valid.'\' WHERE g_gid= "'. \includes\SQL::quote($group_to_update).'"'  ;
-        $result1 = \includes\SQL::query($sql1);
-        if($result1==FALSE) {
-            $result==FALSE;
-        }
-
-
-        $comment_log = "modif_groupe ($group_to_update) : $new_groupname , $new_comment (double_valid = $new_double_valid)";
-        log_action(0, "", "", $comment_log);
-
-        if($result) {
-            $return .= _('form_modif_ok') . ' !<br><br>';
-        } else {
-            $return .= _('form_modif_not_ok') . ' !<br><br>';
-        }
-
-        /* APPEL D'UNE AUTRE PAGE au bout d'une tempo de 2secondes */
-        $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=admin_index.php?session=' . $session . '&onglet=admin-group">';
-        return $return;
-    }
-
-    public static function modifier_groupe($group, $onglet)
-    {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
-        $return   = '';
-
-        // Récupération des informations
-        $sql1 = 'SELECT g_groupename, g_comment, g_double_valid FROM conges_groupe WHERE g_gid = "'. \includes\SQL::quote($group).'"';
-
-        // AFFICHAGE TABLEAU
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '&group_to_update=' . $group . '" method="POST">';
-        $table = new \App\Libraries\Structure\Table();
-        $table->addClasses([
-            'table',
-            'table-hover',
-            'table-responsive',
-            'table-striped',
-            'table-condensed'
-        ]);
-        $childTable = '<thead>';
-        $childTable .= '<tr>';
-        $childTable .= '<th>' . _('admin_groupes_groupe') . '</th>';
-        $childTable .= '<th>' . _('admin_groupes_libelle') . ' / ' . _('divers_comment_maj_1') . '</th>';
-        if($_SESSION['config']['double_validation_conges']) {
-            $childTable .= '<th>' . _('admin_groupes_double_valid') . '</th>';
-        }
-        $childTable .= '</tr></thead><tbody>';
-
-        $ReqLog1 = \includes\SQL::query($sql1);
-        while ($resultat1 = $ReqLog1->fetch_array()) {
-            $sql_groupename=$resultat1["g_groupename"];
-            $sql_comment=$resultat1["g_comment"];
-            $sql_double_valid=$resultat1["g_double_valid"] ;
-        }
-
-
-        // AFICHAGE DE LA LIGNE DES VALEURS ACTUELLES A MODIFIER
-        $childTable .= '<tr>';
-        $childTable .= '<td>' . $sql_groupename . '</td>';
-        $childTable .= '<td>' . $sql_comment . '</td>';
-        if($_SESSION['config']['double_validation_conges']) {
-            $childTable .= '<td>' . $sql_double_valid . '</td>';
-        }
-        $childTable .= '</tr>';
-
-        // contruction des champs de saisie
-        $text_group="<input class=\"form-control\" type=\"text\" name=\"new_groupname\" size=\"30\" maxlength=\"50\" value=\"".$sql_groupename."\">" ;
-        $text_comment="<input class=\"form-control\" type=\"text\" name=\"new_comment\" size=\"50\" maxlength=\"200\" value=\"".$sql_comment."\">" ;
-
-        // AFFICHAGE ligne de saisie
-        $childTable .= '<tr>';
-        $childTable .= '<td>' . $text_group . '</td>';
-        $childTable .= '<td>' . $text_comment . '</td>';
-        if($_SESSION['config']['double_validation_conges']) {
-            $text_double_valid="<select class=\"form-control\" name=\"new_double_valid\" ><option value=\"N\" ";
-            if($sql_double_valid=="N") {
-                $text_double_valid=$text_double_valid."SELECTED";
-            }
-            $text_double_valid=$text_double_valid.">N</option><option value=\"Y\" ";
-            if($sql_double_valid=="Y") {
-                $text_double_valid=$text_double_valid."SELECTED";
-            }
-            $text_double_valid=$text_double_valid.">Y</option></select>" ;
-            $childTable .= '<td>' . $text_double_valid . '</td>';
-        }
-        $childTable .= '</tr></tbody>';
-        $table->addChild($childTable);
-        ob_start();
-        $table->render();
-        $return .= ob_get_clean();
-        $return .= '<hr/>';
-        $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
-        $return .= '<a class="btn" href="admin_index.php?session=' . $session . '&onglet=admin-group">' . _('form_cancel') . '</a>';
-        $return .= '</form>';
-        return $return;
-    }
-
-    /**
-     * Encapsule le comportement du module de modif des groupes
-     *
-     * @param string $session
-     * @param mixed  $onglet
-     *
-     * @return void
-     * @access public
-     * @static
-     */
-    public static function modifGroupeModule($session, $onglet)
-    {
-        /*************************************/
-        // recup des parametres reçus :
-
-        $group                 = getpost_variable('group');
-        $group_to_update     = getpost_variable('group_to_update');
-        $new_groupname         = getpost_variable('new_groupname');
-        $new_comment         = getpost_variable('new_comment');
-        $new_double_valid    = getpost_variable('new_double_valid');
-        $return = '';
-        /*************************************/
-
-        // TITRE
-        $return .= '<h1>' . _('admin_modif_groupe_titre') . '</h1>';
-
-        if($group!="" ) {
-            $return .= \admin\Fonctions::modifier_groupe($group, $onglet);
-        } elseif($group_to_update!="") {
-            $return .= \admin\Fonctions::commit_update_groupe($group_to_update, $new_groupname, $new_comment, $new_double_valid);
-        } else {
-            // renvoit sur la page principale .
-            redirect( ROOT_PATH .'admin/admin_index.php?session='.$session.'&onglet=admin-group', false);
-        }
-        return $return;
     }
 
     public static function commit_update_user($u_login_to_update, &$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, &$tab_new_reliquat, &$return)
     {
         $dataUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($u_login_to_update);
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
         $erreurs = [];
 
         $result=true;
@@ -2327,7 +938,7 @@ class Fonctions
                     $errors .= '<li>' . $erreur . '</li>';
                 }
             }
-            $return .= '<div class="alert alert-danger">' . _('erreur_recommencer') . ' :<ul>' . $errors . '</ul><br /><a href="admin_index.php?onglet=modif_user&session=' . $session . '&u_login=' . $u_login_to_update . '">' . _('form_retour') . '</a></div>';
+            $return .= '<div class="alert alert-danger">' . _('erreur_recommencer') . ' :<ul>' . $errors . '</ul><br /><a href="admin_index.php?onglet=modif_user&u_login=' . $u_login_to_update . '">' . _('form_retour') . '</a></div>';
 
             return false;
         }
@@ -2336,7 +947,6 @@ class Fonctions
     public static function modifier_user($u_login, $onglet)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
         $return   = '';
         $soldeHeureId = uniqid();
 
@@ -2355,7 +965,7 @@ class Fonctions
         /********************/
         /* Etat utilisateur */
         /********************/
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '&u_login_to_update=' . $u_login . '" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '?onglet=' . $onglet . '&u_login_to_update=' . $u_login . '" method="POST">';
         // AFFICHAGE TABLEAU DES INFOS
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses([
@@ -2608,7 +1218,7 @@ class Fonctions
         $return .= '<div>' . $planningName . '</div>';
 
         $return .= '<hr /><input class="btn btn-success" type="submit" value="' . _('form_submit') . '"> ';
-        $return .= '<a class="btn btn-default" href="admin_index.php?session=' . $session . '&onglet=admin-users">' . _('form_cancel') . '</a>';
+        $return .= '<a class="btn btn-default" href="admin_index.php?onglet=admin-users">' . _('form_cancel') . '</a>';
         $return .= '</form>';
         return $return;
     }
@@ -2616,14 +1226,13 @@ class Fonctions
     /**
      * Encapsule le comportement du module de modification d'utilisateurs
      *
-     * @param string $session
      * @param string $onglet Nom de l'onglet à afficher
      *
      * @return string
      * @access public
      * @static
      */
-    public static function modifUserModule($session, $onglet)
+    public static function modifUserModule($onglet)
     {
         $u_login              = htmlentities(getpost_variable('u_login'));
         $u_login_to_update    = htmlentities(getpost_variable('u_login_to_update')) ;
@@ -2669,57 +1278,22 @@ class Fonctions
 
             $ok = \admin\Fonctions::commit_update_user($u_login_to_update, $tab_new_user, $tab_new_jours_an, $tab_new_solde, $tab_new_reliquat, $echo);
             if ($ok) {
-                redirect( ROOT_PATH .'admin/admin_index.php?session='.$session.'&onglet=admin-users', false);
+                redirect( ROOT_PATH .'admin/admin_index.php?onglet=admin-users', false);
                 exit;
             } else {
                 $return .= $echo;
             }
         } else {
             // renvoit sur la page principale .
-            redirect( ROOT_PATH .'admin/admin_index.php?session='.$session.'&onglet=admin-users', false);
+            redirect( ROOT_PATH .'admin/admin_index.php?onglet=admin-users', false);
             exit;
         }
-        return $return;
-    }
-
-    public static function suppression_group($group_to_delete)
-    {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session=session_id();
-        $return = '';
-
-        $sql1 = 'DELETE FROM conges_groupe WHERE g_gid = '.\includes\SQL::quote($group_to_delete);
-        $result = \includes\SQL::query($sql1);
-
-        $sql2 = 'DELETE FROM conges_groupe_users WHERE gu_gid = '.\includes\SQL::quote($group_to_delete);
-        $result2 = \includes\SQL::query($sql2);
-
-        $sql3 = 'DELETE FROM conges_groupe_resp WHERE gr_gid = '.\includes\SQL::quote($group_to_delete);
-        $result3 = \includes\SQL::query($sql3);
-
-        if($_SESSION['config']['double_validation_conges']) {
-            $sql4 = 'DELETE FROM conges_groupe_grd_resp WHERE ggr_gid = '.\includes\SQL::quote($group_to_delete);
-            $result4 = \includes\SQL::query($sql4);
-        }
-
-        $comment_log = "suppression_groupe ($group_to_delete)";
-        log_action(0, "", "", $comment_log);
-
-        if($result) {
-            $return .= _('form_modif_ok') . ' !<br><br>';
-        } else {
-            $return .= _('form_modif_not_ok') . ' !<br><br>';
-        }
-
-        /* APPEL D'UNE AUTRE PAGE au bout d'une tempo de 2secondes */
-        $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=admin_index.php?session=' . $session . '&onglet=admin-group">';
         return $return;
     }
 
     public static function confirmer($group, $onglet)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
         $return   = '';
 
         /*******************/
@@ -2731,7 +1305,7 @@ class Fonctions
 
         // AFFICHAGE TABLEAU
 
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet.'&group_to_delete=' . $group . '" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '?onglet=' . $onglet.'&group_to_delete=' . $group . '" method="POST">';
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses([
             'table',
@@ -2765,47 +1339,15 @@ class Fonctions
         $return .= ob_get_clean();
         $return .= '<hr/>';
         $return .= '<input class="btn btn-danger" type="submit" value="' . _('form_supprim') . '">';
-        $return .= '<a class="btn" href="admin_index.php?session=' . $session . '&onglet=admin-group">' . _('form_cancel') . '</a>';
+        $return .= '<a class="btn" href="admin_index.php?onglet=admin-group">' . _('form_cancel') . '</a>';
         $return .= '</form>';
 
-        return $return;
-    }
-
-    /**
-     * Encapsule le comportement du module de suppression des groupes
-     *
-     * @param string $session
-     * @param string $onglet Nom de l'onglet à afficher
-     *
-     * @return void
-     * @access public
-     * @static
-     */
-    public static function supprimerGroupeModule($session, $onglet)
-    {
-        $group = getpost_variable('group');
-        $group_to_delete = getpost_variable('group_to_delete');
-        $return = '';
-        /*************************************/
-
-        // TITRE
-        $return .= '<h1>' . _('admin_suppr_groupe_titre') . '</h1>';
-
-        if($group!="") {
-            $return .= \admin\Fonctions::confirmer($group, $onglet);
-        } elseif($group_to_delete!="") {
-            $return .= \admin\Fonctions::suppression_group($group_to_delete);
-        } else {
-            // renvoit sur la page principale .
-            redirect( ROOT_PATH .'admin/admin_index.php?session='.$session.'&onglet=admin-group', false);
-        }
         return $return;
     }
 
     public static function suppression($u_login_to_delete)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
         $return   = '';
 
         $sql1 = 'DELETE FROM conges_users WHERE u_login = "'. \includes\SQL::quote($u_login_to_delete).'"';
@@ -2841,14 +1383,13 @@ class Fonctions
     public static function confirmer_suppression($u_login, $onglet)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
         $return   = '';
 
         /*****************************/
         /* Etat Utilisateur en cours */
         /*****************************/
         // AFFICHAGE TABLEAU
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '&u_login_to_delete=' . $u_login . '" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '?onglet=' . $onglet . '&u_login_to_delete=' . $u_login . '" method="POST">';
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses([
             'table',
@@ -2884,7 +1425,7 @@ class Fonctions
         $return .= ob_get_clean();
         $return .= '<br>';
         $return .= '<input class="btn btn-danger" type="submit" value="' . _('form_supprim') . '">';
-        $return .= '<a class="btn" href="admin_index.php?session=' . $session . '&onglet=admin-users">' . _('form_cancel') . '</a>';
+        $return .= '<a class="btn" href="admin_index.php?onglet=admin-users">' . _('form_cancel') . '</a>';
         $return .= '</form>';
         return $return;
     }
@@ -2892,14 +1433,13 @@ class Fonctions
     /**
      * Encapsule le comportement du module de suppression des utilisateurs
      *
-     * @param string $session
      * @param string $onglet
      *
      * @return string
      * @access public
      * @static
      */
-    public static function supprimerUtilisateurModule($session, $onglet)
+    public static function supprimerUtilisateurModule($onglet)
     {
         $return = '';
         /*************************************/
@@ -2923,11 +1463,11 @@ class Fonctions
             $return .= \admin\Fonctions::confirmer_suppression($u_login, $onglet);
         } elseif($u_login_to_delete!="") {
             echo \admin\Fonctions::suppression($u_login_to_delete);
-            redirect( ROOT_PATH .'admin/admin_index.php?session='.$session.'&onglet=admin-users', false);
+            redirect( ROOT_PATH .'admin/admin_index.php?onglet=admin-users', false);
             exit;
         } else {
             // renvoit sur la page principale .
-            redirect( ROOT_PATH .'admin/admin_index.php?session='.$session.'&onglet=admin-users', false);
+            redirect( ROOT_PATH .'admin/admin_index.php?onglet=admin-users', false);
             exit;
         }
         return $return;
@@ -2987,7 +1527,7 @@ class Fonctions
         // affichage TITRE
         $childTable = '<thead>';
         $childTable .= '<tr>';
-        $childTable .= '<th colspan=3><h3>' . _('admin_gestion_groupe_users_group_of_new_user') . ' :</h3></th>';
+        $childTable .= '<th colspan=3><h4>' . _('admin_gestion_groupe_users_group_of_new_user') . ' :</h4></th>';
         $childTable .= '</tr>';
 
         $childTable .= '<tr>';
@@ -3059,7 +1599,6 @@ class Fonctions
     public static function affiche_formulaire_ajout_user(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, $onglet)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session=session_id();
         $return = '';
 
         // recup du tableau des types de conges (seulement les conges)
@@ -3077,7 +1616,7 @@ class Fonctions
         // TITRE
         $return .= '<h1>' . _('admin_new_users_titre') . '</h1>';
 
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $onglet . '" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '?onglet=' . $onglet . '" method="POST">';
 
         /****************************************/
         // tableau des infos de user
@@ -3270,21 +1809,17 @@ class Fonctions
         $return .= ob_get_clean();
         $return .= '<br>';
 
-        // si gestion des groupes :  affichage des groupe pour y affecter le user
-        if($_SESSION['config']['gestion_groupes'])
-        {
-            $return .= '<br>';
-            if( $_SESSION['config']['admin_see_all'] || $_SESSION['userlogin']=="admin" ||  is_hr($_SESSION['userlogin']) ) {
-                $return .= \admin\Fonctions::affiche_tableau_affectation_user_groupes2("");
-            } else {
-                $return .= \admin\Fonctions::affiche_tableau_affectation_user_groupes2($_SESSION['userlogin']);
-            }
+        $return .= '<br>';
+        if( $_SESSION['config']['admin_see_all'] || $_SESSION['userlogin']=="admin" ||  is_hr($_SESSION['userlogin']) ) {
+            $return .= \admin\Fonctions::affiche_tableau_affectation_user_groupes2("");
+        } else {
+            $return .= \admin\Fonctions::affiche_tableau_affectation_user_groupes2($_SESSION['userlogin']);
         }
 
         $return .= '<hr>';
         $return .= '<input type="hidden" name="saisie_user" value="ok">';
         $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
-        $return .= ' <a class="btn btn-default" href="' . $PHP_SELF . '?session=' . $session . '">' . _('form_cancel') . '</a>';
+        $return .= ' <a class="btn btn-default" href="' . $PHP_SELF . '">' . _('form_cancel') . '</a>';
         $return .= '</form>';
         return $return;
     }
@@ -3292,7 +1827,6 @@ class Fonctions
     public static function verif_new_param(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, &$return = null)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
         $return   = '';
 
         foreach($tab_new_jours_an as $id_cong => $jours_an) {
@@ -3310,7 +1844,7 @@ class Fonctions
                 $return .= $tab_new_jours_an[$id_cong] . '---' . $tab_new_solde[$id_cong] . '<br>';
             }
 
-            $return .= '<form action="' . $PHP_SELF . '?session=' . $session .  '&onglet=ajout-user" method="POST">';
+            $return .= '<form action="' . $PHP_SELF . '?onglet=ajout-user" method="POST">';
             $return .= '<input type="hidden" name="new_login" value="' . $tab_new_user['login'] . '">';
             $return .= '<input type="hidden" name="new_nom" value="' . $tab_new_user['nom'] . '">';
             $return .= '<input type="hidden" name="new_prenom" value="' . $tab_new_user['prenom'] . '">';
@@ -3340,7 +1874,7 @@ class Fonctions
             $num_verif = $ReqLog_verif->num_rows;
             if ($num_verif!=0) {
                 $return .= '<h3><font color="red">' . _('admin_verif_login_exist') . '</font></h3>';
-                $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=ajout-user" method="POST">';
+                $return .= '<form action="' . $PHP_SELF . '?onglet=ajout-user" method="POST">';
                 $return .= '<input type="hidden" name="new_login" value="' . $tab_new_user['login'] . '">';
                 $return .= '<input type="hidden" name="new_nom" value="' . $tab_new_user['nom'] . '">';
                 $return .= '<input type="hidden" name="new_prenom" value="' . $tab_new_user['prenom'] . '">';
@@ -3364,7 +1898,7 @@ class Fonctions
                 return true;
             } elseif($_SESSION['config']['where_to_find_user_email'] == "dbconges" && strrchr($tab_new_user['email'], "@")==FALSE) {
                 $return .= '<h3>' . _('admin_verif_bad_mail') . '</h3>';
-                $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=ajout-user" method="POST">';
+                $return .= '<form action="' . $PHP_SELF . '?onglet=ajout-user" method="POST">';
                 $return .= '<input type="hidden" name="new_login" value="' . $tab_new_user['login'] . '">';
                 $return .= '<input type="hidden" name="new_nom" value="' . $tab_new_user['nom'] . '">';
                 $return .= '<input type="hidden" name="new_prenom" value="' . $tab_new_user['prenom'] . '">';
@@ -3431,7 +1965,6 @@ class Fonctions
     public static function ajout_user(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, $checkbox_user_groups)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session  = session_id();
         $return   = '';
         $verifFalse = '';
 
@@ -3448,11 +1981,10 @@ class Fonctions
 
             /*****************************/
             /* INSERT dans conges_users  */
-            if ($_SESSION['config']['how_to_connect_user'] == "dbconges") {
-                $motdepasse = md5($tab_new_user['password1']);
-            } else {
-                $motdepasse = "none";
-            }
+            $motdepasse = ('dbconges' == $_SESSION['config']['how_to_connect_user'])
+                ? $tab_new_user['password1']
+                : 'none';
+            $motdepasse = md5($motdepasse);
 
             $sql1 = "INSERT INTO conges_users SET ";
             $sql1=$sql1."u_login='".$tab_new_user['login']."', ";
@@ -3476,6 +2008,7 @@ class Fonctions
             $sql1=$sql1."u_passwd='$motdepasse', ";
             $sql1=$sql1."u_quotite=".$tab_new_user['quotite'].",";
             $sql1=$sql1."u_heure_solde=".  \App\Helpers\Formatter::hour2Time($tab_new_user['solde_heure']).",";
+            $sql1 .= 'date_inscription = "' . date('Y-m-d H:i') . '" ,';
             $sql1=$sql1." u_email='".$tab_new_user['email']."' ";
             $result1 = \includes\SQL::query($sql1);
 
@@ -3491,7 +2024,7 @@ class Fonctions
             /***********************************/
             /* ajout du user dans ses groupes  */
             $result4=TRUE;
-            if( ($_SESSION['config']['gestion_groupes']) && ($checkbox_user_groups!="") ) {
+            if( ($checkbox_user_groups!="") ) {
                 $result4= \admin\Fonctions::commit_modif_user_groups($tab_new_user['login'], $checkbox_user_groups);
             }
 
@@ -3506,7 +2039,7 @@ class Fonctions
             log_action(0, "", $tab_new_user['login'], $comment_log);
 
             /* APPEL D'UNE AUTRE PAGE */
-            $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=admin-users" method="POST">';
+            $return .= '<form action="' . $PHP_SELF . '?onglet=admin-users" method="POST">';
             $return .= '<input type="submit" value="' . _('form_retour') .'">';
             $return .= '</form>';
         } else {

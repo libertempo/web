@@ -1,8 +1,11 @@
 {
-    "name": "wouldsmina/Libertempo",
+    "name": "Libertempo/Libertempo-web",
     "keywords": ["congés", "leaves"],
-    "homepage": "https://github.com/wouldsmina/Libertempo",
+    "homepage": "https://github.com/Libertempo/Libertempo-web",
     "license": "GPL-2.0",
+    "replace" : {
+        "wouldsmina/Libertempo": "^1.8"
+    },
     "authors": [
         {
             "name": "wouldsmina",
@@ -24,13 +27,27 @@
         "vendor-dir": "vendor"
     },
     "require": {
-        "php": "^5.5|^7.0",
+        "php": "^5.6|^7.0",
         "ext-mbstring": "*",
         "ext-Reflection": "*",
+        "ext-curl": "*",
         "raveren/kint": "^1.0",
         "phpmailer/phpmailer": "5.2.21",
         "tecnickcom/tcpdf": "6.2.6",
         "jasig/phpcas": "1.3.3",
-        "yohang/calendr": "^2.0"
+        "yohang/calendr": "^2.0",
+        "guzzlehttp/guzzle": "6.2.2",
+        "libertempo/libertempo-api": "^0.3.1"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/libertempo/libertempo-api.git"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable" : true,
+    "require-dev": {
+        "atoum/atoum": "3.0.0"
     }
 }

@@ -333,7 +333,7 @@ msgid "divers_absences_maj_1"
 msgstr "Absences"
 
 msgid "divers_nouvelle_absence"
-msgstr "Nouvelle Absence"
+msgstr "Nouveau Congé"
 
 msgid "divers_mois_precedent"
 msgstr "mois précédent"
@@ -1079,12 +1079,6 @@ msgstr "// Texte au bas des ÉDITIONS PAPIER<br>//------------------------------
 msgid "config_comment_user_echange_rtt"
 msgstr "// ÉCHANGE RTT OU TEMPS PARTIEL AUTORISÉ POUR LES UTILISATEURS<br>//---------------------------------------------------------------------------------------<br>// on autorise ou non l'utilisateur à inverser ponctuellement un jour travaillé et un jour d'absence (de RTT ou temps partiel)<br>// si à FALSE : pas d'échange autorisé pour l'utilisateur (FALSE est la valeur par défaut)<br>// si à TRUE : échange autorisé pour l'utilisateur"
 
-msgid "config_comment_affiche_bouton_calcul_nb_jours_pris"
-msgstr "// BOUTON DE CALCUL DU NB DE JOURS PRIS<br>//--------------------------------------------------------------------------------------<br>// si à FALSE : on n'affiche pas le bouton du calcul nb de jours pris lors de la saisie d'une nouvelle absence<br>// si à TRUE : affiche le bouton du calcul du nb de jours pris lors de la saisie d'une nouvelle absence (TRUE est la valeur par défaut)<br>// ATTENTION : si à TRUE : les jours chômés doivent être saisis (voir le module d'administration)"
-
-msgid "config_comment_rempli_auto_champ_nb_jours_pris"
-msgstr "// REMPLISSAGE AUTOMATIQUE DU CHAMP LORS DE L'APPEL AU CALCUL DU NB DE JOURS PRIS<br>//--------------------------------------------------------------------------------------<br>// si à FALSE : l'appel au bouton de calcul du nb de jours pris ne remplit pas automatiquement le champ du formulaire (saisi à la main)<br>// si à TRUE : l'appel au bouton de calcul du nb de jours pris remplit automatiquement le champ du formulaire (TRUE est la valeur par défaut)"
-
 msgid "config_comment_duree_session"
 msgstr "// Durée max d'inactivité d'une session avant expiration (en secondes)"
 
@@ -1217,9 +1211,6 @@ msgstr "Exporter ical"
 msgid "button_export_2"
 msgstr "Pour consulter vos congés sur un agenda, copiez ce lien :"
 
-msgid "config_comment_disable_saise_champ_nb_jours_pris"
-msgstr "// SAISIE INTERDITE DANS LE CHAMP TEXTE DU NB DE JOURS PRIS<br>//--------------------------------------------------------------------------------------<br>// si à FALSE : le champ texte du nb de jours pris est actif (saisie à la main possible)(FALSE est la valeur par défaut)<br>// si à TRUE : le champ texte du nb de jours pris et inactif (saisie à la main impossible)"
-
 msgid "calcul_nb_jours_commentaire"
 msgstr "attention: cette période chevauche d'autres congés !"
 
@@ -1318,9 +1309,6 @@ msgstr "Grands Responsables du Groupe"
 
 msgid "ie_non_gere"
 msgstr "Internet Explorer n'est pas pris en charge par Libertempo!<br>utilisez un autre navigateur"
-
-msgid "resp_traite_demandes_titre_tableau_1"
-msgstr "Traitement des congés"
 
 msgid "resp_traite_demandes_titre_tableau_2"
 msgstr "Demandes en deuxième validation"
@@ -1557,7 +1545,7 @@ msgid "verif_solde_erreur_part_3"
 msgstr "et des congés à valider)"
 
 msgid "admin_groupes_nb_users"
-msgstr "nb membres"
+msgstr "nombre de membres"
 
 msgid "resp_cloture_exercice_titre"
 msgstr "clôture/début d'exercice"
@@ -1627,9 +1615,6 @@ msgstr "Droits RH ?"
 
 msgid "hr_traite_user_etat_conges"
 msgstr "État des congés des Utilisateurs :"
-
-msgid "config_comment_print_disable_users"
-msgstr "// AFFICHAGE DES UTILISATEURS DESACTIVES : <br>//--------------------------------------------------------------------------------------------<br>// si à FALSE : pas d'affichage, dans la liste des utilisateurs, des utilisateurs qui ont été désactivés. (FALSE est la valeur par défaut)<br>// si à TRUE : affichage, dans la liste des utilisateurs, des utilisateurs qui on été désactivés."
 
 msgid "config_comment_affiche_jours_current_month_calendrier"
 msgstr "// AFFICHAGE DU NB DE JOURS PRIS DURANT LE MOIS AFFICHé (POUR CHAQUE TYPE D'ABSENCE) : <br>//--------------------------------------------------------------------------------------------<br>// si à FALSE : pas d'affichage, dans le calendrier, pour chaque utilisateur, pour chaque type de congé, à coté du solde, du nb de jours pris durant le mois affiché. (FALSE est la valeur par défaut)<br>// si à TRUE : affichage, dans le calendrier, pour chaque utilisateur, pour chaque type de congé, à coté du solde, du nb de jours pris durant le mois affiché."
@@ -1709,6 +1694,9 @@ msgstr "Cette demande n'est plus accessible"
 msgid "session_pas_de_compte_dans_dbconges"
 msgstr "Votre compte est introuvable dans Libertempo"
 
+msgid "session_compte_inactif"
+msgstr "Votre compte est inactif"
+
 msgid "session_contactez_admin"
 msgstr "Merci de contacter l'administrateur"
 
@@ -1730,8 +1718,8 @@ msgstr "solde d'heure"
 msgid "Mail_test_ok"
 msgstr "Test effectué. Vérifiez vos courriels"
 
-msgid "user_liste_conge"
-msgstr "Liste des congés"
+msgid "user_conge"
+msgstr "Congés"
 
 msgid "divers_ajout_heure_repos"
 msgstr "Demande d'heures de repos"
@@ -1865,9 +1853,6 @@ msgstr "Heure additionnelle annulée"
 msgid "user_liste_heure_additionnelle_titre"
 msgstr "Liste des heures additionnelles"
 
-msgid "resp_affichage_liste_planning_titre"
-msgstr "Liste des plannings"
-
 msgid "resp_modif_planning_titre"
 msgstr "Modificaton du planning"
 
@@ -1932,7 +1917,7 @@ msgid "hr_tout_utilisateur_associe"
 msgstr "Tous les utilisateurs sont associés à un planning"
 
 msgid "hr_liste_planning"
-msgstr "Liste des plannings"
+msgstr "Plannings"
 
 msgid "hr_ajout_planning"
 msgstr "Nouveau planning"
@@ -1972,3 +1957,40 @@ msgstr "Vous n'avez aucune demande à traiter"
 
 msgid "contacter_rh"
 msgstr "Contacter le gestionnaire des ressources humaines"
+
+msgid "form_debut_am"
+msgstr "début de matinée"
+
+msgid "form_debut_pm"
+msgstr "début d'après-midi"
+
+msgid "form_fin_am"
+msgstr "fin de matinée"
+
+msgid "form_fin_pm"
+msgstr "fin d'après-midi"
+
+msgid "Aucun_planning"
+msgstr "Aucun planning"
+
+msgid "retour_periode_courante"
+msgstr "Retourner à la période courante"
+
+msgid "user_modif_heure_additionnelle_titre"
+msgstr "Modification heure additionnelle titre"
+
+msgid "resp_traite_user_etat_heures_additionnelles"
+msgstr "Traitement des demandes d'heures additionnelles"
+
+msgid "resp_traite_user_aucune_heure_additionnelle"
+msgstr "Aucune demande d'heure additionnelle à traiter"
+
+msgid "resp_traite_user_aucune_heure_repos"
+msgstr "Aucune demande d'heure de repos à traiter"
+
+msgid "resp_traite_user_etat_heures_repos"
+msgstr "Traitement des demandes d'heures de repos"
+
+msgid "install_maj_cas_echec_backup"
+msgstr "Attention! La base de donnée n'a pas pu être sauvegardée."
+

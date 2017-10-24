@@ -361,7 +361,9 @@ a {
     color: #00aad4;
     font-weight: bold
 }
-
+.inactif {
+    color: #b66;
+}
 form .table tbody>tr>td,
 form .table-condensed tbody>tr>td {
     vertical-align: middle
@@ -647,206 +649,149 @@ form.search {
 }
 
 /* CALENDRIER */
-
 #calendar-wrapper {
     padding : 15px;
+}
+
+#calendar-wrapper h1 {
+    font-size: 20px;
+    font-size: 2rem;
+    text-transform: uppercase
 }
 
 #calendar-wrapper h2 {
     text-align: center;
 }
 
-div.calendrier {
-    height: 90%;
-    margin: 15px auto;
-}
-
-div.calendrier div.semaine {
-    width: 100%;
-    display: flex;
-}
-
-div#calendrierSemaine div.colonne {
-    width: 20%;
-}
-
-div.calendrier div.en-tete {
-    color: #717171;
-    text-align: center;
-}
-
-div.calendrier div.celluleJour, div.calendrier div.en-tete {
-    width: 20%;
-}
-
-div#calendrierMois div.celluleJour, div#calendrierSemaine div.celluleJour  .evenementJour, div#calendrierSemaine div.celluleMinute {
-    border: 1px solid #ddd;
-}
-
-div#calendrierMois div.celluleJour, div#calendrierSemaine div.celluleJour  .evenementJour, div#calendrierSemaine div.celluleMinute.inflate {
-    height: 160px;
-    overflow: hidden;
-    vertical-align: top;
-}
-
-div#calendrierSemaine div.celluleMinute {
-    height: 22px;
-}
-
-div#calendrierSemaine div.minuteId {
-    order : 1;
-}
-
-div#calendrierSemaine div.celluleJour {
-    order : 2;
-}
-
-div#calendrierSemaine div.minuteId  .enteteMinute {
-    height: 160px;
-    margin-bottom: 10px;
-}
-
-div#calendrierSemaine div.celluleJour  .evenementJour {
-    margin-bottom: 10px;
-}
-
-div#calendrierMois div.celluleJour:hover, div#calendrierSemaine div.celluleJour  .evenementJour:hover, div#calendrierSemaine div.celluleMinute:hover {
-    overflow-y: auto;
-}
-
-div#calendrierMois .semaineId, div#calendrierSemaine .minuteId {
-    padding: 0 4px;
+table#calendrier {
+    width: 99%;
     margin: auto;
+}
+
+
+#calendrier #entete th {
     text-align: center;
-    vertical-align: middle;
-    color: #AAA;
-    border: 0;
 }
 
-div.calendrier div.celluleJour .jourId {
-    padding: 3px;
-    text-align: right;
-    color: #AAA;
-}
-
-div.calendrier div.celluleJour.horsMois .jourId {
-    color : white;
-}
-
-div.calendrier div.celluleJour:not(.horsMois) .today.jourId {
+#calendrier #entete th.today {
     background: #009ec5;
-    color : white;
+    color: white;
 }
 
-div.calendrier div.celluleJour .event {
-    width:95%;
-    height: 22px;
-    line-height: 22px;
-    padding: 0 5px;
-    margin: 1px 0;
-    border-radius: 2px;
-    background-color: #1ABC9C;
-    position:relative;
+td.calendrier-jour {
+    border: 1px solid #909090;
+    position: relative;
 }
 
-div.calendrier div.event .contenu {
-    width: 180px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-@media (max-width: 1600px) {
-    div.calendrier div.event .contenu {
-        width: 150px;
-    }
-}
-
-@media (max-width: 1280px) {
-    div.calendrier div.event .contenu {
-        width: 100px;
-    }
-}
-
-div.calendrier div.event .multijour {
-    width: 0;
-    height: 0;
-    border-top: 10px solid transparent;
-    border-bottom: 10px solid transparent;
-    border-left: 10px solid #1ABC9C;
+td.calendrier-jour .title {
     position: absolute;
-    top: 1px;
-    right: -8px;
+    min-width: 200px;
+    margin-top: 10px;
+    margin-left: 20px;
+    padding: 5px;
+    border-radius: 3px;
+    background: white;
+    border: 1px solid #F4F4F4;
+    box-shadow: 0 0 2px #F4F4F4;
+    display: none;
+    z-index: 10;
 }
 
-div.calendrier div.celluleJour .evenement-avec-title {
-    cursor: help;
+td.calendrier-jour:hover .title {
+    display: block;
 }
 
-div.calendrier div.celluleJour .event.weekend, div.calendrier div.celluleJour .event.ferie {
-    background: #C7C7C7;
-    border: 1px solid #C7C7C7;
-    color: #444;
+td.calendrier-jour.weekend {
+    background: #AEAEAE;
 }
 
-div.calendrier div.celluleJour .event.conges {
-    background: #1ABC9C;
-    border: 1px solid #1ABC9C;
-    color: white;
+td.calendrier-jour.ferie {
+    background: #6fb2bc;
 }
 
-div.calendrier div.celluleJour .event.conges_demande,
-div.calendrier div.celluleJour .event.conges_valid,
-div.calendrier div.celluleJour .event.heure_1,
-div.calendrier div.celluleJour .event.heure_2 {
-    opacity: 0.7;
-}
-
-div.calendrier div.event.conges .multijour {
-    border-left: 0.675em solid #1ABC9C;
-}
-
-div.calendrier div.celluleJour .event.absences {
-    background: #FFC1FF;
-    border: 1px solid #FFC1FF;
-    color: #444;
-}
-
-div.calendrier div.event.absences .multijour {
-    border-left: 0.675em solid #FFC1FF;
-}
-
-div.calendrier div.celluleJour .event.conges_exceptionnels {
-    background: #9ce6f8;
-    border: 1px solid #9ce6f8;
-    color: #444;
-}
-
-div.calendrier div.event.conges_exceptionnels .multijour {
-    border-left: 0.675em solid #9ce6f8;
-}
-
-div.calendrier div.celluleJour .event.heure {
-    background: #FF530D;
-    border: 1px solid #FF530D;
-    color: white;
-}
-
-div.calendrier div.event.heure .multijour {
-    border-left: 0.675em solid #FF530D;
-}
-
-div.calendrier div.celluleJour .event.fermeture {
+td.calendrier-jour.fermeture {
     background: #CEB6FF;
-    border: 1px solid #CEB6FF;
-    color: #444;
 }
 
-div.calendrier div.event.fermeture .multijour {
-    border-left: 0.675em solid #CEB6FF;
+td.calendrier-jour.horsMois {
+    background: #CCC;
 }
 
-div.calendrier div.celluleJour.horsMois {
-    background: #A9A9A9;
-    opacity: 0.7;
+td.calendrier-jour.conge_all.conge_ok {
+    background: #1ABC9C;
+}
+
+td.calendrier-jour.echange_all {
+    background: #d5ff2b;
+}
+
+td.calendrier-jour.echange_am {
+    background: linear-gradient(90deg, #d5ff2b 50%, rgba(255,0,0,0) 50%);
+}
+
+td.calendrier-jour.echange_pm {
+    background: linear-gradient(90deg, rgba(255,0,0,0) 50%,  #d5ff2b 50%);
+}
+
+td.calendrier-jour.conge_all.conge_demande, td.calendrier-jour.conge_all.conge_valid {
+    background: rgba(26, 188, 156, 0.5);
+}
+
+td.calendrier-jour.conge_am.conge_ok {
+    background: linear-gradient(90deg, #1ABC9C 50%, rgba(255,0,0,0) 50%);
+}
+
+td.calendrier-jour.conge_am.conge_demande, td.calendrier-jour.conge_am.conge_valid {
+    background: linear-gradient(90deg, rgba(26, 188, 156, 0.5) 50%, rgba(255,0,0,0) 50%);
+}
+
+td.calendrier-jour.conge_pm.conge_ok {
+    background: linear-gradient(90deg, rgba(255,0,0,0) 50%,  #1ABC9C 50%);
+}
+
+td.calendrier-jour.conge_pm.conge_demande, td.calendrier-jour.conge_pm.conge_valid {
+    background: linear-gradient(90deg, rgba(255,0,0,0) 50%, rgba(26, 188, 156, 0.5) 50%);
+}
+
+td.calendrier-jour.heure_additionnelle_3 div.triangle-top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 0;
+    width: 0;
+    border-bottom: 8px solid transparent;
+    border-left: 8px solid #6666ff;
+}
+
+td.calendrier-jour.heure_additionnelle_2 div.triangle-top,
+td.calendrier-jour.heure_additionnelle_1 div.triangle-top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 0;
+    width: 0;
+    border-bottom: 8px solid transparent;
+    border-left: 8px solid rgba(102, 102, 225, 0.5);
+}
+
+td.calendrier-jour.heure_repos_3 div.triangle-bottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 0;
+    width: 0;
+    border-top: 8px solid transparent;
+    border-left: 8px solid #e01414;
+}
+
+
+td.calendrier-jour.heure_repos_2 div.triangle-bottom,
+td.calendrier-jour.heure_repos_1 div.triangle-bottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 0;
+    width: 0;
+    border-top: 8px solid transparent;
+    border-left: 8px solid rgba(224, 20, 20, 0.5);
 }

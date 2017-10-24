@@ -62,7 +62,6 @@ class Conge
         $childTable .= '</tr>';
         $childTable .= '</thead><tbody>';
         $listId = $this->getListeId($params);
-        $session = session_id();
         if (empty($listId)) {
             $colonnes = 8;
             $childTable .= '<tr><td colspan="' . $colonnes . '"><center>' . _('aucun_resultat') . '</center></td></tr>';
@@ -106,9 +105,9 @@ class Conge
                 // si on peut modifier une demande :on defini le lien à afficher
                 if (!$interdictionModification && $conges["p_etat"] != "valid") {
                     //on ne peut pas modifier une demande qui a déja été validé une fois (si on utilise la double validation)
-                    $user_modif_demande = '<a href="user_index.php?session=' . $session . '&p_num=' . $conges['p_num'] . '&onglet=modif_demande">' . _('form_modif') . '</a>';
+                    $user_modif_demande = '<a href="user_index.php?p_num=' . $conges['p_num'] . '&onglet=modif_demande">' . _('form_modif') . '</a>';
                 }
-                $user_suppr_demande = '<a href="user_index.php?session=' . $session . '&p_num=' . $conges['p_num'] . '&onglet=suppr_demande">' . _('form_supprim') . '</a>';
+                $user_suppr_demande = '<a href="user_index.php?p_num=' . $conges['p_num'] . '&onglet=suppr_demande">' . _('form_supprim') . '</a>';
                 $childTable .= '<tr class="' . ($i ? 'i' : 'p') . '">';
                 $childTable .= '<td class="histo">' . \App\Helpers\Formatter::dateIso2Fr($conges["p_date_deb"]) . ' <span class="demi">' . schars($demi_j_deb) . '</span></td>';
                 $childTable .= '<td class="histo">' . \App\Helpers\Formatter::dateIso2Fr($conges["p_date_fin"]) . ' <span class="demi">' . schars($demi_j_fin) . '</span></td>';
@@ -176,7 +175,6 @@ class Conge
      */
     protected function getFormulaireRecherche(array $champs)
     {
-        $session = session_id();
         $form = '';
         $form = '<form method="post" action="" class="form-inline search" role="form">';
         $form .= '<div class="form-group"><label class="control-label col-md-4" for="statut">Statut&nbsp;:</label><div class="col-md-8"><select class="form-control" name="search[p_etat]" id="statut">';
@@ -202,7 +200,7 @@ class Conge
                 : '';
             $form .= '<option value="' . $key . '" ' . $selected . '>' . $value . '</option>';
         }
-        $form .= '</select></div></div><div class="form-group"><div class="input-group"><button type="submit" class="btn btn-default"><i class="fa fa-search" aria-hidden="true"></i></button>&nbsp;<a href="' . ROOT_PATH . 'utilisateur/user_index.php?session=' . $session . '&onglet=liste_conge" type="reset" class="btn btn-default">Reset</a></div></div></form>';
+        $form .= '</select></div></div><div class="form-group"><div class="input-group"><button type="submit" class="btn btn-default"><i class="fa fa-search" aria-hidden="true"></i></button>&nbsp;<a href="' . ROOT_PATH . 'utilisateur/user_index.php?onglet=liste_conge" type="reset" class="btn btn-default">Reset</a></div></div></form>';
 
         return $form;
     }

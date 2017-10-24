@@ -6,10 +6,8 @@ $timeout=2 ; // refresh après maj.
 
 $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 
-if(!isset($session) || $session == "")
-    $URL = "$PHP_SELF";
-else
-    $URL = "$PHP_SELF?session=$session";
+$URL = "$PHP_SELF";
+
 echo "<META HTTP-EQUIV=REFRESH CONTENT=\"$timeout; URL=$URL\">";
 
 $delete_table_plugin_cet_query = "DROP TABLE IF EXISTS `conges_plugin_cet`;";

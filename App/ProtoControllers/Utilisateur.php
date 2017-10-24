@@ -14,11 +14,17 @@ class Utilisateur
      * SQL
      */
 
-    public static function getListId()
+    public static function getListId($activeSeul = false, $withAdmin = false)
     {
         $sql = \includes\SQL::singleton();
         $req = 'SELECT u_login
                 FROM conges_users';
+        if(!$withAdmin){
+            $req .= ' WHERE u_login != "admin"';
+        }
+        if($activeSeul){
+            $req .= ' AND u_is_active = "Y"';
+        }
         $result = $sql->query($req);
 
         $users = [];
@@ -39,15 +45,11 @@ class Utilisateur
      */
     public static function getListeGroupesVisibles($utilisateur)
     {
-        if(!$_SESSION['config']['gestion_groupes']) {
-            return [];
-        }
-
         $groupesVisibles = [];
         if (\App\ProtoControllers\Utilisateur::isRH($utilisateur)
             || \App\ProtoControllers\Utilisateur::isAdmin($utilisateur)
         ) {
-            $groupesVisibles = \App\ProtoControllers\Groupe::getListeId();
+            $groupesVisibles = \App\ProtoControllers\Groupe::getListeId(\includes\SQL::singleton());
         } elseif (\App\ProtoControllers\Utilisateur::isResponsable($utilisateur)) {
             $groupesResponsable = \App\ProtoControllers\Responsable::getIdGroupeResp($utilisateur);
             $groupesGrandResponsable = \App\ProtoControllers\Responsable::getIdGroupeGrandResponsable($utilisateur);

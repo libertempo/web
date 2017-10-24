@@ -4,15 +4,13 @@ define('ROOT_PATH', '../');
 require_once ROOT_PATH . 'define.php';
 defined('_PHP_CONGES') or die('Restricted access');
 
-$session = (isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : session_id()));
-
 include_once ROOT_PATH . 'fonctions_conges.php';
 include_once INCLUDE_PATH . 'fonction.php';
 include_once INCLUDE_PATH . 'session.php';
 include_once ROOT_PATH . 'fonctions_calcul.php';
 
 // verif des droits du user à afficher la page
-verif_droits_user($session, "is_resp");
+verif_droits_user("is_resp");
 
 /*************************************/
 // recup des parametres reçus :
@@ -83,7 +81,7 @@ header_menu('', 'Libertempo : ' . _('divers_responsable_maj_1'), $add_css);
 echo '<div id="onglet_menu">';
 foreach ($onglets as $key => $title) {
     echo '<div class="onglet ' . ($onglet == $key ? ' active' : '') . '" >
-            <a href="' . $PHP_SELF . '?session=' . $session . '&onglet=' . $key . '">' . $title . '</a>
+            <a href="' . $PHP_SELF . '?onglet=' . $key . '">' . $title . '</a>
         </div>';
 }
 echo '</div>';

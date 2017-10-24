@@ -3,11 +3,7 @@ include_once ROOT_PATH . 'define.php';
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 
 $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-
-if($session=="")
-    $URL = "$PHP_SELF";
-else
-    $URL = "$PHP_SELF?session=$session";
+$URL = "$PHP_SELF";
 
 
 $update_plugin_table = "UPDATE conges_plugins SET p_is_active = '1'
