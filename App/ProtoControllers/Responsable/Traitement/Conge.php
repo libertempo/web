@@ -250,42 +250,54 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
     protected function putValidationFinale($demandeId)
     {
         $demande = $this->getInfoDemandes(explode(" ", $demandeId))[$demandeId];
-        $SoldeReliquat = $this->getReliquatconge($demande['p_login'], $demande['p_type']);
+        if (0 < $this->updateSoldeReliquatEmploye($demande['p_login'], $demande['p_nb_jours'], $demande['p_type'])) {
+            return $this->updateStatutValidationFinale($demande['p_num']);
+        } else {
+            return NIL_INT;
+        }
+    }
 
-        if($this->isOptionReliquatActive() && $this->isReliquatUtilisable($demande['p_date_fin']) && 0 < $SoldeReliquat) {
+    protected function updateSoldeReliquatEmploye($user, $duree, $typeId)
+    {
+        if (!$this->isOptionReliquatActive()) {
+            return $this->updateSoldeUser($user, $duree, $typeId);
+        }
+        
+        $SoldeReliquat = $this->getReliquatconge($user, $typeId);
+        if (0 >= $SoldeReliquat) {
+            return $this->updateSoldeUser($user, $duree, $typeId);
+        }
 
-            if($SoldeReliquat>=$demande['p_nb_jours']) {
-                $sql = \includes\SQL::singleton();
-                $sql->getPdoObj()->begin_transaction();
-                $updateReliquat = $this->updateReliquatUser($demande['p_login'], $demande['p_nb_jours'], $demande['p_type']);
-                $updateStatut = $this->updateStatutValidationFinale($demande['p_num']);
-                if (0 < $updateReliquat && 0 < $updateStatut) {
-                    $sql->getPdoObj()->commit();
-                } else {
-                    $sql->getPdoObj()->rollback();
-                    return NIL_INT;
-                }
-                return $demande['p_num'];
+        $sql = \includes\SQL::singleton();
+
+        if ($this->isReliquatUtilisable(date("m-d"))) {
+            $sql->getPdoObj()->begin_transaction();
+            if ($SoldeReliquat>=$duree) {
+                $updateReliquat = $this->updateReliquatUser($user, $duree, $typeId);
+                $updateSolde = $this->updateSoldeUser($user, $duree, $typeId);
             } else {
-                $ResteSolde = $demande['p_nb_jours'] - $SoldeReliquat;
-                $sql = \includes\SQL::singleton();
-                $sql->getPdoObj()->begin_transaction();
-                $updateReliquat = $this->updateReliquatUser($demande['p_login'], $SoldeReliquat, $demande['p_type']);
-                $updateSolde = $this->updateSoldeUser($demande['p_login'], $ResteSolde, $demande['p_type']);
-                $updateStatut = $this->updateStatutValidationFinale($demande['p_num']);
-                if (0 < $updateReliquat && 0 < $updateStatut && 0 < $updateSolde) {
-                    $sql->getPdoObj()->commit();
-                } else {
-                    $sql->getPdoObj()->rollback();
-                    return NIL_INT;
-                }
+                $updateReliquat = $this->updateReliquatUser($user, $SoldeReliquat, $typeId);
+                $updateSolde = $this->updateSoldeUser($user, $duree, $typeId);
+            }
+            if (0 < $updateReliquat && 0 < $updateSolde) {
+                $sql->getPdoObj()->commit();
                 return 1;
+            } else {
+                $sql->getPdoObj()->rollback();
             }
         } else {
-            $id = $this->updateSoldeUser($demande['p_login'], $demande['p_nb_jours'], $demande['p_type']);
-            $this->updateStatutValidationFinale($demande['p_num']);
-            log_action($demande['p_num'],"ok", $demande['p_login'], 'traitement demande ' . $demande['p_num'] . ' (' . $demande['p_login'] . ') (' . $demande['p_nb_jours'] . ' jours) : OK');
+            $sql->getPdoObj()->begin_transaction();
+            $updateSolde = $this->updateSoldeUser($user, $SoldeReliquat + $duree, $typeId);
+            $updateReliquat = $this->updateReliquatUser($user, $SoldeReliquat, $typeId);
+            log_action(0,"reliquat", $user, 'retrait reliquat perdu (-' . $SoldeReliquat . ' jours). (date_limite_reliquat)');
+            if (0 < $updateReliquat && 0 < $updateSolde) {
+                $sql->getPdoObj()->commit();
+                return 1;
+            } else {
+                $sql->getPdoObj()->rollback();
+            }
         }
+        return NIL_INT;
     }
 
     /**
@@ -322,7 +334,8 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
         $req   = 'UPDATE conges_periode
                 SET p_etat = \'' . \App\Models\Conge::STATUT_REFUS . '\',
-                    p_motif_refus = \'' . \includes\SQL::quote($comm) .'\'
+                    p_motif_refus = \'' . \includes\SQL::quote($comm) .'\',
+                    p_date_traitement=NOW()
                 WHERE p_num = '. (int) $demandeId;
         $query = $sql->query($req);
 
@@ -341,8 +354,9 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         $sql = \includes\SQL::singleton();
 
         $req   = 'UPDATE conges_periode
-                SET p_etat = \'' . \App\Models\Conge::STATUT_VALIDATION_FINALE . '\'
-                WHERE p_num = '. (int) $demandeId;
+                SET p_etat = \'' . \App\Models\Conge::STATUT_VALIDATION_FINALE . '\',
+                    p_date_traitement=NOW()
+                WHERE p_num = ' . (int) $demandeId;
         $query = $sql->query($req);
 
         return $sql->affected_rows;
@@ -357,7 +371,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
      *
      * @return int
      */
-    protected function updateSoldeUser($user,$duree,$typeId)
+    protected function updateSoldeUser($user, $duree, $typeId)
     {
         $sql = \includes\SQL::singleton();
 
