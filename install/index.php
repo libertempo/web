@@ -111,7 +111,6 @@ $dbdb = htmlentities($dbdb, ENT_QUOTES | ENT_HTML401);
             bottom();
         } else {
             $installed_version = \install\Fonctions::get_installed_version();
-            $installed_version = 0;
 
             if($installed_version==0)   // num de version inconnu
             {
