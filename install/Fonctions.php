@@ -298,6 +298,9 @@ class Fonctions {
             } elseif($start_version == "1.9") {
                 $file_upgrade = 'upgrade_from_v1.9.php';
                 $new_installed_version = "1.10";
+            } elseif($start_version == "1.10") {
+                $file_upgrade = 'upgrade_from_v1.10.php';
+                $new_installed_version = "1.11";
             } else {
                 $file_upgrade = '';
                 $new_installed_version = $installed_version;
