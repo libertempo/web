@@ -185,7 +185,7 @@ function sousmenuEmploye()
                 <?= sousmenuAdmin(); ?>
                 <?php endif; ?>
                 <a class="primary <?= $configActive ?>" href="<?= ROOT_PATH ?>config/index.php" <?php print ($tmp == 'config') ? 'active' : '' ;?>>
-                    <i class="fa fa-cog"></i><?= _('button_config_mode');?>
+                    <i class="fa fa-cog"></i><?= _('Configuration');?>
 				</a>
                 <?php if ($tmp == 'config') : ?>
                 <?= sousmenuConfiguration(); ?>
@@ -220,7 +220,7 @@ function sousmenuEmploye()
                 <?php endif; ?>
                <?php if($_SESSION['config']['auth']): ?>
                 <a id="deconnexion" class="primary" href="<?= ROOT_PATH ?>deconnexion.php">
-                    <i class="fa fa-power-off"></i><?= _('button_deconnect') ?>
+                    <i class="fa fa-sign-out"></i><?= _('button_deconnect') ?>
                 </a>
                 <?php endif; ?>
             </div>
