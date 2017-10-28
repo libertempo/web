@@ -61,6 +61,10 @@
                 $mod_toolbar[] = "<a href=\"" . ROOT_PATH . "edition/edit_user.php\"><i class=\"fa fa-file-text\"></i><span>"._('button_editions')."</span></a>";
         break;
     }
+    $DemandesConges = new \App\ProtoControllers\Responsable\Traitement\Conge;
+    $nbdemandesResp = $DemandesConges->getNbDemandesATraiter($_SESSION['userlogin']);
+
+    $nbdemandesHR = \hr\Fonctions::getNbDemandesATraiter($_SESSION['userlogin']);
 ?>
 <!DOCTYPE html>
 <html>
@@ -138,6 +142,7 @@
                         <a title="<?= _('button_hr_mode');?>" href="<?= ROOT_PATH ?>hr/hr_index.php" <?php print ($tmp == 'hr') ? 'active' : '' ;?>>
                             <i class="fa fa-sitemap fa-2x maxi"></i>
                             <i class="fa fa-sitemap mini"></i>
+                            <?php if (0 < $nbdemandesHR) { echo '<span class="badge" style="position:absolute;">' . $nbdemandesHR . '</span>'; }?>
 						</a>
                     </div>
 					<?php endif; ?>
@@ -146,6 +151,7 @@
                         <a title="<?= _('button_responsable_mode');?>" href="<?= ROOT_PATH ?>responsable/resp_index.php" <?php print ($tmp == 'utilisateur') ? 'active' : '' ;?>>
                             <i class="fa fa-users fa-2x maxi"></i>
                             <i class="fa fa-users mini"></i>
+                            <?php if (0 < $nbdemandesResp) { echo '<span class="badge" style="position:absolute;">' . $nbdemandesResp . '</span>'; }?>
 						</a>
                     </div>
 					<?php endif; ?>

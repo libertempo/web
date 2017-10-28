@@ -3537,4 +3537,26 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
 
         return $return;
     }
+    public static function getNbDemandesATraiter()
+    {
+        // Récup dans un tableau de tableau des informations de tous les users
+        $tab_all_users=recup_infos_all_users();
+        // si tableau des users n'est pas vide
+        if( count($tab_all_users)!=0 ) {
+            // constitution de la liste (séparé par des virgules) des logins ...
+            $list_users="";
+            foreach($tab_all_users as $current_login => $tab_current_user) {
+                if($list_users=="") {
+                    $list_users= "'$current_login'" ;
+                } else {
+                    $list_users=$list_users.", '$current_login'" ;
+                }
+            }
+            // Récup des demandes en cours pour les users :
+            $sql1 = "SELECT p_num, p_login, p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_nb_jours, p_commentaire, p_type, p_date_demande, p_date_traitement FROM conges_periode WHERE p_etat =\"demande\" AND p_login IN ($list_users) ";
+            $ReqLog1 = \includes\SQL::query($sql1);
+            return $ReqLog1->num_rows;
+        }
+        return 0;
+    }
 }
