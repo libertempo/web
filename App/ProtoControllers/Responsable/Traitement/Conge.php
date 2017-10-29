@@ -15,90 +15,13 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
      */
     public function getForm()
     {
-        $return     = '';
-        $notice = '';
-        $errorsLst  = [];
-
-
-        $return .= '<h1>' . _('resp_traite_demandes_titre') . '</h1>';
-
-        if (!empty($_POST)) {
-            if (0 >= (int) $this->post($_POST, $notice, $errorsLst)) {
-                $errors = '';
-                if (!empty($errorsLst)) {
-                    foreach ($errorsLst as $key => $value) {
-                        if (is_array($value)) {
-                            $value = implode(' / ', $value);
-                        }
-                        $errors .= '<li>' . $key . ' : ' . $value . '</li>';
-                    }
-                    $return .= '<br><div class="alert alert-danger">' . _('erreur_recommencer') . '<ul>' . $errors . '</ul></div>';
-                } elseif (!empty($notice)) {
-                    $return .= '<br><div class="alert alert-info">' .  $notice . '.</div>';
-                }
-            }
-        }
-
-        $return .= '<form action="" method="post" class="form-group">';
-        $table = new \App\Libraries\Structure\Table();
-        $table->addClasses([
-            'table',
-            'table-hover',
-            'table-responsive',
-            'table-striped',
-            'table-condensed'
-        ]);
-        $childTable = '<thead><tr><th>' . _('divers_nom_maj_1') . '<br>' . _('divers_prenom_maj_1') .  '</th>';
-        $childTable .= '<th>' . _('divers_debut_maj_1') . '</th>';
-        $childTable .= '<th>' . _('divers_fin_maj_1') . '</th>';
-        $childTable .= '<th>' . _('divers_type_maj_1') . '</th>';
-        $childTable .= '<th>' . _('resp_traite_demandes_nb_jours') . '</th>';
-        $childTable .= '<th>' . _('divers_solde') . '</th>';
-        $childTable .= '<th>' . _('divers_comment_maj_1') . '</th>';
-        $childTable .= '<th>' . _('divers_accepter_maj_1') . '</th>';
-        $childTable .= '<th>' . _('divers_refuser_maj_1') . '</th>';
-        $childTable .= '<th>' . _('resp_traite_demandes_attente') . '</th><th></th>';
-        $childTable .= '<th>' . _('resp_traite_demandes_motif_refus') . '</th>';
-        $childTable .= '</tr></thead><tbody>';
-
-        $demandesResp = $this->getDemandesResponsable($_SESSION['userlogin']);
-        $demandesGrandResp = $this->getDemandesGrandResponsable($_SESSION['userlogin']);
-        $demandesRespAbsent = $this->getDemandesResponsableAbsent($_SESSION['userlogin']);
-        if (empty($demandesResp) && empty($demandesGrandResp) && empty($demandesRespAbsent) ) {
-            $childTable .= '<tr><td colspan="12"><center>' . _('aucune_demande') . '</center></td></tr>';
-        } else {
-            if (!empty($demandesResp)) {
-                $childTable .= $this->getFormDemandes($demandesResp);
-            }
-            if (!empty($demandesGrandResp)) {
-                $childTable .='<tr align="center"><td class="histo" style="background-color: #CCC;" colspan="12"><i>'._('resp_etat_users_titre_double_valid').'</i></td></tr>';
-                $childTable .= $this->getFormDemandes($demandesGrandResp);
-            }
-
-            if (!empty($demandesRespAbsent)) {
-                $childTable .='<tr align="center"><td class="histo" style="background-color: #CCC;" colspan="11"><i>'._('traitement_demande_par_delegation').'</i></td></tr>';
-                $childTable .= $this->getFormDemandes($demandesRespAbsent);
-            }
-        }
-
-        $childTable .= '</tbody>';
-
-        $table->addChild($childTable);
-        ob_start();
-        $table->render();
-        $return .= ob_get_clean();
-        if (!empty($demandesResp) || !empty($demandesGrandResp) || !empty($demandesRespAbsent) ) {
-            $return .= '<div class="form-group"><input type="submit" class="btn btn-success" value="' . _('form_submit') . '" /></div>';
-        }
-        $return .='</form>';
-
-        return $return;
+        return '';
     }
 
     /**
      * {@inheritDoc}
      */
-    protected function getFormDemandes(array $demandes)
+    public function getFormDemandes(array $demandes)
     {
         $i=true;
         $Table='';
@@ -260,7 +183,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         if (!$this->isOptionReliquatActive()) {
             return $this->updateSoldeUser($user, $duree, $typeId);
         }
-        
+
         $SoldeReliquat = $this->getReliquatconge($user, $typeId);
         if (0 >= $SoldeReliquat) {
             return $this->updateSoldeUser($user, $duree, $typeId);
@@ -566,7 +489,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
     public function getReliquatconge($login, $typeId)
     {
         $sql = \includes\SQL::singleton();
-        $req = 'SELECT su_reliquat FROM conges_solde_user 
+        $req = 'SELECT su_reliquat FROM conges_solde_user
                 WHERE su_login = \'' . \includes\SQL::quote($login) . '\'
                 AND su_abs_id ='. (int) $typeId;
         $query = $sql->query($req);

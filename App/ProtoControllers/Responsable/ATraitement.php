@@ -87,7 +87,7 @@ abstract class ATraitement
      *
      * @return int
      */
-    protected function post(array $post, &$notice, array &$errorLst)
+    public function post(array $post, &$notice, array &$errorLst)
     {
         if (!empty($post['_METHOD']) && $post['_METHOD'] == "PUT") {
             return $this->put($post, $_SESSION['userlogin'], $notice, $errorLst);
@@ -159,7 +159,7 @@ abstract class ATraitement
      *
      * @return string
      */
-    protected function getFormDemandes(array $demandes)
+    public function getFormDemandes(array $demandes)
     {
         $i=true;
         $Table='';
