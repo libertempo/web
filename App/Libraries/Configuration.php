@@ -373,12 +373,12 @@ class Configuration {
         return $this->getGroupeFonctionnementEtablissementValeur('grand_resp_ajout_conges');
     }
 
-    public function isCongesExceptionnelleActive()
+    public function isCongesExceptionnelsActive()
     {
         return $this->getGroupeFonctionnementEtablissementValeur('gestion_conges_exceptionnels');
     }
     
-    public function canSoldeNegatif ()
+    public function canSoldeNegatif()
     {
         return !$this->getGroupeFonctionnementEtablissementValeur('solde_toujours_positif');
     }

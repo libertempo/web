@@ -289,7 +289,7 @@ class Fonctions
         // recup du tableau des types de conges exceptionnels (seulement les conge sexceptionnels )
         $tab_type_cong=recup_tableau_types_conges();
         // recup du tableau des types de conges (seulement les conges)
-        if ($config->isCongesExceptionnelleActive()) {
+        if ($config->isCongesExceptionnelsActive()) {
             $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
         } else {
             $tab_type_conges_exceptionnels=array();
@@ -830,7 +830,7 @@ class Fonctions
         // recup du tableau des types de conges (seulement les conges)
         $tab_type_cong=recup_tableau_types_conges();
         // recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
-        if ($config->isCongesExceptionnelleActive()) {
+        if ($config->isCongesExceptionnelsActive()) {
             $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
         } else {
             $tab_type_conges_exceptionnels=array();
@@ -1181,7 +1181,7 @@ class Fonctions
                     SET se_id_edition=$new_edition_id, se_id_absence=$id_abs, se_solde=$tab_solde_user[$id_abs] ";
             $result_insert_2 = \includes\SQL::query($sql_insert_2);
         }
-        if ($config->isCongesExceptionnelleActive())
+        if ($config->isCongesExceptionnelsActive())
         {
             $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
             foreach($tab_type_conges_exceptionnels as $id_abs => $libelle)

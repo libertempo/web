@@ -313,7 +313,7 @@ class Fonctions
                 $return .= '<th>' . $libelle . '<br><i>(' . _('divers_solde') . ')</i></th>';
                 $return .= '<th>' . $libelle . '<br>' . _('resp_ajout_conges_nb_jours_ajout') . '</th>';
             }
-            if ($config->isCongesExceptionnelleActive()) {
+            if ($config->isCongesExceptionnelsActive()) {
                 foreach($tab_type_conges_exceptionnels as $id_conges => $libelle) {
                     $return .= '<th>' . $libelle . '<br><i>(' . _('divers_solde') . ')</i></th>';
                     $return .= '<th>' . $libelle . '<br>' . _('resp_ajout_conges_nb_jours_ajout') . '</th>';
@@ -348,7 +348,7 @@ class Fonctions
                         $return .= '<td>' . $tab_conges[$libelle]['nb_an'] . ' <i>(' . $tab_conges[$libelle]['solde'] . ')</i></td>';
                         $return .= '<td align="center" class="histo">' . $champ_saisie_conges . '</td>';
                     }
-                    if ($config->isCongesExceptionnelleActive()) {
+                    if ($config->isCongesExceptionnelsActive()) {
                         foreach($tab_type_conges_exceptionnels as $id_conges => $libelle) {
                             /** le champ de saisie est <input type="text" name="tab_champ_saisie[valeur de u_login][id_du_type_de_conges]" value="[valeur du nb de jours ajouté saisi]"> */
                             $champ_saisie_conges="<input class=\"form-control\" type=\"text\" name=\"tab_champ_saisie[$current_login][$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\">";
@@ -386,7 +386,7 @@ class Fonctions
                             $return .= '<td>' . $tab_conges[$libelle]['nb_an'] . ' <i>(' . $tab_conges[$libelle]['solde'] . ')</i></td>';
                             $return .= '<td align="center" class="histo">' . $champ_saisie_conges . '</td>';
                         }
-                        if ($config->isCongesExceptionnelleActive()) {
+                        if ($config->isCongesExceptionnelsActive()) {
                             foreach($tab_type_conges_exceptionnels as $id_conges => $libelle) {
                                 /** le champ de saisie est <input type="text" name="tab_champ_saisie[valeur de u_login][id_du_type_de_conges]" value="[valeur du nb de jours ajouté saisi]"> */
                                 $champ_saisie_conges="<input type=\"text\" name=\"tab_champ_saisie[$current_login][$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\">";
@@ -419,7 +419,7 @@ class Fonctions
         $return = '';
 
         // recup du tableau des types de conges (seulement les congesexceptionnels )
-        if ($config->isCongesExceptionnelleActive()) {
+        if ($config->isCongesExceptionnelsActive()) {
             $tab_type_conges_exceptionnels = recup_tableau_types_conges_exceptionnels();
         } else {
             $tab_type_conges_exceptionnels = array();
@@ -1023,7 +1023,7 @@ class Fonctions
             $nb_colonnes += 2;
         }
         // conges exceptionnels
-        if ($config->isCongesExceptionnelleActive()) {
+        if ($config->isCongesExceptionnelsActive()) {
             foreach($tab_type_conges_exceptionnels as $id_type_cong => $libelle) {
                 $return .= '<th>'. _('divers_solde_maj') . ' ' . $libelle . '</th>';
                 $nb_colonnes += 1;
@@ -1068,7 +1068,7 @@ class Fonctions
                         $return .= '<td>' . $tab_conges[$libelle]['nb_an'] . '</td>';
                         $return .= '<td>' . $tab_conges[$libelle]['solde'] . '</td>';
                     }
-                    if ($config->isCongesExceptionnelleActive()) {
+                    if ($config->isCongesExceptionnelsActive()) {
                         foreach($tab_type_conges_exceptionnels as $id_type_cong => $libelle) {
                             $return .= '<td>' . $tab_conges[$libelle]['solde'] . '</td>';
                         }
@@ -1104,7 +1104,7 @@ class Fonctions
                     if($compteur==1)  // alors on affiche une ligne de titre
                     {
                         $nb_colspan=9;
-                        if ($config->isCongesExceptionnelleActive()) {
+                        if ($config->isCongesExceptionnelsActive()) {
                             $nb_colspan=10;
                         }
 
@@ -1121,7 +1121,7 @@ class Fonctions
                     foreach($tab_type_cong as $id_conges => $libelle) {
                         $return .= '<td>' . $tab_conges_2[$libelle]['nb_an'] . '</td><td>' . $tab_conges_2[$libelle]['solde'] . '</td>';
                     }
-                    if ($config->isCongesExceptionnelleActive()) {
+                    if ($config->isCongesExceptionnelsActive()) {
                         foreach($tab_type_conges_exceptionnels as $id_type_cong => $libelle) {
                             $return .= '<td>' . $tab_conges_2[$libelle]['solde'] . '</td>';
                         }

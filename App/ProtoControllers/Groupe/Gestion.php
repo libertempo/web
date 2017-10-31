@@ -986,10 +986,6 @@ class Gestion {
             $return = false;
         }
 
-//        if ($this->isResponsableCirculaire($data['employes'], $data['responsables'], $errors)) {
-//            $return = false;
-//        }
-
         if ('Y' == $data['isDoubleValidation']) {
             if ($this->isGrandResponsableEtAutre($data['employes'], $data['responsables'], $data['grandResponsables'])) {
                 $errors[] = _('Le grand responsable ne peut pas etre membre ou responsable du groupe');

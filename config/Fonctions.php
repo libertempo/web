@@ -613,7 +613,7 @@ class Fonctions
         $tab_enum = \config\Fonctions::get_tab_from_mysql_enum_field("conges_type_absence", "ta_type");
 
         foreach($tab_enum as $ta_type) {
-            if( ($ta_type=="conges_exceptionnels") &&  (!$config->isCongesExceptionnelleActive())) {
+            if( ($ta_type=="conges_exceptionnels") &&  (!$config->isCongesExceptionnelsActive())) {
             } else {
                 $divers_maj_1 = 'divers_' . $ta_type . '_maj_1';
                 $config_abs_comment = 'config_abs_comment_' . $ta_type;
@@ -692,7 +692,7 @@ class Fonctions
         $childTableAjout .= '<select class="form-control" name=tab_new_values[type]>';
 
         foreach($tab_enum as $option) {
-            if( ($option=="conges_exceptionnels") &&  (!$config->isCongesExceptionnelleActive())) {
+            if( ($option=="conges_exceptionnels") &&  (!$config->isCongesExceptionnelsActive())) {
             } else {
                 if($option==$new_type) {
                     $childTableAjout .= '<option selected>' . $option . '</option>';

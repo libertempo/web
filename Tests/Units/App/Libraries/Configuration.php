@@ -32,15 +32,7 @@ class Configuration extends \Tests\Units\TestUnit
                         'conf_commentaire' => "config_comment_user_saisie_demande"
                     ];
         
-        $this->calling($this->result)->fetch_array[3] = [
-                        'conf_nom' => "URL_ACCUEIL_CONGES",
-                        'conf_valeur' => 'http://localhost',
-                        'conf_groupe' => "01_Serveur Web",
-                        'conf_type' => "texte",
-                        'conf_commentaire' => "config_comment_URL_ACCUEIL_CONGES"
-                    ];
-        
-        $this->calling($this->result)->fetch_array[4] = null;
+        $this->calling($this->result)->fetch_array[3] = null;
         $this->config = new _Configuration($this->db);
 
     }

@@ -138,7 +138,7 @@ class Fonctions
         $tab_type_conges_exceptionnels = [];
 
         // recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
-        if ($config->isCongesExceptionnelleActive()) {
+        if ($config->isCongesExceptionnelsActive()) {
             $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
         }
 
@@ -797,7 +797,7 @@ class Fonctions
         // recup du tableau des types de conges (seulement les conges)
         $tab_type_conges = recup_tableau_types_conges();
         $tab_type_conges_excep=array();
-        if ($config->isCongesExceptionnelleActive()) {
+        if ($config->isCongesExceptionnelsActive()) {
             $tab_type_conges_excep=recup_tableau_types_conges_exceptionnels();
         }
 
@@ -825,7 +825,7 @@ class Fonctions
         }
 
         // si l'application gere les conges exceptionnels ET si des types de conges exceptionnels ont été définis
-        if (($config->isCongesExceptionnelleActive())&&(count($tab_type_conges_excep) > 0)) {
+        if (($config->isCongesExceptionnelsActive())&&(count($tab_type_conges_excep) > 0)) {
             $valid_3=true;
             // vérification de la validité de la saisie du nombre de jours annuels et du solde pour chaque type de conges exceptionnels
             foreach($tab_type_conges_excep as $id_conges => $libelle) {
@@ -874,7 +874,7 @@ class Fonctions
 
             }
 
-            if ($config->isCongesExceptionnelleActive()) {
+            if ($config->isCongesExceptionnelsActive()) {
                 foreach($tab_type_conges_excep as $id_conges => $libelle) {
                     $sql = 'REPLACE INTO conges_solde_user SET su_nb_an=0, su_solde=\''.strtr(round_to_half($tab_new_solde[$id_conges]),",",".").'\', su_reliquat=\''.strtr(round_to_half($tab_new_reliquat[$id_conges]),",",".").'\', su_login="'.\includes\SQL::quote($u_login_to_update).'", su_abs_id='.intval($id_conges).';';
                     \includes\SQL::query($sql);
@@ -957,7 +957,7 @@ class Fonctions
         $tab_type_conges=recup_tableau_types_conges();
 
         // recup du tableau des types de conges (seulement les conges)
-        if ($config->isCongesExceptionnelleActive()) {
+        if ($config->isCongesExceptionnelsActive()) {
             $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
         }
 
@@ -1175,7 +1175,7 @@ class Fonctions
         }
 
         // recup du tableau des types de conges (seulement les conges)
-        if ($config->isCongesExceptionnelleActive()) {
+        if ($config->isCongesExceptionnelsActive()) {
             foreach($tab_type_conges_exceptionnels as $id_type_cong_exp => $libelle) {
                 $childTable .= '<tr class="' . ($i ? 'i' : 'p') . '">';
                 $childTable .= '<td>' . $libelle . '</td>';
@@ -1611,7 +1611,7 @@ class Fonctions
         $tab_type_conges=recup_tableau_types_conges();
 
         // recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
-        if ($config->isCongesExceptionnelleActive()){
+        if ($config->isCongesExceptionnelsActive()){
             $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
         }
 
@@ -1795,7 +1795,7 @@ class Fonctions
             $childTable .= '</tr>';
             $i = !$i;
         }
-        if ($config->isCongesExceptionnelleActive()) {
+        if ($config->isCongesExceptionnelsActive()) {
             foreach($tab_type_conges_exceptionnels as $id_type_cong => $libelle) {
                 $childTable .= '<tr class="'.($i?'i':'p').'">';
                 $value_solde_jours = ( isset($tab_new_solde[$id_type_cong]) ? $tab_new_solde[$id_type_cong] : 0 );

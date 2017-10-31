@@ -35,7 +35,7 @@ class Fonctions
         $tab_type_conges_exceptionnels = [];
 
         // recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
-        if ($config->isCongesExceptionnelleActive()) {
+        if ($config->isCongesExceptionnelsActive()) {
             $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
         }
         // AFFICHAGE TABLEAU
@@ -227,7 +227,7 @@ class Fonctions
 
         // recup du tableau des types de conges (seulement les conges exceptionnels)
         $tab_type_conges_exceptionnels=array();
-        if ($config->isCongesExceptionnelleActive()) {
+        if ($config->isCongesExceptionnelsActive()) {
             $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
         }
 
@@ -1435,7 +1435,7 @@ class Fonctions
                 $return .= '<th>' . $libelle . '<br><i>(' . _('divers_solde') . ')</i></th>';
                 $return .= '<th>' . $libelle . '<br>' . _('resp_ajout_conges_nb_jours_ajout') . '</th>';
             }
-            if ($config->isCongesExceptionnelleActive()) {
+            if ($config->isCongesExceptionnelsActive()) {
                 foreach($tab_type_conges_exceptionnels as $id_conges => $libelle) {
                     $return .= '<th>' . $libelle . '<br><i>(' . _('divers_solde') . ')</i></th>';
                     $return .= '<th>' . $libelle . '<br>' . _('resp_ajout_conges_nb_jours_ajout') . '</th>';
@@ -1470,7 +1470,7 @@ class Fonctions
                         $return .= '<td>' . $tab_conges[$libelle]['nb_an'] . ' <i>(' . $tab_conges[$libelle]['solde'] . ')</i></td>';
                         $return .= '<td align="center" class="histo">' . $champ_saisie_conges . '</td>';
                     }
-                    if ($config->isCongesExceptionnelleActive()) {
+                    if ($config->isCongesExceptionnelsActive()) {
                         foreach($tab_type_conges_exceptionnels as $id_conges => $libelle) {
                             /** le champ de saisie est <input type="text" name="tab_champ_saisie[valeur de u_login][id_du_type_de_conges]" value="[valeur du nb de jours ajouté saisi]"> */
                             $champ_saisie_conges="<input class=\"form-control\" type=\"text\" name=\"tab_champ_saisie[$current_login][$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\">";
@@ -1542,7 +1542,7 @@ class Fonctions
         $return = '';
 
         // recup du tableau des types de conges (seulement les congesexceptionnels )
-        if ($config->isCongesExceptionnelleActive()) {
+        if ($config->isCongesExceptionnelsActive()) {
             $tab_type_conges_exceptionnels = recup_tableau_types_conges_exceptionnels();
         } else {
             $tab_type_conges_exceptionnels = array();
