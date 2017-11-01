@@ -172,7 +172,7 @@ function sousmenuEmploye()
         <script type="text/javascript" src="<?= JS_PATH ?>reboot.js"></script>
         <?= $additional_head ?>
     </head>
-    <body id="top" class="hbox connected <?= ($printable) ? 'printable' : '' ?>">
+    <body id="top" class="connected <?= ($printable) ? 'printable' : '' ?>">
         <aside id="toolbar">
             <header class="main-header">
                 <i class="icon-ellipsis-vertical toolbar-toggle"></i>

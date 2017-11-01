@@ -6,12 +6,7 @@ body {
 body.connected {
     background-color: #F3F5F9
 }
-html, body, #content {
-    height: 100%
-}
-.hbox {
-    display: table
-}
+
 .bg-white {
     background-color: #fff;
     color: #717171
@@ -73,9 +68,11 @@ a, a:hover {
 #toolbar {
     background: #009ec5;
     width: 200px;
-    display: table-cell;
+    position:fixed;
+    top: 0;
     vertical-align: top;
     border-right: 2px outset #009ec5;
+    height: 100%;
 }
 #toolbar .main-header {
     height: 65px;
@@ -152,9 +149,7 @@ a, a:hover {
 }
 
 #content {
-    width:91%;
-    height:100%;
-    display:table-cell
+    margin-left: 200px;
 }
 
 #scrollable .wrapper {
