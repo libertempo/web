@@ -123,7 +123,7 @@ class Fonctions
     {
         // verif des droits du user à afficher la page
         verif_droits_user("is_admin");
-        $return = '';
+        $return = '<h1>Journaux</h1>';
 
         /*** initialisation des variables ***/
         /************************************/
@@ -284,7 +284,7 @@ class Fonctions
     {
         // verif des droits du user à afficher la page
         verif_droits_user("is_admin");
-        $return = '';
+        $return = '<h1>Mails</h1>';
 
 
         /*** initialisation des variables ***/
@@ -1020,7 +1020,7 @@ class Fonctions
     {
         // verif des droits du user à afficher la page
         verif_droits_user("is_admin");
-        $return = '';
+        $return = '<h1>Configuration générale</h1>';
 
         /*** initialisation des variables ***/
         $action="";

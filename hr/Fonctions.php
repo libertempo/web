@@ -25,7 +25,7 @@ class Fonctions
         /***********************************/
         // AFFICHAGE TABLEAU (premiere ligne)
         $return = '';
-        $return .= '<h2>'. _('hr_traite_user_etat_conges') . '</H2>';
+        $return .= '<h1>'. _('hr_traite_user_etat_conges') . '</h1>';
         /*********************/
         /* Etat Utilisateurs */
         /*********************/
@@ -2583,7 +2583,19 @@ class Fonctions
         // on construit le tableau de l'année considérée
         $tab_year=array();
         \hr\Fonctions::get_tableau_jour_fermeture($year, $tab_year,  $groupe_id);
-        $return = '';
+        // navigation
+        $onglet = htmlentities(getpost_variable('onglet'), ENT_QUOTES | ENT_HTML401);
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $return = '<div class="btn-group pull-right">';
+        $prev_link = "$PHP_SELF?onglet=$onglet&year=". ($year - 1) . "&groupe_id=$groupe_id";
+        $return .= '<a href="' . $prev_link . '" class="btn btn-default"><i class="fa fa-chevron-left"></i></a>';
+        $currentLink = "$PHP_SELF?onglet=$onglet&year=". date('Y') . "&groupe_id=$groupe_id";
+        $return .= '<a href="' . $currentLink . '" class="btn btn-default"><i class="fa fa-home" title="Retourner à l\'année courante"></i></a>';
+        $next_link = "$PHP_SELF?onglet=$onglet&year=". ($year + 1) . "&groupe_id=$groupe_id";
+        $return .= '<a href="' . $next_link . '" class="btn btn-default"><i class="fa fa-chevron-right"></i></a>';
+        $return .= '</div>';
+        $return .= '<a href="' . $PHP_SELF . '?onglet=saisie" class="btn btn-success pull-right" style="margin-right:15px">' . _('admin_jours_fermeture_titre') . '</a>';
+        $return .= '<h1>Calendrier des fermetures <span class="current-year">' .  $year . '</span></h1>';
 
         $return .= '<div class="calendar calendar-year">';
         $months = array('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12');
@@ -2943,7 +2955,9 @@ class Fonctions
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $return = '';
+        $return = '<h1>Nouvelle fermeture</h1>';
+        $return .= '<a href="' . ROOT_PATH . 'hr/hr_jours_fermeture.php" class="admin-back"><i class="fa fa-arrow-circle-o-left"></i>Retour calendrier des fermetures</a>';
+
 
         $return .= '<div class="row">';
         $return .= '<div class="col-md-6">';
@@ -3024,14 +3038,12 @@ class Fonctions
             $return .= '</table>';
         }
         $return .= '</div>';
-        $return .= '<hr>';
-        $return .= '<a class="btn" href="'.ROOT_PATH.'/hr/hr_index.php">' . _('form_cancel') . '</a>';
         return $return;
     }
 
     /**
      * Encapsule le comportement du module de jours de fermeture
-          *
+     *
      * @return void
      * @access public
      * @static
@@ -3046,7 +3058,6 @@ class Fonctions
         /*************************************/
         // recup des parametres reçus :
         // SERVER
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         // GET / POST
         $choix_action         = getpost_variable('choix_action');
         $year                 = getpost_variable('year', 0);
@@ -3098,50 +3109,19 @@ class Fonctions
         $onglet = htmlentities(getpost_variable('onglet'), ENT_QUOTES | ENT_HTML401);
 
         if(!$onglet) {
-            $onglet = 'saisie';
+            $onglet = 'calendar';
         }
-
-        $onglets = array();
-        $onglets['saisie']   = _('admin_jours_fermeture_titre') . " " . "<span class=\"current-year\">$year</span>";
-        $onglets['calendar'] = 'Calendrier des fermetures' . " " . "<span class=\"current-year\">$year</span>";
-        $onglets['year_nav'] = NULL;
 
         //initialisation de l'action par défaut
         if($choix_action=="") {
             $choix_action="saisie_groupe";
         }
 
-        /*********************************/
-        /*   COMPOSITION DU HEADER...    */
-        /*********************************/
-
-        $add_css = '<style>#onglet_menu .onglet{ width: '. (str_replace(',', '.', 100 / count($onglets) )).'% ;}</style>';
-
         /***********************************/
         // AFFICHAGE DE LA PAGE
-        header_menu('', 'Libertempo : '._('divers_fermeture'), $add_css);
+        header_menu('', 'Libertempo : '._('divers_fermeture'));
 
-        /*********************************/
-        /*   AFFICHAGE DES ONGLETS...  */
-        /*********************************/
-        $return .= '<div id="onglet_menu">';
-        foreach($onglets as $key => $title) {
-            if($key == 'year_nav') {
-                // navigation
-                $prev_link = "$PHP_SELF?onglet=$onglet&year=". ($year - 1) . "&groupe_id=$groupe_id";
-                $next_link = "$PHP_SELF?onglet=$onglet&year=". ($year + 1) . "&groupe_id=$groupe_id";
-                $return .= '<div class="onglet calendar-nav">';
-                $return .= '<ul>';
-                $return .= '<li><a href="' . $prev_link . '" class="calendar-prev"><i class="fa fa-chevron-left"></i><span>année précédente</span></a></li>';
-                $return .= '<li class="current-year">' . $year . '</li>';
-                $return .= '<li><a href="' . $next_link . '" class="calendar-next"><i class="fa fa-chevron-right"></i><span>année suivante</span></a></li>';
-                $return .= '</ul>';
-                $return .= '</div>';
-            } else {
-                $return .= '<div class="onglet ' . ($onglet == $key ? ' active' : '') . '" ><a href="' . $PHP_SELF . '?year=' . $year . '&onglet=' . $key . '">' . $title . '</a></div>';
-            }
-        }
-        $return .= '</div>';
+        $return .= '<div class="main-content">';
 
         // vérifie si les jours fériés sont saisie pour l'année en cours
         if( (verif_jours_feries_saisis($date_debut_yyyy_mm_dd)==FALSE) && (verif_jours_feries_saisis($date_fin_yyyy_mm_dd)==FALSE) ) {
@@ -3214,13 +3194,11 @@ class Fonctions
             }
 
             $return .= '<div class="wrapper">';
-            $return .= '<a href="' . ROOT_PATH . 'hr/hr_index.php" class="admin-back"><i class="fa fa-arrow-circle-o-left"></i>Retour mode rh</a>';
             if($onglet == 'saisie') {
                 $return .= \hr\Fonctions::saisie_dates_fermeture($year, $groupe_id, $new_date_debut, $new_date_fin, $code_erreur);
             }
         } elseif($choix_action=="saisie_groupe") {
             $return .= '<div class="wrapper">';
-            $return .= '<a href="' . ROOT_PATH . 'hr/hr_index.php" class="admin-back"><i class="fa fa-arrow-circle-o-left"></i>Retour mode rh</a>';
             $return .= \hr\Fonctions::saisie_groupe_fermeture();
             $return .= '</div>';
         } elseif($choix_action=="commit_new_fermeture") {
@@ -3233,6 +3211,8 @@ class Fonctions
             $return .= $title;
             $return .= \hr\Fonctions::commit_annul_fermeture($fermeture_id, $groupe_id);
         }
+        $return .= '</div>';
+
         return $return;
     }
 

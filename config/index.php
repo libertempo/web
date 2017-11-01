@@ -25,7 +25,7 @@ $_SESSION['from_config']=TRUE;  // initialise ce flag pour changer le bouton de 
 
 	$onglet = htmlentities(getpost_variable('onglet'), ENT_QUOTES | ENT_HTML401);
 
-	if(!$onglet && $_SESSION['userlogin']=="admin")
+	if(!$onglet && is_admin($_SESSION['userlogin']))
 	{
 		$onglet = 'general';
 	} elseif (!$onglet && $_SESSION['userlogin']!="admin") {
@@ -45,13 +45,13 @@ $_SESSION['from_config']=TRUE;  // initialise ce flag pour changer le bouton de 
 
 	$onglets = array();
 
-	if($config->canAdminAccessConfig() || $_SESSION['userlogin']=="admin")
+	if($config->canAdminAccessConfig() || is_admin($_SESSION['userlogin']))
 		$onglets['general'] = _('install_config_appli');
 
-	if($config->canAdminConfigTypesConges() || $_SESSION['userlogin']=="admin")
+	if($config->canAdminConfigTypesConges() || is_admin($_SESSION['userlogin']))
 		$onglets['type_absence'] = _('install_config_types_abs');
 
-	if($config->canAdminConfigMail() || $_SESSION['userlogin']=="admin")
+	if($config->canAdminConfigMail() || is_admin($_SESSION['userlogin']))
 		$onglets['mail'] = _('install_config_mail');
 
 	$onglets['logs'] = _('config_logs');
@@ -60,25 +60,15 @@ $_SESSION['from_config']=TRUE;  // initialise ce flag pour changer le bouton de 
 	/*   COMPOSITION DU HEADER...    */
 	/*********************************/
 
-	$add_css = '<style>#onglet_menu .onglet{ width: '. (str_replace(',', '.', 100 / count($onglets) )).'% ;}</style>';
-	header_menu('', 'Libertempo : '._('admin_button_config_1'),$add_css);
+	header_menu('', 'Libertempo : '._('admin_button_config_1'),'');
 
 
 	/*********************************/
 	/*   AFFICHAGE DES ONGLETS...  */
 	/*********************************/
 
-	echo '<div id="onglet_menu">';
-	foreach($onglets as $key => $title) {
-		echo '<div class="onglet '.($onglet == $key ? ' active': '').'" >
-			<a href="'.$PHP_SELF.'?onglet='.$key.'">'. $title .'</a>
-		</div>';
-	}
-	echo '</div>';
 
-	echo '<div class="'.$onglet.' wrapper">';
-
-		echo '<a href="' . ROOT_PATH . "admin/admin_index.php\" class=\"admin-back\"><i class=\"fa fa-arrow-circle-o-left\"></i>". _('form_retour')."</a>\n";
+	echo '<div class="'.$onglet.' wrapper main-content">';
 
 		if($onglet == 'general') {
 			include_once ROOT_PATH . 'config/configure.php';

@@ -77,18 +77,6 @@ $add_css = '<style>#onglet_menu .onglet{ width: ' . (str_replace(',', '.', 100 /
 header_menu('', 'Libertempo : ' . _('divers_responsable_maj_1'), $add_css);
 
 /*********************************/
-/*   AFFICHAGE DES ONGLETS...  */
-/*********************************/
-
-echo '<div id="onglet_menu">';
-foreach ($onglets as $key => $title) {
-    echo '<div class="onglet ' . ($onglet == $key ? ' active' : '') . '" >
-            <a href="' . $PHP_SELF . '?onglet=' . $key . '">' . $title . '</a>
-        </div>';
-}
-echo '</div>';
-
-/*********************************/
 /*   AFFICHAGE DE L'ONGLET ...    */
 /*********************************/
 

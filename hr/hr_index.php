@@ -52,18 +52,6 @@ if ( !isset($onglets[ $onglet ]) && !in_array($onglet, ['traite_user', 'modif_pl
 $add_css = '<style>#onglet_menu .onglet{ width: '. (str_replace(',', '.', 100 / count($onglets) )).'% ;}</style>';
 header_menu('', 'Libertempo : '._('resp_menu_button_mode_hr'),$add_css);
 
-/*********************************/
-/*   AFFICHAGE DES ONGLETS...  */
-/*********************************/
-
-echo '<div id="onglet_menu">';
-foreach($onglets as $key => $title) {
-    echo '<div class="onglet '.($onglet == $key ? ' active': '').'" >
-        <a href="'.$PHP_SELF.'?onglet='.$key.'">'. $title .'</a>
-    </div>';
-}
-echo '</div>';
-
 
 /*********************************/
 /*   AFFICHAGE DE L'ONGLET ...    */
