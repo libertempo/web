@@ -17,7 +17,7 @@ if (empty($listPlanningId)) {
     $listIdUsed = \App\ProtoControllers\HautResponsable\Planning::getListPlanningUsed($listPlanningId);
     $injectableCreator = new \App\Libraries\InjectableCreator(\includes\SQL::singleton());
     $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
-    $plannings = $api->get('plannings', $_SESSION['token']);
+    $plannings = $api->get('plannings', $_SESSION['token'])->data;
 }
 
 require_once VIEW_PATH . 'Planning/Liste.php';
