@@ -16,9 +16,12 @@ $version = (isset($_GET['version']) ? $_GET['version'] : (isset($_POST['version'
 $version = htmlentities($version, ENT_QUOTES | ENT_HTML401);
 
 $sql = \includes\SQL::singleton();
-//$sql->getPdoObj()->begin_transaction();
+$sql->getPdoObj()->begin_transaction();
 
-//$sql->getPdoObj()->commit();
+$del_config_db="DELETE FROM conges_config WHERE conf_nom = 'duree_session' LIMIT 1;";
+$sql->query($del_config_db);
+
+$sql->getPdoObj()->commit();
 
 // on renvoit à la page mise_a_jour.php (là d'ou on vient)
-echo "Migration depuis v1.10 effectuée. <a href=\"mise_a_jour.php?etape=2&version=$version\">Continuer.</a><br>\n";
+printf("Migration depuis v1.10 effectuée. <a href=\"mise_a_jour.php?etape=2&version=%s\">Continuer.</a><br>\n", $version);

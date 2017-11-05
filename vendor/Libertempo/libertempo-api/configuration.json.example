@@ -1,7 +1,7 @@
 {
     "db": {
         "serveur": "",
-        "database": "",
+        "base": "",
         "utilisateur": "",
         "mot_de_passe" : ""
     }

@@ -32,6 +32,7 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     define('NIL_INT',          -1);
     define('STATUS_ACTIVE',    1);
     define('STATUS_DELETED',   2);
+    define('SESSION_DURATION', 20*60);
 
     require_once ROOT_PATH . 'vendor/autoload.php';
     require_once ROOT_PATH . 'vendor/raveren/kint/Kint.class.php';

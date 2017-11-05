@@ -15,20 +15,43 @@ final class Identification extends \Atoum
      */
     private $request;
 
+    /**
+     * @var \mock\App\Components\Utilisateur\Repository
+     */
+    private $repository;
+
     public function beforeTestMethod($method)
     {
+        parent::beforeTestMethod($method);
         $this->mockGenerator->orphanize('__construct');
         $this->mockGenerator->shuntParentClassCalls();
         $this->request = new \mock\Slim\Http\Request();
+        $this->calling($this->request)->getHeaderLine = 'token';
+        $this->mockGenerator->orphanize('__construct');
+        $this->repository = new \mock\App\Components\Utilisateur\Repository();
     }
 
     /**
      * Teste si le token api est bon
      */
-    public function testIsTokenApiOkOk()
+    public function testIsTokenOkOk()
     {
-        $auth = new _Identification($this->request);
+        $this->calling($this->repository)->find = function () {
+            return new \App\Components\Utilisateur\Model([]);
+        };
+        $auth = new _Identification($this->request, $this->repository);
 
-        $this->boolean($auth->isTokenApiOk())->isTrue();
+        $this->boolean($auth->isTokenOk())->isTrue();
+    }
+
+    /**
+     * Teste si le token api est ko
+     */
+    public function testIsTokenOkKo()
+    {
+        $this->calling($this->repository)->find = null;
+        $auth = new _Identification($this->request, $this->repository);
+
+        $this->boolean($auth->isTokenOk())->isFalse();
     }
 }
