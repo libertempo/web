@@ -4,15 +4,13 @@ define('ROOT_PATH', '../');
 require ROOT_PATH . 'define.php';
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 
-$session=(isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : session_id()) ) ;
-
 include_once ROOT_PATH .'fonctions_conges.php' ;
 include_once INCLUDE_PATH .'fonction.php';
 include_once INCLUDE_PATH .'session.php';
 include_once ROOT_PATH .'fonctions_calcul.php';
 
 // verif des droits du user à afficher la page
-verif_droits_user($session, "is_hr");
+verif_droits_user("is_hr");
 
 
 /*************************************/
@@ -41,9 +39,9 @@ if( $_SESSION['config']['user_saisie_demande'] )
 
 $onglets['cloture_year'] = _('resp_cloture_exercice_titre');
 $onglets['liste_planning'] = _('hr_liste_planning');
-$onglets['ajout_planning'] = _('hr_ajout_planning');
+//$onglets['ajout_planning'] = _('hr_ajout_planning');
 
-if ( !isset($onglets[ $onglet ]) && !in_array($onglet, ['traite_user', 'modif_planning']))
+if ( !isset($onglets[ $onglet ]) && !in_array($onglet, ['traite_user', 'modif_planning', 'ajout_planning']))
     $onglet = 'page_principale';
 
 /*********************************/
@@ -60,7 +58,7 @@ header_menu('', 'Libertempo : '._('resp_menu_button_mode_hr'),$add_css);
 echo '<div id="onglet_menu">';
 foreach($onglets as $key => $title) {
     echo '<div class="onglet '.($onglet == $key ? ' active': '').'" >
-        <a href="'.$PHP_SELF.'?session='.$session.'&onglet='.$key.'">'. $title .'</a>
+        <a href="'.$PHP_SELF.'?onglet='.$key.'">'. $title .'</a>
     </div>';
 }
 echo '</div>';

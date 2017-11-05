@@ -39,4 +39,4 @@ $del_conges_usr="DELETE FROM conges_users WHERE u_login = 'conges';";
 $res_del_conges_usr=\includes\SQL::query($del_conges_usr);
 
 // on renvoit à la page mise_a_jour.php (là d'ou on vient)
-echo "<a href=\"mise_a_jour.php?etape=2&version=$version&lang=$lang\">upgrade_from_v1.8  OK</a><br>\n";
+echo "Migration depuis v1.8 effectuée. <a href=\"mise_a_jour.php?etape=2&version=$version&lang=$lang\">Continuer.</a><br>\n";

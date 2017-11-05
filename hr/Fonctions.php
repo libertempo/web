@@ -12,13 +12,12 @@ class Fonctions
      *
      * @param array  $tab_type_cong
      * @param array  $tab_type_conges_exceptionnels
-     * @param string $session
      *
      * @return void
      * @access public
      * @static
      */
-    public static function pagePrincipaleModule(array $tab_type_cong, array $tab_type_conges_exceptionnels, $session)
+    public static function pagePrincipaleModule(array $tab_type_cong, array $tab_type_conges_exceptionnels)
     {
         /***********************************/
         // AFFICHAGE ETAT CONGES TOUS USERS
@@ -26,114 +25,136 @@ class Fonctions
         // AFFICHAGE TABLEAU (premiere ligne)
         $return = '';
         $return .= '<h2>'. _('hr_traite_user_etat_conges') . '</H2>';
-        $return .= '<table cellpadding="2" class="tablo" width="80%">';
-        $return .= '<thead>';
-        $return .= '<tr>';
-        $return .= '<th>' . _('divers_nom_maj') . '</th>';
-        $return .= '<th>' . _('divers_prenom_maj') . '</th>';
-        $return .= '<th>' . _('divers_quotite_maj_1') . '</th>';
-        $nb_colonnes = 3;
-        foreach($tab_type_cong as $id_conges => $libelle) {
-            // cas d'une absence ou d'un congé
-            $return .= '<th>' . $libelle . ' / ' . _('divers_an_maj') . '</th>';
-            $return .= '<th>'. _('divers_solde_maj') . ' ' . $libelle . '</th>';
-            $nb_colonnes += 2;
-        }
-        // conges exceptionnels
+        /*********************/
+        /* Etat Utilisateurs */
+        /*********************/
+
+        // recup du tableau des types de conges (seulement les conges)
+        $tab_type_conges=recup_tableau_types_conges();
+        $tab_type_conges_exceptionnels = [];
+
+        // recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
         if ($_SESSION['config']['gestion_conges_exceptionnels']) {
-            foreach($tab_type_conges_exceptionnels as $id_type_cong => $libelle) {
-                $return .= '<th>'. _('divers_solde_maj') . ' ' . $libelle . '</th>';
-                $nb_colonnes += 1;
-            }
+            $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
+        }
+
+        // AFFICHAGE TABLEAU
+        $table = new \App\Libraries\Structure\Table();
+        $table->addClasses([
+            'table',
+            'table-hover',
+            'table-responsive',
+            'table-striped',
+            'table-condensed'
+        ]);
+        $childTable = '<thead>';
+        $childTable .= '<tr>';
+        $childTable .= '<th>' .  _('user') . '</th>';
+        $childTable .= '<th>' . _('divers_quotite_maj_1') . '</th>';
+        foreach ($tab_type_conges as $id_type_cong => $libelle) {
+            $childTable .= '<th>' . $libelle . ' / ' . _('divers_an') . '</th>';
+            $childTable .= '<th>' . _('divers_solde') . ' ' . $libelle . '</th>';
+        }
+
+        foreach ($tab_type_conges_exceptionnels as $id_type_cong => $libelle) {
+            $childTable .= '<th>' . _('divers_solde') . ' ' . $libelle . '</th>';
         }
         if ($_SESSION['config']['gestion_heures']) {
-            $return .= '<th>'. _('solde_heure') .'</th>' ;
+            $childTable .= '<th>'. _('solde_heure') .'</th>' ;
         }
-        $return .= '<th></th>';
-        $nb_colonnes += 1;
-        if($_SESSION['config']['editions_papier']) {
-            $return .= '<th></th>';
-            $nb_colonnes += 1;
-        }
-        $return .= '</tr>';
-        $return .= '</thead>';
-        $return .= '<tbody>';
+        $childTable .= '<th></th>';
+        $childTable .= '<th></th>';
+        $childTable .= '</tr>';
+        $childTable .= '</thead>';
+        $childTable .= '<tbody>';
 
-        /***********************************/
-        // AFFICHAGE USERS
-        /***********************************/
-        // AFFICHAGE DE USERS DIRECTS DU RESP
+        // Récuperation des informations des users:
+        $tab_info_users=array();
+        $tab_info_users=\hr\Fonctions::recup_infos_all_users_du_hr($_SESSION['userlogin']);
 
-        // Récup dans un tableau de tableau des informations de tous les users dont $_SESSION['userlogin'] est responsable
-        $tab_all_users=\hr\Fonctions::recup_infos_all_users_du_hr($_SESSION['userlogin']);
-
-        if(count($tab_all_users)==0) {
+        if(count($tab_info_users)==0) {
             // si le tableau est vide (resp sans user !!) on affiche une alerte !
             $return .= '<tr><td class="histo" colspan="' . $nb_colonnes . '">' .  _('resp_etat_aucun_user') . '</td></tr>';
         } else {
-            //$i = true;
-            foreach($tab_all_users as $current_login => $tab_current_user) {
+            asort($tab_info_users);
+            uasort($tab_info_users, "sortParActif");
+            foreach ($tab_info_users as $current_login => $tab_current_infos) {
+                $text_affich_user="<a href=\"hr_index.php?onglet=traite_user&user_login=$current_login\" title=\""._('resp_etat_users_afficher')."\"><i class=\"fa fa-eye\"></i></a>" ;
+
+                $childTable .= '<tr class="' . (($tab_current_infos['is_active']=='Y') ? 'actif' : 'inactif') . '">';
+                $childTable .= '<td class="utilisateur"><strong>' . $tab_current_infos['nom'] . ' ' . $tab_current_infos['prenom'] . '</strong>';
+                $childTable .= '<span class="login">' . $current_login . '</span>';
+                if($_SESSION['config']['where_to_find_user_email']=="dbconges") {
+                    $childTable .= '<span class="mail">' . $tab_current_infos['email'] . '</span>';
+                }
+                // droit utilisateur
+                $rights = array();
+                if($tab_current_infos['is_admin'] == 'Y') {
+                    $rights[] = 'administrateur';
+                }
+                if($tab_current_infos['is_resp'] == 'Y') {
+                    $rights[] = 'responsable';
+                }
+                if($tab_current_infos['is_hr'] == 'Y') {
+                    $rights[] = 'RH';
+                }
+
+                if(count($rights) > 0) {
+                    $childTable .= '<span class="rights">' . implode(', ', $rights) . '</span>';
+                }
+
+                $childTable .= '<span class="responsable"> responsable : <strong>' . $tab_current_infos['resp_login'] . '</strong></span>';
+
+                $childTable .= '</td><td>' . $tab_current_infos['quotite'] . ' %</td>';
+
                 //tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
-                $tab_conges=$tab_current_user['conges'];
-                $text_affich_user="<a href=\"hr_index.php?session=$session&onglet=traite_user&user_login=$current_login\" title=\""._('resp_etat_users_afficher')."\"><i class=\"fa fa-eye\"></i></a>" ;
-                $text_edit_papier="<a href=\"../edition/edit_user.php?session=$session&user_login=$current_login\" target=\"_blank\" title=\""._('resp_etat_users_imprim')."\"><i class=\"fa fa-file-text\"></i></a>";
-                if($tab_current_user['is_active'] == "Y" || $_SESSION['config']['print_disable_users'] == 'TRUE') {
-                    $return .= '<tr>';
-                } else {
-                    $return .= '<tr class="hidden">';
-                }
-                $return .= '<td>' . $tab_current_user['nom'] . '</td><td>' . $tab_current_user['prenom'] . '</td><td>' . $tab_current_user['quotite'] . '%</td>';
-                foreach($tab_type_cong as $id_conges => $libelle) {
-                    $nbAn = isset($tab_conges[$libelle]['nb_an'])
-                        ? $tab_conges[$libelle]['nb_an']
-                        : 0;
-                    $solde = isset($tab_conges[$libelle]['solde'])
-                        ? $tab_conges[$libelle]['solde']
-                        : 0;
-                    $return .= '<td>'.$nbAn.'</td>';
-                    $return .= '<td>'. $solde .'</td>';
-                }
-                if ($_SESSION['config']['gestion_conges_exceptionnels']) {
-                    foreach($tab_type_conges_exceptionnels as $id_type_cong => $libelle)
-                    {
-                        $solde = isset($tab_conges[$libelle]['solde'])
-                            ? $tab_conges[$libelle]['solde']
-                            : 0;
-                        $return .= '<td>' . $solde .'</td>';
+                $tab_conges=$tab_current_infos['conges'];
+
+                foreach($tab_type_conges as $id_conges => $libelle) {
+                    if (isset($tab_conges[$libelle])) {
+                        $childTable .= '<td>' . $tab_conges[$libelle]['nb_an'] . '</td>';
+                        $childTable .= '<td>' . $tab_conges[$libelle]['solde'] . '</td>';
+                    } else {
+                        $childTable .= '<td>0</td>';
+                        $childTable .= '<td>0</td>';
                     }
                 }
-                if ($_SESSION['config']['gestion_heures']) {
-                    $soldeHeure = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($current_login)['u_heure_solde'];
-                    $return .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($soldeHeure) . '</td>';
-                }
-                $return .= '<td>' . $text_affich_user . '</td>';
-                if($_SESSION['config']['editions_papier']) {
-                    $return .= '<td>' . $text_edit_papier . '</td>';
+
+                foreach($tab_type_conges_exceptionnels as $id_conges => $libelle) {
+                    if (isset($tab_conges[$libelle])) {
+                        $childTable .= '<td>' . $tab_conges[$libelle]['solde'] . '</td>';
+                    } else {
+                        $childTable .= '<td>0</td>';
+                    }
                 }
 
-                $return .= '</tr>';
-                //$i = !$i;
+            if ($_SESSION['config']['gestion_heures']) {
+                $soldeHeure = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($current_login)['u_heure_solde'];
+                $childTable .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($soldeHeure) . '</td>';
             }
+
+                $childTable .= '<td>' . $text_affich_user . '</td>';
+                if($_SESSION['config']['editions_papier']) {
+                    $text_edit_papier="<a href=\"../edition/edit_user.php?user_login=$current_login\" target=\"_blank\" title=\""._('resp_etat_users_imprim')."\"><i class=\"fa fa-file-text\"></i></a>";
+                    $childTable .= '<td>' . $text_edit_papier . '</td>';
+                }
+                $childTable .= '</tr>';
+            }
+
         }
 
-        $return .= '</tbody>';
-        $return .= '</table>';
-        $return .= '<script>
-        $(document).ready(function()
-            {
-            $("tr:not(.hidden):odd").css("background-color", "#F4F4F4");
-            $("#display_hidden").click(function () {
-                $(".hidden").slideToggle();
-                });
-            });
-        </script>';
+        $childTable .= '</tbody>';
+        $table->addChild($childTable);
+        ob_start();
+        $table->render();
+        $return .= ob_get_clean();
+        $return .= '<br>';
         return $return;
     }
 
     public static function traite_all_demande_en_cours($tab_bt_radio, $tab_text_refus)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session=session_id();
         $return = '';
 
         while($elem_tableau = each($tab_bt_radio)) {
@@ -189,7 +210,7 @@ class Fonctions
 
         $return .= _('form_modif_ok') . '<br><br>';
         /* APPEL D'UNE AUTRE PAGE au bout d'une tempo de 2secondes */
-        $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $PHP_SELF . '?session=' . $session . '&onglet=traitement_demandes">';
+        $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $PHP_SELF . '?onglet=traitement_demandes">';
         return $return;
     }
 
@@ -197,7 +218,6 @@ class Fonctions
     {
         $return = '';
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session=session_id() ;
         $count1=0;
         $count2=0;
 
@@ -231,7 +251,7 @@ class Fonctions
 
         /*********************************/
 
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=traitement_demandes" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '?onglet=traitement_demandes" method="POST">';
 
         /*********************************/
         /* TABLEAU DES DEMANDES DES USERS*/
@@ -251,7 +271,7 @@ class Fonctions
             $count1 = $ReqLog1->num_rows;
             if($count1!=0) {
                 // AFFICHAGE TABLEAU DES DEMANDES EN COURS
-                $return .= '<h3>' . _('resp_traite_demandes_titre_tableau_1') . '</h3>';
+                //$return .= '<h3>' . _('resp_traite_demandes_titre') . '</h3>';
                 $return .= '<table cellpadding="2" class="table table-hover table-responsive table-condensed table-striped">';
                 $return .= '<thead>';
                 $return .= '<tr>';
@@ -364,13 +384,12 @@ class Fonctions
      *
      * @param array  $tab_type_cong
      * @param string $onglet
-     * @param string $session
      *
      * @return void
      * @access public
      * @static
      */
-    public static function pageTraitementDemandeModule(array $tab_type_cong, $onglet, $session)
+    public static function pageTraitementDemandeModule(array $tab_type_cong, $onglet)
     {
         $return = '';
 
@@ -379,7 +398,7 @@ class Fonctions
         $tab_text_refus = getpost_variable('tab_text_refus');
 
         // titre
-        $return .= '<h2>'. _('resp_traite_demandes_titre') .'</h2>';
+        $return .= '<h1>'. _('resp_traite_demandes_titre') .'</h1>';
 
         // si le tableau des bouton radio des demandes est vide , on affiche les demandes en cours
         if( $tab_bt_radio == '' ) {
@@ -387,7 +406,7 @@ class Fonctions
         } else {
             $return .= \hr\Fonctions::traite_all_demande_en_cours($tab_bt_radio, $tab_text_refus);
             echo $return;
-            redirect( ROOT_PATH .'hr/hr_index.php?session='.$session.'&onglet='.$onglet, false);
+            redirect( ROOT_PATH .'hr/hr_index.php?onglet='.$onglet, false);
             exit;
         }
         return $return;
@@ -396,7 +415,6 @@ class Fonctions
     public static function new_conges($user_login, $numero_int, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type_id)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session=session_id();
         $return = '';
 
         $new_debut = convert_date($new_debut);
@@ -439,7 +457,7 @@ class Fonctions
         }
 
         /* APPEL D'UNE AUTRE PAGE */
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=traite_user&user_login=' . $user_login . '" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '?onglet=traite_user&user_login=' . $user_login . '" method="POST">';
         $return .= '<input type="submit" value="' . _('form_retour') . '">';
         $return .= '</form>';
         return $return;
@@ -448,7 +466,6 @@ class Fonctions
     public static function traite_demandes($user_login, $tab_radio_traite_demande, $tab_text_refus)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
-        $session=session_id();
         $return = '';
 
         // recup dans un tableau de tableau les infos des types de conges et absences
@@ -526,14 +543,13 @@ class Fonctions
         }
         $return .= _('form_modif_ok') . '<br><br>';
         /* APPEL D'UNE AUTRE PAGE au bout d'une tempo de 2secondes */
-        $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $PHP_SELF . '?session=' . $session . '&user_login=' . $user_login . '">';
+        $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $PHP_SELF . '?user_login=' . $user_login . '">';
         return $return;
     }
 
     public static function annule_conges($user_login, $tab_checkbox_annule, $tab_text_annul)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
-        $session=session_id() ;
         $return = '';
 
         // recup dans un tableau de tableau les infos des types de conges et absences
@@ -575,7 +591,7 @@ class Fonctions
 
         $return .= _('form_modif_ok') . '<br><br>';
         /* APPEL D'UNE AUTRE PAGE au bout d'une tempo de 2secondes */
-        $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $PHP_SELF . '?session=' . $session . '&user_login=' . $user_login . '">';
+        $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $PHP_SELF . '?user_login=' . $user_login . '">';
         return $return;
     }
 
@@ -583,7 +599,6 @@ class Fonctions
     public static function affiche_etat_conges_user_for_resp($user_login, $year_affichage, $tri_date)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
-        $session=session_id() ;
         $return = '';
 
         // affichage de l'année et des boutons de défilement
@@ -591,9 +606,9 @@ class Fonctions
         $year_affichage_suiv = $year_affichage+1 ;
 
         $return .= '<b>';
-        $return .= '<a href="' . $PHP_SELF . '?session=' . $session . '&onglet=traite_user&user_login=' . $user_login . '&year_affichage=' . $year_affichage_prec . '"><<</a>';
+        $return .= '<a href="' . $PHP_SELF . '?onglet=traite_user&user_login=' . $user_login . '&year_affichage=' . $year_affichage_prec . '"><<</a>';
         $return .= '&nbsp&nbsp&nbsp ' . $year_affichage . '&nbsp&nbsp&nbsp';
-        $return .= '<a href="' . $PHP_SELF . '?session=' . $session . '&onglet=traite_user&user_login=' . $user_login . '&year_affichage=' . $year_affichage_suiv . '">>></a>';
+        $return .= '<a href="' . $PHP_SELF . '?onglet=traite_user&user_login=' . $user_login . '&year_affichage=' . $year_affichage_suiv . '">>></a>';
         $return .= '</b><br><br>';
 
 
@@ -618,14 +633,14 @@ class Fonctions
             $tab_types_abs = recup_tableau_tout_types_abs() ;
 
             // AFFICHAGE TABLEAU
-            $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=traite_user" method="POST">';
+            $return .= '<form action="' . $PHP_SELF . '?onglet=traite_user" method="POST">';
             $return .= '<table cellpadding="2" class="tablo">';
             $return .= '<thead>';
             $return .= '<tr>';
             $return .= '<th>';
-            $return .= '<a href="' . $PHP_SELF . '?session=' . $session . '&onglet=traite_user&user_login=' . $user_login . '&tri_date=descendant"><img src="' . IMG_PATH . '1downarrow-16x16.png" width="16" height="16" border="0" title="trier"></a>';
+            $return .= '<a href="' . $PHP_SELF . '?onglet=traite_user&user_login=' . $user_login . '&tri_date=descendant"><img src="' . IMG_PATH . '1downarrow-16x16.png" width="16" height="16" border="0" title="trier"></a>';
             $return .= _('divers_debut_maj_1');
-            $return .= '<a href="' . $PHP_SELF . '?session=' . $session . '&onglet=traite_user&user_login=' . $user_login . '&tri_date=ascendant"><img src="' . IMG_PATH . '1uparrow-16x16.png" width="16" height="16" border="0" title="trier"></a>';
+            $return .= '<a href="' . $PHP_SELF . '?onglet=traite_user&user_login=' . $user_login . '&tri_date=ascendant"><img src="' . IMG_PATH . '1uparrow-16x16.png" width="16" height="16" border="0" title="trier"></a>';
             $return .= '</th>';
             $return .= '<th>' . _('divers_fin_maj_1') . '</th>';
             $return .= '<th>' . _('divers_nb_jours_pris_maj_1') . '</th>';
@@ -731,7 +746,6 @@ class Fonctions
     public static function affiche_etat_demande_2_valid_user_for_resp($user_login)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
-        $session=session_id() ;
         $return = '';
 
         // Récupération des informations
@@ -748,7 +762,7 @@ class Fonctions
             $tab_type_all_abs = recup_tableau_tout_types_abs();
 
             // AFFICHAGE TABLEAU
-            $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=traite_user" method="POST">';
+            $return .= '<form action="' . $PHP_SELF . '?onglet=traite_user" method="POST">';
             $return .= '<table cellpadding="2" class="tablo">';
             $return .= '<thead>';
             $return .= '<tr>';
@@ -822,7 +836,7 @@ class Fonctions
 
             $return .= '<input type="hidden" name="user_login" value="' . $user_login . '">';
             $return .= '<br><input class="btn btn-success" type="submit" value="' . _('form_submit') . '">  &nbsp;&nbsp;&nbsp;&nbsp; <input type="reset" value="' . _('form_cancel') . '">';
-            $return .= '<a class="btn" href="' . $PHP_SELF . '?session=' . $session . '">' . _('form_cancel') . '</a>';
+            $return .= '<a class="btn" href="' . $PHP_SELF . '">' . _('form_cancel') . '</a>';
             $return .= '</form>';
         }
         return $return;
@@ -832,7 +846,6 @@ class Fonctions
     public static function affiche_etat_demande_user_for_resp($user_login, $tab_user, $tab_grd_resp)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
-        $session=session_id() ;
         $return = '';
 
         // Récupération des informations
@@ -850,7 +863,7 @@ class Fonctions
             $tab_type_all_abs = recup_tableau_tout_types_abs();
 
             // AFFICHAGE TABLEAU
-            $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=traite_user" method="POST">';
+            $return .= '<form action="' . $PHP_SELF . '?onglet=traite_user" method="POST">';
             $return .= '<table cellpadding="2" class="tablo">';
             $return .= '<thead>';
             $return .= '<tr>';
@@ -943,7 +956,7 @@ class Fonctions
 
             $return .= '<input type="hidden" name="user_login" value="' . $user_login . '">';
             $return .= '<br><input class="btn btn-success" type="submit" value="' . _('form_submit') . '">  &nbsp;&nbsp;&nbsp;&nbsp;  <input type="reset" value="' . _('form_cancel') . '">';
-            $return .= '<a class="btn" href="' . $PHP_SELF . '?session=' . $session . '">' . _('form_cancel') . '</a>';
+            $return .= '<a class="btn" href="' . $PHP_SELF . '">' . _('form_cancel') . '</a>';
             $return .= '</form>';
         }
         return $return;
@@ -952,7 +965,6 @@ class Fonctions
     public static function affichage($user_login,  $year_affichage, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $tri_date, $onglet)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
-        $session=session_id();
         $return = '';
 
         // on initialise le tableau global des jours fériés s'il ne l'est pas déjà :
@@ -976,7 +988,7 @@ class Fonctions
         /********************/
         /* Titre */
         /********************/
-        $return .= '<h2>'. _('resp_traite_user_titre') . ' ' . $tab_user['prenom'] . ' ' . $tab_user['nom'] . '.</h2>';
+        $return .= '<h3>'. _('resp_traite_user_titre') . ' ' . $tab_user['prenom'] . ' ' . $tab_user['nom'] . '.</h3>';
 
 
         /********************/
@@ -1039,7 +1051,7 @@ class Fonctions
         if($mois_calendrier_saisie_fin==0) {
             $mois_calendrier_saisie_fin=date("m");
         }
-        $return .= '<h3>' . _('resp_traite_user_new_conges') . '</h3>';
+        $return .= '<h1>' . _('resp_traite_user_new_conges') . '</h1>';
 
         $return .= saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet);
 
@@ -1131,14 +1143,7 @@ class Fonctions
             $new_comment        = getpost_variable('new_comment') ;
             $new_type           = getpost_variable('new_type') ;
 
-            if( $_SESSION['config']['disable_saise_champ_nb_jours_pris'] ) {
-                $new_nb_jours = compter($user_login, '', $new_debut,  $new_fin, $new_demi_jour_deb, $new_demi_jour_fin, $comment);
-                if ($new_nb_jours <= 0 ) {
-                    $new_nb_jours      = getpost_variable('new_nb_jours');
-                }
-            } else {
-                $new_nb_jours   = getpost_variable('new_nb_jours') ;
-            }
+            $new_nb_jours = compter($user_login, '', $new_debut,  $new_fin, $new_demi_jour_deb, $new_demi_jour_fin, $comment);
 
             $return .= \hr\Fonctions::new_conges($user_login, "", $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type);
         } else {
@@ -1159,12 +1164,12 @@ class Fonctions
     {
         $list_group="";
 
-        $sql1="SELECT g_gid FROM conges_groupe ORDER BY g_gid";
+        $sql1="SELECT DISTINCT gu_gid FROM conges_groupe_users ORDER BY gu_gid"; // Le but est de sélectionner tous les groupes ayant des utilisateurs
         $ReqLog1 = \includes\SQL::query($sql1);
 
         if($ReqLog1->num_rows != 0) {
             while ($resultat1 = $ReqLog1->fetch_array()) {
-                $current_group=$resultat1["g_gid"];
+                $current_group=$resultat1["gu_gid"];
                 if($list_group=="")
                     $list_group="$current_group";
                 else
@@ -1184,18 +1189,18 @@ class Fonctions
 
     public static function ajout_global_groupe($choix_groupe, $tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all)
     {
-
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session=session_id() ;
 
         // recup de la liste des users d'un groupe donné
         $list_users = get_list_users_du_groupe($choix_groupe);
-
+        if(empty($list_users)) {
+            return;
+        }
         foreach($tab_new_nb_conges_all as $id_conges => $nb_jours) {
             if($nb_jours!=0) {
                 $comment = $tab_new_comment_all[$id_conges];
 
-                $sql1="SELECT u_login, u_quotite FROM conges_users WHERE u_login IN ($list_users) ORDER BY u_login ";
+                $sql1="SELECT u_login, u_quotite FROM conges_users WHERE u_login IN ($list_users) AND u_is_active='Y' ORDER BY u_login ";
                 $ReqLog1 = \includes\SQL::query($sql1);
 
                 while ($resultat1 = $ReqLog1->fetch_array()) {
@@ -1240,7 +1245,6 @@ class Fonctions
     public static function ajout_global($tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session=session_id() ;
         $return = '';
 
         // recup de la liste de TOUS les users dont $resp_login est responsable
@@ -1294,12 +1298,12 @@ class Fonctions
     public static function ajout_conges($tab_champ_saisie, $tab_commentaire_saisie)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session=session_id();
         $return = '';
 
         foreach($tab_champ_saisie as $user_name => $tab_conges)   // tab_champ_saisie[$current_login][$id_conges]=valeur du nb de jours ajouté saisi
         {
           foreach($tab_conges as $id_conges => $user_nb_jours_ajout) {
+
             $valid=verif_saisie_decimal($user_nb_jours_ajout);   //verif la bonne saisie du nombre décimal
             if($valid) {
               if($user_nb_jours_ajout!=0) {
@@ -1320,7 +1324,6 @@ class Fonctions
     public static function affichage_saisie_globale_groupe($tab_type_conges)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session=session_id() ;
         $return = '';
 
         /***********************************************************************/
@@ -1332,7 +1335,7 @@ class Fonctions
         if($list_group!="") //si la liste n'est pas vide ( serait le cas si n'est responsable d'aucun groupe)
         {
             $return .= '<h2>' . _('resp_ajout_conges_ajout_groupe') . '</h2>';
-            $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=ajout_conges" method="POST">';
+            $return .= '<form action="' . $PHP_SELF . '?onglet=ajout_conges" method="POST">';
             $return .= '<fieldset class="cal_saisie">';
             $return .= '<div class="table-responsive"><table class="table table-hover table-condensed table-striped">';
             $return .= '<tr>';
@@ -1369,7 +1372,6 @@ class Fonctions
             $return .= '<input class="btn" type="submit" value="' . _('form_valid_groupe') . '">';
             $return .= '</fieldset>';
             $return .= '<input type="hidden" name="ajout_groupe" value="TRUE">';
-            $return .= '<input type="hidden" name="session" value="' . $session . '">';
             $return .= '</form>';
         }
         return $return;
@@ -1378,13 +1380,12 @@ class Fonctions
     public static function affichage_saisie_globale_pour_tous($tab_type_conges)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session=session_id() ;
         $return = '';
 
         /************************************************************/
         /* SAISIE GLOBALE pour tous les utilisateurs du responsable */
         $return .= '<h2>' . _('resp_ajout_conges_ajout_all') . '</h2>';
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=ajout_conges" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '?onglet=ajout_conges" method="POST">';
         $return .= '<fieldset class="cal_saisie">';
         $return .= '<div class="table-responsive"><table class="table table-hover table-condensed table-striped">';
         $return .= '<thead>';
@@ -1409,7 +1410,6 @@ class Fonctions
         $return .= '<input class="btn" type="submit" value="' . _('form_valid_global') . '">';
         $return .= '</fieldset>';
         $return .= '<input type="hidden" name="ajout_global" value="TRUE">';
-        $return .= '<input type="hidden" name="session" value="' . $session . '">';
         $return .= '</form>';
         return $return;
     }
@@ -1417,13 +1417,12 @@ class Fonctions
     public static function affichage_saisie_user_par_user($tab_type_conges, $tab_type_conges_exceptionnels, $tab_all_users_du_hr, $tab_all_users_du_grand_resp)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session=session_id() ;
         $return = '';
 
         /************************************************************/
         /* SAISIE USER PAR USER pour tous les utilisateurs du responsable */
         $return .= '<h2>Ajout par utilisateur</h2>';
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=ajout_conges" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '?onglet=ajout_conges" method="POST">';
 
         if( (count($tab_all_users_du_hr)!=0) || (count($tab_all_users_du_grand_resp)!=0) ) {
             // AFFICHAGE TITRES TABLEAU
@@ -1453,42 +1452,44 @@ class Fonctions
             $tab_champ_saisie_conges=array();
 
             $i = true;
+            asort($tab_all_users_du_hr);
             // affichage des users dont on est responsable :
             foreach($tab_all_users_du_hr as $current_login => $tab_current_user) {
-                $return .= '<tr class="' . ($i ? 'i' : 'p') . '">';
-                //tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
-                $tab_conges=$tab_current_user['conges'];
+                if($tab_current_user['is_active'] == "Y") {
+                    $return .= '<tr class="' . ($i ? 'i' : 'p') . '">';
+                    //tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
+                    $tab_conges=$tab_current_user['conges'];
 
-                /** sur la ligne ,   **/
-                $return .= '<td>' . $tab_current_user['nom'] . '</td>';
-                $return .= '<td>' . $tab_current_user['prenom'] . '</td>';
-                $return .= '<td>' . $tab_current_user['quotite'] . '%</td>';
+                    /** sur la ligne ,   **/
+                    $return .= '<td>' . $tab_current_user['nom'] . '</td>';
+                    $return .= '<td>' . $tab_current_user['prenom'] . '</td>';
+                    $return .= '<td>' . $tab_current_user['quotite'] . '%</td>';
 
-                foreach($tab_type_conges as $id_conges => $libelle) {
-                    /** le champ de saisie est <input type="text" name="tab_champ_saisie[valeur de u_login][id_du_type_de_conges]" value="[valeur du nb de jours ajouté saisi]"> */
-                    $champ_saisie_conges="<input class=\"form-control\" type=\"text\" name=\"tab_champ_saisie[$current_login][$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\">";
-                    $return .= '<td>' . $tab_conges[$libelle]['nb_an'] . ' <i>(' . $tab_conges[$libelle]['solde'] . ')</i></td>';
-                    $return .= '<td align="center" class="histo">' . $champ_saisie_conges . '</td>';
-                }
-                if ($_SESSION['config']['gestion_conges_exceptionnels']) {
-                    foreach($tab_type_conges_exceptionnels as $id_conges => $libelle) {
+                    foreach($tab_type_conges as $id_conges => $libelle) {
                         /** le champ de saisie est <input type="text" name="tab_champ_saisie[valeur de u_login][id_du_type_de_conges]" value="[valeur du nb de jours ajouté saisi]"> */
                         $champ_saisie_conges="<input class=\"form-control\" type=\"text\" name=\"tab_champ_saisie[$current_login][$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\">";
-                        $return .= '<td><i>(' . $tab_conges[$libelle]['solde'] . ')</i></td>';
+                        $return .= '<td>' . $tab_conges[$libelle]['nb_an'] . ' <i>(' . $tab_conges[$libelle]['solde'] . ')</i></td>';
                         $return .= '<td align="center" class="histo">' . $champ_saisie_conges . '</td>';
                     }
+                    if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+                        foreach($tab_type_conges_exceptionnels as $id_conges => $libelle) {
+                            /** le champ de saisie est <input type="text" name="tab_champ_saisie[valeur de u_login][id_du_type_de_conges]" value="[valeur du nb de jours ajouté saisi]"> */
+                            $champ_saisie_conges="<input class=\"form-control\" type=\"text\" name=\"tab_champ_saisie[$current_login][$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\">";
+                            $return .= '<td><i>(' . $tab_conges[$libelle]['solde'] . ')</i></td>';
+                            $return .= '<td align="center" class="histo">' . $champ_saisie_conges . '</td>';
+                        }
+                    }
+                    $return .= '<td align="center" class="histo"><input class="form-control" type="text" name="tab_commentaire_saisie[' . $current_login . ']" size="30" maxlength="200" value=""></td>';
+                    $return .= '</tr>';
+                    $cpt_lignes++ ;
+                    $i = !$i;
                 }
-                $return .= '<td align="center" class="histo"><input class="form-control" type="text" name="tab_commentaire_saisie[' . $current_login . ']" size="30" maxlength="200" value=""></td>';
-                $return .= '</tr>';
-                $cpt_lignes++ ;
-                $i = !$i;
             }
 
             $return .= '</tbody>';
             $return .= '</table>';
 
             $return .= '<input type="hidden" name="ajout_conges" value="TRUE">';
-            $return .= '<input type="hidden" name="session" value="' . $session . '">';
             $return .= '<input class="btn" type="submit" value="' . _('form_submit') . '">';
             $return .= ' </form>';
         }
@@ -1520,7 +1521,7 @@ class Fonctions
     {
         $list_users="";
 
-        $sql1="SELECT DISTINCT(u_login) FROM conges_users WHERE u_login!='conges' AND u_login!='admin'  ORDER BY u_nom  ";
+        $sql1="SELECT DISTINCT(u_login) FROM conges_users WHERE u_login!='conges' AND u_login!='admin' AND u_is_active='Y' ORDER BY u_nom  ";
         $ReqLog1 = \includes\SQL::query($sql1);
 
         while ($resultat1 = $ReqLog1->fetch_array())
@@ -1538,7 +1539,6 @@ class Fonctions
     public static function saisie_ajout( $tab_type_conges)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session=session_id() ;
         $return = '';
 
         // recup du tableau des types de conges (seulement les congesexceptionnels )
@@ -1562,9 +1562,7 @@ class Fonctions
 
             /***********************************************************************/
             /* SAISIE GROUPE pour tous les utilisateurs d'un groupe du responsable */
-            if( $_SESSION['config']['gestion_groupes'] ) {
-                $return .= \hr\Fonctions::affichage_saisie_globale_groupe($tab_type_conges);
-            }
+            $return .= \hr\Fonctions::affichage_saisie_globale_groupe($tab_type_conges);
             $return .= '<br>';
 
             /************************************************************/
@@ -1582,13 +1580,12 @@ class Fonctions
      * Encapsule le comportement du module d'ajout de congés
      *
      * @param array  $tab_type_cong
-     * @param string $session
      *
      * @return void
      * @access public
      * @static
      */
-    public static function pageAjoutCongesModule($tab_type_cong, $session)
+    public static function pageAjoutCongesModule($tab_type_cong)
     {
         //var pour resp_ajout_conges_all.php
         $ajout_conges = getpost_variable('ajout_conges');
@@ -1605,7 +1602,7 @@ class Fonctions
             $tab_commentaire_saisie        = getpost_variable('tab_commentaire_saisie');
 
             $return .= \hr\Fonctions::ajout_conges($tab_champ_saisie, $tab_commentaire_saisie);
-            redirect( ROOT_PATH .'hr/hr_index.php?session='.$session, false);
+            redirect( ROOT_PATH .'hr/hr_index.php', false);
             exit;
         } elseif( $ajout_global == "TRUE" ) {
 
@@ -1614,7 +1611,7 @@ class Fonctions
             $tab_new_comment_all         = getpost_variable('tab_new_comment_all');
 
             $return .= \hr\Fonctions::ajout_global($tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all);
-            redirect( ROOT_PATH .'hr/hr_index.php?session='.$session, false);
+            redirect( ROOT_PATH .'hr/hr_index.php', false);
             exit;
         } elseif( $ajout_groupe == "TRUE" ) {
 
@@ -1624,7 +1621,7 @@ class Fonctions
             $choix_groupe                = getpost_variable('choix_groupe');
 
             \hr\Fonctions::ajout_global_groupe($choix_groupe, $tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all);
-            redirect( ROOT_PATH .'hr/hr_index.php?session='.$session, false);
+            redirect( ROOT_PATH .'hr/hr_index.php', false);
             exit;
         } else {
             $return .= \hr\Fonctions::saisie_ajout($tab_type_cong);
@@ -1701,7 +1698,6 @@ class Fonctions
     public static function commit_saisie($tab_checkbox_j_chome)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session=session_id();
         $return = '';
 
         // si l'année est déja renseignée dans la database, on efface ttes les dates de l'année
@@ -1732,13 +1728,12 @@ class Fonctions
     public static function confirm_saisie($tab_checkbox_j_chome)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session=session_id();
         $return = '';
 
         header_popup();
 
         $return .= '<h1>' . _('admin_jours_chomes_titre') . '</h1>';
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=jours_chomes" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '?onglet=jours_chomes" method="POST">';
         $return .= '<table>';
         $return .= '<tr>';
         $return .= '<td align="center">';
@@ -1871,7 +1866,6 @@ class Fonctions
     public static function saisie($year_calendrier_saisie)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session=session_id();
         $return = '';
 
         // si l'année n'est pas renseignée, on prend celle du jour
@@ -1891,17 +1885,26 @@ class Fonctions
                     $tab_year[] = $value;
             }
         }
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=jours_chomes&year_calendrier_saisie=' . $year_calendrier_saisie . '" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '?onglet=jours_chomes&year_calendrier_saisie=' . $year_calendrier_saisie . '" method="POST">';
         $return .= '<div class="calendar">';
         $months = array('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12');
 
+        $i = 0;
         foreach ($months as $month) {
+            if($i%4 == 0){
+                $return .= '<div class="row">';
+            }
             $return .= '<div class="month">';
             $return .= '<div class="wrapper">';
             $return .= \hr\Fonctions::affiche_calendrier_saisie_jours_chomes($year_calendrier_saisie, $month, $tab_year);
             $return .= '</div>';
             $return .= '</div>';
+            if($i%4 == 3){
+                $return .= '</div>';
+            }
+            $i++;
         }
+        $return .= '</div>';
         $return .= '</div>';
         $return .= '<div class="actions">';
         $return .= '<input type="hidden" name="choix_action" value="commit">';
@@ -1915,16 +1918,14 @@ class Fonctions
     /**
      * Encapsule le comportement du module des jours chomés
      *
-     * @param string $session
-     *
      * @return void
      * @access public
      * @static
      */
-    public static function pageJoursChomesModule($session)
+    public static function pageJoursChomesModule()
     {
         // verif des droits du user à afficher la page
-        verif_droits_user($session, "is_hr");
+        verif_droits_user( "is_hr");
         $return = '';
         /*** initialisation des variables ***/
         /*************************************/
@@ -1946,12 +1947,12 @@ class Fonctions
         $add_css = '<style>#onglet_menu .onglet{ width: 50% ;}</style>';
 
         //    header_menu('hr', NULL, $add_css);
-
+        $return .= '<h1>'. _('admin_button_jours_chomes_1') . '</h1>';
         $return .= '<div class="pager">';
         $return .= '<div class="onglet calendar-nav">';
         // navigation
-        $prev_link = "$PHP_SELF?session=$session&onglet=jours_chomes&year_calendrier_saisie=". ($year_calendrier_saisie - 1);
-        $next_link = "$PHP_SELF?session=$session&onglet=jours_chomes&year_calendrier_saisie=". ($year_calendrier_saisie + 1);
+        $prev_link = "$PHP_SELF?onglet=jours_chomes&year_calendrier_saisie=". ($year_calendrier_saisie - 1);
+        $next_link = "$PHP_SELF?onglet=jours_chomes&year_calendrier_saisie=". ($year_calendrier_saisie + 1);
         $return .= '<ul>';
         $return .= '<li><a href="' . $prev_link . '" class="calendar-prev"><i class="fa fa-chevron-left"></i><span>année précédente</span></a></li>';
         $return .= '&nbsp;<li class="current-year">' . $year_calendrier_saisie . '</li>';
@@ -1994,7 +1995,6 @@ class Fonctions
     public static function cloture_globale_groupe($group_id, $tab_type_conges)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session=session_id();
         $return = '';
 
         // recup de la liste de TOUS les users du groupe
@@ -2014,7 +2014,6 @@ class Fonctions
     public static function cloture_globale($tab_type_conges)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session=session_id();
         $return = '';
 
         // recup de la liste de TOUS les users dont $resp_login est responsable
@@ -2135,7 +2134,6 @@ class Fonctions
     public static function cloture_users($tab_type_conges, $tab_cloture_users, $tab_commentaire_saisie)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session=session_id();
         $return = '';
 
         // recup de la liste de TOUS les users dont $resp_login est responsable
@@ -2159,7 +2157,6 @@ class Fonctions
     public static function affichage_cloture_globale_groupe($tab_type_conges)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session=session_id() ;
         $return = '';
 
         /***********************************************************************/
@@ -2207,7 +2204,6 @@ class Fonctions
 
             $return .= '<input type="hidden" name="onglet" value="cloture_exercice">';
             $return .= '<input type="hidden" name="cloture_groupe" value="TRUE">';
-            $return .= '<input type="hidden" name="session" value="' . $session . '">';
             $return .= '</form>';
         }
 
@@ -2217,13 +2213,12 @@ class Fonctions
     public static function affichage_cloture_globale_pour_tous($tab_type_conges)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session=session_id() ;
         $return = '';
 
         /************************************************************/
         /* CLOTURE EXERCICE GLOBALE pour tous les utilisateurs du responsable */
 
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=cloture_year" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '?onglet=cloture_year" method="POST">';
         $return .= '<table>';
         $return .= '<tr><td align="center">';
         $return .= '<fieldset class="cal_saisie">';
@@ -2241,7 +2236,6 @@ class Fonctions
         $return .= '</td></tr>';
         $return .= '</table>';
         $return .= '<input type="hidden" name="cloture_globale" value="TRUE">';
-        $return .= '<input type="hidden" name="session" value="' . $session . '">';
         $return .= '</form>';
         return $return;
     }
@@ -2283,14 +2277,13 @@ class Fonctions
     public static function affichage_cloture_user_par_user($tab_type_conges, $tab_all_users_du_hr, $tab_all_users_du_grand_resp)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session=session_id() ;
         $return = '';
 
         /************************************************************/
         /* CLOTURE EXERCICE USER PAR USER pour tous les utilisateurs du responsable */
 
         if( (count($tab_all_users_du_hr)!=0) || (count($tab_all_users_du_grand_resp)!=0) ) {
-            $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '&onglet=cloture_year" method="POST">';
+            $return .= '<form action="' . $PHP_SELF . '?onglet=cloture_year" method="POST">';
             $return .= '<table>';
             $return .= '<tr>';
             $return .= '<td align="center">';
@@ -2339,7 +2332,6 @@ class Fonctions
             $return .= '</td></tr>';
             $return .= '</table>';
             $return .= '<input type="hidden" name="cloture_users" value="TRUE">';
-            $return .= '<input type="hidden" name="session" value="' . $session . '">';
             $return .= '</form>';
         }
 
@@ -2349,7 +2341,6 @@ class Fonctions
     public static function saisie_cloture( $tab_type_conges)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session=session_id() ;
         $return = '';
 
         // recup de la liste de TOUS les users dont $resp_login est responsable
@@ -2365,9 +2356,7 @@ class Fonctions
 
             /***********************************************************************/
             /* SAISIE GROUPE pour tous les utilisateurs d'un groupe du responsable */
-            if( $_SESSION['config']['gestion_groupes']) {
-                $return .= \hr\Fonctions::affichage_cloture_globale_groupe($tab_type_conges);
-            }
+            $return .= \hr\Fonctions::affichage_cloture_globale_groupe($tab_type_conges);
             $return .= '<br>';
 
             /************************************************************/
@@ -2384,13 +2373,11 @@ class Fonctions
     /**
      * Encapsule le comportement du module de cloture d'exercice
      *
-     * @param string $session
-     *
      * @return void
      * @access public
      * @static
      */
-    public static function pageClotureYearModule($session)
+    public static function pageClotureYearModule()
     {
         /*************************************/
         // recup des parametres reçus :
@@ -2407,25 +2394,25 @@ class Fonctions
         $tab_type_cong = ( recup_tableau_types_conges() + recup_tableau_types_conges_exceptionnels()  );
 
         // titre
-        $return .= '<h2>'. _('resp_cloture_exercice_titre') . '</H2>';
+        $return .= '<h1>'. _('resp_cloture_exercice_titre') . '</h1>';
 
         if($cloture_users=="TRUE") {
             $tab_cloture_users       = getpost_variable('tab_cloture_users');
             $tab_commentaire_saisie       = getpost_variable('tab_commentaire_saisie'); //a vérifier
             $return .= \hr\Fonctions::cloture_users($tab_type_cong, $tab_cloture_users, $tab_commentaire_saisie);
 
-            redirect( ROOT_PATH .'hr/hr_index.php?session='.$session, false);
+            redirect( ROOT_PATH .'hr/hr_index.php', false);
             exit;
         } elseif($cloture_globale=="TRUE") {
             \hr\Fonctions::cloture_globale($tab_type_cong);
 
-            redirect( ROOT_PATH .'hr/hr_index.php?session='.$session, false);
+            redirect( ROOT_PATH .'hr/hr_index.php', false);
             exit;
         } elseif($cloture_groupe=="TRUE") {
             $choix_groupe            = getpost_variable('choix_groupe');
             $return .= \hr\Fonctions::cloture_globale_groupe($choix_groupe, $tab_type_cong);
 
-            redirect( ROOT_PATH .'hr/hr_index.php?session='.$session, false);
+            redirect( ROOT_PATH .'hr/hr_index.php', false);
             exit;
         } else {
             $return .= \hr\Fonctions::saisie_cloture($tab_type_cong);
@@ -2666,7 +2653,6 @@ class Fonctions
     public static function commit_annul_fermeture($fermeture_id, $groupe_id)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session=session_id();
         $return = '';
 
         /*****************************/
@@ -2730,7 +2716,7 @@ class Fonctions
         }
         log_action(0, "", "", $comment_log);
 
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '" method="POST">';
         $return .= '<input class="btn btn-success" type="submit" value="' . _('form_ok') . '">';
         $return .= '</form>';
         $return .= '</div>';
@@ -2740,7 +2726,6 @@ class Fonctions
     public static function commit_new_fermeture($new_date_debut, $new_date_fin, $groupe_id, $id_type_conges)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session=session_id();
         $return = '';
 
         // on transforme les formats des dates
@@ -2819,7 +2804,7 @@ class Fonctions
 
         $comment_log = "saisie des jours de fermeture de $date_debut a $date_fin" ;
         log_action(0, "", "", $comment_log);
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '" method="POST">';
         $return .= '<input class="btn btn-success" type="submit" value="' . _('form_ok') . '">';
         $return .= '</form>';
         $return .= '</div>';
@@ -2829,11 +2814,10 @@ class Fonctions
     public static function confirm_annul_fermeture($fermeture_id, $groupe_id, $fermeture_date_debut, $fermeture_date_fin)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session=session_id();
         $return = '';
 
         $return .= '<div class="wrapper">';
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '" method="POST">';
         $return .= _('divers_fermeture_du') . '<b>' . $fermeture_date_debut . '</b>' . _('divers_au') . '<b>' . $fermeture_date_fin . '</b>.';
         $return .= '<b>' . _('admin_annul_fermeture_confirm') . '</b>.<br>';
         $return .= '<input type="hidden" name="fermeture_id" value="' . $fermeture_id . '">';
@@ -2842,7 +2826,7 @@ class Fonctions
         $return .= '<input type="hidden" name="groupe_id" value="' . $groupe_id . '">';
         $return .= '<input type="hidden" name="choix_action" value="commit_annul_fermeture">';
         $return .= '<input class="btn btn-success" type="submit" value="' . _('form_continuer') . '">';
-        $return .= '<a class="btn" href="' . $PHP_SELF . '?session=' . $session . '">' . _('form_cancel') . '</a>';
+        $return .= '<a class="btn" href="' . $PHP_SELF . '">' . _('form_cancel') . '</a>';
         $return .= '</form>';
         $return .= '</div>';
         return $return;
@@ -2916,7 +2900,6 @@ class Fonctions
     public static function saisie_dates_fermeture($year, $groupe_id, $new_date_debut, $new_date_fin, $code_erreur)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session=session_id();
         $return = '';
 
         $tab_date_debut=explode("/",$new_date_debut);   // date au format d/m/Y
@@ -2931,7 +2914,7 @@ class Fonctions
         $tab_year=array();
         \hr\Fonctions::get_tableau_jour_fermeture($year, $tab_year,  $groupe_id);
 
-        $return .= '<form id="form-fermeture" class="form-inline" role="form" action="' . $PHP_SELF . '?session=' . $session . '&year=' . $year . '" method="POST">';
+        $return .= '<form id="form-fermeture" class="form-inline" role="form" action="' . $PHP_SELF . '?year=' . $year . '" method="POST">';
         $return .= '<div class="form-group">';
         $return .= '<label for="new_date_debut">' . _('divers_date_debut') . '</label><input type="text" class="form-control date" name="new_date_debut" value="' . $new_date_debut . '">';
         $return .= '</div>';
@@ -2955,7 +2938,6 @@ class Fonctions
     public static function saisie_groupe_fermeture()
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $session=session_id();
         $return = '';
 
         $return .= '<div class="row">';
@@ -2965,14 +2947,14 @@ class Fonctions
         /********************/
 
         // AFFICHAGE TABLEAU
-        $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '" method="POST">';
         $return .= '<input type="hidden" name="groupe_id" value="0">';
         $return .= '<input type="hidden" name="choix_action" value="saisie_dates">';
         $return .= '<input class="btn btn-success" type="submit" value="' . _('admin_jours_fermeture_fermeture_pour_tous') . ' !">';
         $return .= '</form>';
         $return .= '</div>';
 
-        if($_SESSION['config']['gestion_groupes'] && $_SESSION['config']['fermeture_par_groupe']) {
+        if($_SESSION['config']['fermeture_par_groupe']) {
             /********************/
             /* Choix Groupe     */
             /********************/
@@ -2981,7 +2963,7 @@ class Fonctions
 
             // AFFICHAGE TABLEAU
             $return .= '<div class="col-md-6">';
-            $return .= '<form action="' . $PHP_SELF . '?session=' . $session . '" class="form-inline" method="POST">';
+            $return .= '<form action="' . $PHP_SELF . '" class="form-inline" method="POST">';
             $return .= '<div class="form-group" style="margin-right: 10px;">';
             $ReqLog_gr = \includes\SQL::query($sql_gr);
             $return .= '<select class="form-control" name="groupe_id">';
@@ -3030,7 +3012,7 @@ class Fonctions
                 $return .= _('divers_du') . ' <b>'. $date_affiche_1 . '</b> ' . _('divers_au') . ' <b>' . $date_affiche_2 . '</b>  (id ' . $fermeture_id . ')</b> ' . $groupe_name;
                 $return .= '</td>';
                 $return .= '<td>';
-                $return .= '<a href="' . $PHP_SELF . '?session=' . $session . '&choix_action=annul_fermeture&fermeture_id=' . $fermeture_id . '&groupe_id=' . $groupe_id . '&fermeture_date_debut=' . $date_affiche_1 . '&fermeture_date_fin=' . $date_affiche_2 . '">' . _('admin_annuler_fermeture') . '</a>';
+                $return .= '<a href="' . $PHP_SELF . '?choix_action=annul_fermeture&fermeture_id=' . $fermeture_id . '&groupe_id=' . $groupe_id . '&fermeture_date_debut=' . $date_affiche_1 . '&fermeture_date_fin=' . $date_affiche_2 . '">' . _('admin_annuler_fermeture') . '</a>';
                 $return .= '</td>';
                 $return .= '</tr>';
             }
@@ -3038,23 +3020,21 @@ class Fonctions
         }
         $return .= '</div>';
         $return .= '<hr>';
-        $return .= '<a class="btn" href="'.ROOT_PATH.'/hr/hr_index.php?session=' . $session . '">' . _('form_cancel') . '</a>';
+        $return .= '<a class="btn" href="'.ROOT_PATH.'/hr/hr_index.php">' . _('form_cancel') . '</a>';
         return $return;
     }
 
     /**
      * Encapsule le comportement du module de jours de fermeture
-     *
-     * @param string $session
-     *
+          *
      * @return void
      * @access public
      * @static
      */
-    public static function pageJoursFermetureModule($session)
+    public static function pageJoursFermetureModule()
     {
         // verif des droits du user à afficher la page
-        verif_droits_user($session, "is_hr");
+        verif_droits_user("is_hr");
         $return = '';
 
         /*** initialisation des variables ***/
@@ -3143,8 +3123,8 @@ class Fonctions
         foreach($onglets as $key => $title) {
             if($key == 'year_nav') {
                 // navigation
-                $prev_link = "$PHP_SELF?session=$session&onglet=$onglet&year=". ($year - 1) . "&groupe_id=$groupe_id";
-                $next_link = "$PHP_SELF?session=$session&onglet=$onglet&year=". ($year + 1) . "&groupe_id=$groupe_id";
+                $prev_link = "$PHP_SELF?onglet=$onglet&year=". ($year - 1) . "&groupe_id=$groupe_id";
+                $next_link = "$PHP_SELF?onglet=$onglet&year=". ($year + 1) . "&groupe_id=$groupe_id";
                 $return .= '<div class="onglet calendar-nav">';
                 $return .= '<ul>';
                 $return .= '<li><a href="' . $prev_link . '" class="calendar-prev"><i class="fa fa-chevron-left"></i><span>année précédente</span></a></li>';
@@ -3153,7 +3133,7 @@ class Fonctions
                 $return .= '</ul>';
                 $return .= '</div>';
             } else {
-                $return .= '<div class="onglet ' . ($onglet == $key ? ' active' : '') . '" ><a href="' . $PHP_SELF . '?session=' . $session . '&year=' . $year . '&onglet=' . $key . '">' . $title . '</a></div>';
+                $return .= '<div class="onglet ' . ($onglet == $key ? ' active' : '') . '" ><a href="' . $PHP_SELF . '?year=' . $year . '&onglet=' . $key . '">' . $title . '</a></div>';
             }
         }
         $return .= '</div>';
@@ -3229,13 +3209,13 @@ class Fonctions
             }
 
             $return .= '<div class="wrapper">';
-            $return .= '<a href="' . ROOT_PATH . 'hr/hr_index.php?session=' . $session . '" class="admin-back"><i class="fa fa-arrow-circle-o-left"></i>Retour mode rh</a>';
+            $return .= '<a href="' . ROOT_PATH . 'hr/hr_index.php" class="admin-back"><i class="fa fa-arrow-circle-o-left"></i>Retour mode rh</a>';
             if($onglet == 'saisie') {
                 $return .= \hr\Fonctions::saisie_dates_fermeture($year, $groupe_id, $new_date_debut, $new_date_fin, $code_erreur);
             }
         } elseif($choix_action=="saisie_groupe") {
             $return .= '<div class="wrapper">';
-            $return .= '<a href="' . ROOT_PATH . 'hr/hr_index.php?session=' . $session . '" class="admin-back"><i class="fa fa-arrow-circle-o-left"></i>Retour mode rh</a>';
+            $return .= '<a href="' . ROOT_PATH . 'hr/hr_index.php" class="admin-back"><i class="fa fa-arrow-circle-o-left"></i>Retour mode rh</a>';
             $return .= \hr\Fonctions::saisie_groupe_fermeture();
             $return .= '</div>';
         } elseif($choix_action=="commit_new_fermeture") {
@@ -3277,16 +3257,17 @@ class Fonctions
 enctype="application/x-www-form-urlencoded"><input type="hidden" name="planning_id" value="' . $_POST['planning_id'] . '" /><input type="hidden" name="status" value="' . \App\Models\Planning::STATUS_ACTIVE . '" /><input type="hidden" name="_METHOD" value="PATCH" /><div class="alert alert-info">' .  $notice . '. <button type="submit" class="btn btn-link alert-link">' . _('Annuler') . '</button></div></form>';
             } else {
                 log_action(0, '', '', 'Récupération du planning ' . $_POST['planning_id']);
-                redirect(ROOT_PATH . 'hr/hr_index.php?session='. session_id() . '&onglet=liste_planning', false);
+                redirect(ROOT_PATH . 'hr/hr_index.php?onglet=liste_planning', false);
             }
         }
 
         /* Préparation et requêtage */
         $listPlanningId = \App\ProtoControllers\HautResponsable\Planning::getListPlanningId();
 
-        $return = '<h1>' . _('hr_affichage_liste_planning_titre') . '</h1>';
+        $return = '';
+        $return .= '<a href="' . ROOT_PATH . 'hr/hr_index.php?onglet=ajout_planning" style="float:right" class="btn btn-success">' . _('hr_ajout_planning') . '</a>';
+        $return .= '<h1>' . _('hr_affichage_liste_planning_titre') . '</h1>';
         $return .= $message;
-        $session = session_id();
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses([
             'table',
@@ -3305,7 +3286,7 @@ enctype="application/x-www-form-urlencoded"><input type="hidden" name="planning_
                 $childTable .= '<tr><td>' . $planning['name'] . '</td>';
                 $childTable .= '<td><form action="" method="post" accept-charset="UTF-8"
 enctype="application/x-www-form-urlencoded"><a  title="' . _('form_modif') . '" href="hr_index.php?onglet=modif_planning&id=' . $planning['planning_id'] .
-                '&session=' . $session . '"><i class="fa fa-pencil"></i></a>&nbsp;&nbsp;';
+                '"><i class="fa fa-pencil"></i></a>&nbsp;&nbsp;';
                 if (in_array($planning['planning_id'], $listIdUsed)) {
                     $childTable .= '<button title="' . _('planning_used') . '" type="button" class="btn btn-link disabled"><i class="fa fa-times-circle"></i></button>';
                 } else {
@@ -3340,7 +3321,7 @@ enctype="application/x-www-form-urlencoded"><a  title="' . _('form_modif') . '" 
         if (!empty($_POST)) {
             if (0 < (int) \App\ProtoControllers\HautResponsable\Planning::postPlanning($_POST, $errorsLst, $notice)) {
                 log_action(0, '', '', 'Édition du planning ' . $_POST['name']);
-                redirect(ROOT_PATH . 'hr/hr_index.php?session='. session_id() . '&onglet=liste_planning', false);
+                redirect(ROOT_PATH . 'hr/hr_index.php?onglet=liste_planning', false);
             } else {
                 if (!empty($errorsLst)) {
                     $errors = '';
@@ -3459,7 +3440,8 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $debutId      = uniqid();
         $finId        = uniqid();
         $helperId     = uniqid();
-        $childTable = '<thead><tr><th width="20%">' . _('Jour') . '</th><th>' . _('Creneaux_travail') . '</th><tr></thead><tbody>';
+        $dureeHebdoId = uniqid();
+        $childTable = '<thead><tr><th width="20%">' . _('Jour') . '</th><th>' . _('Creneaux_travail') . '</th><th id="' . $dureeHebdoId .'"></th><tr></thead><tbody>';
         $childTable .= '<tr><td><select class="form-control" id="' . $selectJourId . '"><option value="' . NIL_INT . '"></option>';
 
         foreach ($jours as $id => $jour) {
@@ -3471,10 +3453,10 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $childTable .= '&nbsp;&nbsp;<div class="form-inline col-xs-4"><label class="radio-inline"><input type="radio" name="periode" value="' . \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN . '">' . _('form_am') . '</label>';
         $childTable .= '<label class="radio-inline"><input type="radio" name="periode" value="' . \App\Models\Planning\Creneau::TYPE_PERIODE_APRES_MIDI . '">' . _('form_pm') . '</label>';
         $childTable .= '&nbsp;&nbsp; <button type="button" class="btn btn-default btn-sm" id="' .  $linkId . '"><i class="fa fa-plus link" ></i></button></div>';
-        $childTable .= '<span class="text-danger" id="' . $helperId . '"></span></td></tr>';
+        $childTable .= '<span class="text-danger" id="' . $helperId . '"></span></td><td></td></tr>';
         $childTable .= '<script type="text/javascript">generateTimePicker("' . $debutId . '");generateTimePicker("' . $finId . '");</script>';
         foreach ($jours as $id => $jour) {
-            $childTable .= '<tr data-id-jour=' . $id . '><td name="nom">' . $jour . '</td><td class="creneaux"></td></tr>';
+            $childTable .= '<tr data-id-jour=' . $id . '><td name="nom">' . $jour . '</td><td class="creneaux"></td><td></td></tr>';
         }
         $childTable .= '</tbody>';
         $options = [
@@ -3487,6 +3469,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             'typeHeureDebut'        => \App\Models\Planning\Creneau::TYPE_HEURE_DEBUT,
             'typeHeureFin'          => \App\Models\Planning\Creneau::TYPE_HEURE_FIN,
             'helperId'              => $helperId,
+            'dureeHebdoId'          => $dureeHebdoId,
             'nilInt'                => NIL_INT,
             'erreurFormatHeure'     => _('Format_heure_incorrect'),
             'erreurOptionManquante' => _('Option_manquante'),
@@ -3517,25 +3500,22 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         if (empty($utilisateursAssocies)) {
             $return .= '<div>' . _('hr_tout_utilisateur_associe') . '</div>';
         } else {
-            $hasGroup = $_SESSION['config']['gestion_groupes'];
-            if($hasGroup) {
-                $return .= '<div class="form-group col-md-4 col-sm-5">
-                <label class="control-label col-md-3 col-sm-3" for="groupe">Groupe&nbsp;:</label>
-                <div class="col-md-8 col-sm-8"><select class="form-control" name="groupeId" id="groupe">';
-                $return .= '<option value="' . NIL_INT . '">Tous</option>';
+            $return .= '<div class="form-group col-md-4 col-sm-5">
+            <label class="control-label col-md-3 col-sm-3" for="groupe">Groupe&nbsp;:</label>
+            <div class="col-md-8 col-sm-8"><select class="form-control" name="groupeId" id="groupe">';
+            $return .= '<option value="' . NIL_INT . '">Tous</option>';
 
-                $optionsGroupes = \App\ProtoControllers\Groupe::getOptions();
+            $optionsGroupes = \App\ProtoControllers\Groupe::getOptions();
 
-                foreach ($optionsGroupes as $id => $groupe) {
-                    $return .= '<option value="' . $id . '">' . $groupe['nom'] . '</option>';
-                }
-                $return .= '</select></div></div><br><br><br>';
-                $associations = array_map(function ($groupe) {
-                        return $groupe['utilisateurs'];
-                    },
-                    $optionsGroupes
-                );
+            foreach ($optionsGroupes as $id => $groupe) {
+                $return .= '<option value="' . $id . '">' . $groupe['nom'] . '</option>';
             }
+            $return .= '</select></div></div><br><br><br>';
+            $associations = array_map(function ($groupe) {
+                    return $groupe['utilisateurs'];
+                },
+                $optionsGroupes
+            );
             $return .= '<div>';
             foreach ($utilisateursAssocies as $utilisateur) {
                 $disabled = (\App\ProtoControllers\Utilisateur::hasSortiesEnCours($utilisateur['login']))
@@ -3550,11 +3530,9 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
                 </div>';
             }
             $return .= '</div>';
-            if($hasGroup) {
-                $return .= '<script type="text/javascript">
-                new selectAssociationPlanning("groupe", ' . json_encode($associations) . ', ' . NIL_INT . ');
-                </script>';
-            }
+            $return .= '<script type="text/javascript">
+            new selectAssociationPlanning("groupe", ' . json_encode($associations) . ', ' . NIL_INT . ');
+            </script>';
         }
 
         return $return;
