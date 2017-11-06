@@ -39,7 +39,7 @@ if($_SESSION['config']['auth'] == FALSE)    // si pas d'autentification (cf conf
 			session_destroy();
 
 		// on initialise la nouvelle session
-		ini_set ( "session.gc_maxlifetime", $_SESSION['config']['duree_session'] );
+		ini_set("session.gc_maxlifetime", SESSION_DURATION);
 		session_create($login);
 	}
 }
