@@ -13,14 +13,6 @@ namespace App\ProtoControllers\Responsable;
 abstract class ATraitement
 {
     /**
-     * Encapsule le comportement du formulaire de traitement des demandes d'heures
-     *
-     * @return string
-     * @access public
-     */
-    abstract public function getForm();
-
-    /**
      * Traite les demandes
      *
      * @param array  $put

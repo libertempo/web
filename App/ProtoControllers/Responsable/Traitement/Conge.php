@@ -13,14 +13,6 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
     /**
      * {@inheritDoc}
      */
-    public function getForm()
-    {
-        return '';
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function getFormDemandes(array $demandes)
     {
         $i=true;
@@ -30,7 +22,6 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
             $id = $demande['p_num'];
             $infoUtilisateur = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($demande['p_login']);
             $solde = \App\ProtoControllers\Utilisateur::getSoldeconge($demande['p_login'],$demande['p_type']);
-            $type = $this->getTypeLabel($demande['p_type']);
             $debut = \App\Helpers\Formatter::dateIso2Fr($demande['p_date_deb']);
             $fin = \App\Helpers\Formatter::dateIso2Fr($demande['p_date_fin']);
             if ($demande['p_demi_jour_deb']=="am") {
@@ -48,7 +39,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
             $Table .= '<tr class="'.($i?'i':'p').'">';
             $Table .= '<td><b>'.$infoUtilisateur['u_nom'].'</b><br>'.$infoUtilisateur['u_prenom'].'</td>';
             $Table .= '<td>'.$debut.'<span class="demi">' . $demideb . '</span></td><td>'.$fin.'<span class="demi">' . $demifin . '</span></td>';
-            $Table .= '<td>'.$type.'</td><td><b>'.floatval($demande['p_nb_jours']).'</b></td><td>'.floatval($solde).'</td>';
+            $Table .= '<td><b>'.floatval($demande['p_nb_jours']).'</b></td><td>'.floatval($solde).'</td>';
             $Table .= '<td>'.$demande['p_commentaire'].'</td>';
             $Table .= '<input type="hidden" name="_METHOD" value="PUT" />';
             $Table .= '<td><input type="radio" name="demande['.$id.']" value="1"></td>';
