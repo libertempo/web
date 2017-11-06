@@ -12,6 +12,7 @@ $jours = [];
 $moisPrecedent = getUrlMois($moisDemande->modify('-1 month'), $idGroupe);
 $moisCourant = getUrlMois(new \DateTimeImmutable(), $idGroupe);
 $moisSuivant = getUrlMois($moisDemande->modify('+1 month'), $idGroupe);
+$timestampMois = $mois->getBegin()->getTimestamp();
 
 require_once VIEW_PATH . 'Calendrier.php';
 ?>
@@ -22,7 +23,7 @@ require_once VIEW_PATH . 'Calendrier.php';
     <a class="btn btn-default" href="<?= $moisSuivant ?>"><i class="fa fa-chevron-right" aria-hidden="true"></i></a>
 </div>
 
-<h2><?= strftime('%B %G', $mois->getBegin()->getTimestamp()) ?></h2>
+<h2><?= date_fr('F', $timestampMois) . ' ' . date('Y', $timestampMois) ?></h2>
 <div id="calendrierMois" class="calendrier">
     <table id="calendrier">
         <tr id="entete"><th></th>

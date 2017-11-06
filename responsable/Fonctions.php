@@ -2273,53 +2273,6 @@ class Fonctions
     }
 
     /**
-     * Encapsule le comportement du module de liste des plannings
-     *
-     * @return string
-     * @TODO trouver dans quelle condition un planning ne pourrait pas être modifié
-     */
-    public static function getListePlanningModule()
-    {
-        $message   = '';
-        $errorsLst = [];
-        $notice    = '';
-
-        /* Préparation et requêtage */
-        $listPlanningId = \App\ProtoControllers\HautResponsable\Planning::getListPlanningId();
-        $return = '<h1>' . _('resp_liste_planning') . '</h1>';
-        $return .= $message;
-        $table = new \App\Libraries\Structure\Table();
-        $table->addClasses([
-            'table',
-            'table-hover',
-            'table-responsive',
-            'table-condensed',
-            'table-striped',
-        ]);
-        $childTable = '<thead><tr><th>' . _('divers_nom_maj_1') . '</th><th style="width:10%"></th></tr></thead><tbody>';
-        if (empty($listPlanningId)) {
-            $childTable .= '<tr><td colspan="2"><center>' . _('aucun_resultat') . '</center></td></tr>';
-        } else {
-            $listIdUsed   = \App\ProtoControllers\HautResponsable\Planning::getListPlanningUsed($listPlanningId);
-            $listPlanning = \App\ProtoControllers\HautResponsable\Planning::getListPlanning($listPlanningId);
-            foreach ($listPlanning as $planning) {
-                $childTable .= '<tr><td>' . $planning['name'] . '</td>';
-                $childTable .= '<td><form action="" method="post" accept-charset="UTF-8"
-enctype="application/x-www-form-urlencoded"><a  title="' . _('form_modif') . '" href="resp_index.php?onglet=modif_planning&id=' . $planning['planning_id'] .
-                '"><i class="fa fa-pencil"></i></a>&nbsp;&nbsp;';
-                $childTable .= '</form></td></tr>';
-            }
-        }
-        $childTable .= '</tbody>';
-        $table->addChild($childTable);
-        ob_start();
-        $table->render();
-        $return .= ob_get_clean();
-
-        return $return;
-    }
-
-    /**
      * Encapsule le comportement du module de modification de planning
      *
      * @param int $id

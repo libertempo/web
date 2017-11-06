@@ -26,7 +26,6 @@ if($err = getpost_variable('error', false))
 			echo "<p>" . _('divers_veuillez') ." <a href='" . $config->getUrlAccueil() . "/index.php' target='_top'><strong>" . _('divers_vous_authentifier') . "</strong></a></p>\n";
 			bottom();
 			exit();
-			break;
 	}
 }
 

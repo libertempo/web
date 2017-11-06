@@ -1586,18 +1586,19 @@ function recup_infos_du_user($login, $list_groups_double_valid)
         return FALSE;
 }
 
+/**
+ * Tri les tableaux, d'abord par activité, puis par ordre lexicographique
+ *
+ * @return int {-1, 0, 1}
+ */
+function sortParActif(array $a, array $b) {
+    if ($a['is_active'] == 'Y' && $b['is_active'] == 'N') {
+        return -1; // $a est avant $b
+    } elseif ($a['is_active'] == 'N' && $b['is_active'] == 'Y') {
+        return 1; // $a est derrière $b
+    }
 
-function sortParActif($a, $b) {
-    if( $a['is_active'] == 'N' && $b['is_active'] == 'N') {
-        return $b['prenom'] < $a['prenom'];
-    }
-    if( $a['is_active'] == 'N'){
-        return 1;
-    }
-    if( $b['is_active'] == 'N'){
-        return -1;
-    }
-    return 0;
+    return strnatcmp($a['nom'], $b['nom']);
 }
 
 // renvoit un tableau de tableau contenant les informations de tous les users

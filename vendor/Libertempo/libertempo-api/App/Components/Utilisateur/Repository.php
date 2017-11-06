@@ -13,7 +13,7 @@ use App\Libraries\Application;
  * @since 0.2
  * @see \Tests\Units\App\Components\Utilisateur\Repository
  *
- * Ne devrait être contacté que par le Authentification\Controller
+ * Ne devrait être contacté que par le Authentification\Controller et \Middlewares\Identification
  * Ne devrait contacter que le Utilisateur\Model, Utilisateur\Dao
  */
 class Repository extends \App\Libraries\ARepository
@@ -23,6 +23,11 @@ class Repository extends \App\Libraries\ARepository
      */
     private $application;
 
+    /**
+     * Ajoute la bibliothèque d'accès aux données, pour la génération du token
+     *
+     * @param Application $application
+     */
     public function setApplication(Application $application)
     {
         if ($this->application instanceof Application) {
@@ -95,6 +100,7 @@ class Repository extends \App\Libraries\ARepository
             'heureSolde' => $dataDao['u_heure_solde'],
             'dateInscription' => $dataDao['date_inscription'],
             'token' => $dataDao['token'],
+            'dateLastAccess' => $dataDao['date_last_access'],
         ];
     }
 
@@ -109,6 +115,12 @@ class Repository extends \App\Libraries\ARepository
         }
         if (!empty($paramsConsumer['password'])) {
             $results['u_passwd'] = md5($paramsConsumer['password']);
+        }
+        if (!empty($paramsConsumer['token'])) {
+            $results['token'] = (string) $paramsConsumer['token'];
+        }
+        if (!empty($paramsConsumer['gt_date_last_access'])) {
+            $results['gt_date_last_access'] = (string) $paramsConsumer['gt_date_last_access'];
         }
         return $results;
     }
@@ -130,21 +142,37 @@ class Repository extends \App\Libraries\ARepository
     }
 
     /**
+     * « Ping » la date de dernier accès de l'utilisateur
+     *
+     * @param Model $model Modèle utilisateur
+     *
+     * @since 0.3
+     */
+    public function updateDateLastAccess(Model $model)
+    {
+        $model->updateDateLastAccess();
+        $dataDao = $this->getModel2DataDao($model);
+        $this->dao->put($dataDao, $model->getId());
+    }
+
+    /**
      * Regénère le token de l'utilisateur pour une nouvelle session
      *
      * @param AModel $model Modèle utilisateur
      *
      * @return AModel Le modèle hydraté du nouveau token
+     * @throws \RuntimeException Si le token instance n'est pas posé
      */
     public function regenerateToken(AModel $model)
     {
         $instanceToken = $this->application->getTokenInstance();
-        if ('' === $instanceToken) {
+        if (empty($instanceToken)) {
             throw new \RuntimeException('Instance token is not set');
         }
 
         try {
-            $model->populateToken($this->buildToken($instanceToken, $model));
+            $model->populateToken($this->buildToken($instanceToken));
+            $model->updateDateLastAccess();
             $dataDao = $this->getModel2DataDao($model);
             $this->dao->put($dataDao, $model->getId());
 
@@ -176,22 +204,20 @@ class Repository extends \App\Libraries\ARepository
             'u_heure_solde' => $model->getFin(),
             'date_inscription' => $model->getFin(),*/
             'token' => $model->getToken(),
+            'date_last_access' => $model->getDateLastAccess(),
         ];
     }
 
     /**
      * Génère le token
-     * @example factory method (/ strategy) pour la génération et aider à la reconnaissance du pattern de l'autre côté ?
+     *
+     * @param string $instanceToken Clé API de l'instance
      *
      * @return string
      */
-    private function buildToken($instanceToken, AModel $model)
+    private function buildToken($instanceToken)
     {
-        // assertion sur la vacuite de nom, dateInscriptionUtilisateur, dateJour et id
-        $dateJour = date('Y-m-d');
-        $preHash = $dateJour . ']#[' . $model->getNom() . ']#[' . $model->getDateInscription() . ']#[' . $model->getId() . ']#[' . $dateJour;
-
-        return $instanceToken ^ $preHash;
+        return password_hash($instanceToken, \PASSWORD_BCRYPT);
     }
 
     /*************************************************
