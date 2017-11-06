@@ -3,13 +3,13 @@
  * Slim Framework (https://slimframework.com)
  *
  * @link      https://github.com/slimphp/Slim
- * @copyright Copyright (c) 2011-2016 Josh Lockhart
+ * @copyright Copyright (c) 2011-2017 Josh Lockhart
  * @license   https://github.com/slimphp/Slim/blob/3.x/LICENSE.md (MIT License)
  */
 namespace Slim;
 
 use FastRoute\Dispatcher;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use InvalidArgumentException;
 use RuntimeException;
 use Psr\Http\Message\ServerRequestInterface;
@@ -199,7 +199,7 @@ class Router implements RouterInterface
      *
      * @param  string[] $methods Array of HTTP methods
      * @param  string   $pattern The route pattern
-     * @param  callable $handler The route callable
+     * @param  callable $callable The route callable
      *
      * @return \Slim\Interfaces\RouteInterface
      */

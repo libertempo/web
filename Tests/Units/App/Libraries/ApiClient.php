@@ -100,7 +100,7 @@ class ApiClient extends \Tests\Units\TestUnit
     {
         return $this->requestServerError(function () {
             $api = new _ApiClient($this->client);
-            return $api->get('');
+            return $api->get('', 'dragibus');
         });
     }
 
@@ -130,7 +130,7 @@ class ApiClient extends \Tests\Units\TestUnit
     {
         return $this->requestClientError(function () {
             $api = new _ApiClient($this->client);
-            return $api->get('');
+            return $api->get('', 'dragibus');
         });
     }
 
@@ -160,7 +160,7 @@ class ApiClient extends \Tests\Units\TestUnit
     {
         return $this->requestIsNotJson(function () {
             $api = new _ApiClient($this->client);
-            return $api->get('');
+            return $api->get('', 'dragibus');
         });
     }
 
@@ -187,11 +187,16 @@ class ApiClient extends \Tests\Units\TestUnit
 
     public function testGetOk()
     {
-        $options = $this->defaultOptions;
+        $options = array_merge_recursive([
+            'headers' => [
+                'Token' => 'dragibus',
+            ]],
+            $this->defaultOptions
+        );
         $this->requestOk(
             function () use ($options) {
                 $api = new _ApiClient($this->client);
-                return $api->get('');
+                return $api->get('', 'dragibus');
             },
             'GET',
             '',

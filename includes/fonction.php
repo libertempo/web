@@ -185,7 +185,7 @@ function session_is_valid()
     {
         $difference = time() - $_SESSION['timestamp_last'];
 
-        if ( ($difference < $config->getDureeSession()) )
+        if ( ($difference < SESSION_DURATION) )
             return true;
     }
 

@@ -38,12 +38,31 @@ final class ApiClient
      * Effectue l'ordre Http GET
      *
      * @param string $uri URI relative de la ressource
+     * @param string $token Identifiants de l'utilisateur
      *
      * @return \stdClass Au format Jsend
      */
-    public function get($uri)
+    public function get($uri, $token)
     {
-        return $this->request('GET', $uri, []);
+        return $this->securedRequest('GET', $uri, $token);
+    }
+
+    /**
+     * Effectue une requête HTTP
+     *
+     * @param string $method Ordre HTTP
+     * @param string $uri URI relative de la ressource
+     * @param string $token Identifiants de l'utilisateur
+     * @example ['headers' => [], 'body' => []]
+     *
+     * @return \stdClass Au format Jsend
+     * @throws \LogicException Si la requête est mal formée (Http4XX)
+     */
+    private function securedRequest($method, $uri, $token)
+    {
+        return $this->request($method, $uri, [
+            'headers' => ['Token' => $token],
+        ]);
     }
 
     /**

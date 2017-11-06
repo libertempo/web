@@ -33,31 +33,52 @@ $app->add(function (IRequest $request, IResponse $response, callable $next) {
     return $next($request, $response);
 });
 
-/* Middleware 5 : découverte et mise en forme des noms de ressources */
+/* Middleware 5 : sécurité via droits d'accès sur la ressource */
 $app->add(function (IRequest $request, IResponse $response, callable $next) {
-    $path = trim(trim($request->getUri()->getPath()), '/');
-    $api = 'api/';
-    $position = mb_stripos($path, $api);
-    if (false !== $position) {
-        $uriUpdated = $request->getUri()->withPath('/' . substr($path, $position + strlen($api)));
-        $request = $request->withUri($uriUpdated);
-        $path = trim(trim($request->getUri()->getPath()), '/');
+    /**
+     * TODO
+     *
+     * qu'est ce que ça veut dire qu'une ressource est accessible, et où le mettre ? dépend du rôle ?
+     * On peut désormais s'appuyer sur le DIC : $this['currentUser']
+     */
+    if (true) {
+        return $next($request, $response);
+    } else {
+        return call_user_func(
+            $this->forbiddenHandler,
+            $request,
+            $response
+        );
     }
-    $paths = explode('/', $path);
-    $ressources = [];
-    foreach ($paths as $value) {
-        if (!is_numeric($value)) {
-            $ressources[] = \App\Helpers\Formatter::getSingularTerm(
-                \App\Helpers\Formatter::getStudlyCapsFromSnake($value)
-            );
-        }
-    }
-    $request = $request->withAttribute('nomRessources', implode('|', $ressources));
-
-    return $next($request, $response);
 });
 
-/* Middleware 4 : connexion DB */
+/* Middleware 4 : sécurité via identification (+ « ping » last access) */
+$app->add(function (IRequest $request, IResponse $response, callable $next) {
+    $repoUtilisateur = new \App\Components\Utilisateur\Repository(
+        new \App\Components\Utilisateur\Dao($this['storageConnector'])
+    );
+    $identification = new \Middlewares\Identification($request, $repoUtilisateur);
+    $reserved = ['Authentification', 'HelloWorld'];
+    $ressourcePath = $request->getAttribute('nomRessources');
+    if (in_array($ressourcePath, $reserved, true)) {
+        return $next($request, $response);
+    } elseif ($identification->isTokenOk()) {
+        $utilisateur = $identification->getUtilisateur();
+        // Ping de last_access
+        $repoUtilisateur->updateDateLastAccess($utilisateur);
+
+        $this['currentUser'] = $utilisateur;
+        return $next($request, $response);
+    } else {
+        return call_user_func(
+            $this->unauthorizedHandler,
+            $request,
+            $response
+        );
+    }
+});
+
+/* Middleware 3 : connexion DB */
 $app->add(function (IRequest $request, IResponse $response, callable $next) {
     try {
         $configuration = json_decode(file_get_contents(ROOT_PATH . 'configuration.json'));
@@ -82,55 +103,39 @@ $app->add(function (IRequest $request, IResponse $response, callable $next) {
     }
 });
 
-/* Middleware 3 : vérification des headers (peut-être 1 ?) */
+/* Middleware 2 : découverte et mise en forme des noms de ressources */
+$app->add(function (IRequest $request, IResponse $response, callable $next) {
+    $path = trim(trim($request->getUri()->getPath()), '/');
+    $api = 'api/';
+    $position = mb_stripos($path, $api);
+    if (false !== $position) {
+        $uriUpdated = $request->getUri()->withPath('/' . substr($path, $position + strlen($api)));
+        $request = $request->withUri($uriUpdated);
+        $path = trim(trim($request->getUri()->getPath()), '/');
+    }
+    $paths = explode('/', $path);
+    $ressources = [];
+    foreach ($paths as $value) {
+        if (!is_numeric($value)) {
+            $ressources[] = \App\Helpers\Formatter::getSingularTerm(
+                \App\Helpers\Formatter::getStudlyCapsFromSnake($value)
+            );
+        }
+    }
+    $request = $request->withAttribute('nomRessources', implode('|', $ressources));
+
+    return $next($request, $response);
+});
+
+/* Middleware 1 : vérification des headers */
 $app->add(function (IRequest $request, IResponse $response, callable $next) {
     /* /!\ Headers non versionnés */
     $json = 'application/json';
-    if (($request->hasHeader('Accept') && $request->getHeaderLine('Accept') === $json)
-        && ($request->hasHeader('Content-Type') && $request->getHeaderLine('Content-Type') === $json)
-    ) {
+    if ($request->getHeaderLine('Accept') === $json && $request->getHeaderLine('Content-Type') === $json) {
         return $next($request, $response);
     } else {
         return call_user_func(
             $this->badRequestHandler,
-            $request,
-            $response
-        );
-    }
-});
-
-/* Middleware 2 : sécurité via droits d'accès sur la ressource */
-$app->add(function (IRequest $request, IResponse $response, callable $next) {
-    /**
-    * TODO
-    *
-    * qu'est ce que ça veut dire qu'une ressource est accessible, et où le mettre ? dépend du rôle ?
-    */
-    if (true) {
-        return $next($request, $response);
-    } else {
-        return call_user_func(
-            $this->forbiddenHandler,
-            $request,
-            $response
-        );
-    }
-});
-
-/* Middleware 1 : sécurité via identification */
-$app->add(function (IRequest $request, IResponse $response, callable $next) {
-    /**
-    * TODO
-    */
-    $reserved = ['Authentification'];
-    $ressourcePath = $request->getAttribute('nomRessources');
-    if (in_array($ressourcePath, $reserved, true)) {
-        return $next($request, $response);
-    } elseif ((new \Middlewares\Identification($request))->isTokenApiOk()) {
-        return $next($request, $response);
-    } else {
-        return call_user_func(
-            $this->unauthorizedHandler,
             $request,
             $response
         );

@@ -484,8 +484,7 @@ class Fonctions
             $childTable .= '<td align="center">&nbsp;</td>';
             $childTable .= '</tr>';
             $childTable .= '<tr>';
-            $childTable .= '<td align="center">';
-            $childTable .= '<input type="button" value="' . _('form_close_window') . '" onClick="window.close();">';
+            $childTable .= '<td>';
             $childTable .= '</td>';
             $childTable .= '</tr>';
             $table->addChild($childTable);
@@ -503,8 +502,6 @@ class Fonctions
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return   = '';
-
-        header_popup();
 
         $return .= '<h1>' . _('admin_sauve_db_titre') . '</h1>';
         $return .= '<form enctype="multipart/form-data" action="' . $PHP_SELF . '" method="POST">';
@@ -580,7 +577,7 @@ class Fonctions
      *
      * @return string
      */
-    private static function getDataFile($typeSauvegarde)
+    public static function getDataFile($typeSauvegarde)
     {
         $content = "#\n";
         $content .= "# Libertempo\n";
@@ -612,8 +609,6 @@ class Fonctions
 
         redirect(ROOT_PATH .'admin/admin_db_sauve.php?choix_action=sauvegarde&type_sauvegarde='.$type_sauvegarde.'&commit=ok', false);
 
-        header_popup();
-
         $return .= '<h1>' . _('admin_sauve_db_titre') . '</h1>';
 
         $return .= '<form action="' . $PHP_SELF . '" method="POST">';
@@ -622,7 +617,6 @@ class Fonctions
         $childTable .= '<th colspan="2">' . _('admin_sauve_db_save_ok') . ' ...</th>';
         $childTable .= '</tr><tr>';
         $childTable .= '<td colspan="2" align="center">';
-        $childTable .= '<input type="button" value="' . _('form_close_window') . '" onClick="window.close();">';
         $childTable .= '</td>';
         $childTable .= '</tr>';
         $table->addChild($childTable);
@@ -640,9 +634,6 @@ class Fonctions
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return   = '';
-
-
-        header_popup();
 
         $return .= '<h1>' . _('admin_sauve_db_titre') . '</h1>';
 
@@ -687,8 +678,6 @@ class Fonctions
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return   = '';
-
-        header_popup();
 
         $return .= '<h1>' . _('admin_sauve_db_titre') . '</h1>';
 
@@ -737,10 +726,6 @@ class Fonctions
      */
     public static function saveRestoreModule()
     {
-        // verif des droits du user à afficher la page
-        verif_droits_user( "is_admin");
-
-
         /*** initialisation des variables ***/
         /*************************************/
         // recup des parametres reçus :

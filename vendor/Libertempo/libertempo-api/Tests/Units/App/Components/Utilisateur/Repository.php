@@ -117,6 +117,7 @@ final class Repository extends \Atoum
                 'u_heure_solde' => 983,
                 'date_inscription' => 2,
                 'token' => '',
+                'date_last_access' => 3,
             ],
             [
                 'id' => 'Sinbad',
@@ -136,6 +137,7 @@ final class Repository extends \Atoum
                 'u_heure_solde' => 1218,
                 'date_inscription' => 2,
                 'token' => '',
+                'date_last_access' => 134,
             ],
         ];
         $repository = new _Repository($this->dao);
@@ -181,6 +183,7 @@ final class Repository extends \Atoum
             'u_heure_solde' => 983,
             'date_inscription' => 2,
             'token' => '',
+            'date_last_access' => 98,
         ]];
         $repository = new _Repository($this->dao);
 
@@ -207,6 +210,18 @@ final class Repository extends \Atoum
     public function testPutOne()
     {
         $this->variable((new _Repository($this->dao))->putOne([], $this->model))->isNull();
+    }
+
+    public function testUpdateDateLastAccess()
+    {
+        $repo = new _Repository($this->dao);
+        $this->model->getMockController()->getToken = 'Tartuffe';
+
+        $repo->updateDateLastAccess($this->model);
+
+        $this->mock($this->model)->call('updateDateLastAccess')->once();
+        $this->mock($this->dao)->call('put')->once();
+
     }
 
     /**

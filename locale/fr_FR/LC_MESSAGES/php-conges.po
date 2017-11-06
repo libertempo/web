@@ -18,7 +18,7 @@ msgid "langue"
 msgstr "Langue"
 
 msgid "janvier"
-msgstr "janvier"
+msgstr "Janvier"
 
 msgid "fevrier"
 msgstr "Février"
@@ -1993,4 +1993,3 @@ msgstr "Traitement des demandes d'heures de repos"
 
 msgid "install_maj_cas_echec_backup"
 msgstr "Attention! La base de donnée n'a pas pu être sauvegardée."
-

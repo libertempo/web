@@ -46,19 +46,19 @@ final class Controller extends \App\Libraries\AController
                 'login' => $login,
                 'password' => $password,
             ]);
-            $utilisateurUpdated = $this->repository->regenerateToken($utilisateur);
-
-            $code = 200;
-            $data = [
-                'code' => $code,
-                'status' => 'success',
-                'message' => '',
-                'data' => $utilisateurUpdated->getToken(),
-            ];
-
-            return $response->withJson($data, $code);
         } catch (\UnexpectedValueException $e) {
             return $this->getResponseNotFound($response, 'No user matches these criteria');
         }
+        $utilisateurUpdated = $this->repository->regenerateToken($utilisateur);
+
+        $code = 200;
+        $data = [
+            'code' => $code,
+            'status' => 'success',
+            'message' => '',
+            'data' => $utilisateurUpdated->getToken(),
+        ];
+
+        return $response->withJson($data, $code);
     }
 }

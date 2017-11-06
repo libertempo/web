@@ -91,4 +91,16 @@ final class Formatter extends \Atoum
 
         $this->string($singular)->isIdenticalTo($term);
     }
+
+    /**
+     * Teste la mise au format de datetime sql
+     */
+    public function testTimeToSQLDatetime()
+    {
+        $time0 = 0;
+        $timeFixed = 1303819038;
+
+        $this->string(_Formatter::timeToSQLDatetime($time0))->isIdenticalTo('1970-01-01 00:00');
+        $this->string(_Formatter::timeToSQLDatetime($timeFixed))->isIdenticalTo('2011-04-26 11:57');
+    }
 }
