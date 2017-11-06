@@ -1,7 +1,8 @@
 <?php
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
+$config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
-if($_SESSION['config']['where_to_find_user_email']=="ldap"){
+if($config->getMailFromLdap()){
     include_once CONFIG_PATH .'config_ldap.php';
 }
 

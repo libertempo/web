@@ -398,7 +398,8 @@ class Configuration {
         return $this->getGroupeFonctionnementEtablissementValeur('jour_mois_limite_reliquats');
     }
 
-    public function isHeuresAutorise() {
+    public function isHeuresAutorise()
+    {
         return $this->getGroupeFonctionnementEtablissementValeur('gestion_heures');
     }
     /**
@@ -408,7 +409,8 @@ class Configuration {
      *
      * @return mixed
      */
-    private function getGroupeFonctionnementEtablissementValeur($nom) {
+    private function getGroupeFonctionnementEtablissementValeur($nom)
+    {
         return $this->getValeur($nom, '12_Fonctionnement de l\'Etablissement');
     }
 
