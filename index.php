@@ -45,12 +45,6 @@ if($_SESSION['config']['auth'] == FALSE)    // si pas d'autentification (cf conf
 }
 else
 {
-	$session_username = isset($_POST['session_username']) ? $_POST['session_username'] : '';
-	$session_password = isset($_POST['session_password']) ? $_POST['session_password'] : '';
-
-	if(session_id()!="")
-		session_destroy();
-
 	// Si CAS alors on utilise le login CAS pour la session
 	if ( $_SESSION['config']['how_to_connect_user'] == "cas")
 	{
@@ -71,6 +65,9 @@ else
 	// Si SSO, on utilise les identifiants de session pour se connecter
 	else if ( $_SESSION['config']['how_to_connect_user'] == "SSO" )
 	{
+		if(session_id()!=""){
+			session_destroy();
+		}
 		$usernameSSO = authentification_AD_SSO();
 		if($usernameSSO != "")
 		{
@@ -90,6 +87,11 @@ else
 	}
 	else
 	{
+		$session_username = isset($_POST['session_username']) ? $_POST['session_username'] : '';
+		$session_password = isset($_POST['session_password']) ? $_POST['session_password'] : '';
+		if(session_id()!=""){
+			session_destroy();
+		}
 		if (($session_username == "") || ($session_password == "")) // si login et passwd non saisis
 		{
 			//  SAISIE LOGIN / PASSWORD :
@@ -99,6 +101,11 @@ else
 		}
 		else
 		{
+			$session_username = isset($_POST['session_username']) ? $_POST['session_username'] : '';
+			$session_password = isset($_POST['session_password']) ? $_POST['session_password'] : '';
+			if(session_id()!=""){
+				session_destroy();
+			}
 			//  AUTHENTIFICATION :
 			// le user doit etre authentifié dans la table conges (login + passwd) ou dans le ldap.
 			// si on a trouve personne qui correspond au couple user/password
