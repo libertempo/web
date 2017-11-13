@@ -439,7 +439,8 @@ abstract class AHeure
         $req = 'SELECT EXISTS (
             SELECT p_num
             FROM conges_periode
-            WHERE p_etat IN ("' . implode('","', $statuts) . '")
+            WHERE p_login = "' . $user . '"
+            AND p_etat IN ("' . implode('","', $statuts) . '")
             AND (' . implode(' OR ', $where) . ')
         )';
         $queryConges = $sql->query($req);
