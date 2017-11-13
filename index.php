@@ -29,12 +29,6 @@ if($err = getpost_variable('error', false))
 	}
 }
 
-$session_username = isset($_POST['session_username']) ? $_POST['session_username'] : '';
-$session_password = isset($_POST['session_password']) ? $_POST['session_password'] : '';
-
-if(session_id()!="")
-        session_destroy();
-
 // Si CAS alors on utilise le login CAS pour la session
 if ( $config->getHowToConnectUser() == "cas" && $_GET['cas'] != "no" )
 {
@@ -55,6 +49,9 @@ if ( $config->getHowToConnectUser() == "cas" && $_GET['cas'] != "no" )
 // Si SSO, on utilise les identifiants de session pour se connecter
 else if ( $config->getHowToConnectUser() == "SSO" )
 {
+    if(session_id()!="")
+        session_destroy();
+
         $usernameSSO = authentification_AD_SSO();
         if($usernameSSO != "")
         {
@@ -74,6 +71,12 @@ else if ( $config->getHowToConnectUser() == "SSO" )
 }
 else
 {
+    $session_username = isset($_POST['session_username']) ? $_POST['session_username'] : '';
+    $session_password = isset($_POST['session_password']) ? $_POST['session_password'] : '';
+
+    if(session_id()!="")
+        session_destroy();
+
         if (($session_username == "") || ($session_password == "")) // si login et passwd non saisis
         {
                 //  SAISIE LOGIN / PASSWORD :
