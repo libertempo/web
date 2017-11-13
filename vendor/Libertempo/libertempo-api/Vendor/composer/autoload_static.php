@@ -21,6 +21,10 @@ class ComposerStaticInit5254fb3dcd0ada989877bc48f5b177e0
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Container\\' => 14,
         ),
+        'L' => 
+        array (
+            'LibertAPI\\' => 10,
+        ),
         'I' => 
         array (
             'Interop\\Container\\' => 18,
@@ -28,6 +32,12 @@ class ComposerStaticInit5254fb3dcd0ada989877bc48f5b177e0
         'F' => 
         array (
             'FastRoute\\' => 10,
+        ),
+        'D' => 
+        array (
+            'Doctrine\\Common\\Inflector\\' => 26,
+            'Doctrine\\Common\\Cache\\' => 22,
+            'Doctrine\\Common\\Annotations\\' => 28,
         ),
     );
 
@@ -44,6 +54,10 @@ class ComposerStaticInit5254fb3dcd0ada989877bc48f5b177e0
         array (
             0 => __DIR__ . '/..' . '/psr/container/src',
         ),
+        'LibertAPI\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/',
+        ),
         'Interop\\Container\\' => 
         array (
             0 => __DIR__ . '/..' . '/container-interop/container-interop/src/Interop/Container',
@@ -52,10 +66,18 @@ class ComposerStaticInit5254fb3dcd0ada989877bc48f5b177e0
         array (
             0 => __DIR__ . '/..' . '/nikic/fast-route/src',
         ),
-    );
-
-    public static $fallbackDirsPsr4 = array (
-        0 => __DIR__ . '/../..' . '/',
+        'Doctrine\\Common\\Inflector\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/doctrine/inflector/lib/Doctrine/Common/Inflector',
+        ),
+        'Doctrine\\Common\\Cache\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache',
+        ),
+        'Doctrine\\Common\\Annotations\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations',
+        ),
     );
 
     public static $prefixesPsr0 = array (
@@ -64,6 +86,25 @@ class ComposerStaticInit5254fb3dcd0ada989877bc48f5b177e0
             'Pimple' => 
             array (
                 0 => __DIR__ . '/..' . '/pimple/pimple/src',
+            ),
+        ),
+        'D' => 
+        array (
+            'Doctrine\\DBAL\\' => 
+            array (
+                0 => __DIR__ . '/..' . '/doctrine/dbal/lib',
+            ),
+            'Doctrine\\Common\\Lexer\\' => 
+            array (
+                0 => __DIR__ . '/..' . '/doctrine/lexer/lib',
+            ),
+            'Doctrine\\Common\\Collections\\' => 
+            array (
+                0 => __DIR__ . '/..' . '/doctrine/collections/lib',
+            ),
+            'Doctrine\\Common\\' => 
+            array (
+                0 => __DIR__ . '/..' . '/doctrine/common/lib',
             ),
         ),
     );
@@ -379,7 +420,6 @@ class ComposerStaticInit5254fb3dcd0ada989877bc48f5b177e0
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit5254fb3dcd0ada989877bc48f5b177e0::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit5254fb3dcd0ada989877bc48f5b177e0::$prefixDirsPsr4;
-            $loader->fallbackDirsPsr4 = ComposerStaticInit5254fb3dcd0ada989877bc48f5b177e0::$fallbackDirsPsr4;
             $loader->prefixesPsr0 = ComposerStaticInit5254fb3dcd0ada989877bc48f5b177e0::$prefixesPsr0;
             $loader->classMap = ComposerStaticInit5254fb3dcd0ada989877bc48f5b177e0::$classMap;
 
