@@ -725,3 +725,57 @@ function disableCheckboxGroupe(checkbox,selectId) {
         }
     }
 }
+
+function searchLdapUser() {
+    var form = document.getElementById("manageUser");
+    var nom = form.new_nom.value;
+    if(3 >= nom.length) {
+        return;
+    }
+    var page = 'hr_recherche_ldap.php?nom=' + nom;
+
+    $.ajax({
+        type : 'GET',
+        url : page,
+        dataType : 'text',
+        success : function(data)
+        {
+            var arr = new Array();
+            arr = JSON.parse(data);
+            var list = document.createElement("ul");
+            list.className = "listeNom";
+            list.style.display = "none";
+            form.appendChild(list);
+            var frag = document.createDocumentFragment();
+            for (var i = 0; i < arr.length; ++i) {
+                var word = document.createElement("li");
+                frag.appendChild(word);
+                word.login = arr[i]["login"];
+                word.nom = arr[i]["nom"];
+                word.prenom  = arr[i]["prenom"];
+                word.innerHTML = word.nom + " " + word.prenom;
+                word.onmousedown = function(){
+                        form.new_nom.value.focus();
+                        form.new_login.value.value = this.login;
+                        form.new_nom.value.value = this.nom;
+                        form.new_prenom.value.value = this.prenom;
+                        list.style.display = "none";
+                        return false;
+                };
+            }
+
+            if(0 < arr.length){
+                list.innerHTML = "";
+                list.appendChild(frag);
+                list.style.display = "block";
+            } else {
+                list.style.display = "none";			
+            }
+
+            form.elements['new_login'].innerHTML = arr["login"];
+            form.form[0].elements['new_nom'].value = arr["nom"];
+            form.form[0].elements['new_prenom'].value = arr["prenom"];
+        },
+    });
+}
+

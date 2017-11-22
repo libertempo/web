@@ -17,7 +17,7 @@ $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 // SERVER
 $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 // GET / POST
-$onglet = htmlentities(getpost_variable('onglet', 'admin-users'), ENT_QUOTES | ENT_HTML401);
+$onglet = htmlentities(getpost_variable('onglet', 'admin-group'), ENT_QUOTES | ENT_HTML401);
 
 
 /*********************************/
@@ -34,8 +34,8 @@ if ( $config->canAdminSeeAll() || $_SESSION['userlogin']=="admin" || is_hr($_SES
     $onglets['admin-group'] = _('admin_onglet_gestion_groupe');
 }
 
-if ( !isset($onglets[ $onglet ]) && !in_array($onglet, array('chg_pwd_user', 'ajout_group', 'modif_group', 'modif_user', 'suppr_group', 'suppr_user', 'ajout-user')))
-    $onglet = 'admin-users';
+if ( !isset($onglets[ $onglet ]) && !in_array($onglet, array('ajout_group', 'modif_group', 'suppr_group')))
+    $onglet = 'admin-group';
 
 /*********************************/
 /*   COMPOSITION DU HEADER...    */

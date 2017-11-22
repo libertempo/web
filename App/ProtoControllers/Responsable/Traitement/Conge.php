@@ -20,7 +20,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
         foreach ($demandes as $demande) {
             $id = $demande['p_num'];
-            $infoUtilisateur = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($demande['p_login']);
+            $infoUtilisateur = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($demande['p_login'])[$demande['p_login']];
             $solde = \App\ProtoControllers\Utilisateur::getSoldeconge($demande['p_login'],$demande['p_type']);
             $debut = \App\Helpers\Formatter::dateIso2Fr($demande['p_date_deb']);
             $fin = \App\Helpers\Formatter::dateIso2Fr($demande['p_date_fin']);
@@ -328,11 +328,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
         $usersResp = [];
         $usersResp = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupId);
-        $usersRespDirect = \App\ProtoControllers\Responsable::getUsersRespDirect($resp);
 
-        // merge tous les utilisateurs dont il est le responsable direct et tous les utilisateurs dont il est le chef de groupe
-        // si un utilisateur est dans les deux tableaux on supprime le doublon
-        $usersResp = array_unique(array_merge($usersResp,$usersRespDirect));
         // un utilisateur ne peut etre son propre responsable
         $usersResp = array_diff($usersResp,[$_SESSION['userlogin']]);
 
@@ -368,9 +364,6 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         $usersRespResp = [];
         $usersgroupesIdResponsable = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupesIdResponsable);
 
-        $usersRespDirect = \App\ProtoControllers\Responsable::getUsersRespDirect($resp);
-        $usersgroupesIdResponsable = array_merge($usersgroupesIdResponsable,$usersRespDirect);
-
         foreach ($usersgroupesIdResponsable as $user) {
             if (is_resp($user)) {
                 $usersduRespResponsable[] = $user;
@@ -383,9 +376,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
             if (!\App\ProtoControllers\Responsable::isRespAbsent($userduRespResponsable)) {
                 continue;
             }
-            $usersGroupes = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds(\App\ProtoControllers\Responsable::getIdGroupeResp($userduRespResponsable));
-            $respDirectUser = \App\ProtoControllers\Responsable::getUsersRespDirect($userduRespResponsable);
-            $allUsersResp = array_unique(array_merge($usersGroupes,$respDirectUser));
+            $allUsersResp = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds(\App\ProtoControllers\Responsable::getIdGroupeResp($userduRespResponsable));
             $ids = $this->getIdDemandeDelegable($allUsersResp);
         }
         return $ids;

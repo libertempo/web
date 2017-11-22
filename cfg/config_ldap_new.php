@@ -100,20 +100,6 @@ On va devoir définir des critères de recherche :
 	On recherche donc toutes les personnes dont l'affectation commencent par 'Scienc'
 	(noter ici l'utilisation du caractère joker *)
 
-Vous pouvez aller ENCORE plus loin en définissant vous-même le filtre complet de recherche :
-$config_ldap_filtre_complet
-
-/!\ Laisser ce champ vide si vous ne souhaitez pas l'utiliser !
-
-	Et vous pouvez définir vos propres requêtes ldap (en utilisant le langage associé).
-	Reprenons l'exemple de notre université qui veut que tous les congés personnels de scienc*
-	et de droit soient gérés par l'application.
-	$config_ldap_filtre_complet = "(&(displayName=*)(|(supannAffectation=Scienc*)(supannAffectation=DROIT)))"; 
-
-	Je recherche tous les (utilisateurs) displayName=* ET
-			(dont l'affectation 'supannAffectation' commence par Scien*
-			   OU l'affectation 'supannAffectation' est DROIT)
-
 /********************************************************************/
 
 // Voici ci-dessous 2 configs "pré-remplies" qui peuvent vous aider.
@@ -142,10 +128,6 @@ $config_ldap_nomaff = "displayName";
 $config_ldap_filtre = "objectclass";
 $config_ldap_filrech= "user";
 
-$config_ldap_filtre_complet = "";   
-
-
-
 /********** Config OpenLDAP (en ldaps, anonyme autorisé) **********/
 /*----------------------------------------------------------------*/
 /*
@@ -165,7 +147,6 @@ $config_ldap_nomaff = "displayName";
 $config_ldap_filtre = "mon_filtre_de_recherche";
 $config_ldap_filrech= "mon_critère_de_recherche";
 
-$config_ldap_filtre_complet = "";   
 */
 
 

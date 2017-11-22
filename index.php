@@ -155,9 +155,9 @@ if (isset($_SESSION['userlogin'])) {
 				redirect( ROOT_PATH . $return_url);
 			else
 				redirect( ROOT_PATH .$return_url);
-		} elseif ('Y' === $is_admin) {
-			redirect( ROOT_PATH .'admin/admin_index.php');
-		} elseif ( $is_hr == "Y" ) {
+		}
+                elseif ( $is_hr == "Y" )
+		{
 			redirect( ROOT_PATH .'hr/hr_index.php');
 		} elseif ( $is_resp=="Y" ) {
 			// redirection vers responsable/resp_index.php

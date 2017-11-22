@@ -18,8 +18,14 @@ $version = htmlentities($version, ENT_QUOTES | ENT_HTML401);
 $sql = \includes\SQL::singleton();
 $sql->getPdoObj()->begin_transaction();
 
-$del_config_db="DELETE FROM conges_config WHERE conf_nom = 'duree_session' LIMIT 1;";
+$del_config_db = "DELETE FROM conges_config WHERE conf_nom = 'duree_session' LIMIT 1;";
 $sql->query($del_config_db);
+
+$alterUserSeeAll = "ALTER TABLE `conges_users` DROP `u_see_all`;";
+$sql->query($alterUserSeeAll);
+
+$alterUserResp = "ALTER TABLE `conges_users` DROP `u_resp_login`;";
+$sql->query($alterUserResp);
 
 $sql->getPdoObj()->commit();
 

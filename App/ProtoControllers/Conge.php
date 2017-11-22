@@ -297,4 +297,31 @@ class Conge
 
         return $sql->query($req)->fetch_all(MYSQLI_ASSOC);
     }
+
+    /**
+     * retourne la liste des types de congés par id
+     * 
+     * @param \includes\SQL $sql
+     * @return array $typesConges
+     * 
+     */
+    public static function getTypesAbsences(\includes\SQL $sql, $type = NULL)
+    {
+        $typesConges = [];
+        $req = 'SELECT ta_id, ta_libelle, ta_type
+                FROM conges_type_absence';
+        if($type != NULL){
+            $req .= ' WHERE ta_type=\'' . $type . '\'';
+        }
+        $data   = $sql->query($req);
+
+        while ($type = $data->fetch_array()) {
+            $typesConges[$type['ta_id']] = [
+                'libelle' => $type['ta_libelle'],
+                'type' => $type['ta_type']
+            ];
+        }
+
+        return $typesConges;
+    }
 }
