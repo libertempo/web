@@ -1,6 +1,8 @@
 <?php
 namespace App\Components\Utilisateur;
 
+use App\Helpers\Formatter;
+
 /**
  * @inheritDoc
  *
@@ -32,6 +34,11 @@ class Model extends \App\Libraries\AModel
     public function getDateInscription()
     {
         return $this->getFreshData('dateInscription');
+    }
+
+    public function getDateLastAccess()
+    {
+        return $this->getFreshData('dateLastAccess');
     }
 
     /**
@@ -75,6 +82,14 @@ class Model extends \App\Libraries\AModel
         }
 
         $this->dataUpdated['token'] = $token;
+    }
+
+    /**
+     * @since 0.3
+     */
+    public function updateDateLastAccess()
+    {
+        $this->dataUpdated['dateLastAccess'] = Formatter::timeToSQLDatetime(time());
     }
 
     /**

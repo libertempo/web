@@ -20,7 +20,7 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     define('CSS_PATH',         ASSETS_PATH . 'Css/');
     define('LIBRARY_PATH',     ROOT_PATH . 'library/');
     define('INCLUDE_PATH',     ROOT_PATH . 'includes/');
-    define('CONFIG_PATH',      realpath(ROOT_PATH) . DS . 'cfg'. DS);
+    define('CONFIG_PATH',      realpath(ABSOLUTE_SYSPATH) . DS . 'cfg'. DS);
     define('INSTALL_PATH',     ROOT_PATH . 'install/');
     define('LOCALE_PATH',      ROOT_PATH . 'locale/');
     define('DUMP_PATH',        ROOT_PATH . 'dump/');
@@ -32,6 +32,7 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     define('NIL_INT',          -1);
     define('STATUS_ACTIVE',    1);
     define('STATUS_DELETED',   2);
+    define('SESSION_DURATION', 20*60);
 
     require_once ROOT_PATH . 'vendor/autoload.php';
     require_once ROOT_PATH . 'vendor/raveren/kint/Kint.class.php';
