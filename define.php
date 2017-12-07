@@ -25,7 +25,7 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     define('LOCALE_PATH',      ROOT_PATH . 'locale/');
     define('DUMP_PATH',        ROOT_PATH . 'dump/');
     define('BACKUP_PATH',      ROOT_PATH . 'backup' . DS);
-    define('TEMPLATE_PATH',    ROOT_PATH . 'template/reboot/');
+    define('TEMPLATE_PATH',    PUBLIC_PATH . 'template/');
     define('API_SYSPATH', ABSOLUTE_SYSPATH . 'vendor' . DS . 'Libertempo' . DS . 'libertempo-api' . DS);
     define('API_PATH', ROOT_PATH . 'api/');
     define('PLUGINS_DIR',      INCLUDE_PATH . 'plugins/');
