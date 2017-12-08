@@ -729,7 +729,7 @@ function disableCheckboxGroupe(checkbox,selectId) {
 function searchLdapUser() {
     var form = document.getElementById("manageUser");
     var nom = form.new_nom.value;
-    if(3 >= nom.length) {
+    if(2 >= nom.length) {
         return;
     }
     var page = 'hr_recherche_ldap.php?nom=' + nom;
@@ -755,10 +755,9 @@ function searchLdapUser() {
                 word.prenom  = arr[i]["prenom"];
                 word.innerHTML = word.nom + " " + word.prenom;
                 word.onmousedown = function(){
-                        form.new_nom.value.focus();
-                        form.new_login.value.value = this.login;
-                        form.new_nom.value.value = this.nom;
-                        form.new_prenom.value.value = this.prenom;
+                        document.getElementById("manageUser").new_login.value.value = this.login;
+                        document.getElementById("manageUser").new_nom.value.value = this.nom;
+                        document.getElementById("manageUser").new_prenom.value.value = this.prenom;
                         list.style.display = "none";
                         return false;
                 };
@@ -771,11 +770,6 @@ function searchLdapUser() {
             } else {
                 list.style.display = "none";			
             }
-
-            form.elements['new_login'].innerHTML = arr["login"];
-            form.form[0].elements['new_nom'].value = arr["nom"];
-            form.form[0].elements['new_prenom'].value = arr["prenom"];
         },
     });
 }
-

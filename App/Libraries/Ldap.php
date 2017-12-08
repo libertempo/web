@@ -55,7 +55,7 @@ class Ldap
 
         if(0 < $entries['count']){
             for ($i=0; $i<$entries["count"]; $i++) {
-                $data[$entries[$i][$attributLogin][0]] = [
+                $data[] = [
                     'login' => $entries[$i][$attributLogin][0],
                     'nom' => $entries[$i][$attributNom][0],
                     'prenom' => $entries[$i][$attributPrenom][0],
