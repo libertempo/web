@@ -14,7 +14,7 @@ if (getpost_variable('notice') !== ""){
             $message = _('Utilisateur supprimé');
             break;
         default:
-            $message = "";
+            $message = NIL_INT;
             break;
     }
 }

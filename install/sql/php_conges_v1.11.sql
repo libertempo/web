@@ -393,7 +393,6 @@ INSERT IGNORE INTO `conges_config` VALUES ('mail_refus_conges_alerte_user', 'FAL
 INSERT IGNORE INTO `conges_config` VALUES ('mail_annul_conges_alerte_user', 'FALSE', '08_Mail', 'boolean', 'config_comment_mail_annul_conges_alerte_user');
 INSERT IGNORE INTO `conges_config` VALUES ('mail_modif_demande_alerte_resp', 'FALSE', '08_Mail', 'boolean', 'config_comment_mail_modif_demande_alerte_resp');
 INSERT IGNORE INTO `conges_config` VALUES ('mail_supp_demande_alerte_resp', 'FALSE', '08_Mail', 'boolean', 'config_comment_mail_supp_demande_alerte_resp');
-INSERT IGNORE INTO `conges_config` VALUES ('where_to_find_user_email', 'dbconges', '08_Mail', 'enum=dbconges/ldap', 'config_comment_where_to_find_user_email');
 
 INSERT IGNORE INTO `conges_config` VALUES ('samedi_travail', 'FALSE', '09_jours ouvrables', 'boolean', 'config_comment_samedi_travail');
 INSERT IGNORE INTO `conges_config` VALUES ('dimanche_travail', 'FALSE', '09_jours ouvrables', 'boolean', 'config_comment_dimanche_travail');

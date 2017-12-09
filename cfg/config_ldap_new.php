@@ -2,10 +2,8 @@
 
 /*****************************************************************/
 /*			PARAMATRAGE LDAP
-Ce fichier est utilisisé par PHP_CONGES SEULEMENT SI vous avez activé les options 
-concernants le ldap dans la configuration de php_conges :
-	where_to_find_user_email="ldap" ;
-	how_to_connect_user="ldap";
+Ce fichier est utilisisé SEULEMENT SI vous avez activé l'option 
+how_to_connect_user="ldap" dans la configuration de Libertempo
 
 => vous devez configurer ce fichier pour que les requêtes LDAP 
 s'effectuent sans problème.

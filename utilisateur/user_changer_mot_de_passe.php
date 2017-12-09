@@ -1,10 +1,5 @@
 <?php
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
-$config = new \App\Libraries\Configuration(\includes\SQL::singleton());
-
-if ($config->getMailFromLdap()) {
-    include_once CONFIG_PATH .'config_ldap.php';
-}
 
 $titre = _('user_change_password');
 $self = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);

@@ -588,58 +588,12 @@ function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $m
 // renvoit un tableau a 2 valeurs : prenom+nom et email
 function find_email_adress_for_user($login)
 {
-    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
-    $found_mail=array();
+    $found_mail = array();
+    $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($login);
 
-    if ($config->getMailFromLdap()) { // recherche du mail du user dans un annuaire LDAP
-        // cnx à l'annuaire ldap :
-        $ds = ldap_connect($_SESSION['config']['ldap_server']);
-        if ($_SESSION['config']['ldap_protocol_version'] != 0) {
-            ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, $_SESSION['config']['ldap_protocol_version']) ;
-			// Support Active Directory
-			ldap_set_option($ds, LDAP_OPT_REFERRALS, 0);
-        }
-        if ($_SESSION['config']['ldap_user'] == "")
-             $bound = ldap_bind($ds);
-        else $bound = ldap_bind($ds, $_SESSION['config']['ldap_user'], $_SESSION['config']['ldap_pass']);
+    array_push($found_mail, $infoUser['u_prenom'] . " " . strtoupper($infoUser['u_nom'])) ;
+    array_push($found_mail, $infoUser['u_email']) ;
 
-        // recherche des entrées correspondantes au "login" passé en paramètre :
-        $filter = "(".$_SESSION['config']['ldap_login']."=".$login.")";
-
-        $sr   = ldap_search($ds, $_SESSION['config']['searchdn'], $filter);
-        $data = ldap_get_entries($ds,$sr);
-
-        foreach ($data as $info) {
-            $found_mail=array();
-            // On récupère le nom et le mail de la personne.
-            // Utilisation de la fonction utf8_decode pour corriger les caractères accentués
-            // (qnd les noms ou prénoms ont des accents, "ç", ...
-
-            // Les champs LDAP utilisés, bien que censés être uniformes, sont ceux d'un AD 2003.
-            $ldap_prenom= $_SESSION['config']['ldap_prenom'];
-            $ldap_nom    = $_SESSION['config']['ldap_nom'];
-            $ldap_mail    = $_SESSION['config']['ldap_mail'];
-            $nom    = utf8_decode($info[$ldap_prenom][0])." ".strtoupper(utf8_decode($info[$ldap_nom][0])) ;
-            $addr    = $info[$ldap_mail][0] ;
-            array_push($found_mail, $nom) ;
-            array_push($found_mail, $addr) ;
-        }
-    }
-    elseif (!$config->getMailFromLdap()) { // recherche du mail du user dans la base db_conges
-        $req = 'SELECT u_nom, u_prenom, u_email FROM conges_users WHERE u_login="'.\includes\SQL::quote($login).'" ';
-        $res = \includes\SQL::query($req);
-        $rec = $res->fetch_array();
-
-        $sql_nom = $rec["u_nom"];
-        $sql_prenom = $rec["u_prenom"];
-        $sql_email = $rec["u_email"];
-
-        array_push($found_mail, $sql_prenom." ".strtoupper($sql_nom)) ;
-        array_push($found_mail, $sql_email) ;
-
-    } else {
-        return FALSE;
-    }
     return $found_mail ;
 }
 

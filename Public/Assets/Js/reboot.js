@@ -755,11 +755,12 @@ function searchLdapUser() {
                 word.prenom  = arr[i]["prenom"];
                 word.innerHTML = word.nom + " " + word.prenom;
                 word.onmousedown = function(){
-                        document.getElementById("manageUser").new_login.value.value = this.login;
-                        document.getElementById("manageUser").new_nom.value.value = this.nom;
-                        document.getElementById("manageUser").new_prenom.value.value = this.prenom;
-                        list.style.display = "none";
-                        return false;
+                    document.getElementById("manageUser").new_nom.value.focus();
+                    document.getElementById("manageUser").new_login.value.value = this.login;
+                    document.getElementById("manageUser").new_nom.value.value = this.nom;
+                    document.getElementById("manageUser").new_prenom.value.value = this.prenom;
+                    list.style.display = "none";
+                    return false;
                 };
             }
 

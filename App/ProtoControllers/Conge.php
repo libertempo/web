@@ -21,9 +21,6 @@ class Conge
 
         $return = '';
         $errorsLst = [];
-        if ($config->getMailFromLdap()) {
-            include_once CONFIG_PATH . 'config_ldap.php';
-        }
 
         if (!empty($_POST) && !$this->isSearch($_POST)) {
             if (0 < (int) \utilisateur\Fonctions::postDemandeCongesHeure($_POST, $errorsLst)) {

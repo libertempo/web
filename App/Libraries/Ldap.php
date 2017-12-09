@@ -20,15 +20,16 @@ class Ldap
 
     private function initLdapConn()
     {
-        $this->ds = \ldap_connect($_SESSION['config']['ldap_server']);
-        if($_SESSION['config']['ldap_protocol_version'] != 0) {
-            ldap_set_option($this->ds, LDAP_OPT_PROTOCOL_VERSION, $_SESSION['config']['ldap_protocol_version']) ;
+        include CONFIG_PATH . 'config_ldap.php';
+        $this->ds = \ldap_connect($config_ldap_server);
+        if($config_ldap_protocol_version != 0) {
+            ldap_set_option($this->ds, LDAP_OPT_PROTOCOL_VERSION, $config_ldap_protocol_version);
             ldap_set_option($this->ds, LDAP_OPT_REFERRALS, 0);
         }
-        if ($_SESSION['config']['ldap_user'] == "") {
+        if ($config_ldap_user == "") {
             $bound = ldap_bind($this->ds);  // connexion anonyme au serveur
         } else {
-            $bound = ldap_bind($this->ds, $_SESSION['config']['ldap_user'], $_SESSION['config']['ldap_pass']);
+            $bound = ldap_bind($this->ds, $config_ldap_user, $config_ldap_pass);
         }
 
     }
@@ -41,24 +42,22 @@ class Ldap
 
     public function getInfosUser($nom)
     {
+        include CONFIG_PATH . 'config_ldap.php';
         $data = [];
-        $attributLogin = $_SESSION['config']['ldap_login'];
-        $attributNom = $_SESSION['config']['ldap_nom'];
-        $attributPrenom = $_SESSION['config']['ldap_prenom'];
-        $filter = "(&(" . $_SESSION['config']['ldap_nomaff']."=" . $nom . "*)
-                    (" . $_SESSION['config']['ldap_filtre'] . "=" . $_SESSION['config']['ldap_filrech'] . "))";
+        $filter = "(&(" . $config_ldap_nomaff . "=" . $nom . "*)
+                    (" . $config_ldap_filtre . "=" . $config_ldap_filrech . "))";
 
-        $attributs = array($attributLogin, $attributNom, $attributPrenom);
+        $attributs = array($config_ldap_login, $config_ldap_nom, $config_ldap_prenom);
         
-        $sr   = ldap_search($this->ds, $_SESSION['config']['searchdn'], $filter, $attributs, 0, 10);
+        $sr   = ldap_search($this->ds, $config_searchdn, $filter, $attributs, 0, 10);
         $entries = ldap_get_entries($this->ds,$sr);
 
         if(0 < $entries['count']){
             for ($i=0; $i<$entries["count"]; $i++) {
                 $data[] = [
-                    'login' => $entries[$i][$attributLogin][0],
-                    'nom' => $entries[$i][$attributNom][0],
-                    'prenom' => $entries[$i][$attributPrenom][0],
+                    'login' => $entries[$i][$config_ldap_login][0],
+                    'nom' => $entries[$i][$config_ldap_nom][0],
+                    'prenom' => $entries[$i][$config_ldap_prenom][0],
                     ];
             }
         }
@@ -67,18 +66,18 @@ class Ldap
 
     public function getEmailUser($login)
     {
-        $attributLogin = $_SESSION['config']['ldap_login'];
-        $attributEmail = $_SESSION['config']['email'];
-        $filter = "(&(" . $attributLogin . "=" . $login . ")
-                    (" . $_SESSION['config']['ldap_filtre'] . "=" . $_SESSION['config']['ldap_filrech'] . "))";
+        include CONFIG_PATH . 'config_ldap.php';
 
-        $attributs = array($attributLogin, $attributEmail);
+        $filter = "(&(" . $config_ldap_login . "=" . $login . ")
+                    (" . $config_ldap_filtre . "=" . $config_ldap_filrech . "))";
+
+        $attributs = array($config_ldap_login, $config_ldap_mail);
         
-        $sr   = ldap_search($this->ds, $_SESSION['config']['searchdn'], $filter, $attributs, 0, 10);
+        $sr   = ldap_search($this->ds, $config_searchdn, $filter, $attributs, 0, 10);
         $entries = ldap_get_entries($this->ds,$sr);
 
         if(0 < $entries['count']){
-            return $entries[0][$attributEmail][0];
+            return $entries[0][$config_ldap_mail][0];
         } else {
             return "";
         }

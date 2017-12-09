@@ -23,7 +23,7 @@ class Utilisateur
         $sql = \includes\SQL::singleton();
         $return = '';
 
-        if("" !== $message){
+        if(NIL_INT !== $message){
             $return .= '<div class="alert alert-info">' . $message . '.</div>';
         }
         $return .= '<a href="' . ROOT_PATH . 'hr/hr_index.php?onglet=ajout_user" style="float:right" class="btn btn-success">' . _('admin_onglet_add_user') . '</a>';
@@ -79,9 +79,7 @@ class Utilisateur
             $childTable .= '<tr class="' . (($infosUser['u_is_active']=='Y') ? 'actif' : 'inactif') . '">';
             $childTable .= '<td class="utilisateur"><strong>' . $infosUser['u_nom'] . ' ' . $infosUser['u_prenom'] . '</strong>';
             $childTable .= '<span class="login">' . $login . '</span>';
-            if($_SESSION['config']['where_to_find_user_email']=="dbconges") {
-                $childTable .= '<span class="mail">' . $infosUser['u_email'] . '</span>';
-            }
+            $childTable .= '<span class="mail">' . $infosUser['u_email'] . '</span>';
             // droit utilisateur
             $rights = array();
             if($infosUser['u_is_active'] == 'N') {
@@ -248,18 +246,18 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $childTable .= '</tr></thead><tbody>';
         $soldeHeureId = uniqid();
         $readOnly = '';
-        $JsLdap = '';
+        $optLdap = '';
         if($_SESSION['config']['export_users_from_ldap']){
             $readOnly = 'readonly';
-            $JsLdap = 'onkeyup="searchLdapUser()"';
+            $optLdap = 'onkeyup="searchLdapUser()" autocomplete="off"';
         }
 
         $childTable .= '<tr class="update-line">';
 
-        $childTable .= "<td><input class=\"form-control\" type=\"text\" name=\"new_login\" size=\"10\" maxlength=\"99\" value=\"".$formValue['login']."\" " . $readOnly . "></td>" ;
-        $childTable .= "<td><input class=\"form-control\" type=\"text\" name=\"new_nom\" size=\"10\" maxlength=\"30\" value=\"".$formValue['nom']."\" " . $JsLdap . "></td>" ;
-        $childTable .= "<td><input class=\"form-control\" type=\"text\" name=\"new_prenom\" size=\"10\" maxlength=\"30\" value=\"".$formValue['prenom']."\" " . $readOnly . "></td>" ;
-        $childTable .= "<td><input class=\"form-control\" type=\"text\" name=\"new_quotite\" size=\"3\" maxlength=\"3\" value=\"".$formValue['quotite']."\"></td>" ;
+        $childTable .= "<td><input class=\"form-control\" type=\"text\" name=\"new_login\" size=\"10\" maxlength=\"99\" value=\"".$formValue['login']."\" " . $readOnly . " required></td>" ;
+        $childTable .= "<td><input class=\"form-control\" type=\"text\" id=\"new_nom\" name=\"new_nom\" size=\"10\" maxlength=\"30\" value=\"".$formValue['nom']."\" " . $optLdap . " required></td>" ;
+        $childTable .= "<td><input class=\"form-control\" type=\"text\" name=\"new_prenom\" size=\"10\" maxlength=\"30\" value=\"".$formValue['prenom']."\" " . $readOnly . " required></td>" ;
+        $childTable .= "<td><input class=\"form-control\" type=\"text\" name=\"new_quotite\" size=\"3\" maxlength=\"3\" value=\"".$formValue['quotite']."\" required></td>" ;
 
         if($_SESSION['config']['gestion_heures'] ){
             $childTable .= "<td><input class=\"form-control\" type=\"text\" name=\"new_solde_heure\" id=\"" . $soldeHeureId . "\" size=\"6\" maxlength=\"6\" value=\"".$formValue['soldeHeure']."\"></td>" ;
@@ -283,8 +281,8 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             $childTable .= "<td><input class=\"form-control\" type=\"text\" name=\"new_email\" size=\"10\" maxlength=\"99\" value=\"".$formValue['email']."\"></td>" ;
         }
         if($_SESSION['config']['how_to_connect_user'] == "dbconges"){
-            $childTable .= "<td><input class=\"form-control\" type=\"password\" name=\"new_password1\" size=\"10\" maxlength=\"15\" value=\"\" autocomplete=\"off\" ></td>" ;
-            $childTable .= "<td><input class=\"form-control\" type=\"password\" name=\"new_password2\" size=\"10\" maxlength=\"15\" value=\"\" autocomplete=\"off\" ></td>" ;
+            $childTable .= "<td><input class=\"form-control\" type=\"password\" name=\"new_password1\" size=\"10\" maxlength=\"15\" value=\"\" autocomplete=\"off\" required></td>" ;
+            $childTable .= "<td><input class=\"form-control\" type=\"password\" name=\"new_password2\" size=\"10\" maxlength=\"15\" value=\"\" autocomplete=\"off\" required></td>" ;
         }
         $childTable .= '</tr></tbody>';
         $childTable .= '<script type="text/javascript">generateTimePicker("' . $soldeHeureId . '");</script>';

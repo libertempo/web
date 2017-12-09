@@ -149,6 +149,18 @@ class Utilisateur
     }
 
     /**
+     * Récupère l'adresse email de l'utilisateur
+     *
+     * @todo En attendant l'objet ldap utilisation de find_email_adress_for_user
+     *
+     * @param string $login
+     * @return string $mail
+     */
+    public static function getEmailUtilisateur($login)  {
+        return static::getDonneesUtilisateur($login)["u_email"];
+    }
+
+    /**
      * Retourne la liste des utilisateurs associés à un planning
      *
      * @param int $planningId
@@ -269,23 +281,6 @@ class Utilisateur
             || static::hasHeureReposEnCours($login)
             || static::hasHeureAdditionnelleEnCours($login)
         ;
-    }
-
-    /**
-     * Récupère l'adresse email de l'utilisateur
-     *
-     * @todo En attendant l'objet ldap utilisation de find_email_adress_for_user
-     *
-     * @param string $login
-     * @return string $mail
-     */
-    public static function getEmailUtilisateur($login)  {
-        if($_SESSION['config']['export_users_from_ldap']){
-            $ldap = new \App\Libraries\Ldap();
-            return $ldap->getEmailUser($data['login']);
-        }
-
-        return static::getDonneesUtilisateur($login)["u_email"];
     }
 
     /**
