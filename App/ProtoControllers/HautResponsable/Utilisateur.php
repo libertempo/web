@@ -23,7 +23,7 @@ class Utilisateur
         $sql = \includes\SQL::singleton();
         $return = '';
 
-        if(NIL_INT !== $message){
+        if (NIL_INT !== $message) {
             $return .= '<div class="alert alert-info">' . $message . '.</div>';
         }
         $return .= '<a href="' . ROOT_PATH . 'hr/hr_index.php?onglet=ajout_user" style="float:right" class="btn btn-success">' . _('admin_onglet_add_user') . '</a>';
@@ -57,13 +57,13 @@ class Utilisateur
             $childTable .= '<th>' . _('divers_solde') . ' ' . $infoType['libelle'] . '</th>';
         }
 
-        if($_SESSION['config']['gestion_heures']){
+        if ($_SESSION['config']['gestion_heures']) {
             $childTable .= '<th>' . _('divers_solde') . ' ' . _('heures') . '</th>';
         }
 
         $childTable .= '<th></th>';
         $childTable .= '<th></th>';
-        if(($_SESSION['config']['how_to_connect_user'] == "dbconges")) {
+        if (($_SESSION['config']['how_to_connect_user'] == "dbconges")) {
             $childTable .= '<th></th>';
         }
         $childTable .= '</tr>';
@@ -82,20 +82,20 @@ class Utilisateur
             $childTable .= '<span class="mail">' . $infosUser['u_email'] . '</span>';
             // droit utilisateur
             $rights = array();
-            if($infosUser['u_is_active'] == 'N') {
+            if ($infosUser['u_is_active'] == 'N') {
                 $rights[] = 'inactif';
             }
-            if($infosUser['u_is_admin'] == 'Y') {
+            if ($infosUser['u_is_admin'] == 'Y') {
                 $rights[] = 'administrateur';
             }
-            if($infosUser['u_is_resp'] == 'Y') {
+            if ($infosUser['u_is_resp'] == 'Y') {
                 $rights[] = 'responsable';
             }
-            if($infosUser['u_is_hr'] == 'Y') {
+            if ($infosUser['u_is_hr'] == 'Y') {
                 $rights[] = 'RH';
             }
 
-            if(count($rights) > 0) {
+            if (count($rights) > 0) {
                 $childTable .= '<span class="rights">' . implode(', ', $rights) . '</span>';
             }
 
@@ -123,7 +123,7 @@ class Utilisateur
                     $childTable .= '<td>0</td>';
                 }
             }
-            if($_SESSION['config']['gestion_heures']){
+            if ($_SESSION['config']['gestion_heures']) {
                 $childTable .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($infosUser['u_heure_solde']) . '</td>';
             }
 
@@ -158,7 +158,7 @@ class Utilisateur
         $errorsLst = [];
         $notice    = '';
 
-        if(NIL_INT !== $userId){
+        if (NIL_INT !== $userId) {
             $userInfo = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($userId)[$userId];
             $formValue = [
                 'login' => $userInfo['u_login'],
@@ -190,7 +190,7 @@ class Utilisateur
                 'pwd2' => '',
             ];
         }
-        if(!empty($_POST)){
+        if (!empty($_POST)) {
             $formValue = \App\ProtoControllers\HautResponsable\Utilisateur::dataForm2Array($_POST);
             if (0 < (int) \App\ProtoControllers\HautResponsable\Utilisateur::postFormUser($formValue, $errorsLst, $notice)) {
                 redirect(ROOT_PATH . 'hr/hr_index.php?onglet=page_principale&notice=' . $notice, false);
@@ -205,7 +205,7 @@ class Utilisateur
             }
         }
 
-        if(NIL_INT !== $userId){
+        if (NIL_INT !== $userId) {
             $return .= '<h1>' . _('Modification utilisateur') . '</h1>';
         }else{
             $return .= '<h1>' . _('Nouvel Utilisateur') . '</h1>';
@@ -229,17 +229,17 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $childTable .= '<th>' . _('Nom') . '</th>';
         $childTable .= '<th>' . _('Prénom') . '</th>';
         $childTable .= '<th>' . _('Quotité') . '</th>';
-        if($_SESSION['config']['gestion_heures']){
+        if ($_SESSION['config']['gestion_heures']) {
             $childTable .= '<th>' . _('solde d\'heure') . '</th>';
         }
         $childTable .= '<th>' . _('Responsable?') . '</th>';
         $childTable .= '<th>' . _('Administrateur?') . '</th>';
         $childTable .= '<th>' . _('Haut responsable?') . '</th>';
         $childTable .= '<th>' . _('activé?') . '</th>';
-        if(!$_SESSION['config']['export_users_from_ldap']){
+        if (!$_SESSION['config']['export_users_from_ldap']) {
             $childTable .= '<th>' . _('Email') . '</th>';
         }
-        if($_SESSION['config']['how_to_connect_user'] == "dbconges"){
+        if ($_SESSION['config']['how_to_connect_user'] == "dbconges") {
             $childTable .= '<th>' . _('mot de passe') . '</th>';
             $childTable .= '<th>' . _('ressaisir mot de passe') . '</th>';
         }
@@ -247,7 +247,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $soldeHeureId = uniqid();
         $readOnly = '';
         $optLdap = '';
-        if($_SESSION['config']['export_users_from_ldap']){
+        if ($_SESSION['config']['export_users_from_ldap']) {
             $readOnly = 'readonly';
             $optLdap = 'onkeyup="searchLdapUser()" autocomplete="off"';
         }
@@ -259,7 +259,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $childTable .= "<td><input class=\"form-control\" type=\"text\" name=\"new_prenom\" size=\"10\" maxlength=\"30\" value=\"".$formValue['prenom']."\" " . $readOnly . " required></td>" ;
         $childTable .= "<td><input class=\"form-control\" type=\"text\" name=\"new_quotite\" size=\"3\" maxlength=\"3\" value=\"".$formValue['quotite']."\" required></td>" ;
 
-        if($_SESSION['config']['gestion_heures'] ){
+        if ($_SESSION['config']['gestion_heures'] ) {
             $childTable .= "<td><input class=\"form-control\" type=\"text\" name=\"new_solde_heure\" id=\"" . $soldeHeureId . "\" size=\"6\" maxlength=\"6\" value=\"".$formValue['soldeHeure']."\"></td>" ;
         }else{
             $childTable .= "<input class=\"form-control\" type=\"hidden\" name=\"new_solde_heure\" id=\"" . $soldeHeureId . "\" size=\"6\" maxlength=\"6\" value=\"0\">" ;
@@ -277,10 +277,10 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
                         <option value=\"Y\" " . ($formValue['isActive'] == 'Y' ? 'selected' : '') . ">Y</option>
                         <option value=\"N\" " . ($formValue['isActive'] == 'N' ? 'selected' : '') . ">N</option></select></td>" ;
 
-        if(!$_SESSION['config']['export_users_from_ldap']){
+        if (!$_SESSION['config']['export_users_from_ldap']) {
             $childTable .= "<td><input class=\"form-control\" type=\"text\" name=\"new_email\" size=\"10\" maxlength=\"99\" value=\"".$formValue['email']."\"></td>" ;
         }
-        if($_SESSION['config']['how_to_connect_user'] == "dbconges"){
+        if ($_SESSION['config']['how_to_connect_user'] == "dbconges") {
             $childTable .= "<td><input class=\"form-control\" type=\"password\" name=\"new_password1\" size=\"10\" maxlength=\"15\" value=\"\" autocomplete=\"off\" required></td>" ;
             $childTable .= "<td><input class=\"form-control\" type=\"password\" name=\"new_password2\" size=\"10\" maxlength=\"15\" value=\"\" autocomplete=\"off\" required></td>" ;
         }
@@ -295,7 +295,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $return .= \App\ProtoControllers\HautResponsable\Utilisateur::getFormUserSoldes($formValue, $userId);
         $return .= '<br><hr>';
 
-        if($userId != NIL_INT){
+        if ($userId != NIL_INT) {
             $return .= '<input type="hidden" name="_METHOD" value="PUT" />';
             $return .= '<input type="hidden" name="old_login" value="' . $userId . '" />';
         } else {
@@ -318,9 +318,9 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
     {
         $sql = \includes\SQL::singleton();
         $typeAbsencesConges = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges');
-        if(NIL_INT !== $userId){
+        if (NIL_INT !== $userId) {
             $soldesByType = \App\ProtoControllers\Utilisateur::getSoldesEmploye($sql, $userId);
-            foreach ($soldesByType as $typeId => $infos){
+            foreach ($soldesByType as $typeId => $infos) {
                 $data['joursAn'][$typeId] = $infos['su_nb_an'];
                 $data['soldes'][$typeId] = $infos['su_solde'];
                 $data['reliquat'][$typeId] = $infos['su_reliquat'];
@@ -361,7 +361,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             $childTable .= '</tr>';
             $i = !$i;
         }
-        if($_SESSION['config']['gestion_conges_exceptionnels']){
+        if ($_SESSION['config']['gestion_conges_exceptionnels']) {
             $typeAbsencesExceptionnels = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges_exceptionnels');
             foreach($typeAbsencesExceptionnels as $typeId => $infoType) {
                 $childTable .= '<tr class="'.($i?'i':'p').'">';
@@ -413,13 +413,13 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $groupes = \App\ProtoControllers\Groupe::getListeGroupes($sql);
 
         $groupesUser = [];
-        if(NIL_INT !== $userId){
+        if (NIL_INT !== $userId) {
             $groupesUser = \App\ProtoControllers\Utilisateur::getGroupesId($userId);
         }
 
         $i = true;
         foreach($groupes as $groupeId => $groupeInfos) {
-            if(in_array($groupeId, $groupesUser)){
+            if (in_array($groupeId, $groupesUser)) {
                 $checkbox="<input type=\"checkbox\" name=\"checkbox_user_groups[$groupeId]\" value=\"$groupeId\" checked>";
             } else {
                 $checkbox="<input type=\"checkbox\" name=\"checkbox_user_groups[$groupeId]\" value=\"$groupeId\">";
@@ -449,7 +449,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $errorsLst = [];
         $notice    = '';
 
-        if(!empty($_POST)){
+        if (!empty($_POST)) {
             $formValue = 
                     [
                         'login' => $_POST['new_login'],
@@ -511,7 +511,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
      * @param type $htmlPost
      * @return type
      */
-    private static function dataForm2Array($htmlPost){
+    private static function dataForm2Array($htmlPost) {
         $data['login'] = htmlentities($htmlPost['new_login'], ENT_HTML401);
         $data['oldLogin'] = htmlentities($htmlPost['old_login'], ENT_HTML401);
         $data['nom'] = htmlentities($htmlPost['new_nom'], ENT_QUOTES | ENT_HTML401);
@@ -523,14 +523,14 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $data['isAdmin'] = $htmlPost['new_is_admin'] === 'Y' ? 'Y' : 'N';
         $data['isHR'] = $htmlPost['new_is_hr'] === 'Y' ? 'Y' : 'N';
 
-        if(!$_SESSION['config']['export_users_from_ldap']){
+        if (!$_SESSION['config']['export_users_from_ldap']) {
             $data['email'] = htmlentities($htmlPost['new_email'], ENT_QUOTES | ENT_HTML401);
         } else {
             $ldap = new \App\Libraries\Ldap();
             $data['email'] = $ldap->getEmailUser($data['login']);
         }
 
-        if($_SESSION['config']['how_to_connect_user'] == "dbconges"){
+        if ($_SESSION['config']['how_to_connect_user'] == "dbconges") {
             $data['pwd1'] = $htmlPost['new_password1'] == "" ? "" : md5($htmlPost['new_password1']);
             $data['pwd2'] = $htmlPost['new_password2'] == "" ? "" : md5($htmlPost['new_password2']);
         } else {
@@ -538,17 +538,17 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             $data['pwd2'] = md5('none');
         }
 
-        if(array_key_exists('_METHOD', $htmlPost)){
+        if (array_key_exists('_METHOD', $htmlPost)) {
             $data['_METHOD'] = htmlentities($htmlPost['_METHOD'], ENT_QUOTES | ENT_HTML401);
         }
         $data['joursAn'] = $htmlPost['tab_new_jours_an'];
-        foreach ($htmlPost['tab_new_jours_an'] as $typeId => $joursAn){
+        foreach ($htmlPost['tab_new_jours_an'] as $typeId => $joursAn) {
             $data['joursAn'][$typeId] = htmlentities($joursAn, ENT_QUOTES | ENT_HTML401);
         }
-        foreach ($htmlPost['tab_new_solde'] as $typeId => $solde){
+        foreach ($htmlPost['tab_new_solde'] as $typeId => $solde) {
             $data['soldes'][$typeId] = htmlentities($solde, ENT_QUOTES | ENT_HTML401);
         }
-        foreach ($htmlPost['tab_new_reliquat'] as $typeId => $solde){
+        foreach ($htmlPost['tab_new_reliquat'] as $typeId => $solde) {
             $data['reliquats'][$typeId] = htmlentities($solde, ENT_QUOTES | ENT_HTML401);
         }
         $data['groupesId'] = array_key_exists('checkbox_user_groups', $htmlPost) ? $htmlPost['checkbox_user_groups'] : [];
@@ -561,7 +561,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
      *
      * @return int {-1, 0, 1}
      */
-    private static function sortParActif(array $a, array $b) {
+    private static function sortParActif (array $a, array $b) {
         if ($a['u_is_active'] == 'Y' && $b['u_is_active'] == 'N') {
             return -1; // $a est avant $b
         } elseif ($a['u_is_active'] == 'N' && $b['u_is_active'] == 'Y') {
@@ -583,7 +583,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
     public static function postFormUser(array $post, array &$errors, &$notice)
     {
         $return = NIL_INT;
-        if(!\App\ProtoControllers\Utilisateur::isRH($_SESSION['userlogin'])){
+        if (!\App\ProtoControllers\Utilisateur::isRH($_SESSION['userlogin'])) {
             $errors[] = _('non autorisé');
             return $return;
         }
@@ -592,7 +592,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             switch ($post['_METHOD']) {
                 case 'DELETE':
                     $return = static::deleteUser($post['login'], $errors);
-                    if(NIL_INT !== $return){
+                    if (NIL_INT !== $return) {
                         $notice = "deleted";
                         log_action(0, '', $post['login'], 'utilisateur ' . $post['login'] . ' supprimé');
                     }
@@ -601,7 +601,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
                     if (!empty($_GET['login'])) {
                         $return = static::putUser($post, $errors);
                     }
-                    if(NIL_INT !== $return){
+                    if (NIL_INT !== $return) {
                         $notice = "modified";
                         log_action(0, '', $post['login'], 'utilisateur ' . $post['login'] . ' modifié');
                     }
@@ -609,7 +609,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             }
         } else {
                 $return = static::insertUtilisateur($post, $errors);
-                if(NIL_INT !== $return){
+                if (NIL_INT !== $return) {
                     $notice = "inserted";
                     log_action(0, '', $post['login'], 'utilisateur ' . $post['login'] . ' ajouté');
                 }
@@ -651,7 +651,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $req = 'DELETE FROM heure_repos WHERE login = "' . $user . '"';
         $sql->query($req);
 
-        if($rollback){
+        if ($rollback) {
             $sql->getPdoObj()->commit();
         } else {
             $sql->getPdoObj()->rollback();
@@ -676,17 +676,17 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
 
     private static function insertUtilisateur($data, &$errors)
     {
-        if(!static::isFormInsertValide($data, $errors)){
+        if (!static::isFormInsertValide($data, $errors)) {
             return NIL_INT;
         }
 
         $sql = \includes\SQL::singleton();
         $sql->getPdoObj()->begin_transaction();
         $insertInfos = static::insertInfosUser($data, $sql);
-        if(!$_SESSION['config']['export_users_from_ldap']){
+        if (!$_SESSION['config']['export_users_from_ldap']) {
             $insertEmail = static::insertEmailUser($data, $sql);
         }
-        if(!empty($data|'groupesId')){
+        if (!empty($data|'groupesId')) {
             $insertGroupes = static::insertGroupesUser($data, $sql);
         }
         return $sql->getPdoObj()->commit();
@@ -744,7 +744,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
 
     private static function insertGroupesUser($data, \includes\SQL $sql)
     {
-        foreach($data['groupesId'] as $gid => $value){
+        foreach($data['groupesId'] as $gid => $value) {
             $req = "INSERT INTO conges_groupe_users SET gu_gid=" . $gid . ", gu_login='" . $data['login'] . "' "  ;
             $sql->query($req);
         }
@@ -754,7 +754,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
 
     private static function putUser($data, &$errors)
     {
-        if(!static::isFormUpdateValide($data, $errors)){
+        if (!static::isFormUpdateValide($data, $errors)) {
             return NIL_INT;
         }
 
@@ -762,17 +762,17 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $sql->getPdoObj()->begin_transaction();
         $userUpdate = static::updateInfosUser($data, $sql);
         $soldesUpdate = static::updateSoldeUser($data, $sql);
-        if('' != $data['pwd1']){
+        if ('' != $data['pwd1']) {
             $pwdUpdate = static::updatePasswordUser($data, $sql);
         }
 
-        if(!$_SESSION['config']['export_users_from_ldap']){
+        if (!$_SESSION['config']['export_users_from_ldap']) {
             $emailUpdate = static::updateEmailUser($data, $sql);
         }
 
         $updateGroupes = static::updateGroupesUser($data, $sql);
 
-        if($data['oldLogin'] != $data['login']){
+        if ($data['oldLogin'] != $data['login']) {
             $loginUpdate = static::updateLoginUser($data, $sql);
         }
 
@@ -782,14 +782,14 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
     private static function isFormInsertValide($data, &$errors)
     {
         $users = \App\ProtoControllers\Utilisateur::getListId(false, true);
-        if(in_array($data['login'], $users)){
+        if (in_array($data['login'], $users)) {
             $errors[] = _('Cet identifiant existe déja.');
             $return = false;
         }
 
-        if($_SESSION['config']['how_to_connect_user'] == 'dbconges')
+        if ($_SESSION['config']['how_to_connect_user'] == 'dbconges')
         {
-            if($data['pwd1'] == '' || strcmp($data['pwd1'], $data['pwd2'])!=0 ){
+            if ($data['pwd1'] == '' || strcmp($data['pwd1'], $data['pwd2'])!=0 ) {
                 $errors[] = _('Saisie du mot de passe incorrect');
                 return false;
             }
@@ -804,22 +804,22 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
     {
         $sql = \includes\SQL::singleton();
         $users = \App\ProtoControllers\Utilisateur::getListId(false, true);
-        if(in_array($data['login'], $users) && $data['login'] != $data['oldLogin']){
+        if (in_array($data['login'], $users) && $data['login'] != $data['oldLogin']) {
             $errors[] = _('Cet identifiant existe déja.');
             $return = false;
         }
 
         $groupesId = \App\ProtoControllers\Groupe::getListeId($sql);
-        if('N' === $data['isResp'] 
+        if ('N' === $data['isResp'] 
                 && (\App\ProtoControllers\Groupe::isResponsableGroupe($data['login'], $groupesId, $sql) 
-                || \App\ProtoControllers\Groupe::isGrandResponsableGroupe($data['login'], $groupesId, $sql))){
+                || \App\ProtoControllers\Groupe::isGrandResponsableGroupe($data['login'], $groupesId, $sql))) {
             $errors[] = _('Cette utilisateur est responsable d\'au moins un groupe');
             $return = false;
         }
 
-        if($_SESSION['config']['how_to_connect_user'] == 'dbconges')
+        if ($_SESSION['config']['how_to_connect_user'] == 'dbconges')
         {
-            if($data['pwd1'] != '' && strcmp($data['pwd1'], $data['pwd2'])!=0 ){
+            if ($data['pwd1'] != '' && strcmp($data['pwd1'], $data['pwd2'])!=0 ) {
                 $errors[] = _('Saisie du mot de passe incorrect');
                 return false;
             }
@@ -834,45 +834,45 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
     {
         $return = true;
 
-        if ('' == $data['login']){
+        if ('' == $data['login']) {
             $errors[] = _('Veuillez saisir un identifiant');
             $return = false;
         }
 
-        if(!preg_match('/^[a-z.\d_-]{2,30}$/i', $data['login'])){
+        if (!preg_match('/^[a-z.\d_-]{2,30}$/i', $data['login'])) {
             $errors[] = _('Identifiant : caractère incorrect.');
             $return = false;
         }
 
-        if(0 >= $data['quotite'] || 100 < $data['quotite']){
+        if (0 >= $data['quotite'] || 100 < $data['quotite']) {
             $errors[] = _('quotité incorrect');
             $return = false;
         }
 
         if ($_SESSION['config']['gestion_heures']) {
-            if(!\App\Helpers\Formatter::isHourFormat($data['soldeHeure'])){
+            if (!\App\Helpers\Formatter::isHourFormat($data['soldeHeure'])) {
                 $errors[] = _('Format du solde d\'heure incorrect');
                 $return = false;
             }
         }
 
-        if(!$_SESSION['config']['export_users_from_ldap']){
-            if(!filter_var($data['email'], FILTER_VALIDATE_EMAIL)){
+        if (!$_SESSION['config']['export_users_from_ldap']) {
+            if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
                 $errors[] = _('Format de l\'adresse email incorrect');
                 $return = false;
             }
         }
 
-        foreach ($data['joursAn'] as $typeId => $joursAn){
-            if(!is_numeric($joursAn)){
+        foreach ($data['joursAn'] as $typeId => $joursAn) {
+            if (!is_numeric($joursAn)) {
                 $errors[] = _('nombre de jours par an incorrect');
                 $return = false;
             break;
             }
         }
 
-        foreach ($data['soldes'] as $typeId => $solde){
-            if(!is_numeric($solde)){
+        foreach ($data['soldes'] as $typeId => $solde) {
+            if (!is_numeric($solde)) {
                 $errors[] = _('solde incorrect');
                 $return = false;
             break;
