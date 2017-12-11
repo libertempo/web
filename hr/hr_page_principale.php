@@ -1,6 +1,8 @@
 <?php
 
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
+$message = NIL_INT;
+
 if (getpost_variable('notice') !== ""){
     $notice = getpost_variable('notice');
     switch ($notice) {
@@ -14,7 +16,6 @@ if (getpost_variable('notice') !== ""){
             $message = _('Utilisateur supprimé');
             break;
         default:
-            $message = NIL_INT;
             break;
     }
 }

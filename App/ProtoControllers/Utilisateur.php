@@ -143,9 +143,15 @@ class Utilisateur
                 FROM conges_users
                 WHERE u_login IN ("' . implode('", "', $escapedLogins) . '")
                 ORDER BY u_nom, u_prenom';
-        $query = $sql->query($req);
-
-        return $query->fetch_all();
+        $res = $sql->query($req);
+        while ($data = $res->fetch_array()) {
+            $donnees[$data['u_login']] = $data;
+            if($_SESSION['config']['export_users_from_ldap']){
+                $ldap = new \App\Libraries\Ldap();
+                $donnees[$data['u_login']]['u_email'] = $ldap->getEmailUser($data['u_login']);
+            }
+        }
+        return $donnees;
     }
 
     /**

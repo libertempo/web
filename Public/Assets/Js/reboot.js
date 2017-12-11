@@ -743,7 +743,7 @@ function searchLdapUser() {
             var arr = new Array();
             arr = JSON.parse(data);
             var list = document.createElement("ul");
-            list.className = "listeNom";
+            list.className = "suggestions";
             list.style.display = "none";
             form.appendChild(list);
             var frag = document.createDocumentFragment();
@@ -755,10 +755,10 @@ function searchLdapUser() {
                 word.prenom  = arr[i]["prenom"];
                 word.innerHTML = word.nom + " " + word.prenom;
                 word.onmousedown = function(){
-                    document.getElementById("manageUser").new_nom.value.focus();
-                    document.getElementById("manageUser").new_login.value.value = this.login;
-                    document.getElementById("manageUser").new_nom.value.value = this.nom;
-                    document.getElementById("manageUser").new_prenom.value.value = this.prenom;
+                    document.getElementById("manageUser").new_nom.focus();
+                    document.getElementById("manageUser").new_login.value = this.login;
+                    document.getElementById("manageUser").new_nom.value = this.nom;
+                    document.getElementById("manageUser").new_prenom.value = this.prenom;
                     list.style.display = "none";
                     return false;
                 };
