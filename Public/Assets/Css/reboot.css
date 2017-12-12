@@ -744,7 +744,7 @@ td.calendrier-jour.heure_repos_1 div.triangle-bottom {
 }
 
 #manageUser .suggestions {
-	width:342px;position:relative;margin:-6px auto 0;padding:0;list-style-type:none;border:1px solid #d5d4d4;background:#fff;
+	width:100px;position:relative;margin:-6px auto 0;padding:0;list-style-type:none;border:1px solid #d5d4d4;background:#fff;display: none;
 	font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;font-size:13px;color:#555;	
 	-moz-border-radius:2px;
 	-webkit-border-radius:2px;

@@ -742,10 +742,7 @@ function searchLdapUser() {
         {
             var arr = new Array();
             arr = JSON.parse(data);
-            var list = document.createElement("ul");
-            list.className = "suggestions";
-            list.style.display = "none";
-            form.appendChild(list);
+            var list = document.getElementById("suggestions");
             var frag = document.createDocumentFragment();
             for (var i = 0; i < arr.length; ++i) {
                 var word = document.createElement("li");
@@ -765,7 +762,9 @@ function searchLdapUser() {
             }
 
             if(0 < arr.length){
-                list.innerHTML = "";
+                while (list.firstChild) {
+                    list.removeChild(list.firstChild);
+                }
                 list.appendChild(frag);
                 list.style.display = "block";
             } else {
