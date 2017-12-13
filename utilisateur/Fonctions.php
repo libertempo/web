@@ -12,7 +12,7 @@ class Fonctions
         $sql_abs='SELECT ta_type FROM conges_type_absence WHERE ta_id="'. \includes\SQL::quote($_type_abs_id).'"';
         $ReqLog_abs = \includes\SQL::query($sql_abs);
 
-        if($resultat_abs = $ReqLog_abs->fetch_array())
+        if ($resultat_abs = $ReqLog_abs->fetch_array())
             return $resultat_abs["ta_type"];
         else
             return "" ;
@@ -51,6 +51,8 @@ class Fonctions
     // verifie les parametre de la nouvelle demande :si ok : enregistre la demande dans table conges_periode
     public static function new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+
         //conversion des dates
         $new_debut = convert_date($new_debut);
         $new_fin = convert_date($new_fin);
@@ -62,12 +64,12 @@ class Fonctions
         $valid = verif_saisie_new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $_SESSION['userlogin']);
 
         // verifie que le solde de conges sera encore positif après validation
-        if( $_SESSION['config']['solde_toujours_positif'] ) {
+        if ($config->canSoldeNegatif()) {
             $valid = $valid && \utilisateur\Fonctions::verif_solde_user($_SESSION['userlogin'], $new_type, $new_nb_jours);
         }
 
-        if( $valid ) {
-            if( in_array(\utilisateur\Fonctions::get_type_abs($new_type) , array('conges','conges_exceptionnels') ) ) {
+        if ( $valid ) {
+            if ( in_array(\utilisateur\Fonctions::get_type_abs($new_type) , array('conges','conges_exceptionnels') ) ) {
                 $resp_du_user = get_tab_resp_du_user($_SESSION['userlogin']);
                 if ((1 === count($resp_du_user) && isset($resp_du_user['conges']))||empty($resp_du_user)) {
                     $new_etat = 'ok' ;
@@ -84,8 +86,8 @@ class Fonctions
             if ( $periode_num != 0 ) {
                 $return .= schars( _('form_modif_ok') ) . ' !<br><br>.';
                 //envoi d'un mail d'alerte au responsable (si demandé dans config de php_conges)
-                if($_SESSION['config']['mail_new_demande_alerte_resp']){
-                    if(in_array(\utilisateur\Fonctions::get_type_abs($new_type), array('absences'))) {
+                if ($config->isSendMailDemandeResponsable()) {
+                    if (in_array(\utilisateur\Fonctions::get_type_abs($new_type), array('absences'))) {
                         alerte_mail($_SESSION['userlogin'], ":responsable:", $periode_num, "new_absence_conges");
                     } else {
                         alerte_mail($_SESSION['userlogin'], ":responsable:", $periode_num, "new_demande");
@@ -156,6 +158,8 @@ class Fonctions
      */
     public static function nouvelleAbsenceModule($onglet)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+
         // on initialise le tableau global des jours fériés s'il ne l'est pas déjà :
         init_tab_jours_feries();
         $return = '';
@@ -164,7 +168,7 @@ class Fonctions
 
         $new_demande_conges = getpost_variable('new_demande_conges', 0);
 
-        if( $new_demande_conges == 1 && $_SESSION['config']['user_saisie_demande'] ) {
+        if ( $new_demande_conges == 1 && $config->canUserSaisieDemande()) {
             $new_debut        = htmlentities(getpost_variable('new_debut'), ENT_QUOTES | ENT_HTML401);
             $new_demi_jour_deb  = htmlentities(getpost_variable('new_demi_jour_deb'), ENT_QUOTES | ENT_HTML401);
             $new_fin        = htmlentities(getpost_variable('new_fin'), ENT_QUOTES | ENT_HTML401);
@@ -189,15 +193,15 @@ class Fonctions
             /* Génération du datePicker et de ses options */
             $daysOfWeekDisabled = [];
             $datesDisabled      = [];
-            if ((false == $_SESSION['config']['dimanche_travail'])
-                && (false == $_SESSION['config']['samedi_travail'])
+            if ((!$config->isDimancheOuvrable())
+                && (!$config->isSamediOuvrable())
             ) {
                 $daysOfWeekDisabled = [0,6];
             } else {
-                if (false == $_SESSION['config']['dimanche_travail']) {
+                if (!$config->isDimancheOuvrable()) {
                     $daysOfWeekDisabled = [0];
                 }
-                if (false == $_SESSION['config']['samedi_travail']) {
+                if (!$config->isSamediOuvrable()) {
                     $daysOfWeekDisabled = [6];
                 }
             }
@@ -213,7 +217,7 @@ class Fonctions
                     $datesDisabled[] = \App\Helpers\Formatter::dateIso2Fr($date);
                 }
             }
-            $startDate = ($_SESSION['config']['interdit_saisie_periode_date_passee']) ? 'd' : '';
+            $startDate = ($config->canUserSaisieDemandePasse()) ? 'd' : '';
 
             $datePickerOpts = [
                 'daysOfWeekDisabled' => $daysOfWeekDisabled,
@@ -231,13 +235,14 @@ class Fonctions
 
     public static function modifier($p_num_to_update, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $p_etat, $onglet)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
         $VerifNb = verif_saisie_decimal($new_nb_jours);
 
         $sql1 = "UPDATE conges_periode
             SET p_date_deb='$new_debut', p_demi_jour_deb='$new_demi_jour_deb', p_date_fin='$new_fin', p_demi_jour_fin='$new_demi_jour_fin', p_nb_jours='$new_nb_jours', p_commentaire='". \includes\SQL::quote($new_comment)  ."', ";
-        if($p_etat=="demande")
+        if ($p_etat=="demande")
             $sql1 = $sql1." p_date_demande=NOW() ";
         else
             $sql1 = $sql1." p_date_traitement=NOW() ";
@@ -245,7 +250,7 @@ class Fonctions
 
         $result = \includes\SQL::query($sql1) ;
 
-        if($_SESSION['config']['mail_modif_demande_alerte_resp']) {
+        if ($config->isSendMailAnnulationCongesUtilisateur()) {
             alerte_mail($_SESSION['userlogin'], ":responsable:", $p_num_to_update, "modif_demande_conges");
         }
         $comment_log = "modification de demande num $p_num_to_update ($new_nb_jours jour(s)) ( de $new_debut $new_demi_jour_deb a $new_fin $new_demi_jour_fin) ($new_comment)";
@@ -264,6 +269,7 @@ class Fonctions
 
     public static function confirmer($p_num, $onglet)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
@@ -274,15 +280,15 @@ class Fonctions
         /* Génération du datePicker et de ses options */
         $daysOfWeekDisabled = [];
         $datesDisabled      = [];
-        if ((false == $_SESSION['config']['dimanche_travail'])
-            && (false == $_SESSION['config']['samedi_travail'])
+        if ((false == $config->isDimancheOuvrable())
+            && (!$config->isSamediOuvrable())
         ) {
             $daysOfWeekDisabled = [0,6];
         } else {
-            if (false == $_SESSION['config']['dimanche_travail']) {
+            if (!$config->isDimancheOuvrable()) {
                 $daysOfWeekDisabled = [0];
             }
-            if (false == $_SESSION['config']['samedi_travail']) {
+            if (!$config->isSamediOuvrable()) {
                 $daysOfWeekDisabled = [6];
             }
         }
@@ -298,7 +304,7 @@ class Fonctions
                 $datesDisabled[] = \App\Helpers\Formatter::dateIso2Fr($date);
             }
         }
-        $startDate = ($_SESSION['config']['interdit_saisie_periode_date_passee']) ? 'd' : '';
+        $startDate = ($config->canUserSaisieDemandePasse()) ? 'd' : '';
 
         $datePickerOpts = [
             'daysOfWeekDisabled' => $daysOfWeekDisabled,
@@ -327,13 +333,13 @@ class Fonctions
             $sql_date_deb=eng_date_to_fr($resultat1["p_date_deb"]);
 
             $sql_demi_jour_deb = $resultat1["p_demi_jour_deb"];
-            if($sql_demi_jour_deb=="am")
+            if ($sql_demi_jour_deb=="am")
                 $demi_j_deb= _('divers_am_short') ;
             else
                 $demi_j_deb= _('divers_pm_short') ;
             $sql_date_fin=eng_date_to_fr($resultat1["p_date_fin"]);
             $sql_demi_jour_fin = $resultat1["p_demi_jour_fin"];
-            if($sql_demi_jour_fin=="am")
+            if ($sql_demi_jour_fin=="am")
                 $demi_j_fin= _('divers_am_short') ;
             else
                 $demi_j_fin= _('divers_pm_short') ;
@@ -344,14 +350,14 @@ class Fonctions
 
             $return .= '<td>' . $sql_date_deb . '_' . $demi_j_deb . '</td><td>' . $sql_date_fin  . '_' . $demi_j_fin . '</td><td>' . $aff_nb_jours . '</td><td>' . $sql_commentaire . '</td>';
 
-            if( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) ) {
+            if ( (isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE) ) {
                 $compte = 'onClick="compter_jours();return true;" ' ;
             } else {
                 $compte = 'onChange="compter_jours();return false;" ' ;
             }
 
             $text_debut="<input class=\"form-control date\" type=\"text\" name=\"new_debut\" size=\"10\" maxlength=\"30\" value=\"" . revert_date($sql_date_deb) . "\">" ;
-            if($sql_demi_jour_deb=="am") {
+            if ($sql_demi_jour_deb=="am") {
                 $radio_deb_am="<input type=\"radio\" $compte name=\"new_demi_jour_deb\" value=\"am\" checked>&nbsp;". _('form_debut_am') ;
                 $radio_deb_pm="<input type=\"radio\" $compte name=\"new_demi_jour_deb\" value=\"pm\">&nbsp;". _('form_debut_pm') ;
             } else {
@@ -359,7 +365,7 @@ class Fonctions
                 $radio_deb_pm="<input type=\"radio\" $compte name=\"new_demi_jour_deb\" value=\"pm\" checked>". _('form_debut_pm') ;
             }
             $text_fin="<input class=\"form-control date\" type=\"text\" name=\"new_fin\" size=\"10\" maxlength=\"30\" value=\"" . revert_date($sql_date_fin) . "\">" ;
-            if($sql_demi_jour_fin=="am") {
+            if ($sql_demi_jour_fin=="am") {
                 $radio_fin_am="<input type=\"radio\" $compte name=\"new_demi_jour_fin\" value=\"am\" checked>". _('form_fin_am') ;
                 $radio_fin_pm="<input type=\"radio\" $compte name=\"new_demi_jour_fin\" value=\"pm\">". _('form_fin_pm') ;
             } else {
@@ -402,6 +408,7 @@ class Fonctions
      */
     public static function modificationAbsenceModule()
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $user_login        = $_SESSION['userlogin'];
         $p_num             = getpost_variable('p_num');
         $onglet            = getpost_variable('onglet');
@@ -421,7 +428,7 @@ class Fonctions
             $id = $p_num_to_update;
         }
         $isAllowed = self::canUserManipulateConge($id, $_SESSION['userlogin']);
-        if (!$isAllowed || $_SESSION['config']['interdit_modif_demande']) {
+        if (!$isAllowed || !$config->canUserModifieDemande()) {
             redirect(ROOT_PATH . 'utilisateur/user_index.php');
         }
 
@@ -436,10 +443,10 @@ class Fonctions
         // TITRE
         $return .= '<h1>'. _('user_modif_demande_titre') .'</h1>';
 
-        if($p_num!="") {
+        if ($p_num!="") {
             $return .= \utilisateur\Fonctions::confirmer($p_num, $onglet);
         } else {
-            if($p_num_to_update != "") {
+            if ($p_num_to_update != "") {
                 $return .= \utilisateur\Fonctions::modifier($p_num_to_update, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $p_etat, $onglet);
             } else {
                 // renvoit sur la page principale .
@@ -456,7 +463,7 @@ class Fonctions
 
         $sql_abs='SELECT ta_libelle FROM conges_type_absence WHERE ta_id="'. \includes\SQL::quote($_type_abs_id).'"';
         $ReqLog_abs = \includes\SQL::query($sql_abs);
-        if($resultat_abs = $ReqLog_abs->fetch_array())
+        if ($resultat_abs = $ReqLog_abs->fetch_array())
             return $resultat_abs['ta_libelle'];
         else
             return "" ;
@@ -464,10 +471,11 @@ class Fonctions
 
     public static function suppression($p_num_to_delete, $onglet)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
-        if($_SESSION['config']['mail_supp_demande_alerte_resp']) {
+        if ($config->isSendMailSupprimeDemandeResponsable()) {
             alerte_mail($_SESSION['userlogin'], ":responsable:", $p_num_to_delete, "supp_demande_conges");
         }
 
@@ -477,7 +485,7 @@ class Fonctions
         $comment_log = "suppression de demande num $p_num_to_delete";
         log_action($p_num_to_delete, "", $_SESSION['userlogin'], $comment_log);
 
-        if($result_delete)
+        if ($result_delete)
             $return .= _('form_modif_ok') ."<br><br> \n";
         else
             $return .= _('form_modif_not_ok') ."<br><br> \n";
@@ -518,13 +526,13 @@ class Fonctions
         while ($resultat1 = $ReqLog1->fetch_array()) {
             $sql_date_deb=eng_date_to_fr($resultat1["p_date_deb"]);
             $sql_demi_jour_deb = $resultat1["p_demi_jour_deb"];
-            if($sql_demi_jour_deb=="am")
+            if ($sql_demi_jour_deb=="am")
                 $demi_j_deb= _('divers_am_short') ;
             else
                 $demi_j_deb= _('divers_pm_short') ;
             $sql_date_fin=eng_date_to_fr($resultat1["p_date_fin"]);
             $sql_demi_jour_fin = $resultat1["p_demi_jour_fin"];
-            if($sql_demi_jour_fin=="am")
+            if ($sql_demi_jour_fin=="am")
                 $demi_j_fin= _('divers_am_short') ;
             else
                 $demi_j_fin= _('divers_pm_short') ;
@@ -582,10 +590,10 @@ class Fonctions
         $return .= '<h1>'. _('user_suppr_demande_titre') .'</h1>';
         $return .= '<br>';
 
-        if($p_num!="") {
+        if ($p_num!="") {
             $return .= \utilisateur\Fonctions::confirmerSuppression($p_num, $onglet);
         } else {
-            if($p_num_to_delete!="") {
+            if ($p_num_to_delete!="") {
                 $return .= \utilisateur\Fonctions::suppression($p_num_to_delete, $onglet);
             } else {
                 // renvoit sur la page principale .
@@ -612,10 +620,10 @@ class Fonctions
         $last_jour_mois_rang        = date('w', $last_jour_mois_timestamp);      // jour de la semaine en chiffre (0=dim , 6=sam)
         $nb_jours_mois                = ( $last_jour_mois_timestamp - $first_jour_mois_timestamp  + 60*60 *12 ) / (24 * 60 * 60);// + 60*60 *12 for fucking DST
 
-        if( $first_jour_mois_rang == 0 )
+        if ( $first_jour_mois_rang == 0 )
             $first_jour_mois_rang=7 ;    // jour de la semaine en chiffre (1=lun , 7=dim)
 
-        if( $last_jour_mois_rang == 0 )
+        if ( $last_jour_mois_rang == 0 )
             $last_jour_mois_rang=7 ;    // jour de la semaine en chiffre (1=lun , 7=dim)
 
         $return .= '<table class="table calendrier_saisie_date">';
@@ -684,10 +692,10 @@ class Fonctions
         $last_jour_mois_rang        = date('w', $last_jour_mois_timestamp);      // jour de la semaine en chiffre (0=dim , 6=sam)
         $nb_jours_mois                = ( $last_jour_mois_timestamp - $first_jour_mois_timestamp  + 60*60 *12 ) / (24 * 60 * 60);// + 60*60 *12 for fucking DST
 
-        if( $first_jour_mois_rang == 0 )
+        if ( $first_jour_mois_rang == 0 )
             $first_jour_mois_rang=7 ;    // jour de la semaine en chiffre (1=lun , 7=dim)
 
-        if( $last_jour_mois_rang == 0 )
+        if ( $last_jour_mois_rang == 0 )
             $last_jour_mois_rang=7 ;    // jour de la semaine en chiffre (1=lun , 7=dim)
 
         $return .= '<table class="table calendrier_saisie_date">';
@@ -730,11 +738,11 @@ class Fonctions
     {
         $return = '';
         $bgcolor=$_SESSION['config']['temps_partiel_bgcolor'];
-        if( $val_matin == 'Y' && $val_aprem == 'Y')
+        if ( $val_matin == 'Y' && $val_aprem == 'Y')
             $return .= '<td bgcolor='.$bgcolor.' class="cal-saisie">'.$j.'<input type="radio" name="new_debut" value="'.$year.'-'.$mois.'-'.$j.'-j"></td>';
-        elseif( $val_matin == 'Y' && $val_aprem == 'N' )
+        elseif ( $val_matin == 'Y' && $val_aprem == 'N' )
             $return .= '<td bgcolor='.$bgcolor.' class="cal-day_semaine_rtt_am_travail_pm_w35">'.$j.'<input type="radio" name="new_debut" value="'.$year.'-'.$mois.'-'.$j.'-a"></td>';
-        elseif( $val_matin == 'N' && $val_aprem == 'Y' )
+        elseif ( $val_matin == 'N' && $val_aprem == 'Y' )
             $return .= '<td bgcolor='.$bgcolor.' class="cal-day_semaine_travail_am_rtt_pm_w35">'.$j.'<input type="radio" name="new_debut" value="'.$year.'-'.$mois.'-'.$j.'-p"></td>';
         else {
             $bgcolor=$_SESSION['config']['semaine_bgcolor'];
@@ -747,11 +755,11 @@ class Fonctions
     {
         $return = '';
         $bgcolor = $_SESSION['config']['temps_partiel_bgcolor'];
-        if( $val_matin == 'Y' && $val_aprem == 'Y' )  // rtt le matin et l'apres midi !
+        if ( $val_matin == 'Y' && $val_aprem == 'Y' )  // rtt le matin et l'apres midi !
             $return .= '<td bgcolor='.$bgcolor.' class="cal-saisie">'.$j.'</td>';
-        elseif( $val_matin == 'Y' && $val_aprem == 'N' )
+        elseif ( $val_matin == 'Y' && $val_aprem == 'N' )
             $return .= '<td bgcolor='.$bgcolor.' class="cal-day_semaine_rtt_am_travail_pm_w35">'.$j.'<input type="radio" name="new_fin" value="'.$year.'-'.$mois.'-'.$j.'-p"></td>';
-        elseif( $val_matin == 'N' && $val_aprem == 'Y' )
+        elseif ( $val_matin == 'N' && $val_aprem == 'Y' )
             $return .= '<td bgcolor='.$bgcolor.' class="cal-day_semaine_travail_am_rtt_pm_w35">'.$j.'<input type="radio" name="new_fin" value="'.$year.'-'.$mois.'-'.$j.'-a"></td>';
         else
         {
@@ -774,7 +782,7 @@ class Fonctions
 
         // verif si les dates sont renseignées  (si ce n'est pas le cas, on ne verifie meme pas la suite !)
         // $new_debut et $new_fin sont des string au format : $year-$mois-$jour-X  (avec X = j pour "jour entier", a pour "a" (matin), et p pour "pm" (apres midi) )
-        if( ($new_debut_string=="")||($new_fin_string=="") )
+        if ( ($new_debut_string=="")||($new_fin_string=="") )
             $valid=FALSE;
         else
         {
@@ -799,38 +807,38 @@ class Fonctions
             // traitement du jour d'absence à remplacer
 
             // verif de la concordance des demandes avec l'existant, et affectation de valeurs à entrer dans la database
-            if($demi_jour_debut=="j") // on est absent la journee
+            if ($demi_jour_debut=="j") // on est absent la journee
             {
-                if($moment_absence_ordinaire=="j") // on demande à etre present tte la journee
+                if ($moment_absence_ordinaire=="j") // on demande à etre present tte la journee
                 {
                     $nouvelle_presence_date_1="J";
                     $nouvelle_absence_date_1="N";
                     $duree_demande_1="jour";
                 }
-                elseif($moment_absence_ordinaire=="a") // on demande à etre present le matin
+                elseif ($moment_absence_ordinaire=="a") // on demande à etre present le matin
                 {
                     $nouvelle_presence_date_1="M";
                     $nouvelle_absence_date_1="A";
                     $duree_demande_1="demi";
                 }
-                elseif($moment_absence_ordinaire=="p") // on demande à etre present l'aprem
+                elseif ($moment_absence_ordinaire=="p") // on demande à etre present l'aprem
                 {
                     $nouvelle_presence_date_1="A";
                     $nouvelle_absence_date_1="M";
                     $duree_demande_1="demi";
                 }
             }
-            elseif($demi_jour_debut=="a") // on est absent le matin
+            elseif ($demi_jour_debut=="a") // on est absent le matin
             {
-                if($moment_absence_ordinaire=="j") // on demande à etre present tte la journee
+                if ($moment_absence_ordinaire=="j") // on demande à etre present tte la journee
                 {
                     $nouvelle_presence_date_1="J";
                     $nouvelle_absence_date_1="N";
                     $duree_demande_1="demi";
                 }
-                elseif($moment_absence_ordinaire=="a") // on demande à etre present le matin
+                elseif ($moment_absence_ordinaire=="a") // on demande à etre present le matin
                 {
-                    if($new_debut==$new_fin) // dans ce cas, on veut intervertir 2 demi-journées
+                    if ($new_debut==$new_fin) // dans ce cas, on veut intervertir 2 demi-journées
                     {
                         $nouvelle_presence_date_1="M";
                         $nouvelle_absence_date_1="A";
@@ -842,26 +850,26 @@ class Fonctions
                     }
                     $duree_demande_1="demi";
                 }
-                elseif($moment_absence_ordinaire=="p") // on demande à etre present l'aprem
+                elseif ($moment_absence_ordinaire=="p") // on demande à etre present l'aprem
                 {
                     $valid=FALSE;
                 }
             }
-            elseif($demi_jour_debut=="p") // on est absent l'aprem
+            elseif ($demi_jour_debut=="p") // on est absent l'aprem
             {
-                if($moment_absence_ordinaire=="j") // on demande à etre present tte la journee
+                if ($moment_absence_ordinaire=="j") // on demande à etre present tte la journee
                 {
                     $nouvelle_presence_date_1="J";
                     $nouvelle_absence_date_1="N";
                     $duree_demande_1="demi";
                 }
-                elseif($moment_absence_ordinaire=="a") // on demande à etre present le matin
+                elseif ($moment_absence_ordinaire=="a") // on demande à etre present le matin
                 {
                     $valid=FALSE;
                 }
-                elseif($moment_absence_ordinaire=="p") // on demande à etre present l'aprem
+                elseif ($moment_absence_ordinaire=="p") // on demande à etre present l'aprem
                 {
-                    if($new_debut==$new_fin) // dans ce cas, on veut intervertir 2 demi-journées
+                    if ($new_debut==$new_fin) // dans ce cas, on veut intervertir 2 demi-journées
                     {
                         $nouvelle_presence_date_1="A";
                         $nouvelle_absence_date_1="M";
@@ -882,9 +890,9 @@ class Fonctions
             // traitement du jour de présence à remplacer
 
             // verif de la concordance des demandes avec l'existant, et affectation de valeurs à entrer dans la database
-            if($demi_jour_fin=="j") // on est present la journee
+            if ($demi_jour_fin=="j") // on est present la journee
             {
-                if($moment_absence_souhaitee=="j") // on demande à etre absent tte la journee
+                if ($moment_absence_souhaitee=="j") // on demande à etre absent tte la journee
                 {
                     $nouvelle_presence_date_2="N";
                     $nouvelle_absence_date_2="J";
@@ -905,7 +913,7 @@ class Fonctions
             }
             elseif($demi_jour_fin=="a") // on est present le matin
             {
-                if($moment_absence_souhaitee=="j") // on demande à etre absent tte la journee
+                if ($moment_absence_souhaitee=="j") // on demande à etre absent tte la journee
                 {
                     $nouvelle_presence_date_2="N";
                     $nouvelle_absence_date_2="J";
@@ -913,7 +921,7 @@ class Fonctions
                 }
                 elseif($moment_absence_souhaitee=="a") // on demande à etre absent le matin
                 {
-                    if($new_debut==$new_fin) // dans ce cas, on veut intervertir 2 demi-journées
+                    if ($new_debut==$new_fin) // dans ce cas, on veut intervertir 2 demi-journées
                     {
                         $nouvelle_presence_date_2="A";
                         $nouvelle_absence_date_2="M";
@@ -932,7 +940,7 @@ class Fonctions
             }
             elseif($demi_jour_fin=="p") // on est present l'aprem
             {
-                if($moment_absence_souhaitee=="j") // on demande à etre absent tte la journee
+                if ($moment_absence_souhaitee=="j") // on demande à etre absent tte la journee
                 {
                     $nouvelle_presence_date_2="N";
                     $nouvelle_absence_date_2="J";
@@ -944,7 +952,7 @@ class Fonctions
                 }
                 elseif($moment_absence_souhaitee=="p") // on demande à etre absent l'aprem
                 {
-                    if($new_debut==$new_fin) // dans ce cas, on veut intervertir 2 demi-journées
+                    if ($new_debut==$new_fin) // dans ce cas, on veut intervertir 2 demi-journées
                     {
                         $nouvelle_presence_date_2="M";
                         $nouvelle_absence_date_2="A";
@@ -964,13 +972,13 @@ class Fonctions
 
 
             // verif de la concordance des durée (journée avec journée ou 1/2 journée avec1/2 journée)
-            if( ($duree_demande_1=="") || ($duree_demande_2=="") || ($duree_demande_1!=$duree_demande_2) )
+            if ( ($duree_demande_1=="") || ($duree_demande_2=="") || ($duree_demande_1!=$duree_demande_2) )
                 $valid=FALSE;
         }
 
 
 
-        if($valid) {
+        if ($valid) {
             $return .= schars($_SESSION['userlogin']) . ' --- ' . schars($new_debut) . ' --- ' . schars($new_fin) . ' --- ' . schars($new_comment) . '<br>';
 
             // insert du jour d'absence ordinaire (qui n'en sera plus un ou qu'a moitie ...)
@@ -982,7 +990,7 @@ class Fonctions
             $count_verif_echange1=$result_verif_echange1->num_rows;
 
             // si le couple user/date1 existe dans conges_echange_rtt : on update
-            if($count_verif_echange1!=0) {
+            if ($count_verif_echange1!=0) {
                 $new_comment=addslashes($new_comment);
                 //$resultat1=$result_verif_echange1->fetch_array();
                 //if($resultatverif_echange1['e_absence'] == 'N' )
@@ -1006,7 +1014,7 @@ class Fonctions
             $count_verif_echange2=$result_verif_echange2->num_rows;
 
             // si le couple user/date2 existe dans conges_echange_rtt : on update
-            if($count_verif_echange2!=0) {
+            if ($count_verif_echange2!=0) {
                 $sql2 = 'UPDATE conges_echange_rtt
                     SET e_absence=\''.$nouvelle_absence_date_2.'\', e_presence=\''.$nouvelle_presence_date_2.'\', e_comment=\''.$new_comment.'\'
                     WHERE e_login=\''.$_SESSION['userlogin'].'\' AND e_date_jour=\''.$new_fin.'\' ';
@@ -1022,7 +1030,7 @@ class Fonctions
             log_action(0, "", $_SESSION['userlogin'], $comment_log);
 
 
-            if(($result1)&&($result2))
+            if (($result1)&&($result2))
                 $return .= 'Changements pris en compte avec succes !<br><br>';
             else
                 $return .= 'ERREUR ! Une erreur s\'est produite : contactez votre responsable !<br><br>';
@@ -1160,12 +1168,13 @@ class Fonctions
      */
     public static function echangeJourAbsenceModule($onglet)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $return = '';
         init_tab_jours_feries();
 
         $new_echange_rtt    = getpost_variable('new_echange_rtt', 0);
 
-        if( $new_echange_rtt == 1 && $_SESSION['config']['user_echange_rtt'] ) {
+        if ($new_echange_rtt == 1 && $config->canUserEchangeRTT()) {
 
             $new_debut                = getpost_variable('new_debut');
             $new_fin                  = getpost_variable('new_fin');
@@ -1333,12 +1342,13 @@ class Fonctions
      */
     public static function getDatePickerDaysOfWeekDisabled()
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $daysOfWeekDisabled = [];
 
-        if (false == $_SESSION['config']['dimanche_travail']) {
+        if (!$config->isDimancheOuvrable()) {
             $daysOfWeekDisabled[] = 0;
         }
-        if (false == $_SESSION['config']['samedi_travail']) {
+        if (!$config->isSamediOuvrable()) {
             $daysOfWeekDisabled[] = 6;
         }
         return $daysOfWeekDisabled;
@@ -1393,15 +1403,12 @@ class Fonctions
      */
     public static function getDatePickerStartDate()
     {
-        return ($_SESSION['config']['interdit_saisie_periode_date_passee']) ? 'd' : '';
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+        return ($config->canUserSaisieDemandePasse()) ? 'd' : '';
     }
 
 
     // --------------------------------------
-
-    /*
-    * TODO: Où sont passées les heures validées (!= en cours donc) ?
-    */
 
     public static function getOptionsTypeConges()
     {
@@ -1423,7 +1430,7 @@ class Fonctions
             return false;
         }
         $conge = \App\ProtoControllers\Conge::getConge($idConge);
-        if (($conge["p_etat"]  == \App\Models\Conge::STATUT_DEMANDE) && ($conge['p_login'] == $user)){
+        if (($conge["p_etat"]  == \App\Models\Conge::STATUT_DEMANDE) && ($conge['p_login'] == $user)) {
             return true;
         }
         return false;

@@ -67,7 +67,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
             $return = NIL_INT;
         }
         
-        if( 0 < $return) {
+        if ( 0 < $return) {
             $notif = new \App\Libraries\Notification\Repos($id_heure);
             if (!$notif->send()) {
                 $localError[] = _('erreur_envoi_mail') . ': ' . $infoDemande['login'];
@@ -103,7 +103,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
             $return = NIL_INT;
         }
         
-        if( 0 < $return) {
+        if ( 0 < $return) {
             $notif = new \App\Libraries\Notification\Repos($id_heure);
             $send = $notif->send();
 
@@ -218,7 +218,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
                         $errors .= '<li>' . $key . ' : ' . $value . '</li>';
                     }
                     $return .= '<br><div class="alert alert-danger">' . _('erreur_recommencer') . '<ul>' . $errors . '</ul></div>';
-                } elseif(!empty($notice)) {
+                } elseif (!empty($notice)) {
                     $return .= '<br><div class="alert alert-info">' .  $notice . '.</div>';
 
                 }
@@ -250,7 +250,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
         if (empty($demandesResp) && empty($demandesGrandResp) ) {
             $childTable .= '<tr><td colspan="12"><center>' . _('aucune_demande') . '</center></td></tr>';
         } else {
-            if(!empty($demandesResp)) {
+            if (!empty($demandesResp)) {
                 $childTable .= $this->getFormDemandes($demandesResp);
             }
             if (!empty($demandesGrandResp)) {

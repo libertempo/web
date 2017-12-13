@@ -11,6 +11,9 @@
     } else {
         $home = 'utilisateur/user_index.php';
     }
+    
+    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+
     //user mode
     $user_mode = '';
     $tmp = dirname(filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL));
@@ -61,9 +64,10 @@ function sousmenuConfiguration()
 
 function sousmenuHR()
 {
+    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
     $return = '<a class="secondary" href="' . ROOT_PATH . 'hr/hr_index.php?onglet=page_principale">Page principale</a>';
 
-    if ($_SESSION['config']['user_saisie_demande']) {
+    if ($config->canUserSaisieDemande()) {
         $return .= '<a class="secondary" href="' . ROOT_PATH . 'hr/hr_index.php?onglet=traitement_demandes">Validation de congés</a>';
     }
     $return .= '<a class="secondary" href="' . ROOT_PATH . 'hr/hr_index.php?onglet=ajout_conges">Crédit de congés</a>
@@ -77,18 +81,19 @@ function sousmenuHR()
 
 function sousmenuResponsable()
 {
+    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
     $return = '<a class="secondary" href="' . ROOT_PATH . 'responsable/resp_index.php">Page principale</a>';
 
-    if ($_SESSION['config']['user_saisie_demande']) {
+    if ($config->canUserSaisieDemande()) {
         $return .= '<a class="secondary" href="' . ROOT_PATH . 'responsable/resp_index.php?onglet=traitement_demandes">Validation de congés</a>';
     }
 
-    if ($_SESSION['config']['gestion_heures']) {
+    if ($config->isHeuresAutorise()) {
         $return .= '<a class="secondary" href="' . ROOT_PATH . 'responsable/resp_index.php?onglet=traitement_heures_additionnelles">Validation d\'heures additionnelles</a>
         <a class="secondary" href="' . ROOT_PATH . 'responsable/resp_index.php?onglet=traitement_heures_repos">Validation d\'heures de repos</a>';
     }
 
-    if ($_SESSION['config']['resp_ajoute_conges']) {
+    if ($config->canResponsableAjouteConges()) {
         $return .= '<a class="secondary" href="' . ROOT_PATH . 'responsable/resp_index.php?onglet=ajout_conges">Ajout de congés</a>';
     }
 
@@ -101,22 +106,23 @@ function sousmenuResponsable()
 
 function sousmenuEmploye()
 {
+    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
     $return = '';
     $return .= '<a class="secondary" href="' . ROOT_PATH . 'utilisateur/user_index.php">Congés</a>';
 
-    if ($_SESSION['config']['user_echange_rtt']) {
+    if ($config->canUserEchangeRTT()) {
         $return .= '<a class="secondary" href="' . ROOT_PATH . 'utilisateur/user_index.php?onglet=echange_jour_absence">Échange de jours</a>';
     }
 
-    if ($_SESSION['config']['gestion_heures']) {
+    if ($config->isHeuresAutorise()) {
         $return .= '<a class="secondary" href="' . ROOT_PATH . 'utilisateur/user_index.php?onglet=liste_heure_repos">Heures de repos</a>';
         $return .= '<a class="secondary" href="' . ROOT_PATH . 'utilisateur/user_index.php?onglet=liste_heure_additionnelle">Heures additionnelles</a>';
     }
 
-    if ($_SESSION['config']['auth'] && $_SESSION['config']['user_ch_passwd']) {
+    if ($config->canUserChangePassword()) {
         $return .= '<a class="secondary" href="' . ROOT_PATH . 'utilisateur/user_index.php?onglet=changer_mot_de_passe">Changer mot de passe</a>';
     }
-    if ($_SESSION['config']['editions_papier']) {
+    if ($config->canEditPapier()) {
         $return .= '<a class="secondary" href="' . ROOT_PATH . 'edition/edit_user.php">Édition papier</a>';
     }
 
@@ -218,11 +224,9 @@ function sousmenuEmploye()
                     <i class="fa fa-calendar"></i><?= _('button_calendar') ?>
                 </a>
                 <?php endif; ?>
-               <?php if($_SESSION['config']['auth']): ?>
                 <a id="deconnexion" class="primary" href="<?= ROOT_PATH ?>deconnexion.php">
                     <i class="fa fa-sign-out"></i><?= _('button_deconnect') ?>
                 </a>
-                <?php endif; ?>
             </div>
         </aside>
         <section id="content">

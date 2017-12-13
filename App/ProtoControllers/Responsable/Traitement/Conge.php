@@ -33,7 +33,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
                         $errors .= '<li>' . $key . ' : ' . $value . '</li>';
                     }
                     $return .= '<br><div class="alert alert-danger">' . _('erreur_recommencer') . '<ul>' . $errors . '</ul></div>';
-                } elseif(!empty($notice)) {
+                } elseif (!empty($notice)) {
                     $return .= '<br><div class="alert alert-info">' .  $notice . '.</div>';
                 }
             }
@@ -67,7 +67,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         if (empty($demandesResp) && empty($demandesGrandResp) && empty($demandesRespAbsent) ) {
             $childTable .= '<tr><td colspan="12"><center>' . _('aucune_demande') . '</center></td></tr>';
         } else {
-            if(!empty($demandesResp)) {
+            if (!empty($demandesResp)) {
                 $childTable .= $this->getFormDemandes($demandesResp);
             }
             if (!empty($demandesGrandResp)) {
@@ -173,25 +173,26 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
      */
     protected function putResponsable(array $infoDemande, $statut, array $put, array &$errorLst)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $return = NIL_INT;
         $id_conge = $infoDemande['p_num'];
         if ($this->isDemandeTraitable($infoDemande['p_etat'])) { // demande est traitable
             if (\App\Models\Conge::REFUSE === $statut) {
                 $return = $this->updateStatutRefus($id_conge, $put['comment_refus'][$id_conge]);
-                if($_SESSION['config']['mail_refus_conges_alerte_user']) {
+                if ($config->isSendMailRefusUtilisateur()) {
                     alerte_mail($_SESSION['userlogin'], $infoDemande['p_login'], $infoDemande['p_num'], "refus_conges");
                 }
                 log_action($infoDemande['p_num'], 'refus', '', $infoDemande['p_login'], 'traitement demande ' . $id_conge . ' (' . $infoDemande['p_login'] . ') (' . $infoDemande['p_nb_jours'] . ' jours) : refus');
             } elseif (\App\Models\Conge::ACCEPTE === $statut) {
                 if (\App\ProtoControllers\Responsable::isDoubleValGroupe($infoDemande['p_login'])) {
                     $return = $this->updateStatutPremiereValidation($id_conge);
-                    if($_SESSION['config']['mail_valid_conges_alerte_user']) {
+                    if ($config->isSendMailPremierValidationUtilisateur()) {
                         alerte_mail($_SESSION['userlogin'], $infoDemande['p_login'], $infoDemande['p_num'], "valid_conges");
                     }
                     log_action($infoDemande['p_num'], 'valid', $infoDemande['p_login'], 'traitement demande conges ' . $id_conge . ' de ' . $infoDemande['p_login'] . ' première validation');
                 } else {
                     $return = $this->putValidationFinale($id_conge);
-                    if($_SESSION['config']['mail_valid_conges_alerte_user']) {
+                    if ($config->isSendMailValidationUtilisateur()) {
                         alerte_mail($_SESSION['userlogin'], $infoDemande['p_login'], $infoDemande['p_num'], "accept_conges");
                     }
                     log_action($infoDemande['p_num'], 'ok', $infoDemande['p_login'], 'traitement demande ' . $id_conge . ' (' . $infoDemande['p_login'] . ') (' . $infoDemande['p_nb_jours'] . ' jours) : OK');
@@ -209,19 +210,20 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
      */
     protected function putGrandResponsable(array $infoDemande, $statut, array $put, array &$errorLst)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $return = NIL_INT;
         $id_conge = $infoDemande['p_num'];
         if ($this->isDemandeTraitable($infoDemande['p_etat'])) { // demande est traitable
             if (\App\Models\Conge::REFUSE === $statut) {
                 $return = $this->updateStatutRefus($id_conge, $put['comment_refus'][$id_conge]);
-                if($_SESSION['config']['mail_refus_conges_alerte_user']) {
+                if ($config->isSendMailRefusUtilisateur()) {
                     alerte_mail($_SESSION['userlogin'], $infoDemande['p_login'], $infoDemande['p_num'], "refus_conges");
                 }
                 log_action($infoDemande['p_num'], 'refus', '', $infoDemande['p_login'], 'traitement demande ' . $id_conge . ' (' . $infoDemande['p_login'] . ') (' . $infoDemande['p_nb_jours'] . ' jours) : refus');
             } elseif (\App\Models\Conge::ACCEPTE === $statut) {
                 if (\App\ProtoControllers\Responsable::isDoubleValGroupe($infoDemande['p_login'])) {
                     $return = $this->putValidationFinale($id_conge);
-                    if($_SESSION['config']['mail_valid_conges_alerte_user']) {
+                    if ($config->isSendMailValidationUtilisateur()) {
                         alerte_mail($_SESSION['userlogin'], $infoDemande['p_login'], $infoDemande['p_num'], "accept_conges");
                     }
                     log_action($infoDemande['p_num'], 'ok', $infoDemande['p_login'], 'traitement demande ' . $id_conge . ' (' . $infoDemande['p_login'] . ') (' . $infoDemande['p_nb_jours'] . ' jours) : OK');
@@ -441,7 +443,8 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
      */
     protected function getIdDemandesResponsableAbsent($resp)
     {
-        if(!$_SESSION['config']['gestion_cas_absence_responsable']){
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+        if (!$config->isGestionResponsableAbsent()) {
             return [];
         }
         $groupesIdResponsable = \App\ProtoControllers\Responsable::getIdGroupeResp($resp);
@@ -459,11 +462,11 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
                 $usersduRespResponsable[] = $user;
             }
         }
-        if(empty($usersduRespResponsable)){
+        if (empty($usersduRespResponsable)) {
             return [];
         }
         foreach ($usersduRespResponsable as $userduRespResponsable) {
-            if (!\App\ProtoControllers\Responsable::isRespAbsent($userduRespResponsable)){
+            if (!\App\ProtoControllers\Responsable::isRespAbsent($userduRespResponsable)) {
                 continue;
             }
             $usersGroupes = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds(\App\ProtoControllers\Responsable::getIdGroupeResp($userduRespResponsable));
@@ -480,18 +483,19 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
      * @param array $usersRespAbsent
      * @return array $id
      */
-    protected function getIdDemandeDelegable($usersRespAbsent) {
+    protected function getIdDemandeDelegable($usersRespAbsent)
+    {
         $ids = [];
-        foreach ($usersRespAbsent as $userResp){
+        foreach ($usersRespAbsent as $userResp) {
             $delegation = TRUE;
             $respsUser = \App\ProtoControllers\Responsable::getResponsablesUtilisateur($userResp);
-            foreach ($respsUser as $respUser){
-                if (!\App\ProtoControllers\Responsable::isRespAbsent($respUser)){
+            foreach ($respsUser as $respUser) {
+                if (!\App\ProtoControllers\Responsable::isRespAbsent($respUser)) {
                     $delegation = FALSE;
             break;
                 }
             }
-            if($delegation){
+            if ($delegation) {
                 $ids = array_merge($ids, \App\ProtoControllers\Employe\Conge::getidDemandesUtilisateur($userResp));
             }
         }
@@ -544,7 +548,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
         $ListeDemande = $sql->query($req)->fetch_all(MYSQLI_ASSOC);
 
-        foreach ($ListeDemande as $demande){
+        foreach ($ListeDemande as $demande) {
             $infoDemande[$demande['p_num']] = $demande;
         }
 

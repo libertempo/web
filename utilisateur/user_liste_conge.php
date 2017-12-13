@@ -1,8 +1,9 @@
 <?php
 defined('_PHP_CONGES') or die('Restricted access');
 $conge = new \App\ProtoControllers\Employe\Conge();
+$config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
-if ($_SESSION['config']['where_to_find_user_email'] == "ldap") {
+if ($config->getMailFromLdap()) {
     include_once CONFIG_PATH . 'config_ldap.php';
 }
 
@@ -28,7 +29,7 @@ if (!empty($_POST) && isSearch($_POST)) {
 // on initialise le tableau global des jours fériés s'il ne l'est pas déjà :
 init_tab_jours_feries();
 
-$canAskConge = $_SESSION['config']['user_saisie_demande'] || $_SESSION['config']['user_saisie_mission'];
+$canAskConge = $config->canUserSaisieDemande() || $config->canUserSaisieMission();
 $titre = _('user_liste_conge_titre');
 $params = $champsSql + [
     'p_login' => $_SESSION['userlogin'],
@@ -40,8 +41,8 @@ if (empty($listId)) {
 } else {
     $i = true;
     $listeConges = $conge->getListeSQL($listId);
-    $interdictionModification = $_SESSION['config']['interdit_modif_demande'];
-    $affichageDateTraitement = $_SESSION['config']['affiche_date_traitement'];
+    $interdictionModification = $config->canUserModifieDemande();
+    $affichageDateTraitement = $config->canAfficheDateTraitement();
     $dataConges = new \stdClass;
     $i = 0;
     foreach ($listeConges as $conges) {

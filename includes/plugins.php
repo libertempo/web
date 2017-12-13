@@ -4,8 +4,9 @@
 include_once ROOT_PATH . 'define.php';
 
 function find_plugins_activated(){
-        $list_plugins = array();
-    if(isset($_SESSION['config']['installed_version']) && $_SESSION['config']['installed_version'] != "")
+    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+    $list_plugins = array();
+    if(file_exists(CONFIG_PATH . '/dbconnect.php') && $config->getInstalledVersion() != "")
     {
 
             $plugins_inst_activ_query = "SELECT p_name FROM conges_plugins WHERE p_is_active = 1 AND p_is_install = 1;";

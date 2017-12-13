@@ -7,8 +7,9 @@ include_once ROOT_PATH .'fonctions_conges.php';
 include_once INCLUDE_PATH .'fonction.php';
 include_once INCLUDE_PATH .'session.php';
 
-$how_to_connect_user=$_SESSION['config']['how_to_connect_user'];
-$URL_ACCUEIL_CONGES=$_SESSION['config']['URL_ACCUEIL_CONGES'];
+$config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+$how_to_connect_user = $config->getHowToConnectUser();
+$URL_ACCUEIL_CONGES = $config->getUrlAccueil();
 
 $comment_log = "Deconnexion de ".$_SESSION['userlogin'];
 log_action(0, "", $_SESSION['userlogin'], $comment_log);

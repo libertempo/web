@@ -380,6 +380,11 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
      */
     public function canUserEdit($id, $user)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+        if (!$config->canUserModifieDemande()) {
+            return false;
+        }
+        
         $sql = \includes\SQL::singleton();
         $req = 'SELECT EXISTS (
                     SELECT id_heure

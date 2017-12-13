@@ -49,9 +49,8 @@ class InjectableCreator
                 return new $classname($this->db);
             case \App\Libraries\ApiClient::class:
                 // TODO à supprimer quand on aura un vrai DI
-                include_once ROOT_PATH .'fonctions_conges.php' ;
-                $_SESSION['config']=init_config_tab();
-                $baseURIApi = $_SESSION['config']['URL_ACCUEIL_CONGES'] . '/api/';
+                $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+                $baseURIApi = $config->getUrlAccueil() . '/api/';
 
                 $client = new \GuzzleHttp\Client([
                     'base_uri' => $baseURIApi,

@@ -24,7 +24,7 @@ class Fonctions
 
         $return .= '<h3>' . _('editions_hitorique_edit') . ' :</h3>';
 
-        if(count($tab_editions_user)==0) {
+        if (count($tab_editions_user)==0) {
             $return .= '<b>' . _('editions_aucun_hitorique') . '</b><br>';
         } else {
             // AFFICHAGE TABLEAU
@@ -72,6 +72,7 @@ class Fonctions
 
     public static function affiche_nouvelle_edition($login)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $return = '';
         $return .= '<CENTER>';
 
@@ -92,11 +93,11 @@ class Fonctions
         $return .= '<h3>' . _('editions_last_edition') . ' :</h3>';
 
         $count2=$ReqLog2->num_rows;
-        if($count2==0) {
+        if ($count2==0) {
             $return .= '<b>' . _('editions_aucun_conges') . '</b><br>';
         } else {
             // AFFICHAGE TABLEAU
-            if($_SESSION['config']['affiche_date_traitement']) {
+            if ($config->canAfficheDateTraitement()) {
                 $return .= '<table cellpadding="2" class="tablo" width="850">';
             } else {
                 $return .= '<table cellpadding="2" class="tablo" width="750">';
@@ -108,7 +109,7 @@ class Fonctions
             $return .= '<th>' . _('divers_debut_maj_1') . '</th>';
             $return .= '<th>' . _('divers_fin_maj_1') . '</th>';
             $return .= '<th>' . _('divers_comment_maj_1') . '</th>';
-            if($_SESSION['config']['affiche_date_traitement']) {
+            if ($config->canAfficheDateTraitement()) {
                 $return .= '<th>' . _('divers_date_traitement') . '</td>';
             }
             $return .= '</tr></thead></tbody>';
@@ -116,10 +117,10 @@ class Fonctions
             while ($resultat2 = $ReqLog2->fetch_array()) {
                 $sql_p_date_deb = eng_date_to_fr($resultat2["p_date_deb"]);
                 $sql_p_demi_jour_deb = $resultat2["p_demi_jour_deb"];
-                if($sql_p_demi_jour_deb=="am") $demi_j_deb="mat";  else $demi_j_deb="aprm";
+                if ($sql_p_demi_jour_deb=="am") $demi_j_deb="mat";  else $demi_j_deb="aprm";
                 $sql_p_date_fin = eng_date_to_fr($resultat2["p_date_fin"]);
                 $sql_p_demi_jour_fin = $resultat2["p_demi_jour_fin"];
-                if($sql_p_demi_jour_fin=="am") $demi_j_fin="mat";  else $demi_j_fin="aprm";
+                if ($sql_p_demi_jour_fin=="am") $demi_j_fin="mat";  else $demi_j_fin="aprm";
                 $sql_p_nb_jours = $resultat2["p_nb_jours"];
                 $sql_p_commentaire = $resultat2["p_commentaire"];
                 $sql_p_type = $resultat2["ta_libelle"];
@@ -130,17 +131,17 @@ class Fonctions
                 $return .= '<tr align="center">';
                 $return .= '<td>' . $sql_p_type . '</td>';
                 $return .= '<td>';
-                if($sql_p_etat=="refus") {
+                if ($sql_p_etat=="refus") {
                     $return .= _('divers_refuse');
-                } elseif($sql_p_etat=="annul") {
+                } elseif ($sql_p_etat=="annul") {
                     $return .= _('divers_annule');
                 } else {
                     $return .= $sql_p_etat;
                 }
                 $return .= '</td>';
-                if($sql_p_etat=="ok") {
+                if ($sql_p_etat=="ok") {
                     $return .= '<td class="histo-big"> -' . $sql_p_nb_jours . '</td>';
-                } elseif($sql_p_etat=="ajout") {
+                } elseif ($sql_p_etat=="ajout") {
                     $return .= '<td class="histo-big"> +' . $sql_p_nb_jours . '</td>';
                 } else {
                     $return .= '<td>' . $sql_p_nb_jours . '</td>';
@@ -148,8 +149,8 @@ class Fonctions
                 $return .= '<td>' . $sql_p_date_deb . '_' . $demi_j_deb . '</td>';
                 $return .= '<td>' . $sql_p_date_fin . '_' . $demi_j_fin . '</td>';
                 $return .= '<td>' . $sql_p_commentaire . '</td>';
-                if($_SESSION['config']['affiche_date_traitement']) {
-                    if($sql_p_date_demande == NULL) {
+                if ($config->canAfficheDateTraitement()) {
+                    if ($sql_p_date_demande == NULL) {
                         $return .= '<td class="histo-left">' . _('divers_traitement') . ' : ' . $sql_p_date_traitement . '</td>';
                     }
                     else {
@@ -279,6 +280,7 @@ class Fonctions
 
     public static function edition_papier($login, $edit_id)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $return = '';
 
         // recup infos du user
@@ -290,7 +292,7 @@ class Fonctions
         // recup du tableau des types de conges exceptionnels (seulement les conge sexceptionnels )
         $tab_type_cong=recup_tableau_types_conges();
         // recup du tableau des types de conges (seulement les conges)
-        if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+        if ($config->isCongesExceptionnelsActive()) {
             $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
         } else {
             $tab_type_conges_exceptionnels=array();
@@ -303,7 +305,7 @@ class Fonctions
         /**************************************/
         $return .= '<table cellpadding="0" cellspacing="0" border="0" width="770">';
         $return .= '<tr align="center">';
-        $return .= '<td>' . $_SESSION['config']['texte_haut_edition_papier'] . '<br><br></td>';
+        $return .= '<td>' . $config->getTextHaut() . '<br><br></td>';
         $return .= '</tr>';
         $return .= '</table>';
 
@@ -326,7 +328,7 @@ class Fonctions
         $return .= '<br><br><br>';
 
 
-        if($_SESSION['config']['affiche_date_traitement']) {
+        if ($config->canAfficheDateTraitement()) {
             $return .= '<table cellpadding="0" cellspacing="0" border="1" width="870">';
         } else {
             $return .= '<table cellpadding="0" cellspacing="0" border="1" width="770">';
@@ -351,11 +353,11 @@ class Fonctions
         $ReqLog2 = \includes\SQL::query($sql2);
 
         $count2=$ReqLog2->num_rows;
-        if($count2==0) {
+        if ($count2==0) {
             $return .= '<b>' . _('editions_aucun_conges') . '</b><br>';
         } else {
             // AFFICHAGE TABLEAU
-            if($_SESSION['config']['affiche_date_traitement']) {
+            if ($config->canAfficheDateTraitement()) {
                 $return .= '<table cellpadding="2" class="tablo-edit" width="850">';
             } else {
                 $return .= '<table cellpadding="2" class="tablo-edit" width="750">';
@@ -368,7 +370,7 @@ class Fonctions
             $return .= '<tr>';
             $return .= '<td colspan="5">';
             $edition_precedente_id = \edition\Fonctions::get_id_edition_precedente_user($login, $edit_id);
-            if($edition_precedente_id==0) {
+            if ($edition_precedente_id==0) {
                 $return .= '<b>' . _('editions_soldes_precedents_inconnus') . '!... ';
             } else {
                 $tab_edition_precedente = \edition\Fonctions::recup_info_edition($edition_precedente_id);
@@ -395,7 +397,7 @@ class Fonctions
             $return .= '<td class="titre-edit">' . _('divers_debut_maj_1') . '</td>';
             $return .= '<td class="titre-edit">' . _('divers_fin_maj_1') . '</td>';
             $return .= '<td class="titre-edit">' . _('divers_comment_maj_1') . '</td>';
-            if($_SESSION['config']['affiche_date_traitement']) {
+            if ($config->canAfficheDateTraitement()) {
                 $return .= '<td class="titre-edit">' . _('divers_date_traitement') . '</td>';
             }
             $return .= '</tr>';
@@ -403,14 +405,14 @@ class Fonctions
             while ($resultat2 = $ReqLog2->fetch_array()) {
                 $sql_p_date_deb = eng_date_to_fr($resultat2["p_date_deb"]);
                 $sql_p_demi_jour_deb = $resultat2["p_demi_jour_deb"];
-                if($sql_p_demi_jour_deb=="am") {
+                if ($sql_p_demi_jour_deb=="am") {
                     $demi_j_deb =  _('divers_am_short') ;
                 } else {
                     $demi_j_deb =  _('divers_pm_short') ;
                 }
                 $sql_p_date_fin = eng_date_to_fr($resultat2["p_date_fin"]);
                 $sql_p_demi_jour_fin = $resultat2["p_demi_jour_fin"];
-                if($sql_p_demi_jour_fin=="am") {
+                if ($sql_p_demi_jour_fin=="am") {
                     $demi_j_fin =  _('divers_am_short') ;
                 } else {
                     $demi_j_fin =  _('divers_pm_short') ;
@@ -425,17 +427,17 @@ class Fonctions
                 $return .= '<tr>';
                 $return .= '<td class="histo-edit">' . $tab_type_all_cong[$sql_p_type]['libelle'] . '</td>';
                 $return .= '<td class="histo-edit">';
-                if($sql_p_etat=="refus") {
+                if ($sql_p_etat=="refus") {
                     $return .= _('divers_refuse') ;
-                } elseif($sql_p_etat=="annul") {
+                } elseif ($sql_p_etat=="annul") {
                     $return .= _('divers_annule') ;
                 } else {
                     $return .= '"' . $sql_p_etat . '"';
                 }
                 $return .= '</td>';
-                if($sql_p_etat=="ok") {
+                if ($sql_p_etat=="ok") {
                     $return .= '<td class="histo-big"> -' . $sql_p_nb_jours . '</td>';
-                } elseif($sql_p_etat=="ajout") {
+                } elseif ($sql_p_etat=="ajout") {
                     $return .= '<td class="histo-big"> +' . $sql_p_nb_jours . '</td>';
                 } else {
                     $return .= '<td> ' . $sql_p_nb_jours . '</td>';
@@ -444,8 +446,8 @@ class Fonctions
                 $return .= '<td class="histo-edit">' . $sql_p_date_fin . '_' .  $demi_j_fin . '</td>';
                 $return .= '<td class="histo-edit">' . $sql_p_commentaire . '</td>';
 
-                if($_SESSION['config']['affiche_date_traitement']) {
-                    if($sql_p_date_demande == NULL) {
+                if ($config->canAfficheDateTraitement()) {
+                    if ($sql_p_date_demande == NULL) {
                         $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : ' . $sql_p_date_traitement . '</td>';
                     } else {
                         $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : pas traité</td>';
@@ -498,7 +500,7 @@ class Fonctions
         $return .= '<!-- affichage du texte en bas de page -->';
         $return .= '<table cellpadding="0" cellspacing="0" border="0" width="770">';
         $return .= '<tr align="center">';
-        $return .= '<td><br>' . $_SESSION['config']['texte_bas_edition_papier'] . '</td>';
+        $return .= '<td><br>' . $config->getTextBas() . '</td>';
         $return .= '</tr>';
         $return .= '</table>';
 
@@ -533,7 +535,7 @@ class Fonctions
 
         header_popup(_('editions_etat_conges').' : '.$user_login , $css);
 
-        if($edit_id==0) {  // si c'est une nouvelle édition, on insert dans la base avant d'éditer et on renvoit l'id de l'édition
+        if ($edit_id==0) {  // si c'est une nouvelle édition, on insert dans la base avant d'éditer et on renvoit l'id de l'édition
             $edit_id = \edition\Fonctions::enregistrement_edition($user_login);
         }
 
@@ -581,14 +583,14 @@ class Fonctions
         while ($resultat2 = $ReqLog2->fetch_array()) {
             $sql_p_date_deb = eng_date_to_fr($resultat2["p_date_deb"]);
             $sql_p_demi_jour_deb = $resultat2["p_demi_jour_deb"];
-            if($sql_p_demi_jour_deb=="am") {
+            if ($sql_p_demi_jour_deb=="am") {
                 $demi_j_deb =  _('divers_am_short') ;
             } else {
                 $demi_j_deb =  _('divers_pm_short') ;
             }
             $sql_p_date_fin = eng_date_to_fr($resultat2["p_date_fin"]);
             $sql_p_demi_jour_fin = $resultat2["p_demi_jour_fin"];
-            if($sql_p_demi_jour_fin=="am") {
+            if ($sql_p_demi_jour_fin=="am") {
                 $demi_j_fin =  _('divers_am_short') ;
             } else {
                 $demi_j_fin =  _('divers_pm_short') ;
@@ -610,24 +612,24 @@ class Fonctions
 
             $pdf->Cell($size_cell_type, $hauteur_cellule, $tab_type_all_cong[$sql_p_type]['libelle'], 1, 0, 'C');
 
-            if($sql_p_etat=="refus") {
+            if ($sql_p_etat=="refus") {
                 $text_etat =  _('divers_refuse') ;
-            } elseif($sql_p_etat=="annul") {
+            } elseif ($sql_p_etat=="annul") {
                 $text_etat =  _('divers_annule') ;
             } else {
                 $text_etat=$sql_p_etat;
             }
             $pdf->Cell($size_cell_etat, $hauteur_cellule, $text_etat, 1, 0, 'C');
 
-            if( ($sql_p_etat=="refus") || ($sql_p_etat=="annul") ) {
+            if ( ($sql_p_etat=="refus") || ($sql_p_etat=="annul") ) {
                 $pdf->SetFont('Times', '', $taille_font);
             } else {
                 $pdf->SetFont('Times', 'B', $taille_font);
             }
 
-            if($sql_p_etat=="ok") {
+            if ($sql_p_etat=="ok") {
                 $text_nb_jours="-".$sql_p_nb_jours;
-            } elseif($sql_p_etat=="ajout") {
+            } elseif ($sql_p_etat=="ajout") {
                 $text_nb_jours="+".$sql_p_nb_jours;
             } else {
                 $text_nb_jours=$sql_p_nb_jours;
@@ -638,7 +640,7 @@ class Fonctions
             $pdf->Cell($size_cell_debut, $hauteur_cellule, $sql_p_date_deb." _ ".$demi_j_deb, 1, 0, 'C');
             $pdf->Cell($size_cell_fin, $hauteur_cellule, $sql_p_date_fin." _ ".$demi_j_fin, 1, 0, 'C');
             // reduction de la taille du commentaire pour rentrer dans la cellule
-            if(strlen($sql_p_commentaire)>39) {
+            if (strlen($sql_p_commentaire)>39) {
                 $sql_p_commentaire = substr($sql_p_commentaire, 0, 35)." ..." ;
             }
             $pdf->Cell($size_cell_comment, $hauteur_cellule, $sql_p_commentaire, 1, 1, 'C');
@@ -675,14 +677,14 @@ class Fonctions
         while ($resultat2 = $ReqLog2->fetch_array()) {
             $sql_p_date_deb = eng_date_to_fr($resultat2["p_date_deb"]);
             $sql_p_demi_jour_deb = $resultat2["p_demi_jour_deb"];
-            if($sql_p_demi_jour_deb=="am") {
+            if ($sql_p_demi_jour_deb=="am") {
                 $demi_j_deb =  _('divers_am_short') ;
             } else {
                 $demi_j_deb =  _('divers_pm_short') ;
             }
             $sql_p_date_fin = eng_date_to_fr($resultat2["p_date_fin"]);
             $sql_p_demi_jour_fin = $resultat2["p_demi_jour_fin"];
-            if($sql_p_demi_jour_fin=="am") {
+            if ($sql_p_demi_jour_fin=="am") {
                 $demi_j_fin =  _('divers_am_short') ;
             } else {
                 $demi_j_fin =  _('divers_pm_short') ;
@@ -704,22 +706,22 @@ class Fonctions
 
             $pdf->Cell($size_cell_type, $hauteur_cellule*2, $tab_type_all_cong[$sql_p_type]['libelle'], 1, 0, 'C');
 
-            if($sql_p_etat=="refus")
+            if ($sql_p_etat=="refus")
                 $text_etat =  _('divers_refuse') ;
-            elseif($sql_p_etat=="annul")
+            elseif ($sql_p_etat=="annul")
                 $text_etat =  _('divers_annule') ;
             else
                 $text_etat=$sql_p_etat;
             $pdf->Cell($size_cell_etat, $hauteur_cellule*2, $text_etat, 1, 0, 'C');
 
-            if( ($sql_p_etat=="refus") || ($sql_p_etat=="annul") )
+            if ( ($sql_p_etat=="refus") || ($sql_p_etat=="annul") )
                 $pdf->SetFont('Times', '', $taille_font);
             else
                 $pdf->SetFont('Times', 'B', $taille_font);
 
-            if($sql_p_etat=="ok")
+            if ($sql_p_etat=="ok")
                 $text_nb_jours="-".$sql_p_nb_jours;
-            elseif($sql_p_etat=="ajout")
+            elseif ($sql_p_etat=="ajout")
                 $text_nb_jours="+".$sql_p_nb_jours;
             else
                 $text_nb_jours=$sql_p_nb_jours;
@@ -729,7 +731,7 @@ class Fonctions
             $pdf->Cell($size_cell_debut, $hauteur_cellule*2, $sql_p_date_deb." _ ".$demi_j_deb, 1, 0, 'C');
             $pdf->Cell($size_cell_fin, $hauteur_cellule*2, $sql_p_date_fin." _ ".$demi_j_fin, 1, 0, 'C');
             // reduction de la taille du commentaire pour rentrer dans la cellule
-            if(strlen($sql_p_commentaire)>39)
+            if (strlen($sql_p_commentaire)>39)
                 $sql_p_commentaire = substr($sql_p_commentaire, 0, 35)." ..." ;
 
             $pdf->Cell($size_cell_comment, $hauteur_cellule*2, $sql_p_commentaire."\n ", 1, 'L');
@@ -765,7 +767,7 @@ class Fonctions
         //    $pdf->SetFont('Times', 'B', 10);
 
         $edition_precedente_id = \edition\Fonctions::get_id_edition_precedente_user($login, $edit_id);
-        if($edition_precedente_id==0)
+        if ($edition_precedente_id==0)
         {
             $pdf->Cell($decalage);
             $pdf->SetFont('Times', '', 10);
@@ -827,10 +829,11 @@ class Fonctions
 
     public static function edition_pdf($login, $edit_id)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         // recup du tableau des types de conges (seulement les conges)
         $tab_type_cong=recup_tableau_types_conges();
         // recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
-        if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+        if ($config->isCongesExceptionnelsActive()) {
             $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
         } else {
             $tab_type_conges_exceptionnels=array();
@@ -906,7 +909,7 @@ class Fonctions
         $ReqLog2 = \includes\SQL::query($sql2) ;
 
         $count2=$ReqLog2->num_rows;
-        if($count2==0) {
+        if ($count2==0) {
             $pdf->Cell(0, 5,  _('editions_aucun_conges') ." ...",0,1,'C');
             $pdf->Ln(5);
         } else {
@@ -924,7 +927,7 @@ class Fonctions
 
             // (largeur totale page = 210 ( - 2x10 de marge))
             // tailles des cellules du tableau
-            if($_SESSION['config']['affiche_date_traitement']) {
+            if ($config->canAfficheDateTraitement()) {
                 \edition\Fonctions::affiche_tableau_conges_avec_date_traitement($pdf, $ReqLog2, $decalage, $tab_type_all_cong);
             } else {
                 \edition\Fonctions::affiche_tableau_conges_normal($pdf, $ReqLog2, $decalage, $tab_type_all_cong);
@@ -992,7 +995,7 @@ class Fonctions
         }
 
         /************************************/
-        if($edit_id==0) {  // si c'est une nouvelle édition, on insert dans la base avant d'éditer et on renvoit l'id de l'édition
+        if ($edit_id==0) {  // si c'est une nouvelle édition, on insert dans la base avant d'éditer et on renvoit l'id de l'édition
             $edit_id = \edition\Fonctions::enregistrement_edition($user_login);
         }
 
@@ -1013,7 +1016,7 @@ class Fonctions
         $sql2=$sql2."ORDER BY ep_num_for_user DESC ";
         $ReqLog2 = \includes\SQL::query($sql2);
 
-        if($ReqLog2->num_rows != 0)
+        if ($ReqLog2->num_rows != 0)
         {
             while ($resultat2 = $ReqLog2->fetch_array())
             {
@@ -1040,7 +1043,7 @@ class Fonctions
         $sql_edition= 'SELECT ep_date, ep_num_for_user FROM conges_edition_papier where ep_id = '.\includes\SQL::quote($edit_id);
         $ReqLog_edition = \includes\SQL::query($sql_edition);
 
-        if($resultat_edition = $ReqLog_edition->fetch_array())
+        if ($resultat_edition = $ReqLog_edition->fetch_array())
         {
             $tab['date']=$resultat_edition["ep_date"];
             $tab['num_for_user'] = $resultat_edition["ep_num_for_user"];
@@ -1095,7 +1098,7 @@ class Fonctions
         $ReqLog1 = \includes\SQL::query($sql1);
 
         $resultat1 = $ReqLog1->num_rows ;
-        if($resultat1<=1)    // une seule edition pour ce user
+        if ($resultat1<=1)    // une seule edition pour ce user
             return 0;
         else
         {
@@ -1114,7 +1117,7 @@ class Fonctions
         $sql1 = 'SELECT ep_num_for_user FROM conges_edition_papier WHERE ep_login="'. \includes\SQL::quote($login).'"';
         $ReqLog1 = \includes\SQL::query($sql1);
 
-        if($ReqLog1->num_rows==0)
+        if ($ReqLog1->num_rows==0)
             return 0;    // c'est qu'il n'y a pas encore d'edition pour ce user
         else
         {
@@ -1132,7 +1135,7 @@ class Fonctions
         $sql1 = "SELECT ep_id FROM conges_edition_papier ";
         $ReqLog1 = \includes\SQL::query($sql1);
 
-        if($ReqLog1->num_rows==0)
+        if ($ReqLog1->num_rows==0)
             return 0;    // c'est qu'il n'y a pas encore d'edition
         else
         {
@@ -1145,6 +1148,7 @@ class Fonctions
 
     public static function enregistrement_edition($login)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 
@@ -1180,8 +1184,7 @@ class Fonctions
                     SET se_id_edition=$new_edition_id, se_id_absence=$id_abs, se_solde=$tab_solde_user[$id_abs] ";
             $result_insert_2 = \includes\SQL::query($sql_insert_2);
         }
-        if ($_SESSION['config']['gestion_conges_exceptionnels'])
-        {
+        if ($config->isCongesExceptionnelsActive()) {
             $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
             foreach($tab_type_conges_exceptionnels as $id_abs => $libelle)
             {
@@ -1200,7 +1203,7 @@ class Fonctions
         $list_abs_id="";
         while($resultat_list = $ReqLog_list->fetch_array())
         {
-            if($list_abs_id=="")
+            if ($list_abs_id=="")
                 $list_abs_id=$resultat_list['ta_id'] ;
             else
                 $list_abs_id=$list_abs_id.", ".$resultat_list['ta_id'] ;

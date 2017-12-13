@@ -9,6 +9,8 @@ include_once INCLUDE_PATH . 'fonction.php';
 include_once INCLUDE_PATH . 'session.php';
 include_once ROOT_PATH . 'fonctions_calcul.php';
 
+$config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+
 // verif des droits du user à afficher la page
 verif_droits_user("is_resp");
 
@@ -27,7 +29,7 @@ $onglets = array();
 
 $onglets['page_principale'] = _('resp_menu_button_retour_main');
 
-if ($_SESSION['config']['user_saisie_demande']) {
+if ($config->canUserSaisieDemande()) {
     $nbbadgeConges = '';
     $DemandesConges = new \App\ProtoControllers\Responsable\Traitement\Conge;
     $nbdemandes = $DemandesConges->getNbDemandesATraiter($_SESSION['userlogin']);
@@ -37,7 +39,7 @@ if ($_SESSION['config']['user_saisie_demande']) {
     $onglets['traitement_demandes'] = _('resp_menu_button_traite_demande') . $nbbadgeConges;
 }
 
-if ($_SESSION['config']['gestion_heures']) {
+if ($config->isHeuresAutorise()) {
     $nbbadgeDem = '';
     $DemandesAdd = new \App\ProtoControllers\Responsable\Traitement\Additionnelle;
     $nbdemandes = $DemandesAdd->getNbDemandesATraiter($_SESSION['userlogin']);
@@ -55,11 +57,11 @@ if ($_SESSION['config']['gestion_heures']) {
     $onglets['traitement_heures_repos'] = _('resp_menu_button_traite_repos') . $nbbadgeRep;
 }
 
-if ($_SESSION['config']['resp_ajoute_conges']) {
+if ($config->canResponsableAjouteConges()) {
     $onglets['ajout_conges'] = _('resp_ajout_conges_titre');
 }
 
-if ($_SESSION['config']['resp_association_planning']) {
+if ($config->canResponsablesAssociatePlanning()) {
     $onglets['liste_planning'] = _('resp_liste_planning');
 }
 
@@ -84,7 +86,7 @@ $tab_type_cong = recup_tableau_types_conges();
 
 // recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
 $tab_type_conges_exceptionnels = array();
-if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+if ($config->isCongesExceptionnelsActive()) {
     $tab_type_conges_exceptionnels = recup_tableau_types_conges_exceptionnels();
 }
 

@@ -98,7 +98,7 @@ class Groupe
         
         $infos = $res->fetch_array();
 
-        if(!empty($infos)){
+        if (!empty($infos)){
             $infosGroupe = [
                 'nom' => $infos['g_groupename'],
                 'doubleValidation' => $infos['g_double_valid'],

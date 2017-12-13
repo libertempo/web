@@ -18,11 +18,11 @@ class Gestion {
         $data = $this->FormData2Array($post);
         $return = 1;
 
-        if(!empty($post['_METHOD'])){
+        if (!empty($post['_METHOD'])) {
             switch ($post['_METHOD']) {
                 case 'DELETE':
-                    if($this->isAutorise()){
-                        if(NIL_INT !== $this->deleteGroupe($data['id'], $errorLst)){
+                    if ($this->isAutorise()) {
+                        if (NIL_INT !== $this->deleteGroupe($data['id'], $errorLst)) {
                             log_action(0, 'groupe', '', 'groupe ' . $data['nom'] . ' supprimé');
                         } else {
                             return NIL_INT;
@@ -33,7 +33,7 @@ class Gestion {
                     }
                     break;
                 case 'PUT':
-                    if($this->isValid($data, $errorLst) && NIL_INT !== $this->put($data, $errorLst)){
+                    if ($this->isValid($data, $errorLst) && NIL_INT !== $this->put($data, $errorLst)) {
                         log_action(0, 'groupe', '', 'groupe ' . $data['nom'] . ' modifié');
                     } else {
                         $return = NIL_INT;
@@ -41,14 +41,14 @@ class Gestion {
                     break;
             }
         } else {
-            if(!$this->isValid($data, $errorLst)){
+            if (!$this->isValid($data, $errorLst)) {
                 $return = NIL_INT;
             } else {
-                if($this->isNomGroupeExist($data['nom'])){
+                if ($this->isNomGroupeExist($data['nom'])) {
                     $errorLst[] = _('Ce nom de groupe existe déjà');
                     $return = NIL_INT;
                 } else {
-                    if(NIL_INT !== $this->post($data, $errorLst)){
+                    if (NIL_INT !== $this->post($data, $errorLst)) {
                         log_action(0, 'groupe', '', 'groupe ' . $data['nom'] . ' créé');
                     } else {
                         return NIL_INT;
@@ -67,6 +67,7 @@ class Gestion {
      */
     protected function FormData2Array(array $post)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
         $data = [
             'grandResponsables' => [],
@@ -77,27 +78,27 @@ class Gestion {
         $data['nom'] = htmlentities($post['new_group_name'], ENT_QUOTES | ENT_HTML401);
         $data['commentaire'] = htmlentities($post['new_group_libelle'], ENT_QUOTES | ENT_HTML401);
 
-        if(key_exists('group', $post)){
+        if (key_exists('group', $post)) {
             $data['id'] = (int) $post['group'];
         }
 
-        if(key_exists('checkbox_group_users', $post)){
-            foreach (array_keys($post['checkbox_group_users']) as $employe){
+        if (key_exists('checkbox_group_users', $post)) {
+            foreach (array_keys($post['checkbox_group_users']) as $employe) {
                 $data['employes'][] = htmlentities($employe, ENT_QUOTES | ENT_HTML401);
             }
         }
 
-        if(key_exists('checkbox_group_resps', $post)){
-            foreach (array_keys($post['checkbox_group_resps']) as $resp){
+        if (key_exists('checkbox_group_resps', $post)) {
+            foreach (array_keys($post['checkbox_group_resps']) as $resp) {
                 $data['responsables'][] = htmlentities($resp, ENT_QUOTES | ENT_HTML401);
             }
         }
 
-        if($_SESSION['config']['double_validation_conges'] && $post['new_group_double_valid'] == 'Y'){
+        if ($config->isDoubleValidationActive() && $post['new_group_double_valid'] == 'Y') {
             $data['isDoubleValidation'] = 'Y';
 
-            if(!empty($post['checkbox_group_grand_resps'])){
-                foreach (array_keys($post['checkbox_group_grand_resps']) as $grandresp){
+            if (!empty($post['checkbox_group_grand_resps'])) {
+                foreach (array_keys($post['checkbox_group_grand_resps']) as $grandresp) {
                     $data['grandResponsables'][] = htmlentities($grandresp, ENT_QUOTES | ENT_HTML401);
                 }
             }
@@ -122,7 +123,7 @@ class Gestion {
         $sql = \includes\SQL::singleton();
         $sql->getPdoObj()->begin_transaction();
 
-        if($this->updateGroupe($data['id'], $data['nom'], $data['commentaire'], $data['isDoubleValidation'])){
+        if ($this->updateGroupe($data['id'], $data['nom'], $data['commentaire'], $data['isDoubleValidation'])) {
             $updateEmployes = $this->updateEmployeGroupe($data['id'], $data['employes']);
             $updateResponsables = $this->updateResponsableGroupe($data['id'], $data['responsables']);
             $updategrandResponsables = $this->updateGrandResponsableGroupe($data['id'], $data['grandResponsables']);
@@ -132,7 +133,7 @@ class Gestion {
             $rollback = true;
         }
 
-        if($rollback){
+        if ($rollback) {
             $sql->getPdoObj()->rollback();
             $errorLst[] = _('Une erreur inconnue s\'est produite.');
             $return = NIL_INT;
@@ -233,7 +234,7 @@ class Gestion {
         $deleteGroupe = $sql->query($req);
 
         $resultat = $deleteEmployes && $deleteResponsables && $deleteGrandResponsables && $deleteGroupe;
-        if(!$resultat){
+        if (!$resultat) {
             $sql->getPdoObj()->rollback();
             $errorLst[] = _('Une erreur inconnue s\'est produite.');
             return NIL_INT;
@@ -308,7 +309,7 @@ class Gestion {
 
         $idGroupe = $this->insertGroupe($data['nom'], $data['commentaire'], $data['isDoubleValidation']);
 
-        if(0 < $idGroupe){
+        if (0 < $idGroupe) {
             $insertEmployes = $this->insertEmployesGroupe($idGroupe, $data['employes']);
             $insertReponsables = $this->insertResponsablesGroupe($idGroupe, $data['responsables']);
             $insertGrandResponsables = $this->insertGrandResponsablesGroupe($idGroupe, $data['grandResponsables']);
@@ -317,7 +318,7 @@ class Gestion {
             $rollback = true;
         }
 
-        if($rollback){
+        if ($rollback) {
             $sql->getPdoObj()->rollback();
             $errorLst[] = _('Une erreur inconnue s\'est produite.');
             $return = NIL_INT;
@@ -364,13 +365,13 @@ class Gestion {
         $sql = \includes\SQL::singleton();
 
         $req = '';
-        foreach ($users as $user){
+        foreach ($users as $user) {
             $req .='INSERT INTO conges_groupe_users (gu_gid,gu_login) 
                         VALUES (' . $idGroupe . ',"' . \includes\SQL::quote($user) . '");';
         }
 
         $return = $sql->multi_query($req);
-        while ($sql->more_results() && $sql->next_result()){
+        while ($sql->more_results() && $sql->next_result()) {
             ;
         }
 
@@ -387,19 +388,19 @@ class Gestion {
     protected function insertResponsablesGroupe($idGroupe, array $resps)
     {
 
-        if(empty($resps)){
+        if (empty($resps)) {
             return true;
         }
         $sql = \includes\SQL::singleton();
 
         $req = '';
-        foreach ($resps as $resp){
+        foreach ($resps as $resp) {
             $req .='INSERT INTO conges_groupe_resp (gr_gid,gr_login) 
                         VALUES (' . (int) $idGroupe . ',"' . \includes\SQL::quote($resp) . '");';
         }
 
         $return = $sql->multi_query($req);
-        while ($sql->more_results() && $sql->next_result()){
+        while ($sql->more_results() && $sql->next_result()) {
             ;
         }
 
@@ -416,20 +417,20 @@ class Gestion {
     protected function insertGrandResponsablesGroupe($idGroupe, array $grandResps)
     {
 
-        if(empty($grandResps)){
+        if (empty($grandResps)) {
             return true;
         }
 
         $sql = \includes\SQL::singleton();
 
         $req = '';
-        foreach ($grandResps as $grandResp){
+        foreach ($grandResps as $grandResp) {
             $req .='INSERT INTO conges_groupe_grd_resp (ggr_gid,ggr_login) 
                         VALUES (' . (int) $idGroupe . ',"' . \includes\SQL::quote($grandResp) . '");';
         }
 
         $return = $sql->multi_query($req);
-        while ($sql->more_results() && $sql->next_result()){
+        while ($sql->more_results() && $sql->next_result()) {
             ;
         }
 
@@ -444,16 +445,18 @@ class Gestion {
      */
     public function getFormListGroupe($message = '')
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+
         $errorsLst = [];
         $return = '';
         $return .= '<h1>' . _('admin_onglet_gestion_groupe') . '</h1>';
 
-        if(!empty($_POST)){
-            if(0 >= (int) $this->postHtmlCommon($_POST, $errorsLst)){
+        if (!empty($_POST)) {
+            if (0 >= (int) $this->postHtmlCommon($_POST, $errorsLst)) {
                 $errors = '';
-                if(!empty($errorsLst)){
-                    foreach ($errorsLst as $key => $value){
-                        if(is_array($value)){
+                if (!empty($errorsLst)) {
+                    foreach ($errorsLst as $key => $value) {
+                        if (is_array($value)) {
                             $value = implode(' / ', $value);
                         }
                         $errors .= '<li>' . $key . ' : ' . $value . '</li>';
@@ -465,7 +468,7 @@ class Gestion {
             }
         }
 
-        if("" !== $message){
+        if ("" !== $message) {
             $return .= '<div class="alert alert-info">' . $message . '.</div>';
         }
         $return .= '<a href=admin_index.php?onglet=ajout_group class="btn btn-success pull-right">' . _('admin_groupes_new_groupe') . '</a>';
@@ -484,21 +487,21 @@ class Gestion {
         $childTable .= '<th>' . _('admin_groupes_groupe') . '</th>';
         $childTable .= '<th>' . _('admin_groupes_libelle') . '</th>';
         $childTable .= '<th>' . _('admin_groupes_nb_users') . '</th>';
-        if($_SESSION['config']['double_validation_conges']){
+        if ($config->isDoubleValidationActive()) {
             $childTable .= '<th>' . _('admin_groupes_double_valid') . '</th>';
         }
         $childTable .= '<th></th></tr></thead><tbody>';
 
         $groupes = new \App\ProtoControllers\Groupe();
         $i = true;
-        foreach ($groupes->getListeGroupes(\includes\SQL::singleton()) as $gid => $groupe){
+        foreach ($groupes->getListeGroupes(\includes\SQL::singleton()) as $gid => $groupe) {
             $nbUtilisateursGroupe = count(\App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds([$gid]));
 
             $childTable .= '<tr class="' . ($i ? 'i' : 'p') . '">';
             $childTable .= '<td><b>' . $groupe['g_groupename'] . '</b></td>';
             $childTable .= '<td>' . $groupe['g_comment'] . '</td>';
             $childTable .= '<td>' . $nbUtilisateursGroupe . '</td>';
-            if($_SESSION['config']['double_validation_conges']){
+            if ($config->isDoubleValidationActive()) {
                 $childTable .= '<td>' . $groupe['g_double_valid'] . '</td>';
             }
             $childTable .= '<td class="action">';
@@ -526,6 +529,8 @@ class Gestion {
      */
     public function getForm($idGroupe = NIL_INT)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+
         $return = '';
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $message = '';
@@ -537,12 +542,12 @@ class Gestion {
         $data = NULL;
 
         $errorsLst = [];
-        if(!empty($_POST)){
-            if(0 >= (int) $this->postHtmlCommon($_POST, $errorsLst)){
+        if (!empty($_POST)) {
+            if (0 >= (int) $this->postHtmlCommon($_POST, $errorsLst)) {
                 $errors = '';
-                if(!empty($errorsLst)){
-                    foreach ($errorsLst as $key => $value){
-                        if(is_array($value)){
+                if (!empty($errorsLst)) {
+                    foreach ($errorsLst as $key => $value) {
+                        if (is_array($value)) {
                             $value = implode(' / ', $value);
                         }
                         $errors .= '<li>' . $key . ' : ' . $value . '</li>';
@@ -551,7 +556,7 @@ class Gestion {
                 }
                 $data = $this->FormData2Array($_POST);
             } else {
-                if(key_exists('_METHOD', $_POST)){
+                if (key_exists('_METHOD', $_POST)) {
                     redirect(ROOT_PATH . 'admin/admin_index.php?onglet=admin-group&notice=update', false);
                 } else {
                     redirect(ROOT_PATH . 'admin/admin_index.php?onglet=admin-group&notice=insert', false);
@@ -559,22 +564,22 @@ class Gestion {
             }
         }
 
-        if(isset($data)){
+        if (isset($data)) {
             $infosGroupe = [
                 'nom' => $data['nom'],
                 'comment' => $data['commentaire']
             ];
-            if($_SESSION['config']['double_validation_conges']){
+            if ($config->isDoubleValidationActive()) {
                 $infosGroupe['doubleValidation'] = $data['isDoubleValidation'];
             }
-        } elseif(NIL_INT !== $idGroupe){
+        } elseif (NIL_INT !== $idGroupe) {
             $infosGroupe = \App\ProtoControllers\Groupe::getInfosGroupe($idGroupe, \includes\SQL::singleton());
         }
 
         $selectId = uniqid();
         $DivGrandRespId = uniqid();
         $return .= '<div onload="showDivGroupeGrandResp(\'' . $selectId . '\',\'' . $DivGrandRespId . '\');" class="form-group">';
-        if(NIL_INT !== $idGroupe){
+        if (NIL_INT !== $idGroupe) {
             $return .= '<h1>' . _('admin_modif_groupe_titre') . '</h1>';
         } else {
             $return .= '<h1>' . _('admin_groupes_new_groupe') . '</h1>';
@@ -589,14 +594,14 @@ class Gestion {
         $childTable = '<thead><tr>';
         $childTable .= '<th><b>' . _('Nom du groupe') . '</b></th>';
         $childTable .= '<th>' . _('admin_groupes_libelle') . ' / ' . _('divers_comment_maj_1') . '</th>';
-        if($_SESSION['config']['double_validation_conges']){
+        if ($config->isDoubleValidationActive()) {
             $childTable .= '<th>' . _('admin_groupes_double_valid') . '</th>';
         }
         $childTable .= '</tr></thead><tbody>';
         $childTable .= '<tr>';
         $childTable .= '<td><input class="form-control" type="text" name="new_group_name" size="30" maxlength="50" value="' . $infosGroupe['nom'] . '" required></td>';
         $childTable .= '<td><input class="form-control" type="text" name="new_group_libelle" size="50" maxlength="250" value="' . $infosGroupe['comment'] . '"></td>';
-        if($_SESSION['config']['double_validation_conges']){
+        if ($config->isDoubleValidationActive()) {
             $selectN = $infosGroupe['doubleValidation'] == 'N' ? 'selected="selected"' : '';
             $selectY = $infosGroupe['doubleValidation'] == 'Y' ? 'selected="selected"' : '';
             $childTable .= '<td><select class="form-control" name="new_group_double_valid" id="' . $selectId . '" onchange="showDivGroupeGrandResp(\'' . $selectId . '\',\'' . $DivGrandRespId . '\');"><option value="N" ' . $selectN . '>N</option><option value="Y" ' . $selectY . '>Y</option></select></td>';
@@ -628,7 +633,7 @@ class Gestion {
         $return .= '</div>';
 
         $return .= '<div class="form-group">';
-        if(NIL_INT !== $idGroupe){
+        if (NIL_INT !== $idGroupe) {
             $return .= '<input type="hidden" name="_METHOD" value="PUT" />';
             $return .= '<input type="hidden" name="group" value="' . $idGroupe . '" />';
         }
@@ -667,18 +672,18 @@ class Gestion {
         $childTable .= '</thead>';
         $childTable .= '<tbody>';
         $i = true;
-        foreach ($this->getEmployes($idGroupe) as $login => $info){
+        foreach ($this->getEmployes($idGroupe) as $login => $info) {
             $inputOption = '';
 
-            if(isset($data)){
-                if(in_array($login, $data['responsables']) || in_array($login, $data['grandResponsables'])){
+            if (isset($data)) {
+                if (in_array($login, $data['responsables']) || in_array($login, $data['grandResponsables'])) {
                     $inputOption = 'disabled';
-                } elseif(in_array($login, $data['employes'])){
+                } elseif (in_array($login, $data['employes'])) {
                     $inputOption = 'checked';
                 }
-            } elseif(\App\ProtoControllers\Groupe::isResponsableGroupe($login, [$idGroupe], \includes\SQL::singleton())){
+            } elseif (\App\ProtoControllers\Groupe::isResponsableGroupe($login, [$idGroupe], \includes\SQL::singleton())) {
                 $inputOption = 'disabled';
-            } elseif($info['isDansGroupe']) {
+            } elseif ($info['isDansGroupe']) {
                 $inputOption = 'checked';
             }
             
@@ -724,16 +729,16 @@ class Gestion {
         $childTable .= '</thead>';
         $childTable .= '<tbody>';
         $i = true;
-        foreach ($this->getInfosResponsables($idGroupe) as $login => $info){
+        foreach ($this->getInfosResponsables($idGroupe) as $login => $info) {
             $inputOption = '';
 
-            if(isset($data)){
-                if(in_array($login, $data['grandResponsables'])){
+            if (isset($data)) {
+                if (in_array($login, $data['grandResponsables'])) {
                     $inputOption = 'disabled';
-                } elseif(in_array($login, $data['responsables'])){
+                } elseif (in_array($login, $data['responsables'])) {
                     $inputOption = 'checked';
                 }
-            } elseif($info['isDansGroupe']) {
+            } elseif ($info['isDansGroupe']) {
                 $inputOption = 'checked';
             }
 
@@ -779,14 +784,14 @@ class Gestion {
         $childTable .= '</thead>';
         $childTable .= '<tbody>';
         $i = true;
-        foreach ($this->getGrandResponsables($idGroupe) as $login => $info){
+        foreach ($this->getGrandResponsables($idGroupe) as $login => $info) {
             $inputOption = '';
 
-            if(isset($data)){
-                if(in_array($login, $data['grandResponsables'])){
+            if (isset($data)) {
+                if (in_array($login, $data['grandResponsables'])) {
                     $inputOption = 'checked';
                 }
-            } elseif($info['isDansGroupe']) {
+            } elseif ($info['isDansGroupe']) {
                 $inputOption = 'checked';
             }
 
@@ -813,6 +818,8 @@ class Gestion {
      */
     public function getFormConfirmSuppression($idGroupe)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
@@ -832,13 +839,13 @@ class Gestion {
         $childTable .= '<tr>';
         $childTable .= '<th><b>' . _('admin_groupes_groupe') . '</b></th>';
         $childTable .= '<th><b>' . _('admin_groupes_libelle') . ' / ' . _('divers_comment_maj_1') . '</b></th>';
-        if($_SESSION['config']['double_validation_conges']){
+        if ($config->isDoubleValidationActive()) {
             $childTable .= '<th><b>' . _('admin_groupes_double_valid') . '</b></th>';
         }
         $childTable .= '</tr></thead><tbody><tr>';
         $childTable .= '<td>&nbsp;' . $infosGroupe['nom'] . '&nbsp;</td>';
         $childTable .= '<td>&nbsp;' . $infosGroupe['comment'] . '&nbsp;</td>';
-        if($_SESSION['config']['double_validation_conges']){
+        if ($config->isDoubleValidationActive()) {
             $childTable .= '<td>' . $infosGroupe['doubleValidation'] . '</td>';
         }
         $childTable .= '</tr></tbody>';
@@ -872,7 +879,7 @@ class Gestion {
         $responsables = [];
 
         $infosResps = \App\ProtoControllers\Responsable::getInfosResponsables(\includes\SQL::singleton(),true);
-        foreach ($infosResps as $infos){
+        foreach ($infosResps as $infos) {
             $login = $infos['u_login'];
             $responsables[$login] = [
                 'nom' => $infos['u_nom'],
@@ -881,7 +888,7 @@ class Gestion {
                 'isDansGroupe' => false
             ];
 
-            if(NIL_INT !== $idGroupe){
+            if (NIL_INT !== $idGroupe) {
                 $responsables[$login]['isDansGroupe'] = \App\ProtoControllers\Groupe::isResponsableGroupe($login, [$idGroupe], \includes\SQL::singleton());
             }
         }
@@ -901,7 +908,7 @@ class Gestion {
         $responsables = [];
 
         $infosResps = \App\ProtoControllers\Responsable::getInfosResponsables(\includes\SQL::singleton(),true);
-        foreach ($infosResps as $infos){
+        foreach ($infosResps as $infos) {
             $responsables[$infos['u_login']] = [
                 'nom' => $infos['u_nom'],
                 'prenom' => $infos['u_prenom'],
@@ -909,7 +916,7 @@ class Gestion {
                 'isDansGroupe' => false
             ];
 
-            if(NIL_INT !== $idGroupe){
+            if (NIL_INT !== $idGroupe) {
                 $responsables[$infos['u_login']]['isDansGroupe'] = \App\ProtoControllers\Groupe::isGrandResponsableGroupe($infos['u_login'], [$idGroupe], \includes\SQL::singleton());
             }
         }
@@ -928,7 +935,7 @@ class Gestion {
     {
         $employes = [];
         $idsUtilisateurs = \App\ProtoControllers\Utilisateur::getListId(true);
-        foreach ($idsUtilisateurs as $login){
+        foreach ($idsUtilisateurs as $login) {
             $donnees = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($login);
             $employes[$login] = [
                 'nom' => $donnees['u_nom'],
@@ -936,7 +943,7 @@ class Gestion {
                 'login' => $donnees['u_login'],
                 'isDansGroupe' => false
             ];
-            if(NIL_INT != $idGroupe){
+            if (NIL_INT != $idGroupe) {
                 $employes[$login]['isDansGroupe'] = \App\ProtoControllers\Groupe\Utilisateur::isUtilisateurDansGroupe($login, $idGroupe, \includes\SQL::singleton());
             }
         }
@@ -959,37 +966,33 @@ class Gestion {
 
         $return = true;
 
-        if(!$this->isAutorise()){
+        if (!$this->isAutorise()) {
             $errors[] = _('non autorisé');
             return false;
         }
 
-        if($this->isNomVide($data['nom'])){
+        if ($this->isNomVide($data['nom'])) {
             $errors[] = _('Le nom du groupe est obligatoire');
             $return = false;
         }
 
-        if(!$this->isEmployeGroupeExist($data['employes'])){
+        if (!$this->isEmployeGroupeExist($data['employes'])) {
             $errors[] = _('Le groupe doit contenir au moins un employé');
             $return = false;
         }
 
-        if($this->isResponsableEtEmploye($data['employes'], $data['responsables'])){
+        if ($this->isResponsableEtEmploye($data['employes'], $data['responsables'])) {
             $errors[] = _('Le responsable ne peut pas etre membre du groupe');
             $return = false;
         }
 
-//        if($this->isResponsableCirculaire($data['employes'], $data['responsables'], $errors)){
-//            $return = false;
-//        }
-
-        if('Y' == $data['isDoubleValidation']){
-            if($this->isGrandResponsableEtAutre($data['employes'], $data['responsables'], $data['grandResponsables'])){
+        if ('Y' == $data['isDoubleValidation']) {
+            if ($this->isGrandResponsableEtAutre($data['employes'], $data['responsables'], $data['grandResponsables'])) {
                 $errors[] = _('Le grand responsable ne peut pas etre membre ou responsable du groupe');
                 $return = false;
             }
-            if(!$this->isResponsableGroupeExist($data['responsables']) 
-                || !$this->isGrandResponsableGroupeExist($data['grandResponsables'])){
+            if (!$this->isResponsableGroupeExist($data['responsables']) 
+                || !$this->isGrandResponsableGroupeExist($data['grandResponsables'])) {
                 $errors[] = _('au moins un responsable et un grand responsable sont obligatoires');
                 $return = false;
             }
@@ -1022,7 +1025,7 @@ class Gestion {
         $nomsGroupes = [];
         $groupe = new \App\ProtoControllers\Groupe();
         $groupesIds = $groupe->getListeId(\includes\SQL::singleton());
-        foreach ($groupesIds as $id){
+        foreach ($groupesIds as $id) {
             $nomsGroupes[] = $groupe->getInfosGroupe($id, \includes\SQL::singleton())['nom'];
         }
         return in_array($nomGroupe, $nomsGroupes);
@@ -1050,7 +1053,7 @@ class Gestion {
      */
     protected function isResponsableEtEmploye(array $employes, array $responsables)
     {
-        if(empty($responsables) || empty($employes)){
+        if (empty($responsables) || empty($employes)) {
             return false;
         }
         return !empty(array_intersect($employes, $responsables));
@@ -1066,7 +1069,7 @@ class Gestion {
      */
     protected function isGrandResponsableEtAutre(array $employes, array $responsables, array $grandResponsables)
     {
-        if(empty($grandResponsables)){
+        if (empty($grandResponsables)) {
             return false;
         }
         return !empty(array_intersect_assoc($grandResponsables, $employes)) || !empty(array_intersect_assoc($grandResponsables, $responsables));
@@ -1081,20 +1084,20 @@ class Gestion {
      */
     protected function isResponsableCirculaire(array $employes, array $responsables, array &$errors)
     {
-        if(empty($responsables) || empty($employes)){
+        if (empty($responsables) || empty($employes)) {
             return false;
         }
 
         $employesResponsable = [];
-        foreach ($employes as $employe){
-            if(\App\ProtoControllers\Utilisateur::isResponsable($employe)){
+        foreach ($employes as $employe) {
+            if (\App\ProtoControllers\Utilisateur::isResponsable($employe)) {
                 $employesResponsable[] = $employe;
             }
         }
 
-        foreach ($employesResponsable as $employeResponsable){
-            foreach ($responsables as $responsable){
-                if(\App\ProtoControllers\Responsable::isRespDeUtilisateur($employeResponsable, $responsable)){
+        foreach ($employesResponsable as $employeResponsable) {
+            foreach ($responsables as $responsable) {
+                if (\App\ProtoControllers\Responsable::isRespDeUtilisateur($employeResponsable, $responsable)) {
                     $errors[] = $employeResponsable . _(' est responsable de ') . $responsable . _(' dans un autre groupe');
                     return true;
                 }

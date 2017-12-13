@@ -19,10 +19,10 @@ class Utilisateur
         $sql = \includes\SQL::singleton();
         $req = 'SELECT u_login
                 FROM conges_users';
-        if(!$withAdmin){
+        if (!$withAdmin){
             $req .= ' WHERE u_login != "admin"';
         }
-        if($activeSeul){
+        if ($activeSeul){
             $req .= ' AND u_is_active = "Y"';
         }
         $result = $sql->query($req);

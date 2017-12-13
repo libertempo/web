@@ -1,7 +1,8 @@
 <?php
 
 defined('_PHP_CONGES') or die('Restricted access');
-if (!\App\ProtoControllers\Responsable::canAssociatePLanning()) {
+$config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+if (!$config->canResponsablesAssociatePlanning()) {
     redirect(ROOT_PATH . 'deconnexion.php');
 }
 

@@ -1,6 +1,7 @@
 <?php
 defined('_PHP_CONGES') or die('Restricted access');
-if (!$_SESSION['config']['gestion_heures']) {
+$config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+if (!$config->isHeuresAutorise()) {
     redirect(ROOT_PATH . 'responsable/resp_index.php');
 }
 $repos = new \App\ProtoControllers\Responsable\Traitement\Repos();

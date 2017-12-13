@@ -122,7 +122,7 @@ class Additionnelle extends \App\ProtoControllers\Employe\AHeure
             $return = $id;
 
             $notif = new \App\Libraries\Notification\Additionnelle($id);
-            if(!$notif->send()) {
+            if (!$notif->send()) {
                 $errorsLst['email'] = _('erreur_envoi_mail');
                 $return = NIL_INT;
             }
@@ -382,6 +382,11 @@ class Additionnelle extends \App\ProtoControllers\Employe\AHeure
      */
     public function canUserEdit($id, $user)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+        if (!$config->canUserModifieDemande()) {
+            return FALSE;
+        }
+        
         $sql = \includes\SQL::singleton();
         $req = 'SELECT EXISTS (
                     SELECT id_heure

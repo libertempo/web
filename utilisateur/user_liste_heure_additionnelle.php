@@ -1,6 +1,8 @@
 <?php
 defined('_PHP_CONGES') or die('Restricted access');
-if (!$_SESSION['config']['gestion_heures']) {
+$config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+
+if (!$config->isHeuresAutorise()) {
     redirect(ROOT_PATH . 'utilisateur/user_index.php');
 }
 use \App\Models\AHeure;
@@ -33,7 +35,7 @@ $params = $champsRecherche + [
     'login' => $_SESSION['userlogin'],
 ];
 
-$canUserSaisi = $_SESSION['config']['user_saisie_demande'] || $_SESSION['config']['user_saisie_mission'];
+$canUserSaisi = $config->canUserSaisieDemande() || $config->canUserSaisieMission();
 $urlSaisie = 'utilisateur/user_index.php?onglet=ajout_heure_additionnelle';
 $texteSaisie = _('divers_ajout_heure_additionnelle');
 $titre = _('user_liste_heure_additionnelle_titre');

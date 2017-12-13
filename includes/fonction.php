@@ -174,14 +174,14 @@ function disable_plugin($plugin){
 //
 function session_is_valid()
 {
+    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
    // ATTENTION:  on fixe l'id de session comme nom de session pour que , sur un meme pc, on puisse se loguer sous 2 users à la fois
    if (session_id() == "")
    {
       session_start();
    }
 
-    if( (isset($_SESSION['timestamp_last'])) && (isset($_SESSION['config'])) )
-    {
+    if ((isset($_SESSION['timestamp_last'])) && (isset($_SESSION['config']))) {
         $difference = time() - $_SESSION['timestamp_last'];
 
         if ( ($difference < SESSION_DURATION) )
@@ -198,7 +198,7 @@ function session_create($username)
 {
     if ($username != "")
     {
-        if(isset($_SESSION)) unset($_SESSION);
+        if (isset($_SESSION)) unset($_SESSION);
 
         session_start();
         session_regenerate_id();
@@ -252,16 +252,16 @@ function session_delete()
 //
 function session_saisie_user_password($erreur, $session_username, $session_password)
 {
-   $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+    $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 
-    $config_php_conges_version      = $_SESSION['config']['php_conges_version'];
-    $config_url_site_web_php_conges = $_SESSION['config']['url_site_web_php_conges'];
-    //    $config_stylesheet_file         = $_SESSION['config']['stylesheet_file'];
+    $config_php_conges_version      = $config->getInstalledVersion();
+    $config_url_site_web_php_conges = $config->getUrlAccueil();
 
     $return_url                     = getpost_variable('return_url', false);
 
     // verif si on est dans le repertoire install
-    if(substr(dirname ($_SERVER["SCRIPT_FILENAME"]), -6, 6) == "config")   // verif si on est dans le repertoire install
+    if (substr(dirname ($_SERVER["SCRIPT_FILENAME"]), -6, 6) == "config")   // verif si on est dans le repertoire install
         $config_dir=TRUE;
     else
         $config_dir=FALSE;
@@ -345,21 +345,19 @@ function authentification_passwd_conges_CAS()
     \phpCAS::setDebug();
 
     // initialisation phpCAS
-    if($connexionCAS!="active")
-    {
+    if ($connexionCAS!="active") {
         $CASCnx = \phpCAS::client(CAS_VERSION_2_0,$config_CAS_host,$config_CAS_portNumber,$config_CAS_URI);
         $connexionCAS = "active";
 
     }
 
-    if($logoutCas==1)
-    {
+    if ($logoutCas==1) {
         \phpCAS::logout();
     }
 
 
     // Vérification SSL
-    if(!empty($config_CAS_CACERT))
+    if (!empty($config_CAS_CACERT))
         \phpCAS::setCasServerCACert ($config_CAS_CACERT);
     else
         \phpCAS::setNoCasServerValidation();
@@ -378,7 +376,7 @@ function authentification_passwd_conges_CAS()
     $req_conges = 'SELECT u_login FROM conges_users WHERE u_login=\''. \includes\SQL::quote($usernameCAS).'\'';
     $res_conges = \includes\SQL::query($req_conges) ;
     $num_row_conges = $res_conges->num_rows;
-    if($num_row_conges !=0) {
+    if ($num_row_conges !=0) {
         return $usernameCAS;
     } else {
         return '';
@@ -397,8 +395,7 @@ function deconnexion_CAS($url="")
     global $connexionCAS;
 
     // initialisation phpCAS
-    if($connexionCAS!="active")
-    {
+    if ($connexionCAS!="active") {
         $CASCnx = \phpCAS::client(CAS_VERSION_2_0,$config_CAS_host,$config_CAS_portNumber,$config_CAS_URI);
         $connexionCAS = "active";
 
@@ -410,32 +407,35 @@ function deconnexion_CAS($url="")
 
 function hash_user($user)
 {
-	$ics_salt = $_SESSION['config']['export_ical_salt'];
-	$huser = hash('sha256', $user . $ics_salt);
-	return $huser;
+    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+    $ics_salt = $config->getIcalSalt();
+    $huser = hash('sha256', $user . $ics_salt);
+    return $huser;
 }
 
 function unhash_user($huser_test)
 {
-	$user = "";
-	$ics_salt = $_SESSION['config']['export_ical_salt'];
-	$req_user = 'SELECT u_login FROM conges_users';
-	$res_user = \includes\SQL::query($req_user) ;
+    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+    $user = "";
+    $ics_salt = $config->getIcalSalt();
+    $req_user = 'SELECT u_login FROM conges_users';
+    $res_user = \includes\SQL::query($req_user) ;
 
-	while ($resultat = $res_user->fetch_assoc())
-	{
-		$clear_user = $resultat['u_login'];
-		$huser = hash('sha256', $clear_user . $ics_salt);
-		if( $huser_test == $huser )
-			$user = $clear_user;
-	}
-	return $user;
+    while ($resultat = $res_user->fetch_assoc())
+    {
+        $clear_user = $resultat['u_login'];
+        $huser = hash('sha256', $clear_user . $ics_salt);
+        if ( $huser_test == $huser ) {
+            $user = $clear_user;
+        }
+    }
+    return $user;
 }
 
 function authentification_AD_SSO()
 {
 	$cred = explode('@',$_SERVER['REMOTE_USER']);
-	if(count($cred)==1)
+	if (count($cred)==1)
 		$userAD = $cred[0];
 	else
 		$userAD = $cred[1];
@@ -444,7 +444,7 @@ function authentification_AD_SSO()
 	$req_conges = 'SELECT u_login FROM conges_users WHERE u_login=\''. SQL::quote($userAD).'\'';
 	$res_conges = SQL::query($req_conges) ;
 	$num_row_conges = $res_conges->num_rows;
-	if($num_row_conges !=0)
+	if ($num_row_conges !=0)
 		return $userAD;
 
 	return '';
@@ -459,8 +459,9 @@ function authentification_AD_SSO()
  */
 function storeTokenApi(\App\Libraries\ApiClient $apiClient, $username, $userPassword)
 {
+    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
     try {
-        if ('dbconges' == $_SESSION['config']['how_to_connect_user']) {
+        if ('dbconges' == $config->getHowToConnectUser()) {
             $dataUser = $apiClient->authentifyDbConges($username, $userPassword);
         } else {
             $dataUser = $apiClient->authentifyThirdParty($username);
