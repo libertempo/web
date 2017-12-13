@@ -216,7 +216,7 @@ class Configuration {
      */
     public function canAdminChangePassword() {
         if ($this->getHowToConnectUser() !='dbconges') {
-            return FALSE;
+            return false;
         }
         return $this->getGroupeAdministrateurValeur('admin_change_passwd');
     }

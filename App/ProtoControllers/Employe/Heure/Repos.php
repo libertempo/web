@@ -382,7 +382,7 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         if (!$config->canUserModifieDemande()) {
-            return FALSE;
+            return false;
         }
         
         $sql = \includes\SQL::singleton();

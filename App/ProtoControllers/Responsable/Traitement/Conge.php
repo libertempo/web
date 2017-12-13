@@ -444,7 +444,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
     protected function getIdDemandesResponsableAbsent($resp)
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
-        if (!$config->isGestionResponsableAbsent()){
+        if (!$config->isGestionResponsableAbsent()) {
             return [];
         }
         $groupesIdResponsable = \App\ProtoControllers\Responsable::getIdGroupeResp($resp);
@@ -462,11 +462,11 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
                 $usersduRespResponsable[] = $user;
             }
         }
-        if (empty($usersduRespResponsable)){
+        if (empty($usersduRespResponsable)) {
             return [];
         }
         foreach ($usersduRespResponsable as $userduRespResponsable) {
-            if (!\App\ProtoControllers\Responsable::isRespAbsent($userduRespResponsable)){
+            if (!\App\ProtoControllers\Responsable::isRespAbsent($userduRespResponsable)) {
                 continue;
             }
             $usersGroupes = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds(\App\ProtoControllers\Responsable::getIdGroupeResp($userduRespResponsable));
@@ -483,18 +483,19 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
      * @param array $usersRespAbsent
      * @return array $id
      */
-    protected function getIdDemandeDelegable($usersRespAbsent) {
+    protected function getIdDemandeDelegable($usersRespAbsent)
+    {
         $ids = [];
-        foreach ($usersRespAbsent as $userResp){
+        foreach ($usersRespAbsent as $userResp) {
             $delegation = TRUE;
             $respsUser = \App\ProtoControllers\Responsable::getResponsablesUtilisateur($userResp);
-            foreach ($respsUser as $respUser){
-                if (!\App\ProtoControllers\Responsable::isRespAbsent($respUser)){
+            foreach ($respsUser as $respUser) {
+                if (!\App\ProtoControllers\Responsable::isRespAbsent($respUser)) {
                     $delegation = FALSE;
             break;
                 }
             }
-            if ($delegation){
+            if ($delegation) {
                 $ids = array_merge($ids, \App\ProtoControllers\Employe\Conge::getidDemandesUtilisateur($userResp));
             }
         }
@@ -547,7 +548,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
         $ListeDemande = $sql->query($req)->fetch_all(MYSQLI_ASSOC);
 
-        foreach ($ListeDemande as $demande){
+        foreach ($ListeDemande as $demande) {
             $infoDemande[$demande['p_num']] = $demande;
         }
 

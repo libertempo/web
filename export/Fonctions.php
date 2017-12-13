@@ -176,7 +176,7 @@ class Fonctions
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $_SESSION['config']=init_config_tab();      // on initialise le tableau des variables de config
-        if(!$config->isIcalActive()) {
+        if (!$config->isIcalActive()) {
             header('HTTP/1.0 403 Forbidden');
         	exit('403 Forbidden');
         }

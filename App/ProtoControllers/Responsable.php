@@ -83,7 +83,8 @@ class Responsable
      *
      * @return bool
      */
-    public static function isRespAbsent($resp){
+    public static function isRespAbsent($resp)
+    {
         $sql = \includes\SQL::singleton();
         $req = 'SELECT EXISTS (
                     SELECT p_num FROM conges_periode WHERE p_login = "'
@@ -97,7 +98,8 @@ class Responsable
         return 0 < (int) $query->fetch_array()[0];
     }
 
-    public static function getLoginGrandResponsableUtilisateur($user) {
+    public static function getLoginGrandResponsableUtilisateur($user)
+    {
         $groupesIdUser = \App\ProtoControllers\Utilisateur::getGroupesId($user);
         
         $grandResp = [];
@@ -117,8 +119,8 @@ class Responsable
      * @param string $user
      * @return array
      */
-    public static function getResponsablesUtilisateur($user) {
-        
+    public static function getResponsablesUtilisateur($user) 
+    {
         $responsables = \App\ProtoControllers\Groupe\Responsable::getListResponsableByGroupeIds(\App\ProtoControllers\Utilisateur::getGroupesId($user));
         $responsables[] = \App\ProtoControllers\Responsable::getResponsableDirect($user);
         $responsables = array_unique($responsables);
@@ -132,7 +134,8 @@ class Responsable
      * @param string $user
      * @return array
      */
-    private static function getResponsableDirect($user) {
+    private static function getResponsableDirect($user)
+    {
         $resp = [];
         $sql = \includes\SQL::singleton();
         $req = 'SELECT u_resp_login FROM conges_users WHERE u_login ="' . \includes\SQL::quote($user) . '"';
@@ -154,7 +157,7 @@ class Responsable
         $req = 'SELECT *
                 FROM conges_users
                 WHERE u_is_resp = "Y"';
-        if ($activeSeul){
+        if ($activeSeul) {
             $req .= ' AND u_is_active = "Y"';
         }
         $query = $sql->query($req);
@@ -170,7 +173,8 @@ class Responsable
      *
      * @return bool
      */
-    public static function isRespDeUtilisateur($resp, $user) {
+    public static function isRespDeUtilisateur($resp, $user)
+    {
         return $resp != $user 
                 && (\App\ProtoControllers\Responsable::isRespDirect($resp, $user) 
                 || \App\ProtoControllers\Groupe::isResponsableGroupe($resp, \App\ProtoControllers\Utilisateur::getGroupesId($user), \includes\SQL::singleton()));
@@ -185,9 +189,10 @@ class Responsable
      *
      * @return boolean
      */
-    public static function isRespParDelegation($resp, $user) {
+    public static function isRespParDelegation($resp, $user)
+    {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
-        if (!$config->isGestionResponsableAbsent()){
+        if (!$config->isGestionResponsableAbsent()) {
             return FALSE;
         }
         $usersRespRespAbs = [];
@@ -195,17 +200,17 @@ class Responsable
         $usersResp = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupesIdResp);
         $usersResp = array_merge($usersResp,\App\ProtoControllers\Responsable::getUsersRespDirect($resp));
         foreach ($usersResp as $userResp) {
-            if (\App\ProtoControllers\Utilisateur::isResponsable($userResp) && \App\ProtoControllers\Responsable::isRespAbsent($userResp)){
+            if (\App\ProtoControllers\Utilisateur::isResponsable($userResp) && \App\ProtoControllers\Responsable::isRespAbsent($userResp)) {
                 $usersRespRespAbs[] = $userResp;
             }
         }
-        if (empty($usersRespRespAbs)){
+        if (empty($usersRespRespAbs)) {
             return FALSE;
         }
 
         $RespsUser = \App\ProtoControllers\Responsable::getResponsablesUtilisateur($user);
         $RespUserPresent = array_diff($RespsUser,$usersRespRespAbs);
-        if (empty($RespUserPresent)){
+        if (empty($RespUserPresent)) {
             return TRUE;
         }
 
@@ -219,7 +224,8 @@ class Responsable
      *
      * @return bool
      */
-    public static function isGrandRespDeGroupe($resp, array $groupesId) {
+    public static function isGrandRespDeGroupe($resp, array $groupesId)
+    {
         $sql = \includes\SQL::singleton();
         $req = 'SELECT EXISTS (
                     SELECT ggr_gid
@@ -265,7 +271,7 @@ class Responsable
     {
         $groupes = [];
         $groupes = \App\ProtoControllers\Utilisateur::getGroupesId($user);
-        if (empty($groupes)){
+        if (empty($groupes)) {
             return false;
         }
 

@@ -32,9 +32,9 @@ $_SESSION['from_config']=TRUE;  // initialise ce flag pour changer le bouton de 
 
 		if($config->canAdminAccessConfig())
 			$onglet = 'general';
-		elseif($config->canAdminConfigTypesConges())
+		elseif ($config->canAdminConfigTypesConges())
 			$onglet = 'type_absence';
-		elseif($config->canAdminConfigMail())
+		elseif ($config->canAdminConfigMail())
 			$onglet = 'config_mail';
 
 	}

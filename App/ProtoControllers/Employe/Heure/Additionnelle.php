@@ -383,7 +383,7 @@ class Additionnelle extends \App\ProtoControllers\Employe\AHeure
     public function canUserEdit($id, $user)
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
-        if (!$config->canUserModifieDemande()){
+        if (!$config->canUserModifieDemande()) {
             return FALSE;
         }
         
