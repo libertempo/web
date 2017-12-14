@@ -140,31 +140,27 @@ if (isset($_SESSION['userlogin'])) {
         $is_hr = $row["u_is_hr"];
 		$is_resp = $row["u_is_resp"];
 		$is_active = $row["u_is_active"];
-		if ($is_active == "N") {
+                if('admin' === $_SESSION['userlogin']){
+                    redirect(ROOT_PATH . 'admin/admin_index.php');
+                }
+		if( $is_active == "N") {
 			header_error();
 			echo  _('session_compte_inactif') ."<br>\n";
 			echo  _('session_contactez_admin') ."\n";
 			bottom();
 			exit;
 		}
-		// si le login est celui d'un responsable ET on est pas en mode "responsable virtuel"
-		// OU on est en mode "responsable virtuel" avec login= celui du resp virtuel
-		$return_url = getpost_variable('return_url');
-		if (!empty($return_url)) {
-			if (strpos($return_url,'?'))
-				redirect( ROOT_PATH . $return_url);
-			else
-				redirect( ROOT_PATH .$return_url);
-		}
-                elseif ( $is_hr == "Y" )
+                if ( $is_hr == "Y" )
 		{
-			redirect( ROOT_PATH .'hr/hr_index.php');
-		} elseif ( $is_resp=="Y" ) {
-			// redirection vers responsable/resp_index.php
-			redirect( ROOT_PATH .'responsable/resp_index.php');
-		} else {
-			// redirection vers utilisateur/user_index.php
-			redirect( ROOT_PATH . 'utilisateur/user_index.php');
+                    redirect( ROOT_PATH .'hr/hr_index.php');
+		}
+		elseif ( $is_resp=="Y" )
+		{
+                    redirect( ROOT_PATH .'responsable/resp_index.php');
+		}
+		else
+		{
+                    redirect( ROOT_PATH . 'utilisateur/user_index.php');
 		}
 
 	}

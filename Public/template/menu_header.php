@@ -9,9 +9,9 @@
     } else {
         $home = 'utilisateur/user_index.php';
     }
-
-    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
-
+    if('admin' === $_SESSION['userlogin']){
+        $home = 'admin/admin_index.php';
+    }
     //user mode
     $user_mode = '';
     $tmp = dirname(filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL));
@@ -47,7 +47,7 @@
 
 function sousmenuAdmin()
 {
-    return '<a class="secondary" href="' . ROOT_PATH . 'admin/admin_db_sauve.php">Backup</a>';
+    return '<a class="secondary" href="' . ROOT_PATH . 'admin/admin_index.php?onglet=db_sauve">Backup</a>';
 }
 
 function sousmenuConfiguration()

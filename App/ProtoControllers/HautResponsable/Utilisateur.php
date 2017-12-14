@@ -782,6 +782,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
 
     private static function isFormInsertValide($data, &$errors)
     {
+        $return = true;
         $users = \App\ProtoControllers\Utilisateur::getListId(false, true);
         if (in_array($data['login'], $users)) {
             $errors[] = _('Cet identifiant existe déja.');
@@ -792,13 +793,10 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         {
             if ($data['pwd1'] == '' || strcmp($data['pwd1'], $data['pwd2'])!=0 ) {
                 $errors[] = _('Saisie du mot de passe incorrect');
-                return false;
+                $return = false;
             }
         }
-
-        $return = static::isFormValide($data, $errors);
-
-        return $return;
+        return $return && static::isFormValide($data, $errors);
     }
 
     private static function isFormUpdateValide($data, &$errors)
@@ -822,13 +820,11 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         {
             if ($data['pwd1'] != '' && strcmp($data['pwd1'], $data['pwd2'])!=0 ) {
                 $errors[] = _('Saisie du mot de passe incorrect');
-                return false;
+                $return =  false;
             }
         }
 
-        $return = static::isFormValide($data, $errors);
-
-        return $return;
+        return $return && static::isFormValide($data, $errors);
     }
 
     private static function isFormValide($data, &$errors)

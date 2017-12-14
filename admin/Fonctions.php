@@ -108,7 +108,6 @@ class Fonctions
             $return .= '</form>';
         }
         echo $return;
-        bottom();
     }
 
     // RESTAURATION
@@ -153,7 +152,6 @@ class Fonctions
         $return .= '</form>';
 
         echo $return;
-        bottom();
     }
 
     public static function commit_sauvegarde($type_sauvegarde)
@@ -240,7 +238,6 @@ class Fonctions
         $return .= '</form>';
 
         echo $return;
-        bottom();
     }
 
     // SAUVEGARDE
@@ -283,8 +280,6 @@ class Fonctions
         $return .= '</form>';
 
         echo $return;
-
-        bottom();
     }
 
     // CHOIX
@@ -328,7 +323,6 @@ class Fonctions
         $return .= ob_get_clean();
         $return .= '</form>';
         echo $return;
-        bottom();
     }
 
     /**
