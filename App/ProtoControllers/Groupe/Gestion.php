@@ -471,7 +471,7 @@ class Gestion {
         if ("" !== $message) {
             $return .= '<div class="alert alert-info">' . $message . '.</div>';
         }
-        $return .= '<a href=hr_index.php?onglet=ajout_group class="btn btn-success pull-right">' . _('admin_groupes_new_groupe') . '</a>';
+        $return .= '<a href=hr_index.php?onglet=ajout_groupe class="btn btn-success pull-right">' . _('admin_groupes_new_groupe') . '</a>';
 
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses([
@@ -505,8 +505,8 @@ class Gestion {
                 $childTable .= '<td>' . $groupe['g_double_valid'] . '</td>';
             }
             $childTable .= '<td class="action">';
-            $childTable .= '<a href="hr_index.php?onglet=modif_group&group=' . $gid . '" title="' . _('form_modif') . '"><i class="fa fa-pencil"></i></a> ';
-            $childTable .= '<a href="hr_index.php?onglet=suppr_group&group=' . $gid . '" title="' . _('form_supprim') . '"><i class="fa fa-times-circle"></i></a>';
+            $childTable .= '<a href="hr_index.php?onglet=modif_groupe&group=' . $gid . '" title="' . _('form_modif') . '"><i class="fa fa-pencil"></i></a> ';
+            $childTable .= '<a href="hr_index.php?onglet=suppr_groupe&group=' . $gid . '" title="' . _('form_supprim') . '"><i class="fa fa-times-circle"></i></a>';
             $childTable .= '</td></tr>';
             $i = !$i;
         }
