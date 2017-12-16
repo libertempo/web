@@ -187,6 +187,7 @@ class Configuration {
     {
         return $this->getGroupeResponsableValeur('resp_association_planning');
     }
+
     /**
      * Retourne une valeur du groupe responsable par son nom
      *
@@ -422,6 +423,11 @@ class Configuration {
     public function getDureeSession()
     {
         return $this->getGroupeDiversValeur('duree_session');
+    }
+
+    public function isJoursFeriesFrance()
+    {
+        return $this->getGroupeDiversValeur('calcul_auto_jours_feries_france');
     }
     /**
      * Retourne une valeur du groupe divers par son nom

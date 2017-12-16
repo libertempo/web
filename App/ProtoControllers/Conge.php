@@ -302,12 +302,12 @@ class Conge
      * @return array $typesConges
      * 
      */
-    public static function getTypesAbsences(\includes\SQL $sql, $type = NULL)
+    public static function getTypesAbsences(\includes\SQL $sql, $type = null)
     {
         $typesConges = [];
         $req = 'SELECT ta_id, ta_libelle, ta_type
                 FROM conges_type_absence';
-        if($type != NULL){
+        if ($type != NULL) {
             $req .= ' WHERE ta_type=\'' . $type . '\'';
         }
         $data   = $sql->query($req);

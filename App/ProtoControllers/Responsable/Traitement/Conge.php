@@ -182,7 +182,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
         $sql = \includes\SQL::singleton();
 
-        if ($this->isReliquatUtilisable(date("m-d"))) {
+        if ($this->isReliquatUtilisable($sql)) {
             $sql->getPdoObj()->begin_transaction();
             if ($SoldeReliquat>=$duree) {
                 $updateReliquat = $this->updateReliquatUser($user, $duree, $typeId);
@@ -515,19 +515,14 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
      * @param int $findemande date de fin de la demande
      * @return bool
      */
-    public function isReliquatUtilisable($findemande)
+    public function isReliquatUtilisable(\includes\SQL $sql)
     {
-        $sql = \includes\SQL::singleton();
-        $req = 'SELECT conf_valeur
-                    FROM conges_config
-                    WHERE conf_nom = "jour_mois_limite_reliquats"';
-        $query = $sql->query($req);
-
-        $dlimite = $query->fetch_array()[0];
-        if ($dlimite == 0) {
+        $config = new \App\Libraries\Configuration($sql);
+        $jourDemande = date("Y-m-d");
+        if (0 === $config->getDateLimiteReliquats()) {
             return true;
         }
-        return $findemande < $dlimite;
+        return $jourDemande < $_SESSION['config']['date_limite_reliquats'];
     }
 
     /**

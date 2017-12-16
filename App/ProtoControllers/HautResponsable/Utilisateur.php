@@ -21,6 +21,7 @@ class Utilisateur
     public static function getFormListeUsers($message)
     {
         $sql = \includes\SQL::singleton();
+        $config = new \App\Libraries\Configuration($sql);
         $return = '';
 
         if (NIL_INT !== $message) {
@@ -32,7 +33,7 @@ class Utilisateur
         $typeAbsencesConges = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges');
         $typeAbsencesExceptionnels = [];
 
-        if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+        if ($config->isCongesExceptionnelsActive()) {
             $typeAbsencesExceptionnels = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges_exceptionnels');
         }
 
@@ -57,13 +58,13 @@ class Utilisateur
             $childTable .= '<th>' . _('divers_solde') . ' ' . $infoType['libelle'] . '</th>';
         }
 
-        if ($_SESSION['config']['gestion_heures']) {
+        if ($config->isHeuresAutorise()) {
             $childTable .= '<th>' . _('divers_solde') . ' ' . _('heures') . '</th>';
         }
 
         $childTable .= '<th></th>';
         $childTable .= '<th></th>';
-        if (($_SESSION['config']['how_to_connect_user'] == "dbconges")) {
+        if (($config->getHowToConnectUser() == "dbconges")) {
             $childTable .= '<th></th>';
         }
         $childTable .= '</tr>';
@@ -104,7 +105,7 @@ class Utilisateur
 
             $childTable .= '</td><td>' . $infosUser['u_quotite'] . ' %</td>';
 
-            $soldesByType = \App\ProtoControllers\Utilisateur::getSoldesEmploye($sql, $login);
+            $soldesByType = \App\ProtoControllers\Utilisateur::getSoldesEmploye($sql, $config, $login);
 
             foreach($typeAbsencesConges as $congesId => $infoType) {
                 if (isset($soldesByType[$congesId])) {
@@ -123,7 +124,7 @@ class Utilisateur
                     $childTable .= '<td>0</td>';
                 }
             }
-            if ($_SESSION['config']['gestion_heures']) {
+            if ($config->isHeuresAutorise()) {
                 $childTable .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($infosUser['u_heure_solde']) . '</td>';
             }
 
@@ -157,6 +158,8 @@ class Utilisateur
         $message   = '';
         $errorsLst = [];
         $notice    = '';
+        $sql = \includes\SQL::singleton();
+        $config = new \App\Libraries\Configuration($sql);
 
         if (NIL_INT !== $userId) {
             $userInfo = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($userId)[$userId];
@@ -229,17 +232,17 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $childTable .= '<th>' . _('Nom') . '</th>';
         $childTable .= '<th>' . _('Prénom') . '</th>';
         $childTable .= '<th>' . _('Quotité') . '</th>';
-        if ($_SESSION['config']['gestion_heures']) {
+        if ($config->isHeuresAutorise()) {
             $childTable .= '<th>' . _('solde d\'heure') . '</th>';
         }
         $childTable .= '<th>' . _('Responsable?') . '</th>';
         $childTable .= '<th>' . _('Administrateur?') . '</th>';
         $childTable .= '<th>' . _('Haut responsable?') . '</th>';
         $childTable .= '<th>' . _('activé?') . '</th>';
-        if (!$_SESSION['config']['export_users_from_ldap']) {
+        if (!$config->isUsersExportFromLdap()) {
             $childTable .= '<th>' . _('Email') . '</th>';
         }
-        if ($_SESSION['config']['how_to_connect_user'] == "dbconges") {
+        if ($config->getHowToConnectUser() == "dbconges") {
             $childTable .= '<th>' . _('mot de passe') . '</th>';
             $childTable .= '<th>' . _('ressaisir mot de passe') . '</th>';
         }
@@ -247,7 +250,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $soldeHeureId = uniqid();
         $readOnly = '';
         $optLdap = '';
-        if ($_SESSION['config']['export_users_from_ldap']) {
+        if ($config->isUsersExportFromLdap()) {
             $readOnly = 'readonly';
             $optLdap = 'onkeyup="searchLdapUser()" autocomplete="off"';
         }
@@ -260,7 +263,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $childTable .= "<td><input class=\"form-control\" type=\"text\" name=\"new_prenom\" size=\"10\" maxlength=\"30\" value=\"".$formValue['prenom']."\" " . $readOnly . " required></td>" ;
         $childTable .= "<td><input class=\"form-control\" type=\"text\" name=\"new_quotite\" size=\"3\" maxlength=\"3\" value=\"".$formValue['quotite']."\" required></td>" ;
 
-        if ($_SESSION['config']['gestion_heures'] ) {
+        if ($config->isHeuresAutorise()) {
             $childTable .= "<td><input class=\"form-control\" type=\"text\" name=\"new_solde_heure\" id=\"" . $soldeHeureId . "\" size=\"6\" maxlength=\"6\" value=\"".$formValue['soldeHeure']."\"></td>" ;
         }else{
             $childTable .= "<input class=\"form-control\" type=\"hidden\" name=\"new_solde_heure\" id=\"" . $soldeHeureId . "\" size=\"6\" maxlength=\"6\" value=\"0\">" ;
@@ -278,10 +281,10 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
                         <option value=\"Y\" " . ($formValue['isActive'] == 'Y' ? 'selected' : '') . ">Y</option>
                         <option value=\"N\" " . ($formValue['isActive'] == 'N' ? 'selected' : '') . ">N</option></select></td>" ;
 
-        if (!$_SESSION['config']['export_users_from_ldap']) {
+        if (!$config->isUsersExportFromLdap()) {
             $childTable .= "<td><input class=\"form-control\" type=\"text\" name=\"new_email\" size=\"10\" maxlength=\"99\" value=\"".$formValue['email']."\"></td>" ;
         }
-        if ($_SESSION['config']['how_to_connect_user'] == "dbconges") {
+        if ($config->getHowToConnectUser() == "dbconges") {
             $childTable .= "<td><input class=\"form-control\" type=\"password\" name=\"new_password1\" size=\"10\" maxlength=\"15\" value=\"\" autocomplete=\"off\" required></td>" ;
             $childTable .= "<td><input class=\"form-control\" type=\"password\" name=\"new_password2\" size=\"10\" maxlength=\"15\" value=\"\" autocomplete=\"off\" required></td>" ;
         }
@@ -318,9 +321,10 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
     private static function getFormUserSoldes($data, $userId)
     {
         $sql = \includes\SQL::singleton();
+        $config = new \App\Libraries\Configuration($sql);
         $typeAbsencesConges = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges');
         if (NIL_INT !== $userId) {
-            $soldesByType = \App\ProtoControllers\Utilisateur::getSoldesEmploye($sql, $userId);
+            $soldesByType = \App\ProtoControllers\Utilisateur::getSoldesEmploye($sql, $config, $userId);
             foreach ($soldesByType as $typeId => $infos) {
                 $data['joursAn'][$typeId] = $infos['su_nb_an'];
                 $data['soldes'][$typeId] = $infos['su_solde'];
@@ -362,7 +366,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             $childTable .= '</tr>';
             $i = !$i;
         }
-        if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+        if ($config->isCongesExceptionnelsActive()) {
             $typeAbsencesExceptionnels = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges_exceptionnels');
             foreach($typeAbsencesExceptionnels as $typeId => $infoType) {
                 $childTable .= '<tr class="'.($i?'i':'p').'">';
@@ -513,6 +517,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
      * @return type
      */
     private static function dataForm2Array($htmlPost) {
+        $config = new \App\Libraries\Configuration($sql);
         $data['login'] = htmlentities($htmlPost['new_login'], ENT_HTML401);
         $data['oldLogin'] = htmlentities($htmlPost['old_login'], ENT_HTML401);
         $data['nom'] = htmlentities($htmlPost['new_nom'], ENT_QUOTES | ENT_HTML401);
@@ -524,14 +529,14 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $data['isAdmin'] = $htmlPost['new_is_admin'] === 'Y' ? 'Y' : 'N';
         $data['isHR'] = $htmlPost['new_is_hr'] === 'Y' ? 'Y' : 'N';
 
-        if (!$_SESSION['config']['export_users_from_ldap']) {
+        if (!$config->isUsersExportFromLdap()) {
             $data['email'] = htmlentities($htmlPost['new_email'], ENT_QUOTES | ENT_HTML401);
         } else {
             $ldap = new \App\Libraries\Ldap();
             $data['email'] = $ldap->getEmailUser($data['login']);
         }
 
-        if ($_SESSION['config']['how_to_connect_user'] == "dbconges") {
+        if ($config->getHowToConnectUser() == "dbconges") {
             $data['pwd1'] = $htmlPost['new_password1'] == "" ? "" : md5($htmlPost['new_password1']);
             $data['pwd2'] = $htmlPost['new_password2'] == "" ? "" : md5($htmlPost['new_password2']);
         } else {
@@ -677,16 +682,18 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
 
     private static function insertUtilisateur($data, &$errors)
     {
+        $sql = \includes\SQL::singleton();
+        $config = new \App\Libraries\Configuration($sql);
         if (!static::isFormInsertValide($data, $errors)) {
             return NIL_INT;
         }
 
-        $sql = \includes\SQL::singleton();
         $sql->getPdoObj()->begin_transaction();
         $insertInfos = static::insertInfosUser($data, $sql);
-        if (!$_SESSION['config']['export_users_from_ldap']) {
+        if (!$config->isUsersExportFromLdap()) {
             $insertEmail = static::insertEmailUser($data, $sql);
         }
+        $insertSoldes = static::insertSoldeUser($data, $sql);
         if (!empty($data|'groupesId')) {
             $insertGroupes = static::insertGroupesUser($data, $sql);
         }
@@ -722,6 +729,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
 
     private static function insertSoldeUser($data, \includes\SQL $sql)
     {
+        $config = new \App\Libraries\Configuration($sql);
         $typeAbsencesConges = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges');
 
         foreach($typeAbsencesConges as $typeId => $info) {
@@ -730,7 +738,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             $sql->query($req);
         }
 
-        if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+        if ($config->isCongesExceptionnelsActive()) {
             $typeAbsencesExceptionnels = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges_exceptionnels');
             foreach($typeAbsencesExceptionnels as $typeId => $info) {
                 $req = "INSERT INTO conges_solde_user (su_login, su_abs_id, su_nb_an, su_solde, su_reliquat)
@@ -755,11 +763,12 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
 
     private static function putUser($data, &$errors)
     {
-        if (!static::isFormUpdateValide($data, $errors)) {
+        $sql = \includes\SQL::singleton();
+        $config = new \App\Libraries\Configuration($sql);
+        if (!static::isFormUpdateValide($data, $errors, $sql)) {
             return NIL_INT;
         }
 
-        $sql = \includes\SQL::singleton();
         $sql->getPdoObj()->begin_transaction();
         $userUpdate = static::updateInfosUser($data, $sql);
         $soldesUpdate = static::updateSoldeUser($data, $sql);
@@ -767,7 +776,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             $pwdUpdate = static::updatePasswordUser($data, $sql);
         }
 
-        if (!$_SESSION['config']['export_users_from_ldap']) {
+        if (!$config->isUsersExportFromLdap()) {
             $emailUpdate = static::updateEmailUser($data, $sql);
         }
 
@@ -782,6 +791,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
 
     private static function isFormInsertValide($data, &$errors)
     {
+        $config = new \App\Libraries\Configuration($sql);
         $return = true;
         $users = \App\ProtoControllers\Utilisateur::getListId(false, true);
         if (in_array($data['login'], $users)) {
@@ -789,7 +799,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             $return = false;
         }
 
-        if ($_SESSION['config']['how_to_connect_user'] == 'dbconges')
+        if ($config->getHowToConnectUser() == 'dbconges')
         {
             if ($data['pwd1'] == '' || strcmp($data['pwd1'], $data['pwd2'])!=0 ) {
                 $errors[] = _('Saisie du mot de passe incorrect');
@@ -799,9 +809,9 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         return $return && static::isFormValide($data, $errors);
     }
 
-    private static function isFormUpdateValide($data, &$errors)
+    private static function isFormUpdateValide($data, &$errors, \includes\SQL $sql)
     {
-        $sql = \includes\SQL::singleton();
+        $config = new \App\Libraries\Configuration($sql);
         $users = \App\ProtoControllers\Utilisateur::getListId(false, true);
         if (in_array($data['login'], $users) && $data['login'] != $data['oldLogin']) {
             $errors[] = _('Cet identifiant existe déja.');
@@ -816,7 +826,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             $return = false;
         }
 
-        if ($_SESSION['config']['how_to_connect_user'] == 'dbconges')
+        if ($config->getHowToConnectUser() == 'dbconges')
         {
             if ($data['pwd1'] != '' && strcmp($data['pwd1'], $data['pwd2'])!=0 ) {
                 $errors[] = _('Saisie du mot de passe incorrect');
@@ -829,6 +839,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
 
     private static function isFormValide($data, &$errors)
     {
+        $config = new \App\Libraries\Configuration($sql);
         $return = true;
 
         if ('' == $data['login']) {
@@ -846,14 +857,14 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             $return = false;
         }
 
-        if ($_SESSION['config']['gestion_heures']) {
+        if ($config->isHeuresAutorise()) {
             if (!\App\Helpers\Formatter::isHourFormat($data['soldeHeure'])) {
                 $errors[] = _('Format du solde d\'heure incorrect');
                 $return = false;
             }
         }
 
-        if (!$_SESSION['config']['export_users_from_ldap']) {
+        if (!$config->isUsersExportFromLdap()) {
             if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
                 $errors[] = _('Format de l\'adresse email incorrect');
                 $return = false;
@@ -896,6 +907,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
 
     private static function updateSoldeUser($data, \includes\SQL $sql)
     {
+        $config = new \App\Libraries\Configuration($sql);
         $typeAbsencesConges = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges');
         foreach($typeAbsencesConges as $typeId => $info) {
             $req = 'REPLACE INTO conges_solde_user 
@@ -907,7 +919,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             $sql->query($req);
         }
 
-        if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+        if ($config->isCongesExceptionnelsActive()) {
             $typeAbsencesExceptionnels = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges_exceptionnels');
             foreach($typeAbsencesExceptionnels as $typeId => $info) {
                 $req = 'REPLACE INTO conges_solde_user 

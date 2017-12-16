@@ -112,15 +112,15 @@ class Formatter
 
     public static function roundToHalf($num)
     {
-        if(!is_numeric($num)){
+        if (!is_numeric($num)) {
             return $num;
         }
 
         $ceil = ceil($num);
         $half = $ceil- 0.5;
-        if($num >= $half + 0.25){
+        if ($num >= $half + 0.25) {
             return $ceil;
-        } else if($num < $half - 0.25){
+        } elseif ($num < $half - 0.25) {
             return floor($num);
         }
         

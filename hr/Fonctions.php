@@ -80,14 +80,8 @@ class Fonctions
 
         $sql = \includes\SQL::singleton();
         $typeAbsence = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges');
-        if ($_SESSION['config']['gestion_conges_exceptionnels']) {
-            $typeAbsence = array_merge($typeAbsence, \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges_exceptionnels'));
-        }
-
-        // recup du tableau des types de conges (seulement les conges exceptionnels)
-        $tab_type_conges_exceptionnels=array();
         if ($config->isCongesExceptionnelsActive()) {
-            $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
+            $typeAbsence = array_merge($typeAbsence, \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges_exceptionnels'));
         }
 
         /*********************************/
@@ -1724,6 +1718,8 @@ class Fonctions
 
     public static function saisie($year_calendrier_saisie)
     {
+        $sql = \includes\SQL::singleton();
+        $config = new \App\Libraries\Configuration();
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
@@ -1737,7 +1733,7 @@ class Fonctions
         \hr\Fonctions::get_tableau_jour_feries($year_calendrier_saisie, $tab_year);
 
         //calcul automatique des jours feries
-        if ($_SESSION['config']['calcul_auto_jours_feries_france']) {
+        if ($config->isJoursFeriesFrance()) {
             $tableau_jour_feries = \hr\Fonctions::fcListJourFeries($year_calendrier_saisie) ;
             foreach ($tableau_jour_feries as $i => $value) {
                 if (!in_array ("$value", $tab_year))
