@@ -49,7 +49,7 @@ class InjectableCreator
                 return new $classname($this->db);
             case \App\Libraries\ApiClient::class:
                 // TODO à supprimer quand on aura un vrai DI
-                $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+                $config = new \App\Libraries\Configuration($this->db);
                 $baseURIApi = $config->getUrlAccueil() . '/api/';
 
                 $client = new \GuzzleHttp\Client([
