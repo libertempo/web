@@ -8,26 +8,25 @@ if (!is_readable( CONFIG_PATH .'dbconnect.php')) {
 }
 include_once INCLUDE_PATH .'fonction.php';
 include_once ROOT_PATH .'fonctions_conges.php'; // for init_config_tab()
-$config = new \App\Libraries\Configuration(\includes\SQL::singleton());
-$injectableCreator = new \App\Libraries\InjectableCreator(\includes\SQL::singleton());
+$sql = \includes\SQL::singleton();
+$config = new \App\Libraries\Configuration($sql);
+$injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
 $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
 
 /***** DEBUT DU PROG *****/
 
-if (!session_is_valid()) {
+/*** initialisation des variables ***/
+/************************************/
 
-	/*** initialisation des variables ***/
-	/************************************/
-	if ($err = getpost_variable('error', false)) {
-		switch ($err) {
-			case 'session-invalid':
-				header_error();
-				echo "<p>" . _('session_pas_session_ouverte') . "<p>\n";
-				echo "<p>" . _('divers_veuillez') ." <a href='" . $config->getUrlAccueil() . "/index.php' target='_top'><strong>" . _('divers_vous_authentifier') . "</strong></a></p>\n";
-				bottom();
-				exit();
-		}
-	}
+// Si CAS alors on utilise le login CAS pour la session
+if ( $config->getHowToConnectUser() == "cas") {
+        //redirection vers l'url d'authentification CAS
+        $usernameCAS = authentification_passwd_conges_CAS();
+        if ($usernameCAS == "") {
+                header_error();
+
+                echo  _('session_pas_de_compte_dans_dbconges') ."<br>\n";
+                echo  _('session_contactez_admin') ."\n";
 
 	// Si CAS alors on utilise le login CAS pour la session
 	if ( $config->getHowToConnectUser() == "cas" && $_GET['cas'] != "no" ) {

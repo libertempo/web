@@ -16,7 +16,9 @@ if (empty($listPlanningId)) {
     $plannings = [];
 } else {
     $listIdUsed = \App\ProtoControllers\HautResponsable\Planning::getListPlanningUsed($listPlanningId);
-    $injectableCreator = new \App\Libraries\InjectableCreator(\includes\SQL::singleton());
+    $sql = \includes\SQL::singleton();
+    $config = new \App\Libraries\Configuration($sql);
+    $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
     $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
     $plannings = $api->get('plannings', $_SESSION['token'])->data;
 }

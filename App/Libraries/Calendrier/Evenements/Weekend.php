@@ -23,15 +23,17 @@ class Weekend
      */
     const JOUR_DIMANCHE = 0;
 
-    public function __construct(\includes\SQL $db)
+    public function __construct(\includes\SQL $db, \App\Libraries\Configuration $config)
     {
         $this->db = $db;
+        $this->config = $config;
     }
 
     /**
     * @var \includes\SQL Objet de DB
     */
     private $db;
+    private $config;
 
     /**
      * Retourne la liste des jours fériés relative à la période demandée
@@ -53,7 +55,7 @@ class Weekend
      */
     private function getListeSamedi(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
     {
-        if (!$this->isSamediTravaille()) {
+        if (!$this->config->isSamediOuvrable()) {
             return $this->getListeJourSemaine(static::JOUR_SAMEDI, $dateDebut, $dateFin);
         }
 
@@ -67,7 +69,7 @@ class Weekend
      */
     private function getListeDimanche(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin)
     {
-        if (!$this->isDimancheTravaille()) {
+        if (!$this->config->isDimancheOuvrable()) {
             return $this->getListeJourSemaine(static::JOUR_DIMANCHE, $dateDebut, $dateFin);
         }
 
@@ -102,34 +104,5 @@ class Weekend
         sort($listeJourSemaine);
 
         return $listeJourSemaine;
-    }
-
-
-    /*
-     * SQL
-     * @TODO dégager lors de la mise en place de l'objet configuration
-     */
-
-
-    private function isSamediTravaille()
-    {
-        $req = 'SELECT *
-            FROM conges_config
-            WHERE conf_nom = "samedi_travail" LIMIT 1';
-
-        $res = $this->db->query($req)->fetch_assoc();
-
-        return 'TRUE' === $res['conf_valeur'];
-    }
-
-    private function isDimancheTravaille()
-    {
-        $req = 'SELECT *
-                FROM conges_config
-                WHERE conf_nom = "dimanche_travail" LIMIT 1';
-
-        $res = $this->db->query($req)->fetch_assoc();
-
-        return 'TRUE' === $res['conf_valeur'];
     }
 }

@@ -39,9 +39,10 @@ function getTitleJour(\App\Libraries\Calendrier\Evenements $evenements, $nom, $j
     }
     return '';
 }
-$config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+$sql = \includes\SQL::singleton();
+$config = new \App\Libraries\Configuration($sql);
 
-$injectableCreator = new \App\Libraries\InjectableCreator(\includes\SQL::singleton());
+$injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
 $calendar = new \CalendR\Calendar();
 $jourDemande = null;
 $moisDemande = null;

@@ -194,7 +194,7 @@ class Utilisateur
             ];
         }
         if (!empty($_POST)) {
-            $formValue = \App\ProtoControllers\HautResponsable\Utilisateur::dataForm2Array($_POST);
+            $formValue = \App\ProtoControllers\HautResponsable\Utilisateur::dataForm2Array($_POST, $sql);
             if (0 < (int) \App\ProtoControllers\HautResponsable\Utilisateur::postFormUser($formValue, $errorsLst, $notice)) {
                 redirect(ROOT_PATH . 'hr/hr_index.php?onglet=page_principale&notice=' . $notice, false);
             } else {
@@ -476,6 +476,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
 
         $return .= '<form action="" method="post" accept-charset="UTF-8"
 enctype="application/x-www-form-urlencoded" class="form-group">';
+        $return .= '<div class="alert alert-danger">' . _('êtes vous sur de vouloir supprimer cet utilisateur') . '</div>';
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses([
             'table',
@@ -516,7 +517,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
      * @param type $htmlPost
      * @return type
      */
-    private static function dataForm2Array($htmlPost) {
+    public static function dataForm2Array($htmlPost, \includes\SQL $sql) {
         $config = new \App\Libraries\Configuration($sql);
         $data['login'] = htmlentities($htmlPost['new_login'], ENT_HTML401);
         $data['oldLogin'] = htmlentities($htmlPost['old_login'], ENT_HTML401);
@@ -567,7 +568,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
      *
      * @return int {-1, 0, 1}
      */
-    private static function sortParActif (array $a, array $b) {
+    public static function sortParActif (array $a, array $b) {
         if ($a['u_is_active'] == 'Y' && $b['u_is_active'] == 'N') {
             return -1; // $a est avant $b
         } elseif ($a['u_is_active'] == 'N' && $b['u_is_active'] == 'Y') {
@@ -625,12 +626,12 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
 
     private static function deleteUser($user, &$errors)
     {
-        if (!static::isDeletable($user)) {
+        $sql = \includes\SQL::singleton();
+        if (!static::isDeletable($user, $sql)) {
             $errors[] = _('Suppression impossible : cette utilisateur est responsable d\'un groupe');
             return NIL_INT;
         }
 
-        $sql = \includes\SQL::singleton();
         $sql->getPdoObj()->begin_transaction();
 
         $req = 'DELETE FROM conges_users WHERE u_login = "' . $user . '"';
@@ -666,9 +667,8 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         return $rollback ? $user : NIL_INT;
     }
 
-    private static function isDeletable($user)
+    public static function isDeletable($user, \includes\SQL $sql)
     {
-        $sql = \includes\SQL::singleton();
         $req = 'SELECT EXISTS (
                     SELECT gr_login, ggr_login
                     FROM conges_groupe_resp, conges_groupe_grd_resp
@@ -684,7 +684,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
     {
         $sql = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($sql);
-        if (!static::isFormInsertValide($data, $errors)) {
+        if (!static::isFormInsertValide($data, $errors, $sql)) {
             return NIL_INT;
         }
 
@@ -789,7 +789,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         return $sql->getPdoObj()->commit();
     }
 
-    private static function isFormInsertValide($data, &$errors)
+    private static function isFormInsertValide($data, &$errors, \includes\SQL $sql)
     {
         $config = new \App\Libraries\Configuration($sql);
         $return = true;
@@ -806,7 +806,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
                 $return = false;
             }
         }
-        return $return && static::isFormValide($data, $errors);
+        return $return && static::isFormValide($data, $errors, $sql);
     }
 
     private static function isFormUpdateValide($data, &$errors, \includes\SQL $sql)
@@ -834,10 +834,10 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             }
         }
 
-        return $return && static::isFormValide($data, $errors);
+        return $return && static::isFormValide($data, $errors, $sql);
     }
 
-    private static function isFormValide($data, &$errors)
+    private static function isFormValide($data, &$errors, \includes\SQL $sql)
     {
         $config = new \App\Libraries\Configuration($sql);
         $return = true;

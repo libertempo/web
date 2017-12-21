@@ -46,7 +46,7 @@ class Configuration {
      * @todo a supprimer. non utilisé
      * @return string
      */
-    public function getLang() {
+    public function getLangue() {
         return $this->getGroupeLibertempoValeur('lang');
     }
 
@@ -200,15 +200,6 @@ class Configuration {
     }
 
     /**
-     * Permet aux responsables avec les droits admin de voir tous les utilisateurs
-     * 
-     * @return boolean
-     */
-    public function canAdminSeeAll() {
-        return $this->getGroupeAdministrateurValeur('admin_see_all');
-    }
-
-    /**
      * Permet aux admin de changer les mot de passe
      * le mot de passe n'est modifiable que si 
      * authentification locale
@@ -281,10 +272,6 @@ class Configuration {
     
     public function isSendMailSupprimeDemandeResponsable() {
         return $this->getGroupeMailValeur('mail_supp_demande_alerte_resp');
-    }
-
-    public function getMailFromLdap() {
-        return $this->getGroupeMailValeur('where_to_find_user_email') == 'ldap';
     }
 
     /**
@@ -420,11 +407,6 @@ class Configuration {
         return $this->getGroupeDiversValeur('affiche_date_traitement');
     }
 
-    public function getDureeSession()
-    {
-        return $this->getGroupeDiversValeur('duree_session');
-    }
-
     public function isJoursFeriesFrance()
     {
         return $this->getGroupeDiversValeur('calcul_auto_jours_feries_france');
@@ -487,7 +469,7 @@ class Configuration {
      * @return mixed
      * @throws \Exception Si la configuration n'existe pas
      */
-    private function getValeur($nom, $groupe) {
+    public function getValeur($nom, $groupe) {
         if (!isset($this->data[$groupe]) || !isset($this->data[$groupe][$nom])) {
             throw new \Exception('Donnée de configuration inexistante');
         }

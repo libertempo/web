@@ -171,7 +171,9 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
     protected function updateSoldeReliquatEmploye($user, $duree, $typeId)
     {
-        if (!$this->isOptionReliquatActive()) {
+        $sql = \includes\SQL::singleton();
+        $config = new \App\Libraries\Configuration($sql);
+        if (!$config->isReliquatsAutorise()) {
             return $this->updateSoldeUser($user, $duree, $typeId);
         }
 
@@ -179,8 +181,6 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         if (0 >= $SoldeReliquat) {
             return $this->updateSoldeUser($user, $duree, $typeId);
         }
-
-        $sql = \includes\SQL::singleton();
 
         if ($this->isReliquatUtilisable($sql)) {
             $sql->getPdoObj()->begin_transaction();
@@ -493,22 +493,6 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         return ($statut != \App\Models\conge::STATUT_ANNUL || $statut != \App\Models\Conge::STATUT_VALIDATION_FINALE || $statut != \App\Models\Conge::STATUT_REFUS);
     }
 
-    /**
-     * verifie que les reliquats sont autorisées
-     *
-     * @return bool
-     */
-    public function isOptionReliquatActive()
-    {
-        $sql = \includes\SQL::singleton();
-        $req = 'SELECT conf_valeur
-                    FROM conges_config
-                    WHERE conf_nom = "autorise_reliquats_exercice"';
-        $query = $sql->query($req);
-
-        return $query->fetch_array()[0];
-    }
-
    /**
      * verifie si la date limite d'usage des reliquats n'est pas dépassée
      *
@@ -526,7 +510,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
     }
 
     /**
-     * verifie si la date limite d'usage des reliquats n'est pas dépassée
+     * retourne le libellé d'un type d'absence
      *
      * @param int $type
      *
