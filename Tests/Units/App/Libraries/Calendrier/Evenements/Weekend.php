@@ -11,29 +11,35 @@ class Weekend extends \Tests\Units\TestUnit
         $this->result = new \mock\MYSQLIResult();
         $this->db = new \mock\includes\SQL();
         $this->calling($this->db)->query = $this->result;
+
+        $this->config = new \mock\App\Libraries\Configuration($this->db);
+
     }
 
     private $db;
     private $result;
+    private $config;
 
     public function testGetListeWeekendTravaille()
     {
-        $this->calling($this->result)->fetch_assoc = ['conf_valeur' => 'TRUE'];
+        $this->calling($this->config)->isSamediOuvrable = true;
+        $this->calling($this->config)->isDimancheOuvrable = true;
         $date = new \DateTimeImmutable();
 
-        $weekend = new _Weekend($this->db);
+        $weekend = new _Weekend($this->db, $this->config);
 
         $this->array($weekend->getListe($date, $date))->isEmpty();
     }
 
     public function testGetListeSamediNonTravailleSeulement()
     {
-        $this->calling($this->result)->fetch_assoc[1] = ['conf_valeur' => false];
-        $this->calling($this->result)->fetch_assoc[2] = ['conf_valeur' => 'TRUE'];
+        $this->calling($this->config)->isSamediOuvrable = false;
+        $this->calling($this->config)->isDimancheOuvrable = true;
+
         $debut = new \DateTimeImmutable('2017-02-01');
         $fin = new \DateTimeImmutable('2017-02-28');
 
-        $weekend = new _Weekend($this->db);
+        $weekend = new _Weekend($this->db, $this->config);
 
         $expected = [
             '2017-02-04',
@@ -41,18 +47,17 @@ class Weekend extends \Tests\Units\TestUnit
             '2017-02-18',
             '2017-02-25'
         ];
-
         $this->array($weekend->getListe($debut, $fin))->isIdenticalTo($expected);
     }
 
     public function testGetListeDimancheNonTravailleSeulement()
     {
-        $this->calling($this->result)->fetch_assoc[1] = ['conf_valeur' => 'TRUE'];
-        $this->calling($this->result)->fetch_assoc[2] = ['conf_valeur' => false];
+        $this->calling($this->config)->isSamediOuvrable = true;
+        $this->calling($this->config)->isDimancheOuvrable = false;
         $debut = new \DateTimeImmutable('2017-02-01');
         $fin = new \DateTimeImmutable('2017-02-28');
 
-        $weekend = new _Weekend($this->db);
+        $weekend = new _Weekend($this->db, $this->config);
 
         $expected = [
             '2017-02-05',
