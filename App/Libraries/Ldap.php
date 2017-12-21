@@ -22,16 +22,17 @@ class Ldap
     {
         include CONFIG_PATH . 'config_ldap.php';
         $this->ldapConn = \ldap_connect($config_ldap_server);
-        if($config_ldap_protocol_version != 0) {
+        if ($config_ldap_protocol_version != 0) {
             ldap_set_option($this->ldapConn, LDAP_OPT_PROTOCOL_VERSION, $config_ldap_protocol_version);
             ldap_set_option($this->ldapConn, LDAP_OPT_REFERRALS, 0);
         }
+
         if ($config_ldap_user == "") {
-            $bound = ldap_bind($this->ldapConn);  // connexion anonyme au serveur
-        } else {
-            $bound = ldap_bind($this->ldapConn, $config_ldap_user, $config_ldap_pass);
+            $config_ldap_user = null;
+            $config_ldap_pass = null;
         }
 
+        $bound = ldap_bind($this->ldapConn, $config_ldap_user, $config_ldap_pass);
     }
 
     public function searchLdap($search)
@@ -76,7 +77,7 @@ class Ldap
         $searchResult = ldap_search($this->ldapConn, $config_searchdn, $filter, $attributs, 0, 10);
         $entries = ldap_get_entries($this->ldapConn,$searchResult);
 
-        if(0 < $entries['count']){
+        if (0 < $entries['count']) {
             return $entries[0][$config_ldap_mail][0];
         } else {
             return "";

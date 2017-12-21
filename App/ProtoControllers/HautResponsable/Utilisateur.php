@@ -73,7 +73,7 @@ class Utilisateur
 
         $infoUsers = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur();
         asort($infoUsers);
-        uasort($infoUsers, array('self','sortParActif'));
+        uasort($infoUsers, ['self','sortParActif']);
         $i = true;
         foreach ($infoUsers as $login => $infosUser) {
 
@@ -82,7 +82,7 @@ class Utilisateur
             $childTable .= '<span class="login">' . $login . '</span>';
             $childTable .= '<span class="mail">' . $infosUser['u_email'] . '</span>';
             // droit utilisateur
-            $rights = array();
+            $rights = [];
             if ($infosUser['u_is_active'] == 'N') {
                 $rights[] = 'inactif';
             }
@@ -107,7 +107,7 @@ class Utilisateur
 
             $soldesByType = \App\ProtoControllers\Utilisateur::getSoldesEmploye($sql, $config, $login);
 
-            foreach($typeAbsencesConges as $congesId => $infoType) {
+            foreach ($typeAbsencesConges as $congesId => $infoType) {
                 if (isset($soldesByType[$congesId])) {
                     $childTable .= '<td>' . $soldesByType[$congesId]['su_nb_an'] . '</td>';
                     $childTable .= '<td>' . $soldesByType[$congesId]['su_solde'] . '</td>';
@@ -177,7 +177,7 @@ class Utilisateur
                 'pwd1' => '',
                 'pwd2' => '',
             ];
-        }else{
+        } else {
             $formValue = [
                 'login' => '',
                 'nom' => '',
@@ -296,14 +296,14 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $return .= ob_get_clean();
         $return .= '<br><hr>';
 
-        $return .= \App\ProtoControllers\HautResponsable\Utilisateur::getFormUserSoldes($formValue, $userId);
+        $return .= static::getFormUserSoldes($formValue, $userId);
         $return .= '<br><hr>';
 
         if ($userId != NIL_INT) {
             $return .= '<input type="hidden" name="_METHOD" value="PUT" />';
             $return .= '<input type="hidden" name="old_login" value="' . $userId . '" />';
         } else {
-            $return .= \App\ProtoControllers\HautResponsable\Utilisateur::getFormUserGroupes($formValue, $userId);
+            $return .= \App\ProtoControllers\HautResponsable\Utilisateur::getFormUserGroupes($formValue);
             $return .= '<hr>';
         }
         
@@ -354,7 +354,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $childTable .= '<tbody>';
 
         $i = true;
-        foreach($typeAbsencesConges as $typeId => $infoType) {
+        foreach ($typeAbsencesConges as $typeId => $infoType) {
             $childTable .= '<tr class="'.($i?'i':'p').'">';
             $joursAn = ( isset($data['joursAn'][$typeId]) ? $data['joursAn'][$typeId] : 0 );
             $solde = ( isset($data['soldes'][$typeId]) ? $data['soldes'][$typeId] : 0 );
@@ -368,7 +368,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         }
         if ($config->isCongesExceptionnelsActive()) {
             $typeAbsencesExceptionnels = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges_exceptionnels');
-            foreach($typeAbsencesExceptionnels as $typeId => $infoType) {
+            foreach ($typeAbsencesExceptionnels as $typeId => $infoType) {
                 $childTable .= '<tr class="'.($i?'i':'p').'">';
                 $solde = ( isset($data['soldes'][$typeId]) ? $data['soldes'][$typeId] : 0 );
                 $childTable .= '<td>'.  $infoType['libelle'] . '</td>';
@@ -389,7 +389,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         return $return;
     }
 
-    public static function getFormUserGroupes($data, $userId)
+    public static function getFormUserGroupes($data)
     {
         $sql = \includes\SQL::singleton();
         $return = '';
@@ -417,14 +417,9 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
 
         $groupes = \App\ProtoControllers\Groupe::getListeGroupes($sql);
 
-        $groupesUser = [];
-        if (NIL_INT !== $userId) {
-            $groupesUser = \App\ProtoControllers\Utilisateur::getGroupesId($userId);
-        }
-
         $i = true;
-        foreach($groupes as $groupeId => $groupeInfos) {
-            if (in_array($groupeId, $groupesUser)) {
+        foreach ($groupes as $groupeId => $groupeInfos) {
+            if (in_array($groupeId, $data['groupesId'])) {
                 $checkbox="<input type=\"checkbox\" name=\"checkbox_user_groups[$groupeId]\" value=\"$groupeId\" checked>";
             } else {
                 $checkbox="<input type=\"checkbox\" name=\"checkbox_user_groups[$groupeId]\" value=\"$groupeId\">";
@@ -558,7 +553,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         foreach ($htmlPost['tab_new_reliquat'] as $typeId => $solde) {
             $data['reliquats'][$typeId] = htmlentities($solde, ENT_QUOTES | ENT_HTML401);
         }
-        $data['groupesId'] = array_key_exists('checkbox_user_groups', $htmlPost) ? $htmlPost['checkbox_user_groups'] : [];
+        $data['groupesId'] = array_key_exists('checkbox_user_groups', $htmlPost) ? array_keys($htmlPost['checkbox_user_groups']) : [];
 
         return $data;
     }
@@ -732,7 +727,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $config = new \App\Libraries\Configuration($sql);
         $typeAbsencesConges = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges');
 
-        foreach($typeAbsencesConges as $typeId => $info) {
+        foreach ($typeAbsencesConges as $typeId => $info) {
             $req = "INSERT INTO conges_solde_user (su_login, su_abs_id, su_nb_an, su_solde, su_reliquat) 
                     VALUES ('" . $data['login'] . "' , $typeId, " . $data['joursAn'][$typeId] . ", " . $data['soldes'][$typeId] . ", " . $data['reliquats'][$typeId] . ") " ;
             $sql->query($req);
@@ -740,7 +735,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
 
         if ($config->isCongesExceptionnelsActive()) {
             $typeAbsencesExceptionnels = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges_exceptionnels');
-            foreach($typeAbsencesExceptionnels as $typeId => $info) {
+            foreach ($typeAbsencesExceptionnels as $typeId => $info) {
                 $req = "INSERT INTO conges_solde_user (su_login, su_abs_id, su_nb_an, su_solde, su_reliquat)
                         VALUES ('" . $data['login'] . "' , $typeId, 0, " . $data['soldes'][$typeId] . ", 0) " ;
 
@@ -753,7 +748,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
 
     private static function insertGroupesUser($data, \includes\SQL $sql)
     {
-        foreach($data['groupesId'] as $gid => $value) {
+        foreach ($data['groupesId'] as $gid) {
             $req = "INSERT INTO conges_groupe_users SET gu_gid=" . $gid . ", gu_login='" . $data['login'] . "' "  ;
             $sql->query($req);
         }
@@ -799,13 +794,13 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             $return = false;
         }
 
-        if ($config->getHowToConnectUser() == 'dbconges')
-        {
+        if ($config->getHowToConnectUser() == 'dbconges') {
             if ($data['pwd1'] == '' || strcmp($data['pwd1'], $data['pwd2'])!=0 ) {
                 $errors[] = _('Saisie du mot de passe incorrect');
                 $return = false;
             }
         }
+
         return $return && static::isFormValide($data, $errors, $sql);
     }
 

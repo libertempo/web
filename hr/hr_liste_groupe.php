@@ -1,9 +1,9 @@
 <?php
 
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
-if (getpost_variable('notice') !== ""){
+if (getpost_variable('notice') !== "") {
     $notice = getpost_variable('notice');
-    if("insert" === $notice){
+    if ("insert" === $notice) {
         $message = _('Groupe créé');
     } elseif ("update" === $notice) {
         $message = _('Groupe modifié');

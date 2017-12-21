@@ -148,7 +148,7 @@ class Utilisateur
         $res = $sql->query($req);
         while ($data = $res->fetch_array()) {
             $donnees[$data['u_login']] = $data;
-            if($config->isUsersExportFromLdap()){
+            if ($config->isUsersExportFromLdap()) {
                 $ldap = new \App\Libraries\Ldap();
                 $donnees[$data['u_login']]['u_email'] = $ldap->getEmailUser($data['u_login']);
             }
@@ -244,12 +244,12 @@ class Utilisateur
         $req = 'SELECT ta_id, ta_libelle, su_nb_an, su_solde, su_reliquat 
                 FROM conges_solde_user, conges_type_absence 
                 WHERE conges_type_absence.ta_id = conges_solde_user.su_abs_id 
-                AND su_login = "'.\includes\SQL::quote($login).'" ';
+                AND su_login = "' . $login . '" ';
         if (!$config->isCongesExceptionnelsActive()){
             $req .= 'AND conges_type_absence.ta_type != \'conges_exceptionnels\'';
         }
         $req .= 'ORDER BY su_abs_id ASC;';
-        $res = \includes\SQL::query($req);
+        $res = $sql->query($req);
 
         while ($infos = $res->fetch_assoc()) {
             $soldes[$infos['ta_id']] = $infos;
