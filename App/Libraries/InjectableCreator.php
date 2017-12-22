@@ -43,7 +43,7 @@ class InjectableCreator
 
         switch ($classname) {
             case Evenements\Weekend::class:
-                return new $classname($this->db, $this->config);
+                return new $classname($this->config);
             case Evenements\Ferie::class:
             case Evenements\Fermeture::class:
             case Evenements\Conge::class:

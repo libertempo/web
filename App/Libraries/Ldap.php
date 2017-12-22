@@ -79,8 +79,8 @@ class Ldap
 
         if (0 < $entries['count']) {
             return $entries[0][$config_ldap_mail][0];
-        } else {
-            return "";
         }
+
+        return "";
     }
 }

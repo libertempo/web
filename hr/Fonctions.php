@@ -1729,7 +1729,7 @@ class Fonctions
         }
 
         // on construit le tableau des jours feries de l'année considérée
-        $tab_year=array();
+        $tab_year = [];
         \hr\Fonctions::get_tableau_jour_feries($year_calendrier_saisie, $tab_year);
 
         //calcul automatique des jours feries

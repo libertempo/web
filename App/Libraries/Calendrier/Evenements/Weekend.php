@@ -23,16 +23,14 @@ class Weekend
      */
     const JOUR_DIMANCHE = 0;
 
-    public function __construct(\includes\SQL $db, \App\Libraries\Configuration $config)
+    public function __construct(\App\Libraries\Configuration $config)
     {
-        $this->db = $db;
         $this->config = $config;
     }
 
     /**
     * @var \includes\SQL Objet de DB
     */
-    private $db;
     private $config;
 
     /**

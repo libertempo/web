@@ -245,7 +245,7 @@ class Utilisateur
                 FROM conges_solde_user, conges_type_absence 
                 WHERE conges_type_absence.ta_id = conges_solde_user.su_abs_id 
                 AND su_login = "' . $login . '" ';
-        if (!$config->isCongesExceptionnelsActive()){
+        if (!$config->isCongesExceptionnelsActive()) {
             $req .= 'AND conges_type_absence.ta_type != \'conges_exceptionnels\'';
         }
         $req .= 'ORDER BY su_abs_id ASC;';

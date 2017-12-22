@@ -112,8 +112,9 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
     // si le user a droit de saisir une mission ET si on est PAS dans une fenetre de responsable
     // OU si le resp a droit de saisir une mission ET si on est PAS dans une fenetre dd'utilisateur
     // OU si le resp a droit de saisir une mission ET si le resp est resp de lui meme
-    if ((($config->canUserSaisieMission())&&($user_login==$_SESSION['userlogin'])) || (($config->canResponsableSaisieMission())&&($user_login!=$_SESSION['userlogin'])) || (($config->canResponsableSaisieMission())&&(\App\ProtoControllers\Responsable::isRespDeUtilisateur($_SESSION['userlogin'] , $user_login))) )
-        {
+    if ((($config->canUserSaisieMission())&&($user_login==$_SESSION['userlogin'])) 
+            || (($config->canResponsableSaisieMission())&&($user_login!=$_SESSION['userlogin'])) 
+            || (($config->canResponsableSaisieMission()) && (\App\ProtoControllers\Responsable::isRespDeUtilisateur($_SESSION['userlogin'] , $user_login)))) {
         // absences
         $return .= '<div class="col-md-4">';
         $return .= '<label>' . _('divers_absences') . '</label>';
@@ -1084,12 +1085,12 @@ function init_tab_jours_feries()
 {
     if (empty($_SESSION['tab_j_feries']))
     {
-        $_SESSION['tab_j_feries']=array();
+        $_SESSION['tab_j_feries'] = [];
 
         $sql_select='SELECT jf_date FROM conges_jours_feries;';
         $res_select = \includes\SQL::query($sql_select);
 
-        while( $row = $res_select->fetch_array())
+        while ($row = $res_select->fetch_array())
         {
             $_SESSION['tab_j_feries'][]=$row['jf_date'];
         }
@@ -1111,12 +1112,11 @@ function init_config_tab()
 {
     static $userlogin = null;
     static $result = null;
-    if ($result === null || (isset($_SESSION['userlogin']) && $userlogin != $_SESSION['userlogin']))
-    {
+    if ($result === null || (isset($_SESSION['userlogin']) && $userlogin != $_SESSION['userlogin'])) {
 
         include ROOT_PATH .'version.php';
         include_once CONFIG_PATH .'dbconnect.php';
-        $tab = array();
+        $tab = [];
 
 
         /******************************************/

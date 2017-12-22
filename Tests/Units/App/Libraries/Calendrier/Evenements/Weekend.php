@@ -26,7 +26,7 @@ class Weekend extends \Tests\Units\TestUnit
         $this->calling($this->config)->isDimancheOuvrable = true;
         $date = new \DateTimeImmutable();
 
-        $weekend = new _Weekend($this->db, $this->config);
+        $weekend = new _Weekend($this->config);
 
         $this->array($weekend->getListe($date, $date))->isEmpty();
     }
@@ -39,7 +39,7 @@ class Weekend extends \Tests\Units\TestUnit
         $debut = new \DateTimeImmutable('2017-02-01');
         $fin = new \DateTimeImmutable('2017-02-28');
 
-        $weekend = new _Weekend($this->db, $this->config);
+        $weekend = new _Weekend($this->config);
 
         $expected = [
             '2017-02-04',
@@ -57,7 +57,7 @@ class Weekend extends \Tests\Units\TestUnit
         $debut = new \DateTimeImmutable('2017-02-01');
         $fin = new \DateTimeImmutable('2017-02-28');
 
-        $weekend = new _Weekend($this->db, $this->config);
+        $weekend = new _Weekend($this->config);
 
         $expected = [
             '2017-02-05',
