@@ -148,7 +148,6 @@ class Fonctions {
         echo "<option value=\"1.9\">v1.9</option>\n";
         echo "<option value=\"1.8.1\">v1.8.1</option>\n";
         echo "<option value=\"1.8\">v1.8</option>\n";
-        echo "<option value=\"1.7.0\">v1.7.0</option>\n";
         echo "</select>\n";
         echo "<br>\n";
         echo "<input type=\"hidden\" name=\"lang\" value=\"$lang\">\n";
@@ -286,10 +285,7 @@ class Fonctions {
         } elseif($etape==2) {
             $start_version = $installed_version ;
 
-            if($start_version == "1.7.0") {
-                $file_upgrade = 'upgrade_from_v1.7.0.php';
-                $new_installed_version = "1.8";
-            } elseif($start_version == "1.8") {
+            if($start_version == "1.8") {
                 $file_upgrade = 'upgrade_from_v1.8.php';
                 $new_installed_version = "1.8.1";
             } elseif($start_version == "1.8.1") {
