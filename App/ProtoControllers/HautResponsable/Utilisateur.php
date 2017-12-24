@@ -142,6 +142,7 @@ class Utilisateur
         $table->render();
         $return .= ob_get_clean();
         $return .= '<br>';
+
         return $return;
     }
 
@@ -193,8 +194,8 @@ class Utilisateur
             ];
         }
         if (!empty($_POST)) {
-            $formValue = static::dataForm2Array($_POST, $sql);
-            if (0 < (int) static::postFormUser($formValue, $errorsLst, $notice)) {
+            $formValue = static::dataForm2Array($_POST, $sql, $config);
+            if (static::postFormUser($formValue, $errorsLst, $notice)) {
                 redirect(ROOT_PATH . 'hr/hr_index.php?onglet=page_principale&notice=' . $notice, false);
             } else {
                 if (!empty($errorsLst)) {
@@ -454,7 +455,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
                         '_METHOD' => $_POST['_METHOD'],
                     ];
 
-            if (0 < (int) \App\ProtoControllers\HautResponsable\Utilisateur::postFormUser($formValue, $errorsLst, $notice)) {
+            if (static::postFormUser($formValue, $errorsLst, $notice)) {
                 redirect(ROOT_PATH . 'hr/hr_index.php?onglet=page_principale&notice=' . $notice, false);
             } else {
                 if (!empty($errorsLst)) {
@@ -501,6 +502,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $return .= '<input class="btn btn-danger" type="submit" value="' . _('form_supprim') . '">';
         $return .= '<a class="btn" href="hr_index.php?onglet=page_principale">' . _('form_cancel') . '</a>';
         $return .= '</form>';
+
         return $return;
     }
 
@@ -510,10 +512,12 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
      * @param type $htmlPost
      * @return type
      */
-    private static function dataForm2Array($htmlPost, \includes\SQL $sql) {
-        $config = new \App\Libraries\Configuration($sql);
-        $data['login'] = htmlentities($htmlPost['new_login'], ENT_HTML401);
-        $data['oldLogin'] = htmlentities($htmlPost['old_login'], ENT_HTML401);
+    public static function dataForm2Array($htmlPost, \includes\SQL $sql, \App\Libraries\Configuration $config)
+    {
+        $data['login'] = htmlentities($htmlPost['new_login'], ENT_QUOTES | ENT_HTML401);
+        $data['oldLogin'] = key_exists('old_login', $htmlPost)
+                ? htmlentities($htmlPost['old_login'], ENT_QUOTES | ENT_HTML401)
+                : htmlentities($htmlPost['new_login'], ENT_QUOTES | ENT_HTML401);
         $data['nom'] = htmlentities($htmlPost['new_nom'], ENT_QUOTES | ENT_HTML401);
         $data['prenom'] = htmlentities($htmlPost['new_prenom'], ENT_QUOTES | ENT_HTML401);
         $data['quotite'] = (int) $htmlPost['new_quotite'];
@@ -541,15 +545,18 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         if (array_key_exists('_METHOD', $htmlPost)) {
             $data['_METHOD'] = htmlentities($htmlPost['_METHOD'], ENT_QUOTES | ENT_HTML401);
         }
-        $data['joursAn'] = $htmlPost['tab_new_jours_an'];
+
         foreach ($htmlPost['tab_new_jours_an'] as $typeId => $joursAn) {
-            $data['joursAn'][$typeId] = htmlentities($joursAn, ENT_QUOTES | ENT_HTML401);
+            $tmp = htmlentities($joursAn, ENT_QUOTES | ENT_HTML401);
+            $data['joursAn'][$typeId] = strtr(\App\Helpers\Formatter::roundToHalf($tmp),",",".");
         }
         foreach ($htmlPost['tab_new_solde'] as $typeId => $solde) {
-            $data['soldes'][$typeId] = htmlentities($solde, ENT_QUOTES | ENT_HTML401);
+            $tmp = htmlentities($solde, ENT_QUOTES | ENT_HTML401);
+            $data['soldes'][$typeId] = strtr(\App\Helpers\Formatter::roundToHalf($tmp),",",".");
         }
-        foreach ($htmlPost['tab_new_reliquat'] as $typeId => $solde) {
-            $data['reliquats'][$typeId] = htmlentities($solde, ENT_QUOTES | ENT_HTML401);
+        foreach ($htmlPost['tab_new_reliquat'] as $typeId => $reliquat) {
+            $tmp = htmlentities($reliquat, ENT_QUOTES | ENT_HTML401);
+            $data['reliquats'][$typeId] = strtr(\App\Helpers\Formatter::roundToHalf($tmp),",",".");
         }
         $data['groupesId'] = array_key_exists('checkbox_user_groups', $htmlPost) ? array_keys($htmlPost['checkbox_user_groups']) : [];
 
@@ -561,7 +568,8 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
      *
      * @return int {-1, 0, 1}
      */
-    public static function sortParActif (array $a, array $b) {
+    public static function sortParActif (array $a, array $b)
+    {
         if ($a['u_is_active'] == 'Y' && $b['u_is_active'] == 'N') {
             return -1; // $a est avant $b
         } elseif ($a['u_is_active'] == 'N' && $b['u_is_active'] == 'Y') {
@@ -582,7 +590,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
      */
     private static function postFormUser(array $post, array &$errors, &$notice)
     {
-        $return = NIL_INT;
+        $return = false;
         if (!\App\ProtoControllers\Utilisateur::isRH($_SESSION['userlogin'])) {
             $errors[] = _('non autorisé');
             return $return;
@@ -592,7 +600,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             switch ($post['_METHOD']) {
                 case 'DELETE':
                     $return = static::deleteUser($post['login'], $errors);
-                    if (NIL_INT !== $return) {
+                    if ($return) {
                         $notice = "deleted";
                         log_action(0, '', $post['login'], 'utilisateur ' . $post['login'] . ' supprimé');
                     }
@@ -601,7 +609,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
                     if (!empty($_GET['login'])) {
                         $return = static::putUser($post, $errors);
                     }
-                    if (NIL_INT !== $return) {
+                    if ($return) {
                         $notice = "modified";
                         log_action(0, '', $post['login'], 'utilisateur ' . $post['login'] . ' modifié');
                     }
@@ -609,12 +617,122 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             }
         } else {
                 $return = static::insertUtilisateur($post, $errors);
-                if (NIL_INT !== $return) {
+                if ($return) {
                     $notice = "inserted";
                     log_action(0, '', $post['login'], 'utilisateur ' . $post['login'] . ' ajouté');
                 }
             return $return;
         }
+    }
+
+    private static function isFormInsertValide($data, &$errors, \includes\SQL $sql, \App\Libraries\Configuration $config)
+    {
+        $return = true;
+        $users = \App\ProtoControllers\Utilisateur::getListId(false, true);
+        if (in_array($data['login'], $users)) {
+            $errors[] = _('Cet identifiant existe déja.');
+            $return = false;
+        }
+
+        if ($config->getHowToConnectUser() == 'dbconges') {
+            if ($data['pwd1'] == '' || strcmp($data['pwd1'], $data['pwd2'])!=0 ) {
+                $errors[] = _('Saisie du mot de passe incorrect');
+                $return = false;
+            }
+        }
+
+        return $return && static::isFormValide($data, $errors, $sql, $config);
+    }
+
+    private static function isFormUpdateValide($data, &$errors, \includes\SQL $sql, \App\Libraries\Configuration $config)
+    {
+        $users = \App\ProtoControllers\Utilisateur::getListId(false, true);
+        if (in_array($data['login'], $users) && $data['login'] != $data['oldLogin']) {
+            $errors[] = _('Cet identifiant existe déja.');
+            $return = false;
+        }
+
+        $groupesId = \App\ProtoControllers\Groupe::getListeId($sql);
+        if ('N' === $data['isResp'] 
+                && (\App\ProtoControllers\Groupe::isResponsableGroupe($data['login'], $groupesId, $sql) 
+                || \App\ProtoControllers\Groupe::isGrandResponsableGroupe($data['login'], $groupesId, $sql))) {
+            $errors[] = _('Cette utilisateur est responsable d\'au moins un groupe');
+            $return = false;
+        }
+
+        if ($config->getHowToConnectUser() == 'dbconges') {
+            if ($data['pwd1'] != '' && strcmp($data['pwd1'], $data['pwd2'])!=0 ) {
+                $errors[] = _('Saisie du mot de passe incorrect');
+                $return =  false;
+            }
+        }
+
+        return $return && static::isFormValide($data, $errors, $sql, $config);
+    }
+
+    public static function isFormValide($data, &$errors, \includes\SQL $sql, \App\Libraries\Configuration $config)
+    {
+        $return = true;
+
+        if (!preg_match('/^[a-z.\d_-]{2,30}$/i', $data['login'])) {
+            $errors[] = _('Identifiant incorrect.');
+            $return = false;
+        }
+
+        if ('' == $data['nom']) {
+            $errors[] = _('Veuillez saisir un nom');
+            $return = false;
+        }
+
+        if ('' == $data['prenom']) {
+            $errors[] = _('Veuillez saisir un prenom');
+            $return = false;
+        }
+
+        if (0 >= $data['quotite'] || 100 < $data['quotite']) {
+            $errors[] = _('quotité incorrect');
+            $return = false;
+        }
+
+        if ($config->isHeuresAutorise()) {
+            if (!\App\Helpers\Formatter::isHourFormat($data['soldeHeure'])) {
+                $errors[] = _('Format du solde d\'heure incorrect');
+                $return = false;
+            }
+        }
+
+        if (!$config->isUsersExportFromLdap()) {
+            if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+                $errors[] = _('Format de l\'adresse email incorrect');
+                $return = false;
+            }
+        }
+
+        foreach ($data['joursAn'] as $typeId => $joursAn) {
+            if (!is_numeric($joursAn)) {
+                $errors[] = _('nombre de jours par an incorrect');
+                $return = false;
+            break;
+            }
+        }
+
+        foreach ($data['soldes'] as $typeId => $solde) {
+            if (!is_numeric($solde)) {
+                $errors[] = _('solde incorrect');
+                $return = false;
+            break;
+            }
+        }
+
+        foreach ($data['reliquats'] as $typeId => $reliquat) {
+            if (!is_numeric($reliquat)) {
+                $errors[] = _('reliquat incorrect');
+                $return = false;
+            break;
+            }
+        }
+
+        return $return;
     }
 
     private static function deleteUser($user, &$errors)
@@ -669,7 +787,6 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
                     OR conges_groupe_grd_resp.ggr_login = "' . $user . '"
                 )';
         $query = $sql->query($req);
-
         return 0 >= (int) $query->fetch_array()[0];
     }
 
@@ -683,14 +800,18 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
 
         $sql->getPdoObj()->begin_transaction();
         $insertInfos = static::insertInfosUser($data, $sql);
-        if (!$config->isUsersExportFromLdap()) {
-            $insertEmail = static::insertEmailUser($data, $sql);
-        }
+        $insertEmail = static::insertEmailUser($data, $sql);
         $insertSoldes = static::insertSoldeUser($data, $sql);
+        $insertGroupes = true;
         if (!empty($data|'groupesId')) {
             $insertGroupes = static::insertGroupesUser($data, $sql);
         }
-        return $sql->getPdoObj()->commit();
+        if($insertInfos && $insertEmail && $insertSoldes && $insertGroupes) {
+            return $sql->getPdoObj()->commit();
+        }
+        
+        $sql->getPdoObj()->rollback();
+        return false;
     }
 
     private static function insertInfosUser($data, \includes\SQL $sql)
@@ -726,22 +847,28 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $typeAbsencesConges = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges');
 
         foreach ($typeAbsencesConges as $typeId => $info) {
-            $req = "INSERT INTO conges_solde_user (su_login, su_abs_id, su_nb_an, su_solde, su_reliquat) 
-                    VALUES ('" . $data['login'] . "' , $typeId, " . $data['joursAn'][$typeId] . ", " . $data['soldes'][$typeId] . ", " . $data['reliquats'][$typeId] . ") " ;
-            $sql->query($req);
+            $valuesStd[] = "('" . $data['login'] . "' ,"
+                                . $typeId . ", "
+                                . $data['joursAn'][$typeId] . ", " 
+                                . $data['soldes'][$typeId] . ", " 
+                                . $data['reliquats'][$typeId] . ")" ;
         }
+        $req = "INSERT INTO conges_solde_user (su_login, su_abs_id, su_nb_an, su_solde, su_reliquat) VALUES " . implode(",", $valuesStd);
+        $returnStd = $sql->query($req);
 
         if ($config->isCongesExceptionnelsActive()) {
             $typeAbsencesExceptionnels = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges_exceptionnels');
             foreach ($typeAbsencesExceptionnels as $typeId => $info) {
-                $req = "INSERT INTO conges_solde_user (su_login, su_abs_id, su_nb_an, su_solde, su_reliquat)
-                        VALUES ('" . $data['login'] . "' , $typeId, 0, " . $data['soldes'][$typeId] . ", 0) " ;
+                $valuesExc[] = "('" . $data['login'] . "' ," 
+                                    . $typeId . ", 0, " 
+                                    . $data['soldes'][$typeId] . ", 0)" ;
 
-                $sql->query($req);
             }
+            $req = "INSERT INTO conges_solde_user (su_login, su_abs_id, su_nb_an, su_solde, su_reliquat) VALUES " . implode(",", $valuesExc);
+            $returnExc = $sql->query($req);
         }
 
-        return true;
+        return $returnStd && $returnExc;
     }
 
     private static function insertGroupesUser($data, \includes\SQL $sql)
@@ -765,116 +892,23 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $sql->getPdoObj()->begin_transaction();
         $userUpdate = static::updateInfosUser($data, $sql);
         $soldesUpdate = static::updateSoldeUser($data, $sql);
+        $pwdUpdate = true;
         if ('' != $data['pwd1']) {
             $pwdUpdate = static::updatePasswordUser($data, $sql);
         }
 
-        if (!$config->isUsersExportFromLdap()) {
-            $emailUpdate = static::updateEmailUser($data, $sql);
-        }
-
+        $emailUpdate = static::updateEmailUser($data, $sql);
+        $loginUpdate = true;
         if ($data['oldLogin'] != $data['login']) {
             $loginUpdate = static::updateLoginUser($data, $sql);
         }
 
-        return $sql->getPdoObj()->commit();
-    }
-
-    private static function isFormInsertValide($data, &$errors, \includes\SQL $sql, \App\Libraries\Configuration $config)
-    {
-        $return = true;
-        $users = \App\ProtoControllers\Utilisateur::getListId(false, true);
-        if (in_array($data['login'], $users)) {
-            $errors[] = _('Cet identifiant existe déja.');
-            $return = false;
+        if ($userUpdate && $soldesUpdate && $pwdUpdate && $emailUpdate && $loginUpdate) {
+            return $sql->getPdoObj()->commit();
         }
 
-        if ($config->getHowToConnectUser() == 'dbconges') {
-            if ($data['pwd1'] == '' || strcmp($data['pwd1'], $data['pwd2'])!=0 ) {
-                $errors[] = _('Saisie du mot de passe incorrect');
-                $return = false;
-            }
-        }
-
-        return $return && static::isFormValide($data, $errors, $sql, $config);
-    }
-
-    private static function isFormUpdateValide($data, &$errors, \includes\SQL $sql, \App\Libraries\Configuration $config)
-    {
-        $users = \App\ProtoControllers\Utilisateur::getListId(false, true);
-        if (in_array($data['login'], $users) && $data['login'] != $data['oldLogin']) {
-            $errors[] = _('Cet identifiant existe déja.');
-            $return = false;
-        }
-
-        $groupesId = \App\ProtoControllers\Groupe::getListeId($sql);
-        if ('N' === $data['isResp'] 
-                && (\App\ProtoControllers\Groupe::isResponsableGroupe($data['login'], $groupesId, $sql) 
-                || \App\ProtoControllers\Groupe::isGrandResponsableGroupe($data['login'], $groupesId, $sql))) {
-            $errors[] = _('Cette utilisateur est responsable d\'au moins un groupe');
-            $return = false;
-        }
-
-        if ($config->getHowToConnectUser() == 'dbconges') {
-            if ($data['pwd1'] != '' && strcmp($data['pwd1'], $data['pwd2'])!=0 ) {
-                $errors[] = _('Saisie du mot de passe incorrect');
-                $return =  false;
-            }
-        }
-
-        return $return && static::isFormValide($data, $errors, $sql, $config);
-    }
-
-    private static function isFormValide($data, &$errors, \includes\SQL $sql, \App\Libraries\Configuration $config)
-    {
-        $return = true;
-
-        if ('' == $data['login']) {
-            $errors[] = _('Veuillez saisir un identifiant');
-            $return = false;
-        }
-
-        if (!preg_match('/^[a-z.\d_-]{2,30}$/i', $data['login'])) {
-            $errors[] = _('Identifiant : caractère incorrect.');
-            $return = false;
-        }
-
-        if (0 >= $data['quotite'] || 100 < $data['quotite']) {
-            $errors[] = _('quotité incorrect');
-            $return = false;
-        }
-
-        if ($config->isHeuresAutorise()) {
-            if (!\App\Helpers\Formatter::isHourFormat($data['soldeHeure'])) {
-                $errors[] = _('Format du solde d\'heure incorrect');
-                $return = false;
-            }
-        }
-
-        if (!$config->isUsersExportFromLdap()) {
-            if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
-                $errors[] = _('Format de l\'adresse email incorrect');
-                $return = false;
-            }
-        }
-
-        foreach ($data['joursAn'] as $typeId => $joursAn) {
-            if (!is_numeric($joursAn)) {
-                $errors[] = _('nombre de jours par an incorrect');
-                $return = false;
-            break;
-            }
-        }
-
-        foreach ($data['soldes'] as $typeId => $solde) {
-            if (!is_numeric($solde)) {
-                $errors[] = _('solde incorrect');
-                $return = false;
-            break;
-            }
-        }
-
-        return $return;
+        $sql->getPdoObj()->rollback();
+        return false;
     }
 
     private static function updateInfosUser($data, \includes\SQL $sql)
@@ -897,23 +931,25 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $config = new \App\Libraries\Configuration($sql);
         $typeAbsencesConges = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges');
         foreach ($typeAbsencesConges as $typeId => $info) {
-            $values[] = '(\''.strtr(\App\Helpers\Formatter::roundToHalf($data['joursAn'][$typeId]),",",".").'\',
-                    \''.strtr(\App\Helpers\Formatter::roundToHalf($data['soldes'][$typeId]),",",".").'\',
-                    \''.strtr(\App\Helpers\Formatter::roundToHalf($data['reliquats'][$typeId]),",",".").'\',
-                    "' . $data['oldLogin'] . '",
-                    '.intval($typeId).')';
+            $valuesStd[] = '(\'' . $data['joursAn'][$typeId] . '\', \'' 
+                                . $data['soldes'][$typeId] . '\', \'' 
+                                . $data['reliquats'][$typeId] . '\', "' 
+                                . $data['oldLogin'] . '", ' 
+                                . (int) $typeId . ')';
         }
-        $req = 'REPLACE INTO conges_solde_user (su_nb_an, su_solde, su_reliquat, su_login, su_abs_id) VALUES ' . implode(",", $values);
+        $req = 'REPLACE INTO conges_solde_user (su_nb_an, su_solde, su_reliquat, su_login, su_abs_id) VALUES ' . implode(",", $valuesStd);
         $returnStd = $sql->query($req);
 
         $returnExc = true;
         if ($config->isCongesExceptionnelsActive()) {
             $typeAbsencesExceptionnels = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges_exceptionnels');
             foreach ($typeAbsencesExceptionnels as $typeId => $info) {
-                $values[] = '(0, \'' . strtr(\App\Helpers\Formatter::roundToHalf($data['soldes'][$typeId]),",",".") . '\',
-                            0, "' . $data['oldLogin'] . '", ' . intval($typeId) . ')';
+                $valuesExc[] = '(0, \'' 
+                                . $data['soldes'][$typeId] . '\', 0, "' 
+                                . $data['oldLogin'] . '", ' 
+                                . (int) $typeId . ')';
             }
-            $req = 'REPLACE INTO conges_solde_user (su_nb_an, su_solde, su_reliquat, su_login, su_abs_id) VALUES ' . implode(",", $values);
+            $req = 'REPLACE INTO conges_solde_user (su_nb_an, su_solde, su_reliquat, su_login, su_abs_id) VALUES ' . implode(",", $valuesExc);
             $returnExc = $sql->query($req);
         }
         
@@ -922,11 +958,6 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
 
     private static function updateLoginUser($data, \includes\SQL $sql)
     {
-        $req = 'UPDATE conges_user 
-                SET u_login="' . $data['login'] . '"
-                WHERE u_login="' . $data['oldLogin'] . '" ';
-        $sql->query($req);
-
         $req = 'UPDATE conges_echange_rtt 
                 SET e_login="' . $data['login'] . '"
                 WHERE e_login="' . $data['oldLogin'] . '" ';
@@ -977,7 +1008,11 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
                 WHERE login="' . $data['oldLogin'] . '" ' ;
         $sql->query($req);
 
-        return true;
+        $req = 'UPDATE conges_user 
+                SET u_login="' . $data['login'] . '"
+                WHERE u_login="' . $data['oldLogin'] . '" ';
+
+        return $sql->query($req);
     }
 
     private static function updateEmailUser($data, \includes\SQL $sql)
