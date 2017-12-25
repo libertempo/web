@@ -81,7 +81,7 @@ class Utilisateur
             $childTable .= '<td class="utilisateur"><strong>' . $infosUser['u_nom'] . ' ' . $infosUser['u_prenom'] . '</strong>';
             $childTable .= '<span class="login">' . $login . '</span>';
             $childTable .= '<span class="mail">' . $infosUser['u_email'] . '</span>';
-            // droit utilisateur
+
             $rights = [];
             if ($infosUser['u_is_active'] == 'N') {
                 $rights[] = 'inactif';
@@ -195,7 +195,7 @@ class Utilisateur
         }
         if (!empty($_POST)) {
             $formValue = static::dataForm2Array($_POST, $sql, $config);
-            if (static::postFormUser($formValue, $errorsLst, $notice)) {
+            if (static::postFormUtilisateur($formValue, $errorsLst, $notice)) {
                 redirect(ROOT_PATH . 'hr/hr_index.php?onglet=page_principale&notice=' . $notice, false);
             } else {
                 if (!empty($errorsLst)) {
@@ -299,7 +299,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $return .= static::getFormUserSoldes($formValue, $userId);
         $return .= '<br><hr>';
 
-        if ($userId != NIL_INT) {
+        if (NIL_INT !== $userId) {
             $return .= '<input type="hidden" name="_METHOD" value="PUT" />';
             $return .= '<input type="hidden" name="old_login" value="' . $userId . '" />';
         } else {
@@ -315,7 +315,12 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
     }
 
     /**
+     * formulaire de gestion des soldes d'un utilisateur
      * 
+     * @param array $data
+     * @param int $userId
+     * 
+     * @return string 
      * 
      */
     private static function getFormUserSoldes($data, $userId)
@@ -339,7 +344,6 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             'table-striped',
             'table-condensed'
         ]);
-        // ligne de titres
         $childTable = '<thead>';
         $childTable .= '<tr>';
         $childTable .= '<th colspan=3><h4>' . _('Soldes') . '</h4></th>';
@@ -389,6 +393,12 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         return $return;
     }
 
+    /**
+     * Formulaire d'affectation aux groupes pour un nouvel utilisateur
+     * 
+     * @param array $data
+     * @return string
+     */
     private static function getFormUserGroupes($data)
     {
         $sql = \includes\SQL::singleton();
@@ -440,6 +450,12 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         return $return;
     }
 
+    /**
+     * Formulaire de confirmation de suppression d'un utilisateur
+     * 
+     * @param string $login
+     * @return string
+     */
     public static function getFormDeleteUser($login)
     {
         $donneesUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($login)[$login];
@@ -455,7 +471,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
                         '_METHOD' => $_POST['_METHOD'],
                     ];
 
-            if (static::postFormUser($formValue, $errorsLst, $notice)) {
+            if (static::postFormUtilisateur($formValue, $errorsLst, $notice)) {
                 redirect(ROOT_PATH . 'hr/hr_index.php?onglet=page_principale&notice=' . $notice, false);
             } else {
                 if (!empty($errorsLst)) {
@@ -510,6 +526,9 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
      * Nettoyage des données postés par le formulaire
      * 
      * @param type $htmlPost
+     * @param \includes\SQL $sql
+     * @param \App\Libraries\Configuration $config
+     * 
      * @return type
      */
     public static function dataForm2Array($htmlPost, \includes\SQL $sql, \App\Libraries\Configuration $config)
@@ -588,7 +607,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
      *
      * @return int
      */
-    private static function postFormUser(array $post, array &$errors, &$notice)
+    private static function postFormUtilisateur(array $post, array &$errors, &$notice)
     {
         $return = false;
         if (!\App\ProtoControllers\Utilisateur::isRH($_SESSION['userlogin'])) {
@@ -599,7 +618,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         if (!empty($post['_METHOD'])) {
             switch ($post['_METHOD']) {
                 case 'DELETE':
-                    $return = static::deleteUser($post['login'], $errors);
+                    $return = static::deleteUtilisateur($post['login'], $errors);
                     if ($return) {
                         $notice = "deleted";
                         log_action(0, '', $post['login'], 'utilisateur ' . $post['login'] . ' supprimé');
@@ -607,7 +626,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
                     return $return;
                 case 'PUT':
                     if (!empty($_GET['login'])) {
-                        $return = static::putUser($post, $errors);
+                        $return = static::putUtilisateur($post, $errors);
                     }
                     if ($return) {
                         $notice = "modified";
@@ -625,6 +644,16 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         }
     }
 
+    /**
+     * Controle la conformité du formulaire de création
+     * 
+     * @param aray $data
+     * @param array $errors
+     * @param \includes\SQL $sql
+     * @param \App\Libraries\Configuration $config
+     * 
+     * @return boolean
+     */
     private static function isFormInsertValide($data, &$errors, \includes\SQL $sql, \App\Libraries\Configuration $config)
     {
         $return = true;
@@ -644,8 +673,18 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         return $return && static::isFormValide($data, $errors, $sql, $config);
     }
 
+    /**
+     * Controle la conformité du formulaire de mise à jour
+     * 
+     * @param array $data
+     * @param array $errors
+     * @param \includes\SQL $sql
+     * @param \App\Libraries\Configuration $config
+     * @return boolean
+     */
     private static function isFormUpdateValide($data, &$errors, \includes\SQL $sql, \App\Libraries\Configuration $config)
     {
+        $return = true;
         $users = \App\ProtoControllers\Utilisateur::getListId(false, true);
         if (in_array($data['login'], $users) && $data['login'] != $data['oldLogin']) {
             $errors[] = _('Cet identifiant existe déja.');
@@ -670,6 +709,15 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         return $return && static::isFormValide($data, $errors, $sql, $config);
     }
 
+    /**
+     * Controle la conformité du formulaire (création et mise à jour)
+     * 
+     * @param array $data
+     * @param array $errors
+     * @param \includes\SQL $sql
+     * @param \App\Libraries\Configuration $config
+     * @return boolean
+     */
     public static function isFormValide($data, &$errors, \includes\SQL $sql, \App\Libraries\Configuration $config)
     {
         $return = true;
@@ -735,12 +783,20 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         return $return;
     }
 
-    private static function deleteUser($user, &$errors)
+    /**
+     * Supprime un utilisateur
+     * 
+     * @param string $user
+     * @param array $errors
+     * 
+     * @return boolean
+     */
+    private static function deleteUtilisateur($user, &$errors)
     {
         $sql = \includes\SQL::singleton();
         if (!static::isDeletable($user, $sql)) {
             $errors[] = _('Suppression impossible : cette utilisateur est responsable d\'un groupe');
-            return NIL_INT;
+            return false;
         }
 
         $sql->getPdoObj()->begin_transaction();
@@ -770,14 +826,21 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $commit = $sql->query($req);
 
         if ($commit) {
-            $sql->getPdoObj()->commit();
-        } else {
-            $sql->getPdoObj()->rollback();
+            return $sql->getPdoObj()->commit();
         }
+        $sql->getPdoObj()->rollback();
 
-        return $commit ? $user : NIL_INT;
+        return $commit;
     }
 
+    /**
+     * Controle la possibilité de supprimer un utilisateur
+     * 
+     * @param string $user
+     * @param \includes\SQL $sql
+     * 
+     * @return boolean
+     */
     public static function isDeletable($user, \includes\SQL $sql)
     {
         $req = 'SELECT EXISTS (
@@ -790,21 +853,28 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         return 0 >= (int) $query->fetch_array()[0];
     }
 
+    /**
+     * Création d'un nouvel utilisateur
+     * 
+     * @param array $data
+     * @param array $errors
+     * @return boolean
+     */
     private static function insertUtilisateur($data, &$errors)
     {
         $sql = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($sql);
         if (!static::isFormInsertValide($data, $errors, $sql, $config)) {
-            return NIL_INT;
+            return false;
         }
 
         $sql->getPdoObj()->begin_transaction();
-        $insertInfos = static::insertInfosUser($data, $sql);
-        $insertEmail = static::insertEmailUser($data, $sql);
-        $insertSoldes = static::insertSoldeUser($data, $sql);
+        $insertInfos = static::insertInfosUtilisateur($data, $sql);
+        $insertEmail = static::insertEmailUtilisateur($data, $sql);
+        $insertSoldes = static::insertSoldeUtilisateur($data, $sql);
         $insertGroupes = true;
         if (!empty($data|'groupesId')) {
-            $insertGroupes = static::insertGroupesUser($data, $sql);
+            $insertGroupes = static::insertGroupesUtilisateur($data, $sql);
         }
         if($insertInfos && $insertEmail && $insertSoldes && $insertGroupes) {
             return $sql->getPdoObj()->commit();
@@ -814,26 +884,25 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         return false;
     }
 
-    private static function insertInfosUser($data, \includes\SQL $sql)
+    private static function insertInfosUtilisateur($data, \includes\SQL $sql)
     {
-     
-            $req = "INSERT INTO conges_users SET
-                        u_login='" . $data['login'] . "', 
-                        u_nom='" . $data['nom'] . "', 
-                        u_prenom='" . $data['prenom'] . "', 
-                        u_is_resp='" . $data['isResp'] . "', 
-                        u_is_admin='" . $data['isAdmin'] . "', 
-                        planning_id = 0, 
-                        u_is_hr='" . $data['isHR'] . "',
-                        u_passwd='" . $data['pwd1'] . "', 
-                        u_quotite=" . $data['quotite'] . ",
-                        u_heure_solde=" . \App\Helpers\Formatter::hour2Time($data['soldeHeure']) . ",
-                        date_inscription = '" . date('Y-m-d H:i') . "';";
+        $req = "INSERT INTO conges_users SET
+                    u_login='" . $data['login'] . "', 
+                    u_nom='" . $data['nom'] . "', 
+                    u_prenom='" . $data['prenom'] . "', 
+                    u_is_resp='" . $data['isResp'] . "', 
+                    u_is_admin='" . $data['isAdmin'] . "', 
+                    planning_id = 0, 
+                    u_is_hr='" . $data['isHR'] . "',
+                    u_passwd='" . $data['pwd1'] . "', 
+                    u_quotite=" . $data['quotite'] . ",
+                    u_heure_solde=" . \App\Helpers\Formatter::hour2Time($data['soldeHeure']) . ",
+                    date_inscription = '" . date('Y-m-d H:i') . "';";
 
-            return $sql->query($req);  
+        return $sql->query($req);
     }
 
-    private static function insertEmailUser($data, \includes\SQL $sql)
+    private static function insertEmailUtilisateur($data, \includes\SQL $sql)
     {
         $req = "INSERT INTO conges_users SET
                 u_email = '" . $data['email'] . "';";
@@ -841,7 +910,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         return $sql->query($req);
     }
 
-    private static function insertSoldeUser($data, \includes\SQL $sql)
+    private static function insertSoldeUtilisateur($data, \includes\SQL $sql)
     {
         $config = new \App\Libraries\Configuration($sql);
         $typeAbsencesConges = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges');
@@ -871,7 +940,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         return $returnStd && $returnExc;
     }
 
-    private static function insertGroupesUser($data, \includes\SQL $sql)
+    private static function insertGroupesUtilisateur($data, \includes\SQL $sql)
     {
         foreach ($data['groupesId'] as $gid) {
             $values[] = "(" . $gid . ", '" . $data['login'] . "')"  ;
@@ -881,26 +950,33 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         return $sql->query($req);
     }
 
-    private static function putUser($data, &$errors)
+    /**
+     * Mise à jour d'un utilisateur
+     * 
+     * @param array $data
+     * @param array $errors
+     * @return boolean
+     */
+    private static function putUtilisateur($data, &$errors)
     {
         $sql = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($sql);
         if (!static::isFormUpdateValide($data, $errors, $sql, $config)) {
-            return NIL_INT;
+            return false;
         }
 
         $sql->getPdoObj()->begin_transaction();
-        $userUpdate = static::updateInfosUser($data, $sql);
-        $soldesUpdate = static::updateSoldeUser($data, $sql);
+        $userUpdate = static::updateInfosUtilisateur($data, $sql);
+        $soldesUpdate = static::updateSoldeUtilisateur($data, $sql);
         $pwdUpdate = true;
         if ('' != $data['pwd1']) {
-            $pwdUpdate = static::updatePasswordUser($data, $sql);
+            $pwdUpdate = static::updatePasswordUtilisateur($data, $sql);
         }
 
-        $emailUpdate = static::updateEmailUser($data, $sql);
+        $emailUpdate = static::updateEmailUtilisateur($data, $sql);
         $loginUpdate = true;
         if ($data['oldLogin'] != $data['login']) {
-            $loginUpdate = static::updateLoginUser($data, $sql);
+            $loginUpdate = static::updateLoginUtilisateur($data, $sql);
         }
 
         if ($userUpdate && $soldesUpdate && $pwdUpdate && $emailUpdate && $loginUpdate) {
@@ -911,7 +987,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         return false;
     }
 
-    private static function updateInfosUser($data, \includes\SQL $sql)
+    private static function updateInfosUtilisateur($data, \includes\SQL $sql)
     {
         $req = 'UPDATE conges_users 
                 SET u_nom="' . $data['nom'] . '",
@@ -926,7 +1002,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         return $sql->query($req);
     }
 
-    private static function updateSoldeUser($data, \includes\SQL $sql)
+    private static function updateSoldeUtilisateur($data, \includes\SQL $sql)
     {
         $config = new \App\Libraries\Configuration($sql);
         $typeAbsencesConges = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges');
@@ -956,7 +1032,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         return $returnStd && $returnExc;
     }
 
-    private static function updateLoginUser($data, \includes\SQL $sql)
+    private static function updateLoginUtilisateur($data, \includes\SQL $sql)
     {
         $req = 'UPDATE conges_echange_rtt 
                 SET e_login="' . $data['login'] . '"
@@ -1015,7 +1091,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         return $sql->query($req);
     }
 
-    private static function updateEmailUser($data, \includes\SQL $sql)
+    private static function updateEmailUtilisateur($data, \includes\SQL $sql)
     {
         $req = 'UPDATE conges_users 
                 SET u_email = "'. $data['email'] . '" 
@@ -1023,7 +1099,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         return $sql->query($req);
     }
 
-    private static function updatePasswordUser($data, \includes\SQL $sql)
+    private static function updatePasswordUtilisateur($data, \includes\SQL $sql)
     {
         $req = 'UPDATE conges_users 
                 SET u_passwd = "' . $data['pwd1'] . '" 
