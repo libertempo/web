@@ -1815,7 +1815,7 @@ msgid "verif_saisie_erreur_heure_fin_avant_debut"
 msgstr "L'heure de fin débute avant l'heure de début"
 
 msgid "Chevauchement_heure_avec_existant"
-msgstr "Chevauchement avec une heure validé ou en attente de validation"
+msgstr "Chevauchement avec une heure validée ou en attente de validation"
 
 msgid "duree_nulle"
 msgstr "la durée est nulle"
