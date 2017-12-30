@@ -8,7 +8,9 @@ $_SESSION['lang'] = 'fr_FR';
 include_once INCLUDE_PATH .'fonction.php';
 session_delete();
 include_once ROOT_PATH .'fonctions_conges.php' ;
-session_regenerate_id(false);
+if (!empty(session_id())) {
+    session_regenerate_id(false);
+}
 
 $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 
