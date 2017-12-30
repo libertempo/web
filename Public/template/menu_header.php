@@ -11,7 +11,7 @@
     } else {
         $home = 'utilisateur/user_index.php';
     }
-    
+
     $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
     //user mode
@@ -97,7 +97,7 @@ function sousmenuResponsable()
         $return .= '<a class="secondary" href="' . ROOT_PATH . 'responsable/resp_index.php?onglet=ajout_conges">Ajout de congés</a>';
     }
 
-    if ($_SESSION['config']['resp_association_planning']) {
+    if ($config->canResponsablesAssociatePlanning()) {
         $return .= '<a class="secondary" href="' . ROOT_PATH . 'responsable/resp_index.php?onglet=liste_planning">Plannings</a>';
     }
 
