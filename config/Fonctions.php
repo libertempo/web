@@ -784,8 +784,8 @@ class Fonctions
         foreach($tab_new_values as $key => $value ) {
             $value = htmlentities($value, ENT_QUOTES | ENT_HTML401);
             /* Contrôle de cohérence entre config. */
-            if ('how_to_connect_user' === $key && 'dbconges' !== $value) {
-                $tab_new_values['user_ch_passwd'] = 'FALSE';
+            if ('user_ch_passwd' === $key && 'dbconges' !== $tab_new_values['how_to_connect_user'] ) {
+                $value = 'FALSE';
             }
 
             // CONTROLE gestion_conges_exceptionnels
