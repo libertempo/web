@@ -1588,7 +1588,6 @@ class Fonctions
     public static function affiche_formulaire_ajout_user(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, $onglet)
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
-        
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
@@ -1817,6 +1816,7 @@ class Fonctions
 
     public static function verif_new_param(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, &$return = null)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return   = '';
 
@@ -1918,6 +1918,8 @@ class Fonctions
     }
 
     public static function test_form_add_user($tab_new_user) {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+
         if($config->isUsersExportFromLdap()) {
             return \admin\Fonctions::FormAddUserLoginOk($tab_new_user['login']) && \admin\Fonctions::FormAddUserQuotiteOk($tab_new_user['quotite']) && \admin\Fonctions::FormAddUserSoldeHeureOk($tab_new_user['solde_heure']);
         } else {
