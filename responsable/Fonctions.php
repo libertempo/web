@@ -166,8 +166,7 @@ class Fonctions
             }
         }
         $return .= ' '. _('form_modif_ok') . '<br><br>';
-        /* APPEL D'UNE AUTRE PAGE au bout d'une tempo de 2secondes */
-        $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $PHP_SELF . '">';
+        redirect( ROOT_PATH .'responsable/resp_index.php');
         return $return;
     }
 

@@ -43,24 +43,24 @@
             </tr>
         </thead>
         <tbody>
-        <?php if (empty($formResponsable) && empty($formGrandResponsable)) && empty($formDelegation) : ?>
-            <tr><td colspan="12"><center><?= _('aucune_demande') ?></center></td></tr>
+        <?php if (empty($formResponsable) && empty($formGrandResponsable) && empty($formDelegation)) : ?>
+            <tr><td colspan="13"><center><?= _('aucune_demande') ?></center></td></tr>
         <?php else : ?>
             <?php if (!empty($formResponsable)) : ?>
                 <?= $formResponsable ?>
             <?php endif ; ?>
             <?php if (!empty($formGrandResponsable)) : ?>
-                <tr align="center"><td class="histo" style="background-color: #CCC;" colspan="12"><i>'._('resp_etat_users_titre_double_valid').'</i></td></tr>
+                <tr align="center"><td class="histo" style="background-color: #CCC;" colspan="13"><i>'._('resp_etat_users_titre_double_valid').'</i></td></tr>
                 <?= $formGrandResponsable ?>
             <?php endif ; ?>
             <?php if (!empty($formDelegation)) : ?>
-                <tr align="center"><td class="histo" style="background-color: #CCC;" colspan="12"><i>'._('traitement_demande_par_delegation').'</i></td></tr>
+                <tr align="center"><td class="histo" style="background-color: #CCC;" colspan="13"><i>'._('traitement_demande_par_delegation').'</i></td></tr>
                 <?= $formDelegation ?>
             <?php endif ; ?>
         <?php endif ; ?>
         </tbody>
     </table>
-    <?php if (!empty($formResponsable) || !empty($formGrandResponsable)) || !empty($formDelegation) : ?>
+    <?php if (!empty($formResponsable) || !empty($formGrandResponsable) || !empty($formDelegation)) : ?>
         <div class="form-group"><input type="submit" class="btn btn-success" value="<?= _('form_submit') ?>" /></div>
     <?php endif ; ?>
 </form>

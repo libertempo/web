@@ -19,7 +19,7 @@ $demandesGrandResp = $conges->getDemandesGrandResponsable($_SESSION['userlogin']
 $formGrandResponsable = (!empty($demandesGrandResp))
     ? $conges->getFormDemandes($demandesGrandResp)
     : [];
-$demandesRespDelegation = $this->getDemandesResponsableAbsent($_SESSION['userlogin']);
+$demandesRespDelegation = $conges->getDemandesResponsableAbsent($_SESSION['userlogin']);
 $formDelegation = (!empty($demandesRespDelegation))
     ? $conges->getFormDemandes($demandesRespDelegation)
     : [];
