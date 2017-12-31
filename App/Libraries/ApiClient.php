@@ -137,7 +137,7 @@ final class ApiClient
         }
 
         $body = $response->getBody();
-        if (empty($body->__toString())) {
+        if (empty((string) $body)) {
             $emptyClass = new \stdClass();
             $emptyClass->code = $response->getStatusCode();
             $emptyClass->message = $response->getReasonPhrase();

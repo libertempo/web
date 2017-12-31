@@ -174,7 +174,7 @@ class ApiClient extends \Tests\Units\TestUnit
 
    private function requestIsNotJson(callable $closure)
    {
-       $this->calling($this->response)->getBody = '';
+       $this->calling($this->response)->getBody = 'Crocodile';
 
        $this->exception(function () use ($closure) {
            $closure();
