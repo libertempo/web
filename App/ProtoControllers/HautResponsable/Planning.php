@@ -81,13 +81,6 @@ class Planning extends \App\ProtoControllers\APlanning
     private static function putPlanning($id, array $put, array &$errors)
     {
         $id = (int) $id;
-        $utilisateurs = \App\ProtoControllers\Utilisateur::getListByPlanning($id);
-        foreach ($utilisateurs as $utilisateur) {
-            if (\App\ProtoControllers\Utilisateur::hasSortiesEnCours($utilisateur['u_login'])) {
-                $errors['Planning'] = _('demande_en_cours_sur_planning');
-                return NIL_INT;
-            }
-        }
         if (empty($put['name'])) {
             $errors['Nom'] = _('champ_necessaire');
             return NIL_INT;
@@ -136,12 +129,32 @@ class Planning extends \App\ProtoControllers\APlanning
                 return false;
             }
         }
-        \App\ProtoControllers\Utilisateur::deleteListAssociationPlanning($idPlanning);
-        if (!empty($put['utilisateurs'])) {
-            // on ne peut pas supprimer par erreur des employés associés && en cours
-            // Vu qu'on ne peut pas modifier le planning
-            $hasUtilisateursAffectes = \App\ProtoControllers\Utilisateur::putListAssociationPlanning($put['utilisateurs'], (int) $idPlanning);
-            if (!$hasUtilisateursAffectes) {
+
+        $subalternesAvecPlanning = array_map(function (array $u) {
+            return $u['u_login'];
+        }, \App\ProtoControllers\Utilisateur::getListByPlanning($idPlanning));
+        $subalternesSansSortie = [];
+        foreach ($subalternesAvecPlanning as $u) {
+            if (!\App\ProtoControllers\Utilisateur::hasSortiesEnCours($u)) {
+                $subalternesSansSortie[] = $u;
+            }
+        }
+
+        if (!empty($subalternesSansSortie)) {
+            \App\ProtoControllers\Utilisateur::deleteListAssociationPlanning($idPlanning, $subalternesSansSortie);
+        }
+
+        if (empty($put['utilisateurs'])) {
+            return true;
+        }
+
+        $subalternesSelectionnes = !empty($subalternesSansSortie)
+            ? array_intersect($put['utilisateurs'], $subalternesSansSortie)
+            : $put['utilisateurs'];
+
+        if (!empty($subalternesSelectionnes)) {
+            $hasSubalternesAffectes = \App\ProtoControllers\Utilisateur::putListAssociationPlanning($subalternesSelectionnes, $idPlanning);
+            if (!$hasSubalternesAffectes) {
                 return false;
             }
         }

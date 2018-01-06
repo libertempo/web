@@ -1808,22 +1808,10 @@ class Fonctions
     {
         $return    = '';
         $message   = '';
-        $errorsLst = [];
         if (!empty($_POST)) {
-            if (0 < (int) \App\ProtoControllers\Responsable\Planning::putPlanning($id, $_POST, $errorsLst)) {
+            if (0 < (int) \App\ProtoControllers\Responsable\Planning::putPlanning($id, $_POST)) {
                 log_action(0, '', '', 'Édition des associations du planning ' . $id);
                 redirect(ROOT_PATH . 'responsable/resp_index.php?onglet=liste_planning', false);
-            } else {
-                if (!empty($errorsLst)) {
-                    $errors = '';
-                    foreach ($errorsLst as $key => $value) {
-                        if (is_array($value)) {
-                            $value = implode(' / ', $value);
-                        }
-                        $errors .= '<li>' . $key . ' : ' . $value . '</li>';
-                    }
-                    $message = '<div class="alert alert-danger">' . _('erreur_recommencer') . ' :<ul>' . $errors . '</ul></div>';
-                }
             }
         }
 

@@ -14,11 +14,10 @@ class Planning extends \App\ProtoControllers\APlanning
      *
      * @param int   $id
      * @param array $put
-     * @param array &$errors
      *
      * @return int
      */
-    public static function putPlanning($id, array $put, array &$errors)
+    public static function putPlanning($id, array $put)
     {
         $id = (int) $id;
         $subalternes = \App\ProtoControllers\Responsable::getUsersRespDirect($_SESSION['userlogin']);
