@@ -346,7 +346,7 @@ class Utilisateur
     /**
      * Définit une association massive entre les utilisateurs et le planning
      *
-     * @param array $utilisateurListe
+     * @param array $utilisateursListe
      * @param int $idPlanning
      *
      * @return int Nombre d'utilisateurs affectés
