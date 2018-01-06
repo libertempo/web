@@ -783,6 +783,11 @@ class Fonctions
 
         foreach($tab_new_values as $key => $value ) {
             $value = htmlentities($value, ENT_QUOTES | ENT_HTML401);
+            /* Contrôle de cohérence entre config. */
+            if ('user_ch_passwd' === $key && 'dbconges' !== $tab_new_values['how_to_connect_user'] ) {
+                $value = 'FALSE';
+            }
+
             // CONTROLE gestion_conges_exceptionnels
             // si désactivation les conges exceptionnels, on verif s'il y a des conges exceptionnels enregistres ! si oui : changement impossible !
             if(($key=="gestion_conges_exceptionnels") && ($value=="FALSE") ) {
