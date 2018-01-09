@@ -13,6 +13,7 @@ return array(
     'CAS_GracefullTerminationException' => $vendorDir . '/jasig/phpcas/source/CAS/GracefullTerminationException.php',
     'CAS_InvalidArgumentException' => $vendorDir . '/jasig/phpcas/source/CAS/InvalidArgumentException.php',
     'CAS_Languages_Catalan' => $vendorDir . '/jasig/phpcas/source/CAS/Languages/Catalan.php',
+    'CAS_Languages_ChineseSimplified' => $vendorDir . '/jasig/phpcas/source/CAS/Languages/ChineseSimplified.php',
     'CAS_Languages_English' => $vendorDir . '/jasig/phpcas/source/CAS/Languages/English.php',
     'CAS_Languages_French' => $vendorDir . '/jasig/phpcas/source/CAS/Languages/French.php',
     'CAS_Languages_German' => $vendorDir . '/jasig/phpcas/source/CAS/Languages/German.php',

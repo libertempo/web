@@ -35,7 +35,7 @@ abstract class AHeure
      *
      * @return int
      */
-    protected function postHtmlCommon(array $post, array &$errorsLst, &$notice)
+    public function postHtmlCommon(array $post, array &$errorsLst, &$notice)
     {
         $user = $_SESSION['userlogin'];
         if (!empty($post['_METHOD'])) {
@@ -268,13 +268,6 @@ abstract class AHeure
     abstract public function canUserDelete($id, $user);
 
     /**
-     * Liste des heures
-     *
-     * @return string
-     */
-    abstract public function getListe();
-
-    /**
      * Y-a-t-il une recherche dans l'avion ?
      *
      * @param array $post
@@ -287,22 +280,13 @@ abstract class AHeure
     }
 
     /**
-     * Retourne le formulaire de recherche de la liste
-     *
-     * @param array $champs Champs de recherche (postés ou défaut)
-     *
-     * @return string
-     */
-    abstract protected function getFormulaireRecherche(array $champs);
-
-    /**
      * Transforme les champs de recherche afin d'être compris par la bdd
      *
      * @param array $post
      *
      * @return array
      */
-    protected function transformChampsRecherche(array $post)
+    public function transformChampsRecherche(array $post)
     {
         $champs = [];
         $search = $post['search'];
@@ -455,7 +439,8 @@ abstract class AHeure
         $req = 'SELECT EXISTS (
             SELECT p_num
             FROM conges_periode
-            WHERE p_etat IN ("' . implode('","', $statuts) . '")
+            WHERE p_login = "' . $user . '"
+            AND p_etat IN ("' . implode('","', $statuts) . '")
             AND (' . implode(' OR ', $where) . ')
         )';
         $queryConges = $sql->query($req);

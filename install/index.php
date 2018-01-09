@@ -6,17 +6,15 @@ require_once ROOT_PATH . 'define.php';
 $_SESSION['lang'] = 'fr_FR';
 
 include_once INCLUDE_PATH .'fonction.php';
-
+session_delete();
 include_once ROOT_PATH .'fonctions_conges.php' ;
 session_regenerate_id(false);
 
 $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 
-
-//recup de la langue
-$lang=(isset($_GET['lang']) ? $_GET['lang'] : ((isset($_POST['lang'])) ? $_POST['lang'] : "") ) ;
-$lang = htmlentities($lang, ENT_QUOTES | ENT_HTML401);
-
+// TODO 1.10 : la suppression des langues se fait en plusieurs temps.
+// Les versions suivantes devront supprimer toute info liée aux langues.
+$lang = 'fr_FR';
 //recup de la config db
 $dbserver=(isset($_GET['dbserver']) ? $_GET['dbserver'] : ((isset($_POST['dbserver'])) ? $_POST['dbserver'] : "") ) ;
 $dbserver = htmlentities($dbserver, ENT_QUOTES | ENT_HTML401);
@@ -30,25 +28,8 @@ $dbpasswd = htmlentities($dbpasswd, ENT_QUOTES | ENT_HTML401);
 $dbdb=(isset($_GET['dbdb']) ? $_GET['dbdb'] : ((isset($_POST['dbdb'])) ? $_POST['dbdb'] : "") ) ;
 $dbdb = htmlentities($dbdb, ENT_QUOTES | ENT_HTML401);
 
-    if($lang=="") {
-        header_popup();
-        echo "<br><br>\n";
-        echo "Choisissez votre langue :<br> \n";
-        echo "Choose your language :<br>\n";
-        echo "<form action=\"$PHP_SELF\" method=\"POST\">\n";
-        // affichage de la liste des langues supportées ...
-        // on lit le contenu du répertoire lang et on parse les nom de ficher (ex lang_fr_francais.php)
-        echo affiche_select_from_lang_directory("", "");
-
-        echo "<br>\n";
-        echo "<input type=\"submit\" value=\"OK\">\n";
-        echo "</form>\n";
-        bottom();
-    } elseif(\install\Fonctions::test_dbconnect_file()!=TRUE) {
-        $_SESSION['langue']=$lang;      // sert ensuite pour mettre la langue dans la table config
-        //        $tab_lang_file = glob("lang/lang_".$lang.'_*.php');
-        //        include$tab_lang_file[0] ;
-        //        include$lang_file ;
+    if(\install\Fonctions::test_dbconnect_file()!=TRUE) {
+        $_SESSION['lang']=$lang;
 
         header_popup();
         echo "<center>\n";
@@ -130,7 +111,6 @@ $dbdb = htmlentities($dbdb, ENT_QUOTES | ENT_HTML401);
             bottom();
         } else {
             $installed_version = \install\Fonctions::get_installed_version();
-            $installed_version = 0;
 
             if($installed_version==0)   // num de version inconnu
             {

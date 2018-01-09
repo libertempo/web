@@ -36,6 +36,16 @@ final class Model extends \Tests\Units\App\Libraries\AModel
     }
 
     /**
+     * @since 0.3
+     */
+    public function testGetLogin()
+    {
+        $model = new _Model(['token' => 'token', 'login' => 'login']);
+
+        $this->variable($model->getLogin())->isNull();
+    }
+
+    /**
      * @inheritDoc
      */
     public function testReset()
@@ -70,5 +80,16 @@ final class Model extends \Tests\Units\App\Libraries\AModel
         $model->populateToken($token);
 
         $this->string($model->getToken())->isIdenticalTo($token);
+    }
+
+    public function testUpdateDateLastAccess()
+    {
+        $model = new _Model(['id' => 3, 'dateLastAccess' => "0"]);
+
+        $this->string($model->getDateLastAccess())->isIdenticalTo("0");
+
+        $model->updateDateLastAccess();
+
+        $this->string($model->getDateLastAccess())->isIdenticalTo(date('Y-m-d H:i'));
     }
 }

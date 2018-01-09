@@ -26,7 +26,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *************************************************************************************************/
 
 defined('_PHP_CONGES') or die('Restricted access');
-if (!$_SESSION['config']['gestion_heures']) {
+$config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+if (!$config->isHeuresAutorise()) {
     redirect(ROOT_PATH . 'utilisateur/user_index.php');
 }
 $id = (int) getpost_variable('id');

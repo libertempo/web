@@ -92,7 +92,6 @@ class Fonctions
             $gid=$tab_groups[$i]["gid"] ;
             $group=$tab_groups[$i]["groupename"] ;
             $libelle=$tab_groups[$i]["comment"] ;
-
             if ( ($tab_user!="") && (in_array ($gid, $tab_user)) ) {
                 $case_a_cocher="<input type=\"checkbox\" name=\"checkbox_user_groups[$gid]\" value=\"$gid\" checked>";
                 $class="histo-big";
@@ -125,6 +124,7 @@ class Fonctions
      */
     public static function userModule()
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $return = '';
         $return .= '<a href="' . ROOT_PATH . 'admin/admin_index.php?onglet=ajout-user" style="float:right" class="btn btn-success">' . _('admin_onglet_add_user') . '</a>';
         $return .= '<h1>' . _('admin_onglet_gestion_user') . '</h1>';
@@ -138,7 +138,7 @@ class Fonctions
         $tab_type_conges_exceptionnels = [];
 
         // recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
-        if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+        if ($config->isCongesExceptionnelsActive()) {
             $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
         }
 
@@ -165,13 +165,13 @@ class Fonctions
             $childTable .= '<th>' . _('divers_solde') . ' ' . $libelle . '</th>';
         }
 
-        if($_SESSION['config']['gestion_heures']){
+        if($config->isHeuresAutorise()){
             $childTable .= '<th>' . _('divers_solde') . ' ' . _('heures') . '</th>';
         }
 
         $childTable .= '<th></th>';
         $childTable .= '<th></th>';
-        if($_SESSION['config']['admin_change_passwd'] && ($_SESSION['config']['how_to_connect_user'] == "dbconges")) {
+        if($config->canAdminChangePassword() && "dbconges" == $config->getHowToConnectUser()) {
             $childTable .= '<th></th>';
         }
         $childTable .= '</tr>';
@@ -181,7 +181,7 @@ class Fonctions
         // Récuperation des informations des users:
         $tab_info_users=array();
         // si l'admin peut voir tous les users  OU si l'admin n'est pas responsable
-        if( $_SESSION['config']['admin_see_all'] || $_SESSION['userlogin']=="admin" || is_hr($_SESSION['userlogin']) ) {
+        if( $config->canAdminSeeAll() || $_SESSION['userlogin']=="admin" || is_hr($_SESSION['userlogin']) ) {
             $tab_info_users = recup_infos_all_users();
         } else {
             $tab_info_users = recup_infos_all_users_du_resp($_SESSION['userlogin']);
@@ -198,7 +198,7 @@ class Fonctions
             $childTable .= '<tr class="' . (($tab_current_infos['is_active']=='Y') ? 'actif' : 'inactif') . '">';
             $childTable .= '<td class="utilisateur"><strong>' . $tab_current_infos['nom'] . ' ' . $tab_current_infos['prenom'] . '</strong>';
             $childTable .= '<span class="login">' . $current_login . '</span>';
-            if($_SESSION['config']['where_to_find_user_email']=="dbconges") {
+            if(!$config->getMailFromLdap()) {
                 $childTable .= '<span class="mail">' . $tab_current_infos['email'] . '</span>';
             }
             // droit utilisateur
@@ -249,13 +249,13 @@ class Fonctions
                 }
             }
 
-            if($_SESSION['config']['gestion_heures']){
+            if($config->isHeuresAutorise()){
                 $childTable .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($tab_current_infos['solde_heure']) . '</td>';
             }
 
             $childTable .= '<td>' . $admin_modif_user . '</td>';
             $childTable .= '<td>' . $admin_suppr_user . '</td>';
-            if(($_SESSION['config']['admin_change_passwd']) && ($_SESSION['config']['how_to_connect_user'] == "dbconges")) {
+            if(($config->canAdminChangePassword()) && ($config->getHowToConnectUser() == "dbconges")) {
                 $childTable .= '<td>' . $admin_chg_pwd_user . '</td>';
             }
             $childTable .= '</tr>';
@@ -484,8 +484,7 @@ class Fonctions
             $childTable .= '<td align="center">&nbsp;</td>';
             $childTable .= '</tr>';
             $childTable .= '<tr>';
-            $childTable .= '<td align="center">';
-            $childTable .= '<input type="button" value="' . _('form_close_window') . '" onClick="window.close();">';
+            $childTable .= '<td>';
             $childTable .= '</td>';
             $childTable .= '</tr>';
             $table->addChild($childTable);
@@ -503,8 +502,6 @@ class Fonctions
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return   = '';
-
-        header_popup();
 
         $return .= '<h1>' . _('admin_sauve_db_titre') . '</h1>';
         $return .= '<form enctype="multipart/form-data" action="' . $PHP_SELF . '" method="POST">';
@@ -580,7 +577,7 @@ class Fonctions
      *
      * @return string
      */
-    private static function getDataFile($typeSauvegarde)
+    public static function getDataFile($typeSauvegarde)
     {
         $content = "#\n";
         $content .= "# Libertempo\n";
@@ -612,8 +609,6 @@ class Fonctions
 
         redirect(ROOT_PATH .'admin/admin_db_sauve.php?choix_action=sauvegarde&type_sauvegarde='.$type_sauvegarde.'&commit=ok', false);
 
-        header_popup();
-
         $return .= '<h1>' . _('admin_sauve_db_titre') . '</h1>';
 
         $return .= '<form action="' . $PHP_SELF . '" method="POST">';
@@ -622,7 +617,6 @@ class Fonctions
         $childTable .= '<th colspan="2">' . _('admin_sauve_db_save_ok') . ' ...</th>';
         $childTable .= '</tr><tr>';
         $childTable .= '<td colspan="2" align="center">';
-        $childTable .= '<input type="button" value="' . _('form_close_window') . '" onClick="window.close();">';
         $childTable .= '</td>';
         $childTable .= '</tr>';
         $table->addChild($childTable);
@@ -640,9 +634,6 @@ class Fonctions
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return   = '';
-
-
-        header_popup();
 
         $return .= '<h1>' . _('admin_sauve_db_titre') . '</h1>';
 
@@ -687,8 +678,6 @@ class Fonctions
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return   = '';
-
-        header_popup();
 
         $return .= '<h1>' . _('admin_sauve_db_titre') . '</h1>';
 
@@ -737,10 +726,6 @@ class Fonctions
      */
     public static function saveRestoreModule()
     {
-        // verif des droits du user à afficher la page
-        verif_droits_user( "is_admin");
-
-
         /*** initialisation des variables ***/
         /*************************************/
         // recup des parametres reçus :
@@ -787,6 +772,7 @@ class Fonctions
 
     public static function commit_update_user($u_login_to_update, &$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, &$tab_new_reliquat, &$return)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $dataUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($u_login_to_update);
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $erreurs = [];
@@ -796,7 +782,7 @@ class Fonctions
         // recup du tableau des types de conges (seulement les conges)
         $tab_type_conges = recup_tableau_types_conges();
         $tab_type_conges_excep=array();
-        if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+        if ($config->isCongesExceptionnelsActive()) {
             $tab_type_conges_excep=recup_tableau_types_conges_exceptionnels();
         }
 
@@ -824,7 +810,7 @@ class Fonctions
         }
 
         // si l'application gere les conges exceptionnels ET si des types de conges exceptionnels ont été définis
-        if (($_SESSION['config']['gestion_conges_exceptionnels'])&&(count($tab_type_conges_excep) > 0)) {
+        if (($config->isCongesExceptionnelsActive())&&(count($tab_type_conges_excep) > 0)) {
             $valid_3=true;
             // vérification de la validité de la saisie du nombre de jours annuels et du solde pour chaque type de conges exceptionnels
             foreach($tab_type_conges_excep as $id_conges => $libelle) {
@@ -844,7 +830,7 @@ class Fonctions
         {
             $valid_4=false;
         }
-        if ($_SESSION['config']['gestion_heures'] && !\admin\Fonctions::FormAddUserSoldeHeureOk($tab_new_user['solde_heure'])) {
+        if ($config->isHeuresAutorise() && !\admin\Fonctions::FormAddUserSoldeHeureOk($tab_new_user['solde_heure'])) {
             $valid_5=false;
         }
 
@@ -857,7 +843,7 @@ class Fonctions
             } else {
                 $sql .='"'.\includes\SQL::quote($tab_new_user['resp_login']).'",';
             }
-            if ($_SESSION['config']['gestion_heures']) {
+            if ($config->isHeuresAutorise()) {
                 $sql .='u_heure_solde='. \App\Helpers\Formatter::hour2Time($tab_new_user['solde_heure']).',';
             }
             $sql .= 'u_is_admin="'. \includes\SQL::quote($tab_new_user['is_admin']).'",u_is_hr="'.\includes\SQL::quote($tab_new_user['is_hr']).'",u_is_active="'.\includes\SQL::quote($tab_new_user['is_active']).'",u_see_all="'.\includes\SQL::quote($tab_new_user['see_all']).'",u_login="'.\includes\SQL::quote($tab_new_user['login']).'",u_quotite="'.\includes\SQL::quote($tab_new_user['quotite']).'",u_email="'. \includes\SQL::quote($tab_new_user['email']).'" WHERE u_login="'.\includes\SQL::quote($u_login_to_update).'"' ;
@@ -873,7 +859,7 @@ class Fonctions
 
             }
 
-            if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+            if ($config->isCongesExceptionnelsActive()) {
                 foreach($tab_type_conges_excep as $id_conges => $libelle) {
                     $sql = 'REPLACE INTO conges_solde_user SET su_nb_an=0, su_solde=\''.strtr(round_to_half($tab_new_solde[$id_conges]),",",".").'\', su_reliquat=\''.strtr(round_to_half($tab_new_reliquat[$id_conges]),",",".").'\', su_login="'.\includes\SQL::quote($u_login_to_update).'", su_abs_id='.intval($id_conges).';';
                     \includes\SQL::query($sql);
@@ -946,6 +932,7 @@ class Fonctions
 
     public static function modifier_user($u_login, $onglet)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return   = '';
         $soldeHeureId = uniqid();
@@ -955,7 +942,7 @@ class Fonctions
         $tab_type_conges=recup_tableau_types_conges();
 
         // recup du tableau des types de conges (seulement les conges)
-        if ( $_SESSION['config']['gestion_conges_exceptionnels'] ) {
+        if ($config->isCongesExceptionnelsActive()) {
             $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
         }
 
@@ -981,7 +968,7 @@ class Fonctions
         $childTable .= '<th>' . _('divers_prenom_maj_1') . '</th>';
         $childTable .= '<th>' . _('divers_login_maj_1') . '</th>';
         $childTable .= '<th>' . _('divers_quotite_maj_1') . '</th>';
-        if ($_SESSION['config']['gestion_heures'] ) {
+        if ($config->isHeuresAutorise()) {
             $childTable .= '<th>' . _('solde_heure') . '</th>';
         }
         $childTable .= '<th>' . _('admin_users_is_resp') . '</th>';
@@ -991,7 +978,7 @@ class Fonctions
         $childTable .= '<th>' . _('admin_users_is_active') . '</th>';
         $childTable .= '<th>' . _('admin_users_see_all') . '</th>';
 
-        if($_SESSION['config']['where_to_find_user_email']=="dbconges") {
+        if(!$config->getMailFromLdap()) {
             $childTable .= '<th>' . _('admin_users_mail') . '</th>';
         }
         $childTable .= '</tr>';
@@ -1004,7 +991,7 @@ class Fonctions
         $childTable .= '<td>' . $tab_user['prenom'] . '</td>';
         $childTable .= '<td>' . $tab_user['login'] . '</td>';
         $childTable .= '<td>' . $tab_user['quotite'] . '</td>';
-        if ($_SESSION['config']['gestion_heures'] ) {
+        if ($config->isHeuresAutorise()) {
             $childTable .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($tab_user['solde_heure']) . '</td>';
         }
         $childTable .= '<td>' . $tab_user['is_resp'] . '</td>';
@@ -1014,13 +1001,13 @@ class Fonctions
         $childTable .= '<td>' . $tab_user['is_active'] . '</td>';
         $childTable .= '<td>' . $tab_user['see_all'] . '</td>';
 
-        if($_SESSION['config']['where_to_find_user_email']=="dbconges") {
+        if(!$config->getMailFromLdap()) {
             $childTable .= '<td>' . $tab_user['email'] . '</td>';
         }
         $childTable .= '</tr>';
 
         // contruction des champs de saisie
-        if($_SESSION['config']['export_users_from_ldap']) {
+        if($config->isUsersExportFromLdap()) {
             $text_login="<input class=\"form-control\" type=\"text\" name=\"new_login\" size=\"10\" maxlength=\"98\" value=\"".$tab_user['login']."\" readonly>" ;
         } else {
             $text_login="<input class=\"form-control\" type=\"text\" name=\"new_login\" size=\"10\" maxlength=\"98\" value=\"".$tab_user['login']."\">" ;
@@ -1059,7 +1046,7 @@ class Fonctions
             $text_see_all="<select class=\"form-control\" name=\"new_see_all\" ><option value=\"N\">N</option><option value=\"Y\">Y</option></select>" ;
         }
 
-        if($_SESSION['config']['where_to_find_user_email']=="dbconges") {
+        if(!$config->getMailFromLdap()) {
             $text_email="<input class=\"form-control\" type=\"text\" name=\"new_email\" size=\"10\" maxlength=\"99\" value=\"".$tab_user['email']."\">" ;
         }
 
@@ -1085,7 +1072,7 @@ class Fonctions
         $childTable .= '<td>' . $text_prenom . '</td>';
         $childTable .= '<td>' . $text_login . '</td>';
         $childTable .= '<td>' . $text_quotite . '</td>';
-        if ($_SESSION['config']['gestion_heures'] ) {
+        if ($config->isHeuresAutorise()) {
             $text_solde_heure="<input class=\"form-control\" type=\"text\" name=\"new_solde_heure\" id=\"" . $soldeHeureId . "\"  size=\"6\" maxlength=\"6\" value=\"".  \App\Helpers\Formatter::timestamp2Duree($tab_user['solde_heure'])."\">" ;
             $childTable .= '<td>' . $text_solde_heure . '</td>';
         }
@@ -1095,7 +1082,7 @@ class Fonctions
         $childTable .= '<td>' . $text_is_hr . '</td>';
         $childTable .= '<td>' . $text_is_active . '</td>';
         $childTable .= '<td>' . $text_see_all . '</td>';
-        if($_SESSION['config']['where_to_find_user_email']=="dbconges") {
+        if(!$config->getMailFromLdap()) {
             $childTable .= '<td>' . $text_email . '</td>';
         }
         $childTable .= '</tr></tbody>';
@@ -1121,7 +1108,7 @@ class Fonctions
         $childTable .= '<th></th>';
         $childTable .= '<th colspan="2">' . _('admin_modif_nb_jours_an') . ' </th>';
         $childTable .= '<th colspan="2">' . _('divers_solde') . '</th>';
-        if( $_SESSION['config']['autorise_reliquats_exercice'] ) {
+        if($config->isReliquatsAutorise()) {
             $childTable .= '<th colspan="2">' . _('divers_reliquat') . '</th>';
         }
         $childTable .= '</tr></thead><tbody>';
@@ -1155,7 +1142,7 @@ class Fonctions
 
             // reliquat
             // si on ne les utilise pas, on initialise qd meme le tableau (<input type=\"hidden\") ...
-            if($_SESSION['config']['autorise_reliquats_exercice']) {
+            if($config->isReliquatsAutorise()) {
                 if (isset($tab_user['conges'][$libelle])) {
                     $childTable .= '<td>' . $tab_user['conges'][$libelle]['reliquat'] . '</td>';
                     $text_reliquats_jours="<input class=\"form-control\" type=\"text\" name=\"tab_new_reliquat[$id_type_cong]\" size=\"5\" maxlength=\"5\" value=\"".$tab_user['conges'][$libelle]['reliquat']."\">" ;
@@ -1173,7 +1160,7 @@ class Fonctions
         }
 
         // recup du tableau des types de conges (seulement les conges)
-        if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+        if ($config->isCongesExceptionnelsActive()) {
             foreach($tab_type_conges_exceptionnels as $id_type_cong_exp => $libelle) {
                 $childTable .= '<tr class="' . ($i ? 'i' : 'p') . '">';
                 $childTable .= '<td>' . $libelle . '</td>';
@@ -1186,7 +1173,7 @@ class Fonctions
                 $childTable .= '<td>' . $text_solde_jours . '</td>';
                 // reliquat
                 // si on ne les utilise pas, on initialise qd meme le tableau (<input type=\"hidden\") ...
-                if($_SESSION['config']['autorise_reliquats_exercice']) {
+                if($config->isReliquatsAutorise()) {
                     $childTable .= '<td>' . $tab_user['conges'][$libelle]['reliquat'] . '</td>';
                     $text_reliquats_jours="<input class=\"form-control\" type=\"text\" name=\"tab_new_reliquat[$id_type_cong_exp]\" size=\"5\" maxlength=\"5\" value=\"".$tab_user['conges'][$libelle]['reliquat']."\">" ;
                     $childTable .= '<td>' . $text_reliquats_jours . '</td>';
@@ -1234,6 +1221,7 @@ class Fonctions
      */
     public static function modifUserModule($onglet)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $u_login              = htmlentities(getpost_variable('u_login'));
         $u_login_to_update    = htmlentities(getpost_variable('u_login_to_update')) ;
         $tab_checkbox_sem_imp = htmlentities(getpost_variable('tab_checkbox_sem_imp')) ;
@@ -1261,7 +1249,7 @@ class Fonctions
             $tab_new_user['nom']    = htmlspecialchars(getpost_variable('new_nom'), ENT_QUOTES | ENT_HTML401);
             $tab_new_user['prenom']     = htmlspecialchars(getpost_variable('new_prenom'), ENT_QUOTES | ENT_HTML401);
             $tab_new_user['quotite']    = htmlentities(getpost_variable('new_quotite'), ENT_QUOTES | ENT_HTML401);
-            if ($_SESSION['config']['gestion_heures'] ) {
+            if ($config->isHeuresAutorise()) {
                 $tab_new_user['solde_heure']    = htmlentities(getpost_variable('new_solde_heure'), ENT_QUOTES | ENT_HTML401);
             }
             $tab_new_user['is_resp']    = htmlentities(getpost_variable('new_is_resp'), ENT_QUOTES | ENT_HTML401);
@@ -1293,6 +1281,7 @@ class Fonctions
 
     public static function confirmer($group, $onglet)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return   = '';
 
@@ -1318,7 +1307,7 @@ class Fonctions
         $childTable .= '<tr>';
         $childTable .= '<th><b>' . _('admin_groupes_groupe') . '</b></th>';
         $childTable .= '<th><b>' . _('admin_groupes_libelle') . ' / ' . _('divers_comment_maj_1') . '</b></th>';
-        if($_SESSION['config']['double_validation_conges']) {
+        if($config->isDoubleValidationActive()) {
             $childTable .= '<th><b>' . _('admin_groupes_double_valid') . '</b></th>';
         }
         $childTable .= '</tr></thead><tbody><tr>';
@@ -1328,7 +1317,7 @@ class Fonctions
             $sql_double_valid=$resultat1["g_double_valid"] ;
             $childTable .= '<td>&nbsp;' . $sql_groupname . '&nbsp;</td>';
             $childTable .= '<td>&nbsp;' . $sql_comment . '&nbsp;</td>';
-            if($_SESSION['config']['double_validation_conges']) {
+            if($config->isDoubleValidationActive()) {
                 $childTable .= '<td>' . $sql_double_valid . '</td>';
             }
         }
@@ -1598,6 +1587,7 @@ class Fonctions
     // affichage du formulaire de saisie d'un nouveau user
     public static function affiche_formulaire_ajout_user(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, $onglet)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
@@ -1605,7 +1595,7 @@ class Fonctions
         $tab_type_conges=recup_tableau_types_conges();
 
         // recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
-        if ($_SESSION['config']['gestion_conges_exceptionnels']){
+        if ($config->isCongesExceptionnelsActive()){
             $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
         }
 
@@ -1630,7 +1620,7 @@ class Fonctions
         ]);
         $childTable = '<thead>';
         $childTable .= '<tr>';
-        if ($_SESSION['config']['export_users_from_ldap'] ) {
+        if ($config->isUsersExportFromLdap()) {
             $childTable .= '<th>' . _('divers_nom_maj_1') . ' ' . _('divers_prenom_maj_1') . '</th>';
         } else {
             $childTable .= '<th>' . _('divers_login_maj_1') . '</th>';
@@ -1638,7 +1628,7 @@ class Fonctions
             $childTable .= '<th>' . _('divers_prenom_maj_1') . '</th>';
         }
         $childTable .= '<th>' . _('divers_quotite_maj_1') . '</th>';
-        if ($_SESSION['config']['gestion_heures'] ) {
+        if ($config->isHeuresAutorise()) {
             $childTable .= '<th>' . _('solde_heure') . '</th>';
         }
         $childTable .= '<th>' . _('admin_new_users_is_resp') . '</th>';
@@ -1646,10 +1636,10 @@ class Fonctions
         $childTable .= '<th>' . _('admin_new_users_is_admin') . '</th>';
         $childTable .= '<th>' . _('admin_new_users_is_hr') . '</th>';
         $childTable .= '<th>' . _('admin_new_users_see_all') . '</th>';
-        if ( !$_SESSION['config']['export_users_from_ldap'] ) {
+        if (!$config->isUsersExportFromLdap()) {
             $childTable .= '<th>' . _('admin_users_mail') . '</th>';
         }
-        if ($_SESSION['config']['how_to_connect_user'] == "dbconges") {
+        if ($config->getHowToConnectUser() == "dbconges") {
             $childTable .= '<th>' . _('admin_new_users_password') . '</th>';
             $childTable .= '<th>' . _('admin_new_users_password') . '</th>';
         }
@@ -1668,7 +1658,7 @@ class Fonctions
         // PREPARATION DES OPTIONS DU SELECT du resp_login
         $text_resp_login="<select class=\"form-control\" name=\"new_resp_login\" id=\"resp_login_id\" ><option value=\"no_resp\">". _('admin_users_no_resp') ."</option>" ;
 
-        if( $_SESSION['config']['admin_see_all'] || $_SESSION['userlogin']=="admin" || is_hr($_SESSION['userlogin'])) {
+        if( $config->canAdminSeeAll() || $_SESSION['userlogin']=="admin" || is_hr($_SESSION['userlogin'])) {
             $sql2 = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_is_resp = \"Y\" ORDER BY u_nom, u_prenom"  ;
         } else {
             $sql2 = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_is_resp = \"Y\" AND u_login=\"".$_SESSION['userlogin']."\" ORDER BY u_nom, u_prenom" ;
@@ -1699,7 +1689,7 @@ class Fonctions
 
         $childTable .= '<tr class="update-line">';
         // Aj. D.Chabaud - Université d'Auvergne - Sept. 2005
-        if ($_SESSION['config']['export_users_from_ldap'] ) {
+        if ($config->isUsersExportFromLdap()) {
             // Récupération de la liste des utilisateurs via un ldap :
 
             // on crée 2 tableaux (1 avec les noms + prénoms, 1 avec les login)
@@ -1727,7 +1717,7 @@ class Fonctions
         }
 
         $childTable .= '<td>' . $text_quotite . '</td>';
-        if ($_SESSION['config']['gestion_heures'] ) {
+        if ($config->isHeuresAutorise()) {
             $text_solde_heure="<input class=\"form-control\" type=\"text\" name=\"new_solde_heure\" id=\"" . $soldeHeureId . "\" size=\"6\" maxlength=\"6\" value=\"".$tab_new_user['solde_heure']."\">" ;
             $childTable .= '<td>' . $text_solde_heure . '</td>';
         }else{
@@ -1739,10 +1729,10 @@ class Fonctions
         $childTable .= '<td>' . $text_is_admin . '</td>';
         $childTable .= '<td>' . $text_is_hr . '</td>';
         $childTable .= '<td>' . $text_see_all . '</td>';
-        if ( !$_SESSION['config']['export_users_from_ldap'] ) {
+        if (!$config->isUsersExportFromLdap()) {
             $childTable .= '<td>' . $text_email . '</td>';
         }
-        if ($_SESSION['config']['how_to_connect_user'] == "dbconges") {
+        if ($config->getHowToConnectUser() == "dbconges") {
             $childTable .= '<td>' . $text_password1 . '</td>';
             $childTable .= '<td>' . $text_password2 . '</td>';
         }
@@ -1789,7 +1779,7 @@ class Fonctions
             $childTable .= '</tr>';
             $i = !$i;
         }
-        if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+        if ($config->isCongesExceptionnelsActive()) {
             foreach($tab_type_conges_exceptionnels as $id_type_cong => $libelle) {
                 $childTable .= '<tr class="'.($i?'i':'p').'">';
                 $value_solde_jours = ( isset($tab_new_solde[$id_type_cong]) ? $tab_new_solde[$id_type_cong] : 0 );
@@ -1810,7 +1800,7 @@ class Fonctions
         $return .= '<br>';
 
         $return .= '<br>';
-        if( $_SESSION['config']['admin_see_all'] || $_SESSION['userlogin']=="admin" ||  is_hr($_SESSION['userlogin']) ) {
+        if( $config->canAdminSeeAll() || $_SESSION['userlogin']=="admin" ||  is_hr($_SESSION['userlogin']) ) {
             $return .= \admin\Fonctions::affiche_tableau_affectation_user_groupes2("");
         } else {
             $return .= \admin\Fonctions::affiche_tableau_affectation_user_groupes2($_SESSION['userlogin']);
@@ -1826,6 +1816,7 @@ class Fonctions
 
     public static function verif_new_param(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, &$return = null)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return   = '';
 
@@ -1896,7 +1887,7 @@ class Fonctions
                 $return .= '</form>';
 
                 return true;
-            } elseif($_SESSION['config']['where_to_find_user_email'] == "dbconges" && strrchr($tab_new_user['email'], "@")==FALSE) {
+            } elseif(!$config->getMailFromLdap() && strrchr($tab_new_user['email'], "@")==FALSE) {
                 $return .= '<h3>' . _('admin_verif_bad_mail') . '</h3>';
                 $return .= '<form action="' . $PHP_SELF . '?onglet=ajout-user" method="POST">';
                 $return .= '<input type="hidden" name="new_login" value="' . $tab_new_user['login'] . '">';
@@ -1927,7 +1918,9 @@ class Fonctions
     }
 
     public static function test_form_add_user($tab_new_user) {
-        if($_SESSION['config']['export_users_from_ldap']) {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+
+        if($config->isUsersExportFromLdap()) {
             return \admin\Fonctions::FormAddUserLoginOk($tab_new_user['login']) && \admin\Fonctions::FormAddUserQuotiteOk($tab_new_user['quotite']) && \admin\Fonctions::FormAddUserSoldeHeureOk($tab_new_user['solde_heure']);
         } else {
             return \admin\Fonctions::FormAddUserLoginOk($tab_new_user['login']) && \admin\Fonctions::FormAddUserQuotiteOk($tab_new_user['quotite'])  && \admin\Fonctions::FormAddUserSoldeHeureOk($tab_new_user['solde_heure']) && \admin\Fonctions::FormAddUserNameOk($tab_new_user['nom']) && \admin\Fonctions::FormAddUserNameOk($tab_new_user['prenom']) && \admin\Fonctions::FormAddUserpasswdOk($tab_new_user['password1'],$tab_new_user['password2']);
@@ -1954,7 +1947,9 @@ class Fonctions
     }
 
     public static function FormAddUserpasswdOk($password1,$password2) {
-        if($_SESSION['config']['how_to_connect_user']=='dbconges')
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+
+        if($config->getHowToConnectUser() == 'dbconges')
         {
             return !(strlen($password1)==0 || strlen($password2)==0 || strcmp($password1, $password2)!=0);
         } else {
@@ -1964,6 +1959,8 @@ class Fonctions
 
     public static function ajout_user(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, $checkbox_user_groups)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return   = '';
         $verifFalse = '';
@@ -1981,7 +1978,7 @@ class Fonctions
 
             /*****************************/
             /* INSERT dans conges_users  */
-            $motdepasse = ('dbconges' == $_SESSION['config']['how_to_connect_user'])
+            $motdepasse = ('dbconges' == $config->getHowToConnectUser())
                 ? $tab_new_user['password1']
                 : 'none';
             $motdepasse = md5($motdepasse);
@@ -2080,11 +2077,13 @@ class Fonctions
      */
     public static function ajoutUtilisateurModule($onglet)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+
         $saisie_user = getpost_variable('saisie_user');
         $return      = '';
 
         // si on recupere les users dans ldap et qu'on vient d'en créer un depuis la liste déroulante
-        if ($_SESSION['config']['export_users_from_ldap'] && isset($_POST['new_ldap_user'])) {
+        if ($config->isUsersExportFromLdap() && isset($_POST['new_ldap_user'])) {
             $index = 0;
 
             // On lance une boucle pour selectionner tous les items
@@ -2128,7 +2127,7 @@ class Fonctions
                 $tab_new_user[$login]['is_hr']      = htmlentities(getpost_variable('new_is_hr'), ENT_QUOTES | ENT_HTML401);
                 $tab_new_user[$login]['see_all']    = getpost_variable('new_see_all');
 
-                if ($_SESSION['config']['how_to_connect_user'] == "dbconges") {
+                if ($config->getHowToConnectUser() == "dbconges") {
                     $tab_new_user[$login]['password1'] = getpost_variable('new_password1');
                     $tab_new_user[$login]['password2'] = getpost_variable('new_password2');
                 }
@@ -2150,7 +2149,7 @@ class Fonctions
             $tab_new_user[0]['is_hr']      = htmlentities(getpost_variable('new_is_hr'), ENT_QUOTES | ENT_HTML401);
             $tab_new_user[0]['see_all']    = getpost_variable('new_see_all');
 
-            if ($_SESSION['config']['how_to_connect_user'] == "dbconges") {
+            if ($config->getHowToConnectUser() == "dbconges") {
                 $tab_new_user[0]['password1']    = getpost_variable('new_password1');
                 $tab_new_user[0]['password2']    = getpost_variable('new_password2');
             }
@@ -2167,7 +2166,7 @@ class Fonctions
         /*************************************/
 
         if($saisie_user=="ok") {
-            if($_SESSION['config']['export_users_from_ldap']) {
+            if($config->isUsersExportFromLdap()) {
                 foreach($tab_login as $login) {
                     $return .= \admin\Fonctions::ajout_user($tab_new_user[$login], $tab_new_jours_an, $tab_new_solde, $checkbox_user_groups);
                 }

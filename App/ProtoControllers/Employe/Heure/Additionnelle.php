@@ -122,7 +122,7 @@ class Additionnelle extends \App\ProtoControllers\Employe\AHeure
             $return = $id;
 
             $notif = new \App\Libraries\Notification\Additionnelle($id);
-            if(!$notif->send()) {
+            if (!$notif->send()) {
                 $errorsLst['email'] = _('erreur_envoi_mail');
                 $return = NIL_INT;
             }
@@ -245,110 +245,6 @@ class Additionnelle extends \App\ProtoControllers\Employe\AHeure
         }
 
         return $reelleDuree - $aSoustraire;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getListe()
-    {
-        $message   = '';
-        $errorsLst = [];
-        $notice    = '';
-        if (!empty($_POST) && !$this->isSearch($_POST)) {
-            if (0 >= (int) $this->postHtmlCommon($_POST, $errorsLst, $notice)) {
-                $errors = '';
-                if (!empty($errorsLst)) {
-                    foreach ($errorsLst as $value) {
-                        $errors .= '<li>' . $value . '</li>';
-                    }
-                    $message = '<div class="alert alert-danger">' . _('erreur_recommencer') . ' :<ul>' . $errors . '</ul></div>';
-                }
-            } elseif ('DELETE' === $_POST['_METHOD'] && !empty($notice)) {
-                $message = '<div class="alert alert-info">' .  $notice . '.</div>';
-            } else {
-                log_action(0, '', '', 'Récupération de l\'heure additionnelle ' . $_POST['id_heure']);
-                redirect(ROOT_PATH . 'utilisateur/user_index.php?onglet=liste_heure_additionnelle', false);
-            }
-        }
-        $champsRecherche = (!empty($_POST) && $this->isSearch($_POST))
-            ? $this->transformChampsRecherche($_POST)
-            : [];
-        $params = $champsRecherche + [
-            'login' => $_SESSION['userlogin'],
-        ];
-
-        $return = '';
-        if( $_SESSION['config']['user_saisie_demande'] || $_SESSION['config']['user_saisie_mission'] ) {
-            $return .= '<a href="' . ROOT_PATH . 'utilisateur/user_index.php?onglet=ajout_heure_additionnelle" style="float:right" class="btn btn-success">' . _('divers_ajout_heure_additionnelle') . '</a>';
-        }
-        $return .= '<h1>' . _('user_liste_heure_additionnelle_titre') . '</h1>';
-        $return .= $this->getFormulaireRecherche($champsRecherche);
-        $return .= $message;
-        $table = new \App\Libraries\Structure\Table();
-        $table->addClasses([
-            'table',
-            'table-hover',
-            'table-responsive',
-            'table-condensed',
-            'table-striped',
-        ]);
-        $childTable = '<thead><tr><th>' . _('jour') . '</th><th>' . _('divers_debut_maj_1') . '</th><th>' . _('divers_fin_maj_1') . '</th><th>' . _('duree') . '</th><th>' . _('statut') . '</th><th>' . _('commentaire') . '</th><th></th></tr></thead><tbody>';
-        $listId = $this->getListeId($params);
-        if (empty($listId)) {
-            $childTable .= '<tr><td colspan="6"><center>' . _('aucun_resultat') . '</center></td></tr>';
-        } else {
-            $listeAdditionelle = $this->getListeSQL($listId);
-            foreach ($listeAdditionelle as $additionnelle) {
-                $jour   = date('d/m/Y', $additionnelle['debut']);
-                $debut  = date('H\:i', $additionnelle['debut']);
-                $fin    = date('H\:i', $additionnelle['fin']);
-                $duree  = \App\Helpers\Formatter::Timestamp2Duree($additionnelle['duree']);
-                $statut = AHeure::statusText($additionnelle['statut']);
-                $comment = \includes\SQL::quote($additionnelle['comment']);
-                if (AHeure::STATUT_DEMANDE == $additionnelle['statut']) {
-                    $modification = '<a title="' . _('form_modif') . '" href="user_index.php?onglet=modif_heure_additionnelle&id=' . $additionnelle['id_heure'] . '"><i class="fa fa-pencil"></i></a>';
-                    $annulation   = '<input type="hidden" name="id_heure" value="' . $additionnelle['id_heure'] . '" /><input type="hidden" name="_METHOD" value="DELETE" /><button type="submit" class="btn btn-link" title="' . _('Annuler') . '"><i class="fa fa-times-circle"></i></button>';
-                } else {
-                    $modification = '<i class="fa fa-pencil disabled" title="'  . _('heure_non_modifiable') . '"></i>';
-                    $annulation   = '<button title="' . _('heure_non_supprimable') . '" type="button" class="btn btn-link disabled"><i class="fa fa-times-circle"></i></button>';
-                }
-                $childTable .= '<tr><td>' . $jour . '</td><td>' . $debut . '</td><td>' . $fin . '</td><td>' . $duree . '</td><td>' . $statut . '</td><td>' . $comment . '</td><td><form action="" method="post" accept-charset="UTF-8"
-enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' . $annulation . '</form></td></tr>';
-            }
-        }
-        $childTable .= '</tbody>';
-        $table->addChild($childTable);
-        ob_start();
-        $table->render();
-        $return .= ob_get_clean();
-
-        return $return;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getFormulaireRecherche(array $champs)
-    {
-        $form = '<form method="post" action="" class="form-inline search" role="form"><div class="form-group"><label class="control-label col-md-4" for="statut">Statut&nbsp;:</label><div class="col-md-8"><select class="form-control" name="search[statut]" id="statut">';
-        $form .= '<option value="all">' . _('tous') . '</option>';
-        foreach (\App\Models\AHeure::getOptionsStatuts() as $key => $value) {
-            $selected = (isset($champs['statut']) && $key === $champs['statut'])
-                ? 'selected="selected"'
-                : '';
-            $form .= '<option value="' . $key . '" ' . $selected . '>' . $value . '</option>';
-        }
-        $form .= '</select></div></div><div class="form-group"><label class="control-label col-md-4" for="annee">Année&nbsp;:</label><div class="col-md-8"><select class="form-control" name="search[annee]" id="sel1">';
-        foreach (\utilisateur\Fonctions::getOptionsAnnees() as $key => $value) {
-            $selected = (isset($champs['annee']) && $key === $champs['annee'])
-                ? 'selected="selected"'
-                : '';
-            $form .= '<option value="' . $key . '" ' . $selected . '>' . $value . '</option>';
-        }
-        $form .= '</select></div></div><div class="form-group"><div class="input-group"><button type="submit" class="btn btn-default"><i class="fa fa-search" aria-hidden="true"></i></button>&nbsp;<a href="' . ROOT_PATH . 'utilisateur/user_index.php?onglet=liste_heure_additionnelle" type="reset" class="btn btn-default">Reset</a></div></div></form>';
-
-        return $form;
     }
 
     /*
@@ -486,6 +382,11 @@ enctype="application/x-www-form-urlencoded">' . $modification . '&nbsp;&nbsp;' .
      */
     public function canUserEdit($id, $user)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+        if (!$config->canUserModifieDemande()) {
+            return FALSE;
+        }
+        
         $sql = \includes\SQL::singleton();
         $req = 'SELECT EXISTS (
                     SELECT id_heure

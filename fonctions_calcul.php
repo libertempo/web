@@ -6,6 +6,7 @@ defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 // retourne le nb de jours  (opt_debut et opt_fin ont les valeurs "am" ou "pm"
 function compter($user, $num_current_periode, $date_debut, $date_fin, $opt_debut, $opt_fin, &$comment,  $num_update = null)
 {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 	$date_debut = convert_date($date_debut);
 	$date_fin = convert_date($date_fin);
 
@@ -90,7 +91,7 @@ function compter($user, $num_current_periode, $date_debut, $date_fin, $opt_debut
 
 			// on regarde si le jour est travaillé ou pas dans la config de l'appli
 			$j_name=date("D", $timestamp_du_jour);
-			if( (($j_name=="Sat")&&($_SESSION['config']['samedi_travail']==FALSE)) || (($j_name=="Sun")&&($_SESSION['config']['dimanche_travail']==FALSE)))
+			if( (($j_name=="Sat")&&(!$config->isSamediOuvrable())) || (($j_name=="Sun")&&(!$config->isDimancheOuvrable())))
 			{
 				// on ne compte ce jour à 0
 				$tab_periode_calcul[$current_day]['am']=0;

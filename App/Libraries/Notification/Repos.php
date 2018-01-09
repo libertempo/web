@@ -102,7 +102,7 @@ Class Repos extends \App\Libraries\ANotification {
 
         $return['message'] = $infoResp['u_prenom'] . " " . $infoResp['u_nom'] . " a refusé(e) votre demande d'heure de repos du ". $data['jour'] ." de ". $data['debut'] ." à ". $data['fin'] .".";
 
-        if(!is_null($data['comment_refus'])){
+        if (!is_null($data['comment_refus'])){
             $return['message'] .= "\nCommentaire : " . $data['comment_refus'];
         }
         

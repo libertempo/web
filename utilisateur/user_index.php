@@ -8,7 +8,8 @@ include_once INCLUDE_PATH . 'fonction.php';
 include_once INCLUDE_PATH . 'session.php';
 include_once ROOT_PATH . 'fonctions_calcul.php';
 
-if ($_SESSION['config']['where_to_find_user_email'] == "ldap") {
+$config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+if ($config->getMailFromLdap()) {
     include CONFIG_PATH . 'config_ldap.php';
 }
 
@@ -25,16 +26,16 @@ $onglets = array();
 
 $onglets['liste_conge'] = _('user_conge');
 
-if ($_SESSION['config']['user_echange_rtt']) {
+if ($config->canUserEchangeRTT()) {
     $onglets['echange_jour_absence'] = _('user_onglet_echange_abs');
 }
 
-if ($_SESSION['config']['gestion_heures']) {
+if ($config->isHeuresAutorise()) {
     $onglets['liste_heure_repos'] = _('user_liste_heure_repos');
     $onglets['liste_heure_additionnelle'] = _('user_liste_heure_additionnelle');
 }
 
-if ($_SESSION['config']['auth'] && $_SESSION['config']['user_ch_passwd']) {
+if ($config->canUserChangePassword()) {
     $onglets['changer_mot_de_passe'] = _('user_onglet_change_passwd');
 }
 
@@ -48,18 +49,6 @@ if ( !isset($onglets[ $onglet ]) && !in_array($onglet, array('modif_demande','su
 
 $add_css = '<style>#onglet_menu .onglet{ width: ' . (str_replace(',', '.', 100 / count($onglets))) . '% ;}</style>';
 header_menu('', 'Libertempo : ' . _('user'), $add_css);
-
-/*********************************/
-/*   AFFICHAGE DES ONGLETS...  */
-/*********************************/
-
-echo '<div id="onglet_menu">';
-foreach ($onglets as $key => $title) {
-    echo '<div class="onglet ' . ($onglet == $key ? ' active' : '') . '" >
-        <a href="' . $PHP_SELF . '?onglet=' . $key . '">' . $title . '</a>
-    </div>';
-}
-echo '</div>';
 
 /*********************************/
 /*   AFFICHAGE DU RECAP ...    */

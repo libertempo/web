@@ -44,6 +44,7 @@ function getTitleJour(\App\Libraries\Calendrier\Evenements $evenements, $nom, $j
     }
     return '';
 }
+$config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
 $injectableCreator = new \App\Libraries\InjectableCreator(\includes\SQL::singleton());
 $calendar = new \CalendR\Calendar();
@@ -70,7 +71,7 @@ $utilisateursATrouver = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisa
 $employesATrouver = [];
 foreach ($utilisateursATrouver as $nom) {
     $employe = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($nom);
-    $employesATrouver[$nom] = \App\ProtoControllers\Utilisateur::getNomComplet($employe['u_prenom'], $employe['u_nom']);
+    $employesATrouver[$nom] = \App\ProtoControllers\Utilisateur::getNomComplet($employe['u_prenom'], $employe['u_nom'], true);
 }
 
 header_menu('', 'Libertempo : '._('calendrier_titre'));
@@ -81,7 +82,7 @@ if ($jourDemande instanceof \DateTimeInterface) {
         $jourDemande->modify('+1 day'),
         $utilisateursATrouver,
         canSessionVoirEvenementEnTransit($_SESSION),
-        $_SESSION['config']['gestion_heures']
+        $config->isHeuresAutorise()
     );
     require_once VIEW_PATH . 'Calendrier/Jour.php';
 } else {
@@ -90,7 +91,7 @@ if ($jourDemande instanceof \DateTimeInterface) {
         $moisDemande->modify('+1 month'),
         $utilisateursATrouver,
         canSessionVoirEvenementEnTransit($_SESSION),
-        $_SESSION['config']['gestion_heures']
+        $config->isHeuresAutorise()
     );
     require_once VIEW_PATH . 'Calendrier/Mois.php';
 }

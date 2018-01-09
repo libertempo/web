@@ -1,32 +1,62 @@
 <?php
-/*************************************************************************************************
-Libertempo : Gestion Interactive des Congés
-Copyright (C) 2015 (Wouldsmina)
-Copyright (C) 2015 (Prytoegrian)
-Copyright (C) 2005 (cedric chauvineau)
-
-Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
-termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
-Ce programme est distribué car potentiellement utile, mais SANS AUCUNE GARANTIE,
-ni explicite ni implicite, y compris les garanties de commercialisation ou d'adaptation
-dans un but spécifique. Reportez-vous à la Licence Publique Générale GNU pour plus de détails.
-Vous devez avoir reçu une copie de la Licence Publique Générale GNU en même temps
-que ce programme ; si ce n'est pas le cas, écrivez à la Free Software Foundation,
-Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, États-Unis.
- *************************************************************************************************
-This program is free software; you can redistribute it and/or modify it under the terms
-of the GNU General Public License as published by the Free Software Foundation; either
-version 2 of the License, or any later version.
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the GNU General Public License for more details.
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *************************************************************************************************/
 defined('_PHP_CONGES') or die('Restricted access');
-if (!$_SESSION['config']['gestion_heures']) {
+$config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+
+if (!$config->isHeuresAutorise()) {
     redirect(ROOT_PATH . 'utilisateur/user_index.php');
 }
+use \App\Models\AHeure;
 $additionnelle = new \App\ProtoControllers\Employe\Heure\Additionnelle();
-echo $additionnelle->getListe();
+
+/**
+ * Y-a-t-il une recherche dans l'avion ?
+ *
+ * @param array $post
+ *
+ * @return bool
+ */
+function isSearch(array $post)
+{
+    return !empty($post['search']);
+}
+
+$errorsLst = [];
+$notice    = '';
+if (!empty($_POST) && !isSearch($_POST)) {
+    if (0 < (int) $additionnelle->postHtmlCommon($_POST, $errorsLst, $notice)) {
+        log_action(0, '', '', 'Récupération de l\'heure additionnelle ' . $_POST['id_heure']);
+        redirect(ROOT_PATH . 'utilisateur/user_index.php?onglet=liste_heure_additionnelle', false);
+    }
+}
+$champsRecherche = (!empty($_POST) && isSearch($_POST))
+    ? $additionnelle->transformChampsRecherche($_POST)
+    : [];
+$params = $champsRecherche + [
+    'login' => $_SESSION['userlogin'],
+];
+
+$canUserSaisi = $config->canUserSaisieDemande() || $config->canUserSaisieMission();
+$urlSaisie = 'utilisateur/user_index.php?onglet=ajout_heure_additionnelle';
+$texteSaisie = _('divers_ajout_heure_additionnelle');
+$titre = _('user_liste_heure_additionnelle_titre');
+
+$listId = $additionnelle->getListeId($params);
+$dataHeures = [];
+if (!empty($listId)) {
+    $listeAdditionelle = $additionnelle->getListeSQL($listId);
+    foreach ($listeAdditionelle as $additionnelle) {
+        $data = new \stdClass;
+        $dataHeures[] = $data;
+        $data->jour = date('d/m/Y', $additionnelle['debut']);
+        $data->debut = date('H\:i', $additionnelle['debut']);
+        $data->fin = date('H\:i', $additionnelle['fin']);
+        $data->duree = \App\Helpers\Formatter::Timestamp2Duree($additionnelle['duree']);
+        $data->statut = AHeure::statusText($additionnelle['statut']);
+        $data->comment = \includes\SQL::quote($additionnelle['comment']);
+        $data->isModifiable = AHeure::STATUT_DEMANDE == $additionnelle['statut'];
+        $data->urlModification = 'user_index.php?onglet=modif_heure_additionnelle&id=' . $additionnelle['id_heure'];
+        $data->idHeure = $additionnelle['id_heure'];
+    }
+}
+
+require_once VIEW_PATH . 'Employe/Heure/Liste.php';

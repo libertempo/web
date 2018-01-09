@@ -22,7 +22,7 @@ abstract Class ANotification {
      */
     public function __construct($id) {
         $id = (int)$id;
-        if(is_int($id)){
+        if (is_int($id)){
             $this->contenuNotification = $this->getContenu($id);
         } else {
             throw new Exception('erreur id');
@@ -76,7 +76,7 @@ abstract Class ANotification {
             if (empty($notification['destinataire'][0])) {
                 continue;
             }
-            if($this->canSend($notification['config'])){
+            if ($this->canSend($notification['config'])){
                 $mail->ClearAddresses();
                 $mail->From = $notification['expediteur']['mail'];
                 $mail->FromName = $notification['expediteur']['nom'];
@@ -141,7 +141,22 @@ abstract Class ANotification {
      * 
      */
     private function canSend($optionName) {
-        return isset($_SESSION['config'][$optionName]) ? $_SESSION['config'][$optionName] : false;
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+
+        switch ($optionName) {
+            case 'mail_new_demande_alerte_resp':
+                return $config->isSendMailDemandeResponsable();
+            case 'mail_prem_valid_conges_alerte_user':
+                return $config->isSendMailPremierValidationUtilisateur();
+            case 'mail_valid_conges_alerte_user':
+                return $config->isSendMailValidationUtilisateur();
+            case 'mail_supp_demande_alerte_resp':
+                return $config->isSendMailSupprimeDemandeResponsable();
+            case 'mail_new_demande_alerte_resp':
+                return $config->isSendMailDemandeResponsable();
+            default:
+                return false;
+        }
     }
 
     /**

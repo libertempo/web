@@ -9,6 +9,7 @@ class Fonctions
 {
     public static function form_saisie($user, $date_debut, $date_fin)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
     	$PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 
     	$date_today=date("d-m-Y");
@@ -26,7 +27,7 @@ class Fonctions
     	echo "<h1>". _('export_cal_titre') ."</h1>\n";
 
     	echo _('button_export_2')."<br>";
-    	echo " <a href='".ROOT_PATH."export/ics_export.php?usr=".$huser."'>".$_SESSION['config']['URL_ACCUEIL_CONGES']."/export/ics_export.php?usr=".$huser."<a>";
+    	echo " <a href='".ROOT_PATH."export/ics_export.php?usr=".$huser."'>" . $config->getUrlAccueil() . "/export/ics_export.php?usr=".$huser."<a>";
 
     	bottom();
     }
@@ -173,8 +174,9 @@ class Fonctions
      */
     public static function exportICSModule()
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $_SESSION['config']=init_config_tab();      // on initialise le tableau des variables de config
-        if($_SESSION['config']['export_ical']==FALSE) {
+        if (!$config->isIcalActive()) {
             header('HTTP/1.0 403 Forbidden');
         	exit('403 Forbidden');
         }

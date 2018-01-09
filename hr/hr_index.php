@@ -9,6 +9,8 @@ include_once INCLUDE_PATH .'fonction.php';
 include_once INCLUDE_PATH .'session.php';
 include_once ROOT_PATH .'fonctions_calcul.php';
 
+$config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+
 // verif des droits du user à afficher la page
 verif_droits_user("is_hr");
 
@@ -30,10 +32,9 @@ $onglets = array();
 
 $onglets['page_principale'] = _('resp_menu_button_retour_main');
 
-if( $_SESSION['config']['user_saisie_demande'] )
+if($config->canUserSaisieDemande())
     $onglets['traitement_demandes'] = _('resp_menu_button_traite_demande');
 
-// if( $_SESSION['config']['resp_ajoute_conges'] )
     $onglets['ajout_conges'] = _('resp_ajout_conges_titre');
     $onglets['jours_chomes'] = _('admin_button_jours_chomes_1');
 
@@ -51,18 +52,6 @@ if ( !isset($onglets[ $onglet ]) && !in_array($onglet, ['traite_user', 'modif_pl
 $add_css = '<style>#onglet_menu .onglet{ width: '. (str_replace(',', '.', 100 / count($onglets) )).'% ;}</style>';
 header_menu('', 'Libertempo : '._('resp_menu_button_mode_hr'),$add_css);
 
-/*********************************/
-/*   AFFICHAGE DES ONGLETS...  */
-/*********************************/
-
-echo '<div id="onglet_menu">';
-foreach($onglets as $key => $title) {
-    echo '<div class="onglet '.($onglet == $key ? ' active': '').'" >
-        <a href="'.$PHP_SELF.'?onglet='.$key.'">'. $title .'</a>
-    </div>';
-}
-echo '</div>';
-
 
 /*********************************/
 /*   AFFICHAGE DE L'ONGLET ...    */
@@ -74,7 +63,6 @@ echo '</div>';
 $tab_type_cong=recup_tableau_types_conges();
 
 // recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
-//    if ($_SESSION['config']['gestion_conges_exceptionnels'])
 $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
 
 echo '<div class="'.$onglet.' main-content">';

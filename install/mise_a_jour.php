@@ -7,14 +7,10 @@ include_once ROOT_PATH .'fonctions_conges.php' ;
 include_once INCLUDE_PATH .'fonction.php';
 include ROOT_PATH .'version.php' ;
 
+$_SESSION['config']=init_config_tab();      // on initialise le tableau des variables de config
 $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 
-//recup de la langue
-$lang=(isset($_GET['lang']) ? $_GET['lang'] : ((isset($_POST['lang'])) ? $_POST['lang'] : "") ) ;
-$lang = htmlentities($lang, ENT_QUOTES | ENT_HTML401);
-if (!in_array($lang, ['fr_FR', 'en_US', 'es_ES'], true)) {
-    $lang = '';
-}
+$lang = isset($_SESSION['config']['lang']) ? $_SESSION['config']['lang'] : 'fr_FR';
 
 // recup des parametres
 $action = (isset($_GET['action']) ? $_GET['action'] : (isset($_POST['action']) ? $_POST['action'] : "")) ;
@@ -27,7 +23,7 @@ $etape = htmlentities($etape, ENT_QUOTES | ENT_HTML401);
 
 
 if($version == 0) {  // la version à mettre à jour dans le formulaire de index.php n'a pas été choisie : renvoit sur le formulaire
-    redirect( ROOT_PATH . 'install/index.php?lang='.$lang);
+    redirect( ROOT_PATH . 'install/index.php');
 }
 
 header_popup(' PHP_CONGES : '. _('install_maj_titre_1') );

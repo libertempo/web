@@ -123,7 +123,7 @@ class Fonctions
     {
         // verif des droits du user à afficher la page
         verif_droits_user("is_admin");
-        $return = '';
+        $return = '<h1>Journaux</h1>';
 
         /*** initialisation des variables ***/
         /************************************/
@@ -284,7 +284,7 @@ class Fonctions
     {
         // verif des droits du user à afficher la page
         verif_droits_user("is_admin");
-        $return = '';
+        $return = '<h1>Mails</h1>';
 
 
         /*** initialisation des variables ***/
@@ -597,6 +597,7 @@ class Fonctions
 
     public static function affichage_absence($tab_new_values)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
@@ -612,7 +613,7 @@ class Fonctions
         $tab_enum = \config\Fonctions::get_tab_from_mysql_enum_field("conges_type_absence", "ta_type");
 
         foreach($tab_enum as $ta_type) {
-            if( ($ta_type=="conges_exceptionnels") &&  ($_SESSION['config']['gestion_conges_exceptionnels']==FALSE)) {
+            if( ($ta_type=="conges_exceptionnels") &&  (!$config->isCongesExceptionnelsActive())) {
             } else {
                 $divers_maj_1 = 'divers_' . $ta_type . '_maj_1';
                 $config_abs_comment = 'config_abs_comment_' . $ta_type;
@@ -691,7 +692,7 @@ class Fonctions
         $childTableAjout .= '<select class="form-control" name=tab_new_values[type]>';
 
         foreach($tab_enum as $option) {
-            if( ($option=="conges_exceptionnels") &&  ($_SESSION['config']['gestion_conges_exceptionnels']==FALSE)) {
+            if( ($option=="conges_exceptionnels") &&  (!$config->isCongesExceptionnelsActive())) {
             } else {
                 if($option==$new_type) {
                     $childTableAjout .= '<option selected>' . $option . '</option>';
@@ -782,6 +783,11 @@ class Fonctions
 
         foreach($tab_new_values as $key => $value ) {
             $value = htmlentities($value, ENT_QUOTES | ENT_HTML401);
+            /* Contrôle de cohérence entre config. */
+            if ('user_ch_passwd' === $key && 'dbconges' !== $tab_new_values['how_to_connect_user'] ) {
+                $value = 'FALSE';
+            }
+
             // CONTROLE gestion_conges_exceptionnels
             // si désactivation les conges exceptionnels, on verif s'il y a des conges exceptionnels enregistres ! si oui : changement impossible !
             if(($key=="gestion_conges_exceptionnels") && ($value=="FALSE") ) {
@@ -881,11 +887,7 @@ class Fonctions
                 $conf_commentaire = strtolower($data['conf_commentaire']);
 
                 if($conf_nom=="lang") {
-                    $childTable .= _('choisir_langue').'<br>';
-                    // affichage de la liste des langues supportées ...
-                    // on lit le contenu du répertoire lang et on parse les nom de ficher (ex lang_fr_francais.php)
-                    //affiche_select_from_lang_directory("tab_new_values[$conf_nom]");
-                    $childTable .= affiche_select_from_lang_directory('lang', $conf_valeur);
+                    $childTable .= '<b>Langue installée &nbsp;&nbsp;=&nbsp;&nbsp;' . $conf_valeur . '</b><br>';
                 } else {
                     // affichage commentaire
                     $childTable .= '<br><i>' . _($conf_commentaire) . '</i><br>';
@@ -1023,7 +1025,7 @@ class Fonctions
     {
         // verif des droits du user à afficher la page
         verif_droits_user("is_admin");
-        $return = '';
+        $return = '<h1>Configuration générale</h1>';
 
         /*** initialisation des variables ***/
         $action="";

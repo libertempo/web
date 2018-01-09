@@ -19,12 +19,13 @@ class Fonctions
      */
     public static function pagePrincipaleModule(array $tab_type_cong, array $tab_type_conges_exceptionnels)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         /***********************************/
         // AFFICHAGE ETAT CONGES TOUS USERS
         /***********************************/
         // AFFICHAGE TABLEAU (premiere ligne)
         $return = '';
-        $return .= '<h2>'. _('hr_traite_user_etat_conges') . '</H2>';
+        $return .= '<h1>'. _('hr_traite_user_etat_conges') . '</h1>';
         /*********************/
         /* Etat Utilisateurs */
         /*********************/
@@ -34,10 +35,9 @@ class Fonctions
         $tab_type_conges_exceptionnels = [];
 
         // recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
-        if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+        if ($config->isCongesExceptionnelsActive()) {
             $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
         }
-
         // AFFICHAGE TABLEAU
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses([
@@ -59,7 +59,7 @@ class Fonctions
         foreach ($tab_type_conges_exceptionnels as $id_type_cong => $libelle) {
             $childTable .= '<th>' . _('divers_solde') . ' ' . $libelle . '</th>';
         }
-        if ($_SESSION['config']['gestion_heures']) {
+        if ($config->isHeuresAutorise()) {
             $childTable .= '<th>'. _('solde_heure') .'</th>' ;
         }
         $childTable .= '<th></th>';
@@ -72,7 +72,7 @@ class Fonctions
         $tab_info_users=array();
         $tab_info_users=\hr\Fonctions::recup_infos_all_users_du_hr($_SESSION['userlogin']);
 
-        if(count($tab_info_users)==0) {
+        if (count($tab_info_users)==0) {
             // si le tableau est vide (resp sans user !!) on affiche une alerte !
             $return .= '<tr><td class="histo" colspan="' . $nb_colonnes . '">' .  _('resp_etat_aucun_user') . '</td></tr>';
         } else {
@@ -84,22 +84,22 @@ class Fonctions
                 $childTable .= '<tr class="' . (($tab_current_infos['is_active']=='Y') ? 'actif' : 'inactif') . '">';
                 $childTable .= '<td class="utilisateur"><strong>' . $tab_current_infos['nom'] . ' ' . $tab_current_infos['prenom'] . '</strong>';
                 $childTable .= '<span class="login">' . $current_login . '</span>';
-                if($_SESSION['config']['where_to_find_user_email']=="dbconges") {
+                if (!$config->getMailFromLdap()) {
                     $childTable .= '<span class="mail">' . $tab_current_infos['email'] . '</span>';
                 }
                 // droit utilisateur
                 $rights = array();
-                if($tab_current_infos['is_admin'] == 'Y') {
+                if ($tab_current_infos['is_admin'] == 'Y') {
                     $rights[] = 'administrateur';
                 }
-                if($tab_current_infos['is_resp'] == 'Y') {
+                if ($tab_current_infos['is_resp'] == 'Y') {
                     $rights[] = 'responsable';
                 }
-                if($tab_current_infos['is_hr'] == 'Y') {
+                if ($tab_current_infos['is_hr'] == 'Y') {
                     $rights[] = 'RH';
                 }
 
-                if(count($rights) > 0) {
+                if (count($rights) > 0) {
                     $childTable .= '<span class="rights">' . implode(', ', $rights) . '</span>';
                 }
 
@@ -128,13 +128,13 @@ class Fonctions
                     }
                 }
 
-            if ($_SESSION['config']['gestion_heures']) {
+            if ($config->isHeuresAutorise()) {
                 $soldeHeure = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($current_login)['u_heure_solde'];
                 $childTable .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($soldeHeure) . '</td>';
             }
 
                 $childTable .= '<td>' . $text_affich_user . '</td>';
-                if($_SESSION['config']['editions_papier']) {
+                if ($config->canEditPapier()) {
                     $text_edit_papier="<a href=\"../edition/edit_user.php?user_login=$current_login\" target=\"_blank\" title=\""._('resp_etat_users_imprim')."\"><i class=\"fa fa-file-text\"></i></a>";
                     $childTable .= '<td>' . $text_edit_papier . '</td>';
                 }
@@ -154,6 +154,7 @@ class Fonctions
 
     public static function traite_all_demande_en_cours($tab_bt_radio, $tab_text_refus)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
@@ -173,7 +174,7 @@ class Fonctions
             $return .= $numero . '---' . $user_login . '---' . $user_nb_jours_pris . '---' . $reponse . '<br>';
 
             /* Modification de la table conges_periode */
-            if(strcmp($reponse, "OK")==0) {
+            if (strcmp($reponse, "OK")==0) {
                 /* UPDATE table "conges_periode" */
                 $sql1 = 'UPDATE conges_periode SET p_etat=\'ok\', p_date_traitement=NOW() WHERE p_num="'.\includes\SQL::quote($numero_int).'" AND ( p_etat=\'valid\' OR p_etat=\'demande\' );' ;
                 /* On valide l'UPDATE dans la table "conges_periode" ! */
@@ -186,10 +187,10 @@ class Fonctions
                     soustrait_solde_et_reliquat_user($user_login, $numero_int, $user_nb_jours_pris, $type_abs, $date_deb, $demi_jour_deb, $date_fin, $demi_jour_fin);
 
                     //envoi d'un mail d'alerte au user (si demandé dans config de php_conges)
-                    if($_SESSION['config']['mail_valid_conges_alerte_user'])
+                    if ($config->isSendMailValidationUtilisateur())
                         alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "accept_conges");
                 }
-            } elseif(strcmp($reponse, "not_OK")==0) {
+            } elseif (strcmp($reponse, "not_OK")==0) {
                 // recup du motif de refus
                 $motif_refus=addslashes($tab_text_refus[$numero_int]);
                 $sql1 = 'UPDATE conges_periode SET p_etat=\'refus\', p_motif_refus=\''.$motif_refus.'\', p_date_traitement=NOW() WHERE p_num="'.\includes\SQL::quote($numero_int).'" AND ( p_etat=\'valid\' OR p_etat=\'demande\' );';
@@ -202,7 +203,7 @@ class Fonctions
 
 
                     //envoi d'un mail d'alerte au user (si demandé dans config de php_conges)
-                    if($_SESSION['config']['mail_refus_conges_alerte_user'])
+                    if ($config->isSendMailRefusUtilisateur())
                         alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "refus_conges");
                 }
             }
@@ -217,6 +218,7 @@ class Fonctions
     public static function affiche_all_demandes_en_cours($tab_type_conges)
     {
         $return = '';
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $count1=0;
         $count2=0;
@@ -225,7 +227,7 @@ class Fonctions
 
         // recup du tableau des types de conges (seulement les conges exceptionnels)
         $tab_type_conges_exceptionnels=array();
-        if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+        if ($config->isCongesExceptionnelsActive()) {
             $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
         }
 
@@ -237,11 +239,11 @@ class Fonctions
         $tab_all_users=recup_infos_all_users();
 
         // si tableau des users du resp n'est pas vide
-        if( count($tab_all_users)!=0 ) {
+        if ( count($tab_all_users)!=0 ) {
             // constitution de la liste (séparé par des virgules) des logins ...
             $list_users="";
             foreach($tab_all_users as $current_login => $tab_current_user) {
-                if($list_users=="") {
+                if ($list_users=="") {
                     $list_users= "'$current_login'" ;
                 } else {
                     $list_users=$list_users.", '$current_login'" ;
@@ -258,7 +260,7 @@ class Fonctions
         /*********************************/
 
         // si tableau des users n'est pas vide :)
-        if( count($tab_all_users)!=0 ) {
+        if ( count($tab_all_users)!=0 ) {
 
             // Récup des demandes en cours pour les users :
             $sql1 = "SELECT p_num, p_login, p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_nb_jours, p_commentaire, p_type, p_date_demande, p_date_traitement FROM conges_periode ";
@@ -269,7 +271,7 @@ class Fonctions
             $ReqLog1 = \includes\SQL::query($sql1) ;
 
             $count1 = $ReqLog1->num_rows;
-            if($count1!=0) {
+            if ($count1!=0) {
                 // AFFICHAGE TABLEAU DES DEMANDES EN COURS
                 //$return .= '<h3>' . _('resp_traite_demandes_titre') . '</h3>';
                 $return .= '<table cellpadding="2" class="table table-hover table-responsive table-condensed table-striped">';
@@ -287,7 +289,7 @@ class Fonctions
                 $return .= '<th>'. _('divers_refuser_maj_1') .'</th>' ;
                 $return .= '<th>' . _('resp_traite_demandes_attente') . '</th>';
                 $return .= '<th>'. _('resp_traite_demandes_motif_refus') . '</th>';
-                if( $_SESSION['config']['affiche_date_traitement'] ) {
+                if ($config->canAfficheDateTraitement()) {
                     $return .= '<th>' . _('divers_date_traitement') . '</th>';
                 }
                 $return .= '</tr>';
@@ -315,13 +317,13 @@ class Fonctions
                     $sql_p_date_demande     = $resultat1["p_date_demande"];
                     $sql_p_date_traitement  = $resultat1["p_date_traitement"];
 
-                    if($sql_p_demi_jour_deb=="am") {
+                    if ($sql_p_demi_jour_deb=="am") {
                         $demi_j_deb="mat";
                     } else {
                         $demi_j_deb="aprm";
                     }
 
-                    if($sql_p_demi_jour_fin=="am") {
+                    if ($sql_p_demi_jour_fin=="am") {
                         $demi_j_fin="mat";
                     } else {
                         $demi_j_fin="aprm";
@@ -340,20 +342,9 @@ class Fonctions
                     $return .= '<td>' . $sql_p_date_deb_fr . '<span class="demi">' . $demi_j_deb . '</span></td><td>' . $sql_p_date_fin_fr . '<span class="demi">' . $demi_j_fin . '</span></td><td>' . $sql_p_commentaire . '</td><td><b>' . $sql_p_nb_jours . '</b></td>';
                     $tab_conges=$tab_all_users[$sql_p_login]['conges'];
                     $return .= '<td>' . $tab_conges[$tab_type_all_abs[$sql_p_type]['libelle']]['solde'] . '</td>';
-                    // foreach($tab_type_conges as $id_conges => $libelle)
-                    // {
-                    //     echo '<td>'.$tab_conges[$libelle]['solde'].'</td>';
-                    // }
-
-                    // if ($_SESSION['config']['gestion_conges_exceptionnels'])
-                    //     foreach($tab_type_conges_exceptionnels as $id_conges => $libelle)
-                    //     {
-                    //         echo '<td>'.$tab_conges[$libelle]['solde'].'</td>';
-                    //     }
-                    // echo '<td>'.$tab_type_all_abs[$sql_p_type]['libelle'].'</td>';
                     $return .= '<td>' . $boutonradio1 . '</td><td>' . $boutonradio2 . '</td><td>' . $boutonradio3 . '</td><td>' . $text_refus . '</td>';
-                    if($_SESSION['config']['affiche_date_traitement']) {
-                        if($sql_p_date_demande == NULL) {
+                    if ($config->canAfficheDateTraitement()) {
+                        if ($sql_p_date_demande == NULL) {
                             $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : ' . $sql_p_date_traitement . '</td>';
                         } else {
                             $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : pas traité</td>';
@@ -364,12 +355,12 @@ class Fonctions
                 } // while
                 $return .= '</tbody>' ;
                 $return .= '</table>' ;
-            } //if($count1!=0)
-        } //if( count($tab_all_users)!=0 )
+            } //if ($count1!=0)
+        } //if ( count($tab_all_users)!=0 )
 
         $return .= '<br>';
 
-        if(($count1==0) && ($count2==0)) {
+        if (($count1==0) && ($count2==0)) {
             $return .= '<strong>' . _('aucune_demande') . '</strong>';
         } else {
             $return .= '<hr/>';
@@ -401,7 +392,7 @@ class Fonctions
         $return .= '<h1>'. _('resp_traite_demandes_titre') .'</h1>';
 
         // si le tableau des bouton radio des demandes est vide , on affiche les demandes en cours
-        if( $tab_bt_radio == '' ) {
+        if ( $tab_bt_radio == '' ) {
             $return .= \hr\Fonctions::affiche_all_demandes_en_cours($tab_type_cong);
         } else {
             $return .= \hr\Fonctions::traite_all_demande_en_cours($tab_bt_radio, $tab_text_refus);
@@ -423,7 +414,7 @@ class Fonctions
         // verif validité des valeurs saisies
         $valid = verif_saisie_new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $user_login);
 
-        if($valid) {
+        if ($valid) {
             $return .= $user_login . '---' . $new_debut . '_' . $new_demi_jour_deb . '---' . $new_fin . '_' . $new_demi_jour_fin . '---' . $new_nb_jours . '---' . $new_comment . '---' . $new_type_id . '<br>';
 
             // recup dans un tableau de tableau les infos des types de conges et absences
@@ -439,7 +430,7 @@ class Fonctions
             /* UPDATE table "conges_solde_user" (jours restants) */
             // on retranche les jours seulement pour des conges pris (pas pour les absences)
             // donc seulement si le type de l'absence qu'on annule est un "conges"
-            if($tab_tout_type_abs[$new_type_id]['type']=="conges" || $tab_tout_type_abs[$user_type_abs_id]['type']=="conges_exceptionnels") {
+            if ($tab_tout_type_abs[$new_type_id]['type']=="conges" || $tab_tout_type_abs[$user_type_abs_id]['type']=="conges_exceptionnels") {
                 $user_nb_jours_pris_float=(float) $new_nb_jours ;
                 soustrait_solde_et_reliquat_user($user_login, $numero_int, $user_nb_jours_pris_float, $new_type_id, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin);
             }
@@ -447,7 +438,7 @@ class Fonctions
             $comment_log = "saisie conges par le responsable pour $user_login ($new_nb_jours jour(s)) type_conges = $new_type_id ( de $new_debut $new_demi_jour_deb a $new_fin $new_demi_jour_fin) ($new_comment)";
             log_action(0, "", $user_login, $comment_log);
 
-            if($result) {
+            if ($result) {
                 $return .= _('form_modif_ok') . '<br><br>';
             } else {
                 $return .= _('form_modif_not_ok') . '<br><br>';
@@ -465,6 +456,7 @@ class Fonctions
 
     public static function traite_demandes($user_login, $tab_radio_traite_demande, $tab_text_refus)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $return = '';
 
@@ -486,7 +478,7 @@ class Fonctions
             $numero=$elem_tableau['key'];
             $numero_int=(int) $numero;
 
-            if($reponse == "ACCEPTE") { // acceptation definitive d'un conges
+            if ($reponse == "ACCEPTE") { // acceptation definitive d'un conges
                 /* UPDATE table "conges_periode" */
                 $sql1 = 'UPDATE conges_periode SET p_etat=\'ok\', p_date_traitement=NOW() WHERE p_num='.\includes\SQL::quote($numero_int).' AND ( p_etat=\'valid\' OR p_etat=\'demande\' );';
                 $ReqLog1 = \includes\SQL::query($sql1);
@@ -498,16 +490,16 @@ class Fonctions
                     /* UPDATE table "conges_solde_user" (jours restants) */
                     // on retranche les jours seulement pour des conges pris (pas pour les absences)
                     // donc seulement si le type de l'absence qu'on annule est un "conges"
-                    if(($tab_tout_type_abs[$value_type_abs_id]['type']=="conges")||($tab_tout_type_abs[$value_type_abs_id]['type']=="conges_exceptionnels")) {
+                    if (($tab_tout_type_abs[$value_type_abs_id]['type']=="conges")||($tab_tout_type_abs[$value_type_abs_id]['type']=="conges_exceptionnels")) {
                         soustrait_solde_et_reliquat_user($user_login, $numero_int, $user_nb_jours_pris_float, $value_type_abs_id, $date_deb, $demi_jour_deb, $date_fin, $demi_jour_fin);
                     }
 
                     //envoi d'un mail d'alerte au user (si demandé dans config de php_conges)
-                    if($_SESSION['config']['mail_valid_conges_alerte_user']) {
+                    if ($config->isSendMailValidationUtilisateur()) {
                         alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "accept_conges");
                     }
                 }
-            } elseif($reponse == "VALID") // première validation dans le cas d'une double validation
+            } elseif ($reponse == "VALID") // première validation dans le cas d'une double validation
             {
                 /* UPDATE table "conges_periode" */
                 $sql1 = 'UPDATE conges_periode SET p_etat=\'valid\', p_date_traitement=NOW() WHERE p_num='.\includes\SQL::quote($numero_int).' AND p_etat=\'demande\';' ;
@@ -518,11 +510,11 @@ class Fonctions
                     log_action($numero_int,"valid", $user_login, "traite demande $numero ($user_login) ($user_nb_jours_pris jours) : $date_deb");
 
                     //envoi d'un mail d'alerte au user (si demandé dans config de php_conges)
-                    if($_SESSION['config']['mail_valid_conges_alerte_user']) {
+                    if ($config->isSendMailValidationUtilisateur()) {
                         alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "valid_conges");
                     }
                 }
-            } elseif($reponse == "REFUSE") // refus d'un conges
+            } elseif ($reponse == "REFUSE") // refus d'un conges
             {
                 // recup di motif de refus
                 $motif_refus=addslashes($tab_text_refus[$numero_int]);
@@ -535,7 +527,7 @@ class Fonctions
                     log_action($numero_int,"refus", $user_login, "traite demande $numero ($user_login) ($user_nb_jours_pris jours) : $date_deb");
 
                     //envoi d'un mail d'alerte au user (si demandé dans config de php_conges)
-                    if($_SESSION['config']['mail_refus_conges_alerte_user']) {
+                    if ($config->isSendMailRefusUtilisateur()) {
                         alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "refus_conges");
                     }
                 }
@@ -549,6 +541,7 @@ class Fonctions
 
     public static function annule_conges($user_login, $tab_checkbox_annule, $tab_text_annul)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $return = '';
 
@@ -577,13 +570,13 @@ class Fonctions
                 /* UPDATE table "conges_solde_user" (jours restants) */
                 // on re-crédite les jours seulement pour des conges pris (pas pour les absences)
                 // donc seulement si le type de l'absence qu'on annule est un "conges"
-                if(in_array($tab_tout_type_abs[$user_type_abs_id]['type'],["conges","conges_exceptionnels"])) {
+                if (in_array($tab_tout_type_abs[$user_type_abs_id]['type'],["conges","conges_exceptionnels"])) {
                     $sql2 = 'UPDATE conges_solde_user SET su_solde = su_solde+"'. \includes\SQL::quote($user_nb_jours_pris).'" WHERE su_login="'. \includes\SQL::quote($user_login).'" AND su_abs_id="'. \includes\SQL::quote($user_type_abs_id).'";';
                     $ReqLog2 = \includes\SQL::query($sql2);
                 }
 
                 //envoi d'un mail d'alerte au user (si demandé dans config de php_conges)
-                if($_SESSION['config']['mail_annul_conges_alerte_user']) {
+                if ($config->isSendMailAnnulationCongesUtilisateur()) {
                     alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "annul_conges");
                 }
             }
@@ -598,6 +591,7 @@ class Fonctions
     //affiche l'état des conges du user (avec le formulaire pour le responsable)
     public static function affiche_etat_conges_user_for_resp($user_login, $year_affichage, $tri_date)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $return = '';
 
@@ -618,7 +612,7 @@ class Fonctions
                 "AND p_etat !='demande' " .
                 "AND p_etat !='valid' " .
                 "AND (p_date_deb LIKE '$year_affichage%' OR p_date_fin LIKE '$year_affichage%') ";
-        if($tri_date=="descendant")
+        if ($tri_date=="descendant")
             $sql3=$sql3." ORDER BY p_date_deb DESC ";
         else
             $sql3=$sql3." ORDER BY p_date_deb ASC ";
@@ -626,7 +620,7 @@ class Fonctions
         $ReqLog3 = \includes\SQL::query($sql3);
 
         $count3=$ReqLog3->num_rows;
-        if($count3==0) {
+        if ($count3==0) {
             $return .= '<b>' . _('resp_traite_user_aucun_conges') . '</b><br><br>';
         } else {
             // recup dans un tableau de tableau les infos des types de conges et absences
@@ -649,7 +643,7 @@ class Fonctions
             $return .= ' <th>'. _('divers_etat_maj_1') .'</th>';
             $return .= ' <th>'. _('resp_traite_user_annul') .'</th>';
             $return .= ' <th>'. _('resp_traite_user_motif_annul') .'</th>';
-            if( $_SESSION['config']['affiche_date_traitement'] ) {
+            if ($config->canAfficheDateTraitement()) {
                 $return .= '<th>'. _('divers_date_traitement') .'</th>' ;
             }
             $return .= '</tr>';
@@ -674,29 +668,29 @@ class Fonctions
                 $sql_p_date_traitement  = $resultat3["p_date_traitement"];
                 $sql_num                = $resultat3["p_num"] ;
 
-                if($sql_demi_jour_deb=="am") {
+                if ($sql_demi_jour_deb=="am") {
                     $demi_j_deb =  _('divers_am_short') ;
                 } else {
                     $demi_j_deb =  _('divers_pm_short') ;
                 }
 
-                if($sql_demi_jour_fin=="am") {
+                if ($sql_demi_jour_fin=="am") {
                     $demi_j_fin =  _('divers_am_short') ;
                 } else {
                     $demi_j_fin =  _('divers_pm_short') ;
                 }
 
-                if(($sql_etat=="annul") || ($sql_etat=="refus") || ($sql_etat=="ajout")) {
+                if (($sql_etat=="annul") || ($sql_etat=="refus") || ($sql_etat=="ajout")) {
                     $casecocher1="";
-                    if($sql_etat=="refus") {
-                        if($sql_motif_refus=="")
+                    if ($sql_etat=="refus") {
+                        if ($sql_motif_refus=="")
                             $sql_motif_refus =  _('divers_inconnu')  ;
                         $text_annul="<i>". _('resp_traite_user_motif') ." : $sql_motif_refus</i>";
-                    } elseif($sql_etat=="annul") {
-                        if($sql_motif_refus=="")
+                    } elseif ($sql_etat=="annul") {
+                        if ($sql_motif_refus=="")
                             $sql_motif_refus =  _('divers_inconnu')  ;
                         $text_annul="<i>". _('resp_traite_user_motif') ." : $sql_motif_refus</i>";
-                    } elseif($sql_etat=="ajout") {
+                    } elseif ($sql_etat=="ajout") {
                         $text_annul="&nbsp;";
                     }
                 } else {
@@ -711,9 +705,9 @@ class Fonctions
                 $return .= '<td>' . $sql_commentaire . '</td>';
                 $return .= '<td>' . $tab_types_abs[$sql_type]['libelle'] . '</td>';
                 $return .= '<td>';
-                if($sql_etat=="refus") {
+                if ($sql_etat=="refus") {
                     $return .= _('divers_refuse') ;
-                } elseif($sql_etat=="annul") {
+                } elseif ($sql_etat=="annul") {
                     $return .= _('divers_annule') ;
                 } else {
                     $return .= $sql_etat;
@@ -722,8 +716,8 @@ class Fonctions
                 $return .= '<td>' . $casecocher1 . '</td>';
                 $return .= '<td>' . $text_annul . '</td>';
 
-                if($_SESSION['config']['affiche_date_traitement']) {
-                    if(empty($sql_p_date_demande)) {
+                if ($config->canAfficheDateTraitement()) {
+                    if (empty($sql_p_date_demande)) {
                         $return .= '<td class="histo-left">' . _('divers_traitement') . ' : ' . $sql_p_date_traitement . '</td>';
                     } else {
                         $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : ' . $sql_p_date_traitement . '</td>';
@@ -745,6 +739,7 @@ class Fonctions
     //affiche l'état des demande en attente de 2ieme validation du user (avec le formulaire pour le responsable)
     public static function affiche_etat_demande_2_valid_user_for_resp($user_login)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $return = '';
 
@@ -755,7 +750,7 @@ class Fonctions
         $ReqLog2 = \includes\SQL::query($sql2);
 
         $count2=$ReqLog2->num_rows;
-        if($count2==0) {
+        if ($count2==0) {
             $return .= '<b>' . _('resp_traite_user_aucune_demande') . '</b><br><br>';
         } else {
             // recup dans un tableau des types de conges
@@ -774,7 +769,7 @@ class Fonctions
             $return .= '<th>'. _('divers_accepter_maj_1') .'</th>';
             $return .= '<th>'. _('divers_refuser_maj_1') .'</th>';
             $return .= '<th>'. _('resp_traite_user_motif_refus') .'</th>';
-            if($_SESSION['config']['affiche_date_traitement']) {
+            if ($config->canAfficheDateTraitement()) {
                 $return .= '<th>'. _('divers_date_traitement') .'</th>' ;
             }
             $return .= '</tr>';
@@ -787,7 +782,7 @@ class Fonctions
                 $sql_date_deb = $resultat2["p_date_deb"];
                 $sql_date_deb_fr = eng_date_to_fr($resultat2["p_date_deb"]) ;
                 $sql_demi_jour_deb=$resultat2["p_demi_jour_deb"] ;
-                if($sql_demi_jour_deb=="am") {
+                if ($sql_demi_jour_deb=="am") {
                     $demi_j_deb =  _('divers_am_short') ;
                 } else {
                     $demi_j_deb =  _('divers_pm_short') ;
@@ -795,7 +790,7 @@ class Fonctions
                 $sql_date_fin = $resultat2["p_date_fin"];
                 $sql_date_fin_fr = eng_date_to_fr($resultat2["p_date_fin"]) ;
                 $sql_demi_jour_fin=$resultat2["p_demi_jour_fin"] ;
-                if($sql_demi_jour_fin=="am") {
+                if ($sql_demi_jour_fin=="am") {
                     $demi_j_fin =  _('divers_am_short') ;
                 } else {
                     $demi_j_fin =  _('divers_pm_short') ;
@@ -824,7 +819,7 @@ class Fonctions
                 $return .= '<td>' . $casecocher1 . '</td>';
                 $return .= '<td>' . $casecocher2 . '</td>';
                 $return .= '<td>' . $text_refus . '</td>';
-                if($_SESSION['config']['affiche_date_traitement']) {
+                if ($config->canAfficheDateTraitement()) {
                     $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_date_demande . '<br>' . _('divers_traitement') . ' : ' . $sql_date_traitement . '</td>';
                 }
 
@@ -845,6 +840,7 @@ class Fonctions
     //affiche l'état des demande du user (avec le formulaire pour le responsable)
     public static function affiche_etat_demande_user_for_resp($user_login, $tab_user, $tab_grd_resp)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $return = '';
 
@@ -856,7 +852,7 @@ class Fonctions
         $ReqLog2 = \includes\SQL::query($sql2);
 
         $count2=$ReqLog2->num_rows;
-        if($count2==0) {
+        if ($count2==0) {
             $return .= '<b>' . _('resp_traite_user_aucune_demande') . '</b><br><br>';
         } else {
             // recup dans un tableau des types de conges
@@ -875,7 +871,7 @@ class Fonctions
             $return .= '<th>'. _('divers_accepter_maj_1') .'</th>';
             $return .= '<th>'. _('divers_refuser_maj_1') .'</th>';
             $return .= '<th>'. _('resp_traite_user_motif_refus') .'</th>';
-            if( $_SESSION['config']['affiche_date_traitement'] ) {
+            if ($config->canAfficheDateTraitement()) {
                 $return .= '<th>'. _('divers_date_traitement') .'</th>' ;
             }
             $return .= '</tr>';
@@ -900,12 +896,12 @@ class Fonctions
                 $sql_num            = $resultat2["p_num"] ;
 
 
-                if($sql_demi_jour_deb=="am") {
+                if ($sql_demi_jour_deb=="am") {
                     $demi_j_deb =  _('divers_am_short') ;
                 } else {
                     $demi_j_deb =  _('divers_pm_short') ;
                 }
-                if($sql_demi_jour_fin=="am") {
+                if ($sql_demi_jour_fin=="am") {
                     $demi_j_fin =  _('divers_am_short') ;
                 } else {
                     $demi_j_fin =  _('divers_pm_short') ;
@@ -915,10 +911,10 @@ class Fonctions
                 $chaine_bouton_radio = "$user_login--$sql_nb_jours--$sql_type--$sql_date_deb--$sql_demi_jour_deb--$sql_date_fin--$sql_demi_jour_fin";
 
                 // si le user fait l'objet d'une double validation on a pas le meme resultat sur le bouton !
-                if($tab_user['double_valid'] == "Y") {
+                if ($tab_user['double_valid'] == "Y") {
                     /*******************************/
                     /* verif si le resp est grand_responsable pour ce user*/
-                    if(in_array($_SESSION['userlogin'], $tab_grd_resp)) { // si resp_login est dans le tableau
+                    if (in_array($_SESSION['userlogin'], $tab_grd_resp)) { // si resp_login est dans le tableau
                         $boutonradio1="<input type=\"radio\" name=\"tab_radio_traite_demande[$sql_num]\" value=\"$chaine_bouton_radio--VALID\">";
                     } else {
                         $boutonradio1="<input type=\"radio\" name=\"tab_radio_traite_demande[$sql_num]\" value=\"$chaine_bouton_radio--ACCEPTE\">";
@@ -940,8 +936,8 @@ class Fonctions
                 $return .= '<td>' . $boutonradio1 . '</td>';
                 $return .= '<td>' . $boutonradio2 . '</td>';
                 $return .= '<td>' . $text_refus . '</td>';
-                if( $_SESSION['config']['affiche_date_traitement'] ) {
-                    if($sql_date_traitement==NULL) {
+                if ($config->canAfficheDateTraitement()) {
+                    if ($sql_date_traitement==NULL) {
                         $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_date_demande . '<br>' . _('divers_traitement') . ' : pas traité</td>';
                     } else {
                         $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_date_demande . '<br>' . _('divers_traitement') . ' : ' . $sql_date_traitement . '</td>';
@@ -964,11 +960,13 @@ class Fonctions
 
     public static function affichage($user_login,  $year_affichage, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $tri_date, $onglet)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $return = '';
 
         // on initialise le tableau global des jours fériés s'il ne l'est pas déjà :
-        if(!isset($_SESSION["tab_j_feries"])) {
+        if (!isset($_SESSION["tab_j_feries"])) {
             init_tab_jours_feries();
         }
 
@@ -981,7 +979,7 @@ class Fonctions
         $list_all_users_du_hr=\hr\Fonctions::get_list_all_users_du_hr($_SESSION['userlogin']);
         // recup des grd resp du user
         $tab_grd_resp=array();
-        if($_SESSION['config']['double_validation_conges']) {
+        if ($config->isDoubleValidationActive()) {
             get_tab_grd_resp_du_user($user_login, $tab_grd_resp);
         }
 
@@ -1005,15 +1003,15 @@ class Fonctions
         /* Génération du datePicker et de ses options */
         $daysOfWeekDisabled = [];
         $datesDisabled      = [];
-        if ((false == $_SESSION['config']['dimanche_travail'])
-            && (false == $_SESSION['config']['samedi_travail'])
+        if ((!$config->isDimancheOuvrable())
+            && (!$config->isSamediOuvrable())
         ) {
             $daysOfWeekDisabled = [0,6];
         } else {
-            if (false == $_SESSION['config']['dimanche_travail']) {
+            if (!$config->isDimancheOuvrable()) {
                 $daysOfWeekDisabled = [0];
             }
-            if (false == $_SESSION['config']['samedi_travail']) {
+            if (!$config->isSamediOuvrable()) {
                 $daysOfWeekDisabled = [6];
             }
         }
@@ -1039,16 +1037,16 @@ class Fonctions
         $return .= '<script>generateDatePicker(' . json_encode($datePickerOpts) . ');</script>';
 
         // si les mois et année ne sont pas renseignés, on prend ceux du jour
-        if($year_calendrier_saisie_debut==0) {
+        if ($year_calendrier_saisie_debut==0) {
             $year_calendrier_saisie_debut=date("Y");
         }
-        if($mois_calendrier_saisie_debut==0) {
+        if ($mois_calendrier_saisie_debut==0) {
             $mois_calendrier_saisie_debut=date("m");
         }
-        if($year_calendrier_saisie_fin==0) {
+        if ($year_calendrier_saisie_fin==0) {
             $year_calendrier_saisie_fin=date("Y");
         }
-        if($mois_calendrier_saisie_fin==0) {
+        if ($mois_calendrier_saisie_fin==0) {
             $mois_calendrier_saisie_fin=date("m");
         }
         $return .= '<h1>' . _('resp_traite_user_new_conges') . '</h1>';
@@ -1060,9 +1058,9 @@ class Fonctions
         /*********************/
         /* Etat des Demandes */
         /*********************/
-        if($_SESSION['config']['user_saisie_demande']) {
+        if ($config->canUserSaisieDemande()) {
             //verif si le user est bien un user du resp (et pas seulement du grad resp)
-            if(strstr($list_all_users_du_hr, "'$user_login'")!=FALSE) {
+            if (strstr($list_all_users_du_hr, "'$user_login'")!=FALSE) {
                 $return .= '<h3>' . _('resp_traite_user_etat_demandes') . '</h3>';
 
                 //affiche l'état des demande du user (avec le formulaire pour le responsable)
@@ -1075,11 +1073,11 @@ class Fonctions
         /*********************/
         /* Etat des Demandes en attente de 2ieme validation */
         /*********************/
-        if($_SESSION['config']['double_validation_conges']) {
+        if ($config->isDoubleValidationActive()) {
             /*******************************/
             /* verif si le resp est grand_responsable pour ce user*/
 
-            if(in_array($_SESSION['userlogin'], $tab_grd_resp)) // si resp_login est dans le tableau
+            if (in_array($_SESSION['userlogin'], $tab_grd_resp)) // si resp_login est dans le tableau
             {
                 $return .= '<h3>' . _('resp_traite_user_etat_demandes_2_valid') . '</h3>';
 
@@ -1125,17 +1123,17 @@ class Fonctions
         $return = '';
 
         // si une annulation de conges a été selectionée :
-        if( $tab_checkbox_annule != '' ) {
+        if ( $tab_checkbox_annule != '' ) {
             $tab_text_annul         = getpost_variable('tab_text_annul') ;
             $return .= \hr\Fonctions::annule_conges($user_login, $tab_checkbox_annule, $tab_text_annul);
         }
         // si le traitement des demandes a été selectionée :
-        elseif( $tab_radio_traite_demande != '' ) {
+        elseif ( $tab_radio_traite_demande != '' ) {
             $tab_text_refus         = getpost_variable('tab_text_refus') ;
             $return .= \hr\Fonctions::traite_demandes($user_login, $tab_radio_traite_demande, $tab_text_refus);
         }
         // si un nouveau conges ou absence a été saisi pour un user :
-        elseif( $new_demande_conges == 1 ) {
+        elseif ( $new_demande_conges == 1 ) {
             $new_debut          = getpost_variable('new_debut') ;
             $new_demi_jour_deb  = getpost_variable('new_demi_jour_deb') ;
             $new_fin            = getpost_variable('new_fin') ;
@@ -1167,10 +1165,10 @@ class Fonctions
         $sql1="SELECT DISTINCT gu_gid FROM conges_groupe_users ORDER BY gu_gid"; // Le but est de sélectionner tous les groupes ayant des utilisateurs
         $ReqLog1 = \includes\SQL::query($sql1);
 
-        if($ReqLog1->num_rows != 0) {
+        if ($ReqLog1->num_rows != 0) {
             while ($resultat1 = $ReqLog1->fetch_array()) {
                 $current_group=$resultat1["gu_gid"];
-                if($list_group=="")
+                if ($list_group=="")
                     $list_group="$current_group";
                 else
                     $list_group=$list_group.", $current_group";
@@ -1193,11 +1191,11 @@ class Fonctions
 
         // recup de la liste des users d'un groupe donné
         $list_users = get_list_users_du_groupe($choix_groupe);
-        if(empty($list_users)) {
+        if (empty($list_users)) {
             return;
         }
         foreach($tab_new_nb_conges_all as $id_conges => $nb_jours) {
-            if($nb_jours!=0) {
+            if ($nb_jours!=0) {
                 $comment = $tab_new_comment_all[$id_conges];
 
                 $sql1="SELECT u_login, u_quotite FROM conges_users WHERE u_login IN ($list_users) AND u_is_active='Y' ORDER BY u_login ";
@@ -1207,7 +1205,7 @@ class Fonctions
                     $current_login  =$resultat1["u_login"];
                     $current_quotite=$resultat1["u_quotite"];
 
-                    if( (!isset($tab_calcul_proportionnel[$id_conges])) || ($tab_calcul_proportionnel[$id_conges]!=TRUE) ) {
+                    if ( (!isset($tab_calcul_proportionnel[$id_conges])) || ($tab_calcul_proportionnel[$id_conges]!=TRUE) ) {
                         $nb_conges=$nb_jours;
                     } else {
                         // pour arrondir au 1/2 le + proche on  fait x 2, on arrondit, puis on divise par 2
@@ -1215,7 +1213,7 @@ class Fonctions
                     }
 
                     $valid=verif_saisie_decimal($nb_conges);
-                    if($valid) {
+                    if ($valid) {
                         // 1 : on update conges_solde_user
                         $req_update = 'UPDATE conges_solde_user SET su_solde = su_solde+ '.$nb_conges.'
                                 WHERE  su_login = "'. \includes\SQL::quote($current_login).'" AND su_abs_id = '.intval($id_conges).';';
@@ -1232,7 +1230,7 @@ class Fonctions
                 }
 
                 $group_name = get_group_name_from_id($choix_groupe);
-                if( (!isset($tab_calcul_proportionnel[$id_conges])) || ($tab_calcul_proportionnel[$id_conges]!=TRUE) ) {
+                if ( (!isset($tab_calcul_proportionnel[$id_conges])) || ($tab_calcul_proportionnel[$id_conges]!=TRUE) ) {
                     $comment_log = "ajout conges pour groupe $group_name ($nb_jours jour(s)) ($comment) (calcul proportionnel : No)";
                 } else {
                     $comment_log = "ajout conges pour groupe $group_name ($nb_jours jour(s)) ($comment) (calcul proportionnel : Yes)";
@@ -1253,7 +1251,7 @@ class Fonctions
         $list_users_du_resp = \hr\Fonctions::get_list_all_users_du_hr($_SESSION['userlogin']);
 
         foreach($tab_new_nb_conges_all as $id_conges => $nb_jours) {
-            if($nb_jours!=0) {
+            if ($nb_jours!=0) {
                 $comment = $tab_new_comment_all[$id_conges];
 
                 $sql1="SELECT u_login, u_quotite FROM conges_users WHERE u_login IN ($list_users_du_resp) ORDER BY u_login ";
@@ -1263,14 +1261,14 @@ class Fonctions
                     $current_login  =$resultat1["u_login"];
                     $current_quotite=$resultat1["u_quotite"];
 
-                    if( (!isset($tab_calcul_proportionnel[$id_conges])) || ($tab_calcul_proportionnel[$id_conges]!=TRUE) ) {
+                    if ( (!isset($tab_calcul_proportionnel[$id_conges])) || ($tab_calcul_proportionnel[$id_conges]!=TRUE) ) {
                         $nb_conges=$nb_jours;
                     } else {
                         // pour arrondir au 1/2 le + proche on  fait x 2, on arrondit, puis on divise par 2
                         $nb_conges = (ROUND(($nb_jours*($current_quotite/100))*2))/2  ;
                     }
                     $valid=verif_saisie_decimal($nb_conges);
-                    if($valid) {
+                    if ($valid) {
                         // 1 : update de la table conges_solde_user
                         $req_update = 'UPDATE conges_solde_user SET su_solde = su_solde + '.$nb_conges.'
                                 WHERE  su_login = "'. \includes\SQL::quote($current_login).'"  AND su_abs_id = "'. \includes\SQL::quote($id_conges).'";';
@@ -1283,7 +1281,7 @@ class Fonctions
                     }
                 }
 
-                if( (!isset($tab_calcul_proportionnel[$id_conges])) || ($tab_calcul_proportionnel[$id_conges]!=TRUE) ) {
+                if ( (!isset($tab_calcul_proportionnel[$id_conges])) || ($tab_calcul_proportionnel[$id_conges]!=TRUE) ) {
                     $comment_log = "ajout conges global ($nb_jours jour(s)) ($comment) (calcul proportionnel : No)";
                 } else {
                     $comment_log = "ajout conges global ($nb_jours jour(s)) ($comment) (calcul proportionnel : Yes)";
@@ -1305,8 +1303,8 @@ class Fonctions
           foreach($tab_conges as $id_conges => $user_nb_jours_ajout) {
 
             $valid=verif_saisie_decimal($user_nb_jours_ajout);   //verif la bonne saisie du nombre décimal
-            if($valid) {
-              if($user_nb_jours_ajout!=0) {
+            if ($valid) {
+              if ($user_nb_jours_ajout!=0) {
                 /* Modification de la table conges_users */
                 $sql1 = 'UPDATE conges_solde_user SET su_solde = su_solde+'.$user_nb_jours_ajout.' WHERE su_login="'. \includes\SQL::quote($user_name).'" AND su_abs_id = "'. \includes\SQL::quote($id_conges).'";';
                 /* On valide l'UPDATE dans la table ! */
@@ -1332,7 +1330,7 @@ class Fonctions
         // on établi la liste complète des groupes pour le mode RH
         $list_group = \hr\Fonctions::get_list_groupes_pour_rh($_SESSION['userlogin']);
 
-        if($list_group!="") //si la liste n'est pas vide ( serait le cas si n'est responsable d'aucun groupe)
+        if ($list_group!="") //si la liste n'est pas vide ( serait le cas si n'est responsable d'aucun groupe)
         {
             $return .= '<h2>' . _('resp_ajout_conges_ajout_groupe') . '</h2>';
             $return .= '<form action="' . $PHP_SELF . '?onglet=ajout_conges" method="POST">';
@@ -1416,6 +1414,7 @@ class Fonctions
 
     public static function affichage_saisie_user_par_user($tab_type_conges, $tab_type_conges_exceptionnels, $tab_all_users_du_hr, $tab_all_users_du_grand_resp)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
@@ -1424,7 +1423,7 @@ class Fonctions
         $return .= '<h2>Ajout par utilisateur</h2>';
         $return .= '<form action="' . $PHP_SELF . '?onglet=ajout_conges" method="POST">';
 
-        if( (count($tab_all_users_du_hr)!=0) || (count($tab_all_users_du_grand_resp)!=0) ) {
+        if ( (count($tab_all_users_du_hr)!=0) || (count($tab_all_users_du_grand_resp)!=0) ) {
             // AFFICHAGE TITRES TABLEAU
             $return .= '<div class="table-responsive"><table class="table table-hover table-condensed table-striped">';
             $return .= '<thead>';
@@ -1436,7 +1435,7 @@ class Fonctions
                 $return .= '<th>' . $libelle . '<br><i>(' . _('divers_solde') . ')</i></th>';
                 $return .= '<th>' . $libelle . '<br>' . _('resp_ajout_conges_nb_jours_ajout') . '</th>';
             }
-            if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+            if ($config->isCongesExceptionnelsActive()) {
                 foreach($tab_type_conges_exceptionnels as $id_conges => $libelle) {
                     $return .= '<th>' . $libelle . '<br><i>(' . _('divers_solde') . ')</i></th>';
                     $return .= '<th>' . $libelle . '<br>' . _('resp_ajout_conges_nb_jours_ajout') . '</th>';
@@ -1455,7 +1454,7 @@ class Fonctions
             asort($tab_all_users_du_hr);
             // affichage des users dont on est responsable :
             foreach($tab_all_users_du_hr as $current_login => $tab_current_user) {
-                if($tab_current_user['is_active'] == "Y") {
+                if ($tab_current_user['is_active'] == "Y") {
                     $return .= '<tr class="' . ($i ? 'i' : 'p') . '">';
                     //tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
                     $tab_conges=$tab_current_user['conges'];
@@ -1471,7 +1470,7 @@ class Fonctions
                         $return .= '<td>' . $tab_conges[$libelle]['nb_an'] . ' <i>(' . $tab_conges[$libelle]['solde'] . ')</i></td>';
                         $return .= '<td align="center" class="histo">' . $champ_saisie_conges . '</td>';
                     }
-                    if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+                    if ($config->isCongesExceptionnelsActive()) {
                         foreach($tab_type_conges_exceptionnels as $id_conges => $libelle) {
                             /** le champ de saisie est <input type="text" name="tab_champ_saisie[valeur de u_login][id_du_type_de_conges]" value="[valeur du nb de jours ajouté saisi]"> */
                             $champ_saisie_conges="<input class=\"form-control\" type=\"text\" name=\"tab_champ_saisie[$current_login][$id_conges]\" size=\"6\" maxlength=\"6\" value=\"0\">";
@@ -1527,7 +1526,7 @@ class Fonctions
         while ($resultat1 = $ReqLog1->fetch_array())
         {
             $current_login=$resultat1["u_login"];
-                if($list_users=="") {
+                if ($list_users=="") {
                     $list_users="'$current_login'";
                 } else {
                     $list_users=$list_users.", '$current_login'";
@@ -1538,11 +1537,12 @@ class Fonctions
 
     public static function saisie_ajout( $tab_type_conges)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
         // recup du tableau des types de conges (seulement les congesexceptionnels )
-        if ($_SESSION['config']['gestion_conges_exceptionnels']) {
+        if ($config->isCongesExceptionnelsActive()) {
             $tab_type_conges_exceptionnels = recup_tableau_types_conges_exceptionnels();
         } else {
             $tab_type_conges_exceptionnels = array();
@@ -1554,7 +1554,7 @@ class Fonctions
         $tab_all_users_du_hr=\hr\Fonctions::recup_infos_all_users_du_hr($_SESSION['userlogin']);
         $tab_all_users_du_grand_resp=recup_infos_all_users_du_grand_resp($_SESSION['userlogin']);
 
-        if( (count($tab_all_users_du_hr)!=0) || (count($tab_all_users_du_grand_resp)!=0) ) {
+        if ( (count($tab_all_users_du_hr)!=0) || (count($tab_all_users_du_grand_resp)!=0) ) {
             /************************************************************/
             /* SAISIE GLOBALE pour tous les utilisateurs du responsable */
             $return .= \hr\Fonctions::affichage_saisie_globale_pour_tous($tab_type_conges);
@@ -1597,14 +1597,14 @@ class Fonctions
         // titre
         $return .= '<h1>'. _('resp_ajout_conges_titre') . '</h1>';
 
-        if( $ajout_conges == "TRUE" ) {
+        if ( $ajout_conges == "TRUE" ) {
             $tab_champ_saisie            = getpost_variable('tab_champ_saisie');
             $tab_commentaire_saisie        = getpost_variable('tab_commentaire_saisie');
 
             $return .= \hr\Fonctions::ajout_conges($tab_champ_saisie, $tab_commentaire_saisie);
             redirect( ROOT_PATH .'hr/hr_index.php', false);
             exit;
-        } elseif( $ajout_global == "TRUE" ) {
+        } elseif ( $ajout_global == "TRUE" ) {
 
             $tab_new_nb_conges_all       = getpost_variable('tab_new_nb_conges_all');
             $tab_calcul_proportionnel    = getpost_variable('tab_calcul_proportionnel');
@@ -1613,7 +1613,7 @@ class Fonctions
             $return .= \hr\Fonctions::ajout_global($tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all);
             redirect( ROOT_PATH .'hr/hr_index.php', false);
             exit;
-        } elseif( $ajout_groupe == "TRUE" ) {
+        } elseif ( $ajout_groupe == "TRUE" ) {
 
             $tab_new_nb_conges_all       = getpost_variable('tab_new_nb_conges_all');
             $tab_calcul_proportionnel    = getpost_variable('tab_calcul_proportionnel');
@@ -1665,7 +1665,7 @@ class Fonctions
         $res_select = \includes\SQL::query($sql_select);
         $num_select = $res_select->num_rows;
 
-        if($num_select!=0) {
+        if ($num_select!=0) {
             while($result_select = $res_select->fetch_array()) {
                 $tab_year[]=$result_select["jf_date"];
             }
@@ -1701,7 +1701,7 @@ class Fonctions
         $return = '';
 
         // si l'année est déja renseignée dans la database, on efface ttes les dates de l'année
-        if(\hr\Fonctions::verif_year_deja_saisie($tab_checkbox_j_chome)) {
+        if (\hr\Fonctions::verif_year_deja_saisie($tab_checkbox_j_chome)) {
             $result = \hr\Fonctions::delete_year($tab_checkbox_j_chome);
         }
 
@@ -1712,7 +1712,7 @@ class Fonctions
         // on recharge les jours feries dans les variables de session
         init_tab_jours_feries();
 
-        if($result) {
+        if ($result) {
             $return .= '<div class="alert alert-success">' . _('form_modif_ok') . '</div>';
         } else {
             $return .= '<div class="alert alert-danger">' . _('form_modif_not_ok') . '</div>';
@@ -1785,7 +1785,7 @@ class Fonctions
         $first_jour_mois_timestamp=mktime (0,0,0,$mois,1,$year);
         $mois_name=date_fr("F", $first_jour_mois_timestamp);
         $first_jour_mois_rang=date("w", $first_jour_mois_timestamp);      // jour de la semaine en chiffre (0=dim , 6=sam)
-        if($first_jour_mois_rang==0) {
+        if ($first_jour_mois_rang==0) {
             $first_jour_mois_rang=7 ;    // jour de la semaine en chiffre (1=lun , 7=dim)
         }
 
@@ -1869,7 +1869,7 @@ class Fonctions
         $return = '';
 
         // si l'année n'est pas renseignée, on prend celle du jour
-        if($year_calendrier_saisie==0) {
+        if ($year_calendrier_saisie==0) {
             $year_calendrier_saisie = date("Y");
         }
 
@@ -1878,10 +1878,10 @@ class Fonctions
         \hr\Fonctions::get_tableau_jour_feries($year_calendrier_saisie, $tab_year);
 
         //calcul automatique des jours feries
-        if($_SESSION['config']['calcul_auto_jours_feries_france']) {
+        if ($_SESSION['config']['calcul_auto_jours_feries_france']) {
             $tableau_jour_feries = \hr\Fonctions::fcListJourFeries($year_calendrier_saisie) ;
             foreach ($tableau_jour_feries as $i => $value) {
-                if(!in_array ("$value", $tab_year))
+                if (!in_array ("$value", $tab_year))
                     $tab_year[] = $value;
             }
         }
@@ -1891,7 +1891,7 @@ class Fonctions
 
         $i = 0;
         foreach ($months as $month) {
-            if($i%4 == 0){
+            if ($i%4 == 0) {
                 $return .= '<div class="row">';
             }
             $return .= '<div class="month">';
@@ -1899,7 +1899,7 @@ class Fonctions
             $return .= \hr\Fonctions::affiche_calendrier_saisie_jours_chomes($year_calendrier_saisie, $month, $tab_year);
             $return .= '</div>';
             $return .= '</div>';
-            if($i%4 == 3){
+            if ($i%4 == 3) {
                 $return .= '</div>';
             }
             $i++;
@@ -1940,7 +1940,7 @@ class Fonctions
         /*************************************/
 
         // si l'année n'est pas renseignée, on prend celle du jour
-        if($year_calendrier_saisie==0) {
+        if ($year_calendrier_saisie==0) {
             $year_calendrier_saisie = date("Y");
         }
 
@@ -1960,7 +1960,7 @@ class Fonctions
         $return .= '</ul>';
         $return .= '</div>';
         $return .= '</div>';
-        if($choix_action=="commit") {
+        if ($choix_action=="commit") {
             $return .= \hr\Fonctions::commit_saisie($tab_checkbox_j_chome);
         }
         $return .= '<div class="wrapper">';
@@ -1972,16 +1972,17 @@ class Fonctions
     // calcule de la date limite d'utilisation des reliquats (si on utilise une date limite et qu'elle n'est pas encore calculée) et stockage dans la table
     public static function set_nouvelle_date_limite_reliquat()
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         //si on autorise les reliquats
-        if($_SESSION['config']['autorise_reliquats_exercice']) {
+        if ($config->isReliquatsAutorise()) {
             // s'il y a une date limite d'utilisationdes reliquats (au format jj-mm)
-            if($_SESSION['config']['jour_mois_limite_reliquats']!=0) {
+            if ($config->getDateLimiteReliquats() != 0) {
                 // nouvelle date limite au format aaa-mm-jj
-                $t=explode("-", $_SESSION['config']['jour_mois_limite_reliquats']);
+                $t=explode("-", $config->getDateLimiteReliquats());
                 $new_date_limite = date("Y")."-".$t[1]."-".$t[0];
 
                 //si la date limite n'a pas encore été updatée
-                if($_SESSION['config']['date_limite_reliquats'] < $new_date_limite) {
+                if ($_SESSION['config']['date_limite_reliquats'] < $new_date_limite) {
                     /* Modification de la table conges_appli */
                     $sql_update= 'UPDATE conges_appli SET appli_valeur = \''.$new_date_limite.'\' WHERE appli_variable=\'date_limite_reliquats\';';
                     $ReqLog_update = \includes\SQL::query($sql_update) ;
@@ -2001,7 +2002,7 @@ class Fonctions
         $tab_all_users_du_groupe=recup_infos_all_users_du_groupe($group_id);
         $comment_cloture =  _('resp_cloture_exercice_commentaire') ." ".date("m/Y");
 
-        if(count($tab_all_users_du_groupe)!=0) {
+        if (count($tab_all_users_du_groupe)!=0) {
             // traitement des users dont on est responsable :
             foreach($tab_all_users_du_groupe as $current_login => $tab_current_user) {
                 $return .= \hr\Fonctions::cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $comment_cloture);
@@ -2024,7 +2025,7 @@ class Fonctions
 
         $comment_cloture =  _('resp_cloture_exercice_commentaire') ." ".date("m/Y");
 
-        if( (count($tab_all_users_du_hr)!=0) || (count($tab_all_users_du_grand_resp)!=0) ) {
+        if ( (count($tab_all_users_du_hr)!=0) || (count($tab_all_users_du_grand_resp)!=0) ) {
             // traitement des users dont on est responsable :
             foreach($tab_all_users_du_hr as $current_login => $tab_current_user) {
                 $return .= \hr\Fonctions::cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $comment_cloture);
@@ -2042,7 +2043,7 @@ class Fonctions
         $sql_verif = "SELECT u_login FROM conges_users WHERE u_login != 'admin' AND u_login != 'conges' AND u_num_exercice != $appli_num_exercice "  ;
         $ReqLog_verif = \includes\SQL::query($sql_verif) ;
 
-        if($ReqLog_verif->num_rows == 0) {
+        if ($ReqLog_verif->num_rows == 0) {
             /* Modification de la table conges_appli */
             $sql_update= "UPDATE conges_appli SET appli_valeur = appli_valeur+1 WHERE appli_variable='num_exercice' ";
             $ReqLog_update = \includes\SQL::query($sql_update) ;
@@ -2056,8 +2057,9 @@ class Fonctions
     public static function cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $commentaire)
     {
         $return = '';
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         // si le num d'exercice du user est < à celui de l'appli (il n'a pas encore été basculé): on le bascule d'exercice
-        if($tab_current_user['num_exercice'] < $_SESSION['config']['num_exercice']) {
+        if ($tab_current_user['num_exercice'] < $_SESSION['config']['num_exercice']) {
             // calcule de la date limite d'utilisation des reliquats (si on utilise une date limite et qu'elle n'est pas encore calculée)
             \hr\Fonctions::set_nouvelle_date_limite_reliquat();
 
@@ -2071,15 +2073,15 @@ class Fonctions
                 /**********************************************/
                 /* Modification de la table conges_solde_user */
 
-                if($_SESSION['config']['autorise_reliquats_exercice']) {
+                if ($config->isReliquatsAutorise()) {
                     // ATTENTION : si le solde du user est négatif, on ne compte pas de reliquat et le nouveau solde est nb_jours_an + le solde actuel (qui est négatif)
-                    if($user_solde_actuel>0) {
+                    if ($user_solde_actuel>0) {
                         //calcul du reliquat pour l'exercice suivant
-                        if($_SESSION['config']['nb_maxi_jours_reliquats']!=0) {
-                            if($user_solde_actuel <= $_SESSION['config']['nb_maxi_jours_reliquats']) {
+                        if ($config->getReliquatsMax() != 0) {
+                            if ($user_solde_actuel <= $config->getReliquatsMax()) {
                                 $new_reliquat = $user_solde_actuel ;
                             } else {
-                                $new_reliquat = $_SESSION['config']['nb_maxi_jours_reliquats'] ;
+                                $new_reliquat = $config->getReliquatsMax();
                             }
                         } else {
                             $new_reliquat = $user_reliquat_actuel + $user_solde_actuel ;
@@ -2102,7 +2104,7 @@ class Fonctions
                     $ReqLog_solde = \includes\SQL::query($sql_solde) ;
                 } else {
                     // ATTENTION : meme si on accepte pas les reliquats, si le solde du user est négatif, il faut le reporter: le nouveau solde est nb_jours_an + le solde actuel (qui est négatif)
-                    if($user_solde_actuel < 0) {
+                    if ($user_solde_actuel < 0) {
                         $new_solde = $user_nb_jours_ajout_an + $user_solde_actuel ; // qui est nul ou negatif
                     } else {
                         $new_solde = $user_nb_jours_ajout_an ;
@@ -2141,11 +2143,11 @@ class Fonctions
         // renvoit une liste de login entre quotes et séparés par des virgules
         $tab_all_users_du_hr=\hr\Fonctions::recup_infos_all_users_du_hr($_SESSION['userlogin']);
         $tab_all_users_du_grand_resp=recup_infos_all_users_du_grand_resp($_SESSION['userlogin']);
-        if( (count($tab_all_users_du_hr)!=0) || (count($tab_all_users_du_grand_resp)!=0) ) {
+        if ( (count($tab_all_users_du_hr)!=0) || (count($tab_all_users_du_grand_resp)!=0) ) {
             // traitement des users dont on est responsable :
             foreach($tab_all_users_du_hr as $current_login => $tab_current_user) {
                 // tab_cloture_users[$current_login]=TRUE si checkbox "cloturer" est cochée
-                if( (isset($tab_cloture_users[$current_login])) && ($tab_cloture_users[$current_login]=TRUE) ) {
+                if ( (isset($tab_cloture_users[$current_login])) && ($tab_cloture_users[$current_login]=TRUE) ) {
                     $commentaire = $tab_commentaire_saisie[$current_login];
                     $return .= \hr\Fonctions::cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $commentaire);
                 }
@@ -2165,7 +2167,7 @@ class Fonctions
         // on établi la liste complète des groupes dont on est le resp (ou le grd resp)
         $list_group=get_list_groupes_du_resp($_SESSION['userlogin']);
 
-        if($list_group!="") //si la liste n'est pas vide ( serait le cas si n'est responsable d'aucun groupe)
+        if ($list_group!="") //si la liste n'est pas vide ( serait le cas si n'est responsable d'aucun groupe)
         {
             $return .= '<form action="' . $PHP_SELF . '" method="POST">';
             $return .= '<table>';
@@ -2261,7 +2263,7 @@ class Fonctions
         }
 
         // si le num d'exercice du user est < à celui de l'appli (il n'a pas encore été basculé): on peut le cocher
-        if($tab_current_user['num_exercice'] < $_SESSION['config']['num_exercice']) {
+        if ($tab_current_user['num_exercice'] < $_SESSION['config']['num_exercice']) {
             $return .= '<td align="center" class="histo"><input type="checkbox" name="tab_cloture_users[' . $current_login . ']" value="TRUE" checked></td>';
         } else {
             $return .= '<td align="center" class="histo"><img src="' . IMG_PATH . 'stop.png" width="16" height="16" border="0" ></td>';
@@ -2282,7 +2284,7 @@ class Fonctions
         /************************************************************/
         /* CLOTURE EXERCICE USER PAR USER pour tous les utilisateurs du responsable */
 
-        if( (count($tab_all_users_du_hr)!=0) || (count($tab_all_users_du_grand_resp)!=0) ) {
+        if ( (count($tab_all_users_du_hr)!=0) || (count($tab_all_users_du_grand_resp)!=0) ) {
             $return .= '<form action="' . $PHP_SELF . '?onglet=cloture_year" method="POST">';
             $return .= '<table>';
             $return .= '<tr>';
@@ -2340,6 +2342,7 @@ class Fonctions
 
     public static function saisie_cloture( $tab_type_conges)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
@@ -2348,7 +2351,7 @@ class Fonctions
         // renvoit une liste de login entre quotes et séparés par des virgules
         $tab_all_users_du_hr=\hr\Fonctions::recup_infos_all_users_du_hr($_SESSION['userlogin']);
         $tab_all_users_du_grand_resp=recup_infos_all_users_du_grand_resp($_SESSION['userlogin']);
-        if( (count($tab_all_users_du_hr)!=0) || (count($tab_all_users_du_grand_resp)!=0) ) {
+        if ( (count($tab_all_users_du_hr)!=0) || (count($tab_all_users_du_grand_resp)!=0) ) {
             /************************************************************/
             /* SAISIE GLOBALE pour tous les utilisateurs du responsable */
             $return .= \hr\Fonctions::affichage_cloture_globale_pour_tous($tab_type_conges);
@@ -2396,19 +2399,19 @@ class Fonctions
         // titre
         $return .= '<h1>'. _('resp_cloture_exercice_titre') . '</h1>';
 
-        if($cloture_users=="TRUE") {
+        if ($cloture_users=="TRUE") {
             $tab_cloture_users       = getpost_variable('tab_cloture_users');
             $tab_commentaire_saisie       = getpost_variable('tab_commentaire_saisie'); //a vérifier
             $return .= \hr\Fonctions::cloture_users($tab_type_cong, $tab_cloture_users, $tab_commentaire_saisie);
 
             redirect( ROOT_PATH .'hr/hr_index.php', false);
             exit;
-        } elseif($cloture_globale=="TRUE") {
+        } elseif ($cloture_globale=="TRUE") {
             \hr\Fonctions::cloture_globale($tab_type_cong);
 
             redirect( ROOT_PATH .'hr/hr_index.php', false);
             exit;
-        } elseif($cloture_groupe=="TRUE") {
+        } elseif ($cloture_groupe=="TRUE") {
             $choix_groupe            = getpost_variable('choix_groupe');
             $return .= \hr\Fonctions::cloture_globale_groupe($choix_groupe, $tab_type_cong);
 
@@ -2422,6 +2425,7 @@ class Fonctions
 
     public static function affiche_calendrier_fermeture_mois($year, $mois, $tab_year)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $jour_today=date("j");
         $jour_today_name=date("D");
         $return = '';
@@ -2429,7 +2433,7 @@ class Fonctions
         $first_jour_mois_timestamp=mktime (0,0,0,$mois,1,$year);
         $mois_name=date_fr("F", $first_jour_mois_timestamp);
         $first_jour_mois_rang=date("w", $first_jour_mois_timestamp);      // jour de la semaine en chiffre (0=dim , 6=sam)
-        if($first_jour_mois_rang==0) {
+        if ($first_jour_mois_rang==0) {
             $first_jour_mois_rang=7 ;    // jour de la semaine en chiffre (1=lun , 7=dim)
         }
 
@@ -2452,7 +2456,7 @@ class Fonctions
         $return .= '<tr>';
         // affichage des cellules vides jusqu'au 1 du mois ...
         for($i=1; $i<$first_jour_mois_rang; $i++) {
-            if( (($i==6)&&($_SESSION['config']['samedi_travail']==FALSE)) || (($i==7)&&($_SESSION['config']['dimanche_travail']==FALSE)) ) {
+            if ( (($i==6)&&(!$config->isSamediOuvrable())) || (($i==7)&&(!$config->isDimancheOuvrable())) ) {
                 $bgcolor=$_SESSION['config']['week_end_bgcolor'];
             } else {
                 $bgcolor=$_SESSION['config']['semaine_bgcolor'];
@@ -2467,7 +2471,7 @@ class Fonctions
             $j_day=date("d", $j_timestamp);
             $td_second_class=get_td_class_of_the_day_in_the_week($j_timestamp);
 
-            if(in_array ("$j_date", $tab_year)) {
+            if (in_array ("$j_date", $tab_year)) {
                 $td_second_class="fermeture";
             }
 
@@ -2483,7 +2487,7 @@ class Fonctions
             $j_date=date("Y-m-d", $j_timestamp);
             $j_day=date("d", $j_timestamp);
 
-            if(in_array ("$j_date", $tab_year)) {
+            if (in_array ("$j_date", $tab_year)) {
                 $td_second_class="fermeture";
             }
 
@@ -2499,7 +2503,7 @@ class Fonctions
             $j_day=date("d", $j_timestamp);
             $td_second_class=get_td_class_of_the_day_in_the_week($j_timestamp);
 
-            if(in_array ("$j_date", $tab_year)) {
+            if (in_array ("$j_date", $tab_year)) {
                 $td_second_class="fermeture";
             }
 
@@ -2515,7 +2519,7 @@ class Fonctions
             $j_day=date("d", $j_timestamp);
             $td_second_class=get_td_class_of_the_day_in_the_week($j_timestamp);
 
-            if(in_array ("$j_date", $tab_year)) {
+            if (in_array ("$j_date", $tab_year)) {
                 $td_second_class="fermeture";
             }
 
@@ -2531,14 +2535,14 @@ class Fonctions
             $j_day=date("d", $j_timestamp);
             $td_second_class=get_td_class_of_the_day_in_the_week($j_timestamp);
 
-            if(in_array ("$j_date", $tab_year)) {
+            if (in_array ("$j_date", $tab_year)) {
                 $td_second_class="fermeture";
             }
 
             $return .= '<td  class="cal-saisie ' . $td_second_class . '">' . $j_day . '</td>';
         }
         for($i; $i<36-$first_jour_mois_rang+1; $i++) {
-            if( (($i==35-$first_jour_mois_rang)&&($_SESSION['config']['samedi_travail']==FALSE)) || (($i==36-$first_jour_mois_rang)&&($_SESSION['config']['dimanche_travail']==FALSE)) ) {
+            if ((($i==35-$first_jour_mois_rang)&&(!$config->isSamediOuvrable())) || (($i==36-$first_jour_mois_rang)&&(!$config->isDimancheOuvrable()))) {
                 $bgcolor=$_SESSION['config']['week_end_bgcolor'];
             } else {
                 $bgcolor=$_SESSION['config']['semaine_bgcolor'];
@@ -2555,14 +2559,14 @@ class Fonctions
             $j_day=date("d", $j_timestamp);
             $td_second_class=get_td_class_of_the_day_in_the_week($j_timestamp);
 
-            if(in_array ("$j_date", $tab_year)) {
+            if (in_array ("$j_date", $tab_year)) {
                 $td_second_class="fermeture";
             }
 
             $return .= '<td  class="cal-saisie ' . $td_second_class . '">' . $j_day . '</td>';
         }
         for($i; $i<43-$first_jour_mois_rang+1; $i++) {
-            if( (($i==42-$first_jour_mois_rang)&&($_SESSION['config']['samedi_travail']==FALSE)) || (($i==43-$first_jour_mois_rang)&&($_SESSION['config']['dimanche_travail']==FALSE))) {
+            if ( (($i==42-$first_jour_mois_rang)&&(!$config->isSamediOuvrable())) || (($i==43-$first_jour_mois_rang)&&(!$config->isDimancheOuvrable()))) {
                 $bgcolor=$_SESSION['config']['week_end_bgcolor'];
             } else {
                 $bgcolor=$_SESSION['config']['semaine_bgcolor'];
@@ -2579,7 +2583,19 @@ class Fonctions
         // on construit le tableau de l'année considérée
         $tab_year=array();
         \hr\Fonctions::get_tableau_jour_fermeture($year, $tab_year,  $groupe_id);
-        $return = '';
+        // navigation
+        $onglet = htmlentities(getpost_variable('onglet'), ENT_QUOTES | ENT_HTML401);
+        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $return = '<div class="btn-group pull-right">';
+        $prev_link = "$PHP_SELF?onglet=$onglet&year=". ($year - 1) . "&groupe_id=$groupe_id";
+        $return .= '<a href="' . $prev_link . '" class="btn btn-default"><i class="fa fa-chevron-left"></i></a>';
+        $currentLink = "$PHP_SELF?onglet=$onglet&year=". date('Y') . "&groupe_id=$groupe_id";
+        $return .= '<a href="' . $currentLink . '" class="btn btn-default"><i class="fa fa-home" title="Retourner à l\'année courante"></i></a>';
+        $next_link = "$PHP_SELF?onglet=$onglet&year=". ($year + 1) . "&groupe_id=$groupe_id";
+        $return .= '<a href="' . $next_link . '" class="btn btn-default"><i class="fa fa-chevron-right"></i></a>';
+        $return .= '</div>';
+        $return .= '<a href="' . $PHP_SELF . '?onglet=saisie" class="btn btn-success pull-right" style="margin-right:15px">' . _('admin_jours_fermeture_titre') . '</a>';
+        $return .= '<h1>Calendrier des fermetures <span class="current-year">' .  $year . '</span></h1>';
 
         $return .= '<div class="calendar calendar-year">';
         $months = array('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12');
@@ -2621,7 +2637,7 @@ class Fonctions
         $req_1="SELECT MAX(jf_id) FROM conges_jours_fermeture ";
         $res_1 = \includes\SQL::query($req_1);
         $row_1 = $res_1->fetch_array();
-        if(!$row_1)
+        if (!$row_1)
             return 0;     // si la table est vide, on renvoit 0
         else
             return $row_1[0];
@@ -2633,7 +2649,7 @@ class Fonctions
     {
         /*****************************/
         // on construit le tableau des users affectés par les fermetures saisies :
-        if($groupe_id==0)  // fermeture pour tous !
+        if ($groupe_id==0)  // fermeture pour tous !
             $list_users = get_list_all_users();
         else
             $list_users = get_list_users_du_groupe($groupe_id);
@@ -2645,7 +2661,7 @@ class Fonctions
             // on enleve les quotes qui ont été ajoutées lors de la creation de la liste
             $current_login = trim($current_login, "\'");
             $comment="";
-            if(verif_periode_chevauche_periode_user($date_debut, $date_fin, $current_login, $num_current_periode, $tab_periode_calcul, $comment))
+            if (verif_periode_chevauche_periode_user($date_debut, $date_fin, $current_login, $num_current_periode, $tab_periode_calcul, $comment))
                 return TRUE;
         }
     }
@@ -2657,7 +2673,7 @@ class Fonctions
 
         /*****************************/
         // on construit le tableau des users affectés par les fermetures saisies :
-        if($groupe_id==0) { // fermeture pour tous !
+        if ($groupe_id==0) { // fermeture pour tous !
             $list_users = get_list_all_users();
         } else {
             $list_users = get_list_users_du_groupe($groupe_id);
@@ -2702,14 +2718,14 @@ class Fonctions
         }
 
         $return .= '<div class="wrapper">';
-        if($result) {
+        if ($result) {
             $return .= '<br>' . _('form_modif_ok') . '<br><br>';
         } else {
             $return .= '<br>' . _('form_modif_not_ok') . ' !<br><br>';
         }
 
         // on enregistre cette action dan les logs
-        if($groupe_id==0) { // fermeture pour tous !
+        if ($groupe_id==0) { // fermeture pour tous !
             $comment_log = "annulation fermeture $fermeture_id (pour tous) " ;
         } else {
             $comment_log = "annulation fermeture $fermeture_id (pour le groupe $groupe_id)" ;
@@ -2736,7 +2752,7 @@ class Fonctions
 
         /*****************************/
         // on construit le tableau des users affectés par les fermetures saisies :
-        if($groupe_id==0) { // fermeture pour tous !
+        if ($groupe_id==0) { // fermeture pour tous !
             $list_users = get_list_all_users();
         } else {
             $list_users = get_list_users_du_groupe($groupe_id);
@@ -2796,7 +2812,7 @@ class Fonctions
 
         $return .= '<div class="wrapper">';
 
-        if($result) {
+        if ($result) {
             $return .= '<br>' . _('form_modif_ok') . '<br><br>';
         } else {
             $return .= '<br>' . _('form_modif_not_ok') . ' !<br><br>';
@@ -2839,7 +2855,7 @@ class Fonctions
         $res_1 = \includes\SQL::query($req_1);
 
         $num_select = $res_1->num_rows;
-        if($num_select!=0) {
+        if ($num_select!=0) {
             while($result_select = $res_1->fetch_array()) {
                 $tab_periode=array();
                 $tab_periode['date_deb']=$result_select["p_date_deb"];
@@ -2860,15 +2876,15 @@ class Fonctions
         $return = '';
 
         foreach($tab_conges as $id => $libelle) {
-            if($libelle == 1) {
+            if ($libelle == 1) {
                 $return .= '<option value="' . $id . '" selected>' . $libelle . '</option>';
             } else {
                 $return .= '<option value="' . $id  . '">' . $libelle . '</option>';
             }
         }
-        if(count($tab_conges_except)!=0) {
+        if (count($tab_conges_except)!=0) {
             foreach($tab_conges_except as $id => $libelle) {
-                if($libelle == 1) {
+                if ($libelle == 1) {
                     $return .= '<option value="' . $id . '" selected>' . $libelle . '</option>';
                 } else {
                     $return .= '<option value="' . $id . '">' . $libelle . '</option>';
@@ -2883,14 +2899,14 @@ class Fonctions
     {
         $sql_select = " SELECT jf_date FROM conges_jours_fermeture WHERE DATE_FORMAT(jf_date, '%Y-%m-%d') LIKE '$year%'  ";
         // on recup les fermeture du groupe + les fermetures de tous !
-        if($groupe_id==0)
+        if ($groupe_id==0)
             $sql_select = $sql_select."AND jf_gid = 0";
         else
             $sql_select = $sql_select."AND  (jf_gid = $groupe_id OR jf_gid =0 ) ";
         $res_select = \includes\SQL::query($sql_select);
         $num_select =$res_select->num_rows;
 
-        if($num_select!=0) {
+        if ($num_select!=0) {
             while($result_select = $res_select->fetch_array()) {
                 $tab_year[]=$result_select["jf_date"];
             }
@@ -2937,8 +2953,11 @@ class Fonctions
 
     public static function saisie_groupe_fermeture()
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $return = '';
+        $return = '<h1>Nouvelle fermeture</h1>';
+        $return .= '<a href="' . ROOT_PATH . 'hr/hr_jours_fermeture.php" class="admin-back"><i class="fa fa-arrow-circle-o-left"></i>Retour calendrier des fermetures</a>';
+
 
         $return .= '<div class="row">';
         $return .= '<div class="col-md-6">';
@@ -2954,7 +2973,7 @@ class Fonctions
         $return .= '</form>';
         $return .= '</div>';
 
-        if($_SESSION['config']['fermeture_par_groupe']) {
+        if ($config->canFermetureParGroupe()) {
             /********************/
             /* Choix Groupe     */
             /********************/
@@ -2987,7 +3006,7 @@ class Fonctions
 
         $tab_periodes_fermeture = array();
         \hr\Fonctions::get_tableau_periodes_fermeture($tab_periodes_fermeture);
-        if(count($tab_periodes_fermeture)!=0) {
+        if (count($tab_periodes_fermeture)!=0) {
             $return .= '<table class="table">';
             $return .= '<thead>';
             $return .= '<tr>';
@@ -3001,7 +3020,7 @@ class Fonctions
                 $groupe_id =($tab_periode['groupe_id']);
                 $groupe_name =($tab_periode['groupe_name']);
 
-                if($groupe_id==0) {
+                if ($groupe_id==0) {
                     $groupe_name = 'Tous';
                 } else {
                     $groupe_name = $groupe_name;
@@ -3019,14 +3038,12 @@ class Fonctions
             $return .= '</table>';
         }
         $return .= '</div>';
-        $return .= '<hr>';
-        $return .= '<a class="btn" href="'.ROOT_PATH.'/hr/hr_index.php">' . _('form_cancel') . '</a>';
         return $return;
     }
 
     /**
      * Encapsule le comportement du module de jours de fermeture
-          *
+     *
      * @return void
      * @access public
      * @static
@@ -3041,7 +3058,6 @@ class Fonctions
         /*************************************/
         // recup des parametres reçus :
         // SERVER
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         // GET / POST
         $choix_action         = getpost_variable('choix_action');
         $year                 = getpost_variable('year', 0);
@@ -3055,22 +3071,22 @@ class Fonctions
         $code_erreur          = getpost_variable('code_erreur', 0);
 
         // si les dates de début ou de fin ne sont pas passé par get/post alors date du jour.
-        if($new_date_debut=="") {
-            if($year==0) {
+        if ($new_date_debut=="") {
+            if ($year==0) {
                 $new_date_debut=date("d/m/Y") ;
             } else {
                 $new_date_debut=date("d/m/Y", mktime(0,0,0, date("m"), date("d"), $year) ) ;
             }
         }
-        if($new_date_fin=="") {
-            if($year==0) {
+        if ($new_date_fin=="") {
+            if ($year==0) {
                 $new_date_fin=date("d/m/Y") ;
             } else {
                 $new_date_fin=date("d/m/Y", mktime(0,0,0, date("m"), date("d"), $year) ) ;
             }
         }
 
-        if($year ==0) {
+        if ($year ==0) {
             $year= date("Y");
         }
 
@@ -3092,54 +3108,23 @@ class Fonctions
 
         $onglet = htmlentities(getpost_variable('onglet'), ENT_QUOTES | ENT_HTML401);
 
-        if(!$onglet) {
-            $onglet = 'saisie';
+        if (!$onglet) {
+            $onglet = 'calendar';
         }
 
-        $onglets = array();
-        $onglets['saisie']   = _('admin_jours_fermeture_titre') . " " . "<span class=\"current-year\">$year</span>";
-        $onglets['calendar'] = 'Calendrier des fermetures' . " " . "<span class=\"current-year\">$year</span>";
-        $onglets['year_nav'] = NULL;
-
         //initialisation de l'action par défaut
-        if($choix_action=="") {
+        if ($choix_action=="") {
             $choix_action="saisie_groupe";
         }
 
-        /*********************************/
-        /*   COMPOSITION DU HEADER...    */
-        /*********************************/
-
-        $add_css = '<style>#onglet_menu .onglet{ width: '. (str_replace(',', '.', 100 / count($onglets) )).'% ;}</style>';
-
         /***********************************/
         // AFFICHAGE DE LA PAGE
-        header_menu('', 'Libertempo : '._('divers_fermeture'), $add_css);
+        header_menu('', 'Libertempo : '._('divers_fermeture'));
 
-        /*********************************/
-        /*   AFFICHAGE DES ONGLETS...  */
-        /*********************************/
-        $return .= '<div id="onglet_menu">';
-        foreach($onglets as $key => $title) {
-            if($key == 'year_nav') {
-                // navigation
-                $prev_link = "$PHP_SELF?onglet=$onglet&year=". ($year - 1) . "&groupe_id=$groupe_id";
-                $next_link = "$PHP_SELF?onglet=$onglet&year=". ($year + 1) . "&groupe_id=$groupe_id";
-                $return .= '<div class="onglet calendar-nav">';
-                $return .= '<ul>';
-                $return .= '<li><a href="' . $prev_link . '" class="calendar-prev"><i class="fa fa-chevron-left"></i><span>année précédente</span></a></li>';
-                $return .= '<li class="current-year">' . $year . '</li>';
-                $return .= '<li><a href="' . $next_link . '" class="calendar-next"><i class="fa fa-chevron-right"></i><span>année suivante</span></a></li>';
-                $return .= '</ul>';
-                $return .= '</div>';
-            } else {
-                $return .= '<div class="onglet ' . ($onglet == $key ? ' active' : '') . '" ><a href="' . $PHP_SELF . '?year=' . $year . '&onglet=' . $key . '">' . $title . '</a></div>';
-            }
-        }
-        $return .= '</div>';
+        $return .= '<div class="main-content">';
 
         // vérifie si les jours fériés sont saisie pour l'année en cours
-        if( (verif_jours_feries_saisis($date_debut_yyyy_mm_dd)==FALSE) && (verif_jours_feries_saisis($date_fin_yyyy_mm_dd)==FALSE) ) {
+        if ( (verif_jours_feries_saisis($date_debut_yyyy_mm_dd)==FALSE) && (verif_jours_feries_saisis($date_fin_yyyy_mm_dd)==FALSE) ) {
                 $code_erreur=1 ;  // code erreur : jour feriés non saisis
                 $onglet="calendar";
         }
@@ -3147,159 +3132,86 @@ class Fonctions
         //initialisation de l'action demandée : saisie_dates, commit_new_fermeture pour enregistrer une fermeture, annul_fermeture pour confirmer une annulation, commit_annul_fermeture pour annuler une fermeture
 
         //en cas de confirmation d'une fermeture :
-        if($choix_action == "commit_new_fermeture") {
+        if ($choix_action == "commit_new_fermeture") {
             // on verifie que $new_date_debut est anterieure a $new_date_fin
-            if($timestamp_date_debut > $timestamp_date_fin) {
+            if ($timestamp_date_debut > $timestamp_date_fin) {
                 $code_erreur=2 ;  // code erreur : $new_date_debut est posterieure a $new_date_fin
                 $choix_action="saisie_dates";
             }
             // on verifie que ce ne sont pas des dates passées
-            elseif($timestamp_date_debut < $timestamp_today) {
+            elseif ($timestamp_date_debut < $timestamp_today) {
                 $code_erreur=3 ;  // code erreur : saisie de date passée
                 $choix_action="saisie_dates";
             }
             // on ne verifie QUE si date_debut ou date_fin sont !=  d'aujourd'hui
             // (car aujourd'hui est la valeur par dédaut des dates, et on ne peut saisir aujourd'hui puisque c'est fermé !)
-            elseif( ($timestamp_date_debut==$timestamp_today) || ($timestamp_date_fin==$timestamp_today) ) {
+            elseif ( ($timestamp_date_debut==$timestamp_today) || ($timestamp_date_fin==$timestamp_today) ) {
                 $code_erreur=4 ;  // code erreur : saisie de aujourd'hui
                 $choix_action="saisie_dates";
             } else {
                 // fabrication et initialisation du tableau des demi-jours de la date_debut à la date_fin
                 $tab_periode_calcul = make_tab_demi_jours_periode($date_debut_yyyy_mm_dd, $date_fin_yyyy_mm_dd, "am", "pm");
                 // on verifie si la periode saisie ne chevauche pas une periode existante
-                if(\hr\Fonctions::verif_periode_chevauche_periode_groupe($date_debut_yyyy_mm_dd, $date_fin_yyyy_mm_dd, '', $tab_periode_calcul, $groupe_id) ) {
+                if (\hr\Fonctions::verif_periode_chevauche_periode_groupe($date_debut_yyyy_mm_dd, $date_fin_yyyy_mm_dd, '', $tab_periode_calcul, $groupe_id) ) {
                     $code_erreur=5 ;  // code erreur : fermeture chevauche une periode deja saisie
                     $choix_action="saisie_dates";
                 }
             }
         }
 
-        if($onglet == 'calendar') {
+        if ($onglet == 'calendar') {
             // les jours fériés de l'annee de la periode saisie ne sont pas enregistrés
-            if($code_erreur==1) {
+            if ($code_erreur==1) {
                 $return .= '<div class="alert alert-danger">' . _('admin_jours_fermeture_annee_non_saisie') . '</div>';
             }
 
                    /************************************************/
             // CALENDRIER DES FERMETURES
             $return .= \hr\Fonctions::affiche_calendrier_fermeture($year);
-        } elseif($choix_action=="saisie_dates") {
-            if($groupe_id=="") { // choix du groupe n'a pas été fait ($_SESSION['config']['fermeture_par_groupe']==FALSE)
+        } elseif ($choix_action=="saisie_dates") {
+            if ($groupe_id=="") {
                 $groupe_id=0;
             }
 
             // $new_date_debut est anterieure a $new_date_fin
-            if($code_erreur==2) {
+            if ($code_erreur==2) {
                 $return .= '<div class="alert alert-danger">' . _('admin_jours_fermeture_dates_incompatibles') . '</div>';
             }
 
             // ce ne sont des dates passées
-            if($code_erreur==3) {
+            if ($code_erreur==3) {
                 $return .= '<div class="alert alert-danger">' . _('admin_jours_fermeture_date_passee_error') . '</div>';
             }
 
             // fermeture le jour même impossible
-            if($code_erreur==4) {
+            if ($code_erreur==4) {
                 $return .= '<div class="alert alert-danger">' . _('admin_jours_fermeture_fermeture_aujourd_hui') . '</div>';
             }
 
             // la periode saisie chevauche une periode existante
-            if($code_erreur==5) {
+            if ($code_erreur==5) {
                 $return .= '<div class="alert alert-danger">' . _('admin_jours_fermeture_chevauche_periode') . '</div>';
             }
 
             $return .= '<div class="wrapper">';
-            $return .= '<a href="' . ROOT_PATH . 'hr/hr_index.php" class="admin-back"><i class="fa fa-arrow-circle-o-left"></i>Retour mode rh</a>';
-            if($onglet == 'saisie') {
+            if ($onglet == 'saisie') {
                 $return .= \hr\Fonctions::saisie_dates_fermeture($year, $groupe_id, $new_date_debut, $new_date_fin, $code_erreur);
             }
-        } elseif($choix_action=="saisie_groupe") {
+        } elseif ($choix_action=="saisie_groupe") {
             $return .= '<div class="wrapper">';
-            $return .= '<a href="' . ROOT_PATH . 'hr/hr_index.php" class="admin-back"><i class="fa fa-arrow-circle-o-left"></i>Retour mode rh</a>';
             $return .= \hr\Fonctions::saisie_groupe_fermeture();
             $return .= '</div>';
-        } elseif($choix_action=="commit_new_fermeture") {
+        } elseif ($choix_action=="commit_new_fermeture") {
             $return .= $title;
             $return .= \hr\Fonctions::commit_new_fermeture($new_date_debut, $new_date_fin, $groupe_id, $id_type_conges);
-        } elseif($choix_action=="annul_fermeture") {
+        } elseif ($choix_action=="annul_fermeture") {
             $return .= $title;
             $return .= \hr\Fonctions::confirm_annul_fermeture($fermeture_id, $groupe_id, $fermeture_date_debut, $fermeture_date_fin);
-        } elseif($choix_action=="commit_annul_fermeture") {
+        } elseif ($choix_action=="commit_annul_fermeture") {
             $return .= $title;
             $return .= \hr\Fonctions::commit_annul_fermeture($fermeture_id, $groupe_id);
         }
-        return $return;
-    }
-
-    /**
-     * Encapsule le comportement du module de liste des plannings
-     *
-     * @return string
-     * @TODO trouver dans quelle condition un planning ne pourrait pas être modifié
-     */
-    public static function getListePlanningModule()
-    {
-        $message   = '';
-        $errorsLst = [];
-        $notice    = '';
-        if (!empty($_POST)) {
-            if (0 >= (int) \App\ProtoControllers\HautResponsable\Planning::postPlanning($_POST, $errorsLst, $notice)) {
-                $errors = '';
-                if (!empty($errorsLst)) {
-                    foreach ($errorsLst as $value) {
-                        $errors .= '<li>' . $value . '</li>';
-                    }
-                    $message = '<div class="alert alert-danger">' . _('erreur_recommencer') . ' :<ul>' . $errors . '</ul></div>';
-                }
-            } elseif ('DELETE' === $_POST['_METHOD'] && !empty($notice)) {
-                log_action(0, '', '', 'Suppression du planning ' . $_POST['planning_id']);
-                $message = '<form action="" method="post" accept-charset="UTF-8"
-enctype="application/x-www-form-urlencoded"><input type="hidden" name="planning_id" value="' . $_POST['planning_id'] . '" /><input type="hidden" name="status" value="' . \App\Models\Planning::STATUS_ACTIVE . '" /><input type="hidden" name="_METHOD" value="PATCH" /><div class="alert alert-info">' .  $notice . '. <button type="submit" class="btn btn-link alert-link">' . _('Annuler') . '</button></div></form>';
-            } else {
-                log_action(0, '', '', 'Récupération du planning ' . $_POST['planning_id']);
-                redirect(ROOT_PATH . 'hr/hr_index.php?onglet=liste_planning', false);
-            }
-        }
-
-        /* Préparation et requêtage */
-        $listPlanningId = \App\ProtoControllers\HautResponsable\Planning::getListPlanningId();
-
-        $return = '';
-        $return .= '<a href="' . ROOT_PATH . 'hr/hr_index.php?onglet=ajout_planning" style="float:right" class="btn btn-success">' . _('hr_ajout_planning') . '</a>';
-        $return .= '<h1>' . _('hr_affichage_liste_planning_titre') . '</h1>';
-        $return .= $message;
-        $table = new \App\Libraries\Structure\Table();
-        $table->addClasses([
-            'table',
-            'table-hover',
-            'table-responsive',
-            'table-condensed',
-            'table-striped',
-        ]);
-        $childTable = '<thead><tr><th>' . _('divers_nom_maj_1') . '</th><th style="width:10%"></th></tr></thead><tbody>';
-        if (empty($listPlanningId)) {
-            $childTable .= '<tr><td colspan="2"><center>' . _('aucun_resultat') . '</center></td></tr>';
-        } else {
-            $listIdUsed   = \App\ProtoControllers\HautResponsable\Planning::getListPlanningUsed($listPlanningId);
-            $listPlanning = \App\ProtoControllers\HautResponsable\Planning::getListPlanning($listPlanningId);
-            foreach ($listPlanning as $planning) {
-                $childTable .= '<tr><td>' . $planning['name'] . '</td>';
-                $childTable .= '<td><form action="" method="post" accept-charset="UTF-8"
-enctype="application/x-www-form-urlencoded"><a  title="' . _('form_modif') . '" href="hr_index.php?onglet=modif_planning&id=' . $planning['planning_id'] .
-                '"><i class="fa fa-pencil"></i></a>&nbsp;&nbsp;';
-                if (in_array($planning['planning_id'], $listIdUsed)) {
-                    $childTable .= '<button title="' . _('planning_used') . '" type="button" class="btn btn-link disabled"><i class="fa fa-times-circle"></i></button>';
-                } else {
-                    $childTable .= '<input type="hidden" name="planning_id" value="' . $planning['planning_id'] . '" /><input type="hidden" name="_METHOD" value="DELETE" /><button type="submit" class="btn btn-link" title="' . _('form_supprim') . '"><i class="fa fa-times-circle"></i></button>';
-                }
-                $childTable .= '</form></td></tr>';
-            }
-        }
-        $childTable .= '</tbody>';
-        $table->addChild($childTable);
-        ob_start();
-        $table->render();
-        $return .= ob_get_clean();
+        $return .= '</div>';
 
         return $return;
     }
@@ -3410,6 +3322,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
      */
     private static function getFormPlanningTable($typeSemaine, $idPlanning, array $postPlanning)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         /* Recupération des créneaux (postés ou existants) pour le JS */
         $creneauxGroupes = \App\ProtoControllers\HautResponsable\Planning\Creneau::getCreneauxGroupes($postPlanning, $idPlanning, $typeSemaine);
 
@@ -3421,10 +3334,10 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             4 => _('Jeudi'),
             5 => _('Vendredi'),
         ];
-        if (false !== $_SESSION['config']['samedi_travail']) {
+        if ($config->isSamediOuvrable()) {
             $jours[6] = _('Samedi');
         }
-        if (false !== $_SESSION['config']['dimanche_travail']) {
+        if ($config->isDimancheOuvrable()) {
             $jours[7] = _('Dimanche');
         }
         $table = new \App\Libraries\Structure\Table();
@@ -3493,6 +3406,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
      */
     private static function getFormPlanningEmployes($idPlanning)
     {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $idPlanning = (int) $idPlanning;
         $return = '';
         $utilisateursAssocies = \App\ProtoControllers\HautResponsable\Planning::getListeUtilisateursAssocies($idPlanning);
