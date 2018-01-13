@@ -41,8 +41,6 @@ class ApiClient extends \Tests\Units\TestUnit
 
         switch ($testMethod) {
             case 'testConstructWithCurl':
-            case 'testConstructWithoutCurlWithFopen':
-            case 'testConstructWithoutCurlWithoutFopen':
                 break;
 
             default:
@@ -65,27 +63,11 @@ class ApiClient extends \Tests\Units\TestUnit
     }
 
     /**
-     * Test de la construction quand l'extension curl n'est pas chargée
-     * mais que la directive sur fopen est activée
-     */
-    public function testConstructWithoutCurlWithFopen()
-    {
-        $this->function->extension_loaded = false;
-        $this->function->ini_set = true;
-
-        $api = new _ApiClient($this->client);
-
-        $this->object($api)->isInstanceOf('\App\Libraries\ApiClient');
-    }
-
-    /**
      * Test de la construction quand ni l'extension curl n'est chargée
-     * ni la directive est activée
      */
-    public function testConstructWithoutCurlWithoutFopen()
+    public function testConstructWithoutCurl()
     {
         $this->function->extension_loaded = false;
-        $this->function->ini_set = false;
 
         $this->exception(function () {
             new _ApiClient($this->client);
