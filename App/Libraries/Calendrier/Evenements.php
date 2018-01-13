@@ -158,17 +158,8 @@ class Evenements
         return 'weekend' === $nomEvenement;
     }
 
-    /**
-     * @TODO: utile ?
-     */
-    public function getEmploye($idEmploye)
-    {
-        $this->verificationExistenceEmploye($idEmploye);
-    }
-
     public function getEvenementsDate($idEmploye, $date)
     {
-        $this->verificationExistenceEmploye($idEmploye);
         if (!isset($this->evenements[$idEmploye]['dates'][$date])) {
             return [];
         }
@@ -178,19 +169,11 @@ class Evenements
 
     public function getTitleDate($idEmploye, $date)
     {
-        $this->verificationExistenceEmploye($idEmploye);
         if (!isset($this->evenements[$idEmploye]['dates'][$date])) {
             return [];
         }
 
         return $this->evenements[$idEmploye]['dates'][$date]['title'];
 
-    }
-
-    private function verificationExistenceEmploye($idEmploye)
-    {
-        if (!isset($this->evenements[$idEmploye])) {
-            throw new \DomainException('Employé inconnu');
-        }
     }
 }
