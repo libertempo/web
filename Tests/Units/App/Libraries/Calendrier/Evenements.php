@@ -30,17 +30,6 @@ class Evenements extends \Tests\Units\TestUnit
         $this->calling($this->injectableCreator)->get = $this->evenement;
     }
 
-    public function testGetEvenementsDateEmployeInconnu()
-    {
-        $this->calling($this->evenement)->getListe = [];
-        $calendrier = new _Evenements($this->injectableCreator);
-        $calendrier->fetchEvenements($this->dateDebut, $this->dateFin, $this->employes, false, false);
-
-        $this->exception(function () use ($calendrier) {
-            $calendrier->getEvenementsDate('PetitLapin', '0000-00-00');
-        })->isInstanceOf('\DomainException');
-    }
-
     public function testGetEvenementsDateDateInconnue()
     {
         $this->calling($this->evenement)->getListe = ['2017-02-12'];
