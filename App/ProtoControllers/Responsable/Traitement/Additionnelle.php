@@ -191,86 +191,6 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
         return $sql->affected_rows;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getForm()
-    {
-        $return     = '';
-        $notice = '';
-        $errorsLst  = [];
-        $i = true;
-
-        $return .= '<h1>' . _('traitement_heure_additionnelle_titre') . '</h1>';
-
-        if (!empty($_POST)) {
-            if (0 >= (int) $this->post($_POST, $notice, $errorsLst)) {
-                $errors = '';
-                if (!empty($errorsLst)) {
-                    foreach ($errorsLst as $key => $value) {
-                        if (is_array($value)) {
-                            $value = implode(' / ', $value);
-                        }
-                        $errors .= '<li>' . $key . ' : ' . $value . '</li>';
-                    }
-                    $return .= '<br><div class="alert alert-danger">' . _('erreur_recommencer') . '<ul>' . $errors . '</ul></div>';
-                } elseif (!empty($notice)) {
-                    $return .= '<br><div class="alert alert-info">' .  $notice . '.</div>';
-
-                }
-            }
-        }
-
-        $return .= '<form action="" method="post" class="form-group">';
-        $table = new \App\Libraries\Structure\Table();
-        $table->addClasses([
-            'table',
-            'table-hover',
-            'table-responsive',
-            'table-striped',
-            'table-condensed'
-        ]);
-        $childTable = '<thead><tr><th>' . _('divers_nom_maj_1') . '<br>' . _('divers_prenom_maj_1') . '</th>';
-        $childTable .= '<th>' . _('jour') . '</th>';
-        $childTable .= '<th>' . _('divers_debut_maj_1') . '</th>';
-        $childTable .= '<th>' . _('divers_fin_maj_1') . '</th>';
-        $childTable .= '<th>' . _('duree') . '</th>';
-        $childTable .= '<th>' . _('divers_solde') . '</th>';
-        $childTable .= '<th>' . _('divers_comment_maj_1') . '</th>';
-        $childTable .= '<th>' . _('divers_accepter_maj_1') . '</th><th>' . _('divers_refuser_maj_1') . '</th><th>' . _('resp_traite_demandes_attente') . '</th><th></th>';
-        $childTable .= '<th>' . _('resp_traite_demandes_motif_refus') . '</th>';
-        $childTable .= '</tr></thead><tbody>';
-
-        $demandesResp = $this->getDemandesResponsable($_SESSION['userlogin']);
-        $demandesGrandResp = $this->getDemandesGrandResponsable($_SESSION['userlogin']);
-        if (empty($demandesResp) && empty($demandesGrandResp) ) {
-            $childTable .= '<tr><td colspan="11"><center>' . _('aucune_demande') . '</center></td></tr>';
-        } else {
-            if (!empty($demandesResp)) {
-                $childTable .= $this->getFormDemandes($demandesResp);
-            }
-            if (!empty($demandesGrandResp)) {
-                $childTable .='<tr align="center"><td class="histo" style="background-color: #CCC;" colspan="11"><i>'._('resp_etat_users_titre_double_valid').'</i></td></tr>';
-                $childTable .= $this->getFormDemandes($demandesGrandResp);
-
-            }
-        }
-
-        $childTable .= '</tbody>';
-
-        $table->addChild($childTable);
-        ob_start();
-        $table->render();
-        $return .= ob_get_clean();
-        if (!empty($demandesResp) || !empty($demandesGrandResp) ) {
-            $return .= '<div class="form-group"><input type="submit" class="btn btn-success" value="' . _('form_submit') . '" /></div>';
-        }
-        $return .='</form>';
-
-        return $return;
-    }
-
-
      /**
       * {@inheritDoc}
       */
@@ -284,7 +204,7 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
         $usersRespDirect = \App\ProtoControllers\Responsable::getUsersRespDirect($resp);
         $usersResp = array_merge($usersResp,$usersRespDirect);
         $usersResp = array_diff($usersResp,[$_SESSION['userlogin']]);
-        
+
         if (empty($usersResp)) {
             return [];
         }
