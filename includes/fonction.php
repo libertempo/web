@@ -57,6 +57,7 @@ function header_popup($title = '' , $additional_head = '' ) {
     if (empty($title))
         $title = 'Libertempo';
 
+    include ROOT_PATH .'version.php';
     include_once TEMPLATE_PATH . 'popup_header.php';
 }
 
@@ -74,11 +75,13 @@ function header_error($title = '' , $additional_head = '' ) {
     if (empty($title))
         $title = 'Libertempo';
 
+    include ROOT_PATH .'version.php';
     include_once TEMPLATE_PATH . 'error_header.php';
 }
 
 function header_login($title = '' , $additional_head = '' ) {
     global $type_bottom;
+    require_once ROOT_PATH . 'version.php';
 
     static $last_use = '';
     if ($last_use == '') {
@@ -108,6 +111,7 @@ function header_menu( $info ,$title = '' , $additional_head = '' ) {
     if (empty($title))
         $title = 'Libertempo';
 
+    include ROOT_PATH .'version.php';
     include_once TEMPLATE_PATH . 'menu_header.php';
 }
 
