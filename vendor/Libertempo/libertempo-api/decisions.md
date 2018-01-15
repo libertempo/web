@@ -1,3 +1,15 @@
+## 2017-09-12
+
+* Je renomme les modèles du design MVC en *entités*. Dans un contexte métier, la couche métier ne se résume pas à une seule classe et je ne veux pas perdre le lecteur en créant la confusion dans sa tête si une classe porte ce nom.
+
+~ Prytoegrian
+
+
+## 2017-09-24
+
+* Afin de suivre complètement Psr4, j'ai donné un préfixe au namespace global. Dans un contexte d'import, ça permet de bien séparer les packages. Ce faisant, \App devient inutile, je remonte donc tout d'un niveau
+
+~ Prytoegrian
 
 ## 2016-10-29
 

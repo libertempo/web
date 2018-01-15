@@ -136,12 +136,21 @@ final class ApiClient
             throw new \LogicException('Erreur client : '. $this->formatError($e));
         }
 
-        $body = json_decode($response->getBody(), false);
-        if (null === $body) {
+        $body = $response->getBody();
+        if (empty((string) $body)) {
+            $emptyClass = new \stdClass();
+            $emptyClass->code = $response->getStatusCode();
+            $emptyClass->message = $response->getReasonPhrase();
+            $emptyClass->status = 'success';
+            $emptyClass->data = [];
+            return $emptyClass;
+        }
+        $jsonBody = json_decode($body, false);
+        if (null === $jsonBody) {
             throw new \RuntimeException('La réponse n\'est pas du JSON');
         }
 
-        return $body;
+        return $jsonBody;
     }
 
     /**

@@ -18,7 +18,7 @@
     },
     "autoload": {
         "psr-4": {
-            "": "."
+            "LibertAPI\\": "."
         }
     },
     "license": "AGPL-3.0",
@@ -28,7 +28,8 @@
     },
     "require": {
         "raveren/kint": "^1.0",
-        "slim/slim": "^3.5"
+        "slim/slim": "^3.5",
+        "doctrine/dbal": "2.5"
     },
     "require-dev": {
         "atoum/atoum": "3.0.0"

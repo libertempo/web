@@ -3,5 +3,12 @@ php:
   - '5.6'
   - '7.0'
 notifications:
-  irc: "irc.tuxfamily.org#Libertempo"
+  email:
+    on_success: never # default: change
+    on_failure: always # default: always
+  irc:
+    channel:
+      - "irc.tuxfamily.org#Libertempo"
+    on_success: never # default: change
+    on_failure: always # default: always
 script: Vendor/Bin/atoum
