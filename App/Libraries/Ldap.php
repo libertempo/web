@@ -32,16 +32,18 @@ class Ldap
             $config_ldap_pass = null;
         }
 
-        $bound = ldap_bind($this->ldapConn, $config_ldap_user, $config_ldap_pass);
+        if (!ldap_bind($this->ldapConn, $config_ldap_user, $config_ldap_pass)) {
+          throw new \Exception(_('Erreur ldap'));
+        }
     }
 
     public function searchLdap($search)
     {
-        $nom = htmlentities($search, ENT_QUOTES | ENT_HTML401);;
+        $nom = htmlentities($search, ENT_QUOTES | ENT_HTML401);
         return json_encode($this->getInfosUser($nom));
     }
 
-    public function getInfosUser($nom)
+    private function getInfosUser($nom)
     {
         include CONFIG_PATH . 'config_ldap.php';
         $data = [];

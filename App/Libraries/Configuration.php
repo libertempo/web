@@ -469,7 +469,7 @@ class Configuration {
      * @return mixed
      * @throws \Exception Si la configuration n'existe pas
      */
-    public function getValeur($nom, $groupe) {
+    private function getValeur($nom, $groupe) {
         if (!isset($this->data[$groupe]) || !isset($this->data[$groupe][$nom])) {
             throw new \Exception('Donnée de configuration inexistante');
         }
