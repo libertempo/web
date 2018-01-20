@@ -659,8 +659,9 @@ td.calendrier-jour.fermeture {
     background: #CEB6FF;
 }
 
-td.calendrier-jour.horsMois {
+th.horsMois {
     background: #CCC;
+    color: white;
 }
 
 td.calendrier-jour.conge_all.conge_ok {

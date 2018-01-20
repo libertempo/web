@@ -28,11 +28,6 @@ function getUrlMois(\DateTimeInterface $date, $idGroupe)
 
 function getClassesJour(\App\Libraries\Calendrier\Evenements $evenements, $nom, $jour, \DateTimeInterface $moisDemande)
 {
-    $moisJour = date('m', strtotime($jour));
-    if ($moisDemande->format('m') !== $moisJour) {
-        return 'horsMois';
-    }
-
     return implode(' ', $evenements->getEvenementsDate($nom, $jour));
 }
 

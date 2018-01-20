@@ -31,10 +31,13 @@ require_once VIEW_PATH . 'Calendrier.php';
             <?php foreach ($week as $day) : ?>
             <?php
             $today = ($day->isCurrent()) ? 'today' : '';
+            $horsMois = ($day->getBegin()->format('m') != $mois->format('m')) ? 'horsMois' : '';
             $jourString = $day->getBegin()->format('Y-m-d');
             $jours[] = $jourString;
             ?>
-            <th class="<?= $today ?>"><?= $day->getBegin()->format('d') ?></th>
+            <th class="<?= $today  . ' ' . $horsMois ?>">
+                <?= $day->getBegin()->format('d') ?>
+            </th>
             <?php endforeach ?>
             <?php endforeach ?>
         </tr>
