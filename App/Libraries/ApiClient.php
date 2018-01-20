@@ -27,7 +27,7 @@ final class ApiClient
     public function __construct(ClientInterface $client)
     {
         if (!extension_loaded('curl')) {
-            throw new \RuntimeException('cURL or allow_url_fopen are required');
+            throw new \RuntimeException('cURL is required');
         }
         $this->client = $client;
     }
