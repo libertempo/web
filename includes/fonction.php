@@ -178,18 +178,12 @@ function disable_plugin($plugin){
 //
 function session_is_valid()
 {
-    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
-   // ATTENTION:  on fixe l'id de session comme nom de session pour que , sur un meme pc, on puisse se loguer sous 2 users à la fois
-   if (session_id() == "")
-   {
-      session_start();
-   }
+    if (session_id() == "") {
+        session_start();
+    }
 
-    if ((isset($_SESSION['timestamp_last'])) && (isset($_SESSION['config']))) {
-        $difference = time() - $_SESSION['timestamp_last'];
-
-        if ( ($difference < SESSION_DURATION) )
-            return true;
+    if (isset($_SESSION['timestamp_last']) && isset($_SESSION['config'])) {
+        return time() < $_SESSION['timestamp_last'];
     }
 
     return false;
@@ -209,7 +203,7 @@ function session_create($username)
         $_SESSION['userlogin']=$username;
         $maintenant=time();
         $_SESSION['timestamp_start']=$maintenant;
-        $_SESSION['timestamp_last']=$maintenant;
+        $_SESSION['timestamp_last']= $maintenant + SESSION_DURATION;
         if (function_exists('init_config_tab'))
             $_SESSION['config']=init_config_tab();      // on initialise le tableau des variables de config
 
@@ -229,10 +223,7 @@ function session_create($username)
 //
 function session_update($session)
 {
-   if ($session != "")
-   {
-        $_SESSION['timestamp_last'] = time();
-   }
+    $_SESSION['timestamp_last'] = time() + SESSION_DURATION;
 }
 
 //
