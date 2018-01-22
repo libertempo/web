@@ -15,11 +15,6 @@ class Ldap
     private $ldapConn;
 
     public function __construct() {
-        $this->initLdapConn();
-    }
-
-    private function initLdapConn()
-    {
         include CONFIG_PATH . 'config_ldap.php';
         $this->ldapConn = \ldap_connect($config_ldap_server);
         if ($config_ldap_protocol_version != 0) {
