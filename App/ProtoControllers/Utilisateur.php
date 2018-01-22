@@ -114,7 +114,7 @@ class Utilisateur
     }
 
     /**
-     * Retourne les informations d'un utilisateur
+     * Retourne les informations de tous les utilisateurs
      *
      * @param objet configuration
      *

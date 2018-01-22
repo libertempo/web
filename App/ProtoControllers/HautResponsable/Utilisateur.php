@@ -174,6 +174,7 @@ class Utilisateur
             'email' => '',
             'pwd1' => '',
             'pwd2' => '',
+            'groupesId' => [],
         ];
 
         if (NIL_INT !== $userId) {
@@ -285,8 +286,8 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             $childTable .= "<td><input class=\"form-control\" type=\"text\" name=\"new_email\" size=\"10\" maxlength=\"99\" value=\"".$formValue['email']."\"></td>" ;
         }
         if ($config->getHowToConnectUser() == "dbconges") {
-            $childTable .= "<td><input class=\"form-control\" type=\"password\" name=\"new_password1\" size=\"10\" maxlength=\"15\" value=\"\" autocomplete=\"off\" required></td>" ;
-            $childTable .= "<td><input class=\"form-control\" type=\"password\" name=\"new_password2\" size=\"10\" maxlength=\"15\" value=\"\" autocomplete=\"off\" required></td>" ;
+            $childTable .= "<td><input class=\"form-control\" type=\"password\" name=\"new_password1\" size=\"10\" maxlength=\"15\" value=\"\" autocomplete=\"off\"></td>" ;
+            $childTable .= "<td><input class=\"form-control\" type=\"password\" name=\"new_password2\" size=\"10\" maxlength=\"15\" value=\"\" autocomplete=\"off\"></td>" ;
         }
         $childTable .= '</tr></tbody>';
         $childTable .= '<script type="text/javascript">generateTimePicker("' . $soldeHeureId . '");</script>';
