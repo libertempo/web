@@ -38,7 +38,7 @@ Class Additionnelle extends \App\Libraries\ANotification {
     protected function getContenuDemande($data) {
 
         $return['sujet'] = "[CONGES] Demande d'heure additionnelle";
-        $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($data['login'])[$data['login']];
+        $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($data['login']);
 
         $return['expediteur']['mail'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($data['login']);
         $return['expediteur']['nom'] = $infoUser['u_nom']." ".$infoUser['u_prenom'];
@@ -60,7 +60,7 @@ Class Additionnelle extends \App\Libraries\ANotification {
 
         $return['sujet'] = "[CONGES] Première validation d'heure additionnelle";
         $return['expediteur']['mail'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($_SESSION['userlogin']);
-        $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($_SESSION['userlogin'])[$_SESSION['userlogin']];
+        $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($_SESSION['userlogin']);
         $return['expediteur']['nom'] = $infoUser['u_nom']." ".$infoUser['u_prenom'];
         $return['destinataire'][] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($data['login']);
 
@@ -77,7 +77,7 @@ Class Additionnelle extends \App\Libraries\ANotification {
 
         $return['sujet'] = "[CONGES] Demande d'heure additionnelle validée";
         $return['expediteur']['mail'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($_SESSION['userlogin']);
-        $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($_SESSION['userlogin'])[$_SESSION['userlogin']];
+        $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($_SESSION['userlogin']);
         $return['expediteur']['nom'] = $infoUser['u_nom']." ".$infoUser['u_prenom'];
         $return['destinataire'][] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($data['login']);
 
@@ -94,7 +94,7 @@ Class Additionnelle extends \App\Libraries\ANotification {
 
         $return['sujet'] = "[CONGES] Demande d'heure additionnelle refusée";
         $return['expediteur']['mail'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($_SESSION['userlogin']);
-        $infoResp = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($_SESSION['userlogin'])[$_SESSION['userlogin']];
+        $infoResp = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($_SESSION['userlogin']);
         $return['expediteur']['nom'] = $infoResp['u_nom']." ".$infoResp['u_prenom'];
         $return['destinataire'][] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($data['login']);
 
@@ -116,7 +116,7 @@ Class Additionnelle extends \App\Libraries\ANotification {
         $return['sujet'] = "[CONGES] Demande d'heure additionnelle annulée";
         $return['expediteur']['mail'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($data['login']);
         $responsables = \App\ProtoControllers\Responsable::getResponsablesUtilisateur($data['login']);
-        $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($data['login'])[$data['login']];
+        $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($data['login']);
         $return['expediteur']['nom'] = $infoUser['u_nom']." ".$infoUser['u_prenom'];
         foreach ($responsables as $responsable) {
             $return['destinataire'][] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($responsable);
@@ -135,8 +135,8 @@ Class Additionnelle extends \App\Libraries\ANotification {
         $return['sujet'] = "[CONGES] Demande d'heure additionnelle";
         $return['expediteur']['mail'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($_SESSION['userlogin']);
         $grandResponsables = \App\ProtoControllers\Responsable::getLoginGrandResponsableUtilisateur($data['login']);
-        $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($data['login'])[$data['login']];
-        $infoResp = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($_SESSION['userlogin'])[$_SESSION['userlogin']];
+        $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($data['login']);
+        $infoResp = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($_SESSION['userlogin']);
         $return['expediteur']['nom'] = $infoResp['u_nom']." ".$infoResp['u_prenom'];
         foreach ($grandResponsables as $responsable) {
             $return['destinataire'][] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($responsable);

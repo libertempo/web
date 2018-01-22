@@ -72,7 +72,7 @@ class Utilisateur
      */
     public static function isRH($utilisateur)
     {
-        $donneesUtilisateur = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($utilisateur)[$utilisateur];
+        $donneesUtilisateur = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($utilisateur);
 
         return (!empty($donneesUtilisateur))
             ? 'Y' === $donneesUtilisateur['u_is_hr']
@@ -89,7 +89,7 @@ class Utilisateur
      */
     public static function isAdmin($utilisateur)
     {
-        $donneesUtilisateur = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($utilisateur)[$utilisateur];
+        $donneesUtilisateur = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($utilisateur);
 
         return (!empty($donneesUtilisateur))
             ? 'Y' === $donneesUtilisateur['u_is_admin']
@@ -106,7 +106,7 @@ class Utilisateur
      */
     public static function isResponsable($utilisateur)
     {
-        $donneesUtilisateur = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($utilisateur)[$utilisateur];
+        $donneesUtilisateur = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($utilisateur);
 
         return (!empty($donneesUtilisateur))
             ? 'Y' === $donneesUtilisateur['u_is_resp']
@@ -116,42 +116,47 @@ class Utilisateur
     /**
      * Retourne les informations d'un utilisateur
      *
-     * @param string $login
+     * @param objet configuration
      *
      * @return string
      */
-    public static function getDonneesUtilisateur($login = NIL_INT)
+    public static function getDonneesTousUtilisateurs(\App\Libraries\Configuration $config)
     {
-        $utilisateurs = self::getDonneesUtilisateurs([$login]);
-        reset($utilisateurs);
-
-        return current($utilisateurs);
-    }
-
-    /**
-     * Retour les informations d'un tableau d'utilisateurs
-     *
-     * @param array $logins ['login1', 'login2']
-     *
-     * @return array
-     */
-    public static function getDonneesUtilisateurs(array $logins)
-    {
+        if ($config->isUsersExportFromLdap()) {
+            $ldap = new \App\Libraries\Ldap();
+        }
         $sql = \includes\SQL::singleton();
-        $escapedLogins = array_map([$sql, 'quote'], $logins);
-        $config = new \App\Libraries\Configuration($sql);
-        $donnees = [];
         $req = 'SELECT *
-                FROM conges_users
-                WHERE u_login IN ("' . implode('", "', $escapedLogins) . '")
-                ORDER BY u_nom, u_prenom';
+                FROM conges_users';
         $res = $sql->query($req);
         while ($data = $res->fetch_array()) {
             $donnees[$data['u_login']] = $data;
             if ($config->isUsersExportFromLdap()) {
-                $ldap = new \App\Libraries\Ldap();
                 $donnees[$data['u_login']]['u_email'] = $ldap->getEmailUser($data['u_login']);
             }
+        }
+        return $donnees;
+    }
+
+    /**
+     * Retourne les informations d'un utilisateur
+     *
+     * @param string $login
+     *
+     * @return string $donnees
+     */
+    public static function getDonneesUtilisateur($login)
+    {
+        $sql = \includes\SQL::singleton();
+        $config = new \App\Libraries\Configuration($sql);
+        $req = 'SELECT *
+                FROM conges_users
+                WHERE u_login = \''.  \includes\SQL::quote($login).'\'';
+        $res = $sql->query($req);
+        $donnees = $res->fetch_array();
+        if ($config->isUsersExportFromLdap()) {
+            $ldap = new \App\Libraries\Ldap();
+            $donnees['u_email'] = $ldap->getEmailUser($data['u_login']);
         }
         return $donnees;
     }

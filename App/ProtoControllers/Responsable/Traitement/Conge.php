@@ -20,7 +20,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
         foreach ($demandes as $demande) {
             $id = $demande['p_num'];
-            $infoUtilisateur = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($demande['p_login'])[$demande['p_login']];
+            $infoUtilisateur = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($demande['p_login']);
             $solde = \App\ProtoControllers\Utilisateur::getSoldeconge($demande['p_login'],$demande['p_type']);
             $debut = \App\Helpers\Formatter::dateIso2Fr($demande['p_date_deb']);
             $fin = \App\Helpers\Formatter::dateIso2Fr($demande['p_date_fin']);

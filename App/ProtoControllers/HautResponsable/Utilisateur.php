@@ -71,7 +71,7 @@ class Utilisateur
         $childTable .= '</thead>';
         $childTable .= '<tbody>';
 
-        $infoUsers = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur();
+        $infoUsers = \App\ProtoControllers\Utilisateur::getDonneesTousUtilisateurs($config);
         asort($infoUsers);
         uasort($infoUsers, ['self','sortParActif']);
         $i = true;
@@ -177,7 +177,7 @@ class Utilisateur
         ];
 
         if (NIL_INT !== $userId) {
-            $userInfo = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($userId)[$userId];
+            $userInfo = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($userId);
             $formValue = [
                 'login' => $userInfo['u_login'],
                 'nom' => $userInfo['u_nom'],
@@ -458,7 +458,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
      */
     public static function getFormDeleteUser($login)
     {
-        $donneesUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($login)[$login];
+        $donneesUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($login);
         $return   = '';
         $message   = '';
         $errorsLst = [];

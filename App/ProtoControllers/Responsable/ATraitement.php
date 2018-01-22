@@ -162,7 +162,7 @@ abstract class ATraitement
             $fin    = date('H\:i', $demande['fin']);
             $duree  = \App\Helpers\Formatter::timestamp2Duree($demande['duree']);
             $id = $demande['id_heure'];
-            $infoUtilisateur = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($demande['login'])[$demande['login']];
+            $infoUtilisateur = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($demande['login']);
             $solde = \App\Helpers\Formatter::timestamp2Duree($infoUtilisateur['u_heure_solde']);
             $Table .= '<tr class="'.($i?'i':'p').'">';
             $Table .= '<td><b>'.$infoUtilisateur['u_nom'].'</b><br>'.$infoUtilisateur['u_prenom'].'</td><td>'.$jour.'</td><td>'.$debut.'</td><td>'.$fin.'</td><td>'.$duree.'</td><td>'.$solde.'</td>';
