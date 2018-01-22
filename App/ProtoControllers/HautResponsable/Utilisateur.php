@@ -550,7 +550,8 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         if (!$config->isUsersExportFromLdap()) {
             $data['email'] = htmlentities($htmlPost['new_email'], ENT_QUOTES | ENT_HTML401);
         } else {
-            $ldap = new \App\Libraries\Ldap();
+            $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
+            $ldap = $injectableCreator->get(\App\Libraries\Ldap::class);
             $data['email'] = $ldap->getEmailUser($data['login']);
         }
 

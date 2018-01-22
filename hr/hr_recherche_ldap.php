@@ -10,6 +10,7 @@ if (!isset($_SESSION) || empty($_SESSION)) {
 $nom = $_GET['nom'];
 
 if (2 < strlen($nom)) {
-    $ldap = new \App\Libraries\Ldap();
+    $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
+    $ldap = $injectableCreator->get(\App\Libraries\Ldap::class);
     echo $ldap->searchLdap($nom);
 }

@@ -123,7 +123,8 @@ class Utilisateur
     public static function getDonneesTousUtilisateurs(\App\Libraries\Configuration $config)
     {
         if ($config->isUsersExportFromLdap()) {
-            $ldap = new \App\Libraries\Ldap();
+            $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
+            $ldap = $injectableCreator->get(\App\Libraries\Ldap::class);
         }
         $sql = \includes\SQL::singleton();
         $req = 'SELECT *
@@ -147,6 +148,10 @@ class Utilisateur
      */
     public static function getDonneesUtilisateur($login)
     {
+        if ($config->isUsersExportFromLdap()) {
+            $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
+            $ldap = $injectableCreator->get(\App\Libraries\Ldap::class);
+        }
         $sql = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($sql);
         $req = 'SELECT *
@@ -155,7 +160,6 @@ class Utilisateur
         $res = $sql->query($req);
         $donnees = $res->fetch_array();
         if ($config->isUsersExportFromLdap()) {
-            $ldap = new \App\Libraries\Ldap();
             $donnees['u_email'] = $ldap->getEmailUser($data['u_login']);
         }
         return $donnees;

@@ -60,7 +60,23 @@ class InjectableCreator
                     'base_uri' => $baseURIApi,
                 ]);
                 return new $classname($client);
-
+            case \App\Libraries\Ldap::class:
+                include CONFIG_PATH . 'config_ldap.php';
+                $confLdap = [
+                    'server' => $config_ldap_server,
+                    'version' => $config_ldap_protocol_version,
+                    'bindUser' => $config_ldap_user,
+                    'bindPassword' => $config_ldap_pass,
+                    'searchdn' => $config_searchdn,
+                    'attrPrenom' => $config_ldap_prenom,
+                    'attrNom' => $config_ldap_nom,
+                    'attrMail' => $config_ldap_mail,
+                    'attrLogin' => $config_ldap_login,
+                    'attrNomAff' => $config_ldap_nomaff,
+                    'attrFiltre' => $config_ldap_filtre,
+                    'filtre' => $config_ldap_filrech,
+                    ];
+                return new $classname($confLdap);
             default:
                 throw new \LogicException('Unknown « ' . $classname . ' »');
         }

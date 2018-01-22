@@ -13,21 +13,41 @@ namespace App\Libraries;
 class Ldap
 {
     private $ldapConn;
+    private $server;
+    private $version;
+    private $bindUser;
+    private $bindPassword;
+    private $searchdn;
+    private $attrPrenom;
+    private $attrNom;
+    private $attrMail;
+    private $attrLogin;
+    private $attrNomAff;
+    private $attrFiltre;
+    private $filtre;
 
-    public function __construct() {
-        include CONFIG_PATH . 'config_ldap.php';
-        $this->ldapConn = \ldap_connect($config_ldap_server);
-        if ($config_ldap_protocol_version != 0) {
-            ldap_set_option($this->ldapConn, LDAP_OPT_PROTOCOL_VERSION, $config_ldap_protocol_version);
+    public function __construct($confLdap) {
+        $this->server = $confLdap['server'];
+        $this->version = $confLdap['version'];
+        $this->bindUser = "" == $confLdap['bindUser'] ? null : $confLdap['bindUser'];
+        $this->bindPassword = "" == $confLdap['bindPassword'] ? null : $confLdap['bindPassword'];
+        $this->searchdn = $confLdap['server'];
+        $this->attrNom = $confLdap['attrNom'];
+        $this->attrPrenom = $confLdap['attrPrenom'];
+        $this->attrLogin = $confLdap['attrLogin'];
+        $this->attrNomAff = $confLdap['attrNomAff'];
+        $this->attrMail = $confLdap['attrMail'];
+        $this->attrFiltre = $confLdap['attrFiltre'];
+        $this->filtre = $confLdap['filtre'];
+
+        $this->ldapConn = \ldap_connect($this->server);
+
+        if ($this->version != 0) {
+            ldap_set_option($this->ldapConn, LDAP_OPT_PROTOCOL_VERSION, $this->version);
             ldap_set_option($this->ldapConn, LDAP_OPT_REFERRALS, 0);
         }
 
-        if ($config_ldap_user == "") {
-            $config_ldap_user = null;
-            $config_ldap_pass = null;
-        }
-
-        if (!ldap_bind($this->ldapConn, $config_ldap_user, $config_ldap_pass)) {
+        if (!ldap_bind($this->ldapConn, $this->bindUser, $this->bindPassword)) {
           throw new \Exception(_('Erreur ldap'));
         }
     }
@@ -40,22 +60,21 @@ class Ldap
 
     private function getInfosUser($nom)
     {
-        include CONFIG_PATH . 'config_ldap.php';
         $data = [];
-        $filter = "(&(" . $config_ldap_nomaff . "=" . $nom . "*)
-                    (" . $config_ldap_filtre . "=" . $config_ldap_filrech . "))";
+        $filter = "(&(" . $this->attrNomAff . "=" . $nom . "*)
+                    (" . $this->attrFiltre . "=" . $this->filtre . "))";
 
-        $attributs = [$config_ldap_login, $config_ldap_nom, $config_ldap_prenom];
+        $attributs = [$this->attrLogin, $this->attrNom, $this->attrPrenom];
         
-        $searchResult = ldap_search($this->ldapConn, $config_searchdn, $filter, $attributs, 0, 10);
+        $searchResult = ldap_search($this->ldapConn, $this->searchdn, $filter, $attributs, 0, 10);
         $entries = ldap_get_entries($this->ldapConn,$searchResult);
 
         if (0 < $entries['count']) {
             for ($i=0; $i<$entries["count"]; $i++) {
                 $data[] = [
-                    'login' => $entries[$i][$config_ldap_login][0],
-                    'nom' => $entries[$i][$config_ldap_nom][0],
-                    'prenom' => $entries[$i][$config_ldap_prenom][0],
+                    'login' => $entries[$i][$this->attrLogin][0],
+                    'nom' => $entries[$i][$this->attrNom][0],
+                    'prenom' => $entries[$i][$this->attrPrenom][0],
                     ];
             }
         }
@@ -64,18 +83,16 @@ class Ldap
 
     public function getEmailUser($login)
     {
-        include CONFIG_PATH . 'config_ldap.php';
+        $filter = "(&(" . $this->attrLogin . "=" . $login . ")
+                    (" . $this->attrFiltre . "=" . $this->filtre . "))";
 
-        $filter = "(&(" . $config_ldap_login . "=" . $login . ")
-                    (" . $config_ldap_filtre . "=" . $config_ldap_filrech . "))";
-
-        $attributs = [$config_ldap_login, $config_ldap_mail];
+        $attributs = [$this->attrLogin, $this->attrMail];
         
-        $searchResult = ldap_search($this->ldapConn, $config_searchdn, $filter, $attributs, 0, 10);
+        $searchResult = ldap_search($this->ldapConn, $this->searchdn, $filter, $attributs, 0, 10);
         $entries = ldap_get_entries($this->ldapConn,$searchResult);
 
         if (0 < $entries['count']) {
-            return $entries[0][$config_ldap_mail][0];
+            return $entries[0][$this->attrMail][0];
         }
 
         return "";
