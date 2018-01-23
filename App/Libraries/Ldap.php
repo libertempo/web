@@ -88,7 +88,7 @@ class Ldap
 
         $attributs = [$this->attrLogin, $this->attrMail];
         
-        $searchResult = ldap_search($this->ldapConn, $this->searchdn, $filter, $attributs, 0, 10);
+        $searchResult = ldap_search($this->ldapConn, $this->searchdn, $filter, $attributs, 0, 1);
         $entries = ldap_get_entries($this->ldapConn,$searchResult);
 
         if (0 < $entries['count']) {
