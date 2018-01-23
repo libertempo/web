@@ -246,14 +246,14 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
     protected function putValidationFinale($demandeId)
     {
         $demande = $this->getInfoDemandes(explode(" ", $demandeId))[$demandeId];
-        if (0 < $this->updateSoldeReliquatEmploye($demande['p_login'], $demande['p_nb_jours'], $demande['p_type'])) {
+        if (0 < $this->updateSoldeReliquatEmploye($demande['p_login'], $demande['p_date_deb'], $demande['p_nb_jours'], $demande['p_type'])) {
             return $this->updateStatutValidationFinale($demande['p_num']);
         } else {
             return NIL_INT;
         }
     }
 
-    protected function updateSoldeReliquatEmploye($user, $duree, $typeId)
+    protected function updateSoldeReliquatEmploye($user, $debut, $duree, $typeId)
     {
         if (!$this->isOptionReliquatActive()) {
             return $this->updateSoldeUser($user, $duree, $typeId);
@@ -266,7 +266,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
         $sql = \includes\SQL::singleton();
 
-        if ($this->isReliquatUtilisable(date("m-d"))) {
+        if ($this->isReliquatUtilisable($debut)) {
             $sql->getPdoObj()->begin_transaction();
             if ($SoldeReliquat>=$duree) {
                 $updateReliquat = $this->updateReliquatUser($user, $duree, $typeId);
@@ -606,19 +606,9 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
      * @param int $findemande date de fin de la demande
      * @return bool
      */
-    public function isReliquatUtilisable($findemande)
+    public function isReliquatUtilisable($debutDemande)
     {
-        $sql = \includes\SQL::singleton();
-        $req = 'SELECT conf_valeur
-                    FROM conges_config
-                    WHERE conf_nom = "jour_mois_limite_reliquats"';
-        $query = $sql->query($req);
-
-        $dlimite = $query->fetch_array()[0];
-        if ($dlimite == 0) {
-            return true;
-        }
-        return $findemande < $dlimite;
+        return $_SESSION['config']['date_limite_reliquats'] < $debutDemande;
     }
 
     /**
