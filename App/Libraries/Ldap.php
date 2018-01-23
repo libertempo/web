@@ -5,7 +5,7 @@ namespace App\Libraries;
  * gestion des requetes LDAP
  *
  * @since 1.11
- * @author Wouldsmina <wouldsmina@gmail.com.com>
+ * @author Wouldsmina <wouldsmina@gmail.com>
  * @see Tests\Units\App\Libraries\Ldap
  *
  * Peut être contacté par tout ceux qui requierent un acces LDAP
