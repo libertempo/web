@@ -17,7 +17,7 @@ $session='';
 if (session_id() == '' || !isset($_SESSION)) {
     redirect(ROOT_PATH . 'index.php');
 } else {
-    if(session_is_valid($session) )
+    if(session_is_valid())
     session_update($session);
     else {
         session_delete();
