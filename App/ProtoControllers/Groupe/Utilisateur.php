@@ -35,7 +35,10 @@ class Utilisateur {
 
         $users = [];
         while ($data = $res->fetch_array()) {
-            $users[] = $data['gu_login'];
+            $login = $data['gu_login'];
+            if(!in_array($login, $users)) {
+                $users[] = $login;
+            }
         }
 
         return $users;
