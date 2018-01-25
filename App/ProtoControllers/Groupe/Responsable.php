@@ -23,14 +23,17 @@ class Responsable {
     public static function getListResponsableByGroupeIds(array $groupeIds)
     {
         $sql = \includes\SQL::singleton();
-        $req = 'SELECT gr_login,gr_gid
+        $req = 'SELECT gr_login
                 FROM conges_groupe_resp
                 WHERE gr_gid IN (\'' . implode(',', $groupeIds) . '\')';
         $query = $sql->query($req);
 
         $respLogin = [];
         while ($data = $query->fetch_array()) {
-            $respLogin[$data['gr_gid']] = $data['gr_login'];
+            $login = $data['gr_login'];
+            if(!in_array($login, $respLogin)) {
+                $respLogin[] = $login;
+            }
         }
 
         return $respLogin;
