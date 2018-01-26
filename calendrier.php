@@ -63,6 +63,10 @@ if (!empty($_GET['groupe']) && NIL_INT != $_GET['groupe']) {
 }
 $utilisateursATrouver = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupesAVoir);
 
+// Ajout des responsables pour les afficher avant les membres des groupes concernés.
+$responsablesATrouver = \App\ProtoControllers\Groupe\Responsable::getListResponsableByGroupeIds($groupesAVoir);
+$utilisateursATrouver = array_merge($responsablesATrouver, $utilisateursATrouver);
+
 $employes = \App\ProtoControllers\Utilisateur::getDonneesUtilisateurs($utilisateursATrouver);
 foreach ($employes as $employe) {
     $employesATrouver[$employe['u_login']] = \App\ProtoControllers\Utilisateur::getNomComplet($employe['u_prenom'], $employe['u_nom'], true);
