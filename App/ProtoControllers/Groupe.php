@@ -146,7 +146,7 @@ class Groupe
         $req = 'SELECT EXISTS (
                     SELECT gr_gid
                     FROM conges_groupe_resp
-                    WHERE gr_gid IN (\'' . implode(',', $groupesId) . '\')
+                    WHERE gr_gid IN (' . implode(',', $groupesId) . ')
                         AND gr_login = "' . $sql->quote($resp) . '"
                 )';
         $query = $sql->query($req);
@@ -167,7 +167,7 @@ class Groupe
         $req = 'SELECT EXISTS (
                     SELECT ggr_gid
                     FROM conges_groupe_grd_resp
-                    WHERE ggr_gid IN (\'' . implode(',', $groupesId) . '\')
+                    WHERE ggr_gid IN (' . implode(',', $groupesId) . ')
                         AND ggr_login = "' . $sql->quote($resp) . '"
                 )';
         $query = $sql->query($req);
