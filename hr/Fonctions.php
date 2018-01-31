@@ -3302,8 +3302,11 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             'common'    => _('Semaines_identiques'),
             'notCommon' => _('Semaines_differenciees'),
         ];
-        $return .= '</div><script>new semaineDisplayer("' . $idSemaine . '", "' . \App\Models\Planning\Creneau::TYPE_SEMAINE_COMMUNE . '", ' . json_encode($typeSemaine) . ', ' . json_encode($text) . ').init()</script>';
-        $return .= '<h3>Employés associés</h3>';
+        $return .= '</div><script>var displayer = new semaineDisplayer("' . $idSemaine . '", "' . \App\Models\Planning\Creneau::TYPE_SEMAINE_COMMUNE . '", ' . json_encode($typeSemaine) . ', ' . json_encode($text) . ').init();';
+        if (\App\ProtoControllers\HautResponsable\Planning::hasEmployeAvecSorties($id)) {
+            $return .= 'console.log(displayer); displayer.readOnly();';
+        }
+        $return .= '</script><h3>Employés associés</h3>';
         $return .= self::getFormPlanningEmployes($id);
         $return .= '<br><input type="submit" class="btn btn-success" value="' . _('form_submit') . '" />';
         $return .='</form>';

@@ -122,11 +122,13 @@ class Planning extends \App\ProtoControllers\APlanning
     private static function setDependencies($idPlanning, array $put, array &$errors)
     {
         $idPlanning = (int) $idPlanning;
-        Planning\Creneau::deleteCreneauList($idPlanning);
-        if (!empty($put['creneaux'])) {
-            $idLastCreneau = Planning\Creneau::postCreneauxList($put['creneaux'], $idPlanning, $errors);
-            if (0 >= $idLastCreneau) {
-                return false;
+        if (!self::hasEmployeAvecSorties($idPlanning)) {
+            Planning\Creneau::deleteCreneauList($idPlanning);
+            if (!empty($put['creneaux'])) {
+                $idLastCreneau = Planning\Creneau::postCreneauxList($put['creneaux'], $idPlanning, $errors);
+                if (0 >= $idLastCreneau) {
+                    return false;
+                }
             }
         }
 
@@ -148,18 +150,27 @@ class Planning extends \App\ProtoControllers\APlanning
             return true;
         }
 
-        $subalternesSelectionnes = !empty($subalternesSansSortie)
-            ? array_intersect($put['utilisateurs'], $subalternesSansSortie)
-            : $put['utilisateurs'];
-
-        if (!empty($subalternesSelectionnes)) {
-            $hasSubalternesAffectes = \App\ProtoControllers\Utilisateur::putListAssociationPlanning($subalternesSelectionnes, $idPlanning);
+        if (!empty($put['utilisateurs'])) {
+            $hasSubalternesAffectes = \App\ProtoControllers\Utilisateur::putListAssociationPlanning($put['utilisateurs'], $idPlanning);
             if (!$hasSubalternesAffectes) {
                 return false;
             }
         }
 
         return true;
+    }
+
+    public static function hasEmployeAvecSorties($idPlanning)
+    {
+        $subalternesAvecPlanning = array_map(function (array $u) {
+            return $u['u_login'];
+        }, \App\ProtoControllers\Utilisateur::getListByPlanning($idPlanning));
+        foreach ($subalternesAvecPlanning as $u) {
+            if (\App\ProtoControllers\Utilisateur::hasSortiesEnCours($u)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
