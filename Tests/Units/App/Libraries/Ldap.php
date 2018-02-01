@@ -16,7 +16,7 @@ class Ldap extends \Tests\Units\TestUnit {
     {
         $this->function->ldap_bind = false;
         $this->exception(function() {
-            $this->newTestedInstance();
+            $this->newTestedInstance($this->configuration);
         });
     }
 
