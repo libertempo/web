@@ -246,14 +246,14 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
     protected function putValidationFinale($demandeId)
     {
         $demande = $this->getInfoDemandes(explode(" ", $demandeId))[$demandeId];
-        if (0 < $this->updateSoldeReliquatEmploye($demande['p_login'], $demande['p_date_deb'], $demande['p_nb_jours'], $demande['p_type'])) {
+        if (0 < $this->updateSoldeReliquatEmploye($demande['p_login'], $demande['p_nb_jours'], $demande['p_type'])) {
             return $this->updateStatutValidationFinale($demande['p_num']);
         } else {
             return NIL_INT;
         }
     }
 
-    protected function updateSoldeReliquatEmploye($user, $debut, $duree, $typeId)
+    protected function updateSoldeReliquatEmploye($user, $duree, $typeId)
     {
         if (!$this->isOptionReliquatActive()) {
             return $this->updateSoldeUser($user, $duree, $typeId);
@@ -266,7 +266,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
         $sql = \includes\SQL::singleton();
 
-        if ($this->isReliquatUtilisable($debut)) {
+        if ($this->isReliquatUtilisable()) {
             $sql->getPdoObj()->begin_transaction();
             if ($SoldeReliquat>=$duree) {
                 $updateReliquat = $this->updateReliquatUser($user, $duree, $typeId);
@@ -606,9 +606,9 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
      * @param int $findemande date de fin de la demande
      * @return bool
      */
-    public function isReliquatUtilisable($debutDemande)
+    public function isReliquatUtilisable()
     {
-        return $_SESSION['config']['date_limite_reliquats'] < $debutDemande;
+        return $_SESSION['config']['date_limite_reliquats'] > date('Y-m-d');
     }
 
     /**
