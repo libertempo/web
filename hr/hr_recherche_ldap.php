@@ -6,6 +6,8 @@ defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 if (!isset($_SESSION) || empty($_SESSION)) {
         die("{}");
 }
+$sql = \includes\SQL::singleton();
+$config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
 $nom = $_GET['nom'];
 

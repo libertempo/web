@@ -19,7 +19,7 @@ class Ldap
         $this->configuration['version'] = $confLdap['version'];
         $this->configuration['bindUser'] = "" == $confLdap['bindUser'] ? null : $confLdap['bindUser'];
         $this->configuration['bindPassword'] = "" == $confLdap['bindPassword'] ? null : $confLdap['bindPassword'];
-        $this->configuration['searchdn'] = $confLdap['server'];
+        $this->configuration['searchdn'] = $confLdap['searchdn'];
         $this->configuration['attrNom'] = $confLdap['attrNom'];
         $this->configuration['attrPrenom'] = $confLdap['attrPrenom'];
         $this->configuration['attrLogin'] = $confLdap['attrLogin'];
@@ -77,7 +77,7 @@ class Ldap
         $searchResult = ldap_search($this->configuration['ldapConn'], $this->configuration['searchdn'], $filter, $attributs, 0, 1);
         $entries = ldap_get_entries($this->configuration['ldapConn'],$searchResult);
 
-        if (0 < $entries['count']) {
+        if (0 < $entries['count'] && array_key_exists($this->configuration['attrMail'], $entries[0])) {
             return $entries[0][$this->configuration['attrMail']][0];
         }
 
