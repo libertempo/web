@@ -15,11 +15,13 @@ $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
 
 /***** DEBUT DU PROG *****/
 
-/*** initialisation des variables ***/
-/************************************/
+if (!session_is_valid()) {
 
-// Si CAS alors on utilise le login CAS pour la session
-if ( $config->getHowToConnectUser() == "cas") {
+	/*** initialisation des variables ***/
+	/************************************/
+
+	// Si CAS alors on utilise le login CAS pour la session
+	if ( $config->getHowToConnectUser() == "cas") {
         //redirection vers l'url d'authentification CAS
         $usernameCAS = authentification_passwd_conges_CAS();
         if ($usernameCAS == "") {
@@ -110,6 +112,7 @@ if ( $config->getHowToConnectUser() == "cas") {
                 }
             }
     	}
+	}
 }
 
 /*****************************************************************/
