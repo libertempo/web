@@ -62,6 +62,7 @@ class Ldap extends \Tests\Units\TestUnit {
 
     private $configuration = [
         'server' => 'server',
+        'searchdn' => 'ou=users,dc=nodomain',
         'version' => 3,
         'attrNom' => 'sn',
         'attrPrenom' => 'givenname',
