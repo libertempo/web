@@ -155,7 +155,18 @@ if (!empty($_POST)) {
 
     $randKeysNom = array_rand($listeNoms, $nombreUtilisateurs);
 
-    $sqlGroupe = "-- Contenu de la table `conges_groupe`\n\n";
+    $sqlGroupe = "-- purge des tables\n\n";
+    $sqlGroupe .= "DELETE FROM `conges_groupe`;\n";
+    $sqlGroupe .= "DELETE FROM `conges_groupe_users`;\n";
+    $sqlGroupe .= "DELETE FROM `conges_groupe_resp`;\n";
+    $sqlGroupe .= "DELETE FROM `conges_users`;\n";
+    $sqlGroupe .= "DELETE FROM `conges_solde_user`;\n";
+    $sqlGroupe .= "DELETE FROM `conges_periode`;\n";
+    $sqlGroupe .= "DELETE FROM `planning`;\n";
+    $sqlGroupe .= "DELETE FROM `planning_creneau`;\n";
+    $sqlGroupe .= "DELETE FROM `conges_jours_feries`;\n\n\n";
+    
+    $sqlGroupe .= "-- Contenu de la table `conges_groupe`\n\n";
     for ($i = 1; $i <= $nombreGroupes; $i++) {
         $doubleValidation = rand(0, 1);
         if ($doubleValidation) {
@@ -216,7 +227,7 @@ if (!empty($_POST)) {
             $responsable = 'pierre';
         }
 
-        $sqlCongesUser .= "INSERT INTO `conges_users` VALUES ('" . $prenom . "', '" . $prenom . "', '" . $prenom . "', '" . $isResponsable . "', '" . $responsable . "', '" . $isAdmin . "', '" . $isHr . "', '" . $isActive . "', 'N', '" . $password . "', " . $quotite . ", '', 0, 7, " . $heureSolde . ");\n";
+        $sqlCongesUser .= "INSERT INTO `conges_users` VALUES ('" . $prenom . "', '" . $prenom . "', '" . $prenom . "', '" . $isResponsable . "', '" . $responsable . "', '" . $isAdmin . "', '" . $isHr . "', '" . $isActive . "', 'N', '" . $password . "', " . $quotite . ", '', 0, 7, " . $heureSolde . ",CURRENT_TIMESTAMP,'', null);\n";
 
         if (is_int(array_search($prenom, $responsableGroupe))) {
             // Le prochain utilisateur aura pour responsable la personne courante si celle ci est responsable de son groupe
@@ -224,7 +235,7 @@ if (!empty($_POST)) {
         }
     }
     // A la fin on ajoute l'utilisateur Pierre qui est RH, il est aussi le responsable des responsables (n+2 des autres utilisateurs)
-    $sqlCongesUser .= "INSERT INTO `conges_users` VALUES('pierre', 'point', 'pierre', 'Y', 'conges', 'N', 'Y', 'Y', 'N', '84675f2baf7140037b8f5afe54eef841', 100, '', 0, 7, 0);";
+    $sqlCongesUser .= "INSERT INTO `conges_users` VALUES('pierre', 'point', 'pierre', 'Y', 'conges', 'N', 'Y', 'Y', 'N', '84675f2baf7140037b8f5afe54eef841', 100, '', 0, 7, 0,CURRENT_TIMESTAMP,'', null);";
 
     $sqlCongesSoldeUser = "-- Contenu de la table `conges_solde_user`\n\n";
     for ($i = 0; $i < $nombreUtilisateurs; $i++) {
