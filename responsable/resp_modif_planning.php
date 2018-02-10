@@ -10,7 +10,7 @@ $message   = '';
 $errorsLst = [];
 if (!empty($_POST)) {
     if (0 < (int) \App\ProtoControllers\Responsable\Planning::putPlanning($planningId, $_POST, $errorsLst)) {
-        log_action(0, '', '', 'Édition des associations du planning ' . $id);
+        log_action(0, '', '', 'Édition des associations du planning ' . $planningId);
         redirect(ROOT_PATH . 'responsable/resp_index.php?onglet=liste_planning', false);
     } else {
         if (!empty($errorsLst)) {
@@ -52,7 +52,7 @@ $creneauxGroupesPairs = \App\ProtoControllers\HautResponsable\Planning\Creneau::
 $idToggleSemaine = uniqid();
 $linkId = uniqid();
 
-$options = [
+$optionsSemaine = [
     'typePeriodeMatin'      => \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN,
     'typeHeureDebut'        => \App\Models\Planning\Creneau::TYPE_HEURE_DEBUT,
     'typeHeureFin'          => \App\Models\Planning\Creneau::TYPE_HEURE_FIN,
@@ -62,7 +62,7 @@ $options = [
     'erreurOptionManquante' => _('Option_manquante'),
 ];
 
-$optionsCommuns = $options + [
+$optionsSemaineCommune = $optionsSemaine + [
     'selectJourId'          => uniqid(),
     'tableId'               => uniqid(),
     'debutId'               => uniqid(),
@@ -70,7 +70,7 @@ $optionsCommuns = $options + [
     'typeSemaine'           => \App\Models\Planning\Creneau::TYPE_SEMAINE_COMMUNE,
     'typeHeureFin'          => \App\Models\Planning\Creneau::TYPE_HEURE_FIN,
 ];
-$optionsImpaires = $options + [
+$optionsSemaineImpaire = $optionsSemaine + [
     'selectJourId'          => uniqid(),
     'tableId'               => uniqid(),
     'debutId'               => uniqid(),
@@ -81,7 +81,7 @@ $optionsImpaires = $options + [
     'typeHeureFin'          => \App\Models\Planning\Creneau::TYPE_HEURE_FIN,
     'helperId'              => uniqid(),
 ];
-$optionsPaires = $options + [
+$optionsSemainePaire = $optionsSemaine + [
     'selectJourId'          => uniqid(),
     'tableId'               => uniqid(),
     'debutId'               => uniqid(),

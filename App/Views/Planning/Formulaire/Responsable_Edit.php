@@ -1,5 +1,4 @@
 <?php
-
 /*
  * $message
  * $planning
@@ -10,9 +9,9 @@
  * $creneauxGroupesImpairs
  * $creneauxGroupesPairs
  * $jours
- * $optionsCommuns
- * $optionsImpaires
- * $optionsPaires
+ * $optionsSemaineCommune
+ * $optionsSemaineImpaire
+ * $optionsSemainePaire
  * $typesSemaines
  * $text
  * $utilisateursAssocies
@@ -32,56 +31,35 @@ enctype="application/x-www-form-urlencoded" class="form-group">
         <tbody>
             <tr>
                 <td><?= $planning->name ?><input type="hidden" name="planning_id" value="<?= $planning->id ?>" /></td>
-                <td><input type="button" id="<?= $idToggleSemaine ?>" class="btn btn-default " /></td>
+                <td><input type="hidden" id="<?= $idToggleSemaine ?>" /></td>
             </tr>
         </tbody>
     </table>
     <h3><?= _('Creneaux') ?></h3>
-    <div id="<?= $idSemaineCommune ?>"><h4><?= _('resp_temps_partiel_sem') ?></h4>
-        <table class="table table-hover table-responsive table-condensed table-striped" id="<?= $optionsCommuns['tableId'] ?>">
-            <thead>
-                <tr><th width="20%"><?= _('Jour') ?></th><th><?= _('Creneaux_travail') ?></th><tr>
-            </thead>
-            <tbody>
-            <?php foreach ($jours as $idJour => $jour) : ?>
-                <tr data-id-jour=<?= $idJour ?>><td name="nom"><?= $jour ?></td><td class="creneaux"></td></tr>
-            <?php endforeach ;?>
-            </tbody>
-            <script type="text/javascript">
-            new planningController("<?= $linkId ?>", <?= json_encode($optionsCommuns) ?>, <?= json_encode($creneauxGroupesCommuns) ?>).readOnly();
-            </script>
-        </table>
-    </div>
-    <div id="<?= $idSemaineImpaire ?>"><h4><?= _('resp_temps_partiel_sem_impaires') ?></h4>
-        <table class="table table-hover table-responsive table-condensed table-striped" id="<?= $optionsImpaires['tableId'] ?>">
-            <thead>
-                <tr><th width="20%"><?= _('Jour') ?></th><th><?= _('Creneaux_travail') ?></th><tr>
-            </thead>
-            <tbody>
-            <?php foreach ($jours as $idJour => $jour) : ?>
-                <tr data-id-jour=<?= $idJour ?>><td name="nom"><?= $jour ?></td><td class="creneaux"></td></tr>
-            <?php endforeach ;?>
-            </tbody>
-            <script type="text/javascript">
-            new planningController("<?= $linkId ?>", <?= json_encode($optionsImpaires) ?>, <?= json_encode($creneauxGroupesImpairs) ?>).readOnly();
-            </script>
-        </table>
-    </div>
-    <div id="<?= $idSemainePaire ?>"><h4><?= _('resp_temps_partiel_sem_paires') ?></h4>
-        <table class="table table-hover table-responsive table-condensed table-striped" id="<?= $optionsPaires['tableId'] ?>">
-            <thead>
-                <tr><th width="20%"><?= _('Jour') ?></th><th><?= _('Creneaux_travail') ?></th><tr>
-            </thead>
-            <tbody>
-            <?php foreach ($jours as $idJour => $jour) : ?>
-                <tr data-id-jour=<?= $idJour ?>><td name="nom"><?= $jour ?></td><td class="creneaux"></td></tr>
-            <?php endforeach ;?>
-            </tbody>
-            <script type="text/javascript">
-            new planningController("<?= $linkId ?>", <?= json_encode($optionsPaires) ?>, <?= json_encode($creneauxGroupesPairs) ?>).readOnly();
-            </script>
-        </table>
-    </div>
+    <?php
+    $idSemaine = $idSemaineCommune;
+    $titreSemaine = _('resp_temps_partiel_sem');
+    $optionsSemaine = $optionsSemaineCommune;
+    $creneauxGroupes = $creneauxGroupesCommuns;
+
+    require VIEW_PATH . 'Planning/Formulaire/Semaine_Detail.php';
+    ?>
+    <?php
+    $idSemaine = $idSemaineImpaire;
+    $titreSemaine = _('resp_temps_partiel_sem_impaires');
+    $optionsSemaine = $optionsSemaineImpaire;
+    $creneauxGroupes = $creneauxGroupesImpairs;
+
+    require VIEW_PATH . 'Planning/Formulaire/Semaine_Detail.php';
+    ?>
+    <?php
+    $idSemaine = $idSemainePaire;
+    $titreSemaine = _('resp_temps_partiel_sem_paires');
+    $optionsSemaine = $optionsSemainePaire;
+    $creneauxGroupes = $creneauxGroupesPairs;
+
+    require VIEW_PATH . 'Planning/Formulaire/Semaine_Detail.php';
+    ?>
     <script>new semaineDisplayer("<?= $idToggleSemaine ?>", "<?= \App\Models\Planning\Creneau::TYPE_SEMAINE_COMMUNE ?>", <?=  json_encode($typesSemaines) ?>, <?= json_encode($text) ?>).init().readOnly()</script>
     <h3>Employés associés</h3>
     <?php if (empty($utilisateursAssocies)) : ?>
@@ -105,7 +83,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">
             $disabled = (\App\ProtoControllers\Utilisateur::hasSortiesEnCours($utilisateur['login']))
                 ? 'disabled '
                 : '';
-            $checked = ($idPlanning === $utilisateur['planningId'])
+            $checked = ($planning->id === $utilisateur['planningId'])
                 ? 'checked '
                 : '';
             $nom = \App\ProtoControllers\Utilisateur::getNomComplet($utilisateur['prenom'], $utilisateur['nom']);
@@ -116,7 +94,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">
         <?php endforeach ; ?>
         </div>
         <script type="text/javascript">
-            new selectAssociationPlanning("groupe", <?= json_encode($associations) ?>, <?= NIL_INT ?>);
+            new selectAssociationPlanning("groupe", <?= json_encode($associationsGroupe) ?>, <?= NIL_INT ?>);
         </script>
     <?php endif; ?>
     <br><input type="submit" class="btn btn-success" value="<?= _('form_submit') ?>" />
