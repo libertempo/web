@@ -15,25 +15,25 @@ class Groupe extends \Tests\Units\TestUnit
         $this->db = new \mock\includes\SQL();
         $this->calling($this->db)->query = $this->result;
     }
-    
+
     public function testGetListeVide()
     {
         $this->calling($this->result)->fetch_assoc = [];
         $liste = _Groupe::getListe($this->db);
         $this->array($liste)->isEmpty();
     }
-    
+
     public function testGetListeRempli()
     {
         $array = [
             'g_gid' => 12,
             'g_groupename' => 'POLICE BOX',
             'g_comment' => 'free for use of public',
-            'g_double_valid' => 'Y', 
+            'g_double_valid' => 'Y',
             'gu_gid' => 12,
             'gu_login' => 'who'
         ];
-        
+
         $this->calling($this->result)->fetch_assoc[1] = $array;
         $this->calling($this->result)->fetch_assoc[2] = null;
         $liste = _Groupe::getListe($this->db);
@@ -58,7 +58,7 @@ class Groupe extends \Tests\Units\TestUnit
             'g_comment' => 'free for use of public',
             'g_double_valid' => 'Y'
         ];
-        
+
         $this->calling($this->result)->fetch_assoc[1] = $array;
         $this->calling($this->result)->fetch_assoc[2] = null;
         $liste = _Groupe::getListeGroupes($this->db);
@@ -80,7 +80,7 @@ class Groupe extends \Tests\Units\TestUnit
         $infos = _Groupe::getInfosGroupe($id, $this->db);
         $this->array($infos)->isIdenticalTo($vide);
     }
-    
+
     public function testgetInfosGroupeRempli()
     {
         $id = 1;
@@ -88,7 +88,7 @@ class Groupe extends \Tests\Units\TestUnit
             'g_gid' => 1,
             'g_groupename' => 'testnom',
             'g_comment' => 'testcomment',
-            'g_double_valid' => 'N', 
+            'g_double_valid' => 'N',
         ];
         $resultat = [
                 'nom' => 'testnom',
@@ -100,7 +100,7 @@ class Groupe extends \Tests\Units\TestUnit
 
         $this->array($infos)->isIdenticalTo($resultat);
     }
-    
+
     public function testgetListeIdVide()
     {
         $this->calling($this->result)->fetch_array = null;
@@ -108,7 +108,7 @@ class Groupe extends \Tests\Units\TestUnit
 
         $this->array($array)->isEmpty();
     }
-    
+
     public function testgetListeIdRempli()
     {
         $array = array('g_gid' => '1');
@@ -119,16 +119,16 @@ class Groupe extends \Tests\Units\TestUnit
 
         $this->array($ids)->isIdenticalTo($resultat);
     }
-    
+
     public function testisResponsableGroupeVrai()
     {
         $this->calling($this->result)->fetch_array = [1];
         $this->calling($this->db)->quote = 'LT';
 
         $isResp = _Groupe::isResponsableGroupe('LT', [1,2],$this->db);
-        
+
         $this->boolean($isResp)->isTrue;
-    }    
+    }
 
     public function testisResponsableGroupeFaux()
     {
@@ -136,19 +136,19 @@ class Groupe extends \Tests\Units\TestUnit
         $this->calling($this->db)->quote = 'LT';
 
         $isResp = _Groupe::isResponsableGroupe('LT', [1,2],$this->db);
-        
-        $this->boolean($isResp)->isFalse;      
+
+        $this->boolean($isResp)->isFalse;
     }
-    
+
     public function testisGrandResponsableGroupeVrai()
     {
         $this->calling($this->result)->fetch_array = [1];
         $this->calling($this->db)->quote = 'LT';
 
         $isResp = _Groupe::isGrandResponsableGroupe('LT', [1,2],$this->db);
-        
+
         $this->boolean($isResp)->isTrue;
-    }    
+    }
 
     public function testisGrandResponsableGroupeFaux()
     {
@@ -156,7 +156,7 @@ class Groupe extends \Tests\Units\TestUnit
         $this->calling($this->db)->quote = 'LT';
 
         $isResp = _Groupe::isGrandResponsableGroupe('LT', [1,2],$this->db);
-        
-        $this->boolean($isResp)->isFalse;      
+
+        $this->boolean($isResp)->isFalse;
     }
 }
