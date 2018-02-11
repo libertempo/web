@@ -3,7 +3,7 @@
  * $idSemaine
  * $titreSemaine
  * $optionsSemaine
- * $linkId
+ * $jours
  * $creneauxGroupes
  */
 
@@ -19,7 +19,7 @@
         <?php endforeach ;?>
         </tbody>
         <script type="text/javascript">
-        new planningController("<?= $linkId ?>", <?= json_encode($optionsSemaine) ?>, <?= json_encode($creneauxGroupes) ?>).readOnly();
+        new planningController("<?= $optionsSemaine['ajoutBoutonId'] ?>", <?= json_encode($optionsSemaine) ?>, <?= json_encode($creneauxGroupes) ?>).readOnly();
         </script>
     </table>
 </div>

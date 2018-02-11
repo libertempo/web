@@ -58,6 +58,7 @@ $optionsSemaine = [
     'typeHeureFin'          => \App\Models\Planning\Creneau::TYPE_HEURE_FIN,
     'helperId'              => uniqid(),
     'nilInt'                => NIL_INT,
+    'ajoutBoutonId' => uniqid(),
     'erreurFormatHeure'     => _('Format_heure_incorrect'),
     'erreurOptionManquante' => _('Option_manquante'),
 ];
@@ -68,7 +69,6 @@ $optionsSemaineCommune = $optionsSemaine + [
     'debutId'               => uniqid(),
     'finId'                 => uniqid(),
     'typeSemaine'           => \App\Models\Planning\Creneau::TYPE_SEMAINE_COMMUNE,
-    'typeHeureFin'          => \App\Models\Planning\Creneau::TYPE_HEURE_FIN,
 ];
 $optionsSemaineImpaire = $optionsSemaine + [
     'selectJourId'          => uniqid(),
@@ -76,10 +76,6 @@ $optionsSemaineImpaire = $optionsSemaine + [
     'debutId'               => uniqid(),
     'finId'                 => uniqid(),
     'typeSemaine'           => \App\Models\Planning\Creneau::TYPE_SEMAINE_IMPAIRE,
-    'typePeriodeMatin'      => \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN,
-    'typeHeureDebut'        => \App\Models\Planning\Creneau::TYPE_HEURE_DEBUT,
-    'typeHeureFin'          => \App\Models\Planning\Creneau::TYPE_HEURE_FIN,
-    'helperId'              => uniqid(),
 ];
 $optionsSemainePaire = $optionsSemaine + [
     'selectJourId'          => uniqid(),
@@ -87,10 +83,6 @@ $optionsSemainePaire = $optionsSemaine + [
     'debutId'               => uniqid(),
     'finId'                 => uniqid(),
     'typeSemaine'           => \App\Models\Planning\Creneau::TYPE_SEMAINE_PAIRE,
-    'typePeriodeMatin'      => \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN,
-    'typeHeureDebut'        => \App\Models\Planning\Creneau::TYPE_HEURE_DEBUT,
-    'typeHeureFin'          => \App\Models\Planning\Creneau::TYPE_HEURE_FIN,
-    'helperId'              => uniqid(),
 ];
 
 $idSemaineCommune = uniqid();

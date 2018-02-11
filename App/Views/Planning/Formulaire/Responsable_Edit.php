@@ -5,6 +5,7 @@
  * $idToggleSemaine
  * $idSemaineCommune
  * $idSemaineImpaire
+ * $idSemainePaire
  * $creneauxGroupesCommuns
  * $creneauxGroupesImpairs
  * $creneauxGroupesPairs
