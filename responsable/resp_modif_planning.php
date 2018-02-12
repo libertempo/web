@@ -69,6 +69,7 @@ $optionsSemaineCommune = $optionsSemaine + [
     'debutId'               => uniqid(),
     'finId'                 => uniqid(),
     'typeSemaine'           => \App\Models\Planning\Creneau::TYPE_SEMAINE_COMMUNE,
+    'dureeHebdoId'          => uniqid(),
 ];
 $optionsSemaineImpaire = $optionsSemaine + [
     'selectJourId'          => uniqid(),
@@ -76,6 +77,7 @@ $optionsSemaineImpaire = $optionsSemaine + [
     'debutId'               => uniqid(),
     'finId'                 => uniqid(),
     'typeSemaine'           => \App\Models\Planning\Creneau::TYPE_SEMAINE_IMPAIRE,
+    'dureeHebdoId'          => uniqid(),
 ];
 $optionsSemainePaire = $optionsSemaine + [
     'selectJourId'          => uniqid(),
@@ -83,6 +85,7 @@ $optionsSemainePaire = $optionsSemaine + [
     'debutId'               => uniqid(),
     'finId'                 => uniqid(),
     'typeSemaine'           => \App\Models\Planning\Creneau::TYPE_SEMAINE_PAIRE,
+    'dureeHebdoId'          => uniqid(),
 ];
 
 $idSemaineCommune = uniqid();
