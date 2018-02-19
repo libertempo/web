@@ -71,7 +71,7 @@ class Responsable
          $res = $sql->query($req);
 
          while ($data = $res->fetch_array()) {
-             $users[] = $data['u_login'];
+            $users[] = $data['u_login'];
          }
          return $users;
     }
@@ -101,12 +101,12 @@ class Responsable
     public static function getLoginGrandResponsableUtilisateur($user)
     {
         $groupesIdUser = \App\ProtoControllers\Utilisateur::getGroupesId($user);
-        
+
         $grandResp = [];
         $sql = \includes\SQL::singleton();
         $req = 'select ggr_login FROM conges_groupe_grd_resp where ggr_gid  IN (\'' . implode(',', $groupesIdUser) . '\')';
         $res = $sql->query($req);
-        
+
         while ($data = $res->fetch_array()) {
              $grandResp[] = $data['ggr_login'];
         }
@@ -119,12 +119,12 @@ class Responsable
      * @param string $user
      * @return array
      */
-    public static function getResponsablesUtilisateur($user) 
+    public static function getResponsablesUtilisateur($user)
     {
         $responsables = \App\ProtoControllers\Groupe\Responsable::getListResponsableByGroupeIds(\App\ProtoControllers\Utilisateur::getGroupesId($user));
         $responsables[] = \App\ProtoControllers\Responsable::getResponsableDirect($user);
         $responsables = array_unique($responsables);
-        
+
         return $responsables;
     }
 
@@ -141,7 +141,7 @@ class Responsable
         $req = 'SELECT u_resp_login FROM conges_users WHERE u_login ="' . \includes\SQL::quote($user) . '"';
         $res = $sql->query($req);
         return $res->fetch_array()['u_resp_login'];
-        
+
     }
 
     /**
@@ -161,7 +161,7 @@ class Responsable
             $req .= ' AND u_is_active = "Y"';
         }
         $query = $sql->query($req);
-        
+
         return $sql->query($req)->fetch_all(\MYSQLI_ASSOC);
     }
 
@@ -175,8 +175,8 @@ class Responsable
      */
     public static function isRespDeUtilisateur($resp, $user)
     {
-        return $resp != $user 
-                && (\App\ProtoControllers\Responsable::isRespDirect($resp, $user) 
+        return $resp != $user
+                && (\App\ProtoControllers\Responsable::isRespDirect($resp, $user)
                 || \App\ProtoControllers\Groupe::isResponsableGroupe($resp, \App\ProtoControllers\Utilisateur::getGroupesId($user), \includes\SQL::singleton()));
     }
 
