@@ -592,7 +592,7 @@ function find_email_adress_for_user($login)
     $found_mail = array();
     $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($login);
 
-    array_push($found_mail, $infoUser['u_prenom'] . " " . strtoupper($infoUser['u_nom'])) ;
+    $found_mail[] = $infoUser['u_prenom'] . " " . strtoupper($infoUser['u_nom']);
     array_push($found_mail, $infoUser['u_email']) ;
 
     return $found_mail ;

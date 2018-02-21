@@ -744,18 +744,20 @@ function searchLdapUser() {
             arr = JSON.parse(data);
             var list = document.getElementById("suggestions");
             var frag = document.createDocumentFragment();
-            for (var i = 0; i < arr.length; ++i) {
-                var word = document.createElement("li");
+            var liElem = document.createElement("li");
+            var inputsForm = document.getElementById("manageUser");
+            for (var i in arr) {
+                var word = liElem.cloneNode();
                 frag.appendChild(word);
                 word.login = arr[i]["login"];
                 word.nom = arr[i]["nom"];
                 word.prenom  = arr[i]["prenom"];
                 word.innerHTML = word.nom + " " + word.prenom;
                 word.onmousedown = function(){
-                    document.getElementById("manageUser").new_nom.focus();
-                    document.getElementById("manageUser").new_login.value = this.login;
-                    document.getElementById("manageUser").new_nom.value = this.nom;
-                    document.getElementById("manageUser").new_prenom.value = this.prenom;
+                    inputsForm.new_nom.focus();
+                    inputsForm.new_login.value = this.login;
+                    inputsForm.new_nom.value = this.nom;
+                    inputsForm.new_prenom.value = this.prenom;
                     list.style.display = "none";
                     return false;
                 };

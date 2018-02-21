@@ -3,7 +3,7 @@ define('ROOT_PATH', '../');
 require_once ROOT_PATH . 'define.php';
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 
-if (!isset($_SESSION) || empty($_SESSION)) {
+if (!(!empty($_SESSION) && \App\ProtoControllers\Utilisateur::isRH($_SESSION['userlogin']))) {
         die("{}");
 }
 $sql = \includes\SQL::singleton();
