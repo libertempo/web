@@ -10,6 +10,7 @@ $message   = '';
 $errorsLst = [];
 $notice    = '';
 $valueName = '';
+$config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 if (!empty($_POST)) {
     if (0 < (int) \App\ProtoControllers\HautResponsable\Planning::postPlanning($_POST, $errorsLst, $notice)) {
         log_action(0, '', '', 'Édition du planning ' . $_POST['name']);
@@ -28,13 +29,12 @@ if (!empty($_POST)) {
         $valueName = $_POST['name'];
     }
 } elseif (NIL_INT !== $planningId) {
-    $injectableCreator = new \App\Libraries\InjectableCreator(\includes\SQL::singleton());
+    $injectableCreator = new \App\Libraries\InjectableCreator(\includes\SQL::singleton(),$config);
     $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
     $planning = $api->get('plannings/' .  $planningId, $_SESSION['token'])->data;
     $valueName = $planning->name;
 }
 
-$config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 /* Recupération des créneaux (postés ou existants) pour le JS */
 $jours = [
     // ISO-8601

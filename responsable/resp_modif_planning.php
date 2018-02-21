@@ -8,6 +8,7 @@ if (0 >= $planningId || !\App\ProtoControllers\Responsable\Planning::isVisible($
 
 $message   = '';
 $errorsLst = [];
+$configuration = new \App\Libraries\Configuration(\includes\SQL::singleton());
 if (!empty($_POST)) {
     if (0 < (int) \App\ProtoControllers\Responsable\Planning::putPlanning($planningId, $_POST, $errorsLst)) {
         log_action(0, '', '', 'Édition des associations du planning ' . $planningId);
@@ -26,10 +27,9 @@ if (!empty($_POST)) {
     }
 }
 
-$injectableCreator = new \App\Libraries\InjectableCreator(\includes\SQL::singleton());
+$injectableCreator = new \App\Libraries\InjectableCreator(\includes\SQL::singleton(),$configuration);
 $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
 $planning = $api->get('plannings/' .  $planningId, $_SESSION['token'])->data;
-$configuration = new \App\Libraries\Configuration(\includes\SQL::singleton());
 $jours = [
     // ISO-8601
     1 => _('Lundi'),
