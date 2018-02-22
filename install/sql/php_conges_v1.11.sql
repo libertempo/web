@@ -357,7 +357,7 @@ INSERT IGNORE INTO `conges_appli` VALUES ('token_instance', '');
 # Contenu de la table `conges_users`
 #
 
-INSERT IGNORE INTO `conges_users` VALUES ('admin', 'Libertempo', 'admin', 'N', 'admin', 'Y', 'N','Y','N', '636d61cf9094a62a81836f3737d9c0da', 100, NULL, 0, 0, 0, null, '', null);
+INSERT IGNORE INTO `conges_users` VALUES ('admin', 'Libertempo', 'admin', 'N', 'Y', 'Y','Y', '636d61cf9094a62a81836f3737d9c0da', 100, NULL, 0, 0, 0, null, '', null);
 
 #
 # Contenu de la table `conges_config`
