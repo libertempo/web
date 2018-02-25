@@ -1231,7 +1231,7 @@ function init_config_tab()
 {
     static $userlogin = null;
     static $result = null;
-    if ($result === null || (isset($_SESSION['userlogin']) && $userlogin != $_SESSION['userlogin']))
+    if ($result === null)
     {
 
         include ROOT_PATH .'version.php';
@@ -1308,27 +1308,30 @@ function init_config_tab()
         }
 
         /******************************************/
-        //  recup de qq infos sur le user
-        if (isset($_SESSION['userlogin']))
-        {
-            $sql_user = "SELECT u_nom, u_prenom, u_is_resp, u_is_admin, u_is_hr, u_is_active FROM conges_users WHERE u_login='".$_SESSION['userlogin']."' ";
-            $req_user = \includes\SQL::query($sql_user) ;
 
-            if ($data_user = $req_user->fetch_array()) {
-                $_SESSION['u_nom']    = $data_user[0] ;
-                $_SESSION['u_prenom']    = $data_user[1] ;
-                $_SESSION['is_resp']    = $data_user[2] ;
-                $_SESSION['is_admin']    = $data_user[3] ;
-                $_SESSION['is_hr']    = $data_user[4] ;
-                $_SESSION['is_active']    = $data_user[5] ;
-            }
+        $result = $tab;
+    }
+
+    //  recup de qq infos sur le user
+    if(isset($_SESSION['userlogin']) && ($userlogin != $_SESSION['userlogin'] || !isset($_SESSION['u_nom'])))
+    {
+        include_once CONFIG_PATH .'dbconnect.php';
+
+        $sql_user = "SELECT u_nom, u_prenom, u_is_resp, u_is_admin, u_is_hr, u_is_active FROM conges_users WHERE u_login='".$_SESSION['userlogin']."' ";
+        $req_user = \includes\SQL::query($sql_user) ;
+
+        if ($data_user = $req_user->fetch_array()) {
+            $_SESSION['u_nom']    = $data_user[0] ;
+            $_SESSION['u_prenom']    = $data_user[1] ;
+            $_SESSION['is_resp']    = $data_user[2] ;
+            $_SESSION['is_admin']    = $data_user[3] ;
+            $_SESSION['is_hr']    = $data_user[4] ;
+            $_SESSION['is_active']    = $data_user[5] ;
         }
 
-        /******************************************/
-        $result = $tab;
-        if (isset($_SESSION['userlogin']))
-            $userlogin = $_SESSION['userlogin'];
+        $userlogin = $_SESSION['userlogin'];
     }
+
     return $result;
 }
 
