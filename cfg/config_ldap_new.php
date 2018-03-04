@@ -2,7 +2,7 @@
 
 /*****************************************************************/
 /*			PARAMATRAGE LDAP
-Ce fichier est utilisisé SEULEMENT SI vous avez activé l'option 
+Ce fichier est utilisé SEULEMENT SI vous avez activé l'option 
 how_to_connect_user="ldap" dans la configuration de Libertempo
 
 => vous devez configurer ce fichier pour que les requêtes LDAP 

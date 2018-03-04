@@ -168,7 +168,6 @@ class Utilisateur
     /**
      * Récupère l'adresse email de l'utilisateur
      *
-     * @todo En attendant l'objet ldap utilisation de find_email_adress_for_user
      *
      * @param string $login
      * @return string $mail
