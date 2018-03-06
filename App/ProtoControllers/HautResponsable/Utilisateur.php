@@ -797,7 +797,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
     {
         $sql = \includes\SQL::singleton();
         if (!static::isDeletable($user, $sql)) {
-            $errors[] = _('Suppression impossible : cette utilisateur est responsable d\'un groupe');
+            $errors[] = _('Suppression impossible : cette utilisateur est "admin" ou responsable d\'un groupe');
             return false;
         }
 
@@ -852,7 +852,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
                     OR conges_groupe_grd_resp.ggr_login = "' . $user . '"
                 )';
         $query = $sql->query($req);
-        return 0 >= (int) $query->fetch_array()[0];
+        return 0 >= (int) $query->fetch_array()[0] && $user != 'admin';
     }
 
     /**
@@ -875,10 +875,10 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $insertEmail = static::insertEmailUtilisateur($data, $sql);
         $insertSoldes = static::insertSoldeUtilisateur($data, $sql);
         $insertGroupes = true;
-        if (!empty($data|'groupesId')) {
+        if (!empty($data['groupesId'])) {
             $insertGroupes = static::insertGroupesUtilisateur($data, $sql);
         }
-        if($insertInfos && $insertEmail && $insertSoldes && $insertGroupes) {
+        if ($insertInfos && $insertEmail && $insertSoldes && $insertGroupes) {
             return $sql->getPdoObj()->commit();
         }
         
@@ -926,7 +926,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         }
         $req = "INSERT INTO conges_solde_user (su_login, su_abs_id, su_nb_an, su_solde, su_reliquat) VALUES " . implode(",", $valuesStd);
         $returnStd = $sql->query($req);
-
+        $returnExc = 1;
         if ($config->isCongesExceptionnelsActive()) {
             $typeAbsencesExceptionnels = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges_exceptionnels');
             foreach ($typeAbsencesExceptionnels as $typeId => $info) {

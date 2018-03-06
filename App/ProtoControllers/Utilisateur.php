@@ -122,6 +122,7 @@ class Utilisateur
      */
     public static function getDonneesTousUtilisateurs(\App\Libraries\Configuration $config)
     {
+        $donnees = [];
         $sql = \includes\SQL::singleton();
         if ($config->isUsersExportFromLdap()) {
             $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
