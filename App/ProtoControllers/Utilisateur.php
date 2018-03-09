@@ -54,7 +54,7 @@ class Utilisateur
             $groupesResponsable = \App\ProtoControllers\Responsable::getIdGroupeResp($utilisateur);
             $groupesGrandResponsable = \App\ProtoControllers\Responsable::getIdGroupeGrandResponsable($utilisateur);
             $groupesEmploye = \App\ProtoControllers\Utilisateur::getGroupesId($utilisateur);
-            $groupesVisibles = $groupesResponsable + $groupesGrandResponsable + $groupesEmploye;
+            $groupesVisibles = array_unique(array_merge($groupesResponsable, $groupesGrandResponsable, $groupesEmploye));
         } else {
             $groupesVisibles = \App\ProtoControllers\Utilisateur::getGroupesId($utilisateur);
         }
