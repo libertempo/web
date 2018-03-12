@@ -18,46 +18,13 @@ class Formatter
      */
     public static function getStudlyCapsFromSnake($terme)
     {
-        $longueurTerme = strlen($terme);
-        $studly = '';
-        $i = 0;
-        while ($i < $longueurTerme) {
-            if ('_' === $terme[$i]) {
-                if (($i + 1) < $longueurTerme) {
-                    $studly .= ucfirst($terme[$i + 1]);
-                }
-                if (($i + 2) < $longueurTerme) {
-                    $i = $i+2;
-                } else {
-                    ++$i;
-                }
-            } else {
-                $studly .= $terme[$i];
-                ++$i;
-            }
+        $studlyCapsed = '';
+        $termeSepare = explode('_', $terme);
+        foreach ($termeSepare as $mot) {
+            $studlyCapsed .= ucfirst($mot);
         }
 
-        return ucfirst($studly);
-    }
-
-    /**
-     * Met au singulier un terme
-     *
-     * Comme il n'y a aucun moyen rapide de distinguer un « s / x » final légitime
-     * d'un mot au pluriel, fait la brute épaisse
-     *
-     * @param string $terme
-     *
-     * @return string
-     */
-    public static function getSingularTerm($terme)
-    {
-        $len = strlen($terme);
-        if (in_array($terme[$len - 1], ['s', 'x'], true)) {
-            return substr($terme, 0, $len - 1);
-        }
-
-        return $terme;
+        return $studlyCapsed;
     }
 
     /**
@@ -70,6 +37,8 @@ class Formatter
      */
     public static function timeToSQLDatetime($timestamp)
     {
-        return date('Y-m-d H:i', $timestamp);
+        $format = 'Y-m-d H:i';
+        $date = date($format, $timestamp);
+        return (new \DateTimeImmutable($date))->format($format);
     }
 }

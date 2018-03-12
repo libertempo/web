@@ -2,6 +2,8 @@
 namespace LibertAPI\Planning\Creneau;
 
 use LibertAPI\Tools\Exceptions\MissingArgumentException;
+use LibertAPI\Tools\Interfaces;
+
 use Psr\Http\Message\ServerRequestInterface as IRequest;
 use Psr\Http\Message\ResponseInterface as IResponse;
 
@@ -18,6 +20,7 @@ use Psr\Http\Message\ResponseInterface as IResponse;
  * Ne devrait contacter que le Planning\Repository
  */
 final class CreneauController extends \LibertAPI\Tools\Libraries\AController
+implements Interfaces\IGetable, Interfaces\IPostable, Interfaces\IPutable
 {
     /**
      * {@inheritDoc}
@@ -26,19 +29,8 @@ final class CreneauController extends \LibertAPI\Tools\Libraries\AController
     {
     }
 
-    /*************************************************
-     * GET
-     *************************************************/
-
     /**
-     * Execute l'ordre HTTP GET
-     *
-     * @param IRequest $request Requête Http
-     * @param IResponse $response Réponse Http
-     * @param array $arguments Arguments de route
-     *
-     * @return IResponse
-     * @throws \Exception en cas d'erreur inconnue (fallback, ne doit pas arriver)
+     * {@inheritDoc}
      */
     public function get(IRequest $request, IResponse $response, array $arguments)
     {
@@ -57,7 +49,6 @@ final class CreneauController extends \LibertAPI\Tools\Libraries\AController
      * @param int $planningId Contrainte de recherche sur le planning
      *
      * @return IResponse, 404 si l'élément n'est pas trouvé, 200 sinon
-     * @throws \Exception en cas d'erreur inconnue (fallback, ne doit pas arriver)
      */
     private function getOne(IResponse $response, $id, $planningId)
     {
@@ -122,20 +113,9 @@ final class CreneauController extends \LibertAPI\Tools\Libraries\AController
         ];
     }
 
-    /*************************************************
-     * POST
-     *************************************************/
-
-     /**
-      * Execute l'ordre HTTP POST
-      *
-      * @param IRequest $request Requête Http
-      * @param IResponse $response Réponse Http
-      * @param array $arguments Arguments de route
-      *
-      * @return IResponse
-      * @throws \Exception en cas d'erreur inconnue (fallback, ne doit pas arriver)
-      */
+    /**
+     * {@inheritDoc}
+     */
     public function post(IRequest $request, IResponse $response, array $arguments)
     {
         $body = $request->getParsedBody();
@@ -171,19 +151,8 @@ final class CreneauController extends \LibertAPI\Tools\Libraries\AController
         );
     }
 
-    /*************************************************
-     * PUT
-     *************************************************/
-
     /**
-     * Execute l'ordre HTTP PUT
-     *
-     * @param IRequest $request Requête Http
-     * @param IResponse $response Réponse Http
-     * @param array $arguments Arguments de route
-     *
-     * @return IResponse
-     * @throws \Exception en cas d'erreur inconnue (fallback, ne doit pas arriver)
+     * {@inheritDoc}
      */
     public function put(IRequest $request, IResponse $response, array $arguments)
     {
@@ -197,7 +166,7 @@ final class CreneauController extends \LibertAPI\Tools\Libraries\AController
         try {
             $creneau = $this->repository->getOne($id, $planningId);
         } catch (\DomainException $e) {
-            return $this->getResponseNotFound($response, 'Element « creneaux#' . $id . ' » is not a valid resource');
+            return $this->getResponseNotFound($response, 'Element « creneau#' . $id . ' » is not a valid resource');
         } catch (\Exception $e) {
             return $this->getResponseError($response, $e);
         }

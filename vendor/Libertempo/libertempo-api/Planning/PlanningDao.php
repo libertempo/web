@@ -1,6 +1,8 @@
 <?php
 namespace LibertAPI\Planning;
 
+use LibertAPI\Tools\Libraries\AEntite;
+
 /**
  * {@inheritDoc}
  *
@@ -9,7 +11,7 @@ namespace LibertAPI\Planning;
  *
  * @since 0.1
  *
- * Ne devrait être contacté que par Planning\Repository
+ * Ne devrait être contacté que par PlanningRepository
  * Ne devrait contacter personne
  */
 class PlanningDao extends \LibertAPI\Tools\Libraries\ADao
@@ -27,7 +29,24 @@ class PlanningDao extends \LibertAPI\Tools\Libraries\ADao
         $this->setWhere(['id' => $id]);
         $res = $this->queryBuilder->execute();
 
-        return $res->fetch(\PDO::FETCH_ASSOC);
+        $data = $res->fetch(\PDO::FETCH_ASSOC);
+        if (empty($data)) {
+            throw new \DomainException('#' . $id . ' is not a valid resource');
+        }
+
+        return new PlanningEntite($this->getStorage2Entite($data));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    final protected function getStorage2Entite(array $dataDao)
+    {
+        return [
+            'id' => $dataDao['planning_id'],
+            'name' => $dataDao['name'],
+            'status' => $dataDao['status'],
+        ];
     }
 
     /**
@@ -37,13 +56,20 @@ class PlanningDao extends \LibertAPI\Tools\Libraries\ADao
     {
         $this->queryBuilder->select('*');
         $this->setWhere($parametres);
-        if (!empty($parametres['limit'])) {
-            $this->queryBuilder->setFirstResult(0);
-            $this->queryBuilder->setMaxResults((int) $parametres['limit']);
-        }
         $res = $this->queryBuilder->execute();
 
-        return $res->fetchAll(\PDO::FETCH_ASSOC);
+        $data = $res->fetchAll(\PDO::FETCH_ASSOC);
+        if (empty($data)) {
+            throw new \UnexpectedValueException('No resource match with these parameters');
+        }
+
+        $entites = [];
+        foreach ($data as $value) {
+            $entite = new PlanningEntite($this->getStorage2Entite($value));
+            $entites[$entite->getId()] = $entite;
+        }
+
+        return $entites;
     }
 
     /*************************************************
@@ -53,10 +79,10 @@ class PlanningDao extends \LibertAPI\Tools\Libraries\ADao
     /**
      * @inheritDoc
      */
-    public function post(array $data)
+    public function post(AEntite $entite)
     {
         $this->queryBuilder->insert($this->getTableName());
-        $this->setValues($data);
+        $this->setValues($this->getEntite2Storage($entite));
         $this->queryBuilder->execute();
 
         return $this->storageConnector->lastInsertId();
@@ -81,14 +107,25 @@ class PlanningDao extends \LibertAPI\Tools\Libraries\ADao
     /**
      * @inheritDoc
      */
-    public function put(array $data, $id)
+    public function put(AEntite $entite)
     {
         $this->queryBuilder->update($this->getTableName());
-        $this->setSet($data);
+        $this->setSet($this->getEntite2Storage($entite));
         $this->queryBuilder->where('planning_id = :id');
-        $this->queryBuilder->setParameter(':id', $id);
+        $this->queryBuilder->setParameter(':id', $entite->getId());
 
         $this->queryBuilder->execute();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    final protected function getEntite2Storage(AEntite $entite)
+    {
+        return [
+            'name' => $entite->getName(),
+            'status' => $entite->getStatus(),
+        ];
     }
 
     private function setSet(array $parametres)
@@ -112,7 +149,7 @@ class PlanningDao extends \LibertAPI\Tools\Libraries\ADao
      */
     public function delete($id)
     {
-        $this->queryBuilder->delete();
+        $this->queryBuilder->delete($this->getTableName());
         $this->setWhere(['id' => $id]);
         $res = $this->queryBuilder->execute();
 
@@ -123,21 +160,13 @@ class PlanningDao extends \LibertAPI\Tools\Libraries\ADao
      * Définit les filtres à appliquer à la requête
      *
      * @param array $parametres
-     * @example [filter => [], lt => 23, limit => 4]
+     * @example [filter => []]
      */
     private function setWhere(array $parametres)
     {
         if (!empty($parametres['id'])) {
             $this->queryBuilder->andWhere('planning_id = :id');
             $this->queryBuilder->setParameter(':id', (int) $parametres['id']);
-        }
-        if (!empty($parametres['lt'])) {
-            $this->queryBuilder->andWhere('planning_id < :lt');
-            $this->queryBuilder->setParameter(':lt', (int) $parametres['lt']);
-        }
-        if (!empty($parametres['gt'])) {
-            $this->queryBuilder->andWhere('planning_id > :gt');
-            $this->queryBuilder->setParameter(':gt', (int) $parametres['gt']);
         }
     }
 

@@ -1,6 +1,8 @@
 <?php
 namespace LibertAPI\Tools\Libraries;
 
+use LibertAPI\Tools\Exceptions\MissingArgumentException;
+
 /**
  * Domain Model. Par essence, ne peut pas être immuable.
  *
@@ -26,7 +28,7 @@ abstract class AEntite
     protected $data = [];
 
     /**
-     * @var array $data Données d'édition de l'objet
+     * @var array $dataUpdated Données d'édition de l'objet
      */
     protected $dataUpdated = [];
 
@@ -67,6 +69,7 @@ abstract class AEntite
      *
      * @param array $data Données à insérer / mettre à jour
      *
+     * @throws MissingArgumentException Si un élément requis n'est pas présent
      * @throws \DomainException Si une ou plusieurs données ne sont pas dans les bons domaines de définition, où les erreurs sont jsonEncodée dans le message
      * @example ['nomChamp' => [listeErreurs]]
      */

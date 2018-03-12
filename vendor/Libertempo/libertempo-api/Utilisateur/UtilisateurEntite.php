@@ -1,6 +1,8 @@
 <?php
 namespace LibertAPI\Utilisateur;
 
+use LibertAPI\Tools\Exceptions\MissingArgumentException;
+
 use LibertAPI\Tools\Helpers\Formatter;
 
 /**
@@ -62,11 +64,6 @@ class UtilisateurEntite extends \LibertAPI\Tools\Libraries\AEntite
         return (int) $this->getFreshData('isActif');
     }
 
-    public function canSeeAll()
-    {
-        return (int) $this->getFreshData('seeAll');
-    }
-
     public function getMotDePasse()
     {
         return $this->getFreshData('password');
@@ -112,6 +109,9 @@ class UtilisateurEntite extends \LibertAPI\Tools\Libraries\AEntite
      */
     public function populate(array $data)
     {
+        if (!$this->hasAllRequired($data)) {
+            throw new MissingArgumentException('');
+        }
     }
 
     /**

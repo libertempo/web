@@ -14,7 +14,6 @@ final class CreneauController extends \LibertAPI\Tests\Units\Tools\Libraries\ARe
     protected function initRepository()
     {
         $this->mockGenerator->orphanize('__construct');
-        $this->mockGenerator->shuntParentClassCalls();
         $this->repository = new \mock\LibertAPI\Planning\Creneau\CreneauRepository();
     }
 

@@ -74,15 +74,16 @@ Les réponses de l'API se font sous la spécification jsend. Autrement dit :
 
 # Routes disponibles
 Suivant les règles de l'architecture REST, les routes disponibles à ce jour sont :
-* `GET /plannings`
-* `POST /plannings`
-* `GET /plannings/{id}`
-* `PUT /plannings/{id}`
-* `DELETE /plannings/{id}`
-* `GET /plannings/{id}/creneaux`
-* `POST /plannings/{id}/creneaux`
-* `GET /plannings/{id}/creneaux/{id}`
-* `DELETE /plannings/{id}/creneaux/{id}`
+* `GET /absences/types/{id}`
+* `GET /planning`
+* `POST /planning`
+* `GET /planning/{id}`
+* `PUT /planning/{id}`
+* `DELETE /planning/{id}`
+* `GET /planning/{id}/creneau`
+* `POST /planning/{id}/creneau`
+* `GET /planning/{id}/creneau/{id}`
+* `DELETE /planning/{id}/creneau/{id}`
 
 # Versions
 

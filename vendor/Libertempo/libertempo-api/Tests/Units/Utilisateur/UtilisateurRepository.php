@@ -12,17 +12,12 @@ use LibertAPI\Tools\Libraries\AEntite;
  *
  * @since 0.2
  */
-final class UtilisateurRepository extends \Atoum
+final class UtilisateurRepository extends \LibertAPI\Tests\Units\Tools\Libraries\ARepository
 {
     /**
      * @var \LibertAPI\Tools\Libraries\Application Mock de la bibliothèque d'application
      */
     private $application;
-
-    /**
-     * @var \LibertAPI\Utilisateur\Dao Mock du DAO de l'utilisateur
-     */
-    private $dao;
 
     /**
      * @var \Doctrine\DBAL\Connection Mock du connecteur
@@ -34,17 +29,10 @@ final class UtilisateurRepository extends \Atoum
      */
     private $statement;
 
-    /**
-     * @var \LibertAPI\Utilisateur\Entite Mock de l'Entité de l'utilisateur
-     */
-    private $entite;
-
     public function beforeTestMethod($method)
     {
         parent::beforeTestMethod($method);
-        $this->mockGenerator->orphanize('__construct');
-        $this->mockGenerator->shuntParentClassCalls();
-        $this->dao = new \mock\LibertAPI\Utilisateur\UtilisateurDao();
+
         $this->mockGenerator->orphanize('__construct');
         $this->mockGenerator->shuntParentClassCalls();
         $this->statement = new \mock\Doctrine\DBAL\Statement();
@@ -54,6 +42,18 @@ final class UtilisateurRepository extends \Atoum
         $this->connector->getMockController()->query = $this->statement;
         $this->mockGenerator->orphanize('__construct');
         $this->application = new \mock\LibertAPI\Tools\Libraries\Application($this->connector);
+
+    }
+
+    protected function initDao()
+    {
+        $this->mockGenerator->orphanize('__construct');
+        $this->mockGenerator->shuntParentClassCalls();
+        $this->dao = new \mock\LibertAPI\Utilisateur\UtilisateurDao();
+    }
+
+    protected function initEntite()
+    {
         $this->mockGenerator->orphanize('__construct');
         $this->entite = new \mock\LibertAPI\Utilisateur\UtilisateurEntite();
         $this->entite->getMockController()->getNom = 'Aladdin';
@@ -89,84 +89,12 @@ final class UtilisateurRepository extends \Atoum
      * GET
      *************************************************/
 
-    public function testGetOne()
-    {
-        $this->variable((new _Repository($this->dao))->getOne(1))->isNull();
-    }
-
     /**
      * Teste la méthode find avec des critères pertinents
      */
     public function testFind()
     {
-        $this->dao->getMockController()->getList = [
-            [
-                'id' => 'Aladdin',
-                'u_login' => 'Aladdin',
-                'u_passwd' => 'OpenSesame',
-                'u_nom' => 'Aladdin',
-                'u_prenom' => 'Aladdin',
-                'u_is_resp' => 'Y',
-                'u_is_admin' => 'N',
-                'u_is_hr' => 'N',
-                'u_is_active' => 'N',
-                'u_see_all' => 'N',
-                'u_quotite' => 1000,
-                'u_email' => 'aladdin@tapisvolant.net',
-                'u_num_exercice' => 98,
-                'planning_id' => 12,
-                'u_heure_solde' => 983,
-                'date_inscription' => 2,
-                'token' => '',
-                'date_last_access' => 3,
-            ],
-            [
-                'id' => 'Sinbad',
-                'u_login' => 'Sinbad',
-                'u_nom' => 'Sinbad',
-                'u_prenom' => 'Sinbad',
-                'u_is_resp' => 'N',
-                'u_is_admin' => 'N',
-                'u_is_hr' => 'N',
-                'u_is_active' => 'N',
-                'u_see_all' => 'N',
-                'u_passwd' => 'Bassorah',
-                'u_quotite' => 1000,
-                'u_email' => 'sinbad@sea.com',
-                'u_num_exercice' => 5,
-                'planning_id' => 12,
-                'u_heure_solde' => 1218,
-                'date_inscription' => 2,
-                'token' => '',
-                'date_last_access' => 134,
-            ],
-        ];
-        $repository = new _Repository($this->dao);
-
-        $entite = $repository->find([]);
-
-        $this->object($entite)->isInstanceOf('\LibertAPI\Tools\Libraries\AEntite');
-    }
-
-    /**
-     * Teste la méthode getList avec des critères non pertinents
-     */
-    public function testGetListNotFound()
-    {
-        $this->dao->getMockController()->getList = [];
-        $repository = new _Repository($this->dao);
-
-        $this->exception(function () use ($repository) {
-            $repository->getList([]);
-        })->isInstanceOf('\UnexpectedValueException');
-    }
-
-    /**
-     * Teste la méthode getList avec des critères pertinents
-     */
-    public function testGetListFound()
-    {
-        $this->dao->getMockController()->getList = [[
+        $this->calling($this->dao)->getList = ['Aladdin' => new \LibertAPI\Utilisateur\UtilisateurEntite([
             'id' => 'Aladdin',
             'u_login' => 'Aladdin',
             'u_passwd' => 'OpenSesame',
@@ -176,7 +104,6 @@ final class UtilisateurRepository extends \Atoum
             'u_is_admin' => 'N',
             'u_is_hr' => 'N',
             'u_is_active' => 'N',
-            'u_see_all' => 'N',
             'u_quotite' => 1000,
             'u_email' => 'aladdin@tapisvolant.net',
             'u_num_exercice' => 98,
@@ -184,14 +111,32 @@ final class UtilisateurRepository extends \Atoum
             'u_heure_solde' => 983,
             'date_inscription' => 2,
             'token' => '',
-            'date_last_access' => 98,
-        ]];
+            'date_last_access' => 3,
+        ]),
+        'Sinbad' => new \LibertAPI\Utilisateur\UtilisateurEntite([
+            'id' => 'Sinbad',
+            'u_login' => 'Sinbad',
+            'u_nom' => 'Sinbad',
+            'u_prenom' => 'Sinbad',
+            'u_is_resp' => 'N',
+            'u_is_admin' => 'N',
+            'u_is_hr' => 'N',
+            'u_is_active' => 'N',
+            'u_passwd' => 'Bassorah',
+            'u_quotite' => 1000,
+            'u_email' => 'sinbad@sea.com',
+            'u_num_exercice' => 5,
+            'planning_id' => 12,
+            'u_heure_solde' => 1218,
+            'date_inscription' => 2,
+            'token' => '',
+            'date_last_access' => 134,
+        ]),];
         $repository = new _Repository($this->dao);
 
-        $entites = $repository->getList([]);
+        $entite = $repository->find([]);
 
-        $this->array($entites)->hasKey('Aladdin');
-        $this->object($entites['Aladdin'])->isInstanceOf('\LibertAPI\Tools\Libraries\AEntite');
+        $this->object($entite)->isInstanceOf(\LibertAPI\Tools\Libraries\AEntite::class);
     }
 
     /*************************************************
@@ -207,11 +152,6 @@ final class UtilisateurRepository extends \Atoum
     /*************************************************
      * PUT
      *************************************************/
-
-    public function testPutOne()
-    {
-        $this->variable((new _Repository($this->dao))->putOne([], $this->entite))->isNull();
-    }
 
     public function testUpdateDateLastAccess()
     {
@@ -277,5 +217,11 @@ final class UtilisateurRepository extends \Atoum
     public function testDeleteOne()
     {
         $this->variable((new _Repository($this->dao))->deleteOne($this->entite))->isNull();
+    }
+
+    protected function getEntiteContent()
+    {
+        return [
+        ];
     }
 }

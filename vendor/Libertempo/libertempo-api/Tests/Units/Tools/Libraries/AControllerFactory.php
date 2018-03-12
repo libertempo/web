@@ -79,16 +79,4 @@ final class AControllerFactory extends \Atoum
 
         $this->object($controller)->isInstanceOf(_AController::class);
     }
-
-    /**
-     * Test de la résolution de namespace pour le contrôleur
-     */
-    public function testGetControllerClassname()
-    {
-        $ressource = 'Planning\Creneau';
-        $class = $this->testedClass()->getClass();
-        $this->string($class::getControllerClassname($ressource))
-            ->isIdenticalTo('\LibertAPI\Planning\Creneau\CreneauController')
-        ;
-    }
 }

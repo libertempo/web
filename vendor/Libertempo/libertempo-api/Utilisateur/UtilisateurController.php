@@ -1,5 +1,5 @@
 <?php
-namespace App\Components\Utilisateur;
+namespace LibertAPI\Utilisateur;
 
 use Psr\Http\Message\ServerRequestInterface as IRequest;
 use Psr\Http\Message\ResponseInterface as IResponse;
@@ -16,12 +16,12 @@ use Psr\Http\Message\ResponseInterface as IResponse;
  * Ne devrait être contacté que par le routeur
  * Ne devrait contacter que le Utilisateur\Repository
  */
-final class UtilisateurController extends \App\Libraries\AController
+final class UtilisateurController extends \LibertAPI\Tools\Libraries\AController
 {
     /**
      * {@inheritDoc}
      */
-    protected function ensureAccessUser($order, LibertAPI\Utilisateur\UtilisateurEntite $utilisateur)
+    protected function ensureAccessUser($order, \LibertAPI\Utilisateur\UtilisateurEntite $utilisateur)
     {
     }
 
@@ -59,7 +59,6 @@ final class UtilisateurController extends \App\Libraries\AController
      * @param int $id ID de l'élément
      *
      * @return IResponse, 404 si l'élément n'est pas trouvé, 200 sinon
-     * @throws \Exception en cas d'erreur inconnue (fallback, ne doit pas arriver)
      */
     private function getOne(IResponse $response, $id)
     {
@@ -109,11 +108,11 @@ final class UtilisateurController extends \App\Libraries\AController
     /**
      * Construit le « data » du json
      *
-     * @param Entite $entite Utilisateur
+     * @param UtilisateurEntite $entite Utilisateur
      *
      * @return array
      */
-    private function buildData(Entite $entite)
+    private function buildData(UtilisateurEntite $entite)
     {
         return [
             'id' => $entite->getId(),

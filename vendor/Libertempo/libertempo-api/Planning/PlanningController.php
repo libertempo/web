@@ -2,6 +2,7 @@
 namespace LibertAPI\Planning;
 
 use LibertAPI\Tools\Exceptions\MissingArgumentException;
+use LibertAPI\Tools\Interfaces;
 use Psr\Http\Message\ServerRequestInterface as IRequest;
 use Psr\Http\Message\ResponseInterface as IResponse;
 
@@ -12,12 +13,13 @@ use Psr\Http\Message\ResponseInterface as IResponse;
  * @author Wouldsmina
  *
  * @since 0.1
- * @see \Tests\Units\Planning\Controller
+ * @see \LibertAPI\Tests\Units\Planning\PlanningController
  *
  * Ne devrait être contacté que par le routeur
- * Ne devrait contacter que le Planning\Repository
+ * Ne devrait contacter que le PlanningRepository
  */
 final class PlanningController extends \LibertAPI\Tools\Libraries\AController
+implements Interfaces\IGetable, Interfaces\IPostable, Interfaces\IPutable, Interfaces\IDeletable
 {
     /**
      * {@inheritDoc}
@@ -25,7 +27,7 @@ final class PlanningController extends \LibertAPI\Tools\Libraries\AController
     protected function ensureAccessUser($order, \LibertAPI\Utilisateur\UtilisateurEntite $utilisateur)
     {
         $rights = [
-            'getList' => $utilisateur->isResponsable(),
+            'getList' => $utilisateur->isResponsable() || $utilisateur->isHautReponsable() || $utilisateur->isAdmin(),
         ];
 
         if (isset($rights[$order]) && !$rights[$order]) {
@@ -33,18 +35,8 @@ final class PlanningController extends \LibertAPI\Tools\Libraries\AController
         }
     }
 
-    /*************************************************
-     * GET
-     *************************************************/
-
     /**
-     * Execute l'ordre HTTP GET
-     *
-     * @param IRequest $request Requête Http
-     * @param IResponse $response Réponse Http
-     * @param array $arguments Arguments de route
-     *
-     * @return IResponse
+     * {@inheritDoc}
      */
     public function get(IRequest $request, IResponse $response, array $arguments)
     {
@@ -68,7 +60,7 @@ final class PlanningController extends \LibertAPI\Tools\Libraries\AController
         try {
             $planning = $this->repository->getOne($id);
         } catch (\DomainException $e) {
-            return $this->getResponseNotFound($response, 'Element « plannings#' . $id . ' » is not a valid resource');
+            return $this->getResponseNotFound($response, 'Element « planning#' . $id . ' » is not a valid resource');
         } catch (\Exception $e) {
             return $this->getResponseError($response, $e);
         }
@@ -126,19 +118,10 @@ final class PlanningController extends \LibertAPI\Tools\Libraries\AController
         ];
     }
 
-    /*************************************************
-     * POST
-     *************************************************/
-
-     /**
-      * Execute l'ordre HTTP POST
-      *
-      * @param IRequest $request Requête Http
-      * @param IResponse $response Réponse Http
-      *
-      * @return IResponse
-      */
-    public function post(IRequest $request, IResponse $response)
+    /**
+     * {@inheritDoc}
+     */
+    public function post(IRequest $request, IResponse $response, array $routeArguments)
     {
         $body = $request->getParsedBody();
         if (null === $body) {
@@ -164,18 +147,8 @@ final class PlanningController extends \LibertAPI\Tools\Libraries\AController
         );
     }
 
-    /*************************************************
-     * PUT
-     *************************************************/
-
     /**
-     * Execute l'ordre HTTP PUT
-     *
-     * @param IRequest $request Requête Http
-     * @param IResponse $response Réponse Http
-     * @param array $arguments Arguments de route
-     *
-     * @return IResponse
+     * {@inheritDoc}
      */
     public function put(IRequest $request, IResponse $response, array $arguments)
     {
@@ -188,7 +161,7 @@ final class PlanningController extends \LibertAPI\Tools\Libraries\AController
         try {
             $planning = $this->repository->getOne($id);
         } catch (\DomainException $e) {
-            return $this->getResponseNotFound($response, 'Element « plannings#' . $id . ' » is not a valid resource');
+            return $this->getResponseNotFound($response, 'Element « planning#' . $id . ' » is not a valid resource');
         } catch (\Exception $e) {
             return $this->getResponseError($response, $e);
         }
@@ -206,19 +179,9 @@ final class PlanningController extends \LibertAPI\Tools\Libraries\AController
         return $this->getResponseSuccess($response, '', 204);
     }
 
-    /*************************************************
-     * DELETE
-     *************************************************/
-
-     /**
-      * Execute l'ordre HTTP DELETE
-      *
-      * @param IRequest $request Requête Http
-      * @param IResponse $response Réponse Http
-      * @param array $arguments Arguments de route
-      *
-      * @return IResponse
-      */
+    /**
+     * {@inheritDoc}
+     */
     public function delete(IRequest $request, IResponse $response, array $arguments)
     {
         $id = (int) $arguments['planningId'];
@@ -226,7 +189,7 @@ final class PlanningController extends \LibertAPI\Tools\Libraries\AController
             $planning = $this->repository->getOne($id);
             $this->repository->deleteOne($planning);
         } catch (\DomainException $e) {
-            return $this->getResponseNotFound($response, 'Element « plannings#' . $id . ' » is not a valid resource');
+            return $this->getResponseNotFound($response, 'Element « planning#' . $id . ' » is not a valid resource');
         } catch (\Exception $e) {
             return $this->getResponseError($response, $e);
         }

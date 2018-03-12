@@ -1,6 +1,8 @@
 <?php
 namespace LibertAPI\Planning;
 
+use LibertAPI\Tools\Exceptions\MissingArgumentException;
+
 /**
  * @inheritDoc
  *
@@ -8,7 +10,7 @@ namespace LibertAPI\Planning;
  * @author Wouldsmina
  *
  * @since 0.1
- * @see \LibertAPI\Tests\Units\Planning\Entite
+ * @see \LibertAPI\Tests\Units\Planning\PlanningEntite
  *
  * Ne devrait être contacté que par le Planning\Repository
  * Ne devrait contacter personne
@@ -40,6 +42,9 @@ class PlanningEntite extends \LibertAPI\Tools\Libraries\AEntite
      */
     public function populate(array $data)
     {
+        if (!$this->hasAllRequired($data)) {
+            throw new MissingArgumentException('');
+        }
         $this->setName($data['name']);
         $this->setStatus($data['status']);
 
@@ -47,6 +52,34 @@ class PlanningEntite extends \LibertAPI\Tools\Libraries\AEntite
         if (!empty($erreurs)) {
             throw new \DomainException(json_encode($erreurs));
         }
+    }
+
+    /**
+     * Vérifie que les données passées possèdent bien tous les champs requis
+     *
+     * @param array $data
+     *
+     * @return bool
+     */
+    private function hasAllRequired(array $data)
+    {
+        foreach ($this->getListRequired() as $value) {
+            if (!isset($data[$value])) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Retourne la liste des champs requis
+     *
+     * @return array
+     */
+    private function getListRequired()
+    {
+        return ['name', 'status'];
     }
 
     /**

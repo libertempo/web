@@ -43,15 +43,25 @@ abstract class ADao
      *
      * @param int $id Id potentiel de ressource
      *
-     * @return array, vide si $id n'est pas dans le domaine de définition
+     * @return AEntite
+     * @throws \DomainException si $id n'est pas dans le domaine de définition
      */
     abstract public function getById($id);
+
+    /**
+     * Effectue le mapping des éléments venant de la DAO pour qu'ils soient compréhensibles pour l'Entité
+     *
+     * @param array $dataDao
+     *
+     * @return array
+     */
+    abstract protected function getStorage2Entite(array $dataDao);
 
     /**
      * Retourne une liste de ressource correspondant à des critères
      *
      * @param array $parametres
-     * @example [filter => [], lt => 23, limit => 4]
+     * @example [filter => []]
      *
      * @return array, vide si les critères ne sont pas pertinents
      */
@@ -64,11 +74,11 @@ abstract class ADao
     /**
      * Poste une nouvelle ressource
      *
-     * @param array $data Données à insérer
+     * @param AEntite $entite
      *
      * @return int Id de la ressource nouvellement créée
      */
-    abstract public function post(array $data);
+    abstract public function post(AEntite $entite);
 
     /*************************************************
      * PUT
@@ -77,10 +87,18 @@ abstract class ADao
     /**
      * Met à jour une ressource
      *
-     * @param array $data Données à mettre à jour
-     * @param int $id Id de l'élément à mettre à jour
+     * @param AEntite $entite
      */
-    abstract public function put(array $data, $id);
+    abstract public function put(AEntite $entite);
+
+    /**
+     * Effectue le mapping des éléments venant de l'entité pour qu'ils soient compréhensibles pour la DAO
+     *
+     * @param AEntite $entite
+     *
+     * @return array
+     */
+    abstract protected function getEntite2Storage(AEntite $entite);
 
     /*************************************************
      * DELETE
