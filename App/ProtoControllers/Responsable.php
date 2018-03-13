@@ -160,6 +160,7 @@ class Responsable
         if ($activeSeul) {
             $req .= ' AND u_is_active = "Y"';
         }
+        $req .= ' ORDER BY u_nom ASC, u_prenom ASC';
         $query = $sql->query($req);
 
         return $sql->query($req)->fetch_all(\MYSQLI_ASSOC);
