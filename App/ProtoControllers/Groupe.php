@@ -52,6 +52,7 @@ class Groupe
             $listeId = array_map('intval', $listeId);
             $req .= ' WHERE CG.g_gid IN (' . implode(',', $listeId) . ')';
         }
+        $req .= ' ORDER BY g_groupename ASC';
         $result = $sql->query($req);
 
         $groupes = [];
