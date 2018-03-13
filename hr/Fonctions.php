@@ -1719,7 +1719,7 @@ class Fonctions
     public static function saisie($year_calendrier_saisie)
     {
         $sql = \includes\SQL::singleton();
-        $config = new \App\Libraries\Configuration();
+        $config = new \App\Libraries\Configuration($sql);
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 

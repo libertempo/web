@@ -124,6 +124,7 @@ class Utilisateur
     {
         $donnees = [];
         $sql = \includes\SQL::singleton();
+        $config = new \App\Libraries\Configuration($sql);
         if ($config->isUsersExportFromLdap()) {
             $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
             $ldap = $injectableCreator->get(\App\Libraries\Ldap::class);
@@ -149,12 +150,12 @@ class Utilisateur
      */
     public static function getDonneesUtilisateur($login)
     {
+        $sql = \includes\SQL::singleton();
+        $config = new \App\Libraries\Configuration($sql);
         if ($config->isUsersExportFromLdap()) {
             $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
             $ldap = $injectableCreator->get(\App\Libraries\Ldap::class);
         }
-        $sql = \includes\SQL::singleton();
-        $config = new \App\Libraries\Configuration($sql);
         $req = 'SELECT *
                 FROM conges_users
                 WHERE u_login = \''.  \includes\SQL::quote($login).'\'';

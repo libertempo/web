@@ -872,7 +872,6 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
 
         $sql->getPdoObj()->begin_transaction();
         $insertInfos = static::insertInfosUtilisateur($data, $sql);
-        $insertEmail = static::insertEmailUtilisateur($data, $sql);
         $insertSoldes = static::insertSoldeUtilisateur($data, $sql);
         $insertGroupes = true;
         if (!empty($data['groupesId'])) {
@@ -898,16 +897,9 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
                     u_is_hr='" . $data['isHR'] . "',
                     u_passwd='" . $data['pwd1'] . "', 
                     u_quotite=" . $data['quotite'] . ",
+                    u_email = '" . $data['email'] . "',
                     u_heure_solde=" . \App\Helpers\Formatter::hour2Time($data['soldeHeure']) . ",
                     date_inscription = '" . date('Y-m-d H:i') . "';";
-
-        return $sql->query($req);
-    }
-
-    private static function insertEmailUtilisateur($data, \includes\SQL $sql)
-    {
-        $req = "INSERT INTO conges_users SET
-                u_email = '" . $data['email'] . "';";
 
         return $sql->query($req);
     }
@@ -1097,7 +1089,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
     {
         $req = 'UPDATE conges_users 
                 SET u_email = "'. $data['email'] . '" 
-                    WHERE u_login="' . $data['oldLogin'] . '"' ;
+                WHERE u_login="' . $data['oldLogin'] . '"' ;
         return $sql->query($req);
     }
 
@@ -1105,7 +1097,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
     {
         $req = 'UPDATE conges_users 
                 SET u_passwd = "' . $data['pwd1'] . '" 
-                    WHERE u_login="' . $data['oldLogin'] . '"' ;
+                WHERE u_login="' . $data['oldLogin'] . '"' ;
         return $sql->query($req);
     }
 }
