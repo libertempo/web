@@ -877,7 +877,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         if (!empty($data['groupesId'])) {
             $insertGroupes = static::insertGroupesUtilisateur($data, $sql);
         }
-        if ($insertInfos && $insertEmail && $insertSoldes && $insertGroupes) {
+        if ($insertInfos && $insertSoldes && $insertGroupes) {
             return $sql->getPdoObj()->commit();
         }
         
