@@ -25,6 +25,7 @@ class Utilisateur
         if ($activeSeul){
             $req .= ' AND u_is_active = "Y"';
         }
+        $req .= ' ORDER BY u_nom ASC, u_prenom ASC';
         $result = $sql->query($req);
 
         $users = [];
