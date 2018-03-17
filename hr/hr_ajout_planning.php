@@ -28,7 +28,7 @@ if (!empty($_POST)) {
 } elseif (NIL_INT !== $planningId) {
     $injectableCreator = new \App\Libraries\InjectableCreator(\includes\SQL::singleton(),$config);
     $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
-    $planning = $api->get('plannings/' .  $planningId, $_SESSION['token'])->data;
+    $planning = $api->get('planning/' .  $planningId, $_SESSION['token'])->data;
     $valueName = $planning->name;
 }
 

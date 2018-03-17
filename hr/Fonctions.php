@@ -2821,7 +2821,7 @@ class Fonctions
         /********************/
 
         // AFFICHAGE TABLEAU
-        $return .= '<form action="' . $PHP_SELF . '" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '?onglet=saisie" method="POST">';
         $return .= '<input type="hidden" name="groupe_id" value="0">';
         $return .= '<input type="hidden" name="choix_action" value="saisie_dates">';
         $return .= '<input class="btn btn-success" type="submit" value="' . _('admin_jours_fermeture_fermeture_pour_tous') . ' !">';
@@ -3023,7 +3023,9 @@ class Fonctions
                    /************************************************/
             // CALENDRIER DES FERMETURES
             $return .= \hr\Fonctions::affiche_calendrier_fermeture($year);
-        } elseif ($choix_action=="saisie_dates") {
+        };
+
+        if ($choix_action=="saisie_dates") {
             if ($groupe_id=="") {
                 $groupe_id=0;
             }

@@ -144,6 +144,9 @@ class Groupe
      */
     public static function isResponsableGroupe($resp, array $groupesId, \includes\SQL $sql)
     {
+        if (empty($groupesId)) {
+            return false;
+        }
         $req = 'SELECT EXISTS (
                     SELECT gr_gid
                     FROM conges_groupe_resp
@@ -161,10 +164,15 @@ class Groupe
      * @param string $resp
      * @param array $groupesId
      *
+     * @todo reprendre l'intégralité des méthodes de gestion de la hiérarchie
+     * 
      * @return bool
      */
     public static function isGrandResponsableGroupe($resp, array $groupesId, \includes\SQL $sql)
     {
+        if (empty($groupesId)) {
+            return false;
+        }
         $req = 'SELECT EXISTS (
                     SELECT ggr_gid
                     FROM conges_groupe_grd_resp

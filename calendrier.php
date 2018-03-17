@@ -64,7 +64,10 @@ if (!empty($_GET['groupe']) && NIL_INT != $_GET['groupe']) {
 }
 $utilisateursATrouver = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupesAVoir);
 
-$employes = \App\ProtoControllers\Utilisateur::getDonneesUtilisateurs($utilisateursATrouver);
+$tousEmployes = \App\ProtoControllers\Utilisateur::getDonneesTousUtilisateurs($config);
+$employes = array_filter($tousEmployes, function ($employe) {
+                return in_array($employe['u_login'], $utilisateursATrouver);
+            });
 foreach ($employes as $employe) {
     $employesATrouver[$employe['u_login']] = \App\ProtoControllers\Utilisateur::getNomComplet($employe['u_prenom'], $employe['u_nom'], true);
 }

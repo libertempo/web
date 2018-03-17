@@ -20,7 +20,7 @@ if (empty($listPlanningId)) {
     $config = new \App\Libraries\Configuration($sql);
     $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
     $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
-    $plannings = $api->get('plannings', $_SESSION['token'])->data;
+    $plannings = $api->get('planning', $_SESSION['token'])->data;
 }
 
 require_once VIEW_PATH . 'Planning/Liste.php';
