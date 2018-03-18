@@ -317,7 +317,7 @@ class Utilisateur
             $prenom = $prenom[0] . '.';
         }
 
-        return $prenom . ' ' . $nom;
+        return $nom . ' ' . $prenom;
     }
 
     /**
