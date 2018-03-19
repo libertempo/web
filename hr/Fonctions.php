@@ -2688,7 +2688,7 @@ class Fonctions
         $return = '';
 
         $return .= '<div class="wrapper">';
-        $return .= '<form action="' . $PHP_SELF . '" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '?onglet=saisie" method="POST">';
         $return .= _('divers_fermeture_du') . '<b>' . $fermeture_date_debut . '</b>' . _('divers_au') . '<b>' . $fermeture_date_fin . '</b>.';
         $return .= '<b>' . _('admin_annul_fermeture_confirm') . '</b>.<br>';
         $return .= '<input type="hidden" name="fermeture_id" value="' . $fermeture_id . '">';
@@ -2785,7 +2785,7 @@ class Fonctions
         $tab_year=array();
         \hr\Fonctions::get_tableau_jour_fermeture($year, $tab_year,  $groupe_id);
 
-        $return .= '<form id="form-fermeture" class="form-inline" role="form" action="' . $PHP_SELF . '?year=' . $year . '" method="POST">';
+        $return .= '<form id="form-fermeture" class="form-inline" role="form" action="' . $PHP_SELF . '?year=' . $year . '&onglet=saisie" method="POST">';
         $return .= '<div class="form-group">';
         $return .= '<label for="new_date_debut">' . _('divers_date_debut') . '</label><input type="text" class="form-control date" name="new_date_debut" value="' . $new_date_debut . '">';
         $return .= '</div>';
@@ -2886,7 +2886,7 @@ class Fonctions
                 $return .= _('divers_du') . ' <b>'. $date_affiche_1 . '</b> ' . _('divers_au') . ' <b>' . $date_affiche_2 . '</b>  (id ' . $fermeture_id . ')</b> ' . $groupe_name;
                 $return .= '</td>';
                 $return .= '<td>';
-                $return .= '<a href="' . $PHP_SELF . '?choix_action=annul_fermeture&fermeture_id=' . $fermeture_id . '&groupe_id=' . $groupe_id . '&fermeture_date_debut=' . $date_affiche_1 . '&fermeture_date_fin=' . $date_affiche_2 . '">' . _('admin_annuler_fermeture') . '</a>';
+                $return .= '<a href="' . $PHP_SELF . '?onglet=saisie&choix_action=annul_fermeture&fermeture_id=' . $fermeture_id . '&groupe_id=' . $groupe_id . '&fermeture_date_debut=' . $date_affiche_1 . '&fermeture_date_fin=' . $date_affiche_2 . '">' . _('admin_annuler_fermeture') . '</a>';
                 $return .= '</td>';
                 $return .= '</tr>';
             }
@@ -3023,9 +3023,7 @@ class Fonctions
                    /************************************************/
             // CALENDRIER DES FERMETURES
             $return .= \hr\Fonctions::affiche_calendrier_fermeture($year);
-        };
-
-        if ($choix_action=="saisie_dates") {
+        } elseif ($choix_action=="saisie_dates") {
             if ($groupe_id=="") {
                 $groupe_id=0;
             }
