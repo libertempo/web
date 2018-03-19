@@ -875,7 +875,7 @@ class Fonctions
             }
         }
 
-        if (is_array($_SESSION["tab_j_fermeture"])) {
+        if (isset($_SESSION["tab_j_fermeture"]) && is_array($_SESSION["tab_j_fermeture"])) {
             foreach ($_SESSION["tab_j_fermeture"] as $date) {
                 $datesDisabled[] = \App\Helpers\Formatter::dateIso2Fr($date);
             }
