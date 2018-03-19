@@ -742,3 +742,8 @@ td.calendrier-jour.heure_repos_1 div.triangle-bottom {
     border-top: 8px solid transparent;
     border-left: 8px solid rgba(224, 20, 20, 0.5);
 }
+
+/* Ligne séparant visuellement les responsables des autres membres d'un groupe dans le calendrier. */
+tr.calendrier-separator {
+    height: 5px;
+}

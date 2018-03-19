@@ -41,7 +41,9 @@ require_once VIEW_PATH . 'Calendrier.php';
             <?php endforeach ?>
             <?php endforeach ?>
         </tr>
+        <?php $index = 0; ?>
         <?php foreach ($employesATrouver as $loginUtilisation => $nomComplet) : ?>
+        <?php ++$index; ?>
         <tr class="calendrier-employe">
             <td class="calendrier-nom"><?= $nomComplet ?></td>
             <?php foreach ($jours as $jour) : ?>
@@ -55,6 +57,14 @@ require_once VIEW_PATH . 'Calendrier.php';
             </td>
             <?php endforeach ?>
         </tr>
+        <?php if($indexSeparator && $index === $indexSeparator) : ?>
+        <tr class="calendrier-separator">
+            <td></td>
+            <?php foreach ($jours as $jour) : ?>
+            <td></td>
+            <?php endforeach ?>
+        </tr>
+        <?php endif; ?>
         <?php endforeach ?>
     </table>
 </div>

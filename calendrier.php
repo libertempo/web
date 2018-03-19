@@ -61,16 +61,29 @@ if (!empty($_GET['groupe']) && NIL_INT != $_GET['groupe']) {
     $idGroupe = (int) $_GET['groupe'];
     $groupesAVoir = array_intersect([$idGroupe], $groupesAVoir);
 }
+
+// Récupération des responsables pour les afficher avant les membres des groupes concernés.
+$responsablesATrouver = \App\ProtoControllers\Groupe\Responsable::getListResponsableByGroupeIds($groupesAVoir);
 $utilisateursATrouver = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupesAVoir);
 
-// Ajout des responsables pour les afficher avant les membres des groupes concernés.
-$responsablesATrouver = \App\ProtoControllers\Groupe\Responsable::getListResponsableByGroupeIds($groupesAVoir);
-$utilisateursATrouver = array_merge($responsablesATrouver, $utilisateursATrouver);
-
+// Préparation de la liste des utilisateurs qui seront affichés par le fichier "Mois.php".
+$employesATrouver = [];
+$employes = \App\ProtoControllers\Utilisateur::getDonneesUtilisateurs($responsablesATrouver);
+foreach ($employes as $employe) {
+    $employesATrouver[$employe['u_login']] = \App\ProtoControllers\Utilisateur::getNomComplet($employe['u_prenom'], $employe['u_nom'], true);
+}
 $employes = \App\ProtoControllers\Utilisateur::getDonneesUtilisateurs($utilisateursATrouver);
 foreach ($employes as $employe) {
     $employesATrouver[$employe['u_login']] = \App\ProtoControllers\Utilisateur::getNomComplet($employe['u_prenom'], $employe['u_nom'], true);
 }
+
+// Merge obligatoire pour que les responsables soient
+// pris en compte lors du "fetchEvenements" et affichés par le fichier "Jour.php".
+$utilisateursATrouver = array_merge($responsablesATrouver, $utilisateursATrouver);
+
+// Cette variable est utilisée par le fichier "Mois.php" pour ajouter
+// une séparation visuelle entre les responsables et les autres utilisateurs.
+$indexSeparator = count($responsablesATrouver);
 
 header_menu('', 'Libertempo : '._('calendrier_titre'));
 
