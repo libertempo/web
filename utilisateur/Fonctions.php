@@ -84,7 +84,7 @@ class Fonctions
             $periode_num = insert_dans_periode($_SESSION['userlogin'], $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type, $new_etat, 0);
 
             if ( $periode_num != 0 ) {
-                $return .= schars( _('form_modif_ok') ) . ' !<br><br>.';
+                $return .= schars( _('form_modif_ok') ) . '<br><br>';
                 //envoi d'un mail d'alerte au responsable (si demandé dans config de php_conges)
                 if ($config->isSendMailDemandeResponsable()) {
                     if (in_array(\utilisateur\Fonctions::get_type_abs($new_type), array('absences'))) {
@@ -95,11 +95,11 @@ class Fonctions
                 }
             }
             else {
-                $return .= schars( _('form_modif_not_ok') ) . ' !<br><br>.';
+                $return .= schars( _('form_modif_not_ok') ) . '<br><br>';
             }
         }
         else {
-            $return .= schars( _('resp_traite_user_valeurs_not_ok') ) . ' !<br><br>.';
+            $return .= schars( _('resp_traite_user_valeurs_not_ok') ) . '<br><br>';
         }
 
         $return .= '<a class="btn" href="' . $PHP_SELF . '">' . _('form_retour') . '</a>';

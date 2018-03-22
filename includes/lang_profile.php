@@ -8,12 +8,9 @@ if(isset($_REQUEST['lang']))
 elseif(isset($_SESSION['lang']))
 	$lang = $_SESSION['lang'];
 else {
-    /* Retrieve lang informations from config database */
-    $lang_query = "SELECT conf_valeur FROM conges_config WHERE conf_nom='lang';";
-    $ReqLang = \includes\SQL::query($lang_query);
-    $lang = $ReqLang->fetch_row();
-    if ($lang != NULL)
-        $lang = $lang[0];
+    $sql = \includes\SQL::singleton();
+    $config = new \App\Libraries\Configuration($sql);
+    $lang = $config->getLangue();
 }
 
 putenv('LANG='.$lang); // On modifie la variable d'environnement

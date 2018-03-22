@@ -31,7 +31,7 @@ $app->add(function (IRequest $request, IResponse $response, callable $next) {
                     $this['currentUser']
                 );
             }
-            $this[AControllerFactory::getControllerClassname($ressourcePath)] = $controller;
+            $this['controller'] = $controller;
         } catch (\DomainException $e) {
             return call_user_func(
                 $this->notFoundHandler,
@@ -74,16 +74,16 @@ $app->add(function (IRequest $request, IResponse $response, callable $next) {
 $app->add(function (IRequest $request, IResponse $response, callable $next) {
     try {
         $configuration = json_decode(file_get_contents(ROOT_PATH . 'configuration.json'));
-        $config = new DBAL\Configuration();
-        $connexion = DBAL\DriverManager::getConnection(
-            [
-                'driver' => 'pdo_mysql',
-                'host' => $configuration->db->serveur,
-                'dbname' => $configuration->db->base,
-                'user' => $configuration->db->utilisateur,
-                'password' => $configuration->db->mot_de_passe,
-            ],
-            $config);
+        $dbh = new \PDO(
+            'mysql:host=' . $configuration->db->serveur . ';dbname=' . $configuration->db->base,
+            $configuration->db->utilisateur,
+            $configuration->db->mot_de_passe,
+            [\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'utf8\';']
+        );
+        $connexion = DBAL\DriverManager::getConnection([
+                'pdo' => $dbh
+            ]
+        );
         $this['storageConnector'] = $connexion;
 
         return $next($request, $response);
@@ -112,9 +112,7 @@ $app->add(function (IRequest $request, IResponse $response, callable $next) {
     $ressources = [];
     foreach ($paths as $value) {
         if (!is_numeric($value)) {
-            $ressources[] = Formatter::getSingularTerm(
-                Formatter::getStudlyCapsFromSnake($value)
-            );
+            $ressources[] = Formatter::getStudlyCapsFromSnake($value);
         }
     }
     $request = $request->withAttribute('nomRessources', implode('|', $ressources));

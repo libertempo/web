@@ -39,9 +39,10 @@ function getTitleJour(\App\Libraries\Calendrier\Evenements $evenements, $nom, $j
     }
     return '';
 }
-$config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+$sql = \includes\SQL::singleton();
+$config = new \App\Libraries\Configuration($sql);
 
-$injectableCreator = new \App\Libraries\InjectableCreator(\includes\SQL::singleton());
+$injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
 $calendar = new \CalendR\Calendar();
 $jourDemande = null;
 $moisDemande = null;
@@ -66,20 +67,18 @@ if (!empty($_GET['groupe']) && NIL_INT != $_GET['groupe']) {
 $responsablesATrouver = \App\ProtoControllers\Groupe\Responsable::getListResponsableByGroupeIds($groupesAVoir);
 $utilisateursATrouver = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupesAVoir);
 
-// Préparation de la liste des utilisateurs qui seront affichés par le fichier "Mois.php".
-$employesATrouver = [];
-$employes = \App\ProtoControllers\Utilisateur::getDonneesUtilisateurs($responsablesATrouver);
-foreach ($employes as $employe) {
-    $employesATrouver[$employe['u_login']] = \App\ProtoControllers\Utilisateur::getNomComplet($employe['u_prenom'], $employe['u_nom'], true);
-}
-$employes = \App\ProtoControllers\Utilisateur::getDonneesUtilisateurs($utilisateursATrouver);
-foreach ($employes as $employe) {
-    $employesATrouver[$employe['u_login']] = \App\ProtoControllers\Utilisateur::getNomComplet($employe['u_prenom'], $employe['u_nom'], true);
-}
-
 // Merge obligatoire pour que les responsables soient
 // pris en compte lors du "fetchEvenements" et affichés par le fichier "Jour.php".
 $utilisateursATrouver = array_merge($responsablesATrouver, $utilisateursATrouver);
+
+$tousEmployes = \App\ProtoControllers\Utilisateur::getDonneesTousUtilisateurs($config);
+$employes = array_filter($tousEmployes, function ($employe) use ($utilisateursATrouver) {
+    return 'Y' == $employe['is_active'] && in_array($employe['u_login'], $utilisateursATrouver);
+});
+
+foreach ($employes as $employe) {
+    $employesATrouver[$employe['u_login']] = \App\ProtoControllers\Utilisateur::getNomComplet($employe['u_prenom'], $employe['u_nom'], true);
+}
 
 // Cette variable est utilisée par le fichier "Mois.php" pour ajouter
 // une séparation visuelle entre les responsables et les autres utilisateurs.

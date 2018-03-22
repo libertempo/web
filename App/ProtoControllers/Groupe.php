@@ -52,6 +52,7 @@ class Groupe
             $listeId = array_map('intval', $listeId);
             $req .= ' WHERE CG.g_gid IN (' . implode(',', $listeId) . ')';
         }
+        $req .= ' ORDER BY g_groupename ASC';
         $result = $sql->query($req);
 
         $groupes = [];
@@ -72,7 +73,8 @@ class Groupe
     {
         $req = 'SELECT DISTINCT g_gid,g_groupename,g_comment,g_double_valid
                 FROM conges_groupe CG
-                INNER JOIN conges_groupe_users CGU ON (CG.g_gid = CGU.gu_gid);';
+                INNER JOIN conges_groupe_users CGU ON (CG.g_gid = CGU.gu_gid)
+                ORDER BY g_groupename ASC;';
         $result = $sql->query($req);
 
         $groupes = [];
@@ -143,10 +145,13 @@ class Groupe
      */
     public static function isResponsableGroupe($resp, array $groupesId, \includes\SQL $sql)
     {
+        if (empty($groupesId)) {
+            return false;
+        }
         $req = 'SELECT EXISTS (
                     SELECT gr_gid
                     FROM conges_groupe_resp
-                    WHERE gr_gid IN (\'' . implode(',', $groupesId) . '\')
+                    WHERE gr_gid IN (' . implode(',', $groupesId) . ')
                         AND gr_login = "' . $sql->quote($resp) . '"
                 )';
         $query = $sql->query($req);
@@ -160,14 +165,19 @@ class Groupe
      * @param string $resp
      * @param array $groupesId
      *
+     * @todo reprendre l'intégralité des méthodes de gestion de la hiérarchie
+     * 
      * @return bool
      */
     public static function isGrandResponsableGroupe($resp, array $groupesId, \includes\SQL $sql)
     {
+        if (empty($groupesId)) {
+            return false;
+        }
         $req = 'SELECT EXISTS (
                     SELECT ggr_gid
                     FROM conges_groupe_grd_resp
-                    WHERE ggr_gid IN (\'' . implode(',', $groupesId) . '\')
+                    WHERE ggr_gid IN (' . implode(',', $groupesId) . ')
                         AND ggr_login = "' . $sql->quote($resp) . '"
                 )';
         $query = $sql->query($req);

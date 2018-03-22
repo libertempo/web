@@ -1,7 +1,7 @@
 <?php
 namespace LibertAPI\Tests\Units\Planning\Creneau;
 
-use \LibertAPI\Planning\Creneau\CreneauDao as _Dao;
+use LibertAPI\Planning\Creneau\CreneauEntite;
 
 /**
  * Classe de test du DAO de créneau de planning
@@ -14,62 +14,6 @@ use \LibertAPI\Planning\Creneau\CreneauDao as _Dao;
 final class CreneauDao extends \LibertAPI\Tests\Units\Tools\Libraries\ADao
 {
     /*************************************************
-     * GET
-     *************************************************/
-
-    /**
-     * Teste la méthode getById avec un id non trouvé
-     */
-    public function testGetByIdNotFound()
-    {
-        $this->calling($this->result)->fetch = [];
-        $dao = new _Dao($this->connector);
-
-        $get = $dao->getById(99);
-
-        $this->array($get)->isEmpty();
-    }
-
-    /**
-     * Teste la méthode getById avec un id trouvé
-     */
-    public function testGetByIdFound()
-    {
-        $this->calling($this->result)->fetch = ['a'];
-        $dao = new _Dao($this->connector);
-
-        $get = $dao->getById(99);
-
-        $this->array($get)->isNotEmpty();
-    }
-
-    /**
-     * Teste la méthode getList avec des critères non pertinents
-     */
-    public function testGetListNotFound()
-    {
-        $this->calling($this->result)->fetchAll = [];
-        $dao = new _Dao($this->connector);
-
-        $get = $dao->getList([]);
-
-        $this->array($get)->isEmpty();
-    }
-
-    /**
-    * Teste la méthode getList avec des critères pertinents
-     */
-    public function testGetListFound()
-    {
-        $this->calling($this->result)->fetchAll = [['a']];
-        $dao = new _Dao($this->connector);
-
-        $get = $dao->getList([]);
-
-        $this->array($get[0])->isNotEmpty();
-    }
-
-    /*************************************************
      * POST
      *************************************************/
 
@@ -79,16 +23,9 @@ final class CreneauDao extends \LibertAPI\Tests\Units\Tools\Libraries\ADao
     public function testPostOk()
     {
         $this->connector->getMockController()->lastInsertId = 314;
-        $dao = new _Dao($this->connector);
+        $dao = $this->newTestedInstance($this->connector);
 
-        $postId = $dao->post([
-            'planning_id' => 12,
-            'jour_id' => 7,
-            'type_semaine' => 23,
-            'type_periode' => 2,
-            'debut' => 63,
-            'fin' => 55,
-        ]);
+        $postId = $dao->post(new CreneauEntite($this->entiteContent));
 
         $this->integer($postId)->isIdenticalTo(314);
     }
@@ -102,17 +39,50 @@ final class CreneauDao extends \LibertAPI\Tests\Units\Tools\Libraries\ADao
      */
     public function testPutOk()
     {
-        $dao = new _Dao($this->connector);
+        $dao = $this->newTestedInstance($this->connector);
 
-        $put = $dao->put([
-            'planning_id' => 83,
-            'jour_id' => 27,
-            'type_semaine' => 2,
-            'type_periode' => 52,
-            'debut' => 31,
-            'fin' => 91,
-        ], 22);
+        $put = $dao->put(new CreneauEntite($this->entiteContent));
 
         $this->variable($put)->isNull();
     }
+
+    /*************************************************
+     * DELETE
+     *************************************************/
+
+    /**
+     * Teste la méthode delete quand tout est ok
+     */
+    public function testDeleteOk()
+    {
+        $this->calling($this->result)->rowCount = 1;
+        $this->newTestedInstance($this->connector);
+
+        $res = $this->testedInstance->delete(7);
+
+        $this->variable($res)->isNull();
+    }
+
+    protected function getStorageContent()
+    {
+        return [
+            'creneau_id' => 42,
+            'planning_id' => 12,
+            'jour_id' => 7,
+            'type_semaine' => 23,
+            'type_periode' => 2,
+            'debut' => 63,
+            'fin' => 55,
+        ];
+    }
+
+    private $entiteContent = [
+        'id' => 42,
+        'planningId' => 12,
+        'jourId' => 7,
+        'typeSemaine' => 23,
+        'typePeriode' => 2,
+        'debut' => 63,
+        'fin' => 55,
+    ];
 }

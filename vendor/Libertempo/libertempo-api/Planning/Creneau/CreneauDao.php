@@ -1,6 +1,8 @@
 <?php
 namespace LibertAPI\Planning\Creneau;
 
+use LibertAPI\Tools\Libraries\AEntite;
+
 /**
  * {@inheritDoc}
  *
@@ -29,7 +31,28 @@ class CreneauDao extends \LibertAPI\Tools\Libraries\ADao
         $this->setWhere(['id' => $id, 'planning_id' => $planningId]);
         $res = $this->queryBuilder->execute();
 
-        return $res->fetch(\PDO::FETCH_ASSOC);
+        $data = $res->fetch(\PDO::FETCH_ASSOC);
+        if (empty($data)) {
+            throw new \DomainException('#' . $id . ' is not a valid resource');
+        }
+
+        return new CreneauEntite($this->getStorage2Entite($data));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    final protected function getStorage2Entite(array $dataDao)
+    {
+        return [
+            'id' => $dataDao['creneau_id'],
+            'planningId' => $dataDao['planning_id'],
+            'jourId' => $dataDao['jour_id'],
+            'typeSemaine' => $dataDao['type_semaine'],
+            'typePeriode' => $dataDao['type_periode'],
+            'debut' => $dataDao['debut'],
+            'fin' => $dataDao['fin'],
+        ];
     }
 
     /**
@@ -41,7 +64,18 @@ class CreneauDao extends \LibertAPI\Tools\Libraries\ADao
         $this->setWhere($parametres);
         $res = $this->queryBuilder->execute();
 
-        return $res->fetchAll(\PDO::FETCH_ASSOC);
+        $data = $res->fetchAll(\PDO::FETCH_ASSOC);
+        if (empty($data)) {
+            throw new \UnexpectedValueException('No resource match with these parameters');
+        }
+
+        $entites = [];
+        foreach ($data as $value) {
+            $entite = new CreneauEntite($this->getStorage2Entite($value));
+            $entites[$entite->getId()] = $entite;
+        }
+
+        return $entites;
     }
 
     /**
@@ -68,10 +102,10 @@ class CreneauDao extends \LibertAPI\Tools\Libraries\ADao
     /**
      * @inheritDoc
      */
-    public function post(array $data)
+    public function post(AEntite $entite)
     {
         $this->queryBuilder->insert($this->getTableName());
-        $this->setValues($data);
+        $this->setValues($this->getEntite2Storage($entite));
         $this->queryBuilder->execute();
 
         return $this->storageConnector->lastInsertId();
@@ -99,14 +133,29 @@ class CreneauDao extends \LibertAPI\Tools\Libraries\ADao
     /**
      * @inheritDoc
      */
-    public function put(array $data, $id)
+    public function put(AEntite $entite)
     {
         $this->queryBuilder->update($this->getTableName());
         $this->queryBuilder->where('creneau_id = :id');
-        $this->queryBuilder->setParameter(':id', (int) $id);
-        $this->setSet($data);
+        $this->queryBuilder->setParameter(':id', $entite->getId());
+        $this->setSet($this->getEntite2Storage($entite));
 
         $this->queryBuilder->execute();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    final protected function getEntite2Storage(AEntite $entite)
+    {
+        return [
+            'planning_id' => $entite->getPlanningId(),
+            'jour_id' => $entite->getJourId(),
+            'type_semaine' => $entite->getTypeSemaine(),
+            'type_periode' => $entite->getTypePeriode(),
+            'debut' => $entite->getDebut(),
+            'fin' => $entite->getFin(),
+        ];
     }
 
     private function setSet(array $parametres)

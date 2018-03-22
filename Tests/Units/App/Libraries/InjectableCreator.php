@@ -16,6 +16,8 @@ class InjectableCreator extends \Tests\Units\TestUnit
     * @var \includes\SQL
     */
     private $db;
+    private $result;
+    private $config;
 
     /**
      * @var _InjectableCreator
@@ -25,13 +27,24 @@ class InjectableCreator extends \Tests\Units\TestUnit
     public function beforeTestMethod($method)
     {
         parent::beforeTestMethod($method);
+        $this->result = new \mock\Mysqli\Result();
         $this->db = new \mock\includes\SQL();
-        $this->class = new _InjectableCreator($this->db);
+        $this->calling($this->db)->query = $this->result;
+        $this->calling($this->result)->fetch_array[1] =  [
+                        'conf_nom' => 'installed_version',
+                        'conf_valeur' => '1.9',
+                        'conf_groupe' => '00_libertempo',
+                        'conf_type' => 'texte',
+                        'conf_commentaire' => 'config_comment_installed_version'
+                    ];
+
+        $this->config = new \mock\App\Libraries\Configuration($this->db);
+        $this->class = new _InjectableCreator($this->db, $this->config);
     }
 
     public function testConstruct()
     {
-        $this->object(new _InjectableCreator($this->db))
+        $this->object(new _InjectableCreator($this->db, $this->config))
             ->isInstanceOf(_InjectableCreator::class);
     }
 

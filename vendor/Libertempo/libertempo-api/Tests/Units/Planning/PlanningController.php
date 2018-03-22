@@ -17,7 +17,6 @@ final class PlanningController extends \LibertAPI\Tests\Units\Tools\Libraries\AR
     protected function initRepository()
     {
         $this->mockGenerator->orphanize('__construct');
-        $this->mockGenerator->shuntParentClassCalls();
         $this->repository = new \mock\LibertAPI\Planning\PlanningRepository();
     }
 
@@ -76,7 +75,7 @@ final class PlanningController extends \LibertAPI\Tests\Units\Tools\Libraries\AR
         $this->request->getMockController()->getParsedBody = null;
         $this->newTestedInstance($this->repository, $this->router, $this->currentEmploye);
 
-        $response = $this->testedInstance->post($this->request, $this->response);
+        $response = $this->testedInstance->post($this->request, $this->response, []);
 
         $this->assertFail($response, 400);
     }
@@ -92,7 +91,7 @@ final class PlanningController extends \LibertAPI\Tests\Units\Tools\Libraries\AR
         };
         $this->newTestedInstance($this->repository, $this->router, $this->currentEmploye);
 
-        $response = $this->testedInstance->post($this->request, $this->response);
+        $response = $this->testedInstance->post($this->request, $this->response, []);
 
         $this->assertFail($response, 412);
     }
@@ -108,7 +107,7 @@ final class PlanningController extends \LibertAPI\Tests\Units\Tools\Libraries\AR
         };
         $this->newTestedInstance($this->repository, $this->router, $this->currentEmploye);
 
-        $response = $this->testedInstance->post($this->request, $this->response);
+        $response = $this->testedInstance->post($this->request, $this->response, []);
 
         $this->assertFail($response, 412);
     }
@@ -123,7 +122,7 @@ final class PlanningController extends \LibertAPI\Tests\Units\Tools\Libraries\AR
         $this->repository->getMockController()->postOne = 42;
         $this->newTestedInstance($this->repository, $this->router, $this->currentEmploye);
 
-        $response = $this->testedInstance->post($this->request, $this->response);
+        $response = $this->testedInstance->post($this->request, $this->response, []);
         $data = $this->getJsonDecoded($response->getBody());
 
         $this->integer($response->getStatusCode())->isIdenticalTo(201);
@@ -145,7 +144,7 @@ final class PlanningController extends \LibertAPI\Tests\Units\Tools\Libraries\AR
         };
         $this->newTestedInstance($this->repository, $this->router, $this->currentEmploye);
 
-        $response = $this->testedInstance->post($this->request, $this->response);
+        $response = $this->testedInstance->post($this->request, $this->response, []);
 
         $this->assertError($response);
     }
@@ -311,6 +310,7 @@ final class PlanningController extends \LibertAPI\Tests\Units\Tools\Libraries\AR
     public function testDeleteOk()
     {
         $this->repository->getMockController()->getOne = $this->entite;
+        $this->repository->getMockController()->deleteOne = '';
         $this->newTestedInstance($this->repository, $this->router, $this->currentEmploye);
 
         $response = $this->testedInstance->delete($this->request, $this->response, ['planningId' => 99]);

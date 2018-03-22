@@ -28,7 +28,7 @@ class Utilisateur {
 
         $groupeIds = array_map('intval', $groupeIds);
         $sql = \includes\SQL::singleton();
-        $req = 'SELECT gu_login
+        $req = 'SELECT DISTINCT gu_login
                 FROM `conges_groupe_users`
                 WHERE gu_gid IN (' . implode(',', $groupeIds) . ')';
         $res = $sql->query($req);

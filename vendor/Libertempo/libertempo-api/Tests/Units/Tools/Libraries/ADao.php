@@ -1,6 +1,8 @@
 <?php
 namespace LibertAPI\Tests\Units\Tools\Libraries;
 
+use LibertAPI\Tools\Libraries\AEntite;
+
 /**
  * Classe commune de test du DAO
  *
@@ -47,4 +49,73 @@ abstract class ADao extends \Atoum
      */
     protected $result;
 
+    /**
+     * Teste la méthode getById avec un id non trouvé
+     */
+    public function testGetByIdNotFound()
+    {
+        $this->calling($this->result)->fetch = [];
+        $this->newTestedInstance($this->connector);
+
+        $this->exception(function () {
+            $this->testedInstance->getById(99);
+        })->isInstanceOf(\DomainException::class);
+    }
+
+    /**
+     * Teste la méthode getById avec un id trouvé
+     */
+    public function testGetByIdFound()
+    {
+        $this->calling($this->result)->fetch = $this->getStorageContent();
+        $this->newTestedInstance($this->connector);
+
+        $get = $this->testedInstance->getById(99);
+
+        $this->object($get)->isInstanceOf(AEntite::class);
+    }
+
+    /**
+     * Teste la méthode getList avec des critères non pertinents
+     */
+    public function testGetListNotFound()
+    {
+        $this->calling($this->result)->fetchAll = [];
+        $this->newTestedInstance($this->connector);
+
+        $this->exception(function () {
+            $this->testedInstance->getList([]);
+        })->isInstanceOf(\UnexpectedValueException::class);
+    }
+
+    /**
+     * Teste la méthode getList avec des critères pertinents
+     */
+    public function testGetListFound()
+    {
+        $this->calling($this->result)->fetchAll = [$this->getStorageContent()];
+        $this->newTestedInstance($this->connector);
+
+        $get = $this->testedInstance->getList([]);
+
+        $this->array($get)->isNotEmpty();
+        array_map(function ($entite) {
+            $this->object($entite)->isInstanceOf(AEntite::class);
+        }, $get);
+    }
+
+    abstract protected function getStorageContent();
+
+    /**
+     * Teste la méthode delete quand tout est ok
+     */
+    public function testDeleteOk()
+    {
+        $this->calling($this->result)->rowCount = 1;
+        $this->newTestedInstance($this->connector);
+
+        $res = $this->testedInstance->delete(7);
+
+        $this->integer($res)->isIdenticalTo(1);
+    }
 }

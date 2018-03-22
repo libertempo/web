@@ -1,6 +1,8 @@
 <?php
 namespace LibertAPI\Planning\Creneau;
 
+use LibertAPI\Tools\Exceptions\MissingArgumentException;
+
 /**
  * {@inheritDoc}
  *
@@ -80,6 +82,9 @@ class CreneauEntite extends \LibertAPI\Tools\Libraries\AEntite
      */
     public function populate(array $data)
     {
+        if (!$this->hasAllRequired($data)) {
+            throw new MissingArgumentException('');
+        }
         $this->setPlanningId($data['planningId']);
         $this->setJourId($data['jourId']);
         $this->setTypeSemaine($data['typeSemaine']);
@@ -91,6 +96,34 @@ class CreneauEntite extends \LibertAPI\Tools\Libraries\AEntite
         if (!empty($erreurs)) {
             throw new \DomainException(json_encode($erreurs));
         }
+    }
+
+    /**
+     * Vérifie que les données passées possèdent bien tous les champs requis
+     *
+     * @param array $data
+     *
+     * @return bool
+     */
+    private function hasAllRequired(array $data)
+    {
+        foreach ($this->getListRequired() as $value) {
+            if (!isset($data[$value])) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Retourne la liste des champs requis
+     *
+     * @return array
+     */
+    private function getListRequired()
+    {
+        return ['planningId', 'jourId', 'typeSemaine', 'typePeriode', 'debut', 'fin'];
     }
 
     private function setPlanningId($planningId)

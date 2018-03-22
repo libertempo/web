@@ -87,7 +87,7 @@ abstract class AControllerFactory
      *
      * @return string
      */
-    final public static function getControllerClassname($ressourcePath)
+    final private static function getControllerClassname($ressourcePath)
     {
         $paths = explode('\\', $ressourcePath);
         $end = array_pop($paths);

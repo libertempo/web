@@ -37,7 +37,7 @@
         "jasig/phpcas": "1.3.5",
         "yohang/calendr": "^2.0",
         "guzzlehttp/guzzle": "6.2.2",
-        "libertempo/libertempo-api": "0.6.0"
+        "libertempo/libertempo-api": "0.7.0"
     },
     "repositories": [
         {

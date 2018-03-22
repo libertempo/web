@@ -24,15 +24,21 @@ abstract class ARestController extends AController
     protected $currentEmploye;
 
     /**
+     * @var UtilisateurEntite Standardisation d'un rôle admin
+     */
+    protected $currentAdmin;
+
+    /**
      * Init des tests
      */
     public function beforeTestMethod($method)
     {
         parent::beforeTestMethod($method);
-        $this->currentEmploye = new UtilisateurEntite(['id' => 'user', 'isResp' => false]);
-        $this->currentResponsable = new UtilisateurEntite(['id' => 'resp', 'isResp' => true]);
-
+        $this->currentEmploye = new UtilisateurEntite(['id' => 'user', 'isResp' => false, 'isHr' => false, 'isAdmin' => false]);
+        $this->currentResponsable = new UtilisateurEntite(['id' => 'resp', 'isResp' => true, 'isHr' => false, 'isAdmin' => false]);
+        $this->currentAdmin = new UtilisateurEntite(['id' => 'admin', 'isResp' => true, 'isHr' => false, 'isAdmin' => true]);
     }
+
     /*************************************************
      * GET
      *************************************************/
@@ -96,7 +102,7 @@ abstract class ARestController extends AController
         $this->repository->getMockController()->getList = [
             42 => $this->entite,
         ];
-        $this->newTestedInstance($this->repository, $this->router, $this->currentResponsable);
+        $this->newTestedInstance($this->repository, $this->router, $this->currentAdmin);
 
         $response = $this->getList();
         $data = $this->getJsonDecoded($response->getBody());
@@ -119,7 +125,7 @@ abstract class ARestController extends AController
         $this->repository->getMockController()->getList = function () {
             throw new \UnexpectedValueException('');
         };
-        $this->newTestedInstance($this->repository, $this->router, $this->currentResponsable);
+        $this->newTestedInstance($this->repository, $this->router, $this->currentAdmin);
 
         $response = $this->getList();
 
@@ -135,7 +141,7 @@ abstract class ARestController extends AController
         $this->repository->getMockController()->getList = function () {
             throw new \Exception('');
         };
-        $this->newTestedInstance($this->repository, $this->router, $this->currentResponsable);
+        $this->newTestedInstance($this->repository, $this->router, $this->currentAdmin);
 
         $response = $this->getList();
         $this->assertError($response);

@@ -46,7 +46,7 @@ class Configuration {
      * @todo a supprimer. non utilisé
      * @return string
      */
-    public function getLang() {
+    public function getLangue() {
         return $this->getGroupeLibertempoValeur('lang');
     }
 
@@ -187,6 +187,7 @@ class Configuration {
     {
         return $this->getGroupeResponsableValeur('resp_association_planning');
     }
+
     /**
      * Retourne une valeur du groupe responsable par son nom
      *
@@ -196,15 +197,6 @@ class Configuration {
      */
     private function getGroupeResponsableValeur($nom) {
         return $this->getValeur($nom, '06_Responsable');
-    }
-
-    /**
-     * Permet aux responsables avec les droits admin de voir tous les utilisateurs
-     * 
-     * @return boolean
-     */
-    public function canAdminSeeAll() {
-        return $this->getGroupeAdministrateurValeur('admin_see_all');
     }
 
     /**
@@ -280,10 +272,6 @@ class Configuration {
     
     public function isSendMailSupprimeDemandeResponsable() {
         return $this->getGroupeMailValeur('mail_supp_demande_alerte_resp');
-    }
-
-    public function getMailFromLdap() {
-        return $this->getGroupeMailValeur('where_to_find_user_email') == 'ldap';
     }
 
     /**
@@ -419,9 +407,9 @@ class Configuration {
         return $this->getGroupeDiversValeur('affiche_date_traitement');
     }
 
-    public function getDureeSession()
+    public function isJoursFeriesFrance()
     {
-        return $this->getGroupeDiversValeur('duree_session');
+        return $this->getGroupeDiversValeur('calcul_auto_jours_feries_france');
     }
     /**
      * Retourne une valeur du groupe divers par son nom

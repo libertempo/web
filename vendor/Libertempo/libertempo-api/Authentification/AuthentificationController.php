@@ -3,6 +3,7 @@ namespace LibertAPI\Authentification;
 
 use LibertAPI\Tools\Libraries\ARepository;
 use \Slim\Interfaces\RouterInterface as IRouter;
+use LibertAPI\Tools\Interfaces;
 use Psr\Http\Message\ServerRequestInterface as IRequest;
 use Psr\Http\Message\ResponseInterface as IResponse;
 
@@ -16,6 +17,7 @@ use Psr\Http\Message\ResponseInterface as IResponse;
  * @see \Tests\Units\Authentification\AuthentificationController
  */
 final class AuthentificationController extends \LibertAPI\Tools\Libraries\AController
+implements Interfaces\IGetable
 {
     public function __construct(ARepository $repository, IRouter $router)
     {
@@ -30,19 +32,10 @@ final class AuthentificationController extends \LibertAPI\Tools\Libraries\AContr
     {
     }
 
-    /*************************************************
-     * GET
-     *************************************************/
-
     /**
-     * Execute l'ordre HTTP GET pour la récupération du token
-     *
-     * @param IRequest $request Requête Http
-     * @param IResponse $response Réponse Http
-     *
-     * @return IResponse
+     * {@inheritDoc}
      */
-    public function get(IRequest $request, IResponse $response)
+    public function get(IRequest $request, IResponse $response, array $arguments)
     {
         $authentificationType = 'Basic';
         $authentification = $request->getHeaderLine('Authorization');
@@ -57,6 +50,7 @@ final class AuthentificationController extends \LibertAPI\Tools\Libraries\AContr
             $utilisateur = $this->repository->find([
                 'login' => $login,
                 'password' => $password,
+                'isActif' => true,
             ]);
             $utilisateurUpdated = $this->repository->regenerateToken($utilisateur);
         } catch (\UnexpectedValueException $e) {

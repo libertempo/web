@@ -14,29 +14,44 @@ class Planning extends \App\ProtoControllers\APlanning
      *
      * @param int   $id
      * @param array $put
-     * @param array &$errors
      *
      * @return int
      */
-    public static function putPlanning($id, array $put, array &$errors)
+    public static function putPlanning($id, array $put)
     {
         $id = (int) $id;
-        $utilisateurs = \App\ProtoControllers\Utilisateur::getListByPlanning($id);
-        foreach ($utilisateurs as $utilisateur) {
-            if (\App\ProtoControllers\Utilisateur::hasSortiesEnCours($utilisateur['u_login'])) {
-                $errors['Planning'] = _('demande_en_cours_sur_planning');
-                return NIL_INT;
+        $subalternes = \App\ProtoControllers\Responsable::getUsersRespDirect($_SESSION['userlogin']);
+        $utilisateursPlannings = array_map(function (array $u) {
+            return $u['u_login'];
+        }, \App\ProtoControllers\Utilisateur::getListByPlanning($id));
+
+        $subalternesAvecPlanning = array_intersect(
+            $utilisateursPlannings,
+            $subalternes
+        );
+
+        $subalternesSansSortie = [];
+        foreach ($subalternesAvecPlanning as $u) {
+            if (!\App\ProtoControllers\Utilisateur::hasSortiesEnCours($u)) {
+                $subalternesSansSortie[] = $u;
             }
         }
 
-        $subalternes =  \App\ProtoControllers\Responsable::getUsersRespDirect($_SESSION['userlogin']);
-        \App\ProtoControllers\Utilisateur::deleteListAssociationPlanning($id, $subalternes);
-        $utilisateursAssocies = array_intersect($put['utilisateurs'], $subalternes);
-        if (!empty($utilisateursAssocies)) {
-            // on ne peut pas supprimer par erreur des employés associés && en cours
-            // Vu qu'on ne peut pas modifier le planning
-            $hasUtilisateursAffectes = \App\ProtoControllers\Utilisateur::putListAssociationPlanning($utilisateursAssocies, $id);
-            if (!$hasUtilisateursAffectes) {
+        if (!empty($subalternesSansSortie)) {
+            \App\ProtoControllers\Utilisateur::deleteListAssociationPlanning($id, $subalternesSansSortie);
+        }
+
+        if (empty($put['utilisateurs'])) {
+            return $id;
+        }
+
+        $subalternesSelectionnes = !empty($subalternesSansSortie)
+            ? array_intersect($put['utilisateurs'], $subalternesSansSortie)
+            : $put['utilisateurs'];
+
+        if (!empty($subalternesSelectionnes)) {
+            $hasSubalternesAffectes = \App\ProtoControllers\Utilisateur::putListAssociationPlanning($subalternesSelectionnes, $id);
+            if (!$hasSubalternesAffectes) {
                 return false;
             }
         }
@@ -55,7 +70,8 @@ class Planning extends \App\ProtoControllers\APlanning
     {
         $utilisateursAssocies = parent::getListeUtilisateursAssocies($idPlanning);
 
-        $subalternes = \App\ProtoControllers\Responsable::getUsersRespDirect($_SESSION['userlogin']);
+        $groupesId = \App\ProtoControllers\Responsable::getIdGroupeResp($_SESSION['userlogin']);
+        $subalternes = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupesId);
 
         return $utilisateursAssocies = array_filter(
             $utilisateursAssocies,

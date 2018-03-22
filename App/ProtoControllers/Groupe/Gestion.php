@@ -471,7 +471,7 @@ class Gestion {
         if ("" !== $message) {
             $return .= '<div class="alert alert-info">' . $message . '.</div>';
         }
-        $return .= '<a href=admin_index.php?onglet=ajout_group class="btn btn-success pull-right">' . _('admin_groupes_new_groupe') . '</a>';
+        $return .= '<a href=hr_index.php?onglet=ajout_groupe class="btn btn-success pull-right">' . _('admin_groupes_new_groupe') . '</a>';
 
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses([
@@ -505,8 +505,8 @@ class Gestion {
                 $childTable .= '<td>' . $groupe['g_double_valid'] . '</td>';
             }
             $childTable .= '<td class="action">';
-            $childTable .= '<a href="admin_index.php?onglet=modif_group&group=' . $gid . '" title="' . _('form_modif') . '"><i class="fa fa-pencil"></i></a> ';
-            $childTable .= '<a href="admin_index.php?onglet=suppr_group&group=' . $gid . '" title="' . _('form_supprim') . '"><i class="fa fa-times-circle"></i></a>';
+            $childTable .= '<a href="hr_index.php?onglet=modif_groupe&group=' . $gid . '" title="' . _('form_modif') . '"><i class="fa fa-pencil"></i></a> ';
+            $childTable .= '<a href="hr_index.php?onglet=suppr_groupe&group=' . $gid . '" title="' . _('form_supprim') . '"><i class="fa fa-times-circle"></i></a>';
             $childTable .= '</td></tr>';
             $i = !$i;
         }
@@ -557,9 +557,9 @@ class Gestion {
                 $data = $this->FormData2Array($_POST);
             } else {
                 if (key_exists('_METHOD', $_POST)) {
-                    redirect(ROOT_PATH . 'admin/admin_index.php?onglet=admin-group&notice=update', false);
+                    redirect(ROOT_PATH . 'hr/hr_index.php?onglet=liste_groupe&notice=update', false);
                 } else {
-                    redirect(ROOT_PATH . 'admin/admin_index.php?onglet=admin-group&notice=insert', false);
+                    redirect(ROOT_PATH . 'hr/hr_index.php?onglet=liste_groupe&notice=insert', false);
                 }
             }
         }
@@ -638,7 +638,7 @@ class Gestion {
             $return .= '<input type="hidden" name="group" value="' . $idGroupe . '" />';
         }
         $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
-        $return .= '<a class="btn" href="' . $PHP_SELF . '?onglet=admin-group">' . _('form_annul') . '</a>';
+        $return .= '<a class="btn" href="' . $PHP_SELF . '?onglet=liste_groupe">' . _('form_annul') . '</a>';
         $return .= '</div>';
         $return .= '</form>';
 
@@ -826,7 +826,7 @@ class Gestion {
 
         $infosGroupe = \App\ProtoControllers\Groupe::getInfosGroupe($idGroupe, \includes\SQL::singleton());
 
-        $return .= '<form method="post" action="' . $PHP_SELF . '?onglet=admin-group"  role="form">';
+        $return .= '<form method="post" action="' . $PHP_SELF . '?onglet=liste_groupe"  role="form">';
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses([
             'table',
@@ -860,7 +860,7 @@ class Gestion {
         $return .= '<input type="hidden" name="new_group_libelle" value="' . $infosGroupe['comment'] . '" />';
         $return .= '<input type="hidden" name="new_group_double_valid" value="' . $infosGroupe['doubleValidation'] . '" />';
         $return .= '<input class="btn btn-danger" type="submit" value="' . _('form_supprim') . '">';
-        $return .= '<a class="btn" href="admin_index.php?onglet=admin-group">' . _('form_cancel') . '</a>';
+        $return .= '<a class="btn" href="hr_index.php?onglet=liste_groupe">' . _('form_cancel') . '</a>';
         $return .= '</form>';
 
         return $return;
@@ -1141,7 +1141,7 @@ class Gestion {
      */
     protected function isAutorise()
     {
-        return \App\ProtoControllers\Utilisateur::isAdmin($_SESSION['userlogin']);
+        return \App\ProtoControllers\Utilisateur::isRH($_SESSION['userlogin']);
     }
 
 }

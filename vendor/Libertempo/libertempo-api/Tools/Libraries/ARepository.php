@@ -1,8 +1,6 @@
 <?php
 namespace LibertAPI\Tools\Libraries;
 
-use LibertAPI\Tools\Exceptions\MissingArgumentException;
-
 /**
  * Garant de la cohérence métier de l'entité en relation.
  * Autrement dit, c'est lui qui va chercher les données (dépendances comprises),
@@ -37,30 +35,24 @@ abstract class ARepository
      *
      * @param int $id Id potentiel de ressource
      *
-     * @return \Tools\Libraries\AEntite
-     * @throws \DomainException Si $id n'est pas dans le domaine de définition
+     * @return \LibertAPI\Tools\Libraries\AEntite
      */
-    abstract public function getOne($id);
+    public function getOne($id)
+    {
+        return $this->dao->getById((int) $id);
+    }
 
     /**
      * Retourne une liste de ressource correspondant à des critères
      *
      * @param array $parametres
-     * @example [offset => 4, start-after => 23, filter => 'name::chapo|status::1,3']
      *
      * @return array [$objetId => $objet]
-     * @throws \UnexpectedValueException Si les critères ne sont pas pertinents
      */
-    abstract public function getList(array $parametres);
-
-    /**
-     * Effectue le mapping des éléments venant de la DAO pour qu'ils soient compréhensibles pour l'Entité
-     *
-     * @param array $dataDao
-     *
-     * @return array
-     */
-    abstract protected function getDataDao2Entite(array $dataDao);
+    public function getList(array $parametres)
+    {
+        return $this->dao->getList($this->getParamsConsumer2Dao($parametres));
+    }
 
     /**
      * Effectue le mapping des recherches du consommateur de l'API pour qu'elles
@@ -69,20 +61,10 @@ abstract class ARepository
      * Essentiel pour séparer / traduire les contextes Client / DAO
      *
      * @param array $paramsConsumer Paramètres reçus
-     * @example [offset => 4, start-after => 23, filter => 'name::chapo|status::1,3']
      *
      * @return array
      */
     abstract protected function getParamsConsumer2Dao(array $paramsConsumer);
-
-    /**
-     * Effectue le mapping des éléments venant de l'entité pour qu'ils soient compréhensibles pour la DAO
-     *
-     * @param AEntite $entite
-     *
-     * @return array
-     */
-    abstract protected function getEntite2DataDao(AEntite $entite);
 
     /*************************************************
      * POST
@@ -95,10 +77,12 @@ abstract class ARepository
      * @param AEntite $entite [Vide par définition]
      *
      * @return int Id de la ressource nouvellement insérée
-     * @throws MissingArgumentException Si un élément requis n'est pas présent
-     * @throws \DomainException Si un élément de la ressource n'est pas dans le bon domaine de définition
      */
-    abstract public function postOne(array $data, AEntite $entite);
+    public function postOne(array $data, AEntite $entite)
+    {
+        $entite->populate($data);
+        return $this->dao->post($entite);
+    }
 
     /*************************************************
      * PUT
@@ -109,11 +93,12 @@ abstract class ARepository
      *
      * @param array $data Données à mettre à jour
      * @param AEntite $entite
-     *
-     * @throws MissingArgumentException Si un élément requis n'est pas présent
-     * @throws \DomainException Si un élément de la ressource n'est pas dans le bon domaine de définition
      */
-    abstract public function putOne(array $data, AEntite $entite);
+    public function putOne(array $data, AEntite $entite)
+    {
+        $entite->populate($data);
+        $this->dao->put($entite);
+    }
 
     /*************************************************
      * DELETE

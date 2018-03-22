@@ -1,3 +1,8 @@
+## 2017-11-04
+* À l'origine, j'avais mis les routes au pluriel car la sémantique était meilleure (avec `GET /plannings`, je veux la liste des plannings), mais l'idée atteint ses limites quand on se confronte à la langue (ex : journaux). Obliger à tenir une map serait inutilement lourd, aussi je vais au plus simple et je mets toutes les routes au singulier.
+
+~ Prytoegrian
+
 ## 2017-09-12
 
 * Je renomme les modèles du design MVC en *entités*. Dans un contexte métier, la couche métier ne se résume pas à une seule classe et je ne veux pas perdre le lecteur en créant la confusion dans sa tête si une classe porte ce nom.

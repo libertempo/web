@@ -1111,9 +1111,6 @@ msgstr "// SENDING OF MAIL TO THE USER FOR THE CANCELLATION BY THE MANAG FOR A H
 msgid "config_comment_serveur_smtp"
 msgstr "//  SERVER SMTP TO USE<br>//---------------------------------------<br>// address ip or name of the smpt server to use to send the mails<br>// If you don't master the SMTP server or if, while using, you have a connection Ã©rror to the server, leave this field empty (\"\")"
 
-msgid "config_comment_where_to_find_user_email"
-msgstr "//  WHERE TO FIND THE USERS' MAIL ADDRESSES<br>//-------------------------------------------------<br>// many possibilities to find the users' mail addresses :<br>// if at \"dbconges\" : the users' mail can be found in the users table of the db_conges database<br>// if at \"ldap\"     : the users' mail can be found in a LDAP directory that one will query (cf file config_ldap.php)<br>// WARNING : all other value than \"dbconges\" or \"ldap\" will lead to an error !!!"
-
 msgid "config_comment_samedi_travail"
 msgstr "//  MANAGEMENT OF THE SATURDAYS AS WORKING DAYS OR NOT<br>//--------------------------------------------------------------------------------------<br>// one defines here if the saturdays are working days or not.<br>// if at TRUE : the considered day is a working day ....<br>// if at FALSE : the considered day is not a working day (weekend).... (FALSE is the default value)"
 

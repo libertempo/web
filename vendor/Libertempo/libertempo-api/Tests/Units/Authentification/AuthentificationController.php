@@ -14,7 +14,6 @@ final class AuthentificationController extends \LibertAPI\Tests\Units\Tools\Libr
     protected function initRepository()
     {
         $this->mockGenerator->orphanize('__construct');
-        $this->mockGenerator->shuntParentClassCalls();
         $this->repository = new \mock\LibertAPI\Utilisateur\UtilisateurRepository();
     }
 
@@ -42,7 +41,7 @@ final class AuthentificationController extends \LibertAPI\Tests\Units\Tools\Libr
         $this->request->getMockController()->getHeaderLine = 'NotBasic';
         $this->newTestedInstance($this->repository, $this->router);
 
-        $response = $this->testedInstance->get($this->request, $this->response);
+        $response = $this->testedInstance->get($this->request, $this->response, []);
 
         $this->assertFail($response, 400);
     }
@@ -60,7 +59,8 @@ final class AuthentificationController extends \LibertAPI\Tests\Units\Tools\Libr
 
         $response = $this->testedInstance->get(
             $this->request,
-            $this->response
+            $this->response,
+            []
         );
 
         $this->assertFail($response, 404);
@@ -78,7 +78,7 @@ final class AuthentificationController extends \LibertAPI\Tests\Units\Tools\Libr
         $this->request->getMockController()->getHeaderLine = 'Basic QWxhZGRpbjpPcGVuU2VzYW1l';
         $this->newTestedInstance($this->repository, $this->router);
 
-        $response = $this->testedInstance->get($this->request, $this->response);
+        $response = $this->testedInstance->get($this->request, $this->response, []);
         $data = $this->getJsonDecoded($response->getBody());
 
         $this->integer($response->getStatusCode())->isIdenticalTo(200);

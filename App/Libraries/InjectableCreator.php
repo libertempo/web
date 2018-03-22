@@ -15,15 +15,18 @@ use App\Libraries\Calendrier\Evenements;
 class InjectableCreator
 {
 
-    public function __construct(\includes\SQL $db)
+    public function __construct(\includes\SQL $db, \App\Libraries\Configuration $config)
     {
         $this->db = $db;
+        $this->config = $config;
     }
 
     /**
      * @var \includes\SQL
+     * @var \App\Libraries\Configuration
      */
     private $db;
+    private $config;
 
     /**
      * Retourne un injectable bien construit (avec ses propres dépendances)
@@ -40,6 +43,7 @@ class InjectableCreator
 
         switch ($classname) {
             case Evenements\Weekend::class:
+                return new $classname($this->config);
             case Evenements\Ferie::class:
             case Evenements\Fermeture::class:
             case Evenements\Conge::class:
@@ -56,7 +60,23 @@ class InjectableCreator
                     'base_uri' => $baseURIApi,
                 ]);
                 return new $classname($client);
-
+            case \App\Libraries\Ldap::class:
+                include CONFIG_PATH . 'config_ldap.php';
+                $confLdap = [
+                    'server' => $config_ldap_server,
+                    'version' => $config_ldap_protocol_version,
+                    'bindUser' => $config_ldap_user,
+                    'bindPassword' => $config_ldap_pass,
+                    'searchdn' => $config_searchdn,
+                    'attrPrenom' => $config_ldap_prenom,
+                    'attrNom' => $config_ldap_nom,
+                    'attrMail' => $config_ldap_mail,
+                    'attrLogin' => $config_ldap_login,
+                    'attrNomAff' => $config_ldap_nomaff,
+                    'attrFiltre' => $config_ldap_filtre,
+                    'filtre' => $config_ldap_filrech,
+                    ];
+                return new $classname($confLdap);
             default:
                 throw new \LogicException('Unknown « ' . $classname . ' »');
         }

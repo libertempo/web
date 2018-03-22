@@ -37,10 +37,6 @@ class UtilisateurRepository extends \LibertAPI\Tools\Libraries\ARepository
      * GET
      *************************************************/
 
-    public function getOne($id)
-    {
-    }
-
     /**
      * Retourne une ressource correspondant à des critères
      *
@@ -53,52 +49,6 @@ class UtilisateurRepository extends \LibertAPI\Tools\Libraries\ARepository
     {
         $list = $this->getList($parametres);
         return reset($list);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getList(array $parametres)
-    {
-        $data = $this->dao->getList($this->getParamsConsumer2Dao($parametres));
-        if (empty($data)) {
-            throw new \UnexpectedValueException('No resource match with these parameters');
-        }
-
-        $entites = [];
-        foreach ($data as $value) {
-            $entite = new UtilisateurEntite($this->getDataDao2Entite($value));
-            $entites[$entite->getId()] = $entite;
-        }
-
-        return $entites;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    final protected function getDataDao2Entite(array $dataDao)
-    {
-        return [
-            'id' => $dataDao['id'],
-            'login' => $dataDao['u_login'],
-            'nom' => $dataDao['u_nom'],
-            'prenom' => $dataDao['u_prenom'],
-            'isResp' => $dataDao['u_is_resp'] === 'Y',
-            'isAdmin' => $dataDao['u_is_admin'] === 'Y',
-            'isHr' => $dataDao['u_is_hr'] === 'Y',
-            'isActive' => $dataDao['u_is_active'] === 'Y',
-            'seeAll' => $dataDao['u_see_all'] === 'Y',
-            'password' => $dataDao['u_passwd'],
-            'quotite' => $dataDao['u_quotite'],
-            'email' => $dataDao['u_email'],
-            'numeroExercice' => $dataDao['u_num_exercice'],
-            'planningId' => $dataDao['planning_id'],
-            'heureSolde' => $dataDao['u_heure_solde'],
-            'dateInscription' => $dataDao['date_inscription'],
-            'token' => $dataDao['token'],
-            'dateLastAccess' => $dataDao['date_last_access'],
-        ];
     }
 
     /**
@@ -118,6 +68,9 @@ class UtilisateurRepository extends \LibertAPI\Tools\Libraries\ARepository
         }
         if (!empty($paramsConsumer['gt_date_last_access'])) {
             $results['gt_date_last_access'] = (string) $paramsConsumer['gt_date_last_access'];
+        }
+        if (!empty($paramsConsumer['isActif'])) {
+            $results['is_active'] = $paramsConsumer['isActif'];
         }
         return $results;
     }
@@ -148,8 +101,7 @@ class UtilisateurRepository extends \LibertAPI\Tools\Libraries\ARepository
     public function updateDateLastAccess(UtilisateurEntite $entite)
     {
         $entite->updateDateLastAccess();
-        $dataDao = $this->getEntite2DataDao($entite);
-        $this->dao->put($dataDao, $entite->getId());
+        $this->dao->put($entite);
     }
 
     /**
@@ -170,39 +122,12 @@ class UtilisateurRepository extends \LibertAPI\Tools\Libraries\ARepository
         try {
             $entite->populateToken($this->buildToken($instanceToken));
             $entite->updateDateLastAccess();
-            $dataDao = $this->getEntite2DataDao($entite);
-            $this->dao->put($dataDao, $entite->getId());
+            $this->dao->put($entite);
 
             return $entite;
         } catch (\Exception $e) {
             throw $e;
         }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    final protected function getEntite2DataDao(AEntite $entite)
-    {
-        return [
-            //'u_login' => $entite->getLogin(), // PK ne doit pas être vu par la DAO
-            /*'u_nom' => $entite->getJourId(),
-            'u_prenom' => $entite->getTypeSemaine(),
-            'u_is_resp' => $entite->getTypePeriode(),
-            'u_is_admin' => $entite->getDebut(),
-            'u_is_hr' => $entite->getFin(),
-            'u_is_active' => $entite->getFin(),
-            'u_see_all' => $entite->getFin(),
-            'u_passwd' => $entite->getFin(),
-            'u_quotite' => $entite->getFin(),
-            'u_email' => $entite->getFin(),
-            'u_num_exercice' => $entite->getFin(),
-            'planning_id' => $entite->getFin(),
-            'u_heure_solde' => $entite->getFin(),
-            'date_inscription' => $entite->getFin(),*/
-            'token' => $entite->getToken(),
-            'date_last_access' => $entite->getDateLastAccess(),
-        ];
     }
 
     /**

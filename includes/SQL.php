@@ -93,7 +93,7 @@ class SQL
     /**
      * Retourne l'objet DB
      *
-     * @return \incudes\Database
+     * @return \includes\Database
      */
     public function getPdoObj()
     {
