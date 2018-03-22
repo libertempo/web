@@ -1387,7 +1387,7 @@ class Fonctions
         };
         $userLogin = $entities(getpost_variable('user_login'));
 
-        if ( !is_resp_of_user($_SESSION['userlogin'] , $userLogin)) {
+        if ( !\App\ProtoControllers\Responsable::isRespDeUtilisateur($_SESSION['userlogin'] , $user_login)) {
             redirect(ROOT_PATH . 'deconnexion.php');
             exit;
         }

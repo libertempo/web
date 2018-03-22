@@ -266,11 +266,9 @@ CREATE TABLE IF NOT EXISTS `conges_users` (
   `u_nom` varchar(30) NOT NULL DEFAULT '',
   `u_prenom` varchar(30) NOT NULL DEFAULT '',
   `u_is_resp` enum('Y','N') NOT NULL DEFAULT 'N',
-  `u_resp_login` varbinary(99) DEFAULT NULL,
   `u_is_admin` enum('Y','N') NOT NULL DEFAULT 'N',
   `u_is_hr` enum('Y','N') NOT NULL DEFAULT 'N',
   `u_is_active` enum('Y','N') NOT NULL DEFAULT 'Y',
-  `u_see_all` enum('Y','N') NOT NULL DEFAULT 'N',
   `u_passwd` varchar(64) NOT NULL DEFAULT '',
   `u_quotite` int(3) DEFAULT '100',
   `u_email` varchar(100) DEFAULT NULL,
@@ -359,7 +357,7 @@ INSERT IGNORE INTO `conges_appli` VALUES ('token_instance', '');
 # Contenu de la table `conges_users`
 #
 
-INSERT IGNORE INTO `conges_users` VALUES ('admin', 'Libertempo', 'admin', 'N', 'admin', 'Y', 'N','Y','N', '636d61cf9094a62a81836f3737d9c0da', 100, NULL, 0, 0, 0, null, '', null);
+INSERT IGNORE INTO `conges_users` VALUES ('admin', 'Libertempo', 'admin', 'N', 'Y', 'Y','Y', '636d61cf9094a62a81836f3737d9c0da', 100, NULL, 0, 0, 0, null, '', null);
 
 #
 # Contenu de la table `conges_config`
@@ -395,7 +393,6 @@ INSERT IGNORE INTO `conges_config` VALUES ('mail_refus_conges_alerte_user', 'FAL
 INSERT IGNORE INTO `conges_config` VALUES ('mail_annul_conges_alerte_user', 'FALSE', '08_Mail', 'boolean', 'config_comment_mail_annul_conges_alerte_user');
 INSERT IGNORE INTO `conges_config` VALUES ('mail_modif_demande_alerte_resp', 'FALSE', '08_Mail', 'boolean', 'config_comment_mail_modif_demande_alerte_resp');
 INSERT IGNORE INTO `conges_config` VALUES ('mail_supp_demande_alerte_resp', 'FALSE', '08_Mail', 'boolean', 'config_comment_mail_supp_demande_alerte_resp');
-INSERT IGNORE INTO `conges_config` VALUES ('where_to_find_user_email', 'dbconges', '08_Mail', 'enum=dbconges/ldap', 'config_comment_where_to_find_user_email');
 
 INSERT IGNORE INTO `conges_config` VALUES ('samedi_travail', 'FALSE', '09_jours ouvrables', 'boolean', 'config_comment_samedi_travail');
 INSERT IGNORE INTO `conges_config` VALUES ('dimanche_travail', 'FALSE', '09_jours ouvrables', 'boolean', 'config_comment_dimanche_travail');

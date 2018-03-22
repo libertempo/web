@@ -171,7 +171,9 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
     protected function updateSoldeReliquatEmploye($user, $duree, $typeId)
     {
-        if (!$this->isOptionReliquatActive()) {
+        $sql = \includes\SQL::singleton();
+        $config = new \App\Libraries\Configuration($sql);
+        if (!$config->isReliquatsAutorise()) {
             return $this->updateSoldeUser($user, $duree, $typeId);
         }
 
@@ -180,9 +182,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
             return $this->updateSoldeUser($user, $duree, $typeId);
         }
 
-        $sql = \includes\SQL::singleton();
-
-        if ($this->isReliquatUtilisable(date("m-d"))) {
+        if ($this->isReliquatUtilisable($sql)) {
             $sql->getPdoObj()->begin_transaction();
             if ($SoldeReliquat>=$duree) {
                 $updateReliquat = $this->updateReliquatUser($user, $duree, $typeId);
@@ -328,11 +328,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
         $usersResp = [];
         $usersResp = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupId);
-        $usersRespDirect = \App\ProtoControllers\Responsable::getUsersRespDirect($resp);
 
-        // merge tous les utilisateurs dont il est le responsable direct et tous les utilisateurs dont il est le chef de groupe
-        // si un utilisateur est dans les deux tableaux on supprime le doublon
-        $usersResp = array_unique(array_merge($usersResp,$usersRespDirect));
         // un utilisateur ne peut etre son propre responsable
         $usersResp = array_diff($usersResp,[$_SESSION['userlogin']]);
 
@@ -368,9 +364,6 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         $usersRespResp = [];
         $usersgroupesIdResponsable = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupesIdResponsable);
 
-        $usersRespDirect = \App\ProtoControllers\Responsable::getUsersRespDirect($resp);
-        $usersgroupesIdResponsable = array_merge($usersgroupesIdResponsable,$usersRespDirect);
-
         foreach ($usersgroupesIdResponsable as $user) {
             if (is_resp($user)) {
                 $usersduRespResponsable[] = $user;
@@ -383,9 +376,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
             if (!\App\ProtoControllers\Responsable::isRespAbsent($userduRespResponsable)) {
                 continue;
             }
-            $usersGroupes = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds(\App\ProtoControllers\Responsable::getIdGroupeResp($userduRespResponsable));
-            $respDirectUser = \App\ProtoControllers\Responsable::getUsersRespDirect($userduRespResponsable);
-            $allUsersResp = array_unique(array_merge($usersGroupes,$respDirectUser));
+            $allUsersResp = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds(\App\ProtoControllers\Responsable::getIdGroupeResp($userduRespResponsable));
             $ids = $this->getIdDemandeDelegable($allUsersResp);
         }
         return $ids;
@@ -502,45 +493,24 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         return ($statut != \App\Models\conge::STATUT_ANNUL || $statut != \App\Models\Conge::STATUT_VALIDATION_FINALE || $statut != \App\Models\Conge::STATUT_REFUS);
     }
 
-    /**
-     * verifie que les reliquats sont autorisées
-     *
-     * @return bool
-     */
-    public function isOptionReliquatActive()
-    {
-        $sql = \includes\SQL::singleton();
-        $req = 'SELECT conf_valeur
-                    FROM conges_config
-                    WHERE conf_nom = "autorise_reliquats_exercice"';
-        $query = $sql->query($req);
-
-        return $query->fetch_array()[0];
-    }
-
    /**
      * verifie si la date limite d'usage des reliquats n'est pas dépassée
      *
      * @param int $findemande date de fin de la demande
      * @return bool
      */
-    public function isReliquatUtilisable($findemande)
+    public function isReliquatUtilisable(\includes\SQL $sql)
     {
-        $sql = \includes\SQL::singleton();
-        $req = 'SELECT conf_valeur
-                    FROM conges_config
-                    WHERE conf_nom = "jour_mois_limite_reliquats"';
-        $query = $sql->query($req);
-
-        $dlimite = $query->fetch_array()[0];
-        if ($dlimite == 0) {
+        $config = new \App\Libraries\Configuration($sql);
+        $jourDemande = date("Y-m-d");
+        if (0 === $config->getDateLimiteReliquats()) {
             return true;
         }
-        return $findemande < $dlimite;
+        return $jourDemande < $_SESSION['config']['date_limite_reliquats'];
     }
 
     /**
-     * verifie si la date limite d'usage des reliquats n'est pas dépassée
+     * retourne le libellé d'un type d'absence
      *
      * @param int $type
      *

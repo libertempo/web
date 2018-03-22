@@ -8,8 +8,9 @@ if (!is_readable( CONFIG_PATH .'dbconnect.php')) {
 }
 include_once INCLUDE_PATH .'fonction.php';
 include_once ROOT_PATH .'fonctions_conges.php'; // for init_config_tab()
-$config = new \App\Libraries\Configuration(\includes\SQL::singleton());
-$injectableCreator = new \App\Libraries\InjectableCreator(\includes\SQL::singleton());
+$sql = \includes\SQL::singleton();
+$config = new \App\Libraries\Configuration($sql);
+$injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
 $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
 
 /***** DEBUT DU PROG *****/
@@ -18,24 +19,13 @@ if (!session_is_valid()) {
 
 	/*** initialisation des variables ***/
 	/************************************/
-	if ($err = getpost_variable('error', false)) {
-		switch ($err) {
-			case 'session-invalid':
-				header_error();
-				echo "<p>" . _('session_pas_session_ouverte') . "<p>\n";
-				echo "<p>" . _('divers_veuillez') ." <a href='" . $config->getUrlAccueil() . "/index.php' target='_top'><strong>" . _('divers_vous_authentifier') . "</strong></a></p>\n";
-				bottom();
-				exit();
-		}
-	}
 
 	// Si CAS alors on utilise le login CAS pour la session
-	if ( $config->getHowToConnectUser() == "cas" && $_GET['cas'] != "no" ) {
-	        //redirection vers l'url d'authentification CAS
-	        $usernameCAS = authentification_passwd_conges_CAS();
-	        if ($usernameCAS == "") {
-	                header_error();
-
+	if ( $config->getHowToConnectUser() == "cas") {
+        //redirection vers l'url d'authentification CAS
+        $usernameCAS = authentification_passwd_conges_CAS();
+        if ($usernameCAS == "") {
+                header_error();
 	                echo  _('session_pas_de_compte_dans_dbconges') ."<br>\n";
 	                echo  _('session_contactez_admin') ."\n";
 
@@ -140,31 +130,27 @@ if (isset($_SESSION['userlogin'])) {
         $is_hr = $row["u_is_hr"];
 		$is_resp = $row["u_is_resp"];
 		$is_active = $row["u_is_active"];
-		if ($is_active == "N") {
+                if('admin' === $_SESSION['userlogin']){
+                    redirect(ROOT_PATH . 'admin/admin_index.php');
+                }
+		if( $is_active == "N") {
 			header_error();
 			echo  _('session_compte_inactif') ."<br>\n";
 			echo  _('session_contactez_admin') ."\n";
 			bottom();
 			exit;
 		}
-		// si le login est celui d'un responsable ET on est pas en mode "responsable virtuel"
-		// OU on est en mode "responsable virtuel" avec login= celui du resp virtuel
-		$return_url = getpost_variable('return_url');
-		if (!empty($return_url)) {
-			if (strpos($return_url,'?'))
-				redirect( ROOT_PATH . $return_url);
-			else
-				redirect( ROOT_PATH .$return_url);
-		} elseif ('Y' === $is_admin) {
-			redirect( ROOT_PATH .'admin/admin_index.php');
-		} elseif ( $is_hr == "Y" ) {
-			redirect( ROOT_PATH .'hr/hr_index.php');
-		} elseif ( $is_resp=="Y" ) {
-			// redirection vers responsable/resp_index.php
-			redirect( ROOT_PATH .'responsable/resp_index.php');
-		} else {
-			// redirection vers utilisateur/user_index.php
-			redirect( ROOT_PATH . 'utilisateur/user_index.php');
+                if ( $is_hr == "Y" )
+		{
+                    redirect( ROOT_PATH .'hr/hr_index.php');
+		}
+		elseif ( $is_resp=="Y" )
+		{
+                    redirect( ROOT_PATH .'responsable/resp_index.php');
+		}
+		else
+		{
+                    redirect( ROOT_PATH . 'utilisateur/user_index.php');
 		}
 
 	}

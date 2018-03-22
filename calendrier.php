@@ -39,9 +39,10 @@ function getTitleJour(\App\Libraries\Calendrier\Evenements $evenements, $nom, $j
     }
     return '';
 }
-$config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+$sql = \includes\SQL::singleton();
+$config = new \App\Libraries\Configuration($sql);
 
-$injectableCreator = new \App\Libraries\InjectableCreator(\includes\SQL::singleton());
+$injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
 $calendar = new \CalendR\Calendar();
 $jourDemande = null;
 $moisDemande = null;
@@ -63,7 +64,10 @@ if (!empty($_GET['groupe']) && NIL_INT != $_GET['groupe']) {
 }
 $utilisateursATrouver = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupesAVoir);
 
-$employes = \App\ProtoControllers\Utilisateur::getDonneesUtilisateurs($utilisateursATrouver);
+$tousEmployes = \App\ProtoControllers\Utilisateur::getDonneesTousUtilisateurs($config);
+$employes = array_filter($tousEmployes, function ($employe) use ($utilisateursATrouver) {
+                return 'Y' == $employe['is_active'] && in_array($employe['u_login'], $utilisateursATrouver);
+            });
 foreach ($employes as $employe) {
     $employesATrouver[$employe['u_login']] = \App\ProtoControllers\Utilisateur::getNomComplet($employe['u_prenom'], $employe['u_nom'], true);
 }
