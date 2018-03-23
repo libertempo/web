@@ -140,8 +140,7 @@ if (isset($_SESSION['userlogin'])) {
 			bottom();
 			exit;
 		}
-                if ( $is_hr == "Y" )
-		{
+        if ( $is_hr == "Y" ) {
                     redirect( ROOT_PATH .'hr/hr_index.php');
 		}
 		elseif ( $is_resp=="Y" )

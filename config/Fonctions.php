@@ -54,7 +54,7 @@ class Fonctions
 
         $ReqLog1 = \includes\SQL::query($sql1);
 
-        if($ReqLog1->num_rows !=0) {
+        if ($ReqLog1->num_rows !=0) {
             $return .= '<br>';
             $table = new \App\Libraries\Structure\Table();
             $table->addClasses([
@@ -794,7 +794,7 @@ class Fonctions
                 $sql_abs="SELECT ta_id, ta_libelle FROM conges_type_absence WHERE ta_type='conges_exceptionnels' ";
                 $ReqLog_abs = \includes\SQL::query($sql_abs);
 
-                if($ReqLog_abs->num_rows !=0) {
+                if ($ReqLog_abs->num_rows !=0) {
                     $return .= '<b>' . _('config_abs_desactive_cong_excep_impossible') . '</b><br>';
                     $value = "TRUE" ;
                     $timeout=5 ;
@@ -893,7 +893,7 @@ class Fonctions
                     $childTable .= '<br><i>' . _($conf_commentaire) . '</i><br>';
 
                     // affichage saisie variable
-                    if($conf_nom=="installed_version") {
+                    if ($conf_nom=="installed_version") {
                         $childTable .= '<b>' . $conf_nom . '&nbsp;&nbsp;=&nbsp;&nbsp;' . $conf_valeur . '</b><br>';
                     } elseif( ($conf_type=="texte") || ($conf_type=="path") ) {
                         $childTable .= '<b>' . $conf_nom . '</b>&nbsp;=&nbsp;<input type="text" class="form-control" size="50" maxlength="200" name="tab_new_values[' . $conf_nom . ']" value="' . $conf_valeur . '"><br>';
@@ -970,7 +970,7 @@ class Fonctions
                 $sql_plug="SELECT p_is_active, p_is_install FROM conges_plugins WHERE p_name = '".$my_plugin."';";
                 $ReqLog_plug = \includes\SQL::query($sql_plug);
                 if($ReqLog_plug->num_rows !=0) {
-                    while($plug = $ReqLog_plug->fetch_array()){
+                    while ($plug = $ReqLog_plug->fetch_array()) {
                         $p_install = $plug["p_is_install"];
                         if ($p_install == '1') {
                             $childTableAddon .= '<option selected="selected" value="1">Y</option><option value="0">N</option>';

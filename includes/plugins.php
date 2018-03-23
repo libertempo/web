@@ -11,7 +11,7 @@ function find_plugins_activated(){
 
             $plugins_inst_activ_query = "SELECT p_name FROM conges_plugins WHERE p_is_active = 1 AND p_is_install = 1;";
             $ReqLog_list_plugins = \includes\SQL::query($plugins_inst_activ_query);
-            if($ReqLog_list_plugins->num_rows !=0){
+            if ($ReqLog_list_plugins->num_rows !=0) {
                 while($plugin=$ReqLog_list_plugins->fetch_array())
                 {
                     array_push($list_plugins, $plugin["p_name"]);
@@ -41,4 +41,3 @@ $plugins_activated = find_plugins_activated();
 
 //massive include for plugins...
 include_plugins($plugins_activated);
-

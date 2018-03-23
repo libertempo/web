@@ -911,7 +911,7 @@ class Fonctions
                     $duree_demande_2="demi";
                 }
             }
-            elseif($demi_jour_fin=="a") // on est present le matin
+            elseif ($demi_jour_fin=="a") // on est present le matin
             {
                 if ($moment_absence_souhaitee=="j") // on demande à etre absent tte la journee
                 {

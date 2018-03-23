@@ -102,9 +102,7 @@ function compter($user, $num_current_periode, $date_debut, $date_fin, $opt_debut
 				// on ne compte ce jour à 0
 				$tab_periode_calcul[$current_day]['am']=0;
 				$tab_periode_calcul[$current_day]['pm']=0;
-			}
-			else
-			{
+			} else {
 				/***************/
 				// verif des rtt ou temp partiel (dans la table rtt)
 				$val_matin="N";

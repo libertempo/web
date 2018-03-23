@@ -30,7 +30,7 @@ $dbpasswd = htmlentities($dbpasswd, ENT_QUOTES | ENT_HTML401);
 $dbdb=(isset($_GET['dbdb']) ? $_GET['dbdb'] : ((isset($_POST['dbdb'])) ? $_POST['dbdb'] : "") ) ;
 $dbdb = htmlentities($dbdb, ENT_QUOTES | ENT_HTML401);
 
-    if(\install\Fonctions::test_dbconnect_file()!=TRUE) {
+    if (\install\Fonctions::test_dbconnect_file()!=TRUE) {
         $_SESSION['lang']=$lang;
 
         header_popup();

@@ -32,7 +32,7 @@ class Fonctions {
         try {
             \includes\SQL::singleton();
         }
-        catch (Exception $e){
+        catch (Exception $e) {
             return false;
         }
         return \includes\SQL::getVar('connect_errno') == 0 ;
@@ -285,16 +285,16 @@ class Fonctions {
         } elseif($etape==2) {
             $start_version = $installed_version ;
 
-            if($start_version == "1.8") {
+            if ($start_version == "1.8") {
                 $file_upgrade = 'upgrade_from_v1.8.php';
                 $new_installed_version = "1.8.1";
-            } elseif($start_version == "1.8.1") {
+            } elseif ($start_version == "1.8.1") {
                 $file_upgrade = 'upgrade_from_v1.8.1.php';
                 $new_installed_version = "1.9";
-            } elseif($start_version == "1.9") {
+            } elseif ($start_version == "1.9") {
                 $file_upgrade = 'upgrade_from_v1.9.php';
                 $new_installed_version = "1.10";
-            } elseif($start_version == "1.10") {
+            } elseif ($start_version == "1.10") {
                 $file_upgrade = 'upgrade_from_v1.10.php';
                 $new_installed_version = "1.11";
             } else {
