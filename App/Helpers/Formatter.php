@@ -123,7 +123,12 @@ class Formatter
         } elseif ($num < $half - 0.25) {
             return floor($num);
         }
-        
+
         return $half;
+    }
+
+    public static function bool2String($bool)
+    {
+        return $bool ? _('Oui') : _('Non');
     }
 }
