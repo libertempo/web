@@ -96,7 +96,7 @@ class Responsable
      * @param string $user
      * @return array
      */
-    public static function getResponsablesUtilisateur($user) 
+    public static function getResponsablesUtilisateur($user)
     {
         return \App\ProtoControllers\Groupe\Responsable::getListResponsableByGroupeIds(\App\ProtoControllers\Utilisateur::getGroupesId($user));
     }
@@ -110,7 +110,6 @@ class Responsable
      */
     public static function  getInfosResponsables(\includes\SQL $sql, $activeSeul = false)
     {
-        $respLogin = [];
         $req = 'SELECT *
                 FROM conges_users
                 WHERE u_is_resp = "Y"';
@@ -118,7 +117,6 @@ class Responsable
             $req .= ' AND u_is_active = "Y"';
         }
         $req .= ' ORDER BY u_nom ASC, u_prenom ASC';
-        $query = $sql->query($req);
 
         return $sql->query($req)->fetch_all(\MYSQLI_ASSOC);
     }
@@ -132,7 +130,7 @@ class Responsable
      * @return bool
      */
     public static function isRespDeUtilisateur($resp, $user) {
-        return $resp != $user 
+        return $resp != $user
                 && \App\ProtoControllers\Groupe::isResponsableGroupe($resp, \App\ProtoControllers\Utilisateur::getGroupesId($user), \includes\SQL::singleton());
     }
 

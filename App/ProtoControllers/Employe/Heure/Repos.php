@@ -336,7 +336,7 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
             ' . (int) $data['statut'] . ',
             "' . \includes\SQL::quote($data['comment']) . '"
         )';
-        $query = $sql->query($req);
+        $sql->query($req);
 
         return $sql->insert_id;
     }
@@ -355,7 +355,7 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
                     comment = \''.$data['comment'].'\'
                 WHERE id_heure = '. (int) $id . '
                 AND login = "' . $user . '"';
-        $query = $sql->query($req);
+        $sql->query($req);
 
         return $id;
     }
@@ -384,7 +384,7 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
         if (!$config->canUserModifieDemande()) {
             return false;
         }
-        
+
         $sql = \includes\SQL::singleton();
         $req = 'SELECT EXISTS (
                     SELECT id_heure

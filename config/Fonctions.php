@@ -9,11 +9,10 @@ class Fonctions
 {
     public static function commit_vider_table_logs()
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
         $sql_delete="TRUNCATE TABLE conges_logs ";
-        $ReqLog_delete = \includes\SQL::query($sql_delete);
+        \includes\SQL::query($sql_delete);
 
         // ecriture de cette action dans les logs
         $comment_log = "effacement des logs de php_conges ";
@@ -165,7 +164,7 @@ class Fonctions
             $subject = htmlspecialchars(addslashes($tab_mail['subject']));
             $body = htmlspecialchars(addslashes($tab_mail['body']));
             $req_update='UPDATE conges_mail SET mail_subject=\''.$subject.'\', mail_body=\''.$body.'\' WHERE mail_nom="'. \includes\SQL::quote($nom_mail).'" ';
-            $result1 = \includes\SQL::query($req_update);
+            \includes\SQL::query($req_update);
         }
         $return .= '<span class="messages">' . _('form_modif_ok') . '</span><br>';
 
@@ -387,7 +386,7 @@ class Fonctions
             // ajout dans la table conges_type_absence
             $req_insert1="INSERT INTO conges_type_absence (ta_libelle, ta_short_libelle, ta_type) " .
                 "VALUES ('".$tab_new_values['libelle']."', '".$tab_new_values['short_libelle']."', '".$tab_new_values['type']."') ";
-            $result1 = \includes\SQL::query($req_insert1);
+            \includes\SQL::query($req_insert1);
 
             // on recup l'id de l'absence qu'on vient de créer
             $new_abs_id = \config\Fonctions::get_last_absence_id();
@@ -405,7 +404,7 @@ class Fonctions
 
                         $req_insert2="INSERT INTO conges_solde_user (su_login, su_abs_id, su_nb_an, su_solde, su_reliquat) " .
                             "VALUES ('$current_login', $new_abs_id, 0, 0, 0) ";
-                        $result2 = \includes\SQL::query($req_insert2);
+                        \includes\SQL::query($req_insert2);
                     }
                 }
                 $return .= '<span class="messages">' . _('form_modif_ok') . '</span><br>';
@@ -427,11 +426,11 @@ class Fonctions
 
         // delete dans la table conges_type_absence
         $req_delete1='DELETE FROM conges_type_absence WHERE ta_id='. \includes\SQL::quote($id_to_update);
-        $result1 = \includes\SQL::query($req_delete1);
+        \includes\SQL::query($req_delete1);
 
         // delete dans la table conges_solde_user
         $req_delete2='DELETE FROM conges_solde_user WHERE su_abs_id='.\includes\SQL::quote($id_to_update);
-        $result2 = \includes\SQL::query($req_delete2);
+        \includes\SQL::query($req_delete2);
 
         $return .= '<span class="messages">' . _('form_modif_ok') . '</span><br>';
 
@@ -836,7 +835,7 @@ class Fonctions
 
             // Mise à jour
             $sql2 = 'UPDATE conges_config SET conf_valeur = \''.addslashes($value).'\' WHERE conf_nom ="'. \includes\SQL::quote($key).'" ';
-            $ReqLog2 = \includes\SQL::query($sql2);
+            \includes\SQL::query($sql2);
         }
 
         $_SESSION['config']=init_config_tab();      // on re-initialise le tableau des variables de config

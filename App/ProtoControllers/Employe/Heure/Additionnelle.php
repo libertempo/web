@@ -338,7 +338,7 @@ class Additionnelle extends \App\ProtoControllers\Employe\AHeure
             ' . (int) $data['statut'] . ',
             "'. \includes\SQL::quote($data['comment']) .'"
         )';
-        $query = $sql->query($req);
+        $sql->query($req);
 
         return $sql->insert_id;
     }
@@ -386,7 +386,7 @@ class Additionnelle extends \App\ProtoControllers\Employe\AHeure
         if (!$config->canUserModifieDemande()) {
             return FALSE;
         }
-        
+
         $sql = \includes\SQL::singleton();
         $req = 'SELECT EXISTS (
                     SELECT id_heure

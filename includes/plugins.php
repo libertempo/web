@@ -23,7 +23,6 @@ function find_plugins_activated(){
 
 function include_plugins($plugins_activated){
     $my_plugins = scandir(PLUGINS_DIR);
-    $to_include = array();
     foreach($my_plugins as $dir)
     {
     if (is_dir(PLUGINS_DIR."/$dir") && !preg_match("/^\./",$dir))
