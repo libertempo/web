@@ -57,7 +57,7 @@ require_once VIEW_PATH . 'Calendrier.php';
             </td>
             <?php endforeach ?>
         </tr>
-        <?php if($indexSeparator && $index === $indexSeparator) : ?>
+        <?php if ($indexSeparator && $index === $indexSeparator) : ?>
         <tr class="calendrier-separator">
             <td></td>
             <?php foreach ($jours as $jour) : ?>

@@ -12,10 +12,11 @@ class Fonctions
         $sql_abs='SELECT ta_type FROM conges_type_absence WHERE ta_id="'. \includes\SQL::quote($_type_abs_id).'"';
         $ReqLog_abs = \includes\SQL::query($sql_abs);
 
-        if ($resultat_abs = $ReqLog_abs->fetch_array())
+        if ($resultat_abs = $ReqLog_abs->fetch_array()) {
             return $resultat_abs["ta_type"];
-        else
+        } else {
             return "" ;
+        }
     }
 
     public static function verif_solde_user($user_login, $type_conges, $nb_jours)

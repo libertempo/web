@@ -15,11 +15,11 @@ $tab_calcul_proportionnel = getpost_variable('tab_calcul_proportionnel');
 $tab_new_comment_all     = getpost_variable('tab_new_comment_all');
 $return = '';
 
-if($ajout_conges=="TRUE") {
+if ($ajout_conges=="TRUE") {
     \responsable\Fonctions::ajout_conges($tab_champ_saisie, $tab_commentaire_saisie);
 } elseif($ajout_global=="TRUE") {
     \responsable\Fonctions::ajout_global($tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all);
-} elseif($ajout_groupe=="TRUE") {
+} elseif ($ajout_groupe=="TRUE") {
     \responsable\Fonctions::ajout_global_groupe($choix_groupe, $tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all);
 }
 
@@ -43,7 +43,7 @@ asort($subalternesActifsGrandResponsable);
 $hasSubalternes = (bool) (count($subalternesActifsResponsable) + count($subalternesActifsGrandResponsable));
 
 $list_group_resp=get_list_groupes_du_resp($_SESSION['userlogin']);
-if( ($config->isDoubleValidationActive()) && ($config->canGrandResponsableAjouteConge()) ) {
+if ( ($config->isDoubleValidationActive()) && ($config->canGrandResponsableAjouteConge()) ) {
     $list_group_grd_resp=get_list_groupes_du_grand_resp($_SESSION['userlogin']);
 } else {
     $list_group_grd_resp="";

@@ -1047,7 +1047,7 @@ class Fonctions
         if (empty($list_users)) {
             return;
         }
-        foreach($tab_new_nb_conges_all as $id_conges => $nb_jours) {
+        foreach ($tab_new_nb_conges_all as $id_conges => $nb_jours) {
             if ($nb_jours!=0) {
                 $comment = $tab_new_comment_all[$id_conges];
 
@@ -1696,7 +1696,7 @@ class Fonctions
             $return .= \hr\Fonctions::affiche_jour_checkbox($mois,$i,$year,$tab_year);
         }
 
-        for($i; $i<36-$first_jour_mois_rang+1; $i++) {
+        for ($i; $i<36-$first_jour_mois_rang+1; $i++) {
             $return .= \hr\Fonctions::affiche_jour_hors_mois($mois,$i,$year,$tab_year);
         }
         $return .= '</tr>';

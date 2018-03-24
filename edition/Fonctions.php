@@ -1201,7 +1201,7 @@ class Fonctions
         $ReqLog_list = \includes\SQL::query($sql_list);
 
         $list_abs_id="";
-        while($resultat_list = $ReqLog_list->fetch_array())
+        while ($resultat_list = $ReqLog_list->fetch_array())
         {
             if ($list_abs_id=="")
                 $list_abs_id=$resultat_list['ta_id'] ;

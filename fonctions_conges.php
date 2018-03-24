@@ -629,8 +629,7 @@ function get_list_all_users_du_resp($resp_login)
     $sql1 = $sql1." ORDER BY u_login " ;
     $ReqLog1 = \includes\SQL::query($sql1);
 
-    while ($resultat1 = $ReqLog1->fetch_array())
-    {
+    while ($resultat1 = $ReqLog1->fetch_array()) {
         $current_login=$resultat1["u_login"];
         if ($list_users=="")
             $list_users="'$current_login'";
@@ -659,8 +658,7 @@ function get_list_all_users_du_resp($resp_login)
             $ReqLog_3 = \includes\SQL::query($req);
 
             // si le current resp est absent : on recup la liste de ses users pour les traiter .....
-            if ($ReqLog_3->num_rows!=0)
-            {
+            if ($ReqLog_3->num_rows!=0) {
                 if ($list_users=="")
                     $list_users=get_list_all_users_du_resp($current_resp);
                 else
@@ -990,8 +988,7 @@ function is_hr($login)
 function is_active($login)
 {
     static $sql_is_active = array();
-    if (!isset($sql_is_active[$login]))
-    {
+    if (!isset($sql_is_active[$login])) {
         // recup de qq infos sur le user
         $select_info='SELECT u_is_active FROM conges_users WHERE u_login="'.\includes\SQL::quote($login).'";';
         $ReqLog_info = \includes\SQL::query($select_info);

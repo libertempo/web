@@ -766,8 +766,8 @@ class Fonctions
                         alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "accept_conges");
                     }
                 }
-            } elseif ($reponse == "VALID") // première validation dans le cas d'une double validation
-            {
+            } elseif ($reponse == "VALID") {
+                // première validation dans le cas d'une double validation
                 /* UPDATE table "conges_periode" */
                 $sql1 = 'UPDATE conges_periode SET p_etat="valid", p_date_traitement=NOW() WHERE p_num="'.\includes\SQL::quote($numero_int).'" AND p_etat=\'demande\';';
                 $ReqLog1 = \includes\SQL::query($sql1);

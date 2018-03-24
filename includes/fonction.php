@@ -256,10 +256,11 @@ function session_saisie_user_password($erreur, $session_username, $session_passw
     $return_url                     = getpost_variable('return_url', false);
 
     // verif si on est dans le repertoire install
-    if (substr(dirname ($_SERVER["SCRIPT_FILENAME"]), -6, 6) == "config")   // verif si on est dans le repertoire install
+    if (substr(dirname ($_SERVER["SCRIPT_FILENAME"]), -6, 6) == "config") {  // verif si on est dans le repertoire install
         $config_dir=TRUE;
-    else
+    } else {
         $config_dir=FALSE;
+    }
 
     $add = '<script language="JavaScript" type="text/javascript">
 <!--
