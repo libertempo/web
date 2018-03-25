@@ -182,6 +182,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
             return $this->updateSoldeUser($user, $duree, $typeId);
         }
 
+
         if ($this->isReliquatUtilisable($sql)) {
             $sql->getPdoObj()->begin_transaction();
             if ($SoldeReliquat>=$duree) {
