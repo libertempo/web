@@ -9,11 +9,10 @@ class Fonctions
 {
     public static function commit_vider_table_logs()
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
         $sql_delete="TRUNCATE TABLE conges_logs ";
-        $ReqLog_delete = \includes\SQL::query($sql_delete);
+        \includes\SQL::query($sql_delete);
 
         // ecriture de cette action dans les logs
         $comment_log = "effacement des logs de php_conges ";
@@ -54,7 +53,7 @@ class Fonctions
 
         $ReqLog1 = \includes\SQL::query($sql1);
 
-        if($ReqLog1->num_rows !=0) {
+        if ($ReqLog1->num_rows !=0) {
             $return .= '<br>';
             $table = new \App\Libraries\Structure\Table();
             $table->addClasses([
@@ -141,7 +140,7 @@ class Fonctions
         // header_menu('CONGES : Configuration', $_SESSION['config']['titre_admin_index']);
 
 
-        if($action=="suppr_logs") {
+        if ($action=="suppr_logs") {
             $return .= \config\Fonctions::confirmer_vider_table_logs();
         } elseif($action=="commit_suppr_logs") {
             \config\Fonctions::commit_vider_table_logs();
@@ -165,7 +164,7 @@ class Fonctions
             $subject = htmlspecialchars(addslashes($tab_mail['subject']));
             $body = htmlspecialchars(addslashes($tab_mail['body']));
             $req_update='UPDATE conges_mail SET mail_subject=\''.$subject.'\', mail_body=\''.$body.'\' WHERE mail_nom="'. \includes\SQL::quote($nom_mail).'" ';
-            $result1 = \includes\SQL::query($req_update);
+            \includes\SQL::query($req_update);
         }
         $return .= '<span class="messages">' . _('form_modif_ok') . '</span><br>';
 
@@ -387,14 +386,14 @@ class Fonctions
             // ajout dans la table conges_type_absence
             $req_insert1="INSERT INTO conges_type_absence (ta_libelle, ta_short_libelle, ta_type) " .
                 "VALUES ('".$tab_new_values['libelle']."', '".$tab_new_values['short_libelle']."', '".$tab_new_values['type']."') ";
-            $result1 = \includes\SQL::query($req_insert1);
+            \includes\SQL::query($req_insert1);
 
             // on recup l'id de l'absence qu'on vient de créer
             $new_abs_id = \config\Fonctions::get_last_absence_id();
 
             if($new_abs_id!=0) {
                 // ajout dans la table conges_solde_user (pour chaque user !!)(si c'est un conges, pas si c'est une absence)
-                if( ($tab_new_values['type']=="conges") || ($tab_new_values['type']=="conges_exceptionnels") ) {
+                if ( ($tab_new_values['type']=="conges") || ($tab_new_values['type']=="conges_exceptionnels") ) {
                     // recup de users :
                     $sql_users="SELECT DISTINCT(u_login) FROM conges_users WHERE u_login!='conges' AND u_login!='admin' " ;
 
@@ -405,7 +404,7 @@ class Fonctions
 
                         $req_insert2="INSERT INTO conges_solde_user (su_login, su_abs_id, su_nb_an, su_solde, su_reliquat) " .
                             "VALUES ('$current_login', $new_abs_id, 0, 0, 0) ";
-                        $result2 = \includes\SQL::query($req_insert2);
+                        \includes\SQL::query($req_insert2);
                     }
                 }
                 $return .= '<span class="messages">' . _('form_modif_ok') . '</span><br>';
@@ -427,11 +426,11 @@ class Fonctions
 
         // delete dans la table conges_type_absence
         $req_delete1='DELETE FROM conges_type_absence WHERE ta_id='. \includes\SQL::quote($id_to_update);
-        $result1 = \includes\SQL::query($req_delete1);
+        \includes\SQL::query($req_delete1);
 
         // delete dans la table conges_solde_user
         $req_delete2='DELETE FROM conges_solde_user WHERE su_abs_id='.\includes\SQL::quote($id_to_update);
-        $result2 = \includes\SQL::query($req_delete2);
+        \includes\SQL::query($req_delete2);
 
         $return .= '<span class="messages">' . _('form_modif_ok') . '</span><br>';
 
@@ -757,7 +756,7 @@ class Fonctions
 
         if($action=="new") {
             $return .= \config\Fonctions::commit_ajout($tab_new_values);
-        } elseif($action=="modif") {
+        } elseif ($action=="modif") {
             $return .= \config\Fonctions::modifier($tab_new_values, $id_to_update);
         } elseif($action=="commit_modif") {
             $return .= \config\Fonctions::commit_modif_absence($tab_new_values, $id_to_update);
@@ -794,7 +793,7 @@ class Fonctions
                 $sql_abs="SELECT ta_id, ta_libelle FROM conges_type_absence WHERE ta_type='conges_exceptionnels' ";
                 $ReqLog_abs = \includes\SQL::query($sql_abs);
 
-                if($ReqLog_abs->num_rows !=0) {
+                if ($ReqLog_abs->num_rows !=0) {
                     $return .= '<b>' . _('config_abs_desactive_cong_excep_impossible') . '</b><br>';
                     $value = "TRUE" ;
                     $timeout=5 ;
@@ -836,7 +835,7 @@ class Fonctions
 
             // Mise à jour
             $sql2 = 'UPDATE conges_config SET conf_valeur = \''.addslashes($value).'\' WHERE conf_nom ="'. \includes\SQL::quote($key).'" ';
-            $ReqLog2 = \includes\SQL::query($sql2);
+            \includes\SQL::query($sql2);
         }
 
         $_SESSION['config']=init_config_tab();      // on re-initialise le tableau des variables de config
@@ -893,11 +892,11 @@ class Fonctions
                     $childTable .= '<br><i>' . _($conf_commentaire) . '</i><br>';
 
                     // affichage saisie variable
-                    if($conf_nom=="installed_version") {
+                    if ($conf_nom=="installed_version") {
                         $childTable .= '<b>' . $conf_nom . '&nbsp;&nbsp;=&nbsp;&nbsp;' . $conf_valeur . '</b><br>';
                     } elseif( ($conf_type=="texte") || ($conf_type=="path") ) {
                         $childTable .= '<b>' . $conf_nom . '</b>&nbsp;=&nbsp;<input type="text" class="form-control" size="50" maxlength="200" name="tab_new_values[' . $conf_nom . ']" value="' . $conf_valeur . '"><br>';
-                    } elseif($conf_type=="boolean") {
+                    } elseif ($conf_type=="boolean") {
                         $childTable .= '<b>' . $conf_nom . '</b>&nbsp;=&nbsp;<select class="form-control" name="tab_new_values[' . $conf_nom . ']">';
                         $childTable .= '<option value="TRUE"';
                         if($conf_valeur=="TRUE") {
@@ -961,8 +960,8 @@ class Fonctions
         $childTableAddon = '<tr><td>';
         $childTableAddon .= '<fieldset class="cal_saisie plugins">';
         $childTableAddon .= '<legend class="boxlogin">Plugins</legend>';
-        foreach($my_plugins as $my_plugin) {
-            if(is_dir(PLUGINS_DIR."/$my_plugin") && !preg_match("/^\./",$my_plugin)) {
+        foreach ($my_plugins as $my_plugin) {
+            if (is_dir(PLUGINS_DIR."/$my_plugin") && !preg_match("/^\./",$my_plugin)) {
                 $childTableAddon .= _('plugin_detect').'<br>';
                 $childTableAddon .= '<b>' . $my_plugin . ' : </b>'._('plugin_install').'
                     <select class="form-control" name=tab_new_values[' . $my_plugin . '_installed]>';
@@ -970,7 +969,7 @@ class Fonctions
                 $sql_plug="SELECT p_is_active, p_is_install FROM conges_plugins WHERE p_name = '".$my_plugin."';";
                 $ReqLog_plug = \includes\SQL::query($sql_plug);
                 if($ReqLog_plug->num_rows !=0) {
-                    while($plug = $ReqLog_plug->fetch_array()){
+                    while ($plug = $ReqLog_plug->fetch_array()) {
                         $p_install = $plug["p_is_install"];
                         if ($p_install == '1') {
                             $childTableAddon .= '<option selected="selected" value="1">Y</option><option value="0">N</option>';

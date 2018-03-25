@@ -226,7 +226,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         $req   = 'UPDATE conges_periode
                 SET p_etat = \'' . \App\Models\Conge::STATUT_PREMIERE_VALIDATION . '\'
                 WHERE p_num = '. (int) $demandeId;
-        $query = $sql->query($req);
+        $sql->query($req);
 
         return $sql->affected_rows;
     }
@@ -361,7 +361,6 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
         $ids = [];
         $usersgroupesIdResponsable = [];
-        $usersRespResp = [];
         $usersgroupesIdResponsable = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupesIdResponsable);
 
         foreach ($usersgroupesIdResponsable as $user) {

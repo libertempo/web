@@ -1047,7 +1047,7 @@ class Fonctions
         if (empty($list_users)) {
             return;
         }
-        foreach($tab_new_nb_conges_all as $id_conges => $nb_jours) {
+        foreach ($tab_new_nb_conges_all as $id_conges => $nb_jours) {
             if ($nb_jours!=0) {
                 $comment = $tab_new_comment_all[$id_conges];
 
@@ -1358,8 +1358,7 @@ class Fonctions
         $sql1 = "SELECT u_login FROM conges_users WHERE u_login!='conges' AND u_login!='admin' ORDER BY u_nom";
         $ReqLog = \includes\SQL::query($sql1) ;
 
-        while ($resultat = $ReqLog->fetch_array())
-        {
+        while ($resultat = $ReqLog->fetch_array()) {
             $tab_user=array();
             $sql_login=$resultat["u_login"];
             $tab[$sql_login] = recup_infos_du_user($sql_login, $list_groupes_double_validation);
@@ -1672,7 +1671,7 @@ class Fonctions
 
         /* affichage ligne 2 du mois*/
         $return .= '<tr>';
-        for($i=8-$first_jour_mois_rang+1; $i<15-$first_jour_mois_rang+1; $i++) {
+        for ($i=8-$first_jour_mois_rang+1; $i<15-$first_jour_mois_rang+1; $i++) {
             $return .= \hr\Fonctions::affiche_jour_checkbox($mois,$i,$year,$tab_year);
         }
         $return .= '</tr>';
@@ -1697,7 +1696,7 @@ class Fonctions
             $return .= \hr\Fonctions::affiche_jour_checkbox($mois,$i,$year,$tab_year);
         }
 
-        for($i; $i<36-$first_jour_mois_rang+1; $i++) {
+        for ($i; $i<36-$first_jour_mois_rang+1; $i++) {
             $return .= \hr\Fonctions::affiche_jour_hors_mois($mois,$i,$year,$tab_year);
         }
         $return .= '</tr>';

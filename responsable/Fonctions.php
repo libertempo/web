@@ -140,9 +140,9 @@ class Fonctions
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
-        foreach($tab_champ_saisie as $user_name => $tab_conges)   // tab_champ_saisie[$current_login][$id_conges]=valeur du nb de jours ajouté saisi
+        foreach ($tab_champ_saisie as $user_name => $tab_conges)   // tab_champ_saisie[$current_login][$id_conges]=valeur du nb de jours ajouté saisi
         {
-            foreach($tab_conges as $id_conges => $user_nb_jours_ajout) {
+            foreach ($tab_conges as $id_conges => $user_nb_jours_ajout) {
                 $user_nb_jours_ajout_float =(float) $user_nb_jours_ajout ;
                 $valid=verif_saisie_decimal($user_nb_jours_ajout_float);   //verif la bonne saisie du nombre décimal
                 if ($valid) {
@@ -766,9 +766,8 @@ class Fonctions
                         alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "accept_conges");
                     }
                 }
-            }
-            elseif ($reponse == "VALID") // première validation dans le cas d'une double validation
-            {
+            } elseif ($reponse == "VALID") {
+                // première validation dans le cas d'une double validation
                 /* UPDATE table "conges_periode" */
                 $sql1 = 'UPDATE conges_periode SET p_etat="valid", p_date_traitement=NOW() WHERE p_num="'.\includes\SQL::quote($numero_int).'" AND p_etat=\'demande\';';
                 $ReqLog1 = \includes\SQL::query($sql1);

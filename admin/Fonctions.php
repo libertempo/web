@@ -20,8 +20,7 @@ class Fonctions
         $sql_data='SELECT * FROM '. \includes\SQL::quote($table);
         $ReqLog_data = \includes\SQL::query($sql_data);
 
-        while ($resultat_data = $ReqLog_data->fetch_array())
-        {
+        while ($resultat_data = $ReqLog_data->fetch_array()) {
             $count_fields=count($resultat_data)/2;   // on divise par 2 car c'est un tableau indexé (donc compte key+valeur)
             $chaine_insert = "INSERT INTO `$table` VALUES ( ";
             for($i=0; $i<$count_fields; $i++)
@@ -378,4 +377,3 @@ class Fonctions
         }
     }
 }
-

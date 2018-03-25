@@ -7,11 +7,11 @@ include_once INCLUDE_PATH .'lang_profile.php';
 //better to include_once plugins at the end : see bottom function
 //include_once INCLUDE_PATH .'plugins.php';
 
-function schars( $htmlspec ) {
+function schars($htmlspec) {
     return htmlspecialchars( $htmlspec );
 }
 
-function redirect($url , $auto_exit = true) {
+function redirect($url, $auto_exit = true) {
     // $url = urlencode($url);
     if (headers_sent()) {
         echo '<html>';
@@ -25,8 +25,7 @@ function redirect($url , $auto_exit = true) {
                     </script>';
             echo '</head>';
         echo '</html>';
-    }
-    else {
+    } else {
         header('Location: '.$url);
     }
     if ($auto_exit)
@@ -36,20 +35,20 @@ function redirect($url , $auto_exit = true) {
 
 //Get the name of current php page
 function curPage() {
- $local_scripts = array();
+ $local_scripts = [];
  $local_scripts[0] = substr($_SERVER["SCRIPT_NAME"],strrpos($_SERVER["SCRIPT_NAME"],"/")+1);
  $local_scripts[1] = $_SERVER["REQUEST_URI"];
  return $local_scripts;
 }
 
 
-function header_popup($title = '' , $additional_head = '' ) {
+function header_popup($title = '', $additional_head = '' ) {
     global $type_bottom;
 
     static $last_use = '';
     if ($last_use == '') {
         $last_use = debug_backtrace();
-    }else
+    } else
         throw new Exception('Warning : Ne peux ouvrir deux header !!! previous = '.$last_use['file']);
 
     $type_bottom = 'popup';
@@ -61,13 +60,13 @@ function header_popup($title = '' , $additional_head = '' ) {
     include_once TEMPLATE_PATH . 'popup_header.php';
 }
 
-function header_error($title = '' , $additional_head = '' ) {
+function header_error($title = '', $additional_head = '' ) {
     global $type_bottom;
 
     static $last_use = '';
     if ($last_use == '') {
         $last_use = debug_backtrace();
-    }else
+    } else
         throw new Exception('Warning : Ne peux ouvrir deux header !!! previous = '.$last_use['file']);
 
     $type_bottom = 'error';
@@ -79,7 +78,7 @@ function header_error($title = '' , $additional_head = '' ) {
     include_once TEMPLATE_PATH . 'error_header.php';
 }
 
-function header_login($title = '' , $additional_head = '' ) {
+function header_login($title = '', $additional_head = '' ) {
     global $type_bottom;
     require_once ROOT_PATH . 'version.php';
 
@@ -97,7 +96,7 @@ function header_login($title = '' , $additional_head = '' ) {
     include_once TEMPLATE_PATH . 'login_header.php';
 }
 
-function header_menu( $info ,$title = '' , $additional_head = '' ) {
+function header_menu($info, $title = '', $additional_head = '' ) {
     global $type_bottom;
 
     static $last_use = '';
@@ -115,7 +114,7 @@ function header_menu( $info ,$title = '' , $additional_head = '' ) {
     include_once TEMPLATE_PATH . 'menu_header.php';
 }
 
-function bouton($name, $icon ,$link, $active = false)
+function bouton($name, $icon, $link, $active = false)
 {
     $name = str_replace('"','\\"',$name);
     $icon = str_replace('"','\\"',$icon);
@@ -128,7 +127,7 @@ function bouton($name, $icon ,$link, $active = false)
         </div>';
 }
 
-function bouton_popup($name, $icon ,$link, $popup_name, $size_x, $size_y, $active = false)
+function bouton_popup($name, $icon, $link, $popup_name, $size_x, $size_y, $active = false)
 {
     $name = str_replace('"','\\"',$name);
 
@@ -194,8 +193,7 @@ function session_is_valid()
 //
 function session_create($username)
 {
-    if ($username != "")
-    {
+    if ($username != "") {
         if (isset($_SESSION)) unset($_SESSION);
 
         session_start();
@@ -256,10 +254,11 @@ function session_saisie_user_password($erreur, $session_username, $session_passw
     $return_url                     = getpost_variable('return_url', false);
 
     // verif si on est dans le repertoire install
-    if (substr(dirname ($_SERVER["SCRIPT_FILENAME"]), -6, 6) == "config")   // verif si on est dans le repertoire install
-        $config_dir=TRUE;
-    else
-        $config_dir=FALSE;
+    if (substr(dirname ($_SERVER["SCRIPT_FILENAME"]), -6, 6) == "config") {  // verif si on est dans le repertoire install
+        $config_dir=true;
+    } else {
+        $config_dir=false;
+    }
 
     $add = '<script language="JavaScript" type="text/javascript">
 <!--
@@ -287,9 +286,8 @@ if (! navigator.cookieEnabled) {
 // - renvoie $username si authentification OK
 // - renvoie ""        si authentification FAIL
 //
-function autentification_passwd_conges($username,$password)
+function autentification_passwd_conges($username, $password)
 {
-    $password_md5=md5($password);
     //  $req_conges="SELECT u_passwd   FROM conges_users   WHERE u_login='$username' AND u_passwd='$password_md5' " ;
     // on conserve le double mode d'autentificatio (nouveau cryptage (md5) ou ancien cryptage (mysql))
     $req_conges='SELECT u_passwd   FROM conges_users   WHERE u_login="'. \includes\SQL::quote( $username ) .'" AND ( u_passwd=\''. md5($password) .'\' OR u_passwd=PASSWORD("'. \includes\SQL::quote( $password ).'") ) ' ;
@@ -305,7 +303,7 @@ function autentification_passwd_conges($username,$password)
 // - renvoie $username si authentification OK
 // - renvoie ""        si authentification FAIL
 //
-function authentification_ldap_conges($username,$password)
+function authentification_ldap_conges($username, $password)
 {
     require_once ( LIBRARY_PATH .'authLDAP.php');
 
@@ -379,7 +377,7 @@ function authentification_passwd_conges_CAS()
 }
 
 
-function deconnexion_CAS($url="")
+function deconnexion_CAS($url = "")
 {
     // import des parametres du serveur CAS
 
@@ -416,8 +414,7 @@ function unhash_user($huser_test)
     $req_user = 'SELECT u_login FROM conges_users';
     $res_user = \includes\SQL::query($req_user) ;
 
-    while ($resultat = $res_user->fetch_assoc())
-    {
+    while ($resultat = $res_user->fetch_assoc()) {
         $clear_user = $resultat['u_login'];
         $huser = hash('sha256', $clear_user . $ics_salt);
         if ( $huser_test == $huser ) {

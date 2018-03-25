@@ -112,8 +112,8 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
     // si le user a droit de saisir une mission ET si on est PAS dans une fenetre de responsable
     // OU si le resp a droit de saisir une mission ET si on est PAS dans une fenetre dd'utilisateur
     // OU si le resp a droit de saisir une mission ET si le resp est resp de lui meme
-    if ((($config->canUserSaisieMission())&&($user_login==$_SESSION['userlogin'])) 
-            || (($config->canResponsableSaisieMission())&&($user_login!=$_SESSION['userlogin'])) 
+    if ((($config->canUserSaisieMission())&&($user_login==$_SESSION['userlogin']))
+            || (($config->canResponsableSaisieMission())&&($user_login!=$_SESSION['userlogin']))
             || (($config->canResponsableSaisieMission()) && (\App\ProtoControllers\Responsable::isRespDeUtilisateur($_SESSION['userlogin'] , $user_login)))) {
         // absences
         $return .= '<div class="col-md-4">';
@@ -372,8 +372,7 @@ function date_fr($code, $timestmp)
     $les_jours_longs  = array( _('dimanche') ,  _('lundi') ,  _('mardi') ,  _('mercredi') , _('jeudi') ,  _('vendredi') ,  _('samedi') );
     $les_jours_courts = array( _('dimanche_short') ,  _('lundi_short') ,  _('mardi_short') , _('mercredi_short') ,  _('jeudi_short') ,  _('vendredi_short') ,  _('samedi_short') );
 
-    switch ($code)
-    {
+    switch ($code) {
         case 'F':
             return $les_mois_longs[ date('n', $timestmp) ];
             break;
@@ -630,8 +629,7 @@ function get_list_all_users_du_resp($resp_login)
     $sql1 = $sql1." ORDER BY u_login " ;
     $ReqLog1 = \includes\SQL::query($sql1);
 
-    while ($resultat1 = $ReqLog1->fetch_array())
-    {
+    while ($resultat1 = $ReqLog1->fetch_array()) {
         $current_login=$resultat1["u_login"];
         if ($list_users=="")
             $list_users="'$current_login'";
@@ -660,8 +658,7 @@ function get_list_all_users_du_resp($resp_login)
             $ReqLog_3 = \includes\SQL::query($req);
 
             // si le current resp est absent : on recup la liste de ses users pour les traiter .....
-            if ($ReqLog_3->num_rows!=0)
-            {
+            if ($ReqLog_3->num_rows!=0) {
                 if ($list_users=="")
                     $list_users=get_list_all_users_du_resp($current_resp);
                 else
@@ -991,8 +988,7 @@ function is_hr($login)
 function is_active($login)
 {
     static $sql_is_active = array();
-    if (!isset($sql_is_active[$login]))
-    {
+    if (!isset($sql_is_active[$login])) {
         // recup de qq infos sur le user
         $select_info='SELECT u_is_active FROM conges_users WHERE u_login="'.\includes\SQL::quote($login).'";';
         $ReqLog_info = \includes\SQL::query($select_info);

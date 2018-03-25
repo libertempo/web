@@ -191,7 +191,6 @@ class Fonctions
 
     public static function affichage($login)
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
         $sql1 = 'SELECT u_nom, u_prenom, u_quotite FROM conges_users where u_login = "'. \includes\SQL::quote($login).'"';
@@ -200,7 +199,6 @@ class Fonctions
         while ($resultat1 = $ReqLog1->fetch_array()) {
             $sql_nom=$resultat1["u_nom"];
             $sql_prenom=$resultat1["u_prenom"];
-            $sql_quotite=$resultat1["u_quotite"];
         }
 
         // TITRE
@@ -599,8 +597,6 @@ class Fonctions
             $sql_p_commentaire = html_entity_decode($resultat2["p_commentaire"], ENT_QUOTES);
             $sql_p_type = $resultat2["p_type"];
             $sql_p_etat = $resultat2["p_etat"];
-            $sql_p_date_demande = $resultat2["p_date_demande"];
-            $sql_p_date_traitement = $resultat2["p_date_traitement"];
 
             // decalage pour centrer
             $pdf->Cell($decalage);
@@ -1201,7 +1197,7 @@ class Fonctions
         $ReqLog_list = \includes\SQL::query($sql_list);
 
         $list_abs_id="";
-        while($resultat_list = $ReqLog_list->fetch_array())
+        while ($resultat_list = $ReqLog_list->fetch_array())
         {
             if ($list_abs_id=="")
                 $list_abs_id=$resultat_list['ta_id'] ;

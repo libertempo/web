@@ -22,7 +22,7 @@ $etape = (isset($_GET['etape']) ? $_GET['etape'] : (isset($_POST['etape']) ? $_P
 $etape = htmlentities($etape, ENT_QUOTES | ENT_HTML401);
 
 
-if($version == 0) {  // la version à mettre à jour dans le formulaire de index.php n'a pas été choisie : renvoit sur le formulaire
+if ($version == 0) {  // la version à mettre à jour dans le formulaire de index.php n'a pas été choisie : renvoit sur le formulaire
     redirect( ROOT_PATH . 'install/index.php');
 }
 
