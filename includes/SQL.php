@@ -204,7 +204,7 @@ class Database extends \mysqli
 
 class Database_MySQLi_Result extends \MySQLi_Result
 {
-    public function fetch_all()
+    public function fetch_all($result_type = NULL)
     {
         $rows = array();
         while($row = $this->fetch_assoc())
