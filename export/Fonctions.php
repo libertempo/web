@@ -10,12 +10,11 @@ class Fonctions
     public static function form_saisie($user, $date_debut, $date_fin)
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
-    	$PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 
     	$date_today=date("d-m-Y");
-    	if($date_debut=="")
+    	if ($date_debut=="")
     		$date_debut=$date_today;
-    	if($date_fin=="")
+    	if ($date_fin=="")
     		$date_fin=$date_today;
 
     	$huser = hash_user($user);
@@ -47,13 +46,10 @@ class Fonctions
     	/*************************************/
     	// recup des parametres reçus :
     	// SERVER
-    	$PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
     	// GET	/ POST
-    	$action     = getpost_variable('action') ;
     	$user_login = getpost_variable('user_login') ;
     	$date_debut = getpost_variable('date_debut') ;
     	$date_fin   = getpost_variable('date_fin') ;
-    	$choix_format  = getpost_variable('choix_format') ;
     	/*************************************/
 
 
@@ -62,8 +58,8 @@ class Fonctions
 
     public static function remplace_accents($str)
     {
-    	$accent        = array("à", "â", "ä", "é", "è", "ê", "ë", "î", "ï", "ô", "ö", "ù", "û", "ü", "ç");
-    	$sans_accent   = array("a", "a", "a", "e", "e", "e", "e", "i", "i", "o", "o", "u", "u", "u", "c");
+    	$accent        = ["à", "â", "ä", "é", "è", "ê", "ë", "î", "ï", "ô", "ö", "ù", "û", "ü", "ç"];
+    	$sans_accent   = ["a", "a", "a", "e", "e", "e", "e", "i", "i", "o", "o", "u", "u", "u", "c"];
     	return str_replace($accent, $sans_accent, $str) ;
     }
 
@@ -97,10 +93,9 @@ class Fonctions
     				'FROM conges_periode WHERE p_login=\''. \includes\SQL::quote($user_login).'\' AND ((p_date_deb>=\''. \includes\SQL::quote($good_date_debut).'\' AND  p_date_deb<=\''.\includes\SQL::quote($good_date_fin).'\') OR (p_date_fin>=\''. \includes\SQL::quote($good_date_debut).'\' AND p_date_fin<=\''. \includes\SQL::quote($good_date_fin).'\'))';
     		$res_periodes = \includes\SQL::query($sql_periodes);
 
-    		if ($num_periodes=$res_periodes->num_rows!=0)
+    		if ($res_periodes->num_rows!=0)
     		{
-    			while ($result_periodes = $res_periodes->fetch_array())
-    			{
+    			while ($result_periodes = $res_periodes->fetch_array()) {
     				$sql_date_debut=$result_periodes['p_date_deb'];
     				$sql_demi_jour_deb=$result_periodes['p_demi_jour_deb'];
     				$sql_date_fin=$result_periodes['p_date_fin'];
@@ -117,7 +112,7 @@ class Fonctions
     				$type_abs=\export\Fonctions::remplace_accents($tab_types_abs[$sql_type]['libelle']) ;
 
     				//conversion format date
-    				$replaceThis = Array('-' => '',':' => '',' ' => 'T',);
+    				$replaceThis = ['-' => '',':' => '',' ' => 'T',];
     				$sql_date_dem=str_replace(array_keys($replaceThis), $replaceThis, $sql_dateh_demande);
     				$DTSTAMP=$sql_date_dem."Z";
     				$tab_date_deb=explode("-", $sql_date_debut);
@@ -139,7 +134,7 @@ class Fonctions
     				else
     					$DTSTART=$tab_date_deb[0].$tab_date_deb[1].$tab_date_deb[2]."T120000Z";   // .....
 
-    				if($sql_demi_jour_fin=="am")
+    				if ($sql_demi_jour_fin=="am")
     					$DTEND=$tab_date_fin[0].$tab_date_fin[1].$tab_date_fin[2]."T120000Z";   // .....
     				else
     					$DTEND=$tab_date_fin[0].$tab_date_fin[1].$tab_date_fin[2]."T210000Z";   // .....
@@ -150,7 +145,7 @@ class Fonctions
     						"CREATED:$DTSTART\r\n" .
     						"STATUS:$status\r\n" .
     						"UID:$user_login@Libertempo-$sql_date_dem\r\n";
-    				if($sql_comment!="")
+    				if ($sql_comment!="")
     					echo "DESCRIPTION:$sql_comment\r\n";
     				echo "SUMMARY:$type_abs\r\n" .
     						"CLASS:PUBLIC\r\n" .
