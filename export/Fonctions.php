@@ -93,8 +93,7 @@ class Fonctions
     				'FROM conges_periode WHERE p_login=\''. \includes\SQL::quote($user_login).'\' AND ((p_date_deb>=\''. \includes\SQL::quote($good_date_debut).'\' AND  p_date_deb<=\''.\includes\SQL::quote($good_date_fin).'\') OR (p_date_fin>=\''. \includes\SQL::quote($good_date_debut).'\' AND p_date_fin<=\''. \includes\SQL::quote($good_date_fin).'\'))';
     		$res_periodes = \includes\SQL::query($sql_periodes);
 
-    		if ($res_periodes->num_rows!=0)
-    		{
+    		if ($res_periodes->num_rows!=0) {
     			while ($result_periodes = $res_periodes->fetch_array()) {
     				$sql_date_debut=$result_periodes['p_date_deb'];
     				$sql_demi_jour_deb=$result_periodes['p_demi_jour_deb'];

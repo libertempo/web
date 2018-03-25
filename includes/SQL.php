@@ -48,12 +48,13 @@ class SQL
     // for call staticly dynamic fx (doesn't use instance vars and doesn't use singleton ;-) )
     public static function __callStatic($name, $args) {
         self::singleton();
-        if (method_exists(self::$instance, $name))
-            return call_user_func_array(array(self::$instance, $name), $args);
-        elseif (method_exists(self::$pdo_obj, $name))
-            return call_user_func_array(array(self::$pdo_obj, $name), $args);
-        else
-            throw new \Exception(sprintf('The required method "%s" does not exist for %s', $name, get_class(self::$instance)));
+        if (method_exists(self::$instance, $name)) {
+            return call_user_func_array([self::$instance, $name], $args);
+        }
+        if (method_exists(self::$pdo_obj, $name)) {
+            return call_user_func_array([self::$pdo_obj, $name], $args);
+        }
+        throw new \Exception(sprintf('The required method "%s" does not exist for %s', $name, get_class(self::$instance)));
     }
 
     //=====================
@@ -104,9 +105,9 @@ class SQL
 
 class Database extends \mysqli
 {
-    private static $hist = array();
+    private static $hist = [];
 
-    public function __construct ( $host='localhost', $username='root', $passwd ='',$dbname = 'db_conges')
+    public function __construct($host='localhost', $username='root', $passwd ='',$dbname = 'db_conges')
     {
         parent::__construct (  $host , $username , $passwd , $dbname );
         $this->query('SET NAMES \'utf8\';');
@@ -117,13 +118,13 @@ class Database extends \mysqli
         return self::$hist;
     }
 
-    public function query( $query , $resultmode = MYSQLI_STORE_RESULT )
+    public function query($query , $resultmode = MYSQLI_STORE_RESULT )
     {
         $nb = count(self::$hist);
         $backtraces = debug_backtrace();
         $f = '';
 
-        foreach ( $backtraces as $k => $b ) {
+        foreach ( $backtraces as $b ) {
             if (isset($b['file']) && basename($b['file']) != 'sql.class.php') {
                 $f = $b;
             break;
@@ -146,7 +147,7 @@ class Database extends \mysqli
         if ($this->errno != 0) {
             $dump_name = DUMP_PATH . 'sql_' . date('c') . '.dump';
             $fh = fopen( $dump_name , 'a+');
-            if($fh ==! false) {
+            if ($fh ==! false) {
                 fputs ($fh, "\n".'##################################################');
                 fputs ($fh, "\n".'Date : '. date('Y-m-d H:i:s (T)') );
                 fputs ($fh, "\n".'**************************************************');
@@ -163,7 +164,7 @@ class Database extends \mysqli
                 fputs ($fh, "\n".var_export($_REQUEST, true));
                 fputs ($fh, "\n".'--------------------------------------------------');
                 fputs ($fh, "\n".'=> Var dump $_SESSION');
-                fputs ($fh, "\n".var_export((isset($_SESSION) ? $_SESSION : array() ), true));
+                fputs ($fh, "\n".var_export((isset($_SESSION) ? $_SESSION : []), true));
                 fputs ($fh, "\n".'--------------------------------------------------');
                 fputs ($fh, "\n".'=> Var dump $_SERVER');
                 fputs ($fh, "\n".var_export($_SERVER, true));
@@ -195,7 +196,7 @@ class Database extends \mysqli
         return $result;
     }
 
-    public function quote( $escapestr )
+    public function quote($escapestr)
     {
         return $this->escape_string( $escapestr );
     }

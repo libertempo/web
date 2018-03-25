@@ -28,8 +28,7 @@ function compter($user, $num_current_periode, $date_debut, $date_fin, $opt_debut
 	if ( ($date_debut!=0) && ($date_fin!=0) )
 	{
 		// On ne peut pas calculer si, pour l'année considérée, les jours feries ont ete saisis
-		if ( (verif_jours_feries_saisis($date_debut, $num_update)==false) || (verif_jours_feries_saisis($date_fin, $num_update)==false) )
-		{
+		if ( (verif_jours_feries_saisis($date_debut, $num_update)==false) || (verif_jours_feries_saisis($date_fin, $num_update)==false) ) {
 			$comment =  _('calcul_impossible') ."<br>\n". _('jours_feries_non_saisis') ."<br>\n". _('contacter_rh') ."<br>\n" ;
 			return 0 ;
 		}
@@ -96,8 +95,8 @@ function compter($user, $num_current_periode, $date_debut, $date_fin, $opt_debut
 				// on ne compte ce jour à 0
 				$tab_periode_calcul[$current_day]['am']=0;
 				$tab_periode_calcul[$current_day]['pm']=0;
-			} elseif (est_chome($timestamp_du_jour)) // verif si jour férié
-			{
+			} elseif (est_chome($timestamp_du_jour)) {
+                 // verif si jour férié
 				// on ne compte ce jour à 0
 				$tab_periode_calcul[$current_day]['am']=0;
 				$tab_periode_calcul[$current_day]['pm']=0;

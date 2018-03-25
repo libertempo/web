@@ -29,16 +29,15 @@ if (!$LoadLang)
 }
 
 /* If we can not find the correct language, load fr... */
-if(!$LoadLang)
-    {
+if (!$LoadLang) {
     /* load default language */
     $LoadLang = setlocale(LC_ALL, 'fr_FR', 'fr_FR.utf8');
-    }
+}
 /* try another language... */
-if(!$LoadLang) {
+if (!$LoadLang) {
 	$LoadLang = setlocale(LC_ALL, 'en_US', 'en_US.utf8');
 }
-if(!$LoadLang) {
+if (!$LoadLang) {
 	$LoadLang = setlocale(LC_ALL, 'es_ES', 'es_ES.utf8');
 }
 
