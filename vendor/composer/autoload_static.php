@@ -27,6 +27,10 @@ class ComposerStaticInitfd23b7dd905d561816f77d072cde6740
             'Symfony\\Component\\Console\\' => 26,
             'Slim\\' => 5,
         ),
+        'R' => 
+        array (
+            'Rollbar\\' => 8,
+        ),
         'P' => 
         array (
             'Psr\\Log\\' => 8,
@@ -36,6 +40,10 @@ class ComposerStaticInitfd23b7dd905d561816f77d072cde6740
             'PackageVersions\\' => 16,
             'PHPStan\\PhpDocParser\\' => 21,
             'PHPStan\\' => 8,
+        ),
+        'M' => 
+        array (
+            'Monolog\\' => 8,
         ),
         'L' => 
         array (
@@ -97,6 +105,10 @@ class ComposerStaticInitfd23b7dd905d561816f77d072cde6740
         array (
             0 => __DIR__ . '/..' . '/slim/slim/Slim',
         ),
+        'Rollbar\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/rollbar/rollbar/src',
+        ),
         'Psr\\Log\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
@@ -125,6 +137,10 @@ class ComposerStaticInitfd23b7dd905d561816f77d072cde6740
         array (
             0 => __DIR__ . '/..' . '/phpstan/phpstan/src',
             1 => __DIR__ . '/..' . '/phpstan/phpstan/build/PHPStan',
+        ),
+        'Monolog\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog',
         ),
         'LibertAPI\\' => 
         array (
