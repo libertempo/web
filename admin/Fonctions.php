@@ -1942,7 +1942,7 @@ class Fonctions
     }
 
     public static function FormAddUserLoginOk($login) {
-        return preg_match('/^[a-z.\d_-]{2,30}$/i', $login);
+        return preg_match('/^[@a-z.\d_-]{2,30}$/i', $login);
     }
 
     public static function FormAddUserQuotiteOk($quot) {
