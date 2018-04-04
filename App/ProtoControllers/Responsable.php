@@ -53,29 +53,6 @@ class Responsable
          return $ids;
     }
 
-
-    /**
-     * Retourne le login des utilisateurs d'un responsable direct
-     *
-     * @param string $resp
-     *
-     * @return array $users
-     */
-    public static function getUsersRespDirect($resp)
-    {
-
-        $users = [];
-
-         $sql = \includes\SQL::singleton();
-         $req = 'SELECT u_login FROM `conges_users` WHERE u_resp_login ="'. $resp . '"';
-         $res = $sql->query($req);
-
-         while ($data = $res->fetch_array()) {
-            $users[] = $data['u_login'];
-         }
-         return $users;
-    }
-
     /**
      * Vérifie si le responsable est absent
      *
@@ -114,34 +91,14 @@ class Responsable
     }
 
     /**
-     * Retourne les responsables de groupes et direct d'un utilisateur
+     * Retourne les responsables d'un employé
      *
      * @param string $user
      * @return array
      */
     public static function getResponsablesUtilisateur($user)
     {
-        $responsables = \App\ProtoControllers\Groupe\Responsable::getListResponsableByGroupeIds(\App\ProtoControllers\Utilisateur::getGroupesId($user));
-        $responsables[] = \App\ProtoControllers\Responsable::getResponsableDirect($user);
-        $responsables = array_unique($responsables);
-
-        return $responsables;
-    }
-
-    /**
-     * Retourne le responsable direct d'un utilisateur
-     *
-     * @param string $user
-     * @return array
-     */
-    private static function getResponsableDirect($user)
-    {
-        $resp = [];
-        $sql = \includes\SQL::singleton();
-        $req = 'SELECT u_resp_login FROM conges_users WHERE u_login ="' . \includes\SQL::quote($user) . '"';
-        $res = $sql->query($req);
-        return $res->fetch_array()['u_resp_login'];
-
+        return \App\ProtoControllers\Groupe\Responsable::getListResponsableByGroupeIds(\App\ProtoControllers\Utilisateur::getGroupesId($user));
     }
 
     /**
@@ -153,14 +110,13 @@ class Responsable
      */
     public static function  getInfosResponsables(\includes\SQL $sql, $activeSeul = false)
     {
-        $respLogin = [];
         $req = 'SELECT *
                 FROM conges_users
                 WHERE u_is_resp = "Y"';
         if ($activeSeul) {
             $req .= ' AND u_is_active = "Y"';
         }
-        $query = $sql->query($req);
+        $req .= ' ORDER BY u_nom ASC, u_prenom ASC';
 
         return $sql->query($req)->fetch_all(\MYSQLI_ASSOC);
     }
@@ -173,11 +129,9 @@ class Responsable
      *
      * @return bool
      */
-    public static function isRespDeUtilisateur($resp, $user)
-    {
+    public static function isRespDeUtilisateur($resp, $user) {
         return $resp != $user
-                && (\App\ProtoControllers\Responsable::isRespDirect($resp, $user)
-                || \App\ProtoControllers\Groupe::isResponsableGroupe($resp, \App\ProtoControllers\Utilisateur::getGroupesId($user), \includes\SQL::singleton()));
+                && \App\ProtoControllers\Groupe::isResponsableGroupe($resp, \App\ProtoControllers\Utilisateur::getGroupesId($user), \includes\SQL::singleton());
     }
 
     /**
@@ -198,7 +152,6 @@ class Responsable
         $usersRespRespAbs = [];
         $groupesIdResp = \App\ProtoControllers\Responsable::getIdGroupeResp($resp);
         $usersResp = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupesIdResp);
-        $usersResp = array_merge($usersResp,\App\ProtoControllers\Responsable::getUsersRespDirect($resp));
         foreach ($usersResp as $userResp) {
             if (\App\ProtoControllers\Utilisateur::isResponsable($userResp) && \App\ProtoControllers\Responsable::isRespAbsent($userResp)) {
                 $usersRespRespAbs[] = $userResp;
@@ -236,28 +189,6 @@ class Responsable
         $query = $sql->query($req);
 
         return 0 < (int) $query->fetch_array()[0];
-    }
-
-    /**
-     *  Verifie si un utilisateur est responsable d'un employé
-     *
-     * @param string $resp
-     * @param string $user
-     *
-     * @return bool
-     */
-    public static function isRespDirect($resp, $user)
-    {
-        $sql = \includes\SQL::singleton();
-        $req = 'SELECT EXISTS (
-                    SELECT u_resp_login
-                    FROM conges_users
-                    WHERE u_login ="'.\includes\SQL::quote($user).'"
-                        AND u_resp_login ="'.\includes\SQL::quote($resp).'"
-           )';
-    $query = $sql->query($req);
-
-    return 0 < (int) $query->fetch_array()[0];
     }
 
     /**

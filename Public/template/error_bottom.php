@@ -20,7 +20,7 @@ $total  = 0;
             </thead>
             <tbody>
             <?php
-            foreach($querys as $num => $v):
+            foreach ($querys as $num => $v):
             $time = $v['t2'] - $v['t1'];
             $total += $time;
             ?>

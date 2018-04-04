@@ -70,7 +70,8 @@ class Planning extends \App\ProtoControllers\APlanning
     {
         $utilisateursAssocies = parent::getListeUtilisateursAssocies($idPlanning);
 
-        $subalternes = \App\ProtoControllers\Responsable::getUsersRespDirect($_SESSION['userlogin']);
+        $groupesId = \App\ProtoControllers\Responsable::getIdGroupeResp($_SESSION['userlogin']);
+        $subalternes = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupesId);
 
         return $utilisateursAssocies = array_filter(
             $utilisateursAssocies,

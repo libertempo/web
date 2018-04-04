@@ -30,7 +30,7 @@ $dbpasswd = htmlentities($dbpasswd, ENT_QUOTES | ENT_HTML401);
 $dbdb=(isset($_GET['dbdb']) ? $_GET['dbdb'] : ((isset($_POST['dbdb'])) ? $_POST['dbdb'] : "") ) ;
 $dbdb = htmlentities($dbdb, ENT_QUOTES | ENT_HTML401);
 
-    if(\install\Fonctions::test_dbconnect_file()!=TRUE) {
+    if (\install\Fonctions::test_dbconnect_file()!=TRUE) {
         $_SESSION['lang']=$lang;
 
         header_popup();
@@ -54,7 +54,7 @@ $dbdb = htmlentities($dbdb, ENT_QUOTES | ENT_HTML401);
 
         } else {
             $is_dbconf_ok= \install\Fonctions::write_db_config($dbserver,$dbuser,$dbpasswd,$dbdb);
-            if($is_dbconf_ok!=true) {
+            if ($is_dbconf_ok!=true) {
                 echo "le dossier ".CONFIG_PATH." n'est pas accessible en écriture";
             } else {
                 echo _('db_configuration_ok');

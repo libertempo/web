@@ -197,12 +197,7 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
     protected function getIdDemandesResponsable($resp)
     {
         $groupId = \App\ProtoControllers\Responsable::getIdGroupeResp($resp);
-
-        $usersResp = [];
         $usersResp = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupId);
-
-        $usersRespDirect = \App\ProtoControllers\Responsable::getUsersRespDirect($resp);
-        $usersResp = array_merge($usersResp,$usersRespDirect);
         $usersResp = array_diff($usersResp,[$_SESSION['userlogin']]);
 
         if (empty($usersResp)) {

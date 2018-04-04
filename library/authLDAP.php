@@ -27,7 +27,7 @@ class authLDAP
 
   function servers()
   {
- 
+
 	include CONFIG_PATH .'config_ldap.php';
 
     $this->searchdn[0]    = $config_searchdn;
@@ -104,9 +104,11 @@ class authLDAP
 		// Support Active Directory
 		ldap_set_option($ds, LDAP_OPT_REFERRALS, 0);
         //$bound = @ldap_bind($ds, $this->ldap_user[$i], $this->ldap_pass[$i]);
-  	 if ($this->ldap_user[$i] == "")
-  	 	$bound = @ldap_bind($ds);
-  	 else   $bound = @ldap_bind($ds, $this->ldap_user[$i], $this->ldap_pass[$i]);
+  	if ($this->ldap_user[$i] == "") {
+  	    $bound = @ldap_bind($ds);
+    } else {
+        $bound = @ldap_bind($ds, $this->ldap_user[$i], $this->ldap_pass[$i]);
+    }
 
   	if ( $bound )
   	{
@@ -132,7 +134,7 @@ class authLDAP
           $info = ldap_get_entries($ds,$sr);
           if( isset($info['count']) && $info['count']>0)
             $dn=$info[0]["dn"];
-          else 
+          else
             $dn=false;
 
 

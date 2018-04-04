@@ -725,3 +725,53 @@ function disableCheckboxGroupe(checkbox,selectId) {
         }
     }
 }
+
+function searchLdapUser() {
+    var form = document.getElementById("manageUser");
+    var nom = form.new_nom.value;
+    if(2 >= nom.length) {
+        return;
+    }
+    var page = 'hr_recherche_ldap.php?nom=' + nom;
+
+    $.ajax({
+        type : 'GET',
+        url : page,
+        dataType : 'text',
+        success : function(data)
+        {
+            var arr = new Array();
+            arr = JSON.parse(data);
+            var list = document.getElementById("suggestions");
+            var frag = document.createDocumentFragment();
+            var liElem = document.createElement("li");
+            var inputsForm = document.getElementById("manageUser");
+            for (var i in arr) {
+                var word = liElem.cloneNode();
+                frag.appendChild(word);
+                word.login = arr[i]["login"];
+                word.nom = arr[i]["nom"];
+                word.prenom  = arr[i]["prenom"];
+                word.innerHTML = word.nom + " " + word.prenom;
+                word.onmousedown = function(){
+                    inputsForm.new_nom.focus();
+                    inputsForm.new_login.value = this.login;
+                    inputsForm.new_nom.value = this.nom;
+                    inputsForm.new_prenom.value = this.prenom;
+                    list.style.display = "none";
+                    return false;
+                };
+            }
+
+            if(0 < arr.length){
+                while (list.firstChild) {
+                    list.removeChild(list.firstChild);
+                }
+                list.appendChild(frag);
+                list.style.display = "block";
+            } else {
+                list.style.display = "none";			
+            }
+        },
+    });
+}

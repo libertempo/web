@@ -54,7 +54,7 @@ class Creneau
                 if (-1 !== strnatcmp($debut, $fin)) {
                     $localError['Créneaux de travail'][] = _('date_fin_superieure_date_debut');
                 }
-                if (!preg_match($pattern, $debut) || !preg_match($pattern, $fin))  {
+                if (!preg_match($pattern, $debut) || !preg_match($pattern, $fin)) {
                     $localError['Créneaux de travail'][] = _('Format_heure_incorrect');
                 }
                 if (!empty($precedentsCreneauxJours) && 1 !== strnatcmp($debut, $precedentsCreneauxJours[ModelCreneau::TYPE_HEURE_FIN])) {

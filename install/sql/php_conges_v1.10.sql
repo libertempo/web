@@ -266,7 +266,6 @@ CREATE TABLE IF NOT EXISTS `conges_users` (
   `u_nom` varchar(30) NOT NULL DEFAULT '',
   `u_prenom` varchar(30) NOT NULL DEFAULT '',
   `u_is_resp` enum('Y','N') NOT NULL DEFAULT 'N',
-  `u_resp_login` varbinary(99) DEFAULT NULL,
   `u_is_admin` enum('Y','N') NOT NULL DEFAULT 'N',
   `u_is_hr` enum('Y','N') NOT NULL DEFAULT 'N',
   `u_is_active` enum('Y','N') NOT NULL DEFAULT 'Y',

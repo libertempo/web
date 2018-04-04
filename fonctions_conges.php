@@ -112,8 +112,9 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
     // si le user a droit de saisir une mission ET si on est PAS dans une fenetre de responsable
     // OU si le resp a droit de saisir une mission ET si on est PAS dans une fenetre dd'utilisateur
     // OU si le resp a droit de saisir une mission ET si le resp est resp de lui meme
-    if ((($config->canUserSaisieMission())&&($user_login==$_SESSION['userlogin'])) || (($config->canResponsableSaisieMission())&&($user_login!=$_SESSION['userlogin'])) || (($config->canResponsableSaisieMission())&&(is_resp_of_user($_SESSION['userlogin'], $user_login))))
-        {
+    if ((($config->canUserSaisieMission())&&($user_login==$_SESSION['userlogin']))
+            || (($config->canResponsableSaisieMission())&&($user_login!=$_SESSION['userlogin']))
+            || (($config->canResponsableSaisieMission()) && (\App\ProtoControllers\Responsable::isRespDeUtilisateur($_SESSION['userlogin'] , $user_login)))) {
         // absences
         $return .= '<div class="col-md-4">';
         $return .= '<label>' . _('divers_absences') . '</label>';
@@ -371,8 +372,7 @@ function date_fr($code, $timestmp)
     $les_jours_longs  = array( _('dimanche') ,  _('lundi') ,  _('mardi') ,  _('mercredi') , _('jeudi') ,  _('vendredi') ,  _('samedi') );
     $les_jours_courts = array( _('dimanche_short') ,  _('lundi_short') ,  _('mardi_short') , _('mercredi_short') ,  _('jeudi_short') ,  _('vendredi_short') ,  _('samedi_short') );
 
-    switch ($code)
-    {
+    switch ($code) {
         case 'F':
             return $les_mois_longs[ date('n', $timestmp) ];
             break;
@@ -588,99 +588,13 @@ function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $m
 // renvoit un tableau a 2 valeurs : prenom+nom et email
 function find_email_adress_for_user($login)
 {
-    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
-    $found_mail=array();
+    $found_mail = array();
+    $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($login);
 
-    if ($config->getMailFromLdap()) { // recherche du mail du user dans un annuaire LDAP
-        // cnx à l'annuaire ldap :
-        $ds = ldap_connect($_SESSION['config']['ldap_server']);
-        if ($_SESSION['config']['ldap_protocol_version'] != 0) {
-            ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, $_SESSION['config']['ldap_protocol_version']) ;
-			// Support Active Directory
-			ldap_set_option($ds, LDAP_OPT_REFERRALS, 0);
-        }
-        if ($_SESSION['config']['ldap_user'] == "")
-             $bound = ldap_bind($ds);
-        else $bound = ldap_bind($ds, $_SESSION['config']['ldap_user'], $_SESSION['config']['ldap_pass']);
+    $found_mail[] = $infoUser['u_prenom'] . " " . strtoupper($infoUser['u_nom']);
+    array_push($found_mail, $infoUser['u_email']) ;
 
-        // recherche des entrées correspondantes au "login" passé en paramètre :
-        $filter = "(".$_SESSION['config']['ldap_login']."=".$login.")";
-
-        $sr   = ldap_search($ds, $_SESSION['config']['searchdn'], $filter);
-        $data = ldap_get_entries($ds,$sr);
-
-        foreach ($data as $info) {
-            $found_mail=array();
-            // On récupère le nom et le mail de la personne.
-            // Utilisation de la fonction utf8_decode pour corriger les caractères accentués
-            // (qnd les noms ou prénoms ont des accents, "ç", ...
-
-            // Les champs LDAP utilisés, bien que censés être uniformes, sont ceux d'un AD 2003.
-            $ldap_prenom= $_SESSION['config']['ldap_prenom'];
-            $ldap_nom    = $_SESSION['config']['ldap_nom'];
-            $ldap_mail    = $_SESSION['config']['ldap_mail'];
-            $nom    = utf8_decode($info[$ldap_prenom][0])." ".strtoupper(utf8_decode($info[$ldap_nom][0])) ;
-            $addr    = $info[$ldap_mail][0] ;
-            array_push($found_mail, $nom) ;
-            array_push($found_mail, $addr) ;
-        }
-    }
-    elseif (!$config->getMailFromLdap()) { // recherche du mail du user dans la base db_conges
-        $req = 'SELECT u_nom, u_prenom, u_email FROM conges_users WHERE u_login="'.\includes\SQL::quote($login).'" ';
-        $res = \includes\SQL::query($req);
-        $rec = $res->fetch_array();
-
-        $sql_nom = $rec["u_nom"];
-        $sql_prenom = $rec["u_prenom"];
-        $sql_email = $rec["u_email"];
-
-        array_push($found_mail, $sql_prenom." ".strtoupper($sql_nom)) ;
-        array_push($found_mail, $sql_email) ;
-
-    } else {
-        return FALSE;
-    }
     return $found_mail ;
-}
-
-// affiche une liste déroulante des mois de l'année : la variable est $new_mois
-function affiche_selection_new_mois($default)
-{
-    $return = '';
-    $return .= '<select class="form-control" name="new_mois" >';
-    for($i=1; $i<10; $i++) {
-        $return .= $default . ' : ' . $i . '<br>';
-        if ($default=="0$i") {
-            $return .= '<option value="0' . $i . '" selected >0' . $i . '</option>';
-        } else {
-            $return .= '<option value="0' . $i . '">0' . $i . '</option>';
-        }
-    }
-    for($i=10; $i<13; $i++) {
-        if ($default=="$i") {
-            $return .= '<option value="' . $i . '" selected >' . $i . '</option>';
-        } else {
-            $return .= '<option value="' . $i . '">' . $i . '</option>';
-        }
-    }
-    $return .= '</select>';
-    return $return;
-}
-
-// affiche une liste déroulante d'année : la variable est $new_year
-function affiche_selection_new_year($an_debut, $an_fin, $default)
-{
-    $return = '';
-    $return .= '<select class="form-control" name="new_year">';
-    for($i=$an_debut; $i<$an_fin+1; $i++) {
-        if ($default=="$i") {
-            $return .= '<option value="' . $i . '" selected >' . $i . '</option>';
-        } else {
-            $return .= '<option value="' . $i . '">' . $i . '</option>';
-        }
-    }
-    $return .= '</select>';
-    return $return;
 }
 
 // met la date aaaa-mm-jj dans le format jj-mm-aaaa
@@ -705,20 +619,17 @@ function get_group_name_from_id($groupe_id)
 function get_list_all_users_du_resp($resp_login)
 {
     $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
-    $list_users="";
-    $sql1="SELECT DISTINCT(u_login) FROM conges_users WHERE u_login!='conges' AND u_login!='admin' AND u_login!='$resp_login'";
-    $sql1 = $sql1." AND  ( u_resp_login='$resp_login' " ;
-    $list_users_group=get_list_users_des_groupes_du_resp_sauf_resp($resp_login);
-    if ($list_users_group!="") {
-        $sql1=$sql1." OR u_login IN ($list_users_group) ";
-    }
 
-    $sql1=$sql1." ) " ;
+        $groupeIds = \App\ProtoControllers\Responsable::getIdGroupeResp($resp_login);
+        $listUsers = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupeIds);
+        $list_users="";
+    $sql1="SELECT DISTINCT(u_login) FROM conges_users WHERE u_login!='conges' AND u_login!='admin' AND u_login!='$resp_login'";
+        $sql1 .= ' AND u_login IN ("' . implode('","', $listUsers) . '")';
+
     $sql1 = $sql1." ORDER BY u_login " ;
     $ReqLog1 = \includes\SQL::query($sql1);
 
-    while ($resultat1 = $ReqLog1->fetch_array())
-    {
+    while ($resultat1 = $ReqLog1->fetch_array()) {
         $current_login=$resultat1["u_login"];
         if ($list_users=="")
             $list_users="'$current_login'";
@@ -732,14 +643,8 @@ function get_list_all_users_du_resp($resp_login)
     if ($config->isGestionResponsableAbsent()) {
         // recup liste des resp absents, dont $resp_login est responsable
         $sql_2='SELECT DISTINCT(u_login) FROM conges_users WHERE u_is_resp=\'Y\' AND u_login!="'.\includes\SQL::quote($resp_login).'" AND u_login!=\'conges\' AND u_login!=\'admin\'';
-        $sql_2 = $sql_2." AND  ( u_resp_login='$resp_login' " ;
+        $sql_2=$sql_2.' AND u_login IN ("' . implode('","', $listUsers) . '")';
 
-        $list_users_group=get_list_users_des_groupes_du_resp_sauf_resp($resp_login);
-        if ($list_users_group!="") {
-            $sql_2=$sql_2." OR u_login IN ($list_users_group) ";
-        }
-
-        $sql_2=$sql_2." ) " ;
         $sql_2 = $sql_2." ORDER BY u_login " ;
 
         $ReqLog_2 = \includes\SQL::query($sql_2);
@@ -753,8 +658,7 @@ function get_list_all_users_du_resp($resp_login)
             $ReqLog_3 = \includes\SQL::query($req);
 
             // si le current resp est absent : on recup la liste de ses users pour les traiter .....
-            if ($ReqLog_3->num_rows!=0)
-            {
+            if ($ReqLog_3->num_rows!=0) {
                 if ($list_users=="")
                     $list_users=get_list_all_users_du_resp($current_resp);
                 else
@@ -930,13 +834,6 @@ function get_tab_resp_du_user($user_login)
 {
     $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
     $tab_resp=array();
-    // recup du resp indiqué dans la table users (sauf s'il est resp de lui meme)
-    $req = 'SELECT u_resp_login FROM conges_users WHERE u_login=\''.\includes\SQL::quote($user_login).'\';';
-    $res = \includes\SQL::query($req);
-    $rec = $res->fetch_array();
-    if ($rec['u_resp_login'] !== NULL)
-        $tab_resp[$rec['u_resp_login']]="present";
-
     // recup des resp des groupes du user
     $list_groups=get_list_groupes_du_user($user_login);
     if ($list_groups!="") {
@@ -1091,8 +988,7 @@ function is_hr($login)
 function is_active($login)
 {
     static $sql_is_active = array();
-    if (!isset($sql_is_active[$login]))
-    {
+    if (!isset($sql_is_active[$login])) {
         // recup de qq infos sur le user
         $select_info='SELECT u_is_active FROM conges_users WHERE u_login="'.\includes\SQL::quote($login).'";';
         $ReqLog_info = \includes\SQL::query($select_info);
@@ -1102,25 +998,6 @@ function is_active($login)
 
     return ($sql_is_active[$login]=='Y');
 }
-
-// verifie si un user est responsable d'un second user
-// renvoit TRUE si le $resp_login est responsable du $user_login, FALSE sinon.
-function is_resp_of_user($resp_login, $user_login)
-{
-    return is_resp_direct_of_user($resp_login, $user_login) || is_resp_group_of_user($resp_login, $user_login) || is_gr_group_of_user($resp_login, $user_login);
-}
-
-
-function is_resp_direct_of_user($resp_login, $user_login)
-{
-
-    $select_info='SELECT u_resp_login FROM conges_users WHERE u_login=\''.\includes\SQL::quote($user_login).'\';';
-    $ReqLog_info = \includes\SQL::query($select_info);
-    $resultat_info = $ReqLog_info->fetch_array();
-    $sql_resp_login=$resultat_info["u_resp_login"];
-    return ($resp_login==$sql_resp_login);
-}
-
 
 function is_resp_group_of_user($resp_login, $user_login)
 {
@@ -1204,12 +1081,12 @@ function init_tab_jours_feries()
 {
     if (empty($_SESSION['tab_j_feries']))
     {
-        $_SESSION['tab_j_feries']=array();
+        $_SESSION['tab_j_feries'] = [];
 
         $sql_select='SELECT jf_date FROM conges_jours_feries;';
         $res_select = \includes\SQL::query($sql_select);
 
-        while( $row = $res_select->fetch_array())
+        while ($row = $res_select->fetch_array())
         {
             $_SESSION['tab_j_feries'][]=$row['jf_date'];
         }
@@ -1231,12 +1108,11 @@ function init_config_tab()
 {
     static $userlogin = null;
     static $result = null;
-    if ($result === null || (isset($_SESSION['userlogin']) && $userlogin != $_SESSION['userlogin']))
-    {
+    if ($result === null || (isset($_SESSION['userlogin']) && $userlogin != $_SESSION['userlogin'])) {
 
         include ROOT_PATH .'version.php';
         include_once CONFIG_PATH .'dbconnect.php';
-        $tab = array();
+        $tab = [];
 
 
         /******************************************/
@@ -1280,21 +1156,19 @@ function init_config_tab()
                 $tab['ldap_protocol_version'] = $config_ldap_protocol_version ;
             else
                 $tab['ldap_protocol_version'] = 0;
-
-            if (isset($config_ldap_server))    $tab['ldap_server']    = $config_ldap_server ;
-            if (isset($config_ldap_bupsvr))    $tab['ldap_bupsvr']    = $config_ldap_bupsvr ;
-            if (isset($config_basedn))    $tab['basedn']        = $config_basedn ;
-            if (isset($config_ldap_user))    $tab['ldap_user']    = $config_ldap_user ;
-            if (isset($config_ldap_pass))    $tab['ldap_pass']    = $config_ldap_pass ;
-            if (isset($config_searchdn))    $tab['searchdn']    = $config_searchdn ;
-            if (isset($config_ldap_prenom))    $tab['ldap_prenom']    = $config_ldap_prenom ;
-            if (isset($config_ldap_nom))    $tab['ldap_nom']    = $config_ldap_nom ;
-            if (isset($config_ldap_mail))    $tab['ldap_mail']    = $config_ldap_mail ;
-            if (isset($config_ldap_login))    $tab['ldap_login']    = $config_ldap_login ;
-            if (isset($config_ldap_nomaff))    $tab['ldap_nomaff']    = $config_ldap_nomaff ;
-            if (isset($config_ldap_filtre))    $tab['ldap_filtre']    = $config_ldap_filtre ;
-            if (isset($config_ldap_filrech))    $tab['ldap_filrech']    = $config_ldap_filrech ;
-            if (isset($config_ldap_filtre_complet)) $tab['ldap_filtre_complet']  = $config_ldap_filtre_complet ;
+            if(isset($config_ldap_server))    $tab['ldap_server']    = $config_ldap_server ;
+            if(isset($config_ldap_bupsvr))    $tab['ldap_bupsvr']    = $config_ldap_bupsvr ;
+            if(isset($config_basedn))    $tab['basedn']        = $config_basedn ;
+            if(isset($config_ldap_user))    $tab['ldap_user']    = $config_ldap_user ;
+            if(isset($config_ldap_pass))    $tab['ldap_pass']    = $config_ldap_pass ;
+            if(isset($config_searchdn))    $tab['searchdn']    = $config_searchdn ;
+            if(isset($config_ldap_prenom))    $tab['ldap_prenom']    = $config_ldap_prenom ;
+            if(isset($config_ldap_nom))    $tab['ldap_nom']    = $config_ldap_nom ;
+            if(isset($config_ldap_mail))    $tab['ldap_mail']    = $config_ldap_mail ;
+            if(isset($config_ldap_login))    $tab['ldap_login']    = $config_ldap_login ;
+            if(isset($config_ldap_nomaff))    $tab['ldap_nomaff']    = $config_ldap_nomaff ;
+            if(isset($config_ldap_filtre))    $tab['ldap_filtre']    = $config_ldap_filtre ;
+            if(isset($config_ldap_filrech))    $tab['ldap_filrech']    = $config_ldap_filrech ;
         }
 
         /******************************************/
@@ -1506,11 +1380,9 @@ function recup_infos_du_user($login, $list_groups_double_valid)
         $tab_user['nom']    = $resultat['u_nom'];
         $tab_user['prenom']    = $resultat['u_prenom'];
         $tab_user['is_resp']    = $resultat['u_is_resp'];
-        $tab_user['resp_login']    = $resultat['u_resp_login'];
         $tab_user['is_admin']    = $resultat['u_is_admin'];
         $tab_user['is_hr']    = $resultat['u_is_hr'];
         $tab_user['is_active']    = $resultat['u_is_active'];
-        $tab_user['see_all']    = $resultat['u_see_all'];
         $tab_user['passwd']    = $resultat['u_passwd'];
         $tab_user['quotite']    = $resultat['u_quotite'];
         $tab_user['solde_heure']    = $resultat['u_heure_solde'];
@@ -1535,21 +1407,6 @@ function recup_infos_du_user($login, $list_groups_double_valid)
     }
     else
         return FALSE;
-}
-
-/**
- * Tri les tableaux, d'abord par activité, puis par ordre lexicographique
- *
- * @return int {-1, 0, 1}
- */
-function sortParActif(array $a, array $b) {
-    if ($a['is_active'] == 'Y' && $b['is_active'] == 'N') {
-        return -1; // $a est avant $b
-    } elseif ($a['is_active'] == 'N' && $b['is_active'] == 'Y') {
-        return 1; // $a est derrière $b
-    }
-
-    return strnatcmp($a['nom'], $b['nom']);
 }
 
 // renvoit un tableau de tableau contenant les informations de tous les users
@@ -1595,18 +1452,15 @@ function recup_infos_all_users_du_resp($login)
 {
     $tab=array();
 
-    // recup de la liste de tous les users du resp ...
-    $list_all_users_du_resp = get_list_all_users_du_resp($login);
+        $groupeIds = \App\ProtoControllers\Responsable::getIdGroupeResp($login);
+        $listUsers = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupeIds);
 
     // recup de la liste des groupes à double validation, dont $login est responsable
     // (servira à dire pour chaque user s'il est dans un de ces groupe ou non , donc s'il fait l'objet d'une double valid ou non )
     $list_groups_double_valid_du_resp=get_list_groupes_double_valid_du_resp($login);
 
-    if (strlen($list_all_users_du_resp)!=0)
-    {
-        $tab_users_du_resp=explode(",", $list_all_users_du_resp);
-        foreach($tab_users_du_resp as $current_login)
-        {
+    if (!empty($listUsers)) {
+        foreach($listUsers as $current_login) {
             $current_login = trim($current_login);
             $current_login = trim($current_login, "\'");  // on enleve les quotes qui ont été ajouté lors de la creation de la liste
 

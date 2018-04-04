@@ -21,9 +21,6 @@ class Conge
 
         $return = '';
         $errorsLst = [];
-        if ($config->getMailFromLdap()) {
-            include_once CONFIG_PATH . 'config_ldap.php';
-        }
 
         if (!empty($_POST) && !$this->isSearch($_POST)) {
             if (0 < (int) \utilisateur\Fonctions::postDemandeCongesHeure($_POST, $errorsLst)) {
@@ -296,5 +293,32 @@ class Conge
                 ORDER BY p_date_deb DESC';
 
         return $sql->query($req)->fetch_all(MYSQLI_ASSOC);
+    }
+
+    /**
+     * retourne la liste des types de congés par id
+     * 
+     * @param \includes\SQL $sql
+     * @return array $typesConges
+     * 
+     */
+    public static function getTypesAbsences(\includes\SQL $sql, $type = null)
+    {
+        $typesConges = [];
+        $req = 'SELECT ta_id, ta_libelle, ta_type
+                FROM conges_type_absence';
+        if (null != $type) {
+            $req .= ' WHERE ta_type=\'' . $type . '\'';
+        }
+        $data   = $sql->query($req);
+
+        while ($type = $data->fetch_array()) {
+            $typesConges[$type['ta_id']] = [
+                'libelle' => $type['ta_libelle'],
+                'type' => $type['ta_type']
+            ];
+        }
+
+        return $typesConges;
     }
 }

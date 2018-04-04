@@ -227,7 +227,6 @@ abstract class AHeure
          $planningJour = $planningWeek[$jourId];
          $horodateDebut = \App\Helpers\Formatter::hour2Time(date('H\:i', $debut));
          $horodateFin   = \App\Helpers\Formatter::hour2Time(date('H\:i', $fin));
-         $debutMatin = false;
 
          if (isset($planningJour[Creneau::TYPE_PERIODE_MATIN])) {
              if (!isset($planningJour[Creneau::TYPE_PERIODE_APRES_MIDI])) {

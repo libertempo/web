@@ -1,11 +1,5 @@
 <?php
-define('ROOT_PATH', '../');
-require_once ROOT_PATH . 'define.php';
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
-
-include_once ROOT_PATH .'fonctions_conges.php' ;
-include_once INCLUDE_PATH .'fonction.php';
-include_once INCLUDE_PATH .'session.php';
 
 $choix_action    = getpost_variable('choix_action');
 $type_sauvegarde = getpost_variable('type_sauvegarde');
@@ -26,7 +20,6 @@ function commit_sauvegarde($type_sauvegarde)
 }
 // verif des droits du user à afficher la page
 verif_droits_user('is_admin');
-header_menu('', 'Libertempo : '._('button_admin_mode'),'');
 echo '<div class="main-content">';
 
 \admin\Fonctions::saveRestoreModule();

@@ -39,9 +39,10 @@ function getTitleJour(\App\Libraries\Calendrier\Evenements $evenements, $nom, $j
     }
     return '';
 }
-$config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+$sql = \includes\SQL::singleton();
+$config = new \App\Libraries\Configuration($sql);
 
-$injectableCreator = new \App\Libraries\InjectableCreator(\includes\SQL::singleton());
+$injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
 $calendar = new \CalendR\Calendar();
 $jourDemande = null;
 $moisDemande = null;
@@ -61,12 +62,27 @@ if (!empty($_GET['groupe']) && NIL_INT != $_GET['groupe']) {
     $idGroupe = (int) $_GET['groupe'];
     $groupesAVoir = array_intersect([$idGroupe], $groupesAVoir);
 }
+
+// Récupération des responsables pour les afficher avant les membres des groupes concernés.
+$responsablesATrouver = \App\ProtoControllers\Groupe\Responsable::getListResponsableByGroupeIds($groupesAVoir);
 $utilisateursATrouver = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupesAVoir);
 
-$employes = \App\ProtoControllers\Utilisateur::getDonneesUtilisateurs($utilisateursATrouver);
+// Merge obligatoire pour que les responsables soient
+// pris en compte lors du "fetchEvenements" et affichés par le fichier "Jour.php".
+$utilisateursATrouver = array_merge($responsablesATrouver, $utilisateursATrouver);
+
+$tousEmployes = \App\ProtoControllers\Utilisateur::getDonneesTousUtilisateurs($config);
+$employes = array_filter($tousEmployes, function ($employe) use ($utilisateursATrouver) {
+    return 'Y' == $employe['is_active'] && in_array($employe['u_login'], $utilisateursATrouver);
+});
+
 foreach ($employes as $employe) {
     $employesATrouver[$employe['u_login']] = \App\ProtoControllers\Utilisateur::getNomComplet($employe['u_prenom'], $employe['u_nom'], true);
 }
+
+// Cette variable est utilisée par le fichier "Mois.php" pour ajouter
+// une séparation visuelle entre les responsables et les autres utilisateurs.
+$indexSeparator = count($responsablesATrouver);
 
 header_menu('', 'Libertempo : '._('calendrier_titre'));
 

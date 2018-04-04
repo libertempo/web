@@ -25,6 +25,7 @@ class Utilisateur
         if ($activeSeul){
             $req .= ' AND u_is_active = "Y"';
         }
+        $req .= ' ORDER BY u_nom ASC, u_prenom ASC';
         $result = $sql->query($req);
 
         $users = [];
@@ -54,7 +55,7 @@ class Utilisateur
             $groupesResponsable = \App\ProtoControllers\Responsable::getIdGroupeResp($utilisateur);
             $groupesGrandResponsable = \App\ProtoControllers\Responsable::getIdGroupeGrandResponsable($utilisateur);
             $groupesEmploye = \App\ProtoControllers\Utilisateur::getGroupesId($utilisateur);
-            $groupesVisibles = $groupesResponsable + $groupesGrandResponsable + $groupesEmploye;
+            $groupesVisibles = array_unique(array_merge($groupesResponsable, $groupesGrandResponsable, $groupesEmploye));
         } else {
             $groupesVisibles = \App\ProtoControllers\Utilisateur::getGroupesId($utilisateur);
         }
@@ -114,38 +115,68 @@ class Utilisateur
     }
 
     /**
+     * Retourne les informations de tous les utilisateurs
+     *
+     * @param objet configuration
+     *
+     * @return string
+     */
+    public static function getDonneesTousUtilisateurs(\App\Libraries\Configuration $config)
+    {
+        $donnees = [];
+        $sql = \includes\SQL::singleton();
+        $config = new \App\Libraries\Configuration($sql);
+        if ($config->isUsersExportFromLdap()) {
+            $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
+            $ldap = $injectableCreator->get(\App\Libraries\Ldap::class);
+        }
+        $req = 'SELECT *
+                FROM conges_users';
+        $res = $sql->query($req);
+        while ($data = $res->fetch_array()) {
+            $donnees[$data['u_login']] = $data;
+            if ($config->isUsersExportFromLdap()) {
+                $donnees[$data['u_login']]['u_email'] = $ldap->getEmailUser($data['u_login']);
+            }
+        }
+        return $donnees;
+    }
+
+    /**
      * Retourne les informations d'un utilisateur
      *
      * @param string $login
      *
-     * @return string
+     * @return string $donnees
      */
     public static function getDonneesUtilisateur($login)
     {
-        $utilisateurs = self::getDonneesUtilisateurs([$login]);
-        reset($utilisateurs);
-
-        return current($utilisateurs);
+        $sql = \includes\SQL::singleton();
+        $config = new \App\Libraries\Configuration($sql);
+        if ($config->isUsersExportFromLdap()) {
+            $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
+            $ldap = $injectableCreator->get(\App\Libraries\Ldap::class);
+        }
+        $req = 'SELECT *
+                FROM conges_users
+                WHERE u_login = \''.  \includes\SQL::quote($login).'\'';
+        $res = $sql->query($req);
+        $donnees = $res->fetch_array();
+        if ($config->isUsersExportFromLdap()) {
+            $donnees['u_email'] = $ldap->getEmailUser($data['u_login']);
+        }
+        return $donnees;
     }
 
     /**
-     * Retour les informations d'un tableau d'utilisateurs
+     * Récupère l'adresse email de l'utilisateur
      *
-     * @param array $logins ['login1', 'login2']
      *
-     * @return array
+     * @param string $login
+     * @return string $mail
      */
-    public static function getDonneesUtilisateurs(array $logins)
-    {
-        $sql = \includes\SQL::singleton();
-        $escapedLogins = array_map([$sql, 'quote'], $logins);
-        $req = 'SELECT *
-                FROM conges_users
-                WHERE u_login IN ("' . implode('", "', $escapedLogins) . '")
-                ORDER BY u_nom, u_prenom';
-        $query = $sql->query($req);
-
-        return $query->fetch_all();
+    public static function getEmailUtilisateur($login)  {
+        return static::getDonneesUtilisateur($login)["u_email"];
     }
 
     /**
@@ -209,7 +240,36 @@ class Utilisateur
         return $solde;
     }
 
-     /**
+    /**
+     * Retourne le solde de tout les types de congés
+     * @todo passer l'option gestion_conges_exceptionnels en param
+     * après merge de #445
+     * 
+     * @param string $login
+     * 
+     * @return array
+     */
+    public static function getSoldesEmploye(\includes\SQL $sql, \App\Libraries\Configuration $config, $login)
+    {
+        $soldes = [];
+        $req = 'SELECT ta_id, ta_libelle, su_nb_an, su_solde, su_reliquat 
+                FROM conges_solde_user, conges_type_absence 
+                WHERE conges_type_absence.ta_id = conges_solde_user.su_abs_id 
+                AND su_login = "' . $login . '" ';
+        if (!$config->isCongesExceptionnelsActive()) {
+            $req .= 'AND conges_type_absence.ta_type != \'conges_exceptionnels\'';
+        }
+        $req .= 'ORDER BY su_abs_id ASC;';
+        $res = $sql->query($req);
+
+        while ($infos = $res->fetch_assoc()) {
+            $soldes[$infos['ta_id']] = $infos;
+        }
+
+        return $soldes;
+    }
+
+    /**
      * Retourne le solde d'heure au format timestamp d'un utilisateur
      *
      * @param string $login
@@ -240,19 +300,6 @@ class Utilisateur
             || static::hasHeureReposEnCours($login)
             || static::hasHeureAdditionnelleEnCours($login)
         ;
-    }
-
-    /**
-     * Récupère l'adresse email de l'utilisateur
-     *
-     * @todo En attendant l'objet ldap utilisation de find_email_adress_for_user
-     *
-     * @param string $login
-     * @return string $mail
-     */
-    public static function getEmailUtilisateur($login)  {
-        require_once ROOT_PATH.'fonctions_conges.php';
-        return find_email_adress_for_user($login)[1];
     }
 
     /**
@@ -316,7 +363,7 @@ class Utilisateur
             $prenom = $prenom[0] . '.';
         }
 
-        return $prenom . ' ' . $nom;
+        return $nom . ' ' . $prenom;
     }
 
     /**

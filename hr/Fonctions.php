@@ -7,151 +7,6 @@ namespace hr;
  */
 class Fonctions
 {
-    /**
-     * Encapsule le comportement du module de page principale
-     *
-     * @param array  $tab_type_cong
-     * @param array  $tab_type_conges_exceptionnels
-     *
-     * @return void
-     * @access public
-     * @static
-     */
-    public static function pagePrincipaleModule(array $tab_type_cong, array $tab_type_conges_exceptionnels)
-    {
-        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
-        /***********************************/
-        // AFFICHAGE ETAT CONGES TOUS USERS
-        /***********************************/
-        // AFFICHAGE TABLEAU (premiere ligne)
-        $return = '';
-        $return .= '<h1>'. _('hr_traite_user_etat_conges') . '</h1>';
-        /*********************/
-        /* Etat Utilisateurs */
-        /*********************/
-
-        // recup du tableau des types de conges (seulement les conges)
-        $tab_type_conges=recup_tableau_types_conges();
-        $tab_type_conges_exceptionnels = [];
-
-        // recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
-        if ($config->isCongesExceptionnelsActive()) {
-            $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
-        }
-        // AFFICHAGE TABLEAU
-        $table = new \App\Libraries\Structure\Table();
-        $table->addClasses([
-            'table',
-            'table-hover',
-            'table-responsive',
-            'table-striped',
-            'table-condensed'
-        ]);
-        $childTable = '<thead>';
-        $childTable .= '<tr>';
-        $childTable .= '<th>' .  _('user') . '</th>';
-        $childTable .= '<th>' . _('divers_quotite_maj_1') . '</th>';
-        foreach ($tab_type_conges as $id_type_cong => $libelle) {
-            $childTable .= '<th>' . $libelle . ' / ' . _('divers_an') . '</th>';
-            $childTable .= '<th>' . _('divers_solde') . ' ' . $libelle . '</th>';
-        }
-
-        foreach ($tab_type_conges_exceptionnels as $id_type_cong => $libelle) {
-            $childTable .= '<th>' . _('divers_solde') . ' ' . $libelle . '</th>';
-        }
-        if ($config->isHeuresAutorise()) {
-            $childTable .= '<th>'. _('solde_heure') .'</th>' ;
-        }
-        $childTable .= '<th></th>';
-        $childTable .= '<th></th>';
-        $childTable .= '</tr>';
-        $childTable .= '</thead>';
-        $childTable .= '<tbody>';
-
-        // Récuperation des informations des users:
-        $tab_info_users=array();
-        $tab_info_users=\hr\Fonctions::recup_infos_all_users_du_hr($_SESSION['userlogin']);
-
-        if (count($tab_info_users)==0) {
-            // si le tableau est vide (resp sans user !!) on affiche une alerte !
-            $return .= '<tr><td class="histo" colspan="' . $nb_colonnes . '">' .  _('resp_etat_aucun_user') . '</td></tr>';
-        } else {
-            asort($tab_info_users);
-            uasort($tab_info_users, "sortParActif");
-            foreach ($tab_info_users as $current_login => $tab_current_infos) {
-                $text_affich_user="<a href=\"hr_index.php?onglet=traite_user&user_login=$current_login\" title=\""._('resp_etat_users_afficher')."\"><i class=\"fa fa-eye\"></i></a>" ;
-
-                $childTable .= '<tr class="' . (($tab_current_infos['is_active']=='Y') ? 'actif' : 'inactif') . '">';
-                $childTable .= '<td class="utilisateur"><strong>' . $tab_current_infos['nom'] . ' ' . $tab_current_infos['prenom'] . '</strong>';
-                $childTable .= '<span class="login">' . $current_login . '</span>';
-                if (!$config->getMailFromLdap()) {
-                    $childTable .= '<span class="mail">' . $tab_current_infos['email'] . '</span>';
-                }
-                // droit utilisateur
-                $rights = array();
-                if ($tab_current_infos['is_admin'] == 'Y') {
-                    $rights[] = 'administrateur';
-                }
-                if ($tab_current_infos['is_resp'] == 'Y') {
-                    $rights[] = 'responsable';
-                }
-                if ($tab_current_infos['is_hr'] == 'Y') {
-                    $rights[] = 'RH';
-                }
-
-                if (count($rights) > 0) {
-                    $childTable .= '<span class="rights">' . implode(', ', $rights) . '</span>';
-                }
-
-                $childTable .= '<span class="responsable"> responsable : <strong>' . $tab_current_infos['resp_login'] . '</strong></span>';
-
-                $childTable .= '</td><td>' . $tab_current_infos['quotite'] . ' %</td>';
-
-                //tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
-                $tab_conges=$tab_current_infos['conges'];
-
-                foreach($tab_type_conges as $id_conges => $libelle) {
-                    if (isset($tab_conges[$libelle])) {
-                        $childTable .= '<td>' . $tab_conges[$libelle]['nb_an'] . '</td>';
-                        $childTable .= '<td>' . $tab_conges[$libelle]['solde'] . '</td>';
-                    } else {
-                        $childTable .= '<td>0</td>';
-                        $childTable .= '<td>0</td>';
-                    }
-                }
-
-                foreach($tab_type_conges_exceptionnels as $id_conges => $libelle) {
-                    if (isset($tab_conges[$libelle])) {
-                        $childTable .= '<td>' . $tab_conges[$libelle]['solde'] . '</td>';
-                    } else {
-                        $childTable .= '<td>0</td>';
-                    }
-                }
-
-            if ($config->isHeuresAutorise()) {
-                $soldeHeure = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($current_login)['u_heure_solde'];
-                $childTable .= '<td>' . \App\Helpers\Formatter::timestamp2Duree($soldeHeure) . '</td>';
-            }
-
-                $childTable .= '<td>' . $text_affich_user . '</td>';
-                if ($config->canEditPapier()) {
-                    $text_edit_papier="<a href=\"../edition/edit_user.php?user_login=$current_login\" target=\"_blank\" title=\""._('resp_etat_users_imprim')."\"><i class=\"fa fa-file-text\"></i></a>";
-                    $childTable .= '<td>' . $text_edit_papier . '</td>';
-                }
-                $childTable .= '</tr>';
-            }
-
-        }
-
-        $childTable .= '</tbody>';
-        $table->addChild($childTable);
-        ob_start();
-        $table->render();
-        $return .= ob_get_clean();
-        $return .= '<br>';
-        return $return;
-    }
-
     public static function traite_all_demande_en_cours($tab_bt_radio, $tab_text_refus)
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
@@ -223,12 +78,10 @@ class Fonctions
         $count1=0;
         $count2=0;
 
-        $tab_type_all_abs = recup_tableau_tout_types_abs();
-
-        // recup du tableau des types de conges (seulement les conges exceptionnels)
-        $tab_type_conges_exceptionnels=array();
+        $sql = \includes\SQL::singleton();
+        $typeAbsence = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges');
         if ($config->isCongesExceptionnelsActive()) {
-            $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
+            $typeAbsence = array_merge($typeAbsence, \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges_exceptionnels'));
         }
 
         /*********************************/
@@ -338,10 +191,10 @@ class Fonctions
 
                     $return .= '<tr class="' . ($i ? 'i' : 'p') . '">';
                     $return .= '<td><b>' . $tab_all_users[$sql_p_login]['nom'] . '</b><br>' . $tab_all_users[$sql_p_login]['prenom'] . '</td><td>' . $tab_all_users[$sql_p_login]['quotite'] . '%</td>';
-                    $return .= '<td>' . $tab_type_all_abs[$sql_p_type]['libelle'] . '</td>';
+                    $return .= '<td>' . $typeAbsence[$sql_p_type]['libelle'] . '</td>';
                     $return .= '<td>' . $sql_p_date_deb_fr . '<span class="demi">' . $demi_j_deb . '</span></td><td>' . $sql_p_date_fin_fr . '<span class="demi">' . $demi_j_fin . '</span></td><td>' . $sql_p_commentaire . '</td><td><b>' . $sql_p_nb_jours . '</b></td>';
                     $tab_conges=$tab_all_users[$sql_p_login]['conges'];
-                    $return .= '<td>' . $tab_conges[$tab_type_all_abs[$sql_p_type]['libelle']]['solde'] . '</td>';
+                    $return .= '<td>' . $tab_conges[$typeAbsence[$sql_p_type]['libelle']]['solde'] . '</td>';
                     $return .= '<td>' . $boutonradio1 . '</td><td>' . $boutonradio2 . '</td><td>' . $boutonradio3 . '</td><td>' . $text_refus . '</td>';
                     if ($config->canAfficheDateTraitement()) {
                         if ($sql_p_date_demande == NULL) {
@@ -1022,7 +875,7 @@ class Fonctions
             }
         }
 
-        if (is_array($_SESSION["tab_j_fermeture"])) {
+        if (isset($_SESSION["tab_j_fermeture"]) && is_array($_SESSION["tab_j_fermeture"])) {
             foreach ($_SESSION["tab_j_fermeture"] as $date) {
                 $datesDisabled[] = \App\Helpers\Formatter::dateIso2Fr($date);
             }
@@ -1194,7 +1047,7 @@ class Fonctions
         if (empty($list_users)) {
             return;
         }
-        foreach($tab_new_nb_conges_all as $id_conges => $nb_jours) {
+        foreach ($tab_new_nb_conges_all as $id_conges => $nb_jours) {
             if ($nb_jours!=0) {
                 $comment = $tab_new_comment_all[$id_conges];
 
@@ -1505,8 +1358,7 @@ class Fonctions
         $sql1 = "SELECT u_login FROM conges_users WHERE u_login!='conges' AND u_login!='admin' ORDER BY u_nom";
         $ReqLog = \includes\SQL::query($sql1) ;
 
-        while ($resultat = $ReqLog->fetch_array())
-        {
+        while ($resultat = $ReqLog->fetch_array()) {
             $tab_user=array();
             $sql_login=$resultat["u_login"];
             $tab[$sql_login] = recup_infos_du_user($sql_login, $list_groupes_double_validation);
@@ -1819,7 +1671,7 @@ class Fonctions
 
         /* affichage ligne 2 du mois*/
         $return .= '<tr>';
-        for($i=8-$first_jour_mois_rang+1; $i<15-$first_jour_mois_rang+1; $i++) {
+        for ($i=8-$first_jour_mois_rang+1; $i<15-$first_jour_mois_rang+1; $i++) {
             $return .= \hr\Fonctions::affiche_jour_checkbox($mois,$i,$year,$tab_year);
         }
         $return .= '</tr>';
@@ -1844,7 +1696,7 @@ class Fonctions
             $return .= \hr\Fonctions::affiche_jour_checkbox($mois,$i,$year,$tab_year);
         }
 
-        for($i; $i<36-$first_jour_mois_rang+1; $i++) {
+        for ($i; $i<36-$first_jour_mois_rang+1; $i++) {
             $return .= \hr\Fonctions::affiche_jour_hors_mois($mois,$i,$year,$tab_year);
         }
         $return .= '</tr>';
@@ -1865,6 +1717,8 @@ class Fonctions
 
     public static function saisie($year_calendrier_saisie)
     {
+        $sql = \includes\SQL::singleton();
+        $config = new \App\Libraries\Configuration($sql);
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
@@ -1874,11 +1728,11 @@ class Fonctions
         }
 
         // on construit le tableau des jours feries de l'année considérée
-        $tab_year=array();
+        $tab_year = [];
         \hr\Fonctions::get_tableau_jour_feries($year_calendrier_saisie, $tab_year);
 
         //calcul automatique des jours feries
-        if ($_SESSION['config']['calcul_auto_jours_feries_france']) {
+        if ($config->isJoursFeriesFrance()) {
             $tableau_jour_feries = \hr\Fonctions::fcListJourFeries($year_calendrier_saisie) ;
             foreach ($tableau_jour_feries as $i => $value) {
                 if (!in_array ("$value", $tab_year))
@@ -2833,7 +2687,7 @@ class Fonctions
         $return = '';
 
         $return .= '<div class="wrapper">';
-        $return .= '<form action="' . $PHP_SELF . '" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '?onglet=saisie" method="POST">';
         $return .= _('divers_fermeture_du') . '<b>' . $fermeture_date_debut . '</b>' . _('divers_au') . '<b>' . $fermeture_date_fin . '</b>.';
         $return .= '<b>' . _('admin_annul_fermeture_confirm') . '</b>.<br>';
         $return .= '<input type="hidden" name="fermeture_id" value="' . $fermeture_id . '">';
@@ -2930,7 +2784,7 @@ class Fonctions
         $tab_year=array();
         \hr\Fonctions::get_tableau_jour_fermeture($year, $tab_year,  $groupe_id);
 
-        $return .= '<form id="form-fermeture" class="form-inline" role="form" action="' . $PHP_SELF . '?year=' . $year . '" method="POST">';
+        $return .= '<form id="form-fermeture" class="form-inline" role="form" action="' . $PHP_SELF . '?year=' . $year . '&onglet=saisie" method="POST">';
         $return .= '<div class="form-group">';
         $return .= '<label for="new_date_debut">' . _('divers_date_debut') . '</label><input type="text" class="form-control date" name="new_date_debut" value="' . $new_date_debut . '">';
         $return .= '</div>';
@@ -2966,7 +2820,7 @@ class Fonctions
         /********************/
 
         // AFFICHAGE TABLEAU
-        $return .= '<form action="' . $PHP_SELF . '" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '?onglet=saisie" method="POST">';
         $return .= '<input type="hidden" name="groupe_id" value="0">';
         $return .= '<input type="hidden" name="choix_action" value="saisie_dates">';
         $return .= '<input class="btn btn-success" type="submit" value="' . _('admin_jours_fermeture_fermeture_pour_tous') . ' !">';
@@ -3031,7 +2885,7 @@ class Fonctions
                 $return .= _('divers_du') . ' <b>'. $date_affiche_1 . '</b> ' . _('divers_au') . ' <b>' . $date_affiche_2 . '</b>  (id ' . $fermeture_id . ')</b> ' . $groupe_name;
                 $return .= '</td>';
                 $return .= '<td>';
-                $return .= '<a href="' . $PHP_SELF . '?choix_action=annul_fermeture&fermeture_id=' . $fermeture_id . '&groupe_id=' . $groupe_id . '&fermeture_date_debut=' . $date_affiche_1 . '&fermeture_date_fin=' . $date_affiche_2 . '">' . _('admin_annuler_fermeture') . '</a>';
+                $return .= '<a href="' . $PHP_SELF . '?onglet=saisie&choix_action=annul_fermeture&fermeture_id=' . $fermeture_id . '&groupe_id=' . $groupe_id . '&fermeture_date_debut=' . $date_affiche_1 . '&fermeture_date_fin=' . $date_affiche_2 . '">' . _('admin_annuler_fermeture') . '</a>';
                 $return .= '</td>';
                 $return .= '</tr>';
             }
