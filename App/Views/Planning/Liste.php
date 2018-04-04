@@ -7,9 +7,6 @@
  * $isHr
  * $lienModif
  */
-$plannings = array_filter($plannings, function ($planning) {
-    return $planning->status === \App\Models\Planning::STATUS_ACTIVE;
-});
 ?>
 <?php if ($isHr) : ?>
 <a href="<?= ROOT_PATH ?>hr/hr_index.php?onglet=ajout_planning" style="float:right" class="btn btn-success"><?= _('hr_ajout_planning') ?></a>

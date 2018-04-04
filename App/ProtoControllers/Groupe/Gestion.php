@@ -5,14 +5,14 @@ namespace App\ProtoControllers\Groupe;
 class Gestion {
 
     /**
-     * 
+     *
      * Traite la création ou la modification d'un groupe
-     * 
+     *
      * @param array $post
      * @param array $errorLst
      * @return int
      */
-    protected function postHtmlCommon(array $post, array &$errorLst)
+    public function postHtmlCommon(array $post, array &$errorLst)
     {
         $user = $_SESSION['userlogin'];
         $data = $this->FormData2Array($post);
@@ -61,7 +61,7 @@ class Gestion {
 
     /**
      * Conversion des données du formulaire pour import en BDD
-     * 
+     *
      * @param array $post
      * @return array $data
      */
@@ -110,9 +110,9 @@ class Gestion {
     }
 
     /**
-     * 
+     *
      * Modifie un groupe
-     * 
+     *
      * @param array $put
      * @param array $errorLst
      */
@@ -144,9 +144,9 @@ class Gestion {
     }
 
     /**
-     * 
+     *
      * Mise à jour d'un groupe
-     * 
+     *
      * @param type $idGroupe
      * @param type $nom
      * @param type $libelle
@@ -157,7 +157,7 @@ class Gestion {
     {
         $sql = \includes\SQL::singleton();
 
-        $req = 'UPDATE conges_groupe 
+        $req = 'UPDATE conges_groupe
                     SET g_groupename = "' . \includes\SQL::quote($nom) . '",
                         g_comment = "' . \includes\SQL::quote($libelle) . '",
                         g_double_valid = "' . \includes\SQL::quote($isDoubleValidation) . '"
@@ -166,9 +166,9 @@ class Gestion {
     }
 
     /**
-     * 
+     *
      * Mise à jour membre d'un groupe
-     * 
+     *
      * @param type $idGroupe
      * @param array $users
      * @return boolean
@@ -182,9 +182,9 @@ class Gestion {
     }
 
     /**
-     * 
+     *
      * Mise à jour responsable d'un groupe
-     * 
+     *
      * @param type $idGroupe
      * @param array $resps
      * @return boolean
@@ -198,9 +198,9 @@ class Gestion {
     }
 
     /**
-     * 
+     *
      * Mise à jour grand responsable d'un groupe
-     * 
+     *
      * @param type $idGroupe
      * @param array $grandResps
      * @return boolean
@@ -215,7 +215,7 @@ class Gestion {
 
     /**
      * Supprime un groupe
-     * 
+     *
      * @param int $idGroupe
      * @param array $errorLst
      * @return int
@@ -229,7 +229,7 @@ class Gestion {
         $deleteResponsables = $this->deleteResponsablesGroupe($idGroupe);
         $deleteGrandResponsables = $this->deleteGrandResponsablesGroupe($idGroupe);
 
-        $req = 'DELETE FROM conges_groupe 
+        $req = 'DELETE FROM conges_groupe
                     WHERE g_gid = ' . $idGroupe . ';';
         $deleteGroupe = $sql->query($req);
 
@@ -246,7 +246,7 @@ class Gestion {
 
     /**
      * Supprime les employés d'un groupe
-     * 
+     *
      * @param int $idGroupe
      * @return boolean
      */
@@ -254,7 +254,7 @@ class Gestion {
     {
         $sql = \includes\SQL::singleton();
 
-        $req = 'DELETE FROM conges_groupe_users 
+        $req = 'DELETE FROM conges_groupe_users
                     WHERE gu_gid = ' . (int) $idGroupe . ';';
 
         return $sql->query($req);
@@ -262,7 +262,7 @@ class Gestion {
 
     /**
      * Supprime les responsables d'un groupe
-     * 
+     *
      * @param int $idGroupe
      * @return boolean
      */
@@ -270,7 +270,7 @@ class Gestion {
     {
         $sql = \includes\SQL::singleton();
 
-        $req = 'DELETE FROM conges_groupe_resp 
+        $req = 'DELETE FROM conges_groupe_resp
                     WHERE gr_gid = ' . (int) $idGroupe . ';';
 
         return $sql->query($req);
@@ -278,7 +278,7 @@ class Gestion {
 
     /**
      * Supprime les grands responsables d'un groupe
-     * 
+     *
      * @param int $idGroupe
      * @return boolean
      */
@@ -286,16 +286,16 @@ class Gestion {
     {
         $sql = \includes\SQL::singleton();
 
-        $req = 'DELETE FROM conges_groupe_grd_resp 
+        $req = 'DELETE FROM conges_groupe_grd_resp
                     WHERE ggr_gid = ' . (int) $idGroupe . ';';
 
         return $sql->query($req);
     }
 
     /**
-     * 
+     *
      * Créer un nouveau groupe
-     * 
+     *
      * @param array $post
      * @param array $errorLst
      */
@@ -329,9 +329,9 @@ class Gestion {
     }
 
     /**
-     * 
+     *
      * Mise à jour d'un groupe
-     * 
+     *
      * @param string $nom
      * @param string $libelle
      * @param string $isDoubleValidation
@@ -354,7 +354,7 @@ class Gestion {
 
     /**
      * affectation des employés dans un groupe
-     * 
+     *
      * @param type $idGroupe
      * @param array $users
      * @return boolean
@@ -366,7 +366,7 @@ class Gestion {
 
         $req = '';
         foreach ($users as $user) {
-            $req .='INSERT INTO conges_groupe_users (gu_gid,gu_login) 
+            $req .='INSERT INTO conges_groupe_users (gu_gid,gu_login)
                         VALUES (' . $idGroupe . ',"' . \includes\SQL::quote($user) . '");';
         }
 
@@ -380,7 +380,7 @@ class Gestion {
 
     /**
      * affectation des responsables dans un groupe
-     * 
+     *
      * @param int $idGroupe
      * @param array $users
      * @return boolean
@@ -395,7 +395,7 @@ class Gestion {
 
         $req = '';
         foreach ($resps as $resp) {
-            $req .='INSERT INTO conges_groupe_resp (gr_gid,gr_login) 
+            $req .='INSERT INTO conges_groupe_resp (gr_gid,gr_login)
                         VALUES (' . (int) $idGroupe . ',"' . \includes\SQL::quote($resp) . '");';
         }
 
@@ -409,7 +409,7 @@ class Gestion {
 
     /**
      * affectation des grands responsables dans un groupe
-     * 
+     *
      * @param int $idGroupe
      * @param array $users
      * @return boolean
@@ -425,7 +425,7 @@ class Gestion {
 
         $req = '';
         foreach ($grandResps as $grandResp) {
-            $req .='INSERT INTO conges_groupe_grd_resp (ggr_gid,ggr_login) 
+            $req .='INSERT INTO conges_groupe_grd_resp (ggr_gid,ggr_login)
                         VALUES (' . (int) $idGroupe . ',"' . \includes\SQL::quote($grandResp) . '");';
         }
 
@@ -438,92 +438,9 @@ class Gestion {
     }
 
     /**
-     * 
-     * Formulaire de la liste des groupes
-     * 
-     * @return string
-     */
-    public function getFormListGroupe($message = '')
-    {
-        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
-
-        $errorsLst = [];
-        $return = '';
-        $return .= '<h1>' . _('admin_onglet_gestion_groupe') . '</h1>';
-
-        if (!empty($_POST)) {
-            if (0 >= (int) $this->postHtmlCommon($_POST, $errorsLst)) {
-                $errors = '';
-                if (!empty($errorsLst)) {
-                    foreach ($errorsLst as $key => $value) {
-                        if (is_array($value)) {
-                            $value = implode(' / ', $value);
-                        }
-                        $errors .= '<li>' . $key . ' : ' . $value . '</li>';
-                    }
-                    $return .= '<div class="alert alert-danger">' . _('erreur_recommencer') . '<ul>' . $errors . '</ul></div>';
-                }
-            } else {
-                $return .= '<div class="alert alert-info">' . _('Groupe supprimé') . '.</div>';
-            }
-        }
-
-        if ("" !== $message) {
-            $return .= '<div class="alert alert-info">' . $message . '.</div>';
-        }
-        $return .= '<a href=hr_index.php?onglet=ajout_groupe class="btn btn-success pull-right">' . _('admin_groupes_new_groupe') . '</a>';
-
-        $table = new \App\Libraries\Structure\Table();
-        $table->addClasses([
-            'table',
-            'table-hover',
-            'table-responsive',
-            'table-striped',
-            'table-condensed'
-        ]);
-
-        $childTable = '<thead>';
-        $childTable .= '<tr>';
-        $childTable .= '<th>' . _('admin_groupes_groupe') . '</th>';
-        $childTable .= '<th>' . _('admin_groupes_libelle') . '</th>';
-        $childTable .= '<th>' . _('admin_groupes_nb_users') . '</th>';
-        if ($config->isDoubleValidationActive()) {
-            $childTable .= '<th>' . _('admin_groupes_double_valid') . '</th>';
-        }
-        $childTable .= '<th></th></tr></thead><tbody>';
-
-        $groupes = new \App\ProtoControllers\Groupe();
-        $i = true;
-        foreach ($groupes->getListeGroupes(\includes\SQL::singleton()) as $gid => $groupe) {
-            $nbUtilisateursGroupe = count(\App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds([$gid]));
-
-            $childTable .= '<tr class="' . ($i ? 'i' : 'p') . '">';
-            $childTable .= '<td><b>' . $groupe['g_groupename'] . '</b></td>';
-            $childTable .= '<td>' . $groupe['g_comment'] . '</td>';
-            $childTable .= '<td>' . $nbUtilisateursGroupe . '</td>';
-            if ($config->isDoubleValidationActive()) {
-                $childTable .= '<td>' . $groupe['g_double_valid'] . '</td>';
-            }
-            $childTable .= '<td class="action">';
-            $childTable .= '<a href="hr_index.php?onglet=modif_groupe&group=' . $gid . '" title="' . _('form_modif') . '"><i class="fa fa-pencil"></i></a> ';
-            $childTable .= '<a href="hr_index.php?onglet=suppr_groupe&group=' . $gid . '" title="' . _('form_supprim') . '"><i class="fa fa-times-circle"></i></a>';
-            $childTable .= '</td></tr>';
-            $i = !$i;
-        }
-        $childTable .= '</tbody>';
-        $table->addChild($childTable);
-        ob_start();
-        $table->render();
-        $return .= ob_get_clean();
-        $return .= '<hr/>';
-
-        return $return;
-    }
-
-    /**
-     * 
+     *
      * Formulaire d'ajout ou de modification d'un groupe
-     * 
+     *
      * @param int $idGroupe
      * @return string
      */
@@ -646,9 +563,9 @@ class Gestion {
     }
 
     /**
-     * 
+     *
      * Formulaire de selection des employés d'un groupe
-     * 
+     *
      * @param int $id
      * @return string
      */
@@ -686,7 +603,7 @@ class Gestion {
             } elseif ($info['isDansGroupe']) {
                 $inputOption = 'checked';
             }
-            
+
             $childTable .= '<tr class="' . (($i) ? 'i' : 'p') . '">';
             $childTable .='<td class="histo"><input type="checkbox" id="Emp_' . $login . '" name="checkbox_group_users[' . $login . '] "' . $inputOption . '></td>';
             $childTable .= '<td class="histo">' . $info['nom'] . ' ' . $info['prenom'] . '</td>';
@@ -703,9 +620,9 @@ class Gestion {
     }
 
     /**
-     * 
+     *
      * Formulaire de selection du responsable d'un groupe
-     * 
+     *
      * @param int $idGroupe
      * @return string
      */
@@ -758,9 +675,9 @@ class Gestion {
     }
 
     /**
-     * 
+     *
      * Formulaire de selection des grands responsables d'un groupe
-     * 
+     *
      * @param int $idGroupe
      * @return string
      */
@@ -812,7 +729,7 @@ class Gestion {
 
     /**
      * Formulaire de confirmation de suppression d'un groupe
-     * 
+     *
      * @param int $idGroupe
      * @return string
      */
@@ -867,10 +784,10 @@ class Gestion {
     }
 
     /**
-     * 
+     *
      * retournes les utilisateurs responsables
      * si $idGroupe existe, marquage des responsables du groupe
-     * 
+     *
      * @param int $idGroupe
      * @return array
      */
@@ -896,10 +813,10 @@ class Gestion {
     }
 
     /**
-     * 
+     *
      * retournes les utilisateurs responsables
      * si $idGroupe existe, marquage des grands responsables du groupe
-     * 
+     *
      * @param int $idGroupe
      * @return array
      */
@@ -924,10 +841,10 @@ class Gestion {
     }
 
     /**
-     * 
-     * retournes les utilisateurs 
+     *
+     * retournes les utilisateurs
      * si $idGroupe existe, marquage des employés du groupe
-     * 
+     *
      * @param int $idGroupe
      * @return array
      */
@@ -951,15 +868,15 @@ class Gestion {
     }
 
     /**
-     * 
+     *
      * Teste si le groupe et son contenu sont conformes
-     * 
+     *
      * @param array $data
      * @param array $errors
      * @return boolean
-     * 
+     *
      * @todo activer isResponsableCirculaire() une fois le responsable direct retiré
-     * 
+     *
      */
     protected function isValid(array $data, array &$errors)
     {
@@ -991,7 +908,7 @@ class Gestion {
                 $errors[] = _('Le grand responsable ne peut pas etre membre ou responsable du groupe');
                 $return = false;
             }
-            if (!$this->isResponsableGroupeExist($data['responsables']) 
+            if (!$this->isResponsableGroupeExist($data['responsables'])
                 || !$this->isGrandResponsableGroupeExist($data['grandResponsables'])) {
                 $errors[] = _('au moins un responsable et un grand responsable sont obligatoires');
                 $return = false;
@@ -1002,9 +919,9 @@ class Gestion {
     }
 
     /**
-     * 
+     *
      * teste si le nom du groupe est vide
-     * 
+     *
      * @param string $nom
      * @return boolean
      */
@@ -1014,9 +931,9 @@ class Gestion {
     }
 
     /**
-     * 
+     *
      * vérifie si le nom du groupe existe déja
-     * 
+     *
      * @param string $nomGroupe
      * @return boolean
      */
@@ -1032,9 +949,9 @@ class Gestion {
     }
 
     /**
-     * 
+     *
      * vérifie si il y a au moins un employé dans le groupe
-     * 
+     *
      * @param array $users
      * @return boolean
      */
@@ -1044,9 +961,9 @@ class Gestion {
     }
 
     /**
-     * 
+     *
      * vérifie si le responsable est aussi employé dans le même groupe
-     * 
+     *
      * @param array $employes
      * @param array $responsables
      * @return boolean
@@ -1060,9 +977,9 @@ class Gestion {
     }
 
     /**
-     * 
+     *
      * vérifie si le  grand responsable est aussi employé ou responsable dans le même groupe
-     * 
+     *
      * @param array $employes
      * @param array $responsables
      * @return boolean
@@ -1077,7 +994,7 @@ class Gestion {
 
     /**
      * Vérifie si un employé n'est pas responsable de son responsable
-     * 
+     *
      * @param array $employes
      * @param array $responsables
      * @return boolean
@@ -1108,10 +1025,10 @@ class Gestion {
     }
 
     /**
-     * 
+     *
      * vérifie si il y a au moins un responsable du groupe
      * obligatoire uniquement en cas de double validation
-     * 
+     *
      * @param array $responsables
      * @return boolean
      */
@@ -1121,10 +1038,10 @@ class Gestion {
     }
 
     /**
-     * 
+     *
      * vérifie si il y a au moins un grand responsable du groupe
      * uniquement en cas de double validation
-     * 
+     *
      * @param array $grandResponsables
      * @return boolean
      */
@@ -1134,9 +1051,9 @@ class Gestion {
     }
 
     /**
-     * 
+     *
      * vérifie si l'utilisateur est autorisé à gérer les congés
-     * 
+     *
      * @return boolean
      */
     protected function isAutorise()
