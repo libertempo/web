@@ -73,7 +73,7 @@ $utilisateursATrouver = array_merge($responsablesATrouver, $utilisateursATrouver
 
 $tousEmployes = \App\ProtoControllers\Utilisateur::getDonneesTousUtilisateurs($config);
 $employes = array_filter($tousEmployes, function ($employe) use ($utilisateursATrouver) {
-    return 'Y' == $employe['is_active'] && in_array($employe['u_login'], $utilisateursATrouver);
+    return 'Y' == $employe['u_is_active'] && in_array($employe['u_login'], $utilisateursATrouver);
 });
 
 foreach ($employes as $employe) {
