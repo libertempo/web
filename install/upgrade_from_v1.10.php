@@ -30,6 +30,9 @@ $sql->query($alterUserSeeAll);
 $alterUserResp = "ALTER TABLE `conges_users` DROP `u_resp_login`;";
 $sql->query($alterUserResp);
 
+$updateconfig = "UPDATE conges_config SET conf_groupe = '00_libertempo' WHERE conf_nom = 'installed_version' OR conf_nom = 'lang'";
+$sql->query($updateconfig);
+
 $sql->getPdoObj()->commit();
 
 // on renvoit à la page mise_a_jour.php (là d'ou on vient)
