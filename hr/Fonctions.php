@@ -2836,7 +2836,7 @@ class Fonctions
 
             // AFFICHAGE TABLEAU
             $return .= '<div class="col-md-6">';
-            $return .= '<form action="' . $PHP_SELF . '" class="form-inline" method="POST">';
+            $return .= '<form action="' . $PHP_SELF . '?onglet=saisie" class="form-inline" method="POST">';
             $return .= '<div class="form-group" style="margin-right: 10px;">';
             $ReqLog_gr = \includes\SQL::query($sql_gr);
             $return .= '<select class="form-control" name="groupe_id">';
@@ -3056,13 +3056,10 @@ class Fonctions
             $return .= \hr\Fonctions::saisie_groupe_fermeture();
             $return .= '</div>';
         } elseif ($choix_action=="commit_new_fermeture") {
-            $return .= $title;
             $return .= \hr\Fonctions::commit_new_fermeture($new_date_debut, $new_date_fin, $groupe_id, $id_type_conges);
         } elseif ($choix_action=="annul_fermeture") {
-            $return .= $title;
             $return .= \hr\Fonctions::confirm_annul_fermeture($fermeture_id, $groupe_id, $fermeture_date_debut, $fermeture_date_fin);
         } elseif ($choix_action=="commit_annul_fermeture") {
-            $return .= $title;
             $return .= \hr\Fonctions::commit_annul_fermeture($fermeture_id, $groupe_id);
         }
         $return .= '</div>';
