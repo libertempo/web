@@ -24,6 +24,9 @@ $sql->query($del_config_db);
 $del_config_db = "DELETE FROM conges_config WHERE conf_nom = 'where_to_find_user_email' LIMIT 1;";
 $sql->query($del_config_db);
 
+$del_config_db = "DELETE FROM conges_config WHERE conf_nom = 'affiche_soldes_calendrier' LIMIT 1;";
+$sql->query($del_config_db);
+
 $alterUserSeeAll = "ALTER TABLE `conges_users` DROP `u_see_all`;";
 $sql->query($alterUserSeeAll);
 
