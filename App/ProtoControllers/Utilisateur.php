@@ -163,7 +163,7 @@ class Utilisateur
         $res = $sql->query($req);
         $donnees = $res->fetch_array();
         if ($config->isUsersExportFromLdap()) {
-            $donnees['u_email'] = $ldap->getEmailUser($data['u_login']);
+            $donnees['u_email'] = $ldap->getEmailUser($login);
         }
         return $donnees;
     }
