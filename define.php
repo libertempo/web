@@ -37,55 +37,42 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     require_once ROOT_PATH . 'vendor/autoload.php';
     require_once ROOT_PATH . 'vendor/raveren/kint/Kint.class.php';
     require_once CONFIG_PATH . 'env.php';
+
+    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+
     \Kint::enabled(false);
     \Kint::$theme = 'solarized-dark';
+
     switch (ENV) {
         case ENV_PROD:
             error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
             ini_set("display_errors", 0);
+            \Rollbar\Rollbar::init([
+                'access_token' => 'ee012bd0fc724b79ac6b1f28a8f74e44',
+                'environment' => 'production',
+                'code_version' => $config->getInstalledVersion(),
+            ]);
             break;
         case ENV_DEV:
+            \Kint::enabled(true);
+            ini_set("display_errors", 1);
             error_reporting(-1);
             // no break;
+            \Rollbar\Rollbar::init([
+                'access_token' => 'ee012bd0fc724b79ac6b1f28a8f74e44',
+                'environment' => 'development',
+                'code_version' => $config->getInstalledVersion(),
+            ]);
+            break;
         case ENV_TEST:
             \Kint::enabled(true);
-            if (ENV === ENV_TEST) {
-                error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
-            }
+            error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
             ini_set("display_errors", 1);
-
-            /**
-             * Logue les variables à déboguer
-             */
-            function debug()
-            {
-                global $debug;
-                $debug[] = [
-                    'Kint' => @d(func_get_args()),
-                    'Backtrace' => '<pre>' . print_r(debug_backtrace(), true) . '</pre>',
-                    'LastError' => '<pre>' . print_r(error_get_last(), true)  .'</pre>',
-                ];
-            }
-            register_shutdown_function(function () {
-                global $debug;
-                if (empty($debug)) {
-                    return;
-                }
-                if (!is_dir(DEBUG_SYSPATH)) {
-                    mkdir(DEBUG_SYSPATH);
-                }
-                $file = fopen(DEBUG_SYSPATH . 'dbg-' . date('Y-m-d') . '.html', 'wb');
-                if (!is_resource($file)) {
-                    return;
-                }
-                foreach ($debug as $v) {
-                    foreach ($v as $title => $data) {
-                        fwrite($file, '####################<br># ' . $title. '<br>####################<br>');
-                        fwrite($file, $data . '<br><br>');
-                    }
-                }
-
-            });
+            \Rollbar\Rollbar::init([
+                'access_token' => 'ee012bd0fc724b79ac6b1f28a8f74e44',
+                'environment' => 'testing',
+                'code_version' => $config->getInstalledVersion(),
+            ]);
             break;
     }
     session_start();

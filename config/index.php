@@ -8,7 +8,6 @@ if (empty(session_id())) {
 	redirect(ROOT_PATH . 'index.php?return_url=config/index.php');
 }
 
-
 include_once ROOT_PATH .'fonctions_conges.php' ;
 
 $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
