@@ -4,7 +4,6 @@
 [![BCH compliance](https://bettercodehub.com/edge/badge/Libertempo/Libertempo-web?branch=develop)](https://bettercodehub.com/)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/ed902981f4fb40bda7b90c199a0b4da1)](https://www.codacy.com/app/Libertempo/Libertempo-web?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Libertempo/Libertempo-web&amp;utm_campaign=Badge_Grade)
 ![build_status](https://travis-ci.org/Libertempo/Libertempo-web.svg?branch=master)
-[![Dependency Status](https://gemnasium.com/badges/github.com/Libertempo/Libertempo-web.svg)](https://gemnasium.com/github.com/Libertempo/Libertempo-web)
 
 
 ----------
