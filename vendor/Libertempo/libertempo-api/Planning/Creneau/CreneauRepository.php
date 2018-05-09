@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 namespace LibertAPI\Planning\Creneau;
 
 use LibertAPI\Tools\Exceptions\MissingArgumentException;
@@ -24,15 +24,15 @@ class CreneauRepository extends \LibertAPI\Tools\Libraries\ARepository
      *
      * @param int $planningId Contrainte de recherche sur le planning
      */
-    public function getOne($id, $planningId = -1)
+    public function getOne(int $id, $planningId = -1) : AEntite
     {
-        return $this->dao->getById((int) $id, $planningId);
+        return $this->dao->getById($id, $planningId);
     }
 
     /**
      * @inheritDoc
      */
-    final protected function getParamsConsumer2Dao(array $paramsConsumer)
+    final protected function getParamsConsumer2Dao(array $paramsConsumer) : array
     {
         $results = [];
         if (!empty($paramsConsumer['planningId'])) {
@@ -56,18 +56,14 @@ class CreneauRepository extends \LibertAPI\Tools\Libraries\ARepository
      * @throws MissingArgumentException Si un élément requis n'est pas présent
      * @throws \DomainException Si un élément de la ressource n'est pas dans le bon domaine de définition
      */
-    public function postList(array $data, AEntite $entite)
+    public function postList(array $data, AEntite $entite) : array
     {
         $postIds = [];
         $this->dao->beginTransaction();
         foreach ($data as $creneau) {
             try {
-                $postIds[] = $this->postOne($creneau, $entite);
-                /*
-                 * Le plus cool aurait été de cloner l'objet de base,
-                 * mais le clonage de mock est nul, donc on reset pour la boucle
-                 */
-                $entite->reset();
+                $cloneEntite = clone $entite;
+                $postIds[] = $this->postOne($creneau, $cloneEntite);
             } catch (\Exception $e) {
                 $this->dao->rollback();
                 throw $e;

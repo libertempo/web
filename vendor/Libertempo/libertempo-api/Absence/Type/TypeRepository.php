@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 namespace LibertAPI\Absence\Type;
 
 use LibertAPI\Tools\Libraries\AEntite;
@@ -17,7 +17,7 @@ class TypeRepository extends \LibertAPI\Tools\Libraries\ARepository
     /**
      * {@inheritDoc}
      */
-    final protected function getParamsConsumer2Dao(array $paramsConsumer)
+    final protected function getParamsConsumer2Dao(array $paramsConsumer) : array
     {
         unset($paramsConsumer);
         return [];
@@ -29,8 +29,8 @@ class TypeRepository extends \LibertAPI\Tools\Libraries\ARepository
     public function deleteOne(AEntite $entite)
     {
         try {
-            $entite->reset();
             $this->dao->delete($entite->getId());
+            $entite->reset();
         } catch (\Exception $e) {
             throw $e;
         }

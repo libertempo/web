@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 namespace LibertAPI\Tests\Units\Tools\Helpers;
 
 use LibertAPI\Tools\Helpers\Formatter as _Formatter;

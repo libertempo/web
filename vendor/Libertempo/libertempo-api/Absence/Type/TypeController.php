@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 namespace LibertAPI\Absence\Type;
 
 use LibertAPI\Tools\Interfaces;
@@ -21,7 +21,7 @@ implements Interfaces\IGetable, Interfaces\IPostable, Interfaces\IPutable, Inter
     /**
      * {@inheritDoc}
      */
-    protected function ensureAccessUser($order, \LibertAPI\Utilisateur\UtilisateurEntite $utilisateur)
+    protected function ensureAccessUser(string $order, \LibertAPI\Utilisateur\UtilisateurEntite $utilisateur)
     {
         // uniquement accessible par l'admin ?
     }
@@ -29,7 +29,7 @@ implements Interfaces\IGetable, Interfaces\IPostable, Interfaces\IPutable, Inter
     /**
      * {@inheritDoc}
      */
-    public function get(IRequest $request, IResponse $response, array $arguments)
+    public function get(IRequest $request, IResponse $response, array $arguments) : IResponse
     {
         if (!isset($arguments['typeId'])) {
             return $this->getList($request, $response);
@@ -46,7 +46,7 @@ implements Interfaces\IGetable, Interfaces\IPostable, Interfaces\IPutable, Inter
      *
      * @return IResponse, 404 si l'élément n'est pas trouvé, 200 sinon
      */
-    private function getOne(IResponse $response, $id)
+    private function getOne(IResponse $response, int $id) : IResponse
     {
         try {
             $responseResource = $this->repository->getOne($id);
@@ -84,10 +84,7 @@ implements Interfaces\IGetable, Interfaces\IPostable, Interfaces\IPutable, Inter
         } catch (\Exception $e) {
             return $this->getResponseError($response, $e);
         }
-        $entites = [];
-        foreach ($responseResources as $responseResource) {
-            $entites[] = $this->buildData($responseResource);
-        }
+        $entites = array_map([$this, 'buildData'], $responseResources);
 
         return $this->getResponseSuccess($response, $entites, 200);
     }
@@ -112,7 +109,7 @@ implements Interfaces\IGetable, Interfaces\IPostable, Interfaces\IPutable, Inter
     /**
      * {@inheritDoc}
      */
-    public function post(IRequest $request, IResponse $response, array $routeArguments)
+    public function post(IRequest $request, IResponse $response, array $routeArguments) : IResponse
     {
         $body = $request->getParsedBody();
         if (null === $body) {
@@ -141,7 +138,7 @@ implements Interfaces\IGetable, Interfaces\IPostable, Interfaces\IPutable, Inter
     /**
      * {@inheritDoc}
      */
-    public function put(IRequest $request, IResponse $response, array $arguments)
+    public function put(IRequest $request, IResponse $response, array $arguments) : IResponse
     {
         $body = $request->getParsedBody();
         if (null === $body) {
@@ -173,7 +170,7 @@ implements Interfaces\IGetable, Interfaces\IPostable, Interfaces\IPutable, Inter
     /**
      * {@inheritDoc}
      */
-    public function delete(IRequest $request, IResponse $response, array $arguments)
+    public function delete(IRequest $request, IResponse $response, array $arguments) : IResponse
     {
         $id = (int) $arguments['typeId'];
         try {

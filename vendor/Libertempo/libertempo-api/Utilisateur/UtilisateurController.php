@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 namespace LibertAPI\Utilisateur;
 
 use Psr\Http\Message\ServerRequestInterface as IRequest;
@@ -11,7 +11,7 @@ use Psr\Http\Message\ResponseInterface as IResponse;
  * @author Wouldsmina
  *
  * @since 0.4
- * @see \Tests\Units\App\Components\Utilisateur\Controller
+ * @see \LibertAPI\Utilisateur\UtilisateurController
  *
  * Ne devrait être contacté que par le routeur
  * Ne devrait contacter que le Utilisateur\Repository
@@ -21,7 +21,7 @@ final class UtilisateurController extends \LibertAPI\Tools\Libraries\AController
     /**
      * {@inheritDoc}
      */
-    protected function ensureAccessUser($order, \LibertAPI\Utilisateur\UtilisateurEntite $utilisateur)
+    protected function ensureAccessUser(string $order, \LibertAPI\Utilisateur\UtilisateurEntite $utilisateur)
     {
     }
 
@@ -43,7 +43,7 @@ final class UtilisateurController extends \LibertAPI\Tools\Libraries\AController
      * @return IResponse
      * @throws \Exception en cas d'erreur inconnue (fallback, ne doit pas arriver)
      */
-    public function get(IRequest $request, IResponse $response, array $arguments)
+    public function get(IRequest $request, IResponse $response, array $arguments) : IResponse
     {
         if (!isset($arguments['utilisateurId'])) {
             return $this->getList($request, $response);
@@ -97,10 +97,7 @@ final class UtilisateurController extends \LibertAPI\Tools\Libraries\AController
         } catch (\Exception $e) {
             return $this->getResponseError($response, $e);
         }
-        $entites = [];
-        foreach ($utilisateurs as $utilisateur) {
-            $entites[] = $this->buildData($utilisateur);
-        }
+        $entites = array_map([$this, 'buildData'], $utilisateurs);
 
         return $this->getResponseSuccess($response, $entites, 200);
     }

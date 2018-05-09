@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 namespace LibertAPI\Planning;
 
 use LibertAPI\Tools\Exceptions\MissingArgumentException;
@@ -12,7 +12,7 @@ use LibertAPI\Tools\Exceptions\MissingArgumentException;
  * @since 0.1
  * @see \LibertAPI\Tests\Units\Planning\PlanningEntite
  *
- * Ne devrait être contacté que par le Planning\Repository
+ * Ne devrait être contacté que par le Planning\PlanningDao
  * Ne devrait contacter personne
  */
 class PlanningEntite extends \LibertAPI\Tools\Libraries\AEntite

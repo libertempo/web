@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 namespace LibertAPI\Tests\Units\Planning;
 
 use \LibertAPI\Planning\PlanningRepository as _Repository;
@@ -22,7 +22,7 @@ final class PlanningRepository extends \LibertAPI\Tests\Units\Tools\Libraries\AR
 
     protected function initEntite()
     {
-        $this->entite = new \LibertAPI\Planning\PlanningEntite([]);
+        $this->entite = new \LibertAPI\Planning\PlanningEntite(['id' => 42]);
     }
 
     /*************************************************
@@ -42,7 +42,6 @@ final class PlanningRepository extends \LibertAPI\Tests\Units\Tools\Libraries\AR
         $this->exception(function () use ($repository) {
             $repository->deleteOne($this->entite);
         })->isInstanceOf('\LogicException');
-
     }
 
     /**

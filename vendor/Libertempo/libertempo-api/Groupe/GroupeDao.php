@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 namespace LibertAPI\Groupe;
 
 use LibertAPI\Tools\Libraries\AEntite;
@@ -23,7 +23,7 @@ class GroupeDao extends \LibertAPI\Tools\Libraries\ADao
     /**
      * @inheritDoc
      */
-    public function getById($id)
+    public function getById(int $id) : AEntite
     {
         $this->queryBuilder->select('*');
         $this->setWhere(['id' => $id]);
@@ -53,7 +53,7 @@ class GroupeDao extends \LibertAPI\Tools\Libraries\ADao
     /**
      * @inheritDoc
      */
-    public function getList(array $parametres)
+    public function getList(array $parametres) : array
     {
         $this->queryBuilder->select('*');
         $this->setWhere($parametres);
@@ -64,11 +64,11 @@ class GroupeDao extends \LibertAPI\Tools\Libraries\ADao
             throw new \UnexpectedValueException('No resource match with these parameters');
         }
 
-        $entites = [];
-        foreach ($data as $value) {
-            $entite = new GroupeEntite($this->getStorage2Entite($value));
-            $entites[$entite->getId()] = $entite;
-        }
+        $entites = array_map(function ($value) {
+                return new GroupeEntite($this->getStorage2Entite($value));
+            },
+            $data
+        );
 
         return $entites;
     }
@@ -80,7 +80,7 @@ class GroupeDao extends \LibertAPI\Tools\Libraries\ADao
     /**
      * @inheritDoc
      */
-    public function post(AEntite $entite)
+    public function post(AEntite $entite) : int
     {
         $this->queryBuilder->insert($this->getTableName());
         $this->setValues($this->getEntite2Storage($entite));
@@ -123,7 +123,7 @@ class GroupeDao extends \LibertAPI\Tools\Libraries\ADao
     /**
      * @inheritDoc
      */
-    final protected function getEntite2Storage(AEntite $entite)
+    final protected function getEntite2Storage(AEntite $entite) : array
     {
         return [
             'name' => $entite->getName(),
@@ -155,7 +155,7 @@ class GroupeDao extends \LibertAPI\Tools\Libraries\ADao
     /**
      * @inheritDoc
      */
-    public function delete($id)
+    public function delete(int $id) : int
     {
         $this->queryBuilder->delete($this->getTableName());
         $this->setWhere(['id' => $id]);
@@ -181,7 +181,7 @@ class GroupeDao extends \LibertAPI\Tools\Libraries\ADao
     /**
      * @inheritDoc
      */
-    final protected function getTableName()
+    final protected function getTableName() : string
     {
         return 'conges_groupe';
     }

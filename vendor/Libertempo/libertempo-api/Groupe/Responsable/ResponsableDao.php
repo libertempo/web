@@ -1,7 +1,8 @@
 <?php declare(strict_types = 1);
-namespace LibertAPI\Journal;
+namespace LibertAPI\Groupe\Responsable;
 
 use LibertAPI\Tools\Libraries\AEntite;
+use LibertAPI\Utilisateur\UtilisateurEntite;
 
 /**
  * {@inheritDoc}
@@ -9,9 +10,12 @@ use LibertAPI\Tools\Libraries\AEntite;
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina
  *
- * @since 0.5
+ * @since 0.7
+ *
+ * Ne devrait être contacté que par ResponsableRepository
+ * Ne devrait contacter personne
  */
-class JournalDao extends \LibertAPI\Tools\Libraries\ADao
+class ResponsableDao extends \LibertAPI\Tools\Libraries\ADao
 {
     /*************************************************
      * GET
@@ -30,7 +34,8 @@ class JournalDao extends \LibertAPI\Tools\Libraries\ADao
      */
     public function getList(array $parametres) : array
     {
-        $this->queryBuilder->select('*');
+        $this->queryBuilder->select('users.*, users.u_login AS id');
+        $this->queryBuilder->innerJoin('current', 'conges_users', 'users', 'current.gr_login = u_login');
         $this->setWhere($parametres);
         $res = $this->queryBuilder->execute();
 
@@ -40,7 +45,7 @@ class JournalDao extends \LibertAPI\Tools\Libraries\ADao
         }
 
         $entites = array_map(function ($value) {
-            return new JournalEntite($this->getStorage2Entite($value));
+            return new UtilisateurEntite($this->getStorage2Entite($value));
         }, $data);
 
         return $entites;
@@ -48,17 +53,30 @@ class JournalDao extends \LibertAPI\Tools\Libraries\ADao
 
     /**
      * @inheritDoc
+     *
+     * Duplication de la fonction dans UtilisateurDao (Cf. decisions.md #2018-02-17)
      */
-    final protected function getStorage2Entite(array $dataDao)
+    final protected function getStorage2Entite(array $dataDao) : array
     {
         return [
-            'id' => $dataDao['log_id'],
-            'numeroPeriode' => $dataDao['log_p_num'],
-            'utilisateurActeur' => $dataDao['log_user_login_par'],
-            'utilisateurObjet' => $dataDao['log_user_login_pour'],
-            'etat' => $dataDao['log_etat'],
-            'commentaire' => $dataDao['log_comment'],
-            'date' => $dataDao['log_date'],
+            'id' => $dataDao['id'],
+            'login' => $dataDao['u_login'],
+            'nom' => $dataDao['u_nom'],
+            'prenom' => $dataDao['u_prenom'],
+            'isResp' => $dataDao['u_is_resp'] === 'Y',
+            'isAdmin' => $dataDao['u_is_admin'] === 'Y',
+            'isHr' => $dataDao['u_is_hr'] === 'Y',
+            'isActive' => $dataDao['u_is_active'] === 'Y',
+            'seeAll' => $dataDao['u_see_all'] === 'Y',
+            'password' => $dataDao['u_passwd'],
+            'quotite' => $dataDao['u_quotite'],
+            'email' => $dataDao['u_email'],
+            'numeroExercice' => $dataDao['u_num_exercice'],
+            'planningId' => $dataDao['planning_id'],
+            'heureSolde' => $dataDao['u_heure_solde'],
+            'dateInscription' => $dataDao['date_inscription'],
+            'token' => $dataDao['token'],
+            'dateLastAccess' => $dataDao['date_last_access'],
         ];
     }
 
@@ -91,7 +109,7 @@ class JournalDao extends \LibertAPI\Tools\Libraries\ADao
      */
     final protected function getEntite2Storage(AEntite $entite) : array
     {
-        throw new \RuntimeException('Action is forbidden');
+        return [];
     }
 
     /*************************************************
@@ -115,7 +133,7 @@ class JournalDao extends \LibertAPI\Tools\Libraries\ADao
     private function setWhere(array $parametres)
     {
         if (!empty($parametres['id'])) {
-            $this->queryBuilder->andWhere('log_id = :id');
+            $this->queryBuilder->andWhere('g_gid = :id');
             $this->queryBuilder->setParameter(':id', (int) $parametres['id']);
         }
     }
@@ -125,6 +143,6 @@ class JournalDao extends \LibertAPI\Tools\Libraries\ADao
      */
     final protected function getTableName() : string
     {
-        return 'conges_logs';
+        return 'conges_groupe_resp';
     }
 }

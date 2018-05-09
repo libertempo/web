@@ -1,5 +1,7 @@
-<?php
+<?php declare(strict_types = 1);
 namespace LibertAPI\Tests\Units\Tools\Libraries;
+
+use LibertAPI\Tools\Libraries\AEntite;
 
 /**
  * Classe de test des repositories
@@ -41,12 +43,12 @@ abstract class ARepository extends \Atoum
      */
     public function testGetOne()
     {
-        $this->dao->getMockController()->getById = new \stdClass;
+        $this->dao->getMockController()->getById = $this->entite;
         $repository = $this->newTestedInstance($this->dao);
 
         $entite = $repository->getOne(42);
 
-        $this->object($entite);
+        $this->object($entite)->isInstanceOf(AEntite::class);
     }
 
     /**
@@ -54,7 +56,7 @@ abstract class ARepository extends \Atoum
      */
     public function testGetList()
     {
-        $this->calling($this->dao)->getList = [42 => new \stdClass];
+        $this->calling($this->dao)->getList = [42 => $this->entite];
         $repository = $this->newTestedInstance($this->dao);
 
         $entites = $repository->getList([]);

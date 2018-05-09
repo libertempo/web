@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 namespace LibertAPI\Tests\Units\Utilisateur;
 
 use \LibertAPI\Utilisateur\UtilisateurEntite as _Entite;

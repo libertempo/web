@@ -1,5 +1,5 @@
 <?php declare(strict_types = 1);
-namespace LibertAPI\Journal;
+namespace LibertAPI\Groupe\Responsable;
 
 use LibertAPI\Tools\Libraries\AEntite;
 
@@ -10,9 +10,9 @@ use LibertAPI\Tools\Libraries\AEntite;
  * @author Wouldsmina
  *
  * @since 0.5
- * @see \LibertAPI\Tests\Units\Journal\JournalRepository
+ * @see \LibertAPI\Tests\Units\Groupe\ResponsableRepository
  */
-class JournalRepository extends \LibertAPI\Tools\Libraries\ARepository
+class ResponsableRepository extends \LibertAPI\Tools\Libraries\ARepository
 {
     /*************************************************
      * GET
@@ -23,7 +23,7 @@ class JournalRepository extends \LibertAPI\Tools\Libraries\ARepository
      */
     public function getOne(int $id) : AEntite
     {
-        throw new \RuntimeException('Journal#' . $id . ' is not a callable resource');
+        throw new \RuntimeException('#' . $id . ' is not a callable resource');
     }
 
     /**

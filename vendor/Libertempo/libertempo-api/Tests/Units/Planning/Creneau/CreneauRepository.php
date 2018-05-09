@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 namespace LibertAPI\Tests\Units\Planning\Creneau;
 
 /**
@@ -16,6 +16,9 @@ final class CreneauRepository extends \LibertAPI\Tests\Units\Tools\Libraries\ARe
         $this->mockGenerator->orphanize('__construct');
         $this->mockGenerator->shuntParentClassCalls();
         $this->dao = new \mock\LibertAPI\Planning\Creneau\CreneauDao();
+        $this->calling($this->dao)->beginTransaction = true;
+        $this->calling($this->dao)->commit = true;
+        $this->calling($this->dao)->rollback = true;
     }
 
     protected function initEntite()
@@ -33,8 +36,8 @@ final class CreneauRepository extends \LibertAPI\Tests\Units\Tools\Libraries\ARe
     public function testPostListException()
     {
         $repository = $this->newTestedInstance($this->dao);
-        $entite = new \mock\LibertAPI\Planning\Creneau\CreneauEntite([]);
-        $entite->getMockController()->populate = function () {
+        $entite = new \LibertAPI\Planning\Creneau\CreneauEntite([]);
+        $this->calling($this->dao)->post = function () {
             throw new \LogicException('');
         };
         $data = [

@@ -1,27 +1,28 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5729cab80e0b4930fd056a72f317aefd",
+    "content-hash": "33636716666ce69d1622c78d49f662c3",
     "packages": [
         {
             "name": "Libertempo/libertempo-api",
-            "version": "v0.7.0",
+            "version": "v1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Libertempo/libertempo-api.git",
-                "reference": "dba1f29d480772d489924dca86e89761967c2f69"
+                "reference": "7082a2d81bc7bba429b93ad2f50dfc48450c6a92"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Libertempo/libertempo-api/zipball/dba1f29d480772d489924dca86e89761967c2f69",
-                "reference": "dba1f29d480772d489924dca86e89761967c2f69",
+                "url": "https://api.github.com/repos/Libertempo/libertempo-api/zipball/7082a2d81bc7bba429b93ad2f50dfc48450c6a92",
+                "reference": "7082a2d81bc7bba429b93ad2f50dfc48450c6a92",
                 "shasum": ""
             },
             "require": {
                 "doctrine/dbal": "2.5",
+                "php": "^7.0",
                 "raveren/kint": "^1.0",
                 "slim/slim": "^3.5"
             },
@@ -52,10 +53,10 @@
             "support": {
                 "email": "libertempo@lists.tuxfamily.org",
                 "irc": "irc://irc.tuxfamily.org/#Libertempo",
-                "source": "https://github.com/Libertempo/libertempo-api/tree/v0.7.0",
+                "source": "https://github.com/Libertempo/libertempo-api/tree/v1.0.0",
                 "issues": "https://github.com/Libertempo/libertempo-api/issues"
             },
-            "time": "2018-03-12T19:40:09+00:00"
+            "time": "2018-05-08T21:32:19+00:00"
         },
         {
             "name": "container-interop/container-interop",
@@ -1456,7 +1457,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^5.6|^7.0",
+        "php": "^7.0",
         "ext-mbstring": "*",
         "ext-reflection": "*",
         "ext-curl": "*"

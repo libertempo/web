@@ -1,26 +1,26 @@
 <?php declare(strict_types = 1);
-namespace LibertAPI\Tests\Units\Journal;
+namespace LibertAPI\Tests\Units\Groupe\Responsable;
 
 /**
- * Classe de test du repository de journal
+ * Classe de test du repository de responsable de groupe
  *
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina
  *
  * @since 0.5
  */
-final class JournalRepository extends \LibertAPI\Tests\Units\Tools\Libraries\ARepository
+final class ResponsableRepository extends \LibertAPI\Tests\Units\Tools\Libraries\ARepository
 {
     protected function initDao()
     {
         $this->mockGenerator->orphanize('__construct');
         $this->mockGenerator->shuntParentClassCalls();
-        $this->dao = new \mock\LibertAPI\Journal\JournalDao();
+        $this->dao = new \mock\LibertAPI\Groupe\Responsable\ResponsableDao();
     }
 
     protected function initEntite()
     {
-        $this->entite = new \LibertAPI\Journal\JournalEntite([]);
+        $this->entite = new \LibertAPI\Utilisateur\UtilisateurEntite([]);
     }
 
     /*************************************************
@@ -95,13 +95,6 @@ final class JournalRepository extends \LibertAPI\Tests\Units\Tools\Libraries\ARe
     protected function getEntiteContent()
     {
         return [
-            'id' => 298,
-            'numeroPeriode' => 1,
-            'utilisateurActeur' => 'Romeo',
-            'utilisateurObjet' => 'Juliette',
-            'etat' => 'gere',
-            'commentaire' => 'nope',
-            'date' => '2017-12-01',
         ];
     }
 }

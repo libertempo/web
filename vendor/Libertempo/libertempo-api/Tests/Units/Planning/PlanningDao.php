@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 namespace LibertAPI\Tests\Units\Planning;
 
 use LibertAPI\Planning\PlanningDao as _Dao;

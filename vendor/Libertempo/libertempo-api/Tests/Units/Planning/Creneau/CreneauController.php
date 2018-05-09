@@ -1,5 +1,7 @@
-<?php
+<?php declare(strict_types = 1);
 namespace LibertAPI\Tests\Units\Planning\Creneau;
+
+use Psr\Http\Message\ResponseInterface as IResponse;
 
 /**
  * Classe de test du contrôleur de créneau de planning
@@ -30,12 +32,12 @@ final class CreneauController extends \LibertAPI\Tests\Units\Tools\Libraries\ARe
         $this->entite->getMockController()->getFin = 12;
     }
 
-    protected function getOne()
+    protected function getOne() : IResponse
     {
         return $this->testedInstance->get($this->request, $this->response, ['creneauId' => 99, 'planningId' => 45]);
     }
 
-    protected function getList()
+    protected function getList() : IResponse
     {
         return $this->testedInstance->get($this->request, $this->response, ['planningId' => 45]);
     }

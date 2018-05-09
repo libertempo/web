@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 namespace LibertAPI\Tests\Units\Absence\Type;
 
 use LibertAPI\Absence\Type\TypeEntite;

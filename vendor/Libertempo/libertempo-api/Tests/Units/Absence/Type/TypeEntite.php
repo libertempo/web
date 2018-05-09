@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 namespace LibertAPI\Tests\Units\Absence\Type;
 
 /**
@@ -43,7 +43,7 @@ final class TypeEntite extends \LibertAPI\Tests\Units\Tools\Libraries\AEntite
     public function testPopulateBadDomain()
     {
         $this->newTestedInstance([]);
-        $data = ['type' => '', 'libelle' => 45, 'libelleCourt' => 'non'];
+        $data = ['type' => '', 'libelle' => '45', 'libelleCourt' => 'non'];
 
         $this->exception(function () use ($data) {
             $this->testedInstance->populate($data);

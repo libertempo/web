@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 namespace LibertAPI\Utilisateur;
 
 use LibertAPI\Tools\Exceptions\MissingArgumentException;
@@ -14,7 +14,7 @@ use LibertAPI\Tools\Helpers\Formatter;
  * @since 0.2
  * @see \LibertAPI\Tests\Units\Utilisateur\Entite
  *
- * Ne devrait être contacté que par le Utilisateur\Repository
+ * Ne devrait être contacté que par le Utilisateur\UtilisateurDao et Groupe\Responsable\ResponsableDao
  * Ne devrait contacter personne
  */
 class UtilisateurEntite extends \LibertAPI\Tools\Libraries\AEntite
