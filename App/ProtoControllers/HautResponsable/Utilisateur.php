@@ -724,7 +724,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
     {
         $return = true;
 
-        if (!preg_match('/^[a-z.\d_-]{2,30}$/i', $data['login'])) {
+        if (!preg_match('/^[@a-z.\d_-]{2,30}$/i', $data['login'])) {
             $errors[] = _('Identifiant incorrect.');
             $return = false;
         }
