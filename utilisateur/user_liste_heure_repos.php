@@ -49,7 +49,7 @@ if (!empty($listId)) {
         $data->jour = date('d/m/Y', $repos['debut']);
         $data->debut = date('H\:i', $repos['debut']);
         $data->fin = date('H\:i', $repos['fin']);
-        $data->duree = \App\Helpers\Formatter::Timestamp2Duree($repos['duree']);
+        $data->duree = \App\Helpers\Formatter::timestamp2Duree($repos['duree']);
         $data->statut = AHeure::statusText($repos['statut']);
         $data->comment = \includes\SQL::quote($repos['comment']);
         $data->isModifiable = AHeure::STATUT_DEMANDE == $repos['statut'];

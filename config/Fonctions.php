@@ -114,7 +114,7 @@ class Fonctions
     /**
      * Encapsule le comportement du module d'affichage des logs
      *
-     * @return void
+     * @return string
      * @access public
      * @static
      */
@@ -275,7 +275,7 @@ class Fonctions
     /**
      * Encapsule le comportement du module d'affichage des logs
      *
-     * @return void
+     * @return string
      * @access public
      * @static
      */
@@ -839,7 +839,7 @@ class Fonctions
     /**
      * Encapsule le comportement du module d'affichage des logs
      *
-     * @return void
+     * @return string
      * @access public
      * @static
      */
