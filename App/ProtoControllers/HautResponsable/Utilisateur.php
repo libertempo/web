@@ -184,7 +184,7 @@ class Utilisateur
                 'nom' => $userInfo['u_nom'],
                 'prenom' => $userInfo['u_prenom'],
                 'quotite' => $userInfo['u_quotite'],
-                'soldeHeure' => \App\Helpers\Formatter::Timestamp2Duree($userInfo['u_heure_solde']),
+                'soldeHeure' => \App\Helpers\Formatter::timestamp2Duree($userInfo['u_heure_solde']),
                 'isResp' => $userInfo['u_is_resp'],
                 'isAdmin' => $userInfo['u_is_admin'],
                 'isHR' => $userInfo['u_is_hr'],
@@ -526,11 +526,11 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
     /**
      * Nettoyage des données postés par le formulaire
      * 
-     * @param type $htmlPost
+     * @param array $htmlPost
      * @param \includes\SQL $sql
      * @param \App\Libraries\Configuration $config
      * 
-     * @return type
+     * @return array
      */
     public static function dataForm2Array($htmlPost, \includes\SQL $sql, \App\Libraries\Configuration $config)
     {
@@ -649,7 +649,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
     /**
      * Controle la conformité du formulaire de création
      * 
-     * @param aray $data
+     * @param array $data
      * @param array $errors
      * @param \includes\SQL $sql
      * @param \App\Libraries\Configuration $config

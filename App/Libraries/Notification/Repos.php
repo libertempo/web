@@ -28,7 +28,7 @@ Class Repos extends \App\Libraries\ANotification {
         $data['jour']   = date('d/m/Y', $data['debut']);
         $data['debut']  = date('H\:i', $data['debut']);
         $data['fin']    = date('H\:i', $data['fin']);
-        $data['duree']    = \App\Helpers\Formatter::Timestamp2Duree($data['duree']);
+        $data['duree']    = \App\Helpers\Formatter::timestamp2Duree($data['duree']);
 
         return $data;
     }
