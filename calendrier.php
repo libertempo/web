@@ -76,9 +76,24 @@ $employes = array_filter($tousEmployes, function ($employe) use ($utilisateursAT
     return 'Y' == $employe['u_is_active'] && in_array($employe['u_login'], $utilisateursATrouver);
 });
 
+$employesATrouver = [];
 foreach ($employes as $employe) {
-    $employesATrouver[$employe['u_login']] = \App\ProtoControllers\Utilisateur::getNomComplet($employe['u_prenom'], $employe['u_nom'], true);
+    $employesATrouver[$employe['u_login']] = [
+        'nom' => \App\ProtoControllers\Utilisateur::getNomComplet($employe['u_prenom'], $employe['u_nom'], true),
+        'isResponsable' => \App\ProtoControllers\Utilisateur::isResponsable($employe['u_login']),
+    ];
 }
+
+$responsablesPremier = function (array $a, array $b) {
+    if ($a['isResponsable'] && !$b['isResponsable']) {
+        return -1;
+    } elseif (!$a['isResponsable'] && $b['isResponsable']) {
+        return 1;
+    }
+    return strcmp($a['nom'], $b['nom']);
+};
+
+uasort($employesATrouver, $responsablesPremier);
 
 // Cette variable est utilisée par le fichier "Mois.php" pour ajouter
 // une séparation visuelle entre les responsables et les autres utilisateurs.

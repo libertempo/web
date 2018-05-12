@@ -22,10 +22,11 @@ class Responsable {
      */
     public static function getListResponsableByGroupeIds(array $groupeIds)
     {
+        $groupeIds = array_map('intval', $groupeIds);
         $sql = \includes\SQL::singleton();
         $req = 'SELECT gr_login
                 FROM conges_groupe_resp
-                WHERE gr_gid IN (\'' . implode(',', $groupeIds) . '\')';
+                WHERE gr_gid IN (' . implode(',', $groupeIds) . ')';
         $query = $sql->query($req);
 
         $respLogin = [];
