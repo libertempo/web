@@ -310,7 +310,8 @@ function get_td_class_of_the_day_in_the_week($timestamp_du_jour)
 // attention : les param $val_matin et $val_aprem sont passées par référence (avec &) car on change leur valeur
 function recup_infos_artt_du_jour($sql_login, $j_timestamp, &$val_matin, &$val_aprem, array $planningUser)
 {
-    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+    $db = \includes\SQL::singleton();
+    $config = new \App\Libraries\Configuration($db);
     $num_semaine = date('W', $j_timestamp);
     $jour_name_fr_2c = get_j_name_fr_2c($j_timestamp); // nom du jour de la semaine en francais sur 2 caracteres
 
@@ -318,8 +319,8 @@ function recup_infos_artt_du_jour($sql_login, $j_timestamp, &$val_matin, &$val_a
     if (($jour_name_fr_2c != 'sa' || $config->isSamediOuvrable())  && ( $jour_name_fr_2c != 'di' || $config->isDimancheOuvrable())) {
         // verif si le jour fait l'objet d'un echange ....
         $date_j            = date('Y-m-d', $j_timestamp);
-        $sql_echange_rtt = 'SELECT e_absence FROM conges_echange_rtt WHERE e_login="'.\includes\SQL::quote($sql_login).'" AND e_date_jour="'.\includes\SQL::quote($date_j).'" ';
-        $res_echange_rtt = \includes\SQL::query($sql_echange_rtt);
+        $sql_echange_rtt = 'SELECT e_absence FROM conges_echange_rtt WHERE e_login="'. $db->quote($sql_login).'" AND e_date_jour="'. $db->quote($date_j).'" ';
+        $res_echange_rtt = $db->query($sql_echange_rtt);
         $num_echange_rtt = $res_echange_rtt->num_rows;
         // si le jour est l'objet d'un echange, on tient compte de l'échange
         if ( $num_echange_rtt != 0 ) {
@@ -474,7 +475,8 @@ function alerte_mail($login_expediteur, $destinataire, $num_periode, $objet)
 // construit et envoie le mail
 function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $mail_dest_name, $mail_dest_addr, $num_periode)
 {
-    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+    $db = \includes\SQL::singleton();
+    $config = new \App\Libraries\Configuration($db);
     /*********************************************/
     // init du mail
     $mail = new \PHPMailer();
@@ -527,7 +529,7 @@ function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $m
     } else {
         $select_abs = 'SELECT conges_periode.p_date_deb,conges_periode.p_demi_jour_deb,conges_periode.p_date_fin,conges_periode.p_demi_jour_fin,conges_periode.p_nb_jours,conges_periode.p_commentaire,conges_type_absence.ta_libelle
                 FROM conges_periode, conges_type_absence WHERE conges_periode.p_num='.$num_periode.' AND conges_periode.p_type = conges_type_absence.ta_id;';
-        $res_abs = \includes\SQL::query($select_abs);
+        $res_abs = $db->query($select_abs);
         $rec_abs = $res_abs->fetch_array();
         $tab_date_deb = explode('-', $rec_abs['p_date_deb']);
         // affiche : "23 / 01 / 2008 (am)"
@@ -607,8 +609,9 @@ function eng_date_to_fr($une_date)
 // recup du nom d'un groupe grace à son group_id
 function get_group_name_from_id($groupe_id)
 {
-    $req_name='SELECT g_groupename FROM conges_groupe WHERE g_gid='.\includes\SQL::quote($groupe_id);
-    $ReqLog_name = \includes\SQL::query($req_name);
+    $db = \includes\SQL::singleton();
+    $req_name='SELECT g_groupename FROM conges_groupe WHERE g_gid='. $db->quote($groupe_id);
+    $ReqLog_name = $db->query($req_name);
     $resultat_name = $ReqLog_name->fetch_array();
     return $resultat_name["g_groupename"];
 }
@@ -618,7 +621,8 @@ function get_group_name_from_id($groupe_id)
 // renvoie une liste de login entre quotes et séparés par des virgules
 function get_list_all_users_du_resp($resp_login)
 {
-    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+    $db = \includes\SQL::singleton();
+    $config = new \App\Libraries\Configuration($db);
 
         $groupeIds = \App\ProtoControllers\Responsable::getIdGroupeResp($resp_login);
         $listUsers = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupeIds);
@@ -627,7 +631,7 @@ function get_list_all_users_du_resp($resp_login)
         $sql1 .= ' AND u_login IN ("' . implode('","', $listUsers) . '")';
 
     $sql1 = $sql1." ORDER BY u_login " ;
-    $ReqLog1 = \includes\SQL::query($sql1);
+    $ReqLog1 = $db->query($sql1);
 
     while ($resultat1 = $ReqLog1->fetch_array()) {
         $current_login=$resultat1["u_login"];
@@ -642,20 +646,20 @@ function get_list_all_users_du_resp($resp_login)
     // on recup la liste des users des resp absents, dont $resp_login est responsable
     if ($config->isGestionResponsableAbsent()) {
         // recup liste des resp absents, dont $resp_login est responsable
-        $sql_2='SELECT DISTINCT(u_login) FROM conges_users WHERE u_is_resp=\'Y\' AND u_login!="'.\includes\SQL::quote($resp_login).'" AND u_login!=\'conges\' AND u_login!=\'admin\'';
+        $sql_2='SELECT DISTINCT(u_login) FROM conges_users WHERE u_is_resp=\'Y\' AND u_login!="'. $db->quote($resp_login).'" AND u_login!=\'conges\' AND u_login!=\'admin\'';
         $sql_2=$sql_2.' AND u_login IN ("' . implode('","', $listUsers) . '")';
 
         $sql_2 = $sql_2." ORDER BY u_login " ;
 
-        $ReqLog_2 = \includes\SQL::query($sql_2);
+        $ReqLog_2 = $db->query($sql_2);
 
         // on va verifier si les resp récupérés sont absents (si oui, c'est $resp_login qui traite leurs users
         while ($resultat_2 = $ReqLog_2->fetch_array())
         {
             $current_resp=$resultat_2["u_login"];
             // verif dans la base si le current_resp est absent :
-            $req = 'SELECT p_num FROM conges_periode WHERE p_login = "'.\includes\SQL::quote($current_resp).'" AND p_etat = \'ok\' AND TO_DAYS(conges_periode.p_date_deb) <= TO_DAYS(NOW()) AND TO_DAYS(conges_periode.p_date_fin) >= TO_DAYS(NOW())';
-            $ReqLog_3 = \includes\SQL::query($req);
+            $req = 'SELECT p_num FROM conges_periode WHERE p_login = "'. $db->quote($current_resp).'" AND p_etat = \'ok\' AND TO_DAYS(conges_periode.p_date_deb) <= TO_DAYS(NOW()) AND TO_DAYS(conges_periode.p_date_fin) >= TO_DAYS(NOW())';
+            $ReqLog_3 = $db->query($req);
 
             // si le current resp est absent : on recup la liste de ses users pour les traiter .....
             if ($ReqLog_3->num_rows!=0) {
@@ -677,10 +681,11 @@ function get_list_all_users_du_resp($resp_login)
 function get_list_users_du_groupe($group_id)
 {
     $list_users=array();
+    $db = \includes\SQL::singleton();
     $sql1='SELECT DISTINCT(gu_login) FROM conges_groupe_users WHERE gu_gid = '.intval($group_id).' ORDER BY gu_login ';
-    $ReqLog1 = \includes\SQL::query($sql1);
+    $ReqLog1 = $db->query($sql1);
     while ($resultat1 = $ReqLog1->fetch_array())
-        $list_users[] = "'".\includes\SQL::quote($resultat1["gu_login"])."'";
+        $list_users[] = "'". $db->quote($resultat1["gu_login"])."'";
 
     $list_users = implode(' , ', $list_users);
     return $list_users;
@@ -691,8 +696,9 @@ function get_list_users_du_groupe($group_id)
 function get_list_groupes_du_resp($resp_login)
 {
     $list_group="";
-    $sql1='SELECT gr_gid FROM conges_groupe_resp WHERE gr_login="'.\includes\SQL::quote($resp_login).'" ORDER BY gr_gid';
-    $ReqLog1 = \includes\SQL::query($sql1);
+    $db = \includes\SQL::singleton();
+    $sql1='SELECT gr_gid FROM conges_groupe_resp WHERE gr_login="'. $db->quote($resp_login).'" ORDER BY gr_gid';
+    $ReqLog1 = $db->query($sql1);
 
     if ($ReqLog1->num_rows !=0)
     {
@@ -713,8 +719,9 @@ function get_list_groupes_du_resp($resp_login)
 function get_list_groupes_du_grand_resp($resp_login)
 {
     $list_group="";
-    $sql1='SELECT ggr_gid FROM conges_groupe_grd_resp WHERE ggr_login="'.\includes\SQL::quote($resp_login).'" ORDER BY ggr_gid';
-    $ReqLog1 = \includes\SQL::query($sql1);
+    $db = \includes\SQL::singleton();
+    $sql1='SELECT ggr_gid FROM conges_groupe_grd_resp WHERE ggr_login="'.$db->quote($resp_login).'" ORDER BY ggr_gid';
+    $ReqLog1 = $db->query($sql1);
 
     if ($ReqLog1->num_rows!=0)
     {
@@ -736,7 +743,7 @@ function get_list_groupes_double_valid()
 {
     $list_groupes_double_valid="";
     $sql1="SELECT g_gid FROM conges_groupe WHERE g_double_valid='Y' ORDER BY g_gid ";
-    $ReqLog1 = \includes\SQL::query($sql1);
+    $ReqLog1 = \includes\SQL::singleton()->query($sql1);
 
     while ($resultat1 = $ReqLog1->fetch_array())
     {
@@ -756,10 +763,11 @@ function get_list_groupes_double_valid_du_resp($resp_login)
 {
     $list_groupes_double_valid_du_resp="";
     $list_groups=get_list_groupes_du_resp($resp_login);
+    $db = \includes\SQL::singleton();
 
     if ($list_groups!="") { // si $resp_login est responsable d'au moins un groupe
-        $sql1='SELECT DISTINCT(g_gid) FROM conges_groupe WHERE g_double_valid=\'Y\' AND g_gid IN ('.\includes\SQL::quote($list_groups).') ORDER BY g_gid ';
-        $ReqLog1 = \includes\SQL::query($sql1);
+        $sql1='SELECT DISTINCT(g_gid) FROM conges_groupe WHERE g_double_valid=\'Y\' AND g_gid IN ('. $db->quote($list_groups).') ORDER BY g_gid ';
+        $ReqLog1 = $db->query($sql1);
 
         while ($resultat1 = $ReqLog1->fetch_array()) {
             $current_gid=$resultat1["g_gid"];
@@ -779,9 +787,10 @@ function get_list_groupes_double_valid_du_grand_resp($resp_login)
 {
 
     $list_groupes_double_valid_du_grand_resp="";
+    $db = \includes\SQL::singleton();
 
-    $sql1='SELECT DISTINCT(ggr_gid) FROM conges_groupe_grd_resp WHERE ggr_login="'.\includes\SQL::quote($resp_login).'" ORDER BY ggr_gid ';
-    $ReqLog1 = \includes\SQL::query($sql1);
+    $sql1='SELECT DISTINCT(ggr_gid) FROM conges_groupe_grd_resp WHERE ggr_login="'. $db->quote($resp_login).'" ORDER BY ggr_gid ';
+    $ReqLog1 = $db->query($sql1);
 
     while ($resultat1 = $ReqLog1->fetch_array())
     {
@@ -799,8 +808,9 @@ function get_list_groupes_double_valid_du_grand_resp($resp_login)
 function get_list_groupes_du_user($user_login)
 {
     $list_group=array();
-    $sql1='SELECT gu_gid FROM conges_groupe_users WHERE gu_login="'.\includes\SQL::quote($user_login).'" ORDER BY gu_gid';
-    $ReqLog1 = \includes\SQL::query($sql1);
+    $db = \includes\SQL::singleton();
+    $sql1='SELECT gu_gid FROM conges_groupe_users WHERE gu_login="'. $db->quote($user_login).'" ORDER BY gu_gid';
+    $ReqLog1 = $db->query($sql1);
 
     while ($resultat1 = $ReqLog1->fetch_array())
         $list_group[] = $resultat1["gu_gid"];
@@ -832,7 +842,8 @@ function get_list_all_users()
 //renvoit un tableau indexé de resp_login => "absent" ou "present"
 function get_tab_resp_du_user($user_login)
 {
-    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+    $db = \includes\SQL::singleton();
+    $config = new \App\Libraries\Configuration($db);
     $tab_resp=array();
     // recup des resp des groupes du user
     $list_groups=get_list_groupes_du_user($user_login);
@@ -840,8 +851,8 @@ function get_tab_resp_du_user($user_login)
         $tab_gid=explode(",", $list_groups);
         foreach ($tab_gid as $gid) {
             $gid=trim($gid);
-            $sql2='SELECT gr_login FROM conges_groupe_resp WHERE gr_gid=' . \includes\SQL::quote($gid) . ' AND gr_login!=\'' . \includes\SQL::quote($user_login) . '\'';
-            $ReqLog1 = \includes\SQL::query($sql2);
+            $sql2='SELECT gr_login FROM conges_groupe_resp WHERE gr_gid=' . $db->quote($gid) . ' AND gr_login!=\'' . $db->quote($user_login) . '\'';
+            $ReqLog1 = $db->query($sql2);
 
             while ($resultat1 = $ReqLog1->fetch_array()) {
                 //attention à ne pas mettre 2 fois le meme resp dans le tableau
@@ -858,8 +869,8 @@ function get_tab_resp_du_user($user_login)
     foreach ($tab_resp as $current_resp => $presence )
     {
         // verif dans la base si le current_resp est absent :
-        $req = 'SELECT u_is_active FROM conges_users WHERE u_login=\''.\includes\SQL::quote($current_resp).'\';';
-        $ReqLog_2 = \includes\SQL::query($req);
+        $req = 'SELECT u_is_active FROM conges_users WHERE u_login=\''. $db->quote($current_resp).'\';';
+        $ReqLog_2 = $db->query($req);
         $rec = $ReqLog_2->fetch_array();
         if ($rec['u_is_active'] == 'N') {
             $nb_present=$nb_present-1;
@@ -886,11 +897,11 @@ function get_tab_resp_du_user($user_login)
             // verif dans la base si le current_resp est absent :
             $req = 'SELECT p_num
                      FROM conges_periode
-                     WHERE p_login =\''.\includes\SQL::quote($current_resp).'\'
+                     WHERE p_login =\''. $db->quote($current_resp).'\'
                      AND p_etat = \'ok\'
                      AND TO_DAYS(conges_periode.p_date_deb) <= TO_DAYS(NOW())
                      AND TO_DAYS(conges_periode.p_date_fin) >= TO_DAYS(NOW())';
-            $ReqLog_3 = \includes\SQL::query($req);
+            $ReqLog_3 = $db->query($req);
             if ($ReqLog_3->num_rows!=0) {
                 $nb_present=$nb_present-1;
                 $tab_resp[$current_resp]="absent";
@@ -920,15 +931,16 @@ function get_tab_resp_du_user($user_login)
 // le login du user est passé en paramêtre ainsi que le tableau (vide) des resp
 function get_tab_grd_resp_du_user($user_login, &$tab_grd_resp)
 {
-    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+    $db = \includes\SQL::singleton();
+    $config = new \App\Libraries\Configuration($db);
     // recup des resp des groupes du user
     $list_groups=get_list_groupes_du_user($user_login);
     if ($list_groups!="") {
         $tab_gid=explode(",", $list_groups);
         foreach($tab_gid as $gid) {
             $gid=trim($gid);
-            $sql1='SELECT ggr_login FROM conges_groupe_grd_resp WHERE ggr_gid='.\includes\SQL::quote($gid);
-            $ReqLog1 = \includes\SQL::query($sql1);
+            $sql1='SELECT ggr_login FROM conges_groupe_grd_resp WHERE ggr_gid='. $db->quote($gid);
+            $ReqLog1 = $db->query($sql1);
 
             while ($resultat1 = $ReqLog1->fetch_array()) {
                 //attention à ne pas mettre 2 fois le meme resp dans le tableau
@@ -953,9 +965,10 @@ connecter alors qu'il n'a pas de compte dans
 
 */
     // connexion MySQL + selection de la database sur le serveur
+    $db = \includes\SQL::singleton();
 
-    $req = 'SELECT COUNT(*) FROM conges_users WHERE u_login="'.\includes\SQL::quote($username).'";';
-    $res = \includes\SQL::query($req);
+    $req = 'SELECT COUNT(*) FROM conges_users WHERE u_login="'. $db->quote($username).'";';
+    $res = $db->query($req);
     $cpt = $res->fetch_array();
     $cpt = $cpt[0];
 
@@ -988,10 +1001,11 @@ function is_hr($login)
 function is_active($login)
 {
     static $sql_is_active = array();
+    $db = \includes\SQL::singleton();
     if (!isset($sql_is_active[$login])) {
         // recup de qq infos sur le user
-        $select_info='SELECT u_is_active FROM conges_users WHERE u_login="'.\includes\SQL::quote($login).'";';
-        $ReqLog_info = \includes\SQL::query($select_info);
+        $select_info='SELECT u_is_active FROM conges_users WHERE u_login="'. $db->quote($login).'";';
+        $ReqLog_info = $db->query($select_info);
         $resultat_info = $ReqLog_info->fetch_array();
         $sql_is_active[$login]=$resultat_info["u_is_active"];
     }
@@ -1001,25 +1015,27 @@ function is_active($login)
 
 function is_resp_group_of_user($resp_login, $user_login)
 {
-    $ReqLog_info = \includes\SQL::query('SELECT count(*)
+    $db = \includes\SQL::singleton();
+    $ReqLog_info = $db->query('SELECT count(*)
             FROM `conges_groupe_users`
             JOIN conges_groupe_resp ON gr_gid = gu_gid
-            WHERE gu_login = \''.\includes\SQL::quote($user_login).'\'
-            AND gr_login = \''.\includes\SQL::quote($resp_login).'\';');
+            WHERE gu_login = \''. $db->quote($user_login).'\'
+            AND gr_login = \''. $db->quote($resp_login).'\';');
     $resultat_info = $ReqLog_info->fetch_array();
     return ($resultat_info[0] != 0);
 }
 
 function is_gr_group_of_user($resp_login, $user_login)
 {
-    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+    $db = \includes\SQL::singleton();
+    $config = new \App\Libraries\Configuration($db);
     if ($config->isDoubleValidationActive())
     {
-        $ReqLog_info = \includes\SQL::query('SELECT count(*)
+        $ReqLog_info = $db->query('SELECT count(*)
                 FROM `conges_groupe_users`
                 JOIN conges_groupe_grd_resp ON ggr_gid = gu_gid
-                WHERE gu_login = \''.\includes\SQL::quote($user_login).'\'
-                AND ggr_login = \''.\includes\SQL::quote($resp_login).'\';');
+                WHERE gu_login = \''. $db->quote($user_login).'\'
+                AND ggr_login = \''. $db->quote($resp_login).'\';');
         $resultat_info = $ReqLog_info->fetch_array();
         return ($resultat_info[0] != 0);
     }
@@ -1041,14 +1057,15 @@ function is_admin($login)
 function insert_dans_periode($login, $date_deb, $demi_jour_deb, $date_fin, $demi_jour_fin, $nb_jours, $commentaire, $id_type_abs, $etat, $id_fermeture)
 {
     // Récupération du + grand p_num (+ grand numero identifiant de conges)
+    $db = \includes\SQL::singleton();
     $sql1 = "SELECT max(p_num) FROM conges_periode" ;
-    $ReqLog1 = \includes\SQL::query($sql1);
+    $ReqLog1 = $db->query($sql1);
     if ( $num_new_demande = $ReqLog1->fetch_row() )
         $num_new_demande = $num_new_demande[0] +1;
     else
         $num_new_demande = 1;
 
-    $sql2 = "INSERT INTO conges_periode SET p_login='$login',p_date_deb='$date_deb', p_demi_jour_deb='$demi_jour_deb',p_date_fin='$date_fin', p_demi_jour_fin='$demi_jour_fin', p_nb_jours='$nb_jours', p_commentaire='".\includes\SQL::quote($commentaire)."', p_type='$id_type_abs', p_etat='$etat', ";
+    $sql2 = "INSERT INTO conges_periode SET p_login='$login',p_date_deb='$date_deb', p_demi_jour_deb='$demi_jour_deb',p_date_fin='$date_fin', p_demi_jour_fin='$demi_jour_fin', p_nb_jours='$nb_jours', p_commentaire='". $db->quote($commentaire)."', p_type='$id_type_abs', p_etat='$etat', ";
 
     if ($id_fermeture!=0)
         $sql2 = $sql2." p_fermeture_id='$id_fermeture' ," ;
@@ -1058,7 +1075,7 @@ function insert_dans_periode($login, $date_deb, $demi_jour_deb, $date_fin, $demi
         $sql2 = $sql2." p_date_traitement=NOW() ," ;
 
     $sql2 = $sql2." p_num='$num_new_demande' " ;
-    $result = \includes\SQL::query($sql2);
+    $result = $db->query($sql2);
 
     if ($id_fermeture!=0)
         $comment_log = "saisie de fermeture num $num_new_demande (type $id_type_abs) pour $login ($nb_jours jours) (de $date_deb $demi_jour_deb à $date_fin $demi_jour_fin)";
@@ -1084,7 +1101,7 @@ function init_tab_jours_feries()
         $_SESSION['tab_j_feries'] = [];
 
         $sql_select='SELECT jf_date FROM conges_jours_feries;';
-        $res_select = \includes\SQL::query($sql_select);
+        $res_select = \includes\SQL::singleton()->query($sql_select);
 
         while ($row = $res_select->fetch_array())
         {
@@ -1108,6 +1125,7 @@ function init_config_tab()
 {
     static $userlogin = null;
     static $result = null;
+    $db = \includes\SQL::singleton();
     if ($result === null || (isset($_SESSION['userlogin']) && $userlogin != $_SESSION['userlogin'])) {
 
         include ROOT_PATH .'version.php';
@@ -1123,7 +1141,7 @@ function init_config_tab()
         /******************************************/
         //  recup des variables de la table conges_appli
         $sql_appli = "SELECT appli_variable, appli_valeur FROM conges_appli;";
-        $req_appli = \includes\SQL::query($sql_appli) ;
+        $req_appli = $db->query($sql_appli) ;
 
         while ($data_appli = $req_appli->fetch_array())
         {
@@ -1135,7 +1153,7 @@ function init_config_tab()
         /******************************************/
         //  recup des mails dans  la table conges_mail
         $sql_mail = "SELECT mail_nom, mail_subject, mail_body FROM conges_mail;";
-        $req_mail = \includes\SQL::query($sql_mail) ;
+        $req_mail = $db->query($sql_mail) ;
 
         while ($data_mail = $req_mail->fetch_array())
         {
@@ -1186,7 +1204,7 @@ function init_config_tab()
         if (isset($_SESSION['userlogin']))
         {
             $sql_user = "SELECT u_nom, u_prenom, u_is_resp, u_is_admin, u_is_hr, u_is_active FROM conges_users WHERE u_login='".$_SESSION['userlogin']."' ";
-            $req_user = \includes\SQL::query($sql_user) ;
+            $req_user = $db->query($sql_user) ;
 
             if ($data_user = $req_user->fetch_array()) {
                 $_SESSION['u_nom']    = $data_user[0] ;
@@ -1222,7 +1240,7 @@ function recup_tableau_types_conges()
 {
     $result = array();
     $request = 'SELECT ta_id, ta_libelle FROM conges_type_absence WHERE ta_type=\'conges\';';
-    $data   = \includes\SQL::query($request);
+    $data   = \includes\SQL::singleton()->query($request);
 
     while ($l = $data->fetch_array())
     {
@@ -1237,7 +1255,7 @@ function recup_tableau_types_absence()
 {
     $result = array();
     $request = 'SELECT ta_id, ta_libelle FROM conges_type_absence WHERE ta_type=\'absences\';';
-    $data   = \includes\SQL::query($request);
+    $data   = \includes\SQL::singleton()->query($request);
 
     while ($l = $data->fetch_array())
     {
@@ -1252,7 +1270,7 @@ function recup_tableau_types_conges_exceptionnels()
 {
     $result = array();
     $request = 'SELECT ta_id, ta_libelle FROM conges_type_absence WHERE ta_type=\'conges_exceptionnels\';';
-    $data   = \includes\SQL::query($request);
+    $data   = \includes\SQL::singleton()->query($request);
 
     while ($l = $data->fetch_array())
     {
@@ -1265,14 +1283,15 @@ function recup_tableau_types_conges_exceptionnels()
 // recup dans un tableau de tableau les infos des types de conges et absences
 function recup_tableau_tout_types_abs( )
 {
-    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+    $db = \includes\SQL::singleton();
+    $config = new \App\Libraries\Configuration($db);
     $result = array();
     if ($config->isCongesExceptionnelsActive()) // on prend tout les types de conges
         $request = 'SELECT ta_id, ta_type, ta_libelle, ta_short_libelle FROM conges_type_absence;';
     else // on prend tout les types de conges SAUF les conges exceptionnels
         $request = 'SELECT ta_id, ta_type, ta_libelle, ta_short_libelle FROM conges_type_absence WHERE conges_type_absence.ta_type != \'conges_exceptionnels\';';
 
-    $data = \includes\SQL::query($request);
+    $data = $db->query($request);
 
     while ($resultat_cong = $data->fetch_array())
     {
@@ -1285,15 +1304,16 @@ function recup_tableau_tout_types_abs( )
 // recup dans un tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
 function recup_tableau_conges_for_user($login, $hide_conges_exceptionnels)
 {
-    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+    $db = \includes\SQL::singleton();
+    $config = new \App\Libraries\Configuration($db);
     // on pourrait tout faire en un seule select, mais cela bug si on change la prise en charge des conges exceptionnels en cours d'utilisation ...
 
     if ($config->isCongesExceptionnelsActive() && ! $hide_conges_exceptionnels) // on prend tout les types de conges
-        $request = 'SELECT ta_libelle, su_nb_an, su_solde, su_reliquat FROM conges_solde_user, conges_type_absence WHERE conges_type_absence.ta_id = conges_solde_user.su_abs_id AND su_login = "'.\includes\SQL::quote($login).'" ORDER BY su_abs_id ASC;';
+        $request = 'SELECT ta_libelle, su_nb_an, su_solde, su_reliquat FROM conges_solde_user, conges_type_absence WHERE conges_type_absence.ta_id = conges_solde_user.su_abs_id AND su_login = "'. $db->quote($login).'" ORDER BY su_abs_id ASC;';
     else // on prend tout les types de conges SAUF les conges exceptionnels
-        $request = 'SELECT ta_libelle, su_nb_an, su_solde, su_reliquat FROM conges_solde_user, conges_type_absence WHERE conges_type_absence.ta_type != \'conges_exceptionnels\' AND conges_type_absence.ta_id = conges_solde_user.su_abs_id AND su_login = "'.\includes\SQL::quote($login).'" ORDER BY su_abs_id ASC;';
+        $request = 'SELECT ta_libelle, su_nb_an, su_solde, su_reliquat FROM conges_solde_user, conges_type_absence WHERE conges_type_absence.ta_type != \'conges_exceptionnels\' AND conges_type_absence.ta_id = conges_solde_user.su_abs_id AND su_login = "'. $db->quote($login).'" ORDER BY su_abs_id ASC;';
 
-    $data   = \includes\SQL::query($request);
+    $data   = $db->query($request);
 
     $result = array();
 
@@ -1674,7 +1694,7 @@ function get_list_users_des_groupes_du_resp_sauf_resp($resp_login)
     $list_groups=get_list_groupes_du_resp($resp_login);
     if ($list_groups!="") { // si $resp_login est responsable d'au moins un groupe
         $sql1="SELECT DISTINCT(gu_login) FROM conges_groupe_users WHERE gu_gid IN ($list_groups) AND gu_login NOT IN (SELECT gr_login FROM conges_groupe_resp WHERE gr_gid IN ($list_groups)) ORDER BY gu_login ";
-        $ReqLog1 = \includes\SQL::query($sql1);
+        $ReqLog1 = \includes\SQL::singleton()->query($sql1);
 
         while ($resultat1 = $ReqLog1->fetch_array())
         {
