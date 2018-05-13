@@ -824,7 +824,7 @@ function get_list_all_users()
 {
     $list_users="";
     $sql1="SELECT DISTINCT(u_login) FROM conges_users WHERE u_login!='conges' AND u_login!='admin' ORDER BY u_login " ;
-    $ReqLog1 = \includes\SQL::query($sql1);
+    $ReqLog1 = \includes\SQL::singleton()->query($sql1);
 
     while ($resultat1 = $ReqLog1->fetch_array())
     {
@@ -1329,9 +1329,10 @@ function recup_tableau_conges_for_user($login, $hide_conges_exceptionnels)
 // affichage du tableau récapitulatif des solde de congés d'un user
 function affiche_tableau_bilan_conges_user($login)
 {
-    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
-    $request = 'SELECT u_quotite FROM conges_users where u_login = "'. \includes\SQL::quote($login).'";';
-    $ReqLog = \includes\SQL::query($request) ;
+    $db = \includes\SQL::singleton();
+    $config = new \App\Libraries\Configuration($db);
+    $request = 'SELECT u_quotite FROM conges_users where u_login = "'. $db->quote($login).'";';
+    $ReqLog = $db->query($request) ;
     $resultat = $ReqLog->fetch_array();
     $sql_quotite=$resultat['u_quotite'];
     $return = '';
@@ -1388,11 +1389,12 @@ function affiche_tableau_bilan_conges_user($login)
 // renvoit FALSE si erreur
 function recup_infos_du_user($login, $list_groups_double_valid)
 {
-    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+    $db = \includes\SQL::singleton();
+    $config = new \App\Libraries\Configuration($db);
     $tab=array();
     $sql1 = 'SELECT * FROM conges_users ' .
-            'WHERE u_login="'.\includes\SQL::quote($login).'";';
-    $ReqLog = \includes\SQL::query($sql1) ;
+            'WHERE u_login="'. $db->quote($login).'";';
+    $ReqLog = $db->query($sql1) ;
 
     if ($resultat = $ReqLog->fetch_array()) {
         $tab_user=array();
@@ -1416,8 +1418,8 @@ function recup_infos_du_user($login, $list_groups_double_valid)
         // on regarde ici si le user est dans un groupe qui fait l'objet d'une double validation
         if ($config->isDoubleValidationActive()) {
             if ($list_groups_double_valid!="") { // si $resp_login est responsable d'au moins un groupe a double validation
-                $sql1='SELECT gu_login FROM conges_groupe_users WHERE gu_login="'.\includes\SQL::quote($login).'" AND gu_gid IN ('.$list_groups_double_valid.') ORDER BY gu_gid, gu_login;';
-                $ReqLog1 = \includes\SQL::query($sql1);
+                $sql1='SELECT gu_login FROM conges_groupe_users WHERE gu_login="'. $db->quote($login).'" AND gu_gid IN ('.$list_groups_double_valid.') ORDER BY gu_gid, gu_login;';
+                $ReqLog1 = $db->query($sql1);
 
                 if ($ReqLog1->num_rows  !=0)
                     $tab_user['double_valid'] = 'Y';
@@ -1435,7 +1437,7 @@ function recup_infos_all_users()
     $tab=array();
     $list_groupes_double_validation=get_list_groupes_double_valid();
     $sql1 = "SELECT u_login FROM conges_users WHERE u_login!='conges' AND u_login!='admin' ORDER BY u_nom";
-    $ReqLog = \includes\SQL::query($sql1);
+    $ReqLog = \includes\SQL::singleton()->query($sql1);
 
     while ($resultat =$ReqLog->fetch_array())
     {
@@ -1494,14 +1496,15 @@ function recup_infos_all_users_du_resp($login)
 // renvoit un tableau de tableau contenant les informations de tous les users dont $login est GRAND responsable
 function recup_infos_all_users_du_grand_resp($login)
 {
+    $db = \includes\SQL::singleton();
     $tab=array();
     $list_groups_double_valid=get_list_groupes_double_valid_du_grand_resp($login);
 
     if ($list_groups_double_valid!="")
     {
         // recup de la liste des users des groupes de la liste $list_groups_double_valid
-        $sql_users = 'SELECT DISTINCT(gu_login) FROM conges_groupe_users, conges_users WHERE gu_gid IN ('.\includes\SQL::quote($list_groups_double_valid).') AND gu_login=u_login ORDER BY u_nom;';
-        $ReqLog_users = \includes\SQL::query($sql_users) ;
+        $sql_users = 'SELECT DISTINCT(gu_login) FROM conges_groupe_users, conges_users WHERE gu_gid IN ('. $db->quote($list_groups_double_valid).') AND gu_login=u_login ORDER BY u_nom;';
+        $ReqLog_users = $db->query($sql_users) ;
         $list_all_users_dbl_valid="";
         while ($resultat_users =$ReqLog_users->fetch_array())
         {
@@ -1539,7 +1542,7 @@ function execute_sql_file($file)
         if ((substr($line, 0, 1)!="#") && ($line!="")) { //on ne prend pas les lignes de commentaire
             $sql_requete = $sql_requete.$line ;
             if (substr($sql_requete, -1, 1)==";") { // alors la requete est finie !
-                $result = \includes\SQL::query($sql_requete);
+                $result = \includes\SQL::singleton()->query($sql_requete);
                 $sql_requete="";
             }
         }
@@ -1579,6 +1582,7 @@ function verif_droits_user($niveau_droits)
 // retourne TRUE ou FALSE
 function log_action($num_periode, $etat_periode, $login_pour, $comment)
 {
+    $db = \includes\SQL::singleton();
     $comment = htmlentities($comment, ENT_QUOTES | ENT_HTML401);
 
     if (isset($_SESSION['userlogin']))
@@ -1586,8 +1590,8 @@ function log_action($num_periode, $etat_periode, $login_pour, $comment)
     else
         $user = "inconnu";
 
-    $sql1 = 'INSERT INTO conges_logs SET log_p_num="'.\includes\SQL::quote($num_periode).'",log_user_login_par="'.\includes\SQL::quote($user).'",log_user_login_pour="'.\includes\SQL::quote($login_pour).'",log_etat="'.\includes\SQL::quote($etat_periode).'",log_comment="'.\includes\SQL::quote($comment).'",log_date=NOW()';
-    $result = \includes\SQL::query($sql1);
+    $sql1 = 'INSERT INTO conges_logs SET log_p_num="'. $db->quote($num_periode).'",log_user_login_par="'. $db->quote($user).'",log_user_login_pour="'. $db->quote($login_pour).'",log_etat="'. $db->quote($etat_periode).'",log_comment="'. $db->quote($comment).'",log_date=NOW()';
+    $result = $db->query($sql1);
 
     return $result;
 }
@@ -1595,9 +1599,10 @@ function log_action($num_periode, $etat_periode, $login_pour, $comment)
 // remplit le tableau global des jours feries a partir de la database
 function init_tab_jours_fermeture($user)
 {
+    $db = \includes\SQL::singleton();
     $_SESSION["tab_j_fermeture"]=array();
-    $sql_select='SELECT DISTINCT jf_date FROM conges_jours_fermeture, conges_groupe_users WHERE gu_login="'.\includes\SQL::quote($user).'" AND gu_gid=jf_gid';
-    $res_select = \includes\SQL::query($sql_select);
+    $sql_select='SELECT DISTINCT jf_date FROM conges_jours_fermeture, conges_groupe_users WHERE gu_login="'. $db->quote($user).'" AND gu_gid=jf_gid';
+    $res_select = $db->query($sql_select);
 
     while( $row = $res_select->fetch_array())
         $_SESSION["tab_j_fermeture"][]=$row["jf_date"];
@@ -1616,8 +1621,9 @@ function est_ferme($timestamp)
 // renvoit le "su_reliquat" pour un user et un type de conges donné
 function get_reliquat_user_conges($login, $type_abs)
 {
-    $select_info='SELECT su_reliquat FROM conges_solde_user WHERE su_login="'.\includes\SQL::quote($login).'" AND su_abs_id="'.\includes\SQL::quote($type_abs).'"';
-    $ReqLog_info = \includes\SQL::query($select_info);
+    $db = \includes\SQL::singleton();
+    $select_info='SELECT su_reliquat FROM conges_solde_user WHERE su_login="'. $db->quote($login).'" AND su_abs_id="'. $db->quote($type_abs).'"';
+    $ReqLog_info = $db->query($select_info);
     $resultat_info = $ReqLog_info->fetch_array();
     $sql_reliquat=$resultat_info["su_reliquat"];
 
@@ -1632,7 +1638,9 @@ function get_reliquat_user_conges($login, $type_abs)
 */
 function soustrait_solde_et_reliquat_user($user_login, $num_current_periode, $user_nb_jours_pris, $type_abs, $date_deb, $demi_jour_deb, $date_fin, $demi_jour_fin)
 {
-    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+    $db = \includes\SQL::singleton();
+    $config = new \App\Libraries\Configuration($db);
+    $new_reliquat = null;
 
     $VerifDec = verif_saisie_decimal($user_nb_jours_pris);
 
@@ -1675,15 +1683,15 @@ function soustrait_solde_et_reliquat_user($user_login, $num_current_periode, $us
         }
         $VerifDec = verif_saisie_decimal($user_nb_jours_pris);
         $VerifDec = verif_saisie_decimal($new_reliquat);
-        $sql2 = 'UPDATE conges_solde_user SET su_solde=su_solde-'.\includes\SQL::quote($user_nb_jours_pris).', su_reliquat='.\includes\SQL::quote($new_reliquat).' WHERE su_login="'.\includes\SQL::quote($user_login).'"  AND su_abs_id='.\includes\SQL::quote($type_abs).' ';
+        $sql2 = 'UPDATE conges_solde_user SET su_solde=su_solde-'. $db->quote($user_nb_jours_pris).', su_reliquat='. $db->quote($new_reliquat).' WHERE su_login="'. $db->quote($user_login).'"  AND su_abs_id='. $db->quote($type_abs).' ';
     }
     else
     {
         $VerifDec = verif_saisie_decimal($user_nb_jours_pris);
         $VerifDec = verif_saisie_decimal($new_reliquat);
-        $sql2 = 'UPDATE conges_solde_user SET su_solde=su_solde-'.\includes\SQL::quote($user_nb_jours_pris).' WHERE su_login=\''.\includes\SQL::quote($user_login).'\'  AND su_abs_id=\''.$type_abs.'\' ';
+        $sql2 = 'UPDATE conges_solde_user SET su_solde=su_solde-'. $db->quote($user_nb_jours_pris).' WHERE su_login=\''. $db->quote($user_login).'\'  AND su_abs_id=\''.$type_abs.'\' ';
     }
-    $ReqLog2 = \includes\SQL::query($sql2) ;
+    $ReqLog2 = $db->query($sql2) ;
 }
 
 // recup de la liste des users des groupes dont $resp_login est responsable mais ne remonte pas les autres responsables

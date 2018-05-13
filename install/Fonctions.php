@@ -32,7 +32,7 @@ class Fonctions {
         try {
             \includes\SQL::singleton();
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             return false;
         }
         return \includes\SQL::getVar('connect_errno') == 0 ;
@@ -42,16 +42,17 @@ class Fonctions {
 
     // renvoit le num de la version installée ou 0 s'il est inaccessible (non renseigné ou table non présente)
     public static function get_installed_version() {
+        $db = \includes\SQL::singleton();
         try {
-            $reglog = \includes\SQL::query('show tables like \'conges_config\';');
+            $reglog = $db->query('show tables like \'conges_config\';');
             if( $reglog->num_rows == 0)
                 return 0;
             $sql="SELECT conf_valeur FROM conges_config WHERE conf_nom='installed_version' ";
-            if($reglog = \includes\SQL::query($sql))
+            if($reglog = $db->query($sql))
                 if($result=$reglog->fetch_array())
                     return $result['conf_valeur'];
         }
-        catch(Exception $e) {
+        catch(\Exception $e) {
             return 0;
         }
         return 0;
@@ -69,7 +70,7 @@ class Fonctions {
             `test2` varchar(100) BINARY NOT NULL default '',
             PRIMARY KEY  (`test1`)
                 ) ;";
-        return \includes\SQL::query($sql_create);
+        return \includes\SQL::singleton()->query($sql_create);
     }
 
 
@@ -79,7 +80,7 @@ class Fonctions {
         /*********************************************/
         // alter de la table `conges_test`
         $sql_alter="ALTER TABLE `conges_test` CHANGE `test2` `test2` varchar(150) ;" ;
-        return \includes\SQL::query($sql_alter) ;
+        return \includes\SQL::singleton()->query($sql_alter) ;
     }
 
 
@@ -89,7 +90,7 @@ class Fonctions {
         /*********************************************/
         // suppression de la table `conges_test`
         $sql_drop="DROP TABLE `conges_test` ;" ;
-        return \includes\SQL::query($sql_drop);
+        return \includes\SQL::singleton()->query($sql_drop);
     }
 
     public static function write_db_config($server,$user,$passwd,$db){
@@ -170,6 +171,7 @@ class Fonctions {
         include CONFIG_PATH . 'dbconnect.php';
         include ROOT_PATH .'version.php' ;
 
+        $db = \includes\SQL::singleton();
         //verif si create / alter table possible !!!
         if(!\install\Fonctions::test_create_table())
         {
@@ -195,16 +197,16 @@ class Fonctions {
                 $result = execute_sql_file($file_sql);
             }
             if (0 <= version_compare($config_php_conges_version, '1.9')) {
-                \includes\SQL::query('UPDATE `conges_appli` SET appli_valeur =  "' . hash('sha256', time() . rand()) . '" WHERE appli_variable = "token_instance"');
+                $db->query('UPDATE `conges_appli` SET appli_valeur =  "' . hash('sha256', time() . rand()) . '" WHERE appli_variable = "token_instance"');
             }
 
             /*************************************/
             // FIN : mise à jour de la "installed_version" et de la langue dans la table conges_config
             $sql_update_version="UPDATE conges_config SET conf_valeur = '$config_php_conges_version' WHERE conf_nom='installed_version' ";
-            $result_update_version = \includes\SQL::query($sql_update_version) ;
+            $result_update_version = $db->query($sql_update_version) ;
 
             $sql_update_lang="UPDATE conges_config SET conf_valeur = '$lang' WHERE conf_nom='lang' ";
-            $result_update_lang = \includes\SQL::query($sql_update_lang) ;
+            $result_update_lang = $db->query($sql_update_lang) ;
             /* Prénommage de l'instance et pointage API */
             self::addInstanceName(\includes\SQL::singleton());
 
@@ -227,6 +229,7 @@ class Fonctions {
 
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         include CONFIG_PATH .'dbconnect.php' ;
+        $db = \includes\SQL::singleton();
 
 
         //*** ETAPE 0
@@ -312,7 +315,7 @@ class Fonctions {
             }
         } elseif($etape == 3) {
             /* Reset du token d'instance à chaque version */
-            \includes\SQL::query('UPDATE `conges_appli` SET appli_valeur =  "' . hash('sha256', time() . rand()) . '" WHERE appli_variable = "token_instance"');
+            $db->query('UPDATE `conges_appli` SET appli_valeur =  "' . hash('sha256', time() . rand()) . '" WHERE appli_variable = "token_instance"');
             // FIN
             // test si fichiers config.php ou config_old.php existent encore (si oui : demande de les effacer !
             if( (\install\Fonctions::test_config_file()) || (\install\Fonctions::test_old_config_file()) )
@@ -331,10 +334,10 @@ class Fonctions {
             {
                 // mise à jour de la "installed_version" et de la langue dans la table conges_config
                 $sql_update_version="UPDATE conges_config SET conf_valeur = '$config_php_conges_version' WHERE conf_nom='installed_version' ";
-                $result_update_version = \includes\SQL::query($sql_update_version) ;
+                $result_update_version = $db->query($sql_update_version) ;
 
                 $sql_update_lang="UPDATE conges_config SET conf_valeur = '$lang' WHERE conf_nom='lang' ";
-                $result_update_lang = \includes\SQL::query($sql_update_lang) ;
+                $result_update_lang = $db->query($sql_update_lang) ;
 
                 $comment_log = _('install_maj_titre_2')." (version $installed_version --> version $config_php_conges_version) ";
                 log_action(0, "", "", $comment_log);
@@ -356,7 +359,7 @@ class Fonctions {
             `p_is_install` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Plugin is installed ?',
             PRIMARY KEY (`id`)
                 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-        $result_create_table_plugin = \includes\SQL::query($create_table_plugin_query);
+        $result_create_table_plugin = \includes\SQL::singleton()->query($create_table_plugin_query);
     }
 
     /**

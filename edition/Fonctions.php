@@ -72,7 +72,8 @@ class Fonctions
 
     public static function affiche_nouvelle_edition($login)
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+        $db = \includes\SQL::singleton();
+        $config = new \App\Libraries\Configuration($db);
         $return = '';
         $return .= '<CENTER>';
 
@@ -88,7 +89,7 @@ class Fonctions
         $sql2=$sql2."AND (p_login = '$login') ";
         $sql2=$sql2."AND (a.p_type=b.ta_id AND  ( (b.ta_type='conges') OR (b.ta_type='conges_exceptionnels') ) )";
         $sql2=$sql2."ORDER BY p_date_deb ASC ";
-        $ReqLog2 = \includes\SQL::query($sql2);
+        $ReqLog2 = $db->query($sql2);
 
         $return .= '<h3>' . _('editions_last_edition') . ' :</h3>';
 
@@ -191,10 +192,11 @@ class Fonctions
 
     public static function affichage($login)
     {
+        $db = \includes\SQL::singleton();
         $return = '';
 
-        $sql1 = 'SELECT u_nom, u_prenom, u_quotite FROM conges_users where u_login = "'. \includes\SQL::quote($login).'"';
-        $ReqLog1 = \includes\SQL::query($sql1);
+        $sql1 = 'SELECT u_nom, u_prenom, u_quotite FROM conges_users where u_login = "'. $db->quote($login).'"';
+        $ReqLog1 = $db->query($sql1);
 
         while ($resultat1 = $ReqLog1->fetch_array()) {
             $sql_nom=$resultat1["u_nom"];
@@ -278,7 +280,8 @@ class Fonctions
 
     public static function edition_papier($login, $edit_id)
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+        $db = \includes\SQL::singleton();
+        $config = new \App\Libraries\Configuration($db);
         $return = '';
 
         // recup infos du user
@@ -348,7 +351,7 @@ class Fonctions
         $sql2=$sql2."FROM conges_periode ";
         $sql2=$sql2."WHERE p_edition_id = $edit_id ";
         $sql2=$sql2."ORDER BY p_date_deb ASC ";
-        $ReqLog2 = \includes\SQL::query($sql2);
+        $ReqLog2 = $db->query($sql2);
 
         $count2=$ReqLog2->num_rows;
         if ($count2==0) {
@@ -825,7 +828,8 @@ class Fonctions
 
     public static function edition_pdf($login, $edit_id)
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+        $db = \includes\SQL::singleton();
+        $config = new \App\Libraries\Configuration($db);
         // recup du tableau des types de conges (seulement les conges)
         $tab_type_cong=recup_tableau_types_conges();
         // recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
@@ -902,7 +906,7 @@ class Fonctions
         $sql2=$sql2."FROM conges_periode ";
         $sql2=$sql2."WHERE p_edition_id = $edit_id ";
         $sql2=$sql2."ORDER BY p_date_deb ASC ";
-        $ReqLog2 = \includes\SQL::query($sql2) ;
+        $ReqLog2 = $db->query($sql2) ;
 
         $count2=$ReqLog2->num_rows;
         if ($count2==0) {
@@ -1010,7 +1014,7 @@ class Fonctions
         $sql2 = "SELECT ep_id, ep_date, ep_num_for_user ";
         $sql2=$sql2."FROM conges_edition_papier WHERE ep_login = '$login' ";
         $sql2=$sql2."ORDER BY ep_num_for_user DESC ";
-        $ReqLog2 = \includes\SQL::query($sql2);
+        $ReqLog2 = \includes\SQL::singleton()->query($sql2);
 
         if ($ReqLog2->num_rows != 0)
         {
@@ -1035,9 +1039,10 @@ class Fonctions
     {
 
         $tab=array();
+        $db = \includes\SQL::singleton();
 
-        $sql_edition= 'SELECT ep_date, ep_num_for_user FROM conges_edition_papier where ep_id = '.\includes\SQL::quote($edit_id);
-        $ReqLog_edition = \includes\SQL::query($sql_edition);
+        $sql_edition= 'SELECT ep_date, ep_num_for_user FROM conges_edition_papier where ep_id = '. $db->quote($edit_id);
+        $ReqLog_edition = $db->query($sql_edition);
 
         if ($resultat_edition = $ReqLog_edition->fetch_array())
         {
@@ -1053,8 +1058,9 @@ class Fonctions
     public static function recup_info_user_pour_edition($login)
     {
         $tab=array();
-        $sql_user = 'SELECT u_nom, u_prenom, u_quotite FROM conges_users where u_login = "'. \includes\SQL::quote($login).'"';
-        $ReqLog_user = \includes\SQL::query($sql_user);
+        $db = \includes\SQL::singleton();
+        $sql_user = 'SELECT u_nom, u_prenom, u_quotite FROM conges_users where u_login = "'. $db->quote($login).'"';
+        $ReqLog_user = $db->query($sql_user);
 
         while ($resultat_user = $ReqLog_user->fetch_array()) {
             $tab['nom']=$resultat_user["u_nom"];
@@ -1073,8 +1079,9 @@ class Fonctions
     {
 
         $tab=array();
-        $sql_ed = 'SELECT se_id_absence, se_solde FROM conges_solde_edition where se_id_edition = '.\includes\SQL::quote($edition_id);
-        $ReqLog_ed = \includes\SQL::query($sql_ed);
+        $db = \includes\SQL::singleton();
+        $sql_ed = 'SELECT se_id_absence, se_solde FROM conges_solde_edition where se_id_edition = '. $db->quote($edition_id);
+        $ReqLog_ed = $db->query($sql_ed);
 
         $tab=array();
         while ($resultat_ed = $ReqLog_ed->fetch_array())
@@ -1088,18 +1095,18 @@ class Fonctions
     // renvoi le id de la table edition_papier de l'edition précédente pour un user donné et un edition_id donnée.
     public static function get_id_edition_precedente_user($login, $edition_id)
     {
-
+        $db = \includes\SQL::singleton();
         // verif si le user n'a pas une seule edition
-        $sql1 = 'SELECT * FROM conges_edition_papier WHERE ep_login="'.\includes\SQL::quote($login).'"';
-        $ReqLog1 = \includes\SQL::query($sql1);
+        $sql1 = 'SELECT * FROM conges_edition_papier WHERE ep_login="'. $db->quote($login).'"';
+        $ReqLog1 = $db->query($sql1);
 
         $resultat1 = $ReqLog1->num_rows ;
         if ($resultat1<=1)    // une seule edition pour ce user
             return 0;
         else
         {
-            $sql2 = 'SELECT MAX(ep_id) FROM conges_edition_papier WHERE ep_login="'. \includes\SQL::quote($login).'" AND ep_id<'.\includes\SQL::quote($edition_id);
-            $ReqLog2 = \includes\SQL::query($sql2);
+            $sql2 = 'SELECT MAX(ep_id) FROM conges_edition_papier WHERE ep_login="' . $db->quote($login).'" AND ep_id<'. $db->quote($edition_id);
+            $ReqLog2 = $db->query($sql2);
             $tmp = $ReqLog2->fetch_row();
             return $tmp[0];
         }

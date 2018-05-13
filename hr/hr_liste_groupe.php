@@ -30,7 +30,8 @@ if (!empty($_POST)) {
     }
 }
 
-$config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+$sql = \includes\SQL::singleton();
+$config = new \App\Libraries\Configuration($sql);
 $isDoubleValidationActive = $config->isDoubleValidationActive();
 $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
 $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
