@@ -3,10 +3,6 @@ defined('_PHP_CONGES') or die('Restricted access');
 $conge = new \App\ProtoControllers\Employe\Conge();
 $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
-\Rollbar\Rollbar::debug('This is a rollbar debug message');
-throw new \DomainException("This var doesn't comply with the expected", 1);
-
-
 /**
  * Y-a-t-il une recherche dans l'avion ?
  *

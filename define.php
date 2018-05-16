@@ -10,7 +10,6 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     define('SHOW_SQL',         false);
     define('DS',               DIRECTORY_SEPARATOR);
     define('ABSOLUTE_SYSPATH', dirname(__FILE__) . DS);
-    define('DEBUG_SYSPATH',    ABSOLUTE_SYSPATH . 'debug' . DS);
     define('PUBLIC_PATH',      ROOT_PATH . 'Public/');
     define('VIEW_PATH', ROOT_PATH . 'App' . DS . 'Views' . DS);
     define('ASSETS_PATH',      PUBLIC_PATH . 'Assets/');
@@ -38,33 +37,31 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     require_once ROOT_PATH . 'vendor/raveren/kint/Kint.class.php';
     require_once CONFIG_PATH . 'env.php';
 
-    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
-
-    \Kint::enabled(false);
-    \Kint::$theme = 'solarized-dark';
-
     switch (ENV) {
         case ENV_PROD:
+        default:
             error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
             ini_set("display_errors", 0);
             $environnement = 'production';
+            \Kint::enabled(false);
             break;
         case ENV_DEV:
             \Kint::enabled(true);
-            ini_set("display_errors", 1);
+            \Kint::$theme = 'solarized-dark';
             error_reporting(-1);
+            ini_set("display_errors", 1);
             $environnement = 'development';
             break;
         case ENV_TEST:
             \Kint::enabled(true);
+            \Kint::$theme = 'solarized-dark';
             error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
             ini_set("display_errors", 1);
             $environnement = 'test';
             break;
-        default:
-            throw new \ErrorException('Bad configuration');
     }
     if (!empty(LOGGER_TOKEN) {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         \Rollbar\Rollbar::init([
             'access_token' => LOGGER_TOKEN,
             'environment' => $environnement,
