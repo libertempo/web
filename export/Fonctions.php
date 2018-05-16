@@ -92,7 +92,7 @@ class Fonctions
     		// on prend toutes les periodes de conges qui chevauchent la periode donnée par les dates demandées
     		$sql_periodes="SELECT p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_commentaire, p_type, p_etat, p_date_demande  " .
     				'FROM conges_periode WHERE p_login=\''. $db->quote($user_login).'\' AND ((p_date_deb>=\''. $db->quote($good_date_debut).'\' AND  p_date_deb<=\''.$db->quote($good_date_fin).'\') OR (p_date_fin>=\''. $db->quote($good_date_debut).'\' AND p_date_fin<=\''. $db->quote($good_date_fin).'\'))';
-    		$res_periodes = $db->query($sql_periodes);
+            $res_periodes = $db->query($sql_periodes);
 
     		if ($res_periodes->num_rows!=0) {
     			while ($result_periodes = $res_periodes->fetch_array()) {

@@ -932,7 +932,6 @@ function get_tab_resp_du_user($user_login)
 function get_tab_grd_resp_du_user($user_login, &$tab_grd_resp)
 {
     $db = \includes\SQL::singleton();
-    $config = new \App\Libraries\Configuration($db);
     // recup des resp des groupes du user
     $list_groups=get_list_groupes_du_user($user_login);
     if ($list_groups!="") {

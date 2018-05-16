@@ -48,7 +48,7 @@ class Fonctions
                         // 1 : on update conges_solde_user
                         $req_update = "UPDATE conges_solde_user SET su_solde = su_solde+$nb_conges
                             WHERE  su_login = '$current_login' AND su_abs_id = $id_conges   ";
-                        $ReqLog_update = $db->query($req_update);
+                        $db->query($req_update);
 
                         // 2 : on insert l'ajout de conges dans la table periode
                         // recup du nom du groupe
@@ -152,7 +152,7 @@ class Fonctions
                         /* Modification de la table conges_users */
                         $sql1 = "UPDATE conges_solde_user SET su_solde = su_solde+$user_nb_jours_ajout_float WHERE su_login='$user_name' AND su_abs_id = $id_conges " ;
                         /* On valide l'UPDATE dans la table ! */
-                        $ReqLog1 = \includes\SQL::singleton()->query($sql1) ;
+                        \includes\SQL::singleton()->query($sql1) ;
 
                         /*			// Enregistrement du commentaire relatif à l'ajout de jours de congés
                                     $comment = $tab_commentaire_saisie[$user_name];
@@ -188,7 +188,7 @@ class Fonctions
                 if ($_SESSION['config']['date_limite_reliquats'] < $new_date_limite) {
                     /* Modification de la table conges_appli */
                     $sql_update= "UPDATE conges_appli SET appli_valeur = '$new_date_limite' WHERE appli_variable='date_limite_reliquats' " ;
-                    $ReqLog_update = \includes\SQL::singleton()->query($sql_update) ;
+                    \includes\SQL::singleton()->query($sql_update) ;
 
                 }
             }
@@ -264,7 +264,7 @@ class Fonctions
         if ($ReqLog_verif->num_rows == 0) {
             /* Modification de la table conges_appli */
             $sql_update= 'UPDATE conges_appli SET appli_valeur = appli_valeur+1 WHERE appli_variable=\'num_exercice\' ;';
-            $ReqLog_update = $db->query($sql_update) ;
+            $db->query($sql_update) ;
 
             // ecriture dans les logs
             $new_appli_num_exercice = $appli_num_exercice+1 ;
@@ -310,7 +310,7 @@ class Fonctions
                         // update D'ABORD du reliquat
                         $VerifDec=verif_saisie_decimal($new_reliquat);
                         $sql_reliquat = "UPDATE conges_solde_user SET su_reliquat = $new_reliquat WHERE su_login='$current_login' AND su_abs_id = $id_conges " ;
-                        $ReqLog_reliquat = $db->query($sql_reliquat) ;
+                        $db->query($sql_reliquat) ;
                     } else {
                         $new_reliquat = $user_solde_actuel ; // qui est nul ou negatif
                     }
