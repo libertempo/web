@@ -47,33 +47,32 @@ if (!defined( 'DEFINE_INCLUDE' )) {
         case ENV_PROD:
             error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
             ini_set("display_errors", 0);
-            \Rollbar\Rollbar::init([
-                'access_token' => 'ee012bd0fc724b79ac6b1f28a8f74e44',
-                'environment' => 'production',
-                'code_version' => $config->getInstalledVersion(),
-            ]);
+            $environnement = 'production';
             break;
         case ENV_DEV:
             \Kint::enabled(true);
             ini_set("display_errors", 1);
             error_reporting(-1);
-            // no break;
-            \Rollbar\Rollbar::init([
-                'access_token' => 'ee012bd0fc724b79ac6b1f28a8f74e44',
-                'environment' => 'development',
-                'code_version' => $config->getInstalledVersion(),
-            ]);
+            $environnement = 'development';
             break;
         case ENV_TEST:
             \Kint::enabled(true);
             error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
             ini_set("display_errors", 1);
-            \Rollbar\Rollbar::init([
-                'access_token' => 'ee012bd0fc724b79ac6b1f28a8f74e44',
-                'environment' => 'testing',
-                'code_version' => $config->getInstalledVersion(),
-            ]);
+            $environnement = 'test';
             break;
+        default:
+            throw new \ErrorException('Bad configuration');
+    }
+    if (!empty(LOGGER_TOKEN) {
+        \Rollbar\Rollbar::init([
+            'access_token' => LOGGER_TOKEN,
+            'environment' => $environnement,
+            'code_version' => $config->getInstalledVersion(),
+            'use_error_reporting' => true,
+            'allow_exec' => false,
+            'included_errno' => E_ALL,
+        ]);
     }
     session_start();
 
