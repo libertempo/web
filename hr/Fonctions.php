@@ -987,12 +987,12 @@ class Fonctions
         }
         // si un nouveau conges ou absence a été saisi pour un user :
         elseif ( $new_demande_conges == 1 ) {
-            $new_debut          = getpost_variable('new_debut') ;
-            $new_demi_jour_deb  = getpost_variable('new_demi_jour_deb') ;
-            $new_fin            = getpost_variable('new_fin') ;
-            $new_demi_jour_fin  = getpost_variable('new_demi_jour_fin') ;
-            $new_comment        = getpost_variable('new_comment') ;
-            $new_type           = getpost_variable('new_type') ;
+            $new_debut = htmlentities(getpost_variable('new_debut'), ENT_QUOTES | ENT_HTML401);
+            $new_demi_jour_deb  = htmlentities(getpost_variable('new_demi_jour_deb'), ENT_QUOTES | ENT_HTML401);
+            $new_fin = htmlentities(getpost_variable('new_fin'), ENT_QUOTES | ENT_HTML401);
+            $new_demi_jour_fin = htmlentities(getpost_variable('new_demi_jour_fin'), ENT_QUOTES | ENT_HTML401);
+            $new_comment = htmlentities(getpost_variable('new_comment'), ENT_QUOTES | ENT_HTML401);
+            $new_type = htmlentities(getpost_variable('new_type'), ENT_QUOTES | ENT_HTML401);
 
             $new_nb_jours = compter($user_login, '', $new_debut,  $new_fin, $new_demi_jour_deb, $new_demi_jour_fin, $comment);
 
