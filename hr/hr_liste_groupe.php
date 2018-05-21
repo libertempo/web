@@ -34,6 +34,6 @@ $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 $isDoubleValidationActive = $config->isDoubleValidationActive();
 $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
 $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
-$groupes = $api->get('groupe', $_SESSION['token'])->data;
+$groupes = $api->get('groupe', $_SESSION['token'])['data'];
 
 require_once VIEW_PATH . 'Groupe/Liste.php';
