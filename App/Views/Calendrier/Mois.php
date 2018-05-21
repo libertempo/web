@@ -42,10 +42,10 @@ require_once VIEW_PATH . 'Calendrier.php';
             <?php endforeach ?>
         </tr>
         <?php $index = 0; ?>
-        <?php foreach ($employesATrouver as $loginUtilisation => $nomComplet) : ?>
+        <?php foreach ($employesATrouver as $loginUtilisation => $employe) : ?>
         <?php ++$index; ?>
         <tr class="calendrier-employe">
-            <td class="calendrier-nom"><?= $nomComplet ?></td>
+            <td class="calendrier-nom"><?= $employe['nom'] ?></td>
             <?php foreach ($jours as $jour) : ?>
             <td class="calendrier-jour <?= getClassesJour($evenements, $loginUtilisation, $jour, $moisDemande) ?>">
                 <div class="triangle-top"></div>

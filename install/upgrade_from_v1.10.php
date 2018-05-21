@@ -24,11 +24,17 @@ $sql->query($del_config_db);
 $del_config_db = "DELETE FROM conges_config WHERE conf_nom = 'where_to_find_user_email' LIMIT 1;";
 $sql->query($del_config_db);
 
+$del_config_db = "DELETE FROM conges_config WHERE conf_nom = 'affiche_soldes_calendrier' LIMIT 1;";
+$sql->query($del_config_db);
+
 $alterUserSeeAll = "ALTER TABLE `conges_users` DROP `u_see_all`;";
 $sql->query($alterUserSeeAll);
 
 $alterUserResp = "ALTER TABLE `conges_users` DROP `u_resp_login`;";
 $sql->query($alterUserResp);
+
+$updateconfig = "UPDATE conges_config SET conf_groupe = '00_libertempo' WHERE conf_nom = 'installed_version' OR conf_nom = 'lang'";
+$sql->query($updateconfig);
 
 $sql->getPdoObj()->commit();
 

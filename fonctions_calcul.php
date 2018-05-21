@@ -327,7 +327,7 @@ function verif_periode_chevauche_periode_user($date_debut, $date_fin, $user, $nu
 					$comment =  _('calcul_nb_jours_commentaire_impossible') ;
 				else
 					$comment =  _('calcul_nb_jours_commentaire') ;
-				return TRUE ;
+				return true;
 			}
 			if ( ($tab_periode_calcul[$current_day]['pm']==1) && ($tab_periode_deja_prise[$current_day]['pm']!="no") )
 			{
@@ -337,17 +337,13 @@ function verif_periode_chevauche_periode_user($date_debut, $date_fin, $user, $nu
 				else
 					$comment =  _('calcul_nb_jours_commentaire') ;
 
-				return TRUE ;
+				return true;
 			}
 			$current_day=jour_suivant($current_day);
 		}// fin du while
 	}
 
-
-	return true ;
-
-	/************************************************************/
-	// Fin de le verif de chevauchement d'une période déja saisie
+    return false;
 }
 
 //retourne un nombre arrondit à 0.5 près à partir d'un nombre décimal

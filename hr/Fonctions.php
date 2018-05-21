@@ -985,12 +985,12 @@ class Fonctions
         }
         // si un nouveau conges ou absence a été saisi pour un user :
         elseif ( $new_demande_conges == 1 ) {
-            $new_debut          = getpost_variable('new_debut') ;
-            $new_demi_jour_deb  = getpost_variable('new_demi_jour_deb') ;
-            $new_fin            = getpost_variable('new_fin') ;
-            $new_demi_jour_fin  = getpost_variable('new_demi_jour_fin') ;
-            $new_comment        = getpost_variable('new_comment') ;
-            $new_type           = getpost_variable('new_type') ;
+            $new_debut = htmlentities(getpost_variable('new_debut'), ENT_QUOTES | ENT_HTML401);
+            $new_demi_jour_deb  = htmlentities(getpost_variable('new_demi_jour_deb'), ENT_QUOTES | ENT_HTML401);
+            $new_fin = htmlentities(getpost_variable('new_fin'), ENT_QUOTES | ENT_HTML401);
+            $new_demi_jour_fin = htmlentities(getpost_variable('new_demi_jour_fin'), ENT_QUOTES | ENT_HTML401);
+            $new_comment = htmlentities(getpost_variable('new_comment'), ENT_QUOTES | ENT_HTML401);
+            $new_type = htmlentities(getpost_variable('new_type'), ENT_QUOTES | ENT_HTML401);
 
             $new_nb_jours = compter($user_login, '', $new_debut,  $new_fin, $new_demi_jour_deb, $new_demi_jour_fin, $comment);
 
@@ -2833,7 +2833,7 @@ class Fonctions
 
             // AFFICHAGE TABLEAU
             $return .= '<div class="col-md-6">';
-            $return .= '<form action="' . $PHP_SELF . '" class="form-inline" method="POST">';
+            $return .= '<form action="' . $PHP_SELF . '?onglet=saisie" class="form-inline" method="POST">';
             $return .= '<div class="form-group" style="margin-right: 10px;">';
             $ReqLog_gr = \includes\SQL::query($sql_gr);
             $return .= '<select class="form-control" name="groupe_id">';
@@ -3052,13 +3052,10 @@ class Fonctions
             $return .= \hr\Fonctions::saisie_groupe_fermeture();
             $return .= '</div>';
         } elseif ($choix_action=="commit_new_fermeture") {
-            $return .= $title;
             $return .= \hr\Fonctions::commit_new_fermeture($new_date_debut, $new_date_fin, $groupe_id, $id_type_conges);
         } elseif ($choix_action=="annul_fermeture") {
-            $return .= $title;
             $return .= \hr\Fonctions::confirm_annul_fermeture($fermeture_id, $groupe_id, $fermeture_date_debut, $fermeture_date_fin);
         } elseif ($choix_action=="commit_annul_fermeture") {
-            $return .= $title;
             $return .= \hr\Fonctions::commit_annul_fermeture($fermeture_id, $groupe_id);
         }
         $return .= '</div>';

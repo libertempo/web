@@ -80,7 +80,7 @@ function header_error($title = '', $additional_head = '' ) {
 
 function header_login($title = '', $additional_head = '' ) {
     global $type_bottom;
-    require_once ROOT_PATH . 'version.php';
+    include ROOT_PATH .'version.php';
 
     static $last_use = '';
     if ($last_use == '') {
@@ -181,7 +181,7 @@ function session_is_valid()
         session_start();
     }
 
-    if (isset($_SESSION['timestamp_last']) && isset($_SESSION['config'])) {
+    if (isset($_SESSION['token']) && isset($_SESSION['timestamp_last']) && isset($_SESSION['config'])) {
         return time() < $_SESSION['timestamp_last'];
     }
 
@@ -286,10 +286,8 @@ if (! navigator.cookieEnabled) {
 // - renvoie $username si authentification OK
 // - renvoie ""        si authentification FAIL
 //
-function autentification_passwd_conges($username, $password)
+function authentification_passwd_conges($username, $password)
 {
-    //  $req_conges="SELECT u_passwd   FROM conges_users   WHERE u_login='$username' AND u_passwd='$password_md5' " ;
-    // on conserve le double mode d'autentificatio (nouveau cryptage (md5) ou ancien cryptage (mysql))
     $req_conges='SELECT u_passwd   FROM conges_users   WHERE u_login="'. \includes\SQL::quote( $username ) .'" AND ( u_passwd=\''. md5($password) .'\' OR u_passwd=PASSWORD("'. \includes\SQL::quote( $password ).'") ) ' ;
     $res_conges = \includes\SQL::query($req_conges) ;
     $num_row_conges = $res_conges->num_rows;
@@ -452,17 +450,11 @@ function authentification_AD_SSO()
 function storeTokenApi(\App\Libraries\ApiClient $apiClient, $username, $userPassword)
 {
     $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
-    try {
-        if ('dbconges' == $config->getHowToConnectUser()) {
-            $dataUser = $apiClient->authentifyDbConges($username, $userPassword);
-        } else {
-            $dataUser = $apiClient->authentifyThirdParty($username);
-        }
-    } catch (\Exception $e) {
-        echo 'Une erreur de connexion est survenue : ' . $e->getMessage();
-        return;
+    if ('dbconges' == $config->getHowToConnectUser() || "admin" == $username) {
+        $dataUser = $apiClient->authentifyDbConges($username, $userPassword);
+    } else {
+        $dataUser = $apiClient->authentifyThirdParty($username);
     }
-
 
     $_SESSION['token'] = $dataUser->data;
 }

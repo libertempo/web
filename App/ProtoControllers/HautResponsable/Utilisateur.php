@@ -1078,7 +1078,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
                 WHERE login="' . $data['oldLogin'] . '" ' ;
         $sql->query($req);
 
-        $req = 'UPDATE conges_user 
+        $req = 'UPDATE conges_users
                 SET u_login="' . $data['login'] . '"
                 WHERE u_login="' . $data['oldLogin'] . '" ';
 

@@ -416,7 +416,6 @@ INSERT IGNORE INTO `conges_config` VALUES ('jour_mois_limite_reliquats', '0', '1
 INSERT IGNORE INTO `conges_config` VALUES ('interdit_saisie_periode_date_passee', 'FALSE', '05_Utilisateur', 'boolean', 'config_comment_interdit_saisie_periode_date_passee');
 INSERT IGNORE INTO `conges_config` VALUES ('interdit_modif_demande', 'FALSE', '05_Utilisateur', 'boolean', 'config_comment_interdit_modif_demande');
 INSERT IGNORE INTO `conges_config` VALUES ('affiche_date_traitement', 'FALSE', '13_Divers', 'boolean', 'config_comment_affiche_date_traitement');
-INSERT IGNORE INTO `conges_config` VALUES ('affiche_soldes_calendrier', 'TRUE', '13_Divers', 'boolean', 'config_comment_affiche_soldes_calendrier');
 INSERT IGNORE INTO `conges_config` VALUES ('affiche_demandes_dans_calendrier', 'FALSE', '13_Divers', 'boolean', 'config_comment_affiche_demandes_dans_calendrier');
 INSERT IGNORE INTO `conges_config` VALUES ('affiche_jours_current_month_calendrier',  'FALSE',  '13_Divers',  'boolean',  'config_comment_affiche_jours_current_month_calendrier');
 INSERT IGNORE INTO `conges_config` VALUES ('calcul_auto_jours_feries_france', 'FALSE', '13_Divers', 'boolean', 'config_comment_calcul_auto_jours_feries_france');

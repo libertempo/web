@@ -68,6 +68,10 @@ class Fonctions
         if ($config->canSoldeNegatif()) {
             $valid = $valid && \utilisateur\Fonctions::verif_solde_user($_SESSION['userlogin'], $new_type, $new_nb_jours);
         }
+        if (!$config->canUserSaisieDemandePasse()) {
+            $now = time();
+            $valid = $valid && strtotime($new_debut) - $now >= 0 && strtotime($new_fin) - $now >= 0;
+        }
 
         if ( $valid ) {
             if ( in_array(\utilisateur\Fonctions::get_type_abs($new_type) , array('conges','conges_exceptionnels') ) ) {
@@ -218,13 +222,14 @@ class Fonctions
                     $datesDisabled[] = \App\Helpers\Formatter::dateIso2Fr($date);
                 }
             }
-            $startDate = ($config->canUserSaisieDemandePasse()) ? 'd' : '';
 
             $datePickerOpts = [
                 'daysOfWeekDisabled' => $daysOfWeekDisabled,
                 'datesDisabled'      => $datesDisabled,
-                'startDate'          => $startDate,
             ];
+            if (!$config->canUserSaisieDemandePasse()) {
+                $datePickerOpts['startDate'] = 'd';
+            }
             $return .= '<script>generateDatePicker(' . json_encode($datePickerOpts) . ');</script>';
             $return .= '<h1>' . _('resp_traite_user_new_conges') . '</h1>';
 
