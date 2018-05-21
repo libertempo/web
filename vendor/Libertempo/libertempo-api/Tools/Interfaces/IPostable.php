@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 namespace LibertAPI\Tools\Interfaces;
 
 use Psr\Http\Message\ServerRequestInterface as IRequest;
@@ -18,5 +18,5 @@ interface IPostable
      *
      * @return IResponse
      */
-    public function post(IRequest $request, IResponse $response, array $routeArguments);
+    public function post(IRequest $request, IResponse $response, array $routeArguments) : IResponse;
 }

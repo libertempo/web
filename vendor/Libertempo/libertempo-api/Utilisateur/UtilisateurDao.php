@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 namespace LibertAPI\Utilisateur;
 
 use LibertAPI\Tools\Libraries\AEntite;
@@ -13,7 +13,7 @@ use LibertAPI\Tools\Libraries\AEntite;
  */
 class UtilisateurDao extends \LibertAPI\Tools\Libraries\ADao
 {
-    public function getById($id)
+    public function getById(int $id) : AEntite
     {
         throw new \RuntimeException('Action is forbidden');
     }
@@ -21,7 +21,7 @@ class UtilisateurDao extends \LibertAPI\Tools\Libraries\ADao
     /**
      * @inheritDoc
      */
-    final protected function getStorage2Entite(array $dataDao)
+    final protected function getStorage2Entite(array $dataDao) : array
     {
         return [
             'id' => $dataDao['id'],
@@ -47,7 +47,7 @@ class UtilisateurDao extends \LibertAPI\Tools\Libraries\ADao
     /**
      * @inheritDoc
      */
-    public function getList(array $parametres)
+    public function getList(array $parametres) : array
     {
         $this->queryBuilder->select('*, u_login AS id');
         $this->setWhere($parametres);
@@ -58,11 +58,9 @@ class UtilisateurDao extends \LibertAPI\Tools\Libraries\ADao
             throw new \UnexpectedValueException('No resource match with these parameters');
         }
 
-        $entites = [];
-        foreach ($data as $value) {
-            $entite = new UtilisateurEntite($this->getStorage2Entite($value));
-            $entites[$entite->getId()] = $entite;
-        }
+        $entites = array_map(function ($value) {
+            return new UtilisateurEntite($this->getStorage2Entite($value));
+        }, $data);
 
         return $entites;
     }
@@ -74,8 +72,9 @@ class UtilisateurDao extends \LibertAPI\Tools\Libraries\ADao
     /**
      * @inheritDoc
      */
-    public function post(AEntite $entite)
+    public function post(AEntite $entite) : int
     {
+        throw new \RuntimeException('Not implemented');
     }
 
     /**
@@ -94,7 +93,7 @@ class UtilisateurDao extends \LibertAPI\Tools\Libraries\ADao
     /**
      * @inheritDoc
      */
-    final protected function getEntite2Storage(AEntite $entite)
+    final protected function getEntite2Storage(AEntite $entite) : array
     {
         return [
             //'u_login' => $entite->getLogin(), // PK ne doit pas être vu par la DAO
@@ -132,8 +131,9 @@ class UtilisateurDao extends \LibertAPI\Tools\Libraries\ADao
      * DELETE
      *************************************************/
 
-    public function delete($id)
+    public function delete(int $id) : int
     {
+        throw new \Exception('Not implemented');
     }
 
     /**
@@ -143,32 +143,39 @@ class UtilisateurDao extends \LibertAPI\Tools\Libraries\ADao
      */
     private function setWhere(array $parametres)
     {
+        $whereCriteria = [];
         if (!empty($parametres['u_login'])) {
             $this->queryBuilder->andWhere('u_login = :id');
-            $this->queryBuilder->setParameter(':id', $parametres['u_login']);
+            $whereCriteria[':id'] = $parametres['u_login'];
         }
         if (!empty($parametres['u_passwd'])) {
-            $this->queryBuilder->andWhere('u_passwd = :password');
-            $this->queryBuilder->setParameter(':password', $parametres['u_passwd']);
+            // @TODO: on vise la compat' dans la migration de #12,
+            // mais il faudra à terme enlever md5
+            $this->queryBuilder->andWhere('u_passwd = :passwordMd5 OR u_passwd = :passwordBlow');
+            $whereCriteria[':passwordMd5'] = md5($parametres['u_passwd']);
+            $whereCriteria[':passwordBlow'] = password_hash($parametres['u_passwd'], PASSWORD_BCRYPT);
         }
         if (!empty($parametres['token'])) {
             $this->queryBuilder->andWhere('token = :token');
-            $this->queryBuilder->setParameter(':token', $parametres['token']);
+            $whereCriteria[':token'] = $parametres['token'];
         }
         if (!empty($parametres['gt_date_last_access'])) {
             $this->queryBuilder->andWhere('date_last_access >= :gt_date_last_access');
-            $this->queryBuilder->setParameter(':gt_date_last_access', $parametres['gt_date_last_access']);
+            $whereCriteria[':gt_date_last_access'] = $parametres['gt_date_last_access'];
         }
         if (!empty($parametres['is_active'])) {
             $this->queryBuilder->andWhere('u_is_active = :actif');
-            $this->queryBuilder->setParameter(':actif', ($parametres['is_active']) ? 'Y' : 'N');
+            $whereCriteria[':actif'] = ($parametres['is_active']) ? 'Y' : 'N';
+        }
+        if (!empty($whereCriteria)) {
+            $this->queryBuilder->setParameters($whereCriteria);
         }
     }
 
     /**
      * @inheritDoc
      */
-    final protected function getTableName()
+    final protected function getTableName() : string
     {
         return 'conges_users';
     }

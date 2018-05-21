@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 /*
  * Simple déclaration des handlers à injecter dans le serveur Slim
  */

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 namespace LibertAPI\Planning\Creneau;
 
 use LibertAPI\Tools\Exceptions\MissingArgumentException;
@@ -12,7 +12,7 @@ use LibertAPI\Tools\Exceptions\MissingArgumentException;
  * @since 0.1
  * @see \LibertAPI\Tests\Units\Planning\Creneau\Entite
  *
- * Ne devrait être contacté que par le Planning\Creneau\Repository
+ * Ne devrait être contacté que par le Planning\Creneau\CreneauDao
  * Ne devrait contacter personne
  */
 class CreneauEntite extends \LibertAPI\Tools\Libraries\AEntite

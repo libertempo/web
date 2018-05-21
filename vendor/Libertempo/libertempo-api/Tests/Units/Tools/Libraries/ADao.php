@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 namespace LibertAPI\Tests\Units\Tools\Libraries;
 
 use LibertAPI\Tools\Libraries\AEntite;

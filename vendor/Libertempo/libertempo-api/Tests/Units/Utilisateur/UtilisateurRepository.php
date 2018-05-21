@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 namespace LibertAPI\Tests\Units\Utilisateur;
 
 use LibertAPI\Utilisateur\UtilisateurRepository as _Repository;
@@ -146,7 +146,10 @@ final class UtilisateurRepository extends \LibertAPI\Tests\Units\Tools\Libraries
 
     public function testPostOne()
     {
-        $this->variable((new _Repository($this->dao))->postOne([], $this->entite))->isNull();
+        $this->exception(function () {
+            $repo = new _Repository($this->dao);
+            $repo->postOne([], $this->entite);
+        });
     }
 
     /*************************************************

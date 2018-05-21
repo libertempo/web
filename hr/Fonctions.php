@@ -7,7 +7,7 @@ namespace hr;
  */
 class Fonctions
 {
-    public static function traite_all_demande_en_cours($tab_bt_radio, $tab_text_refus)
+    public static function traite_all_demande_en_cours(array $tab_bt_radio, array $tab_text_refus) : string
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
@@ -70,7 +70,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affiche_all_demandes_en_cours($tab_type_conges)
+    public static function affiche_all_demandes_en_cours($tab_type_conges) : string
     {
         $return = '';
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
@@ -229,11 +229,10 @@ class Fonctions
      * @param array  $tab_type_cong
      * @param string $onglet
      *
-     * @return void
      * @access public
      * @static
      */
-    public static function pageTraitementDemandeModule(array $tab_type_cong, $onglet)
+    public static function pageTraitementDemandeModule(array $tab_type_cong, $onglet) : string
     {
         $return = '';
 
@@ -256,7 +255,7 @@ class Fonctions
         return $return;
     }
 
-    public static function new_conges($user_login, $numero_int, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type_id)
+    public static function new_conges($user_login, $numero_int, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type_id) : string
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
@@ -307,7 +306,7 @@ class Fonctions
         return $return;
     }
 
-    public static function traite_demandes($user_login, $tab_radio_traite_demande, $tab_text_refus)
+    public static function traite_demandes($user_login, $tab_radio_traite_demande, $tab_text_refus) : string
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
@@ -392,7 +391,7 @@ class Fonctions
         return $return;
     }
 
-    public static function annule_conges($user_login, $tab_checkbox_annule, $tab_text_annul)
+    public static function annule_conges($user_login, $tab_checkbox_annule, $tab_text_annul) : string
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
@@ -442,7 +441,7 @@ class Fonctions
     }
 
     //affiche l'état des conges du user (avec le formulaire pour le responsable)
-    public static function affiche_etat_conges_user_for_resp($user_login, $year_affichage, $tri_date)
+    public static function affiche_etat_conges_user_for_resp($user_login, $year_affichage, $tri_date) : string
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
@@ -590,7 +589,7 @@ class Fonctions
     }
 
     //affiche l'état des demande en attente de 2ieme validation du user (avec le formulaire pour le responsable)
-    public static function affiche_etat_demande_2_valid_user_for_resp($user_login)
+    public static function affiche_etat_demande_2_valid_user_for_resp($user_login) : string
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
@@ -691,7 +690,7 @@ class Fonctions
     }
 
     //affiche l'état des demande du user (avec le formulaire pour le responsable)
-    public static function affiche_etat_demande_user_for_resp($user_login, $tab_user, $tab_grd_resp)
+    public static function affiche_etat_demande_user_for_resp($user_login, $tab_user, $tab_grd_resp) : string
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
@@ -811,7 +810,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affichage($user_login,  $year_affichage, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $tri_date, $onglet)
+    public static function affichage($user_login, $year_affichage, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $tri_date, $onglet) : string
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
@@ -962,11 +961,10 @@ class Fonctions
      *
      * @param string $onglet
      *
-     * @return void
      * @access public
      * @static
      */
-    public static function pageTraiteUserModule($onglet)
+    public static function pageTraiteUserModule($onglet) : string
     {
         //var pour hr_traite_user.php
         $user_login                 = htmlentities(getpost_variable('user_login'), ENT_QUOTES | ENT_HTML401);
@@ -1011,7 +1009,7 @@ class Fonctions
     }
 
     // recup de la liste de tous les groupes pour le mode RH
-    public static function get_list_groupes_pour_rh($user_login)
+    public static function get_list_groupes_pour_rh($user_login) : string
     {
         $list_group="";
 
@@ -1093,7 +1091,7 @@ class Fonctions
         }
     }
 
-    public static function ajout_global($tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all)
+    public static function ajout_global($tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all) : string
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
@@ -1172,7 +1170,7 @@ class Fonctions
         }
     }
 
-    public static function affichage_saisie_globale_groupe($tab_type_conges)
+    public static function affichage_saisie_globale_groupe($tab_type_conges) : string
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
@@ -1228,7 +1226,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affichage_saisie_globale_pour_tous($tab_type_conges)
+    public static function affichage_saisie_globale_pour_tous($tab_type_conges) : string
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
@@ -1265,7 +1263,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affichage_saisie_user_par_user($tab_type_conges, $tab_type_conges_exceptionnels, $tab_all_users_du_hr, $tab_all_users_du_grand_resp)
+    public static function affichage_saisie_user_par_user($tab_type_conges, $tab_type_conges_exceptionnels, $tab_all_users_du_hr, $tab_all_users_du_grand_resp) : string
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
@@ -1350,7 +1348,7 @@ class Fonctions
     }
 
     // renvoit un tableau de tableau contenant les informations de tous les users dont $login est HR responsable
-    public static function recup_infos_all_users_du_hr($login)
+    public static function recup_infos_all_users_du_hr($login) : array
     {
         $tab=array();
         $list_groupes_double_validation=get_list_groupes_double_valid();
@@ -1368,7 +1366,7 @@ class Fonctions
 
     // recup de la liste de TOUS les users pour le responsable RH
     // renvoit une liste de login entre quotes et séparés par des virgules
-    public static function get_list_all_users_du_hr($resp_login)
+    public static function get_list_all_users_du_hr($resp_login) : string
     {
         $list_users="";
 
@@ -1387,7 +1385,7 @@ class Fonctions
         return $list_users;
     }
 
-    public static function saisie_ajout( $tab_type_conges)
+    public static function saisie_ajout($tab_type_conges) : string
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
@@ -1433,11 +1431,10 @@ class Fonctions
      *
      * @param array  $tab_type_cong
      *
-     * @return void
      * @access public
      * @static
      */
-    public static function pageAjoutCongesModule($tab_type_cong)
+    public static function pageAjoutCongesModule($tab_type_cong) : string
     {
         //var pour resp_ajout_conges_all.php
         $ajout_conges = getpost_variable('ajout_conges');
@@ -1484,9 +1481,8 @@ class Fonctions
 
     //fonction de recherche des jours fériés de l'année demandée
     // trouvée sur http://www.phpcs.com/codes/LISTE-JOURS-FERIES-ANNEE_32791.aspx
-    public static function fcListJourFeries($iAnnee = 2000)
+    public static function fcListJourFeries($iAnnee = 2000) : array
     {
-
         //Initialisation de variables
         $iCstJour = 3600*24;
         $tbJourFerie=array();
@@ -1512,7 +1508,6 @@ class Fonctions
     // retourne un tableau des jours feriés de l'année dans un tables passé par référence
     public static function get_tableau_jour_feries($year, &$tab_year)
     {
-
         $sql_select='SELECT jf_date FROM conges_jours_feries WHERE jf_date LIKE "'. \includes\SQL::quote($year).'-%" ;';
         $res_select = \includes\SQL::query($sql_select);
         $num_select = $res_select->num_rows;
@@ -1524,7 +1519,8 @@ class Fonctions
         }
     }
 
-    public static function verif_year_deja_saisie($tab_checkbox_j_chome) {
+    public static function verif_year_deja_saisie($tab_checkbox_j_chome) : bool
+    {
         $date_1=key($tab_checkbox_j_chome);
         $year=substr($date_1, 0, 4);
         $sql_select='SELECT jf_date FROM conges_jours_feries WHERE jf_date LIKE "'. \includes\SQL::quote($year).'%" ;';
@@ -1532,7 +1528,8 @@ class Fonctions
         return($relog->num_rows != 0);
     }
 
-    public static function delete_year($tab_checkbox_j_chome) {
+    public static function delete_year($tab_checkbox_j_chome) : bool
+    {
         $date_1=key($tab_checkbox_j_chome);
         $year=substr($date_1, 0, 4);
         $sql_delete='DELETE FROM conges_jours_feries WHERE jf_date LIKE "'. \includes\SQL::quote($year).'%" ;';
@@ -1541,13 +1538,14 @@ class Fonctions
         return true;
     }
 
-    public static function insert_year($tab_checkbox_j_chome) {
+    public static function insert_year($tab_checkbox_j_chome) : bool
+    {
         foreach($tab_checkbox_j_chome as $key => $value)
             $result = \includes\SQL::query('INSERT INTO conges_jours_feries SET jf_date="'. \includes\SQL::quote($key).'";');
         return true;
     }
 
-    public static function commit_saisie($tab_checkbox_j_chome)
+    public static function commit_saisie($tab_checkbox_j_chome) : string
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
@@ -1577,7 +1575,7 @@ class Fonctions
         return $return;
     }
 
-    public static function confirm_saisie($tab_checkbox_j_chome)
+    public static function confirm_saisie($tab_checkbox_j_chome) : string
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
@@ -1610,13 +1608,15 @@ class Fonctions
         bottom();
     }
 
-    public static function affiche_jour_hors_mois($mois,$i,$year,$tab_year) {
+    public static function affiche_jour_hors_mois($mois,$i,$year,$tab_year) : string
+    {
         $j_timestamp=mktime (0,0,0,$mois,$i,$year);
         $td_second_class=get_td_class_of_the_day_in_the_week($j_timestamp);
         return "<td class=\"cal-saisie2 month-out $td_second_class\">&nbsp;</td>\n";
     }
 
-    public static function affiche_jour_checkbox($mois,$i,$year,$tab_year) {
+    public static function affiche_jour_checkbox($mois,$i,$year,$tab_year) : string
+    {
         $j_timestamp=mktime (0,0,0,$mois,$i,$year);
         $j_date=date("Y-m-d", $j_timestamp);
         $j_day=date("d", $j_timestamp);
@@ -1628,7 +1628,7 @@ class Fonctions
 
     // affichage du calendrier du mois avec les case à cocher
     // on lui passe en parametre le tableau des jour chomé de l'année (pour pré-cocher certaines cases)
-    public static function affiche_calendrier_saisie_jours_chomes($year, $mois, $tab_year)
+    public static function affiche_calendrier_saisie_jours_chomes($year, $mois, $tab_year) : string
     {
         $jour_today=date("j");
         $jour_today_name=date("D");
@@ -1715,7 +1715,7 @@ class Fonctions
         return $return;
     }
 
-    public static function saisie($year_calendrier_saisie)
+    public static function saisie($year_calendrier_saisie) : string
     {
         $sql = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($sql);
@@ -1772,11 +1772,10 @@ class Fonctions
     /**
      * Encapsule le comportement du module des jours chomés
      *
-     * @return void
      * @access public
      * @static
      */
-    public static function pageJoursChomesModule()
+    public static function pageJoursChomesModule() : string
     {
         // verif des droits du user à afficher la page
         verif_droits_user( "is_hr");
@@ -1847,7 +1846,7 @@ class Fonctions
     }
 
     // cloture / debut d'exercice pour TOUS les users d'un groupe'
-    public static function cloture_globale_groupe($group_id, $tab_type_conges)
+    public static function cloture_globale_groupe($group_id, $tab_type_conges) : string
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
@@ -1866,7 +1865,7 @@ class Fonctions
     }
 
     // cloture / debut d'exercice pour TOUS les users du resp (ou grand resp)
-    public static function cloture_globale($tab_type_conges)
+    public static function cloture_globale($tab_type_conges) : string
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
@@ -1908,7 +1907,7 @@ class Fonctions
         }
     }
 
-    public static function cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $commentaire)
+    public static function cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $commentaire) : string
     {
         $return = '';
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
@@ -1987,7 +1986,7 @@ class Fonctions
     }
 
     // cloture / debut d'exercice user par user pour les users du resp (ou grand resp)
-    public static function cloture_users($tab_type_conges, $tab_cloture_users, $tab_commentaire_saisie)
+    public static function cloture_users($tab_type_conges, $tab_cloture_users, $tab_commentaire_saisie) : string
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
@@ -2010,7 +2009,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affichage_cloture_globale_groupe($tab_type_conges)
+    public static function affichage_cloture_globale_groupe($tab_type_conges) : string
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
@@ -2066,7 +2065,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affichage_cloture_globale_pour_tous($tab_type_conges)
+    public static function affichage_cloture_globale_pour_tous($tab_type_conges) : string
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
@@ -2096,7 +2095,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affiche_ligne_du_user($current_login, $tab_type_conges, $tab_current_user, $i = true)
+    public static function affiche_ligne_du_user($current_login, $tab_type_conges, $tab_current_user, $i = true) : string
     {
         $return = '';
         $return .= '<tr class="' . ($i ? 'i' : 'p') . '">';
@@ -2130,7 +2129,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affichage_cloture_user_par_user($tab_type_conges, $tab_all_users_du_hr, $tab_all_users_du_grand_resp)
+    public static function affichage_cloture_user_par_user($tab_type_conges, $tab_all_users_du_hr, $tab_all_users_du_grand_resp) : string 
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
@@ -2194,7 +2193,7 @@ class Fonctions
         return $return;
     }
 
-    public static function saisie_cloture( $tab_type_conges)
+    public static function saisie_cloture( $tab_type_conges) : string
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
@@ -2230,11 +2229,10 @@ class Fonctions
     /**
      * Encapsule le comportement du module de cloture d'exercice
      *
-     * @return void
      * @access public
      * @static
      */
-    public static function pageClotureYearModule()
+    public static function pageClotureYearModule() : string
     {
         /*************************************/
         // recup des parametres reçus :
@@ -2277,7 +2275,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affiche_calendrier_fermeture_mois($year, $mois, $tab_year)
+    public static function affiche_calendrier_fermeture_mois($year, $mois, $tab_year) : string
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $jour_today=date("j");
@@ -2432,8 +2430,8 @@ class Fonctions
     }
 
     //calendrier des fermeture
-    public static function affiche_calendrier_fermeture($year, $groupe_id = 0) {
-
+    public static function affiche_calendrier_fermeture($year, $groupe_id = 0) : string
+    {
         // on construit le tableau de l'année considérée
         $tab_year=array();
         \hr\Fonctions::get_tableau_jour_fermeture($year, $tab_year,  $groupe_id);
@@ -2466,7 +2464,7 @@ class Fonctions
     }
 
     //insertion des nouvelles dates de fermeture
-    public static function insert_year_fermeture($fermeture_id, $tab_j_ferme, $groupe_id)
+    public static function insert_year_fermeture($fermeture_id, $tab_j_ferme, $groupe_id) : bool
     {
         $sql_insert="";
         foreach($tab_j_ferme as $jf_date ) {
@@ -2477,16 +2475,15 @@ class Fonctions
     }
 
     // supprime une fermeture
-    public static function delete_year_fermeture($fermeture_id, $groupe_id)
+    public static function delete_year_fermeture($fermeture_id, $groupe_id) : bool
     {
-
         $sql_delete="DELETE FROM conges_jours_fermeture WHERE jf_id = '$fermeture_id' AND jf_gid= '$groupe_id' ;";
         $result = \includes\SQL::query($sql_delete);
         return TRUE;
     }
 
     // recup l'id de la derniere fermeture (le max)
-    public static function get_last_fermeture_id()
+    public static function get_last_fermeture_id() : int
     {
         $req_1="SELECT MAX(jf_id) FROM conges_jours_fermeture ";
         $res_1 = \includes\SQL::query($req_1);
@@ -2520,7 +2517,7 @@ class Fonctions
         }
     }
 
-    public static function commit_annul_fermeture($fermeture_id, $groupe_id)
+    public static function commit_annul_fermeture($fermeture_id, $groupe_id) : string
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
@@ -2593,7 +2590,7 @@ class Fonctions
         return $return;
     }
 
-    public static function commit_new_fermeture($new_date_debut, $new_date_fin, $groupe_id, $id_type_conges)
+    public static function commit_new_fermeture($new_date_debut, $new_date_fin, $groupe_id, $id_type_conges) : string
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
@@ -2681,7 +2678,7 @@ class Fonctions
         return $return;
     }
 
-    public static function confirm_annul_fermeture($fermeture_id, $groupe_id, $fermeture_date_debut, $fermeture_date_fin)
+    public static function confirm_annul_fermeture($fermeture_id, $groupe_id, $fermeture_date_debut, $fermeture_date_fin) : string
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
@@ -2723,7 +2720,7 @@ class Fonctions
     }
 
     // Affichage d'un SELECT de formulaire pour choix d'un type d'absence
-    public static function affiche_select_conges_id()
+    public static function affiche_select_conges_id() : string
     {
         $tab_conges=recup_tableau_types_conges();
         $tab_conges_except=recup_tableau_types_conges_exceptionnels();
@@ -2767,7 +2764,7 @@ class Fonctions
         }
     }
 
-    public static function saisie_dates_fermeture($year, $groupe_id, $new_date_debut, $new_date_fin, $code_erreur)
+    public static function saisie_dates_fermeture($year, $groupe_id, $new_date_debut, $new_date_fin, $code_erreur) : string
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
@@ -2805,7 +2802,7 @@ class Fonctions
         return $return;
     }
 
-    public static function saisie_groupe_fermeture()
+    public static function saisie_groupe_fermeture() : string
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
@@ -2898,11 +2895,10 @@ class Fonctions
     /**
      * Encapsule le comportement du module de jours de fermeture
      *
-     * @return void
      * @access public
      * @static
      */
-    public static function pageJoursFermetureModule()
+    public static function pageJoursFermetureModule() : string
     {
         // verif des droits du user à afficher la page
         verif_droits_user("is_hr");

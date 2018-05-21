@@ -1,3 +1,8 @@
+## 2018-02-17
+* Dans le processus d'écriture de routes pour l'API, la table `conges_groupe_resp` fait apparaître une relation N-N ; problème, rien est encore fait dans ce sens et le [« package par feature »](http://www.codingthearchitecture.com/2015/03/08/package_by_component_and_architecturally_aligned_testing.html) nous ennuie un peu. Suivant la règle de 3 et le principe selon lequel on doit repousser les décisions importantes plus tard, je vise la simplicité et manipule l'entité « Utilisateur/UtilisateurEntite » suite à la requête. Quand nous en saurons plus on changera.
+
+~ Prytoegrian
+
 ## 2017-11-04
 * À l'origine, j'avais mis les routes au pluriel car la sémantique était meilleure (avec `GET /plannings`, je veux la liste des plannings), mais l'idée atteint ses limites quand on se confronte à la langue (ex : journaux). Obliger à tenir une map serait inutilement lourd, aussi je vais au plus simple et je mets toutes les routes au singulier.
 
@@ -20,12 +25,12 @@
 
 * Histoire de faciliter la transmission des connaissances et des intentions, j'amorce la création de ce fichier, en m'appuyant sur cette [proposition](http://akazlou.com/posts/2015-11-09-every-project-should-have-decisions.html).
 
-* Convaincu de la nécessité de séparer les reponsabilités de l'application malgré une apparence de simplicité, je commence la création d'une API.
+* Convaincu de la nécessité de séparer les responsabilités de l'application malgré une apparence de simplicité, je commence la création d'une API.
 L'un des risques qu'il pourrait y avoir est la dispersion et un ralentissement dans le processus de production,
 puisqu'il faut qu'un projet soit à jour pour que l'autre puisse avancer.
 Je suppose que ça ne sera vrai que le temps que l'API gagne en puissance.
 
-* Comme l'évoque [cette issue](https://github.com/wouldsmina/Libertempo/issues/134), un framework permet de se concentrer sur son coeur de métier et d'avancer rapidement.
+* Comme l'évoque [cette issue](https://github.com/wouldsmina/Libertempo/issues/134), un framework permet de se concentrer sur son cœur de métier et d'avancer rapidement.
 Vu les besoins de l'API, Slim semble faire l'affaire. Le risque évident est la possibilité qu'il ne suffise pas aux besoins de l'application front
 et qu'on se retrouve avec deux framework.
 J'ai étudié les alternatives Lumen et Laravel, mais tous les frameworks semblent s'être pris d'amour pour le pattern ActiveRecord,

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 /**
  * API de Libertempo
  * @since 0.1

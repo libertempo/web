@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 namespace LibertAPI\Tools\Libraries;
 
 use Doctrine\DBAL\Driver\Connection;
@@ -41,7 +41,7 @@ class Application
      *
      * @return array
      */
-    private function fetchAllData()
+    private function fetchAllData() : array
     {
         $req = 'SELECT * FROM `conges_appli`';
         $res = $this->storageConnector->query($req);
@@ -49,7 +49,7 @@ class Application
         return $res->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    public function getTokenInstance()
+    public function getTokenInstance() : string
     {
         return $this->data['token_instance'];
     }

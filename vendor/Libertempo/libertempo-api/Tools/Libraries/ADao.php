@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 namespace LibertAPI\Tools\Libraries;
 
 use Doctrine\DBAL\Query;
@@ -21,7 +21,7 @@ abstract class ADao
     {
         $this->storageConnector = $storageConnector;
         $this->queryBuilder = $storageConnector->createQueryBuilder();
-        $this->queryBuilder->from($this->getTableName());
+        $this->queryBuilder->from($this->getTableName(), 'current');
     }
 
     /**
@@ -46,7 +46,7 @@ abstract class ADao
      * @return AEntite
      * @throws \DomainException si $id n'est pas dans le domaine de définition
      */
-    abstract public function getById($id);
+    abstract public function getById(int $id) : AEntite;
 
     /**
      * Effectue le mapping des éléments venant de la DAO pour qu'ils soient compréhensibles pour l'Entité
@@ -65,7 +65,7 @@ abstract class ADao
      *
      * @return array, vide si les critères ne sont pas pertinents
      */
-    abstract public function getList(array $parametres);
+    abstract public function getList(array $parametres) : array;
 
     /*************************************************
      * POST
@@ -78,7 +78,7 @@ abstract class ADao
      *
      * @return int Id de la ressource nouvellement créée
      */
-    abstract public function post(AEntite $entite);
+    abstract public function post(AEntite $entite) : int;
 
     /*************************************************
      * PUT
@@ -98,7 +98,7 @@ abstract class ADao
      *
      * @return array
      */
-    abstract protected function getEntite2Storage(AEntite $entite);
+    abstract protected function getEntite2Storage(AEntite $entite) : array;
 
     /*************************************************
      * DELETE
@@ -111,21 +111,21 @@ abstract class ADao
      *
      * @return int Nombre d'éléments affectés
      */
-    abstract public function delete($id);
+    abstract public function delete(int $id) : int;
 
     /**
      * Retourne le nom de la table
      *
      * @return string
      */
-    abstract protected function getTableName();
+    abstract protected function getTableName() : string;
 
     /**
      * Initie une transaction
      *
      * @return bool
      */
-    public function beginTransaction()
+    public function beginTransaction() : bool
     {
         return $this->storageConnector->beginTransaction();
     }
@@ -135,7 +135,7 @@ abstract class ADao
      *
      * @return bool
      */
-    public function commit()
+    public function commit() : bool
     {
         return $this->storageConnector->commit();
     }
@@ -145,7 +145,7 @@ abstract class ADao
      *
      * @return bool
      */
-    public function rollback()
+    public function rollback() : bool
     {
         return $this->storageConnector->rollBack();
     }

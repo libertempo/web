@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 namespace LibertAPI\Tests\Units\Absence\Type;
 
 /**
@@ -38,9 +38,8 @@ final class TypeRepository extends \LibertAPI\Tests\Units\Tools\Libraries\ARepos
         $this->newTestedInstance($this->dao);
 
         $this->exception(function () {
-            $this->testedInstance->deleteOne(new \LibertAPI\Absence\Type\TypeEntite([]));
+            $this->testedInstance->deleteOne(new \LibertAPI\Absence\Type\TypeEntite(['id' => 49]));
         })->isInstanceOf('\LogicException');
-
     }
 
     /**
@@ -50,7 +49,7 @@ final class TypeRepository extends \LibertAPI\Tests\Units\Tools\Libraries\ARepos
     {
         $this->dao->getMockController()->delete = 4;
         $this->newTestedInstance($this->dao);
-        $entite = new \LibertAPI\Absence\Type\TypeEntite([]);
+        $entite = new \LibertAPI\Absence\Type\TypeEntite(['id' => 49]);
 
         $this->variable($this->testedInstance->deleteOne($entite))->isNull();
     }

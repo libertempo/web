@@ -36,9 +36,9 @@ if (empty($listPlanningId)) {
     $config = new \App\Libraries\Configuration($sql);
     $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
     $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
-    $plannings = $api->get('planning', $_SESSION['token'])->data;
+    $plannings = $api->get('planning', $_SESSION['token'])['data'];
     $plannings = array_filter($plannings, function ($planning) {
-        return $planning->status === \App\Models\Planning::STATUS_ACTIVE;
+        return $planning['status'] === \App\Models\Planning::STATUS_ACTIVE;
     });
 }
 

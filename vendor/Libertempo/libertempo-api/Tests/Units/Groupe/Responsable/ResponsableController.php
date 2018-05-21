@@ -1,22 +1,22 @@
 <?php declare(strict_types = 1);
-namespace LibertAPI\Tests\Units\Journal;
+namespace LibertAPI\Tests\Units\Groupe\Responsable;
 
 use LibertAPI\Utilisateur\UtilisateurEntite;
 
 /**
- * Classe de test du contrôleur de journal
+ * Classe de test du contrôleur de reponsable de groupe
  *
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina
  *
- * @since 0.5
+ * @since 0.7
  */
-final class JournalController extends \LibertAPI\Tests\Units\Tools\Libraries\AController
+final class ResponsableController extends \LibertAPI\Tests\Units\Tools\Libraries\AController
 {
     /**
-     * @var UtilisateurEntite Standardisation d'un rôle employé
+     * @var UtilisateurEntite Standardisation d'un rôle admin
      */
-    protected $currentEmploye;
+    protected $currentAdmin;
 
     /**
      * {@inheritdoc}
@@ -24,7 +24,7 @@ final class JournalController extends \LibertAPI\Tests\Units\Tools\Libraries\ACo
     public function beforeTestMethod($method)
     {
         parent::beforeTestMethod($method);
-        $this->currentEmploye = new UtilisateurEntite(['id' => 'user', 'isResp' => false]);
+        $this->currentAdmin = new UtilisateurEntite(['id' => 'user', 'isAdmin' => true]);
     }
 
     /**
@@ -34,7 +34,7 @@ final class JournalController extends \LibertAPI\Tests\Units\Tools\Libraries\ACo
     {
         $this->mockGenerator->orphanize('__construct');
         $this->mockGenerator->shuntParentClassCalls();
-        $this->repository = new \mock\LibertAPI\Journal\JournalRepository();
+        $this->repository = new \mock\LibertAPI\Groupe\Responsable\ResponsableRepository();
     }
 
     /**
@@ -42,14 +42,25 @@ final class JournalController extends \LibertAPI\Tests\Units\Tools\Libraries\ACo
      */
     protected function initEntite()
     {
-        $this->entite = new \LibertAPI\Journal\JournalEntite([
-            'id' => 42,
-            'numeroPeriode' => 88,
-            'utilisateurActeur' => '4',
-            'utilisateurObjet' => '8',
-            'etat' => 'cassé',
-            'commentaire' => 'c\'est cassé',
-            'date' => 'now',
+        $this->entite = new \LibertAPI\Utilisateur\UtilisateurEntite([
+            'id' => 816,
+            'login' => 'Spider-man',
+            'nom' => 'Parker',
+            'prenom' => 'Peter',
+            'isResp' => 'N',
+            'isAdmin' => 'N',
+            'isHr' => 'N',
+            'isActif' => 'Y',
+            'seeAll' => 'N',
+            'password' => 'MJ',
+            'quotite' => '10',
+            'email' => 'p.parker@dailybugle.com',
+            'numeroExercice' => 3,
+            'planningId' => 666,
+            'heureSolde' => 1,
+            'dateInscription' => '1-08-1962',
+            'token' => '',
+            'dateLastAccess' => '1-08-2006',
         ]);
     }
 
@@ -64,7 +75,7 @@ final class JournalController extends \LibertAPI\Tests\Units\Tools\Libraries\ACo
     {
         $this->calling($this->request)->getQueryParams = [];
         $this->calling($this->repository)->getList = [$this->entite,];
-        $this->newTestedInstance($this->repository, $this->router, $this->currentEmploye);
+        $this->newTestedInstance($this->repository, $this->router, $this->currentAdmin);
         $response = $this->testedInstance->get($this->request, $this->response, []);
         $data = $this->getJsonDecoded($response->getBody());
 
@@ -87,7 +98,7 @@ final class JournalController extends \LibertAPI\Tests\Units\Tools\Libraries\ACo
         $this->calling($this->repository)->getList = function () {
             throw new \UnexpectedValueException('');
         };
-        $this->newTestedInstance($this->repository, $this->router, $this->currentEmploye);
+        $this->newTestedInstance($this->repository, $this->router, $this->currentAdmin);
         $response = $this->testedInstance->get($this->request, $this->response, []);
 
         $this->assertSuccessEmpty($response);
@@ -102,7 +113,7 @@ final class JournalController extends \LibertAPI\Tests\Units\Tools\Libraries\ACo
         $this->calling($this->repository)->getList = function () {
             throw new \Exception('');
         };
-        $this->newTestedInstance($this->repository, $this->router, $this->currentEmploye);
+        $this->newTestedInstance($this->repository, $this->router, $this->currentAdmin);
 
         $response = $this->testedInstance->get($this->request, $this->response, []);
         $this->assertError($response);

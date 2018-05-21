@@ -1,8 +1,8 @@
-<?php
+<?php declare(strict_types = 1);
 /*
  * Doit être importé après la création de $app. Ne créé rien.
  *
- * La convention de nommage est de mettre les routes au pluriel
+ * La convention de nommage est de mettre les routes au singulier
  */
 
 /* Routes sur une absence et associés */

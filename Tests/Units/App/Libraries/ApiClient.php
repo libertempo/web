@@ -218,10 +218,10 @@ class ApiClient extends \Tests\Units\TestUnit
 
         $this->mock($this->client)->call('request')->withIdenticalArguments($method, $uri, $options)->once();
 
-        $this->string($request->code);
-        $this->string($request->status);
-        $this->string($request->message);
-        $this->string($request->data);
+        $this->string($request['code']);
+        $this->string($request['status']);
+        $this->string($request['message']);
+        $this->string($request['data']);
     }
 
     public function testClone()

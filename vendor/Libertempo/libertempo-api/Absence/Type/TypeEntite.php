@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 namespace LibertAPI\Absence\Type;
 
 /**
@@ -14,10 +14,8 @@ class TypeEntite extends \LibertAPI\Tools\Libraries\AEntite
 {
     /**
      * Retourne la donnée la plus à jour du champ type
-     *
-     * @return string
      */
-    public function getType()
+    public function getType() : string
     {
         return $this->getFreshData('type');
     }
@@ -25,10 +23,9 @@ class TypeEntite extends \LibertAPI\Tools\Libraries\AEntite
     /**
      * Retourne la donnée la plus à jour du champ libelle
      *
-     * @return string
      * @TODO : changer le schema bd, le transcodage ne devrait pas être nécessaire
      */
-    public function getLibelle()
+    public function getLibelle() : string
     {
         if ('utf-8' !== strtolower(mb_detect_encoding($this->getFreshData('libelle')))) {
             return utf8_encode($this->getFreshData('libelle'));
@@ -40,10 +37,8 @@ class TypeEntite extends \LibertAPI\Tools\Libraries\AEntite
 
     /**
      * Retourne la donnée la plus à jour du champ libelle court
-     *
-     * @return string
      */
-    public function getLibelleCourt()
+    public function getLibelleCourt() : string
     {
         return $this->getFreshData('libelleCourt');
     }
@@ -68,10 +63,9 @@ class TypeEntite extends \LibertAPI\Tools\Libraries\AEntite
      *
      * Stocke une erreur si la donnée ne colle pas au domaine
      *
-     * @param string $type
      * @todo
      */
-    private function setType($type)
+    private function setType(string $type)
     {
         // domaine ?
         if (empty($type)) {
@@ -87,10 +81,9 @@ class TypeEntite extends \LibertAPI\Tools\Libraries\AEntite
      *
      * Stocke une erreur si la donnée ne colle pas au domaine
      *
-     * @param string $var
      * @todo
      */
-    private function setLibelle($var)
+    private function setLibelle(string $var)
     {
         // domaine ?
         if (empty($var)) {
@@ -106,10 +99,9 @@ class TypeEntite extends \LibertAPI\Tools\Libraries\AEntite
      *
      * Stocke une erreur si la donnée ne colle pas au domaine
      *
-     * @param string $var
      * @todo
      */
-    private function setLibelleCourt($var)
+    private function setLibelleCourt(string $var)
     {
         // domaine ?
         if (empty($var)) {

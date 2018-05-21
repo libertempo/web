@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 namespace LibertAPI\Planning;
 
 use LibertAPI\Tools\Libraries\AEntite;
@@ -17,14 +17,10 @@ use LibertAPI\Tools\Libraries\AEntite;
  */
 class PlanningRepository extends \LibertAPI\Tools\Libraries\ARepository
 {
-    /*************************************************
-     * GET
-     *************************************************/
-
     /**
      * @inheritDoc
      */
-    final protected function getParamsConsumer2Dao(array $paramsConsumer)
+    final protected function getParamsConsumer2Dao(array $paramsConsumer) : array
     {
         unset($paramsConsumer);
         return [];
@@ -41,8 +37,8 @@ class PlanningRepository extends \LibertAPI\Tools\Libraries\ARepository
     public function deleteOne(AEntite $entite)
     {
         try {
-            $entite->reset();
             $this->dao->delete($entite->getId());
+            $entite->reset();
         } catch (\Exception $e) {
             throw $e;
         }

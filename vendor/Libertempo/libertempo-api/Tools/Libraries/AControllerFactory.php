@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 namespace LibertAPI\Tools\Libraries;
 
 use \Slim\Interfaces\RouterInterface as IRouter;
@@ -26,10 +26,10 @@ abstract class AControllerFactory
      * @param Connection $storageConnector Connecteur à la BDD
      * @param IRouter $router Routeur de l'application
      *
-     * @return \LibertAPI\Tools\Libraries\AController
+     * @return AController
      * @throws \DomainException Si la ressource est inconnue
      */
-    final public static function createControllerAuthentification($ressourcePath, Connection $storageConnector, IRouter $router)
+    final public static function createControllerAuthentification($ressourcePath, Connection $storageConnector, IRouter $router) : AController
     {
         $controllerClass = static::getControllerClassname($ressourcePath);
         if (!class_exists($controllerClass, true)) {
@@ -56,10 +56,10 @@ abstract class AControllerFactory
      * @param IRouter $router Routeur de l'application
      * @param AEntite $currentUser Utilisateur authentifié
      *
-     * @return \App\Libraries\AController
+     * @return AController
      * @throws \DomainException Si la ressource est inconnue
      */
-    final public static function createControllerWithUser($ressourcePath, Connection $storageConnector, IRouter $router, AEntite $currentUser)
+    final public static function createControllerWithUser($ressourcePath, Connection $storageConnector, IRouter $router, AEntite $currentUser) : AController
     {
         $controllerClass = static::getControllerClassname($ressourcePath);
         if (!class_exists($controllerClass, true)) {
@@ -87,7 +87,7 @@ abstract class AControllerFactory
      *
      * @return string
      */
-    final private static function getControllerClassname($ressourcePath)
+    final private static function getControllerClassname($ressourcePath) : string
     {
         $paths = explode('\\', $ressourcePath);
         $end = array_pop($paths);

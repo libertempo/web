@@ -1,5 +1,7 @@
-<?php
+<?php declare(strict_types = 1);
 namespace LibertAPI\Tests\Units\Planning;
+
+use Psr\Http\Message\ResponseInterface as IResponse;
 
 /**
  * Classe de test du contrôleur de planning
@@ -32,6 +34,10 @@ final class PlanningController extends \LibertAPI\Tests\Units\Tools\Libraries\AR
         $this->entite->getMockController()->getStatus = 12;
     }
 
+    /*************************************************
+     * GET
+     *************************************************/
+
     /**
      * Teste la méthode get d'une liste avec des droits insuffisants
      */
@@ -52,12 +58,12 @@ final class PlanningController extends \LibertAPI\Tests\Units\Tools\Libraries\AR
         $this->assertFail($response, 403);
     }
 
-    protected function getOne()
+    protected function getOne() : IResponse
     {
         return $this->testedInstance->get($this->request, $this->response, ['planningId' => 99]);
     }
 
-    protected function getList()
+    protected function getList() : IResponse
     {
         return $this->testedInstance->get($this->request, $this->response, []);
     }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 namespace LibertAPI\Absence\Type;
 
 use LibertAPI\Tools\Libraries\AEntite;
@@ -20,7 +20,7 @@ class TypeDao extends \LibertAPI\Tools\Libraries\ADao
     /**
      * @inheritDoc
      */
-    public function getById($id)
+    public function getById(int $id) : AEntite
     {
         $this->queryBuilder->select('*');
         $this->setWhere(['id' => $id]);
@@ -50,7 +50,7 @@ class TypeDao extends \LibertAPI\Tools\Libraries\ADao
     /**
      * @inheritDoc
      */
-    public function getList(array $parametres)
+    public function getList(array $parametres) : array
     {
         $this->queryBuilder->select('*');
         $this->setWhere($parametres);
@@ -61,11 +61,11 @@ class TypeDao extends \LibertAPI\Tools\Libraries\ADao
             throw new \UnexpectedValueException('No resource match with these parameters');
         }
 
-        $entites = [];
-        foreach ($data as $value) {
-            $entite = new TypeEntite($this->getStorage2Entite($value));
-            $entites[$entite->getId()] = $entite;
-        }
+        $entites = array_map(function ($value) {
+                return new TypeEntite($this->getStorage2Entite($value));
+            },
+            $data
+        );
 
         return $entites;
     }
@@ -77,7 +77,7 @@ class TypeDao extends \LibertAPI\Tools\Libraries\ADao
     /**
      * @inheritDoc
      */
-    public function post(AEntite $entite)
+    public function post(AEntite $entite) : int
     {
         $this->queryBuilder->insert($this->getTableName());
         $this->setValues($this->getEntite2Storage($entite));
@@ -121,7 +121,7 @@ class TypeDao extends \LibertAPI\Tools\Libraries\ADao
     /**
      * @inheritDoc
      */
-    final protected function getEntite2Storage(AEntite $entite)
+    final protected function getEntite2Storage(AEntite $entite) : array
     {
         return [
             'type' => $entite->getType(),
@@ -154,7 +154,7 @@ class TypeDao extends \LibertAPI\Tools\Libraries\ADao
     /**
      * @inheritDoc
      */
-    public function delete($id)
+    public function delete(int $id) : int
     {
         $this->queryBuilder->delete($this->getTableName());
         $this->setWhere(['ta_id' => $id]);
@@ -180,7 +180,7 @@ class TypeDao extends \LibertAPI\Tools\Libraries\ADao
     /**
      * @inheritDoc
      */
-    final protected function getTableName()
+    final protected function getTableName() : string
     {
         return 'conges_type_absence';
     }

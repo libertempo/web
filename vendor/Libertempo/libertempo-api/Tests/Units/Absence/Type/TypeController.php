@@ -1,5 +1,7 @@
-<?php
+<?php declare(strict_types = 1);
 namespace LibertAPI\Tests\Units\Absence\Type;
+
+use Psr\Http\Message\ResponseInterface as IResponse;
 
 /**
  * Classe de test du contrôleur des type d'absence
@@ -44,12 +46,12 @@ final class TypeController extends \LibertAPI\Tests\Units\Tools\Libraries\ARestC
         ]);
     }
 
-    protected function getOne()
+    protected function getOne() : IResponse
     {
         return $this->testedInstance->get($this->request, $this->response, ['typeId' => 99]);
     }
 
-    protected function getList()
+    protected function getList() : IResponse
     {
         return $this->testedInstance->get($this->request, $this->response, []);
     }

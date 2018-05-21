@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 namespace LibertAPI\Tools\Interfaces;
 
 use Psr\Http\Message\ServerRequestInterface as IRequest;
@@ -18,5 +18,5 @@ interface IDeletable
      *
      * @return IResponse
      */
-    public function delete(IRequest $request, IResponse $response, array $routeArguments);
+    public function delete(IRequest $request, IResponse $response, array $routeArguments) : IResponse;
 }

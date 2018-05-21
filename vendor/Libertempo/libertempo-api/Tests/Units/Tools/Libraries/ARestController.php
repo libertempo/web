@@ -1,7 +1,8 @@
-<?php
+<?php declare(strict_types = 1);
 namespace LibertAPI\Tests\Units\Tools\Libraries;
 
 use LibertAPI\Utilisateur\UtilisateurEntite;
+use Psr\Http\Message\ResponseInterface as IResponse;
 
 /**
  * Classe de base des tests sur les contrôleurs REST
@@ -91,7 +92,7 @@ abstract class ARestController extends AController
         $response = $this->assertError($response);
     }
 
-    abstract protected function getOne();
+    abstract protected function getOne() : IResponse;
 
     /**
      * Teste la méthode get d'une liste trouvée
@@ -99,9 +100,7 @@ abstract class ARestController extends AController
     public function testGetListFound()
     {
         $this->request->getMockController()->getQueryParams = [];
-        $this->repository->getMockController()->getList = [
-            42 => $this->entite,
-        ];
+        $this->repository->getMockController()->getList = [$this->entite,];
         $this->newTestedInstance($this->repository, $this->router, $this->currentAdmin);
 
         $response = $this->getList();
@@ -147,5 +146,5 @@ abstract class ARestController extends AController
         $this->assertError($response);
     }
 
-    abstract protected function getList();
+    abstract protected function getList() : IResponse;
 }

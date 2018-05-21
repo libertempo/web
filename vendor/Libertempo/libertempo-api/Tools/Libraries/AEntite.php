@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 namespace LibertAPI\Tools\Libraries;
 
 use LibertAPI\Tools\Exceptions\MissingArgumentException;
@@ -91,7 +91,7 @@ abstract class AEntite
      * @param string $champ Champ
      * @param string $message Message d'erreur
      */
-    final protected function setErreur($champ, $message)
+    final protected function setErreur(string $champ, string $message)
     {
         $this->erreurs[$champ][] = $message;
     }
@@ -101,7 +101,7 @@ abstract class AEntite
      *
      * @return array
      */
-    final protected function getErreurs()
+    final protected function getErreurs() : array
     {
         return $this->erreurs;
     }
@@ -123,7 +123,7 @@ abstract class AEntite
      *
      * @return string
      */
-    final protected function getFreshData($data)
+    final protected function getFreshData(string $data)
     {
         if (isset($this->dataUpdated[$data])) {
             return $this->dataUpdated[$data];

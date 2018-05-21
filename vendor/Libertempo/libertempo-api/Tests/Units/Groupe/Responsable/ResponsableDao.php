@@ -1,17 +1,17 @@
 <?php declare(strict_types = 1);
-namespace LibertAPI\Tests\Units\Journal;
+namespace LibertAPI\Tests\Units\Groupe\Responsable;
 
-use LibertAPI\Journal\JournalEntite;
+use LibertAPI\Utilisateur\UtilisateurEntite;
 
 /**
- * Classe de test du DAO de planning
+ * Classe de test du DAO de responsable de groupe
  *
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina
  *
- * @since 0.5
+ * @since 0.7
  */
-final class JournalDao extends \LibertAPI\Tests\Units\Tools\Libraries\ADao
+final class ResponsableDao extends \LibertAPI\Tests\Units\Tools\Libraries\ADao
 {
     /*************************************************
      * GET
@@ -49,7 +49,7 @@ final class JournalDao extends \LibertAPI\Tests\Units\Tools\Libraries\ADao
         $this->newTestedInstance($this->connector);
 
         $this->exception(function () {
-            $this->testedInstance->post(new JournalEntite([]));
+            $this->testedInstance->post(new UtilisateurEntite([]));
         })->isInstanceOf(\RuntimeException::class);
     }
 
@@ -65,7 +65,7 @@ final class JournalDao extends \LibertAPI\Tests\Units\Tools\Libraries\ADao
         $this->newTestedInstance($this->connector);
 
         $this->exception(function () {
-            $this->testedInstance->put(new JournalEntite([]));
+            $this->testedInstance->put(new UtilisateurEntite([]));
         })->isInstanceOf(\RuntimeException::class);
     }
 
@@ -81,20 +81,34 @@ final class JournalDao extends \LibertAPI\Tests\Units\Tools\Libraries\ADao
         $this->newTestedInstance($this->connector);
 
         $this->exception(function () {
-            $this->testedInstance->delete(218);
+            $this->testedInstance->delete(0);
         })->isInstanceOf(\RuntimeException::class);
     }
 
+    /**
+     * Duplication de la fonction dans UtilisateurDao (Cf. decisions.md #2018-02-17)
+     */
     protected function getStorageContent()
     {
         return [
-            'log_id' => 81,
-            'log_p_num' => 1213,
-            'log_user_login_par' => 'Baloo',
-            'log_user_login_pour' => 'Mowgli',
-            'log_etat' => 'gere',
-            'log_comment' => 'nope',
-            'log_date' => '2017-12-01',
+            'id' => 'Aladdin',
+            'token' => 'token',
+            'date_last_access' => 'date_last_access',
+            'u_login' => 'Aladdin',
+            'u_prenom' => 'Aladdin',
+            'u_nom' => 'Genie',
+            'u_is_resp' => 'Y',
+            'u_is_admin' => 'Y',
+            'u_is_hr' => 'N',
+            'u_is_active' => 'Y',
+            'u_see_all' => 'Y',
+            'u_passwd' => 'Sésame Ouvre toi',
+            'u_quotite' => '21220',
+            'u_email' => 'aladdin@example.org',
+            'u_num_exercice' => '3',
+            'planning_id' => 12,
+            'u_heure_solde' => 1,
+            'date_inscription' => 123456789,
         ];
     }
 }

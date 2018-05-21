@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 namespace LibertAPI\Tests\Units\Planning\Creneau;
 
 use \LibertAPI\Planning\Creneau\CreneauEntite as _Entite;

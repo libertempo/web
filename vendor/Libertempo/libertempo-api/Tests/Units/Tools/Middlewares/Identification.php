@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 namespace LibertAPI\Tests\Units\Tools\Middlewares;
 
 use LibertAPI\Tools\Middlewares\Identification as _Identification;

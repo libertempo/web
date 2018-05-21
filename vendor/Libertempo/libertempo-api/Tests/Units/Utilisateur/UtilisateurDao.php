@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 namespace LibertAPI\Tests\Units\Utilisateur;
 
 use \LibertAPI\Utilisateur\UtilisateurDao as _Dao;
@@ -45,8 +45,10 @@ final class UtilisateurDao extends \LibertAPI\Tests\Units\Tools\Libraries\ADao
 
     public function testPost()
     {
-        $dao = new _Dao($this->connector);
-        $this->variable($dao->post(new UtilisateurEntite($this->entiteContent)))->isNull();
+        $this->exception(function () {
+            $dao = new _Dao($this->connector);
+            $this->variable($dao->post(new UtilisateurEntite($this->entiteContent)));
+        })->isInstanceOf(\RuntimeException::class);
     }
 
     /*************************************************
@@ -74,12 +76,11 @@ final class UtilisateurDao extends \LibertAPI\Tests\Units\Tools\Libraries\ADao
      */
     public function testDeleteOk()
     {
-        $this->calling($this->result)->rowCount = 1;
         $this->newTestedInstance($this->connector);
 
-        $res = $this->testedInstance->delete(7);
-
-        $this->variable($res)->isNull();
+        $this->exception(function () {
+            $this->testedInstance->delete(7);
+        });
     }
 
     protected function getStorageContent()

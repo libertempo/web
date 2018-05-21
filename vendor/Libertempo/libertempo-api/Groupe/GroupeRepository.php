@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 namespace LibertAPI\Groupe;
 
 use LibertAPI\Tools\Libraries\AEntite;
@@ -24,7 +24,7 @@ class GroupeRepository extends \LibertAPI\Tools\Libraries\ARepository
     /**
      * @inheritDoc
      */
-    final protected function getParamsConsumer2Dao(array $paramsConsumer)
+    final protected function getParamsConsumer2Dao(array $paramsConsumer) : array
     {
         unset($paramsConsumer);
         return [];
@@ -41,8 +41,8 @@ class GroupeRepository extends \LibertAPI\Tools\Libraries\ARepository
     public function deleteOne(AEntite $entite)
     {
         try {
-            $entite->reset();
             $this->dao->delete($entite->getId());
+            $entite->reset();
         } catch (\Exception $e) {
             throw $e;
         }
