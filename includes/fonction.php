@@ -456,5 +456,6 @@ function storeTokenApi(\App\Libraries\ApiClient $apiClient, $username, $userPass
         $dataUser = $apiClient->authentifyThirdParty($username);
     }
 
-    $_SESSION['token'] = $dataUser->data;
+
+    $_SESSION['token'] = $dataUser['data'];
 }
