@@ -85,13 +85,11 @@ function generateDatePicker(opts, compter)
         todayHighlight     : true,
         daysOfWeekDisabled : [],
         datesDisabled      : [],
-        startDate          : ''
     };
     var toApply = defaultOpts;
 
-    /* On ne peut pas écraser une option qui n'existe en défaut */
-    for (var i in defaultOpts) {
-        toApply[i] = (undefined !== opts[i]) ? opts[i] : defaultOpts[i];
+    for (var i in opts) {
+        toApply[i] = opts[i];
     }
     $(document).ready(function () {
         $('input.date').datepicker(toApply).on("change", function() {
@@ -770,7 +768,7 @@ function searchLdapUser() {
                 list.appendChild(frag);
                 list.style.display = "block";
             } else {
-                list.style.display = "none";			
+                list.style.display = "none";
             }
         },
     });
