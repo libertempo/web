@@ -810,7 +810,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affichage($user_login,  $year_affichage, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $tri_date, $onglet) : string
+    public static function affichage($user_login, $year_affichage, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $tri_date, $onglet) : string
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
@@ -1385,7 +1385,7 @@ class Fonctions
         return $list_users;
     }
 
-    public static function saisie_ajout( $tab_type_conges) : string
+    public static function saisie_ajout($tab_type_conges) : string
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
