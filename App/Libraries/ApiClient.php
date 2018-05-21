@@ -143,7 +143,7 @@ final class ApiClient
             $emptyClass->data = [];
             return $emptyClass;
         }
-        $jsonBody = json_decode($body, false);
+        $jsonBody = json_decode($body, true);
         if (null === $jsonBody) {
             throw new \RuntimeException('La réponse n\'est pas du JSON');
         }

@@ -1538,7 +1538,7 @@ class Fonctions
         return true;
     }
 
-    public static function insert_year($tab_checkbox_j_chome) : bool
+    public static function insert_year($tab_checkbox_j_chome) : bool
     {
         foreach($tab_checkbox_j_chome as $key => $value)
             $result = \includes\SQL::query('INSERT INTO conges_jours_feries SET jf_date="'. \includes\SQL::quote($key).'";');
@@ -1628,7 +1628,7 @@ class Fonctions
 
     // affichage du calendrier du mois avec les case à cocher
     // on lui passe en parametre le tableau des jour chomé de l'année (pour pré-cocher certaines cases)
-    public static function affiche_calendrier_saisie_jours_chomes($year, $mois, $tab_year) : string
+    public static function affiche_calendrier_saisie_jours_chomes($year, $mois, $tab_year) : string
     {
         $jour_today=date("j");
         $jour_today_name=date("D");
@@ -1715,7 +1715,7 @@ class Fonctions
         return $return;
     }
 
-    public static function saisie($year_calendrier_saisie) : string
+    public static function saisie($year_calendrier_saisie) : string
     {
         $sql = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($sql);
@@ -1907,7 +1907,7 @@ class Fonctions
         }
     }
 
-    public static function cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $commentaire) : string
+    public static function cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $commentaire) : string
     {
         $return = '';
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
@@ -2065,7 +2065,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affichage_cloture_globale_pour_tous($tab_type_conges) : string
+    public static function affichage_cloture_globale_pour_tous($tab_type_conges) : string
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
@@ -2095,7 +2095,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affiche_ligne_du_user($current_login, $tab_type_conges, $tab_current_user, $i = true) : string
+    public static function affiche_ligne_du_user($current_login, $tab_type_conges, $tab_current_user, $i = true) : string
     {
         $return = '';
         $return .= '<tr class="' . ($i ? 'i' : 'p') . '">';
@@ -2275,7 +2275,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affiche_calendrier_fermeture_mois($year, $mois, $tab_year) : string
+    public static function affiche_calendrier_fermeture_mois($year, $mois, $tab_year) : string
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $jour_today=date("j");
@@ -2764,7 +2764,7 @@ class Fonctions
         }
     }
 
-    public static function saisie_dates_fermeture($year, $groupe_id, $new_date_debut, $new_date_fin, $code_erreur) : string
+    public static function saisie_dates_fermeture($year, $groupe_id, $new_date_debut, $new_date_fin, $code_erreur) : string
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
@@ -2802,7 +2802,7 @@ class Fonctions
         return $return;
     }
 
-    public static function saisie_groupe_fermeture() : string
+    public static function saisie_groupe_fermeture() : string
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
