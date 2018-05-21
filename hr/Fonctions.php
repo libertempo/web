@@ -992,7 +992,7 @@ class Fonctions
             $new_fin = htmlentities(getpost_variable('new_fin'), ENT_QUOTES | ENT_HTML401);
             $new_demi_jour_fin = htmlentities(getpost_variable('new_demi_jour_fin'), ENT_QUOTES | ENT_HTML401);
             $new_comment = htmlentities(getpost_variable('new_comment'), ENT_QUOTES | ENT_HTML401);
-            $new_type = getpost_variable('new_type') ;
+            $new_type = htmlentities(getpost_variable('new_type'), ENT_QUOTES | ENT_HTML401);
 
             $new_nb_jours = compter($user_login, '', $new_debut,  $new_fin, $new_demi_jour_deb, $new_demi_jour_fin, $comment);
 
