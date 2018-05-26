@@ -9,3 +9,4 @@ cfg/config_SMTP.php
 /nbproject/
 /dump/*.dump
 /backup/libertempo*
+clover.xml
