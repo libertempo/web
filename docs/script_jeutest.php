@@ -205,7 +205,7 @@ if (!empty($_POST)) {
             $heureSolde = rand(0, 400);
         }
 
-        $password = md5($prenom);
+        $password = password_hash($prenom, PASSWORD_BCRYPT);
 
         $isHr = 'N';
         $isActive = 'Y';
