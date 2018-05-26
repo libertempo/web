@@ -1,0 +1,13 @@
+machine:
+  php:
+    version: 7.1.6
+
+dependencies:
+  pre:
+    - curl -s http://getcomposer.org/installer | php
+    - php composer.phar install -n
+
+test:
+  post:
+    - php vendor/bin/phpunit --coverage-clover build/coverage/xml tests
+    - php bin/codacycoverage clover build/coverage/xml

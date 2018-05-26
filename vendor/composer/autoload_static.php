@@ -7,6 +7,7 @@ namespace Composer\Autoload;
 class ComposerStaticInitfd23b7dd905d561816f77d072cde6740
 {
     public static $files = array (
+        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         '253c157292f75eb38082b5acb06f3f01' => __DIR__ . '/..' . '/nikic/fast-route/src/functions.php',
         'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
         'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
@@ -17,7 +18,10 @@ class ComposerStaticInitfd23b7dd905d561816f77d072cde6740
     public static $prefixLengthsPsr4 = array (
         'S' => 
         array (
+            'Symfony\\Polyfill\\Mbstring\\' => 26,
+            'Symfony\\Component\\Process\\' => 26,
             'Symfony\\Component\\OptionsResolver\\' => 34,
+            'Symfony\\Component\\Console\\' => 26,
             'Slim\\' => 5,
         ),
         'P' => 
@@ -38,6 +42,7 @@ class ComposerStaticInitfd23b7dd905d561816f77d072cde6740
             'GuzzleHttp\\Psr7\\' => 16,
             'GuzzleHttp\\Promise\\' => 19,
             'GuzzleHttp\\' => 11,
+            'Gitonomy\\Git\\' => 13,
         ),
         'F' => 
         array (
@@ -52,9 +57,21 @@ class ComposerStaticInitfd23b7dd905d561816f77d072cde6740
     );
 
     public static $prefixDirsPsr4 = array (
+        'Symfony\\Polyfill\\Mbstring\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
+        ),
+        'Symfony\\Component\\Process\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/process',
+        ),
         'Symfony\\Component\\OptionsResolver\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/options-resolver',
+        ),
+        'Symfony\\Component\\Console\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/console',
         ),
         'Slim\\' => 
         array (
@@ -87,6 +104,10 @@ class ComposerStaticInitfd23b7dd905d561816f77d072cde6740
         'GuzzleHttp\\' => 
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
+        ),
+        'Gitonomy\\Git\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/gitonomy/gitlib/src/Gitonomy/Git',
         ),
         'FastRoute\\' => 
         array (
@@ -191,6 +212,18 @@ class ComposerStaticInitfd23b7dd905d561816f77d072cde6740
         'CAS_Request_MultiRequestInterface' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/Request/MultiRequestInterface.php',
         'CAS_Request_RequestInterface' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/Request/RequestInterface.php',
         'CAS_TypeMismatchException' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/TypeMismatchException.php',
+        'Codacy\\Coverage\\Application' => __DIR__ . '/..' . '/codacy/coverage/src/Codacy/Coverage/Application.php',
+        'Codacy\\Coverage\\Command\\Clover' => __DIR__ . '/..' . '/codacy/coverage/src/Codacy/Coverage/Command/Clover.php',
+        'Codacy\\Coverage\\Command\\Phpunit' => __DIR__ . '/..' . '/codacy/coverage/src/Codacy/Coverage/Command/Phpunit.php',
+        'Codacy\\Coverage\\Parser\\CloverParser' => __DIR__ . '/..' . '/codacy/coverage/src/Codacy/Coverage/Parser/CloverParser.php',
+        'Codacy\\Coverage\\Parser\\IParser' => __DIR__ . '/..' . '/codacy/coverage/src/Codacy/Coverage/Parser/Parser.php',
+        'Codacy\\Coverage\\Parser\\PhpUnitXmlParser' => __DIR__ . '/..' . '/codacy/coverage/src/Codacy/Coverage/Parser/PhpUnitXmlParser.php',
+        'Codacy\\Coverage\\Parser\\XMLParser' => __DIR__ . '/..' . '/codacy/coverage/src/Codacy/Coverage/Parser/Parser.php',
+        'Codacy\\Coverage\\Report\\CoverageReport' => __DIR__ . '/..' . '/codacy/coverage/src/Codacy/Coverage/Report/CoverageReport.php',
+        'Codacy\\Coverage\\Report\\FileReport' => __DIR__ . '/..' . '/codacy/coverage/src/Codacy/Coverage/Report/FileReport.php',
+        'Codacy\\Coverage\\Util\\CodacyApiClient' => __DIR__ . '/..' . '/codacy/coverage/src/Codacy/Coverage/Util/CodacyApiClient.php',
+        'Codacy\\Coverage\\Util\\GitClient' => __DIR__ . '/..' . '/codacy/coverage/src/Codacy/Coverage/Util/GitClient.php',
+        'Codacy\\Coverage\\Util\\JsonProducer' => __DIR__ . '/..' . '/codacy/coverage/src/Codacy/Coverage/Util/JsonProducer.php',
         'Datamatrix' => __DIR__ . '/..' . '/tecnickcom/tcpdf/include/barcodes/datamatrix.php',
         'EasyPeasyICS' => __DIR__ . '/..' . '/phpmailer/phpmailer/extras/EasyPeasyICS.php',
         'PDF417' => __DIR__ . '/..' . '/tecnickcom/tcpdf/include/barcodes/pdf417.php',
