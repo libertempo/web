@@ -13,4 +13,4 @@ notifications:
 script: vendor/bin/atoum
 
 after_script:
-  - php Vendor/Bin/codacycoverage clover clover.xml
+  - php vendor/bin/codacycoverage clover clover.xml
