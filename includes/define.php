@@ -33,7 +33,7 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     require_once ROOT_PATH . 'vendor/autoload.php';
     require_once ROOT_PATH . 'vendor/raveren/kint/Kint.class.php';
     require_once CONFIG_PATH . 'env.php';
-
+    require_once INCLUDE_PATH . 'fonctions_conges.php' ;
     switch (ENV) {
         case ENV_PROD:
         default:
@@ -51,7 +51,7 @@ if (!defined( 'DEFINE_INCLUDE' )) {
         case ENV_TEST:
             \Kint::enabled(true);
             error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
-            ini_set("display_errors", 1);
+            ini_set("display_errors", 0);
             $environnement = 'test';
             break;
     }

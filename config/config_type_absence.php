@@ -7,7 +7,6 @@ if (file_exists(CONFIG_PATH .'config_ldap.php')) {
     include_once CONFIG_PATH .'config_ldap.php';
 }
 
-// include_once ROOT_PATH .'fonctions_conges.php' ;
 // include_once INCLUDE_PATH .'fonction.php';
 if(!isset($_SESSION['config'])) {
     $_SESSION['config']=init_config_tab();      // on initialise le tableau des variables de config

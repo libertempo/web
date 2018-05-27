@@ -1,7 +1,5 @@
 <?php
 
-defined( '_PHP_CONGES' ) or die( 'Restricted access' );
-
 // retourne le nom du jour de la semaine en francais sur 2 caracteres
 function get_j_name_fr_2c($timestamp)
 {
