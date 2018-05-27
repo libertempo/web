@@ -2,8 +2,7 @@
 define('ROOT_PATH', '../');
 define('INCLUDE_PATH',     ROOT_PATH . 'includes/');
 require_once INCLUDE_PATH . 'define.php';
-include_once INCLUDE_PATH .'session.php';
-include_once ROOT_PATH .'fonctions_calcul.php';
+include_once INCLUDE_PATH . 'session.php';
 
 // verif des droits du user à afficher la page
 verif_droits_user('is_admin');
