@@ -350,10 +350,10 @@ class Fonctions
 
     public static function commit_ajout(&$tab_new_values)
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $return = '';
 
-        $URL = "$PHP_SELF?onglet=type_absence";
+        $URL = $PHP_SELF;
         $tab_new_values['libelle'] = htmlentities($tab_new_values['libelle'], ENT_QUOTES | ENT_HTML401);
         $tab_new_values['short_libelle'] = htmlentities($tab_new_values['short_libelle']);
         $tab_new_values['type'] = htmlentities($tab_new_values['type'], ENT_QUOTES | ENT_HTML401);
@@ -419,10 +419,10 @@ class Fonctions
 
     public static function commit_suppr($id_to_update)
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $return = '';
 
-        $URL = "$PHP_SELF?onglet=type_absence";
+        $URL = $PHP_SELF;
 
         // delete dans la table conges_type_absence
         $req_delete1='DELETE FROM conges_type_absence WHERE ta_id='. \includes\SQL::quote($id_to_update);
@@ -443,10 +443,10 @@ class Fonctions
 
     public static function supprimer($id_to_update)
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $return = '';
 
-        $URL = "$PHP_SELF?onglet=type_absence";
+        $URL = parse_url($PHP_SELF, PHP_URL_PATH);
 
 
         // verif si pas de periode de ce type de conges !!!
@@ -492,10 +492,10 @@ class Fonctions
 
     public static function commit_modif_absence(&$tab_new_values, $id_to_update)
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $return = '';
 
-        $URL = "$PHP_SELF";
+        $URL = $PHP_SELF;
 
 
         // verif de la saisie
@@ -513,7 +513,7 @@ class Fonctions
 
         if($erreur) {
             $return .= '<br>';
-            $return .= '<form action="' . $PHP_SELF . '?onglet=type_absence" method="POST">';
+            $return .= '<form action="' . $PHP_SELF . '" method="POST">';
             $return .= '<input type="hidden" name="action" value="modif">';
             $return .= '<input type="hidden" name="id_to_update" value="' . $id_to_update .'">';
             $return .= '<input type="hidden" name="tab_new_values[libelle]" value="' . $tab_new_values['libelle'] . '">';
@@ -537,10 +537,10 @@ class Fonctions
 
     public static function modifier(&$tab_new_values, $id_to_update)
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $return = '';
 
-        $URL = "$PHP_SELF?onglet=type_absence";
+        $URL = parse_url($PHP_SELF, PHP_URL_PATH);
 
         /**************************************/
         // affichage du titre

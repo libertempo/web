@@ -7,19 +7,23 @@ $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 $rewritten = [
     '/authentification',
-    '/utilisateur/liste_conge'
+    '/config/general',
+    '/config/type_absence',
 ];
 
 if (!in_array($uri, $rewritten, true)) {
     header('HTTP/1.0 404 Not Found');
     exit;
 }
-$utilisateur = '/utilisateur';
-$authentification = '/authentification';
+list(,$urn, $resource) = explode('/', $uri);
 
-if ($utilisateur === substr($uri, 0, strlen($utilisateur))) {
-    $_GET['onglet'] = 'liste_conge';
-    require_once ROOT_PATH . 'utilisateur/user_index.php';
-} elseif ($authentification === substr($uri, 0, strlen($authentification))) {
-    require_once ROOT_PATH . 'index.php';
+switch ($urn) {
+    case 'config':
+        $_GET['onglet'] = $resource;
+        require_once ROOT_PATH . 'config/index.php';
+        break;
+
+    default:
+        header('HTTP/1.0 404 Not Found');
+        break;
 }

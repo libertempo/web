@@ -20,7 +20,7 @@ verif_droits_user( "is_admin");
 /*************************************/
 // recup des parametres reçus :
 // SERVER
-$PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+$PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
 // GET / POST
 $action         = getpost_variable('action') ;
 $tab_new_values = getpost_variable('tab_new_values');
@@ -47,7 +47,7 @@ switch ($action) {
     default:
         $db = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($db);
-        $url = "$PHP_SELF?onglet=type_absence";
+        $url = $PHP_SELF;
         $tab_enum = \config\Fonctions::get_tab_from_mysql_enum_field("conges_type_absence", "ta_type");
         $listeTypeConges = [];
         $enumTypeConges = [];

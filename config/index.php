@@ -1,7 +1,6 @@
 <?php
-
-define('ROOT_PATH', '../');
-define('INCLUDE_PATH',     ROOT_PATH . 'includes/');
+defined('ROOT_PATH') or define('ROOT_PATH', '../');
+defined('INCLUDE_PATH') or define('INCLUDE_PATH',     ROOT_PATH . 'includes/');
 
 require_once INCLUDE_PATH . 'define.php';
 
@@ -15,7 +14,7 @@ $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 $_SESSION['config']=init_config_tab();      // on initialise le tableau des variables de config
 include_once INCLUDE_PATH .'session.php';
 
-$PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+$PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
 
 // verif des droits du user à afficher la page
 verif_droits_user("is_admin");
