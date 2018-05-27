@@ -8,7 +8,6 @@ if (!\includes\SQL::existsDatabase($mysql_database)) {
     echo "L'application n'est pas installée. Veuillez passer par l'installateur.";
     exit();
 }
-include_once INCLUDE_PATH .'fonction.php';
 $sql = \includes\SQL::singleton();
 $config = new \App\Libraries\Configuration($sql);
 $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);

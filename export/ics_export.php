@@ -5,5 +5,4 @@ define('INCLUDE_PATH',     ROOT_PATH . 'includes/');
 require_once INCLUDE_PATH . 'define.php';
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 
-include INCLUDE_PATH .'fonction.php';
 \export\Fonctions::exportICSModule();

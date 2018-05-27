@@ -1,7 +1,5 @@
 <?php
 
-defined( '_PHP_CONGES' ) or die( 'Restricted access' );
-
 include_once INCLUDE_PATH .'fonction_config.php';
 include_once INCLUDE_PATH .'lang_profile.php';
 //better to include_once plugins at the end : see bottom function

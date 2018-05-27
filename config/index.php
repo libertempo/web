@@ -4,7 +4,6 @@ define('ROOT_PATH', '../');
 define('INCLUDE_PATH',     ROOT_PATH . 'includes/');
 
 require_once INCLUDE_PATH . 'define.php';
-include_once INCLUDE_PATH . 'fonction.php';
 
 if (empty(session_id())) {
 	redirect(ROOT_PATH . 'index.php?return_url=config/index.php');
