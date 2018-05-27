@@ -1,7 +1,7 @@
 <?php
 define('ROOT_PATH', '');
-require_once 'define.php';
-require CONFIG_PATH . 'dbconnect.php';
+define('INCLUDE_PATH',     ROOT_PATH . 'includes/');
+require_once INCLUDE_PATH . 'define.php';
 
 // L'installation a-t-elle été faite ?
 if (!\includes\SQL::existsDatabase($mysql_database)) {

@@ -1,7 +1,9 @@
 <?php
 
 define('ROOT_PATH', '../');
-require_once ROOT_PATH . 'define.php';
+define('INCLUDE_PATH',     ROOT_PATH . 'includes/');
+
+require_once INCLUDE_PATH . 'define.php';
 include_once INCLUDE_PATH . 'fonction.php';
 
 if (empty(session_id())) {

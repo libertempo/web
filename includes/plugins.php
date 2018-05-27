@@ -1,7 +1,5 @@
 <?php
-
-
-include_once ROOT_PATH . 'define.php';
+require_once INCLUDE_PATH . 'define.php';
 
 function find_plugins_activated(){
     $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
