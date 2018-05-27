@@ -244,7 +244,7 @@ function session_delete()
 function session_saisie_user_password($erreur, $session_username, $session_password)
 {
     $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
-    $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+    $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
 
     $config_php_conges_version      = $config->getInstalledVersion();
     $config_url_site_web_php_conges = $config->getUrlAccueil();
@@ -422,7 +422,7 @@ function deconnexion_CAS($url = "")
 
     }
 
-    \phpCAS::logoutWithUrl($url);
+    \phpCAS::logoutWithUrl($url . 'authentification');
 }
 
 

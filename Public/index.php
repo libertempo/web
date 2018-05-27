@@ -15,9 +15,14 @@ if (!in_array($uri, $rewritten, true)) {
     header('HTTP/1.0 404 Not Found');
     exit;
 }
-list(,$urn, $resource) = explode('/', $uri);
+$explodedUri = explode('/', $uri);
+$urn = $explodedUri[1] ?? null;
+$resource = $explodedUri[2] ?? null;
 
 switch ($urn) {
+    case 'authentification':
+        require_once ROOT_PATH . 'index.php';
+        break;
     case 'config':
         $_GET['onglet'] = $resource;
         require_once ROOT_PATH . 'config/index.php';

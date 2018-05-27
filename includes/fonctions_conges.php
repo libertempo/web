@@ -1569,7 +1569,7 @@ function verif_droits_user($niveau_droits)
         // message d'erreur !
         echo "<center>\n";
         echo "<font color=\"red\">$lang_divers_acces_page_interdit</font><br>$lang_divers_user_disconnected<br>\n";
-        echo "$lang_divers_veuillez <a href='$url_accueil_conges/index.php' target='_top'> $lang_divers_vous_authentifier .</a>\n";
+        echo "$lang_divers_veuillez <a href='$url_accueil_conges/authentification' target='_top'> $lang_divers_vous_authentifier .</a>\n";
         echo "</center>\n";
         exit;
     }

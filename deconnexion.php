@@ -26,4 +26,4 @@ $session="";
 $session_username="";
 $session_password="";
 
-redirect( $URL_ACCUEIL_CONGES );
+redirect( $URL_ACCUEIL_CONGES . 'authentification');

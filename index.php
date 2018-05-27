@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
-define('ROOT_PATH', '');
-define('INCLUDE_PATH',     ROOT_PATH . 'includes/');
+defined('ROOT_PATH') or define('ROOT_PATH', '');
+defined('INCLUDE_PATH') or define('INCLUDE_PATH',     ROOT_PATH . 'includes/');
 require_once INCLUDE_PATH . 'define.php';
 
 // test si dbconnect.php est présent !
@@ -97,7 +97,7 @@ if (isset($_SESSION['userlogin'])) {
 	$request= "SELECT u_nom, u_passwd, u_prenom, u_is_resp, u_is_hr, u_is_admin, u_is_active  FROM conges_users where u_login = '". \includes\SQL::quote($_SESSION['userlogin'])."' " ;
 	$rs = \includes\SQL::query($request );
 	if ($rs->num_rows != 1) {
-	    redirect( ROOT_PATH .'index.php' );
+	    redirect(ROOT_PATH . 'authentification');
 	} else {
 		$row = $rs->fetch_array();
 		$NOM=$row["u_nom"];
