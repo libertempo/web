@@ -1529,7 +1529,7 @@ function recup_infos_all_users_du_grand_resp($login)
 }
 
 // execute sequentiellement les requètes d'un fichier .sql
-function execute_sql_file($file)
+function execute_sql_file($file) : bool
 {
     // lecture du fichier SQL
     // et execution de chaque ligne ....

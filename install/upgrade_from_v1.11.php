@@ -5,7 +5,7 @@ include ROOT_PATH . 'define.php';
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 
 /*******************************************************************/
-// SCRIPT DE MIGRATION DE LA VERSION 1.10 vers 1.11
+// SCRIPT DE MIGRATION DE LA VERSION 1.11 vers 1.12
 /*******************************************************************/
 include ROOT_PATH .'fonctions_conges.php' ;
 include INCLUDE_PATH .'fonction.php';

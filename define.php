@@ -12,6 +12,7 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     define('ABSOLUTE_SYSPATH', dirname(__FILE__) . DS);
     define('PUBLIC_PATH',      ROOT_PATH . 'Public/');
     define('VIEW_PATH', ROOT_PATH . 'App' . DS . 'Views' . DS);
+    define('PATCH_PATH', ROOT_PATH . 'App' . DS . 'Patchs' . DS);
     define('ASSETS_PATH',      PUBLIC_PATH . 'Assets/');
     define('JS_PATH',          ASSETS_PATH . 'Js/');
     define('IMG_PATH',         ASSETS_PATH . 'Img/');

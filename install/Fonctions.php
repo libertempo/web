@@ -172,29 +172,24 @@ class Fonctions {
 
         $db = \includes\SQL::singleton();
         //verif si create / alter table possible !!!
-        if(!\install\Fonctions::test_create_table())
-        {
+        if(!\install\Fonctions::test_create_table()) {
             echo "<font color=\"red\"><b>CREATE TABLE</b> ". _('install_impossible_sur_db') ." <b>$mysql_database</b> (". _('install_verif_droits_mysql') ." <b>$mysql_user</b>)...</font><br> \n";
             echo "<br>". _('install_puis') ." ...<br>\n";
             echo "<form action=\"$PHP_SELF\" method=\"POST\">\n";
             echo "<input type=\"submit\" value=\"". _('form_redo') ."\">\n";
             echo "</form>\n";
-        }
-        elseif(!\install\Fonctions::test_drop_table())
-        {
+        } elseif(!\install\Fonctions::test_drop_table()) {
             echo "<font color=\"red\"><b>DROP TABLE</b> ". _('install_impossible_sur_db') ." <b>$mysql_database</b> (". _('install_verif_droits_mysql') ." <b>$mysql_user</b>)...</font><br> \n";
             echo "<br>". _('install_puis') ." ...<br>\n";
             echo "<form action=\"$PHP_SELF\" method=\"POST\">\n";
             echo "<input type=\"submit\" value=\"". _('form_redo') ."\">\n";
             echo "</form>\n";
-        }
-        else
-        {
-            //on execute le script [nouvelle vesion].sql qui crée et initialise les tables
-            $file_sql="sql/php_conges_v$config_php_conges_version.sql";
-            if(file_exists($file_sql)) {
-                $result = execute_sql_file($file_sql);
+        } else {
+            foreach (glob(PATCH_PATH . '/*.sql') as $filename) {
+                $currentPatch = basename($filename, '.sql');
+                execute_sql_file($filename);
             }
+
             if (0 <= version_compare($config_php_conges_version, '1.9')) {
                 $db->query('UPDATE `conges_appli` SET appli_valeur =  "' . hash('sha256', time() . rand()) . '" WHERE appli_variable = "token_instance"');
             }
@@ -206,6 +201,9 @@ class Fonctions {
 
             $sql_update_lang="UPDATE conges_config SET conf_valeur = '$lang' WHERE conf_nom='lang' ";
             $db->query($sql_update_lang) ;
+            $result_update_lang = \includes\SQL::query($sql_update_lang);
+            $sql_update_date = 'UPDATE `conges_appli` SET appli_valeur = "' . $currentPatch . '" WHERE appli_variable = "version_last_maj" LIMIT 1';
+            $db->query($sql_update_date);
             /* Prénommage de l'instance et pointage API */
             self::addInstanceName(\includes\SQL::singleton());
 
