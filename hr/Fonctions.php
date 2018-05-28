@@ -427,7 +427,7 @@ class Fonctions
                 // donc seulement si le type de l'absence qu'on annule est un "conges"
                 if (in_array($tab_tout_type_abs[$user_type_abs_id]['type'],["conges","conges_exceptionnels"])) {
                     $sql2 = 'UPDATE conges_solde_user SET su_solde = su_solde+"'. $db->quote($user_nb_jours_pris).'" WHERE su_login="'. $db->quote($user_login).'" AND su_abs_id="'. $db->quote($user_type_abs_id).'";';
-                    $ReqLog2 = $db->query($sql2);
+                    $db->query($sql2);
                 }
 
                 //envoi d'un mail d'alerte au user (si demandé dans config de php_conges)
@@ -2003,7 +2003,7 @@ class Fonctions
     }
 
     // cloture / debut d'exercice user par user pour les users du resp (ou grand resp)
-    public static function cloture_users($tab_type_conges, $tab_cloture_users, $tab_commentaire_saisie) : string
+    public static function cloture_users($tab_type_conges, $tab_cloture_users, $tab_commentaire_saisie) : string
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
@@ -2481,7 +2481,7 @@ class Fonctions
     }
 
     //insertion des nouvelles dates de fermeture
-    public static function insert_year_fermeture($fermeture_id, $tab_j_ferme, $groupe_id) : bool
+    public static function insert_year_fermeture($fermeture_id, $tab_j_ferme, $groupe_id) : bool
     {
         $sql_insert="";
         foreach($tab_j_ferme as $jf_date ) {
@@ -2492,7 +2492,7 @@ class Fonctions
     }
 
     // supprime une fermeture
-    public static function delete_year_fermeture($fermeture_id, $groupe_id) : bool
+    public static function delete_year_fermeture($fermeture_id, $groupe_id) : bool
     {
         $sql_delete="DELETE FROM conges_jours_fermeture WHERE jf_id = '$fermeture_id' AND jf_gid= '$groupe_id' ;";
         $result = \includes\SQL::singleton()->query($sql_delete);
@@ -2534,7 +2534,7 @@ class Fonctions
         }
     }
 
-    public static function commit_annul_fermeture($fermeture_id, $groupe_id) : string
+    public static function commit_annul_fermeture($fermeture_id, $groupe_id) : string
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $db = \includes\SQL::singleton();
@@ -2696,7 +2696,7 @@ class Fonctions
         return $return;
     }
 
-    public static function confirm_annul_fermeture($fermeture_id, $groupe_id, $fermeture_date_debut, $fermeture_date_fin) : string
+    public static function confirm_annul_fermeture($fermeture_id, $groupe_id, $fermeture_date_debut, $fermeture_date_fin) : string
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';

@@ -113,7 +113,7 @@ class Fonctions
                         // 1 : update de la table conges_solde_user
                         $req_update = "UPDATE conges_solde_user SET su_solde = su_solde+$nb_conges
                             WHERE  su_login = '$current_login' AND su_abs_id = $id_conges   ";
-                        $ReqLog_update = $db->query($req_update);
+                        $db->query($req_update);
 
                         // 2 : on insert l'ajout de conges GLOBAL (pour tous les users) dans la table periode
                         $commentaire =  _('resp_ajout_conges_comment_periode_all') ;
@@ -337,7 +337,7 @@ class Fonctions
                 // ATTENTION : ne pas faire "SET u_num_exercice = u_num_exercice+1" dans la requete SQL car on incrémenterait pour chaque type d'absence !
                 $new_num_exercice=$_SESSION['config']['num_exercice'] ;
                 $sql2 = 'UPDATE conges_users SET u_num_exercice = \''.$new_num_exercice.'\' WHERE u_login="'. $db->quote($current_login).'" ';
-                $ReqLog2 = $db->query($sql2) ;
+                $db->query($sql2) ;
 
                 // on insert l'ajout de conges dans la table periode (avec le commentaire)
                 $date_today=date("Y-m-d");

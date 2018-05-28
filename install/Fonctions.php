@@ -51,8 +51,7 @@ class Fonctions {
             if ($reglog = $db->query($sql) && $result = $reglog->fetch_array()) {
                 return $result['conf_valeur'];
             }
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return 0;
         }
         return 0;
@@ -206,7 +205,7 @@ class Fonctions {
             $db->query($sql_update_version) ;
 
             $sql_update_lang="UPDATE conges_config SET conf_valeur = '$lang' WHERE conf_nom='lang' ";
-            $result_update_lang = $db->query($sql_update_lang) ;
+            $db->query($sql_update_lang) ;
             /* Prénommage de l'instance et pointage API */
             self::addInstanceName(\includes\SQL::singleton());
 
@@ -334,7 +333,7 @@ class Fonctions {
             {
                 // mise à jour de la "installed_version" et de la langue dans la table conges_config
                 $sql_update_version="UPDATE conges_config SET conf_valeur = '$config_php_conges_version' WHERE conf_nom='installed_version' ";
-                $result_update_version = $db->query($sql_update_version) ;
+                $db->query($sql_update_version) ;
 
                 $sql_update_lang="UPDATE conges_config SET conf_valeur = '$lang' WHERE conf_nom='lang' ";
                 $result_update_lang = $db->query($sql_update_lang) ;
@@ -359,7 +358,7 @@ class Fonctions {
             `p_is_install` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Plugin is installed ?',
             PRIMARY KEY (`id`)
                 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-        $result_create_table = \includes\SQL::singleton()->query($create_table_plugin_query);
+        \includes\SQL::singleton()->query($create_table_plugin_query);
     }
 
     /**
