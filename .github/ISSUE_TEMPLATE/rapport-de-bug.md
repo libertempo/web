@@ -20,12 +20,13 @@ Une description claire et concise de l'attendu.
 Si applicable, ajoutez des captures d'écran pour aider à expliquer le problème.
 
 **Poste (veuillez remplir les informations suivantes):**
- - Système: [i.e. iOS] :
+ - Système [i.e. iOS] :
  - Navigateur et version : 
  - Erreur dans la console : 
 
 **Serveur (veuillez remplir les informations suivantes):**
- - Système: [i.e. iOS8.1]
+ - Système [i.e. iOS8.1] :
+ - Version de Libertempo : 
  - Version MySQL et PHP :
  - Erreur dans le log du serveur : 
 

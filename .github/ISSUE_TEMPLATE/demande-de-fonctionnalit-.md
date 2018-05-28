@@ -1,6 +1,6 @@
 ---
 name: Demande de fonctionnalité
-about: Suggest an idea for this project
+about: Suggérer une idée
 
 ---
 
@@ -11,8 +11,8 @@ about: Suggest an idea for this project
  Une description claire et concise du comportement que vous aimeriez voir.
 
 **Décrivez les alternatives que vous avez étudié**
-
+Ex : nous avons tenté de regrouper des validations / changer notre process…
 
 **Contexte additionnel**
 Ajoutez tout ce qui vous paraît utile pour la proposition d'amélioration.
-Rappelez vous que le **pourquoi** est toujours plus utile que le **comment**.
+Rappelez vous que le **pourquoi** est toujours plus utile que le **comment** de telle sorte que nous pouvons chercher une solution globale au problème plutôt que tourner autour de votre proposition.
