@@ -20,7 +20,7 @@ class SQL
     public static function singleton() {
         if (!isset(self::$instance)) {
             $className = __CLASS__;
-            require CONFIG_PATH .'dbconnect.php';
+            require CONFIG_PATH . 'dbconnect.php';
 
             self::$instance = new $className( $mysql_serveur , $mysql_user, $mysql_pass, $mysql_database);
         }
@@ -124,7 +124,12 @@ class Database extends \mysqli
         return self::$hist;
     }
 
-    public function query($query , $resultmode = MYSQLI_STORE_RESULT )
+    public function isDbEmpty() : bool
+    {
+        return empty($this->query('SHOW TABLES')->fetch_all());
+    }
+
+    public function query($query, $resultmode = MYSQLI_STORE_RESULT) : Database_MySQLi_Result
     {
         $nb = count(self::$hist);
         $backtraces = debug_backtrace();
