@@ -46,14 +46,12 @@ if (!defined( 'DEFINE_INCLUDE' )) {
             break;
         case ENV_DEV:
             \Kint::enabled(true);
-            \Kint::$theme = 'solarized-dark';
             error_reporting(-1);
             ini_set("display_errors", 1);
             $environnement = 'development';
             break;
         case ENV_TEST:
             \Kint::enabled(true);
-            \Kint::$theme = 'solarized-dark';
             error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
             ini_set("display_errors", 1);
             $environnement = 'test';
@@ -69,8 +67,6 @@ if (!defined( 'DEFINE_INCLUDE' )) {
             'allow_exec' => false,
             'included_errno' => E_ALL,
         ]);
-
-        \Rollbar\Rollbar::alert('coucou petite perruche');
     }
     session_start();
 

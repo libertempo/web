@@ -113,6 +113,9 @@ class Database extends \mysqli
     public function __construct($host='localhost', $username='root', $passwd ='',$dbname = 'db_conges')
     {
         parent::__construct (  $host , $username , $passwd , $dbname );
+        /* activate reporting */
+        $driver = new \mysqli_driver();
+        $driver->report_mode = MYSQLI_REPORT_ALL;
         $this->query('SET NAMES \'utf8\';');
         $this->query("SET @@SESSION.sql_mode='';");
     }
@@ -147,55 +150,6 @@ class Database extends \mysqli
         self::$hist[$nb]['t2'] = microtime(true);
         self::$hist[$nb]['results'] = $result;
 
-        if ($this->errno != 0) {
-            $dump_name = DUMP_PATH . 'sql_' . date('c') . '.dump';
-            $fh = fopen( $dump_name , 'a+');
-            if ($fh ==! false) {
-                fputs ($fh, "\n".'##################################################');
-                fputs ($fh, "\n".'Date : '. date('Y-m-d H:i:s (T)') );
-                fputs ($fh, "\n".'**************************************************');
-                fputs ($fh, "\n".'--------------------------------------------------');
-                fputs ($fh, "\n".'=> Last erreur log');
-                fputs ($fh, "\n".var_export(error_get_last(), true));
-                fputs ($fh, "\n".'**************************************************');
-                fputs ($fh, "\n".'--------------------------------------------------');
-                fputs ($fh, "\n".'=> Debug Backtrace');
-                fputs ($fh, "\n".var_export($backtraces, true));
-                fputs ($fh, "\n".'**************************************************');
-                fputs ($fh, "\n".'--------------------------------------------------');
-                fputs ($fh, "\n".'=> Var dump $_REQUEST');
-                fputs ($fh, "\n".var_export($_REQUEST, true));
-                fputs ($fh, "\n".'--------------------------------------------------');
-                fputs ($fh, "\n".'=> Var dump $_SESSION');
-                fputs ($fh, "\n".var_export((isset($_SESSION) ? $_SESSION : []), true));
-                fputs ($fh, "\n".'--------------------------------------------------');
-                fputs ($fh, "\n".'=> Var dump $_SERVER');
-                fputs ($fh, "\n".var_export($_SERVER, true));
-                fputs ($fh, "\n".'**************************************************');
-                fclose ($fh);
-            }
-
-            @ob_clean();
-            // DONT USE GETTEXT ... KEEP THIS CODE WITHOUT REF ... THIS NEED TO BE A SAFE CODE !!!!
-            echo '<div style="margin: auto; width: 80%;">
-                    <h1>Une erreur est survenue ...</h1>
-                    <p>Pour aider la résolution de ce problème, veuillez fournir les informations suivantes :</p>
-                    <div>
-                        <div style="float:left;width: 230px;"><img src="'. IMG_PATH .'oops.png" style="width: 98%" /></div>
-                        <textarea style="width: 70%" rows="14">'.
-                        'login : ' .@$_SESSION['userlogin']."\n".
-                        'uri   : ' .preg_replace('/session=phpconges[a-z0-9]{32}&?/','',@$_SERVER['REQUEST_URI'])."\n".
-                        'dump  : ' .$dump_name. "\n"."\n".
-                        'file  : ' .$f['file']. "\n".
-                        'line  : ' .$f['line']. "\n".
-                        'fx    : $SQL->query'. "\n".
-                        'error : ' .$this->error. "\n".
-                        'sql   : ' .$query. "\n".
-                        '</textarea>
-                    </div>
-                </div>';
-            exit();
-        }
         return $result;
     }
 
