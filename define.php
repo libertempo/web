@@ -22,7 +22,6 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     define('CONFIG_PATH',      realpath(ABSOLUTE_SYSPATH) . DS . 'cfg'. DS);
     define('INSTALL_PATH',     ROOT_PATH . 'install/');
     define('LOCALE_PATH',      ROOT_PATH . 'locale/');
-    define('DUMP_PATH',        ROOT_PATH . 'dump/');
     define('BACKUP_PATH',      ROOT_PATH . 'backup' . DS);
     define('TEMPLATE_PATH',    PUBLIC_PATH . 'template/');
     define('API_SYSPATH', ABSOLUTE_SYSPATH . 'vendor' . DS . 'Libertempo' . DS . 'libertempo-api' . DS);
@@ -60,7 +59,7 @@ if (!defined( 'DEFINE_INCLUDE' )) {
             $environnement = 'test';
             break;
     }
-    if (!empty(LOGGER_TOKEN) {
+    if (!empty(LOGGER_TOKEN)) {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         \Rollbar\Rollbar::init([
             'access_token' => LOGGER_TOKEN,
@@ -70,6 +69,8 @@ if (!defined( 'DEFINE_INCLUDE' )) {
             'allow_exec' => false,
             'included_errno' => E_ALL,
         ]);
+
+        \Rollbar\Rollbar::alert('coucou petite perruche');
     }
     session_start();
 
