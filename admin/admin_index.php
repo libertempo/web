@@ -17,8 +17,6 @@ $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 // SERVER
 $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 
-$onglet = getpost_variable('onglet', "db_sauve");
-
 /*********************************/
 /*   COMPOSITION DU HEADER...    */
 /*********************************/
@@ -31,10 +29,6 @@ header_menu('', 'Libertempo : '._('button_admin_mode'),'');
 /*********************************/
 
 
-if (!in_array($onglet, ['db_sauve', 'mise_a_jour'], true)) {
-    $onglet = 'db_sauve';
-}
-
 /** initialisation des tableaux des types de conges/absences  **/
 // recup du tableau des types de conges (seulement les conges)
 $tab_type_cong=recup_tableau_types_conges();
@@ -43,7 +37,7 @@ $tab_type_cong=recup_tableau_types_conges();
 $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
 
 echo '<div main-content">';
-    include_once ROOT_PATH . 'admin/admin_' . $onglet . '.php';
+    include_once ROOT_PATH . 'admin/admin_db_sauve.php';
 echo '</div>';
 
 /*********************************/

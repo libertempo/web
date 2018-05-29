@@ -47,8 +47,7 @@
 
 function sousmenuAdmin()
 {
-    return '<a class="secondary" href="' . ROOT_PATH . 'admin/admin_index.php?onglet=mise_a_jour">Mise à jour</a>
-    <a class="secondary" href="' . ROOT_PATH . 'admin/admin_index.php?onglet=db_sauve">Backup</a>';
+    return '<a class="secondary" href="' . ROOT_PATH . 'admin/admin_index.php?onglet=db_sauve">Backup</a>';
 }
 
 function sousmenuConfiguration()
