@@ -97,9 +97,13 @@ class Fonctions
     {
         $db = \includes\SQL::singleton();
         $req = 'SELECT appli_valeur FROM conges_appli WHERE appli_variable = "version_last_maj" LIMIT 1';
-        // si pas trouvé alors on doit prendre la derniere version installée et y poser en patch 0
         $res = $db->query($req);
-        return $res->fetch_array()['appli_valeur'];
+        $versionLastMaj = $res->fetch_array()['appli_valeur'];
+        if (!empty($versionLastMaj)) {
+            return $versionLastMaj;
+        }
+
+        return self::getInstalledVersion() . '.0';
     }
 
     /**
