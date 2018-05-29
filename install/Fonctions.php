@@ -12,10 +12,9 @@ class Fonctions
         $installedVersion = self::getInstalledVersion();
         // @TODO : check admin pour la maj
         if (0 != $installedVersion) {
-            $versionLastMaj = self::miseAJour($installedVersion, $config_php_conges_version);
+            // ANNULATION
         } else {
             $versionLastMaj = self::installation($config_php_conges_version);
-            $versionLastMaj = self::miseAJour($versionLastMaj, $config_php_conges_version);
         }
         // Finalisation
         /* Reset du token d'instance à chaque version */
@@ -28,7 +27,7 @@ class Fonctions
         \includes\SQL::query($sql_update_date);
     }
 
-    private static function getInstalledVersion() : string
+    public static function getInstalledVersion() : string
     {
         try {
             $reglog = $db->query('show tables like \'conges_config\';');
@@ -68,29 +67,6 @@ class Fonctions
         list($major, $minor, _) = explode('.', $currentPatch);
 
         return $major . '.' . $minor;
-    }
-
-    /**
-     * Effectue la mise à jour et retourne le numéro de dernier patch installé
-     */
-    private static function miseAJour(string $installed_version, string $config_php_conges_version) : string
-    {
-        // Avant tout, une petite protection…
-        \admin\Fonctions::sauvegardeAsFile($installed_version, 'end');
-
-        $versionDerniereMAJ = self::getVersionDerniereMiseAJour();
-        list($major, $minor, _) = explode('.', $versionDerniereMAJ);
-        foreach (glob(MAJ_PATH . '/' . $major . '.' . $minor . '*.sql') as $filename) {
-            $currentPatch = basename($filename, '.sql');
-            if (version_compare($currentPatch, $versionDerniereMAJ, '>')) {
-                execute_sql_file($filename);
-            }
-        }
-
-        $comment_log = _('install_maj_titre_2')." (version $installed_version --> version $config_php_conges_version) ";
-        log_action(0, "", "", $comment_log);
-
-        return $currentPatch;
     }
 
     private static function getVersionDerniereMiseAJour() : string

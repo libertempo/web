@@ -5,12 +5,10 @@ require_once 'define.php';
 // L'installation a-t-elle été faite ?
 $sql = \includes\SQL::singleton();
 if ($sql->isDbEmpty()) {
-	header("Location:". ROOT_PATH .'install/');
+    header("Location:". ROOT_PATH . 'install.php');
 }
-//ddd('je passe ici');
 include_once INCLUDE_PATH .'fonction.php';
 include_once ROOT_PATH .'fonctions_conges.php'; // for init_config_tab()
-$sql = \includes\SQL::singleton();
 $config = new \App\Libraries\Configuration($sql);
 $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
 $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
