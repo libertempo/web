@@ -9,12 +9,13 @@ class Fonctions
     public static function installationMiseAJour()
     {
         include ROOT_PATH .'version.php' ;
-        $installedVersion = self::get_installed_version();
+        $installedVersion = self::getInstalledVersion();
         // @TODO : check admin pour la maj
         if (0 != $installedVersion) {
             $versionLastMaj = self::miseAJour($installedVersion, $config_php_conges_version);
         } else {
             $versionLastMaj = self::installation($config_php_conges_version);
+            $versionLastMaj = self::miseAJour($versionLastMaj, $config_php_conges_version);
         }
         // Finalisation
         /* Reset du token d'instance à chaque version */
@@ -27,7 +28,7 @@ class Fonctions
         \includes\SQL::query($sql_update_date);
     }
 
-    private static function get_installed_version() : string
+    private static function getInstalledVersion() : string
     {
         try {
             $reglog = $db->query('show tables like \'conges_config\';');
@@ -43,11 +44,16 @@ class Fonctions
         return 0;
     }
 
+    /**
+     * Effectue l'installation de la version initiale et retourne son numéro
+     */
     private static function installation(string $versionAppli) : string
     {
-        foreach (glob(PATCH_PATH . '/*.sql') as $filename) {
+        foreach (glob(INSTALLATION_PATH . '/*.sql') as $filename) {
             $currentPatch = basename($filename, '.sql');
+            // il n'est sensé n'y en avoir qu'un
             execute_sql_file($filename);
+            break;
         }
 
         /* Prénommage de l'instance et pointage API */
@@ -59,18 +65,22 @@ class Fonctions
         $comment_log = "Install de php_conges (version = $versionAppli) ";
         log_action(0, "", "", $comment_log);
 
-        return $currentPatch;
+        list($major, $minor, _) = explode('.', $currentPatch);
+
+        return $major . '.' . $minor;
     }
 
-
+    /**
+     * Effectue la mise à jour et retourne le numéro de dernier patch installé
+     */
     private static function miseAJour(string $installed_version, string $config_php_conges_version) : string
     {
         // Avant tout, une petite protection…
         \admin\Fonctions::sauvegardeAsFile($installed_version, 'end');
 
         $versionDerniereMAJ = self::getVersionDerniereMiseAJour();
-        list($major, $minor, $patch) = explode('.', $versionDerniereMAJ);
-        foreach (glob(PATCH_PATH . '/' . $major . '.' . $minor . '*.sql') as $filename) {
+        list($major, $minor, _) = explode('.', $versionDerniereMAJ);
+        foreach (glob(MAJ_PATH . '/' . $major . '.' . $minor . '*.sql') as $filename) {
             $currentPatch = basename($filename, '.sql');
             if (version_compare($currentPatch, $versionDerniereMAJ, '>')) {
                 execute_sql_file($filename);
@@ -87,6 +97,7 @@ class Fonctions
     {
         $db = \includes\SQL::singleton();
         $req = 'SELECT appli_valeur FROM conges_appli WHERE appli_variable = "version_last_maj" LIMIT 1';
+        // si pas trouvé alors on doit prendre la derniere version installée et y poser en patch 0
         $res = $db->query($req);
         return $res->fetch_array()['appli_valeur'];
     }
