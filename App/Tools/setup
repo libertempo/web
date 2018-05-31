@@ -7,6 +7,14 @@ define('INSTALLATION_PATH', PATCH_PATH . DS . 'Installation' . DS);
 define('API_PATH', ROOT_PATH . 'api' . DS);
 define('API_SYSPATH', ROOT_PATH . 'vendor' . DS . 'Libertempo' . DS . 'libertempo-api' . DS);
 
+function createDatabase(\includes\SQL $db, string $name) : bool
+{
+    $req = 'CREATE DATABASE `' . $name . '`';
+    $db->query($req);
+
+    return 0 < $db->affected_rows;
+}
+
 /**
  * Définit un nom pour l'instance. Doit coller à ce que le vhost a déclaré.
  */
@@ -62,32 +70,41 @@ function executePatch() : string
     return $currentPatch;
 }
 
-echo 'Installation…', "\n";
+display('Installation…');
 
 // Quelques vérifications de base…
 $instanceName = $argv[1] ?? null;
+display('Contrôles généraux…');
 if (null == $instanceName) {
     displayError("Nom d'instance vide");
 }
-
-if (0 != getInstalledVersion()) {
+if (\includes\SQL::existsDatabase($mysql_database)) {
     displayError('Application déjà installée');
 }
 
+display('Création base de données…');
+if (!createDatabase(\includes\SQL::singletonWithoutDb(), $mysql_database)) {
+    displayFail();
+}
+
+display('Création tables…');
+$db = \includes\SQL::singleton();
 list($major, $minor,) = explode('.', executePatch());
 $versionMaj = $major . '.' . $minor;
 
-$db = \includes\SQL::singleton();
+display('Inscription de la dernière version…');
 if(!setLastMaj($db, $versionMaj)) {
-    displayError('Mise à jour du patch échouée');
+    displayFail();
 }
 
+display('Nommage de l\'instance…');
 if (!nameInstance($db, $instanceName)) {
-    displayError('Nommage de l\'instance impossible');
+    displayFail();
 }
 
+display('Configuration de l\'API');
 if (!setDataConfigurationApi($mysql_serveur, $mysql_database, $mysql_user, $mysql_pass)) {
-    displayError('Configuration de l\'API impossible');
+    displayFail();
 }
 
 $updateLang = "UPDATE conges_config SET conf_valeur = 'fr_FR' WHERE conf_nom = 'lang' LIMIT 1";

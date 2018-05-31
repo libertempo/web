@@ -78,10 +78,15 @@ try {
 
 list($major, $minor,) = explode('.', executePatchs($versionDerniereMAJ));
 $versionMaj = $major . '.' . $minor;
-// rien à maj !
+
+// Le seul cas qui amènerait à ce que la version ait cette valeur ici
+// est qu'aucun script ne soit supérieur la version courante
+if ('0.0' === $versionMaj) {
+    displayError('Aucun nouveau patch');
+}
 
 if (!resetToken($db)) {
-    displayError('Définition du token');
+    displayError('Définition du token échouée');
 }
 
 if (!setInstalledVersion($db, $config_php_conges_version)) {

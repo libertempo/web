@@ -13,12 +13,23 @@ define('_PHP_CONGES', 1);
 require_once ROOT_PATH . 'vendor/autoload.php';
 require_once ROOT_PATH . 'fonctions_conges.php';
 
+function displayFail()
+{
+    displayError('Échec');
+}
+
 /**
  * Affiche un cas d'erreur et s'arrête
  */
-function displayError(string $message) {
-    echo 'Mise à jour échouée : ' . $message . '.', "\n";
+function displayError(string $message)
+{
+    display($message);
     exit(1);
+}
+
+function display(string $message)
+{
+    echo $message, "\n";
 }
 
 function setLastMaj(\includes\SQL $db, string $versionLastMaj) : bool
@@ -36,11 +47,6 @@ function getInstalledVersion() : string
 {
     $db = \includes\SQL::singleton();
     try {
-        $reglog = $db->query('show tables like \'conges_config\';');
-        if ($reglog->num_rows == 0) {
-            return 0;
-        }
-
         $sql="SELECT conf_valeur FROM conges_config WHERE conf_nom='installed_version' ";
         if ($reglog = $db->query($sql)) {
             if($result=$reglog->fetch_array()) {

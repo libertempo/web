@@ -1,9 +1,13 @@
 .PHONY: install
 DEFAULT: install
 
-install:
-	@App/Tools/install ${NOM_INSTANCE}
-	@App/Tools/update
-
+destroy:
+	@App/Tools/destroy
+setup:
+	@App/Tools/setup ${nom_instance}
 update:
 	@App/Tools/update
+
+install: setup update
+
+reinstall: destroy install
