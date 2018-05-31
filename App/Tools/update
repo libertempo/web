@@ -30,17 +30,17 @@ function getVersionDerniereMiseAJour(\includes\SQL $db, string $installedVersion
  */
 function executePatchs(string $versionDerniereMAJ) : string
 {
-    $currentPatch = "0.0";
+    $patchInstalled = "0.0.0";
     $patches = glob(MAJ_PATH . '*.sql');
     natsort($patches);
     foreach ($patches as $filename) {
-        $currentPatch = basename($filename, '.sql');
-        if (version_compare($currentPatch, $versionDerniereMAJ, '>')) {
+        if (version_compare(basename($filename, '.sql'), $versionDerniereMAJ, '>')) {
+            $patchInstalled = basename($filename, '.sql');
             execute_sql_file($filename);
         }
     }
 
-    return $currentPatch;
+    return $patchInstalled;
 }
 
 function resetToken(\includes\SQL $db) : bool
@@ -59,42 +59,51 @@ function setInstalledVersion(\includes\SQL $db, $versionCode) : bool
 
 }
 
-echo 'Mise à jour vers la dernière version…', "\n";
+display('Mise à jour…');
+display('Contrôles généraux…');
+if (!\includes\SQL::existsDatabase($mysql_database)) {
+    displayError('Application non installée');
+}
 $installedVersion = getInstalledVersion();
 $db = \includes\SQL::singleton();
 $versionDerniereMAJ = getVersionDerniereMiseAJour($db, $installedVersion);
 
 // Quelques vérifications de base…
-if ('0.0' == $versionDerniereMAJ) {
+if ('0.0.0' == $versionDerniereMAJ) {
     displayError('l\'application n\'est pas encore installée.');
 }
 
+display('Sauvegarde de la DB courante…');
 try {
     \admin\Fonctions::sauvegardeAsFile($installedVersion, 'end');
 } catch (\Exception $e) {
-    displayError('Sauvegarde impossible');
+    displayFail();
 }
 
 
-list($major, $minor,) = explode('.', executePatchs($versionDerniereMAJ));
-$versionMaj = $major . '.' . $minor;
+display('Application des nouveaux patches…');
+list($major, $minor, $patch) = explode('.', executePatchs($versionDerniereMAJ));
+$versionMaj = implode('.', [$major, $minor, $patch]);
 
 // Le seul cas qui amènerait à ce que la version ait cette valeur ici
 // est qu'aucun script ne soit supérieur la version courante
-if ('0.0' === $versionMaj) {
-    displayError('Aucun nouveau patch');
+if ('0.0.0' === $versionMaj) {
+    displayFail();
 }
 
+display('Définition du token d\'instance…');
 if (!resetToken($db)) {
-    displayError('Définition du token échouée');
+    displayFail();
 }
 
+display('Définition de la version…');
 if (!setInstalledVersion($db, $config_php_conges_version)) {
-    displayError('Définition de version');
+    displayFail();
 }
 
+display('Inscription de la dernière version…');
 if(!setLastMaj($db, $versionMaj)) {
-    displayError('Mise à jour du patch échouée');
+    displayFail();
 }
 
-echo 'Mise à jour terminée avec succès.', "\n";
+display('Mise à jour effectuée avec succès.');

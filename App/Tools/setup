@@ -1,7 +1,6 @@
 #!/usr/bin/env php
 <?php
 require_once 'libraries';
-require_once CONFIG_PATH . 'dbconnect.php';
 
 define('INSTALLATION_PATH', PATCH_PATH . DS . 'Installation' . DS);
 define('API_PATH', ROOT_PATH . 'api' . DS);
@@ -89,8 +88,8 @@ if (!createDatabase(\includes\SQL::singletonWithoutDb(), $mysql_database)) {
 
 display('Création tables…');
 $db = \includes\SQL::singleton();
-list($major, $minor,) = explode('.', executePatch());
-$versionMaj = $major . '.' . $minor;
+list($major, $minor, $patch) = explode('.', executePatch());
+$versionMaj = implode('.', [$major, $minor, $patch]);
 
 display('Inscription de la dernière version…');
 if(!setLastMaj($db, $versionMaj)) {

@@ -12,6 +12,7 @@ define('_PHP_CONGES', 1);
 
 require_once ROOT_PATH . 'vendor/autoload.php';
 require_once ROOT_PATH . 'fonctions_conges.php';
+require_once CONFIG_PATH . 'dbconnect.php';
 
 function displayFail()
 {
