@@ -27,16 +27,9 @@ class SQL
         return self::$instance;
     }
 
-    public static function singletonWithoutDb()
+    public static function existsDatabase(string $name) : bool
     {
-        require CONFIG_PATH . 'dbconnect.php';
-        return new self($mysql_serveur, $mysql_user, $mysql_pass, '');
-    }
-
-    public function existsDatabase(string $name) : bool
-    {
-        require CONFIG_PATH . 'dbconnect.php';
-        $instance = new self($mysql_serveur, $mysql_user, $mysql_pass, '');
+        $instance = self::singletonWithoutDb();
 
         $res = $instance->query('SHOW DATABASES');
         foreach ($res->fetch_all() as $database) {
@@ -48,12 +41,18 @@ class SQL
         return in_array($name, $res->fetch_all(), true);
     }
 
+    public static function singletonWithoutDb()
+    {
+        require CONFIG_PATH . 'dbconnect.php';
+        return new self($mysql_serveur, $mysql_user, $mysql_pass, '');
+    }
+
     public function initialized() {
         return isset( self::$instance );
     }
 
     private function __construct(string $server, string $user, string $host, string $database) {
-        self::$pdo_obj = new \includes\Database($server, $user, $host, $database);
+        self::$pdo_obj = new Database($server, $user, $host, $database);
     }
 
     public function __clone() { error_handler('Clone is not allowed.', E_USER_ERROR); }
@@ -139,11 +138,6 @@ class Database extends \mysqli
     public function getQuerys() {
         return self::$hist;
     }
-
-    /*public function isDbEmpty() : bool
-    {
-        return empty($this->query('SHOW TABLES')->fetch_all());
-    }*/
 
     public function query($query, $resultmode = MYSQLI_STORE_RESULT) : Database_MySQLi_Result
     {

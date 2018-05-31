@@ -1,13 +1,13 @@
 <?php
 define('ROOT_PATH', '');
 require_once 'define.php';
+require CONFIG_PATH . 'dbconnect.php';
 
 // L'installation a-t-elle été faite ?
-$sql = \includes\SQL::singleton();
-if ($sql->isDbEmpty()) {
-	header("Location:". ROOT_PATH .'install/');
+if (!\includes\SQL::existsDatabase($mysql_database)) {
+    echo "L'application n'est pas installée. Veuillez passer par l'installateur.";
+    exit();
 }
-//ddd('je passe ici');
 include_once INCLUDE_PATH .'fonction.php';
 include_once ROOT_PATH .'fonctions_conges.php'; // for init_config_tab()
 $sql = \includes\SQL::singleton();

@@ -1,4 +1,3 @@
-.PHONY: install
 DEFAULT: install
 
 destroy:
