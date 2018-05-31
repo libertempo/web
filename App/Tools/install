@@ -1,40 +1,11 @@
 #!/usr/bin/env php
 <?php
-define('DS', DIRECTORY_SEPARATOR);
-define('ROOT_PATH', dirname(__FILE__, 3) . DS);
-define('PATCH_PATH', ROOT_PATH . 'App' . DS . 'Patchs' . DS);
-define('INSTALLATION_PATH', PATCH_PATH . DS . 'Installation' . DS);
-define('API_SYSPATH', ROOT_PATH . 'vendor' . DS . 'Libertempo' . DS . 'libertempo-api' . DS);
-define('CONFIG_PATH', ROOT_PATH . DS . 'cfg'. DS);
-define('DUMP_PATH', ROOT_PATH . 'dump' . DS);
-define('PUBLIC_PATH', ROOT_PATH . 'Public' . DS);
-define('ASSETS_PATH', PUBLIC_PATH . 'Assets' . DS);
-define('IMG_PATH', ASSETS_PATH . 'Img' . DS);
-define('API_PATH', ROOT_PATH . 'api' . DS);
-define('_PHP_CONGES', 1);
-
-require_once ROOT_PATH . 'vendor/autoload.php';
-require_once ROOT_PATH . 'fonctions_conges.php';
+require_once 'libraries';
 require_once CONFIG_PATH . 'dbconnect.php';
 
-/**
- * Affiche un cas d'erreur et s'arrête
- */
-function displayError(string $message) {
-    echo 'Installation échouée : ' . $message . '.', "\n";
-    exit(1);
-}
-
-function setLastMaj(\includes\SQL $db, string $versionLastMaj) : bool
-{
-    $req = 'UPDATE `conges_appli` SET appli_valeur = "' . $versionLastMaj . '" WHERE appli_variable = "version_last_maj" LIMIT 1';
-    $db->query($req);
-    // @TODO: Compat with <1.12 versions
-    if ($db->affected_rows > 0) {
-        return true;
-    }
-    return 0 < file_put_contents('/tmp/lt-last-version', $versionLastMaj);
-}
+define('INSTALLATION_PATH', PATCH_PATH . DS . 'Installation' . DS);
+define('API_PATH', ROOT_PATH . 'api' . DS);
+define('API_SYSPATH', ROOT_PATH . 'vendor' . DS . 'Libertempo' . DS . 'libertempo-api' . DS);
 
 /**
  * Définit un nom pour l'instance. Doit coller à ce que le vhost a déclaré.
@@ -99,7 +70,7 @@ if (null == $instanceName) {
     displayError("Nom d'instance vide");
 }
 
-if (0 != \install\Fonctions::getInstalledVersion()) {
+if (0 != getInstalledVersion()) {
     displayError('Application déjà installée');
 }
 
