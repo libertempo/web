@@ -503,7 +503,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
     {
         $config = new \App\Libraries\Configuration($sql);
         $jourDemande = date("Y-m-d");
-        if (0 === $config->getDateLimiteReliquats()) {
+        if (0 == $config->getDateLimiteReliquats()) {
             return true;
         }
         return $jourDemande < $_SESSION['config']['date_limite_reliquats'];
