@@ -12,9 +12,6 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     define('ABSOLUTE_SYSPATH', dirname(__FILE__) . DS);
     define('PUBLIC_PATH',      ROOT_PATH . 'Public/');
     define('VIEW_PATH', ROOT_PATH . 'App' . DS . 'Views' . DS);
-    define('PATCH_PATH', ROOT_PATH . 'App' . DS . 'Patchs' . DS);
-    define('INSTALLATION_PATH', PATCH_PATH . 'App' . DS . 'Installation' . DS);
-    define('MAJ_PATH', PATCH_PATH . 'App' . DS . 'Maj' . DS);
 
     define('ASSETS_PATH',      PUBLIC_PATH . 'Assets/');
     define('JS_PATH',          ASSETS_PATH . 'Js/');
@@ -28,7 +25,6 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     define('LOCALE_PATH',      ROOT_PATH . 'locale/');
     define('BACKUP_PATH',      ROOT_PATH . 'backup' . DS);
     define('TEMPLATE_PATH',    PUBLIC_PATH . 'template/');
-    define('API_SYSPATH', ABSOLUTE_SYSPATH . 'vendor' . DS . 'Libertempo' . DS . 'libertempo-api' . DS);
     define('API_PATH', ROOT_PATH . 'api/');
     define('PLUGINS_DIR',      INCLUDE_PATH . 'plugins/');
     define('NIL_INT',          -1);

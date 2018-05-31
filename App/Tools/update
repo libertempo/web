@@ -1,0 +1,125 @@
+#!/usr/bin/env php
+<?php
+define('DS', DIRECTORY_SEPARATOR);
+define('ROOT_PATH', dirname(__FILE__, 3) . DS);
+define('PATCH_PATH', ROOT_PATH . 'App' . DS . 'Patchs' . DS);
+define('MAJ_PATH', PATCH_PATH . DS . 'Maj' . DS);
+define('CONFIG_PATH', ROOT_PATH . DS . 'cfg'. DS);
+define('DUMP_PATH', ROOT_PATH . 'dump' . DS);
+define('PUBLIC_PATH', ROOT_PATH . 'Public' . DS);
+define('ASSETS_PATH', PUBLIC_PATH . 'Assets' . DS);
+define('IMG_PATH', ASSETS_PATH . 'Img' . DS);
+define('BACKUP_PATH', ROOT_PATH . 'backup' . DS);
+define('_PHP_CONGES', 1);
+
+require_once ROOT_PATH . 'vendor/autoload.php';
+require_once ROOT_PATH . 'version.php';
+require_once ROOT_PATH . 'fonctions_conges.php';
+
+
+/**
+ * Affiche un cas d'erreur et s'arrête
+ */
+function displayError(string $message) {
+    echo 'Mise à jour échouée : ' . $message . '.', "\n";
+    exit(1);
+}
+
+/**
+ *
+ */
+function getVersionDerniereMiseAJour(\includes\SQL $db, string $installedVersion) : string
+{
+    $req = 'SELECT appli_valeur FROM conges_appli WHERE appli_variable = "version_last_maj" LIMIT 1';
+    $res = $db->query($req);
+    $versionLastMaj = $res->fetch_array()['appli_valeur'];
+    $versionFile = file_get_contents('/tmp/lt-last-version');
+    if (!empty($versionLastMaj)) {
+        return $versionLastMaj;
+    } elseif ($versionFile) {
+        // @TODO: Compat with <1.12 versions
+        return $versionFile;
+    }
+
+    return $installedVersion . '.0';
+}
+
+/**
+ * Execute les fichiers de mise à jour et retourne la version du dernier patch
+ */
+function executePatchs(string $versionDerniereMAJ) : string
+{
+    $currentPatch = "0.0";
+    $patches = glob(MAJ_PATH . '*.sql');
+    natsort($patches);
+    foreach ($patches as $filename) {
+        $currentPatch = basename($filename, '.sql');
+        if (version_compare($currentPatch, $versionDerniereMAJ, '>')) {
+            execute_sql_file($filename);
+        }
+    }
+
+    return $currentPatch;
+}
+
+function resetToken(\includes\SQL $db) : bool
+{
+    $db->query('UPDATE `conges_appli` SET appli_valeur =  "' . hash('sha256', time() . rand()) . '" WHERE appli_variable = "token_instance"');
+
+    return 0 < $db->affected_rows;
+}
+
+function setInstalledVersion(\includes\SQL $db, $versionCode) : bool
+{
+    $req = "UPDATE conges_config SET conf_valeur = '$versionCode' WHERE conf_nom = 'installed_version' ";
+    $db->query($req);
+
+    return 0 < $db->affected_rows;
+
+}
+
+function setLastMaj(\includes\SQL $db, string $versionLastMaj) : bool
+{
+    $req = 'UPDATE `conges_appli` SET appli_valeur = "' . $versionLastMaj . '" WHERE appli_variable = "version_last_maj" LIMIT 1';
+    $db->query($req);
+    // @TODO: Compat with <1.12 versions
+    if ($db->affected_rows > 0) {
+        return true;
+    }
+    return 0 < file_put_contents('/tmp/lt-last-version', $versionLastMaj);
+}
+
+echo 'Mise à jour vers la dernière version…', "\n";
+$installedVersion = \install\Fonctions::getInstalledVersion();
+$db = \includes\SQL::singleton();
+$versionDerniereMAJ = getVersionDerniereMiseAJour($db, $installedVersion);
+
+// Quelques vérifications de base…
+if ('0.0' == $versionDerniereMAJ) {
+    displayError('l\'application n\'est pas encore installée.');
+}
+
+try {
+    \admin\Fonctions::sauvegardeAsFile($installedVersion, 'end');
+} catch (\Exception $e) {
+    displayError('Sauvegarde impossible');
+}
+
+
+list($major, $minor,) = explode('.', executePatchs($versionDerniereMAJ));
+$versionMaj = $major . '.' . $minor;
+// rien à maj !
+
+if (!resetToken($db)) {
+    displayError('Définition du token');
+}
+
+if (!setInstalledVersion($db, $config_php_conges_version)) {
+    displayError('Définition de version');
+}
+
+if(!setLastMaj($db, $versionMaj)) {
+    displayError('Mise à jour du patch échouée');
+}
+
+echo 'Mise à jour terminée avec succès.', "\n";

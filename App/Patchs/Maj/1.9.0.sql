@@ -55,14 +55,11 @@ CREATE TABLE heure_repos (
     PRIMARY KEY (`id_heure`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-ALTER TABLE conges_users
-               ADD u_heure_solde INT(11) NOT NULL DEFAULT '0';
+ALTER TABLE `conges_users` ADD u_heure_solde INT(11) NOT NULL DEFAULT '0';
 
 # augmentation de la taille des commentaires
-ALTER TABLE conges_periode
-                CHANGE p_commentaire p_commentaire VARCHAR(250);
-ALTER TABLE conges_periode
-                CHANGE p_motif_refus p_motif_refus VARCHAR(250);
+ALTER TABLE conges_periode CHANGE p_commentaire p_commentaire VARCHAR(250);
+ALTER TABLE conges_periode CHANGE p_motif_refus p_motif_refus VARCHAR(250);
 
 # modification de la configuration
 DELETE FROM conges_config WHERE conf_nom = 'user_affiche_calendrier';
