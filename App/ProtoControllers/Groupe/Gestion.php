@@ -147,10 +147,10 @@ class Gestion {
      *
      * Mise à jour d'un groupe
      *
-     * @param type $idGroupe
-     * @param type $nom
-     * @param type $libelle
-     * @param type $isDoubleValidation
+     * @param int $idGroupe
+     * @param string $nom
+     * @param string $libelle
+     * @param string $isDoubleValidation
      * @return array
      */
     protected function updateGroupe($idGroupe, $nom, $libelle, $isDoubleValidation)
@@ -169,7 +169,7 @@ class Gestion {
      *
      * Mise à jour membre d'un groupe
      *
-     * @param type $idGroupe
+     * @param int $idGroupe
      * @param array $users
      * @return boolean
      */
@@ -185,7 +185,7 @@ class Gestion {
      *
      * Mise à jour responsable d'un groupe
      *
-     * @param type $idGroupe
+     * @param int $idGroupe
      * @param array $resps
      * @return boolean
      */
@@ -201,7 +201,7 @@ class Gestion {
      *
      * Mise à jour grand responsable d'un groupe
      *
-     * @param type $idGroupe
+     * @param int $idGroupe
      * @param array $grandResps
      * @return boolean
      */
@@ -355,7 +355,7 @@ class Gestion {
     /**
      * affectation des employés dans un groupe
      *
-     * @param type $idGroupe
+     * @param int $idGroupe
      * @param array $users
      * @return boolean
      */

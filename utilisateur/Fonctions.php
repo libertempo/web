@@ -157,7 +157,7 @@ class Fonctions
      *
      * @param string $onglet Nom de l'onglet à afficher
      *
-     * @return void
+     * @return string
      * @access public
      * @static
      */
@@ -1168,7 +1168,7 @@ class Fonctions
      *
      * @param string $onglet Nom de l'onglet à afficher
      *
-     * @return void
+     * @return string
      * @access public
      * @static
      */

@@ -156,7 +156,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
     /**
      * Validation finale avec prise en compte des reliquats
      *
-     * @param type $demandeId
+     * @param int $demandeId
      * @return int
      */
     protected function putValidationFinale($demandeId)
@@ -401,7 +401,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
                 }
             }
             if ($delegation) {
-                $ids = array_merge($ids, \App\ProtoControllers\Employe\Conge::getidDemandesUtilisateur($userResp));
+                $ids = array_merge($ids, \App\ProtoControllers\Employe\Conge::getIdDemandesUtilisateur($userResp));
             }
         }
         return $ids;
@@ -490,7 +490,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
      */
     public function isDemandeTraitable($statut)
     {
-        return ($statut != \App\Models\conge::STATUT_ANNUL || $statut != \App\Models\Conge::STATUT_VALIDATION_FINALE || $statut != \App\Models\Conge::STATUT_REFUS);
+        return ($statut != \App\Models\Conge::STATUT_ANNUL || $statut != \App\Models\Conge::STATUT_VALIDATION_FINALE || $statut != \App\Models\Conge::STATUT_REFUS);
     }
 
    /**

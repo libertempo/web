@@ -45,7 +45,10 @@ class SQL
     // singleton pattern, code from php.net
     public function __wakeup() { error_handler('Unserializing is not allowed.', E_USER_ERROR); }
 
-    // for call staticly dynamic fx (doesn't use instance vars and doesn't use singleton ;-) )
+    /**
+     * for call staticly dynamic fx (doesn't use instance vars and doesn't use singleton ;-) )
+     * @deprecated
+     */
     public static function __callStatic($name, $args) {
         self::singleton();
         if (method_exists(self::$instance, $name)) {

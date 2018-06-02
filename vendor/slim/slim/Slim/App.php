@@ -52,7 +52,7 @@ class App
      *
      * @var string
      */
-    const VERSION = '3.9.2';
+    const VERSION = '3.10.0';
 
     /**
      * Container
@@ -246,6 +246,24 @@ class App
         }
 
         return $route;
+    }
+
+    /**
+     * Add a route that sends an HTTP redirect
+     *
+     * @param string              $from
+     * @param string|UriInterface $to
+     * @param int                 $status
+     *
+     * @return RouteInterface
+     */
+    public function redirect($from, $to, $status = 302)
+    {
+        $handler = function ($request, ResponseInterface $response) use ($to, $status) {
+            return $response->withHeader('Location', (string)$to)->withStatus($status);
+        };
+
+        return $this->get($from, $handler);
     }
 
     /**
