@@ -1,12 +1,28 @@
-DEFAULT: install
+.DEFAULT_GOAL := help
 
-destroy:
+#
+# Thanks to https://blog.theodo.fr/2018/05/why-you-need-a-makefile-on-your-project/
+#
+
+help:
+	@grep -E '(^[a-zA-Z_-]+:.*?##.*$$)|(^##)' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}{printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m##/[33m/'
+
+## Purge
+destroy: ## Détruit l'instance
 	App/Tools/destroy
-setup:
-	App/Tools/setup ${nom_instance}
-update:
+
+## Mise à jour
+update: ## Met l'application à la toute dernière version (patch compris)
 	App/Tools/update
 
-install: setup update
+## Installation
+setup:
+	App/Tools/setup ${nom_instance}
 
-reinstall: destroy install
+install: setup update ## Installe la nouvelle instance
+
+reinstall: destroy install ## Reset usine
+
+## Test
+test: ## Lance les tests unitaires
+	vendor/bin/atoum -ulr
