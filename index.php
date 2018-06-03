@@ -97,7 +97,7 @@ if (isset($_SESSION['userlogin'])) {
 	$request= "SELECT u_nom, u_passwd, u_prenom, u_is_resp, u_is_hr, u_is_admin, u_is_active  FROM conges_users where u_login = '". \includes\SQL::quote($_SESSION['userlogin'])."' " ;
 	$rs = \includes\SQL::query($request );
 	if ($rs->num_rows != 1) {
-	    redirect(ROOT_PATH . 'authentification');
+        redirect(ROOT_PATH . 'authentification');
 	} else {
 		$row = $rs->fetch_array();
 		$NOM=$row["u_nom"];
