@@ -7,6 +7,5 @@ cfg/config_ldap.php
 cfg/config_SMTP.php
 .idea/
 /nbproject/
-/dump/*.dump
 /backup/libertempo*
 clover.xml

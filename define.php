@@ -10,7 +10,6 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     define('SHOW_SQL',         false);
     define('DS',               DIRECTORY_SEPARATOR);
     define('ABSOLUTE_SYSPATH', dirname(__FILE__) . DS);
-    define('DEBUG_SYSPATH',    ABSOLUTE_SYSPATH . 'debug' . DS);
     define('PUBLIC_PATH',      ROOT_PATH . 'Public/');
     define('VIEW_PATH', ROOT_PATH . 'App' . DS . 'Views' . DS);
     define('ASSETS_PATH',      PUBLIC_PATH . 'Assets/');
@@ -23,7 +22,6 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     define('CONFIG_PATH',      realpath(ABSOLUTE_SYSPATH) . DS . 'cfg'. DS);
     define('INSTALL_PATH',     ROOT_PATH . 'install/');
     define('LOCALE_PATH',      ROOT_PATH . 'locale/');
-    define('DUMP_PATH',        ROOT_PATH . 'dump/');
     define('BACKUP_PATH',      ROOT_PATH . 'backup' . DS);
     define('TEMPLATE_PATH',    PUBLIC_PATH . 'template/');
     define('API_SYSPATH', ABSOLUTE_SYSPATH . 'vendor' . DS . 'Libertempo' . DS . 'libertempo-api' . DS);
@@ -37,56 +35,38 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     require_once ROOT_PATH . 'vendor/autoload.php';
     require_once ROOT_PATH . 'vendor/raveren/kint/Kint.class.php';
     require_once CONFIG_PATH . 'env.php';
-    \Kint::enabled(false);
-    \Kint::$theme = 'solarized-dark';
+
     switch (ENV) {
         case ENV_PROD:
+        default:
             error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
             ini_set("display_errors", 0);
+            $environnement = 'production';
+            \Kint::enabled(false);
             break;
         case ENV_DEV:
+            \Kint::enabled(true);
             error_reporting(-1);
-            // no break;
+            ini_set("display_errors", 1);
+            $environnement = 'development';
+            break;
         case ENV_TEST:
             \Kint::enabled(true);
-            if (ENV === ENV_TEST) {
-                error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
-            }
+            error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
             ini_set("display_errors", 1);
-
-            /**
-             * Logue les variables à déboguer
-             */
-            function debug()
-            {
-                global $debug;
-                $debug[] = [
-                    'Kint' => @d(func_get_args()),
-                    'Backtrace' => '<pre>' . print_r(debug_backtrace(), true) . '</pre>',
-                    'LastError' => '<pre>' . print_r(error_get_last(), true)  .'</pre>',
-                ];
-            }
-            register_shutdown_function(function () {
-                global $debug;
-                if (empty($debug)) {
-                    return;
-                }
-                if (!is_dir(DEBUG_SYSPATH)) {
-                    mkdir(DEBUG_SYSPATH);
-                }
-                $file = fopen(DEBUG_SYSPATH . 'dbg-' . date('Y-m-d') . '.html', 'wb');
-                if (!is_resource($file)) {
-                    return;
-                }
-                foreach ($debug as $v) {
-                    foreach ($v as $title => $data) {
-                        fwrite($file, '####################<br># ' . $title. '<br>####################<br>');
-                        fwrite($file, $data . '<br><br>');
-                    }
-                }
-
-            });
+            $environnement = 'test';
             break;
+    }
+    if (!empty(LOGGER_TOKEN)) {
+        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+        \Rollbar\Rollbar::init([
+            'access_token' => LOGGER_TOKEN,
+            'environment' => $environnement,
+            'code_version' => $config->getInstalledVersion(),
+            'use_error_reporting' => true,
+            'allow_exec' => false,
+            'included_errno' => E_ALL,
+        ]);
     }
     session_start();
 
