@@ -1493,24 +1493,22 @@ class Fonctions
     public static function fcListJourFeries($iAnnee = 2000) : array
     {
         //Initialisation de variables
-        $iCstJour = 3600*24;
-        $tbJourFerie=array();
+        $unJour = 3600*24;
+        $tbJourFerie = array();
+        $timePaques = easter_date($iAnnee) + 6 * 3600; // évite les changements d'heures
 
-        // Détermination des dates toujours fixes
-        $tbJourFerie["Jour de l an"]     = $iAnnee . "-01-01";
-        $tbJourFerie["Armistice 39-45"]  = $iAnnee . "-05-08";
-        $tbJourFerie["Toussaint"]        = $iAnnee . "-11-01";
-        $tbJourFerie["Armistice 14-18"]  = $iAnnee . "-11-11";
-        $tbJourFerie["Assomption"]       = $iAnnee . "-08-15";
-        $tbJourFerie["Fete du travail"]  = $iAnnee . "-05-01";
-        $tbJourFerie["Fete nationale"]   = $iAnnee . "-07-14";
-        $tbJourFerie["Noel"]    = $iAnnee . "-12-25";
+        $tbJourFerie["Jour de l an"] = $iAnnee . "-01-01";
+        $tbJourFerie["Paques"] = date('Y-m-d', $timePaques);
+        $tbJourFerie["Lundi de Paques"] = $iAnnee . date("-m-d", $timePaques + 1 * $unJour);
+        $tbJourFerie["Fete du travail"] = $iAnnee . "-05-01";
+        $tbJourFerie["Armistice 39-45"] = $iAnnee . "-05-08";
+        $tbJourFerie["Jeudi de l ascension"] = $iAnnee . date("-m-d", easter_date($iAnnee) + 39 * $unJour);
+        $tbJourFerie["Fete nationale"] = $iAnnee . "-07-14";
+        $tbJourFerie["Assomption"] = $iAnnee . "-08-15";
+        $tbJourFerie["Toussaint"] = $iAnnee . "-11-01";
+        $tbJourFerie["Armistice 14-18"] = $iAnnee . "-11-11";
+        $tbJourFerie["Noel"] = $iAnnee . "-12-25";
 
-        // Récupération des fêtes mobiles
-             $tbJourFerie["Lundi de Paques"]   = $iAnnee . date( "-m-d", easter_date($iAnnee) + 1*$iCstJour );
-             $tbJourFerie["Jeudi de l ascension"] = $iAnnee . date( "-m-d", easter_date($iAnnee) + 39*$iCstJour );
-
-        // Retour du tableau des jours fériés pour l'année demandée
         return $tbJourFerie;
     }
 
