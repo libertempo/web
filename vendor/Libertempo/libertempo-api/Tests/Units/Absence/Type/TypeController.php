@@ -192,7 +192,7 @@ final class TypeController extends \LibertAPI\Tests\Units\Tools\Libraries\ARestC
      */
     public function testPutMissingRequiredArg()
     {
-        $this->request->getMockController()->getParsedBody = [];
+        $this->request->getMockController()->getParsedBody = $this->getEntiteContent();
         $this->repository->getMockController()->getOne = $this->entite;
 
         $this->repository->getMockController()->putOne = function () {
@@ -209,7 +209,7 @@ final class TypeController extends \LibertAPI\Tests\Units\Tools\Libraries\ARestC
      */
     public function testPutBadDomain()
     {
-        $this->request->getMockController()->getParsedBody = [];
+        $this->request->getMockController()->getParsedBody = $this->getEntiteContent();
         $this->repository->getMockController()->getOne = $this->entite;
         $this->repository->getMockController()->putOne = function () {
             throw new \DomainException('');
@@ -225,7 +225,7 @@ final class TypeController extends \LibertAPI\Tests\Units\Tools\Libraries\ARestC
      */
     public function testPutPutOneFallback()
     {
-        $this->request->getMockController()->getParsedBody = [];
+        $this->request->getMockController()->getParsedBody = $this->getEntiteContent();
         $this->repository->getMockController()->getOne = $this->entite;
         $this->repository->getMockController()->putOne = function () {
             throw new \LogicException('');
@@ -241,7 +241,7 @@ final class TypeController extends \LibertAPI\Tests\Units\Tools\Libraries\ARestC
      */
     public function testPutOk()
     {
-        $this->request->getMockController()->getParsedBody = [];
+        $this->request->getMockController()->getParsedBody = $this->getEntiteContent();
         $this->repository->getMockController()->getOne = $this->entite;
         $this->repository->getMockController()->putOne = '';
         $this->newTestedInstance($this->repository, $this->router, $this->currentEmploye);
@@ -255,6 +255,16 @@ final class TypeController extends \LibertAPI\Tests\Units\Tools\Libraries\ARestC
             ->string['status']->isIdenticalTo('success')
             ->string['data']->isIdenticalTo('')
         ;
+    }
+
+    final protected function getEntiteContent() : array
+    {
+        return [
+            'id' => 87,
+            'type' => 'quatre',
+            'libelle' => 'chipolata',
+            'libelleCourt' => 'cp',
+        ];
     }
 
     /*************************************************
@@ -296,6 +306,7 @@ final class TypeController extends \LibertAPI\Tests\Units\Tools\Libraries\ARestC
     public function testDeleteOk()
     {
         $this->repository->getMockController()->getOne = $this->entite;
+        $this->calling($this->repository)->deleteOne = 34;
         $this->newTestedInstance($this->repository, $this->router, $this->currentEmploye);
         $response = $this->testedInstance->delete($this->request, $this->response, ['typeId' => 99]);
         $data = $this->getJsonDecoded($response->getBody());

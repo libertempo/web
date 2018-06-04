@@ -72,7 +72,7 @@ implements Interfaces\IGetable
             'prenom' => $entite->getPrenom(),
             'isResp' => $entite->isResponsable(),
             'isAdmin' => $entite->isAdmin(),
-            'isHr' => $entite->isHautReponsable(),
+            'isHr' => $entite->isHautResponsable(),
             'isActif' => $entite->isActif(),
             'password' => $entite->getMotDePasse(),
             'quotite' => $entite->getQuotite(),

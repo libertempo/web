@@ -82,4 +82,30 @@ final class UtilisateurEntite extends \LibertAPI\Tests\Units\Tools\Libraries\AEn
 
         $this->string($entite->getDateLastAccess())->isIdenticalTo(date('Y-m-d H:i'));
     }
+
+    public function testIsPasswordMatchingFalse()
+    {
+        $password = 'foo';
+        $this->function->password_verify = false;
+        $this->function->md5 = 'bar';
+
+        $this->newTestedInstance(['id' => 4, 'password' => 'baz']);
+
+        $this->boolean(
+            $this->testedInstance->isPasswordMatching($password)
+        )->isFalse();
+    }
+
+    public function testIsPasswordMatchingTrue()
+    {
+        $password = 'foo';
+        $this->function->password_verify = true;
+        $this->function->md5 = $password;
+
+        $this->newTestedInstance(['id' => 4, 'password' => 'baz']);
+
+        $this->boolean(
+            $this->testedInstance->isPasswordMatching($password)
+        )->isTrue();
+    }
 }

@@ -192,7 +192,7 @@ final class GroupeController extends \LibertAPI\Tests\Units\Tools\Libraries\ARes
      */
     public function testPutGetOneFallback()
     {
-        $this->request->getMockController()->getParsedBody = [];
+        $this->request->getMockController()->getParsedBody = $this->getEntiteContent();
         $this->repository->getMockController()->getOne = function () {
             throw new \LogicException('');
         };
@@ -242,7 +242,7 @@ final class GroupeController extends \LibertAPI\Tests\Units\Tools\Libraries\ARes
      */
     public function testPutPutOneFallback()
     {
-        $this->request->getMockController()->getParsedBody = [];
+        $this->request->getMockController()->getParsedBody = $this->getEntiteContent();
         $this->repository->getMockController()->getOne = $this->entite;
         $this->repository->getMockController()->putOne = function () {
             throw new \LogicException('');
@@ -258,7 +258,7 @@ final class GroupeController extends \LibertAPI\Tests\Units\Tools\Libraries\ARes
      */
     public function testPutOk()
     {
-        $this->request->getMockController()->getParsedBody = [];
+        $this->request->getMockController()->getParsedBody = $this->getEntiteContent();
         $this->repository->getMockController()->getOne = $this->entite;
         $this->repository->getMockController()->putOne = '';
         $this->newTestedInstance($this->repository, $this->router, $this->currentEmploye);
@@ -273,6 +273,16 @@ final class GroupeController extends \LibertAPI\Tests\Units\Tools\Libraries\ARes
             ->string['status']->isIdenticalTo('success')
             ->string['data']->isIdenticalTo('')
         ;
+    }
+
+    final protected function getEntiteContent() : array
+    {
+        return [
+            'id' => 72,
+            'name' => 'name',
+            'comment' => 'text',
+            'double_validation' => true,
+        ];
     }
 
     /*************************************************
@@ -314,7 +324,7 @@ final class GroupeController extends \LibertAPI\Tests\Units\Tools\Libraries\ARes
     public function testDeleteOk()
     {
         $this->repository->getMockController()->getOne = $this->entite;
-        $this->repository->getMockController()->deleteOne = '';
+        $this->repository->getMockController()->deleteOne = 123;
         $this->newTestedInstance($this->repository, $this->router, $this->currentEmploye);
 
         $response = $this->testedInstance->delete($this->request, $this->response, ['groupeId' => 99]);

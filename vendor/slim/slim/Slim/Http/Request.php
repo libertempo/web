@@ -197,10 +197,8 @@ class Request extends Message implements ServerRequestInterface
             $this->protocolVersion = str_replace('HTTP/', '', $serverParams['SERVER_PROTOCOL']);
         }
 
-        if (!$this->headers->has('Host') && $this->uri->getHost() !== '') {
-            $port = $this->uri->getPort() ? ":{$this->uri->getPort()}" : '';
-
-            $this->headers->set('Host', $this->uri->getHost() . $port);
+        if (!$this->headers->has('Host') || $this->uri->getHost() !== '') {
+            $this->headers->set('Host', $this->uri->getHost());
         }
 
         $this->registerMediaTypeParser('application/json', function ($input) {

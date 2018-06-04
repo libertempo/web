@@ -10,4 +10,7 @@ notifications:
       - "irc.tuxfamily.org#Libertempo"
     on_success: never # default: change
     on_failure: always # default: always
-script: Vendor/Bin/atoum
+script: Vendor/Bin/atoum -ulr
+
+after_script:
+  - php Vendor/Bin/codacycoverage clover clover.xml

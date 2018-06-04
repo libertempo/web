@@ -12,7 +12,7 @@ use LibertAPI\Tools\Exceptions\MissingArgumentException;
  * @since 0.7
  * @see \LibertAPI\Tests\Units\Groupe\GroupeEntite
  *
- * Ne devrait être contacté que par le GroupeDao
+ * Ne devrait être contacté que par le GroupeRepository
  * Ne devrait contacter personne
  */
 class GroupeEntite extends \LibertAPI\Tools\Libraries\AEntite

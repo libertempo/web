@@ -220,7 +220,7 @@ final class CreneauController extends \LibertAPI\Tests\Units\Tools\Libraries\ARe
      */
     public function testPutPutOneFallback()
     {
-        $this->request->getMockController()->getParsedBody = [];
+        $this->request->getMockController()->getParsedBody = $this->getEntiteContent();
         $this->repository->getMockController()->getOne = $this->entite;
         $this->repository->getMockController()->putOne = function () {
             throw new \LogicException('');
@@ -236,7 +236,7 @@ final class CreneauController extends \LibertAPI\Tests\Units\Tools\Libraries\ARe
      */
     public function testPutOk()
     {
-        $this->request->getMockController()->getParsedBody = [];
+        $this->request->getMockController()->getParsedBody = $this->getEntiteContent();
         $this->repository->getMockController()->getOne = $this->entite;
         $this->repository->getMockController()->putOne = '';
         $this->newTestedInstance($this->repository, $this->router, $this->currentEmploye);
@@ -251,5 +251,18 @@ final class CreneauController extends \LibertAPI\Tests\Units\Tools\Libraries\ARe
             ->string['status']->isIdenticalTo('success')
             ->string['data']->isIdenticalTo('')
         ;
+    }
+
+    final protected function getEntiteContent() : array
+    {
+        return [
+            'id' => 42,
+            'planningId' => 12,
+            'jourId' => 7,
+            'typeSemaine' => 23,
+            'typePeriode' => 2,
+            'debut' => 98,
+            'fin' => 123,
+        ];
     }
 }

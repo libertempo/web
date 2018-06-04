@@ -2,7 +2,6 @@
 namespace LibertAPI\Utilisateur;
 
 use LibertAPI\Tools\Exceptions\MissingArgumentException;
-
 use LibertAPI\Tools\Helpers\Formatter;
 
 /**
@@ -14,7 +13,7 @@ use LibertAPI\Tools\Helpers\Formatter;
  * @since 0.2
  * @see \LibertAPI\Tests\Units\Utilisateur\Entite
  *
- * Ne devrait être contacté que par le Utilisateur\UtilisateurDao et Groupe\Responsable\ResponsableDao
+ * Ne devrait être contacté que par le UtilisateurRepository et Groupe\Responsable\ResponsableRepository
  * Ne devrait contacter personne
  */
 class UtilisateurEntite extends \LibertAPI\Tools\Libraries\AEntite
@@ -44,24 +43,24 @@ class UtilisateurEntite extends \LibertAPI\Tools\Libraries\AEntite
         et supprimer une grande partie des accesseurs
      */
 
-    public function isResponsable()
+    public function isResponsable() : bool
     {
-        return (int) $this->getFreshData('isResp');
+        return $this->getFreshData('isResp');
     }
 
-    public function isAdmin()
+    public function isAdmin() : bool
     {
-        return (int) $this->getFreshData('isAdmin');
+        return $this->getFreshData('isAdmin');
     }
 
-    public function isHautReponsable()
+    public function isHautResponsable() : bool
     {
-        return (int) $this->getFreshData('isHr');
+        return $this->getFreshData('isHr');
     }
 
-    public function isActif()
+    public function isActif() : bool
     {
-        return (int) $this->getFreshData('isActif');
+        return $this->getFreshData('isActif');
     }
 
     public function getMotDePasse()
@@ -156,6 +155,16 @@ class UtilisateurEntite extends \LibertAPI\Tools\Libraries\AEntite
     public function updateDateLastAccess()
     {
         $this->dataUpdated['dateLastAccess'] = Formatter::timeToSQLDatetime(time());
+    }
+
+    /**
+     * @since 1.0
+     * @TODO 2018-05-26: Supprimer la comparaison md5 quand tous les MDP seront migrés
+     */
+    public function isPasswordMatching(string $password) : bool
+    {
+        return password_verify($password, $this->getMotDePasse())
+            || $this->getMotDePasse() === md5($password);
     }
 
     /**

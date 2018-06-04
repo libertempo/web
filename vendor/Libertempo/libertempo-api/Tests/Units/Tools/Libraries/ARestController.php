@@ -37,7 +37,7 @@ abstract class ARestController extends AController
         parent::beforeTestMethod($method);
         $this->currentEmploye = new UtilisateurEntite(['id' => 'user', 'isResp' => false, 'isHr' => false, 'isAdmin' => false]);
         $this->currentResponsable = new UtilisateurEntite(['id' => 'resp', 'isResp' => true, 'isHr' => false, 'isAdmin' => false]);
-        $this->currentAdmin = new UtilisateurEntite(['id' => 'admin', 'isResp' => true, 'isHr' => false, 'isAdmin' => true]);
+        $this->currentAdmin = new UtilisateurEntite(['id' => 'admin', 'isResp' => true, 'isHr' => true, 'isAdmin' => true]);
     }
 
     /*************************************************
@@ -112,7 +112,7 @@ abstract class ARestController extends AController
             ->string['status']->isIdenticalTo('success')
             //->array['data']->hasSize(1) // TODO: l'asserter atoum en sucre syntaxique est buggé, faire un ticket
         ;
-        $this->array($data['data'][0])->hasKey('id');
+        $this->boolean(empty($data['data']))->isFalse();
     }
 
     /**
@@ -147,4 +147,6 @@ abstract class ARestController extends AController
     }
 
     abstract protected function getList() : IResponse;
+
+    abstract protected function getEntiteContent() : array;
 }

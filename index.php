@@ -24,7 +24,7 @@ if (!session_is_valid()) {
 	if ($config->getHowToConnectUser() == "cas") {
         try {
             $usernameCAS = authentification_passwd_conges_CAS();
-            if ($usernameCAS == "") { 
+            if ($usernameCAS == "") {
                 throw new \Exception("Nom d'utilisateur vide");
             }
             session_create($usernameCAS);
