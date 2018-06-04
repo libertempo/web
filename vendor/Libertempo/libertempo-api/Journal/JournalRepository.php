@@ -14,60 +14,108 @@ use LibertAPI\Tools\Libraries\AEntite;
  */
 class JournalRepository extends \LibertAPI\Tools\Libraries\ARepository
 {
-    /*************************************************
-     * GET
-     *************************************************/
-
     /**
      * @inheritDoc
      */
     public function getOne(int $id) : AEntite
     {
-        throw new \RuntimeException('Journal#' . $id . ' is not a callable resource');
+        throw new \RuntimeException('#' . $id . ' is not a callable resource');
+    }
+
+    final protected function getEntiteClass() : string
+    {
+        return JournalEntite::class;
     }
 
     /**
      * @inheritDoc
      */
-    final protected function getParamsConsumer2Dao(array $paramsConsumer) : array
+    final protected function getParamsConsumer2Storage(array $paramsConsumer) : array
     {
         unset($paramsConsumer);
         return [];
     }
 
-    /*************************************************
-     * POST
-     *************************************************/
+    /**
+     * @inheritDoc
+     */
+    final protected function getStorage2Entite(array $dataStorage)
+    {
+        return [
+            'id' => $dataStorage['log_id'],
+            'numeroPeriode' => $dataStorage['log_p_num'],
+            'utilisateurActeur' => $dataStorage['log_user_login_par'],
+            'utilisateurObjet' => $dataStorage['log_user_login_pour'],
+            'etat' => $dataStorage['log_etat'],
+            'commentaire' => $dataStorage['log_comment'],
+            'date' => $dataStorage['log_date'],
+        ];
+    }
 
     /**
      * @inheritDoc
      */
-    public function postOne(array $data, AEntite $entite)
+    public function postOne(array $data, AEntite $entite) : int
     {
         throw new \RuntimeException('Action is forbidden');
     }
 
-    /*************************************************
-     * PUT
-     *************************************************/
-
     /**
      * @inheritDoc
      */
-    public function putOne(array $data, AEntite $entite)
+    public function putOne(AEntite $entite)
     {
         throw new \RuntimeException('Action is forbidden');
     }
 
-    /*************************************************
-     * DELETE
-     *************************************************/
+    /**
+     * @inheritDoc
+     */
+    final protected function getEntite2Storage(AEntite $entite) : array
+    {
+        throw new \RuntimeException('Action is forbidden');
+    }
 
     /**
      * @inheritDoc
      */
-    public function deleteOne(AEntite $entite)
+    final protected function setValues(array $values)
+    {
+        unset($values);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    final protected function setSet(array $parametres)
+    {
+        unset($parametres);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function deleteOne(AEntite $entite) : int
     {
         throw new \RuntimeException('Action is forbidden');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    final protected function setWhere(array $parametres)
+    {
+        if (!empty($parametres['id'])) {
+            $this->queryBuilder->andWhere('log_id = :id');
+            $this->queryBuilder->setParameter(':id', (int) $parametres['id']);
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    final protected function getTableName() : string
+    {
+        return 'conges_logs';
     }
 }

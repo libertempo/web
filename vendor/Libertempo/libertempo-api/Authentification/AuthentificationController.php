@@ -49,9 +49,11 @@ implements Interfaces\IGetable
         try {
             $utilisateur = $this->repository->find([
                 'login' => $login,
-                'password' => $password,
                 'isActif' => true,
             ]);
+            if (!$utilisateur->isPasswordMatching($password)) {
+                throw new \UnexpectedValueException('Wrong password');
+            }
             $utilisateurUpdated = $this->repository->regenerateToken($utilisateur);
         } catch (\UnexpectedValueException $e) {
             return $this->getResponseNotFound($response, 'No user matches these criteria');

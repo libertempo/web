@@ -38,7 +38,7 @@ implements Interfaces\IGetable, Interfaces\IPostable, Interfaces\IPutable
             return $this->getList($response, (int) $arguments['planningId']);
         }
 
-        return $this->getOne($response, (int) $arguments['creneauId'], (int) $arguments['planningId']);
+        return $this->getOne($response, (int) $arguments['creneauId']);
     }
 
     /**
@@ -46,14 +46,13 @@ implements Interfaces\IGetable, Interfaces\IPostable, Interfaces\IPutable
      *
      * @param IResponse $response Réponse Http
      * @param int $id ID de l'élément
-     * @param int $planningId Contrainte de recherche sur le planning
      *
      * @return IResponse, 404 si l'élément n'est pas trouvé, 200 sinon
      */
-    private function getOne(IResponse $response, $id, $planningId)
+    private function getOne(IResponse $response, $id)
     {
         try {
-            $creneau = $this->repository->getOne($id, $planningId);
+            $creneau = $this->repository->getOne($id);
         } catch (\DomainException $e) {
             return $this->getResponseNotFound($response, 'Element « creneaux#' . $id . ' » is not a valid resource');
         } catch (\Exception $e) {
@@ -159,9 +158,8 @@ implements Interfaces\IGetable, Interfaces\IPostable, Interfaces\IPutable
         }
 
         $id = (int) $arguments['creneauId'];
-        $planningId = (int) $arguments['planningId'];
         try {
-            $creneau = $this->repository->getOne($id, $planningId);
+            $creneau = $this->repository->getOne($id);
         } catch (\DomainException $e) {
             return $this->getResponseNotFound($response, 'Element « creneau#' . $id . ' » is not a valid resource');
         } catch (\Exception $e) {
@@ -169,7 +167,8 @@ implements Interfaces\IGetable, Interfaces\IPostable, Interfaces\IPutable
         }
 
         try {
-            $this->repository->putOne($body, $creneau);
+            $creneau->populate($body);
+            $this->repository->putOne($creneau);
         } catch (MissingArgumentException $e) {
             return $this->getResponseMissingArgument($response);
         } catch (\DomainException $e) {

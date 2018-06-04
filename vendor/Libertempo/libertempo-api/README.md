@@ -1,6 +1,7 @@
 # libertempo-api
-[![BCH compliance](https://bettercodehub.com/edge/badge/Libertempo/libertempo-api?branch=develop)](https://bettercodehub.com/)
+[![BCH compliance](https://bettercodehub.com/edge/badge/Libertempo/libertempo-api?branch=master)](https://bettercodehub.com/)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/c9248e3a815347209c8e56d2291f0da7)](https://www.codacy.com/app/Libertempo/libertempo-api?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Libertempo/libertempo-api&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://api.codacy.com/project/badge/Coverage/c9248e3a815347209c8e56d2291f0da7)](https://www.codacy.com/app/Libertempo/libertempo-api?utm_source=github.com&utm_medium=referral&utm_content=Libertempo/libertempo-api&utm_campaign=Badge_Coverage)
 [![Build Status](https://travis-ci.org/Libertempo/libertempo-api.svg?branch=master)](https://travis-ci.org/Libertempo/libertempo-api)
 
 
@@ -42,7 +43,7 @@ GET /authentification
 Authorization: Basic {base64(login:mot_de_passe)}
 ```
 
-Si l'utilisateur existe et a le droit de se connecter, l'API enverra le token d'identification, dont la durée de validité est de 5min (repoussée à chaque échange).
+Si l'utilisateur existe et a le droit de se connecter, l'API enverra le token d'identification, dont la durée de validité est de 30min (repoussée à chaque échange).
 
 ## Échanges authentifiés
 Une fois connecté, tous les échanges devront avoir le header :
@@ -72,21 +73,8 @@ Les réponses de l'API se font sous la spécification jsend. Autrement dit :
 ```
 
 # Routes disponibles
-Suivant les règles de l'architecture REST, les routes disponibles à ce jour sont :
-* `GET|POST /absence/type`
-* `GET|PUT|DELETE /absence/type/{id}`
-* `GET /groupe`
-* `GET /groupe/{id}`
-* `GET /groupe/{id}/responsable`
-* `GET /journal`
-* `GET|POST /planning`
-* `GET|PUT|DELETE /planning/{id}`
-* `GET|POST /planning/{id}/creneau`
-* `GET|DELETE /planning/{id}/creneau/{id}`
-* `GET /utilisateur`
-* `GET /utilisateur/{id}`
+Voir [Swagger](https://app.swaggerhub.com/apis/Libertempo/api) pour une documentation exhaustive.
 
 # Versions
 
-L'API suit `semver`, ce qui signifie qu'une route ne sera enlevée ou que ses spécifications ne seront changées que si la version passe `vM.0.0`.
-Attention : pour le moment, le logiciel n'est pas encore en `v1.m.p`, donc ces [cassages de compatibilité](https://github.com/Prytoegrian/check-break#what-is-a-compatibility-break-) peuvent arriver à tout moment.
+L'API suit `semver`, ce qui signifie qu'une route ne sera enlevée ou que ses spécifications ne seront changées que si la version passe `vM.0.0`. Autrement, il n'y aura pas de [cassages de compatibilité](https://github.com/Prytoegrian/check-break#what-is-a-compatibility-break-) .

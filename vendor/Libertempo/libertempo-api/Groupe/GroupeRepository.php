@@ -13,38 +13,92 @@ use LibertAPI\Tools\Libraries\AEntite;
  * @see \LibertAPI\Tests\Units\Planning\PlanningRepository
  *
  * Ne devrait être contacté que par le GroupeController
- * Ne devrait contacter que le GroupeEntite, GroupeDao
+ * Ne devrait contacter que le GroupeEntite
  */
 class GroupeRepository extends \LibertAPI\Tools\Libraries\ARepository
 {
-    /*************************************************
-     * GET
-     *************************************************/
+    final protected function getEntiteClass() : string
+    {
+        return GroupeEntite::class;
+    }
 
     /**
      * @inheritDoc
      */
-    final protected function getParamsConsumer2Dao(array $paramsConsumer) : array
+    final protected function getParamsConsumer2Storage(array $paramsConsumer) : array
     {
         unset($paramsConsumer);
         return [];
     }
 
-
-    /*************************************************
-     * DELETE
-     *************************************************/
+    /**
+     * @inheritDoc
+     */
+    final protected function getStorage2Entite(array $dataStorage)
+    {
+        return [
+            'id' => $dataStorage['g_gid'],
+            'name' => $dataStorage['g_groupename'],
+            'comment' => $dataStorage['g_comment'],
+            'double_validation' => 'Y' === $dataStorage['g_double_valid']
+        ];
+    }
 
     /**
      * @inheritDoc
      */
-    public function deleteOne(AEntite $entite)
+    final protected function setValues(array $values)
     {
-        try {
-            $this->dao->delete($entite->getId());
-            $entite->reset();
-        } catch (\Exception $e) {
-            throw $e;
+        $this->queryBuilder->setValue('g_groupename', ':name');
+        $this->queryBuilder->setParameter(':name', $values['name']);
+        $this->queryBuilder->setValue('g_comment', $values['comment']);
+        $this->queryBuilder->setValue('g_double_valid', $values['double_validation']);
+    }
+
+    final protected function setSet(array $parametres)
+    {
+        if (!empty($parametres['name'])) {
+            $this->queryBuilder->set('g_groupename', ':name');
+            $this->queryBuilder->setParameter(':name', $parametres['name']);
         }
+        if (!empty($parametres['comment'])) {
+            $this->queryBuilder->set('g_comment', ':comment');
+            $this->queryBuilder->setParameter(':comment', $parametres['comment']);
+        }
+        if (!empty($parametres['double_validation'])) {
+            $this->queryBuilder->set('g_double_valid', ':double_validation');
+            $this->queryBuilder->setParameter(':double_validation', $parametres['double_validation']);
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    final protected function setWhere(array $parametres)
+    {
+        if (!empty($parametres['id'])) {
+            $this->queryBuilder->andWhere('g_gid = :id');
+            $this->queryBuilder->setParameter(':id', (int) $parametres['id']);
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    final protected function getEntite2Storage(AEntite $entite) : array
+    {
+        return [
+            'name' => $entite->getName(),
+            'comment' => $entite->getComment(),
+            'double_validation' => 'Y' === $entite->isDoubleValidated()
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    final protected function getTableName() : string
+    {
+        return 'conges_groupe';
     }
 }

@@ -34,7 +34,6 @@ implements Interfaces\IGetable, Interfaces\IPostable, Interfaces\IPutable, Inter
         if (!isset($arguments['typeId'])) {
             return $this->getList($request, $response);
         }
-
         return $this->getOne($response, (int) $arguments['typeId']);
     }
 
@@ -70,7 +69,6 @@ implements Interfaces\IGetable, Interfaces\IPostable, Interfaces\IPutable, Inter
      * @param IResponse $response Réponse Http
      *
      * @return IResponse
-     * @throws \Exception en cas d'erreur inconnue (fallback, ne doit pas arriver)
      */
     private function getList(IRequest $request, IResponse $response)
     {
@@ -155,7 +153,8 @@ implements Interfaces\IGetable, Interfaces\IPostable, Interfaces\IPutable, Inter
         }
 
         try {
-            $this->repository->putOne($body, $resource);
+            $resource->populate($body);
+            $this->repository->putOne($resource);
         } catch (MissingArgumentException $e) {
             return $this->getResponseMissingArgument($response);
         } catch (\DomainException $e) {

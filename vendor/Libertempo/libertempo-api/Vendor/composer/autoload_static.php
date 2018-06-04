@@ -7,19 +7,30 @@ namespace Composer\Autoload;
 class ComposerStaticInit5254fb3dcd0ada989877bc48f5b177e0
 {
     public static $files = array (
+        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
+        'bd9634f2d41831496de0d3dfe4c94881' => __DIR__ . '/..' . '/symfony/polyfill-php56/bootstrap.php',
         '253c157292f75eb38082b5acb06f3f01' => __DIR__ . '/..' . '/nikic/fast-route/src/functions.php',
+        'b33e3d135e5d9e47d845c576147bda89' => __DIR__ . '/..' . '/php-di/php-di/src/functions.php',
         '6bc45d0537e6858fd179bdbc31d62c79' => __DIR__ . '/..' . '/raveren/kint/Kint.class.php',
     );
 
     public static $prefixLengthsPsr4 = array (
         'S' => 
         array (
+            'Symfony\\Polyfill\\Util\\' => 22,
+            'Symfony\\Polyfill\\Php56\\' => 23,
+            'Symfony\\Polyfill\\Mbstring\\' => 26,
+            'Symfony\\Component\\Process\\' => 26,
+            'Symfony\\Component\\Console\\' => 26,
+            'SuperClosure\\' => 13,
             'Slim\\' => 5,
         ),
         'P' => 
         array (
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Container\\' => 14,
+            'PhpParser\\' => 10,
+            'PhpDocReader\\' => 13,
         ),
         'L' => 
         array (
@@ -27,7 +38,12 @@ class ComposerStaticInit5254fb3dcd0ada989877bc48f5b177e0
         ),
         'I' => 
         array (
+            'Invoker\\' => 8,
             'Interop\\Container\\' => 18,
+        ),
+        'G' => 
+        array (
+            'Gitonomy\\Git\\' => 13,
         ),
         'F' => 
         array (
@@ -38,10 +54,35 @@ class ComposerStaticInit5254fb3dcd0ada989877bc48f5b177e0
             'Doctrine\\Common\\Inflector\\' => 26,
             'Doctrine\\Common\\Cache\\' => 22,
             'Doctrine\\Common\\Annotations\\' => 28,
+            'DI\\' => 3,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
+        'Symfony\\Polyfill\\Util\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-util',
+        ),
+        'Symfony\\Polyfill\\Php56\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-php56',
+        ),
+        'Symfony\\Polyfill\\Mbstring\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
+        ),
+        'Symfony\\Component\\Process\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/process',
+        ),
+        'Symfony\\Component\\Console\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/console',
+        ),
+        'SuperClosure\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/jeremeamia/SuperClosure/src',
+        ),
         'Slim\\' => 
         array (
             0 => __DIR__ . '/..' . '/slim/slim/Slim',
@@ -54,13 +95,29 @@ class ComposerStaticInit5254fb3dcd0ada989877bc48f5b177e0
         array (
             0 => __DIR__ . '/..' . '/psr/container/src',
         ),
+        'PhpParser\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser',
+        ),
+        'PhpDocReader\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/php-di/phpdoc-reader/src/PhpDocReader',
+        ),
         'LibertAPI\\' => 
         array (
             0 => __DIR__ . '/../..' . '/',
         ),
+        'Invoker\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/php-di/invoker/src',
+        ),
         'Interop\\Container\\' => 
         array (
             0 => __DIR__ . '/..' . '/container-interop/container-interop/src/Interop/Container',
+        ),
+        'Gitonomy\\Git\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/gitonomy/gitlib/src/Gitonomy/Git',
         ),
         'FastRoute\\' => 
         array (
@@ -77,6 +134,10 @@ class ComposerStaticInit5254fb3dcd0ada989877bc48f5b177e0
         'Doctrine\\Common\\Annotations\\' => 
         array (
             0 => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations',
+        ),
+        'DI\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/php-di/php-di/src',
         ),
     );
 
@@ -110,6 +171,18 @@ class ComposerStaticInit5254fb3dcd0ada989877bc48f5b177e0
     );
 
     public static $classMap = array (
+        'Codacy\\Coverage\\Application' => __DIR__ . '/..' . '/codacy/coverage/src/Codacy/Coverage/Application.php',
+        'Codacy\\Coverage\\Command\\Clover' => __DIR__ . '/..' . '/codacy/coverage/src/Codacy/Coverage/Command/Clover.php',
+        'Codacy\\Coverage\\Command\\Phpunit' => __DIR__ . '/..' . '/codacy/coverage/src/Codacy/Coverage/Command/Phpunit.php',
+        'Codacy\\Coverage\\Parser\\CloverParser' => __DIR__ . '/..' . '/codacy/coverage/src/Codacy/Coverage/Parser/CloverParser.php',
+        'Codacy\\Coverage\\Parser\\IParser' => __DIR__ . '/..' . '/codacy/coverage/src/Codacy/Coverage/Parser/Parser.php',
+        'Codacy\\Coverage\\Parser\\PhpUnitXmlParser' => __DIR__ . '/..' . '/codacy/coverage/src/Codacy/Coverage/Parser/PhpUnitXmlParser.php',
+        'Codacy\\Coverage\\Parser\\XMLParser' => __DIR__ . '/..' . '/codacy/coverage/src/Codacy/Coverage/Parser/Parser.php',
+        'Codacy\\Coverage\\Report\\CoverageReport' => __DIR__ . '/..' . '/codacy/coverage/src/Codacy/Coverage/Report/CoverageReport.php',
+        'Codacy\\Coverage\\Report\\FileReport' => __DIR__ . '/..' . '/codacy/coverage/src/Codacy/Coverage/Report/FileReport.php',
+        'Codacy\\Coverage\\Util\\CodacyApiClient' => __DIR__ . '/..' . '/codacy/coverage/src/Codacy/Coverage/Util/CodacyApiClient.php',
+        'Codacy\\Coverage\\Util\\GitClient' => __DIR__ . '/..' . '/codacy/coverage/src/Codacy/Coverage/Util/GitClient.php',
+        'Codacy\\Coverage\\Util\\JsonProducer' => __DIR__ . '/..' . '/codacy/coverage/src/Codacy/Coverage/Util/JsonProducer.php',
         'mageekguy\\atoum\\adapter' => __DIR__ . '/..' . '/atoum/atoum/classes/adapter.php',
         'mageekguy\\atoum\\adapter\\definition' => __DIR__ . '/..' . '/atoum/atoum/classes/adapter/definition.php',
         'mageekguy\\atoum\\annotations\\extractor' => __DIR__ . '/..' . '/atoum/atoum/classes/annotations/extractor.php',

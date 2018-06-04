@@ -26,6 +26,7 @@ final class AuthentificationController extends \LibertAPI\Tests\Units\Tools\Libr
         $this->entite->getMockController()->getLogin = 12;
         $this->entite->getMockController()->getNom = 12;
         $this->entite->getMockController()->getDateInscription = 12;
+        $this->entite->getMockController()->getMotDePasse = 'Fatboy slim';
     }
 
     /*************************************************
@@ -67,12 +68,32 @@ final class AuthentificationController extends \LibertAPI\Tests\Units\Tools\Libr
     }
 
     /**
+     * Teste la méthode get d'une authentification échouée avec mauvais mdp
+     */
+    public function testGetWrongPassword()
+    {
+        $this->entite->getMockController()->isPasswordMatching = false;
+        $this->repository->getMockController()->find = $this->entite;
+        $this->request->getMockController()->getHeaderLine = 'Basic QWxhZGRpbjpPcGVuU2VzYW1l';
+        $this->newTestedInstance($this->repository, $this->router);
+
+        $response = $this->testedInstance->get(
+            $this->request,
+            $this->response,
+            []
+        );
+
+        $this->assertFail($response, 404);
+    }
+
+    /**
      * Teste la méthode get d'une authentification réussie
      */
     public function testGetFound()
     {
         $token = 'abcde';
         $this->entite->getMockController()->getToken = $token;
+        $this->entite->getMockController()->isPasswordMatching = true;
         $this->repository->getMockController()->find = $this->entite;
         $this->repository->getMockController()->regenerateToken = $this->entite;
         $this->request->getMockController()->getHeaderLine = 'Basic QWxhZGRpbjpPcGVuU2VzYW1l';

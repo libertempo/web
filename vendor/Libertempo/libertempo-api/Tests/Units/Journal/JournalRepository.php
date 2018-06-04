@@ -11,97 +11,51 @@ namespace LibertAPI\Tests\Units\Journal;
  */
 final class JournalRepository extends \LibertAPI\Tests\Units\Tools\Libraries\ARepository
 {
-    protected function initDao()
+    public function testGetOneEmpty()
     {
-        $this->mockGenerator->orphanize('__construct');
-        $this->mockGenerator->shuntParentClassCalls();
-        $this->dao = new \mock\LibertAPI\Journal\JournalDao();
-    }
-
-    protected function initEntite()
-    {
-        $this->entite = new \LibertAPI\Journal\JournalEntite([]);
-    }
-
-    /*************************************************
-     * GET
-     *************************************************/
-
-    /**
-     * Teste la méthode getOne
-     */
-    public function testGetOne()
-    {
-        $this->calling($this->dao)->getById = [];
-        $this->newTestedInstance($this->dao);
-
+        $this->newTestedInstance($this->connector);
         $this->exception(function () {
-            $this->testedInstance->getOne(99);
+            $this->testedInstance->getOne(4);
         })->isInstanceOf(\RuntimeException::class);
     }
 
-
-    /*************************************************
-     * POST
-     *************************************************/
-
-    /**
-     * Teste la méthode postOne
-     */
-    public function testPostOne()
-    {
-        $this->newTestedInstance($this->dao);
-
-        $this->exception(function () {
-            $this->testedInstance->postOne([], $this->entite);
-        })->isInstanceOf(\RuntimeException::class);
-    }
-
-    /*************************************************
-     * PUT
-     *************************************************/
-
-    /**
-     * Teste la méthode putOne
-     */
-    public function testPutOne()
-    {
-        $this->newTestedInstance($this->dao);
-
-        $this->exception(function () {
-            $this->testedInstance->putOne([], $this->entite);
-        })->isInstanceOf(\RuntimeException::class);
-    }
-
-    /*************************************************
-     * DELETE
-     *************************************************/
-
-    /**
-     * Teste la méthode deleteOne
-     */
-    public function testDeleteOne()
-    {
-        $this->newTestedInstance($this->dao);
-
-        $this->exception(function () {
-            $this->testedInstance->deleteOne($this->entite);
-        })->isInstanceOf(\RuntimeException::class);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function getEntiteContent()
+    final protected function getStorageContent() : array
     {
         return [
-            'id' => 298,
-            'numeroPeriode' => 1,
-            'utilisateurActeur' => 'Romeo',
-            'utilisateurObjet' => 'Juliette',
-            'etat' => 'gere',
-            'commentaire' => 'nope',
-            'date' => '2017-12-01',
+            'log_id' => 81,
+            'log_p_num' => 1213,
+            'log_user_login_par' => 'Baloo',
+            'log_user_login_pour' => 'Mowgli',
+            'log_etat' => 'gere',
+            'log_comment' => 'nope',
+            'log_date' => '2017-12-01',
         ];
+    }
+
+    public function testPostOne()
+    {
+        $this->newTestedInstance($this->connector);
+
+        $this->exception(function () {
+            $this->testedInstance->postOne([], new \mock\LibertAPI\Tools\Libraries\AEntite([]));
+        })->isInstanceOf(\RuntimeException::class);
+    }
+
+    public function testPutOne()
+    {
+        $this->newTestedInstance($this->connector);
+
+        $this->exception(function () {
+            $this->testedInstance->putOne(new \mock\LibertAPI\Tools\Libraries\AEntite([]));
+        })->isInstanceOf(\RuntimeException::class);
+    }
+
+    public function testDeleteOne()
+    {
+        $this->newTestedInstance($this->connector);
+
+        $this->exception(function () {
+            $this->testedInstance->deleteOne(new \mock\LibertAPI\Tools\Libraries\AEntite([]));
+        })->isInstanceOf(\RuntimeException::class);
     }
 }

@@ -12,7 +12,7 @@ use LibertAPI\Tools\Exceptions\MissingArgumentException;
  * @since 0.1
  * @see \LibertAPI\Tests\Units\Planning\PlanningEntite
  *
- * Ne devrait être contacté que par le Planning\PlanningDao
+ * Ne devrait être contacté que par le PlanningRepository
  * Ne devrait contacter personne
  */
 class PlanningEntite extends \LibertAPI\Tools\Libraries\AEntite
