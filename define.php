@@ -58,15 +58,23 @@ if (!defined( 'DEFINE_INCLUDE' )) {
             break;
     }
     if (!empty(LOGGER_TOKEN)) {
-        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+        // @TODO : c'est dégueu, enlevez ça quand la nouvelle installation par CLI sera là
+        try {
+            $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+            $version = $config->getInstalledVersion();
+        } catch (\mysqli_sql_exception $e) {
+            $version = null;
+        }
+
         \Rollbar\Rollbar::init([
             'access_token' => LOGGER_TOKEN,
             'environment' => $environnement,
-            'code_version' => $config->getInstalledVersion(),
+            'code_version' => $version,
             'use_error_reporting' => true,
             'allow_exec' => false,
             'included_errno' => E_ALL,
         ]);
+        \Rollbar\Rollbar::addCustom('access_key', LOGGER_TOKEN);
     }
     session_start();
 
