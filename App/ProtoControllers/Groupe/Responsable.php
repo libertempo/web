@@ -22,6 +22,9 @@ class Responsable {
      */
     public static function getListResponsableByGroupeIds(array $groupeIds)
     {
+        if (empty($groupeIds)) {
+            return [];
+        }
         $groupeIds = array_map('intval', $groupeIds);
         $sql = \includes\SQL::singleton();
         $req = 'SELECT gr_login
