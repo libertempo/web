@@ -223,13 +223,12 @@ class Fonctions
                 }
             }
 
+            $startDate = (!$config->canUserSaisieDemandePasse()) ? 'd' : '';
             $datePickerOpts = [
                 'daysOfWeekDisabled' => $daysOfWeekDisabled,
                 'datesDisabled'      => $datesDisabled,
+                'startDate'          => $startDate,
             ];
-            if (!$config->canUserSaisieDemandePasse()) {
-                $datePickerOpts['startDate'] = 'd';
-            }
             $return .= '<script>generateDatePicker(' . json_encode($datePickerOpts) . ');</script>';
             $return .= '<h1>' . _('resp_traite_user_new_conges') . '</h1>';
 
@@ -310,7 +309,7 @@ class Fonctions
                 $datesDisabled[] = \App\Helpers\Formatter::dateIso2Fr($date);
             }
         }
-        $startDate = ($config->canUserSaisieDemandePasse()) ? 'd' : '';
+        $startDate = (!$config->canUserSaisieDemandePasse()) ? 'd' : '';
 
         $datePickerOpts = [
             'daysOfWeekDisabled' => $daysOfWeekDisabled,
