@@ -65,7 +65,7 @@ class Fonctions
         $valid = verif_saisie_new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $_SESSION['userlogin']);
 
         // verifie que le solde de conges sera encore positif après validation
-        if ($config->canSoldeNegatif()) {
+        if (!$config->canSoldeNegatif()) {
             $valid = $valid && \utilisateur\Fonctions::verif_solde_user($_SESSION['userlogin'], $new_type, $new_nb_jours);
         }
         if (!$config->canUserSaisieDemandePasse()) {
