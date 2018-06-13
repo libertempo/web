@@ -2,10 +2,10 @@
 
 
 [![BCH compliance](https://bettercodehub.com/edge/badge/Libertempo/Libertempo-web?branch=develop)](https://bettercodehub.com/)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ed902981f4fb40bda7b90c199a0b4da1)](https://www.codacy.com/app/Libertempo/Libertempo-web?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Libertempo/Libertempo-web&amp;utm_campaign=Badge_Grade)
-[![Codacy Badge](https://api.codacy.com/project/badge/Coverage/ed902981f4fb40bda7b90c199a0b4da1)](https://www.codacy.com/app/Libertempo/Libertempo-web?utm_source=github.com&utm_medium=referral&utm_content=Libertempo/Libertempo-web&utm_campaign=Badge_Coverage)
-![build_status](https://travis-ci.org/Libertempo/Libertempo-web.svg?branch=master)
-[![licence](https://img.shields.io/badge/licence-GPL2-green.svg)](https://github.com/Libertempo/Libertempo-web/blob/develop/LICENSE)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ed902981f4fb40bda7b90c199a0b4da1)](https://www.codacy.com/app/libertempo/Libertempo-web)
+[![Codacy Badge](https://api.codacy.com/project/badge/Coverage/ed902981f4fb40bda7b90c199a0b4da1)](https://www.codacy.com/app/libertempo/Libertempo-web)
+![build_status](https://travis-ci.org/libertempo/Libertempo-web.svg?branch=master)
+[![licence](https://img.shields.io/badge/licence-GPL2-green.svg)](https://github.com/libertempo/Libertempo-web/blob/develop/LICENSE)
 
 
 # Présentation
