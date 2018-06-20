@@ -421,7 +421,7 @@ function deconnexion_CAS($url = "")
 
     }
 
-    \phpCAS::logoutWithUrl($url . 'authentification');
+    \phpCAS::logout();
 }
 
 
