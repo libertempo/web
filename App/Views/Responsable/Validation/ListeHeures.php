@@ -31,7 +31,6 @@
                 <th><?= _('jour') ?></th>
                 <th><?= _('divers_debut_maj_1') ?></th>
                 <th><?= _('divers_fin_maj_1') ?></th>
-                <th><?= _('divers_type_maj_1') ?></th>
                 <th><?= _('duree') ?></th>
                 <th><?= _('divers_solde') ?></th>
                 <th><?= _('divers_comment_maj_1') ?></th>
