@@ -11,7 +11,6 @@ namespace PackageVersions;
 final class Versions
 {
     const VERSIONS = array (
-  'Libertempo/libertempo-api' => 'v1.1.0@23783757f062f81eae506679418efd6ea7d2e8fe',
   'container-interop/container-interop' => '1.2.0@79cbf1341c22ec75643d841642dd5d6acd83bdb8',
   'doctrine/annotations' => 'v1.4.0@54cacc9b81758b14e3ce750f205a393d52339e97',
   'doctrine/cache' => 'v1.6.2@eb152c5100571c7a45470ff2a35095ab3f3b900b',
@@ -25,6 +24,7 @@ final class Versions
   'guzzlehttp/psr7' => '1.4.2@f5b8a8512e2b58b0071a7280e39f14f72e05d87c',
   'jasig/phpcas' => '1.3.5@61c8899c8f91204e8b9135d795461e50fe5c2db0',
   'jeremeamia/SuperClosure' => '2.4.0@5707d5821b30b9a07acfb4d76949784aaa0e9ce9',
+  'libertempo/api' => 'v1.1.0@23783757f062f81eae506679418efd6ea7d2e8fe',
   'monolog/monolog' => '1.23.0@fd8c787753b3a2ad11bc60c063cff1358a32a3b4',
   'nikic/fast-route' => 'v1.3.0@181d480e08d9476e61381e04a71b34dc0432e812',
   'nikic/php-parser' => 'v3.1.5@bb87e28e7d7b8d9a7fda231d37457c9210faf6ce',

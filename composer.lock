@@ -4,63 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "663244f6b3d520895b942371af0d0140",
+    "content-hash": "9b8246a4065e595918c09878ca95526d",
     "packages": [
-        {
-            "name": "Libertempo/libertempo-api",
-            "version": "v1.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Libertempo/libertempo-api.git",
-                "reference": "23783757f062f81eae506679418efd6ea7d2e8fe"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Libertempo/libertempo-api/zipball/23783757f062f81eae506679418efd6ea7d2e8fe",
-                "reference": "23783757f062f81eae506679418efd6ea7d2e8fe",
-                "shasum": ""
-            },
-            "require": {
-                "doctrine/dbal": "2.5",
-                "php": "^7.0",
-                "php-di/php-di": "6.0.2",
-                "raveren/kint": "^1.0",
-                "slim/slim": "3.9"
-            },
-            "require-dev": {
-                "atoum/atoum": "3.0.0",
-                "codacy/coverage": "1.4.1",
-                "symfony/console": "3.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "LibertAPI\\": "."
-                }
-            },
-            "license": [
-                "AGPL-3.0"
-            ],
-            "authors": [
-                {
-                    "name": "wouldsmina",
-                    "role": "Developer"
-                },
-                {
-                    "name": "Prytoegrian",
-                    "email": "prytoegrian@protonmail.com",
-                    "homepage": "https://github.com/Prytoegrian",
-                    "role": "Developer"
-                }
-            ],
-            "support": {
-                "email": "libertempo@lists.tuxfamily.org",
-                "irc": "irc://irc.tuxfamily.org/#Libertempo",
-                "source": "https://github.com/Libertempo/libertempo-api/tree/v1.1.0",
-                "issues": "https://github.com/Libertempo/libertempo-api/issues"
-            },
-            "time": "2018-06-04T10:17:47+00:00"
-        },
         {
             "name": "container-interop/container-interop",
             "version": "1.2.0",
@@ -851,6 +796,56 @@
                 "tokenizer"
             ],
             "time": "2018-03-21T22:21:57+00:00"
+        },
+        {
+            "name": "libertempo/api",
+            "version": "v1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/libertempo/api.git",
+                "reference": "23783757f062f81eae506679418efd6ea7d2e8fe"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/libertempo/api/zipball/23783757f062f81eae506679418efd6ea7d2e8fe",
+                "reference": "23783757f062f81eae506679418efd6ea7d2e8fe",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/dbal": "2.5",
+                "php": "^7.0",
+                "php-di/php-di": "6.0.2",
+                "raveren/kint": "^1.0",
+                "slim/slim": "3.9"
+            },
+            "require-dev": {
+                "atoum/atoum": "3.0.0",
+                "codacy/coverage": "1.4.1",
+                "symfony/console": "3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "LibertAPI\\": "."
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "AGPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "wouldsmina",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Prytoegrian",
+                    "email": "prytoegrian@protonmail.com",
+                    "homepage": "https://github.com/Prytoegrian",
+                    "role": "Developer"
+                }
+            ],
+            "time": "2018-06-04T10:17:47+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -3050,9 +3045,9 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "stability-flags": [],
-    "prefer-stable": true,
+    "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
         "php": "^7.0",

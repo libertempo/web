@@ -168,7 +168,7 @@ class ComposerStaticInitfd23b7dd905d561816f77d072cde6740
         ),
         'LibertAPI\\' => 
         array (
-            0 => __DIR__ . '/..' . '/Libertempo/libertempo-api',
+            0 => __DIR__ . '/..' . '/libertempo/api',
         ),
         'Jean85\\' => 
         array (

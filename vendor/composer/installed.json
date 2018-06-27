@@ -1,62 +1,5 @@
 [
     {
-        "name": "Libertempo/libertempo-api",
-        "version": "v1.1.0",
-        "version_normalized": "1.1.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/Libertempo/libertempo-api.git",
-            "reference": "23783757f062f81eae506679418efd6ea7d2e8fe"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/Libertempo/libertempo-api/zipball/23783757f062f81eae506679418efd6ea7d2e8fe",
-            "reference": "23783757f062f81eae506679418efd6ea7d2e8fe",
-            "shasum": ""
-        },
-        "require": {
-            "doctrine/dbal": "2.5",
-            "php": "^7.0",
-            "php-di/php-di": "6.0.2",
-            "raveren/kint": "^1.0",
-            "slim/slim": "3.9"
-        },
-        "require-dev": {
-            "atoum/atoum": "3.0.0",
-            "codacy/coverage": "1.4.1",
-            "symfony/console": "3.0"
-        },
-        "time": "2018-06-04T10:17:47+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "LibertAPI\\": "."
-            }
-        },
-        "license": [
-            "AGPL-3.0"
-        ],
-        "authors": [
-            {
-                "name": "wouldsmina",
-                "role": "Developer"
-            },
-            {
-                "name": "Prytoegrian",
-                "email": "prytoegrian@protonmail.com",
-                "homepage": "https://github.com/Prytoegrian",
-                "role": "Developer"
-            }
-        ],
-        "support": {
-            "email": "libertempo@lists.tuxfamily.org",
-            "irc": "irc://irc.tuxfamily.org/#Libertempo",
-            "source": "https://github.com/Libertempo/libertempo-api/tree/v1.1.0",
-            "issues": "https://github.com/Libertempo/libertempo-api/issues"
-        }
-    },
-    {
         "name": "atoum/atoum",
         "version": "3.0.0",
         "version_normalized": "3.0.0.0",
@@ -1115,6 +1058,58 @@
             "serializable",
             "serialize",
             "tokenizer"
+        ]
+    },
+    {
+        "name": "libertempo/api",
+        "version": "v1.1.0",
+        "version_normalized": "1.1.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/libertempo/api.git",
+            "reference": "23783757f062f81eae506679418efd6ea7d2e8fe"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/libertempo/api/zipball/23783757f062f81eae506679418efd6ea7d2e8fe",
+            "reference": "23783757f062f81eae506679418efd6ea7d2e8fe",
+            "shasum": ""
+        },
+        "require": {
+            "doctrine/dbal": "2.5",
+            "php": "^7.0",
+            "php-di/php-di": "6.0.2",
+            "raveren/kint": "^1.0",
+            "slim/slim": "3.9"
+        },
+        "require-dev": {
+            "atoum/atoum": "3.0.0",
+            "codacy/coverage": "1.4.1",
+            "symfony/console": "3.0"
+        },
+        "time": "2018-06-04T10:17:47+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "LibertAPI\\": "."
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "AGPL-3.0"
+        ],
+        "authors": [
+            {
+                "name": "wouldsmina",
+                "role": "Developer"
+            },
+            {
+                "name": "Prytoegrian",
+                "email": "prytoegrian@protonmail.com",
+                "homepage": "https://github.com/Prytoegrian",
+                "role": "Developer"
+            }
         ]
     },
     {
