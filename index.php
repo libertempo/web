@@ -1,10 +1,12 @@
 <?php
 define('ROOT_PATH', '');
 require_once 'define.php';
+require CONFIG_PATH . 'dbconnect.php';
 
-// test si dbconnect.php est présent !
-if (!is_readable( CONFIG_PATH .'dbconnect.php')) {
-	header("Location:". ROOT_PATH .'install/');
+// L'installation a-t-elle été faite ?
+if (!\includes\SQL::existsDatabase($mysql_database)) {
+    echo "L'application n'est pas installée. Veuillez passer par l'installateur.";
+    exit();
 }
 include_once INCLUDE_PATH .'fonction.php';
 include_once ROOT_PATH .'fonctions_conges.php'; // for init_config_tab()
@@ -24,7 +26,7 @@ if (!session_is_valid()) {
 	if ($config->getHowToConnectUser() == "cas") {
         try {
             $usernameCAS = authentification_passwd_conges_CAS();
-            if ($usernameCAS == "") {
+            if ($usernameCAS == "") { 
                 throw new \Exception("Nom d'utilisateur vide");
             }
             session_create($usernameCAS);

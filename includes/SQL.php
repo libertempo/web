@@ -20,29 +20,43 @@ class SQL
     public static function singleton() {
         if (!isset(self::$instance)) {
             $className = __CLASS__;
-            require CONFIG_PATH .'dbconnect.php';
+            require CONFIG_PATH . 'dbconnect.php';
 
             self::$instance = new $className( $mysql_serveur , $mysql_user, $mysql_pass, $mysql_database);
         }
         return self::$instance;
     }
 
+    public static function existsDatabase(string $name) : bool
+    {
+        $instance = self::singletonWithoutDb();
+
+        $res = $instance->query('SHOW DATABASES');
+        foreach ($res->fetch_all() as $database) {
+            if ($name === $database['Database']) {
+                return true;
+            }
+        }
+
+        return in_array($name, $res->fetch_all(), true);
+    }
+
+    public static function singletonWithoutDb()
+    {
+        require CONFIG_PATH . 'dbconnect.php';
+        return new self($mysql_serveur, $mysql_user, $mysql_pass, '');
+    }
+
     public function initialized() {
         return isset( self::$instance );
     }
 
-    private function __construct() {
-        $args = func_get_args();
-        // this doesn't work ... need use ReflectionClass ... BEURK ! ReflectionClass is not documented ... unstable
-        // self::$pdo_obj = call_user_func_array('Database::__construct', $args);
-        $r = new \ReflectionClass('\includes\Database');
-        self::$pdo_obj = $r->newInstanceArgs($args);
+    private function __construct(string $server, string $user, string $host, string $database) {
+        self::$pdo_obj = new Database($server, $user, $host, $database);
     }
 
-    // singleton pattern, code from php.net
     public function __clone() { error_handler('Clone is not allowed.', E_USER_ERROR); }
 
-    // singleton pattern, code from php.net
     public function __wakeup() { error_handler('Unserializing is not allowed.', E_USER_ERROR); }
 
     /**
@@ -110,12 +124,13 @@ class Database extends \mysqli
 {
     private static $hist = [];
 
-    public function __construct($host='localhost', $username='root', $passwd ='',$dbname = 'db_conges')
+    public function __construct($host, $username, $passwd, $dbname)
     {
-        parent::__construct (  $host , $username , $passwd , $dbname );
         /* activate reporting */
         $driver = new \mysqli_driver();
-        $driver->report_mode = MYSQLI_REPORT_ALL;
+        // @TODO: mettre ALL quand on voudra travailler dessus;
+        $driver->report_mode = MYSQLI_REPORT_ALL & ~MYSQLI_REPORT_INDEX;;
+        parent::__construct ($host, $username, $passwd, $dbname);
         $this->query('SET NAMES \'utf8\';');
         $this->query("SET @@SESSION.sql_mode='';");
     }
@@ -124,7 +139,7 @@ class Database extends \mysqli
         return self::$hist;
     }
 
-    public function query($query , $resultmode = MYSQLI_STORE_RESULT )
+    public function query($query, $resultmode = MYSQLI_STORE_RESULT) : Database_MySQLi_Result
     {
         $nb = count(self::$hist);
         $backtraces = debug_backtrace();

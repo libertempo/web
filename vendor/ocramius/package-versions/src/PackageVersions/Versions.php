@@ -64,8 +64,8 @@ final class Versions
   'symfony/finder' => 'v4.1.0@087e2ee0d74464a4c6baac4e90417db7477dc238',
   'symfony/polyfill-mbstring' => 'v1.8.0@3296adf6a6454a050679cde90f95350ad604b171',
   'symfony/process' => 'v4.1.0@73445bd33b0d337c060eef9652b94df72b6b3434',
-  'wouldsmina/libertempo' => '^1.8@dc06c779b486aee48bdde9cf1d148b0e1375c3de',
-  'libertempo/libertempo-web' => 'dev-pry/algoMdp@dc06c779b486aee48bdde9cf1d148b0e1375c3de',
+  'wouldsmina/libertempo' => '^1.8@',
+  'libertempo/libertempo-web' => 'No version set (parsed as 1.0.0)@',
 );
 
     private function __construct()

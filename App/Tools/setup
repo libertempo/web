@@ -1,0 +1,112 @@
+#!/usr/bin/env php
+<?php
+require_once 'libraries';
+
+define('INSTALLATION_PATH', PATCH_PATH . DS . 'Installation' . DS);
+define('API_PATH', ROOT_PATH . 'api' . DS);
+define('API_SYSPATH', ROOT_PATH . 'vendor' . DS . 'Libertempo' . DS . 'libertempo-api' . DS);
+
+function createDatabase(\includes\SQL $db, string $name) : bool
+{
+    $req = 'CREATE DATABASE `' . $name . '`';
+    $db->query($req);
+
+    return 0 < $db->affected_rows;
+}
+
+/**
+ * Définit un nom pour l'instance. Doit coller à ce que le vhost a déclaré.
+ */
+function nameInstance(\includes\SQL $db, string $name) : bool
+{
+    if (!filter_var($name, FILTER_VALIDATE_URL)) {
+        return false;
+    }
+
+    $req = 'UPDATE `conges_config` SET conf_valeur = "' . $db->quote($name) . '"
+    WHERE conf_nom = "URL_ACCUEIL_CONGES" LIMIT 1';
+    $db->query($req);
+
+    // @TODO: à supprimer quand la mise à jour des vhosts sera effective
+    $path = parse_url($name, \PHP_URL_PATH);
+    $contentFile = file_get_contents(API_PATH . '.htaccess.example');
+    $newContent = str_replace('vendor', $path . 'vendor', $contentFile);
+    return file_put_contents(API_PATH . '.htaccess', $newContent);
+}
+
+/**
+ * Définit les données de configuration pour l'API
+ *
+ * @param array $data Données de configuration
+ */
+function setDataConfigurationApi(string $server, string $base, string $user, string $password) : bool
+{
+    $data = [
+        'db' => [
+            'serveur' => $server,
+            'base' => $base,
+            'utilisateur' => $user,
+            'mot_de_passe' => $password,
+        ],
+    ];
+
+    return file_put_contents(API_SYSPATH . 'configuration.json', json_encode($data));
+}
+
+/**
+ * Execute le fichier de patch d'installation et retourne sa version
+ */
+function executePatch() : string
+{
+    $currentPatch = "0.0";
+    foreach (glob(INSTALLATION_PATH . '/*.sql') as $filename) {
+        $currentPatch = basename($filename, '.sql');
+        // il n'est sensé n'y en avoir qu'un
+        execute_sql_file($filename);
+        break;
+    }
+
+    return $currentPatch;
+}
+
+display('Installation…');
+
+// Quelques vérifications de base…
+$instanceName = $argv[1] ?? null;
+display('Contrôles généraux…');
+if (null == $instanceName) {
+    displayError("Nom d'instance vide");
+}
+if (\includes\SQL::existsDatabase($mysql_database)) {
+    displayError('Application déjà installée');
+}
+
+display('Création base de données…');
+if (!createDatabase(\includes\SQL::singletonWithoutDb(), $mysql_database)) {
+    displayFail();
+}
+
+display('Création tables…');
+$db = \includes\SQL::singleton();
+list($major, $minor, $patch) = explode('.', executePatch());
+$versionMaj = implode('.', [$major, $minor, $patch]);
+
+display('Inscription de la dernière version…');
+if(!setLastMaj($db, $versionMaj)) {
+    displayFail();
+}
+
+display('Nommage de l\'instance…');
+if (!nameInstance($db, $instanceName)) {
+    displayFail();
+}
+
+display('Configuration de l\'API');
+if (!setDataConfigurationApi($mysql_serveur, $mysql_database, $mysql_user, $mysql_pass)) {
+    displayFail();
+}
+
+$updateLang = "UPDATE conges_config SET conf_valeur = 'fr_FR' WHERE conf_nom = 'lang' LIMIT 1";
+$db->query($updateLang);
+
+echo 'Installation terminée avec succès.', "\n";
