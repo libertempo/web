@@ -1,13 +1,10 @@
 <?php
-
 define('ROOT_PATH', '../');
-require ROOT_PATH . 'define.php';
-defined( '_PHP_CONGES' ) or die( 'Restricted access' );
+define('INCLUDE_PATH',     ROOT_PATH . 'includes/');
 
-include_once ROOT_PATH .'fonctions_conges.php' ;
-include_once INCLUDE_PATH .'fonction.php';
+require_once INCLUDE_PATH . 'define.php';
+defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 include_once INCLUDE_PATH .'session.php';
-include_once ROOT_PATH .'fonctions_calcul.php';
 
 $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 

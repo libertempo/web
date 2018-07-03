@@ -9,7 +9,7 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     define('DEFINE_INCLUDE',   true);
     define('SHOW_SQL',         false);
     define('DS',               DIRECTORY_SEPARATOR);
-    define('ABSOLUTE_SYSPATH', dirname(__FILE__) . DS);
+    define('ABSOLUTE_SYSPATH', dirname(__FILE__, 2) . DS);
     define('PUBLIC_PATH',      ROOT_PATH . 'Public/');
     define('VIEW_PATH', ROOT_PATH . 'App' . DS . 'Views' . DS);
     define('ASSETS_PATH',      PUBLIC_PATH . 'Assets/');
@@ -18,7 +18,6 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     define('FONT_PATH',        ASSETS_PATH . 'Font/');
     define('CSS_PATH',         ASSETS_PATH . 'Css/');
     define('LIBRARY_PATH',     ROOT_PATH . 'library/');
-    define('INCLUDE_PATH',     ROOT_PATH . 'includes/');
     define('CONFIG_PATH',      realpath(ABSOLUTE_SYSPATH) . DS . 'cfg'. DS);
     define('INSTALL_PATH',     ROOT_PATH . 'install/');
     define('LOCALE_PATH',      ROOT_PATH . 'locale/');
@@ -34,6 +33,9 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     require_once ROOT_PATH . 'vendor/autoload.php';
     require_once ROOT_PATH . 'vendor/raveren/kint/Kint.class.php';
     require_once CONFIG_PATH . 'env.php';
+    require_once INCLUDE_PATH . 'fonctions_conges.php' ;
+    require_once INCLUDE_PATH . 'fonction.php';
+    require_once INCLUDE_PATH . 'fonctions_calcul.php';
 
     switch (ENV) {
         case ENV_PROD:
@@ -52,7 +54,7 @@ if (!defined( 'DEFINE_INCLUDE' )) {
         case ENV_TEST:
             \Kint::enabled(true);
             error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
-            ini_set("display_errors", 1);
+            ini_set("display_errors", 0);
             $environnement = 'test';
             break;
     }

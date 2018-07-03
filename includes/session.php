@@ -15,7 +15,7 @@ $session_password="";
 $session='';
 
 if (session_id() == '' || !isset($_SESSION)) {
-    redirect(ROOT_PATH . 'index.php');
+    redirect(ROOT_PATH . 'authentification');
 } else {
     if(session_is_valid())
     session_update($session);
@@ -25,6 +25,6 @@ if (session_id() == '' || !isset($_SESSION)) {
         $session_password="";
         $_SESSION['config']=init_config_tab();  // on recrée le tableau de config pour l'url du lien
 
-        redirect(ROOT_PATH . 'index.php?error=session-invalid');
+        redirect(ROOT_PATH . 'authentification?error=session-invalid');
     }
 }

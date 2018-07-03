@@ -25,9 +25,9 @@
                 <td><strong><?= $conge['ta_libelle'] ?></strong></td>
                 <td><?= $conge['ta_short_libelle'] ?></td>
                 <td class="action">
-                    <a href="<?= $PHP_SELF ?>?action=modif&id_to_update=<?= $conge['ta_id'] ?>&onglet=type_absence" title=" <?= _('form_modif') ?>"><i class="fa fa-pencil"></i></a>
+                    <a href="<?= $PHP_SELF ?>?action=modif&id_to_update=<?= $conge['ta_id'] ?>" title=" <?= _('form_modif') ?>"><i class="fa fa-pencil"></i></a>
                     &nbsp;
-                    <a href="<?= $PHP_SELF ?>?action=suppr&id_to_update=<?= $conge['ta_id'] ?>&onglet=type_absence" title=" <?= _('form_supprim') ?>"><i class="fa fa-times-circle"></i></a>
+                    <a href="<?= $PHP_SELF ?>?action=suppr&id_to_update=<?= $conge['ta_id'] ?>" title=" <?= _('form_supprim') ?>"><i class="fa fa-times-circle"></i></a>
                 </td>
             </tr>
         <?php endforeach ; ?>

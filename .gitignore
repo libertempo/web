@@ -1,5 +1,3 @@
-api/.htaccess
-tags
 debug/
 cfg/env.php
 cfg/dbconnect.php

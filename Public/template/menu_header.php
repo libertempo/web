@@ -12,13 +12,13 @@
     if('admin' === $_SESSION['userlogin']){
         $home = 'admin/admin_index.php';
     }
+
     //user mode
     $user_mode = '';
-    $tmp = dirname(filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL));
-    $tmp = explode('/',$tmp);
-    $tmp = array_pop($tmp);
+    $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+    list(,$urn, $resource) = explode('/', $uri);
     $adminActive = $userActive = $respActive = $hrActive = $calendarActive = $configActive = '';
-    switch ($tmp) {
+    switch ($urn) {
         case "utilisateur":
             $user_mode = _('user');
             $userActive = 'active';
@@ -52,8 +52,8 @@ function sousmenuAdmin()
 
 function sousmenuConfiguration()
 {
-    return '<a class="secondary" href="' . ROOT_PATH . 'config/index.php?onglet=general">Config. générale</a>
-    <a class="secondary" href="' . ROOT_PATH . 'config/index.php?onglet=type_absence">Type de congés</a>
+    return '<a class="secondary" href="' . ROOT_PATH . 'config/general">Config. générale</a>
+    <a class="secondary" href="' . ROOT_PATH . 'config/type_absence">Type de congés</a>
     <a class="secondary" href="' . ROOT_PATH . 'config/index.php?onglet=mail">Mails</a>
     <a class="secondary" href="' . ROOT_PATH . 'config/index.php?onglet=logs">Journaux</a>';
 }
@@ -181,42 +181,42 @@ function sousmenuEmploye()
                     <?= \App\ProtoControllers\Utilisateur::getNomComplet($_SESSION['u_prenom'], $_SESSION['u_nom'], true) ?>
                 </div>
 				<?php if (is_admin($_SESSION['userlogin'])): ?>
-                <a class="primary <?= $adminActive ?>" href="<?= ROOT_PATH ?>admin/admin_index.php" <?php print ($tmp == 'admin') ? 'active' : '' ;?>>
+                <a class="primary <?= $adminActive ?>" href="<?= ROOT_PATH ?>admin/admin_index.php" <?php print ($urn == 'admin') ? 'active' : '' ;?>>
                     <i class="fa fa-bolt"></i><?= _('button_admin_mode');?>
 				</a>
-                <?php if ($tmp == 'admin') : ?>
+                <?php if ($urn == 'admin') : ?>
                 <?= sousmenuAdmin(); ?>
                 <?php endif; ?>
-                <a class="primary <?= $configActive ?>" href="<?= ROOT_PATH ?>config/index.php" <?php print ($tmp == 'config') ? 'active' : '' ;?>>
+                <a class="primary <?= $configActive ?>" href="<?= ROOT_PATH ?>config/index.php" <?php print ($urn == 'config') ? 'active' : '' ;?>>
                     <i class="fa fa-cog"></i><?= _('Configuration');?>
 				</a>
-                <?php if ($tmp == 'config') : ?>
+                <?php if ($urn == 'config') : ?>
                 <?= sousmenuConfiguration(); ?>
                 <?php endif; ?>
 				<?php endif; ?>
 				<?php if (is_hr($_SESSION['userlogin'])): ?>
-                <a class="primary <?= $hrActive ?>" href="<?= ROOT_PATH ?>hr/hr_index.php" <?php print ($tmp == 'hr') ? 'active' : '' ;?>>
+                <a class="primary <?= $hrActive ?>" href="<?= ROOT_PATH ?>hr/hr_index.php" <?php print ($urn == 'hr') ? 'active' : '' ;?>>
                     <i class="fa fa-sitemap"></i><?= _('button_hr_mode');?>
 				</a>
-                <?php if ($tmp == 'hr') : ?>
+                <?php if ($urn == 'hr') : ?>
                     <?= sousmenuHR(); ?>
                 <?php endif; ?>
 				<?php endif; ?>
 				<?php if (is_resp($_SESSION['userlogin'])): ?>
-                <a class="primary <?= $respActive ?>" href="<?= ROOT_PATH ?>responsable/resp_index.php" <?php print ($tmp == 'responsable') ? 'active' : '' ;?>>
+                <a class="primary <?= $respActive ?>" href="<?= ROOT_PATH ?>responsable/resp_index.php" <?php print ($urn == 'responsable') ? 'active' : '' ;?>>
                     <i class="fa fa-users"></i><?= _('button_responsable_mode');?>
 				</a>
-                <?php if ($tmp == 'responsable') : ?>
+                <?php if ($urn == 'responsable') : ?>
                     <?= sousmenuResponsable(); ?>
                 <?php endif; ?>
 				<?php endif; ?>
-                <a class="primary <?= $userActive ?>" href="<?= ROOT_PATH ?>utilisateur/user_index.php" <?php print ($tmp == 'utilisateur') ? 'active' : '' ;?>>
+                <a class="primary <?= $userActive ?>" href="<?= ROOT_PATH ?>utilisateur/user_index.php" <?php print ($urn == 'utilisateur') ? 'active' : '' ;?>>
                     <i class="fa fa-user"></i><?= _('user') ?>
                 </a>
-                <?php if ($tmp == 'utilisateur') : ?>
+                <?php if ($urn == 'utilisateur') : ?>
                     <?= sousmenuEmploye(); ?>
                 <?php endif; ?>
-                <?php if('active' === $calendarActive || $tmp=='utilisateur' || $tmp=='responsable' || in_array($tmp, ['hr', 'admin', 'config'])): ?>
+                <?php if('active' === $calendarActive || $urn=='utilisateur' || $urn=='responsable' || in_array($urn, ['hr', 'admin', 'config'])): ?>
                 <a class="primary <?= $calendarActive ?>" href="<?= ROOT_PATH ?>calendrier.php">
                     <i class="fa fa-calendar"></i><?= _('button_calendar') ?>
                 </a>

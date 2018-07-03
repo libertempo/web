@@ -1,10 +1,8 @@
 <?php
 
 define('ROOT_PATH', '');
-require_once ROOT_PATH . 'define.php';
-
-include_once ROOT_PATH .'fonctions_conges.php';
-include_once INCLUDE_PATH .'fonction.php';
+define('INCLUDE_PATH',     ROOT_PATH . 'includes/');
+require_once INCLUDE_PATH . 'define.php';
 include_once INCLUDE_PATH .'session.php';
 
 $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
@@ -28,4 +26,4 @@ $session="";
 $session_username="";
 $session_password="";
 
-redirect( $URL_ACCUEIL_CONGES );
+redirect( $URL_ACCUEIL_CONGES . 'authentification');

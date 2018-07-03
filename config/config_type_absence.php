@@ -1,15 +1,11 @@
 <?php
-
-include_once ROOT_PATH . 'define.php';
+require_once INCLUDE_PATH . 'define.php';
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 
 
 if (file_exists(CONFIG_PATH .'config_ldap.php')) {
     include_once CONFIG_PATH .'config_ldap.php';
 }
-
-// include_once ROOT_PATH .'fonctions_conges.php' ;
-// include_once INCLUDE_PATH .'fonction.php';
 if(!isset($_SESSION['config'])) {
     $_SESSION['config']=init_config_tab();      // on initialise le tableau des variables de config
 }
@@ -24,7 +20,7 @@ verif_droits_user( "is_admin");
 /*************************************/
 // recup des parametres reçus :
 // SERVER
-$PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+$PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
 // GET / POST
 $action         = getpost_variable('action') ;
 $tab_new_values = getpost_variable('tab_new_values');
@@ -51,7 +47,7 @@ switch ($action) {
     default:
         $db = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($db);
-        $url = "$PHP_SELF?onglet=type_absence";
+        $url = $PHP_SELF;
         $tab_enum = \config\Fonctions::get_tab_from_mysql_enum_field("conges_type_absence", "ta_type");
         $listeTypeConges = [];
         $enumTypeConges = [];

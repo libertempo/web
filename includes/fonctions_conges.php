@@ -1,7 +1,5 @@
 <?php
 
-defined( '_PHP_CONGES' ) or die( 'Restricted access' );
-
 // retourne le nom du jour de la semaine en francais sur 2 caracteres
 function get_j_name_fr_2c($timestamp)
 {
@@ -1571,7 +1569,7 @@ function verif_droits_user($niveau_droits)
         // message d'erreur !
         echo "<center>\n";
         echo "<font color=\"red\">$lang_divers_acces_page_interdit</font><br>$lang_divers_user_disconnected<br>\n";
-        echo "$lang_divers_veuillez <a href='$url_accueil_conges/index.php' target='_top'> $lang_divers_vous_authentifier .</a>\n";
+        echo "$lang_divers_veuillez <a href='$url_accueil_conges/authentification' target='_top'> $lang_divers_vous_authentifier .</a>\n";
         echo "</center>\n";
         exit;
     }
@@ -1664,7 +1662,6 @@ function soustrait_solde_et_reliquat_user($user_login, $num_current_periode, $us
             //si conges demandé est à cheval sur la date_limite_reliquat => il faut decompter le nb_jours_pris du solde, puis il faut
             //calculer le nb_jours_avant pris avant la date limite, et on le decompte des reliquats, et calculer le nb_jours_apres
             //d'apres la data limite et ne pas le décompter des reliquats !!!
-                include_once 'fonctions_calcul.php' ;
                 $comment="calcul reliquat -> date limite" ;
                 $nb_reliquats_a_deduire = compter($user_login, $num_current_periode, $date_deb, $_SESSION['config']['date_limite_reliquats'], $demi_jour_deb, "pm", $comment );
 
