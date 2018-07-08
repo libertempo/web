@@ -129,7 +129,7 @@ class Database extends \mysqli
         /* activate reporting */
         $driver = new \mysqli_driver();
         // @TODO: mettre ALL quand on voudra travailler dessus;
-        $driver->report_mode = MYSQLI_REPORT_ALL & ~MYSQLI_REPORT_INDEX;;
+        $driver->report_mode = MYSQLI_REPORT_ALL & ~MYSQLI_REPORT_INDEX;
         parent::__construct ($host, $username, $passwd, $dbname);
         $this->query('SET NAMES \'utf8\';');
         $this->query("SET @@SESSION.sql_mode='';");
