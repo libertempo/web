@@ -4,7 +4,7 @@ require_once 'libraries';
 
 define('INSTALLATION_PATH', PATCH_PATH . DS . 'Installation' . DS);
 define('API_PATH', ROOT_PATH . 'api' . DS);
-define('API_SYSPATH', ROOT_PATH . 'vendor' . DS . 'Libertempo' . DS . 'libertempo-api' . DS);
+define('API_SYSPATH', ROOT_PATH . 'vendor' . DS . 'libertempo' . DS . 'api' . DS);
 
 function createDatabase(\includes\SQL $db, string $name) : bool
 {
@@ -27,11 +27,7 @@ function nameInstance(\includes\SQL $db, string $name) : bool
     WHERE conf_nom = "URL_ACCUEIL_CONGES" LIMIT 1';
     $db->query($req);
 
-    // @TODO: à supprimer quand la mise à jour des vhosts sera effective
-    $path = parse_url($name, \PHP_URL_PATH);
-    $contentFile = file_get_contents(API_PATH . '.htaccess.example');
-    $newContent = str_replace('vendor', $path . 'vendor', $contentFile);
-    return file_put_contents(API_PATH . '.htaccess', $newContent);
+    return true;
 }
 
 /**

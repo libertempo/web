@@ -2,6 +2,7 @@
 <?php
 define('DS', DIRECTORY_SEPARATOR);
 define('ROOT_PATH', dirname(__FILE__, 3) . DS);
+defined('INCLUDE_PATH') or define('INCLUDE_PATH',     ROOT_PATH . 'includes/');
 define('PATCH_PATH', ROOT_PATH . 'App' . DS . 'Patchs' . DS);
 define('CONFIG_PATH', ROOT_PATH . DS . 'cfg'. DS);
 define('DUMP_PATH', ROOT_PATH . 'dump' . DS);
@@ -11,7 +12,7 @@ define('IMG_PATH', ASSETS_PATH . 'Img' . DS);
 define('_PHP_CONGES', 1);
 
 require_once ROOT_PATH . 'vendor/autoload.php';
-require_once ROOT_PATH . 'fonctions_conges.php';
+require_once INCLUDE_PATH . 'fonctions_conges.php';
 require_once CONFIG_PATH . 'dbconnect.php';
 
 function displayFail()
