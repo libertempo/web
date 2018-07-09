@@ -26,7 +26,7 @@ return array(
     'PHPStan\\PhpDocParser\\' => array($vendorDir . '/phpstan/phpdoc-parser/src'),
     'PHPStan\\' => array($vendorDir . '/phpstan/phpstan/src', $vendorDir . '/phpstan/phpstan/build/PHPStan'),
     'Monolog\\' => array($vendorDir . '/monolog/monolog/src/Monolog'),
-    'LibertAPI\\' => array($vendorDir . '/Libertempo/libertempo-api'),
+    'LibertAPI\\' => array($vendorDir . '/libertempo/api'),
     'Jean85\\' => array($vendorDir . '/jean85/pretty-package-versions/src'),
     'Invoker\\' => array($vendorDir . '/php-di/invoker/src'),
     'Interop\\Container\\' => array($vendorDir . '/container-interop/container-interop/src/Interop/Container'),

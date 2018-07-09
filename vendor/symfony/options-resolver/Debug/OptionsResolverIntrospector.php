@@ -41,49 +41,61 @@ class OptionsResolverIntrospector
     }
 
     /**
+     * @param string $option
+     *
      * @return mixed
      *
      * @throws NoConfigurationException on no configured value
      */
-    public function getDefault(string $option)
+    public function getDefault($option)
     {
         return call_user_func($this->get, 'defaults', $option, sprintf('No default value was set for the "%s" option.', $option));
     }
 
     /**
+     * @param string $option
+     *
      * @return \Closure[]
      *
      * @throws NoConfigurationException on no configured closures
      */
-    public function getLazyClosures(string $option): array
+    public function getLazyClosures($option)
     {
         return call_user_func($this->get, 'lazy', $option, sprintf('No lazy closures were set for the "%s" option.', $option));
     }
 
     /**
+     * @param string $option
+     *
      * @return string[]
      *
      * @throws NoConfigurationException on no configured types
      */
-    public function getAllowedTypes(string $option): array
+    public function getAllowedTypes($option)
     {
         return call_user_func($this->get, 'allowedTypes', $option, sprintf('No allowed types were set for the "%s" option.', $option));
     }
 
     /**
+     * @param string $option
+     *
      * @return mixed[]
      *
      * @throws NoConfigurationException on no configured values
      */
-    public function getAllowedValues(string $option): array
+    public function getAllowedValues($option)
     {
         return call_user_func($this->get, 'allowedValues', $option, sprintf('No allowed values were set for the "%s" option.', $option));
     }
 
     /**
+     * @param string $option
+     *
+     * @return \Closure
+     *
      * @throws NoConfigurationException on no configured normalizer
      */
-    public function getNormalizer(string $option): \Closure
+    public function getNormalizer($option)
     {
         return call_user_func($this->get, 'normalizers', $option, sprintf('No normalizer was set for the "%s" option.', $option));
     }
