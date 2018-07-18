@@ -187,7 +187,7 @@ function sousmenuEmploye()
                 <?php if ($urn == 'admin') : ?>
                 <?= sousmenuAdmin(); ?>
                 <?php endif; ?>
-                <a class="primary <?= $configActive ?>" href="<?= ROOT_PATH ?>config/index.php" <?php print ($urn == 'config') ? 'active' : '' ;?>>
+                <a class="primary <?= $configActive ?>" href="<?= ROOT_PATH ?>config/general" <?php print ($urn == 'config') ? 'active' : '' ;?>>
                     <i class="fa fa-cog"></i><?= _('Configuration');?>
 				</a>
                 <?php if ($urn == 'config') : ?>
