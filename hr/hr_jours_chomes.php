@@ -42,7 +42,7 @@ function commit_saisie($tab_checkbox_j_chome) : string
 
     // si l'année est déja renseignée dans la database, on efface ttes les dates de l'année
     if (verif_year_deja_saisie($tab_checkbox_j_chome)) {
-        $result = delete_year($tab_checkbox_j_chome);
+        delete_year($tab_checkbox_j_chome);
     }
 
 
@@ -107,94 +107,29 @@ function fcListJourFeries($iAnnee = 2000) : array
     return $tbJourFerie;
 }
 
-// affichage du calendrier du mois avec les case à cocher
-// on lui passe en parametre le tableau des jour chomé de l'année (pour pré-cocher certaines cases)
-function affiche_calendrier_saisie_jours_chomes($year, $mois, $joursFeries) : string
+function afficheJourHorsMois($mois, $i, $year, $tab_year) : string
 {
-    $jour_today=date("j");
-    $jour_today_name=date("D");
-    $return = '';
-
-    $first_jour_mois_timestamp = mktime(0,0,0,$mois,1,$year);
-    $mois_name=date_fr("F", $first_jour_mois_timestamp);
-    $first_jour_mois_rang=date("w", $first_jour_mois_timestamp);      // jour de la semaine en chiffre (0=dim , 6=sam)
-    if ($first_jour_mois_rang==0) {
-        $first_jour_mois_rang=7 ;    // jour de la semaine en chiffre (1=lun , 7=dim)
-    }
-
-    $return .= '<table>';
-    /* affichage  2 premieres lignes */
-    $return .= '<thead>';
-    $return .= '<tr align="center"><th colspan=7 class="titre">' . $mois_name . ' ' . $year . '</th></tr>';
-    $return .= '<tr>';
-    $return .= '<th class="cal-saisie2">' . _('lundi_1c') . '</th>';
-    $return .= '<th class="cal-saisie2">' . _('mardi_1c') . '</th>';
-    $return .= '<th class="cal-saisie2">' . _('mercredi_1c') . '</th>';
-    $return .= '<th class="cal-saisie2">' . _('jeudi_1c') . '</th>';
-    $return .= '<th class="cal-saisie2">' . _('vendredi_1c') . '</th>';
-    $return .= '<th class="cal-saisie2 weekend">' . _('samedi_1c') . '</th>';
-    $return .= '<th class="cal-saisie2 weekend">' . _('dimanche_1c') . '</th>';
-    $return .= '</tr>';
-    $return .= '</thead>';
-
-    /* affichage ligne 1 du mois*/
-    $return .= '<tr>';
-    // affichage des cellules vides jusqu'au 1 du mois ...
-    for($i=1; $i<$first_jour_mois_rang; $i++) {
-        $return .= \hr\Fonctions::affiche_jour_hors_mois($mois,$i,$year,$joursFeries);
-    }
-    // affichage des cellules cochables du 1 du mois à la fin de la ligne ...
-    for($i=$first_jour_mois_rang; $i<8; $i++) {
-        $j=$i-$first_jour_mois_rang+1;
-        $return .= \hr\Fonctions::affiche_jour_checkbox($mois,$j,$year,$joursFeries);
-    }
-    $return .= '</tr>';
-
-    /* affichage ligne 2 du mois*/
-    $return .= '<tr>';
-    for ($i=8-$first_jour_mois_rang+1; $i<15-$first_jour_mois_rang+1; $i++) {
-        $return .= \hr\Fonctions::affiche_jour_checkbox($mois,$i,$year,$joursFeries);
-    }
-    $return .= '</tr>';
-
-    /* affichage ligne 3 du mois*/
-    $return .= '<tr>';
-    for($i=15-$first_jour_mois_rang+1; $i<22-$first_jour_mois_rang+1; $i++) {
-        $return .= \hr\Fonctions::affiche_jour_checkbox($mois,$i,$year,$joursFeries);
-    }
-    $return .= '</tr>';
-
-    /* affichage ligne 4 du mois*/
-    $return .= '<tr>';
-    for($i=22-$first_jour_mois_rang+1; $i<29-$first_jour_mois_rang+1; $i++) {
-        $return .= \hr\Fonctions::affiche_jour_checkbox($mois,$i,$year,$joursFeries);
-    }
-    $return .= '</tr>';
-
-    /* affichage ligne 5 du mois (peut etre la derniere ligne) */
-    $return .= '<tr>';
-    for($i=29-$first_jour_mois_rang+1; $i<36-$first_jour_mois_rang+1 && checkdate($mois, $i, $year); $i++) {
-        $return .= \hr\Fonctions::affiche_jour_checkbox($mois,$i,$year,$joursFeries);
-    }
-
-    for ($i; $i<36-$first_jour_mois_rang+1; $i++) {
-        $return .= \hr\Fonctions::affiche_jour_hors_mois($mois,$i,$year,$joursFeries);
-    }
-    $return .= '</tr>';
-
-    /* affichage ligne 6 du mois (derniere ligne)*/
-    $return .= '<tr>';
-    for($i=36-$first_jour_mois_rang+1; checkdate($mois, $i, $year); $i++) {
-        $return .= \hr\Fonctions::affiche_jour_checkbox($mois,$i,$year,$joursFeries);
-    }
-
-    for($i; $i<43-$first_jour_mois_rang+1; $i++) {
-        $return .= \hr\Fonctions::affiche_jour_hors_mois($mois,$i,$year,$joursFeries);
-    }
-    $return .= '</tr></table>';
-
-    return $return;
+    $j_timestamp = mktime(0,0,0,$mois,$i,$year);
+    $td_second_class = get_td_class_of_the_day_in_the_week($j_timestamp);
+    return '<td class="cal-saisie2 month-out ' . $td_second_class . '">&nbsp;</td>';
 }
+
+function afficheJourMois($mois, $i, $year, $tab_year) : string
+{
+    $j_timestamp = mktime(0,0,0,$mois,$i,$year);
+    $j_date = date("Y-m-d", $j_timestamp);
+    $j_day = date("d", $j_timestamp);
+    $td_second_class = get_td_class_of_the_day_in_the_week($j_timestamp);
+    $checked = in_array("$j_date", $tab_year);
+
+    return '<td class="cal-saisie ' . $td_second_class . ' ' . (($checked) ? ' fermeture' : '') . '">' . $j_day . '<input type="checkbox" name="tab_checkbox_j_chome[' . $j_date . ']" value="Y" ' . (($checked) ? ' checked' : '') . '></td>';
+}
+
+function isJourLundi($jour) : bool
+{
+    return $jour % 7 == 1;
+}
+
 
 // verif des droits du user à afficher la page
 verif_droits_user( "is_hr");
@@ -205,11 +140,13 @@ $choix_action = getpost_variable('choix_action');
 $year_calendrier_saisie = getpost_variable('year_calendrier_saisie', date("Y"));
 $checkbox = getpost_variable('tab_checkbox_j_chome');
 $tab_checkbox_j_chome = (!is_array($checkbox) || empty($checkbox)) ? [] : $checkbox;
+$message = ($choix_action == "commit")
+    ? commit_saisie($tab_checkbox_j_chome)
+    : null;
 /*************************************/
 
 
 $title = _('admin_button_jours_chomes_1');
-
 $prev_link = "$PHP_SELF?onglet=jours_chomes&year_calendrier_saisie=". ($year_calendrier_saisie - 1);
 $next_link = "$PHP_SELF?onglet=jours_chomes&year_calendrier_saisie=". ($year_calendrier_saisie + 1);
 
@@ -230,16 +167,7 @@ if ($config->isJoursFeriesFrance()) {
     }
 }
 
-$months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
-$i = 0;
-$idLine = 0;
-$linesMois = [];
-foreach ($months as $month) {
-    if ($i%4 == 0) {
-        $idLine++;
-    }
-    $linesMois[$idLine][] = affiche_calendrier_saisie_jours_chomes($year_calendrier_saisie, $month, $joursFeries);
-    $i++;
-}
+$listeMois = [['01', '02', '03', '04'], ['05', '06', '07', '08'], ['09', '10', '11', '12']];
 
-require_once VIEW_PATH . 'JourFerie.php';
+
+require_once VIEW_PATH . 'JourFerie/Liste.php';

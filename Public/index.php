@@ -9,6 +9,7 @@ $rewritten = [
     '/authentification',
     '/config/general',
     '/config/type_absence',
+    '/hr/jours_chomes',
 ];
 
 if (!in_array($uri, $rewritten, true)) {
@@ -24,6 +25,10 @@ switch ($urn) {
         require_once ROOT_PATH . 'index.php';
         break;
     case 'config':
+        $_GET['onglet'] = $resource;
+        require_once ROOT_PATH . 'config/index.php';
+        break;
+    case 'hr':
         $_GET['onglet'] = $resource;
         require_once ROOT_PATH . 'config/index.php';
         break;

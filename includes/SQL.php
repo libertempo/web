@@ -34,6 +34,7 @@ class SQL
         $res = $instance->query('SHOW DATABASES');
         foreach ($res->fetch_all() as $database) {
             if ($name === $database['Database']) {
+                $instance->select_db($name);
                 return true;
             }
         }

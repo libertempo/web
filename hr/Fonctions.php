@@ -1524,13 +1524,6 @@ class Fonctions
         bottom();
     }
 
-    public static function affiche_jour_hors_mois($mois,$i,$year,$tab_year) : string
-    {
-        $j_timestamp=mktime (0,0,0,$mois,$i,$year);
-        $td_second_class=get_td_class_of_the_day_in_the_week($j_timestamp);
-        return "<td class=\"cal-saisie2 month-out $td_second_class\">&nbsp;</td>\n";
-    }
-
     public static function affiche_jour_checkbox($mois,$i,$year,$tab_year) : string
     {
         $j_timestamp=mktime (0,0,0,$mois,$i,$year);
