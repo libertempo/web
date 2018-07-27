@@ -6,7 +6,7 @@ if (file_exists(CONFIG_PATH .'config_ldap.php')) {
     include CONFIG_PATH .'config_ldap.php';
 }
 
-function commitSaisie($tab_checkbox_j_chome) : bool
+function commitSaisie(array $tab_checkbox_j_chome) : bool
 {
     // si l'année est déja renseignée dans la database, on efface ttes les dates de l'année
     if (isAnneeSaisie($tab_checkbox_j_chome)) {
@@ -26,16 +26,16 @@ function commitSaisie($tab_checkbox_j_chome) : bool
     return false;
 }
 
-function isAnneeSaisie($tab_checkbox_j_chome) : bool
+function isAnneeSaisie(array $tab_checkbox_j_chome) : bool
 {
     $db = \includes\SQL::singleton();
     $date_1 = key($tab_checkbox_j_chome);
-    $year = substr($date_1, 0, 4);
+    $year = (int) substr($date_1, 0, 4);
 
     return !empty(getJourFeriesListe($year));
 }
 
-function supprimeAnnee($tab_checkbox_j_chome) : bool
+function supprimeAnnee(array $tab_checkbox_j_chome) : bool
 {
     $db = \includes\SQL::singleton();
     $date_1=key($tab_checkbox_j_chome);
@@ -46,15 +46,16 @@ function supprimeAnnee($tab_checkbox_j_chome) : bool
     return true;
 }
 
-function insereAnnee($tab_checkbox_j_chome) : bool
+function insereAnnee(array $tab_checkbox_j_chome) : bool
 {
     $db = \includes\SQL::singleton();
-    foreach($tab_checkbox_j_chome as $key => $value)
+    foreach($tab_checkbox_j_chome as $key => $value) {
         $result = $db->query('INSERT INTO conges_jours_feries SET jf_date="'. $db->quote($key).'";');
+    }
     return true;
 }
 
-function getJourFeriesListe($year) : array
+function getJourFeriesListe(int $year) : array
 {
     $sql = \includes\SQL::singleton();
     $config = new \App\Libraries\Configuration($sql);
@@ -63,7 +64,7 @@ function getJourFeriesListe($year) : array
     $feries = $api->get('jour_ferie', $_SESSION['token'])['data'];
 
     $feriesAnnee = array_filter($feries, function ($ferie) use ($year) {
-        return false !== stripos($ferie['date'], $year);
+        return false !== stripos($ferie['date'], (string) $year);
     });
 
     return array_map(function ($ferie) {
@@ -71,7 +72,7 @@ function getJourFeriesListe($year) : array
     }, $feriesAnnee);
 }
 
-function getJoursFeriesFrance($iAnnee) : array
+function getJoursFeriesFrance(int $iAnnee) : array
 {
     //Initialisation de variables
     $unJour = 3600*24;
@@ -93,7 +94,7 @@ function getJoursFeriesFrance($iAnnee) : array
     return $tbJourFerie;
 }
 
-function afficheJourHorsMois($mois, $i, $year, $tab_year) : string
+function afficheJourHorsMois(int $mois, $i, int $year) : string
 {
     $j_timestamp = mktime(0, 0, 0, $mois, $i, $year);
     $td_second_class = get_td_class_of_the_day_in_the_week($j_timestamp);
@@ -114,22 +115,24 @@ function afficheJourMois($mois, $i, $year, $tab_year) : string
 // verif des droits du user à afficher la page
 verif_droits_user( "is_hr");
 
-$PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+$PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
 // GET / POST
+$PHP_SELF = parse_url($PHP_SELF, PHP_URL_PATH);
 $choix_action = getpost_variable('choix_action');
-$year_calendrier_saisie = (int) getpost_variable('year_calendrier_saisie', date("Y"));
+$annee = (int) getpost_variable('year_calendrier_saisie', date("Y"));
 $checkbox = getpost_variable('tab_checkbox_j_chome');
 $tab_checkbox_j_chome = (!is_array($checkbox) || empty($checkbox)) ? [] : $checkbox;
-$commitSuccess = ($choix_action == "commit")
+$commitSuccess = ($choix_action == "commit" && !empty($tab_checkbox_j_chome))
     ? commitSaisie($tab_checkbox_j_chome)
     : null;
 /*************************************/
 
-$joursFeries = getJourFeriesListe($year_calendrier_saisie);
+$joursFeries = getJourFeriesListe($annee);
+
 $sql = \includes\SQL::singleton();
 $config = new \App\Libraries\Configuration($sql);
 if ($config->isJoursFeriesFrance()) {
-    $tableau_jour_feries = getJoursFeriesFrance($year_calendrier_saisie) ;
+    $tableau_jour_feries = getJoursFeriesFrance($annee) ;
     foreach ($tableau_jour_feries as $value) {
         if (in_array($value, $joursFeries)) {
             continue;
@@ -139,8 +142,8 @@ if ($config->isJoursFeriesFrance()) {
 }
 
 $title = _('admin_button_jours_chomes_1');
-$prev_link = "$PHP_SELF?onglet=jours_chomes&year_calendrier_saisie=". ($year_calendrier_saisie - 1);
-$next_link = "$PHP_SELF?onglet=jours_chomes&year_calendrier_saisie=". ($year_calendrier_saisie + 1);
+$prev_link = "$PHP_SELF?year_calendrier_saisie=". ($annee - 1);
+$next_link = "$PHP_SELF?year_calendrier_saisie=". ($annee + 1);
 $listeMois = [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]];
 
 require_once VIEW_PATH . 'JourFerie/Liste.php';

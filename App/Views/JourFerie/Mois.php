@@ -1,11 +1,11 @@
 <?php declare(strict_types = 1);
 /*
- * $year_calendrier_saisie
+ * $annee
  * $mois
  * $joursFeries
  */
 
-$premierJour = mktime(0, 0, 0, $mois, 1, $year_calendrier_saisie);
+$premierJour = mktime(0, 0, 0, $mois, 1, $annee);
 $premierJourMois = date("w", $premierJour);
 $nomMois = date_fr("F", $premierJour);
 
@@ -32,41 +32,41 @@ if (0 == $premierJourMois) {
             <tr>
             <?php // 1° ligne
             for ($jour = 1; $jour < $premierJourMois; ++$jour) : ?>
-                <?= afficheJourHorsMois($mois, $jour, $year_calendrier_saisie, $joursFeries); ?>
+                <?= afficheJourHorsMois($mois, $jour, $annee); ?>
             <?php endfor; ?>
             <?php for ($jour = $premierJourMois; $jour < 8; ++$jour) : ?>
                 <?php $resteJourFinSemaine = $jour - $premierJourMois + 1; ?>
-                <?= afficheJourMois($mois, $resteJourFinSemaine, $year_calendrier_saisie, $joursFeries); ?>
+                <?= afficheJourMois($mois, $resteJourFinSemaine, $annee, $joursFeries); ?>
             <?php endfor; ?>
             </tr><tr>
             <?php // 2° ligne
             for ($jour = 8 - $premierJourMois + 1; $jour < 15 - $premierJourMois + 1; ++$jour) : ?>
-                <?= afficheJourMois($mois, $jour, $year_calendrier_saisie, $joursFeries); ?>
-                <?php endfor ; ?>
+                <?= afficheJourMois($mois, $jour, $annee, $joursFeries); ?>
+            <?php endfor ; ?>
             </tr><tr>
             <?php // 3° ligne
             for ($jour = 15 - $premierJourMois + 1; $jour < 22 - $premierJourMois + 1; ++$jour) : ?>
-                <?= afficheJourMois($mois, $jour, $year_calendrier_saisie, $joursFeries); ?>
+                <?= afficheJourMois($mois, $jour, $annee, $joursFeries); ?>
             <?php endfor ; ?>
             </tr><tr>
             <?php // 4° ligne
             for ($jour = 22 - $premierJourMois + 1; $jour < 29 - $premierJourMois + 1; ++$jour) : ?>
-                <?= afficheJourMois($mois, $jour, $year_calendrier_saisie, $joursFeries); ?>
+                <?= afficheJourMois($mois, $jour, $annee, $joursFeries); ?>
             <?php endfor; ?>
             </tr><tr>
 
             <?php // 5° ligne
-            for ($jour = 29 - $premierJourMois + 1; $jour < 36 - $premierJourMois + 1 && checkdate($mois, $jour, $year_calendrier_saisie); ++$jour) : ?>
-                <?= afficheJourMois($mois, $jour, $year_calendrier_saisie, $joursFeries); ?>
+            for ($jour = 29 - $premierJourMois + 1; $jour < 36 - $premierJourMois + 1 && checkdate($mois, $jour, $annee); ++$jour) : ?>
+                <?= afficheJourMois($mois, $jour, $annee, $joursFeries); ?>
             <?php endfor; for ($jour; $jour < 36 - $premierJourMois + 1; ++$jour) : ?>
-                <?= afficheJourHorsMois($mois, $jour, $year_calendrier_saisie, $joursFeries); ?>
+                <?= afficheJourHorsMois($mois, $jour, $annee); ?>
             <?php endfor ?>
             </tr><tr>
             <?php // 6° ligne
-            for ($jour = 36 - $premierJourMois + 1; checkdate($mois, $jour, $year_calendrier_saisie); ++$jour) : ?>
-                <?= afficheJourMois($mois, $jour, $year_calendrier_saisie, $joursFeries); ?>
+            for ($jour = 36 - $premierJourMois + 1; checkdate($mois, $jour, $annee); ++$jour) : ?>
+                <?= afficheJourMois($mois, $jour, $annee, $joursFeries); ?>
             <?php endfor; for($jour; $jour < 43 - $premierJourMois + 1; ++$jour) : ?>
-                <?= afficheJourHorsMois($mois, $jour, $year_calendrier_saisie, $joursFeries); ?>
+                <?= afficheJourHorsMois($mois, $jour, $annee); ?>
             <?php endfor; ?>
             </tr>
         </table>

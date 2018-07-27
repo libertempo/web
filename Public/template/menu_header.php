@@ -68,7 +68,7 @@ function sousmenuHR()
         $return .= '<a class="secondary" href="' . ROOT_PATH . 'hr/hr_index.php?onglet=traitement_demandes">Validation de congés</a>';
     }
     $return .= '<a class="secondary" href="' . ROOT_PATH . 'hr/hr_index.php?onglet=ajout_conges">Crédit de congés</a>
-    <a class="secondary" href="' . ROOT_PATH . 'hr/hr_index.php?onglet=jours_chomes">Jours fériés</a>
+    <a class="secondary" href="' . ROOT_PATH . 'hr/jours_chomes">Jours fériés</a>
     <a class="secondary" href="' . ROOT_PATH . 'hr/hr_index.php?onglet=cloture_year">Exercices</a>
     <a class="secondary" href="' . ROOT_PATH . 'hr/hr_index.php?onglet=liste_planning">Plannings</a>
     <a class="secondary" href="' . ROOT_PATH . 'hr/hr_jours_fermeture.php">Jours de fermeture</a>';
