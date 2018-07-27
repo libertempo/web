@@ -16,7 +16,7 @@
     //user mode
     $user_mode = '';
     $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-    list(,$urn, $resource) = explode('/', $uri);
+    list(,$urn) = explode('/', $uri);
     $adminActive = $userActive = $respActive = $hrActive = $calendarActive = $configActive = '';
     switch ($urn) {
         case "utilisateur":

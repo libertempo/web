@@ -68,19 +68,19 @@ function commit_saisie($tab_checkbox_j_chome) : string
 // retourne un tableau des jours feriés de l'année dans un tables passé par référence
 function get_tableau_jour_feries($year) : array
 {
-    $db = \includes\SQL::singleton();
-    $tab_year = [];
-    $sql_select='SELECT jf_date FROM conges_jours_feries WHERE jf_date LIKE "'. $db->quote($year).'-%" ;';
-    $res_select = $db->query($sql_select);
-    $num_select = $res_select->num_rows;
+    $sql = \includes\SQL::singleton();
+    $config = new \App\Libraries\Configuration($sql);
+    $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
+    $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
+    $feries = $api->get('jour_ferie', $_SESSION['token'])['data'];
 
-    if ($num_select!=0) {
-        while($result_select = $res_select->fetch_array()) {
-            $tab_year[] = $result_select["jf_date"];
-        }
-    }
+    $feriesAnnee = array_filter($feries, function ($ferie) use ($year) {
+        return false !== stripos($ferie['date'], $year);
+    });
 
-    return $tab_year;
+    return array_map(function ($ferie) {
+        return $ferie['date'];
+    }, $feriesAnnee);
 }
 
 //fonction de recherche des jours fériés de l'année demandée
