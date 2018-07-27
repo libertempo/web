@@ -1488,53 +1488,6 @@ class Fonctions
         return $return;
     }
 
-    /**
-     * @TODEL ?
-     */
-    public static function confirm_saisie($tab_checkbox_j_chome) : string
-    {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $return = '';
-
-        header_popup();
-
-        $return .= '<h1>' . _('admin_jours_chomes_titre') . '</h1>';
-        $return .= '<form action="' . $PHP_SELF . '?onglet=jours_chomes" method="POST">';
-        $return .= '<table>';
-        $return .= '<tr>';
-        $return .= '<td align="center">';
-
-        foreach($tab_checkbox_j_chome as $key => $value) {
-            $date_affiche=eng_date_to_fr($key);
-            $return .= $date_affiche . '<br>';
-            $return .= '<input type="hidden" name="tab_checkbox_j_chome[' . $key . ']" value="' . $value . '">';
-        }
-        $return .= '<input type="hidden" name="choix_action" value="commit">';
-        $return .= '<input type="submit" value="' . _('admin_jours_chomes_confirm') . '">';
-        $return .= '</td>';
-        $return .= '</tr>';
-        $return .= '<tr>';
-        $return .= '<td align="center">';
-        $return .= '<input type="button" value="' . _('form_cancel') . '" onClick="window.close();">';
-        $return .= '</td>';
-        $return .= '</tr>';
-        $return .= '</table>';
-        $return .= '</form>';
-
-        bottom();
-    }
-
-    public static function affiche_jour_checkbox($mois,$i,$year,$tab_year) : string
-    {
-        $j_timestamp=mktime (0,0,0,$mois,$i,$year);
-        $j_date=date("Y-m-d", $j_timestamp);
-        $j_day=date("d", $j_timestamp);
-        $td_second_class=get_td_class_of_the_day_in_the_week($j_timestamp);
-        $checked = in_array ("$j_date", $tab_year);
-
-        return "<td  class=\"cal-saisie $td_second_class" . (($checked) ? ' fermeture' : '') . "\">$j_day<input type=\"checkbox\" name=\"tab_checkbox_j_chome[$j_date]\" value=\"Y\"" . (($checked) ? ' checked' : '') . "></td>\n";
-    }
-
     // calcul de la date limite d'utilisation des reliquats (si on utilise une date limite et qu'elle n'est pas encore calculée) et stockage dans la table
     public static function set_nouvelle_date_limite_reliquat()
     {
