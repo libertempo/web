@@ -15,6 +15,10 @@
         </ul>
     </div>
 </div>
+<?php if ('commit' === $choix_action) : ?>
+    <div class="alert <?= $commitSuccess ? 'alert-success' : 'alert-danger' ?>"><?= $commitSuccess ? _('form_modif_ok') : _('form_modif_not_ok') ?>
+    </div>
+<?php endif; ?>
 <?= (!empty($message) ? $message : null) ?>
 <div class="wrapper">
     <form action="<?= $PHP_SELF ?>?onglet=jours_chomes&year_calendrier_saisie=<?= $year_calendrier_saisie ?>" method="POST">
