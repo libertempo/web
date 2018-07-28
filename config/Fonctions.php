@@ -465,12 +465,27 @@ class Fonctions
         //requête qui récupère les informations de la table conges_periode
         $sql1 = 'SELECT p_num FROM conges_periode WHERE p_type="'. \includes\SQL::quote($id_to_update).'"';
         $ReqLog1 = \includes\SQL::query($sql1);
+        $withErreur = false;
 
-        $count= ($ReqLog1->num_rows) ;
+        if (0 !== $ReqLog1->num_rows) {
+            $raison = _('config_abs_already_used');
+            $withErreur = true;
+        }
 
-        if( $count!=0 ) {
+        $sql = \includes\SQL::singleton();
+        $config = new \App\Libraries\Configuration($sql);
+        $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
+        $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
+        $absenceType = $api->get('absence/type/' . $id_to_update, $_SESSION['token'])['data'];
+
+        if ($absenceType['typeNatif']) {
+            $raison = _('config_abs_type_natif');
+            $withErreur = true;
+        }
+
+        if($withErreur) {
             $return .= '<center>';
-            $return .= '<br>' . _('config_abs_suppr_impossible') . '<br>' . _('config_abs_already_used') . '<br>';
+            $return .= '<br>' . _('config_abs_suppr_impossible') . '<br>' . $raison . '<br>';
 
             $return .= '<br>';
             $return .= '<form action="' . $URL . '" method="POST">';
