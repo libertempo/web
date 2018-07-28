@@ -371,11 +371,12 @@ class Fonctions
             $erreur=TRUE;
         }
 
+        // TODO : vérif unicité données
+
 
         if($erreur) {
             $return .= '<br>';
             $return .= '<form action="' . $URL . '" method="POST">';
-            $return .= '<input type="hidden" name="id_to_update" value="' . $id_to_update . '">';
             $return .= '<input type="hidden" name="tab_new_values[libelle]" value="' . $tab_new_values['libelle']. '">';
             $return .= '<input type="hidden" name="tab_new_values[short_libelle]" value="' . $tab_new_values['short_libelle'] . '">';
             $return .= '<input type="hidden" name="tab_new_values[type]" value="' . $tab_new_values['type'] . '">';
@@ -384,8 +385,8 @@ class Fonctions
             $return .= '<br><br>';
         } else {
             // ajout dans la table conges_type_absence
-            $req_insert1="INSERT INTO conges_type_absence (ta_libelle, ta_short_libelle, ta_type) " .
-                "VALUES ('".$tab_new_values['libelle']."', '".$tab_new_values['short_libelle']."', '".$tab_new_values['type']."') ";
+            $req_insert1="INSERT INTO conges_type_absence (ta_libelle, ta_short_libelle, ta_type, type_natif) " .
+                "VALUES ('".$tab_new_values['libelle']."', '".$tab_new_values['short_libelle']."', '".$tab_new_values['type']."', 0) ";
             \includes\SQL::query($req_insert1);
 
             // on recup l'id de l'absence qu'on vient de créer
@@ -547,22 +548,17 @@ class Fonctions
         $return .= '<br><center><H1>' . _('config_abs_titre') . '</H1></center>';
         $return .= '<br>';
 
-        // recup des infos du type de conges / absences
-        $sql_cong='SELECT ta_type, ta_libelle, ta_short_libelle FROM conges_type_absence WHERE ta_id = '. \includes\SQL::quote($id_to_update);
-
-        $ReqLog_cong = \includes\SQL::query($sql_cong);
-
-        if($resultat_cong = $ReqLog_cong->fetch_array()) {
-            $sql_type=$resultat_cong['ta_type'];
-            $sql_libelle= $resultat_cong['ta_libelle'];
-            $sql_short_libelle= $resultat_cong['ta_short_libelle'];
-        }
+        $sql = \includes\SQL::singleton();
+        $config = new \App\Libraries\Configuration($sql);
+        $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
+        $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
+        $absenceType = $api->get('absence/type/' . $id_to_update, $_SESSION['token'])['data'];
 
         // mise en place du formulaire
         $return .= '<form action="' . $URL . '" method="POST">';
 
-        $text_libelle ="<input class=\"form-control\" type=\"text\" name=\"tab_new_values[libelle]\" size=\"20\" maxlength=\"20\" value=\"$sql_libelle\" >";
-        $text_short_libelle ="<input class=\"form-control\" type=\"text\" name=\"tab_new_values[short_libelle]\" size=\"3\" maxlength=\"3\" value=\"$sql_short_libelle\" >";
+        $text_libelle = '<input class="form-control" type="text" name="tab_new_values[libelle]" size="20" maxlength="20" value="' . $absenceType['libelle'] . '" >';
+        $text_short_libelle = '<input class="form-control" type="text" name="tab_new_values[short_libelle]" size="3" maxlength="3" value="' . $absenceType['libelleCourt'] . '" >';
 
         // affichage
         $table = new \App\Libraries\Structure\Table();
@@ -573,7 +569,7 @@ class Fonctions
         $childTable .= '<td><b><u>' . _('config_abs_libelle_short') . '</b></u></td>';
         $childTable .= '<td>' . _('divers_type') . '</td>';
         $childTable .= '</tr>';
-        $childTable .= '<tr><td><b>' . $sql_libelle . '</b></td><td>' . $sql_short_libelle . '</td><td>' . $sql_type . '</td></tr>';
+        $childTable .= '<tr><td><b>' . $absenceType['libelle'] . '</b></td><td>' . $absenceType['libelleCourt'] . '</td><td>' . $absenceType['type'] . '</td></tr>';
         $childTable .= '<tr><td><b>' . $text_libelle . '</b></td><td>' . $text_short_libelle . '</td><td></td></tr>';
         $table->addChild($childTable);
 

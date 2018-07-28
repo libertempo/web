@@ -22,12 +22,12 @@
     <?php else : ?>
         <?php foreach ($conges as $conge) : ?>
             <tr>
-                <td><strong><?= $conge['ta_libelle'] ?></strong></td>
-                <td><?= $conge['ta_short_libelle'] ?></td>
+                <td><strong><?= $conge['libelle'] ?></strong></td>
+                <td><?= $conge['libelleCourt'] ?></td>
                 <td class="action">
-                    <a href="<?= $PHP_SELF ?>?action=modif&id_to_update=<?= $conge['ta_id'] ?>" title=" <?= _('form_modif') ?>"><i class="fa fa-pencil"></i></a>
+                    <a href="<?= $PHP_SELF ?>?action=modif&id_to_update=<?= $conge['id'] ?>" title=" <?= _('form_modif') ?>"><i class="fa fa-pencil"></i></a>
                     &nbsp;
-                    <a href="<?= $PHP_SELF ?>?action=suppr&id_to_update=<?= $conge['ta_id'] ?>" title=" <?= _('form_supprim') ?>"><i class="fa fa-times-circle"></i></a>
+                    <a href="<?= $PHP_SELF ?>?action=suppr&id_to_update=<?= $conge['id'] ?>" title=" <?= _('form_supprim') ?>"><i class="fa fa-times-circle disabled"></i></a>
                 </td>
             </tr>
         <?php endforeach ; ?>
@@ -49,7 +49,7 @@
             <td><input class="form-control" type="text" name="tab_new_values[short_libelle]" size="3" maxlength="3" value="<?= $nouveauLibelleCourt ?>"></td>
             <td>
                 <select class="form-control" name=tab_new_values[type]>
-                <?php foreach ($enumTypeConges as $typeConge) : ?>
+                <?php foreach (array_keys($listeTypeConges) as $typeConge) : ?>
                     <option <?= ($typeConge == $nouveauType) ? 'selected' : '' ?>><?= $typeConge ?></option>
                 <?php endforeach ;?>
                 </select>

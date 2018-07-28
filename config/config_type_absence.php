@@ -45,22 +45,19 @@ switch ($action) {
         echo \config\Fonctions::commit_suppr($id_to_update);
         break;
     default:
-        $db = \includes\SQL::singleton();
-        $config = new \App\Libraries\Configuration($db);
-        $url = $PHP_SELF;
-        $tab_enum = \config\Fonctions::get_tab_from_mysql_enum_field("conges_type_absence", "ta_type");
-        $listeTypeConges = [];
-        $enumTypeConges = [];
-        foreach ($tab_enum as $typeConge) {
-            if($typeConge != "conges_exceptionnels"
-                || $config->isCongesExceptionnelsActive()
-            ) {
-                $sql1 = 'SELECT * FROM conges_type_absence WHERE ta_type = "' . $db->quote($typeConge) . '"';
-                $ReqLog1 = $db->query($sql1);
-                $listeTypeConges[$typeConge] = $ReqLog1->fetch_all();
-                $enumTypeConges[] = $typeConge;
-            }
+        $sql = \includes\SQL::singleton();
+        $config = new \App\Libraries\Configuration($sql);
+        $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
+        $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
+        $absenceTypes = $api->get('absence/type', $_SESSION['token'])['data'];
+        foreach ($absenceTypes as $type) {
+            $listeTypeConges[$type['type']][] = $type;
         }
+        if (!$config->isCongesExceptionnelsActive() && isset($listeTypeConges['conges_exceptionnels'])) {
+            unset($listeTypeConges['conges_exceptionnels']);
+        }
+        $url = $PHP_SELF;
+
         $nouveauLibelle = isset($tab_new_values['libelle'])
             ? $tab_new_values['libelle']
             : '';
