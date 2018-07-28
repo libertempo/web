@@ -371,8 +371,19 @@ class Fonctions
             $erreur=TRUE;
         }
 
-        // TODO : vérif unicité données
-
+        // vérif unicité du libellé court
+        $sql = \includes\SQL::singleton();
+        $config = new \App\Libraries\Configuration($sql);
+        $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
+        $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
+        $absenceTypes = $api->get('absence/type', $_SESSION['token'])['data'];
+        $absenceWithLibelle = array_filter($absenceTypes, function (array $type) use ($tab_new_values) {
+            return $tab_new_values['short_libelle'] === $type['libelleCourt'];
+        });
+        if (!empty($absenceWithLibelle)) {
+            $return .= '<br>' . _('config_abs_saisie_not_ok') . ' : ' . _('libelle_court_existant') . '<br>';
+            $erreur = true;
+        }
 
         if($erreur) {
             $return .= '<br>';
