@@ -9,6 +9,7 @@ $rewritten = [
     '/authentification',
     '/config/general',
     '/config/type_absence',
+    '/hr/page_principale',
 ];
 
 if (!in_array($uri, $rewritten, true)) {
@@ -26,6 +27,10 @@ switch ($urn) {
     case 'config':
         $_GET['onglet'] = $resource;
         require_once ROOT_PATH . 'config/index.php';
+        break;
+    case 'hr':
+        $_GET['onglet'] = $resource;
+        require_once ROOT_PATH . 'hr/hr_index.php';
         break;
 
     default:

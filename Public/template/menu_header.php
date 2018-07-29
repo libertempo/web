@@ -61,7 +61,7 @@ function sousmenuConfiguration()
 function sousmenuHR()
 {
     $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
-    $return = '<a class="secondary" href="' . ROOT_PATH . 'hr/hr_index.php?onglet=page_principale">Utilisateurs</a>
+    $return = '<a class="secondary" href="' . ROOT_PATH . 'hr/page_principale">Utilisateurs</a>
     <a class="secondary" href="' . ROOT_PATH . 'hr/hr_index.php?onglet=liste_groupe">Groupes</a>';
 
     if ($config->canUserSaisieDemande()) {
