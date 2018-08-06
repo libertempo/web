@@ -538,6 +538,17 @@ class Fonctions
             $erreur=TRUE;
         }
 
+        $sql = \includes\SQL::singleton();
+        $config = new \App\Libraries\Configuration($sql);
+        $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
+        $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
+        $absenceType = $api->get('absence/type/' . $id_to_update, $_SESSION['token'])['data'];
+
+        if ($absenceType['typeNatif']) {
+            $return .= '<br>' . _('config_abs_saisie_not_ok') . ' : ' . _('config_abs_type_natif') . '<br>';
+            $erreur = true;
+        }
+
         if($erreur) {
             $return .= '<br>';
             $return .= '<form action="' . $PHP_SELF . '" method="POST">';

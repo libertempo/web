@@ -25,12 +25,14 @@
                 <td><strong><?= $conge['libelle'] ?></strong></td>
                 <td><?= $conge['libelleCourt'] ?></td>
                 <td class="action">
-                    <a href="<?= $PHP_SELF ?>?action=modif&id_to_update=<?= $conge['id'] ?>" title=" <?= _('form_modif') ?>"><i class="fa fa-pencil"></i></a>
-                    &nbsp;
                     <?php if (!$conge['typeNatif']) : ?>
+                        <a href="<?= $PHP_SELF ?>?action=modif&id_to_update=<?= $conge['id'] ?>" title=" <?= _('form_modif') ?>"><i class="fa fa-pencil"></i></a>
+                        &nbsp;
                         <a href="<?= $PHP_SELF ?>?action=suppr&id_to_update=<?= $conge['id'] ?>" title=" <?= _('form_supprim') ?>"><i class="fa fa-times-circle"></i></a>
                     <?php else : ?>
-                        <i class="fa fa-times-circle disabled"></i></a>
+                        <i class="fa fa-pencil disabled" title="Type d'absence natif"></i>
+                        &nbsp;
+                        <i class="fa fa-times-circle disabled" title="Type d'absence natif"></i></a>
                     <?php endif; ?>
                 </td>
             </tr>
