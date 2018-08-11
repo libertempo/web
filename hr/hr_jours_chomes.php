@@ -28,7 +28,6 @@ function commitSaisie(array $tab_checkbox_j_chome) : bool
 
 function isAnneeSaisie(array $tab_checkbox_j_chome) : bool
 {
-    $db = \includes\SQL::singleton();
     $date_1 = key($tab_checkbox_j_chome);
     $year = (int) substr($date_1, 0, 4);
 
@@ -41,7 +40,7 @@ function supprimeAnnee(array $tab_checkbox_j_chome) : bool
     $date_1=key($tab_checkbox_j_chome);
     $year=substr($date_1, 0, 4);
     $sql_delete='DELETE FROM conges_jours_feries WHERE jf_date LIKE "'. $db->quote($year).'%" ;';
-    $result = $db->query($sql_delete);
+    $db->query($sql_delete);
 
     return true;
 }
@@ -49,8 +48,8 @@ function supprimeAnnee(array $tab_checkbox_j_chome) : bool
 function insereAnnee(array $tab_checkbox_j_chome) : bool
 {
     $db = \includes\SQL::singleton();
-    foreach($tab_checkbox_j_chome as $key => $value) {
-        $result = $db->query('INSERT INTO conges_jours_feries SET jf_date="'. $db->quote($key).'";');
+    foreach (array_keys($tab_checkbox_j_chome) as $date) {
+        $db->query('INSERT INTO conges_jours_feries SET jf_date="'. $db->quote($date).'";');
     }
     return true;
 }
@@ -76,7 +75,7 @@ function getJoursFeriesFrance(int $iAnnee) : array
 {
     //Initialisation de variables
     $unJour = 3600*24;
-    $tbJourFerie = array();
+    $tbJourFerie = [];
     $timePaques = easter_date($iAnnee) + 6 * 3600; // évite les changements d'heures
 
     $tbJourFerie["Jour de l an"] = $iAnnee . "-01-01";
@@ -94,9 +93,9 @@ function getJoursFeriesFrance(int $iAnnee) : array
     return $tbJourFerie;
 }
 
-function afficheJourHorsMois(int $mois, $i, int $year) : string
+function afficheJourHorsMois(int $mois, $jour, int $year) : string
 {
-    $j_timestamp = mktime(0, 0, 0, $mois, $i, $year);
+    $j_timestamp = mktime(0, 0, 0, $mois, $jour, $year);
     $td_second_class = get_td_class_of_the_day_in_the_week($j_timestamp);
     return '<td class="cal-saisie2 month-out ' . $td_second_class . '">&nbsp;</td>';
 }

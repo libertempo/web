@@ -65,7 +65,7 @@ if (0 == $premierJourMois) {
             <?php // 6° ligne
             for ($jour = 36 - $premierJourMois + 1; checkdate($mois, $jour, $annee); ++$jour) : ?>
                 <?= afficheJourMois($mois, $jour, $annee, $joursFeries); ?>
-            <?php endfor; for($jour; $jour < 43 - $premierJourMois + 1; ++$jour) : ?>
+            <?php endfor; for ($jour; $jour < 43 - $premierJourMois + 1; ++$jour) : ?>
                 <?= afficheJourHorsMois($mois, $jour, $annee); ?>
             <?php endfor; ?>
             </tr>
