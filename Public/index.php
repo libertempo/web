@@ -9,6 +9,7 @@ $rewritten = [
     '/authentification',
     '/config/general',
     '/config/type_absence',
+    '/hr/jours_chomes',
     '/admin/db_sauve',
 ];
 
@@ -28,6 +29,9 @@ switch ($urn) {
         $_GET['onglet'] = $resource;
         require_once ROOT_PATH . 'config/index.php';
         break;
+    case 'hr':
+        $_GET['onglet'] = $resource;
+        require_once ROOT_PATH . 'hr/hr_index.php';
     case 'admin':
         $_GET['onglet'] = $resource;
         require_once ROOT_PATH . 'admin/admin_index.php';

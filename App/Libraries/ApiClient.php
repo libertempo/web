@@ -136,12 +136,12 @@ final class ApiClient
 
         $body = $response->getBody();
         if (empty((string) $body)) {
-            $emptyClass = new \stdClass();
-            $emptyClass->code = $response->getStatusCode();
-            $emptyClass->message = $response->getReasonPhrase();
-            $emptyClass->status = 'success';
-            $emptyClass->data = [];
-            return $emptyClass;
+            return [
+                'code' => $response->getStatusCode(),
+                'message' => $response->getReasonPhrase(),
+                'status' => 'success',
+                'data' => [],
+            ];
         }
         $jsonBody = json_decode($body, true);
         if (null === $jsonBody) {
