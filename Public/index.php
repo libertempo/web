@@ -9,6 +9,7 @@ $rewritten = [
     '/authentification',
     '/config/general',
     '/config/type_absence',
+    '/hr/page_principale',
     '/hr/jours_chomes',
     '/admin/db_sauve',
 ];
