@@ -5,7 +5,7 @@ defined('INCLUDE_PATH') or define('INCLUDE_PATH',     ROOT_PATH . 'includes/');
 require_once INCLUDE_PATH . 'define.php';
 
 if (empty(session_id())) {
-	redirect(ROOT_PATH . 'authentification?return_url=config/index.php');
+	redirect(ROOT_PATH . 'authentification?return_url=config/general');
 }
 
 
