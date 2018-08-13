@@ -47,7 +47,7 @@
 
 function sousmenuAdmin()
 {
-    return '<a class="secondary" href="' . ROOT_PATH . 'admin/admin_index.php?onglet=db_sauve">Backup</a>';
+    return '<a class="secondary" href="' . ROOT_PATH . 'admin/db_sauve">Backup</a>';
 }
 
 function sousmenuConfiguration()
@@ -181,13 +181,13 @@ function sousmenuEmploye()
                     <?= \App\ProtoControllers\Utilisateur::getNomComplet($_SESSION['u_prenom'], $_SESSION['u_nom'], true) ?>
                 </div>
 				<?php if (is_admin($_SESSION['userlogin'])): ?>
-                <a class="primary <?= $adminActive ?>" href="<?= ROOT_PATH ?>admin/admin_index.php" <?php print ($urn == 'admin') ? 'active' : '' ;?>>
+                <a class="primary <?= $adminActive ?>" href="<?= ROOT_PATH ?>admin/db_sauve" <?php print ($urn == 'admin') ? 'active' : '' ;?>>
                     <i class="fa fa-bolt"></i><?= _('button_admin_mode');?>
 				</a>
                 <?php if ($urn == 'admin') : ?>
                 <?= sousmenuAdmin(); ?>
                 <?php endif; ?>
-                <a class="primary <?= $configActive ?>" href="<?= ROOT_PATH ?>config/index.php" <?php print ($urn == 'config') ? 'active' : '' ;?>>
+                <a class="primary <?= $configActive ?>" href="<?= ROOT_PATH ?>config/general" <?php print ($urn == 'config') ? 'active' : '' ;?>>
                     <i class="fa fa-cog"></i><?= _('Configuration');?>
 				</a>
                 <?php if ($urn == 'config') : ?>

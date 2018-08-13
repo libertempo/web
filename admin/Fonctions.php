@@ -215,7 +215,7 @@ class Fonctions
 
     public static function sauve($type_sauvegarde)
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $return   = '';
 
         redirect(ROOT_PATH .'admin/admin_db_sauve.php?choix_action=sauvegarde&type_sauvegarde='.$type_sauvegarde.'&commit=ok', false);
@@ -242,7 +242,7 @@ class Fonctions
     // SAUVEGARDE
     public static function choix_sauvegarde()
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $return   = '';
 
         $return .= '<h1>' . _('admin_sauve_db_titre') . '</h1>';
@@ -284,7 +284,7 @@ class Fonctions
     // CHOIX
     public static function choix_save_restore()
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $return   = '';
 
         $return .= '<h1>' . _('admin_sauve_db_titre') . '</h1>';
@@ -337,7 +337,7 @@ class Fonctions
         /*************************************/
         // recup des parametres reçus :
         // SERVER
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         // GET / POST
         $choix_action    = getpost_variable('choix_action');
         $type_sauvegarde = getpost_variable('type_sauvegarde');

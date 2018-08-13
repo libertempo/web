@@ -109,9 +109,9 @@ if (isset($_SESSION['userlogin'])) {
         $is_hr = $row["u_is_hr"];
 		$is_resp = $row["u_is_resp"];
 		$is_active = $row["u_is_active"];
-                if('admin' === $_SESSION['userlogin']){
-                    redirect(ROOT_PATH . 'admin/admin_index.php');
-                }
+        if('admin' === $_SESSION['userlogin']) {
+            redirect(ROOT_PATH . 'admin/db_sauve');
+        }
 		if($is_active == "N") {
 			header_error();
 			echo  _('session_compte_inactif') ."<br>\n";
