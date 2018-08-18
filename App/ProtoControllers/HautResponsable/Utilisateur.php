@@ -559,8 +559,8 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             $data['pwd1'] = $htmlPost['new_password1'] == "" ? "" : md5($htmlPost['new_password1']);
             $data['pwd2'] = $htmlPost['new_password2'] == "" ? "" : md5($htmlPost['new_password2']);
         } else {
-            $data['pwd1'] = md5(uniqid('', true));
-            $data['pwd2'] = md5('none');
+            $data['pwd1'] = md5('none');
+            $data['pwd2'] = md5(uniqid('', true));
         }
 
         if (array_key_exists('_METHOD', $htmlPost)) {
@@ -895,7 +895,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
                     u_is_admin='" . $data['isAdmin'] . "',
                     planning_id = 0,
                     u_is_hr='" . $data['isHR'] . "',
-                    u_passwd='" . $data['pwd2'] . "',
+                    u_passwd='" . $data['pwd1'] . "',
                     u_quotite=" . $data['quotite'] . ",
                     u_email = '" . $data['email'] . "',
                     u_heure_solde=" . \App\Helpers\Formatter::hour2Time($data['soldeHeure']) . ",
