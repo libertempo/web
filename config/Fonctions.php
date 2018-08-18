@@ -596,7 +596,7 @@ class Fonctions
 
     public static function commit_saisie(&$tab_new_values)
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $return = '';
 
         $URL = "$PHP_SELF";
@@ -675,7 +675,7 @@ class Fonctions
 
     public static function affichage_configuration()
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $return = '';
 
         // affichage de la liste des variables
