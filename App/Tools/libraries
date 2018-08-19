@@ -18,6 +18,9 @@ define('API_SYSPATH', ROOT_PATH . 'vendor' . DS . 'libertempo' . DS . 'api' . DS
 require_once ROOT_PATH . 'vendor/autoload.php';
 require_once INCLUDE_PATH . 'fonctions_conges.php';
 require_once CONFIG_PATH . 'dbconnect.php';
+if (is_file(CONFIG_PATH . 'config_ldap.php')) {
+    require_once CONFIG_PATH . 'config_ldap.php';
+}
 
 function displayFail()
 {
