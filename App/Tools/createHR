@@ -1,0 +1,88 @@
+#!/usr/bin/env php
+<?php
+require_once 'libraries';
+require_once CONFIG_PATH . 'dbconnect.php';
+
+define('INSTALLATION_PATH', PATCH_PATH . DS . 'Installation' . DS);
+define('API_PATH', ROOT_PATH . 'api' . DS);
+define('API_SYSPATH', ROOT_PATH . 'vendor' . DS . 'Libertempo' . DS . 'libertempo-api' . DS);
+
+function createHR(\includes\SQL $db, array $data) : bool
+{
+    $db->query('INSERT INTO conges_users 
+                (u_login, u_nom, u_prenom, u_is_resp, u_is_admin, u_is_hr, u_is_active, u_passwd, u_email) 
+                VALUES ("' . $data['login'] . '", "' . $data['nom'] . '", "' . $data['prenom'] . '", "N", "Y", "Y", "Y", "' . $data['password'] . '", "' . $data['email'] . '");
+    ');
+
+    return 0 < $db->affected_rows;
+}
+
+function existUser(\includes\SQL $db, string $login) : bool
+{
+    $db->query('SELECT EXISTS (SELECT u_login FROM conges_users WHERE u_login = "' . $login . '");
+    ');
+
+    return 0 < (int) $db->fetch_array()[0];
+}
+
+
+display('Création du haut responsable...');
+display('Contrôles généraux…');
+if (!\includes\SQL::existsDatabase($mysql_database)) {
+    displayFail();
+}
+
+display('Vous vous apprêtez à créer un HR avec les droits administrateurs.
+Si vous utilisez une authentification externe, assurez vous de créer un utilisateur existant dans votre référentiel.');
+
+$stdin = fopen('php://stdin', 'r');
+
+display('Identifiant :');
+$input = trim(fgets($stdin));
+if ($input == '' || !preg_match('/^[@a-z.\d_-]{2,30}$/i', $input)) {
+    displayError('Saisie incorrecte!');
+}
+$data['login'] = $input;
+
+display('Nom :');
+$input = trim(fgets($stdin));
+if ($input == '') {
+    displayError('Saisie incorrecte!');
+}
+$data['nom'] = $input;
+
+display('Prenom :');
+$input = trim(fgets($stdin));
+if ($input == '') {
+    displayError('Saisie incorrecte!');
+}
+$data['prenom'] = $input;
+
+display('Courriel :');
+$input = trim(fgets($stdin));
+if ($input == '' || !filter_var($input, FILTER_VALIDATE_EMAIL)) {
+    displayError('Saisie incorrecte!');
+}
+$data['email'] = $input;
+
+display('Mot de passe (invisible) :');
+system('stty -echo');
+$input = trim(fgets($stdin));
+system('stty echo');
+if ($input == '') {
+    displayError('Saisie incorrecte!');
+}
+$data['password'] = password_hash($input, PASSWORD_BCRYPT);
+
+display('Contrôles d\'unicité de l\'identifiant');
+$db = \includes\SQL::singleton();
+if (existUser($db, $data['login'])) {
+    displayError('identifiant déjà existant');
+}
+
+
+if (!createHR($db, $data)) {
+    displayFail();
+}
+
+display('Création du haut responsable effectuée avec succès.');
