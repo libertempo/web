@@ -16,8 +16,8 @@ update: ## Met l'application à la toute dernière version (patch compris)
 	App/Tools/update
 
 ## Création haut responsable / administrateur
-createHR: ## Créer un utilisateur avec les droits HR et administrateur
-	App/Tools/createHR
+createHR: ## Créé un utilisateur avec les droits HR et administrateur
+	App/Tools/createHR ${login} ${nom} ${prenom} ${courriel} ${hash}
 
 ## Installation
 setup:

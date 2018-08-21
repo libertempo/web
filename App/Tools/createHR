@@ -19,10 +19,10 @@ function createHR(\includes\SQL $db, array $data) : bool
 
 function existUser(\includes\SQL $db, string $login) : bool
 {
-    $db->query('SELECT EXISTS (SELECT u_login FROM conges_users WHERE u_login = "' . $login . '");
+    $res = $db->query('SELECT EXISTS (SELECT u_login FROM conges_users WHERE u_login = "' . $login . '");
     ');
 
-    return 0 < (int) $db->fetch_array()[0];
+    return 0 < (int) $res->fetch_array()[0];
 }
 
 
@@ -32,49 +32,64 @@ if (!\includes\SQL::existsDatabase($mysql_database)) {
     displayFail();
 }
 
+$data['login'] = $argv[1] ?? null;
+$data['nom'] = $argv[2] ?? null;
+$data['prenom'] = $argv[3] ?? null;
+$data['email'] = $argv[4] ?? null;
+$data['password'] = $argv[5] ?? null;
+
 display('Vous vous apprêtez à créer un HR avec les droits administrateurs.
 Si vous utilisez une authentification externe, assurez vous de créer un utilisateur existant dans votre référentiel.');
 
 $stdin = fopen('php://stdin', 'r');
-
-display('Identifiant :');
-$input = trim(fgets($stdin));
-if ($input == '' || !preg_match('/^[@a-z.\d_-]{2,30}$/i', $input)) {
-    displayError('Saisie incorrecte!');
+if (null == $data['login']) {
+    display('Identifiant :');
+    $input = trim(fgets($stdin));
+    if ($input == '' || !preg_match('/^[@a-z.\d_-]{2,30}$/i', $input)) {
+        displayError('Saisie incorrecte!');
+    }
+    $data['login'] = $input;
 }
-$data['login'] = $input;
 
-display('Nom :');
-$input = trim(fgets($stdin));
-if ($input == '') {
-    displayError('Saisie incorrecte!');
+if (null == $data['nom']) {
+    display('Nom :');
+    $input = trim(fgets($stdin));
+    if ($input == '') {
+        displayError('Saisie incorrecte!');
+    }
+    $data['nom'] = $input;
 }
-$data['nom'] = $input;
 
-display('Prenom :');
-$input = trim(fgets($stdin));
-if ($input == '') {
-    displayError('Saisie incorrecte!');
+if (null == $data['prenom']) {
+    display('Prenom :');
+    $input = trim(fgets($stdin));
+    if ($input == '') {
+        displayError('Saisie incorrecte!');
+    }
+    $data['prenom'] = $input;
 }
-$data['prenom'] = $input;
 
-display('Courriel :');
-$input = trim(fgets($stdin));
-if ($input == '' || !filter_var($input, FILTER_VALIDATE_EMAIL)) {
-    displayError('Saisie incorrecte!');
+if (null == $data['email']) {
+    display('Courriel :');
+    $input = trim(fgets($stdin));
+    if ($input == '' || !filter_var($input, FILTER_VALIDATE_EMAIL)) {
+        displayError('Saisie incorrecte!');
+    }
+    $data['email'] = $input;
 }
-$data['email'] = $input;
 
-display('Mot de passe (invisible) :');
-system('stty -echo');
-$input = trim(fgets($stdin));
-system('stty echo');
-if ($input == '') {
-    displayError('Saisie incorrecte!');
+if (null == $data['password']) {
+    display('Mot de passe (invisible) :');
+    system('stty -echo');
+    $input = trim(fgets($stdin));
+    system('stty echo');
+    if ($input == '') {
+        displayError('Saisie incorrecte!');
+    }
+    $data['password'] = password_hash($input, PASSWORD_BCRYPT);
 }
-$data['password'] = password_hash($input, PASSWORD_BCRYPT);
 
-display('Contrôles d\'unicité de l\'identifiant');
+display('Contrôle d\'unicité de l\'identifiant...');
 $db = \includes\SQL::singleton();
 if (existUser($db, $data['login'])) {
     displayError('identifiant déjà existant');
