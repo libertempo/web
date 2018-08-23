@@ -41,50 +41,44 @@ $data['password'] = $argv[5] ?? null;
 display('Vous vous apprêtez à créer un HR avec les droits administrateurs.
 Si vous utilisez une authentification externe, assurez vous de créer un utilisateur existant dans votre référentiel.');
 
-$stdin = fopen('php://stdin', 'r');
 if (null == $data['login']) {
-    display('Identifiant :');
-    $input = trim(fgets($stdin));
+    $input = getValue('Identifiant :');
     if ($input == '' || !preg_match('/^[@a-z.\d_-]{2,30}$/i', $input)) {
-        displayError('Saisie incorrecte!');
+        displayError('Saisie incorrecte! L\'identifiant ne peut pas etre vide ou contenir des caractères spéciaux');
     }
     $data['login'] = $input;
 }
 
 if (null == $data['nom']) {
-    display('Nom :');
-    $input = trim(fgets($stdin));
+    $input = getValue('Nom :');
     if ($input == '') {
-        displayError('Saisie incorrecte!');
+        displayError('Saisie incorrecte! Le nom ne peut pas etre vide');
     }
     $data['nom'] = $input;
 }
 
 if (null == $data['prenom']) {
-    display('Prenom :');
-    $input = trim(fgets($stdin));
+    $input = getValue('Prenom :');
     if ($input == '') {
-        displayError('Saisie incorrecte!');
+        displayError('Saisie incorrecte! Le prénom ne peut pas etre vide');
     }
     $data['prenom'] = $input;
 }
 
 if (null == $data['email']) {
-    display('Courriel :');
-    $input = trim(fgets($stdin));
+    $input = getValue('Courriel :');
     if ($input == '' || !filter_var($input, FILTER_VALIDATE_EMAIL)) {
-        displayError('Saisie incorrecte!');
+        displayError('Saisie incorrecte! Le courriel doit respecter le format standard');
     }
     $data['email'] = $input;
 }
 
 if (null == $data['password']) {
-    display('Mot de passe (invisible) :');
     system('stty -echo');
-    $input = trim(fgets($stdin));
+    $input = getValue('Mot de passe (invisible) :');
     system('stty echo');
     if ($input == '') {
-        displayError('Saisie incorrecte!');
+        displayError('Saisie incorrecte! Le mot de passe ne peut pas etre vide');
     }
     $data['password'] = password_hash($input, PASSWORD_BCRYPT);
 }
@@ -92,11 +86,12 @@ if (null == $data['password']) {
 display('Contrôle d\'unicité de l\'identifiant...');
 $db = \includes\SQL::singleton();
 if (existUser($db, $data['login'])) {
-    displayError('identifiant déjà existant');
+    displayError('identifiant déjà existant!');
 }
 
 
 if (!createHR($db, $data)) {
+    displayError('Une erreur inattendue s\'est produite!');
     displayFail();
 }
 
