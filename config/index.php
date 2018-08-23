@@ -26,7 +26,7 @@ $_SESSION['from_config']=true;  // initialise ce flag pour changer le bouton de 
 	if (!$onglet && is_admin($_SESSION['userlogin']))
 	{
 		$onglet = 'general';
-	} elseif (!$onglet && $_SESSION['userlogin']!="admin") {
+	} elseif (!$onglet) {
 
 		if ($config->canAdminAccessConfig())
 			$onglet = 'general';

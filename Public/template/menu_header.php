@@ -9,9 +9,6 @@
     } else {
         $home = 'utilisateur/user_index.php';
     }
-    if('admin' === $_SESSION['userlogin']){
-        $home = 'admin/admin_index.php';
-    }
 
     //user mode
     $user_mode = '';

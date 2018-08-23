@@ -1362,7 +1362,7 @@ class Fonctions
         $tab=array();
         $list_groupes_double_validation=get_list_groupes_double_valid();
 
-        $sql1 = "SELECT u_login FROM conges_users WHERE u_login!='conges' AND u_login!='admin' ORDER BY u_nom";
+        $sql1 = "SELECT u_login FROM conges_users ORDER BY u_nom";
         $ReqLog = \includes\SQL::singleton()->query($sql1) ;
 
         while ($resultat = $ReqLog->fetch_array()) {
@@ -1379,7 +1379,7 @@ class Fonctions
     {
         $list_users="";
 
-        $sql1="SELECT DISTINCT(u_login) FROM conges_users WHERE u_login!='conges' AND u_login!='admin' AND u_is_active='Y' ORDER BY u_nom  ";
+        $sql1="SELECT DISTINCT(u_login) FROM conges_users WHERE u_is_active='Y' ORDER BY u_nom  ";
         $ReqLog1 = \includes\SQL::singleton()->query($sql1);
 
         while ($resultat1 = $ReqLog1->fetch_array())
@@ -1561,7 +1561,7 @@ class Fonctions
         $db = \includes\SQL::singleton();
         // verif
         $appli_num_exercice = $_SESSION['config']['num_exercice'] ;
-        $sql_verif = "SELECT u_login FROM conges_users WHERE u_login != 'admin' AND u_login != 'conges' AND u_num_exercice != $appli_num_exercice "  ;
+        $sql_verif = "SELECT u_login FROM conges_users WHERE u_num_exercice != $appli_num_exercice "  ;
         $ReqLog_verif = $db->query($sql_verif) ;
 
         if ($ReqLog_verif->num_rows == 0) {

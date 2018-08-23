@@ -625,7 +625,7 @@ function get_list_all_users_du_resp($resp_login)
         $groupeIds = \App\ProtoControllers\Responsable::getIdGroupeResp($resp_login);
         $listUsers = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupeIds);
         $list_users="";
-    $sql1="SELECT DISTINCT(u_login) FROM conges_users WHERE u_login!='conges' AND u_login!='admin' AND u_login!='$resp_login'";
+    $sql1="SELECT DISTINCT(u_login) FROM conges_users WHERE u_login!='$resp_login'";
         $sql1 .= ' AND u_login IN ("' . implode('","', $listUsers) . '")';
 
     $sql1 = $sql1." ORDER BY u_login " ;
@@ -644,7 +644,7 @@ function get_list_all_users_du_resp($resp_login)
     // on recup la liste des users des resp absents, dont $resp_login est responsable
     if ($config->isGestionResponsableAbsent()) {
         // recup liste des resp absents, dont $resp_login est responsable
-        $sql_2='SELECT DISTINCT(u_login) FROM conges_users WHERE u_is_resp=\'Y\' AND u_login!="'. $db->quote($resp_login).'" AND u_login!=\'conges\' AND u_login!=\'admin\'';
+        $sql_2='SELECT DISTINCT(u_login) FROM conges_users WHERE u_is_resp=\'Y\' AND u_login!="'. $db->quote($resp_login).'"';
         $sql_2=$sql_2.' AND u_login IN ("' . implode('","', $listUsers) . '")';
 
         $sql_2 = $sql_2." ORDER BY u_login " ;
@@ -821,7 +821,7 @@ function get_list_groupes_du_user($user_login)
 function get_list_all_users()
 {
     $list_users="";
-    $sql1="SELECT DISTINCT(u_login) FROM conges_users WHERE u_login!='conges' AND u_login!='admin' ORDER BY u_login " ;
+    $sql1="SELECT DISTINCT(u_login) FROM conges_users ORDER BY u_login " ;
     $ReqLog1 = \includes\SQL::singleton()->query($sql1);
 
     while ($resultat1 = $ReqLog1->fetch_array())
@@ -1433,7 +1433,7 @@ function recup_infos_all_users()
 {
     $tab=array();
     $list_groupes_double_validation=get_list_groupes_double_valid();
-    $sql1 = "SELECT u_login FROM conges_users WHERE u_login!='conges' AND u_login!='admin' ORDER BY u_nom";
+    $sql1 = "SELECT u_login FROM conges_users ORDER BY u_nom";
     $ReqLog = \includes\SQL::singleton()->query($sql1);
 
     while ($resultat =$ReqLog->fetch_array())
