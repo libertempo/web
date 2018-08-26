@@ -483,7 +483,7 @@ class Fonctions
             $withErreur = true;
         }
 
-        if($withErreur) {
+        if ($withErreur) {
             $return .= '<center>';
             $return .= '<br>' . _('config_abs_suppr_impossible') . '<br>' . $raison . '<br>';
 
