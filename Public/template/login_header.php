@@ -31,7 +31,7 @@ include TEMPLATE_PATH . 'template_define.php';
         <?php /* JQUERY */ ?>
         <link type="text/css" href="<?= ASSETS_PATH ?>jquery/css/custom-theme/jquery-ui-1.8.17.custom.css?v=<?= $config_php_conges_version ?>" rel="stylesheet" />
         <?php /* BOOTSTRAP */?>
-        <link type="text/css" href="<?= ASSETS_PATH ?>bootstrap/css/bootstrap.min.css?v=<?= $config_php_conges_version ?>" rel="stylesheet" media="screen">
+        <link type="text/css" href="<?= NODE_PATH ?>bootstrap/dist/css/bootstrap.min.css?v=<?= $config_php_conges_version ?>" rel="stylesheet" media="screen">
         <?php /* FONT AWESOME */ ?>
         <link href="<?= ASSETS_PATH ?>font-awesome/css/font-awesome.css?v=<?= $config_php_conges_version ?>" rel="stylesheet">
         <?php /* REBOOT STYLE */ ?>
