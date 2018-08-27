@@ -29,7 +29,6 @@ include TEMPLATE_PATH . 'template_define.php';
         <meta name="msapplication-TileImage" content="<?= IMG_PATH ?>Favicons/mstile-144x144.png">
         <meta name="theme-color" content="#ffffff">
         <?php /* JQUERY */ ?>
-        <link type="text/css" href="<?= ASSETS_PATH ?>jquery/css/custom-theme/jquery-ui-1.8.17.custom.css?v=<?= $config_php_conges_version ?>" rel="stylesheet" />
         <?php /* BOOTSTRAP */?>
         <link type="text/css" href="<?= NODE_PATH ?>bootstrap/dist/css/bootstrap.min.css?v=<?= $config_php_conges_version ?>" rel="stylesheet" media="screen">
         <?php /* FONT AWESOME */ ?>
@@ -38,7 +37,6 @@ include TEMPLATE_PATH . 'template_define.php';
         <link type="text/css" href="<?= CSS_PATH ?>reboot.css?v=<?= $config_php_conges_version ?>" rel="stylesheet" media="screen">
         <?php /* SCRIPTS */ ?>
         <script type="text/javascript" src="<?= NODE_PATH ?>jquery/jquery.min.js?v=<?= $config_php_conges_version ?>"></script>
-        <script type="text/javascript" src="<?= ASSETS_PATH ?>jquery/js/jquery-ui-1.8.17.custom.min.js?v=<?= $config_php_conges_version ?>"></script>
         <script type="text/javascript" src="<?= JS_PATH ?>reboot.js?v=<?= $config_php_conges_version ?>"></script>
         <?= $additional_head; ?>
     </head>
