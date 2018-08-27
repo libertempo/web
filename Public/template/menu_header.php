@@ -155,7 +155,7 @@ function sousmenuEmploye()
         <?php /* BOOTSTRAP */?>
         <link type="text/css" href="<?= ASSETS_PATH ?>bootstrap/css/bootstrap.min.css?v=<?= $config_php_conges_version ?>" rel="stylesheet" media="screen,print">
         <link type="text/css" href="<?= NODE_PATH ?>bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css?v=<?= $config_php_conges_version ?>" rel="stylesheet" media="screen">
-        <link type="text/css" href="<?= ASSETS_PATH ?>bootstrap-timepicker/css/bootstrap-timepicker.min.css?v=<?= $config_php_conges_version ?>" rel="stylesheet" media="screen" />
+        <link type="text/css" href="<?= NODE_PATH ?>bootstrap-timepicker/css/bootstrap-timepicker.min.css?v=<?= $config_php_conges_version ?>" rel="stylesheet" media="screen" />
         <?php /* FONT AWESOME */ ?>
         <link href="<?= ASSETS_PATH ?>font-awesome/css/font-awesome.css?v=<?= $config_php_conges_version ?>" rel="stylesheet">
         <?php /* REBOOT STYLE */ ?>
@@ -165,7 +165,7 @@ function sousmenuEmploye()
         <script type="text/javascript" src="<?= ASSETS_PATH  ?>bootstrap/js/bootstrap.min.js?v=<?= $config_php_conges_version ?>"></script>
         <script type="text/javascript" src="<?= NODE_PATH ?>bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js?v=<?= $config_php_conges_version ?>"></script>
         <script type="text/javascript" src="<?= NODE_PATH ?>bootstrap-datepicker/dist/locales/bootstrap-datepicker.fr.min.js?v=<?= $config_php_conges_version ?>"></script>
-        <script type="text/javascript" src="<?= ASSETS_PATH ?>bootstrap-timepicker/js/bootstrap-timepicker.min.js?v=<?= $config_php_conges_version ?>"></script>
+        <script type="text/javascript" src="<?= NODE_PATH ?>bootstrap-timepicker/js/bootstrap-timepicker.min.js?v=<?= $config_php_conges_version ?>"></script>
         <script type="text/javascript" src="<?= JS_PATH ?>reboot.js?v=<?= $config_php_conges_version ?>"></script>
         <?= $additional_head ?>
     </head>
