@@ -11,6 +11,7 @@
     "bootstrap-datepicker": "^1.8.0",
     "bootstrap-timepicker": "^0.5.2",
     "jquery": "^1.9.1",
+    "jquery-ui": "^1.10.4",
     "vue": "^2.5.17"
   },
   "devDependencies": {},

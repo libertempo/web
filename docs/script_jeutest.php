@@ -73,7 +73,7 @@ echo '
         <link href="../Public/Assets/font-awesome/css/font-awesome.css" rel="stylesheet">
         <link type="text/css" href="../Public/Assets/Css/reboot.css" rel="stylesheet" media="screen,print">
 
-        <script type="text/javascript" src="../Public/Assets/jquery/js/jquery-1.7.1.min.js"></script>
+        <script type="text/javascript" src="../node_modules/jquery/jquery.min.js"></script>
         <script type="text/javascript" src="../Public/Assets/Js/reboot.js"></script>
     </head>
     <body id="top" class="hbox connected">
