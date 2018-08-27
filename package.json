@@ -1,0 +1,30 @@
+{
+  "name": "libertempo-web",
+  "version": "1.11.0",
+  "description": "Application web de gestion de congés",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "dependencies": {
+    "bootstrap": "^3.1.1",
+    "bootstrap-datepicker": "^1.8.0",
+    "bootstrap-timepicker": "^0.5.2",
+    "jquery": "^1.9.1",
+    "vue": "^2.5.17"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/libertempo/web.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/libertempo/web/issues"
+  },
+  "homepage": "https://github.com/libertempo/web#readme"
+}
