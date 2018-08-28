@@ -161,6 +161,18 @@ function sousmenuEmploye()
         <?php /* REBOOT STYLE */ ?>
         <link type="text/css" href="<?= CSS_PATH ?>reboot.css?v=<?= $config_php_conges_version ?>" rel="stylesheet" media="screen,print">
         <?php /* JQUERY */ ?>
+        <script>
+        var _rollbarConfig = {
+            accessToken: "<?= LOGGER_TOKEN ?>",
+            captureUncaught: true,
+            captureUnhandledRejections: true,
+            payload: {
+                environment: "production",
+                code_version : "<?= $config_php_conges_version ?>"
+            }
+        };
+        </script>
+        <script type="text/javascript" src="<?= JS_PATH ?>rollbar.js?v=<?= $config_php_conges_version ?>"></script>
         <script type="text/javascript" src="<?= NODE_PATH ?>jquery/jquery.min.js?v=<?= $config_php_conges_version ?>"></script>
         <script type="text/javascript" src="<?= NODE_PATH ?>bootstrap/dist/js/bootstrap.min.js?v=<?= $config_php_conges_version ?>"></script>
         <script type="text/javascript" src="<?= NODE_PATH ?>bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js?v=<?= $config_php_conges_version ?>"></script>

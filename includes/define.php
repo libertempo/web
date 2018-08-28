@@ -78,6 +78,7 @@ if (!defined( 'DEFINE_INCLUDE' )) {
         ]);
         \Rollbar\Rollbar::addCustom('access_key', LOGGER_TOKEN);
     }
+
     session_start();
 
     /* Définition de headers de sécurité */
