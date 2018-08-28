@@ -1,6 +1,7 @@
 <?php
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 include TEMPLATE_PATH . 'template_define.php';
+global $environnement;
 ?>
 <!DOCTYPE html>
 <html>
@@ -42,7 +43,7 @@ include TEMPLATE_PATH . 'template_define.php';
             captureUncaught: true,
             captureUnhandledRejections: true,
             payload: {
-                environment: "production",
+                environment: "<?= $environnement ?>",
                 code_version : "<?= $config_php_conges_version ?>"
             }
         };

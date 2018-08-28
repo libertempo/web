@@ -78,7 +78,7 @@ echo '
             captureUncaught: true,
             captureUnhandledRejections: true,
             payload: {
-                environment: "production",
+                environment: "development",
                 code_version : "' . $config_php_conges_version . '"
             }
         };

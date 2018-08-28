@@ -2,6 +2,8 @@
     defined( '_PHP_CONGES' ) or die( 'Restricted access' );
     include TEMPLATE_PATH . 'template_define.php';
     $printable = getpost_variable('printable');
+    global $environnement;
+
     if (is_hr($_SESSION['userlogin'])) {
         $home = 'hr/hr_index.php';
     } elseif (is_resp($_SESSION['userlogin'])) {
@@ -167,7 +169,7 @@ function sousmenuEmploye()
             captureUncaught: true,
             captureUnhandledRejections: true,
             payload: {
-                environment: "production",
+                environment: "<?= $environnement ?>",
                 code_version : "<?= $config_php_conges_version ?>"
             }
         };
