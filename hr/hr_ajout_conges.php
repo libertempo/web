@@ -1,5 +1,10 @@
 <?php
 
+/*
+ * $tab_type_cong
+ * $tab_type_conges_exceptionnels
+ */
+
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 
 // on insert l'ajout de conges dans la table periode
@@ -343,74 +348,34 @@ function affichage_saisie_user_par_user($tab_type_conges, $tab_type_conges_excep
     return $return;
 }
 
-function saisie_ajout($tab_type_conges) : string
-{
-    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
-    $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-    $return = '';
-
-    // recup du tableau des types de conges (seulement les congesexceptionnels )
-    if ($config->isCongesExceptionnelsActive()) {
-        $tab_type_conges_exceptionnels = recup_tableau_types_conges_exceptionnels();
-    } else {
-        $tab_type_conges_exceptionnels = array();
-    }
-
-    // recup de la liste de TOUS les users pour le RH
-    // (prend en compte le resp direct, les groupes, le resp virtuel, etc ...)
-    // renvoit une liste de login entre quotes et séparés par des virgules
-    $tab_all_users_du_hr=\hr\Fonctions::recup_infos_all_users_du_hr($_SESSION['userlogin']);
-    $tab_all_users_du_grand_resp=recup_infos_all_users_du_grand_resp($_SESSION['userlogin']);
-
-    if ( (count($tab_all_users_du_hr)!=0) || (count($tab_all_users_du_grand_resp)!=0) ) {
-        /************************************************************/
-        /* SAISIE GLOBALE pour tous les utilisateurs du responsable */
-        $return .= affichage_saisie_globale_pour_tous($tab_type_conges);
-        $return .= '<br>';
-
-        /***********************************************************************/
-        /* SAISIE GROUPE pour tous les utilisateurs d'un groupe du responsable */
-        $return .= affichage_saisie_globale_groupe($tab_type_conges);
-        $return .= '<br>';
-
-        /************************************************************/
-        /* SAISIE USER PAR USER pour tous les utilisateurs du responsable */
-        $return .= affichage_saisie_user_par_user($tab_type_conges, $tab_type_conges_exceptionnels, $tab_all_users_du_hr, $tab_all_users_du_grand_resp);
-        $return .= '<br>';
-
-    } else {
-        $return .= _('resp_etat_aucun_user') . '<br>';
-    }
-    return $return;
-}
-
 //var pour resp_ajout_conges_all.php
 $ajout_conges = getpost_variable('ajout_conges');
 $ajout_global = getpost_variable('ajout_global');
 $ajout_groupe = getpost_variable('ajout_groupe');
 $choix_groupe = getpost_variable('choix_groupe');
-$return = '';
 
 // titre
-$return .= '<h1>'. _('resp_ajout_conges_titre') . '</h1>';
+$titre = _('resp_ajout_conges_titre');
 
-if ( $ajout_conges == "TRUE" ) {
+if ('true' === $ajout_conges) {
     $tab_champ_saisie            = getpost_variable('tab_champ_saisie');
     $tab_commentaire_saisie        = getpost_variable('tab_commentaire_saisie');
 
-    $return .= ajout_conges($tab_champ_saisie, $tab_commentaire_saisie);
-    redirect( ROOT_PATH .'hr/hr_index.php', false);
-    exit;
-} elseif ( $ajout_global == "TRUE" ) {
+    ajout_conges($tab_champ_saisie, $tab_commentaire_saisie);
+    redirect( ROOT_PATH .'hr/hr_index.php');
+}
+
+if ('true' === $ajout_global) {
 
     $tab_new_nb_conges_all       = getpost_variable('tab_new_nb_conges_all');
     $tab_calcul_proportionnel    = getpost_variable('tab_calcul_proportionnel');
     $tab_new_comment_all         = getpost_variable('tab_new_comment_all');
 
-    $return .= ajout_global($tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all);
-    redirect( ROOT_PATH .'hr/hr_index.php', false);
-    exit;
-} elseif ( $ajout_groupe == "TRUE" ) {
+    ajout_global($tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all);
+    redirect( ROOT_PATH .'hr/hr_index.php');
+}
+
+if ('true' === $ajout_groupe) {
 
     $tab_new_nb_conges_all       = getpost_variable('tab_new_nb_conges_all');
     $tab_calcul_proportionnel    = getpost_variable('tab_calcul_proportionnel');
@@ -418,10 +383,43 @@ if ( $ajout_conges == "TRUE" ) {
     $choix_groupe                = getpost_variable('choix_groupe');
 
     ajout_global_groupe($choix_groupe, $tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all);
-    redirect( ROOT_PATH .'hr/hr_index.php', false);
-    exit;
-} else {
-    $return .= saisie_ajout($tab_type_cong);
+    redirect( ROOT_PATH .'hr/hr_index.php');
 }
 
-echo $return;
+$config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+$PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+$return = '';
+
+// recup du tableau des types de conges (seulement les congesexceptionnels )
+if ($config->isCongesExceptionnelsActive()) {
+    $tab_type_conges_exceptionnels = recup_tableau_types_conges_exceptionnels();
+} else {
+    $tab_type_conges_exceptionnels = array();
+}
+
+// recup de la liste de TOUS les users pour le RH
+// (prend en compte le resp direct, les groupes, le resp virtuel, etc ...)
+// renvoit une liste de login entre quotes et séparés par des virgules
+$tab_all_users_du_hr = \hr\Fonctions::recup_infos_all_users_du_hr($_SESSION['userlogin']);
+$tab_all_users_du_grand_resp = recup_infos_all_users_du_grand_resp($_SESSION['userlogin']);
+
+if ( (count($tab_all_users_du_hr)!=0) || (count($tab_all_users_du_grand_resp)!=0) ) {
+    /************************************************************/
+    /* SAISIE GLOBALE pour tous les utilisateurs du responsable */
+    $return .= affichage_saisie_globale_pour_tous($tab_type_cong);
+    $return .= '<br>';
+
+    /***********************************************************************/
+    /* SAISIE GROUPE pour tous les utilisateurs d'un groupe du responsable */
+    $return .= affichage_saisie_globale_groupe($tab_type_cong);
+    $return .= '<br>';
+
+    /************************************************************/
+    /* SAISIE USER PAR USER pour tous les utilisateurs du responsable */
+    $return .= affichage_saisie_user_par_user($tab_type_cong, $tab_type_conges_exceptionnels, $tab_all_users_du_hr, $tab_all_users_du_grand_resp);
+    $return .= '<br>';
+} else {
+    $return .= _('resp_etat_aucun_user') . '<br>';
+}
+
+require_once VIEW_PATH . 'HautResponsable/CreditConges.php';

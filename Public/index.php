@@ -11,6 +11,7 @@ $rewritten = [
     '/config/type_absence',
     '/hr/page_principale',
     '/hr/jours_chomes',
+    '/hr/ajout_conges',
     '/admin/db_sauve',
 ];
 
