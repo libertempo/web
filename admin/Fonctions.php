@@ -112,7 +112,7 @@ class Fonctions
     // RESTAURATION
     public static function choix_restaure()
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $return   = '';
 
         $return .= '<h1>' . _('admin_sauve_db_titre') . '</h1>';

@@ -10,7 +10,7 @@
         $home = 'utilisateur/user_index.php';
     }
     if('admin' === $_SESSION['userlogin']){
-        $home = 'admin/admin_index.php';
+        $home = 'admin/db_sauve';
     }
 
     //user mode
