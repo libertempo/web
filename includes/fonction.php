@@ -145,7 +145,7 @@ function bottom() {
     if ($last_use == '') {
         $last_use = debug_backtrace();
     }else
-        throw new Exception('Warning : Ne peux ouvrir deux header !!!');
+        throw new Exception('Warning : Ne peut ouvrir deux header !!!');
 
     include_once INCLUDE_PATH .'plugins.php';
     include_once TEMPLATE_PATH . $type_bottom .'_bottom.php';

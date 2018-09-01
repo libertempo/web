@@ -9,6 +9,7 @@ class Fonctions
 {
     public static function traite_all_demande_en_cours(array $tab_bt_radio, array $tab_text_refus) : string
     {
+
         $db = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($db);
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);

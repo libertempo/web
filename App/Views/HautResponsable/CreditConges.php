@@ -4,6 +4,9 @@
  * $tab_all_users_du_hr
  * $tab_all_users_du_grand_resp
  * $list_group
+ * $groupes
+ * $tab_type_cong
+ * $tab_type_conges_exceptionnels
  */
 ?>
 
@@ -81,7 +84,7 @@
         <input type="hidden" name="ajout_groupe" value="TRUE">
     </form>
     <br>
-    <? endif ; ?>
+<?php endif ; ?>
 
     <h2>Ajout par utilisateur</h2>
     <form action="<?= $PHP_SELF ?>?onglet=ajout_conges" method="POST">
@@ -138,4 +141,4 @@
         <input class="btn" type="submit" value="<?= _('form_submit') ?>">
     </form>
     <br>
-<? endif ; ?>
+<?php endif ; ?>
