@@ -307,7 +307,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             $return .= \App\ProtoControllers\HautResponsable\Utilisateur::getFormUserGroupes($formValue);
             $return .= '<hr>';
         }
-        
+
         $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
         $return .= ' <a class="btn btn-default" href="hr_index.php?onglet=page_principale">' . _('form_cancel') . '</a>';
         $return .= '</form>';
@@ -317,12 +317,12 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
 
     /**
      * formulaire de gestion des soldes d'un utilisateur
-     * 
+     *
      * @param array $data
      * @param int $userId
-     * 
-     * @return string 
-     * 
+     *
+     * @return string
+     *
      */
     private static function getFormUserSoldes($data, $userId)
     {
@@ -396,7 +396,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
 
     /**
      * Formulaire d'affectation aux groupes pour un nouvel utilisateur
-     * 
+     *
      * @param array $data
      * @return string
      */
@@ -453,7 +453,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
 
     /**
      * Formulaire de confirmation de suppression d'un utilisateur
-     * 
+     *
      * @param string $login
      * @return string
      */
@@ -466,7 +466,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $notice    = '';
 
         if (!empty($_POST)) {
-            $formValue = 
+            $formValue =
                     [
                         'login' => $_POST['new_login'],
                         '_METHOD' => $_POST['_METHOD'],
@@ -525,12 +525,12 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
 
     /**
      * Nettoyage des données postés par le formulaire
-     * 
-     * @param type $htmlPost
+     *
+     * @param array $htmlPost
      * @param \includes\SQL $sql
      * @param \App\Libraries\Configuration $config
-     * 
-     * @return type
+     *
+     * @return array
      */
     public static function dataForm2Array($htmlPost, \includes\SQL $sql, \App\Libraries\Configuration $config)
     {
@@ -559,8 +559,8 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             $data['pwd1'] = $htmlPost['new_password1'] == "" ? "" : md5($htmlPost['new_password1']);
             $data['pwd2'] = $htmlPost['new_password2'] == "" ? "" : md5($htmlPost['new_password2']);
         } else {
-            $data['pwd1'] = md5(uniqid('', true));
-            $data['pwd2'] = md5('none');
+            $data['pwd1'] = md5('none');
+            $data['pwd2'] = md5(uniqid('', true));
         }
 
         if (array_key_exists('_METHOD', $htmlPost)) {
@@ -616,7 +616,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             $errors[] = _('non autorisé');
             return $return;
         }
-        
+
         if (!empty($post['_METHOD'])) {
             switch ($post['_METHOD']) {
                 case 'DELETE':
@@ -648,12 +648,12 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
 
     /**
      * Controle la conformité du formulaire de création
-     * 
-     * @param aray $data
+     *
+     * @param array $data
      * @param array $errors
      * @param \includes\SQL $sql
      * @param \App\Libraries\Configuration $config
-     * 
+     *
      * @return boolean
      */
     private static function isFormInsertValide($data, &$errors, \includes\SQL $sql, \App\Libraries\Configuration $config)
@@ -677,7 +677,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
 
     /**
      * Controle la conformité du formulaire de mise à jour
-     * 
+     *
      * @param array $data
      * @param array $errors
      * @param \includes\SQL $sql
@@ -694,8 +694,8 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         }
 
         $groupesId = \App\ProtoControllers\Groupe::getListeId($sql);
-        if ('N' === $data['isResp'] 
-                && (\App\ProtoControllers\Groupe::isResponsableGroupe($data['login'], $groupesId, $sql) 
+        if ('N' === $data['isResp']
+                && (\App\ProtoControllers\Groupe::isResponsableGroupe($data['login'], $groupesId, $sql)
                 || \App\ProtoControllers\Groupe::isGrandResponsableGroupe($data['login'], $groupesId, $sql))) {
             $errors[] = _('Cette utilisateur est responsable d\'au moins un groupe');
             $return = false;
@@ -713,7 +713,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
 
     /**
      * Controle la conformité du formulaire (création et mise à jour)
-     * 
+     *
      * @param array $data
      * @param array $errors
      * @param \includes\SQL $sql
@@ -787,10 +787,10 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
 
     /**
      * Supprime un utilisateur
-     * 
+     *
      * @param string $user
      * @param array $errors
-     * 
+     *
      * @return boolean
      */
     private static function deleteUtilisateur($user, &$errors)
@@ -837,10 +837,10 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
 
     /**
      * Controle la possibilité de supprimer un utilisateur
-     * 
+     *
      * @param string $user
      * @param \includes\SQL $sql
-     * 
+     *
      * @return boolean
      */
     public static function isDeletable($user, \includes\SQL $sql)
@@ -857,7 +857,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
 
     /**
      * Création d'un nouvel utilisateur
-     * 
+     *
      * @param array $data
      * @param array $errors
      * @return boolean
@@ -880,7 +880,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         if ($insertInfos && $insertSoldes && $insertGroupes) {
             return $sql->getPdoObj()->commit();
         }
-        
+
         $sql->getPdoObj()->rollback();
         return false;
     }
@@ -888,14 +888,14 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
     private static function insertInfosUtilisateur($data, \includes\SQL $sql)
     {
         $req = "INSERT INTO conges_users SET
-                    u_login='" . $data['login'] . "', 
-                    u_nom='" . $data['nom'] . "', 
-                    u_prenom='" . $data['prenom'] . "', 
-                    u_is_resp='" . $data['isResp'] . "', 
-                    u_is_admin='" . $data['isAdmin'] . "', 
-                    planning_id = 0, 
+                    u_login='" . $data['login'] . "',
+                    u_nom='" . $data['nom'] . "',
+                    u_prenom='" . $data['prenom'] . "',
+                    u_is_resp='" . $data['isResp'] . "',
+                    u_is_admin='" . $data['isAdmin'] . "',
+                    planning_id = 0,
                     u_is_hr='" . $data['isHR'] . "',
-                    u_passwd='" . $data['pwd1'] . "', 
+                    u_passwd='" . $data['pwd1'] . "',
                     u_quotite=" . $data['quotite'] . ",
                     u_email = '" . $data['email'] . "',
                     u_heure_solde=" . \App\Helpers\Formatter::hour2Time($data['soldeHeure']) . ",
@@ -912,8 +912,8 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         foreach ($typeAbsencesConges as $typeId => $info) {
             $valuesStd[] = "('" . $data['login'] . "' ,"
                                 . $typeId . ", "
-                                . $data['joursAn'][$typeId] . ", " 
-                                . $data['soldes'][$typeId] . ", " 
+                                . $data['joursAn'][$typeId] . ", "
+                                . $data['soldes'][$typeId] . ", "
                                 . $data['reliquats'][$typeId] . ")" ;
         }
         $req = "INSERT INTO conges_solde_user (su_login, su_abs_id, su_nb_an, su_solde, su_reliquat) VALUES " . implode(",", $valuesStd);
@@ -922,8 +922,8 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         if ($config->isCongesExceptionnelsActive()) {
             $typeAbsencesExceptionnels = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges_exceptionnels');
             foreach ($typeAbsencesExceptionnels as $typeId => $info) {
-                $valuesExc[] = "('" . $data['login'] . "' ," 
-                                    . $typeId . ", 0, " 
+                $valuesExc[] = "('" . $data['login'] . "' ,"
+                                    . $typeId . ", 0, "
                                     . $data['soldes'][$typeId] . ", 0)" ;
 
             }
@@ -946,7 +946,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
 
     /**
      * Mise à jour d'un utilisateur
-     * 
+     *
      * @param array $data
      * @param array $errors
      * @return boolean
@@ -983,10 +983,10 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
 
     private static function updateInfosUtilisateur($data, \includes\SQL $sql)
     {
-        $req = 'UPDATE conges_users 
+        $req = 'UPDATE conges_users
                 SET u_nom="' . $data['nom'] . '",
-                    u_prenom="' . $data['prenom'] . '", 
-                    u_is_resp="' . $data['isResp'] . '", 
+                    u_prenom="' . $data['prenom'] . '",
+                    u_is_resp="' . $data['isResp'] . '",
                     u_heure_solde='. \App\Helpers\Formatter::hour2Time($data['soldeHeure']) . ',
                     u_is_admin="' . $data['isAdmin'] . '",
                     u_is_hr="' . $data['isHR'] . '",
@@ -1001,10 +1001,10 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $config = new \App\Libraries\Configuration($sql);
         $typeAbsencesConges = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges');
         foreach ($typeAbsencesConges as $typeId => $info) {
-            $valuesStd[] = '(\'' . $data['joursAn'][$typeId] . '\', \'' 
-                                . $data['soldes'][$typeId] . '\', \'' 
-                                . $data['reliquats'][$typeId] . '\', "' 
-                                . $data['oldLogin'] . '", ' 
+            $valuesStd[] = '(\'' . $data['joursAn'][$typeId] . '\', \''
+                                . $data['soldes'][$typeId] . '\', \''
+                                . $data['reliquats'][$typeId] . '\', "'
+                                . $data['oldLogin'] . '", '
                                 . (int) $typeId . ')';
         }
         $req = 'REPLACE INTO conges_solde_user (su_nb_an, su_solde, su_reliquat, su_login, su_abs_id) VALUES ' . implode(",", $valuesStd);
@@ -1014,67 +1014,67 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         if ($config->isCongesExceptionnelsActive()) {
             $typeAbsencesExceptionnels = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges_exceptionnels');
             foreach ($typeAbsencesExceptionnels as $typeId => $info) {
-                $valuesExc[] = '(0, \'' 
-                                . $data['soldes'][$typeId] . '\', 0, "' 
-                                . $data['oldLogin'] . '", ' 
+                $valuesExc[] = '(0, \''
+                                . $data['soldes'][$typeId] . '\', 0, "'
+                                . $data['oldLogin'] . '", '
                                 . (int) $typeId . ')';
             }
             $req = 'REPLACE INTO conges_solde_user (su_nb_an, su_solde, su_reliquat, su_login, su_abs_id) VALUES ' . implode(",", $valuesExc);
             $returnExc = $sql->query($req);
         }
-        
+
         return $returnStd && $returnExc;
     }
 
     private static function updateLoginUtilisateur($data, \includes\SQL $sql)
     {
-        $req = 'UPDATE conges_echange_rtt 
+        $req = 'UPDATE conges_echange_rtt
                 SET e_login="' . $data['login'] . '"
                 WHERE e_login="' . $data['oldLogin'] . '" ';
         $sql->query($req);
 
         // update table edition_papier
-        $req = 'UPDATE conges_edition_papier 
-                SET ep_login="' . $data['login'] . '" 
+        $req = 'UPDATE conges_edition_papier
+                SET ep_login="' . $data['login'] . '"
                 WHERE ep_login="' . $data['oldLogin'] . '" ';
         $sql->query($req);
 
         // update table groupe_grd_resp
-        $req = 'UPDATE conges_groupe_grd_resp 
+        $req = 'UPDATE conges_groupe_grd_resp
                 SET ggr_login= "' . $data['login'] . '"
                 WHERE ggr_login="' . $data['oldLogin'] . '"  ';
         $sql->query($req);
 
         // update table groupe_resp
-        $req = 'UPDATE conges_groupe_resp 
-                SET gr_login="' . $data['login'] . '" 
+        $req = 'UPDATE conges_groupe_resp
+                SET gr_login="' . $data['login'] . '"
                 WHERE gr_login="' . $data['oldLogin'] . '" ';
         $sql->query($req);
 
         // update table conges_groupe_users
-        $req = 'UPDATE conges_groupe_users 
-                SET gu_login="' . $data['login'] . '" 
+        $req = 'UPDATE conges_groupe_users
+                SET gu_login="' . $data['login'] . '"
                 WHERE gu_login="' . $data['oldLogin'] . '" ';
         $sql->query($req);
 
         // update table periode
-        $req = 'UPDATE conges_periode 
-                SET p_login="' . $data['login'] . '" 
+        $req = 'UPDATE conges_periode
+                SET p_login="' . $data['login'] . '"
                 WHERE p_login="' . $data['oldLogin'] . '" ';
         $sql->query($req);
 
         $req = 'UPDATE conges_solde_user
-                SET su_login="' . $data['login'] . '" 
+                SET su_login="' . $data['login'] . '"
                 WHERE su_login="' . $data['oldLogin'] . '" ' ;
         $sql->query($req);
 
         $req = 'UPDATE heure_additionnelle
-                SET login="' . $data['login'] . '" 
+                SET login="' . $data['login'] . '"
                 WHERE login="' . $data['oldLogin'] . '" ' ;
         $sql->query($req);
 
         $req = 'UPDATE heure_repos
-                SET login="' . $data['login'] . '" 
+                SET login="' . $data['login'] . '"
                 WHERE login="' . $data['oldLogin'] . '" ' ;
         $sql->query($req);
 
@@ -1087,16 +1087,16 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
 
     private static function updateEmailUtilisateur($data, \includes\SQL $sql)
     {
-        $req = 'UPDATE conges_users 
-                SET u_email = "'. $data['email'] . '" 
+        $req = 'UPDATE conges_users
+                SET u_email = "'. $data['email'] . '"
                 WHERE u_login="' . $data['oldLogin'] . '"' ;
         return $sql->query($req);
     }
 
     private static function updatePasswordUtilisateur($data, \includes\SQL $sql)
     {
-        $req = 'UPDATE conges_users 
-                SET u_passwd = "' . $data['pwd1'] . '" 
+        $req = 'UPDATE conges_users
+                SET u_passwd = "' . $data['pwd1'] . '"
                 WHERE u_login="' . $data['oldLogin'] . '"' ;
         return $sql->query($req);
     }
