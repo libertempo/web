@@ -49,7 +49,7 @@ class Ldap
     private function getInfosUser($nom)
     {
         $data = [];
-        $filter = "(&(" . $this->configuration['attrNomAff'] . "=" . $nom . "*)
+        $filter = "(&(" . $this->configuration['attrNomAff'] . "=*" . $nom . "*)
                     (" . $this->configuration['attrFiltre'] . "=" . $this->configuration['filtre'] . "))";
 
         $attributs = [$this->configuration['attrLogin'], $this->configuration['attrNom'], $this->configuration['attrPrenom']];
