@@ -9,6 +9,12 @@ define('API_SYSPATH', ROOT_PATH . 'vendor' . DS . 'Libertempo' . DS . 'libertemp
 
 function createHR(\includes\SQL $db, array $data) : bool
 {
+
+    $data['login'] = $db->escape_string($data['login']);
+    $data['nom'] = $db->escape_string($data['nom']);
+    $data['prenom'] = $db->escape_string($data['prenom']);
+    $data['email'] = $db->escape_string($data['email']);
+
     $db->query('INSERT INTO conges_users 
                 (u_login, u_nom, u_prenom, u_is_resp, u_is_admin, u_is_hr, u_is_active, u_passwd, u_email) 
                 VALUES ("' . $data['login'] . '", "' . $data['nom'] . '", "' . $data['prenom'] . '", "N", "Y", "Y", "Y", "' . $data['password'] . '", "' . $data['email'] . '");
@@ -27,10 +33,12 @@ function existUser(\includes\SQL $db, string $login) : bool
 
 
 display('Création du haut responsable...');
-display('Contrôles généraux…');
+display('Contrôles généraux...');
 if (!\includes\SQL::existsDatabase($mysql_database)) {
     displayFail();
 }
+
+$db = \includes\SQL::singleton();
 
 $data['login'] = $argv[1] ?? null;
 $data['nom'] = $argv[2] ?? null;
@@ -84,7 +92,7 @@ if (null == $data['password']) {
 }
 
 display('Contrôle d\'unicité de l\'identifiant...');
-$db = \includes\SQL::singleton();
+
 if (existUser($db, $data['login'])) {
     displayError('identifiant déjà existant!');
 }
