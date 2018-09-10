@@ -1526,7 +1526,7 @@ function recup_infos_all_users_du_grand_resp($login)
     return $tab ;
 }
 
-// execute sequentiellement les requètes d'un fichier .sql
+// execute sequentiellement les requêtes d'un fichier .sql
 function execute_sql_file($file) : bool
 {
     // lecture du fichier SQL

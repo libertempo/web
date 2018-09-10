@@ -371,11 +371,23 @@ class Fonctions
             $erreur=TRUE;
         }
 
+        // vérif unicité du libellé court
+        $sql = \includes\SQL::singleton();
+        $config = new \App\Libraries\Configuration($sql);
+        $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
+        $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
+        $absenceTypes = $api->get('absence/type', $_SESSION['token'])['data'];
+        $absenceWithLibelle = array_filter($absenceTypes, function (array $type) use ($tab_new_values) {
+            return $tab_new_values['short_libelle'] === $type['libelleCourt'];
+        });
+        if (!empty($absenceWithLibelle)) {
+            $return .= '<br>' . _('config_abs_saisie_not_ok') . ' : ' . _('libelle_court_existant') . '<br>';
+            $erreur = true;
+        }
 
         if($erreur) {
             $return .= '<br>';
             $return .= '<form action="' . $URL . '" method="POST">';
-            $return .= '<input type="hidden" name="id_to_update" value="' . $id_to_update . '">';
             $return .= '<input type="hidden" name="tab_new_values[libelle]" value="' . $tab_new_values['libelle']. '">';
             $return .= '<input type="hidden" name="tab_new_values[short_libelle]" value="' . $tab_new_values['short_libelle'] . '">';
             $return .= '<input type="hidden" name="tab_new_values[type]" value="' . $tab_new_values['type'] . '">';
@@ -384,8 +396,8 @@ class Fonctions
             $return .= '<br><br>';
         } else {
             // ajout dans la table conges_type_absence
-            $req_insert1="INSERT INTO conges_type_absence (ta_libelle, ta_short_libelle, ta_type) " .
-                "VALUES ('".$tab_new_values['libelle']."', '".$tab_new_values['short_libelle']."', '".$tab_new_values['type']."') ";
+            $req_insert1="INSERT INTO conges_type_absence (ta_libelle, ta_short_libelle, ta_type, type_natif) " .
+                "VALUES ('".$tab_new_values['libelle']."', '".$tab_new_values['short_libelle']."', '".$tab_new_values['type']."', 0) ";
             \includes\SQL::query($req_insert1);
 
             // on recup l'id de l'absence qu'on vient de créer
@@ -453,12 +465,28 @@ class Fonctions
         //requête qui récupère les informations de la table conges_periode
         $sql1 = 'SELECT p_num FROM conges_periode WHERE p_type="'. \includes\SQL::quote($id_to_update).'"';
         $ReqLog1 = \includes\SQL::query($sql1);
+        $withErreur = false;
 
-        $count= ($ReqLog1->num_rows) ;
+        if (0 !== $ReqLog1->num_rows) {
+            $raison = _('config_abs_already_used');
+            $withErreur = true;
+        }
 
-        if( $count!=0 ) {
+        $sql = \includes\SQL::singleton();
+        $config = new \App\Libraries\Configuration($sql);
+        $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
+        $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
+        $absenceType = $api->get('absence/type/' . $id_to_update, $_SESSION['token'])['data'];
+
+        // @TODO 2018-09-08 : avance de phase pour l'API. À enlever quand l'API sera consommée
+        if (isset($absenceType['typeNatif']) && $absenceType['typeNatif']) {
+            $raison = _('config_abs_type_natif');
+            $withErreur = true;
+        }
+
+        if ($withErreur) {
             $return .= '<center>';
-            $return .= '<br>' . _('config_abs_suppr_impossible') . '<br>' . _('config_abs_already_used') . '<br>';
+            $return .= '<br>' . _('config_abs_suppr_impossible') . '<br>' . $raison . '<br>';
 
             $return .= '<br>';
             $return .= '<form action="' . $URL . '" method="POST">';
@@ -511,6 +539,33 @@ class Fonctions
             $erreur=TRUE;
         }
 
+        $sql = \includes\SQL::singleton();
+        $config = new \App\Libraries\Configuration($sql);
+        $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
+        $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
+        $absenceTypes = $api->get('absence/type/', $_SESSION['token'])['data'];
+
+        $absence = [];
+        $absenceWithLibelle = [];
+        foreach ($absenceTypes as $at) {
+            if ($at['id'] === $id_to_update) {
+                $absence = $at;
+            }
+            if ($tab_new_values['short_libelle'] === $at['libelleCourt'] && $at['id'] !== $id_to_update) {
+                $absenceWithLibelle[] = $at;
+            }
+        }
+        if (!empty($absenceWithLibelle)) {
+            $return .= '<br>' . _('config_abs_saisie_not_ok') . ' : ' . _('libelle_court_existant') . '<br>';
+            $erreur = true;
+        }
+
+        // @TODO 2018-09-08 : avance de phase pour l'API. À enlever quand l'API sera consommée
+        if (isset($absence['typeNatif']) && $absence['typeNatif']) {
+            $return .= '<br>' . _('config_abs_saisie_not_ok') . ' : ' . _('config_abs_type_natif') . '<br>';
+            $erreur = true;
+        }
+
         if($erreur) {
             $return .= '<br>';
             $return .= '<form action="' . $PHP_SELF . '" method="POST">';
@@ -547,22 +602,17 @@ class Fonctions
         $return .= '<br><center><H1>' . _('config_abs_titre') . '</H1></center>';
         $return .= '<br>';
 
-        // recup des infos du type de conges / absences
-        $sql_cong='SELECT ta_type, ta_libelle, ta_short_libelle FROM conges_type_absence WHERE ta_id = '. \includes\SQL::quote($id_to_update);
-
-        $ReqLog_cong = \includes\SQL::query($sql_cong);
-
-        if($resultat_cong = $ReqLog_cong->fetch_array()) {
-            $sql_type=$resultat_cong['ta_type'];
-            $sql_libelle= $resultat_cong['ta_libelle'];
-            $sql_short_libelle= $resultat_cong['ta_short_libelle'];
-        }
+        $sql = \includes\SQL::singleton();
+        $config = new \App\Libraries\Configuration($sql);
+        $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
+        $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
+        $absenceType = $api->get('absence/type/' . $id_to_update, $_SESSION['token'])['data'];
 
         // mise en place du formulaire
         $return .= '<form action="' . $URL . '" method="POST">';
 
-        $text_libelle ="<input class=\"form-control\" type=\"text\" name=\"tab_new_values[libelle]\" size=\"20\" maxlength=\"20\" value=\"$sql_libelle\" >";
-        $text_short_libelle ="<input class=\"form-control\" type=\"text\" name=\"tab_new_values[short_libelle]\" size=\"3\" maxlength=\"3\" value=\"$sql_short_libelle\" >";
+        $text_libelle = '<input class="form-control" type="text" name="tab_new_values[libelle]" size="20" maxlength="20" value="' . $absenceType['libelle'] . '" >';
+        $text_short_libelle = '<input class="form-control" type="text" name="tab_new_values[short_libelle]" size="3" maxlength="3" value="' . $absenceType['libelleCourt'] . '" >';
 
         // affichage
         $table = new \App\Libraries\Structure\Table();
@@ -573,7 +623,7 @@ class Fonctions
         $childTable .= '<td><b><u>' . _('config_abs_libelle_short') . '</b></u></td>';
         $childTable .= '<td>' . _('divers_type') . '</td>';
         $childTable .= '</tr>';
-        $childTable .= '<tr><td><b>' . $sql_libelle . '</b></td><td>' . $sql_short_libelle . '</td><td>' . $sql_type . '</td></tr>';
+        $childTable .= '<tr><td><b>' . $absenceType['libelle'] . '</b></td><td>' . $absenceType['libelleCourt'] . '</td><td>' . $absenceType['type'] . '</td></tr>';
         $childTable .= '<tr><td><b>' . $text_libelle . '</b></td><td>' . $text_short_libelle . '</td><td></td></tr>';
         $table->addChild($childTable);
 

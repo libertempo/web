@@ -114,7 +114,7 @@ final class ApiClient
      * @param array $options Options de requête
      * @example ['headers' => [], 'body' => []]
      *
-     * @return \stdClass Au format Jsend
+     * @return array Au format Jsend
      * @throws \LogicException Si la requête est mal formée (Http4XX)
      */
     private function request($method, $uri, array $options)
