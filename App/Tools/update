@@ -56,7 +56,19 @@ function setInstalledVersion(\includes\SQL $db, $versionCode) : bool
     $db->query($req);
 
     return 0 < $db->affected_rows;
+}
 
+function hasOldAPIOnly()
+{
+    return is_file(OLD_API_SYSPATH . 'configuration.json') && !is_file(API_SYSPATH . 'configuration.json');
+}
+
+function copyAPIConfiguration()
+{
+    $config = 'configuration.json';
+    if (!copy(OLD_API_SYSPATH . $config, API_SYSPATH . $config)) {
+        displayError('Impossible de copier la configuration API');
+    }
 }
 
 display('Mise à jour…');
@@ -80,6 +92,10 @@ try {
     displayFail();
 }
 
+display('Mise à jour de l\'API…');
+if (hasOldAPIOnly()) {
+    copyAPIConfiguration();
+}
 
 display('Application des nouveaux patches…');
 list($major, $minor, $patch) = explode('.', executePatchs($versionDerniereMAJ));
