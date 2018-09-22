@@ -30,25 +30,6 @@ function nameInstance(\includes\SQL $db, string $name) : bool
 }
 
 /**
- * Définit les données de configuration pour l'API
- *
- * @param array $data Données de configuration
- */
-function setDataConfigurationApi(string $server, string $base, string $user, string $password) : bool
-{
-    $data = [
-        'db' => [
-            'serveur' => $server,
-            'base' => $base,
-            'utilisateur' => $user,
-            'mot_de_passe' => $password,
-        ],
-    ];
-
-    return file_put_contents(API_SYSPATH . 'configuration.json', json_encode($data));
-}
-
-/**
  * Execute le fichier de patch d'installation et retourne sa version
  */
 function executePatch() : string
@@ -93,11 +74,6 @@ if(!setLastMaj($db, $versionMaj)) {
 
 display('Nommage de l\'instance…');
 if (!nameInstance($db, $instanceName)) {
-    displayFail();
-}
-
-display('Configuration de l\'API');
-if (!setDataConfigurationApi($mysql_serveur, $mysql_database, $mysql_user, $mysql_pass)) {
     displayFail();
 }
 

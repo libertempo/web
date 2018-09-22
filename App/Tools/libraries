@@ -42,10 +42,6 @@ function setLastMaj(\includes\SQL $db, string $versionLastMaj) : bool
 {
     $req = 'UPDATE `conges_appli` SET appli_valeur = "' . $versionLastMaj . '" WHERE appli_variable = "version_last_maj" LIMIT 1';
     $db->query($req);
-    // @TODO: Compat with <1.12 versions
-    if ($db->affected_rows > 0) {
-        return true;
-    }
     return 0 < file_put_contents('/tmp/lt-last-version', $versionLastMaj);
 }
 

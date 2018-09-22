@@ -58,17 +58,23 @@ function setInstalledVersion(\includes\SQL $db, $versionCode) : bool
     return 0 < $db->affected_rows;
 }
 
-function hasOldAPIOnly()
+/**
+ * Définit les données de configuration pour l'API
+ *
+ * @param array $data Données de configuration
+ */
+function setDataConfigurationApi(string $server, string $base, string $user, string $password) : bool
 {
-    return is_file(OLD_API_SYSPATH . 'configuration.json') && !is_file(API_SYSPATH . 'configuration.json');
-}
+    $data = [
+        'db' => [
+            'serveur' => $server,
+            'base' => $base,
+            'utilisateur' => $user,
+            'mot_de_passe' => $password,
+        ],
+    ];
 
-function copyAPIConfiguration()
-{
-    $config = 'configuration.json';
-    if (!copy(OLD_API_SYSPATH . $config, API_SYSPATH . $config)) {
-        displayError('Impossible de copier la configuration API');
-    }
+    return file_put_contents(API_SYSPATH . 'configuration.json', json_encode($data));
 }
 
 display('Mise à jour…');
@@ -92,9 +98,9 @@ try {
     displayFail();
 }
 
-display('Mise à jour de l\'API…');
-if (hasOldAPIOnly()) {
-    copyAPIConfiguration();
+display('Configuration de l\'API');
+if (!setDataConfigurationApi($mysql_serveur, $mysql_database, $mysql_user, $mysql_pass)) {
+    displayFail();
 }
 
 display('Application des nouveaux patches…');
