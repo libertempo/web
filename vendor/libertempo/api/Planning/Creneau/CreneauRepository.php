@@ -18,7 +18,7 @@ class CreneauRepository extends \LibertAPI\Tools\Libraries\ARepository
     /**
      * @inheritDoc
      */
-    public function getOne(int $id) : AEntite
+    public function getOne($id) : AEntite
     {
         throw new \RuntimeException('#' . $id . ' is not a callable resource');
     }
@@ -66,14 +66,13 @@ class CreneauRepository extends \LibertAPI\Tools\Libraries\ARepository
      * @throws MissingArgumentException Si un élément requis n'est pas présent
      * @throws \DomainException Si un élément de la ressource n'est pas dans le bon domaine de définition
      */
-    public function postList(array $data, AEntite $entite) : array
+    public function postList(array $data) : array
     {
         $postIds = [];
         $this->beginTransaction();
         foreach ($data as $creneau) {
             try {
-                $cloneEntite = clone $entite;
-                $postIds[] = $this->postOne($creneau, $cloneEntite);
+                $postIds[] = $this->postOne($creneau);
             } catch (\Exception $e) {
                 $this->rollback();
                 throw $e;
@@ -158,7 +157,7 @@ class CreneauRepository extends \LibertAPI\Tools\Libraries\ARepository
     /**
      * @inheritDoc
      */
-    public function deleteOne(AEntite $entite) : int
+    public function deleteOne(int $id) : int
     {
         throw new \RuntimeException('Action is forbidden');
     }

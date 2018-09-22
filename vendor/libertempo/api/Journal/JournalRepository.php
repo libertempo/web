@@ -17,7 +17,7 @@ class JournalRepository extends \LibertAPI\Tools\Libraries\ARepository
     /**
      * @inheritDoc
      */
-    public function getOne(int $id) : AEntite
+    public function getOne($id) : AEntite
     {
         throw new \RuntimeException('#' . $id . ' is not a callable resource');
     }
@@ -55,7 +55,7 @@ class JournalRepository extends \LibertAPI\Tools\Libraries\ARepository
     /**
      * @inheritDoc
      */
-    public function postOne(array $data, AEntite $entite) : int
+    public function postOne(array $data) : int
     {
         throw new \RuntimeException('Action is forbidden');
     }
@@ -63,7 +63,7 @@ class JournalRepository extends \LibertAPI\Tools\Libraries\ARepository
     /**
      * @inheritDoc
      */
-    public function putOne(AEntite $entite)
+    public function putOne($id, array $data) : AEntite
     {
         throw new \RuntimeException('Action is forbidden');
     }
@@ -95,7 +95,7 @@ class JournalRepository extends \LibertAPI\Tools\Libraries\ARepository
     /**
      * @inheritDoc
      */
-    public function deleteOne(AEntite $entite) : int
+    public function deleteOne(int $id) : int
     {
         throw new \RuntimeException('Action is forbidden');
     }

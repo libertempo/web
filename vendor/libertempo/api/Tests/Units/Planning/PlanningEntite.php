@@ -22,7 +22,7 @@ final class PlanningEntite extends \LibertAPI\Tests\Units\Tools\Libraries\AEntit
         $name = 'name';
         $status = 4;
 
-        $entite = new _Entite(['id' => $id, 'name' => 'name', 'status' => $status]);
+        $entite = new _Entite(['id' => $id, 'name' => $name, 'status' => $status]);
 
         $this->assertConstructWithId($entite, $id);
         $this->string($entite->getName())->isIdenticalTo($name);

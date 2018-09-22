@@ -3,6 +3,7 @@ namespace LibertAPI\Tools\Libraries;
 
 use Doctrine\DBAL\Driver;
 use Doctrine\DBAL\Query\QueryBuilder;
+use \LibertAPI\Tools\Exceptions\UnknownResourceException;
 
 /**
  * Garant de la cohérence métier de l'entité en relation.
@@ -39,12 +40,12 @@ abstract class ARepository
     /**
      * Retourne une ressource unique
      *
-     * @param int $id Id potentiel de ressource
+     * @param int $id Id potentiel de ressource (Ne peut pas être typecasté tant que utilisateur n'a pas d'id, ou que php7.2 n'est pas activé)
      *
      * @return AEntite
-     * @throws \DomainException Si $id n'est pas dans le domaine de définition
+     * @throws UnknownResourceException Si $id n'est pas dans le domaine de définition
      */
-    public function getOne(int $id) : AEntite
+    public function getOne($id) : AEntite
     {
         $this->queryBuilder->select('*');
         $this->setWhere(['id' => $id]);
@@ -52,7 +53,7 @@ abstract class ARepository
 
         $data = $res->fetch(\PDO::FETCH_ASSOC);
         if (empty($data)) {
-            throw new \DomainException('#' . $id . ' is not a valid resource');
+            throw new UnknownResourceException('#' . $id . ' is not a valid resource');
         }
 
         $entiteClass = $this->getEntiteClass();
@@ -118,12 +119,13 @@ abstract class ARepository
      * Poste une ressource unique
      *
      * @param array $data Données à poster
-     * @param AEntite $entite [Vide par définition]
      *
      * @return int Id de la ressource nouvellement insérée
      */
-    public function postOne(array $data, AEntite $entite) : int
+    public function postOne(array $data) : int
     {
+        $entiteClass = $this->getEntiteClass();
+        $entite = new $entiteClass([]);
         $entite->populate($data);
         $this->queryBuilder->insert($this->getTableName());
         $this->setValues($this->getEntite2Storage($entite));
@@ -142,15 +144,22 @@ abstract class ARepository
     /**
      * Met à jour une ressource unique
      *
-     * @param AEntite $entite mise à jour
+     * @param int $id ID de la ressource (Ne peut pas être typecasté tant que utilisateur n'a pas d'id, ou que php7.2 n'est pas activé)
+     * @param array $data Données à mettre à jour
+     *
+     * @returns AEntite Une entité résultante de l'opération
      */
-    public function putOne(AEntite $entite)
+    public function putOne($id, array $data) : AEntite
     {
+        $entite = $this->getOne($id);
+        $entite->populate($data);
         $this->queryBuilder->update($this->getTableName());
         $this->setSet($this->getEntite2Storage($entite));
         $this->setWhere(['id', $entite->getId()]);
 
         $this->queryBuilder->execute();
+
+        return $entite;
     }
 
     abstract protected function setSet(array $parametres);
@@ -177,8 +186,9 @@ abstract class ARepository
      *
      * @param AEntite $entite
      */
-    public function deleteOne(AEntite $entite) : int
+    public function deleteOne(int $id) : int
     {
+        $entite = $this->getOne($id);
         $this->queryBuilder->delete($this->getTableName());
         $this->setWhere(['id' => $entite->getId()]);
         $res = $this->queryBuilder->execute();

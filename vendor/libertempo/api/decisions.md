@@ -1,3 +1,10 @@
+## 2018-06-07
+* J'ai désormais appliqué le paradigme « package by components » attendu que le « package by feature » soulevait des embûches. En effet, le contrôleur ne fait pas parti d'un composant, il est un moyen d'accès vers lui ; je l'ai donc déplacé dans `Tools`. À l'exception des répertoires d'utilitaires, nous aurons ainsi une vision claire des objectifs du logiciel du premier coup d'œil et une place toute trouvée pour les structures applicatives relatives au différents métiers du soft.
+* Un framework d'injection de dépendances a également fait son entrée. Il nous aidera à supprimer tout un pan de verbosité, facilite le test et nous permettra d'exprimer le plus précisément possible les interactions entre les structures applicatives.
+* Le problème des relations N-N n'en est pas encore un. Pour le moment, j'ai créé des entités pour les représentants de ces associations que l'on utilisera côté client. Si besoin il y a, nous créerons des Aggrégats.
+
+~ Prytoegrian
+
 ## 2018-02-17
 * Dans le processus d'écriture de routes pour l'API, la table `conges_groupe_resp` fait apparaître une relation N-N ; problème, rien est encore fait dans ce sens et le [« package par feature »](http://www.codingthearchitecture.com/2015/03/08/package_by_component_and_architecturally_aligned_testing.html) nous ennuie un peu. Suivant la règle de 3 et le principe selon lequel on doit repousser les décisions importantes plus tard, je vise la simplicité et manipule l'entité « Utilisateur/UtilisateurEntite » suite à la requête. Quand nous en saurons plus on changera.
 

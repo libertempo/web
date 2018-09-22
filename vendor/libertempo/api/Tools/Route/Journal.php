@@ -1,4 +1,7 @@
 <?php declare(strict_types = 1);
+
+use LibertAPI\Tools\Controllers\JournalController;
+
 /*
  * Doit être importé après la création de $app. Ne créé rien.
  *
@@ -11,5 +14,5 @@
 /* Routes sur le journal */
 $app->group('/journal', function () {
     /* Collection */
-    $this->get('', 'controller:get')->setName('getJournalListe');
+    $this->get('', [JournalController::class, 'get'])->setName('getJournalListe');
 });

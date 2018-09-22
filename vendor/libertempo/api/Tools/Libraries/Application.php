@@ -11,7 +11,6 @@ use Doctrine\DBAL\Driver\Connection;
  *
  * @since 0.2
  *
- * Ne devrait être contacté que par AControllerFactory
  * Ne devrait contacter personne
  */
 class Application

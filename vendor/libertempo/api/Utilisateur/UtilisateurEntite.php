@@ -13,7 +13,7 @@ use LibertAPI\Tools\Helpers\Formatter;
  * @since 0.2
  * @see \LibertAPI\Tests\Units\Utilisateur\Entite
  *
- * Ne devrait être contacté que par le UtilisateurRepository et Groupe\Responsable\ResponsableRepository
+ * Ne devrait être contacté que par le UtilisateurRepository
  * Ne devrait contacter personne
  */
 class UtilisateurEntite extends \LibertAPI\Tools\Libraries\AEntite
@@ -108,8 +108,9 @@ class UtilisateurEntite extends \LibertAPI\Tools\Libraries\AEntite
      */
     public function populate(array $data)
     {
-        if (!$this->hasAllRequired($data)) {
-            throw new MissingArgumentException('');
+        $erreurs = $this->getErreurs();
+        if (!empty($erreurs)) {
+            throw new \DomainException(json_encode($erreurs));
         }
     }
 
@@ -147,6 +148,11 @@ class UtilisateurEntite extends \LibertAPI\Tools\Libraries\AEntite
         }
 
         $this->dataUpdated['token'] = $token;
+    }
+
+    public function getData()
+    {
+        return $this->dataUpdated;
     }
 
     /**

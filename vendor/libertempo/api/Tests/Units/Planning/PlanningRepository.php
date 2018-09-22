@@ -19,4 +19,12 @@ final class PlanningRepository extends \LibertAPI\Tests\Units\Tools\Libraries\AR
             'status' => 59,
         ];
     }
+
+    protected function getConsumerContent() : array
+    {
+        return [
+            'name' => 'Pomme',
+            'status' => 'green',
+        ];
+    }
 }
