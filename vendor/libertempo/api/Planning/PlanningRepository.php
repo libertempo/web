@@ -84,7 +84,7 @@ class PlanningRepository extends \LibertAPI\Tools\Libraries\ARepository
      */
     final protected function setWhere(array $parametres)
     {
-        if (!empty($parametres['id'])) {
+        if (array_key_exists('id', $parametres)) {
             $this->queryBuilder->andWhere('planning_id = :id');
             $this->queryBuilder->setParameter(':id', $parametres['id']);
         }

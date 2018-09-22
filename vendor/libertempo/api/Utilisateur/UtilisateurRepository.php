@@ -74,9 +74,14 @@ class UtilisateurRepository extends \LibertAPI\Tools\Libraries\ARepository
      */
     public function getList(array $parametres) : array
     {
+        // @TODO: supprimer cette ligne quand on passera à DBAL > 2.6 : https://github.com/doctrine/dbal/commit/e937f37a8acc117047ff4ed9aec493a1e3de2195
+        $this->queryBuilder->resetQueryParts();
         $this->queryBuilder->select('*, u_login AS id');
+<<<<<<< HEAD
         // @TODO: supprimer cette ligne quand on passera à DBAL > 2.6 : https://github.com/doctrine/dbal/commit/e937f37a8acc117047ff4ed9aec493a1e3de2195
         $this->queryBuilder->resetQueryPart('from');
+=======
+>>>>>>> Update API version
         $this->queryBuilder->from($this->getTableName(), 'current');
         $this->setWhere($this->getParamsConsumer2Storage($parametres));
         $res = $this->queryBuilder->execute();
@@ -125,16 +130,16 @@ class UtilisateurRepository extends \LibertAPI\Tools\Libraries\ARepository
     final protected function getParamsConsumer2Storage(array $paramsConsumer) : array
     {
         $results = [];
-        if (!empty($paramsConsumer['login'])) {
+        if (array_key_exists('login', $paramsConsumer)) {
             $results['u_login'] = (string) $paramsConsumer['login'];
         }
-        if (!empty($paramsConsumer['token'])) {
+        if (array_key_exists('token', $paramsConsumer)) {
             $results['token'] = (string) $paramsConsumer['token'];
         }
-        if (!empty($paramsConsumer['gt_date_last_access'])) {
+        if (array_key_exists('gt_date_last_access', $paramsConsumer)) {
             $results['gt_date_last_access'] = (string) $paramsConsumer['gt_date_last_access'];
         }
-        if (!empty($paramsConsumer['isActif'])) {
+        if (array_key_exists('isActif', $paramsConsumer)) {
             $results['is_active'] = $paramsConsumer['isActif'];
         }
         return $results;
@@ -148,11 +153,19 @@ class UtilisateurRepository extends \LibertAPI\Tools\Libraries\ARepository
     public function putOne($id, array $data) : AEntite
     {
         $entite = $this->getOne($id);
+<<<<<<< HEAD
         $entite->populate($data);
         $this->queryBuilder->update($this->getTableName());
         $this->setSet($this->getEntite2Storage($entite));
         // @TODO: supprimer cette ligne quand on passera à DBAL > 2.6 : https://github.com/doctrine/dbal/commit/e937f37a8acc117047ff4ed9aec493a1e3de2195
         $this->queryBuilder->resetQueryPart('where');
+=======
+        // @TODO: supprimer cette ligne quand on passera à DBAL > 2.6 : https://github.com/doctrine/dbal/commit/e937f37a8acc117047ff4ed9aec493a1e3de2195
+        $this->queryBuilder->resetQueryParts();
+        $entite->populate($data);
+        $this->queryBuilder->update($this->getTableName());
+        $this->setSet($this->getEntite2Storage($entite));
+>>>>>>> Update API version
         $this->setWhere(['u_login' => $entite->getId()]);
 
         $this->queryBuilder->execute();
@@ -186,19 +199,23 @@ class UtilisateurRepository extends \LibertAPI\Tools\Libraries\ARepository
      */
     final protected function setWhere(array $parametres)
     {
+<<<<<<< HEAD
         if (!empty($parametres['u_login'])) {
+=======
+        if (array_key_exists('u_login', $parametres)) {
+>>>>>>> Update API version
             $this->queryBuilder->andWhere('u_login = :id');
             $this->queryBuilder->setParameter(':id', $parametres['u_login']);
         }
-        if (!empty($parametres['token'])) {
+        if (array_key_exists('token', $parametres)) {
             $this->queryBuilder->andWhere('token = :token');
             $this->queryBuilder->setParameter(':token', $parametres['token']);
         }
-        if (!empty($parametres['gt_date_last_access'])) {
+        if (array_key_exists('gt_date_last_access', $parametres)) {
             $this->queryBuilder->andWhere('date_last_access >= :gt_date_last_access');
             $this->queryBuilder->setParameter(':gt_date_last_access', $parametres['gt_date_last_access']);
         }
-        if (!empty($parametres['is_active'])) {
+        if (array_key_exists('is_active', $parametres)) {
             $this->queryBuilder->andWhere('u_is_active = :actif');
             $this->queryBuilder->setParameter(':actif', ($parametres['is_active']) ? 'Y' : 'N');
         }
@@ -260,6 +277,7 @@ class UtilisateurRepository extends \LibertAPI\Tools\Libraries\ARepository
 
         $entite->updateDateLastAccess();
         $entite->populateToken($this->buildToken($instanceToken));
+<<<<<<< HEAD
         $this->queryBuilder->update($this->getTableName());
         $this->setSet($this->getEntite2Storage($entite));
         // @TODO: supprimer cette ligne quand on passera à DBAL > 2.6 : https://github.com/doctrine/dbal/commit/e937f37a8acc117047ff4ed9aec493a1e3de2195
@@ -268,6 +286,16 @@ class UtilisateurRepository extends \LibertAPI\Tools\Libraries\ARepository
 
         $this->queryBuilder->execute();
 
+=======
+        // @TODO: supprimer cette ligne quand on passera à DBAL > 2.6 : https://github.com/doctrine/dbal/commit/e937f37a8acc117047ff4ed9aec493a1e3de2195
+        $this->queryBuilder->resetQueryParts();
+        $this->queryBuilder->update($this->getTableName());
+        $this->setSet($this->getEntite2Storage($entite));
+        $this->setWhere(['u_login' => $entite->getId()]);
+
+        $this->queryBuilder->execute();
+
+>>>>>>> Update API version
         return $entite;
     }
 

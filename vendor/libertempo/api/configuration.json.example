@@ -4,5 +4,22 @@
         "base": "",
         "utilisateur": "",
         "mot_de_passe" : ""
-    }
+    },
+    "ldap": {
+        "serveur":"",
+        "protocol":,
+        "up_serveur":"",
+        "base":"",
+        "utilisateur":"",
+        "mot_de_passe":"",
+        "domaine":"",
+        "prenom":"",
+        "nom":"",
+        "mail":"",
+        "login":"",
+        "nom_affiche":"",
+        "filtre":"",
+        "filtre_recherche":""
+    },
+    "stage" : "production"
 }

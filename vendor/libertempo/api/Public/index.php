@@ -20,6 +20,17 @@ $containerBuilder->addDefinitions(ROOT_PATH . 'di-config.php');
 $app = new \Slim\App($containerBuilder->build());
 
 /*
+ * Commençons simple et posons le paramétrage des assert ici.
+ * Précision : une partie est faite côté php.ini (nouvelle norme)
+ */
+if ('development' == $app->getContainer()->get('environment')->get('stage')) {
+    ini_set('assert.exception', '1');
+} else {
+    assert_options(ASSERT_ACTIVE, 0);
+    ini_set('assert.exception', '0');
+}
+
+/*
  * /!\ Les Middlewares sont executés en mode PILE : le premier de la liste est lancé en dernier
  */
 $app->add(new Middlewares\AccessChecker($app));

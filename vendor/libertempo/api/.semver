@@ -1,6 +1,10 @@
 ---
 :major: 1
+<<<<<<< HEAD
 :minor: 2
+=======
+:minor: 3
+>>>>>>> Update API version
 :patch: 0
 :special: ''
 :metadata: ''
