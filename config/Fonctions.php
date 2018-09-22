@@ -478,8 +478,7 @@ class Fonctions
         $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
         $absenceType = $api->get('absence/type/' . $id_to_update, $_SESSION['token'])['data'];
 
-        // @TODO 2018-09-08 : avance de phase pour l'API. À enlever quand l'API sera consommée
-        if (isset($absenceType['typeNatif']) && $absenceType['typeNatif']) {
+        if ($absenceType['typeNatif']) {
             $raison = _('config_abs_type_natif');
             $withErreur = true;
         }
@@ -551,7 +550,8 @@ class Fonctions
             if ($at['id'] === $id_to_update) {
                 $absence = $at;
             }
-            if ($tab_new_values['short_libelle'] === $at['libelleCourt'] && $at['id'] !== $id_to_update) {
+            if ($tab_new_values['short_libelle'] === $at['libelleCourt'] && $at['id'] != $id_to_update) {
+
                 $absenceWithLibelle[] = $at;
             }
         }
@@ -560,7 +560,6 @@ class Fonctions
             $erreur = true;
         }
 
-        // @TODO 2018-09-08 : avance de phase pour l'API. À enlever quand l'API sera consommée
         if (isset($absence['typeNatif']) && $absence['typeNatif']) {
             $return .= '<br>' . _('config_abs_saisie_not_ok') . ' : ' . _('config_abs_type_natif') . '<br>';
             $erreur = true;

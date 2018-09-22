@@ -51,10 +51,7 @@ switch ($action) {
         $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
         $absenceTypes = $api->get('absence/type', $_SESSION['token'])['data'];
         foreach ($absenceTypes as $type) {
-            // @TODO 2018-09-08 : avance de phase pour l'API. À enlever quand l'API sera consommée
-            if (!isset($type['typeNatif'])) {
-                $type += ['typeNatif' => false];
-            }
+            $type += ['typeNatif' => false];
             $listeTypeConges[$type['type']][] = $type;
         }
         if (!$config->isCongesExceptionnelsActive() && isset($listeTypeConges['conges_exceptionnels'])) {
