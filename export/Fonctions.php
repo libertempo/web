@@ -141,7 +141,7 @@ class Fonctions
     					echo "BEGIN:VEVENT\r\n" .
     						"DTSTAMP:$DTSTAMP\r\n" .
     						"ORGANIZER:MAILTO:".$tab_infos_user['email']."\r\n" .
-    						"CREATED:$DTSTART\r\n" .
+    						"CREATED:$DTSTAMP\r\n" .
     						"STATUS:$status\r\n" .
     						"UID:$user_login@Libertempo-$sql_date_dem\r\n";
     				if ($sql_comment!="")
