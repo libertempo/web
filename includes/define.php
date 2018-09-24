@@ -18,6 +18,7 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     define('FONT_PATH',        ASSETS_PATH . 'Font/');
     define('CSS_PATH',         ASSETS_PATH . 'Css/');
     define('LIBRARY_PATH',     ROOT_PATH . 'library/');
+    define('NODE_PATH', ROOT_PATH . 'node_modules' . DS);
     define('CONFIG_PATH',      realpath(ABSOLUTE_SYSPATH) . DS . 'cfg'. DS);
     define('INSTALL_PATH',     ROOT_PATH . 'install/');
     define('LOCALE_PATH',      ROOT_PATH . 'locale/');
@@ -77,6 +78,7 @@ if (!defined( 'DEFINE_INCLUDE' )) {
         ]);
         \Rollbar\Rollbar::addCustom('access_key', LOGGER_TOKEN);
     }
+
     session_start();
 
     /* Définition de headers de sécurité */
