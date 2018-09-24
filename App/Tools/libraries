@@ -34,6 +34,16 @@ function display(string $message)
     echo $message, "\n";
 }
 
+function getValue(string $message) : string
+{
+    display($message);
+    $stdin = fopen('php://stdin', 'r');
+    $input = trim(fgets($stdin));
+    fclose($stdin);
+
+    return $input;
+}
+
 function setLastMaj(\includes\SQL $db, string $versionLastMaj) : bool
 {
     $req = 'UPDATE `conges_appli` SET appli_valeur = "' . $versionLastMaj . '" WHERE appli_variable = "version_last_maj" LIMIT 1';
