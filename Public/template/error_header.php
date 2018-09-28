@@ -1,6 +1,7 @@
 <?php
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 include TEMPLATE_PATH . 'template_define.php';
+global $environnement;
 ?>
 <!DOCTYPE html>
 <html>
@@ -29,17 +30,26 @@ include TEMPLATE_PATH . 'template_define.php';
         <meta name="msapplication-TileImage" content="<?= IMG_PATH ?>Favicons/mstile-144x144.png">
         <meta name="theme-color" content="#ffffff">
         <?php /* JQUERY */ ?>
-        <link type="text/css" href="<?= ASSETS_PATH ?>jquery/css/custom-theme/jquery-ui-1.8.17.custom.css?v=<?= $config_php_conges_version ?>" rel="stylesheet" />
         <?php /* BOOTSTRAP */?>
-        <link type="text/css" href="<?= ASSETS_PATH ?>bootstrap/css/bootstrap.min.css?v=<?= $config_php_conges_version ?>" rel="stylesheet" media="screen">
+        <link type="text/css" href="<?= NODE_PATH ?>bootstrap/dist/css/bootstrap.min.css?v=<?= $config_php_conges_version ?>" rel="stylesheet" media="screen">
         <?php /* FONT AWESOME */ ?>
-        <link href="<?= ASSETS_PATH ?>font-awesome/css/font-awesome.css?v=<?= $config_php_conges_version ?>" rel="stylesheet">
+        <link href="<?= ASSETS_PATH ?>font-awesome/css/font-awesome.min.css?v=<?= $config_php_conges_version ?>" rel="stylesheet">
         <?php /* REBOOT STYLE */ ?>
         <link type="text/css" href="<?= CSS_PATH ?>reboot.css?v=<?= $config_php_conges_version ?>" rel="stylesheet" media="screen">
         <?php /* SCRIPTS */ ?>
-        <script type="text/javascript" src="<?= ASSETS_PATH ?>jquery/js/jquery-1.7.1.min.js?v=<?= $config_php_conges_version ?>"></script>
-        <script type="text/javascript" src="<?= ASSETS_PATH ?>jquery/js/jquery-ui-1.8.17.custom.min.js?v=<?= $config_php_conges_version ?>"></script>
-        <script type="text/javascript" src="<?= ASSETS_PATH ?>jquery/js/jquery.tablesorter.min.js?v=<?= $config_php_conges_version ?>"></script>
+        <script>
+        var _rollbarConfig = {
+            accessToken: "<?= LOGGER_TOKEN ?>",
+            captureUncaught: true,
+            captureUnhandledRejections: true,
+            payload: {
+                environment: "<?= $environnement ?>",
+                code_version : "<?= $config_php_conges_version ?>"
+            }
+        };
+        </script>
+        <script type="text/javascript" src="<?= JS_PATH ?>rollbar.js?v=<?= $config_php_conges_version ?>"></script>
+        <script type="text/javascript" src="<?= NODE_PATH ?>jquery/jquery.min.js?v=<?= $config_php_conges_version ?>"></script>
         <script type="text/javascript" src="<?= JS_PATH ?>reboot.js?v=<?= $config_php_conges_version ?>"></script>
         <?= $additional_head; ?>
     </head>
