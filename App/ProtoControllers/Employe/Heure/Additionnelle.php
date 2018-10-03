@@ -116,7 +116,7 @@ class Additionnelle extends \App\ProtoControllers\Employe\AHeure
     protected function delete($id, $user, array &$errorsLst, &$notice)
     {
         $return = NIL_INT;
-        if (NIL_INT !== $this->deleteSQL($id, $user, $errorsLst)) {
+        if (NIL_INT !== $this->deleteSQL($id, $user)) {
             log_action($id, 'annul', '', 'Annulation de la demande d\'heure additionnelle ' . $id);
             $notice = _('heure_additionnelle_annulee');
             $return = $id;

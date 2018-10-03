@@ -1,5 +1,5 @@
 <?php
-include ROOT_PATH . 'define.php';
+require_once INCLUDE_PATH . 'define.php';
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 
 $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);

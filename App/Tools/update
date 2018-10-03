@@ -1,0 +1,131 @@
+#!/usr/bin/env php
+<?php
+require_once 'libraries';
+require_once ROOT_PATH . 'version.php';
+
+define('BACKUP_PATH', ROOT_PATH . 'backup' . DS);
+define('MAJ_PATH', PATCH_PATH . DS . 'Maj' . DS);
+
+/**
+ *
+ */
+function getVersionDerniereMiseAJour(\includes\SQL $db, string $installedVersion) : string
+{
+    $req = 'SELECT appli_valeur FROM conges_appli WHERE appli_variable = "version_last_maj" LIMIT 1';
+    $res = $db->query($req);
+    $versionLastMaj = $res->fetch_array()['appli_valeur'];
+    $versionFile = file_get_contents('/tmp/lt-last-version');
+    if (!empty($versionLastMaj)) {
+        return $versionLastMaj;
+    } elseif ($versionFile) {
+        // @TODO: Compat with <1.12 versions
+        return $versionFile;
+    }
+
+    return $installedVersion . '.0';
+}
+
+/**
+ * Execute les fichiers de mise à jour et retourne la version du dernier patch
+ */
+function executePatchs(string $versionDerniereMAJ) : string
+{
+    $patchInstalled = "0.0.0";
+    $patches = glob(MAJ_PATH . '*.sql');
+    natsort($patches);
+    foreach ($patches as $filename) {
+        if (version_compare(basename($filename, '.sql'), $versionDerniereMAJ, '>')) {
+            $patchInstalled = basename($filename, '.sql');
+            execute_sql_file($filename);
+        }
+    }
+
+    return $patchInstalled;
+}
+
+function resetToken(\includes\SQL $db) : bool
+{
+    $db->query('UPDATE `conges_appli` SET appli_valeur =  "' . hash('sha256', time() . rand()) . '" WHERE appli_variable = "token_instance"');
+
+    return 0 < $db->affected_rows;
+}
+
+function setInstalledVersion(\includes\SQL $db, $versionCode) : bool
+{
+    $req = "UPDATE conges_config SET conf_valeur = '$versionCode' WHERE conf_nom = 'installed_version' ";
+    $db->query($req);
+
+    return 0 < $db->affected_rows;
+}
+
+/**
+ * Définit les données de configuration pour l'API
+ *
+ * @param array $data Données de configuration
+ */
+function setDataConfigurationApi(string $server, string $base, string $user, string $password) : bool
+{
+    $data = [
+        'db' => [
+            'serveur' => $server,
+            'base' => $base,
+            'utilisateur' => $user,
+            'mot_de_passe' => $password,
+        ],
+    ];
+
+    return file_put_contents(API_SYSPATH . 'configuration.json', json_encode($data));
+}
+
+display('Mise à jour…');
+display('Contrôles généraux…');
+if (!\includes\SQL::existsDatabase($mysql_database)) {
+    displayError('Application non installée');
+}
+$installedVersion = getInstalledVersion();
+$db = \includes\SQL::singleton();
+$versionDerniereMAJ = getVersionDerniereMiseAJour($db, $installedVersion);
+
+// Quelques vérifications de base…
+if ('0.0.0' == $versionDerniereMAJ) {
+    displayError('l\'application n\'est pas encore installée.');
+}
+
+display('Sauvegarde de la DB courante…');
+try {
+    \admin\Fonctions::sauvegardeAsFile($installedVersion, 'end');
+} catch (\Exception $e) {
+    displayFail();
+}
+
+display('Configuration de l\'API');
+if (!setDataConfigurationApi($mysql_serveur, $mysql_database, $mysql_user, $mysql_pass)) {
+    displayFail();
+}
+
+display('Application des nouveaux patches…');
+list($major, $minor, $patch) = explode('.', executePatchs($versionDerniereMAJ));
+$versionMaj = implode('.', [$major, $minor, $patch]);
+
+// Le seul cas qui amènerait à ce que la version ait cette valeur ici
+// est qu'aucun script ne soit supérieur la version courante
+if ('0.0.0' === $versionMaj) {
+    displayFail();
+}
+
+display('Définition du token d\'instance…');
+if (!resetToken($db)) {
+    displayFail();
+}
+
+display('Définition de la version…');
+if (!setInstalledVersion($db, $config_php_conges_version)) {
+    displayFail();
+}
+
+display('Inscription de la dernière version…');
+if(!setLastMaj($db, $versionMaj)) {
+    displayFail();
+}
+
+display('Mise à jour effectuée avec succès.');

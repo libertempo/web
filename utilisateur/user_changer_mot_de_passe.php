@@ -11,7 +11,7 @@ if (getpost_variable('change_passwd', 0) == 1) {
     if ((strlen($new_passwd1)==0) || (strlen($new_passwd2)==0) || ($new_passwd1 != $new_passwd2)) {
         $error = _('user_passwd_error');
     } else {
-        $passwd_md5 = md5($new_passwd1);
+        $passwd_md5 = password_hash($new_passwd1, PASSWORD_BCRYPT);
         $sql1 = 'UPDATE conges_users SET  u_passwd=\''.$passwd_md5.'\' WHERE u_login=\''.$_SESSION['userlogin'].'\' ';
         $result = \includes\SQL::query($sql1) ;
 

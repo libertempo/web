@@ -20,6 +20,7 @@ class Fonctions
         // $tab_calcul_proportionnel[$id_conges]= TRUE / FALSE
 
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $db = \includes\SQL::singleton();
         $return = '';
 
         // recup de la liste des users d'un groupe donné
@@ -30,7 +31,7 @@ class Fonctions
                 $comment = $tab_new_comment_all[$id_conges];
 
                 $sql1="SELECT u_login, u_quotite FROM conges_users WHERE u_login IN ($list_users) AND u_is_active='Y' ORDER BY u_login ";
-                $ReqLog1 = \includes\SQL::query($sql1);
+                $ReqLog1 = $db->query($sql1);
 
                 while ($resultat1 = $ReqLog1->fetch_array()) {
                     $current_login  =$resultat1["u_login"];
@@ -40,14 +41,14 @@ class Fonctions
                         $nb_conges=$nb_jours;
                     } else {
                         // pour arrondir au 1/2 le + proche on  fait x 2, on arrondit, puis on divise par 2
-                        $nb_conges = (ROUND(($nb_jours*($current_quotite/100))*2))/2  ;
+                        $nb_conges = (round(($nb_jours*($current_quotite/100))*2))/2  ;
                     }
                     $nb_conges_ok = verif_saisie_decimal($nb_conges);
                     if ($nb_conges_ok) {
                         // 1 : on update conges_solde_user
                         $req_update = "UPDATE conges_solde_user SET su_solde = su_solde+$nb_conges
                             WHERE  su_login = '$current_login' AND su_abs_id = $id_conges   ";
-                        $ReqLog_update = \includes\SQL::query($req_update);
+                        $db->query($req_update);
 
                         // 2 : on insert l'ajout de conges dans la table periode
                         // recup du nom du groupe
@@ -78,6 +79,7 @@ class Fonctions
     public static function ajout_global($tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $db = \includes\SQL::singleton();
         $return = '';
 
         // $tab_new_nb_conges_all[$id_conges]= nb_jours
@@ -93,7 +95,7 @@ class Fonctions
                 $comment = $tab_new_comment_all[$id_conges];
 
                 $sql1="SELECT u_login, u_quotite FROM conges_users WHERE u_login IN ($list_users_du_resp) AND u_is_active='Y' ORDER BY u_login ";
-                $ReqLog1 = \includes\SQL::query($sql1);
+                $ReqLog1 = $db->query($sql1);
 
                 while($resultat1 = $ReqLog1->fetch_array()) {
                     $current_login  =$resultat1["u_login"];
@@ -103,7 +105,7 @@ class Fonctions
                         $nb_conges=$nb_jours;
                     } else {
                         // pour arrondir au 1/2 le + proche on  fait x 2, on arrondit, puis on divise par 2
-                        $nb_conges = (ROUND(($nb_jours*($current_quotite/100))*2))/2  ;
+                        $nb_conges = (round(($nb_jours*($current_quotite/100))*2))/2  ;
                     }
 
                     $nb_conges_ok = verif_saisie_decimal($nb_conges);
@@ -111,7 +113,7 @@ class Fonctions
                         // 1 : update de la table conges_solde_user
                         $req_update = "UPDATE conges_solde_user SET su_solde = su_solde+$nb_conges
                             WHERE  su_login = '$current_login' AND su_abs_id = $id_conges   ";
-                        $ReqLog_update = \includes\SQL::query($req_update);
+                        $db->query($req_update);
 
                         // 2 : on insert l'ajout de conges GLOBAL (pour tous les users) dans la table periode
                         $commentaire =  _('resp_ajout_conges_comment_periode_all') ;
@@ -150,7 +152,7 @@ class Fonctions
                         /* Modification de la table conges_users */
                         $sql1 = "UPDATE conges_solde_user SET su_solde = su_solde+$user_nb_jours_ajout_float WHERE su_login='$user_name' AND su_abs_id = $id_conges " ;
                         /* On valide l'UPDATE dans la table ! */
-                        $ReqLog1 = \includes\SQL::query($sql1) ;
+                        \includes\SQL::singleton()->query($sql1) ;
 
                         /*			// Enregistrement du commentaire relatif à l'ajout de jours de congés
                                     $comment = $tab_commentaire_saisie[$user_name];
@@ -186,7 +188,7 @@ class Fonctions
                 if ($_SESSION['config']['date_limite_reliquats'] < $new_date_limite) {
                     /* Modification de la table conges_appli */
                     $sql_update= "UPDATE conges_appli SET appli_valeur = '$new_date_limite' WHERE appli_variable='date_limite_reliquats' " ;
-                    $ReqLog_update = \includes\SQL::query($sql_update) ;
+                    \includes\SQL::singleton()->query($sql_update) ;
 
                 }
             }
@@ -253,15 +255,16 @@ class Fonctions
     // si oui : on incrémente le num_exercice de l'application
     public static function update_appli_num_exercice()
     {
+        $db = \includes\SQL::singleton();
         // verif
         $appli_num_exercice = $_SESSION['config']['num_exercice'] ;
-        $sql_verif = 'SELECT u_login FROM conges_users WHERE u_login != \'admin\' AND u_login != \'conges\' AND u_num_exercice != '. \includes\SQL::quote($appli_num_exercice).';';
-        $ReqLog_verif = \includes\SQL::query($sql_verif);
+        $sql_verif = 'SELECT u_login FROM conges_users WHERE u_login != \'admin\' AND u_login != \'conges\' AND u_num_exercice != '. $db->quote($appli_num_exercice).';';
+        $ReqLog_verif = $db->query($sql_verif);
 
         if ($ReqLog_verif->num_rows == 0) {
             /* Modification de la table conges_appli */
             $sql_update= 'UPDATE conges_appli SET appli_valeur = appli_valeur+1 WHERE appli_variable=\'num_exercice\' ;';
-            $ReqLog_update = \includes\SQL::query($sql_update) ;
+            $db->query($sql_update) ;
 
             // ecriture dans les logs
             $new_appli_num_exercice = $appli_num_exercice+1 ;
@@ -272,7 +275,8 @@ class Fonctions
     public static function cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $commentaire)
     {
         $return = '';
-        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+        $db = \includes\SQL::singleton();
+        $config = new \App\Libraries\Configuration($db);
         // si le num d'exercice du user est < à celui de l'appli (il n'a pas encore été basculé): on le bascule d'exercice
         if ($tab_current_user['num_exercice'] < $_SESSION['config']['num_exercice']) {
             // calcule de la date limite d'utilisation des reliquats (si on utilise une date limite et qu'elle n'est pas encore calculée)
@@ -306,7 +310,7 @@ class Fonctions
                         // update D'ABORD du reliquat
                         $VerifDec=verif_saisie_decimal($new_reliquat);
                         $sql_reliquat = "UPDATE conges_solde_user SET su_reliquat = $new_reliquat WHERE su_login='$current_login' AND su_abs_id = $id_conges " ;
-                        $ReqLog_reliquat = \includes\SQL::query($sql_reliquat) ;
+                        $db->query($sql_reliquat) ;
                     } else {
                         $new_reliquat = $user_solde_actuel ; // qui est nul ou negatif
                     }
@@ -315,8 +319,8 @@ class Fonctions
                     $new_solde = $user_nb_jours_ajout_an + $new_reliquat  ;
                     $VerifDec=verif_saisie_decimal($new_solde);
                     // update du solde
-                    $sql_solde = 'UPDATE conges_solde_user SET su_solde = \''.$new_solde.'\' WHERE su_login="'. \includes\SQL::quote($current_login).'" AND su_abs_id ="'. \includes\SQL::quote($id_conges).'" ';
-                    $ReqLog_solde = \includes\SQL::query($sql_solde) ;
+                    $sql_solde = 'UPDATE conges_solde_user SET su_solde = \''.$new_solde.'\' WHERE su_login="'. $db->quote($current_login).'" AND su_abs_id ="'. $db->quote($id_conges).'" ';
+                    $ReqLog_solde = $db->query($sql_solde) ;
                 } else {
                     // ATTENTION : meme si on accepte pas les reliquats, si le solde du user est négatif, il faut le reporter: le nouveau solde est nb_jours_an + le solde actuel (qui est négatif)
                     if ($user_solde_actuel < 0) {
@@ -325,15 +329,15 @@ class Fonctions
                         $new_solde = $user_nb_jours_ajout_an ;
                     }
                     $VerifDec=verif_saisie_decimal($new_solde);
-                    $sql_solde = 'UPDATE conges_solde_user SET su_solde = \''.$new_solde.'\' WHERE su_login="'. \includes\SQL::quote($current_login).'"  AND su_abs_id = "'. \includes\SQL::quote($id_conges).'" ';
-                    $ReqLog_solde = \includes\SQL::query($sql_solde) ;
+                    $sql_solde = 'UPDATE conges_solde_user SET su_solde = \''.$new_solde.'\' WHERE su_login="'. $db->quote($current_login).'"  AND su_abs_id = "'. $db->quote($id_conges).'" ';
+                    $ReqLog_solde = $db->query($sql_solde) ;
                 }
 
                 /* Modification de la table conges_users */
                 // ATTENTION : ne pas faire "SET u_num_exercice = u_num_exercice+1" dans la requete SQL car on incrémenterait pour chaque type d'absence !
                 $new_num_exercice=$_SESSION['config']['num_exercice'] ;
-                $sql2 = 'UPDATE conges_users SET u_num_exercice = \''.$new_num_exercice.'\' WHERE u_login="'. \includes\SQL::quote($current_login).'" ';
-                $ReqLog2 = \includes\SQL::query($sql2) ;
+                $sql2 = 'UPDATE conges_users SET u_num_exercice = \''.$new_num_exercice.'\' WHERE u_login="'. $db->quote($current_login).'" ';
+                $db->query($sql2) ;
 
                 // on insert l'ajout de conges dans la table periode (avec le commentaire)
                 $date_today=date("Y-m-d");
@@ -387,7 +391,8 @@ class Fonctions
 
     public static function affichage_cloture_globale_groupe($tab_type_conges)
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+        $db = \includes\SQL::singleton();
+        $config = new \App\Libraries\Configuration($db);
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
@@ -429,7 +434,7 @@ class Fonctions
             // création du select pour le choix du groupe
             $text_choix_group="<select name=\"choix_groupe\" >";
             $sql_group = "SELECT g_gid, g_groupename FROM conges_groupe WHERE g_gid IN ($list_group) ORDER BY g_groupename "  ;
-            $ReqLog_group = \includes\SQL::query($sql_group) ;
+            $ReqLog_group = $db->query($sql_group) ;
 
             while ($resultat_group = $ReqLog_group->fetch_array()) {
                 $current_group_id=$resultat_group["g_gid"];
@@ -492,7 +497,7 @@ class Fonctions
 
     public static function affiche_ligne_du_user($current_login, $tab_type_conges, $tab_current_user)
     {
-        $return .= '<tr align="center">';
+        $return = '<tr align="center">';
         //tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
         $tab_conges=$tab_current_user['conges'];
 
@@ -628,7 +633,7 @@ class Fonctions
     /**
      * Encapsule le comportement du module de cloture d'exercice
      *
-     * @return void
+     * @return string
      * @access public
      * @static
      */
@@ -723,7 +728,8 @@ class Fonctions
 
     public static function traite_demandes($user_login, $tab_radio_traite_demande, $tab_text_refus)
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+        $db = \includes\SQL::singleton();
+        $config = new \App\Libraries\Configuration($db);
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $return = '';
 
@@ -747,8 +753,8 @@ class Fonctions
             if ($reponse == "ACCEPTE") // acceptation definitive d'un conges
             {
                 /* UPDATE table "conges_periode" */
-                $sql1 = 'UPDATE conges_periode SET p_etat="ok", p_date_traitement=NOW() WHERE p_num="'.\includes\SQL::quote($numero_int).'" AND ( p_etat=\'valid\' OR p_etat=\'demande\' );';
-                $ReqLog1 = \includes\SQL::query($sql1);
+                $sql1 = 'UPDATE conges_periode SET p_etat="ok", p_date_traitement=NOW() WHERE p_num="'. $db->quote($numero_int).'" AND ( p_etat=\'valid\' OR p_etat=\'demande\' );';
+                $ReqLog1 = $db->query($sql1);
 
                 if ($ReqLog1 && \includes\SQL::getVar('affected_rows')) {
                     // Log de l'action
@@ -769,8 +775,8 @@ class Fonctions
             } elseif ($reponse == "VALID") {
                 // première validation dans le cas d'une double validation
                 /* UPDATE table "conges_periode" */
-                $sql1 = 'UPDATE conges_periode SET p_etat="valid", p_date_traitement=NOW() WHERE p_num="'.\includes\SQL::quote($numero_int).'" AND p_etat=\'demande\';';
-                $ReqLog1 = \includes\SQL::query($sql1);
+                $sql1 = 'UPDATE conges_periode SET p_etat="valid", p_date_traitement=NOW() WHERE p_num="'. $db->quote($numero_int).'" AND p_etat=\'demande\';';
+                $ReqLog1 = $db->query($sql1);
 
                 if ($ReqLog1 && \includes\SQL::getVar('affected_rows')) {
                     // Log de l'action
@@ -786,8 +792,8 @@ class Fonctions
             {
                 // recup di motif de refus
                 $motif_refus = addslashes($tab_text_refus[$numero_int]);
-                $sql3 = 'UPDATE conges_periode SET p_etat="refus", p_motif_refus=\''.$motif_refus.'\', p_date_traitement=NOW() WHERE p_num="'. \includes\SQL::quote($numero_int).'" AND ( p_etat=\'valid\' OR p_etat=\'demande\' );';
-                $ReqLog3 = \includes\SQL::query($sql3);
+                $sql3 = 'UPDATE conges_periode SET p_etat="refus", p_motif_refus=\''.$motif_refus.'\', p_date_traitement=NOW() WHERE p_num="'. $db->quote($numero_int).'" AND ( p_etat=\'valid\' OR p_etat=\'demande\' );';
+                $ReqLog3 = $db->query($sql3);
 
                 if ($ReqLog3 && \includes\SQL::getVar('affected_rows')) {
                     // Log de l'action
@@ -808,7 +814,8 @@ class Fonctions
 
     public static function annule_conges($user_login, $tab_checkbox_annule, $tab_text_annul)
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+        $db = \includes\SQL::singleton();
+        $config = new \App\Libraries\Configuration($db);
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $return = '';
 
@@ -827,8 +834,8 @@ class Fonctions
             $motif_annul=addslashes($tab_text_annul[$numero_int]);
 
             /* UPDATE table "conges_periode" */
-            $sql1 = 'UPDATE conges_periode SET p_etat="annul", p_motif_refus="'. \includes\SQL::quote($motif_annul).'", p_date_traitement=NOW() WHERE p_num="'. \includes\SQL::quote($numero_int).'" AND p_etat=\'ok\';';
-            $ReqLog1 = \includes\SQL::query($sql1);
+            $sql1 = 'UPDATE conges_periode SET p_etat="annul", p_motif_refus="'. $db->quote($motif_annul).'", p_date_traitement=NOW() WHERE p_num="'. $db->quote($numero_int).'" AND p_etat=\'ok\';';
+            $ReqLog1 = $db->query($sql1);
 
             if ($ReqLog1 && \includes\SQL::getVar('affected_rows')) {
                 // Log de l'action
@@ -838,8 +845,8 @@ class Fonctions
                 // on re-crédite les jours seulement pour des conges pris (pas pour les absences)
                 // donc seulement si le type de l'absence qu'on annule est un "conges"
                 if (in_array($tab_tout_type_abs[$user_type_abs_id]['type'],["conges","conges_exceptionnels"])) {
-                    $sql2 = 'UPDATE conges_solde_user SET su_solde = su_solde+"'. \includes\SQL::quote($user_nb_jours_pris_float).'" WHERE su_login="'. \includes\SQL::quote($user_login).'" AND su_abs_id="'. \includes\SQL::quote($user_type_abs_id).'";';
-                    $ReqLog2 = \includes\SQL::query($sql2);
+                    $sql2 = 'UPDATE conges_solde_user SET su_solde = su_solde+"'. $db->quote($user_nb_jours_pris_float).'" WHERE su_login="'. $db->quote($user_login).'" AND su_abs_id="'. $db->quote($user_type_abs_id).'";';
+                    $ReqLog2 = $db->query($sql2);
                 }
 
                 //envoi d'un mail d'alerte au user (si demandé dans config de php_conges)
@@ -857,7 +864,8 @@ class Fonctions
     //affiche l'état des conges du user (avec le formulaire pour le responsable)
     public static function affiche_etat_conges_user_for_resp($user_login, $year_affichage, $tri_date, $onglet)
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+        $db = \includes\SQL::singleton();
+        $config = new \App\Libraries\Configuration($db);
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $return = '';
 
@@ -886,7 +894,7 @@ class Fonctions
             $sql3=$sql3." ORDER BY p_date_deb ASC ";
         }
 
-        $ReqLog3 = \includes\SQL::query($sql3);
+        $ReqLog3 = $db->query($sql3);
 
         $count3=$ReqLog3->num_rows;
         if ($count3==0) {
@@ -1004,7 +1012,8 @@ class Fonctions
     //affiche l'état des demande en attente de 2ieme validation du user (avec le formulaire pour le responsable)
     public static function affiche_etat_demande_2_valid_user_for_resp($user_login)
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+        $db = \includes\SQL::singleton();
+        $config = new \App\Libraries\Configuration($db);
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $return = '';
 
@@ -1012,7 +1021,7 @@ class Fonctions
         $sql2 = "SELECT p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_nb_jours, p_commentaire, p_type, p_date_demande, p_date_traitement, p_num " .
             "FROM conges_periode " .
             "WHERE p_login = '$user_login' AND p_etat ='valid' ORDER BY p_date_deb";
-        $ReqLog2 = \includes\SQL::query($sql2);
+        $ReqLog2 = $db->query($sql2);
 
         $count2=$ReqLog2->num_rows;
         if ($count2==0) {
@@ -1108,7 +1117,8 @@ class Fonctions
     //affiche l'état des demandes du user (avec le formulaire pour le responsable)
     public static function affiche_etat_demande_user_for_resp($user_login, $tab_user, $tab_grd_resp)
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+        $db = \includes\SQL::singleton();
+        $config = new \App\Libraries\Configuration($db);
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
         $return = '';
 
@@ -1117,7 +1127,7 @@ class Fonctions
             "FROM conges_periode " .
             "WHERE p_login = '$user_login' AND p_etat ='demande' ".
             "ORDER BY p_date_deb";
-        $ReqLog2 = \includes\SQL::query($sql2);
+        $ReqLog2 = $db->query($sql2);
 
         $count2=$ReqLog2->num_rows;
         if ($count2==0) {
@@ -1386,7 +1396,7 @@ class Fonctions
         };
         $userLogin = $entities(getpost_variable('user_login'));
 
-        if ( !\App\ProtoControllers\Responsable::isRespDeUtilisateur($_SESSION['userlogin'] , $user_login)) {
+        if ( !\App\ProtoControllers\Responsable::isRespDeUtilisateur($_SESSION['userlogin'] , $userLogin)) {
             redirect(ROOT_PATH . 'deconnexion.php');
             exit;
         }
@@ -1430,13 +1440,12 @@ class Fonctions
         $new_demi_jour_deb = $entities(getpost_variable('new_demi_jour_deb'));
         $new_fin = $entities(getpost_variable('new_fin'));
         $new_demi_jour_fin = $entities(getpost_variable('new_demi_jour_fin'));
+        $new_comment = $entities(getpost_variable('new_comment'));
+        $new_type = $entities(getpost_variable('new_type'));
 
         $return = '';
 
-        $new_nb_jours = compter($user_login, '', $new_debut,  $new_fin, $new_demi_jour_deb, $new_demi_jour_fin, $comment);
-
-        $new_comment = $entities(getpost_variable('new_comment'));
-        $new_type = $entities(getpost_variable('new_type'));
+        $new_nb_jours = compter($user_login, '', $new_debut,  $new_fin, $new_demi_jour_deb, $new_demi_jour_fin, $new_comment);
 
         /************************************/
 
@@ -1536,6 +1545,7 @@ class Fonctions
     {
         $yearPrec = $year - 1;
         $yearSucc = $year + 1;
+        $db = \includes\SQL::singleton();
         $url = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
@@ -1586,10 +1596,10 @@ class Fonctions
                 $jour   = date('d/m/Y', $heure['debut']);
                 $debut  = date('H\:i', $heure['debut']);
                 $fin    = date('H\:i', $heure['fin']);
-                $duree  = \App\Helpers\Formatter::Timestamp2Duree($heure['duree']);
+                $duree  = \App\Helpers\Formatter::timestamp2Duree($heure['duree']);
                 $statut = \App\Models\AHeure::statusText($heure['statut']);
-                $comment = \includes\SQL::quote($heure['comment']);
-                $commentaireRefus = \includes\SQL::quote($heure['comment_refus']);
+                $comment = $db->quote($heure['comment']);
+                $commentaireRefus = $db->quote($heure['comment_refus']);
                 if (empty($commentaireRefus)) {
                     $commentaireRefus = _('divers_inconnu');
                 }
@@ -1660,7 +1670,7 @@ class Fonctions
             self::annulerHeureRepos($userLogin, $aAnnuler);
         }
 
-        return self::getFormulaireAnnulationHeureRepos($userLogin, $year, $commentairesAnnulation);
+        return self::getFormulaireAnnulationHeureRepos($userLogin, $year);
     }
 
     private static function annulerHeureRepos($userLogin, array $annulations)
@@ -1705,6 +1715,7 @@ class Fonctions
     {
         $yearPrec = $year - 1;
         $yearSucc = $year + 1;
+        $db = \includes\SQL::singleton();
         $url = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
 
@@ -1754,10 +1765,10 @@ class Fonctions
                 $jour   = date('d/m/Y', $heure['debut']);
                 $debut  = date('H\:i', $heure['debut']);
                 $fin    = date('H\:i', $heure['fin']);
-                $duree  = \App\Helpers\Formatter::Timestamp2Duree($heure['duree']);
+                $duree  = \App\Helpers\Formatter::timestamp2Duree($heure['duree']);
                 $statut = \App\Models\AHeure::statusText($heure['statut']);
-                $comment = \includes\SQL::quote($heure['comment']);
-                $commentaireRefus = \includes\SQL::quote($heure['comment_refus']);
+                $comment = $db->quote($heure['comment']);
+                $commentaireRefus = $db->quote($heure['comment_refus']);
                 if (empty($commentaireRefus)) {
                     $commentaireRefus = _('divers_inconnu');
                 }

@@ -138,8 +138,8 @@ class Responsable
      * Vérifie si un utilisateur est responsable par délégation d'un employé
      *
      *
-     * @param type $resp
-     * @param type $user
+     * @param string $resp
+     * @param string $user
      *
      * @return boolean
      */

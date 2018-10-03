@@ -1,0 +1,33 @@
+#!/usr/bin/env php
+<?php
+require_once 'libraries';
+require_once CONFIG_PATH . 'dbconnect.php';
+
+define('INSTALLATION_PATH', PATCH_PATH . DS . 'Installation' . DS);
+define('API_PATH', ROOT_PATH . 'api' . DS);
+define('API_SYSPATH', ROOT_PATH . 'vendor' . DS . 'Libertempo' . DS . 'libertempo-api' . DS);
+
+function destroyDatabase(\includes\SQL $db, string $name) : bool
+{
+    try {
+        $req = 'DROP DATABASE `' . $name . '`';
+        $res = $db->query($req);
+        return true;
+    } catch (\mysqli_sql_exception $e) {
+        return false;
+    }
+}
+
+display('Destruction totale…');
+display('Contrôles généraux…');
+if (!\includes\SQL::existsDatabase($mysql_database)) {
+    displayFail();
+}
+
+display('Suppression base de données…');
+$db = \includes\SQL::singleton();
+if (!destroyDatabase($db, $mysql_database)) {
+    displayFail();
+}
+
+display('Destruction de la DB effectuée avec succès.');

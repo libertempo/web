@@ -10,7 +10,7 @@ $message   = '';
 $errorsLst = [];
 $configuration = new \App\Libraries\Configuration(\includes\SQL::singleton());
 if (!empty($_POST)) {
-    if (0 < (int) \App\ProtoControllers\Responsable\Planning::putPlanning($planningId, $_POST, $errorsLst)) {
+    if (0 < (int) \App\ProtoControllers\Responsable\Planning::putPlanning($planningId, $_POST)) {
         log_action(0, '', '', 'Édition des associations du planning ' . $planningId);
         redirect(ROOT_PATH . 'responsable/resp_index.php?onglet=liste_planning', false);
     } else {
@@ -29,7 +29,7 @@ if (!empty($_POST)) {
 
 $injectableCreator = new \App\Libraries\InjectableCreator(\includes\SQL::singleton(),$configuration);
 $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
-$planning = $api->get('planning/' .  $planningId, $_SESSION['token'])->data;
+$planning = $api->get('planning/' .  $planningId, $_SESSION['token'])['data'];
 $jours = [
     // ISO-8601
     1 => _('Lundi'),

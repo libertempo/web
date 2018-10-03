@@ -1,0 +1,83 @@
+#!/usr/bin/env php
+<?php
+require_once 'libraries';
+
+define('INSTALLATION_PATH', PATCH_PATH . DS . 'Installation' . DS);
+define('API_PATH', ROOT_PATH . 'api' . DS);
+
+function createDatabase(\includes\SQL $db, string $name) : bool
+{
+    $req = 'CREATE DATABASE `' . $name . '`';
+    $db->query($req);
+
+    return 0 < $db->affected_rows;
+}
+
+/**
+ * Définit un nom pour l'instance. Doit coller à ce que le vhost a déclaré.
+ */
+function nameInstance(\includes\SQL $db, string $name) : bool
+{
+    if (!filter_var($name, FILTER_VALIDATE_URL)) {
+        return false;
+    }
+
+    $req = 'UPDATE `conges_config` SET conf_valeur = "' . $db->quote($name) . '"
+    WHERE conf_nom = "URL_ACCUEIL_CONGES" LIMIT 1';
+    $db->query($req);
+
+    return true;
+}
+
+/**
+ * Execute le fichier de patch d'installation et retourne sa version
+ */
+function executePatch() : string
+{
+    $currentPatch = "0.0";
+    foreach (glob(INSTALLATION_PATH . '/*.sql') as $filename) {
+        $currentPatch = basename($filename, '.sql');
+        // il n'est sensé n'y en avoir qu'un
+        execute_sql_file($filename);
+        break;
+    }
+
+    return $currentPatch;
+}
+
+display('Installation…');
+
+// Quelques vérifications de base…
+$instanceName = $argv[1] ?? null;
+display('Contrôles généraux…');
+if (null == $instanceName) {
+    displayError("Nom d'instance vide");
+}
+if (\includes\SQL::existsDatabase($mysql_database)) {
+    displayError('Application déjà installée');
+}
+
+display('Création base de données…');
+if (!createDatabase(\includes\SQL::singletonWithoutDb(), $mysql_database)) {
+    displayFail();
+}
+
+display('Création tables…');
+$db = \includes\SQL::singleton();
+list($major, $minor, $patch) = explode('.', executePatch());
+$versionMaj = implode('.', [$major, $minor, $patch]);
+
+display('Inscription de la dernière version…');
+if(!setLastMaj($db, $versionMaj)) {
+    displayFail();
+}
+
+display('Nommage de l\'instance…');
+if (!nameInstance($db, $instanceName)) {
+    displayFail();
+}
+
+$updateLang = "UPDATE conges_config SET conf_valeur = 'fr_FR' WHERE conf_nom = 'lang' LIMIT 1";
+$db->query($updateLang);
+
+echo 'Installation terminée avec succès.', "\n";

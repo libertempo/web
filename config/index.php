@@ -1,22 +1,20 @@
 <?php
+defined('ROOT_PATH') or define('ROOT_PATH', '../');
+defined('INCLUDE_PATH') or define('INCLUDE_PATH',     ROOT_PATH . 'includes/');
 
-define('ROOT_PATH', '../');
-require_once ROOT_PATH . 'define.php';
-include_once INCLUDE_PATH . 'fonction.php';
+require_once INCLUDE_PATH . 'define.php';
 
 if (empty(session_id())) {
-	redirect(ROOT_PATH . 'index.php?return_url=config/index.php');
+	redirect(ROOT_PATH . 'authentification?return_url=config/general');
 }
 
-
-include_once ROOT_PATH .'fonctions_conges.php' ;
 
 $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
 $_SESSION['config']=init_config_tab();      // on initialise le tableau des variables de config
 include_once INCLUDE_PATH .'session.php';
 
-$PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+$PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
 
 // verif des droits du user à afficher la page
 verif_droits_user("is_admin");

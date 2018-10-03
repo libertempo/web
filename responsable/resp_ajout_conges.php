@@ -63,7 +63,7 @@ if($list_group_resp!="") {
 $groupes = [];
 if ('' != $list_group) {
     $sql_group = "SELECT g_gid, g_groupename FROM conges_groupe WHERE g_gid IN ($list_group) ORDER BY g_groupename "  ;
-    $ReqLog_group = \includes\SQL::query($sql_group) ;
+    $ReqLog_group = \includes\SQL::singleton()->query($sql_group) ;
 
     while ($resultat_group = $ReqLog_group->fetch_array()) {
         $groupes[$resultat_group["g_gid"]] = $resultat_group["g_groupename"];

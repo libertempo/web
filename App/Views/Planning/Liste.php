@@ -7,9 +7,6 @@
  * $isHr
  * $lienModif
  */
-$plannings = array_filter($plannings, function ($planning) {
-    return $planning->status === \App\Models\Planning::STATUS_ACTIVE;
-});
 ?>
 <?php if ($isHr) : ?>
 <a href="<?= ROOT_PATH ?>hr/hr_index.php?onglet=ajout_planning" style="float:right" class="btn btn-success"><?= _('hr_ajout_planning') ?></a>
@@ -25,16 +22,16 @@ $plannings = array_filter($plannings, function ($planning) {
     <tr><td colspan="2"><center><?= _('aucun_resultat') ?></center></td></tr>
 <?php else : ?>
     <?php foreach ($plannings as $planning) : ?>
-        <tr><td><?= $planning->name ?></td>
+        <tr><td><?= $planning['name'] ?></td>
             <td>
                 <form action="" method="post" accept-charset="UTF-8"
                 enctype="application/x-www-form-urlencoded">
-                <a title="<?= _('form_modif') ?>" href="<?= $lienModif ?>&amp;id=<?= $planning->id ?>"><i class="fa fa-pencil"></i></a>&nbsp;&nbsp;
+                <a title="<?= _('form_modif') ?>" href="<?= $lienModif ?>&amp;id=<?= $planning['id'] ?>"><i class="fa fa-pencil"></i></a>&nbsp;&nbsp;
                 <?php if ($isHr) : ?>
-                    <?php if (in_array($planning->id, $listIdUsed)) : ?>
+                    <?php if (in_array($planning['id'], $listIdUsed)) : ?>
                         <button title="<?= _('planning_used') ?>" type="button" class="btn btn-link disabled"><i class="fa fa-times-circle"></i></button>
                     <?php else : ?>
-                            <input type="hidden" name="planning_id" value="<?= $planning->id ?>" />
+                            <input type="hidden" name="planning_id" value="<?= $planning['id'] ?>" />
                             <input type="hidden" name="_METHOD" value="DELETE" />
                             <button type="submit" class="btn btn-link" title="<?= _('form_supprim') ?>"><i class="fa fa-times-circle"></i></button>
                     <?php endif ?>

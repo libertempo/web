@@ -1,7 +1,5 @@
 <?php
 
-defined( '_PHP_CONGES' ) or die( 'Restricted access' );
-
 include_once INCLUDE_PATH .'fonction_config.php';
 include_once INCLUDE_PATH .'lang_profile.php';
 //better to include_once plugins at the end : see bottom function
@@ -246,8 +244,7 @@ function session_delete()
 function session_saisie_user_password($erreur, $session_username, $session_password)
 {
     $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
-    $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-
+    $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
     $config_php_conges_version      = $config->getInstalledVersion();
     $config_url_site_web_php_conges = $config->getUrlAccueil();
 
@@ -279,21 +276,53 @@ if (! navigator.cookieEnabled) {
     exit;
 }
 
-
-
 //
-// autentifie un user dans le base mysql avec son login et son passwd conges :
+// authentifie un user dans le base mysql avec son login et son passwd conges :
 // - renvoie $username si authentification OK
 // - renvoie ""        si authentification FAIL
 //
-function authentification_passwd_conges($username, $password)
+function authentification_passwd_conges($username, $password) : string
 {
-    $req_conges='SELECT u_passwd   FROM conges_users   WHERE u_login="'. \includes\SQL::quote( $username ) .'" AND ( u_passwd=\''. md5($password) .'\' OR u_passwd=PASSWORD("'. \includes\SQL::quote( $password ).'") ) ' ;
-    $res_conges = \includes\SQL::query($req_conges) ;
-    $num_row_conges = $res_conges->num_rows;
-    if ($num_row_conges !=0)
+    $sql = \includes\SQL::singleton();
+    if (isAuthentifiedNouvelAlgo($sql, $username, $password)) {
         return $username;
+    } elseif (isAuthentifiedVieilAlgo($sql, $username, $password)) {
+        if (updateUtilisateurChiffrement($sql, $username, $password)) {
+            return $username;
+        }
+
+        throw new \Exception("Mise à jour algo impossible");
+    }
+
     return '';
+}
+
+function isAuthentifiedNouvelAlgo(\includes\SQL $sql, string $username, string $password) : bool
+{
+    $req = 'SELECT u_passwd
+    FROM conges_users
+    WHERE u_login = "' . $sql->quote($username) . '"';
+    $result = $sql->query($req);
+
+    return password_verify($password, $result->fetch_array()['u_passwd']);
+}
+
+function isAuthentifiedVieilAlgo(\includes\SQL $sql, string $username, string $password) : bool
+{
+    $req = 'SELECT u_passwd
+    FROM conges_users
+    WHERE u_login = "' . $sql->quote($username) . '" AND (u_passwd = "' . md5($password) . '" OR u_passwd = PASSWORD("' . $sql->quote($password ) . '"))';
+    $result = $sql->query($req);
+
+    return $result->num_rows != 0;
+}
+
+function updateUtilisateurChiffrement(\includes\SQL $sql, string $username, string $password) : bool
+{
+    $req = 'UPDATE conges_users SET u_passwd = "' . password_hash($password, PASSWORD_BCRYPT) . '" WHERE u_login = "' . $sql->quote($username) . '" LIMIT 1';
+    $sql->query($req);
+
+    return $sql->affected_rows != 0;
 }
 
 
@@ -392,7 +421,7 @@ function deconnexion_CAS($url = "")
 
     }
 
-    \phpCAS::logoutWithUrl($url);
+    \phpCAS::logout();
 }
 
 
@@ -431,8 +460,8 @@ function authentification_AD_SSO()
 		$userAD = $cred[1];
 
 	//ON VERIFIE ICI QUE L'UTILISATEUR EST DEJA ENREGISTRE SOUS DBCONGES
-	$req_conges = 'SELECT u_login FROM conges_users WHERE u_login=\''. SQL::quote($userAD).'\'';
-	$res_conges = SQL::query($req_conges) ;
+	$req_conges = 'SELECT u_login FROM conges_users WHERE u_login=\''. \includes\SQL::quote($userAD).'\'';
+	$res_conges = \includes\SQL::query($req_conges) ;
 	$num_row_conges = $res_conges->num_rows;
 	if ($num_row_conges !=0)
 		return $userAD;
@@ -456,5 +485,6 @@ function storeTokenApi(\App\Libraries\ApiClient $apiClient, $username, $userPass
         $dataUser = $apiClient->authentifyThirdParty($username);
     }
 
-    $_SESSION['token'] = $dataUser->data;
+
+    $_SESSION['token'] = $dataUser['data'];
 }

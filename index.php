@@ -1,13 +1,15 @@
-<?php
-define('ROOT_PATH', '');
-require_once 'define.php';
+<?php declare(strict_types = 1);
+defined('ROOT_PATH') or define('ROOT_PATH', '');
+defined('INCLUDE_PATH') or define('INCLUDE_PATH',     ROOT_PATH . 'includes/');
+require_once INCLUDE_PATH . 'define.php';
+require CONFIG_PATH . 'dbconnect.php';
 
-// test si dbconnect.php est présent !
-if (!is_readable( CONFIG_PATH .'dbconnect.php')) {
-	header("Location:". ROOT_PATH .'install/');
+// L'installation a-t-elle été faite ?
+if (!\includes\SQL::existsDatabase($mysql_database)) {
+    echo "L'application n'est pas installée. Veuillez passer par l'installateur.";
+    exit();
 }
-include_once INCLUDE_PATH .'fonction.php';
-include_once ROOT_PATH .'fonctions_conges.php'; // for init_config_tab()
+
 $sql = \includes\SQL::singleton();
 $config = new \App\Libraries\Configuration($sql);
 $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
@@ -24,7 +26,7 @@ if (!session_is_valid()) {
 	if ($config->getHowToConnectUser() == "cas") {
         try {
             $usernameCAS = authentification_passwd_conges_CAS();
-            if ($usernameCAS == "") { 
+            if ($usernameCAS == "") {
                 throw new \Exception("Nom d'utilisateur vide");
             }
             session_create($usernameCAS);
@@ -98,7 +100,7 @@ if (isset($_SESSION['userlogin'])) {
 	$request= "SELECT u_nom, u_passwd, u_prenom, u_is_resp, u_is_hr, u_is_admin, u_is_active  FROM conges_users where u_login = '". \includes\SQL::quote($_SESSION['userlogin'])."' " ;
 	$rs = \includes\SQL::query($request );
 	if ($rs->num_rows != 1) {
-	    redirect( ROOT_PATH .'index.php' );
+        redirect(ROOT_PATH . 'authentification');
 	} else {
 		$row = $rs->fetch_array();
 		$NOM=$row["u_nom"];
@@ -107,9 +109,9 @@ if (isset($_SESSION['userlogin'])) {
         $is_hr = $row["u_is_hr"];
 		$is_resp = $row["u_is_resp"];
 		$is_active = $row["u_is_active"];
-                if('admin' === $_SESSION['userlogin']){
-                    redirect(ROOT_PATH . 'admin/admin_index.php');
-                }
+        if('admin' === $_SESSION['userlogin']) {
+            redirect(ROOT_PATH . 'admin/db_sauve');
+        }
 		if($is_active == "N") {
 			header_error();
 			echo  _('session_compte_inactif') ."<br>\n";

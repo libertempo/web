@@ -114,7 +114,7 @@ final class ApiClient
      * @param array $options Options de requête
      * @example ['headers' => [], 'body' => []]
      *
-     * @return \stdClass Au format Jsend
+     * @return array Au format Jsend
      * @throws \LogicException Si la requête est mal formée (Http4XX)
      */
     private function request($method, $uri, array $options)
@@ -136,14 +136,14 @@ final class ApiClient
 
         $body = $response->getBody();
         if (empty((string) $body)) {
-            $emptyClass = new \stdClass();
-            $emptyClass->code = $response->getStatusCode();
-            $emptyClass->message = $response->getReasonPhrase();
-            $emptyClass->status = 'success';
-            $emptyClass->data = [];
-            return $emptyClass;
+            return [
+                'code' => $response->getStatusCode(),
+                'message' => $response->getReasonPhrase(),
+                'status' => 'success',
+                'data' => [],
+            ];
         }
-        $jsonBody = json_decode($body, false);
+        $jsonBody = json_decode($body, true);
         if (null === $jsonBody) {
             throw new \RuntimeException('La réponse n\'est pas du JSON');
         }

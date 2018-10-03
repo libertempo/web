@@ -114,7 +114,7 @@ class Fonctions
     /**
      * Encapsule le comportement du module d'affichage des logs
      *
-     * @return void
+     * @return string
      * @access public
      * @static
      */
@@ -275,7 +275,7 @@ class Fonctions
     /**
      * Encapsule le comportement du module d'affichage des logs
      *
-     * @return void
+     * @return string
      * @access public
      * @static
      */
@@ -350,10 +350,10 @@ class Fonctions
 
     public static function commit_ajout(&$tab_new_values)
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $return = '';
 
-        $URL = "$PHP_SELF?onglet=type_absence";
+        $URL = $PHP_SELF;
         $tab_new_values['libelle'] = htmlentities($tab_new_values['libelle'], ENT_QUOTES | ENT_HTML401);
         $tab_new_values['short_libelle'] = htmlentities($tab_new_values['short_libelle']);
         $tab_new_values['type'] = htmlentities($tab_new_values['type'], ENT_QUOTES | ENT_HTML401);
@@ -371,11 +371,23 @@ class Fonctions
             $erreur=TRUE;
         }
 
+        // vérif unicité du libellé court
+        $sql = \includes\SQL::singleton();
+        $config = new \App\Libraries\Configuration($sql);
+        $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
+        $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
+        $absenceTypes = $api->get('absence/type', $_SESSION['token'])['data'];
+        $absenceWithLibelle = array_filter($absenceTypes, function (array $type) use ($tab_new_values) {
+            return $tab_new_values['short_libelle'] === $type['libelleCourt'];
+        });
+        if (!empty($absenceWithLibelle)) {
+            $return .= '<br>' . _('config_abs_saisie_not_ok') . ' : ' . _('libelle_court_existant') . '<br>';
+            $erreur = true;
+        }
 
         if($erreur) {
             $return .= '<br>';
             $return .= '<form action="' . $URL . '" method="POST">';
-            $return .= '<input type="hidden" name="id_to_update" value="' . $id_to_update . '">';
             $return .= '<input type="hidden" name="tab_new_values[libelle]" value="' . $tab_new_values['libelle']. '">';
             $return .= '<input type="hidden" name="tab_new_values[short_libelle]" value="' . $tab_new_values['short_libelle'] . '">';
             $return .= '<input type="hidden" name="tab_new_values[type]" value="' . $tab_new_values['type'] . '">';
@@ -384,8 +396,8 @@ class Fonctions
             $return .= '<br><br>';
         } else {
             // ajout dans la table conges_type_absence
-            $req_insert1="INSERT INTO conges_type_absence (ta_libelle, ta_short_libelle, ta_type) " .
-                "VALUES ('".$tab_new_values['libelle']."', '".$tab_new_values['short_libelle']."', '".$tab_new_values['type']."') ";
+            $req_insert1="INSERT INTO conges_type_absence (ta_libelle, ta_short_libelle, ta_type, type_natif) " .
+                "VALUES ('".$tab_new_values['libelle']."', '".$tab_new_values['short_libelle']."', '".$tab_new_values['type']."', 0) ";
             \includes\SQL::query($req_insert1);
 
             // on recup l'id de l'absence qu'on vient de créer
@@ -419,10 +431,10 @@ class Fonctions
 
     public static function commit_suppr($id_to_update)
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $return = '';
 
-        $URL = "$PHP_SELF?onglet=type_absence";
+        $URL = $PHP_SELF;
 
         // delete dans la table conges_type_absence
         $req_delete1='DELETE FROM conges_type_absence WHERE ta_id='. \includes\SQL::quote($id_to_update);
@@ -443,22 +455,38 @@ class Fonctions
 
     public static function supprimer($id_to_update)
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $return = '';
 
-        $URL = "$PHP_SELF?onglet=type_absence";
+        $URL = parse_url($PHP_SELF, PHP_URL_PATH);
 
 
         // verif si pas de periode de ce type de conges !!!
         //requête qui récupère les informations de la table conges_periode
         $sql1 = 'SELECT p_num FROM conges_periode WHERE p_type="'. \includes\SQL::quote($id_to_update).'"';
         $ReqLog1 = \includes\SQL::query($sql1);
+        $withErreur = false;
 
-        $count= ($ReqLog1->num_rows) ;
+        if (0 !== $ReqLog1->num_rows) {
+            $raison = _('config_abs_already_used');
+            $withErreur = true;
+        }
 
-        if( $count!=0 ) {
+        $sql = \includes\SQL::singleton();
+        $config = new \App\Libraries\Configuration($sql);
+        $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
+        $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
+        $absenceType = $api->get('absence/type/' . $id_to_update, $_SESSION['token'])['data'];
+
+        // @TODO 2018-09-08 : avance de phase pour l'API. À enlever quand l'API sera consommée
+        if (isset($absenceType['typeNatif']) && $absenceType['typeNatif']) {
+            $raison = _('config_abs_type_natif');
+            $withErreur = true;
+        }
+
+        if ($withErreur) {
             $return .= '<center>';
-            $return .= '<br>' . _('config_abs_suppr_impossible') . '<br>' . _('config_abs_already_used') . '<br>';
+            $return .= '<br>' . _('config_abs_suppr_impossible') . '<br>' . $raison . '<br>';
 
             $return .= '<br>';
             $return .= '<form action="' . $URL . '" method="POST">';
@@ -492,10 +520,10 @@ class Fonctions
 
     public static function commit_modif_absence(&$tab_new_values, $id_to_update)
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $return = '';
 
-        $URL = "$PHP_SELF";
+        $URL = $PHP_SELF;
 
 
         // verif de la saisie
@@ -511,9 +539,36 @@ class Fonctions
             $erreur=TRUE;
         }
 
+        $sql = \includes\SQL::singleton();
+        $config = new \App\Libraries\Configuration($sql);
+        $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
+        $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
+        $absenceTypes = $api->get('absence/type/', $_SESSION['token'])['data'];
+
+        $absence = [];
+        $absenceWithLibelle = [];
+        foreach ($absenceTypes as $at) {
+            if ($at['id'] === $id_to_update) {
+                $absence = $at;
+            }
+            if ($tab_new_values['short_libelle'] === $at['libelleCourt'] && $at['id'] !== $id_to_update) {
+                $absenceWithLibelle[] = $at;
+            }
+        }
+        if (!empty($absenceWithLibelle)) {
+            $return .= '<br>' . _('config_abs_saisie_not_ok') . ' : ' . _('libelle_court_existant') . '<br>';
+            $erreur = true;
+        }
+
+        // @TODO 2018-09-08 : avance de phase pour l'API. À enlever quand l'API sera consommée
+        if (isset($absence['typeNatif']) && $absence['typeNatif']) {
+            $return .= '<br>' . _('config_abs_saisie_not_ok') . ' : ' . _('config_abs_type_natif') . '<br>';
+            $erreur = true;
+        }
+
         if($erreur) {
             $return .= '<br>';
-            $return .= '<form action="' . $PHP_SELF . '?onglet=type_absence" method="POST">';
+            $return .= '<form action="' . $PHP_SELF . '" method="POST">';
             $return .= '<input type="hidden" name="action" value="modif">';
             $return .= '<input type="hidden" name="id_to_update" value="' . $id_to_update .'">';
             $return .= '<input type="hidden" name="tab_new_values[libelle]" value="' . $tab_new_values['libelle'] . '">';
@@ -537,32 +592,27 @@ class Fonctions
 
     public static function modifier(&$tab_new_values, $id_to_update)
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $return = '';
 
-        $URL = "$PHP_SELF?onglet=type_absence";
+        $URL = parse_url($PHP_SELF, PHP_URL_PATH);
 
         /**************************************/
         // affichage du titre
         $return .= '<br><center><H1>' . _('config_abs_titre') . '</H1></center>';
         $return .= '<br>';
 
-        // recup des infos du type de conges / absences
-        $sql_cong='SELECT ta_type, ta_libelle, ta_short_libelle FROM conges_type_absence WHERE ta_id = '. \includes\SQL::quote($id_to_update);
-
-        $ReqLog_cong = \includes\SQL::query($sql_cong);
-
-        if($resultat_cong = $ReqLog_cong->fetch_array()) {
-            $sql_type=$resultat_cong['ta_type'];
-            $sql_libelle= $resultat_cong['ta_libelle'];
-            $sql_short_libelle= $resultat_cong['ta_short_libelle'];
-        }
+        $sql = \includes\SQL::singleton();
+        $config = new \App\Libraries\Configuration($sql);
+        $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
+        $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
+        $absenceType = $api->get('absence/type/' . $id_to_update, $_SESSION['token'])['data'];
 
         // mise en place du formulaire
         $return .= '<form action="' . $URL . '" method="POST">';
 
-        $text_libelle ="<input class=\"form-control\" type=\"text\" name=\"tab_new_values[libelle]\" size=\"20\" maxlength=\"20\" value=\"$sql_libelle\" >";
-        $text_short_libelle ="<input class=\"form-control\" type=\"text\" name=\"tab_new_values[short_libelle]\" size=\"3\" maxlength=\"3\" value=\"$sql_short_libelle\" >";
+        $text_libelle = '<input class="form-control" type="text" name="tab_new_values[libelle]" size="20" maxlength="20" value="' . $absenceType['libelle'] . '" >';
+        $text_short_libelle = '<input class="form-control" type="text" name="tab_new_values[short_libelle]" size="3" maxlength="3" value="' . $absenceType['libelleCourt'] . '" >';
 
         // affichage
         $table = new \App\Libraries\Structure\Table();
@@ -573,7 +623,7 @@ class Fonctions
         $childTable .= '<td><b><u>' . _('config_abs_libelle_short') . '</b></u></td>';
         $childTable .= '<td>' . _('divers_type') . '</td>';
         $childTable .= '</tr>';
-        $childTable .= '<tr><td><b>' . $sql_libelle . '</b></td><td>' . $sql_short_libelle . '</td><td>' . $sql_type . '</td></tr>';
+        $childTable .= '<tr><td><b>' . $absenceType['libelle'] . '</b></td><td>' . $absenceType['libelleCourt'] . '</td><td>' . $absenceType['type'] . '</td></tr>';
         $childTable .= '<tr><td><b>' . $text_libelle . '</b></td><td>' . $text_short_libelle . '</td><td></td></tr>';
         $table->addChild($childTable);
 
@@ -594,186 +644,9 @@ class Fonctions
         return $return;
     }
 
-    public static function affichage_absence($tab_new_values)
-    {
-        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        $return = '';
-
-        $URL = "$PHP_SELF?onglet=type_absence";
-
-        /**************************************/
-        // affichage du titre
-        $return .= '<h1>' . _('config_abs_titre') . '</h1>';
-        /**************************************/
-
-        // affichage de la liste des type d'absence existants
-
-        $tab_enum = \config\Fonctions::get_tab_from_mysql_enum_field("conges_type_absence", "ta_type");
-
-        foreach($tab_enum as $ta_type) {
-            if( ($ta_type=="conges_exceptionnels") &&  (!$config->isCongesExceptionnelsActive())) {
-            } else {
-                $divers_maj_1 = 'divers_' . $ta_type . '_maj_1';
-                $config_abs_comment = 'config_abs_comment_' . $ta_type;
-
-                $legend= _($divers_maj_1)  ;
-                $comment= _($config_abs_comment)  ;
-
-                $return .= '<h2>' . $legend . '</h2>';
-                $return .= '<p>' . $comment . '</p>';
-
-                //requête qui récupère les informations de la table conges_type_absence
-                $sql1 = 'SELECT * FROM conges_type_absence WHERE ta_type = "'. \includes\SQL::quote($ta_type).'"';
-                $ReqLog1 = \includes\SQL::query($sql1);
-
-                if($ReqLog1->num_rows !=0) {
-                    $table = new \App\Libraries\Structure\Table();
-                    $table->addClasses([
-                        'table',
-                        'table-hover',
-                        'table-responsive',
-                        'table-condensed',
-                        'table-striped'
-                    ]);
-                    $childTable = '<tr>';
-                    $childTable .= '<th>' . _('config_abs_libelle') . '</th>';
-                    $childTable .= '<th>' . _('config_abs_libelle_short') . '</th>';
-                    $childTable .= '<th></th>';
-                    $childTable .= '</tr>';
-
-                    while ($data = $ReqLog1->fetch_array()) {
-                        $ta_id = $data['ta_id'];
-                        $ta_libelle = $data['ta_libelle'];
-                        $ta_short_libelle = $data['ta_short_libelle'];
-
-                        $text_modif="<a href=\"$PHP_SELF?action=modif&id_to_update=$ta_id&onglet=type_absence\" title=\"". _('form_modif') ."\"><i class=\"fa fa-pencil\"></i></a>";
-                        $text_suppr="<a href=\"$PHP_SELF?action=suppr&id_to_update=$ta_id&onglet=type_absence\" title=\"". _('form_supprim') ."\"><i class=\"fa fa-times-circle\"></i></a>";
-
-                        $childTable .= '<tr><td><strong>' . $ta_libelle . '</strong></td><td>' . $ta_short_libelle . '</td><td class="action">' . $text_modif . '&nbsp;' . $text_suppr . '</td></tr>';
-                    }
-                    $table->addChild($childTable);
-                    ob_start();
-                    $table->render();
-                    $return .= ob_get_clean();
-                    $return .= '<hr/>';
-                }
-            }
-        }
-
-        /**************************************/
-        // saisie de nouveaux type d'absence
-        $return .= '<h2>' . _('config_abs_add_type_abs') . '</h2>';
-        $return .= '<p>' . _('config_abs_add_type_abs_comment') . '</p>';
-        $return .= '<form action="' . $URL . '" method="POST">';
-        $tableAjout = new \App\Libraries\Structure\Table();
-        $tableAjout->addClasses([
-            'table',
-            'table-hover',
-            'table-responsive',
-            'table-condensed',
-            'table-striped'
-        ]);
-
-        $childTableAjout = '<tr>';
-        $childTableAjout .= '<th>' . _('config_abs_libelle') . '</th>';
-        $childTableAjout .= '<th>' . _('config_abs_libelle_short') . '</th>';
-        $childTableAjout .= '<th>' . _('divers_type') . '</th>';
-        $childTableAjout .= '</tr>';
-        $childTableAjout .= '<tr>';
-        $new_libelle = ( isset($tab_new_values['libelle']) ? $tab_new_values['libelle'] : "" );
-        $new_short_libelle = ( isset($tab_new_values['short_libelle']) ? $tab_new_values['short_libelle'] : "" ) ;
-        $new_type = ( isset($tab_new_values['type']) ? $tab_new_values['type'] : "" ) ;
-        $childTableAjout .= '<td><input class="form-control" type="text" name="tab_new_values[libelle]" size="20" maxlength="20" value="' . $new_libelle . '"></td>';
-        $childTableAjout .= '<td><input class="form-control" type="text" name="tab_new_values[short_libelle]" size="3" maxlength="3" value="' . $new_short_libelle . '" ></td>';
-        $childTableAjout .= '<td>';
-
-        $childTableAjout .= '<select class="form-control" name=tab_new_values[type]>';
-
-        foreach($tab_enum as $option) {
-            if( ($option=="conges_exceptionnels") &&  (!$config->isCongesExceptionnelsActive())) {
-            } else {
-                if($option==$new_type) {
-                    $childTableAjout .= '<option selected>' . $option . '</option>';
-                } else {
-                    $childTableAjout .= '<option>' . $option . '</option>';
-                }
-            }
-        }
-
-        $childTableAjout .= '</select>';
-        $childTableAjout .= '</td></tr>';
-        $tableAjout->addChild($childTableAjout);
-        ob_start();
-        $tableAjout->render();
-        $return .= ob_get_clean();
-        $return .= '<input type="hidden" name="action" value="new">';
-        $return .= '<hr/>';
-        $return .= '<input type="submit" class="btn btn-success" value="' . _('form_ajout') . '"><br>';
-        $return .= '</form>';
-        return $return;
-    }
-
-    /**
-     * Encapsule le comportement du module de configuration des types de congés
-     *
-     *
-     * @return void
-     * @access public
-     * @static
-     */
-    public static function typeAbsenceModule()
-    {
-        $return = '';
-
-        if (file_exists(CONFIG_PATH .'config_ldap.php')) {
-            include_once CONFIG_PATH .'config_ldap.php';
-        }
-
-        // include_once ROOT_PATH .'fonctions_conges.php' ;
-        // include_once INCLUDE_PATH .'fonction.php';
-        if(!isset($_SESSION['config'])) {
-            $_SESSION['config']=init_config_tab();      // on initialise le tableau des variables de config
-        }
-        include_once INCLUDE_PATH .'session.php';
-
-        // verif des droits du user à afficher la page
-        verif_droits_user( "is_admin");
-
-
-
-        /*** initialisation des variables ***/
-        /*************************************/
-        // recup des parametres reçus :
-        // SERVER
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-        // GET / POST
-        $action         = getpost_variable('action') ;
-        $tab_new_values = getpost_variable('tab_new_values');
-        $id_to_update   = htmlentities(getpost_variable('id_to_update'), ENT_QUOTES | ENT_HTML401);
-
-        /*********************************/
-
-        if($action=="new") {
-            $return .= \config\Fonctions::commit_ajout($tab_new_values);
-        } elseif ($action=="modif") {
-            $return .= \config\Fonctions::modifier($tab_new_values, $id_to_update);
-        } elseif($action=="commit_modif") {
-            $return .= \config\Fonctions::commit_modif_absence($tab_new_values, $id_to_update);
-        } elseif($action=="suppr") {
-            $return .= \config\Fonctions::supprimer($id_to_update);
-        } elseif($action=="commit_suppr") {
-            $return .= \config\Fonctions::commit_suppr($id_to_update);
-        } else {
-            $return .= \config\Fonctions::affichage_absence($tab_new_values);
-        }
-
-        return $return;
-    }
-
     public static function commit_saisie(&$tab_new_values)
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $return = '';
 
         $URL = "$PHP_SELF";
@@ -852,7 +725,7 @@ class Fonctions
 
     public static function affichage_configuration()
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $return = '';
 
         // affichage de la liste des variables
@@ -1016,7 +889,7 @@ class Fonctions
     /**
      * Encapsule le comportement du module d'affichage des logs
      *
-     * @return void
+     * @return string
      * @access public
      * @static
      */

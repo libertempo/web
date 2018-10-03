@@ -1,0 +1,106 @@
+#!/usr/bin/env php
+<?php
+require_once 'libraries';
+require_once CONFIG_PATH . 'dbconnect.php';
+
+define('INSTALLATION_PATH', PATCH_PATH . DS . 'Installation' . DS);
+define('API_PATH', ROOT_PATH . 'api' . DS);
+define('API_SYSPATH', ROOT_PATH . 'vendor' . DS . 'Libertempo' . DS . 'libertempo-api' . DS);
+
+function createHR(\includes\SQL $db, array $data) : bool
+{
+
+    $data['login'] = $db->escape_string($data['login']);
+    $data['nom'] = $db->escape_string($data['nom']);
+    $data['prenom'] = $db->escape_string($data['prenom']);
+    $data['email'] = $db->escape_string($data['email']);
+
+    $db->query('INSERT INTO conges_users 
+                (u_login, u_nom, u_prenom, u_is_resp, u_is_admin, u_is_hr, u_is_active, u_passwd, u_email) 
+                VALUES ("' . $data['login'] . '", "' . $data['nom'] . '", "' . $data['prenom'] . '", "N", "Y", "Y", "Y", "' . $data['password'] . '", "' . $data['email'] . '");
+    ');
+
+    return 0 < $db->affected_rows;
+}
+
+function existUser(\includes\SQL $db, string $login) : bool
+{
+    $res = $db->query('SELECT EXISTS (SELECT u_login FROM conges_users WHERE u_login = "' . $login . '");
+    ');
+
+    return 0 < (int) $res->fetch_array()[0];
+}
+
+
+display('Création du haut responsable...');
+display('Contrôles généraux...');
+if (!\includes\SQL::existsDatabase($mysql_database)) {
+    displayFail();
+}
+
+$db = \includes\SQL::singleton();
+
+$data['login'] = $argv[1] ?? null;
+$data['nom'] = $argv[2] ?? null;
+$data['prenom'] = $argv[3] ?? null;
+$data['email'] = $argv[4] ?? null;
+$data['password'] = $argv[5] ?? null;
+
+display('Vous vous apprêtez à créer un HR avec les droits administrateurs.
+Si vous utilisez une authentification externe, assurez vous de créer un utilisateur existant dans votre référentiel.');
+
+if (null == $data['login']) {
+    $input = getValue('Identifiant :');
+    if ($input == '' || !preg_match('/^[@a-z.\d_-]{2,30}$/i', $input)) {
+        displayError('Saisie incorrecte! L\'identifiant ne peut pas etre vide ou contenir des caractères spéciaux');
+    }
+    $data['login'] = $input;
+}
+
+if (null == $data['nom']) {
+    $input = getValue('Nom :');
+    if ($input == '') {
+        displayError('Saisie incorrecte! Le nom ne peut pas etre vide');
+    }
+    $data['nom'] = $input;
+}
+
+if (null == $data['prenom']) {
+    $input = getValue('Prenom :');
+    if ($input == '') {
+        displayError('Saisie incorrecte! Le prénom ne peut pas etre vide');
+    }
+    $data['prenom'] = $input;
+}
+
+if (null == $data['email']) {
+    $input = getValue('Courriel :');
+    if ($input == '' || !filter_var($input, FILTER_VALIDATE_EMAIL)) {
+        displayError('Saisie incorrecte! Le courriel doit respecter le format standard');
+    }
+    $data['email'] = $input;
+}
+
+if (null == $data['password']) {
+    system('stty -echo');
+    $input = getValue('Mot de passe (invisible) :');
+    system('stty echo');
+    if ($input == '') {
+        displayError('Saisie incorrecte! Le mot de passe ne peut pas etre vide');
+    }
+    $data['password'] = password_hash($input, PASSWORD_BCRYPT);
+}
+
+display('Contrôle d\'unicité de l\'identifiant...');
+
+if (existUser($db, $data['login'])) {
+    displayError('identifiant déjà existant!');
+}
+
+
+if (!createHR($db, $data)) {
+    displayError('Une erreur inattendue s\'est produite!');
+    displayFail();
+}
+
+display('Création du haut responsable effectuée avec succès.');

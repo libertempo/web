@@ -1,0 +1,10 @@
+parameters:
+	excludes_analyse:
+		- %currentWorkingDirectory%/vendor/*
+		- %currentWorkingDirectory%/App/Views/*
+		- %currentWorkingDirectory%/Public/template/*
+		- %currentWorkingDirectory%/Tests/*
+		- %currentWorkingDirectory%/library/*
+	ignoreErrors:
+		- '#Function (.+) not found\.#'
+		- '#Function (.+) not found while trying to analyse it - autoloading is probably not configured properly\.#'

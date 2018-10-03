@@ -50,7 +50,7 @@ if (!empty($listId)) {
         $data->jour = date('d/m/Y', $additionnelle['debut']);
         $data->debut = date('H\:i', $additionnelle['debut']);
         $data->fin = date('H\:i', $additionnelle['fin']);
-        $data->duree = \App\Helpers\Formatter::Timestamp2Duree($additionnelle['duree']);
+        $data->duree = \App\Helpers\Formatter::timestamp2Duree($additionnelle['duree']);
         $data->statut = AHeure::statusText($additionnelle['statut']);
         $data->comment = \includes\SQL::quote($additionnelle['comment']);
         $data->isModifiable = AHeure::STATUT_DEMANDE == $additionnelle['statut'];
