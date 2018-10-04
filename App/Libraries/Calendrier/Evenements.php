@@ -92,7 +92,7 @@ class Evenements
                 $suffixe = '*' !== $evenement['demiJournee']
                 ? '_' . $evenement['demiJournee']
                 : '_all';
-                $this->setEvenementDate($evenement['employe'], $jour, 'conge' . $suffixe . ' conge_' . $evenement['statut'], 'Congé');
+                $this->setEvenementDate($evenement['employe'], $jour, 'conge' . $suffixe . ' conge_' . $evenement['statut'], $evenement['libelle']);
             }
         }
     }
