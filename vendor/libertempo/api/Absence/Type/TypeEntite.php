@@ -44,6 +44,16 @@ class TypeEntite extends \LibertAPI\Tools\Libraries\AEntite
     }
 
     /**
+     * Retourne la donnée la plus à jour du champ type natif
+     * S'il n'est pas inséré par le client (préciser les cas),
+     * alors c'est que ce n'est pas un type natif
+     */
+    public function isTypeNatif() : bool
+    {
+        return $this->dataUpdated['typeNatif'] ?? $this->data['typeNatif'] ?? false;
+    }
+
+    /**
      * @inheritDoc
      */
     public function populate(array $data)
@@ -111,5 +121,4 @@ class TypeEntite extends \LibertAPI\Tools\Libraries\AEntite
 
         $this->dataUpdated['libelleCourt'] = $var;
     }
-
 }

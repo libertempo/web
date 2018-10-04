@@ -1,4 +1,7 @@
 <?php declare(strict_types = 1);
+
+use LibertAPI\Tools\Controllers\AbsenceTypeController;
+
 /*
  * Doit être importé après la création de $app. Ne créé rien.
  *
@@ -11,12 +14,12 @@ $app->group('/absence', function () {
     $this->group('/type', function () {
         /* Détail */
         $this->group('/{typeId:[0-9]+}', function () {
-            $this->get('', ['controller', 'get'])->setName('getAbsenceTypeDetail');
-            $this->put('', ['controller', 'put'])->setName('putAbsenceTypeDetail');
-            $this->delete('', ['controller', 'delete'])->setName('deleteAbsenceTypeDetail');
+            $this->get('', [AbsenceTypeController::class, 'get'])->setName('getAbsenceTypeDetail');
+            $this->put('', [AbsenceTypeController::class, 'put'])->setName('putAbsenceTypeDetail');
+            $this->delete('', [AbsenceTypeController::class, 'delete'])->setName('deleteAbsenceTypeDetail');
         });
         /* Collection */
-        $this->get('', ['controller', 'get'])->setName('getAbsenceTypeListe');
-        $this->post('', ['controller', 'post'])->setName('postAbsenceTypeListe');
+        $this->get('', [AbsenceTypeController::class, 'get'])->setName('getAbsenceTypeListe');
+        $this->post('', [AbsenceTypeController::class, 'post'])->setName('postAbsenceTypeListe');
     });
 });

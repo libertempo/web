@@ -24,7 +24,7 @@ final class Versions
   'guzzlehttp/psr7' => '1.4.2@f5b8a8512e2b58b0071a7280e39f14f72e05d87c',
   'jasig/phpcas' => '1.3.5@61c8899c8f91204e8b9135d795461e50fe5c2db0',
   'jeremeamia/SuperClosure' => '2.4.0@5707d5821b30b9a07acfb4d76949784aaa0e9ce9',
-  'libertempo/api' => 'v1.1.0@23783757f062f81eae506679418efd6ea7d2e8fe',
+  'libertempo/api' => 'v1.2.0@2c98685dcad8baf51f903cde53db3079b6881614',
   'monolog/monolog' => '1.23.0@fd8c787753b3a2ad11bc60c063cff1358a32a3b4',
   'nikic/fast-route' => 'v1.3.0@181d480e08d9476e61381e04a71b34dc0432e812',
   'nikic/php-parser' => 'v3.1.5@bb87e28e7d7b8d9a7fda231d37457c9210faf6ce',
@@ -63,7 +63,7 @@ final class Versions
   'symfony/finder' => 'v3.4.12@3a8c3de91d2b2c68cd2d665cf9d00f7ef9eaa394',
   'symfony/polyfill-mbstring' => 'v1.8.0@3296adf6a6454a050679cde90f95350ad604b171',
   'symfony/process' => 'v3.4.12@acc5a37c706ace827962851b69705b24e71ca17c',
-  'libertempo/libertempo-web' => 'No version set (parsed as 1.0.0)@',
+  'libertempo/libertempo-web' => 'dev-develop@0641c5dc0c5efac638924496f46d3ca387a6d5c5',
 );
 
     private function __construct()

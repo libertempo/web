@@ -38,6 +38,7 @@ class TypeRepository extends \LibertAPI\Tools\Libraries\ARepository
             'type' => $dataStorage['ta_type'],
             'libelle' => $dataStorage['ta_libelle'],
             'libelleCourt' => $dataStorage['ta_short_libelle'],
+            'typeNatif' => (bool) $dataStorage['type_natif'],
         ];
     }
 
@@ -82,6 +83,7 @@ class TypeRepository extends \LibertAPI\Tools\Libraries\ARepository
             'type' => $entite->getType(),
             'libelle' => $entite->getLibelle(),
             'libelleCourt' => $entite->getLibelleCourt(),
+            'typeNatif' => $entite->isTypeNatif(),
         ];
     }
 

@@ -3,6 +3,7 @@ namespace LibertAPI\Utilisateur;
 
 use LibertAPI\Tools\Libraries\AEntite;
 use LibertAPI\Tools\Libraries\Application;
+use LibertAPI\Tools\Exceptions\UnknownResourceException;
 
 /**
  * {@inheritDoc}
@@ -38,9 +39,20 @@ class UtilisateurRepository extends \LibertAPI\Tools\Libraries\ARepository
         return UtilisateurEntite::class;
     }
 
-    public function getOne(int $id) : AEntite
+    public function getOne($id) : AEntite
     {
-        throw new \RuntimeException('Action is forbidden');
+        $this->queryBuilder->select('*, u_login AS id');
+        $this->setWhere(['id' => $id]);
+        $res = $this->queryBuilder->execute();
+
+        $data = $res->fetch(\PDO::FETCH_ASSOC);
+        if (empty($data)) {
+            throw new UnknownResourceException('#' . $id . ' is not a valid resource');
+        }
+
+        $entiteClass = $this->getEntiteClass();
+
+        return new $entiteClass($this->getStorage2Entite($data));
     }
 
     /**
@@ -63,6 +75,9 @@ class UtilisateurRepository extends \LibertAPI\Tools\Libraries\ARepository
     public function getList(array $parametres) : array
     {
         $this->queryBuilder->select('*, u_login AS id');
+        // @TODO: supprimer cette ligne quand on passera à DBAL > 2.6 : https://github.com/doctrine/dbal/commit/e937f37a8acc117047ff4ed9aec493a1e3de2195
+        $this->queryBuilder->resetQueryPart('from');
+        $this->queryBuilder->from($this->getTableName(), 'current');
         $this->setWhere($this->getParamsConsumer2Storage($parametres));
         $res = $this->queryBuilder->execute();
         $data = $res->fetchAll(\PDO::FETCH_ASSOC);
@@ -125,19 +140,25 @@ class UtilisateurRepository extends \LibertAPI\Tools\Libraries\ARepository
         return $results;
     }
 
-    public function postOne(array $data, AEntite $entite) : int
+    public function postOne(array $data) : int
     {
         throw new \RuntimeException('Action is forbidden');
     }
 
-    public function putOne(AEntite $entite)
+    public function putOne($id, array $data) : AEntite
     {
+        $entite = $this->getOne($id);
+        $entite->populate($data);
         $this->queryBuilder->update($this->getTableName());
         $this->setSet($this->getEntite2Storage($entite));
-        $this->queryBuilder->where('u_login = :id');
-        $this->queryBuilder->setParameter(':id', $entite->getId());
+        // @TODO: supprimer cette ligne quand on passera à DBAL > 2.6 : https://github.com/doctrine/dbal/commit/e937f37a8acc117047ff4ed9aec493a1e3de2195
+        $this->queryBuilder->resetQueryPart('where');
+        $this->setWhere(['u_login' => $entite->getId()]);
 
         $this->queryBuilder->execute();
+
+        return $entite;
+
     }
 
     /**
@@ -165,25 +186,21 @@ class UtilisateurRepository extends \LibertAPI\Tools\Libraries\ARepository
      */
     final protected function setWhere(array $parametres)
     {
-        $whereCriteria = [];
         if (!empty($parametres['u_login'])) {
             $this->queryBuilder->andWhere('u_login = :id');
-            $whereCriteria[':id'] = $parametres['u_login'];
+            $this->queryBuilder->setParameter(':id', $parametres['u_login']);
         }
         if (!empty($parametres['token'])) {
             $this->queryBuilder->andWhere('token = :token');
-            $whereCriteria[':token'] = $parametres['token'];
+            $this->queryBuilder->setParameter(':token', $parametres['token']);
         }
         if (!empty($parametres['gt_date_last_access'])) {
             $this->queryBuilder->andWhere('date_last_access >= :gt_date_last_access');
-            $whereCriteria[':gt_date_last_access'] = $parametres['gt_date_last_access'];
+            $this->queryBuilder->setParameter(':gt_date_last_access', $parametres['gt_date_last_access']);
         }
         if (!empty($parametres['is_active'])) {
             $this->queryBuilder->andWhere('u_is_active = :actif');
-            $whereCriteria[':actif'] = ($parametres['is_active']) ? 'Y' : 'N';
-        }
-        if (!empty($whereCriteria)) {
-            $this->queryBuilder->setParameters($whereCriteria);
+            $this->queryBuilder->setParameter(':actif', ($parametres['is_active']) ? 'Y' : 'N');
         }
     }
 
@@ -219,10 +236,11 @@ class UtilisateurRepository extends \LibertAPI\Tools\Libraries\ARepository
      *
      * @since 0.3
      */
-    public function updateDateLastAccess(UtilisateurEntite $entite)
+    public function updateDateLastAccess(UtilisateurEntite $entite) : AEntite
     {
         $entite->updateDateLastAccess();
-        $this->putOne($entite);
+
+        return $this->putOne($entite->getId(), ['date_last_access' => $entite->getDateLastAccess()]);
     }
 
     /**
@@ -240,15 +258,17 @@ class UtilisateurRepository extends \LibertAPI\Tools\Libraries\ARepository
             throw new \RuntimeException('Instance token is not set');
         }
 
-        try {
-            $entite->populateToken($this->buildToken($instanceToken));
-            $entite->updateDateLastAccess();
-            $this->putOne($entite);
+        $entite->updateDateLastAccess();
+        $entite->populateToken($this->buildToken($instanceToken));
+        $this->queryBuilder->update($this->getTableName());
+        $this->setSet($this->getEntite2Storage($entite));
+        // @TODO: supprimer cette ligne quand on passera à DBAL > 2.6 : https://github.com/doctrine/dbal/commit/e937f37a8acc117047ff4ed9aec493a1e3de2195
+        $this->queryBuilder->resetQueryPart('where');
+        $this->setWhere(['u_login' => $entite->getId()]);
 
-            return $entite;
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        $this->queryBuilder->execute();
+
+        return $entite;
     }
 
     /**
@@ -263,7 +283,7 @@ class UtilisateurRepository extends \LibertAPI\Tools\Libraries\ARepository
         return password_hash($instanceToken, \PASSWORD_BCRYPT);
     }
 
-    public function deleteOne(AEntite $entite) : int
+    public function deleteOne(int $id) : int
     {
         throw new \RuntimeException('Action is forbidden');
     }
