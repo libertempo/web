@@ -28,7 +28,7 @@ function getUrlMois(\DateTimeInterface $date, $idGroupe)
 
 function getClassesJour(\App\Libraries\Calendrier\Evenements $evenements, $nom, $jour, \DateTimeInterface $moisDemande)
 {
-    return implode(' ', $evenements->getEvenementsDate($nom, $jour));
+    return preg_replace('/(^|.* )ferie( .*|$)/', 'ferie', implode(' ', $evenements->getEvenementsDate($nom, $jour)));
 }
 
 function getTitleJour(\App\Libraries\Calendrier\Evenements $evenements, $nom, $jour)
