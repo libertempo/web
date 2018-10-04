@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9b8246a4065e595918c09878ca95526d",
+    "content-hash": "cffff0e72f750089d9e36d049713fb4f",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -799,16 +799,16 @@
         },
         {
             "name": "libertempo/api",
-            "version": "v1.1.0",
+            "version": "v1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/libertempo/api.git",
-                "reference": "23783757f062f81eae506679418efd6ea7d2e8fe"
+                "reference": "2c98685dcad8baf51f903cde53db3079b6881614"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/libertempo/api/zipball/23783757f062f81eae506679418efd6ea7d2e8fe",
-                "reference": "23783757f062f81eae506679418efd6ea7d2e8fe",
+                "url": "https://api.github.com/repos/libertempo/api/zipball/2c98685dcad8baf51f903cde53db3079b6881614",
+                "reference": "2c98685dcad8baf51f903cde53db3079b6881614",
                 "shasum": ""
             },
             "require": {
@@ -845,7 +845,7 @@
                     "role": "Developer"
                 }
             ],
-            "time": "2018-06-04T10:17:47+00:00"
+            "time": "2018-09-22T13:30:00+00:00"
         },
         {
             "name": "monolog/monolog",

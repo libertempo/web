@@ -20,4 +20,13 @@ final class GroupeRepository extends \LibertAPI\Tests\Units\Tools\Libraries\ARep
             'g_double_valid' => 'Y'
         ];
     }
+
+    protected function getConsumerContent() : array
+    {
+        return [
+            'name' => 'Spartan',
+            'comment' => 'Mario',
+            'double_validation' => 'N',
+        ];
+    }
 }

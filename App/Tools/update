@@ -56,7 +56,25 @@ function setInstalledVersion(\includes\SQL $db, $versionCode) : bool
     $db->query($req);
 
     return 0 < $db->affected_rows;
+}
 
+/**
+ * Définit les données de configuration pour l'API
+ *
+ * @param array $data Données de configuration
+ */
+function setDataConfigurationApi(string $server, string $base, string $user, string $password) : bool
+{
+    $data = [
+        'db' => [
+            'serveur' => $server,
+            'base' => $base,
+            'utilisateur' => $user,
+            'mot_de_passe' => $password,
+        ],
+    ];
+
+    return file_put_contents(API_SYSPATH . 'configuration.json', json_encode($data));
 }
 
 display('Mise à jour…');
@@ -80,6 +98,10 @@ try {
     displayFail();
 }
 
+display('Configuration de l\'API');
+if (!setDataConfigurationApi($mysql_serveur, $mysql_database, $mysql_user, $mysql_pass)) {
+    displayFail();
+}
 
 display('Application des nouveaux patches…');
 list($major, $minor, $patch) = explode('.', executePatchs($versionDerniereMAJ));

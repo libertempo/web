@@ -30,27 +30,11 @@ abstract class AController
      */
     protected $router;
 
-    /**
-     * @var AEntite
-     */
-    protected $currentUser;
-
-    public function __construct(ARepository $repository, IRouter $router, AEntite $currentUser)
+    public function __construct(ARepository $repository, IRouter $router)
     {
         $this->repository = $repository;
         $this->router = $router;
-        $this->currentUser = $currentUser;
     }
-
-    /**
-     * Vérifie les bons droits de l'utilisateur pour accéder à l'ordre demandé
-     *
-     * @param string $order Ordre dont on veut vérifier les droits
-     * @param \LibertAPI\Utilisateur\UtilisateurEntite $utilisateur Utilisateur courant
-     *
-     * @throws \LibertAPI\Tools\Exceptions\MissingRightException if rights aren't enought to execute action
-     */
-    abstract protected function ensureAccessUser(string $order, \LibertAPI\Utilisateur\UtilisateurEntite $utilisateur);
 
     /**
      * Retourne une réponse de succès normalisée
@@ -90,19 +74,6 @@ abstract class AController
     final protected function getResponseBadRequest(IResponse $response, string $message) : IResponse
     {
         return $this->getResponseFail($response, $message, 400);
-    }
-
-    /**
-     * Retourne une réponse 403 normalisée
-     *
-     * @param IResponse $response Réponse Http
-     * @param IRequest $request Requête Http
-     *
-     * @return IResponse
-     */
-    final protected function getResponseForbidden(IResponse $response, IRequest $request) : IResponse
-    {
-        return $this->getResponseFail($response, 'User has not access to « ' . $request->getUri()->getPath() . ' » resource', 403);
     }
 
     /**

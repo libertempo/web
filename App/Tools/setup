@@ -4,7 +4,6 @@ require_once 'libraries';
 
 define('INSTALLATION_PATH', PATCH_PATH . DS . 'Installation' . DS);
 define('API_PATH', ROOT_PATH . 'api' . DS);
-define('API_SYSPATH', ROOT_PATH . 'vendor' . DS . 'libertempo' . DS . 'api' . DS);
 
 function createDatabase(\includes\SQL $db, string $name) : bool
 {
@@ -28,25 +27,6 @@ function nameInstance(\includes\SQL $db, string $name) : bool
     $db->query($req);
 
     return true;
-}
-
-/**
- * Définit les données de configuration pour l'API
- *
- * @param array $data Données de configuration
- */
-function setDataConfigurationApi(string $server, string $base, string $user, string $password) : bool
-{
-    $data = [
-        'db' => [
-            'serveur' => $server,
-            'base' => $base,
-            'utilisateur' => $user,
-            'mot_de_passe' => $password,
-        ],
-    ];
-
-    return file_put_contents(API_SYSPATH . 'configuration.json', json_encode($data));
 }
 
 /**
@@ -94,11 +74,6 @@ if(!setLastMaj($db, $versionMaj)) {
 
 display('Nommage de l\'instance…');
 if (!nameInstance($db, $instanceName)) {
-    displayFail();
-}
-
-display('Configuration de l\'API');
-if (!setDataConfigurationApi($mysql_serveur, $mysql_database, $mysql_user, $mysql_pass)) {
     displayFail();
 }
 
