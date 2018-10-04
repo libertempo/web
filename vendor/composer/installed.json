@@ -1062,17 +1062,17 @@
     },
     {
         "name": "libertempo/api",
-        "version": "v1.1.0",
-        "version_normalized": "1.1.0.0",
+        "version": "v1.2.0",
+        "version_normalized": "1.2.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/libertempo/api.git",
-            "reference": "23783757f062f81eae506679418efd6ea7d2e8fe"
+            "reference": "2c98685dcad8baf51f903cde53db3079b6881614"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/libertempo/api/zipball/23783757f062f81eae506679418efd6ea7d2e8fe",
-            "reference": "23783757f062f81eae506679418efd6ea7d2e8fe",
+            "url": "https://api.github.com/repos/libertempo/api/zipball/2c98685dcad8baf51f903cde53db3079b6881614",
+            "reference": "2c98685dcad8baf51f903cde53db3079b6881614",
             "shasum": ""
         },
         "require": {
@@ -1087,9 +1087,9 @@
             "codacy/coverage": "1.4.1",
             "symfony/console": "3.0"
         },
-        "time": "2018-06-04T10:17:47+00:00",
+        "time": "2018-09-22T13:30:00+00:00",
         "type": "library",
-        "installation-source": "dist",
+        "installation-source": "source",
         "autoload": {
             "psr-4": {
                 "LibertAPI\\": "."

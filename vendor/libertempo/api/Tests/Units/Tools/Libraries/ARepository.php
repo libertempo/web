@@ -2,6 +2,7 @@
 namespace LibertAPI\Tests\Units\Tools\Libraries;
 
 use LibertAPI\Tools\Libraries\AEntite;
+use \LibertAPI\Tools\Exceptions\UnknownResourceException;
 
 /**
  * Classe de test des repositories
@@ -37,7 +38,7 @@ abstract class ARepository extends \Atoum
 
         $this->exception(function () {
             $this->testedInstance->getOne(4);
-        })->isInstanceOf(\DomainException::class);
+        })->isInstanceOf(UnknownResourceException::class);
     }
 
     public function testGetListEmpty()
@@ -71,25 +72,28 @@ abstract class ARepository extends \Atoum
         $this->calling($this->queryBuilder)->execute = true;
         $this->calling($this->connector)->lastInsertId = 9182;
 
-        $this->integer($this->testedInstance->postOne([], new \mock\LibertAPI\Tools\Libraries\AEntite([])))->isIdenticalTo(9182);
+        $this->integer($this->testedInstance->postOne($this->getConsumerContent()))
+            ->isIdenticalTo(9182);
     }
 
     public function testPutOne()
     {
         $this->newTestedInstance($this->connector);
-        $this->calling($this->queryBuilder)->execute = true;
-        $this->calling($this->connector)->lastInsertId = 9182;
+        $this->calling($this->result)->fetch = $this->getStorageContent();
 
-        $this->variable($this->testedInstance->putOne(new \mock\LibertAPI\Tools\Libraries\AEntite([])))->isNull();
+        $this->object($this->testedInstance->putOne(55, $this->getConsumerContent()))->isInstanceOf(AEntite::class);
     }
+
+    abstract protected function getConsumerContent() : array;
 
     public function testDeleteOne()
     {
         $this->newTestedInstance($this->connector);
         $this->calling($this->queryBuilder)->execute = $this->result;
+        $this->calling($this->result)->fetch = $this->getStorageContent();
         $this->calling($this->result)->rowCount = 123;
 
-        $this->integer($this->testedInstance->deleteOne(new \mock\LibertAPI\Tools\Libraries\AEntite([])))->isIdenticalTo(123);
+        $this->integer($this->testedInstance->deleteOne(4))->isIdenticalTo(123);
     }
 
     /**

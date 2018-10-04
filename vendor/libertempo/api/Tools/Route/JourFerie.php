@@ -1,4 +1,7 @@
 <?php declare(strict_types = 1);
+
+use LibertAPI\Tools\Controllers\JourFerieController;
+
 /**
  * Doit être importé après la création de $app. Ne créé rien.
  *
@@ -8,5 +11,5 @@
 /* Route sur le jour férié */
 $app->group('/jour_ferie', function () {
     /* Collection */
-    $this->get('', 'controller:get')->setName('getJourFerieListe');
+    $this->get('', [JourFerieController::class, 'get'])->setName('getJourFerieListe');
 });

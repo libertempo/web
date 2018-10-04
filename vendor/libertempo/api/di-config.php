@@ -8,6 +8,10 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 use Psr\Http\Message\ServerRequestInterface as IRequest;
 use Psr\Http\Message\ResponseInterface as IResponse;
+use Slim\Interfaces\RouterInterface as IRouter;
+use LibertAPI\Tools\Controllers\AuthentificationController;
+use LibertAPI\Utilisateur\UtilisateurRepository;
+use LibertAPI\Tools\Libraries\Application;
 use function DI\get;
 use function DI\create;
 use function DI\autowire;
@@ -51,6 +55,12 @@ return [
     'foundHandler' => create(\Slim\Handlers\Strategies\RequestResponse::class),
 
     // LibertAPI
+    AuthentificationController::class => function (C $c) {
+        $repo = $c->get(UtilisateurRepository::class);
+        $repo->setApplication($c->get(Application::class));
+        return new AuthentificationController($repo, $c->get(IRouter::class));
+    },
+    IRouter::class => get('router'),
     'badRequestHandler' => function (C $c) {
         return function (IRequest $request, IResponse $response) {
             $code = 400;
@@ -65,18 +75,33 @@ return [
             return $responseUpd->withJson($data);
         };
     },
-    'unauthorizedHandler' => function (C $c) {
-        $code = 401;
-        $response = $c->get('response');
-        $responseUpd = $response->withStatus($code);
-        $data = [
-            'code' => $code,
-            'status' => 'fail',
-            'message' => $responseUpd->getReasonPhrase(),
-            'data' => 'Bad API Key',
-        ];
+    'forbiddenHandler' => function (C $c) {
+        return function (IRequest $request, IResponse $response) {
+            $code = 403;
+            $responseUpd = $response->withStatus($code);
+            $data = [
+                'code' => $code,
+                'status' => 'fail',
+                'message' => $responseUpd->getReasonPhrase(),
+                'data' => 'User has not access to « ' . $request->getUri()->getPath() . ' » resource',
+            ];
 
-        return $response->withJson($data, 401);
+            return $response->withJson($data, $code);
+        };
+    },
+    'unauthorizedHandler' => function (C $c) {
+        return function (IRequest $request, IResponse $response) {
+            $code = 401;
+            $responseUpd = $response->withStatus($code);
+            $data = [
+                'code' => $code,
+                'status' => 'fail',
+                'message' => $responseUpd->getReasonPhrase(),
+                'data' => 'Bad API Key',
+            ];
+
+            return $response->withJson($data, $code);
+        };
     },
     'notFoundHandler' => function () {
         return function (IRequest $request, IResponse $response) {
