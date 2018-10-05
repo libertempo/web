@@ -1,0 +1,65 @@
+#!/usr/bin/env php
+<?php
+require_once 'libraries';
+require_once CONFIG_PATH . 'dbconnect.php';
+
+define('INSTALLATION_PATH', PATCH_PATH . DS . 'Installation' . DS);
+define('API_PATH', ROOT_PATH . 'api' . DS);
+define('API_SYSPATH', ROOT_PATH . 'vendor' . DS . 'libertempo' . DS . 'api' . DS);
+
+function configure(\includes\SQL $db, array $data) : bool
+{
+
+    $nom = $db->escape_string(key($data));
+    $valeur = $db->escape_string(current($data));
+
+    $db->query('UPDATE conges_config 
+                SET conf_valeur = "' . $valeur . '" 
+                WHERE conf_nom = "' . $nom . '";
+    ');
+
+    return 0 < $db->affected_rows;
+}
+
+function existOptionNom(\includes\SQL $db, string $nom) : bool
+{
+    $res = $db->query('SELECT EXISTS (SELECT conf_valeur FROM conges_config WHERE conf_nom = "' . $nom . '");');
+    return 0 < (int) $res->fetch_array()[0];
+}
+
+function isOptionBoolValid(\includes\SQL $db, $data) : bool
+{
+    $req = 'SELECT * FROM conges_config WHERE conf_nom = "' . key($data) . '"';
+    $res = $db->query($req);
+    $option = $res->fetch_array()[0];
+
+    return !('boolean' == $option['conf_type'] && "TRUE" != current($data) && "FALSE" != current($data));
+}
+
+display('Configuration générale de Libertempo');
+display('Vérification de l\'accès à la base de donnée...');
+if (!\includes\SQL::existsDatabase($mysql_database)) {
+    displayFail();
+}
+
+$db = \includes\SQL::singleton();
+
+$nomOpt = $argv[1] ?? null;
+$valeurOpt = $argv[2] ?? null;
+
+if (null == $nomOpt || null == $valeurOpt) {
+    displayError('exemple : make configure option="resp_ajoute_conges" valeur="TRUE"');
+}
+
+if (!existOptionNom($db,$nomOpt)) {
+    displayError('Cette option n\'existe pas.');
+}
+
+if (!isOptionBoolValid($db,[$nomOpt => $valeurOpt])) {
+    displayError('Cette option prend uniquement pour valeur "TRUE" ou "FALSE".');
+}
+
+if (!configure($db,[$nomOpt => $valeurOpt])) {
+    displayError('Une erreur inattendue s\'est produite!');
+    displayFail();
+}

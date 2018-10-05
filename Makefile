@@ -30,3 +30,8 @@ reinstall: destroy install ## Reset usine
 ## Test
 test: ## Lance les tests unitaires
 	vendor/bin/atoum -ulr
+
+## Configuration
+configure: ## Paramètre une option de configuration
+      App/Tools/configure ${option} ${valeur}
+
