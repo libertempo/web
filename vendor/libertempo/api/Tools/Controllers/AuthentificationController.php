@@ -35,7 +35,7 @@ implements Interfaces\IGetable
         }
 
         $authentification = substr($authentification, strlen($authentificationType) + 1);
-        list($login, $password) = explode(':', base64_decode($authentification));
+        list($login, $password) = explode(':', base64_decode($authentification), 2);
 
         try {
             $utilisateur = $this->repository->find([
