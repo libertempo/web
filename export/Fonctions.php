@@ -90,11 +90,11 @@ class Fonctions
     		// SELECT des periodes à exporter .....
             $db = \includes\SQL::singleton();
     		// on prend toutes les periodes de conges qui chevauchent la periode donnée par les dates demandées
-    		$sql_periodes="SELECT p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_commentaire, p_type, p_etat, p_date_demande  " .
+    		$sql_periodes="SELECT p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_commentaire, p_type, p_etat, p_date_demande, p_date_traitement " .
     				'FROM conges_periode WHERE p_login=\''. $db->quote($user_login).'\' AND ((p_date_deb>=\''. $db->quote($good_date_debut).'\' AND  p_date_deb<=\''.$db->quote($good_date_fin).'\') OR (p_date_fin>=\''. $db->quote($good_date_debut).'\' AND p_date_fin<=\''. $db->quote($good_date_fin).'\'))';
             $res_periodes = $db->query($sql_periodes);
 
-    		if ($res_periodes->num_rows!=0) {
+      if ($res_periodes->num_rows!=0) {
     			while ($result_periodes = $res_periodes->fetch_array()) {
     				$sql_date_debut=$result_periodes['p_date_deb'];
     				$sql_demi_jour_deb=$result_periodes['p_demi_jour_deb'];
@@ -102,7 +102,7 @@ class Fonctions
     				$sql_demi_jour_fin=$result_periodes['p_demi_jour_fin'];
     				$sql_type=$result_periodes['p_type'];
     				$sql_etat=$result_periodes['p_etat'];
-    				$sql_dateh_demande=$result_periodes['p_date_demande'];
+    				$sql_dateh_demande=(is_null($result_periodes['p_date_demande']) ? $result_periodes['p_date_traitement'] : $result_periodes['p_date_demande']);
 
     				// PB : les fichiers ical et vcal doivent être encodés en UTF-8, or php ne gère pas l'utf-8
     				// on remplace donc les caractères spéciaux de la chaine de caractères
@@ -142,7 +142,7 @@ class Fonctions
     					echo "BEGIN:VEVENT\r\n" .
     						"DTSTAMP:$DTSTAMP\r\n" .
     						"ORGANIZER:MAILTO:".$tab_infos_user['email']."\r\n" .
-    						"CREATED:$DTSTART\r\n" .
+    						"CREATED:$DTSTAMP\r\n" .
     						"STATUS:$status\r\n" .
     						"UID:$user_login@Libertempo-$sql_date_dem\r\n";
     				if ($sql_comment!="")
