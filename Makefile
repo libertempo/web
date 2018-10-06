@@ -33,5 +33,6 @@ test: ## Lance les tests unitaires
 
 ## Configuration
 configure: ## Paramètre une option de configuration
-      App/Tools/configure ${option} ${valeur}
+	App/Tools/configure ${option} ${valeur}
+
 
