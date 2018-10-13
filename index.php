@@ -86,6 +86,7 @@ if (!session_is_valid()) {
                     session_create($session_username);
                     storeTokenApi($api, $session_username, $session_password);
                 } catch (\Exception $e) {
+                    ddd('hehre', $e->getMessage());
                     $session_username="";
                     $session_password="";
                     $erreur="login_passwd_incorrect";
