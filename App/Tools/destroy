@@ -24,6 +24,12 @@ if (!\includes\SQL::existsDatabase($mysql_database)) {
     displayFail();
 }
 
+display('Vous êtes sur le point de supprimer toute la base de données!');
+$input = getValue('êtes vous sûr (y/N) :');
+if ($input != 'y' &&  $input != 'Y') {
+    displayError('Destruction annulée.');
+}
+
 display('Suppression base de données…');
 $db = \includes\SQL::singleton();
 if (!destroyDatabase($db, $mysql_database)) {

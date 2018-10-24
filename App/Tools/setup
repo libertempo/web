@@ -51,7 +51,11 @@ display('Installation…');
 $instanceName = $argv[1] ?? null;
 display('Contrôles généraux…');
 if (null == $instanceName) {
-    displayError("Nom d'instance vide");
+    $input = getValue('Adresse web :');
+    if ($input == ''|| !filter_var($input, FILTER_VALIDATE_URL)) {
+        displayError('Saisie incorrecte! Adresse web vide ou mal formée.');
+    }
+    $instanceName = $input;
 }
 if (\includes\SQL::existsDatabase($mysql_database)) {
     displayError('Application déjà installée');
