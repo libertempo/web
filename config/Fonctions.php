@@ -407,7 +407,7 @@ class Fonctions
                 // ajout dans la table conges_solde_user (pour chaque user !!)(si c'est un conges, pas si c'est une absence)
                 if ( ($tab_new_values['type']=="conges") || ($tab_new_values['type']=="conges_exceptionnels") ) {
                     // recup de users :
-                    $sql_users="SELECT DISTINCT(u_login) FROM conges_users WHERE u_login!='conges' AND u_login!='admin' " ;
+                    $sql_users="SELECT DISTINCT(u_login) FROM conges_users;" ;
 
                     $ReqLog_users = \includes\SQL::query($sql_users);
 

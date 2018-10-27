@@ -258,7 +258,7 @@ class Fonctions
         $db = \includes\SQL::singleton();
         // verif
         $appli_num_exercice = $_SESSION['config']['num_exercice'] ;
-        $sql_verif = 'SELECT u_login FROM conges_users WHERE u_login != \'admin\' AND u_login != \'conges\' AND u_num_exercice != '. $db->quote($appli_num_exercice).';';
+        $sql_verif = 'SELECT u_login FROM conges_users WHERE u_num_exercice != '. $db->quote($appli_num_exercice).';';
         $ReqLog_verif = $db->query($sql_verif);
 
         if ($ReqLog_verif->num_rows == 0) {

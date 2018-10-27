@@ -23,18 +23,8 @@ $_SESSION['from_config']=true;  // initialise ce flag pour changer le bouton de 
 
 	$onglet = htmlentities(getpost_variable('onglet'), ENT_QUOTES | ENT_HTML401);
 
-	if (!$onglet && is_admin($_SESSION['userlogin']))
-	{
+	if (!$onglet && is_admin($_SESSION['userlogin'])) {
 		$onglet = 'general';
-	} elseif (!$onglet && $_SESSION['userlogin']!="admin") {
-
-		if ($config->canAdminAccessConfig())
-			$onglet = 'general';
-		elseif ($config->canAdminConfigTypesConges())
-			$onglet = 'type_absence';
-		elseif ($config->canAdminConfigMail())
-			$onglet = 'config_mail';
-
 	}
 
 	/*********************************/
@@ -43,16 +33,12 @@ $_SESSION['from_config']=true;  // initialise ce flag pour changer le bouton de 
 
 	$onglets = [];
 
-	if ($config->canAdminAccessConfig() || is_admin($_SESSION['userlogin']))
-		$onglets['general'] = _('install_config_appli');
-
-	if ($config->canAdminConfigTypesConges() || is_admin($_SESSION['userlogin']))
-		$onglets['type_absence'] = _('install_config_types_abs');
-
-	if ($config->canAdminConfigMail() || is_admin($_SESSION['userlogin']))
-		$onglets['mail'] = _('install_config_mail');
-
-	$onglets['logs'] = _('config_logs');
+	if (is_admin($_SESSION['userlogin'])) {
+            $onglets['general'] = _('install_config_appli');
+            $onglets['type_absence'] = _('install_config_types_abs');
+            $onglets['mail'] = _('install_config_mail');
+            $onglets['logs'] = _('config_logs');
+        }
 
 	/*********************************/
 	/*   COMPOSITION DU HEADER...    */

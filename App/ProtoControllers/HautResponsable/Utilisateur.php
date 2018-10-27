@@ -507,7 +507,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
     private static function isFormInsertValide($data, &$errors, \includes\SQL $sql, \App\Libraries\Configuration $config)
     {
         $return = true;
-        $users = \App\ProtoControllers\Utilisateur::getListId(false, true);
+        $users = \App\ProtoControllers\Utilisateur::getListId(false);
         if (in_array($data['login'], $users)) {
             $errors[] = _('Cet identifiant existe déja.');
             $return = false;
@@ -535,7 +535,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
     private static function isFormUpdateValide($data, &$errors, \includes\SQL $sql, \App\Libraries\Configuration $config)
     {
         $return = true;
-        $users = \App\ProtoControllers\Utilisateur::getListId(false, true);
+        $users = \App\ProtoControllers\Utilisateur::getListId(false);
         if (in_array($data['login'], $users) && $data['login'] != $data['oldLogin']) {
             $errors[] = _('Cet identifiant existe déja.');
             $return = false;
@@ -700,7 +700,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
                     OR conges_groupe_grd_resp.ggr_login = "' . $user . '"
                 )';
         $query = $sql->query($req);
-        return 0 >= (int) $query->fetch_array()[0] && $user != 'admin';
+        return 0 >= (int) $query->fetch_array()[0];
     }
 
     /**

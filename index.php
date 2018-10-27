@@ -59,7 +59,7 @@ if (!session_is_valid()) {
         if (($session_username == "") || ($session_password == "")) {
             session_saisie_user_password("", "", "");
         } else {
-            if ($config->getHowToConnectUser() == "ldap" && $session_username != "admin") {
+            if ($config->getHowToConnectUser() == "ldap" ) {
                 $username_ldap = authentification_ldap_conges($session_username,$session_password);
                 if ($username_ldap != $session_username) {
                     $session_username="";
@@ -77,7 +77,7 @@ if (!session_is_valid()) {
                         errorAuthentification();
                     }
                 }
-            } elseif ($config->getHowToConnectUser() == "dbconges" || $session_username == "admin") {
+            } elseif ($config->getHowToConnectUser() == "dbconges") {
                 $username_conges = authentification_passwd_conges($session_username,$session_password);
                 try {
                     if ($username_conges != $session_username) {
@@ -109,9 +109,6 @@ if (isset($_SESSION['userlogin'])) {
         $is_hr = $row["u_is_hr"];
 		$is_resp = $row["u_is_resp"];
 		$is_active = $row["u_is_active"];
-        if('admin' === $_SESSION['userlogin']) {
-            redirect(ROOT_PATH . 'admin/db_sauve');
-        }
 		if($is_active == "N") {
 			header_error();
 			echo  _('session_compte_inactif') ."<br>\n";

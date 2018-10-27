@@ -14,14 +14,11 @@ class Utilisateur
      * SQL
      */
 
-    public static function getListId($activeSeul = false, $withAdmin = false)
+    public static function getListId($activeSeul = false)
     {
         $sql = \includes\SQL::singleton();
         $req = 'SELECT u_login
                 FROM conges_users';
-        if (!$withAdmin){
-            $req .= ' WHERE u_login != "admin"';
-        }
         if ($activeSeul){
             $req .= ' AND u_is_active = "Y"';
         }
@@ -193,7 +190,6 @@ class Utilisateur
         $req = 'SELECT *
                 FROM conges_users
                 WHERE planning_id = ' . $planningId . '
-                    AND u_login <> "admin"
                 ORDER BY u_login';
 
         return $sql->query($req)->fetch_all(\MYSQLI_ASSOC);

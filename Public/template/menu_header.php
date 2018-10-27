@@ -11,9 +11,6 @@
     } else {
         $home = 'utilisateur/user_index.php';
     }
-    if('admin' === $_SESSION['userlogin']){
-        $home = 'admin/db_sauve';
-    }
 
     //user mode
     $user_mode = '';

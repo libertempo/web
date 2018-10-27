@@ -479,7 +479,7 @@ function authentification_AD_SSO()
 function storeTokenApi(\App\Libraries\ApiClient $apiClient, $username, $userPassword)
 {
     $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
-    if ('dbconges' == $config->getHowToConnectUser() || "admin" == $username) {
+    if ('dbconges' == $config->getHowToConnectUser()) {
         $dataUser = $apiClient->authentifyDbConges($username, $userPassword);
     } else {
         $dataUser = $apiClient->authentifyThirdParty($username);
