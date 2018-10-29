@@ -50,6 +50,7 @@ class Evenements extends \Tests\Units\TestUnit
     {
         // définition d'un autre événement avec weekend
         $this->calling($this->evenement)->getListe = ['2017-02-12'];
+        $this->calling($this->evenement)->getListe[2] = []; //fetchFeries call, as 'ferie' absorbs 'weekend'
         $this->calling($this->evenement)->getListe[4] = [];
         $this->calling($this->evenement)->getListe[5] = [];
         $this->calling($this->evenement)->getListe[6] = [];
