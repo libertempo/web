@@ -20,7 +20,7 @@ class Utilisateur
         $req = 'SELECT u_login
                 FROM conges_users';
         if ($activeSeul){
-            $req .= ' AND u_is_active = "Y"';
+            $req .= ' WHERE u_is_active = "Y"';
         }
         $req .= ' ORDER BY u_nom ASC, u_prenom ASC';
         $result = $sql->query($req);
@@ -240,17 +240,17 @@ class Utilisateur
      * Retourne le solde de tout les types de congés
      * @todo passer l'option gestion_conges_exceptionnels en param
      * après merge de #445
-     * 
+     *
      * @param string $login
-     * 
+     *
      * @return array
      */
     public static function getSoldesEmploye(\includes\SQL $sql, \App\Libraries\Configuration $config, $login)
     {
         $soldes = [];
-        $req = 'SELECT ta_id, ta_libelle, su_nb_an, su_solde, su_reliquat 
-                FROM conges_solde_user, conges_type_absence 
-                WHERE conges_type_absence.ta_id = conges_solde_user.su_abs_id 
+        $req = 'SELECT ta_id, ta_libelle, su_nb_an, su_solde, su_reliquat
+                FROM conges_solde_user, conges_type_absence
+                WHERE conges_type_absence.ta_id = conges_solde_user.su_abs_id
                 AND su_login = "' . $login . '" ';
         if (!$config->isCongesExceptionnelsActive()) {
             $req .= 'AND conges_type_absence.ta_type != \'conges_exceptionnels\'';
