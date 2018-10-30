@@ -135,10 +135,10 @@ class Evenements
 
     private function setEvenementDate($idEmploye, $date, $idEvenement, $labelEvenement)
     {
-        if ($this->isEvenementWeekend($idEvenement)) {
+        if ($this->isEvenementWeekend($idEvenement) || $this->isEvenementFerie($idEvenement)) {
             unset($this->evenements[$idEmploye]['dates'][$date]['evenements']);
         }
-        if (!$this->isDayWeekend($idEmploye, $date)) {
+        if (!$this->isDayWeekend($idEmploye, $date) && !$this->isDayFerie($idEmploye, $date)) {
             $this->evenements[$idEmploye]['dates'][$date]['evenements'][] = $idEvenement;
             $this->evenements[$idEmploye]['dates'][$date]['title'][] = $labelEvenement;
         }
@@ -153,9 +153,23 @@ class Evenements
         return in_array('weekend', $this->evenements[$idEmploye]['dates'][$date]['evenements'], true);
     }
 
+    private function isDayFerie($idEmploye, $date)
+    {
+        if (!isset($this->evenements[$idEmploye]['dates'][$date]['evenements'])) {
+            return false;
+        }
+
+        return in_array('ferie', $this->evenements[$idEmploye]['dates'][$date]['evenements'], true);
+    }
+
     private function isEvenementWeekend($nomEvenement)
     {
         return 'weekend' === $nomEvenement;
+    }
+
+    private function isEvenementFerie($nomEvenement)
+    {
+        return 'ferie' === $nomEvenement;
     }
 
     public function getEvenementsDate($idEmploye, $date)
