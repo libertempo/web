@@ -14,7 +14,6 @@ define('_PHP_CONGES', 1);
 define('OLD_API_SYSPATH', ROOT_PATH . 'vendor' . DS . 'Libertempo' . DS . 'libertempo-api' . DS);
 define('API_SYSPATH', ROOT_PATH . 'vendor' . DS . 'libertempo' . DS . 'api' . DS);
 
-
 require_once ROOT_PATH . 'vendor/autoload.php';
 require_once INCLUDE_PATH . 'fonctions_conges.php';
 require_once CONFIG_PATH . 'dbconnect.php';
