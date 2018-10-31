@@ -24,7 +24,6 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     define('LOCALE_PATH',      ROOT_PATH . 'locale/');
     define('BACKUP_PATH',      ROOT_PATH . 'backup' . DS);
     define('TEMPLATE_PATH',    PUBLIC_PATH . 'template/');
-    define('API_PATH', ROOT_PATH . 'api/');
     define('PLUGINS_DIR',      INCLUDE_PATH . 'plugins/');
     define('NIL_INT',          -1);
     define('STATUS_ACTIVE',    1);
