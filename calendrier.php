@@ -39,6 +39,7 @@ function getTitleJour(\App\Libraries\Calendrier\Evenements $evenements, $nom, $j
 }
 $sql = \includes\SQL::singleton();
 $config = new \App\Libraries\Configuration($sql);
+$isICalActive = $config->isIcalActive();
 
 $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
 $calendar = new \CalendR\Calendar();

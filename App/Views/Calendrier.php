@@ -4,11 +4,14 @@
  * $calendar
  * $evenements
  * $groupesVisiblesUtilisateur
+ * $isICalActive
  */
 
 /* Div auto fermé par le bottom */ ?>
 <div id="calendar-wrapper">
-    <a href="<?= ROOT_PATH ?>export/ics_export.php?usr=<?= hash_user($_SESSION['userlogin']) ?>" style="float:right" class="btn btn-success"><?= _('Exporter calendrier') ?></a>
+    <?php if ($isICalActive) : ?>
+        <a href="<?= ROOT_PATH ?>export/ics_export.php?usr=<?= hash_user($_SESSION['userlogin']) ?>" style="float:right" class="btn btn-success"><?= _('Exporter calendrier') ?></a>
+    <?php endif ;?>
     <h1><?= _('calendrier_titre') ?></h1>
 
 <form method="get" action="" class="form-inline search" role="form">

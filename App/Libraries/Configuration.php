@@ -12,7 +12,6 @@ class Configuration {
     private $data;
 
     public function __construct(\includes\SQL $sql) {
-        
         $this->loadData($sql);
     }
 
@@ -34,7 +33,7 @@ class Configuration {
 
     /**
      * Retourne la version de la base de données
-     * 
+     *
      * @return string
      */
     public function getInstalledVersion() {
@@ -63,7 +62,7 @@ class Configuration {
 
     /**
      * Retourne l'url racine du site
-     * 
+     *
      * @return string
      */
     public function getUrlAccueil() {
@@ -83,17 +82,17 @@ class Configuration {
 
     /**
      * Autorise la saisie d'une demande par l'employé
-     * 
+     *
      * @return boolean
      */
     public function canUserSaisieDemande() {
         return $this->getGroupeUtilisateurValeur('user_saisie_demande');
     }
-    
+
     /**
      * Autorise la saisie d'une demande de mission par l'employé
      * @todo a supprimer au profit de canUserSaisieDemande()
-     * 
+     *
      * @return boolean
      */
     public function canUserSaisieMission() {
@@ -102,9 +101,9 @@ class Configuration {
 
     /**
      * Autorise la modification du mot de passe par l'employé
-     * le mot de passe n'est modifiable que si 
+     * le mot de passe n'est modifiable que si
      * authentification locale
-     * 
+     *
      * @return boolean
      */
     public function canUserChangePassword() {
@@ -120,7 +119,7 @@ class Configuration {
 
     /**
      * Controle si l'utilisateur peut saisir une demande dans le passé
-     * 
+     *
      * @return boolean
      */
     public function canUserSaisieDemandePasse() {
@@ -129,7 +128,7 @@ class Configuration {
 
     /**
      * Controle si l'utilisateur peut modifier une demande
-     * 
+     *
      * @return boolean
      */
     public function canUserModifieDemande() {
@@ -149,7 +148,7 @@ class Configuration {
 
     /**
      * Permet aux responsables de saisir une mission pour leurs employés
-     * 
+     *
      * @return boolean
      */
     public function canResponsableSaisieMission() {
@@ -158,7 +157,7 @@ class Configuration {
 
     /**
      * Permet aux responsables d'ajouter des jours de congés
-     * 
+     *
      * @return boolean
      */
     public function canResponsableAjouteConges() {
@@ -167,7 +166,7 @@ class Configuration {
 
     /**
      * Gestion de la délégation de traitement en cas d'absence
-     * 
+     *
      * @return boolean
      */
     public function isGestionResponsableAbsent() {
@@ -176,7 +175,7 @@ class Configuration {
 
     /**
      * Gestion des utilisateur désactivé
-     * 
+     *
      * @return boolean
      */
     public function isUtilisateurDesactiveVisible() {
@@ -201,9 +200,9 @@ class Configuration {
 
     /**
      * Permet aux admin de changer les mot de passe
-     * le mot de passe n'est modifiable que si 
+     * le mot de passe n'est modifiable que si
      * authentification locale
-     * 
+     *
      * @return boolean
      */
     public function canAdminChangePassword() {
@@ -247,7 +246,7 @@ class Configuration {
     public function isSendMailModificationDemandeResponsable() {
         return $this->getGroupeMailValeur('mail_modif_demande_alerte_resp');
     }
-    
+
     public function isSendMailSupprimeDemandeResponsable() {
         return $this->getGroupeMailValeur('mail_supp_demande_alerte_resp');
     }
@@ -266,7 +265,7 @@ class Configuration {
     public function isSamediOuvrable() {
         return $this->getGroupeJoursOuvrablesValeur('samedi_travail');
     }
-    
+
     public function isDimancheOuvrable() {
         return $this->getGroupeJoursOuvrablesValeur('dimanche_travail');
     }
@@ -307,12 +306,12 @@ class Configuration {
     {
         return $this->getGroupeEditionPapierValeur('texte_haut_edition_papier');
     }
-    
+
     public function getTextBas()
     {
         return $this->getGroupeEditionPapierValeur('texte_bas_edition_papier');
     }
-    
+
     /**
      * Retourne une valeur du groupe d'édition papier par son nom
      *
@@ -333,7 +332,7 @@ class Configuration {
     {
         return $this->getGroupeFonctionnementEtablissementValeur('double_validation_conges');
     }
-    
+
     public function canGrandResponsableAjouteConge()
     {
         return $this->getGroupeFonctionnementEtablissementValeur('grand_resp_ajout_conges');
@@ -343,22 +342,22 @@ class Configuration {
     {
         return $this->getGroupeFonctionnementEtablissementValeur('gestion_conges_exceptionnels');
     }
-    
+
     public function canSoldeNegatif()
     {
         return !$this->getGroupeFonctionnementEtablissementValeur('solde_toujours_positif');
     }
-    
+
     public function isReliquatsAutorise()
     {
         return $this->getGroupeFonctionnementEtablissementValeur('autorise_reliquats_exercice');
     }
-    
+
     public function getReliquatsMax()
     {
         return $this->getGroupeFonctionnementEtablissementValeur('nb_maxi_jours_reliquats');
     }
-    
+
     public function getDateLimiteReliquats()
     {
         return $this->getGroupeFonctionnementEtablissementValeur('jour_mois_limite_reliquats');
@@ -454,7 +453,7 @@ class Configuration {
         $config = $this->data[$groupe][$nom];
 
         if ('boolean' === $config['type'] ) {
-            return 'TRUE' === $config['valeur'];
+            return 'true' === strtolower($config['valeur']);
         }
 
         return $config['valeur'];
