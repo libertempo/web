@@ -34,7 +34,7 @@ class CreneauRepository extends \LibertAPI\Tools\Libraries\ARepository
     final protected function getParamsConsumer2Storage(array $paramsConsumer) : array
     {
         $results = [];
-        if (!empty($paramsConsumer['planningId'])) {
+        if (array_key_exists('planningId', $paramsConsumer)) {
             $results['planning_id'] = (int) $paramsConsumer['planningId'];
         }
 
@@ -144,11 +144,11 @@ class CreneauRepository extends \LibertAPI\Tools\Libraries\ARepository
      */
     final protected function setWhere(array $parametres)
     {
-        if (!empty($parametres['id'])) {
+        if (array_key_exists('id', $parametres)) {
             $this->queryBuilder->andWhere('creneau_id = :id');
             $this->queryBuilder->setParameter(':id', (int) $parametres['id']);
         }
-        if (!empty($parametres['planning_id'])) {
+        if (array_key_exists('planning_id', $parametres)) {
             $this->queryBuilder->andWhere('planning_id = :planningId');
             $this->queryBuilder->setParameter(':planningId', (int) $parametres['planning_id']);
         }

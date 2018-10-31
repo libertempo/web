@@ -76,7 +76,7 @@ class GroupeRepository extends \LibertAPI\Tools\Libraries\ARepository
      */
     final protected function setWhere(array $parametres)
     {
-        if (!empty($parametres['id'])) {
+        if (array_key_exists('id', $parametres)) {
             $this->queryBuilder->andWhere('g_gid = :id');
             $this->queryBuilder->setParameter(':id', (int) $parametres['id']);
         }

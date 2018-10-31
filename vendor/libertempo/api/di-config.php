@@ -12,6 +12,10 @@ use Slim\Interfaces\RouterInterface as IRouter;
 use LibertAPI\Tools\Controllers\AuthentificationController;
 use LibertAPI\Utilisateur\UtilisateurRepository;
 use LibertAPI\Tools\Libraries\Application;
+<<<<<<< HEAD
+=======
+use LibertAPI\Tools\Libraries\StorageConfiguration;
+>>>>>>> Update API version
 use function DI\get;
 use function DI\create;
 use function DI\autowire;
@@ -41,8 +45,16 @@ return [
         ->method('setCacheFile', get('settings.routerCacheFile')),
     Slim\Router::class => get('router'),
     'callableResolver' => autowire(CallableResolver::class),
-    'environment' => function () {
-        return new Slim\Http\Environment($_SERVER);
+    'environment' => function (C $c) {
+        $configuration = json_decode(file_get_contents(ROOT_PATH . 'configuration.json'), true);
+        $stage = (!isset($configuration['stage']) || 'development' !== $configuration['stage'])
+            ? 'production'
+            : 'development';
+
+        $e = new Slim\Http\Environment($_SERVER);
+        $e->set('stage', $stage);
+
+        return $e;
     },
     'request' => function (C $c) {
         return Request::createFromEnvironment($c->get('environment'));
@@ -58,7 +70,11 @@ return [
     AuthentificationController::class => function (C $c) {
         $repo = $c->get(UtilisateurRepository::class);
         $repo->setApplication($c->get(Application::class));
+<<<<<<< HEAD
         return new AuthentificationController($repo, $c->get(IRouter::class));
+=======
+        return new AuthentificationController($repo, $c->get(IRouter::class), $c->get(StorageConfiguration::class));
+>>>>>>> Update API version
     },
     IRouter::class => get('router'),
     'badRequestHandler' => function (C $c) {

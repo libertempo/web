@@ -63,14 +63,30 @@ function setInstalledVersion(\includes\SQL $db, $versionCode) : bool
  *
  * @param array $data Données de configuration
  */
-function setDataConfigurationApi(string $server, string $base, string $user, string $password) : bool
+function setDataConfigurationApi(array $dbConfiguration, array $ldapConfiguration) : bool
 {
     $data = [
         'db' => [
-            'serveur' => $server,
-            'base' => $base,
-            'utilisateur' => $user,
-            'mot_de_passe' => $password,
+            'serveur' => $dbConfiguration['serveur'],
+            'base' => $dbConfiguration['base'],
+            'utilisateur' => $dbConfiguration['utilisateur'],
+            'mot_de_passe' => $dbConfiguration['mot_de_passe'],
+        ],
+        'ldap' => [
+            'serveur' => $ldapConfiguration['serveur'],
+            'protocol' => $ldapConfiguration['protocol'],
+            'up_serveur' => $ldapConfiguration['up_serveur'],
+            'base' => $ldapConfiguration['base'],
+            'utilisateur' => $ldapConfiguration['utilisateur'],
+            'mot_de_passe' => $ldapConfiguration['mot_de_passe'],
+            'domaine' => $ldapConfiguration['domaine'],
+            'prenom' => $ldapConfiguration['prenom'],
+            'nom' => $ldapConfiguration['nom'],
+            'mail' => $ldapConfiguration['mail'],
+            'login' => $ldapConfiguration['login'],
+            'nom_affiche' => $ldapConfiguration['nom_affiche'],
+            'filtre' => $ldapConfiguration['filtre'],
+            'filtre_recherche' => $ldapConfiguration['filtre_recherche'],
         ],
     ];
 
@@ -99,7 +115,29 @@ try {
 }
 
 display('Configuration de l\'API');
-if (!setDataConfigurationApi($mysql_serveur, $mysql_database, $mysql_user, $mysql_pass)) {
+$dbConfiguration = [
+    'serveur' => $mysql_serveur,
+    'base' => $mysql_database,
+    'utilisateur' => $mysql_user,
+    'mot_de_passe' => $mysql_pass,
+];
+$ldapConfiguration = [
+    'serveur' => $config_ldap_server ?? '',
+    'protocol' => $config_ldap_protocol_version ?? '',
+    'up_serveur' => $config_ldap_bupsvr ?? '',
+    'base' => $config_basedn ?? '',
+    'utilisateur' => $config_ldap_user ?? '',
+    'mot_de_passe' => $config_ldap_pass ?? '',
+    'domaine' => $config_searchdn ?? '',
+    'prenom' => $config_ldap_prenom ?? '',
+    'nom' => $config_ldap_nom ?? '',
+    'mail' => $config_ldap_mail ?? '',
+    'login' => $config_ldap_login ?? '',
+    'nom_affiche' => $config_ldap_nomaff ?? '',
+    'filtre' => $config_ldap_filtre ?? '',
+    'filtre_recherche' => $config_ldap_filrech ?? '',
+];
+if (!setDataConfigurationApi($dbConfiguration, $ldapConfiguration)) {
     displayFail();
 }
 

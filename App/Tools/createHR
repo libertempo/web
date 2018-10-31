@@ -4,8 +4,7 @@ require_once 'libraries';
 require_once CONFIG_PATH . 'dbconnect.php';
 
 define('INSTALLATION_PATH', PATCH_PATH . DS . 'Installation' . DS);
-define('API_PATH', ROOT_PATH . 'api' . DS);
-define('API_SYSPATH', ROOT_PATH . 'vendor' . DS . 'Libertempo' . DS . 'libertempo-api' . DS);
+define('API_SYSPATH', ROOT_PATH . 'vendor' . DS . 'libertempo' . DS . 'api' . DS);
 
 function createHR(\includes\SQL $db, array $data) : bool
 {
@@ -15,8 +14,8 @@ function createHR(\includes\SQL $db, array $data) : bool
     $data['prenom'] = $db->escape_string($data['prenom']);
     $data['email'] = $db->escape_string($data['email']);
 
-    $db->query('INSERT INTO conges_users 
-                (u_login, u_nom, u_prenom, u_is_resp, u_is_admin, u_is_hr, u_is_active, u_passwd, u_email) 
+    $db->query('INSERT INTO conges_users
+                (u_login, u_nom, u_prenom, u_is_resp, u_is_admin, u_is_hr, u_is_active, u_passwd, u_email)
                 VALUES ("' . $data['login'] . '", "' . $data['nom'] . '", "' . $data['prenom'] . '", "N", "Y", "Y", "Y", "' . $data['password'] . '", "' . $data['email'] . '");
     ');
 
