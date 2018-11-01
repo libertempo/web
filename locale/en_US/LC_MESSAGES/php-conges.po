@@ -1162,9 +1162,6 @@ msgstr "// PATH TO THE phpmailer DIRECTORY<br>//--------------------------------
 msgid "config_comment_php_conges_cas_include_path"
 msgstr "// PATH TO THE cas DIRECTORY<br>//-------------------------------------------------------<br>// One defines here the path to access to the PHP library directory \"CAS\".<br>// The path must be relative from the php_conges root application."
 
-msgid "config_comment_php_conges_authldap_include_path"
-msgstr "// PATH TO THE authLDAP.php FILE<br>//-------------------------------------------------------<br>// One defines here the path to access to the PHP library directory \"authLDAP.php\".<br>// The path must be relative from the php_conges root application."
-
 msgid "install_le_fichier"
 msgstr "The file"
 

@@ -1162,9 +1162,6 @@ msgstr "// CAMINO HACIA EL REPERTORIO DE phpmailer<br>//------------------------
 msgid "config_comment_php_conges_cas_include_path"
 msgstr "// CAMINO HACIA EL REPERTORIO DE cas<br>//-------------------------------------------------------<br>// Definimos aqui el camino para acceder al repertorio de la libreria PHP \"CAS\".<br>// El camino debe ser relativo desde la raiz de la aplicacion php_vacaciones."
 
-msgid "config_comment_php_conges_authldap_include_path"
-msgstr "// CAMINO HACIA EL fichero authLDAP.php<br>//-------------------------------------------------------<br>// Definimos aqui el camino para acceder al repertorio de la libreria PHP \"authLDAP.php\".<br>// El camino debe ser relativo desde la raiz de la aplicacion php_vacaciones."
-
 msgid "install_le_fichier"
 msgstr "El fichero"
 

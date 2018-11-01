@@ -73,7 +73,7 @@ class Ldap
                     (" . $this->configuration['attrFiltre'] . "=" . $this->configuration['filtre'] . "))";
 
         $attributs = [$this->configuration['attrLogin'], $this->configuration['attrMail']];
-        
+
         $searchResult = ldap_search($this->configuration['ldapConn'], $this->configuration['searchdn'], $filter, $attributs, 0, 1);
         $entries = ldap_get_entries($this->configuration['ldapConn'],$searchResult);
 
