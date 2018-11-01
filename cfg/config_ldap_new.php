@@ -2,10 +2,10 @@
 
 /*****************************************************************/
 /*			PARAMATRAGE LDAP
-Ce fichier est utilisé SEULEMENT SI vous avez activé l'option 
+Ce fichier est utilisé SEULEMENT SI vous avez activé l'option
 how_to_connect_user="ldap" dans la configuration de Libertempo
 
-=> vous devez configurer ce fichier pour que les requêtes LDAP 
+=> vous devez configurer ce fichier pour que les requêtes LDAP
 s'effectuent sans problème.
 
 /!\ quelques notions de LDAP sont nécessaires à la bonne compréhension
@@ -22,7 +22,7 @@ utilisés (et pour vous aider 2 exemples de paramétrage pour ActiveDirectory200
 	(en ldaps) $config_ldap_server = "https://nom_de_mon_serveur";
 
 - Vous pouvez également définir un serveur de "backup" (serveur secondaire de domaine) :
-	$config_ldap_bupsvr = "http://serveur2"; 
+	$config_ldap_bupsvr = "http://serveur2";
 	Si vous n'en avez pas, laisser le champ vide.
 
 - $config_ldap_protocol_version : numéro de version du protocole LDAP utilisé par votre serveur.
@@ -39,7 +39,7 @@ utilisés (et pour vous aider 2 exemples de paramétrage pour ActiveDirectory200
 
 
 - $config_ldap_user : s'il faut s'identifier pour accéder au ldap, rentrer un login ici.
-	Pour un AD2008, c'est obligatoire et il est conseillé d'ajouter le nom de domaine avant le login. Il est aussi conseillé 
+	Pour un AD2008, c'est obligatoire et il est conseillé d'ajouter le nom de domaine avant le login. Il est aussi conseillé
 	de créer un utilisateur qui ne servira qu'à cela (et ainsi évitera de mettre en clair
 	le mot de passe d'un utilisateur existant), et interdire l'accès aux PC de cet utilisateur.
 	(cf votre documentation (ou votre bible) ;-) Windows Server...)
@@ -51,13 +51,13 @@ On peut laisser ces deux champ vides si la connexion au ldap anonyme est autoris
 
 
 - $config_searchdn : permet d'indiquer le point d'entrée dans l'arborescence du LDAP.
-	En effet, sous un AD, par exemple, vous avez "MesOrdinateurs", "MesUtilisateurs", "MesGroupes"... 
+	En effet, sous un AD, par exemple, vous avez "MesOrdinateurs", "MesUtilisateurs", "MesGroupes"...
 	Il est inutile de rechercher dans tout l'arbre.
 	Ex (AD) : $config_searchdn = "ou=MesUtilisateurs,dc=administration,dc=toto,dc=com";
-	(pour un OpenLdap 	   = "ou=people,dc=mon_domaine,dc=fr"		) 
+	(pour un OpenLdap 	   = "ou=people,dc=mon_domaine,dc=fr"		)
 
 
-Les champs suivants vont nous permettre d'extraire du ldap les données qui nous intéresse : 
+Les champs suivants vont nous permettre d'extraire du ldap les données qui nous intéresse :
 En effet, même standardisé, d'un ldap à l'autre le nommage des champs vont être différents.
 Nous prendrons 2 exemples "les + courants", Active Directory et OpenLDAP.
 Pour Novell, IBM, ... : cf doc de votre ldap !
@@ -110,7 +110,7 @@ On va devoir définir des critères de recherche :
 
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 
-$config_ldap_server = "ldap://mon_serveur";
+$config_ldap_server = "mon_serveur";
 $config_ldap_protocol_version = 0 ;   // 3 si version 3 , 0 sinon !
 $config_ldap_bupsvr = "";
 $config_basedn      = "dc=mon_domaine,dc=fr";
@@ -118,7 +118,7 @@ $config_ldap_user   = "CN=user_ldap,dc=mon_domaine,dc=com" ;
 $config_ldap_pass   = "user_ldap_pass";
 $config_searchdn    = "ou=MesUtilisateurs,dc=mon_domaine,dc=com";
 
-$config_ldap_prenom = "givenname"; 
+$config_ldap_prenom = "givenname";
 $config_ldap_nom    = "sn";
 $config_ldap_mail   = "mail";
 $config_ldap_login  = "samaccountname";
@@ -137,7 +137,7 @@ $config_ldap_user   = "";
 $config_ldap_pass   = "";
 $config_searchdn    = "ou=people,dc=mon_domaine,dc=com";
 
-$config_ldap_prenom = "givenname"; 
+$config_ldap_prenom = "givenname";
 $config_ldap_nom    = "sn";
 $config_ldap_mail   = "mail";
 $config_ldap_login  = "uid";
@@ -146,5 +146,3 @@ $config_ldap_filtre = "mon_filtre_de_recherche";
 $config_ldap_filrech= "mon_critère_de_recherche";
 
 */
-
-

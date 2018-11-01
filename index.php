@@ -23,78 +23,67 @@ function errorAuthentification() {
 }
 
 if (!session_is_valid()) {
-	if ($config->getHowToConnectUser() == "cas") {
-        try {
-            $usernameCAS = authentification_passwd_conges_CAS();
-            if ($usernameCAS == "") {
-                throw new \Exception("Nom d'utilisateur vide");
-            }
-            session_create($usernameCAS);
-            storeTokenApi($api, $usernameCAS, '');
-        } catch (\Exception $e) {
-            errorAuthentification();
-            deconnexion_CAS($config->getUrlAccueil());
-        }
-	} elseif ($config->getHowToConnectUser() == "SSO") {
-        if (session_id() != "") {
-            session_destroy();
-        }
-        try {
-            $usernameSSO = authentification_AD_SSO();
-            if ($usernameSSO == "") {
-                throw new \Exception("Nom d'utilisateur vide");
-            }
-            session_create($usernameSSO);
-            storeTokenApi($api, $usernameSSO, '');
-        } catch (\Exception $e) {
-            errorAuthentification();
-        }
-	} else {
-	    $session_username = isset($_POST['session_username']) ? $_POST['session_username'] : '';
-	    $session_password = isset($_POST['session_password']) ? $_POST['session_password'] : '';
-        if (session_id() != "") {
-            session_destroy();
-        }
-
-        if (($session_username == "") || ($session_password == "")) {
-            session_saisie_user_password("", "", "");
-        } else {
-            if ($config->getHowToConnectUser() == "ldap" ) {
-                $username_ldap = authentification_ldap_conges($session_username,$session_password);
-                if ($username_ldap != $session_username) {
-                    $session_username="";
-                    $session_password="";
-                    $erreur="login_passwd_incorrect";
-                    session_saisie_user_password($erreur, $session_username, $session_password);
-                } else {
-                    try {
-                        if (!valid_ldap_user($session_username)) {
-                            throw new \Exception("Nom d'utilisateur invalide");
-                        }
-                        session_create($session_username);
-                        storeTokenApi($api, $session_username, $session_password);
-                    } catch (\Exception $e) {
-                        errorAuthentification();
-                    }
+    $authMethod = $config->getHowToConnectUser();
+    switch ($authMethod) {
+        case 'cas':
+            try {
+                $usernameCAS = authentification_passwd_conges_CAS();
+                if ($usernameCAS == "") {
+                    throw new \Exception("Nom d'utilisateur vide");
                 }
-            } elseif ($config->getHowToConnectUser() == "dbconges") {
-                $username_conges = authentification_passwd_conges($session_username,$session_password);
+                session_create($usernameCAS);
+                storeTokenApi($api, $usernameCAS, '');
+            } catch (\Exception $e) {
+                errorAuthentification();
+                deconnexion_CAS($config->getUrlAccueil());
+            }
+            break;
+        case 'SSO':
+            if (session_id() != "") {
+                session_destroy();
+            }
+            try {
+                $usernameSSO = authentification_AD_SSO();
+                if ($usernameSSO == "") {
+                    throw new \Exception("Nom d'utilisateur vide");
+                }
+                session_create($usernameSSO);
+                storeTokenApi($api, $usernameSSO, '');
+            } catch (\Exception $e) {
+                errorAuthentification();
+            }
+            break;
+
+        default:
+            $session_username = $_POST['session_username'] ?? '';
+            $session_password = $_POST['session_password'] ?? '';
+            if (session_id() != "") {
+                session_destroy();
+            }
+
+            if (($session_username == "") || ($session_password == "")) {
+                session_saisie_user_password("", "", "");
+            } else {
+                if ('ldap' == $authMethod) {
+                    $usernameAuth = authentification_ldap_conges($session_username, $session_password);
+                } else {
+                    $usernameAuth = authentification_passwd_conges($session_username, $session_password);
+                }
                 try {
-                    if ($username_conges != $session_username) {
+                    if ($usernameAuth != $session_username) {
                         throw new \Exception("Noms d'utilisateurs différents");
                     }
                     session_create($session_username);
                     storeTokenApi($api, $session_username, $session_password);
                 } catch (\Exception $e) {
-                    ddd('hehre', $e->getMessage());
                     $session_username="";
                     $session_password="";
                     $erreur="login_passwd_incorrect";
                     session_saisie_user_password($erreur, $session_username, $session_password);
                 }
             }
-    	}
-	}
+            break;
+    }
 }
 
 if (isset($_SESSION['userlogin'])) {

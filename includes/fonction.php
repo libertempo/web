@@ -328,20 +328,12 @@ function updateUtilisateurChiffrement(\includes\SQL $sql, string $username, stri
 
 // authentification du login/passwd sur un serveur LDAP
 // - renvoie $username si authentification OK
-// - renvoie ""        si authentification FAIL
+// Renvoie toujours l'équivalent de OK car c'est l'API qui fait la connexion désormais
+// @see vendor/libertempo/api/Tools/Services/LdapAuthentifierService.php
 //
 function authentification_ldap_conges($username, $password)
 {
-    require_once ( LIBRARY_PATH .'authLDAP.php');
-
-    $a = new authLDAP();
-    //$a->DEBUG = 1;
-    //$a->bind($username,$password);
-    $a->bind($username,stripslashes($password));
-    if ($a->is_authentificated())
-        return $username;
-
-    return '';
+    return $username;
 }
 
 
@@ -479,7 +471,7 @@ function authentification_AD_SSO()
 function storeTokenApi(\App\Libraries\ApiClient $apiClient, $username, $userPassword)
 {
     $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
-    if ('dbconges' == $config->getHowToConnectUser()) {
+    if (in_array($config->getHowToConnectUser(), ['dbconges', 'ldap'], true)) {
         $dataUser = $apiClient->authentifyDbConges($username, $userPassword);
     } else {
         $dataUser = $apiClient->authentifyThirdParty($username);

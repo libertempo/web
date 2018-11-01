@@ -43,7 +43,7 @@ class authLDAP
      if ($this->DEBUG) print "Auth par defaut";
   }
 
-  function __construct($utils="",$searchdn=0,$basedn=0,$ldap_server=0,$ldap_user=0,$ldap_pass=0,$ldap_group=0)
+    function __construct($utils="",$searchdn=0,$basedn=0,$ldap_server=0,$ldap_user=0,$ldap_pass=0,$ldap_group=0)
   {
 
 
