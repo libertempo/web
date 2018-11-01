@@ -9,17 +9,25 @@ class ComposerStaticInit5254fb3dcd0ada989877bc48f5b177e0
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         'bd9634f2d41831496de0d3dfe4c94881' => __DIR__ . '/..' . '/symfony/polyfill-php56/bootstrap.php',
+        '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
         '253c157292f75eb38082b5acb06f3f01' => __DIR__ . '/..' . '/nikic/fast-route/src/functions.php',
+        'fe62ba7e10580d903cc46d808b5961a4' => __DIR__ . '/..' . '/tightenco/collect/src/Collect/Support/helpers.php',
+        'caf31cc6ec7cf2241cb6f12c226c3846' => __DIR__ . '/..' . '/tightenco/collect/src/Collect/Support/alias.php',
         'b33e3d135e5d9e47d845c576147bda89' => __DIR__ . '/..' . '/php-di/php-di/src/functions.php',
         '6bc45d0537e6858fd179bdbc31d62c79' => __DIR__ . '/..' . '/raveren/kint/Kint.class.php',
     );
 
     public static $prefixLengthsPsr4 = array (
+        'T' => 
+        array (
+            'Tightenco\\Collect\\' => 18,
+        ),
         'S' => 
         array (
             'Symfony\\Polyfill\\Util\\' => 22,
             'Symfony\\Polyfill\\Php56\\' => 23,
             'Symfony\\Polyfill\\Mbstring\\' => 26,
+            'Symfony\\Component\\VarDumper\\' => 28,
             'Symfony\\Component\\Process\\' => 26,
             'Symfony\\Component\\Console\\' => 26,
             'SuperClosure\\' => 13,
@@ -27,6 +35,7 @@ class ComposerStaticInit5254fb3dcd0ada989877bc48f5b177e0
         ),
         'P' => 
         array (
+            'Psr\\SimpleCache\\' => 16,
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Container\\' => 14,
             'PhpParser\\' => 10,
@@ -40,6 +49,7 @@ class ComposerStaticInit5254fb3dcd0ada989877bc48f5b177e0
         array (
             'Invoker\\' => 8,
             'Interop\\Container\\' => 18,
+            'Illuminate\\Contracts\\' => 21,
         ),
         'G' => 
         array (
@@ -56,9 +66,17 @@ class ComposerStaticInit5254fb3dcd0ada989877bc48f5b177e0
             'Doctrine\\Common\\Annotations\\' => 28,
             'DI\\' => 3,
         ),
+        'A' => 
+        array (
+            'Adldap\\' => 7,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
+        'Tightenco\\Collect\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/tightenco/collect/src/Collect',
+        ),
         'Symfony\\Polyfill\\Util\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-util',
@@ -70,6 +88,10 @@ class ComposerStaticInit5254fb3dcd0ada989877bc48f5b177e0
         'Symfony\\Polyfill\\Mbstring\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
+        ),
+        'Symfony\\Component\\VarDumper\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/var-dumper',
         ),
         'Symfony\\Component\\Process\\' => 
         array (
@@ -86,6 +108,10 @@ class ComposerStaticInit5254fb3dcd0ada989877bc48f5b177e0
         'Slim\\' => 
         array (
             0 => __DIR__ . '/..' . '/slim/slim/Slim',
+        ),
+        'Psr\\SimpleCache\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/simple-cache/src',
         ),
         'Psr\\Http\\Message\\' => 
         array (
@@ -115,6 +141,10 @@ class ComposerStaticInit5254fb3dcd0ada989877bc48f5b177e0
         array (
             0 => __DIR__ . '/..' . '/container-interop/container-interop/src/Interop/Container',
         ),
+        'Illuminate\\Contracts\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/illuminate/contracts',
+        ),
         'Gitonomy\\Git\\' => 
         array (
             0 => __DIR__ . '/..' . '/gitonomy/gitlib/src/Gitonomy/Git',
@@ -138,6 +168,10 @@ class ComposerStaticInit5254fb3dcd0ada989877bc48f5b177e0
         'DI\\' => 
         array (
             0 => __DIR__ . '/..' . '/php-di/php-di/src',
+        ),
+        'Adldap\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/adldap2/adldap2/src',
         ),
     );
 

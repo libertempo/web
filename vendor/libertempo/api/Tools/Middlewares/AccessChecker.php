@@ -36,7 +36,7 @@ final class AccessChecker extends \LibertAPI\Tools\AMiddleware
                         $container->get('forbiddenHandler'),
                         $request,
                         $response
-                   );
+                    );
                 }
 
                 return $next($request, $response);
@@ -63,7 +63,7 @@ final class AccessChecker extends \LibertAPI\Tools\AMiddleware
 
                 return $next($request, $response);
             default:
-                throw new \RuntimeException('Unknown route');
+                throw new \RuntimeException('Rights were not configured for this route');
         }
     }
 }

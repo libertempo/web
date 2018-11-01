@@ -1,7 +1,49 @@
-Version 4.0.2-dev
+Version 4.0.5-dev
 -----------------
 
 Nothing yet.
+
+Version 4.0.4 (2018-09-18)
+--------------------------
+
+### Added
+
+* The following methods have been added to `BuilderFactory`:
+  * `useTrait()` (fluent builder)
+  * `traitUseAdaptation()` (fluent builder)
+  * `useFunction()` (fluent builder)
+  * `useConst()` (fluent builder)
+  * `var()`
+  * `propertyFetch()`
+  
+### Deprecated
+
+* `Builder\Param::setTypeHint()` has been deprecated in favor of the newly introduced
+  `Builder\Param::setType()`.
+
+Version 4.0.3 (2018-07-15)
+--------------------------
+
+### Fixed
+
+* Fixed possible undefined offset notice in formatting-preserving printer. (#513)
+
+### Added
+
+* Improved error recovery inside arrays.
+* Preserve trailing comment inside classes. **Note:** This change is possibly BC breaking if your
+  code validates that classes can only contain certain statement types. After this change, classes
+  can also contain Nop statements, while this was not previously possible. (#509)
+
+Version 4.0.2 (2018-06-03)
+--------------------------
+
+### Added
+
+* Improved error recovery inside classes.
+* Support error recovery for `foreach` without `as`.
+* Support error recovery for parameters without variable (`function (Type ) {}`).
+* Support error recovery for functions without body (`function ($foo)`).
 
 Version 4.0.1 (2018-03-25)
 --------------------------

@@ -36,6 +36,7 @@ if ('development' == $app->getContainer()->get('environment')->get('stage')) {
 $app->add(new Middlewares\AccessChecker($app));
 $app->add(new Middlewares\Identificator($app));
 $app->add(new Middlewares\DBConnector($app));
+$app->add(new Middlewares\ConfigurationFileChecker($app));
 $app->add(new Middlewares\ResourceFormatter($app));
 $app->add(new Middlewares\HeadersChecker($app));
 

@@ -2,7 +2,6 @@
 namespace LibertAPI\Tools\Services;
 
 use LibertAPI\Tools\Libraries\ARepository;
-use LibertAPI\Tools\Exceptions\BadRequestException;
 use Psr\Http\Message\ServerRequestInterface as IRequest;
 
 /**
@@ -17,7 +16,7 @@ class InterneAuthentifierService extends AAuthentifierFactoryService
 {
     public function __construct(ARepository $repository)
     {
-        parent::__construct($repository);
+        $this->repository = $repository;
     }
 
     /**
@@ -25,33 +24,12 @@ class InterneAuthentifierService extends AAuthentifierFactoryService
      */
     public function isAuthentificationSucceed(IRequest $request) : bool
     {
-        $authentificationType = 'Basic';
-        $authentification = $request->getHeaderLine('Authorization');
-        if (0 !== stripos($authentification, $authentificationType)) {
-            throw new BadRequestException();
-        }
-
-        $authentification = substr($authentification, strlen($authentificationType) + 1);
-        list($this->login, $password) = explode(':', base64_decode($authentification));
-
+        $this->storeBasicIdentificants($request);
         $utilisateur = $this->getRepository()->find([
-            'login' => $this->login,
+            'login' => $this->getLogin(),
             'isActif' => true,
         ]);
 
-        return $utilisateur->isPasswordMatching($password);
+        return $utilisateur->isPasswordMatching($this->getPassword());
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getLogin() : string
-    {
-        return $this->login;
-    }
-
-    /**
-     * @var string Login de l'utilisateur en cours de connexion
-     */
-    private $login = '';
 }

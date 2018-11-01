@@ -1,6 +1,7 @@
 language: php
 php:
   - '7.0'
+  - '7.1'
 notifications:
   email:
     on_success: never # default: change
