@@ -29,17 +29,6 @@ abstract class ARestController extends AController
      */
     protected $currentAdmin;
 
-<<<<<<< HEAD
-    /**
-     * Init des tests
-     */
-    public function beforeTestMethod($method)
-    {
-        parent::beforeTestMethod($method);
-    }
-
-=======
->>>>>>> Update API version
     /*************************************************
      * GET
      *************************************************/

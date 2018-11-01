@@ -77,11 +77,8 @@ class UtilisateurRepository extends \LibertAPI\Tools\Libraries\ARepository
         // @TODO: supprimer cette ligne quand on passera à DBAL > 2.6 : https://github.com/doctrine/dbal/commit/e937f37a8acc117047ff4ed9aec493a1e3de2195
         $this->queryBuilder->resetQueryParts();
         $this->queryBuilder->select('*, u_login AS id');
-<<<<<<< HEAD
         // @TODO: supprimer cette ligne quand on passera à DBAL > 2.6 : https://github.com/doctrine/dbal/commit/e937f37a8acc117047ff4ed9aec493a1e3de2195
         $this->queryBuilder->resetQueryPart('from');
-=======
->>>>>>> Update API version
         $this->queryBuilder->from($this->getTableName(), 'current');
         $this->setWhere($this->getParamsConsumer2Storage($parametres));
         $res = $this->queryBuilder->execute();
@@ -153,19 +150,11 @@ class UtilisateurRepository extends \LibertAPI\Tools\Libraries\ARepository
     public function putOne($id, array $data) : AEntite
     {
         $entite = $this->getOne($id);
-<<<<<<< HEAD
-        $entite->populate($data);
-        $this->queryBuilder->update($this->getTableName());
-        $this->setSet($this->getEntite2Storage($entite));
-        // @TODO: supprimer cette ligne quand on passera à DBAL > 2.6 : https://github.com/doctrine/dbal/commit/e937f37a8acc117047ff4ed9aec493a1e3de2195
-        $this->queryBuilder->resetQueryPart('where');
-=======
         // @TODO: supprimer cette ligne quand on passera à DBAL > 2.6 : https://github.com/doctrine/dbal/commit/e937f37a8acc117047ff4ed9aec493a1e3de2195
         $this->queryBuilder->resetQueryParts();
         $entite->populate($data);
         $this->queryBuilder->update($this->getTableName());
         $this->setSet($this->getEntite2Storage($entite));
->>>>>>> Update API version
         $this->setWhere(['u_login' => $entite->getId()]);
 
         $this->queryBuilder->execute();
@@ -199,11 +188,7 @@ class UtilisateurRepository extends \LibertAPI\Tools\Libraries\ARepository
      */
     final protected function setWhere(array $parametres)
     {
-<<<<<<< HEAD
-        if (!empty($parametres['u_login'])) {
-=======
         if (array_key_exists('u_login', $parametres)) {
->>>>>>> Update API version
             $this->queryBuilder->andWhere('u_login = :id');
             $this->queryBuilder->setParameter(':id', $parametres['u_login']);
         }
@@ -277,16 +262,6 @@ class UtilisateurRepository extends \LibertAPI\Tools\Libraries\ARepository
 
         $entite->updateDateLastAccess();
         $entite->populateToken($this->buildToken($instanceToken));
-<<<<<<< HEAD
-        $this->queryBuilder->update($this->getTableName());
-        $this->setSet($this->getEntite2Storage($entite));
-        // @TODO: supprimer cette ligne quand on passera à DBAL > 2.6 : https://github.com/doctrine/dbal/commit/e937f37a8acc117047ff4ed9aec493a1e3de2195
-        $this->queryBuilder->resetQueryPart('where');
-        $this->setWhere(['u_login' => $entite->getId()]);
-
-        $this->queryBuilder->execute();
-
-=======
         // @TODO: supprimer cette ligne quand on passera à DBAL > 2.6 : https://github.com/doctrine/dbal/commit/e937f37a8acc117047ff4ed9aec493a1e3de2195
         $this->queryBuilder->resetQueryParts();
         $this->queryBuilder->update($this->getTableName());
@@ -295,7 +270,6 @@ class UtilisateurRepository extends \LibertAPI\Tools\Libraries\ARepository
 
         $this->queryBuilder->execute();
 
->>>>>>> Update API version
         return $entite;
     }
 

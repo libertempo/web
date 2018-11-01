@@ -12,10 +12,7 @@ use Slim\Interfaces\RouterInterface as IRouter;
 use LibertAPI\Tools\Controllers\AuthentificationController;
 use LibertAPI\Utilisateur\UtilisateurRepository;
 use LibertAPI\Tools\Libraries\Application;
-<<<<<<< HEAD
-=======
 use LibertAPI\Tools\Libraries\StorageConfiguration;
->>>>>>> Update API version
 use function DI\get;
 use function DI\create;
 use function DI\autowire;
@@ -70,11 +67,7 @@ return [
     AuthentificationController::class => function (C $c) {
         $repo = $c->get(UtilisateurRepository::class);
         $repo->setApplication($c->get(Application::class));
-<<<<<<< HEAD
         return new AuthentificationController($repo, $c->get(IRouter::class));
-=======
-        return new AuthentificationController($repo, $c->get(IRouter::class), $c->get(StorageConfiguration::class));
->>>>>>> Update API version
     },
     IRouter::class => get('router'),
     'badRequestHandler' => function (C $c) {
