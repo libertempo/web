@@ -30,6 +30,5 @@ if ($erreur == 'login_passwd_incorrect') {
         <input type="password" id="session_password" class="form-control" name="session_password" placeholder="Mot de passe" autocomplete="off"/>
         <button type="submit" class="btn btn-lg btn-primary btn-block"><?= _('form_submit') ?></button>
     </form>
-    <script type="text/javascript">$('#login_form .submit').button();</script>
     </div>
 </div>
