@@ -1,0 +1,116 @@
+#!/usr/bin/env php
+<?php
+require_once 'libraries';
+
+function isLtInstalled() : bool
+{
+    $db = \includes\SQL::singleton();
+    $sql = "SHOW TABLES LIKE 'conges_config'";
+    $res = $db->query($sql);
+    if ($res->num_rows != 1) {
+        return false;
+    }
+    return true;
+}
+
+function getInstanceName() : string
+{
+    $db = \includes\SQL::singleton();
+    $sql="SELECT conf_valeur FROM conges_config WHERE conf_nom='URL_ACCUEIL_CONGES' ";
+    $ret = $db->query($sql);
+    $res = $ret->fetch_array();
+    return $res['conf_valeur'];
+}
+
+function isApiJoignable() : bool
+{
+    $apiUrl = getInstanceName() . '/api/hello_world';
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        'Content-Type: application/json',
+        'Accept: application/json'
+    ));
+    curl_setopt($ch, CURLOPT_URL,$apiUrl);
+    $result = curl_exec($ch);
+    curl_close($ch);
+    if ($result != '"Hi there !"') {
+        return false;
+    }
+    return true;
+}
+
+function isApiConfigSecure() : bool
+{
+    $configUrl = getInstanceName() . '/vendor/libertempo/api/configuration.json';
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_URL,$configUrl);
+    $result = curl_exec($ch);
+    $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    if (200 === $code) {
+        return false;
+    }
+    return true;
+}
+
+// test curl
+if (!extension_loaded('curl')) {
+    displayError('[ERREUR] l\'extension cURL pour php (php-curl) n\'est pas installée');
+}
+
+// test cfg/env.php
+if (!file_exists(CONFIG_PATH . 'env.php')) {
+    displayError('[ERREUR] ' . CONFIG_PATH . 'env.php n\'existe pas ou est inaccessible');
+}
+
+// test cfg/dbconnect.php
+if (!file_exists(CONFIG_PATH . 'dbconnect.php')) {
+    displayError('[ERREUR] ' . CONFIG_PATH . 'dbconnect.php n\'existe pas ou est inaccessible');
+}
+require_once CONFIG_PATH . 'dbconnect.php';
+
+// test vendor/libertempo/api/configuration.json
+if (!file_exists(API_SYSPATH . 'configuration.json')) {
+    displayError('[ERREUR] ' . API_SYSPATH . 'configuration.php n\'existe pas ou est inaccessible');
+}
+
+// test php-mysql
+if (!function_exists('mysqli_connect')) {
+    displayError('[ERREUR] l\'extension mysqli pour php (php-mysql) n\'est pas activée');
+}
+
+// test bdd access
+try {
+    \includes\SQL::singleton();
+}
+catch (Exception $e) {
+    display('[ERREUR] Accès à mysql/mariadb impossible.');
+    displayError($e->getMessage());
+}
+
+// test bdd exist
+if (!\includes\SQL::existsDatabase($mysql_database)) {
+    display('[INFO] La base de données n\'existe pas. Elle sera créée lors de l\'installation');
+    display('Vérifications effectuées avec succès.');
+    exit();
+} 
+
+//test table
+if (!isLtInstalled()) {
+    displayError('[ERREUR] la base de données semble vide, une réinstallation est nécessaire.');
+}
+display('[INFO] Version actuelle de Libertempo : ' . getInstalledVersion());
+display('[INFO] Adresse web : ' . getInstanceName());
+
+// test http api
+if (!isApiJoignable()) {
+    displayError('[ERREUR] L\'API semble inaccessible. Vérifiez la configuration d\'apache.');
+}
+
+//test http configuration.json access
+if (!isApiConfigSecure()) {
+    displayError('[ERREUR] le fichier de configuration de l\'api est exposé. Vérifiez la configuration du virtual host.');
+}
+
+display('Vérifications effectuées avec succès.');
