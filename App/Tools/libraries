@@ -33,8 +33,13 @@ function displayFail()
  */
 function displayError(string $message)
 {
-    display($message);
+    display('[ERREUR] ' . $message);
     exit(1);
+}
+
+function displayInfo(string $message)
+{
+    display('[INFO] ' . $message);
 }
 
 function display(string $message)
