@@ -12,7 +12,7 @@ class dateTime extends atoum\test
 {
     public function testClass()
     {
-        $this->testedClass->extends('mageekguy\atoum\asserters\object');
+        $this->testedClass->extends(atoum\asserters\phpObject::class);
     }
 
     public function test__construct()
@@ -39,9 +39,7 @@ class dateTime extends atoum\test
     public function testSetWith()
     {
         $this
-            ->given($asserter = $this->newTestedInstance
-                ->setLocale($locale = new \mock\atoum\locale())
-            )
+            ->given($asserter = $this->newTestedInstance->setLocale($locale = new \mock\atoum\locale()))
             ->then
                 ->object($asserter->setWith($value = new \DateTime()))->isIdenticalTo($asserter)
                 ->object($asserter->getValue())->isIdenticalTo($value)
@@ -54,7 +52,7 @@ class dateTime extends atoum\test
                 ->exception(function () use ($asserter, & $value) {
                     $asserter->setWith($value = uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($notDatetime)
                 ->mock($locale)->call('_')->withArguments('%s is not an instance of \\dateTime', $asserter)->once
                 ->string($asserter->getValue())->isEqualTo($value)
@@ -68,14 +66,12 @@ class dateTime extends atoum\test
     public function testHasTimezone()
     {
         $this
-            ->given($asserter = $this->newTestedInstance
-                ->setLocale($locale = new \mock\atoum\locale())
-            )
+            ->given($asserter = $this->newTestedInstance->setLocale($locale = new \mock\atoum\locale()))
             ->then
                 ->exception(function () use ($asserter) {
                     $asserter->hasTimezone(new \DateTimezone('Europe/London'));
                 })
-                    ->isInstanceOf('mageekguy\atoum\exceptions\logic')
+                    ->isInstanceOf(atoum\exceptions\logic::class)
                     ->hasMessage('Value is not an instance of \\dateTime or \\dateTimeInterface')
 
             ->if($asserter->setWith($dateTime = new \DateTime('now', $timezone = new \DateTimezone('Europe/Paris'))))
@@ -87,14 +83,14 @@ class dateTime extends atoum\test
                 ->exception(function () use ($asserter) {
                     $asserter->hasTimezone(new \DateTimezone('Europe/London'));
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($badTimezone)
                 ->mock($locale)->call('_')->withArguments('Timezone is %s instead of %s', 'Europe/Paris', 'Europe/London')->once
 
                 ->exception(function () use ($asserter, & $failMessage) {
                     $asserter->hasTimezone(new \DateTimezone('Europe/London'), $failMessage = uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($failMessage)
         ;
     }
@@ -102,14 +98,12 @@ class dateTime extends atoum\test
     public function testHasYear()
     {
         $this
-            ->given($asserter = $this->newTestedInstance
-                ->setLocale($locale = new \mock\atoum\locale())
-            )
+            ->given($asserter = $this->newTestedInstance->setLocale($locale = new \mock\atoum\locale()))
             ->then
                 ->exception(function () use ($asserter) {
                     $asserter->hasYear(rand(0, PHP_INT_MAX));
                 })
-                    ->isInstanceOf('mageekguy\atoum\exceptions\logic')
+                    ->isInstanceOf(atoum\exceptions\logic::class)
                     ->hasMessage('Value is not an instance of \\dateTime or \\dateTimeInterface')
 
             ->if($asserter->setWith($dateTime = new \DateTime('1976-10-06')))
@@ -122,14 +116,14 @@ class dateTime extends atoum\test
                 ->exception(function () use ($asserter) {
                     $asserter->hasYear(1981);
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($badYear)
                 ->mock($locale)->call('_')->withArguments('Year is %s instead of %s', 1976, 1981)->once
 
                 ->exception(function () use ($asserter, & $failMessage) {
                     $asserter->hasYear(1981, $failMessage = uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($failMessage)
         ;
     }
@@ -137,14 +131,12 @@ class dateTime extends atoum\test
     public function testHasMonth()
     {
         $this
-            ->given($asserter = $this->newTestedInstance
-                ->setLocale($locale = new \mock\atoum\locale())
-            )
+            ->given($asserter = $this->newTestedInstance->setLocale($locale = new \mock\atoum\locale()))
             ->then
                 ->exception(function () use ($asserter) {
                     $asserter->hasMonth(rand(0, PHP_INT_MAX));
                 })
-                    ->isInstanceOf('mageekguy\atoum\exceptions\logic')
+                    ->isInstanceOf(atoum\exceptions\logic::class)
                     ->hasMessage('Value is not an instance of \\dateTime or \\dateTimeInterface')
 
             ->if($asserter->setWith($dateTime = new \DateTime('1976-09-06')))
@@ -158,14 +150,14 @@ class dateTime extends atoum\test
                 ->exception(function () use ($asserter) {
                     $asserter->hasMonth(1);
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($badMonth)
                 ->mock($locale)->call('_')->withArguments('Month is %s instead of %02d', '09', 1)->once
 
                 ->exception(function () use ($asserter, & $failMessage) {
                     $asserter->hasMonth(1, $failMessage = uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($failMessage)
         ;
     }
@@ -173,14 +165,12 @@ class dateTime extends atoum\test
     public function testHasDay()
     {
         $this
-            ->given($asserter = $this->newTestedInstance
-                ->setLocale($locale = new \mock\atoum\locale())
-            )
+            ->given($asserter = $this->newTestedInstance->setLocale($locale = new \mock\atoum\locale()))
             ->then
                 ->exception(function () use ($asserter) {
                     $asserter->hasDay(rand(0, PHP_INT_MAX));
                 })
-                    ->isInstanceOf('mageekguy\atoum\exceptions\logic')
+                    ->isInstanceOf(atoum\exceptions\logic::class)
                     ->hasMessage('Value is not an instance of \\dateTime or \\dateTimeInterface')
 
             ->if($asserter->setWith($dateTime = new \DateTime('1976-10-06')))
@@ -194,14 +184,14 @@ class dateTime extends atoum\test
                 ->exception(function () use ($asserter) {
                     $asserter->hasDay(1);
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($badDay)
                 ->mock($locale)->call('_')->withArguments('Day is %s instead of %02d', '06', 1)->once
 
                 ->exception(function () use ($asserter, & $failMessage) {
                     $asserter->hasDay(1, $failMessage = uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($failMessage)
         ;
     }
@@ -209,14 +199,12 @@ class dateTime extends atoum\test
     public function testHasDate()
     {
         $this
-            ->given($asserter = $this->newTestedInstance
-                ->setLocale($locale = new \mock\atoum\locale())
-            )
+            ->given($asserter = $this->newTestedInstance->setLocale($locale = new \mock\atoum\locale()))
             ->then
                 ->exception(function () use ($asserter) {
                     $asserter->hasDate(1976, 10, 6);
                 })
-                    ->isInstanceOf('mageekguy\atoum\exceptions\logic')
+                    ->isInstanceOf(atoum\exceptions\logic::class)
                     ->hasMessage('Value is not an instance of \\dateTime or \\dateTimeInterface')
 
             ->if($asserter->setWith($dateTime = new \DateTime('1976-10-06')))
@@ -230,14 +218,14 @@ class dateTime extends atoum\test
                 ->exception(function () use ($asserter) {
                     $asserter->hasDate(1980, 8, 14);
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($badDate)
                 ->mock($locale)->call('_')->withArguments('Date is %s instead of %s', '1976-10-06', '1980-08-14')->once
 
                 ->exception(function () use ($asserter, & $failMessage) {
                     $asserter->hasDate(1980, 8, 14, $failMessage = uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($failMessage)
         ;
     }
@@ -245,14 +233,12 @@ class dateTime extends atoum\test
     public function testHasHours()
     {
         $this
-            ->given($asserter = $this->newTestedInstance
-                ->setLocale($locale = new \mock\atoum\locale())
-            )
+            ->given($asserter = $this->newTestedInstance->setLocale($locale = new \mock\atoum\locale()))
             ->then
                 ->exception(function () use ($asserter) {
                     $asserter->hasHours(rand(0, PHP_INT_MAX));
                 })
-                    ->isInstanceOf('mageekguy\atoum\exceptions\logic')
+                    ->isInstanceOf(atoum\exceptions\logic::class)
                     ->hasMessage('Value is not an instance of \\dateTime or \\dateTimeInterface')
 
             ->if($asserter->setWith($dateTime = new \DateTime('01:02:03')))
@@ -266,14 +252,14 @@ class dateTime extends atoum\test
                 ->exception(function () use ($asserter) {
                     $asserter->hasHours(2);
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($badHours)
                 ->mock($locale)->call('_')->withArguments('Hours are %s instead of %02d', 1, 2)->once
 
                 ->exception(function () use ($asserter, & $failMessage) {
                     $asserter->hasHours(2, $failMessage = uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($failMessage)
         ;
     }
@@ -281,14 +267,12 @@ class dateTime extends atoum\test
     public function testHasMinutes()
     {
         $this
-            ->given($asserter = $this->newTestedInstance
-                ->setLocale($locale = new \mock\atoum\locale())
-            )
+            ->given($asserter = $this->newTestedInstance->setLocale($locale = new \mock\atoum\locale()))
             ->then
                 ->exception(function () use ($asserter) {
                     $asserter->hasMinutes(rand(0, PHP_INT_MAX));
                 })
-                    ->isInstanceOf('mageekguy\atoum\exceptions\logic')
+                    ->isInstanceOf(atoum\exceptions\logic::class)
                     ->hasMessage('Value is not an instance of \\dateTime or \\dateTimeInterface')
 
             ->if($asserter->setWith($dateTime = new \DateTime('01:02:03')))
@@ -302,14 +286,14 @@ class dateTime extends atoum\test
                 ->exception(function () use ($asserter) {
                     $asserter->hasMinutes(1);
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($badMinutes)
                 ->mock($locale)->call('_')->withArguments('Minutes are %s instead of %02d', 2, 1)->once
 
                 ->exception(function () use ($asserter, & $failMessage) {
                     $asserter->hasMinutes(1, $failMessage = uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($failMessage)
         ;
     }
@@ -317,14 +301,12 @@ class dateTime extends atoum\test
     public function testHasSeconds()
     {
         $this
-            ->given($asserter = $this->newTestedInstance
-                ->setLocale($locale = new \mock\atoum\locale())
-            )
+            ->given($asserter = $this->newTestedInstance->setLocale($locale = new \mock\atoum\locale()))
             ->then
                 ->exception(function () use ($asserter) {
                     $asserter->hasSeconds(rand(0, PHP_INT_MAX));
                 })
-                    ->isInstanceOf('mageekguy\atoum\exceptions\logic')
+                    ->isInstanceOf(atoum\exceptions\logic::class)
                     ->hasMessage('Value is not an instance of \\dateTime or \\dateTimeInterface')
 
             ->if($asserter->setWith($dateTime = new \DateTime('01:02:03')))
@@ -338,14 +320,14 @@ class dateTime extends atoum\test
                 ->exception(function () use ($asserter) {
                     $asserter->hasSeconds(1);
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($badSeconds)
                 ->mock($locale)->call('_')->withArguments('Seconds are %s instead of %02d', 3, 1)->once
 
                 ->exception(function () use ($asserter, & $failMessage) {
                     $asserter->hasSeconds(1, $failMessage = uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($failMessage)
         ;
     }
@@ -353,14 +335,12 @@ class dateTime extends atoum\test
     public function testHasTime()
     {
         $this
-            ->given($asserter = $this->newTestedInstance
-                ->setLocale($locale = new \mock\atoum\locale())
-            )
+            ->given($asserter = $this->newTestedInstance->setLocale($locale = new \mock\atoum\locale()))
             ->then
                 ->exception(function () use ($asserter) {
                     $asserter->hasTime(1, 2, 3);
                 })
-                    ->isInstanceOf('mageekguy\atoum\exceptions\logic')
+                    ->isInstanceOf(atoum\exceptions\logic::class)
                     ->hasMessage('Value is not an instance of \\dateTime or \\dateTimeInterface')
 
             ->if($asserter->setWith($dateTime = new \DateTime('01:02:03')))
@@ -374,14 +354,14 @@ class dateTime extends atoum\test
                 ->exception(function () use ($asserter) {
                     $asserter->hasTime(4, 5, 6);
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($badTime)
                 ->mock($locale)->call('_')->withArguments('Time is %s instead of %s', '01:02:03', '04:05:06')->once
 
                 ->exception(function () use ($asserter, & $failMessage) {
                     $asserter->hasTime(4, 5, 6, $failMessage = uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($failMessage)
         ;
     }
@@ -389,14 +369,12 @@ class dateTime extends atoum\test
     public function testHasDateAndTime()
     {
         $this
-            ->given($asserter = $this->newTestedInstance
-                ->setLocale($locale = new \mock\atoum\locale())
-            )
+            ->given($asserter = $this->newTestedInstance->setLocale($locale = new \mock\atoum\locale()))
             ->then
                 ->exception(function () use ($asserter) {
                     $asserter->hasDateAndTime(1981, 2, 13, 1, 2, 3);
                 })
-                    ->isInstanceOf('mageekguy\atoum\exceptions\logic')
+                    ->isInstanceOf(atoum\exceptions\logic::class)
                     ->hasMessage('Value is not an instance of \\dateTime or \\dateTimeInterface')
 
             ->if($asserter->setWith($dateTime = new \DateTime('1981-02-13 01:02:03')))
@@ -410,14 +388,14 @@ class dateTime extends atoum\test
                 ->exception(function () use ($asserter) {
                     $asserter->hasDateAndTime(1900, 1, 1, 4, 5, 6);
                 })
-                    ->isinstanceof('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasmessage($badDateAndTime)
                 ->mock($locale)->call('_')->withArguments('Datetime is %s instead of %s', '1981-02-13 01:02:03', '1900-01-01 04:05:06')->once
 
                 ->exception(function () use ($asserter, & $failMessage) {
                     $asserter->hasdateandtime(1900, 1, 1, 4, 5, 6, $failMessage = uniqid());
                 })
-                    ->isinstanceof('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasmessage($failMessage)
         ;
     }
@@ -426,8 +404,7 @@ class dateTime extends atoum\test
     {
         $this
             ->given(
-                $this->newTestedInstance
-                    ->setLocale($locale),
+                $this->newTestedInstance->setLocale($locale),
                 $this->calling($locale)->_ = $notImmutable = uniqid()
             )
             ->if($this->testedInstance->setWith($value = new \dateTime()))
@@ -435,7 +412,7 @@ class dateTime extends atoum\test
                 ->exception(function () use (& $value) {
                     $this->testedInstance->isImmutable();
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($notImmutable)
             ->if($this->testedInstance->setWith($value = new \dateTimeImmutable()))
             ->then
@@ -447,8 +424,7 @@ class dateTime extends atoum\test
     {
         $this
             ->given(
-                $this->newTestedInstance
-                    ->setLocale($locale),
+                $this->newTestedInstance->setLocale($locale),
                 $this->calling($locale)->_ = $notEqual = uniqid(),
                 $now = date(DATE_ISO8601)
             )

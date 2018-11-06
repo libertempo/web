@@ -317,7 +317,7 @@ class autoloader
 
     protected function handleNamespaceOfClass($class)
     {
-        foreach ($this->directories as $namespace => $directories) {
+        foreach ($this->directories as $namespace => $_) {
             if (strpos($class, $namespace) === 0) {
                 return true;
             }
@@ -329,14 +329,18 @@ class autoloader
     protected function readCache()
     {
         if ($this->cacheUsed === false) {
-            $cacheContents = @file_get_contents($this->getCacheFileForInstance());
+            $cacheFile = $this->getCacheFileForInstance();
 
-            if ($cacheContents !== false) {
-                $cacheContents = @unserialize($cacheContents) ?: null;
-            }
+            if (file_exists($cacheFile) === true) {
+                $cacheContents = file_get_contents($cacheFile);
 
-            if (is_array($cacheContents) === true && isset($cacheContents['version']) === true && $cacheContents['version'] === static::version) {
-                $this->classes = $cacheContents['classes'];
+                if ($cacheContents !== false) {
+                    $cacheContents = @unserialize($cacheContents) ?: null;
+                }
+
+                if (is_array($cacheContents) === true && isset($cacheContents['version']) === true && $cacheContents['version'] === static::version) {
+                    $this->classes = $cacheContents['classes'];
+                }
             }
 
             $this->cacheUsed = true;

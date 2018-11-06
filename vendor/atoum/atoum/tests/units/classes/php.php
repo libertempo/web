@@ -31,24 +31,51 @@ class php extends atoum\test
         ;
     }
 
+    /**
+     * @os !windows !winnt
+     */
     public function test__toString()
     {
         $this
             ->if($php = new testedClass())
             ->then
-                ->castToString($php)->isEqualTo(defined('PHP_WINDOWS_VERSION_MAJOR') === true ? '"' . $php->getBinaryPath() . '"' : escapeshellcmd($php->getBinaryPath()))
+                ->castToString($php)->isEqualTo(escapeshellcmd($php->getBinaryPath()))
             ->if($php->addOption($option1 = uniqid()))
             ->then
-                ->castToString($php)->isEqualTo((defined('PHP_WINDOWS_VERSION_MAJOR') === true ? '"' . $php->getBinaryPath() . '"' : escapeshellcmd($php->getBinaryPath())) . ' ' . escapeshellcmd($option1))
+                ->castToString($php)->isEqualTo(escapeshellcmd($php->getBinaryPath()) . ' ' . escapeshellcmd($option1))
             ->if($php->addOption($option2 = uniqid(), $option2Value = uniqid() . ' ' . uniqid()))
             ->then
-                ->castToString($php)->isEqualTo((defined('PHP_WINDOWS_VERSION_MAJOR') === true ? '"' . $php->getBinaryPath() . '"' : escapeshellcmd($php->getBinaryPath())) . ' ' . escapeshellcmd($option1 . ' ' . $option2 . ' ' . $option2Value))
+                ->castToString($php)->isEqualTo($php->getBinaryPath() . ' ' . $option1 . ' ' . $option2 . ' \'' . $option2Value . '\'')
             ->if($php->addArgument($argument1 = uniqid()))
             ->then
-                ->castToString($php)->isEqualTo((defined('PHP_WINDOWS_VERSION_MAJOR') === true ? '"' . $php->getBinaryPath() . '"' : escapeshellcmd($php->getBinaryPath())) . ' ' . escapeshellcmd($option1 . ' ' . $option2 . ' ' . $option2Value . ' -- ' . $argument1))
+                ->castToString($php)->isEqualTo($php->getBinaryPath() . ' ' . $option1 . ' ' . $option2 . ' \'' . $option2Value . '\' -- ' . $argument1)
             ->if($php->addArgument($argument2 = uniqid(), $argument2Value = uniqid()))
             ->then
-                ->castToString($php)->isEqualTo((defined('PHP_WINDOWS_VERSION_MAJOR') === true ? '"' . $php->getBinaryPath() . '"' : escapeshellcmd($php->getBinaryPath())) . ' ' . escapeshellcmd($option1 . ' ' . $option2 . ' ' . $option2Value . ' -- ' . $argument1 . ' ' . $argument2) . ' ' . (defined('PHP_WINDOWS_VERSION_MAJOR') === true ? '"' . $argument2Value . '"': escapeshellarg($argument2Value)))
+                ->castToString($php)->isEqualTo($php->getBinaryPath() . ' ' . $option1 . ' ' . $option2 . ' \'' . $option2Value . '\' -- ' . $argument1 . ' ' . $argument2 . ' \'' . $argument2Value . '\'')
+        ;
+    }
+
+    /**
+     * @os windows winnt
+     */
+    public function test__toStringWindows()
+    {
+        $this
+            ->if($php = new testedClass())
+            ->then
+                ->castToString($php)->isEqualTo('"' . $php->getBinaryPath() . '"')
+            ->if($php->addOption($option1 = uniqid()))
+            ->then
+                ->castToString($php)->isEqualTo('"' . $php->getBinaryPath() . '" ' . escapeshellcmd($option1))
+            ->if($php->addOption($option2 = uniqid(), $option2Value = uniqid() . ' ' . uniqid()))
+            ->then
+                ->castToString($php)->isEqualTo('"' . $php->getBinaryPath() . '" ' . $option1 . ' ' . $option2 . ' "' . $option2Value . '"')
+            ->if($php->addArgument($argument1 = uniqid()))
+            ->then
+                ->castToString($php)->isEqualTo('"' . $php->getBinaryPath() . '" ' . $option1 . ' ' . $option2 . ' "' . $option2Value . '" -- ' . $argument1)
+            ->if($php->addArgument($argument2 = uniqid(), $argument2Value = uniqid()))
+            ->then
+                ->castToString($php)->isEqualTo('"' . $php->getBinaryPath() . '" ' . $option1 . ' ' . $option2 . ' "' . $option2Value . '" -- ' . $argument1 . ' ' . $argument2 . ' "' . $argument2Value . '"')
         ;
     }
 
@@ -109,14 +136,13 @@ class php extends atoum\test
                 ->string($php->getBinaryPath())->isEqualTo($pearBinaryPath)
             ->if($adapter->getenv = function ($variable) use (& $phpBinPath) {
                 switch ($variable) {
-                        case 'PHPBIN':
-                            return ($phpBinPath = uniqid());
+                    case 'PHPBIN':
+                        return ($phpBinPath = uniqid());
 
-                        default:
-                            return false;
-                    }
-            }
-            )
+                    default:
+                        return false;
+                }
+            })
             ->then
                 ->object($php->setBinaryPath())->isIdenticalTo($php)
                 ->string($php->getBinaryPath())->isEqualTo($phpBinPath)
@@ -177,7 +203,7 @@ class php extends atoum\test
                 ->exception(function () use ($php, & $code) {
                     $php->run($code = uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\cli\command\exception')
+                    ->isInstanceOf(atoum\cli\command\exception::class)
                     ->hasMessage('Unable to run \'' . $php . '\'')
                 ->adapter($adapter)
                     ->call('proc_open')->withArguments((string) $php, [0 => ['pipe', 'r'], 1 => ['pipe', 'w'], 2 => ['pipe', 'w']], [])->once()

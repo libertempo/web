@@ -9,6 +9,7 @@ class ComposerStaticInit105eb6cc62daffd76dde387ae5125a83
     public static $files = array (
         'a12da592622097d2b593a430e32e13fd' => __DIR__ . '/..' . '/nette/utils/src/loader.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
+        '25072dd6e2470089de65ae7bf11d3109' => __DIR__ . '/..' . '/symfony/polyfill-php72/bootstrap.php',
         'bd9634f2d41831496de0d3dfe4c94881' => __DIR__ . '/..' . '/symfony/polyfill-php56/bootstrap.php',
         '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
         '253c157292f75eb38082b5acb06f3f01' => __DIR__ . '/..' . '/nikic/fast-route/src/functions.php',
@@ -29,6 +30,7 @@ class ComposerStaticInit105eb6cc62daffd76dde387ae5125a83
         'S' => 
         array (
             'Symfony\\Polyfill\\Util\\' => 22,
+            'Symfony\\Polyfill\\Php72\\' => 23,
             'Symfony\\Polyfill\\Php56\\' => 23,
             'Symfony\\Polyfill\\Mbstring\\' => 26,
             'Symfony\\Component\\VarDumper\\' => 28,
@@ -106,6 +108,10 @@ class ComposerStaticInit105eb6cc62daffd76dde387ae5125a83
         'Symfony\\Polyfill\\Util\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-util',
+        ),
+        'Symfony\\Polyfill\\Php72\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-php72',
         ),
         'Symfony\\Polyfill\\Php56\\' => 
         array (
@@ -494,13 +500,13 @@ class ComposerStaticInit105eb6cc62daffd76dde387ae5125a83
         'mageekguy\\atoum\\asserters\\mock' => __DIR__ . '/..' . '/atoum/atoum/classes/asserters/mock.php',
         'mageekguy\\atoum\\asserters\\mock\\exceptions\\logic' => __DIR__ . '/..' . '/atoum/atoum/classes/asserters/mock/exceptions/logic.php',
         'mageekguy\\atoum\\asserters\\mysqlDateTime' => __DIR__ . '/..' . '/atoum/atoum/classes/asserters/mysqlDateTime.php',
-        'mageekguy\\atoum\\asserters\\object' => __DIR__ . '/..' . '/atoum/atoum/classes/asserters/object.php',
         'mageekguy\\atoum\\asserters\\output' => __DIR__ . '/..' . '/atoum/atoum/classes/asserters/output.php',
         'mageekguy\\atoum\\asserters\\phpArray' => __DIR__ . '/..' . '/atoum/atoum/classes/asserters/phpArray.php',
         'mageekguy\\atoum\\asserters\\phpArray\\child' => __DIR__ . '/..' . '/atoum/atoum/classes/asserters/phpArray/child.php',
         'mageekguy\\atoum\\asserters\\phpClass' => __DIR__ . '/..' . '/atoum/atoum/classes/asserters/phpClass.php',
         'mageekguy\\atoum\\asserters\\phpFloat' => __DIR__ . '/..' . '/atoum/atoum/classes/asserters/phpFloat.php',
         'mageekguy\\atoum\\asserters\\phpFunction' => __DIR__ . '/..' . '/atoum/atoum/classes/asserters/phpFunction.php',
+        'mageekguy\\atoum\\asserters\\phpObject' => __DIR__ . '/..' . '/atoum/atoum/classes/asserters/phpObject.php',
         'mageekguy\\atoum\\asserters\\phpResource' => __DIR__ . '/..' . '/atoum/atoum/classes/asserters/phpResource.php',
         'mageekguy\\atoum\\asserters\\phpString' => __DIR__ . '/..' . '/atoum/atoum/classes/asserters/phpString.php',
         'mageekguy\\atoum\\asserters\\sizeOf' => __DIR__ . '/..' . '/atoum/atoum/classes/asserters/sizeOf.php',
@@ -517,6 +523,7 @@ class ComposerStaticInit105eb6cc62daffd76dde387ae5125a83
         'mageekguy\\atoum\\cli\\command\\exception' => __DIR__ . '/..' . '/atoum/atoum/classes/cli/command/exception.php',
         'mageekguy\\atoum\\cli\\commands\\git' => __DIR__ . '/..' . '/atoum/atoum/classes/cli/commands/git.php',
         'mageekguy\\atoum\\cli\\progressBar' => __DIR__ . '/..' . '/atoum/atoum/classes/cli/progressBar.php',
+        'mageekguy\\atoum\\cli\\progressBar\\dot' => __DIR__ . '/..' . '/atoum/atoum/classes/cli/progressBar/dot.php',
         'mageekguy\\atoum\\cli\\prompt' => __DIR__ . '/..' . '/atoum/atoum/classes/cli/prompt.php',
         'mageekguy\\atoum\\configurator' => __DIR__ . '/..' . '/atoum/atoum/classes/configurator.php',
         'mageekguy\\atoum\\exception' => __DIR__ . '/..' . '/atoum/atoum/classes/exception.php',
@@ -596,6 +603,8 @@ class ComposerStaticInit105eb6cc62daffd76dde387ae5125a83
         'mageekguy\\atoum\\readers\\std\\in' => __DIR__ . '/..' . '/atoum/atoum/classes/readers/std/in.php',
         'mageekguy\\atoum\\report' => __DIR__ . '/..' . '/atoum/atoum/classes/report.php',
         'mageekguy\\atoum\\report\\field' => __DIR__ . '/..' . '/atoum/atoum/classes/report/field.php',
+        'mageekguy\\atoum\\report\\field\\decorator' => __DIR__ . '/..' . '/atoum/atoum/classes/report/field/decorator.php',
+        'mageekguy\\atoum\\report\\field\\decorators\\travis\\fold' => __DIR__ . '/..' . '/atoum/atoum/classes/report/field/decorators/travis/fold.php',
         'mageekguy\\atoum\\report\\fields\\event' => __DIR__ . '/..' . '/atoum/atoum/classes/report/fields/event.php',
         'mageekguy\\atoum\\report\\fields\\runner' => __DIR__ . '/..' . '/atoum/atoum/classes/report/fields/runner.php',
         'mageekguy\\atoum\\report\\fields\\runner\\atoum' => __DIR__ . '/..' . '/atoum/atoum/classes/report/fields/runner/atoum.php',
@@ -617,6 +626,7 @@ class ComposerStaticInit105eb6cc62daffd76dde387ae5125a83
         'mageekguy\\atoum\\report\\fields\\runner\\errors\\cli' => __DIR__ . '/..' . '/atoum/atoum/classes/report/fields/runner/errors/cli.php',
         'mageekguy\\atoum\\report\\fields\\runner\\event' => __DIR__ . '/..' . '/atoum/atoum/classes/report/fields/runner/event.php',
         'mageekguy\\atoum\\report\\fields\\runner\\event\\cli' => __DIR__ . '/..' . '/atoum/atoum/classes/report/fields/runner/event/cli.php',
+        'mageekguy\\atoum\\report\\fields\\runner\\event\\cli\\dot' => __DIR__ . '/..' . '/atoum/atoum/classes/report/fields/runner/event/cli/dot.php',
         'mageekguy\\atoum\\report\\fields\\runner\\exceptions' => __DIR__ . '/..' . '/atoum/atoum/classes/report/fields/runner/exceptions.php',
         'mageekguy\\atoum\\report\\fields\\runner\\exceptions\\cli' => __DIR__ . '/..' . '/atoum/atoum/classes/report/fields/runner/exceptions/cli.php',
         'mageekguy\\atoum\\report\\fields\\runner\\failures' => __DIR__ . '/..' . '/atoum/atoum/classes/report/fields/runner/failures.php',
@@ -669,6 +679,9 @@ class ComposerStaticInit105eb6cc62daffd76dde387ae5125a83
         'mageekguy\\atoum\\report\\fields\\test\\run' => __DIR__ . '/..' . '/atoum/atoum/classes/report/fields/test/run.php',
         'mageekguy\\atoum\\report\\fields\\test\\run\\cli' => __DIR__ . '/..' . '/atoum/atoum/classes/report/fields/test/run/cli.php',
         'mageekguy\\atoum\\report\\fields\\test\\run\\phing' => __DIR__ . '/..' . '/atoum/atoum/classes/report/fields/test/run/phing.php',
+        'mageekguy\\atoum\\report\\fields\\test\\travis' => __DIR__ . '/..' . '/atoum/atoum/classes/report/fields/test/travis.php',
+        'mageekguy\\atoum\\report\\fields\\test\\travis\\start' => __DIR__ . '/..' . '/atoum/atoum/classes/report/fields/test/travis/start.php',
+        'mageekguy\\atoum\\report\\fields\\test\\travis\\stop' => __DIR__ . '/..' . '/atoum/atoum/classes/report/fields/test/travis/stop.php',
         'mageekguy\\atoum\\report\\writers\\asynchronous' => __DIR__ . '/..' . '/atoum/atoum/classes/report/writers/asynchronous.php',
         'mageekguy\\atoum\\report\\writers\\realtime' => __DIR__ . '/..' . '/atoum/atoum/classes/report/writers/realtime.php',
         'mageekguy\\atoum\\reports\\asynchronous' => __DIR__ . '/..' . '/atoum/atoum/classes/reports/asynchronous.php',
@@ -679,7 +692,9 @@ class ComposerStaticInit105eb6cc62daffd76dde387ae5125a83
         'mageekguy\\atoum\\reports\\asynchronous\\xunit' => __DIR__ . '/..' . '/atoum/atoum/classes/reports/asynchronous/xunit.php',
         'mageekguy\\atoum\\reports\\realtime' => __DIR__ . '/..' . '/atoum/atoum/classes/reports/realtime.php',
         'mageekguy\\atoum\\reports\\realtime\\cli' => __DIR__ . '/..' . '/atoum/atoum/classes/reports/realtime/cli.php',
+        'mageekguy\\atoum\\reports\\realtime\\cli\\dot' => __DIR__ . '/..' . '/atoum/atoum/classes/reports/realtime/cli/dot.php',
         'mageekguy\\atoum\\reports\\realtime\\cli\\light' => __DIR__ . '/..' . '/atoum/atoum/classes/reports/realtime/cli/light.php',
+        'mageekguy\\atoum\\reports\\realtime\\cli\\travis' => __DIR__ . '/..' . '/atoum/atoum/classes/reports/realtime/cli/travis.php',
         'mageekguy\\atoum\\reports\\realtime\\phing' => __DIR__ . '/..' . '/atoum/atoum/classes/reports/realtime/phing.php',
         'mageekguy\\atoum\\reports\\realtime\\tap' => __DIR__ . '/..' . '/atoum/atoum/classes/reports/realtime/tap.php',
         'mageekguy\\atoum\\runner' => __DIR__ . '/..' . '/atoum/atoum/classes/runner.php',
@@ -736,7 +751,7 @@ class ComposerStaticInit105eb6cc62daffd76dde387ae5125a83
         'mageekguy\\atoum\\test\\data\\provider\\object\\exceptions\\mandatoryArgument' => __DIR__ . '/..' . '/atoum/atoum/classes/test/data/provider/object/exceptions/mandatoryArgument.php',
         'mageekguy\\atoum\\test\\data\\provider\\object\\exceptions\\privateConstructor' => __DIR__ . '/..' . '/atoum/atoum/classes/test/data/provider/object/exceptions/privateConstructor.php',
         'mageekguy\\atoum\\test\\data\\providers\\mock' => __DIR__ . '/..' . '/atoum/atoum/classes/test/data/providers/mock.php',
-        'mageekguy\\atoum\\test\\data\\providers\\object' => __DIR__ . '/..' . '/atoum/atoum/classes/test/data/providers/object.php',
+        'mageekguy\\atoum\\test\\data\\providers\\phpObject' => __DIR__ . '/..' . '/atoum/atoum/classes/test/data/providers/phpObject.php',
         'mageekguy\\atoum\\test\\data\\set' => __DIR__ . '/..' . '/atoum/atoum/classes/test/data/set.php',
         'mageekguy\\atoum\\test\\engine' => __DIR__ . '/..' . '/atoum/atoum/classes/test/engine.php',
         'mageekguy\\atoum\\test\\engines\\concurrent' => __DIR__ . '/..' . '/atoum/atoum/classes/test/engines/concurrent.php',

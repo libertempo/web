@@ -6,13 +6,12 @@ require __DIR__ . '/../../../../runner.php';
 
 use mageekguy\atoum;
 use mageekguy\atoum\iterators\filters\recursives;
-use mageekguy\atoum\mock;
 
 class extension extends atoum\test
 {
     public function testClass()
     {
-        $this->testedClass->extends('\recursiveFilterIterator');
+        $this->testedClass->extends(\recursiveFilterIterator::class);
     }
 
     public function test__construct()

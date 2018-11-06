@@ -31,7 +31,16 @@ class exception extends \runtimeException
                 }
             }
 
-            $code = $test->getScore()->addFail($file, $class, $method, $line, get_class($asserter) . ($function ? '::' . $function : '') . '()', $message);
+            $asserterName = preg_replace(
+                [
+                    '/^' . preg_quote('mageekguy\atoum\asserters\\') . '/',
+                    '/^php(?=.)/'
+                ],
+                '',
+                strtolower(get_class($asserter))
+            );
+
+            $code = $test->getScore()->addFail($file, $class, $method, $line, $asserterName . ($function ? '::' . $function : '') . '()', $message);
         }
 
         parent::__construct($message, $code);

@@ -12,7 +12,7 @@ class iterator extends atoum\test
 {
     public function testClass()
     {
-        $this->testedClass->extends('mageekguy\atoum\asserters\object');
+        $this->testedClass->extends(atoum\asserters\phpObject::class);
     }
 
     public function test__construct()
@@ -39,9 +39,10 @@ class iterator extends atoum\test
     public function testSetWith()
     {
         $this
-            ->given($asserter = $this->newTestedInstance
-                ->setLocale($locale = new \mock\atoum\locale())
-                ->setAnalyzer($analyzer = new \mock\atoum\tools\variable\analyzer())
+            ->given(
+                $asserter = $this->newTestedInstance
+                    ->setLocale($locale = new \mock\atoum\locale())
+                    ->setAnalyzer($analyzer = new \mock\atoum\tools\variable\analyzer())
             )
 
             ->if(
@@ -52,14 +53,14 @@ class iterator extends atoum\test
                 ->exception(function () use ($asserter, & $value) {
                     $asserter->setWith($value = uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($notAnArray)
                 ->mock($locale)->call('_')->withArguments('%s is not an object', $type)->once
 
                 ->exception(function () use ($asserter, & $value) {
                     $asserter->setWith($value = new \stdClass);
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($notAnArray)
                 ->mock($locale)->call('_')->withArguments('%s is not an object', $type)->once
 
@@ -72,15 +73,16 @@ class iterator extends atoum\test
     public function testHasSize()
     {
         $this
-            ->given($asserter = $this->newTestedInstance
-                ->setLocale($locale = new \mock\atoum\locale())
-                ->setAnalyzer($analyzer = new \mock\atoum\tools\variable\analyzer())
+            ->given(
+                $asserter = $this->newTestedInstance
+                    ->setLocale($locale = new \mock\atoum\locale())
+                    ->setAnalyzer($analyzer = new \mock\atoum\tools\variable\analyzer())
             )
             ->then
                 ->exception(function () use ($asserter) {
                     $asserter->hasSize(rand(0, PHP_INT_MAX));
                 })
-                    ->isInstanceOf('mageekguy\atoum\exceptions\logic')
+                    ->isInstanceOf(atoum\exceptions\logic::class)
                     ->hasMessage('Object is undefined')
 
             ->if(
@@ -92,14 +94,14 @@ class iterator extends atoum\test
                 ->exception(function () use ($asserter, & $size) {
                     $asserter->hasSize($size = rand(1, PHP_INT_MAX));
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($badSize)
                 ->mock($locale)->call('_')->withArguments('%s has size %d, expected size %d', $asserter, 0, $size)->once
 
                 ->exception(function () use ($asserter, & $failMessage) {
                     $asserter->hasSize(rand(1, PHP_INT_MAX), $failMessage = uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($failMessage)
 
                 ->object($asserter->hasSize(0))->isIdenticalTo($asserter)
@@ -113,15 +115,16 @@ class iterator extends atoum\test
     public function testIsEmpty()
     {
         $this
-            ->given($asserter = $this->newTestedInstance
-                ->setLocale($locale = new \mock\atoum\locale())
-                ->setAnalyzer($analyzer = new \mock\atoum\tools\variable\analyzer())
+            ->given(
+                $asserter = $this->newTestedInstance
+                    ->setLocale($locale = new \mock\atoum\locale())
+                    ->setAnalyzer($analyzer = new \mock\atoum\tools\variable\analyzer())
             )
             ->then
                 ->exception(function () use ($asserter) {
                     $asserter->isEmpty();
                 })
-                    ->isInstanceOf('mageekguy\atoum\exceptions\logic')
+                    ->isInstanceOf(atoum\exceptions\logic::class)
                     ->hasMessage('Object is undefined')
 
             ->if(
@@ -132,21 +135,21 @@ class iterator extends atoum\test
                 ->exception(function () use ($asserter) {
                     $asserter->isEmpty();
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($notEmpty)
                 ->mock($locale)->call('_')->withArguments('%s is not empty', $asserter)->once
 
                 ->exception(function () use ($asserter) {
                     $asserter->isEmpty;
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($notEmpty)
                 ->mock($locale)->call('_')->withArguments('%s is not empty', $asserter)->twice
 
                 ->exception(function () use ($asserter, & $failMessage) {
                     $asserter->isEmpty($failMessage = uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($failMessage)
 
             ->if($asserter->setWith(new \arrayIterator([])))
@@ -158,15 +161,16 @@ class iterator extends atoum\test
     public function testIsNotEmpty()
     {
         $this
-            ->given($asserter = $this->newTestedInstance
-                ->setLocale($locale = new \mock\atoum\locale())
-                ->setAnalyzer($analyzer = new \mock\atoum\tools\variable\analyzer())
+            ->given(
+                $asserter = $this->newTestedInstance
+                    ->setLocale($locale = new \mock\atoum\locale())
+                    ->setAnalyzer($analyzer = new \mock\atoum\tools\variable\analyzer())
             )
             ->then
                 ->exception(function () use ($asserter) {
                     $asserter->isNotEmpty();
                 })
-                    ->isInstanceOf('mageekguy\atoum\exceptions\logic')
+                    ->isInstanceOf(atoum\exceptions\logic::class)
                     ->hasMessage('Object is undefined')
 
             ->if(
@@ -178,21 +182,21 @@ class iterator extends atoum\test
                 ->exception(function () use ($asserter) {
                     $asserter->isNotEmpty();
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($isEmpty)
                 ->mock($locale)->call('_')->withArguments('%s is empty', $asserter)->once
 
                 ->exception(function () use ($asserter) {
                     $asserter->isNotEmpty;
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($isEmpty)
                 ->mock($locale)->call('_')->withArguments('%s is empty', $asserter)->twice
 
                 ->exception(function () use ($asserter, & $failMessage) {
                     $asserter->isNotEmpty($failMessage = uniqid());
                 })
-                        ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                        ->isInstanceOf(atoum\asserter\exception::class)
                         ->hasMessage($failMessage)
 
                 ->if($asserter->setWith(new \arrayIterator([uniqid()])))
@@ -209,17 +213,17 @@ class iterator extends atoum\test
                 ->exception(function () use ($asserter) {
                     $asserter->size;
                 })
-                    ->isInstanceOf('mageekguy\atoum\exceptions\logic')
+                    ->isInstanceOf(atoum\exceptions\logic::class)
                     ->hasMessage('Object is undefined')
 
             ->if($asserter->setWith(new \arrayIterator([])))
             ->then
-                ->object($integer = $asserter->size)->isInstanceOf('mageekguy\atoum\asserters\integer')
+                ->object($integer = $asserter->size)->isInstanceOf(atoum\asserters\integer::class)
                 ->integer($integer->getValue())->isEqualTo(0)
 
             ->if($asserter->setWith(new \arrayIterator([uniqid(), uniqid()])))
             ->then
-                ->object($integer = $asserter->size)->isInstanceOf('mageekguy\atoum\asserters\integer')
+                ->object($integer = $asserter->size)->isInstanceOf(atoum\asserters\integer::class)
                 ->integer($integer->getValue())->isEqualTo(2)
         ;
     }
@@ -227,17 +231,18 @@ class iterator extends atoum\test
     public function testIsEqualTo()
     {
         $this
-            ->given($asserter = $this->newTestedInstance
-                ->setLocale($locale = new \mock\atoum\locale())
-                ->setDiff($diff = new \mock\atoum\tools\diffs\variable())
-                ->setAnalyzer($analyzer = new \mock\atoum\tools\variable\analyzer())
-                ->setGenerator($generator = new \mock\atoum\asserter\generator())
+            ->given(
+                $asserter = $this->newTestedInstance
+                    ->setLocale($locale = new \mock\atoum\locale())
+                    ->setDiff($diff = new \mock\atoum\tools\diffs\variable())
+                    ->setAnalyzer($analyzer = new \mock\atoum\tools\variable\analyzer())
+                    ->setGenerator($generator = new \mock\atoum\asserter\generator())
             )
             ->then
                 ->exception(function () use ($asserter) {
                     $asserter->isEqualTo(new \mock\iterator());
                 })
-                    ->isInstanceOf('mageekguy\atoum\exceptions\logic')
+                    ->isInstanceOf(atoum\exceptions\logic::class)
                     ->hasMessage('Object is undefined')
 
             ->if($asserter->setWith(new \arrayIterator([])))
@@ -257,7 +262,7 @@ class iterator extends atoum\test
                 ->exception(function () use ($asserter, & $notEqualValue) {
                     $asserter->isEqualTo($notEqualValue = uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($localizedMessage . PHP_EOL . $diffValue)
                 ->mock($locale)->call('_')->withArguments('%s is not equal to %s', $asserter, $type)->once
                 ->mock($analyzer)->call('getTypeOf')->withArguments($notEqualValue)->once
@@ -269,16 +274,17 @@ class iterator extends atoum\test
     public function testIsNotEqualTo()
     {
         $this
-            ->given($asserter = $this->newTestedInstance
-                ->setLocale($locale = new \mock\atoum\locale())
-                ->setAnalyzer($analyzer = new \mock\atoum\tools\variable\analyzer())
-                ->setGenerator($generator = new \mock\atoum\asserter\generator())
+            ->given(
+                $asserter = $this->newTestedInstance
+                    ->setLocale($locale = new \mock\atoum\locale())
+                    ->setAnalyzer($analyzer = new \mock\atoum\tools\variable\analyzer())
+                    ->setGenerator($generator = new \mock\atoum\asserter\generator())
             )
             ->then
                 ->exception(function () use ($asserter) {
                     $asserter->isNotEqualTo(new \mock\iterator());
                 })
-                    ->isInstanceOf('mageekguy\atoum\exceptions\logic')
+                    ->isInstanceOf(atoum\exceptions\logic::class)
                     ->hasMessage('Object is undefined')
 
             ->if($asserter->setWith(new \arrayIterator([])))
@@ -293,7 +299,7 @@ class iterator extends atoum\test
                 ->exception(function () use ($asserter) {
                     $asserter->isNotEqualTo(new \arrayIterator([]));
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($localizedMessage)
                 ->mock($locale)->call('_')->withArguments('%s is equal to %s', $asserter, $type)->once
                 ->mock($analyzer)->call('getTypeOf')->withArguments(new \arrayIterator([]))->once
@@ -305,7 +311,7 @@ class iterator extends atoum\test
                 ->exception(function () use ($asserter, $iterator) {
                     $asserter->isNotEqualTo($iterator);
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($localizedMessage)
                 ->mock($locale)->call('_')->withArguments('%s is equal to %s', $asserter, $type)->twice
                 ->mock($analyzer)->call('getTypeOf')->withArguments($iterator)->once
@@ -315,17 +321,18 @@ class iterator extends atoum\test
     public function testIsIdenticalTo()
     {
         $this
-            ->given($asserter = $this->newTestedInstance
-                ->setLocale($locale = new \mock\atoum\locale())
-                ->setDiff($diff = new \mock\atoum\tools\diffs\variable())
-                ->setAnalyzer($analyzer = new \mock\atoum\tools\variable\analyzer())
-                ->setGenerator($generator = new \mock\atoum\asserter\generator())
+            ->given(
+                $asserter = $this->newTestedInstance
+                    ->setLocale($locale = new \mock\atoum\locale())
+                    ->setDiff($diff = new \mock\atoum\tools\diffs\variable())
+                    ->setAnalyzer($analyzer = new \mock\atoum\tools\variable\analyzer())
+                    ->setGenerator($generator = new \mock\atoum\asserter\generator())
             )
             ->then
                 ->exception(function () use ($asserter) {
                     $asserter->isIdenticalTo(new \mock\iterator());
                 })
-                    ->isInstanceOf('mageekguy\atoum\exceptions\logic')
+                    ->isInstanceOf(atoum\exceptions\logic::class)
                     ->hasMessage('Object is undefined')
 
             ->if($asserter->setWith($iterator = new \mock\iterator()))
@@ -341,7 +348,7 @@ class iterator extends atoum\test
                 ->exception(function () use ($asserter, & $notIdenticalValue) {
                     $asserter->isIdenticalTo($notIdenticalValue = uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($localizedMessage . PHP_EOL . $diffValue)
                 ->mock($locale)->call('_')->withArguments('%s is not identical to %s', $asserter, $type)->once
                 ->mock($analyzer)->call('getTypeOf')->withArguments($notIdenticalValue)->once
@@ -351,16 +358,17 @@ class iterator extends atoum\test
     public function testIsNotIdenticalTo()
     {
         $this
-            ->given($asserter = $this->newTestedInstance
-                ->setLocale($locale = new \mock\atoum\locale())
-                ->setAnalyzer($analyzer = new \mock\atoum\tools\variable\analyzer())
-                ->setGenerator($generator = new \mock\atoum\asserter\generator())
+            ->given(
+                $asserter = $this->newTestedInstance
+                    ->setLocale($locale = new \mock\atoum\locale())
+                    ->setAnalyzer($analyzer = new \mock\atoum\tools\variable\analyzer())
+                    ->setGenerator($generator = new \mock\atoum\asserter\generator())
             )
             ->then
                 ->exception(function () use ($asserter) {
                     $asserter->isNotIdenticalTo(new \mock\iterator());
                 })
-                    ->isInstanceOf('mageekguy\atoum\exceptions\logic')
+                    ->isInstanceOf(atoum\exceptions\logic::class)
                     ->hasMessage('Object is undefined')
 
             ->if($asserter->setWith($iterator = new \mock\iterator()))
@@ -375,7 +383,7 @@ class iterator extends atoum\test
                 ->exception(function () use ($asserter, $iterator) {
                     $asserter->isNotIdenticalTo($iterator);
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($localizedMessage)
                 ->mock($locale)->call('_')->withArguments('%s is identical to %s', $asserter, $type)->once
                 ->mock($analyzer)->call('getTypeOf')->withArguments($iterator)->once

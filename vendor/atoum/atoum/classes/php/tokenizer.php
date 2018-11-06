@@ -33,7 +33,7 @@ class tokenizer implements \iteratorAggregate
     {
         $this->currentIterator = $this->iterator;
 
-        foreach ($this->tokens = new \arrayIterator(token_get_all($string)) as $key => $token) {
+        foreach ($this->tokens = new \arrayIterator(token_get_all($string)) as $token) {
             switch ($token[0]) {
                 case T_CONST:
                     $token = $this->appendConstant();
@@ -211,54 +211,6 @@ class tokenizer implements \iteratorAggregate
         }
 
         return $this->tokens->valid() === false ? null : $this->tokens->current();
-    }
-
-    private function appendCommentAndWhitespace()
-    {
-        $key = $this->tokens->key();
-
-        while (isset($this->tokens[$key + 1]) === true && ($this->tokens[$key + 1][0] === T_WHITESPACE || $this->tokens[$key + 1][0] === T_COMMENT)) {
-            $this->tokens->next();
-
-            $token = $this->tokens->current();
-
-            $this->currentIterator->append(new token($token[0], isset($token[1]) === false ? null : $token[1], isset($token[2]) === false ? null : $token[2]));
-
-            $key = $this->tokens->key();
-        }
-    }
-
-    private function appendArray()
-    {
-        $this->appendCommentAndWhitespace();
-
-        $this->tokens->next();
-
-        if ($this->tokens->valid() === true) {
-            $token = $this->tokens->current();
-
-            if ($token[0] === '(') {
-                $this->currentIterator->append(new token($token[0], isset($token[1]) === false ? null : $token[1], isset($token[2]) === false ? null : $token[2]));
-
-                $stack = 1;
-
-                while ($stack > 0 && $this->tokens->valid() === true) {
-                    $this->tokens->next();
-
-                    if ($this->tokens->valid() === true) {
-                        $token = $this->tokens->current();
-
-                        if ($token[0] === '(') {
-                            $stack++;
-                        } elseif ($token[0] === ')') {
-                            $stack--;
-                        }
-
-                        $this->currentIterator->append(new token($token[0], isset($token[1]) === false ? null : $token[1], isset($token[2]) === false ? null : $token[2]));
-                    }
-                }
-            }
-        }
     }
 
     private function nextTokenIs($tokenName, array $skipedTags = [T_WHITESPACE, T_COMMENT, T_INLINE_HTML])

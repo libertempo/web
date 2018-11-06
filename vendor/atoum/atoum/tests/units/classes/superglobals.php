@@ -24,10 +24,15 @@ class superglobals extends atoum\test
                 ->array->setByReferenceWith($superglobals->_POST)->isReferenceTo($_POST)
                 ->array->setByReferenceWith($superglobals->_FILES)->isReferenceTo($_FILES)
                 ->array->setByReferenceWith($superglobals->_COOKIE)->isReferenceTo($_COOKIE)
-                ->array->setByReferenceWith($superglobals->_SESSION)->isReferenceTo($_SESSION)
                 ->array->setByReferenceWith($superglobals->_REQUEST)->isReferenceTo($_REQUEST)
                 ->array->setByReferenceWith($superglobals->_ENV)->isReferenceTo($_ENV)
         ;
+
+        if (isset($_SESSION)) {
+            $this->assert()->array->setByReferenceWith($superglobals->_SESSION)->isReferenceTo($_SESSION);
+        } else {
+            $this->assert()->array->setByReferenceWith($superglobals->_SESSION)->isReferenceTo($superglobals->_SESSION);
+        }
     }
 
     public function test__set()
@@ -37,9 +42,8 @@ class superglobals extends atoum\test
             ->then
                 ->exception(function () use ($superglobals, & $name) {
                     $superglobals->{$name = uniqid()} = uniqid();
-                }
-                    )
-                    ->isInstanceOf('mageekguy\atoum\exceptions\logic\invalidArgument')
+                })
+                    ->isInstanceOf(atoum\exceptions\logic\invalidArgument::class)
                     ->hasMessage('PHP superglobal \'$' . $name . '\' does not exist')
             ->if($superglobals->GLOBALS = ($variable = uniqid()))
             ->then

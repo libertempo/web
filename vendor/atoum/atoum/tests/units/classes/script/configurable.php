@@ -13,7 +13,7 @@ class configurable extends atoum\test
     {
         $this->testedClass
             ->isAbstract()
-            ->extends('mageekguy\atoum\script')
+            ->extends(atoum\script::class)
         ;
     }
 
@@ -29,9 +29,10 @@ class configurable extends atoum\test
             ->then
                 ->string($configurable->getName())->isEqualTo($name)
                 ->object($configurable->getAdapter())->isEqualTo(new atoum\adapter())
-                ->object($configurable->getIncluder())->isInstanceOf('mageekguy\atoum\includer')
+                ->object($configurable->getIncluder())->isInstanceOf(atoum\includer::class)
                 ->array($configurable->getConfigFiles())->isEmpty()
-                ->array($configurable->getHelp())->isEqualTo([
+                ->array($configurable->getHelp())->isEqualTo(
+                    [
                         [
                             ['-h', '--help'],
                             null,
@@ -48,9 +49,10 @@ class configurable extends atoum\test
             ->then
                 ->string($configurable->getName())->isEqualTo($name)
                 ->object($configurable->getAdapter())->isIdenticalTo($adapter)
-                ->object($configurable->getIncluder())->isInstanceOf('mageekguy\atoum\includer')
+                ->object($configurable->getIncluder())->isInstanceOf(atoum\includer::class)
                 ->array($configurable->getConfigFiles())->isEmpty()
-                ->array($configurable->getHelp())->isEqualTo([
+                ->array($configurable->getHelp())->isEqualTo(
+                    [
                         [
                             ['-h', '--help'],
                             null,
@@ -88,7 +90,7 @@ class configurable extends atoum\test
                 ->exception(function () use ($configurable, & $file) {
                     $configurable->useConfigFile($file = uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\includer\exception')
+                    ->isInstanceOf(atoum\includer\exception::class)
                     ->hasMessage('Unable to find configuration file \'' . $file . '\'')
             ->if($includer = new \mock\mageekguy\atoum\includer())
             ->and($this->calling($includer)->includePath = function () {
@@ -112,30 +114,18 @@ class configurable extends atoum\test
                 ->mock($configurable)
                     ->foreach(testedClass::getSubDirectoryPath(atoum\directory), function ($mock, $path) {
                         $mock->call('useConfigFile')->withArguments($path . testedClass::defaultConfigFile)->atLeastOnce();
-                    }
-                    )
+                    })
             ->if($configurable = new testedClass(($directory = uniqid() . DIRECTORY_SEPARATOR . uniqid() . DIRECTORY_SEPARATOR . uniqid()) . DIRECTORY_SEPARATOR . uniqid()))
             ->and($this->calling($configurable)->useConfigFile = function () {
             })
             ->and($configurable->setAdapter($adapter = new atoum\test\adapter()))
-            ->and($adapter->is_dir = true)
-            ->then
-                ->object($configurable->useDefaultConfigFiles())->isIdenticalTo($configurable)
-                ->mock($configurable)
-                    ->foreach(testedClass::getSubDirectoryPath($directory), function ($mock, $path) {
-                        $mock->call('useConfigFile')->withArguments($path . testedClass::defaultConfigFile)->atLeastOnce();
-                    }
-                )
-            ->if($adapter->is_dir = false)
             ->and($adapter->getcwd = $workingDirectory = uniqid() . DIRECTORY_SEPARATOR . uniqid() . DIRECTORY_SEPARATOR . uniqid())
             ->then
                 ->object($configurable->useDefaultConfigFiles())->isIdenticalTo($configurable)
                 ->mock($configurable)
                     ->foreach(testedClass::getSubDirectoryPath($workingDirectory), function ($mock, $path) {
                         $mock->call('useConfigFile')->withArguments($path . testedClass::defaultConfigFile)->atLeastOnce();
-                    }
-                )
-            ->if($adapter->is_dir = true)
+                    })
             ->and($adapter->getcwd = $otherWorkingDirectory = uniqid() . DIRECTORY_SEPARATOR . uniqid() . DIRECTORY_SEPARATOR . uniqid())
             ->and($this->calling($configurable)->useConfigFile->throw = new atoum\includer\exception())
             ->then
@@ -143,8 +133,7 @@ class configurable extends atoum\test
                 ->mock($configurable)
                     ->foreach(testedClass::getSubDirectoryPath($otherWorkingDirectory), function ($mock, $path) {
                         $mock->call('useConfigFile')->withArguments($path . testedClass::defaultConfigFile)->atLeastOnce();
-                    }
-                )
+                    })
         ;
     }
 

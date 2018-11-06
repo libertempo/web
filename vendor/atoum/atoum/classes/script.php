@@ -46,11 +46,7 @@ abstract class script
 
     public function getDirectory()
     {
-        $directory = $this->adapter->dirname($this->getName());
-
-        if ($this->adapter->is_dir($directory) === false) {
-            $directory = $this->adapter->getcwd();
-        }
+        $directory = $this->adapter->getcwd();
 
         return rtrim($directory, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
     }
@@ -193,10 +189,10 @@ abstract class script
             $labelColorizer = new cli\colorizer('0;32');
             $labelColorizer->setPattern('/(^[^:]+: )/');
 
-            $argumentColorizer = new cli\colorizer('0;32');
+            $argumentColorizer = new cli\colorizer('0;37');
             $argumentColorizer->setPattern('/((?:^| )[-+]+[-a-z]+)/');
 
-            $valueColorizer = new cli\colorizer('0;34');
+            $valueColorizer = new cli\colorizer('0;36');
             $valueColorizer->setPattern('/(<[^>]+>(?:\.\.\.)?)/');
 
             $writer = new writers\std\out();
@@ -456,7 +452,7 @@ abstract class script
 
     protected static function writeLabelWithWriter($label, $value, $level, writer $writer)
     {
-        return $writer->write(($level <= 0 ? '' : str_repeat(self::padding, $level)) . (preg_match('/^ +$/', $label) ? $label : rtrim($label)) . ': ' . trim($value));
+        return $writer->write('  ' . $label . '  ' . trim($value));
     }
 
     protected static function writeLabelsWithWriter($labels, $level, writer $writer)
@@ -474,7 +470,7 @@ abstract class script
         foreach ($labels as $label => $value) {
             $value = explode("\n", trim($value));
 
-            static::writeLabelWithWriter(str_pad($label, $maxLength, ' ', STR_PAD_LEFT), $value[0], $level, $writer);
+            static::writeLabelWithWriter(str_pad($label, $maxLength, ' ', STR_PAD_RIGHT), $value[0], $level, $writer);
 
             if (count($value) > 1) {
                 foreach (array_slice($value, 1) as $line) {

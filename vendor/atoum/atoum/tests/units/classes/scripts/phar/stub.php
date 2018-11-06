@@ -12,7 +12,7 @@ class stub extends atoum\test
 {
     public function testClass()
     {
-        $this->testedClass->extends('mageekguy\atoum\scripts\runner');
+        $this->testedClass->extends(atoum\scripts\runner::class);
     }
 
     public function testClassConstants()
@@ -28,9 +28,9 @@ class stub extends atoum\test
         $this
             ->given($this->newTestedInstance(uniqid()))
             ->then
-                ->object($this->testedInstance->getPharFactory())->isInstanceOf('closure')
+                ->object($this->testedInstance->getPharFactory())->isInstanceOf(\closure::class)
                 ->object($this->testedInstance->setPharFactory())->isTestedInstance
-                ->object($this->testedInstance->getPharFactory())->isInstanceOf('closure')
+                ->object($this->testedInstance->getPharFactory())->isInstanceOf(\closure::class)
             ->if($factory = function () {
             })
             ->then
@@ -85,8 +85,8 @@ class stub extends atoum\test
                 ->object($this->testedInstance->infos())->isTestedInstance
                 ->mock($writer)
                     ->call('write')
-                        ->withArguments('   ' . $key . ': ' . $value)->once
-                        ->withArguments('   ' . $otherKey . ': ' . $otherValue)->once
+                        ->withArguments('  ' . $key . '  ' . $value)->once
+                        ->withArguments('  ' . $otherKey . '  ' . $otherValue)->once
         ;
     }
 
@@ -112,10 +112,13 @@ class stub extends atoum\test
             ->then
                 ->object($this->testedInstance->signature())->isTestedInstance
                 ->mock($writer)
-                    ->call('write')->withArguments('Signature: ' . $signature)->once
+                    ->call('write')->withArguments('  Signature  ' . $signature)->once
         ;
     }
 
+    /**
+     * @engine inline
+     */
     public function testVersion()
     {
         $this
@@ -149,7 +152,7 @@ class stub extends atoum\test
                 ->exception(function () use ($stub) {
                     $stub->update();
                 })
-                    ->isInstanceOf('mageekguy\atoum\exceptions\runtime')
+                    ->isInstanceOf(atoum\exceptions\runtime::class)
                     ->hasMessage('Unable to update the PHAR, phar.readonly is set, use \'-d phar.readonly=0\'')
             ->if($adapter->ini_get = function ($name) {
                 return $name === 'phar.readonly' ? 0 : $name = 'allow_url_fopen' ? 0 : ini_get($name);
@@ -158,7 +161,7 @@ class stub extends atoum\test
                 ->exception(function () use ($stub) {
                     $stub->update();
                 })
-                    ->isInstanceOf('mageekguy\atoum\exceptions\runtime')
+                    ->isInstanceOf(atoum\exceptions\runtime::class)
                     ->hasMessage('Unable to update the PHAR, allow_url_fopen is not set, use \'-d allow_url_fopen=1\'')
             ->if($adapter->ini_get = function ($name) {
                 return $name === 'phar.readonly' ? 0 : $name = 'allow_url_fopen' ? 1 : ini_get($name);
@@ -176,22 +179,19 @@ class stub extends atoum\test
                 $phar = new \mock\phar($path);
 
                 return $phar;
-            }
-                )
-            )
+            }))
             ->and($adapter->file_get_contents = function ($path) use (& $currentVersion) {
                 switch ($path) {
-                        case 'versions':
-                            return serialize(['1' => $currentVersion = uniqid(), 'current' => '1']);
+                    case 'versions':
+                        return serialize(['1' => $currentVersion = uniqid(), 'current' => '1']);
 
-                        case phar\stub::updateUrl:
-                            return json_encode([]);
+                    case phar\stub::updateUrl:
+                        return json_encode([]);
 
-                        default:
-                            return false;
-                    }
-            }
-            )
+                    default:
+                        return false;
+                }
+            })
             ->then
                 ->object($stub->update())->isIdenticalTo($stub)
                 ->adapter($adapter)

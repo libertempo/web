@@ -18,7 +18,7 @@ class html extends atoum\test
 {
     public function testClass()
     {
-        $this->testedClass->extends('mageekguy\atoum\report\fields\runner\coverage\cli');
+        $this->testedClass->extends(atoum\report\fields\runner\coverage\cli::class);
     }
 
     public function test__construct()
@@ -37,7 +37,7 @@ class html extends atoum\test
                 ->object($field->getPhp())->isEqualTo(new atoum\php())
                 ->object($field->getAdapter())->isEqualTo(new atoum\adapter())
                 ->object($field->getLocale())->isEqualTo(new locale())
-                ->object($field->getTemplateParser())->isInstanceOf('mageekguy\atoum\template\parser')
+                ->object($field->getTemplateParser())->isInstanceOf(atoum\template\parser::class)
                 ->variable($field->getCoverage())->isNull()
                 ->array($field->getSrcDirectories())->isEmpty()
                 ->array($field->getEvents())->isEqualTo([atoum\runner::runStop])
@@ -53,33 +53,31 @@ class html extends atoum\test
             ->if($coverage = new \mock\mageekguy\atoum\score\coverage())
             ->and($coverageController = $coverage->getMockController())
             ->and($coverageController->count = rand(1, PHP_INT_MAX))
-            ->and($coverageController->getClasses = [
-                        $className = uniqid() => $classFile = uniqid()
+            ->and(
+                $coverageController->getClasses = [
+                    $className = uniqid() => $classFile = uniqid()
+                ]
+            )
+            ->and(
+                $coverageController->getMethods = [
+                    $className => [
+                        $method1Name = uniqid() => [
+                            5 => 1,
+                            6 => 1,
+                            7 => -1,
+                            8 => 1,
+                            9 => -2
+                        ],
+                        $method3Name = uniqid() => [
+                            10 => -2
+                        ],
+                        $method4Name = uniqid() => [
+                            11 => 1,
+                            12 => -2
+                        ]
                     ]
-                )
-            ->and($coverageController->getMethods = [
-                        $className =>
-                            [
-                                $method1Name = uniqid() =>
-                                    [
-                                        5 => 1,
-                                        6 => 1,
-                                        7 => -1,
-                                        8 => 1,
-                                        9 => -2
-                                    ],
-                                $method3Name = uniqid() =>
-                                    [
-                                        10 => -2
-                                    ],
-                                $method4Name = uniqid() =>
-                                    [
-                                        11 => 1,
-                                        12 => -2
-                                    ]
-                            ]
-                    ]
-                )
+                ]
+            )
             ->and($coverageController->getValue = $coverageValue = rand(1, 10) / 10)
             ->and($coverageController->getValueForClass = $classCoverageValue = rand(1, 10) / 10)
             ->and($coverageController->getValueForMethod = $methodCoverageValue = rand(1, 10) / 10)
@@ -88,7 +86,8 @@ class html extends atoum\test
             ->if($classCoverageTemplate = new \mock\mageekguy\atoum\template\tag('classCoverage'))
             ->and($classCoverageTemplate->addChild($classCoverageAvailableTemplate = new \mock\mageekguy\atoum\template\tag('classCoverageAvailable')))
             ->and($indexTemplate = new \mock\mageekguy\atoum\template())
-            ->and($indexTemplate
+            ->and(
+                $indexTemplate
                     ->addChild($coverageAvailableTemplate = new \mock\mageekguy\atoum\template\tag('coverageAvailable'))
                     ->addChild($classCoverageTemplate)
                 )
@@ -116,7 +115,8 @@ class html extends atoum\test
             ->and($sourceFileTemplateController = $sourceFileTemplate->getMockController())
             ->and($sourceFileTemplateController->__set = function () {
             })
-            ->and($sourceFileTemplate
+            ->and(
+                $sourceFileTemplate
                     ->addChild($lineTemplate)
                     ->addChild($coveredLineTemplate)
                     ->addChild($notCoveredLineTemplate)
@@ -130,7 +130,8 @@ class html extends atoum\test
             ->and($classTemplateController = $classTemplate->getMockController())
             ->and($classTemplateController->__set = function () {
             })
-            ->and($classTemplate
+            ->and(
+                $classTemplate
                     ->addChild($methodsTemplate)
                     ->addChild($sourceFileTemplate)
                 )
@@ -179,7 +180,8 @@ class html extends atoum\test
             ->and($reflectedClassController->getMethods = [$reflectedMethod1, $reflectedMethod2, $reflectedMethod3, $reflectedMethod4])
             ->and($templateParser = new \mock\mageekguy\atoum\template\parser())
             ->and($field = new \mock\mageekguy\atoum\report\fields\runner\coverage\html($projectName = uniqid(), $destinationDirectory = uniqid()))
-            ->and($field
+            ->and(
+                $field
                     ->setTemplateParser($templateParser)
                     ->setTemplatesDirectory($templatesDirectory = uniqid())
                     ->setAdapter($adapter = new test\adapter())
@@ -194,14 +196,13 @@ class html extends atoum\test
             ->and($templateParserController = $templateParser->getMockController())
             ->and($templateParserController->parseFile = function ($path) use ($templatesDirectory, $indexTemplate, $classTemplate) {
                 switch ($path) {
-                            case $templatesDirectory . DIRECTORY_SEPARATOR . 'index.tpl':
-                                return $indexTemplate;
+                    case $templatesDirectory . DIRECTORY_SEPARATOR . 'index.tpl':
+                        return $indexTemplate;
 
-                            case $templatesDirectory . DIRECTORY_SEPARATOR . 'class.tpl':
-                                return $classTemplate;
-                        }
-            }
-                )
+                    case $templatesDirectory . DIRECTORY_SEPARATOR . 'class.tpl':
+                        return $classTemplate;
+                }
+            })
             ->and($adapter->mkdir = function () {
             })
             ->and($adapter->file_put_contents = function () {
@@ -231,7 +232,7 @@ class html extends atoum\test
             ->and($field->handleEvent(atoum\runner::runStop, $runner))
             ->then
                 ->object($field->getCoverage())->isIdenticalTo($coverage)
-                ->castToString($field)->isIdenticalTo(sprintf($field->getLocale()->_('Code coverage: %3.2f%%.'),  round($coverageValue * 100, 2)) . PHP_EOL . 'Details of code coverage are available at ' . $rootUrl . '.' . PHP_EOL)
+                ->castToString($field)->isIdenticalTo(sprintf($field->getLocale()->_('Code coverage: %3.2f%%.'), round($coverageValue * 100, 2)) . PHP_EOL . 'Details of code coverage are available at ' . $rootUrl . '.' . PHP_EOL)
                 ->mock($coverage)->call('count')->once()
                 ->mock($field)
                     ->call('cleanDestinationDirectory')->once()
@@ -304,7 +305,7 @@ class html extends atoum\test
                     ->call('fclose')->withArguments($classResource)->once()
             ->if($indexTemplateController->build->throw = new \exception($errorMessage = uniqid()))
             ->then
-                ->castToString($field)->isIdenticalTo(sprintf($field->getLocale()->_('Code coverage: %3.2f%%.'),  round($coverageValue * 100, 2)) . PHP_EOL . 'Unable to generate code coverage at ' . $rootUrl . ': ' . $errorMessage . '.' . PHP_EOL)
+                ->castToString($field)->isIdenticalTo(sprintf($field->getLocale()->_('Code coverage: %3.2f%%.'), round($coverageValue * 100, 2)) . PHP_EOL . 'Unable to generate code coverage at ' . $rootUrl . ': ' . $errorMessage . '.' . PHP_EOL)
         ;
     }
 
@@ -387,8 +388,8 @@ class html extends atoum\test
         $this
             ->if($field = new testedClass(uniqid(), __DIR__))
             ->then
-                ->object($recursiveIteratorIterator = $field->getDestinationDirectoryIterator())->isInstanceOf('recursiveIteratorIterator')
-                ->object($recursiveDirectoryIterator = $recursiveIteratorIterator->getInnerIterator())->isInstanceOf('recursiveDirectoryIterator')
+                ->object($recursiveIteratorIterator = $field->getDestinationDirectoryIterator())->isInstanceOf(\recursiveIteratorIterator::class)
+                ->object($recursiveDirectoryIterator = $recursiveIteratorIterator->getInnerIterator())->isInstanceOf(\recursiveDirectoryIterator::class)
                 ->string($recursiveDirectoryIterator->current()->getPathInfo()->getPathname())->isEqualTo(__DIR__)
         ;
     }
@@ -411,7 +412,8 @@ class html extends atoum\test
             ->if($field->addSrcDirectory($otherDirectory = __DIR__ . DIRECTORY_SEPARATOR . '..', $otherClosure = function () {
             }))
             ->then
-                ->array($iterators = $field->getSrcDirectoryIterators())->isEqualTo([
+                ->array($iterators = $field->getSrcDirectoryIterators())->isEqualTo(
+                    [
                             new \recursiveIteratorIterator(new atoum\iterators\filters\recursives\closure(new \recursiveDirectoryIterator($directory))),
                             new \recursiveIteratorIterator(new atoum\iterators\filters\recursives\closure(new \recursiveDirectoryIterator($otherDirectory)))
                     ]
@@ -421,7 +423,8 @@ class html extends atoum\test
             ->if($field->addSrcDirectory($otherDirectory, $anOtherClosure = function () {
             }))
             ->then
-                ->array($iterators = $field->getSrcDirectoryIterators())->isEqualTo([
+                ->array($iterators = $field->getSrcDirectoryIterators())->isEqualTo(
+                    [
                             new \recursiveIteratorIterator(new atoum\iterators\filters\recursives\closure(new \recursiveDirectoryIterator($directory))),
                             new \recursiveIteratorIterator(new atoum\iterators\filters\recursives\closure(new \recursiveDirectoryIterator($otherDirectory)))
                     ]
@@ -522,9 +525,8 @@ class html extends atoum\test
                 ->exception(function () use ($field) {
                     $field->setReflectionClassInjector(function () {
                     });
-                }
-                    )
-                    ->isInstanceOf('mageekguy\atoum\exceptions\logic\invalidArgument')
+                })
+                    ->isInstanceOf(atoum\exceptions\logic\invalidArgument::class)
                     ->hasMessage('Reflection class injector must take one argument')
         ;
     }
@@ -534,16 +536,15 @@ class html extends atoum\test
         $this
             ->if($field = new testedClass(uniqid(), uniqid(), uniqid()))
             ->then
-                ->object($field->getReflectionClass(__CLASS__))->isInstanceOf('reflectionClass')
+                ->object($field->getReflectionClass(__CLASS__))->isInstanceOf(\reflectionClass::class)
                 ->string($field->getReflectionClass(__CLASS__)->getName())->isEqualTo(__CLASS__)
             ->if($field->setReflectionClassInjector(function ($class) {
             }))
             ->then
                 ->exception(function () use ($field) {
                     $field->getReflectionClass(uniqid());
-                }
-                    )
-                    ->isInstanceOf('mageekguy\atoum\exceptions\runtime\unexpectedValue')
+                })
+                    ->isInstanceOf(atoum\exceptions\runtime\unexpectedValue::class)
                     ->hasMessage('Reflection class injector must return a \reflectionClass instance')
         ;
     }

@@ -19,7 +19,7 @@ class phpClass extends atoum\test
 
     public function testClass()
     {
-        $this->testedClass->extends('mageekguy\atoum\asserter');
+        $this->testedClass->extends(atoum\asserter::class);
     }
 
     public function test__construct()
@@ -54,8 +54,7 @@ class phpClass extends atoum\test
                         $mockController->getName = $class;
 
                         return new \mock\reflectionClass($class, $mockController);
-                    }
-                    ),
+                    }),
                 $this->testedInstance->setWith($class = uniqid())
             )
             ->then
@@ -90,7 +89,7 @@ class phpClass extends atoum\test
                     $asserter->setReflectionClassInjector(function () {
                     });
                 })
-                    ->isInstanceOf('mageekguy\atoum\exceptions\logic\invalidArgument')
+                    ->isInstanceOf(atoum\exceptions\logic\invalidArgument::class)
                     ->hasMessage('Reflection class injector must take one argument')
         ;
     }
@@ -100,7 +99,7 @@ class phpClass extends atoum\test
         $this
             ->given($asserter = $this->newTestedInstance)
             ->then
-                ->object($this->testedInstance->getReflectionClass(__CLASS__))->isInstanceOf('reflectionClass')
+                ->object($this->testedInstance->getReflectionClass(__CLASS__))->isInstanceOf(\reflectionClass::class)
                 ->string($this->testedInstance->getReflectionClass(__CLASS__)->getName())->isEqualTo(__CLASS__)
 
             ->if($this->testedInstance->setReflectionClassInjector(function ($class) use (& $reflectionClass) {
@@ -117,7 +116,7 @@ class phpClass extends atoum\test
                 ->exception(function () use ($asserter) {
                     $asserter->getReflectionClass(uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\exceptions\runtime\unexpectedValue')
+                    ->isInstanceOf(atoum\exceptions\runtime\unexpectedValue::class)
                     ->hasMessage('Reflection class injector must return a \reflectionClass instance')
         ;
     }
@@ -136,8 +135,7 @@ class phpClass extends atoum\test
                         };
 
                         return new \mock\reflectionClass($class, $mockController);
-                    }
-                    )
+                    })
                     ->setLocale($locale = new \mock\atoum\locale()),
                 $this->calling($locale)->_ = $notExists = uniqid()
             )
@@ -145,7 +143,7 @@ class phpClass extends atoum\test
                 ->exception(function () use ($asserter, & $class) {
                     $asserter->setWith($class = uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($notExists)
                 ->mock($locale)->call('_')->withArguments('Class \'%s\' does not exist', $class)->once
 
@@ -157,8 +155,7 @@ class phpClass extends atoum\test
                         $mockController->getName = $class;
 
                         return new \mock\reflectionClass($class, $mockController);
-                    }
-                    )
+                    })
             )
             ->then
                 ->object($this->testedInstance->setWith($class = uniqid()))->isTestedInstance
@@ -174,7 +171,7 @@ class phpClass extends atoum\test
                 ->exception(function () use ($asserter) {
                     $asserter->hasParent(uniqid());
                 })
-                    ->isInstanceOf('logicException')
+                    ->isInstanceOf(\logicException::class)
                     ->hasMessage('Class is undefined')
 
             ->if(
@@ -188,8 +185,7 @@ class phpClass extends atoum\test
                         $mockController->getParentClass = new \mock\reflectionClass(uniqid(), $parentMockController);
 
                         return new \mock\reflectionClass($class, $mockController);
-                    }
-                    )
+                    })
                     ->setWith(uniqid())
                     ->setLocale($locale = new \mock\atoum\locale()),
                 $this->calling($locale)->_ = $isNotChild = uniqid()
@@ -198,14 +194,14 @@ class phpClass extends atoum\test
                 ->exception(function () use ($asserter, & $notParent) {
                     $asserter->hasParent($notParent = uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($isNotChild)
                 ->mock($locale)->call('_')->withArguments('%s is not the parent of class %s', $notParent, $asserter)->once
 
                 ->exception(function () use ($asserter, & $failMessage) {
                     $asserter->hasParent(uniqid(), $failMessage = uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($failMessage)
 
             ->object($this->testedInstance->hasParent($parent))->isTestedInstance
@@ -221,13 +217,13 @@ class phpClass extends atoum\test
                 ->exception(function () use ($asserter) {
                     $asserter->hasNoParent();
                 })
-                    ->isInstanceOf('logicException')
+                    ->isInstanceOf(\logicException::class)
                     ->hasMessage('Class is undefined')
 
                 ->exception(function () use ($asserter) {
                     $asserter->hasNoParent;
                 })
-                    ->isInstanceOf('logicException')
+                    ->isInstanceOf(\logicException::class)
                     ->hasMessage('Class is undefined')
 
             ->if(
@@ -255,20 +251,20 @@ class phpClass extends atoum\test
                 ->exception(function () use ($asserter) {
                     $asserter->hasNoParent();
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($hasParent)
                 ->mock($locale)->call('_')->withArguments('%s has parent %s', $asserter, $parentClass)->once
 
                 ->exception(function () use ($asserter, & $failMessage) {
                     $asserter->hasNoParent($failMessage = uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($failMessage)
 
                 ->exception(function () use ($asserter) {
                     $asserter->hasNoParent;
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($hasParent)
                 ->mock($locale)->call('_')->withArguments('%s has parent %s', $asserter, $parentClass)->twice
         ;
@@ -282,19 +278,19 @@ class phpClass extends atoum\test
                 ->exception(function () use ($asserter) {
                     $asserter->isSubclassOf(uniqid());
                 })
-                    ->isInstanceOf('logicException')
+                    ->isInstanceOf(\logicException::class)
                     ->hasMessage('Class is undefined')
 
                 ->exception(function () use ($asserter) {
                     $asserter->extends(uniqid());
                 })
-                    ->isInstanceOf('logicException')
+                    ->isInstanceOf(\logicException::class)
                     ->hasMessage('Class is undefined')
 
                 ->exception(function () use ($asserter) {
                     $asserter->exTENDs(uniqid());
                 })
-                    ->isInstanceOf('logicException')
+                    ->isInstanceOf(\logicException::class)
                     ->hasMessage('Class is undefined')
 
             ->given(
@@ -306,8 +302,7 @@ class phpClass extends atoum\test
                         $mockController->getName = $class;
 
                         return $reflectionClass = new \mock\reflectionClass($class, $mockController);
-                    }
-                    )
+                    })
                     ->setWith(uniqid())
                     ->setLocale($locale = new \mock\atoum\locale()),
                 $this->calling($locale)->_ = $isNotSubclass = uniqid()
@@ -318,7 +313,7 @@ class phpClass extends atoum\test
                 ->exception(function () use ($asserter) {
                     $asserter->isSubclassOf(uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\exceptions\logic')
+                    ->isInstanceOf(atoum\exceptions\logic::class)
                     ->hasMessage('Argument of ' . $this->getTestedClassName() . '::isSubClassOf() must be a class name')
                     ->hasNestedException($exception)
 
@@ -327,27 +322,27 @@ class phpClass extends atoum\test
                 ->exception(function () use ($asserter, & $parentClass) {
                     $asserter->isSubclassOf($parentClass = uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($isNotSubclass)
                 ->mock($locale)->call('_')->withArguments('%s does not extend %s', $asserter, $parentClass)->once
 
                 ->exception(function () use ($asserter, & $parentClass) {
                     $asserter->extends($parentClass = uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($isNotSubclass)
                 ->mock($locale)->call('_')->withArguments('%s does not extend %s', $asserter, $parentClass)->once
 
                 ->exception(function () use ($asserter, & $failMessage) {
                     $asserter->isSubclassOf(uniqid(), $failMessage = uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($failMessage)
 
                 ->exception(function () use ($asserter, & $failMessage) {
                     $asserter->extends(uniqid(), $failMessage = uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($failMessage)
 
             ->if($this->calling($reflectionClass)->isSubclassOf = true)
@@ -365,19 +360,19 @@ class phpClass extends atoum\test
                 ->exception(function () use ($asserter) {
                     $asserter->hasInterface(uniqid());
                 })
-                    ->isInstanceOf('logicException')
+                    ->isInstanceOf(\logicException::class)
                     ->hasMessage('Class is undefined')
 
                 ->exception(function () use ($asserter) {
                     $asserter->implements(uniqid());
                 })
-                    ->isInstanceOf('logicException')
+                    ->isInstanceOf(\logicException::class)
                     ->hasMessage('Class is undefined')
 
                 ->exception(function () use ($asserter) {
                     $asserter->imPLEMENts(uniqid());
                 })
-                    ->isInstanceOf('logicException')
+                    ->isInstanceOf(\logicException::class)
                     ->hasMessage('Class is undefined')
 
             ->given(
@@ -389,8 +384,7 @@ class phpClass extends atoum\test
                         $mockController->getName = $class;
 
                         return $reflectionClass = new \mock\reflectionClass($class, $mockController);
-                    }
-                    )
+                    })
                     ->setWith(uniqid())
                     ->setLocale($locale = new \mock\atoum\locale()),
                 $this->calling($locale)->_ = $notImplements = uniqid()
@@ -401,7 +395,7 @@ class phpClass extends atoum\test
                 ->exception(function () use ($asserter) {
                     $asserter->hasInterface(uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\exceptions\logic')
+                    ->isInstanceOf(atoum\exceptions\logic::class)
                     ->hasMessage('Argument of ' . $this->getTestedClassName() . '::hasInterface() must be an interface name')
                     ->hasNestedException($exception)
 
@@ -410,27 +404,27 @@ class phpClass extends atoum\test
                 ->exception(function () use ($asserter, & $interface) {
                     $asserter->hasInterface($interface = uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($notImplements)
                 ->mock($locale)->call('_')->withArguments('%s does not implement %s', $asserter, $interface)->once
 
                 ->exception(function () use ($asserter, & $failMessage) {
                     $asserter->hasInterface(uniqid(), $failMessage = uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($failMessage)
 
                 ->exception(function () use ($asserter, & $interface) {
                     $asserter->implements($interface = uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($notImplements)
                 ->mock($locale)->call('_')->withArguments('%s does not implement %s', $asserter, $interface)->once
 
                 ->exception(function () use ($asserter, & $failMessage) {
                     $asserter->implements(uniqid(), $failMessage = uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($failMessage)
 
             ->if($this->calling($reflectionClass)->implementsInterface = true)
@@ -448,13 +442,13 @@ class phpClass extends atoum\test
                 ->exception(function () use ($asserter) {
                     $asserter->isAbstract();
                 })
-                    ->isInstanceOf('logicException')
+                    ->isInstanceOf(\logicException::class)
                     ->hasMessage('Class is undefined')
 
                 ->exception(function () use ($asserter) {
                     $asserter->isAbstract;
                 })
-                    ->isInstanceOf('logicException')
+                    ->isInstanceOf(\logicException::class)
                     ->hasMessage('Class is undefined')
 
             ->given(
@@ -466,8 +460,7 @@ class phpClass extends atoum\test
                         $mockController->getName = $class;
 
                         return $reflectionClass = new \mock\reflectionClass($class, $mockController);
-                    }
-                    )
+                    })
                     ->setWith(uniqid())
                     ->setLocale($locale = new \mock\atoum\locale()),
                 $this->calling($locale)->_ = $notAbstract = uniqid()
@@ -478,20 +471,20 @@ class phpClass extends atoum\test
                 ->exception(function () use ($asserter) {
                     $asserter->isAbstract();
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($notAbstract)
                 ->mock($locale)->call('_')->withArguments('%s is not abstract', $asserter)->once
 
                 ->exception(function () use ($asserter, & $failMessage) {
                     $asserter->isAbstract($failMessage = uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($failMessage)
 
                 ->exception(function () use ($asserter) {
                     $asserter->isAbstract;
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($notAbstract)
                 ->mock($locale)->call('_')->withArguments('%s is not abstract', $asserter)->twice
 
@@ -509,7 +502,7 @@ class phpClass extends atoum\test
                 ->exception(function () use ($asserter) {
                     $asserter->isFinal();
                 })
-                    ->isInstanceOf('logicException')
+                    ->isInstanceOf(\logicException::class)
                     ->hasMessage('Class is undefined')
 
             ->given(
@@ -521,8 +514,7 @@ class phpClass extends atoum\test
                         $mockController->getName = $class;
 
                         return $reflectionClass = new \mock\reflectionClass($class, $mockController);
-                    }
-                    )
+                    })
                     ->setWith(uniqid())
                     ->setLocale($locale = new \mock\atoum\locale()),
                 $this->calling($locale)->_ = $notFinal = uniqid()
@@ -533,20 +525,20 @@ class phpClass extends atoum\test
                 ->exception(function () use ($asserter) {
                     $asserter->isFinal();
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($notFinal)
                 ->mock($locale)->call('_')->withArguments('%s is not final', $asserter)->once
 
                 ->exception(function () use ($asserter, & $failMessage) {
                     $asserter->isFinal($failMessage = uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($failMessage)
 
                 ->exception(function () use ($asserter) {
                     $asserter->isFinal;
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($notFinal)
                 ->mock($locale)->call('_')->withArguments('%s is not final', $asserter)->twice
 
@@ -564,7 +556,7 @@ class phpClass extends atoum\test
                 ->exception(function () use ($asserter) {
                     $asserter->hasMethod(uniqid());
                 })
-                    ->isInstanceOf('logicException')
+                    ->isInstanceOf(\logicException::class)
                     ->hasMessage('Class is undefined')
 
             ->given(
@@ -576,8 +568,7 @@ class phpClass extends atoum\test
                         $mockController->getName = $class;
 
                         return $reflectionClass = new \mock\reflectionClass($class, $mockController);
-                    }
-                    )
+                    })
                     ->setWith(uniqid())
                     ->setLocale($locale = new \mock\atoum\locale()),
                 $this->calling($locale)->_ = $methodUnknown = uniqid()
@@ -588,14 +579,14 @@ class phpClass extends atoum\test
                 ->exception(function () use ($asserter, & $method) {
                     $asserter->hasMethod($method = uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($methodUnknown)
                 ->mock($locale)->call('_')->withArguments('%s::%s() does not exist', $asserter, $method)->once
 
                 ->exception(function () use ($asserter, & $failMessage) {
                     $asserter->hasMethod(uniqid(), $failMessage = uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($failMessage)
 
             ->if($this->calling($reflectionClass)->hasMethod = true)
@@ -612,7 +603,7 @@ class phpClass extends atoum\test
                 ->exception(function () use ($asserter) {
                     $asserter->hasConstant(uniqid());
                 })
-                    ->isInstanceOf('logicException')
+                    ->isInstanceOf(\logicException::class)
                     ->hasMessage('Class is undefined')
 
             ->given(
@@ -624,8 +615,7 @@ class phpClass extends atoum\test
                         $mockController->getName = $class;
 
                         return $reflectionClass = new \mock\reflectionClass($class, $mockController);
-                    }
-                    )
+                    })
                     ->setWith(uniqid())
                     ->setLocale($locale = new \mock\atoum\locale()),
                 $this->calling($locale)->_ = $constantUnknown = uniqid()
@@ -636,14 +626,14 @@ class phpClass extends atoum\test
                 ->exception(function () use ($asserter, & $constant) {
                     $asserter->hasConstant($constant = uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($constantUnknown)
                 ->mock($locale)->call('_')->withArguments('%s::%s does not exist', $asserter, $constant)->once
 
                 ->exception(function () use ($asserter, & $failMessage) {
                     $asserter->hasConstant(uniqid(), $failMessage = uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($failMessage)
 
             ->if(

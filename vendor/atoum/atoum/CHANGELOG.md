@@ -1,5 +1,57 @@
 # `dev-master`
 
+# 3.3.0 - 2018-03-15
+
+* [#771](https://github.com/atoum/atoum/pull/771) Normalize and simplify the asserter name when a test case fails ([@hywan])
+* [#754](https://github.com/atoum/atoum/pull/754) Add the dot report ([@jubianchi])
+* [#769](https://github.com/atoum/atoum/pull/769) CLI: Align options to the left, and increase contrast ([@hywan])
+* [#757](https://github.com/atoum/atoum/pull/757) Take the error reporting level into account to exit the runner ([@hywan])
+* [#752](https://github.com/atoum/atoum/pull/752) Add an os annotation to only run tests on specific OS ([@jubianchi])
+* [#585](https://github.com/atoum/atoum/pull/585) Memory usage is based on the peak & real allocations ([@hywan])
+* [#740](https://github.com/atoum/atoum/pull/740) String asserter now has `notMatches` assertion ([@fvilpoix])
+
+## Bugfix
+
+* [#756](https://github.com/atoum/atoum/pull/756) Configuration, autoloader and bootstrap files are correctly loaded when using the PHAR ([@jubianchi])
+* [#755](https://github.com/atoum/atoum/pull/755) String asserter's failure messages are clear ([@jubianchi])
+* [#773](https://github.com/atoum/atoum/pull/773) Directory is the current working directory ([@hywan])
+* [#770](https://github.com/atoum/atoum/pull/770) Fix path to the runner for the help ([@hywan])
+* [#768](https://github.com/atoum/atoum/pull/768) Fix typos in the CLI help ([@hywan])
+* [#767](https://github.com/atoum/atoum/pull/767) Fix typos in the exception messages ([@hywan])
+
+# 3.2.0 - 2017-09-07
+
+* [#739](https://github.com/atoum/atoum/pull/739) Avoid many memory allocations in error report field ([@hywan])
+* [#736](https://github.com/atoum/atoum/pull/736) Display clear errors when mocking function fails ([@jubianchi])
+* [#737](https://github.com/atoum/atoum/pull/737) Command line switches override configuration file directives ([@jubianchi])
+* [#733](https://github.com/atoum/atoum/pull/733) Uncompleted methods make atoum exit with an error code ([@jubianchi])
+* [#734](https://github.com/atoum/atoum/pull/734) The `exception::isInstanceOf` asserter correctly works with interfaces ([@jubianchi])
+* [#731](https://github.com/atoum/atoum/pull/731) Remove dependency on `ext-session` ([@jubianchi], [@hywan])
+
+## Bugfix
+
+* [#746](https://github.com/atoum/atoum/pull/746) CLI commands are correctly escaped ([@agallou], [@jubianchi])
+
+# 3.1.1 - 2017-07-19
+
+## Bugfix
+
+* [#727](https://github.com/atoum/atoum/pull/727) Add alias on `phpObject` to restore compatibility ([@grummfy])
+
+# 3.1.0 - 2017-07-11
+
+* [#726](https://github.com/atoum/atoum/pull/726) Remove an autoloader cache warning ([@hywan])
+* [#719](https://github.com/atoum/atoum/pull/719) Add nullable type support in the mock engine ([@grummfy])
+* [#723](https://github.com/atoum/atoum/pull/724) `object` is a reserved keyword as of PHP 7.2 ([@trasher])
+* [#713](https://github.com/atoum/atoum/pull/713) Results are folded on Travis CI ([@jubianchi])
+* [#709](https://github.com/atoum/atoum/pull/709) Exception asserter now has `isInstanceOf` without parenthesis ([@guiled])
+* [#705](https://github.com/atoum/atoum/pull/705) Stream asserter now has `isRead` and `isWritten` assertion (without brackets) ([@guiled])
+* [#701](https://github.com/atoum/atoum/pull/701) Mock generator supports `strict_types` ([@jubianchi])
+
+## Bugfix
+
+* [#701](https://github.com/atoum/atoum/pull/701) Mock generator correctly handles `void` return type ([@jubianchi])
+
 # 3.0.0 - 2017-02-22
 
 * [#664](https://github.com/atoum/atoum/pull/664) New asserter: `generator` ([@agallou])
@@ -240,3 +292,6 @@
 [@oxman]: https://github.com/blackprism
 [@mvrhov]: https://github.com/mvrhov
 [@krtek4]: https://github.com/krtek4
+[@guiled]: https://github.com/guiled
+[@trasher]: https://github.com/trasher
+[@fvilpoix]: https://github.com/fvilpoix

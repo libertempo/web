@@ -11,7 +11,7 @@ class execute extends atoum\test
 {
     public function testClass()
     {
-        $this->testedClass->extends('mageekguy\atoum\report\fields\runner\failures');
+        $this->testedClass->extends(atoum\report\fields\runner\failures::class);
     }
 
     public function test__construct()
@@ -20,8 +20,8 @@ class execute extends atoum\test
             ->if($field = new testedClass($command = uniqid()))
             ->then
                 ->string($field->getCommand())->isEqualTo($command)
-                ->object($field->getAdapter())->isInstanceOf('mageekguy\atoum\adapter')
-                ->object($field->getLocale())->isInstanceOf('mageekguy\atoum\locale')
+                ->object($field->getAdapter())->isInstanceOf(atoum\adapter::class)
+                ->object($field->getLocale())->isInstanceOf(atoum\locale::class)
         ;
     }
 
@@ -47,29 +47,30 @@ class execute extends atoum\test
             ->then
                 ->castToString($field)->isEmpty()
                 ->adapter($adapter)->call('system')->never()
-            ->if($score->getMockController()->getFailAssertions = $fails = [
-                        [
-                            'case' => null,
-                            'dataSetKey' => null,
-                            'class' => $class = uniqid(),
-                            'method' => $method = uniqid(),
-                            'file' => $file = uniqid(),
-                            'line' => $line = uniqid(),
-                            'asserter' => $asserter = uniqid(),
-                            'fail' => $fail = uniqid()
-                        ],
-                        [
-                            'case' => null,
-                            'dataSetKey' => null,
-                            'class' => $otherClass = uniqid(),
-                            'method' => $otherMethod = uniqid(),
-                            'file' => $otherFile = uniqid(),
-                            'line' => $otherLine = uniqid(),
-                            'asserter' => $otherAsserter = uniqid(),
-                            'fail' => $otherFail = uniqid()
-                        ]
+            ->if(
+                $score->getMockController()->getFailAssertions = $fails = [
+                    [
+                        'case' => null,
+                        'dataSetKey' => null,
+                        'class' => $class = uniqid(),
+                        'method' => $method = uniqid(),
+                        'file' => $file = uniqid(),
+                        'line' => $line = uniqid(),
+                        'asserter' => $asserter = uniqid(),
+                        'fail' => $fail = uniqid()
+                    ],
+                    [
+                        'case' => null,
+                        'dataSetKey' => null,
+                        'class' => $otherClass = uniqid(),
+                        'method' => $otherMethod = uniqid(),
+                        'file' => $otherFile = uniqid(),
+                        'line' => $otherLine = uniqid(),
+                        'asserter' => $otherAsserter = uniqid(),
+                        'fail' => $otherFail = uniqid()
                     ]
-                )
+                ]
+            )
             ->and($field->handleEvent(atoum\runner::runStop, $runner))
             ->then
                 ->castToString($field)->isEmpty()
