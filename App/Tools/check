@@ -78,7 +78,6 @@ catch (Exception $e) {
     display($e->getMessage());
     displayError('Accès à mysql/mariadb impossible.');
 }
-$db = \includes\SQL::singleton();
 
 // test bdd exist
 if (!\includes\SQL::existsDatabase($mysql_database)) {
@@ -86,6 +85,8 @@ if (!\includes\SQL::existsDatabase($mysql_database)) {
     display('Vérifications effectuées avec succès.');
     exit();
 } 
+
+$db = \includes\SQL::singleton();
 
 //test table
 if (!isLtInstalled($db)) {
