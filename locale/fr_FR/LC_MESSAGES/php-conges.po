@@ -1103,9 +1103,6 @@ msgstr "// CHEMIN VERS LE RÉPERTOIRE DE phpmailer<br>//------------------------
 msgid "config_comment_php_conges_cas_include_path"
 msgstr "// CHEMIN VERS LE RÉPERTOIRE DE cas<br>//-------------------------------------------------------<br>// On définit ici le chemin pour accéder au répertoire de la librairie PHP \"CAS\".<br>// Le chemin doit être relatif depuis la racine de l'application Libertempo."
 
-msgid "config_comment_php_conges_authldap_include_path"
-msgstr "// CHEMIN VERS LE fichier authLDAP.php<br>//-------------------------------------------------------<br>// On définit ici le chemin pour accéder au répertoire de la librairie PHP \"authLDAP.php\".<br>// Le chemin doit être relatif depuis la racine de l'application Libertempo."
-
 msgid "install_le_fichier"
 msgstr "Le fichier"
 

@@ -42,6 +42,15 @@ class AAuthentifierFactoryService extends \Atoum
         $this->object($service)->isInstanceOf(Services\InterneAuthentifierService::class);
     }
 
+    public function testGetCASService()
+    {
+        $this->calling($this->configuration)->getHowToConnectUser = 'cas';
+
+        $testedClass = $this->testedClass->getClass();
+        $service = $testedClass::getAuthentifier($this->configuration, $this->repository);
+        $this->object($service)->isInstanceOf(Services\WorkaroundAuthentifierService::class);
+    }
+
     public function testGetUnknownService()
     {
         $this->calling($this->configuration)->getHowToConnectUser = 'foobar';

@@ -77,8 +77,6 @@ class UtilisateurRepository extends \LibertAPI\Tools\Libraries\ARepository
         // @TODO: supprimer cette ligne quand on passera à DBAL > 2.6 : https://github.com/doctrine/dbal/commit/e937f37a8acc117047ff4ed9aec493a1e3de2195
         $this->queryBuilder->resetQueryParts();
         $this->queryBuilder->select('*, u_login AS id');
-        // @TODO: supprimer cette ligne quand on passera à DBAL > 2.6 : https://github.com/doctrine/dbal/commit/e937f37a8acc117047ff4ed9aec493a1e3de2195
-        $this->queryBuilder->resetQueryPart('from');
         $this->queryBuilder->from($this->getTableName(), 'current');
         $this->setWhere($this->getParamsConsumer2Storage($parametres));
         $res = $this->queryBuilder->execute();

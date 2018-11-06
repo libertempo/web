@@ -66,22 +66,6 @@ class InterneAuthentifierService extends \Atoum
         $this->boolean($succeed)->isTrue();
     }
 
-    public function testGetLogin()
-    {
-        $this->newTestedInstance($this->repository);
-        $this->string($this->testedInstance->getLogin())->isEmpty();
-
-        $this->calling($this->request)->getHeaderLine = 'Basic QWxhZGRpbjpPcGVuU2VzYW1l';
-        $entite = new \LibertAPI\Utilisateur\UtilisateurEntite([
-            'id' => 42,
-            'password' => md5('Fatboy slim'),
-        ]);
-        $this->calling($this->repository)->find = $entite;
-        $this->testedInstance->isAuthentificationSucceed($this->request);
-
-        $this->string($this->testedInstance->getLogin())->isIdenticalTo('Aladdin');
-    }
-
     /**
     * @var LibertAPI\Tools\Libraries\ARepository Mock d'un repository lambda
     */

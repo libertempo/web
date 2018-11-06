@@ -67,7 +67,7 @@ return [
     AuthentificationController::class => function (C $c) {
         $repo = $c->get(UtilisateurRepository::class);
         $repo->setApplication($c->get(Application::class));
-        return new AuthentificationController($repo, $c->get(IRouter::class));
+        return new AuthentificationController($repo, $c->get(IRouter::class), $c->get(StorageConfiguration::class));
     },
     IRouter::class => get('router'),
     'badRequestHandler' => function (C $c) {

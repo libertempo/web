@@ -11,6 +11,7 @@ namespace PackageVersions;
 final class Versions
 {
     const VERSIONS = array (
+  'adldap2/adldap2' => 'v9.1.3@f9ba4003a1350b7cad952d3ad22b24c8d3e0d1af',
   'container-interop/container-interop' => '1.2.0@79cbf1341c22ec75643d841642dd5d6acd83bdb8',
   'doctrine/annotations' => 'v1.4.0@54cacc9b81758b14e3ce750f205a393d52339e97',
   'doctrine/cache' => 'v1.6.2@eb152c5100571c7a45470ff2a35095ab3f3b900b',
@@ -22,9 +23,10 @@ final class Versions
   'guzzlehttp/guzzle' => '6.2.2@ebf29dee597f02f09f4d5bbecc68230ea9b08f60',
   'guzzlehttp/promises' => 'v1.3.1@a59da6cf61d80060647ff4d3eb2c03a2bc694646',
   'guzzlehttp/psr7' => '1.4.2@f5b8a8512e2b58b0071a7280e39f14f72e05d87c',
+  'illuminate/contracts' => 'v5.5.44@b2a62b4a85485fca9cf5fa61a933ad64006ff528',
   'jasig/phpcas' => '1.3.5@61c8899c8f91204e8b9135d795461e50fe5c2db0',
   'jeremeamia/SuperClosure' => '2.4.0@5707d5821b30b9a07acfb4d76949784aaa0e9ce9',
-  'libertempo/api' => 'v1.3.0@17b77a711b7df896e96ca93cae5517fab743dea8',
+  'libertempo/api' => 'v1.4.0@3562581dd7e140eb6d1aed503da28e078bf517b3',
   'monolog/monolog' => '1.23.0@fd8c787753b3a2ad11bc60c063cff1358a32a3b4',
   'nikic/fast-route' => 'v1.3.0@181d480e08d9476e61381e04a71b34dc0432e812',
   'nikic/php-parser' => 'v3.1.5@bb87e28e7d7b8d9a7fda231d37457c9210faf6ce',
@@ -37,13 +39,17 @@ final class Versions
   'psr/container' => '1.0.0@b7ce3b176482dbbc1245ebf52b181af44c2cf55f',
   'psr/http-message' => '1.0.1@f6561bf28d520154e4b0ec72be95418abe6d9363',
   'psr/log' => '1.0.2@4ebe3a8bf773a19edfe0a84b6585ba3d401b724d',
+  'psr/simple-cache' => '1.0.1@408d5eafb83c57f6365a3ca330ff23aa4a5fa39b',
   'raveren/kint' => '1.1@a8549198558560b24e2879c6bac2875de5371483',
   'rollbar/rollbar' => 'v1.4.0@9a626a08a1293b2ad648521a0b4285b13b28fe23',
   'slim/slim' => '3.9.0@575a8b53a0a489447915029c69680156cd355304',
   'symfony/options-resolver' => 'v3.4.17@1cf7d8e704a9cc4164c92e430f2dfa3e6983661d',
+  'symfony/polyfill-mbstring' => 'v1.9.0@d0cd638f4634c16d8df4508e847f14e9e43168b8',
   'symfony/polyfill-php56' => 'v1.9.0@7b4fc009172cc0196535b0328bd1226284a28000',
   'symfony/polyfill-util' => 'v1.9.0@8e15d04ba3440984d23e7964b2ee1d25c8de1581',
+  'symfony/var-dumper' => 'v3.4.17@ff8ac19e97e5c7c3979236b584719a1190f84181',
   'tecnickcom/tcpdf' => '6.2.6@a2e8f5b505a7a14a4ed960313c4baf699fd1f4bb',
+  'tightenco/collect' => 'v5.5.33@a2a3ca1c56aa18948b4e08e90f38fcdee859cc4c',
   'yohang/calendr' => '2.1.1@1ae1da29ec9e633afb692cc763b6736c1def3f55',
   'atoum/atoum' => '3.0.0@decb381ef771ada37f8850774a9e9770a3da506f',
   'codacy/coverage' => '1.4.1@546ac2e000a004571c1000ecff4d68a98706db3a',
@@ -61,9 +67,8 @@ final class Versions
   'symfony/console' => 'v3.2.0@09d0fd33560e3573185a2ea17614e37ba38716c5',
   'symfony/debug' => 'v3.4.17@0a612e9dfbd2ccce03eb174365f31ecdca930ff6',
   'symfony/finder' => 'v3.4.17@54ba444dddc5bd5708a34bd095ea67c6eb54644d',
-  'symfony/polyfill-mbstring' => 'v1.9.0@d0cd638f4634c16d8df4508e847f14e9e43168b8',
   'symfony/process' => 'v3.4.17@1dc2977afa7d70f90f3fefbcd84152813558910e',
-  'libertempo/libertempo-web' => 'No version set (parsed as 1.0.0)@',
+  'libertempo/libertempo-web' => 'dev-pry/ldapConnexion2@712bf48dd2c295953821b7921d0e94ebee60afac',
 );
 
     private function __construct()

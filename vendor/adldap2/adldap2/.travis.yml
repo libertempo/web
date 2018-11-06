@@ -1,0 +1,20 @@
+language: php
+
+php:
+  - 7.0
+  - 7.1
+  - 7.2
+
+before_install: echo "extension=ldap.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+
+before_script:
+  - travis_retry composer self-update
+  - travis_retry composer install --prefer-source --no-interaction
+
+script: ./vendor/bin/phpunit
+
+branches:
+  only:
+    - master
+    - v8.0
+    - v7.0

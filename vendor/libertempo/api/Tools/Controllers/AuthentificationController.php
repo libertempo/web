@@ -2,6 +2,10 @@
 namespace LibertAPI\Tools\Controllers;
 
 use LibertAPI\Utilisateur\UtilisateurRepository;
+use LibertAPI\Tools\Exceptions\BadRequestException;
+use LibertAPI\Tools\Exceptions\AuthentificationFailedException;
+use LibertAPI\Tools\Libraries\StorageConfiguration;
+use LibertAPI\Tools\Services\AAuthentifierFactoryService;
 use Slim\Interfaces\RouterInterface as IRouter;
 use LibertAPI\Tools\Interfaces;
 use Psr\Http\Message\ServerRequestInterface as IRequest;
@@ -9,6 +13,8 @@ use Psr\Http\Message\ResponseInterface as IResponse;
 
 /**
  * Contrôleur de l'authentification
+ *
+ * Depuis la 1.1, n'est plus testable unitairement (les multiples authentifiers et la fabrique l'empêchent). À tester par des tests de services
  *
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina
@@ -18,9 +24,10 @@ use Psr\Http\Message\ResponseInterface as IResponse;
 final class AuthentificationController extends \LibertAPI\Tools\Libraries\AController
 implements Interfaces\IGetable
 {
-    public function __construct(\LibertAPI\Utilisateur\UtilisateurRepository $repository, IRouter $router)
+    public function __construct(UtilisateurRepository $repository, IRouter $router, StorageConfiguration $configuration)
     {
         parent::__construct($repository, $router);
+        $this->configuration = $configuration;
     }
 
     /**
@@ -28,27 +35,26 @@ implements Interfaces\IGetable
      */
     public function get(IRequest $request, IResponse $response, array $arguments) : IResponse
     {
-        $authentificationType = 'Basic';
-        $authentification = $request->getHeaderLine('Authorization');
-        if (0 !== stripos($authentification, $authentificationType)) {
-            return $this->getResponseBadRequest($response, 'Authorization mechanism is not set to « ' . $authentificationType . ' »');
-        }
-
-        $authentification = substr($authentification, strlen($authentificationType) + 1);
-        list($login, $password) = explode(':', base64_decode($authentification));
-
         try {
+            $authentifier = AAuthentifierFactoryService::getAuthentifier($this->configuration, $this->repository);
+            // Ajout de la configuration dans ce contexte, pour les authentifiers
+            $request = $request->withAttribute('configurationFileData', $arguments['configurationFileData']);
+            if (!$authentifier->isAuthentificationSucceed($request)) {
+                throw new AuthentificationFailedException();
+            }
             $utilisateur = $this->repository->find([
-                'login' => $login,
+                'login' => $authentifier->getLogin(),
                 'isActif' => true,
             ]);
-            if (!$utilisateur->isPasswordMatching($password)) {
-                throw new \UnexpectedValueException('Wrong password');
-            }
-            $utilisateurUpdated = $this->repository->regenerateToken($utilisateur);
+        } catch (BadRequestException $e) {
+            return $this->getResponseBadRequest($response, 'Authorization header doesn\'t comply to authentication method');
+        } catch (AuthentificationFailedException $e) {
+            return $this->getResponseNotFound($response, 'No user matches these criteria');
         } catch (\UnexpectedValueException $e) {
             return $this->getResponseNotFound($response, 'No user matches these criteria');
         }
+
+        $utilisateurUpdated = $this->repository->regenerateToken($utilisateur);
 
         return $this->getResponseSuccess(
             $response,
@@ -56,4 +62,9 @@ implements Interfaces\IGetable
             200
         );
     }
+
+    /**
+     * @var StorageConfiguration
+     */
+    private $configuration;
 }
