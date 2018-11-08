@@ -3,9 +3,6 @@
 require_once 'libraries';
 require_once CONFIG_PATH . 'dbconnect.php';
 
-define('INSTALLATION_PATH', PATCH_PATH . DS . 'Installation' . DS);
-define('API_SYSPATH', ROOT_PATH . 'vendor' . DS . 'libertempo' . DS . 'api' . DS);
-
 function createHR(\includes\SQL $db, array $data) : bool
 {
 
@@ -99,7 +96,6 @@ if (existUser($db, $data['login'])) {
 
 if (!createHR($db, $data)) {
     displayError('Une erreur inattendue s\'est produite!');
-    displayFail();
 }
 
 display('Création du haut responsable effectuée avec succès.');

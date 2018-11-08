@@ -15,6 +15,10 @@ destroy: ## Détruit l'instance
 update: ## Met l'application à la toute dernière version (patch compris)
 	App/Tools/update
 
+## Vérification de l'integrité avant installation
+check: ## Controle les prérequis
+	App/Tools/check
+
 ## Création haut responsable / administrateur
 createHR: ## Créé un utilisateur avec les droits HR et administrateur
 	App/Tools/createHR ${login} ${nom} ${prenom} ${courriel} ${hash}
@@ -23,7 +27,7 @@ createHR: ## Créé un utilisateur avec les droits HR et administrateur
 setup:
 	App/Tools/setup ${nom_instance}
 
-install: setup update createHR ## Installe la nouvelle instance
+install: check setup update createHR check ## Installe la nouvelle instance
 
 reinstall: destroy install ## Reset usine
 
