@@ -12,5 +12,8 @@ notifications:
     on_failure: always # default: always
 script: make test
 
+before_script:
+    make install-dep
+
 after_script:
   - php vendor/bin/codacycoverage clover clover.xml

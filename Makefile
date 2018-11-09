@@ -12,7 +12,7 @@ destroy: ## Détruit l'instance
 	App/Tools/destroy
 
 ## Mise à jour
-update: ## Met l'application à la toute dernière version (patch compris)
+update: install-dep ## Met l'application à la toute dernière version (patch compris)
 	App/Tools/update
 
 ## Vérification de l'integrité avant installation
@@ -30,6 +30,9 @@ setup:
 install: check setup update createHR check ## Installe la nouvelle instance
 
 reinstall: destroy install ## Reset usine
+
+install-dep: ## Installe les dépendances composer
+	php composer.phar install
 
 ## Test
 test: ## Lance les tests unitaires
