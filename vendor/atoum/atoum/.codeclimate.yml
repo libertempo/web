@@ -1,9 +1,0 @@
-engines:
-    phpcodesniffer:
-        enabled: false
-
-    phpmd:
-        enabled: true
-        checks:
-            Controversial/CamelCaseClassName:
-                enabled: false
