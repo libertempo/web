@@ -148,7 +148,8 @@ $versionMaj = implode('.', [$major, $minor, $patch]);
 // Le seul cas qui amènerait à ce que la version ait cette valeur ici
 // est qu'aucun script ne soit supérieur la version courante
 if ('0.0.0' === $versionMaj) {
-    displayFail();
+    display('aucune mise à jour disponible');
+    exit();
 }
 
 display('Définition du token d\'instance…');
