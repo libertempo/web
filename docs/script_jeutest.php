@@ -85,7 +85,7 @@ echo '
         </script>
         <script type="text/javascript" src="<?= JS_PATH ?>rollbar.js?v=<?= $config_php_conges_version ?>"></script>
 
-        <script type="text/javascript" src="../node_modules/jquery/jquery.min.js"></script>
+        <script type="text/javascript" src="../node_modules/jquery/dist/jquery.min.js"></script>
         <script type="text/javascript" src="../Public/Assets/Js/reboot.js"></script>
     </head>
     <body id="top" class="hbox connected">
