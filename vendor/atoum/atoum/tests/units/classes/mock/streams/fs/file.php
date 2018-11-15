@@ -11,7 +11,7 @@ class file extends atoum\test
 {
     public function testClass()
     {
-        $this->testedClass->extends('mageekguy\atoum\mock\stream');
+        $this->testedClass->extends(atoum\mock\stream::class);
     }
 
     public function testGet()
@@ -19,7 +19,7 @@ class file extends atoum\test
         $this
             ->if($file = testedClass::get())
             ->then
-                ->object($file)->isInstanceOf('mageekguy\atoum\mock\stream\controller')
+                ->object($file)->isInstanceOf(atoum\mock\stream\controller::class)
                 ->castToString($file)->isNotEmpty()
                 ->string(file_get_contents($file))->isEmpty()
                 ->variable($fileResource = fopen($file, 'r'))->isNotEqualTo(false)
@@ -30,7 +30,7 @@ class file extends atoum\test
                 ->boolean(unlink($file))->isTrue()
             ->if($file = testedClass::get($path = uniqid()))
             ->then
-                ->object($file)->isInstanceOf('mageekguy\atoum\mock\stream\controller')
+                ->object($file)->isInstanceOf(atoum\mock\stream\controller::class)
                 ->castToString($file)->isEqualTo(testedClass::defaultProtocol . '://' . $path)
                 ->string(file_get_contents($file))->isEmpty()
                 ->variable($fileResource = fopen($file, 'r'))->isNotEqualTo(false)
@@ -276,7 +276,8 @@ class file extends atoum\test
             ->then
                 ->boolean(feof($resource))->isTrue()
             ->if($file = testedClass::get())
-            ->and($file->contains(
+            ->and(
+                $file->contains(
                     ($line1 = 'un' . PHP_EOL) .
                     ($line2 = 'deux' . PHP_EOL) .
                     ($line3 = 'trois' . PHP_EOL) .
@@ -343,7 +344,8 @@ class file extends atoum\test
     {
         $this
             ->if($file = testedClass::get())
-            ->and($file->contains(
+            ->and(
+                $file->contains(
                     ($line0 = 'un' . PHP_EOL) .
                     ($line1 = 'deux' . PHP_EOL) .
                     ($line2 = 'trois' . PHP_EOL) .
@@ -372,7 +374,8 @@ class file extends atoum\test
             ->then
                 ->integer(fseek($resource, 4096))->isZero()
             ->if($file = testedClass::get())
-            ->and($file->contains(
+            ->and(
+                $file->contains(
                     ($line0 = 'un' . PHP_EOL) .
                     ($line1 = 'deux' . PHP_EOL) .
                     ($line2 = 'trois' . PHP_EOL) .
@@ -465,7 +468,8 @@ class file extends atoum\test
                 ->string($fileObject->current())->isEmpty()
                 ->boolean($fileObject->eof())->isTrue()
             ->if($file = testedClass::get())
-            ->and($file->contains(
+            ->and(
+                $file->contains(
                     ($line0 = 'un' . PHP_EOL) .
                     ($line1 = 'deux' . PHP_EOL) .
                     ($line2 = 'trois' . PHP_EOL) .

@@ -4,7 +4,6 @@ namespace mageekguy\atoum\tests\units\report\fields\runner\result\notifier;
 
 use mageekguy\atoum;
 use mageekguy\atoum\exceptions;
-use mageekguy\atoum\report\fields\runner\result\notifier\image as testedClass;
 use mageekguy\atoum\test\adapter;
 
 require_once __DIR__ . '/../../../../../runner.php';
@@ -15,7 +14,7 @@ class image extends atoum\test
     {
         $this
             ->testedClass
-                ->extends('mageekguy\atoum\report\fields\runner\result\notifier')
+                ->extends(atoum\report\fields\runner\result\notifier::class)
         ;
     }
 
@@ -66,10 +65,9 @@ class image extends atoum\test
             ->then
                 ->exception(function () use ($field) {
                     $field->getImage(true);
-                }
-                    )
-                        ->isInstanceOf('\\mageekguy\\atoum\\exceptions\\runtime')
-                        ->hasMessage(sprintf('File %s does not exist', $successImage))
+                })
+                    ->isInstanceOf(atoum\exceptions\runtime::class)
+                    ->hasMessage(sprintf('File %s does not exist', $successImage))
             ->if($field->setFailureImage($failureImage = uniqid()))
             ->and($adapter->file_exists = true)
             ->then
@@ -78,10 +76,9 @@ class image extends atoum\test
             ->then
                 ->exception(function () use ($field) {
                     $field->getImage(false);
-                }
-                    )
-                        ->isInstanceOf('\\mageekguy\\atoum\\exceptions\\runtime')
-                        ->hasMessage(sprintf('File %s does not exist', $failureImage))
+                })
+                    ->isInstanceOf(atoum\exceptions\runtime::class)
+                    ->hasMessage(sprintf('File %s does not exist', $failureImage))
         ;
     }
 

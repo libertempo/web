@@ -4,16 +4,16 @@ namespace mageekguy\atoum\tests\units\scripts\git;
 
 require __DIR__ . '/../../../runner.php';
 
-use atoum;
-use atoum\cli\commands;
-use atoum\scripts;
-use atoum\scripts\git\pusher as testedClass;
+use mageekguy\atoum;
+use mageekguy\atoum\cli\commands;
+use mageekguy\atoum\scripts;
+use mageekguy\atoum\scripts\git\pusher as testedClass;
 
 class pusher extends atoum
 {
     public function testClass()
     {
-        $this->testedClass->extends('atoum\script\configurable');
+        $this->testedClass->extends(atoum\script\configurable::class);
     }
 
     public function testClassConstants()
@@ -31,7 +31,7 @@ class pusher extends atoum
             ->if($pusher = new testedClass(__FILE__))
             ->then
                 ->string($pusher->getRemote())->isEqualTo(testedClass::defaultRemote)
-                ->string($pusher->getTagFile())->isEqualTo(__DIR__ . DIRECTORY_SEPARATOR . testedClass::defaultTagFile)
+                ->string($pusher->getTagFile())->isEqualTo(getcwd() . DIRECTORY_SEPARATOR . testedClass::defaultTagFile)
                 ->object($pusher->getTaggerEngine())->isEqualTo(new scripts\tagger\engine())
                 ->string($pusher->getWorkingDirectory())->isEqualTo(getcwd())
                 ->object($pusher->getGit())->isEqualTo(new commands\git())
@@ -58,7 +58,7 @@ class pusher extends atoum
                 ->object($pusher->setTagFile($tagFile = uniqid()))->isIdenticalTo($pusher)
                 ->string($pusher->getTagFile())->isEqualTo($tagFile)
                 ->object($pusher->setTagFile())->isIdenticalTo($pusher)
-                ->string($pusher->getTagFile())->isEqualTo(__DIR__ . DIRECTORY_SEPARATOR . testedClass::defaultTagFile)
+                ->string($pusher->getTagFile())->isEqualTo(getcwd() . DIRECTORY_SEPARATOR . testedClass::defaultTagFile)
         ;
     }
 
@@ -159,27 +159,32 @@ class pusher extends atoum
                             ->call('tagChangelog')->withArguments('0.0.1')
                                 ->before($this->mock($git)
                                     ->call('addAllAndCommit')->withArguments('Set version to 0.0.1.')
-                                    ->before($this->mock($git)
-                                        ->call('createTag')->withArguments('0.0.1')
-                                        ->before($this->mock($git)
-                                            ->call('push')->withArguments($pusher->getRemote())
+                                    ->before(
+                                        $this->mock($git)
+                                            ->call('createTag')->withArguments('0.0.1')
+                                            ->before(
+                                                $this->mock($git)
+                                                    ->call('push')->withArguments($pusher->getRemote())
+                                                    ->once()
+                                            )
+                                            ->before(
+                                                $this->mock($git)
+                                                    ->call('pushTag')->withArguments('0.0.1', $pusher->getRemote())
+                                                    ->once()
+                                            )
                                             ->once()
-                                        )
-                                        ->before($this->mock($git)
-                                            ->call('pushTag')->withArguments('0.0.1', $pusher->getRemote())
-                                            ->once()
-                                        )
-                                        ->once()
                                     )
                                 ->once())
                             ->once())
-                        ->after($this->mock($taggerEngine)
-                            ->call('setSrcDirectory')->withArguments($pusher->getWorkingDirectory())
-                            ->once()
+                        ->after(
+                            $this->mock($taggerEngine)
+                                ->call('setSrcDirectory')->withArguments($pusher->getWorkingDirectory())
+                                ->once()
                         )
-                        ->after($this->mock($taggerEngine)
-                            ->call('setVersion')->withArguments('$Rev:' . ' 0.0.1 $') // Don't remove concatenation operator to avoid tagger replace the string.
-                            ->once()
+                        ->after(
+                            $this->mock($taggerEngine)
+                                ->call('setVersion')->withArguments('$Rev:' . ' 0.0.1 $') // Don't remove concatenation operator to avoid tagger replace the string.
+                                ->once()
                         )
                         ->once()
                     ->call('tagVersion')

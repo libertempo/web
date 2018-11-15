@@ -55,13 +55,15 @@ class git extends atoum
                 ->object($git->addAllAndCommit($message = uniqid()))->isIdenticalTo($git)
                 ->mock($command)
                     ->call('reset')
-                    ->before($this->mock($command)
-                        ->call('addOption')->withArguments('commit -am \'' . $message . '\'')
-                        ->before($this->mock($command)
-                            ->call('run')
+                    ->before(
+                        $this->mock($command)
+                            ->call('addOption')->withArguments('commit -am \'' . $message . '\'')
+                            ->before(
+                                $this->mock($command)
+                                    ->call('run')
+                                    ->once()
+                            )
                             ->once()
-                        )
-                        ->once()
                     )
                     ->once()
 
@@ -73,7 +75,7 @@ class git extends atoum
                 ->exception(function () use ($git) {
                     $git->addAllAndCommit(uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\cli\command\exception')
+                    ->isInstanceOf(atoum\cli\command\exception::class)
                     ->hasMessage('Unable to execute \'' . $command . '\': ' . $errorMessage)
         ;
     }
@@ -94,13 +96,15 @@ class git extends atoum
                 ->object($git->resetHardTo($commit = uniqid()))->isIdenticalTo($git)
                 ->mock($command)
                     ->call('reset')
-                    ->before($this->mock($command)
-                        ->call('addOption')->withArguments('reset --hard ' . $commit)
-                        ->before($this->mock($command)
-                            ->call('run')
+                    ->before(
+                        $this->mock($command)
+                            ->call('addOption')->withArguments('reset --hard ' . $commit)
+                            ->before(
+                                $this->mock($command)
+                                    ->call('run')
+                                    ->once()
+                            )
                             ->once()
-                        )
-                        ->once()
                     )
                     ->once()
 
@@ -112,7 +116,7 @@ class git extends atoum
                 ->exception(function () use ($git) {
                     $git->resetHardTo(uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\cli\command\exception')
+                    ->isInstanceOf(atoum\cli\command\exception::class)
                     ->hasMessage('Unable to execute \'' . $command . '\': ' . $errorMessage)
         ;
     }
@@ -133,13 +137,15 @@ class git extends atoum
                 ->object($git->createTag($tag = uniqid()))->isIdenticalTo($git)
                 ->mock($command)
                     ->call('reset')
-                    ->before($this->mock($command)
-                        ->call('addOption')->withArguments('tag ' . $tag)
-                        ->before($this->mock($command)
-                            ->call('run')
+                    ->before(
+                        $this->mock($command)
+                            ->call('addOption')->withArguments('tag ' . $tag)
+                            ->before(
+                                $this->mock($command)
+                                    ->call('run')
+                                    ->once()
+                            )
                             ->once()
-                        )
-                        ->once()
                     )
                     ->once()
 
@@ -151,7 +157,7 @@ class git extends atoum
                 ->exception(function () use ($git) {
                     $git->createTag(uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\cli\command\exception')
+                    ->isInstanceOf(atoum\cli\command\exception::class)
                     ->hasMessage('Unable to execute \'' . $command . '\': ' . $errorMessage)
         ;
     }
@@ -172,13 +178,15 @@ class git extends atoum
                 ->object($git->deleteLocalTag($tag = uniqid()))->isIdenticalTo($git)
                 ->mock($command)
                     ->call('reset')
-                    ->before($this->mock($command)
-                        ->call('addOption')->withArguments('tag -d ' . $tag)
-                        ->before($this->mock($command)
-                            ->call('run')
+                    ->before(
+                        $this->mock($command)
+                            ->call('addOption')->withArguments('tag -d ' . $tag)
+                            ->before(
+                                $this->mock($command)
+                                    ->call('run')
+                                    ->once()
+                            )
                             ->once()
-                        )
-                        ->once()
                     )
                     ->once()
 
@@ -190,7 +198,7 @@ class git extends atoum
                 ->exception(function () use ($git) {
                     $git->deleteLocalTag(uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\cli\command\exception')
+                    ->isInstanceOf(atoum\cli\command\exception::class)
                     ->hasMessage('Unable to execute \'' . $command . '\': ' . $errorMessage)
         ;
     }
@@ -226,24 +234,28 @@ class git extends atoum
                 ->object($git->push($remote = uniqid()))->isIdenticalTo($git)
                 ->mock($command)
                     ->call('reset')
-                    ->before($this->mock($command)
-                        ->call('addOption')->withArguments('push ' . $remote . ' master')
-                        ->before($this->mock($command)
-                            ->call('run')
-                            ->exactly(4)
-                        )
-                        ->once()
+                    ->before(
+                        $this->mock($command)
+                            ->call('addOption')->withArguments('push ' . $remote . ' master')
+                            ->before(
+                                $this->mock($command)
+                                    ->call('run')
+                                    ->exactly(4)
+                            )
+                            ->once()
                     )
                     ->exactly(6)
 
                 ->object($git->push($remote = uniqid(), $branch = uniqid()))->isIdenticalTo($git)
                 ->mock($command)
                     ->call('reset')
-                    ->before($this->mock($command)
+                    ->before(
+                        $this->mock($command)
                             ->call('addOption')->withArguments('push ' . $remote . ' ' . $branch)
-                            ->before($this->mock($command)
-                                ->call('run')
-                                ->exactly(5)
+                            ->before(
+                                $this->mock($command)
+                                    ->call('run')
+                                    ->exactly(5)
                             )
                             ->once()
                     )
@@ -257,7 +269,7 @@ class git extends atoum
                 ->exception(function () use ($git) {
                     $git->push();
                 })
-                    ->isInstanceOf('mageekguy\atoum\cli\command\exception')
+                    ->isInstanceOf(atoum\cli\command\exception::class)
                     ->hasMessage('Unable to execute \'' . $command . '\': ' . $errorMessage)
         ;
     }
@@ -293,24 +305,28 @@ class git extends atoum
                 ->object($git->forcePush($remote = uniqid()))->isIdenticalTo($git)
                 ->mock($command)
                     ->call('reset')
-                    ->before($this->mock($command)
-                        ->call('addOption')->withArguments('push --force ' . $remote . ' master')
-                        ->before($this->mock($command)
-                            ->call('run')
-                            ->exactly(4)
-                        )
-                        ->once()
+                    ->before(
+                        $this->mock($command)
+                            ->call('addOption')->withArguments('push --force ' . $remote . ' master')
+                            ->before(
+                                $this->mock($command)
+                                    ->call('run')
+                                    ->exactly(4)
+                            )
+                            ->once()
                     )
                     ->exactly(6)
 
                 ->object($git->forcePush($remote = uniqid(), $branch = uniqid()))->isIdenticalTo($git)
                 ->mock($command)
                     ->call('reset')
-                    ->before($this->mock($command)
+                    ->before(
+                        $this->mock($command)
                             ->call('addOption')->withArguments('push --force ' . $remote . ' ' . $branch)
-                            ->before($this->mock($command)
-                                ->call('run')
-                                ->exactly(5)
+                            ->before(
+                                $this->mock($command)
+                                    ->call('run')
+                                    ->exactly(5)
                             )
                             ->once()
                     )
@@ -324,7 +340,7 @@ class git extends atoum
                 ->exception(function () use ($git) {
                     $git->forcePush();
                 })
-                    ->isInstanceOf('mageekguy\atoum\cli\command\exception')
+                    ->isInstanceOf(atoum\cli\command\exception::class)
                     ->hasMessage('Unable to execute \'' . $command . '\': ' . $errorMessage)
         ;
     }
@@ -345,26 +361,30 @@ class git extends atoum
                 ->object($git->pushTag($tag = uniqid()))->isIdenticalTo($git)
                 ->mock($command)
                     ->call('reset')
-                    ->before($this->mock($command)
-                        ->call('addOption')->withArguments('push origin ' . $tag)
-                        ->before($this->mock($command)
-                            ->call('run')
+                    ->before(
+                        $this->mock($command)
+                            ->call('addOption')->withArguments('push origin ' . $tag)
+                            ->before(
+                                $this->mock($command)
+                                    ->call('run')
+                                    ->once()
+                            )
                             ->once()
-                        )
-                        ->once()
                     )
                     ->once()
 
                 ->object($git->pushTag($tag = uniqid(), $remote = uniqid()))->isIdenticalTo($git)
                 ->mock($command)
                     ->call('reset')
-                    ->before($this->mock($command)
-                        ->call('addOption')->withArguments('push ' . $remote . ' ' . $tag)
-                        ->before($this->mock($command)
-                            ->call('run')
-                            ->twice()
-                        )
-                        ->once()
+                    ->before(
+                        $this->mock($command)
+                            ->call('addOption')->withArguments('push ' . $remote . ' ' . $tag)
+                            ->before(
+                                $this->mock($command)
+                                    ->call('run')
+                                    ->twice()
+                            )
+                            ->once()
                     )
                     ->twice()
 
@@ -376,7 +396,7 @@ class git extends atoum
                 ->exception(function () use ($git) {
                     $git->pushTag(uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\cli\command\exception')
+                    ->isInstanceOf(atoum\cli\command\exception::class)
                     ->hasMessage('Unable to execute \'' . $command . '\': ' . $errorMessage)
         ;
     }
@@ -397,13 +417,15 @@ class git extends atoum
                 ->object($git->checkoutAllFiles())->isIdenticalTo($git)
                 ->mock($command)
                     ->call('reset')
-                    ->before($this->mock($command)
-                        ->call('addOption')->withArguments('checkout .')
-                        ->before($this->mock($command)
-                            ->call('run')
+                    ->before(
+                        $this->mock($command)
+                            ->call('addOption')->withArguments('checkout .')
+                            ->before(
+                                $this->mock($command)
+                                    ->call('run')
+                                    ->once()
+                            )
                             ->once()
-                        )
-                        ->once()
                     )
                     ->once()
 
@@ -415,7 +437,7 @@ class git extends atoum
                 ->exception(function () use ($git) {
                     $git->checkoutAllFiles();
                 })
-                    ->isInstanceOf('mageekguy\atoum\cli\command\exception')
+                    ->isInstanceOf(atoum\cli\command\exception::class)
                     ->hasMessage('Unable to execute \'' . $command . '\': ' . $errorMessage)
         ;
     }

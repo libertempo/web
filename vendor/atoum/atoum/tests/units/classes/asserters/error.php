@@ -12,7 +12,7 @@ class error extends atoum\test
 {
     public function testClass()
     {
-        $this->testedClass->extends('mageekguy\atoum\asserter');
+        $this->testedClass->extends(atoum\asserter::class);
     }
 
     public function test__construct()
@@ -23,7 +23,7 @@ class error extends atoum\test
                 ->object($this->testedInstance->getGenerator())->isEqualTo(new asserter\generator())
                 ->object($this->testedInstance->getAnalyzer())->isEqualTo(new variable\analyzer())
                 ->object($this->testedInstance->getLocale())->isEqualTo(new atoum\locale())
-                ->object($this->testedInstance->getScore())->isInstanceOf('mageekguy\atoum\test\score')
+                ->object($this->testedInstance->getScore())->isInstanceOf(atoum\test\score::class)
                 ->variable($this->testedInstance->getMessage())->isNull()
                 ->variable($this->testedInstance->getType())->isNull()
 
@@ -103,15 +103,15 @@ class error extends atoum\test
                 ->exception(function () use (& $line, $asserter) {
                     $asserter->exists();
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($errorNotExists)
-                ->mock($locale)->call('_')->withArguments('error does not exist')->once
+                ->mock($locale)->call('_')->withArguments('error %s', 'does not exist')->once
                 ->exception(function () use (& $line, $asserter) {
                     $asserter->exists;
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($errorNotExists)
-                ->mock($locale)->call('_')->withArguments('error does not exist')->twice
+                ->mock($locale)->call('_')->withArguments('error %s', 'does not exist')->twice
 
             ->if($asserter->getScore()->addError(uniqid(), uniqid(), uniqid(), rand(1, PHP_INT_MAX), rand(0, PHP_INT_MAX), uniqid(), uniqid(), rand(1, PHP_INT_MAX)))
             ->then
@@ -128,9 +128,9 @@ class error extends atoum\test
                 ->exception(function () use (& $line, $asserter) {
                     $asserter->exists();
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($errorNotExists)
-                ->mock($locale)->call('_')->withArguments('error with message \'%s\' does not exist', $message)->once
+                ->mock($locale)->call('_')->withArguments('error with message \'%s\' %s', $message, 'does not exist')->once
 
             ->if($asserter->getScore()->addError(uniqid(), uniqid(), uniqid(), rand(1, PHP_INT_MAX), rand(0, PHP_INT_MAX), $message, uniqid(), rand(1, PHP_INT_MAX)))
             ->then
@@ -143,9 +143,9 @@ class error extends atoum\test
                     $line = __LINE__;
                     $asserter->exists();
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($errorNotExists)
-                ->mock($locale)->call('_')->withArguments('error of type %s with message \'%s\' does not exist', atoum\asserters\error::getAsString($type), $message)->once
+                ->mock($locale)->call('_')->withArguments('error of type %s with message \'%s\' %s', atoum\asserters\error::getAsString($type), $message, 'does not exist')->once
 
             ->if($asserter->getScore()->addError(uniqid(), uniqid(), uniqid(), rand(1, PHP_INT_MAX), $type, $message, uniqid(), rand(1, PHP_INT_MAX)))
             ->then
@@ -158,9 +158,9 @@ class error extends atoum\test
                     $line = __LINE__;
                     $asserter->exists();
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($errorNotExists)
-                ->mock($locale)->call('_')->withArguments('error of type %s does not exist', atoum\asserters\error::getAsString($type))->once
+                ->mock($locale)->call('_')->withArguments('error of type %s %s', atoum\asserters\error::getAsString($type), 'does not exist')->once
 
             ->if($asserter->getScore()->addError(uniqid(), uniqid(), uniqid(), rand(1, PHP_INT_MAX), $type, uniqid(), uniqid(), rand(1, PHP_INT_MAX)))
             ->then
@@ -194,39 +194,39 @@ class error extends atoum\test
                 ->exception(function () use (& $line, $asserter) {
                     $asserter->notExists();
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($errorExists)
-                ->mock($locale)->call('_')->withArguments('error exists')->once
+                ->mock($locale)->call('_')->withArguments('error %s', 'exists')->once
                 ->exception(function () use (& $line, $asserter) {
                     $asserter->notExists;
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($errorExists)
-                ->mock($locale)->call('_')->withArguments('error exists')->twice
+                ->mock($locale)->call('_')->withArguments('error %s', 'exists')->twice
 
             ->if($asserter->setWith($message = uniqid(), null))
             ->then
                 ->exception(function () use (& $line, $asserter) {
                     $asserter->exists();
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($errorExists)
-                ->mock($locale)->call('_')->withArguments('error with message \'%s\' does not exist', $message)->once
+                ->mock($locale)->call('_')->withArguments('error with message \'%s\' %s', $message, 'does not exist')->once
 
             ->if($asserter->getScore()->addError(uniqid(), uniqid(), uniqid(), rand(1, PHP_INT_MAX), rand(0, PHP_INT_MAX), $message, uniqid(), rand(1, PHP_INT_MAX)))
             ->then
                 ->exception(function () use (& $line, $asserter) {
                     $asserter->notExists();
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($errorExists)
-                ->mock($locale)->call('_')->withArguments('error with message \'%s\' exists')->once
+                ->mock($locale)->call('_')->withArguments('error with message \'%s\' %s', $message, 'exists')->once
                 ->exception(function () use (& $line, $asserter) {
                     $asserter->notExists;
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($errorExists)
-                ->mock($locale)->call('_')->withArguments('error with message \'%s\' exists')->twice
+                ->mock($locale)->call('_')->withArguments('error with message \'%s\' %s', $message, 'exists')->twice
                 ->array($asserter->getScore()->getErrors())->isNotEmpty()
 
             ->if($asserter->setWith($message = uniqid(), $type = E_USER_ERROR))
@@ -241,9 +241,9 @@ class error extends atoum\test
                     $line = __LINE__;
                     $asserter->notExists();
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($errorExists)
-                ->mock($locale)->call('_')->withArguments('error of type %s with message \'%s\' exists', atoum\asserters\error::getAsString($type), $message)->once
+                ->mock($locale)->call('_')->withArguments('error of type %s with message \'%s\' %s', atoum\asserters\error::getAsString($type), $message, 'exists')->once
 
             ->if($asserter->setWith(null, $type = E_USER_ERROR))
             ->then
@@ -251,28 +251,28 @@ class error extends atoum\test
                     $line = __LINE__;
                     $asserter->notExists();
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($errorExists)
-                ->mock($locale)->call('_')->withArguments('error of type %s exists', atoum\asserters\error::getAsString($type))->once
+                ->mock($locale)->call('_')->withArguments('error of type %s %s', atoum\asserters\error::getAsString($type), 'exists')->once
 
-            ->if($asserter->getScore()->addError(uniqid(), uniqid(), uniqid(), rand(1, PHP_INT_MAX), $type, uniqid(), uniqid(), rand(1, PHP_INT_MAX)))
+            ->if($asserter->getScore()->addError(uniqid(), uniqid(), uniqid(), rand(1, PHP_INT_MAX), $type, $message, uniqid(), rand(1, PHP_INT_MAX)))
             ->then
                 ->exception(function () use (& $line, $asserter) {
                     $asserter->notExists();
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($errorExists)
-                ->mock($locale)->call('_')->withArguments('error of type %s with message \'%s\' exists')->once
+                ->mock($locale)->call('_')->withArguments('error of type %s with message \'%s\' %s', atoum\asserters\error::getAsString($type), $message, 'exists')->once
                 ->array($asserter->getScore()->getErrors())->isNotEmpty()
 
-            ->if($asserter->getScore()->addError(uniqid(), uniqid(), uniqid(), rand(1, PHP_INT_MAX), $type, uniqid(), uniqid(), rand(1, PHP_INT_MAX)))
+            ->if($asserter->getScore()->addError(uniqid(), uniqid(), uniqid(), rand(1, PHP_INT_MAX), $type, $message, uniqid(), rand(1, PHP_INT_MAX)))
             ->then
                 ->exception(function () use (& $line, $asserter) {
                     $asserter->notExists;
                 })
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage($errorExists)
-                ->mock($locale)->call('_')->withArguments('error of type %s with message \'%s\' exists')->once
+                ->mock($locale)->call('_')->withArguments('error of type %s with message \'%s\' %s', atoum\asserters\error::getAsString($type), $message, 'exists')->once
                 ->array($asserter->getScore()->getErrors())->isNotEmpty()
 
             ->if($asserter->getScore()->addError(uniqid(), uniqid(), uniqid(), rand(1, PHP_INT_MAX), rand(1, PHP_INT_MAX), $message = uniqid() . 'FOO' . uniqid(), uniqid(), rand(1, PHP_INT_MAX)))
@@ -363,7 +363,7 @@ class error extends atoum\test
                 ->object($this->testedInstance->setScore())->isTestedInstance
                 ->object($this->testedInstance->getScore())
                     ->isNotIdenticalTo($score)
-                    ->isInstanceOf('mageekguy\atoum\score')
+                    ->isInstanceOf(atoum\score::class)
         ;
     }
 }

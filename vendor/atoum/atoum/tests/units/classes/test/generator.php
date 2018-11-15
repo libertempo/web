@@ -185,28 +185,28 @@ class generator extends atoum\test
                 ->exception(function () use ($generator) {
                     $generator->generate(uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\test\generator\exception')
+                    ->isInstanceOf(atoum\test\generator\exception::class)
                     ->hasMessage('Tested classes directory is undefined')
             ->if($generator->setTestedClassesDirectory($classesDirectory = uniqid()))
             ->then
                 ->exception(function () use ($generator) {
                     $generator->generate(uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\test\generator\exception')
+                    ->isInstanceOf(atoum\test\generator\exception::class)
                     ->hasMessage('Tests directory is undefined')
             ->if($generator->setTestClassesDirectory($testsDirectory = DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, ['a', 'b', 'c'])))
             ->then
                 ->exception(function () use ($generator) {
                     $generator->generate(uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\test\generator\exception')
+                    ->isInstanceOf(atoum\test\generator\exception::class)
                     ->hasMessage('Tested class namespace is undefined')
             ->if($generator->setTestedClassNamespace($testedClassNamespace = uniqid()))
             ->then
                 ->exception(function () use ($generator) {
                     $generator->generate(uniqid());
                 })
-                    ->isInstanceOf('mageekguy\atoum\test\generator\exception')
+                    ->isInstanceOf(atoum\test\generator\exception::class)
                     ->hasMessage('Test class namespace is undefined')
             ->if($generator->setTestClassNamespace($testClassNamespace = uniqid()))
             ->and($testClassesDirectoryPath = new \mock\mageekguy\atoum\fs\path(DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, ['a', 'b', 'c'])))
@@ -220,17 +220,16 @@ class generator extends atoum\test
             ->and($this->calling($testClassPath)->putContents = $testClassPath)
             ->and($this->calling($pathFactory)->build = function ($path) use ($testClassesDirectoryPath, $testClassPath, $testedClassPath) {
                 switch ($path) {
-                        case (string) $testClassesDirectoryPath . DIRECTORY_SEPARATOR:
-                            return $testClassesDirectoryPath;
+                    case (string) $testClassesDirectoryPath . DIRECTORY_SEPARATOR:
+                        return $testClassesDirectoryPath;
 
-                        case (string) $testClassPath:
-                            return $testClassPath;
+                    case (string) $testClassPath:
+                        return $testClassPath;
 
-                        default:
-                            return $testedClassPath;
-                    }
-            }
-            )
+                    default:
+                        return $testedClassPath;
+                }
+            })
             ->then
                 ->object($generator->generate((string) $testClassPath))->isIdenticalTo($generator)
                 ->mock($templateParser)

@@ -11,7 +11,7 @@ class extension extends atoum\test
 {
     public function testClass()
     {
-        $this->testedClass->extends('mageekguy\atoum\asserter');
+        $this->testedClass->extends(atoum\asserter::class);
     }
 
     public function test__construct()
@@ -78,15 +78,13 @@ class extension extends atoum\test
             ->then
                 ->exception(function () use ($asserter) {
                     $asserter->isLoaded();
-                }
-                )
-                    ->isInstanceOf('mageekguy\atoum\exceptions\logic')
+                })
+                    ->isInstanceOf(atoum\exceptions\logic::class)
                     ->hasMessage('Name of PHP extension is undefined')
                 ->exception(function () use ($asserter) {
                     $asserter->isLoaded;
-                }
-                )
-                    ->isInstanceOf('mageekguy\atoum\exceptions\logic')
+                })
+                    ->isInstanceOf(atoum\exceptions\logic::class)
                     ->hasMessage('Name of PHP extension is undefined')
 
             ->given(
@@ -103,15 +101,13 @@ class extension extends atoum\test
             ->then
                 ->exception(function () use ($asserter) {
                     $asserter->isLoaded();
-                }
-                )
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                })
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage('PHP extension \'' . $extensionName . '\' is not loaded')
                 ->exception(function () use ($asserter) {
                     $asserter->isLoaded;
-                }
-                )
-                    ->isInstanceOf('mageekguy\atoum\asserter\exception')
+                })
+                    ->isInstanceOf(atoum\asserter\exception::class)
                     ->hasMessage('PHP extension \'' . $extensionName . '\' is not loaded')
 
             ->if($this->calling($extension)->isLoaded = true)

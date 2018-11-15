@@ -8,7 +8,6 @@ use mageekguy\atoum;
 use mageekguy\atoum\cli\colorizer;
 use mageekguy\atoum\cli\prompt;
 use mageekguy\atoum\exceptions;
-use mageekguy\atoum\locale;
 use mageekguy\atoum\report;
 
 class treemap extends report\fields\runner\coverage\cli
@@ -55,7 +54,7 @@ class treemap extends report\fields\runner\coverage\cli
                     'children' => []
                 ];
 
-                foreach ($this->coverage->getClasses() as $className => $classPath) {
+                foreach ($this->coverage->getClasses() as $className => $_) {
                     $node = & $nodes;
 
                     $class = new \reflectionClass($className);

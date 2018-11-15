@@ -122,6 +122,11 @@ class runner extends atoum\script\configurable
     {
         $this->defaultReportFactory = $factory ?: function ($script) {
             $report = new atoum\reports\realtime\cli();
+
+            if ($this->getAdapter()->getenv('TRAVIS') !== false) {
+                $report = new atoum\reports\realtime\cli\travis();
+            }
+
             $report->addWriter($script->getOutputWriter());
 
             return $report;
@@ -176,9 +181,9 @@ class runner extends atoum\script\configurable
         return $this;
     }
 
-    public function addDefaultArguments($argument)
+    public function addDefaultArguments(...$arguments)
     {
-        $this->defaultArguments = array_merge($this->defaultArguments, func_get_args());
+        $this->defaultArguments = array_merge($this->defaultArguments, $arguments);
 
         return $this;
     }
@@ -309,6 +314,13 @@ class runner extends atoum\script\configurable
         return $this->namespaces;
     }
 
+    public function resetTestedNamespaces()
+    {
+        $this->namespaces = [];
+
+        return $this;
+    }
+
     public function testTags(array $tags)
     {
         $this->tags = $tags;
@@ -319,6 +331,13 @@ class runner extends atoum\script\configurable
     public function testMethod($class, $method)
     {
         $this->methods[$class][] = $method;
+
+        return $this;
+    }
+
+    public function resetTestMethods()
+    {
+        $this->methods = [];
 
         return $this;
     }
@@ -397,6 +416,13 @@ class runner extends atoum\script\configurable
         return $this;
     }
 
+    public function resetExcludedNamespacesFromCoverage()
+    {
+        $this->runner->getCoverage()->resetExcludedNamespaces();
+
+        return $this;
+    }
+
     public function excludeDirectoriesFromCoverage(array $directories)
     {
         $coverage = $this->runner->getCoverage();
@@ -404,6 +430,13 @@ class runner extends atoum\script\configurable
         foreach ($directories as $directory) {
             $coverage->excludeDirectory($directory);
         }
+
+        return $this;
+    }
+
+    public function resetExcludedDirectoriesFromCoverage()
+    {
+        $this->runner->getCoverage()->resetExcludedDirectories();
 
         return $this;
     }
@@ -419,6 +452,13 @@ class runner extends atoum\script\configurable
         return $this;
     }
 
+    public function resetExcludedClassesFromCoverage()
+    {
+        $this->runner->getCoverage()->resetExcludedClasses();
+
+        return $this;
+    }
+
     public function excludeMethodsFromCoverage(array $methods)
     {
         $coverage = $this->runner->getCoverage();
@@ -426,6 +466,13 @@ class runner extends atoum\script\configurable
         foreach ($methods as $method) {
             $coverage->excludeMethod($method);
         }
+
+        return $this;
+    }
+
+    public function resetExcludedMethodsFromCoverage()
+    {
+        $this->runner->getCoverage()->resetExcludedMethods();
 
         return $this;
     }
@@ -638,38 +685,39 @@ class runner extends atoum\script\configurable
             $autorunner = & static::$autorunner;
             $calledClass = get_called_class();
 
-            register_shutdown_function(function () use (& $autorunner, $calledClass) {
-                if ($autorunner instanceof $calledClass) {
-                    set_error_handler(function ($error, $message, $file, $line) use ($autorunner) {
-                        if (error_reporting() !== 0) {
-                            $autorunner->writeError($message . ' in ' . $file . ' at line ' . $line, $error);
+            register_shutdown_function(
+                function () use (& $autorunner, $calledClass) {
+                    if ($autorunner instanceof $calledClass) {
+                        set_error_handler(function ($error, $message, $file, $line) use ($autorunner) {
+                            $errorReporting = error_reporting();
 
-                            exit(3);
+                            if ($errorReporting !== 0 && $errorReporting & $error) {
+                                $autorunner->writeError($message . ' in ' . $file . ' at line ' . $line, $error);
+
+                                exit(3);
+                            }
+                        });
+
+                        try {
+                            $score = $autorunner->run()->getRunner()->getScore();
+                            $isSuccess = $score->getFailNumber() <= 0 && $score->getErrorNumber() <= 0 && $score->getExceptionNumber() <= 0 && $score->getUncompletedMethodNumber() <= 0;
+
+                            if ($autorunner->shouldFailIfVoidMethods() && $score->getVoidMethodNumber() > 0) {
+                                $isSuccess = false;
+                            }
+
+                            if ($autorunner->shouldFailIfSkippedMethods() && $score->getSkippedMethodNumber() > 0) {
+                                $isSuccess = false;
+                            }
+
+                            exit($isSuccess ? 0 : 1);
+                        } catch (\exception $exception) {
+                            $autorunner->writeError($exception->getMessage());
+
+                            exit(2);
                         }
-                    }
-                        );
-
-                    try {
-                        $score = $autorunner->run()->getRunner()->getScore();
-
-                        $isSuccess = $score->getFailNumber() <= 0 && $score->getErrorNumber() <= 0 && $score->getExceptionNumber() <= 0;
-
-                        if ($autorunner->shouldFailIfVoidMethods() && $score->getVoidMethodNumber() > 0) {
-                            $isSuccess = false;
-                        }
-
-                        if ($autorunner->shouldFailIfSkippedMethods() && $score->getSkippedMethodNumber() > 0) {
-                            $isSuccess = false;
-                        }
-
-                        exit($isSuccess ? 0 : 1);
-                    } catch (\exception $exception) {
-                        $autorunner->writeError($exception->getMessage());
-
-                        exit(2);
                     }
                 }
-            }
             );
 
             $autorunIsRegistered = true;
@@ -708,7 +756,7 @@ class runner extends atoum\script\configurable
             ->addArgumentHandler(
                     function ($script, $argument, $values) {
                         if (count($values) !== 0) {
-                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more informations'), $argument, $script->getName()));
+                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more information'), $argument, $script->getName()));
                         }
 
                         $script->version();
@@ -720,7 +768,7 @@ class runner extends atoum\script\configurable
             ->addArgumentHandler(
                     function ($script, $argument, $values) {
                         if (count($values) !== 0) {
-                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more informations'), $argument, $script->getName()));
+                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more information'), $argument, $script->getName()));
                         }
 
                         $script->resetVerbosityLevel();
@@ -750,7 +798,7 @@ class runner extends atoum\script\configurable
             ->addArgumentHandler(
                     function ($script, $argument, $path) {
                         if (count($path) != 1) {
-                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more informations'), $argument, $script->getName()));
+                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more information'), $argument, $script->getName()));
                         }
 
                         $script->setPhpPath(reset($path));
@@ -762,7 +810,7 @@ class runner extends atoum\script\configurable
             ->addArgumentHandler(
                     function ($script, $argument, $defaultReportTitle) {
                         if (count($defaultReportTitle) != 1) {
-                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more informations'), $argument, $script->getName()));
+                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more information'), $argument, $script->getName()));
                         }
 
                         $script->setDefaultReportTitle(reset($defaultReportTitle));
@@ -774,7 +822,7 @@ class runner extends atoum\script\configurable
             ->addArgumentHandler(
                     function ($script, $argument, $file) {
                         if (count($file) != 1) {
-                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more informations'), $argument, $script->getName()));
+                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more information'), $argument, $script->getName()));
                         }
 
                         $script->setScoreFile(reset($file));
@@ -786,19 +834,19 @@ class runner extends atoum\script\configurable
             ->addArgumentHandler(
                     function ($script, $argument, $maxChildrenNumber) {
                         if (count($maxChildrenNumber) != 1) {
-                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more informations'), $argument, $script->getName()));
+                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more information'), $argument, $script->getName()));
                         }
 
                         $script->setMaxChildrenNumber(reset($maxChildrenNumber));
                     },
                     ['-mcn', '--max-children-number'],
                     '<integer>',
-                    $this->locale->_('Maximum number of sub-processus which will be run simultaneously')
+                    $this->locale->_('Maximum number of sub-processes which will be run simultaneously')
                 )
             ->addArgumentHandler(
                     function ($script, $argument, $empty) {
                         if ($empty) {
-                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more informations'), $argument, $script->getName()));
+                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more information'), $argument, $script->getName()));
                         }
 
                         $script->disableCodeCoverage();
@@ -810,10 +858,13 @@ class runner extends atoum\script\configurable
             ->addArgumentHandler(
                     function ($script, $argument, $directories) {
                         if (count($directories) <= 0) {
-                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more informations'), $argument, $script->getName()));
+                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more information'), $argument, $script->getName()));
                         }
 
-                        $script->excludeDirectoriesFromCoverage($directories);
+                        $script
+                            ->resetExcludedDirectoriesFromCoverage()
+                            ->excludeDirectoriesFromCoverage($directories)
+                        ;
                     },
                     ['-nccid', '--no-code-coverage-in-directories'],
                     '<directory>...',
@@ -822,10 +873,13 @@ class runner extends atoum\script\configurable
             ->addArgumentHandler(
                     function ($script, $argument, $namespaces) {
                         if (count($namespaces) <= 0) {
-                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more informations'), $argument, $script->getName()));
+                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more information'), $argument, $script->getName()));
                         }
 
-                        $script->excludeNamespacesFromCoverage($namespaces);
+                        $script
+                            ->resetExcludedNamespacesFromCoverage()
+                            ->excludeNamespacesFromCoverage($namespaces)
+                        ;
                     },
                     ['-nccfns', '--no-code-coverage-for-namespaces'],
                     '<namespace>...',
@@ -834,10 +888,13 @@ class runner extends atoum\script\configurable
             ->addArgumentHandler(
                     function ($script, $argument, $classes) {
                         if (count($classes) <= 0) {
-                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more informations'), $argument, $script->getName()));
+                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more information'), $argument, $script->getName()));
                         }
 
-                        $script->excludeClassesFromCoverage($classes);
+                        $script
+                            ->resetExcludedClassesFromCoverage()
+                            ->excludeClassesFromCoverage($classes)
+                        ;
                     },
                     ['-nccfc', '--no-code-coverage-for-classes'],
                     '<class>...',
@@ -846,10 +903,13 @@ class runner extends atoum\script\configurable
             ->addArgumentHandler(
                     function ($script, $argument, $classes) {
                         if (count($classes) <= 0) {
-                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more informations'), $argument, $script->getName()));
+                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more information'), $argument, $script->getName()));
                         }
 
-                        $script->excludeMethodsFromCoverage($classes);
+                        $script
+                            ->resetExcludedMethodsFromCoverage()
+                            ->excludeMethodsFromCoverage($classes)
+                        ;
                     },
                     ['-nccfm', '--no-code-coverage-for-methods'],
                     '<method>...',
@@ -858,7 +918,7 @@ class runner extends atoum\script\configurable
             ->addArgumentHandler(
                     function ($script, $argument, $empty) {
                         if ($empty) {
-                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more informations'), $argument, $script->getName()));
+                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more information'), $argument, $script->getName()));
                         }
 
                         $script->enableBranchesAndPathsCoverage();
@@ -870,7 +930,7 @@ class runner extends atoum\script\configurable
             ->addArgumentHandler(
                     function ($script, $argument, $files) {
                         if (count($files) <= 0) {
-                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more informations'), $argument, $script->getName()));
+                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more information'), $argument, $script->getName()));
                         }
 
                         $script->addTests($files);
@@ -882,7 +942,7 @@ class runner extends atoum\script\configurable
             ->addArgumentHandler(
                     function ($script, $argument, $directories) {
                         if (count($directories) <= 0) {
-                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more informations'), $argument, $script->getName()));
+                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more information'), $argument, $script->getName()));
                         }
 
                         $script->addTestsFromDirectories($directories);
@@ -894,7 +954,7 @@ class runner extends atoum\script\configurable
             ->addArgumentHandler(
                     function ($script, $argument, $extensions) {
                         if (count($extensions) <= 0) {
-                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more informations'), $argument, $script->getName()));
+                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more information'), $argument, $script->getName()));
                         }
 
                         $script->acceptTestFileExtensions($extensions);
@@ -906,7 +966,7 @@ class runner extends atoum\script\configurable
             ->addArgumentHandler(
                     function ($script, $argument, $patterns) {
                         if (count($patterns) <= 0) {
-                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more informations'), $argument, $script->getName()));
+                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more information'), $argument, $script->getName()));
                         }
 
                         $script->addTestsFromPatterns($patterns);
@@ -918,7 +978,7 @@ class runner extends atoum\script\configurable
             ->addArgumentHandler(
                     function ($script, $argument, $tags) {
                         if (count($tags) <= 0) {
-                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more informations'), $argument, $script->getName()));
+                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more information'), $argument, $script->getName()));
                         }
 
                         $script->testTags($tags);
@@ -930,14 +990,16 @@ class runner extends atoum\script\configurable
             ->addArgumentHandler(
                     function ($script, $argument, $methods) {
                         if (count($methods) <= 0) {
-                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more informations'), $argument, $script->getName()));
+                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more information'), $argument, $script->getName()));
                         }
+
+                        $script->resetTestMethods();
 
                         foreach ($methods as $method) {
                             $method = explode('::', $method);
 
                             if (count($method) != 2) {
-                                throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more informations'), $argument, $script->getName()));
+                                throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more information'), $argument, $script->getName()));
                             }
 
                             $script->testMethod($method[0], $method[1]);
@@ -950,10 +1012,13 @@ class runner extends atoum\script\configurable
             ->addArgumentHandler(
                     function ($script, $argument, $namespaces) {
                         if (count($namespaces) <= 0) {
-                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more informations'), $argument, $script->getName()));
+                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more information'), $argument, $script->getName()));
                         }
 
-                        $script->testNamespaces($namespaces);
+                        $script
+                            ->resetTestedNamespaces()
+                            ->testNamespaces($namespaces)
+                        ;
                     },
                     ['-ns', '--namespaces'],
                     '<namespace>...',
@@ -962,7 +1027,7 @@ class runner extends atoum\script\configurable
             ->addArgumentHandler(
                     function ($script, $argument, $values) {
                         if ($values) {
-                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more informations'), $argument, $script->getName()));
+                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more information'), $argument, $script->getName()));
                         }
 
                         $script->enableLoopMode();
@@ -974,7 +1039,7 @@ class runner extends atoum\script\configurable
             ->addArgumentHandler(
                     function ($script, $argument, $values) {
                         if (count($values) !== 0) {
-                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more informations'), $argument, $script->getName()));
+                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more information'), $argument, $script->getName()));
                         }
 
                         $script->disableLoopMode();
@@ -987,7 +1052,7 @@ class runner extends atoum\script\configurable
             ->addArgumentHandler(
                     function ($script, $argument, $values) {
                         if (count($values) !== 0) {
-                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more informations'), $argument, $script->getName()));
+                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more information'), $argument, $script->getName()));
                         }
 
                         $script->testIt();
@@ -999,7 +1064,7 @@ class runner extends atoum\script\configurable
             ->addArgumentHandler(
                     function ($script, $argument, $values) {
                         if ($values) {
-                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more informations'), $argument, $script->getName()));
+                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more information'), $argument, $script->getName()));
                         }
 
                         \mageekguy\atoum\cli::forceTerminal();
@@ -1011,7 +1076,7 @@ class runner extends atoum\script\configurable
             ->addArgumentHandler(
                     function ($script, $argument, $values) {
                         if (count($values) != 1) {
-                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more informations'), $argument, $script->getName()));
+                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more information'), $argument, $script->getName()));
                         }
 
                         $script->setAutoloaderFile($values[0]);
@@ -1024,7 +1089,7 @@ class runner extends atoum\script\configurable
             ->addArgumentHandler(
                     function ($script, $argument, $values) {
                         if (count($values) != 1) {
-                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more informations'), $argument, $script->getName()));
+                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more information'), $argument, $script->getName()));
                         }
 
                         $script->setBootstrapFile($values[0]);
@@ -1037,7 +1102,7 @@ class runner extends atoum\script\configurable
             ->addArgumentHandler(
                     function ($script, $argument, $values) {
                         if (count($values) != 0) {
-                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more informations'), $argument, $script->getName()));
+                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more information'), $argument, $script->getName()));
                         }
 
                         $lightReport = new atoum\reports\realtime\cli\light();
@@ -1053,7 +1118,23 @@ class runner extends atoum\script\configurable
             ->addArgumentHandler(
                     function ($script, $argument, $values) {
                         if (count($values) != 0) {
-                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more informations'), $argument, $script->getName()));
+                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more information'), $argument, $script->getName()));
+                        }
+
+                        $lightReport = new atoum\reports\realtime\cli\dot();
+                        $lightReport->addWriter($script->getOutputWriter());
+
+                        $script->setReport($lightReport);
+                    },
+                    ['-udr', '--use-dot-report'],
+                    null,
+                    $this->locale->_('Use "dot" CLI report'),
+                    PHP_INT_MAX
+                )
+            ->addArgumentHandler(
+                    function ($script, $argument, $values) {
+                        if (count($values) != 0) {
+                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more information'), $argument, $script->getName()));
                         }
 
                         $tapReport = new atoum\reports\realtime\tap();
@@ -1069,7 +1150,7 @@ class runner extends atoum\script\configurable
             ->addArgumentHandler(
                     function ($script, $argument, $values) {
                         if (count($values) != 0) {
-                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more informations'), $argument, $script->getName()));
+                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more information'), $argument, $script->getName()));
                         }
 
                         $script->enableDebugMode();
@@ -1081,7 +1162,7 @@ class runner extends atoum\script\configurable
             ->addArgumentHandler(
                     function ($script, $argument, $values) {
                         if (count($values) != 1) {
-                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more informations'), $argument, $script->getName()));
+                            throw new exceptions\logic\invalidArgument(sprintf($script->getLocale()->_('Bad usage of %s, do php %s --help for more information'), $argument, $script->getName()));
                         }
 
                         $script->setXdebugConfig($values[0]);
@@ -1108,15 +1189,16 @@ class runner extends atoum\script\configurable
                 )
         ;
 
-        $this->setDefaultArgumentHandler(function ($script, $argument) {
-            try {
-                $script->getRunner()->addTest($argument);
-            } catch (\exception $exception) {
-                return false;
-            }
+        $this->setDefaultArgumentHandler(
+            function ($script, $argument) {
+                try {
+                    $script->getRunner()->addTest($argument);
+                } catch (\exception $exception) {
+                    return false;
+                }
 
-            return true;
-        }
+                return true;
+            }
         );
 
         return $this;

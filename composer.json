@@ -42,7 +42,7 @@
         "ocramius/package-versions": "1.2"
     },
     "require-dev": {
-        "atoum/atoum": "3.0.0",
+        "atoum/atoum": "3.3.0",
         "symfony/console": "3.2",
         "codacy/coverage": "1.4.1",
         "phpstan/phpstan": "0.9"

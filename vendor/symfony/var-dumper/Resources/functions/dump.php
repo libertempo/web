@@ -15,10 +15,12 @@ if (!function_exists('dump')) {
     /**
      * @author Nicolas Grekas <p@tchwork.com>
      */
-    function dump($var)
+    function dump($var, ...$moreVars)
     {
-        foreach (func_get_args() as $v) {
-            VarDumper::dump($v);
+        VarDumper::dump($var);
+
+        foreach ($moreVars as $var) {
+            VarDumper::dump($var);
         }
 
         if (1 < func_num_args()) {

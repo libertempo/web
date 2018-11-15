@@ -61,6 +61,7 @@ abstract class test implements observable, \countable
     private $tags = [];
     private $phpVersions = [];
     private $mandatoryExtensions = [];
+    private $supportedOs = [];
     private $dataProviders = [];
     private $testMethods = [];
     private $runTestMethods = [];
@@ -409,27 +410,29 @@ abstract class test implements observable, \countable
                 $this->getMockGenerator()->generate($this->getTestedClassName(), $mockNamespace, $mockClass);
                 return $this;
             })
-            ->setHandler('newMockInstance', function ($class, $mockNamespace = null, $mockClass = null, array $constructorArguments = null) {
-                $mockNamespace = trim($mockNamespace ?: $this->getMockGenerator()->getDefaultNamespace(), '\\');
-                $mockClass = trim($mockClass ?: $class, '\\');
-                $className = $mockNamespace . '\\' . $mockClass;
+            ->setHandler(
+                'newMockInstance',
+                function ($class, $mockNamespace = null, $mockClass = null, array $constructorArguments = null) {
+                    $mockNamespace = trim($mockNamespace ?: $this->getMockGenerator()->getDefaultNamespace(), '\\');
+                    $mockClass = trim($mockClass ?: $class, '\\');
+                    $className = $mockNamespace . '\\' . $mockClass;
 
-                if (class_exists($className) === false) {
-                    $this->mockClass($class, $mockNamespace, $mockClass);
+                    if (class_exists($className) === false) {
+                        $this->mockClass($class, $mockNamespace, $mockClass);
+                    }
+
+                    if ($constructorArguments !== null) {
+                        $reflectionClass = new \reflectionClass($className);
+
+                        return $reflectionClass->newInstanceArgs($constructorArguments);
+                    }
+
+                    return new $className();
                 }
-
-                if ($constructorArguments !== null) {
-                    $reflectionClass = new \reflectionClass($className);
-
-                    return $reflectionClass->newInstanceArgs($constructorArguments);
-                }
-
-                return new $className();
-            }
             )
-            ->setHandler('dump', function () {
+            ->setHandler('dump', function (...$arguments) {
                 if ($this->debugModeIsEnabled() === true) {
-                    call_user_func_array('var_dump', func_get_args());
+                    call_user_func_array('var_dump', $arguments);
                 }
                 return $this;
             })
@@ -465,13 +468,9 @@ abstract class test implements observable, \countable
         ;
 
         $this->assertionManager
-            ->setHandler('callStaticOnTestedClass', function () {
-                $args = func_get_args();
-                $method = array_shift($args);
-
-                return call_user_func_array([$this->getTestedClassName(), $method], $args);
-            }
-            )
+            ->setHandler('callStaticOnTestedClass', function ($method, ...$arguments) {
+                return call_user_func_array([$this->getTestedClassName(), $method], $arguments);
+            })
         ;
 
         $mockGenerator = $this->mockGenerator;
@@ -490,9 +489,7 @@ abstract class test implements observable, \countable
             ->setHandler('if', $returnTest)
             ->setHandler('and', $returnTest)
             ->setHandler('then', $returnTest)
-            ->setHandler('given', function () use ($returnTest) {
-                return $returnTest();
-            })
+            ->setHandler('given', $returnTest)
             ->setMethodHandler('define', $returnTest)
             ->setMethodHandler('let', $returnTest)
         ;
@@ -545,22 +542,24 @@ abstract class test implements observable, \countable
 
         $asserterGenerator = $this->asserterGenerator;
 
-        $this->assertionManager->setDefaultHandler(function ($keyword, $arguments) use ($asserterGenerator, $assertionAliaser, & $lastAsserter) {
-            static $lastAsserter = null;
+        $this->assertionManager->setDefaultHandler(
+            function ($keyword, $arguments) use ($asserterGenerator, $assertionAliaser, & $lastAsserter) {
+                static $lastAsserter = null;
 
-            if ($lastAsserter !== null) {
-                $realKeyword = $assertionAliaser->resolveAlias($keyword, get_class($lastAsserter));
+                if ($lastAsserter !== null) {
+                    $realKeyword = $assertionAliaser->resolveAlias($keyword, get_class($lastAsserter));
 
-                if ($realKeyword !== $keyword) {
-                    return call_user_func_array([$lastAsserter, $realKeyword], $arguments);
+                    if ($realKeyword !== $keyword) {
+                        return call_user_func_array([$lastAsserter, $realKeyword], $arguments);
+                    }
                 }
-            }
 
-            return ($lastAsserter = $asserterGenerator->getAsserterInstance($keyword, $arguments));
-        }
+                return ($lastAsserter = $asserterGenerator->getAsserterInstance($keyword, $arguments));
+            }
         );
 
         $this->assertionManager
+            ->use('phpObject')->as('object')
             ->use('phpArray')->as('array')
             ->use('phpArray')->as('in')
             ->use('phpClass')->as('class')
@@ -598,11 +597,67 @@ abstract class test implements observable, \countable
         return $this->phpVersions;
     }
 
+    public function addClassSupportedOs($os)
+    {
+        $this->supportedOs[] = strtolower($os);
+
+        return $this;
+    }
+
+    public function getClassSupportedOs()
+    {
+        return $this->supportedOs;
+    }
+
     public function addMandatoryClassExtension($extension)
     {
         $this->mandatoryExtensions[] = $extension;
 
         return $this;
+    }
+
+    public function addMethodSupportedOs($testMethodName, $os)
+    {
+        $this->checkMethod($testMethodName)->testMethods[$testMethodName]['os'][] = strtolower($os);
+
+        return $this;
+    }
+
+    public function getMethodSupportedOs($testMethodName = null)
+    {
+        $supportedOs = [];
+
+        $classSupportedOs = $this->getClassSupportedOs();
+        $mergeSupportedOs = function ($classOs, $methodOs) {
+            return array_merge(
+                array_filter(
+                    $classOs,
+                    function ($os) use ($methodOs) {
+                        return array_search(trim($os, '!'), $methodOs, true) === false
+                            && array_search('!' . trim($os, '!'), $methodOs, true) === false;
+                    }
+                ),
+                $methodOs
+            );
+        };
+
+        if ($testMethodName === null) {
+            foreach ($this->testMethods as $testMethodName => $annotations) {
+                if (isset($annotations['os']) === false) {
+                    $supportedOs[$testMethodName] = $classSupportedOs;
+                } else {
+                    $supportedOs[$testMethodName] = $mergeSupportedOs($classSupportedOs, $annotations['os']);
+                }
+            }
+        } else {
+            if (isset($this->checkMethod($testMethodName)->testMethods[$testMethodName]['os']) === false) {
+                $supportedOs = $classSupportedOs;
+            } else {
+                $supportedOs = $mergeSupportedOs($classSupportedOs, $this->testMethods[$testMethodName]['os']);
+            }
+        }
+
+        return $supportedOs;
     }
 
     public function addMethodPhpVersion($testMethodName, $version, $operator = null)
@@ -1196,6 +1251,33 @@ abstract class test implements observable, \countable
             $this->phpConstantMocker->setDefaultNamespace($this->getTestedClassNamespace());
 
             try {
+                $os = $this->getMethodSupportedOs($testMethod);
+                $supportedOs = array_filter(
+                    $os,
+                    function ($os) {
+                        return $os[0] !== '!';
+                    }
+                );
+                $unsupportedOs = array_map(
+                    function ($os) {
+                        return substr($os, 1);
+                    },
+                    array_filter(
+                        $os,
+                        function ($os) {
+                            return $os[0] === '!';
+                        }
+                    )
+                );
+
+                if (count($supportedOs) > 0 && in_array(strtolower(PHP_OS), $supportedOs) === false) {
+                    throw new test\exceptions\skip(PHP_OS . ' OS is not supported');
+                }
+
+                if (count($unsupportedOs) > 0 && in_array(strtolower(PHP_OS), $unsupportedOs) === true) {
+                    throw new test\exceptions\skip(PHP_OS . ' OS is not supported');
+                }
+
                 foreach ($this->getMethodPhpVersions($testMethod) as $phpVersion => $operator) {
                     if (version_compare(phpversion(), $phpVersion, $operator) === false) {
                         throw new test\exceptions\skip('PHP version ' . PHP_VERSION . ' is not ' . $operator . ' to ' . $phpVersion);
@@ -1233,26 +1315,34 @@ abstract class test implements observable, \countable
                     }
 
                     $this->factoryBuilder->build($testedClass, $instance)
-                        ->addToAssertionManager($this->assertionManager, 'newTestedInstance', function () use ($testedClass) {
-                            throw new exceptions\runtime('Tested class ' . $testedClass->getName() . ' has no constructor or its constructor has at least one mandatory argument');
-                        }
+                        ->addToAssertionManager(
+                            $this->assertionManager,
+                            'newTestedInstance',
+                            function () use ($testedClass) {
+                                throw new exceptions\runtime('Tested class ' . $testedClass->getName() . ' has no constructor or its constructor has at least one mandatory argument');
+                            }
                         )
                     ;
 
                     $this->factoryBuilder->build($testedClass)
-                        ->addToAssertionManager($this->assertionManager, 'newInstance', function () use ($testedClass) {
-                            throw new exceptions\runtime('Tested class ' . $testedClass->getName() . ' has no constructor or its constructor has at least one mandatory argument');
-                        }
+                        ->addToAssertionManager(
+                            $this->assertionManager,
+                            'newInstance',
+                            function () use ($testedClass) {
+                                throw new exceptions\runtime('Tested class ' . $testedClass->getName() . ' has no constructor or its constructor has at least one mandatory argument');
+                            }
                         )
                     ;
 
-                    $this->assertionManager->setPropertyHandler('testedInstance', function () use (& $instance) {
-                        if ($instance === null) {
-                            throw new exceptions\runtime('Use $this->newTestedInstance before using $this->testedInstance');
-                        }
+                    $this->assertionManager->setPropertyHandler(
+                        'testedInstance',
+                        function () use (& $instance) {
+                            if ($instance === null) {
+                                throw new exceptions\runtime('Use $this->newTestedInstance before using $this->testedInstance');
+                            }
 
-                        return $instance;
-                    }
+                            return $instance;
+                        }
                     );
 
                     if ($this->codeCoverageIsEnabled() === true) {
@@ -1267,7 +1357,7 @@ abstract class test implements observable, \countable
 
                     $assertionNumber = $this->score->getAssertionNumber();
                     $time = microtime(true);
-                    $memory = memory_get_usage(true);
+                    $memory = memory_get_peak_usage();
 
                     if (isset($this->dataProviders[$testMethod]) === false) {
                         $this->{$testMethod}();
@@ -1311,7 +1401,7 @@ abstract class test implements observable, \countable
                     $this->mockControllerLinker->reset();
                     $this->testAdapterStorage->reset();
 
-                    $memoryUsage = memory_get_usage(true) - $memory;
+                    $memoryUsage = memory_get_peak_usage() - $memory;
                     $duration = microtime(true) - $time;
 
                     $this->score
@@ -1531,7 +1621,7 @@ abstract class test implements observable, \countable
 
         if ($analyzer->isRegex($testNamespace) === true) {
             if (preg_match($testNamespace, $fullyQualifiedClassName) === 0) {
-                throw new exceptions\runtime('Test class \'' . $fullyQualifiedClassName . '\' is not in a namespace which match pattern \'' . $testNamespace . '\'');
+                throw new exceptions\runtime('Test class \'' . $fullyQualifiedClassName . '\' is not in a namespace which matches pattern \'' . $testNamespace . '\'');
             }
 
             $testedClassName = preg_replace($testNamespace, '\\', $fullyQualifiedClassName);
@@ -1576,18 +1666,20 @@ abstract class test implements observable, \countable
             ->setHandler('hasNotVoidMethods', function ($value) {
                 $this->classHasNotVoidMethods();
             })
-            ->setHandler('php', function ($value) {
-                $value = annotations\extractor::toArray($value);
+            ->setHandler(
+                'php',
+                function ($value) {
+                    $value = annotations\extractor::toArray($value);
 
-                if (isset($value[0]) === true) {
-                    $operator = null;
+                    if (isset($value[0]) === true) {
+                        $operator = null;
 
-                    if (isset($value[1]) === false) {
-                        $version = $value[0];
-                    } else {
-                        $version = $value[1];
+                        if (isset($value[1]) === false) {
+                            $version = $value[0];
+                        } else {
+                            $version = $value[1];
 
-                        switch ($value[0]) {
+                            switch ($value[0]) {
                                 case '<':
                                 case '<=':
                                 case '=':
@@ -1596,18 +1688,25 @@ abstract class test implements observable, \countable
                                 case '>':
                                     $operator = $value[0];
                             }
-                    }
+                        }
 
-                    $this->addClassPhpVersion($version, $operator);
+                        $this->addClassPhpVersion($version, $operator);
+                    }
                 }
-            }
             )
-            ->setHandler('extensions', function ($value) {
-                foreach (annotations\extractor::toArray($value) as $mandatoryExtension) {
-                    $this->addMandatoryClassExtension($mandatoryExtension);
+            ->setHandler(
+                'extensions',
+                function ($value) {
+                    foreach (annotations\extractor::toArray($value) as $mandatoryExtension) {
+                        $this->addMandatoryClassExtension($mandatoryExtension);
+                    }
                 }
-            }
             )
+            ->setHandler('os', function ($value) {
+                foreach (annotations\extractor::toArray($value) as $supportedOs) {
+                    $this->addClassSupportedOs($supportedOs);
+                }
+            })
         ;
 
         return $this;
@@ -1635,18 +1734,20 @@ abstract class test implements observable, \countable
             ->setHandler('isNotVoid', function ($value) use (& $methodName) {
                 $this->setMethodNotVoid($methodName);
             })
-            ->setHandler('php', function ($value) use (& $methodName) {
-                $value = annotations\extractor::toArray($value);
+            ->setHandler(
+                'php',
+                function ($value) use (& $methodName) {
+                    $value = annotations\extractor::toArray($value);
 
-                if (isset($value[0]) === true) {
-                    $operator = null;
+                    if (isset($value[0]) === true) {
+                        $operator = null;
 
-                    if (isset($value[1]) === false) {
-                        $version = $value[0];
-                    } else {
-                        $version = $value[1];
+                        if (isset($value[1]) === false) {
+                            $version = $value[0];
+                        } else {
+                            $version = $value[1];
 
-                        switch ($value[0]) {
+                            switch ($value[0]) {
                                 case '<':
                                 case '<=':
                                 case '=':
@@ -1655,18 +1756,25 @@ abstract class test implements observable, \countable
                                 case '>':
                                     $operator = $value[0];
                             }
-                    }
+                        }
 
-                    $this->addMethodPhpVersion($methodName, $version, $operator);
+                        $this->addMethodPhpVersion($methodName, $version, $operator);
+                    }
                 }
-            }
             )
-            ->setHandler('extensions', function ($value) use (& $methodName) {
-                foreach (annotations\extractor::toArray($value) as $mandatoryExtension) {
-                    $this->addMandatoryMethodExtension($methodName, $mandatoryExtension);
+            ->setHandler(
+                'extensions',
+                function ($value) use (& $methodName) {
+                    foreach (annotations\extractor::toArray($value) as $mandatoryExtension) {
+                        $this->addMandatoryMethodExtension($methodName, $mandatoryExtension);
+                    }
                 }
-            }
             )
+            ->setHandler('os', function ($value) use (& $methodName) {
+                foreach (annotations\extractor::toArray($value) as $supportedOs) {
+                    $this->addMethodSupportedOs($methodName, $supportedOs);
+                }
+            })
         ;
 
         return $this;

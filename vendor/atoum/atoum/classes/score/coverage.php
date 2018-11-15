@@ -54,7 +54,8 @@ class coverage implements \countable, \serializable
 
     public function serialize()
     {
-        return serialize([
+        return serialize(
+            [
                 $this->classes,
                 $this->methods,
                 $this->paths,
@@ -345,7 +346,7 @@ class coverage implements \countable, \serializable
             foreach ($this->branches as $methods) {
                 foreach ($methods as $method) {
                     foreach ($method as $node) {
-                        foreach ($node['out'] as $index => $out) {
+                        foreach ($node['out'] as $index => $_) {
                             $totalBranches++;
 
                             if ($node['out_hit'][$index] === 1) {
@@ -580,7 +581,7 @@ class coverage implements \countable, \serializable
             $coveredBranches = 0;
 
             foreach ($this->branches[$class][$method] as $node) {
-                foreach ($node['out'] as $index => $out) {
+                foreach ($node['out'] as $index => $_) {
                     $totalBranches++;
 
                     if ($node['out_hit'][$index] === 1) {
