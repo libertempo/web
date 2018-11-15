@@ -7,11 +7,11 @@
     "doc": "docs"
   },
   "dependencies": {
-    "bootstrap": "^3.3.7",
-    "bootstrap-datepicker": "^1.8.0",
-    "bootstrap-timepicker": "^0.5.2",
-    "jquery": "^1.9.1",
-    "vue": "^2.5.17"
+    "bootstrap": "3.3.7",
+    "bootstrap-datepicker": "1.8.0",
+    "bootstrap-timepicker": "0.5.2",
+    "jquery": "1.9.1",
+    "vue": "2.5.17"
   },
   "devDependencies": {},
   "scripts": {

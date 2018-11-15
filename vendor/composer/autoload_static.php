@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitfd23b7dd905d561816f77d072cde6740
+class ComposerStaticInit105eb6cc62daffd76dde387ae5125a83
 {
     public static $files = array (
         'a12da592622097d2b593a430e32e13fd' => __DIR__ . '/..' . '/nette/utils/src/loader.php',
@@ -14,10 +14,10 @@ class ComposerStaticInitfd23b7dd905d561816f77d072cde6740
         '253c157292f75eb38082b5acb06f3f01' => __DIR__ . '/..' . '/nikic/fast-route/src/functions.php',
         'fe62ba7e10580d903cc46d808b5961a4' => __DIR__ . '/..' . '/tightenco/collect/src/Collect/Support/helpers.php',
         'caf31cc6ec7cf2241cb6f12c226c3846' => __DIR__ . '/..' . '/tightenco/collect/src/Collect/Support/alias.php',
-        'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
         'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
-        'b33e3d135e5d9e47d845c576147bda89' => __DIR__ . '/..' . '/php-di/php-di/src/functions.php',
+        'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
         '6bc45d0537e6858fd179bdbc31d62c79' => __DIR__ . '/..' . '/raveren/kint/Kint.class.php',
+        'b33e3d135e5d9e47d845c576147bda89' => __DIR__ . '/..' . '/php-di/php-di/src/functions.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
     );
 
@@ -774,11 +774,11 @@ class ComposerStaticInitfd23b7dd905d561816f77d072cde6740
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitfd23b7dd905d561816f77d072cde6740::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitfd23b7dd905d561816f77d072cde6740::$prefixDirsPsr4;
-            $loader->fallbackDirsPsr4 = ComposerStaticInitfd23b7dd905d561816f77d072cde6740::$fallbackDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInitfd23b7dd905d561816f77d072cde6740::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInitfd23b7dd905d561816f77d072cde6740::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit105eb6cc62daffd76dde387ae5125a83::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit105eb6cc62daffd76dde387ae5125a83::$prefixDirsPsr4;
+            $loader->fallbackDirsPsr4 = ComposerStaticInit105eb6cc62daffd76dde387ae5125a83::$fallbackDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit105eb6cc62daffd76dde387ae5125a83::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit105eb6cc62daffd76dde387ae5125a83::$classMap;
 
         }, null, ClassLoader::class);
     }
