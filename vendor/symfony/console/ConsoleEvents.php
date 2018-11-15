@@ -24,8 +24,6 @@ final class ConsoleEvents
      * before they are handled to the command.
      *
      * @Event("Symfony\Component\Console\Event\ConsoleCommandEvent")
-     *
-     * @var string
      */
     const COMMAND = 'console.command';
 
@@ -34,20 +32,16 @@ final class ConsoleEvents
      * executed by the console.
      *
      * @Event("Symfony\Component\Console\Event\ConsoleTerminateEvent")
-     *
-     * @var string
      */
     const TERMINATE = 'console.terminate';
 
     /**
-     * The EXCEPTION event occurs when an uncaught exception appears.
+     * The ERROR event occurs when an uncaught exception or error appears.
      *
-     * This event allows you to deal with the exception or
+     * This event allows you to deal with the exception/error or
      * to modify the thrown exception.
      *
-     * @Event("Symfony\Component\Console\Event\ConsoleExceptionEvent")
-     *
-     * @var string
+     * @Event("Symfony\Component\Console\Event\ConsoleErrorEvent")
      */
-    const EXCEPTION = 'console.exception';
+    const ERROR = 'console.error';
 }

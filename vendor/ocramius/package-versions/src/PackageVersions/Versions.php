@@ -10,6 +10,7 @@ namespace PackageVersions;
  */
 final class Versions
 {
+    const ROOT_PACKAGE_NAME = 'libertempo/libertempo-web';
     const VERSIONS = array (
   'adldap2/adldap2' => 'v9.1.3@f9ba4003a1350b7cad952d3ad22b24c8d3e0d1af',
   'container-interop/container-interop' => '1.2.0@79cbf1341c22ec75643d841642dd5d6acd83bdb8',
@@ -48,7 +49,7 @@ final class Versions
   'symfony/polyfill-php56' => 'v1.10.0@ff208829fe1aa48ab9af356992bb7199fed551af',
   'symfony/polyfill-php72' => 'v1.10.0@9050816e2ca34a8e916c3a0ae8b9c2fccf68b631',
   'symfony/polyfill-util' => 'v1.10.0@3b58903eae668d348a7126f999b0da0f2f93611c',
-  'symfony/var-dumper' => 'v4.0.14@3af63f44ddb45b03af4d172a4ce3e5c58b25fc5b',
+  'symfony/var-dumper' => 'v4.1.7@60319b45653580b0cdacca499344577d87732f16',
   'tecnickcom/tcpdf' => '6.2.6@a2e8f5b505a7a14a4ed960313c4baf699fd1f4bb',
   'tightenco/collect' => 'v5.7.13@5172ad96c54560352b79386b293375da40280fdc',
   'yohang/calendr' => '2.1.1@1ae1da29ec9e633afb692cc763b6736c1def3f55',
@@ -82,12 +83,12 @@ final class Versions
      */
     public static function getVersion(string $packageName) : string
     {
-        if (! isset(self::VERSIONS[$packageName])) {
-            throw new \OutOfBoundsException(
-                'Required package "' . $packageName . '" is not installed: cannot detect its version'
-            );
+        if (isset(self::VERSIONS[$packageName])) {
+            return self::VERSIONS[$packageName];
         }
 
-        return self::VERSIONS[$packageName];
+        throw new \OutOfBoundsException(
+            'Required package "' . $packageName . '" is not installed: cannot detect its version'
+        );
     }
 }

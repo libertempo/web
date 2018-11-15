@@ -11,16 +11,16 @@
 
 namespace Symfony\Component\Console\Command;
 
-use Symfony\Component\Console\Exception\ExceptionInterface;
-use Symfony\Component\Console\Input\InputDefinition;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Application;
-use Symfony\Component\Console\Helper\HelperSet;
+use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Exception\LogicException;
+use Symfony\Component\Console\Helper\HelperSet;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputDefinition;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Base class for all commands.
@@ -29,6 +29,11 @@ use Symfony\Component\Console\Exception\LogicException;
  */
 class Command
 {
+    /**
+     * @var string|null The default command name
+     */
+    protected static $defaultName;
+
     private $application;
     private $name;
     private $processTitle;
@@ -46,25 +51,30 @@ class Command
     private $helperSet;
 
     /**
-     * Constructor.
-     *
+     * @return string|null The default command name or null when no default name is set
+     */
+    public static function getDefaultName()
+    {
+        $class = \get_called_class();
+        $r = new \ReflectionProperty($class, 'defaultName');
+
+        return $class === $r->class ? static::$defaultName : null;
+    }
+
+    /**
      * @param string|null $name The name of the command; passing null means it must be set in configure()
      *
      * @throws LogicException When the command name is empty
      */
-    public function __construct($name = null)
+    public function __construct(string $name = null)
     {
         $this->definition = new InputDefinition();
 
-        if (null !== $name) {
+        if (null !== $name || null !== $name = static::getDefaultName()) {
             $this->setName($name);
         }
 
         $this->configure();
-
-        if (!$this->name) {
-            throw new LogicException(sprintf('The command defined in "%s" cannot have an empty name.', get_class($this)));
-        }
     }
 
     /**
@@ -77,11 +87,6 @@ class Command
         $this->ignoreValidationErrors = true;
     }
 
-    /**
-     * Sets the application instance for this command.
-     *
-     * @param Application $application An Application instance
-     */
     public function setApplication(Application $application = null)
     {
         $this->application = $application;
@@ -92,11 +97,6 @@ class Command
         }
     }
 
-    /**
-     * Sets the helper set.
-     *
-     * @param HelperSet $helperSet A HelperSet instance
-     */
     public function setHelperSet(HelperSet $helperSet)
     {
         $this->helperSet = $helperSet;
@@ -150,10 +150,7 @@ class Command
      * execute() method, you set the code to execute by passing
      * a Closure to the setCode() method.
      *
-     * @param InputInterface  $input  An InputInterface instance
-     * @param OutputInterface $output An OutputInterface instance
-     *
-     * @return null|int null or 0 if everything went fine, or an error code
+     * @return int|null null or 0 if everything went fine, or an error code
      *
      * @throws LogicException When this abstract method is not implemented
      *
@@ -170,22 +167,20 @@ class Command
      * This method is executed before the InputDefinition is validated.
      * This means that this is the only place where the command can
      * interactively ask for values of missing required arguments.
-     *
-     * @param InputInterface  $input  An InputInterface instance
-     * @param OutputInterface $output An OutputInterface instance
      */
     protected function interact(InputInterface $input, OutputInterface $output)
     {
     }
 
     /**
-     * Initializes the command just after the input has been validated.
+     * Initializes the command after the input has been bound and before the input
+     * is validated.
      *
      * This is mainly useful when a lot of commands extends one main command
      * where some things need to be initialized based on the input arguments and options.
      *
-     * @param InputInterface  $input  An InputInterface instance
-     * @param OutputInterface $output An OutputInterface instance
+     * @see InputInterface::bind()
+     * @see InputInterface::validate()
      */
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
@@ -198,10 +193,9 @@ class Command
      * setCode() method or by overriding the execute() method
      * in a sub-class.
      *
-     * @param InputInterface  $input  An InputInterface instance
-     * @param OutputInterface $output An OutputInterface instance
-     *
      * @return int The command exit code
+     *
+     * @throws \Exception When binding input fails. Bypass this by calling {@link ignoreValidationErrors()}.
      *
      * @see setCode()
      * @see execute()
@@ -227,9 +221,15 @@ class Command
         $this->initialize($input, $output);
 
         if (null !== $this->processTitle) {
-            if (function_exists('cli_set_process_title')) {
-                cli_set_process_title($this->processTitle);
-            } elseif (function_exists('setproctitle')) {
+            if (\function_exists('cli_set_process_title')) {
+                if (!@cli_set_process_title($this->processTitle)) {
+                    if ('Darwin' === PHP_OS) {
+                        $output->writeln('<comment>Running "cli_set_process_title" as an unprivileged user is not supported on MacOS.</comment>', OutputInterface::VERBOSITY_VERY_VERBOSE);
+                    } else {
+                        cli_set_process_title($this->processTitle);
+                    }
+                }
+            } elseif (\function_exists('setproctitle')) {
                 setproctitle($this->processTitle);
             } elseif (OutputInterface::VERBOSITY_VERY_VERBOSE === $output->getVerbosity()) {
                 $output->writeln('<comment>Install the proctitle PECL to be able to change the process title.</comment>');
@@ -250,7 +250,7 @@ class Command
         $input->validate();
 
         if ($this->code) {
-            $statusCode = call_user_func($this->code, $input, $output);
+            $statusCode = \call_user_func($this->code, $input, $output);
         } else {
             $statusCode = $this->execute($input, $output);
         }
@@ -266,7 +266,7 @@ class Command
      *
      * @param callable $code A callable(InputInterface $input, OutputInterface $output)
      *
-     * @return Command The current instance
+     * @return $this
      *
      * @throws InvalidArgumentException
      *
@@ -301,14 +301,13 @@ class Command
 
         $this->definition->addOptions($this->application->getDefinition()->getOptions());
 
+        $this->applicationDefinitionMerged = true;
+
         if ($mergeArgs) {
             $currentArguments = $this->definition->getArguments();
             $this->definition->setArguments($this->application->getDefinition()->getArguments());
             $this->definition->addArguments($currentArguments);
-        }
 
-        $this->applicationDefinitionMerged = true;
-        if ($mergeArgs) {
             $this->applicationDefinitionMergedWithArgs = true;
         }
     }
@@ -318,7 +317,7 @@ class Command
      *
      * @param array|InputDefinition $definition An array of argument and option instances or a definition instance
      *
-     * @return Command The current instance
+     * @return $this
      */
     public function setDefinition($definition)
     {
@@ -361,12 +360,14 @@ class Command
     /**
      * Adds an argument.
      *
-     * @param string $name        The argument name
-     * @param int    $mode        The argument mode: InputArgument::REQUIRED or InputArgument::OPTIONAL
-     * @param string $description A description text
-     * @param mixed  $default     The default value (for InputArgument::OPTIONAL mode only)
+     * @param string               $name        The argument name
+     * @param int|null             $mode        The argument mode: self::REQUIRED or self::OPTIONAL
+     * @param string               $description A description text
+     * @param string|string[]|null $default     The default value (for self::OPTIONAL mode only)
      *
-     * @return Command The current instance
+     * @throws InvalidArgumentException When argument mode is not valid
+     *
+     * @return $this
      */
     public function addArgument($name, $mode = null, $description = '', $default = null)
     {
@@ -378,13 +379,15 @@ class Command
     /**
      * Adds an option.
      *
-     * @param string $name        The option name
-     * @param string $shortcut    The shortcut (can be null)
-     * @param int    $mode        The option mode: One of the InputOption::VALUE_* constants
-     * @param string $description A description text
-     * @param mixed  $default     The default value (must be null for InputOption::VALUE_NONE)
+     * @param string                    $name        The option name
+     * @param string|array              $shortcut    The shortcuts, can be null, a string of shortcuts delimited by | or an array of shortcuts
+     * @param int|null                  $mode        The option mode: One of the VALUE_* constants
+     * @param string                    $description A description text
+     * @param string|string[]|bool|null $default     The default value (must be null for self::VALUE_NONE)
      *
-     * @return Command The current instance
+     * @throws InvalidArgumentException If option mode is invalid or incompatible
+     *
+     * @return $this
      */
     public function addOption($name, $shortcut = null, $mode = null, $description = '', $default = null)
     {
@@ -403,7 +406,7 @@ class Command
      *
      * @param string $name The command name
      *
-     * @return Command The current instance
+     * @return $this
      *
      * @throws InvalidArgumentException When the name is invalid
      */
@@ -426,7 +429,7 @@ class Command
      *
      * @param string $title The process title
      *
-     * @return Command The current instance
+     * @return $this
      */
     public function setProcessTitle($title)
     {
@@ -458,7 +461,7 @@ class Command
     }
 
     /**
-     * @return bool Whether the command should be publicly shown or not.
+     * @return bool whether the command should be publicly shown or not
      */
     public function isHidden()
     {
@@ -470,7 +473,7 @@ class Command
      *
      * @param string $description The description for the command
      *
-     * @return Command The current instance
+     * @return $this
      */
     public function setDescription($description)
     {
@@ -494,7 +497,7 @@ class Command
      *
      * @param string $help The help for the command
      *
-     * @return Command The current instance
+     * @return $this
      */
     public function setHelp($help)
     {
@@ -540,13 +543,13 @@ class Command
      *
      * @param string[] $aliases An array of aliases for the command
      *
-     * @return Command The current instance
+     * @return $this
      *
      * @throws InvalidArgumentException When an alias is invalid
      */
     public function setAliases($aliases)
     {
-        if (!is_array($aliases) && !$aliases instanceof \Traversable) {
+        if (!\is_array($aliases) && !$aliases instanceof \Traversable) {
             throw new InvalidArgumentException('$aliases must be an array or an instance of \Traversable');
         }
 
@@ -592,7 +595,7 @@ class Command
      *
      * @param string $usage The usage, it'll be prefixed with the command name
      *
-     * @return Command The current instance
+     * @return $this
      */
     public function addUsage($usage)
     {
@@ -639,11 +642,9 @@ class Command
      *
      * It must be non-empty and parts can optionally be separated by ":".
      *
-     * @param string $name
-     *
      * @throws InvalidArgumentException When the name is invalid
      */
-    private function validateName($name)
+    private function validateName(string $name)
     {
         if (!preg_match('/^[^\:]++(\:[^\:]++)*$/', $name)) {
             throw new InvalidArgumentException(sprintf('Command name "%s" is invalid.', $name));
