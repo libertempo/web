@@ -110,7 +110,7 @@ On va devoir définir des critères de recherche :
 
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 
-$config_ldap_server = "mon_serveur";
+$config_ldap_server = "ldap://mon_serveur";
 $config_ldap_protocol_version = 0 ;   // 3 si version 3 , 0 sinon !
 $config_ldap_bupsvr = "";
 $config_basedn      = "dc=mon_domaine,dc=fr";

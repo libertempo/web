@@ -18,37 +18,22 @@ class LdapAuthentifierService extends \Atoum
     {
         parent::beforeTestMethod($method);
 
-        $this->mockGenerator->orphanize('__construct');
-        $this->search = new \mock\Adldap\Query\Factory();
+        $this->connection = new \mock\Adldap\Connections\Ldap();
         $this->provider = new \mock\Adldap\Connections\Provider();
         $this->ldap = new \mock\Adldap\Adldap();
         $this->calling($this->ldap)->addProvider = '';
         $this->calling($this->ldap)->connect = $this->provider;
-        $this->calling($this->provider)->search = $this->search;
+        $this->calling($this->provider)->getConnection = $this->connection;
         $this->mockGenerator->orphanize('__construct');
         $this->request = new \mock\Slim\Http\Request();
         $configuration = json_decode(json_encode($this->configuration));
         $this->calling($this->request)->getAttribute = $configuration;
+        $this->calling($this->request)->getHeaderLine = 'Basic QWxhZGRpbjpPcGVuU2VzYW1l';
     }
 
-    public function testIsAuthentificationSucceedBindException()
+    public function testIsAuthentificationSucceedFalse()
     {
-        $this->calling($this->request)->getHeaderLine = 'Basic QWxhZGRpbjpPcGVuU2VzYW1l';
-        $this->calling($this->ldap)->connect = function () {
-            throw new \Adldap\Auth\BindException('');
-        };
-        $this->newTestedInstance($this->ldap);
-        $succeed = $this->testedInstance->isAuthentificationSucceed($this->request);
-
-        $this->boolean($succeed)->isFalse();
-    }
-
-    public function testIsAuthentificationSucceedModelNotFoundException()
-    {
-        $this->calling($this->request)->getHeaderLine = 'Basic QWxhZGRpbjpPcGVuU2VzYW1l';
-        $this->calling($this->search)->findByDnOrFail = function () {
-            throw new \Adldap\Models\ModelNotFoundException('');
-        };
+        $this->calling($this->connection)->bind = false;
         $this->newTestedInstance($this->ldap);
         $succeed = $this->testedInstance->isAuthentificationSucceed($this->request);
 
@@ -57,11 +42,7 @@ class LdapAuthentifierService extends \Atoum
 
     public function testIsAuthentificationSucceedTrue()
     {
-        $this->calling($this->request)->getHeaderLine = 'Basic QWxhZGRpbjpPcGVuU2VzYW1l';
-        $this->mockGenerator->orphanize('__construct');
-        $model = new \mock\Adldap\Models\Entry();
-        $model->userpassword = 'OpenSesame';
-        $this->calling($this->search)->findByDnOrFail = $model;
+        $this->calling($this->connection)->bind = true;
         $this->newTestedInstance($this->ldap);
         $succeed = $this->testedInstance->isAuthentificationSucceed($this->request);
 
@@ -79,9 +60,9 @@ class LdapAuthentifierService extends \Atoum
     private $provider;
 
     /**
-     * @var \Adldap\Query\Factory
+     * @var \Adldap\Connections\ConnectionInterface
      */
-    private $search;
+    private $connection;
 
     /**
      * @var array
