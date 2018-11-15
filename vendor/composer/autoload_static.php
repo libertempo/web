@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit105eb6cc62daffd76dde387ae5125a83
+class ComposerStaticInit92a53738965641ee7e3b3e4f4372cbb2
 {
     public static $files = array (
         'a12da592622097d2b593a430e32e13fd' => __DIR__ . '/..' . '/nette/utils/src/loader.php',
@@ -506,6 +506,7 @@ class ComposerStaticInit105eb6cc62daffd76dde387ae5125a83
         'mageekguy\\atoum\\asserters\\phpClass' => __DIR__ . '/..' . '/atoum/atoum/classes/asserters/phpClass.php',
         'mageekguy\\atoum\\asserters\\phpFloat' => __DIR__ . '/..' . '/atoum/atoum/classes/asserters/phpFloat.php',
         'mageekguy\\atoum\\asserters\\phpFunction' => __DIR__ . '/..' . '/atoum/atoum/classes/asserters/phpFunction.php',
+        'mageekguy\\atoum\\asserters\\phpObject' => __DIR__ . '/..' . '/atoum/atoum/classes/asserters/phpObject.php',
         'mageekguy\\atoum\\asserters\\phpResource' => __DIR__ . '/..' . '/atoum/atoum/classes/asserters/phpResource.php',
         'mageekguy\\atoum\\asserters\\phpString' => __DIR__ . '/..' . '/atoum/atoum/classes/asserters/phpString.php',
         'mageekguy\\atoum\\asserters\\sizeOf' => __DIR__ . '/..' . '/atoum/atoum/classes/asserters/sizeOf.php',
@@ -750,6 +751,7 @@ class ComposerStaticInit105eb6cc62daffd76dde387ae5125a83
         'mageekguy\\atoum\\test\\data\\provider\\object\\exceptions\\mandatoryArgument' => __DIR__ . '/..' . '/atoum/atoum/classes/test/data/provider/object/exceptions/mandatoryArgument.php',
         'mageekguy\\atoum\\test\\data\\provider\\object\\exceptions\\privateConstructor' => __DIR__ . '/..' . '/atoum/atoum/classes/test/data/provider/object/exceptions/privateConstructor.php',
         'mageekguy\\atoum\\test\\data\\providers\\mock' => __DIR__ . '/..' . '/atoum/atoum/classes/test/data/providers/mock.php',
+        'mageekguy\\atoum\\test\\data\\providers\\phpObject' => __DIR__ . '/..' . '/atoum/atoum/classes/test/data/providers/phpObject.php',
         'mageekguy\\atoum\\test\\data\\set' => __DIR__ . '/..' . '/atoum/atoum/classes/test/data/set.php',
         'mageekguy\\atoum\\test\\engine' => __DIR__ . '/..' . '/atoum/atoum/classes/test/engine.php',
         'mageekguy\\atoum\\test\\engines\\concurrent' => __DIR__ . '/..' . '/atoum/atoum/classes/test/engines/concurrent.php',
@@ -787,11 +789,11 @@ class ComposerStaticInit105eb6cc62daffd76dde387ae5125a83
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit105eb6cc62daffd76dde387ae5125a83::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit105eb6cc62daffd76dde387ae5125a83::$prefixDirsPsr4;
-            $loader->fallbackDirsPsr4 = ComposerStaticInit105eb6cc62daffd76dde387ae5125a83::$fallbackDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit105eb6cc62daffd76dde387ae5125a83::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit105eb6cc62daffd76dde387ae5125a83::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit92a53738965641ee7e3b3e4f4372cbb2::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit92a53738965641ee7e3b3e4f4372cbb2::$prefixDirsPsr4;
+            $loader->fallbackDirsPsr4 = ComposerStaticInit92a53738965641ee7e3b3e4f4372cbb2::$fallbackDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit92a53738965641ee7e3b3e4f4372cbb2::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit92a53738965641ee7e3b3e4f4372cbb2::$classMap;
 
         }, null, ClassLoader::class);
     }

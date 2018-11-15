@@ -69,7 +69,7 @@ final class Versions
   'symfony/debug' => 'v3.4.18@fe9793af008b651c5441bdeab21ede8172dab097',
   'symfony/finder' => 'v4.1.7@1f17195b44543017a9c9b2d437c670627e96ad06',
   'symfony/process' => 'v4.1.7@3e83acef94d979b1de946599ef86b3a352abcdc9',
-  'libertempo/libertempo-web' => 'No version set (parsed as 1.0.0)@',
+  'libertempo/libertempo-web' => 'dev-dependabot/composer/atoum/atoum-3.3.0@8c261ff1118236ce2b86d782f490c4c505082303',
 );
 
     private function __construct()
