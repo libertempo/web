@@ -2,21 +2,30 @@
 
 namespace PHPStan\Type;
 
-use PHPStan\Analyser\Scope;
-use PHPStan\Reflection\ClassConstantReflection;
+use PHPStan\Reflection\ClassMemberAccessAnswerer;
+use PHPStan\Reflection\ConstantReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\PropertyReflection;
 use PHPStan\TrinaryLogic;
+use PHPStan\Type\Traits\MaybeCallableTypeTrait;
+use PHPStan\Type\Traits\MaybeIterableTypeTrait;
+use PHPStan\Type\Traits\MaybeOffsetAccessibleTypeTrait;
+use PHPStan\Type\Traits\TruthyBooleanTypeTrait;
 
 class ObjectWithoutClassType implements Type
 {
+
+	use MaybeCallableTypeTrait;
+	use MaybeIterableTypeTrait;
+	use MaybeOffsetAccessibleTypeTrait;
+	use TruthyBooleanTypeTrait;
 
 	public function hasProperty(string $propertyName): bool
 	{
 		return false;
 	}
 
-	public function getProperty(string $propertyName, Scope $scope): PropertyReflection
+	public function getProperty(string $propertyName, ClassMemberAccessAnswerer $scope): PropertyReflection
 	{
 		throw new \PHPStan\ShouldNotHappenException();
 	}
@@ -29,13 +38,15 @@ class ObjectWithoutClassType implements Type
 		return [];
 	}
 
-	public function accepts(Type $type): bool
+	public function accepts(Type $type, bool $strictTypes): TrinaryLogic
 	{
 		if ($type instanceof CompoundType) {
-			return CompoundTypeHelper::accepts($type, $this);
+			return CompoundTypeHelper::accepts($type, $this, $strictTypes);
 		}
 
-		return $type instanceof self || $type instanceof TypeWithClassName;
+		return TrinaryLogic::createFromBoolean(
+			$type instanceof self || $type instanceof TypeWithClassName
+		);
 	}
 
 	public function isSuperTypeOf(Type $type): TrinaryLogic
@@ -48,22 +59,31 @@ class ObjectWithoutClassType implements Type
 			return TrinaryLogic::createYes();
 		}
 
+		if ($type instanceof ClosureType) {
+			return TrinaryLogic::createYes();
+		}
+
 		return TrinaryLogic::createNo();
 	}
 
-	public function describe(): string
+	public function equals(Type $type): bool
+	{
+		return $type instanceof self;
+	}
+
+	public function describe(VerbosityLevel $level): string
 	{
 		return 'object';
 	}
 
-	public function canAccessProperties(): bool
+	public function canAccessProperties(): TrinaryLogic
 	{
-		return true;
+		return TrinaryLogic::createYes();
 	}
 
-	public function canCallMethods(): bool
+	public function canCallMethods(): TrinaryLogic
 	{
-		return true;
+		return TrinaryLogic::createYes();
 	}
 
 	public function hasMethod(string $methodName): bool
@@ -71,14 +91,14 @@ class ObjectWithoutClassType implements Type
 		return false;
 	}
 
-	public function getMethod(string $methodName, Scope $scope): MethodReflection
+	public function getMethod(string $methodName, ClassMemberAccessAnswerer $scope): MethodReflection
 	{
 		throw new \PHPStan\ShouldNotHappenException();
 	}
 
-	public function canAccessConstants(): bool
+	public function canAccessConstants(): TrinaryLogic
 	{
-		return true;
+		return TrinaryLogic::createYes();
 	}
 
 	public function hasConstant(string $constantName): bool
@@ -86,41 +106,45 @@ class ObjectWithoutClassType implements Type
 		return false;
 	}
 
-	public function getConstant(string $constantName): ClassConstantReflection
+	public function getConstant(string $constantName): ConstantReflection
 	{
 		throw new \PHPStan\ShouldNotHappenException();
 	}
 
-	public function isDocumentableNatively(): bool
+	public function isCloneable(): TrinaryLogic
 	{
-		return true;
+		return TrinaryLogic::createYes();
 	}
 
-	public function isIterable(): TrinaryLogic
+	public function toNumber(): Type
 	{
-		return TrinaryLogic::createMaybe();
+		return new ErrorType();
 	}
 
-	public function getIterableKeyType(): Type
+	public function toString(): Type
 	{
-		return new MixedType();
+		return new ErrorType();
 	}
 
-	public function getIterableValueType(): Type
+	public function toInteger(): Type
 	{
-		return new MixedType();
+		return new ErrorType();
 	}
 
-	public function isCallable(): TrinaryLogic
+	public function toFloat(): Type
 	{
-		return TrinaryLogic::createMaybe();
+		return new ErrorType();
 	}
 
-	public function isClonable(): bool
+	public function toArray(): Type
 	{
-		return true;
+		return new ArrayType(new MixedType(), new MixedType());
 	}
 
+	/**
+	 * @param mixed[] $properties
+	 * @return Type
+	 */
 	public static function __set_state(array $properties): Type
 	{
 		return new self();

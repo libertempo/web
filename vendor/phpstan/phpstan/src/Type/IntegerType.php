@@ -2,80 +2,84 @@
 
 namespace PHPStan\Type;
 
-use PHPStan\Analyser\Scope;
-use PHPStan\Reflection\ClassConstantReflection;
-use PHPStan\Reflection\MethodReflection;
-use PHPStan\Reflection\PropertyReflection;
 use PHPStan\TrinaryLogic;
+use PHPStan\Type\Constant\ConstantArrayType;
+use PHPStan\Type\Constant\ConstantIntegerType;
+use PHPStan\Type\Traits\NonCallableTypeTrait;
+use PHPStan\Type\Traits\NonIterableTypeTrait;
+use PHPStan\Type\Traits\NonObjectTypeTrait;
+use PHPStan\Type\Traits\UndecidedBooleanTypeTrait;
 
 class IntegerType implements Type
 {
 
 	use JustNullableTypeTrait;
+	use NonCallableTypeTrait;
+	use NonIterableTypeTrait;
+	use NonObjectTypeTrait;
+	use UndecidedBooleanTypeTrait;
 
-	public function describe(): string
+	public function describe(VerbosityLevel $level): string
 	{
 		return 'int';
 	}
 
-	public function canAccessProperties(): bool
-	{
-		return false;
-	}
-
-	public function hasProperty(string $propertyName): bool
-	{
-		return false;
-	}
-
-	public function getProperty(string $propertyName, Scope $scope): PropertyReflection
-	{
-		throw new \PHPStan\ShouldNotHappenException();
-	}
-
-	public function canCallMethods(): bool
-	{
-		return false;
-	}
-
-	public function hasMethod(string $methodName): bool
-	{
-		return false;
-	}
-
-	public function getMethod(string $methodName, Scope $scope): MethodReflection
-	{
-		throw new \PHPStan\ShouldNotHappenException();
-	}
-
-	public function canAccessConstants(): bool
-	{
-		return false;
-	}
-
-	public function hasConstant(string $constantName): bool
-	{
-		return false;
-	}
-
-	public function getConstant(string $constantName): ClassConstantReflection
-	{
-		throw new \PHPStan\ShouldNotHappenException();
-	}
-
-	public function isCallable(): TrinaryLogic
-	{
-		return TrinaryLogic::createNo();
-	}
-
-	public function isClonable(): bool
-	{
-		return false;
-	}
-
+	/**
+	 * @param mixed[] $properties
+	 * @return Type
+	 */
 	public static function __set_state(array $properties): Type
 	{
 		return new self();
+	}
+
+	public function toNumber(): Type
+	{
+		return $this;
+	}
+
+	public function toFloat(): Type
+	{
+		return new FloatType();
+	}
+
+	public function toInteger(): Type
+	{
+		return $this;
+	}
+
+	public function toString(): Type
+	{
+		return new StringType();
+	}
+
+	public function toArray(): Type
+	{
+		return new ConstantArrayType(
+			[new ConstantIntegerType(0)],
+			[$this],
+			1
+		);
+	}
+
+	public function isOffsetAccessible(): TrinaryLogic
+	{
+		return TrinaryLogic::createYes();
+	}
+
+	public function hasOffsetValueType(Type $offsetType): TrinaryLogic
+	{
+		return TrinaryLogic::createYes();
+	}
+
+	public function getOffsetValueType(Type $offsetType): Type
+	{
+		return new NullType();
+	}
+
+	public function setOffsetValueType(?Type $offsetType, Type $valueType): Type
+	{
+		return new ErrorType();
 	}
 
 }

@@ -3,10 +3,19 @@
 namespace PHPStan\Command\ErrorFormatter;
 
 use PHPStan\Command\AnalysisResult;
+use PHPStan\File\RelativePathHelper;
 use Symfony\Component\Console\Style\OutputStyle;
 
 class CheckstyleErrorFormatter implements ErrorFormatter
 {
+
+	/** @var RelativePathHelper */
+	private $relativePathHelper;
+
+	public function __construct(RelativePathHelper $relativePathHelper)
+	{
+		$this->relativePathHelper = $relativePathHelper;
+	}
 
 	/**
 	 * Formats the errors and outputs them to the console.
@@ -20,34 +29,28 @@ class CheckstyleErrorFormatter implements ErrorFormatter
 		OutputStyle $style
 	): int
 	{
-		$returnCode = 1;
-		if (!$analysisResult->hasErrors()) {
-			$returnCode = 0;
+		$style->writeln('<?xml version="1.0" encoding="UTF-8"?>');
+		$style->writeln('<checkstyle>');
+
+		foreach ($this->groupByFile($analysisResult) as $relativeFilePath => $errors) {
+			$style->writeln(sprintf(
+				'<file name="%s">',
+				$this->escape($relativeFilePath)
+			));
+
+			foreach ($errors as $error) {
+				$style->writeln(sprintf(
+					'  <error line="%d" column="1" severity="error" message="%s" />',
+					$this->escape((string) $error->getLine()),
+					$this->escape((string) $error->getMessage())
+				));
+			}
+			$style->writeln('</file>');
 		}
 
-		$out = '';
+		$style->writeln('</checkstyle>');
 
-		/** @var \PHPStan\Analyser\Error $fileSpecificError */
-		foreach ($analysisResult->getFileSpecificErrors() as $fileSpecificError) {
-			$out .= '<file name="' . $this->escape($fileSpecificError->getFile()) . '">' . "\n";
-			$out .= ' ';
-			$out .= '<error';
-			$out .= ' line="' . $this->escape((string) $fileSpecificError->getLine()) . '"';
-			$out .= ' column="1"';
-			$out .= ' severity="error"';
-			$out .= ' message="' . $this->escape($fileSpecificError->getMessage()) . '"';
-			$out .= '/>' . "\n";
-			$out .= '</file>' . "\n";
-		}
-
-		$style->write('<?xml version="1.0" encoding="UTF-8"?>' . "\n");
-		$style->write('<checkstyle>' . "\n");
-		if ($out !== '') {
-			$style->write($out);
-		}
-		$style->write('</checkstyle>' . "\n");
-
-		return $returnCode;
+		return $analysisResult->hasErrors() ? 1 : 0;
 	}
 
 	/**
@@ -59,6 +62,29 @@ class CheckstyleErrorFormatter implements ErrorFormatter
 	protected function escape(string $string): string
 	{
 		return htmlspecialchars($string, ENT_XML1 | ENT_COMPAT, 'UTF-8');
+	}
+
+	/**
+	 * Group errors by file
+	 *
+	 * @param AnalysisResult $analysisResult
+	 * @return array<string, array> Array that have as key the relative path of file
+	 *                              and as value an array with occured errors.
+	 */
+	private function groupByFile(AnalysisResult $analysisResult): array
+	{
+		$files = [];
+
+		/** @var \PHPStan\Analyser\Error $fileSpecificError */
+		foreach ($analysisResult->getFileSpecificErrors() as $fileSpecificError) {
+			$relativeFilePath = $this->relativePathHelper->getRelativePath(
+				$fileSpecificError->getFile()
+			);
+
+			$files[$relativeFilePath][] = $fileSpecificError;
+		}
+
+		return $files;
 	}
 
 }

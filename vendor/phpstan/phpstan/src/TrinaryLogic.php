@@ -2,20 +2,24 @@
 
 namespace PHPStan;
 
+use PHPStan\Type\BooleanType;
+use PHPStan\Type\Constant\ConstantBooleanType;
+
 /**
  * @see https://en.wikipedia.org/wiki/Three-valued_logic
  */
 class TrinaryLogic
 {
 
-	const YES = 1;
-	const MAYBE = 0;
-	const NO = -1;
+	private const YES = 1;
+	private const MAYBE = 0;
+	private const NO = -1;
 
-	/**
-	 * @var int
-	 */
+	/** @var int */
 	private $value;
+
+	/** @var self[] */
+	private static $registry = [];
 
 	private function __construct(int $value)
 	{
@@ -24,17 +28,28 @@ class TrinaryLogic
 
 	public static function createYes(): self
 	{
-		return new self(self::YES);
+		return self::create(self::YES);
 	}
 
 	public static function createNo(): self
 	{
-		return new self(self::NO);
+		return self::create(self::NO);
 	}
 
 	public static function createMaybe(): self
 	{
-		return new self(self::MAYBE);
+		return self::create(self::MAYBE);
+	}
+
+	public static function createFromBoolean(bool $value): self
+	{
+		return self::create($value ? self::YES : self::NO);
+	}
+
+	private static function create(int $value): self
+	{
+		self::$registry[$value] = self::$registry[$value] ?? new self($value);
+		return self::$registry[$value];
 	}
 
 	public function yes(): bool
@@ -52,67 +67,67 @@ class TrinaryLogic
 		return $this->value === self::NO;
 	}
 
+	public function toBooleanType(): BooleanType
+	{
+		if ($this->value === self::MAYBE) {
+			return new BooleanType();
+		}
+
+		return new ConstantBooleanType($this->value === self::YES);
+	}
+
 	public function and(self ...$operands): self
 	{
-		$operandValues = array_map(function (self $trinaryLogic): int {
-			return $trinaryLogic->value;
-		}, $operands);
+		$operandValues = array_column($operands, 'value');
 		$operandValues[] = $this->value;
-		return new self(min($operandValues));
+		return self::create(min($operandValues));
 	}
 
 	public function or(self ...$operands): self
 	{
-		$operandValues = array_map(function (self $trinaryLogic): int {
-			return $trinaryLogic->value;
-		}, $operands);
+		$operandValues = array_column($operands, 'value');
 		$operandValues[] = $this->value;
-		return new self(max($operandValues));
+		return self::create(max($operandValues));
 	}
 
 	public static function extremeIdentity(self ...$operands): self
 	{
-		$operandValues = array_map(function (self $trinaryLogic): int {
-			return $trinaryLogic->value;
-		}, $operands);
-
+		$operandValues = array_column($operands, 'value');
 		$min = min($operandValues);
 		$max = max($operandValues);
-		return new self($min === $max ? $min : self::MAYBE);
+		return self::create($min === $max ? $min : self::MAYBE);
 	}
 
 	public static function maxMin(self ...$operands): self
 	{
-		$operandValues = array_map(function (self $trinaryLogic): int {
-			return $trinaryLogic->value;
-		}, $operands);
-
-		return new self(max($operandValues) ?: min($operandValues));
+		$operandValues = array_column($operands, 'value');
+		return self::create(max($operandValues) > 0 ? max($operandValues) : min($operandValues));
 	}
 
 	public function negate(): self
 	{
-		return new self(-$this->value);
+		return self::create(-$this->value);
 	}
 
 	public function equals(self $other): bool
 	{
-		return $this->value === $other->value;
+		return $this === $other;
 	}
 
-	public function addMaybe(): self
+	public function compareTo(self $other): ?self
 	{
-		$value = $this->value;
-		if ($value === self::NO) {
-			$value = self::MAYBE;
+		if ($this->value > $other->value) {
+			return $this;
+		} elseif ($other->value > $this->value) {
+			return $other;
 		}
 
-		return new self($value);
+		return null;
 	}
 
 	public function describe(): string
 	{
-		$labels = [
+		static $labels = [
 			self::NO => 'No',
 			self::MAYBE => 'Maybe',
 			self::YES => 'Yes',
@@ -121,9 +136,13 @@ class TrinaryLogic
 		return $labels[$this->value];
 	}
 
+	/**
+	 * @param mixed[] $properties
+	 * @return self
+	 */
 	public static function __set_state(array $properties): self
 	{
-		return new self($properties['value']);
+		return self::create($properties['value']);
 	}
 
 }

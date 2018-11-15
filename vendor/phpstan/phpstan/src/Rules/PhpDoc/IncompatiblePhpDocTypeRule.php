@@ -3,10 +3,13 @@
 namespace PHPStan\Rules\PhpDoc;
 
 use PhpParser\Node;
+use PhpParser\Node\Expr\Variable;
 use PHPStan\Analyser\Scope;
 use PHPStan\Type\ArrayType;
+use PHPStan\Type\ErrorType;
 use PHPStan\Type\FileTypeMapper;
 use PHPStan\Type\Type;
+use PHPStan\Type\VerbosityLevel;
 
 class IncompatiblePhpDocTypeRule implements \PHPStan\Rules\Rule
 {
@@ -39,6 +42,7 @@ class IncompatiblePhpDocTypeRule implements \PHPStan\Rules\Rule
 		$resolvedPhpDoc = $this->fileTypeMapper->getResolvedPhpDoc(
 			$scope->getFile(),
 			$scope->isInClass() ? $scope->getClassReflection()->getName() : null,
+			$scope->isInTrait() ? $scope->getTraitReflection()->getName() : null,
 			$docComment->getText()
 		);
 		$nativeParameterTypes = $this->getNativeParameterTypes($node, $scope);
@@ -51,6 +55,12 @@ class IncompatiblePhpDocTypeRule implements \PHPStan\Rules\Rule
 			if (!isset($nativeParameterTypes[$parameterName])) {
 				$errors[] = sprintf(
 					'PHPDoc tag @param references unknown parameter $%s',
+					$parameterName
+				);
+
+			} elseif ($phpDocParamType instanceof ErrorType) {
+				$errors[] = sprintf(
+					'PHPDoc tag @param for parameter $%s contains unresolvable type',
 					$parameterName
 				);
 
@@ -70,16 +80,16 @@ class IncompatiblePhpDocTypeRule implements \PHPStan\Rules\Rule
 					$errors[] = sprintf(
 						'PHPDoc tag @param for parameter $%s with type %s is incompatible with native type %s',
 						$parameterName,
-						$phpDocParamType->describe(),
-						$nativeParamType->describe()
+						$phpDocParamType->describe(VerbosityLevel::typeOnly()),
+						$nativeParamType->describe(VerbosityLevel::typeOnly())
 					);
 
 				} elseif ($isParamSuperType->maybe()) {
 					$errors[] = sprintf(
 						'PHPDoc tag @param for parameter $%s with type %s is not subtype of native type %s',
 						$parameterName,
-						$phpDocParamType->describe(),
-						$nativeParamType->describe()
+						$phpDocParamType->describe(VerbosityLevel::typeOnly()),
+						$nativeParamType->describe(VerbosityLevel::typeOnly())
 					);
 				}
 			}
@@ -88,21 +98,25 @@ class IncompatiblePhpDocTypeRule implements \PHPStan\Rules\Rule
 		if ($resolvedPhpDoc->getReturnTag() !== null) {
 			$phpDocReturnType = $resolvedPhpDoc->getReturnTag()->getType();
 
-			$isReturnSuperType = $nativeReturnType->isSuperTypeOf($phpDocReturnType);
+			if ($phpDocReturnType instanceof ErrorType) {
+				$errors[] = 'PHPDoc tag @return contains unresolvable type';
 
-			if ($isReturnSuperType->no()) {
-				$errors[] = sprintf(
-					'PHPDoc tag @return with type %s is incompatible with native type %s',
-					$phpDocReturnType->describe(),
-					$nativeReturnType->describe()
-				);
+			} else {
+				$isReturnSuperType = $nativeReturnType->isSuperTypeOf($phpDocReturnType);
+				if ($isReturnSuperType->no()) {
+					$errors[] = sprintf(
+						'PHPDoc tag @return with type %s is incompatible with native type %s',
+						$phpDocReturnType->describe(VerbosityLevel::typeOnly()),
+						$nativeReturnType->describe(VerbosityLevel::typeOnly())
+					);
 
-			} elseif ($isReturnSuperType->maybe()) {
-				$errors[] = sprintf(
-					'PHPDoc tag @return with type %s is not subtype of native type %s',
-					$phpDocReturnType->describe(),
-					$nativeReturnType->describe()
-				);
+				} elseif ($isReturnSuperType->maybe()) {
+					$errors[] = sprintf(
+						'PHPDoc tag @return with type %s is not subtype of native type %s',
+						$phpDocReturnType->describe(VerbosityLevel::typeOnly()),
+						$nativeReturnType->describe(VerbosityLevel::typeOnly())
+					);
+				}
 			}
 		}
 
@@ -119,7 +133,10 @@ class IncompatiblePhpDocTypeRule implements \PHPStan\Rules\Rule
 		$nativeParameterTypes = [];
 		foreach ($node->getParams() as $parameter) {
 			$isNullable = $scope->isParameterValueNullable($parameter);
-			$nativeParameterTypes[$parameter->name] = $scope->getFunctionType(
+			if (!$parameter->var instanceof Variable || !is_string($parameter->var->name)) {
+				throw new \PHPStan\ShouldNotHappenException();
+			}
+			$nativeParameterTypes[$parameter->var->name] = $scope->getFunctionType(
 				$parameter->type,
 				$isNullable,
 				$parameter->variadic

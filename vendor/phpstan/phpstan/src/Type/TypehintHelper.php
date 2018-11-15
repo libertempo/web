@@ -7,13 +7,13 @@ use PHPStan\Broker\Broker;
 class TypehintHelper
 {
 
-	private static function getTypeObjectFromTypehint(string $typeString, string $selfClass = null): Type
+	private static function getTypeObjectFromTypehint(string $typeString, ?string $selfClass): Type
 	{
 		switch (strtolower($typeString)) {
 			case 'int':
 				return new IntegerType();
 			case 'bool':
-				return new TrueOrFalseBooleanType();
+				return new BooleanType();
 			case 'string':
 				return new StringType();
 			case 'float':
@@ -21,7 +21,7 @@ class TypehintHelper
 			case 'array':
 				return new ArrayType(new MixedType(), new MixedType());
 			case 'iterable':
-				return new IterableIterableType(new MixedType(), new MixedType());
+				return new IterableType(new MixedType(), new MixedType());
 			case 'callable':
 				return new CallableType();
 			case 'void':
@@ -45,9 +45,9 @@ class TypehintHelper
 	}
 
 	public static function decideTypeFromReflection(
-		\ReflectionType $reflectionType = null,
-		Type $phpDocType = null,
-		string $selfClass = null,
+		?\ReflectionType $reflectionType,
+		?Type $phpDocType = null,
+		?string $selfClass = null,
 		bool $isVariadic = false
 	): Type
 	{
@@ -73,22 +73,22 @@ class TypehintHelper
 
 	public static function decideType(
 		Type $type,
-		Type $phpDocType = null
+		?Type $phpDocType = null
 	): Type
 	{
-		if ($phpDocType !== null) {
+		if ($phpDocType !== null && !$phpDocType instanceof ErrorType) {
 			if ($type instanceof VoidType || $phpDocType instanceof VoidType) {
 				return new VoidType();
 			}
 
-			if (TypeCombinator::removeNull($type) instanceof IterableIterableType) {
+			if (TypeCombinator::removeNull($type) instanceof IterableType) {
 				if ($phpDocType instanceof UnionType) {
 					$innerTypes = [];
 					foreach ($phpDocType->getTypes() as $innerType) {
 						if ($innerType instanceof ArrayType) {
-							$innerTypes[] = new IterableIterableType(
-								$innerType->getIterableKeyType(),
-								$innerType->getIterableValueType()
+							$innerTypes[] = new IterableType(
+								$innerType->getKeyType(),
+								$innerType->getItemType()
 							);
 						} else {
 							$innerTypes[] = $innerType;
@@ -96,15 +96,14 @@ class TypehintHelper
 					}
 					$phpDocType = new UnionType($innerTypes);
 				} elseif ($phpDocType instanceof ArrayType) {
-					$phpDocType = new IterableIterableType(
-						$phpDocType->getIterableKeyType(),
-						$phpDocType->getIterableValueType()
+					$phpDocType = new IterableType(
+						$phpDocType->getKeyType(),
+						$phpDocType->getItemType()
 					);
 				}
 			}
 
-			$intersection = TypeCombinator::intersect($type, $phpDocType);
-			return $intersection instanceof NeverType ? $type : $intersection;
+			return $type->isSuperTypeOf($phpDocType)->yes() ? $phpDocType : $type;
 		}
 
 		return $type;

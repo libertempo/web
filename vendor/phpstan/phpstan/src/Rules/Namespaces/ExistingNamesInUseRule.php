@@ -10,23 +10,24 @@ use PHPStan\Rules\ClassCaseSensitivityCheck;
 class ExistingNamesInUseRule implements \PHPStan\Rules\Rule
 {
 
-	/**
-	 * @var \PHPStan\Broker\Broker
-	 */
+	/** @var \PHPStan\Broker\Broker */
 	private $broker;
 
-	/**
-	 * @var \PHPStan\Rules\ClassCaseSensitivityCheck
-	 */
+	/** @var \PHPStan\Rules\ClassCaseSensitivityCheck */
 	private $classCaseSensitivityCheck;
+
+	/** @var bool */
+	private $checkFunctionNameCase;
 
 	public function __construct(
 		Broker $broker,
-		ClassCaseSensitivityCheck $classCaseSensitivityCheck
+		ClassCaseSensitivityCheck $classCaseSensitivityCheck,
+		bool $checkFunctionNameCase
 	)
 	{
 		$this->broker = $broker;
 		$this->classCaseSensitivityCheck = $classCaseSensitivityCheck;
+		$this->checkFunctionNameCase = $checkFunctionNameCase;
 	}
 
 	public function getNodeType(): string
@@ -70,9 +71,11 @@ class ExistingNamesInUseRule implements \PHPStan\Rules\Rule
 	{
 		$messages = [];
 		foreach ($uses as $use) {
-			if (!$this->broker->hasConstant($use->name)) {
-				$messages[] = sprintf('Used constant %s not found.', (string) $use->name);
+			if ($this->broker->hasConstant($use->name, null)) {
+				continue;
 			}
+
+			$messages[] = sprintf('Used constant %s not found.', (string) $use->name);
 		}
 
 		return $messages;
@@ -86,13 +89,16 @@ class ExistingNamesInUseRule implements \PHPStan\Rules\Rule
 	{
 		$messages = [];
 		foreach ($uses as $use) {
-			if (!$this->broker->hasFunction($use->name)) {
+			if (!$this->broker->hasFunction($use->name, null)) {
 				$messages[] = sprintf('Used function %s not found.', (string) $use->name);
-			} else {
-				$functionReflection = $this->broker->getFunction($use->name);
+			} elseif ($this->checkFunctionNameCase) {
+				$functionReflection = $this->broker->getFunction($use->name, null);
 				$realName = $functionReflection->getName();
 				$usedName = (string) $use->name;
-				if ($realName !== $usedName) {
+				if (
+					strtolower($realName) === strtolower($usedName)
+					&& $realName !== $usedName
+				) {
 					$messages[] = sprintf(
 						'Function %s used with incorrect case: %s.',
 						$realName,
@@ -112,7 +118,7 @@ class ExistingNamesInUseRule implements \PHPStan\Rules\Rule
 	private function checkClasses(array $uses): array
 	{
 		return $this->classCaseSensitivityCheck->checkClassNames(
-			array_map(function (\PhpParser\Node\Stmt\UseUse $use): string {
+			array_map(static function (\PhpParser\Node\Stmt\UseUse $use): string {
 				return (string) $use->name;
 			}, $uses)
 		);

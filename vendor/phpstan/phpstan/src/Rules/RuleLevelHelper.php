@@ -6,6 +6,9 @@ use PhpParser\Node\Expr;
 use PHPStan\Analyser\Scope;
 use PHPStan\Broker\Broker;
 use PHPStan\Type\ArrayType;
+use PHPStan\Type\BenevolentUnionType;
+use PHPStan\Type\CompoundType;
+use PHPStan\Type\Constant\ConstantArrayType;
 use PHPStan\Type\ErrorType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\NeverType;
@@ -13,29 +16,22 @@ use PHPStan\Type\NullType;
 use PHPStan\Type\StaticType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
+use PHPStan\Type\TypeUtils;
 use PHPStan\Type\UnionType;
 
 class RuleLevelHelper
 {
 
-	/**
-	 * @var \PHPStan\Broker\Broker
-	 */
+	/** @var \PHPStan\Broker\Broker */
 	private $broker;
 
-	/**
-	 * @var bool
-	 */
+	/** @var bool */
 	private $checkNullables;
 
-	/**
-	 * @var bool
-	 */
+	/** @var bool */
 	private $checkThisOnly;
 
-	/**
-	 * @var bool
-	 */
+	/** @var bool */
 	private $checkUnionTypes;
 
 	public function __construct(
@@ -53,41 +49,106 @@ class RuleLevelHelper
 
 	public function isThis(Expr $expression): bool
 	{
-		if (!($expression instanceof Expr\Variable)) {
-			return false;
-		}
-
-		if (!is_string($expression->name)) {
-			return false;
-		}
-
-		return $expression->name === 'this';
+		return $expression instanceof Expr\Variable && $expression->name === 'this';
 	}
 
-	public function accepts(Type $acceptingType, Type $acceptedType): bool
+	public function accepts(Type $acceptingType, Type $acceptedType, bool $strictTypes): bool
 	{
 		if (
 			!$this->checkNullables
 			&& !$acceptingType instanceof NullType
 			&& !$acceptedType instanceof NullType
+			&& !$acceptedType instanceof BenevolentUnionType
 		) {
 			$acceptedType = TypeCombinator::removeNull($acceptedType);
 		}
 
-		return $acceptingType->accepts($acceptedType);
+		$acceptedArrays = TypeUtils::getArrays($acceptedType);
+		if ($acceptingType instanceof ArrayType && count($acceptedArrays) > 0) {
+			foreach ($acceptedArrays as $acceptedArray) {
+				if ($acceptedArray instanceof ConstantArrayType) {
+					foreach ($acceptedArray->getKeyTypes() as $i => $keyType) {
+						$valueType = $acceptedArray->getValueTypes()[$i];
+						if (
+							!self::accepts(
+								$acceptingType->getKeyType(),
+								$keyType,
+								$strictTypes
+							) || !self::accepts(
+								$acceptingType->getItemType(),
+								$valueType,
+								$strictTypes
+							)
+						) {
+							return false;
+						}
+					}
+				} else {
+					if (
+						!self::accepts(
+							$acceptingType->getKeyType(),
+							$acceptedArray->getKeyType(),
+							$strictTypes
+						) || !self::accepts(
+							$acceptingType->getItemType(),
+							$acceptedArray->getItemType(),
+							$strictTypes
+						)
+					) {
+						return false;
+					}
+				}
+			}
+
+			return true;
+		}
+
+		if ($acceptingType instanceof UnionType && !$acceptedType instanceof CompoundType) {
+			foreach ($acceptingType->getTypes() as $innerType) {
+				if (self::accepts($innerType, $acceptedType, $strictTypes)) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		if ($acceptedType instanceof ArrayType && $acceptingType instanceof ArrayType) {
+			return self::accepts(
+				$acceptingType->getKeyType(),
+				$acceptedType->getKeyType(),
+				$strictTypes
+			) && self::accepts(
+				$acceptingType->getItemType(),
+				$acceptedType->getItemType(),
+				$strictTypes
+			);
+		}
+
+		$accepts = $acceptingType->accepts($acceptedType, $strictTypes);
+
+		return $this->checkUnionTypes ? $accepts->yes() : !$accepts->no();
 	}
 
+	/**
+	 * @param Scope $scope
+	 * @param Expr $var
+	 * @param string $unknownClassErrorPattern
+	 * @param callable(Type $type): bool $unionTypeCriteriaCallback
+	 * @return FoundTypeResult
+	 */
 	public function findTypeToCheck(
 		Scope $scope,
 		Expr $var,
-		string $unknownClassErrorPattern
+		string $unknownClassErrorPattern,
+		callable $unionTypeCriteriaCallback
 	): FoundTypeResult
 	{
 		if ($this->checkThisOnly && !$this->isThis($var)) {
 			return new FoundTypeResult(new ErrorType(), [], []);
 		}
 		$type = $scope->getType($var);
-		if (!$type instanceof NullType) {
+		if (!$this->checkNullables && !$type instanceof NullType) {
 			$type = \PHPStan\Type\TypeCombinator::removeNull($type);
 		}
 		if ($type instanceof MixedType || $type instanceof NeverType) {
@@ -96,16 +157,15 @@ class RuleLevelHelper
 		if ($type instanceof StaticType) {
 			$type = $type->resolveStatic($type->getBaseClass());
 		}
-		if ($type instanceof ArrayType) {
-			return new FoundTypeResult($type, [], []);
-		}
 
 		$errors = [];
-		$referencedClasses = $type->getReferencedClasses();
-		foreach ($referencedClasses as $referencedClass) {
-			if (!$this->broker->hasClass($referencedClass)) {
-				$errors[] = sprintf($unknownClassErrorPattern, $referencedClass);
+		$directClassNames = TypeUtils::getDirectClassNames($type);
+		foreach ($directClassNames as $referencedClass) {
+			if ($this->broker->hasClass($referencedClass)) {
+				continue;
 			}
+
+			$errors[] = sprintf($unknownClassErrorPattern, $referencedClass);
 		}
 
 		if (count($errors) > 0) {
@@ -113,10 +173,21 @@ class RuleLevelHelper
 		}
 
 		if (!$this->checkUnionTypes && $type instanceof UnionType) {
-			return new FoundTypeResult(new ErrorType(), [], []);
+			$newTypes = [];
+			foreach ($type->getTypes() as $innerType) {
+				if (!$unionTypeCriteriaCallback($innerType)) {
+					continue;
+				}
+
+				$newTypes[] = $innerType;
+			}
+
+			if (count($newTypes) > 0) {
+				return new FoundTypeResult(TypeCombinator::union(...$newTypes), $directClassNames, []);
+			}
 		}
 
-		return new FoundTypeResult($type, $referencedClasses, []);
+		return new FoundTypeResult($type, $directClassNames, []);
 	}
 
 }

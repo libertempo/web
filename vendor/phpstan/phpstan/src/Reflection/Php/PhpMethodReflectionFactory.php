@@ -10,16 +10,26 @@ interface PhpMethodReflectionFactory
 
 	/**
 	 * @param \PHPStan\Reflection\ClassReflection $declaringClass
-	 * @param \ReflectionMethod $reflection
+	 * @param \PHPStan\Reflection\ClassReflection|null $declaringTrait
+	 * @param BuiltinMethodReflection $reflection
 	 * @param \PHPStan\Type\Type[] $phpDocParameterTypes
 	 * @param \PHPStan\Type\Type|null $phpDocReturnType
+	 * @param \PHPStan\Type\Type|null $phpDocThrowType
+	 * @param bool $isDeprecated
+	 * @param bool $isInternal
+	 * @param bool $isFinal
 	 * @return \PHPStan\Reflection\Php\PhpMethodReflection
 	 */
 	public function create(
 		ClassReflection $declaringClass,
-		\ReflectionMethod $reflection,
+		?ClassReflection $declaringTrait,
+		BuiltinMethodReflection $reflection,
 		array $phpDocParameterTypes,
-		Type $phpDocReturnType = null
+		?Type $phpDocReturnType,
+		?Type $phpDocThrowType,
+		bool $isDeprecated,
+		bool $isInternal,
+		bool $isFinal
 	): PhpMethodReflection;
 
 }

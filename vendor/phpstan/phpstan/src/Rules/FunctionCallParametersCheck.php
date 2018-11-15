@@ -3,13 +3,11 @@
 namespace PHPStan\Rules;
 
 use PHPStan\Analyser\Scope;
-use PHPStan\Reflection\FunctionReflection;
-use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptor;
 use PHPStan\Type\ArrayType;
-use PHPStan\Type\IterableIterableType;
+use PHPStan\Type\IterableType;
 use PHPStan\Type\MixedType;
-use PHPStan\Type\StringType;
+use PHPStan\Type\VerbosityLevel;
 use PHPStan\Type\VoidType;
 
 class FunctionCallParametersCheck
@@ -36,51 +34,31 @@ class FunctionCallParametersCheck
 	}
 
 	/**
-	 * @param \PHPStan\Reflection\ParametersAcceptor $function
+	 * @param \PHPStan\Reflection\ParametersAcceptor $parametersAcceptor
 	 * @param \PHPStan\Analyser\Scope $scope
 	 * @param \PhpParser\Node\Expr\FuncCall|\PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall|\PhpParser\Node\Expr\New_ $funcCall
 	 * @param string[] $messages Eight message templates
 	 * @return string[]
 	 */
-	public function check(ParametersAcceptor $function, Scope $scope, $funcCall, array $messages): array
+	public function check(
+		ParametersAcceptor $parametersAcceptor,
+		Scope $scope,
+		$funcCall,
+		array $messages
+	): array
 	{
-		if (
-			$function instanceof FunctionReflection
-			&& in_array($function->getName(), [
-				'implode',
-				'strtok',
-			], true)
-		) {
-			$functionParametersMinCount = 1;
-			$functionParametersMaxCount = 2;
-		} elseif (
-			$function instanceof MethodReflection
-			&& $function->getDeclaringClass()->getName() === 'DatePeriod'
-			&& $function->getName() === '__construct'
-		) {
-			$functionParametersMinCount = 1;
-			$functionParametersMaxCount = 4;
-		} elseif (
-			$function instanceof MethodReflection
-			&& $function->getDeclaringClass()->getName() === 'mysqli'
-			&& $function->getName() === 'query'
-		) {
-			$functionParametersMinCount = 1;
-			$functionParametersMaxCount = 2;
-		} else {
-			$functionParametersMinCount = 0;
-			$functionParametersMaxCount = 0;
-			foreach ($function->getParameters() as $parameter) {
-				if (!$parameter->isOptional()) {
-					$functionParametersMinCount++;
-				}
-
-				$functionParametersMaxCount++;
+		$functionParametersMinCount = 0;
+		$functionParametersMaxCount = 0;
+		foreach ($parametersAcceptor->getParameters() as $parameter) {
+			if (!$parameter->isOptional()) {
+				$functionParametersMinCount++;
 			}
 
-			if ($function->isVariadic()) {
-				$functionParametersMaxCount = -1;
-			}
+			$functionParametersMaxCount++;
+		}
+
+		if ($parametersAcceptor->isVariadic()) {
+			$functionParametersMaxCount = -1;
 		}
 
 		$errors = [];
@@ -116,7 +94,7 @@ class FunctionCallParametersCheck
 		}
 
 		if (
-			$function->getReturnType() instanceof VoidType
+			$parametersAcceptor->getReturnType() instanceof VoidType
 			&& !$scope->isInFirstLevelStatement()
 			&& !$funcCall instanceof \PhpParser\Node\Expr\New_
 		) {
@@ -127,21 +105,24 @@ class FunctionCallParametersCheck
 			return $errors;
 		}
 
-		$parameters = $function->getParameters();
-		foreach ($funcCall->args as $i => $argument) {
+		$parameters = $parametersAcceptor->getParameters();
+
+		/** @var array<int, \PhpParser\Node\Arg> $args */
+		$args = $funcCall->args;
+		foreach ($args as $i => $argument) {
 			if (!isset($parameters[$i])) {
-				if (!$function->isVariadic() || count($parameters) === 0) {
+				if (!$parametersAcceptor->isVariadic() || count($parameters) === 0) {
 					break;
 				}
 
 				$parameter = $parameters[count($parameters) - 1];
 				$parameterType = $parameter->getType();
-				if ($parameterType instanceof ArrayType) {
-					if (!$argument->unpack) {
-						$parameterType = $parameterType->getItemType();
-					}
-				} else {
+				if (!($parameterType instanceof ArrayType)) {
 					break;
+				}
+
+				if (!$argument->unpack) {
+					$parameterType = $parameterType->getItemType();
 				}
 			} else {
 				$parameter = $parameters[$i];
@@ -159,46 +140,46 @@ class FunctionCallParametersCheck
 			$secondAccepts = null;
 			if ($parameterType->isIterable()->yes() && $parameter->isVariadic()) {
 				$secondAccepts = $this->ruleLevelHelper->accepts(
-					new IterableIterableType(
+					new IterableType(
 						new MixedType(),
 						$parameterType->getIterableValueType()
 					),
-					$argumentValueType
+					$argumentValueType,
+					$scope->isDeclareStrictTypes()
 				);
 			}
 
 			if (
 				$this->checkArgumentTypes
-				&& !$this->ruleLevelHelper->accepts($parameterType, $argumentValueType)
+				&& !$parameter->passedByReference()->createsNewVariable()
+				&& !$this->ruleLevelHelper->accepts($parameterType, $argumentValueType, $scope->isDeclareStrictTypes())
 				&& ($secondAccepts === null || !$secondAccepts)
-				&& (
-					!($parameterType instanceof StringType)
-					|| !$argumentValueType->hasMethod('__toString')
-				)
 			) {
 				$errors[] = sprintf(
 					$messages[6],
 					$i + 1,
 					sprintf('%s$%s', $parameter->isVariadic() ? '...' : '', $parameter->getName()),
-					$parameterType->describe(),
-					$argumentValueType->describe()
+					$parameterType->describe(VerbosityLevel::typeOnly()),
+					$argumentValueType->describe($parameterType->isCallable()->yes() ? VerbosityLevel::value() : VerbosityLevel::typeOnly())
 				);
 			}
 
 			if (
-				$this->checkArgumentsPassedByReference
-				&& $parameter->isPassedByReference()
-				&& !$argument->value instanceof \PhpParser\Node\Expr\Variable
-				&& !$argument->value instanceof \PhpParser\Node\Expr\ArrayDimFetch
-				&& !$argument->value instanceof \PhpParser\Node\Expr\PropertyFetch
-				&& !$argument->value instanceof \PhpParser\Node\Expr\StaticPropertyFetch
+				!$this->checkArgumentsPassedByReference
+				|| !$parameter->passedByReference()->yes()
+				|| $argument->value instanceof \PhpParser\Node\Expr\Variable
+				|| $argument->value instanceof \PhpParser\Node\Expr\ArrayDimFetch
+				|| $argument->value instanceof \PhpParser\Node\Expr\PropertyFetch
+				|| $argument->value instanceof \PhpParser\Node\Expr\StaticPropertyFetch
 			) {
-				$errors[] = sprintf(
-					$messages[8],
-					$i + 1,
-					sprintf('%s$%s', $parameter->isVariadic() ? '...' : '', $parameter->getName())
-				);
+				continue;
 			}
+
+			$errors[] = sprintf(
+				$messages[8],
+				$i + 1,
+				sprintf('%s$%s', $parameter->isVariadic() ? '...' : '', $parameter->getName())
+			);
 		}
 
 		return $errors;

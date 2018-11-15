@@ -6,30 +6,60 @@ You can become one of them by [pledging on Patreon](https://www.patreon.com/phps
 Check out all the tiers - higher ones include additional goodies like placing
 the logo of your company in PHPStan's README.
 
+# $50+
+
+* MessageBird
+
+# $10+
+
+* Adam Lundrigan
+* Scott Arciszewski
+
 # $5+
 
-* Sebastian Bergmann
-* Vašek Brychta
-* Jobs Dev
-* Haralan Dobrev
-* Jan Kuchař
-* Adam Lundrigan
-* Tommy Muehle
-* Tomas Pesek
-* Oleg Samorai
-* Lukas Unger
-* Pavel Vondrášek
-* Tomáš Votruba
-* Holger Woltersdorf
-* Masaru Yamagishi
 * Adam Žurek
+* Bart Reunes
+* Carlos C Soto
+* Craig Mayhew
+* David Šolc
+* Dennis Haarbrink
+* Haralan Dobrev
+* Ilija Tovilo
+* Jake B
+* Jakub Chábek
+* Jakub Červený
+* Jan Endel
+* Jan Kuchař
+* Lars Roettig
+* Lukas Unger
+* Masaru Yamagishi
+* Michael Moll
+* Pavel Vondrášek
+* René Kliment
+* Rudolph Gottesheim
+* seagoj
+* Stefan Zielke
+* Thomas Daugaard
+* Tomasz
+* Tommy Muehle
+* Vašek Brychta
+* Woda Digital
 
 # $1+
 
-* augmenter
-* Bronek Bialek
-* Jon C.
-* Rudolph Gottesheim
+* Andrew Barlow
+* Broken Bialek
+* Christian Sjöström
+* Craig Duncan
+* Honza Cerny
 * Ian Den Hartog
+* Ivan Kvasnica
 * korchasa
-* Oldrich Salek
+* Lucas Dos Santos Abreu
+* Martin Lukeš
+* Matej Drame
+* Michal Mleczko
+* Michał Włodarczyk
+* Oliver Klee
+* Ondrej Vodacek
+* Wouter Admiraal

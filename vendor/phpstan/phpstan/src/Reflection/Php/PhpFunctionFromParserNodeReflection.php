@@ -2,13 +2,16 @@
 
 namespace PHPStan\Reflection\Php;
 
+use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\FunctionLike;
 use PhpParser\Node\Stmt\ClassMethod;
+use PHPStan\Reflection\FunctionVariant;
+use PHPStan\Reflection\PassedByReference;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\TypehintHelper;
 
-class PhpFunctionFromParserNodeReflection implements \PHPStan\Reflection\ParametersAcceptor
+class PhpFunctionFromParserNodeReflection implements \PHPStan\Reflection\FunctionReflection
 {
 
 	/** @var \PhpParser\Node\FunctionLike */
@@ -29,22 +32,44 @@ class PhpFunctionFromParserNodeReflection implements \PHPStan\Reflection\Paramet
 	/** @var \PHPStan\Type\Type|null */
 	private $phpDocReturnType;
 
+	/** @var \PHPStan\Type\Type|null */
+	private $throwType;
+
 	/** @var bool */
-	private $isVariadic;
+	private $isDeprecated;
 
-	/** @var \PHPStan\Reflection\Php\PhpParameterFromParserNodeReflection[] */
-	private $parameters;
+	/** @var bool */
+	private $isInternal;
 
-	/** @var \PHPStan\Type\Type */
-	private $returnType;
+	/** @var bool */
+	private $isFinal;
 
+	/** @var FunctionVariant[]|null */
+	private $variants;
+
+	/**
+	 * @param FunctionLike $functionLike
+	 * @param \PHPStan\Type\Type[] $realParameterTypes
+	 * @param \PHPStan\Type\Type[] $phpDocParameterTypes
+	 * @param bool $realReturnTypePresent
+	 * @param Type $realReturnType
+	 * @param Type|null $phpDocReturnType
+	 * @param Type|null $throwType
+	 * @param bool $isDeprecated
+	 * @param bool $isInternal
+	 * @param bool $isFinal
+	 */
 	public function __construct(
 		FunctionLike $functionLike,
 		array $realParameterTypes,
 		array $phpDocParameterTypes,
 		bool $realReturnTypePresent,
 		Type $realReturnType,
-		Type $phpDocReturnType = null
+		?Type $phpDocReturnType = null,
+		?Type $throwType = null,
+		bool $isDeprecated = false,
+		bool $isInternal = false,
+		bool $isFinal = false
 	)
 	{
 		$this->functionLike = $functionLike;
@@ -53,6 +78,10 @@ class PhpFunctionFromParserNodeReflection implements \PHPStan\Reflection\Paramet
 		$this->realReturnTypePresent = $realReturnTypePresent;
 		$this->realReturnType = $realReturnType;
 		$this->phpDocReturnType = $phpDocReturnType;
+		$this->throwType = $throwType;
+		$this->isDeprecated = $isDeprecated;
+		$this->isInternal = $isInternal;
+		$this->isFinal = $isFinal;
 	}
 
 	protected function getFunctionLike(): FunctionLike
@@ -63,74 +92,105 @@ class PhpFunctionFromParserNodeReflection implements \PHPStan\Reflection\Paramet
 	public function getName(): string
 	{
 		if ($this->functionLike instanceof ClassMethod) {
-			return $this->functionLike->name;
+			return $this->functionLike->name->name;
 		}
 
 		return (string) $this->functionLike->namespacedName;
 	}
 
 	/**
+	 * @return \PHPStan\Reflection\ParametersAcceptor[]
+	 */
+	public function getVariants(): array
+	{
+		if ($this->variants === null) {
+			$this->variants = [
+				new FunctionVariant(
+					$this->getParameters(),
+					$this->isVariadic(),
+					$this->getReturnType()
+				),
+			];
+		}
+
+		return $this->variants;
+	}
+
+	/**
 	 * @return \PHPStan\Reflection\ParameterReflection[]
 	 */
-	public function getParameters(): array
+	private function getParameters(): array
 	{
-		if ($this->parameters === null) {
-			$parameters = [];
-			$isOptional = true;
-			foreach (array_reverse($this->functionLike->getParams()) as $parameter) {
-				if (!$isOptional || $parameter->default === null) {
-					$isOptional = false;
-				}
+		$parameters = [];
+		$isOptional = true;
 
-				$parameters[] = new PhpParameterFromParserNodeReflection(
-					$parameter->name,
-					$isOptional,
-					$this->realParameterTypes[$parameter->name],
-					isset($this->phpDocParameterTypes[$parameter->name]) ? $this->phpDocParameterTypes[$parameter->name] : null,
-					$parameter->byRef,
-					$parameter->default,
-					$parameter->variadic
-				);
+		/** @var \PhpParser\Node\Param $parameter */
+		foreach (array_reverse($this->functionLike->getParams()) as $parameter) {
+			if (!$isOptional || $parameter->default === null) {
+				$isOptional = false;
 			}
 
-			$this->parameters = array_reverse($parameters);
+			if (!$parameter->var instanceof Variable || !is_string($parameter->var->name)) {
+				throw new \PHPStan\ShouldNotHappenException();
+			}
+			$parameters[] = new PhpParameterFromParserNodeReflection(
+				$parameter->var->name,
+				$isOptional,
+				$this->realParameterTypes[$parameter->var->name],
+				$this->phpDocParameterTypes[$parameter->var->name] ?? null,
+				$parameter->byRef
+					? PassedByReference::createCreatesNewVariable()
+					: PassedByReference::createNo(),
+				$parameter->default,
+				$parameter->variadic
+			);
 		}
 
-		return $this->parameters;
+		return array_reverse($parameters);
 	}
 
-	public function isVariadic(): bool
+	private function isVariadic(): bool
 	{
-		if ($this->isVariadic === null) {
-			$isVariadic = false;
-			foreach ($this->functionLike->getParams() as $parameter) {
-				if ($parameter->variadic) {
-					$isVariadic = true;
-					break;
-				}
+		foreach ($this->functionLike->getParams() as $parameter) {
+			if ($parameter->variadic) {
+				return true;
 			}
-
-			$this->isVariadic = $isVariadic;
 		}
 
-		return $this->isVariadic;
+		return false;
 	}
 
-	public function getReturnType(): Type
+	protected function getReturnType(): Type
 	{
-		if ($this->returnType === null) {
-			$phpDocReturnType = $this->phpDocReturnType;
-			if (
-				$this->realReturnTypePresent
-				&& $phpDocReturnType !== null
-				&& TypeCombinator::containsNull($this->realReturnType) !== TypeCombinator::containsNull($phpDocReturnType)
-			) {
-				$phpDocReturnType = null;
-			}
-			$this->returnType = TypehintHelper::decideType($this->realReturnType, $phpDocReturnType);
+		$phpDocReturnType = $this->phpDocReturnType;
+		if (
+			$this->realReturnTypePresent
+			&& $phpDocReturnType !== null
+			&& TypeCombinator::containsNull($this->realReturnType) !== TypeCombinator::containsNull($phpDocReturnType)
+		) {
+			$phpDocReturnType = null;
 		}
+		return TypehintHelper::decideType($this->realReturnType, $phpDocReturnType);
+	}
 
-		return $this->returnType;
+	public function isDeprecated(): bool
+	{
+		return $this->isDeprecated;
+	}
+
+	public function isInternal(): bool
+	{
+		return $this->isInternal;
+	}
+
+	public function isFinal(): bool
+	{
+		return $this->isFinal;
+	}
+
+	public function getThrowType(): ?Type
+	{
+		return $this->throwType;
 	}
 
 }

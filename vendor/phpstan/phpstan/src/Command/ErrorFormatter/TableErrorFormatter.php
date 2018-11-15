@@ -4,13 +4,23 @@ namespace PHPStan\Command\ErrorFormatter;
 
 use PHPStan\Command\AnalyseCommand;
 use PHPStan\Command\AnalysisResult;
+use PHPStan\File\RelativePathHelper;
+use Symfony\Component\Console\Style\OutputStyle;
 
 class TableErrorFormatter implements ErrorFormatter
 {
 
+	/** @var RelativePathHelper */
+	private $relativePathHelper;
+
+	public function __construct(RelativePathHelper $relativePathHelper)
+	{
+		$this->relativePathHelper = $relativePathHelper;
+	}
+
 	public function formatErrors(
 		AnalysisResult $analysisResult,
-		\Symfony\Component\Console\Style\OutputStyle $style
+		OutputStyle $style
 	): int
 	{
 		if (!$analysisResult->hasErrors()) {
@@ -25,16 +35,7 @@ class TableErrorFormatter implements ErrorFormatter
 			return 0;
 		}
 
-		$currentDirectory = $analysisResult->getCurrentDirectory();
-		$cropFilename = function (string $filename) use ($currentDirectory): string {
-			if ($currentDirectory !== '' && strpos($filename, $currentDirectory) === 0) {
-				return substr($filename, strlen($currentDirectory) + 1);
-			}
-
-			return $filename;
-		};
-
-		/** @var \PHPStan\Analyser\Error[][] $fileErrors */
+		/** @var array<string, \PHPStan\Analyser\Error[]> $fileErrors */
 		$fileErrors = [];
 		foreach ($analysisResult->getFileSpecificErrors() as $fileSpecificError) {
 			if (!isset($fileErrors[$fileSpecificError->getFile()])) {
@@ -53,11 +54,13 @@ class TableErrorFormatter implements ErrorFormatter
 				];
 			}
 
-			$style->table(['Line', $cropFilename($file)], $rows);
+			$relativeFilePath = $this->relativePathHelper->getRelativePath($file);
+
+			$style->table(['Line', $relativeFilePath], $rows);
 		}
 
 		if (count($analysisResult->getNotFileSpecificErrors()) > 0) {
-			$style->table(['Error'], array_map(function (string $error): array {
+			$style->table(['Error'], array_map(static function (string $error): array {
 				return [$error];
 			}, $analysisResult->getNotFileSpecificErrors()));
 		}

@@ -22,11 +22,15 @@ class RequireParentConstructCallRule implements \PHPStan\Rules\Rule
 	 */
 	public function processNode(Node $node, Scope $scope): array
 	{
-		if (strpos($scope->getAnalysedContextFile(), '(in context of ') !== false) {
-			return []; // skip traits
+		if (!$scope->isInClass()) {
+			throw new \PHPStan\ShouldNotHappenException();
 		}
 
-		if ($node->name !== '__construct') {
+		if ($scope->isInTrait()) {
+			return [];
+		}
+
+		if ($node->name->name !== '__construct') {
 			return [];
 		}
 
@@ -76,12 +80,17 @@ class RequireParentConstructCallRule implements \PHPStan\Rules\Rule
 		}
 
 		foreach ($parserNode->stmts as $statement) {
+			if ($statement instanceof Node\Stmt\Expression) {
+				$statement = $statement->expr;
+			}
+
 			$statement = $this->ignoreErrorSuppression($statement);
 			if ($statement instanceof \PhpParser\Node\Expr\StaticCall) {
 				if (
 					$statement->class instanceof Name
 					&& ((string) $statement->class === 'parent')
-					&& $statement->name === '__construct'
+					&& $statement->name instanceof Node\Identifier
+					&& $statement->name->name === '__construct'
 				) {
 					return true;
 				}

@@ -10,7 +10,7 @@ use PHPStan\Reflection\PropertyReflection;
 class PhpDefectClassReflectionExtension implements PropertiesClassReflectionExtension
 {
 
-	/** @var string[][] */
+	/** @var array<string, array<string, string>> */
 	private static $defaultProperties = [
 		\DateInterval::class => [
 			'y' => 'int',
@@ -21,27 +21,40 @@ class PhpDefectClassReflectionExtension implements PropertiesClassReflectionExte
 			's' => 'int',
 			'invert' => 'int',
 			'days' => 'mixed',
+			'f' => 'float',
 		],
-		\DOMAttr::class => [ // extends DOMNode
+		\DatePeriod::class => [
+			'recurrences' => 'int',
+			'include_start_date' => 'bool',
+			'start' => \DateTimeInterface::class,
+			'current' => \DateTimeInterface::class,
+			'end' => \DateTimeInterface::class,
+			'interval' => \DateInterval::class,
+		],
+		'Directory' => [
+			'handle' => 'resource',
+			'path' => 'string',
+		],
+		'DOMAttr' => [ // extends DOMNode
 			'name' => 'string',
-			'ownerElement' => \DOMElement::class,
+			'ownerElement' => 'DOMElement',
 			'schemaTypeInfo' => 'bool',
 			'specified' => 'bool',
 			'value' => 'string',
 		],
-		\DOMCharacterData::class => [ // extends DOMNode
+		'DOMCharacterData' => [ // extends DOMNode
 			'data' => 'string',
 			'length' => 'int',
 		],
-		\DOMDocument::class => [
+		'DOMDocument' => [
 			'actualEncoding' => 'string',
-			'config' => \DOMConfiguration::class,
-			'doctype' => \DOMDocumentType::class,
-			'documentElement' => \DOMElement::class,
+			'config' => 'DOMConfiguration',
+			'doctype' => 'DOMDocumentType',
+			'documentElement' => 'DOMElement',
 			'documentURI' => 'string',
 			'encoding' => 'string',
 			'formatOutput' => 'bool',
-			'implementation' => \DOMImplementation::class,
+			'implementation' => 'DOMImplementation',
 			'preserveWhiteSpace' => 'bool',
 			'recover' => 'bool',
 			'resolveExternals' => 'bool',
@@ -54,19 +67,19 @@ class PhpDefectClassReflectionExtension implements PropertiesClassReflectionExte
 			'xmlStandalone' => 'bool',
 			'xmlVersion' => 'string',
 		],
-		\DOMDocumentType::class => [ // extends DOMNode
+		'DOMDocumentType' => [ // extends DOMNode
 			'publicId' => 'string',
 			'systemId' => 'string',
 			'name' => 'string',
-			'entities' => \DOMNamedNodeMap::class,
-			'notations' => \DOMNamedNodeMap::class,
+			'entities' => 'DOMNamedNodeMap',
+			'notations' => 'DOMNamedNodeMap',
 			'internalSubset' => 'string',
 		],
-		\DOMElement::class => [ // extends DOMNode
+		'DOMElement' => [ // extends DOMNode
 			'schemaTypeInfo' => 'bool',
 			'tagName' => 'string',
 		],
-		\DOMEntity::class => [ // extends DOMNode
+		'DOMEntity' => [ // extends DOMNode
 			'publicId' => 'string',
 			'systemId' => 'string',
 			'notationName' => 'string',
@@ -74,45 +87,49 @@ class PhpDefectClassReflectionExtension implements PropertiesClassReflectionExte
 			'encoding' => 'string',
 			'version' => 'string',
 		],
-		\DOMNamedNodeMap::class => [
+		'DOMNamedNodeMap' => [
 			'length' => 'int',
 		],
-		\DOMNode::class => [
+		'DOMNode' => [
 			'nodeName' => 'string',
 			'nodeValue' => 'string',
 			'nodeType' => 'int',
-			'parentNode' => \DOMNode::class,
-			'childNodes' => \DOMNodeList::class,
-			'firstChild' => \DOMNode::class,
-			'lastChild' => \DOMNode::class,
-			'previousSibling' => \DOMNode::class,
-			'nextSibling' => \DOMNode::class,
-			'attributes' => \DOMNamedNodeMap::class,
-			'ownerDocument' => \DOMDocument::class,
+			'parentNode' => 'DOMNode',
+			'childNodes' => 'DOMNodeList',
+			'firstChild' => 'DOMNode',
+			'lastChild' => 'DOMNode',
+			'previousSibling' => 'DOMNode',
+			'nextSibling' => 'DOMNode',
+			'attributes' => 'DOMNamedNodeMap',
+			'ownerDocument' => 'DOMDocument',
 			'namespaceURI' => 'string',
 			'prefix' => 'string',
 			'localName' => 'string',
 			'baseURI' => 'string',
 			'textContent' => 'string',
 		],
-		\DOMNodeList::class => [
+		'DOMNodeList' => [
 			'length' => 'int',
 		],
-		\DOMNotation::class => [ // extends DOMNode
+		'DOMNotation' => [ // extends DOMNode
 			'publicId' => 'string',
 			'systemId' => 'string',
 		],
-		\DOMProcessingInstruction::class => [ // extends DOMNode
+		'DOMProcessingInstruction' => [ // extends DOMNode
 			'target' => 'string',
 			'data' => 'string',
 		],
-		\DOMText::class => [ // extends DOMCharacterData
+		'DOMText' => [ // extends DOMCharacterData
 			'wholeText' => 'string',
 		],
-		\DOMXPath::class => [ // extends DOMCharacterData
-			'document' => \DOMDocument::class,
+		'DOMXPath' => [ // extends DOMCharacterData
+			'document' => 'DOMDocument',
 		],
-		\XMLReader::class => [
+		'Ds\\Pair' => [
+			'key' => 'mixed',
+			'value' => 'mixed',
+		],
+		'XMLReader' => [
 			'attributeCount' => 'int',
 			'baseURI' => 'string',
 			'depth' => 'int',
@@ -128,27 +145,20 @@ class PhpDefectClassReflectionExtension implements PropertiesClassReflectionExte
 			'value' => 'string',
 			'xmlLang' => 'string',
 		],
-		\ZipArchive::class => [
+		'ZipArchive' => [
 			'status' => 'int',
 			'statusSys' => 'int',
 			'numFiles' => 'int',
 			'filename' => 'string',
 			'comment' => 'string',
 		],
-		\LibXMLError::class => [
+		'LibXMLError' => [
 			'level' => 'int',
 			'code' => 'int',
 			'column' => 'int',
 			'message' => 'string',
 			'file' => 'string',
 			'line' => 'int',
-		],
-	];
-
-	/** @var string[][] */
-	private static $properties71 = [
-		\DateInterval::class => [
-			'f' => 'float',
 		],
 	];
 
@@ -162,9 +172,6 @@ class PhpDefectClassReflectionExtension implements PropertiesClassReflectionExte
 	{
 		$this->typeStringResolver = $typeStringResolver;
 		$this->properties = self::$defaultProperties;
-		if (PHP_VERSION_ID >= 70100) { // since PHP 7.1
-			$this->properties = array_merge_recursive($this->properties, self::$properties71);
-		}
 	}
 
 	public function hasProperty(ClassReflection $classReflection, string $propertyName): bool
@@ -184,12 +191,7 @@ class PhpDefectClassReflectionExtension implements PropertiesClassReflectionExte
 		);
 	}
 
-	/**
-	 * @param \PHPStan\Reflection\ClassReflection $classReflection
-	 * @param string $propertyName
-	 * @return \PHPStan\Reflection\ClassReflection|null
-	 */
-	private function getClassWithProperties(ClassReflection $classReflection, string $propertyName)
+	private function getClassWithProperties(ClassReflection $classReflection, string $propertyName): ?\PHPStan\Reflection\ClassReflection
 	{
 		if (isset($this->properties[$classReflection->getName()][$propertyName])) {
 			return $classReflection;

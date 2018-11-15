@@ -2,21 +2,22 @@
 
 namespace PHPStan\Rules\Arrays;
 
+use PhpParser\Node;
 use PHPStan\Analyser\Scope;
-use PHPStan\Type\MixedType;
-use PHPStan\Type\UnionType;
+use PHPStan\Rules\RuleLevelHelper;
+use PHPStan\Type\ErrorType;
+use PHPStan\Type\Type;
+use PHPStan\Type\VerbosityLevel;
 
 class IterableInForeachRule implements \PHPStan\Rules\Rule
 {
 
-	/**
-	 * @var bool
-	 */
-	private $checkUnionTypes;
+	/** @var \PHPStan\Rules\RuleLevelHelper */
+	private $ruleLevelHelper;
 
-	public function __construct(bool $checkUnionTypes)
+	public function __construct(RuleLevelHelper $ruleLevelHelper)
 	{
-		$this->checkUnionTypes = $checkUnionTypes;
+		$this->ruleLevelHelper = $ruleLevelHelper;
 	}
 
 	public function getNodeType(): string
@@ -29,23 +30,30 @@ class IterableInForeachRule implements \PHPStan\Rules\Rule
 	 * @param \PHPStan\Analyser\Scope $scope
 	 * @return string[]
 	 */
-	public function processNode(\PhpParser\Node $node, Scope $scope): array
+	public function processNode(Node $node, Scope $scope): array
 	{
-		$iteratedExpressionType = $scope->getType($node->expr);
-		if (!$this->checkUnionTypes && $iteratedExpressionType instanceof UnionType) {
+		$typeResult = $this->ruleLevelHelper->findTypeToCheck(
+			$scope,
+			$node->expr,
+			'Iterating over an object of an unknown class %s.',
+			static function (Type $type): bool {
+				return $type->isIterable()->yes();
+			}
+		);
+		$type = $typeResult->getType();
+		if ($type instanceof ErrorType) {
+			return $typeResult->getUnknownClassErrors();
+		}
+		if ($type->isIterable()->yes()) {
 			return [];
 		}
 
-		if (!$iteratedExpressionType instanceof MixedType && !$iteratedExpressionType->isIterable()->yes()) {
-			return [
-				sprintf(
-					'Argument of an invalid type %s supplied for foreach, only iterables are supported.',
-					$iteratedExpressionType->describe()
-				),
-			];
-		}
-
-		return [];
+		return [
+			sprintf(
+				'Argument of an invalid type %s supplied for foreach, only iterables are supported.',
+				$type->describe(VerbosityLevel::typeOnly())
+			),
+		];
 	}
 
 }

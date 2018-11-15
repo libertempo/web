@@ -9,14 +9,10 @@ use PHPStan\Analyser\Scope;
 class DefinedVariableRule implements \PHPStan\Rules\Rule
 {
 
-	/**
-	 * @var bool
-	 */
+	/** @var bool */
 	private $cliArgumentsVariablesRegistered;
 
-	/**
-	 * @var bool
-	 */
+	/** @var bool */
 	private $checkMaybeUndefinedVariables;
 
 	public function __construct(
@@ -33,21 +29,6 @@ class DefinedVariableRule implements \PHPStan\Rules\Rule
 		return Variable::class;
 	}
 
-	public static function isGlobalVariable(string $variableName): bool
-	{
-		return in_array($variableName, [
-			'GLOBALS',
-			'_SERVER',
-			'_GET',
-			'_POST',
-			'_FILES',
-			'_COOKIE',
-			'_SESSION',
-			'_REQUEST',
-			'_ENV',
-		], true);
-	}
-
 	/**
 	 * @param \PhpParser\Node\Expr\Variable $node
 	 * @param \PHPStan\Analyser\Scope $scope
@@ -56,10 +37,6 @@ class DefinedVariableRule implements \PHPStan\Rules\Rule
 	public function processNode(Node $node, Scope $scope): array
 	{
 		if (!is_string($node->name)) {
-			return [];
-		}
-
-		if (self::isGlobalVariable($node->name)) {
 			return [];
 		}
 

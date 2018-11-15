@@ -6,6 +6,7 @@ use PhpParser\Node;
 use PhpParser\Node\Stmt\Property;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\RuleLevelHelper;
+use PHPStan\Type\VerbosityLevel;
 
 class DefaultValueTypesAssignedToPropertiesRule implements \PHPStan\Rules\Rule
 {
@@ -30,6 +31,10 @@ class DefaultValueTypesAssignedToPropertiesRule implements \PHPStan\Rules\Rule
 	 */
 	public function processNode(Node $node, Scope $scope): array
 	{
+		if (!$scope->isInClass()) {
+			throw new \PHPStan\ShouldNotHappenException();
+		}
+
 		$classReflection = $scope->getClassReflection();
 
 		$errors = [];
@@ -42,10 +47,10 @@ class DefaultValueTypesAssignedToPropertiesRule implements \PHPStan\Rules\Rule
 				continue;
 			}
 
-			$propertyReflection = $classReflection->getNativeProperty($property->name);
+			$propertyReflection = $classReflection->getNativeProperty($property->name->name);
 			$propertyType = $propertyReflection->getType();
 			$defaultValueType = $scope->getType($property->default);
-			if ($this->ruleLevelHelper->accepts($propertyType, $defaultValueType)) {
+			if ($this->ruleLevelHelper->accepts($propertyType, $defaultValueType, $scope->isDeclareStrictTypes())) {
 				continue;
 			}
 
@@ -53,9 +58,9 @@ class DefaultValueTypesAssignedToPropertiesRule implements \PHPStan\Rules\Rule
 				'%s %s::$%s (%s) does not accept default value of type %s.',
 				$node->isStatic() ? 'Static property' : 'Property',
 				$classReflection->getDisplayName(),
-				$property->name,
-				$propertyType->describe(),
-				$defaultValueType->describe()
+				$property->name->name,
+				$propertyType->describe(VerbosityLevel::typeOnly()),
+				$defaultValueType->describe(VerbosityLevel::typeOnly())
 			);
 		}
 

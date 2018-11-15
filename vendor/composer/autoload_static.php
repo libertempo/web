@@ -94,6 +94,10 @@ class ComposerStaticInit92a53738965641ee7e3b3e4f4372cbb2
             'Doctrine\\Common\\Annotations\\' => 28,
             'DI\\' => 3,
         ),
+        'C' => 
+        array (
+            'Composer\\XdebugHandler\\' => 23,
+        ),
         'A' => 
         array (
             'Adldap\\' => 7,
@@ -253,6 +257,10 @@ class ComposerStaticInit92a53738965641ee7e3b3e4f4372cbb2
         'DI\\' => 
         array (
             0 => __DIR__ . '/..' . '/php-di/php-di/src',
+        ),
+        'Composer\\XdebugHandler\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/composer/xdebug-handler/src',
         ),
         'Adldap\\' => 
         array (

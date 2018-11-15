@@ -12,23 +12,21 @@ use PHPStan\Rules\RuleLevelHelper;
 use PHPStan\Type\ErrorType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
+use PHPStan\Type\Type;
+use PHPStan\Type\TypeCombinator;
+use PHPStan\Type\TypeUtils;
+use PHPStan\Type\VerbosityLevel;
 
 class AccessStaticPropertiesRule implements \PHPStan\Rules\Rule
 {
 
-	/**
-	 * @var \PHPStan\Broker\Broker
-	 */
+	/** @var \PHPStan\Broker\Broker */
 	private $broker;
 
-	/**
-	 * @var \PHPStan\Rules\RuleLevelHelper
-	 */
+	/** @var \PHPStan\Rules\RuleLevelHelper */
 	private $ruleLevelHelper;
 
-	/**
-	 * @var \PHPStan\Rules\ClassCaseSensitivityCheck
-	 */
+	/** @var \PHPStan\Rules\ClassCaseSensitivityCheck */
 	private $classCaseSensitivityCheck;
 
 	public function __construct(
@@ -54,15 +52,16 @@ class AccessStaticPropertiesRule implements \PHPStan\Rules\Rule
 	 */
 	public function processNode(Node $node, Scope $scope): array
 	{
-		if (!is_string($node->name)) {
+		if (!$node->name instanceof Node\VarLikeIdentifier) {
 			return [];
 		}
 
-		$name = $node->name;
+		$name = $node->name->name;
 		$messages = [];
 		if ($node->class instanceof Name) {
 			$class = (string) $node->class;
-			if ($class === 'self' || $class === 'static') {
+			$lowercasedClass = strtolower($class);
+			if (in_array($lowercasedClass, ['self', 'static'], true)) {
 				if (!$scope->isInClass()) {
 					return [
 						sprintf(
@@ -73,7 +72,7 @@ class AccessStaticPropertiesRule implements \PHPStan\Rules\Rule
 					];
 				}
 				$className = $scope->getClassReflection()->getName();
-			} elseif ($class === 'parent') {
+			} elseif ($lowercasedClass === 'parent') {
 				if (!$scope->isInClass()) {
 					return [
 						sprintf(
@@ -126,7 +125,10 @@ class AccessStaticPropertiesRule implements \PHPStan\Rules\Rule
 			$classTypeResult = $this->ruleLevelHelper->findTypeToCheck(
 				$scope,
 				$node->class,
-				sprintf('Access to static property $%s on an unknown class %%s.', $name)
+				sprintf('Access to static property $%s on an unknown class %%s.', $name),
+				static function (Type $type) use ($name): bool {
+					return $type->canAccessProperties()->yes() && $type->hasProperty($name);
+				}
 			);
 			$classType = $classTypeResult->getType();
 			if ($classType instanceof ErrorType) {
@@ -134,13 +136,16 @@ class AccessStaticPropertiesRule implements \PHPStan\Rules\Rule
 			}
 		}
 
-		if ($classType instanceof StringType) {
+		if ((new StringType())->isSuperTypeOf($classType)->yes()) {
 			return [];
 		}
 
-		if (!$classType->canAccessProperties()) {
+		$typeForDescribe = $classType;
+		$classType = TypeCombinator::remove($classType, new StringType());
+
+		if (!$classType->canAccessProperties()->yes()) {
 			return array_merge($messages, [
-				sprintf('Cannot access static property $%s on %s.', $name, $classType->describe()),
+				sprintf('Cannot access static property $%s on %s.', $name, $typeForDescribe->describe(VerbosityLevel::typeOnly())),
 			]);
 		}
 
@@ -152,7 +157,7 @@ class AccessStaticPropertiesRule implements \PHPStan\Rules\Rule
 			return array_merge($messages, [
 				sprintf(
 					'Access to an undefined static property %s::$%s.',
-					$classType->describe(),
+					$typeForDescribe->describe(VerbosityLevel::typeOnly()),
 					$name
 				),
 			]);
@@ -160,6 +165,13 @@ class AccessStaticPropertiesRule implements \PHPStan\Rules\Rule
 
 		$property = $classType->getProperty($name, $scope);
 		if (!$property->isStatic()) {
+			$hasPropertyTypes = TypeUtils::getHasPropertyTypes($classType);
+			foreach ($hasPropertyTypes as $hasPropertyType) {
+				if ($hasPropertyType->getPropertyName() === $name) {
+					return [];
+				}
+			}
+
 			return array_merge($messages, [
 				sprintf(
 					'Static access to instance property %s::$%s.',

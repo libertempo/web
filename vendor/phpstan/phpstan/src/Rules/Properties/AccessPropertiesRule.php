@@ -7,27 +7,30 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Broker\Broker;
 use PHPStan\Rules\RuleLevelHelper;
 use PHPStan\Type\ErrorType;
+use PHPStan\Type\Type;
+use PHPStan\Type\VerbosityLevel;
 
 class AccessPropertiesRule implements \PHPStan\Rules\Rule
 {
 
-	/**
-	 * @var \PHPStan\Broker\Broker
-	 */
+	/** @var \PHPStan\Broker\Broker */
 	private $broker;
 
-	/**
-	 * @var \PHPStan\Rules\RuleLevelHelper
-	 */
+	/** @var \PHPStan\Rules\RuleLevelHelper */
 	private $ruleLevelHelper;
+
+	/** @var bool */
+	private $reportMagicProperties;
 
 	public function __construct(
 		Broker $broker,
-		RuleLevelHelper $ruleLevelHelper
+		RuleLevelHelper $ruleLevelHelper,
+		bool $reportMagicProperties
 	)
 	{
 		$this->broker = $broker;
 		$this->ruleLevelHelper = $ruleLevelHelper;
+		$this->reportMagicProperties = $reportMagicProperties;
 	}
 
 	public function getNodeType(): string
@@ -42,23 +45,27 @@ class AccessPropertiesRule implements \PHPStan\Rules\Rule
 	 */
 	public function processNode(\PhpParser\Node $node, Scope $scope): array
 	{
-		if (!is_string($node->name)) {
+		if (!$node->name instanceof \PhpParser\Node\Identifier) {
 			return [];
 		}
 
-		$name = $node->name;
+		$name = $node->name->name;
 		$typeResult = $this->ruleLevelHelper->findTypeToCheck(
 			$scope,
 			$node->var,
-			sprintf('Access to property $%s on an unknown class %%s.', $name)
+			sprintf('Access to property $%s on an unknown class %%s.', $name),
+			static function (Type $type) use ($name): bool {
+				return $type->canAccessProperties()->yes() && $type->hasProperty($name);
+			}
 		);
 		$type = $typeResult->getType();
 		if ($type instanceof ErrorType) {
 			return $typeResult->getUnknownClassErrors();
 		}
-		if (!$type->canAccessProperties()) {
+
+		if (!$type->canAccessProperties()->yes()) {
 			return [
-				sprintf('Cannot access property $%s on %s.', $name, $type->describe()),
+				sprintf('Cannot access property $%s on %s.', $name, $type->describe(VerbosityLevel::typeOnly())),
 			];
 		}
 
@@ -67,7 +74,24 @@ class AccessPropertiesRule implements \PHPStan\Rules\Rule
 				return [];
 			}
 
-			if (count($typeResult->getReferencedClasses()) === 1) {
+			$classNames = $typeResult->getReferencedClasses();
+			if (!$this->reportMagicProperties) {
+				foreach ($classNames as $className) {
+					if (!$this->broker->hasClass($className)) {
+						continue;
+					}
+
+					$classReflection = $this->broker->getClass($className);
+					if (
+						$classReflection->hasNativeMethod('__get')
+						|| $classReflection->hasNativeMethod('__set')
+					) {
+						return [];
+					}
+				}
+			}
+
+			if (count($classNames) === 1) {
 				$referencedClass = $typeResult->getReferencedClasses()[0];
 				$propertyClassReflection = $this->broker->getClass($referencedClass);
 				$parentClassReflection = $propertyClassReflection->getParentClass();
@@ -89,7 +113,7 @@ class AccessPropertiesRule implements \PHPStan\Rules\Rule
 			return [
 				sprintf(
 					'Access to an undefined property %s::$%s.',
-					$type->describe(),
+					$type->describe(VerbosityLevel::typeOnly()),
 					$name
 				),
 			];
@@ -101,7 +125,7 @@ class AccessPropertiesRule implements \PHPStan\Rules\Rule
 				sprintf(
 					'Access to %s property %s::$%s.',
 					$propertyReflection->isPrivate() ? 'private' : 'protected',
-					$type->describe(),
+					$type->describe(VerbosityLevel::typeOnly()),
 					$name
 				),
 			];

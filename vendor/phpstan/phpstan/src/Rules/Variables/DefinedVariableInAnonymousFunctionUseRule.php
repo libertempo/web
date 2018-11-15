@@ -9,9 +9,7 @@ use PHPStan\Analyser\Scope;
 class DefinedVariableInAnonymousFunctionUseRule implements \PHPStan\Rules\Rule
 {
 
-	/**
-	 * @var bool
-	 */
+	/** @var bool */
 	private $checkMaybeUndefinedVariables;
 
 	public function __construct(
@@ -33,20 +31,20 @@ class DefinedVariableInAnonymousFunctionUseRule implements \PHPStan\Rules\Rule
 	 */
 	public function processNode(Node $node, Scope $scope): array
 	{
-		if ($node->byRef) {
+		if ($node->byRef || !is_string($node->var->name)) {
 			return [];
 		}
 
-		if ($scope->hasVariableType($node->var)->no()) {
+		if ($scope->hasVariableType($node->var->name)->no()) {
 			return [
-				sprintf('Undefined variable: $%s', $node->var),
+				sprintf('Undefined variable: $%s', $node->var->name),
 			];
 		} elseif (
 			$this->checkMaybeUndefinedVariables
-			&& !$scope->hasVariableType($node->var)->yes()
+			&& !$scope->hasVariableType($node->var->name)->yes()
 		) {
 			return [
-				sprintf('Variable $%s might not be defined.', $node->var),
+				sprintf('Variable $%s might not be defined.', $node->var->name),
 			];
 		}
 

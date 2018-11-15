@@ -14,37 +14,30 @@ class PropertyReflectionFinder
 	 * @param \PHPStan\Analyser\Scope $scope
 	 * @return \PHPStan\Reflection\PropertyReflection|null
 	 */
-	public function findPropertyReflectionFromNode($propertyFetch, Scope $scope)
+	public function findPropertyReflectionFromNode($propertyFetch, Scope $scope): ?\PHPStan\Reflection\PropertyReflection
 	{
 		if ($propertyFetch instanceof \PhpParser\Node\Expr\PropertyFetch) {
-			if (!is_string($propertyFetch->name)) {
+			if (!$propertyFetch->name instanceof \PhpParser\Node\Identifier) {
 				return null;
 			}
 			$propertyHolderType = $scope->getType($propertyFetch->var);
-			return $this->findPropertyReflection($propertyHolderType, $propertyFetch->name, $scope);
-		} elseif ($propertyFetch instanceof \PhpParser\Node\Expr\StaticPropertyFetch) {
-			if (!is_string($propertyFetch->name)) {
-				return null;
-			}
-			if ($propertyFetch->class instanceof \PhpParser\Node\Name) {
-				$propertyHolderType = new ObjectType($scope->resolveName($propertyFetch->class));
-			} else {
-				$propertyHolderType = $scope->getType($propertyFetch->class);
-			}
-
-			return $this->findPropertyReflection($propertyHolderType, $propertyFetch->name, $scope);
+			return $this->findPropertyReflection($propertyHolderType, $propertyFetch->name->name, $scope);
 		}
 
-		return null;
+		if (!$propertyFetch->name instanceof \PhpParser\Node\Identifier) {
+			return null;
+		}
+
+		if ($propertyFetch->class instanceof \PhpParser\Node\Name) {
+			$propertyHolderType = new ObjectType($scope->resolveName($propertyFetch->class));
+		} else {
+			$propertyHolderType = $scope->getType($propertyFetch->class);
+		}
+
+		return $this->findPropertyReflection($propertyHolderType, $propertyFetch->name->name, $scope);
 	}
 
-	/**
-	 * @param \PHPStan\Type\Type $propertyHolderType
-	 * @param string $propertyName
-	 * @param Scope $scope
-	 * @return \PHPStan\Reflection\PropertyReflection|null
-	 */
-	private function findPropertyReflection(Type $propertyHolderType, string $propertyName, Scope $scope)
+	private function findPropertyReflection(Type $propertyHolderType, string $propertyName, Scope $scope): ?\PHPStan\Reflection\PropertyReflection
 	{
 		if (!$propertyHolderType->hasProperty($propertyName)) {
 			return null;

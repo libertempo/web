@@ -3,54 +3,41 @@
 namespace PHPStan\Command;
 
 use PHPStan\Analyser\Analyser;
-use PHPStan\Analyser\Error;
 use PHPStan\Command\ErrorFormatter\ErrorFormatter;
-use PHPStan\File\FileExcluder;
 use PHPStan\File\FileHelper;
 use Symfony\Component\Console\Style\OutputStyle;
-use Symfony\Component\Finder\Finder;
 
 class AnalyseApplication
 {
 
-	/**
-	 * @var \PHPStan\Analyser\Analyser
-	 */
+	/** @var \PHPStan\Analyser\Analyser */
 	private $analyser;
 
-	/**
-	 * @var string
-	 */
+	/** @var string */
 	private $memoryLimitFile;
-
-	/**
-	 * @var string[]
-	 */
-	private $fileExtensions;
 
 	/** @var \PHPStan\File\FileHelper */
 	private $fileHelper;
 
-	/** @var \PHPStan\File\FileExcluder */
-	private $fileExcluder;
+	/** @var string */
+	private $currentWorkingDirectory;
 
 	public function __construct(
 		Analyser $analyser,
 		string $memoryLimitFile,
 		FileHelper $fileHelper,
-		array $fileExtensions,
-		FileExcluder $fileExcluder
+		string $currentWorkingDirectory
 	)
 	{
 		$this->analyser = $analyser;
 		$this->memoryLimitFile = $memoryLimitFile;
-		$this->fileExtensions = $fileExtensions;
 		$this->fileHelper = $fileHelper;
-		$this->fileExcluder = $fileExcluder;
+		$this->currentWorkingDirectory = $currentWorkingDirectory;
 	}
 
 	/**
-	 * @param string[] $paths
+	 * @param string[] $files
+	 * @param bool $onlyFiles
 	 * @param \Symfony\Component\Console\Style\OutputStyle $style
 	 * @param \PHPStan\Command\ErrorFormatter\ErrorFormatter $errorFormatter
 	 * @param bool $defaultLevelUsed
@@ -58,49 +45,22 @@ class AnalyseApplication
 	 * @return int Error code.
 	 */
 	public function analyse(
-		array $paths,
+		array $files,
+		bool $onlyFiles,
 		OutputStyle $style,
 		ErrorFormatter $errorFormatter,
 		bool $defaultLevelUsed,
 		bool $debug
 	): int
 	{
+		$this->updateMemoryLimitFile();
 		$errors = [];
-		$files = [];
-
-		$this->updateMemoryLimitFile();
-
-		$paths = array_map(function (string $path): string {
-			return $this->fileHelper->absolutizePath($path);
-		}, $paths);
-
-		$onlyFiles = true;
-		foreach ($paths as $path) {
-			if (!file_exists($path)) {
-				$errors[] = new Error(sprintf('<error>Path %s does not exist</error>', $path), $path, null, false);
-			} elseif (is_file($path)) {
-				$files[] = $this->fileHelper->normalizePath($path);
-			} else {
-				$finder = new Finder();
-				$finder->followLinks();
-				foreach ($finder->files()->name('*.{' . implode(',', $this->fileExtensions) . '}')->in($path) as $fileInfo) {
-					$files[] = $this->fileHelper->normalizePath($fileInfo->getPathname());
-					$onlyFiles = false;
-				}
-			}
-		}
-
-		$files = array_filter($files, function (string $file): bool {
-			return !$this->fileExcluder->isExcludedFromAnalysing($file);
-		});
-
-		$this->updateMemoryLimitFile();
 
 		if (!$debug) {
 			$progressStarted = false;
 			$fileOrder = 0;
 			$preFileCallback = null;
-			$postFileCallback = function () use ($style, &$progressStarted, $files, &$fileOrder) {
+			$postFileCallback = function () use ($style, &$progressStarted, $files, &$fileOrder): void {
 				if (!$progressStarted) {
 					$style->progressStart(count($files));
 					$progressStarted = true;
@@ -112,7 +72,7 @@ class AnalyseApplication
 				$fileOrder++;
 			};
 		} else {
-			$preFileCallback = function (string $file) use ($style) {
+			$preFileCallback = static function (string $file) use ($style): void {
 				$style->writeln($file);
 			};
 			$postFileCallback = null;
@@ -135,10 +95,8 @@ class AnalyseApplication
 		foreach ($errors as $error) {
 			if (is_string($error)) {
 				$notFileSpecificErrors[] = $error;
-			} elseif ($error instanceof Error) {
-				$fileSpecificErrors[] = $error;
 			} else {
-				throw new \PHPStan\ShouldNotHappenException();
+				$fileSpecificErrors[] = $error;
 			}
 		}
 
@@ -147,21 +105,23 @@ class AnalyseApplication
 				$fileSpecificErrors,
 				$notFileSpecificErrors,
 				$defaultLevelUsed,
-				$this->fileHelper->normalizePath(dirname($paths[0]))
+				$this->fileHelper->normalizePath($this->currentWorkingDirectory)
 			),
 			$style
 		);
 	}
 
-	private function updateMemoryLimitFile()
+	private function updateMemoryLimitFile(): void
 	{
 		$bytes = memory_get_peak_usage(true);
 		$megabytes = ceil($bytes / 1024 / 1024);
 		file_put_contents($this->memoryLimitFile, sprintf('%d MB', $megabytes));
 
-		if (function_exists('pcntl_signal_dispatch')) {
-			pcntl_signal_dispatch();
+		if (!function_exists('pcntl_signal_dispatch')) {
+			return;
 		}
+
+		pcntl_signal_dispatch();
 	}
 
 }

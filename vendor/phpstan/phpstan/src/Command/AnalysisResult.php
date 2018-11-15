@@ -2,27 +2,21 @@
 
 namespace PHPStan\Command;
 
+use PHPStan\Analyser\Error;
+
 class AnalysisResult
 {
 
-	/**
-	 * @var \PHPStan\Analyser\Error[]
-	 */
+	/** @var \PHPStan\Analyser\Error[] sorted by their file name, line number and message */
 	private $fileSpecificErrors;
 
-	/**
-	 * @var string[]
-	 */
+	/** @var string[] */
 	private $notFileSpecificErrors;
 
-	/**
-	 * @var bool
-	 */
+	/** @var bool */
 	private $defaultLevelUsed;
 
-	/**
-	 * @var string
-	 */
+	/** @var string */
 	private $currentDirectory;
 
 	/**
@@ -38,6 +32,21 @@ class AnalysisResult
 		string $currentDirectory
 	)
 	{
+		usort(
+			$fileSpecificErrors,
+			static function (Error $a, Error $b): int {
+				return [
+					$a->getFile(),
+					$a->getLine(),
+					$a->getMessage(),
+				] <=> [
+					$b->getFile(),
+					$b->getLine(),
+					$b->getMessage(),
+				];
+			}
+		);
+
 		$this->fileSpecificErrors = $fileSpecificErrors;
 		$this->notFileSpecificErrors = $notFileSpecificErrors;
 		$this->defaultLevelUsed = $defaultLevelUsed;
@@ -55,7 +64,7 @@ class AnalysisResult
 	}
 
 	/**
-	 * @return \PHPStan\Analyser\Error[]
+	 * @return \PHPStan\Analyser\Error[] sorted by their file name, line number and message
 	 */
 	public function getFileSpecificErrors(): array
 	{
@@ -75,6 +84,10 @@ class AnalysisResult
 		return $this->defaultLevelUsed;
 	}
 
+	/**
+	 * @deprecated Use \PHPStan\File\RelativePathHelper instead
+	 * @return string
+	 */
 	public function getCurrentDirectory(): string
 	{
 		return $this->currentDirectory;
