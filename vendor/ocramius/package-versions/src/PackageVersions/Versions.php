@@ -68,7 +68,7 @@ final class Versions
   'symfony/debug' => 'v3.4.18@fe9793af008b651c5441bdeab21ede8172dab097',
   'symfony/finder' => 'v3.4.18@54ba444dddc5bd5708a34bd095ea67c6eb54644d',
   'symfony/process' => 'v3.4.18@35c2914a9f50519bd207164c353ae4d59182c2cb',
-  'libertempo/libertempo-web' => 'dev-develop@ce859901c39adf03d26412cab7b1e540d96d734b',
+  'libertempo/libertempo-web' => 'dev-develop@2a3d13cefe30e560bb21740d8b7672a49bdf8d92',
 );
 
     private function __construct()
