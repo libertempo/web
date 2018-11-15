@@ -31,8 +31,9 @@ install: check setup update createHR check ## Installe la nouvelle instance
 
 reinstall: destroy install ## Reset usine
 
-install-dep: ## Installe les dépendances composer
+install-dep: ## Installe les dépendances composer et node
 	php composer.phar install
+	npm update
 
 ## Test
 test: ## Lance les tests unitaires

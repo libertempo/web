@@ -8,3 +8,4 @@ cfg/config_SMTP.php
 /backup/libertempo*
 clover.xml
 vendor/
+node_modules/
