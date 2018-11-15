@@ -13,7 +13,8 @@ notifications:
 script: make test
 
 before_script:
-    make install-dep
+    - make install-dep
+    - ls vendor/symfony/polyfill-mbstring
 
 after_script:
   - php vendor/bin/codacycoverage clover clover.xml
