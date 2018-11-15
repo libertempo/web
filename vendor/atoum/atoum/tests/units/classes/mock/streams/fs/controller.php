@@ -11,7 +11,7 @@ class controller extends atoum\test
 {
     public function testClass()
     {
-        $this->testedClass->extends('mageekguy\atoum\mock\stream\controller');
+        $this->testedClass->extends(atoum\mock\stream\controller::class);
     }
 
     public function test__construct()
@@ -21,7 +21,8 @@ class controller extends atoum\test
             ->then
                 ->integer($controller->getPermissions())->isZero()
                 ->object($controller->getAdapter())->isEqualTo(new atoum\adapter())
-                ->array($controller->getStat())->isEqualTo([
+                ->array($controller->getStat())->isEqualTo(
+                    [
                         'dev' => 0,
                         'ino' => 0,
                         'mode' => 0,

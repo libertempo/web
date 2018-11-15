@@ -23,9 +23,9 @@ class script extends atoum\test
             ->given(
                 $labelColorizer = new atoum\cli\colorizer('0;32'),
                 $labelColorizer->setPattern('/(^[^:]+: )/'),
-                $argumentColorizer = new atoum\cli\colorizer('0;32'),
+                $argumentColorizer = new atoum\cli\colorizer('0;37'),
                 $argumentColorizer->setPattern('/((?:^| )[-+]+[-a-z]+)/'),
-                $valueColorizer = new atoum\cli\colorizer('0;34'),
+                $valueColorizer = new atoum\cli\colorizer('0;36'),
                 $valueColorizer->setPattern('/(<[^>]+>(?:\.\.\.)?)/'),
 
                 $defaultOutputWriter = new writers\std\out(),
@@ -62,9 +62,9 @@ class script extends atoum\test
             ->if($script = new mock\script($name = uniqid()))
             ->then
                 ->string($script->getName())->isEqualTo($name)
-                ->object($script->getAdapter())->isInstanceOf('mageekguy\atoum\adapter')
-                ->object($script->getLocale())->isInstanceOf('mageekguy\atoum\locale')
-                ->object($script->getArgumentsParser())->isInstanceOf('mageekguy\atoum\script\arguments\parser')
+                ->object($script->getAdapter())->isInstanceOf(atoum\adapter::class)
+                ->object($script->getLocale())->isInstanceOf(atoum\locale::class)
+                ->object($script->getArgumentsParser())->isInstanceOf(atoum\script\arguments\parser::class)
                 ->object($script->getOutputWriter())->isEqualTo($defaultOutputWriter)
                 ->object($script->getInfoWriter())->isEqualTo($defaultInfoWriter)
                 ->object($script->getErrorWriter())->isEqualTo($defaultErrorWriter)
@@ -77,8 +77,8 @@ class script extends atoum\test
             ->then
                 ->string($script->getName())->isEqualTo($name)
                 ->object($script->getAdapter())->isIdenticalTo($adapter)
-                ->object($script->getLocale())->isInstanceOf('mageekguy\atoum\locale')
-                ->object($script->getArgumentsParser())->isInstanceOf('mageekguy\atoum\script\arguments\parser')
+                ->object($script->getLocale())->isInstanceOf(atoum\locale::class)
+                ->object($script->getArgumentsParser())->isInstanceOf(atoum\script\arguments\parser::class)
                 ->object($script->getOutputWriter())->isEqualTo($defaultOutputWriter)
                 ->object($script->getInfoWriter())->isEqualTo($defaultInfoWriter)
                 ->object($script->getErrorWriter())->isEqualTo($defaultErrorWriter)
@@ -92,9 +92,8 @@ class script extends atoum\test
             ->then
                 ->exception(function () use ($adapter, & $name) {
                     new mock\script($name = uniqid(), $adapter);
-                }
-                )
-                    ->isInstanceOf('mageekguy\atoum\exceptions\logic')
+                })
+                    ->isInstanceOf(atoum\exceptions\logic::class)
                     ->hasMessage('\'' . $name . '\' must be used in CLI only')
         ;
     }
@@ -246,9 +245,9 @@ class script extends atoum\test
             ->given(
                 $labelColorizer = new atoum\cli\colorizer('0;32'),
                 $labelColorizer->setPattern('/(^[^:]+: )/'),
-                $argumentColorizer = new atoum\cli\colorizer('0;32'),
+                $argumentColorizer = new atoum\cli\colorizer('0;37'),
                 $argumentColorizer->setPattern('/((?:^| )[-+]+[-a-z]+)/'),
-                $valueColorizer = new atoum\cli\colorizer('0;34'),
+                $valueColorizer = new atoum\cli\colorizer('0;36'),
                 $valueColorizer->setPattern('/(<[^>]+>(?:\.\.\.)?)/'),
                 $defaultHelpWriter = new writers\std\out(),
                 $defaultHelpWriter
@@ -400,7 +399,7 @@ class script extends atoum\test
                     ->call('write')
                         ->withArguments('Usage: ' . $script->getName() . ' [options]')->once()
                         ->withArguments('Available options are:')->once()
-                        ->withArguments('   -c <argumentC>, --c <argumentC>: help of C argument')->once()
+                        ->withArguments('  -c <argumentC>, --c <argumentC>  help of C argument')->once()
         ;
     }
 
@@ -542,17 +541,17 @@ class script extends atoum\test
             ->and($this->calling($helpWriter)->write->doesNothing())
             ->then
                 ->object($script->writeLabel($label = uniqid(), $message = uniqid()))->isIdenticalTo($script)
-                ->mock($helpWriter)->call('write')->withIdenticalArguments($label . ': ' . $message)->once()
+                ->mock($helpWriter)->call('write')->withIdenticalArguments('  ' . $label . '  ' . $message)->once()
                 ->object($script->writeLabel($label, $message, 0))->isIdenticalTo($script)
-                ->mock($helpWriter)->call('write')->withIdenticalArguments($label . ': ' . $message)->exactly(2)
-                ->object($script->writeLabel(($label = ' ' . $label) . PHP_EOL, ' ' . $message . ' ' . PHP_EOL))->isIdenticalTo($script)
-                ->mock($helpWriter)->call('write')->withIdenticalArguments($label . ': ' . $message)->once()
+                ->mock($helpWriter)->call('write')->withIdenticalArguments('  ' . $label . '  ' . $message)->exactly(2)
+                ->object($script->writeLabel(($label = '  ' . $label) . PHP_EOL, ' ' . $message . ' ' . PHP_EOL))->isIdenticalTo($script)
+                ->mock($helpWriter)->call('write')->withIdenticalArguments('  ' . $label . PHP_EOL . '  ' . $message)->once()
                 ->object($script->writeLabel($label, $message, 0))->isIdenticalTo($script)
-                ->mock($helpWriter)->call('write')->withIdenticalArguments($label . ': ' . $message)->exactly(2)
+                ->mock($helpWriter)->call('write')->withIdenticalArguments('  ' . $label . PHP_EOL . '  ' . $message)->once()
                 ->object($script->writeLabel($label = uniqid(), $message = uniqid(), 1))->isIdenticalTo($script)
-                ->mock($helpWriter)->call('write')->withIdenticalArguments(atoum\script::padding . $label . ': ' . $message)->once()
+                ->mock($helpWriter)->call('write')->withIdenticalArguments('  ' . $label . '  ' . $message)->once()
                 ->object($script->writeLabel($label, $message, 2))->isIdenticalTo($script)
-                ->mock($helpWriter)->call('write')->withIdenticalArguments(atoum\script::padding . atoum\script::padding . $label . ': ' . $message)->once()
+                ->mock($helpWriter)->call('write')->withIdenticalArguments('  ' . $label . '  ' . $message)->twice()
         ;
     }
 
@@ -564,8 +563,9 @@ class script extends atoum\test
             ->and($this->calling($helpWriter)->write->doesNothing())
             ->then
                 ->object($script->writeLabels([$label = uniqid() => $message = uniqid()]))->isIdenticalTo($script)
-                ->mock($helpWriter)->call('write')->withIdenticalArguments(atoum\script::padding . $label . ': ' . $message)->once()
-                ->object($script->writeLabels(
+                ->mock($helpWriter)->call('write')->withIdenticalArguments('  ' . $label . '  ' . $message)->once()
+                ->object(
+                    $script->writeLabels(
                         [
                             $label1 = uniqid() => $message1 = uniqid(),
                             $label2 = uniqid() => $message2 = uniqid(),
@@ -575,10 +575,11 @@ class script extends atoum\test
                 )
                     ->isIdenticalTo($script)
                 ->mock($helpWriter)
-                    ->call('write')->withIdenticalArguments(atoum\script::padding . $label1 . ': ' . $message1)->once()
-                    ->call('write')->withIdenticalArguments(atoum\script::padding . $label2 . ': ' . $message2)->once()
-                    ->call('write')->withIdenticalArguments(atoum\script::padding . $label3 . ': ' . $message3)->once()
-                ->object($script->writeLabels(
+                    ->call('write')->withIdenticalArguments('  ' . $label1 . '  ' . $message1)->once()
+                    ->call('write')->withIdenticalArguments('  ' . $label2 . '  ' . $message2)->once()
+                    ->call('write')->withIdenticalArguments('  ' . $label3 . '  ' . $message3)->once()
+                ->object(
+                    $script->writeLabels(
                         [
                             $label1 = uniqid() => $message1 = uniqid(),
                             $label2 = '  ' . uniqid() => $message2 = uniqid(),
@@ -588,50 +589,47 @@ class script extends atoum\test
                 )
                     ->isIdenticalTo($script)
                 ->mock($helpWriter)
-                    ->call('write')->withIdenticalArguments(atoum\script::padding . '  ' . $label1 . ': ' . $message1)->once()
-                    ->call('write')->withIdenticalArguments(atoum\script::padding . $label2 . ': ' . $message2)->once()
-                    ->call('write')->withIdenticalArguments(atoum\script::padding . '  ' . $label3 . ': ' . $message3)->once()
-                ->object($script->writeLabels([
+                    ->call('write')->withIdenticalArguments('  ' . $label1 . '    ' . $message1)->once()
+                    ->call('write')->withIdenticalArguments('  ' . $label2 . '  ' . $message2)->once()
+                    ->call('write')->withIdenticalArguments('  ' . $label3 . '    ' . $message3)->once()
+                ->object(
+                    $script->writeLabels(
+                        [
                             $label1 = uniqid() => $message1 = uniqid(),
                             $label2 = 'xx' . uniqid() => $message2 = uniqid(),
                             $label3 = uniqid() => $message3 = uniqid()
-                        ], 3
+                        ],
+                        3
                     )
                 )
                     ->isIdenticalTo($script)
                 ->mock($helpWriter)
-                    ->call('write')->withIdenticalArguments(atoum\script::padding . atoum\script::padding . atoum\script::padding . '  ' . $label1 . ': ' . $message1)->once()
-                    ->call('write')->withIdenticalArguments(atoum\script::padding . atoum\script::padding . atoum\script::padding . $label2 . ': ' . $message2)->once()
-                    ->call('write')->withIdenticalArguments(atoum\script::padding . atoum\script::padding . atoum\script::padding . '  ' . $label3 . ': ' . $message3)->once()
-                ->object($script->writeLabels([
+                    ->call('write')->withIdenticalArguments('  ' . $label1 . '    ' . $message1)->once()
+                    ->call('write')->withIdenticalArguments('  ' . $label2 . '  ' . $message2)->once()
+                    ->call('write')->withIdenticalArguments('  ' . $label3 . '    ' . $message3)->once()
+                ->object(
+                    $script->writeLabels(
+                        [
                             $label1 = uniqid() => $message1 = uniqid(),
                             $label2 = 'xx' . uniqid() => ($message21 = uniqid()) . PHP_EOL . ($message22 = uniqid()),
                             $label3 = uniqid() => $message3 = uniqid()
-                        ], 3
+                        ],
+                        3
                     )
                 )
                     ->isIdenticalTo($script)
                 ->mock($helpWriter)
-                    ->call('write')->withIdenticalArguments(atoum\script::padding . atoum\script::padding . atoum\script::padding . '  ' . $label1 . ': ' . $message1)->once()
-                    ->call('write')->withIdenticalArguments(atoum\script::padding . atoum\script::padding . atoum\script::padding . $label2 . ': ' . $message21)->once()
-                    ->call('write')->withIdenticalArguments(atoum\script::padding . atoum\script::padding . atoum\script::padding . '               ' . ': ' . $message22)->once()
-                    ->call('write')->withIdenticalArguments(atoum\script::padding . atoum\script::padding . atoum\script::padding . '  ' . $label3 . ': ' . $message3)->once()
+                    ->call('write')->withIdenticalArguments('  ' . $label1 . '    ' . $message1)->once()
+                    ->call('write')->withIdenticalArguments('  ' . $label2 . '  ' . $message21)->once()
+                    ->call('write')->withIdenticalArguments('                   ' . $message22)->once()
+                    ->call('write')->withIdenticalArguments('  ' . $label3 . '    ' . $message3)->once()
         ;
     }
 
     public function testGetDirectory()
     {
         $this
-            ->given($script = new mock\script($name = uniqid()))
-            ->and($script->setAdapter($adapter = new atoum\test\adapter()))
-            ->and($adapter->is_dir = true)
-            ->and($adapter->dirname = $directory = uniqid())
-            ->then
-                ->string($script->getDirectory())->isEqualTo($directory . DIRECTORY_SEPARATOR)
-            ->if($adapter->dirname = $directory . DIRECTORY_SEPARATOR)
-            ->then
-                ->string($script->getDirectory())->isEqualTo($directory . DIRECTORY_SEPARATOR)
-            ->if($adapter->is_dir = false)
+            ->given($script = new mock\script($name = uniqid(), $adapter = new atoum\test\adapter()))
             ->and($adapter->getcwd = $currentDirectory = uniqid())
             ->then
                 ->string($script->getDirectory())->isEqualTo($currentDirectory . DIRECTORY_SEPARATOR)

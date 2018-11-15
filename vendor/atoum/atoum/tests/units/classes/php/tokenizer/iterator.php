@@ -13,8 +13,8 @@ class iterator extends atoum\test
     {
         $this
             ->testedClass
-                ->implements('Iterator')
-                ->implements('Countable')
+                ->implements(\iterator::class)
+                ->implements(\countable::class)
         ;
     }
 
@@ -576,9 +576,8 @@ class iterator extends atoum\test
                 ->object($otherInnerIterator->current())->isIdenticalTo($token3)
                 ->exception(function () use ($iterator, $innerIterator) {
                     $iterator->append($innerIterator);
-                }
-                )
-                    ->isInstanceOf('mageekguy\atoum\exceptions\runtime')
+                })
+                    ->isInstanceOf(atoum\exceptions\runtime::class)
                     ->hasMessage('Unable to append value because it has already a parent')
             ->if(
                 $this->newTestedInstance,

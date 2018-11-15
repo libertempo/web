@@ -13,8 +13,8 @@ class http extends atoum\test
     {
         $this
             ->testedClass
-                ->isSubclassOf('\\mageekguy\\atoum\\writer')
-                ->implements('mageekguy\atoum\report\writers\asynchronous')
+                ->isSubclassOf(atoum\writer::class)
+                ->implements(atoum\report\writers\asynchronous::class)
         ;
     }
 
@@ -40,9 +40,8 @@ class http extends atoum\test
             ->then
                 ->exception(function () use ($writer) {
                     $writer->write(uniqid());
-                }
-                )
-                    ->isInstanceOf('\\mageekguy\\atoum\\exceptions\\runtime')
+                })
+                    ->isInstanceOf(atoum\exceptions\runtime::class)
                     ->hasMessage('No URL set for HTTP writer')
             ->if($writer->setUrl($url = uniqid()))
             ->then
@@ -106,7 +105,7 @@ class http extends atoum\test
                 ->exception(function () use ($writer, $report) {
                     $writer->writeAsynchronousReport($report);
                 })
-                    ->isInstanceOf('mageekguy\atoum\writers\http\exception')
+                    ->isInstanceOf(atoum\writers\http\exception::class)
                     ->hasMessage('Unable to write coverage report to ' . $url)
         ;
     }

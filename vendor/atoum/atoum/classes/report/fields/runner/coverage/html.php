@@ -44,7 +44,7 @@ class html extends report\fields\runner\coverage\cli
     {
         $string = '';
 
-        if (count($this->coverage) > 0) {
+        if ($this->coverage !== null && count($this->coverage) > 0) {
             try {
                 $this->cleanDestinationDirectory();
 
@@ -75,7 +75,7 @@ class html extends report\fields\runner\coverage\cli
 
                 ksort($classes, \SORT_STRING);
 
-                foreach ($classes as $className => $classFile) {
+                foreach ($classes as $className => $_) {
                     $classCoverageTemplates->className = $className;
                     $classCoverageTemplates->classUrl = str_replace('\\', '/', $className) . self::htmlExtensionFile;
 
@@ -116,6 +116,8 @@ class html extends report\fields\runner\coverage\cli
 
                     if (substr_count($className, '\\') >= 1) {
                         $classTemplate->relativeRootUrl = rtrim(str_repeat('../', substr_count($className, '\\')), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+                    } else {
+                        $classTemplate->relativeRootUrl = './';
                     }
 
                     $classCoverageValue = $this->coverage->getValueForClass($className);
@@ -141,7 +143,8 @@ class html extends report\fields\runner\coverage\cli
                             if ($methodCoverageValue === null) {
                                 $methodCoverageUnavailableTemplates->build(['methodName' => $methodName]);
                             } else {
-                                $methodCoverageAvailableTemplates->build([
+                                $methodCoverageAvailableTemplates->build(
+                                    [
                                         'methodName' => $methodName,
                                         'methodCoverageValue' => round($methodCoverageValue * 100, 2)
                                     ]

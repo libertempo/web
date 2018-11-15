@@ -13,7 +13,7 @@ class tap extends atoum\test
     public function testClass()
     {
         $this->testedClass
-            ->extends('mageekguy\atoum\reports\realtime')
+            ->extends(atoum\reports\realtime::class)
         ;
     }
 
@@ -26,7 +26,8 @@ class tap extends atoum\test
             ->then
                 ->object($report->getLocale())->isEqualTo(new atoum\locale())
                 ->object($report->getAdapter())->isEqualTo(new atoum\adapter())
-                ->array($report->getFields())->isEqualTo([
+                ->array($report->getFields())->isEqualTo(
+                    [
                         $planField,
                         $eventField
                     ]

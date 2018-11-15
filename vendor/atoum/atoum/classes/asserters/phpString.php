@@ -79,6 +79,17 @@ class phpString extends variable
         return $this;
     }
 
+    public function notMatches($pattern, $failMessage = null)
+    {
+        if (preg_match($pattern, $this->valueIsSet()->value) === 0) {
+            $this->pass();
+        } else {
+            $this->fail($failMessage ?: $this->_('%s matches %s', $this, $pattern));
+        }
+
+        return $this;
+    }
+
     public function isEqualTo($value, $failMessage = null)
     {
         return parent::isEqualTo($value, $failMessage ?: $this->_('strings are not equal'));
@@ -144,7 +155,7 @@ class phpString extends variable
     public function notContains($fragment, $failMessage = null)
     {
         if (strpos($this->valueIsSet()->value, $fragment) !== false) {
-            $this->fail($failMessage ?: $this->_('%s contains %s', $this, $fragment));
+            $this->fail($failMessage ?: $this->_('%s contains %s', $this, $this->analyzer->getTypeOf($fragment)));
         } else {
             $this->pass();
         }
@@ -157,7 +168,7 @@ class phpString extends variable
         if (strpos($this->valueIsSet()->value, $fragment) === 0) {
             $this->pass();
         } else {
-            $this->fail($failMessage ?: $this->_('%s does not start with %s', $this, $fragment));
+            $this->fail($failMessage ?: $this->_('%s does not start with %s', $this, $this->analyzer->getTypeOf($fragment)));
         }
 
         return $this;
@@ -170,7 +181,7 @@ class phpString extends variable
         if ($fragmentPosition === false || $fragmentPosition > 0) {
             $this->pass();
         } else {
-            $this->fail($failMessage ?: $this->_('%s start with %s', $this, $fragment));
+            $this->fail($failMessage ?: $this->_('%s start with %s', $this, $this->analyzer->getTypeOf($fragment)));
         }
 
         return $this;
@@ -181,7 +192,7 @@ class phpString extends variable
         if (strpos($this->valueIsSet()->value, $fragment) === (strlen($this->valueIsSet()->value) - strlen($fragment))) {
             $this->pass();
         } else {
-            $this->fail($failMessage ?: $this->_('%s does not end with %s', $this, $fragment));
+            $this->fail($failMessage ?: $this->_('%s does not end with %s', $this, $this->analyzer->getTypeOf($fragment)));
         }
 
         return $this;
@@ -190,7 +201,7 @@ class phpString extends variable
     public function notEndWith($fragment, $failMessage = null)
     {
         if (strpos($this->valueIsSet()->value, $fragment) === (strlen($this->valueIsSet()->value) - strlen($fragment))) {
-            $this->fail($failMessage ?: $this->_('%s end with %s', $this, $fragment));
+            $this->fail($failMessage ?: $this->_('%s end with %s', $this, $this->analyzer->getTypeOf($fragment)));
         } else {
             $this->pass();
         }

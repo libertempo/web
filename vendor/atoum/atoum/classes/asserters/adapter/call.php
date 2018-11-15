@@ -122,11 +122,11 @@ abstract class call extends atoum\asserter
         return $this->adapter;
     }
 
-    public function before(call $call)
+    public function before(self ...$calls)
     {
         $this->setTrace();
 
-        foreach (func_get_args() as $call) {
+        foreach ($calls as $call) {
             $this->addBeforeCall($call);
         }
 
@@ -138,11 +138,11 @@ abstract class call extends atoum\asserter
         return $this->beforeCalls;
     }
 
-    public function after(call $call)
+    public function after(self ...$calls)
     {
         $this->setTrace();
 
-        foreach (func_get_args() as $call) {
+        foreach ($calls as $call) {
             $this->addAfterCall($call);
         }
 
@@ -312,6 +312,7 @@ abstract class call extends atoum\asserter
             ->call
                 ->setFunction($function)
                 ->unsetArguments()
+                ->unsetverify()
         ;
 
         $this->beforeCalls = [];
@@ -328,6 +329,7 @@ abstract class call extends atoum\asserter
             ->setTrace()
             ->call
                 ->setArguments($arguments)
+                ->unsetverify()
         ;
 
         $this->identicalCall = false;
@@ -343,6 +345,37 @@ abstract class call extends atoum\asserter
             ->setTrace()
             ->call
                 ->unsetArguments()
+        ;
+
+        $this->identicalCall = false;
+
+        return $this;
+    }
+
+    protected function setVerify(callable $verify)
+    {
+        $this
+            ->adapterIsSet()
+            ->callIsSet()
+            ->setTrace()
+            ->call
+                ->setVerify($verify)
+                ->unsetArguments()
+        ;
+
+        $this->identicalCall = false;
+
+        return $this;
+    }
+
+    protected function unsetVerify()
+    {
+        $this
+            ->adapterIsSet()
+            ->callIsSet()
+            ->setTrace()
+            ->call
+                ->unsetVerify()
         ;
 
         $this->identicalCall = false;
@@ -404,14 +437,14 @@ abstract class call extends atoum\asserter
         return $this;
     }
 
-    private function addBeforeCall(call $call)
+    private function addBeforeCall(self $call)
     {
         $this->beforeCalls[] = $call->disableEvaluationChecking();
 
         return $this;
     }
 
-    private function addAfterCall(call $call)
+    private function addAfterCall(self $call)
     {
         $this->afterCalls[] = $call->disableEvaluationChecking();
 

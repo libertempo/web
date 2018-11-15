@@ -16,9 +16,8 @@ class manager extends atoum\test
             ->then
                 ->exception(function () use ($assertionManager, & $event) {
                     $assertionManager->{$event = uniqid()};
-                }
-                )
-                    ->isInstanceOf('mageekguy\atoum\test\assertion\manager\exception')
+                })
+                    ->isInstanceOf(atoum\test\assertion\manager\exception::class)
                     ->hasMessage('There is no handler defined for \'' . $event . '\'')
 
             ->if($this->testedInstance->setDefaultHandler(function () use (& $defaultReturn) {
@@ -74,9 +73,8 @@ class manager extends atoum\test
             ->then
                 ->exception(function () use ($assertionManager, & $event) {
                     $assertionManager->{$event = uniqid()}();
-                }
-                )
-                    ->isInstanceOf('mageekguy\atoum\test\assertion\manager\exception')
+                })
+                    ->isInstanceOf(atoum\test\assertion\manager\exception::class)
                     ->hasMessage('There is no handler defined for \'' . $event . '\'')
 
             ->if($this->testedInstance->setDefaultHandler(function ($event, $defaultArg) {
@@ -174,9 +172,8 @@ class manager extends atoum\test
 
                 ->exception(function () use ($assertionManager) {
                     $assertionManager->invokeMethodHandler('foo');
-                }
-                )
-                    ->isInstanceOf('mageekguy\atoum\test\assertion\manager\exception')
+                })
+                    ->isInstanceOf(atoum\test\assertion\manager\exception::class)
                     ->hasMessage('There is no handler defined for \'foo\'')
         ;
     }
@@ -202,9 +199,8 @@ class manager extends atoum\test
 
                 ->exception(function () use ($assertionManager) {
                     $assertionManager->invokePropertyHandler('foo');
-                }
-                )
-                    ->isInstanceOf('mageekguy\atoum\test\assertion\manager\exception')
+                })
+                    ->isInstanceOf(atoum\test\assertion\manager\exception::class)
                     ->hasMessage('There is no handler defined for \'foo\'')
         ;
     }
@@ -226,9 +222,8 @@ class manager extends atoum\test
             ->then
                 ->exception(function () use ($assertionManager, & $event) {
                     $assertionManager->invokeMethodHandler($event = uniqid());
-                }
-                )
-                    ->isInstanceOf('mageekguy\atoum\test\assertion\manager\exception')
+                })
+                    ->isInstanceOf(atoum\test\assertion\manager\exception::class)
                     ->hasMessage('There is no handler defined for \'' . $event . '\'')
 
             ->if($this->testedInstance->setDefaultHandler(function ($event, $arg) {

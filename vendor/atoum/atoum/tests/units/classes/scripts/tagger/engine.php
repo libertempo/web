@@ -25,7 +25,7 @@ class engine extends atoum\test
                 ->variable($this->testedInstance->getDestinationDirectory())->isNull()
                 ->variable($this->testedInstance->getVersion())->isNull()
                 ->string($this->testedInstance->getVersionPattern())->isEqualTo(\mageekguy\atoum\scripts\tagger\engine::defaultVersionPattern)
-                ->object($this->testedInstance->getAdapter())->isInstanceOf('mageekguy\atoum\adapter')
+                ->object($this->testedInstance->getAdapter())->isInstanceOf(atoum\adapter::class)
             ->if($this->newTestedInstance($adapter = new atoum\adapter()))
             ->then
                 ->variable($this->testedInstance->getSrcDirectory())->isNull()
@@ -112,14 +112,13 @@ class engine extends atoum\test
                 ->exception(function () use ($tagger) {
                     $tagger->setSrcIteratorInjector(function () {
                     });
-                }
-                )
-                    ->isInstanceOf('mageekguy\atoum\exceptions\logic')
+                })
+                    ->isInstanceOf(atoum\exceptions\logic::class)
                     ->hasMessage('Src iterator injector must take one argument')
                 ->object($this->testedInstance->setSrcIteratorInjector(function ($directory) {
                     return new \recursiveDirectoryIterator($directory);
                 }))->isTestedInstance
-                ->object($this->testedInstance->getSrcIterator())->isInstanceOf('recursiveDirectoryIterator')
+                ->object($this->testedInstance->getSrcIterator())->isInstanceOf(\recursiveDirectoryIterator::class)
                 ->string($this->testedInstance->getSrcIterator()->getPath())->isEqualTo(__DIR__)
         ;
     }
@@ -131,14 +130,13 @@ class engine extends atoum\test
             ->then
                 ->exception(function () use ($tagger) {
                     $tagger->getSrcIterator();
-                }
-                )
-                    ->isInstanceOf('mageekguy\atoum\exceptions\logic')
+                })
+                    ->isInstanceOf(atoum\exceptions\logic::class)
                     ->hasMessage('Unable to get files iterator, source directory is undefined')
             ->if($this->testedInstance->setSrcDirectory(__DIR__))
             ->then
-                ->object($this->testedInstance->getSrcIterator())->isInstanceOf('recursiveIteratorIterator')
-                ->object($this->testedInstance->getSrcIterator()->getInnerIterator())->isInstanceOf('mageekguy\atoum\iterators\filters\recursives\dot')
+                ->object($this->testedInstance->getSrcIterator())->isInstanceOf(\recursiveIteratorIterator::class)
+                ->object($this->testedInstance->getSrcIterator()->getInnerIterator())->isInstanceOf(atoum\iterators\filters\recursives\dot::class)
         ;
     }
 
@@ -154,17 +152,15 @@ class engine extends atoum\test
             ->then
                 ->exception(function () use ($tagger) {
                     $tagger->tagVersion(uniqid());
-                }
-                )
-                    ->isInstanceOf('mageekguy\atoum\exceptions\logic')
+                })
+                    ->isInstanceOf(atoum\exceptions\logic::class)
                     ->hasMessage('Unable to tag, src directory is undefined')
             ->if($this->testedInstance->setSrcDirectory($srcDirectory = uniqid()))
             ->then
                 ->exception(function () use ($tagger) {
                     $tagger->tagVersion(uniqid());
-                }
-                )
-                    ->isInstanceOf('mageekguy\atoum\exceptions\logic')
+                })
+                    ->isInstanceOf(atoum\exceptions\logic::class)
                     ->hasMessage('Unable to tag, version is undefined')
             ->if(
                 $tagger
@@ -175,12 +171,12 @@ class engine extends atoum\test
             ->then
                 ->exception(function () use ($tagger) {
                     $tagger->tagVersion(uniqid());
-                }
-                )
-                    ->isInstanceOf('mageekguy\atoum\exceptions\logic')
+                })
+                    ->isInstanceOf(atoum\exceptions\logic::class)
                     ->hasMessage('Unable to tag, src iterator injector does not return an iterator')
             ->if(
-                $srcIterator = new \arrayIterator([
+                $srcIterator = new \arrayIterator(
+                    [
                         $file1 = $srcDirectory . \DIRECTORY_SEPARATOR . ($basename1 = uniqid()),
                         $file2 = $srcDirectory . \DIRECTORY_SEPARATOR . ($basename2 = uniqid()),
                         $file3 = $srcDirectory . \DIRECTORY_SEPARATOR . ($basename3 = uniqid()),
@@ -208,9 +204,8 @@ class engine extends atoum\test
             ->then
                 ->exception(function () use ($tagger) {
                     $tagger->tagVersion(uniqid());
-                }
-                )
-                    ->isInstanceOf('mageekguy\atoum\exceptions\runtime')
+                })
+                    ->isInstanceOf(atoum\exceptions\runtime::class)
                     ->hasMessage('Unable to tag, path \'' . $file2 . '\' is not readable')
             ->if(
                 $adapter->resetCalls(),
@@ -220,9 +215,8 @@ class engine extends atoum\test
             ->then
                 ->exception(function () use ($tagger) {
                     $tagger->tagVersion(uniqid());
-                }
-                )
-                    ->isInstanceOf('mageekguy\atoum\exceptions\runtime')
+                })
+                    ->isInstanceOf(atoum\exceptions\runtime::class)
                     ->hasMessage('Unable to tag, path \'' . $file2 . '\' is not writable')
             ->if(
                 $adapter->resetCalls(),

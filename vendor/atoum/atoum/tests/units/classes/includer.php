@@ -67,7 +67,7 @@ class includer extends atoum\test
                 ->exception(function () use ($includer, $unknownFile) {
                     $includer->includePath($unknownFile);
                 })
-                    ->isInstanceOf('mageekguy\atoum\includer\exception')
+                    ->isInstanceOf(atoum\includer\exception::class)
                     ->hasMessage('Unable to include \'' . $unknownFile . '\'')
                 ->array($includer->getErrors())->isNotEmpty()
                 ->adapter($adapter)
@@ -126,12 +126,14 @@ class includer extends atoum\test
             ->and($adapter->error_reporting = E_ALL)
             ->then
                 ->boolean($includer->errorHandler($errno = E_NOTICE, $message = uniqid(), $file = uniqid(), $line = rand(1, PHP_INT_MAX), $context = []))->isTrue()
-                ->array($includer->getErrors())->isEqualTo([
+                ->array($includer->getErrors())->isEqualTo(
+                    [
                         [$errno, $message, $file, $line, $context]
                     ]
                 )
                 ->boolean($includer->errorHandler($otherErrno = E_WARNING, $otherMessage = uniqid(), $otherFile = uniqid(), $otherLine = rand(1, PHP_INT_MAX), $otherContext = []))->isTrue()
-                ->array($includer->getErrors())->isEqualTo([
+                ->array($includer->getErrors())->isEqualTo(
+                    [
                         [$errno, $message, $file, $line, $context],
                         [$otherErrno, $otherMessage, $otherFile, $otherLine, $otherContext]
                     ]
