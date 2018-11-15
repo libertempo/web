@@ -2154,13 +2154,13 @@ class Fonctions
     // recup l'id de la derniere fermeture (le max)
     public static function get_last_fermeture_id() : int
     {
-        $req_1="SELECT MAX(jf_id) FROM conges_jours_fermeture ";
+        $req_1="SELECT MAX(jf_id) as max FROM conges_jours_fermeture ";
         $res_1 = \includes\SQL::singleton()->query($req_1);
         $row_1 = $res_1->fetch_array();
-        if (!$row_1)
+        if (empty($row_1['max'])) {
             return 0;     // si la table est vide, on renvoit 0
-        else
-            return $row_1[0];
+        }
+        return $row_1['max'];
     }
 
     // verifie si la periode donnee chevauche une periode de conges d'un des user du groupe ..
