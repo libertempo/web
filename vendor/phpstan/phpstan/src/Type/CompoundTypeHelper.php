@@ -2,16 +2,28 @@
 
 namespace PHPStan\Type;
 
+use PHPStan\TrinaryLogic;
+
 class CompoundTypeHelper
 {
 
-	public static function accepts(CompoundType $compoundType, Type $otherType): bool
+	public static function accepts(CompoundType $compoundType, Type $otherType, bool $strictTypes): TrinaryLogic
 	{
 		if ($compoundType instanceof MixedType) {
-			return true;
+			return TrinaryLogic::createYes();
 		}
 
-		return $compoundType->isSubTypeOf($otherType)->yes();
+		if ($compoundType instanceof BenevolentUnionType) {
+			foreach ($compoundType->getTypes() as $innerType) {
+				if ($otherType->accepts($innerType, $strictTypes)->yes()) {
+					return TrinaryLogic::createYes();
+				}
+			}
+
+			return TrinaryLogic::createNo();
+		}
+
+		return $compoundType->isSubTypeOf($otherType);
 	}
 
 }

@@ -2,6 +2,8 @@
 
 namespace PHPStan\File;
 
+use Nette\Utils\Strings;
+
 class FileHelper
 {
 
@@ -35,15 +37,16 @@ class FileHelper
 
 	public function normalizePath(string $originalPath): string
 	{
-		if (preg_match('~^([a-z]+)\\:\\/\\/(.+)~', $originalPath, $m)) {
-			list(, $scheme, $path) = $m;
+		$matches = \Nette\Utils\Strings::match($originalPath, '~^([a-z]+)\\:\\/\\/(.+)~');
+		if ($matches !== null) {
+			[, $scheme, $path] = $matches;
 		} else {
 			$scheme = null;
 			$path = $originalPath;
 		}
 
 		$path = str_replace('\\', '/', $path);
-		$path = preg_replace('~/{2,}~', '/', $path);
+		$path = Strings::replace($path, '~/{2,}~', '/');
 
 		$pathRoot = strpos($path, '/') === 0 ? DIRECTORY_SEPARATOR : '';
 		$pathParts = explode('/', trim($path, '/'));
@@ -54,6 +57,7 @@ class FileHelper
 				continue;
 			}
 			if ($pathPart === '..') {
+				/** @var string $removedPart */
 				$removedPart = array_pop($normalizedPathParts);
 				if ($scheme === 'phar' && substr($removedPart, -5) === '.phar') {
 					$scheme = null;

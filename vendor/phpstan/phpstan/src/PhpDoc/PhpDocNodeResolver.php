@@ -8,12 +8,16 @@ use PHPStan\PhpDoc\Tag\MethodTagParameter;
 use PHPStan\PhpDoc\Tag\ParamTag;
 use PHPStan\PhpDoc\Tag\PropertyTag;
 use PHPStan\PhpDoc\Tag\ReturnTag;
+use PHPStan\PhpDoc\Tag\ThrowsTag;
 use PHPStan\PhpDoc\Tag\VarTag;
 use PHPStan\PhpDocParser\Ast\ConstExpr\ConstExprNullNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocNode;
+use PHPStan\PhpDocParser\Ast\PhpDoc\ThrowsTagValueNode;
+use PHPStan\Reflection\PassedByReference;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\IntegerType;
 use PHPStan\Type\MixedType;
+use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 
 class PhpDocNodeResolver
@@ -29,19 +33,23 @@ class PhpDocNodeResolver
 
 	public function resolve(PhpDocNode $phpDocNode, NameScope $nameScope): ResolvedPhpDocBlock
 	{
-		return new ResolvedPhpDocBlock(
+		return ResolvedPhpDocBlock::create(
 			$this->resolveVarTags($phpDocNode, $nameScope),
 			$this->resolveMethodTags($phpDocNode, $nameScope),
 			$this->resolvePropertyTags($phpDocNode, $nameScope),
 			$this->resolveParamTags($phpDocNode, $nameScope),
-			$this->resolveReturnTag($phpDocNode, $nameScope)
+			$this->resolveReturnTag($phpDocNode, $nameScope),
+			$this->resolveThrowsTags($phpDocNode, $nameScope),
+			$this->resolveIsDeprecated($phpDocNode),
+			$this->resolveIsInternal($phpDocNode),
+			$this->resolveIsFinal($phpDocNode)
 		);
 	}
 
 	/**
 	 * @param PhpDocNode $phpDocNode
 	 * @param NameScope $nameScope
-	 * @return \PHPStan\PhpDoc\Tag\VarTag[]
+	 * @return array<string|int, \PHPStan\PhpDoc\Tag\VarTag>
 	 */
 	private function resolveVarTags(PhpDocNode $phpDocNode, NameScope $nameScope): array
 	{
@@ -65,7 +73,7 @@ class PhpDocNodeResolver
 	/**
 	 * @param PhpDocNode $phpDocNode
 	 * @param NameScope $nameScope
-	 * @return \PHPStan\PhpDoc\Tag\PropertyTag[]
+	 * @return array<string, \PHPStan\PhpDoc\Tag\PropertyTag>
 	 */
 	private function resolvePropertyTags(PhpDocNode $phpDocNode, NameScope $nameScope): array
 	{
@@ -116,7 +124,7 @@ class PhpDocNodeResolver
 	/**
 	 * @param PhpDocNode $phpDocNode
 	 * @param NameScope $nameScope
-	 * @return \PHPStan\PhpDoc\Tag\MethodTag[]
+	 * @return array<string, \PHPStan\PhpDoc\Tag\MethodTag>
 	 */
 	private function resolveMethodTags(PhpDocNode $phpDocNode, NameScope $nameScope): array
 	{
@@ -132,8 +140,10 @@ class PhpDocNodeResolver
 				}
 				$parameters[$parameterName] = new MethodTagParameter(
 					$type,
-					$parameterNode->isReference,
-					$parameterNode->defaultValue !== null,
+					$parameterNode->isReference
+						? PassedByReference::createCreatesNewVariable()
+						: PassedByReference::createNo(),
+					$parameterNode->isVariadic || $parameterNode->defaultValue !== null,
 					$parameterNode->isVariadic
 				);
 			}
@@ -149,9 +159,9 @@ class PhpDocNodeResolver
 	}
 
 	/**
-	 * @param  PhpDocNode $phpDocNode
-	 * @param  NameScope $nameScope
-	 * @return \PHPStan\PhpDoc\Tag\ParamTag[]
+	 * @param PhpDocNode $phpDocNode
+	 * @param NameScope $nameScope
+	 * @return array<string, \PHPStan\PhpDoc\Tag\ParamTag>
 	 */
 	private function resolveParamTags(PhpDocNode $phpDocNode, NameScope $nameScope): array
 	{
@@ -166,7 +176,7 @@ class PhpDocNodeResolver
 				if (!$parameterType instanceof ArrayType) {
 					$parameterType = new ArrayType(new IntegerType(), $parameterType);
 
-				} elseif ($parameterType->getIterableKeyType() instanceof MixedType) {
+				} elseif ($parameterType->getKeyType() instanceof MixedType) {
 					$parameterType = new ArrayType(new IntegerType(), $parameterType->getItemType());
 				}
 			}
@@ -180,18 +190,47 @@ class PhpDocNodeResolver
 		return $resolved;
 	}
 
-	/**
-	 * @param  PhpDocNode $phpDocNode
-	 * @param  NameScope $nameScope
-	 * @return \PHPStan\PhpDoc\Tag\ReturnTag|null
-	 */
-	private function resolveReturnTag(PhpDocNode $phpDocNode, NameScope $nameScope)
+	private function resolveReturnTag(PhpDocNode $phpDocNode, NameScope $nameScope): ?\PHPStan\PhpDoc\Tag\ReturnTag
 	{
 		foreach ($phpDocNode->getReturnTagValues() as $tagValue) {
 			return new ReturnTag($this->typeNodeResolver->resolve($tagValue->type, $nameScope));
 		}
 
 		return null;
+	}
+
+	private function resolveThrowsTags(PhpDocNode $phpDocNode, NameScope $nameScope): ?\PHPStan\PhpDoc\Tag\ThrowsTag
+	{
+		$types = array_map(function (ThrowsTagValueNode $throwsTagValue) use ($nameScope): Type {
+			return $this->typeNodeResolver->resolve($throwsTagValue->type, $nameScope);
+		}, $phpDocNode->getThrowsTagValues());
+
+		if (count($types) === 0) {
+			return null;
+		}
+
+		return new ThrowsTag(TypeCombinator::union(...$types));
+	}
+
+	private function resolveIsDeprecated(PhpDocNode $phpDocNode): bool
+	{
+		$deprecatedTags = $phpDocNode->getTagsByName('@deprecated');
+
+		return count($deprecatedTags) > 0;
+	}
+
+	private function resolveIsInternal(PhpDocNode $phpDocNode): bool
+	{
+		$internalTags = $phpDocNode->getTagsByName('@internal');
+
+		return count($internalTags) > 0;
+	}
+
+	private function resolveIsFinal(PhpDocNode $phpDocNode): bool
+	{
+		$finalTags = $phpDocNode->getTagsByName('@final');
+
+		return count($finalTags) > 0;
 	}
 
 }

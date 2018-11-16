@@ -2,92 +2,123 @@
 
 namespace PHPStan\Type;
 
-use PHPStan\Analyser\Scope;
-use PHPStan\Reflection\ClassConstantReflection;
-use PHPStan\Reflection\MethodReflection;
-use PHPStan\Reflection\PropertyReflection;
+use PHPStan\Broker\Broker;
 use PHPStan\TrinaryLogic;
+use PHPStan\Type\Constant\ConstantArrayType;
+use PHPStan\Type\Constant\ConstantIntegerType;
+use PHPStan\Type\Traits\MaybeCallableTypeTrait;
+use PHPStan\Type\Traits\NonIterableTypeTrait;
+use PHPStan\Type\Traits\NonObjectTypeTrait;
+use PHPStan\Type\Traits\UndecidedBooleanTypeTrait;
 
 class StringType implements Type
 {
 
 	use JustNullableTypeTrait;
+	use MaybeCallableTypeTrait;
+	use NonIterableTypeTrait;
+	use NonObjectTypeTrait;
+	use UndecidedBooleanTypeTrait;
 
-	public function describe(): string
+	public function describe(VerbosityLevel $level): string
 	{
 		return 'string';
 	}
 
-	public function canAccessProperties(): bool
+	public function isOffsetAccessible(): TrinaryLogic
 	{
-		return false;
+		return TrinaryLogic::createYes();
 	}
 
-	public function hasProperty(string $propertyName): bool
+	public function hasOffsetValueType(Type $offsetType): TrinaryLogic
 	{
-		return false;
+		return (new IntegerType())->isSuperTypeOf($offsetType)->and(TrinaryLogic::createMaybe());
 	}
 
-	public function getProperty(string $propertyName, Scope $scope): PropertyReflection
+	public function getOffsetValueType(Type $offsetType): Type
 	{
-		throw new \PHPStan\ShouldNotHappenException();
+		if ($this->hasOffsetValueType($offsetType)->no()) {
+			return new ErrorType();
+		}
+
+		return new StringType();
 	}
 
-	public function canCallMethods(): bool
+	public function setOffsetValueType(?Type $offsetType, Type $valueType): Type
 	{
-		return false;
+		$valueStringType = $valueType->toString();
+		if ($valueStringType instanceof ErrorType) {
+			return new ErrorType();
+		}
+
+		if (
+			$offsetType === null
+			|| (new IntegerType())->isSuperTypeOf($offsetType)->yes()
+		) {
+			return new StringType();
+		}
+
+		return new ErrorType();
 	}
 
-	public function hasMethod(string $methodName): bool
+	public function accepts(Type $type, bool $strictTypes): TrinaryLogic
 	{
-		return false;
-	}
+		if ($type instanceof self) {
+			return TrinaryLogic::createYes();
+		}
 
-	public function getMethod(string $methodName, Scope $scope): MethodReflection
-	{
-		throw new \PHPStan\ShouldNotHappenException();
-	}
+		if ($type instanceof CompoundType) {
+			return CompoundTypeHelper::accepts($type, $this, $strictTypes);
+		}
 
-	public function canAccessConstants(): bool
-	{
-		return false;
-	}
+		if ($type instanceof TypeWithClassName && !$strictTypes) {
+			$broker = Broker::getInstance();
+			if (!$broker->hasClass($type->getClassName())) {
+				return TrinaryLogic::createNo();
+			}
 
-	public function hasConstant(string $constantName): bool
-	{
-		return false;
-	}
+			$typeClass = $broker->getClass($type->getClassName());
+			return TrinaryLogic::createFromBoolean(
+				$typeClass->hasNativeMethod('__toString')
+			);
+		}
 
-	public function getConstant(string $constantName): ClassConstantReflection
-	{
-		throw new \PHPStan\ShouldNotHappenException();
-	}
-
-	public function isIterable(): TrinaryLogic
-	{
 		return TrinaryLogic::createNo();
 	}
 
-	public function getIterableKeyType(): Type
+	public function toNumber(): Type
 	{
 		return new ErrorType();
 	}
 
-	public function getIterableValueType(): Type
+	public function toInteger(): Type
 	{
-		return new ErrorType();
+		return new IntegerType();
 	}
 
-	public function isCallable(): TrinaryLogic
+	public function toFloat(): Type
 	{
-		return TrinaryLogic::createMaybe();
+		return new FloatType();
 	}
 
-	public function isClonable(): bool
+	public function toString(): Type
 	{
-		return false;
+		return $this;
 	}
 
+	public function toArray(): Type
+	{
+		return new ConstantArrayType(
+			[new ConstantIntegerType(0)],
+			[$this],
+			1
+		);
+	}
+
+	/**
+	 * @param mixed[] $properties
+	 * @return Type
+	 */
 	public static function __set_state(array $properties): Type
 	{
 		return new self();

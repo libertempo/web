@@ -2,14 +2,22 @@
 
 namespace PHPStan\Type;
 
-use PHPStan\Analyser\Scope;
-use PHPStan\Reflection\ClassConstantReflection;
-use PHPStan\Reflection\MethodReflection;
-use PHPStan\Reflection\PropertyReflection;
 use PHPStan\TrinaryLogic;
+use PHPStan\Type\Constant\ConstantArrayType;
+use PHPStan\Type\Constant\ConstantIntegerType;
+use PHPStan\Type\Constant\ConstantStringType;
+use PHPStan\Type\Traits\FalseyBooleanTypeTrait;
+use PHPStan\Type\Traits\NonCallableTypeTrait;
+use PHPStan\Type\Traits\NonIterableTypeTrait;
+use PHPStan\Type\Traits\NonObjectTypeTrait;
 
-class NullType implements Type
+class NullType implements ConstantScalarType
 {
+
+	use NonCallableTypeTrait;
+	use NonIterableTypeTrait;
+	use NonObjectTypeTrait;
+	use FalseyBooleanTypeTrait;
 
 	/**
 	 * @return string[]
@@ -19,17 +27,30 @@ class NullType implements Type
 		return [];
 	}
 
-	public function accepts(Type $type): bool
+	/**
+	 * @return null
+	 */
+	public function getValue()
+	{
+		return null;
+	}
+
+	public function generalize(): Type
+	{
+		return $this;
+	}
+
+	public function accepts(Type $type, bool $strictTypes): TrinaryLogic
 	{
 		if ($type instanceof self) {
-			return true;
+			return TrinaryLogic::createYes();
 		}
 
 		if ($type instanceof CompoundType) {
-			return CompoundTypeHelper::accepts($type, $this);
+			return CompoundTypeHelper::accepts($type, $this, $strictTypes);
 		}
 
-		return false;
+		return TrinaryLogic::createNo();
 	}
 
 	public function isSuperTypeOf(Type $type): TrinaryLogic
@@ -45,86 +66,66 @@ class NullType implements Type
 		return TrinaryLogic::createNo();
 	}
 
-	public function describe(): string
+	public function equals(Type $type): bool
+	{
+		return $type instanceof self;
+	}
+
+	public function describe(VerbosityLevel $level): string
 	{
 		return 'null';
 	}
 
-	public function canAccessProperties(): bool
+	public function toNumber(): Type
 	{
-		return false;
+		return new ConstantIntegerType(0);
 	}
 
-	public function hasProperty(string $propertyName): bool
+	public function toString(): Type
 	{
-		return false;
+		return new ConstantStringType('');
 	}
 
-	public function getProperty(string $propertyName, Scope $scope): PropertyReflection
+	public function toInteger(): Type
 	{
-		throw new \PHPStan\ShouldNotHappenException();
+		return $this->toNumber();
 	}
 
-	public function canCallMethods(): bool
+	public function toFloat(): Type
 	{
-		return false;
+		return $this->toNumber()->toFloat();
 	}
 
-	public function hasMethod(string $methodName): bool
+	public function toArray(): Type
 	{
-		return false;
+		return new ConstantArrayType([], []);
 	}
 
-	public function getMethod(string $methodName, Scope $scope): MethodReflection
+	public function isOffsetAccessible(): TrinaryLogic
 	{
-		throw new \PHPStan\ShouldNotHappenException();
+		return TrinaryLogic::createYes();
 	}
 
-	public function canAccessConstants(): bool
+	public function hasOffsetValueType(Type $offsetType): TrinaryLogic
 	{
-		return false;
+		return TrinaryLogic::createYes();
 	}
 
-	public function hasConstant(string $constantName): bool
+	public function getOffsetValueType(Type $offsetType): Type
 	{
-		return false;
+		return new NullType();
 	}
 
-	public function getConstant(string $constantName): ClassConstantReflection
+	public function setOffsetValueType(?Type $offsetType, Type $valueType): Type
 	{
-		throw new \PHPStan\ShouldNotHappenException();
+		$array = new ConstantArrayType([], []);
+		return $array->setOffsetValueType($offsetType, $valueType);
 	}
 
-	public function isDocumentableNatively(): bool
-	{
-		return true;
-	}
-
-	public function isIterable(): TrinaryLogic
-	{
-		return TrinaryLogic::createNo();
-	}
-
-	public function getIterableKeyType(): Type
-	{
-		return new ErrorType();
-	}
-
-	public function getIterableValueType(): Type
-	{
-		return new ErrorType();
-	}
-
-	public function isCallable(): TrinaryLogic
-	{
-		return TrinaryLogic::createNo();
-	}
-
-	public function isClonable(): bool
-	{
-		return false;
-	}
-
+	/**
+	 * @param mixed[] $properties
+	 * @return Type
+	 */
 	public static function __set_state(array $properties): Type
 	{
 		return new self();

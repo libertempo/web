@@ -2,8 +2,8 @@
 
 namespace PHPStan\Type;
 
-use PHPStan\Analyser\Scope;
-use PHPStan\Reflection\ClassConstantReflection;
+use PHPStan\Reflection\ClassMemberAccessAnswerer;
+use PHPStan\Reflection\ConstantReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\PropertyReflection;
 use PHPStan\TrinaryLogic;
@@ -16,31 +16,31 @@ interface Type
 	 */
 	public function getReferencedClasses(): array;
 
-	public function accepts(Type $type): bool;
+	public function accepts(Type $type, bool $strictTypes): TrinaryLogic;
 
 	public function isSuperTypeOf(Type $type): TrinaryLogic;
 
-	public function describe(): string;
+	public function equals(Type $type): bool;
 
-	public function canAccessProperties(): bool;
+	public function describe(VerbosityLevel $level): string;
+
+	public function canAccessProperties(): TrinaryLogic;
 
 	public function hasProperty(string $propertyName): bool;
 
-	public function getProperty(string $propertyName, Scope $scope): PropertyReflection;
+	public function getProperty(string $propertyName, ClassMemberAccessAnswerer $scope): PropertyReflection;
 
-	public function canCallMethods(): bool;
+	public function canCallMethods(): TrinaryLogic;
 
 	public function hasMethod(string $methodName): bool;
 
-	public function getMethod(string $methodName, Scope $scope): MethodReflection;
+	public function getMethod(string $methodName, ClassMemberAccessAnswerer $scope): MethodReflection;
 
-	public function canAccessConstants(): bool;
+	public function canAccessConstants(): TrinaryLogic;
 
 	public function hasConstant(string $constantName): bool;
 
-	public function getConstant(string $constantName): ClassConstantReflection;
-
-	public function isDocumentableNatively(): bool;
+	public function getConstant(string $constantName): ConstantReflection;
 
 	public function isIterable(): TrinaryLogic;
 
@@ -48,10 +48,40 @@ interface Type
 
 	public function getIterableValueType(): Type;
 
+	public function isOffsetAccessible(): TrinaryLogic;
+
+	public function hasOffsetValueType(Type $offsetType): TrinaryLogic;
+
+	public function getOffsetValueType(Type $offsetType): Type;
+
+	public function setOffsetValueType(?Type $offsetType, Type $valueType): Type;
+
 	public function isCallable(): TrinaryLogic;
 
-	public function isClonable(): bool;
+	/**
+	 * @param \PHPStan\Reflection\ClassMemberAccessAnswerer $scope
+	 * @return \PHPStan\Reflection\ParametersAcceptor[]
+	 */
+	public function getCallableParametersAcceptors(ClassMemberAccessAnswerer $scope): array;
 
+	public function isCloneable(): TrinaryLogic;
+
+	public function toBoolean(): BooleanType;
+
+	public function toNumber(): Type;
+
+	public function toInteger(): Type;
+
+	public function toFloat(): Type;
+
+	public function toString(): Type;
+
+	public function toArray(): Type;
+
+	/**
+	 * @param mixed[] $properties
+	 * @return self
+	 */
 	public static function __set_state(array $properties): self;
 
 }

@@ -2,26 +2,21 @@
 
 namespace PHPStan\DependencyInjection;
 
-use Nette\Configurator;
 use Nette\DI\Extensions\PhpExtension;
+use PHPStan\Broker\Broker;
 use PHPStan\File\FileHelper;
+use PHPStan\File\RelativePathHelper;
 
 class ContainerFactory
 {
 
-	/**
-	 * @var string
-	 */
+	/** @var string */
 	private $currentWorkingDirectory;
 
-	/**
-	 * @var string
-	 */
+	/** @var string */
 	private $rootDirectory;
 
-	/**
-	 * @var string
-	 */
+	/** @var string */
 	private $configDirectory;
 
 	public function __construct(string $currentWorkingDirectory)
@@ -32,12 +27,19 @@ class ContainerFactory
 		$this->configDirectory = $this->rootDirectory . '/conf';
 	}
 
+	/**
+	 * @param string $tempDirectory
+	 * @param string[] $additionalConfigFiles
+	 * @param string[] $analysedPaths
+	 * @return \Nette\DI\Container
+	 */
 	public function create(
 		string $tempDirectory,
-		array $additionalConfigFiles
+		array $additionalConfigFiles,
+		array $analysedPaths = []
 	): \Nette\DI\Container
 	{
-		$configurator = new Configurator();
+		$configurator = new Configurator(new LoaderFactory());
 		$configurator->defaultExtensions = [
 			'php' => PhpExtension::class,
 			'extensions' => \Nette\DI\Extensions\ExtensionsExtension::class,
@@ -55,7 +57,18 @@ class ContainerFactory
 			$configurator->addConfig($additionalConfigFile);
 		}
 
-		return $configurator->createContainer();
+		$configurator->addServices([
+			'relativePathHelper' => new RelativePathHelper($this->currentWorkingDirectory, DIRECTORY_SEPARATOR, $analysedPaths),
+		]);
+
+		$container = $configurator->createContainer();
+
+		/** @var Broker $broker */
+		$broker = $container->getService('broker');
+		Broker::registerInstance($broker);
+		$container->getService('typeSpecifier');
+
+		return $container;
 	}
 
 	public function getCurrentWorkingDirectory(): string

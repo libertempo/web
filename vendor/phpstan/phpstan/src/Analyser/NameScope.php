@@ -5,32 +5,28 @@ namespace PHPStan\Analyser;
 class NameScope
 {
 
-	/**
-	 * @var string|null
-	 */
+	/** @var string|null */
 	private $namespace;
 
-	/**
-	 * @var string[] alias(string) => fullName(string)
-	 */
+	/** @var string[] alias(string) => fullName(string) */
 	private $uses;
 
-	/**
-	 * @var string|null
-	 */
+	/** @var string|null */
 	private $className;
 
-	public function __construct(string $namespace = null, array $uses = [], string $className = null)
+	/**
+	 * @param string|null $namespace
+	 * @param string[] $uses alias(string) => fullName(string)
+	 * @param string|null $className
+	 */
+	public function __construct(?string $namespace, array $uses, ?string $className = null)
 	{
 		$this->namespace = $namespace;
 		$this->uses = $uses;
 		$this->className = $className;
 	}
 
-	/**
-	 * @return string|null
-	 */
-	public function getClassName()
+	public function getClassName(): ?string
 	{
 		return $this->className;
 	}
@@ -42,7 +38,7 @@ class NameScope
 		}
 
 		$nameParts = explode('\\', $name);
-		$firstNamePart = $nameParts[0];
+		$firstNamePart = strtolower($nameParts[0]);
 		if (isset($this->uses[$firstNamePart])) {
 			if (count($nameParts) === 1) {
 				return $this->uses[$firstNamePart];

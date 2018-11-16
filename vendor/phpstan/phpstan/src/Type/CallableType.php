@@ -2,14 +2,55 @@
 
 namespace PHPStan\Type;
 
-use PHPStan\Analyser\Scope;
-use PHPStan\Reflection\ClassConstantReflection;
-use PHPStan\Reflection\MethodReflection;
-use PHPStan\Reflection\PropertyReflection;
+use PHPStan\Analyser\OutOfClassScope;
+use PHPStan\Reflection\ClassMemberAccessAnswerer;
+use PHPStan\Reflection\ParametersAcceptor;
 use PHPStan\TrinaryLogic;
+use PHPStan\Type\Traits\MaybeIterableTypeTrait;
+use PHPStan\Type\Traits\MaybeObjectTypeTrait;
+use PHPStan\Type\Traits\MaybeOffsetAccessibleTypeTrait;
+use PHPStan\Type\Traits\TruthyBooleanTypeTrait;
 
-class CallableType implements CompoundType
+class CallableType implements CompoundType, ParametersAcceptor
 {
+
+	use MaybeIterableTypeTrait;
+	use MaybeObjectTypeTrait;
+	use MaybeOffsetAccessibleTypeTrait;
+	use TruthyBooleanTypeTrait;
+
+	/** @var array<int, \PHPStan\Reflection\Native\NativeParameterReflection> */
+	private $parameters;
+
+	/** @var Type */
+	private $returnType;
+
+	/** @var bool */
+	private $variadic;
+
+	/** @var bool */
+	private $isCommonCallable;
+
+	/**
+	 * @param array<int, \PHPStan\Reflection\Native\NativeParameterReflection> $parameters
+	 * @param Type $returnType
+	 * @param bool $variadic
+	 */
+	public function __construct(
+		?array $parameters = null,
+		?Type $returnType = null,
+		bool $variadic = true
+	)
+	{
+		if ($returnType === null) {
+			$returnType = new MixedType();
+		}
+
+		$this->parameters = $parameters ?? [];
+		$this->returnType = $returnType;
+		$this->variadic = $variadic;
+		$this->isCommonCallable = $parameters === null;
+	}
 
 	/**
 	 * @return string[]
@@ -19,22 +60,42 @@ class CallableType implements CompoundType
 		return [];
 	}
 
-	public function accepts(Type $type): bool
+	public function accepts(Type $type, bool $strictTypes): TrinaryLogic
 	{
 		if ($type instanceof CompoundType) {
-			return CompoundTypeHelper::accepts($type, $this);
+			return CompoundTypeHelper::accepts($type, $this, $strictTypes);
 		}
 
-		if (!$type->isCallable()->no()) {
-			return true;
-		}
-
-		return false;
+		return $this->isSuperTypeOf($type);
 	}
 
 	public function isSuperTypeOf(Type $type): TrinaryLogic
 	{
-		return $type->isCallable();
+		$isCallable = $type->isCallable();
+		if ($isCallable->no() || $this->isCommonCallable) {
+			return $isCallable;
+		}
+
+		static $scope;
+		if ($scope === null) {
+			$scope = new OutOfClassScope();
+		}
+
+		$variantsResult = null;
+		foreach ($type->getCallableParametersAcceptors($scope) as $variant) {
+			$isSuperType = CallableTypeHelper::isParametersAcceptorSuperTypeOf($this, $variant);
+			if ($variantsResult === null) {
+				$variantsResult = $isSuperType;
+			} else {
+				$variantsResult = $variantsResult->or($isSuperType);
+			}
+		}
+
+		if ($variantsResult === null) {
+			throw new \PHPStan\ShouldNotHappenException();
+		}
+
+		return $isCallable->and($variantsResult);
 	}
 
 	public function isSubTypeOf(Type $otherType): TrinaryLogic
@@ -47,74 +108,14 @@ class CallableType implements CompoundType
 			->and($otherType instanceof self ? TrinaryLogic::createYes() : TrinaryLogic::createMaybe());
 	}
 
-	public function describe(): string
+	public function equals(Type $type): bool
+	{
+		return $type instanceof self;
+	}
+
+	public function describe(VerbosityLevel $level): string
 	{
 		return 'callable';
-	}
-
-	public function canAccessProperties(): bool
-	{
-		return false;
-	}
-
-	public function hasProperty(string $propertyName): bool
-	{
-		return false;
-	}
-
-	public function getProperty(string $propertyName, Scope $scope): PropertyReflection
-	{
-		throw new \PHPStan\ShouldNotHappenException();
-	}
-
-	public function canCallMethods(): bool
-	{
-		return true;
-	}
-
-	public function hasMethod(string $methodName): bool
-	{
-		return false;
-	}
-
-	public function getMethod(string $methodName, Scope $scope): MethodReflection
-	{
-		throw new \PHPStan\ShouldNotHappenException();
-	}
-
-	public function canAccessConstants(): bool
-	{
-		return false;
-	}
-
-	public function hasConstant(string $constantName): bool
-	{
-		return false;
-	}
-
-	public function getConstant(string $constantName): ClassConstantReflection
-	{
-		throw new \PHPStan\ShouldNotHappenException();
-	}
-
-	public function isDocumentableNatively(): bool
-	{
-		return true;
-	}
-
-	public function isIterable(): TrinaryLogic
-	{
-		return TrinaryLogic::createMaybe();
-	}
-
-	public function getIterableKeyType(): Type
-	{
-		return new MixedType();
-	}
-
-	public function getIterableValueType(): Type
-	{
-		return new MixedType();
 	}
 
 	public function isCallable(): TrinaryLogic
@@ -122,14 +123,69 @@ class CallableType implements CompoundType
 		return TrinaryLogic::createYes();
 	}
 
-	public function isClonable(): bool
+	/**
+	 * @param \PHPStan\Reflection\ClassMemberAccessAnswerer $scope
+	 * @return \PHPStan\Reflection\ParametersAcceptor[]
+	 */
+	public function getCallableParametersAcceptors(ClassMemberAccessAnswerer $scope): array
 	{
-		return false;
+		return [$this];
 	}
 
+	public function toNumber(): Type
+	{
+		return new ErrorType();
+	}
+
+	public function toString(): Type
+	{
+		return new ErrorType();
+	}
+
+	public function toInteger(): Type
+	{
+		return new ErrorType();
+	}
+
+	public function toFloat(): Type
+	{
+		return new ErrorType();
+	}
+
+	public function toArray(): Type
+	{
+		return new ArrayType(new MixedType(), new MixedType());
+	}
+
+	/**
+	 * @return array<int, \PHPStan\Reflection\Native\NativeParameterReflection>
+	 */
+	public function getParameters(): array
+	{
+		return $this->parameters;
+	}
+
+	public function isVariadic(): bool
+	{
+		return $this->variadic;
+	}
+
+	public function getReturnType(): Type
+	{
+		return $this->returnType;
+	}
+
+	/**
+	 * @param mixed[] $properties
+	 * @return Type
+	 */
 	public static function __set_state(array $properties): Type
 	{
-		return new self();
+		return new self(
+			(bool) $properties['isCommonCallable'] ? null : $properties['parameters'],
+			$properties['returnType'],
+			$properties['variadic']
+		);
 	}
 
 }

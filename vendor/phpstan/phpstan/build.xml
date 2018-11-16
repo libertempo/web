@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="PHPStan" default="check">
-
+	<property name="path.composer-require-checker"
+			  value="tmp/composer-require-checker-1.1.0.phar"/>
+	<property name="url.composer-require-checker"
+			  value="https://github.com/maglnet/ComposerRequireChecker/releases/download/1.1.0/composer-require-checker.phar"/>
 	<target name="check" depends="
 		composer-validate,
 		composer-install,
 		lint,
 		cs,
+		composer-normalize-check,
+		composer-require-checker,
+		test-configuration-validate,
 		tests,
 		phpstan
 	"/>
@@ -18,6 +24,7 @@
 				checkreturn="true"
 		>
 			<arg value="validate"/>
+			<arg value="--ansi"/>
 		</exec>
 	</target>
 
@@ -29,7 +36,73 @@
 				checkreturn="true"
 		>
 			<arg value="install"/>
+			<arg value="--ansi"/>
 		</exec>
+	</target>
+
+	<target name="composer-normalize-check">
+		<exec
+				executable="composer"
+				logoutput="true"
+				passthru="true"
+				checkreturn="true"
+		>
+			<arg value="normalize"/>
+			<arg value="--ansi"/>
+			<arg value="--dry-run"/>
+		</exec>
+	</target>
+
+	<target name="composer-normalize-fix">
+		<exec
+				executable="composer"
+				logoutput="true"
+				passthru="true"
+				checkreturn="true"
+		>
+			<arg value="normalize"/>
+			<arg value="--ansi"/>
+		</exec>
+	</target>
+
+	<target name="composer-require-checker">
+		<if>
+			<and>
+				<not>
+					<available file="${path.composer-require-checker}"/>
+				</not>
+				<not><os family="windows"/></not>
+			</and>
+			<then>
+				<exec
+					executable="wget"
+					logoutput="true"
+					passthru="true"
+					checkreturn="true"
+				>
+					<arg value="-O"/>
+					<arg path="${path.composer-require-checker}"/>
+					<arg value="${url.composer-require-checker}"/>
+				</exec>
+			</then>
+		</if>
+		<if>
+			<available file="${path.composer-require-checker}"/>
+			<then>
+				<exec
+						executable="php"
+						logoutput="true"
+						passthru="true"
+						checkreturn="true"
+				>
+					<arg path="${path.composer-require-checker}"/>
+					<arg value="check"/>
+					<arg value="--config-file"/>
+					<arg path="${project.basedir}/build/composer-require-checker.json"/>
+					<arg path="composer.json"/>
+				</exec>
+			</then>
+		</if>
 	</target>
 
 	<target name="lint">
@@ -39,12 +112,15 @@
 				passthru="true"
 				checkreturn="true"
 		>
+			<arg value="--colors"/>
 			<arg value="--exclude"/>
 			<arg path="tests/PHPStan/Analyser/data"/>
 			<arg value="--exclude"/>
 			<arg path="tests/PHPStan/Rules/Methods/data"/>
 			<arg value="--exclude"/>
 			<arg path="tests/PHPStan/Rules/Functions/data"/>
+			<arg value="--exclude"/>
+			<arg path="tests/PHPStan/Rules/Operators/data/invalid-inc-dec.php"/>
 			<arg path="src" />
 			<arg path="tests" />
 		</exec>
@@ -57,10 +133,12 @@
 				passthru="true"
 				checkreturn="true"
 		>
+			<arg value="--colors"/>
 			<arg value="--extensions=php"/>
 			<arg value="--encoding=utf-8"/>
 			<arg value="--tab-width=4"/>
-			<arg value="--ignore=tests/*/data,tests/*/traits"/>
+			<arg value="--cache=tmp/cache/phpcs"/>
+			<arg value="--ignore=tests/*/data,tests/*/traits,tests/notAutoloaded,src/Reflection/SignatureMap/functionMap.php"/>
 			<arg value="-sp"/>
 			<arg path="src"/>
 			<arg path="tests"/>
@@ -74,19 +152,32 @@
 				passthru="true"
 				checkreturn="true"
 		>
+			<arg value="--colors"/>
 			<arg value="--extensions=php"/>
 			<arg value="--encoding=utf-8"/>
 			<arg value="--tab-width=4"/>
-			<arg value="--ignore=tests/*/data,tests/*/traits"/>
 			<arg value="-sp"/>
 			<arg path="src"/>
 			<arg path="tests"/>
 		</exec>
 	</target>
 
+	<target name="test-configuration-validate" depends="composer-install">
+		<xmllint schema="vendor/phpunit/phpunit/phpunit.xsd" file="tests/phpunit.xml"/>
+	</target>
+
 	<target name="tests">
+		<if>
+			<os family="windows"/>
+			<then>
+				<property name="phpunit.executable" value="vendor/bin/phpunit"/>
+			</then>
+			<else>
+				<property name="phpunit.executable" value="vendor/bin/paratest"/>
+			</else>
+		</if>
 		<exec
-				executable="vendor/bin/phpunit"
+				executable="${phpunit.executable}"
 				logoutput="true"
 				passthru="true"
 				checkreturn="true"
@@ -98,7 +189,6 @@
 	</target>
 
 	<target name="phpstan">
-		<php expression="PHP_VERSION_ID &lt; 70100 ?'true':'false'" returnProperty="isPHP70" level="verbose" />
 		<property name="phpstan.config" value="build/phpstan-generated.neon"/>
 		<touch file="${phpstan.config}"/>
 		<append
@@ -115,15 +205,6 @@
 				></append>
 			</then>
 		</if>
-		<if>
-			<equals arg1="${isPHP70}" arg2="true" />
-			<then>
-				<append
-						destFile="${phpstan.config}"
-						text=", ignore-php7.0-errors.neon"
-				></append>
-			</then>
-		</if>
 		<append
 				destFile="${phpstan.config}"
 				text=" ]"
@@ -134,12 +215,16 @@
 				passthru="true"
 				checkreturn="true"
 		>
+			<arg value="-d"/>
+			<arg value="memory_limit=512M"/>
 			<arg path="bin/phpstan"/>
 			<arg value="analyse"/>
 			<arg value="-c"/>
 			<arg path="${phpstan.config}"/>
 			<arg value="-l"/>
 			<arg value="7"/>
+			<arg value="--ansi"/>
+			<arg path="build/PHPStan"/>
 			<arg path="src"/>
 			<arg path="tests"/>
 		</exec>

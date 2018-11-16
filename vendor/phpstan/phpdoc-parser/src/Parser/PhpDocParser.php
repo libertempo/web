@@ -8,7 +8,7 @@ use PHPStan\PhpDocParser\Lexer\Lexer;
 class PhpDocParser
 {
 
-	const DISALLOWED_DESCRIPTION_START_TOKENS = [
+	private const DISALLOWED_DESCRIPTION_START_TOKENS = [
 		Lexer::TOKEN_UNION,
 		Lexer::TOKEN_INTERSECTION,
 		Lexer::TOKEN_OPEN_ANGLE_BRACKET,
@@ -30,13 +30,15 @@ class PhpDocParser
 	public function parse(TokenIterator $tokens): Ast\PhpDoc\PhpDocNode
 	{
 		$tokens->consumeTokenType(Lexer::TOKEN_OPEN_PHPDOC);
+		$tokens->tryConsumeTokenType(Lexer::TOKEN_PHPDOC_EOL);
 
 		$children = [];
-		$children[] = $this->parseText($tokens);
 
-		while (!$tokens->isCurrentTokenType(Lexer::TOKEN_CLOSE_PHPDOC) && !$tokens->isCurrentTokenType(Lexer::TOKEN_END)) {
-			$children[] = $this->parseTag($tokens);
-			$children[] = $this->parseText($tokens);
+		if (!$tokens->isCurrentTokenType(Lexer::TOKEN_CLOSE_PHPDOC)) {
+			$children[] = $this->parseChild($tokens);
+			while ($tokens->tryConsumeTokenType(Lexer::TOKEN_PHPDOC_EOL) && !$tokens->isCurrentTokenType(Lexer::TOKEN_CLOSE_PHPDOC)) {
+				$children[] = $this->parseChild($tokens);
+			}
 		}
 
 		$tokens->consumeTokenType(Lexer::TOKEN_CLOSE_PHPDOC);
@@ -45,10 +47,21 @@ class PhpDocParser
 	}
 
 
+	private function parseChild(TokenIterator $tokens): Ast\PhpDoc\PhpDocChildNode
+	{
+		if ($tokens->isCurrentTokenType(Lexer::TOKEN_PHPDOC_TAG)) {
+			return $this->parseTag($tokens);
+
+		} else {
+			return $this->parseText($tokens);
+		}
+	}
+
+
 	private function parseText(TokenIterator $tokens): Ast\PhpDoc\PhpDocTextNode
 	{
-		$text = $tokens->getSkippedHorizontalWhiteSpaceIfAny();
-		$text .= $tokens->joinUntil(Lexer::TOKEN_PHPDOC_TAG, Lexer::TOKEN_CLOSE_PHPDOC);
+		$text = $tokens->joinUntil(Lexer::TOKEN_PHPDOC_EOL, Lexer::TOKEN_CLOSE_PHPDOC, Lexer::TOKEN_END);
+		$text = rtrim($text, " \t"); // the trimmed characters MUST match Lexer::TOKEN_HORIZONTAL_WS
 
 		return new Ast\PhpDoc\PhpDocTextNode($text);
 	}
@@ -79,8 +92,11 @@ class PhpDocParser
 					break;
 
 				case '@return':
-				case '@returns':
 					$tagValue = $this->parseReturnTagValue($tokens);
+					break;
+
+				case '@throws':
+					$tagValue = $this->parseThrowsTagValue($tokens);
 					break;
 
 				case '@property':
@@ -136,6 +152,14 @@ class PhpDocParser
 	}
 
 
+	private function parseThrowsTagValue(TokenIterator $tokens): Ast\PhpDoc\ThrowsTagValueNode
+	{
+		$type = $this->typeParser->parse($tokens);
+		$description = $this->parseOptionalDescription($tokens, true);
+		return new Ast\PhpDoc\ThrowsTagValueNode($type, $description);
+	}
+
+
 	private function parsePropertyTagValue(TokenIterator $tokens): Ast\PhpDoc\PropertyTagValueNode
 	{
 		$type = $this->typeParser->parse($tokens);
@@ -156,8 +180,9 @@ class PhpDocParser
 			$tokens->next();
 
 		} elseif ($returnTypeOrMethodName instanceof Ast\Type\IdentifierTypeNode) {
-			$returnType = null;
+			$returnType = $isStatic ? new Ast\Type\IdentifierTypeNode('static') : null;
 			$methodName = $returnTypeOrMethodName->name;
+			$isStatic = false;
 
 		} else {
 			$tokens->consumeTokenType(Lexer::TOKEN_IDENTIFIER); // will throw exception
@@ -165,15 +190,14 @@ class PhpDocParser
 		}
 
 		$parameters = [];
-		if ($tokens->tryConsumeTokenType(Lexer::TOKEN_OPEN_PARENTHESES)) {
-			if (!$tokens->tryConsumeTokenType(Lexer::TOKEN_CLOSE_PARENTHESES)) {
+		$tokens->consumeTokenType(Lexer::TOKEN_OPEN_PARENTHESES);
+		if (!$tokens->isCurrentTokenType(Lexer::TOKEN_CLOSE_PARENTHESES)) {
+			$parameters[] = $this->parseMethodTagValueParameter($tokens);
+			while ($tokens->tryConsumeTokenType(Lexer::TOKEN_COMMA)) {
 				$parameters[] = $this->parseMethodTagValueParameter($tokens);
-				while ($tokens->tryConsumeTokenType(Lexer::TOKEN_COMMA)) {
-					$parameters[] = $this->parseMethodTagValueParameter($tokens);
-				}
-				$tokens->consumeTokenType(Lexer::TOKEN_CLOSE_PARENTHESES);
 			}
 		}
+		$tokens->consumeTokenType(Lexer::TOKEN_CLOSE_PARENTHESES);
 
 		$description = $this->parseOptionalDescription($tokens);
 		return new Ast\PhpDoc\MethodTagValueNode($isStatic, $returnType, $methodName, $parameters, $description);
@@ -223,6 +247,7 @@ class PhpDocParser
 		return $parameterName;
 	}
 
+
 	private function parseRequiredVariableName(TokenIterator $tokens): string
 	{
 		$parameterName = $tokens->currentTokenValue();
@@ -242,14 +267,7 @@ class PhpDocParser
 			}
 		}
 
-		$description = $tokens->joinUntil(
-			Lexer::TOKEN_EOL,
-			Lexer::TOKEN_PHPDOC_TAG,
-			Lexer::TOKEN_CLOSE_PHPDOC
-		);
-
-		// the trimmed characters MUST match Lexer::TOKEN_HORIZONTAL_WS
-		return rtrim($description, " \t");
+		return $this->parseText($tokens)->text;
 	}
 
 }

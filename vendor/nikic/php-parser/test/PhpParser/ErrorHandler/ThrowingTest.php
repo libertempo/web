@@ -1,15 +1,15 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpParser\ErrorHandler;
 
 use PhpParser\Error;
+use PHPUnit\Framework\TestCase;
 
-class ThrowingTest extends \PHPUnit_Framework_TestCase {
-    /**
-     * @expectedException \PhpParser\Error
-     * @expectedExceptionMessage Test
-     */
+class ThrowingTest extends TestCase
+{
     public function testHandleError() {
+        $this->expectException(Error::class);
+        $this->expectExceptionMessage('Test');
         $errorHandler = new Throwing();
         $errorHandler->handleError(new Error('Test'));
     }

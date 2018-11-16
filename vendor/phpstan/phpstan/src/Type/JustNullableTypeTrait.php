@@ -15,17 +15,17 @@ trait JustNullableTypeTrait
 		return [];
 	}
 
-	public function accepts(Type $type): bool
+	public function accepts(Type $type, bool $strictTypes): TrinaryLogic
 	{
-		if ($type instanceof $this) {
-			return true;
+		if ($type instanceof static) {
+			return TrinaryLogic::createYes();
 		}
 
 		if ($type instanceof CompoundType) {
-			return CompoundTypeHelper::accepts($type, $this);
+			return CompoundTypeHelper::accepts($type, $this, $strictTypes);
 		}
 
-		return false;
+		return TrinaryLogic::createNo();
 	}
 
 	public function isSuperTypeOf(Type $type): TrinaryLogic
@@ -41,24 +41,9 @@ trait JustNullableTypeTrait
 		return TrinaryLogic::createNo();
 	}
 
-	public function isDocumentableNatively(): bool
+	public function equals(Type $type): bool
 	{
-		return true;
-	}
-
-	public function isIterable(): TrinaryLogic
-	{
-		return TrinaryLogic::createNo();
-	}
-
-	public function getIterableKeyType(): Type
-	{
-		return new ErrorType();
-	}
-
-	public function getIterableValueType(): Type
-	{
-		return new ErrorType();
+		return $type instanceof self;
 	}
 
 }

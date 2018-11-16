@@ -6,25 +6,21 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\New_;
 use PHPStan\Analyser\Scope;
 use PHPStan\Broker\Broker;
+use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Rules\ClassCaseSensitivityCheck;
 use PHPStan\Rules\FunctionCallParametersCheck;
+use PHPStan\Type\ObjectType;
 
 class InstantiationRule implements \PHPStan\Rules\Rule
 {
 
-	/**
-	 * @var \PHPStan\Broker\Broker
-	 */
+	/** @var \PHPStan\Broker\Broker */
 	private $broker;
 
-	/**
-	 * @var \PHPStan\Rules\FunctionCallParametersCheck
-	 */
+	/** @var \PHPStan\Rules\FunctionCallParametersCheck */
 	private $check;
 
-	/**
-	 * @var \PHPStan\Rules\ClassCaseSensitivityCheck
-	 */
+	/** @var \PHPStan\Rules\ClassCaseSensitivityCheck */
 	private $classCaseSensitivityCheck;
 
 	public function __construct(
@@ -50,27 +46,36 @@ class InstantiationRule implements \PHPStan\Rules\Rule
 	 */
 	public function processNode(Node $node, Scope $scope): array
 	{
-		if (!($node->class instanceof \PhpParser\Node\Name)) {
+		if ($node->class instanceof \PhpParser\Node\Name) {
+			$class = (string) $node->class;
+		} elseif ($node->class instanceof Node\Stmt\Class_) {
+			$anonymousClassType = $scope->getType($node);
+			if (!$anonymousClassType instanceof ObjectType) {
+				throw new \PHPStan\ShouldNotHappenException();
+			}
+
+			$class = $anonymousClassType->getClassName();
+		} else {
 			return [];
 		}
 
-		$class = (string) $node->class;
+		$lowercasedClass = strtolower($class);
 		$messages = [];
-		if ($class === 'static') {
+		if ($lowercasedClass === 'static') {
 			if (!$scope->isInClass()) {
 				return [
 					sprintf('Using %s outside of class scope.', $class),
 				];
 			}
 			return [];
-		} elseif ($class === 'self') {
+		} elseif ($lowercasedClass === 'self') {
 			if (!$scope->isInClass()) {
 				return [
 					sprintf('Using %s outside of class scope.', $class),
 				];
 			}
 			$classReflection = $scope->getClassReflection();
-		} elseif ($class === 'parent') {
+		} elseif ($lowercasedClass === 'parent') {
 			if (!$scope->isInClass()) {
 				return [
 					sprintf('Using %s outside of class scope.', $class),
@@ -111,7 +116,7 @@ class InstantiationRule implements \PHPStan\Rules\Rule
 			];
 		}
 
-		if (!$classReflection->hasNativeMethod('__construct') && !$classReflection->hasNativeMethod($class)) {
+		if (!$classReflection->hasConstructor()) {
 			if (count($node->args) > 0) {
 				return array_merge($messages, [
 					sprintf(
@@ -121,10 +126,10 @@ class InstantiationRule implements \PHPStan\Rules\Rule
 				]);
 			}
 
-			return [];
+			return $messages;
 		}
 
-		$constructorReflection = $classReflection->hasNativeMethod('__construct') ? $classReflection->getNativeMethod('__construct') : $classReflection->getNativeMethod($class);
+		$constructorReflection = $classReflection->getConstructor();
 		if (!$scope->canCallMethod($constructorReflection)) {
 			$messages[] = sprintf(
 				'Cannot instantiate class %s via %s constructor %s::%s().',
@@ -136,7 +141,11 @@ class InstantiationRule implements \PHPStan\Rules\Rule
 		}
 
 		return array_merge($messages, $this->check->check(
-			$constructorReflection,
+			ParametersAcceptorSelector::selectFromArgs(
+				$scope,
+				$node->args,
+				$constructorReflection->getVariants()
+			),
 			$scope,
 			$node,
 			[

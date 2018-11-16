@@ -2,14 +2,18 @@
 
 namespace PHPStan\Type;
 
-use PHPStan\Analyser\Scope;
-use PHPStan\Reflection\ClassConstantReflection;
+use PHPStan\Reflection\ClassMemberAccessAnswerer;
+use PHPStan\Reflection\ConstantReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\PropertyReflection;
+use PHPStan\Reflection\TrivialParametersAcceptor;
 use PHPStan\TrinaryLogic;
+use PHPStan\Type\Traits\FalseyBooleanTypeTrait;
 
 class NeverType implements CompoundType
 {
+
+	use FalseyBooleanTypeTrait;
 
 	/**
 	 * @return string[]
@@ -19,9 +23,9 @@ class NeverType implements CompoundType
 		return [];
 	}
 
-	public function accepts(Type $type): bool
+	public function accepts(Type $type, bool $strictTypes): TrinaryLogic
 	{
-		return true;
+		return TrinaryLogic::createYes();
 	}
 
 	public function isSuperTypeOf(Type $type): TrinaryLogic
@@ -33,19 +37,24 @@ class NeverType implements CompoundType
 		return TrinaryLogic::createNo();
 	}
 
+	public function equals(Type $type): bool
+	{
+		return $type instanceof self;
+	}
+
 	public function isSubTypeOf(Type $otherType): TrinaryLogic
 	{
 		return TrinaryLogic::createYes();
 	}
 
-	public function describe(): string
+	public function describe(VerbosityLevel $level): string
 	{
 		return '*NEVER*';
 	}
 
-	public function canAccessProperties(): bool
+	public function canAccessProperties(): TrinaryLogic
 	{
-		return false;
+		return TrinaryLogic::createYes();
 	}
 
 	public function hasProperty(string $propertyName): bool
@@ -53,14 +62,14 @@ class NeverType implements CompoundType
 		return false;
 	}
 
-	public function getProperty(string $propertyName, Scope $scope): PropertyReflection
+	public function getProperty(string $propertyName, ClassMemberAccessAnswerer $scope): PropertyReflection
 	{
 		throw new \PHPStan\ShouldNotHappenException();
 	}
 
-	public function canCallMethods(): bool
+	public function canCallMethods(): TrinaryLogic
 	{
-		return false;
+		return TrinaryLogic::createYes();
 	}
 
 	public function hasMethod(string $methodName): bool
@@ -68,14 +77,14 @@ class NeverType implements CompoundType
 		return false;
 	}
 
-	public function getMethod(string $methodName, Scope $scope): MethodReflection
+	public function getMethod(string $methodName, ClassMemberAccessAnswerer $scope): MethodReflection
 	{
 		throw new \PHPStan\ShouldNotHappenException();
 	}
 
-	public function canAccessConstants(): bool
+	public function canAccessConstants(): TrinaryLogic
 	{
-		return false;
+		return TrinaryLogic::createYes();
 	}
 
 	public function hasConstant(string $constantName): bool
@@ -83,14 +92,9 @@ class NeverType implements CompoundType
 		return false;
 	}
 
-	public function getConstant(string $constantName): ClassConstantReflection
+	public function getConstant(string $constantName): ConstantReflection
 	{
 		throw new \PHPStan\ShouldNotHappenException();
-	}
-
-	public function isDocumentableNatively(): bool
-	{
-		return true;
 	}
 
 	public function isIterable(): TrinaryLogic
@@ -108,16 +112,74 @@ class NeverType implements CompoundType
 		return new NeverType();
 	}
 
+	public function isOffsetAccessible(): TrinaryLogic
+	{
+		return TrinaryLogic::createYes();
+	}
+
+	public function hasOffsetValueType(Type $offsetType): TrinaryLogic
+	{
+		return TrinaryLogic::createYes();
+	}
+
+	public function getOffsetValueType(Type $offsetType): Type
+	{
+		return new NeverType();
+	}
+
+	public function setOffsetValueType(?Type $offsetType, Type $valueType): Type
+	{
+		return new NeverType();
+	}
+
 	public function isCallable(): TrinaryLogic
 	{
 		return TrinaryLogic::createYes();
 	}
 
-	public function isClonable(): bool
+	/**
+	 * @param \PHPStan\Reflection\ClassMemberAccessAnswerer $scope
+	 * @return \PHPStan\Reflection\ParametersAcceptor[]
+	 */
+	public function getCallableParametersAcceptors(ClassMemberAccessAnswerer $scope): array
 	{
-		return false;
+		return [new TrivialParametersAcceptor()];
 	}
 
+	public function isCloneable(): TrinaryLogic
+	{
+		return TrinaryLogic::createYes();
+	}
+
+	public function toNumber(): Type
+	{
+		return $this;
+	}
+
+	public function toString(): Type
+	{
+		return $this;
+	}
+
+	public function toInteger(): Type
+	{
+		return $this;
+	}
+
+	public function toFloat(): Type
+	{
+		return $this;
+	}
+
+	public function toArray(): Type
+	{
+		return $this;
+	}
+
+	/**
+	 * @param mixed[] $properties
+	 * @return Type
+	 */
 	public static function __set_state(array $properties): Type
 	{
 		return new self();

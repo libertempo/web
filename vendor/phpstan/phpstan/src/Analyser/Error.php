@@ -5,27 +5,19 @@ namespace PHPStan\Analyser;
 class Error
 {
 
-	/**
-	 * @var string
-	 */
+	/** @var string */
 	private $message;
 
-	/**
-	 * @var string
-	 */
+	/** @var string */
 	private $file;
 
-	/**
-	 * @var int|NULL
-	 */
+	/** @var int|NULL */
 	private $line;
 
-	/**
-	 * @var bool
-	 */
+	/** @var bool */
 	private $canBeIgnored;
 
-	public function __construct(string $message, string $file, int $line = null, bool $canBeIgnored = true)
+	public function __construct(string $message, string $file, ?int $line = null, bool $canBeIgnored = true)
 	{
 		$this->message = $message;
 		$this->file = $file;
@@ -43,10 +35,7 @@ class Error
 		return $this->file;
 	}
 
-	/**
-	 * @return int|NULL
-	 */
-	public function getLine()
+	public function getLine(): ?int
 	{
 		return $this->line;
 	}

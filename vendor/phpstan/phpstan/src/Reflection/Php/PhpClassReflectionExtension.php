@@ -9,10 +9,15 @@ use PHPStan\Reflection\Annotations\AnnotationsMethodsClassReflectionExtension;
 use PHPStan\Reflection\Annotations\AnnotationsPropertiesClassReflectionExtension;
 use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\ClassReflection;
+use PHPStan\Reflection\FunctionVariant;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
+use PHPStan\Reflection\Native\NativeMethodReflection;
+use PHPStan\Reflection\Native\NativeParameterReflection;
 use PHPStan\Reflection\PropertiesClassReflectionExtension;
 use PHPStan\Reflection\PropertyReflection;
+use PHPStan\Reflection\SignatureMap\ParameterSignature;
+use PHPStan\Reflection\SignatureMap\SignatureMapProvider;
 use PHPStan\Type\FileTypeMapper;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\Type;
@@ -33,6 +38,9 @@ class PhpClassReflectionExtension
 	/** @var \PHPStan\Reflection\Annotations\AnnotationsPropertiesClassReflectionExtension */
 	private $annotationsPropertiesClassReflectionExtension;
 
+	/** @var \PHPStan\Reflection\SignatureMap\SignatureMapProvider */
+	private $signatureMapProvider;
+
 	/** @var \PHPStan\Broker\Broker */
 	private $broker;
 
@@ -45,23 +53,25 @@ class PhpClassReflectionExtension
 	/** @var \PHPStan\Reflection\MethodReflection[][] */
 	private $methodsIncludingAnnotations = [];
 
-	/** @var \PHPStan\Reflection\Php\PhpMethodReflection[][] */
+	/** @var \PHPStan\Reflection\MethodReflection[][] */
 	private $nativeMethods = [];
 
 	public function __construct(
 		PhpMethodReflectionFactory $methodReflectionFactory,
 		FileTypeMapper $fileTypeMapper,
 		AnnotationsMethodsClassReflectionExtension $annotationsMethodsClassReflectionExtension,
-		AnnotationsPropertiesClassReflectionExtension $annotationsPropertiesClassReflectionExtension
+		AnnotationsPropertiesClassReflectionExtension $annotationsPropertiesClassReflectionExtension,
+		SignatureMapProvider $signatureMapProvider
 	)
 	{
 		$this->methodReflectionFactory = $methodReflectionFactory;
 		$this->fileTypeMapper = $fileTypeMapper;
 		$this->annotationsMethodsClassReflectionExtension = $annotationsMethodsClassReflectionExtension;
 		$this->annotationsPropertiesClassReflectionExtension = $annotationsPropertiesClassReflectionExtension;
+		$this->signatureMapProvider = $signatureMapProvider;
 	}
 
-	public function setBroker(Broker $broker)
+	public function setBroker(Broker $broker): void
 	{
 		$this->broker = $broker;
 	}
@@ -100,6 +110,8 @@ class PhpClassReflectionExtension
 		$propertyReflection = $classReflection->getNativeReflection()->getProperty($propertyName);
 		$propertyName = $propertyReflection->getName();
 		$declaringClassReflection = $this->broker->getClass($propertyReflection->getDeclaringClass()->getName());
+		$isDeprecated = false;
+		$isInternal = false;
 
 		if ($includingAnnotations && $this->annotationsPropertiesClassReflectionExtension->hasProperty($classReflection, $propertyName)) {
 			$hierarchyDistances = $classReflection->getClassHierarchyDistances();
@@ -117,7 +129,7 @@ class PhpClassReflectionExtension
 		}
 		if ($propertyReflection->getDocComment() === false) {
 			$type = new MixedType();
-		} elseif (!$classReflection->isAnonymous() && !$declaringClassReflection->isAnonymous() && $declaringClassReflection->getFileName() !== false) {
+		} elseif ($declaringClassReflection->getFileName() !== false) {
 			$phpDocBlock = PhpDocBlock::resolvePhpDocBlockForProperty(
 				$this->broker,
 				$propertyReflection->getDocComment(),
@@ -129,6 +141,7 @@ class PhpClassReflectionExtension
 			$resolvedPhpDoc = $this->fileTypeMapper->getResolvedPhpDoc(
 				$phpDocBlock->getFile(),
 				$phpDocBlock->getClass(),
+				$this->findPropertyTrait($phpDocBlock, $propertyReflection),
 				$phpDocBlock->getDocComment()
 			);
 			$varTags = $resolvedPhpDoc->getVarTags();
@@ -139,6 +152,8 @@ class PhpClassReflectionExtension
 			} else {
 				$type = new MixedType();
 			}
+			$isDeprecated = $resolvedPhpDoc->isDeprecated();
+			$isInternal = $resolvedPhpDoc->isInternal();
 		} else {
 			$type = new MixedType();
 		}
@@ -146,24 +161,37 @@ class PhpClassReflectionExtension
 		return new PhpPropertyReflection(
 			$declaringClassReflection,
 			$type,
-			$propertyReflection
+			$propertyReflection,
+			$isDeprecated,
+			$isInternal
 		);
 	}
 
 	public function hasMethod(ClassReflection $classReflection, string $methodName): bool
 	{
+		if (
+			$classReflection->getName() === \ReflectionType::class
+		) {
+			$classReflection = $this->broker->getClass(\ReflectionNamedType::class);
+		}
+
 		return $classReflection->getNativeReflection()->hasMethod($methodName);
 	}
 
 	public function getMethod(ClassReflection $classReflection, string $methodName): MethodReflection
 	{
+		if (
+			$classReflection->getName() === \ReflectionType::class
+		) {
+			$classReflection = $this->broker->getClass(\ReflectionNamedType::class);
+		}
+
 		if (isset($this->methodsIncludingAnnotations[$classReflection->getName()][$methodName])) {
 			return $this->methodsIncludingAnnotations[$classReflection->getName()][$methodName];
 		}
 
-		$nativeMethodReflection = $classReflection->getNativeReflection()->getMethod($methodName);
+		$nativeMethodReflection = new NativeBuiltinMethodReflection($classReflection->getNativeReflection()->getMethod($methodName));
 		if (!isset($this->methodsIncludingAnnotations[$classReflection->getName()][$nativeMethodReflection->getName()])) {
-			/** @var \PHPStan\Reflection\Php\PhpMethodReflection $method */
 			$method = $this->createMethod($classReflection, $nativeMethodReflection, true);
 			$this->methodsIncludingAnnotations[$classReflection->getName()][$nativeMethodReflection->getName()] = $method;
 			if ($nativeMethodReflection->getName() !== $methodName) {
@@ -174,15 +202,52 @@ class PhpClassReflectionExtension
 		return $this->methodsIncludingAnnotations[$classReflection->getName()][$nativeMethodReflection->getName()];
 	}
 
-	public function getNativeMethod(ClassReflection $classReflection, string $methodName): PhpMethodReflection
+	public function hasNativeMethod(ClassReflection $classReflection, string $methodName): bool
+	{
+		$hasMethod = $this->hasMethod($classReflection, $methodName);
+		if ($hasMethod) {
+			return true;
+		}
+
+		if ($methodName === '__get' && UniversalObjectCratesClassReflectionExtension::isUniversalObjectCrate(
+			$this->broker,
+			$this->broker->getUniversalObjectCratesClasses(),
+			$classReflection
+		)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	public function getNativeMethod(ClassReflection $classReflection, string $methodName): MethodReflection
 	{
 		if (isset($this->nativeMethods[$classReflection->getName()][$methodName])) {
 			return $this->nativeMethods[$classReflection->getName()][$methodName];
 		}
 
-		$nativeMethodReflection = $classReflection->getNativeReflection()->getMethod($methodName);
+		if ($classReflection->getNativeReflection()->hasMethod($methodName)) {
+			$nativeMethodReflection = new NativeBuiltinMethodReflection(
+				$classReflection->getNativeReflection()->getMethod($methodName)
+			);
+		} else {
+			if (
+				$methodName !== '__get'
+				|| !UniversalObjectCratesClassReflectionExtension::isUniversalObjectCrate(
+					$this->broker,
+					$this->broker->getUniversalObjectCratesClasses(),
+					$classReflection
+				)) {
+				throw new \PHPStan\ShouldNotHappenException();
+			}
+
+			$nativeMethodReflection = new FakeBuiltinMethodReflection(
+				$methodName,
+				$classReflection->getNativeReflection()
+			);
+		}
+
 		if (!isset($this->nativeMethods[$classReflection->getName()][$nativeMethodReflection->getName()])) {
-			/** @var \PHPStan\Reflection\Php\PhpMethodReflection $method */
 			$method = $this->createMethod($classReflection, $nativeMethodReflection, false);
 			$this->nativeMethods[$classReflection->getName()][$nativeMethodReflection->getName()] = $method;
 		}
@@ -192,7 +257,7 @@ class PhpClassReflectionExtension
 
 	private function createMethod(
 		ClassReflection $classReflection,
-		\ReflectionMethod $methodReflection,
+		BuiltinMethodReflection $methodReflection,
 		bool $includingAnnotations
 	): MethodReflection
 	{
@@ -210,11 +275,47 @@ class PhpClassReflectionExtension
 				return $annotationMethod;
 			}
 		}
-		$declaringClass = $this->broker->getClass($methodReflection->getDeclaringClass()->getName());
+		$declaringClassName = $methodReflection->getDeclaringClass()->getName();
+		$signatureMapMethodName = sprintf('%s::%s', $declaringClassName, $methodReflection->getName());
+		$declaringClass = $this->broker->getClass($declaringClassName);
+		if ($this->signatureMapProvider->hasFunctionSignature($signatureMapMethodName)) {
+			$variantName = $signatureMapMethodName;
+			$variants = [];
+			$i = 0;
+			while ($this->signatureMapProvider->hasFunctionSignature($variantName)) {
+				$methodSignature = $this->signatureMapProvider->getFunctionSignature($variantName, $declaringClassName);
+				$variants[] = new FunctionVariant(
+					array_map(static function (ParameterSignature $parameterSignature): NativeParameterReflection {
+						return new NativeParameterReflection(
+							$parameterSignature->getName(),
+							$parameterSignature->isOptional(),
+							$parameterSignature->getType(),
+							$parameterSignature->passedByReference(),
+							$parameterSignature->isVariadic()
+						);
+					}, $methodSignature->getParameters()),
+					$methodSignature->isVariadic(),
+					$methodSignature->getReturnType()
+				);
+				$i++;
+				$variantName = sprintf($signatureMapMethodName . '\'' . $i);
+			}
+			return new NativeMethodReflection(
+				$this->broker,
+				$declaringClass,
+				$methodReflection,
+				$variants
+			);
+		}
 
 		$phpDocParameterTypes = [];
 		$phpDocReturnType = null;
-		if (!$classReflection->isAnonymous() && !$declaringClass->isAnonymous() && $declaringClass->getFileName() !== false) {
+		$phpDocThrowType = null;
+		$isDeprecated = false;
+		$isInternal = false;
+		$isFinal = false;
+		$declaringTraitName = $this->findMethodTrait($methodReflection);
+		if ($declaringClass->getFileName() !== false) {
 			if ($methodReflection->getDocComment() !== false) {
 				$phpDocBlock = PhpDocBlock::resolvePhpDocBlockForMethod(
 					$this->broker,
@@ -227,21 +328,112 @@ class PhpClassReflectionExtension
 				$resolvedPhpDoc = $this->fileTypeMapper->getResolvedPhpDoc(
 					$phpDocBlock->getFile(),
 					$phpDocBlock->getClass(),
+					$declaringTraitName,
 					$phpDocBlock->getDocComment()
 				);
-				$phpDocParameterTypes = array_map(function (ParamTag $tag): Type {
+				$phpDocParameterTypes = array_map(static function (ParamTag $tag): Type {
 					return $tag->getType();
 				}, $resolvedPhpDoc->getParamTags());
 				$phpDocReturnType = $resolvedPhpDoc->getReturnTag() !== null ? $resolvedPhpDoc->getReturnTag()->getType() : null;
+				$phpDocThrowType = $resolvedPhpDoc->getThrowsTag() !== null ? $resolvedPhpDoc->getThrowsTag()->getType() : null;
+				$isDeprecated = $resolvedPhpDoc->isDeprecated();
+				$isInternal = $resolvedPhpDoc->isInternal();
+				$isFinal = $resolvedPhpDoc->isFinal();
 			}
+		}
+
+		$declaringTrait = null;
+		if (
+			$declaringTraitName !== null && $this->broker->hasClass($declaringTraitName)
+		) {
+			$declaringTrait = $this->broker->getClass($declaringTraitName);
 		}
 
 		return $this->methodReflectionFactory->create(
 			$declaringClass,
+			$declaringTrait,
 			$methodReflection,
 			$phpDocParameterTypes,
-			$phpDocReturnType
+			$phpDocReturnType,
+			$phpDocThrowType,
+			$isDeprecated,
+			$isInternal,
+			$isFinal
 		);
+	}
+
+	private function findPropertyTrait(
+		PhpDocBlock $phpDocBlock,
+		\ReflectionProperty $propertyReflection
+	): ?string
+	{
+		$resolvedPhpDoc = $this->fileTypeMapper->getResolvedPhpDoc(
+			$phpDocBlock->getFile(),
+			$phpDocBlock->getClass(),
+			null,
+			$phpDocBlock->getDocComment()
+		);
+		if (count($resolvedPhpDoc->getVarTags()) > 0) {
+			return null;
+		}
+
+		$declaringClass = $propertyReflection->getDeclaringClass();
+		$traits = $declaringClass->getTraits();
+		while (count($traits) > 0) {
+			/** @var \ReflectionClass $traitReflection */
+			$traitReflection = array_pop($traits);
+			$traits = array_merge($traits, $traitReflection->getTraits());
+			if (!$traitReflection->hasProperty($propertyReflection->getName())) {
+				continue;
+			}
+
+			$traitResolvedPhpDoc = $this->fileTypeMapper->getResolvedPhpDoc(
+				$phpDocBlock->getFile(),
+				$phpDocBlock->getClass(),
+				$traitReflection->getName(),
+				$phpDocBlock->getDocComment()
+			);
+			if (
+				count($traitResolvedPhpDoc->getVarTags()) > 0
+			) {
+				return $traitReflection->getName();
+			}
+		}
+
+		return null;
+	}
+
+	private function findMethodTrait(
+		BuiltinMethodReflection $methodReflection
+	): ?string
+	{
+		if (
+			$methodReflection->getFileName() === $methodReflection->getDeclaringClass()->getFileName()
+		) {
+			return null;
+		}
+
+		$declaringClass = $methodReflection->getDeclaringClass();
+		$traitAliases = $declaringClass->getTraitAliases();
+		if (array_key_exists($methodReflection->getName(), $traitAliases)) {
+			return explode('::', $traitAliases[$methodReflection->getName()])[0];
+		}
+
+		foreach ($declaringClass->getTraits() as $traitReflection) {
+			if (!$traitReflection->hasMethod($methodReflection->getName())) {
+				continue;
+			}
+
+			$traitMethodReflection = $traitReflection->getMethod($methodReflection->getName());
+			if (
+				$traitMethodReflection->getFileName() === $methodReflection->getFileName()
+				&& $traitMethodReflection->getStartLine() === $methodReflection->getStartLine()
+			) {
+				return $traitReflection->getName();
+			}
+		}
+
+		return null;
 	}
 
 }

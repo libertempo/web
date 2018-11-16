@@ -2,15 +2,17 @@
 
 namespace PHPStan\Type;
 
-use PHPStan\Analyser\Scope;
-use PHPStan\Broker\Broker;
-use PHPStan\Reflection\ClassConstantReflection;
+use PHPStan\Reflection\ClassMemberAccessAnswerer;
+use PHPStan\Reflection\ConstantReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\PropertyReflection;
 use PHPStan\TrinaryLogic;
+use PHPStan\Type\Traits\TruthyBooleanTypeTrait;
 
 class StaticType implements StaticResolvableType, TypeWithClassName
 {
+
+	use TruthyBooleanTypeTrait;
 
 	/** @var string */
 	private $baseClass;
@@ -29,6 +31,11 @@ class StaticType implements StaticResolvableType, TypeWithClassName
 		return $this->baseClass;
 	}
 
+	protected function getStaticObjectType(): ObjectType
+	{
+		return $this->staticObjectType;
+	}
+
 	/**
 	 * @return string[]
 	 */
@@ -42,9 +49,9 @@ class StaticType implements StaticResolvableType, TypeWithClassName
 		return $this->baseClass;
 	}
 
-	public function accepts(Type $type): bool
+	public function accepts(Type $type, bool $strictTypes): TrinaryLogic
 	{
-		return $this->staticObjectType->accepts($type);
+		return $this->staticObjectType->accepts($type, $strictTypes);
 	}
 
 	public function isSuperTypeOf(Type $type): TrinaryLogic
@@ -64,12 +71,17 @@ class StaticType implements StaticResolvableType, TypeWithClassName
 		return TrinaryLogic::createNo();
 	}
 
-	public function describe(): string
+	public function equals(Type $type): bool
 	{
-		return sprintf('static(%s)', $this->baseClass);
+		return $this->staticObjectType->equals($type);
 	}
 
-	public function canAccessProperties(): bool
+	public function describe(VerbosityLevel $level): string
+	{
+		return sprintf('static(%s)', $this->staticObjectType->describe($level));
+	}
+
+	public function canAccessProperties(): TrinaryLogic
 	{
 		return $this->staticObjectType->canAccessProperties();
 	}
@@ -79,12 +91,12 @@ class StaticType implements StaticResolvableType, TypeWithClassName
 		return $this->staticObjectType->hasProperty($propertyName);
 	}
 
-	public function getProperty(string $propertyName, Scope $scope): PropertyReflection
+	public function getProperty(string $propertyName, ClassMemberAccessAnswerer $scope): PropertyReflection
 	{
 		return $this->staticObjectType->getProperty($propertyName, $scope);
 	}
 
-	public function canCallMethods(): bool
+	public function canCallMethods(): TrinaryLogic
 	{
 		return $this->staticObjectType->canCallMethods();
 	}
@@ -94,12 +106,12 @@ class StaticType implements StaticResolvableType, TypeWithClassName
 		return $this->staticObjectType->hasMethod($methodName);
 	}
 
-	public function getMethod(string $methodName, Scope $scope): MethodReflection
+	public function getMethod(string $methodName, ClassMemberAccessAnswerer $scope): MethodReflection
 	{
 		return $this->staticObjectType->getMethod($methodName, $scope);
 	}
 
-	public function canAccessConstants(): bool
+	public function canAccessConstants(): TrinaryLogic
 	{
 		return $this->staticObjectType->canAccessConstants();
 	}
@@ -109,14 +121,9 @@ class StaticType implements StaticResolvableType, TypeWithClassName
 		return $this->staticObjectType->hasConstant($constantName);
 	}
 
-	public function getConstant(string $constantName): ClassConstantReflection
+	public function getConstant(string $constantName): ConstantReflection
 	{
 		return $this->staticObjectType->getConstant($constantName);
-	}
-
-	public function isDocumentableNatively(): bool
-	{
-		return $this->staticObjectType->isDocumentableNatively();
 	}
 
 	public function resolveStatic(string $className): Type
@@ -126,100 +133,93 @@ class StaticType implements StaticResolvableType, TypeWithClassName
 
 	public function changeBaseClass(string $className): StaticResolvableType
 	{
-		$thisClass = get_class($this);
+		$thisClass = static::class;
 		return new $thisClass($className);
 	}
 
 	public function isIterable(): TrinaryLogic
 	{
-		$broker = Broker::getInstance();
-
-		if (!$broker->hasClass($this->baseClass)) {
-			return TrinaryLogic::createMaybe();
-		}
-
-		$classReflection = $broker->getClass($this->baseClass);
-		if ($classReflection->isSubclassOf(\Traversable::class) || $classReflection->getName() === \Traversable::class) {
-			return TrinaryLogic::createYes();
-		}
-
-		return TrinaryLogic::createNo();
+		return $this->staticObjectType->isInstanceOf(\Traversable::class);
 	}
 
 	public function getIterableKeyType(): Type
 	{
-		$broker = Broker::getInstance();
-
-		if (!$broker->hasClass($this->baseClass)) {
-			return new ErrorType();
-		}
-
-		$classReflection = $broker->getClass($this->baseClass);
-
-		if ($classReflection->isSubclassOf(\Iterator::class) && $classReflection->hasNativeMethod('key')) {
-			return $classReflection->getNativeMethod('key')->getReturnType();
-		}
-
-		if ($classReflection->isSubclassOf(\IteratorAggregate::class) && $classReflection->hasNativeMethod('getIterator')) {
-			return RecursionGuard::run($this, function () use ($classReflection) {
-				return $classReflection->getNativeMethod('getIterator')->getReturnType()->getIterableKeyType();
-			});
-		}
-
-		if ($classReflection->isSubclassOf(\Traversable::class)) {
-			return new MixedType();
-		}
-
-		return new ErrorType();
+		return $this->staticObjectType->getIterableKeyType();
 	}
 
 	public function getIterableValueType(): Type
 	{
-		$broker = Broker::getInstance();
+		return $this->staticObjectType->getIterableValueType();
+	}
 
-		if (!$broker->hasClass($this->baseClass)) {
-			return new ErrorType();
-		}
+	public function isOffsetAccessible(): TrinaryLogic
+	{
+		return $this->staticObjectType->isInstanceOf(\ArrayAccess::class);
+	}
 
-		$classReflection = $broker->getClass($this->baseClass);
+	public function hasOffsetValueType(Type $offsetType): TrinaryLogic
+	{
+		return $this->staticObjectType->hasOffsetValueType($offsetType);
+	}
 
-		if ($classReflection->isSubclassOf(\Iterator::class) && $classReflection->hasNativeMethod('current')) {
-			return $classReflection->getNativeMethod('current')->getReturnType();
-		}
+	public function getOffsetValueType(Type $offsetType): Type
+	{
+		return $this->staticObjectType->getOffsetValueType($offsetType);
+	}
 
-		if ($classReflection->isSubclassOf(\IteratorAggregate::class) && $classReflection->hasNativeMethod('getIterator')) {
-			return RecursionGuard::run($this, function () use ($classReflection) {
-				return $classReflection->getNativeMethod('getIterator')->getReturnType()->getIterableValueType();
-			});
-		}
-
-		if ($classReflection->isSubclassOf(\Traversable::class)) {
-			return new MixedType();
-		}
-
-		return new ErrorType();
+	public function setOffsetValueType(?Type $offsetType, Type $valueType): Type
+	{
+		return $this->staticObjectType->setOffsetValueType($offsetType, $valueType);
 	}
 
 	public function isCallable(): TrinaryLogic
 	{
-		$broker = Broker::getInstance();
-
-		if (!$broker->hasClass($this->baseClass)) {
-			return TrinaryLogic::createMaybe();
-		}
-
-		if ($broker->getClass($this->baseClass)->hasMethod('__invoke')) {
-			return TrinaryLogic::createYes();
-		}
-
-		return TrinaryLogic::createNo();
+		return $this->staticObjectType->isCallable();
 	}
 
-	public function isClonable(): bool
+	/**
+	 * @param \PHPStan\Reflection\ClassMemberAccessAnswerer $scope
+	 * @return \PHPStan\Reflection\ParametersAcceptor[]
+	 */
+	public function getCallableParametersAcceptors(ClassMemberAccessAnswerer $scope): array
 	{
-		return true;
+		return $this->staticObjectType->getCallableParametersAcceptors($scope);
 	}
 
+	public function isCloneable(): TrinaryLogic
+	{
+		return TrinaryLogic::createYes();
+	}
+
+	public function toNumber(): Type
+	{
+		return new ErrorType();
+	}
+
+	public function toString(): Type
+	{
+		return $this->staticObjectType->toString();
+	}
+
+	public function toInteger(): Type
+	{
+		return new ErrorType();
+	}
+
+	public function toFloat(): Type
+	{
+		return new ErrorType();
+	}
+
+	public function toArray(): Type
+	{
+		return $this->staticObjectType->toArray();
+	}
+
+	/**
+	 * @param mixed[] $properties
+	 * @return Type
+	 */
 	public static function __set_state(array $properties): Type
 	{
 		return new static($properties['baseClass']);

@@ -1,174 +1,203 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace PhpParser\Lexer;
 
+use PhpParser\Error;
 use PhpParser\ErrorHandler;
-use PhpParser\Parser\Tokens;
 
 class Emulative extends \PhpParser\Lexer
 {
-    protected $newKeywords;
-    protected $inObjectAccess;
+    const PHP_7_3 = '7.3.0dev';
 
-    const T_ELLIPSIS   = 1001;
-    const T_POW        = 1002;
-    const T_POW_EQUAL  = 1003;
-    const T_COALESCE   = 1004;
-    const T_SPACESHIP  = 1005;
-    const T_YIELD_FROM = 1006;
+    /**
+     * @var array Patches used to reverse changes introduced in the code
+     */
+    private $patches;
 
-    const PHP_7_0 = '7.0.0dev';
-    const PHP_5_6 = '5.6.0rc1';
-
-    public function __construct(array $options = array()) {
-        parent::__construct($options);
-
-        $newKeywordsPerVersion = array(
-            // No new keywords since PHP 5.5
-        );
-
-        $this->newKeywords = array();
-        foreach ($newKeywordsPerVersion as $version => $newKeywords) {
-            if (version_compare(PHP_VERSION, $version, '>=')) {
-                break;
-            }
-
-            $this->newKeywords += $newKeywords;
-        }
-
-        if (version_compare(PHP_VERSION, self::PHP_7_0, '>=')) {
+    public function startLexing(string $code, ErrorHandler $errorHandler = null) {
+        $this->patches = [];
+        $preparedCode = $this->prepareCode($code);
+        if (null === $preparedCode) {
+            // Nothing to emulate, yay
+            parent::startLexing($code, $errorHandler);
             return;
         }
-        $this->tokenMap[self::T_COALESCE]   = Tokens::T_COALESCE;
-        $this->tokenMap[self::T_SPACESHIP]  = Tokens::T_SPACESHIP;
-        $this->tokenMap[self::T_YIELD_FROM] = Tokens::T_YIELD_FROM;
 
-        if (version_compare(PHP_VERSION, self::PHP_5_6, '>=')) {
-            return;
-        }
-        $this->tokenMap[self::T_ELLIPSIS]  = Tokens::T_ELLIPSIS;
-        $this->tokenMap[self::T_POW]       = Tokens::T_POW;
-        $this->tokenMap[self::T_POW_EQUAL] = Tokens::T_POW_EQUAL;
-    }
+        $collector = new ErrorHandler\Collecting();
+        parent::startLexing($preparedCode, $collector);
+        $this->fixupTokens();
 
-    public function startLexing($code, ErrorHandler $errorHandler = null) {
-        $this->inObjectAccess = false;
-
-        parent::startLexing($code, $errorHandler);
-        if ($this->requiresEmulation($code)) {
-            $this->emulateTokens();
+        $errors = $collector->getErrors();
+        if (!empty($errors)) {
+            $this->fixupErrors($errors);
+            foreach ($errors as $error) {
+                $errorHandler->handleError($error);
+            }
         }
     }
 
-    /*
-     * Checks if the code is potentially using features that require emulation.
+    /**
+     * Prepares code for emulation. If nothing has to be emulated null is returned.
+     *
+     * @param string $code
+     * @return null|string
      */
-    protected function requiresEmulation($code) {
-        if (version_compare(PHP_VERSION, self::PHP_7_0, '>=')) {
-            return false;
+    private function prepareCode(string $code) {
+        if (version_compare(\PHP_VERSION, self::PHP_7_3, '>=')) {
+            return null;
         }
 
-        if (preg_match('(\?\?|<=>|yield[ \n\r\t]+from)', $code)) {
-            return true;
+        if (strpos($code, '<<<') === false) {
+            // Definitely doesn't contain heredoc/nowdoc
+            return null;
         }
 
-        if (version_compare(PHP_VERSION, self::PHP_5_6, '>=')) {
-            return false;
+        $flexibleDocStringRegex = <<<'REGEX'
+/<<<[ \t]*(['"]?)([a-zA-Z_\x80-\xff][a-zA-Z0-9_\x80-\xff]*)\1\r?\n
+(?:.*\r?\n)*?
+(?<indentation>\h*)\2(?![a-zA-Z_\x80-\xff])(?<separator>(?:;?[\r\n])?)/x
+REGEX;
+        if (!preg_match_all($flexibleDocStringRegex, $code, $matches, PREG_SET_ORDER|PREG_OFFSET_CAPTURE)) {
+            // No heredoc/nowdoc found
+            return null;
         }
 
-        return preg_match('(\.\.\.|(?<!/)\*\*(?!/))', $code);
+        // Keep track of how much we need to adjust string offsets due to the modifications we
+        // already made
+        $posDelta = 0;
+        foreach ($matches as $match) {
+            $indentation = $match['indentation'][0];
+            $indentationStart = $match['indentation'][1];
+
+            $separator = $match['separator'][0];
+            $separatorStart = $match['separator'][1];
+
+            if ($indentation === '' && $separator !== '') {
+                // Ordinary heredoc/nowdoc
+                continue;
+            }
+
+            if ($indentation !== '') {
+                // Remove indentation
+                $indentationLen = strlen($indentation);
+                $code = substr_replace($code, '', $indentationStart + $posDelta, $indentationLen);
+                $this->patches[] = [$indentationStart + $posDelta, 'add', $indentation];
+                $posDelta -= $indentationLen;
+            }
+
+            if ($separator === '') {
+                // Insert newline as separator
+                $code = substr_replace($code, "\n", $separatorStart + $posDelta, 0);
+                $this->patches[] = [$separatorStart + $posDelta, 'remove', "\n"];
+                $posDelta += 1;
+            }
+        }
+
+        if (empty($this->patches)) {
+            // We did not end up emulating anything
+            return null;
+        }
+
+        return $code;
     }
 
-    /*
-     * Emulates tokens for newer PHP versions.
+    private function fixupTokens() {
+        assert(count($this->patches) > 0);
+
+        // Load first patch
+        $patchIdx = 0;
+        list($patchPos, $patchType, $patchText) = $this->patches[$patchIdx];
+
+        // We use a manual loop over the tokens, because we modify the array on the fly
+        $pos = 0;
+        for ($i = 0, $c = \count($this->tokens); $i < $c; $i++) {
+            $token = $this->tokens[$i];
+            if (\is_string($token)) {
+                // We assume that patches don't apply to string tokens
+                $pos += \strlen($token);
+                continue;
+            }
+
+            $len = \strlen($token[1]);
+            $posDelta = 0;
+            while ($patchPos >= $pos && $patchPos < $pos + $len) {
+                $patchTextLen = \strlen($patchText);
+                if ($patchType === 'remove') {
+                    if ($patchPos === $pos && $patchTextLen === $len) {
+                        // Remove token entirely
+                        array_splice($this->tokens, $i, 1, []);
+                        $i--;
+                        $c--;
+                    } else {
+                        // Remove from token string
+                        $this->tokens[$i][1] = substr_replace(
+                            $token[1], '', $patchPos - $pos + $posDelta, $patchTextLen
+                        );
+                        $posDelta -= $patchTextLen;
+                    }
+                } elseif ($patchType === 'add') {
+                    // Insert into the token string
+                    $this->tokens[$i][1] = substr_replace(
+                        $token[1], $patchText, $patchPos - $pos + $posDelta, 0
+                    );
+                    $posDelta += $patchTextLen;
+                } else {
+                    assert(false);
+                }
+
+                // Fetch the next patch
+                $patchIdx++;
+                if ($patchIdx >= \count($this->patches)) {
+                    // No more patches, we're done
+                    return;
+                }
+
+                list($patchPos, $patchType, $patchText) = $this->patches[$patchIdx];
+
+                // Multiple patches may apply to the same token. Reload the current one to check
+                // If the new patch applies
+                $token = $this->tokens[$i];
+            }
+
+            $pos += $len;
+        }
+
+        // A patch did not apply
+        assert(false);
+    }
+
+    /**
+     * Fixup line and position information in errors.
+     *
+     * @param Error[] $errors
      */
-    protected function emulateTokens() {
-        // We need to manually iterate and manage a count because we'll change
-        // the tokens array on the way
-        $line = 1;
-        for ($i = 0, $c = count($this->tokens); $i < $c; ++$i) {
-            $replace = null;
-            if (isset($this->tokens[$i + 1])) {
-                if ($this->tokens[$i] === '?' && $this->tokens[$i + 1] === '?') {
-                    array_splice($this->tokens, $i, 2, array(
-                        array(self::T_COALESCE, '??', $line)
-                    ));
-                    $c--;
-                    continue;
+    private function fixupErrors(array $errors) {
+        foreach ($errors as $error) {
+            $attrs = $error->getAttributes();
+
+            $posDelta = 0;
+            $lineDelta = 0;
+            foreach ($this->patches as $patch) {
+                list($patchPos, $patchType, $patchText) = $patch;
+                if ($patchPos >= $attrs['startFilePos']) {
+                    // No longer relevant
+                    break;
                 }
-                if ($this->tokens[$i][0] === T_IS_SMALLER_OR_EQUAL
-                    && $this->tokens[$i + 1] === '>'
-                ) {
-                    array_splice($this->tokens, $i, 2, array(
-                        array(self::T_SPACESHIP, '<=>', $line)
-                    ));
-                    $c--;
-                    continue;
-                }
-                if ($this->tokens[$i] === '*' && $this->tokens[$i + 1] === '*') {
-                    array_splice($this->tokens, $i, 2, array(
-                        array(self::T_POW, '**', $line)
-                    ));
-                    $c--;
-                    continue;
-                }
-                if ($this->tokens[$i] === '*' && $this->tokens[$i + 1][0] === T_MUL_EQUAL) {
-                    array_splice($this->tokens, $i, 2, array(
-                        array(self::T_POW_EQUAL, '**=', $line)
-                    ));
-                    $c--;
-                    continue;
+
+                if ($patchType === 'add') {
+                    $posDelta += strlen($patchText);
+                    $lineDelta += substr_count($patchText, "\n");
+                } else {
+                    $posDelta -= strlen($patchText);
+                    $lineDelta -= substr_count($patchText, "\n");
                 }
             }
 
-            if (isset($this->tokens[$i + 2])) {
-                if ($this->tokens[$i][0] === T_YIELD && $this->tokens[$i + 1][0] === T_WHITESPACE
-                    && $this->tokens[$i + 2][0] === T_STRING
-                    && !strcasecmp($this->tokens[$i + 2][1], 'from')
-                ) {
-                    array_splice($this->tokens, $i, 3, array(
-                        array(
-                            self::T_YIELD_FROM,
-                            $this->tokens[$i][1] . $this->tokens[$i + 1][1] . $this->tokens[$i + 2][1],
-                            $line
-                        )
-                    ));
-                    $c -= 2;
-                    $line += substr_count($this->tokens[$i][1], "\n");
-                    continue;
-                }
-                if ($this->tokens[$i] === '.' && $this->tokens[$i + 1] === '.'
-                    && $this->tokens[$i + 2] === '.'
-                ) {
-                    array_splice($this->tokens, $i, 3, array(
-                        array(self::T_ELLIPSIS, '...', $line)
-                    ));
-                    $c -= 2;
-                    continue;
-                }
-            }
-
-            if (\is_array($this->tokens[$i])) {
-                $line += substr_count($this->tokens[$i][1], "\n");
-            }
+            $attrs['startFilePos'] += $posDelta;
+            $attrs['endFilePos'] += $posDelta;
+            $attrs['startLine'] += $lineDelta;
+            $attrs['endLine'] += $lineDelta;
+            $error->setAttributes($attrs);
         }
-    }
-
-    public function getNextToken(&$value = null, &$startAttributes = null, &$endAttributes = null) {
-        $token = parent::getNextToken($value, $startAttributes, $endAttributes);
-
-        // replace new keywords by their respective tokens. This is not done
-        // if we currently are in an object access (e.g. in $obj->namespace
-        // "namespace" stays a T_STRING tokens and isn't converted to T_NAMESPACE)
-        if (Tokens::T_STRING === $token && !$this->inObjectAccess) {
-            if (isset($this->newKeywords[strtolower($value)])) {
-                return $this->newKeywords[strtolower($value)];
-            }
-        } else {
-            // keep track of whether we currently are in an object access (after ->)
-            $this->inObjectAccess = Tokens::T_OBJECT_OPERATOR === $token;
-        }
-
-        return $token;
     }
 }

@@ -2,7 +2,9 @@
 
 namespace PHPStan\Reflection\Annotations;
 
+use PHPStan\Reflection\ClassMemberReflection;
 use PHPStan\Reflection\ClassReflection;
+use PHPStan\Reflection\FunctionVariant;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\Type;
 
@@ -27,7 +29,25 @@ class AnnotationMethodReflection implements MethodReflection
 	/** @var bool */
 	private $isVariadic;
 
-	public function __construct(string $name, ClassReflection $declaringClass, Type $returnType, array $parameters, bool $isStatic, bool $isVariadic)
+	/** @var FunctionVariant[]|null */
+	private $variants;
+
+	/**
+	 * @param string $name
+	 * @param ClassReflection $declaringClass
+	 * @param Type $returnType
+	 * @param \PHPStan\Reflection\Annotations\AnnotationsMethodParameterReflection[] $parameters
+	 * @param bool $isStatic
+	 * @param bool $isVariadic
+	 */
+	public function __construct(
+		string $name,
+		ClassReflection $declaringClass,
+		Type $returnType,
+		array $parameters,
+		bool $isStatic,
+		bool $isVariadic
+	)
 	{
 		$this->name = $name;
 		$this->declaringClass = $declaringClass;
@@ -42,7 +62,7 @@ class AnnotationMethodReflection implements MethodReflection
 		return $this->declaringClass;
 	}
 
-	public function getPrototype(): MethodReflection
+	public function getPrototype(): ClassMemberReflection
 	{
 		return $this;
 	}
@@ -50,16 +70,6 @@ class AnnotationMethodReflection implements MethodReflection
 	public function isStatic(): bool
 	{
 		return $this->isStatic;
-	}
-
-	public function getParameters(): array
-	{
-		return $this->parameters;
-	}
-
-	public function isVariadic(): bool
-	{
-		return $this->isVariadic;
 	}
 
 	public function isPrivate(): bool
@@ -77,9 +87,21 @@ class AnnotationMethodReflection implements MethodReflection
 		return $this->name;
 	}
 
-	public function getReturnType(): Type
+	/**
+	 * @return \PHPStan\Reflection\ParametersAcceptor[]
+	 */
+	public function getVariants(): array
 	{
-		return $this->returnType;
+		if ($this->variants === null) {
+			$this->variants = [
+				new FunctionVariant(
+					$this->parameters,
+					$this->isVariadic,
+					$this->returnType
+				),
+			];
+		}
+		return $this->variants;
 	}
 
 }

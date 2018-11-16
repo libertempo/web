@@ -4,7 +4,9 @@ namespace PHPStan\Reflection\Php;
 
 use PHPStan\Broker\Broker;
 use PHPStan\Reflection\ClassReflection;
+use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\PropertyReflection;
+use PHPStan\Type\MixedType;
 
 class UniversalObjectCratesClassReflectionExtension
 	implements \PHPStan\Reflection\PropertiesClassReflectionExtension, \PHPStan\Reflection\BrokerAwareExtension
@@ -12,9 +14,6 @@ class UniversalObjectCratesClassReflectionExtension
 
 	/** @var string[] */
 	private $classes;
-
-	/** @var string[]|null */
-	private $filteredClasses;
 
 	/** @var \PHPStan\Broker\Broker */
 	private $broker;
@@ -27,23 +26,37 @@ class UniversalObjectCratesClassReflectionExtension
 		$this->classes = $classes;
 	}
 
-	public function setBroker(Broker $broker)
+	public function setBroker(Broker $broker): void
 	{
 		$this->broker = $broker;
 	}
 
 	public function hasProperty(ClassReflection $classReflection, string $propertyName): bool
 	{
-		if ($this->filteredClasses === null) {
-			$this->filteredClasses = array_values(array_filter($this->classes, function (string $class): bool {
-				return $this->broker->hasClass($class);
-			}));
-		}
-		if ($classReflection->hasNativeProperty($propertyName)) {
-			return false;
-		}
+		return self::isUniversalObjectCrate(
+			$this->broker,
+			$this->classes,
+			$classReflection
+		);
+	}
 
-		foreach ($this->filteredClasses as $className) {
+	/**
+	 * @param \PHPStan\Broker\Broker $broker
+	 * @param string[] $classes
+	 * @param \PHPStan\Reflection\ClassReflection $classReflection
+	 * @return bool
+	 */
+	public static function isUniversalObjectCrate(
+		Broker $broker,
+		array $classes,
+		ClassReflection $classReflection
+	): bool
+	{
+		foreach ($classes as $className) {
+			if (!$broker->hasClass($className)) {
+				continue;
+			}
+
 			if (
 				$classReflection->getName() === $className
 				|| $classReflection->isSubclassOf($className)
@@ -57,7 +70,12 @@ class UniversalObjectCratesClassReflectionExtension
 
 	public function getProperty(ClassReflection $classReflection, string $propertyName): PropertyReflection
 	{
-		return new UniversalObjectCrateProperty($classReflection);
+		if ($classReflection->hasNativeMethod('__get')) {
+			$type = ParametersAcceptorSelector::selectSingle($classReflection->getNativeMethod('__get')->getVariants())->getReturnType();
+		} else {
+			$type = new MixedType();
+		}
+		return new UniversalObjectCrateProperty($classReflection, $type);
 	}
 
 }

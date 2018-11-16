@@ -34,3 +34,7 @@ reinstall: destroy install ## Reset usine
 ## Test
 test: ## Lance les tests unitaires
 	vendor/bin/atoum -ulr
+
+## CI
+stan: ## Découvre des bugs d'analyse statique
+	vendor/bin/phpstan analyze -l 0 App/ ./admin/ ./edition/ ./export/ ./hr/ ./includes/ Public/ responsable/ utilisateur/ --memory-limit 100M

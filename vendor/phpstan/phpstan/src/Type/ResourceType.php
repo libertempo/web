@@ -2,77 +2,81 @@
 
 namespace PHPStan\Type;
 
-use PHPStan\Analyser\Scope;
-use PHPStan\Reflection\ClassConstantReflection;
-use PHPStan\Reflection\MethodReflection;
-use PHPStan\Reflection\PropertyReflection;
 use PHPStan\TrinaryLogic;
+use PHPStan\Type\Constant\ConstantArrayType;
+use PHPStan\Type\Constant\ConstantIntegerType;
+use PHPStan\Type\Traits\NonCallableTypeTrait;
+use PHPStan\Type\Traits\NonIterableTypeTrait;
+use PHPStan\Type\Traits\NonObjectTypeTrait;
+use PHPStan\Type\Traits\TruthyBooleanTypeTrait;
 
 class ResourceType implements Type
 {
 
 	use JustNullableTypeTrait;
+	use NonCallableTypeTrait;
+	use NonIterableTypeTrait;
+	use NonObjectTypeTrait;
+	use TruthyBooleanTypeTrait;
 
-	public function describe(): string
+	public function describe(VerbosityLevel $level): string
 	{
 		return 'resource';
 	}
 
-	public function canAccessProperties(): bool
+	public function toNumber(): Type
 	{
-		return false;
+		return new ErrorType();
 	}
 
-	public function hasProperty(string $propertyName): bool
+	public function toString(): Type
 	{
-		return false;
+		return new StringType();
 	}
 
-	public function getProperty(string $propertyName, Scope $scope): PropertyReflection
+	public function toInteger(): Type
 	{
-		throw new \PHPStan\ShouldNotHappenException();
+		return new IntegerType();
 	}
 
-	public function canCallMethods(): bool
+	public function toFloat(): Type
 	{
-		return false;
+		return new ErrorType();
 	}
 
-	public function hasMethod(string $methodName): bool
+	public function toArray(): Type
 	{
-		return false;
+		return new ConstantArrayType(
+			[new ConstantIntegerType(0)],
+			[$this],
+			1
+		);
 	}
 
-	public function getMethod(string $methodName, Scope $scope): MethodReflection
+	public function isOffsetAccessible(): TrinaryLogic
 	{
-		throw new \PHPStan\ShouldNotHappenException();
+		return TrinaryLogic::createYes();
 	}
 
-	public function canAccessConstants(): bool
+	public function hasOffsetValueType(Type $offsetType): TrinaryLogic
 	{
-		return false;
+		return TrinaryLogic::createYes();
 	}
 
-	public function hasConstant(string $constantName): bool
+	public function getOffsetValueType(Type $offsetType): Type
 	{
-		return false;
+		return new NullType();
 	}
 
-	public function getConstant(string $constantName): ClassConstantReflection
+	public function setOffsetValueType(?Type $offsetType, Type $valueType): Type
 	{
-		throw new \PHPStan\ShouldNotHappenException();
+		return new ErrorType();
 	}
 
-	public function isCallable(): TrinaryLogic
-	{
-		return TrinaryLogic::createNo();
-	}
-
-	public function isClonable(): bool
-	{
-		return false;
-	}
-
+	/**
+	 * @param mixed[] $properties
+	 * @return Type
+	 */
 	public static function __set_state(array $properties): Type
 	{
 		return new self();

@@ -5,6 +5,7 @@ namespace PHPStan\Rules\Properties;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\RuleLevelHelper;
+use PHPStan\Type\VerbosityLevel;
 
 class TypesAssignedToPropertiesRule implements \PHPStan\Rules\Rule
 {
@@ -31,11 +32,11 @@ class TypesAssignedToPropertiesRule implements \PHPStan\Rules\Rule
 
 	public function getNodeType(): string
 	{
-		return \PhpParser\Node::class;
+		return \PhpParser\Node\Expr::class;
 	}
 
 	/**
-	 * @param \PhpParser\Node $node
+	 * @param \PhpParser\Node\Expr $node
 	 * @param \PHPStan\Analyser\Scope $scope
 	 * @return string[]
 	 */
@@ -69,18 +70,15 @@ class TypesAssignedToPropertiesRule implements \PHPStan\Rules\Rule
 		} else {
 			$assignedValueType = $scope->getType($node);
 		}
-		if (!$this->ruleLevelHelper->accepts($propertyType, $assignedValueType)) {
+		if (!$this->ruleLevelHelper->accepts($propertyType, $assignedValueType, $scope->isDeclareStrictTypes())) {
 			$propertyDescription = $this->propertyDescriptor->describeProperty($propertyReflection, $propertyFetch);
-			if ($propertyDescription === null) {
-				return [];
-			}
 
 			return [
 				sprintf(
 					'%s (%s) does not accept %s.',
 					$propertyDescription,
-					$propertyType->describe(),
-					$assignedValueType->describe()
+					$propertyType->describe(VerbosityLevel::typeOnly()),
+					$assignedValueType->describe(VerbosityLevel::typeOnly())
 				),
 			];
 		}

@@ -9,9 +9,7 @@ use PHPStan\Rules\ClassCaseSensitivityCheck;
 class ExistingClassesInInterfaceExtendsRule implements \PHPStan\Rules\Rule
 {
 
-	/**
-	 * @var \PHPStan\Rules\ClassCaseSensitivityCheck
-	 */
+	/** @var \PHPStan\Rules\ClassCaseSensitivityCheck */
 	private $classCaseSensitivityCheck;
 
 	public function __construct(ClassCaseSensitivityCheck $classCaseSensitivityCheck)
@@ -32,7 +30,7 @@ class ExistingClassesInInterfaceExtendsRule implements \PHPStan\Rules\Rule
 	public function processNode(Node $node, Scope $scope): array
 	{
 		return $this->classCaseSensitivityCheck->checkClassNames(
-			array_map(function (Node\Name $traitName): string {
+			array_map(static function (Node\Name $traitName): string {
 				return (string) $traitName;
 			}, $node->extends)
 		);

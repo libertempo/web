@@ -4,8 +4,8 @@ namespace PHPStan\Rules\Functions;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
-use PhpParser\Node\Scalar\String_;
 use PHPStan\Analyser\Scope;
+use PHPStan\Type\Constant\ConstantStringType;
 
 class PrintfParametersRule implements \PHPStan\Rules\Rule
 {
@@ -52,8 +52,8 @@ class PrintfParametersRule implements \PHPStan\Rules\Rule
 			return []; // caught by CallToFunctionParametersRule
 		}
 
-		$formatArg = $args[$formatArgumentPosition]->value;
-		if (!($formatArg instanceof String_)) {
+		$formatArgType = $scope->getType($args[$formatArgumentPosition]->value);
+		if (!($formatArgType instanceof ConstantStringType)) {
 			return []; // inspect only literal string format
 		}
 
@@ -63,7 +63,7 @@ class PrintfParametersRule implements \PHPStan\Rules\Rule
 			}
 		}
 
-		$format = $formatArg->value;
+		$format = $formatArgType->getValue();
 		$placeHoldersCount = $this->getPlaceholdersCount($name, $format);
 		$argsCount -= $formatArgumentPosition;
 
@@ -90,11 +90,13 @@ class PrintfParametersRule implements \PHPStan\Rules\Rule
 		$specifiers = in_array($functionName, ['sprintf', 'printf'], true) ? '[bcdeEfFgGosuxX]' : '(?:[cdDeEfinosuxX]|\[[^\]]+\])';
 		$pattern = '~(?<before>%*)%(?:(?<position>\d+)\$)?[-+]?(?:[ 0]|(?:\'[^%]))?-?\d*(?:\.\d*)?' . $specifiers . '~';
 
-		if (!preg_match_all($pattern, $format, $matches, PREG_SET_ORDER)) {
+		$matches = \Nette\Utils\Strings::matchAll($format, $pattern, PREG_SET_ORDER);
+
+		if (count($matches) === 0) {
 			return 0;
 		}
 
-		$placeholders = array_filter($matches, function (array $match): bool {
+		$placeholders = array_filter($matches, static function (array $match): bool {
 			return strlen($match['before']) % 2 === 0;
 		});
 
