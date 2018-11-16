@@ -49,6 +49,14 @@ We have php5-curl dependency, if you have issues related to curl_init() please i
 sudo apt-get install php5-curl
 ```
 
+## Alternative Installation (using phar)
+
+Setup codacy-coverage as phar, you can simply download a pre-compiled and ready-to-use version as a phar to any directory. Simply download the latest `codacy-coverage.phar` file from our [releases page](https://github.com/codacy/php-codacy-coverage/releases):
+
+[Latest release](https://github.com/codacy/php-codacy-coverage/releases/latest)
+
+That's it already.
+
 ## Updating Codacy
 
 To update Codacy, you will need your project API token. You can find the token in Project -> Settings -> Integrations -> Project API.
