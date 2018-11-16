@@ -25,9 +25,12 @@ class CodacyApiClient
      */
     public function sendCoverage($commit, $data)
     {
+        $tempCertFile = $this->dumpCertificateBundle();
+
         $url = $this->baseUrl . "/2.0/coverage/" . $commit . "/php";
 
         $curl = curl_init($url);
+
         curl_setopt($curl, CURLOPT_HEADER, false);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt(
@@ -37,11 +40,13 @@ class CodacyApiClient
                 "project_token: " . $this->projectToken
             )
         );
-        curl_setopt($curl, CURLOPT_CAINFO, dirname(__FILE__) . '/cacert.pem'); 
+        curl_setopt($curl, CURLOPT_CAINFO, $tempCertFile); 
         curl_setopt($curl, CURLOPT_POST, true);
         curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
 
         $json_response = curl_exec($curl);
+
+        unlink($tempCertFile);
 
         $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
@@ -62,5 +67,19 @@ class CodacyApiClient
         } else {
             return $json['error'];
         }
+    }
+
+    /**
+     * Store certificate bundle to temporary file to be available when used within phar context
+     * 
+     * @return string Full qualified path to temporary file
+     */
+    protected function dumpCertificateBundle()
+    {
+        $tempCertFile = tempnam(sys_get_temp_dir(), 'cacert');
+
+        copy(dirname(__FILE__) . '/cacert.pem', $tempCertFile);
+
+        return $tempCertFile;
     }
 }

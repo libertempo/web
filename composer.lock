@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6284e55b3dc9db66e334c1d06a310792",
+    "content-hash": "16b88e558500bb5364618d917ba2a0f3",
     "packages": [
         {
             "name": "adldap2/adldap2",
@@ -2423,16 +2423,16 @@
         },
         {
             "name": "codacy/coverage",
-            "version": "1.4.1",
+            "version": "1.4.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/codacy/php-codacy-coverage.git",
-                "reference": "546ac2e000a004571c1000ecff4d68a98706db3a"
+                "reference": "4988cd098db4d578681bfd3176071931ad475150"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/codacy/php-codacy-coverage/zipball/546ac2e000a004571c1000ecff4d68a98706db3a",
-                "reference": "546ac2e000a004571c1000ecff4d68a98706db3a",
+                "url": "https://api.github.com/repos/codacy/php-codacy-coverage/zipball/4988cd098db4d578681bfd3176071931ad475150",
+                "reference": "4988cd098db4d578681bfd3176071931ad475150",
                 "shasum": ""
             },
             "require": {
@@ -2464,7 +2464,7 @@
             ],
             "description": "Sends PHP test coverage information to Codacy.",
             "homepage": "https://github.com/codacy/php-codacy-coverage",
-            "time": "2017-12-20T14:31:46+00:00"
+            "time": "2018-03-22T16:43:39+00:00"
         },
         {
             "name": "composer/xdebug-handler",

@@ -53,7 +53,7 @@ final class Versions
   'tightenco/collect' => 'v5.7.13@5172ad96c54560352b79386b293375da40280fdc',
   'yohang/calendr' => '2.1.1@1ae1da29ec9e633afb692cc763b6736c1def3f55',
   'atoum/atoum' => '3.3.0@c5279d0ecd4e2d53af6b38815db2cafee8fc46b6',
-  'codacy/coverage' => '1.4.1@546ac2e000a004571c1000ecff4d68a98706db3a',
+  'codacy/coverage' => '1.4.2@4988cd098db4d578681bfd3176071931ad475150',
   'composer/xdebug-handler' => '1.3.0@b8e9745fb9b06ea6664d8872c4505fb16df4611c',
   'gitonomy/gitlib' => 'v1.0.4@932a960221ae3484a3e82553b3be478e56beb68d',
   'jean85/pretty-package-versions' => '1.2@75c7effcf3f77501d0e0caa75111aff4daa0dd48',
@@ -70,7 +70,7 @@ final class Versions
   'symfony/debug' => 'v3.4.18@fe9793af008b651c5441bdeab21ede8172dab097',
   'symfony/finder' => 'v4.1.7@1f17195b44543017a9c9b2d437c670627e96ad06',
   'symfony/process' => 'v4.1.7@3e83acef94d979b1de946599ef86b3a352abcdc9',
-  'libertempo/libertempo-web' => 'dev-dependabot/composer/phpstan/phpstan-0.10.5@1636dac36869cd89b64803f76c8b13549636cf2c',
+  'libertempo/libertempo-web' => 'dev-dependabot/composer/codacy/coverage-1.4.2@f9c284dd4a5b5c8ba1af244b84549f1d36ff52f9',
 );
 
     private function __construct()
