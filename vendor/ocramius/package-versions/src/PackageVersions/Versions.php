@@ -20,7 +20,7 @@ final class Versions
   'doctrine/dbal' => 'v2.5.0@71140662c0a954602e81271667b6e03d9f53ea34',
   'doctrine/inflector' => 'v1.3.0@5527a48b7313d15261292c149e55e26eae771b0a',
   'doctrine/lexer' => 'v1.0.1@83893c552fd2045dd78aef794c31e694c37c0b8c',
-  'guzzlehttp/guzzle' => '6.2.2@ebf29dee597f02f09f4d5bbecc68230ea9b08f60',
+  'guzzlehttp/guzzle' => '6.3.3@407b0cb880ace85c9b63c5f9551db498cb2d50ba',
   'guzzlehttp/promises' => 'v1.3.1@a59da6cf61d80060647ff4d3eb2c03a2bc694646',
   'guzzlehttp/psr7' => '1.4.2@f5b8a8512e2b58b0071a7280e39f14f72e05d87c',
   'illuminate/contracts' => 'v5.7.11@64df81d3382d876f1c1d3d5481d89c93b61b8279',
@@ -70,7 +70,7 @@ final class Versions
   'symfony/debug' => 'v3.4.18@fe9793af008b651c5441bdeab21ede8172dab097',
   'symfony/finder' => 'v4.1.7@1f17195b44543017a9c9b2d437c670627e96ad06',
   'symfony/process' => 'v4.1.7@3e83acef94d979b1de946599ef86b3a352abcdc9',
-  'libertempo/libertempo-web' => 'dev-dependabot/composer/codacy/coverage-1.4.2@f9c284dd4a5b5c8ba1af244b84549f1d36ff52f9',
+  'libertempo/libertempo-web' => 'dev-dependabot/composer/guzzlehttp/guzzle-6.3.3@03911fe07df3a32933096bec67c778c11ab48289',
 );
 
     private function __construct()
