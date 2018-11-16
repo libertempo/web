@@ -29,7 +29,7 @@ final class Versions
   'libertempo/api' => 'v1.5.0@c01c7ef5dd45463be68c8e8da3f34801291c37b0',
   'monolog/monolog' => '1.24.0@bfc9ebb28f97e7a24c45bdc3f0ff482e47bb0266',
   'nikic/fast-route' => 'v1.3.0@181d480e08d9476e61381e04a71b34dc0432e812',
-  'nikic/php-parser' => 'v3.1.5@bb87e28e7d7b8d9a7fda231d37457c9210faf6ce',
+  'nikic/php-parser' => 'v4.1.0@d0230c5c77a7e3cfa69446febf340978540958c0',
   'ocramius/package-versions' => '1.2.0@ad8a245decad4897cc6b432743913dad0d69753c',
   'php-di/invoker' => '2.0.0@540c27c86f663e20fe39a24cd72fa76cdb21d41a',
   'php-di/php-di' => '6.0.2@71a7f2ed1e728138060ea159cbb1a92dc8620bd2',
@@ -54,6 +54,7 @@ final class Versions
   'yohang/calendr' => '2.1.1@1ae1da29ec9e633afb692cc763b6736c1def3f55',
   'atoum/atoum' => '3.3.0@c5279d0ecd4e2d53af6b38815db2cafee8fc46b6',
   'codacy/coverage' => '1.4.1@546ac2e000a004571c1000ecff4d68a98706db3a',
+  'composer/xdebug-handler' => '1.3.0@b8e9745fb9b06ea6664d8872c4505fb16df4611c',
   'gitonomy/gitlib' => 'v1.0.4@932a960221ae3484a3e82553b3be478e56beb68d',
   'jean85/pretty-package-versions' => '1.2@75c7effcf3f77501d0e0caa75111aff4daa0dd48',
   'nette/bootstrap' => 'v2.4.6@268816e3f1bb7426c3a4ceec2bd38a036b532543',
@@ -63,13 +64,13 @@ final class Versions
   'nette/php-generator' => 'v3.0.5@ea90209c2e8a7cd087b2742ca553c047a8df5eff',
   'nette/robot-loader' => 'v3.1.0@fc76c70e740b10f091e502b2e393d0be912f38d4',
   'nette/utils' => 'v2.5.3@17b9f76f2abd0c943adfb556e56f2165460b15ce',
-  'phpstan/phpdoc-parser' => '0.1@08d714b2f0bc0a2bf9407255d5bb634669b7065c',
-  'phpstan/phpstan' => '0.9@f8cccde009c856e42704b7e4c250d5c73c60d00d',
+  'phpstan/phpdoc-parser' => '0.3@ed3223362174b8067729930439e139794e9e514a',
+  'phpstan/phpstan' => '0.10.5@c6a8cd1fe08a23b9d101a55ffa9ff6b91d71ef5d',
   'symfony/console' => 'v3.2.0@09d0fd33560e3573185a2ea17614e37ba38716c5',
   'symfony/debug' => 'v3.4.18@fe9793af008b651c5441bdeab21ede8172dab097',
   'symfony/finder' => 'v4.1.7@1f17195b44543017a9c9b2d437c670627e96ad06',
   'symfony/process' => 'v4.1.7@3e83acef94d979b1de946599ef86b3a352abcdc9',
-  'libertempo/libertempo-web' => 'dev-dependabot/composer/atoum/atoum-3.3.0@8c261ff1118236ce2b86d782f490c4c505082303',
+  'libertempo/libertempo-web' => 'dev-dependabot/composer/phpstan/phpstan-0.10.5@1636dac36869cd89b64803f76c8b13549636cf2c',
 );
 
     private function __construct()

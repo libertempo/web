@@ -9,7 +9,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ErrorsConsoleStyle extends \Symfony\Component\Console\Style\SymfonyStyle
 {
 
-	const OPTION_NO_PROGRESS = 'no-progress';
+	public const OPTION_NO_PROGRESS = 'no-progress';
 
 	/** @var bool */
 	private $showProgress;
@@ -23,24 +23,31 @@ class ErrorsConsoleStyle extends \Symfony\Component\Console\Style\SymfonyStyle
 	public function __construct(InputInterface $input, OutputInterface $output)
 	{
 		parent::__construct($input, $output);
-		$this->showProgress = $input->hasOption(self::OPTION_NO_PROGRESS) && !((bool) $input->getOption(self::OPTION_NO_PROGRESS));
+		$this->showProgress = $input->hasOption(self::OPTION_NO_PROGRESS) && !(bool) $input->getOption(self::OPTION_NO_PROGRESS);
 		$this->output = $output;
 	}
 
-	public function table(array $headers, array $rows)
+	/**
+	 * @param string[] $headers
+	 * @param string[][] $rows
+	 */
+	public function table(array $headers, array $rows): void
 	{
+		/** @var int $terminalWidth */
 		$terminalWidth = (new \Symfony\Component\Console\Terminal())->getWidth();
 		$maxHeaderWidth = strlen($headers[0]);
 		foreach ($rows as $row) {
 			$length = strlen($row[0]);
-			if ($maxHeaderWidth === 0 || $length > $maxHeaderWidth) {
-				$maxHeaderWidth = $length;
+			if ($maxHeaderWidth !== 0 && $length <= $maxHeaderWidth) {
+				continue;
 			}
+
+			$maxHeaderWidth = $length;
 		}
 
-		$wrap = function ($rows) use ($terminalWidth, $maxHeaderWidth) {
-			return array_map(function ($row) use ($terminalWidth, $maxHeaderWidth) {
-				return array_map(function ($s) use ($terminalWidth, $maxHeaderWidth) {
+		$wrap = static function ($rows) use ($terminalWidth, $maxHeaderWidth) {
+			return array_map(static function ($row) use ($terminalWidth, $maxHeaderWidth) {
+				return array_map(static function ($s) use ($terminalWidth, $maxHeaderWidth) {
 					if ($terminalWidth > $maxHeaderWidth + 5) {
 						return wordwrap(
 							$s,
@@ -72,7 +79,7 @@ class ErrorsConsoleStyle extends \Symfony\Component\Console\Style\SymfonyStyle
 	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
 	 * @param int $max
 	 */
-	public function progressStart($max = 0)
+	public function progressStart($max = 0): void
 	{
 		if (!$this->showProgress) {
 			return;
@@ -84,7 +91,7 @@ class ErrorsConsoleStyle extends \Symfony\Component\Console\Style\SymfonyStyle
 	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
 	 * @param int $step
 	 */
-	public function progressAdvance($step = 1)
+	public function progressAdvance($step = 1): void
 	{
 		if (!$this->showProgress) {
 			return;
@@ -92,7 +99,7 @@ class ErrorsConsoleStyle extends \Symfony\Component\Console\Style\SymfonyStyle
 		if ($this->output->isDecorated() && $step > 0) {
 			$stepTime = (time() - $this->progressBar->getStartTime()) / $step;
 			if ($stepTime > 0 && $stepTime < 1) {
-				$this->progressBar->setRedrawFrequency(1 / $stepTime);
+				$this->progressBar->setRedrawFrequency((int) (1 / $stepTime));
 			} else {
 				$this->progressBar->setRedrawFrequency(1);
 			}
@@ -101,7 +108,7 @@ class ErrorsConsoleStyle extends \Symfony\Component\Console\Style\SymfonyStyle
 		$this->progressBar->setProgress($this->progressBar->getProgress() + $step);
 	}
 
-	public function progressFinish()
+	public function progressFinish(): void
 	{
 		if (!$this->showProgress) {
 			return;

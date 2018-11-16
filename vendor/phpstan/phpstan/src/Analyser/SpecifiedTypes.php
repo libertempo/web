@@ -7,14 +7,10 @@ use PHPStan\Type\TypeCombinator;
 class SpecifiedTypes
 {
 
-	/**
-	 * @var mixed[]
-	 */
+	/** @var mixed[] */
 	private $sureTypes;
 
-	/**
-	 * @var mixed[]
-	 */
+	/** @var mixed[] */
 	private $sureNotTypes;
 
 	/**
@@ -48,22 +44,26 @@ class SpecifiedTypes
 		$sureTypeUnion = [];
 		$sureNotTypeUnion = [];
 
-		foreach ($this->sureTypes as $exprString => list($exprNode, $type)) {
-			if (isset($other->sureTypes[$exprString])) {
-				$sureTypeUnion[$exprString] = [
-					$exprNode,
-					TypeCombinator::union($type, $other->sureTypes[$exprString][1]),
-				];
+		foreach ($this->sureTypes as $exprString => [$exprNode, $type]) {
+			if (!isset($other->sureTypes[$exprString])) {
+				continue;
 			}
+
+			$sureTypeUnion[$exprString] = [
+				$exprNode,
+				TypeCombinator::union($type, $other->sureTypes[$exprString][1]),
+			];
 		}
 
-		foreach ($this->sureNotTypes as $exprString => list($exprNode, $type)) {
-			if (isset($other->sureNotTypes[$exprString])) {
-				$sureNotTypeUnion[$exprString] = [
-					$exprNode,
-					TypeCombinator::intersect($type, $other->sureNotTypes[$exprString][1]),
-				];
+		foreach ($this->sureNotTypes as $exprString => [$exprNode, $type]) {
+			if (!isset($other->sureNotTypes[$exprString])) {
+				continue;
 			}
+
+			$sureNotTypeUnion[$exprString] = [
+				$exprNode,
+				TypeCombinator::intersect($type, $other->sureNotTypes[$exprString][1]),
+			];
 		}
 
 		return new self($sureTypeUnion, $sureNotTypeUnion);
@@ -75,22 +75,26 @@ class SpecifiedTypes
 		$sureTypeUnion = $this->sureTypes + $other->sureTypes;
 		$sureNotTypeUnion = $this->sureNotTypes + $other->sureNotTypes;
 
-		foreach ($this->sureTypes as $exprString => list($exprNode, $type)) {
-			if (isset($other->sureTypes[$exprString])) {
-				$sureTypeUnion[$exprString] = [
-					$exprNode,
-					TypeCombinator::intersect($type, $other->sureTypes[$exprString][1]),
-				];
+		foreach ($this->sureTypes as $exprString => [$exprNode, $type]) {
+			if (!isset($other->sureTypes[$exprString])) {
+				continue;
 			}
+
+			$sureTypeUnion[$exprString] = [
+				$exprNode,
+				TypeCombinator::intersect($type, $other->sureTypes[$exprString][1]),
+			];
 		}
 
-		foreach ($this->sureNotTypes as $exprString => list($exprNode, $type)) {
-			if (isset($other->sureNotTypes[$exprString])) {
-				$sureNotTypeUnion[$exprString] = [
-					$exprNode,
-					TypeCombinator::union($type, $other->sureNotTypes[$exprString][1]),
-				];
+		foreach ($this->sureNotTypes as $exprString => [$exprNode, $type]) {
+			if (!isset($other->sureNotTypes[$exprString])) {
+				continue;
 			}
+
+			$sureNotTypeUnion[$exprString] = [
+				$exprNode,
+				TypeCombinator::union($type, $other->sureNotTypes[$exprString][1]),
+			];
 		}
 
 		return new self($sureTypeUnion, $sureNotTypeUnion);

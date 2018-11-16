@@ -2,99 +2,57 @@
 
 namespace PHPStan\Analyser;
 
-use PHPStan\Broker\Broker;
-use PHPStan\File\FileHelper;
 use PHPStan\Parser\Parser;
 use PHPStan\Rules\Registry;
 
 class Analyser
 {
 
-	/**
-	 * @var \PHPStan\Parser\Parser
-	 */
+	/** @var \PHPStan\Analyser\ScopeFactory */
+	private $scopeFactory;
+
+	/** @var \PHPStan\Parser\Parser */
 	private $parser;
 
-	/**
-	 * @var \PHPStan\Rules\Registry
-	 */
+	/** @var \PHPStan\Rules\Registry */
 	private $registry;
 
-	/**
-	 * @var \PHPStan\Broker\Broker
-	 */
-	private $broker;
-
-	/**
-	 * @var \PHPStan\Analyser\NodeScopeResolver
-	 */
+	/** @var \PHPStan\Analyser\NodeScopeResolver */
 	private $nodeScopeResolver;
 
-	/**
-	 * @var \PhpParser\PrettyPrinter\Standard
-	 */
-	private $printer;
-
-	/**
-	 * @var \PHPStan\Analyser\TypeSpecifier
-	 */
-	private $typeSpecifier;
-
-	/**
-	 * @var string[]
-	 */
+	/** @var string[] */
 	private $ignoreErrors;
 
-	/**
-	 * @var string|null
-	 */
-	private $bootstrapFile;
-
-	/**
-	 * @var bool
-	 */
+	/** @var bool */
 	private $reportUnmatchedIgnoredErrors;
 
-	/**
-	 * @var int
-	 */
+	/** @var int */
 	private $internalErrorsCountLimit;
 
 	/**
-	 * @param \PHPStan\Broker\Broker $broker
+	 * @param \PHPStan\Analyser\ScopeFactory $scopeFactory
 	 * @param \PHPStan\Parser\Parser $parser
 	 * @param \PHPStan\Rules\Registry $registry
 	 * @param \PHPStan\Analyser\NodeScopeResolver $nodeScopeResolver
-	 * @param \PhpParser\PrettyPrinter\Standard $printer
-	 * @param \PHPStan\Analyser\TypeSpecifier $typeSpecifier
-	 * @param \PHPStan\File\FileHelper $fileHelper
 	 * @param string[] $ignoreErrors
-	 * @param string|null $bootstrapFile
 	 * @param bool $reportUnmatchedIgnoredErrors
 	 * @param int $internalErrorsCountLimit
 	 */
 	public function __construct(
-		Broker $broker,
+		ScopeFactory $scopeFactory,
 		Parser $parser,
 		Registry $registry,
 		NodeScopeResolver $nodeScopeResolver,
-		\PhpParser\PrettyPrinter\Standard $printer,
-		TypeSpecifier $typeSpecifier,
-		FileHelper $fileHelper,
 		array $ignoreErrors,
-		string $bootstrapFile = null,
 		bool $reportUnmatchedIgnoredErrors,
 		int $internalErrorsCountLimit
 	)
 	{
-		$this->broker = $broker;
+		$this->scopeFactory = $scopeFactory;
 		$this->parser = $parser;
 		$this->registry = $registry;
 		$this->nodeScopeResolver = $nodeScopeResolver;
-		$this->printer = $printer;
-		$this->typeSpecifier = $typeSpecifier;
 		$this->ignoreErrors = $ignoreErrors;
-		$this->bootstrapFile = $bootstrapFile !== null ? $fileHelper->normalizePath($bootstrapFile) : null;
 		$this->reportUnmatchedIgnoredErrors = $reportUnmatchedIgnoredErrors;
 		$this->internalErrorsCountLimit = $internalErrorsCountLimit;
 	}
@@ -102,33 +60,20 @@ class Analyser
 	/**
 	 * @param string[] $files
 	 * @param bool $onlyFiles
-	 * @param \Closure|null $preFileCallback
-	 * @param \Closure|null $postFileCallback
+	 * @param \Closure(string $file): void|null $preFileCallback
+	 * @param \Closure(string $file): void|null $postFileCallback
 	 * @param bool $debug
 	 * @return string[]|\PHPStan\Analyser\Error[] errors
 	 */
 	public function analyse(
 		array $files,
 		bool $onlyFiles,
-		\Closure $preFileCallback = null,
-		\Closure $postFileCallback = null,
+		?\Closure $preFileCallback = null,
+		?\Closure $postFileCallback = null,
 		bool $debug = false
 	): array
 	{
 		$errors = [];
-
-		if ($this->bootstrapFile !== null) {
-			if (!is_file($this->bootstrapFile)) {
-				return [
-					sprintf('Bootstrap file %s does not exist.', $this->bootstrapFile),
-				];
-			}
-			try {
-				require_once $this->bootstrapFile;
-			} catch (\Throwable $e) {
-				return [$e->getMessage()];
-			}
-		}
 
 		foreach ($this->ignoreErrors as $ignoreError) {
 			try {
@@ -151,20 +96,24 @@ class Analyser
 				if ($preFileCallback !== null) {
 					$preFileCallback($file);
 				}
-				$this->nodeScopeResolver->processNodes(
-					$this->parser->parseFile($file),
-					new Scope($this->broker, $this->printer, $this->typeSpecifier, $file),
-					function (\PhpParser\Node $node, Scope $scope) use (&$fileErrors) {
-						foreach ($this->registry->getRules(get_class($node)) as $rule) {
-							$ruleErrors = $this->createErrors(
-								$node,
-								$scope->getAnalysedContextFile(),
-								$rule->processNode($node, $scope)
-							);
-							$fileErrors = array_merge($fileErrors, $ruleErrors);
+
+				if (is_file($file)) {
+					$this->nodeScopeResolver->processNodes(
+						$this->parser->parseFile($file),
+						$this->scopeFactory->create(ScopeContext::create($file)),
+						function (\PhpParser\Node $node, Scope $scope) use (&$fileErrors): void {
+							foreach ($this->registry->getRules(get_class($node)) as $rule) {
+								foreach ($rule->processNode($node, $scope) as $message) {
+									$fileErrors[] = new Error($message, $scope->getFileDescription(), $node->getLine());
+								}
+							}
 						}
-					}
-				);
+					);
+				} elseif (is_dir($file)) {
+					$fileErrors[] = new Error(sprintf('File %s is a directory.', $file), $file, null, false);
+				} else {
+					$fileErrors[] = new Error(sprintf('File %s does not exist.', $file), $file, null, false);
+				}
 				if ($postFileCallback !== null) {
 					$postFileCallback($file);
 				}
@@ -227,22 +176,6 @@ class Analyser
 
 		if ($reachedInternalErrorsCountLimit) {
 			$errors[] = sprintf('Reached internal errors count limit of %d, exiting...', $this->internalErrorsCountLimit);
-		}
-
-		return $errors;
-	}
-
-	/**
-	 * @param \PhpParser\Node $node
-	 * @param string $file
-	 * @param string[] $messages
-	 * @return \PHPStan\Analyser\Error[]
-	 */
-	private function createErrors(\PhpParser\Node $node, string $file, array $messages): array
-	{
-		$errors = [];
-		foreach ($messages as $message) {
-			$errors[] = new Error($message, $file, $node->getLine());
 		}
 
 		return $errors;

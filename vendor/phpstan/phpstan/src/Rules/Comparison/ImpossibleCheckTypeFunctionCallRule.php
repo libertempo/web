@@ -4,23 +4,22 @@ namespace PHPStan\Rules\Comparison;
 
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
-use PHPStan\Analyser\TypeSpecifier;
 
 class ImpossibleCheckTypeFunctionCallRule implements \PHPStan\Rules\Rule
 {
 
-	/** @var \PHPStan\Analyser\TypeSpecifier */
-	private $typeSpecifier;
+	/** @var \PHPStan\Rules\Comparison\ImpossibleCheckTypeHelper */
+	private $impossibleCheckTypeHelper;
 
 	/** @var bool */
 	private $checkAlwaysTrueCheckTypeFunctionCall;
 
 	public function __construct(
-		TypeSpecifier $typeSpecifier,
+		ImpossibleCheckTypeHelper $impossibleCheckTypeHelper,
 		bool $checkAlwaysTrueCheckTypeFunctionCall
 	)
 	{
-		$this->typeSpecifier = $typeSpecifier;
+		$this->impossibleCheckTypeHelper = $impossibleCheckTypeHelper;
 		$this->checkAlwaysTrueCheckTypeFunctionCall = $checkAlwaysTrueCheckTypeFunctionCall;
 	}
 
@@ -40,32 +39,26 @@ class ImpossibleCheckTypeFunctionCallRule implements \PHPStan\Rules\Rule
 			return [];
 		}
 
-		$sureTypes = $this->typeSpecifier->specifyTypesInCondition($scope, $node)->getSureTypes();
-		if (count($sureTypes) !== 1) {
-			return [];
-		}
-
-		$sureType = reset($sureTypes);
-		$argumentType = $scope->getType($sureType[0]);
-
-		/** @var \PHPStan\Type\Type $resultType */
-		$resultType = $sureType[1];
-
-		$isSuperType = $resultType->isSuperTypeOf($argumentType);
 		$functionName = (string) $node->name;
-		if ($functionName === 'is_a') {
+		if (strtolower($functionName) === 'is_a') {
+			return [];
+		}
+		$isAlways = $this->impossibleCheckTypeHelper->findSpecifiedType($scope, $node);
+		if ($isAlways === null) {
 			return [];
 		}
 
-		if ($isSuperType->no()) {
+		if (!$isAlways) {
 			return [sprintf(
-				'Call to function %s() will always evaluate to false.',
-				$functionName
+				'Call to function %s()%s will always evaluate to false.',
+				$functionName,
+				$this->impossibleCheckTypeHelper->getArgumentsDescription($scope, $node->args)
 			)];
-		} elseif ($isSuperType->yes() && $this->checkAlwaysTrueCheckTypeFunctionCall) {
+		} elseif ($this->checkAlwaysTrueCheckTypeFunctionCall) {
 			return [sprintf(
-				'Call to function %s() will always evaluate to true.',
-				$functionName
+				'Call to function %s()%s will always evaluate to true.',
+				$functionName,
+				$this->impossibleCheckTypeHelper->getArgumentsDescription($scope, $node->args)
 			)];
 		}
 

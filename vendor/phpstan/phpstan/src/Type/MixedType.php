@@ -2,18 +2,28 @@
 
 namespace PHPStan\Type;
 
-use PHPStan\Analyser\Scope;
-use PHPStan\Reflection\ClassConstantReflection;
+use PHPStan\Reflection\ClassMemberAccessAnswerer;
+use PHPStan\Reflection\ConstantReflection;
+use PHPStan\Reflection\Dummy\DummyConstantReflection;
+use PHPStan\Reflection\Dummy\DummyMethodReflection;
+use PHPStan\Reflection\Dummy\DummyPropertyReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\PropertyReflection;
 use PHPStan\TrinaryLogic;
+use PHPStan\Type\Traits\MaybeCallableTypeTrait;
+use PHPStan\Type\Traits\MaybeIterableTypeTrait;
+use PHPStan\Type\Traits\MaybeOffsetAccessibleTypeTrait;
+use PHPStan\Type\Traits\UndecidedBooleanTypeTrait;
 
 class MixedType implements CompoundType
 {
 
-	/**
-	 * @var bool
-	 */
+	use MaybeCallableTypeTrait;
+	use MaybeIterableTypeTrait;
+	use MaybeOffsetAccessibleTypeTrait;
+	use UndecidedBooleanTypeTrait;
+
+	/** @var bool */
 	private $isExplicitMixed;
 
 	public function __construct(bool $isExplicitMixed = false)
@@ -29,14 +39,19 @@ class MixedType implements CompoundType
 		return [];
 	}
 
-	public function accepts(Type $type): bool
+	public function accepts(Type $type, bool $strictTypes): TrinaryLogic
 	{
-		return true;
+		return TrinaryLogic::createYes();
 	}
 
 	public function isSuperTypeOf(Type $type): TrinaryLogic
 	{
 		return TrinaryLogic::createYes();
+	}
+
+	public function equals(Type $type): bool
+	{
+		return $type instanceof self;
 	}
 
 	public function isSubTypeOf(Type $otherType): TrinaryLogic
@@ -48,84 +63,87 @@ class MixedType implements CompoundType
 		return TrinaryLogic::createMaybe();
 	}
 
-	public function describe(): string
+	public function canAccessProperties(): TrinaryLogic
 	{
-		return 'mixed';
-	}
-
-	public function canAccessProperties(): bool
-	{
-		return true;
+		return TrinaryLogic::createYes();
 	}
 
 	public function hasProperty(string $propertyName): bool
 	{
-		return false;
-	}
-
-	public function getProperty(string $propertyName, Scope $scope): PropertyReflection
-	{
-		throw new \PHPStan\ShouldNotHappenException();
-	}
-
-	public function canCallMethods(): bool
-	{
 		return true;
+	}
+
+	public function getProperty(string $propertyName, ClassMemberAccessAnswerer $scope): PropertyReflection
+	{
+		return new DummyPropertyReflection();
+	}
+
+	public function canCallMethods(): TrinaryLogic
+	{
+		return TrinaryLogic::createYes();
 	}
 
 	public function hasMethod(string $methodName): bool
 	{
-		return false;
-	}
-
-	public function getMethod(string $methodName, Scope $scope): MethodReflection
-	{
-		throw new \PHPStan\ShouldNotHappenException();
-	}
-
-	public function canAccessConstants(): bool
-	{
 		return true;
+	}
+
+	public function getMethod(string $methodName, ClassMemberAccessAnswerer $scope): MethodReflection
+	{
+		return new DummyMethodReflection($methodName);
+	}
+
+	public function canAccessConstants(): TrinaryLogic
+	{
+		return TrinaryLogic::createYes();
 	}
 
 	public function hasConstant(string $constantName): bool
 	{
-		return false;
-	}
-
-	public function getConstant(string $constantName): ClassConstantReflection
-	{
-		throw new \PHPStan\ShouldNotHappenException();
-	}
-
-	public function isDocumentableNatively(): bool
-	{
 		return true;
 	}
 
-	public function isIterable(): TrinaryLogic
+	public function getConstant(string $constantName): ConstantReflection
 	{
-		return TrinaryLogic::createMaybe();
+		return new DummyConstantReflection($constantName);
 	}
 
-	public function getIterableKeyType(): Type
+	public function isCloneable(): TrinaryLogic
 	{
-		return new MixedType();
+		return TrinaryLogic::createYes();
 	}
 
-	public function getIterableValueType(): Type
+	public function describe(VerbosityLevel $level): string
 	{
-		return new MixedType();
+		return 'mixed';
 	}
 
-	public function isCallable(): TrinaryLogic
+	public function toNumber(): Type
 	{
-		return TrinaryLogic::createMaybe();
+		return new UnionType([
+			$this->toInteger(),
+			$this->toFloat(),
+		]);
 	}
 
-	public function isClonable(): bool
+	public function toInteger(): Type
 	{
-		return true;
+		return new IntegerType();
+	}
+
+	public function toFloat(): Type
+	{
+		return new FloatType();
+	}
+
+	public function toString(): Type
+	{
+		return new StringType();
+	}
+
+	public function toArray(): Type
+	{
+		return new ArrayType(new MixedType(), new MixedType());
 	}
 
 	public function isExplicitMixed(): bool
@@ -133,6 +151,10 @@ class MixedType implements CompoundType
 		return $this->isExplicitMixed;
 	}
 
+	/**
+	 * @param mixed[] $properties
+	 * @return Type
+	 */
 	public static function __set_state(array $properties): Type
 	{
 		return new self($properties['isExplicitMixed']);

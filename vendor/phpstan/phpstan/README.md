@@ -53,7 +53,7 @@ Unique feature of PHPStan is the ability to define and statically check "magic" 
 accessing properties that are not defined in the class but are created in `__get` and `__set`
 and invoking methods using `__call`.
 
-See [Class reflection extensions](#class-reflection-extensions) and [Dynamic return type extensions](#dynamic-return-type-extensions).
+See [Class reflection extensions](#class-reflection-extensions), [Dynamic return type extensions](#dynamic-return-type-extensions) and [Type-specifying extensions](#type-specifying-extensions).
 
 You can also install official framework-specific extensions:
 
@@ -62,16 +62,23 @@ You can also install official framework-specific extensions:
 * [Nette Framework](https://github.com/phpstan/phpstan-nette)
 * [Dibi - Database Abstraction Library](https://github.com/phpstan/phpstan-dibi)
 * [PHP-Parser](https://github.com/phpstan/phpstan-php-parser)
+* [beberlei/assert](https://github.com/phpstan/phpstan-beberlei-assert)
+* [webmozart/assert](https://github.com/phpstan/phpstan-webmozart-assert)
+* [Symfony Framework](https://github.com/phpstan/phpstan-symfony)
+* [Mockery](https://github.com/phpstan/phpstan-mockery)
 
 Unofficial extensions for other frameworks and libraries are also available:
 
 * [Phony](https://github.com/eloquent/phpstan-phony)
+* [Prophecy](https://github.com/Jan0707/phpstan-prophecy)
+* [Laravel](https://github.com/nunomaduro/larastan)
+* [myclabs/php-enum](https://github.com/timeweb/phpstan-enum)
 
 New extensions are becoming available on a regular basis!
 
 ## Prerequisites
 
-PHPStan requires PHP >= 7.0. You have to run it in environment with PHP 7.x but the actual code does not have to use
+PHPStan requires PHP >= 7.1. You have to run it in environment with PHP 7.x but the actual code does not have to use
 PHP 7.x features. (Code written for PHP 5.6 and earlier can run on 7.x mostly unmodified.)
 
 PHPStan works best with modern object-oriented code. The more strongly-typed your code is, the more information
@@ -100,7 +107,7 @@ To let PHPStan analyse your codebase, you have use the `analyse` command and poi
 
 So, for example if you have your classes in directories `src` and `tests`, you can run PHPStan like this:
 
-```
+```bash
 vendor/bin/phpstan analyse src tests
 ```
 
@@ -131,15 +138,34 @@ You can also use `--level max` as an alias for the highest level. This will ensu
 
 Config file is passed to the `phpstan` executable with `-c` option:
 
-```
+```bash
 vendor/bin/phpstan analyse -l 4 -c phpstan.neon src tests
 ```
 
 When using a custom project config file, you have to pass the `--level` (`-l`)
 option to `analyse` command (default value does not apply here).
 
+If you do not provide config file explicitly, PHPStan will look for
+files named `phpstan.neon` or `phpstan.neon.dist` in current directory.
+
+The resolution priority is as such:
+1. If config file is provided on command line, it is used.
+2. If config file `phpstan.neon` exists in current directory, it will be used.
+3. If config file `phpstan.neon.dist` exists in current directory, it will be used.
+4. If none of the above is true, no config will be used.
+
 [NEON file format](https://ne-on.org/) is very similar to YAML.
 All the following options are part of the `parameters` section.
+
+#### Configuration variables
+ - `%rootDir%` - root directory where PHPStan resides (i.e. `vendor/phpstan/phpstan` in Composer installation)
+ - `%currentWorkingDirectory%` - current working directory where PHPStan was executed
+
+#### Configuration options
+
+ - `tmpDir` - specifies the temporary directory used by PHPStan cache (defaults to `sys_get_temp_dir() . '/phpstan'`)
+ - `level` - specifies analysis level - if specified, `-l` option is not required
+ - `paths` - specifies analysed paths - if specified, paths are not required to be passed as arguments
 
 ### Autoloading
 
@@ -288,7 +314,7 @@ parameters:
 			- sendResponse
 ```
 
-### Ignore error messages with regular expresions
+### Ignore error messages with regular expressions
 
 If some issue in your code base is not easy to fix or just simply want to deal with it later,
 you can exclude error messages from the analysis result with regular expressions:
@@ -336,7 +362,7 @@ Check out also [phpstan-strict-rules](https://github.com/phpstan/phpstan-strict-
 
 ### Custom error formatters
 
-By default, PHPStan outputs found errors into tables grouped by files to be easily human-readable. To change the output, you can use the `--errorFormat` CLI option. There's an additional built-in `raw` format with one-per-line errors intended for easy parsing. You can also create your own error formatter by implementing the `PHPStan\Command\ErrorFormatter\ErrorFormatter` interface:
+By default, PHPStan outputs found errors into tables grouped by files to be easily human-readable. To change the output, you can use the `--error-format` CLI option. There's an additional built-in `raw` format with one-per-line errors intended for easy parsing. You can also create your own error formatter by implementing the `PHPStan\Command\ErrorFormatter\ErrorFormatter` interface:
 
 ```php
 interface ErrorFormatter
@@ -360,14 +386,15 @@ interface ErrorFormatter
 Register the formatter in your `phpstan.neon`:
 
 ```
-errorFormatter.awesome:
-	class: App\PHPStan\AwesomeErrorFormatter
+services:
+	errorFormatter.awesome:
+		class: App\PHPStan\AwesomeErrorFormatter
 ```
 
 Use the name part after `errorFormatter.` as the CLI option value:
 
-```
-vendor/bin/phpstan analyse -c phpstan.neon -l 4 --errorFormat awesome src tests
+```bash
+vendor/bin/phpstan analyse -c phpstan.neon -l 4 --error-format awesome src tests
 ```
 
 ## Class reflection extensions
@@ -379,7 +406,7 @@ class methods like `__get`, `__set` and `__call`. Because PHPStan is all about s
 When PHPStan stumbles upon a property or a method that is unknown to built-in class reflection, it iterates
 over all registered class reflection extensions until it finds one that defines the property or method.
 
-Class reflection extension cannot have `PHPStan\Broker\Broker` (service for obtaining class reflections) injected in the constructor due to circular reference issue, but the extensions can implement `PHPStan\Reflection\BrokerAwareClassReflectionExtension` interface to obtain Broker via a setter.
+Class reflection extension cannot have `PHPStan\Broker\Broker` (service for obtaining class reflections) injected in the constructor due to circular reference issue, but the extensions can implement `PHPStan\Reflection\BrokerAwareExtension` interface to obtain Broker via a setter.
 
 ### Properties class reflection extensions
 
@@ -539,7 +566,11 @@ public function isMethodSupported(MethodReflection $methodReflection): bool
 public function getTypeFromMethodCall(MethodReflection $methodReflection, MethodCall $methodCall, Scope $scope): Type
 {
 	if (count($methodCall->args) === 0) {
-		return $methodReflection->getReturnType();
+		return \PHPStan\Reflection\ParametersAcceptorSelector::selectFromArgs(
+			$scope,
+			$methodCall->args,
+			$methodReflection->getVariants()
+		)->getReturnType();
 	}
 	$arg = $methodCall->args[0]->value;
 
@@ -563,6 +594,85 @@ There's also an analogous functionality for:
 and `phpstan.broker.dynamicStaticMethodReturnTypeExtension` service tag.
 * **functions** using `DynamicFunctionReturnTypeExtension` interface and `phpstan.broker.dynamicFunctionReturnTypeExtension` service tag.
 
+## Type-specifying extensions
+
+These extensions allow you to specify types of expressions based on certain pre-existing conditions. This is best illustrated with couple examples:
+
+```php
+if (is_int($variable)) {
+    // here we can be sure that $variable is integer
+}
+```
+
+```php
+// using PHPUnit's asserts
+
+self::assertNotNull($variable);
+// here we can be sure that $variable is not null
+```
+
+Type-specifying extension cannot have `PHPStan\Analyser\TypeSpecifier` injected in the constructor due to circular reference issue, but the extensions can implement `PHPStan\Analyser\TypeSpecifierAwareExtension` interface to obtain TypeSpecifier via a setter.
+
+This is the interface for type-specifying extension:
+
+```php
+namespace PHPStan\Type;
+
+use PhpParser\Node\Expr\StaticCall;
+use PHPStan\Analyser\Scope;
+use PHPStan\Analyser\SpecifiedTypes;
+use PHPStan\Analyser\TypeSpecifierContext;
+use PHPStan\Reflection\MethodReflection;
+
+interface StaticMethodTypeSpecifyingExtension
+{
+
+	public function getClass(): string;
+
+	public function isStaticMethodSupported(MethodReflection $staticMethodReflection, StaticCall $node, TypeSpecifierContext $context): bool;
+
+	public function specifyTypes(MethodReflection $staticMethodReflection, StaticCall $node, Scope $scope, TypeSpecifierContext $context): SpecifiedTypes;
+
+}
+```
+
+And this is how you'd write the extension for the second example above:
+
+```php
+public function getClass(): string
+{
+	return \PHPUnit\Framework\Assert::class;
+}
+
+public function isStaticMethodSupported(MethodReflection $staticMethodReflection, StaticCall $node, TypeSpecifierContext $context): bool;
+{
+	// The $context argument tells us if we're in an if condition or not (as in this case).
+	return $staticMethodReflection->getName() === 'assertNotNull' && $context->null();
+}
+
+public function specifyTypes(MethodReflection $staticMethodReflection, StaticCall $node, Scope $scope, TypeSpecifierContext $context): SpecifiedTypes
+{
+	// Assuming extension implements \PHPStan\Analyser\TypeSpecifierAwareExtension.
+	return $this->typeSpecifier->create($node->var, \PHPStan\Type\TypeCombinator::removeNull($scope->getType($node->var)), $context);
+}
+```
+
+And finally, register the extension to PHPStan in the project's config file:
+
+```
+services:
+	-
+		class: App\PHPStan\AssertNotNullTypeSpecifyingExtension
+		tags:
+			- phpstan.typeSpecifier.staticMethodTypeSpecifyingExtension
+```
+
+There's also an analogous functionality for:
+
+* **dynamic methods** using `MethodTypeSpecifyingExtension` interface
+and `phpstan.typeSpecifier.methodTypeSpecifyingExtension` service tag.
+* **functions** using `FunctionTypeSpecifyingExtension` interface and `phpstan.typeSpecifier.functionTypeSpecifyingExtension` service tag.
+
 ## Known issues
 
 * If `include` or `require` are used in the analysed code (instead of `include_once` or `require_once`),
@@ -583,8 +693,12 @@ Any contributions are welcome.
 
 You can either run the whole build including linting and coding standards using
 
-`vendor/bin/phing`
+```bash
+vendor/bin/phing
+```
 
 or run only tests using
 
-`vendor/bin/phing tests`
+```bash
+vendor/bin/phing tests
+```

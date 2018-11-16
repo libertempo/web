@@ -11,23 +11,24 @@ use PHPStan\Rules\ClassCaseSensitivityCheck;
 class ExistingNamesInGroupUseRule implements \PHPStan\Rules\Rule
 {
 
-	/**
-	 * @var \PHPStan\Broker\Broker
-	 */
+	/** @var \PHPStan\Broker\Broker */
 	private $broker;
 
-	/**
-	 * @var \PHPStan\Rules\ClassCaseSensitivityCheck
-	 */
+	/** @var \PHPStan\Rules\ClassCaseSensitivityCheck */
 	private $classCaseSensitivityCheck;
+
+	/** @var bool */
+	private $checkFunctionNameCase;
 
 	public function __construct(
 		Broker $broker,
-		ClassCaseSensitivityCheck $classCaseSensitivityCheck
+		ClassCaseSensitivityCheck $classCaseSensitivityCheck,
+		bool $checkFunctionNameCase
 	)
 	{
 		$this->broker = $broker;
 		$this->classCaseSensitivityCheck = $classCaseSensitivityCheck;
+		$this->checkFunctionNameCase = $checkFunctionNameCase;
 	}
 
 	public function getNodeType(): string
@@ -64,56 +65,51 @@ class ExistingNamesInGroupUseRule implements \PHPStan\Rules\Rule
 				throw new \PHPStan\ShouldNotHappenException();
 			}
 
-			if ($message !== null) {
-				$messages[] = $message;
+			if ($message === null) {
+				continue;
 			}
+
+			$messages[] = $message;
 		}
 
 		return $messages;
 	}
 
-	/**
-	 * @param \PhpParser\Node\Name $name
-	 * @return string|null
-	 */
-	private function checkConstant(Node\Name $name)
+	private function checkConstant(Node\Name $name): ?string
 	{
-		if (!$this->broker->hasConstant($name)) {
+		if (!$this->broker->hasConstant($name, null)) {
 			return sprintf('Used constant %s not found.', (string) $name);
 		}
 
 		return null;
 	}
 
-	/**
-	 * @param \PhpParser\Node\Name $name
-	 * @return string|null
-	 */
-	private function checkFunction(Node\Name $name)
+	private function checkFunction(Node\Name $name): ?string
 	{
-		if (!$this->broker->hasFunction($name)) {
+		if (!$this->broker->hasFunction($name, null)) {
 			return sprintf('Used function %s not found.', (string) $name);
 		}
 
-		$functionReflection = $this->broker->getFunction($name);
-		$realName = $functionReflection->getName();
-		$usedName = (string) $name;
-		if ($realName !== $usedName) {
-			return sprintf(
-				'Function %s used with incorrect case: %s.',
-				$realName,
-				$usedName
-			);
+		if ($this->checkFunctionNameCase) {
+			$functionReflection = $this->broker->getFunction($name, null);
+			$realName = $functionReflection->getName();
+			$usedName = (string) $name;
+			if (
+				strtolower($realName) === strtolower($usedName)
+				&& $realName !== $usedName
+			) {
+				return sprintf(
+					'Function %s used with incorrect case: %s.',
+					$realName,
+					$usedName
+				);
+			}
 		}
 
 		return null;
 	}
 
-	/**
-	 * @param \PhpParser\Node\Name $name
-	 * @return string|null
-	 */
-	private function checkClass(Node\Name $name)
+	private function checkClass(Node\Name $name): ?string
 	{
 		$messages = $this->classCaseSensitivityCheck->checkClassNames([(string) $name]);
 		if (count($messages) === 0) {

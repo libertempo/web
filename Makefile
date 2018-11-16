@@ -39,4 +39,6 @@ test: ## Lance les tests unitaires
 configure: ## Paramètre une option de configuration
 	App/Tools/configure ${option} ${valeur}
 
-
+## CI
+stan: ## Découvre des bugs d'analyse statique
+	vendor/bin/phpstan analyze -l 0 App/ ./admin/ ./edition/ ./export/ ./hr/ ./includes/ Public/ responsable/ utilisateur/ --memory-limit 100M

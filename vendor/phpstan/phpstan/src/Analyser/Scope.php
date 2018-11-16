@@ -18,26 +18,41 @@ use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Name;
 use PhpParser\Node\Scalar\DNumber;
+use PhpParser\Node\Scalar\EncapsedStringPart;
 use PhpParser\Node\Scalar\LNumber;
 use PhpParser\Node\Scalar\String_;
 use PHPStan\Broker\Broker;
-use PHPStan\Reflection\ClassConstantReflection;
+use PHPStan\Reflection\ClassMemberAccessAnswerer;
 use PHPStan\Reflection\ClassMemberReflection;
 use PHPStan\Reflection\ClassReflection;
+use PHPStan\Reflection\ConstantReflection;
 use PHPStan\Reflection\MethodReflection;
-use PHPStan\Reflection\ParametersAcceptor;
+use PHPStan\Reflection\Native\NativeParameterReflection;
+use PHPStan\Reflection\ParametersAcceptorSelector;
+use PHPStan\Reflection\PassedByReference;
 use PHPStan\Reflection\Php\PhpFunctionFromParserNodeReflection;
 use PHPStan\Reflection\Php\PhpMethodFromParserNodeReflection;
 use PHPStan\Reflection\PropertyReflection;
 use PHPStan\TrinaryLogic;
 use PHPStan\Type\ArrayType;
+use PHPStan\Type\BenevolentUnionType;
 use PHPStan\Type\BooleanType;
 use PHPStan\Type\CallableType;
+use PHPStan\Type\ClosureType;
+use PHPStan\Type\Constant\ConstantArrayTypeBuilder;
+use PHPStan\Type\Constant\ConstantBooleanType;
+use PHPStan\Type\Constant\ConstantFloatType;
+use PHPStan\Type\Constant\ConstantIntegerType;
+use PHPStan\Type\Constant\ConstantStringType;
+use PHPStan\Type\ConstantScalarType;
+use PHPStan\Type\ConstantType;
 use PHPStan\Type\ErrorType;
 use PHPStan\Type\FloatType;
 use PHPStan\Type\IntegerType;
-use PHPStan\Type\IterableIterableType;
+use PHPStan\Type\IntersectionType;
+use PHPStan\Type\IterableType;
 use PHPStan\Type\MixedType;
+use PHPStan\Type\NeverType;
 use PHPStan\Type\NonexistentParentClassType;
 use PHPStan\Type\NullType;
 use PHPStan\Type\ObjectType;
@@ -46,174 +61,162 @@ use PHPStan\Type\StaticResolvableType;
 use PHPStan\Type\StaticType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\ThisType;
-use PHPStan\Type\TrueOrFalseBooleanType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
+use PHPStan\Type\TypeUtils;
+use PHPStan\Type\TypeWithClassName;
+use PHPStan\Type\UnionType;
+use PHPStan\Type\VerbosityLevel;
 use PHPStan\Type\VoidType;
 
-class Scope
+class Scope implements ClassMemberAccessAnswerer
 {
 
-	/**
-	 * @var \PHPStan\Broker\Broker
-	 */
+	/** @var \PHPStan\Analyser\ScopeFactory */
+	private $scopeFactory;
+
+	/** @var \PHPStan\Broker\Broker */
 	private $broker;
 
-	/**
-	 * @var \PhpParser\PrettyPrinter\Standard
-	 */
+	/** @var \PhpParser\PrettyPrinter\Standard */
 	private $printer;
 
-	/**
-	 * @var \PHPStan\Analyser\TypeSpecifier
-	 */
+	/** @var \PHPStan\Analyser\TypeSpecifier */
 	private $typeSpecifier;
 
-	/**
-	 * @var string
-	 */
-	private $file;
+	/** @var \PHPStan\Analyser\ScopeContext */
+	private $context;
 
-	/**
-	 * @var \PHPStan\Type\Type[]
-	 */
+	/** @var \PHPStan\Type\Type[] */
 	private $resolvedTypes = [];
 
-	/**
-	 * @var string
-	 */
-	private $analysedContextFile;
-
-	/**
-	 * @var bool
-	 */
+	/** @var bool */
 	private $declareStrictTypes;
 
-	/**
-	 * @var \PHPStan\Reflection\ClassReflection|null
-	 */
-	private $classReflection;
-
-	/**
-	 * @var \PHPStan\Reflection\ParametersAcceptor|null
-	 */
+	/** @var \PHPStan\Reflection\FunctionReflection|MethodReflection|null */
 	private $function;
 
-	/**
-	 * @var string|null
-	 */
+	/** @var string|null */
 	private $namespace;
 
-	/**
-	 * @var \PHPStan\Analyser\VariableTypeHolder[]
-	 */
+	/** @var \PHPStan\Analyser\VariableTypeHolder[] */
 	private $variableTypes;
 
-	/**
-	 * @var string|null
-	 */
-	private $inClosureBindScopeClass;
-
-	/**
-	 * @var \PHPStan\Type\Type|null
-	 */
-	private $inAnonymousFunctionReturnType;
-
-	/**
-	 * @var \PhpParser\Node\Expr\FuncCall|\PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall|null
-	 */
-	private $inFunctionCall;
-
-	/**
-	 * @var bool
-	 */
-	private $negated;
-
-	/**
-	 * @var \PHPStan\Type\Type[]
-	 */
+	/** @var \PHPStan\Analyser\VariableTypeHolder[] */
 	private $moreSpecificTypes;
 
-	/**
-	 * @var bool
-	 */
+	/** @var string|null */
+	private $inClosureBindScopeClass;
+
+	/** @var \PHPStan\Type\Type|null */
+	private $inAnonymousFunctionReturnType;
+
+	/** @var \PhpParser\Node\Expr\FuncCall|\PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall|null */
+	private $inFunctionCall;
+
+	/** @var bool */
+	private $negated;
+
+	/** @var bool */
 	private $inFirstLevelStatement;
 
-	/**
-	 * @var string[]
-	 */
+	/** @var string[] */
 	private $currentlyAssignedExpressions = [];
 
+	/** @var string[] */
+	private $dynamicConstantNames;
+
 	/**
+	 * @param  \PHPStan\Analyser\ScopeFactory $scopeFactory
 	 * @param \PHPStan\Broker\Broker $broker
 	 * @param \PhpParser\PrettyPrinter\Standard $printer
 	 * @param \PHPStan\Analyser\TypeSpecifier $typeSpecifier
-	 * @param string $file
-	 * @param string|null $analysedContextFile
+	 * @param \PHPStan\Analyser\ScopeContext $context
 	 * @param bool $declareStrictTypes
-	 * @param \PHPStan\Reflection\ClassReflection|null $classReflection
-	 * @param \PHPStan\Reflection\ParametersAcceptor|null $function
+	 * @param \PHPStan\Reflection\FunctionReflection|MethodReflection|null $function
 	 * @param string|null $namespace
 	 * @param \PHPStan\Analyser\VariableTypeHolder[] $variablesTypes
+	 * @param \PHPStan\Analyser\VariableTypeHolder[] $moreSpecificTypes
 	 * @param string|null $inClosureBindScopeClass
 	 * @param \PHPStan\Type\Type|null $inAnonymousFunctionReturnType
 	 * @param \PhpParser\Node\Expr\FuncCall|\PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall|null $inFunctionCall
 	 * @param bool $negated
-	 * @param \PHPStan\Type\Type[] $moreSpecificTypes
 	 * @param bool $inFirstLevelStatement
 	 * @param string[] $currentlyAssignedExpressions
+	 * @param string[] $dynamicConstantNames
 	 */
 	public function __construct(
+		ScopeFactory $scopeFactory,
 		Broker $broker,
 		\PhpParser\PrettyPrinter\Standard $printer,
 		TypeSpecifier $typeSpecifier,
-		string $file,
-		string $analysedContextFile = null,
+		ScopeContext $context,
 		bool $declareStrictTypes = false,
-		ClassReflection $classReflection = null,
-		\PHPStan\Reflection\ParametersAcceptor $function = null,
-		string $namespace = null,
+		$function = null,
+		?string $namespace = null,
 		array $variablesTypes = [],
-		string $inClosureBindScopeClass = null,
-		Type $inAnonymousFunctionReturnType = null,
-		Expr $inFunctionCall = null,
-		bool $negated = false,
 		array $moreSpecificTypes = [],
+		?string $inClosureBindScopeClass = null,
+		?Type $inAnonymousFunctionReturnType = null,
+		?Expr $inFunctionCall = null,
+		bool $negated = false,
 		bool $inFirstLevelStatement = true,
-		array $currentlyAssignedExpressions = []
+		array $currentlyAssignedExpressions = [],
+		array $dynamicConstantNames = []
 	)
 	{
 		if ($namespace === '') {
 			$namespace = null;
 		}
 
+		$this->scopeFactory = $scopeFactory;
 		$this->broker = $broker;
 		$this->printer = $printer;
 		$this->typeSpecifier = $typeSpecifier;
-		$this->file = $file;
-		$this->analysedContextFile = $analysedContextFile !== null ? $analysedContextFile : $file;
+		$this->context = $context;
 		$this->declareStrictTypes = $declareStrictTypes;
-		$this->classReflection = $classReflection;
 		$this->function = $function;
 		$this->namespace = $namespace;
 		$this->variableTypes = $variablesTypes;
+		$this->moreSpecificTypes = $moreSpecificTypes;
 		$this->inClosureBindScopeClass = $inClosureBindScopeClass;
 		$this->inAnonymousFunctionReturnType = $inAnonymousFunctionReturnType;
 		$this->inFunctionCall = $inFunctionCall;
 		$this->negated = $negated;
-		$this->moreSpecificTypes = $moreSpecificTypes;
 		$this->inFirstLevelStatement = $inFirstLevelStatement;
 		$this->currentlyAssignedExpressions = $currentlyAssignedExpressions;
+		$this->dynamicConstantNames = $dynamicConstantNames;
 	}
 
 	public function getFile(): string
 	{
-		return $this->file;
+		return $this->context->getFile();
 	}
 
-	public function getAnalysedContextFile(): string
+	public function getFileDescription(): string
 	{
-		return $this->analysedContextFile;
+		if ($this->context->getTraitReflection() === null) {
+			return $this->getFile();
+		}
+
+		/** @var ClassReflection $classReflection */
+		$classReflection = $this->context->getClassReflection();
+
+		$className = sprintf('class %s', $classReflection->getDisplayName());
+		if ($classReflection->isAnonymous()) {
+			$className = 'anonymous class';
+		}
+
+		$traitReflection = $this->context->getTraitReflection();
+		if ($traitReflection->getFileName() === false) {
+			throw new \PHPStan\ShouldNotHappenException();
+		}
+
+		return sprintf(
+			'%s (in context of %s)',
+			$traitReflection->getFileName(),
+			$className
+		);
 	}
 
 	public function isDeclareStrictTypes(): bool
@@ -223,54 +226,52 @@ class Scope
 
 	public function enterDeclareStrictTypes(): self
 	{
-		return new self(
-			$this->broker,
-			$this->printer,
-			$this->typeSpecifier,
-			$this->getFile(),
-			$this->getAnalysedContextFile(),
+		return $this->scopeFactory->create(
+			$this->context,
 			true
 		);
 	}
 
 	public function isInClass(): bool
 	{
-		return $this->classReflection !== null;
+		return $this->context->getClassReflection() !== null;
 	}
 
-	public function getClassReflection(): ClassReflection
+	public function isInTrait(): bool
 	{
-		/** @var \PHPStan\Reflection\ClassReflection $classReflection */
-		$classReflection = $this->classReflection;
-		return $classReflection;
+		return $this->context->getTraitReflection() !== null;
+	}
+
+	public function getClassReflection(): ?ClassReflection
+	{
+		return $this->context->getClassReflection();
+	}
+
+	public function getTraitReflection(): ?ClassReflection
+	{
+		return $this->context->getTraitReflection();
 	}
 
 	/**
-	 * @return null|\PHPStan\Reflection\ParametersAcceptor
+	 * @return \PHPStan\Reflection\FunctionReflection|\PHPStan\Reflection\MethodReflection|null
 	 */
 	public function getFunction()
 	{
 		return $this->function;
 	}
 
-	/**
-	 * @return null|string
-	 */
-	public function getFunctionName()
+	public function getFunctionName(): ?string
 	{
 		return $this->function !== null ? $this->function->getName() : null;
 	}
 
-	/**
-	 * @return null|string
-	 */
-	public function getNamespace()
+	public function getNamespace(): ?string
 	{
 		return $this->namespace;
 	}
 
 	/**
-	 * @return \PHPStan\Analyser\VariableTypeHolder[]
+	 * @return array<string, \PHPStan\Analyser\VariableTypeHolder>
 	 */
 	private function getVariableTypes(): array
 	{
@@ -279,6 +280,10 @@ class Scope
 
 	public function hasVariableType(string $variableName): TrinaryLogic
 	{
+		if ($this->isGlobalVariable($variableName)) {
+			return TrinaryLogic::createYes();
+		}
+
 		if (!isset($this->variableTypes[$variableName])) {
 			return TrinaryLogic::createNo();
 		}
@@ -288,6 +293,10 @@ class Scope
 
 	public function getVariableType(string $variableName): Type
 	{
+		if ($this->isGlobalVariable($variableName)) {
+			return new ArrayType(new StringType(), new MixedType());
+		}
+
 		if ($this->hasVariableType($variableName)->no()) {
 			throw new \PHPStan\Analyser\UndefinedVariableException($this, $variableName);
 		}
@@ -295,15 +304,36 @@ class Scope
 		return $this->variableTypes[$variableName]->getType();
 	}
 
+	private function isGlobalVariable(string $variableName): bool
+	{
+		return in_array($variableName, [
+			'GLOBALS',
+			'_SERVER',
+			'_GET',
+			'_POST',
+			'_FILES',
+			'_COOKIE',
+			'_SESSION',
+			'_REQUEST',
+			'_ENV',
+		], true);
+	}
+
+	public function hasConstant(Name $name): bool
+	{
+		$node = new ConstFetch(new Name\FullyQualified($name->toString()));
+		if ($this->isSpecified($node)) {
+			return true;
+		}
+		return $this->broker->hasConstant($name, $this);
+	}
+
 	public function isInAnonymousFunction(): bool
 	{
 		return $this->inAnonymousFunctionReturnType !== null;
 	}
 
-	/**
-	 * @return \PHPStan\Type\Type|null
-	 */
-	public function getAnonymousFunctionReturnType()
+	public function getAnonymousFunctionReturnType(): ?\PHPStan\Type\Type
 	{
 		return $this->inAnonymousFunctionReturnType;
 	}
@@ -328,83 +358,422 @@ class Scope
 	private function resolveType(Expr $node): Type
 	{
 		if (
-			$node instanceof \PhpParser\Node\Expr\BinaryOp\BooleanAnd
-			|| $node instanceof \PhpParser\Node\Expr\BinaryOp\BooleanOr
-			|| $node instanceof \PhpParser\Node\Expr\BooleanNot
-			|| $node instanceof \PhpParser\Node\Expr\BinaryOp\LogicalXor
-			|| $node instanceof Expr\BinaryOp\Greater
+			$node instanceof Expr\BinaryOp\Greater
 			|| $node instanceof Expr\BinaryOp\GreaterOrEqual
 			|| $node instanceof Expr\BinaryOp\Smaller
 			|| $node instanceof Expr\BinaryOp\SmallerOrEqual
-			|| $node instanceof Expr\BinaryOp\Identical
-			|| $node instanceof Expr\BinaryOp\NotIdentical
 			|| $node instanceof Expr\BinaryOp\Equal
 			|| $node instanceof Expr\BinaryOp\NotEqual
-			|| $node instanceof Expr\Instanceof_
-			|| $node instanceof Expr\Isset_
 			|| $node instanceof Expr\Empty_
 		) {
-			return new TrueOrFalseBooleanType();
+			return new BooleanType();
+		}
+
+		if ($node instanceof Expr\Isset_) {
+			foreach ($node->vars as $var) {
+				if ($var instanceof Expr\ArrayDimFetch && $var->dim !== null) {
+					$hasOffset = $this->getType($var->var)->hasOffsetValueType(
+						$this->getType($var->dim)
+					)->toBooleanType();
+					if ($hasOffset instanceof ConstantBooleanType) {
+						if (!$hasOffset->getValue()) {
+							return $hasOffset;
+						}
+
+						continue;
+					}
+
+					return $hasOffset;
+				}
+
+				return new BooleanType();
+			}
+
+			return new ConstantBooleanType(true);
+		}
+
+		if ($node instanceof \PhpParser\Node\Expr\BooleanNot) {
+			$exprBooleanType = $this->getType($node->expr)->toBoolean();
+			if ($exprBooleanType instanceof ConstantBooleanType) {
+				return new ConstantBooleanType(!$exprBooleanType->getValue());
+			}
+
+			return new BooleanType();
 		}
 
 		if (
-			$node instanceof Node\Expr\UnaryMinus
-			|| $node instanceof Node\Expr\UnaryPlus
-			|| $node instanceof Expr\ErrorSuppress
+			$node instanceof \PhpParser\Node\Expr\BinaryOp\BooleanAnd
+			|| $node instanceof \PhpParser\Node\Expr\BinaryOp\LogicalAnd
+		) {
+			$leftBooleanType = $this->getType($node->left)->toBoolean();
+			if (
+				$leftBooleanType instanceof ConstantBooleanType
+				&& !$leftBooleanType->getValue()
+			) {
+				return new ConstantBooleanType(false);
+			}
+
+			$rightBooleanType = $this->filterByTruthyValue($node->left)->getType($node->right)->toBoolean();
+			if (
+				$rightBooleanType instanceof ConstantBooleanType
+				&& !$rightBooleanType->getValue()
+			) {
+				return new ConstantBooleanType(false);
+			}
+
+			if (
+				$leftBooleanType instanceof ConstantBooleanType
+				&& $leftBooleanType->getValue()
+				&& $rightBooleanType instanceof ConstantBooleanType
+				&& $rightBooleanType->getValue()
+			) {
+				return new ConstantBooleanType(true);
+			}
+
+			return new BooleanType();
+		}
+
+		if (
+			$node instanceof \PhpParser\Node\Expr\BinaryOp\BooleanOr
+			|| $node instanceof \PhpParser\Node\Expr\BinaryOp\LogicalOr
+		) {
+			$leftBooleanType = $this->getType($node->left)->toBoolean();
+			if (
+				$leftBooleanType instanceof ConstantBooleanType
+				&& $leftBooleanType->getValue()
+			) {
+				return new ConstantBooleanType(true);
+			}
+
+			$rightBooleanType = $this->filterByFalseyValue($node->left)->getType($node->right)->toBoolean();
+			if (
+				$rightBooleanType instanceof ConstantBooleanType
+				&& $rightBooleanType->getValue()
+			) {
+				return new ConstantBooleanType(true);
+			}
+
+			if (
+				$leftBooleanType instanceof ConstantBooleanType
+				&& !$leftBooleanType->getValue()
+				&& $rightBooleanType instanceof ConstantBooleanType
+				&& !$rightBooleanType->getValue()
+			) {
+				return new ConstantBooleanType(false);
+			}
+
+			return new BooleanType();
+		}
+
+		if ($node instanceof \PhpParser\Node\Expr\BinaryOp\LogicalXor) {
+			$leftBooleanType = $this->getType($node->left)->toBoolean();
+			$rightBooleanType = $this->filterByFalseyValue($node->left)->getType($node->right)->toBoolean();
+			if (
+				$leftBooleanType instanceof ConstantBooleanType
+				&& $rightBooleanType instanceof ConstantBooleanType
+			) {
+				return new ConstantBooleanType(
+					$leftBooleanType->getValue() xor $rightBooleanType->getValue()
+				);
+			}
+
+			return new BooleanType();
+		}
+
+		if ($node instanceof Expr\BinaryOp\Identical) {
+			$leftType = $this->getType($node->left);
+			$rightType = $this->getType($node->right);
+
+			if (
+				(
+					$node->left instanceof Node\Expr\PropertyFetch
+					|| $node->left instanceof Node\Expr\StaticPropertyFetch
+				)
+				&& $rightType instanceof NullType
+			) {
+				return new BooleanType();
+			}
+
+			if (
+				(
+					$node->right instanceof Node\Expr\PropertyFetch
+					|| $node->right instanceof Node\Expr\StaticPropertyFetch
+				)
+				&& $leftType instanceof NullType
+			) {
+				return new BooleanType();
+			}
+
+			$isSuperset = $leftType->isSuperTypeOf($rightType);
+			if ($isSuperset->no()) {
+				return new ConstantBooleanType(false);
+			} elseif (
+				$isSuperset->yes()
+				&& $leftType instanceof ConstantScalarType
+				&& $rightType instanceof ConstantScalarType
+				&& $leftType->getValue() === $rightType->getValue()
+			) {
+				return new ConstantBooleanType(true);
+			}
+
+			return new BooleanType();
+		}
+
+		if ($node instanceof Expr\BinaryOp\NotIdentical) {
+			$leftType = $this->getType($node->left);
+			$rightType = $this->getType($node->right);
+
+			if (
+				(
+					$node->left instanceof Node\Expr\PropertyFetch
+					|| $node->left instanceof Node\Expr\StaticPropertyFetch
+				)
+				&& $rightType instanceof NullType
+			) {
+				return new BooleanType();
+			}
+
+			if (
+				(
+					$node->right instanceof Node\Expr\PropertyFetch
+					|| $node->right instanceof Node\Expr\StaticPropertyFetch
+				)
+				&& $leftType instanceof NullType
+			) {
+				return new BooleanType();
+			}
+
+			$isSuperset = $leftType->isSuperTypeOf($rightType);
+			if ($isSuperset->no()) {
+				return new ConstantBooleanType(true);
+			} elseif (
+				$isSuperset->yes()
+				&& $leftType instanceof ConstantScalarType
+				&& $rightType instanceof ConstantScalarType
+				&& $leftType->getValue() === $rightType->getValue()
+			) {
+				return new ConstantBooleanType(false);
+			}
+
+			return new BooleanType();
+		}
+
+		if ($node instanceof Expr\Instanceof_) {
+			if ($node->class instanceof Node\Name) {
+				$className = $this->resolveName($node->class);
+				$type = new ObjectType($className);
+			} else {
+				$type = $this->getType($node->class);
+			}
+
+			$expressionType = $this->getType($node->expr);
+			if (
+				$this->isInTrait()
+				&& TypeUtils::findThisType($expressionType) !== null
+			) {
+				return new BooleanType();
+			}
+			if ($expressionType instanceof NeverType) {
+				return new ConstantBooleanType(false);
+			}
+			$isExpressionObject = (new ObjectWithoutClassType())->isSuperTypeOf($expressionType);
+			if (!$isExpressionObject->no() && !(new StringType())->isSuperTypeOf($type)->no()) {
+				return new BooleanType();
+			}
+
+			$isSuperType = $type->isSuperTypeOf($expressionType)
+				->and($isExpressionObject);
+			if ($isSuperType->no()) {
+				return new ConstantBooleanType(false);
+			} elseif ($isSuperType->yes()) {
+				return new ConstantBooleanType(true);
+			}
+
+			return new BooleanType();
+		}
+
+		if ($node instanceof Node\Expr\UnaryPlus) {
+			return $this->getType($node->expr)->toNumber();
+		}
+
+		if ($node instanceof Expr\ErrorSuppress
 			|| $node instanceof Expr\Assign
 		) {
 			return $this->getType($node->expr);
 		}
 
-		if ($node instanceof Node\Expr\BinaryOp\Mod) {
-			return new IntegerType();
+		if ($node instanceof Node\Expr\UnaryMinus) {
+			$type = $this->getType($node->expr)->toNumber();
+			$scalarValues = TypeUtils::getConstantScalars($type);
+			if (count($scalarValues) > 0) {
+				$newTypes = [];
+				foreach ($scalarValues as $scalarValue) {
+					if ($scalarValue instanceof ConstantIntegerType) {
+						$newTypes[] = new ConstantIntegerType(-$scalarValue->getValue());
+					} elseif ($scalarValue instanceof ConstantFloatType) {
+						$newTypes[] = new ConstantFloatType(-$scalarValue->getValue());
+					}
+				}
+
+				return TypeCombinator::union(...$newTypes);
+			}
+
+			return $type;
 		}
 
-		if ($node instanceof Expr\BinaryOp\Concat) {
+		if ($node instanceof Expr\BinaryOp\Concat || $node instanceof Expr\AssignOp\Concat) {
+			if ($node instanceof Node\Expr\AssignOp) {
+				$left = $node->var;
+				$right = $node->expr;
+			} else {
+				$left = $node->left;
+				$right = $node->right;
+			}
+
+			$leftStringType = $this->getType($left)->toString();
+			$rightStringType = $this->getType($right)->toString();
+			if (TypeCombinator::union(
+				$leftStringType,
+				$rightStringType
+			) instanceof ErrorType) {
+				return new ErrorType();
+			}
+
+			if ($leftStringType instanceof ConstantStringType && $rightStringType instanceof ConstantStringType) {
+				return $leftStringType->append($rightStringType);
+			}
+
 			return new StringType();
+		}
+
+		if (
+			$node instanceof Node\Expr\BinaryOp\Div
+			|| $node instanceof Node\Expr\AssignOp\Div
+			|| $node instanceof Node\Expr\BinaryOp\Mod
+			|| $node instanceof Node\Expr\AssignOp\Mod
+		) {
+			if ($node instanceof Node\Expr\AssignOp) {
+				$right = $node->expr;
+			} else {
+				$right = $node->right;
+			}
+
+			$rightTypes = TypeUtils::getConstantScalars($this->getType($right)->toNumber());
+			foreach ($rightTypes as $rightType) {
+				if (
+					$rightType->getValue() === 0
+					|| $rightType->getValue() === 0.0
+				) {
+					return new ErrorType();
+				}
+			}
+		}
+
+		if (
+			(
+				$node instanceof Node\Expr\BinaryOp
+				|| $node instanceof Node\Expr\AssignOp
+			) && !$node instanceof Expr\BinaryOp\Coalesce
+		) {
+			if ($node instanceof Node\Expr\AssignOp) {
+				$left = $node->var;
+				$right = $node->expr;
+			} else {
+				$left = $node->left;
+				$right = $node->right;
+			}
+
+			$leftTypes = TypeUtils::getConstantScalars($this->getType($left));
+			$rightTypes = TypeUtils::getConstantScalars($this->getType($right));
+
+			if (count($leftTypes) > 0 && count($rightTypes) > 0) {
+				$resultTypes = [];
+				foreach ($leftTypes as $leftType) {
+					foreach ($rightTypes as $rightType) {
+						$resultTypes[] = $this->calculateFromScalars($node, $leftType, $rightType);
+					}
+				}
+				return TypeCombinator::union(...$resultTypes);
+			}
+		}
+
+		if ($node instanceof Node\Expr\BinaryOp\Mod || $node instanceof Expr\AssignOp\Mod) {
+			return new IntegerType();
 		}
 
 		if ($node instanceof Expr\BinaryOp\Spaceship) {
 			return new IntegerType();
 		}
 
-		if ($node instanceof Expr\Ternary) {
-			$elseType = $this->getType($node->else);
-			if ($node->if === null) {
+		if ($node instanceof Expr\BinaryOp\Coalesce) {
+			if ($node->left instanceof Expr\ArrayDimFetch && $node->left->dim !== null) {
+				$dimType = $this->getType($node->left->dim);
+				$varType = $this->getType($node->left->var);
+				$hasOffset = $varType->hasOffsetValueType($dimType);
+				$leftType = $this->getType($node->left);
+				$rightType = $this->getType($node->right);
+				if ($hasOffset->no()) {
+					return $rightType;
+				} elseif ($hasOffset->yes()) {
+					$offsetValueType = $varType->getOffsetValueType($dimType);
+					if ($offsetValueType->isSuperTypeOf(new NullType())->no()) {
+						return TypeCombinator::removeNull($leftType);
+					}
+				}
+
 				return TypeCombinator::union(
-					TypeCombinator::removeNull($this->getType($node->cond)),
-					$elseType
+					TypeCombinator::removeNull($leftType),
+					$rightType
 				);
 			}
 
-			$conditionScope = $this->filterByTruthyValue($node->cond);
-			$ifType = $conditionScope->getType($node->if);
-			$negatedConditionScope = $this->filterByFalseyValue($node->cond);
-			$elseType = $negatedConditionScope->getType($node->else);
+			$leftType = $this->getType($node->left);
+			$rightType = $this->getType($node->right);
+			if ($leftType instanceof ErrorType || $leftType instanceof NullType) {
+				return $rightType;
+			}
 
-			return TypeCombinator::union($ifType, $elseType);
-		}
+			if (TypeCombinator::containsNull($leftType) || $node->left instanceof PropertyFetch) {
+				return TypeCombinator::union(
+					TypeCombinator::removeNull($leftType),
+					$rightType
+				);
+			}
 
-		if ($node instanceof Expr\BinaryOp\Coalesce) {
-			return TypeCombinator::union(
-				TypeCombinator::removeNull($this->getType($node->left)),
-				$this->getType($node->right)
-			);
+			return TypeCombinator::removeNull($leftType);
 		}
 
 		if ($node instanceof Expr\Clone_) {
 			return $this->getType($node->expr);
 		}
 
-		if ($node instanceof Expr\AssignOp\Concat) {
-			return new StringType();
-		}
-
 		if (
 			$node instanceof Expr\AssignOp\ShiftLeft
+			|| $node instanceof Expr\BinaryOp\ShiftLeft
 			|| $node instanceof Expr\AssignOp\ShiftRight
-			|| $node instanceof Expr\AssignOp\Mod
+			|| $node instanceof Expr\BinaryOp\ShiftRight
+			|| $node instanceof Expr\AssignOp\BitwiseAnd
+			|| $node instanceof Expr\BinaryOp\BitwiseAnd
+			|| $node instanceof Expr\AssignOp\BitwiseOr
+			|| $node instanceof Expr\BinaryOp\BitwiseOr
+			|| $node instanceof Expr\AssignOp\BitwiseXor
+			|| $node instanceof Expr\BinaryOp\BitwiseXor
 		) {
+			if ($node instanceof Node\Expr\AssignOp) {
+				$left = $node->var;
+				$right = $node->expr;
+			} else {
+				$left = $node->left;
+				$right = $node->right;
+			}
+
+			if (TypeCombinator::union(
+				$this->getType($left)->toNumber(),
+				$this->getType($right)->toNumber()
+			) instanceof ErrorType) {
+				return new ErrorType();
+			}
+
 			return new IntegerType();
 		}
 
@@ -414,215 +783,452 @@ class Scope
 			|| $node instanceof Node\Expr\BinaryOp\Mul
 			|| $node instanceof Node\Expr\BinaryOp\Pow
 			|| $node instanceof Node\Expr\BinaryOp\Div
-			|| $node instanceof Node\Expr\AssignOp
+			|| $node instanceof Node\Expr\AssignOp\Plus
+			|| $node instanceof Node\Expr\AssignOp\Minus
+			|| $node instanceof Node\Expr\AssignOp\Mul
+			|| $node instanceof Node\Expr\AssignOp\Pow
+			|| $node instanceof Node\Expr\AssignOp\Div
 		) {
 			if ($node instanceof Node\Expr\AssignOp) {
 				$left = $node->var;
 				$right = $node->expr;
-			} elseif ($node instanceof Node\Expr\BinaryOp) {
+			} else {
 				$left = $node->left;
 				$right = $node->right;
-			} else {
-				throw new \PHPStan\ShouldNotHappenException();
 			}
 
 			$leftType = $this->getType($left);
 			$rightType = $this->getType($right);
 
-			if ($leftType instanceof BooleanType) {
-				$leftType = new IntegerType();
-			}
+			if ($node instanceof Expr\AssignOp\Plus || $node instanceof Expr\BinaryOp\Plus) {
+				$leftConstantArrays = TypeUtils::getConstantArrays($leftType);
+				$rightConstantArrays = TypeUtils::getConstantArrays($rightType);
 
-			if ($rightType instanceof BooleanType) {
-				$rightType = new IntegerType();
-			}
+				if (count($leftConstantArrays) > 0 && count($rightConstantArrays) > 0) {
+					$resultTypes = [];
+					foreach ($rightConstantArrays as $rightConstantArray) {
+						foreach ($leftConstantArrays as $leftConstantArray) {
+							$newArrayBuilder = ConstantArrayTypeBuilder::createFromConstantArray($rightConstantArray);
+							foreach ($leftConstantArray->getKeyTypes() as $leftKeyType) {
+								$newArrayBuilder->setOffsetValueType(
+									$leftKeyType,
+									$leftConstantArray->getOffsetValueType($leftKeyType)
+								);
+							}
+							$resultTypes[] = $newArrayBuilder->getArray();
+						}
+					}
 
-			if ($node instanceof Expr\AssignOp\Div || $node instanceof Expr\BinaryOp\Div) {
-				if (!$leftType instanceof MixedType && !$rightType instanceof MixedType) {
-					return new FloatType();
+					return TypeCombinator::union(...$resultTypes);
+				}
+
+				$leftArrays = TypeUtils::getArrays($leftType);
+				$rightArrays = TypeUtils::getArrays($rightType);
+
+				if (count($leftArrays) > 0 && count($rightArrays) > 0) {
+					$resultTypes = [];
+					foreach ($rightArrays as $rightArray) {
+						foreach ($leftArrays as $leftArray) {
+							$resultTypes[] = new ArrayType(
+								TypeCombinator::union($leftArray->getKeyType(), $rightArray->getKeyType()),
+								TypeCombinator::union($leftArray->getItemType(), $rightArray->getItemType())
+							);
+						}
+					}
+
+					return TypeCombinator::union(...$resultTypes);
+				}
+
+				if ($leftType instanceof MixedType && $rightType instanceof MixedType) {
+					return new BenevolentUnionType([
+						new FloatType(),
+						new IntegerType(),
+						new ArrayType(new MixedType(), new MixedType()),
+					]);
 				}
 			}
 
+			$types = TypeCombinator::union($leftType, $rightType);
 			if (
-				($leftType instanceof FloatType && !$rightType instanceof MixedType)
-				|| ($rightType instanceof FloatType && !$leftType instanceof MixedType)
+				$leftType instanceof ArrayType
+				|| $rightType instanceof ArrayType
+				|| $types instanceof ArrayType
+			) {
+				return new ErrorType();
+			}
+
+			$leftNumberType = $leftType->toNumber();
+			$rightNumberType = $rightType->toNumber();
+
+			if (
+				(new FloatType())->isSuperTypeOf($leftNumberType)->yes()
+				|| (new FloatType())->isSuperTypeOf($rightNumberType)->yes()
 			) {
 				return new FloatType();
 			}
 
-			if ($leftType instanceof IntegerType && $rightType instanceof IntegerType) {
-				return new IntegerType();
+			if ($node instanceof Expr\AssignOp\Pow || $node instanceof Expr\BinaryOp\Pow) {
+				return new BenevolentUnionType([
+					new FloatType(),
+					new IntegerType(),
+				]);
 			}
 
-			if (
-				($node instanceof Expr\AssignOp\Plus || $node instanceof Expr\BinaryOp\Plus)
-				&& $leftType instanceof ArrayType
-				&& $rightType instanceof ArrayType
-			) {
-				return new ArrayType(
-					TypeCombinator::union($leftType->getIterableKeyType(), $rightType->getIterableKeyType()),
-					TypeCombinator::union($leftType->getItemType(), $rightType->getItemType()),
-					$leftType->isItemTypeInferredFromLiteralArray() || $rightType->isItemTypeInferredFromLiteralArray()
-				);
+			$resultType = TypeCombinator::union($leftNumberType, $rightNumberType);
+			if ($node instanceof Expr\AssignOp\Div || $node instanceof Expr\BinaryOp\Div) {
+				if ($types instanceof MixedType || $resultType instanceof IntegerType) {
+					return new BenevolentUnionType([new IntegerType(), new FloatType()]);
+				}
+
+				return new UnionType([new IntegerType(), new FloatType()]);
 			}
+
+			if ($types instanceof MixedType) {
+				return TypeUtils::toBenevolentUnion($resultType);
+			}
+
+			return $resultType;
 		}
 
 		if ($node instanceof LNumber) {
-			return new IntegerType();
-		} elseif ($node instanceof ConstFetch) {
-			$constName = strtolower((string) $node->name);
-			if ($constName === 'true') {
-				return new \PHPStan\Type\TrueBooleanType();
-			} elseif ($constName === 'false') {
-				return new \PHPStan\Type\FalseBooleanType();
-			} elseif ($constName === 'null') {
-				return new NullType();
-			}
+			return new ConstantIntegerType($node->value);
+		} elseif ($node instanceof String_) {
+			return new ConstantStringType($node->value);
+		} elseif ($node instanceof Node\Scalar\Encapsed) {
+			$constantString = new ConstantStringType('');
+			foreach ($node->parts as $part) {
+				if ($part instanceof EncapsedStringPart) {
+					$partStringType = new ConstantStringType($part->value);
+				} else {
+					$partStringType = $this->getType($part)->toString();
+					if ($partStringType instanceof ErrorType) {
+						return new ErrorType();
+					}
+					if (!$partStringType instanceof ConstantStringType) {
+						return new StringType();
+					}
+				}
 
-			if ($this->broker->hasConstant($node->name, $this)) {
-				$typeFromValue = $this->getTypeFromValue(
-					constant($this->broker->resolveConstantName($node->name, $this))
-				);
-				if ($typeFromValue !== null) {
-					return $typeFromValue;
+				$constantString = $constantString->append($partStringType);
+			}
+			return $constantString;
+		} elseif ($node instanceof DNumber) {
+			return new ConstantFloatType($node->value);
+		} elseif ($node instanceof Expr\Closure) {
+			$parameters = [];
+			$isVariadic = false;
+			$firstOptionalParameterIndex = null;
+			foreach ($node->params as $i => $param) {
+				$isOptionalCandidate = $param->default !== null || $param->variadic;
+
+				if ($isOptionalCandidate) {
+					if ($firstOptionalParameterIndex === null) {
+						$firstOptionalParameterIndex = $i;
+					}
+				} else {
+					$firstOptionalParameterIndex = null;
 				}
 			}
-		} elseif ($node instanceof String_ || $node instanceof Node\Scalar\Encapsed) {
-			return new StringType();
-		} elseif ($node instanceof DNumber) {
-			return new FloatType();
-		} elseif ($node instanceof Expr\Closure) {
-			return new ObjectType('Closure');
+
+			foreach ($node->params as $i => $param) {
+				if ($param->variadic) {
+					$isVariadic = true;
+				}
+				if (!$param->var instanceof Variable || !is_string($param->var->name)) {
+					throw new \PHPStan\ShouldNotHappenException();
+				}
+				$parameters[] = new NativeParameterReflection(
+					$param->var->name,
+					$firstOptionalParameterIndex !== null && $i >= $firstOptionalParameterIndex,
+					$this->getFunctionType($param->type, $param->type === null, false),
+					$param->byRef
+						? PassedByReference::createCreatesNewVariable()
+						: PassedByReference::createNo(),
+					$param->variadic
+				);
+			}
+
+			return new ClosureType(
+				$parameters,
+				$this->getFunctionType($node->returnType, $node->returnType === null, false),
+				$isVariadic
+			);
 		} elseif ($node instanceof New_) {
 			if ($node->class instanceof Name) {
 				if (
 					count($node->class->parts) === 1
 				) {
-					if ($node->class->parts[0] === 'static') {
-						return new StaticType($this->getClassReflection()->getName());
-					} elseif ($node->class->parts[0] === 'self') {
-						return new ObjectType($this->getClassReflection()->getName());
+					$lowercasedClassName = strtolower($node->class->parts[0]);
+					if (in_array($lowercasedClassName, [
+						'self',
+						'static',
+						'parent',
+					], true)) {
+						if (!$this->isInClass()) {
+							throw new \PHPStan\ShouldNotHappenException();
+						}
+						if ($lowercasedClassName === 'static') {
+							return new StaticType($this->getClassReflection()->getName());
+						}
+
+						if ($lowercasedClassName === 'self') {
+							return new ObjectType($this->getClassReflection()->getName());
+						}
+
+						if ($this->getClassReflection()->getParentClass() !== false) {
+							return new ObjectType($this->getClassReflection()->getParentClass()->getName());
+						}
+
+						return new NonexistentParentClassType();
 					}
 				}
 
 				return new ObjectType((string) $node->class);
 			}
+			if ($node->class instanceof Node\Stmt\Class_) {
+				$anonymousClassReflection = $this->broker->getAnonymousClassReflection($node, $this);
+
+				return new ObjectType($anonymousClassReflection->getName());
+			}
 		} elseif ($node instanceof Array_) {
-			$itemTypes = array_map(
-				function (Expr\ArrayItem $item): Type {
-					return $this->getType($item->value);
-				},
-				$node->items
-			);
-
-			$callable = TrinaryLogic::createNo();
-			if (count($itemTypes) === 2) {
-				if (
-					($itemTypes[0]->accepts(new StringType()) || count($itemTypes[0]->getReferencedClasses()) > 0)
-					&& $itemTypes[1]->accepts(new StringType())
-				) {
-					$callable = TrinaryLogic::createYes();
-				}
-			}
-
-			$arrayWithKeys = [];
-			$keyExpressionTypes = [];
+			$arrayBuilder = ConstantArrayTypeBuilder::createEmpty();
 			foreach ($node->items as $arrayItem) {
-				$itemKey = $arrayItem->key;
-				if ($itemKey === null) {
-					$arrayWithKeys[] = 'foo';
-					continue;
-				}
+				$arrayBuilder->setOffsetValueType(
+					$arrayItem->key !== null ? $this->getType($arrayItem->key) : null,
+					$this->getType($arrayItem->value)
+				);
+			}
+			return $arrayBuilder->getArray();
 
-				if (
-					$itemKey instanceof \PhpParser\Node\Scalar\String_
-					|| $itemKey instanceof \PhpParser\Node\Scalar\LNumber
-					|| $itemKey instanceof \PhpParser\Node\Scalar\DNumber
-					|| $itemKey instanceof \PhpParser\Node\Expr\ConstFetch
-				) {
-					if ($itemKey instanceof \PhpParser\Node\Expr\ConstFetch) {
-						$constName = strtolower((string) $itemKey->name);
-						if ($constName === 'true') {
-							$value = true;
-						} elseif ($constName === 'false') {
-							$value = false;
-						} elseif ($constName === 'null') {
-							$value = null;
-						} elseif ($this->broker->hasConstant($itemKey->name, $this)) {
-							$value = constant($this->broker->resolveConstantName($itemKey->name, $this));
-						} else {
-							$keyExpressionTypes[] = new MixedType();
-							continue;
-						}
-
-						$arrayWithKeys[$value] = 'foo';
-					} else {
-						$arrayWithKeys[$itemKey->value] = 'foo';
-					}
-				} else {
-					$keyExpressionTypes[] = $this->getType($itemKey);
-				}
+		} elseif ($node instanceof Int_) {
+			return $this->getType($node->expr)->toInteger();
+		} elseif ($node instanceof Bool_) {
+			return $this->getType($node->expr)->toBoolean();
+		} elseif ($node instanceof Double) {
+			return $this->getType($node->expr)->toFloat();
+		} elseif ($node instanceof \PhpParser\Node\Expr\Cast\String_) {
+			return $this->getType($node->expr)->toString();
+		} elseif ($node instanceof \PhpParser\Node\Expr\Cast\Array_) {
+			return $this->getType($node->expr)->toArray();
+		} elseif ($node instanceof Node\Scalar\MagicConst\Line) {
+			return new ConstantIntegerType($node->getLine());
+		} elseif ($node instanceof Node\Scalar\MagicConst\Class_) {
+			if (!$this->isInClass()) {
+				return new ConstantStringType('');
 			}
 
-			$scalarKeysTypes = array_map(function ($value): Type {
-				return $this->getTypeFromValue($value);
-			}, array_keys($arrayWithKeys));
+			return new ConstantStringType($this->getClassReflection()->getName());
+		} elseif ($node instanceof Node\Scalar\MagicConst\Dir) {
+			return new ConstantStringType(dirname($this->getFile()));
+		} elseif ($node instanceof Node\Scalar\MagicConst\File) {
+			return new ConstantStringType($this->getFile());
+		} elseif ($node instanceof Node\Scalar\MagicConst\Namespace_) {
+			if (!$this->isInClass()) {
+				return new ConstantStringType('');
+			}
 
-			return new ArrayType(
-				$this->getCombinedType(array_merge($scalarKeysTypes, $keyExpressionTypes)),
-				$this->getCombinedType($itemTypes),
-				true,
-				$callable
-			);
-		} elseif ($node instanceof Int_) {
-				return new IntegerType();
-		} elseif ($node instanceof Bool_) {
-			return new TrueOrFalseBooleanType();
-		} elseif ($node instanceof Double) {
-			return new FloatType();
-		} elseif ($node instanceof \PhpParser\Node\Expr\Cast\String_) {
-			return new StringType();
-		} elseif ($node instanceof \PhpParser\Node\Expr\Cast\Array_) {
-			return new ArrayType(new MixedType(), new MixedType());
-		} elseif ($node instanceof Node\Scalar\MagicConst\Line) {
-			return new IntegerType();
-		} elseif ($node instanceof Node\Scalar\MagicConst) {
-			return new StringType();
+			$className = $this->getClassReflection()->getName();
+			$parts = explode('\\', $className);
+			if (count($parts) <= 1) {
+				return new ConstantStringType('');
+			}
+
+			return new ConstantStringType($parts[0]);
+		} elseif ($node instanceof Node\Scalar\MagicConst\Method) {
+			if ($this->isInAnonymousFunction()) {
+				return new ConstantStringType('{closure}');
+			}
+
+			$function = $this->getFunction();
+			if ($function === null) {
+				return new ConstantStringType('');
+			}
+			if ($function instanceof MethodReflection) {
+				return new ConstantStringType(
+					sprintf('%s::%s', $function->getDeclaringClass()->getName(), $function->getName())
+				);
+			}
+
+			return new ConstantStringType($function->getName());
+		} elseif ($node instanceof Node\Scalar\MagicConst\Function_) {
+			if ($this->isInAnonymousFunction()) {
+				return new ConstantStringType('{closure}');
+			}
+			$function = $this->getFunction();
+			if ($function === null) {
+				return new ConstantStringType('');
+			}
+
+			return new ConstantStringType($function->getName());
+		} elseif ($node instanceof Node\Scalar\MagicConst\Trait_) {
+			if (!$this->isInTrait()) {
+				return new ConstantStringType('');
+			}
+			return new ConstantStringType($this->getTraitReflection()->getName());
 		} elseif ($node instanceof Object_) {
-			return new ObjectType('stdClass');
+			$castToObject = static function (Type $type): Type {
+				if ((new ObjectWithoutClassType())->isSuperTypeOf($type)->yes()) {
+					return $type;
+				}
+
+				return new ObjectType('stdClass');
+			};
+
+			$exprType = $this->getType($node->expr);
+			if ($exprType instanceof UnionType) {
+				return TypeCombinator::union(...array_map($castToObject, $exprType->getTypes()));
+			}
+
+			return $castToObject($exprType);
 		} elseif ($node instanceof Unset_) {
 			return new NullType();
-		} elseif ($node instanceof Node\Expr\ClassConstFetch && is_string($node->name)) {
+		} elseif ($node instanceof Expr\PostInc || $node instanceof Expr\PostDec) {
+			return $this->getType($node->var);
+		} elseif ($node instanceof Expr\PreInc || $node instanceof Expr\PreDec) {
+			$varType = $this->getType($node->var);
+			if ($varType instanceof ConstantScalarType) {
+				$varValue = $varType->getValue();
+				if ($node instanceof Expr\PreInc) {
+					++$varValue;
+				} else {
+					--$varValue;
+				}
+				return $this->getTypeFromValue($varValue);
+			}
+
+			$stringType = new StringType();
+			if ($stringType->isSuperTypeOf($varType)->yes()) {
+				return $stringType;
+			}
+
+			return $varType->toNumber();
+		}
+
+		$exprString = $this->printer->prettyPrintExpr($node);
+		if (isset($this->moreSpecificTypes[$exprString])) {
+			return $this->moreSpecificTypes[$exprString]->getType();
+		}
+
+		if ($node instanceof ConstFetch) {
+			$constName = strtolower((string) $node->name);
+			if ($constName === 'true') {
+				return new \PHPStan\Type\Constant\ConstantBooleanType(true);
+			} elseif ($constName === 'false') {
+				return new \PHPStan\Type\Constant\ConstantBooleanType(false);
+			} elseif ($constName === 'null') {
+				return new NullType();
+			}
+
+			if ($this->broker->hasConstant($node->name, $this)) {
+				/** @var string $resolvedConstantName */
+				$resolvedConstantName = $this->broker->resolveConstantName($node->name, $this);
+				if ($resolvedConstantName === 'DIRECTORY_SEPARATOR') {
+					return new UnionType([
+						new ConstantStringType('/'),
+						new ConstantStringType('\\'),
+					]);
+				}
+				if ($resolvedConstantName === 'PATH_SEPARATOR') {
+					return new UnionType([
+						new ConstantStringType(':'),
+						new ConstantStringType(';'),
+					]);
+				}
+				if ($resolvedConstantName === 'PHP_EOL') {
+					return new UnionType([
+						new ConstantStringType("\n"),
+						new ConstantStringType("\r\n"),
+					]);
+				}
+
+				$constantType = $this->getTypeFromValue(constant($resolvedConstantName));
+				if ($constantType instanceof ConstantType && in_array($resolvedConstantName, $this->dynamicConstantNames, true)) {
+					return $constantType->generalize();
+				}
+				return $constantType;
+			}
+
+			return new ErrorType();
+		} elseif ($node instanceof Node\Expr\ClassConstFetch && $node->name instanceof Node\Identifier) {
+			$constantName = $node->name->name;
 			if ($node->class instanceof Name) {
 				$constantClass = (string) $node->class;
 				$constantClassType = new ObjectType($constantClass);
-				if (in_array(strtolower($constantClass), [
+				$namesToResolve = [
 					'self',
 					'parent',
-				], true)) {
+				];
+				if ($this->isInClass()) {
+					if ($this->getClassReflection()->isFinal()) {
+						$namesToResolve[] = 'static';
+					} elseif (strtolower($constantClass) === 'static') {
+						if (strtolower($constantName) === 'class') {
+							return new StringType();
+						}
+						return new MixedType();
+					}
+				}
+				if (in_array(strtolower($constantClass), $namesToResolve, true)) {
 					$resolvedName = $this->resolveName($node->class);
+					if ($resolvedName === 'parent' && strtolower($constantName) === 'class') {
+						return new StringType();
+					}
 					$constantClassType = new ObjectType($resolvedName);
 				}
 			} else {
 				$constantClassType = $this->getType($node->class);
 			}
 
-			$constantName = $node->name;
-			if (strtolower($constantName) === 'class') {
-				return new StringType();
+			if (strtolower($constantName) === 'class' && $constantClassType instanceof TypeWithClassName) {
+				return new ConstantStringType($constantClassType->getClassName());
 			}
 			if ($constantClassType->hasConstant($constantName)) {
 				$constant = $constantClassType->getConstant($constantName);
-				$typeFromValue = $this->getTypeFromValue($constant->getValue());
-				if ($typeFromValue !== null) {
-					return $typeFromValue;
+				$constantType = $this->getTypeFromValue($constant->getValue());
+				$directClassNames = TypeUtils::getDirectClassNames($constantClassType);
+				if (
+					$constantType instanceof ConstantType &&
+					count($directClassNames) === 1 &&
+					in_array(sprintf('%s::%s', $this->broker->getClass($directClassNames[0])->getName(), $constantName), $this->dynamicConstantNames, true)
+				) {
+					return $constantType->generalize();
 				}
+				return $constantType;
 			}
+
+			return new ErrorType();
 		}
 
-		$exprString = $this->printer->prettyPrintExpr($node);
-		if (isset($this->moreSpecificTypes[$exprString])) {
-			return $this->moreSpecificTypes[$exprString];
+		if ($node instanceof Expr\Ternary) {
+			if ($node->if === null) {
+				$conditionType = $this->filterByTruthyValue($node->cond, true)->getType($node->cond);
+				$booleanConditionType = $conditionType->toBoolean();
+				if ($booleanConditionType instanceof ConstantBooleanType) {
+					if ($booleanConditionType->getValue()) {
+						return $conditionType;
+					}
+
+					return $this->filterByFalseyValue($node->cond, true)->getType($node->else);
+				}
+				return TypeCombinator::union(
+					$conditionType,
+					$this->filterByFalseyValue($node->cond, true)->getType($node->else)
+				);
+			}
+
+			$booleanConditionType = $this->getType($node->cond)->toBoolean();
+			if ($booleanConditionType instanceof ConstantBooleanType) {
+				if ($booleanConditionType->getValue()) {
+					return $this->filterByTruthyValue($node->cond)->getType($node->if);
+				}
+
+				return $this->filterByFalseyValue($node->cond)->getType($node->else);
+			}
+
+			return TypeCombinator::union(
+				$this->filterByTruthyValue($node->cond)->getType($node->if),
+				$this->filterByFalseyValue($node->cond)->getType($node->else)
+			);
 		}
 
 		if ($node instanceof Variable && is_string($node->name)) {
@@ -634,42 +1240,55 @@ class Scope
 		}
 
 		if ($node instanceof Expr\ArrayDimFetch && $node->dim !== null) {
-			$arrayType = $this->getType($node->var);
-			if ($arrayType instanceof ArrayType) {
-				return $arrayType->getItemType();
-			}
+			return $this->getTypeFromArrayDimFetch(
+				$node,
+				$this->getType($node->dim),
+				$this->getType($node->var)
+			);
 		}
 
-		if ($node instanceof MethodCall && is_string($node->name)) {
+		if ($node instanceof MethodCall && $node->name instanceof Node\Identifier) {
 			$methodCalledOnType = $this->getType($node->var);
-			$referencedClasses = $methodCalledOnType->getReferencedClasses();
-			if (
-				count($referencedClasses) === 1
-				&& $this->broker->hasClass($referencedClasses[0])
-			) {
-				$methodClassReflection = $this->broker->getClass($referencedClasses[0]);
-				if (!$methodClassReflection->hasMethod($node->name)) {
+			$referencedClasses = TypeUtils::getDirectClassNames($methodCalledOnType);
+			$resolvedTypes = [];
+			foreach ($referencedClasses as $referencedClass) {
+				if (!$this->broker->hasClass($referencedClass)) {
+					continue;
+				}
+
+				$methodClassReflection = $this->broker->getClass($referencedClass);
+				if (!$methodClassReflection->hasMethod($node->name->name)) {
+					if ($methodCalledOnType instanceof IntersectionType) {
+						continue;
+					}
 					return new ErrorType();
 				}
 
-				$methodReflection = $methodClassReflection->getMethod($node->name, $this);
+				$methodReflection = $methodClassReflection->getMethod($node->name->name, $this);
 				foreach ($this->broker->getDynamicMethodReturnTypeExtensionsForClass($methodClassReflection->getName()) as $dynamicMethodReturnTypeExtension) {
 					if (!$dynamicMethodReturnTypeExtension->isMethodSupported($methodReflection)) {
 						continue;
 					}
 
-					return $dynamicMethodReturnTypeExtension->getTypeFromMethodCall($methodReflection, $node, $this);
+					$resolvedTypes[] = $dynamicMethodReturnTypeExtension->getTypeFromMethodCall($methodReflection, $node, $this);
 				}
 			}
+			if (count($resolvedTypes) > 0) {
+				return TypeCombinator::union(...$resolvedTypes);
+			}
 
-			if (!$methodCalledOnType->hasMethod($node->name)) {
+			if (!$methodCalledOnType->hasMethod($node->name->name)) {
 				return new ErrorType();
 			}
-			$methodReflection = $methodCalledOnType->getMethod($node->name, $this);
+			$methodReflection = $methodCalledOnType->getMethod($node->name->name, $this);
 
-			$calledOnThis = $node->var instanceof Variable && is_string($node->var->name) && $node->var->name === 'this';
-			$methodReturnType = $methodReflection->getReturnType();
+			$methodReturnType = ParametersAcceptorSelector::selectFromArgs(
+				$this,
+				$node->args,
+				$methodReflection->getVariants()
+			)->getReturnType();
 			if ($methodReturnType instanceof StaticResolvableType) {
+				$calledOnThis = $this->getType($node->var) instanceof ThisType;
 				if ($calledOnThis) {
 					if ($this->isInClass()) {
 						return $methodReturnType->changeBaseClass($this->getClassReflection()->getName());
@@ -678,36 +1297,48 @@ class Scope
 					return $methodReturnType->resolveStatic($referencedClasses[0]);
 				}
 			}
-
-			return $methodReflection->getReturnType();
+			return $methodReturnType;
 		}
 
-		if ($node instanceof Expr\StaticCall && is_string($node->name)) {
+		if ($node instanceof Expr\StaticCall && $node->name instanceof Node\Identifier) {
 			if ($node->class instanceof Name) {
 				$calleeType = new ObjectType($this->resolveName($node->class));
 			} else {
 				$calleeType = $this->getType($node->class);
 			}
 
-			if (!$calleeType->hasMethod($node->name)) {
+			if (!$calleeType->hasMethod($node->name->name)) {
 				return new ErrorType();
 			}
-			$staticMethodReflection = $calleeType->getMethod($node->name, $this);
-			$referencedClasses = $calleeType->getReferencedClasses();
-			if (
-				count($calleeType->getReferencedClasses()) === 1
-				&& $this->broker->hasClass($referencedClasses[0])
-			) {
-				$staticMethodClassReflection = $this->broker->getClass($referencedClasses[0]);
+			$staticMethodReflection = $calleeType->getMethod($node->name->name, $this);
+			$referencedClasses = TypeUtils::getDirectClassNames($calleeType);
+
+			$resolvedTypes = [];
+			foreach ($referencedClasses as $referencedClass) {
+				if (!$this->broker->hasClass($referencedClass)) {
+					continue;
+				}
+
+				$staticMethodClassReflection = $this->broker->getClass($referencedClass);
 				foreach ($this->broker->getDynamicStaticMethodReturnTypeExtensionsForClass($staticMethodClassReflection->getName()) as $dynamicStaticMethodReturnTypeExtension) {
 					if (!$dynamicStaticMethodReturnTypeExtension->isStaticMethodSupported($staticMethodReflection)) {
 						continue;
 					}
 
-					return $dynamicStaticMethodReturnTypeExtension->getTypeFromStaticMethodCall($staticMethodReflection, $node, $this);
+					$resolvedTypes[] = $dynamicStaticMethodReturnTypeExtension->getTypeFromStaticMethodCall($staticMethodReflection, $node, $this);
 				}
 			}
-			if ($staticMethodReflection->getReturnType() instanceof StaticResolvableType) {
+			if (count($resolvedTypes) > 0) {
+				return TypeCombinator::union(...$resolvedTypes);
+			}
+
+			$staticMethodReturnType = ParametersAcceptorSelector::selectFromArgs(
+				$this,
+				$node->args,
+				$staticMethodReflection->getVariants()
+			)->getReturnType();
+
+			if ($staticMethodReturnType instanceof StaticResolvableType) {
 				if ($node->class instanceof Name) {
 					$nodeClassString = strtolower((string) $node->class);
 					if (in_array($nodeClassString, [
@@ -715,46 +1346,58 @@ class Scope
 						'static',
 						'parent',
 					], true) && $this->isInClass()) {
-						return $staticMethodReflection->getReturnType()->changeBaseClass($this->getClassReflection()->getName());
+						return $staticMethodReturnType->changeBaseClass($this->getClassReflection()->getName());
 					}
 				}
 				if (count($referencedClasses) === 1) {
-					return $staticMethodReflection->getReturnType()->resolveStatic($referencedClasses[0]);
+					return $staticMethodReturnType->resolveStatic($referencedClasses[0]);
 				}
 			}
-			return $staticMethodReflection->getReturnType();
+			return $staticMethodReturnType;
 		}
 
-		if ($node instanceof PropertyFetch && is_string($node->name)) {
+		if ($node instanceof PropertyFetch && $node->name instanceof Node\Identifier) {
 			$propertyFetchedOnType = $this->getType($node->var);
-			if (!$propertyFetchedOnType->hasProperty($node->name)) {
+			if (!$propertyFetchedOnType->hasProperty($node->name->name)) {
 				return new ErrorType();
 			}
 
-			return $propertyFetchedOnType->getProperty($node->name, $this)->getType();
+			return $propertyFetchedOnType->getProperty($node->name->name, $this)->getType();
 		}
 
-		if ($node instanceof Expr\StaticPropertyFetch && is_string($node->name) && $node->class instanceof Name) {
+		if ($node instanceof Expr\StaticPropertyFetch && $node->name instanceof Node\VarLikeIdentifier && $node->class instanceof Name) {
 			$staticPropertyHolderClass = $this->resolveName($node->class);
 			if ($this->broker->hasClass($staticPropertyHolderClass)) {
 				$staticPropertyClassReflection = $this->broker->getClass(
 					$staticPropertyHolderClass
 				);
-				if (!$staticPropertyClassReflection->hasProperty($node->name)) {
+				if (!$staticPropertyClassReflection->hasProperty($node->name->name)) {
 					return new ErrorType();
 				}
 
-				return $staticPropertyClassReflection->getProperty($node->name, $this)->getType();
+				return $staticPropertyClassReflection->getProperty($node->name->name, $this)->getType();
 			}
 		}
 
-		if ($node instanceof FuncCall && $node->name instanceof Name) {
+		if ($node instanceof FuncCall) {
+			if ($node->name instanceof Expr) {
+				$calledOnType = $this->getType($node->name);
+				if ($calledOnType->isCallable()->no()) {
+					return new ErrorType();
+				}
+
+				return ParametersAcceptorSelector::selectFromArgs(
+					$this,
+					$node->args,
+					$calledOnType->getCallableParametersAcceptors($this)
+				)->getReturnType();
+			}
+
 			if (!$this->broker->hasFunction($node->name, $this)) {
 				return new ErrorType();
 			}
 
 			$functionReflection = $this->broker->getFunction($node->name, $this);
-
 			foreach ($this->broker->getDynamicFunctionReturnTypeExtensions() as $dynamicFunctionReturnTypeExtension) {
 				if (!$dynamicFunctionReturnTypeExtension->isFunctionSupported($functionReflection)) {
 					continue;
@@ -763,7 +1406,108 @@ class Scope
 				return $dynamicFunctionReturnTypeExtension->getTypeFromFunctionCall($functionReflection, $node, $this);
 			}
 
-			return $functionReflection->getReturnType();
+			return ParametersAcceptorSelector::selectFromArgs(
+				$this,
+				$node->args,
+				$functionReflection->getVariants()
+			)->getReturnType();
+		}
+
+		return new MixedType();
+	}
+
+	protected function getTypeFromArrayDimFetch(
+		Expr\ArrayDimFetch $arrayDimFetch,
+		Type $offsetType,
+		Type $offsetAccessibleType
+	): Type
+	{
+		if ($arrayDimFetch->dim === null) {
+			throw new \PHPStan\ShouldNotHappenException();
+		}
+
+		if ((new ObjectType(\ArrayAccess::class))->isSuperTypeOf($offsetAccessibleType)->yes()) {
+			return $this->getType(
+				new MethodCall(
+					$arrayDimFetch->var,
+					new Node\Identifier('offsetGet'),
+					[
+						new Node\Arg($arrayDimFetch->dim),
+					]
+				)
+			);
+		}
+
+		return $offsetAccessibleType->getOffsetValueType($offsetType);
+	}
+
+	private function calculateFromScalars(Expr $node, ConstantScalarType $leftType, ConstantScalarType $rightType): Type
+	{
+		$leftValue = $leftType->getValue();
+		$rightValue = $rightType->getValue();
+
+		if ($node instanceof Node\Expr\BinaryOp\Spaceship) {
+			return $this->getTypeFromValue($leftValue <=> $rightValue);
+		}
+
+		$leftNumberType = $leftType->toNumber();
+		$rightNumberType = $rightType->toNumber();
+		if (TypeCombinator::union($leftNumberType, $rightNumberType) instanceof ErrorType) {
+			return new ErrorType();
+		}
+
+		if (!$leftNumberType instanceof ConstantScalarType || !$rightNumberType instanceof ConstantScalarType) {
+			throw new \PHPStan\ShouldNotHappenException();
+		}
+
+		/** @var float|int $leftNumberValue */
+		$leftNumberValue = $leftNumberType->getValue();
+
+		/** @var float|int $rightNumberValue */
+		$rightNumberValue = $rightNumberType->getValue();
+
+		if ($node instanceof Node\Expr\BinaryOp\Plus || $node instanceof Node\Expr\AssignOp\Plus) {
+			return $this->getTypeFromValue($leftNumberValue + $rightNumberValue);
+		}
+
+		if ($node instanceof Node\Expr\BinaryOp\Minus || $node instanceof Node\Expr\AssignOp\Minus) {
+			return $this->getTypeFromValue($leftNumberValue - $rightNumberValue);
+		}
+
+		if ($node instanceof Node\Expr\BinaryOp\Mul || $node instanceof Node\Expr\AssignOp\Mul) {
+			return $this->getTypeFromValue($leftNumberValue * $rightNumberValue);
+		}
+
+		if ($node instanceof Node\Expr\BinaryOp\Pow || $node instanceof Node\Expr\AssignOp\Pow) {
+			return $this->getTypeFromValue($leftNumberValue ** $rightNumberValue);
+		}
+
+		if ($node instanceof Node\Expr\BinaryOp\Div || $node instanceof Node\Expr\AssignOp\Div) {
+			return $this->getTypeFromValue($leftNumberValue / $rightNumberValue);
+		}
+
+		if ($node instanceof Node\Expr\BinaryOp\Mod || $node instanceof Node\Expr\AssignOp\Mod) {
+			return $this->getTypeFromValue($leftNumberValue % $rightNumberValue);
+		}
+
+		if ($node instanceof Expr\BinaryOp\ShiftLeft || $node instanceof Expr\AssignOp\ShiftLeft) {
+			return $this->getTypeFromValue($leftNumberValue << $rightNumberValue);
+		}
+
+		if ($node instanceof Expr\BinaryOp\ShiftRight || $node instanceof Expr\AssignOp\ShiftRight) {
+			return $this->getTypeFromValue($leftNumberValue >> $rightNumberValue);
+		}
+
+		if ($node instanceof Expr\BinaryOp\BitwiseAnd || $node instanceof Expr\AssignOp\BitwiseAnd) {
+			return $this->getTypeFromValue($leftNumberValue & $rightNumberValue);
+		}
+
+		if ($node instanceof Expr\BinaryOp\BitwiseOr || $node instanceof Expr\AssignOp\BitwiseOr) {
+			return $this->getTypeFromValue($leftNumberValue | $rightNumberValue);
+		}
+
+		if ($node instanceof Expr\BinaryOp\BitwiseXor || $node instanceof Expr\AssignOp\BitwiseXor) {
+			return $this->getTypeFromValue($leftNumberValue ^ $rightNumberValue);
 		}
 
 		return new MixedType();
@@ -791,50 +1535,28 @@ class Scope
 
 	/**
 	 * @param mixed $value
-	 * @return Type|null
 	 */
-	private function getTypeFromValue($value)
+	public function getTypeFromValue($value): Type
 	{
 		if (is_int($value)) {
-			return new IntegerType();
+			return new ConstantIntegerType($value);
 		} elseif (is_float($value)) {
-			return new FloatType();
+			return new ConstantFloatType($value);
 		} elseif (is_bool($value)) {
-			return new TrueOrFalseBooleanType();
+			return new ConstantBooleanType($value);
 		} elseif ($value === null) {
 			return new NullType();
 		} elseif (is_string($value)) {
-			return new StringType();
+			return new ConstantStringType($value);
 		} elseif (is_array($value)) {
-			return new ArrayType(
-				$this->getCombinedType(
-					array_map(function ($value): Type {
-						return $this->getTypeFromValue($value);
-					}, array_keys($value))
-				),
-				$this->getCombinedType(
-					array_map(function ($value): Type {
-						return $this->getTypeFromValue($value);
-					}, array_values($value))
-				),
-				false
-			);
+			$arrayBuilder = ConstantArrayTypeBuilder::createEmpty();
+			foreach ($value as $k => $v) {
+				$arrayBuilder->setOffsetValueType($this->getTypeFromValue($k), $this->getTypeFromValue($v));
+			}
+			return $arrayBuilder->getArray();
 		}
 
-		return null;
-	}
-
-	/**
-	 * @param \PHPStan\Type\Type[] $types
-	 * @return \PHPStan\Type\Type
-	 */
-	private function getCombinedType(array $types): Type
-	{
-		if (count($types) === 0) {
-			return new MixedType();
-		}
-
-		return TypeCombinator::union(...$types);
+		return new MixedType();
 	}
 
 	public function isSpecified(Expr $node): bool
@@ -846,14 +1568,9 @@ class Scope
 
 	public function enterClass(ClassReflection $classReflection): self
 	{
-		return new self(
-			$this->broker,
-			$this->printer,
-			$this->typeSpecifier,
-			$this->getFile(),
-			$this->getAnalysedContextFile(),
+		return $this->scopeFactory->create(
+			$this->context->enterClass($classReflection),
 			$this->isDeclareStrictTypes(),
-			$classReflection,
 			null,
 			$this->getNamespace(),
 			[
@@ -862,33 +1579,46 @@ class Scope
 		);
 	}
 
-	public function changeAnalysedContextFile(string $fileName): self
+	public function enterTrait(ClassReflection $traitReflection): self
 	{
-		return new self(
-			$this->broker,
-			$this->printer,
-			$this->typeSpecifier,
-			$this->getFile(),
-			$fileName,
+		return $this->scopeFactory->create(
+			$this->context->enterTrait($traitReflection),
 			$this->isDeclareStrictTypes(),
-			$this->isInClass() ? $this->getClassReflection() : null,
 			$this->getFunction(),
 			$this->getNamespace(),
 			$this->getVariableTypes(),
+			$this->moreSpecificTypes,
 			$this->inClosureBindScopeClass,
 			$this->getAnonymousFunctionReturnType(),
 			$this->getInFunctionCall(),
-			$this->isNegated(),
-			$this->moreSpecificTypes
+			$this->isNegated()
 		);
 	}
 
+	/**
+	 * @param Node\Stmt\ClassMethod $classMethod
+	 * @param Type[] $phpDocParameterTypes
+	 * @param Type|null $phpDocReturnType
+	 * @param Type|null $throwType
+	 * @param bool $isDeprecated
+	 * @param bool $isInternal
+	 * @param bool $isFinal
+	 * @return self
+	 */
 	public function enterClassMethod(
 		Node\Stmt\ClassMethod $classMethod,
 		array $phpDocParameterTypes,
-		Type $phpDocReturnType = null
+		?Type $phpDocReturnType,
+		?Type $throwType,
+		bool $isDeprecated,
+		bool $isInternal,
+		bool $isFinal
 	): self
 	{
+		if (!$this->isInClass()) {
+			throw new \PHPStan\ShouldNotHappenException();
+		}
+
 		return $this->enterFunctionLike(
 			new PhpMethodFromParserNodeReflection(
 				$this->getClassReflection(),
@@ -897,16 +1627,27 @@ class Scope
 				$phpDocParameterTypes,
 				$classMethod->returnType !== null,
 				$this->getFunctionType($classMethod->returnType, $classMethod->returnType === null, false),
-				$phpDocReturnType
+				$phpDocReturnType,
+				$throwType,
+				$isDeprecated,
+				$isInternal,
+				$isFinal
 			)
 		);
 	}
 
+	/**
+	 * @param Node\FunctionLike $functionLike
+	 * @return Type[]
+	 */
 	private function getRealParameterTypes(Node\FunctionLike $functionLike): array
 	{
 		$realParameterTypes = [];
 		foreach ($functionLike->getParams() as $parameter) {
-			$realParameterTypes[$parameter->name] = $this->getFunctionType(
+			if (!$parameter->var instanceof Variable || !is_string($parameter->var->name)) {
+				throw new \PHPStan\ShouldNotHappenException();
+			}
+			$realParameterTypes[$parameter->var->name] = $this->getFunctionType(
 				$parameter->type,
 				$this->isParameterValueNullable($parameter),
 				$parameter->variadic
@@ -916,10 +1657,24 @@ class Scope
 		return $realParameterTypes;
 	}
 
+	/**
+	 * @param Node\Stmt\Function_ $function
+	 * @param Type[] $phpDocParameterTypes
+	 * @param Type|null $phpDocReturnType
+	 * @param Type|null $throwType
+	 * @param bool $isDeprecated
+	 * @param bool $isInternal
+	 * @param bool $isFinal
+	 * @return self
+	 */
 	public function enterFunction(
 		Node\Stmt\Function_ $function,
 		array $phpDocParameterTypes,
-		Type $phpDocReturnType = null
+		?Type $phpDocReturnType,
+		?Type $throwType,
+		bool $isDeprecated,
+		bool $isInternal,
+		bool $isFinal
 	): self
 	{
 		return $this->enterFunctionLike(
@@ -929,29 +1684,31 @@ class Scope
 				$phpDocParameterTypes,
 				$function->returnType !== null,
 				$this->getFunctionType($function->returnType, $function->returnType === null, false),
-				$phpDocReturnType
+				$phpDocReturnType,
+				$throwType,
+				$isDeprecated,
+				$isInternal,
+				$isFinal
 			)
 		);
 	}
 
-	private function enterFunctionLike(ParametersAcceptor $functionReflection): self
+	private function enterFunctionLike(
+		PhpFunctionFromParserNodeReflection $functionReflection
+	): self
 	{
 		$variableTypes = $this->getVariableTypes();
-		foreach ($functionReflection->getParameters() as $parameter) {
+		foreach (ParametersAcceptorSelector::selectSingle($functionReflection->getVariants())->getParameters() as $parameter) {
 			$variableTypes[$parameter->getName()] = VariableTypeHolder::createYes($parameter->getType());
 		}
 
-		return new self(
-			$this->broker,
-			$this->printer,
-			$this->typeSpecifier,
-			$this->getFile(),
-			$this->getAnalysedContextFile(),
+		return $this->scopeFactory->create(
+			$this->context,
 			$this->isDeclareStrictTypes(),
-			$this->isInClass() ? $this->getClassReflection() : null,
 			$functionReflection,
 			$this->getNamespace(),
 			$variableTypes,
+			[],
 			null,
 			null
 		);
@@ -959,20 +1716,15 @@ class Scope
 
 	public function enterNamespace(string $namespaceName): self
 	{
-		return new self(
-			$this->broker,
-			$this->printer,
-			$this->typeSpecifier,
-			$this->getFile(),
-			$this->getAnalysedContextFile(),
+		return $this->scopeFactory->create(
+			$this->context->beginFile(),
 			$this->isDeclareStrictTypes(),
-			null,
 			null,
 			$namespaceName
 		);
 	}
 
-	public function enterClosureBind(Type $thisType = null, string $scopeClass): self
+	public function enterClosureBind(?Type $thisType, string $scopeClass): self
 	{
 		$variableTypes = $this->getVariableTypes();
 
@@ -986,22 +1738,36 @@ class Scope
 			$scopeClass = $this->getClassReflection()->getName();
 		}
 
-		return new self(
-			$this->broker,
-			$this->printer,
-			$this->typeSpecifier,
-			$this->getFile(),
-			$this->getAnalysedContextFile(),
+		return $this->scopeFactory->create(
+			$this->context,
 			$this->isDeclareStrictTypes(),
-			$this->isInClass() ? $this->getClassReflection() : null,
 			$this->getFunction(),
 			$this->getNamespace(),
 			$variableTypes,
+			$this->moreSpecificTypes,
 			$scopeClass,
 			$this->getAnonymousFunctionReturnType(),
 			$this->getInFunctionCall(),
-			$this->isNegated(),
-			$this->moreSpecificTypes
+			$this->isNegated()
+		);
+	}
+
+	public function enterClosureCall(Type $thisType): self
+	{
+		$variableTypes = $this->getVariableTypes();
+		$variableTypes['this'] = VariableTypeHolder::createYes($thisType);
+
+		return $this->scopeFactory->create(
+			$this->context,
+			$this->isDeclareStrictTypes(),
+			$this->getFunction(),
+			$this->getNamespace(),
+			$variableTypes,
+			$this->moreSpecificTypes,
+			$thisType instanceof TypeWithClassName ? $thisType->getClassName() : null,
+			$this->getAnonymousFunctionReturnType(),
+			$this->getInFunctionCall(),
+			$this->isNegated()
 		);
 	}
 
@@ -1015,54 +1781,54 @@ class Scope
 		return $this->enterClass($anonymousClass);
 	}
 
-	/**
-	 * @param \PhpParser\Node\Param[] $parameters
-	 * @param \PhpParser\Node\Expr\ClosureUse[] $uses
-	 * @param \PhpParser\Node\Name|string|\PhpParser\Node\NullableType|null $returnTypehint
-	 * @return self
-	 */
 	public function enterAnonymousFunction(
-		array $parameters,
-		array $uses,
-		$returnTypehint = null
+		Expr\Closure $closure
 	): self
 	{
 		$variableTypes = [];
-		foreach ($parameters as $parameter) {
+		foreach ($closure->params as $parameter) {
 			$isNullable = $this->isParameterValueNullable($parameter);
 
-			$variableTypes[$parameter->name] = VariableTypeHolder::createYes(
+			if (!$parameter->var instanceof Variable || !is_string($parameter->var->name)) {
+				throw new \PHPStan\ShouldNotHappenException();
+			}
+			$variableTypes[$parameter->var->name] = VariableTypeHolder::createYes(
 				$this->getFunctionType($parameter->type, $isNullable, $parameter->variadic)
 			);
 		}
 
-		foreach ($uses as $use) {
-			if (!$this->hasVariableType($use->var)->yes()) {
+		foreach ($closure->uses as $use) {
+			if (!is_string($use->var->name)) {
+				throw new \PHPStan\ShouldNotHappenException();
+			}
+			if ($this->hasVariableType($use->var->name)->no()) {
 				if ($use->byRef) {
-					$variableTypes[$use->var] = VariableTypeHolder::createYes(new MixedType());
+					if ($this->isInExpressionAssign(new Variable($use->var->name))) {
+						$variableTypes[$use->var->name] = VariableTypeHolder::createYes(
+							$this->getType($closure)
+						);
+						continue;
+					}
+					$variableTypes[$use->var->name] = VariableTypeHolder::createYes(new NullType());
 				}
 				continue;
 			}
-			$variableTypes[$use->var] = VariableTypeHolder::createYes($this->getVariableType($use->var));
+			$variableTypes[$use->var->name] = VariableTypeHolder::createYes($this->getVariableType($use->var->name));
 		}
 
 		if ($this->hasVariableType('this')->yes()) {
 			$variableTypes['this'] = VariableTypeHolder::createYes($this->getVariableType('this'));
 		}
 
-		$returnType = $this->getFunctionType($returnTypehint, $returnTypehint === null, false);
+		$returnType = $this->getFunctionType($closure->returnType, $closure->returnType === null, false);
 
-		return new self(
-			$this->broker,
-			$this->printer,
-			$this->typeSpecifier,
-			$this->getFile(),
-			$this->getAnalysedContextFile(),
+		return $this->scopeFactory->create(
+			$this->context,
 			$this->isDeclareStrictTypes(),
-			$this->isInClass() ? $this->getClassReflection() : null,
 			$this->getFunction(),
 			$this->getNamespace(),
 			$variableTypes,
+			[],
 			$this->inClosureBindScopeClass,
 			$returnType,
 			$this->getInFunctionCall()
@@ -1079,12 +1845,12 @@ class Scope
 	}
 
 	/**
-	 * @param \PhpParser\Node\Name|string|\PhpParser\Node\NullableType|null $type
+	 * @param \PhpParser\Node\Name|\PhpParser\Node\Identifier|\PhpParser\Node\NullableType|null $type
 	 * @param bool $isNullable
 	 * @param bool $isVariadic
 	 * @return Type
 	 */
-	public function getFunctionType($type = null, bool $isNullable, bool $isVariadic): Type
+	public function getFunctionType($type, bool $isNullable, bool $isVariadic): Type
 	{
 		if ($isNullable) {
 			return TypeCombinator::addNull(
@@ -1096,28 +1862,17 @@ class Scope
 				$type,
 				false,
 				false
-			), false);
+			));
 		}
 		if ($type === null) {
 			return new MixedType();
-		} elseif ($type === 'string') {
-			return new StringType();
-		} elseif ($type === 'int') {
-			return new IntegerType();
-		} elseif ($type === 'bool') {
-			return new TrueOrFalseBooleanType();
-		} elseif ($type === 'float') {
-			return new FloatType();
-		} elseif ($type === 'callable') {
-			return new CallableType();
-		} elseif ($type === 'array') {
-			return new ArrayType(new MixedType(), new MixedType());
 		} elseif ($type instanceof Name) {
 			$className = (string) $type;
-			if ($className === 'self') {
+			$lowercasedClassName = strtolower($className);
+			if ($this->isInClass() && in_array($lowercasedClassName, ['self', 'static'], true)) {
 				$className = $this->getClassReflection()->getName();
 			} elseif (
-				$className === 'parent'
+				$lowercasedClassName === 'parent'
 			) {
 				if ($this->isInClass() && $this->getClassReflection()->getParentClass() !== false) {
 					return new ObjectType($this->getClassReflection()->getParentClass()->getName());
@@ -1126,20 +1881,35 @@ class Scope
 				return new NonexistentParentClassType();
 			}
 			return new ObjectType($className);
+		} elseif ($type instanceof Node\NullableType) {
+			return $this->getFunctionType($type->type, true, $isVariadic);
+		}
+
+		$type = $type->name;
+		if ($type === 'string') {
+			return new StringType();
+		} elseif ($type === 'int') {
+			return new IntegerType();
+		} elseif ($type === 'bool') {
+			return new BooleanType();
+		} elseif ($type === 'float') {
+			return new FloatType();
+		} elseif ($type === 'callable') {
+			return new CallableType();
+		} elseif ($type === 'array') {
+			return new ArrayType(new MixedType(), new MixedType());
 		} elseif ($type === 'iterable') {
-			return new IterableIterableType(new MixedType(), new MixedType());
+			return new IterableType(new MixedType(), new MixedType());
 		} elseif ($type === 'void') {
 			return new VoidType();
 		} elseif ($type === 'object') {
 			return new ObjectWithoutClassType();
-		} elseif ($type instanceof Node\NullableType) {
-			return $this->getFunctionType($type->type, true, $isVariadic);
 		}
 
 		return new MixedType();
 	}
 
-	public function enterForeach(Expr $iteratee, string $valueName, string $keyName = null): self
+	public function enterForeach(Expr $iteratee, string $valueName, ?string $keyName): self
 	{
 		$iterateeType = $this->getType($iteratee);
 		$scope = $this->assignVariable($valueName, $iterateeType->getIterableValueType(), TrinaryLogic::createYes());
@@ -1158,7 +1928,7 @@ class Scope
 	 */
 	public function enterCatch(array $classes, string $variableName): self
 	{
-		$type = TypeCombinator::union(...array_map(function (string $class): ObjectType {
+		$type = TypeCombinator::union(...array_map(static function (string $class): ObjectType {
 			return new ObjectType($class);
 		}, $classes));
 
@@ -1175,22 +1945,17 @@ class Scope
 	 */
 	public function enterFunctionCall($functionCall): self
 	{
-		return new self(
-			$this->broker,
-			$this->printer,
-			$this->typeSpecifier,
-			$this->getFile(),
-			$this->getAnalysedContextFile(),
+		return $this->scopeFactory->create(
+			$this->context,
 			$this->isDeclareStrictTypes(),
-			$this->isInClass() ? $this->getClassReflection() : null,
 			$this->getFunction(),
 			$this->getNamespace(),
 			$this->getVariableTypes(),
+			$this->moreSpecificTypes,
 			$this->inClosureBindScopeClass,
 			$this->getAnonymousFunctionReturnType(),
 			$functionCall,
 			$this->isNegated(),
-			$this->moreSpecificTypes,
 			$this->inFirstLevelStatement
 		);
 	}
@@ -1200,22 +1965,17 @@ class Scope
 		$currentlyAssignedExpressions = $this->currentlyAssignedExpressions;
 		$currentlyAssignedExpressions[] = $this->printer->prettyPrintExpr($expr);
 
-		return new self(
-			$this->broker,
-			$this->printer,
-			$this->typeSpecifier,
-			$this->getFile(),
-			$this->getAnalysedContextFile(),
+		return $this->scopeFactory->create(
+			$this->context,
 			$this->isDeclareStrictTypes(),
-			$this->isInClass() ? $this->getClassReflection() : null,
 			$this->getFunction(),
 			$this->getNamespace(),
 			$this->getVariableTypes(),
+			$this->moreSpecificTypes,
 			$this->inClosureBindScopeClass,
 			$this->getAnonymousFunctionReturnType(),
 			$this->getInFunctionCall(),
 			$this->isNegated(),
-			$this->moreSpecificTypes,
 			$this->isInFirstLevelStatement(),
 			$currentlyAssignedExpressions
 		);
@@ -1245,58 +2005,75 @@ class Scope
 		$variableTypes = $this->getVariableTypes();
 		$variableTypes[$variableName] = new VariableTypeHolder($type, $certainty);
 
-		$exprString = $this->printer->prettyPrintExpr(new Variable($variableName));
-		$moreSpecificTypes = $this->moreSpecificTypes;
-		if (array_key_exists($exprString, $moreSpecificTypes)) {
-			unset($moreSpecificTypes[$exprString]);
+		$variableString = $this->printer->prettyPrintExpr(new Variable($variableName));
+		$moreSpecificTypeHolders = $this->moreSpecificTypes;
+		foreach (array_keys($moreSpecificTypeHolders) as $key) {
+			$matches = \Nette\Utils\Strings::match((string) $key, '#(\$[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*)#');
+			if ($matches === null) {
+				continue;
+			}
+
+			if ($matches[1] !== $variableString) {
+				continue;
+			}
+
+			unset($moreSpecificTypeHolders[$key]);
 		}
 
-		return new self(
-			$this->broker,
-			$this->printer,
-			$this->typeSpecifier,
-			$this->getFile(),
-			$this->getAnalysedContextFile(),
+		return $this->scopeFactory->create(
+			$this->context,
 			$this->isDeclareStrictTypes(),
-			$this->isInClass() ? $this->getClassReflection() : null,
 			$this->getFunction(),
 			$this->getNamespace(),
 			$variableTypes,
+			$moreSpecificTypeHolders,
 			$this->inClosureBindScopeClass,
 			$this->getAnonymousFunctionReturnType(),
 			$this->getInFunctionCall(),
 			$this->isNegated(),
-			$moreSpecificTypes,
-			$this->inFirstLevelStatement
+			$this->inFirstLevelStatement,
+			$this->currentlyAssignedExpressions
 		);
 	}
 
-	public function unsetVariable(string $variableName): self
+	public function unsetExpression(Expr $expr): self
 	{
-		if ($this->hasVariableType($variableName)->no()) {
-			return $this;
-		}
-		$variableTypes = $this->getVariableTypes();
-		unset($variableTypes[$variableName]);
+		if ($expr instanceof Variable && is_string($expr->name)) {
+			if ($this->hasVariableType($expr->name)->no()) {
+				return $this;
+			}
+			$variableTypes = $this->getVariableTypes();
+			unset($variableTypes[$expr->name]);
 
-		return new self(
-			$this->broker,
-			$this->printer,
-			$this->typeSpecifier,
-			$this->getFile(),
-			$this->getAnalysedContextFile(),
-			$this->isDeclareStrictTypes(),
-			$this->isInClass() ? $this->getClassReflection() : null,
-			$this->getFunction(),
-			$this->getNamespace(),
-			$variableTypes,
-			$this->inClosureBindScopeClass,
-			$this->getAnonymousFunctionReturnType(),
-			$this->getInFunctionCall(),
-			$this->isNegated(),
-			$this->moreSpecificTypes,
-			$this->inFirstLevelStatement
-		);
+			return $this->scopeFactory->create(
+				$this->context,
+				$this->isDeclareStrictTypes(),
+				$this->getFunction(),
+				$this->getNamespace(),
+				$variableTypes,
+				$this->moreSpecificTypes,
+				$this->inClosureBindScopeClass,
+				$this->getAnonymousFunctionReturnType(),
+				$this->getInFunctionCall(),
+				$this->isNegated(),
+				$this->inFirstLevelStatement
+			);
+		} elseif ($expr instanceof Expr\ArrayDimFetch && $expr->dim !== null) {
+			$constantArrays = TypeUtils::getConstantArrays($this->getType($expr->var));
+			if (count($constantArrays) > 0) {
+				$unsetArrays = [];
+				$dimType = $this->getType($expr->dim);
+				foreach ($constantArrays as $constantArray) {
+					$unsetArrays[] = $constantArray->unsetOffset($dimType);
+				}
+				return $this->specifyExpressionType(
+					$expr->var,
+					TypeCombinator::union(...$unsetArrays)
+				);
+			}
+		}
+
+		return $this;
 	}
 
 	public function intersectVariables(Scope $otherScope): self
@@ -1330,35 +2107,54 @@ class Scope
 			$intersectedVariableTypeHolders[$name] = VariableTypeHolder::createMaybe($variableTypeHolder->getType());
 		}
 
-		$theirSpecifiedTypes = $otherScope->moreSpecificTypes;
+		$ourSpecifiedTypeHolders = $this->moreSpecificTypes;
+		$theirSpecifiedTypeHolders = $otherScope->moreSpecificTypes;
 		$intersectedSpecifiedTypes = [];
-		foreach ($this->moreSpecificTypes as $exprString => $specificType) {
-			if (!isset($theirSpecifiedTypes[$exprString])) {
+
+		foreach ($theirSpecifiedTypeHolders as $exprString => $theirSpecifiedTypeHolder) {
+			$matches = \Nette\Utils\Strings::match((string) $exprString, '#^\$([a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*)$#');
+			if ($matches !== null) {
+				continue;
+			}
+			if (isset($ourSpecifiedTypeHolders[$exprString])) {
+				$intersectedSpecifiedTypes[$exprString] = $ourSpecifiedTypeHolders[$exprString]->and($theirSpecifiedTypeHolder);
+			} else {
+				$intersectedSpecifiedTypes[$exprString] = VariableTypeHolder::createMaybe($theirSpecifiedTypeHolder->getType());
+			}
+		}
+
+		foreach ($this->moreSpecificTypes as $exprString => $specificTypeHolder) {
+			$matches = \Nette\Utils\Strings::match((string) $exprString, '#^\$([a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*)$#');
+			if ($matches !== null) {
+				continue;
+			}
+			if (isset($otherScope->moreSpecificTypes[$exprString])) {
+				$intersectedSpecifiedTypes[$exprString] = VariableTypeHolder::createYes(
+					TypeCombinator::union(
+						$otherScope->moreSpecificTypes[$exprString]->getType(),
+						$specificTypeHolder->getType()
+					)
+				);
+				continue;
+			}
+			if (isset($theirVariableTypeHolders[$exprString])) {
 				continue;
 			}
 
-			$intersectedSpecifiedTypes[$exprString] = TypeCombinator::union(
-				$specificType,
-				$theirSpecifiedTypes[$exprString]
-			);
+			$intersectedSpecifiedTypes[$exprString] = VariableTypeHolder::createMaybe($specificTypeHolder->getType());
 		}
 
-		return new self(
-			$this->broker,
-			$this->printer,
-			$this->typeSpecifier,
-			$this->getFile(),
-			$this->getAnalysedContextFile(),
+		return $this->scopeFactory->create(
+			$this->context,
 			$this->isDeclareStrictTypes(),
-			$this->isInClass() ? $this->getClassReflection() : null,
 			$this->getFunction(),
 			$this->getNamespace(),
 			$intersectedVariableTypeHolders,
+			$intersectedSpecifiedTypes,
 			$this->inClosureBindScopeClass,
 			$this->getAnonymousFunctionReturnType(),
 			$this->getInFunctionCall(),
 			$this->isNegated(),
-			$intersectedSpecifiedTypes,
 			$this->inFirstLevelStatement
 		);
 	}
@@ -1371,26 +2167,26 @@ class Scope
 		}
 
 		$specifiedTypes = [];
-		foreach ($otherScope->moreSpecificTypes as $exprString => $specificType) {
-			$specifiedTypes[$exprString] = $specificType;
+		foreach ($otherScope->moreSpecificTypes as $exprString => $specificTypeHolder) {
+			$matches = \Nette\Utils\Strings::match((string) $exprString, '#^\$([a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*)$#');
+			if ($matches !== null) {
+				$variableTypes[$matches[1]] = $specificTypeHolder;
+				continue;
+			}
+			$specifiedTypes[$exprString] = $specificTypeHolder;
 		}
 
-		return new self(
-			$this->broker,
-			$this->printer,
-			$this->typeSpecifier,
-			$this->getFile(),
-			$this->getAnalysedContextFile(),
+		return $this->scopeFactory->create(
+			$this->context,
 			$this->isDeclareStrictTypes(),
-			$this->isInClass() ? $this->getClassReflection() : null,
 			$this->getFunction(),
 			$this->getNamespace(),
 			$variableTypes,
+			$specifiedTypes,
 			$this->inClosureBindScopeClass,
 			$this->getAnonymousFunctionReturnType(),
 			$this->getInFunctionCall(),
 			$this->isNegated(),
-			$specifiedTypes,
 			$this->inFirstLevelStatement
 		);
 	}
@@ -1398,7 +2194,7 @@ class Scope
 	public function mergeWithIntersectedScope(self $intersectedScope): self
 	{
 		$variableTypeHolders = $this->variableTypes;
-		$specifiedTypes = $this->moreSpecificTypes;
+		$specifiedTypeHolders = $this->moreSpecificTypes;
 		foreach ($intersectedScope->getVariableTypes() as $name => $theirVariableTypeHolder) {
 			if (isset($variableTypeHolders[$name])) {
 				$type = $theirVariableTypeHolder->getType();
@@ -1411,37 +2207,80 @@ class Scope
 				);
 			}
 
-			$variableTypeHolders[$name] = $theirVariableTypeHolder->addMaybe();
+			$variableTypeHolders[$name] = $theirVariableTypeHolder;
 
 			$exprString = $this->printer->prettyPrintExpr(new Variable($name));
-			unset($specifiedTypes[$exprString]);
+			unset($specifiedTypeHolders[$exprString]);
 		}
 
-		foreach ($intersectedScope->moreSpecificTypes as $exprString => $specificType) {
-			if (preg_match('#^\$([a-zA-Z_][a-zA-Z0-9_]*)$#', $exprString, $matches) === 1) {
-				$variableName = $matches[1];
-				$variableTypeHolders[$variableName] = VariableTypeHolder::createYes($specificType);
+		foreach ($intersectedScope->moreSpecificTypes as $exprString => $theirTypeHolder) {
+			if (isset($specifiedTypeHolders[$exprString])) {
+				$type = $theirTypeHolder->getType();
+				if ($theirTypeHolder->getCertainty()->maybe()) {
+					$type = TypeCombinator::union($type, $specifiedTypeHolders[$exprString]->getType());
+				}
+				$theirTypeHolder = new VariableTypeHolder(
+					$type,
+					$theirTypeHolder->getCertainty()->or($specifiedTypeHolders[$exprString]->getCertainty())
+				);
+			}
+
+			if (!$theirTypeHolder->getCertainty()->yes()) {
 				continue;
 			}
-			$specifiedTypes[$exprString] = $specificType;
+
+			$specifiedTypeHolders[$exprString] = $theirTypeHolder;
 		}
 
-		return new self(
-			$this->broker,
-			$this->printer,
-			$this->typeSpecifier,
-			$this->getFile(),
-			$this->getAnalysedContextFile(),
+		return $this->scopeFactory->create(
+			$this->context,
 			$this->isDeclareStrictTypes(),
-			$this->isInClass() ? $this->getClassReflection() : null,
 			$this->getFunction(),
 			$this->getNamespace(),
 			$variableTypeHolders,
+			$specifiedTypeHolders,
 			$this->inClosureBindScopeClass,
 			$this->getAnonymousFunctionReturnType(),
 			$this->getInFunctionCall(),
 			$this->isNegated(),
-			$specifiedTypes,
+			$this->inFirstLevelStatement
+		);
+	}
+
+	public function removeSpecified(self $initialScope): self
+	{
+		$variableTypeHolders = $this->variableTypes;
+		foreach ($variableTypeHolders as $name => $holder) {
+			if (!$holder->getCertainty()->yes()) {
+				continue;
+			}
+			$node = new Variable($name);
+			if ($this->isSpecified($node) && !$initialScope->hasVariableType($name)->no()) {
+				$variableTypeHolders[$name] = VariableTypeHolder::createYes(TypeCombinator::remove($initialScope->getVariableType($name), $this->getType($node)));
+				continue;
+			}
+		}
+
+		$moreSpecificTypeHolders = $this->moreSpecificTypes;
+		foreach (array_keys($moreSpecificTypeHolders) as $exprString) {
+			if (isset($initialScope->moreSpecificTypes[$exprString])) {
+				continue;
+			}
+
+			unset($moreSpecificTypeHolders[$exprString]);
+		}
+
+		return $this->scopeFactory->create(
+			$this->context,
+			$this->isDeclareStrictTypes(),
+			$this->getFunction(),
+			$this->getNamespace(),
+			$variableTypeHolders,
+			$moreSpecificTypeHolders,
+			$this->inClosureBindScopeClass,
+			$this->getAnonymousFunctionReturnType(),
+			$this->getInFunctionCall(),
+			$this->isNegated(),
 			$this->inFirstLevelStatement
 		);
 	}
@@ -1460,7 +2299,7 @@ class Scope
 			} else {
 				if (
 					isset($ourVariableTypeHolders[$name])
-					&& $theirVariableTypeHolder->getType()->describe() === $ourVariableTypeHolders[$name]->getType()->describe()
+					&& $theirVariableTypeHolder->getType()->equals($ourVariableTypeHolders[$name]->getType())
 					&& $ourVariableTypeHolders[$name]->getCertainty()->equals($theirVariableTypeHolder->getCertainty())
 				) {
 					unset($ourVariableTypeHolders[$name]);
@@ -1468,92 +2307,110 @@ class Scope
 			}
 		}
 
-		$moreSpecificTypes = $this->moreSpecificTypes;
-		foreach ($otherScope->moreSpecificTypes as $exprString => $specifiedType) {
-			if (isset($moreSpecificTypes[$exprString]) && $specifiedType->describe() === $moreSpecificTypes[$exprString]->describe()) {
-				unset($moreSpecificTypes[$exprString]);
+		$ourTypeHolders = $this->moreSpecificTypes;
+		foreach ($otherScope->moreSpecificTypes as $exprString => $theirTypeHolder) {
+			if ($all) {
+				if (
+					isset($ourTypeHolders[$exprString])
+					&& $ourTypeHolders[$exprString]->getCertainty()->equals($theirTypeHolder->getCertainty())
+				) {
+					unset($ourVariableTypeHolders[$exprString]);
+				}
+			} else {
+				if (
+					isset($ourTypeHolders[$exprString])
+					&& $theirTypeHolder->getType()->equals($ourTypeHolders[$exprString]->getType())
+					&& $ourTypeHolders[$exprString]->getCertainty()->equals($theirTypeHolder->getCertainty())
+				) {
+					unset($ourVariableTypeHolders[$exprString]);
+				}
 			}
 		}
 
-		return new self(
-			$this->broker,
-			$this->printer,
-			$this->typeSpecifier,
-			$this->getFile(),
-			$this->getAnalysedContextFile(),
+		return $this->scopeFactory->create(
+			$this->context,
 			$this->isDeclareStrictTypes(),
-			$this->isInClass() ? $this->getClassReflection() : null,
 			$this->getFunction(),
 			$this->getNamespace(),
 			$ourVariableTypeHolders,
+			$ourTypeHolders,
 			$this->inClosureBindScopeClass,
 			$this->getAnonymousFunctionReturnType(),
 			$this->getInFunctionCall(),
 			$this->isNegated(),
-			$moreSpecificTypes,
 			$this->inFirstLevelStatement
 		);
 	}
 
 	public function specifyExpressionType(Expr $expr, Type $type): self
 	{
+		if ($expr instanceof Node\Scalar || $expr instanceof Array_) {
+			return $this;
+		}
+
 		$exprString = $this->printer->prettyPrintExpr($expr);
 
-		$scope = $this->addMoreSpecificTypes([
-			$exprString => $type,
-		]);
+		$scope = $this;
 
 		if ($expr instanceof Variable && is_string($expr->name)) {
 			$variableName = $expr->name;
 
-			$variableTypes = $scope->getVariableTypes();
+			$variableTypes = $this->getVariableTypes();
 			$variableTypes[$variableName] = VariableTypeHolder::createYes($type);
 
-			return new self(
-				$scope->broker,
-				$scope->printer,
-				$scope->typeSpecifier,
-				$scope->getFile(),
-				$scope->getAnalysedContextFile(),
-				$scope->isDeclareStrictTypes(),
-				$scope->isInClass() ? $scope->getClassReflection() : null,
-				$scope->getFunction(),
-				$scope->getNamespace(),
+			$moreSpecificTypes = $this->moreSpecificTypes;
+			$moreSpecificTypes[$exprString] = $variableTypes[$variableName];
+
+			return $this->scopeFactory->create(
+				$this->context,
+				$this->isDeclareStrictTypes(),
+				$this->getFunction(),
+				$this->getNamespace(),
 				$variableTypes,
-				$scope->inClosureBindScopeClass,
-				$scope->getAnonymousFunctionReturnType(),
-				$scope->getInFunctionCall(),
-				$scope->isNegated(),
-				$scope->moreSpecificTypes,
-				$scope->inFirstLevelStatement
+				$moreSpecificTypes,
+				$this->inClosureBindScopeClass,
+				$this->getAnonymousFunctionReturnType(),
+				$this->getInFunctionCall(),
+				$this->isNegated(),
+				$this->inFirstLevelStatement
 			);
+		} elseif ($expr instanceof Expr\ArrayDimFetch && $expr->dim !== null) {
+			$constantArrays = TypeUtils::getConstantArrays($this->getType($expr->var));
+			if (count($constantArrays) > 0) {
+				$setArrays = [];
+				$dimType = $this->getType($expr->dim);
+				foreach ($constantArrays as $constantArray) {
+					$setArrays[] = $constantArray->setOffsetValueType($dimType, $type);
+				}
+				$scope = $this->specifyExpressionType(
+					$expr->var,
+					TypeCombinator::union(...$setArrays)
+				);
+			}
 		}
 
-		return $scope;
+		return $scope->addMoreSpecificTypes([
+			$exprString => $type,
+		]);
 	}
 
 	public function unspecifyExpressionType(Expr $expr): self
 	{
 		$exprString = $this->printer->prettyPrintExpr($expr);
-		$moreSpecificTypes = $this->moreSpecificTypes;
-		if (isset($moreSpecificTypes[$exprString]) && !$moreSpecificTypes[$exprString] instanceof MixedType) {
-			unset($moreSpecificTypes[$exprString]);
-			return new self(
-				$this->broker,
-				$this->printer,
-				$this->typeSpecifier,
-				$this->getFile(),
-				$this->getAnalysedContextFile(),
+		$moreSpecificTypeHolders = $this->moreSpecificTypes;
+		if (isset($moreSpecificTypeHolders[$exprString]) && !$moreSpecificTypeHolders[$exprString]->getType() instanceof MixedType) {
+			unset($moreSpecificTypeHolders[$exprString]);
+			return $this->scopeFactory->create(
+				$this->context,
 				$this->isDeclareStrictTypes(),
-				$this->isInClass() ? $this->getClassReflection() : null,
 				$this->getFunction(),
 				$this->getNamespace(),
 				$this->getVariableTypes(),
+				$moreSpecificTypeHolders,
 				$this->inClosureBindScopeClass,
 				$this->getAnonymousFunctionReturnType(),
 				$this->getInFunctionCall(),
 				$this->isNegated(),
-				$moreSpecificTypes,
 				$this->inFirstLevelStatement
 			);
 		}
@@ -1569,38 +2426,60 @@ class Scope
 		);
 	}
 
-	public function filterByTruthyValue(Expr $expr): self
+	public function filterByTruthyValue(Expr $expr, bool $defaultHandleFunctions = false): self
 	{
-		$specifiedTypes = $this->typeSpecifier->specifyTypesInCondition($this, $expr, TypeSpecifier::CONTEXT_TRUTHY);
+		$specifiedTypes = $this->typeSpecifier->specifyTypesInCondition($this, $expr, TypeSpecifierContext::createTruthy(), $defaultHandleFunctions);
 		return $this->filterBySpecifiedTypes($specifiedTypes);
 	}
 
-	public function filterByFalseyValue(Expr $expr): self
+	public function filterByFalseyValue(Expr $expr, bool $defaultHandleFunctions = false): self
 	{
-		$specifiedTypes = $this->typeSpecifier->specifyTypesInCondition($this, $expr, TypeSpecifier::CONTEXT_FALSEY);
+		$specifiedTypes = $this->typeSpecifier->specifyTypesInCondition($this, $expr, TypeSpecifierContext::createFalsey(), $defaultHandleFunctions);
 		return $this->filterBySpecifiedTypes($specifiedTypes);
 	}
 
-	private function filterBySpecifiedTypes(SpecifiedTypes $specifiedTypes): self
+	public function filterBySpecifiedTypes(SpecifiedTypes $specifiedTypes): self
 	{
+		$typeSpecifications = [];
+		foreach ($specifiedTypes->getSureTypes() as $exprString => [$expr, $type]) {
+			$typeSpecifications[] = [
+				'sure' => true,
+				'exprString' => $exprString,
+				'expr' => $expr,
+				'type' => $type,
+			];
+		}
+		foreach ($specifiedTypes->getSureNotTypes() as $exprString => [$expr, $type]) {
+			$typeSpecifications[] = [
+				'sure' => false,
+				'exprString' => $exprString,
+				'expr' => $expr,
+				'type' => $type,
+			];
+		}
+
+		usort($typeSpecifications, static function (array $a, array $b): int {
+			$length = strlen((string) $a['exprString']) - strlen((string) $b['exprString']);
+			if ($length !== 0) {
+				return $length;
+			}
+
+			return $b['sure'] - $a['sure'];
+		});
+
 		$scope = $this;
-		foreach ($specifiedTypes->getSureTypes() as list($expr, $type)) {
-			$type = TypeCombinator::intersect($type, $this->getType($expr));
-			$scope = $scope->specifyExpressionType($expr, $type);
+		foreach ($typeSpecifications as $typeSpecification) {
+			$expr = $typeSpecification['expr'];
+			$type = $typeSpecification['type'];
+			if ($typeSpecification['sure']) {
+				$type = TypeCombinator::intersect($type, $this->getType($expr));
+				$scope = $scope->specifyExpressionType($expr, $type);
+			} else {
+				$scope = $scope->removeTypeFromExpression($expr, $type);
+			}
 		}
-		foreach ($specifiedTypes->getSureNotTypes() as list($expr, $type)) {
-			$scope = $scope->removeTypeFromExpression($expr, $type);
-		}
+
 		return $scope;
-	}
-
-	public function specifyFetchedPropertyFromIsset(PropertyFetch $expr): self
-	{
-		$exprString = $this->printer->prettyPrintExpr($expr);
-
-		return $this->addMoreSpecificTypes([
-			$exprString => new MixedType(),
-		]);
 	}
 
 	public function specifyFetchedStaticPropertyFromIsset(Expr\StaticPropertyFetch $expr): self
@@ -1614,44 +2493,34 @@ class Scope
 
 	public function enterNegation(): self
 	{
-		return new self(
-			$this->broker,
-			$this->printer,
-			$this->typeSpecifier,
-			$this->getFile(),
-			$this->getAnalysedContextFile(),
+		return $this->scopeFactory->create(
+			$this->context,
 			$this->isDeclareStrictTypes(),
-			$this->isInClass() ? $this->getClassReflection() : null,
 			$this->getFunction(),
 			$this->getNamespace(),
 			$this->getVariableTypes(),
+			$this->moreSpecificTypes,
 			$this->inClosureBindScopeClass,
 			$this->getAnonymousFunctionReturnType(),
 			$this->getInFunctionCall(),
 			!$this->isNegated(),
-			$this->moreSpecificTypes,
 			$this->inFirstLevelStatement
 		);
 	}
 
 	public function enterFirstLevelStatements(): self
 	{
-		return new self(
-			$this->broker,
-			$this->printer,
-			$this->typeSpecifier,
-			$this->getFile(),
-			$this->getAnalysedContextFile(),
+		return $this->scopeFactory->create(
+			$this->context,
 			$this->isDeclareStrictTypes(),
-			$this->isInClass() ? $this->getClassReflection() : null,
 			$this->getFunction(),
 			$this->getNamespace(),
 			$this->getVariableTypes(),
+			$this->moreSpecificTypes,
 			$this->inClosureBindScopeClass,
 			$this->getAnonymousFunctionReturnType(),
 			$this->getInFunctionCall(),
 			$this->isNegated(),
-			$this->moreSpecificTypes,
 			true,
 			$this->currentlyAssignedExpressions
 		);
@@ -1659,22 +2528,17 @@ class Scope
 
 	public function exitFirstLevelStatements(): self
 	{
-		return new self(
-			$this->broker,
-			$this->printer,
-			$this->typeSpecifier,
-			$this->getFile(),
-			$this->getAnalysedContextFile(),
+		return $this->scopeFactory->create(
+			$this->context,
 			$this->isDeclareStrictTypes(),
-			$this->isInClass() ? $this->getClassReflection() : null,
 			$this->getFunction(),
 			$this->getNamespace(),
 			$this->getVariableTypes(),
+			$this->moreSpecificTypes,
 			$this->inClosureBindScopeClass,
 			$this->getAnonymousFunctionReturnType(),
 			$this->getInFunctionCall(),
 			$this->isNegated(),
-			$this->moreSpecificTypes,
 			false,
 			$this->currentlyAssignedExpressions
 		);
@@ -1690,29 +2554,28 @@ class Scope
 		return $this->negated;
 	}
 
+	/**
+	 * @param Type[] $types
+	 * @return self
+	 */
 	private function addMoreSpecificTypes(array $types): self
 	{
-		$moreSpecificTypes = $this->moreSpecificTypes;
+		$moreSpecificTypeHolders = $this->moreSpecificTypes;
 		foreach ($types as $exprString => $type) {
-			$moreSpecificTypes[$exprString] = $type;
+			$moreSpecificTypeHolders[$exprString] = VariableTypeHolder::createYes($type);
 		}
 
-		return new self(
-			$this->broker,
-			$this->printer,
-			$this->typeSpecifier,
-			$this->getFile(),
-			$this->getAnalysedContextFile(),
+		return $this->scopeFactory->create(
+			$this->context,
 			$this->isDeclareStrictTypes(),
-			$this->isInClass() ? $this->getClassReflection() : null,
 			$this->getFunction(),
 			$this->getNamespace(),
 			$this->getVariableTypes(),
+			$moreSpecificTypeHolders,
 			$this->inClosureBindScopeClass,
 			$this->getAnonymousFunctionReturnType(),
 			$this->getInFunctionCall(),
 			$this->isNegated(),
-			$moreSpecificTypes,
 			$this->inFirstLevelStatement
 		);
 	}
@@ -1731,7 +2594,7 @@ class Scope
 		return $this->canAccessClassMember($methodReflection->getPrototype());
 	}
 
-	public function canAccessConstant(ClassConstantReflection $constantReflection): bool
+	public function canAccessConstant(ConstantReflection $constantReflection): bool
 	{
 		return $this->canAccessClassMember($constantReflection);
 	}
@@ -1775,14 +2638,15 @@ class Scope
 		$descriptions = [];
 		foreach ($this->getVariableTypes() as $name => $variableTypeHolder) {
 			$key = sprintf('$%s (%s)', $name, $variableTypeHolder->getCertainty()->describe());
-			$descriptions[$key] = $variableTypeHolder->getType()->describe();
+			$descriptions[$key] = $variableTypeHolder->getType()->describe(VerbosityLevel::value());
 		}
-		foreach ($this->moreSpecificTypes as $exprString => $type) {
-			$key = $exprString;
-			if (isset($descriptions[$key])) {
-				$key .= '-specified';
-			}
-			$descriptions[$key] = $type->describe();
+		foreach ($this->moreSpecificTypes as $exprString => $typeHolder) {
+			$key = sprintf(
+				'%s-specified (%s)',
+				$exprString,
+				$typeHolder->getCertainty()->describe()
+			);
+			$descriptions[$key] = $typeHolder->getType()->describe(VerbosityLevel::value());
 		}
 
 		return $descriptions;

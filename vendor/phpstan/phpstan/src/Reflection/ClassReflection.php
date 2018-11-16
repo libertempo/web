@@ -2,17 +2,20 @@
 
 namespace PHPStan\Reflection;
 
-use PHPStan\Analyser\Scope;
 use PHPStan\Broker\Broker;
+use PHPStan\PhpDoc\ResolvedPhpDocBlock;
 use PHPStan\Reflection\Php\PhpClassReflectionExtension;
-use PHPStan\Reflection\Php\PhpMethodReflection;
 use PHPStan\Reflection\Php\PhpPropertyReflection;
+use PHPStan\Type\FileTypeMapper;
 
-class ClassReflection
+class ClassReflection implements DeprecatableReflection, InternableReflection, FinalizableReflection, ReflectionWithFilename
 {
 
 	/** @var \PHPStan\Broker\Broker */
 	private $broker;
+
+	/** @var \PHPStan\Type\FileTypeMapper */
+	private $fileTypeMapper;
 
 	/** @var \PHPStan\Reflection\PropertiesClassReflectionExtension[] */
 	private $propertiesClassReflectionExtensions;
@@ -26,8 +29,8 @@ class ClassReflection
 	/** @var \ReflectionClass */
 	private $reflection;
 
-	/** @var bool */
-	private $anonymous;
+	/** @var string|null */
+	private $anonymousFilename;
 
 	/** @var \PHPStan\Reflection\MethodReflection[] */
 	private $methods = [];
@@ -35,27 +38,47 @@ class ClassReflection
 	/** @var \PHPStan\Reflection\PropertyReflection[] */
 	private $properties = [];
 
-	/** @var \PHPStan\Reflection\ClassConstantReflection[] */
+	/** @var \PHPStan\Reflection\ConstantReflection[] */
 	private $constants;
 
 	/** @var int[]|null */
 	private $classHierarchyDistances;
 
+	/** @var bool|null */
+	private $isDeprecated;
+
+	/** @var bool|null */
+	private $isInternal;
+
+	/** @var bool|null */
+	private $isFinal;
+
+	/**
+	 * @param Broker $broker
+	 * @param \PHPStan\Type\FileTypeMapper $fileTypeMapper
+	 * @param \PHPStan\Reflection\PropertiesClassReflectionExtension[] $propertiesClassReflectionExtensions
+	 * @param \PHPStan\Reflection\MethodsClassReflectionExtension[] $methodsClassReflectionExtensions
+	 * @param string $displayName
+	 * @param \ReflectionClass $reflection
+	 * @param string|null $anonymousFilename
+	 */
 	public function __construct(
 		Broker $broker,
+		FileTypeMapper $fileTypeMapper,
 		array $propertiesClassReflectionExtensions,
 		array $methodsClassReflectionExtensions,
 		string $displayName,
 		\ReflectionClass $reflection,
-		bool $anonymous
+		?string $anonymousFilename
 	)
 	{
 		$this->broker = $broker;
+		$this->fileTypeMapper = $fileTypeMapper;
 		$this->propertiesClassReflectionExtensions = $propertiesClassReflectionExtensions;
 		$this->methodsClassReflectionExtensions = $methodsClassReflectionExtensions;
 		$this->displayName = $displayName;
 		$this->reflection = $reflection;
-		$this->anonymous = $anonymous;
+		$this->anonymousFilename = $anonymousFilename;
 	}
 
 	public function getNativeReflection(): \ReflectionClass
@@ -68,6 +91,9 @@ class ClassReflection
 	 */
 	public function getFileName()
 	{
+		if ($this->anonymousFilename !== null) {
+			return $this->anonymousFilename;
+		}
 		$fileName = $this->reflection->getFileName();
 		if ($fileName === false) {
 			return false;
@@ -113,6 +139,15 @@ class ClassReflection
 				$this->getName() => $distance,
 			];
 			$currentClassReflection = $this->getNativeReflection();
+			foreach ($this->getNativeReflection()->getTraits() as $trait) {
+				$distance++;
+				if (array_key_exists($trait->getName(), $distances)) {
+					continue;
+				}
+
+				$distances[$trait->getName()] = $distance;
+			}
+
 			while ($currentClassReflection->getParentClass() !== false) {
 				$distance++;
 				$parentClassName = $currentClassReflection->getParentClass()->getName();
@@ -120,6 +155,14 @@ class ClassReflection
 					$distances[$parentClassName] = $distance;
 				}
 				$currentClassReflection = $currentClassReflection->getParentClass();
+				foreach ($currentClassReflection->getTraits() as $trait) {
+					$distance++;
+					if (array_key_exists($trait->getName(), $distances)) {
+						continue;
+					}
+
+					$distances[$trait->getName()] = $distance;
+				}
 			}
 			foreach ($this->getNativeReflection()->getInterfaces() as $interface) {
 				$distance++;
@@ -158,7 +201,7 @@ class ClassReflection
 		return false;
 	}
 
-	public function getMethod(string $methodName, Scope $scope): MethodReflection
+	public function getMethod(string $methodName, ClassMemberAccessAnswerer $scope): MethodReflection
 	{
 		$key = $methodName;
 		if ($scope->isInClass()) {
@@ -166,18 +209,21 @@ class ClassReflection
 		}
 		if (!isset($this->methods[$key])) {
 			foreach ($this->methodsClassReflectionExtensions as $extension) {
-				if ($extension->hasMethod($this, $methodName)) {
-					$method = $extension->getMethod($this, $methodName);
-					if ($scope->canCallMethod($method)) {
-						return $this->methods[$key] = $method;
-					}
-					$this->methods[$key] = $method;
+				if (!$extension->hasMethod($this, $methodName)) {
+					continue;
 				}
+
+				$method = $extension->getMethod($this, $methodName);
+				if ($scope->canCallMethod($method)) {
+					return $this->methods[$key] = $method;
+				}
+				$this->methods[$key] = $method;
 			}
 		}
 
 		if (!isset($this->methods[$key])) {
-			throw new \PHPStan\Reflection\MissingMethodFromReflectionException($this->getName(), $methodName);
+			$filename = $this->getFileName();
+			throw new \PHPStan\Reflection\MissingMethodFromReflectionException($this->getName(), $methodName, $filename !== false ? $filename : null);
 		}
 
 		return $this->methods[$key];
@@ -185,15 +231,30 @@ class ClassReflection
 
 	public function hasNativeMethod(string $methodName): bool
 	{
-		return $this->getPhpExtension()->hasMethod($this, $methodName);
+		return $this->getPhpExtension()->hasNativeMethod($this, $methodName);
 	}
 
-	public function getNativeMethod(string $methodName): PhpMethodReflection
+	public function getNativeMethod(string $methodName): MethodReflection
 	{
 		if (!$this->hasNativeMethod($methodName)) {
-			throw new \PHPStan\Reflection\MissingMethodFromReflectionException($this->getName(), $methodName);
+			$filename = $this->getFileName();
+			throw new \PHPStan\Reflection\MissingMethodFromReflectionException($this->getName(), $methodName, $filename !== false ? $filename : null);
 		}
 		return $this->getPhpExtension()->getNativeMethod($this, $methodName);
+	}
+
+	public function hasConstructor(): bool
+	{
+		return $this->reflection->getConstructor() !== null;
+	}
+
+	public function getConstructor(): MethodReflection
+	{
+		$constructor = $this->reflection->getConstructor();
+		if ($constructor === null) {
+			throw new \PHPStan\ShouldNotHappenException();
+		}
+		return $this->getNativeMethod($constructor->getName());
 	}
 
 	private function getPhpExtension(): PhpClassReflectionExtension
@@ -206,7 +267,7 @@ class ClassReflection
 		return $extension;
 	}
 
-	public function getProperty(string $propertyName, Scope $scope): PropertyReflection
+	public function getProperty(string $propertyName, ClassMemberAccessAnswerer $scope): PropertyReflection
 	{
 		$key = $propertyName;
 		if ($scope->isInClass()) {
@@ -214,18 +275,21 @@ class ClassReflection
 		}
 		if (!isset($this->properties[$key])) {
 			foreach ($this->propertiesClassReflectionExtensions as $extension) {
-				if ($extension->hasProperty($this, $propertyName)) {
-					$property = $extension->getProperty($this, $propertyName);
-					if ($scope->canAccessProperty($property)) {
-						return $this->properties[$key] = $property;
-					}
-					$this->properties[$key] = $property;
+				if (!$extension->hasProperty($this, $propertyName)) {
+					continue;
 				}
+
+				$property = $extension->getProperty($this, $propertyName);
+				if ($scope->canAccessProperty($property)) {
+					return $this->properties[$key] = $property;
+				}
+				$this->properties[$key] = $property;
 			}
 		}
 
 		if (!isset($this->properties[$key])) {
-			throw new \PHPStan\Reflection\MissingPropertyFromReflectionException($this->getName(), $propertyName);
+			$filename = $this->getFileName();
+			throw new \PHPStan\Reflection\MissingPropertyFromReflectionException($this->getName(), $propertyName, $filename !== false ? $filename : null);
 		}
 
 		return $this->properties[$key];
@@ -239,7 +303,8 @@ class ClassReflection
 	public function getNativeProperty(string $propertyName): PhpPropertyReflection
 	{
 		if (!$this->hasNativeProperty($propertyName)) {
-			throw new \PHPStan\Reflection\MissingPropertyFromReflectionException($this->getName(), $propertyName);
+			$filename = $this->getFileName();
+			throw new \PHPStan\Reflection\MissingPropertyFromReflectionException($this->getName(), $propertyName, $filename !== false ? $filename : null);
 		}
 		return $this->getPhpExtension()->getNativeProperty($this, $propertyName);
 	}
@@ -261,7 +326,7 @@ class ClassReflection
 
 	public function isAnonymous(): bool
 	{
-		return $this->anonymous;
+		return $this->anonymousFilename !== null;
 	}
 
 	public function isSubclassOf(string $className): bool
@@ -324,22 +389,29 @@ class ClassReflection
 		return $this->getNativeReflection()->hasConstant($name);
 	}
 
-	public function getConstant(string $name): ClassConstantReflection
+	public function getConstant(string $name): ConstantReflection
 	{
 		if (!isset($this->constants[$name])) {
-			if (PHP_VERSION_ID < 70100) {
-				$this->constants[$name] = new ObsoleteClassConstantReflection(
-					$this,
-					$name,
-					$this->getNativeReflection()->getConstant($name)
-				);
-			} else {
-				$reflectionConstant = $this->getNativeReflection()->getReflectionConstant($name);
-				$this->constants[$name] = new ClassConstantWithVisibilityReflection(
-					$this->broker->getClass($reflectionConstant->getDeclaringClass()->getName()),
-					$reflectionConstant
-				);
+			$reflectionConstant = $this->getNativeReflection()->getReflectionConstant($name);
+
+			$isDeprecated = false;
+			$isInternal = false;
+			if ($reflectionConstant->getDocComment() !== false && $this->getFileName() !== false) {
+				$docComment = $reflectionConstant->getDocComment();
+				$fileName = $this->getFileName();
+				$className = $reflectionConstant->getDeclaringClass()->getName();
+				$resolvedPhpDoc = $this->fileTypeMapper->getResolvedPhpDoc($fileName, $className, null, $docComment);
+
+				$isDeprecated = $resolvedPhpDoc->isDeprecated();
+				$isInternal = $resolvedPhpDoc->isInternal();
 			}
+
+			$this->constants[$name] = new ClassConstantReflection(
+				$this->broker->getClass($reflectionConstant->getDeclaringClass()->getName()),
+				$reflectionConstant,
+				$isDeprecated,
+				$isInternal
+			);
 		}
 		return $this->constants[$name];
 	}
@@ -349,6 +421,9 @@ class ClassReflection
 		return in_array($traitName, $this->getTraitNames(), true);
 	}
 
+	/**
+	 * @return string[]
+	 */
 	private function getTraitNames(): array
 	{
 		$class = $this->reflection;
@@ -359,6 +434,52 @@ class ClassReflection
 		}
 
 		return $traitNames;
+	}
+
+	public function isDeprecated(): bool
+	{
+		if ($this->isDeprecated === null) {
+			$resolvedPhpDoc = $this->getResolvedPhpDoc();
+			$this->isDeprecated = $resolvedPhpDoc !== null && $resolvedPhpDoc->isDeprecated();
+		}
+
+		return $this->isDeprecated;
+	}
+
+	public function isInternal(): bool
+	{
+		if ($this->isInternal === null) {
+			$resolvedPhpDoc = $this->getResolvedPhpDoc();
+			$this->isInternal = $resolvedPhpDoc !== null && $resolvedPhpDoc->isInternal();
+		}
+
+		return $this->isInternal;
+	}
+
+	public function isFinal(): bool
+	{
+		if ($this->isFinal === null) {
+			$resolvedPhpDoc = $this->getResolvedPhpDoc();
+			$this->isFinal = $this->reflection->isFinal()
+				|| ($resolvedPhpDoc !== null && $resolvedPhpDoc->isFinal());
+		}
+
+		return $this->isFinal;
+	}
+
+	private function getResolvedPhpDoc(): ?ResolvedPhpDocBlock
+	{
+		$fileName = $this->reflection->getFileName();
+		if ($fileName === false) {
+			return null;
+		}
+
+		$docComment = $this->reflection->getDocComment();
+		if ($docComment === false) {
+			return null;
+		}
+
+		return $this->fileTypeMapper->getResolvedPhpDoc($fileName, $this->getName(), null, $docComment);
 	}
 
 }

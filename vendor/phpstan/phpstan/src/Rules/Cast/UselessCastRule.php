@@ -4,10 +4,10 @@ namespace PHPStan\Rules\Cast;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\Cast;
-use PhpParser\Node\Expr\Cast\Object_;
 use PHPStan\Analyser\Scope;
-use PHPStan\Type\FloatType;
-use PHPStan\Type\UnionType;
+use PHPStan\Type\ErrorType;
+use PHPStan\Type\TypeUtils;
+use PHPStan\Type\VerbosityLevel;
 
 class UselessCastRule implements \PHPStan\Rules\Rule
 {
@@ -24,26 +24,19 @@ class UselessCastRule implements \PHPStan\Rules\Rule
 	 */
 	public function processNode(Node $node, Scope $scope): array
 	{
-		if ($node instanceof Object_) {
+		$castType = $scope->getType($node);
+		if ($castType instanceof ErrorType) {
 			return [];
 		}
+		$castType = TypeUtils::generalizeType($castType);
 
 		$expressionType = $scope->getType($node->expr);
-		if ($expressionType instanceof UnionType) {
-			return [];
-		}
-
-		$castType = $scope->getType($node);
-		if ($castType instanceof FloatType && $node->expr instanceof Node\Expr\BinaryOp\Div) {
-			return [];
-		}
-
-		if (get_class($expressionType) === get_class($castType)) {
+		if ($castType->isSuperTypeOf($expressionType)->yes()) {
 			return [
 				sprintf(
 					'Casting to %s something that\'s already %s.',
-					$castType->describe(),
-					$expressionType->describe()
+					$castType->describe(VerbosityLevel::typeOnly()),
+					$expressionType->describe(VerbosityLevel::typeOnly())
 				),
 			];
 		}

@@ -6,7 +6,10 @@ use PHPStan\Analyser\Analyser;
 use PHPStan\Analyser\Error;
 use PHPStan\Analyser\NodeScopeResolver;
 use PHPStan\Analyser\TypeSpecifier;
+use PHPStan\Broker\AnonymousClassNameHelper;
 use PHPStan\Cache\Cache;
+use PHPStan\File\FileHelper;
+use PHPStan\File\RelativePathHelper;
 use PHPStan\PhpDoc\PhpDocStringResolver;
 use PHPStan\Rules\Registry;
 use PHPStan\Rules\Rule;
@@ -15,10 +18,20 @@ use PHPStan\Type\FileTypeMapper;
 abstract class RuleTestCase extends \PHPStan\Testing\TestCase
 {
 
-	/** @var \PHPStan\Analyser\Analyser */
+	/** @var \PHPStan\Analyser\Analyser|null */
 	private $analyser;
 
 	abstract protected function getRule(): Rule;
+
+	protected function getTypeSpecifier(): TypeSpecifier
+	{
+		return $this->createTypeSpecifier(
+			new \PhpParser\PrettyPrinter\Standard(),
+			$this->createBroker(),
+			$this->getMethodTypeSpecifyingExtensions(),
+			$this->getStaticMethodTypeSpecifyingExtensions()
+		);
+	}
 
 	private function getAnalyser(): Analyser
 	{
@@ -30,26 +43,28 @@ abstract class RuleTestCase extends \PHPStan\Testing\TestCase
 			$broker = $this->createBroker();
 			$printer = new \PhpParser\PrettyPrinter\Standard();
 			$fileHelper = $this->getFileHelper();
-			$typeSpecifier = new TypeSpecifier($printer);
-			$this->analyser = new Analyser(
+			$typeSpecifier = $this->createTypeSpecifier(
+				$printer,
 				$broker,
+				$this->getMethodTypeSpecifyingExtensions(),
+				$this->getStaticMethodTypeSpecifyingExtensions()
+			);
+			$currentWorkingDirectory = $this->getCurrentWorkingDirectory();
+			$this->analyser = new Analyser(
+				$this->createScopeFactory($broker, $typeSpecifier),
 				$this->getParser(),
 				$registry,
 				new NodeScopeResolver(
 					$broker,
 					$this->getParser(),
-					$printer,
-					new FileTypeMapper($this->getParser(), $this->getContainer()->getByType(PhpDocStringResolver::class), $this->createMock(Cache::class)),
+					new FileTypeMapper($this->getParser(), self::getContainer()->getByType(PhpDocStringResolver::class), $this->createMock(Cache::class), new AnonymousClassNameHelper(new FileHelper($currentWorkingDirectory), new RelativePathHelper($currentWorkingDirectory, DIRECTORY_SEPARATOR, [])), new \PHPStan\PhpDoc\TypeNodeResolver($this->getTypeNodeResolverExtensions())),
 					$fileHelper,
+					$typeSpecifier,
 					$this->shouldPolluteScopeWithLoopInitialAssignments(),
 					$this->shouldPolluteCatchScopeWithTryAssignments(),
 					[]
 				),
-				$printer,
-				$typeSpecifier,
-				$fileHelper,
 				[],
-				null,
 				true,
 				50
 			);
@@ -58,18 +73,45 @@ abstract class RuleTestCase extends \PHPStan\Testing\TestCase
 		return $this->analyser;
 	}
 
-	public function analyse(array $files, array $expectedErrors)
+	/**
+	 * @return \PHPStan\Type\MethodTypeSpecifyingExtension[]
+	 */
+	protected function getMethodTypeSpecifyingExtensions(): array
+	{
+		return [];
+	}
+
+	/**
+	 * @return \PHPStan\Type\StaticMethodTypeSpecifyingExtension[]
+	 */
+	protected function getStaticMethodTypeSpecifyingExtensions(): array
+	{
+		return [];
+	}
+
+	/**
+	 * @return \PHPStan\PhpDoc\TypeNodeResolverExtension[]
+	 */
+	protected function getTypeNodeResolverExtensions(): array
+	{
+		return [];
+	}
+
+	/**
+	 * @param string[] $files
+	 * @param mixed[] $expectedErrors
+	 */
+	public function analyse(array $files, array $expectedErrors): void
 	{
 		$files = array_map([$this->getFileHelper(), 'normalizePath'], $files);
 		$actualErrors = $this->getAnalyser()->analyse($files, false);
-		$this->assertInternalType('array', $actualErrors);
 
-		$strictlyTypedSprintf = function (int $line, string $message): string {
+		$strictlyTypedSprintf = static function (int $line, string $message): string {
 			return sprintf('%02d: %s', $line, $message);
 		};
 
 		$expectedErrors = array_map(
-			function (array $error) use ($strictlyTypedSprintf): string {
+			static function (array $error) use ($strictlyTypedSprintf): string {
 				if (!isset($error[0])) {
 					throw new \InvalidArgumentException('Missing expected error message.');
 				}
@@ -82,7 +124,7 @@ abstract class RuleTestCase extends \PHPStan\Testing\TestCase
 		);
 
 		$actualErrors = array_map(
-			function (Error $error): string {
+			static function (Error $error): string {
 				return sprintf('%02d: %s', $error->getLine(), $error->getMessage());
 			},
 			$actualErrors

@@ -4,6 +4,8 @@ namespace PHPStan\PhpDoc;
 
 use PHPStan\Broker\Broker;
 use PHPStan\Reflection\ClassReflection;
+use PHPStan\Reflection\Php\PhpMethodReflection;
+use PHPStan\Reflection\Php\PhpPropertyReflection;
 
 class PhpDocBlock
 {
@@ -132,15 +134,6 @@ class PhpDocBlock
 		return new self($docComment, $file, $class);
 	}
 
-	/**
-	 * @param \PHPStan\Broker\Broker $broker
-	 * @param \PHPStan\Reflection\ClassReflection $classReflection
-	 * @param string $name
-	 * @param string $hasMethodName
-	 * @param string $getMethodName
-	 * @param string $resolveMethodName
-	 * @return self|null
-	 */
 	private static function resolvePhpDocBlockFromClass(
 		Broker $broker,
 		ClassReflection $classReflection,
@@ -148,11 +141,17 @@ class PhpDocBlock
 		string $hasMethodName,
 		string $getMethodName,
 		string $resolveMethodName
-	)
+	): ?self
 	{
 		if ($classReflection->getFileName() !== false && $classReflection->$hasMethodName($name)) {
-			/** @var \PHPStan\Reflection\Php\PhpMethodReflection|\PHPStan\Reflection\Php\PhpPropertyReflection $parentReflection */
+			/** @var \PHPStan\Reflection\PropertyReflection|\PHPStan\Reflection\MethodReflection $parentReflection */
 			$parentReflection = $classReflection->$getMethodName($name);
+			if (
+				!$parentReflection instanceof PhpPropertyReflection
+				&& !$parentReflection instanceof PhpMethodReflection
+			) {
+				return null;
+			}
 			if ($parentReflection->getDocComment() !== false) {
 				return self::$resolveMethodName(
 					$broker,

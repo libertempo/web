@@ -31,12 +31,12 @@ class NonExistentDefinedFunctionRule implements \PHPStan\Rules\Rule
 	 */
 	public function processNode(Node $node, Scope $scope): array
 	{
-		$functionName = $node->name;
+		$functionName = $node->name->name;
 		if (isset($node->namespacedName)) {
 			$functionName = (string) $node->namespacedName;
 		}
 		$functionNameName = new Name($functionName);
-		if ($this->broker->hasFunction($functionNameName)) {
+		if ($this->broker->hasFunction($functionNameName, null)) {
 			return [];
 		}
 

@@ -3,6 +3,7 @@
 namespace PHPStan\Reflection\Php;
 
 use PHPStan\Reflection\ParameterReflection;
+use PHPStan\Reflection\PassedByReference;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypehintHelper;
@@ -16,13 +17,13 @@ class PhpParameterReflection implements ParameterReflection
 	/** @var \PHPStan\Type\Type|null */
 	private $phpDocType = null;
 
-	/** @var \PHPStan\Type\Type */
+	/** @var \PHPStan\Type\Type|null */
 	private $type;
 
-	/** @var \PHPStan\Type\Type */
+	/** @var \PHPStan\Type\Type|null */
 	private $nativeType;
 
-	public function __construct(\ReflectionParameter $reflection, Type $phpDocType = null)
+	public function __construct(\ReflectionParameter $reflection, ?Type $phpDocType)
 	{
 		$this->reflection = $reflection;
 		$this->phpDocType = $phpDocType;
@@ -56,9 +57,11 @@ class PhpParameterReflection implements ParameterReflection
 		return $this->type;
 	}
 
-	public function isPassedByReference(): bool
+	public function passedByReference(): PassedByReference
 	{
-		return $this->reflection->isPassedByReference();
+		return $this->reflection->isPassedByReference()
+			? PassedByReference::createCreatesNewVariable()
+			: PassedByReference::createNo();
 	}
 
 	public function isVariadic(): bool

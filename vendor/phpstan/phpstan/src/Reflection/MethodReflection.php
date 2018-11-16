@@ -2,9 +2,16 @@
 
 namespace PHPStan\Reflection;
 
-interface MethodReflection extends ParametersAcceptor, ClassMemberReflection
+interface MethodReflection extends ClassMemberReflection
 {
 
-	public function getPrototype(): self;
+	public function getName(): string;
+
+	public function getPrototype(): ClassMemberReflection;
+
+	/**
+	 * @return \PHPStan\Reflection\ParametersAcceptor[]
+	 */
+	public function getVariants(): array;
 
 }

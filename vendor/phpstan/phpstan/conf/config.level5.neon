@@ -4,9 +4,3 @@ includes:
 parameters:
 	checkFunctionArgumentTypes: true
 	checkArgumentsPassedByReference: true
-
-services:
-	-
-		class: PHPStan\Rules\Functions\CallToCountOnlyWithArrayOrCountableRule
-		tags:
-			- phpstan.rules.rule

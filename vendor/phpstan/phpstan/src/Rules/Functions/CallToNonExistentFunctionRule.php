@@ -10,14 +10,19 @@ use PHPStan\Broker\Broker;
 class CallToNonExistentFunctionRule implements \PHPStan\Rules\Rule
 {
 
-	/**
-	 * @var \PHPStan\Broker\Broker
-	 */
+	/** @var \PHPStan\Broker\Broker */
 	private $broker;
 
-	public function __construct(Broker $broker)
+	/** @var bool */
+	private $checkFunctionNameCase;
+
+	public function __construct(
+		Broker $broker,
+		bool $checkFunctionNameCase
+	)
 	{
 		$this->broker = $broker;
+		$this->checkFunctionNameCase = $checkFunctionNameCase;
 	}
 
 	public function getNodeType(): string
@@ -36,10 +41,6 @@ class CallToNonExistentFunctionRule implements \PHPStan\Rules\Rule
 			return [];
 		}
 
-		if (strpos((string) $node->name, 'apache_') === 0 || strpos((string) $node->name, 'fastcgi_') === 0) {
-			return [];
-		}
-
 		if (!$this->broker->hasFunction($node->name, $scope)) {
 			return [sprintf('Function %s not found.', (string) $node->name)];
 		}
@@ -47,8 +48,15 @@ class CallToNonExistentFunctionRule implements \PHPStan\Rules\Rule
 		$function = $this->broker->getFunction($node->name, $scope);
 		$name = (string) $node->name;
 
-		if ($function->getName() !== $this->broker->resolveFunctionName($node->name, $scope)) {
-			return [sprintf('Call to function %s() with incorrect case: %s', $function->getName(), $name)];
+		if ($this->checkFunctionNameCase) {
+			/** @var string $calledFunctionName */
+			$calledFunctionName = $this->broker->resolveFunctionName($node->name, $scope);
+			if (
+				strtolower($function->getName()) === strtolower($calledFunctionName)
+				&& $function->getName() !== $calledFunctionName
+			) {
+				return [sprintf('Call to function %s() with incorrect case: %s', $function->getName(), $name)];
+			}
 		}
 
 		return [];

@@ -45,6 +45,6 @@
         "atoum/atoum": "3.3.0",
         "symfony/console": "3.2",
         "codacy/coverage": "1.4.1",
-        "phpstan/phpstan": "0.9"
+        "phpstan/phpstan": "0.10.5"
     }
 }

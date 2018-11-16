@@ -3,6 +3,7 @@
 namespace PHPStan\Rules\Classes;
 
 use PhpParser\Node;
+use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\ClassMethod;
 use PHPStan\Analyser\Scope;
@@ -31,7 +32,11 @@ class UnusedConstructorParametersRule implements \PHPStan\Rules\Rule
 	 */
 	public function processNode(Node $node, Scope $scope): array
 	{
-		if ($node->name !== '__construct' || $node->stmts === null) {
+		if (!$scope->isInClass()) {
+			throw new \PHPStan\ShouldNotHappenException();
+		}
+
+		if ($node->name->name !== '__construct' || $node->stmts === null) {
 			return [];
 		}
 
@@ -45,8 +50,12 @@ class UnusedConstructorParametersRule implements \PHPStan\Rules\Rule
 		}
 
 		return $this->check->getUnusedParameters(
-			array_map(function (Param $parameter): string {
-				return $parameter->name;
+			$scope,
+			array_map(static function (Param $parameter): string {
+				if (!$parameter->var instanceof Variable || !is_string($parameter->var->name)) {
+					throw new \PHPStan\ShouldNotHappenException();
+				}
+				return $parameter->var->name;
 			}, $node->params),
 			$node->stmts,
 			$message

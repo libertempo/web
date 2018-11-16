@@ -36,11 +36,11 @@ class ReadingWriteOnlyPropertiesRule implements \PHPStan\Rules\Rule
 
 	public function getNodeType(): string
 	{
-		return \PhpParser\Node::class;
+		return \PhpParser\Node\Expr::class;
 	}
 
 	/**
-	 * @param \PhpParser\Node $node
+	 * @param \PhpParser\Node\Expr $node
 	 * @param Scope $scope
 	 * @return string[]
 	 */
@@ -75,9 +75,6 @@ class ReadingWriteOnlyPropertiesRule implements \PHPStan\Rules\Rule
 
 		if (!$propertyReflection->isReadable()) {
 			$propertyDescription = $this->propertyDescriptor->describeProperty($propertyReflection, $node);
-			if ($propertyDescription === null) {
-				return [];
-			}
 
 			return [
 				sprintf(

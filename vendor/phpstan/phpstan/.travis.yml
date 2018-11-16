@@ -1,6 +1,5 @@
 language: php
 php:
-  - 7.0
   - 7.1
   - 7.2
   - master
@@ -17,9 +16,16 @@ matrix:
       env: dependencies=highest
 
 before_script:
-  - composer self-update
-  - if [ "$dependencies" = "lowest" ]; then composer update --prefer-lowest --no-interaction; fi;
-  - if [ "$dependencies" = "highest" ]; then composer update --no-interaction; fi;
+  - if php --ri xdebug >/dev/null; then phpenv config-rm xdebug.ini; fi
+
+install:
+  - if [ "$dependencies" = "lowest" ]; then composer update --prefer-lowest --no-interaction; fi
+  - if [ "$dependencies" = "highest" ]; then composer update --no-interaction; fi
 
 script:
   - vendor/bin/phing
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+    - tmp

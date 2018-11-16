@@ -11,19 +11,13 @@ use PHPStan\Rules\ClassCaseSensitivityCheck;
 class ExistingClassesInPropertiesRule implements \PHPStan\Rules\Rule
 {
 
-	/**
-	 * @var \PHPStan\Broker\Broker
-	 */
+	/** @var \PHPStan\Broker\Broker */
 	private $broker;
 
-	/**
-	 * @var \PHPStan\Rules\ClassCaseSensitivityCheck
-	 */
+	/** @var \PHPStan\Rules\ClassCaseSensitivityCheck */
 	private $classCaseSensitivityCheck;
 
-	/**
-	 * @var bool
-	 */
+	/** @var bool */
 	private $checkClassCaseSensitivity;
 
 	public function __construct(
@@ -49,19 +43,31 @@ class ExistingClassesInPropertiesRule implements \PHPStan\Rules\Rule
 	 */
 	public function processNode(Node $node, Scope $scope): array
 	{
-		$propertyReflection = $scope->getClassReflection()->getNativeProperty($node->name);
+		if (!$scope->isInClass()) {
+			throw new \PHPStan\ShouldNotHappenException();
+		}
+
+		$propertyReflection = $scope->getClassReflection()->getNativeProperty($node->name->name);
 		$propertyType = $propertyReflection->getType();
 
 		$errors = [];
 		foreach ($propertyType->getReferencedClasses() as $referencedClass) {
 			if ($this->broker->hasClass($referencedClass)) {
+				if ($this->broker->getClass($referencedClass)->isTrait()) {
+					$errors[] = sprintf(
+						'Property %s::$%s has invalid type %s.',
+						$propertyReflection->getDeclaringClass()->getDisplayName(),
+						$node->name->name,
+						$referencedClass
+					);
+				}
 				continue;
 			}
 
 			$errors[] = sprintf(
 				'Property %s::$%s has unknown class %s as its type.',
 				$propertyReflection->getDeclaringClass()->getDisplayName(),
-				$node->name,
+				$node->name->name,
 				$referencedClass
 			);
 		}
