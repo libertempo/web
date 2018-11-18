@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 /**
  * $titre
  * $tab_all_users_du_hr
@@ -33,7 +33,7 @@
                         <td><?= _('resp_ajout_conges_oui') ?>
                             <input type="checkbox" name="tab_calcul_proportionnel[<?= $id_conges ?>]" value="TRUE" checked>
                         </td>
-                        <td><input class="form-control" type="text" name="tab_new_comment_all[<?= $id_conges ?>]" size="30" maxlength="200" value=""></td>
+                        <td><input class="form-control" type="text" name="tab_new_comment_all[<?= $id_conges ?>]" size="30" maxlength="200"></td>
                     </tr>
                 <?php endforeach ; ?>
                 </table>
@@ -46,7 +46,7 @@
     <br>
     <?php if (!empty($list_group)) : ?>
     <h2><?= _('resp_ajout_conges_ajout_groupe') ?></h2>
-    <form action="<?= $PHP_SELF ?>?onglet=ajout_conges" method="POST">
+    <form action="<?= $PHP_SELF ?>" method="POST">
         <fieldset class="cal_saisie">
             <div class="table-responsive">
                 <table class="table table-hover table-condensed table-striped">
@@ -55,7 +55,7 @@
                         <td colspan="3">
                             <select name="choix_groupe">
                             <?php foreach ($groupes as $groupe) : ?>
-                                <option value="<?= $group['g_gid'] ?>"><?= $group['g_groupename'] ?></option>
+                                <option value="<?= $groupe['g_gid'] ?>"><?= $groupe['g_groupename'] ?></option>
                             <?php endforeach ; ?>
                         </td>
                     </tr>
@@ -72,7 +72,7 @@
                             <input type="checkbox" name="tab_calcul_proportionnel[<?= $id_conges ?>]" value="TRUE" checked>
                         </td>
                         <td>
-                            <input class="form-control" type="text" name="tab_new_comment_all[<?= $id_conges ?>" size="30" maxlength="200" value="">
+                            <input class="form-control" type="text" name="tab_new_comment_all[<?= $id_conges ?>]" size="30" maxlength="200">
                         </td>
                     </tr>
                 <?php endforeach ; ?>
@@ -81,7 +81,7 @@
             <p><?= _('resp_ajout_conges_calcul_prop_arondi') ?> ! </p>
             <input class="btn" type="submit" value="<?= _('form_valid_groupe') ?>">
         </fieldset>
-        <input type="hidden" name="ajout_groupe" value="TRUE">
+        <input type="hidden" name="ajout_groupe" value="true">
     </form>
     <br>
 <?php endif ; ?>
@@ -118,7 +118,7 @@
                         <td><?= $tab_current_user['prenom'] ?></td>
                         <td><?= $tab_current_user['quotite'] ?>%</td>
                     <?php foreach($tab_type_cong as $id_conges => $libelle) : ?>
-                        <td><?= $tab_conges[$libelle]['nb_an'] ?> <i>(<?= $tab_conges[$libelle]['solde'] ?>)</i></td>
+                        <td><?= $tab_conges[$libelle]['nb_an'] ?? 0 ?> <i>(<?= $tab_conges[$libelle]['solde'] ?? 0 ?>)</i></td>
                         <td align="center" class="histo">
                             <input class="form-control" type="text" name="tab_champ_saisie[<?= $current_login ?>][<?= $id_conges ?>]" size="6" maxlength="6" value="0">
                         </td>

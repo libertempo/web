@@ -34,6 +34,7 @@ switch ($urn) {
     case 'hr':
         $_GET['onglet'] = $resource;
         require_once ROOT_PATH . 'hr/hr_index.php';
+        break;
     case 'admin':
         $_GET['onglet'] = $resource;
         require_once ROOT_PATH . 'admin/admin_index.php';

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 /*
  * $tab_type_cong
@@ -91,7 +91,7 @@ function ajout_global($tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_ne
     }
 }
 
-function ajout_global_groupe($choix_groupe, $tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all)
+function ajout_global_groupe($choix_groupe, array $tab_new_nb_conges_all, array $tab_calcul_proportionnel, array $tab_new_comment_all)
 {
     $db = \includes\SQL::singleton();
 
@@ -196,18 +196,17 @@ if ('true' === $ajout_global) {
 }
 
 if ('true' === $ajout_groupe) {
-
     $tab_new_nb_conges_all = getpost_variable('tab_new_nb_conges_all');
     $tab_calcul_proportionnel = getpost_variable('tab_calcul_proportionnel');
     $tab_new_comment_all = getpost_variable('tab_new_comment_all');
     $choix_groupe = getpost_variable('choix_groupe');
 
     ajout_global_groupe($choix_groupe, $tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all);
-    redirect( ROOT_PATH . 'hr/hr_index.php');
+    redirect( ROOT_PATH . 'hr/page_principale');
 }
 
 $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
-$PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+$PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
 
 // recup du tableau des types de conges (seulement les congesexceptionnels )
 if ($config->isCongesExceptionnelsActive()) {
@@ -227,7 +226,7 @@ if (!empty($list_group)) {
     $sql_group = "SELECT g_gid, g_groupename FROM conges_groupe WHERE g_gid IN ($list_group) ORDER BY g_groupename "  ;
     $resultatGroupe = \includes\SQL::singleton()->query($sql_group);
 
-    $groupes = $resultatGroupe->fetchAll();
+    $groupes = $resultatGroupe->fetch_all();
 } else {
     $groupes = [];
 }
