@@ -222,7 +222,7 @@ class Fonctions
     /**
      * Encapsule le comportement du module d'édition des utilisateurs
      *
-     * @return void
+     * @return string
      * @access public
      * @static
      */
@@ -511,7 +511,7 @@ class Fonctions
     /**
      * Encapsule le comportement du module de l'édition papier
      *
-     * @return void
+     * @return string
      * @access public
      * @static
      */

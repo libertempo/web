@@ -407,7 +407,7 @@ class Fonctions
      * Encapsule le comportement du module de modification d'absence
      *
      *
-     * @return void
+     * @return string
      * @access public
      * @static
      */
@@ -569,7 +569,7 @@ class Fonctions
      * Encapsule le comportement du module de suppression d'absence
      *
      *
-     * @return void
+     * @return string
      * @access public
      * @static
      */

@@ -176,7 +176,7 @@ class Database extends \mysqli
 }
 
 
-class Database_MySQLi_Result extends \MySQLi_Result
+class Database_MySQLi_Result extends \mysqli_result
 {
     public function fetch_all($result_type = NULL)
     {
