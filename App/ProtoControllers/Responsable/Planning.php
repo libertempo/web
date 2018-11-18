@@ -20,18 +20,12 @@ class Planning extends \App\ProtoControllers\APlanning
     public static function putPlanning($id, array $put)
     {
         $id = (int) $id;
-        $subalternes = \App\ProtoControllers\Responsable::getUsersRespDirect($_SESSION['userlogin']);
         $utilisateursPlannings = array_map(function (array $u) {
             return $u['u_login'];
         }, \App\ProtoControllers\Utilisateur::getListByPlanning($id));
 
-        $subalternesAvecPlanning = array_intersect(
-            $utilisateursPlannings,
-            $subalternes
-        );
-
         $subalternesSansSortie = [];
-        foreach ($subalternesAvecPlanning as $u) {
+        foreach ($utilisateursPlannings as $u) {
             if (!\App\ProtoControllers\Utilisateur::hasSortiesEnCours($u)) {
                 $subalternesSansSortie[] = $u;
             }

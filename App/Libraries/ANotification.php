@@ -25,7 +25,7 @@ abstract Class ANotification {
         if (is_int($id)){
             $this->contenuNotification = $this->getContenu($id);
         } else {
-            throw new Exception('erreur id');
+            throw new \Exception('erreur id');
         }
     }
 
