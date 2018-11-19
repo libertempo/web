@@ -182,7 +182,7 @@ if ('true' === $ajout_conges) {
     $tab_commentaire_saisie = getpost_variable('tab_commentaire_saisie');
 
     ajout_conges($tab_champ_saisie, $tab_commentaire_saisie);
-    redirect( ROOT_PATH . 'hr/hr_index.php');
+    redirect( ROOT_PATH . 'hr/page_principale');
 }
 
 if ('true' === $ajout_global) {

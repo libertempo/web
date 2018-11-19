@@ -87,7 +87,7 @@
 <?php endif ; ?>
 
     <h2>Ajout par utilisateur</h2>
-    <form action="<?= $PHP_SELF ?>?onglet=ajout_conges" method="POST">
+    <form action="<?= $PHP_SELF ?>" method="POST">
         <div class="table-responsive">
             <table class="table table-hover table-condensed table-striped">
                 <thead>
@@ -137,7 +137,7 @@
                 <?php endforeach ; ?>
                 </tbody>
             </table>
-        <input type="hidden" name="ajout_conges" value="TRUE">
+        <input type="hidden" name="ajout_conges" value="true">
         <input class="btn" type="submit" value="<?= _('form_submit') ?>">
     </form>
     <br>
