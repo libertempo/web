@@ -39,7 +39,7 @@ function ajout_conges($tab_champ_saisie, $tab_commentaire_saisie)
     }
 }
 
-function ajout_global($tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all) : string
+function ajout_global(array $tab_new_nb_conges_all, array $tab_calcul_proportionnel, array $tab_new_comment_all)
 {
     $db = \includes\SQL::singleton();
 
@@ -192,7 +192,7 @@ if ('true' === $ajout_global) {
     $tab_new_comment_all = getpost_variable('tab_new_comment_all');
 
     ajout_global($tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all);
-    redirect( ROOT_PATH . 'hr/hr_index.php');
+    redirect( ROOT_PATH . 'hr/page_principale');
 }
 
 if ('true' === $ajout_groupe) {

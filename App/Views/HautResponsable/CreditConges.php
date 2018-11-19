@@ -15,7 +15,7 @@
     <?= _('resp_etat_aucun_user') ?><br>
 <?php else : ?>
     <h2><?= _('resp_ajout_conges_ajout_all') ?></h2>
-    <form action="<?= $PHP_SELF ?>?onglet=ajout_conges" method="POST">
+    <form action="<?= $PHP_SELF ?>" method="POST">
         <fieldset class="cal_saisie">
             <div class="table-responsive">
                 <table class="table table-hover table-condensed table-striped">
@@ -41,7 +41,7 @@
             <p><?= _('resp_ajout_conges_calcul_prop_arondi') ?> !</p>
             <input class="btn" type="submit" value="<?= _('form_valid_global') ?>">
         </fieldset>
-        <input type="hidden" name="ajout_global" value="TRUE">
+        <input type="hidden" name="ajout_global" value="true">
     </form>
     <br>
     <?php if (!empty($list_group)) : ?>
