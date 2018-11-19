@@ -26,7 +26,7 @@
                             <th><?= _('divers_comment_maj_1') ?></th>
                         </tr>
                     </thead>
-                <?php foreach($tab_type_cong as $id_conges => $libelle) : ?>
+                <?php foreach ($tab_type_cong as $id_conges => $libelle) : ?>
                     <tr>
                         <td><strong><?= $libelle ?><strong></td>
                         <td><input class="form-control" type="text" name="tab_new_nb_conges_all[<?= $id_conges ?>]" size="6" maxlength="6" value="0"></td>
@@ -64,7 +64,7 @@
                         <th><?= _('resp_ajout_conges_calcul_prop') ?></th>
                         <th><?= _('divers_comment_maj_1') ?></th>
                     </tr>
-                <?php foreach($tab_type_cong as $id_conges => $libelle) : ?>
+                <?php foreach ($tab_type_cong as $id_conges => $libelle) : ?>
                     <tr>
                         <td><strong><?= $libelle ?><strong></td>
                         <td><input class="form-control" type="text" name="tab_new_nb_conges_all[<?= $id_conges ?>]" size="6" maxlength="6" value="0"></td>
@@ -95,11 +95,11 @@
                         <th><?= _('divers_nom_maj_1') ?></th>
                         <th><?= _('divers_prenom_maj_1') ?></th>
                         <th><?= _('divers_quotite_maj_1') ?></th>
-                    <?php foreach($tab_type_cong as $libelle) : ?>
+                    <?php foreach ($tab_type_cong as $libelle) : ?>
                         <th><?= $libelle ?><br><i>(<?= _('divers_solde') ?>)</i></th>
                         <th><?= $libelle ?><br><?= _('resp_ajout_conges_nb_jours_ajout') ?></th>
                     <?php endforeach ; ?>
-                    <?php foreach($tab_type_conges_exceptionnels as $libelle) : ?>
+                    <?php foreach ($tab_type_conges_exceptionnels as $libelle) : ?>
                         <th><?= $libelle ?><br><i>(<?= _('divers_solde') ?>)</i></th>
                         <th><?= $libelle ?><br><?= _('resp_ajout_conges_nb_jours_ajout') ?></th>
                     <?php endforeach ; ?>
@@ -117,13 +117,13 @@
                         <td><?= $tab_current_user['nom'] ?></td>
                         <td><?= $tab_current_user['prenom'] ?></td>
                         <td><?= $tab_current_user['quotite'] ?>%</td>
-                    <?php foreach($tab_type_cong as $id_conges => $libelle) : ?>
+                    <?php foreach ($tab_type_cong as $id_conges => $libelle) : ?>
                         <td><?= $tab_conges[$libelle]['nb_an'] ?? 0 ?> <i>(<?= $tab_conges[$libelle]['solde'] ?? 0 ?>)</i></td>
                         <td align="center" class="histo">
                             <input class="form-control" type="text" name="tab_champ_saisie[<?= $current_login ?>][<?= $id_conges ?>]" size="6" maxlength="6" value="0">
                         </td>
                     <?php endforeach ; ?>
-                    <?php foreach($tab_type_conges_exceptionnels as $id_conges => $libelle) : ?>
+                    <?php foreach ($tab_type_conges_exceptionnels as $id_conges => $libelle) : ?>
                         <td><i>(<?= $tab_conges[$libelle]['solde'] ?>)</i></td>
                         <td align="center" class="histo">
                             <input class="form-control" type="text" name="tab_champ_saisie[<?= $current_login ?>][ <?= $id_conges ?>]" size="6" maxlength="6" value="0">
@@ -141,4 +141,4 @@
         <input class="btn" type="submit" value="<?= _('form_submit') ?>">
     </form>
     <br>
-<?php endif ; ?>
+<?php endif ;

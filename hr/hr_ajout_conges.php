@@ -14,12 +14,11 @@ function insert_ajout_dans_periode($login, $nombreJours, $idTypeAbsence, $commen
     insert_dans_periode($login, $today, "am", $today, "am", $nombreJours, $commentaire, $idTypeAbsence, "ajout", 0);
 }
 
-function ajout_conges($tab_champ_saisie, $tab_commentaire_saisie)
+function ajout_conges($tab_champ_saisie)
 {
     $db = \includes\SQL::singleton();
 
-    foreach ($tab_champ_saisie as $user_name => $tab_conges)
-    {
+    foreach ($tab_champ_saisie as $user_name => $tab_conges) {
         // tab_champ_saisie[$current_login][$id_conges]=valeur du nb de jours ajouté saisi
         foreach ($tab_conges as $id_conges => $user_nb_jours_ajout) {
 
@@ -39,16 +38,16 @@ function ajout_conges($tab_champ_saisie, $tab_commentaire_saisie)
     }
 }
 
-function ajout_global(array $tab_new_nb_conges_all, array $tab_calcul_proportionnel, array $tab_new_comment_all)
+function ajout_global(array $tab_new_nb_conges, array $tab_calcul_proportionnel, array $tab_new_comment_all, string $loginSession)
 {
     $db = \includes\SQL::singleton();
 
     // recup de la liste de TOUS les users dont $resp_login est responsable
     // (prend en compte le resp direct, les groupes, le resp virtuel, etc ...)
     // renvoit une liste de login entre quotes et séparés par des virgules
-    $list_users_du_resp = \hr\Fonctions::get_list_all_users_du_hr($_SESSION['userlogin']);
+    $list_users_du_resp = \hr\Fonctions::get_list_all_users_du_hr($loginSession);
 
-    foreach ($tab_new_nb_conges_all as $id_conges => $nb_jours) {
+    foreach ($tab_new_nb_conges as $id_conges => $nb_jours) {
         if ($nb_jours == 0) {
             continue;
         }
@@ -91,7 +90,7 @@ function ajout_global(array $tab_new_nb_conges_all, array $tab_calcul_proportion
     }
 }
 
-function ajout_global_groupe($choix_groupe, array $tab_new_nb_conges_all, array $tab_calcul_proportionnel, array $tab_new_comment_all)
+function ajout_global_groupe($choix_groupe, array $tab_new_nb_conges, array $tab_calcul_proportionnel, array $tab_new_comment_all)
 {
     $db = \includes\SQL::singleton();
 
@@ -100,7 +99,7 @@ function ajout_global_groupe($choix_groupe, array $tab_new_nb_conges_all, array 
     if (empty($list_users)) {
         return;
     }
-    foreach ($tab_new_nb_conges_all as $id_conges => $nb_jours) {
+    foreach ($tab_new_nb_conges as $id_conges => $nb_jours) {
         if ($nb_jours!=0) {
             $comment = $tab_new_comment_all[$id_conges];
 
@@ -111,7 +110,7 @@ function ajout_global_groupe($choix_groupe, array $tab_new_nb_conges_all, array 
                 $current_login  =$resultat1["u_login"];
                 $current_quotite=$resultat1["u_quotite"];
 
-                if ( (!isset($tab_calcul_proportionnel[$id_conges])) || ($tab_calcul_proportionnel[$id_conges]!=TRUE) ) {
+                if (!isset($tab_calcul_proportionnel[$id_conges]) || $tab_calcul_proportionnel[$id_conges] != true) {
                     $nb_conges=$nb_jours;
                 } else {
                     // pour arrondir au 1/2 le + proche on  fait x 2, on arrondit, puis on divise par 2
@@ -148,7 +147,7 @@ function ajout_global_groupe($choix_groupe, array $tab_new_nb_conges_all, array 
 
 
 // recup de la liste de tous les groupes pour le mode RH
-function get_list_groupes_pour_rh($user_login) : string
+function get_list_groupes_pour_rh() : string
 {
     $list_group="";
 
@@ -158,10 +157,11 @@ function get_list_groupes_pour_rh($user_login) : string
     if ($ReqLog1->num_rows != 0) {
         while ($resultat1 = $ReqLog1->fetch_array()) {
             $current_group=$resultat1["gu_gid"];
-            if ($list_group=="")
+            if ($list_group=="") {
                 $list_group="$current_group";
-            else
+            } else {
                 $list_group=$list_group.", $current_group";
+            }
         }
     }
     return $list_group;
@@ -181,7 +181,7 @@ if ('true' === $ajout_conges) {
     $tab_champ_saisie = getpost_variable('tab_champ_saisie');
     $tab_commentaire_saisie = getpost_variable('tab_commentaire_saisie');
 
-    ajout_conges($tab_champ_saisie, $tab_commentaire_saisie);
+    ajout_conges($tab_champ_saisie);
     redirect( ROOT_PATH . 'hr/page_principale');
 }
 
@@ -191,7 +191,7 @@ if ('true' === $ajout_global) {
     $tab_calcul_proportionnel = getpost_variable('tab_calcul_proportionnel');
     $tab_new_comment_all = getpost_variable('tab_new_comment_all');
 
-    ajout_global($tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all);
+    ajout_global($tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all, $_SESSION['userlogin']);
     redirect( ROOT_PATH . 'hr/page_principale');
 }
 
@@ -212,7 +212,7 @@ $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
 if ($config->isCongesExceptionnelsActive()) {
     $tab_type_conges_exceptionnels = recup_tableau_types_conges_exceptionnels();
 } else {
-    $tab_type_conges_exceptionnels = array();
+    $tab_type_conges_exceptionnels = [];
 }
 
 // recup de la liste de TOUS les users pour le RH
