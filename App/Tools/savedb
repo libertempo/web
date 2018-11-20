@@ -1,0 +1,46 @@
+#!/usr/bin/env php
+<?php
+require_once 'libraries';
+require_once ROOT_PATH . 'version.php';
+require_once INCLUDE_PATH . 'fonction.php';
+
+define('BACKUP_PATH', ROOT_PATH . 'backup' . DS);
+
+/**
+ *
+ */
+function getVersionDerniereMiseAJour(\includes\SQL $db, string $installedVersion) : string
+{
+    $req = 'SELECT appli_valeur FROM conges_appli WHERE appli_variable = "version_last_maj" LIMIT 1';
+    $res = $db->query($req);
+    $versionLastMaj = $res->fetch_array()['appli_valeur'];
+    $versionFile = file_get_contents('/tmp/lt-last-version');
+    if (!empty($versionLastMaj)) {
+        return $versionLastMaj;
+    } elseif ($versionFile) {
+        // @TODO: Compat with <1.12 versions
+        return $versionFile;
+    }
+
+    return $installedVersion . '.0';
+}
+
+display('Sauvegarde…');
+if (!\includes\SQL::existsDatabase($mysql_database)) {
+    displayError('Application non installée');
+}
+$installedVersion = getInstalledVersion();
+$db = \includes\SQL::singleton();
+$versionDerniereMAJ = getVersionDerniereMiseAJour($db, $installedVersion);
+
+// Quelques vérifications de base…
+if ('0.0.0' == $versionDerniereMAJ) {
+    displayError('l\'application n\'est pas encore installée.');
+}
+
+display('Sauvegarde de la DB courante…');
+try {
+    sauvegardeAsFile($installedVersion, 'end');
+} catch (\Exception $e) {
+    displayFail();
+}

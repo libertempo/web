@@ -12,12 +12,16 @@ destroy: ## Détruit l'instance
 	App/Tools/destroy
 
 ## Mise à jour
-update: install-dep ## Met l'application à la toute dernière version (patch compris)
+update: install-dep save ## Met l'application à la toute dernière version (patch compris)
 	App/Tools/update
 
 ## Vérification de l'integrité avant installation
 check: ## Controle les prérequis
 	App/Tools/check
+
+## Sauvegarde de la DB
+save:
+	App/Tools/savedb
 
 ## Création haut responsable / administrateur
 createHR: ## Créé un utilisateur avec les droits HR et administrateur

@@ -7,25 +7,6 @@ define('BACKUP_PATH', ROOT_PATH . 'backup' . DS);
 define('MAJ_PATH', PATCH_PATH . DS . 'Maj' . DS);
 
 /**
- *
- */
-function getVersionDerniereMiseAJour(\includes\SQL $db, string $installedVersion) : string
-{
-    $req = 'SELECT appli_valeur FROM conges_appli WHERE appli_variable = "version_last_maj" LIMIT 1';
-    $res = $db->query($req);
-    $versionLastMaj = $res->fetch_array()['appli_valeur'];
-    $versionFile = file_get_contents('/tmp/lt-last-version');
-    if (!empty($versionLastMaj)) {
-        return $versionLastMaj;
-    } elseif ($versionFile) {
-        // @TODO: Compat with <1.12 versions
-        return $versionFile;
-    }
-
-    return $installedVersion . '.0';
-}
-
-/**
  * Execute les fichiers de mise à jour et retourne la version du dernier patch
  */
 function executePatchs(string $versionDerniereMAJ) : string
@@ -105,13 +86,6 @@ $versionDerniereMAJ = getVersionDerniereMiseAJour($db, $installedVersion);
 // Quelques vérifications de base…
 if ('0.0.0' == $versionDerniereMAJ) {
     displayError('l\'application n\'est pas encore installée.');
-}
-
-display('Sauvegarde de la DB courante…');
-try {
-    \admin\Fonctions::sauvegardeAsFile($installedVersion, 'end');
-} catch (\Exception $e) {
-    displayFail();
 }
 
 display('Configuration de l\'API');
