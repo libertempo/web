@@ -7,17 +7,12 @@
 help:
 	@grep -E '(^[a-zA-Z_-]+:.*?##.*$$)|(^##)' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}{printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m##/[33m/'
 
-
 ## Installation
 setup: ## Crée l'application
 	App/Tools/setup ${nom_instance}
 
-save: ## Sauvegarde la DB
-	App/Tools/savedb
-
 check: ## Controle les prérequis et l'intégrité
 	App/Tools/check
-
 
 update: install-dep save ## Met l'application à la toute dernière version (patch compris)
 	App/Tools/update
@@ -37,8 +32,11 @@ install-dep: ## Installe les dépendances composer et node
 	npm update
 
 ## Administration
-restaure: ## Restaure : monte en base le dernier fichier possible
-	a
+save: ## Sauvegarde la DB
+	App/Tools/savedb
+
+restore: destroy setup ## Restaure la dernière sauvegarde
+	App/Tools/restore
 
 ## CI
 test: ## Lance les tests unitaires

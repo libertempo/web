@@ -4,8 +4,6 @@ require_once 'libraries';
 require_once ROOT_PATH . 'version.php';
 require_once INCLUDE_PATH . 'fonction.php';
 
-define('BACKUP_PATH', ROOT_PATH . 'backup' . DS);
-
 /**
  *
  */

@@ -10,6 +10,8 @@ define('PUBLIC_PATH', ROOT_PATH . 'Public' . DS);
 define('ASSETS_PATH', PUBLIC_PATH . 'Assets' . DS);
 define('IMG_PATH', ASSETS_PATH . 'Img' . DS);
 define('_PHP_CONGES', 1);
+define('BACKUP_PATH', ROOT_PATH . 'backup' . DS);
+
 // TODO 2018-09-22 : lien vers l'API < 1.12, à supprimer quand cette version est un souvenir
 define('OLD_API_SYSPATH', ROOT_PATH . 'vendor' . DS . 'Libertempo' . DS . 'libertempo-api' . DS);
 define('API_SYSPATH', ROOT_PATH . 'vendor' . DS . 'libertempo' . DS . 'api' . DS);

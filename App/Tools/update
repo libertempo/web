@@ -3,7 +3,6 @@
 require_once 'libraries';
 require_once ROOT_PATH . 'version.php';
 
-define('BACKUP_PATH', ROOT_PATH . 'backup' . DS);
 define('MAJ_PATH', PATCH_PATH . DS . 'Maj' . DS);
 
 /**
