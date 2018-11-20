@@ -16,15 +16,11 @@
     $user_mode = '';
     $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
     list(,$urn) = explode('/', $uri);
-    $adminActive = $userActive = $respActive = $hrActive = $calendarActive = $configActive = '';
+    $userActive = $respActive = $hrActive = $calendarActive = $configActive = '';
     switch ($urn) {
         case "utilisateur":
             $user_mode = _('user');
             $userActive = 'active';
-            break;
-        case "admin":
-            $user_mode = _('button_admin_mode');
-            $adminActive = 'active';
             break;
         case "config":
             $user_mode = _('button_config_mode');
@@ -43,11 +39,6 @@
             $calendarActive = 'active';
     }
     $onglet = getpost_variable('onglet');
-
-function sousmenuAdmin()
-{
-    return '<a class="secondary" href="' . ROOT_PATH . 'admin/db_sauve">Backup</a>';
-}
 
 function sousmenuConfiguration()
 {
@@ -192,12 +183,6 @@ function sousmenuEmploye()
                     <?= \App\ProtoControllers\Utilisateur::getNomComplet($_SESSION['u_prenom'], $_SESSION['u_nom'], true) ?>
                 </div>
 				<?php if (is_admin($_SESSION['userlogin'])): ?>
-                <a class="primary <?= $adminActive ?>" href="<?= ROOT_PATH ?>admin/db_sauve" <?php print ($urn == 'admin') ? 'active' : '' ;?>>
-                    <i class="fa fa-bolt"></i><?= _('button_admin_mode');?>
-				</a>
-                <?php if ($urn == 'admin') : ?>
-                <?= sousmenuAdmin(); ?>
-                <?php endif; ?>
                 <a class="primary <?= $configActive ?>" href="<?= ROOT_PATH ?>config/general" <?php print ($urn == 'config') ? 'active' : '' ;?>>
                     <i class="fa fa-cog"></i><?= _('Configuration');?>
 				</a>
@@ -227,7 +212,7 @@ function sousmenuEmploye()
                 <?php if ($urn == 'utilisateur') : ?>
                     <?= sousmenuEmploye(); ?>
                 <?php endif; ?>
-                <?php if('active' === $calendarActive || $urn=='utilisateur' || $urn=='responsable' || in_array($urn, ['hr', 'admin', 'config'])): ?>
+                <?php if('active' === $calendarActive || $urn=='utilisateur' || $urn=='responsable' || in_array($urn, ['hr', 'config'])): ?>
                 <a class="primary <?= $calendarActive ?>" href="<?= ROOT_PATH ?>calendrier.php">
                     <i class="fa fa-calendar"></i><?= _('button_calendar') ?>
                 </a>
