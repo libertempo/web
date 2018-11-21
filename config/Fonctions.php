@@ -686,25 +686,6 @@ class Fonctions
                 }
             }
 
-            if(preg_match("/_installed$/",$key) && ($value=="1")) {
-                $plugin = explode("_",$key);
-                $plugin = $plugin[0];
-                install_plugin($plugin);
-            } elseif(preg_match("/_installed$/",$key) && ($value=="0")) {
-                $plugin = explode("_",$key);
-                $plugin = $plugin[0];
-                uninstall_plugin($plugin);
-            }
-            if(preg_match("/_activated$/",$key) && ($value=="1")) {
-                $plugin = explode("_",$key);
-                $plugin = $plugin[0];
-                activate_plugin($plugin);
-            } elseif(preg_match("/_activated$/",$key) && ($value=="0")) {
-                $plugin = explode("_",$key);
-                $plugin = $plugin[0];
-                disable_plugin($plugin);
-            }
-
             // Mise à jour
             $sql2 = 'UPDATE conges_config SET conf_valeur = \''.addslashes($value).'\' WHERE conf_nom ="'. \includes\SQL::quote($key).'" ';
             \includes\SQL::query($sql2);
@@ -807,80 +788,6 @@ class Fonctions
             $return .= ob_get_clean();
         }
 
-
-        /******************* GESTION DES PLUGINS V1.7 *************************/
-
-        //rajout du formulaire de gestion des plugins : à partir de la version 1.7
-        // - On détecte les plugins puis on propose de les installer
-        // L'installation du plugin va lancer include/plugins/[nom_du_plugins]/plugin_install.php
-        // plugin_install.php lance la création des tables supplémentaires;
-        // normalement le format de nommage des tables est conges_plugin_[nom_du_plugin]. Exemple de table : conges_plugin_cet
-        // il vaut mieux éviter de surcharger les tables existantes pour éviter les nombreux problèmes de compatibilité
-        // lors d'un changement de version.
-        // - Lorsqu'un plugin est installé, l'administrateur ou la personne autorisée pourra activer le plugin.
-        // Le status qui s'affichera deviendra "activated"
-        // Soit 4 statuts disponibles : not installed, installed, disable, activated
-        // Correspondants à 4 fichiers dans le dossier du plugin : plugin_install.php, plugin_uninstall.php, plugin_active.php, plugin_inactive.php
-        //Les statuts sont retrouvés par la table conges_plugins
-        //Ensuite, les fichiers à inclure doivent être listés dans include/plugins/[nom_du_plugins]/allfilestoinclude.php
-        // Ces fichiers à inclure contiennent le coeur de votre plugin.
-
-        $my_plugins = scandir(PLUGINS_DIR);
-        $plug_count = 0;
-        $tableAddon = new \App\Libraries\Structure\Table();
-        $tableAddon->addAttribute('width', '100%');
-        $childTableAddon = '<tr><td>';
-        $childTableAddon .= '<fieldset class="cal_saisie plugins">';
-        $childTableAddon .= '<legend class="boxlogin">Plugins</legend>';
-        foreach ($my_plugins as $my_plugin) {
-            if (is_dir(PLUGINS_DIR."/$my_plugin") && !preg_match("/^\./",$my_plugin)) {
-                $childTableAddon .= _('plugin_detect').'<br>';
-                $childTableAddon .= '<b>' . $my_plugin . ' : </b>'._('plugin_install').'
-                    <select class="form-control" name=tab_new_values[' . $my_plugin . '_installed]>';
-
-                $sql_plug="SELECT p_is_active, p_is_install FROM conges_plugins WHERE p_name = '".$my_plugin."';";
-                $ReqLog_plug = \includes\SQL::query($sql_plug);
-                if($ReqLog_plug->num_rows !=0) {
-                    while ($plug = $ReqLog_plug->fetch_array()) {
-                        $p_install = $plug["p_is_install"];
-                        if ($p_install == '1') {
-                            $childTableAddon .= '<option selected="selected" value="1">Y</option><option value="0">N</option>';
-                        } else {
-                            $childTableAddon .= '<option value="1">Y</option><option selected="selected" value="0">N</option>';
-                        }
-                        $childTableAddon .= '</select>';
-                        $childTableAddon .= _('plugin_active').' <select class="form-control" name=tab_new_values[' . $my_plugin . '_activated]>';
-                        $p_active = $plug["p_is_active"];
-                        if ($p_active == '1') {
-                            $childTableAddon .= '<option selected="selected" value="1">Y</option><option value="0">N</option>';
-                        } else {
-                            $childTableAddon .= '<option value="1">Y</option><option selected="selected" value="0">N</option>';
-                        }
-                    }
-                } else {
-                    $childTableAddon .= '<option value="1">Y</option><option selected="selected" value="0">N</option>';
-                    $childTableAddon .= '</select>';
-                    $childTableAddon .= _('plugin_active').' <select class="form-control" name=tab_new_values[' . $my_plugin . '_activated]>';
-                    $childTableAddon .= '<option value="1">Y</option><option selected="selected" value="0">N</option>';
-                }
-                $childTableAddon .= '</select>';
-                $childTableAddon .= '<br />';
-                $plug_count++;
-            }
-        }
-        if($plug_count == 0){
-            $childTableAddon .= _('no_plugin');
-        }
-        $childTableAddon .= '</td></tr>';
-        $childTableAddon .= '<tr><td align="right">';
-        $childTableAddon .= '<input type="submit" class="btn"  value="' . _('form_save_modif') . '"><br>';
-        $childTableAddon .= '</td></tr>';
-        /**********************************************************************/
-
-        $tableAddon->addChild($childTableAddon);
-        ob_start();
-        $tableAddon->render();
-        $return .= ob_get_clean();
         $return .= '</form>';
         return $return;
     }
