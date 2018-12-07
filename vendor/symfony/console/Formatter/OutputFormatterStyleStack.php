@@ -12,27 +12,20 @@
 namespace Symfony\Component\Console\Formatter;
 
 use Symfony\Component\Console\Exception\InvalidArgumentException;
+use Symfony\Contracts\Service\ResetInterface;
 
 /**
  * @author Jean-François Simon <contact@jfsimon.fr>
  */
-class OutputFormatterStyleStack
+class OutputFormatterStyleStack implements ResetInterface
 {
     /**
      * @var OutputFormatterStyleInterface[]
      */
     private $styles;
 
-    /**
-     * @var OutputFormatterStyleInterface
-     */
     private $emptyStyle;
 
-    /**
-     * Constructor.
-     *
-     * @param OutputFormatterStyleInterface|null $emptyStyle
-     */
     public function __construct(OutputFormatterStyleInterface $emptyStyle = null)
     {
         $this->emptyStyle = $emptyStyle ?: new OutputFormatterStyle();
@@ -49,8 +42,6 @@ class OutputFormatterStyleStack
 
     /**
      * Pushes a style in the stack.
-     *
-     * @param OutputFormatterStyleInterface $style
      */
     public function push(OutputFormatterStyleInterface $style)
     {
@@ -59,8 +50,6 @@ class OutputFormatterStyleStack
 
     /**
      * Pops a style from the stack.
-     *
-     * @param OutputFormatterStyleInterface|null $style
      *
      * @return OutputFormatterStyleInterface
      *
@@ -78,7 +67,7 @@ class OutputFormatterStyleStack
 
         foreach (array_reverse($this->styles, true) as $index => $stackedStyle) {
             if ($style->apply('') === $stackedStyle->apply('')) {
-                $this->styles = array_slice($this->styles, 0, $index);
+                $this->styles = \array_slice($this->styles, 0, $index);
 
                 return $stackedStyle;
             }
@@ -98,13 +87,11 @@ class OutputFormatterStyleStack
             return $this->emptyStyle;
         }
 
-        return $this->styles[count($this->styles) - 1];
+        return $this->styles[\count($this->styles) - 1];
     }
 
     /**
-     * @param OutputFormatterStyleInterface $emptyStyle
-     *
-     * @return OutputFormatterStyleStack
+     * @return $this
      */
     public function setEmptyStyle(OutputFormatterStyleInterface $emptyStyle)
     {

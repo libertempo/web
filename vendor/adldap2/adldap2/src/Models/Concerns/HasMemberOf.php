@@ -10,6 +10,21 @@ use Illuminate\Support\Collection;
 trait HasMemberOf
 {
     /**
+     * Returns an array of distinguished names of groups that the current model belongs to.
+     *
+     * @link https://msdn.microsoft.com/en-us/library/ms677099(v=vs.85).aspx
+     *
+     * @return array
+     */
+    public function getMemberOf()
+    {
+        $dns = $this->getAttribute($this->schema->memberOf());
+
+        // Normalize returned distinguished names if the attribute is null.
+        return is_array($dns) ? $dns : [];
+    }
+
+    /**
      * Adds the current model to the specified group.
      *
      * @param string|Group $group
@@ -58,6 +73,24 @@ trait HasMemberOf
     }
 
     /**
+     * Removes the current model from all groups.
+     *
+     * @return array The group distinguished names that were successfully removed
+     */
+    public function removeAllGroups()
+    {
+        $removed = [];
+
+        foreach ($this->getMemberOf() as $group) {
+            if ($this->removeGroup($group)) {
+                $removed[] = $group;
+            }
+        }
+
+        return $removed;
+    }
+
+    /**
      * Returns the models groups that it is apart of.
      *
      * If a recursive option is given, groups of groups
@@ -80,7 +113,7 @@ trait HasMemberOf
             $fields = array_merge($fields, [$this->schema->memberOf()]);
         }
 
-        $groups = $this->getGroupsByNames($this->memberOfDns(), $fields);
+        $groups = $this->getGroupsByNames($this->getMemberOf(), $fields);
 
         // We need to check if we're working with a User model. Only users
         // contain a primary group. If we are, we'll merge the users
@@ -194,19 +227,6 @@ trait HasMemberOf
         })->filter(function ($group) {
             return $group instanceof Group;
         });
-    }
-
-    /**
-     * Returns the member distinguished names.
-     *
-     * @return array
-     */
-    protected function memberOfDns()
-    {
-        $dns = $this->getAttribute($this->schema->memberOf());
-
-        // Normalize returned distinguished names.
-        return is_array($dns) ? $dns : [];
     }
 
     /**

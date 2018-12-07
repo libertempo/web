@@ -19,12 +19,13 @@ class Terminal
     /**
      * Gets the terminal width.
      *
-     * @return int|null
+     * @return int
      */
     public function getWidth()
     {
-        if ($width = trim(getenv('COLUMNS'))) {
-            return (int) $width;
+        $width = getenv('COLUMNS');
+        if (false !== $width) {
+            return (int) trim($width);
         }
 
         if (null === self::$width) {
@@ -37,12 +38,13 @@ class Terminal
     /**
      * Gets the terminal height.
      *
-     * @return int|null
+     * @return int
      */
     public function getHeight()
     {
-        if ($height = trim(getenv('LINES'))) {
-            return (int) $height;
+        $height = getenv('LINES');
+        if (false !== $height) {
+            return (int) trim($height);
         }
 
         if (null === self::$height) {
@@ -54,7 +56,7 @@ class Terminal
 
     private static function initDimensions()
     {
-        if ('\\' === DIRECTORY_SEPARATOR) {
+        if ('\\' === \DIRECTORY_SEPARATOR) {
             if (preg_match('/^(\d+)x(\d+)(?: \((\d+)x(\d+)\))?$/', trim(getenv('ANSICON')), $matches)) {
                 // extract [w, H] from "wxh (WxH)"
                 // or [w, h] from "wxh"
@@ -85,7 +87,7 @@ class Terminal
      */
     private static function getConsoleMode()
     {
-        if (!function_exists('proc_open')) {
+        if (!\function_exists('proc_open')) {
             return;
         }
 
@@ -94,7 +96,7 @@ class Terminal
             2 => array('pipe', 'w'),
         );
         $process = proc_open('mode CON', $descriptorspec, $pipes, null, null, array('suppress_errors' => true));
-        if (is_resource($process)) {
+        if (\is_resource($process)) {
             $info = stream_get_contents($pipes[1]);
             fclose($pipes[1]);
             fclose($pipes[2]);
@@ -113,7 +115,7 @@ class Terminal
      */
     private static function getSttyColumns()
     {
-        if (!function_exists('proc_open')) {
+        if (!\function_exists('proc_open')) {
             return;
         }
 
@@ -123,7 +125,7 @@ class Terminal
         );
 
         $process = proc_open('stty -a | grep columns', $descriptorspec, $pipes, null, null, array('suppress_errors' => true));
-        if (is_resource($process)) {
+        if (\is_resource($process)) {
             $info = stream_get_contents($pipes[1]);
             fclose($pipes[1]);
             fclose($pipes[2]);

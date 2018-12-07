@@ -2,8 +2,6 @@
 
 namespace Adldap\Connections;
 
-use Adldap\AdldapException;
-
 /**
  * Class Ldap
  *
@@ -276,8 +274,8 @@ class Ldap implements ConnectionInterface
      */
     public function bind($username, $password, $sasl = false)
     {
-        if ($this->isUsingTLS()) {
-            $this->startTLS();
+        if ($this->isUsingTLS() && $this->startTLS() === false) {
+            throw new ConnectionException("Unable to connect to LDAP server over TLS.");
         }
 
         if ($sasl) {

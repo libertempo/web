@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit92a53738965641ee7e3b3e4f4372cbb2
+class ComposerStaticInit545df53d2d8ac07231358123b91ae9ef
 {
     public static $files = array (
         'a12da592622097d2b593a430e32e13fd' => __DIR__ . '/..' . '/nette/utils/src/loader.php',
@@ -13,6 +13,7 @@ class ComposerStaticInit92a53738965641ee7e3b3e4f4372cbb2
         'bd9634f2d41831496de0d3dfe4c94881' => __DIR__ . '/..' . '/symfony/polyfill-php56/bootstrap.php',
         '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
         '253c157292f75eb38082b5acb06f3f01' => __DIR__ . '/..' . '/nikic/fast-route/src/functions.php',
+        '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
         'fe62ba7e10580d903cc46d808b5961a4' => __DIR__ . '/..' . '/tightenco/collect/src/Collect/Support/helpers.php',
         'caf31cc6ec7cf2241cb6f12c226c3846' => __DIR__ . '/..' . '/tightenco/collect/src/Collect/Support/alias.php',
         'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
@@ -33,11 +34,11 @@ class ComposerStaticInit92a53738965641ee7e3b3e4f4372cbb2
             'Symfony\\Polyfill\\Php72\\' => 23,
             'Symfony\\Polyfill\\Php56\\' => 23,
             'Symfony\\Polyfill\\Mbstring\\' => 26,
+            'Symfony\\Contracts\\' => 18,
             'Symfony\\Component\\VarDumper\\' => 28,
             'Symfony\\Component\\Process\\' => 26,
             'Symfony\\Component\\OptionsResolver\\' => 34,
             'Symfony\\Component\\Finder\\' => 25,
-            'Symfony\\Component\\Debug\\' => 24,
             'Symfony\\Component\\Console\\' => 26,
             'SuperClosure\\' => 13,
             'Slim\\' => 5,
@@ -125,6 +126,10 @@ class ComposerStaticInit92a53738965641ee7e3b3e4f4372cbb2
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
         ),
+        'Symfony\\Contracts\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/contracts',
+        ),
         'Symfony\\Component\\VarDumper\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/var-dumper',
@@ -140,10 +145,6 @@ class ComposerStaticInit92a53738965641ee7e3b3e4f4372cbb2
         'Symfony\\Component\\Finder\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/finder',
-        ),
-        'Symfony\\Component\\Debug\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/debug',
         ),
         'Symfony\\Component\\Console\\' => 
         array (
@@ -797,11 +798,11 @@ class ComposerStaticInit92a53738965641ee7e3b3e4f4372cbb2
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit92a53738965641ee7e3b3e4f4372cbb2::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit92a53738965641ee7e3b3e4f4372cbb2::$prefixDirsPsr4;
-            $loader->fallbackDirsPsr4 = ComposerStaticInit92a53738965641ee7e3b3e4f4372cbb2::$fallbackDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit92a53738965641ee7e3b3e4f4372cbb2::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit92a53738965641ee7e3b3e4f4372cbb2::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit545df53d2d8ac07231358123b91ae9ef::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit545df53d2d8ac07231358123b91ae9ef::$prefixDirsPsr4;
+            $loader->fallbackDirsPsr4 = ComposerStaticInit545df53d2d8ac07231358123b91ae9ef::$fallbackDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit545df53d2d8ac07231358123b91ae9ef::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit545df53d2d8ac07231358123b91ae9ef::$classMap;
 
         }, null, ClassLoader::class);
     }
