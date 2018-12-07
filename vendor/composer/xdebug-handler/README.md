@@ -45,7 +45,7 @@ This optional value is added to the restart command-line and is needed to force 
 
 If the original command-line contains an argument that pattern matches this value (for example `--no-ansi`, `--colors=never`) then _$colorOption_ is ignored.
 
-If the pattern match ends with `=auto` (for example `--colors=auto`), the argument is replaced by _$colorOption_. Otherwise it is added at either the end of the command-line, or preceeding the first double-dash `--` delimiter.
+If the pattern match ends with `=auto` (for example `--colors=auto`), the argument is replaced by _$colorOption_. Otherwise it is added at either the end of the command-line, or preceding the first double-dash `--` delimiter.
 
 ## Advanced Usage
 
@@ -139,7 +139,7 @@ DEBUG    No restart (MYAPP_ALLOW_XDEBUG=1)
 // Failed restart
 DEBUG    Checking MYAPP_ALLOW_XDEBUG
 DEBUG    The xdebug extension is loaded (2.5.0)
-WARNING  No restart (Unable to create temporary ini file)
+WARNING  No restart (Unable to create temp ini file at: ...)
 ```
 
 Status messages can also be output with `XDEBUG_HANDLER_DEBUG`. See [Troubleshooting](#troubleshooting).
