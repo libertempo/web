@@ -1,3 +1,3 @@
-DROP TABLE `conges_plugins`;
+DROP TABLE IF EXISTS `conges_plugins`;
 
-DROP TABLE `conges_plugin_cet`;
+DROP TABLE IF EXISTS `conges_plugin_cet`;
