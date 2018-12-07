@@ -290,7 +290,7 @@ function isAuthentifiedVieilAlgo(\includes\SQL $sql, string $username, string $p
 {
     $req = 'SELECT u_passwd
     FROM conges_users
-    WHERE u_login = "' . $sql->quote($username) . '" AND (u_passwd = "' . md5($password) . '" OR u_passwd = PASSWORD("' . $sql->quote($password ) . '"))';
+    WHERE u_login = "' . $sql->quote($username) . '" AND u_passwd = "' . md5($password) . '"';
     $result = $sql->query($req);
 
     return $result->num_rows != 0;

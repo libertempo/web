@@ -24,8 +24,8 @@ Chaque nouvelle version est mise à disposition sur [github](https://github.com/
 # Support minimum
 | Logiciel | Version |
 |-------|-----|
-| php   | 7.0 |
-| mysql | 5.6 |
+| php   | 7.1 |
+| mysql | 8.0 |
 | apache| 2.4 |
 
 
