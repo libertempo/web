@@ -2,8 +2,6 @@
 
 include_once INCLUDE_PATH .'fonction_config.php';
 include_once INCLUDE_PATH .'lang_profile.php';
-//better to include_once plugins at the end : see bottom function
-//include_once INCLUDE_PATH .'plugins.php';
 
 function schars($htmlspec) {
     return htmlspecialchars( $htmlspec );
@@ -147,27 +145,8 @@ function bottom() {
     }else
         throw new Exception('Warning : Ne peux ouvrir deux header !!!');
 
-    include_once INCLUDE_PATH .'plugins.php';
     include_once TEMPLATE_PATH . $type_bottom .'_bottom.php';
 }
-
-
-//manage plugins
-function install_plugin($plugin){
-    include_once INCLUDE_PATH . "/plugins/".$plugin."/plugin_install.php";
-}
-function activate_plugin($plugin){
-    include_once INCLUDE_PATH . "/plugins/".$plugin."/plugin_active.php";
-}
-function uninstall_plugin($plugin){
-    include_once INCLUDE_PATH . "/plugins/".$plugin."/plugin_uninstall.php";
-}
-function disable_plugin($plugin){
-    include_once INCLUDE_PATH . "/plugins/".$plugin."/plugin_inactive.php";
-}
-
-
-
 
 
 //

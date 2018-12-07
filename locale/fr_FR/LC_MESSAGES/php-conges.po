@@ -1646,18 +1646,6 @@ msgstr "Vous permet de tester si l'émission de mail fonctionne.<br>En cas d'éc
 msgid "choisir_langue"
 msgstr "Choisissez votre langue :"
 
-msgid "plugin_install"
-msgstr "installé :"
-
-msgid "plugin_active"
-msgstr "activé :"
-
-msgid "plugin_detect"
-msgstr "Plugin détecté :"
-
-msgid "no_plugin"
-msgstr "Aucun plugin"
-
 msgid "Heure_non_reconnue"
 msgstr "Heure non reconnue"
 
