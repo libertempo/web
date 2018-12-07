@@ -1,7 +1,6 @@
 <?php
 
 namespace Adldap\Connections;
-use Adldap\AdldapError;
 
 /**
  * The Connection interface used for making connections. Implementing
@@ -41,34 +40,28 @@ interface ConnectionInterface
     const PORT = 389;
 
     /**
-     * Returns true / false if the
-     * current connection instance is using
-     * SSL.
+     * Returns true / false if the current connection instance is using SSL.
      *
      * @return bool
      */
     public function isUsingSSL();
 
     /**
-     * Returns true / false if the
-     * current connection instance is using
-     * TLS.
+     * Returns true / false if the current connection instance is using TLS.
      *
      * @return bool
      */
     public function isUsingTLS();
 
     /**
-     * Returns true / false if the current
-     * connection is able to modify passwords.
+     * Returns true / false if the current connection is able to modify passwords.
      *
      * @return bool
      */
     public function canChangePasswords();
 
     /**
-     * Returns true / false if the current
-     * connection is bound.
+     * Returns true / false if the current connection is bound.
      *
      * @return bool
      */
@@ -261,6 +254,8 @@ interface ConnectionInterface
      * @param string $username
      * @param string $password
      * @param bool   $sasl
+     *
+     * @throws ConnectionException If connecting over TLS fails.
      *
      * @return bool
      */

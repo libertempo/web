@@ -4,7 +4,7 @@
 
 Adldap2 is a PHP LDAP package that allows you to:
 
-1. Easily Manage multiple LDAP connections at once
+1. Easily manage multiple LDAP connections at once
 2. Perform authentication
 3. Search your LDAP directory with a fluent and easy to use query builder
 4. Create / Update / Delete LDAP entities with ease
@@ -45,7 +45,7 @@ Use Adldap2:
 
 ```php
 // Construct new Adldap instance.
-$ad = new \Adldap\Adldap();
+$ad = new Adldap\Adldap();
 
 // Create a configuration array.
 $config = [  
@@ -90,7 +90,7 @@ try {
     if ($user->save()) {
         // User was saved!
     }
-} catch (\Adldap\Auth\BindException $e) {
+} catch (Adldap\Auth\BindException $e) {
 
     // There was an issue binding / connecting to the server.
 

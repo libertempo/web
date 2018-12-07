@@ -1,6 +1,59 @@
 CHANGELOG
 =========
 
+4.2.0
+-----
+
+ * allowed passing commands as `array($process, 'ENV_VAR' => 'value')` to
+   `ProcessHelper::run()` to pass environment variables
+ * deprecated passing a command as a string to `ProcessHelper::run()`,
+   pass it the command as an array of its arguments instead
+ * made the `ProcessHelper` class final
+ * added `WrappableOutputFormatterInterface::formatAndWrap()` (implemented in `OutputFormatter`)
+ * added `capture_stderr_separately` option to `CommandTester::execute()`
+
+4.1.0
+-----
+
+ * added option to run suggested command if command is not found and only 1 alternative is available
+ * added option to modify console output and print multiple modifiable sections
+ * added support for iterable messages in output `write` and `writeln` methods
+
+4.0.0
+-----
+
+ * `OutputFormatter` throws an exception when unknown options are used
+ * removed `QuestionHelper::setInputStream()/getInputStream()`
+ * removed `Application::getTerminalWidth()/getTerminalHeight()` and 
+  `Application::setTerminalDimensions()/getTerminalDimensions()`
+* removed `ConsoleExceptionEvent`
+* removed `ConsoleEvents::EXCEPTION`
+
+3.4.0
+-----
+
+ * added `SHELL_VERBOSITY` env var to control verbosity
+ * added `CommandLoaderInterface`, `FactoryCommandLoader` and PSR-11
+   `ContainerCommandLoader` for commands lazy-loading
+ * added a case-insensitive command name matching fallback
+ * added static `Command::$defaultName/getDefaultName()`, allowing for
+   commands to be registered at compile time in the application command loader.
+   Setting the `$defaultName` property avoids the need for filling the `command`
+   attribute on the `console.command` tag when using `AddConsoleCommandPass`.
+
+3.3.0
+-----
+
+* added `ExceptionListener`
+* added `AddConsoleCommandPass` (originally in FrameworkBundle)
+* [BC BREAK] `Input::getOption()` no longer returns the default value for options
+  with value optional explicitly passed empty
+* added console.error event to catch exceptions thrown by other listeners
+* deprecated console.exception event in favor of console.error
+* added ability to handle `CommandNotFoundException` through the 
+ `console.error` event
+* deprecated default validation in `SymfonyQuestionHelper::ask`
+
 3.2.0
 ------
 

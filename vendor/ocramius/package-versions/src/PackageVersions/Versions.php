@@ -10,8 +10,9 @@ namespace PackageVersions;
  */
 final class Versions
 {
+    const ROOT_PACKAGE_NAME = 'libertempo/libertempo-web';
     const VERSIONS = array (
-  'adldap2/adldap2' => 'v9.1.3@f9ba4003a1350b7cad952d3ad22b24c8d3e0d1af',
+  'adldap2/adldap2' => 'v9.1.4@ef3437720eee5e5be6ada160708cb9a8cb407b30',
   'container-interop/container-interop' => '1.2.0@79cbf1341c22ec75643d841642dd5d6acd83bdb8',
   'doctrine/annotations' => 'v1.6.0@c7f2050c68a9ab0bdb0f98567ec08d80ea7d24d5',
   'doctrine/cache' => 'v1.8.0@d768d58baee9a4862ca783840eca1b9add7a7f57',
@@ -22,15 +23,14 @@ final class Versions
   'doctrine/lexer' => 'v1.0.1@83893c552fd2045dd78aef794c31e694c37c0b8c',
   'guzzlehttp/guzzle' => '6.3.3@407b0cb880ace85c9b63c5f9551db498cb2d50ba',
   'guzzlehttp/promises' => 'v1.3.1@a59da6cf61d80060647ff4d3eb2c03a2bc694646',
-  'guzzlehttp/psr7' => '1.4.2@f5b8a8512e2b58b0071a7280e39f14f72e05d87c',
-  'illuminate/contracts' => 'v5.7.11@64df81d3382d876f1c1d3d5481d89c93b61b8279',
+  'guzzlehttp/psr7' => '1.5.2@9f83dded91781a01c63574e387eaa769be769115',
+  'illuminate/contracts' => 'v5.7.15@758927e5e925c1d442a1faaa1356675ceba0194c',
   'jasig/phpcas' => '1.3.5@61c8899c8f91204e8b9135d795461e50fe5c2db0',
   'jeremeamia/SuperClosure' => '2.4.0@5707d5821b30b9a07acfb4d76949784aaa0e9ce9',
   'libertempo/api' => 'v1.5.0@c01c7ef5dd45463be68c8e8da3f34801291c37b0',
   'monolog/monolog' => '1.24.0@bfc9ebb28f97e7a24c45bdc3f0ff482e47bb0266',
   'nikic/fast-route' => 'v1.3.0@181d480e08d9476e61381e04a71b34dc0432e812',
   'nikic/php-parser' => 'v4.1.0@d0230c5c77a7e3cfa69446febf340978540958c0',
-  'ocramius/package-versions' => '1.2.0@ad8a245decad4897cc6b432743913dad0d69753c',
   'php-di/invoker' => '2.0.0@540c27c86f663e20fe39a24cd72fa76cdb21d41a',
   'php-di/php-di' => '6.0.2@71a7f2ed1e728138060ea159cbb1a92dc8620bd2',
   'php-di/phpdoc-reader' => '2.1.0@7d0de60b9341933c8afd172a6255cd7557601e0e',
@@ -38,23 +38,24 @@ final class Versions
   'pimple/pimple' => 'v3.2.3@9e403941ef9d65d20cba7d54e29fe906db42cf32',
   'psr/container' => '1.0.0@b7ce3b176482dbbc1245ebf52b181af44c2cf55f',
   'psr/http-message' => '1.0.1@f6561bf28d520154e4b0ec72be95418abe6d9363',
-  'psr/log' => '1.0.2@4ebe3a8bf773a19edfe0a84b6585ba3d401b724d',
+  'psr/log' => '1.1.0@6c001f1daafa3a3ac1d8ff69ee4db8e799a654dd',
   'psr/simple-cache' => '1.0.1@408d5eafb83c57f6365a3ca330ff23aa4a5fa39b',
+  'ralouphie/getallheaders' => '2.0.5@5601c8a83fbba7ef674a7369456d12f1e0d0eafa',
   'raveren/kint' => '1.1@a8549198558560b24e2879c6bac2875de5371483',
   'rollbar/rollbar' => 'v1.4.0@9a626a08a1293b2ad648521a0b4285b13b28fe23',
   'slim/slim' => '3.9.0@575a8b53a0a489447915029c69680156cd355304',
-  'symfony/options-resolver' => 'v4.1.7@40f0e40d37c1c8a762334618dea597d64bbb75ff',
+  'symfony/options-resolver' => 'v4.2.1@a9c38e8a3da2c03b3e71fdffa6efb0bda51390ba',
   'symfony/polyfill-mbstring' => 'v1.10.0@c79c051f5b3a46be09205c73b80b346e4153e494',
   'symfony/polyfill-php56' => 'v1.10.0@ff208829fe1aa48ab9af356992bb7199fed551af',
   'symfony/polyfill-php72' => 'v1.10.0@9050816e2ca34a8e916c3a0ae8b9c2fccf68b631',
   'symfony/polyfill-util' => 'v1.10.0@3b58903eae668d348a7126f999b0da0f2f93611c',
-  'symfony/var-dumper' => 'v4.0.14@3af63f44ddb45b03af4d172a4ce3e5c58b25fc5b',
+  'symfony/var-dumper' => 'v4.2.1@db61258540350725f4beb6b84006e32398acd120',
   'tecnickcom/tcpdf' => '6.2.6@a2e8f5b505a7a14a4ed960313c4baf699fd1f4bb',
-  'tightenco/collect' => 'v5.7.13@5172ad96c54560352b79386b293375da40280fdc',
+  'tightenco/collect' => 'v5.7.15@860d20166ac0fa0be63b66798525fbb1e4a44493',
   'yohang/calendr' => '2.1.1@1ae1da29ec9e633afb692cc763b6736c1def3f55',
   'atoum/atoum' => '3.3.0@c5279d0ecd4e2d53af6b38815db2cafee8fc46b6',
   'codacy/coverage' => '1.4.2@4988cd098db4d578681bfd3176071931ad475150',
-  'composer/xdebug-handler' => '1.3.0@b8e9745fb9b06ea6664d8872c4505fb16df4611c',
+  'composer/xdebug-handler' => '1.3.1@dc523135366eb68f22268d069ea7749486458562',
   'gitonomy/gitlib' => 'v1.0.4@932a960221ae3484a3e82553b3be478e56beb68d',
   'jean85/pretty-package-versions' => '1.2@75c7effcf3f77501d0e0caa75111aff4daa0dd48',
   'nette/bootstrap' => 'v2.4.6@268816e3f1bb7426c3a4ceec2bd38a036b532543',
@@ -64,13 +65,15 @@ final class Versions
   'nette/php-generator' => 'v3.0.5@ea90209c2e8a7cd087b2742ca553c047a8df5eff',
   'nette/robot-loader' => 'v3.1.0@fc76c70e740b10f091e502b2e393d0be912f38d4',
   'nette/utils' => 'v2.5.3@17b9f76f2abd0c943adfb556e56f2165460b15ce',
+  'ocramius/package-versions' => '1.3.0@4489d5002c49d55576fa0ba786f42dbb009be46f',
   'phpstan/phpdoc-parser' => '0.3@ed3223362174b8067729930439e139794e9e514a',
   'phpstan/phpstan' => '0.10.5@c6a8cd1fe08a23b9d101a55ffa9ff6b91d71ef5d',
-  'symfony/console' => 'v3.2.0@09d0fd33560e3573185a2ea17614e37ba38716c5',
-  'symfony/debug' => 'v3.4.18@fe9793af008b651c5441bdeab21ede8172dab097',
-  'symfony/finder' => 'v4.1.7@1f17195b44543017a9c9b2d437c670627e96ad06',
-  'symfony/process' => 'v4.1.7@3e83acef94d979b1de946599ef86b3a352abcdc9',
-  'libertempo/libertempo-web' => 'dev-dependabot/composer/guzzlehttp/guzzle-6.3.3@03911fe07df3a32933096bec67c778c11ab48289',
+  'symfony/console' => 'v4.2.1@4dff24e5d01e713818805c1862d2e3f901ee7dd0',
+  'symfony/contracts' => 'v1.0.2@1aa7ab2429c3d594dd70689604b5cf7421254cdf',
+  'symfony/finder' => 'v4.2.1@e53d477d7b5c4982d0e1bfd2298dbee63d01441d',
+  'symfony/process' => 'v4.2.1@2b341009ccec76837a7f46f59641b431e4d4c2b0',
+  'wouldsmina/libertempo' => '^1.8@3ca9857955fb74d72da1b01f568b0abcb6e1a6de',
+  'libertempo/libertempo-web' => 'dev-pry/vendorBridge@3ca9857955fb74d72da1b01f568b0abcb6e1a6de',
 );
 
     private function __construct()
@@ -82,12 +85,12 @@ final class Versions
      */
     public static function getVersion(string $packageName) : string
     {
-        if (! isset(self::VERSIONS[$packageName])) {
-            throw new \OutOfBoundsException(
-                'Required package "' . $packageName . '" is not installed: cannot detect its version'
-            );
+        if (isset(self::VERSIONS[$packageName])) {
+            return self::VERSIONS[$packageName];
         }
 
-        return self::VERSIONS[$packageName];
+        throw new \OutOfBoundsException(
+            'Required package "' . $packageName . '" is not installed: cannot detect its version'
+        );
     }
 }
