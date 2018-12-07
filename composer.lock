@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "862d26b8f4f8848eb02fbc495e046293",
+    "content-hash": "5fe3459b052e4a7964b18a3b65536eeb",
     "packages": [
         {
             "name": "adldap2/adldap2",
@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Adldap2/Adldap2.git",
-                "reference": "ef3437720eee5e5be6ada160708cb9a8cb407b30"
+                "reference": "e74bf7e3762b35e828179b11eb100da4a12ff701"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Adldap2/Adldap2/zipball/ef3437720eee5e5be6ada160708cb9a8cb407b30",
-                "reference": "ef3437720eee5e5be6ada160708cb9a8cb407b30",
+                "url": "https://api.github.com/repos/Adldap2/Adldap2/zipball/e74bf7e3762b35e828179b11eb100da4a12ff701",
+                "reference": "e74bf7e3762b35e828179b11eb100da4a12ff701",
                 "shasum": ""
             },
             "require": {
@@ -57,7 +57,7 @@
                 "ldap",
                 "windows"
             ],
-            "time": "2018-12-06T14:59:18+00:00"
+            "time": "2018-12-06T15:03:32+00:00"
         },
         {
             "name": "container-interop/container-interop",
@@ -1688,27 +1688,27 @@
         },
         {
             "name": "rollbar/rollbar",
-            "version": "v1.4.0",
+            "version": "v1.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rollbar/rollbar-php.git",
-                "reference": "9a626a08a1293b2ad648521a0b4285b13b28fe23"
+                "reference": "c2f8be87983ecdd3c46ceb3c459de02376af4707"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rollbar/rollbar-php/zipball/9a626a08a1293b2ad648521a0b4285b13b28fe23",
-                "reference": "9a626a08a1293b2ad648521a0b4285b13b28fe23",
+                "url": "https://api.github.com/repos/rollbar/rollbar-php/zipball/c2f8be87983ecdd3c46ceb3c459de02376af4707",
+                "reference": "c2f8be87983ecdd3c46ceb3c459de02376af4707",
                 "shasum": ""
             },
             "require": {
                 "ext-curl": "*",
-                "monolog/monolog": "*",
+                "monolog/monolog": "^1.23",
                 "psr/log": "^1.0.1"
             },
             "require-dev": {
                 "codeclimate/php-test-reporter": "dev-master",
                 "mockery/mockery": "0.9.*",
-                "monolog/monolog": "^1.12.0",
+                "monolog/monolog": "^1.23",
                 "packfire/php5.3-compat": "*",
                 "phpmd/phpmd": "@stable",
                 "phpunit/phpunit": "4.8.*",
@@ -1744,7 +1744,7 @@
                 "logging",
                 "monitoring"
             ],
-            "time": "2018-02-06T06:19:04+00:00"
+            "time": "2018-11-12T12:03:55+00:00"
         },
         {
             "name": "slim/slim",

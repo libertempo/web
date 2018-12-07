@@ -38,7 +38,7 @@
         "yohang/calendr": "^2.0",
         "guzzlehttp/guzzle": "6.3.3",
         "libertempo/api": "1.5.0",
-        "rollbar/rollbar": "1.4"
+        "rollbar/rollbar": "1.7.1"
     },
     "require-dev": {
         "atoum/atoum": "3.3.0",
