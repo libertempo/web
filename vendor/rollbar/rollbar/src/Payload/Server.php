@@ -1,6 +1,6 @@
 <?php namespace Rollbar\Payload;
 
-class Server implements \JsonSerializable
+class Server implements \Serializable
 {
     private $host;
     private $root;
@@ -73,7 +73,7 @@ class Server implements \JsonSerializable
         $this->extra['argv'] = $argv;
     }
 
-    public function jsonSerialize()
+    public function serialize()
     {
         $result = array(
             "host" => $this->host,
@@ -84,6 +84,14 @@ class Server implements \JsonSerializable
         foreach ($this->extra as $key => $val) {
             $result[$key] = $val;
         }
-        return $this->utilities->serializeForRollbar($result, array_keys($this->extra));
+        
+        $objectHashes = \Rollbar\Utilities::getObjectHashes();
+        
+        return $this->utilities->serializeForRollbar($result, array_keys($this->extra), $objectHashes);
+    }
+    
+    public function unserialize($serialized)
+    {
+        throw new \Exception('Not implemented yet.');
     }
 }

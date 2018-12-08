@@ -2,20 +2,29 @@
 
 namespace Rollbar\Truncation;
 
-class RawStrategyTest extends \PHPUnit_Framework_TestCase
+use Rollbar\Payload\EncodedPayload;
+use \Rollbar\Config;
+use \Rollbar\BaseRollbarTest;
+
+class RawStrategyTest extends BaseRollbarTest
 {
     public function testExecute()
     {
         $payload = array('test' => 'test data');
 
-        $truncation = new Truncation();
+        $config = new Config(array('access_token' => $this->getTestAccessToken()));
+        $truncation = new Truncation($config);
                     
         $strategy = new RawStrategy($truncation);
-        $result = $strategy->execute($payload);
+        
+        $data = new EncodedPayload($payload);
+        $data->encode();
+        
+        $result = $strategy->execute($data);
         
         $this->assertEquals(
             strlen(json_encode($payload)),
-            strlen(json_encode($result))
+            $result->size()
         );
     }
 }

@@ -2,19 +2,28 @@
 
 namespace Rollbar\Truncation;
 
-class StringsStrategyTest extends \PHPUnit_Framework_TestCase
+use Rollbar\Payload\EncodedPayload;
+use \Rollbar\Config;
+use \Rollbar\BaseRollbarTest;
+
+class StringsStrategyTest extends BaseRollbarTest
 {
     /**
      * @dataProvider executeProvider
      */
     public function testExecute($data, $expected)
     {
-        $truncation = new Truncation();
+        $config = new Config(array('access_token' => $this->getTestAccessToken()));
+        $truncation = new Truncation($config);
 
         $strategy = new StringsStrategy($truncation);
+        
+        $data = new EncodedPayload($data);
+        $data->encode();
+        
         $result = $strategy->execute($data);
         
-        $this->assertEquals($expected, $result);
+        $this->assertEquals($expected, $result->data());
     }
     
     public function executeProvider()
@@ -34,7 +43,7 @@ class StringsStrategyTest extends \PHPUnit_Framework_TestCase
         return $data;
     }
     
-    protected function thresholdTestProvider($threshold)
+    public function thresholdTestProvider($threshold)
     {
         $stringLengthToTrim = $threshold+1;
         
@@ -52,7 +61,7 @@ class StringsStrategyTest extends \PHPUnit_Framework_TestCase
         return array($payload,$expected);
     }
     
-    protected function payloadStructureProvider($message)
+    public function payloadStructureProvider($message)
     {
         return array(
             "data" => array(

@@ -2,7 +2,7 @@
 
 use Rollbar\Defaults;
 
-class Data implements \JsonSerializable
+class Data implements \Serializable
 {
     private $environment;
     private $body;
@@ -229,7 +229,7 @@ class Data implements \JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize()
+    public function serialize()
     {
         $result = array(
             "environment" => $this->environment,
@@ -250,6 +250,14 @@ class Data implements \JsonSerializable
             "uuid" => $this->uuid,
             "notifier" => $this->notifier,
         );
-        return $this->utilities->serializeForRollbar($result);
+        
+        $objectHashes = \Rollbar\Utilities::getObjectHashes();
+        
+        return $this->utilities->serializeForRollbar($result, null, $objectHashes);
+    }
+    
+    public function unserialize($serialized)
+    {
+        throw new \Exception('Not implemented yet.');
     }
 }

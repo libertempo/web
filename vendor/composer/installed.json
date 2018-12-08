@@ -6,12 +6,12 @@
         "source": {
             "type": "git",
             "url": "https://github.com/Adldap2/Adldap2.git",
-            "reference": "ef3437720eee5e5be6ada160708cb9a8cb407b30"
+            "reference": "e74bf7e3762b35e828179b11eb100da4a12ff701"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/Adldap2/Adldap2/zipball/ef3437720eee5e5be6ada160708cb9a8cb407b30",
-            "reference": "ef3437720eee5e5be6ada160708cb9a8cb407b30",
+            "url": "https://api.github.com/repos/Adldap2/Adldap2/zipball/e74bf7e3762b35e828179b11eb100da4a12ff701",
+            "reference": "e74bf7e3762b35e828179b11eb100da4a12ff701",
             "shasum": ""
         },
         "require": {
@@ -2143,59 +2143,48 @@
     },
     {
         "name": "phpmailer/phpmailer",
-        "version": "v5.2.26",
-        "version_normalized": "5.2.26.0",
+        "version": "v6.0.6",
+        "version_normalized": "6.0.6.0",
         "source": {
             "type": "git",
             "url": "https://github.com/PHPMailer/PHPMailer.git",
-            "reference": "70362997bda4376378be7d92d81e2200550923f7"
+            "reference": "8190d73eb5def11a43cfb020b7f36db65330698c"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/70362997bda4376378be7d92d81e2200550923f7",
-            "reference": "70362997bda4376378be7d92d81e2200550923f7",
+            "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/8190d73eb5def11a43cfb020b7f36db65330698c",
+            "reference": "8190d73eb5def11a43cfb020b7f36db65330698c",
             "shasum": ""
         },
         "require": {
             "ext-ctype": "*",
-            "php": ">=5.0.0"
+            "ext-filter": "*",
+            "php": ">=5.5.0"
         },
         "require-dev": {
             "doctrine/annotations": "1.2.*",
-            "jms/serializer": "0.16.*",
+            "friendsofphp/php-cs-fixer": "^2.2",
             "phpdocumentor/phpdocumentor": "2.*",
-            "phpunit/phpunit": "4.8.*",
-            "symfony/debug": "2.8.*",
-            "symfony/filesystem": "2.8.*",
-            "symfony/translation": "2.8.*",
-            "symfony/yaml": "2.8.*",
-            "zendframework/zend-cache": "2.5.1",
-            "zendframework/zend-config": "2.5.1",
-            "zendframework/zend-eventmanager": "2.5.1",
-            "zendframework/zend-filter": "2.5.1",
-            "zendframework/zend-i18n": "2.5.1",
-            "zendframework/zend-json": "2.5.1",
-            "zendframework/zend-math": "2.5.1",
-            "zendframework/zend-serializer": "2.5.*",
-            "zendframework/zend-servicemanager": "2.5.*",
-            "zendframework/zend-stdlib": "2.5.1"
+            "phpunit/phpunit": "^4.8 || ^5.7",
+            "zendframework/zend-eventmanager": "3.0.*",
+            "zendframework/zend-i18n": "2.7.3",
+            "zendframework/zend-serializer": "2.7.*"
         },
         "suggest": {
-            "league/oauth2-google": "Needed for Google XOAUTH2 authentication"
+            "ext-mbstring": "Needed to send email in multibyte encoding charset",
+            "hayageek/oauth2-yahoo": "Needed for Yahoo XOAUTH2 authentication",
+            "league/oauth2-google": "Needed for Google XOAUTH2 authentication",
+            "psr/log": "For optional PSR-3 debug logging",
+            "stevenmaguire/oauth2-microsoft": "Needed for Microsoft XOAUTH2 authentication",
+            "symfony/polyfill-mbstring": "To support UTF-8 if the Mbstring PHP extension is not enabled (^1.2)"
         },
-        "time": "2017-11-04T09:26:05+00:00",
+        "time": "2018-11-16T00:41:32+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
-            "classmap": [
-                "class.phpmailer.php",
-                "class.phpmaileroauth.php",
-                "class.phpmaileroauthgoogle.php",
-                "class.smtp.php",
-                "class.pop3.php",
-                "extras/EasyPeasyICS.php",
-                "extras/ntlm_sasl_client.php"
-            ]
+            "psr-4": {
+                "PHPMailer\\PHPMailer\\": "src/"
+            }
         },
         "notification-url": "https://packagist.org/downloads/",
         "license": [
@@ -2691,28 +2680,28 @@
     },
     {
         "name": "rollbar/rollbar",
-        "version": "v1.4.0",
-        "version_normalized": "1.4.0.0",
+        "version": "v1.7.1",
+        "version_normalized": "1.7.1.0",
         "source": {
             "type": "git",
             "url": "https://github.com/rollbar/rollbar-php.git",
-            "reference": "9a626a08a1293b2ad648521a0b4285b13b28fe23"
+            "reference": "c2f8be87983ecdd3c46ceb3c459de02376af4707"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/rollbar/rollbar-php/zipball/9a626a08a1293b2ad648521a0b4285b13b28fe23",
-            "reference": "9a626a08a1293b2ad648521a0b4285b13b28fe23",
+            "url": "https://api.github.com/repos/rollbar/rollbar-php/zipball/c2f8be87983ecdd3c46ceb3c459de02376af4707",
+            "reference": "c2f8be87983ecdd3c46ceb3c459de02376af4707",
             "shasum": ""
         },
         "require": {
             "ext-curl": "*",
-            "monolog/monolog": "*",
+            "monolog/monolog": "^1.23",
             "psr/log": "^1.0.1"
         },
         "require-dev": {
             "codeclimate/php-test-reporter": "dev-master",
             "mockery/mockery": "0.9.*",
-            "monolog/monolog": "^1.12.0",
+            "monolog/monolog": "^1.23",
             "packfire/php5.3-compat": "*",
             "phpmd/phpmd": "@stable",
             "phpunit/phpunit": "4.8.*",
@@ -2722,7 +2711,7 @@
             "fluent/logger": "Needed to use the 'fluent' handler for fluentd support",
             "packfire/php5.3-compat": "for backward compatibility with PHP 5.3"
         },
-        "time": "2018-02-06T06:19:04+00:00",
+        "time": "2018-11-12T12:03:55+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -3432,28 +3421,27 @@
     },
     {
         "name": "tecnickcom/tcpdf",
-        "version": "6.2.6",
-        "version_normalized": "6.2.6.0",
+        "version": "6.2.26",
+        "version_normalized": "6.2.26.0",
         "source": {
             "type": "git",
             "url": "https://github.com/tecnickcom/TCPDF.git",
-            "reference": "a2e8f5b505a7a14a4ed960313c4baf699fd1f4bb"
+            "reference": "367241059ca166e3a76490f4448c284e0a161f15"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/tecnickcom/TCPDF/zipball/a2e8f5b505a7a14a4ed960313c4baf699fd1f4bb",
-            "reference": "a2e8f5b505a7a14a4ed960313c4baf699fd1f4bb",
+            "url": "https://api.github.com/repos/tecnickcom/TCPDF/zipball/367241059ca166e3a76490f4448c284e0a161f15",
+            "reference": "367241059ca166e3a76490f4448c284e0a161f15",
             "shasum": ""
         },
         "require": {
             "php": ">=5.3.0"
         },
-        "time": "2015-01-28T18:51:40+00:00",
+        "time": "2018-10-16T17:24:05+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
             "classmap": [
-                "fonts",
                 "config",
                 "include",
                 "tcpdf.php",
@@ -3474,13 +3462,13 @@
         },
         "notification-url": "https://packagist.org/downloads/",
         "license": [
-            "LGPLv3"
+            "LGPL-3.0"
         ],
         "authors": [
             {
                 "name": "Nicola Asuni",
                 "email": "info@tecnick.com",
-                "homepage": "http://nicolaasuni.tecnick.com"
+                "role": "lead"
             }
         ],
         "description": "TCPDF is a PHP class for generating PDF documents and barcodes.",
@@ -3497,17 +3485,17 @@
     },
     {
         "name": "tightenco/collect",
-        "version": "v5.7.15",
-        "version_normalized": "5.7.15.0",
+        "version": "v5.7.16",
+        "version_normalized": "5.7.16.0",
         "source": {
             "type": "git",
             "url": "https://github.com/tightenco/collect.git",
-            "reference": "860d20166ac0fa0be63b66798525fbb1e4a44493"
+            "reference": "52a7b56dc0a9d265dd5911dff433dedd3417dcc4"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/tightenco/collect/zipball/860d20166ac0fa0be63b66798525fbb1e4a44493",
-            "reference": "860d20166ac0fa0be63b66798525fbb1e4a44493",
+            "url": "https://api.github.com/repos/tightenco/collect/zipball/52a7b56dc0a9d265dd5911dff433dedd3417dcc4",
+            "reference": "52a7b56dc0a9d265dd5911dff433dedd3417dcc4",
             "shasum": ""
         },
         "require": {
@@ -3519,7 +3507,7 @@
             "nesbot/carbon": "^1.26.3",
             "phpunit/phpunit": "^7.0"
         },
-        "time": "2018-11-26T17:03:23+00:00",
+        "time": "2018-12-07T15:32:04+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
