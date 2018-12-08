@@ -8,7 +8,7 @@ use Rollbar\Payload\Level;
 use Rollbar\Payload\Message;
 use Rollbar\Payload\Payload;
 use Rollbar\RollbarLogger;
-
+use Rollbar\Defaults;
 
 use Rollbar\TestHelpers\Exceptions\SilentExceptionSampleRate;
 use Rollbar\TestHelpers\Exceptions\FiftyFiftyExceptionSampleRate;
@@ -34,6 +34,7 @@ class ConfigTest extends BaseRollbarTest
 
     public function tearDown()
     {
+        parent::tearDown();
         m::close();
     }
     
@@ -221,7 +222,7 @@ class ConfigTest extends BaseRollbarTest
 
     public function testSender()
     {
-        $p = m::mock("Rollbar\Payload\Payload");
+        $p = m::mock("Rollbar\Payload\EncodedPayload");
         $sender = m::mock("Rollbar\Senders\SenderInterface")
             ->shouldReceive("send")
             ->with($p, $this->getTestAccessToken())
@@ -248,19 +249,6 @@ class ConfigTest extends BaseRollbarTest
             $config->getSender()->getEndpoint()
         );
     }
-    
-    public function testVerbosity()
-    {
-        $expected = 3;
-        
-        $config = new Config(array(
-            "access_token" => $this->getTestAccessToken(),
-            "environment" => $this->env,
-            "verbosity" => $expected
-        ));
-        
-        $this->assertEquals($expected, $config->getVerbosity());
-    }
 
     public function testCustom()
     {
@@ -285,6 +273,48 @@ class ConfigTest extends BaseRollbarTest
         
         $this->assertEquals("bar", $custom["foo"]);
         $this->assertEquals("buzz", $custom["fuzz"]);
+    }
+    
+    public function testMaxItems()
+    {
+        $config = new Config(array(
+            "access_token" => $this->getTestAccessToken()
+        ));
+        
+        $this->assertEquals(Defaults::get()->maxItems(), $config->getMaxItems());
+        
+        $config = new Config(array(
+            "access_token" => $this->getTestAccessToken(),
+            "max_items" => Defaults::get()->maxItems()+1
+        ));
+        
+        $this->assertEquals(Defaults::get()->maxItems()+1, $config->getMaxItems());
+    }
+    
+    public function testCustomDataMethod()
+    {
+        $logger = new RollbarLogger(array(
+            "access_token" => $this->getTestAccessToken(),
+            "environment" => $this->env,
+            "custom_data_method" => function ($toLog, $customDataMethodContext) {
+                
+                return array(
+                    'data_from_my_custom_method' => $customDataMethodContext['foo']
+                );
+            }
+        ));
+        
+        $dataBuilder = $logger->getDataBuilder();
+        
+        $result = $dataBuilder->makeData(
+            Level::ERROR,
+            new \Exception(),
+            array(
+                'custom_data_method_context' => array('foo' => 'bar')
+            )
+        )->getCustom();
+        
+        $this->assertEquals('bar', $result['data_from_my_custom_method']);
     }
 
     public function testEndpointDefault()
@@ -351,7 +381,7 @@ class ConfigTest extends BaseRollbarTest
         $config = new Config(array(
             "access_token" => $this->getTestAccessToken(),
             "environment" => $this->env,
-            "checkIgnore" => function () use (&$called) {
+            "check_ignore" => function () use (&$called) {
                 $called = true;
             }
         ));
@@ -382,7 +412,7 @@ class ConfigTest extends BaseRollbarTest
         $config = new Config(array(
             "access_token" => $this->getTestAccessToken(),
             "environment" => $this->env,
-            "checkIgnore" => function (
+            "check_ignore" => function (
                 $isUncaught,
                 $exc
             ) use (
@@ -445,7 +475,7 @@ class ConfigTest extends BaseRollbarTest
         $config = new Config(array(
             "access_token" => $this->getTestAccessToken(),
             "environment" => $this->env,
-            "checkIgnore" => function () use (&$called) {
+            "check_ignore" => function () use (&$called) {
                 $called = true;
             },
             "use_error_reporting" => $use_error_reporting
