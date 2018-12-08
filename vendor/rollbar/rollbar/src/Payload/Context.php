@@ -1,6 +1,6 @@
 <?php namespace Rollbar\Payload;
 
-class Context implements \JsonSerializable
+class Context implements \Serializable
 {
     private $pre;
     private $post;
@@ -35,12 +35,20 @@ class Context implements \JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize()
+    public function serialize()
     {
         $result = array(
             "pre" => $this->pre,
             "post" => $this->post,
         );
-        return $this->utilities->serializeForRollbar($result);
+        
+        $objectHashes = \Rollbar\Utilities::getObjectHashes();
+        
+        return $this->utilities->serializeForRollbar($result, null, $objectHashes);
+    }
+    
+    public function unserialize($serialized)
+    {
+        throw new \Exception('Not implemented yet.');
     }
 }

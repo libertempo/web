@@ -12,31 +12,17 @@ use Rollbar\Payload\Level;
 class RollbarTest extends BaseRollbarTest
 {
     
-    public function __construct()
+    public function setUp()
     {
         self::$simpleConfig['access_token'] = $this->getTestAccessToken();
         self::$simpleConfig['environment'] = 'test';
-        
-        parent::__construct();
     }
 
     private static $simpleConfig = array();
-
-    private static function clearLogger()
-    {
-        $reflLoggerProperty = new \ReflectionProperty('Rollbar\Rollbar', 'logger');
-        $reflLoggerProperty->setAccessible(true);
-        $reflLoggerProperty->setValue(null);
-    }
     
     public static function setupBeforeClass()
     {
-        self::clearLogger();
-    }
-
-    public function tearDown()
-    {
-        self::clearLogger();
+        Rollbar::destroy();
     }
     
     public function testInitWithConfig()
@@ -95,7 +81,7 @@ class RollbarTest extends BaseRollbarTest
     {
         Rollbar::init(self::$simpleConfig);
       
-        Rollbar::log(Level::INFO, 'testing info level');
+        $response = Rollbar::log(Level::INFO, 'testing info level');
       
         $this->assertTrue(true);
     }

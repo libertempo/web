@@ -2,7 +2,11 @@
 
 namespace Rollbar\Truncation;
 
-class MinBodyStrategyTest extends \PHPUnit_Framework_TestCase
+use Rollbar\Payload\EncodedPayload;
+use \Rollbar\Config;
+use \Rollbar\BaseRollbarTest;
+
+class MinBodyStrategyTest extends BaseRollbarTest
 {
     
     /**
@@ -10,12 +14,17 @@ class MinBodyStrategyTest extends \PHPUnit_Framework_TestCase
      */
     public function testExecute($data, $expected)
     {
-        $truncation = new Truncation();
+        $config = new Config(array('access_token' => $this->getTestAccessToken()));
+        $truncation = new Truncation($config);
 
         $strategy = new MinBodyStrategy($truncation);
+        
+        $data = new EncodedPayload($data);
+        $data->encode();
+        
         $result = $strategy->execute($data);
         
-        $this->assertEquals($expected, $result);
+        $this->assertEquals($expected, $result->data());
     }
     
     public function executeProvider()

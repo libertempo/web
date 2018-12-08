@@ -12,7 +12,7 @@ final class Versions
 {
     const ROOT_PACKAGE_NAME = 'libertempo/libertempo-web';
     const VERSIONS = array (
-  'adldap2/adldap2' => 'v9.1.4@ef3437720eee5e5be6ada160708cb9a8cb407b30',
+  'adldap2/adldap2' => 'v9.1.4@e74bf7e3762b35e828179b11eb100da4a12ff701',
   'container-interop/container-interop' => '1.2.0@79cbf1341c22ec75643d841642dd5d6acd83bdb8',
   'doctrine/annotations' => 'v1.6.0@c7f2050c68a9ab0bdb0f98567ec08d80ea7d24d5',
   'doctrine/cache' => 'v1.8.0@d768d58baee9a4862ca783840eca1b9add7a7f57',
@@ -34,7 +34,7 @@ final class Versions
   'php-di/invoker' => '2.0.0@540c27c86f663e20fe39a24cd72fa76cdb21d41a',
   'php-di/php-di' => '6.0.2@71a7f2ed1e728138060ea159cbb1a92dc8620bd2',
   'php-di/phpdoc-reader' => '2.1.0@7d0de60b9341933c8afd172a6255cd7557601e0e',
-  'phpmailer/phpmailer' => 'v5.2.26@70362997bda4376378be7d92d81e2200550923f7',
+  'phpmailer/phpmailer' => 'v6.0.6@8190d73eb5def11a43cfb020b7f36db65330698c',
   'pimple/pimple' => 'v3.2.3@9e403941ef9d65d20cba7d54e29fe906db42cf32',
   'psr/container' => '1.0.0@b7ce3b176482dbbc1245ebf52b181af44c2cf55f',
   'psr/http-message' => '1.0.1@f6561bf28d520154e4b0ec72be95418abe6d9363',
@@ -42,7 +42,7 @@ final class Versions
   'psr/simple-cache' => '1.0.1@408d5eafb83c57f6365a3ca330ff23aa4a5fa39b',
   'ralouphie/getallheaders' => '2.0.5@5601c8a83fbba7ef674a7369456d12f1e0d0eafa',
   'raveren/kint' => '1.1@a8549198558560b24e2879c6bac2875de5371483',
-  'rollbar/rollbar' => 'v1.4.0@9a626a08a1293b2ad648521a0b4285b13b28fe23',
+  'rollbar/rollbar' => 'v1.7.1@c2f8be87983ecdd3c46ceb3c459de02376af4707',
   'slim/slim' => '3.9.0@575a8b53a0a489447915029c69680156cd355304',
   'symfony/options-resolver' => 'v4.2.1@a9c38e8a3da2c03b3e71fdffa6efb0bda51390ba',
   'symfony/polyfill-mbstring' => 'v1.10.0@c79c051f5b3a46be09205c73b80b346e4153e494',
@@ -50,8 +50,8 @@ final class Versions
   'symfony/polyfill-php72' => 'v1.10.0@9050816e2ca34a8e916c3a0ae8b9c2fccf68b631',
   'symfony/polyfill-util' => 'v1.10.0@3b58903eae668d348a7126f999b0da0f2f93611c',
   'symfony/var-dumper' => 'v4.2.1@db61258540350725f4beb6b84006e32398acd120',
-  'tecnickcom/tcpdf' => '6.2.6@a2e8f5b505a7a14a4ed960313c4baf699fd1f4bb',
-  'tightenco/collect' => 'v5.7.15@860d20166ac0fa0be63b66798525fbb1e4a44493',
+  'tecnickcom/tcpdf' => '6.2.26@367241059ca166e3a76490f4448c284e0a161f15',
+  'tightenco/collect' => 'v5.7.16@52a7b56dc0a9d265dd5911dff433dedd3417dcc4',
   'yohang/calendr' => '2.1.1@1ae1da29ec9e633afb692cc763b6736c1def3f55',
   'atoum/atoum' => '3.3.0@c5279d0ecd4e2d53af6b38815db2cafee8fc46b6',
   'codacy/coverage' => '1.4.2@4988cd098db4d578681bfd3176071931ad475150',
@@ -72,8 +72,8 @@ final class Versions
   'symfony/contracts' => 'v1.0.2@1aa7ab2429c3d594dd70689604b5cf7421254cdf',
   'symfony/finder' => 'v4.2.1@e53d477d7b5c4982d0e1bfd2298dbee63d01441d',
   'symfony/process' => 'v4.2.1@2b341009ccec76837a7f46f59641b431e4d4c2b0',
-  'wouldsmina/libertempo' => '^1.8@3ca9857955fb74d72da1b01f568b0abcb6e1a6de',
-  'libertempo/libertempo-web' => 'dev-pry/vendorBridge@3ca9857955fb74d72da1b01f568b0abcb6e1a6de',
+  'wouldsmina/libertempo' => '^1.8@f2b14c00341a8c54a10ff850cc0f9abf99410813',
+  'libertempo/libertempo-web' => 'dev-dependabot/composer/rollbar/rollbar-1.7.1@f2b14c00341a8c54a10ff850cc0f9abf99410813',
 );
 
     private function __construct()

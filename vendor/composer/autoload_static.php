@@ -58,6 +58,7 @@ class ComposerStaticInit545df53d2d8ac07231358123b91ae9ef
             'PackageVersions\\' => 16,
             'PHPStan\\PhpDocParser\\' => 21,
             'PHPStan\\' => 8,
+            'PHPMailer\\PHPMailer\\' => 20,
         ),
         'M' => 
         array (
@@ -198,6 +199,10 @@ class ComposerStaticInit545df53d2d8ac07231358123b91ae9ef
         array (
             0 => __DIR__ . '/..' . '/phpstan/phpstan/src',
             1 => __DIR__ . '/..' . '/phpstan/phpstan/build/PHPStan',
+        ),
+        'PHPMailer\\PHPMailer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
         ),
         'Monolog\\' => 
         array (
@@ -367,7 +372,6 @@ class ComposerStaticInit545df53d2d8ac07231358123b91ae9ef
         'Codacy\\Coverage\\Util\\GitClient' => __DIR__ . '/..' . '/codacy/coverage/src/Codacy/Coverage/Util/GitClient.php',
         'Codacy\\Coverage\\Util\\JsonProducer' => __DIR__ . '/..' . '/codacy/coverage/src/Codacy/Coverage/Util/JsonProducer.php',
         'Datamatrix' => __DIR__ . '/..' . '/tecnickcom/tcpdf/include/barcodes/datamatrix.php',
-        'EasyPeasyICS' => __DIR__ . '/..' . '/phpmailer/phpmailer/extras/EasyPeasyICS.php',
         'Nette\\ArgumentOutOfRangeException' => __DIR__ . '/..' . '/nette/utils/src/Utils/exceptions.php',
         'Nette\\Bridges\\DITracy\\ContainerPanel' => __DIR__ . '/..' . '/nette/di/src/Bridges/DITracy/ContainerPanel.php',
         'Nette\\Bridges\\Framework\\TracyBridge' => __DIR__ . '/..' . '/nette/bootstrap/src/Bridges/Framework/TracyBridge.php',
@@ -461,12 +465,7 @@ class ComposerStaticInit545df53d2d8ac07231358123b91ae9ef
         'Nette\\Utils\\UnknownImageFileException' => __DIR__ . '/..' . '/nette/utils/src/Utils/exceptions.php',
         'Nette\\Utils\\Validators' => __DIR__ . '/..' . '/nette/utils/src/Utils/Validators.php',
         'PDF417' => __DIR__ . '/..' . '/tecnickcom/tcpdf/include/barcodes/pdf417.php',
-        'PHPMailer' => __DIR__ . '/..' . '/phpmailer/phpmailer/class.phpmailer.php',
-        'PHPMailerOAuth' => __DIR__ . '/..' . '/phpmailer/phpmailer/class.phpmaileroauth.php',
-        'PHPMailerOAuthGoogle' => __DIR__ . '/..' . '/phpmailer/phpmailer/class.phpmaileroauthgoogle.php',
-        'POP3' => __DIR__ . '/..' . '/phpmailer/phpmailer/class.pop3.php',
         'QRcode' => __DIR__ . '/..' . '/tecnickcom/tcpdf/include/barcodes/qrcode.php',
-        'SMTP' => __DIR__ . '/..' . '/phpmailer/phpmailer/class.smtp.php',
         'TCPDF' => __DIR__ . '/..' . '/tecnickcom/tcpdf/tcpdf.php',
         'TCPDF2DBarcode' => __DIR__ . '/..' . '/tecnickcom/tcpdf/tcpdf_barcodes_2d.php',
         'TCPDFBarcode' => __DIR__ . '/..' . '/tecnickcom/tcpdf/tcpdf_barcodes_1d.php',
@@ -790,9 +789,7 @@ class ComposerStaticInit545df53d2d8ac07231358123b91ae9ef
         'mageekguy\\atoum\\writers\\std' => __DIR__ . '/..' . '/atoum/atoum/classes/writers/std.php',
         'mageekguy\\atoum\\writers\\std\\err' => __DIR__ . '/..' . '/atoum/atoum/classes/writers/std/err.php',
         'mageekguy\\atoum\\writers\\std\\out' => __DIR__ . '/..' . '/atoum/atoum/classes/writers/std/out.php',
-        'ntlm_sasl_client_class' => __DIR__ . '/..' . '/phpmailer/phpmailer/extras/ntlm_sasl_client.php',
         'phpCAS' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS.php',
-        'phpmailerException' => __DIR__ . '/..' . '/phpmailer/phpmailer/class.phpmailer.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

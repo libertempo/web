@@ -17,6 +17,8 @@ use Rollbar\Exceptions\PersonFuncException;
 
 class DataBuilder implements DataBuilderInterface
 {
+    const ANONYMIZE_IP = 'anonymize';
+    
     protected static $defaults;
 
     protected $environment;
@@ -39,6 +41,7 @@ class DataBuilder implements DataBuilderInterface
     protected $serverCodeVersion;
     protected $serverExtras;
     protected $custom;
+    protected $customDataMethod;
     protected $fingerprint;
     protected $title;
     protected $notifier;
@@ -49,6 +52,9 @@ class DataBuilder implements DataBuilderInterface
     protected $rawRequestBody;
     protected $localVarsDump;
     protected $captureErrorStacktraces;
+    protected $captureIP;
+    protected $captureEmail;
+    protected $captureUsername;
     
     /**
      * @var LevelFactory
@@ -98,11 +104,33 @@ class DataBuilder implements DataBuilderInterface
         $this->setLocalVarsDump($config);
         $this->setCaptureErrorStacktraces($config);
         $this->setLevelFactory($config);
+        $this->setCaptureEmail($config);
+        $this->setCaptureUsername($config);
+        $this->setCaptureIP($config);
+        $this->setCustomDataMethod($config);
+    }
+
+    protected function setCaptureIP($config)
+    {
+        $fromConfig = isset($config['capture_ip']) ? $config['capture_ip'] : null;
+        $this->captureIP = self::$defaults->captureIP($fromConfig);
+    }
+    
+    protected function setCaptureEmail($config)
+    {
+        $fromConfig = isset($config['capture_email']) ? $config['capture_email'] : null;
+        $this->captureEmail = self::$defaults->captureEmail($fromConfig);
+    }
+    
+    protected function setCaptureUsername($config)
+    {
+        $fromConfig = isset($config['capture_username']) ? $config['capture_username'] : null;
+        $this->captureUsername = self::$defaults->captureUsername($fromConfig);
     }
 
     protected function setEnvironment($config)
     {
-        $fromConfig = isset($config['environment']) ? $config['environment'] : null;
+        $fromConfig = isset($config['environment']) ? $config['environment'] : self::$defaults->get()->environment();
         $this->utilities->validateString($fromConfig, "config['environment']", null, false);
         $this->environment = $fromConfig;
     }
@@ -231,11 +259,22 @@ class DataBuilder implements DataBuilderInterface
         if (!isset($fromConfig)) {
             $fromConfig = isset($config['branch']) ? $config['branch'] : null;
         }
-        $allowExec = isset($config['allow_exec']) ? $config['allow_exec'] : null;
-        if (!isset($allowExec)) {
-            $allowExec = true;
+            
+        $this->serverBranch = self::$defaults->branch($fromConfig);
+        
+        if ($this->serverBranch === null) {
+            $autodetectBranch = isset($config['autodetect_branch']) ?
+                $config['autodetect_branch'] :
+                self::$defaults->autodetectBranch();
+            
+            if ($autodetectBranch) {
+                $allowExec = isset($config['allow_exec']) ?
+                    $config['allow_exec'] :
+                    self::$defaults->allowExec();
+                    
+                $this->serverBranch = $this->detectGitBranch($allowExec);
+            }
         }
-        $this->serverBranch = self::$defaults->gitBranch($fromConfig, $allowExec);
     }
 
     protected function setServerCodeVersion($config)
@@ -250,25 +289,24 @@ class DataBuilder implements DataBuilderInterface
 
     public function setCustom($config)
     {
-        $this->custom = isset($config['custom']) ? $config['custom'] : null;
+        $this->custom = isset($config['custom']) ? $config['custom'] : \Rollbar\Defaults::get()->custom();
+    }
+    
+    public function setCustomDataMethod($config)
+    {
+        $this->customDataMethod = isset($config['custom_data_method']) ?
+            $config['custom_data_method'] :
+            \Rollbar\Defaults::get()->customDataMethod();
     }
 
     protected function setFingerprint($config)
     {
         $this->fingerprint = isset($config['fingerprint']) ? $config['fingerprint'] : null;
-        if (!is_null($this->fingerprint) && !is_callable($this->fingerprint)) {
-            $msg = "If set, config['fingerprint'] must be a callable that returns a uuid string";
-            throw new \InvalidArgumentException($msg);
-        }
     }
 
     protected function setTitle($config)
     {
         $this->title = isset($config['title']) ? $config['title'] : null;
-        if (!is_null($this->title) && !is_callable($this->title)) {
-            $msg = "If set, config['title'] must be a callable that returns a string";
-            throw new \InvalidArgumentException($msg);
-        }
     }
 
     protected function setNotifier($config)
@@ -318,7 +356,7 @@ class DataBuilder implements DataBuilderInterface
 
     protected function setHost($config)
     {
-        $this->host = isset($config['host']) ? $config['host'] : null;
+        $this->host = isset($config['host']) ? $config['host'] : self::$defaults->host();
     }
 
     /**
@@ -343,7 +381,7 @@ class DataBuilder implements DataBuilderInterface
             ->setPerson($this->getPerson())
             ->setServer($this->getServer())
             ->setCustom($this->getCustomForPayload($toLog, $context))
-            ->setFingerprint($this->getFingerprint())
+            ->setFingerprint($this->getFingerprint($context))
             ->setTitle($this->getTitle())
             ->setUuid($this->getUuid())
             ->setNotifier($this->getNotifier());
@@ -463,7 +501,7 @@ class DataBuilder implements DataBuilderInterface
         $source = $this->getSourceLines($filename);
 
         $total = count($source);
-        $line = $line - 1;
+        $line = max($line - 1, 0);
         $frame->setCode($source[$line]);
         $offset = 6;
         $min = max($line - $offset, 0);
@@ -782,20 +820,38 @@ class DataBuilder implements DataBuilderInterface
      */
     protected function getUserIp()
     {
-        if (!isset($_SERVER)) {
+        if (!isset($_SERVER) || $this->captureIP === false) {
             return null;
         }
+        
+        $ipAddress = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : null;
+        
         $forwardFor = isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : null;
         if ($forwardFor) {
             // return everything until the first comma
             $parts = explode(',', $forwardFor);
-            return $parts[0];
+            $ipAddress = $parts[0];
         }
         $realIp = isset($_SERVER['HTTP_X_REAL_IP']) ? $_SERVER['HTTP_X_REAL_IP'] : null;
         if ($realIp) {
-            return $realIp;
+            $ipAddress = $realIp;
         }
-        return isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : null;
+        
+        if ($this->captureIP === DataBuilder::ANONYMIZE_IP) {
+            if (filter_var($ipAddress, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+                $parts = explode('.', $ipAddress);
+                $ipAddress = $parts[0] . '.' . $parts[1] . '.' . $parts[2] . '.0';
+            } elseif (filter_var($ipAddress, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+                $parts = explode(':', $ipAddress);
+                $ipAddress =
+                    $parts[0] . ':' .
+                    $parts[1] . ':' .
+                    $parts[2] . ':' .
+                    '0000:0000:0000:0000:0000';
+            }
+        }
+        
+        return $ipAddress;
     }
 
     protected function getRequestExtras()
@@ -825,12 +881,12 @@ class DataBuilder implements DataBuilderInterface
         $identifier = $personData['id'];
 
         $email = null;
-        if (isset($personData['email'])) {
+        if ($this->captureEmail && isset($personData['email'])) {
             $email = $personData['email'];
         }
 
         $username = null;
-        if (isset($personData['username'])) {
+        if ($this->captureUsername && isset($personData['username'])) {
             $username = $personData['username'];
         }
 
@@ -892,21 +948,38 @@ class DataBuilder implements DataBuilderInterface
     {
         return $this->custom;
     }
+    
+    public function getCustomDataMethod()
+    {
+        return $this->customDataMethod;
+    }
 
     protected function getCustomForPayload($toLog, $context)
     {
         $custom = $this->getCustom();
 
         // Make this an array if possible:
-        if ($custom instanceof \JsonSerializable) {
-            $custom = $custom->jsonSerialize();
+        if ($custom instanceof \Serializable) {
+            $custom = $custom->serialize();
         } elseif (is_null($custom)) {
             $custom = array();
         } elseif (!is_array($custom)) {
             $custom = get_object_vars($custom);
         }
+        
+        if ($customDataMethod = $this->getCustomDataMethod()) {
+            $customDataMethodContext = isset($context['custom_data_method_context']) ?
+                $context['custom_data_method_context'] :
+                null;
+                
+            $customDataMethodResult = $customDataMethod($toLog, $customDataMethodContext);
+            
+            $custom = array_merge($custom, $customDataMethodResult);
+        }
+        
+        unset($context['custom_data_method_context']);
 
-        return array_replace_recursive(array(), $context, $custom);
+        return $custom;
     }
     
     public function addCustom($key, $data)
@@ -929,9 +1002,9 @@ class DataBuilder implements DataBuilderInterface
         unset($this->custom[$key]);
     }
 
-    protected function getFingerprint()
+    protected function getFingerprint($context)
     {
-        return $this->fingerprint;
+        return isset($context['fingerprint']) ? $context['fingerprint'] : $this->fingerprint;
     }
 
     protected function getTitle()
@@ -1069,5 +1142,35 @@ class DataBuilder implements DataBuilderInterface
         }
         
         return $backTrace;
+    }
+    
+    public function detectGitBranch($allowExec = true)
+    {
+        if ($allowExec) {
+            static $cachedValue;
+            static $hasExecuted = false;
+            if (!$hasExecuted) {
+                $cachedValue = self::getGitBranch();
+                $hasExecuted = true;
+            }
+            return $cachedValue;
+        }
+        return null;
+    }
+    
+    private static function getGitBranch()
+    {
+        try {
+            if (function_exists('shell_exec')) {
+                $stdRedirCmd = Utilities::isWindows() ? " > NUL" : " 2> /dev/null";
+                $output = rtrim(shell_exec('git rev-parse --abbrev-ref HEAD' . $stdRedirCmd));
+                if ($output) {
+                    return $output;
+                }
+            }
+            return null;
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 }

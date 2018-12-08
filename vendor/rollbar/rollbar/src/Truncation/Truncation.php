@@ -1,34 +1,57 @@
 <?php namespace Rollbar\Truncation;
 
+use \Rollbar\Payload\EncodedPayload;
+use \Rollbar\Config;
+
 class Truncation
 {
     const MAX_PAYLOAD_SIZE = 524288; // 512 * 1024
  
     protected static $truncationStrategies = array(
-        "Rollbar\Truncation\RawStrategy",
         "Rollbar\Truncation\FramesStrategy",
-        "Rollbar\Truncation\StringsStrategy",
-        "Rollbar\Truncation\MinBodyStrategy"
+        "Rollbar\Truncation\StringsStrategy"
     );
- 
+    
+    public function __construct(Config $config)
+    {
+        if ($custom = $config->getCustomTruncation()) {
+            $this->registerStrategy($custom);
+        }
+    }
+    
+    public function registerStrategy($type)
+    {
+        if (!class_exists($type) || !is_subclass_of($type, "Rollbar\Truncation\AbstractStrategy")) {
+            throw new \Exception(
+                "Truncation strategy '$type' doesn't exist or is not a subclass " .
+                "of Rollbar\Truncation\AbstractStrategy"
+            );
+        }
+        array_unshift(static::$truncationStrategies, $type);
+    }
+    
     /**
      * Applies truncation strategies in order to keep the payload size under
      * configured limit.
      *
-     * @param array $payload
+     * @param \Rollbar\Payload\EncodedPayload $payload
      * @param string $strategy
      *
-     * @return array
+     * @return \Rollbar\Payload\EncodedPayload
      */
-    public function truncate(array $payload)
+    public function truncate(EncodedPayload $payload)
     {
         foreach (static::$truncationStrategies as $strategy) {
-            if (!$this->needsTruncating($payload)) {
-                break;
-            }
-            
             $strategy = new $strategy($this);
             
+            if (!$strategy->applies($payload)) {
+                continue;
+            }
+            
+            if (!$this->needsTruncating($payload, $strategy)) {
+                break;
+            }
+    
             $payload = $strategy->execute($payload);
         }
         
@@ -42,8 +65,8 @@ class Truncation
      *
      * @return boolean
      */
-    public function needsTruncating(array $payload)
+    public function needsTruncating(EncodedPayload $payload, $strategy)
     {
-        return strlen(json_encode($payload)) > self::MAX_PAYLOAD_SIZE;
+        return $payload->size() > self::MAX_PAYLOAD_SIZE;
     }
 }

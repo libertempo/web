@@ -29,6 +29,7 @@ return array(
     'PackageVersions\\' => array($vendorDir . '/ocramius/package-versions/src/PackageVersions'),
     'PHPStan\\PhpDocParser\\' => array($vendorDir . '/phpstan/phpdoc-parser/src'),
     'PHPStan\\' => array($vendorDir . '/phpstan/phpstan/src', $vendorDir . '/phpstan/phpstan/build/PHPStan'),
+    'PHPMailer\\PHPMailer\\' => array($vendorDir . '/phpmailer/phpmailer/src'),
     'Monolog\\' => array($vendorDir . '/monolog/monolog/src/Monolog'),
     'LibertAPI\\' => array($vendorDir . '/libertempo/api'),
     'Jean85\\' => array($vendorDir . '/jean85/pretty-package-versions/src'),
