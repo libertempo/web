@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "505876d8c508bab6159b6df5e97c4121",
+    "content-hash": "e8c863d4138b5c8a6709210743c1c111",
     "packages": [
         {
             "name": "adldap2/adldap2",
@@ -1677,27 +1677,27 @@
         },
         {
             "name": "rollbar/rollbar",
-            "version": "v1.4.0",
+            "version": "v1.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rollbar/rollbar-php.git",
-                "reference": "9a626a08a1293b2ad648521a0b4285b13b28fe23"
+                "reference": "c2f8be87983ecdd3c46ceb3c459de02376af4707"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rollbar/rollbar-php/zipball/9a626a08a1293b2ad648521a0b4285b13b28fe23",
-                "reference": "9a626a08a1293b2ad648521a0b4285b13b28fe23",
+                "url": "https://api.github.com/repos/rollbar/rollbar-php/zipball/c2f8be87983ecdd3c46ceb3c459de02376af4707",
+                "reference": "c2f8be87983ecdd3c46ceb3c459de02376af4707",
                 "shasum": ""
             },
             "require": {
                 "ext-curl": "*",
-                "monolog/monolog": "*",
+                "monolog/monolog": "^1.23",
                 "psr/log": "^1.0.1"
             },
             "require-dev": {
                 "codeclimate/php-test-reporter": "dev-master",
                 "mockery/mockery": "0.9.*",
-                "monolog/monolog": "^1.12.0",
+                "monolog/monolog": "^1.23",
                 "packfire/php5.3-compat": "*",
                 "phpmd/phpmd": "@stable",
                 "phpunit/phpunit": "4.8.*",
@@ -1733,7 +1733,7 @@
                 "logging",
                 "monitoring"
             ],
-            "time": "2018-02-06T06:19:04+00:00"
+            "time": "2018-11-12T12:03:55+00:00"
         },
         {
             "name": "slim/slim",
