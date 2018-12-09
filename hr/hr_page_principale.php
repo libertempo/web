@@ -15,6 +15,8 @@ if (getpost_variable('notice') !== "") {
         case 'deleted':
             $message = _('Utilisateur supprimé');
             break;
+        case 'credit-added':
+            $message = _('Compte(s) crédités(s)');
         default:
             break;
     }

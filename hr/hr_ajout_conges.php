@@ -182,17 +182,16 @@ if ('true' === $ajout_conges) {
     $tab_commentaire_saisie = getpost_variable('tab_commentaire_saisie');
 
     ajout_conges($tab_champ_saisie);
-    redirect( ROOT_PATH . 'hr/page_principale');
+    redirect( ROOT_PATH . 'hr/page_principale?notice=credit-added');
 }
 
 if ('true' === $ajout_global) {
-
     $tab_new_nb_conges_all = getpost_variable('tab_new_nb_conges_all');
     $tab_calcul_proportionnel = getpost_variable('tab_calcul_proportionnel');
     $tab_new_comment_all = getpost_variable('tab_new_comment_all');
 
     ajout_global($tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all, $_SESSION['userlogin']);
-    redirect( ROOT_PATH . 'hr/page_principale');
+    redirect( ROOT_PATH . 'hr/page_principale?notice=credit-added');
 }
 
 if ('true' === $ajout_groupe) {
@@ -202,7 +201,7 @@ if ('true' === $ajout_groupe) {
     $choix_groupe = getpost_variable('choix_groupe');
 
     ajout_global_groupe($choix_groupe, $tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all);
-    redirect( ROOT_PATH . 'hr/page_principale');
+    redirect( ROOT_PATH . 'hr/page_principale?notice=credit-added');
 }
 
 $config = new \App\Libraries\Configuration(\includes\SQL::singleton());

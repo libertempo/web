@@ -9,7 +9,6 @@
  * $tab_type_conges_exceptionnels
  */
 ?>
-
 <h1><?= $titre ?></h1>
 <?php if (empty($tab_all_users_du_hr) && empty($tab_all_users_du_grand_resp)) : ?>
     <?= _('resp_etat_aucun_user') ?><br>
