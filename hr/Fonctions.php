@@ -1343,7 +1343,6 @@ class Fonctions
             $return .= '</td></tr>';
             $return .= '</table>';
 
-            $return .= '<input type="hidden" name="onglet" value="cloture_exercice">';
             $return .= '<input type="hidden" name="cloture_groupe" value="TRUE">';
             $return .= '</form>';
         }
@@ -1359,7 +1358,7 @@ class Fonctions
         /************************************************************/
         /* CLOTURE EXERCICE GLOBALE pour tous les utilisateurs du responsable */
 
-        $return .= '<form action="' . $PHP_SELF . '?onglet=cloture_year" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '" method="POST">';
         $return .= '<table>';
         $return .= '<tr><td align="center">';
         $return .= '<fieldset class="cal_saisie">';
@@ -1424,7 +1423,7 @@ class Fonctions
         /* CLOTURE EXERCICE USER PAR USER pour tous les utilisateurs du responsable */
 
         if ( (count($tab_all_users_du_hr)!=0) || (count($tab_all_users_du_grand_resp)!=0) ) {
-            $return .= '<form action="' . $PHP_SELF . '?onglet=cloture_year" method="POST">';
+            $return .= '<form action="' . $PHP_SELF . '" method="POST">';
             $return .= '<table>';
             $return .= '<tr>';
             $return .= '<td align="center">';
@@ -1541,19 +1540,16 @@ class Fonctions
             $tab_commentaire_saisie       = getpost_variable('tab_commentaire_saisie'); //a vérifier
             $return .= \hr\Fonctions::cloture_users($tab_type_cong, $tab_cloture_users, $tab_commentaire_saisie);
 
-            redirect( ROOT_PATH .'hr/page_principale', false);
-            exit;
+            redirect( ROOT_PATH .'hr/page_principale');
         } elseif ($cloture_globale=="TRUE") {
             \hr\Fonctions::cloture_globale($tab_type_cong);
 
-            redirect( ROOT_PATH .'hr/page_principale', false);
-            exit;
+            redirect( ROOT_PATH .'hr/page_principale');
         } elseif ($cloture_groupe=="TRUE") {
             $choix_groupe            = getpost_variable('choix_groupe');
             $return .= \hr\Fonctions::cloture_globale_groupe($choix_groupe, $tab_type_cong);
 
-            redirect( ROOT_PATH .'hr/page_principale', false);
-            exit;
+            redirect( ROOT_PATH .'hr/page_principale');
         } else {
             $return .= \hr\Fonctions::saisie_cloture($tab_type_cong);
         }
@@ -2052,7 +2048,6 @@ class Fonctions
 
     public static function saisie_dates_fermeture($year, $groupe_id, $new_date_debut, $new_date_fin, $code_erreur) : string
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $return = '';
 
         $tab_date_debut=explode("/",$new_date_debut);   // date au format d/m/Y

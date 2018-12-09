@@ -21,6 +21,7 @@ $rewritten = [
     '/hr/jours_chomes',
     '/hr/ajout_conges',
     '/hr/jours_fermeture',
+    '/hr/cloture_year',
 ];
 
 if (!in_array($uri, $rewritten, true)) {
