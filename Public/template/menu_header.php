@@ -5,7 +5,7 @@
     global $environnement;
 
     if (is_hr($_SESSION['userlogin'])) {
-        $home = 'hr/hr_index.php';
+        $home = 'hr/page_principale';
     } elseif (is_resp($_SESSION['userlogin'])) {
         $home = 'responsable/resp_index.php';
     } else {
@@ -191,7 +191,7 @@ function sousmenuEmploye()
                 <?php endif; ?>
 				<?php endif; ?>
 				<?php if (is_hr($_SESSION['userlogin'])): ?>
-                <a class="primary <?= $hrActive ?>" href="<?= ROOT_PATH ?>hr/hr_index.php" <?php print ($urn == 'hr') ? 'active' : '' ;?>>
+                <a class="primary <?= $hrActive ?>" href="<?= ROOT_PATH ?>hr/page_principale" <?php print ($urn == 'hr') ? 'active' : '' ;?>>
                     <i class="fa fa-sitemap"></i><?= _('button_hr_mode');?>
 				</a>
                 <?php if ($urn == 'hr') : ?>

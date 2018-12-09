@@ -1110,8 +1110,6 @@ class Fonctions
         return $list_users;
     }
 
-
-
     // calcul de la date limite d'utilisation des reliquats (si on utilise une date limite et qu'elle n'est pas encore calculée) et stockage dans la table
     public static function set_nouvelle_date_limite_reliquat()
     {
@@ -1549,18 +1547,18 @@ class Fonctions
             $tab_commentaire_saisie       = getpost_variable('tab_commentaire_saisie'); //a vérifier
             $return .= \hr\Fonctions::cloture_users($tab_type_cong, $tab_cloture_users, $tab_commentaire_saisie);
 
-            redirect( ROOT_PATH .'hr/hr_index.php', false);
+            redirect( ROOT_PATH .'hr/page_principale', false);
             exit;
         } elseif ($cloture_globale=="TRUE") {
             \hr\Fonctions::cloture_globale($tab_type_cong);
 
-            redirect( ROOT_PATH .'hr/hr_index.php', false);
+            redirect( ROOT_PATH .'hr/page_principale', false);
             exit;
         } elseif ($cloture_groupe=="TRUE") {
             $choix_groupe            = getpost_variable('choix_groupe');
             $return .= \hr\Fonctions::cloture_globale_groupe($choix_groupe, $tab_type_cong);
 
-            redirect( ROOT_PATH .'hr/hr_index.php', false);
+            redirect( ROOT_PATH .'hr/page_principale', false);
             exit;
         } else {
             $return .= \hr\Fonctions::saisie_cloture($tab_type_cong);
