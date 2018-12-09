@@ -7,7 +7,6 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     define('ENV_TEST', 2);
     define('ENV_PROD', 3);
     define('DEFINE_INCLUDE',   true);
-    define('SHOW_SQL',         false);
     define('DS',               DIRECTORY_SEPARATOR);
     define('ABSOLUTE_SYSPATH', dirname(__FILE__, 2) . DS);
     define('PUBLIC_PATH',      ROOT_PATH . 'Public/');

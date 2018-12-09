@@ -123,8 +123,6 @@ class SQL
 
 class Database extends \mysqli
 {
-    private static $hist = [];
-
     public function __construct($host, $username, $passwd, $dbname)
     {
         /* activate reporting */
@@ -136,37 +134,12 @@ class Database extends \mysqli
         $this->query("SET @@SESSION.sql_mode='';");
     }
 
-    public function getQuerys() {
-        return self::$hist;
-    }
-
     public function query($query, $resultmode = MYSQLI_STORE_RESULT) : Database_MySQLi_Result
     {
-        $nb = count(self::$hist);
-        $backtraces = debug_backtrace();
-        $f = '';
-
-        foreach ( $backtraces as $b ) {
-            if (isset($b['file']) && basename($b['file']) != 'sql.class.php') {
-                $f = $b;
-            break;
-            }
-        }
-
-        if ($f !='') {
-            self::$hist[$nb]['back'] = $f;
-        }
-
-        self::$hist[$nb]['query'] = $query;
-        self::$hist[$nb]['t1'] = microtime(true);
-
+        unset($resultmode);
         $this->real_query($query);
-        $result = new Database_MySQLi_Result($this);
 
-        self::$hist[$nb]['t2'] = microtime(true);
-        self::$hist[$nb]['results'] = $result;
-
-        return $result;
+        return new Database_MySQLi_Result($this);
     }
 
     public function quote($escapestr)
@@ -181,8 +154,7 @@ class Database_MySQLi_Result extends \mysqli_result
     public function fetch_all($result_type = NULL)
     {
         $rows = array();
-        while($row = $this->fetch_assoc())
-        {
+        while ($row = $this->fetch_assoc()) {
             $rows[] = $row;
         }
 
