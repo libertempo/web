@@ -952,28 +952,6 @@ function get_tab_grd_resp_du_user($user_login, &$tab_grd_resp)
 }
 
 
-function valid_ldap_user($username)
-{
-/* fonction utilisée avec le mode d'authentification ldap.
-   En effet, si un utilisateur (enregistré dans le ldap) tente de se
-connecter alors qu'il n'a pas de compte dans
-   la base, il n'y a aucun message qui lui indique !
-
-   Retourne TRUE, si tout est ok... ($username dans la table conges_users)
-   False, sinon
-
-*/
-    // connexion MySQL + selection de la database sur le serveur
-    $db = \includes\SQL::singleton();
-
-    $req = 'SELECT COUNT(*) FROM conges_users WHERE u_login="'. $db->quote($username).'";';
-    $res = $db->query($req);
-    $cpt = $res->fetch_array();
-    $cpt = $cpt[0];
-
-    return ( $cpt != 0 );
-}
-
 
 /**
  * verifie si un user est responsable ou pas
@@ -1012,34 +990,6 @@ function is_active($login)
     return ($sql_is_active[$login]=='Y');
 }
 
-function is_resp_group_of_user($resp_login, $user_login)
-{
-    $db = \includes\SQL::singleton();
-    $ReqLog_info = $db->query('SELECT count(*)
-            FROM `conges_groupe_users`
-            JOIN conges_groupe_resp ON gr_gid = gu_gid
-            WHERE gu_login = \''. $db->quote($user_login).'\'
-            AND gr_login = \''. $db->quote($resp_login).'\';');
-    $resultat_info = $ReqLog_info->fetch_array();
-    return ($resultat_info[0] != 0);
-}
-
-function is_gr_group_of_user($resp_login, $user_login)
-{
-    $db = \includes\SQL::singleton();
-    $config = new \App\Libraries\Configuration($db);
-    if ($config->isDoubleValidationActive())
-    {
-        $ReqLog_info = $db->query('SELECT count(*)
-                FROM `conges_groupe_users`
-                JOIN conges_groupe_grd_resp ON ggr_gid = gu_gid
-                WHERE gu_login = \''. $db->quote($user_login).'\'
-                AND ggr_login = \''. $db->quote($resp_login).'\';');
-        $resultat_info = $ReqLog_info->fetch_array();
-        return ($resultat_info[0] != 0);
-    }
-    return false;
-}
 
 /**
  * verifie si un user est admin ou pas
@@ -1222,9 +1172,6 @@ function init_config_tab()
     }
     return $result;
 }
-
-
-
 
 // Récupère le contenu d une variable $_GET / $_POST
 function getpost_variable($variable, $default="")
@@ -1671,27 +1618,6 @@ function soustrait_solde_et_reliquat_user($user_login, $num_current_periode, $us
     $ReqLog2 = $db->query($sql2) ;
 }
 
-// recup de la liste des users des groupes dont $resp_login est responsable mais ne remonte pas les autres responsables
-// renvoit une liste de login entre quotes et séparés par des virgules
-function get_list_users_des_groupes_du_resp_sauf_resp($resp_login)
-{
-    $list_users_des_groupes_du_resp_sauf_resp="";
-    $list_groups=get_list_groupes_du_resp($resp_login);
-    if ($list_groups!="") { // si $resp_login est responsable d'au moins un groupe
-        $sql1="SELECT DISTINCT(gu_login) FROM conges_groupe_users WHERE gu_gid IN ($list_groups) AND gu_login NOT IN (SELECT gr_login FROM conges_groupe_resp WHERE gr_gid IN ($list_groups)) ORDER BY gu_login ";
-        $ReqLog1 = \includes\SQL::singleton()->query($sql1);
-
-        while ($resultat1 = $ReqLog1->fetch_array())
-        {
-            $current_login=$resultat1["gu_login"];
-            if ($list_users_des_groupes_du_resp_sauf_resp=="")
-                $list_users_des_groupes_du_resp_sauf_resp="'$current_login'";
-            else
-                $list_users_des_groupes_du_resp_sauf_resp=$list_users_des_groupes_du_resp_sauf_resp.", '$current_login'";
-        }
-    }
-    return $list_users_des_groupes_du_resp_sauf_resp;
-}
 
 /*--------- ajout fonction probesys -------------------*/
 //date au format d/m/Y -> Y-m-d

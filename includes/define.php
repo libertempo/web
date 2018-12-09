@@ -31,7 +31,6 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     require_once CONFIG_PATH . 'env.php';
     require_once INCLUDE_PATH . 'fonctions_conges.php' ;
     require_once INCLUDE_PATH . 'fonction.php';
-    require_once INCLUDE_PATH . 'fonctions_calcul.php';
 
     switch (ENV) {
         case ENV_PROD:

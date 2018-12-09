@@ -343,11 +343,3 @@ function verif_periode_chevauche_periode_user($date_debut, $date_fin, $user, $nu
 
     return false;
 }
-
-//retourne un nombre arrondit à 0.5 près à partir d'un nombre décimal
-function round_to_half($num)
-{
-	if ($num >= ($half = ($ceil = ceil($num))- 0.5) + 0.25) return $ceil;
-	else if ($num < $half - 0.25) return floor($num);
-	else return $half;
-}
