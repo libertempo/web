@@ -54,7 +54,7 @@ var vm = new Vue({
     },
     'methods' : {
         hasPlanning : function () {
-            return 0 < this.plannings.length;
+            return 0 < Object.keys(this.plannings).length;
         },
         isUsed : function (id) {
             return -1 != this.listIdUsed.indexOf(id);
