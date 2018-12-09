@@ -12,7 +12,7 @@ class Fonctions
 
         $db = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($db);
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $return = '';
 
         while($elem_tableau = each($tab_bt_radio)) {
@@ -68,7 +68,7 @@ class Fonctions
 
         $return .= _('form_modif_ok') . '<br><br>';
         /* APPEL D'UNE AUTRE PAGE au bout d'une tempo de 2secondes */
-        $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $PHP_SELF . '?onglet=traitement_demandes">';
+        $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $PHP_SELF . '">';
         return $return;
     }
 
@@ -77,7 +77,7 @@ class Fonctions
         $return = '';
         $db = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($db);
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $count1=0;
         $count2=0;
 
@@ -108,7 +108,7 @@ class Fonctions
 
         /*********************************/
 
-        $return .= '<form action="' . $PHP_SELF . '?onglet=traitement_demandes" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '" method="POST">';
 
         /*********************************/
         /* TABLEAU DES DEMANDES DES USERS*/
@@ -251,8 +251,7 @@ class Fonctions
         } else {
             $return .= \hr\Fonctions::traite_all_demande_en_cours($tab_bt_radio, $tab_text_refus);
             echo $return;
-            redirect( ROOT_PATH .'hr/hr_index.php?onglet='.$onglet, false);
-            exit;
+            return '';
         }
         return $return;
     }
@@ -2100,7 +2099,7 @@ class Fonctions
         $config = new \App\Libraries\Configuration($db);
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '<h1>Nouvelle fermeture</h1>';
-        $return .= '<a href="' . ROOT_PATH . 'hr/hr_jours_fermeture.php" class="admin-back"><i class="fa fa-arrow-circle-o-left"></i>Retour calendrier des fermetures</a>';
+        $return .= '<a href="' . ROOT_PATH . 'hr/jours_fermeture" class="admin-back"><i class="fa fa-arrow-circle-o-left"></i>Retour calendrier des fermetures</a>';
 
 
         $return .= '<div class="row">';
