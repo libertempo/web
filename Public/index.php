@@ -22,6 +22,9 @@ $rewritten = [
     '/hr/ajout_conges',
     '/hr/jours_fermeture',
     '/hr/cloture_year',
+    '/hr/liste_planning',
+    '/hr/ajout_planning',
+    '/hr/modif_planning',
 ];
 
 if (!in_array($uri, $rewritten, true)) {
