@@ -27,7 +27,6 @@
                 <span v-if="isHr">
                     <span v-if="isUsed(p.id)">
                         <button title="<?= _('planning_used') ?>" type="button" class="btn btn-link disabled"><i class="fa fa-times-circle"></i></button>
-
                     </span>
                     <span v-else>
                         <input type="hidden" name="planning_id" :value="p.id" />
@@ -46,7 +45,6 @@
 var vm = new Vue({
     el: '#inner-content',
     data: {
-        message: 'Hello Vue!',
         plannings : <?= json_encode($plannings) ?>,
         listIdUsed : <?= json_encode($listIdUsed) ?>,
         isHr: 'true' == "<?= $isHr ? 'true' : 'false' ?>",
