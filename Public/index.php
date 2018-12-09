@@ -11,6 +11,7 @@ $rewritten = [
     '/config/general',
     '/config/type_absence',
     '/config/mail',
+    '/config/logs',
     '/deconnexion',
     '/hr/page_principale',
     '/hr/jours_chomes',

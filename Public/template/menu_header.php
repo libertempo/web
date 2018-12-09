@@ -45,7 +45,7 @@ function sousmenuConfiguration()
     return '<a class="secondary" href="' . ROOT_PATH . 'config/general">Config. générale</a>
     <a class="secondary" href="' . ROOT_PATH . 'config/type_absence">Type de congés</a>
     <a class="secondary" href="' . ROOT_PATH . 'config/mail">Mails</a>
-    <a class="secondary" href="' . ROOT_PATH . 'config/index.php?onglet=logs">Journaux</a>';
+    <a class="secondary" href="' . ROOT_PATH . 'config/logs">Journaux</a>';
 }
 
 function sousmenuHR()

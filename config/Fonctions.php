@@ -19,21 +19,21 @@ class Fonctions
         log_action(0, "", "", $comment_log);
 
         $return .= '<span class="messages">' . _('form_modif_ok') . '</span><br>';
-        redirect( ROOT_PATH . 'config/index.php?onglet=logs');
+        redirect( ROOT_PATH . 'config/logs');
     }
 
     public static function confirmer_vider_table_logs()
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $return = '';
 
         $return .= '<center>';
         $return .= '<br><h2>' . _('confirm_vider_logs') . '</h2><br>';
-        $return .= '<form action="' . $PHP_SELF . '?onglet=logs" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '" method="POST">';
         $return .= '<input type="hidden" name="action" value="commit_suppr_logs">';
         $return .= '<input type="submit" value="' . _('form_delete_logs') . '">';
         $return .= '</form>';
-        $return .= '<form action="' . $PHP_SELF . '?onglet=logs" method="POST">';
+        $return .= '<form action="' . $PHP_SELF . '" method="POST">';
         $return .= '<input type="submit" value="' . _('form_cancel') . '"">';
         $return .= '</form></center>';
         return $return;
@@ -41,7 +41,7 @@ class Fonctions
 
     public static function affichage($login_par)
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $return = '';
 
         //requête qui récupère les logs
@@ -65,7 +65,7 @@ class Fonctions
 
             $childTable = '<tr><td class="histo" colspan="5">' . _('voir_les_logs_par') . '</td>';
             if($login_par!="") {
-                $childTable .= '<tr><td class="histo" colspan="5">' . _('voir_tous_les_logs') . '<a href="' . $PHP_SELF . '?onglet=logs">' . _('voir_tous_les_logs') . '</a></td>';
+                $childTable .= '<tr><td class="histo" colspan="5">' . _('voir_tous_les_logs') . '<a href="/config/logs">' . _('voir_tous_les_logs') . '</a></td>';
             }
             $childTable .= '<tr><td class="histo" colspan="5">&nbsp;</td>';
 
@@ -88,7 +88,7 @@ class Fonctions
 
                 $childTable .= '<tr>';
                 $childTable .= '<td>' . $log_log_date . '</td>';
-                $childTable .= '<td><a href="' . $PHP_SELF . '?onglet=logs&login_par=' . $log_login_par . '"><b>' . $log_login_par . '</b></a></td>';
+                $childTable .= '<td><a href="' . $PHP_SELF . '?login_par=' . $log_login_par . '"><b>' . $log_login_par . '</b></a></td>';
                 $childTable .= '<td>' . $log_login_pour . '</td>';
                 $childTable .= '<td>' . $log_log_comment . '</td>';
                 $childTable .= '<td>' . $log_log_etat . '</td>';
@@ -99,7 +99,7 @@ class Fonctions
             ob_start();
             $table->render();
             $return .= ob_get_clean();
-            $return .= '<form action="' . $PHP_SELF . '?onglet=logs" method="POST">';
+            $return .= '<form action="' . $PHP_SELF . '" method="POST">';
 
             // affichage du bouton pour vider les logs
             $return .= '<input type="hidden" name="action" value="suppr_logs">';
