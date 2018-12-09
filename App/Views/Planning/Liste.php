@@ -25,7 +25,7 @@
                 enctype="application/x-www-form-urlencoded">
                 <a title="<?= _('form_modif') ?>" :href="linkModification(p.id)"><i class="fa fa-pencil"></i></a>&nbsp;&nbsp;
                 <span v-if="isHr">
-                    <span v-if="isUsed('p.id')">
+                    <span v-if="isUsed(p.id)">
                         <button title="<?= _('planning_used') ?>" type="button" class="btn btn-link disabled"><i class="fa fa-times-circle"></i></button>
 
                     </span>
@@ -59,10 +59,10 @@ var vm = new Vue({
             return 0 < this.plannings.length;
         },
         isUsed : function (id) {
-            return undefined != this.listIdUsed[id];
+            return -1 != this.listIdUsed.indexOf(id);
         },
         linkModification : function (id) {
-            return this.lienModification + '?id=' + id;
+            return this.lienModification + '&id=' + id;
         }
     }
 })
