@@ -7,7 +7,7 @@ global $environnement;
 <html>
     <head>
         <meta charset="utf-8">
-        <title><?= $title ?></title>
+        <title><?= $title; ?></title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <?php /* FAVICONS */ ?>
         <link rel="apple-touch-icon" href="<?= IMG_PATH ?>Favicons/apple-touch-icon.png">
@@ -29,14 +29,15 @@ global $environnement;
         <meta name="msapplication-TileColor" content="#da532c">
         <meta name="msapplication-TileImage" content="<?= IMG_PATH ?>Favicons/mstile-144x144.png">
         <meta name="theme-color" content="#ffffff">
-        <?php /* JQUERY */ ?>
         <?php /* BOOTSTRAP */?>
-        <link type="text/css" href="<?= NODE_PATH ?>bootstrap/dist/css/bootstrap.min.css?v=<?= $config_php_conges_version ?>" rel="stylesheet" media="screen">
+        <link type="text/css" href="<?= NODE_PATH ?>bootstrap/dist/css/bootstrap.min.css?v=<?= $config_php_conges_version ?>" rel="stylesheet" media="screen,print">
+        <link type="text/css" href="<?= NODE_PATH ?>bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css?v=<?= $config_php_conges_version ?>" rel="stylesheet" media="screen">
+        <link type="text/css" href="<?= NODE_PATH ?>bootstrap-timepicker/css/bootstrap-timepicker.min.css?v=<?= $config_php_conges_version ?>" rel="stylesheet" media="screen" />
         <?php /* FONT AWESOME */ ?>
         <link href="<?= ASSETS_PATH ?>font-awesome/css/font-awesome.min.css?v=<?= $config_php_conges_version ?>" rel="stylesheet">
         <?php /* REBOOT STYLE */ ?>
-        <link type="text/css" href="<?= CSS_PATH ?>reboot.css?v=<?= $config_php_conges_version ?>" rel="stylesheet" media="screen">
-        <?php /* SCRIPTS */ ?>
+        <link type="text/css" href="<?= CSS_PATH ?>reboot.css?v=<?= $config_php_conges_version ?>" rel="stylesheet" media="screen,print">
+        <?php /* JQUERY */ ?>
         <script>
         var _rollbarConfig = {
             accessToken: "<?= LOGGER_TOKEN ?>",
@@ -50,6 +51,10 @@ global $environnement;
         </script>
         <script type="text/javascript" src="<?= JS_PATH ?>rollbar.js?v=<?= $config_php_conges_version ?>"></script>
         <script type="text/javascript" src="<?= NODE_PATH ?>jquery/dist/jquery.min.js?v=<?= $config_php_conges_version ?>"></script>
+        <script type="text/javascript" src="<?= NODE_PATH ?>bootstrap/dist/js/bootstrap.min.js?v=<?= $config_php_conges_version ?>"></script>
+        <script type="text/javascript" src="<?= NODE_PATH ?>bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js?v=<?= $config_php_conges_version ?>"></script>
+        <script type="text/javascript" src="<?= NODE_PATH ?>bootstrap-datepicker/dist/locales/bootstrap-datepicker.fr.min.js?v=<?= $config_php_conges_version ?>"></script>
+        <script type="text/javascript" src="<?= NODE_PATH ?>bootstrap-timepicker/js/bootstrap-timepicker.min.js?v=<?= $config_php_conges_version ?>"></script>
         <script type="text/javascript" src="<?= JS_PATH ?>reboot.js?v=<?= $config_php_conges_version ?>"></script>
-        <?= $additional_head; ?>
+        <?= $additional_head ?>
     </head>
