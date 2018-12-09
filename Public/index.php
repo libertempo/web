@@ -14,6 +14,7 @@ $rewritten = [
     '/config/logs',
     '/deconnexion',
     '/hr/page_principale',
+    '/hr/liste_groupe',
     '/hr/jours_chomes',
     '/hr/ajout_conges',
 ];

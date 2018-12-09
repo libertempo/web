@@ -449,7 +449,7 @@ class Gestion {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
         $return = '';
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $message = '';
         $infosGroupe = [
             'nom' => '',
@@ -474,9 +474,9 @@ class Gestion {
                 $data = $this->FormData2Array($_POST);
             } else {
                 if (key_exists('_METHOD', $_POST)) {
-                    redirect(ROOT_PATH . 'hr/hr_index.php?onglet=liste_groupe&notice=update', false);
+                    redirect(ROOT_PATH . 'hr/liste_groupe?notice=update', false);
                 } else {
-                    redirect(ROOT_PATH . 'hr/hr_index.php?onglet=liste_groupe&notice=insert', false);
+                    redirect(ROOT_PATH . 'hr/liste_groupe?notice=insert', false);
                 }
             }
         }
@@ -555,7 +555,7 @@ class Gestion {
             $return .= '<input type="hidden" name="group" value="' . $idGroupe . '" />';
         }
         $return .= '<input class="btn btn-success" type="submit" value="' . _('form_submit') . '">';
-        $return .= '<a class="btn" href="' . $PHP_SELF . '?onglet=liste_groupe">' . _('form_annul') . '</a>';
+        $return .= '<a class="btn" href="' . $PHP_SELF . '">' . _('form_annul') . '</a>';
         $return .= '</div>';
         $return .= '</form>';
 
@@ -737,13 +737,12 @@ class Gestion {
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $return = '';
-
 
         $infosGroupe = \App\ProtoControllers\Groupe::getInfosGroupe($idGroupe, \includes\SQL::singleton());
 
-        $return .= '<form method="post" action="' . $PHP_SELF . '?onglet=liste_groupe"  role="form">';
+        $return .= '<form method="post" action="liste_groupe"  role="form">';
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses([
             'table',
@@ -777,7 +776,7 @@ class Gestion {
         $return .= '<input type="hidden" name="new_group_libelle" value="' . $infosGroupe['comment'] . '" />';
         $return .= '<input type="hidden" name="new_group_double_valid" value="' . $infosGroupe['doubleValidation'] . '" />';
         $return .= '<input class="btn btn-danger" type="submit" value="' . _('form_supprim') . '">';
-        $return .= '<a class="btn" href="hr_index.php?onglet=liste_groupe">' . _('form_cancel') . '</a>';
+        $return .= '<a class="btn" href="liste_groupe">' . _('form_cancel') . '</a>';
         $return .= '</form>';
 
         return $return;
