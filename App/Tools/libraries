@@ -105,3 +105,16 @@ function getVersionDerniereMiseAJour(\includes\SQL $db, string $installedVersion
 
     return $installedVersion . '.0';
 }
+
+/**
+ * Crée une base de données nue
+ *
+ * @return bool succès de l'opération
+ */
+function createDatabase(\includes\SQL $db, string $name) : bool
+{
+    $req = 'CREATE DATABASE `' . $name . '`';
+    $db->query($req);
+
+    return 0 < $db->affected_rows;
+}

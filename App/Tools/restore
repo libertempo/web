@@ -16,6 +16,9 @@ function executeBackup() : bool
 }
 
 display('Restauration de la base de données…');
+if (!createDatabase(\includes\SQL::singletonWithoutDb(), $mysql_database)) {
+    displayError('Création de la base de données impossible.');
+}
 if (!executeBackup()) {
     displayFail();
 }

@@ -35,7 +35,7 @@ install-dep: ## Installe les dépendances composer et node
 save: ## Sauvegarde la DB
 	App/Tools/savedb
 
-restore: destroy setup ## Restaure la dernière sauvegarde
+restore: destroy check ## Restaure la dernière sauvegarde
 	App/Tools/restore
 
 ## CI
