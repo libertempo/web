@@ -4,12 +4,103 @@ require_once 'libraries';
 require_once ROOT_PATH . 'version.php';
 require_once INCLUDE_PATH . 'fonction.php';
 
+/**
+ * Écrit un fichier de sauvegarde de version dans le répertoire de backup
+ *
+ * @param string $previousVersion Version de départ (courante)
+ * @param string $newVersion Version visée
+ *
+ * @throws \Exception en cas d'échec d'écriture de fichier
+ */
+function sauvegardeAsFile(\includes\SQL $db, $previousVersion, $newVersion) : void
+{
+    $contentFile = getDataFile($db);
+    $filename = BACKUP_PATH . 'libertempo_' . $previousVersion . '__' . $newVersion . '.sql'; // nom de migration
+
+    if (false === file_put_contents($filename, $contentFile)) {
+        throw new \Exception('Échec de l\'écriture de la sauvegarde');
+    }
+}
+
+/**
+ * Retourne les données de sauvegarde
+ *
+ * @return string
+ */
+function getDataFile(\includes\SQL $db) : string
+{
+    $content = "#\n";
+    $content .= "# Libertempo\n";
+    $content .= "#\n# DATE : " . date("d-m-Y H:i:s") . "\n";
+    $content .= "#\n";
+
+    //recup de la liste des tables
+    $ReqLog = $db->query('SHOW TABLES');
+    while ($resultat = $ReqLog->fetch_array()) {
+        $table = $resultat[0];
+        $content .= "#\n#\n# TABLE: $table \n#\n";
+        $content .= "# Structure : \n#\n";
+        $content .= get_table_structure($db, $table);
+        $content .= "# Data : \n#\n";
+        $content .= get_table_data($db, $table);
+    }
+
+    return $content;
+}
+
+// recup de la structure d'une table sous forme de CREATE ...
+function get_table_structure(\includes\SQL $db, $table)
+{
+    $drop = "DROP TABLE IF EXISTS  `$table` ;\n";
+
+    // description des champs :
+    $req = 'SHOW CREATE TABLE '. $db->quote($table);
+    $descriptor = $db->query($req) ;
+    $resultDescriptor = $descriptor->fetch_array();
+    return $drop . $resultDescriptor['Create Table'] . ";\n#\n";
+}
+
+function get_table_data(\includes\SQL $db, $table)
+{
+    $chaine_data="";
+
+    // suppression des donnéées de la table :
+    $chaine_delete='DELETE FROM `'. $db->quote($table) . '` ;'."\n";
+    $chaine_data=$chaine_data.$chaine_delete ;
+
+    // recup des donnéées de la table :
+    $sql_data='SELECT * FROM '. $db->quote($table);
+    $ReqLog_data = $db->query($sql_data);
+
+    while ($resultat_data = $ReqLog_data->fetch_array()) {
+        $count_fields=count($resultat_data)/2;   // on divise par 2 car c'est un tableau indexé (donc compte key+valeur)
+        $chaine_insert = "INSERT INTO `$table` VALUES ( ";
+        for($i=0; $i<$count_fields; $i++)
+        {
+            if(isset($resultat_data[$i]))
+                $chaine_insert = $chaine_insert."'".addslashes($resultat_data[$i])."'";
+            else
+                $chaine_insert = $chaine_insert."NULL";
+
+            if($i!=$count_fields-1)
+                $chaine_insert = $chaine_insert.", ";
+        }
+        $chaine_insert = $chaine_insert." );\n";
+
+        $chaine_data=$chaine_data.$chaine_insert;
+    }
+
+    return $chaine_data;
+}
+
+
 display('Sauvegarde…');
 if (!\includes\SQL::existsDatabase($mysql_database)) {
     displayError('Application non installée');
 }
 $installedVersion = getInstalledVersion();
-$versionDerniereMAJ = getVersionDerniereMiseAJour(\includes\SQL::singleton(), $installedVersion);
+$db = \includes\SQL::singleton();
+$versionDerniereMAJ = getVersionDerniereMiseAJour($db, $installedVersion);
 
 // Quelques vérifications de base…
 if ('0.0.0' == $versionDerniereMAJ) {
@@ -18,7 +109,7 @@ if ('0.0.0' == $versionDerniereMAJ) {
 
 display('Sauvegarde de la DB courante…');
 try {
-    sauvegardeAsFile($installedVersion, 'end');
+    sauvegardeAsFile($db, $installedVersion, 'end');
 } catch (\Exception $e) {
     displayFail();
 }
