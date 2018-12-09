@@ -61,7 +61,7 @@ function sousmenuHR()
     <a class="secondary" href="' . ROOT_PATH . 'hr/jours_chomes">Jours fériés</a>
     <a class="secondary" href="' . ROOT_PATH . 'hr/hr_index.php?onglet=cloture_year">Exercices</a>
     <a class="secondary" href="' . ROOT_PATH . 'hr/hr_index.php?onglet=liste_planning">Plannings</a>
-    <a class="secondary" href="' . ROOT_PATH . 'hr/hr_jours_fermeture.php">Jours de fermeture</a>';
+    <a class="secondary" href="' . ROOT_PATH . 'hr/jours_fermeture">Jours de fermeture</a>';
 
     return $return;
 }

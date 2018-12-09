@@ -20,6 +20,7 @@ $rewritten = [
     '/hr/traitement_demandes',
     '/hr/jours_chomes',
     '/hr/ajout_conges',
+    '/hr/jours_fermeture',
 ];
 
 if (!in_array($uri, $rewritten, true)) {

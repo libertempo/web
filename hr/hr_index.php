@@ -35,12 +35,14 @@ if($config->canUserSaisieDemande())
 
     $onglets['ajout_conges'] = _('resp_ajout_conges_titre');
     $onglets['jours_chomes'] = _('admin_button_jours_chomes_1');
+    $onglets['jours_fermeture'] = _('divers_fermeture');
+
 
 $onglets['cloture_year'] = _('resp_cloture_exercice_titre');
 $onglets['liste_planning'] = _('hr_liste_planning');
 //$onglets['ajout_planning'] = _('hr_ajout_planning');
 
-if ( !isset($onglets[ $onglet ]) && !in_array($onglet, ['traite_user', 'modif_planning', 'ajout_planning', 'ajout_user', 'modif_user','suppr_user','liste_groupe','modif_groupe','ajout_groupe','suppr_groupe']))
+if ( !isset($onglets[ $onglet ]) && !in_array($onglet, ['traite_user', 'modif_planning', 'ajout_planning', 'ajout_user', 'modif_user','suppr_user','liste_groupe','modif_groupe','ajout_groupe','suppr_groupe', 'jours_fermeture']))
     $onglet = 'page_principale';
 
 /*********************************/
