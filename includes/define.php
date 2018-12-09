@@ -29,7 +29,6 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     require_once ROOT_PATH . 'vendor/autoload.php';
     require_once ROOT_PATH . 'vendor/raveren/kint/Kint.class.php';
     require_once CONFIG_PATH . 'env.php';
-    require_once INCLUDE_PATH . 'fonctions_conges.php' ;
     require_once INCLUDE_PATH . 'fonction.php';
 
     switch (ENV) {
