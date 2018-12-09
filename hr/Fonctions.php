@@ -97,7 +97,7 @@ class Fonctions
         if ( count($tab_all_users)!=0 ) {
             // constitution de la liste (séparé par des virgules) des logins ...
             $list_users="";
-            foreach($tab_all_users as $current_login => $tab_current_user) {
+            foreach ($tab_all_users as $current_login => $tab_current_user) {
                 if ($list_users=="") {
                     $list_users= "'$current_login'" ;
                 } else {
@@ -403,7 +403,7 @@ class Fonctions
         // recup dans un tableau de tableau les infos des types de conges et absences
         $tab_tout_type_abs = recup_tableau_tout_types_abs();
 
-        while($elem_tableau = each($tab_checkbox_annule)) {
+        while ($elem_tableau = each($tab_checkbox_annule)) {
             $champs = explode("--", $elem_tableau['value']);
             $user_login=$champs[0];
             $user_nb_jours_pris=$champs[1];
@@ -1068,7 +1068,6 @@ class Fonctions
         }
         return $return;
     }
-
 
     // renvoit un tableau de tableau contenant les informations de tous les users dont $login est HR responsable
     public static function recup_infos_all_users_du_hr($login) : array

@@ -98,7 +98,7 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
         // congés
         $return .= '<div class="col-md-4">';
         $return .= '<label>' . _('divers_conges') . '</label>';
-        foreach($tab_type_conges as $id => $libelle) {
+        foreach ($tab_type_conges as $id => $libelle) {
             if ($id==1) {
                 $return .= '<input type="radio" name="new_type" value="' . $id . '" checked>'. $libelle . '<br>';
                 $already_checked = true;

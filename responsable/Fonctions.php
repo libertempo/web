@@ -550,7 +550,7 @@ class Fonctions
             $return .= '<th>' . _('divers_nom_maj_1') . '</th>';
             $return .= '<th>' . _('divers_prenom_maj_1') . '</th>';
             $return .= '<th>' . _('divers_quotite_maj_1') . '</th>';
-            foreach($tab_type_conges as $id_conges => $libelle) {
+            foreach ($tab_type_conges as $id_conges => $libelle) {
                 $return .= '<th>' . $libelle . '<br><i>(' . _('divers_solde') . ')</i></th>';
             }
             $return .= '<th>' . _('divers_cloturer_maj_1') . '<br></th>';
@@ -788,8 +788,7 @@ class Fonctions
                     }
                 }
             }
-            elseif ($reponse == "REFUSE") // refus d'un conges
-            {
+            elseif ($reponse == "REFUSE") {
                 // recup di motif de refus
                 $motif_refus = addslashes($tab_text_refus[$numero_int]);
                 $sql3 = 'UPDATE conges_periode SET p_etat="refus", p_motif_refus=\''.$motif_refus.'\', p_date_traitement=NOW() WHERE p_num="'. $db->quote($numero_int).'" AND ( p_etat=\'valid\' OR p_etat=\'demande\' );';

@@ -14,7 +14,6 @@ class Gestion {
      */
     public function postHtmlCommon(array $post, array &$errorLst)
     {
-        $user = $_SESSION['userlogin'];
         $data = $this->FormData2Array($post);
         $return = 1;
 

@@ -1181,8 +1181,7 @@ class Fonctions
         /*************************************************/
         // recup du tableau des types de conges (seulement les conges)
         $tab_type_cong=recup_tableau_types_conges();
-        foreach($tab_type_cong as $id_abs => $libelle)
-        {
+        foreach ($tab_type_cong as $id_abs => $libelle) {
             $sql_insert_2 = "INSERT INTO conges_solde_edition
                     SET se_id_edition=$new_edition_id, se_id_absence=$id_abs, se_solde=$tab_solde_user[$id_abs] ";
             $result_insert_2 = \includes\SQL::query($sql_insert_2);
