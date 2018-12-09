@@ -1,5 +1,5 @@
 {
-  "name": "libertempo-web",
+  "name": "web",
   "version": "1.11.0",
   "description": "Application web de gestion de congés",
   "main": "index.js",
