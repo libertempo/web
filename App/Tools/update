@@ -78,14 +78,8 @@ display('Contrôles généraux…');
 if (!\includes\SQL::existsDatabase($mysql_database)) {
     displayError('Application non installée');
 }
-$installedVersion = getInstalledVersion();
 $db = \includes\SQL::singleton();
-$versionDerniereMAJ = getVersionDerniereMiseAJour($db, $installedVersion);
-
-// Quelques vérifications de base…
-if ('0.0.0' == $versionDerniereMAJ) {
-    displayError('l\'application n\'est pas encore installée.');
-}
+$versionDerniereMAJ = getVersionDerniereMiseAJour($db, getInstalledVersion());
 
 display('Configuration de l\'API');
 $dbConfiguration = [

@@ -66,6 +66,10 @@ function setLastMaj(\includes\SQL $db, string $versionLastMaj) : bool
     return 0 < file_put_contents('/tmp/lt-last-version', $versionLastMaj);
 }
 
+/**
+ * Retourne la version installée
+ * @example 1.12
+ */
 function getInstalledVersion() : string
 {
     $db = \includes\SQL::singleton();
@@ -80,4 +84,24 @@ function getInstalledVersion() : string
         return 0;
     }
     return 0;
+}
+
+/**
+ * Retourne le format long de la dernière mise à jour installée
+ * @exemple 1.12.4
+ */
+function getVersionDerniereMiseAJour(\includes\SQL $db, string $installedVersion) : string
+{
+    $req = 'SELECT appli_valeur FROM conges_appli WHERE appli_variable = "version_last_maj" LIMIT 1';
+    $res = $db->query($req);
+    $versionLastMaj = $res->fetch_array()['appli_valeur'];
+    $versionFile = file_get_contents('/tmp/lt-last-version');
+    if (!empty($versionLastMaj)) {
+        return $versionLastMaj;
+    } elseif ($versionFile) {
+        // @TODO: Compat with <1.12 versions
+        return $versionFile;
+    }
+
+    return $installedVersion . '.0';
 }
