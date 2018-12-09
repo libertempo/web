@@ -17,7 +17,7 @@
         <tr><th><?= _('divers_nom_maj_1') ?></th><th style="width:10%"></th></tr>
     </thead>
     <tbody>
-        <tr v-if="!hasPlanning"><td colspan="2"><center><?= _('aucun_resultat') ?></center></td></tr>
+        <tr v-if="!hasPlanning()"><td colspan="2"><center><?= _('aucun_resultat') ?></center></td></tr>
         <tr v-for="p in plannings">
             <td>{{ p.name }}</td>
             <td>
