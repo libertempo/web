@@ -3,7 +3,7 @@
 defined('_PHP_CONGES') or die('Restricted access');
 $planningId = (int) getpost_variable('id');
 if (0 >= $planningId || !\App\ProtoControllers\HautResponsable\Planning::isVisible($planningId)) {
-    redirect(ROOT_PATH . 'deconnexion.php');
+    redirect(ROOT_PATH . 'deconnexion');
 }
 
 $message   = '';

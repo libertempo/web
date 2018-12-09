@@ -10,6 +10,7 @@ $rewritten = [
     '/calendrier',
     '/config/general',
     '/config/type_absence',
+    '/deconnexion',
     '/hr/page_principale',
     '/hr/jours_chomes',
     '/hr/ajout_conges',
@@ -33,6 +34,9 @@ switch ($urn) {
     case 'config':
         $_GET['onglet'] = $resource;
         require_once ROOT_PATH . 'config/index.php';
+        break;
+    case 'deconnexion':
+        require_once ROOT_PATH . 'deconnexion.php';
         break;
     case 'hr':
         $_GET['onglet'] = $resource;

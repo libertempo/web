@@ -217,7 +217,7 @@ function sousmenuEmploye()
                     <i class="fa fa-calendar"></i><?= _('button_calendar') ?>
                 </a>
                 <?php endif; ?>
-                <a id="deconnexion" class="primary" href="<?= ROOT_PATH ?>deconnexion.php">
+                <a id="deconnexion" class="primary" href="<?= ROOT_PATH ?>deconnexion">
                     <i class="fa fa-sign-out"></i><?= _('button_deconnect') ?>
                 </a>
             </div>

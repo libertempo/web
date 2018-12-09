@@ -241,7 +241,7 @@ class Fonctions
         /*************************************/
 
         if ($user_login != $_SESSION['userlogin'] && !is_hr($_SESSION['userlogin']) && !\App\ProtoControllers\Responsable::isRespDeUtilisateur($_SESSION['userlogin'] , $user_login)) {
-            redirect(ROOT_PATH . 'deconnexion.php');
+            redirect(ROOT_PATH . 'deconnexion');
             exit;
         }
 
@@ -526,7 +526,7 @@ class Fonctions
         /*************************************/
 
         if ($user_login != $_SESSION['userlogin'] && !is_hr($_SESSION['userlogin']) && !\App\ProtoControllers\Responsable::isRespDeUtilisateur($_SESSION['userlogin'] , $user_login)) {
-            redirect(ROOT_PATH . 'deconnexion.php');
+            redirect(ROOT_PATH . 'deconnexion');
             exit;
         }
 
@@ -990,7 +990,7 @@ class Fonctions
         /*************************************/
 
         if ($user_login != $_SESSION['userlogin'] && !is_hr($_SESSION['userlogin']) && !\App\ProtoControllers\Responsable::isRespDeUtilisateur($_SESSION['userlogin'] , $user_login)) {
-            redirect(ROOT_PATH . 'deconnexion.php');
+            redirect(ROOT_PATH . 'deconnexion');
             exit;
         }
 
