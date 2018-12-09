@@ -10,6 +10,7 @@ $rewritten = [
     '/calendrier',
     '/config/general',
     '/config/type_absence',
+    '/config/mail',
     '/deconnexion',
     '/hr/page_principale',
     '/hr/jours_chomes',

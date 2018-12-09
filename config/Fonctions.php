@@ -153,10 +153,10 @@ class Fonctions
 
     public static function commit_modif($tab_new_values)
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $return = '';
 
-        $URL = "$PHP_SELF?onglet=mail";
+        $URL = "$PHP_SELF";
 
 
         // update de la table
@@ -177,10 +177,10 @@ class Fonctions
 
     public static function test_config($tab_new_values)
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $return = '';
 
-        $URL = "$PHP_SELF?onglet=mail";
+        $URL = "$PHP_SELF";
 
         // update de la table
         $mail_array             = find_email_adress_for_user($_SESSION['userlogin']);
@@ -200,10 +200,10 @@ class Fonctions
 
     public static function affichage_config_mail($tab_new_values)
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $return = '';
 
-        $URL = "$PHP_SELF?onglet=mail";
+        $URL = "$PHP_SELF";
 
         /**************************************/
         // affichage du titre
