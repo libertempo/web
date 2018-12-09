@@ -11,5 +11,6 @@ defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 </section>
 </section>
 </section>
-</body>
-</html>
+<?php
+include_once 'bottom.php';
+?>
