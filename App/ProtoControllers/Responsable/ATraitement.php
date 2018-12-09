@@ -177,7 +177,7 @@ abstract class ATraitement
             $paramsCalendrier = [
                 'mois' => $mois->format('Y-m'),
             ];
-            $Table .= '<td><a href="' . ROOT_PATH . 'calendrier.php?' . http_build_query($paramsCalendrier) . '" title="' . _('consulter_calendrier_de_periode') . '"><i class="fa fa-lg fa-calendar" aria-hidden="true"></i></a></td>';
+            $Table .= '<td><a href="' . ROOT_PATH . 'calendrier?' . http_build_query($paramsCalendrier) . '" title="' . _('consulter_calendrier_de_periode') . '"><i class="fa fa-lg fa-calendar" aria-hidden="true"></i></a></td>';
             $Table .= '<td><input class="form-control" type="text" name="comment_refus['.$id.']" size="20" maxlength="100"></td></tr>';
 
             $i = !$i;

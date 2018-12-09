@@ -7,6 +7,7 @@ $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 $rewritten = [
     '/authentification',
+    '/calendrier',
     '/config/general',
     '/config/type_absence',
     '/hr/page_principale',
@@ -25,6 +26,9 @@ $resource = $explodedUri[2] ?? null;
 switch ($urn) {
     case 'authentification':
         require_once ROOT_PATH . 'index.php';
+        break;
+    case 'calendrier':
+        require_once ROOT_PATH . 'calendrier.php';
         break;
     case 'config':
         $_GET['onglet'] = $resource;
