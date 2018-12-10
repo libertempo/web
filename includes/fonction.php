@@ -185,35 +185,9 @@ function session_delete()
 //
 // formulaire de saisie du user/password
 //
-function session_saisie_user_password($erreur, $session_username, $session_password)
+function session_saisie_user_password($erreur, $session_username)
 {
-    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
-    $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
-    $config_php_conges_version      = $config->getInstalledVersion();
-    $config_url_site_web_php_conges = $config->getUrlAccueil();
-
-    $return_url                     = getpost_variable('return_url', false);
-
-    // verif si on est dans le repertoire install
-    if (substr(dirname ($_SERVER["SCRIPT_FILENAME"]), -6, 6) == "config") {  // verif si on est dans le repertoire install
-        $config_dir=true;
-    } else {
-        $config_dir=false;
-    }
-
-    $add = '<script language="JavaScript" type="text/javascript">
-<!--
-// Les cookies sont obligatoires
-if (! navigator.cookieEnabled) {
-    document.write("<font color=\'#FF0000\'><br><br><center>'. _('cookies_obligatoires') .'</center></font><br><br>");
-}
-//-->
-</script>
-<noscript>
-        <font color="#FF0000"><br><br><center>'. _('javascript_obligatoires') .'</center></font><br><br>
-</noscript>';
-
-    header_login('', $add);
+    header_login('');
     include_once TEMPLATE_PATH . 'login_form.php';
 
     bottom();
