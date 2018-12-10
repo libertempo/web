@@ -579,8 +579,7 @@ function verif_jours_feries_saisis($date)
         $tab_date=explode("/", $date); // date est de la forme dd/mm/YYYY
         $an=$tab_date[2];
     }
-    if (substr_count($date,'-'))
-    {
+    if (substr_count($date,'-')) {
         $tab_date=explode("-", $date); // date est de la forme yyyy-mm-dd
         $an=$tab_date[0];
     }
@@ -658,10 +657,9 @@ function verif_periode_chevauche_periode_user($date_debut, $date_fin, $user, $nu
 
         $user_periode_request = \includes\SQL::query($user_periode_sql);
 
-        if ($user_periode_request->num_rows !=0)  // le jour courant est dans une periode de conges du user
-        {
-            while ($resultat_periode=$user_periode_request->fetch_array())
-            {
+        if ($user_periode_request->num_rows !=0) {
+            // le jour courant est dans une periode de conges du user
+            while ($resultat_periode=$user_periode_request->fetch_array()) {
                 $sql_p_date_deb=$resultat_periode["p_date_deb"];
                 $sql_p_date_fin=$resultat_periode["p_date_fin"];
                 $sql_p_demi_jour_deb=$resultat_periode["p_demi_jour_deb"];
@@ -671,24 +669,24 @@ function verif_periode_chevauche_periode_user($date_debut, $date_fin, $user, $nu
                 if ( ($current_day!=$sql_p_date_deb) && ($current_day!=$sql_p_date_fin) )
                 {
                     // pas la peine d'aller + loin, on chevauche une periode de conges !!!
-                    if ($sql_p_etat=="demande")
-                            $comment =  _('calcul_nb_jours_commentaire_impossible') ;
-                        else
-                            $comment =  _('calcul_nb_jours_commentaire') ;
+                    if ($sql_p_etat=="demande") {
+                        $comment =  _('calcul_nb_jours_commentaire_impossible') ;
+                    } else {
+                        $comment =  _('calcul_nb_jours_commentaire') ;
+                    }
 
                     return true ;
                 }
-                elseif ( ($current_day==$sql_p_date_deb) && ($current_day==$sql_p_date_fin) ) // periode sur une seule journee
-                {
-                    if ($sql_p_demi_jour_deb=="am")
+                elseif ( ($current_day==$sql_p_date_deb) && ($current_day==$sql_p_date_fin) ) {
+                     // periode sur une seule journee
+                    if ($sql_p_demi_jour_deb=="am") {
                         $tab_periode_deja_prise[$current_day]['am']="$sql_p_etat" ;
-                    if ($sql_p_demi_jour_fin=="pm")
+                    }
+                    if ($sql_p_demi_jour_fin=="pm") {
                         $tab_periode_deja_prise[$current_day]['pm']="$sql_p_etat" ;
-                }
-                elseif ($current_day==$sql_p_date_deb)
-                {
-                    if ($sql_p_demi_jour_deb=="am")
-                    {
+                    }
+                } elseif ($current_day==$sql_p_date_deb) {
+                    if ($sql_p_demi_jour_deb=="am") {
                         $tab_periode_deja_prise[$current_day]['am']="$sql_p_etat" ;
                         $tab_periode_deja_prise[$current_day]['pm']="$sql_p_etat" ;
                     }
@@ -2397,9 +2395,7 @@ function soustrait_solde_et_reliquat_user($user_login, $num_current_periode, $us
         $VerifDec = verif_saisie_decimal($user_nb_jours_pris);
         $VerifDec = verif_saisie_decimal($new_reliquat);
         $sql2 = 'UPDATE conges_solde_user SET su_solde=su_solde-'. $db->quote($user_nb_jours_pris).', su_reliquat='. $db->quote($new_reliquat).' WHERE su_login="'. $db->quote($user_login).'"  AND su_abs_id='. $db->quote($type_abs).' ';
-    }
-    else
-    {
+    } else {
         $VerifDec = verif_saisie_decimal($user_nb_jours_pris);
         $VerifDec = verif_saisie_decimal($new_reliquat);
         $sql2 = 'UPDATE conges_solde_user SET su_solde=su_solde-'. $db->quote($user_nb_jours_pris).' WHERE su_login=\''. $db->quote($user_login).'\'  AND su_abs_id=\''.$type_abs.'\' ';
