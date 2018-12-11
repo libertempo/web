@@ -37,8 +37,7 @@
         </td>
         </tr>
     </tbody>
-    </table>
-</div>
+</table>
 
 <script>
 const instance = axios.create({
@@ -52,7 +51,7 @@ const instance = axios.create({
 });
 
 var vm = new Vue({
-    el: '#inner-content',
+    el: '#main-content',
     data: {
         //plannings : <?= json_encode($plannings) ?>,
         plannings : '',

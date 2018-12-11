@@ -67,7 +67,7 @@ $tab_type_cong=recup_tableau_types_conges();
 // recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
 $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
 
-echo '<div class="'.$onglet.' main-content">';
+echo '<div class="'.$onglet.'" id="main-content">';
     include_once ROOT_PATH . 'hr/hr_'.$onglet.'.php';
 echo '</div>';
 

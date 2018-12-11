@@ -246,7 +246,7 @@ class Fonctions
         }
 
         /************************************/
-        $return .= '<div class="main-content">';
+        $return .= '<div id="main-content">';
         $return .= \edition\Fonctions::affichage($user_login);
         $return .= '</div>';
 
