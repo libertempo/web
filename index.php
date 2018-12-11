@@ -25,11 +25,8 @@ function redirectAuth() : void
         $is_resp = $row["u_is_resp"];
         $is_active = $row["u_is_active"];
         if($is_active == "N") {
-            header_error();
-            echo  _('session_compte_inactif') ."<br>\n";
-            echo  _('session_contactez_admin') ."\n";
-            bottom();
-            exit;
+            errorInactif();
+            return;
         }
         if ($is_hr == "Y") {
             redirect( ROOT_PATH .'hr/page_principale.php');
@@ -39,6 +36,14 @@ function redirectAuth() : void
             redirect( ROOT_PATH . 'utilisateur/user_index.php');
         }
     }
+}
+
+function errorInactif()
+{
+    header_error();
+    echo  _('session_compte_inactif') ."<br>\n";
+    echo  _('session_contactez_admin') ."\n";
+    bottom();
 }
 
 function errorAuthentification() {

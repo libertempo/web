@@ -82,7 +82,7 @@ function header_login($title = '', $additional_head = '' ) {
     include_once TEMPLATE_PATH . 'login_header.php';
 }
 
-function header_menu($info, $title = '', $additional_head = '' ) {
+function header_menu($info, $title = '') {
     global $type_bottom;
 
     static $last_use = '';
@@ -187,7 +187,7 @@ function session_delete()
 //
 function session_saisie_user_password($erreur, $session_username)
 {
-    $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL); 
+    $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
     header_login('');
     include_once TEMPLATE_PATH . 'login_form.php';
 

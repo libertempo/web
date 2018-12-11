@@ -44,7 +44,7 @@ $_SESSION['from_config']=true;  // initialise ce flag pour changer le bouton de 
 	/*   COMPOSITION DU HEADER...    */
 	/*********************************/
 
-	header_menu('', 'Libertempo : '._('admin_button_config_1'),'');
+	header_menu('', 'Libertempo : '._('admin_button_config_1'));
 
 
 	/*********************************/

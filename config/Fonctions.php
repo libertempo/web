@@ -137,9 +137,6 @@ class Fonctions
 
         /*************************************/
 
-        // header_menu('CONGES : Configuration', $_SESSION['config']['titre_admin_index']);
-
-
         if ($action=="suppr_logs") {
             $return .= \config\Fonctions::confirmer_vider_table_logs();
         } elseif($action=="commit_suppr_logs") {
