@@ -187,6 +187,7 @@ function session_delete()
 //
 function session_saisie_user_password($erreur, $session_username)
 {
+    $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL); 
     header_login('');
     include_once TEMPLATE_PATH . 'login_form.php';
 
