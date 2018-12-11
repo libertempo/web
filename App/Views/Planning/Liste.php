@@ -3,7 +3,6 @@
  * $titre
  * $message
  * $listIdUsed
- * $plannings
  * $isHr
  * $lienModif
  */
@@ -42,13 +41,26 @@
 </div>
 
 <script>
+const instance = axios.create({
+  baseURL: '',
+  timeout: 1500,
+  headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': '<?= $_SESSION['token'] ?>'
+  }
+});
+
 var vm = new Vue({
     el: '#inner-content',
     data: {
-        plannings : <?= json_encode($plannings) ?>,
+        //plannings : <?= json_encode($plannings) ?>,
+        plannings : '',
         listIdUsed : <?= json_encode($listIdUsed) ?>,
         isHr: 'true' == "<?= $isHr ? 'true' : 'false' ?>",
-        lienModification : "<?= $lienModif ?>"
+        lienModification : "<?= $lienModif ?>",
+        statusActive : <?= \App\Models\Planning::STATUS_ACTIVE ?>
+        axios : instance
     },
     computed: {
     },
@@ -62,6 +74,35 @@ var vm = new Vue({
         linkModification : function (id) {
             return this.lienModification + '&id=' + id;
         }
-    }
+    },
+    created () {
+    var vm = this;
+    this.axios.get('/planning')
+      .then((response) => {
+          console.log(response.data);
+          /**
+           * Array.prototype.filter((planning) => {
+               return planning.status === vm.statusActive
+           }, response.data);
+           */
+          // filter on status
+          // vm.plannings = response.data;
+      })
+      .catch((error) => {
+          console.log(error);
+      })
+      // https://github.com/axios/axios
+      // https://scotch.io/@timtech4u/how-to-make-simple-api-calls-with-vuejs-and-axios
+  }
 })
 </script>
+<?php
+
+// $sql = \includes\SQL::singleton();
+// $config = new \App\Libraries\Configuration($sql);
+// $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
+// $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
+// $plannings = $api->get('planning', $_SESSION['token'])['data'];
+// $plannings = array_filter($plannings, function ($planning) {
+//     return $planning['status'] === \App\Models\Planning::STATUS_ACTIVE;
+// });
