@@ -18,9 +18,6 @@ function redirectAuth() : void
         redirect(ROOT_PATH . 'authentification');
     } else {
         $row = $rs->fetch_array();
-        $NOM=$row["u_nom"];
-        $PRENOM=$row["u_prenom"];
-        $is_admin = $row["u_is_admin"];
         $is_hr = $row["u_is_hr"];
         $is_resp = $row["u_is_resp"];
         $is_active = $row["u_is_active"];

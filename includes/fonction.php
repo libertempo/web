@@ -416,15 +416,13 @@ function compter($user, $num_current_periode, $date_debut, $date_fin, $opt_debut
 
     // verif si date_debut est bien anterieure à date_fin
     // ou si meme jour mais debut l'apres midi et fin le matin
-    if ( (strtotime($date_debut) > strtotime($date_fin)) || ( ($date_debut==$date_fin) && ($opt_debut=="pm") && ($opt_fin=="am") ) )
-    {
+    if ((strtotime($date_debut) > strtotime($date_fin)) || ($date_debut == $date_fin && $opt_debut == "pm" && $opt_fin=="am")) {
         $comment =  _('calcul_nb_jours_commentaire_bad_date') ;
         return 0 ;
     }
 
 
-    if ( ($date_debut!=0) && ($date_fin!=0) )
-    {
+    if ($date_debut != 0 && $date_fin != 0) {
         // On ne peut pas calculer si, pour l'année considérée, les jours feries ont ete saisis
         if ( (verif_jours_feries_saisis($date_debut, $num_update)==false) || (verif_jours_feries_saisis($date_fin, $num_update)==false) ) {
             $comment =  _('calcul_impossible') ."<br>\n". _('jours_feries_non_saisis') ."<br>\n". _('contacter_rh') ."<br>\n" ;
@@ -456,13 +454,11 @@ function compter($user, $num_current_periode, $date_debut, $date_fin, $opt_debut
         // 3 : on affecte à 0 ou 1 chaque demi jour, en fonction de s'il est travaillé ou pas
 
         // on initialise le tableau global des jours fériés s'il ne l'est pas déjà :
-        if (!isset($_SESSION["tab_j_feries"]))
-        {
+        if (!isset($_SESSION["tab_j_feries"])) {
             init_tab_jours_feries();
         }
         // on initialise le tableau global des jours fermés s'il ne l'est pas déjà :
-        if (!isset($_SESSION["tab_j_fermeture"]))
-        {
+        if (!isset($_SESSION["tab_j_fermeture"])) {
             init_tab_jours_fermeture($user);
         }
 
@@ -473,7 +469,7 @@ function compter($user, $num_current_periode, $date_debut, $date_fin, $opt_debut
         while ($current_day!=$date_limite)
         {
             // calcul du timestamp du jour courant
-            if (substr_count($current_day,'/')){
+            if (substr_count($current_day,'/')) {
                 $pieces = explode("/", $current_day);  // date de la forme jj/mm/yyyy
                 $y=$pieces[2];
                 $m=$pieces[1];
@@ -508,8 +504,10 @@ function compter($user, $num_current_periode, $date_debut, $date_fin, $opt_debut
                 if ($val_matin=="Y")  // rtt le matin
                     $tab_periode_calcul[$current_day]['am']=0;
 
-                if ($val_aprem=="Y") // rtt l'après midi
+                if ($val_aprem=="Y") {
+                    // rtt l'après midi
                     $tab_periode_calcul[$current_day]['pm']=0;
+                }
             }
 
             $nb_jours = $nb_jours + $tab_periode_calcul[$current_day]['am'] + $tab_periode_calcul[$current_day]['pm'];
@@ -527,7 +525,7 @@ function compter($user, $num_current_periode, $date_debut, $date_fin, $opt_debut
 // renvoit le jour suivant de la date passée en paramètre sous la forme jj/mm/yyyy
 function jour_suivant($date)
 {
-    if (substr_count($date,'/')){
+    if (substr_count($date,'/')) {
         $pieces = explode("/", $date);  // date de la forme jj/mm/yyyy
         $y=$pieces[2];
         $m=$pieces[1];
@@ -549,8 +547,7 @@ function jour_suivant($date)
 function verif_jours_feries_saisis($date)
 {
     // on calcule le premier de l'an et le dernier de l'an de l'année de la date passee en parametre
-    if (substr_count($date,'/'))
-    {
+    if (substr_count($date,'/')) {
         $tab_date=explode("/", $date); // date est de la forme dd/mm/YYYY
         $an=$tab_date[2];
     }
@@ -583,10 +580,13 @@ function make_tab_demi_jours_periode($date_debut, $date_fin, $opt_debut, $opt_fi
         $current_day=jour_suivant($current_day);
     }
     // attention au premier et dernier jour :
-    if ($opt_debut=="pm")
+    if ($opt_debut=="pm") {
         $tab_periode_calcul[$date_debut]['am']=0;
-    if ($opt_fin=="am")
+    }
+    if ($opt_fin=="am") {
         $tab_periode_calcul[$date_fin]['pm']=0;
+    }
+
     return $tab_periode_calcul;
 }
 
@@ -610,8 +610,7 @@ function verif_periode_chevauche_periode_user($date_debut, $date_fin, $user, $nu
         $tab_periode_deja_prise[$current_day]['am']="no" ;
         $tab_periode_deja_prise[$current_day]['pm']="no" ;
 
-        if ($num_update === null)
-        {
+        if ($num_update === null) {
             // verif si c'est deja un conges
             $user_periode_sql = 'SELECT  p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_etat
                         FROM conges_periode
@@ -641,8 +640,7 @@ function verif_periode_chevauche_periode_user($date_debut, $date_fin, $user, $nu
                 $sql_p_demi_jour_fin=$resultat_periode["p_demi_jour_fin"];
                 $sql_p_etat=$resultat_periode["p_etat"];
 
-                if ( ($current_day!=$sql_p_date_deb) && ($current_day!=$sql_p_date_fin) )
-                {
+                if ( ($current_day!=$sql_p_date_deb) && ($current_day!=$sql_p_date_fin) ) {
                     // pas la peine d'aller + loin, on chevauche une periode de conges !!!
                     if ($sql_p_etat=="demande") {
                         $comment =  _('calcul_nb_jours_commentaire_impossible') ;
