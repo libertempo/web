@@ -82,7 +82,6 @@ var vm = new Vue({
             const plannings = response.data.data;
             var activePlannings = new Array();
             for (var i = 0; i < plannings.length; ++i) {
-                console.log(plannings[i]);
                 if (plannings[i].status === vm.statusActive) {
                     activePlannings.push(plannings[i]);
                 }
