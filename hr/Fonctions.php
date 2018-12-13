@@ -7,7 +7,7 @@ namespace hr;
  */
 class Fonctions
 {
-    public static function traite_all_demande_en_cours(array $tab_bt_radio, array $tab_text_refus) : string
+    private static function traite_all_demande_en_cours(array $tab_bt_radio, array $tab_text_refus) : string
     {
 
         $db = \includes\SQL::singleton();
@@ -72,7 +72,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affiche_all_demandes_en_cours($tab_type_conges) : string
+    private static function affiche_all_demandes_en_cours($tab_type_conges) : string
     {
         $return = '';
         $db = \includes\SQL::singleton();
@@ -307,7 +307,7 @@ class Fonctions
         return $return;
     }
 
-    public static function traite_demandes($user_login, $tab_radio_traite_demande, $tab_text_refus) : string
+    private static function traite_demandes($user_login, $tab_radio_traite_demande, $tab_text_refus) : string
     {
         $db = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($db);
@@ -393,7 +393,7 @@ class Fonctions
         return $return;
     }
 
-    public static function annule_conges($user_login, $tab_checkbox_annule, $tab_text_annul) : string
+    private static function annule_conges($user_login, $tab_checkbox_annule, $tab_text_annul) : string
     {
         $db = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($db);
@@ -444,7 +444,7 @@ class Fonctions
     }
 
     //affiche l'état des conges du user (avec le formulaire pour le responsable)
-    public static function affiche_etat_conges_user_for_resp($user_login, $year_affichage, $tri_date) : string
+    private static function affiche_etat_conges_user_for_resp($user_login, $year_affichage, $tri_date) : string
     {
         $db = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($db);
@@ -593,7 +593,7 @@ class Fonctions
     }
 
     //affiche l'état des demande en attente de 2ieme validation du user (avec le formulaire pour le responsable)
-    public static function affiche_etat_demande_2_valid_user_for_resp($user_login) : string
+    private static function affiche_etat_demande_2_valid_user_for_resp($user_login) : string
     {
         $db = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($db);
@@ -695,7 +695,7 @@ class Fonctions
     }
 
     //affiche l'état des demande du user (avec le formulaire pour le responsable)
-    public static function affiche_etat_demande_user_for_resp($user_login, $tab_user, $tab_grd_resp) : string
+    private static function affiche_etat_demande_user_for_resp($user_login, $tab_user, $tab_grd_resp) : string
     {
         $db = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($db);
@@ -816,7 +816,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affichage($user_login, $year_affichage, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $tri_date, $onglet) : string
+    private static function affichage($user_login, $year_affichage, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $tri_date, $onglet) : string
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
@@ -1070,7 +1070,7 @@ class Fonctions
     }
 
     // renvoit un tableau de tableau contenant les informations de tous les users dont $login est HR responsable
-    public static function recup_infos_all_users_du_hr($login) : array
+    private static function recup_infos_all_users_du_hr($login) : array
     {
         $tab=array();
         $list_groupes_double_validation=get_list_groupes_double_valid();
@@ -1088,7 +1088,7 @@ class Fonctions
 
     // recup de la liste de TOUS les users pour le responsable RH
     // renvoit une liste de login entre quotes et séparés par des virgules
-    public static function get_list_all_users_du_hr($resp_login) : string
+    private static function get_list_all_users_du_hr($resp_login) : string
     {
         $list_users="";
 
@@ -1108,7 +1108,7 @@ class Fonctions
     }
 
     // calcul de la date limite d'utilisation des reliquats (si on utilise une date limite et qu'elle n'est pas encore calculée) et stockage dans la table
-    public static function set_nouvelle_date_limite_reliquat()
+    private static function set_nouvelle_date_limite_reliquat()
     {
         $db = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($db);
@@ -1132,7 +1132,7 @@ class Fonctions
     }
 
     // cloture / debut d'exercice pour TOUS les users d'un groupe'
-    public static function cloture_globale_groupe($group_id, $tab_type_conges) : string
+    private static function cloture_globale_groupe($group_id, $tab_type_conges) : string
     {
         $return = '';
 
@@ -1150,7 +1150,7 @@ class Fonctions
     }
 
     // cloture / debut d'exercice pour TOUS les users du resp (ou grand resp)
-    public static function cloture_globale($tab_type_conges) : string
+    private static function cloture_globale($tab_type_conges) : string
     {
         $return = '';
 
@@ -1173,7 +1173,7 @@ class Fonctions
 
     // verifie si tous les users on été basculés de l'exercice précédent vers le suivant.
     // si oui : on incrémente le num_exercice de l'application
-    public static function update_appli_num_exercice()
+    private static function update_appli_num_exercice()
     {
         $db = \includes\SQL::singleton();
         // verif
@@ -1192,7 +1192,7 @@ class Fonctions
         }
     }
 
-    public static function cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $commentaire) : string
+    private static function cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $commentaire) : string
     {
         $return = '';
         $db = \includes\SQL::singleton();
@@ -1272,7 +1272,7 @@ class Fonctions
     }
 
     // cloture / debut d'exercice user par user pour les users du resp (ou grand resp)
-    public static function cloture_users($tab_type_conges, $tab_cloture_users, $tab_commentaire_saisie) : string
+    private static function cloture_users($tab_type_conges, $tab_cloture_users, $tab_commentaire_saisie) : string
     {
         $return = '';
 
@@ -1294,7 +1294,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affichage_cloture_globale_groupe($tab_type_conges) : string
+    private static function affichage_cloture_globale_groupe($tab_type_conges) : string
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $return = '';
@@ -1349,7 +1349,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affichage_cloture_globale_pour_tous($tab_type_conges) : string
+    private static function affichage_cloture_globale_pour_tous($tab_type_conges) : string
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $return = '';
@@ -1379,7 +1379,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affiche_ligne_du_user($current_login, $tab_type_conges, $tab_current_user, $i = true) : string
+    private static function affiche_ligne_du_user($current_login, $tab_type_conges, $tab_current_user, $i = true) : string
     {
         $return = '';
         $return .= '<tr class="' . ($i ? 'i' : 'p') . '">';
@@ -1413,7 +1413,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affichage_cloture_user_par_user($tab_type_conges, $tab_all_users_du_hr, $tab_all_users_du_grand_resp) : string
+    private static function affichage_cloture_user_par_user($tab_type_conges, $tab_all_users_du_hr, $tab_all_users_du_grand_resp) : string
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $return = '';
@@ -1477,7 +1477,7 @@ class Fonctions
         return $return;
     }
 
-    public static function saisie_cloture( $tab_type_conges) : string
+    private static function saisie_cloture( $tab_type_conges) : string
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $return = '';
@@ -1555,7 +1555,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affiche_calendrier_fermeture_mois($year, $mois, $tab_year) : string
+    private static function affiche_calendrier_fermeture_mois($year, $mois, $tab_year) : string
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $jour_today=date("j");
@@ -1710,7 +1710,7 @@ class Fonctions
     }
 
     //calendrier des fermeture
-    public static function affiche_calendrier_fermeture($year, $groupe_id = 0) : string
+    private static function affiche_calendrier_fermeture($year, $groupe_id = 0) : string
     {
         // on construit le tableau de l'année considérée
         $tab_year=array();
@@ -1744,7 +1744,7 @@ class Fonctions
     }
 
     //insertion des nouvelles dates de fermeture
-    public static function insert_year_fermeture($fermeture_id, $tab_j_ferme, $groupe_id) : bool
+    private static function insert_year_fermeture($fermeture_id, $tab_j_ferme, $groupe_id) : bool
     {
         $sql_insert="";
         foreach($tab_j_ferme as $jf_date ) {
@@ -1755,7 +1755,7 @@ class Fonctions
     }
 
     // supprime une fermeture
-    public static function delete_year_fermeture($fermeture_id, $groupe_id) : bool
+    private static function delete_year_fermeture($fermeture_id, $groupe_id) : bool
     {
         $sql_delete="DELETE FROM conges_jours_fermeture WHERE jf_id = '$fermeture_id' AND jf_gid= '$groupe_id' ;";
         $result = \includes\SQL::singleton()->query($sql_delete);
@@ -1763,7 +1763,7 @@ class Fonctions
     }
 
     // recup l'id de la derniere fermeture (le max)
-    public static function get_last_fermeture_id() : int
+    private static function get_last_fermeture_id() : int
     {
         $req_1="SELECT MAX(jf_id) as max FROM conges_jours_fermeture ";
         $res_1 = \includes\SQL::singleton()->query($req_1);
@@ -1776,7 +1776,7 @@ class Fonctions
 
     // verifie si la periode donnee chevauche une periode de conges d'un des user du groupe ..
     // retourne TRUE si chevauchement et FALSE sinon !
-    public static function verif_periode_chevauche_periode_groupe($date_debut, $date_fin, $num_current_periode='', $tab_periode_calcul, $groupe_id)
+    private static function verif_periode_chevauche_periode_groupe($date_debut, $date_fin, $num_current_periode='', $tab_periode_calcul, $groupe_id)
     {
         /*****************************/
         // on construit le tableau des users affectés par les fermetures saisies :
@@ -1797,7 +1797,7 @@ class Fonctions
         }
     }
 
-    public static function commit_annul_fermeture($fermeture_id, $groupe_id) : string
+    private static function commit_annul_fermeture($fermeture_id, $groupe_id) : string
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $db = \includes\SQL::singleton();
@@ -1871,7 +1871,7 @@ class Fonctions
         return $return;
     }
 
-    public static function commit_new_fermeture($new_date_debut, $new_date_fin, $groupe_id, $id_type_conges) : string
+    private static function commit_new_fermeture($new_date_debut, $new_date_fin, $groupe_id, $id_type_conges) : string
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $return = '';
@@ -1959,7 +1959,7 @@ class Fonctions
         return $return;
     }
 
-    public static function confirm_annul_fermeture($fermeture_id, $groupe_id, $fermeture_date_debut, $fermeture_date_fin) : string
+    private static function confirm_annul_fermeture($fermeture_id, $groupe_id, $fermeture_date_debut, $fermeture_date_fin) : string
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $return = '';
@@ -1981,7 +1981,7 @@ class Fonctions
     }
 
     // retourne un tableau des periodes de fermeture (pour un groupe donné (gid=0 pour tout le monde))
-    public static function get_tableau_periodes_fermeture(&$tab_periodes_fermeture)
+    private static function get_tableau_periodes_fermeture(&$tab_periodes_fermeture)
     {
         $req_1="SELECT DISTINCT conges_periode.p_date_deb, conges_periode.p_date_fin, conges_periode.p_fermeture_id, conges_jours_fermeture.jf_gid, conges_groupe.g_groupename FROM conges_periode, conges_jours_fermeture LEFT JOIN conges_groupe ON conges_jours_fermeture.jf_gid=conges_groupe.g_gid WHERE conges_periode.p_fermeture_id = conges_jours_fermeture.jf_id AND conges_periode.p_etat='ok' ORDER BY conges_periode.p_date_deb DESC  ";
         $res_1 = \includes\SQL::singleton()->query($req_1);
@@ -2001,7 +2001,7 @@ class Fonctions
     }
 
     // Affichage d'un SELECT de formulaire pour choix d'un type d'absence
-    public static function affiche_select_conges_id() : string
+    private static function affiche_select_conges_id() : string
     {
         $tab_conges=recup_tableau_types_conges();
         $tab_conges_except=recup_tableau_types_conges_exceptionnels();
@@ -2027,7 +2027,7 @@ class Fonctions
     }
 
     //renvoi un tableau des jours de fermeture
-    public static function get_tableau_jour_fermeture($year, &$tab_year,  $groupe_id)
+    private static function get_tableau_jour_fermeture($year, &$tab_year,  $groupe_id)
     {
         $sql_select = " SELECT jf_date FROM conges_jours_fermeture WHERE DATE_FORMAT(jf_date, '%Y-%m-%d') LIKE '$year%'  ";
         // on recup les fermeture du groupe + les fermetures de tous !
@@ -2045,7 +2045,7 @@ class Fonctions
         }
     }
 
-    public static function saisie_dates_fermeture($year, $groupe_id, $new_date_debut, $new_date_fin, $code_erreur) : string
+    private static function saisie_dates_fermeture($year, $groupe_id, $new_date_debut, $new_date_fin, $code_erreur) : string
     {
         $return = '';
 
@@ -2082,7 +2082,7 @@ class Fonctions
         return $return;
     }
 
-    public static function saisie_groupe_fermeture() : string
+    private static function saisie_groupe_fermeture() : string
     {
         $db = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($db);
