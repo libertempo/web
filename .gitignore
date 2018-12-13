@@ -7,3 +7,5 @@ cfg/config_SMTP.php
 /nbproject/
 /backup/libertempo*
 clover.xml
+vendor/
+node_modules/
