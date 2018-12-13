@@ -7,7 +7,7 @@ namespace config;
  */
 class Fonctions
 {
-    public static function commit_vider_table_logs()
+    private static function commit_vider_table_logs()
     {
         $return = '';
 
@@ -22,7 +22,7 @@ class Fonctions
         redirect( ROOT_PATH . 'config/logs');
     }
 
-    public static function confirmer_vider_table_logs()
+    private static function confirmer_vider_table_logs()
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $return = '';
@@ -148,7 +148,7 @@ class Fonctions
         return $return;
     }
 
-    public static function commit_modif($tab_new_values)
+    private static function commit_modif($tab_new_values)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $return = '';
@@ -172,7 +172,7 @@ class Fonctions
         return $return;
     }
 
-    public static function test_config($tab_new_values)
+    private static function test_config($tab_new_values)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $return = '';
@@ -195,7 +195,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affichage_config_mail($tab_new_values)
+    private static function affichage_config_mail($tab_new_values)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $return = '';
@@ -306,7 +306,7 @@ class Fonctions
     }
 
     // recup l'id de la derniere absence (le max puisque c'est un auto incrément)
-    public static function get_last_absence_id()
+    private static function get_last_absence_id()
     {
         $req_1="SELECT MAX(ta_id) FROM conges_type_absence ";
         $res_1 = \includes\SQL::query($req_1);
@@ -316,33 +316,6 @@ class Fonctions
         } else {
             return $row_1[0];
         }
-    }
-
-    //
-    // cree un tableau à partir des valeurs du enum(...) d'un champ mysql (cf structure des tables)
-    //    $table         = nom de la table sql
-    //    $column        = nom du champ sql
-    public static function get_tab_from_mysql_enum_field($table, $column)
-    {
-
-        $tab=array();
-        $req_enum = "DESCRIBE $table $column";
-        $res_enum = \includes\SQL::query($req_enum);
-
-        while ($row_enum = $res_enum->fetch_array()) {
-            $sql_type=$row_enum['Type'];
-            // exemple : enum('autre','labo','fonction','personne','web', ....
-            $liste_enum = strstr($sql_type, '(');
-            $liste_enum = substr($liste_enum, 1);    // on vire le premier caractere
-            $liste_enum = substr($liste_enum, 0, strlen($liste_enum)-1);    // on vire le dernier caractere
-            $option = strtok($liste_enum,"','");
-            while ($option) {
-                $tab[]=$option;
-                $option = strtok("','");
-            }
-        }
-
-        return $tab;
     }
 
     public static function commit_ajout(&$tab_new_values)
@@ -640,7 +613,7 @@ class Fonctions
         return $return;
     }
 
-    public static function commit_saisie(&$tab_new_values)
+    private static function commit_saisie(&$tab_new_values)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $return = '';
@@ -700,7 +673,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affichage_configuration()
+    private static function affichage_configuration()
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $return = '';
