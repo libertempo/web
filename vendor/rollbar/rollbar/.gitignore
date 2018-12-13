@@ -1,6 +1,0 @@
-*.swp
-*.swo
-vendor
-composer.lock
-.idea
-build

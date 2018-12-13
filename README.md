@@ -16,8 +16,16 @@ Libertempo se veut être au plus proche des règles inhérentes aux réglementat
 
 Plus d'informations sont disponibles sur le [blog](http://libertempo.tuxfamily.org) et la [documentation](http://libertempo.tuxfamily.org/Documentation).
 
-# Version recommandée
-Vous pouvez télécharger la version stable la plus récente directement depuis [master](https://github.com/Libertempo/Libertempo-web/archive/master.zip).
+# Initialisation
+Avant tout, il vous faut installer `npm`, le [gestionnaire de paquet](https://www.npmjs.com/get-npm) de Node.
+
+Ensuite, l'installation sous sa forme la plus simple se résume à faire :
+```sh
+git clone --single-branch -b master git@github.com:libertempo/web.git
+cd web
+ln -sf `pwd`/App/Tools/post-checkout .git/hooks/post-checkout
+make install
+```
 
 Chaque nouvelle version est mise à disposition sur [github](https://github.com/Libertempo/Libertempo-web/releases) et sur [le blog du logiciel](http://libertempo.tuxfamily.org/downloads/)
 
