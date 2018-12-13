@@ -1,4 +1,3 @@
 #!/bin/sh
 
-echo "Don't forget to run « make install » in docker to fetch dependencies"
-
+echo "Don't forget to run « make install-dep » in docker to fetch dependencies"

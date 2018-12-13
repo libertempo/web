@@ -24,7 +24,6 @@ Ensuite, l'installation sous sa forme la plus simple se résume à faire :
 git clone --single-branch -b master git@github.com:libertempo/web.git
 cd web
 ln -sf `pwd`/App/Tools/post-checkout .git/hooks/post-checkout
-make install-dep
 make install
 ```
 
