@@ -19,7 +19,7 @@ function configure(\includes\SQL $db, array $data) : bool
 
 function existOptionNom(\includes\SQL $db, string $nom) : bool
 {
-    $res = $db->query('SELECT EXISTS (SELECT conf_valeur FROM conges_config WHERE conf_nom = "' . $nom . '");');
+    $res = $db->query('SELECT EXISTS (SELECT conf_valeur FROM conges_config WHERE conf_nom = "' . $db->quote($nom) . '");');
 
     return 0 < (int) $res->fetch_array()[0];
 }
@@ -50,7 +50,7 @@ function listeOptions(\includes\SQL $db) : array
 
 function listeOptionValeur(\includes\SQL $db, $option) : string
 {
-    $res = $db->query('SELECT conf_valeur FROM conges_config WHERE conf_nom = "' . $option . '"');
+    $res = $db->query('SELECT conf_valeur FROM conges_config WHERE conf_nom = "' . $db->quote($option) . '"');
 
     return $res->fetch_array()[0];
 }
