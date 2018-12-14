@@ -24,11 +24,19 @@ function existOptionNom(\includes\SQL $db, string $nom) : bool
     return 0 < (int) $res->fetch_array()[0];
 }
 
-function isOptionBoolValid(\includes\SQL $db, $data) : bool
+function isOptionValid(\includes\SQL $db, $data) : bool
 {
     $res = $db->query('SELECT conf_type FROM conges_config WHERE conf_nom = "' . key($data) . '"');
     $option = $res->fetch_array()[0];
-    return !('boolean' == $option && "TRUE" != current($data) && "FALSE" != current($data));
+    switch (true) {
+        case 'boolean' == $option:
+            return ("TRUE" == current($data) || "FALSE" == current($data));
+        case 'enum' == mb_strcut($option, 0, 4):
+            $enumOpt = explode("/",mb_strcut($option, 5));
+            return in_array(current($data), $enumOpt);
+        default:
+            return true;
+    }
 }
 
 function listeOptions(\includes\SQL $db) : array
@@ -81,8 +89,8 @@ if (null == $valeurOpt) {
     exit();
 }
 
-if (!isOptionBoolValid($db,[$nomOpt => $valeurOpt])) {
-    displayError('Cette option prend uniquement pour valeur "TRUE" ou "FALSE".');
+if (!isOptionValid($db,[$nomOpt => $valeurOpt])) {
+    displayError('Saisie invalide!');
 }
 
 if (!configure($db,[$nomOpt => $valeurOpt])) {
