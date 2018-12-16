@@ -38,7 +38,7 @@ function ajout_conges($tab_champ_saisie)
     }
 }
 
-function ajout_global(array $tab_new_nb_conges, array $tab_calcul_proportionnel, array $tab_new_comment_all, string $loginSession)
+function ajout_global(array $tab_new_nb_conges, array $calculProportionnel, array $tab_new_comment_all, string $loginSession)
 {
     $db = \includes\SQL::singleton();
 
@@ -60,7 +60,7 @@ function ajout_global(array $tab_new_nb_conges, array $tab_calcul_proportionnel,
             $current_login = $resultat1["u_login"];
             $current_quotite = $resultat1["u_quotite"];
 
-            if ( (!isset($tab_calcul_proportionnel[$id_conges])) || ($tab_calcul_proportionnel[$id_conges] != TRUE) ) {
+            if ( (!isset($calculProportionnel[$id_conges])) || ($calculProportionnel[$id_conges] != true) ) {
                 $nb_conges=$nb_jours;
             } else {
                 // pour arrondir au 1/2 le + proche on  fait x 2, on arrondit, puis on divise par 2
@@ -81,7 +81,7 @@ function ajout_global(array $tab_new_nb_conges, array $tab_calcul_proportionnel,
             insert_ajout_dans_periode($current_login, $nb_conges, $id_conges, $commentaire);
         }
 
-        if ( (!isset($tab_calcul_proportionnel[$id_conges])) || ($tab_calcul_proportionnel[$id_conges]!=TRUE) ) {
+        if ( (!isset($calculProportionnel[$id_conges])) || ($calculProportionnel[$id_conges]!= true) ) {
             $comment_log = "ajout conges global ($nb_jours jour(s)) ($comment) (calcul proportionnel : No)";
         } else {
             $comment_log = "ajout conges global ($nb_jours jour(s)) ($comment) (calcul proportionnel : Yes)";
@@ -90,7 +90,7 @@ function ajout_global(array $tab_new_nb_conges, array $tab_calcul_proportionnel,
     }
 }
 
-function ajout_global_groupe($choix_groupe, array $tab_new_nb_conges, array $tab_calcul_proportionnel, array $tab_new_comment_all)
+function ajout_global_groupe($choix_groupe, array $tab_new_nb_conges, array $calculProportionnel, array $tab_new_comment_all)
 {
     $db = \includes\SQL::singleton();
 
@@ -110,7 +110,7 @@ function ajout_global_groupe($choix_groupe, array $tab_new_nb_conges, array $tab
                 $current_login  =$resultat1["u_login"];
                 $current_quotite=$resultat1["u_quotite"];
 
-                if (!isset($tab_calcul_proportionnel[$id_conges]) || $tab_calcul_proportionnel[$id_conges] != true) {
+                if (!isset($calculProportionnel[$id_conges]) || $calculProportionnel[$id_conges] != true) {
                     $nb_conges=$nb_jours;
                 } else {
                     // pour arrondir au 1/2 le + proche on  fait x 2, on arrondit, puis on divise par 2
@@ -135,7 +135,7 @@ function ajout_global_groupe($choix_groupe, array $tab_new_nb_conges, array $tab
             }
 
             $group_name = get_group_name_from_id($choix_groupe);
-            if ( (!isset($tab_calcul_proportionnel[$id_conges])) || ($tab_calcul_proportionnel[$id_conges]!=TRUE) ) {
+            if (!isset($calculProportionnel[$id_conges]) || $calculProportionnel[$id_conges] != true) {
                 $comment_log = "ajout conges pour groupe $group_name ($nb_jours jour(s)) ($comment) (calcul proportionnel : No)";
             } else {
                 $comment_log = "ajout conges pour groupe $group_name ($nb_jours jour(s)) ($comment) (calcul proportionnel : Yes)";
