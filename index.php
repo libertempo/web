@@ -107,7 +107,7 @@ if (isset($_SESSION['userlogin'])) {
 			exit;
 		}
         if ($is_hr == "Y") {
-            redirect( ROOT_PATH .'hr/hr_index.php');
+            redirect( ROOT_PATH .'hr/page_principale');
 		} elseif ($is_resp=="Y") {
             redirect( ROOT_PATH .'responsable/resp_index.php');
 		} else {
