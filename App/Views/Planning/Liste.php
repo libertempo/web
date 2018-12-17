@@ -5,6 +5,7 @@
  * $listIdUsed
  * $isHr
  * $lienModif
+ * $baseURIApi
  */
 ?>
 <div id="inner-content">
@@ -48,7 +49,7 @@ axios.defaults.headers.get = {
 };
 
 const instance = axios.create({
-  baseURL: 'http://libertempo/api',
+  baseURL: '<?= $baseURIApi ?>',
   timeout: 1500
 });
 

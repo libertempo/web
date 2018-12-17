@@ -25,6 +25,7 @@ enctype="application/x-www-form-urlencoded"><input type="hidden" name="planning_
 
 $titre = _('hr_affichage_liste_planning_titre');
 $lienModif = 'modif_planning';
+$baseURIApi = $config->getUrlAccueil() . '/api/';
 $isHr = true;
 $listPlanningId = \App\ProtoControllers\HautResponsable\Planning::getListPlanningId();
 $listIdUsed = \App\ProtoControllers\HautResponsable\Planning::getListPlanningUsed($listPlanningId);
