@@ -15,7 +15,7 @@ require_once INCLUDE_PATH . 'fonction.php';
 function sauvegardeAsFile(\includes\SQL $db, $previousVersion, $newVersion) : void
 {
     $contentFile = getDataFile($db);
-    $filename = BACKUP_PATH . 'libertempo_' . $previousVersion . '__' . $newVersion . '.sql'; // nom de migration
+    $filename = BACKUP_PATH . 'libertempo_' . $previousVersion . '__' . $newVersion . '_' . date('Ymd_Hi') . '.sql'; // nom de migration
 
     if (false === file_put_contents($filename, $contentFile)) {
         throw new \Exception('Échec de l\'écriture de la sauvegarde');
