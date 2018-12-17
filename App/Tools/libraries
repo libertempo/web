@@ -16,6 +16,8 @@ define('BACKUP_PATH', ROOT_PATH . 'backup' . DS);
 define('OLD_API_SYSPATH', ROOT_PATH . 'vendor' . DS . 'Libertempo' . DS . 'libertempo-api' . DS);
 define('API_SYSPATH', ROOT_PATH . 'vendor' . DS . 'libertempo' . DS . 'api' . DS);
 define('LAST_VERSION_FILE', '/tmp/lt-last-version');
+// For includes/fonction.php import
+define('LOCALE_PATH', ROOT_PATH . 'locale/');
 
 require_once ROOT_PATH . 'vendor/autoload.php';
 require_once INCLUDE_PATH . 'fonctions_conges.php';
