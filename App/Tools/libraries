@@ -15,6 +15,7 @@ define('BACKUP_PATH', ROOT_PATH . 'backup' . DS);
 // TODO 2018-09-22 : lien vers l'API < 1.12, à supprimer quand cette version est un souvenir
 define('OLD_API_SYSPATH', ROOT_PATH . 'vendor' . DS . 'Libertempo' . DS . 'libertempo-api' . DS);
 define('API_SYSPATH', ROOT_PATH . 'vendor' . DS . 'libertempo' . DS . 'api' . DS);
+define('LAST_VERSION_FILE', '/tmp/lt-last-version');
 
 require_once ROOT_PATH . 'vendor/autoload.php';
 require_once INCLUDE_PATH . 'fonctions_conges.php';
@@ -63,7 +64,7 @@ function setLastMaj(\includes\SQL $db, string $versionLastMaj) : bool
 {
     $req = 'UPDATE `conges_appli` SET appli_valeur = "' . $versionLastMaj . '" WHERE appli_variable = "version_last_maj" LIMIT 1';
     $db->query($req);
-    return 0 < file_put_contents('/tmp/lt-last-version', $versionLastMaj);
+    return 0 < file_put_contents(LAST_VERSION_FILE, $versionLastMaj);
 }
 
 /**
@@ -95,12 +96,11 @@ function getVersionDerniereMiseAJour(\includes\SQL $db, string $installedVersion
     $req = 'SELECT appli_valeur FROM conges_appli WHERE appli_variable = "version_last_maj" LIMIT 1';
     $res = $db->query($req);
     $versionLastMaj = $res->fetch_array()['appli_valeur'];
-    $versionFile = file_get_contents('/tmp/lt-last-version');
     if (!empty($versionLastMaj)) {
         return $versionLastMaj;
-    } elseif ($versionFile) {
+    } elseif (is_file(LAST_VERSION_FILE)) {
         // @TODO: Compat with <1.12 versions
-        return $versionFile;
+        return file_get_contents(LAST_VERSION_FILE);
     }
 
     return $installedVersion . '.0';
