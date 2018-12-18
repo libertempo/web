@@ -47,6 +47,7 @@ switch ($action) {
     default:
         $sql = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($sql);
+        $baseURIApi = $config->getUrlAccueil() . '/api/';
         $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
         $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
         $absenceTypes = $api->get('absence/type', $_SESSION['token'])['data'];
