@@ -95,7 +95,7 @@ if (!isOptionValid($db,[$nomOpt => $valeurOpt])) {
 
 if (!configure($db,[$nomOpt => $valeurOpt])) {
     display($nomOpt . ' : ' . listeOptionValeur($db, $nomOpt));
-    displayError('Option ' . $nomOpt . ' non modifiée.');
+    display('Option ' . $nomOpt . ' non modifiée.');
 }
 
 display('Mise à jour de l\'option ' . $nomOpt . ' effectuée.');
