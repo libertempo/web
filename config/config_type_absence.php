@@ -59,6 +59,24 @@ switch ($action) {
             unset($listeTypeConges['conges_exceptionnels']);
         }
         $url = $PHP_SELF;
+        $titres = [
+            'conges' => _('divers_conges_maj_1'),
+            'absences' => _('divers_absences_maj_1'),
+            'conges_exceptionnels' => _('divers_conges_exceptionnels_maj_1'),
+
+        ];
+        $comments = [
+            'conges' => _('config_abs_comment_conges'),
+            'absences' => _('config_abs_comment_absences'),
+            'conges_exceptionnels' => _('config_abs_comment_conges_exceptionnels'),
+        ];
+
+        $traductions = [
+            'titres' => $titres,
+            'commentaires' => $comments,
+        ];
+        $lienModif = $PHP_SELF . '?action=modif&id_to_update=';
+        $lienSuppr = $PHP_SELF . 'action=suppr&id_to_update=';
 
         $nouveauLibelle = isset($tab_new_values['libelle'])
             ? $tab_new_values['libelle']
