@@ -1,0 +1,102 @@
+#!/usr/bin/env php
+<?php
+require_once 'libraries';
+require_once CONFIG_PATH . 'dbconnect.php';
+
+function configure(\includes\SQL $db, array $data) : bool
+{
+
+    $nom = $db->escape_string(key($data));
+    $valeur = $db->escape_string(current($data));
+
+    $db->query('UPDATE conges_config 
+                SET conf_valeur = "' . $valeur . '" 
+                WHERE conf_nom = "' . $nom . '";
+    ');
+
+    return 0 < $db->affected_rows;
+}
+
+function existOptionNom(\includes\SQL $db, string $nom) : bool
+{
+    $res = $db->query('SELECT EXISTS (SELECT conf_valeur FROM conges_config WHERE conf_nom = "' . $db->quote($nom) . '");');
+
+    return 0 < (int) $res->fetch_array()[0];
+}
+
+function isOptionValid(\includes\SQL $db, $data) : bool
+{
+    $res = $db->query('SELECT conf_type FROM conges_config WHERE conf_nom = "' . key($data) . '"');
+    $option = $res->fetch_array()[0];
+    switch (true) {
+        case 'boolean' == $option:
+            return ("TRUE" == current($data) || "FALSE" == current($data));
+        case 'enum' == mb_strcut($option, 0, 4):
+            $enumOpt = explode("/",mb_strcut($option, 5));
+            return in_array(current($data), $enumOpt);
+        default:
+            return true;
+    }
+}
+
+function listeOptions(\includes\SQL $db) : array
+{
+    $res = $db->query('SELECT * FROM conges_config');
+    while ($option = $res->fetch_all()) {
+        $options = $option;
+    }
+    return $options;
+}
+
+function listeOptionValeur(\includes\SQL $db, $option) : string
+{
+    $res = $db->query('SELECT conf_valeur FROM conges_config WHERE conf_nom = "' . $db->quote($option) . '"');
+
+    return $res->fetch_array()[0];
+}
+
+display('Configuration générale de Libertempo');
+
+if (!\includes\SQL::existsDatabase($mysql_database)) {
+    displayError('Accès à la base de donnée impossible!');
+    displayFail();
+}
+
+$db = \includes\SQL::singleton();
+
+$nomOpt = $argv[1] ?? null;
+$valeurOpt = $argv[2] ?? null;
+
+if (null == $nomOpt) {
+    display('commande incomplète. Veuillez définir l\'une des options suivantes :');
+    display(str_pad('OPTION', 40) . ' : ' . str_pad('VALEUR', 35) . ' ; TYPE');
+
+    $conf = listeOptions($db);
+    foreach ($conf as $option) {
+        display(str_pad($option['conf_nom'], 40) . ' : ' . str_pad($option['conf_valeur'], 35) . ' ; ' . $option['conf_type']);
+    }
+
+    display('exemple : make configure option="resp_ajoute_conges" valeur="TRUE"');
+}
+
+if (!existOptionNom($db,$nomOpt)) {
+    displayError('Cette option n\'existe pas.');
+}
+
+if (null == $valeurOpt) {
+    display('Valeur de l\'option demandée : ');
+    display($nomOpt . ' : ' . listeOptionValeur($db, $nomOpt));
+    exit();
+}
+
+if (!isOptionValid($db,[$nomOpt => $valeurOpt])) {
+    displayError('Saisie invalide!');
+}
+
+if (!configure($db,[$nomOpt => $valeurOpt])) {
+    display($nomOpt . ' : ' . listeOptionValeur($db, $nomOpt));
+    display('Option ' . $nomOpt . ' non modifiée.');
+}
+
+display('Mise à jour de l\'option ' . $nomOpt . ' effectuée.');
+display($nomOpt . ' : ' . listeOptionValeur($db, $nomOpt));
