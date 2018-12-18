@@ -76,7 +76,7 @@ if (null == $nomOpt) {
         display(str_pad($option['conf_nom'], 40) . ' : ' . str_pad($option['conf_valeur'], 35) . ' ; ' . $option['conf_type']);
     }
 
-    displayError('exemple : make configure option="resp_ajoute_conges" valeur="TRUE"');
+    display('exemple : make configure option="resp_ajoute_conges" valeur="TRUE"');
 }
 
 if (!existOptionNom($db,$nomOpt)) {
