@@ -1,5 +1,4 @@
 ALTER TABLE `conges_appli` ENGINE=INNODB;
-ALTER TABLE `conges_artt` ENGINE=INNODB;
 ALTER TABLE `conges_config` ENGINE=INNODB;
 ALTER TABLE `conges_echange_rtt` ENGINE=INNODB;
 ALTER TABLE `conges_edition_papier` ENGINE=INNODB;
@@ -12,8 +11,6 @@ ALTER TABLE `conges_jours_fermeture` ENGINE=INNODB;
 ALTER TABLE `conges_logs` ENGINE=INNODB;
 ALTER TABLE `conges_mail` ENGINE=INNODB;
 ALTER TABLE `conges_periode` ENGINE=INNODB;
-ALTER TABLE `conges_plugins` ENGINE=INNODB;
-ALTER TABLE `conges_plugin_cet` ENGINE=INNODB;
 ALTER TABLE `conges_solde_edition` ENGINE=INNODB;
 ALTER TABLE `conges_solde_user` ENGINE=INNODB;
 ALTER TABLE `conges_type_absence` ENGINE=INNODB;
