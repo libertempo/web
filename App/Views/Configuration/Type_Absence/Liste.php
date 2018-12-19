@@ -122,7 +122,11 @@ var vm = new Vue({
     var vm = this;
     this.axios.get('/absence/type')
         .then((response) => {
+            if (typeof response.data != 'object') {
+                return;
+            }
             const absenceTypes = response.data.data;
+            console.log(response.data);
             var organisedTypes = {};
             for (var i = 0; i < absenceTypes.length; ++i) {
                 var absenceType = absenceTypes[i];
@@ -140,6 +144,7 @@ var vm = new Vue({
             vm.absenceTypes = organisedTypes;
         })
         .catch((error) => {
+            console.log(error.response);
             console.error(error);
         })
   }

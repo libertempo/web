@@ -56,7 +56,7 @@ const instance = axios.create({
 var vm = new Vue({
     el: '#inner-content',
     data: {
-        plannings : '',
+        plannings : {},
         listIdUsed : <?= json_encode($listIdUsed) ?>,
         isHr: 'true' == "<?= $isHr ? 'true' : 'false' ?>",
         lienModification : "<?= $lienModif ?>",
@@ -80,6 +80,9 @@ var vm = new Vue({
     var vm = this;
     this.axios.get('/planning')
         .then((response) => {
+            if (typeof response.data != 'object') {
+                return;
+            }
             const plannings = response.data.data;
             var activePlannings = new Array();
             for (var i = 0; i < plannings.length; ++i) {
@@ -90,6 +93,7 @@ var vm = new Vue({
             vm.plannings = activePlannings;
         })
         .catch((error) => {
+            console.log(error.response);
             console.error(error);
         })
   }
