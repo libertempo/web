@@ -453,3 +453,16 @@ INSERT IGNORE INTO `conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUE
 INSERT IGNORE INTO `conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUES ('mail_new_absence_conges', 'APPLI CONGES - Nouvelle absence', ' __SENDER_NAME__ vous informe qu\'il sera absent. Ce type de congés ne necéssite pas de validation. Vous pouvez consulter votre application Libertempo : __URL_ACCUEIL_CONGES__/\r\n\r\n-------------------------------------------------------------------------------------------------------\r\nCeci est un message automatique. ');
 INSERT IGNORE INTO `conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUES ('mail_modif_demande_conges', 'APPLI CONGES - Modification demande', ' __SENDER_NAME__ à modifié une demande non traité. Vous pouvez consulter votre application Libertempo : __URL_ACCUEIL_CONGES__/\r\n\r\n-------------------------------------------------------------------------------------------------------\r\nCeci est un message automatique.');
 INSERT IGNORE INTO `conges_mail` (`mail_nom`, `mail_subject`, `mail_body`) VALUES ('mail_supp_demande_conges', 'APPLI CONGES - Suppression demande', ' __SENDER_NAME__ à supprimé une demande non traité. Vous pouvez consulter votre application Libertempo : __URL_ACCUEIL_CONGES__/\r\n\r\n-------------------------------------------------------------------------------------------------------\r\nCeci est un message automatique.');
+
+
+
+# suppression des droits de conges
+DELETE FROM conges_groupe_resp WHERE gr_login = 'conges';
+DELETE FROM conges_groupe_grd_resp WHERE ggr_login = 'conges';
+UPDATE conges_users SET u_resp_login = NULL WHERE u_login = 'conges';
+
+# suppression des artt de conges
+DELETE FROM conges_artt WHERE a_login = 'conges';
+
+# suppression du user conges
+DELETE FROM conges_users WHERE u_login = 'conges';
