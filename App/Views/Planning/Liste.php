@@ -90,7 +90,7 @@ var vm = new Vue({
             vm.plannings = activePlannings;
         })
         .catch((error) => {
-            console.log(error);
+            console.error(error);
         })
   }
 });

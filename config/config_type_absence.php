@@ -2,7 +2,6 @@
 require_once INCLUDE_PATH . 'define.php';
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 
-
 if (file_exists(CONFIG_PATH .'config_ldap.php')) {
     include_once CONFIG_PATH .'config_ldap.php';
 }
@@ -14,19 +13,10 @@ include_once INCLUDE_PATH . 'session.php';
 // verif des droits du user à afficher la page
 verif_droits_user( "is_admin");
 
-
-
-/*** initialisation des variables ***/
-/*************************************/
-// recup des parametres reçus :
-// SERVER
 $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
-// GET / POST
 $action         = getpost_variable('action') ;
 $tab_new_values = getpost_variable('tab_new_values');
 $id_to_update   = htmlentities(getpost_variable('id_to_update'), ENT_QUOTES | ENT_HTML401);
-
-/*********************************/
 
 switch ($action) {
     case 'new':
@@ -48,22 +38,11 @@ switch ($action) {
         $sql = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($sql);
         $baseURIApi = $config->getUrlAccueil() . '/api/';
-        $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
-        $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
-        $absenceTypes = $api->get('absence/type', $_SESSION['token'])['data'];
-        foreach ($absenceTypes as $type) {
-            $type += ['typeNatif' => false];
-            $listeTypeConges[$type['type']][] = $type;
-        }
-        if (!$config->isCongesExceptionnelsActive() && isset($listeTypeConges['conges_exceptionnels'])) {
-            unset($listeTypeConges['conges_exceptionnels']);
-        }
-        $url = $PHP_SELF;
+        $isCongesExceptionnelsActive = $config->isCongesExceptionnelsActive();
         $titres = [
             'conges' => _('divers_conges_maj_1'),
             'absences' => _('divers_absences_maj_1'),
             'conges_exceptionnels' => _('divers_conges_exceptionnels_maj_1'),
-
         ];
         $comments = [
             'conges' => _('config_abs_comment_conges'),
@@ -75,18 +54,11 @@ switch ($action) {
             'titres' => $titres,
             'commentaires' => $comments,
         ];
-        $lienModif = $PHP_SELF . '?action=modif&id_to_update=';
-        $lienSuppr = $PHP_SELF . 'action=suppr&id_to_update=';
+        $url = $PHP_SELF;
 
-        $nouveauLibelle = isset($tab_new_values['libelle'])
-            ? $tab_new_values['libelle']
-            : '';
-        $nouveauLibelleCourt = isset($tab_new_values['short_libelle'])
-            ? $tab_new_values['short_libelle']
-            : '';
-        $nouveauType = isset($tab_new_values['type'])
-            ? $tab_new_values['type']
-            : '';
+        $nouveauLibelle = $tab_new_values['libelle'] ?? '';
+        $nouveauLibelleCourt = $tab_new_values['short_libelle'] ?? '';
+        $nouveauType = $tab_new_values['type'] ?? '';
         require_once VIEW_PATH .  'Configuration/Type_Absence/Liste.php';
         break;
 }
