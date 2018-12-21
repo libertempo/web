@@ -24,7 +24,7 @@ if (!\includes\SQL::existsDatabase($mysql_database)) {
 }
 
 display('Vous êtes sur le point de supprimer toute la base de données!');
-$input = getValue('êtes vous sûr (y/N) :');
+$input = getValue('Êtes-vous sûr (y/N) :');
 if ($input != 'y' &&  $input != 'Y') {
     displayError('Destruction annulée.');
 }

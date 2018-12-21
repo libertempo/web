@@ -20,9 +20,7 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     define('LIBRARY_PATH',     ROOT_PATH . 'library/');
     define('NODE_PATH', ROOT_PATH . 'node_modules' . DS);
     define('CONFIG_PATH',      realpath(ABSOLUTE_SYSPATH) . DS . 'cfg'. DS);
-    define('INSTALL_PATH',     ROOT_PATH . 'install/');
     define('LOCALE_PATH',      ROOT_PATH . 'locale/');
-    define('BACKUP_PATH',      ROOT_PATH . 'backup' . DS);
     define('TEMPLATE_PATH',    PUBLIC_PATH . 'template/');
     define('NIL_INT',          -1);
     define('STATUS_ACTIVE',    1);

@@ -1526,27 +1526,6 @@ function recup_infos_all_users_du_grand_resp($login)
     return $tab ;
 }
 
-// execute sequentiellement les requêtes d'un fichier .sql
-function execute_sql_file($file) : bool
-{
-    // lecture du fichier SQL
-    // et execution de chaque ligne ....
-    $lines = file ($file);
-    $sql_requete="";
-    foreach ($lines as $line_num => $line)
-    {
-        $line=trim($line);
-        if ((substr($line, 0, 1)!="#") && ($line!="")) { //on ne prend pas les lignes de commentaire
-            $sql_requete = $sql_requete.$line ;
-            if (substr($sql_requete, -1, 1)==";") { // alors la requete est finie !
-                $result = \includes\SQL::singleton()->query($sql_requete);
-                $sql_requete="";
-            }
-        }
-    }
-    return TRUE;
-}
-
 // verif des droits du user à afficher la page qu'il demande (pour éviter les hacks par bricolage d'URL)
 
 function verif_droits_user($niveau_droits)
