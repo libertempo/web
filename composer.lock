@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e8c863d4138b5c8a6709210743c1c111",
+    "content-hash": "ea7f427e329bc901cca01f629a3e8173",
     "packages": [
         {
             "name": "adldap2/adldap2",
@@ -794,16 +794,16 @@
         },
         {
             "name": "jasig/phpcas",
-            "version": "1.3.5",
+            "version": "1.3.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/apereo/phpCAS.git",
-                "reference": "61c8899c8f91204e8b9135d795461e50fe5c2db0"
+                "reference": "7972833e84f6ee5fa41f1479eab5d855109627f5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/apereo/phpCAS/zipball/61c8899c8f91204e8b9135d795461e50fe5c2db0",
-                "reference": "61c8899c8f91204e8b9135d795461e50fe5c2db0",
+                "url": "https://api.github.com/repos/apereo/phpCAS/zipball/7972833e84f6ee5fa41f1479eab5d855109627f5",
+                "reference": "7972833e84f6ee5fa41f1479eab5d855109627f5",
                 "shasum": ""
             },
             "require": {
@@ -841,10 +841,11 @@
             "description": "Provides a simple API for authenticating users against a CAS server",
             "homepage": "https://wiki.jasig.org/display/CASC/phpCAS",
             "keywords": [
+                "apereo",
                 "cas",
                 "jasig"
             ],
-            "time": "2017-04-10T19:12:45+00:00"
+            "time": "2018-10-25T20:22:09+00:00"
         },
         {
             "name": "jeremeamia/SuperClosure",
