@@ -1,0 +1,25 @@
+#!/usr/bin/env php
+<?php
+require_once 'libraries';
+
+/**
+ * Execute la dernière sauvegarde
+ */
+function executeBackup() : bool
+{
+    $patches = glob(BACKUP_PATH . '*.sql');
+    natsort($patches);
+    $reversed = array_reverse($patches);
+    $backup = array_shift($reversed);
+
+    return execute_sql_file($backup);
+}
+
+display('Restauration de la base de données…');
+if (!createDatabase(\includes\SQL::singletonWithoutDb(), $mysql_database)) {
+    displayError('Création de la base de données impossible.');
+}
+if (!executeBackup()) {
+    displayFail();
+}
+display('Restauration effectuée avec succès.');
