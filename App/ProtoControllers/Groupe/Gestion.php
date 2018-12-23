@@ -737,12 +737,11 @@ class Gestion {
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
-        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $return = '';
 
         $infosGroupe = \App\ProtoControllers\Groupe::getInfosGroupe($idGroupe, \includes\SQL::singleton());
 
-        $return .= '<form method="post" action="liste_groupe"  role="form">';
+        $return .= '<form method="post" action="liste_groupe" role="form">';
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses([
             'table',

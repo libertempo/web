@@ -21,7 +21,7 @@ $rewritten = [
     '/hr/jours_chomes',
     '/hr/ajout_conges',
     '/hr/jours_fermeture',
-    '/hr/cloture_year',
+    '/hr/cloture_exercice',
     '/hr/liste_planning',
     '/hr/ajout_planning',
     '/hr/modif_planning',
@@ -50,7 +50,11 @@ switch ($urn) {
         require_once ROOT_PATH . 'deconnexion.php';
         break;
     case 'hr':
-        $_GET['onglet'] = $resource;
+        if ('cloture_exercice' === $resource) {
+            $_GET['onglet'] = 'cloture_year';
+        } else {
+            $_GET['onglet'] = $resource;
+        }
         require_once ROOT_PATH . 'hr/hr_index.php';
         break;
 
