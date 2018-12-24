@@ -63,59 +63,6 @@ function getInfosResponsables($idGroupe = NIL_INT)
 
 /**
  *
- * Formulaire de selection des grands responsables d'un groupe
- *
- * @param int $idGroupe
- * @return string
- */
-function getFormChoixGrandResponsable($idGroupe,$selectId, $data)
-{
-    $table = new \App\Libraries\Structure\Table();
-    $table->addClasses([
-        'table',
-        'table-hover',
-        'table-responsive',
-        'table-condensed',
-        'table-striped',
-    ]);
-    $childTable = '<thead>';
-
-    $childTable .= '<tr>';
-    $childTable .= '<th>&nbsp;</th>';
-    $childTable .= '<th>' . _('divers_personne_maj_1') . '</th>';
-    $childTable .= '<th>' . _('divers_login') . '</th>';
-    $childTable .= '</tr>';
-    $childTable .= '</thead>';
-    $childTable .= '<tbody>';
-    $i = true;
-    foreach ($this->getGrandResponsables($idGroupe) as $login => $info) {
-        $inputOption = '';
-
-        if (isset($data)) {
-            if (in_array($login, $data['grandResponsables'])) {
-                $inputOption = 'checked';
-            }
-        } elseif ($info['isDansGroupe']) {
-            $inputOption = 'checked';
-        }
-
-        $childTable .= '<tr class="' . (($i) ? 'i' : 'p') . '">';
-        $childTable .='<td class="histo"><input type="checkbox" id="Gres_' . $login . '" name="checkbox_group_grand_resps[' . $login . ']" onchange="disableCheckboxGroupe(this,\'' . $selectId . '\');"' . $inputOption . '></td>';
-        $childTable .= '<td class="histo">' . $info['nom'] . ' ' . $info['prenom'] . '</td>';
-        $childTable .= '<td class="histo">' . $login . '</td>';
-        $childTable .= '</tr>';
-    }
-    $childTable .= '</tbody>';
-    $table->addChild($childTable);
-    ob_start();
-    $table->render();
-    $return = ob_get_clean();
-
-    return $return;
-}
-
-/**
- *
  * retournes les utilisateurs responsables
  * si $idGroupe existe, marquage des grands responsables du groupe
  *
@@ -156,7 +103,7 @@ $data = NULL;
 
 $errorsLst = [];
 if (!empty($_POST)) {
-    if (0 >= (int) $this->postHtmlCommon($_POST, $errorsLst)) {
+    if (0 >= (int) $gestionGroupes->postHtmlCommon($_POST, $errorsLst)) {
         $errors = '';
         if (!empty($errorsLst)) {
             foreach ($errorsLst as $key => $value) {
@@ -167,7 +114,7 @@ if (!empty($_POST)) {
             }
             $message = '<br><div class="alert alert-danger">' . _('erreur_recommencer') . '<ul>' . $errors . '</ul></div>';
         }
-        $data = $this->FormData2Array($_POST);
+        $data = $gestionGroupes->FormData2Array($_POST);
     } else {
         if (key_exists('_METHOD', $_POST)) {
             redirect(ROOT_PATH . 'hr/hr_index.php?onglet=liste_groupe&notice=update', false);
@@ -192,6 +139,8 @@ if (isset($data)) {
 $selectId = uniqid();
 $DivGrandRespId = uniqid();
 $employes = getEmployes($idGroupe);
+$responsables = getInfosResponsables($idGroupe);
+$grandResponsables = getGrandResponsables($idGroupe);
 if (NIL_INT !== $idGroupe) {
     $titre = '<h1>' . _('admin_modif_groupe_titre') . '</h1>';
 } else {
