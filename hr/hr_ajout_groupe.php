@@ -7,63 +7,6 @@ $idGroupe = NIL_INT;
 
 /**
  *
- * Formulaire de selection des employés d'un groupe
- *
- * @param int $id
- * @return string
- */
-function getFormChoixEmploye($idGroupe, $data = NULL)
-{
-    $table = new \App\Libraries\Structure\Table();
-    $table->addClasses([
-        'table',
-        'table-hover',
-        'table-condensed',
-        'table-striped',
-        'table-condensed',
-    ]);
-
-    $childTable = '<thead>';
-    $childTable .= '<tr>';
-    $childTable .= '<th></th>';
-    $childTable .= '<th>' . _('divers_personne_maj_1') . '</th>';
-    $childTable .= '<th>' . _('divers_login') . '</th>';
-    $childTable .= '</tr>';
-    $childTable .= '</thead>';
-    $childTable .= '<tbody>';
-    $i = true;
-    foreach (getEmployes($idGroupe) as $login => $info) {
-        $inputOption = '';
-
-        if (isset($data)) {
-            if (in_array($login, $data['responsables']) || in_array($login, $data['grandResponsables'])) {
-                $inputOption = 'disabled';
-            } elseif (in_array($login, $data['employes'])) {
-                $inputOption = 'checked';
-            }
-        } elseif (\App\ProtoControllers\Groupe::isResponsableGroupe($login, [$idGroupe], \includes\SQL::singleton())) {
-            $inputOption = 'disabled';
-        } elseif ($info['isDansGroupe']) {
-            $inputOption = 'checked';
-        }
-
-        $childTable .= '<tr class="' . (($i) ? 'i' : 'p') . '">';
-        $childTable .='<td class="histo"><input type="checkbox" id="Emp_' . $login . '" name="checkbox_group_users[' . $login . '] "' . $inputOption . '></td>';
-        $childTable .= '<td class="histo">' . $info['nom'] . ' ' . $info['prenom'] . '</td>';
-        $childTable .= '<td class="histo">' . $login . '</td>';
-        $childTable .= '</tr>';
-    }
-    $childTable .= '</tbody>';
-    $table->addChild($childTable);
-    ob_start();
-    $table->render();
-    $return = ob_get_clean();
-
-    return $return;
-}
-
-/**
- *
  * retournes les utilisateurs
  * si $idGroupe existe, marquage des employés du groupe
  *
@@ -87,61 +30,6 @@ function getEmployes($idGroupe = NIL_INT)
         }
     }
     return $employes;
-}
-
-/**
- *
- * Formulaire de selection du responsable d'un groupe
- *
- * @param int $idGroupe
- * @return string
- */
-function getFormChoixResponsable($idGroupe, $selectId, $data)
-{
-    $table = new \App\Libraries\Structure\Table();
-    $table->addClasses([
-        'table',
-        'table-hover',
-        'table-responsive',
-        'table-condensed',
-        'table-striped',
-    ]);
-    $childTable = '<thead>';
-
-    $childTable .= '<tr>';
-    $childTable .= '<th>&nbsp;</th>';
-    $childTable .= '<th>' . _('divers_personne_maj_1') . '</th>';
-    $childTable .= '<th>' . _('divers_login') . '</th>';
-    $childTable .= '</tr>';
-    $childTable .= '</thead>';
-    $childTable .= '<tbody>';
-    $i = true;
-    foreach (getInfosResponsables($idGroupe) as $login => $info) {
-        $inputOption = '';
-
-        if (isset($data)) {
-            if (in_array($login, $data['grandResponsables'])) {
-                $inputOption = 'disabled';
-            } elseif (in_array($login, $data['responsables'])) {
-                $inputOption = 'checked';
-            }
-        } elseif ($info['isDansGroupe']) {
-            $inputOption = 'checked';
-        }
-
-        $childTable .= '<tr class="' . (($i) ? 'i' : 'p') . '">';
-        $childTable .='<td class="histo"><input type="checkbox" id="Resp_' . $login . '" name="checkbox_group_resps[' . $login . ']" onchange="disableCheckboxGroupe(this,\'' . $selectId . '\');" ' . $inputOption . '></td>';
-        $childTable .= '<td class="histo">' . $info['nom'] . ' ' . $info['prenom'] . '</td>';
-        $childTable .= '<td class="histo">' . $login . '</td>';
-        $childTable .= '</tr>';
-    }
-    $childTable .= '</tbody>';
-    $table->addChild($childTable);
-    ob_start();
-    $table->render();
-    $return = ob_get_clean();
-
-    return $return;
 }
 
 /**

@@ -92,7 +92,41 @@
 
             <div class="col-md-6">
                 <h2><?= _('admin_gestion_groupe_resp_responsables') ?></h2>
-                <?= getFormChoixResponsable($idGroupe, $selectId, $data) ?>
+                <table class="table table-hover table-responsive table-condensed table-striped">
+                    <thead>
+                        <tr>
+                            <th>&nbsp;</th>
+                            <th><?= _('divers_personne_maj_1') ?></th>
+                            <th><?= _('divers_login') ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <?php $i = true ?>
+                    <?php foreach (getInfosResponsables($idGroupe) as $login => $info) : ?>
+                        <?php
+                        $inputOption = '';
+
+                        if (isset($data)) {
+                            if (in_array($login, $data['grandResponsables'])) {
+                                $inputOption = 'disabled';
+                            } elseif (in_array($login, $data['responsables'])) {
+                                $inputOption = 'checked';
+                            }
+                        } elseif ($info['isDansGroupe']) {
+                            $inputOption = 'checked';
+                        }
+                        ?>
+                        <tr class="<?= ($i) ? 'i' : 'p' ?>">
+                            <td class="histo">
+                                <input type="checkbox" id="Resp_<?= $login ?>" name="checkbox_group_resps[<?= $login ?>]" onchange="disableCheckboxGroupe(this,'<?= $selectId ?>');" <?= $inputOption ?>>
+                            </td>
+                            <td class="histo"><?= $info['nom'] ?> <?= $info['prenom'] ?>
+                            </td>
+                            <td class="histo"><?= $login ?></td>
+                        </tr>
+                    <?php endforeach ; ?>
+                    </tbody>
+                </table>
             </div>
             <div class="col-md-6 hide" id="<?= $DivGrandRespId ?>">
                 <h2><?= _('admin_gestion_groupe_grand_resp_responsables') ?></h2>
