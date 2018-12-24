@@ -255,8 +255,8 @@ function getGrandResponsables($idGroupe = NIL_INT)
 }
 
 $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+$doubleValidationActive = $config->isDoubleValidationActive();
 
-$return = '';
 $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 $message = '';
 $infosGroupe = [
@@ -294,7 +294,7 @@ if (isset($data)) {
         'nom' => $data['nom'],
         'comment' => $data['commentaire']
     ];
-    if ($config->isDoubleValidationActive()) {
+    if ($doubleValidationActive) {
         $infosGroupe['doubleValidation'] = $data['isDoubleValidation'];
     }
 } elseif (NIL_INT !== $idGroupe) {
@@ -303,6 +303,7 @@ if (isset($data)) {
 
 $selectId = uniqid();
 $DivGrandRespId = uniqid();
+$employes = getEmployes($idGroupe);
 if (NIL_INT !== $idGroupe) {
     $titre = '<h1>' . _('admin_modif_groupe_titre') . '</h1>';
 } else {

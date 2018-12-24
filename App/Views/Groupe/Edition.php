@@ -8,18 +8,20 @@
  * $data (tmp)
  * $config
  * $idGroupe
+ * $doubleValidationActive
+ * $employes
  */
 ?>
-<div onload="showDivGroupeGrandResp('<?= $selectId ?>','<?= $DivGrandRespId ?>');" class="form-group">
+<div onload="showDivGroupeGrandResp('<?= $selectId ?>', '<?= $DivGrandRespId ?>');" class="form-group">
     <h1><?= $titre ?></h1>
     <?= $message ?>
-    <form method="post" action=""  role="form">
+    <form method="post" action="" role="form">
         <table class="table">
             <thead>
                 <tr>
                     <th><b><?= _('Nom du groupe') ?></b></th>
                     <th><?= _('admin_groupes_libelle') ?> / <?= _('divers_comment_maj_1') ?></th>
-                    <?php if ($config->isDoubleValidationActive()) : ?>
+                    <?php if ($doubleValidationActive) : ?>
                         <th><?= _('admin_groupes_double_valid') ?></th>
                     <?php endif; ?>
                 </tr>
@@ -32,7 +34,7 @@
                     <td>
                         <input class="form-control" type="text" name="new_group_libelle" size="50" maxlength="250" value="<?= $infosGroupe['comment'] ?>">
                     </td>
-                    <?php if ($config->isDoubleValidationActive()) : ?>
+                    <?php if ($doubleValidationActive) : ?>
                         <?php
                         $selectN = $infosGroupe['doubleValidation'] == 'N' ? 'selected="selected"' : '';
                         $selectY = $infosGroupe['doubleValidation'] == 'Y' ? 'selected="selected"' : '';
@@ -51,7 +53,41 @@
         <div class="row">
             <div class="col-md-6">
                 <h2><?= _('admin_gestion_groupe_users_membres') ?></h2>
-                <?= getFormChoixEmploye($idGroupe, $data) ?>
+                <table class="table table-hover table-condensed table-striped"/>
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th><?= _('divers_personne_maj_1') ?></th>
+                            <th><?= _('divers_login') ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <?php $i = true ?>
+                    <?php foreach ($employes as $login => $info) : ?>
+                        <?php
+                        $inputOption = '';
+                        if (isset($data)) {
+                            if (in_array($login, $data['responsables']) || in_array($login, $data['grandResponsables'])) {
+                                $inputOption = 'disabled';
+                            } elseif (in_array($login, $data['employes'])) {
+                                $inputOption = 'checked';
+                            }
+                        } elseif (\App\ProtoControllers\Groupe::isResponsableGroupe($login, [$idGroupe], \includes\SQL::singleton())) {
+                            $inputOption = 'disabled';
+                        } elseif ($info['isDansGroupe']) {
+                            $inputOption = 'checked';
+                        }
+                        ?>
+                        <tr class="<?= ($i) ? 'i' : 'p' ?>">
+                            <td class="histo">
+                                <input type="checkbox" id="Emp_<?= $login ?>" name="checkbox_group_users['<?= $login ?>]" <?= $inputOption ?>>
+                            </td>
+                            <td class="histo"><?= $info['nom'] ?> <?= $info['prenom'] ?></td>
+                            <td class="histo"><?= $login ?></td>
+                        </tr>
+                    <?php endforeach ?>
+                    </tbody>
+                </table>
             </div>
 
             <div class="col-md-6">
@@ -63,14 +99,14 @@
                 <?= getFormChoixGrandResponsable($idGroupe, $selectId, $data) ?>
             </div>
         </div>
-    </div>
 
-    <div class="form-group">
-    <?php if (NIL_INT !== $idGroupe) : ?>
-        <input type="hidden" name="_METHOD" value="PUT" />
-        <input type="hidden" name="group" value="<?= $idGroupe ?>" />
-    <?php endif; ?>
-        <input class="btn btn-success" type="submit" value="<?= _('form_submit') ?>">
-        <a class="btn" href="<?= $PHP_SELF ?>?onglet=liste_groupe"><?= _('form_annul') ?></a>
-    </div>
-</form>
+        <div class="form-group">
+        <?php if (NIL_INT !== $idGroupe) : ?>
+            <input type="hidden" name="_METHOD" value="PUT" />
+            <input type="hidden" name="group" value="<?= $idGroupe ?>" />
+        <?php endif; ?>
+            <input class="btn btn-success" type="submit" value="<?= _('form_submit') ?>">
+            <a class="btn" href="<?= $PHP_SELF ?>?onglet=liste_groupe"><?= _('form_annul') ?></a>
+        </div>
+    </form>
+</div>
