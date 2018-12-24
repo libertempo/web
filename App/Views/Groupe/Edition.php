@@ -316,6 +316,8 @@ var vm = new Vue({
  * $idGroupe
  * $doubleValidationActive
  * $employes
+ * $responsables
+ * $grandResponsables
  */
 ?>
 <div onload="showDivGroupeGrandResp('<?= $selectId ?>', '<?= $DivGrandRespId ?>');" class="form-group">
@@ -408,7 +410,7 @@ var vm = new Vue({
                     </thead>
                     <tbody>
                     <?php $i = true ?>
-                    <?php foreach (getInfosResponsables($idGroupe) as $login => $info) : ?>
+                    <?php foreach ($responsables as $login => $info) : ?>
                         <?php
                         $inputOption = '';
 
@@ -436,7 +438,41 @@ var vm = new Vue({
             </div>
             <div class="col-md-6 hide" id="<?= $DivGrandRespId ?>">
                 <h2><?= _('admin_gestion_groupe_grand_resp_responsables') ?></h2>
-                <?= getFormChoixGrandResponsable($idGroupe, $selectId, $data) ?>
+                <table class="table table-hover table-responsive table-condensed table-striped">
+                    <thead>
+                        <tr>
+                            <th>&nbsp;</th>
+                            <th><?= _('divers_personne_maj_1') ?></th>
+                            <th><?= _('divers_login') ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <?php
+                    $i = true;
+                    ?>
+                    <?php foreach ($grandResponsables as $login => $info) : ?>
+                        <?php
+                        $inputOption = '';
+
+                        if (isset($data)) {
+                            if (in_array($login, $data['grandResponsables'])) {
+                                $inputOption = 'checked';
+                            }
+                        } elseif ($info['isDansGroupe']) {
+                            $inputOption = 'checked';
+                        }
+                        ?>
+
+                        <tr class="<?= ($i) ? 'i' : 'p' ?>">
+                            <td class="histo">
+                                <input type="checkbox" id="Gres_<?= $login ?>" name="checkbox_group_grand_resps[<?=  $login ?>]" onchange="disableCheckboxGroupe(this,'<?= $selectId ?> ');" <?= $inputOption ?>>
+                            </td>
+                            <td class="histo"><?= $info['nom'] ?> <?= $info['prenom'] ?></td>
+                            <td class="histo"><?= $login ?></td>
+                        </tr>
+                    <?php endforeach;?>
+                    </tbody>
+                </table>
             </div>
         </div>
 
