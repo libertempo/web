@@ -506,7 +506,7 @@ class Fonctions
             $erreur=TRUE;
         }
         // verif si les champs sont vides
-        if ( (strlen($tab_new_values['libelle'])==0) || (strlen($tab_new_values['short_libelle'])==0) ) {
+        if (0 === strlen($tab_new_values['libelle']) || 0 === strlen($tab_new_values['short_libelle'])) {
             $return .= '<br>' . _('config_abs_saisie_not_ok') . ' : ' . _('config_abs_champs_vides') . '<br>';
             $erreur=true;
         }
@@ -634,7 +634,7 @@ class Fonctions
 
             // CONTROLE gestion_conges_exceptionnels
             // si désactivation les conges exceptionnels, on verif s'il y a des conges exceptionnels enregistres ! si oui : changement impossible !
-            if (($key=="gestion_conges_exceptionnels") && ($value=="FALSE") ) {
+            if ('gestion_conges_exceptionnels' === $key && 'FALSE' === $value) {
                 $sql_abs="SELECT ta_id, ta_libelle FROM conges_type_absence WHERE ta_type='conges_exceptionnels' ";
                 $ReqLog_abs = \includes\SQL::query($sql_abs);
 
@@ -709,7 +709,7 @@ class Fonctions
                 $conf_type = strtolower($data['conf_type']);
                 $conf_commentaire = strtolower($data['conf_commentaire']);
 
-                if ($conf_nom=="lang") {
+                if ('lang' === $conf_nom) {
                     $childTable .= '<b>Langue installée &nbsp;&nbsp;=&nbsp;&nbsp;' . $conf_valeur . '</b><br>';
                 } else {
                     // affichage commentaire
@@ -718,22 +718,22 @@ class Fonctions
                     // affichage saisie variable
                     if ($conf_nom=="installed_version") {
                         $childTable .= '<b>' . $conf_nom . '&nbsp;&nbsp;=&nbsp;&nbsp;' . $conf_valeur . '</b><br>';
-                    } elseif ( ($conf_type=="texte") || ($conf_type=="path") ) {
+                    } elseif ('texte' === $conf_type || 'path' === $conf_type) {
                         $childTable .= '<b>' . $conf_nom . '</b>&nbsp;=&nbsp;<input type="text" class="form-control" size="50" maxlength="200" name="tab_new_values[' . $conf_nom . ']" value="' . $conf_valeur . '"><br>';
                     } elseif ($conf_type=="boolean") {
                         $childTable .= '<b>' . $conf_nom . '</b>&nbsp;=&nbsp;<select class="form-control" name="tab_new_values[' . $conf_nom . ']">';
                         $childTable .= '<option value="TRUE"';
-                        if ($conf_valeur=="TRUE") {
+                        if ('TRUE' === $conf_valeur) {
                             $childTable .= ' selected';
                         }
                         $childTable .= '>TRUE</option>';
                         $childTable .= '<option value="FALSE"';
-                        if ($conf_valeur=="FALSE") {
+                        if ('FALSE' === $conf_valeur) {
                             $childTable .= ' selected';
                         }
                         $childTable .= '>FALSE</option>';
                         $childTable .= '</select><br>';
-                    } elseif (substr($conf_type,0,4)=="enum") {
+                    } elseif (substr($conf_type,0,4) === "enum") {
                         $childTable .= '<b>' . $conf_nom . '</b>&nbsp;=&nbsp;<select class="form-control" name="tab_new_values[' . $conf_nom . ']">';
                         $options=explode("/", substr(strstr($conf_type, '='),1));
                         for ($i=0; $i<count($options); $i++) {
