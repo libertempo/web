@@ -29,7 +29,6 @@ if (!defined('DEFINE_INCLUDE')) {
     define('SESSION_DURATION', 20*60);
 
     require_once ROOT_PATH . 'vendor/autoload.php';
-    require_once ROOT_PATH . 'vendor/raveren/kint/Kint.class.php';
     require_once CONFIG_PATH . 'env.php';
     require_once INCLUDE_PATH . 'fonction.php';
 
@@ -39,16 +38,16 @@ if (!defined('DEFINE_INCLUDE')) {
             error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
             ini_set("display_errors", 0);
             $environnement = 'production';
-            \Kint::enabled(false);
+            \Kint\Kint::$enabled_mode = false;
             break;
         case ENV_DEV:
-            \Kint::enabled(true);
+            \Kint\Kint::$enabled_mode = true;
             error_reporting(-1);
             ini_set("display_errors", 1);
             $environnement = 'development';
             break;
         case ENV_TEST:
-            \Kint::enabled(true);
+            \Kint\Kint::$enabled_mode = true;
             error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
             ini_set("display_errors", 0);
             $environnement = 'test';
