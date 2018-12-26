@@ -44,16 +44,19 @@ switch ($action) {
             'absences' => _('divers_absences_maj_1'),
             'conges_exceptionnels' => _('divers_conges_exceptionnels_maj_1'),
         ];
+        $classesConges = array_keys($titres);
         $comments = [
             'conges' => _('config_abs_comment_conges'),
             'absences' => _('config_abs_comment_absences'),
             'conges_exceptionnels' => _('config_abs_comment_conges_exceptionnels'),
         ];
-
         $traductions = [
             'titres' => $titres,
             'commentaires' => $comments,
         ];
+        if (!$isCongesExceptionnelsActive && isset($classesConges['conges_exceptionnels'])) {
+            unset($classesConges['conges_exceptionnels']);
+        }
         $url = $PHP_SELF;
 
         $nouveauLibelle = $tab_new_values['libelle'] ?? '';
