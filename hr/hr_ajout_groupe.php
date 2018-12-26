@@ -1,74 +1,52 @@
 <?php declare(strict_types = 1);
 defined('_PHP_CONGES') or die('Restricted access');
 $gestionGroupes = new \App\ProtoControllers\Groupe\Gestion();
-
 $idGroupe = NIL_INT;
 
 /**
+ * retourne les utilisateurs
  *
- * retournes les utilisateurs
- * si $idGroupe existe, marquage des employés du groupe
- *
- * @param int $idGroupe
  * @return array
  */
-function getEmployes($idGroupe = NIL_INT)
+function getEmployes(\App\Libraries\ApiClient $api, string $token)
 {
-    $employes = [];
-    $idsUtilisateurs = \App\ProtoControllers\Utilisateur::getListId(true);
-    foreach ($idsUtilisateurs as $login) {
-        $donnees = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($login);
-        $employes[$login] = [
-            'nom' => $donnees['u_nom'],
-            'prenom' => $donnees['u_prenom'],
-            'login' => $donnees['u_login'],
-            'isDansGroupe' => false
-        ];
-        if (NIL_INT != $idGroupe) {
-            $employes[$login]['isDansGroupe'] = \App\ProtoControllers\Groupe\Utilisateur::isUtilisateurDansGroupe($login, $idGroupe, \includes\SQL::singleton());
-        }
-    }
+    $employes = $api->get('utilisateur', $token)['data'];
+    $employes = array_map(function (array $e) {
+        $e += ['prenom' => 'A recup', 'isDansGroupe' => false];
+        return $e;
+    }, $employes);
+
     return $employes;
 }
 
 /**
+ * retourne les utilisateurs responsables
  *
- * retournes les utilisateurs responsables
- * si $idGroupe existe, marquage des responsables du groupe
- *
- * @param int $idGroupe
  * @return array
  */
-function getInfosResponsables($idGroupe = NIL_INT)
+function getInfosResponsables()
 {
     $responsables = [];
 
-    $infosResps = \App\ProtoControllers\Responsable::getInfosResponsables(\includes\SQL::singleton(),true);
+    $infosResps = \App\ProtoControllers\Responsable::getInfosResponsables(\includes\SQL::singleton(), true);
     foreach ($infosResps as $infos) {
         $login = $infos['u_login'];
         $responsables[$login] = [
             'nom' => $infos['u_nom'],
             'prenom' => $infos['u_prenom'],
             'login' => $login,
-            'isDansGroupe' => false
+            'isDansGroupe' => false,
         ];
-
-        if (NIL_INT !== $idGroupe) {
-            $responsables[$login]['isDansGroupe'] = \App\ProtoControllers\Groupe::isResponsableGroupe($login, [$idGroupe], \includes\SQL::singleton());
-        }
     }
     return $responsables;
 }
 
 /**
  *
- * retournes les utilisateurs responsables
- * si $idGroupe existe, marquage des grands responsables du groupe
- *
- * @param int $idGroupe
+ * retourne les utilisateurs grands responsables
  * @return array
  */
-function getGrandResponsables($idGroupe = NIL_INT)
+function getGrandResponsables()
 {
     $responsables = [];
 
@@ -80,23 +58,20 @@ function getGrandResponsables($idGroupe = NIL_INT)
             'login' => $infos['u_login'],
             'isDansGroupe' => false
         ];
-
-        if (NIL_INT !== $idGroupe) {
-            $responsables[$infos['u_login']]['isDansGroupe'] = \App\ProtoControllers\Groupe::isGrandResponsableGroupe($infos['u_login'], [$idGroupe], \includes\SQL::singleton());
-        }
     }
     return $responsables;
 }
 
-$config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+$sql = \includes\SQL::singleton();
+$config = new \App\Libraries\Configuration($sql);
 $doubleValidationActive = $config->isDoubleValidationActive();
 
 $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 $message = '';
 $infosGroupe = [
     'nom' => '',
-    'doubleValidation' => '',
-    'comment' => ''
+    'doubleValidation' => false,
+    'comment' => '',
 ];
 $data = NULL;
 
@@ -116,9 +91,9 @@ if (!empty($_POST)) {
         $data = $gestionGroupes->FormData2Array($_POST);
     } else {
         if (key_exists('_METHOD', $_POST)) {
-            redirect(ROOT_PATH . 'hr/hr_index.php?onglet=liste_groupe&notice=update', false);
+            redirect(ROOT_PATH . 'hr/hr_index.php?onglet=liste_groupe&notice=update');
         } else {
-            redirect(ROOT_PATH . 'hr/hr_index.php?onglet=liste_groupe&notice=insert', false);
+            redirect(ROOT_PATH . 'hr/hr_index.php?onglet=liste_groupe&notice=insert');
         }
     }
 }
@@ -131,19 +106,16 @@ if (isset($data)) {
     if ($doubleValidationActive) {
         $infosGroupe['doubleValidation'] = $data['isDoubleValidation'];
     }
-} elseif (NIL_INT !== $idGroupe) {
-    $infosGroupe = \App\ProtoControllers\Groupe::getInfosGroupe($idGroupe, \includes\SQL::singleton());
 }
 
 $selectId = uniqid();
 $DivGrandRespId = uniqid();
-$employes = getEmployes($idGroupe);
-$responsables = getInfosResponsables($idGroupe);
-$grandResponsables = getGrandResponsables($idGroupe);
-if (NIL_INT !== $idGroupe) {
-    $titre = '<h1>' . _('admin_modif_groupe_titre') . '</h1>';
-} else {
-    $titre = '<h1>' . _('admin_groupes_new_groupe') . '</h1>';
-}
+
+$injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
+$api = $injectableCreator->get(\App\Libraries\ApiClient::class);
+$employes = getEmployes($api, $_SESSION['token']);
+$responsables = getInfosResponsables();
+$grandResponsables = getGrandResponsables();
+$titre = '<h1>' . _('admin_groupes_new_groupe') . '</h1>';
 
 require_once VIEW_PATH . 'Groupe/Edition.php';
