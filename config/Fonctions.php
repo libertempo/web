@@ -324,9 +324,9 @@ class Fonctions
         $return = '';
 
         $URL = $PHP_SELF;
-        $tab_new_values['libelle'] = htmlentities($tab_new_values['libelle'], ENT_QUOTES | ENT_HTML401);
-        $tab_new_values['short_libelle'] = htmlentities($tab_new_values['short_libelle']);
-        $tab_new_values['type'] = htmlentities($tab_new_values['type'], ENT_QUOTES | ENT_HTML401);
+        $tab_new_values['libelle'] = htmlspecialchars($tab_new_values['libelle'], ENT_QUOTES | ENT_HTML401);
+        $tab_new_values['short_libelle'] = htmlspecialchars($tab_new_values['short_libelle']);
+        $tab_new_values['type'] = htmlspecialchars($tab_new_values['type'], ENT_QUOTES | ENT_HTML401);
 
         // verif de la saisie
         $erreur=FALSE ;
@@ -493,7 +493,9 @@ class Fonctions
         $return = '';
 
         $URL = $PHP_SELF;
-
+        $tab_new_values['libelle'] = htmlspecialchars($tab_new_values['libelle'], ENT_QUOTES | ENT_HTML401);
+        $tab_new_values['short_libelle'] = htmlspecialchars($tab_new_values['short_libelle']);
+        $tab_new_values['type'] = htmlspecialchars($tab_new_values['type'], ENT_QUOTES | ENT_HTML401);
 
         // verif de la saisie
         $erreur=FALSE ;
