@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 /**
  * $message
  * $selectId
@@ -12,6 +12,7 @@
  * $employes
  * $responsables
  * $grandResponsables
+ * $sql
  */
 ?>
 <div onload="showDivGroupeGrandResp('<?= $selectId ?>', '<?= $DivGrandRespId ?>');" class="form-group">
@@ -56,25 +57,18 @@
             <div class="col-md-6">
                 <h2><?= _('admin_gestion_groupe_users_membres') ?></h2>
                 <table class="table table-hover table-condensed table-striped"/>
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th><?= _('divers_personne_maj_1') ?></th>
-                            <th><?= _('divers_login') ?></th>
-                        </tr>
-                    </thead>
                     <tbody>
                     <?php $i = true ?>
-                    <?php foreach ($employes as $login => $info) : ?>
+                    <?php foreach ($employes as $info) : ?>
                         <?php
                         $inputOption = '';
                         if (isset($data)) {
-                            if (in_array($login, $data['responsables']) || in_array($login, $data['grandResponsables'])) {
+                            if (in_array($info['login'], $data['responsables']) || in_array($info['login'], $data['grandResponsables'])) {
                                 $inputOption = 'disabled';
-                            } elseif (in_array($login, $data['employes'])) {
+                            } elseif (in_array($info['login'], $data['employes'])) {
                                 $inputOption = 'checked';
                             }
-                        } elseif (\App\ProtoControllers\Groupe::isResponsableGroupe($login, [$idGroupe], \includes\SQL::singleton())) {
+                        } elseif (\App\ProtoControllers\Groupe::isResponsableGroupe($info['login'], [$idGroupe], $sql)) {
                             $inputOption = 'disabled';
                         } elseif ($info['isDansGroupe']) {
                             $inputOption = 'checked';
@@ -82,10 +76,9 @@
                         ?>
                         <tr class="<?= ($i) ? 'i' : 'p' ?>">
                             <td class="histo">
-                                <input type="checkbox" id="Emp_<?= $login ?>" name="checkbox_group_users['<?= $login ?>]" <?= $inputOption ?>>
+                                <input type="checkbox" id="Emp_<?= $info['login'] ?>" name="checkbox_group_users['<?= $info['login'] ?>]" <?= $inputOption ?>>
                             </td>
                             <td class="histo"><?= $info['nom'] ?> <?= $info['prenom'] ?></td>
-                            <td class="histo"><?= $login ?></td>
                         </tr>
                     <?php endforeach ?>
                     </tbody>
@@ -95,13 +88,6 @@
             <div class="col-md-6">
                 <h2><?= _('admin_gestion_groupe_resp_responsables') ?></h2>
                 <table class="table table-hover table-responsive table-condensed table-striped">
-                    <thead>
-                        <tr>
-                            <th>&nbsp;</th>
-                            <th><?= _('divers_personne_maj_1') ?></th>
-                            <th><?= _('divers_login') ?></th>
-                        </tr>
-                    </thead>
                     <tbody>
                     <?php $i = true ?>
                     <?php foreach ($responsables as $login => $info) : ?>
@@ -124,7 +110,6 @@
                             </td>
                             <td class="histo"><?= $info['nom'] ?> <?= $info['prenom'] ?>
                             </td>
-                            <td class="histo"><?= $login ?></td>
                         </tr>
                     <?php endforeach ; ?>
                     </tbody>
@@ -133,13 +118,6 @@
             <div class="col-md-6 hide" id="<?= $DivGrandRespId ?>">
                 <h2><?= _('admin_gestion_groupe_grand_resp_responsables') ?></h2>
                 <table class="table table-hover table-responsive table-condensed table-striped">
-                    <thead>
-                        <tr>
-                            <th>&nbsp;</th>
-                            <th><?= _('divers_personne_maj_1') ?></th>
-                            <th><?= _('divers_login') ?></th>
-                        </tr>
-                    </thead>
                     <tbody>
                     <?php
                     $i = true;
@@ -162,7 +140,6 @@
                                 <input type="checkbox" id="Gres_<?= $login ?>" name="checkbox_group_grand_resps[<?=  $login ?>]" onchange="disableCheckboxGroupe(this,'<?= $selectId ?> ');" <?= $inputOption ?>>
                             </td>
                             <td class="histo"><?= $info['nom'] ?> <?= $info['prenom'] ?></td>
-                            <td class="histo"><?= $login ?></td>
                         </tr>
                     <?php endforeach;?>
                     </tbody>
@@ -175,8 +152,7 @@
             <input type="hidden" name="_METHOD" value="PUT" />
             <input type="hidden" name="group" value="<?= $idGroupe ?>" />
         <?php endif; ?>
-            <input class="btn btn-success" type="submit" value="<?= _('form_submit') ?>">
-            <a class="btn" href="<?= $PHP_SELF ?>?onglet=liste_groupe"><?= _('form_annul') ?></a>
+        <input class="btn btn-success" type="submit" value="<?= _('form_submit') ?>">
         </div>
     </form>
 </div>
