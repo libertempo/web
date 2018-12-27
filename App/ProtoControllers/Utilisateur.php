@@ -183,9 +183,12 @@ class Utilisateur
      *
      * @return array
      */
-    public static function getListByPlanning($planningId)
+    public static function getListByPlanning($planningId) : array
     {
         $planningId = (int) $planningId;
+        if (NIL_INT === $planningId) {
+            return [];
+        }
         $sql = \includes\SQL::singleton();
         $req = 'SELECT *
                 FROM conges_users
