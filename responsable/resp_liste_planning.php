@@ -8,7 +8,7 @@ if (!$config->canResponsablesAssociatePlanning()) {
 
 $message   = '';
 $titre = _('resp_liste_planning');
-$lienModif = 'resp_index.php?onglet=modif_planning';
+$lienModif = 'modif_planning';
 $isHr = false;
 $listPlanningId = \App\ProtoControllers\HautResponsable\Planning::getListPlanningId();
 $listIdUsed = \App\ProtoControllers\HautResponsable\Planning::getListPlanningUsed($listPlanningId);
