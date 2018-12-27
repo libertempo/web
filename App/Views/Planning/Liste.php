@@ -73,7 +73,7 @@ var vm = new Vue({
             return -1 != this.listIdUsed.indexOf(id);
         },
         linkModification : function (id) {
-            return this.lienModification + '&id=' + id;
+            return this.lienModification + '?id=' + id;
         }
     },
     created () {
