@@ -17,7 +17,7 @@
 <?php if (!empty($message)) : ?>
     <div class="alert alert-info"><?= $message ?>.</div>
 <?php endif ; ?>
-<a href="hr_index.php?onglet=ajout_groupe" class="btn btn-success pull-right"><?= _('admin_groupes_new_groupe') ?></a>
+<a href="ajout_groupe" class="btn btn-success pull-right"><?= _('admin_groupes_new_groupe') ?></a>
 
 <table class="table table-hover table-responsive table-condensed table-striped">
     <thead>

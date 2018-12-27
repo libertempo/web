@@ -1,7 +1,4 @@
 <?php
-define('ROOT_PATH', '');
-define('INCLUDE_PATH',     ROOT_PATH . 'includes/');
-require_once INCLUDE_PATH . 'define.php';
 include_once INCLUDE_PATH . 'session.php';
 
 /**
@@ -16,7 +13,7 @@ function canSessionVoirEvenementEnTransit(array $donneesUtilisateur)
 
 function getUrlMois(\DateTimeInterface $date, $idGroupe)
 {
-    $urlCalendrier = ROOT_PATH . 'calendrier.php';
+    $urlCalendrier = ROOT_PATH . 'calendrier';
     $queryBase = [
         'groupe' => $idGroupe,
     ];

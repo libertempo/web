@@ -3,7 +3,7 @@
 defined('_PHP_CONGES') or die('Restricted access');
 $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 if (!$config->canResponsablesAssociatePlanning()) {
-    redirect(ROOT_PATH . 'deconnexion.php');
+    redirect(ROOT_PATH . 'deconnexion');
 }
 
 $message   = '';

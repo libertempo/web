@@ -2,6 +2,8 @@
 
 namespace App\Libraries;
 
+use PHPMailer\PHPMailer\PHPMailer;
+
 /**
  * Objet de gestion des notifications
  *
@@ -41,7 +43,7 @@ abstract Class ANotification {
     $return = [];
 
         // init du mail
-        $mail = new \PHPMailer();
+        $mail = new PHPMailer();
 
         if (file_exists(CONFIG_PATH . 'config_SMTP.php')) {
             include CONFIG_PATH . 'config_SMTP.php';
