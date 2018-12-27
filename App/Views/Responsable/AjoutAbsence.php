@@ -114,7 +114,7 @@
                         </tr>
                     <?php endforeach ?>
                     <tr align="center"><td class="histo" style="background-color: #CCC;" colspan="50"><i><?= _('resp_etat_users_titre_double_valid') ?></i></td></tr>
-                    <?php foreach($subalternesActifsGrandResponsable as $login => $donneesSubalterne) : ?>
+                    <?php foreach ($subalternesActifsGrandResponsable as $login => $donneesSubalterne) : ?>
                         <tr>
                             <td><?= $tab_current_user['nom'] ?></td>
                             <td><?= $tab_current_user['prenom'] ?></td>

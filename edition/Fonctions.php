@@ -7,7 +7,7 @@ namespace edition;
 */
 class Fonctions
 {
-    public static function affiche_anciennes_editions($login)
+    private static function affiche_anciennes_editions($login)
     {
         $return = '';
 
@@ -70,7 +70,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affiche_nouvelle_edition($login)
+    private static function affiche_nouvelle_edition($login)
     {
         $db = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($db);
@@ -190,7 +190,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affichage($login)
+    private static function affichage($login)
     {
         $db = \includes\SQL::singleton();
         $return = '';
@@ -254,7 +254,7 @@ class Fonctions
     }
 
     // affichage du tableau récapitulatif des solde de congés d'un user d'une edition donnée !
-    public static function affiche_tableau_bilan_conges_user_edition($tab_info_user, $tab_info_edition, $tab_type_cong, $tab_type_conges_exceptionnels)
+    private static function affiche_tableau_bilan_conges_user_edition($tab_info_user, $tab_info_edition, $tab_type_cong, $tab_type_conges_exceptionnels)
     {
         $return = '';
 
@@ -278,7 +278,7 @@ class Fonctions
         return $return;
     }
 
-    public static function edition_papier($login, $edit_id)
+    private static function edition_papier($login, $edit_id)
     {
         $db = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($db);
@@ -553,7 +553,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affiche_tableau_conges_normal(&$pdf, $ReqLog2, $decalage, $tab_type_all_cong)
+    private static function affiche_tableau_conges_normal(&$pdf, $ReqLog2, $decalage, $tab_type_all_cong)
     {
 
         // (largeur totale page = 210 ( - 2x10 de marge))
@@ -646,7 +646,7 @@ class Fonctions
         }
     }
 
-    public static function affiche_tableau_conges_avec_date_traitement(&$pdf, $ReqLog2, $decalage, $tab_type_all_cong)
+    private static function affiche_tableau_conges_avec_date_traitement(&$pdf, $ReqLog2, $decalage, $tab_type_all_cong)
     {
         // (largeur totale page = 210 ( - 2x10 de marge))
         // tailles des cellules du tableau
@@ -739,7 +739,7 @@ class Fonctions
     }
 
     // affichage en pdf des nouveaux soldes de congés d'un user
-    public static function affiche_pdf_nouveau_solde(&$pdf, $login, $tab_info_edition, $tab_type_cong, $tab_type_conges_exceptionnels, $decalage)
+    private static function affiche_pdf_nouveau_solde(&$pdf, $login, $tab_info_edition, $tab_type_cong, $tab_type_conges_exceptionnels, $decalage)
     {
 
         foreach($tab_type_cong as $id_abs => $libelle)
@@ -761,7 +761,7 @@ class Fonctions
     }
 
     // affichage en pdf des anciens soldes de congés d'un user
-    public static function affiche_pdf_ancien_solde(&$pdf, $login, $edit_id, $tab_type_cong, $tab_type_conges_exceptionnels, $decalage)
+    private static function affiche_pdf_ancien_solde(&$pdf, $login, $edit_id, $tab_type_cong, $tab_type_conges_exceptionnels, $decalage)
     {
         //    $pdf->SetFont('Times', 'B', 10);
 
@@ -796,7 +796,7 @@ class Fonctions
     }
 
     // affichage en pdf du tableau récapitulatif des solde de congés d'un user
-    public static function affiche_pdf_tableau_bilan_conges_user_edtion(&$pdf, $tab_info_user, $tab_info_edition, $tab_type_cong, $tab_type_conges_exceptionnels)
+    private static function affiche_pdf_tableau_bilan_conges_user_edtion(&$pdf, $tab_info_user, $tab_info_edition, $tab_type_cong, $tab_type_conges_exceptionnels)
     {
         // calcul du décalage pour centrer ( = (21cm - (marges x 2) - (sommes des cell définies en dessous) )/2  ) (marges=10mm)
         $decalage = 55 ;
@@ -826,7 +826,7 @@ class Fonctions
 
     }
 
-    public static function edition_pdf($login, $edit_id)
+    private static function edition_pdf($login, $edit_id)
     {
         $db = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($db);
@@ -1007,7 +1007,7 @@ class Fonctions
 
     // Récupération des informations des editions du user
     // renvoit un tableau vide si pas de'edition pour le user
-    public static function recup_editions_user($login)
+    private static function recup_editions_user($login)
     {
         $tab_ed=array();
 
@@ -1035,7 +1035,7 @@ class Fonctions
 
     // recup infos de l'édition
     // renvoit un tableau vide si pas de'edition pour le user
-    public static function recup_info_edition($edit_id)
+    private static function recup_info_edition($edit_id)
     {
 
         $tab=array();
@@ -1055,7 +1055,7 @@ class Fonctions
     }
 
     // recup infos du user
-    public static function recup_info_user_pour_edition($login)
+    private static function recup_info_user_pour_edition($login)
     {
         $tab=array();
         $db = \includes\SQL::singleton();
@@ -1075,7 +1075,7 @@ class Fonctions
     }
 
     // recup du tab des soldes des conges pour cette edition
-    public static function recup_solde_conges_of_edition($edition_id)
+    private static function recup_solde_conges_of_edition($edition_id)
     {
 
         $tab=array();
@@ -1093,7 +1093,7 @@ class Fonctions
     }
 
     // renvoi le id de la table edition_papier de l'edition précédente pour un user donné et un edition_id donnée.
-    public static function get_id_edition_precedente_user($login, $edition_id)
+    private static function get_id_edition_precedente_user($login, $edition_id)
     {
         $db = \includes\SQL::singleton();
         // verif si le user n'a pas une seule edition
@@ -1113,7 +1113,7 @@ class Fonctions
     }
 
     // renvoi le + grand num_par_user de la table edition_papier pour un user donné (le num de la derniere edition du user)
-    public static function get_num_last_edition_user($login)
+    private static function get_num_last_edition_user($login)
     {
 
         // verif si le user a une edition
@@ -1132,7 +1132,7 @@ class Fonctions
     }
 
     // renvoi le + grand id de la table edition_papier (l'id de la derniere edition)
-    public static function get_last_edition_id()
+    private static function get_last_edition_id()
     {
         // verif si table edition pas vide
         $sql1 = "SELECT ep_id FROM conges_edition_papier ";
@@ -1149,7 +1149,7 @@ class Fonctions
         }
     }
 
-    public static function enregistrement_edition($login)
+    private static function enregistrement_edition($login)
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
@@ -1181,8 +1181,7 @@ class Fonctions
         /*************************************************/
         // recup du tableau des types de conges (seulement les conges)
         $tab_type_cong=recup_tableau_types_conges();
-        foreach($tab_type_cong as $id_abs => $libelle)
-        {
+        foreach ($tab_type_cong as $id_abs => $libelle) {
             $sql_insert_2 = "INSERT INTO conges_solde_edition
                     SET se_id_edition=$new_edition_id, se_id_absence=$id_abs, se_solde=$tab_solde_user[$id_abs] ";
             $result_insert_2 = \includes\SQL::query($sql_insert_2);

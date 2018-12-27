@@ -7,7 +7,7 @@ namespace responsable;
 class Fonctions
 {
     // on insert l'ajout de conges dans la table periode
-    public static function insert_ajout_dans_periode($login, $nb_jours, $id_type_abs, $commentaire)
+    private static function insert_ajout_dans_periode($login, $nb_jours, $id_type_abs, $commentaire)
     {
         $date_today=date("Y-m-d");
 
@@ -173,7 +173,7 @@ class Fonctions
     }
 
     // calcule de la date limite d'utilisation des reliquats (si on utilise une date limite et qu'elle n'est pas encore calculée) et stockage dans la table
-    public static function set_nouvelle_date_limite_reliquat()
+    private static function set_nouvelle_date_limite_reliquat()
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         //si on autorise les reliquats
@@ -196,7 +196,7 @@ class Fonctions
     }
 
     // cloture / debut d'exercice pour TOUS les users d'un groupe'
-    public static function cloture_globale_groupe($group_id, $tab_type_conges)
+    private static function cloture_globale_groupe($group_id, $tab_type_conges)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
@@ -219,7 +219,7 @@ class Fonctions
     }
 
     // cloture / debut d'exercice pour TOUS les users du resp (ou grand resp)
-    public static function cloture_globale($tab_type_conges)
+    private static function cloture_globale($tab_type_conges)
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
@@ -253,7 +253,7 @@ class Fonctions
 
     // verifie si tous les users on été basculés de l'exerccice précédent vers le suivant.
     // si oui : on incrémente le num_exercice de l'application
-    public static function update_appli_num_exercice()
+    private static function update_appli_num_exercice()
     {
         $db = \includes\SQL::singleton();
         // verif
@@ -272,7 +272,7 @@ class Fonctions
         }
     }
 
-    public static function cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $commentaire)
+    private static function cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $commentaire)
     {
         $return = '';
         $db = \includes\SQL::singleton();
@@ -351,7 +351,7 @@ class Fonctions
     }
 
     // cloture / debut d'exercice user par user pour les users du resp (ou grand resp)
-    public static function cloture_users($tab_type_conges, $tab_cloture_users, $tab_commentaire_saisie)
+    private static function cloture_users($tab_type_conges, $tab_cloture_users, $tab_commentaire_saisie)
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
@@ -389,7 +389,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affichage_cloture_globale_groupe($tab_type_conges)
+    private static function affichage_cloture_globale_groupe($tab_type_conges)
     {
         $db = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($db);
@@ -465,7 +465,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affichage_cloture_globale_pour_tous($tab_type_conges)
+    private static function affichage_cloture_globale_pour_tous($tab_type_conges)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
@@ -495,7 +495,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affiche_ligne_du_user($current_login, $tab_type_conges, $tab_current_user)
+    private static function affiche_ligne_du_user($current_login, $tab_type_conges, $tab_current_user)
     {
         $return = '<tr align="center">';
         //tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
@@ -523,7 +523,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affichage_cloture_user_par_user($tab_type_conges, $tab_all_users_du_resp, $tab_all_users_du_grand_resp)
+    private static function affichage_cloture_user_par_user($tab_type_conges, $tab_all_users_du_resp, $tab_all_users_du_grand_resp)
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
@@ -550,7 +550,7 @@ class Fonctions
             $return .= '<th>' . _('divers_nom_maj_1') . '</th>';
             $return .= '<th>' . _('divers_prenom_maj_1') . '</th>';
             $return .= '<th>' . _('divers_quotite_maj_1') . '</th>';
-            foreach($tab_type_conges as $id_conges => $libelle) {
+            foreach ($tab_type_conges as $id_conges => $libelle) {
                 $return .= '<th>' . $libelle . '<br><i>(' . _('divers_solde') . ')</i></th>';
             }
             $return .= '<th>' . _('divers_cloturer_maj_1') . '<br></th>';
@@ -596,7 +596,7 @@ class Fonctions
         return $return;
     }
 
-    public static function saisie_cloture( $tab_type_conges)
+    private static function saisie_cloture( $tab_type_conges)
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
@@ -675,7 +675,7 @@ class Fonctions
         return $return;
     }
 
-    public static function new_conges($user_login, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type_id)
+    private static function new_conges($user_login, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type_id)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
@@ -726,7 +726,7 @@ class Fonctions
         return $return;
     }
 
-    public static function traite_demandes($user_login, $tab_radio_traite_demande, $tab_text_refus)
+    private static function traite_demandes($user_login, $tab_radio_traite_demande, $tab_text_refus)
     {
         $db = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($db);
@@ -788,8 +788,7 @@ class Fonctions
                     }
                 }
             }
-            elseif ($reponse == "REFUSE") // refus d'un conges
-            {
+            elseif ($reponse == "REFUSE") {
                 // recup di motif de refus
                 $motif_refus = addslashes($tab_text_refus[$numero_int]);
                 $sql3 = 'UPDATE conges_periode SET p_etat="refus", p_motif_refus=\''.$motif_refus.'\', p_date_traitement=NOW() WHERE p_num="'. $db->quote($numero_int).'" AND ( p_etat=\'valid\' OR p_etat=\'demande\' );';
@@ -812,7 +811,7 @@ class Fonctions
         return $return;
     }
 
-    public static function annule_conges($user_login, $tab_checkbox_annule, $tab_text_annul)
+    private static function annule_conges($user_login, $tab_checkbox_annule, $tab_text_annul)
     {
         $db = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($db);
@@ -862,7 +861,7 @@ class Fonctions
     }
 
     //affiche l'état des conges du user (avec le formulaire pour le responsable)
-    public static function affiche_etat_conges_user_for_resp($user_login, $year_affichage, $tri_date, $onglet)
+    private static function affiche_etat_conges_user_for_resp($user_login, $year_affichage, $tri_date, $onglet)
     {
         $db = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($db);
@@ -1010,7 +1009,7 @@ class Fonctions
     }
 
     //affiche l'état des demande en attente de 2ieme validation du user (avec le formulaire pour le responsable)
-    public static function affiche_etat_demande_2_valid_user_for_resp($user_login)
+    private static function affiche_etat_demande_2_valid_user_for_resp($user_login)
     {
         $db = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($db);
@@ -1115,7 +1114,7 @@ class Fonctions
     }
 
     //affiche l'état des demandes du user (avec le formulaire pour le responsable)
-    public static function affiche_etat_demande_user_for_resp($user_login, $tab_user, $tab_grd_resp)
+    private static function affiche_etat_demande_user_for_resp($user_login, $tab_user, $tab_grd_resp)
     {
         $db = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($db);
@@ -1232,7 +1231,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affichage($user_login, $year_affichage, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $tri_date)
+    private static function affichage($user_login, $year_affichage, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $tri_date)
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 

@@ -7,7 +7,7 @@ namespace export;
 */
 class Fonctions
 {
-    public static function form_saisie($user, $date_debut, $date_fin)
+    private static function form_saisie($user, $date_debut, $date_fin)
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
@@ -56,7 +56,7 @@ class Fonctions
     	\export\Fonctions::form_saisie($user_login, $date_debut, $date_fin);
     }
 
-    public static function remplace_accents($str)
+    private static function remplace_accents($str)
     {
     	$accent        = ["à", "â", "ä", "é", "è", "ê", "ë", "î", "ï", "ô", "ö", "ù", "û", "ü", "ç"];
     	$sans_accent   = ["a", "a", "a", "e", "e", "e", "e", "i", "i", "o", "o", "u", "u", "u", "c"];
@@ -64,7 +64,7 @@ class Fonctions
     }
 
     // export des périodes des conges et d'absences comprise entre les 2 dates , dans un fichier texte au format ICAL
-    public static function export_ical($user_login)
+    private static function export_ical($user_login)
     {
     	$good_date_debut = date("Y-m-d", strtotime("-1 year"));
     	$good_date_fin = date("Y-m-d", strtotime('+1 year'));

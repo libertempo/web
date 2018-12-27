@@ -19,7 +19,7 @@ class Utilisateur
         $sql = \includes\SQL::singleton();
         $req = 'SELECT u_login
                 FROM conges_users';
-        if ($activeSeul){
+        if ($activeSeul) {
             $req .= ' WHERE u_is_active = "Y"';
         }
         $req .= ' ORDER BY u_nom ASC, u_prenom ASC';
