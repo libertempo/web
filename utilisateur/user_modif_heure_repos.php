@@ -33,6 +33,6 @@ if (!$config->isHeuresAutorise()) {
 $id = (int) getpost_variable('id');
 $repos = new \App\ProtoControllers\Employe\Heure\Repos();
 if (0 >= $id || !$repos->canUserEdit($id, $_SESSION['userlogin'])) {
-    redirect(ROOT_PATH . 'deconnexion.php');
+    redirect(ROOT_PATH . 'deconnexion');
 }
 echo $repos->getForm($id);

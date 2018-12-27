@@ -19,14 +19,14 @@ if (!empty($_POST)) {
 enctype="application/x-www-form-urlencoded"><input type="hidden" name="planning_id" value="' . $_POST['planning_id'] . '" /><input type="hidden" name="status" value="' . \App\Models\Planning::STATUS_ACTIVE . '" /><input type="hidden" name="_METHOD" value="PATCH" /><div class="alert alert-info">' .  $notice . '. <button type="submit" class="btn btn-link alert-link">' . _('Annuler') . '</button></div></form>';
     } else {
         log_action(0, '', '', 'Récupération du planning ' . $_POST['planning_id']);
-        redirect(ROOT_PATH . 'hr/hr_index.php?onglet=liste_planning', false);
+        redirect(ROOT_PATH . 'hr/liste_planning', false);
     }
 }
 
 $listPlanningId = \App\ProtoControllers\HautResponsable\Planning::getListPlanningId();
 $titre = _('hr_affichage_liste_planning_titre');
 $isHr = true;
-$lienModif = 'hr_index.php?onglet=modif_planning';
+$lienModif = 'modif_planning';
 if (empty($listPlanningId)) {
     $listIdUsed = [];
     $plannings = [];

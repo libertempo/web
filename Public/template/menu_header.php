@@ -5,7 +5,7 @@
     global $environnement;
 
     if (is_hr($_SESSION['userlogin'])) {
-        $home = 'hr/hr_index.php';
+        $home = 'hr/page_principale';
     } elseif (is_resp($_SESSION['userlogin'])) {
         $home = 'responsable/resp_index.php';
     } else {
@@ -44,24 +44,24 @@ function sousmenuConfiguration()
 {
     return '<a class="secondary" href="' . ROOT_PATH . 'config/general">Config. générale</a>
     <a class="secondary" href="' . ROOT_PATH . 'config/type_absence">Type de congés</a>
-    <a class="secondary" href="' . ROOT_PATH . 'config/index.php?onglet=mail">Mails</a>
-    <a class="secondary" href="' . ROOT_PATH . 'config/index.php?onglet=logs">Journaux</a>';
+    <a class="secondary" href="' . ROOT_PATH . 'config/mail">Mails</a>
+    <a class="secondary" href="' . ROOT_PATH . 'config/logs">Journaux</a>';
 }
 
 function sousmenuHR()
 {
     $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
     $return = '<a class="secondary" href="' . ROOT_PATH . 'hr/page_principale">Utilisateurs</a>
-    <a class="secondary" href="' . ROOT_PATH . 'hr/hr_index.php?onglet=liste_groupe">Groupes</a>';
+    <a class="secondary" href="' . ROOT_PATH . 'hr/liste_groupe">Groupes</a>';
 
     if ($config->canUserSaisieDemande()) {
-        $return .= '<a class="secondary" href="' . ROOT_PATH . 'hr/hr_index.php?onglet=traitement_demandes">Validation de congés</a>';
+        $return .= '<a class="secondary" href="' . ROOT_PATH . 'hr/traitement_demandes">Validation de congés</a>';
     }
     $return .= '<a class="secondary" href="' . ROOT_PATH . 'hr/ajout_conges">Crédit de congés</a>
     <a class="secondary" href="' . ROOT_PATH . 'hr/jours_chomes">Jours fériés</a>
-    <a class="secondary" href="' . ROOT_PATH . 'hr/hr_index.php?onglet=cloture_year">Exercices</a>
-    <a class="secondary" href="' . ROOT_PATH . 'hr/hr_index.php?onglet=liste_planning">Plannings</a>
-    <a class="secondary" href="' . ROOT_PATH . 'hr/hr_jours_fermeture.php">Jours de fermeture</a>';
+    <a class="secondary" href="' . ROOT_PATH . 'hr/cloture_exercice">Exercices</a>
+    <a class="secondary" href="' . ROOT_PATH . 'hr/liste_planning">Plannings</a>
+    <a class="secondary" href="' . ROOT_PATH . 'hr/jours_fermeture">Jours de fermeture</a>';
 
     return $return;
 }
@@ -191,7 +191,7 @@ function sousmenuEmploye()
                 <?php endif; ?>
 				<?php endif; ?>
 				<?php if (is_hr($_SESSION['userlogin'])): ?>
-                <a class="primary <?= $hrActive ?>" href="<?= ROOT_PATH ?>hr/hr_index.php" <?php print ($urn == 'hr') ? 'active' : '' ;?>>
+                <a class="primary <?= $hrActive ?>" href="<?= ROOT_PATH ?>hr/page_principale" <?php print ($urn == 'hr') ? 'active' : '' ;?>>
                     <i class="fa fa-sitemap"></i><?= _('button_hr_mode');?>
 				</a>
                 <?php if ($urn == 'hr') : ?>
@@ -212,12 +212,12 @@ function sousmenuEmploye()
                 <?php if ($urn == 'utilisateur') : ?>
                     <?= sousmenuEmploye(); ?>
                 <?php endif; ?>
-                <?php if ('active' === $calendarActive || 'utilisateur' === $urn || 'responsable' === $urn || in_array($urn, ['hr', 'config'], true)) : ?>
-                <a class="primary <?= $calendarActive ?>" href="<?= ROOT_PATH ?>calendrier.php">
+                <?php if ('active' === $calendarActive ||  in_array($urn, ['utilisateur', 'responsable', 'hr', 'admin', 'config'], true)): ?>
+                <a class="primary <?= $calendarActive ?>" href="<?= ROOT_PATH ?>calendrier">
                     <i class="fa fa-calendar"></i><?= _('button_calendar') ?>
                 </a>
                 <?php endif; ?>
-                <a id="deconnexion" class="primary" href="<?= ROOT_PATH ?>deconnexion.php">
+                <a id="deconnexion" class="primary" href="<?= ROOT_PATH ?>deconnexion">
                     <i class="fa fa-sign-out"></i><?= _('button_deconnect') ?>
                 </a>
             </div>

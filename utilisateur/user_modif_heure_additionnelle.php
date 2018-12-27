@@ -32,7 +32,7 @@ if (!$config->isHeuresAutorise()) {
 }
 $id = (int) getpost_variable('id');
 if (0 >= $id) {
-    redirect(ROOT_PATH . 'deconnexion.php');
+    redirect(ROOT_PATH . 'deconnexion');
 }
 $additionnelle = new \App\ProtoControllers\Employe\Heure\Additionnelle();
 echo $additionnelle->getForm($id);

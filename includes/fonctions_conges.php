@@ -1,5 +1,7 @@
 <?php
 
+use PHPMailer\PHPMailer\PHPMailer;
+
 // retourne le nom du jour de la semaine en francais sur 2 caracteres
 function get_j_name_fr_2c($timestamp)
 {
@@ -477,7 +479,7 @@ function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $m
     $config = new \App\Libraries\Configuration($db);
     /*********************************************/
     // init du mail
-    $mail = new \PHPMailer();
+    $mail = new PHPMailer();
 
     if (file_exists(CONFIG_PATH .'config_SMTP.php')) {
         include CONFIG_PATH .'config_SMTP.php';

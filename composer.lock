@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ea7f427e329bc901cca01f629a3e8173",
+    "content-hash": "c0670fb5b5cf09c8c94e462887b65e67",
     "packages": [
         {
             "name": "adldap2/adldap2",
@@ -750,7 +750,7 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v5.7.15",
+            "version": "5.7.19",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
@@ -2222,16 +2222,16 @@
         },
         {
             "name": "tightenco/collect",
-            "version": "v5.7.16",
+            "version": "v5.7.18",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tightenco/collect.git",
-                "reference": "52a7b56dc0a9d265dd5911dff433dedd3417dcc4"
+                "reference": "799108d67cdc9843ed3569ae2989888826166381"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tightenco/collect/zipball/52a7b56dc0a9d265dd5911dff433dedd3417dcc4",
-                "reference": "52a7b56dc0a9d265dd5911dff433dedd3417dcc4",
+                "url": "https://api.github.com/repos/tightenco/collect/zipball/799108d67cdc9843ed3569ae2989888826166381",
+                "reference": "799108d67cdc9843ed3569ae2989888826166381",
                 "shasum": ""
             },
             "require": {
@@ -2268,7 +2268,7 @@
                 "collection",
                 "laravel"
             ],
-            "time": "2018-12-07T15:32:04+00:00"
+            "time": "2018-12-17T15:11:32+00:00"
         },
         {
             "name": "yohang/calendr",

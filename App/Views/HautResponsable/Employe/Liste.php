@@ -11,7 +11,7 @@
 <?php if (!empty($message)) : ?>
     <div class="alert alert-info"><?= $message ?></div>
 <?php endif; ?>
-<a href="<?= ROOT_PATH ?>hr/hr_index.php?onglet=ajout_user" style="float:right" class="btn btn-success"><?= _('admin_onglet_add_user') ?></a>
+<a href="<?= ROOT_PATH ?>hr/ajout_user" style="float:right" class="btn btn-success"><?= _('admin_onglet_add_user') ?></a>
 <h1><?= $titre ?></h1>
 <table class="table table-hover table-responsive table-striped table-condensed">
     <thead>

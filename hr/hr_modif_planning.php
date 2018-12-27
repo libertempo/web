@@ -3,7 +3,7 @@
 defined('_PHP_CONGES') or die('Restricted access');
 $planningId = (int) getpost_variable('id');
 if (0 >= $planningId || !\App\ProtoControllers\HautResponsable\Planning::isVisible($planningId)) {
-    redirect(ROOT_PATH . 'deconnexion.php');
+    redirect(ROOT_PATH . 'deconnexion');
 }
 
 $message   = '';
@@ -14,7 +14,7 @@ $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 if (!empty($_POST)) {
     if (0 < (int) \App\ProtoControllers\HautResponsable\Planning::postPlanning($_POST, $errorsLst, $notice)) {
         log_action(0, '', '', 'Édition du planning ' . $_POST['name']);
-        redirect(ROOT_PATH . 'hr/hr_index.php?onglet=liste_planning', false);
+        redirect(ROOT_PATH . 'hr/liste_planning', false);
     } else {
         if (!empty($errorsLst)) {
             $errors = '';
