@@ -26,7 +26,7 @@ function redirectAuth() : void
             return;
         }
         if ($is_hr == "Y") {
-            redirect( ROOT_PATH .'hr/page_principale.php');
+            redirect( ROOT_PATH .'hr/page_principale');
         } elseif ($is_resp=="Y") {
             redirect( ROOT_PATH .'responsable/resp_index.php');
         } else {

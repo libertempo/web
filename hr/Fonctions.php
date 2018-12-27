@@ -1070,7 +1070,7 @@ class Fonctions
     }
 
     // renvoit un tableau de tableau contenant les informations de tous les users dont $login est HR responsable
-    private static function recup_infos_all_users_du_hr($login) : array
+    public static function recup_infos_all_users_du_hr($login) : array
     {
         $tab=array();
         $list_groupes_double_validation=get_list_groupes_double_valid();

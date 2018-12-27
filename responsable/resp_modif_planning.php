@@ -109,12 +109,5 @@ $associationsGroupe = array_map(function ($groupe) {
     $optionsGroupes
 );
 $utilisateursAssocies = \App\ProtoControllers\Responsable\Planning::getListeUtilisateursAssocies($planningId);
-$subalternes = \App\ProtoControllers\Responsable::getUsersRespDirect($_SESSION['userlogin']);
-$utilisateursAssocies = array_filter(
-    $utilisateursAssocies,
-    function ($utilisateurs) use ($subalternes) {
-        return in_array($utilisateurs['login'], $subalternes);
-    }
-);
 
 require_once VIEW_PATH . 'Planning/Formulaire/Responsable_Edit.php';

@@ -5,6 +5,15 @@ require_once INCLUDE_PATH . 'define.php';
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
+/**
+ * Pour la migration vers VueJS :
+ * puisque Vue est versatile et permet l'utilisation
+ * comme librairie ou comme framework, il permet une migration douce.
+ * Mais, le temps qu'on en fasse un framework,
+ * nous devons stocker la valeur de session (token API) dans le code PHP,
+ * token que nous transmettrons au script VueJS dans chaque page, puisqu'elles seront isolées.
+ */
+
 $rewritten = [
     '/authentification',
     '/calendrier',

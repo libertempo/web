@@ -228,45 +228,45 @@ content-title {
     margin: 0
 }
 
-.main-content {
+#main-content {
     padding: 20px
 }
-.main-content h1 {
+#main-content h1 {
     font-size: 20px;
     font-size: 2rem;
     text-transform: uppercase
 }
-.main-content h2 {
+#main-content h2 {
     font-size: 18px;
     font-size: 1.8rem
 }
-.main-content.traite_user .calendar-nav {
+#main-content.traite_user .calendar-nav {
     margin: 0;
     padding: 0;
     overflow: hidden;
     float: right
 }
-.main-content.traite_user .calendar-nav ul {
+#main-content.traite_user .calendar-nav ul {
     float: right;
     margin: 0 20px;
     padding: 0
 }
-.main-content.traite_user .calendar-nav ul li {
+#main-content.traite_user .calendar-nav ul li {
     line-height: 20px;
     padding: 0 5px;
     margin: 0;
     list-style-type: none;
     float: left
 }
-.main-content.traite_user .calendar-nav ul li a {
+#main-content.traite_user .calendar-nav ul li a {
     border: none;
     padding: 0 5px;
     color: #00aad4
 }
-.main-content.traite_user .calendar-nav ul li a span {
+#main-content.traite_user .calendar-nav ul li a span {
     display: none
 }
-.main-content.traite_user .calendar-nav ul li.current-year {
+#main-content.traite_user .calendar-nav ul li.current-year {
     color: #00aad4;
     font-weight: bold
 }
