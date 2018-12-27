@@ -7,7 +7,7 @@ namespace utilisateur;
 class Fonctions
 {
     // renvoit le type d'absence (conges ou absence) d'une absence
-    public static function get_type_abs($_type_abs_id)
+    private static function get_type_abs($_type_abs_id)
     {
         $sql_abs='SELECT ta_type FROM conges_type_absence WHERE ta_id="'. \includes\SQL::quote($_type_abs_id).'"';
         $ReqLog_abs = \includes\SQL::query($sql_abs);
@@ -19,7 +19,7 @@ class Fonctions
         }
     }
 
-    public static function verif_solde_user($user_login, $type_conges, $nb_jours)
+    private static function verif_solde_user($user_login, $type_conges, $nb_jours)
     {
         $verif = TRUE;
         // on ne tient compte du solde que pour les absences de type conges (conges avec solde annuel)
@@ -50,7 +50,7 @@ class Fonctions
     }
 
     // verifie les parametre de la nouvelle demande :si ok : enregistre la demande dans table conges_periode
-    public static function new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type)
+    private static function new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type)
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
@@ -238,7 +238,7 @@ class Fonctions
         return $return;
     }
 
-    public static function modifier($p_num_to_update, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $p_etat, $onglet)
+    private static function modifier($p_num_to_update, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $p_etat, $onglet)
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
@@ -272,7 +272,7 @@ class Fonctions
 
     }
 
-    public static function confirmer($p_num, $onglet)
+    private static function confirmer($p_num, $onglet)
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
@@ -463,7 +463,7 @@ class Fonctions
     }
 
     // renvoit le libelle d une absence (conges ou absence) d une absence
-    public static function get_libelle_abs($_type_abs_id)
+    private static function get_libelle_abs($_type_abs_id)
     {
 
         $sql_abs='SELECT ta_libelle FROM conges_type_absence WHERE ta_id="'. \includes\SQL::quote($_type_abs_id).'"';
@@ -474,7 +474,7 @@ class Fonctions
             return "" ;
     }
 
-    public static function suppression($p_num_to_delete, $onglet)
+    private static function suppression($p_num_to_delete, $onglet)
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
@@ -504,7 +504,7 @@ class Fonctions
         return $return;
     }
 
-    public static function confirmerSuppression($p_num, $onglet)
+    private static function confirmerSuppression($p_num, $onglet)
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         $return = '';
@@ -610,7 +610,7 @@ class Fonctions
     }
 
     // affichage du calendrier du mois avec les case à cocher sur les jour de présence
-    public static function  affiche_calendrier_saisie_jour_presence($user_login, $year, $mois)
+    private static function  affiche_calendrier_saisie_jour_presence($user_login, $year, $mois)
     {
         $return = '';
         $jour_today                    = date('j');
@@ -682,7 +682,7 @@ class Fonctions
     }
 
     //affichage du calendrier du mois avec les case à cocher sur les jour d'absence
-    public static function  affiche_calendrier_saisie_jour_absence($user_login, $year, $mois)
+    private static function  affiche_calendrier_saisie_jour_absence($user_login, $year, $mois)
     {
         $return = '';
         $jour_today                    = date('j');
@@ -739,7 +739,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affiche_cellule_calendrier_echange_absence_saisie_semaine($val_matin, $val_aprem, $year, $mois, $j)
+    private static function affiche_cellule_calendrier_echange_absence_saisie_semaine($val_matin, $val_aprem, $year, $mois, $j)
     {
         $return = '';
         $bgcolor=$_SESSION['config']['temps_partiel_bgcolor'];
@@ -756,7 +756,7 @@ class Fonctions
         return $return;
     }
 
-    public static function affiche_cellule_calendrier_echange_presence_saisie_semaine($val_matin, $val_aprem, $year, $mois, $j)
+    private static function affiche_cellule_calendrier_echange_presence_saisie_semaine($val_matin, $val_aprem, $year, $mois, $j)
     {
         $return = '';
         $bgcolor = $_SESSION['config']['temps_partiel_bgcolor'];
@@ -775,7 +775,7 @@ class Fonctions
         return $return;
     }
 
-    public static function echange_absence_rtt($onglet, $new_debut_string, $new_fin_string, $new_comment, $moment_absence_ordinaire, $moment_absence_souhaitee)
+    private static function echange_absence_rtt($onglet, $new_debut_string, $new_fin_string, $new_comment, $moment_absence_ordinaire, $moment_absence_souhaitee)
     {
         $return = '';
 
@@ -1053,7 +1053,7 @@ class Fonctions
     }
 
     //affiche le formulaire d'échange d'un jour de rtt-temps partiel / jour travaillé
-    public static function saisie_echange_rtt($user_login, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet)
+    private static function saisie_echange_rtt($user_login, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet)
     {
         $return = '';
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
@@ -1215,7 +1215,7 @@ class Fonctions
      *
      * @return bool
      */
-    public static function hasUserPlanning($user)
+    private static function hasUserPlanning($user)
     {
         $sql = \includes\SQL::singleton();
         $req = 'SELECT EXISTS (
@@ -1430,7 +1430,7 @@ class Fonctions
         return $options;
     }
 
-    public static function canUserManipulateConge($idConge, $user) {
+    private static function canUserManipulateConge($idConge, $user) {
         if (empty($idConge) || empty($user)) {
             return false;
         }

@@ -20,7 +20,7 @@ define('LAST_VERSION_FILE', '/tmp/lt-last-version');
 define('LOCALE_PATH', ROOT_PATH . 'locale/');
 
 require_once ROOT_PATH . 'vendor/autoload.php';
-require_once INCLUDE_PATH . 'fonctions_conges.php';
+require_once INCLUDE_PATH . 'fonctions.php';
 if (is_file(CONFIG_PATH . 'dbconnect.php')) {
     require_once CONFIG_PATH . 'dbconnect.php';
 }

@@ -7,7 +7,6 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     define('ENV_TEST', 2);
     define('ENV_PROD', 3);
     define('DEFINE_INCLUDE',   true);
-    define('SHOW_SQL',         false);
     define('DS',               DIRECTORY_SEPARATOR);
     define('ABSOLUTE_SYSPATH', dirname(__FILE__, 2) . DS);
     define('PUBLIC_PATH',      ROOT_PATH . 'Public/');
@@ -30,9 +29,7 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     require_once ROOT_PATH . 'vendor/autoload.php';
     require_once ROOT_PATH . 'vendor/raveren/kint/Kint.class.php';
     require_once CONFIG_PATH . 'env.php';
-    require_once INCLUDE_PATH . 'fonctions_conges.php' ;
     require_once INCLUDE_PATH . 'fonction.php';
-    require_once INCLUDE_PATH . 'fonctions_calcul.php';
 
     switch (ENV) {
         case ENV_PROD:

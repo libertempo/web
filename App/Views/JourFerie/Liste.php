@@ -7,7 +7,7 @@
 ?>
 <h1> <?= $title ?></h1>
 <div class="pager">
-    <div class="onglet calendar-nav">
+    <div class="calendar-nav">
         <ul>
             <li><a href="<?= $prev_link ?>" class="calendar-prev"><i class="fa fa-chevron-left"></i><span>année précédente</span></a></li>
             &nbsp;<li class="current-year"><?= $annee ?></li>

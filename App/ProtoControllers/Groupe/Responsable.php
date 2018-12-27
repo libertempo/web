@@ -35,7 +35,7 @@ class Responsable {
         $respLogin = [];
         while ($data = $query->fetch_array()) {
             $login = $data['gr_login'];
-            if(!in_array($login, $respLogin)) {
+            if (!in_array($login, $respLogin)) {
                 $respLogin[] = $login;
             }
         }
