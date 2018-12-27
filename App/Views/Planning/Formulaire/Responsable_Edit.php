@@ -31,7 +31,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">
         </thead>
         <tbody>
             <tr>
-                <td><?= $planning->name ?><input type="hidden" name="planning_id" value="<?= $planning->id ?>" /></td>
+                <td><?= $planning['name'] ?><input type="hidden" name="planning_id" value="<?= $planning['id'] ?>" /></td>
                 <td><input type="hidden" id="<?= $idToggleSemaine ?>" /></td>
             </tr>
         </tbody>
@@ -84,7 +84,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">
             $disabled = (\App\ProtoControllers\Utilisateur::hasSortiesEnCours($utilisateur['login']))
                 ? 'disabled '
                 : '';
-            $checked = ($planning->id === $utilisateur['planningId'])
+            $checked = ($planning['id'] === $utilisateur['planningId'])
                 ? 'checked '
                 : '';
             $nom = \App\ProtoControllers\Utilisateur::getNomComplet($utilisateur['prenom'], $utilisateur['nom']);

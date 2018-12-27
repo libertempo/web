@@ -1,6 +1,5 @@
 <?php
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
-include TEMPLATE_PATH . 'template_define.php';
 $printable = getpost_variable('printable');
 global $environnement;
 

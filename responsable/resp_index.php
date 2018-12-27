@@ -87,7 +87,7 @@ if ($config->isCongesExceptionnelsActive()) {
     $tab_type_conges_exceptionnels = recup_tableau_types_conges_exceptionnels();
 }
 
-echo '<div class="' . $onglet . ' main-content">';
+echo '<div class="' . $onglet . '" id="main-content">';
 include_once ROOT_PATH . 'responsable/resp_' . $onglet . '.php';
 echo '</div>';
 
