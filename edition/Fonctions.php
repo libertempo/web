@@ -24,7 +24,7 @@ class Fonctions
 
         $return .= '<h3>' . _('editions_hitorique_edit') . ' :</h3>';
 
-        if (count($tab_editions_user)==0) {
+        if (0 === count($tab_editions_user)) {
             $return .= '<b>' . _('editions_aucun_hitorique') . '</b><br>';
         } else {
             // AFFICHAGE TABLEAU
@@ -40,7 +40,7 @@ class Fonctions
             $return .= '<th></th>';
             $return .= '</tr></thead><tbody>';
 
-            foreach($tab_editions_user as $id_edition => $tab_ed) {
+            foreach ($tab_editions_user as $id_edition => $tab_ed) {
                 $text_edit_a_nouveau="<a href=\"edition_papier.php?user_login=$login&edit_id=$id_edition\">" .
                         "<img src=\"". IMG_PATH . "fileprint_16x16_2.png\" width=\"16\" height=\"16\" border=\"0\" title=\"". _('editions_edit_again') ."\" alt=\"". _('editions_edit_again') ."\">" .
                         " ". _('editions_edit_again')  .
@@ -121,7 +121,11 @@ class Fonctions
                 if ($sql_p_demi_jour_deb=="am") $demi_j_deb="mat";  else $demi_j_deb="aprm";
                 $sql_p_date_fin = eng_date_to_fr($resultat2["p_date_fin"]);
                 $sql_p_demi_jour_fin = $resultat2["p_demi_jour_fin"];
-                if ($sql_p_demi_jour_fin=="am") $demi_j_fin="mat";  else $demi_j_fin="aprm";
+                if ('am' === $sql_p_demi_jour_fin) {
+                    $demi_j_fin="mat";
+                } else {
+                    $demi_j_fin="aprm";
+                }
                 $sql_p_nb_jours = $resultat2["p_nb_jours"];
                 $sql_p_commentaire = $resultat2["p_commentaire"];
                 $sql_p_type = $resultat2["ta_libelle"];
@@ -246,7 +250,7 @@ class Fonctions
         }
 
         /************************************/
-        $return .= '<div id="main-content">';
+        $return .= '<div id="main-content" class="wrapper">';
         $return .= \edition\Fonctions::affichage($user_login);
         $return .= '</div>';
 
@@ -371,7 +375,7 @@ class Fonctions
             $return .= '<tr>';
             $return .= '<td colspan="5">';
             $edition_precedente_id = \edition\Fonctions::get_id_edition_precedente_user($login, $edit_id);
-            if ($edition_precedente_id==0) {
+            if (0 == $edition_precedente_id) {
                 $return .= '<b>' . _('editions_soldes_precedents_inconnus') . '!... ';
             } else {
                 $tab_edition_precedente = \edition\Fonctions::recup_info_edition($edition_precedente_id);
@@ -448,7 +452,7 @@ class Fonctions
                 $return .= '<td class="histo-edit">' . $sql_p_commentaire . '</td>';
 
                 if ($config->canAfficheDateTraitement()) {
-                    if ($sql_p_date_demande == NULL) {
+                    if (null == $sql_p_date_demande) {
                         $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : ' . $sql_p_date_traitement . '</td>';
                     } else {
                         $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : pas traité</td>';
@@ -705,25 +709,28 @@ class Fonctions
 
             $pdf->Cell($size_cell_type, $hauteur_cellule*2, $tab_type_all_cong[$sql_p_type]['libelle'], 1, 0, 'C');
 
-            if ($sql_p_etat=="refus")
+            if ('refus' === $sql_p_etat) {
                 $text_etat =  _('divers_refuse') ;
-            elseif ($sql_p_etat=="annul")
+            } elseif ('annul' === $sql_p_etat) {
                 $text_etat =  _('divers_annule') ;
-            else
+            } else {
                 $text_etat=$sql_p_etat;
+            }
             $pdf->Cell($size_cell_etat, $hauteur_cellule*2, $text_etat, 1, 0, 'C');
 
-            if ( ($sql_p_etat=="refus") || ($sql_p_etat=="annul") )
+            if ('refus' === $sql_p_etat || 'annul' === $sql_p_etat) {
                 $pdf->SetFont('Times', '', $taille_font);
-            else
+            } else {
                 $pdf->SetFont('Times', 'B', $taille_font);
+            }
 
-            if ($sql_p_etat=="ok")
+            if ('ok' === $sql_p_etat) {
                 $text_nb_jours="-".$sql_p_nb_jours;
-            elseif ($sql_p_etat=="ajout")
+            } elseif ('ajout' === $sql_p_etat) {
                 $text_nb_jours="+".$sql_p_nb_jours;
-            else
+            } else {
                 $text_nb_jours=$sql_p_nb_jours;
+            }
             $pdf->Cell($size_cell_nb_jours, $hauteur_cellule*2, $text_nb_jours, 1, 0, 'C');
 
             $pdf->SetFont('Times', '', $taille_font);
@@ -742,7 +749,7 @@ class Fonctions
     private static function affiche_pdf_nouveau_solde(&$pdf, $login, $tab_info_edition, $tab_type_cong, $tab_type_conges_exceptionnels, $decalage)
     {
 
-        foreach($tab_type_cong as $id_abs => $libelle)
+        foreach ($tab_type_cong as $id_abs => $libelle)
         {
             $pdf->Cell($decalage);
             $pdf->SetFont('Times', '', 10);
@@ -750,7 +757,7 @@ class Fonctions
             $pdf->SetFont('Times', 'B', 10);
             $pdf->Cell(40, 5, $libelle." : ".$tab_info_edition['conges'][$id_abs], 0, 1);
         }
-        foreach($tab_type_conges_exceptionnels as $id_abs => $libelle)
+        foreach ($tab_type_conges_exceptionnels as $id_abs => $libelle)
         {
             $pdf->Cell($decalage);
             $pdf->SetFont('Times', '', 10);
@@ -766,26 +773,21 @@ class Fonctions
         //    $pdf->SetFont('Times', 'B', 10);
 
         $edition_precedente_id = \edition\Fonctions::get_id_edition_precedente_user($login, $edit_id);
-        if ($edition_precedente_id==0)
-        {
+        if ($edition_precedente_id==0) {
             $pdf->Cell($decalage);
             $pdf->SetFont('Times', '', 10);
             $pdf->Cell(50, 5,  _('editions_soldes_precedents_inconnus') ." !...",0,1);
-        }
-        else
-        {
+        } else {
             $tab_edition_precedente = \edition\Fonctions::recup_info_edition($edition_precedente_id);
 
-            foreach($tab_type_cong as $id_abs => $libelle)
-            {
+            foreach ($tab_type_cong as $id_abs => $libelle) {
                 $pdf->Cell($decalage);
                 $pdf->SetFont('Times', '', 10);
                 $pdf->Cell(26, 5,  _('editions_solde_precedent') ." ",0,0);
                 $pdf->SetFont('Times', 'B', 10);
                 $pdf->Cell(10, 5, $libelle." : ".$tab_edition_precedente['conges'][$id_abs], 0, 1);
             }
-            foreach($tab_type_conges_exceptionnels as $id_abs => $libelle)
-            {
+            foreach ($tab_type_conges_exceptionnels as $id_abs => $libelle) {
                 $pdf->Cell($decalage);
                 $pdf->SetFont('Times', '', 10);
                 $pdf->Cell(26, 5,  _('editions_solde_precedent') ." ",0,0);
@@ -809,13 +811,13 @@ class Fonctions
         $pdf->Cell(20, 5, " ". _('editions_jours_an') , 1, 0, 'C');
         $pdf->Cell(20, 5,  _('divers_solde_maj_1') ." ", 1, 1, 'C');
 
-        foreach($tab_type_cong as $id_abs => $libelle) {
+        foreach ($tab_type_cong as $id_abs => $libelle) {
             $pdf->Cell($decalage);
             $pdf->Cell(40, 5, " $libelle ", 1, 0, 'C');
             $pdf->Cell(20, 5, $tab_info_user['conges'][$libelle]['nb_an'], 1, 0, 'C');
             $pdf->Cell(20, 5, $tab_info_edition['conges'][$id_abs], 1, 1, 'C', 1);
         }
-        foreach($tab_type_conges_exceptionnels as $id_abs => $libelle) {
+        foreach ($tab_type_conges_exceptionnels as $id_abs => $libelle) {
             $pdf->Cell($decalage);
             $pdf->Cell(40, 5, " $libelle ", 1, 0, 'C');
             $pdf->Cell(20, 5, $tab_info_user['conges'][$libelle]['nb_an'], 1, 0, 'C');
@@ -836,7 +838,7 @@ class Fonctions
         if ($config->isCongesExceptionnelsActive()) {
             $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
         } else {
-            $tab_type_conges_exceptionnels=array();
+            $tab_type_conges_exceptionnels = [];
         }
         // recup du tableau de tous les types de conges
         $tab_type_all_cong=recup_tableau_tout_types_abs();
@@ -1009,18 +1011,16 @@ class Fonctions
     // renvoit un tableau vide si pas de'edition pour le user
     private static function recup_editions_user($login)
     {
-        $tab_ed=array();
+        $tab_ed =a [];
 
         $sql2 = "SELECT ep_id, ep_date, ep_num_for_user ";
         $sql2=$sql2."FROM conges_edition_papier WHERE ep_login = '$login' ";
         $sql2=$sql2."ORDER BY ep_num_for_user DESC ";
         $ReqLog2 = \includes\SQL::singleton()->query($sql2);
 
-        if ($ReqLog2->num_rows != 0)
-        {
-            while ($resultat2 = $ReqLog2->fetch_array())
-            {
-                $tab=array();
+        if ($ReqLog2->num_rows != 0) {
+            while ($resultat2 = $ReqLog2->fetch_array()) {
+                $tab = [];
                 $sql_id = $resultat2["ep_id"];
                 $tab['date'] = eng_date_to_fr($resultat2["ep_date"]);
                 $tab['num_for_user'] = $resultat2["ep_num_for_user"];
@@ -1101,10 +1101,10 @@ class Fonctions
         $ReqLog1 = $db->query($sql1);
 
         $resultat1 = $ReqLog1->num_rows ;
-        if ($resultat1<=1)    // une seule edition pour ce user
+        if ($resultat1<=1) {
+            // une seule edition pour ce user
             return 0;
-        else
-        {
+        } else {
             $sql2 = 'SELECT MAX(ep_id) FROM conges_edition_papier WHERE ep_login="' . $db->quote($login).'" AND ep_id<'. $db->quote($edition_id);
             $ReqLog2 = $db->query($sql2);
             $tmp = $ReqLog2->fetch_row();
@@ -1120,10 +1120,9 @@ class Fonctions
         $sql1 = 'SELECT ep_num_for_user FROM conges_edition_papier WHERE ep_login="'. \includes\SQL::quote($login).'"';
         $ReqLog1 = \includes\SQL::query($sql1);
 
-        if ($ReqLog1->num_rows==0)
+        if ($ReqLog1->num_rows==0) {
             return 0;    // c'est qu'il n'y a pas encore d'edition pour ce user
-        else
-        {
+        } else {
             $sql2 = 'SELECT MAX(ep_num_for_user) FROM conges_edition_papier WHERE ep_login="'. \includes\SQL::quote($login).'"';
             $ReqLog2 = \includes\SQL::query($sql2);
             $tmp = $ReqLog2->fetch_row();
@@ -1138,10 +1137,9 @@ class Fonctions
         $sql1 = "SELECT ep_id FROM conges_edition_papier ";
         $ReqLog1 = \includes\SQL::query($sql1);
 
-        if ($ReqLog1->num_rows==0)
+        if ($ReqLog1->num_rows==0) {
             return 0;    // c'est qu'il n'y a pas encore d'edition
-        else
-        {
+        } else {
             $sql2 = 'SELECT MAX(ep_id) FROM conges_edition_papier ';
             $ReqLog2 = \includes\SQL::query($sql2);
             $tmp = $ReqLog2->fetch_row();
@@ -1153,14 +1151,11 @@ class Fonctions
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
-
-        $tab_solde_user=array();
+        $tab_solde_user = [];
         $sql1 = 'SELECT su_abs_id, su_solde FROM conges_solde_user where su_login = "'. \includes\SQL::quote($login).'"';
         $ReqLog1 = \includes\SQL::query($sql1);
 
-        while ($resultat1 = $ReqLog1->fetch_array())
-        {
+        while ($resultat1 = $ReqLog1->fetch_array()) {
             $sql_id=$resultat1["su_abs_id"];
             $tab_solde_user[$sql_id]=$resultat1["su_solde"];
         }
@@ -1175,7 +1170,6 @@ class Fonctions
                 SET ep_id=$new_edition_id, ep_login='$login', ep_date='$aujourdhui', ep_num_for_user=$num_for_user ";
         $result_insert = \includes\SQL::query($sql_insert);
 
-
         /*************************************************/
         /* Insertion dans le table conges_solde_edition  */
         /*************************************************/
@@ -1188,8 +1182,7 @@ class Fonctions
         }
         if ($config->isCongesExceptionnelsActive()) {
             $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
-            foreach($tab_type_conges_exceptionnels as $id_abs => $libelle)
-            {
+            foreach ($tab_type_conges_exceptionnels as $id_abs => $libelle) {
                 $sql_insert_3 = "INSERT INTO conges_solde_edition SET se_id_edition=$new_edition_id, se_id_absence=$id_abs, se_solde=$tab_solde_user[$id_abs] ";
                 $result_insert_3 = \includes\SQL::query($sql_insert_3);
             }
@@ -1203,8 +1196,7 @@ class Fonctions
         $ReqLog_list = \includes\SQL::query($sql_list);
 
         $list_abs_id="";
-        while ($resultat_list = $ReqLog_list->fetch_array())
-        {
+        while ($resultat_list = $ReqLog_list->fetch_array()) {
             if ($list_abs_id=="")
                 $list_abs_id=$resultat_list['ta_id'] ;
             else
