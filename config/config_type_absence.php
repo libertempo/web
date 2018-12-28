@@ -54,8 +54,9 @@ switch ($action) {
             'titres' => $titres,
             'commentaires' => $comments,
         ];
-        if (!$isCongesExceptionnelsActive && isset($classesConges['conges_exceptionnels'])) {
-            unset($classesConges['conges_exceptionnels']);
+        $offsetCongesExceptionnels = array_search('conges_exceptionnels', $classesConges);
+        if (!$isCongesExceptionnelsActive && is_int($offsetCongesExceptionnels)) {
+            unset($classesConges[$offsetCongesExceptionnels]);
         }
         $url = $PHP_SELF;
 
@@ -65,5 +66,3 @@ switch ($action) {
         require_once VIEW_PATH .  'Configuration/Type_Absence/Liste.php';
         break;
 }
-
-bottom();

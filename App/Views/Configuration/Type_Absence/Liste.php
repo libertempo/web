@@ -26,7 +26,7 @@
                 <th></th>
             </tr>
             <tr v-if="!hasAbsences(classe)"><td colspan="2"><center><?= _('aucun_resultat') ?></center></td></tr>
-            <tr v-for="absenceType in value">
+            <tr v-for="absenceType in absenceTypes[classe]">
                 <td><strong>{{ absenceType.libelle }}</strong></td>
                 <td>{{ absenceType.libelleCourt }}</td>
                 <td class="action">
@@ -99,8 +99,7 @@ var vm = new Vue({
     },
     'methods' : {
         hasAbsences: function (type) {
-            console.log(type, this.absenceTypes);
-            return 0 < this.absenceTypes[type].length;
+            return undefined != this.absenceTypes[type] && 0 < this.absenceTypes[type].length;
         },
         titre: function (type) {
             return this.traductions.titres[type];
@@ -120,7 +119,6 @@ var vm = new Vue({
     },
     created () {
         var vm = this;
-        console.log(document.getElementById('loader-bar'));
         this.axios.get('/absence/type')
         .then((response) => {
             if (typeof response.data != 'object') {
@@ -136,14 +134,13 @@ var vm = new Vue({
                 }
                 organisedTypes[absenceType.type].push(absenceType);
             }
-            console.log('o', organisedTypes);
             if (!vm.isCongesExceptionnelsActive && undefined != organisedTypes['conges_exceptionnels']) {
                 delete organisedTypes['conges_exceptionnels'];
             }
 
             // Finally hide loader and show var
-            console.log('i', organisedTypes);
             document.getElementById('loader-bar').classList.add('hidden');
+            console.log('o', organisedTypes);
             vm.absenceTypes = organisedTypes;
         })
         .catch((error) => {
