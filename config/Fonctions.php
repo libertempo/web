@@ -64,7 +64,7 @@ class Fonctions
             ]);
 
             $childTable = '<tr><td class="histo" colspan="5">' . _('voir_les_logs_par') . '</td>';
-            if($login_par!="") {
+            if ('' !== $login_par) {
                 $childTable .= '<tr><td class="histo" colspan="5">' . _('voir_tous_les_logs') . '<a href="/config/logs">' . _('voir_tous_les_logs') . '</a></td>';
             }
             $childTable .= '<tr><td class="histo" colspan="5">&nbsp;</td>';
@@ -137,9 +137,10 @@ class Fonctions
 
         /*************************************/
 
-        if ($action=="suppr_logs") {
+
+        if ('suppr_logs' === $action) {
             $return .= \config\Fonctions::confirmer_vider_table_logs();
-        } elseif($action=="commit_suppr_logs") {
+        } elseif ('commit_suppr_logs' === $action) {
             \config\Fonctions::commit_vider_table_logs();
         } else {
             $return .= \config\Fonctions::affichage($login_par);
@@ -157,7 +158,7 @@ class Fonctions
 
 
         // update de la table
-        foreach($tab_new_values as $nom_mail => $tab_mail) {
+        foreach ($tab_new_values as $nom_mail => $tab_mail) {
             $subject = htmlspecialchars(addslashes($tab_mail['subject']));
             $body = htmlspecialchars(addslashes($tab_mail['body']));
             $req_update='UPDATE conges_mail SET mail_subject=\''.$subject.'\', mail_body=\''.$body.'\' WHERE mail_nom="'. \includes\SQL::quote($nom_mail).'" ';
@@ -172,7 +173,7 @@ class Fonctions
         return $return;
     }
 
-    private static function test_config($tab_new_values)
+    public static function test_config()
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $return = '';
@@ -195,7 +196,7 @@ class Fonctions
         return $return;
     }
 
-    private static function affichage_config_mail($tab_new_values)
+    public static function affichage_config_mail()
     {
         $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $return = '';
@@ -293,10 +294,10 @@ class Fonctions
         $tab_new_values = getpost_variable('tab_new_values');
         /*********************************/
 
-        if($action=="modif") {
+        if ('modif' === $action) {
             $return .= \config\Fonctions::commit_modif($tab_new_values);
         }
-        if($action=="test") {
+        if ('test' === $action) {
             $return .= \config\Fonctions::test_config($tab_new_values);
         }
 
@@ -311,7 +312,7 @@ class Fonctions
         $req_1="SELECT MAX(ta_id) FROM conges_type_absence ";
         $res_1 = \includes\SQL::query($req_1);
         $row_1 = $res_1->fetch_row();
-        if(!$row_1) {
+        if (!$row_1) {
             return 0;     // si la table est vide, on renvoit 0
         } else {
             return $row_1[0];
@@ -324,9 +325,9 @@ class Fonctions
         $return = '';
 
         $URL = $PHP_SELF;
-        $tab_new_values['libelle'] = htmlentities($tab_new_values['libelle'], ENT_QUOTES | ENT_HTML401);
-        $tab_new_values['short_libelle'] = htmlentities($tab_new_values['short_libelle']);
-        $tab_new_values['type'] = htmlentities($tab_new_values['type'], ENT_QUOTES | ENT_HTML401);
+        $tab_new_values['libelle'] = htmlspecialchars($tab_new_values['libelle'], ENT_QUOTES | ENT_HTML401);
+        $tab_new_values['short_libelle'] = htmlspecialchars($tab_new_values['short_libelle']);
+        $tab_new_values['type'] = htmlspecialchars($tab_new_values['type'], ENT_QUOTES | ENT_HTML401);
 
         // verif de la saisie
         $erreur=FALSE ;
@@ -336,7 +337,7 @@ class Fonctions
             $erreur=TRUE;
         }
         // verif si les champs sont vides
-        if( (strlen($tab_new_values['libelle'])==0) || (strlen($tab_new_values['short_libelle'])==0) || (strlen($tab_new_values['type'])==0) ) {
+        if (0 === strlen($tab_new_values['libelle']) || 0 === strlen($tab_new_values['short_libelle']) || 0 === strlen($tab_new_values['type'])) {
             $return .= '<br>' . _('config_abs_saisie_not_ok') . ' : ' . _('config_abs_champs_vides') . '<br>';
             $erreur=TRUE;
         }
@@ -373,7 +374,7 @@ class Fonctions
             // on recup l'id de l'absence qu'on vient de créer
             $new_abs_id = \config\Fonctions::get_last_absence_id();
 
-            if($new_abs_id!=0) {
+            if (0 !== $new_abs_id) {
                 // ajout dans la table conges_solde_user (pour chaque user !!)(si c'est un conges, pas si c'est une absence)
                 if ("conges" == $tab_new_values['type'] || "conges_exceptionnels" == $tab_new_values['type']) {
                     // recup de users :
@@ -493,19 +494,21 @@ class Fonctions
         $return = '';
 
         $URL = $PHP_SELF;
-
+        $tab_new_values['libelle'] = htmlspecialchars($tab_new_values['libelle'], ENT_QUOTES | ENT_HTML401);
+        $tab_new_values['short_libelle'] = htmlspecialchars($tab_new_values['short_libelle']);
+        $tab_new_values['type'] = htmlspecialchars($tab_new_values['type'], ENT_QUOTES | ENT_HTML401);
 
         // verif de la saisie
-        $erreur=FALSE ;
+        $erreur=false ;
         // verif si pas de " ' , . ; % ?
-        if( (preg_match('/.*[?%;.,"\'].*$/', $tab_new_values['libelle'])) || (preg_match('/.*[?%;.,"\'].*$/', $tab_new_values['short_libelle'])) ) {
+        if ( (preg_match('/.*[?%;.,"\'].*$/', $tab_new_values['libelle'])) || (preg_match('/.*[?%;.,"\'].*$/', $tab_new_values['short_libelle'])) ) {
             $return .= '<br>' . _('config_abs_saisie_not_ok') . ' : ' . _('config_abs_bad_caracteres') . ' " \' , . ; % ? <br>';
             $erreur=TRUE;
         }
         // verif si les champs sont vides
-        if( (strlen($tab_new_values['libelle'])==0) || (strlen($tab_new_values['short_libelle'])==0) ) {
+        if (0 === strlen($tab_new_values['libelle']) || 0 === strlen($tab_new_values['short_libelle'])) {
             $return .= '<br>' . _('config_abs_saisie_not_ok') . ' : ' . _('config_abs_champs_vides') . '<br>';
-            $erreur=TRUE;
+            $erreur=true;
         }
 
         $sql = \includes\SQL::singleton();
@@ -535,7 +538,7 @@ class Fonctions
             $erreur = true;
         }
 
-        if($erreur) {
+        if ($erreur) {
             $return .= '<br>';
             $return .= '<form action="' . $PHP_SELF . '" method="POST">';
             $return .= '<input type="hidden" name="action" value="modif">';
@@ -548,7 +551,7 @@ class Fonctions
         } else {
             // update de la table
             $req_update='UPDATE conges_type_absence SET ta_libelle=\''.$tab_new_values['libelle'].'\', ta_short_libelle=\''.$tab_new_values['short_libelle'].'\' WHERE ta_id="'. \includes\SQL::quote($id_to_update).'" ';
-            $result1 = \includes\SQL::query($req_update);
+            \includes\SQL::query($req_update);
 
             $return .= '<span class="messages">' . _('form_modif_ok') . '</span><br>';
 
@@ -622,7 +625,7 @@ class Fonctions
 
         $timeout=2 ;  // temps d'attente pour rafraichir l'écran après l'update !
 
-        foreach($tab_new_values as $key => $value ) {
+        foreach ($tab_new_values as $key => $value ) {
             $value = htmlentities($value, ENT_QUOTES | ENT_HTML401);
             /* Contrôle de cohérence entre config. */
             if ('user_ch_passwd' === $key && 'dbconges' !== $tab_new_values['how_to_connect_user'] ) {
@@ -631,7 +634,7 @@ class Fonctions
 
             // CONTROLE gestion_conges_exceptionnels
             // si désactivation les conges exceptionnels, on verif s'il y a des conges exceptionnels enregistres ! si oui : changement impossible !
-            if(($key=="gestion_conges_exceptionnels") && ($value=="FALSE") ) {
+            if ('gestion_conges_exceptionnels' === $key && 'FALSE' === $value) {
                 $sql_abs="SELECT ta_id, ta_libelle FROM conges_type_absence WHERE ta_type='conges_exceptionnels' ";
                 $ReqLog_abs = \includes\SQL::query($sql_abs);
 
@@ -646,7 +649,7 @@ class Fonctions
             // si modif de jour_mois_limite_reliquats, on verifie le format ( 0 ou jj-mm) , sinon : changement impossible !
             if( ($key=="jour_mois_limite_reliquats") && ($value!= "0") ) {
                 $t=explode("-", $value);
-                if(checkdate($t[1], $t[0], date("Y"))==FALSE) {
+                if (checkdate($t[1], $t[0], date("Y"))==false) {
                     $return .= '<b>' . _('config_jour_mois_limite_reliquats_modif_impossible') . '</b><br>';
                     $sql_date="SELECT conf_valeur FROM conges_config WHERE conf_nom='jour_mois_limite_reliquats' ";
                     $ReqLog_date = \includes\SQL::query($sql_date);
@@ -687,7 +690,6 @@ class Fonctions
         $sql1 = "SELECT * FROM conges_config ORDER BY conf_groupe ASC";
         $ReqLog1 = \includes\SQL::query($sql1);
 
-        $old_groupe="";
         $config = [];
         while ($data = $ReqLog1->fetch_array()) {
             $config[$data['conf_groupe']][] = $data;
@@ -704,11 +706,10 @@ class Fonctions
             foreach ($group as $data) {
                 $conf_nom = $data['conf_nom'];
                 $conf_valeur = $data['conf_valeur'];
-                $conf_groupe = $data['conf_groupe'];
                 $conf_type = strtolower($data['conf_type']);
                 $conf_commentaire = strtolower($data['conf_commentaire']);
 
-                if($conf_nom=="lang") {
+                if ('lang' === $conf_nom) {
                     $childTable .= '<b>Langue installée &nbsp;&nbsp;=&nbsp;&nbsp;' . $conf_valeur . '</b><br>';
                 } else {
                     // affichage commentaire
@@ -717,27 +718,27 @@ class Fonctions
                     // affichage saisie variable
                     if ($conf_nom=="installed_version") {
                         $childTable .= '<b>' . $conf_nom . '&nbsp;&nbsp;=&nbsp;&nbsp;' . $conf_valeur . '</b><br>';
-                    } elseif( ($conf_type=="texte") || ($conf_type=="path") ) {
+                    } elseif ('texte' === $conf_type || 'path' === $conf_type) {
                         $childTable .= '<b>' . $conf_nom . '</b>&nbsp;=&nbsp;<input type="text" class="form-control" size="50" maxlength="200" name="tab_new_values[' . $conf_nom . ']" value="' . $conf_valeur . '"><br>';
                     } elseif ($conf_type=="boolean") {
                         $childTable .= '<b>' . $conf_nom . '</b>&nbsp;=&nbsp;<select class="form-control" name="tab_new_values[' . $conf_nom . ']">';
                         $childTable .= '<option value="TRUE"';
-                        if($conf_valeur=="TRUE") {
+                        if ('TRUE' === $conf_valeur) {
                             $childTable .= ' selected';
                         }
                         $childTable .= '>TRUE</option>';
                         $childTable .= '<option value="FALSE"';
-                        if($conf_valeur=="FALSE") {
+                        if ('FALSE' === $conf_valeur) {
                             $childTable .= ' selected';
                         }
                         $childTable .= '>FALSE</option>';
                         $childTable .= '</select><br>';
-                    } elseif(substr($conf_type,0,4)=="enum") {
+                    } elseif (substr($conf_type,0,4) === "enum") {
                         $childTable .= '<b>' . $conf_nom . '</b>&nbsp;=&nbsp;<select class="form-control" name="tab_new_values[' . $conf_nom . ']">';
                         $options=explode("/", substr(strstr($conf_type, '='),1));
-                        for($i=0; $i<count($options); $i++) {
+                        for ($i=0; $i<count($options); $i++) {
                             $childTable .= '<option value="' . $options[$i] . '"';
-                            if($conf_valeur==$options[$i]) {
+                            if ($conf_valeur==$options[$i]) {
                                 $childTable .= ' selected';
                             }
                             $childTable .= '>' . $options[$i] . '</option>';
@@ -777,13 +778,12 @@ class Fonctions
 
         /*** initialisation des variables ***/
         $action="";
-        $tab_new_values=array();
+        $tab_new_values= [];
         /************************************/
 
         /*************************************/
         // recup des parametres reçus :
         // SERVER
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         // GET / POST
         $action         = getpost_variable('action') ;
         $tab_new_values = getpost_variable('tab_new_values');

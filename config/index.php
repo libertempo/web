@@ -61,3 +61,4 @@ $_SESSION['from_config']=true;  // initialise ce flag pour changer le bouton de 
 		}
 
 	echo '</div>';
+    bottom();
