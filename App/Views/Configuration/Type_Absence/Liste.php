@@ -6,6 +6,7 @@
  * $traductions
  * $url
  * $isCongesExceptionnelsActive
+ * $classesConges
  */
 ?>
 <div id="inner-content">
@@ -15,17 +16,17 @@
         aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%">
         </div>
     </div>
-    <div v-for="(value, key) in absenceTypes">
-        <h2>{{ titre(key) }}</h2>
-        <p>{{ commentaire(key) }}</p>
+    <div v-for="classe in classesConges">
+        <h2>{{ titre(classe) }}</h2>
+        <p>{{ commentaire(classe) }}</p>
         <table class="table table-hover table-responsive table-condensed table-striped">
             <tr>
                 <th><?= _('config_abs_libelle') ?></th>
                 <th><?= _('config_abs_libelle_short') ?></th>
                 <th></th>
             </tr>
-            <tr v-if="!hasAbsences(key)"><td colspan="2"><center><?= _('aucun_resultat') ?></center></td></tr>
-            <tr v-for="absenceType in value">
+            <tr v-if="!hasAbsences(classe)"><td colspan="2"><center><?= _('aucun_resultat') ?></center></td></tr>
+            <tr v-for="absenceType in absenceTypes[classe]">
                 <td><strong>{{ absenceType.libelle }}</strong></td>
                 <td>{{ absenceType.libelleCourt }}</td>
                 <td class="action">
@@ -58,7 +59,7 @@
                 <td><input class="form-control" type="text" name="tab_new_values[short_libelle]" size="3" maxlength="3" :value="nouveauLibelleCourt"></td>
                 <td>
                     <select class="form-control" name=tab_new_values[type]>
-                        <option v-for="type in typesGeneraux" :selected="isSelected(type)">{{ type }}</option>
+                        <option v-for="classe in classesConges" :selected="isSelected(classe)">{{ titre(classe) }}</option>
                     </select>
                 </td>
             </tr>
@@ -91,16 +92,14 @@ var vm = new Vue({
         nouveauType : '<?= $nouveauType ?>',
         traductions : <?= json_encode($traductions) ?>,
         isCongesExceptionnelsActive: 'true' == "<?= $isCongesExceptionnelsActive ? 'true' : 'false' ?>",
-        axios : instance
+        axios : instance,
+        classesConges : <?= json_encode($classesConges) ?>
     },
     computed: {
-        typesGeneraux : function () {
-            return Object.keys(this.absenceTypes);
-        }
     },
     'methods' : {
         hasAbsences: function (type) {
-            return 0 < this.absenceTypes[type].length;
+            return undefined != this.absenceTypes[type] && 0 < this.absenceTypes[type].length;
         },
         titre: function (type) {
             return this.traductions.titres[type];
@@ -119,8 +118,8 @@ var vm = new Vue({
         }
     },
     created () {
-    var vm = this;
-    this.axios.get('/absence/type')
+        var vm = this;
+        this.axios.get('/absence/type')
         .then((response) => {
             if (typeof response.data != 'object') {
                 return;
@@ -135,19 +134,20 @@ var vm = new Vue({
                 }
                 organisedTypes[absenceType.type].push(absenceType);
             }
-            if (!vm.isisCongesExceptionnelsActive && undefined != organisedTypes['conges_exceptionnels']) {
+            if (!vm.isCongesExceptionnelsActive && undefined != organisedTypes['conges_exceptionnels']) {
                 delete organisedTypes['conges_exceptionnels'];
             }
 
             // Finally hide loader and show var
             document.getElementById('loader-bar').classList.add('hidden');
+            console.log('o', organisedTypes);
             vm.absenceTypes = organisedTypes;
         })
         .catch((error) => {
             console.log(error.response);
             console.error(error);
         })
-  }
+    }
 });
 </script>
 <?php
