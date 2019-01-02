@@ -4,62 +4,15 @@ $gestionGroupes = new \App\ProtoControllers\Groupe\Gestion();
 $idGroupe = NIL_INT;
 
 /**
- * retourne les utilisateurs
- *
- * @return array
- */
-function getEmployes(\App\Libraries\ApiClient $api, string $token)
-{
-    $employes = $api->get('utilisateur', $token)['data'];
-    $employes = array_map(function (array $e) {
-        $e += ['prenom' => 'A recup', 'isDansGroupe' => false];
-        return $e;
-    }, $employes);
-
-    return $employes;
-}
-
-/**
  * retourne les utilisateurs responsables
  *
  * @return array
  */
-function getInfosResponsables()
+function getInfosResponsables(array $employes)
 {
-    $responsables = [];
-
-    $infosResps = \App\ProtoControllers\Responsable::getInfosResponsables(\includes\SQL::singleton(), true);
-    foreach ($infosResps as $infos) {
-        $login = $infos['u_login'];
-        $responsables[$login] = [
-            'nom' => $infos['u_nom'],
-            'prenom' => $infos['u_prenom'],
-            'login' => $login,
-            'isDansGroupe' => false,
-        ];
-    }
-    return $responsables;
-}
-
-/**
- *
- * retourne les utilisateurs grands responsables
- * @return array
- */
-function getGrandResponsables()
-{
-    $responsables = [];
-
-    $infosResps = \App\ProtoControllers\Responsable::getInfosResponsables(\includes\SQL::singleton(),true);
-    foreach ($infosResps as $infos) {
-        $responsables[$infos['u_login']] = [
-            'nom' => $infos['u_nom'],
-            'prenom' => $infos['u_prenom'],
-            'login' => $infos['u_login'],
-            'isDansGroupe' => false
-        ];
-    }
-    return $responsables;
+    return array_filter($employes, function (array $e) {
+        return $e['is_haut_responsable'];
+    });
 }
 
 $sql = \includes\SQL::singleton();
@@ -113,9 +66,13 @@ $DivGrandRespId = uniqid();
 
 $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
 $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
-$employes = getEmployes($api, $_SESSION['token']);
-$responsables = getInfosResponsables();
-$grandResponsables = getGrandResponsables();
+$employes = $api->get('utilisateur', $_SESSION['token'])['data'];
+$employes = array_map(function (array $e) {
+    $e += ['isDansGroupe' => false];
+    return $e;
+}, $employes);
+
+$responsables = getInfosResponsables($employes);
 $titre = '<h1>' . _('admin_groupes_new_groupe') . '</h1>';
 
 require_once VIEW_PATH . 'Groupe/Edition.php';

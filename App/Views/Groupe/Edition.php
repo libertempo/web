@@ -3,10 +3,8 @@
  * $message
  * $selectId
  * $DivGrandRespId
- * $PHP_SELF
  * $infosGroupe
  * $data (tmp)
- * $config
  * $idGroupe
  * $doubleValidationActive
  * $employes
@@ -90,14 +88,14 @@
                 <table class="table table-hover table-responsive table-condensed table-striped">
                     <tbody>
                     <?php $i = true ?>
-                    <?php foreach ($responsables as $login => $info) : ?>
+                    <?php foreach ($responsables as $info) : ?>
                         <?php
                         $inputOption = '';
 
                         if (isset($data)) {
-                            if (in_array($login, $data['grandResponsables'])) {
+                            if (in_array($info['login'], $data['grandResponsables'])) {
                                 $inputOption = 'disabled';
-                            } elseif (in_array($login, $data['responsables'])) {
+                            } elseif (in_array($info['login'], $data['responsables'])) {
                                 $inputOption = 'checked';
                             }
                         } elseif ($info['isDansGroupe']) {
@@ -106,7 +104,7 @@
                         ?>
                         <tr class="<?= ($i) ? 'i' : 'p' ?>">
                             <td class="histo">
-                                <input type="checkbox" id="Resp_<?= $login ?>" name="checkbox_group_resps[<?= $login ?>]" onchange="disableCheckboxGroupe(this,'<?= $selectId ?>');" <?= $inputOption ?>>
+                                <input type="checkbox" id="Resp_<?= $info['login'] ?>" name="checkbox_group_resps[<?= $info['login'] ?>]" onchange="disableCheckboxGroupe(this,'<?= $selectId ?>');" <?= $inputOption ?>>
                             </td>
                             <td class="histo"><?= $info['nom'] ?> <?= $info['prenom'] ?>
                             </td>
@@ -122,12 +120,12 @@
                     <?php
                     $i = true;
                     ?>
-                    <?php foreach ($grandResponsables as $login => $info) : ?>
+                    <?php foreach ($responsables as $info) : ?>
                         <?php
                         $inputOption = '';
 
                         if (isset($data)) {
-                            if (in_array($login, $data['grandResponsables'])) {
+                            if (in_array($info['login'], $data['grandResponsables'])) {
                                 $inputOption = 'checked';
                             }
                         } elseif ($info['isDansGroupe']) {
@@ -137,7 +135,7 @@
 
                         <tr class="<?= ($i) ? 'i' : 'p' ?>">
                             <td class="histo">
-                                <input type="checkbox" id="Gres_<?= $login ?>" name="checkbox_group_grand_resps[<?=  $login ?>]" onchange="disableCheckboxGroupe(this,'<?= $selectId ?> ');" <?= $inputOption ?>>
+                                <input type="checkbox" id="Gres_<?= $info['login'] ?>" name="checkbox_group_grand_resps[<?=  $info['login'] ?>]" onchange="disableCheckboxGroupe(this,'<?= $selectId ?> ');" <?= $inputOption ?>>
                             </td>
                             <td class="histo"><?= $info['nom'] ?> <?= $info['prenom'] ?></td>
                         </tr>
