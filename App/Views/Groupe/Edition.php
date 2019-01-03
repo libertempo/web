@@ -50,10 +50,10 @@
                         <tr v-for="e in employes">
                             <td class="histo">
                                 <input type="checkbox"
-                                 :id="getId(e)"
-                                 :name="getName(e)"
-                                 :disabled="getDisabled(e)"
-                                 :checked="getChecked(e)"
+                                 :id="getEmployeId(e)"
+                                 :name="getEmployeName(e)"
+                                 :disabled="getEmployeDisabled(e)"
+                                 :checked="getEmployeChecked(e)"
                                 >
                             </td>
                             <td class="histo">{{ e.nom }} {{ e.prenom }}</td>
@@ -66,29 +66,20 @@
                 <h2><?= _('admin_gestion_groupe_resp_responsables') ?></h2>
                 <table class="table table-hover table-responsive table-condensed table-striped">
                     <tbody>
-                    <?php $i = true ?>
-                    <?php foreach ($responsables as $info) : ?>
-                        <?php
-                        $inputOption = '';
-
-                        if (!empty($data)) {
-                            if (in_array($info['login'], $data['grandResponsables'])) {
-                                $inputOption = 'disabled';
-                            } elseif (in_array($info['login'], $data['responsables'])) {
-                                $inputOption = 'checked';
-                            }
-                        } elseif ($info['isDansGroupe']) {
-                            $inputOption = 'checked';
-                        }
-                        ?>
-                        <tr class="<?= ($i) ? 'i' : 'p' ?>">
+                        <tr v-for="r in responsables">
                             <td class="histo">
-                                <input type="checkbox" id="Resp_<?= $info['login'] ?>" name="checkbox_group_resps[<?= $info['login'] ?>]" onchange="disableCheckboxGroupe(this,'<?= $selectId ?>');" <?= $inputOption ?>>
+                                <input type="checkbox"
+                                 :id="getResponsableId(r)"
+                                 :name="getResponsableName(r)"
+                                 :disabled="getResponsableDisabled(r)"
+                                 :checked="getResponsableChecked(r)"
+                                 @change="disableCheckboxGroupe(this, '<?= $selectId ?>')"
+                                 <? //onchange="disableCheckboxGroupe(this,'?= $selectId >');" ?= $inputOption ?>
+                                >
                             </td>
-                            <td class="histo"><?= $info['nom'] ?> <?= $info['prenom'] ?>
+                            <td class="histo">{{ r.nom }} {{ r.prenom }}</td>
                             </td>
                         </tr>
-                    <?php endforeach ; ?>
                     </tbody>
                 </table>
             </div>
@@ -150,7 +141,7 @@ var vm = new Vue({
     el: '#inner-content',
     data: {
         employes : {},
-        responsables : <?= json_encode($responsables) ?>,
+        responsables : {},
         responsablesGroupe : <?= json_encode($responsablesGroupe) ?>,
 
         hasDoubleValidation: 'true' == "<?= $doubleValidationActive ? 'true' : 'false' ?>",
@@ -161,7 +152,7 @@ var vm = new Vue({
     computed: {
     },
     'methods' : {
-        getDisabled : function (employe) {
+        getEmployeDisabled : function (employe) {
             if (0 != this.dataForm.length) {
                 if (undefined != this.dataForm['responsables'][employe['login']] || undefined != this.dataForm['grandResponsables'][employe['login']]) {
                     return true;
@@ -172,23 +163,54 @@ var vm = new Vue({
 
             return false;
         },
-        getChecked : function (employe) {
+        getEmployeChecked : function (employe) {
             if (0 != this.dataForm.length && this.dataForm['employes'][employe['login']]) {
                 return true;
             } else if (employe['isDansGroupe']) {
                 return true;
             }
+
             return false;
         },
-        getId : function (employe) {
+        getEmployeId : function (employe) {
             return 'Emp_' + employe['login'];
         },
-        getName : function (employe) {
+        getEmployeName : function (employe) {
             return 'checkbox_group_users[' + employe['login'] + ']';
         },
         selected : function (bool) {
             return bool == this.infosGroupe.doubleValidation;
-        }
+        },
+        getResponsableId : function (employe) {
+            return 'Resp_' + employe['login'];
+        },
+        getResponsableName : function (employe) {
+            return 'checkbox_group_resps[' + employe['login'] + ']';
+        },
+        getResponsableDisabled : function (employe) {
+            // if (!empty($data)) {
+            //     if (in_array($info['login'], $data['grandResponsables'])) {
+            //         $inputOption = 'disabled';
+            //     } elseif (in_array($info['login'], $data['responsables'])) {
+            //         $inputOption = 'checked';
+            //     }
+            // } elseif ($info['isDansGroupe']) {
+            //     $inputOption = 'checked';
+            // }
+            return false;
+        },
+        getResponsableChecked : function (employe) {
+            // if (!empty($data)) {
+            //     if (in_array($info['login'], $data['grandResponsables'])) {
+            //         $inputOption = 'disabled';
+            //     } elseif (in_array($info['login'], $data['responsables'])) {
+            //         $inputOption = 'checked';
+            //     }
+            // } elseif ($info['isDansGroupe']) {
+            //     $inputOption = 'checked';
+            // }
+            return false;
+        },
     },
     created () {
         var vm = this;
@@ -199,12 +221,18 @@ var vm = new Vue({
             }
             const employes = response.data.data;
             var fullUtilisateurs = new Array();
+            var responsables = new Array();
             for (var i = 0; i < employes.length; ++i) {
                 var employe = employes[i];
                 employe.isDansGroupe = false;
                 fullUtilisateurs.push(employe);
+
+                if (employe.is_haut_responsable) {
+                    responsables.push(employe);
+                }
             }
             vm.employes = fullUtilisateurs;
+            vm.responsables = responsables;
         })
         .catch((error) => {
             console.log(error.response);
