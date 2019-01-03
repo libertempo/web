@@ -26,7 +26,7 @@ $infosGroupe = [
     'doubleValidation' => '',
     'comment' => '',
 ];
-$data = NULL;
+$data = [];
 
 $errorsLst = [];
 if (!empty($_POST)) {
@@ -51,7 +51,7 @@ if (!empty($_POST)) {
     }
 }
 
-if (isset($data)) {
+if (!empty($data)) {
     $infosGroupe = [
         'nom' => $data['nom'],
         'comment' => $data['commentaire']
@@ -62,7 +62,7 @@ if (isset($data)) {
 }
 
 $selectId = uniqid();
-$DivGrandRespId = uniqid();
+$divGrandRespId = uniqid();
 
 $baseURIApi = $config->getUrlAccueil() . '/api/';
 $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
@@ -74,6 +74,7 @@ $employes = array_map(function (array $e) {
 }, $employes);
 
 $responsables = getInfosResponsables($employes);
+$responsablesGroupe = [];
 $titre = '<h1>' . _('admin_groupes_new_groupe') . '</h1>';
 
 require_once VIEW_PATH . 'Groupe/Edition.php';

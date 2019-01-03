@@ -2,18 +2,17 @@
 /**
  * $message
  * $selectId
- * $DivGrandRespId
+ * $divGrandRespId
  * $infosGroupe
  * $data (tmp)
  * $idGroupe
  * $doubleValidationActive
- * $employes
  * $responsables
- * $sql
+ * $responsablesGroupe
  * $baseURIApi
  */
 ?>
-<div id="inner-content" onload="showDivGroupeGrandResp('<?= $selectId ?>', '<?= $DivGrandRespId ?>');" class="form-group">
+<div id="inner-content" onload="showDivGroupeGrandResp('<?= $selectId ?>', '<?= $divGrandRespId ?>');" class="form-group">
     <h1><?= $titre ?></h1>
     <?= $message ?>
     <form method="post" action="" role="form">
@@ -34,7 +33,7 @@
                         <input class="form-control" type="text" name="new_group_libelle" size="50" maxlength="250" :value="infosGroupe.comment">
                     </td>
                     <td v-if="hasDoubleValidation">
-                        <select class="form-control" name="new_group_double_valid" id="<?= $selectId ?>" onchange="showDivGroupeGrandResp('<?= $selectId ?>','<?= $DivGrandRespId ?>');">
+                        <select class="form-control" name="new_group_double_valid" id="<?= $selectId ?>" onchange="showDivGroupeGrandResp('<?= $selectId ?>','<?= $divGrandRespId ?>');">
                             <option value="N" :selected="selected('N')">N</option>
                             <option value="Y" :selected="selected('Y')">Y</option>
                         </select>
@@ -48,29 +47,17 @@
                 <h2><?= _('admin_gestion_groupe_users_membres') ?></h2>
                 <table class="table table-hover table-condensed table-striped"/>
                     <tbody>
-                    <?php $i = true ?>
-                    <?php foreach ($employes as $info) : ?>
-                        <?php
-                        $inputOption = '';
-                        if (isset($data)) {
-                            if (in_array($info['login'], $data['responsables']) || in_array($info['login'], $data['grandResponsables'])) {
-                                $inputOption = 'disabled';
-                            } elseif (in_array($info['login'], $data['employes'])) {
-                                $inputOption = 'checked';
-                            }
-                        } elseif (\App\ProtoControllers\Groupe::isResponsableGroupe($info['login'], [$idGroupe], $sql)) {
-                            $inputOption = 'disabled';
-                        } elseif ($info['isDansGroupe']) {
-                            $inputOption = 'checked';
-                        }
-                        ?>
-                        <tr class="<?= ($i) ? 'i' : 'p' ?>">
+                        <tr v-for="e in employes">
                             <td class="histo">
-                                <input type="checkbox" id="Emp_<?= $info['login'] ?>" name="checkbox_group_users['<?= $info['login'] ?>]" <?= $inputOption ?>>
+                                <input type="checkbox"
+                                 :id="getId(e)"
+                                 :name="getName(e)"
+                                 :disabled="getDisabled(e)"
+                                 :checked="getChecked(e)"
+                                >
                             </td>
-                            <td class="histo"><?= $info['nom'] ?> <?= $info['prenom'] ?></td>
+                            <td class="histo">{{ e.nom }} {{ e.prenom }}</td>
                         </tr>
-                    <?php endforeach ?>
                     </tbody>
                 </table>
             </div>
@@ -84,7 +71,7 @@
                         <?php
                         $inputOption = '';
 
-                        if (isset($data)) {
+                        if (!empty($data)) {
                             if (in_array($info['login'], $data['grandResponsables'])) {
                                 $inputOption = 'disabled';
                             } elseif (in_array($info['login'], $data['responsables'])) {
@@ -105,7 +92,7 @@
                     </tbody>
                 </table>
             </div>
-            <div class="col-md-6 hide" id="<?= $DivGrandRespId ?>">
+            <div class="col-md-6 hide" id="<?= $divGrandRespId ?>">
                 <h2><?= _('admin_gestion_groupe_grand_resp_responsables') ?></h2>
                 <table class="table table-hover table-responsive table-condensed table-striped">
                     <tbody>
@@ -116,7 +103,7 @@
                         <?php
                         $inputOption = '';
 
-                        if (isset($data)) {
+                        if (!empty($data)) {
                             if (in_array($info['login'], $data['grandResponsables'])) {
                                 $inputOption = 'checked';
                             }
@@ -162,27 +149,67 @@ const instance = axios.create({
 var vm = new Vue({
     el: '#inner-content',
     data: {
-        employes : <?= json_encode($employes) ?>,
+        employes : {},
         responsables : <?= json_encode($responsables) ?>,
+        responsablesGroupe : <?= json_encode($responsablesGroupe) ?>,
+
         hasDoubleValidation: 'true' == "<?= $doubleValidationActive ? 'true' : 'false' ?>",
         infosGroupe : <?= json_encode($infosGroupe) ?>,
+        dataForm : <?= json_encode($data) ?>,
         axios : instance
     },
     computed: {
     },
     'methods' : {
-        hasPlanning : function () {
-            return 0 < Object.keys(this.plannings).length;
+        getDisabled : function (employe) {
+            if (0 != this.dataForm.length) {
+                if (undefined != this.dataForm['responsables'][employe['login']] || undefined != this.dataForm['grandResponsables'][employe['login']]) {
+                    return true;
+                }
+            } else if (undefined != this.responsablesGroupe[employe['login']]) {
+                return true;
+            }
+
+            return false;
+        },
+        getChecked : function (employe) {
+            if (0 != this.dataForm.length && this.dataForm['employes'][employe['login']]) {
+                return true;
+            } else if (employe['isDansGroupe']) {
+                return true;
+            }
+            return false;
+        },
+        getId : function (employe) {
+            return 'Emp_' + employe['login'];
+        },
+        getName : function (employe) {
+            return 'checkbox_group_users[' + employe['login'] + ']';
         },
         selected : function (bool) {
             return bool == this.infosGroupe.doubleValidation;
-        },
-        linkModification : function (id) {
-            return this.lienModification + '?id=' + id;
         }
     },
     created () {
         var vm = this;
+        this.axios.get('/utilisateur')
+        .then((response) => {
+            if (typeof response.data != 'object') {
+                return;
+            }
+            const employes = response.data.data;
+            var fullUtilisateurs = new Array();
+            for (var i = 0; i < employes.length; ++i) {
+                var employe = employes[i];
+                employe.isDansGroupe = false;
+                fullUtilisateurs.push(employe);
+            }
+            vm.employes = fullUtilisateurs;
+        })
+        .catch((error) => {
+            console.log(error.response);
+            console.error(error);
+        })
     }
 });
 </script>
