@@ -23,7 +23,7 @@ $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 $message = '';
 $infosGroupe = [
     'nom' => '',
-    'doubleValidation' => false,
+    'doubleValidation' => '',
     'comment' => '',
 ];
 $data = NULL;
@@ -64,6 +64,7 @@ if (isset($data)) {
 $selectId = uniqid();
 $DivGrandRespId = uniqid();
 
+$baseURIApi = $config->getUrlAccueil() . '/api/';
 $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
 $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
 $employes = $api->get('utilisateur', $_SESSION['token'])['data'];

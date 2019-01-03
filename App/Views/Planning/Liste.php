@@ -96,7 +96,7 @@ var vm = new Vue({
             console.log(error.response);
             console.error(error);
         })
-  }
+    }
 });
 </script>
 <?php

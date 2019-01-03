@@ -9,11 +9,11 @@
  * $doubleValidationActive
  * $employes
  * $responsables
- * $grandResponsables
  * $sql
+ * $baseURIApi
  */
 ?>
-<div onload="showDivGroupeGrandResp('<?= $selectId ?>', '<?= $DivGrandRespId ?>');" class="form-group">
+<div id="inner-content" onload="showDivGroupeGrandResp('<?= $selectId ?>', '<?= $DivGrandRespId ?>');" class="form-group">
     <h1><?= $titre ?></h1>
     <?= $message ?>
     <form method="post" action="" role="form">
@@ -22,31 +22,23 @@
                 <tr>
                     <th><b><?= _('Nom du groupe') ?></b></th>
                     <th><?= _('admin_groupes_libelle') ?> / <?= _('divers_comment_maj_1') ?></th>
-                    <?php if ($doubleValidationActive) : ?>
-                        <th><?= _('admin_groupes_double_valid') ?></th>
-                    <?php endif; ?>
+                    <th v-if="hasDoubleValidation"><?= _('admin_groupes_double_valid') ?></th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td>
-                        <input class="form-control" type="text" name="new_group_name" size="30" maxlength="50" value="<?= $infosGroupe['nom'] ?>" required>
+                        <input class="form-control" type="text" name="new_group_name" size="30" maxlength="50" :value="infosGroupe.nom" required>
                     </td>
                     <td>
-                        <input class="form-control" type="text" name="new_group_libelle" size="50" maxlength="250" value="<?= $infosGroupe['comment'] ?>">
+                        <input class="form-control" type="text" name="new_group_libelle" size="50" maxlength="250" :value="infosGroupe.comment">
                     </td>
-                    <?php if ($doubleValidationActive) : ?>
-                        <?php
-                        $selectN = $infosGroupe['doubleValidation'] == 'N' ? 'selected="selected"' : '';
-                        $selectY = $infosGroupe['doubleValidation'] == 'Y' ? 'selected="selected"' : '';
-                        ?>
-                        <td>
-                            <select class="form-control" name="new_group_double_valid" id="<?= $selectId ?>" onchange="showDivGroupeGrandResp('<?= $selectId ?>','<?= $DivGrandRespId ?>');">
-                                <option value="N" <?= $selectN ?>>N</option>
-                                <option value="Y" <?= $selectY ?>>Y</option>
-                            </select>
-                        </td>
-                    <?php endif; ?>
+                    <td v-if="hasDoubleValidation">
+                        <select class="form-control" name="new_group_double_valid" id="<?= $selectId ?>" onchange="showDivGroupeGrandResp('<?= $selectId ?>','<?= $DivGrandRespId ?>');">
+                            <option value="N" :selected="selected('N')">N</option>
+                            <option value="Y" :selected="selected('Y')">Y</option>
+                        </select>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -154,3 +146,44 @@
         </div>
     </form>
 </div>
+
+<script>
+axios.defaults.headers.get = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json',
+  'Token': '<?= $_SESSION['token'] ?>',
+};
+
+const instance = axios.create({
+  baseURL: '<?= $baseURIApi ?>',
+  timeout: 1500
+});
+
+var vm = new Vue({
+    el: '#inner-content',
+    data: {
+        employes : <?= json_encode($employes) ?>,
+        responsables : <?= json_encode($responsables) ?>,
+        hasDoubleValidation: 'true' == "<?= $doubleValidationActive ? 'true' : 'false' ?>",
+        infosGroupe : <?= json_encode($infosGroupe) ?>,
+        axios : instance
+    },
+    computed: {
+    },
+    'methods' : {
+        hasPlanning : function () {
+            return 0 < Object.keys(this.plannings).length;
+        },
+        selected : function (bool) {
+            return bool == this.infosGroupe.doubleValidation;
+        },
+        linkModification : function (id) {
+            return this.lienModification + '?id=' + id;
+        }
+    },
+    created () {
+        var vm = this;
+    }
+});
+</script>
+<?php
