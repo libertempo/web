@@ -44,6 +44,13 @@
                 <h2><?= _('admin_gestion_groupe_users_membres') ?></h2>
                 <table class="table table-hover table-condensed table-striped"/>
                     <tbody>
+                        <tr>
+                            <div id="loader-bar-employe" class="progress">
+                                <div class="progress-bar progress-bar-striped active" role="progressbar"
+                                aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%">
+                                </div>
+                            </div>
+                        </tr>
                         <tr v-for="e in employes">
                             <td class="histo">
                                 <input type="checkbox"
@@ -63,6 +70,13 @@
                 <h2><?= _('admin_gestion_groupe_resp_responsables') ?></h2>
                 <table class="table table-hover table-responsive table-condensed table-striped">
                     <tbody>
+                        <tr>
+                            <div id="loader-bar-responsable" class="progress">
+                                <div class="progress-bar progress-bar-striped active" role="progressbar"
+                                aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%">
+                                </div>
+                            </div>
+                        </tr>
                         <tr v-for="r in responsables">
                             <td class="histo">
                                 <input type="checkbox"
@@ -267,6 +281,9 @@ var vm = new Vue({
                     responsables.push(employe);
                 }
             }
+            // Finally hide loaders and show vars
+            document.getElementById('loader-bar-employe').classList.add('hidden');
+            document.getElementById('loader-bar-responsable').classList.add('hidden');
             vm.employes = fullUtilisateurs;
             vm.responsables = responsables;
         })
