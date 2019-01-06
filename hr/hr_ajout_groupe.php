@@ -3,20 +3,9 @@ defined('_PHP_CONGES') or die('Restricted access');
 $gestionGroupes = new \App\ProtoControllers\Groupe\Gestion();
 $idGroupe = NIL_INT;
 
-/**
- * retourne les utilisateurs responsables
- *
- * @return array
- */
-function getInfosResponsables(array $employes)
-{
-    return array_filter($employes, function (array $e) {
-        return $e['is_haut_responsable'];
-    });
-}
-
 $sql = \includes\SQL::singleton();
 $config = new \App\Libraries\Configuration($sql);
+$baseURIApi = $config->getUrlAccueil() . '/api/';
 $doubleValidationActive = $config->isDoubleValidationActive();
 
 $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
@@ -61,19 +50,6 @@ if (!empty($data)) {
     }
 }
 
-$selectId = uniqid();
-$divGrandRespId = uniqid();
-
-$baseURIApi = $config->getUrlAccueil() . '/api/';
-$injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
-$api = $injectableCreator->get(\App\Libraries\ApiClient::class);
-$employes = $api->get('utilisateur', $_SESSION['token'])['data'];
-$employes = array_map(function (array $e) {
-    $e += ['isDansGroupe' => false];
-    return $e;
-}, $employes);
-
-$responsables = getInfosResponsables($employes);
 $responsablesGroupe = [];
 $titre = '<h1>' . _('admin_groupes_new_groupe') . '</h1>';
 
