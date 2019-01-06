@@ -136,11 +136,30 @@ var vm = new Vue({
     computed: {
     },
     'methods' : {
+        objectContains : function (object, needle) {
+            return undefined != object[needle];
+        },
+        arrayContains : function (array, needle) {
+            return -1 != array.indexOf(needle);
+        },
+        dataEmployeContains : function (employe) {
+            var login = employe['login'];
+
+            return this.objectContains(this.dataForm, 'employes') && this.arrayContains(this.dataForm['employes'], login);
+        },
+        dataResponsableContains : function (employe) {
+            var login = employe['login'];
+
+            return this.objectContains(this.dataForm, 'responsables') && this.arrayContains(this.dataForm['responsables'], login);
+        },
+        dataGrandResponsableContains : function (employe) {
+            var login = employe['login'];
+
+            return this.objectContains(this.dataForm, 'grandResponsables') && this.arrayContains(this.dataForm['grandResponsables'], login);
+        },
         getEmployeDisabled : function (employe) {
-            if (0 != this.dataForm.length) {
-                if (undefined != this.dataForm['responsables'][employe['login']] || undefined != this.dataForm['grandResponsables'][employe['login']]) {
+            if (this.dataResponsableContains(employe) || this.dataGrandResponsableContains(employe)) {
                     return true;
-                }
             } else if (undefined != this.responsablesGroupe[employe['login']]) {
                 return true;
             }
@@ -148,9 +167,7 @@ var vm = new Vue({
             return false;
         },
         getEmployeChecked : function (employe) {
-            if (0 != this.dataForm.length && this.dataForm['employes'][employe['login']]) {
-                return true;
-            } else if (employe['isDansGroupe']) {
+            if (this.dataEmployeContains(employe) || employe['isDansGroupe']) {
                 return true;
             }
 
@@ -172,12 +189,10 @@ var vm = new Vue({
             return 'checkbox_group_resps[' + employe['login'] + ']';
         },
         getResponsableDisabled : function (employe) {
-            return (0 != this.dataForm.length && undefined != this.dataForm['grandResponsables'][employe['login']]);
+            return (this.dataGrandResponsableContains(employe));
         },
         getResponsableChecked : function (employe) {
-            if (0 != this.dataForm.length && this.dataForm['responsables'][employe['login']]) {
-                return true;
-            } else if (employe['isDansGroupe']) {
+            if (this.dataResponsableContains(employe) || employe['isDansGroupe']) {
                 return true;
             }
 
@@ -190,9 +205,7 @@ var vm = new Vue({
             return 'checkbox_group_grand_resps[' + employe['login'] + ']';
         },
         getGrandResponsableChecked : function (employe) {
-            if (0 != this.dataForm.length && this.dataForm['grandResponsables'][employe['login']]) {
-                return true;
-            } else if (employe['isDansGroupe']) {
+            if (this.dataGrandResponsableContains(employe) || employe['isDansGroupe']) {
                 return true;
             }
 
@@ -265,7 +278,7 @@ var vm = new Vue({
     updated () {
         // Shows grand responsable groupe
         this.showDivGroupeGrandResp('select-double-validation', 'groupe-grands-responsables');
-        // Update checkboxes
+        // Update checkboxes and lock them
         var event = new Event('change');
         var responsables = document.querySelectorAll('#groupe-responsables input[type=checkbox]');
         for (var i in responsables) {
