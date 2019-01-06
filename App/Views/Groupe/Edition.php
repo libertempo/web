@@ -1,18 +1,15 @@
 <?php declare(strict_types = 1);
 /**
  * $message
- * $selectId
- * $divGrandRespId
  * $infosGroupe
  * $data (tmp)
  * $idGroupe
  * $doubleValidationActive
- * $responsables
  * $responsablesGroupe
  * $baseURIApi
  */
 ?>
-<div id="inner-content" onload="showDivGroupeGrandResp('<?= $selectId ?>', '<?= $divGrandRespId ?>');" class="form-group">
+<div id="inner-content" class="form-group">
     <h1><?= $titre ?></h1>
     <?= $message ?>
     <form method="post" action="" role="form">
@@ -33,7 +30,7 @@
                         <input class="form-control" type="text" name="new_group_libelle" size="50" maxlength="250" :value="infosGroupe.comment">
                     </td>
                     <td v-if="hasDoubleValidation">
-                        <select class="form-control" name="new_group_double_valid" id="<?= $selectId ?>" onchange="showDivGroupeGrandResp('<?= $selectId ?>','<?= $divGrandRespId ?>');">
+                        <select class="form-control" name="new_group_double_valid" id="select-double-validation" @change="showDivGroupeGrandResp('select-double-validation', 'groupe-grands-responsables');">
                             <option value="N" :selected="selected('N')">N</option>
                             <option value="Y" :selected="selected('Y')">Y</option>
                         </select>
@@ -56,13 +53,13 @@
                                  :checked="getEmployeChecked(e)"
                                 >
                             </td>
-                            <td class="histo">{{ e.nom }} {{ e.prenom }}</td>
+                            <td class="histo"><label :for="getEmployeId(e)">{{ e.nom }} {{ e.prenom }}</label></td>
                         </tr>
                     </tbody>
                 </table>
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-6" id="groupe-responsables">
                 <h2><?= _('admin_gestion_groupe_resp_responsables') ?></h2>
                 <table class="table table-hover table-responsive table-condensed table-striped">
                     <tbody>
@@ -73,16 +70,16 @@
                                  :name="getResponsableName(r)"
                                  :disabled="getResponsableDisabled(r)"
                                  :checked="getResponsableChecked(r)"
-                                 @change="disableCheckboxGroupe($event, '<?= $selectId ?>')"
+                                 @change="disableCheckboxGroupe($event, 'select-double-validation')"
                                 >
                             </td>
-                            <td class="histo">{{ r.nom }} {{ r.prenom }}</td>
+                            <td class="histo"><label :for="getResponsableId(r)">{{ r.nom }} {{ r.prenom }}</label></td>
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <div class="col-md-6 hide" id="<?= $divGrandRespId ?>">
+            <div class="col-md-6 hide" id="groupe-grands-responsables">
                 <h2><?= _('admin_gestion_groupe_grand_resp_responsables') ?></h2>
                 <table class="table table-hover table-responsive table-condensed table-striped">
                     <tbody>
@@ -92,10 +89,10 @@
                                  :id="getGrandResponsableId(r)"
                                  :name="getGrandResponsableName(r)"
                                  :checked="getGrandResponsableChecked(r)"
-                                 @change="disableCheckboxGroupe($event, '<?= $selectId ?>')"
+                                 @change="disableCheckboxGroupe($event, 'select-double-validation')"
                                 >
                             </td>
-                            <td class="histo">{{ r.nom }} {{ r.prenom }}</td>
+                            <td class="histo"><label :for="getGrandResponsableId(r)">{{ r.nom }} {{ r.prenom }}</label></td>
                         </tr>
                     </tbody>
                 </table>
@@ -227,6 +224,15 @@ var vm = new Vue({
                     grandResponsable.disabled = false;
                 }
             }
+        },
+        showDivGroupeGrandResp : function (selectId, DivGrandRespId) {
+            var select = document.getElementById(selectId);
+            var groupeGrandsResponsables = document.getElementById(DivGrandRespId);
+            if (select.value == 'Y') {
+                groupeGrandsResponsables.classList.remove('hide');
+            } else {
+                groupeGrandsResponsables.classList.add('hide');
+            }
         }
     },
     created () {
@@ -255,6 +261,19 @@ var vm = new Vue({
             console.log(error.response);
             console.error(error);
         })
+    },
+    updated () {
+        // Shows grand responsable groupe
+        this.showDivGroupeGrandResp('select-double-validation', 'groupe-grands-responsables');
+        // Update checkboxes
+        var event = new Event('change');
+        var responsables = document.querySelectorAll('#groupe-responsables input[type=checkbox]');
+        for (var i in responsables) {
+            if (!responsables.hasOwnProperty(i)) {
+                continue;
+            }
+            responsables[i].dispatchEvent(event);
+        }
     }
 });
 </script>

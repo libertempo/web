@@ -659,15 +659,6 @@ var selectAssociationPlanning = function(idElement, associationsGroupe, nilId) {
     }
 }
 
-function showDivGroupeGrandResp(selectId, DivGrandRespId) {
-    if (document.getElementById(selectId).value == 'Y') {
-        document.getElementById(DivGrandRespId).classList.remove('hide');
-    } else {
-        document.getElementById(DivGrandRespId).classList.add('hide');
-    }
-    return false;
-}
-
 $(function() {
     $('div[onload]').trigger('onload');
 });
