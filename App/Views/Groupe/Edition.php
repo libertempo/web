@@ -73,8 +73,7 @@
                                  :name="getResponsableName(r)"
                                  :disabled="getResponsableDisabled(r)"
                                  :checked="getResponsableChecked(r)"
-                                 @change="disableCheckboxGroupe(this, '<?= $selectId ?>')"
-                                 <? //onchange="disableCheckboxGroupe(this,'?= $selectId >');" ?= $inputOption ?>
+                                 @change="disableCheckboxGroupe($event, '<?= $selectId ?>')"
                                 >
                             </td>
                             <td class="histo">{{ r.nom }} {{ r.prenom }}</td>
@@ -105,7 +104,11 @@
 
                         <tr class="<?= ($i) ? 'i' : 'p' ?>">
                             <td class="histo">
-                                <input type="checkbox" id="Gres_<?= $info['login'] ?>" name="checkbox_group_grand_resps[<?=  $info['login'] ?>]" onchange="disableCheckboxGroupe(this,'<?= $selectId ?> ');" <?= $inputOption ?>>
+                                <input type="checkbox"
+                                 id="Gres_<?= $info['login'] ?>"
+                                 name="checkbox_group_grand_resps[<?=  $info['login'] ?>]"
+                                 @change="disableCheckboxGroupe($event, '<?= $selectId ?>')"
+                                >
                             </td>
                             <td class="histo"><?= $info['nom'] ?> <?= $info['prenom'] ?></td>
                         </tr>
@@ -199,6 +202,33 @@ var vm = new Vue({
 
             return false;
         },
+        disableCheckboxGroupe : function (event, selectId) {
+            var target = event.target;
+            var select = document.getElementById(selectId);
+            var login = target.id.substring(5);
+            var employe = document.getElementById('Emp_' + login);
+            var responsable = document.getElementById('Resp_' + login);
+            var grandResponsable = document.getElementById('Gres_' + login);
+
+            if (target.checked) {
+                employe.disabled = true;
+                employe.checked = false;
+                if (target.id.substring(0, 4) == 'Gres') {
+                    responsable.disabled = true;
+                    responsable.checked = false;
+                } else if (select.value == 'Y') {
+                    grandResponsable.disabled = true;
+                    grandResponsable.checked = false;
+                }
+            } else {
+                employe.disabled = false;
+                if (target.id.substring(0, 4) == 'Gres') {
+                    responsable.disabled = false;
+                } else if (select.value == 'Y') {
+                    grandResponsable.disabled = false;
+                }
+            }
+        }
     },
     created () {
         var vm = this;
