@@ -86,33 +86,17 @@
                 <h2><?= _('admin_gestion_groupe_grand_resp_responsables') ?></h2>
                 <table class="table table-hover table-responsive table-condensed table-striped">
                     <tbody>
-                    <?php
-                    $i = true;
-                    ?>
-                    <?php foreach ($responsables as $info) : ?>
-                        <?php
-                        $inputOption = '';
-
-                        if (!empty($data)) {
-                            if (in_array($info['login'], $data['grandResponsables'])) {
-                                $inputOption = 'checked';
-                            }
-                        } elseif ($info['isDansGroupe']) {
-                            $inputOption = 'checked';
-                        }
-                        ?>
-
-                        <tr class="<?= ($i) ? 'i' : 'p' ?>">
+                        <tr v-for="r in responsables">
                             <td class="histo">
                                 <input type="checkbox"
-                                 id="Gres_<?= $info['login'] ?>"
-                                 name="checkbox_group_grand_resps[<?=  $info['login'] ?>]"
+                                 :id="getGrandResponsableId(r)"
+                                 :name="getGrandResponsableName(r)"
+                                 :checked="getGrandResponsableChecked(r)"
                                  @change="disableCheckboxGroupe($event, '<?= $selectId ?>')"
                                 >
                             </td>
-                            <td class="histo"><?= $info['nom'] ?> <?= $info['prenom'] ?></td>
+                            <td class="histo">{{ r.nom }} {{ r.prenom }}</td>
                         </tr>
-                    <?php endforeach;?>
                     </tbody>
                 </table>
             </div>
@@ -195,6 +179,21 @@ var vm = new Vue({
         },
         getResponsableChecked : function (employe) {
             if (0 != this.dataForm.length && this.dataForm['responsables'][employe['login']]) {
+                return true;
+            } else if (employe['isDansGroupe']) {
+                return true;
+            }
+
+            return false;
+        },
+        getGrandResponsableId : function (employe) {
+            return 'Gres_' + employe['login'];
+        },
+        getGrandResponsableName : function (employe) {
+            return 'checkbox_group_grand_resps[' + employe['login'] + ']';
+        },
+        getGrandResponsableChecked : function (employe) {
+            if (0 != this.dataForm.length && this.dataForm['grandResponsables'][employe['login']]) {
                 return true;
             } else if (employe['isDansGroupe']) {
                 return true;
