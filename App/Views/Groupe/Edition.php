@@ -188,27 +188,15 @@ var vm = new Vue({
             return 'checkbox_group_resps[' + employe['login'] + ']';
         },
         getResponsableDisabled : function (employe) {
-            // if (!empty($data)) {
-            //     if (in_array($info['login'], $data['grandResponsables'])) {
-            //         $inputOption = 'disabled';
-            //     } elseif (in_array($info['login'], $data['responsables'])) {
-            //         $inputOption = 'checked';
-            //     }
-            // } elseif ($info['isDansGroupe']) {
-            //     $inputOption = 'checked';
-            // }
-            return false;
+            return (0 != this.dataForm.length && undefined != this.dataForm['grandResponsables'][employe['login']]);
         },
         getResponsableChecked : function (employe) {
-            // if (!empty($data)) {
-            //     if (in_array($info['login'], $data['grandResponsables'])) {
-            //         $inputOption = 'disabled';
-            //     } elseif (in_array($info['login'], $data['responsables'])) {
-            //         $inputOption = 'checked';
-            //     }
-            // } elseif ($info['isDansGroupe']) {
-            //     $inputOption = 'checked';
-            // }
+            if (0 != this.dataForm.length && this.dataForm['responsables'][employe['login']]) {
+                return true;
+            } else if (employe['isDansGroupe']) {
+                return true;
+            }
+
             return false;
         },
     },
