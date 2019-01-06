@@ -229,9 +229,7 @@ var vm = new Vue({
             return 'checkbox_group_grand_resps[' + employe['login'] + ']';
         },
         getGrandResponsableChecked : function (employe) {
-            if (0 != this.dataForm.length && this.dataForm['grandResponsables'][employe['login']]) {
-                return true;
-            } else if (employe['isDansGroupe']) {
+            if (this.dataGrandResponsableContains(employe) || employe['isDansGroupe']) {
                 return true;
             }
 
