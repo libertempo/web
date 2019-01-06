@@ -222,6 +222,21 @@ var vm = new Vue({
 
             return false;
         },
+        getGrandResponsableId : function (employe) {
+            return 'Gres_' + employe['login'];
+        },
+        getGrandResponsableName : function (employe) {
+            return 'checkbox_group_grand_resps[' + employe['login'] + ']';
+        },
+        getGrandResponsableChecked : function (employe) {
+            if (0 != this.dataForm.length && this.dataForm['grandResponsables'][employe['login']]) {
+                return true;
+            } else if (employe['isDansGroupe']) {
+                return true;
+            }
+
+            return false;
+        },
         disableCheckboxGroupe : function (event, selectId) {
             var target = event.target;
             var select = document.getElementById(selectId);
