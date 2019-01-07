@@ -27,7 +27,7 @@ if (!empty($_POST)) {
     }
 }
 
-$injectableCreator = new \App\Libraries\InjectableCreator(\includes\SQL::singleton(),$configuration);
+$injectableCreator = new \App\Libraries\InjectableCreator(\includes\SQL::singleton(), $configuration);
 $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
 $planning = $api->get('planning/' .  $planningId, $_SESSION['token'])['data'];
 $jours = [
@@ -103,7 +103,8 @@ $text = [
 ];
 
 $optionsGroupes = \App\ProtoControllers\Groupe::getOptions();
-$associationsGroupe = array_map(function ($groupe) {
+$associationsGroupe = array_map(
+    function ($groupe) {
         return $groupe['utilisateurs'];
     },
     $optionsGroupes

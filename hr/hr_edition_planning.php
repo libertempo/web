@@ -24,7 +24,7 @@ if (!empty($_POST)) {
         $valueName = $_POST['name'];
     }
 } elseif (NIL_INT !== $planningId) {
-    $injectableCreator = new \App\Libraries\InjectableCreator(\includes\SQL::singleton(),$config);
+    $injectableCreator = new \App\Libraries\InjectableCreator(\includes\SQL::singleton(), $config);
     $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
     $planning = $api->get('planning/' .  $planningId, $_SESSION['token'])['data'];
     $valueName = $planning['name'];
@@ -104,7 +104,8 @@ $text = [
 ];
 $utilisateursAssocies = \App\ProtoControllers\HautResponsable\Planning::getListeUtilisateursAssocies($planningId);
 $optionsGroupes = \App\ProtoControllers\Groupe::getOptions();
-$associations = array_map(function ($groupe) {
+$associations = array_map(
+    function ($groupe) {
         return $groupe['utilisateurs'];
     },
     $optionsGroupes

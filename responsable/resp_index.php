@@ -5,7 +5,7 @@ define('INCLUDE_PATH',     ROOT_PATH . 'includes/');
 require_once INCLUDE_PATH . 'define.php';
 defined('_PHP_CONGES') or die('Restricted access');
 
-include_once INCLUDE_PATH . 'session.php';
+require_once INCLUDE_PATH . 'session.php';
 
 $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
@@ -88,7 +88,7 @@ if ($config->isCongesExceptionnelsActive()) {
 }
 
 echo '<div class="' . $onglet . ' wrapper" id="main-content">';
-include_once ROOT_PATH . 'responsable/resp_' . $onglet . '.php';
+require_once ROOT_PATH . 'responsable/resp_' . $onglet . '.php';
 echo '</div>';
 
 /*********************************/
