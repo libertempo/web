@@ -20,9 +20,11 @@ class Planning extends \App\ProtoControllers\APlanning
     public static function putPlanning($id, array $put)
     {
         $id = (int) $id;
-        $utilisateursPlannings = array_map(function (array $u) {
-            return $u['u_login'];
-        }, \App\ProtoControllers\Utilisateur::getListByPlanning($id));
+        $utilisateursPlannings = array_map(
+            function (array $u) {
+                return $u['u_login'];
+            }, \App\ProtoControllers\Utilisateur::getListByPlanning($id)
+        );
 
         $subalternesSansSortie = [];
         foreach ($utilisateursPlannings as $u) {

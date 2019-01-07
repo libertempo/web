@@ -245,7 +245,7 @@ abstract class AHeure
             return Creneau::TYPE_PERIODE_MATIN_APRES_MIDI;
         }
         return Creneau::TYPE_PERIODE_APRES_MIDI;
-     }
+    }
     /**
      * Vérifie que l'utilisateur a bien le droit d'éditer la ressource
      *

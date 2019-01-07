@@ -14,7 +14,8 @@ class Ldap
 {
     private $configuration = [];
 
-    public function __construct($confLdap) {
+    public function __construct($confLdap)
+    {
         $this->configuration['server'] = $confLdap['server'];
         $this->configuration['version'] = $confLdap['version'];
         $this->configuration['bindUser'] = "" == $confLdap['bindUser'] ? null : $confLdap['bindUser'];
@@ -36,7 +37,7 @@ class Ldap
         }
 
         if (!ldap_bind($this->configuration['ldapConn'], $this->configuration['bindUser'], $this->configuration['bindPassword'])) {
-          throw new \Exception(_('Erreur ldap'));
+            throw new \Exception(_('Erreur ldap'));
         }
     }
 
@@ -55,7 +56,7 @@ class Ldap
         $attributs = [$this->configuration['attrLogin'], $this->configuration['attrNom'], $this->configuration['attrPrenom']];
         
         $searchResult = ldap_search($this->configuration['ldapConn'], $this->configuration['searchdn'], $filter, $attributs, 0, 10);
-        $entries = ldap_get_entries($this->configuration['ldapConn'],$searchResult);
+        $entries = ldap_get_entries($this->configuration['ldapConn'], $searchResult);
 
         for ($i=0; $i<$entries["count"]; $i++) {
             $data[] = [
@@ -75,7 +76,7 @@ class Ldap
         $attributs = [$this->configuration['attrLogin'], $this->configuration['attrMail']];
 
         $searchResult = ldap_search($this->configuration['ldapConn'], $this->configuration['searchdn'], $filter, $attributs, 0, 1);
-        $entries = ldap_get_entries($this->configuration['ldapConn'],$searchResult);
+        $entries = ldap_get_entries($this->configuration['ldapConn'], $searchResult);
 
         if (0 < $entries['count'] && array_key_exists($this->configuration['attrMail'], $entries[0])) {
             return $entries[0][$this->configuration['attrMail']][0];

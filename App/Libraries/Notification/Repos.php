@@ -4,16 +4,16 @@ namespace App\Libraries\Notification;
 
 /**
  * Objet de gestion des notifications
- * 
- * 
  */
-Class Repos extends \App\Libraries\ANotification {
+Class Repos extends \App\Libraries\ANotification
+{
 
 
     /**
      * {@inheritDoc}
      */
-    protected function getData($id) {
+    protected function getData($id)
+    {
 
         if (empty($id)) {
             return [];
@@ -36,7 +36,8 @@ Class Repos extends \App\Libraries\ANotification {
     /**
      * {@inheritDoc}
      */
-    protected function getContenuDemande($data) {
+    protected function getContenuDemande($data)
+    {
 
         $return['sujet'] = "[CONGES] Demande d'heure de repos";
         $return['expediteur']['mail'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($data['login']);
@@ -57,7 +58,8 @@ Class Repos extends \App\Libraries\ANotification {
     /**
      * {@inheritDoc}
      */
-    protected function getContenuEmployePremierValidation($data) {
+    protected function getContenuEmployePremierValidation($data)
+    {
 
         $return['sujet'] = "[CONGES] Première validation d'heure de repos";
         $return['expediteur']['mail'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($_SESSION['userlogin']);
@@ -75,7 +77,8 @@ Class Repos extends \App\Libraries\ANotification {
     /**
      * {@inheritDoc}
      */
-    protected function getContenuValidationFinale($data) {
+    protected function getContenuValidationFinale($data)
+    {
 
         $return['sujet'] = "[CONGES] Demande d'heure de repos validée";
         $return['expediteur']['mail'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($_SESSION['userlogin']);
@@ -92,7 +95,8 @@ Class Repos extends \App\Libraries\ANotification {
     /**
      * {@inheritDoc}
      */
-    protected function getContenuRefus($data) {
+    protected function getContenuRefus($data)
+    {
 
         $return['sujet'] = "[CONGES] Demande d'heure de repos refusée";
         $return['expediteur']['mail'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($_SESSION['userlogin']);
@@ -102,7 +106,7 @@ Class Repos extends \App\Libraries\ANotification {
 
         $return['message'] = $infoResp['u_prenom'] . " " . $infoResp['u_nom'] . " a refusé(e) votre demande d'heure de repos du ". $data['jour'] ." de ". $data['debut'] ." à ". $data['fin'] .".";
 
-        if (!is_null($data['comment_refus'])){
+        if (!is_null($data['comment_refus'])) {
             $return['message'] .= "\nCommentaire : " . $data['comment_refus'];
         }
         
@@ -113,7 +117,8 @@ Class Repos extends \App\Libraries\ANotification {
     /**
      * {@inheritDoc}
      */
-    protected function getContenuAnnulation($data) {
+    protected function getContenuAnnulation($data)
+    {
 
         $return['sujet'] = "[CONGES] Demande d'heure de repos annulée";
         $return['expediteur']['mail'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($data['login']);
@@ -133,7 +138,8 @@ Class Repos extends \App\Libraries\ANotification {
     /**
      * {@inheritDoc}
      */
-    protected function getContenuGrandResponsablePremiereValidation($data) {
+    protected function getContenuGrandResponsablePremiereValidation($data)
+    {
         $return['sujet'] = "[CONGES] Demande d'heure de repos";
         $return['expediteur']['mail'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($_SESSION['userlogin']);
         $grandResponsables = \App\ProtoControllers\Responsable::getLoginGrandResponsableUtilisateur($data['login']);
@@ -145,7 +151,7 @@ Class Repos extends \App\Libraries\ANotification {
             $return['destinataire'][] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($responsable);
         }
 
-    $return['message'] = $infoResp['u_prenom'] . " " . $infoResp['u_nom'] . " a validé(e) la demande d'ajout d'heure de repos de ".$infoUser['u_prenom']." ".$infoUser['u_nom']." pour le ". $data['jour'] ." de ". $data['debut'] ." à ". $data['fin'] ." soit ". $data['duree'] ." heure(s). Vous devez traiter cette demande";
+        $return['message'] = $infoResp['u_prenom'] . " " . $infoResp['u_nom'] . " a validé(e) la demande d'ajout d'heure de repos de ".$infoUser['u_prenom']." ".$infoUser['u_nom']." pour le ". $data['jour'] ." de ". $data['debut'] ." à ". $data['fin'] ." soit ". $data['duree'] ." heure(s). Vous devez traiter cette demande";
 
         $return['config'] = 'mail_new_demande_alerte_resp';
         return $return;

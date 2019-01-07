@@ -66,7 +66,6 @@ abstract class ATraitement
      * @param array $listId
      *
      * @return array $infoDemande
-     *
      */
     abstract protected function getInfoDemandes(array $listId);
 
