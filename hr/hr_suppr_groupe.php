@@ -1,6 +1,6 @@
 <?php
 
-defined( '_PHP_CONGES' ) or die( 'Restricted access' );
+defined('_PHP_CONGES') or die('Restricted access');
 
 $id = (int) getpost_variable('group');
 
