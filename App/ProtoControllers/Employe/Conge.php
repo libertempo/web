@@ -14,7 +14,6 @@ use App\Models\Planning\Creneau;
 class Conge
 {
     /**
-
      * Transforme les champs de recherche afin d'être compris par la bdd
      *
      * @param array $post
@@ -111,7 +110,6 @@ class Conge
 
     /**
      * Retourne les demandes d'un employé
-     *
      */
     public static function getIdDemandesUtilisateur($user)
     {

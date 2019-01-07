@@ -132,9 +132,11 @@ class Planning extends \App\ProtoControllers\APlanning
             }
         }
 
-        $subalternesAvecPlanning = array_map(function (array $u) {
-            return $u['u_login'];
-        }, \App\ProtoControllers\Utilisateur::getListByPlanning($idPlanning));
+        $subalternesAvecPlanning = array_map(
+            function (array $u) {
+                return $u['u_login'];
+            }, \App\ProtoControllers\Utilisateur::getListByPlanning($idPlanning)
+        );
         $subalternesSansSortie = [];
         foreach ($subalternesAvecPlanning as $u) {
             if (!\App\ProtoControllers\Utilisateur::hasSortiesEnCours($u)) {
@@ -162,9 +164,11 @@ class Planning extends \App\ProtoControllers\APlanning
 
     public static function hasEmployeAvecSorties($idPlanning)
     {
-        $subalternesAvecPlanning = array_map(function (array $u) {
-            return $u['u_login'];
-        }, \App\ProtoControllers\Utilisateur::getListByPlanning($idPlanning));
+        $subalternesAvecPlanning = array_map(
+            function (array $u) {
+                return $u['u_login'];
+            }, \App\ProtoControllers\Utilisateur::getListByPlanning($idPlanning)
+        );
         foreach ($subalternesAvecPlanning as $u) {
             if (\App\ProtoControllers\Utilisateur::hasSortiesEnCours($u)) {
                 return true;

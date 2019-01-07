@@ -3,8 +3,8 @@
 namespace edition;
 
 /**
-* Regroupement des fonctions liées à l'édition
-*/
+ * Regroupement des fonctions liées à l'édition
+ */
 class Fonctions
 {
     private static function affiche_anciennes_editions($login)
@@ -155,7 +155,7 @@ class Fonctions
                 $return .= '<td>' . $sql_p_date_fin . '_' . $demi_j_fin . '</td>';
                 $return .= '<td>' . $sql_p_commentaire . '</td>';
                 if ($config->canAfficheDateTraitement()) {
-                    if ($sql_p_date_demande == NULL) {
+                    if ($sql_p_date_demande == null) {
                         $return .= '<td class="histo-left">' . _('divers_traitement') . ' : ' . $sql_p_date_traitement . '</td>';
                     }
                     else {
@@ -239,12 +239,12 @@ class Fonctions
         // GET / POST
         $user_login = htmlentities(getpost_variable('user_login', $_SESSION['userlogin']), ENT_QUOTES | ENT_HTML401);
         $return = '';
-        header_menu( _('editions_titre') . ' : ' . $user_login);
+        header_menu(_('editions_titre') . ' : ' . $user_login);
 
 
         /*************************************/
 
-        if ($user_login != $_SESSION['userlogin'] && !is_hr($_SESSION['userlogin']) && !\App\ProtoControllers\Responsable::isRespDeUtilisateur($_SESSION['userlogin'] , $user_login)) {
+        if ($user_login != $_SESSION['userlogin'] && !is_hr($_SESSION['userlogin']) && !\App\ProtoControllers\Responsable::isRespDeUtilisateur($_SESSION['userlogin'], $user_login)) {
             redirect(ROOT_PATH . 'deconnexion');
             exit;
         }
@@ -411,16 +411,16 @@ class Fonctions
                 $sql_p_date_deb = eng_date_to_fr($resultat2["p_date_deb"]);
                 $sql_p_demi_jour_deb = $resultat2["p_demi_jour_deb"];
                 if ($sql_p_demi_jour_deb=="am") {
-                    $demi_j_deb =  _('divers_am_short') ;
+                    $demi_j_deb =  _('divers_am_short');
                 } else {
-                    $demi_j_deb =  _('divers_pm_short') ;
+                    $demi_j_deb =  _('divers_pm_short');
                 }
                 $sql_p_date_fin = eng_date_to_fr($resultat2["p_date_fin"]);
                 $sql_p_demi_jour_fin = $resultat2["p_demi_jour_fin"];
                 if ($sql_p_demi_jour_fin=="am") {
-                    $demi_j_fin =  _('divers_am_short') ;
+                    $demi_j_fin =  _('divers_am_short');
                 } else {
-                    $demi_j_fin =  _('divers_pm_short') ;
+                    $demi_j_fin =  _('divers_pm_short');
                 }
                 $sql_p_nb_jours = $resultat2["p_nb_jours"];
                 $sql_p_commentaire = $resultat2["p_commentaire"];
@@ -433,9 +433,9 @@ class Fonctions
                 $return .= '<td class="histo-edit">' . $tab_type_all_cong[$sql_p_type]['libelle'] . '</td>';
                 $return .= '<td class="histo-edit">';
                 if ($sql_p_etat=="refus") {
-                    $return .= _('divers_refuse') ;
+                    $return .= _('divers_refuse');
                 } elseif ($sql_p_etat=="annul") {
-                    $return .= _('divers_annule') ;
+                    $return .= _('divers_annule');
                 } else {
                     $return .= '"' . $sql_p_etat . '"';
                 }
@@ -524,12 +524,12 @@ class Fonctions
         /*************************************/
         // recup des parametres reçus :
         // GET / POST
-        $user_login = getpost_variable('user_login') ;
-        $edit_id = getpost_variable('edit_id', 0) ;
+        $user_login = getpost_variable('user_login');
+        $edit_id = getpost_variable('edit_id', 0);
         $return = '';
         /*************************************/
 
-        if ($user_login != $_SESSION['userlogin'] && !is_hr($_SESSION['userlogin']) && !\App\ProtoControllers\Responsable::isRespDeUtilisateur($_SESSION['userlogin'] , $user_login)) {
+        if ($user_login != $_SESSION['userlogin'] && !is_hr($_SESSION['userlogin']) && !\App\ProtoControllers\Responsable::isRespDeUtilisateur($_SESSION['userlogin'], $user_login)) {
             redirect(ROOT_PATH . 'deconnexion');
             exit;
         }
@@ -538,7 +538,7 @@ class Fonctions
 
         $css = '<link href="'. CSS_PATH .'style_calendar_edition.css" rel="stylesheet" type="text/css">';
 
-        header_popup(_('editions_etat_conges').' : '.$user_login , $css);
+        header_popup(_('editions_etat_conges').' : '.$user_login, $css);
 
         if ($edit_id==0) {  // si c'est une nouvelle édition, on insert dans la base avant d'éditer et on renvoit l'id de l'édition
             $edit_id = \edition\Fonctions::enregistrement_edition($user_login);
@@ -589,16 +589,16 @@ class Fonctions
             $sql_p_date_deb = eng_date_to_fr($resultat2["p_date_deb"]);
             $sql_p_demi_jour_deb = $resultat2["p_demi_jour_deb"];
             if ($sql_p_demi_jour_deb=="am") {
-                $demi_j_deb =  _('divers_am_short') ;
+                $demi_j_deb =  _('divers_am_short');
             } else {
-                $demi_j_deb =  _('divers_pm_short') ;
+                $demi_j_deb =  _('divers_pm_short');
             }
             $sql_p_date_fin = eng_date_to_fr($resultat2["p_date_fin"]);
             $sql_p_demi_jour_fin = $resultat2["p_demi_jour_fin"];
             if ($sql_p_demi_jour_fin=="am") {
-                $demi_j_fin =  _('divers_am_short') ;
+                $demi_j_fin =  _('divers_am_short');
             } else {
-                $demi_j_fin =  _('divers_pm_short') ;
+                $demi_j_fin =  _('divers_pm_short');
             }
             $sql_p_nb_jours = $resultat2["p_nb_jours"];
             $sql_p_commentaire = html_entity_decode($resultat2["p_commentaire"], ENT_QUOTES);
@@ -616,15 +616,15 @@ class Fonctions
             $pdf->Cell($size_cell_type, $hauteur_cellule, $tab_type_all_cong[$sql_p_type]['libelle'], 1, 0, 'C');
 
             if ($sql_p_etat=="refus") {
-                $text_etat =  _('divers_refuse') ;
+                $text_etat =  _('divers_refuse');
             } elseif ($sql_p_etat=="annul") {
-                $text_etat =  _('divers_annule') ;
+                $text_etat =  _('divers_annule');
             } else {
                 $text_etat=$sql_p_etat;
             }
             $pdf->Cell($size_cell_etat, $hauteur_cellule, $text_etat, 1, 0, 'C');
 
-            if ( ($sql_p_etat=="refus") || ($sql_p_etat=="annul") ) {
+            if (($sql_p_etat=="refus") || ($sql_p_etat=="annul") ) {
                 $pdf->SetFont('Times', '', $taille_font);
             } else {
                 $pdf->SetFont('Times', 'B', $taille_font);
@@ -681,16 +681,16 @@ class Fonctions
             $sql_p_date_deb = eng_date_to_fr($resultat2["p_date_deb"]);
             $sql_p_demi_jour_deb = $resultat2["p_demi_jour_deb"];
             if ($sql_p_demi_jour_deb=="am") {
-                $demi_j_deb =  _('divers_am_short') ;
+                $demi_j_deb =  _('divers_am_short');
             } else {
-                $demi_j_deb =  _('divers_pm_short') ;
+                $demi_j_deb =  _('divers_pm_short');
             }
             $sql_p_date_fin = eng_date_to_fr($resultat2["p_date_fin"]);
             $sql_p_demi_jour_fin = $resultat2["p_demi_jour_fin"];
             if ($sql_p_demi_jour_fin=="am") {
-                $demi_j_fin =  _('divers_am_short') ;
+                $demi_j_fin =  _('divers_am_short');
             } else {
-                $demi_j_fin =  _('divers_pm_short') ;
+                $demi_j_fin =  _('divers_pm_short');
             }
             $sql_p_nb_jours = $resultat2["p_nb_jours"];
             $sql_p_commentaire = html_entity_decode($resultat2["p_commentaire"], ENT_QUOTES);
@@ -710,9 +710,9 @@ class Fonctions
             $pdf->Cell($size_cell_type, $hauteur_cellule*2, $tab_type_all_cong[$sql_p_type]['libelle'], 1, 0, 'C');
 
             if ('refus' === $sql_p_etat) {
-                $text_etat =  _('divers_refuse') ;
+                $text_etat =  _('divers_refuse');
             } elseif ('annul' === $sql_p_etat) {
-                $text_etat =  _('divers_annule') ;
+                $text_etat =  _('divers_annule');
             } else {
                 $text_etat=$sql_p_etat;
             }
@@ -856,7 +856,7 @@ class Fonctions
         header('content-type: application/pdf');
         //header('content-Disposition: attachement; filename="downloaded.pdf"');    // pour IE
 
-        $pdf=new \edition\PDF( 'P', 'mm', 'A4', true, "UTF-8");
+        $pdf=new \edition\PDF('P', 'mm', 'A4', true, "UTF-8");
         $pdf->AddPage();
         $pdf->SetFillColor(200);
 
@@ -880,7 +880,7 @@ class Fonctions
         /* tableau Bilan des Conges */
         /****************************/
         // affichage en pdf du tableau récapitulatif des solde de congés d'un user
-        \edition\Fonctions::affiche_pdf_tableau_bilan_conges_user_edtion($pdf, $tab_info_user, $tab_info_edition, $tab_type_cong, $tab_type_conges_exceptionnels) ;
+        \edition\Fonctions::affiche_pdf_tableau_bilan_conges_user_edtion($pdf, $tab_info_user, $tab_info_edition, $tab_type_cong, $tab_type_conges_exceptionnels);
 
         // affichage de la quotité
         $pdf->SetFont('Times', 'B', 13);
@@ -908,7 +908,7 @@ class Fonctions
         $sql2=$sql2."FROM conges_periode ";
         $sql2=$sql2."WHERE p_edition_id = $edit_id ";
         $sql2=$sql2."ORDER BY p_date_deb ASC ";
-        $ReqLog2 = $db->query($sql2) ;
+        $ReqLog2 = $db->query($sql2);
 
         $count2=$ReqLog2->num_rows;
         if ($count2==0) {
@@ -923,7 +923,7 @@ class Fonctions
             /* affichage anciens soldes          */
             /*************************************/
             // affichage en pdf des anciens soldes de congés d'un user
-            \edition\Fonctions::affiche_pdf_ancien_solde($pdf, $login, $edit_id, $tab_type_cong, $tab_type_conges_exceptionnels, $decalage) ;
+            \edition\Fonctions::affiche_pdf_ancien_solde($pdf, $login, $edit_id, $tab_type_cong, $tab_type_conges_exceptionnels, $decalage);
 
             $pdf->Ln(2);
 
@@ -941,7 +941,7 @@ class Fonctions
             /* affichage nouveaux soldes         */
             /*************************************/
             // affichage en pdf des nouveaux soldes de congés d'un user
-            \edition\Fonctions::affiche_pdf_nouveau_solde($pdf, $login, $tab_info_edition, $tab_type_cong, $tab_type_conges_exceptionnels, $decalage) ;
+            \edition\Fonctions::affiche_pdf_nouveau_solde($pdf, $login, $tab_info_edition, $tab_type_cong, $tab_type_conges_exceptionnels, $decalage);
         }
 
         $pdf->Ln(8);
@@ -987,11 +987,11 @@ class Fonctions
         /*************************************/
         // recup des parametres reçus :
         // GET / POST
-        $user_login = getpost_variable('user_login') ;
-        $edit_id = getpost_variable('edit_id', 0) ;
+        $user_login = getpost_variable('user_login');
+        $edit_id = getpost_variable('edit_id', 0);
         /*************************************/
 
-        if ($user_login != $_SESSION['userlogin'] && !is_hr($_SESSION['userlogin']) && !\App\ProtoControllers\Responsable::isRespDeUtilisateur($_SESSION['userlogin'] , $user_login)) {
+        if ($user_login != $_SESSION['userlogin'] && !is_hr($_SESSION['userlogin']) && !\App\ProtoControllers\Responsable::isRespDeUtilisateur($_SESSION['userlogin'], $user_login)) {
             redirect(ROOT_PATH . 'deconnexion');
             exit;
         }
@@ -1044,8 +1044,7 @@ class Fonctions
         $sql_edition= 'SELECT ep_date, ep_num_for_user FROM conges_edition_papier where ep_id = '. $db->quote($edit_id);
         $ReqLog_edition = $db->query($sql_edition);
 
-        if ($resultat_edition = $ReqLog_edition->fetch_array())
-        {
+        if ($resultat_edition = $ReqLog_edition->fetch_array()) {
             $tab['date']=$resultat_edition["ep_date"];
             $tab['num_for_user'] = $resultat_edition["ep_num_for_user"];
             // recup du tab des soldes des conges pour cette edition
@@ -1069,7 +1068,7 @@ class Fonctions
         }
 
         // recup dans un tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
-        $tab['conges']=recup_tableau_conges_for_user($login, false) ;
+        $tab['conges']=recup_tableau_conges_for_user($login, false);
 
         return $tab;
     }
