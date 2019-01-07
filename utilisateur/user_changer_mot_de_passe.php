@@ -1,5 +1,5 @@
 <?php
-defined( '_PHP_CONGES' ) or die( 'Restricted access' );
+defined('_PHP_CONGES') or die('Restricted access');
 
 $titre = _('user_change_password');
 $self = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
@@ -13,7 +13,7 @@ if (getpost_variable('change_passwd', 0) == 1) {
     } else {
         $passwd_md5 = password_hash($new_passwd1, PASSWORD_BCRYPT);
         $sql1 = 'UPDATE conges_users SET  u_passwd=\''.$passwd_md5.'\' WHERE u_login=\''.$_SESSION['userlogin'].'\' ';
-        $result = \includes\SQL::query($sql1) ;
+        $result = \includes\SQL::query($sql1);
 
         if (!$result) {
             $error = _('form_modif_not_ok');
