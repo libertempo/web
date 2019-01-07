@@ -416,13 +416,13 @@ function compter($user, $num_current_periode, $date_debut, $date_fin, $opt_debut
 
     // verif si date_debut est bien anterieure à date_fin
     // ou si meme jour mais debut l'apres midi et fin le matin
-    if ((strtotime($date_debut) > strtotime($date_fin)) || ($date_debut == $date_fin && $opt_debut == "pm" && $opt_fin=="am")) {
+    if ((strtotime($date_debut) > strtotime($date_fin)) || ($date_debut === $date_fin && $opt_debut === "pm" && $opt_fin==="am")) {
         $comment =  _('calcul_nb_jours_commentaire_bad_date') ;
         return 0 ;
     }
 
 
-    if ($date_debut != 0 && $date_fin != 0) {
+    if ($date_debut !== 0 && $date_fin !== 0) {
         // On ne peut pas calculer si, pour l'année considérée, les jours feries ont ete saisis
         if ( (verif_jours_feries_saisis($date_debut, $num_update)==false) || (verif_jours_feries_saisis($date_fin, $num_update)==false) ) {
             $comment =  _('calcul_impossible') ."<br>\n". _('jours_feries_non_saisis') ."<br>\n". _('contacter_rh') ."<br>\n" ;
@@ -484,7 +484,7 @@ function compter($user, $num_current_periode, $date_debut, $date_fin, $opt_debut
 
             // on regarde si le jour est travaillé ou pas dans la config de l'appli
             $j_name=date("D", $timestamp_du_jour);
-            if ( (($j_name=="Sat")&&(!$config->isSamediOuvrable())) || (($j_name=="Sun")&&(!$config->isDimancheOuvrable())))
+            if ( (($j_name==="Sat")&&(!$config->isSamediOuvrable())) || (($j_name==="Sun")&&(!$config->isDimancheOuvrable())))
             {
                 // on ne compte ce jour à 0
                 $tab_periode_calcul[$current_day]['am']=0;
@@ -501,10 +501,10 @@ function compter($user, $num_current_periode, $date_debut, $date_fin, $opt_debut
                 $val_aprem="N";
                 recup_infos_artt_du_jour($user, $timestamp_du_jour, $val_matin, $val_aprem, $planningUser);
 
-                if ($val_matin=="Y")  // rtt le matin
+                if ($val_matin==="Y")  // rtt le matin
                     $tab_periode_calcul[$current_day]['am']=0;
 
-                if ($val_aprem=="Y") {
+                if ($val_aprem==="Y") {
                     // rtt l'après midi
                     $tab_periode_calcul[$current_day]['pm']=0;
                 }

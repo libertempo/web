@@ -19,7 +19,7 @@ $subalternesGrandResponsable = ($config->isDoubleValidationActive())
     ? recup_infos_all_users_du_grand_resp($_SESSION['userlogin'])
     : [];
 $subalternesActifsGrandResponsable = array_filter($subalternesGrandResponsable, function ($employe) {
-    return 'Y' == $employe['is_active'];
+    return 'Y' === $employe['is_active'];
 });
 $subalternesActifsGrandResponsableNonDirect = [];
 foreach ($subalternesActifsGrandResponsable as $k => $v) {

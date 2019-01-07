@@ -228,23 +228,23 @@ abstract class AHeure
          $horodateDebut = \App\Helpers\Formatter::hour2Time(date('H\:i', $debut));
          $horodateFin   = \App\Helpers\Formatter::hour2Time(date('H\:i', $fin));
 
-         if (isset($planningJour[Creneau::TYPE_PERIODE_MATIN])) {
-             if (!isset($planningJour[Creneau::TYPE_PERIODE_APRES_MIDI])) {
-                 return Creneau::TYPE_PERIODE_MATIN;
-             }
-             $planningMatin = $planningJour[Creneau::TYPE_PERIODE_MATIN];
-             $dernierCreneauMatin = $planningMatin[count($planningMatin) - 1];
-             $planningApresMidi = $planningJour[Creneau::TYPE_PERIODE_APRES_MIDI];
-             $premierCreneauApresMidi = current($planningApresMidi);
+        if (isset($planningJour[Creneau::TYPE_PERIODE_MATIN])) {
+            if (!isset($planningJour[Creneau::TYPE_PERIODE_APRES_MIDI])) {
+                return Creneau::TYPE_PERIODE_MATIN;
+            }
+            $planningMatin = $planningJour[Creneau::TYPE_PERIODE_MATIN];
+            $dernierCreneauMatin = $planningMatin[count($planningMatin) - 1];
+            $planningApresMidi = $planningJour[Creneau::TYPE_PERIODE_APRES_MIDI];
+            $premierCreneauApresMidi = current($planningApresMidi);
 
-             if ($horodateFin <= $dernierCreneauMatin[Creneau::TYPE_HEURE_FIN]) {
-                 return Creneau::TYPE_PERIODE_MATIN;
-             } elseif ($horodateDebut >= $premierCreneauApresMidi[Creneau::TYPE_HEURE_DEBUT]) {
-                 return Creneau::TYPE_PERIODE_APRES_MIDI;
-             }
-             return Creneau::TYPE_PERIODE_MATIN_APRES_MIDI;
-         }
-         return Creneau::TYPE_PERIODE_APRES_MIDI;
+            if ($horodateFin <= $dernierCreneauMatin[Creneau::TYPE_HEURE_FIN]) {
+                return Creneau::TYPE_PERIODE_MATIN;
+            } elseif ($horodateDebut >= $premierCreneauApresMidi[Creneau::TYPE_HEURE_DEBUT]) {
+                return Creneau::TYPE_PERIODE_APRES_MIDI;
+            }
+            return Creneau::TYPE_PERIODE_MATIN_APRES_MIDI;
+        }
+        return Creneau::TYPE_PERIODE_APRES_MIDI;
      }
     /**
      * Vérifie que l'utilisateur a bien le droit d'éditer la ressource

@@ -376,7 +376,7 @@ class Fonctions
 
             if (0 !== $new_abs_id) {
                 // ajout dans la table conges_solde_user (pour chaque user !!)(si c'est un conges, pas si c'est une absence)
-                if ("conges" == $tab_new_values['type'] || "conges_exceptionnels" == $tab_new_values['type']) {
+                if ("conges" === $tab_new_values['type'] || "conges_exceptionnels" === $tab_new_values['type']) {
                     // recup de users :
                     $sql_users="SELECT DISTINCT(u_login) FROM conges_users;" ;
 
@@ -716,11 +716,11 @@ class Fonctions
                     $childTable .= '<br><i>' . _($conf_commentaire) . '</i><br>';
 
                     // affichage saisie variable
-                    if ($conf_nom=="installed_version") {
+                    if ($conf_nom === "installed_version") {
                         $childTable .= '<b>' . $conf_nom . '&nbsp;&nbsp;=&nbsp;&nbsp;' . $conf_valeur . '</b><br>';
                     } elseif ('texte' === $conf_type || 'path' === $conf_type) {
                         $childTable .= '<b>' . $conf_nom . '</b>&nbsp;=&nbsp;<input type="text" class="form-control" size="50" maxlength="200" name="tab_new_values[' . $conf_nom . ']" value="' . $conf_valeur . '"><br>';
-                    } elseif ($conf_type=="boolean") {
+                    } elseif ($conf_type === "boolean") {
                         $childTable .= '<b>' . $conf_nom . '</b>&nbsp;=&nbsp;<select class="form-control" name="tab_new_values[' . $conf_nom . ']">';
                         $childTable .= '<option value="TRUE"';
                         if ('TRUE' === $conf_valeur) {
@@ -790,7 +790,7 @@ class Fonctions
 
         /*************************************/
 
-        if($action=="commit") {
+        if($action==="commit") {
             $return .= \config\Fonctions::commit_saisie($tab_new_values);
         } else {
             $return .= '<div class="wrapper configure">';

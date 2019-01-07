@@ -568,7 +568,7 @@ class Gestion {
      * @param int $id
      * @return string
      */
-    protected function getFormChoixEmploye($idGroupe, $data = NULL)
+    protected function getFormChoixEmploye($idGroupe, $data = null)
     {
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses([

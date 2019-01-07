@@ -663,11 +663,11 @@ class Fonctions
         // titre
         $return .= '<H2>' . _('resp_cloture_exercice_titre') . '</H2>';
 
-        if ($cloture_users=="TRUE") {
+        if ($cloture_users==="TRUE") {
             $return .= \responsable\Fonctions::cloture_users($tab_type_cong, $tab_cloture_users, $tab_commentaire_saisie);
-        } elseif ($cloture_globale=="TRUE") {
+        } elseif ($cloture_globale==="TRUE") {
             $return .= \responsable\Fonctions::cloture_globale($tab_type_cong);
-        } elseif ($cloture_groupe=="TRUE") {
+        } elseif ($cloture_groupe==="TRUE") {
             $return .= \responsable\Fonctions::cloture_globale_groupe($choix_groupe, $tab_type_cong);
         } else {
             $return .= \responsable\Fonctions::saisie_cloture($tab_type_cong);

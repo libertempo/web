@@ -393,11 +393,11 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
     {
         $ids = [];
         foreach ($usersRespAbsent as $userResp) {
-            $delegation = TRUE;
+            $delegation = true;
             $respsUser = \App\ProtoControllers\Responsable::getResponsablesUtilisateur($userResp);
             foreach ($respsUser as $respUser) {
                 if (!\App\ProtoControllers\Responsable::isRespAbsent($respUser)) {
-                    $delegation = FALSE;
+                    $delegation = false;
             break;
                 }
             }

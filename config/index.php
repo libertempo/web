@@ -54,7 +54,7 @@ $_SESSION['from_config']=true;  // initialise ce flag pour changer le bouton de 
 
 	echo '<div class="'.$onglet.' wrapper" id="main-content">';
 
-		if ($onglet == 'general') {
+		if ($onglet === 'general') {
 			include_once ROOT_PATH . 'config/configure.php';
 		} else {
 			include_once ROOT_PATH . 'config/config_'.$onglet.'.php';
