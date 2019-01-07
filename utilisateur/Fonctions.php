@@ -784,8 +784,8 @@ class Fonctions
         // verif si les dates sont renseignées  (si ce n'est pas le cas, on ne verifie meme pas la suite !)
         // $new_debut et $new_fin sont des string au format : $year-$mois-$jour-X  (avec X = j pour "jour entier", a pour "a" (matin), et p pour "pm" (apres midi) )
         if ( ($new_debut_string=="")||($new_fin_string=="") )
-        else
             $valid=false;
+        else
         {
             $date_1=explode("-", $new_debut_string);
             $year_debut=$date_1[0];
