@@ -72,7 +72,4 @@ if (!nameInstance($db, $instanceName)) {
     displayFail();
 }
 
-$updateLang = "UPDATE conges_config SET conf_valeur = 'fr_FR' WHERE conf_nom = 'lang' LIMIT 1";
-$db->query($updateLang);
-
 echo 'Installation terminée avec succès.', "\n";

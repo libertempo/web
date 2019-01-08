@@ -146,9 +146,6 @@ function session_create($username)
         $_SESSION['timestamp_last']= $maintenant + SESSION_DURATION;
         if (function_exists('init_config_tab'))
             $_SESSION['config']=init_config_tab();      // on initialise le tableau des variables de config
-
-        if (isset($_REQUEST['lang']))
-            $_SESSION['lang'] = $_REQUEST['lang'];
     }
 
 
@@ -176,7 +173,6 @@ function session_delete()
      unset($_SESSION['timestamp_last']);
      unset($_SESSION['tab_j_feries']);
      unset($_SESSION['config']);
-     unset($_SESSION['lang']);
      session_destroy();
 }
 

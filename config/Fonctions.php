@@ -709,44 +709,40 @@ class Fonctions
                 $conf_type = strtolower($data['conf_type']);
                 $conf_commentaire = strtolower($data['conf_commentaire']);
 
-                if ('lang' === $conf_nom) {
-                    $childTable .= '<b>Langue installée &nbsp;&nbsp;=&nbsp;&nbsp;' . $conf_valeur . '</b><br>';
-                } else {
-                    // affichage commentaire
-                    $childTable .= '<br><i>' . _($conf_commentaire) . '</i><br>';
+                // affichage commentaire
+                $childTable .= '<br><i>' . _($conf_commentaire) . '</i><br>';
 
-                    // affichage saisie variable
-                    if ($conf_nom=="installed_version") {
-                        $childTable .= '<b>' . $conf_nom . '&nbsp;&nbsp;=&nbsp;&nbsp;' . $conf_valeur . '</b><br>';
-                    } elseif ('texte' === $conf_type || 'path' === $conf_type) {
-                        $childTable .= '<b>' . $conf_nom . '</b>&nbsp;=&nbsp;<input type="text" class="form-control" size="50" maxlength="200" name="tab_new_values[' . $conf_nom . ']" value="' . $conf_valeur . '"><br>';
-                    } elseif ($conf_type=="boolean") {
-                        $childTable .= '<b>' . $conf_nom . '</b>&nbsp;=&nbsp;<select class="form-control" name="tab_new_values[' . $conf_nom . ']">';
-                        $childTable .= '<option value="TRUE"';
-                        if ('TRUE' === $conf_valeur) {
-                            $childTable .= ' selected';
-                        }
-                        $childTable .= '>TRUE</option>';
-                        $childTable .= '<option value="FALSE"';
-                        if ('FALSE' === $conf_valeur) {
-                            $childTable .= ' selected';
-                        }
-                        $childTable .= '>FALSE</option>';
-                        $childTable .= '</select><br>';
-                    } elseif (substr($conf_type,0,4) === "enum") {
-                        $childTable .= '<b>' . $conf_nom . '</b>&nbsp;=&nbsp;<select class="form-control" name="tab_new_values[' . $conf_nom . ']">';
-                        $options=explode("/", substr(strstr($conf_type, '='),1));
-                        for ($i=0; $i<count($options); $i++) {
-                            $childTable .= '<option value="' . $options[$i] . '"';
-                            if ($conf_valeur==$options[$i]) {
-                                $childTable .= ' selected';
-                            }
-                            $childTable .= '>' . $options[$i] . '</option>';
-                        }
-                        $childTable .= '</select><br>';
+                // affichage saisie variable
+                if ($conf_nom=="installed_version") {
+                    $childTable .= '<b>' . $conf_nom . '&nbsp;&nbsp;=&nbsp;&nbsp;' . $conf_valeur . '</b><br>';
+                } elseif ('texte' === $conf_type || 'path' === $conf_type) {
+                    $childTable .= '<b>' . $conf_nom . '</b>&nbsp;=&nbsp;<input type="text" class="form-control" size="50" maxlength="200" name="tab_new_values[' . $conf_nom . ']" value="' . $conf_valeur . '"><br>';
+                } elseif ($conf_type=="boolean") {
+                    $childTable .= '<b>' . $conf_nom . '</b>&nbsp;=&nbsp;<select class="form-control" name="tab_new_values[' . $conf_nom . ']">';
+                    $childTable .= '<option value="TRUE"';
+                    if ('TRUE' === $conf_valeur) {
+                        $childTable .= ' selected';
                     }
-                    $childTable .= '<br>';
+                    $childTable .= '>TRUE</option>';
+                    $childTable .= '<option value="FALSE"';
+                    if ('FALSE' === $conf_valeur) {
+                        $childTable .= ' selected';
+                    }
+                    $childTable .= '>FALSE</option>';
+                    $childTable .= '</select><br>';
+                } elseif (substr($conf_type,0,4) === "enum") {
+                    $childTable .= '<b>' . $conf_nom . '</b>&nbsp;=&nbsp;<select class="form-control" name="tab_new_values[' . $conf_nom . ']">';
+                    $options=explode("/", substr(strstr($conf_type, '='),1));
+                    for ($i=0; $i<count($options); $i++) {
+                        $childTable .= '<option value="' . $options[$i] . '"';
+                        if ($conf_valeur==$options[$i]) {
+                            $childTable .= ' selected';
+                        }
+                        $childTable .= '>' . $options[$i] . '</option>';
+                    }
+                    $childTable .= '</select><br>';
                 }
+                $childTable .= '<br>';
             }
 
             $childTable .= '</td></tr>';
