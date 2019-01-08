@@ -70,7 +70,7 @@ echo '
         <meta name="theme-color" content="#ffffff">
 
         <link type="text/css" href="../node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" media="screen,print">
-        <link href="../Public/Assets/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+        <link href="../node_modules/font-awesome/css/font-awesome.min.css" rel="stylesheet">
         <link type="text/css" href="../Public/Assets/Css/reboot.css" rel="stylesheet" media="screen,print">
         <script>
         var _rollbarConfig = {
