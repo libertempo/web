@@ -27,7 +27,7 @@ ln -sf `pwd`/App/Tools/post-checkout .git/hooks/post-checkout
 make install
 ```
 
-Chaque nouvelle version est mise à disposition sur [github](https://github.com/Libertempo/Libertempo-web/releases) et sur [le blog du logiciel](http://libertempo.tuxfamily.org/downloads/)
+Chaque nouvelle version est mise à disposition sur [github](https://github.com/libertempo/web/releases) et sur [le blog du logiciel](http://libertempo.tuxfamily.org/downloads/)
 
 # Support minimum
 | Logiciel | Version |

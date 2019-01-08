@@ -19,8 +19,7 @@ if (!defined( 'DEFINE_INCLUDE' )) {
     define('FONT_PATH',        ASSETS_PATH . 'Font/');
     define('CSS_PATH',         ASSETS_PATH . 'Css/');
     define('LIBRARY_PATH',     ROOT_PATH . 'library/');
-    defindefine('LOCALE_PATH', ROOT_PATH . 'locale/');
-e('NODE_PATH', ROOT_PATH . 'node_modules' . DS);
+    define('NODE_PATH', ROOT_PATH . 'node_modules' . DS);
     define('CONFIG_PATH',      realpath(ABSOLUTE_SYSPATH) . DS . 'cfg'. DS);
     define('LOCALE_PATH',      TOOLS_PATH . 'locale' . DS);
     define('TEMPLATE_PATH',    PUBLIC_PATH . 'template/');
