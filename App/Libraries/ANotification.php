@@ -7,7 +7,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 /**
  * Objet de gestion des notifications
  */
-abstract Class ANotification
+abstract class ANotification
 {
 
     protected $contenuNotification;

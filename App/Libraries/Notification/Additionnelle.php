@@ -5,7 +5,7 @@ namespace App\Libraries\Notification;
 /**
  * Objet de gestion des notifications
  */
-Class Additionnelle extends \App\Libraries\ANotification
+class Additionnelle extends \App\Libraries\ANotification
 {
 
     /**
@@ -23,7 +23,7 @@ Class Additionnelle extends \App\Libraries\ANotification
                 WHERE id_heure =' . (int) $id;
 
         $data = $sql->query($req)->fetch_array();
-        
+
         $data['jour']   = date('d/m/Y', $data['debut']);
         $data['debut']  = date('H\:i', $data['debut']);
         $data['fin']    = date('H\:i', $data['fin']);
@@ -89,7 +89,7 @@ Class Additionnelle extends \App\Libraries\ANotification
         $return['config'] = 'mail_valid_conges_alerte_user';
         return $return;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -107,11 +107,11 @@ Class Additionnelle extends \App\Libraries\ANotification
         if (!is_null($data['comment_refus'])) {
             $return['message'] .= "\nCommentaire : " . $data['comment_refus'];
         }
-        
+
         $return['config'] = 'mail_valid_conges_alerte_user';
         return $return;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -132,7 +132,7 @@ Class Additionnelle extends \App\Libraries\ANotification
         $return['config'] = 'mail_supp_demande_alerte_resp';
         return $return;
     }
-    
+
     /**
      * {@inheritDoc}
      */

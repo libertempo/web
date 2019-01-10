@@ -86,7 +86,7 @@ class Fonctions
 
             $periode_num = insert_dans_periode($_SESSION['userlogin'], $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type, $new_etat, 0);
 
-            if ($periode_num != 0 ) {
+            if (0 != $periode_num) {
                 $return .= schars(_('form_modif_ok')) . '<br><br>';
                 //envoi d'un mail d'alerte au responsable (si demandé dans config de php_conges)
                 if ($config->isSendMailDemandeResponsable()) {

@@ -165,8 +165,8 @@ class Planning extends \App\ProtoControllers\APlanning
     public static function hasEmployeAvecSorties($idPlanning)
     {
         $subalternesAvecPlanning = array_map(
-            function (array $u) {
-                return $u['u_login'];
+            function (array $user) {
+                return $user['u_login'];
             }, \App\ProtoControllers\Utilisateur::getListByPlanning($idPlanning)
         );
         foreach ($subalternesAvecPlanning as $u) {

@@ -21,8 +21,8 @@ class Planning extends \App\ProtoControllers\APlanning
     {
         $id = (int) $id;
         $utilisateursPlannings = array_map(
-            function (array $u) {
-                return $u['u_login'];
+            function (array $user) {
+                return $user['u_login'];
             }, \App\ProtoControllers\Utilisateur::getListByPlanning($id)
         );
 

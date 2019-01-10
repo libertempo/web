@@ -164,6 +164,7 @@ class Database_MySQLi_Result extends \mysqli_result
 {
     public function fetch_all($result_type = null)
     {
+        unset($result_type);
         $rows = array();
         while($row = $this->fetch_assoc()) {
             $rows[] = $row;

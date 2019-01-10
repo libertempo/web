@@ -717,11 +717,11 @@ class Fonctions
                     $childTable .= '<br><i>' . _($conf_commentaire) . '</i><br>';
 
                     // affichage saisie variable
-                    if ($conf_nom === "installed_version") {
+                    if ('installed_version' === $conf_nom) {
                         $childTable .= '<b>' . $conf_nom . '&nbsp;&nbsp;=&nbsp;&nbsp;' . $conf_valeur . '</b><br>';
                     } elseif ('texte' === $conf_type || 'path' === $conf_type) {
                         $childTable .= '<b>' . $conf_nom . '</b>&nbsp;=&nbsp;<input type="text" class="form-control" size="50" maxlength="200" name="tab_new_values[' . $conf_nom . ']" value="' . $conf_valeur . '"><br>';
-                    } elseif ($conf_type === "boolean") {
+                    } elseif ('boolean' === $conf_type) {
                         $childTable .= '<b>' . $conf_nom . '</b>&nbsp;=&nbsp;<select class="form-control" name="tab_new_values[' . $conf_nom . ']">';
                         $childTable .= '<option value="TRUE"';
                         if ('TRUE' === $conf_valeur) {
@@ -791,7 +791,7 @@ class Fonctions
 
         /*************************************/
 
-        if($action==="commit") {
+        if('commit' === $action) {
             $return .= \config\Fonctions::commit_saisie($tab_new_values);
         } else {
             $return .= '<div class="wrapper configure">';
