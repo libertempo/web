@@ -108,7 +108,7 @@ class Responsable
      *
      * @return array
      */
-    public static function  getInfosResponsables(\includes\SQL $sql, $activeSeul = false)
+    public static function getInfosResponsables(\includes\SQL $sql, $activeSeul = false)
     {
         $req = 'SELECT *
                 FROM conges_users
@@ -129,14 +129,14 @@ class Responsable
      *
      * @return bool
      */
-    public static function isRespDeUtilisateur($resp, $user) {
+    public static function isRespDeUtilisateur($resp, $user)
+    {
         return $resp != $user
                 && \App\ProtoControllers\Groupe::isResponsableGroupe($resp, \App\ProtoControllers\Utilisateur::getGroupesId($user), \includes\SQL::singleton());
     }
 
     /**
      * Vérifie si un utilisateur est responsable par délégation d'un employé
-     *
      *
      * @param string $resp
      * @param string $user
@@ -147,7 +147,7 @@ class Responsable
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         if (!$config->isGestionResponsableAbsent()) {
-            return FALSE;
+            return false;
         }
         $usersRespRespAbs = [];
         $groupesIdResp = \App\ProtoControllers\Responsable::getIdGroupeResp($resp);
@@ -158,22 +158,22 @@ class Responsable
             }
         }
         if (empty($usersRespRespAbs)) {
-            return FALSE;
+            return false;
         }
 
         $RespsUser = \App\ProtoControllers\Responsable::getResponsablesUtilisateur($user);
-        $RespUserPresent = array_diff($RespsUser,$usersRespRespAbs);
+        $RespUserPresent = array_diff($RespsUser, $usersRespRespAbs);
         if (empty($RespUserPresent)) {
-            return TRUE;
+            return true;
         }
 
-        return FALSE;
+        return false;
     }
     /**
      * Vérifie si un utilisateur est bien le grand responsable d'un employé
      *
      * @param string $resp
-     * @param array $groupesId
+     * @param array  $groupesId
      *
      * @return bool
      */

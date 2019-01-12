@@ -1,6 +1,6 @@
 <?php
 require_once INCLUDE_PATH . 'define.php';
-defined( '_PHP_CONGES' ) or die( 'Restricted access' );
+defined('_PHP_CONGES') or die('Restricted access');
 
 if (file_exists(CONFIG_PATH .'config_ldap.php')) {
     include_once CONFIG_PATH .'config_ldap.php';
@@ -8,13 +8,13 @@ if (file_exists(CONFIG_PATH .'config_ldap.php')) {
 if(!isset($_SESSION['config'])) {
     $_SESSION['config']=init_config_tab();      // on initialise le tableau des variables de config
 }
-include_once INCLUDE_PATH . 'session.php';
+require_once INCLUDE_PATH . 'session.php';
 
 // verif des droits du user à afficher la page
-verif_droits_user( "is_admin");
+verif_droits_user("is_admin");
 
 $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
-$action         = getpost_variable('action') ;
+$action         = getpost_variable('action');
 $tab_new_values = getpost_variable('tab_new_values');
 $id_to_update   = htmlentities(getpost_variable('id_to_update'), ENT_QUOTES | ENT_HTML401);
 

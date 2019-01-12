@@ -2,7 +2,7 @@
 define('ROOT_PATH', '../');
 define('INCLUDE_PATH',     ROOT_PATH . 'includes/');
 require_once INCLUDE_PATH . 'define.php';
-defined( '_PHP_CONGES' ) or die( 'Restricted access' );
+defined('_PHP_CONGES') or die('Restricted access');
 
 if (!(!empty($_SESSION) && \App\ProtoControllers\Utilisateur::isRH($_SESSION['userlogin']))) {
         die("{}");

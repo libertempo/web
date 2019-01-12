@@ -21,13 +21,13 @@ function redirectAuth() : void
         $is_hr = $row["u_is_hr"];
         $is_resp = $row["u_is_resp"];
         $is_active = $row["u_is_active"];
-        if($is_active == "N") {
+        if($is_active === "N") {
             errorInactif();
             return;
         }
-        if ($is_hr == "Y") {
+        if ($is_hr === "Y") {
             redirect( ROOT_PATH .'hr/page_principale');
-        } elseif ($is_resp=="Y") {
+        } elseif ($is_resp==="Y") {
             redirect( ROOT_PATH .'responsable/resp_index.php');
         } else {
             redirect( ROOT_PATH . 'utilisateur/user_index.php');
@@ -86,7 +86,7 @@ function authDefault(string $authMethod, \App\Libraries\ApiClient $api)
 {
     $session_username = $_POST['session_username'] ?? '';
     $session_password = $_POST['session_password'] ?? '';
-    if (session_id() != "") {
+    if (session_id() !== "") {
         session_destroy();
     }
 
@@ -99,7 +99,7 @@ function authDefault(string $authMethod, \App\Libraries\ApiClient $api)
             $usernameAuth = authentification_passwd_conges($session_username, $session_password);
         }
         try {
-            if ($usernameAuth != $session_username) {
+            if ($usernameAuth !== $session_username) {
                 throw new \Exception("Noms d'utilisateurs différents");
             }
             session_create($session_username);

@@ -35,7 +35,7 @@ class Fonctions
                 /* UPDATE table "conges_periode" */
                 $sql1 = 'UPDATE conges_periode SET p_etat=\'ok\', p_date_traitement=NOW() WHERE p_num="'. $db->quote($numero_int).'" AND ( p_etat=\'valid\' OR p_etat=\'demande\' );' ;
                 /* On valide l'UPDATE dans la table "conges_periode" ! */
-                $ReqLog1 = $db->query($sql1) ;
+                $ReqLog1 = $db->query($sql1);
                 if ($ReqLog1 && \includes\SQL::getVar('affected_rows') ) {
                     // Log de l'action
                     log_action($numero_int,"ok", $user_login, "traite demande $numero ($user_login) ($user_nb_jours_pris jours) : $reponse");
@@ -44,8 +44,9 @@ class Fonctions
                     soustrait_solde_et_reliquat_user($user_login, $numero_int, $user_nb_jours_pris, $type_abs, $date_deb, $demi_jour_deb, $date_fin, $demi_jour_fin);
 
                     //envoi d'un mail d'alerte au user (si demandé dans config de php_conges)
-                    if ($config->isSendMailValidationUtilisateur())
+                    if ($config->isSendMailValidationUtilisateur()) {
                         alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "accept_conges");
+                    }
                 }
             } elseif (strcmp($reponse, "not_OK")==0) {
                 // recup du motif de refus

@@ -21,7 +21,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         foreach ($demandes as $demande) {
             $id = $demande['p_num'];
             $infoUtilisateur = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($demande['p_login']);
-            $solde = \App\ProtoControllers\Utilisateur::getSoldeconge($demande['p_login'],$demande['p_type']);
+            $solde = \App\ProtoControllers\Utilisateur::getSoldeconge($demande['p_login'], $demande['p_type']);
             $type = $this->getTypeLabel($demande['p_type']);
             $debut = \App\Helpers\Formatter::dateIso2Fr($demande['p_date_deb']);
             $fin = \App\Helpers\Formatter::dateIso2Fr($demande['p_date_fin']);
@@ -143,8 +143,8 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
                     }
                     log_action($infoDemande['p_num'], 'ok', $infoDemande['p_login'], 'traitement demande ' . $id_conge . ' (' . $infoDemande['p_login'] . ') (' . $infoDemande['p_nb_jours'] . ' jours) : OK');
                 } else {
-                $errorLst[] = _('traitement_non_autorise') . ': ' . $infoDemande['p_login'];
-                $return = NIL_INT;
+                    $errorLst[] = _('traitement_non_autorise') . ': ' . $infoDemande['p_login'];
+                    $return = NIL_INT;
                 }
             }
         } else {
@@ -203,7 +203,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
             $sql->getPdoObj()->begin_transaction();
             $updateSolde = $this->updateSoldeUser($user, $SoldeReliquat + $duree, $typeId);
             $updateReliquat = $this->updateReliquatUser($user, $SoldeReliquat, $typeId);
-            log_action(0,"reliquat", $user, 'retrait reliquat perdu (-' . $SoldeReliquat . ' jours). (date_limite_reliquat)');
+            log_action(0, "reliquat", $user, 'retrait reliquat perdu (-' . $SoldeReliquat . ' jours). (date_limite_reliquat)');
             if (0 < $updateReliquat && 0 < $updateSolde) {
                 $sql->getPdoObj()->commit();
                 return 1;
@@ -312,7 +312,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         $sql = \includes\SQL::singleton();
 
         $req   = 'UPDATE conges_solde_user
-                SET su_reliquat = su_reliquat-' .number_format($duree,2) . '
+                SET su_reliquat = su_reliquat-' .number_format($duree, 2) . '
                 WHERE su_login = \''. \includes\SQL::quote($user) .'\'
                 AND su_abs_id = '. (int) $typeId;
         $query = $sql->query($req);
@@ -322,6 +322,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
      /**
       * {@inheritDoc}
+      *
       * @todo après refonte gestion des groupes retirer array_diff
       */
     protected function getIdDemandesResponsable($resp)
@@ -332,7 +333,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         $usersResp = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupId);
 
         // un utilisateur ne peut etre son propre responsable
-        $usersResp = array_diff($usersResp,[$_SESSION['userlogin']]);
+        $usersResp = array_diff($usersResp, [$_SESSION['userlogin']]);
 
         if (empty($usersResp)) {
             return [];
@@ -340,7 +341,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
 
         $ids = [];
         foreach ($usersResp as $user) {
-            $ids = array_merge($ids,\App\ProtoControllers\Employe\Conge::getIdDemandesUtilisateur($user));
+            $ids = array_merge($ids, \App\ProtoControllers\Employe\Conge::getIdDemandesUtilisateur($user));
         }
         return $ids;
     }
@@ -393,12 +394,12 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
     {
         $ids = [];
         foreach ($usersRespAbsent as $userResp) {
-            $delegation = TRUE;
+            $delegation = true;
             $respsUser = \App\ProtoControllers\Responsable::getResponsablesUtilisateur($userResp);
             foreach ($respsUser as $respUser) {
                 if (!\App\ProtoControllers\Responsable::isRespAbsent($respUser)) {
-                    $delegation = FALSE;
-            break;
+                    $delegation = false;
+                    break;
                 }
             }
             if ($delegation) {
@@ -409,8 +410,8 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
     }
 
     /**
-      * {@inheritDoc}
-      */
+     * {@inheritDoc}
+     */
     protected function getIdDemandesGrandResponsable($gResp)
     {
         $groupId = \App\ProtoControllers\Responsable::getIdGroupeGrandResponsable($gResp);
@@ -494,7 +495,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         return ($statut != \App\Models\Conge::STATUT_ANNUL || $statut != \App\Models\Conge::STATUT_VALIDATION_FINALE || $statut != \App\Models\Conge::STATUT_REFUS);
     }
 
-   /**
+    /**
      * verifie si la date limite d'usage des reliquats n'est pas dépassée
      *
      * @param int $findemande date de fin de la demande

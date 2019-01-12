@@ -1,8 +1,8 @@
 <?php
 define('_PHP_CONGES', 1);
-defined( 'ROOT_PATH' ) or die( 'ROOT_PATH not defined !' );
+defined('ROOT_PATH') or die('ROOT_PATH not defined !');
 
-if (!defined( 'DEFINE_INCLUDE' )) {
+if (!defined('DEFINE_INCLUDE')) {
     define('ENV_DEV', 1);
     define('ENV_TEST', 2);
     define('ENV_PROD', 3);

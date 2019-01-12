@@ -16,8 +16,7 @@ else {
 putenv('LANG='.$lang); // On modifie la variable d'environnement
 $LoadLang = setlocale(LC_ALL, $lang, $lang.".utf8");
 
-if (!$LoadLang)
-    {
+if (!$LoadLang) {
     $pattern = "/".$lang."/i";
     /* Retrieve lang informations from system */
     $originalLocales = explode(";", setlocale(LC_ALL, 0));

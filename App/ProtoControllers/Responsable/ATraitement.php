@@ -66,7 +66,6 @@ abstract class ATraitement
      * @param array $listId
      *
      * @return array $infoDemande
-     *
      */
     abstract protected function getInfoDemandes(array $listId);
 
@@ -81,7 +80,7 @@ abstract class ATraitement
      */
     public function post(array $post, &$notice, array &$errorLst)
     {
-        if (!empty($post['_METHOD']) && $post['_METHOD'] == "PUT") {
+        if (!empty($post['_METHOD']) && 'PUT' === $post['_METHOD']) {
             return $this->put($post, $_SESSION['userlogin'], $notice, $errorLst);
         } else {
             return NIL_INT;

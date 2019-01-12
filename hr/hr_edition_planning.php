@@ -1,18 +1,15 @@
-<?php
-
+<?php declare(strict_types = 1);
 defined('_PHP_CONGES') or die('Restricted access');
-$planningId = (int) getpost_variable('id');
-if (0 >= $planningId || !\App\ProtoControllers\Responsable\Planning::isVisible($planningId)) {
-    redirect(ROOT_PATH . 'deconnexion');
-}
 
 $message   = '';
 $errorsLst = [];
-$configuration = new \App\Libraries\Configuration(\includes\SQL::singleton());
+$notice    = '';
+$valueName = '';
+$config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 if (!empty($_POST)) {
-    if (0 < (int) \App\ProtoControllers\Responsable\Planning::putPlanning($planningId, $_POST)) {
-        log_action(0, '', '', 'Édition des associations du planning ' . $planningId);
-        redirect(ROOT_PATH . 'responsable/resp_index.php?onglet=liste_planning', false);
+    if (0 < (int) \App\ProtoControllers\HautResponsable\Planning::postPlanning($_POST, $errorsLst, $notice)) {
+        log_action(0, '', '', 'Édition du planning ' . $_POST['name']);
+        redirect(ROOT_PATH . 'hr/liste_planning', false);
     } else {
         if (!empty($errorsLst)) {
             $errors = '';
@@ -24,12 +21,16 @@ if (!empty($_POST)) {
             }
             $message = '<div class="alert alert-danger">' . _('erreur_recommencer') . ' :<ul>' . $errors . '</ul></div>';
         }
+        $valueName = $_POST['name'];
     }
+} elseif (NIL_INT !== $planningId) {
+    $injectableCreator = new \App\Libraries\InjectableCreator(\includes\SQL::singleton(), $config);
+    $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
+    $planning = $api->get('planning/' .  $planningId, $_SESSION['token'])['data'];
+    $valueName = $planning['name'];
 }
 
-$injectableCreator = new \App\Libraries\InjectableCreator(\includes\SQL::singleton(), $configuration);
-$api = $injectableCreator->get(\App\Libraries\ApiClient::class);
-$planning = $api->get('planning/' .  $planningId, $_SESSION['token'])['data'];
+/* Recupération des créneaux (postés ou existants) pour le JS */
 $jours = [
     // ISO-8601
     1 => _('Lundi'),
@@ -38,10 +39,10 @@ $jours = [
     4 => _('Jeudi'),
     5 => _('Vendredi'),
 ];
-if ($configuration->isSamediOuvrable()) {
+if ($config->isSamediOuvrable()) {
     $jours[6] = _('Samedi');
 }
-if ($configuration->isDimancheOuvrable()) {
+if ($config->isDimancheOuvrable()) {
     $jours[7] = _('Dimanche');
 }
 
@@ -50,7 +51,10 @@ $creneauxGroupesImpairs = \App\ProtoControllers\HautResponsable\Planning\Creneau
 $creneauxGroupesPairs = \App\ProtoControllers\HautResponsable\Planning\Creneau::getCreneauxGroupes($_POST, $planningId, \App\Models\Planning\Creneau::TYPE_SEMAINE_PAIRE);
 
 $idToggleSemaine = uniqid();
-$linkId = uniqid();
+$idSemaineCommune = uniqid();
+$idSemaineImpaire = uniqid();
+$idSemainePaire = uniqid();
+$isSemaineReadOnly = \App\ProtoControllers\HautResponsable\Planning::hasEmployeAvecSorties($planningId);
 
 $optionsSemaine = [
     'typePeriodeMatin'      => \App\Models\Planning\Creneau::TYPE_PERIODE_MATIN,
@@ -58,13 +62,13 @@ $optionsSemaine = [
     'typeHeureFin'          => \App\Models\Planning\Creneau::TYPE_HEURE_FIN,
     'helperId'              => uniqid(),
     'nilInt'                => NIL_INT,
-    'ajoutBoutonId' => uniqid(),
     'erreurFormatHeure'     => _('Format_heure_incorrect'),
     'erreurOptionManquante' => _('Option_manquante'),
 ];
 
 $optionsSemaineCommune = $optionsSemaine + [
     'selectJourId'          => uniqid(),
+    'ajoutBoutonId' => uniqid(),
     'tableId'               => uniqid(),
     'debutId'               => uniqid(),
     'finId'                 => uniqid(),
@@ -73,6 +77,7 @@ $optionsSemaineCommune = $optionsSemaine + [
 ];
 $optionsSemaineImpaire = $optionsSemaine + [
     'selectJourId'          => uniqid(),
+    'ajoutBoutonId' => uniqid(),
     'tableId'               => uniqid(),
     'debutId'               => uniqid(),
     'finId'                 => uniqid(),
@@ -81,18 +86,14 @@ $optionsSemaineImpaire = $optionsSemaine + [
 ];
 $optionsSemainePaire = $optionsSemaine + [
     'selectJourId'          => uniqid(),
+    'ajoutBoutonId' => uniqid(),
     'tableId'               => uniqid(),
     'debutId'               => uniqid(),
     'finId'                 => uniqid(),
     'typeSemaine'           => \App\Models\Planning\Creneau::TYPE_SEMAINE_PAIRE,
     'dureeHebdoId'          => uniqid(),
 ];
-
-$idSemaineCommune = uniqid();
-$idSemaineImpaire = uniqid();
-$idSemainePaire = uniqid();
-
-$typesSemaines = [
+$typeSemaine = [
     \App\Models\Planning\Creneau::TYPE_SEMAINE_COMMUNE => $idSemaineCommune,
     \App\Models\Planning\Creneau::TYPE_SEMAINE_IMPAIRE => $idSemaineImpaire,
     \App\Models\Planning\Creneau::TYPE_SEMAINE_PAIRE   => $idSemainePaire,
@@ -101,14 +102,13 @@ $text = [
     'common'    => _('Semaines_identiques'),
     'notCommon' => _('Semaines_differenciees'),
 ];
-
+$utilisateursAssocies = \App\ProtoControllers\HautResponsable\Planning::getListeUtilisateursAssocies($planningId);
 $optionsGroupes = \App\ProtoControllers\Groupe::getOptions();
-$associationsGroupe = array_map(
+$associations = array_map(
     function ($groupe) {
         return $groupe['utilisateurs'];
     },
     $optionsGroupes
 );
-$utilisateursAssocies = \App\ProtoControllers\Responsable\Planning::getListeUtilisateursAssocies($planningId);
 
-require_once VIEW_PATH . 'Planning/Formulaire/Responsable_Edit.php';
+require_once VIEW_PATH . 'Planning/Formulaire/HautResponsable_Edit.php';

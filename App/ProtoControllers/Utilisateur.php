@@ -168,11 +168,11 @@ class Utilisateur
     /**
      * Récupère l'adresse email de l'utilisateur
      *
-     *
      * @param string $login
      * @return string $mail
      */
-    public static function getEmailUtilisateur($login)  {
+    public static function getEmailUtilisateur($login)
+    {
         return static::getDonneesUtilisateur($login)["u_email"];
     }
 
@@ -241,6 +241,7 @@ class Utilisateur
 
     /**
      * Retourne le solde de tout les types de congés
+     *
      * @todo passer l'option gestion_conges_exceptionnels en param
      * après merge de #445
      *
@@ -297,8 +298,7 @@ class Utilisateur
     {
         return static::hasCongesEnCours($login)
             || static::hasHeureReposEnCours($login)
-            || static::hasHeureAdditionnelleEnCours($login)
-        ;
+            || static::hasHeureAdditionnelleEnCours($login);
     }
 
     /**
