@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "77f8958fa296195756eabfb5bda429f8",
+    "content-hash": "a3530145964f528ce738266c515095a1",
     "packages": [
         {
             "name": "adldap2/adldap2",
@@ -503,7 +503,7 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "5.7.19",
+            "version": "v5.7.20",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
@@ -660,16 +660,16 @@
         },
         {
             "name": "libertempo/api",
-            "version": "v1.6.2",
+            "version": "v1.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/libertempo/api.git",
-                "reference": "f2fefee849efd2a268fb6297354b4a764d4a1565"
+                "reference": "495bee70b616777499afcc0704e9bec816a30170"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/libertempo/api/zipball/f2fefee849efd2a268fb6297354b4a764d4a1565",
-                "reference": "f2fefee849efd2a268fb6297354b4a764d4a1565",
+                "url": "https://api.github.com/repos/libertempo/api/zipball/495bee70b616777499afcc0704e9bec816a30170",
+                "reference": "495bee70b616777499afcc0704e9bec816a30170",
                 "shasum": ""
             },
             "require": {
@@ -683,7 +683,7 @@
             "require-dev": {
                 "atoum/atoum": "3.3.0",
                 "codacy/coverage": "1.4.2",
-                "codeception/codeception": "2.5",
+                "codeception/codeception": "2.5.1",
                 "herloct/codeception-slim-module": "1.1"
             },
             "type": "library",
@@ -708,7 +708,7 @@
                     "role": "Developer"
                 }
             ],
-            "time": "2018-12-17T21:12:30+00:00"
+            "time": "2019-01-02T22:09:09+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -1839,16 +1839,16 @@
         },
         {
             "name": "symfony/var-dumper",
-            "version": "v4.2.1",
+            "version": "v4.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-dumper.git",
-                "reference": "db61258540350725f4beb6b84006e32398acd120"
+                "reference": "85bde661b178173d85c6f11ea9d03b61d1212bb2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/db61258540350725f4beb6b84006e32398acd120",
-                "reference": "db61258540350725f4beb6b84006e32398acd120",
+                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/85bde661b178173d85c6f11ea9d03b61d1212bb2",
+                "reference": "85bde661b178173d85c6f11ea9d03b61d1212bb2",
                 "shasum": ""
             },
             "require": {
@@ -1862,6 +1862,7 @@
             },
             "require-dev": {
                 "ext-iconv": "*",
+                "symfony/console": "~3.4|~4.0",
                 "symfony/process": "~3.4|~4.0",
                 "twig/twig": "~1.34|~2.4"
             },
@@ -1910,7 +1911,7 @@
                 "debug",
                 "dump"
             ],
-            "time": "2018-11-25T12:50:42+00:00"
+            "time": "2019-01-03T09:07:35+00:00"
         },
         {
             "name": "tecnickcom/tcpdf",
@@ -1976,16 +1977,16 @@
         },
         {
             "name": "tightenco/collect",
-            "version": "v5.7.18",
+            "version": "v5.7.19",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tightenco/collect.git",
-                "reference": "799108d67cdc9843ed3569ae2989888826166381"
+                "reference": "b963d48b9aab0029fddf3629a4e11f063469c6ea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tightenco/collect/zipball/799108d67cdc9843ed3569ae2989888826166381",
-                "reference": "799108d67cdc9843ed3569ae2989888826166381",
+                "url": "https://api.github.com/repos/tightenco/collect/zipball/b963d48b9aab0029fddf3629a4e11f063469c6ea",
+                "reference": "b963d48b9aab0029fddf3629a4e11f063469c6ea",
                 "shasum": ""
             },
             "require": {
@@ -2022,7 +2023,7 @@
                 "collection",
                 "laravel"
             ],
-            "time": "2018-12-17T15:11:32+00:00"
+            "time": "2018-12-19T23:16:40+00:00"
         },
         {
             "name": "yohang/calendr",
