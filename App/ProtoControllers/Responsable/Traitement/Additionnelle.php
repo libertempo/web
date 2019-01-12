@@ -66,7 +66,7 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
             $localError[] = _('demande_deja_traite') . ': ' . $infoDemande['login'];
             $return = NIL_INT;
         }
-        if ( 0 < $return) {
+        if (0 < $return) {
             $notif = new \App\Libraries\Notification\Additionnelle($id_heure);
             if (!$notif->send()) {
                 $localError[] = _('erreur_envoi_mail') . ': ' . $infoDemande['login'];
@@ -94,14 +94,14 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
                     $return = $this->putValidationFinale($id_heure);
                     log_action(0, '', '', 'Validation de la demande d\'heure additionnelle ' . $id_heure . ' de ' . $infoDemande['login']);
                 } else {
-                $localError[] = _('traitement_non_autorise') . ': ' . $infoDemande['login'];
+                    $localError[] = _('traitement_non_autorise') . ': ' . $infoDemande['login'];
                 }
             }
         } else {
             $localError[] = _('demande_deja_traite') . ': ' . $infoDemande['login'];
             $return = NIL_INT;
         }
-        if ( 0 < $return) {
+        if (0 < $return) {
             $notif = new \App\Libraries\Notification\Additionnelle($id_heure);
             if (!$notif->send()) {
                 $localError[] = _('erreur_envoi_mail') . ': ' . $infoDemande['login'];
@@ -198,7 +198,7 @@ class Additionnelle extends \App\ProtoControllers\Responsable\ATraitement
     {
         $groupId = \App\ProtoControllers\Responsable::getIdGroupeResp($resp);
         $usersResp = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupId);
-        $usersResp = array_diff($usersResp,[$_SESSION['userlogin']]);
+        $usersResp = array_diff($usersResp, [$_SESSION['userlogin']]);
 
         if (empty($usersResp)) {
             return [];

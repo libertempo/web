@@ -3,8 +3,8 @@ defined('ROOT_PATH') or define('ROOT_PATH', '../');
 defined('INCLUDE_PATH') or define('INCLUDE_PATH',     ROOT_PATH . 'includes/');
 
 require_once INCLUDE_PATH . 'define.php';
-defined( '_PHP_CONGES' ) or die( 'Restricted access' );
-include_once INCLUDE_PATH .'session.php';
+defined('_PHP_CONGES') or die('Restricted access');
+require_once INCLUDE_PATH .'session.php';
 
 $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
@@ -30,8 +30,9 @@ $onglets = array();
 $onglets['page_principale'] = _('resp_menu_button_retour_main');
 $onglets['hr-group'] = _('admin_onglet_gestion_groupe');
 
-if($config->canUserSaisieDemande())
+if($config->canUserSaisieDemande()) {
     $onglets['traitement_demandes'] = _('resp_menu_button_traite_demande');
+}
 
     $onglets['ajout_conges'] = _('resp_ajout_conges_titre');
     $onglets['jours_chomes'] = _('admin_button_jours_chomes_1');
@@ -60,7 +61,9 @@ header_menu('', 'Libertempo : '._('resp_menu_button_mode_hr'));
 /*********************************/
 
 
-/** initialisation des tableaux des types de conges/absences  **/
+/**
+ * initialisation des tableaux des types de conges/absences  
+**/
 // recup du tableau des types de conges (seulement les conges)
 $tab_type_cong=recup_tableau_types_conges();
 
@@ -68,7 +71,7 @@ $tab_type_cong=recup_tableau_types_conges();
 $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
 
 echo '<div class="'.$onglet.' wrapper" id="main-content">';
-    include_once ROOT_PATH . 'hr/hr_'.$onglet.'.php';
+    require_once ROOT_PATH . 'hr/hr_'.$onglet.'.php';
 echo '</div>';
 
 /*********************************/

@@ -2,10 +2,10 @@
 
 namespace App\ProtoControllers\Groupe;
 
-class Gestion {
+class Gestion
+{
 
     /**
-     *
      * Traite la création ou la modification d'un groupe
      *
      * @param array $post
@@ -109,7 +109,6 @@ class Gestion {
     }
 
     /**
-     *
      * Modifie un groupe
      *
      * @param array $put
@@ -292,7 +291,6 @@ class Gestion {
     }
 
     /**
-     *
      * Créer un nouveau groupe
      *
      * @param array $post
@@ -455,7 +453,7 @@ class Gestion {
             'doubleValidation' => '',
             'comment' => ''
         ];
-        $data = NULL;
+        $data = null;
 
         $errorsLst = [];
         if (!empty($_POST)) {
@@ -568,7 +566,7 @@ class Gestion {
      * @param int $id
      * @return string
      */
-    protected function getFormChoixEmploye($idGroupe, $data = NULL)
+    protected function getFormChoixEmploye($idGroupe, $data = null)
     {
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses([
@@ -906,7 +904,8 @@ class Gestion {
                 $return = false;
             }
             if (!$this->isResponsableGroupeExist($data['responsables'])
-                || !$this->isGrandResponsableGroupeExist($data['grandResponsables'])) {
+                || !$this->isGrandResponsableGroupeExist($data['grandResponsables'])
+            ) {
                 $errors[] = _('au moins un responsable et un grand responsable sont obligatoires');
                 $return = false;
             }
@@ -928,7 +927,6 @@ class Gestion {
     }
 
     /**
-     *
      * vérifie si le nom du groupe existe déja
      *
      * @param string $nomGroupe
@@ -1048,7 +1046,6 @@ class Gestion {
     }
 
     /**
-     *
      * vérifie si l'utilisateur est autorisé à gérer les congés
      *
      * @return boolean

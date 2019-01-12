@@ -4,15 +4,15 @@ namespace App\Libraries\Notification;
 
 /**
  * Objet de gestion des notifications
- * 
- * 
  */
-Class Additionnelle extends \App\Libraries\ANotification {
+class Additionnelle extends \App\Libraries\ANotification
+{
 
     /**
      * {@inheritDoc}
      */
-    protected function getData($id) {
+    protected function getData($id)
+    {
 
         if (empty($id)) {
             return [];
@@ -23,7 +23,7 @@ Class Additionnelle extends \App\Libraries\ANotification {
                 WHERE id_heure =' . (int) $id;
 
         $data = $sql->query($req)->fetch_array();
-        
+
         $data['jour']   = date('d/m/Y', $data['debut']);
         $data['debut']  = date('H\:i', $data['debut']);
         $data['fin']    = date('H\:i', $data['fin']);
@@ -35,7 +35,8 @@ Class Additionnelle extends \App\Libraries\ANotification {
     /**
      * {@inheritDoc}
      */
-    protected function getContenuDemande($data) {
+    protected function getContenuDemande($data)
+    {
 
         $return['sujet'] = "[CONGES] Demande d'heure additionnelle";
         $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($data['login']);
@@ -56,7 +57,8 @@ Class Additionnelle extends \App\Libraries\ANotification {
     /**
      * {@inheritDoc}
      */
-    protected function getContenuEmployePremierValidation($data) {
+    protected function getContenuEmployePremierValidation($data)
+    {
 
         $return['sujet'] = "[CONGES] Première validation d'heure additionnelle";
         $return['expediteur']['mail'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($_SESSION['userlogin']);
@@ -73,7 +75,8 @@ Class Additionnelle extends \App\Libraries\ANotification {
     /**
      * {@inheritDoc}
      */
-    protected function getContenuValidationFinale($data) {
+    protected function getContenuValidationFinale($data)
+    {
 
         $return['sujet'] = "[CONGES] Demande d'heure additionnelle validée";
         $return['expediteur']['mail'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($_SESSION['userlogin']);
@@ -86,11 +89,12 @@ Class Additionnelle extends \App\Libraries\ANotification {
         $return['config'] = 'mail_valid_conges_alerte_user';
         return $return;
     }
-    
+
     /**
      * {@inheritDoc}
      */
-    protected function getContenuRefus($data) {
+    protected function getContenuRefus($data)
+    {
 
         $return['sujet'] = "[CONGES] Demande d'heure additionnelle refusée";
         $return['expediteur']['mail'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($_SESSION['userlogin']);
@@ -100,18 +104,19 @@ Class Additionnelle extends \App\Libraries\ANotification {
 
         $return['message'] = $infoResp['u_prenom'] . " " . $infoResp['u_nom'] . " a refusé(e) votre demande d'heure additionnelle du ". $data['jour'] ." de ". $data['debut'] ." à ". $data['fin'] .".";
 
-        if (!is_null($data['comment_refus'])){
+        if (!is_null($data['comment_refus'])) {
             $return['message'] .= "\nCommentaire : " . $data['comment_refus'];
         }
-        
+
         $return['config'] = 'mail_valid_conges_alerte_user';
         return $return;
     }
-    
+
     /**
      * {@inheritDoc}
      */
-    protected function getContenuAnnulation($data) {
+    protected function getContenuAnnulation($data)
+    {
 
         $return['sujet'] = "[CONGES] Demande d'heure additionnelle annulée";
         $return['expediteur']['mail'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($data['login']);
@@ -127,11 +132,12 @@ Class Additionnelle extends \App\Libraries\ANotification {
         $return['config'] = 'mail_supp_demande_alerte_resp';
         return $return;
     }
-    
+
     /**
      * {@inheritDoc}
      */
-    protected function getContenuGrandResponsablePremiereValidation($data) {
+    protected function getContenuGrandResponsablePremiereValidation($data)
+    {
         $return['sujet'] = "[CONGES] Demande d'heure additionnelle";
         $return['expediteur']['mail'] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($_SESSION['userlogin']);
         $grandResponsables = \App\ProtoControllers\Responsable::getLoginGrandResponsableUtilisateur($data['login']);
@@ -142,7 +148,7 @@ Class Additionnelle extends \App\Libraries\ANotification {
             $return['destinataire'][] = \App\ProtoControllers\Utilisateur::getEmailUtilisateur($responsable);
         }
 
-    $return['message'] = $infoResp['u_prenom'] . " " . $infoResp['u_nom'] . " a validé(e) la demande d'ajout d'heure additionnelle de ".$infoUser['u_prenom']." ".$infoUser['u_nom']." pour le ". $data['jour'] ." de ". $data['debut'] ." à ". $data['fin'] ." soit ". $data['duree'] ." heure(s). Vous devez traiter cette demande";
+        $return['message'] = $infoResp['u_prenom'] . " " . $infoResp['u_nom'] . " a validé(e) la demande d'ajout d'heure additionnelle de ".$infoUser['u_prenom']." ".$infoUser['u_nom']." pour le ". $data['jour'] ." de ". $data['debut'] ." à ". $data['fin'] ." soit ". $data['duree'] ." heure(s). Vous devez traiter cette demande";
 
         $return['config'] = 'mail_new_demande_alerte_resp';
         return $return;

@@ -8,7 +8,8 @@ namespace App\ProtoControllers\Groupe;
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina
  */
-class Utilisateur {
+class Utilisateur
+{
     /*
      * SQL
      */

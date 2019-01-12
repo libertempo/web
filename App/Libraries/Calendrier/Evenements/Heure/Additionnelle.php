@@ -25,10 +25,12 @@ final class Additionnelle extends \App\Libraries\Calendrier\Evenements\AHeure
         $ids = [];
         $etats[] = \App\Models\AHeure::STATUT_VALIDATION_FINALE;
         if ($canVoirEnTransit) {
-            $etats = array_merge($etats, [
+            $etats = array_merge(
+                $etats, [
                 \App\Models\AHeure::STATUT_DEMANDE,
                 \App\Models\AHeure::STATUT_PREMIERE_VALIDATION
-            ]);
+                ]
+            );
         }
         $req = 'SELECT id_heure AS id
                 FROM heure_additionnelle

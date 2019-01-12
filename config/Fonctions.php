@@ -3,7 +3,6 @@ namespace config;
 
 /**
  * Regroupement des fonctions liées à la configuration
- *
  */
 class Fonctions
 {
@@ -19,7 +18,7 @@ class Fonctions
         log_action(0, "", "", $comment_log);
 
         $return .= '<span class="messages">' . _('form_modif_ok') . '</span><br>';
-        redirect( ROOT_PATH . 'config/logs');
+        redirect(ROOT_PATH . 'config/logs');
     }
 
     private static function confirmer_vider_table_logs()
@@ -228,7 +227,7 @@ class Fonctions
 
             $legend =$mail_nom ;
             $key = $mail_nom."_comment";
-            $comment =  _($key)  ;
+            $comment =  _($key);
 
             $return .= '<br>';
             $table = new \App\Libraries\Structure\Table();
@@ -290,7 +289,7 @@ class Fonctions
         // SERVER
         $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
         // GET / POST
-        $action = getpost_variable('action') ;
+        $action = getpost_variable('action');
         $tab_new_values = getpost_variable('tab_new_values');
         /*********************************/
 
@@ -330,16 +329,16 @@ class Fonctions
         $tab_new_values['type'] = htmlspecialchars($tab_new_values['type'], ENT_QUOTES | ENT_HTML401);
 
         // verif de la saisie
-        $erreur=FALSE ;
+        $erreur=false ;
         // verif si pas de " ' , . ; % ?
-        if( (preg_match('/.*[?%;.,"\'].*$/', $tab_new_values['libelle'])) || (preg_match('/.*[?%;.,"\'].*$/', $tab_new_values['short_libelle'])) ) {
+        if((preg_match('/.*[?%;.,"\'].*$/', $tab_new_values['libelle'])) || (preg_match('/.*[?%;.,"\'].*$/', $tab_new_values['short_libelle'])) ) {
             $return .= '<br>' . _('config_abs_saisie_not_ok') . ' : ' . _('config_abs_bad_caracteres') . ' " \' , . ; % ? <br>';
-            $erreur=TRUE;
+            $erreur=true;
         }
         // verif si les champs sont vides
         if (0 === strlen($tab_new_values['libelle']) || 0 === strlen($tab_new_values['short_libelle']) || 0 === strlen($tab_new_values['type'])) {
             $return .= '<br>' . _('config_abs_saisie_not_ok') . ' : ' . _('config_abs_champs_vides') . '<br>';
-            $erreur=TRUE;
+            $erreur=true;
         }
 
         // vérif unicité du libellé court
@@ -348,9 +347,11 @@ class Fonctions
         $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
         $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
         $absenceTypes = $api->get('absence/type', $_SESSION['token'])['data'];
-        $absenceWithLibelle = array_filter($absenceTypes, function (array $type) use ($tab_new_values) {
-            return $tab_new_values['short_libelle'] === $type['libelleCourt'];
-        });
+        $absenceWithLibelle = array_filter(
+            $absenceTypes, function (array $type) use ($tab_new_values) {
+                return $tab_new_values['short_libelle'] === $type['libelleCourt'];
+            }
+        );
         if (!empty($absenceWithLibelle)) {
             $return .= '<br>' . _('config_abs_saisie_not_ok') . ' : ' . _('libelle_court_existant') . '<br>';
             $erreur = true;
@@ -376,7 +377,7 @@ class Fonctions
 
             if (0 !== $new_abs_id) {
                 // ajout dans la table conges_solde_user (pour chaque user !!)(si c'est un conges, pas si c'est une absence)
-                if ("conges" == $tab_new_values['type'] || "conges_exceptionnels" == $tab_new_values['type']) {
+                if ("conges" === $tab_new_values['type'] || "conges_exceptionnels" === $tab_new_values['type']) {
                     // recup de users :
                     $sql_users="SELECT DISTINCT(u_login) FROM conges_users;" ;
 
@@ -501,9 +502,9 @@ class Fonctions
         // verif de la saisie
         $erreur=false ;
         // verif si pas de " ' , . ; % ?
-        if ( (preg_match('/.*[?%;.,"\'].*$/', $tab_new_values['libelle'])) || (preg_match('/.*[?%;.,"\'].*$/', $tab_new_values['short_libelle'])) ) {
+        if ((preg_match('/.*[?%;.,"\'].*$/', $tab_new_values['libelle'])) || (preg_match('/.*[?%;.,"\'].*$/', $tab_new_values['short_libelle'])) ) {
             $return .= '<br>' . _('config_abs_saisie_not_ok') . ' : ' . _('config_abs_bad_caracteres') . ' " \' , . ; % ? <br>';
-            $erreur=TRUE;
+            $erreur=true;
         }
         // verif si les champs sont vides
         if (0 === strlen($tab_new_values['libelle']) || 0 === strlen($tab_new_values['short_libelle'])) {
@@ -647,7 +648,7 @@ class Fonctions
 
             // CONTROLE jour_mois_limite_reliquats
             // si modif de jour_mois_limite_reliquats, on verifie le format ( 0 ou jj-mm) , sinon : changement impossible !
-            if( ($key=="jour_mois_limite_reliquats") && ($value!= "0") ) {
+            if(($key=="jour_mois_limite_reliquats") && ($value!= "0") ) {
                 $t=explode("-", $value);
                 if (checkdate($t[1], $t[0], date("Y"))==false) {
                     $return .= '<b>' . _('config_jour_mois_limite_reliquats_modif_impossible') . '</b><br>';
@@ -716,11 +717,11 @@ class Fonctions
                     $childTable .= '<br><i>' . _($conf_commentaire) . '</i><br>';
 
                     // affichage saisie variable
-                    if ($conf_nom=="installed_version") {
+                    if ('installed_version' === $conf_nom) {
                         $childTable .= '<b>' . $conf_nom . '&nbsp;&nbsp;=&nbsp;&nbsp;' . $conf_valeur . '</b><br>';
                     } elseif ('texte' === $conf_type || 'path' === $conf_type) {
                         $childTable .= '<b>' . $conf_nom . '</b>&nbsp;=&nbsp;<input type="text" class="form-control" size="50" maxlength="200" name="tab_new_values[' . $conf_nom . ']" value="' . $conf_valeur . '"><br>';
-                    } elseif ($conf_type=="boolean") {
+                    } elseif ('boolean' === $conf_type) {
                         $childTable .= '<b>' . $conf_nom . '</b>&nbsp;=&nbsp;<select class="form-control" name="tab_new_values[' . $conf_nom . ']">';
                         $childTable .= '<option value="TRUE"';
                         if ('TRUE' === $conf_valeur) {
@@ -733,9 +734,9 @@ class Fonctions
                         }
                         $childTable .= '>FALSE</option>';
                         $childTable .= '</select><br>';
-                    } elseif (substr($conf_type,0,4) === "enum") {
+                    } elseif (substr($conf_type, 0, 4) === "enum") {
                         $childTable .= '<b>' . $conf_nom . '</b>&nbsp;=&nbsp;<select class="form-control" name="tab_new_values[' . $conf_nom . ']">';
-                        $options=explode("/", substr(strstr($conf_type, '='),1));
+                        $options=explode("/", substr(strstr($conf_type, '='), 1));
                         for ($i=0; $i<count($options); $i++) {
                             $childTable .= '<option value="' . $options[$i] . '"';
                             if ($conf_valeur==$options[$i]) {
@@ -785,12 +786,12 @@ class Fonctions
         // recup des parametres reçus :
         // SERVER
         // GET / POST
-        $action         = getpost_variable('action') ;
+        $action         = getpost_variable('action');
         $tab_new_values = getpost_variable('tab_new_values');
 
         /*************************************/
 
-        if($action=="commit") {
+        if('commit' === $action) {
             $return .= \config\Fonctions::commit_saisie($tab_new_values);
         } else {
             $return .= '<div class="wrapper configure">';

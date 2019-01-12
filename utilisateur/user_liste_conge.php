@@ -48,7 +48,7 @@ if (empty($listId)) {
         $data->dateDebut = \App\Helpers\Formatter::dateIso2Fr($conges["p_date_deb"]);
         $data->periodeDebut = schars($conges["p_demi_jour_deb"] == "am" ? 'matin' : 'après-midi');
         $data->dateFin = \App\Helpers\Formatter::dateIso2Fr($conges["p_date_fin"]);
-        $data->periodeFin = schars($conges["p_demi_jour_fin"] == "am" ? 'matin' : 'après-midi');
+        $data->periodeFin = schars($conges["p_demi_jour_fin"] === "am" ? 'matin' : 'après-midi');
         $data->libelle = schars($conges["ta_libelle"]);
         $data->nbJours = affiche_decimal($conges["p_nb_jours"]);
         $data->statut = \App\Models\Conge::statusText($conges["p_etat"]);

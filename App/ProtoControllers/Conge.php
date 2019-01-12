@@ -102,7 +102,7 @@ class Conge
                 $user_modif_demande = "&nbsp;";
 
                 // si on peut modifier une demande :on defini le lien à afficher
-                if ($modifAutorisee && $conges["p_etat"] != "valid") {
+                if ($modifAutorisee && 'valid' !== $conges["p_etat"]) {
                     //on ne peut pas modifier une demande qui a déja été validé une fois (si on utilise la double validation)
                     $user_modif_demande = '<a href="user_index.php?p_num=' . $conges['p_num'] . '&onglet=modif_demande">' . _('form_modif') . '</a>';
                 }
@@ -297,10 +297,10 @@ class Conge
 
     /**
      * retourne la liste des types de congés par id
-     * 
+     *
      * @param \includes\SQL $sql
      * @return array $typesConges
-     * 
+     *
      */
     public static function getTypesAbsences(\includes\SQL $sql, $type = null)
     {

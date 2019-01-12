@@ -3,8 +3,8 @@
 namespace export;
 
 /**
-* Regroupement des fonctions liées à l'export
-*/
+ * Regroupement des fonctions liées à l'export
+ */
 class Fonctions
 {
     private static function form_saisie($user, $date_debut, $date_fin)

@@ -1,11 +1,11 @@
 <?php
 
 $error_message = NULL;
-if ($erreur == 'login_passwd_incorrect') {
+if ($erreur === 'login_passwd_incorrect') {
     $error_message = _('login_passwd_incorrect');
-} elseif ($erreur=='login_non_connu') {
+} elseif ($erreur==='login_non_connu') {
     $error_message = _('login_non_connu');
-} elseif( 'session-invalid' == getpost_variable('error', false)){
+} elseif( 'session-invalid' === getpost_variable('error', false)){
     $error_message = _('session_pas_session_ouverte');
 }
 ?>

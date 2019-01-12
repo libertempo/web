@@ -67,7 +67,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
             $return = NIL_INT;
         }
 
-        if( 0 < $return) {
+        if(0 < $return) {
             $notif = new \App\Libraries\Notification\Repos($id_heure);
             if (!$notif->send()) {
                 $localError[] = _('erreur_envoi_mail') . ': ' . $infoDemande['login'];
@@ -95,7 +95,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
                     $return = $this->putValidationFinale($id_heure);
                     log_action(0, '', '', 'Validation de la demande d\'heure de repos ' . $id_heure . ' de ' . $infoDemande['login']);
                 } else {
-                $localError[] = _('traitement_non_autorise') . ': ' . $infoDemande['login'];
+                    $localError[] = _('traitement_non_autorise') . ': ' . $infoDemande['login'];
                 }
             }
         } else {
@@ -103,7 +103,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
             $return = NIL_INT;
         }
 
-        if( 0 < $return) {
+        if(0 < $return) {
             $notif = new \App\Libraries\Notification\Repos($id_heure);
             $send = $notif->send();
 
@@ -184,7 +184,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
      */
     protected function updateSolde($demandeId)
     {
-        $user = $this->getInfoDemandes(explode(" ",$demandeId));
+        $user = $this->getInfoDemandes(explode(" ", $demandeId));
         $sql = \includes\SQL::singleton();
 
         $req   = 'UPDATE conges_users
@@ -206,7 +206,7 @@ class Repos extends \App\ProtoControllers\Responsable\ATraitement
         $usersResp = [];
         $usersResp = \App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds($groupId);
 
-        $usersResp = array_diff($usersResp,[$_SESSION['userlogin']]);
+        $usersResp = array_diff($usersResp, [$_SESSION['userlogin']]);
 
         if (empty($usersResp)) {
             return [];

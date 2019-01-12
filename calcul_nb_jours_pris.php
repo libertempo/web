@@ -23,20 +23,19 @@ $opt_fin    = getpost_variable('opt_fin') ;
 $p_num	    = getpost_variable('p_num') ;
 /*************************************/
 
-if( ($user!="") && ($date_debut!="") && ($date_fin!="") && ($opt_debut!="") && ($opt_fin!="") )
+if($user !== "" && $date_debut !== "" && $date_fin !== "" && $opt_debut !== "" && $opt_fin !== "")
 	affichage($user, $date_debut, $date_fin, $opt_debut, $opt_fin, $p_num);
 
 /**********  FONCTIONS  ****************************************/
 
 function affichage($user, $date_debut, $date_fin, $opt_debut, $opt_fin, $p_num="")
 {
-	$PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 	$comment="&nbsp;" ;
 
 
 
 	// calcul :
-	$nb_jours=compter($user, $p_num, $date_debut, $date_fin, $opt_debut, $opt_fin, $comment);
+    $nb_jours = compter($user, $p_num, $date_debut, $date_fin, $opt_debut, $opt_fin, $comment);
 	$tab['nb'] = $nb_jours;
 	$tab['comm'] = $comment;
 
