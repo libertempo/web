@@ -277,7 +277,7 @@ var vm = new Vue({
                 employe.isDansGroupe = false;
                 fullUtilisateurs.push(employe);
 
-                if (employe.is_haut_responsable) {
+                if (employe.is_responsable) {
                     responsables.push(employe);
                 }
             }
