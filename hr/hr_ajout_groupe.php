@@ -33,9 +33,9 @@ if (!empty($_POST)) {
         $data = $gestionGroupes->FormData2Array($_POST);
     } else {
         if (key_exists('_METHOD', $_POST)) {
-            redirect(ROOT_PATH . 'hr/hr_index.php?onglet=liste_groupe&notice=update');
+            redirect(ROOT_PATH . 'hr/liste_groupe?notice=update');
         } else {
-            redirect(ROOT_PATH . 'hr/hr_index.php?onglet=liste_groupe&notice=insert');
+            redirect(ROOT_PATH . 'hr/liste_groupe?notice=insert');
         }
     }
 }
