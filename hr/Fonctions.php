@@ -837,9 +837,7 @@ class Fonctions
         $list_all_users_du_hr=\hr\Fonctions::get_list_all_users_du_hr($_SESSION['userlogin']);
         // recup des grd resp du user
         $tab_grd_resp=array();
-        if ($config->isDoubleValidationActive()) {
-            get_tab_grd_resp_du_user($user_login, $tab_grd_resp);
-        }
+        get_tab_grd_resp_du_user($user_login, $tab_grd_resp);
 
         /********************/
         /* Titre */
@@ -931,19 +929,17 @@ class Fonctions
         /*********************/
         /* Etat des Demandes en attente de 2ieme validation */
         /*********************/
-        if ($config->isDoubleValidationActive()) {
-            /*******************************/
-            /* verif si le resp est grand_responsable pour ce user*/
+        /*******************************/
+        /* verif si le resp est grand_responsable pour ce user*/
 
-            if (in_array($_SESSION['userlogin'], $tab_grd_resp)) // si resp_login est dans le tableau
-            {
-                $return .= '<h3>' . _('resp_traite_user_etat_demandes_2_valid') . '</h3>';
+        if (in_array($_SESSION['userlogin'], $tab_grd_resp)) // si resp_login est dans le tableau
+        {
+            $return .= '<h3>' . _('resp_traite_user_etat_demandes_2_valid') . '</h3>';
 
-                //affiche l'état des demande en attente de 2ieme valid du user (avec le formulaire pour le responsable)
-                $return .= self::affiche_etat_demande_2_valid_user_for_resp($user_login);
+            //affiche l'état des demande en attente de 2ieme valid du user (avec le formulaire pour le responsable)
+            $return .= self::affiche_etat_demande_2_valid_user_for_resp($user_login);
 
-                $return .= '<hr align="center" size="2" width="90%">';
-            }
+            $return .= '<hr align="center" size="2" width="90%">';
         }
 
         /*******************/

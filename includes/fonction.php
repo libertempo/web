@@ -2101,14 +2101,12 @@ function recup_infos_du_user($login, $list_groups_double_valid)
         $tab_user['double_valid'] = "N";
 
         // on regarde ici si le user est dans un groupe qui fait l'objet d'une double validation
-        if ($config->isDoubleValidationActive()) {
-            if ($list_groups_double_valid!="") { // si $resp_login est responsable d'au moins un groupe a double validation
-                $sql1='SELECT gu_login FROM conges_groupe_users WHERE gu_login="'. $db->quote($login).'" AND gu_gid IN ('.$list_groups_double_valid.') ORDER BY gu_gid, gu_login;';
-                $ReqLog1 = $db->query($sql1);
+        if ($list_groups_double_valid!="") { // si $resp_login est responsable d'au moins un groupe a double validation
+            $sql1='SELECT gu_login FROM conges_groupe_users WHERE gu_login="'. $db->quote($login).'" AND gu_gid IN ('.$list_groups_double_valid.') ORDER BY gu_gid, gu_login;';
+            $ReqLog1 = $db->query($sql1);
 
-                if ($ReqLog1->num_rows  !=0)
-                    $tab_user['double_valid'] = 'Y';
-            }
+            if ($ReqLog1->num_rows  !=0)
+            $tab_user['double_valid'] = 'Y';
         }
         return $tab_user ;
     }

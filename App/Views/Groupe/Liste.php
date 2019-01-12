@@ -2,7 +2,6 @@
 /*
  * $errors
  * $message
- * $isDoubleValidationActive
  * $groupes
  */
 ?>
@@ -25,15 +24,13 @@
             <th><?= _('admin_groupes_groupe') ?></th>
             <th><?= _('admin_groupes_libelle') ?></th>
             <th><?= _('admin_groupes_nb_users') ?></th>
-        <?php if ($isDoubleValidationActive) : ?>
             <th><?= _('admin_groupes_double_valid') ?></th>
-        <?php endif ; ?>
             <th></th>
         </tr>
     </thead>
     <tbody>
     <?php if (empty($groupes)) : ?>
-        <tr><td colspan="<?= ($isDoubleValidationActive) ? 5 : 4?>"><center><?= _('aucun_resultat') ?></center></td></tr>
+        <tr><td colspan="5"><center><?= _('aucun_resultat') ?></center></td></tr>
     <?php else : ?>
         <?php $i = 0; ?>
         <?php foreach ($groupes as $groupe) : ?>
@@ -41,9 +38,7 @@
                 <td><b><?= $groupe['name'] ?></b></td>
                 <td><?= $groupe['comment'] ?></td>
                 <td><?= count(\App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds([$groupe['id']])); ?></td>
-            <?php if ($isDoubleValidationActive) : ?>
                 <td><?= \App\Helpers\Formatter::bool2String($groupe['double_validation']) ?></td>
-            <?php endif ; ?>
                 <td class="action">
                     <a href="hr_index.php?onglet=modif_groupe&group=<?= $groupe['id'] ?>" title="<?= _('form_modif') ?>"><i class="fa fa-pencil"></i></a>
                     <a href="hr_index.php?onglet=suppr_groupe&group=<?= $groupe['id'] ?>" title="<?= _('form_supprim') ?>"><i class="fa fa-times-circle"></i></a>

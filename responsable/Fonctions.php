@@ -239,7 +239,7 @@ class Fonctions
                 $return .= cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $comment_cloture);
             }
             // traitement des users dont on est grand responsable :
-            if (($config->isDoubleValidationActive()) && ($config->canGrandResponsableAjouteConge()) ) {
+            if ($config->canGrandResponsableAjouteConge()) {
                 foreach($tab_all_users_du_grand_resp as $current_login => $tab_current_user) {
                     $return .= cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $comment_cloture);
                 }
@@ -373,7 +373,7 @@ class Fonctions
                 }
             }
             // traitement des users dont on est grand responsable :
-            if (($config->isDoubleValidationActive()) && ($config->canGrandResponsableAjouteConge()) ) {
+            if ($config->canGrandResponsableAjouteConge()) {
                 foreach($tab_all_users_du_grand_resp as $current_login => $tab_current_user) {
                     // tab_cloture_users[$current_login]=TRUE si checkbox "cloturer" est cochée
                     if ((isset($tab_cloture_users[$current_login])) && ($tab_cloture_users[$current_login]=true) ) {
@@ -401,7 +401,7 @@ class Fonctions
 
         // on établi la liste complète des groupes dont on est le resp (ou le grd resp)
         $list_group_resp=get_list_groupes_du_resp($_SESSION['userlogin']);
-        if (($config->isDoubleValidationActive()) && ($config->canGrandResponsableAjouteConge()) ) {
+        if ($config->canGrandResponsableAjouteConge()) {
             $list_group_grd_resp=get_list_groupes_du_grand_resp($_SESSION['userlogin']);
         } else {
             $list_group_grd_resp="";
@@ -567,7 +567,7 @@ class Fonctions
             }
 
             // affichage des users dont on est grand responsable :
-            if (($config->isDoubleValidationActive()) && ($config->canGrandResponsableAjouteConge()) ) {
+            if ($config->canGrandResponsableAjouteConge()) {
                 $nb_colspan=50;
                 $return .= '<tr align="center"><td class="histo" style="background-color: #CCC;" colspan="' . $nb_colspan . '"><i>' . _('resp_etat_users_titre_double_valid') . '</i></td></tr>';
 
@@ -1254,9 +1254,7 @@ class Fonctions
 
         // recup des grd resp du user
         $tab_grd_resp=array();
-        if ($config->isDoubleValidationActive()) {
-            get_tab_grd_resp_du_user($user_login, $tab_grd_resp);
-        }
+        get_tab_grd_resp_du_user($user_login, $tab_grd_resp);
 
         /********************/
         /* Titre */
@@ -1357,19 +1355,17 @@ class Fonctions
         /*********************/
         /* Etat des Demandes en attente de 2ieme validation */
         /*********************/
-        if ($config->isDoubleValidationActive()) {
-            /*******************************/
-            /* verif si le resp est grand_responsable pour ce user*/
+        /*******************************/
+        /* verif si le resp est grand_responsable pour ce user*/
 
-            if (in_array($_SESSION['userlogin'], $tab_grd_resp)) // si resp_login est dans le tableau
-            {
-                $return .= '<h2>' . _('resp_traite_user_etat_demandes_2_valid') . '</h2>';
+        if (in_array($_SESSION['userlogin'], $tab_grd_resp)) // si resp_login est dans le tableau
+        {
+            $return .= '<h2>' . _('resp_traite_user_etat_demandes_2_valid') . '</h2>';
 
-                //affiche l'état des demande en attente de 2ieme valid du user (avec le formulaire pour le responsable)
-                $return .= \responsable\Fonctions::affiche_etat_demande_2_valid_user_for_resp($user_login);
+            //affiche l'état des demande en attente de 2ieme valid du user (avec le formulaire pour le responsable)
+            $return .= \responsable\Fonctions::affiche_etat_demande_2_valid_user_for_resp($user_login);
 
-                $return .= '<hr/>';
-            }
+            $return .= '<hr/>';
         }
 
         /*******************/
