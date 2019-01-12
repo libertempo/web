@@ -35,7 +35,7 @@ function setInstalledVersion(\includes\SQL $db, $versionCode) : bool
     $req = "UPDATE conges_config SET conf_valeur = '$versionCode' WHERE conf_nom = 'installed_version' ";
     $db->query($req);
 
-    return 0 < $db->affected_rows;
+    return true;
 }
 
 /**
