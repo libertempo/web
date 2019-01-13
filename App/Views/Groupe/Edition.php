@@ -87,7 +87,6 @@
                                 >
                             </td>
                             <td class="histo"><label :for="getResponsableId(r)">{{ r.nom }} {{ r.prenom }}</label></td>
-                            </td>
                         </tr>
                     </tbody>
                 </table>
