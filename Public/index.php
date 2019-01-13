@@ -25,6 +25,7 @@ $rewritten = [
     '/hr/page_principale',
     '/hr/ajout_user',
     '/hr/ajout_groupe',
+    '/hr/modif_groupe',
     '/hr/liste_groupe',
     '/hr/traitement_demandes',
     '/hr/jours_chomes',
