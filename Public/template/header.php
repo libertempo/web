@@ -2,6 +2,9 @@
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 include TEMPLATE_PATH . 'template_define.php';
 global $environnement;
+$sql = \includes\SQL::singleton();
+$config = new \App\Libraries\Configuration($sql);
+$baseURIApi = $config->getUrlAccueil() . '/api/';
 ?>
 <!DOCTYPE html>
 <html>
@@ -38,40 +41,31 @@ global $environnement;
         <?php /* REBOOT STYLE */ ?>
         <link type="text/css" href="<?= CSS_PATH ?>reboot.css?v=<?= $config_php_conges_version ?>" rel="stylesheet" media="screen,print">
         <?php /* JQUERY */ ?>
-        <script>
-        var _rollbarConfig = {
-            accessToken: "<?= LOGGER_TOKEN ?>",
-            captureUncaught: true,
-            captureUnhandledRejections: true,
-            payload: {
-                environment: "<?= $environnement ?>",
-                code_version : "<?= $config_php_conges_version ?>"
-            }
-        };
-        </script>
-        <script type="text/javascript" src="<?= JS_PATH ?>rollbar.js?v=<?= $config_php_conges_version ?>"></script>
-        <script type="text/javascript" src="<?= NODE_PATH ?>jquery/dist/jquery.min.js?v=<?= $config_php_conges_version ?>"></script>
-        <script type="text/javascript" src="<?= NODE_PATH ?>bootstrap/dist/js/bootstrap.min.js?v=<?= $config_php_conges_version ?>"></script>
-        <script type="text/javascript" src="<?= NODE_PATH ?>bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js?v=<?= $config_php_conges_version ?>"></script>
-        <script type="text/javascript" src="<?= NODE_PATH ?>bootstrap-datepicker/dist/locales/bootstrap-datepicker.fr.min.js?v=<?= $config_php_conges_version ?>"></script>
-        <script type="text/javascript" src="<?= NODE_PATH ?>bootstrap-timepicker/js/bootstrap-timepicker.min.js?v=<?= $config_php_conges_version ?>"></script>
         <script type="text/javascript" src="<?= NODE_PATH ?>axios/dist/axios.min.js?v=<?= $config_php_conges_version ?>"></script>
-        <?php if ('development' === $environnement) : ?>
-            <script type="text/javascript" src="<?= NODE_PATH ?>vue/dist/vue.js?v=<?= $config_php_conges_version ?>"></script>
-        <?php else : ?>
-            <script type="text/javascript" src="<?= NODE_PATH ?>vue/dist/vue.min.js?v=<?= $config_php_conges_version ?>"></script>
-        <?php endif ;?>
-        <script type="text/javascript" src="<?= JS_PATH ?>reboot.js?v=<?= $config_php_conges_version ?>"></script>
         <script language="JavaScript" type="text/javascript">
         <!--
         // Les cookies sont obligatoires
         if (! navigator.cookieEnabled) {
             document.write("<font color=\'#FF0000\'><br><br><center>'. _('cookies_obligatoires') .'</center></font><br><br>");
         }
+
+        /**
+         * Construction axios
+         */
+        axios.defaults.headers.get = {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Token': '<?= $_SESSION['token'] ?>',
+        };
+
+        const instance = axios.create({
+          baseURL: '<?= $baseURIApi ?>',
+          timeout: 1500
+        });
+
+        var optionsVue = undefined;
+
         //-->
         </script>
-        <noscript>
-                <font color="#FF0000"><br><br><center>'. _('javascript_obligatoires') .'</center></font><br><br>
-        </noscript>
         <?= $additional_head ?>
     </head>

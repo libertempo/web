@@ -117,6 +117,7 @@ function bottom()
     }else
         throw new Exception('Warning : Ne peut ouvrir deux header !!!');
 
+    include ROOT_PATH .'version.php';
     include_once TEMPLATE_PATH . $type_bottom .'_bottom.php';
 }
 

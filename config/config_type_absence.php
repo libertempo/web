@@ -37,7 +37,6 @@ switch ($action) {
     default:
         $sql = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($sql);
-        $baseURIApi = $config->getUrlAccueil() . '/api/';
         $isCongesExceptionnelsActive = $config->isCongesExceptionnelsActive();
         $titres = [
             'conges' => _('divers_conges_maj_1'),
