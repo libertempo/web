@@ -257,6 +257,37 @@ var optionsVue = {
             } else {
                 groupeGrandsResponsables.classList.add('hide');
             }
+        },
+        fillEmployes : function () {
+            var vm = this;
+            this.axios.get('/utilisateur')
+            .then((response) => {
+                if (typeof response.data != 'object') {
+                    return;
+                }
+                const employes = response.data.data;
+                var fullUtilisateurs = new Array();
+                var responsables = new Array();
+                for (var i = 0; i < employes.length; ++i) {
+                    var employe = employes[i];
+                    employe.isDansGroupe = false;
+                    fullUtilisateurs.push(employe);
+                    if (employe.is_responsable) {
+                        responsables.push(employe);
+                    }
+                }
+                // Finally hide loaders and show vars
+                document.getElementById('loader-bar-employe').classList.add('hidden');
+                document.getElementById('loader-bar-responsable').classList.add('hidden');
+                vm.employes = fullUtilisateurs;
+                vm.responsables = responsables;
+                vm.grands_responsables = responsables;
+            })
+            .catch((error) => {
+                console.log(error.response);
+                console.error(error);
+            })
+        },
         }
     },
     created () {
