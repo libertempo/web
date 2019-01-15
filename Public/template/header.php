@@ -58,6 +58,7 @@ $baseURIApi = $config->getUrlAccueil() . '/api/';
         <script type="text/javascript" src="<?= NODE_PATH ?>bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js?v=<?= $config_php_conges_version ?>"></script>
         <script type="text/javascript" src="<?= NODE_PATH ?>bootstrap-datepicker/dist/locales/bootstrap-datepicker.fr.min.js?v=<?= $config_php_conges_version ?>"></script>
         <script type="text/javascript" src="<?= NODE_PATH ?>bootstrap-timepicker/js/bootstrap-timepicker.min.js?v=<?= $config_php_conges_version ?>"></script>
+        <script type="text/javascript" src="<?= NODE_PATH ?>axios/dist/axios.min.js?v=<?= $config_php_conges_version ?>"></script>
         <?php if ('development' === $environnement) : ?>
             <script type="text/javascript" src="<?= NODE_PATH ?>vue/dist/vue.js?v=<?= $config_php_conges_version ?>"></script>
         <?php else : ?>
