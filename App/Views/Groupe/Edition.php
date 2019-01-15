@@ -122,17 +122,6 @@
 </div>
 
 <script>
-axios.defaults.headers.get = {
-  'Content-Type': 'application/json',
-  'Accept': 'application/json',
-  'Token': '<?= $_SESSION['token'] ?>',
-};
-
-const instance = axios.create({
-  baseURL: '<?= $baseURIApi ?>',
-  timeout: 1500
-});
-
 var optionsVue = {
     el: '#inner-content',
     data: {

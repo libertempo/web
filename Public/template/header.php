@@ -41,7 +41,29 @@ $baseURIApi = $config->getUrlAccueil() . '/api/';
         <?php /* REBOOT STYLE */ ?>
         <link type="text/css" href="<?= CSS_PATH ?>reboot.css?v=<?= $config_php_conges_version ?>" rel="stylesheet" media="screen,print">
         <?php /* JQUERY */ ?>
-        <script type="text/javascript" src="<?= NODE_PATH ?>axios/dist/axios.min.js?v=<?= $config_php_conges_version ?>"></script>
+        <script>
+        var _rollbarConfig = {
+            accessToken: "<?= LOGGER_TOKEN ?>",
+            captureUncaught: true,
+            captureUnhandledRejections: true,
+            payload: {
+                environment: "<?= $environnement ?>",
+                code_version : "<?= $config_php_conges_version ?>"
+            }
+        };
+        </script>
+        <script type="text/javascript" src="<?= JS_PATH ?>rollbar.js?v=<?= $config_php_conges_version ?>"></script>
+        <script type="text/javascript" src="<?= NODE_PATH ?>jquery/dist/jquery.min.js?v=<?= $config_php_conges_version ?>"></script>
+        <script type="text/javascript" src="<?= NODE_PATH ?>bootstrap/dist/js/bootstrap.min.js?v=<?= $config_php_conges_version ?>"></script>
+        <script type="text/javascript" src="<?= NODE_PATH ?>bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js?v=<?= $config_php_conges_version ?>"></script>
+        <script type="text/javascript" src="<?= NODE_PATH ?>bootstrap-datepicker/dist/locales/bootstrap-datepicker.fr.min.js?v=<?= $config_php_conges_version ?>"></script>
+        <script type="text/javascript" src="<?= NODE_PATH ?>bootstrap-timepicker/js/bootstrap-timepicker.min.js?v=<?= $config_php_conges_version ?>"></script>
+        <?php if ('development' === $environnement) : ?>
+            <script type="text/javascript" src="<?= NODE_PATH ?>vue/dist/vue.js?v=<?= $config_php_conges_version ?>"></script>
+        <?php else : ?>
+            <script type="text/javascript" src="<?= NODE_PATH ?>vue/dist/vue.min.js?v=<?= $config_php_conges_version ?>"></script>
+        <?php endif ;?>
+        <script type="text/javascript" src="<?= JS_PATH ?>reboot.js?v=<?= $config_php_conges_version ?>"></script>
         <script language="JavaScript" type="text/javascript">
         <!--
         // Les cookies sont obligatoires
