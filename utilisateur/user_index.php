@@ -2,7 +2,7 @@
 define('ROOT_PATH', '../');
 define('INCLUDE_PATH',     ROOT_PATH . 'includes/');
 require_once INCLUDE_PATH . 'define.php';
-include_once INCLUDE_PATH . 'session.php';
+require_once INCLUDE_PATH . 'session.php';
 
 $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
@@ -57,7 +57,7 @@ echo "</div>\n";
 /*********************************/
 
 echo '<div class="' . $onglet . ' wrapper" id="main-content">';
-include ROOT_PATH . 'utilisateur/user_' . $onglet . '.php';
+require ROOT_PATH . 'utilisateur/user_' . $onglet . '.php';
 echo '</div>';
 
 /*********************************/

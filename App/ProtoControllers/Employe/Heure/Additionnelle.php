@@ -58,7 +58,7 @@ class Additionnelle extends \App\ProtoControllers\Employe\AHeure
         $daysOfWeekDisabled = \utilisateur\Fonctions::getDatePickerDaysOfWeekDisabled();
         $datesFeries        = \utilisateur\Fonctions::getDatePickerJoursFeries();
         $datesFerme         = \utilisateur\Fonctions::getDatePickerFermeture();
-        $datesDisabled      = array_merge($datesFeries,$datesFerme);
+        $datesDisabled      = array_merge($datesFeries, $datesFerme);
         $startDate          = \utilisateur\Fonctions::getDatePickerStartDate();
 
         $datePickerOpts = [
@@ -384,7 +384,7 @@ class Additionnelle extends \App\ProtoControllers\Employe\AHeure
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
         if (!$config->canUserModifieDemande()) {
-            return FALSE;
+            return false;
         }
 
         $sql = \includes\SQL::singleton();

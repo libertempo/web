@@ -138,7 +138,7 @@ include_once 'header.php';
                 <?php endif; ?>
 				<?php endif; ?>
 				<?php if (is_hr($_SESSION['userlogin'])): ?>
-                <a class="primary <?= $hrActive ?>" href="<?= ROOT_PATH ?>hr/page_principale" <?php print ($urn == 'hr') ? 'active' : '' ;?>>
+                <a class="primary <?= $hrActive ?>" href="<?= ROOT_PATH ?>hr/page_principale" <?php print ($urn === 'hr') ? 'active' : '' ;?>>
                     <i class="fa fa-sitemap"></i><?= _('button_hr_mode');?>
 				</a>
                 <?php if ($urn == 'hr') : ?>
@@ -146,17 +146,17 @@ include_once 'header.php';
                 <?php endif; ?>
 				<?php endif; ?>
 				<?php if (is_resp($_SESSION['userlogin'])): ?>
-                <a class="primary <?= $respActive ?>" href="<?= ROOT_PATH ?>responsable/resp_index.php" <?php print ($urn == 'responsable') ? 'active' : '' ;?>>
+                <a class="primary <?= $respActive ?>" href="<?= ROOT_PATH ?>responsable/resp_index.php" <?php print ($urn === 'responsable') ? 'active' : '' ;?>>
                     <i class="fa fa-users"></i><?= _('button_responsable_mode');?>
 				</a>
-                <?php if ($urn == 'responsable') : ?>
+                <?php if ($urn === 'responsable') : ?>
                     <?= sousmenuResponsable(); ?>
                 <?php endif; ?>
 				<?php endif; ?>
-                <a class="primary <?= $userActive ?>" href="<?= ROOT_PATH ?>utilisateur/user_index.php" <?php print ($urn == 'utilisateur') ? 'active' : '' ;?>>
+                <a class="primary <?= $userActive ?>" href="<?= ROOT_PATH ?>utilisateur/user_index.php" <?php print ($urn === 'utilisateur') ? 'active' : '' ;?>>
                     <i class="fa fa-user"></i><?= _('user') ?>
                 </a>
-                <?php if ($urn == 'utilisateur') : ?>
+                <?php if ($urn === 'utilisateur') : ?>
                     <?= sousmenuEmploye(); ?>
                 <?php endif; ?>
                 <?php if ('active' === $calendarActive ||  in_array($urn, ['utilisateur', 'responsable', 'hr', 'admin', 'config'], true)): ?>

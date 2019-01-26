@@ -5,7 +5,7 @@
  * $tab_type_conges_exceptionnels
  */
 
-defined( '_PHP_CONGES' ) or die( 'Restricted access' );
+defined('_PHP_CONGES') or die('Restricted access');
 
 function insert_ajout_dans_periode($login, $nombreJours, $idTypeAbsence, $commentaire)
 {
@@ -29,10 +29,10 @@ function ajout_conges($tab_champ_saisie)
             /* Modification de la table conges_users */
             $sql1 = 'UPDATE conges_solde_user SET su_solde = su_solde+' . $user_nb_jours_ajout . ' WHERE su_login="' . $db->quote($user_name) . '" AND su_abs_id = "' . $db->quote($id_conges) . '";';
             /* On valide l'UPDATE dans la table ! */
-            $db->query($sql1) ;
+            $db->query($sql1);
 
             // on insert l'ajout de conges dans la table periode
-            $commentaire =  _('resp_ajout_conges_comment_periode_user') ;
+            $commentaire =  _('resp_ajout_conges_comment_periode_user');
             insert_ajout_dans_periode($user_name, $user_nb_jours_ajout, $id_conges, $commentaire);
         }
     }
@@ -60,7 +60,7 @@ function ajout_global(array $tab_new_nb_conges, array $calculProportionnel, arra
             $current_login = $resultat1["u_login"];
             $current_quotite = $resultat1["u_quotite"];
 
-            if ( (!isset($calculProportionnel[$id_conges])) || ($calculProportionnel[$id_conges] != true) ) {
+            if ((!isset($calculProportionnel[$id_conges])) || ($calculProportionnel[$id_conges] != true) ) {
                 $nb_conges=$nb_jours;
             } else {
                 // pour arrondir au 1/2 le + proche on  fait x 2, on arrondit, puis on divise par 2
@@ -76,12 +76,12 @@ function ajout_global(array $tab_new_nb_conges, array $calculProportionnel, arra
             $db->query($req_update);
 
             // 2 : on insert l'ajout de conges GLOBAL (pour tous les users) dans la table periode
-            $commentaire =  _('resp_ajout_conges_comment_periode_all') ;
+            $commentaire =  _('resp_ajout_conges_comment_periode_all');
             // ajout conges
             insert_ajout_dans_periode($current_login, $nb_conges, $id_conges, $commentaire);
         }
 
-        if ( (!isset($calculProportionnel[$id_conges])) || ($calculProportionnel[$id_conges]!= true) ) {
+        if ((!isset($calculProportionnel[$id_conges])) || ($calculProportionnel[$id_conges]!= true) ) {
             $comment_log = "ajout conges global ($nb_jours jour(s)) ($comment) (calcul proportionnel : No)";
         } else {
             $comment_log = "ajout conges global ($nb_jours jour(s)) ($comment) (calcul proportionnel : Yes)";
@@ -182,7 +182,7 @@ if ('true' === $ajout_conges) {
     $tab_commentaire_saisie = getpost_variable('tab_commentaire_saisie');
 
     ajout_conges($tab_champ_saisie);
-    redirect( ROOT_PATH . 'hr/page_principale?notice=credit-added');
+    redirect(ROOT_PATH . 'hr/page_principale?notice=credit-added');
 }
 
 if ('true' === $ajout_global) {
@@ -191,7 +191,7 @@ if ('true' === $ajout_global) {
     $tab_new_comment_all = getpost_variable('tab_new_comment_all');
 
     ajout_global($tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all, $_SESSION['userlogin']);
-    redirect( ROOT_PATH . 'hr/page_principale?notice=credit-added');
+    redirect(ROOT_PATH . 'hr/page_principale?notice=credit-added');
 }
 
 if ('true' === $ajout_groupe) {
@@ -201,7 +201,7 @@ if ('true' === $ajout_groupe) {
     $choix_groupe = getpost_variable('choix_groupe');
 
     ajout_global_groupe($choix_groupe, $tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all);
-    redirect( ROOT_PATH . 'hr/page_principale?notice=credit-added');
+    redirect(ROOT_PATH . 'hr/page_principale?notice=credit-added');
 }
 
 $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
