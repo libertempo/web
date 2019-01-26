@@ -83,6 +83,11 @@ if (!\includes\SQL::existsDatabase($mysql_database)) {
 
 $db = \includes\SQL::singleton();
 
+// test vendor/libertempo/api/configuration.json
+if (!file_exists(API_SYSPATH . 'configuration.json')) {
+    displayError(API_SYSPATH . 'configuration.json n\'existe pas ou est inaccessible');
+}
+
 //test table
 if (!isLtInstalled($db)) {
     displayError('La base de données semble vide, une réinstallation est nécessaire.');

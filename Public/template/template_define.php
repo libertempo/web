@@ -1,3 +1,3 @@
 <?php
 
-define('BOTTOM_TEXT','Libertempo 1.13 "Nooma". <a href="https://github.com/Libertempo/Libertempo-web/issues">Un bug, une remarque <i class="fa fa-github fa-2x"></i></a>');
+define('BOTTOM_TEXT','Libertempo 1.13 "Nooma". <a href="https://feedback.libertempo.fr/">Un bug, une remarque <img src="' . IMG_PATH . '/Favicons/favicon-16x16.png" alt="logo-libertempo"/></a>');
