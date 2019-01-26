@@ -37,7 +37,7 @@
     </thead>
     <tbody>
     <?php foreach ($infoUsers as $login => $infosUser) : ?>
-        <tr class="<?= $infosUser['u_is_active'] == 'Y' ? 'actif' : 'inactif' ?>">
+        <tr class="<?= $infosUser['u_is_active'] === 'Y' ? 'actif' : 'inactif' ?>">
             <td class="utilisateur">
                 <strong><?= $infosUser['u_nom'] ?> <?= $infosUser['u_prenom'] ?></strong>
                 <span class="login"><?= $login ?></span>

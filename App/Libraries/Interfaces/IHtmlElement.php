@@ -32,7 +32,6 @@ interface IHtmlElement extends IRenderable
     /**
      * Ajoute un attribut quelconque à l'élément
      *
-     *
      * @param string $name
      * @param string $value
      *
@@ -44,6 +43,7 @@ interface IHtmlElement extends IRenderable
 
     /**
      * Ajoute une liste d'attributs quelconques à l'élément
+     *
      * @example ['nomAttr1' => 'val1', ...]
      *
      * @param array $list

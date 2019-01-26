@@ -13,13 +13,14 @@ namespace App\Libraries\Calendrier\Evenements;
  */
 class Conge
 {
-    public function __construct(\includes\SQL $db) {
+    public function __construct(\includes\SQL $db)
+    {
         $this->db = $db;
     }
 
     /**
-    * @var \includes\SQL Objet de DB
-    */
+     * @var \includes\SQL Objet de DB
+     */
     private $db;
 
     /**
@@ -133,10 +134,12 @@ class Conge
         }
         $etats[] = \App\Models\Conge::STATUT_VALIDATION_FINALE;
         if ($canVoirEnTransit) {
-            $etats = array_merge($etats, [
+            $etats = array_merge(
+                $etats, [
                 \App\Models\Conge::STATUT_DEMANDE,
                 \App\Models\Conge::STATUT_PREMIERE_VALIDATION
-            ]);
+                ]
+            );
         }
         /* On prend plus pour le début en cas de congés débordant sur deux mois */
         $req = 'SELECT *

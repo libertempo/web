@@ -7,17 +7,17 @@ namespace App\Libraries\Calendrier\Evenements;
  * @since  1.9
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina
- *
  */
 abstract class AHeure
 {
-    public function __construct(\includes\SQL $db) {
+    public function __construct(\includes\SQL $db)
+    {
         $this->db = $db;
     }
 
     /**
-    * @var \includes\SQL Objet de DB
-    */
+     * @var \includes\SQL Objet de DB
+     */
     protected $db;
 
     /**

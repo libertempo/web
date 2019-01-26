@@ -1,13 +1,15 @@
 <?php
-include_once INCLUDE_PATH . 'lang_profile.php';
+require_once INCLUDE_PATH . 'lang_profile.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 
-function schars($htmlspec) {
-    return htmlspecialchars( $htmlspec );
+function schars($htmlspec)
+{
+    return htmlspecialchars($htmlspec);
 }
 
-function redirect($url, $auto_exit = true) {
+function redirect($url, $auto_exit = true)
+{
     // $url = urlencode($url);
     if (headers_sent()) {
         echo '<html>';
@@ -29,7 +31,8 @@ function redirect($url, $auto_exit = true) {
 }
 
 
-function header_popup($title = '', $additional_head = '') {
+function header_popup($title = '', $additional_head = '')
+{
     global $type_bottom;
 
     static $last_use = '';
@@ -47,7 +50,8 @@ function header_popup($title = '', $additional_head = '') {
     include_once TEMPLATE_PATH . 'popup_header.php';
 }
 
-function header_error($additional_head = '') {
+function header_error($additional_head = '')
+{
     global $type_bottom;
 
     static $last_use = '';
@@ -64,7 +68,8 @@ function header_error($additional_head = '') {
     include_once TEMPLATE_PATH . 'error_header.php';
 }
 
-function header_login($title = '', $additional_head = '' ) {
+function header_login($title = '', $additional_head = '' )
+{
     global $type_bottom;
     include ROOT_PATH .'version.php';
 
@@ -82,7 +87,8 @@ function header_login($title = '', $additional_head = '' ) {
     include_once TEMPLATE_PATH . 'login_header.php';
 }
 
-function header_menu($info, $title = '', $additional_head = '') {
+function header_menu($info, $title = '', $additional_head = '')
+{
     global $type_bottom;
 
     static $last_use = '';
@@ -100,7 +106,8 @@ function header_menu($info, $title = '', $additional_head = '') {
     include_once TEMPLATE_PATH . 'menu_header.php';
 }
 
-function bottom() {
+function bottom()
+{
     global $type_bottom;
 
 
@@ -273,7 +280,7 @@ function authentification_passwd_conges_CAS()
 
     // initialisation phpCAS
     if ($connexionCAS!="active") {
-        $CASCnx = \phpCAS::client(CAS_VERSION_2_0,$config_CAS_host,$config_CAS_portNumber,$config_CAS_URI);
+        $CASCnx = \phpCAS::client(CAS_VERSION_2_0, $config_CAS_host, $config_CAS_portNumber, $config_CAS_URI);
         $connexionCAS = "active";
 
     }
@@ -301,7 +308,7 @@ function authentification_passwd_conges_CAS()
 
     //ON VERIFIE ICI QUE L'UTILISATEUR EST DEJA ENREGISTRE SOUS DBCONGES
     $req_conges = 'SELECT u_login FROM conges_users WHERE u_login=\''. \includes\SQL::quote($usernameCAS).'\'';
-    $res_conges = \includes\SQL::query($req_conges) ;
+    $res_conges = \includes\SQL::query($req_conges);
     $num_row_conges = $res_conges->num_rows;
     if ($num_row_conges !=0) {
         return $usernameCAS;
@@ -323,7 +330,7 @@ function deconnexion_CAS($url = "")
 
     // initialisation phpCAS
     if ($connexionCAS!="active") {
-        $CASCnx = \phpCAS::client(CAS_VERSION_2_0,$config_CAS_host,$config_CAS_portNumber,$config_CAS_URI);
+        $CASCnx = \phpCAS::client(CAS_VERSION_2_0, $config_CAS_host, $config_CAS_portNumber, $config_CAS_URI);
         $connexionCAS = "active";
 
     }
@@ -346,12 +353,12 @@ function unhash_user($huser_test)
     $user = "";
     $ics_salt = $config->getIcalSalt();
     $req_user = 'SELECT u_login FROM conges_users';
-    $res_user = \includes\SQL::query($req_user) ;
+    $res_user = \includes\SQL::query($req_user);
 
     while ($resultat = $res_user->fetch_assoc()) {
         $clear_user = $resultat['u_login'];
         $huser = hash('sha256', $clear_user . $ics_salt);
-        if ( $huser_test == $huser ) {
+        if ($huser_test == $huser ) {
             $user = $clear_user;
         }
     }
@@ -412,15 +419,15 @@ function compter($user, $num_current_periode, $date_debut, $date_fin, $opt_debut
 
     // verif si date_debut est bien anterieure à date_fin
     // ou si meme jour mais debut l'apres midi et fin le matin
-    if ((strtotime($date_debut) > strtotime($date_fin)) || ($date_debut == $date_fin && $opt_debut == "pm" && $opt_fin=="am")) {
-        $comment =  _('calcul_nb_jours_commentaire_bad_date') ;
+    if ((strtotime($date_debut) > strtotime($date_fin)) || ($date_debut === $date_fin && 'pm' === $opt_debut && 'am' === $opt_fin)) {
+        $comment =  _('calcul_nb_jours_commentaire_bad_date');
         return 0 ;
     }
 
 
-    if ($date_debut != 0 && $date_fin != 0) {
+    if (0 !== $date_debut && 0 != $date_fin) {
         // On ne peut pas calculer si, pour l'année considérée, les jours feries ont ete saisis
-        if ( (verif_jours_feries_saisis($date_debut, $num_update)==false) || (verif_jours_feries_saisis($date_fin, $num_update)==false) ) {
+        if ((verif_jours_feries_saisis($date_debut, $num_update)==false) || (verif_jours_feries_saisis($date_fin, $num_update)==false) ) {
             $comment =  _('calcul_impossible') ."<br>\n". _('jours_feries_non_saisis') ."<br>\n". _('contacter_rh') ."<br>\n" ;
             return 0 ;
         }
@@ -465,7 +472,7 @@ function compter($user, $num_current_periode, $date_debut, $date_fin, $opt_debut
         while ($current_day!=$date_limite)
         {
             // calcul du timestamp du jour courant
-            if (substr_count($current_day,'/')) {
+            if (substr_count($current_day, '/')) {
                 $pieces = explode("/", $current_day);  // date de la forme jj/mm/yyyy
                 $y=$pieces[2];
                 $m=$pieces[1];
@@ -476,12 +483,11 @@ function compter($user, $num_current_periode, $date_debut, $date_fin, $opt_debut
                 $m=$pieces[1];
                 $j=$pieces[2];
             }
-            $timestamp_du_jour=mktime (0,0,0,$m,$j,$y);
+            $timestamp_du_jour=mktime(0, 0, 0, $m, $j, $y);
 
             // on regarde si le jour est travaillé ou pas dans la config de l'appli
             $j_name=date("D", $timestamp_du_jour);
-            if ( (($j_name=="Sat")&&(!$config->isSamediOuvrable())) || (($j_name=="Sun")&&(!$config->isDimancheOuvrable())))
-            {
+            if ((($j_name==="Sat")&&(!$config->isSamediOuvrable())) || (($j_name==="Sun")&&(!$config->isDimancheOuvrable()))) {
                 // on ne compte ce jour à 0
                 $tab_periode_calcul[$current_day]['am']=0;
                 $tab_periode_calcul[$current_day]['pm']=0;
@@ -497,10 +503,11 @@ function compter($user, $num_current_periode, $date_debut, $date_fin, $opt_debut
                 $val_aprem="N";
                 recup_infos_artt_du_jour($user, $timestamp_du_jour, $val_matin, $val_aprem, $planningUser);
 
-                if ($val_matin=="Y")  // rtt le matin
+                if ('Y' === $val_matin) {  // rtt le matin
                     $tab_periode_calcul[$current_day]['am']=0;
+                }
 
-                if ($val_aprem=="Y") {
+                if ('Y' === $val_aprem) {
                     // rtt l'après midi
                     $tab_periode_calcul[$current_day]['pm']=0;
                 }
@@ -521,18 +528,18 @@ function compter($user, $num_current_periode, $date_debut, $date_fin, $opt_debut
 // renvoit le jour suivant de la date passée en paramètre sous la forme jj/mm/yyyy
 function jour_suivant($date)
 {
-    if (substr_count($date,'/')) {
+    if (substr_count($date, '/')) {
         $pieces = explode("/", $date);  // date de la forme jj/mm/yyyy
         $y=$pieces[2];
         $m=$pieces[1];
         $j=$pieces[0];
-        $lendemain = date("d/m/Y", mktime(0, 0, 0, $m , $j+1, $y) );
+        $lendemain = date("d/m/Y", mktime(0, 0, 0, $m, $j+1, $y));
     } else {
         $pieces = explode("-", $date);  // date de la forme yyyy-mm-dd
         $y=$pieces[0];
         $m=$pieces[1];
         $j=$pieces[2];
-        $lendemain = date("Y-m-d", mktime(0, 0, 0, $m , $j+1, $y) );
+        $lendemain = date("Y-m-d", mktime(0, 0, 0, $m, $j+1, $y));
     }
 
     return $lendemain;
@@ -543,11 +550,11 @@ function jour_suivant($date)
 function verif_jours_feries_saisis($date)
 {
     // on calcule le premier de l'an et le dernier de l'an de l'année de la date passee en parametre
-    if (substr_count($date,'/')) {
+    if (substr_count($date, '/')) {
         $tab_date=explode("/", $date); // date est de la forme dd/mm/YYYY
         $an=$tab_date[2];
     }
-    if (substr_count($date,'-')) {
+    if (substr_count($date, '-')) {
         $tab_date=explode("-", $date); // date est de la forme yyyy-mm-dd
         $an=$tab_date[0];
     }
@@ -636,17 +643,17 @@ function verif_periode_chevauche_periode_user($date_debut, $date_fin, $user, $nu
                 $sql_p_demi_jour_fin=$resultat_periode["p_demi_jour_fin"];
                 $sql_p_etat=$resultat_periode["p_etat"];
 
-                if ( ($current_day!=$sql_p_date_deb) && ($current_day!=$sql_p_date_fin) ) {
+                if (($current_day!=$sql_p_date_deb) && ($current_day!=$sql_p_date_fin) ) {
                     // pas la peine d'aller + loin, on chevauche une periode de conges !!!
                     if ($sql_p_etat=="demande") {
-                        $comment =  _('calcul_nb_jours_commentaire_impossible') ;
+                        $comment =  _('calcul_nb_jours_commentaire_impossible');
                     } else {
-                        $comment =  _('calcul_nb_jours_commentaire') ;
+                        $comment =  _('calcul_nb_jours_commentaire');
                     }
 
                     return true ;
                 }
-                elseif ( ($current_day==$sql_p_date_deb) && ($current_day==$sql_p_date_fin) ) {
+                elseif (($current_day==$sql_p_date_deb) && ($current_day==$sql_p_date_fin) ) {
                      // periode sur une seule journee
                     if ($sql_p_demi_jour_deb=="am") {
                         $tab_periode_deja_prise[$current_day]['am']="$sql_p_etat" ;
@@ -664,8 +671,7 @@ function verif_periode_chevauche_periode_user($date_debut, $date_fin, $user, $nu
                 }
                 else // alors ($current_day==$sql_p_date_fin)
                 {
-                    if($sql_p_demi_jour_fin=="pm")
-                    {
+                    if($sql_p_demi_jour_fin=="pm") {
                         $tab_periode_deja_prise[$current_day]['am']="$sql_p_etat" ;
                         $tab_periode_deja_prise[$current_day]['pm']="$sql_p_etat" ;
                     }
@@ -702,16 +708,14 @@ function verif_periode_chevauche_periode_user($date_debut, $date_fin, $user, $nu
         return true;
     }
 
-    if (count($tab_periode_deja_prise)!=0)
-    {
+    if (count($tab_periode_deja_prise)!=0) {
         $current_day=$date_debut;
         $date_limite=jour_suivant($date_fin);
         // on va avancer jour par jour jusqu'à la date limite et recupere les periodes qui contiennent ce jour...
         // on construit un tableau par date et 1/2 jour avec l'état de la periode
         while ($current_day!=$date_limite)
         {
-            if ( ($tab_periode_calcul[$current_day]['am']==1) && ($tab_periode_deja_prise[$current_day]['am']!="no") )
-            {
+            if (($tab_periode_calcul[$current_day]['am']==1) && ($tab_periode_deja_prise[$current_day]['am']!="no") ) {
                 // pas la peine d'aller + loin, on chevauche une periode de conges !!!
                 if ($tab_periode_deja_prise[$current_day]['am']=="demande")
                     $comment =  _('calcul_nb_jours_commentaire_impossible') ;
@@ -719,8 +723,7 @@ function verif_periode_chevauche_periode_user($date_debut, $date_fin, $user, $nu
                     $comment =  _('calcul_nb_jours_commentaire') ;
                 return true;
             }
-            if ( ($tab_periode_calcul[$current_day]['pm']==1) && ($tab_periode_deja_prise[$current_day]['pm']!="no") )
-            {
+            if (($tab_periode_calcul[$current_day]['pm']==1) && ($tab_periode_deja_prise[$current_day]['pm']!="no") ) {
                 // pas la peine d'aller + loin, on chevauche une periode de conges !!!
                 if ($tab_periode_deja_prise[$current_day]['pm']=="demande")
                     $comment =  _('calcul_nb_jours_commentaire_impossible') ;
@@ -764,7 +767,7 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
     $return .= '<input type="radio" name="new_demi_jour_deb" ';
 
     // attention : IE6 : bug avec les "OnChange" sur les boutons radio!!! (on remplace par OnClick)
-    if ((isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE)) {
+    if ((isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=false)) {
         $return .= 'onClick="compter_jours();return true;" ';
     } else {
         $return .= 'onChange="compter_jours();return false;" ';
@@ -772,7 +775,7 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
     $return .= 'value="am" checked>&nbsp;' .  _('form_debut_am') . '&nbsp;';
     $return .= '<input type="radio" name="new_demi_jour_deb" ';
 
-    if ((isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE)) {
+    if ((isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=false)) {
         $return .= 'onClick="compter_jours();return true;" ';
     } else {
         $return .= 'onChange="compter_jours();return false;" ';
@@ -789,7 +792,7 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
     $return .= '<input type="radio" name="new_demi_jour_fin" ';
 
     // attention : IE6 : bug avec les "OnChange" sur les boutons radio!!! (on remplace par OnClick)
-    if ((isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE)) {
+    if ((isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=false)) {
         $return .= 'onClick="compter_jours();return true;" ' ;
     } else {
         $return .= 'onChange="compter_jours();return false;" ' ;
@@ -797,7 +800,7 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
     $return .= 'value="am">&nbsp;'. _('form_fin_am') . '&nbsp;';
     $return .= '<input class="form-controm" type="radio" name="new_demi_jour_fin" ';
 
-    if ((isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=FALSE)) {
+    if ((isset($_SERVER['HTTP_USER_AGENT'])) && (stristr($_SERVER['HTTP_USER_AGENT'], 'MSIE')!=false)) {
         $return .= 'onClick="compter_jours();return true;" ' ;
     } else {
         $return .= 'onChange="compter_jours();return false;" ' ;
@@ -827,8 +830,7 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
     // si le user a droit de saisir une demande de conges ET si on est PAS dans une fenetre de responsable
     // OU si le user n'a pas droit de saisir une demande de conges ET si on est dans une fenetre de responsable
     // OU si le user est un RH ou un admin
-    if (( $config->canUserSaisieDemande() && $user_login==$_SESSION['userlogin'] ) || ( !$config->canUserSaisieDemande() && $user_login!=$_SESSION['userlogin'] ) || is_hr($_SESSION['userlogin']) || is_admin($_SESSION['userlogin']))
-    {
+    if (( $config->canUserSaisieDemande() && $user_login==$_SESSION['userlogin'] ) || ( !$config->canUserSaisieDemande() && $user_login!=$_SESSION['userlogin'] ) || is_hr($_SESSION['userlogin']) || is_admin($_SESSION['userlogin'])) {
         // congés
         $return .= '<div class="col-md-4">';
         $return .= '<label>' . _('divers_conges') . '</label>';
@@ -955,10 +957,10 @@ function affiche_decimal($str)
     if ($decimal=='00') {
         return $int ;
     }
-    if (preg_match('/[0-9][1-9]$/' , $decimal )) {
+    if (preg_match('/[0-9][1-9]$/', $decimal)) {
         return $str;
     }
-    if (preg_match('/([0-9]?)0?$/' , $decimal, $regs )) {
+    if (preg_match('/([0-9]?)0?$/', $decimal, $regs)) {
         return $int.'.'.$regs[1] ;
     }
     echo 'ERREUR: affiche_decimal('.$str.') : '.$str.' n\'a pas le format attendu !!!!<br>';
@@ -991,7 +993,7 @@ function verif_saisie_new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new
     }
 
     // si la date debut et fin = même jour mais début=après midi et fin=matin !!
-    if ( $new_debut == $new_fin && $new_demi_jour_deb=='pm' && $new_demi_jour_fin == 'am' ) {
+    if ($new_debut == $new_fin && $new_demi_jour_deb=='pm' && $new_demi_jour_fin == 'am' ) {
         echo '<br>'. _('verif_saisie_erreur_debut_apres_fin') .'<br>';
         $verif = false;
     }
@@ -1098,7 +1100,7 @@ function recup_infos_artt_du_jour($sql_login, $j_timestamp, &$val_matin, &$val_a
 //  (attention : le $nombre est passé par référence car on le modifie si besoin)
 function verif_saisie_decimal(&$nombre)
 {
-    $nombre = number_format(floatval($nombre), 1, '.', '' );
+    $nombre = number_format(floatval($nombre), 1, '.', '');
     return true;
 }
 
@@ -1303,8 +1305,8 @@ function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $m
     $contenu = str_replace("__TYPE_ABSENCE__", $sql_type_absence, $contenu);
 
     // construction du corps du mail
-    $mail->Subject = stripslashes(utf8_decode($sujet ));
-    $mail->Body = stripslashes(utf8_decode($contenu ));
+    $mail->Subject = stripslashes(utf8_decode($sujet));
+    $mail->Body = stripslashes(utf8_decode($contenu));
 
 
     /*********************************************/
@@ -1330,7 +1332,7 @@ function find_email_adress_for_user($login)
     $infoUser = \App\ProtoControllers\Utilisateur::getDonneesUtilisateur($login);
 
     $found_mail[] = $infoUser['u_prenom'] . " " . strtoupper($infoUser['u_nom']);
-    array_push($found_mail, $infoUser['u_email']) ;
+    array_push($found_mail, $infoUser['u_email']);
 
     return $found_mail ;
 }
@@ -1338,7 +1340,7 @@ function find_email_adress_for_user($login)
 // met la date aaaa-mm-jj dans le format jj-mm-aaaa
 function eng_date_to_fr($une_date)
 {
- return substr($une_date, 8)."-".substr($une_date, 5, 2)."-".substr($une_date, 0, 4);
+    return substr($une_date, 8)."-".substr($une_date, 5, 2)."-".substr($une_date, 0, 4);
 
 }
 
@@ -1420,8 +1422,9 @@ function get_list_users_du_groupe($group_id)
     $db = \includes\SQL::singleton();
     $sql1='SELECT DISTINCT(gu_login) FROM conges_groupe_users WHERE gu_gid = '.intval($group_id).' ORDER BY gu_login ';
     $ReqLog1 = $db->query($sql1);
-    while ($resultat1 = $ReqLog1->fetch_array())
+    while ($resultat1 = $ReqLog1->fetch_array()) {
         $list_users[] = "'". $db->quote($resultat1["gu_login"])."'";
+    }
 
     $list_users = implode(' , ', $list_users);
     return $list_users;
@@ -1436,8 +1439,7 @@ function get_list_groupes_du_resp($resp_login)
     $sql1='SELECT gr_gid FROM conges_groupe_resp WHERE gr_login="'. $db->quote($resp_login).'" ORDER BY gr_gid';
     $ReqLog1 = $db->query($sql1);
 
-    if ($ReqLog1->num_rows !=0)
-    {
+    if ($ReqLog1->num_rows !=0) {
         while ($resultat1 = $ReqLog1->fetch_array())
         {
             $current_group=$resultat1["gr_gid"];
@@ -1459,8 +1461,7 @@ function get_list_groupes_du_grand_resp($resp_login)
     $sql1='SELECT ggr_gid FROM conges_groupe_grd_resp WHERE ggr_login="'.$db->quote($resp_login).'" ORDER BY ggr_gid';
     $ReqLog1 = $db->query($sql1);
 
-    if ($ReqLog1->num_rows!=0)
-    {
+    if ($ReqLog1->num_rows!=0) {
         while ($resultat1 = $ReqLog1->fetch_array())
         {
             $current_group=$resultat1["ggr_gid"];
@@ -1652,7 +1653,7 @@ function get_tab_resp_du_user($user_login)
                 if ($current_resp != $user_login)
                     $new_tab_resp = array_merge  ( $new_tab_resp , get_tab_resp_du_user($current_resp));
             }
-            $tab_resp = array_merge  ( $tab_resp, $new_tab_resp);
+            $tab_resp = array_merge($tab_resp, $new_tab_resp);
         }
     }
     // FIN gestion des absence des responsables :
@@ -1679,7 +1680,7 @@ function get_tab_grd_resp_du_user($user_login, &$tab_grd_resp)
 
             while ($resultat1 = $ReqLog1->fetch_array()) {
                 //attention à ne pas mettre 2 fois le meme resp dans le tableau
-                if (in_array($resultat1["ggr_login"], $tab_grd_resp)==FALSE) {
+                if (in_array($resultat1["ggr_login"], $tab_grd_resp)==false) {
                     $tab_grd_resp[]=$resultat1["ggr_login"];
                 }
             }
@@ -1781,8 +1782,7 @@ function insert_dans_periode($login, $date_deb, $demi_jour_deb, $date_fin, $demi
 // remplit le tableau global des jours feries a partir de la database
 function init_tab_jours_feries()
 {
-    if (empty($_SESSION['tab_j_feries']))
-    {
+    if (empty($_SESSION['tab_j_feries'])) {
         $_SESSION['tab_j_feries'] = [];
 
         $sql_select='SELECT jf_date FROM conges_jours_feries;';
@@ -1826,7 +1826,7 @@ function init_config_tab()
         /******************************************/
         //  recup des variables de la table conges_appli
         $sql_appli = "SELECT appli_variable, appli_valeur FROM conges_appli;";
-        $req_appli = $db->query($sql_appli) ;
+        $req_appli = $db->query($sql_appli);
 
         while ($data_appli = $req_appli->fetch_array())
         {
@@ -1838,7 +1838,7 @@ function init_config_tab()
         /******************************************/
         //  recup des mails dans  la table conges_mail
         $sql_mail = "SELECT mail_nom, mail_subject, mail_body FROM conges_mail;";
-        $req_mail = $db->query($sql_mail) ;
+        $req_mail = $db->query($sql_mail);
 
         while ($data_mail = $req_mail->fetch_array())
         {
@@ -1886,10 +1886,9 @@ function init_config_tab()
 
         /******************************************/
         //  recup de qq infos sur le user
-        if (isset($_SESSION['userlogin']))
-        {
+        if (isset($_SESSION['userlogin'])) {
             $sql_user = "SELECT u_nom, u_prenom, u_is_resp, u_is_admin, u_is_hr, u_is_active FROM conges_users WHERE u_login='".$_SESSION['userlogin']."' ";
-            $req_user = $db->query($sql_user) ;
+            $req_user = $db->query($sql_user);
 
             if ($data_user = $req_user->fetch_array()) {
                 $_SESSION['u_nom']    = $data_user[0] ;
@@ -1903,8 +1902,9 @@ function init_config_tab()
 
         /******************************************/
         $result = $tab;
-        if (isset($_SESSION['userlogin']))
+        if (isset($_SESSION['userlogin'])) {
             $userlogin = $_SESSION['userlogin'];
+        }
     }
     return $result;
 }
@@ -2013,7 +2013,7 @@ function affiche_tableau_bilan_conges_user($login)
     $db = \includes\SQL::singleton();
     $config = new \App\Libraries\Configuration($db);
     $request = 'SELECT u_quotite FROM conges_users where u_login = "'. $db->quote($login).'";';
-    $ReqLog = $db->query($request) ;
+    $ReqLog = $db->query($request);
     $resultat = $ReqLog->fetch_array();
     $sql_quotite=$resultat['u_quotite'];
     $return = '';
@@ -2035,7 +2035,7 @@ function affiche_tableau_bilan_conges_user($login)
     $return .= '<th class="titre">'. _('divers_quotite') .'</th>';
 
     foreach($tab_cong_user as $id => $val) {
-        if ($config->isCongesExceptionnelsActive() && in_array($id,$tab_type_conges_exceptionnels)) {
+        if ($config->isCongesExceptionnelsActive() && in_array($id, $tab_type_conges_exceptionnels)) {
             $return .= '<th class="solde">' . $id . '</th>';
         } else {
             $return .= '<th class="annuel">' . $id . ' / ' . _('divers_an_maj') . '</th><th class="solde">' . $id . '</th>';
@@ -2050,7 +2050,7 @@ function affiche_tableau_bilan_conges_user($login)
     $return .= '<tr>';
     $return .= '<td class="quotite">' . $sql_quotite . '%</td>';
     foreach($tab_cong_user as $id => $val) {
-        if ($config->isCongesExceptionnelsActive()  && in_array($id,$tab_type_conges_exceptionnels)) {
+        if ($config->isCongesExceptionnelsActive()  && in_array($id, $tab_type_conges_exceptionnels)) {
             $return .= '<td class="solde">' . $val['solde'] . ($val['reliquat'] > 0 ? ' (' . _('dont_reliquat') . ' ' . $val['reliquat'] . ')' : '') . '</td>';
         } else {
             $return .= '<td class="annuel">' . $val['nb_an'] . '</td><td class="solde">' . $val['solde'] . ($val['reliquat'] > 0 ? ' (' . _('dont_reliquat') . ' ' . $val['reliquat'] . ')' : '') . '</td>';
@@ -2075,7 +2075,7 @@ function recup_infos_du_user($login, $list_groups_double_valid)
     $tab=array();
     $sql1 = 'SELECT * FROM conges_users ' .
             'WHERE u_login="'. $db->quote($login).'";';
-    $ReqLog = $db->query($sql1) ;
+    $ReqLog = $db->query($sql1);
 
     if ($resultat = $ReqLog->fetch_array()) {
         $tab_user=array();
@@ -2137,8 +2137,7 @@ function recup_infos_all_users_du_groupe($group_id)
     // recup de la liste de tous les users du groupe ...
     $list_all_users_du_groupe = get_list_users_du_groupe($group_id);
     $list_groupes_double_validation=get_list_groupes_double_valid();
-    if (strlen($list_all_users_du_groupe)!=0)
-    {
+    if (strlen($list_all_users_du_groupe)!=0) {
         $tab_users_du_groupe=explode(",", $list_all_users_du_groupe);
         foreach($tab_users_du_groupe as $current_login)
         {
@@ -2181,11 +2180,10 @@ function recup_infos_all_users_du_grand_resp($login)
     $tab=array();
     $list_groups_double_valid=get_list_groupes_double_valid_du_grand_resp($login);
 
-    if ($list_groups_double_valid!="")
-    {
+    if ($list_groups_double_valid!="") {
         // recup de la liste des users des groupes de la liste $list_groups_double_valid
         $sql_users = 'SELECT DISTINCT(gu_login) FROM conges_groupe_users, conges_users WHERE gu_gid IN ('. $db->quote($list_groups_double_valid).') AND gu_login=u_login ORDER BY u_nom;';
-        $ReqLog_users = $db->query($sql_users) ;
+        $ReqLog_users = $db->query($sql_users);
         $list_all_users_dbl_valid="";
         while ($resultat_users =$ReqLog_users->fetch_array())
         {
@@ -2196,8 +2194,7 @@ function recup_infos_all_users_du_grand_resp($login)
                 $list_all_users_dbl_valid=$list_all_users_dbl_valid.", '$current_login'";
         }
 
-        if ($list_all_users_dbl_valid!="")
-        {
+        if ($list_all_users_dbl_valid!="") {
             $tab_users_du_resp=explode(",", $list_all_users_dbl_valid);
             foreach($tab_users_du_resp as $current_login)
             {
@@ -2348,7 +2345,7 @@ function soustrait_solde_et_reliquat_user($user_login, $num_current_periode, $us
         $VerifDec = verif_saisie_decimal($new_reliquat);
         $sql2 = 'UPDATE conges_solde_user SET su_solde=su_solde-'. $db->quote($user_nb_jours_pris).' WHERE su_login=\''. $db->quote($user_login).'\'  AND su_abs_id=\''.$type_abs.'\' ';
     }
-    $ReqLog2 = $db->query($sql2) ;
+    $ReqLog2 = $db->query($sql2);
 }
 
 

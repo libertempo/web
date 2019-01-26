@@ -11,8 +11,8 @@ namespace App\Libraries\Calendrier;
 class Evenements
 {
     public function __construct(
-        \App\Libraries\InjectableCreator $injectableCreator)
-    {
+        \App\Libraries\InjectableCreator $injectableCreator
+    ) {
         $this->injectableCreator = $injectableCreator;
     }
 

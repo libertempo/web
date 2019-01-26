@@ -37,7 +37,7 @@
         "jasig/phpcas": "1.3.6",
         "yohang/calendr": "^2.0",
         "guzzlehttp/guzzle": "6.3.3",
-        "libertempo/api": "1.6.2",
+        "libertempo/api": "1.7.0",
         "rollbar/rollbar": "1.7.1"
     },
     "require-dev": {

@@ -29,8 +29,8 @@ class Weekend
     }
 
     /**
-    * @var \includes\SQL Objet de DB
-    */
+     * @var \includes\SQL Objet de DB
+     */
     private $config;
 
     /**

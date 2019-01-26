@@ -433,15 +433,15 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
 
         foreach ($htmlPost['tab_new_jours_an'] as $typeId => $joursAn) {
             $tmp = htmlentities($joursAn, ENT_QUOTES | ENT_HTML401);
-            $data['joursAn'][$typeId] = strtr(\App\Helpers\Formatter::roundToHalf($tmp),",",".");
+            $data['joursAn'][$typeId] = strtr(\App\Helpers\Formatter::roundToHalf($tmp), ",", ".");
         }
         foreach ($htmlPost['tab_new_solde'] as $typeId => $solde) {
             $tmp = htmlentities($solde, ENT_QUOTES | ENT_HTML401);
-            $data['soldes'][$typeId] = strtr(\App\Helpers\Formatter::roundToHalf($tmp),",",".");
+            $data['soldes'][$typeId] = strtr(\App\Helpers\Formatter::roundToHalf($tmp), ",", ".");
         }
         foreach ($htmlPost['tab_new_reliquat'] as $typeId => $reliquat) {
             $tmp = htmlentities($reliquat, ENT_QUOTES | ENT_HTML401);
-            $data['reliquats'][$typeId] = strtr(\App\Helpers\Formatter::roundToHalf($tmp),",",".");
+            $data['reliquats'][$typeId] = strtr(\App\Helpers\Formatter::roundToHalf($tmp), ",", ".");
         }
         $data['groupesId'] = array_key_exists('checkbox_user_groups', $htmlPost) ? array_keys($htmlPost['checkbox_user_groups']) : [];
 
@@ -543,8 +543,9 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
 
         $groupesId = \App\ProtoControllers\Groupe::getListeId($sql);
         if ('N' === $data['isResp']
-                && (\App\ProtoControllers\Groupe::isResponsableGroupe($data['login'], $groupesId, $sql)
-                || \App\ProtoControllers\Groupe::isGrandResponsableGroupe($data['login'], $groupesId, $sql))) {
+            && (\App\ProtoControllers\Groupe::isResponsableGroupe($data['login'], $groupesId, $sql)
+            || \App\ProtoControllers\Groupe::isGrandResponsableGroupe($data['login'], $groupesId, $sql))
+        ) {
             $errors[] = _('Cette utilisateur est responsable d\'au moins un groupe');
             $return = false;
         }
@@ -610,7 +611,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             if (!is_numeric($joursAn)) {
                 $errors[] = _('nombre de jours par an incorrect');
                 $return = false;
-            break;
+                break;
             }
         }
 
@@ -618,7 +619,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             if (!is_numeric($solde)) {
                 $errors[] = _('solde incorrect');
                 $return = false;
-            break;
+                break;
             }
         }
 
@@ -626,7 +627,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             if (!is_numeric($reliquat)) {
                 $errors[] = _('reliquat incorrect');
                 $return = false;
-            break;
+                break;
             }
         }
 
@@ -787,7 +788,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         foreach ($data['groupesId'] as $gid) {
             $values[] = "(" . $gid . ", '" . $data['login'] . "')"  ;
         }
-        $req = "INSERT INTO conges_groupe_users (gu_gid, gu_login) VALUES " . implode(",", $values)  ;
+        $req = "INSERT INTO conges_groupe_users (gu_gid, gu_login) VALUES " . implode(",", $values);
 
         return $sql->query($req);
     }

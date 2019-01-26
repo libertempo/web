@@ -17,12 +17,13 @@ class SQL
 
     // singleton pattern, code from php.net
     // fucking parameters ... I don't find a way to use $args and call construtor with it ...
-    public static function singleton() {
+    public static function singleton()
+    {
         if (!isset(self::$instance)) {
             $className = __CLASS__;
             require CONFIG_PATH . 'dbconnect.php';
 
-            self::$instance = new $className( $mysql_serveur , $mysql_user, $mysql_pass, $mysql_database);
+            self::$instance = new $className($mysql_serveur, $mysql_user, $mysql_pass, $mysql_database);
         }
         return self::$instance;
     }
@@ -48,11 +49,13 @@ class SQL
         return new self($mysql_serveur, $mysql_user, $mysql_pass, '');
     }
 
-    public function initialized() {
-        return isset( self::$instance );
+    public function initialized()
+    {
+        return isset(self::$instance);
     }
 
-    private function __construct(string $server, string $user, string $host, string $database) {
+    private function __construct(string $server, string $user, string $host, string $database)
+    {
         self::$pdo_obj = new Database($server, $user, $host, $database);
     }
 
@@ -62,9 +65,11 @@ class SQL
 
     /**
      * for call staticly dynamic fx (doesn't use instance vars and doesn't use singleton ;-) )
+     *
      * @deprecated
      */
-    public static function __callStatic($name, $args) {
+    public static function __callStatic($name, $args)
+    {
         self::singleton();
         if (method_exists(self::$instance, $name)) {
             return call_user_func_array([self::$instance, $name], $args);
@@ -80,32 +85,38 @@ class SQL
     //=====================
 
     // isset on the warped obj
-    public function __isset($name) {
+    public function __isset($name)
+    {
         return isset(self::$pdo_obj->$name);
     }
 
     // get on the warped obj
-    public function __get($name) {
+    public function __get($name)
+    {
         return self::$pdo_obj->$name;
     }
 
     // isset on the warped obj
-    public function __set($name, $value) {
+    public function __set($name, $value)
+    {
         self::$pdo_obj->$name = $value;
     }
 
     // unset on the warped obj
-    public function __unset($name) {
+    public function __unset($name)
+    {
         unset(self::$pdo_obj->$name);
     }
 
     // call on the warped obj
-    public function __call($name, $args) {
+    public function __call($name, $args)
+    {
         return call_user_func_array(array(self::$pdo_obj, $name), $args);
     }
 
     // call on the warped obj
-    public static function getVar($name) {
+    public static function getVar($name)
+    {
         return self::$pdo_obj->$name;
     }
 
@@ -129,7 +140,7 @@ class Database extends \mysqli
         $driver = new \mysqli_driver();
         // @TODO: mettre ALL quand on voudra travailler dessus;
         $driver->report_mode = MYSQLI_REPORT_ALL & ~MYSQLI_REPORT_INDEX;
-        parent::__construct ($host, $username, $passwd, $dbname);
+        parent::__construct($host, $username, $passwd, $dbname);
         $this->query('SET NAMES \'utf8\';');
         $this->query("SET @@SESSION.sql_mode='';");
     }
@@ -144,15 +155,16 @@ class Database extends \mysqli
 
     public function quote($escapestr)
     {
-        return $this->escape_string( $escapestr );
+        return $this->escape_string($escapestr);
     }
 }
 
 
 class Database_MySQLi_Result extends \mysqli_result
 {
-    public function fetch_all($result_type = NULL)
+    public function fetch_all($result_type = null)
     {
+        unset($result_type);
         $rows = array();
         while($row = $this->fetch_assoc()) {
             $rows[] = $row;
