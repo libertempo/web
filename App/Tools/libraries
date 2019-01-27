@@ -17,7 +17,8 @@ define('OLD_API_SYSPATH', ROOT_PATH . 'vendor' . DS . 'Libertempo' . DS . 'liber
 define('API_SYSPATH', ROOT_PATH . 'vendor' . DS . 'libertempo' . DS . 'api' . DS);
 define('LAST_VERSION_FILE', '/tmp/lt-last-version');
 // For includes/fonction.php import
-define('LOCALE_PATH', ROOT_PATH . 'locale/');
+define('TOOLS_PATH', ROOT_PATH . 'App' . DS . 'Tools' . DS);
+define('LOCALE_PATH',      TOOLS_PATH . 'locale' . DS);
 
 require_once ROOT_PATH . 'vendor/autoload.php';
 if (is_file(CONFIG_PATH . 'dbconnect.php')) {

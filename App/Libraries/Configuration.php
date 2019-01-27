@@ -45,16 +45,6 @@ class Configuration
     }
 
     /**
-     * Retourne la langue
-     * @todo a supprimer. non utilisé
-     * @return string
-     */
-    public function getLangue()
-    {
-        return $this->getGroupeLibertempoValeur('lang');
-    }
-
-    /**
      * Retourne une valeur du groupe de Libertempo par son nom
      *
      * @param string $nom
