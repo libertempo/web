@@ -95,7 +95,7 @@
                 <h2><?= _('admin_gestion_groupe_grand_resp_responsables') ?></h2>
                 <table class="table table-hover table-responsive table-condensed table-striped">
                     <tbody>
-                        <tr v-for="r in responsables">
+                        <tr v-for="r in grands_responsables">
                             <td class="histo">
                                 <input type="checkbox"
                                  :id="getGrandResponsableId(r)"
@@ -281,17 +281,106 @@ var optionsVue = {
                 document.getElementById('loader-bar-responsable').classList.add('hidden');
                 vm.employes = fullUtilisateurs;
                 vm.responsables = responsables;
-                vm.grands_responsables = responsables;
+                // Copie sans partage de mémoire
+                vm.grands_responsables = JSON.parse(JSON.stringify(responsables));
             })
             .catch((error) => {
                 console.log(error.response);
                 console.error(error);
             })
         },
+        fillEmployesGroupe : function () {
+            var vm = this;
+            this.axios.get('/groupe/' + vm.idGroupe + '/employe')
+            .then((response) => {
+                if (typeof response.data != 'object') {
+                    return;
+                }
+                const employesGroupe = response.data.data;
+                for (var i = 0; i < employesGroupe.length; ++i) {
+                    var employeGroupe = employesGroupe[i];
+                    for (var j in vm.employes) {
+                        if (!vm.employes.hasOwnProperty(j)) {
+                            continue;
+                        }
+                        var employe = vm.employes[j];
+                        if (employe.login === employeGroupe.login) {
+                            employe.isDansGroupe = true;
+                            break;
+                        }
+                    }
+                }
+            })
+            .catch((error) => {
+                console.log(error.response);
+                console.error(error);
+            })
+        },
+        fillResponsablesGroupe : function () {
+            var vm = this;
+            this.axios.get('/groupe/' + vm.idGroupe + '/responsable')
+            .then((response) => {
+                if (typeof response.data != 'object') {
+                    return;
+                }
+                const responsablesGroupe = response.data.data;
+                for (var i = 0; i < responsablesGroupe.length; ++i) {
+                    var responsableGroupe = responsablesGroupe[i];
+                    for (var j in vm.responsables) {
+                        if (!vm.responsables.hasOwnProperty(j)) {
+                            continue;
+                        }
+                        var responsable = vm.responsables[j];
+                        if (responsable.login === responsableGroupe.login) {
+                            responsable.isDansGroupe = true;
+                            break;
+                        }
+                    }
+                }
+            })
+            .catch((error) => {
+                console.log(error.response);
+                console.error(error);
+            })
+        },
+        fillGrandsResponsablesGroupe : function () {
+            var vm = this;
+            this.axios.get('/groupe/' + vm.idGroupe + '/grand_responsable')
+            .then((response) => {
+                if (typeof response.data != 'object') {
+                    return;
+                }
+                const responsablesGroupe = response.data.data;
+                for (var i = 0; i < responsablesGroupe.length; ++i) {
+                    var responsableGroupe = responsablesGroupe[i];
+                    for (var j in vm.grands_responsables) {
+                        if (!vm.grands_responsables.hasOwnProperty(j)) {
+                            continue;
+                        }
+                        var grandResponsable = vm.grands_responsables[j];
+                        if (grandResponsable.login === responsableGroupe.login) {
+                            grandResponsable.isDansGroupe = true;
+                            break;
+                        }
+                    }
+                }
+            })
+            .catch((error) => {
+                console.log(error.response);
+                console.error(error);
+            })
         }
     },
     created () {
         this.fillEmployes();
+        if (-1 !== this.idGroupe) {
+            this.fillEmployesGroupe();
+            this.fillResponsablesGroupe();
+            this.fillGrandsResponsablesGroupe();
+        }
+        // TODO : actuellement :
+        // * toujours, le grand resp ne se remplit pas
+        // * parfois, les valeurs préremplies sont absurdes
     },
     updated () {
         // Shows grand responsable groupe
@@ -304,6 +393,13 @@ var optionsVue = {
                 continue;
             }
             responsables[i].dispatchEvent(event);
+        }
+        var grandsResponsables = document.querySelectorAll('#groupe-grands-responsables input[type=checkbox]');
+        for (var i in grandsResponsables) {
+            if (!grandsResponsables.hasOwnProperty(i)) {
+                continue;
+            }
+            grandsResponsables[i].dispatchEvent(event);
         }
     }
 };
