@@ -91,7 +91,7 @@ class Gestion
             }
         }
 
-        if ($post['new_group_double_valid'] == 'Y') {
+        if ('Y' === $post['new_group_double_valid']) {
             $data['isDoubleValidation'] = 'Y';
 
             if (!empty($post['checkbox_group_grand_resps'])) {
