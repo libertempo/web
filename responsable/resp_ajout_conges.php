@@ -36,7 +36,7 @@ $subalternesActifsResponsable = $filterActif($subalternesResponsable);
 asort($subalternesActifsResponsable);
 
 $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
-$subalternesGrandResponsable = ($config->isDoubleValidationActive()) && ($config->canGrandResponsableAjouteConge())
+$subalternesGrandResponsable = ($config->canGrandResponsableAjouteConge())
     ? recup_infos_all_users_du_grand_resp($_SESSION['userlogin'])
     : [];
 $subalternesActifsGrandResponsable = $filterActif($subalternesGrandResponsable);
@@ -45,7 +45,7 @@ asort($subalternesActifsGrandResponsable);
 $hasSubalternes = (bool) (count($subalternesActifsResponsable) + count($subalternesActifsGrandResponsable));
 
 $list_group_resp=get_list_groupes_du_resp($_SESSION['userlogin']);
-if (($config->isDoubleValidationActive()) && ($config->canGrandResponsableAjouteConge()) ) {
+if ($config->canGrandResponsableAjouteConge()) {
     $list_group_grd_resp=get_list_groupes_du_grand_resp($_SESSION['userlogin']);
 } else {
     $list_group_grd_resp="";
