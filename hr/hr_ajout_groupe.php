@@ -6,7 +6,6 @@ $idGroupe = NIL_INT;
 $sql = \includes\SQL::singleton();
 $config = new \App\Libraries\Configuration($sql);
 $baseURIApi = $config->getUrlAccueil() . '/api/';
-$doubleValidationActive = $config->isDoubleValidationActive();
 
 $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 $message = '';
@@ -45,9 +44,7 @@ if (!empty($data)) {
         'nom' => $data['nom'],
         'comment' => $data['commentaire']
     ];
-    if ($doubleValidationActive) {
-        $infosGroupe['doubleValidation'] = $data['isDoubleValidation'];
-    }
+    $infosGroupe['doubleValidation'] = $data['isDoubleValidation'];
 }
 
 $responsablesGroupe = [];
