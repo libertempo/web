@@ -77,8 +77,8 @@ var vm = new Vue({
         }
     },
     created () {
-    var vm = this;
-    this.axios.get('/planning')
+        var vm = this;
+        this.axios.get('/planning')
         .then((response) => {
             if (typeof response.data != 'object') {
                 return;
@@ -96,7 +96,7 @@ var vm = new Vue({
             console.log(error.response);
             console.error(error);
         })
-  }
+    }
 });
 </script>
 <?php

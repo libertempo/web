@@ -140,7 +140,6 @@ var vm = new Vue({
 
             // Finally hide loader and show var
             document.getElementById('loader-bar').classList.add('hidden');
-            console.log('o', organisedTypes);
             vm.absenceTypes = organisedTypes;
         })
         .catch((error) => {

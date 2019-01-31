@@ -64,7 +64,7 @@ class Gestion
      * @param array $post
      * @return array $data
      */
-    protected function FormData2Array(array $post)
+    public function FormData2Array(array $post)
     {
         $data = [
             'grandResponsables' => [],
@@ -124,7 +124,7 @@ class Gestion
             $updateResponsables = $this->updateResponsableGroupe($data['id'], $data['responsables']);
             $updategrandResponsables = $this->updateGrandResponsableGroupe($data['id'], $data['grandResponsables']);
 
-            $rollback = !($updateEmployes && $updateEmployes && $updateEmployes);
+            $rollback = !($updateEmployes && $updateResponsables && $updategrandResponsables);
         } else {
             $rollback = true;
         }
@@ -342,7 +342,7 @@ class Gestion
                         "' . \includes\SQL::quote($libelle) . '",
                         "' . \includes\SQL::quote($isDoubleValidation) . '");';
 
-        $query = $sql->query($req);
+        $sql->query($req);
 
         return $sql->insert_id;
     }
@@ -670,7 +670,7 @@ class Gestion
      * @param int $idGroupe
      * @return string
      */
-    protected function getFormChoixGrandResponsable($idGroupe,$selectId, $data)
+    protected function getFormChoixGrandResponsable($idGroupe, $selectId, $data)
     {
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses([
@@ -884,7 +884,7 @@ class Gestion
             $return = false;
         }
 
-        if ('Y' == $data['isDoubleValidation']) {
+        if ('Y' === $data['isDoubleValidation']) {
             if ($this->isGrandResponsableEtAutre($data['employes'], $data['responsables'], $data['grandResponsables'])) {
                 $errors[] = _('Le grand responsable ne peut pas etre membre ou responsable du groupe');
                 $return = false;
@@ -1040,5 +1040,4 @@ class Gestion
     {
         return \App\ProtoControllers\Utilisateur::isRH($_SESSION['userlogin']);
     }
-
 }

@@ -354,11 +354,6 @@ class Configuration
         return $this->getGroupeFonctionnementEtablissementValeur('user_echange_rtt');
     }
 
-    public function isDoubleValidationActive()
-    {
-        return $this->getGroupeFonctionnementEtablissementValeur('double_validation_conges');
-    }
-
     public function canGrandResponsableAjouteConge()
     {
         return $this->getGroupeFonctionnementEtablissementValeur('grand_resp_ajout_conges');
