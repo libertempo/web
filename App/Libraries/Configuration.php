@@ -45,16 +45,6 @@ class Configuration
     }
 
     /**
-     * Retourne la langue
-     * @todo a supprimer. non utilisé
-     * @return string
-     */
-    public function getLangue()
-    {
-        return $this->getGroupeLibertempoValeur('lang');
-    }
-
-    /**
      * Retourne une valeur du groupe de Libertempo par son nom
      *
      * @param string $nom
@@ -362,11 +352,6 @@ class Configuration
     public function canUserEchangeRTT()
     {
         return $this->getGroupeFonctionnementEtablissementValeur('user_echange_rtt');
-    }
-
-    public function isDoubleValidationActive()
-    {
-        return $this->getGroupeFonctionnementEtablissementValeur('double_validation_conges');
     }
 
     public function canGrandResponsableAjouteConge()

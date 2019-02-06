@@ -64,10 +64,8 @@ class Gestion
      * @param array $post
      * @return array $data
      */
-    protected function FormData2Array(array $post)
+    public function FormData2Array(array $post)
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
-
         $data = [
             'grandResponsables' => [],
             'responsables' => [],
@@ -93,7 +91,7 @@ class Gestion
             }
         }
 
-        if ($config->isDoubleValidationActive() && $post['new_group_double_valid'] == 'Y') {
+        if ('Y' === $post['new_group_double_valid']) {
             $data['isDoubleValidation'] = 'Y';
 
             if (!empty($post['checkbox_group_grand_resps'])) {
@@ -126,7 +124,7 @@ class Gestion
             $updateResponsables = $this->updateResponsableGroupe($data['id'], $data['responsables']);
             $updategrandResponsables = $this->updateGrandResponsableGroupe($data['id'], $data['grandResponsables']);
 
-            $rollback = !($updateEmployes && $updateEmployes && $updateEmployes);
+            $rollback = !($updateEmployes && $updateResponsables && $updategrandResponsables);
         } else {
             $rollback = true;
         }
@@ -344,7 +342,7 @@ class Gestion
                         "' . \includes\SQL::quote($libelle) . '",
                         "' . \includes\SQL::quote($isDoubleValidation) . '");';
 
-        $query = $sql->query($req);
+        $sql->query($req);
 
         return $sql->insert_id;
     }
@@ -481,11 +479,9 @@ class Gestion
         if (isset($data)) {
             $infosGroupe = [
                 'nom' => $data['nom'],
-                'comment' => $data['commentaire']
+                'comment' => $data['commentaire'],
+                'doubleValidation' => $data['isDoubleValidation'],
             ];
-            if ($config->isDoubleValidationActive()) {
-                $infosGroupe['doubleValidation'] = $data['isDoubleValidation'];
-            }
         } elseif (NIL_INT !== $idGroupe) {
             $infosGroupe = \App\ProtoControllers\Groupe::getInfosGroupe($idGroupe, \includes\SQL::singleton());
         }
@@ -508,18 +504,14 @@ class Gestion
         $childTable = '<thead><tr>';
         $childTable .= '<th><b>' . _('Nom du groupe') . '</b></th>';
         $childTable .= '<th>' . _('admin_groupes_libelle') . ' / ' . _('divers_comment_maj_1') . '</th>';
-        if ($config->isDoubleValidationActive()) {
-            $childTable .= '<th>' . _('admin_groupes_double_valid') . '</th>';
-        }
+        $childTable .= '<th>' . _('admin_groupes_double_valid') . '</th>';
         $childTable .= '</tr></thead><tbody>';
         $childTable .= '<tr>';
         $childTable .= '<td><input class="form-control" type="text" name="new_group_name" size="30" maxlength="50" value="' . $infosGroupe['nom'] . '" required></td>';
         $childTable .= '<td><input class="form-control" type="text" name="new_group_libelle" size="50" maxlength="250" value="' . $infosGroupe['comment'] . '"></td>';
-        if ($config->isDoubleValidationActive()) {
-            $selectN = $infosGroupe['doubleValidation'] == 'N' ? 'selected="selected"' : '';
-            $selectY = $infosGroupe['doubleValidation'] == 'Y' ? 'selected="selected"' : '';
-            $childTable .= '<td><select class="form-control" name="new_group_double_valid" id="' . $selectId . '" onchange="showDivGroupeGrandResp(\'' . $selectId . '\',\'' . $DivGrandRespId . '\');"><option value="N" ' . $selectN . '>N</option><option value="Y" ' . $selectY . '>Y</option></select></td>';
-        }
+        $selectN = $infosGroupe['doubleValidation'] == 'N' ? 'selected="selected"' : '';
+        $selectY = $infosGroupe['doubleValidation'] == 'Y' ? 'selected="selected"' : '';
+        $childTable .= '<td><select class="form-control" name="new_group_double_valid" id="' . $selectId . '" onchange="showDivGroupeGrandResp(\'' . $selectId . '\',\'' . $DivGrandRespId . '\');"><option value="N" ' . $selectN . '>N</option><option value="Y" ' . $selectY . '>Y</option></select></td>';
         $childTable .= '</tr></tbody>';
         $table->addChild($childTable);
         ob_start();
@@ -678,7 +670,7 @@ class Gestion
      * @param int $idGroupe
      * @return string
      */
-    protected function getFormChoixGrandResponsable($idGroupe,$selectId, $data)
+    protected function getFormChoixGrandResponsable($idGroupe, $selectId, $data)
     {
         $table = new \App\Libraries\Structure\Table();
         $table->addClasses([
@@ -732,8 +724,6 @@ class Gestion
      */
     public function getFormConfirmSuppression($idGroupe)
     {
-        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
-
         $return = '';
 
         $infosGroupe = \App\ProtoControllers\Groupe::getInfosGroupe($idGroupe, \includes\SQL::singleton());
@@ -751,15 +741,11 @@ class Gestion
         $childTable .= '<tr>';
         $childTable .= '<th><b>' . _('admin_groupes_groupe') . '</b></th>';
         $childTable .= '<th><b>' . _('admin_groupes_libelle') . ' / ' . _('divers_comment_maj_1') . '</b></th>';
-        if ($config->isDoubleValidationActive()) {
-            $childTable .= '<th><b>' . _('admin_groupes_double_valid') . '</b></th>';
-        }
+        $childTable .= '<th><b>' . _('admin_groupes_double_valid') . '</b></th>';
         $childTable .= '</tr></thead><tbody><tr>';
         $childTable .= '<td>&nbsp;' . $infosGroupe['nom'] . '&nbsp;</td>';
         $childTable .= '<td>&nbsp;' . $infosGroupe['comment'] . '&nbsp;</td>';
-        if ($config->isDoubleValidationActive()) {
-            $childTable .= '<td>' . $infosGroupe['doubleValidation'] . '</td>';
-        }
+        $childTable .= '<td>' . $infosGroupe['doubleValidation'] . '</td>';
         $childTable .= '</tr></tbody>';
         $table->addChild($childTable);
         ob_start();
@@ -898,7 +884,7 @@ class Gestion
             $return = false;
         }
 
-        if ('Y' == $data['isDoubleValidation']) {
+        if ('Y' === $data['isDoubleValidation']) {
             if ($this->isGrandResponsableEtAutre($data['employes'], $data['responsables'], $data['grandResponsables'])) {
                 $errors[] = _('Le grand responsable ne peut pas etre membre ou responsable du groupe');
                 $return = false;
@@ -1054,5 +1040,4 @@ class Gestion
     {
         return \App\ProtoControllers\Utilisateur::isRH($_SESSION['userlogin']);
     }
-
 }

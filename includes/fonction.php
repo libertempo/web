@@ -153,9 +153,6 @@ function session_create($username)
         $_SESSION['timestamp_last']= $maintenant + SESSION_DURATION;
         if (function_exists('init_config_tab'))
             $_SESSION['config']=init_config_tab();      // on initialise le tableau des variables de config
-
-        if (isset($_REQUEST['lang']))
-            $_SESSION['lang'] = $_REQUEST['lang'];
     }
 
 
@@ -183,7 +180,6 @@ function session_delete()
      unset($_SESSION['timestamp_last']);
      unset($_SESSION['tab_j_feries']);
      unset($_SESSION['config']);
-     unset($_SESSION['lang']);
      session_destroy();
 }
 
@@ -2101,14 +2097,12 @@ function recup_infos_du_user($login, $list_groups_double_valid)
         $tab_user['double_valid'] = "N";
 
         // on regarde ici si le user est dans un groupe qui fait l'objet d'une double validation
-        if ($config->isDoubleValidationActive()) {
-            if ($list_groups_double_valid!="") { // si $resp_login est responsable d'au moins un groupe a double validation
-                $sql1='SELECT gu_login FROM conges_groupe_users WHERE gu_login="'. $db->quote($login).'" AND gu_gid IN ('.$list_groups_double_valid.') ORDER BY gu_gid, gu_login;';
-                $ReqLog1 = $db->query($sql1);
+        if ($list_groups_double_valid!="") { // si $resp_login est responsable d'au moins un groupe a double validation
+            $sql1='SELECT gu_login FROM conges_groupe_users WHERE gu_login="'. $db->quote($login).'" AND gu_gid IN ('.$list_groups_double_valid.') ORDER BY gu_gid, gu_login;';
+            $ReqLog1 = $db->query($sql1);
 
-                if ($ReqLog1->num_rows  !=0)
-                    $tab_user['double_valid'] = 'Y';
-            }
+            if ($ReqLog1->num_rows  !=0)
+            $tab_user['double_valid'] = 'Y';
         }
         return $tab_user ;
     }

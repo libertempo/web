@@ -17,9 +17,7 @@ $subalternesActifsResponsable = array_filter(
 );
 $nombreColonnes = 3 + 2 * count($typeConges) + count($congesExceptionnels) + (int) $gestionHeure + 1 + (int) $gestionEditionPapier;
 
-$subalternesGrandResponsable = ($config->isDoubleValidationActive())
-    ? recup_infos_all_users_du_grand_resp($_SESSION['userlogin'])
-    : [];
+$subalternesGrandResponsable = recup_infos_all_users_du_grand_resp($_SESSION['userlogin']);
 $subalternesActifsGrandResponsable = array_filter(
     $subalternesGrandResponsable, function ($employe) {
         return 'Y' === $employe['is_active'];

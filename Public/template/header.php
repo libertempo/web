@@ -34,7 +34,7 @@ global $environnement;
         <link type="text/css" href="<?= NODE_PATH ?>bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css?v=<?= $config_php_conges_version ?>" rel="stylesheet" media="screen">
         <link type="text/css" href="<?= NODE_PATH ?>bootstrap-timepicker/css/bootstrap-timepicker.min.css?v=<?= $config_php_conges_version ?>" rel="stylesheet" media="screen" />
         <?php /* FONT AWESOME */ ?>
-        <link href="<?= ASSETS_PATH ?>font-awesome/css/font-awesome.min.css?v=<?= $config_php_conges_version ?>" rel="stylesheet">
+        <link href="<?= NODE_PATH ?>font-awesome/css/font-awesome.min.css?v=<?= $config_php_conges_version ?>" rel="stylesheet">
         <?php /* REBOOT STYLE */ ?>
         <link type="text/css" href="<?= CSS_PATH ?>reboot.css?v=<?= $config_php_conges_version ?>" rel="stylesheet" media="screen,print">
         <?php /* JQUERY */ ?>
@@ -56,7 +56,11 @@ global $environnement;
         <script type="text/javascript" src="<?= NODE_PATH ?>bootstrap-datepicker/dist/locales/bootstrap-datepicker.fr.min.js?v=<?= $config_php_conges_version ?>"></script>
         <script type="text/javascript" src="<?= NODE_PATH ?>bootstrap-timepicker/js/bootstrap-timepicker.min.js?v=<?= $config_php_conges_version ?>"></script>
         <script type="text/javascript" src="<?= NODE_PATH ?>axios/dist/axios.min.js?v=<?= $config_php_conges_version ?>"></script>
-        <script type="text/javascript" src="<?= NODE_PATH ?>vue/dist/vue.min.js?v=<?= $config_php_conges_version ?>"></script>
+        <?php if ('development' === $environnement) : ?>
+            <script type="text/javascript" src="<?= NODE_PATH ?>vue/dist/vue.js?v=<?= $config_php_conges_version ?>"></script>
+        <?php else : ?>
+            <script type="text/javascript" src="<?= NODE_PATH ?>vue/dist/vue.min.js?v=<?= $config_php_conges_version ?>"></script>
+        <?php endif ;?>
         <script type="text/javascript" src="<?= JS_PATH ?>reboot.js?v=<?= $config_php_conges_version ?>"></script>
         <script language="JavaScript" type="text/javascript">
         <!--
