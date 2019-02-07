@@ -38,6 +38,9 @@ save: ## Sauvegarde la DB
 restore: destroy check ## Restaure la dernière sauvegarde
 	App/Tools/restore
 
+configure: ## Paramètre une option de configuration
+	App/Tools/configure ${option} ${valeur}
+
 ## CI
 test: ## Lance les tests unitaires
 	vendor/bin/atoum -ulr
