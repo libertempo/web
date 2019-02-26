@@ -49,11 +49,11 @@
             </td>
             <td><?= $infosUser['u_quotite'] ?> %</td>
             <?php foreach ($typeAbsencesConges as $congesId => $infoType) : ?>
-                <td><?= isset($infosUser['solde'][$congesId]) ? $infosUser['solde'][$congesId]['su_nb_an'] : 0 ?></td>
-                <td><?= isset($infosUser['solde'][$congesId]) ? $infosUser['solde'][$congesId]['su_solde'] : 0 ?></td>
+                <td><?= isset($infosUser['soldes'][$congesId]) ? $infosUser['soldes'][$congesId]['su_nb_an'] : 0 ?></td>
+                <td><?= isset($infosUser['soldes'][$congesId]) ? $infosUser['soldes'][$congesId]['su_solde'] : 0 ?></td>
             <?php endforeach; ?>
             <?php foreach ($typeAbsencesExceptionnels as $congesId => $infoType) : ?>
-                <td><?= isset($infosUser['solde'][$congesId]) ? $infosUser['solde'][$congesId]['su_solde'] : 0 ?></td>
+                <td><?= isset($infosUser['soldes'][$congesId]) ? $infosUser['soldes'][$congesId]['su_solde'] : 0 ?></td>
             <?php endforeach; ?>
             <?php if ($isHeuresAutorises) : ?>
                 <td><?= \App\Helpers\Formatter::timestamp2Duree($infosUser['u_heure_solde']) ?></td>
