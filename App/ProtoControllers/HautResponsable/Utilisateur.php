@@ -862,6 +862,9 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $returnExc = true;
         if ($config->isCongesExceptionnelsActive()) {
             $typeAbsencesExceptionnels = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges_exceptionnels');
+            if(empty($typeAbsencesExceptionnels)){
+                return $returnStd;
+            }
             foreach ($typeAbsencesExceptionnels as $typeId => $info) {
                 $valuesExc[] = '(0, \''
                                 . $data['soldes'][$typeId] . '\', 0, "'
