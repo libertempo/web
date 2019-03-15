@@ -1560,10 +1560,10 @@ msgid "button_cloture"
 msgstr "Changement Exercice"
 
 msgid "resp_cloture_exercice_all"
-msgstr "Clôture d'exercice globale pour Tous"
+msgstr "Clôture d'exercice globale"
 
 msgid "resp_cloture_exercice_groupe"
-msgstr "Clôture d'exercice globale par groupe"
+msgstr "Clôture d'exercice par groupe"
 
 msgid "resp_cloture_exercice_users"
 msgstr "Clôture d'exercice par personne"
