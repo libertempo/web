@@ -12,7 +12,7 @@
 <?php endif; ?>
 <a href="<?= ROOT_PATH ?>hr/hr_cloture_groupe.php" style="float:right" class="btn btn-success"><?= _('resp_cloture_exercice_groupe') ?></a>
   <h2>Vous êtes sur le point de cloturer l'exercice actuel pour tout les utilisateurs actifs.</h2>
-  <form action="hr/cloture_exercice" method="POST">
+  <form action="cloture_exercice" method="POST">
     <?php if ($isReliquatsAutorise && 0 != $DateReliquats) : ?>
     <div class="form-group">
       <label for="annee">Veuillez saisir l'année de la date limite des reliquats :</label>
@@ -23,6 +23,5 @@
       <label><input type="checkbox" name="feries" value="1"> Valider automatiquement les jours fériés pour l'année à venir ?</label>
     </div>
     <input type="hidden" name="cloture_globale" value=1>
-    <input type="hidden" name="formId" value="<?= $formId ?>">
     <button type="submit" class="btn btn-danger">Valider la clôture globale</button>
   </form>
