@@ -14,7 +14,7 @@ $datePickerOpts = [
     'minViewMode' => "years",
 ];
 
-if (1 == getpost_variable('cloture_globale', 0)) {
+if (1 == getpost_variable('cloture_globale', 0) && is_hr($_SESSION['userlogin'])) {
     $error = '';
     $anneeFinReliquats = intval(getpost_variable('annee', 0));
     $feries = getpost_variable('feries', 0);
@@ -24,8 +24,8 @@ if (1 == getpost_variable('cloture_globale', 0)) {
 
     if (0 != count($employes)) {
         if (\App\ProtoControllers\HautResponsable\clotureExercice::traitementClotureEmploye($employes, $typeConges, $error, $sql, $config)) {
-            $ExerciceResult = \App\ProtoControllers\HautResponsable\clotureExercice::updateNumExerciceGlobal($error, $sql);
-            if($isReliquatsAutorise && $ExerciceResult) {
+            \App\ProtoControllers\HautResponsable\clotureExercice::updateNumExerciceGlobal($sql);
+            if($isReliquatsAutorise) {
                 \App\ProtoControllers\HautResponsable\clotureExercice::updateDateLimiteReliquats($anneeFinReliquats, $error, $sql, $config);
             }
         }

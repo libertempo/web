@@ -15,7 +15,7 @@ class clotureExercice
     {
         $return = true;
         $exerciceGlobal = $_SESSION['config']['num_exercice'];
-        $comment =  _('resp_cloture_exercice_commentaire') ." ".date("m/Y");
+        $comment =  _('resp_cloture_exercice_commentaire') . " " . $exerciceGlobal;
         $sql->getPdoObj()->begin_transaction();
 
         foreach ($employes as $employe => $infosEmploye) {
@@ -27,14 +27,14 @@ class clotureExercice
                 foreach($typeConges as $idType => $libelle) {
                     $soldeRestant = $soldesEmploye[$idType]['su_solde'];
                     $soldeFutur = $soldesEmploye[$idType]['su_nb_an'];
+                    // Si le solde est négatif, on le déduit du futur solde
                     if(0 > $soldeRestant){
                         $soldeFutur = $soldeFutur + $soldeRestant;
                     } elseif ($config->isReliquatsAutorise()) {
                         $return = static::setReliquatEmploye($employe, $idType, $soldeRestant, $sql, $config);
                     }
-                    
-                    if (!static::setSoldeEmploye($employe, $idType, $soldeFutur, $sql)
-                        || !static::setNumExeEmploye($employe, $exerciceGlobal, $sql)) {
+                    if ((!static::setSoldeEmploye($employe, $idType, $soldeFutur, $sql))
+                        || (!static::setNumExeEmploye($employe, $exerciceGlobal, $sql))) {
                         $return = false;
                         break;
                     }
@@ -46,7 +46,7 @@ class clotureExercice
 
         if (!$return) {
             $sql->getPdoObj()->rollback();
-            $error = _('Une erreur inconnue s\'est produite.');
+            $error = _('Une erreur inattendue s\'est produite durant le traitement de <b>' . $employe . "</b>. Cloture d'exercice annulée.");
             return $return;
         }
         $sql->getPdoObj()->commit();
@@ -59,8 +59,10 @@ class clotureExercice
         $req = 'UPDATE conges_solde_user 
                   SET su_solde = ' . $soldeFutur .
                 ' WHERE su_login = "' . $sql->quote($employe) .
-                '" AND su_abs_id = ' . intval($idType) . ';';    
-        return $sql->query($req);
+                '" AND su_abs_id = ' . intval($idType) . ';';
+        $sql->query($req);
+
+        return 0 < $sql->affected_rows;
     }
 
     private static function setReliquatEmploye($employe, $idType, $soldeRestant, \includes\SQL $sql, \App\Libraries\Configuration $config)
@@ -70,32 +72,33 @@ class clotureExercice
             $soldeRestant = $reliquatMax;
         }
         $req = 'UPDATE conges_solde_user
-                  SET su_solde = ' . $soldeRestant .
+                  SET su_reliquat = ' . $soldeRestant .
                 ' WHERE su_login="' . $sql->quote($employe) .
-                '" AND su_abs_id = '. intval($idType) . ';';
-        return $sql->query($req) ;
+                '" AND su_abs_id = ' . intval($idType) . ';';
+        $sql->query($req);
+
+        return 0 < $sql->affected_rows;
     }
 
     private static function setNumExeEmploye($employe, $numExercice, \includes\SQL $sql) {
         $req = 'UPDATE conges_users
                 SET u_num_exercice = ' . $numExercice .
-                ' WHERE u_login="'. $sql->quote($employe).'";';
-        return $sql->query($req);
+                ' WHERE u_login="' . $sql->quote($employe) . '";';
+        $sql->query($req);
+
+        return 0 < $sql->affected_rows;
     }
 
-    public static function updateNumExerciceGlobal(&$error, \includes\SQL $sql)
+    public static function updateNumExerciceGlobal(\includes\SQL $sql)
     {
         $req = "UPDATE conges_appli
                 SET appli_valeur = appli_valeur+1
                 WHERE appli_variable='num_exercice';";
-        $return = $sql->query($req);
-        if($return) {
-            log_action(0, "", "", "fin/debut exercice (appli_num_exercice : " . $_SESSION['config']['num_exercice'] . " -> " . $_SESSION['config']['num_exercice'] + 1 . ")");
-            return $return;
-        }
+        $sql->query($req);
 
-        $error = "Une erreur inatendue s'est produite durant la mise à jour de l'exercice globale !";
-        return $return;
+        log_action(0, "", "", "fin/debut exercice (appli_num_exercice : " . $_SESSION['config']['num_exercice'] . " -> " . $_SESSION['config']['num_exercice'] + 1 . ")");
+
+        return true;
     }
 
     public static function updateDateLimiteReliquats($annee, &$error, \includes\SQL $sql, \App\Libraries\Configuration $config)
@@ -116,15 +119,12 @@ class clotureExercice
         $req = 'UPDATE conges_appli
                        SET appli_valeur = \'' . $dateLimite . '\' 
                        WHERE appli_variable=\'date_limite_reliquats\';';
-        $return = $sql->query($req);
-        if($return) {
-            $error = "Une erreur inatendue s'est produite durant la mise à jour de la date limite de reliquat !";
-        }
-    
-        return $return;
+        $sql->query($req);
+
+        return 0 < $sql->affected_rows;
     }
 
-    public function setJoursFeriesFrance() {
+    public static function setJoursFeriesFrance() {
         
     }
 }
