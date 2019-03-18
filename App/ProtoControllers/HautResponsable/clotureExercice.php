@@ -33,13 +33,15 @@ class clotureExercice
                     } elseif ($config->isReliquatsAutorise()) {
                         $return = static::setReliquatEmploye($employe, $idType, $soldeRestant, $sql, $config);
                     }
-                    if ((!static::setSoldeEmploye($employe, $idType, $soldeFutur, $sql))
-                        || (!static::setNumExeEmploye($employe, $exerciceGlobal, $sql))) {
+                    if (!static::setSoldeEmploye($employe, $idType, $soldeFutur, $sql)) {
                         $return = false;
                         break;
                     }
                     $today = date("Y-m-d");
                     insert_dans_periode($employe, $today, "am", $today, "am", $soldeFutur, $comment, $idType, "ajout", 0);
+                }
+                if($return) {
+                    static::setNumExeEmploye($employe, $exerciceGlobal, $sql);
                 }
             }
         }
