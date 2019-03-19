@@ -126,7 +126,15 @@ class clotureExercice
         return 0 < $sql->affected_rows;
     }
 
-    public static function setJoursFeriesFrance() {
-        
+    public static function setJoursFeriesFrance() 
+    {
+        $annee = date('Y') + 1;
+        $joursFeriesFrance = \hr\Fonctions::getJoursFeriesFrance($annee);
+        \hr\Fonctions::supprimeAnnee($joursFeriesFrance);
+        if (\hr\Fonctions::insereAnnee($joursFeriesFrance)) {
+            log_action(0, "", "", "insertion automatique des jours chomés pour " . $annee);
+            init_tab_jours_feries();
+            return true;
+        }
     }
 }
