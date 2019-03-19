@@ -2335,4 +2335,46 @@ class Fonctions
 
         return $return;
     }
+
+    public static function getJoursFeriesFrance(int $iAnnee) : array
+    {
+        //Initialisation de variables
+        $unJour = 3600*24;
+        $tbJourFerie = [];
+        $timePaques = easter_date($iAnnee) + 6 * 3600; // évite les changements d'heures
+
+        $tbJourFerie["Jour de l an"] = $iAnnee . "-01-01";
+        $tbJourFerie["Paques"] = date('Y-m-d', $timePaques);
+        $tbJourFerie["Lundi de Paques"] = $iAnnee . date("-m-d", $timePaques + 1 * $unJour);
+        $tbJourFerie["Fete du travail"] = $iAnnee . "-05-01";
+        $tbJourFerie["Armistice 39-45"] = $iAnnee . "-05-08";
+        $tbJourFerie["Jeudi de l ascension"] = $iAnnee . date("-m-d", easter_date($iAnnee) + 39 * $unJour);
+        $tbJourFerie["Fete nationale"] = $iAnnee . "-07-14";
+        $tbJourFerie["Assomption"] = $iAnnee . "-08-15";
+        $tbJourFerie["Toussaint"] = $iAnnee . "-11-01";
+        $tbJourFerie["Armistice 14-18"] = $iAnnee . "-11-11";
+        $tbJourFerie["Noel"] = $iAnnee . "-12-25";
+
+        return $tbJourFerie;
+    }
+
+    public static function insereAnnee(array $tab_checkbox_j_chome) : bool
+    {
+        $db = \includes\SQL::singleton();
+        foreach ($tab_checkbox_j_chome as $date) {
+            $db->query('INSERT INTO conges_jours_feries SET jf_date="'. $db->quote($date).'";');
+        }
+        return true;
+    }
+
+    public static function supprimeAnnee(array $tab_checkbox_j_chome) : bool
+    {
+        $db = \includes\SQL::singleton();
+        $date_1=$tab_checkbox_j_chome[0];
+        $year=substr($date_1, 0, 4);
+        $sql_delete='DELETE FROM conges_jours_feries WHERE jf_date LIKE "'. $db->quote($year).'%" ;';
+        $db->query($sql_delete);
+
+        return true;
+    }
 }

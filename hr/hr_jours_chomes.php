@@ -10,11 +10,11 @@ function commitSaisie(array $tab_checkbox_j_chome) : bool
 {
     // si l'année est déja renseignée dans la database, on efface ttes les dates de l'année
     if (isAnneeSaisie($tab_checkbox_j_chome)) {
-        supprimeAnnee($tab_checkbox_j_chome);
+        \hr\Fonctions::supprimeAnnee(array_keys($tab_checkbox_j_chome));
     }
 
     // on insère les nouvelles dates saisies
-    if (insereAnnee($tab_checkbox_j_chome)) {
+    if (\hr\Fonctions::insereAnnee(array_keys($tab_checkbox_j_chome))) {
         $date_1 = key($tab_checkbox_j_chome);
         $tab_date = explode('-', $date_1);
         $comment_log = "saisie des jours chomés pour " . $tab_date[0] ;
@@ -32,26 +32,6 @@ function isAnneeSaisie(array $tab_checkbox_j_chome) : bool
     $year = (int) substr($date_1, 0, 4);
 
     return !empty(getJourFeriesListe($year));
-}
-
-function supprimeAnnee(array $tab_checkbox_j_chome) : bool
-{
-    $db = \includes\SQL::singleton();
-    $date_1=key($tab_checkbox_j_chome);
-    $year=substr($date_1, 0, 4);
-    $sql_delete='DELETE FROM conges_jours_feries WHERE jf_date LIKE "'. $db->quote($year).'%" ;';
-    $db->query($sql_delete);
-
-    return true;
-}
-
-function insereAnnee(array $tab_checkbox_j_chome) : bool
-{
-    $db = \includes\SQL::singleton();
-    foreach (array_keys($tab_checkbox_j_chome) as $date) {
-        $db->query('INSERT INTO conges_jours_feries SET jf_date="'. $db->quote($date).'";');
-    }
-    return true;
 }
 
 function getJourFeriesListe(int $year) : array
@@ -73,28 +53,6 @@ function getJourFeriesListe(int $year) : array
             return $ferie['date'];
         }, $feriesAnnee
     );
-}
-
-function getJoursFeriesFrance(int $iAnnee) : array
-{
-    //Initialisation de variables
-    $unJour = 3600*24;
-    $tbJourFerie = [];
-    $timePaques = easter_date($iAnnee) + 6 * 3600; // évite les changements d'heures
-
-    $tbJourFerie["Jour de l an"] = $iAnnee . "-01-01";
-    $tbJourFerie["Paques"] = date('Y-m-d', $timePaques);
-    $tbJourFerie["Lundi de Paques"] = $iAnnee . date("-m-d", $timePaques + 1 * $unJour);
-    $tbJourFerie["Fete du travail"] = $iAnnee . "-05-01";
-    $tbJourFerie["Armistice 39-45"] = $iAnnee . "-05-08";
-    $tbJourFerie["Jeudi de l ascension"] = $iAnnee . date("-m-d", easter_date($iAnnee) + 39 * $unJour);
-    $tbJourFerie["Fete nationale"] = $iAnnee . "-07-14";
-    $tbJourFerie["Assomption"] = $iAnnee . "-08-15";
-    $tbJourFerie["Toussaint"] = $iAnnee . "-11-01";
-    $tbJourFerie["Armistice 14-18"] = $iAnnee . "-11-11";
-    $tbJourFerie["Noel"] = $iAnnee . "-12-25";
-
-    return $tbJourFerie;
 }
 
 function afficheJourHorsMois(int $mois, $jour, int $year) : string
@@ -135,7 +93,7 @@ $joursFeries = getJourFeriesListe($annee);
 $sql = \includes\SQL::singleton();
 $config = new \App\Libraries\Configuration($sql);
 if ($config->isJoursFeriesFrance()) {
-    $tableau_jour_feries = getJoursFeriesFrance($annee);
+    $tableau_jour_feries = \hr\Fonctions::getJoursFeriesFrance($annee);
     foreach ($tableau_jour_feries as $value) {
         if (in_array($value, $joursFeries)) {
             continue;
