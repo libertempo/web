@@ -10,11 +10,12 @@ function commitSaisie(array $tab_checkbox_j_chome) : bool
 {
     // si l'année est déja renseignée dans la database, on efface ttes les dates de l'année
     if (isAnneeSaisie($tab_checkbox_j_chome)) {
-        \hr\Fonctions::supprimeAnnee(array_keys($tab_checkbox_j_chome));
+        $year = explode('-', key($tab_checkbox_j_chome))[0];
+        \hr\Fonctions::supprimeFeriesAnnee(intval($year));
     }
 
     // on insère les nouvelles dates saisies
-    if (\hr\Fonctions::insereAnnee(array_keys($tab_checkbox_j_chome))) {
+    if (\hr\Fonctions::insereFeriesAnnee(array_keys($tab_checkbox_j_chome))) {
         $date_1 = key($tab_checkbox_j_chome);
         $tab_date = explode('-', $date_1);
         $comment_log = "saisie des jours chomés pour " . $tab_date[0] ;
@@ -92,15 +93,6 @@ $joursFeries = getJourFeriesListe($annee);
 
 $sql = \includes\SQL::singleton();
 $config = new \App\Libraries\Configuration($sql);
-if ($config->isJoursFeriesFrance()) {
-    $tableau_jour_feries = \hr\Fonctions::getJoursFeriesFrance($annee);
-    foreach ($tableau_jour_feries as $value) {
-        if (in_array($value, $joursFeries)) {
-            continue;
-        }
-        $joursFeries[] = $value;
-    }
-}
 
 $title = _('admin_button_jours_chomes_1');
 $prev_link = "$PHP_SELF?year_calendrier_saisie=". ($annee - 1);

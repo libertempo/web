@@ -2358,7 +2358,7 @@ class Fonctions
         return $tbJourFerie;
     }
 
-    public static function insereAnnee(array $tab_checkbox_j_chome) : bool
+    public static function insereFeriesAnnee(array $tab_checkbox_j_chome) : bool
     {
         $db = \includes\SQL::singleton();
         foreach ($tab_checkbox_j_chome as $date) {
@@ -2367,11 +2367,9 @@ class Fonctions
         return true;
     }
 
-    public static function supprimeAnnee(array $tab_checkbox_j_chome) : bool
+    public static function supprimeFeriesAnnee(int $year) : bool
     {
         $db = \includes\SQL::singleton();
-        $date_1=$tab_checkbox_j_chome[0];
-        $year=substr($date_1, 0, 4);
         $sql_delete='DELETE FROM conges_jours_feries WHERE jf_date LIKE "'. $db->quote($year).'%" ;';
         $db->query($sql_delete);
 
