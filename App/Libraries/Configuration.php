@@ -405,10 +405,6 @@ class Configuration
         return $this->getGroupeDiversValeur('affiche_date_traitement');
     }
 
-    public function isJoursFeriesFrance()
-    {
-        return $this->getGroupeDiversValeur('calcul_auto_jours_feries_france');
-    }
     /**
      * Retourne une valeur du groupe divers par son nom
      *
