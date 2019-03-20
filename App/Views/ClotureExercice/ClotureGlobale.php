@@ -5,7 +5,7 @@
  * and open the template in the editor.
  */
 ?>
-<script>generateDatePicker(<?php json_encode($datePickerOpts) ?>, false);</script>
+<script>generateDatePicker(<?= json_encode($datePickerOpts) ?>, false);</script>
 <h1><?= $titre ?></h1>
 <?php if ($commitSuccess) : ?>
     <div class="alert alert-success">Changement d'exercice effectué.</div
@@ -25,7 +25,7 @@
             </label>
         </div>
         <div class="col-xs-8 col-sm-2">
-            <input class="form-control date" type="text" id="annee" name="annee" required placeholder="<?= date('Y'); ?>">
+            <input class="form-control date" type="text" id="annee" name="annee" autocomplete="off" required placeholder="<?= date('Y'); ?>">
         </div>
     </div>
     <?php endif; ?>
