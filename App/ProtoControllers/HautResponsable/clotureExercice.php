@@ -31,7 +31,10 @@ class clotureExercice
                     if(0 > $soldeRestant){
                         $soldeFutur = $soldeFutur + $soldeRestant;
                     } elseif ($config->isReliquatsAutorise()) {
-                        $return = static::setReliquatEmploye($employe, $idType, $soldeRestant, $sql, $config);
+                        if (!static::setReliquatEmploye($employe, $idType, $soldeRestant, $sql, $config)) {
+                            $return = false;
+                            break;
+                        }
                     }
                     if (!static::setSoldeEmploye($employe, $idType, $soldeFutur, $sql)) {
                         $return = false;
@@ -98,7 +101,8 @@ class clotureExercice
                 WHERE appli_variable='num_exercice';";
         $sql->query($req);
 
-        log_action(0, "", "", "fin/debut exercice (appli_num_exercice : " . $_SESSION['config']['num_exercice'] . " -> " . $_SESSION['config']['num_exercice'] + 1 . ")");
+        $exeSuivant = $_SESSION['config']['num_exercice'] + 1;
+        log_action(0, "", "", "fin/debut exercice (appli_num_exercice : " . $_SESSION['config']['num_exercice'] . " -> " . $exeSuivant . ")");
 
         return true;
     }
@@ -130,8 +134,8 @@ class clotureExercice
     {
         $annee = date('Y') + 1;
         $joursFeriesFrance = \hr\Fonctions::getJoursFeriesFrance($annee);
-        \hr\Fonctions::supprimeAnnee($joursFeriesFrance);
-        if (\hr\Fonctions::insereAnnee($joursFeriesFrance)) {
+        \hr\Fonctions::supprimeFeriesAnnee($annee);
+        if (\hr\Fonctions::insereFeriesAnnee($joursFeriesFrance)) {
             log_action(0, "", "", "insertion automatique des jours chomés pour " . $annee);
             init_tab_jours_feries();
             return true;

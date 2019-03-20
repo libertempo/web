@@ -4,9 +4,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-?>2021
+?>
 <script>generateDatePicker(<?php json_encode($datePickerOpts) ?>, false);</script>
 <h1><?= $titre ?></h1>
+<?php if ($commitSuccess) : ?>
+    <div class="alert alert-success">Changement d'exercice effectué.</div
+<?php endif; ?>
 <?php if (!empty($error)) : ?>
     <div class="alert alert-danger"><?= $error ?></div>
 <?php endif; ?>

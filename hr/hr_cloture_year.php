@@ -7,6 +7,7 @@ $sql = \includes\SQL::singleton();
 $config = new \App\Libraries\Configuration($sql);
 $DateReliquats = $config->getDateLimiteReliquats();
 $isReliquatsAutorise = $config->isReliquatsAutorise();
+$commitSuccess = false;
 
 $datePickerOpts = [
     'format' => "yyyy",
@@ -15,7 +16,7 @@ $datePickerOpts = [
 ];
 
 if (1 == getpost_variable('cloture_globale', 0) && is_hr($_SESSION['userlogin'])) {
-    $error = '';
+    $error = null;
     $anneeFinReliquats = intval(getpost_variable('annee', 0));
     $feries = getpost_variable('feries', 0);
     $typeConges = (\App\ProtoControllers\Conge::getTypesAbsences($sql, "conges") 
@@ -32,6 +33,9 @@ if (1 == getpost_variable('cloture_globale', 0) && is_hr($_SESSION['userlogin'])
         if(1 == $feries) {
             \App\ProtoControllers\HautResponsable\clotureExercice::setJoursFeriesFrance();
         }
+    }
+    if (null === $error) {
+        $commitSuccess = true;
     }
 }
 
