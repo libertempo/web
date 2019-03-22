@@ -1,0 +1,1 @@
+INSERT INTO conges_config (conf_nom, conf_valeur, conf_groupe, conf_type, conf_commentaire) VALUES ('afficher_types_conges_calendrier', 'rh', '12_Fonctionnement de l\'Etablissement', 'enum=rh/rh+responsable/tous', 'config_comment_afficher_types_conges_calendrier');

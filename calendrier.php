@@ -11,6 +11,16 @@ function canSessionVoirEvenementEnTransit(array $donneesUtilisateur)
         || (isset($donneesUtilisateur['is_admin']) && 'Y' === $donneesUtilisateur['is_admin']);
 }
 
+/**
+ * @return bool
+ */
+function canSessionVoirTypesConges(array $donneesUtilisateur, \App\Libraries\Configuration $config)
+{
+    return (isset($donneesUtilisateur['is_resp']) && 'Y' === $donneesUtilisateur['is_resp'] && 'rh+responsable' === $config->getQuiAfficheTypeCongesCalendrier())
+        || (isset($donneesUtilisateur['is_rh']) && 'Y' === $donneesUtilisateur['is_rh'])
+        || ('tous' === $config->getQuiAfficheTypeCongesCalendrier());
+}
+
 function getUrlMois(\DateTimeInterface $date, $idGroupe)
 {
     $urlCalendrier = ROOT_PATH . 'calendrier';
@@ -103,7 +113,8 @@ if ($jourDemande instanceof \DateTimeInterface) {
         $jourDemande->modify('+1 day'),
         $utilisateursATrouver,
         canSessionVoirEvenementEnTransit($_SESSION),
-        $config->isHeuresAutorise()
+        $config->isHeuresAutorise(),
+        canSessionVoirTypesConges($_SESSION, $config)
     );
     require_once VIEW_PATH . 'Calendrier/Jour.php';
 } else {
@@ -112,7 +123,8 @@ if ($jourDemande instanceof \DateTimeInterface) {
         $moisDemande->modify('+1 month'),
         $utilisateursATrouver,
         canSessionVoirEvenementEnTransit($_SESSION),
-        $config->isHeuresAutorise()
+        $config->isHeuresAutorise(),
+        canSessionVoirTypesConges($_SESSION, $config)
     );
     require_once VIEW_PATH . 'Calendrier/Mois.php';
 }
