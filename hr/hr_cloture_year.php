@@ -15,23 +15,24 @@ $datePickerOpts = [
     'minViewMode' => "years",
 ];
 
-if (1 == getpost_variable('cloture_globale', 0) && is_hr($_SESSION['userlogin'])) {
+$commitCloture = intval(getpost_variable('cloture_globale', 0));
+if (1 === $commitCloture && is_hr($_SESSION['userlogin'])) {
     $error = null;
     $anneeFinReliquats = intval(getpost_variable('annee', 0));
     $feries = getpost_variable('feries', 0);
-    $typeConges = (\App\ProtoControllers\Conge::getTypesAbsences($sql, "conges") 
+    $typeConges = (\App\ProtoControllers\Conge::getTypesAbsences($sql, "conges")
                 + \App\ProtoControllers\Conge::getTypesAbsences($sql, "conges_exceptionnels"));
     $employes = \App\ProtoControllers\Utilisateur::getDonneesTousUtilisateurs($config);
 
-    if (0 != count($employes)) {
-        if (\App\ProtoControllers\HautResponsable\clotureExercice::traitementClotureEmploye($employes, $typeConges, $error, $sql, $config)) {
-            \App\ProtoControllers\HautResponsable\clotureExercice::updateNumExerciceGlobal($sql);
-            if($isReliquatsAutorise) {
-                \App\ProtoControllers\HautResponsable\clotureExercice::updateDateLimiteReliquats($anneeFinReliquats, $error, $sql, $config);
+    if (0 !== count($employes)) {
+        if (\App\ProtoControllers\HautResponsable\ClotureExercice::traitementClotureEmploye($employes, $typeConges, $error, $sql, $config)) {
+            \App\ProtoControllers\HautResponsable\ClotureExercice::updateNumExerciceGlobal($sql);
+            if ($isReliquatsAutorise) {
+                \App\ProtoControllers\HautResponsable\ClotureExercice::updateDateLimiteReliquats($anneeFinReliquats, $error, $sql, $config);
             }
         }
-        if(1 == $feries) {
-            \App\ProtoControllers\HautResponsable\clotureExercice::setJoursFeriesFrance();
+        if (1 === $feries) {
+            \App\ProtoControllers\HautResponsable\ClotureExercice::setJoursFeriesFrance();
         }
     }
     if (null === $error) {

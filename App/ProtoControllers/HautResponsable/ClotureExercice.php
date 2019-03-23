@@ -9,7 +9,7 @@ namespace App\ProtoControllers\HautResponsable;
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina <wouldsmina@tuxfamily.org>
  */
-class clotureExercice
+class ClotureExercice
 {
     public static function traitementClotureEmploye($employes, $typeConges, &$error, \includes\SQL $sql, \App\Libraries\Configuration $config)
     {
@@ -19,16 +19,16 @@ class clotureExercice
         $sql->getPdoObj()->begin_transaction();
 
         foreach ($employes as $employe => $infosEmploye) {
-            if ("Y" != $infosEmploye['u_is_active']) {
+            if ("Y" !== $infosEmploye['u_is_active']) {
                 continue;
             }
             if ($infosEmploye['u_num_exercice'] < $exerciceGlobal) {
                 $soldesEmploye = \App\ProtoControllers\Utilisateur::getSoldesEmploye($sql, $config, $employe);
-                foreach($typeConges as $idType => $libelle) {
+                foreach ($typeConges as $idType => $libelle) {
                     $soldeRestant = $soldesEmploye[$idType]['su_solde'];
                     $soldeFutur = $soldesEmploye[$idType]['su_nb_an'];
                     // Si le solde est négatif, on le déduit du futur solde
-                    if(0 > $soldeRestant){
+                    if (0 > $soldeRestant) {
                         $soldeFutur = $soldeFutur + $soldeRestant;
                     } elseif ($config->isReliquatsAutorise()) {
                         if (!static::setReliquatEmploye($employe, $idType, $soldeRestant, $sql, $config)) {
@@ -43,7 +43,7 @@ class clotureExercice
                     $today = date("Y-m-d");
                     insert_dans_periode($employe, $today, "am", $today, "am", $soldeFutur, $comment, $idType, "ajout", 0);
                 }
-                if($return) {
+                if ($return) {
                     static::setNumExeEmploye($employe, $exerciceGlobal, $sql);
                 }
             }
@@ -73,7 +73,7 @@ class clotureExercice
     private static function setReliquatEmploye($employe, $idType, $soldeRestant, \includes\SQL $sql, \App\Libraries\Configuration $config)
     {
         $reliquatMax = $config->getReliquatsMax();
-        if(0 != $reliquatMax && $soldeRestant > $reliquatMax){
+        if (0 !== $reliquatMax && $soldeRestant > $reliquatMax) {
             $soldeRestant = $reliquatMax;
         }
         $req = 'UPDATE conges_solde_user
@@ -110,7 +110,7 @@ class clotureExercice
     public static function updateDateLimiteReliquats($annee, &$error, \includes\SQL $sql, \App\Libraries\Configuration $config)
     {
         $LimiteReliquats = $config->getDateLimiteReliquats();
-        if (0 == $LimiteReliquats) {
+        if (0 === $LimiteReliquats) {
             return true;
         }
         
@@ -121,7 +121,7 @@ class clotureExercice
 
         $JourMois = explode("-", $LimiteReliquats);
         $dateLimite = $annee . "-" . $JourMois[1] . "-" . $JourMois[0];
-        
+
         $req = 'UPDATE conges_appli
                        SET appli_valeur = \'' . $dateLimite . '\' 
                        WHERE appli_variable=\'date_limite_reliquats\';';
@@ -130,7 +130,7 @@ class clotureExercice
         return 0 < $sql->affected_rows;
     }
 
-    public static function setJoursFeriesFrance() 
+    public static function setJoursFeriesFrance()
     {
         $annee = date('Y') + 1;
         $joursFeriesFrance = \hr\Fonctions::getJoursFeriesFrance($annee);
