@@ -18,22 +18,18 @@
                 <tr>
                     <th><b><?= _('Nom du groupe') ?></b></th>
                     <th><?= _('admin_groupes_libelle') ?> / <?= _('divers_comment_maj_1') ?></th>
-                    <?php if ($doubleValidationActive) : ?>
-                        <th><?= _('admin_groupes_double_valid') ?></th>
-                    <?php endif; ?>
+                    <th><?= _('admin_groupes_double_valid') ?></th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td><input class="form-control" type="text" name="new_group_name" size="30" maxlength="50" value="<?= $infosGroupe['nom'] ?>" required></td>
                     <td><input class="form-control" type="text" name="new_group_libelle" size="50" maxlength="250" value="<?= $infosGroupe['comment'] ?>"></td>
-                    <?php if ($doubleValidationActive) : ?>
-                        <?php
-                        $selectN = $infosGroupe['doubleValidation'] === 'N' ? 'selected="selected"' : '';
-                        $selectY = $infosGroupe['doubleValidation'] === 'Y' ? 'selected="selected"' : '';
-                        ?>
-                        <td><select class="form-control" name="new_group_double_valid" id="<?= $selectId ?>" onchange="showDivGroupeGrandResp('<?= $selectId ?>',' <?= $DivGrandRespId ?>');"><option value="N" <?= $selectN ?>>N</option><option value="Y" <?= $selectY ?>>Y</option></select></td>
-                    <?php endif; ?>
+                    <?php
+                    $selectN = $infosGroupe['doubleValidation'] === 'N' ? 'selected="selected"' : '';
+                    $selectY = $infosGroupe['doubleValidation'] === 'Y' ? 'selected="selected"' : '';
+                    ?>
+                    <td><select class="form-control" name="new_group_double_valid" id="<?= $selectId ?>" onchange="showDivGroupeGrandResp('<?= $selectId ?>',' <?= $DivGrandRespId ?>');"><option value="N" <?= $selectN ?>>N</option><option value="Y" <?= $selectY ?>>Y</option></select></td>
                 </tr>
             </tbody>
         </table>

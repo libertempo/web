@@ -11,7 +11,6 @@ if (0 >= $idGroupe) {
 $db = \includes\SQL::singleton();
 $config = new \App\Libraries\Configuration($db);
 $baseURIApi = $config->getUrlAccueil() . '/api/';
-$doubleValidationActive = $config->isDoubleValidationActive();
 
 $message = '';
 $infosGroupe = \App\ProtoControllers\Groupe::getInfosGroupe($idGroupe, $db);
@@ -45,9 +44,7 @@ if (!empty($data)) {
         'nom' => $data['nom'],
         'comment' => $data['commentaire']
     ];
-    if ($doubleValidationActive) {
-        $infosGroupe['doubleValidation'] = $data['isDoubleValidation'];
-    }
+    $infosGroupe['doubleValidation'] = $data['isDoubleValidation'];
 }
 
 $responsablesGroupe = [];

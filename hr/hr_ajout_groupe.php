@@ -5,7 +5,6 @@ $idGroupe = NIL_INT;
 
 $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 $baseURIApi = $config->getUrlAccueil() . '/api/';
-$doubleValidationActive = $config->isDoubleValidationActive();
 
 $message = '';
 $infosGroupe = [
@@ -43,9 +42,7 @@ if (!empty($data)) {
         'nom' => $data['nom'],
         'comment' => $data['commentaire']
     ];
-    if ($doubleValidationActive) {
-        $infosGroupe['doubleValidation'] = $data['isDoubleValidation'];
-    }
+    $infosGroupe['doubleValidation'] = $data['isDoubleValidation'];
 }
 
 $titre = _('admin_groupes_new_groupe');
