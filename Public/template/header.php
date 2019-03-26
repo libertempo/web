@@ -78,7 +78,7 @@ $baseURIApi = $config->getUrlAccueil() . '/api/';
         axios.defaults.headers.get = {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          'Token': '<?= $_SESSION['token'] ?>',
+          'Token': '<?= $_SESSION['token'] ?? '' ?>',
         };
 
         const instance = axios.create({
