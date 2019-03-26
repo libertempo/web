@@ -283,6 +283,13 @@ var optionsVue = {
                 vm.responsables = responsables;
                 // Copie sans partage de mémoire
                 vm.grands_responsables = JSON.parse(JSON.stringify(responsables));
+
+                if (-1 !== this.idGroupe) {
+                    // setTimeout(this.fillResponsablesGroupe, 1500);
+                    this.fillEmployesGroupe();
+                    this.fillResponsablesGroupe();
+                    this.fillGrandsResponsablesGroupe();
+                }
             })
             .catch((error) => {
                 console.log(error.response);
@@ -373,14 +380,8 @@ var optionsVue = {
     },
     created () {
         this.fillEmployes();
-        if (-1 !== this.idGroupe) {
-            this.fillEmployesGroupe();
-            this.fillResponsablesGroupe();
-            this.fillGrandsResponsablesGroupe();
-        }
         // TODO : actuellement :
         // * toujours, le grand resp ne se remplit pas
-        // * parfois, les valeurs préremplies sont absurdes
     },
     updated () {
         // Shows grand responsable groupe
