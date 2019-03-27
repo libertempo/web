@@ -253,6 +253,16 @@ var optionsVue = {
             var select = document.getElementById(selectId);
             var groupeGrandsResponsables = document.getElementById(DivGrandRespId);
             if (select.value == 'Y') {
+                // Update checkboxes and lock them
+                var event = new Event('change');
+                var grandsResponsables = document.querySelectorAll('#groupe-grands-responsables input[type=checkbox]');
+                for (var i in grandsResponsables) {
+                    if (!grandsResponsables.hasOwnProperty(i)) {
+                        continue;
+                    }
+                    grandsResponsables[i].dispatchEvent(event);
+                }
+
                 groupeGrandsResponsables.classList.remove('hide');
             } else {
                 groupeGrandsResponsables.classList.add('hide');
@@ -394,13 +404,6 @@ var optionsVue = {
                 continue;
             }
             responsables[i].dispatchEvent(event);
-        }
-        var grandsResponsables = document.querySelectorAll('#groupe-grands-responsables input[type=checkbox]');
-        for (var i in grandsResponsables) {
-            if (!grandsResponsables.hasOwnProperty(i)) {
-                continue;
-            }
-            grandsResponsables[i].dispatchEvent(event);
         }
     }
 };
