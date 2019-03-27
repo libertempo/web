@@ -5,7 +5,6 @@
  * and open the template in the editor.
  */
 ?>
-<script>generateDatePicker(<?= json_encode($datePickerOpts) ?>, false);</script>
 <h1><?= $titre ?></h1>
 <?php if ($commitSuccess) : ?>
     <div class="alert alert-success">Changement d'exercice effectué.</div
@@ -30,11 +29,12 @@
     </div>
     <?php endif; ?>
     <div class="checkbox">
-        <label><input type="checkbox" name="feries" value="1"> Valider automatiquement les jours fériés pour l'année à venir ?</label>
+        <label><input type="checkbox" name="feries" value="1"> Remplir automatiquement les jours fériés pour l'année à venir</label>
     </div>
     <input type="hidden" name="cloture_globale" value=1>
     <button type="submit" class="btn btn-danger">Valider la clôture globale</button>
 </form>
+<script>generateDatePicker(<?= json_encode($datePickerOpts) ?>, false);</script>
 <script>
 $(document).ready(function(){
   $('[data-toggle="tooltip"]').tooltip();   

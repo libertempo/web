@@ -5,7 +5,7 @@ namespace App\ProtoControllers\HautResponsable;
 /**
  * ProtoContrôleur d'utilisateur, en attendant la migration vers le MVC REST
  *
- * @since  1.12
+ * @since  1.13
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina <wouldsmina@tuxfamily.org>
  */
@@ -113,7 +113,7 @@ class ClotureExercice
         if (0 === $LimiteReliquats) {
             return true;
         }
-        
+
         if (!preg_match('/^([0-9]{1,2})\-([0-9]{1,2})$/', $LimiteReliquats)) {
             $error = "Erreur de configuration du jour et mois de limite des reliquats.";
             return false;
@@ -130,15 +130,20 @@ class ClotureExercice
         return 0 < $sql->affected_rows;
     }
 
-    public static function setJoursFeriesFrance()
+    public static function setJoursFeriesFrance($annee = null)
     {
-        $annee = date('Y') + 1;
+        if(!isset($year)) {
+            $annee = date('Y') + 1;
+        }
         $joursFeriesFrance = \hr\Fonctions::getJoursFeriesFrance($annee);
         \hr\Fonctions::supprimeFeriesAnnee($annee);
-        if (\hr\Fonctions::insereFeriesAnnee($joursFeriesFrance)) {
-            log_action(0, "", "", "insertion automatique des jours chomés pour " . $annee);
-            init_tab_jours_feries();
-            return true;
+        if (!\hr\Fonctions::insereFeriesAnnee($joursFeriesFrance)) {
+            return false;
         }
+
+        log_action(0, "", "", "insertion automatique des jours chomés pour " . $annee);
+        init_tab_jours_feries();
+
+        return true;
     }
 }
