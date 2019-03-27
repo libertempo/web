@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d6880f53e15e9f107864387a7dedb105",
+    "content-hash": "b52c95d46d1380fe8d39f2ad8e1ef64b",
     "packages": [
         {
             "name": "adldap2/adldap2",
@@ -660,16 +660,16 @@
         },
         {
             "name": "kint-php/kint",
-            "version": "3.0",
+            "version": "3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kint-php/kint.git",
-                "reference": "6b4b95f5cd516b9c37c58fbb712b9c5c528752f3"
+                "reference": "5cd8ac3c2957c3ef5bbf89934983a7ccf6a4c8fb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kint-php/kint/zipball/6b4b95f5cd516b9c37c58fbb712b9c5c528752f3",
-                "reference": "6b4b95f5cd516b9c37c58fbb712b9c5c528752f3",
+                "url": "https://api.github.com/repos/kint-php/kint/zipball/5cd8ac3c2957c3ef5bbf89934983a7ccf6a4c8fb",
+                "reference": "5cd8ac3c2957c3ef5bbf89934983a7ccf6a4c8fb",
                 "shasum": ""
             },
             "require": {
@@ -680,7 +680,7 @@
                 "phpunit/phpunit": "^4.0",
                 "seld/phar-utils": "^1.0",
                 "symfony/finder": "^2.0 || ^3.0 || ^4.0",
-                "vimeo/psalm": "^2.0"
+                "vimeo/psalm": "^3.0"
             },
             "suggest": {
                 "ext-ctype": "Simple data type tests",
@@ -726,7 +726,7 @@
                 "kint",
                 "php"
             ],
-            "time": "2018-09-30T08:05:18+00:00"
+            "time": "2019-03-20T20:19:15+00:00"
         },
         {
             "name": "libertempo/api",
