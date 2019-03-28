@@ -41,6 +41,9 @@ restore: destroy check ## Restaure la dernière sauvegarde
 configure: ## Paramètre une option de configuration
 	App/Tools/configure ${option} ${valeur}
 
+setferies: ## insert dans la bdd les jours fériés français
+        App/Tools/setJoursFeries ${annee} ${force}
+
 ## CI
 test: ## Lance les tests unitaires
 	vendor/bin/atoum -ulr
