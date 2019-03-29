@@ -1496,9 +1496,6 @@ msgstr "date de début"
 msgid "divers_date_fin"
 msgstr "date de fin"
 
-msgid "config_comment_affiche_demandes_dans_calendrier"
-msgstr "// AFFICHAGE DES DEMANDES DE CONGÉS DES UTILISATEURS DANS LE CALENDRIER : <br>//--------------------------------------------------------------------------------------------<br>// si à FALSE : les demandes de congés de tous les utilisateurs n'apparaissent pas sur le calendrier des congés. (seules les demandes de l'utilisateur connecté apparaissent) (FALSE est la valeur par défaut)<br>// si à TRUE : les demandes de congés de tous les utilisateurs apparaissent sur le calendrier des congés."
-
 msgid "config_comment_calcul_auto_jours_feries_france"
 msgstr "// SAISIE DES JOURS FÉRIÉS DE L'ANNÉE : <br>//--------------------------------------------------------------------------------------------<br>// si à FALSE : la saisie des jours fériés de l'année par l'administrateur se fait à la main. (FALSE est la valeur par défaut)<br>// si à TRUE : lors de la saisie des jours fériés de l'année par l'administrateur, les jours fériés (de France) sont automatiquement renseignés (il n'y a plus qu'à vérifier et valider)."
 
