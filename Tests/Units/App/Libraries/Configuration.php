@@ -15,7 +15,7 @@ class Configuration extends \Tests\Units\TestUnit
         $this->result = new \mock\Mysqli\Result();
         $this->db = new \mock\includes\SQL();
         $this->calling($this->db)->query = $this->result;
-        
+
         $this->calling($this->result)->fetch_array[1] =  [
                         'conf_nom' => 'installed_version',
                         'conf_valeur' => '1.9',

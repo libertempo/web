@@ -62,7 +62,7 @@ header_menu('', 'Libertempo : '._('resp_menu_button_mode_hr'));
 
 
 /**
- * initialisation des tableaux des types de conges/absences  
+ * initialisation des tableaux des types de conges/absences
 **/
 // recup du tableau des types de conges (seulement les conges)
 $tab_type_cong=recup_tableau_types_conges();
