@@ -121,7 +121,6 @@ class ClotureExercice
 
         $JourMois = explode("-", $LimiteReliquats);
         $dateLimite = $annee . "-" . $JourMois[1] . "-" . $JourMois[0];
-
         $req = 'UPDATE conges_appli
                        SET appli_valeur = \'' . $dateLimite . '\' 
                        WHERE appli_variable=\'date_limite_reliquats\';';
