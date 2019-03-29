@@ -1016,9 +1016,6 @@ msgstr "// SAISIE DES CONGES ET ABSENCES POUR MISSIONS, FORMATIONS, CONGRES, ETC
 msgid "config_comment_resp_vertical_menu"
 msgstr "// CONFIG DU MENU DU RESPONSABLE<br>//---------------------------------------<br>// si à TRUE : dans la fenêtre responsable, le menu est vertical (à gauche) (TRUE est la valeur par défaut)<br>// si à FALSE : dans la fenêtre responsable, le menu est horizontal (en haut)"
 
-msgid "config_comment_admin_see_all"
-msgstr "// CONFIG DU MODE ADMINISTRATEUR<br>//---------------------------------------<br>// si à FALSE : l'admin ne gére que les utilisateurs dont il est responsable (FALSE est la valeur par défaut)<br>// si à TRUE : l'admin gére tous les utilisateurs"
-
 msgid "config_comment_admin_change_passwd"
 msgstr "// CHANGER LE MOT DE PASSE D'UN UTILISATEUR<br>//-----------------------------------------<br>// si à FALSE : l'administrateur ne peut pas changer le mot de passe des utilisateurs<br>// si à TRUE : l'administrateur peut changer le mot de passe des utilisateurs (TRUE est la valeur par défaut)"
 
