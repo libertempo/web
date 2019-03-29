@@ -848,7 +848,7 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
     // si le user a droit de saisir une mission ET si on est PAS dans une fenetre de responsable
     // OU si le resp a droit de saisir une mission ET si on est PAS dans une fenetre dd'utilisateur
     // OU si le resp a droit de saisir une mission ET si le resp est resp de lui meme
-    if ((($config->canUserSaisieMission())&&($user_login==$_SESSION['userlogin']))
+    if ((($user_login==$_SESSION['userlogin']))
             || (($config->canResponsableSaisieMission())&&($user_login!=$_SESSION['userlogin']))
             || (($config->canResponsableSaisieMission()) && (\App\ProtoControllers\Responsable::isRespDeUtilisateur($_SESSION['userlogin'] , $user_login)))) {
         // absences

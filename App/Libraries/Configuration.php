@@ -79,18 +79,6 @@ class Configuration
     }
 
     /**
-     * Autorise la saisie d'une demande de mission par l'employé
-     *
-     * @todo a supprimer au profit de canUserSaisieDemande()
-     *
-     * @return boolean
-     */
-    public function canUserSaisieMission()
-    {
-        return $this->getGroupeUtilisateurValeur('user_saisie_mission');
-    }
-
-    /**
      * Autorise la modification du mot de passe par l'employé
      * le mot de passe n'est modifiable que si
      * authentification locale

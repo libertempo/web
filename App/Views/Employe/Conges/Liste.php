@@ -1,14 +1,11 @@
 <?php
 /*
- * $canAskConge
  * $titre
  * $champsRecherche
  * $dataConges
  */
 ?>
-<?php if ($canAskConge) : ?>
 <a href="<?= ROOT_PATH ?>utilisateur/user_index.php?onglet=nouvelle_absence" style="float:right" class="btn btn-success"><?= _('divers_nouvelle_absence') ?></a>
-<?php endif; ?>
 <h1><?= $titre ?></h1>
 <form method="post" action="" class="form-inline search" role="form">
     <div class="form-group">

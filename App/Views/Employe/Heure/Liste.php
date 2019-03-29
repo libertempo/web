@@ -1,6 +1,5 @@
 <?php
 /*
- * $canUserSaisi
  * $errorsLst
  * $notice
  * $champsRecherche
@@ -12,9 +11,7 @@
 use \App\Models\AHeure;
 
 ?>
-<?php if ($canUserSaisi) : ?>
-    <a href="<?= ROOT_PATH . $urlSaisie ?>" style="float:right" class="btn btn-success"><?= $texteSaisie ?></a>
-<?php endif; ?>
+<a href="<?= ROOT_PATH . $urlSaisie ?>" style="float:right" class="btn btn-success"><?= $texteSaisie ?></a>
 <h1><?= $titre ?></h1>
 <?php if (!empty($errorsLst)) : ?>
     <div class="alert alert-danger"><?= _('erreur_recommencer') ?> :<ul>
