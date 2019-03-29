@@ -27,15 +27,13 @@ $onglets = array();
 
 $onglets['page_principale'] = _('resp_menu_button_retour_main');
 
-if ($config->canUserSaisieDemande()) {
-    $nbbadgeConges = '';
-    $DemandesConges = new \App\ProtoControllers\Responsable\Traitement\Conge;
-    $nbdemandes = $DemandesConges->getNbDemandesATraiter($_SESSION['userlogin']);
-    if (0 < $nbdemandes) {
-        $nbbadgeConges = ' <span class="badge">' . $nbdemandes . '</span>';
-    }
-    $onglets['traitement_demandes'] = _('resp_menu_button_traite_demande') . $nbbadgeConges;
+$nbbadgeConges = '';
+$DemandesConges = new \App\ProtoControllers\Responsable\Traitement\Conge;
+$nbdemandes = $DemandesConges->getNbDemandesATraiter($_SESSION['userlogin']);
+if (0 < $nbdemandes) {
+    $nbbadgeConges = ' <span class="badge">' . $nbdemandes . '</span>';
 }
+$onglets['traitement_demandes'] = _('resp_menu_button_traite_demande') . $nbbadgeConges;
 
 if ($config->isHeuresAutorise()) {
     $nbbadgeDem = '';

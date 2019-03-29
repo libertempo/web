@@ -25,7 +25,7 @@ if (!empty($_POST) && isSearch($_POST)) {
 // on initialise le tableau global des jours fériés s'il ne l'est pas déjà :
 init_tab_jours_feries();
 
-$canAskConge = $config->canUserSaisieDemande() || $config->canUserSaisieMission();
+$canAskConge = $config->canUserSaisieMission();
 $titre = _('user_liste_conge_titre');
 $params = $champsSql + [
     'p_login' => $_SESSION['userlogin'],

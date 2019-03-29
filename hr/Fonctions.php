@@ -914,16 +914,14 @@ class Fonctions
         /*********************/
         /* Etat des Demandes */
         /*********************/
-        if ($config->canUserSaisieDemande()) {
-            //verif si le user est bien un user du resp (et pas seulement du grad resp)
-            if (strstr($list_all_users_du_hr, "'$user_login'")!=FALSE) {
-                $return .= '<h3>' . _('resp_traite_user_etat_demandes') . '</h3>';
+        //verif si le user est bien un user du resp (et pas seulement du grad resp)
+        if (strstr($list_all_users_du_hr, "'$user_login'")!=FALSE) {
+            $return .= '<h3>' . _('resp_traite_user_etat_demandes') . '</h3>';
 
-                //affiche l'état des demande du user (avec le formulaire pour le responsable)
-                $return .= \hr\Fonctions::affiche_etat_demande_user_for_resp($user_login, $tab_user, $tab_grd_resp);
+            //affiche l'état des demande du user (avec le formulaire pour le responsable)
+            $return .= \hr\Fonctions::affiche_etat_demande_user_for_resp($user_login, $tab_user, $tab_grd_resp);
 
-                $return .= '<hr align="center" size="2" width="90%">';
-            }
+            $return .= '<hr align="center" size="2" width="90%">';
         }
 
         /*********************/

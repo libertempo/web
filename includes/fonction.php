@@ -830,7 +830,7 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
     // si le user a droit de saisir une demande de conges ET si on est PAS dans une fenetre de responsable
     // OU si le user n'a pas droit de saisir une demande de conges ET si on est dans une fenetre de responsable
     // OU si le user est un RH ou un admin
-    if (( $config->canUserSaisieDemande() && $user_login==$_SESSION['userlogin'] ) || ( !$config->canUserSaisieDemande() && $user_login!=$_SESSION['userlogin'] ) || is_hr($_SESSION['userlogin']) || is_admin($_SESSION['userlogin'])) {
+    if ( $user_login == $_SESSION['userlogin'] || ( false && $user_login!=$_SESSION['userlogin'] ) || is_hr($_SESSION['userlogin']) || is_admin($_SESSION['userlogin'])) {
         // congés
         $return .= '<div class="col-md-4">';
         $return .= '<label>' . _('divers_conges') . '</label>';
@@ -867,7 +867,7 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
 
     // si le user a droit de saisir une demande de conges ET si on est PAS dans une fenetre de responsable
     // OU si le user n'a pas droit de saisir une demande de conges ET si on est dans une fenetre de responsable
-    if (($config->isCongesExceptionnelsActive()) && ((($config->canUserSaisieDemande())&&($user_login==$_SESSION['userlogin'])) || ((!$config->canUserSaisieDemande())&&($user_login!=$_SESSION['userlogin'])))) {
+    if (($config->isCongesExceptionnelsActive()) && ($user_login == $_SESSION['userlogin'] || (false && $user_login != $_SESSION['userlogin']))) {
         // congés exceptionnels
         $return .= '<div class="col-md-4">';
         $return .= '<label>' . _('divers_conges_exceptionnels') . '</label>';

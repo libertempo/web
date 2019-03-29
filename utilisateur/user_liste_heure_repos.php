@@ -34,7 +34,7 @@ $params = $champsRecherche + [
     'login' => $_SESSION['userlogin'],
 ];
 
-$canUserSaisi = $config->canUserSaisieDemande() || $config->canUserSaisieMission();
+$canUserSaisi = $config->canUserSaisieMission();
 $urlSaisie = 'utilisateur/user_index.php?onglet=ajout_heure_repos';
 $texteSaisie = _('divers_ajout_heure_repos');
 $titre = _('user_liste_heure_repos_titre');

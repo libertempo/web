@@ -54,9 +54,7 @@ function sousmenuHR()
     $return = '<a class="secondary" href="' . ROOT_PATH . 'hr/page_principale">Utilisateurs</a>
     <a class="secondary" href="' . ROOT_PATH . 'hr/liste_groupe">Groupes</a>';
 
-    if ($config->canUserSaisieDemande()) {
-        $return .= '<a class="secondary" href="' . ROOT_PATH . 'hr/traitement_demandes">Validation de congés</a>';
-    }
+    $return .= '<a class="secondary" href="' . ROOT_PATH . 'hr/traitement_demandes">Validation de congés</a>';
     $return .= '<a class="secondary" href="' . ROOT_PATH . 'hr/ajout_conges">Crédit de congés</a>
     <a class="secondary" href="' . ROOT_PATH . 'hr/jours_chomes">Jours fériés</a>
     <a class="secondary" href="' . ROOT_PATH . 'hr/cloture_exercice">Exercices</a>
@@ -71,9 +69,7 @@ function sousmenuResponsable()
     $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
     $return = '<a class="secondary" href="' . ROOT_PATH . 'responsable/resp_index.php">Page principale</a>';
 
-    if ($config->canUserSaisieDemande()) {
-        $return .= '<a class="secondary" href="' . ROOT_PATH . 'responsable/resp_index.php?onglet=traitement_demandes">Validation de congés</a>';
-    }
+    $return .= '<a class="secondary" href="' . ROOT_PATH . 'responsable/resp_index.php?onglet=traitement_demandes">Validation de congés</a>';
 
     if ($config->isHeuresAutorise()) {
         $return .= '<a class="secondary" href="' . ROOT_PATH . 'responsable/resp_index.php?onglet=traitement_heures_additionnelles">Validation d\'heures additionnelles</a>
@@ -109,9 +105,7 @@ function sousmenuEmploye()
     if ($config->canUserChangePassword()) {
         $return .= '<a class="secondary" href="' . ROOT_PATH . 'utilisateur/user_index.php?onglet=changer_mot_de_passe">Changer mot de passe</a>';
     }
-    if ($config->canEditPapier()) {
-        $return .= '<a class="secondary" href="' . ROOT_PATH . 'edition/edit_user.php">Édition papier</a>';
-    }
+    $return .= '<a class="secondary" href="' . ROOT_PATH . 'edition/edit_user.php">Édition papier</a>';
 
     return $return;
 }

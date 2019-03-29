@@ -1274,7 +1274,7 @@ class Fonctions
         /* SAISIE NOUVEAU CONGES */
         /*************************/
         // dans le cas ou les users ne peuvent pas saisir de demande, le responsable saisi les congès :
-        if (!$config->canUserSaisieDemande() || $config->canResponsableSaisieMission() ) {
+        if ($config->canResponsableSaisieMission() ) {
             /*************************/
             /* SAISIE NOUVEAU CONGES */
             /*************************/
@@ -1340,16 +1340,14 @@ class Fonctions
         /*********************/
         /* Etat des Demandes */
         /*********************/
-        if ($config->canUserSaisieDemande()) {
-            //verif si le user est bien un user du resp (et pas seulement du grand resp)
-            if (strstr($list_all_users_du_resp, "'$user_login'")!=false) {
-                $return .= '<h2>' . _('resp_traite_user_etat_demandes') . '</h2>';
+        //verif si le user est bien un user du resp (et pas seulement du grand resp)
+        if (strstr($list_all_users_du_resp, "'$user_login'")!=false) {
+            $return .= '<h2>' . _('resp_traite_user_etat_demandes') . '</h2>';
 
-                //affiche l'état des demandes du user (avec le formulaire pour le responsable)
-                $return .= \responsable\Fonctions::affiche_etat_demande_user_for_resp($user_login, $tab_user, $tab_grd_resp);
+            //affiche l'état des demandes du user (avec le formulaire pour le responsable)
+            $return .= \responsable\Fonctions::affiche_etat_demande_user_for_resp($user_login, $tab_user, $tab_grd_resp);
 
-                $return .= '<hr/>';
-            }
+            $return .= '<hr/>';
         }
 
         /*********************/

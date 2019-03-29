@@ -171,7 +171,7 @@ class Fonctions
 
         $new_demande_conges = getpost_variable('new_demande_conges', 0);
 
-        if ($new_demande_conges == 1 && $config->canUserSaisieDemande()) {
+        if ($new_demande_conges == 1) {
             $new_debut        = htmlentities(getpost_variable('new_debut'), ENT_QUOTES | ENT_HTML401);
             $new_demi_jour_deb  = htmlentities(getpost_variable('new_demi_jour_deb'), ENT_QUOTES | ENT_HTML401);
             $new_fin        = htmlentities(getpost_variable('new_fin'), ENT_QUOTES | ENT_HTML401);

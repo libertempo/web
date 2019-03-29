@@ -992,17 +992,11 @@ msgstr "Titre des pages Responsable"
 msgid "config_comment_titre_admin_index"
 msgstr "Titre des pages Administrateur"
 
-msgid "config_comment_auth"
-msgstr "// Authentification :<br>//---------------------<br>// si = FALSE : pas d'authentification au démarrage , il faut passer le paramètre login à l'appel de Libertempo<br>// si = TRUE : la page d'authentification apparaît à l'appel de Libertemp (TRUE est la valeur par défaut)"
-
 msgid "config_comment_how_to_connect_user"
 msgstr "// Comment vérifier l'identifiant et mot de passe des utilisateurs au démarrage :<br>//--------------------------------------------------------------------------<br>// si à \"dbconges\" : l'authentification des utilisateurs se fait dans la table users de la database db_conges<br>// si à \"ldap\"   : l'authentification des utilisateurs se fait dans un annuaire LDAP que l'on va interroger (cf config_ldap.php)<br>// si à \"CAS\"   : l'authentification des utilisateurs se fait sur un serveur CAS que l'on va interroger (cf config_CAS.php)<br>// attention : toute autre valeur que \"dbconges\" ou \"ldap\" ou \"CAS\" entraînera une erreur !!!"
 
 msgid "config_comment_export_users_from_ldap"
 msgstr "// Export des utilisateurs depuis LDAP :<br>//--------------------------------<br>// si = FALSE : les utilisateurs sont créés \"à la main\" directement dans Libertempo (FALSE est la valeur par défaut)<br>// si = TRUE : les utilisateurs sont importés du serveur LDAP (grâce à une liste déroulante) (cf config_ldap.php)"
-
-msgid "config_comment_user_saisie_demande"
-msgstr "// DEMANDES DE CONGÉS<br>//---------------------------------------<br>// si à FALSE : pas de saisie de demande par l'utilisateur, pas de gestion des demandes par le responsable<br>// si à TRUE : saisie de demande par l'utilisateur, et gestion des demandes par le responsable (TRUE est la valeur par défaut)"
 
 msgid "config_comment_user_affiche_calendrier"
 msgstr "// AFFICHAGE DU BOUTON DE CALENDRIER POUR L'UTILISATEUR<br>//--------------------------------------------------------------------------------------<br>// si à FALSE : les utilisateurs n'ont pas la possibilité d'afficher le calendrier des congés<br>// si à TRUE : les utilisateurs ont la possibilité d'afficher le calendrier des congés (TRUE est la valeur par défaut)"

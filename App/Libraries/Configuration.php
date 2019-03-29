@@ -79,16 +79,6 @@ class Configuration
     }
 
     /**
-     * Autorise la saisie d'une demande par l'employé
-     *
-     * @return boolean
-     */
-    public function canUserSaisieDemande()
-    {
-        return $this->getGroupeUtilisateurValeur('user_saisie_demande');
-    }
-
-    /**
      * Autorise la saisie d'une demande de mission par l'employé
      *
      * @todo a supprimer au profit de canUserSaisieDemande()

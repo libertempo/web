@@ -30,14 +30,12 @@ $onglets = array();
 $onglets['page_principale'] = _('resp_menu_button_retour_main');
 $onglets['hr-group'] = _('admin_onglet_gestion_groupe');
 
-if($config->canUserSaisieDemande()) {
-    $onglets['traitement_demandes'] = _('resp_menu_button_traite_demande');
-}
+$onglets['traitement_demandes'] = _('resp_menu_button_traite_demande');
 
-    $onglets['ajout_conges'] = _('resp_ajout_conges_titre');
-    $onglets['jours_chomes'] = _('admin_button_jours_chomes_1');
-    $onglets['jours_fermeture'] = _('divers_fermeture');
-    $onglets['cloture_year'] = _('divers_fermeture');
+$onglets['ajout_conges'] = _('resp_ajout_conges_titre');
+$onglets['jours_chomes'] = _('admin_button_jours_chomes_1');
+$onglets['jours_fermeture'] = _('divers_fermeture');
+$onglets['cloture_year'] = _('divers_fermeture');
 
 
 

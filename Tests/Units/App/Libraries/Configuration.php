@@ -23,24 +23,10 @@ class Configuration extends \Tests\Units\TestUnit
                         'conf_type' => 'texte',
                         'conf_commentaire' => 'config_comment_installed_version'
                     ];
-        
-        $this->calling($this->result)->fetch_array[2] = [
-                        'conf_nom' => "user_saisie_demande",
-                        'conf_valeur' => "TRUE",
-                        'conf_groupe' => "05_Utilisateur",
-                        'conf_type' => "boolean",
-                        'conf_commentaire' => "config_comment_user_saisie_demande"
-                    ];
-        
-        $this->calling($this->result)->fetch_array[3] = null;
+
+        $this->calling($this->result)->fetch_array[2] = null;
         $this->config = new _Configuration($this->db);
 
-    }
-
-    public function testcanUserSaisieDemande()
-    {
-        $canDemande = $this->config->canUserSaisieDemande();
-        $this->boolean($canDemande)->isTrue;
     }
 
     public function testgetInstalledVersion()
