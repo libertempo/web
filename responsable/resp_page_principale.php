@@ -8,14 +8,13 @@ $congesExceptionnels = ($config->isCongesExceptionnelsActive())
     : [];
 
 $gestionHeure = $config->isHeuresAutorise();
-$gestionEditionPapier = $config->canEditPapier();
 $subalternesResponsable = recup_infos_all_users_du_resp($_SESSION['userlogin']);
 $subalternesActifsResponsable = array_filter(
     $subalternesResponsable, function ($employe) {
         return 'Y' == $employe['is_active'];
     }
 );
-$nombreColonnes = 3 + 2 * count($typeConges) + count($congesExceptionnels) + (int) $gestionHeure + 1 + (int) $gestionEditionPapier;
+$nombreColonnes = 3 + 2 * count($typeConges) + count($congesExceptionnels) + (int) $gestionHeure + 2;
 
 $subalternesGrandResponsable = recup_infos_all_users_du_grand_resp($_SESSION['userlogin']);
 $subalternesActifsGrandResponsable = array_filter(

@@ -322,11 +322,6 @@ class Configuration
         return $this->getValeur($nom, '10_Gestion par groupes');
     }
 
-    public function canEditPapier()
-    {
-        return $this->getGroupeEditionPapierValeur('editions_papier');
-    }
-
     public function getTextHaut()
     {
         return $this->getGroupeEditionPapierValeur('texte_haut_edition_papier');

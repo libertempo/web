@@ -1067,9 +1067,6 @@ msgstr "// GESTION DES GROUPES D'UTILISATEURS<br>//-----------------------------
 msgid "config_comment_affiche_groupe_in_calendrier"
 msgstr "// AFFICHAGE DU CALENDRIER : tous les utilisateurs ou les utilisateurs d'un groupe seulement<br>//--------------------------------------------------------------------------------------------<br>// si à FALSE : tous les personnes apparaissent sur le calendrier des congés (FALSE est la valeur par défaut)<br>// si à TRUE : seuls les personnes du même groupe que l'utilisateur apparaissent sur le calendrier des congés"
 
-msgid "config_comment_editions_papier"
-msgstr "// ÉDITIONS PAPIER<br>//--------------------------------------<br>// on définit ici si le responsable peut générer des états papier des congés d'un utilisateur.<br>// si à TRUE : les éditions papier sont disponibles ...(TRUE est la valeur par défaut)<br>// si à FALSE : les éditions papier ne sont pas disponibles dans l'application ..."
-
 msgid "config_comment_texte_haut_edition_papier"
 msgstr "// Texte en haut des ÉDITIONS PAPIER<br>//--------------------------------------<br>// on définit ici le texte éventuel qui figurera en haut de page des états papier des congés d'un utilisateur."
 
@@ -1432,9 +1429,6 @@ msgstr "Groupes auxquels l'utilisateur appartient"
 
 msgid "config_comment_calendrier_select_all_groups"
 msgstr "// AFFICHAGE DU CALENDRIER : Sélection du groupe : choix entre tous les groupes ou non<br>//--------------------------------------------------------------------------------------------<br>// si la gestion des groupes est active, on définit ici si le choix du groupe à afficher dans le calendrier inclut tous les groupes ou pas.<br>// si à FALSE : seuls les groupes de l'utilisateur (ou dont il est responsable) apparaissent dans la sélection sur le calendrier des congés (FALSE est la valeur par défaut)<br>// si à TRUE : tous les groupes apparaissent dans la sélection sur le calendrier des congés"
-
-msgid "config_comment_consult_calendrier_sans_auth"
-msgstr "// AFFICHAGE DU CALENDRIER SANS AUTHENTIFICATION<br>//--------------------------------------------------------------------------------------------<br>// si à FALSE : Il n'est pas possible d'afficher le calendrier des congés sans être connecté à Libertempo. (FALSE est la valeur par défaut)<br>// si à TRUE : Possibilité de consulter le calendrier des congés sans se connecter à Libertempo (via un lien sur la page d'accueil, ou avec l'URL directe)."
 
 msgid "config_comment_resp_ajoute_conges"
 msgstr "// AJOUT DE JOURS DE CONGÉS PAR LE RESPONSABLE<br>//--------------------------------------------------------------------------------------------<br>// si à FALSE : Le responsable ne peut pas ajouter (créditer) de jours de congés à ses utilisateurs.<br>// si à TRUE : Le responsable peut ajouter (créditer) des jours de congés à ses utilisateurs. (FALSE est la valeur par défaut)"
