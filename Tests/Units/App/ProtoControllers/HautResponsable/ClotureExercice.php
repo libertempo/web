@@ -34,12 +34,4 @@ class ClotureExercice extends \Tests\Units\TestUnit
         $result = _ClotureExercice::updateDateLimiteReliquats("2020", $this->error, $this->db, $this->config);
         $this->boolean($result)->isFalse;
     }
-
-    function testUpdateDateLimiteReliquatsOk() {
-        $this->calling($this->config)->getDateLimiteReliquats = "12-06";
-        $this->calling($this->result)->affected_rows = 1;
-
-        $result = _ClotureExercice::updateDateLimiteReliquats("2020", $this->error, $this->db, $this->config);
-        $this->boolean($result)->isTrue;
-    }
 }
