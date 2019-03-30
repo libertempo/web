@@ -8,6 +8,7 @@
  * $config
  * $typeAbsencesConges
  * $typeAbsencesExceptionnels
+ * $groupes
  */
 ?>
 
@@ -133,7 +134,32 @@ enctype="application/x-www-form-urlencoded" class="form-group">
     </table>
     <br>
     <br><hr>
-    <?= getFormUserGroupes($formValue); ?>
+    <table class="table table-hover table-responsive table-striped table-condensed">
+        <thead>
+            <tr>
+                <th colspan=3><h4><?= _('Groupes') ?></h4></th>
+            </tr>
+            <tr>
+                <th>&nbsp;</th>
+                <th>&nbsp;<?= _('Nom') ?></th>
+                <th>&nbsp;<?= _('Description') ?></th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($groupes as $groupeId => $groupeInfos) : ?>
+            <tr>
+                <td>
+                <?php
+                $checked = in_array($groupeId, $formValue['groupesId']) ? 'checked' : '';
+                ?>
+                    <input type="checkbox" name="checkbox_user_groups[<?= $groupeId ?>]" value="<?= $groupeId ?>" <?= $checked ?>>
+                </td>
+                <td>&nbsp;<?= $groupeInfos['g_groupename'] ?>&nbsp</td>
+                <td>&nbsp;<?= $groupeInfos['g_comment'] ?>&nbsp;</td>
+            </tr>
+        <?php endforeach ;?>
+        <tbody>
+    </table>
     <hr>
     <input class="btn btn-success" type="submit" value="<?= _('form_submit') ?>">
 </form>

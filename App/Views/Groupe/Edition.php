@@ -4,7 +4,6 @@
  * $infosGroupe
  * $data (tmp)
  * $idGroupe
- * $doubleValidationActive
  * $responsablesGroupe
  * $baseURIApi
  */
@@ -141,8 +140,7 @@ var vm = new Vue({
         employes : {},
         responsables : {},
         responsablesGroupe : <?= json_encode($responsablesGroupe) ?>,
-
-        hasDoubleValidation: 'true' == "<?= $doubleValidationActive ? 'true' : 'false' ?>",
+        hasDoubleValidation: true,
         infosGroupe : <?= json_encode($infosGroupe) ?>,
         dataForm : <?= json_encode($data) ?>,
         axios : instance

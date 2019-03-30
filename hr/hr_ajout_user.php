@@ -6,6 +6,7 @@ $message   = '';
 $sql = \includes\SQL::singleton();
 $config = new \App\Libraries\Configuration($sql);
 $typeAbsencesConges = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges');
+$groupes = \App\ProtoControllers\Groupe::getListeGroupes($sql);
 
 $formValue = [
     'login' => '',
@@ -326,63 +327,6 @@ function isFormValide(array $data, array &$errors, \includes\SQL $sql, \App\Libr
             break;
         }
     }
-
-    return $return;
-}
-
-/**
- * Formulaire d'affectation aux groupes pour un nouvel utilisateur
- *
- * @param array $data
- * @return string
- */
-function getFormUserGroupes(array $data) : string
-{
-    $sql = \includes\SQL::singleton();
-    $return = '';
-    $table = new \App\Libraries\Structure\Table();
-    $table->addClasses([
-        'table',
-        'table-hover',
-        'table-responsive',
-        'table-striped',
-        'table-condensed'
-    ]);
-
-    $childTable = '<thead>';
-    $childTable .= '<tr>';
-    $childTable .= '<th colspan=3><h4>' . _('Groupes') . '</h4></th>';
-    $childTable .= '</tr>';
-
-    $childTable .= '<tr>';
-    $childTable .= '<th>&nbsp;</th>';
-    $childTable .= '<th>&nbsp;' . _('Nom') . '</th>';
-    $childTable .= '<th>&nbsp;' . _('Description') . '</th>';
-    $childTable .= '</tr>';
-    $childTable .= '</thead>';
-    $childTable .= '<tbody>';
-
-    $groupes = \App\ProtoControllers\Groupe::getListeGroupes($sql);
-
-    $i = true;
-    foreach ($groupes as $groupeId => $groupeInfos) {
-        $checkbox="<input type=\"checkbox\" name=\"checkbox_user_groups[$groupeId]\" value=\"$groupeId\">";
-        if (in_array($groupeId, $data['groupesId'])) {
-            $checkbox="<input type=\"checkbox\" name=\"checkbox_user_groups[$groupeId]\" value=\"$groupeId\" checked>";
-        }
-
-        $childTable .= '<tr class="'.($i ? 'i' : 'p').'">';
-        $childTable .= '<td>' . $checkbox . '</td>';
-        $childTable .= '<td>&nbsp;' . $groupeInfos['g_groupename'] . '&nbsp</td>';
-        $childTable .= '<td>&nbsp;' . $groupeInfos['g_comment'] . '&nbsp;</td>';
-        $childTable .= '</tr>';
-        $i = !$i;
-    }
-    $childTable .= '<tbody>';
-    $table->addChild($childTable);
-    ob_start();
-    $table->render();
-    $return .= ob_get_clean();
 
     return $return;
 }
