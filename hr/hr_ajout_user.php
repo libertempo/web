@@ -5,6 +5,8 @@ defined('_PHP_CONGES') or die('Restricted access');
 $message   = '';
 $sql = \includes\SQL::singleton();
 $config = new \App\Libraries\Configuration($sql);
+$typeAbsencesConges = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges');
+
 $formValue = [
     'login' => '',
     'nom' => '',
@@ -41,11 +43,15 @@ if (!empty($_POST)) {
 $soldeHeureId = uniqid();
 $readOnly = '';
 $optLdap = '';
+$typeAbsencesExceptionnels = [];
 if ($config->isUsersExportFromLdap()) {
     $readOnly = 'readonly';
     $optLdap = 'onkeyup="searchLdapUser()" autocomplete="off"';
 }
 
+if ($config->isCongesExceptionnelsActive()) {
+    $typeAbsencesExceptionnels = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges_exceptionnels');
+}
 /**
  * Nettoyage des données postés par le formulaire
  *
@@ -320,76 +326,6 @@ function isFormValide(array $data, array &$errors, \includes\SQL $sql, \App\Libr
             break;
         }
     }
-
-    return $return;
-}
-
-/**
- * formulaire de gestion des soldes d'un utilisateur
- *
- * @param array $data
- *
- * @return string
- *
- */
-function getFormUserSoldes(array $data) : string
-{
-    $sql = \includes\SQL::singleton();
-    $config = new \App\Libraries\Configuration($sql);
-    $typeAbsencesConges = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges');
-    $table = new \App\Libraries\Structure\Table();
-    $table->addClasses([
-        'table',
-        'table-hover',
-        'table-responsive',
-        'table-striped',
-        'table-condensed'
-    ]);
-    $childTable = '<thead>';
-    $childTable .= '<tr>';
-    $childTable .= '<th colspan=3><h4>' . _('Soldes') . '</h4></th>';
-    $childTable .= '</tr>';
-    $childTable .= '<tr>';
-    $childTable .= '<th></th>';
-    $childTable .= '<th>' . _('admin_new_users_nb_par_an') . '</th>';
-    $childTable .= '<th>' . _('divers_solde') . '</th>';
-    $childTable .= '<th>' . _('Reliquat') . '</th>';
-    $childTable .= '</tr>';
-    $childTable .= '</thead>';
-    $childTable .= '<tbody>';
-
-    $i = true;
-    foreach ($typeAbsencesConges as $typeId => $infoType) {
-        $childTable .= '<tr class="'.($i?'i':'p').'">';
-        $joursAn = ( isset($data['joursAn'][$typeId]) ? $data['joursAn'][$typeId] : 0 );
-        $solde = ( isset($data['soldes'][$typeId]) ? $data['soldes'][$typeId] : 0 );
-        $reliquat = ( isset($data['reliquat'][$typeId]) ? $data['reliquat'][$typeId] : 0 );
-        $childTable .= '<td>' . $infoType['libelle'] . '</td>';
-        $childTable .= "<td><input class=\"form-control\" type=\"text\" name=\"tab_new_jours_an[$typeId]\" size=\"5\" maxlength=\"5\" value=\"$joursAn\"></td>" ;
-        $childTable .= "<td><input class=\"form-control\" type=\"text\" name=\"tab_new_solde[$typeId]\" size=\"5\" maxlength=\"5\" value=\"$solde\"></td>" ;
-        $childTable .= "<td><input class=\"form-control\" type=\"text\" name=\"tab_new_reliquat[$typeId]\" size=\"5\" maxlength=\"5\" value=\"$reliquat\"></td>" ;
-        $childTable .= '</tr>';
-        $i = !$i;
-    }
-    if ($config->isCongesExceptionnelsActive()) {
-        $typeAbsencesExceptionnels = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges_exceptionnels');
-        foreach ($typeAbsencesExceptionnels as $typeId => $infoType) {
-            $childTable .= '<tr class="'.($i?'i':'p').'">';
-            $solde = ( isset($data['soldes'][$typeId]) ? $data['soldes'][$typeId] : 0 );
-            $childTable .= '<td>'.  $infoType['libelle'] . '</td>';
-            $childTable .= "<td><input type=\"hidden\" name=\"tab_new_jours_an[$typeId]\" size=\"5\" maxlength=\"5\" value=\"0\"></td>" ;
-            $childTable .= "<td><input class=\"form-control\" type=\"text\" name=\"tab_new_solde[$typeId]\" size=\"5\" maxlength=\"5\" value=\"$solde\"></td>" ;
-            $childTable .= "<td><input type=\"hidden\" name=\"tab_new_reliquat[$typeId]\" size=\"5\" maxlength=\"5\" value=\"0\"></td>" ;
-            $childTable .= '</tr>';
-            $i = !$i;
-        }
-    }
-    $childTable .= '</tbody>';
-    $table->addChild($childTable);
-    ob_start();
-    $table->render();
-    $return = ob_get_clean();
-    $return .= '<br>';
 
     return $return;
 }

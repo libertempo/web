@@ -4,6 +4,10 @@
  * $soldeHeureId
  * $readOnly
  * $optLdap
+ * $formValue
+ * $config
+ * $typeAbsencesConges
+ * $typeAbsencesExceptionnels
  */
 ?>
 
@@ -87,7 +91,47 @@ enctype="application/x-www-form-urlencoded" class="form-group">
         </script>
     </table>
     <br><hr>
-    <?= getFormUserSoldes($formValue); ?>
+
+    <table class="table table-hover table-responsive table-striped table-condensed">
+        <thead>
+            <tr>
+                <th colspan=3><h4><?= _('Soldes') ?> </h4></th>
+            </tr>
+            <tr>
+                <th></th>
+                <th><?= _('admin_new_users_nb_par_an') ?></th>
+                <th><?= _('divers_solde') ?></th>
+                <th><?= _('Reliquat') ?></th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($typeAbsencesConges as $typeId => $infoType) :?>
+            <tr>
+            <?php
+            $joursAn = $formValue['joursAn'][$typeId] ?? 0;
+            $solde = $formValue['soldes'][$typeId] ?? 0;
+            $reliquat = $formValue['reliquat'][$typeId] ?? 0;
+            ?>
+                <td><?= $infoType['libelle'] ?></td>
+                <td><input class="form-control" type="text" name="tab_new_jours_an[<?= $typeId ?>]" size="5" maxlength="5" value="<?= $joursAn ?>"></td>
+                <td><input class="form-control" type="text" name="tab_new_solde[<?= $typeId ?>]" size="5" maxlength="5" value="<?= $solde ?>"></td>
+                <td><input class="form-control" type="text" name="tab_new_reliquat[<?= $typeId ?>]" size="5" maxlength="5" value="<?= $reliquat ?>"></td>
+            </tr>
+        <?php endforeach ;?>
+        <?php foreach ($typeAbsencesExceptionnels as $typeId => $infoType) : ?>
+            <tr>
+            <?php
+            $solde = $formValue['soldes'][$typeId] ?? 0;
+            ?>
+                <td><?= $infoType['libelle'] ?></td>
+                <td><input type="hidden" name="tab_new_jours_an[<?= $typeId ?>]" size="5" maxlength="5" value="0"></td>
+                <td><input class="form-control" type="text" name="tab_new_solde[<?= $typeId ?>]" size="5" maxlength="5" value="<?= $solde ?>"></td>
+                <td><input type="hidden" name="tab_new_reliquat[<?= $typeId ?> ]" size="5" maxlength="5" value="0"></td>
+            </tr>
+        <?php endforeach;?>
+        </tbody>
+    </table>
+    <br>
     <br><hr>
     <?= getFormUserGroupes($formValue); ?>
     <hr>
