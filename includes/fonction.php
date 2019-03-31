@@ -2308,10 +2308,13 @@ function soustrait_solde_et_reliquat_user($user_login, $num_current_periode, $us
         if ($config->getDateLimiteReliquats() != 0) {
             //si date_fin_conges < date_limite_reliquat => alors on décompte dans reliquats
             if ($date_fin < $_SESSION['config']['date_limite_reliquats']) {
-                if ($reliquat>$user_nb_jours_pris)
+                if ($reliquat>$user_nb_jours_pris) {
                     $new_reliquat = $reliquat-$user_nb_jours_pris;
-                else
+                    $user_nb_jours_pris = 0;
+                } else {
                     $new_reliquat = 0;
+                    $user_nb_jours_pris = $user_nb_jours_pris - $reliquat;
+                }
             }
             //si date_debut_conges > date_limite_reliquat => alors on ne décompte pas dans reliquats
             elseif ($date_deb >= $_SESSION['config']['date_limite_reliquats']) {
@@ -2323,17 +2326,23 @@ function soustrait_solde_et_reliquat_user($user_login, $num_current_periode, $us
                 $comment="calcul reliquat -> date limite" ;
                 $nb_reliquats_a_deduire = compter($user_login, $num_current_periode, $date_deb, $_SESSION['config']['date_limite_reliquats'], $demi_jour_deb, "pm", $comment );
 
-                if ($reliquat > $nb_reliquats_a_deduire)
+                if ($reliquat > $nb_reliquats_a_deduire) {
                     $new_reliquat = $reliquat - $nb_reliquats_a_deduire;
-                else
+                    $user_nb_jours_pris = 0;
+                } else {
                     $new_reliquat = 0;
+                    $user_nb_jours_pris = $user_nb_jours_pris - $reliquat;
+                }
             }
         } else {
         // s'il n'y a pas de date limite d'utilisation des reliquats
-            if ($reliquat>$user_nb_jours_pris)
+            if ($reliquat>$user_nb_jours_pris) {
                 $new_reliquat = $reliquat-$user_nb_jours_pris;
-            else
+                $user_nb_jours_pris = 0;
+            } else {
                 $new_reliquat = 0;
+                $user_nb_jours_pris = $user_nb_jours_pris - $reliquat;
+            }
         }
         $VerifDec = verif_saisie_decimal($user_nb_jours_pris);
         $VerifDec = verif_saisie_decimal($new_reliquat);

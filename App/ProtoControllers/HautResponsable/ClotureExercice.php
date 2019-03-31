@@ -131,7 +131,7 @@ class ClotureExercice
 
     public static function setJoursFeriesFrance($annee = null)
     {
-        if(!isset($year)) {
+        if (!isset($annee)) {
             $annee = date('Y') + 1;
         }
         $joursFeriesFrance = \hr\Fonctions::getJoursFeriesFrance($annee);

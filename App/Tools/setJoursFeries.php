@@ -29,11 +29,11 @@ if ('O' === $force) {
     \hr\Fonctions::supprimeFeriesAnnee($annee);
 }
 
-if(isJoursFeriesSaisi($annee)) {
+if (isJoursFeriesSaisi($annee)) {
     displayInfo('Des jours fériés ont déja été saisi pour l\'année ' . $annee);
     $input = getValue('Ecraser et continuer ? (O/N) :');
 
-    if ($input !== 'O') {
+    if ('O' !== $input) {
         displayError('Annulation de l\'insertion des jours fériés.');
     }
 }

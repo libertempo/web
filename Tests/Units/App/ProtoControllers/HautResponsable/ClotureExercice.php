@@ -21,16 +21,16 @@ class ClotureExercice extends \Tests\Units\TestUnit
         $this->config = new \mock\App\Libraries\Configuration($this->db);
     }
 
-    function testUpdateDateLimiteReliquatsNoLimit() {
+    public function testUpdateDateLimiteReliquatsNoLimit() {
         $this->calling($this->config)->getDateLimiteReliquats = 0;
         
         $result = _ClotureExercice::updateDateLimiteReliquats("2020", $this->error, $this->db, $this->config);
         $this->boolean($result)->isTrue;
     }
 
-    function testUpdateDateLimiteReliquatsPreMatch() {
+    public function testUpdateDateLimiteReliquatsPreMatch() {
         $this->calling($this->config)->getDateLimiteReliquats = "/12-06";
-        
+
         $result = _ClotureExercice::updateDateLimiteReliquats("2020", $this->error, $this->db, $this->config);
         $this->boolean($result)->isFalse;
     }
