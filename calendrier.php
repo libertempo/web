@@ -17,7 +17,7 @@ function canSessionVoirEvenementEnTransit(array $donneesUtilisateur)
 function canSessionVoirTypesConges(array $donneesUtilisateur, \App\Libraries\Configuration $config) : bool
 {
     return (isset($donneesUtilisateur['is_resp']) && 'Y' === $donneesUtilisateur['is_resp'] && 'rh+responsable' === $config->getQuiAfficheTypeCongesCalendrier())
-        || (isset($donneesUtilisateur['is_rh']) && 'Y' === $donneesUtilisateur['is_rh'])
+        || (isset($donneesUtilisateur['is_hr']) && 'Y' === $donneesUtilisateur['is_hr'])
         || ('tous' === $config->getQuiAfficheTypeCongesCalendrier());
 }
 
