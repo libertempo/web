@@ -1103,6 +1103,9 @@ msgstr "// CHEMIN VERS LE RÉPERTOIRE DE phpmailer<br>//------------------------
 msgid "config_comment_php_conges_cas_include_path"
 msgstr "// CHEMIN VERS LE RÉPERTOIRE DE cas<br>//-------------------------------------------------------<br>// On définit ici le chemin pour accéder au répertoire de la librairie PHP \"CAS\".<br>// Le chemin doit être relatif depuis la racine de l'application Libertempo."
 
+msgid "config_comment_afficher_types_conges_calendrier"
+msgstr "// Afficher le libellé des congés dans le calendrier<br>//-------------------------------------------------------<br>// Permet d'afficher le libellé des congés dans le calendrier selon le profil de l'utilisateur.<br>// Le HR voit toujours les libellés, quelle que soit l'option choisie."
+
 msgid "install_le_fichier"
 msgstr "Le fichier"
 
