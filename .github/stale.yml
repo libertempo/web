@@ -1,0 +1,15 @@
+# Number of days of inactivity before an issue becomes stale
+daysUntilStale: 360
+# Number of days of inactivity before a stale issue is closed
+daysUntilClose: 360
+# Issues with these labels will never be considered stale
+exemptLabels:
+  - security
+  - Sécurité
+# Label to use when marking an issue as stale
+staleLabel: Invalide
+# Comment to post when marking an issue as stale. Set to `false` to disable
+markComment: >
+  Cette issue a été marquée « stale » car elle n'a pas eu d'activité récente. Elle sera fermée si aucune activité ultérieure ne survient. Merci de vos contributions.
+# Comment to post when closing a stale issue. Set to `false` to disable
+closeComment: false
