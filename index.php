@@ -53,12 +53,12 @@ function errorAuthentification() {
 function authCas(\App\Libraries\ApiClient $api, \App\Libraries\Configuration $config)
 {
     try {
-        $usernameCAS = authentification_passwd_conges_CAS();
-        if ($usernameCAS == "") {
+        $authData = authentification_passwd_conges_CAS();
+        if ($authData['username'] == "") {
             throw new \Exception("Nom d'utilisateur vide");
         }
-        session_create($usernameCAS);
-        storeTokenApi($api, $usernameCAS, '');
+        session_create($authData['username']);
+        storeTokenApi($api, $authData['username'], $authData['proxyTicket']);
     } catch (\Exception $e) {
         errorAuthentification();
         deconnexion_CAS($config->getUrlAccueil());

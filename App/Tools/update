@@ -43,7 +43,7 @@ function setInstalledVersion(\includes\SQL $db, $versionCode) : bool
  *
  * @param array $data Données de configuration
  */
-function setDataConfigurationApi(array $dbConfiguration, array $ldapConfiguration) : bool
+function setDataConfigurationApi(array $dbConfiguration, array $ldapConfiguration, array $casConfiguration) : bool
 {
     $data = [
         'db' => [
@@ -67,6 +67,12 @@ function setDataConfigurationApi(array $dbConfiguration, array $ldapConfiguratio
             'nom_affiche' => $ldapConfiguration['nom_affiche'],
             'filtre' => $ldapConfiguration['filtre'],
             'filtre_recherche' => $ldapConfiguration['filtre_recherche'],
+        ],
+        'cas' => [
+            'serveur' => $casConfiguration['serveur'],
+            'port' => $casConfiguration['port'],
+            'uri' => $casConfiguration['uri'],
+            'caCert' => $casConfiguration['caCert'],
         ],
     ];
 
@@ -104,7 +110,13 @@ $ldapConfiguration = [
     'filtre' => $config_ldap_filtre ?? '',
     'filtre_recherche' => $config_ldap_filrech ?? '',
 ];
-if (!setDataConfigurationApi($dbConfiguration, $ldapConfiguration)) {
+$casConfiguration = [
+    'serveur' => $config_CAS_host ?? '',
+    'port' => $config_CAS_portNumber ?? '',
+    'uri' => $config_CAS_URI ?? '',
+    'caCert' => $config_CAS_CACERT ?? ''
+];
+if (!setDataConfigurationApi($dbConfiguration, $ldapConfiguration, $casConfiguration)) {
     displayFail();
 }
 

@@ -280,9 +280,9 @@ function authentification_passwd_conges_CAS()
 
     // initialisation phpCAS
     if ($connexionCAS!="active") {
-        $CASCnx = \phpCAS::client(CAS_VERSION_2_0, $config_CAS_host, $config_CAS_portNumber, $config_CAS_URI);
+        \phpCAS::proxy(CAS_VERSION_2_0, $config_CAS_host, $config_CAS_portNumber, $config_CAS_URI);
+        \phpCAS::setPGTStorageFile("/tmp");
         $connexionCAS = "active";
-
     }
 
     if ($logoutCas==1) {
@@ -300,6 +300,13 @@ function authentification_passwd_conges_CAS()
     \phpCAS::forceAuthentication();
 
     $usernameCAS = \phpCAS::getUser();
+    $userPT = \phpCAS::retrievePT("https://api", $err_code, $err_msg);
+
+    $array = ['username' => $usernameCAS, 'proxyTicket' => $userPT];
+
+    return $array;
+
+
 
     //On nettoie la session créée par phpCAS
     session_destroy();
