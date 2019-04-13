@@ -271,6 +271,8 @@ function authentification_passwd_conges_CAS()
     $config_CAS_portNumber =$_SESSION['config']['CAS_portNumber'];
     $config_CAS_URI        =$_SESSION['config']['CAS_URI'];
     $config_CAS_CACERT     =$_SESSION['config']['CAS_CACERT'];
+    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+
 
     global $connexionCAS;
     global $logoutCas;
@@ -300,7 +302,7 @@ function authentification_passwd_conges_CAS()
     \phpCAS::forceAuthentication();
 
     $usernameCAS = \phpCAS::getUser();
-    $userPT = \phpCAS::retrievePT("https://api", $err_code, $err_msg);
+    $userPT = \phpCAS::retrievePT( $config->getUrlAccueil() . "/api/", $err_code, $err_msg);
 
     $array = ['username' => $usernameCAS, 'proxyTicket' => $userPT];
 
