@@ -125,7 +125,7 @@ if (!session_is_valid()) {
         case 'cas':
             authCas($api, $config);
             break;
-        case 'SSO':
+        case 'sso':
             authSso($api);
             break;
         default:
