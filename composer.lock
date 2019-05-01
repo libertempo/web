@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "304f26a21ec2771219897df6d8ae3702",
+    "content-hash": "024a4936386a8adc50358bf35889f929",
     "packages": [
         {
             "name": "adldap2/adldap2",
@@ -660,16 +660,16 @@
         },
         {
             "name": "kint-php/kint",
-            "version": "3.2",
+            "version": "3.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kint-php/kint.git",
-                "reference": "5cd8ac3c2957c3ef5bbf89934983a7ccf6a4c8fb"
+                "reference": "c9faaf53df10e4b8cead370d0f8676d5f2efb176"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kint-php/kint/zipball/5cd8ac3c2957c3ef5bbf89934983a7ccf6a4c8fb",
-                "reference": "5cd8ac3c2957c3ef5bbf89934983a7ccf6a4c8fb",
+                "url": "https://api.github.com/repos/kint-php/kint/zipball/c9faaf53df10e4b8cead370d0f8676d5f2efb176",
+                "reference": "c9faaf53df10e4b8cead370d0f8676d5f2efb176",
                 "shasum": ""
             },
             "require": {
@@ -726,7 +726,7 @@
                 "kint",
                 "php"
             ],
-            "time": "2019-03-20T20:19:15+00:00"
+            "time": "2019-04-30T16:07:02+00:00"
         },
         {
             "name": "libertempo/api",
