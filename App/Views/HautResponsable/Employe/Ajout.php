@@ -42,12 +42,12 @@ enctype="application/x-www-form-urlencoded" class="form-group">
         </thead>
         <tbody>
             <tr class="update-line">
-                <td><input class="form-control" type="text" name="new_login" size="10" maxlength="99" value="<?= $formValue['login'] ?>" "<?= $readOnly ?>" required></td>
+                <td><input class="form-control" type="text" name="new_login" size="10" maxlength="99" value="<?= $formValue['login'] ?>" <?= $readOnly ?> required></td>
                 <td>
-                    <input class="form-control" type="text" id="new_nom" name="new_nom" size="10" maxlength="30" value="<?= $formValue['nom'] ?>" "<?= $optLdap ?>" required>
+                    <input class="form-control" type="text" id="new_nom" name="new_nom" size="10" maxlength="30" value="<?= $formValue['nom'] ?>" <?= $optLdap ?> required>
                     <ul class="suggestions" id="suggestions"></ul>
                 </td>
-                <td><input class="form-control" type="text" name="new_prenom" size="10" maxlength="30" value="<?= $formValue['prenom'] ?>" "<?= $readOnly ?>" required></td>
+                <td><input class="form-control" type="text" name="new_prenom" size="10" maxlength="30" value="<?= $formValue['prenom'] ?>" <?= $readOnly ?> required></td>
                 <td><input class="form-control" type="text" name="new_quotite" size="3" maxlength="3" value="<?= $formValue['quotite'] ?>" required></td>
                 <?php if ($config->isHeuresAutorise()) : ?>
                     <td>
