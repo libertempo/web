@@ -63,9 +63,9 @@ abstract class ANotification
                 }
             }
         } else {
-            if (file_exists('/usr/sbin/sendmail')) {
+            if (@file_exists('/usr/sbin/sendmail')) {
                 $mail->IsSendmail();   // send message using the $Sendmail program
-            } elseif (file_exists('/var/qmail/bin/sendmail')) {
+            } elseif (@file_exists('/var/qmail/bin/sendmail')) {
                 $mail->IsQmail(); // send message using the qmail MTA
             } else {
                 $mail->IsMail(); // send message using PHP mail() function
