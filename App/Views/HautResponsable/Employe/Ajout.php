@@ -81,7 +81,7 @@ enctype="application/x-www-form-urlencoded" class="form-group">
                 <?php if (!$config->isUsersExportFromLdap()) : ?>
                     <td><input class="form-control" type="text" name="new_email" size="10" maxlength="99" value="<?= $formValue['email'] ?>"></td>
                 <?php endif ;?>
-                <?php if ($config->getHowToConnectUser() == "dbconges") : ?>
+                <?php if ("dbconges" === $config->getHowToConnectUser()) : ?>
                     <td><input class="form-control" type="password" name="new_password1" size="10" maxlength="15" value="" autocomplete="off"></td>
                     <td><input class="form-control" type="password" name="new_password2" size="10" maxlength="15" value="" autocomplete="off"></td>
                 <?php endif ;?>

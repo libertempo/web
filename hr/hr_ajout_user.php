@@ -247,8 +247,8 @@ function isFormInsertValide(array $data, array &$errors, \includes\SQL $sql, \Ap
         $return = false;
     }
 
-    if ($config->getHowToConnectUser() == 'dbconges') {
-        if ('' === $data['pwd1'] || strcmp($data['pwd1'], $data['pwd2'])!=0 ) {
+    if ('dbconges' === $config->getHowToConnectUser()) {
+        if ('' === $data['pwd1'] || 0!== strcmp($data['pwd1'], $data['pwd2'])) {
             $errors[] = _('Saisie du mot de passe incorrect');
             $return = false;
         }
@@ -275,7 +275,7 @@ function isFormValide(array $data, array &$errors, \includes\SQL $sql, \App\Libr
         $return = false;
     }
 
-    if ('' == $data['nom']) {
+    if ('' === $data['nom']) {
         $errors[] = _('Veuillez saisir un nom');
         $return = false;
     }
