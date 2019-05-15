@@ -72,10 +72,10 @@ function dataForm2Array(array $htmlPost, \includes\SQL $sql, \App\Libraries\Conf
     $data['prenom'] = htmlentities($htmlPost['new_prenom'], ENT_QUOTES | ENT_HTML401);
     $data['quotite'] = (int) $htmlPost['new_quotite'];
     $data['soldeHeure'] = htmlentities($htmlPost['new_solde_heure'], ENT_QUOTES | ENT_HTML401);
-    $data['isActive'] = $htmlPost['new_is_active'] === 'N' ? 'N' : 'Y';
-    $data['isResp'] = $htmlPost['new_is_resp'] === 'Y' ? 'Y' : 'N';
-    $data['isAdmin'] = $htmlPost['new_is_admin'] === 'Y' ? 'Y' : 'N';
-    $data['isHR'] = $htmlPost['new_is_hr'] === 'Y' ? 'Y' : 'N';
+    $data['isActive'] = 'N' === $htmlPost['new_is_active'] ? 'N' : 'Y';
+    $data['isResp'] = 'Y' === $htmlPost['new_is_resp'] ? 'Y' : 'N';
+    $data['isAdmin'] = 'Y' === $htmlPost['new_is_admin'] ? 'Y' : 'N';
+    $data['isHR'] = 'Y' === $htmlPost['new_is_hr'] ? 'Y' : 'N';
 
     if (!$config->isUsersExportFromLdap()) {
         $data['email'] = htmlentities($htmlPost['new_email'], ENT_QUOTES | ENT_HTML401);
@@ -85,9 +85,9 @@ function dataForm2Array(array $htmlPost, \includes\SQL $sql, \App\Libraries\Conf
         $data['email'] = $ldap->getEmailUser($data['login']);
     }
 
-    if ($config->getHowToConnectUser() == "dbconges") {
-        $data['pwd1'] = $htmlPost['new_password1'] == "" ? "" : md5($htmlPost['new_password1']);
-        $data['pwd2'] = $htmlPost['new_password2'] == "" ? "" : md5($htmlPost['new_password2']);
+    if ('dbconges' === $config->getHowToConnectUser()) {
+        $data['pwd1'] = '' !== $htmlPost['new_password1'] ? md5($htmlPost['new_password1']) : "";
+        $data['pwd2'] = '' !== $htmlPost['new_password2'] ? md5($htmlPost['new_password2']) : "";
     } else {
         $data['pwd1'] = md5(uniqid('', true));
         $data['pwd2'] = md5('none');
@@ -242,13 +242,13 @@ function isFormInsertValide(array $data, array &$errors, \includes\SQL $sql, \Ap
 {
     $return = true;
     $users = \App\ProtoControllers\Utilisateur::getListId(false);
-    if (in_array($data['login'], $users)) {
+    if (in_array($data['login'], $users, true)) {
         $errors[] = _('Cet identifiant existe déja.');
         $return = false;
     }
 
     if ($config->getHowToConnectUser() == 'dbconges') {
-        if ($data['pwd1'] == '' || strcmp($data['pwd1'], $data['pwd2'])!=0 ) {
+        if ('' === $data['pwd1'] || strcmp($data['pwd1'], $data['pwd2'])!=0 ) {
             $errors[] = _('Saisie du mot de passe incorrect');
             $return = false;
         }
@@ -280,7 +280,7 @@ function isFormValide(array $data, array &$errors, \includes\SQL $sql, \App\Libr
         $return = false;
     }
 
-    if ('' == $data['prenom']) {
+    if ('' === $data['prenom']) {
         $errors[] = _('Veuillez saisir un prenom');
         $return = false;
     }

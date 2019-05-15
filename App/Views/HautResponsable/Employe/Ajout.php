@@ -56,26 +56,26 @@ enctype="application/x-www-form-urlencoded" class="form-group">
                 <?php endif; ?>
                 <td>
                     <select class="form-control" name="new_is_resp">
-                        <option value="N" <?= $formValue['isResp'] == 'N' ? 'selected' : ''?>>N</option>
-                        <option value="Y" <?= $formValue['isResp'] == 'Y' ? 'selected' : ''?>>Y</option>
+                        <option value="N" <?= 'N' === $formValue['isResp'] ? 'selected' : ''?>>N</option>
+                        <option value="Y" <?= 'Y' === $formValue['isResp'] ? 'selected' : ''?>>Y</option>
                     </select>
                 </td>
                 <td>
                     <select class="form-control" name="new_is_admin">
-                        <option value="N" <?= $formValue['isAdmin'] == 'N' ? 'selected' : ''?>>N</option>
-                        <option value="Y" <?= $formValue['isAdmin'] == 'Y' ? 'selected' : ''?>>Y</option>
+                        <option value="N" <?= 'N' === $formValue['isAdmin'] ? 'selected' : ''?>>N</option>
+                        <option value="Y" <?= 'Y' === $formValue['isAdmin'] ? 'selected' : ''?>>Y</option>
                     </select>
                 </td>
                 <td>
                     <select class="form-control" name="new_is_hr">
-                        <option value="N" <?= $formValue['isHR'] == 'N' ? 'selected' : ''?>>N</option>
-                        <option value="Y" <?= $formValue['isHR'] == 'Y' ? 'selected' : ''?>>Y</option>
+                        <option value="N" <?= 'N' === $formValue['isHR'] ? 'selected' : ''?>>N</option>
+                        <option value="Y" <?= 'Y' === $formValue['isHR'] ? 'selected' : ''?>>Y</option>
                     </select>
                 </td>
                 <td>
                     <select class="form-control" name="new_is_active">
-                        <option value="Y" <?= $formValue['isActive'] == 'Y' ? 'selected' : '' ?>>Y</option>
-                        <option value="N" <?= $formValue['isActive'] == 'N' ? 'selected' : '' ?>>N</option>
+                        <option value="Y" <?= 'Y' === $formValue['isActive'] ? 'selected' : '' ?>>Y</option>
+                        <option value="N" <?= 'N' === $formValue['isActive'] ? 'selected' : '' ?>>N</option>
                     </select>
                 </td>
                 <?php if (!$config->isUsersExportFromLdap()) : ?>
