@@ -1239,12 +1239,7 @@ function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $m
             }
         }
     } else {
-        if (file_exists('/usr/sbin/sendmail'))
-            $mail->IsSendmail();   // send message using the $Sendmail program
-        elseif (file_exists('/var/qmail/bin/sendmail'))
-            $mail->IsQmail(); // send message using the qmail MTA
-        else
-            $mail->IsMail(); // send message using PHP mail() function
+        $mail->IsMail(); // send message using PHP mail() function
     }
 
     // initialisation du langage utilisé par php_mailer
