@@ -126,6 +126,8 @@ class Fonctions
     					case "refus":
     						$status="CANCELLED";
     						break;
+    					case "annul":
+    						continue 2;
     					default:
     						$status="TENTATIVE";
     					}
