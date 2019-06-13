@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "278b6ac3f77399f7e4a57be2cdfa1180",
+    "content-hash": "7a154b1f1c01b9500762d624901ccdcb",
     "packages": [
         {
             "name": "adldap2/adldap2",
@@ -601,7 +601,7 @@
             "time": "2019-04-22T19:48:16+00:00"
         },
         {
-            "name": "jeremeamia/SuperClosure",
+            "name": "jeremeamia/superclosure",
             "version": "2.4.0",
             "source": {
                 "type": "git",
@@ -660,16 +660,16 @@
         },
         {
             "name": "kint-php/kint",
-            "version": "3.2",
+            "version": "3.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kint-php/kint.git",
-                "reference": "5cd8ac3c2957c3ef5bbf89934983a7ccf6a4c8fb"
+                "reference": "c332db9529fdce74ae6a347f97a1e7395e76ced8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kint-php/kint/zipball/5cd8ac3c2957c3ef5bbf89934983a7ccf6a4c8fb",
-                "reference": "5cd8ac3c2957c3ef5bbf89934983a7ccf6a4c8fb",
+                "url": "https://api.github.com/repos/kint-php/kint/zipball/c332db9529fdce74ae6a347f97a1e7395e76ced8",
+                "reference": "c332db9529fdce74ae6a347f97a1e7395e76ced8",
                 "shasum": ""
             },
             "require": {
@@ -726,7 +726,7 @@
                 "kint",
                 "php"
             ],
-            "time": "2019-03-20T20:19:15+00:00"
+            "time": "2019-05-03T16:49:16+00:00"
         },
         {
             "name": "libertempo/api",
