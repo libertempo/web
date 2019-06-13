@@ -7,7 +7,7 @@
     "doc": "docs"
   },
   "dependencies": {
-    "axios": "0.18.0",
+    "axios": "0.18.1",
     "bootstrap": "3.4.1",
     "bootstrap-datepicker": "1.8.0",
     "bootstrap-timepicker": "0.5.2",
