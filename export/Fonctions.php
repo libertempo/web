@@ -126,10 +126,8 @@ class Fonctions
     					case "refus":
     						$status="CANCELLED";
     						break;
-    					case "annul":
-    						continue 2;
     					default:
-    						$status="TENTATIVE";
+    						continue 2;
     					}
     				if($sql_demi_jour_deb=="am")
     					$DTSTART=$tab_date_deb[0].$tab_date_deb[1].$tab_date_deb[2]."T070000Z";   // .....
