@@ -20,7 +20,7 @@ update: install-dep save ## Met l'application à la toute dernière version (pat
 createHR: ## Créé un utilisateur avec les droits HR et administrateur
 	App/Tools/createHR ${login} ${nom} ${prenom} ${courriel} ${hash}
 
-install: check setup update createHR check ## Installe la nouvelle instance
+install: install-dep check setup update createHR check ## Installe la nouvelle instance
 
 destroy: ## Détruit l'instance
 	App/Tools/destroy
