@@ -750,6 +750,9 @@ $(document).ready(function() {
     submits.forEach(function (item) {
         item.addEventListener('click', function() {
             item.classList.add('disabled');
+            setTimeout(function() {
+                item.classList.remove('disabled');
+            }, 5000);
         });
     });
 });
