@@ -23,26 +23,7 @@ class ClotureExercice
                 continue;
             }
             if ($infosEmploye['u_num_exercice'] < $exerciceGlobal) {
-                $soldesEmploye = \App\ProtoControllers\Utilisateur::getSoldesEmploye($sql, $config, $employe);
-                foreach ($typeConges as $idType => $libelle) {
-                    $soldeRestant = $soldesEmploye[$idType]['su_solde'];
-                    $soldeFutur = $soldesEmploye[$idType]['su_nb_an'];
-                    // Si le solde est négatif, on le déduit du futur solde
-                    if (0 > $soldeRestant) {
-                        $soldeFutur = $soldeFutur + $soldeRestant;
-                    } elseif ($config->isReliquatsAutorise()) {
-                        if (!static::setReliquatEmploye($employe, $idType, $soldeRestant, $sql, $config)) {
-                            $return = false;
-                            break;
-                        }
-                    }
-                    if (!static::setSoldeEmploye($employe, $idType, $soldeFutur, $sql)) {
-                        $return = false;
-                        break;
-                    }
-                    $today = date("Y-m-d");
-                    insert_dans_periode($employe, $today, "am", $today, "am", $soldeFutur, $comment, $idType, "ajout", 0);
-                }
+                $return = static::updateSoldesEmploye($employe, $typeConges, $sql, $config);
                 if ($return) {
                     static::setNumExeEmploye($employe, $exerciceGlobal, $sql);
                 }
@@ -55,6 +36,32 @@ class ClotureExercice
             return $return;
         }
         $sql->getPdoObj()->commit();
+
+        return $return;
+    }
+
+    private static function updateSoldesEmploye($employe, $typeConges, \includes\SQL $sql, \App\Libraries\Configuration $config)
+    {
+        $soldesEmploye = \App\ProtoControllers\Utilisateur::getSoldesEmploye($sql, $config, $employe);
+        foreach ($typeConges as $idType => $libelle) {
+            $soldeRestant = $soldesEmploye[$idType]['su_solde'];
+            $soldeFutur = $soldesEmploye[$idType]['su_nb_an'];
+            // Si le solde est négatif, on le déduit du futur solde
+            if (0 > $soldeRestant) {
+                $soldeFutur = $soldeFutur + $soldeRestant;
+            } elseif ($config->isReliquatsAutorise()) {
+                if (!static::setReliquatEmploye($employe, $idType, $soldeRestant, $sql, $config)) {
+                    $return = false;
+                    break;
+                }
+            }
+            if (!static::setSoldeEmploye($employe, $idType, $soldeFutur, $sql)) {
+                $return = false;
+                break;
+            }
+            $today = date("Y-m-d");
+            insert_dans_periode($employe, $today, "am", $today, "am", $soldeFutur, $comment, $idType, "ajout", 0);
+        }
 
         return $return;
     }
