@@ -41,7 +41,8 @@ class Conge extends \Tests\Units\TestUnit
             'p_demi_jour_fin' => 'am',
             'p_etat' => $statut,
             'p_date_deb' => '2017-02-12',
-            'p_date_fin' => '2017-02-15'
+            'p_date_fin' => '2017-02-15',
+            'ta_libelle' => 'conges'
         ],];
 
         $conge = new _Conge($this->db);
@@ -52,21 +53,25 @@ class Conge extends \Tests\Units\TestUnit
                 'employe' => $nomComplet,
                 'demiJournee' => 'pm',
                 'statut' => $statut,
+                'libelle' => 'conges'
             ]],
             '2017-02-13' => [[
                 'employe' => $nomComplet,
                 'demiJournee' => '*',
                 'statut' => $statut,
+                'libelle' => 'conges'
             ]],
             '2017-02-14' => [[
                 'employe' => $nomComplet,
                 'demiJournee' => '*',
                 'statut' => $statut,
+                'libelle' => 'conges'
             ]],
             '2017-02-15' => [[
                 'employe' => $nomComplet,
                 'demiJournee' => 'am',
                 'statut' => $statut,
+                'libelle' => 'conges'
             ]],
         ];
         $date = new \DateTimeImmutable();
@@ -85,7 +90,8 @@ class Conge extends \Tests\Units\TestUnit
             'p_demi_jour_fin' => 'pm',
             'p_etat' => $statut,
             'p_date_deb' => '2017-02-12',
-            'p_date_fin' => '2017-02-12'
+            'p_date_fin' => '2017-02-12',
+            'ta_libelle' => 'conges'
         ],];
 
         $conge = new _Conge($this->db);
@@ -96,6 +102,7 @@ class Conge extends \Tests\Units\TestUnit
                 'employe' => $nomComplet,
                 'demiJournee' => '*',
                 'statut' => $statut,
+                'libelle' => 'conges'
             ]],
         ];
         $date = new \DateTimeImmutable();

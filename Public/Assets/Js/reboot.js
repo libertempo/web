@@ -743,3 +743,17 @@ function searchLdapUser() {
         },
     });
 }
+
+// Lock button after clicking once
+$(document).ready(function() {
+    var submits = document.querySelectorAll('button[type="submit"], input[type="submit"], a');
+    submits.forEach(function (item) {
+        item.addEventListener('click', function() {
+            item.classList.add('disabled');
+            setTimeout(function() {
+                item.classList.remove('disabled');
+            }, 5000);
+        });
+    });
+});
+

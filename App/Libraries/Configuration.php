@@ -384,10 +384,16 @@ class Configuration
         return $this->getGroupeFonctionnementEtablissementValeur('jour_mois_limite_reliquats');
     }
 
+    public function getQuiAfficheTypeCongesCalendrier()
+    {
+        return $this->getGroupeFonctionnementEtablissementValeur('afficher_types_conges_calendrier');
+    }
+
     public function isHeuresAutorise()
     {
         return $this->getGroupeFonctionnementEtablissementValeur('gestion_heures');
     }
+
     /**
      * Retourne une valeur du groupe fonctionnement de l'établissement par son nom
      *
