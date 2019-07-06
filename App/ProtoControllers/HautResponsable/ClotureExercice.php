@@ -23,7 +23,7 @@ class ClotureExercice
                 continue;
             }
             if ($infosEmploye['u_num_exercice'] < $exerciceGlobal) {
-                $return = static::updateSoldesEmploye($employe, $typeConges, $sql, $config);
+                $return = static::updateSoldesEmploye($employe, $typeConges, $comment, $sql, $config);
                 if ($return) {
                     static::setNumExeEmploye($employe, $exerciceGlobal, $sql);
                 }
@@ -40,7 +40,7 @@ class ClotureExercice
         return $return;
     }
 
-    private static function updateSoldesEmploye($employe, $typeConges, \includes\SQL $sql, \App\Libraries\Configuration $config)
+    private static function updateSoldesEmploye($employe, $typeConges, $comment, \includes\SQL $sql, \App\Libraries\Configuration $config)
     {
         $soldesEmploye = \App\ProtoControllers\Utilisateur::getSoldesEmploye($sql, $config, $employe);
         foreach ($typeConges as $idType => $libelle) {
