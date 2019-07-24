@@ -45,7 +45,7 @@ function ajout_global(array $tab_new_nb_conges, array $calculProportionnel, arra
     // recup de la liste de TOUS les users dont $resp_login est responsable
     // (prend en compte le resp direct, les groupes, le resp virtuel, etc ...)
     // renvoit une liste de login entre quotes et séparés par des virgules
-    $list_users_du_resp = \hr\Fonctions::get_list_all_users_du_hr($loginSession);
+    $list_users_du_resp = \App\ProtoControllers\Utilisateur::getListId(true);
 
     foreach ($tab_new_nb_conges as $id_conges => $nb_jours) {
         if ($nb_jours == 0) {
@@ -53,7 +53,7 @@ function ajout_global(array $tab_new_nb_conges, array $calculProportionnel, arra
         }
         $comment = $tab_new_comment_all[$id_conges];
 
-        $sql1="SELECT u_login, u_quotite FROM conges_users WHERE u_login IN ($list_users_du_resp) ORDER BY u_login ";
+        $sql1= 'SELECT u_login, u_quotite FROM conges_users WHERE u_login IN ("' . implode('","', $list_users_du_resp) . '") ORDER BY u_login';
         $ReqLog1 = $db->query($sql1);
 
         while ($resultat1 = $ReqLog1->fetch_array()) {
