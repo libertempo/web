@@ -1128,46 +1128,6 @@ class Fonctions
         }
     }
 
-    // cloture / debut d'exercice pour TOUS les users d'un groupe'
-    private static function cloture_globale_groupe($group_id, $tab_type_conges) : string
-    {
-        $return = '';
-
-        // recup de la liste de TOUS les users du groupe
-        $tab_all_users_du_groupe=recup_infos_all_users_du_groupe($group_id);
-        $comment_cloture =  _('resp_cloture_exercice_commentaire') ." ".date("m/Y");
-
-        if (count($tab_all_users_du_groupe)!=0) {
-            // traitement des users dont on est responsable :
-            foreach($tab_all_users_du_groupe as $current_login => $tab_current_user) {
-                $return .= \hr\Fonctions::cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $comment_cloture);
-            }
-        }
-        return $return;
-    }
-
-    // cloture / debut d'exercice pour TOUS les users du resp (ou grand resp)
-    private static function cloture_globale($tab_type_conges) : string
-    {
-        $return = '';
-
-        // recup de la liste de TOUS les users dont $resp_login est responsable
-        // (prend en compte le resp direct, les groupes, le resp virtuel, etc ...)
-        // renvoit une liste de login entre quotes et séparés par des virgules
-        $tab_all_users_du_hr=\hr\Fonctions::recup_infos_all_users_du_hr($_SESSION['userlogin']);
-        $tab_all_users_du_grand_resp=recup_infos_all_users_du_grand_resp($_SESSION['userlogin']);
-
-        $comment_cloture =  _('resp_cloture_exercice_commentaire') ." ".date("m/Y");
-
-        if ( (count($tab_all_users_du_hr)!=0) || (count($tab_all_users_du_grand_resp)!=0) ) {
-            // traitement des users dont on est responsable :
-            foreach($tab_all_users_du_hr as $current_login => $tab_current_user) {
-                $return .= \hr\Fonctions::cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $comment_cloture);
-            }
-        }
-        return $return;
-    }
-
     // verifie si tous les users on été basculés de l'exercice précédent vers le suivant.
     // si oui : on incrémente le num_exercice de l'application
     private static function update_appli_num_exercice()
@@ -1187,369 +1147,6 @@ class Fonctions
             $new_appli_num_exercice = $appli_num_exercice+1 ;
             log_action(0, "", "", "fin/debut exercice (appli_num_exercice : $appli_num_exercice -> $new_appli_num_exercice)");
         }
-    }
-
-    private static function cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $commentaire) : string
-    {
-        $return = '';
-        $db = \includes\SQL::singleton();
-        $config = new \App\Libraries\Configuration($db);
-        // si le num d'exercice du user est < à celui de l'appli (il n'a pas encore été basculé): on le bascule d'exercice
-        if ($tab_current_user['num_exercice'] < $_SESSION['config']['num_exercice']) {
-            // calcule de la date limite d'utilisation des reliquats (si on utilise une date limite et qu'elle n'est pas encore calculée)
-            \hr\Fonctions::set_nouvelle_date_limite_reliquat();
-
-            //tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
-            $tab_conges_current_user=$tab_current_user['conges'];
-            foreach($tab_type_conges as $id_conges => $libelle) {
-                $user_nb_jours_ajout_an = $tab_conges_current_user[$libelle]['nb_an'];
-                $user_solde_actuel= $tab_conges_current_user[$libelle]['solde'];
-                $user_reliquat_actuel= $tab_conges_current_user[$libelle]['reliquat'];
-
-                /**********************************************/
-                /* Modification de la table conges_solde_user */
-
-                if ($config->isReliquatsAutorise()) {
-                    // ATTENTION : si le solde du user est négatif, on ne compte pas de reliquat et le nouveau solde est nb_jours_an + le solde actuel (qui est négatif)
-                    if ($user_solde_actuel>0) {
-                        //calcul du reliquat pour l'exercice suivant
-                        if ($config->getReliquatsMax() != 0) {
-                            if ($user_solde_actuel <= $config->getReliquatsMax()) {
-                                $new_reliquat = $user_solde_actuel ;
-                            } else {
-                                $new_reliquat = $config->getReliquatsMax();
-                            }
-                        } else {
-                            $new_reliquat = $user_reliquat_actuel + $user_solde_actuel ;
-                        }
-
-                        $VerifDec = verif_saisie_decimal($new_reliquat);
-                        //
-                        // update D'ABORD du reliquat
-                        $sql_reliquat = 'UPDATE conges_solde_user SET su_reliquat = '.$new_reliquat.' WHERE su_login="'. $db->quote($current_login).'"  AND su_abs_id = '.$id_conges;
-                        $ReqLog_reliquat = $db->query($sql_reliquat) ;
-                    } else {
-                        $new_reliquat = $user_solde_actuel ; // qui est nul ou negatif
-                    }
-
-                    $new_solde = $user_nb_jours_ajout_an + $new_reliquat  ;
-                    $VerifDec = verif_saisie_decimal($new_solde);
-
-                    // update du solde
-                    $sql_solde = 'UPDATE conges_solde_user SET su_solde = '.$new_solde.' WHERE su_login="'. $db->quote($current_login).'"  AND su_abs_id = '.intval($id_conges).';';
-                    $ReqLog_solde = $db->query($sql_solde) ;
-                } else {
-                    // ATTENTION : meme si on accepte pas les reliquats, si le solde du user est négatif, il faut le reporter: le nouveau solde est nb_jours_an + le solde actuel (qui est négatif)
-                    if ($user_solde_actuel < 0) {
-                        $new_solde = $user_nb_jours_ajout_an + $user_solde_actuel ; // qui est nul ou negatif
-                    } else {
-                        $new_solde = $user_nb_jours_ajout_an ;
-                    }
-
-                    $VerifDec = verif_saisie_decimal($new_solde);
-                    $sql_solde = 'UPDATE conges_solde_user SET su_solde = '.$new_solde.' WHERE su_login="'. $db->quote($current_login).'" AND su_abs_id = '.intval($id_conges).';';
-                    $ReqLog_solde = $db->query($sql_solde) ;
-                }
-
-                /* Modification de la table conges_users */
-                // ATTENTION : ne pas faire "SET u_num_exercice = u_num_exercice+1" dans la requete SQL car on incrémenterait pour chaque type d'absence !
-                $new_num_exercice=$_SESSION['config']['num_exercice'] ;
-                $sql2 = 'UPDATE conges_users SET u_num_exercice = '.$new_num_exercice.' WHERE u_login="'. $db->quote($current_login).'"  ';
-                $ReqLog2 = $db->query($sql2) ;
-
-                // on insert l'ajout de conges dans la table periode (avec le commentaire)
-                $date_today=date("Y-m-d");
-                insert_dans_periode($current_login, $date_today, "am", $date_today, "am", $user_nb_jours_ajout_an, $commentaire, $id_conges, "ajout", 0);
-            }
-
-            // on incrémente le num_exercice de l'application si tous les users ont été basculés.
-            \hr\Fonctions::update_appli_num_exercice();
-        }
-        return $return;
-    }
-
-    // cloture / debut d'exercice user par user pour les users du resp (ou grand resp)
-    private static function cloture_users($tab_type_conges, $tab_cloture_users, $tab_commentaire_saisie) : string
-    {
-        $return = '';
-
-        // recup de la liste de TOUS les users dont $resp_login est responsable
-        // (prend en compte le resp direct, les groupes, le resp virtuel, etc ...)
-        // renvoit une liste de login entre quotes et séparés par des virgules
-        $tab_all_users_du_hr=\hr\Fonctions::recup_infos_all_users_du_hr($_SESSION['userlogin']);
-        $tab_all_users_du_grand_resp=recup_infos_all_users_du_grand_resp($_SESSION['userlogin']);
-        if ( (count($tab_all_users_du_hr)!=0) || (count($tab_all_users_du_grand_resp)!=0) ) {
-            // traitement des users dont on est responsable :
-            foreach($tab_all_users_du_hr as $current_login => $tab_current_user) {
-                // tab_cloture_users[$current_login]=TRUE si checkbox "cloturer" est cochée
-                if ( (isset($tab_cloture_users[$current_login])) && ($tab_cloture_users[$current_login]=TRUE) ) {
-                    $commentaire = $tab_commentaire_saisie[$current_login];
-                    $return .= \hr\Fonctions::cloture_current_year_for_login($current_login, $tab_current_user, $tab_type_conges, $commentaire);
-                }
-            }
-        }
-        return $return;
-    }
-
-    private static function affichage_cloture_globale_groupe($tab_type_conges) : string
-    {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
-        $return = '';
-
-        /***********************************************************************/
-        /* SAISIE GROUPE pour tous les utilisateurs d'un groupe du responsable */
-
-        // on établi la liste complète des groupes dont on est le resp (ou le grd resp)
-        $list_group=get_list_groupes_du_resp($_SESSION['userlogin']);
-
-        if ($list_group!="") //si la liste n'est pas vide ( serait le cas si n'est responsable d'aucun groupe)
-        {
-            $return .= '<form action="' . $PHP_SELF . '" method="POST">';
-            $return .= '<table>';
-            $return .= '<tr><td align="center">';
-            $return .= '<fieldset class="cal_saisie">';
-            $return .= '<legend class="boxlogin">' . _('resp_cloture_exercice_groupe') . '</legend>';
-
-            $return .= '<table>';
-            $return .= '<tr>';
-
-            // création du select pour le choix du groupe
-            $text_choix_group="<select name=\"choix_groupe\" >";
-            $sql_group = "SELECT g_gid, g_groupename FROM conges_groupe WHERE g_gid IN ($list_group) ORDER BY g_groupename "  ;
-            $ReqLog_group = \includes\SQL::singleton()->query($sql_group) ;
-
-            while ($resultat_group = $ReqLog_group->fetch_array()) {
-                $current_group_id=$resultat_group["g_gid"];
-                $current_group_name=$resultat_group["g_groupename"];
-                $text_choix_group=$text_choix_group."<option value=\"$current_group_id\" >$current_group_name</option>";
-            }
-            $text_choix_group=$text_choix_group."</select>" ;
-
-            $return .= '<td class="big">' . _('resp_ajout_conges_choix_groupe') . ' : ' . $text_choix_group . '</td>';
-            $return .= '</tr>';
-            $return .= '<tr>';
-            $return .= '<td class="big">' . _('resp_cloture_exercice_for_groupe_text_confirmer') . '</td>';
-            $return .= '</tr>';
-            $return .= '<tr>';
-            $return .= '<td align="center"><input type="submit" value="' . _('form_valid_cloture_group') . '"></td>';
-            $return .= '</tr>';
-            $return .= '</table>';
-
-            $return .= '</fieldset>';
-            $return .= '</td></tr>';
-            $return .= '</table>';
-
-            $return .= '<input type="hidden" name="cloture_groupe" value="TRUE">';
-            $return .= '</form>';
-        }
-
-        return $return;
-    }
-
-    private static function affichage_cloture_globale_pour_tous($tab_type_conges) : string
-    {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
-        $return = '';
-
-        /************************************************************/
-        /* CLOTURE EXERCICE GLOBALE pour tous les utilisateurs du responsable */
-
-        $return .= '<form action="' . $PHP_SELF . '" method="POST">';
-        $return .= '<table>';
-        $return .= '<tr><td align="center">';
-        $return .= '<fieldset class="cal_saisie">';
-        $return .= '<legend class="boxlogin">' . _('resp_cloture_exercice_all') . '</legend>';
-        $return .= '<table>';
-        $return .= '<tr>';
-        $return .= '<td class="big">&nbsp;&nbsp;&nbsp;' . _('resp_cloture_exercice_for_all_text_confirmer') . '&nbsp;&nbsp;&nbsp;</td>';
-        $return .= '</tr>';
-        // bouton valider
-        $return .= '<tr>';
-        $return .= '<td colspan="5" align="center"><input type="submit" value="' . _('form_valid_cloture_global') . '"></td>';
-        $return .= '</tr>';
-        $return .= '</table>';
-        $return .= '</fieldset>';
-        $return .= '</td></tr>';
-        $return .= '</table>';
-        $return .= '<input type="hidden" name="cloture_globale" value="TRUE">';
-        $return .= '</form>';
-        return $return;
-    }
-
-    private static function affiche_ligne_du_user($current_login, $tab_type_conges, $tab_current_user, $i = true) : string
-    {
-        $return = '';
-        $return .= '<tr class="' . ($i ? 'i' : 'p') . '">';
-        //tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
-        $tab_conges=$tab_current_user['conges'];
-
-        /** sur la ligne ,   **/
-        $return .= '<td>' . $tab_current_user['nom'] . '</td>';
-        $return .= '<td>' . $tab_current_user['prenom'] . '</td>';
-        $return .= '<td>' . $tab_current_user['quotite'] . '%</td>';
-
-        foreach($tab_type_conges as $id_conges => $libelle) {
-            if (isset($tab_conges[$libelle])) {
-                $return .= '<td>' . $tab_conges[$libelle]['nb_an'] . ' <i>(' . $tab_conges[$libelle]['solde'] . ')</i></td>';
-            } else {
-                $return .= '<td></td>';
-            }
-        }
-
-        // si le num d'exercice du user est < à celui de l'appli (il n'a pas encore été basculé): on peut le cocher
-        if ($tab_current_user['num_exercice'] < $_SESSION['config']['num_exercice']) {
-            $return .= '<td align="center" class="histo"><input type="checkbox" name="tab_cloture_users[' . $current_login . ']" value="TRUE" checked></td>';
-        } else {
-            $return .= '<td align="center" class="histo"><img src="' . IMG_PATH . 'stop.png" width="16" height="16" border="0" ></td>';
-        }
-
-        $comment_cloture =  _('resp_cloture_exercice_commentaire') ." ".date("m/Y");
-        $return .= '<td align="center" class="histo"><input type="text" name="tab_commentaire_saisie[' . $current_login . ']" size="20" maxlength="200" value="' . $comment_cloture . '"></td>';
-        $return .= '</tr>';
-
-        return $return;
-    }
-
-    private static function affichage_cloture_user_par_user($tab_type_conges, $tab_all_users_du_hr, $tab_all_users_du_grand_resp) : string
-    {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
-        $return = '';
-
-        /************************************************************/
-        /* CLOTURE EXERCICE USER PAR USER pour tous les utilisateurs du responsable */
-
-        if ( (count($tab_all_users_du_hr)!=0) || (count($tab_all_users_du_grand_resp)!=0) ) {
-            $return .= '<form action="' . $PHP_SELF . '" method="POST">';
-            $return .= '<table>';
-            $return .= '<tr>';
-            $return .= '<td align="center">';
-            $return .= '<fieldset class="cal_saisie">';
-            $return .= '<legend class="boxlogin">' . _('resp_cloture_exercice_users') . '</legend>';
-            $return .= '<table>';
-            $return .= '<tr>';
-            $return .= '<td align="center">';
-
-            // AFFICHAGE TITRES TABLEAU
-            $return .= '<table cellpadding="2" class="tablo">';
-            $return .= '<thead>';
-            $return .= '<tr>';
-            $return .= '<th>' . _('divers_nom_maj_1') . '</th>';
-            $return .= '<th>' . _('divers_prenom_maj_1') . '</th>';
-            $return .= '<th>' . _('divers_quotite_maj_1') . '</th>';
-            foreach($tab_type_conges as $id_conges => $libelle) {
-                $return .= '<th>' . $libelle . '<br><i>(' . _('divers_solde') . ')</i></th>';
-            }
-            $return .= '<th>' . _('divers_cloturer_maj_1') . '<br></th>';
-            $return .= '<th>' . _('divers_comment_maj_1') . '<br></th>';
-            $return .= '</tr>';
-            $return .= '</thead>';
-            $return .= '<tbody>';
-
-            // AFFICHAGE LIGNES TABLEAU
-
-            // affichage des users dont on est responsable :
-            $i = true;
-            foreach($tab_all_users_du_hr as $current_login => $tab_current_user) {
-                $return .= \hr\Fonctions::affiche_ligne_du_user($current_login, $tab_type_conges, $tab_current_user, $i);
-                $i = !$i;
-            }
-
-            $return .= '</tbody>';
-            $return .= '</table>';
-            $return .= '</td>';
-            $return .= '</tr>';
-            $return .= '<tr>';
-            $return .= '<td align="center">';
-            $return .= '<input type="submit" value="' . _('form_submit') . '">';
-            $return .= '</td>';
-            $return .= '</tr>';
-            $return .= '</table>';
-            $return .= '</fieldset>';
-            $return .= '</td></tr>';
-            $return .= '</table>';
-            $return .= '<input type="hidden" name="cloture_users" value="TRUE">';
-            $return .= '</form>';
-        }
-
-        return $return;
-    }
-
-    private static function saisie_cloture( $tab_type_conges) : string
-    {
-        $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
-        $return = '';
-
-        // recup de la liste de TOUS les users dont $resp_login est responsable
-        // (prend en compte le resp direct, les groupes, le resp virtuel, etc ...)
-        // renvoit une liste de login entre quotes et séparés par des virgules
-        $tab_all_users_du_hr=\hr\Fonctions::recup_infos_all_users_du_hr($_SESSION['userlogin']);
-        $tab_all_users_du_grand_resp=recup_infos_all_users_du_grand_resp($_SESSION['userlogin']);
-        if ( (count($tab_all_users_du_hr)!=0) || (count($tab_all_users_du_grand_resp)!=0) ) {
-            /************************************************************/
-            /* SAISIE GLOBALE pour tous les utilisateurs du responsable */
-            $return .= \hr\Fonctions::affichage_cloture_globale_pour_tous($tab_type_conges);
-            $return .= '<br>';
-
-            /***********************************************************************/
-            /* SAISIE GROUPE pour tous les utilisateurs d'un groupe du responsable */
-            $return .= \hr\Fonctions::affichage_cloture_globale_groupe($tab_type_conges);
-            $return .= '<br>';
-
-            /************************************************************/
-            /* SAISIE USER PAR USER pour tous les utilisateurs du responsable */
-            $return .= \hr\Fonctions::affichage_cloture_user_par_user($tab_type_conges, $tab_all_users_du_hr, $tab_all_users_du_grand_resp);
-            $return .= '<br>';
-
-        } else {
-            $return .= _('resp_etat_aucun_user') . '<br>';
-        }
-        return $return;
-    }
-
-    /**
-     * Encapsule le comportement du module de cloture d'exercice
-     *
-     * @access public
-     * @static
-     */
-    public static function pageClotureYearModule() : string
-    {
-        /*************************************/
-        // recup des parametres reçus :
-
-        $cloture_users   = getpost_variable('cloture_users');
-        $cloture_globale = getpost_variable('cloture_globale');
-        $cloture_groupe  = getpost_variable('cloture_groupe');
-        $return = '';
-        /*************************************/
-
-        /** initialisation des tableaux des types de conges/absences  **/
-        // recup du tableau des types de conges (conges et congesexceptionnels)
-        // on concatene les 2 tableaux
-        $tab_type_cong = ( recup_tableau_types_conges() + recup_tableau_types_conges_exceptionnels()  );
-
-        // titre
-        $return .= '<h1>'. _('resp_cloture_exercice_titre') . '</h1>';
-
-        if ($cloture_users=="TRUE") {
-            $tab_cloture_users       = getpost_variable('tab_cloture_users');
-            $tab_commentaire_saisie       = getpost_variable('tab_commentaire_saisie'); //a vérifier
-            $return .= \hr\Fonctions::cloture_users($tab_type_cong, $tab_cloture_users, $tab_commentaire_saisie);
-
-            redirect( ROOT_PATH .'hr/page_principale');
-        } elseif ($cloture_globale=="TRUE") {
-            \hr\Fonctions::cloture_globale($tab_type_cong);
-
-            redirect( ROOT_PATH .'hr/page_principale');
-        } elseif ($cloture_groupe=="TRUE") {
-            $choix_groupe            = getpost_variable('choix_groupe');
-            $return .= \hr\Fonctions::cloture_globale_groupe($choix_groupe, $tab_type_cong);
-
-            redirect( ROOT_PATH .'hr/page_principale');
-        } else {
-            $return .= \hr\Fonctions::saisie_cloture($tab_type_cong);
-        }
-        return $return;
     }
 
     private static function affiche_calendrier_fermeture_mois($year, $mois, $tab_year) : string
@@ -2334,5 +1931,45 @@ class Fonctions
         }
 
         return $return;
+    }
+
+    public static function getJoursFeriesFrance(int $iAnnee) : array
+    {
+        //Initialisation de variables
+        $unJour = 3600*24;
+        $tbJourFerie = [];
+        $timePaques = easter_date($iAnnee) + 6 * 3600; // évite les changements d'heures
+
+        $tbJourFerie["Jour de l an"] = $iAnnee . "-01-01";
+        $tbJourFerie["Paques"] = date('Y-m-d', $timePaques);
+        $tbJourFerie["Lundi de Paques"] = $iAnnee . date("-m-d", $timePaques + 1 * $unJour);
+        $tbJourFerie["Fete du travail"] = $iAnnee . "-05-01";
+        $tbJourFerie["Armistice 39-45"] = $iAnnee . "-05-08";
+        $tbJourFerie["Jeudi de l ascension"] = $iAnnee . date("-m-d", easter_date($iAnnee) + 39 * $unJour);
+        $tbJourFerie["Fete nationale"] = $iAnnee . "-07-14";
+        $tbJourFerie["Assomption"] = $iAnnee . "-08-15";
+        $tbJourFerie["Toussaint"] = $iAnnee . "-11-01";
+        $tbJourFerie["Armistice 14-18"] = $iAnnee . "-11-11";
+        $tbJourFerie["Noel"] = $iAnnee . "-12-25";
+
+        return $tbJourFerie;
+    }
+
+    public static function insereFeriesAnnee(array $tab_checkbox_j_chome) : bool
+    {
+        $db = \includes\SQL::singleton();
+        foreach ($tab_checkbox_j_chome as $date) {
+            $db->query('INSERT INTO conges_jours_feries SET jf_date="'. $db->quote($date).'";');
+        }
+        return true;
+    }
+
+    public static function supprimeFeriesAnnee(int $year) : bool
+    {
+        $db = \includes\SQL::singleton();
+        $sql_delete='DELETE FROM conges_jours_feries WHERE jf_date LIKE "'. $db->quote($year).'%" ;';
+        $db->query($sql_delete);
+
+        return true;
     }
 }

@@ -20,7 +20,7 @@ update: install-dep save ## Met l'application à la toute dernière version (pat
 createHR: ## Créé un utilisateur avec les droits HR et administrateur
 	App/Tools/createHR ${login} ${nom} ${prenom} ${courriel} ${hash}
 
-install: install-dep check setup update createHR check ## Installe la nouvelle instance
+install: install-dep check setup update createHR check setferies ## Installe la nouvelle instance
 
 destroy: ## Détruit l'instance
 	App/Tools/destroy
@@ -40,6 +40,9 @@ restore: destroy check ## Restaure la dernière sauvegarde
 
 configure: ## Paramètre une option de configuration
 	App/Tools/configure ${option} ${valeur}
+
+setferies: ## insert dans la bdd les jours fériés français
+	App/Tools/setJoursFeries ${annee} ${force}
 
 ## CI
 test: ## Lance les tests unitaires

@@ -122,7 +122,6 @@ class Utilisateur
     {
         $donnees = [];
         $sql = \includes\SQL::singleton();
-        $config = new \App\Libraries\Configuration($sql);
         if ($config->isUsersExportFromLdap()) {
             $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
             $ldap = $injectableCreator->get(\App\Libraries\Ldap::class);
