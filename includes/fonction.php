@@ -358,7 +358,7 @@ function unhash_user($huser_test)
     while ($resultat = $res_user->fetch_assoc()) {
         $clear_user = $resultat['u_login'];
         $huser = hash('sha256', $clear_user . $ics_salt);
-        if ($huser_test == $huser ) {
+        if ($huser_test === $huser ) {
             $user = $clear_user;
         }
     }
