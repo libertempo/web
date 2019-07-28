@@ -18,7 +18,7 @@ display('insertion des jours fériés français');
 $annee = $argv[1] ?? null;
 $force = $argv[2] ?? null;
 
-if (preg_match('/^[0-9]{4}/', $annee)) {
+if (!preg_match('/^[0-9]{4}/', $annee)) {
     $annee = date('Y');
 }
 
