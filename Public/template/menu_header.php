@@ -59,7 +59,7 @@ function sousmenuHR()
     }
     $return .= '<a class="secondary" href="' . ROOT_PATH . 'hr/ajout_conges">Crédit de congés</a>
     <a class="secondary" href="' . ROOT_PATH . 'hr/jours_chomes">Jours fériés</a>
-    <a class="secondary" href="' . ROOT_PATH . 'hr/cloture_exercice">Exercices</a>
+    <a class="secondary" href="' . ROOT_PATH . 'hr/cloture_exercice">Cloture d\'exercice</a>
     <a class="secondary" href="' . ROOT_PATH . 'hr/liste_planning">Plannings</a>
     <a class="secondary" href="' . ROOT_PATH . 'hr/jours_fermeture">Jours de fermeture</a>';
 
@@ -81,7 +81,7 @@ function sousmenuResponsable()
     }
 
     if ($config->canResponsableAjouteConges()) {
-        $return .= '<a class="secondary" href="' . ROOT_PATH . 'responsable/resp_index.php?onglet=ajout_conges">Ajout de congés</a>';
+        $return .= '<a class="secondary" href="' . ROOT_PATH . 'responsable/resp_index.php?onglet=ajout_conges">Crédit de congés</a>';
     }
 
     if ($config->canResponsablesAssociatePlanning()) {
