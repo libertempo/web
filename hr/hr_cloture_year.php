@@ -5,7 +5,7 @@ defined('_PHP_CONGES') or die('Restricted access');
 $titre = "Clôture d'exercice globale";
 $sql = \includes\SQL::singleton();
 $config = new \App\Libraries\Configuration($sql);
-$DateReliquats = $config->getDateLimiteReliquats();
+$dateReliquats = $config->getDateLimiteReliquats();
 $isReliquatsAutorise = $config->isReliquatsAutorise();
 $commitSuccess = false;
 
@@ -27,7 +27,7 @@ if (1 === $commitCloture && is_hr($_SESSION['userlogin'])) {
     if (0 !== count($employes)) {
         if (\App\ProtoControllers\HautResponsable\ClotureExercice::traitementClotureEmploye($employes, $typeConges, $error, $sql, $config)) {
             \App\ProtoControllers\HautResponsable\ClotureExercice::updateNumExerciceGlobal($sql);
-            if ($isReliquatsAutorise) {
+            if ($isReliquatsAutorise && 0 != $dateReliquats) {
                 \App\ProtoControllers\HautResponsable\ClotureExercice::updateDateLimiteReliquats($anneeFinReliquats, $error, $sql, $config);
             }
         }

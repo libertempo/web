@@ -14,7 +14,7 @@
 <?php endif; ?>
 <h2>Vous êtes sur le point de cloturer l'exercice actuel pour tous les utilisateurs actifs.</h2>
 <form action="cloture_exercice" method="POST">
-    <?php if ($isReliquatsAutorise && 0 !== $DateReliquats) : ?>
+    <?php if ($isReliquatsAutorise && 0 != $dateReliquats) : ?>
     <div class="form-group row">
         <div class="col-xs-12">
             <label for="annee">Veuillez saisir l'année de la date limite des reliquats 

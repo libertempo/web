@@ -42,6 +42,7 @@ class ClotureExercice
 
     private static function updateSoldesEmploye($employe, $typeConges, $comment, \includes\SQL $sql, \App\Libraries\Configuration $config)
     {
+        $return = true;
         $soldesEmploye = \App\ProtoControllers\Utilisateur::getSoldesEmploye($sql, $config, $employe);
         foreach ($typeConges as $idType => $libelle) {
             $soldeRestant = $soldesEmploye[$idType]['su_solde'];
@@ -74,7 +75,7 @@ class ClotureExercice
                 '" AND su_abs_id = ' . intval($idType) . ';';
         $sql->query($req);
 
-        return 0 < $sql->affected_rows;
+        return true;
     }
 
     private static function setReliquatEmploye($employe, $idType, $soldeRestant, \includes\SQL $sql, \App\Libraries\Configuration $config)
@@ -89,7 +90,7 @@ class ClotureExercice
                 '" AND su_abs_id = ' . intval($idType) . ';';
         $sql->query($req);
 
-        return 0 < $sql->affected_rows;
+        return true;
     }
 
     private static function setNumExeEmploye($employe, $numExercice, \includes\SQL $sql) {
