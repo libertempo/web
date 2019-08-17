@@ -59,7 +59,7 @@ class Additionnelle extends \App\ProtoControllers\Employe\AHeure
         $datesFeries        = \utilisateur\Fonctions::getDatePickerJoursFeries();
         $datesFerme         = \utilisateur\Fonctions::getDatePickerFermeture();
         $datesDisabled      = array_merge($datesFeries, $datesFerme);
-        $startDate          = \utilisateur\Fonctions::getDatePickerStartDate();
+        $startDate          = '';
 
         $datePickerOpts = [
             'daysOfWeekDisabled' => $daysOfWeekDisabled,
