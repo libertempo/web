@@ -98,11 +98,7 @@ class Fonctions
             $return .= '<b>' . _('editions_aucun_conges') . '</b><br>';
         } else {
             // AFFICHAGE TABLEAU
-            if ($config->canAfficheDateTraitement()) {
-                $return .= '<table cellpadding="2" class="tablo" width="850">';
-            } else {
-                $return .= '<table cellpadding="2" class="tablo" width="750">';
-            }
+            $return .= '<table cellpadding="2" class="tablo" width="850">';
             $return .= '<thead><tr align="center">';
             $return .= '<th>' . _('divers_type_maj_1') . '</th>';
             $return .= '<th>' . _('divers_etat_maj_1') . '</th>';
@@ -110,9 +106,7 @@ class Fonctions
             $return .= '<th>' . _('divers_debut_maj_1') . '</th>';
             $return .= '<th>' . _('divers_fin_maj_1') . '</th>';
             $return .= '<th>' . _('divers_comment_maj_1') . '</th>';
-            if ($config->canAfficheDateTraitement()) {
-                $return .= '<th>' . _('divers_date_traitement') . '</td>';
-            }
+            $return .= '<th>' . _('divers_date_traitement') . '</td>';
             $return .= '</tr></thead></tbody>';
 
             while ($resultat2 = $ReqLog2->fetch_array()) {
@@ -154,13 +148,11 @@ class Fonctions
                 $return .= '<td>' . $sql_p_date_deb . '_' . $demi_j_deb . '</td>';
                 $return .= '<td>' . $sql_p_date_fin . '_' . $demi_j_fin . '</td>';
                 $return .= '<td>' . $sql_p_commentaire . '</td>';
-                if ($config->canAfficheDateTraitement()) {
-                    if ($sql_p_date_demande == null) {
-                        $return .= '<td class="histo-left">' . _('divers_traitement') . ' : ' . $sql_p_date_traitement . '</td>';
-                    }
-                    else {
-                        $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : ' . $sql_p_date_traitement . '</td>';
-                    }
+                if ($sql_p_date_demande == null) {
+                    $return .= '<td class="histo-left">' . _('divers_traitement') . ' : ' . $sql_p_date_traitement . '</td>';
+                }
+                else {
+                    $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : ' . $sql_p_date_traitement . '</td>';
                 }
                 $return .= '</tr>';
             }
@@ -332,12 +324,7 @@ class Fonctions
         $return .= '<h3>' . _('divers_quotite') . '&nbsp; : &nbsp;' . $quotite . ' %</h3>';
         $return .= '<br><br><br>';
 
-
-        if ($config->canAfficheDateTraitement()) {
-            $return .= '<table cellpadding="0" cellspacing="0" border="1" width="870">';
-        } else {
-            $return .= '<table cellpadding="0" cellspacing="0" border="1" width="770">';
-        }
+        $return .= '<table cellpadding="0" cellspacing="0" border="1" width="870">';
         $return .= '<tr align="center">';
         $return .= '<td><h3>' . _('editions_historique') . ' :</h3></td>';
         $return .= '</tr>';
@@ -362,11 +349,7 @@ class Fonctions
             $return .= '<b>' . _('editions_aucun_conges') . '</b><br>';
         } else {
             // AFFICHAGE TABLEAU
-            if ($config->canAfficheDateTraitement()) {
-                $return .= '<table cellpadding="2" class="tablo-edit" width="850">';
-            } else {
-                $return .= '<table cellpadding="2" class="tablo-edit" width="750">';
-            }
+            $return .= '<table cellpadding="2" class="tablo-edit" width="850">';
 
             /*************************************/
             /* affichage anciens soldes          */
@@ -402,9 +385,7 @@ class Fonctions
             $return .= '<td class="titre-edit">' . _('divers_debut_maj_1') . '</td>';
             $return .= '<td class="titre-edit">' . _('divers_fin_maj_1') . '</td>';
             $return .= '<td class="titre-edit">' . _('divers_comment_maj_1') . '</td>';
-            if ($config->canAfficheDateTraitement()) {
-                $return .= '<td class="titre-edit">' . _('divers_date_traitement') . '</td>';
-            }
+            $return .= '<td class="titre-edit">' . _('divers_date_traitement') . '</td>';
             $return .= '</tr>';
 
             while ($resultat2 = $ReqLog2->fetch_array()) {
@@ -451,12 +432,11 @@ class Fonctions
                 $return .= '<td class="histo-edit">' . $sql_p_date_fin . '_' .  $demi_j_fin . '</td>';
                 $return .= '<td class="histo-edit">' . $sql_p_commentaire . '</td>';
 
-                if ($config->canAfficheDateTraitement()) {
-                    if (null == $sql_p_date_demande) {
-                        $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : ' . $sql_p_date_traitement . '</td>';
-                    } else {
-                        $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : pas traité</td>';
-                    }
+
+                if (null == $sql_p_date_demande) {
+                    $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : ' . $sql_p_date_traitement . '</td>';
+                } else {
+                    $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : pas traité</td>';
                 }
                 $return .= '</tr>';
             }
@@ -929,11 +909,7 @@ class Fonctions
 
             // (largeur totale page = 210 ( - 2x10 de marge))
             // tailles des cellules du tableau
-            if ($config->canAfficheDateTraitement()) {
-                \edition\Fonctions::affiche_tableau_conges_avec_date_traitement($pdf, $ReqLog2, $decalage, $tab_type_all_cong);
-            } else {
-                \edition\Fonctions::affiche_tableau_conges_normal($pdf, $ReqLog2, $decalage, $tab_type_all_cong);
-            }
+            \edition\Fonctions::affiche_tableau_conges_avec_date_traitement($pdf, $ReqLog2, $decalage, $tab_type_all_cong);
 
             $pdf->Ln(2);
 

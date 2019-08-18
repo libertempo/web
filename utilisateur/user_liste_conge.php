@@ -38,7 +38,7 @@ if (empty($listId)) {
     $i = true;
     $listeConges = $conge->getListeSQL($listId);
     $interdictionModification = $config->canUserModifieDemande();
-    $affichageDateTraitement = $config->canAfficheDateTraitement();
+    $affichageDateTraitement = canAfficheDateTraitement(true);
     $dataConges = new \stdClass;
     $i = 0;
     foreach ($listeConges as $conges) {

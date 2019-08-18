@@ -145,9 +145,7 @@ class Fonctions
                 $return .= '<th>'. _('divers_refuser_maj_1') .'</th>' ;
                 $return .= '<th>' . _('resp_traite_demandes_attente') . '</th>';
                 $return .= '<th>'. _('resp_traite_demandes_motif_refus') . '</th>';
-                if ($config->canAfficheDateTraitement()) {
-                    $return .= '<th>' . _('divers_date_traitement') . '</th>';
-                }
+                $return .= '<th>' . _('divers_date_traitement') . '</th>';
                 $return .= '</tr>';
                 $return .= '</thead>' ;
                 $return .= '<tbody>' ;
@@ -199,12 +197,10 @@ class Fonctions
                     $tab_conges=$tab_all_users[$sql_p_login]['conges'];
                     $return .= '<td>' . $tab_conges[$typeAbsence[$sql_p_type]['libelle']]['solde'] . '</td>';
                     $return .= '<td>' . $boutonradio1 . '</td><td>' . $boutonradio2 . '</td><td>' . $boutonradio3 . '</td><td>' . $text_refus . '</td>';
-                    if ($config->canAfficheDateTraitement()) {
-                        if ($sql_p_date_demande == NULL) {
-                            $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : ' . $sql_p_date_traitement . '</td>';
-                        } else {
-                            $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : pas traité</td>';
-                        }
+                    if ($sql_p_date_demande == NULL) {
+                        $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : ' . $sql_p_date_traitement . '</td>';
+                    } else {
+                        $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : pas traité</td>';
                     }
                     $return .= '</tr>' ;
                     $i = !$i;
@@ -500,9 +496,7 @@ class Fonctions
             $return .= ' <th>'. _('divers_etat_maj_1') .'</th>';
             $return .= ' <th>'. _('resp_traite_user_annul') .'</th>';
             $return .= ' <th>'. _('resp_traite_user_motif_annul') .'</th>';
-            if ($config->canAfficheDateTraitement()) {
-                $return .= '<th>'. _('divers_date_traitement') .'</th>' ;
-            }
+            $return .= '<th>'. _('divers_date_traitement') .'</th>' ;
             $return .= '</tr>';
             $return .= '</thead>';
             $return .= '<tbody>';
@@ -573,12 +567,10 @@ class Fonctions
                 $return .= '<td>' . $casecocher1 . '</td>';
                 $return .= '<td>' . $text_annul . '</td>';
 
-                if ($config->canAfficheDateTraitement()) {
-                    if (empty($sql_p_date_demande)) {
-                        $return .= '<td class="histo-left">' . _('divers_traitement') . ' : ' . $sql_p_date_traitement . '</td>';
-                    } else {
-                        $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : ' . $sql_p_date_traitement . '</td>';
-                    }
+                if (empty($sql_p_date_demande)) {
+                    $return .= '<td class="histo-left">' . _('divers_traitement') . ' : ' . $sql_p_date_traitement . '</td>';
+                } else {
+                    $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_p_date_demande . '<br>' . _('divers_traitement') . ' : ' . $sql_p_date_traitement . '</td>';
                 }
                 $return .= '</tr>';
                 $i = !$i;
@@ -627,9 +619,7 @@ class Fonctions
             $return .= '<th>'. _('divers_accepter_maj_1') .'</th>';
             $return .= '<th>'. _('divers_refuser_maj_1') .'</th>';
             $return .= '<th>'. _('resp_traite_user_motif_refus') .'</th>';
-            if ($config->canAfficheDateTraitement()) {
-                $return .= '<th>'. _('divers_date_traitement') .'</th>' ;
-            }
+            $return .= '<th>'. _('divers_date_traitement') .'</th>' ;
             $return .= '</tr>';
             $return .= '</thead>';
             $return .= '<tbody>';
@@ -677,9 +667,7 @@ class Fonctions
                 $return .= '<td>' . $casecocher1 . '</td>';
                 $return .= '<td>' . $casecocher2 . '</td>';
                 $return .= '<td>' . $text_refus . '</td>';
-                if ($config->canAfficheDateTraitement()) {
-                    $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_date_demande . '<br>' . _('divers_traitement') . ' : ' . $sql_date_traitement . '</td>';
-                }
+                $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_date_demande . '<br>' . _('divers_traitement') . ' : ' . $sql_date_traitement . '</td>';
 
                 $return .= '</tr>';
                 $i = !$i;
@@ -730,9 +718,7 @@ class Fonctions
             $return .= '<th>'. _('divers_accepter_maj_1') .'</th>';
             $return .= '<th>'. _('divers_refuser_maj_1') .'</th>';
             $return .= '<th>'. _('resp_traite_user_motif_refus') .'</th>';
-            if ($config->canAfficheDateTraitement()) {
-                $return .= '<th>'. _('divers_date_traitement') .'</th>' ;
-            }
+            $return .= '<th>'. _('divers_date_traitement') .'</th>' ;
             $return .= '</tr>';
             $return .= '</thead>';
             $return .= '<tbody>';
@@ -795,12 +781,10 @@ class Fonctions
                 $return .= '<td>' . $boutonradio1 . '</td>';
                 $return .= '<td>' . $boutonradio2 . '</td>';
                 $return .= '<td>' . $text_refus . '</td>';
-                if ($config->canAfficheDateTraitement()) {
-                    if ($sql_date_traitement==NULL) {
-                        $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_date_demande . '<br>' . _('divers_traitement') . ' : pas traité</td>';
-                    } else {
-                        $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_date_demande . '<br>' . _('divers_traitement') . ' : ' . $sql_date_traitement . '</td>';
-                    }
+                if ($sql_date_traitement==NULL) {
+                    $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_date_demande . '<br>' . _('divers_traitement') . ' : pas traité</td>';
+                } else {
+                    $return .= '<td class="histo-left">' . _('divers_demande') . ' : ' . $sql_date_demande . '<br>' . _('divers_traitement') . ' : ' . $sql_date_traitement . '</td>';
                 }
 
                 $return .= '</tr>';

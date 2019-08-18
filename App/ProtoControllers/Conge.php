@@ -68,7 +68,7 @@ class Conge
             $i = true;
             $listeConges = $this->getListeSQL($listId);
             $modifAutorisee = $config->canUserModifieDemande();
-            $affichDateTraitement = $config->canAfficheDateTraitement();
+            $affichDateTraitement = canAfficheDateTraitement(true);
             foreach ($listeConges as $conges) {
                 /** Dates demande / traitement */
                 $dateDemande = '';
