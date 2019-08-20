@@ -271,6 +271,8 @@ function authentification_passwd_conges_CAS()
     $config_CAS_portNumber =$_SESSION['config']['CAS_portNumber'];
     $config_CAS_URI        =$_SESSION['config']['CAS_URI'];
     $config_CAS_CACERT     =$_SESSION['config']['CAS_CACERT'];
+    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+
 
     global $connexionCAS;
     global $logoutCas;
@@ -280,9 +282,9 @@ function authentification_passwd_conges_CAS()
 
     // initialisation phpCAS
     if ($connexionCAS!="active") {
-        $CASCnx = \phpCAS::client(CAS_VERSION_2_0, $config_CAS_host, $config_CAS_portNumber, $config_CAS_URI);
+        \phpCAS::proxy(CAS_VERSION_2_0, $config_CAS_host, $config_CAS_portNumber, $config_CAS_URI);
+        \phpCAS::setPGTStorageFile("/tmp");
         $connexionCAS = "active";
-
     }
 
     if ($logoutCas==1) {
@@ -300,6 +302,13 @@ function authentification_passwd_conges_CAS()
     \phpCAS::forceAuthentication();
 
     $usernameCAS = \phpCAS::getUser();
+    $userPT = \phpCAS::retrievePT( $config->getUrlAccueil() . "/api/", $err_code, $err_msg);
+
+    $array = ['username' => $usernameCAS, 'proxyTicket' => $userPT];
+
+    return $array;
+
+
 
     //On nettoie la session créée par phpCAS
     session_destroy();
@@ -358,7 +367,7 @@ function unhash_user($huser_test)
     while ($resultat = $res_user->fetch_assoc()) {
         $clear_user = $resultat['u_login'];
         $huser = hash('sha256', $clear_user . $ics_salt);
-        if ($huser_test == $huser ) {
+        if ($huser_test === $huser ) {
             $user = $clear_user;
         }
     }
@@ -830,7 +839,7 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
     // si le user a droit de saisir une demande de conges ET si on est PAS dans une fenetre de responsable
     // OU si le user n'a pas droit de saisir une demande de conges ET si on est dans une fenetre de responsable
     // OU si le user est un RH ou un admin
-    if (( $config->canUserSaisieDemande() && $user_login==$_SESSION['userlogin'] ) || ( !$config->canUserSaisieDemande() && $user_login!=$_SESSION['userlogin'] ) || is_hr($_SESSION['userlogin']) || is_admin($_SESSION['userlogin'])) {
+    if (( $config->canUserSaisieDemande() && $user_login==$_SESSION['userlogin'] ) || ( $config->canResponsableSaisieMission() && \App\ProtoControllers\Responsable::isRespDeUtilisateur($_SESSION['userlogin'] , $user_login)) || is_hr($_SESSION['userlogin'])) {
         // congés
         $return .= '<div class="col-md-4">';
         $return .= '<label>' . _('divers_conges') . '</label>';
@@ -1239,12 +1248,7 @@ function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $m
             }
         }
     } else {
-        if (file_exists('/usr/sbin/sendmail'))
-            $mail->IsSendmail();   // send message using the $Sendmail program
-        elseif (file_exists('/var/qmail/bin/sendmail'))
-            $mail->IsQmail(); // send message using the qmail MTA
-        else
-            $mail->IsMail(); // send message using PHP mail() function
+        $mail->IsMail(); // send message using PHP mail() function
     }
 
     // initialisation du langage utilisé par php_mailer
@@ -2308,10 +2312,13 @@ function soustrait_solde_et_reliquat_user($user_login, $num_current_periode, $us
         if ($config->getDateLimiteReliquats() != 0) {
             //si date_fin_conges < date_limite_reliquat => alors on décompte dans reliquats
             if ($date_fin < $_SESSION['config']['date_limite_reliquats']) {
-                if ($reliquat>$user_nb_jours_pris)
+                if ($reliquat>$user_nb_jours_pris) {
                     $new_reliquat = $reliquat-$user_nb_jours_pris;
-                else
+                    $user_nb_jours_pris = 0;
+                } else {
                     $new_reliquat = 0;
+                    $user_nb_jours_pris = $user_nb_jours_pris - $reliquat;
+                }
             }
             //si date_debut_conges > date_limite_reliquat => alors on ne décompte pas dans reliquats
             elseif ($date_deb >= $_SESSION['config']['date_limite_reliquats']) {
@@ -2323,17 +2330,23 @@ function soustrait_solde_et_reliquat_user($user_login, $num_current_periode, $us
                 $comment="calcul reliquat -> date limite" ;
                 $nb_reliquats_a_deduire = compter($user_login, $num_current_periode, $date_deb, $_SESSION['config']['date_limite_reliquats'], $demi_jour_deb, "pm", $comment );
 
-                if ($reliquat > $nb_reliquats_a_deduire)
+                if ($reliquat > $nb_reliquats_a_deduire) {
                     $new_reliquat = $reliquat - $nb_reliquats_a_deduire;
-                else
+                    $user_nb_jours_pris = 0;
+                } else {
                     $new_reliquat = 0;
+                    $user_nb_jours_pris = $user_nb_jours_pris - $reliquat;
+                }
             }
         } else {
         // s'il n'y a pas de date limite d'utilisation des reliquats
-            if ($reliquat>$user_nb_jours_pris)
+            if ($reliquat>$user_nb_jours_pris) {
                 $new_reliquat = $reliquat-$user_nb_jours_pris;
-            else
+                $user_nb_jours_pris = 0;
+            } else {
                 $new_reliquat = 0;
+                $user_nb_jours_pris = $user_nb_jours_pris - $reliquat;
+            }
         }
         $VerifDec = verif_saisie_decimal($user_nb_jours_pris);
         $VerifDec = verif_saisie_decimal($new_reliquat);

@@ -1103,6 +1103,9 @@ msgstr "// CHEMIN VERS LE RÉPERTOIRE DE phpmailer<br>//------------------------
 msgid "config_comment_php_conges_cas_include_path"
 msgstr "// CHEMIN VERS LE RÉPERTOIRE DE cas<br>//-------------------------------------------------------<br>// On définit ici le chemin pour accéder au répertoire de la librairie PHP \"CAS\".<br>// Le chemin doit être relatif depuis la racine de l'application Libertempo."
 
+msgid "config_comment_afficher_types_conges_calendrier"
+msgstr "// Afficher le libellé des congés dans le calendrier<br>//-------------------------------------------------------<br>// Permet d'afficher le libellé des congés dans le calendrier selon le profil de l'utilisateur.<br>// Le HR voit toujours les libellés, quelle que soit l'option choisie."
+
 msgid "install_le_fichier"
 msgstr "Le fichier"
 
@@ -1517,9 +1520,6 @@ msgstr "date de fin"
 msgid "config_comment_affiche_demandes_dans_calendrier"
 msgstr "// AFFICHAGE DES DEMANDES DE CONGÉS DES UTILISATEURS DANS LE CALENDRIER : <br>//--------------------------------------------------------------------------------------------<br>// si à FALSE : les demandes de congés de tous les utilisateurs n'apparaissent pas sur le calendrier des congés. (seules les demandes de l'utilisateur connecté apparaissent) (FALSE est la valeur par défaut)<br>// si à TRUE : les demandes de congés de tous les utilisateurs apparaissent sur le calendrier des congés."
 
-msgid "config_comment_calcul_auto_jours_feries_france"
-msgstr "// SAISIE DES JOURS FÉRIÉS DE L'ANNÉE : <br>//--------------------------------------------------------------------------------------------<br>// si à FALSE : la saisie des jours fériés de l'année par l'administrateur se fait à la main. (FALSE est la valeur par défaut)<br>// si à TRUE : lors de la saisie des jours fériés de l'année par l'administrateur, les jours fériés (de France) sont automatiquement renseignés (il n'y a plus qu'à vérifier et valider)."
-
 msgid "config_comment_gestion_cas_absence_responsable"
 msgstr "// PRISE EN COMPTE DES ABSENCES DU RESPONSABLE : <br>//--------------------------------------------------------------------------------------------<br>// si à FALSE : en cas d'absence de leur responsable, les demandes des utilisateurs attendent le retour de celui-ci. (FALSE est la valeur par défaut)<br>// si à TRUE : en cas d'absence de leur responsable, les demandes des utilisateurs sont transmises au responsable du responsable qui peut alors les traiter."
 
@@ -1560,10 +1560,10 @@ msgid "button_cloture"
 msgstr "Changement Exercice"
 
 msgid "resp_cloture_exercice_all"
-msgstr "Clôture d'exercice globale pour Tous"
+msgstr "Clôture d'exercice globale"
 
 msgid "resp_cloture_exercice_groupe"
-msgstr "Clôture d'exercice globale par groupe"
+msgstr "Clôture d'exercice par groupe"
 
 msgid "resp_cloture_exercice_users"
 msgstr "Clôture d'exercice par personne"

@@ -183,15 +183,14 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
             return $this->updateSoldeUser($user, $duree, $typeId);
         }
 
-
         if ($this->isReliquatUtilisable($sql)) {
             $sql->getPdoObj()->begin_transaction();
-            if ($SoldeReliquat>=$duree) {
+            if ($SoldeReliquat >= $duree) {
                 $updateReliquat = $this->updateReliquatUser($user, $duree, $typeId);
-                $updateSolde = $this->updateSoldeUser($user, $duree, $typeId);
             } else {
                 $updateReliquat = $this->updateReliquatUser($user, $SoldeReliquat, $typeId);
-                $updateSolde = $this->updateSoldeUser($user, $duree, $typeId);
+                $dureeSansReliquat = $duree - $SoldeReliquat;
+                $updateSolde = $this->updateSoldeUser($user, $dureeSansReliquat, $typeId);
             }
             if (0 < $updateReliquat && 0 < $updateSolde) {
                 $sql->getPdoObj()->commit();
@@ -201,7 +200,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
             }
         } else {
             $sql->getPdoObj()->begin_transaction();
-            $updateSolde = $this->updateSoldeUser($user, $SoldeReliquat + $duree, $typeId);
+            $updateSolde = $this->updateSoldeUser($user, $duree, $typeId);
             $updateReliquat = $this->updateReliquatUser($user, $SoldeReliquat, $typeId);
             log_action(0, "reliquat", $user, 'retrait reliquat perdu (-' . $SoldeReliquat . ' jours). (date_limite_reliquat)');
             if (0 < $updateReliquat && 0 < $updateSolde) {
@@ -312,7 +311,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
         $sql = \includes\SQL::singleton();
 
         $req   = 'UPDATE conges_solde_user
-                SET su_reliquat = su_reliquat-' .number_format($duree, 2) . '
+                SET su_reliquat = su_reliquat-' . number_format($duree, 2,".","") . '
                 WHERE su_login = \''. \includes\SQL::quote($user) .'\'
                 AND su_abs_id = '. (int) $typeId;
         $query = $sql->query($req);
