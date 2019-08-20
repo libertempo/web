@@ -465,63 +465,29 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             return $return;
         }
 
-        if (!empty($post['_METHOD'])) {
-            switch ($post['_METHOD']) {
-                case 'DELETE':
-                    $return = static::deleteUtilisateur($post['login'], $errors);
-                    if ($return) {
-                        $notice = "deleted";
-                        log_action(0, '', $post['login'], 'utilisateur ' . $post['login'] . ' supprimé');
-                    }
-                    return $return;
-                case 'PUT':
-                    if (!empty($_GET['login'])) {
-                        $return = static::putUtilisateur($post, $errors);
-                    }
-                    if ($return) {
-                        $notice = "modified";
-                        log_action(0, '', $post['login'], 'utilisateur ' . $post['login'] . ' modifié');
-                    }
-                    return $return;
-            }
-        } else {
-                $return = static::insertUtilisateur($post, $errors);
+        switch ($post['_METHOD']) {
+            case 'DELETE':
+                $return = static::deleteUtilisateur($post['login'], $errors);
                 if ($return) {
-                    $notice = "inserted";
-                    log_action(0, '', $post['login'], 'utilisateur ' . $post['login'] . ' ajouté');
+                    $notice = "deleted";
+                    log_action(0, '', $post['login'], 'utilisateur ' . $post['login'] . ' supprimé');
                 }
-            return $return;
+                return $return;
+            case 'PUT':
+                if (!empty($_GET['login'])) {
+                    $return = static::putUtilisateur($post, $errors);
+                }
+                if ($return) {
+                    $notice = "modified";
+                    log_action(0, '', $post['login'], 'utilisateur ' . $post['login'] . ' modifié');
+                }
+                return $return;
+            default:
+                throw new \LogicException('Unknown _METHOD');
         }
     }
 
-    /**
-     * Controle la conformité du formulaire de création
-     *
-     * @param array $data
-     * @param array $errors
-     * @param \includes\SQL $sql
-     * @param \App\Libraries\Configuration $config
-     *
-     * @return boolean
-     */
-    private static function isFormInsertValide($data, &$errors, \includes\SQL $sql, \App\Libraries\Configuration $config)
-    {
-        $return = true;
-        $users = \App\ProtoControllers\Utilisateur::getListId(false);
-        if (in_array($data['login'], $users)) {
-            $errors[] = _('Cet identifiant existe déja.');
-            $return = false;
-        }
 
-        if ($config->getHowToConnectUser() == 'dbconges') {
-            if ($data['pwd1'] == '' || strcmp($data['pwd1'], $data['pwd2'])!=0 ) {
-                $errors[] = _('Saisie du mot de passe incorrect');
-                $return = false;
-            }
-        }
-
-        return $return && static::isFormValide($data, $errors, $sql, $config);
-    }
 
     /**
      * Controle la conformité du formulaire de mise à jour
@@ -702,95 +668,6 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
                 )';
         $query = $sql->query($req);
         return 0 >= (int) $query->fetch_array()[0];
-    }
-
-    /**
-     * Création d'un nouvel utilisateur
-     *
-     * @param array $data
-     * @param array $errors
-     * @return boolean
-     */
-    private static function insertUtilisateur($data, &$errors)
-    {
-        $sql = \includes\SQL::singleton();
-        $config = new \App\Libraries\Configuration($sql);
-        if (!static::isFormInsertValide($data, $errors, $sql, $config)) {
-            return false;
-        }
-
-        $sql->getPdoObj()->begin_transaction();
-        $insertInfos = static::insertInfosUtilisateur($data, $sql);
-        $insertSoldes = static::insertSoldeUtilisateur($data, $sql);
-        $insertGroupes = true;
-        if (!empty($data['groupesId'])) {
-            $insertGroupes = static::insertGroupesUtilisateur($data, $sql);
-        }
-        if ($insertInfos && $insertSoldes && $insertGroupes) {
-            return $sql->getPdoObj()->commit();
-        }
-
-        $sql->getPdoObj()->rollback();
-        return false;
-    }
-
-    private static function insertInfosUtilisateur($data, \includes\SQL $sql)
-    {
-        $req = "INSERT INTO conges_users SET
-                    u_login='" . $data['login'] . "',
-                    u_nom='" . $data['nom'] . "',
-                    u_prenom='" . $data['prenom'] . "',
-                    u_is_resp='" . $data['isResp'] . "',
-                    u_is_admin='" . $data['isAdmin'] . "',
-                    planning_id = 0,
-                    u_is_hr='" . $data['isHR'] . "',
-                    u_passwd='" . $data['pwd1'] . "',
-                    u_quotite=" . $data['quotite'] . ",
-                    u_email = '" . $data['email'] . "',
-                    u_heure_solde=" . \App\Helpers\Formatter::hour2Time($data['soldeHeure']) . ",
-                    date_inscription = '" . date('Y-m-d H:i') . "';";
-
-        return $sql->query($req);
-    }
-
-    private static function insertSoldeUtilisateur($data, \includes\SQL $sql)
-    {
-        $config = new \App\Libraries\Configuration($sql);
-        $typeAbsencesConges = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges');
-
-        foreach ($typeAbsencesConges as $typeId => $info) {
-            $valuesStd[] = "('" . $data['login'] . "' ,"
-                                . $typeId . ", "
-                                . $data['joursAn'][$typeId] . ", "
-                                . $data['soldes'][$typeId] . ", "
-                                . $data['reliquats'][$typeId] . ")" ;
-        }
-        $req = "INSERT INTO conges_solde_user (su_login, su_abs_id, su_nb_an, su_solde, su_reliquat) VALUES " . implode(",", $valuesStd);
-        $returnStd = $sql->query($req);
-        $returnExc = 1;
-        if ($config->isCongesExceptionnelsActive()) {
-            $typeAbsencesExceptionnels = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges_exceptionnels');
-            foreach ($typeAbsencesExceptionnels as $typeId => $info) {
-                $valuesExc[] = "('" . $data['login'] . "' ,"
-                                    . $typeId . ", 0, "
-                                    . $data['soldes'][$typeId] . ", 0)" ;
-
-            }
-            $req = "INSERT INTO conges_solde_user (su_login, su_abs_id, su_nb_an, su_solde, su_reliquat) VALUES " . implode(",", $valuesExc);
-            $returnExc = $sql->query($req);
-        }
-
-        return $returnStd && $returnExc;
-    }
-
-    private static function insertGroupesUtilisateur($data, \includes\SQL $sql)
-    {
-        foreach ($data['groupesId'] as $gid) {
-            $values[] = "(" . $gid . ", '" . $data['login'] . "')"  ;
-        }
-        $req = "INSERT INTO conges_groupe_users (gu_gid, gu_login) VALUES " . implode(",", $values);
-
-        return $sql->query($req);
     }
 
     /**

@@ -1011,7 +1011,7 @@ class Fonctions
     // renvoit un tableau vide si pas de'edition pour le user
     private static function recup_editions_user($login)
     {
-        $tab_ed =a [];
+        $tab_ed = [];
 
         $sql2 = "SELECT ep_id, ep_date, ep_num_for_user ";
         $sql2=$sql2."FROM conges_edition_papier WHERE ep_login = '$login' ";

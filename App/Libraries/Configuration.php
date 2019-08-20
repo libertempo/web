@@ -451,7 +451,7 @@ class Configuration
 
     public function isUsersExportFromLdap()
     {
-        return $this->getGroupeAuthentificationValeur('export_users_from_ldap');
+        return 'ldap' === $this->getHowToConnectUser() && $this->getGroupeAuthentificationValeur('export_users_from_ldap');
     }
 
     /**

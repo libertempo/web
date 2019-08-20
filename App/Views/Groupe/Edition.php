@@ -140,7 +140,6 @@ var vm = new Vue({
         employes : {},
         responsables : {},
         responsablesGroupe : <?= json_encode($responsablesGroupe) ?>,
-
         infosGroupe : <?= json_encode($infosGroupe) ?>,
         dataForm : <?= json_encode($data) ?>,
         axios : instance
