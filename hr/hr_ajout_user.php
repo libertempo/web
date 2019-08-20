@@ -90,7 +90,7 @@ function dataForm2Array(array $htmlPost, \includes\SQL $sql, \App\Libraries\Conf
         $data['pwd2'] = '' !== $htmlPost['new_password2'] ? md5($htmlPost['new_password2']) : "";
     } else {
         $data['pwd1'] = md5(uniqid('', true));
-        $data['pwd2'] = md5('none');
+        $data['pwd2'] = $data['pwd1'];
     }
 
     if (array_key_exists('_METHOD', $htmlPost)) {
