@@ -3,24 +3,14 @@
 defined('_PHP_CONGES') or die('Restricted access');
 $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 if (!$config->canResponsablesAssociatePlanning()) {
-    redirect(ROOT_PATH . 'deconnexion.php');
+    redirect(ROOT_PATH . 'deconnexion');
 }
 
 $message   = '';
-$listPlanningId = \App\ProtoControllers\HautResponsable\Planning::getListPlanningId();
 $titre = _('resp_liste_planning');
-$lienModif = 'resp_index.php?onglet=modif_planning';
+$lienModif = 'modif_planning';
 $isHr = false;
-if (empty($listPlanningId)) {
-    $listIdUsed = [];
-    $plannings = [];
-} else {
-    $listIdUsed = \App\ProtoControllers\HautResponsable\Planning::getListPlanningUsed($listPlanningId);
-    $sql = \includes\SQL::singleton();
-    $config = new \App\Libraries\Configuration($sql);
-    $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
-    $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
-    $plannings = $api->get('planning', $_SESSION['token'])['data'];
-}
+$listPlanningId = \App\ProtoControllers\HautResponsable\Planning::getListPlanningId();
+$listIdUsed = \App\ProtoControllers\HautResponsable\Planning::getListPlanningUsed($listPlanningId);
 
 require_once VIEW_PATH . 'Planning/Liste.php';

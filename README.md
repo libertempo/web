@@ -7,6 +7,8 @@
 ![build_status](https://travis-ci.org/libertempo/web.svg?branch=master)
 [![licence](https://img.shields.io/badge/licence-GPL2-green.svg)](https://github.com/libertempo/web/blob/develop/LICENSE)
 
+## Panthéon
+[![](https://sourcerer.io/fame/prytoegrian/libertempo/web/images/0)](https://sourcerer.io/fame/prytoegrian/libertempo/web/links/0)[![](https://sourcerer.io/fame/prytoegrian/libertempo/web/images/1)](https://sourcerer.io/fame/prytoegrian/libertempo/web/links/1)[![](https://sourcerer.io/fame/prytoegrian/libertempo/web/images/2)](https://sourcerer.io/fame/prytoegrian/libertempo/web/links/2)[![](https://sourcerer.io/fame/prytoegrian/libertempo/web/images/3)](https://sourcerer.io/fame/prytoegrian/libertempo/web/links/3)[![](https://sourcerer.io/fame/prytoegrian/libertempo/web/images/4)](https://sourcerer.io/fame/prytoegrian/libertempo/web/links/4)[![](https://sourcerer.io/fame/prytoegrian/libertempo/web/images/5)](https://sourcerer.io/fame/prytoegrian/libertempo/web/links/5)[![](https://sourcerer.io/fame/prytoegrian/libertempo/web/images/6)](https://sourcerer.io/fame/prytoegrian/libertempo/web/links/6)[![](https://sourcerer.io/fame/prytoegrian/libertempo/web/images/7)](https://sourcerer.io/fame/prytoegrian/libertempo/web/links/7)
 
 # Présentation
 
@@ -16,16 +18,24 @@ Libertempo se veut être au plus proche des règles inhérentes aux réglementat
 
 Plus d'informations sont disponibles sur le [blog](http://libertempo.tuxfamily.org) et la [documentation](http://libertempo.tuxfamily.org/Documentation).
 
-# Version recommandée
-Vous pouvez télécharger la version stable la plus récente directement depuis [master](https://github.com/Libertempo/Libertempo-web/archive/master.zip).
+# Initialisation
+Avant tout, il vous faut installer `npm`, le [gestionnaire de paquet](https://www.npmjs.com/get-npm) de Node.
 
-Chaque nouvelle version est mise à disposition sur [github](https://github.com/Libertempo/Libertempo-web/releases) et sur [le blog du logiciel](http://libertempo.tuxfamily.org/downloads/)
+Ensuite, l'installation sous sa forme la plus simple se résume à faire :
+```sh
+git clone --single-branch -b master git@github.com:libertempo/web.git
+cd web
+ln -sf `pwd`/App/Tools/post-checkout .git/hooks/post-checkout
+make install
+```
+
+Chaque nouvelle version est mise à disposition sur [github](https://github.com/libertempo/web/releases) et sur [le blog du logiciel](http://libertempo.tuxfamily.org/downloads/)
 
 # Support minimum
 | Logiciel | Version |
 |-------|-----|
-| php   | 7.0 |
-| mysql | 5.6 |
+| php   | 7.1 |
+| mysql | 8.0 |
 | apache| 2.4 |
 
 

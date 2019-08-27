@@ -3,27 +3,7 @@
 require_once 'libraries';
 require_once ROOT_PATH . 'version.php';
 
-define('BACKUP_PATH', ROOT_PATH . 'backup' . DS);
 define('MAJ_PATH', PATCH_PATH . DS . 'Maj' . DS);
-
-/**
- *
- */
-function getVersionDerniereMiseAJour(\includes\SQL $db, string $installedVersion) : string
-{
-    $req = 'SELECT appli_valeur FROM conges_appli WHERE appli_variable = "version_last_maj" LIMIT 1';
-    $res = $db->query($req);
-    $versionLastMaj = $res->fetch_array()['appli_valeur'];
-    $versionFile = file_get_contents('/tmp/lt-last-version');
-    if (!empty($versionLastMaj)) {
-        return $versionLastMaj;
-    } elseif ($versionFile) {
-        // @TODO: Compat with <1.12 versions
-        return $versionFile;
-    }
-
-    return $installedVersion . '.0';
-}
 
 /**
  * Execute les fichiers de mise à jour et retourne la version du dernier patch
@@ -55,7 +35,7 @@ function setInstalledVersion(\includes\SQL $db, $versionCode) : bool
     $req = "UPDATE conges_config SET conf_valeur = '$versionCode' WHERE conf_nom = 'installed_version' ";
     $db->query($req);
 
-    return 0 < $db->affected_rows;
+    return true;
 }
 
 /**
@@ -63,7 +43,7 @@ function setInstalledVersion(\includes\SQL $db, $versionCode) : bool
  *
  * @param array $data Données de configuration
  */
-function setDataConfigurationApi(array $dbConfiguration, array $ldapConfiguration) : bool
+function setDataConfigurationApi(array $dbConfiguration, array $ldapConfiguration, array $casConfiguration) : bool
 {
     $data = [
         'db' => [
@@ -88,6 +68,12 @@ function setDataConfigurationApi(array $dbConfiguration, array $ldapConfiguratio
             'filtre' => $ldapConfiguration['filtre'],
             'filtre_recherche' => $ldapConfiguration['filtre_recherche'],
         ],
+        'cas' => [
+            'serveur' => $casConfiguration['serveur'],
+            'port' => $casConfiguration['port'],
+            'uri' => $casConfiguration['uri'],
+            'caCert' => $casConfiguration['caCert'],
+        ],
     ];
 
     return file_put_contents(API_SYSPATH . 'configuration.json', json_encode($data));
@@ -98,21 +84,8 @@ display('Contrôles généraux…');
 if (!\includes\SQL::existsDatabase($mysql_database)) {
     displayError('Application non installée');
 }
-$installedVersion = getInstalledVersion();
 $db = \includes\SQL::singleton();
-$versionDerniereMAJ = getVersionDerniereMiseAJour($db, $installedVersion);
-
-// Quelques vérifications de base…
-if ('0.0.0' == $versionDerniereMAJ) {
-    displayError('l\'application n\'est pas encore installée.');
-}
-
-display('Sauvegarde de la DB courante…');
-try {
-    \admin\Fonctions::sauvegardeAsFile($installedVersion, 'end');
-} catch (\Exception $e) {
-    displayFail();
-}
+$versionDerniereMAJ = getVersionDerniereMiseAJour($db, getInstalledVersion());
 
 display('Configuration de l\'API');
 $dbConfiguration = [
@@ -137,7 +110,13 @@ $ldapConfiguration = [
     'filtre' => $config_ldap_filtre ?? '',
     'filtre_recherche' => $config_ldap_filrech ?? '',
 ];
-if (!setDataConfigurationApi($dbConfiguration, $ldapConfiguration)) {
+$casConfiguration = [
+    'serveur' => $config_CAS_host ?? '',
+    'port' => $config_CAS_portNumber ?? '',
+    'uri' => $config_CAS_URI ?? '',
+    'caCert' => $config_CAS_CACERT ?? ''
+];
+if (!setDataConfigurationApi($dbConfiguration, $ldapConfiguration, $casConfiguration)) {
     displayFail();
 }
 
@@ -148,7 +127,7 @@ $versionMaj = implode('.', [$major, $minor, $patch]);
 // Le seul cas qui amènerait à ce que la version ait cette valeur ici
 // est qu'aucun script ne soit supérieur la version courante
 if ('0.0.0' === $versionMaj) {
-    display('aucune mise à jour disponible');
+    display('Aucune mise à jour disponible');
     exit();
 }
 

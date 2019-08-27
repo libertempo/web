@@ -58,7 +58,7 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
         $daysOfWeekDisabled = \utilisateur\Fonctions::getDatePickerDaysOfWeekDisabled();
         $datesFeries        = \utilisateur\Fonctions::getDatePickerJoursFeries();
         $datesFerme         = \utilisateur\Fonctions::getDatePickerFermeture();
-        $datesDisabled      = array_merge($datesFeries,$datesFerme);
+        $datesDisabled      = array_merge($datesFeries, $datesFerme);
         $startDate          = \utilisateur\Fonctions::getDatePickerStartDate();
 
         $datePickerOpts = [
@@ -307,8 +307,7 @@ class Repos extends \App\ProtoControllers\Employe\AHeure
     {
         return $this->isChevauchementHeureAdditionnelle($jour, $heureDebut, $heureFin, $user)
             || $this->isChevauchementHeureRepos($jour, $heureDebut, $heureFin, $user, $id)
-            || $this->isChevauchementConges($jour, $heureDebut, $heureFin, $user)
-        ;
+            || $this->isChevauchementConges($jour, $heureDebut, $heureFin, $user);
     }
 
     /**

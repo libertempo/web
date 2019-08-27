@@ -1,7 +1,7 @@
 {
-    "name": "Libertempo/Libertempo-web",
+    "name": "libertempo/web",
     "keywords": ["congés", "leaves"],
-    "homepage": "https://github.com/Libertempo/Libertempo-web",
+    "homepage": "https://github.com/libertempo/web",
     "license": "GPL-2.0",
     "replace" : {
         "wouldsmina/Libertempo": "^1.8"
@@ -27,24 +27,22 @@
         "vendor-dir": "vendor"
     },
     "require": {
-        "php": "^7.0",
+        "php": "^7.1",
         "ext-mbstring": "*",
         "ext-Reflection": "*",
         "ext-curl": "*",
-        "raveren/kint": "^1.0",
-        "phpmailer/phpmailer": "5.2.26",
-        "tecnickcom/tcpdf": "6.2.6",
-        "jasig/phpcas": "1.3.5",
+        "kint-php/kint": "3.2.2",
+        "phpmailer/phpmailer": "6.0.7",
+        "tecnickcom/tcpdf": "6.2.26",
+        "jasig/phpcas": "1.3.7",
         "yohang/calendr": "^2.0",
-        "guzzlehttp/guzzle": "6.2.2",
-        "libertempo/api": "1.5.0",
-        "rollbar/rollbar": "1.4",
-        "ocramius/package-versions": "1.2"
+        "guzzlehttp/guzzle": "6.3.3",
+        "libertempo/api": "1.7.0",
+        "rollbar/rollbar": "1.7.1"
     },
     "require-dev": {
-        "atoum/atoum": "3.0.0",
-        "symfony/console": "3.2",
-        "codacy/coverage": "1.4.1",
-        "phpstan/phpstan": "0.9"
+        "atoum/atoum": "3.3.0",
+        "codacy/coverage": "1.4.2",
+        "phpstan/phpstan": "0.11.5"
     }
 }

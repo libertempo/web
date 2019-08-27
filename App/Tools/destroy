@@ -1,7 +1,6 @@
 #!/usr/bin/env php
 <?php
 require_once 'libraries';
-require_once CONFIG_PATH . 'dbconnect.php';
 
 define('INSTALLATION_PATH', PATCH_PATH . DS . 'Installation' . DS);
 define('API_SYSPATH', ROOT_PATH . 'vendor' . DS . 'libertempo' . DS . 'api' . DS);
@@ -24,7 +23,7 @@ if (!\includes\SQL::existsDatabase($mysql_database)) {
 }
 
 display('Vous êtes sur le point de supprimer toute la base de données!');
-$input = getValue('êtes vous sûr (y/N) :');
+$input = getValue('Êtes-vous sûr (y/N) :');
 if ($input != 'y' &&  $input != 'Y') {
     displayError('Destruction annulée.');
 }

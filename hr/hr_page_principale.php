@@ -1,6 +1,6 @@
 <?php
 
-defined( '_PHP_CONGES' ) or die( 'Restricted access' );
+defined('_PHP_CONGES') or die('Restricted access');
 $message = '';
 
 if (getpost_variable('notice') !== "") {
@@ -15,6 +15,8 @@ if (getpost_variable('notice') !== "") {
         case 'deleted':
             $message = _('Utilisateur supprimé');
             break;
+        case 'credit-added':
+            $message = _('Compte(s) crédités(s)');
         default:
             break;
     }
@@ -40,16 +42,16 @@ asort($infoUsers);
 uasort($infoUsers, 'sortParActif');
 foreach ($infoUsers as $login => $infosUser) {
     $rights = [];
-    if ($infosUser['u_is_active'] == 'N') {
+    if ($infosUser['u_is_active'] === 'N') {
         $rights[] = 'inactif';
     }
-    if ($infosUser['u_is_admin'] == 'Y') {
+    if ($infosUser['u_is_admin'] === 'Y') {
         $rights[] = 'administrateur';
     }
-    if ($infosUser['u_is_resp'] == 'Y') {
+    if ($infosUser['u_is_resp'] === 'Y') {
         $rights[] = 'responsable';
     }
-    if ($infosUser['u_is_hr'] == 'Y') {
+    if ($infosUser['u_is_hr'] === 'Y') {
         $rights[] = 'RH';
     }
 
@@ -66,9 +68,9 @@ foreach ($infoUsers as $login => $infosUser) {
  */
 function sortParActif(array $a, array $b)
 {
-    if ($a['u_is_active'] == 'Y' && $b['u_is_active'] == 'N') {
+    if ($a['u_is_active'] === 'Y' && $b['u_is_active'] === 'N') {
         return -1; // $a est avant $b
-    } elseif ($a['u_is_active'] == 'N' && $b['u_is_active'] == 'Y') {
+    } elseif ($a['u_is_active'] === 'N' && $b['u_is_active'] === 'Y') {
         return 1; // $a est derrière $b
     }
 

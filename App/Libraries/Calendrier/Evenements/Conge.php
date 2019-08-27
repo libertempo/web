@@ -13,13 +13,14 @@ namespace App\Libraries\Calendrier\Evenements;
  */
 class Conge
 {
-    public function __construct(\includes\SQL $db) {
+    public function __construct(\includes\SQL $db)
+    {
         $this->db = $db;
     }
 
     /**
-    * @var \includes\SQL Objet de DB
-    */
+     * @var \includes\SQL Objet de DB
+     */
     private $db;
 
     /**
@@ -46,6 +47,7 @@ class Conge
                     'employe' => $jour['p_login'],
                     'demiJournee' => '*',
                     'statut' => $jour['p_etat'],
+                    'libelle' => $jour['ta_libelle'],
                 ];
             }
 
@@ -54,12 +56,14 @@ class Conge
                 'employe' => $jour['p_login'],
                 'demiJournee' => $this->getDemiJourneeDebut($jour['p_date_deb'], $jour['p_demi_jour_deb'], $jour['p_date_fin'], $jour['p_demi_jour_fin']),
                 'statut' => $jour['p_etat'],
+                'libelle' => $jour['ta_libelle'],
             ];
             if ($jour['p_date_fin'] !== $jour['p_date_deb']) {
                 $conges[$jour['p_date_fin']][] = [
                     'employe' => $jour['p_login'],
                     'demiJournee' => $this->getDemiJourneeFin($jour['p_date_deb'], $jour['p_demi_jour_deb'], $jour['p_date_fin'], $jour['p_demi_jour_fin']),
                     'statut' => $jour['p_etat'],
+                    'libelle' => $jour['ta_libelle'],
                 ];
             }
         }
@@ -133,10 +137,12 @@ class Conge
         }
         $etats[] = \App\Models\Conge::STATUT_VALIDATION_FINALE;
         if ($canVoirEnTransit) {
-            $etats = array_merge($etats, [
+            $etats = array_merge(
+                $etats, [
                 \App\Models\Conge::STATUT_DEMANDE,
                 \App\Models\Conge::STATUT_PREMIERE_VALIDATION
-            ]);
+                ]
+            );
         }
         /* On prend plus pour le début en cas de congés débordant sur deux mois */
         $req = 'SELECT *

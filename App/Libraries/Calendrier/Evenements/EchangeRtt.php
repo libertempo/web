@@ -13,13 +13,14 @@ namespace App\Libraries\Calendrier\Evenements;
  */
 class EchangeRtt
 {
-    public function __construct(\includes\SQL $db) {
+    public function __construct(\includes\SQL $db)
+    {
         $this->db = $db;
     }
 
     /**
-    * @var \includes\SQL Objet de DB
-    */
+     * @var \includes\SQL Objet de DB
+     */
     private $db;
 
     /**

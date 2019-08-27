@@ -227,118 +227,46 @@ content-title {
     font-weight: bold;
     margin: 0
 }
-#onglet_menu {
-    overflow: hidden
-}
-#onglet_menu .onglet {
-    font-size: 14px;
-    font-size: 1.4rem;
-    border-bottom: #eceff6 1px solid;
-    float: left;
-    text-align: center;
-    line-height: 40px
-}
-#onglet_menu .onglet .current-year {
-    color: #00aad4
-}
-#onglet_menu .onglet.active {
-    border-bottom: transparent;
-    font-weight: bold
-}
-#onglet_menu .onglet.active a {
-    background-color: #fff
-}
-#onglet_menu .onglet:first-child a {
-    border-left: none
-}
-#onglet_menu .onglet a {
-    display: block;
-    text-align: center;
-    color: #6e6e6e;
-    background-color: #f6f8fb;
-    border-left: solid 1px #eceff6;
-    -webkit-transition: background-color, 1s, ease-out;
-    -moz-transition: background-color, 1s, ease-out;
-    -o-transition: background-color, 1s, ease-out;
-    transition: background-color, 1s, ease-out
-}
-#onglet_menu .onglet a:hover {
-    text-decoration: none;
-    background-color: #fff
-}
-#onglet_menu .onglet a .current-year {
-    color: #00aad4
-}
-#onglet_menu .onglet.calendar-nav {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    background-color: #f6f8fb;
-    border-left: solid 1px #eceff6
-}
-#onglet_menu .onglet.calendar-nav ul {
-    float: right;
-    margin: 0 20px;
-    padding: 0
-}
-#onglet_menu .onglet.calendar-nav ul li {
-    padding: 0 5px;
-    margin: 0;
-    list-style-type: none;
-    float: left
-}
-#onglet_menu .onglet.calendar-nav ul li a {
-    border: none;
-    padding: 0 5px;
-    color: #00aad4
-}
-#onglet_menu .onglet.calendar-nav ul li a span {
-    display: none
-}
-#onglet_menu .onglet.calendar-nav ul li.current-year {
-    color: #00aad4;
-    line-height: 40px;
-    font-weight: bold
-}
-.main-content {
+
+#main-content {
     padding: 20px
 }
-.main-content h1 {
+#main-content h1 {
     font-size: 20px;
     font-size: 2rem;
     text-transform: uppercase
 }
-.main-content h2 {
+#main-content h2 {
     font-size: 18px;
     font-size: 1.8rem
 }
-.main-content.traite_user .calendar-nav {
+#main-content.traite_user .calendar-nav {
     margin: 0;
     padding: 0;
     overflow: hidden;
     float: right
 }
-.main-content.traite_user .calendar-nav ul {
+#main-content.traite_user .calendar-nav ul {
     float: right;
     margin: 0 20px;
     padding: 0
 }
-.main-content.traite_user .calendar-nav ul li {
+#main-content.traite_user .calendar-nav ul li {
     line-height: 20px;
     padding: 0 5px;
     margin: 0;
     list-style-type: none;
     float: left
 }
-.main-content.traite_user .calendar-nav ul li a {
+#main-content.traite_user .calendar-nav ul li a {
     border: none;
     padding: 0 5px;
     color: #00aad4
 }
-.main-content.traite_user .calendar-nav ul li a span {
+#main-content.traite_user .calendar-nav ul li a span {
     display: none
 }
-.main-content.traite_user .calendar-nav ul li.current-year {
+#main-content.traite_user .calendar-nav ul li.current-year {
     color: #00aad4;
     font-weight: bold
 }
@@ -498,9 +426,7 @@ footer {
     width: 50%;
     min-width: 150px
 }
-.configure .plugins select {
-    width: 50px
-}
+
 #form-fermeture {
     margin-bottom: 20px;
     overflow: hidden
@@ -750,10 +676,10 @@ tr.calendrier-separator {
 
 #manageUser .suggestions {
 	width:100px;position:absolute;margin:-6px auto 0;padding:0;list-style-type:none;border:1px solid #d5d4d4;background:#fff;display: none;
-	font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;font-size:13px;color:#555;	
+	font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;font-size:13px;color:#555;
 	-border-radius:2px;
 	-webkit-border-radius:2px;
-	border-radius:2px;	
+	border-radius:2px;
 	-moz-box-shadow:0 1px 3px rgba(0,0,0,0.1);
 	-webkit-box-shadow:0 1px 3px rgba(0,0,0,0.1);
 	box-shadow:0 1px 3px rgba(0,0,0,0.1)

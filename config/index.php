@@ -5,14 +5,14 @@ defined('INCLUDE_PATH') or define('INCLUDE_PATH',     ROOT_PATH . 'includes/');
 require_once INCLUDE_PATH . 'define.php';
 
 if (empty(session_id())) {
-	redirect(ROOT_PATH . 'authentification?return_url=config/general');
+    redirect(ROOT_PATH . 'authentification?return_url=config/general');
 }
 
 
 $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
 $_SESSION['config']=init_config_tab();      // on initialise le tableau des variables de config
-include_once INCLUDE_PATH .'session.php';
+require_once INCLUDE_PATH .'session.php';
 
 $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
 
@@ -21,7 +21,7 @@ verif_droits_user("is_admin");
 
 $_SESSION['from_config']=true;  // initialise ce flag pour changer le bouton de retour des popup
 
-	$onglet = htmlentities(getpost_variable('onglet'), ENT_QUOTES | ENT_HTML401);
+    $onglet = htmlentities(getpost_variable('onglet'), ENT_QUOTES | ENT_HTML401);
 
 	if (!$onglet && is_admin($_SESSION['userlogin'])) {
 		$onglet = 'general';
@@ -31,7 +31,7 @@ $_SESSION['from_config']=true;  // initialise ce flag pour changer le bouton de 
 	/*   COMPOSITION DES ONGLETS...  */
 	/*********************************/
 
-	$onglets = [];
+    $onglets = [];
 
 	if (is_admin($_SESSION['userlogin'])) {
             $onglets['general'] = _('install_config_appli');
@@ -44,7 +44,7 @@ $_SESSION['from_config']=true;  // initialise ce flag pour changer le bouton de 
 	/*   COMPOSITION DU HEADER...    */
 	/*********************************/
 
-	header_menu('', 'Libertempo : '._('admin_button_config_1'),'');
+    header_menu('', 'Libertempo : '._('admin_button_config_1'));
 
 
 	/*********************************/
@@ -52,12 +52,13 @@ $_SESSION['from_config']=true;  // initialise ce flag pour changer le bouton de 
 	/*********************************/
 
 
-	echo '<div class="'.$onglet.' wrapper main-content">';
+    echo '<div class="'.$onglet.' wrapper" id="main-content">';
 
-		if ($onglet == 'general') {
+		if ($onglet === 'general') {
 			include_once ROOT_PATH . 'config/configure.php';
 		} else {
 			include_once ROOT_PATH . 'config/config_'.$onglet.'.php';
 		}
 
-	echo '</div>';
+    echo '</div>';
+    bottom();

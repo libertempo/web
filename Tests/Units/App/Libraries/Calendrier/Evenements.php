@@ -37,7 +37,7 @@ class Evenements extends \Tests\Units\TestUnit
         $this->calling($this->evenement)->getListe[5] = [];
         $this->calling($this->evenement)->getListe[6] = [];
         $calendrier = new _Evenements($this->injectableCreator);
-        $calendrier->fetchEvenements($this->dateDebut, $this->dateFin, $this->employes, false, false);
+        $calendrier->fetchEvenements($this->dateDebut, $this->dateFin, $this->employes, false, false, false);
 
         $this->array($calendrier->getEvenementsDate('Babar', '2017-02-10'))
             ->isIdenticalTo([]);
@@ -55,7 +55,7 @@ class Evenements extends \Tests\Units\TestUnit
         $this->calling($this->evenement)->getListe[5] = [];
         $this->calling($this->evenement)->getListe[6] = [];
         $calendrier = new _Evenements($this->injectableCreator);
-        $calendrier->fetchEvenements($this->dateDebut, $this->dateFin, $this->employes, false, false);
+        $calendrier->fetchEvenements($this->dateDebut, $this->dateFin, $this->employes, false, false, false);
 
         $this->array($calendrier->getEvenementsDate('Babar', '2017-02-12'))
             ->isIdenticalTo(['weekend']);

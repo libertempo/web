@@ -2,7 +2,7 @@
 define('ROOT_PATH', '../');
 define('INCLUDE_PATH',     ROOT_PATH . 'includes/');
 require_once INCLUDE_PATH . 'define.php';
-include_once INCLUDE_PATH . 'session.php';
+require_once INCLUDE_PATH . 'session.php';
 
 $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
@@ -40,8 +40,7 @@ if ( !isset($onglets[ $onglet ]) && !in_array($onglet, array('modif_demande','su
 /*   COMPOSITION DU HEADER...    */
 /*********************************/
 
-$add_css = '<style>#onglet_menu .onglet{ width: ' . (str_replace(',', '.', 100 / count($onglets))) . '% ;}</style>';
-header_menu('', 'Libertempo : ' . _('user'), $add_css);
+header_menu('', 'Libertempo : ' . _('user'));
 
 /*********************************/
 /*   AFFICHAGE DU RECAP ...    */
@@ -57,8 +56,8 @@ echo "</div>\n";
 /*   AFFICHAGE DE L'ONGLET ...    */
 /*********************************/
 
-echo '<div class="' . $onglet . ' main-content">';
-include ROOT_PATH . 'utilisateur/user_' . $onglet . '.php';
+echo '<div class="' . $onglet . ' wrapper" id="main-content">';
+require ROOT_PATH . 'utilisateur/user_' . $onglet . '.php';
 echo '</div>';
 
 /*********************************/

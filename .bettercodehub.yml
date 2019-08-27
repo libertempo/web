@@ -1,5 +1,6 @@
 exclude:
 - /vendor/.*
+- /node_modules/.*
 - /Public/Assets/.*
 component_depth: 1
 languages:

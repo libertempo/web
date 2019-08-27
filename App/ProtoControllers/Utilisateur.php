@@ -19,7 +19,7 @@ class Utilisateur
         $sql = \includes\SQL::singleton();
         $req = 'SELECT u_login
                 FROM conges_users';
-        if ($activeSeul){
+        if ($activeSeul) {
             $req .= ' WHERE u_is_active = "Y"';
         }
         $req .= ' ORDER BY u_nom ASC, u_prenom ASC';
@@ -122,7 +122,6 @@ class Utilisateur
     {
         $donnees = [];
         $sql = \includes\SQL::singleton();
-        $config = new \App\Libraries\Configuration($sql);
         if ($config->isUsersExportFromLdap()) {
             $injectableCreator = new \App\Libraries\InjectableCreator($sql, $config);
             $ldap = $injectableCreator->get(\App\Libraries\Ldap::class);
@@ -168,11 +167,11 @@ class Utilisateur
     /**
      * Récupère l'adresse email de l'utilisateur
      *
-     *
      * @param string $login
      * @return string $mail
      */
-    public static function getEmailUtilisateur($login)  {
+    public static function getEmailUtilisateur($login)
+    {
         return static::getDonneesUtilisateur($login)["u_email"];
     }
 
@@ -183,9 +182,12 @@ class Utilisateur
      *
      * @return array
      */
-    public static function getListByPlanning($planningId)
+    public static function getListByPlanning($planningId) : array
     {
         $planningId = (int) $planningId;
+        if (NIL_INT === $planningId) {
+            return [];
+        }
         $sql = \includes\SQL::singleton();
         $req = 'SELECT *
                 FROM conges_users
@@ -238,6 +240,7 @@ class Utilisateur
 
     /**
      * Retourne le solde de tout les types de congés
+     *
      * @todo passer l'option gestion_conges_exceptionnels en param
      * après merge de #445
      *
@@ -294,8 +297,7 @@ class Utilisateur
     {
         return static::hasCongesEnCours($login)
             || static::hasHeureReposEnCours($login)
-            || static::hasHeureAdditionnelleEnCours($login)
-        ;
+            || static::hasHeureAdditionnelleEnCours($login);
     }
 
     /**

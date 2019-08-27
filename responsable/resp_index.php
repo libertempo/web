@@ -5,7 +5,7 @@ define('INCLUDE_PATH',     ROOT_PATH . 'includes/');
 require_once INCLUDE_PATH . 'define.php';
 defined('_PHP_CONGES') or die('Restricted access');
 
-include_once INCLUDE_PATH . 'session.php';
+require_once INCLUDE_PATH . 'session.php';
 
 $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
@@ -71,8 +71,7 @@ if (!isset($onglets[$onglet]) && !in_array($onglet, array('traite_user', 'modif_
 /*   COMPOSITION DU HEADER...    */
 /*********************************/
 
-$add_css = '<style>#onglet_menu .onglet{ width: ' . (str_replace(',', '.', 100 / count($onglets))) . '% ;}</style>';
-header_menu('', 'Libertempo : ' . _('divers_responsable_maj_1'), $add_css);
+header_menu('', 'Libertempo : ' . _('divers_responsable_maj_1'));
 
 /*********************************/
 /*   AFFICHAGE DE L'ONGLET ...    */
@@ -88,8 +87,8 @@ if ($config->isCongesExceptionnelsActive()) {
     $tab_type_conges_exceptionnels = recup_tableau_types_conges_exceptionnels();
 }
 
-echo '<div class="' . $onglet . ' main-content">';
-include_once ROOT_PATH . 'responsable/resp_' . $onglet . '.php';
+echo '<div class="' . $onglet . ' wrapper" id="main-content">';
+require_once ROOT_PATH . 'responsable/resp_' . $onglet . '.php';
 echo '</div>';
 
 /*********************************/

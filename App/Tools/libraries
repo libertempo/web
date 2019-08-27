@@ -10,17 +10,25 @@ define('PUBLIC_PATH', ROOT_PATH . 'Public' . DS);
 define('ASSETS_PATH', PUBLIC_PATH . 'Assets' . DS);
 define('IMG_PATH', ASSETS_PATH . 'Img' . DS);
 define('_PHP_CONGES', 1);
+define('BACKUP_PATH', ROOT_PATH . 'backup' . DS);
+
 // TODO 2018-09-22 : lien vers l'API < 1.12, à supprimer quand cette version est un souvenir
 define('OLD_API_SYSPATH', ROOT_PATH . 'vendor' . DS . 'Libertempo' . DS . 'libertempo-api' . DS);
 define('API_SYSPATH', ROOT_PATH . 'vendor' . DS . 'libertempo' . DS . 'api' . DS);
+define('LAST_VERSION_FILE', '/tmp/lt-last-version');
+// For includes/fonction.php import
+define('TOOLS_PATH', ROOT_PATH . 'App' . DS . 'Tools' . DS);
+define('LOCALE_PATH',      TOOLS_PATH . 'locale' . DS);
 
 require_once ROOT_PATH . 'vendor/autoload.php';
-require_once INCLUDE_PATH . 'fonctions_conges.php';
 if (is_file(CONFIG_PATH . 'dbconnect.php')) {
     require_once CONFIG_PATH . 'dbconnect.php';
 }
 if (is_file(CONFIG_PATH . 'config_ldap.php')) {
     require_once CONFIG_PATH . 'config_ldap.php';
+}
+if (is_file(CONFIG_PATH . 'config_CAS.php')) {
+    require_once CONFIG_PATH . 'config_CAS.php';
 }
 
 function displayFail()
@@ -61,9 +69,13 @@ function setLastMaj(\includes\SQL $db, string $versionLastMaj) : bool
 {
     $req = 'UPDATE `conges_appli` SET appli_valeur = "' . $versionLastMaj . '" WHERE appli_variable = "version_last_maj" LIMIT 1';
     $db->query($req);
-    return 0 < file_put_contents('/tmp/lt-last-version', $versionLastMaj);
+    return 0 < file_put_contents(LAST_VERSION_FILE, $versionLastMaj);
 }
 
+/**
+ * Retourne la version installée
+ * @example 1.12
+ */
 function getInstalledVersion() : string
 {
     $db = \includes\SQL::singleton();
@@ -78,4 +90,57 @@ function getInstalledVersion() : string
         return 0;
     }
     return 0;
+}
+
+/**
+ * Retourne le format long de la dernière mise à jour installée
+ * @exemple 1.12.4
+ */
+function getVersionDerniereMiseAJour(\includes\SQL $db, string $installedVersion) : string
+{
+    $req = 'SELECT appli_valeur FROM conges_appli WHERE appli_variable = "version_last_maj" LIMIT 1';
+    $res = $db->query($req);
+    $versionLastMaj = $res->fetch_array()['appli_valeur'];
+    if (!empty($versionLastMaj)) {
+        return $versionLastMaj;
+    } elseif (is_file(LAST_VERSION_FILE)) {
+        // @TODO: Compat with <1.12 versions
+        return file_get_contents(LAST_VERSION_FILE);
+    }
+
+    return $installedVersion . '.0';
+}
+
+/**
+ * Crée une base de données nue
+ *
+ * @return bool succès de l'opération
+ */
+function createDatabase(\includes\SQL $db, string $name) : bool
+{
+    $req = 'CREATE DATABASE `' . $name . '`';
+    $db->query($req);
+
+    return 0 < $db->affected_rows;
+}
+
+// execute sequentiellement les requêtes d'un fichier .sql
+function execute_sql_file($file) : bool
+{
+    // lecture du fichier SQL
+    // et execution de chaque ligne ....
+    $lines = file ($file);
+    $sql_requete="";
+    foreach ($lines as $line_num => $line)
+    {
+        $line=trim($line);
+        if ((substr($line, 0, 1)!="#") && ($line!="")) { //on ne prend pas les lignes de commentaire
+            $sql_requete = $sql_requete.$line ;
+            if (substr($sql_requete, -1, 1)==";") { // alors la requete est finie !
+                $result = \includes\SQL::singleton()->query($sql_requete);
+                $sql_requete="";
+            }
+        }
+    }
+    return TRUE;
 }

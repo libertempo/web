@@ -2,46 +2,46 @@
 
 namespace App\Libraries;
 
+use PHPMailer\PHPMailer\PHPMailer;
+
 /**
  * Objet de gestion des notifications
- *
- *
  */
-abstract Class ANotification {
+abstract class ANotification
+{
 
     protected $contenuNotification;
     protected $envoiMail;
 
     /**
-     *
      * implémente les informations de la demande d'heure
      * ainsi que du contenu du mail
      *
      * @param int $id
-     *
      */
-    public function __construct($id) {
+    public function __construct($id)
+    {
         $id = (int)$id;
-        if (is_int($id)){
+        if (is_int($id)) {
             $this->contenuNotification = $this->getContenu($id);
         } else {
-            throw new Exception('erreur id');
+            throw new \Exception('erreur id');
         }
     }
 
 
     /**
-     *
      * Transmet les notifications par mail
      *
      * @return boolean
      */
-    public function send() {
+    public function send()
+    {
 
-    $return = [];
+        $return = [];
 
         // init du mail
-        $mail = new \PHPMailer();
+        $mail = new PHPMailer();
 
         if (file_exists(CONFIG_PATH . 'config_SMTP.php')) {
             include CONFIG_PATH . 'config_SMTP.php';
@@ -63,30 +63,24 @@ abstract Class ANotification {
                 }
             }
         } else {
-            if (file_exists('/usr/sbin/sendmail')) {
-                $mail->IsSendmail();   // send message using the $Sendmail program
-            } elseif (file_exists('/var/qmail/bin/sendmail')) {
-                $mail->IsQmail(); // send message using the qmail MTA
-            } else {
-                $mail->IsMail(); // send message using PHP mail() function
-            }
+            $mail->IsMail(); // send message using PHP mail() function
         }
 
         foreach ($this->contenuNotification as $notification) {
             if (empty($notification['destinataire'][0])) {
                 continue;
             }
-            if ($this->canSend($notification['config'])){
+            if ($this->canSend($notification['config'])) {
                 $mail->ClearAddresses();
                 $mail->From = $notification['expediteur']['mail'];
                 $mail->FromName = $notification['expediteur']['nom'];
                 foreach ($notification['destinataire'] as $destinataire) {
                     $mail->AddAddress($destinataire);
                 }
-                $mail->SetLanguage( 'fr', ROOT_PATH . 'vendor/phpmailer/phpmailer/language/');
+                $mail->SetLanguage('fr', ROOT_PATH . 'vendor/phpmailer/phpmailer/language/');
 
-                $mail->Subject = utf8_decode ( $notification['sujet'] );
-                $mail->Body = utf8_decode ( $notification['message'] );
+                $mail->Subject = utf8_decode($notification['sujet']);
+                $mail->Body = utf8_decode($notification['message']);
 
                 $return[] = $mail->Send();
             }
@@ -109,7 +103,8 @@ abstract Class ANotification {
      *
      * @return array
      */
-    protected function getContenu($id) {
+    protected function getContenu($id)
+    {
         $data = $this->getData($id);
         switch ($data['statut']) {
             case \App\Models\AHeure::STATUT_DEMANDE:
@@ -138,9 +133,9 @@ abstract Class ANotification {
      * @param string $optionName
      * @return boolean
      * @throws Exception
-     *
      */
-    private function canSend($optionName) {
+    private function canSend($optionName)
+    {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
         switch ($optionName) {

@@ -8,7 +8,8 @@ namespace App\ProtoControllers\Groupe;
  * @author Prytoegrian <prytoegrian@protonmail.com>
  * @author Wouldsmina <wouldsmina@tuxfamily.org>
  */
-class Responsable {
+class Responsable
+{
     /*
      * SQL
      */
@@ -35,7 +36,7 @@ class Responsable {
         $respLogin = [];
         while ($data = $query->fetch_array()) {
             $login = $data['gr_login'];
-            if(!in_array($login, $respLogin)) {
+            if (!in_array($login, $respLogin)) {
                 $respLogin[] = $login;
             }
         }

@@ -114,20 +114,20 @@
                         </tr>
                     <?php endforeach ?>
                     <tr align="center"><td class="histo" style="background-color: #CCC;" colspan="50"><i><?= _('resp_etat_users_titre_double_valid') ?></i></td></tr>
-                    <?php foreach($subalternesActifsGrandResponsable as $login => $donneesSubalterne) : ?>
+                    <?php foreach ($subalternesActifsGrandResponsable as $login => $donneesSubalterne) : ?>
                         <tr>
-                            <td><?= $tab_current_user['nom'] ?></td>
-                            <td><?= $tab_current_user['prenom'] ?></td>
-                            <td><?= $tab_current_user['quotite'] ?>%</td>
+                            <td><?= $donneesSubalterne['nom'] ?></td>
+                            <td><?= $donneesSubalterne['prenom'] ?></td>
+                            <td><?= $donneesSubalterne['quotite'] ?>%</td>
                             <?php foreach($tab_type_cong as $id_conges => $libelle) : ?>
-                                <td><?= $tab_conges[$libelle]['nb_an'] ?> <i>(<?= $tab_conges[$libelle]['solde'] ?>)</i></td>
-                                <td align="center" class="histo"><input type="text" name="tab_champ_saisie[<?= $current_login ?>][<?= $id_conges ?>]" size="6" maxlength="6" value="0"></td>
+                                <td><?= $donneesSubalterne['conges'][$libelle]['nb_an'] ?> <i>(<?= $donneesSubalterne['conges'][$libelle]['solde'] ?>)</i></td>
+                                <td align="center" class="histo"><input type="text" name="tab_champ_saisie[<?= $donneesSubalterne['login'] ?>][<?= $id_conges ?>]" size="6" maxlength="6" value="0"></td>
                             <?php endforeach ?>
                             <?php foreach($tab_type_conges_exceptionnels as $id_conges => $libelle) : ?>
-                                <td><i>(<?= $tab_conges[$libelle]['solde'] ?>)</i></td>
-                                <td align="center" class="histo"><input type="text" name="tab_champ_saisie[<?= $current_login ?>][<?= $id_conges ?>]" size="6" maxlength="6" value="0"></td>
+                                <td><i>(<?= $donneesSubalterne['conges'][$libelle]['solde'] ?>)</i></td>
+                                <td align="center" class="histo"><input type="text" name="tab_champ_saisie[<?= $donneesSubalterne['login'] ?>][<?= $id_conges ?>]" size="6" maxlength="6" value="0"></td>
                             <?php endforeach ?>
-                            <td align="center" class="histo"><input type="text" name="tab_commentaire_saisie[<?= $current_login ?>]" size="30" maxlength="200" value=""></td>
+                            <td align="center" class="histo"><input type="text" name="tab_commentaire_saisie[<?= $donneesSubalterne['login'] ?>]" size="30" maxlength="200" value=""></td>
                         </tr>
                     <?php endforeach ?>
                 </tbody>

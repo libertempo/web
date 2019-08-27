@@ -11,8 +11,8 @@ namespace App\Libraries\Calendrier;
 class Evenements
 {
     public function __construct(
-        \App\Libraries\InjectableCreator $injectableCreator)
-    {
+        \App\Libraries\InjectableCreator $injectableCreator
+    ) {
         $this->injectableCreator = $injectableCreator;
     }
 
@@ -29,14 +29,14 @@ class Evenements
      * @param bool $canVoirEnTransit Si l'utilisateur a la possiblité de voir les événements non encore validés
      * @param bool $hasGestionHeure
      */
-    public function fetchEvenements(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, array $employesATrouver, $canVoirEnTransit, $hasGestionHeure)
+    public function fetchEvenements(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, array $employesATrouver, $canVoirEnTransit, $hasGestionHeure, bool $canVoirTypesConges)
     {
         $canVoirEnTransit = (bool) $canVoirEnTransit;
         $hasGestionHeure = (bool) $hasGestionHeure;
         $this->fetchWeekends($dateDebut, $dateFin, $employesATrouver);
         $this->fetchFeries($dateDebut, $dateFin, $employesATrouver);
         $this->fetchFermeture($dateDebut, $dateFin, $employesATrouver);
-        $this->fetchConges($dateDebut, $dateFin, $canVoirEnTransit, $employesATrouver);
+        $this->fetchConges($dateDebut, $dateFin, $canVoirEnTransit, $employesATrouver, $canVoirTypesConges);
         $this->fetchEchanges($dateDebut, $dateFin, $employesATrouver);
         if ($hasGestionHeure) {
             $this->fetchHeuresAdditionnelles($dateDebut, $dateFin, $canVoirEnTransit, $employesATrouver);
@@ -83,7 +83,7 @@ class Evenements
         }
     }
 
-    private function fetchConges(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, $canVoirEnTransit, array $employesATrouver)
+    private function fetchConges(\DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, $canVoirEnTransit, array $employesATrouver, bool $canVoirTypesConges)
     {
         $conge = $this->injectableCreator->get(Evenements\Conge::class);
         $congesListe = $conge->getListe($dateDebut, $dateFin, $employesATrouver, $canVoirEnTransit);
@@ -92,7 +92,7 @@ class Evenements
                 $suffixe = '*' !== $evenement['demiJournee']
                 ? '_' . $evenement['demiJournee']
                 : '_all';
-                $this->setEvenementDate($evenement['employe'], $jour, 'conge' . $suffixe . ' conge_' . $evenement['statut'], 'Congé');
+                $this->setEvenementDate($evenement['employe'], $jour, 'conge' . $suffixe . ' conge_' . $evenement['statut'], $canVoirTypesConges ? $evenement['libelle'] : 'Congé');
             }
         }
     }

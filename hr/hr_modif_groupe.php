@@ -1,11 +1,11 @@
 <?php
 
-defined( '_PHP_CONGES' ) or die( 'Restricted access' );
+defined('_PHP_CONGES') or die('Restricted access');
 
 $id = (int) getpost_variable('group');
 
 if (0 >= $id) {
-    redirect(ROOT_PATH . 'deconnexion.php');
+    redirect(ROOT_PATH . 'deconnexion');
 }
 
 $gestionGroupes = new \App\ProtoControllers\Groupe\Gestion();

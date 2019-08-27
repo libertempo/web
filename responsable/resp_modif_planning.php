@@ -3,7 +3,7 @@
 defined('_PHP_CONGES') or die('Restricted access');
 $planningId = (int) getpost_variable('id');
 if (0 >= $planningId || !\App\ProtoControllers\Responsable\Planning::isVisible($planningId)) {
-    redirect(ROOT_PATH . 'deconnexion.php');
+    redirect(ROOT_PATH . 'deconnexion');
 }
 
 $message   = '';
@@ -27,7 +27,7 @@ if (!empty($_POST)) {
     }
 }
 
-$injectableCreator = new \App\Libraries\InjectableCreator(\includes\SQL::singleton(),$configuration);
+$injectableCreator = new \App\Libraries\InjectableCreator(\includes\SQL::singleton(), $configuration);
 $api = $injectableCreator->get(\App\Libraries\ApiClient::class);
 $planning = $api->get('planning/' .  $planningId, $_SESSION['token'])['data'];
 $jours = [
@@ -103,18 +103,12 @@ $text = [
 ];
 
 $optionsGroupes = \App\ProtoControllers\Groupe::getOptions();
-$associationsGroupe = array_map(function ($groupe) {
+$associationsGroupe = array_map(
+    function ($groupe) {
         return $groupe['utilisateurs'];
     },
     $optionsGroupes
 );
 $utilisateursAssocies = \App\ProtoControllers\Responsable\Planning::getListeUtilisateursAssocies($planningId);
-$subalternes = \App\ProtoControllers\Responsable::getUsersRespDirect($_SESSION['userlogin']);
-$utilisateursAssocies = array_filter(
-    $utilisateursAssocies,
-    function ($utilisateurs) use ($subalternes) {
-        return in_array($utilisateurs['login'], $subalternes);
-    }
-);
 
 require_once VIEW_PATH . 'Planning/Formulaire/Responsable_Edit.php';

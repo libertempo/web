@@ -7,18 +7,21 @@ namespace App\Libraries;
  *
  * Pour le moment, ne gère que l'utilisation courante, pas la modification des données via la page de configuration
  */
-class Configuration {
+class Configuration
+{
 
     private $data;
 
-    public function __construct(\includes\SQL $sql) {
+    public function __construct(\includes\SQL $sql)
+    {
         $this->loadData($sql);
     }
 
     /**
      * Charge les données de configuration
      */
-    private function loadData(\includes\SQL $sql) {
+    private function loadData(\includes\SQL $sql)
+    {
         $req = 'SELECT * FROM conges_config ORDER BY conf_groupe';
         $res = $sql->query($req);
         while ($data = $res->fetch_array()) {
@@ -36,17 +39,9 @@ class Configuration {
      *
      * @return string
      */
-    public function getInstalledVersion() {
+    public function getInstalledVersion()
+    {
         return $this->getGroupeLibertempoValeur('installed_version');
-    }
-
-    /**
-     * Retourne la langue
-     * @todo a supprimer. non utilisé
-     * @return string
-     */
-    public function getLangue() {
-        return $this->getGroupeLibertempoValeur('lang');
     }
 
     /**
@@ -56,7 +51,8 @@ class Configuration {
      *
      * @return mixed
      */
-    private function getGroupeLibertempoValeur($nom) {
+    private function getGroupeLibertempoValeur($nom)
+    {
         return $this->getValeur($nom, '00_libertempo');
     }
 
@@ -65,7 +61,8 @@ class Configuration {
      *
      * @return string
      */
-    public function getUrlAccueil() {
+    public function getUrlAccueil()
+    {
         return $this->getGroupeServeurValeur('URL_ACCUEIL_CONGES');
     }
 
@@ -76,7 +73,8 @@ class Configuration {
      *
      * @return mixed
      */
-    private function getGroupeServeurValeur($nom) {
+    private function getGroupeServeurValeur($nom)
+    {
         return $this->getValeur($nom, '01_Serveur Web');
     }
 
@@ -85,17 +83,20 @@ class Configuration {
      *
      * @return boolean
      */
-    public function canUserSaisieDemande() {
+    public function canUserSaisieDemande()
+    {
         return $this->getGroupeUtilisateurValeur('user_saisie_demande');
     }
 
     /**
      * Autorise la saisie d'une demande de mission par l'employé
+     *
      * @todo a supprimer au profit de canUserSaisieDemande()
      *
      * @return boolean
      */
-    public function canUserSaisieMission() {
+    public function canUserSaisieMission()
+    {
         return $this->getGroupeUtilisateurValeur('user_saisie_mission');
     }
 
@@ -106,14 +107,16 @@ class Configuration {
      *
      * @return boolean
      */
-    public function canUserChangePassword() {
+    public function canUserChangePassword()
+    {
         if ($this->getHowToConnectUser() != 'dbconges') {
             return false;
         }
         return $this->getGroupeUtilisateurValeur('user_ch_passwd');
     }
 
-    public function canUserSaisieNombreJours() {
+    public function canUserSaisieNombreJours()
+    {
         return !$this->getGroupeUtilisateurValeur('disable_saise_champ_nb_jours_pris');
     }
 
@@ -122,7 +125,8 @@ class Configuration {
      *
      * @return boolean
      */
-    public function canUserSaisieDemandePasse() {
+    public function canUserSaisieDemandePasse()
+    {
         return !$this->getGroupeUtilisateurValeur('interdit_saisie_periode_date_passee');
     }
 
@@ -131,7 +135,8 @@ class Configuration {
      *
      * @return boolean
      */
-    public function canUserModifieDemande() {
+    public function canUserModifieDemande()
+    {
         return !$this->getGroupeUtilisateurValeur('interdit_modif_demande');
     }
 
@@ -142,7 +147,8 @@ class Configuration {
      *
      * @return mixed
      */
-    private function getGroupeUtilisateurValeur($nom) {
+    private function getGroupeUtilisateurValeur($nom)
+    {
         return $this->getValeur($nom, '05_Utilisateur');
     }
 
@@ -151,7 +157,8 @@ class Configuration {
      *
      * @return boolean
      */
-    public function canResponsableSaisieMission() {
+    public function canResponsableSaisieMission()
+    {
         return $this->getGroupeResponsableValeur('resp_saisie_mission');
     }
 
@@ -160,7 +167,8 @@ class Configuration {
      *
      * @return boolean
      */
-    public function canResponsableAjouteConges() {
+    public function canResponsableAjouteConges()
+    {
         return $this->getGroupeResponsableValeur('resp_ajoute_conges');
     }
 
@@ -169,7 +177,8 @@ class Configuration {
      *
      * @return boolean
      */
-    public function isGestionResponsableAbsent() {
+    public function isGestionResponsableAbsent()
+    {
         return $this->getGroupeResponsableValeur('gestion_cas_absence_responsable');
     }
 
@@ -178,7 +187,8 @@ class Configuration {
      *
      * @return boolean
      */
-    public function isUtilisateurDesactiveVisible() {
+    public function isUtilisateurDesactiveVisible()
+    {
         return $this->getGroupeResponsableValeur('print_disable_users');
     }
 
@@ -194,7 +204,8 @@ class Configuration {
      *
      * @return mixed
      */
-    private function getGroupeResponsableValeur($nom) {
+    private function getGroupeResponsableValeur($nom)
+    {
         return $this->getValeur($nom, '06_Responsable');
     }
 
@@ -205,7 +216,8 @@ class Configuration {
      *
      * @return boolean
      */
-    public function canAdminChangePassword() {
+    public function canAdminChangePassword()
+    {
         if ($this->getHowToConnectUser() !='dbconges') {
             return false;
         }
@@ -219,35 +231,43 @@ class Configuration {
      *
      * @return mixed
      */
-    private function getGroupeAdministrateurValeur($nom) {
+    private function getGroupeAdministrateurValeur($nom)
+    {
         return $this->getValeur($nom, '07_Administrateur');
     }
 
-    public function isSendMailDemandeResponsable() {
+    public function isSendMailDemandeResponsable()
+    {
         return $this->getGroupeMailValeur('mail_new_demande_alerte_resp');
     }
 
-    public function isSendMailValidationUtilisateur() {
+    public function isSendMailValidationUtilisateur()
+    {
         return $this->getGroupeMailValeur('mail_valid_conges_alerte_user');
     }
 
-    public function isSendMailPremierValidationUtilisateur() {
+    public function isSendMailPremierValidationUtilisateur()
+    {
         return $this->getGroupeMailValeur('mail_prem_valid_conges_alerte_user');
     }
 
-    public function isSendMailRefusUtilisateur() {
+    public function isSendMailRefusUtilisateur()
+    {
         return $this->getGroupeMailValeur('mail_refus_conges_alerte_user');
     }
 
-    public function isSendMailAnnulationCongesUtilisateur() {
+    public function isSendMailAnnulationCongesUtilisateur()
+    {
         return$this->getGroupeMailValeur('mail_annul_conges_alerte_user');
     }
 
-    public function isSendMailModificationDemandeResponsable() {
+    public function isSendMailModificationDemandeResponsable()
+    {
         return $this->getGroupeMailValeur('mail_modif_demande_alerte_resp');
     }
 
-    public function isSendMailSupprimeDemandeResponsable() {
+    public function isSendMailSupprimeDemandeResponsable()
+    {
         return $this->getGroupeMailValeur('mail_supp_demande_alerte_resp');
     }
 
@@ -258,15 +278,18 @@ class Configuration {
      *
      * @return mixed
      */
-    private function getGroupeMailValeur($nom) {
+    private function getGroupeMailValeur($nom)
+    {
         return $this->getValeur($nom, '08_Mail');
     }
 
-    public function isSamediOuvrable() {
+    public function isSamediOuvrable()
+    {
         return $this->getGroupeJoursOuvrablesValeur('samedi_travail');
     }
 
-    public function isDimancheOuvrable() {
+    public function isDimancheOuvrable()
+    {
         return $this->getGroupeJoursOuvrablesValeur('dimanche_travail');
     }
 
@@ -277,7 +300,8 @@ class Configuration {
      *
      * @return mixed
      */
-    private function getGroupeJoursOuvrablesValeur($nom) {
+    private function getGroupeJoursOuvrablesValeur($nom)
+    {
         return $this->getValeur($nom, '09_jours ouvrables');
     }
 
@@ -293,7 +317,8 @@ class Configuration {
      *
      * @return mixed
      */
-    private function getGroupeGestionGroupesValeur($nom) {
+    private function getGroupeGestionGroupesValeur($nom)
+    {
         return $this->getValeur($nom, '10_Gestion par groupes');
     }
 
@@ -319,18 +344,14 @@ class Configuration {
      *
      * @return mixed
      */
-    private function getGroupeEditionPapierValeur($nom) {
+    private function getGroupeEditionPapierValeur($nom)
+    {
         return $this->getValeur($nom, '11_Editions papier');
     }
 
     public function canUserEchangeRTT()
     {
         return $this->getGroupeFonctionnementEtablissementValeur('user_echange_rtt');
-    }
-
-    public function isDoubleValidationActive()
-    {
-        return $this->getGroupeFonctionnementEtablissementValeur('double_validation_conges');
     }
 
     public function canGrandResponsableAjouteConge()
@@ -363,10 +384,16 @@ class Configuration {
         return $this->getGroupeFonctionnementEtablissementValeur('jour_mois_limite_reliquats');
     }
 
+    public function getQuiAfficheTypeCongesCalendrier()
+    {
+        return $this->getGroupeFonctionnementEtablissementValeur('afficher_types_conges_calendrier');
+    }
+
     public function isHeuresAutorise()
     {
         return $this->getGroupeFonctionnementEtablissementValeur('gestion_heures');
     }
+
     /**
      * Retourne une valeur du groupe fonctionnement de l'établissement par son nom
      *
@@ -384,10 +411,6 @@ class Configuration {
         return $this->getGroupeDiversValeur('affiche_date_traitement');
     }
 
-    public function isJoursFeriesFrance()
-    {
-        return $this->getGroupeDiversValeur('calcul_auto_jours_feries_france');
-    }
     /**
      * Retourne une valeur du groupe divers par son nom
      *
@@ -395,11 +418,13 @@ class Configuration {
      *
      * @return mixed
      */
-    private function getGroupeDiversValeur($nom) {
+    private function getGroupeDiversValeur($nom)
+    {
         return $this->getValeur($nom, '13_Divers');
     }
 
-    public function isIcalActive() {
+    public function isIcalActive()
+    {
         return $this->getGroupeIcalValeur('export_ical');
     }
 
@@ -414,16 +439,19 @@ class Configuration {
      *
      * @return mixed
      */
-    private function getGroupeIcalValeur($nom) {
+    private function getGroupeIcalValeur($nom)
+    {
         return $this->getValeur($nom, '15_ical');
     }
 
-    public function getHowToConnectUser() {
+    public function getHowToConnectUser()
+    {
         return $this->getGroupeAuthentificationValeur('how_to_connect_user');
     }
 
-    public function isUsersExportFromLdap() {
-        return $this->getGroupeAuthentificationValeur('export_users_from_ldap');
+    public function isUsersExportFromLdap()
+    {
+        return 'ldap' === $this->getHowToConnectUser() && $this->getGroupeAuthentificationValeur('export_users_from_ldap');
     }
 
     /**
@@ -433,7 +461,8 @@ class Configuration {
      *
      * @return mixed
      */
-    private function getGroupeAuthentificationValeur($nom) {
+    private function getGroupeAuthentificationValeur($nom)
+    {
         return $this->getValeur($nom, '04_Authentification');
     }
 
@@ -446,7 +475,8 @@ class Configuration {
      * @return mixed
      * @throws \Exception Si la configuration n'existe pas
      */
-    private function getValeur($nom, $groupe) {
+    private function getValeur($nom, $groupe)
+    {
         if (!isset($this->data[$groupe]) || !isset($this->data[$groupe][$nom])) {
             throw new \Exception('Donnée de configuration inexistante');
         }
