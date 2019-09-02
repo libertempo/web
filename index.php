@@ -105,7 +105,7 @@ function authDefault(string $authMethod, \App\Libraries\ApiClient $api)
             session_create($session_username);
             storeTokenApi($api, $session_username, $session_password);
         } catch (\Exception $e) {
-            ddd($e->getMessage());
+            dd($e->getMessage());
             $session_username="";
             $session_password="";
             $erreur="login_passwd_incorrect";
