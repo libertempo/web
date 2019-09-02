@@ -41,7 +41,7 @@
         <div class="row">
             <div class="col-md-6">
                 <h2><?= _('admin_gestion_groupe_users_membres') ?></h2>
-                <table class="table table-hover table-condensed table-striped"/>
+                <table class="table table-hover table-condensed table-striped">
                     <tbody>
                         <tr>
                             <div id="loader-bar-employe" class="progress">
@@ -130,6 +130,7 @@ var optionsVue = {
         responsables : {},
         responsablesGroupe : <?= json_encode($responsablesGroupe) ?>,
         infosGroupe : <?= json_encode($infosGroupe) ?>,
+        grands_responsables : {},
         dataForm : <?= json_encode($data) ?>,
         axios : instance
     },
