@@ -39,9 +39,9 @@ class Fonctions
                 $sql_solde_user_a_valider = 0;
 
             // vérification du solde de jours de type $type_conges
+            if ($sql_solde_user < $nb_jours+$sql_solde_user_a_valider) {
                 echo '<p class="bg-danger">'.schars( _('verif_solde_erreur_part_1') ).' ('.(float)schars($nb_jours).') '.schars( _('verif_solde_erreur_part_2') ).' ('.(float)schars($sql_solde_user).') '.schars( _('verif_solde_erreur_part_3') ).' ('.(float)schars($sql_solde_user_a_valider).')</p>'."\n";
                 $verif = FALSE;
-            if ($sql_solde_user < $nb_jours+$sql_solde_user_a_valider) {
             }
         }
         return $verif;
