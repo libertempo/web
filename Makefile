@@ -49,4 +49,4 @@ test: ## Lance les tests unitaires
 	vendor/bin/atoum -ulr
 
 stan: ## Découvre des bugs d'analyse statique
-	vendor/bin/phpstan analyze -l 0 App/ ./admin/ ./edition/ ./export/ ./hr/ ./includes/ Public/ responsable/ utilisateur/ --memory-limit 200M
+	vendor/bin/phpstan analyze -l 0 App/ ./edition/ ./export/ ./hr/ ./includes/ Public/ responsable/ utilisateur/ --memory-limit 300M

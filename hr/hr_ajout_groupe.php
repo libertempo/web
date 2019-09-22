@@ -45,6 +45,7 @@ if (!empty($data)) {
     $infosGroupe['doubleValidation'] = $data['isDoubleValidation'];
 }
 
+$responsablesGroupe = [];
 $titre = _('admin_groupes_new_groupe');
 
 require_once VIEW_PATH . 'Groupe/Edition.php';
