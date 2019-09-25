@@ -1,10 +1,11 @@
-<?php
+<?php declare(strict_types = 1);
 define('ROOT_PATH', '../');
 define('INCLUDE_PATH',     ROOT_PATH . 'includes/');
 require_once INCLUDE_PATH . 'define.php';
 require_once INCLUDE_PATH . 'session.php';
 
 $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+$baseURIApi = $config->getUrlAccueil() . '/api/';
 
 // SERVER
 $PHP_SELF = filter_var($_SERVER['PHP_SELF'], FILTER_SANITIZE_URL);
@@ -45,13 +46,13 @@ header_menu('', 'Libertempo : ' . _('user'));
 /*********************************/
 /*   AFFICHAGE DU RECAP ...    */
 /*********************************/
+//afficher la quotité de travail
+//API : récupérer le solde des congés
+//Si conges excep = false retirer de la réponse
+//Si heure = true API : Solde employé (table users)
 
-echo "<div class=\"wrapper\">\n";
-echo '<h3>' . _('tableau_recap') . '</h3>';
-echo affiche_tableau_bilan_conges_user($_SESSION['userlogin']);
-echo "<hr/>\n";
-echo "</div>\n";
 
+require_once VIEW_PATH . 'Employe/TableauBord.php';
 /*********************************/
 /*   AFFICHAGE DE L'ONGLET ...    */
 /*********************************/
