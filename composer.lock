@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "79cdc94d1d9860f51e3f780f1546def7",
+    "content-hash": "fd32f8c0a8395127be883f2d00f9de1b",
     "packages": [
         {
             "name": "adldap2/adldap2",
@@ -43,8 +43,8 @@
             "authors": [
                 {
                     "name": "Steve Bauman",
-                    "role": "Developer",
-                    "email": "steven_bauman@outlook.com"
+                    "email": "steven_bauman@outlook.com",
+                    "role": "Developer"
                 }
             ],
             "description": "A PHP LDAP Package for humans.",
@@ -730,7 +730,7 @@
         },
         {
             "name": "libertempo/api",
-            "version": "v1.7.0",
+            "version": "v1.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/libertempo/api.git",
@@ -1493,8 +1493,8 @@
             "authors": [
                 {
                     "name": "Rollbar, Inc.",
-                    "role": "Developer",
-                    "email": "support@rollbar.com"
+                    "email": "support@rollbar.com",
+                    "role": "Developer"
                 }
             ],
             "description": "Monitors errors and exceptions and reports them to Rollbar",
@@ -1976,8 +1976,8 @@
             "authors": [
                 {
                     "name": "Nicola Asuni",
-                    "role": "lead",
-                    "email": "info@tecnick.com"
+                    "email": "info@tecnick.com",
+                    "role": "lead"
                 }
             ],
             "description": "TCPDF is a PHP class for generating PDF documents and barcodes.",
