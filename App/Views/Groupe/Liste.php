@@ -40,7 +40,7 @@
                 <td><?= count(\App\ProtoControllers\Groupe\Utilisateur::getListUtilisateurByGroupeIds([$groupe['id']])); ?></td>
                 <td><?= \App\Helpers\Formatter::bool2String($groupe['double_validation']) ?></td>
                 <td class="action">
-                    <a href="hr_index.php?onglet=modif_groupe&group=<?= $groupe['id'] ?>" title="<?= _('form_modif') ?>"><i class="fa fa-pencil"></i></a>
+                    <a href="modif_groupe?group=<?= $groupe['id'] ?>" title="<?= _('form_modif') ?>"><i class="fa fa-pencil"></i></a>
                     <a href="hr_index.php?onglet=suppr_groupe&group=<?= $groupe['id'] ?>" title="<?= _('form_supprim') ?>"><i class="fa fa-times-circle"></i></a>
                 </td>
             </tr>

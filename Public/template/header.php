@@ -2,6 +2,9 @@
 defined( '_PHP_CONGES' ) or die( 'Restricted access' );
 include TEMPLATE_PATH . 'template_define.php';
 global $environnement;
+$sql = \includes\SQL::singleton();
+$config = new \App\Libraries\Configuration($sql);
+$baseURIApi = $config->getUrlAccueil() . '/api/';
 ?>
 <!DOCTYPE html>
 <html>
@@ -68,10 +71,24 @@ global $environnement;
         if (! navigator.cookieEnabled) {
             document.write("<font color=\'#FF0000\'><br><br><center>'. _('cookies_obligatoires') .'</center></font><br><br>");
         }
+
+        /**
+         * Construction axios
+         */
+        axios.defaults.headers.get = {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Token': '<?= $_SESSION['token'] ?? '' ?>',
+        };
+
+        const instance = axios.create({
+          baseURL: '<?= $baseURIApi ?>',
+          timeout: 1500
+        });
+
+        var optionsVue = undefined;
+
         //-->
         </script>
-        <noscript>
-                <font color="#FF0000"><br><br><center>'. _('javascript_obligatoires') .'</center></font><br><br>
-        </noscript>
         <?= $additional_head ?>
     </head>
