@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7a154b1f1c01b9500762d624901ccdcb",
+    "content-hash": "5cc119f4c2932306be1c62e7fe84c636",
     "packages": [
         {
             "name": "adldap2/adldap2",
@@ -730,7 +730,7 @@
         },
         {
             "name": "libertempo/api",
-            "version": "v1.7.0",
+            "version": "v1.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/libertempo/api.git",
