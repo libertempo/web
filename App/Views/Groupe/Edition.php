@@ -41,7 +41,7 @@
         <div class="row">
             <div class="col-md-6">
                 <h2><?= _('admin_gestion_groupe_users_membres') ?></h2>
-                <table class="table table-hover table-condensed table-striped"/>
+                <table class="table table-hover table-condensed table-striped">
                     <tbody>
                         <tr>
                             <div id="loader-bar-employe" class="progress">
@@ -87,7 +87,6 @@
                                 >
                             </td>
                             <td class="histo"><label :for="getResponsableId(r)">{{ r.nom }} {{ r.prenom }}</label></td>
-                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -96,7 +95,7 @@
                 <h2><?= _('admin_gestion_groupe_grand_resp_responsables') ?></h2>
                 <table class="table table-hover table-responsive table-condensed table-striped">
                     <tbody>
-                        <tr v-for="r in responsables">
+                        <tr v-for="r in grands_responsables">
                             <td class="histo">
                                 <input type="checkbox"
                                  :id="getGrandResponsableId(r)"
@@ -123,24 +122,15 @@
 </div>
 
 <script>
-axios.defaults.headers.get = {
-  'Content-Type': 'application/json',
-  'Accept': 'application/json',
-  'Token': '<?= $_SESSION['token'] ?>',
-};
-
-const instance = axios.create({
-  baseURL: '<?= $baseURIApi ?>',
-  timeout: 1500
-});
-
-var vm = new Vue({
+var optionsVue = {
     el: '#inner-content',
     data: {
         employes : {},
+        idGroupe : <?= $idGroupe ?>,
         responsables : {},
         responsablesGroupe : <?= json_encode($responsablesGroupe) ?>,
         infosGroupe : <?= json_encode($infosGroupe) ?>,
+        grands_responsables : {},
         dataForm : <?= json_encode($data) ?>,
         axios : instance
     },
@@ -170,8 +160,6 @@ var vm = new Vue({
         },
         getEmployeDisabled : function (employe) {
             if (this.dataResponsableContains(employe) || this.dataGrandResponsableContains(employe)) {
-                    return true;
-            } else if (undefined != this.responsablesGroupe[employe['login']]) {
                 return true;
             }
 
@@ -222,6 +210,19 @@ var vm = new Vue({
 
             return false;
         },
+        getGrandResponsableId : function (employe) {
+            return 'Gres_' + employe['login'];
+        },
+        getGrandResponsableName : function (employe) {
+            return 'checkbox_group_grand_resps[' + employe['login'] + ']';
+        },
+        getGrandResponsableChecked : function (employe) {
+            if (this.dataGrandResponsableContains(employe) || employe['isDansGroupe']) {
+                return true;
+            }
+
+            return false;
+        },
         disableCheckboxGroupe : function (event, selectId) {
             var target = event.target;
             var select = document.getElementById(selectId);
@@ -253,41 +254,143 @@ var vm = new Vue({
             var select = document.getElementById(selectId);
             var groupeGrandsResponsables = document.getElementById(DivGrandRespId);
             if (select.value == 'Y') {
+                // Update checkboxes and lock them
+                var event = new Event('change');
+                var grandsResponsables = document.querySelectorAll('#groupe-grands-responsables input[type=checkbox]');
+                for (var i in grandsResponsables) {
+                    if (!grandsResponsables.hasOwnProperty(i)) {
+                        continue;
+                    }
+                    grandsResponsables[i].dispatchEvent(event);
+                }
+
                 groupeGrandsResponsables.classList.remove('hide');
             } else {
                 groupeGrandsResponsables.classList.add('hide');
             }
+        },
+        fillEmployes : function () {
+            var vm = this;
+            this.axios.get('/utilisateur')
+            .then((response) => {
+                if (typeof response.data != 'object') {
+                    return;
+                }
+                const employes = response.data.data;
+                var fullUtilisateurs = new Array();
+                var responsables = new Array();
+                for (var i = 0; i < employes.length; ++i) {
+                    var employe = employes[i];
+                    employe.isDansGroupe = false;
+                    fullUtilisateurs.push(employe);
+                    if (employe.is_responsable) {
+                        responsables.push(employe);
+                    }
+                }
+                // Finally hide loaders and show vars
+                document.getElementById('loader-bar-employe').classList.add('hidden');
+                document.getElementById('loader-bar-responsable').classList.add('hidden');
+                vm.employes = fullUtilisateurs;
+                vm.responsables = responsables;
+                // Copie sans partage de mémoire
+                vm.grands_responsables = JSON.parse(JSON.stringify(responsables));
+
+                if (-1 !== this.idGroupe) {
+                    // setTimeout(this.fillResponsablesGroupe, 1500);
+                    this.fillEmployesGroupe();
+                    this.fillResponsablesGroupe();
+                    this.fillGrandsResponsablesGroupe();
+                }
+            })
+            .catch((error) => {
+                console.log(error.response);
+                console.error(error);
+            })
+        },
+        fillEmployesGroupe : function () {
+            var vm = this;
+            this.axios.get('/groupe/' + vm.idGroupe + '/employe')
+            .then((response) => {
+                if (typeof response.data != 'object') {
+                    return;
+                }
+                const employesGroupe = response.data.data;
+                for (var i = 0; i < employesGroupe.length; ++i) {
+                    var employeGroupe = employesGroupe[i];
+                    for (var j in vm.employes) {
+                        if (!vm.employes.hasOwnProperty(j)) {
+                            continue;
+                        }
+                        var employe = vm.employes[j];
+                        if (employe.login === employeGroupe.login) {
+                            employe.isDansGroupe = true;
+                            break;
+                        }
+                    }
+                }
+            })
+            .catch((error) => {
+                console.log(error.response);
+                console.error(error);
+            })
+        },
+        fillResponsablesGroupe : function () {
+            var vm = this;
+            this.axios.get('/groupe/' + vm.idGroupe + '/responsable')
+            .then((response) => {
+                if (typeof response.data != 'object') {
+                    return;
+                }
+                const responsablesGroupe = response.data.data;
+                for (var i = 0; i < responsablesGroupe.length; ++i) {
+                    var responsableGroupe = responsablesGroupe[i];
+                    for (var j in vm.responsables) {
+                        if (!vm.responsables.hasOwnProperty(j)) {
+                            continue;
+                        }
+                        var responsable = vm.responsables[j];
+                        if (responsable.login === responsableGroupe.login) {
+                            responsable.isDansGroupe = true;
+                            break;
+                        }
+                    }
+                }
+            })
+            .catch((error) => {
+                console.log(error.response);
+                console.error(error);
+            })
+        },
+        fillGrandsResponsablesGroupe : function () {
+            var vm = this;
+            this.axios.get('/groupe/' + vm.idGroupe + '/grand_responsable')
+            .then((response) => {
+                if (typeof response.data != 'object') {
+                    return;
+                }
+                const responsablesGroupe = response.data.data;
+                for (var i = 0; i < responsablesGroupe.length; ++i) {
+                    var responsableGroupe = responsablesGroupe[i];
+                    for (var j in vm.grands_responsables) {
+                        if (!vm.grands_responsables.hasOwnProperty(j)) {
+                            continue;
+                        }
+                        var grandResponsable = vm.grands_responsables[j];
+                        if (grandResponsable.login === responsableGroupe.login) {
+                            grandResponsable.isDansGroupe = true;
+                            break;
+                        }
+                    }
+                }
+            })
+            .catch((error) => {
+                console.log(error.response);
+                console.error(error);
+            })
         }
     },
     created () {
-        var vm = this;
-        this.axios.get('/utilisateur')
-        .then((response) => {
-            if (typeof response.data != 'object') {
-                return;
-            }
-            const employes = response.data.data;
-            var fullUtilisateurs = new Array();
-            var responsables = new Array();
-            for (var i = 0; i < employes.length; ++i) {
-                var employe = employes[i];
-                employe.isDansGroupe = false;
-                fullUtilisateurs.push(employe);
-
-                if (employe.is_responsable) {
-                    responsables.push(employe);
-                }
-            }
-            // Finally hide loaders and show vars
-            document.getElementById('loader-bar-employe').classList.add('hidden');
-            document.getElementById('loader-bar-responsable').classList.add('hidden');
-            vm.employes = fullUtilisateurs;
-            vm.responsables = responsables;
-        })
-        .catch((error) => {
-            console.log(error.response);
-            console.error(error);
-        })
+        this.fillEmployes();
     },
     updated () {
         // Shows grand responsable groupe
@@ -302,6 +405,6 @@ var vm = new Vue({
             responsables[i].dispatchEvent(event);
         }
     }
-});
+};
 </script>
 <?php

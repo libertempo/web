@@ -3,11 +3,9 @@ defined('_PHP_CONGES') or die('Restricted access');
 $gestionGroupes = new \App\ProtoControllers\Groupe\Gestion();
 $idGroupe = NIL_INT;
 
-$sql = \includes\SQL::singleton();
-$config = new \App\Libraries\Configuration($sql);
+$config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 $baseURIApi = $config->getUrlAccueil() . '/api/';
 
-$PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
 $message = '';
 $infosGroupe = [
     'nom' => '',
@@ -48,6 +46,6 @@ if (!empty($data)) {
 }
 
 $responsablesGroupe = [];
-$titre = '<h1>' . _('admin_groupes_new_groupe') . '</h1>';
+$titre = _('admin_groupes_new_groupe');
 
 require_once VIEW_PATH . 'Groupe/Edition.php';
