@@ -1001,8 +1001,8 @@ class Fonctions
             }
             else // sinon : on insert
             {
-                $sql1 = "INSERT into conges_echange_rtt (e_login, e_date_jour, e_absence, e_presence, e_comment)
-                    VALUES ('".$_SESSION['userlogin']."','$new_debut','$nouvelle_absence_date_1', '$nouvelle_presence_date_1', '$new_comment')" ;
+                $sql1 = "INSERT into conges_echange_rtt (e_id, e_login, e_date_jour, e_absence, e_presence, e_comment)
+                    VALUES (DEFAULT, '".$_SESSION['userlogin']."','$new_debut','$nouvelle_absence_date_1', '$nouvelle_presence_date_1', '$new_comment')" ;
             }
             $result1 = \includes\SQL::query($sql1);
 
@@ -1022,8 +1022,8 @@ class Fonctions
             }
             else // sinon: on insert
             {
-                $sql2 = "INSERT into conges_echange_rtt (e_login, e_date_jour, e_absence, e_presence, e_comment)
-                    VALUES ('".$_SESSION['userlogin']."','$new_fin','$nouvelle_absence_date_2', '$nouvelle_presence_date_2', '$new_comment')" ;
+                $sql2 = "INSERT into conges_echange_rtt (e_id, e_login, e_date_jour, e_absence, e_presence, e_comment)
+                    VALUES (DEFAULT, '".$_SESSION['userlogin']."','$new_fin','$nouvelle_absence_date_2', '$nouvelle_presence_date_2', '$new_comment')" ;
             }
             $result2 = \includes\SQL::query($sql2);
 

@@ -17,7 +17,7 @@ ALTER TABLE conges_config ADD INDEX conf_nom (conf_nom);
 #
 ALTER TABLE conges_echange_rtt MODIFY e_login varbinary(99) NOT NULL DEFAULT '';
 ALTER TABLE conges_echange_rtt DROP PRIMARY KEY;
-ALTER TABLE conges_echange_rtt ADD echange_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT FIRST;
+ALTER TABLE conges_echange_rtt ADD e_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT FIRST;
 ALTER TABLE conges_echange_rtt ADD INDEX login_date (e_login, e_date_jour);
 #
 # Add an int PK on conges_jours_feries
@@ -33,18 +33,6 @@ ALTER TABLE conges_periode MODIFY p_num int(5) unsigned NOT NULL;
 ALTER TABLE conges_periode DROP PRIMARY KEY;
 ALTER TABLE conges_periode ADD p_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT FIRST;
 ALTER TABLE conges_periode ADD INDEX p_num (p_num);
-#
-# Add an int PK on conges_groupe_grd_resp
-#
-ALTER TABLE conges_groupe_grd_resp MODIFY ggr_gid int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT;
-#
-# Add an int PK on conges_groupe_resp
-#
-ALTER TABLE conges_groupe_resp MODIFY gr_gid int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT;
-#
-# Add an int PK on conges_groupe_users
-#
-ALTER TABLE conges_groupe_users MODIFY gu_gid int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT;
 #
 # Add an int PK on conges_jours_fermeture
 #
