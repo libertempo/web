@@ -888,7 +888,8 @@ class Fonctions
         };
         $userLogin = $entities(getpost_variable('user_login'));
 
-        if (!\App\ProtoControllers\Responsable::isRespDeUtilisateur($_SESSION['userlogin'], $userLogin)) {
+        if (!(\App\ProtoControllers\Responsable::isRespDeUtilisateur($_SESSION['userlogin'], $userLogin)
+                || \App\ProtoControllers\Responsable::isGrandRespDeUtilisateur($_SESSION['userlogin'])))  {
             redirect(ROOT_PATH . 'deconnexion');
             exit;
         }
