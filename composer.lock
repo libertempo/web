@@ -734,12 +734,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/libertempo/api.git",
-                "reference": "495bee70b616777499afcc0704e9bec816a30170"
+                "reference": "0157d7259069b12b9c0c3c0dfef5bc472f420366"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/libertempo/api/zipball/495bee70b616777499afcc0704e9bec816a30170",
-                "reference": "495bee70b616777499afcc0704e9bec816a30170",
+                "url": "https://api.github.com/repos/libertempo/api/zipball/0157d7259069b12b9c0c3c0dfef5bc472f420366",
+                "reference": "0157d7259069b12b9c0c3c0dfef5bc472f420366",
                 "shasum": ""
             },
             "require": {
