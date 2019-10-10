@@ -44,16 +44,6 @@ if ( !isset($onglets[ $onglet ]) && !in_array($onglet, array('modif_demande','su
 header_menu('', 'Libertempo : ' . _('user'));
 
 /*********************************/
-/*   AFFICHAGE DU RECAP ...    */
-/*********************************/
-//afficher la quotité de travail
-//API : récupérer le solde des congés
-//Si conges excep = false retirer de la réponse
-//Si heure = true API : Solde employé (table users)
-
-
-require_once VIEW_PATH . 'Employe/TableauBord.php';
-/*********************************/
 /*   AFFICHAGE DE L'ONGLET ...    */
 /*********************************/
 
