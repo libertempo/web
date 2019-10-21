@@ -36,11 +36,13 @@ ALTER TABLE conges_periode ADD INDEX p_num (p_num);
 #
 # Add an int PK on conges_jours_fermeture
 #
-ALTER TABLE conges_jours_fermeture MODIFY jf_id int(5) NOT NULL PRIMARY KEY AUTO_INCREMENT;
+ALTER TABLE conges_jours_fermeture ADD id INT NOT NULL PRIMARY KEY AUTO_INCREMENT FIRST;
+
 #
 # Add an int PK on conges_solde_edition
 #
-ALTER TABLE conges_solde_edition MODIFY se_id_edition int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT;
+ALTER TABLE conges_solde_edition ADD id INT NOT NULL PRIMARY KEY AUTO_INCREMENT FIRST;
+
 #
 # Add an int PK on conges_mail
 #
