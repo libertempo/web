@@ -41,15 +41,11 @@
                     </div>
                 </div>
             </div>
-           <div class="col-sm-12" v-for="s in soldesAutre"> 
-                <div class="col-sm-2">
-                    <h4 class="progress-label">{{ s.libelle }}</h4>
-                </div>
-                <div class="col-sm-10">
-                    <div class="progress">
-                        <div role="progressbar" class="progress-bar progress-bar-success" style="width:100%">{{ getRestant(s) }} Jours</div>
-                    </div>
-                </div>
+           <div class="col-sm-4" v-for="s in soldesAutre">
+                <dl class="row">
+                    <dt class="col-sm-5">{{ s.libelle }}</dt>
+                    <dd class="col-sm-5">{{ getRestant(s) }} Jours</dd>
+                </dl>
             </div>
         </div>
     </div>
