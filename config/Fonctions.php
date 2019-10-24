@@ -386,8 +386,8 @@ class Fonctions
                     while ($resultat1 = $ReqLog_users->fetch_array()) {
                         $current_login=$resultat1["u_login"];
 
-                        $req_insert2="INSERT INTO conges_solde_user (su_login, su_abs_id, su_nb_an, su_solde, su_reliquat) " .
-                            "VALUES ('$current_login', $new_abs_id, 0, 0, 0) ";
+                        $req_insert2="INSERT INTO conges_solde_user (su_id, su_login, su_abs_id, su_nb_an, su_solde, su_reliquat) " .
+                            "VALUES (DEFAULT, '$current_login', $new_abs_id, 0, 0, 0) ";
                         \includes\SQL::query($req_insert2);
                     }
                 }

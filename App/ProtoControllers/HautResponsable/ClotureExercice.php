@@ -44,24 +44,26 @@ class ClotureExercice
     {
         $return = true;
         $soldesEmploye = \App\ProtoControllers\Utilisateur::getSoldesEmploye($sql, $config, $employe);
-        foreach ($typeConges as $idType => $libelle) {
-            $soldeRestant = $soldesEmploye[$idType]['su_solde'];
-            $soldeFutur = $soldesEmploye[$idType]['su_nb_an'];
-            // Si le solde est négatif, on le déduit du futur solde
-            if (0 > $soldeRestant) {
-                $soldeFutur = $soldeFutur + $soldeRestant;
-            } elseif ($config->isReliquatsAutorise()) {
-                if (!static::setReliquatEmploye($employe, $idType, $soldeRestant, $sql, $config)) {
+        if (!empty($soldesEmploye)) {
+            foreach ($typeConges as $idType => $libelle) {
+                $soldeRestant = $soldesEmploye[$idType]['su_solde'];
+                $soldeFutur = $soldesEmploye[$idType]['su_nb_an'];
+                // Si le solde est négatif, on le déduit du futur solde
+                if (0 > $soldeRestant) {
+                    $soldeFutur = $soldeFutur + $soldeRestant;
+                } elseif ($config->isReliquatsAutorise()) {
+                    if (!static::setReliquatEmploye($employe, $idType, $soldeRestant, $sql, $config)) {
+                        $return = false;
+                        break;
+                    }
+                }
+                if (!static::setSoldeEmploye($employe, $idType, $soldeFutur, $sql)) {
                     $return = false;
                     break;
                 }
+                $today = date("Y-m-d");
+                insert_dans_periode($employe, $today, "am", $today, "am", $soldeFutur, $comment, $idType, "ajout", 0);
             }
-            if (!static::setSoldeEmploye($employe, $idType, $soldeFutur, $sql)) {
-                $return = false;
-                break;
-            }
-            $today = date("Y-m-d");
-            insert_dans_periode($employe, $today, "am", $today, "am", $soldeFutur, $comment, $idType, "ajout", 0);
         }
 
         return $return;
@@ -69,7 +71,7 @@ class ClotureExercice
 
     private static function setSoldeEmploye($employe, $idType, $soldeFutur, \includes\SQL $sql)
     {
-        $req = 'UPDATE conges_solde_user 
+        $req = 'UPDATE conges_solde_user
                   SET su_solde = ' . $soldeFutur .
                 ' WHERE su_login = "' . $sql->quote($employe) .
                 '" AND su_abs_id = ' . intval($idType) . ';';
@@ -130,7 +132,7 @@ class ClotureExercice
         $JourMois = explode("-", $LimiteReliquats);
         $dateLimite = $annee . "-" . $JourMois[1] . "-" . $JourMois[0];
         $req = 'UPDATE conges_appli
-                       SET appli_valeur = \'' . $dateLimite . '\' 
+                       SET appli_valeur = \'' . $dateLimite . '\'
                        WHERE appli_variable=\'date_limite_reliquats\';';
         $sql->query($req);
 
