@@ -136,6 +136,20 @@ class Responsable
     }
 
     /**
+     * Vérifie si un utilisateur est bien le grand responsable d'un employé
+     *
+     * @param string $resp
+     * @param string $user
+     *
+     * @return bool
+     */
+    public static function isGrandRespDeUtilisateur($resp, $user)
+    {
+        return $resp != $user
+                && \App\ProtoControllers\Groupe::isGrandResponsableGroupe($resp, \App\ProtoControllers\Utilisateur::getGroupesId($user), \includes\SQL::singleton());
+    }
+
+    /**
      * Vérifie si un utilisateur est responsable par délégation d'un employé
      *
      * @param string $resp
