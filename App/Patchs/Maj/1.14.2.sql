@@ -1,0 +1,1 @@
+ALTER TABLE `conges_solde_user` ADD UNIQUE( `su_login`, `su_abs_id`);
