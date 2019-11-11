@@ -47,6 +47,12 @@
                     <dd class="col-sm-5">{{ getRestant(s) }} Jours</dd>
                 </dl>
             </div>
+            <div class="col-sm-4" v-if="soldeHeure != 0">
+                <dl class="row">
+                    <dt class="col-sm-5">Heure</dt>
+                    <dd class="col-sm-5">{{ getSoldeHeure(soldeHeure) }}</dd>
+                </dl>
+            </div>
         </div>
     </div>
 </div>
@@ -70,6 +76,7 @@ var vm = new Vue({
         soldesCongeNatif : {},
         soldesConge : {},
         soldesAutre : {},
+        soldeHeure : 0,
         axios : instance
     },
     computed: {
@@ -92,10 +99,30 @@ var vm = new Vue({
         },
         getWidthConsomme : function (solde) {
             return "width:" + ((solde['solde_annuel'] - solde['solde']) / solde['solde_annuel'] * 100) + "%; background-color:gray !important;";
+        },
+        getSoldeHeure : function (solde) {
+            var heures   = Math.floor(solde / 3600);
+            var minutes = Math.floor((solde - (heures * 3600)) / 60);
+            if (heures   < 10) {heures   = "0"+heures;}
+            if (minutes < 10) {minutes = "0"+minutes;}
+            return heures + " heure(s) et " + minutes + " minute(s)";
         }
     },
     created () {
         var vm = this;
+        this.axios.get('/employe/me')
+        .then((response) => {
+            if (typeof response.data != 'object') {
+                return;
+            }
+            const employe = response.data.data;
+            
+            vm.soldeHeure = employe.heure_solde;
+        })
+        .catch((error) => {
+            console.log(error.response);
+            console.error(error);
+        }),
         this.axios.get('/absence/type')
         .then((response) => {
             if (typeof response.data != 'object') {
