@@ -190,7 +190,7 @@ function session_delete()
 //
 function session_saisie_user_password($erreur, $session_username)
 {
-    $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
+    $PHP_SELF = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL);
     header_login('');
     include_once TEMPLATE_PATH . 'login_form.php';
 
@@ -763,7 +763,7 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
 {
     $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
-    $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+    $PHP_SELF = filter_var($_SERVER['PHP_SELF'], FILTER_SANITIZE_URL);
     $new_date_fin = date('d/m/Y');
     $return = '';
 

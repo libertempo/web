@@ -13,7 +13,7 @@ require_once INCLUDE_PATH . 'session.php';
 // verif des droits du user à afficher la page
 verif_droits_user("is_admin");
 
-$PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
+$PHP_SELF = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL);
 $action         = getpost_variable('action');
 $tab_new_values = getpost_variable('tab_new_values');
 $id_to_update   = htmlentities(getpost_variable('id_to_update'), ENT_QUOTES | ENT_HTML401);

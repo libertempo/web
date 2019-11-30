@@ -57,7 +57,7 @@ class Fonctions
         $new_fin = convert_date($new_fin);
         $return = '';
 
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_var($_SERVER['PHP_SELF'], FILTER_SANITIZE_URL);
 
         // verif validité des valeurs saisies
         $valid = verif_saisie_new_demande($new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $_SESSION['userlogin']);
@@ -239,7 +239,7 @@ class Fonctions
     private static function modifier($p_num_to_update, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $p_etat, $onglet)
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_var($_SERVER['PHP_SELF'], FILTER_SANITIZE_URL);
         $return = '';
         $VerifNb = verif_saisie_decimal($new_nb_jours);
 
@@ -273,7 +273,7 @@ class Fonctions
     private static function confirmer($p_num, $onglet)
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_var($_SERVER['PHP_SELF'], FILTER_SANITIZE_URL);
         $return = '';
 
         // Récupération des informations
@@ -474,7 +474,7 @@ class Fonctions
     private static function suppression($p_num_to_delete, $onglet)
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_var($_SERVER['PHP_SELF'], FILTER_SANITIZE_URL);
         $return = '';
 
         if ($config->isSendMailSupprimeDemandeResponsable()) {
@@ -503,7 +503,7 @@ class Fonctions
 
     private static function confirmerSuppression($p_num, $onglet)
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_var($_SERVER['PHP_SELF'], FILTER_SANITIZE_URL);
         $return = '';
 
         // Récupération des informations
@@ -775,7 +775,7 @@ class Fonctions
     {
         $return = '';
 
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_var($_SERVER['PHP_SELF'], FILTER_SANITIZE_URL);
 
         $duree_demande_1="";
         $duree_demande_2="";
@@ -1052,7 +1052,7 @@ class Fonctions
     private static function saisie_echange_rtt($user_login, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $onglet)
     {
         $return = '';
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_var($_SERVER['PHP_SELF'], FILTER_SANITIZE_URL);
         $mois_calendrier_saisie_debut_prec=0; $year_calendrier_saisie_debut_prec=0;
         $mois_calendrier_saisie_debut_suiv=0; $year_calendrier_saisie_debut_suiv=0;
         $mois_calendrier_saisie_fin_prec=0; $year_calendrier_saisie_fin_prec=0;
