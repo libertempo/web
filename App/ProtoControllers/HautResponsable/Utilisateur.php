@@ -191,10 +191,9 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
     private static function getFormUserSoldes($data, $userId)
     {
         $sql = \includes\SQL::singleton();
-        $config = new \App\Libraries\Configuration($sql);
         $typeAbsencesConges = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges');
         if (NIL_INT !== $userId) {
-            $soldesByType = \App\ProtoControllers\Utilisateur::getSoldesEmploye($sql, $config, $userId);
+            $soldesByType = \App\ProtoControllers\Utilisateur::getSoldesEmploye($sql, $userId);
             foreach ($soldesByType as $typeId => $infos) {
                 $data['joursAn'][$typeId] = $infos['su_nb_an'];
                 $data['soldes'][$typeId] = $infos['su_solde'];
@@ -235,8 +234,8 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
             $childTable .= '</tr>';
             $i = !$i;
         }
-        if ($config->isCongesExceptionnelsActive()) {
-            $typeAbsencesExceptionnels = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges_exceptionnels');
+        $typeAbsencesExceptionnels = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges_exceptionnels');
+        if(!empty($typeAbsencesExceptionnels)){
             foreach ($typeAbsencesExceptionnels as $typeId => $infoType) {
                 $childTable .= '<tr class="'.($i?'i':'p').'">';
                 $solde = ( isset($data['soldes'][$typeId]) ? $data['soldes'][$typeId] : 0 );
@@ -737,20 +736,18 @@ enctype="application/x-www-form-urlencoded" class="form-group">';
         $returnStd = $sql->query($req);
 
         $returnExc = true;
-        if ($config->isCongesExceptionnelsActive()) {
-            $typeAbsencesExceptionnels = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges_exceptionnels');
-            if(empty($typeAbsencesExceptionnels)){
-                return $returnStd;
-            }
-            foreach ($typeAbsencesExceptionnels as $typeId => $info) {
-                $valuesExc[] = '(0, \''
-                                . $data['soldes'][$typeId] . '\', 0, "'
-                                . $data['oldLogin'] . '", '
-                                . (int) $typeId . ')';
-            }
-            $req = 'REPLACE INTO conges_solde_user (su_nb_an, su_solde, su_reliquat, su_login, su_abs_id) VALUES ' . implode(",", $valuesExc);
-            $returnExc = $sql->query($req);
+        $typeAbsencesExceptionnels = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges_exceptionnels');
+        if(empty($typeAbsencesExceptionnels)){
+            return $returnStd;
         }
+        foreach ($typeAbsencesExceptionnels as $typeId => $info) {
+            $valuesExc[] = '(0, \''
+                            . $data['soldes'][$typeId] . '\', 0, "'
+                            . $data['oldLogin'] . '", '
+                            . (int) $typeId . ')';
+        }
+        $req = 'REPLACE INTO conges_solde_user (su_nb_an, su_solde, su_reliquat, su_login, su_abs_id) VALUES ' . implode(",", $valuesExc);
+        $returnExc = $sql->query($req);
 
         return $returnStd && $returnExc;
     }

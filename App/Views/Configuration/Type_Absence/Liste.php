@@ -5,7 +5,6 @@
  * $nouveauType
  * $traductions
  * $url
- * $isCongesExceptionnelsActive
  * $classesConges
  */
 ?>
@@ -80,7 +79,7 @@ var optionsVue = {
         nouveauLibelleCourt : '<?= $nouveauLibelleCourt ?>',
         nouveauType : '<?= $nouveauType ?>',
         traductions : <?= json_encode($traductions) ?>,
-        isCongesExceptionnelsActive: 'true' == "<?= $isCongesExceptionnelsActive ? 'true' : 'false' ?>",
+        isCongesExceptionnelsActive: 'true',
         axios : instance,
         classesConges : <?= json_encode($classesConges) ?>
     },
@@ -136,6 +135,6 @@ var optionsVue = {
             console.error(error);
         })
     }
-});
+};
 </script>
 <?php

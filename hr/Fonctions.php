@@ -82,10 +82,7 @@ class Fonctions
         $count1=0;
         $count2=0;
 
-        $typeAbsence = \App\ProtoControllers\Conge::getTypesAbsences($db, 'conges');
-        if ($config->isCongesExceptionnelsActive()) {
-            $typeAbsence += \App\ProtoControllers\Conge::getTypesAbsences($db, 'conges_exceptionnels');
-        }
+        $typeAbsence = \App\ProtoControllers\Conge::getTypesAbsences($db);
 
         /*********************************/
         // Récupération des informations

@@ -876,7 +876,7 @@ function saisie_nouveau_conges2($user_login, $year_calendrier_saisie_debut, $moi
 
     // si le user a droit de saisir une demande de conges ET si on est PAS dans une fenetre de responsable
     // OU si le user n'a pas droit de saisir une demande de conges ET si on est dans une fenetre de responsable
-    if (($config->isCongesExceptionnelsActive()) && ((($config->canUserSaisieDemande())&&($user_login==$_SESSION['userlogin'])) || ((!$config->canUserSaisieDemande())&&($user_login!=$_SESSION['userlogin'])))) {
+    if ((($config->canUserSaisieDemande())&&($user_login==$_SESSION['userlogin'])) || ((!$config->canUserSaisieDemande())&&($user_login!=$_SESSION['userlogin']))) {
         // congés exceptionnels
         $return .= '<div class="col-md-4">';
         $return .= '<label>' . _('divers_conges_exceptionnels') . '</label>';
@@ -1925,7 +1925,7 @@ function getpost_variable($variable, $default="")
 function recup_tableau_types_conges()
 {
     $result = array();
-    $request = 'SELECT ta_id, ta_libelle FROM conges_type_absence WHERE ta_type=\'conges\';';
+    $request = 'SELECT ta_id, ta_libelle FROM conges_type_absence WHERE ta_type=\'conges\' AND ta_actif = 1;';
     $data   = \includes\SQL::singleton()->query($request);
 
     while ($l = $data->fetch_array()) {
@@ -1939,7 +1939,7 @@ function recup_tableau_types_conges()
 function recup_tableau_types_absence()
 {
     $result = array();
-    $request = 'SELECT ta_id, ta_libelle FROM conges_type_absence WHERE ta_type=\'absences\';';
+    $request = 'SELECT ta_id, ta_libelle FROM conges_type_absence WHERE ta_type=\'absences\' AND ta_actif=1;';
     $data   = \includes\SQL::singleton()->query($request);
 
     while ($l = $data->fetch_array())
@@ -1954,7 +1954,7 @@ function recup_tableau_types_absence()
 function recup_tableau_types_conges_exceptionnels()
 {
     $result = array();
-    $request = 'SELECT ta_id, ta_libelle FROM conges_type_absence WHERE ta_type=\'conges_exceptionnels\';';
+    $request = 'SELECT ta_id, ta_libelle FROM conges_type_absence WHERE ta_type=\'conges_exceptionnels\' AND ta_actif=1;';
     $data   = \includes\SQL::singleton()->query($request);
 
     while ($l = $data->fetch_array())
@@ -1971,10 +1971,7 @@ function recup_tableau_tout_types_abs( )
     $db = \includes\SQL::singleton();
     $config = new \App\Libraries\Configuration($db);
     $result = array();
-    if ($config->isCongesExceptionnelsActive()) // on prend tout les types de conges
-        $request = 'SELECT ta_id, ta_type, ta_libelle, ta_short_libelle FROM conges_type_absence;';
-    else // on prend tout les types de conges SAUF les conges exceptionnels
-        $request = 'SELECT ta_id, ta_type, ta_libelle, ta_short_libelle FROM conges_type_absence WHERE conges_type_absence.ta_type != \'conges_exceptionnels\';';
+    $request = 'SELECT ta_id, ta_type, ta_libelle, ta_short_libelle FROM conges_type_absence WHERE ta_actif = 1;';
 
     $data = $db->query($request);
 
@@ -1993,10 +1990,10 @@ function recup_tableau_conges_for_user($login, $hide_conges_exceptionnels)
     $config = new \App\Libraries\Configuration($db);
     // on pourrait tout faire en un seule select, mais cela bug si on change la prise en charge des conges exceptionnels en cours d'utilisation ...
 
-    if ($config->isCongesExceptionnelsActive() && ! $hide_conges_exceptionnels) // on prend tout les types de conges
-        $request = 'SELECT ta_libelle, su_nb_an, su_solde, su_reliquat FROM conges_solde_user, conges_type_absence WHERE conges_type_absence.ta_id = conges_solde_user.su_abs_id AND su_login = "'. $db->quote($login).'" ORDER BY su_abs_id ASC;';
+    if (!$hide_conges_exceptionnels) // on prend tout les types de conges
+        $request = 'SELECT ta_libelle, su_nb_an, su_solde, su_reliquat FROM conges_solde_user, conges_type_absence WHERE conges_type_absence.ta_actif = 1 AND conges_type_absence.ta_id = conges_solde_user.su_abs_id AND su_login = "'. $db->quote($login).'" ORDER BY su_abs_id ASC;';
     else // on prend tout les types de conges SAUF les conges exceptionnels
-        $request = 'SELECT ta_libelle, su_nb_an, su_solde, su_reliquat FROM conges_solde_user, conges_type_absence WHERE conges_type_absence.ta_type != \'conges_exceptionnels\' AND conges_type_absence.ta_id = conges_solde_user.su_abs_id AND su_login = "'. $db->quote($login).'" ORDER BY su_abs_id ASC;';
+        $request = 'SELECT ta_libelle, su_nb_an, su_solde, su_reliquat FROM conges_solde_user, conges_type_absence WHERE conges_type_absence.ta_actif = 1 AND conges_type_absence.ta_type != \'conges_exceptionnels\' AND conges_type_absence.ta_id = conges_solde_user.su_abs_id AND su_login = "'. $db->quote($login).'" ORDER BY su_abs_id ASC;';
 
     $data   = $db->query($request);
 
@@ -2026,9 +2023,7 @@ function affiche_tableau_bilan_conges_user($login)
     $tab_cong_user = recup_tableau_conges_for_user($login, true);
 
     // recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
-    if ($config->isCongesExceptionnelsActive()) {
-        $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
-    }
+    $tab_type_conges_exceptionnels = recup_tableau_types_conges_exceptionnels();
 
     $return .= '<table class="table table-hover table-responsive table-condensed table-bordered">';
     $return .= '<thead>';
@@ -2039,7 +2034,7 @@ function affiche_tableau_bilan_conges_user($login)
     $return .= '<th class="titre">'. _('divers_quotite') .'</th>';
 
     foreach($tab_cong_user as $id => $val) {
-        if ($config->isCongesExceptionnelsActive() && in_array($id, $tab_type_conges_exceptionnels)) {
+        if (in_array($id, $tab_type_conges_exceptionnels)) {
             $return .= '<th class="solde">' . $id . '</th>';
         } else {
             $return .= '<th class="annuel">' . $id . ' / ' . _('divers_an_maj') . '</th><th class="solde">' . $id . '</th>';
@@ -2054,7 +2049,7 @@ function affiche_tableau_bilan_conges_user($login)
     $return .= '<tr>';
     $return .= '<td class="quotite">' . $sql_quotite . '%</td>';
     foreach($tab_cong_user as $id => $val) {
-        if ($config->isCongesExceptionnelsActive()  && in_array($id, $tab_type_conges_exceptionnels)) {
+        if (in_array($id, $tab_type_conges_exceptionnels)) {
             $return .= '<td class="solde">' . $val['solde'] . ($val['reliquat'] > 0 ? ' (' . _('dont_reliquat') . ' ' . $val['reliquat'] . ')' : '') . '</td>';
         } else {
             $return .= '<td class="annuel">' . $val['nb_an'] . '</td><td class="solde">' . $val['solde'] . ($val['reliquat'] > 0 ? ' (' . _('dont_reliquat') . ' ' . $val['reliquat'] . ')' : '') . '</td>';

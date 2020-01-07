@@ -1417,7 +1417,8 @@ class Fonctions
         $options = [];
         $sql = \includes\SQL::singleton();
         $req = 'SELECT ta_libelle, ta_short_libelle
-                FROM conges_type_absence';
+                FROM conges_type_absence
+                WHERE ta_actif = 1';
         $res = $sql->query($req);
 
         while ($data = $res->fetch_array()) {
