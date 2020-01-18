@@ -77,7 +77,7 @@ function afficheJourMois($mois, $i, $year, $tab_year) : string
 // verif des droits du user à afficher la page
 verif_droits_user("is_hr");
 
-$PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
+$PHP_SELF = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL);
 // GET / POST
 $PHP_SELF = parse_url($PHP_SELF, PHP_URL_PATH);
 $choix_action = getpost_variable('choix_action');

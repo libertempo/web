@@ -136,6 +136,6 @@ var optionsVue = {
             console.error(error);
         })
     }
-});
+};
 </script>
 <?php

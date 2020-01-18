@@ -12,7 +12,7 @@ class Fonctions
 
         $db = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($db);
-        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL);
         $return = '';
 
         while($elem_tableau = each($tab_bt_radio)) {
@@ -78,7 +78,7 @@ class Fonctions
         $return = '';
         $db = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($db);
-        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL);
         $count1=0;
         $count2=0;
 
@@ -259,7 +259,7 @@ class Fonctions
 
     public static function new_conges($user_login, $numero_int, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type_id) : string
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_var($_SERVER['PHP_SELF'], FILTER_SANITIZE_URL);
         $return = '';
 
         $new_debut = convert_date($new_debut);
@@ -312,7 +312,7 @@ class Fonctions
     {
         $db = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($db);
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
+        $PHP_SELF = filter_var($_SERVER['PHP_SELF'], FILTER_SANITIZE_URL);
         $return = '';
 
         // recup dans un tableau de tableau les infos des types de conges et absences
@@ -398,7 +398,7 @@ class Fonctions
     {
         $db = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($db);
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
+        $PHP_SELF = filter_var($_SERVER['PHP_SELF'], FILTER_SANITIZE_URL);
         $return = '';
 
         // recup dans un tableau de tableau les infos des types de conges et absences
@@ -449,7 +449,7 @@ class Fonctions
     {
         $db = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($db);
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
+        $PHP_SELF = filter_var($_SERVER['PHP_SELF'], FILTER_SANITIZE_URL);
         $return = '';
 
         // affichage de l'année et des boutons de défilement
@@ -598,7 +598,7 @@ class Fonctions
     {
         $db = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($db);
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
+        $PHP_SELF = filter_var($_SERVER['PHP_SELF'], FILTER_SANITIZE_URL);
         $return = '';
 
         // Récupération des informations
@@ -700,7 +700,7 @@ class Fonctions
     {
         $db = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($db);
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
+        $PHP_SELF = filter_var($_SERVER['PHP_SELF'], FILTER_SANITIZE_URL);
         $return = '';
 
         // Récupération des informations
@@ -1012,7 +1012,7 @@ class Fonctions
 
     public static function affichage_saisie_globale_groupe($tab_type_conges) : string
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_var($_SERVER['PHP_SELF'], FILTER_SANITIZE_URL);
         $return = '';
 
         /***********************************************************************/
@@ -1311,7 +1311,7 @@ class Fonctions
         \hr\Fonctions::get_tableau_jour_fermeture($year, $tab_year,  $groupe_id);
         // navigation
         $onglet = htmlentities(getpost_variable('onglet'), ENT_QUOTES | ENT_HTML401);
-        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL);
         $return = '<div class="btn-group pull-right">';
         $prev_link = "$PHP_SELF?year=". ($year - 1) . "&groupe_id=$groupe_id";
         $return .= '<a href="' . $prev_link . '" class="btn btn-default"><i class="fa fa-chevron-left"></i></a>';
@@ -1393,7 +1393,7 @@ class Fonctions
 
     private static function commit_annul_fermeture($fermeture_id, $groupe_id) : string
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL);
         $db = \includes\SQL::singleton();
         $return = '';
 
@@ -1467,7 +1467,7 @@ class Fonctions
 
     private static function commit_new_fermeture($new_date_debut, $new_date_fin, $groupe_id, $id_type_conges) : string
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL);
         $return = '';
 
         // on transforme les formats des dates
@@ -1555,7 +1555,7 @@ class Fonctions
 
     private static function confirm_annul_fermeture($fermeture_id, $groupe_id, $fermeture_date_debut, $fermeture_date_fin) : string
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL);
         $return = '';
 
         $return .= '<div class="wrapper">';
@@ -1938,7 +1938,7 @@ class Fonctions
         //Initialisation de variables
         $unJour = 3600*24;
         $tbJourFerie = [];
-        $timePaques = easter_date($iAnnee) + 6 * 3600; // évite les changements d'heures
+        $timePaques = \easter_date($iAnnee) + 6 * 3600; // évite les changements d'heures
 
         $tbJourFerie["Jour de l an"] = $iAnnee . "-01-01";
         $tbJourFerie["Paques"] = date('Y-m-d', $timePaques);
