@@ -43,8 +43,11 @@ function header_popup($title = '', $additional_head = '')
 
     $type_bottom = 'popup';
 
+    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
     if (empty($title))
-        $title = 'Libertempo';
+        $title = $config->getNomAppli();
+    else
+        $title = $config->getNomAppli() . ' : ' . $title;
 
     include ROOT_PATH .'version.php';
     include_once TEMPLATE_PATH . 'popup_header.php';
@@ -62,7 +65,8 @@ function header_error($additional_head = '')
 
     $type_bottom = 'error';
 
-    $title = 'Libertempo';
+    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
+    $title = $config->getNomAppli();
 
     include ROOT_PATH .'version.php';
     include_once TEMPLATE_PATH . 'error_header.php';
@@ -81,8 +85,11 @@ function header_login($title = '', $additional_head = '' )
 
     $type_bottom = 'login';
 
+    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
     if (empty($title))
-        $title = 'Libertempo';
+        $title = $config->getNomAppli();
+    else
+        $title = $config->getNomAppli() . ' : ' . $title;
 
     include_once TEMPLATE_PATH . 'login_header.php';
 }
@@ -99,8 +106,11 @@ function header_menu($info, $title = '', $additional_head = '')
 
     $type_bottom = 'menu';
 
+    $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
     if (empty($title))
-        $title = 'Libertempo';
+        $title = $config->getNomAppli();
+    else
+        $title = $config->getNomAppli() . ' : ' . $title;
 
     include ROOT_PATH .'version.php';
     include_once TEMPLATE_PATH . 'menu_header.php';
@@ -1299,6 +1309,7 @@ function constuct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $m
     $sujet = $_SESSION['config'][$key1];
     $contenu = $_SESSION['config'][$key2];
     $contenu = str_replace("__URL_ACCUEIL_CONGES__", $config->getUrlAccueil(), $contenu);
+    $contenu = str_replace("__NOM_APPLI_CONGES__", $config->getNomAppli(), $contenu);
     $contenu = str_replace("__SENDER_NAME__", $mail_sender_name, $contenu);
     $contenu = str_replace("__DESTINATION_NAME__", $mail_dest_name, $contenu);
     $contenu = str_replace("__NB_OF_DAY__", $sql_nb_jours, $contenu);

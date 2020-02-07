@@ -67,6 +67,16 @@ class Configuration
     }
 
     /**
+     * Retourne le nom du appli
+     *
+     * @return string
+     */
+    public function getNomAppli()
+    {
+        return $this->getGroupeServeurValeur('NOM_APPLI_CONGES');
+    }
+
+    /**
      * Retourne une valeur du groupe de Libertempo par son nom
      *
      * @param string $nom

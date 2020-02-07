@@ -71,7 +71,7 @@ if (!isset($onglets[$onglet]) && !in_array($onglet, array('traite_user', 'modif_
 /*   COMPOSITION DU HEADER...    */
 /*********************************/
 
-header_menu('', 'Libertempo : ' . _('divers_responsable_maj_1'));
+header_menu('', _('divers_responsable_maj_1'));
 
 /*********************************/
 /*   AFFICHAGE DE L'ONGLET ...    */

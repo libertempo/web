@@ -122,7 +122,7 @@ include_once 'header.php';
         <aside id="toolbar">
             <header class="main-header">
                 <i class="icon-ellipsis-vertical toolbar-toggle"></i>
-                <div class="brand"><a href="<?= ROOT_PATH . $home ?>" title="Accueil"><img src="<?= IMG_PATH ?>Libertempo64.png" alt="Libertempo"></a></div>
+                <div class="brand"><a href="<?= ROOT_PATH . $home ?>" title="Accueil"><img src="<?= IMG_PATH ?>Libertempo64.png" alt="<?= $title ?>"></a></div>
             </header>
             <div class="tools">
                 <div class="primary profil-info">

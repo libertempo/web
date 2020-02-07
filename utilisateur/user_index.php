@@ -40,7 +40,7 @@ if ( !isset($onglets[ $onglet ]) && !in_array($onglet, array('modif_demande','su
 /*   COMPOSITION DU HEADER...    */
 /*********************************/
 
-header_menu('', 'Libertempo : ' . _('user'));
+header_menu('', _('user'));
 
 /*********************************/
 /*   AFFICHAGE DU RECAP ...    */

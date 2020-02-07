@@ -105,7 +105,7 @@ uasort($employesATrouver, $responsablesPremier);
 // une séparation visuelle entre les responsables et les autres utilisateurs.
 $indexSeparator = count($responsablesATrouver);
 
-header_menu('', 'Libertempo : '._('calendrier_titre'));
+header_menu('', _('calendrier_titre'));
 
 if ($jourDemande instanceof \DateTimeInterface) {
     $evenements->fetchEvenements(

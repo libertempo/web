@@ -1841,7 +1841,7 @@ class Fonctions
 
         /***********************************/
         // AFFICHAGE DE LA PAGE
-        //header_menu('', 'Libertempo : '._('divers_fermeture'));
+        //header_menu('', _('divers_fermeture'));
 
 
         // vérifie si les jours fériés sont saisie pour l'année en cours

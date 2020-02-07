@@ -53,7 +53,7 @@ if (!isset($onglets[ $onglet ]) && !in_array($onglet, ['traite_user', 'modif_pla
 /*   COMPOSITION DU HEADER...    */
 /*********************************/
 
-header_menu('', 'Libertempo : '._('resp_menu_button_mode_hr'));
+header_menu('', _('resp_menu_button_mode_hr'));
 
 
 /*********************************/

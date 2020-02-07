@@ -245,6 +245,7 @@ class Fonctions
             $childSubTable .= '<td class="config">&nbsp;</td>';
             $childSubTable .= '<td class="config">';
             $childSubTable .= '<i>' . _('mail_remplace_url_accueil_comment') . '<br>';
+            $childSubTable .= _('mail_remplace_nom_appli_comment') . '<br>';
             $childSubTable .= _('mail_remplace_sender_name_comment') . '<br>';
             $childSubTable .= _('mail_remplace_destination_name_comment') . '<br>';
             $childSubTable .= _('mail_remplace_nb_jours') . '<br>';

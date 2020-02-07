@@ -971,6 +971,9 @@ msgstr "// LANGUE / LANGUAGE<br>//---------------------------<br>// fr = frança
 msgid "config_comment_URL_ACCUEIL_CONGES"
 msgstr "// URL DE BASE DE VOTRE INSTALLATION<br>//-------------------------------------------------<br>// URL de base de Libertempo sur votre serveur (ce que vous devez taper pour obtenir la page d'authentification.<br>// (PAS terminé par un / et sans le index.php à la fin)<br>// URL_ACCUEIL_CONGES = \"http://monserveurweb.mondomaine/Libertempo\""
 
+msgid "config_comment_NOM_APPLI_CONGES"
+msgstr "// URL DE BASE DE VOTRE INSTALLATION<br>//-------------------------------------------------<br>// Nom de l'application"
+
 msgid "config_comment_img_login"
 msgstr "// IMAGE DE LA PAGE DE CONNEXION<br>//---------------------------<br>// image qui apparaît en haut de la page d'authentification"
 
@@ -1252,6 +1255,9 @@ msgstr "message d'alerte au responsable en cas de suppression d'une demande de c
 
 msgid "mail_remplace_url_accueil_comment"
 msgstr "__URL_ACCUEIL_CONGES__ sera automatiquement remplacé par un lien vers votre application Libertempo."
+
+msgid "mail_remplace_nom_appli_comment"
+msgstr "__NOM_APPLI_CONGES__ sera automatiquement remplacé par le nom de votre application Libertempo."
 
 msgid "mail_remplace_sender_name_comment"
 msgstr "__SENDER_NAME__ sera automatiquement remplacé par le nom et prénom de l'expéditeur."
