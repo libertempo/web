@@ -271,7 +271,7 @@ CREATE TABLE `conges_mail` (
 DELETE FROM `conges_mail` ;
 INSERT INTO `conges_mail` VALUES ( 'mail_new_demande', 'APPLI CONGES - Demande de congés', ' __SENDER_NAME__ a solicité une demande de congés dans l\'application de gestion des congés.
 
-Merci de consulter votre application Libertempo : __URL_ACCUEIL_CONGES__/
+Merci de consulter votre application __NOM_APPLI_CONGES__ : __URL_ACCUEIL_CONGES__/
 
 -------------------------------------------------------------------------------------------------------
 Ceci est un message automatique.' );
@@ -283,38 +283,38 @@ En votre absence, cette demande a été transférée à votre (vos) propre(s) re
 Ceci est un message automatique.' );
 INSERT INTO `conges_mail` VALUES ( 'mail_valid_conges', 'APPLI CONGES - Congés accepté', ' __SENDER_NAME__ a enregistré/accepté un congés pour vous dans l\'application de gestion des congés.
 
-Merci de consulter votre application Libertempo : __URL_ACCUEIL_CONGES__/
+Merci de consulter votre application __NOM_APPLI_CONGES__ : __URL_ACCUEIL_CONGES__/
 
 -------------------------------------------------------------------------------------------------------
 Ceci est un message automatique.' );
 INSERT INTO `conges_mail` VALUES ( 'mail_refus_conges', 'APPLI CONGES - Congés refusé', ' __SENDER_NAME__ a refusé une demande de congés pour vous dans l\'application de gestion des congés.
 
-Merci de consulter votre application Libertempo : __URL_ACCUEIL_CONGES__/
+Merci de consulter votre application __NOM_APPLI_CONGES__ : __URL_ACCUEIL_CONGES__/
 
 -------------------------------------------------------------------------------------------------------
 Ceci est un message automatique.' );
 INSERT INTO `conges_mail` VALUES ( 'mail_annul_conges', 'APPLI CONGES - Congés annulé', ' __SENDER_NAME__ a annulé un de vos congés dans l\'application de gestion des congés.
 
-Merci de consulter votre application Libertempo : __URL_ACCUEIL_CONGES__/
+Merci de consulter votre application __NOM_APPLI_CONGES__ : __URL_ACCUEIL_CONGES__/
 
 -------------------------------------------------------------------------------------------------------
 Ceci est un message automatique.' );
 INSERT INTO `conges_mail` VALUES ( 'mail_prem_valid_conges', 'APPLI CONGES - Congés validé', ' __SENDER_NAME__ a validé (première validation) un congés pour vous dans l\'application de gestion des congés.
 Il doit maintenant être accepté en deuxième validation.
 
-Merci de consulter votre application Libertempo : __URL_ACCUEIL_CONGES__/
+Merci de consulter votre application __NOM_APPLI_CONGES__ : __URL_ACCUEIL_CONGES__/
 
 -------------------------------------------------------------------------------------------------------
 Ceci est un message automatique.' );
-INSERT INTO `conges_mail` VALUES ( 'mail_new_absence_conges', 'APPLI CONGES - Nouvelle absence', ' __SENDER_NAME__ vous informe qu\'il sera absent. Ce type de congés ne necéssite pas de validation. Vous pouvez consulter votre application Libertempo : __URL_ACCUEIL_CONGES__/
+INSERT INTO `conges_mail` VALUES ( 'mail_new_absence_conges', 'APPLI CONGES - Nouvelle absence', ' __SENDER_NAME__ vous informe qu\'il sera absent. Ce type de congés ne necéssite pas de validation. Vous pouvez consulter votre application __NOM_APPLI_CONGES__ : __URL_ACCUEIL_CONGES__/
 
 -------------------------------------------------------------------------------------------------------
 Ceci est un message automatique. ' );
-INSERT INTO `conges_mail` VALUES ( 'mail_modif_demande_conges', 'APPLI CONGES - Modification demande', ' __SENDER_NAME__ à modifié une demande non traité. Vous pouvez consulter votre application Libertempo : __URL_ACCUEIL_CONGES__/
+INSERT INTO `conges_mail` VALUES ( 'mail_modif_demande_conges', 'APPLI CONGES - Modification demande', ' __SENDER_NAME__ à modifié une demande non traité. Vous pouvez consulter votre application __NOM_APPLI_CONGES__ : __URL_ACCUEIL_CONGES__/
 
 -------------------------------------------------------------------------------------------------------
 Ceci est un message automatique.' );
-INSERT INTO `conges_mail` VALUES ( 'mail_supp_demande_conges', 'APPLI CONGES - Suppression demande', ' __SENDER_NAME__ à supprimé une demande non traité. Vous pouvez consulter votre application Libertempo : __URL_ACCUEIL_CONGES__/
+INSERT INTO `conges_mail` VALUES ( 'mail_supp_demande_conges', 'APPLI CONGES - Suppression demande', ' __SENDER_NAME__ à supprimé une demande non traité. Vous pouvez consulter votre application __NOM_APPLI_CONGES__ : __URL_ACCUEIL_CONGES__/
 
 -------------------------------------------------------------------------------------------------------
 Ceci est un message automatique.' );
