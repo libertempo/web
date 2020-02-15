@@ -322,11 +322,7 @@ class Fonctions
     {
         $PHP_SELF = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL);
         $return = '';
-
         $URL = $PHP_SELF;
-        $tab_new_values['libelle'] = htmlspecialchars($tab_new_values['libelle'], ENT_QUOTES | ENT_HTML401);
-        $tab_new_values['short_libelle'] = htmlspecialchars($tab_new_values['short_libelle']);
-        $tab_new_values['type'] = htmlspecialchars($tab_new_values['type'], ENT_QUOTES | ENT_HTML401);
 
         // verif de la saisie
         $erreur=false ;
@@ -340,6 +336,10 @@ class Fonctions
             $return .= '<br>' . _('config_abs_saisie_not_ok') . ' : ' . _('config_abs_champs_vides') . '<br>';
             $erreur=true;
         }
+
+        $tab_new_values['libelle'] = htmlspecialchars($tab_new_values['libelle'], ENT_QUOTES | ENT_HTML401);
+        $tab_new_values['short_libelle'] = htmlspecialchars($tab_new_values['short_libelle']);
+        $tab_new_values['type'] = htmlspecialchars($tab_new_values['type'], ENT_QUOTES | ENT_HTML401);
 
         // vérif unicité du libellé court
         $sql = \includes\SQL::singleton();
