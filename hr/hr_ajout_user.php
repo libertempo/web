@@ -71,7 +71,9 @@ function dataForm2Array(array $htmlPost, \includes\SQL $sql, \App\Libraries\Conf
     $data['nom'] = htmlentities($htmlPost['new_nom'], ENT_QUOTES | ENT_HTML401);
     $data['prenom'] = htmlentities($htmlPost['new_prenom'], ENT_QUOTES | ENT_HTML401);
     $data['quotite'] = (int) $htmlPost['new_quotite'];
-    $data['soldeHeure'] = htmlentities($htmlPost['new_solde_heure'], ENT_QUOTES | ENT_HTML401);
+    $data['soldeHeure'] = key_exists('soldeHeure', $htmlPost)
+            ? htmlentities($htmlPost['new_solde_heure'], ENT_QUOTES | ENT_HTML401)
+            : '00:00';
     $data['isActive'] = 'N' === $htmlPost['new_is_active'] ? 'N' : 'Y';
     $data['isResp'] = 'Y' === $htmlPost['new_is_resp'] ? 'Y' : 'N';
     $data['isAdmin'] = 'Y' === $htmlPost['new_is_admin'] ? 'Y' : 'N';
