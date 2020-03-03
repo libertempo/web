@@ -34,6 +34,9 @@ switch ($action) {
     case 'commit_suppr':
         echo \config\Fonctions::commit_suppr($id_to_update);
         break;
+    case 'commit_desac':
+        echo \config\Fonctions::commit_desac($id_to_update);
+        break;
     default:
         $sql = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($sql);
