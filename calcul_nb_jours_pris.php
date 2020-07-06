@@ -13,7 +13,7 @@ $p_num="";
 /*************************************/
 // recup des parametres reçus :
 // SERVER
-$PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+$PHP_SELF = filter_var($_SERVER['PHP_SELF'], FILTER_SANITIZE_URL);
 // GET  / POST
 $user       = getpost_variable('user') ;
 $date_debut = getpost_variable('date_debut') ;

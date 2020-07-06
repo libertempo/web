@@ -15,7 +15,7 @@ verif_droits_user("is_resp");
 /*************************************/
 // recup des parametres reçus :
 // SERVER
-$PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+$PHP_SELF = filter_var($_SERVER['PHP_SELF'], FILTER_SANITIZE_URL);
 // GET / POST
 $onglet = getpost_variable('onglet', "page_principale");
 

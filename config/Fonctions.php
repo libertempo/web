@@ -23,7 +23,7 @@ class Fonctions
 
     private static function confirmer_vider_table_logs()
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL);
         $return = '';
 
         $return .= '<center>';
@@ -40,7 +40,7 @@ class Fonctions
 
     public static function affichage($login_par)
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL);
         $return = '';
 
         //requête qui récupère les logs
@@ -129,7 +129,7 @@ class Fonctions
         /*************************************/
         // recup des parametres reçus :
         // SERVER
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_var($_SERVER['PHP_SELF'], FILTER_SANITIZE_URL);
         // GET / POST
         $action         = htmlentities(getpost_variable('action', ""), ENT_QUOTES | ENT_HTML401);
         $login_par      = htmlentities(getpost_variable('login_par', ""), ENT_QUOTES | ENT_HTML401);
@@ -150,7 +150,7 @@ class Fonctions
 
     private static function commit_modif($tab_new_values)
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL);
         $return = '';
 
         $URL = "$PHP_SELF";
@@ -174,7 +174,7 @@ class Fonctions
 
     public static function test_config()
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL);
         $return = '';
 
         $URL = "$PHP_SELF";
@@ -197,7 +197,7 @@ class Fonctions
 
     public static function affichage_config_mail()
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL);
         $return = '';
 
         $URL = "$PHP_SELF";
@@ -287,7 +287,7 @@ class Fonctions
         /*************************************/
         // recup des parametres reçus :
         // SERVER
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_var($_SERVER['PHP_SELF'], FILTER_SANITIZE_URL);
         // GET / POST
         $action = getpost_variable('action');
         $tab_new_values = getpost_variable('tab_new_values');
@@ -320,13 +320,9 @@ class Fonctions
 
     public static function commit_ajout(&$tab_new_values)
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL);
         $return = '';
-
         $URL = $PHP_SELF;
-        $tab_new_values['libelle'] = htmlspecialchars($tab_new_values['libelle'], ENT_QUOTES | ENT_HTML401);
-        $tab_new_values['short_libelle'] = htmlspecialchars($tab_new_values['short_libelle']);
-        $tab_new_values['type'] = htmlspecialchars($tab_new_values['type'], ENT_QUOTES | ENT_HTML401);
 
         // verif de la saisie
         $erreur=false ;
@@ -340,6 +336,10 @@ class Fonctions
             $return .= '<br>' . _('config_abs_saisie_not_ok') . ' : ' . _('config_abs_champs_vides') . '<br>';
             $erreur=true;
         }
+
+        $tab_new_values['libelle'] = htmlspecialchars($tab_new_values['libelle'], ENT_QUOTES | ENT_HTML401);
+        $tab_new_values['short_libelle'] = htmlspecialchars($tab_new_values['short_libelle']);
+        $tab_new_values['type'] = htmlspecialchars($tab_new_values['type'], ENT_QUOTES | ENT_HTML401);
 
         // vérif unicité du libellé court
         $sql = \includes\SQL::singleton();
@@ -403,7 +403,7 @@ class Fonctions
 
     public static function commit_suppr($id_to_update)
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL);
         $return = '';
 
         $URL = $PHP_SELF;
@@ -447,7 +447,7 @@ class Fonctions
 
     public static function supprimer($id_to_update)
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL);
         $return = '';
 
         $URL = parse_url($PHP_SELF, PHP_URL_PATH);
@@ -518,7 +518,7 @@ class Fonctions
 
     public static function commit_modif_absence(&$tab_new_values, $id_to_update)
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL);
         $return = '';
 
         $URL = $PHP_SELF;
@@ -592,7 +592,7 @@ class Fonctions
 
     public static function modifier(&$tab_new_values, $id_to_update)
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL);
         $return = '';
 
         $URL = parse_url($PHP_SELF, PHP_URL_PATH);
@@ -646,7 +646,7 @@ class Fonctions
 
     private static function commit_saisie(&$tab_new_values)
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL);
         $return = '';
 
         $URL = "$PHP_SELF";
@@ -706,7 +706,7 @@ class Fonctions
 
     private static function affichage_configuration()
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL);
         $return = '';
 
         // affichage de la liste des variables

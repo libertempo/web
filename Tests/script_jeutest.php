@@ -4,7 +4,7 @@ define('INCLUDE_PATH',     ROOT_PATH . 'includes/');
 require_once INCLUDE_PATH . 'define.php';
 
 // SERVER
-$PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+$PHP_SELF = filter_var($_SERVER['PHP_SELF'], FILTER_SANITIZE_URL);
 
 // récupération des valeurs par défaut
 if (!empty($_POST)) {

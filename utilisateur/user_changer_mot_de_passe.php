@@ -2,7 +2,7 @@
 defined('_PHP_CONGES') or die('Restricted access');
 
 $titre = _('user_change_password');
-$self = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+$self = filter_var($_SERVER['PHP_SELF'], FILTER_SANITIZE_URL);
 
 if (getpost_variable('change_passwd', 0) == 1) {
     $new_passwd1 = getpost_variable('new_passwd1');

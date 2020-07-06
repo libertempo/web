@@ -19,7 +19,7 @@ class Fonctions
         // $tab_new_nb_conges_all[$id_conges]= nb_jours
         // $tab_calcul_proportionnel[$id_conges]= TRUE / FALSE
 
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_var($_SERVER['PHP_SELF'], FILTER_SANITIZE_URL);
         $db = \includes\SQL::singleton();
         $return = '';
 
@@ -78,7 +78,7 @@ class Fonctions
 
     public static function ajout_global($tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_new_comment_all)
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_var($_SERVER['PHP_SELF'], FILTER_SANITIZE_URL);
         $db = \includes\SQL::singleton();
         $return = '';
 
@@ -139,7 +139,7 @@ class Fonctions
 
     public static function ajout_conges($tab_champ_saisie, $tab_commentaire_saisie)
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_var($_SERVER['PHP_SELF'], FILTER_SANITIZE_URL);
         $return = '';
 
         foreach ($tab_champ_saisie as $user_name => $tab_conges)   // tab_champ_saisie[$current_login][$id_conges]=valeur du nb de jours ajouté saisi
@@ -174,7 +174,7 @@ class Fonctions
 
     private static function new_conges($user_login, $new_debut, $new_demi_jour_deb, $new_fin, $new_demi_jour_fin, $new_nb_jours, $new_comment, $new_type_id)
     {
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $PHP_SELF = filter_var($_SERVER['PHP_SELF'], FILTER_SANITIZE_URL);
         $return = '';
 
         //conversion des dates
@@ -227,7 +227,7 @@ class Fonctions
     {
         $db = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($db);
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
+        $PHP_SELF = filter_var($_SERVER['PHP_SELF'], FILTER_SANITIZE_URL);
         $return = '';
 
         // recup dans un tableau de tableau les infos des types de conges et absences
@@ -312,7 +312,7 @@ class Fonctions
     {
         $db = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($db);
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
+        $PHP_SELF = filter_var($_SERVER['PHP_SELF'], FILTER_SANITIZE_URL);
         $return = '';
 
         // recup dans un tableau de tableau les infos des types de conges et absences
@@ -362,7 +362,7 @@ class Fonctions
     {
         $db = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($db);
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
+        $PHP_SELF = filter_var($_SERVER['PHP_SELF'], FILTER_SANITIZE_URL);
         $return = '';
 
         // affichage de l'année et des boutons de défilement
@@ -510,7 +510,7 @@ class Fonctions
     {
         $db = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($db);
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
+        $PHP_SELF = filter_var($_SERVER['PHP_SELF'], FILTER_SANITIZE_URL);
         $return = '';
 
         // Récupération des informations
@@ -615,7 +615,7 @@ class Fonctions
     {
         $db = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($db);
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
+        $PHP_SELF = filter_var($_SERVER['PHP_SELF'], FILTER_SANITIZE_URL);
         $return = '';
 
         // Récupération des informations
@@ -732,7 +732,7 @@ class Fonctions
     {
         $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 
-        $PHP_SELF = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL); ;
+        $PHP_SELF = filter_var($_SERVER['PHP_SELF'], FILTER_SANITIZE_URL);
         $return = '';
 
         // on initialise le tableau global des jours fériés s'il ne l'est pas déjà :
@@ -1041,7 +1041,7 @@ class Fonctions
         $yearPrec = $year - 1;
         $yearSucc = $year + 1;
         $db = \includes\SQL::singleton();
-        $url = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $url = filter_var($_SERVER['PHP_SELF'], FILTER_SANITIZE_URL);
         $return = '';
 
         $return .= '<div class="calendar-nav">';
@@ -1213,7 +1213,7 @@ class Fonctions
         $yearPrec = $year - 1;
         $yearSucc = $year + 1;
         $db = \includes\SQL::singleton();
-        $url = filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_URL);
+        $url = filter_var($_SERVER['PHP_SELF'], FILTER_SANITIZE_URL);
         $return = '';
 
         $return .= '<div class="calendar-nav">';

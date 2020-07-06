@@ -105,6 +105,12 @@ function authDefault(string $authMethod, \App\Libraries\ApiClient $api)
             session_create($session_username);
             storeTokenApi($api, $session_username, $session_password);
         } catch (\Exception $e) {
+            // Log failed accesses, matching the default fail2ban nginx/apache auth rules
+            if (isset($_SERVER['SERVER_SOFTWARE']) && preg_match('/nginx/i', $_SERVER['SERVER_SOFTWARE'])) {
+                error_log('user "' . $session_username . '" was not found in "Libertempo"', 4);
+            } else {
+                error_log('user "' . $session_username . '" authentication failure for "Libertempo"', 4);
+            }
             dd($e->getMessage());
             $session_username="";
             $session_password="";

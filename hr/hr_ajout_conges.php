@@ -205,7 +205,7 @@ if ('true' === $ajout_groupe) {
 }
 
 $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
-$PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
+$PHP_SELF = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL);
 
 // recup du tableau des types de conges (seulement les congesexceptionnels )
 $tab_type_conges_exceptionnels = recup_tableau_types_conges_exceptionnels();
