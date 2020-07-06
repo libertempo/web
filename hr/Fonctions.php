@@ -485,7 +485,7 @@ class Fonctions
 
             // AFFICHAGE TABLEAU
             $return .= '<form action="' . $PHP_SELF . '?onglet=traite_user" method="POST">';
-            $return .= '<table cellpadding="2" class="tablo">';
+            $return .= '<table cellpadding="2" class="table table-hover table-responsive table-condensed table-striped">';
             $return .= '<thead>';
             $return .= '<tr>';
             $return .= '<th>';
