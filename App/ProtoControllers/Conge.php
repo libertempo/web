@@ -306,9 +306,10 @@ class Conge
     {
         $typesConges = [];
         $req = 'SELECT ta_id, ta_libelle, ta_type
-                FROM conges_type_absence';
+                FROM conges_type_absence
+                WHERE ta_actif = 1';
         if (null != $type) {
-            $req .= ' WHERE ta_type=\'' . $type . '\'';
+            $req .= ' AND ta_type=\'' . $type . '\'';
         }
         $data   = $sql->query($req);
 

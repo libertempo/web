@@ -43,7 +43,7 @@ class ClotureExercice
     private static function updateSoldesEmploye($employe, $typeConges, $comment, \includes\SQL $sql, \App\Libraries\Configuration $config)
     {
         $return = true;
-        $soldesEmploye = \App\ProtoControllers\Utilisateur::getSoldesEmploye($sql, $config, $employe);
+        $soldesEmploye = \App\ProtoControllers\Utilisateur::getSoldesEmploye($sql, $employe);
         if (!empty($soldesEmploye)) {
             foreach ($typeConges as $idType => $libelle) {
                 $soldeRestant = $soldesEmploye[$idType]['su_solde'];

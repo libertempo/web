@@ -5,7 +5,6 @@
  * $nouveauType
  * $traductions
  * $url
- * $isCongesExceptionnelsActive
  * $classesConges
  */
 ?>
@@ -80,7 +79,6 @@ var optionsVue = {
         nouveauLibelleCourt : '<?= $nouveauLibelleCourt ?>',
         nouveauType : '<?= $nouveauType ?>',
         traductions : <?= json_encode($traductions) ?>,
-        isCongesExceptionnelsActive: 'true' == "<?= $isCongesExceptionnelsActive ? 'true' : 'false' ?>",
         axios : instance,
         classesConges : <?= json_encode($classesConges) ?>
     },
@@ -122,9 +120,6 @@ var optionsVue = {
                     organisedTypes[absenceType.type] = new Array();
                 }
                 organisedTypes[absenceType.type].push(absenceType);
-            }
-            if (!vm.isCongesExceptionnelsActive && undefined != organisedTypes['conges_exceptionnels']) {
-                delete organisedTypes['conges_exceptionnels'];
             }
 
             // Finally hide loader and show var

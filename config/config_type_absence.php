@@ -34,10 +34,12 @@ switch ($action) {
     case 'commit_suppr':
         echo \config\Fonctions::commit_suppr($id_to_update);
         break;
+    case 'commit_desac':
+        echo \config\Fonctions::commit_desac($id_to_update);
+        break;
     default:
         $sql = \includes\SQL::singleton();
         $config = new \App\Libraries\Configuration($sql);
-        $isCongesExceptionnelsActive = $config->isCongesExceptionnelsActive();
         $titres = [
             'conges' => _('divers_conges_maj_1'),
             'absences' => _('divers_absences_maj_1'),
@@ -54,7 +56,7 @@ switch ($action) {
             'commentaires' => $comments,
         ];
         $offsetCongesExceptionnels = array_search('conges_exceptionnels', $classesConges);
-        if (!$isCongesExceptionnelsActive && is_int($offsetCongesExceptionnels)) {
+        if (is_int($offsetCongesExceptionnels)) {
             unset($classesConges[$offsetCongesExceptionnels]);
         }
         $url = $PHP_SELF;

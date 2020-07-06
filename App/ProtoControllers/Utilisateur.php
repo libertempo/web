@@ -248,17 +248,15 @@ class Utilisateur
      *
      * @return array
      */
-    public static function getSoldesEmploye(\includes\SQL $sql, \App\Libraries\Configuration $config, $login)
+    public static function getSoldesEmploye(\includes\SQL $sql, $login)
     {
         $soldes = [];
         $req = 'SELECT ta_id, ta_libelle, su_nb_an, su_solde, su_reliquat
                 FROM conges_solde_user, conges_type_absence
                 WHERE conges_type_absence.ta_id = conges_solde_user.su_abs_id
-                AND su_login = "' . $login . '" ';
-        if (!$config->isCongesExceptionnelsActive()) {
-            $req .= 'AND conges_type_absence.ta_type != \'conges_exceptionnels\'';
-        }
-        $req .= 'ORDER BY su_abs_id ASC;';
+                AND su_login = "' . $login . '"
+                AND conges_type_absence.ta_actif = 1
+                ORDER BY su_abs_id ASC;';
         $res = $sql->query($req);
 
         while ($infos = $res->fetch_assoc()) {
