@@ -267,12 +267,8 @@ function authentification_ldap_conges($username, $password)
 // - renvoie ""        si authentification FAIL
 function authentification_passwd_conges_CAS()
 {
-    $config_CAS_host       =$_SESSION['config']['CAS_host'];
-    $config_CAS_portNumber =$_SESSION['config']['CAS_portNumber'];
-    $config_CAS_URI        =$_SESSION['config']['CAS_URI'];
-    $config_CAS_CACERT     =$_SESSION['config']['CAS_CACERT'];
     $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
-
+    include CONFIG_PATH .'config_CAS.php';
 
     global $connexionCAS;
     global $logoutCas;
@@ -305,25 +301,11 @@ function authentification_passwd_conges_CAS()
     $userPT = \phpCAS::retrievePT( $config->getUrlAccueil() . "/api/", $err_code, $err_msg);
 
     $array = ['username' => $usernameCAS, 'proxyTicket' => $userPT];
-
-    return $array;
-
-
-
+ 
     //On nettoie la session créée par phpCAS
     session_destroy();
-    // On créé la session gérée par Libertempo
-    session_create($usernameCAS);
 
-    //ON VERIFIE ICI QUE L'UTILISATEUR EST DEJA ENREGISTRE SOUS DBCONGES
-    $req_conges = 'SELECT u_login FROM conges_users WHERE u_login=\''. \includes\SQL::quote($usernameCAS).'\'';
-    $res_conges = \includes\SQL::query($req_conges);
-    $num_row_conges = $res_conges->num_rows;
-    if ($num_row_conges !=0) {
-        return $usernameCAS;
-    } else {
-        return '';
-    }
+    return $array;
 }
 
 
