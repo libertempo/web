@@ -58,7 +58,7 @@
                 <td><input class="form-control" type="text" name="tab_new_values[short_libelle]" size="3" maxlength="3" :value="nouveauLibelleCourt"></td>
                 <td>
                     <select class="form-control" name=tab_new_values[type]>
-                        <option v-for="classe in classesConges" :selected="isSelected(classe)">{{ titre(classe) }}</option>
+                        <option v-for="classe in classesConges" :selected="isSelected(classe)" :value="classe">{{ titre(classe) }}</option>
                     </select>
                 </td>
             </tr>
