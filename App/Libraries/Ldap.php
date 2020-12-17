@@ -70,7 +70,7 @@ class Ldap
 
     public function getEmailUser($login)
     {
-        $filter = "(&(" . $this->configuration['attrLogin'] . "=" . $login . ")(" . 
+        $filter = "(&(" . $this->configuration['attrLogin'] . "=" . $login . ")(" .
                     $this->configuration['attrFiltre'] . "=" . $this->configuration['filtre'] . "))";
 
         $attributs = [$this->configuration['attrLogin'], $this->configuration['attrMail']];
