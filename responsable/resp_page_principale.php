@@ -3,9 +3,6 @@ defined('_PHP_CONGES') or die('Restricted access');
 
 $typeConges = $tab_type_cong;
 $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
-$congesExceptionnels = ($config->isCongesExceptionnelsActive())
-    ? $tab_type_conges_exceptionnels
-    : [];
 
 $gestionHeure = $config->isHeuresAutorise();
 $gestionEditionPapier = $config->canEditPapier();
@@ -15,7 +12,7 @@ $subalternesActifsResponsable = array_filter(
         return 'Y' == $employe['is_active'];
     }
 );
-$nombreColonnes = 3 + 2 * count($typeConges) + count($congesExceptionnels) + (int) $gestionHeure + 1 + (int) $gestionEditionPapier;
+$nombreColonnes = 3 + 2 * count($typeConges) + count($tab_type_conges_exceptionnels) + (int) $gestionHeure + 1 + (int) $gestionEditionPapier;
 
 $subalternesGrandResponsable = recup_infos_all_users_du_grand_resp($_SESSION['userlogin']);
 $subalternesActifsGrandResponsable = array_filter(

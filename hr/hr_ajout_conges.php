@@ -208,11 +208,7 @@ $config = new \App\Libraries\Configuration(\includes\SQL::singleton());
 $PHP_SELF = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL);
 
 // recup du tableau des types de conges (seulement les congesexceptionnels )
-if ($config->isCongesExceptionnelsActive()) {
-    $tab_type_conges_exceptionnels = recup_tableau_types_conges_exceptionnels();
-} else {
-    $tab_type_conges_exceptionnels = [];
-}
+$tab_type_conges_exceptionnels = recup_tableau_types_conges_exceptionnels();
 
 // recup de la liste de TOUS les users pour le RH
 // (prend en compte le resp direct, les groupes, le resp virtuel, etc ...)

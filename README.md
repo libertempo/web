@@ -38,7 +38,3 @@ Chaque nouvelle version est mise à disposition sur [github](https://github.com/
 | mysql | 8.0 |
 | apache| 2.4 |
 
-
-# Contact
-Nous sommes joignable par mail : 	libertempo@lists.tuxfamily.org.
-ou directement par irc à l'adresse : irc://irc.tuxfamily.org/Libertempo. Accès direct par webclient [ici](https://client02.chat.mibbit.com/?url=irc%3A%2F%2Firc.tuxfamily.org%2FLibertempo).

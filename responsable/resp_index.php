@@ -82,10 +82,7 @@ header_menu('', 'Libertempo : ' . _('divers_responsable_maj_1'));
 $tab_type_cong = recup_tableau_types_conges();
 
 // recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
-$tab_type_conges_exceptionnels = array();
-if ($config->isCongesExceptionnelsActive()) {
-    $tab_type_conges_exceptionnels = recup_tableau_types_conges_exceptionnels();
-}
+$tab_type_conges_exceptionnels = recup_tableau_types_conges_exceptionnels();
 
 echo '<div class="' . $onglet . ' wrapper" id="main-content">';
 require_once ROOT_PATH . 'responsable/resp_' . $onglet . '.php';

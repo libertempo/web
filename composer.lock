@@ -744,7 +744,7 @@
         },
         {
             "name": "libertempo/api",
-            "version": "v1.9.0",
+            "version": "v1.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/libertempo/api.git",
@@ -760,8 +760,9 @@
                 "adldap2/adldap2": "10.0.6",
                 "doctrine/dbal": "2.9.2",
                 "php": "^7.1",
-                "php-di/php-di": "6.0.8",
+                "php-di/php-di": "6.0.11",
                 "rollbar/rollbar": "1.8.1",
+                "doctrine/orm": "2.6.6",
                 "slim/slim": "3.12.1"
             },
             "require-dev": {

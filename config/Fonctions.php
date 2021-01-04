@@ -425,6 +425,26 @@ class Fonctions
         return $return;
     }
 
+    public static function commit_desac($id)
+    {
+        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
+        $return = '';
+
+        $URL = $PHP_SELF;
+
+        // delete dans la table conges_type_absence
+        $req='UPDATE FROM conges_type_absence set ta_actif = 0 WHERE ta_id='. \includes\SQL::quote($id);
+        \includes\SQL::query($req);
+
+        $return .= '<span class="messages">' . _('form_modif_ok') . '</span><br>';
+
+        $comment_log = "config : desactivation type absence ($id) ";
+        log_action(0, "", "", $comment_log);
+        $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $URL . '">';
+
+        return $return;
+    }
+
     public static function supprimer($id_to_update)
     {
         $PHP_SELF = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL);
@@ -461,8 +481,15 @@ class Fonctions
 
             $return .= '<br>';
             $return .= '<form action="' . $URL . '" method="POST">';
-            $return .= '<input type="submit" value="' . _('form_redo') . '" >';
+            $return .= '<input type="submit" value="' . _('form_annul') . '" >';
             $return .= '</form>';
+            if ($absenceType['typeActif']) {
+                $return .= '<form action="' . $URL . '" method="POST">';
+                $return .= '<input type="hidden" name="action" value="commit_desac">';
+                $return .= '<input type="hidden" name="id_to_update" value="' . $id_to_update . '">';
+                $return .= '<input type="submit" value="' . _('form_desactive') . '" >';
+                $return .= '</form>';
+            }
             $return .= '<br><br>';
             $return .= '</center>';
         } else {

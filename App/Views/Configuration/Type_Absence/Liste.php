@@ -5,7 +5,6 @@
  * $nouveauType
  * $traductions
  * $url
- * $isCongesExceptionnelsActive
  * $classesConges
  */
 ?>
@@ -59,7 +58,7 @@
                 <td><input class="form-control" type="text" name="tab_new_values[short_libelle]" size="3" maxlength="3" :value="nouveauLibelleCourt"></td>
                 <td>
                     <select class="form-control" name=tab_new_values[type]>
-                        <option v-for="classe in classesConges" :selected="isSelected(classe)">{{ titre(classe) }}</option>
+                        <option v-for="classe in classesConges" :selected="isSelected(classe)" :value="classe">{{ titre(classe) }}</option>
                     </select>
                 </td>
             </tr>
@@ -80,7 +79,6 @@ var optionsVue = {
         nouveauLibelleCourt : '<?= $nouveauLibelleCourt ?>',
         nouveauType : '<?= $nouveauType ?>',
         traductions : <?= json_encode($traductions) ?>,
-        isCongesExceptionnelsActive: 'true' == "<?= $isCongesExceptionnelsActive ? 'true' : 'false' ?>",
         axios : instance,
         classesConges : <?= json_encode($classesConges) ?>
     },
@@ -122,9 +120,6 @@ var optionsVue = {
                     organisedTypes[absenceType.type] = new Array();
                 }
                 organisedTypes[absenceType.type].push(absenceType);
-            }
-            if (!vm.isCongesExceptionnelsActive && undefined != organisedTypes['conges_exceptionnels']) {
-                delete organisedTypes['conges_exceptionnels'];
             }
 
             // Finally hide loader and show var

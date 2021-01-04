@@ -297,11 +297,7 @@ class Fonctions
         // recup du tableau des types de conges exceptionnels (seulement les conge sexceptionnels )
         $tab_type_cong=recup_tableau_types_conges();
         // recup du tableau des types de conges (seulement les conges)
-        if ($config->isCongesExceptionnelsActive()) {
-            $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
-        } else {
-            $tab_type_conges_exceptionnels=array();
-        }
+        $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
         // recup du tableau de tous les types de conges
         $tab_type_all_cong=recup_tableau_tout_types_abs();
 
@@ -835,11 +831,7 @@ class Fonctions
         // recup du tableau des types de conges (seulement les conges)
         $tab_type_cong=recup_tableau_types_conges();
         // recup du tableau des types de conges exceptionnels (seulement les conges exceptionnels)
-        if ($config->isCongesExceptionnelsActive()) {
-            $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
-        } else {
-            $tab_type_conges_exceptionnels = [];
-        }
+        $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
         // recup du tableau de tous les types de conges
         $tab_type_all_cong=recup_tableau_tout_types_abs();
 
@@ -1182,7 +1174,6 @@ class Fonctions
                     SET se_id_edition=$new_edition_id, se_id_absence=$id_abs, se_solde=$tab_solde_user[$id_abs] ";
             $result_insert_2 = \includes\SQL::query($sql_insert_2);
         }
-        if ($config->isCongesExceptionnelsActive()) {
             $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels();
             foreach ($tab_type_conges_exceptionnels as $id_abs => $libelle) {
                 if (!isset($tab_solde_user[$id_abs])) {
@@ -1191,7 +1182,6 @@ class Fonctions
                 $sql_insert_3 = "INSERT INTO conges_solde_edition SET se_id_edition=$new_edition_id, se_id_absence=$id_abs, se_solde=$tab_solde_user[$id_abs] ";
                 $result_insert_3 = \includes\SQL::query($sql_insert_3);
             }
-        }
 
         /********************************************************************************************/
         /* Update du num edition dans la table periode pour les Conges et demandes de cette edition */
