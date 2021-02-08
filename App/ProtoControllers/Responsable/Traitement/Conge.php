@@ -187,6 +187,7 @@ class Conge extends \App\ProtoControllers\Responsable\ATraitement
             $sql->getPdoObj()->begin_transaction();
             if ($SoldeReliquat >= $duree) {
                 $updateReliquat = $this->updateReliquatUser($user, $duree, $typeId);
+                $updateSolde = 1;
             } else {
                 $updateReliquat = $this->updateReliquatUser($user, $SoldeReliquat, $typeId);
                 $dureeSansReliquat = $duree - $SoldeReliquat;
