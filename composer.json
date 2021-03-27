@@ -3,6 +3,7 @@
     "keywords": ["congés", "leaves"],
     "homepage": "https://github.com/libertempo/web",
     "license": "GPL-2.0",
+    "description": "Application web de gestion des congés en ligne",
     "replace" : {
         "wouldsmina/libertempo": "^1.8"
     },
