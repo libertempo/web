@@ -6,6 +6,7 @@ notifications:
     on_success: never # default: change
     on_failure: always # default: always
   irc:
+    if: repo = libertempo/web
     channels:
       - "irc.tuxfamily.org#Libertempo"
     on_success: never # default: change
