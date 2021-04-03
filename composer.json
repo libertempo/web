@@ -28,7 +28,7 @@
         "vendor-dir": "vendor"
     },
     "require": {
-        "php": "^7.4",
+        "php": "^7.2",
         "ext-mbstring": "*",
         "ext-Reflection": "*",
         "ext-curl": "*",
