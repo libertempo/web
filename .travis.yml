@@ -6,7 +6,7 @@ notifications:
     on_success: never # default: change
     on_failure: always # default: always
   irc:
-    channel:
+    channels:
       - "irc.tuxfamily.org#Libertempo"
     on_success: never # default: change
     on_failure: always # default: always
