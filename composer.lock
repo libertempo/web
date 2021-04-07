@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e1be9d73109cd03d9736c6f9031ef52f",
+    "content-hash": "c2e0dd76f910d0093e7f912e1a997dd9",
     "packages": [
         {
             "name": "adldap2/adldap2",
@@ -1514,16 +1514,16 @@
         },
         {
             "name": "kint-php/kint",
-            "version": "3.2.2",
+            "version": "3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kint-php/kint.git",
-                "reference": "c332db9529fdce74ae6a347f97a1e7395e76ced8"
+                "reference": "335ac1bcaf04d87df70d8aa51e8887ba2c6d203b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kint-php/kint/zipball/c332db9529fdce74ae6a347f97a1e7395e76ced8",
-                "reference": "c332db9529fdce74ae6a347f97a1e7395e76ced8",
+                "url": "https://api.github.com/repos/kint-php/kint/zipball/335ac1bcaf04d87df70d8aa51e8887ba2c6d203b",
+                "reference": "335ac1bcaf04d87df70d8aa51e8887ba2c6d203b",
                 "shasum": ""
             },
             "require": {
@@ -1561,12 +1561,12 @@
             ],
             "authors": [
                 {
-                    "name": "Rokas Šleinius",
-                    "homepage": "https://github.com/raveren"
-                },
-                {
                     "name": "Jonathan Vollebregt",
                     "homepage": "https://github.com/jnvsor"
+                },
+                {
+                    "name": "Rokas Šleinius",
+                    "homepage": "https://github.com/raveren"
                 },
                 {
                     "name": "Contributors",
@@ -1582,9 +1582,9 @@
             ],
             "support": {
                 "issues": "https://github.com/kint-php/kint/issues",
-                "source": "https://github.com/kint-php/kint/tree/3.2.2"
+                "source": "https://github.com/kint-php/kint/tree/master"
             },
-            "time": "2019-05-03T16:49:16+00:00"
+            "time": "2019-10-17T18:05:24+00:00"
         },
         {
             "name": "libertempo/api",
