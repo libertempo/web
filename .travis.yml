@@ -1,12 +1,13 @@
 language: php
 php:
-  - '7.1'
+  - '7.4.0'
 notifications:
   email:
     on_success: never # default: change
     on_failure: always # default: always
   irc:
-    channel:
+    if: repo = libertempo/web
+    channels:
       - "irc.tuxfamily.org#Libertempo"
     on_success: never # default: change
     on_failure: always # default: always
