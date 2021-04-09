@@ -322,11 +322,7 @@ class Fonctions
     {
         $PHP_SELF = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL);
         $return = '';
-
         $URL = $PHP_SELF;
-        $tab_new_values['libelle'] = htmlspecialchars($tab_new_values['libelle'], ENT_QUOTES | ENT_HTML401);
-        $tab_new_values['short_libelle'] = htmlspecialchars($tab_new_values['short_libelle']);
-        $tab_new_values['type'] = htmlspecialchars($tab_new_values['type'], ENT_QUOTES | ENT_HTML401);
 
         // verif de la saisie
         $erreur=false ;
@@ -340,6 +336,10 @@ class Fonctions
             $return .= '<br>' . _('config_abs_saisie_not_ok') . ' : ' . _('config_abs_champs_vides') . '<br>';
             $erreur=true;
         }
+
+        $tab_new_values['libelle'] = htmlspecialchars($tab_new_values['libelle'], ENT_QUOTES | ENT_HTML401);
+        $tab_new_values['short_libelle'] = htmlspecialchars($tab_new_values['short_libelle']);
+        $tab_new_values['type'] = htmlspecialchars($tab_new_values['type'], ENT_QUOTES | ENT_HTML401);
 
         // vérif unicité du libellé court
         $sql = \includes\SQL::singleton();
@@ -425,6 +425,26 @@ class Fonctions
         return $return;
     }
 
+    public static function commit_desac($id)
+    {
+        $PHP_SELF = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
+        $return = '';
+
+        $URL = $PHP_SELF;
+
+        // delete dans la table conges_type_absence
+        $req='UPDATE FROM conges_type_absence set ta_actif = 0 WHERE ta_id='. \includes\SQL::quote($id);
+        \includes\SQL::query($req);
+
+        $return .= '<span class="messages">' . _('form_modif_ok') . '</span><br>';
+
+        $comment_log = "config : desactivation type absence ($id) ";
+        log_action(0, "", "", $comment_log);
+        $return .= '<META HTTP-EQUIV=REFRESH CONTENT="2; URL=' . $URL . '">';
+
+        return $return;
+    }
+
     public static function supprimer($id_to_update)
     {
         $PHP_SELF = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL);
@@ -461,8 +481,15 @@ class Fonctions
 
             $return .= '<br>';
             $return .= '<form action="' . $URL . '" method="POST">';
-            $return .= '<input type="submit" value="' . _('form_redo') . '" >';
+            $return .= '<input type="submit" value="' . _('form_annul') . '" >';
             $return .= '</form>';
+            if ($absenceType['typeActif']) {
+                $return .= '<form action="' . $URL . '" method="POST">';
+                $return .= '<input type="hidden" name="action" value="commit_desac">';
+                $return .= '<input type="hidden" name="id_to_update" value="' . $id_to_update . '">';
+                $return .= '<input type="submit" value="' . _('form_desactive') . '" >';
+                $return .= '</form>';
+            }
             $return .= '<br><br>';
             $return .= '</center>';
         } else {

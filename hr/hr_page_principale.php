@@ -31,11 +31,7 @@ $return = '';
 $titre = _('admin_onglet_gestion_user');
 
 $typeAbsencesConges = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges');
-$typeAbsencesExceptionnels = [];
-
-if ($config->isCongesExceptionnelsActive()) {
-    $typeAbsencesExceptionnels = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges_exceptionnels');
-}
+$typeAbsencesExceptionnels = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges_exceptionnels');
 
 $infoUsers = \App\ProtoControllers\Utilisateur::getDonneesTousUtilisateurs($config);
 asort($infoUsers);
@@ -57,7 +53,7 @@ foreach ($infoUsers as $login => $infosUser) {
 
     $infoUsers[$login]['rights'] = $rights;
     $infoUsers[$login]['responsables'] = \App\ProtoControllers\Responsable::getResponsablesUtilisateur($login);
-    $infoUsers[$login]['soldes'] = \App\ProtoControllers\Utilisateur::getSoldesEmploye($sql, $config, $login);
+    $infoUsers[$login]['soldes'] = \App\ProtoControllers\Utilisateur::getSoldesEmploye($sql, $login);
 }
 
 /**

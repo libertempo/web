@@ -82,10 +82,7 @@ class Fonctions
         $count1=0;
         $count2=0;
 
-        $typeAbsence = \App\ProtoControllers\Conge::getTypesAbsences($db, 'conges');
-        if ($config->isCongesExceptionnelsActive()) {
-            $typeAbsence += \App\ProtoControllers\Conge::getTypesAbsences($db, 'conges_exceptionnels');
-        }
+        $typeAbsence = \App\ProtoControllers\Conge::getTypesAbsences($db);
 
         /*********************************/
         // Récupération des informations
@@ -120,7 +117,7 @@ class Fonctions
 
             // Récup des demandes en cours pour les users :
             $sql1 = "SELECT p_num, p_login, p_date_deb, p_demi_jour_deb, p_date_fin, p_demi_jour_fin, p_nb_jours, p_commentaire, p_type, p_date_demande, p_date_traitement FROM conges_periode ";
-            $sql1=$sql1." WHERE p_etat =\"demande\" ";
+            $sql1=$sql1." WHERE p_etat =\"demande\" OR p_etat =\"valid\"";
             $sql1=$sql1." AND p_login IN ($list_users) ";
             $sql1=$sql1." ORDER BY p_num";
 
