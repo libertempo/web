@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e1be9d73109cd03d9736c6f9031ef52f",
+    "content-hash": "4a5a3773d0d593f0b0284463afb5769a",
     "packages": [
         {
             "name": "adldap2/adldap2",
@@ -3489,24 +3489,25 @@
         },
         {
             "name": "codacy/coverage",
-            "version": "1.4.2",
+            "version": "1.4.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/codacy/php-codacy-coverage.git",
-                "reference": "4988cd098db4d578681bfd3176071931ad475150"
+                "reference": "1852ca987c91ef466ebcfdbdd4e1788b653eaf1d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/codacy/php-codacy-coverage/zipball/4988cd098db4d578681bfd3176071931ad475150",
-                "reference": "4988cd098db4d578681bfd3176071931ad475150",
+                "url": "https://api.github.com/repos/codacy/php-codacy-coverage/zipball/1852ca987c91ef466ebcfdbdd4e1788b653eaf1d",
+                "reference": "1852ca987c91ef466ebcfdbdd4e1788b653eaf1d",
                 "shasum": ""
             },
             "require": {
                 "gitonomy/gitlib": ">=1.0",
                 "php": ">=5.3.3",
-                "symfony/console": "~2.5|~3.0|~4.0"
+                "symfony/console": "~2.5|~3.0|~4.0|~5.0"
             },
             "require-dev": {
+                "clue/phar-composer": "^1.1",
                 "phpunit/phpunit": "~6.5"
             },
             "bin": [
@@ -3532,10 +3533,10 @@
             "homepage": "https://github.com/codacy/php-codacy-coverage",
             "support": {
                 "issues": "https://github.com/codacy/php-codacy-coverage/issues",
-                "source": "https://github.com/codacy/php-codacy-coverage/tree/1.4.2"
+                "source": "https://github.com/codacy/php-codacy-coverage/tree/master"
             },
             "abandoned": true,
-            "time": "2018-03-22T16:43:39+00:00"
+            "time": "2020-01-10T10:52:12+00:00"
         },
         {
             "name": "composer/package-versions-deprecated",
