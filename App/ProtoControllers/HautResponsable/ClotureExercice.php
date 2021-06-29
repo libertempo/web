@@ -72,7 +72,7 @@ class ClotureExercice
     private static function setSoldeEmploye($employe, $idType, $soldeFutur, \includes\SQL $sql)
     {
         $req = 'UPDATE conges_solde_user
-                  SET su_solde = ' . $soldeFutur .
+                  SET su_solde = ' . str_replace(",",".",$soldeFutur) .
                 ' WHERE su_login = "' . $sql->quote($employe) .
                 '" AND su_abs_id = ' . intval($idType) . ';';
         $sql->query($req);
@@ -87,7 +87,7 @@ class ClotureExercice
             $soldeRestant = $reliquatMax;
         }
         $req = 'UPDATE conges_solde_user
-                  SET su_reliquat = ' . $soldeRestant .
+                  SET su_reliquat = ' . str_replace(",",".",$soldeRestant) .
                 ' WHERE su_login="' . $sql->quote($employe) .
                 '" AND su_abs_id = ' . intval($idType) . ';';
         $sql->query($req);
