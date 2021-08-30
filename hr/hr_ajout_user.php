@@ -203,14 +203,16 @@ function insertSoldeUtilisateur(array $data, \includes\SQL $sql) : bool
     $returnStd = $sql->query($req);
     $returnExc = 1;
     $typeAbsencesExceptionnels = \App\ProtoControllers\Conge::getTypesAbsences($sql, 'conges_exceptionnels');
-    foreach ($typeAbsencesExceptionnels as $typeId => $info) {
-        $valuesExc[] = "(DEFAULT, '" . $data['login'] . "' ,"
-                            . $typeId . ", 0, "
-                            . $data['soldes'][$typeId] . ", 0)" ;
+    if(count($typeAbsencesExceptionnels) > 0){
+        foreach ($typeAbsencesExceptionnels as $typeId => $info) {
+            $valuesExc[] = "(DEFAULT, '" . $data['login'] . "' ,"
+                                . $typeId . ", 0, "
+                                . $data['soldes'][$typeId] . ", 0)" ;
 
+        }
+        $req = "INSERT INTO conges_solde_user (su_id, su_login, su_abs_id, su_nb_an, su_solde, su_reliquat) VALUES " . implode(",", $valuesExc);
+        $returnExc = $sql->query($req);
     }
-    $req = "INSERT INTO conges_solde_user (su_id, su_login, su_abs_id, su_nb_an, su_solde, su_reliquat) VALUES " . implode(",", $valuesExc);
-    $returnExc = $sql->query($req);
 
     return $returnStd && $returnExc;
 }
