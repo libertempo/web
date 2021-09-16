@@ -156,7 +156,8 @@ class Groupe
                 )';
         $query = $sql->query($req);
 
-        return $query->fetch_array() && 0 < (int) $query->fetch_array()[0];
+        $results = $query->fetch_array();
+        return $results && (0 < (int) $results[0]);
     }
 
     /**
